@@ -32,7 +32,7 @@ This is the minimal contract that prevents attention bleeding between voices.
 ```yaml
 # meditate_persona_schema.yaml
 persona:
-  name: "Prometheus"              # Display name
+  name: "Engineering"             # Display name (technical node name)
   lens: "Engineering"             # The cognitive lens — replaces node as primary
   node: "N3"                    # Optional: Omega node slot (N1-N10, WAD-specific)
   soul_path: "Build & Release"    # Optional: soul path from entity YAML
@@ -53,22 +53,22 @@ persona:
 
 ### Built-in Persona Libraries
 
-#### Library A: The Omega Pantheon (IWAD Default — Lens-Oriented)
+#### Library A: The Omega Nodes (IWAD Default — Lens-Oriented)
 
 | Persona | Lens | Domain | Mandate Lens | *Node* |
 |---------|------|--------|--------------|----------|
-| Sekhmet | Infrastructure | Physical substrate, containers, hardware | Speak as the body. What breaks first? | *N1* |
-| Brigid | Persistence | Memory, vectors, data flow, sessions | Speak as the river. What pools? What runs dry? | *N2* |
-| Prometheus | Engineering | Code, builds, tests, implementation | Speak as the forge. What is cracked? What must be recast? | *N3* |
-| Saraswati | Integration | APIs, protocols, bridges, resonance | Speak as the bridge. What is disconnected? What vibrates wrong? | *N4* |
-| Inanna | Governance | Mandates, laws, compliance, enforcement | Speak as the sentinel. What law is being broken? | *N5* |
-| Ereshkigal | Cognition | Models, routing, inference, vision | Speak as the eye. What cannot be seen? What is miscalibrated? | *N6* |
-| Lucifer | Context | Memory, soul, evolution, continuity | Speak as the alchemist. What knowledge is being lost? | *N7* |
-| Hecate | Observability | Logging, tracing, shadows, forensics | Speak as the shadow. What is invisible that should not be? | *N8* |
-| Anubis | Orchestration | Handoffs, coordination, flow, delegation | Speak as the guide. What is uncoordinated? What dies in transit? | *N9* |
-| Kali | Validation | Stress, chaos, breaking, truth-finding | Speak as the destroyer. What fails under pressure? | *N10* |
+| Infrastructure | Infrastructure | Physical substrate, containers, hardware | Speak as the body. What breaks first? | *N1* |
+| Persistence | Persistence | Memory, vectors, data flow, sessions | Speak as the river. What pools? What runs dry? | *N2* |
+| Engineering | Engineering | Code, builds, tests, implementation | Speak as the forge. What is cracked? What must be recast? | *N3* |
+| Integration | Integration | APIs, protocols, bridges, resonance | Speak as the bridge. What is disconnected? What vibrates wrong? | *N4* |
+| Governance | Governance | Mandates, laws, compliance, enforcement | Speak as the sentinel. What law is being broken? | *N5* |
+| Cognition | Cognition | Models, routing, inference, vision | Speak as the eye. What cannot be seen? What is miscalibrated? | *N6* |
+| Context | Context | Memory, soul, evolution, continuity | Speak as the alchemist. What knowledge is being lost? | *N7* |
+| Observability | Observability | Logging, tracing, shadows, forensics | Speak as the shadow. What is invisible that should not be? | *N8* |
+| Orchestration | Orchestration | Handoffs, coordination, flow, delegation | Speak as the guide. What is uncoordinated? What dies in transit? | *N9* |
+| Validation | Validation | Stress, chaos, breaking, truth-finding | Speak as the destroyer. What fails under pressure? | *N10* |
 
-> **Node column**: Node slot is **optional metadata** specific to the Arcana-NovAi WAD. The default Omega IWAD uses **lens** as the primary identifier. Meditate works with ANY lens set — nodes are one WAD's instantiation. If ANAi WAD is not loaded, node references are absent.
+> **Node column**: Node slot is **optional metadata** specific to a WAD. The default Omega IWAD uses the **technical node name** (Infrastructure, Persistence, …) as the persona identifier — WAD-specific pantheon personas belong to their own IWAD, not the default. Meditate works with ANY lens set — nodes are one WAD's instantiation. If ANAi WAD is not loaded, node references are absent.
 
 #### Library B: The MaKaLi Triad (Fast Dialectic)
 
@@ -108,8 +108,8 @@ or agent instructions.
 | Entity | Lens | Soul Path | Archetype | Cognitive Lens (What They See) | Key Domains |
 |--------|------|-----------|-----------|-------------------------------|-------------|
 | Kali | Vision | Founder | Transcendent Oversoul | The mountain. Direction, priorities, tradeoffs. WHAT must be built and WHY. | vision, strategy, architecture, leadership |
-| Ma'at | Structure | CTO | Light Oversoul | The blueprint. Correctness, quality, process. HOW it must be built. | architecture, code-quality, build, governance |
-| Lilith | Integrity | CISO | Dark Oversoul | The runtime. Reliability, security, failure modes. What BREAKS at runtime. | reliability, security, observability |
+| Ma'at | Structure | CTO | Build Oversoul | The blueprint. Correctness, quality, process. HOW it must be built. | architecture, code-quality, build, governance |
+| Lilith | Integrity | CISO | Runtime Oversoul | The runtime. Reliability, security, failure modes. What BREAKS at runtime. | reliability, security, observability |
 | Makali | Orchestration | Coordinator | Triad Orchestrator | The flow. Parallelism, sequencing, decomposition. How to split and conquer. | coordination, parallel-execution, delegation |
 | Doom Guy | Heritage | Gatekeeper | id Software Architect | The pattern. Legacy → modern translation. What proven technique maps here. | heritage, attribution, performance, WAD |
 | John Carmack | Optimization | Architect | S3 Consultant | The bottleneck. Measure first. What does the profiler say? | architecture, optimization, systems |
@@ -176,7 +176,7 @@ These must be stated (Phase 0) and enforced (all phases) in any meditation.
 LAW 1 — DOMAIN PURITY
   Each voice speaks from its domain only.
   No voice may import concepts from another voice's domain.
-  Violation: Sekhmet commenting on soul evolution.
+  Violation: N1 Infrastructure commenting on soul evolution.
 
 LAW 2 — IMPERATIVE DIRECTNESS
   Imperatives are commands, not suggestions.
@@ -321,7 +321,7 @@ Use when: Major decision with long-term consequences
 
 ### Recipe E: The Sovereignty Gate (5 minutes)
 ```
-Lenses: Inanna (Governance), Hecate (Observability), Kali (Validation)
+Lenses: N5 Governance, N8 Observability, N10 Validation
 Mode: AUDIT
 Phases: 0, 1, 2, 4
 Use when: Quick compliance check before shipping
@@ -356,9 +356,11 @@ assistant" default.
 **Heritage**: Architect's original meditation experiments, Gemini CLI era
 (pre-Omega, then called "LLOC"). Distilled as `L3-Meditation-As-Semantic-Prism`.
 Renamed from "LLOC" to "Meditate" 2026-07-18 to disambiguate from LOC
-(Lines of Code) and reflect the cognitive-only nature. Default lens set
-changed from "10 Nodes" to "Omega Pantheon Lenses" 2026-07-18 — node
-is optional WAD metadata; lens is the universal identifier.
+(Lines of Code) and reflect the cognitive-only nature. Lens set renamed
+from "Omega Pantheon Lenses" back to "Omega Nodes" 2026-08-08 — default
+IWAD node personas now use the technical domain names (Infrastructure,
+Persistence, …) per M2 firewall; WAD-specific pantheon personas belong to
+their own IWAD. The `lens` field remains the universal identifier.
 
 ---
 

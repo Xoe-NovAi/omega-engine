@@ -183,8 +183,8 @@ AgentDescriptor = Dict[str, Any]
 # These constants are engine architecture, not WAD content (M2-compliant).
 ROLE_CONSTANTS: Dict[str, str] = {
     "GRAND_OVERSIGHT": "grand_oversight",
-    "LIGHT_OVERSOUL": "light_oversoul",
-    "DARK_OVERSOUL": "dark_oversoul",
+    "BUILD_OVERSOUL": "build_oversoul",
+    "RUNTIME_OVERSOUL": "runtime_oversoul",
     "N1": "infrastructure",
     "N2": "persistence",
     "N3": "engineering",

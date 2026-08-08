@@ -13,7 +13,6 @@ from typing import List, Tuple
 EXCLUDE_PATTERNS = [
     'test_', 'tests/', '__pycache__', '.venv', 'venv/',
     'docs/', 'data/', 'scripts/', 'archive/', 'old/',
-    'omega-vetala/', 'packages/omega-sieve/',
     'third-party/', 'third_party/',
     'detect_api_keys.py', 'enforce_vaultcore.py', 'check_hardcoded_secrets.py',
 ]

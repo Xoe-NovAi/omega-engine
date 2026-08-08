@@ -60,8 +60,8 @@ ICS_CHANNEL_RUN = "run"               # Run-side channel (Lilith)
 # and are loaded at runtime via _load_dispatch_config().
 ROLE_CONSTANTS = {
     "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",
-    "LIGHT_OVERSOUL": "LIGHT_OVERSOUL",
-    "DARK_OVERSOUL": "DARK_OVERSOUL",
+    "BUILD_OVERSOUL": "BUILD_OVERSOUL",
+    "RUNTIME_OVERSOUL": "RUNTIME_OVERSOUL",
     "N1": "N1",
     "N2": "N2",
     "N3": "N3",
@@ -135,9 +135,9 @@ def _get_channel_for_role(role: str, iwad: str = DEFAULT_IWAD) -> str:
         role_value = ROLE_CONSTANTS.get(role, role)
         if role_value == "GRAND_OVERSIGHT":
             return ICS_CHANNEL_OVERSIGHT
-        elif role_value == "LIGHT_OVERSOUL":
+        elif role_value == "BUILD_OVERSOUL":
             return ICS_CHANNEL_BUILD
-        elif role_value == "DARK_OVERSOUL":
+        elif role_value == "RUNTIME_OVERSOUL":
             return ICS_CHANNEL_RUN
     return ICS_CHANNEL_OPENCODE
 
@@ -264,7 +264,7 @@ def _read_entity_model(entity: str) -> Optional[str]:
     """Read the model name from the entity's soul.yaml file.
 
     Args:
-        entity: The entity name (e.g., "grand_oversight", "light_oversoul")
+        entity: The entity name (e.g., "grand_oversight", "build_oversoul")
 
     Returns:
         The model name string, or None if not found.
@@ -299,7 +299,7 @@ def render(
     instead of hand-typing headers.
 
     Args:
-        entity: The entity name (e.g., "GRAND_OVERSIGHT", "light_oversoul")
+        entity: The entity name (e.g., "GRAND_OVERSIGHT", "build_oversoul")
         model: Optional model override (D118). If None, auto-detected.
         channel: The execution channel (default: ``"opencode"``)
         trace_id: Optional trace ID. If None, auto-generated.

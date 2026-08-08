@@ -50,6 +50,7 @@ Any recommendation MUST satisfy these. Violations are disqualifying.
 | `PyYAML` | 6.0.3 | ✅ Installed | YAML parsing |
 | `sqlite-vec` | 0.1.9 | ✅ Installed | Vector search extension |
 | `tenacity` | 9.1.4 | ✅ Installed | Retry library (3 active consumers) |
+| `pybreaker` | 1.4.1 | ✅ Installed | Legacy breaker lib (not used by HealthMonitor) |
 | `structlog` | — | ❌ Not installed | Structured logging (adopted in plan) |
 | `prometheus_client` | — | ❌ Not installed | Metrics (adopted in plan) |
 | `interlock-cb` | — | ❌ Not installed | Circuit breaker (adopted in plan) |
@@ -148,7 +149,15 @@ Any recommendation MUST satisfy these. Violations are disqualifying.
 
 ### Research Area 2: SQLite + Honker (Redis Replacement)
 
-**Current state**: Redis is used in 5 files: `memory_store.py` (9 refs), `budget_guard.py` (37 refs), `youtube_worker.py` (24 refs), `memory/providers.py` (21 refs), `hivemind_redis.py` (2 refs — exposed as MCP tools). Total: ~93 Redis references.
+**Current state**: Redis is used in **6 files, ~73 references** (verified 2026-08-08):
+- `governance/budget_guard.py` (24 refs) — rate limiting (INCR/EXPIRE)
+- `workers/youtube_worker.py` (19 refs) — queue (LPUSH/BRPOP)
+- `ingestion/worker.py` (11 refs) — ingestion queue
+- `mcp_servers/omega_hub/hivemind_redis.py` (9 refs — pub/sub, exposed as MCP tools)
+- `memory/providers.py` (6 refs)
+- `memory_store.py` (4 refs)
+
+NOTE: Paths moved since earlier drafts — youtube_worker.py is now at `src/omega/workers/`, budget_guard.py at `src/omega/governance/`, ingestion worker at `src/omega/ingestion/worker.py`.
 
 **Proposed**: Replace with SQLite + Honker (russellromney/honker, 2957 stars, created 2026-04-18).
 
@@ -169,9 +178,9 @@ Any recommendation MUST satisfy these. Violations are disqualifying.
 3. **Honker + sqlite-vec Coexistence**: Can both extensions be loaded in the same SQLite connection? Same database file? Any schema conflicts?
 
 4. **Honker vs Redis Feature Mapping**: For each Redis use case in our codebase, can Honker provide an equivalent?
-   - `memory_store.py` (9 refs): What Redis operations does it use? (GET/SET/EXPIRE?)
-   - `budget_guard.py` (37 refs): What Redis operations? (INCR/EXPIRE for rate limiting?)
-   - `youtube_worker.py` (24 refs): What Redis operations? (LPUSH/BRPOP for queue?)
+   - `memory_store.py` (4 refs): What Redis operations does it use? (GET/SET/EXPIRE?)
+   - `budget_guard.py` (24 refs): What Redis operations? (INCR/EXPIRE for rate limiting?)
+   - `youtube_worker.py` (19 refs): What Redis operations? (LPUSH/BRPOP for queue?)
    - `hivemind_redis.py`: Pub/sub — Honker's NOTIFY/LISTEN is a direct match.
 
 5. **Honker Production Maturity**: 2957 stars is strong. But who's using it? What's the test coverage? Known issues? License?

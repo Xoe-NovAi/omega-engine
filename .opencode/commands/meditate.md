@@ -25,7 +25,7 @@ cognition: the semantic prism applied to $ARGUMENTS.
 **When to use:**
 - You need mastermind-grade multi-perspective analysis without RAM overhead
 - The task benefits from genuine internal conflict (not averaged output)
-- You want the Omega Pantheon lenses, the MaKaLi Triad, a specific Omegamind's cognitive lens, or a custom lens set applied
+- You want the Omega Node lenses, the MaKaLi Triad, a specific Omegamind's cognitive lens, or a custom lens set applied
 - You are in a constrained environment (local inference, 14Gi RAM ceiling)
 - You want emergent sequencing — where the synthesis produces priorities
   that were not explicit in the raw context
@@ -129,24 +129,24 @@ What would [persona] push back on from the previous voice(s)?
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**The Default Omega Pantheon Lens Set** (used when no custom set is specified):
+**The Default Omega Node Lens Set** (used when no custom set is specified):
 
 The **Lens** column is the primary identifier (IWAD-agnostic). The **Node** is
-optional WAD-specific metadata — shown here because the default IWAD borrows the
-Arcana-Nova Node framework. Other WADs may omit node entirely.
+optional WAD-specific metadata — shown here because the default IWAD uses the
+technical Node framework. Other WADs may omit node entirely.
 
-| N | Lens | Persona | Archetype | Domain | Element | Mandate Lens |
-|---|------|---------|-----------|--------|---------|--------------|
-| 1 | **Infrastructure** | Sekhmet | Architect → Creator | Physical substrate, containers, hardware | Earth 🜃 | Speak as the body. What breaks first? |
-| 2 | **Persistence** | Brigid | Strategist → Metis | Memory, vectors, data flow, sessions | Water 🜄 | Speak as the river. What pools? What runs dry? |
-| 3 | **Engineering** | Prometheus | Forge-Worker | Code, builds, tests, implementation | Fire 🜂 | Speak as the forge. What is cracked? What must be recast? |
-| 4 | **Integration** | Saraswati | Messenger → Bridge-Builder | APIs, protocols, bridges, resonance | Air 🜁 | Speak as the bridge. What is disconnected? What vibrates wrong? |
-| 5 | **Governance** | Inanna | Judge → Law-Giver | Mandates, laws, compliance, enforcement | Aether ⛤ | Speak as the sentinel. What law is being broken? |
-| 6 | **Cognition** | Ereshkigal | Seer → Visionary | Models, routing, inference, vision | Aether ⛤ | Speak as the eye. What cannot be seen? What is miscalibrated? |
-| 7 | **Context** | Lucifer | Alchemist → Transformer | Memory, soul, evolution, continuity | Air 🜁 | Speak as the alchemist. What knowledge is being lost? |
-| 8 | **Observability** | Hecate | Watcher → Guardian of Thresholds | Logging, tracing, shadows, forensics | Fire 🜂 | Speak as the shadow. What is invisible that should not be? |
-| 9 | **Orchestration** | Anubis | Guide → Psychopomp | Handoffs, coordination, flow, delegation | Water 🜄 | Speak as the guide. What is uncoordinated? What dies in transit? |
-| 10 | **Validation** | Kali | Destroyer → Truth-Seeker | Stress, chaos, breaking, truth-finding | Earth 🜃 | Speak as the destroyer. What fails under pressure? |
+| N | Lens | Archetype | Domain | Element | Mandate Lens |
+|---|------|-----------|--------|---------|--------------|
+| 1 | **Infrastructure** | Architect → Creator | Physical substrate, containers, hardware | Earth 🜃 | Speak as the body. What breaks first? |
+| 2 | **Persistence** | Strategist → Metis | Memory, vectors, data flow, sessions | Water 🜄 | Speak as the river. What pools? What runs dry? |
+| 3 | **Engineering** | Forge-Worker | Code, builds, tests, implementation | Fire 🜂 | Speak as the forge. What is cracked? What must be recast? |
+| 4 | **Integration** | Messenger → Bridge-Builder | APIs, protocols, bridges, resonance | Air 🜁 | Speak as the bridge. What is disconnected? What vibrates wrong? |
+| 5 | **Governance** | Judge → Law-Giver | Mandates, laws, compliance, enforcement | Aether ⛤ | Speak as the sentinel. What law is being broken? |
+| 6 | **Cognition** | Seer → Visionary | Models, routing, inference, vision | Aether ⛤ | Speak as the eye. What cannot be seen? What is miscalibrated? |
+| 7 | **Context** | Alchemist → Transformer | Memory, soul, evolution, continuity | Air 🜁 | Speak as the alchemist. What knowledge is being lost? |
+| 8 | **Observability** | Watcher → Guardian of Thresholds | Logging, tracing, shadows, forensics | Fire 🜂 | Speak as the shadow. What is invisible that should not be? |
+| 9 | **Orchestration** | Guide → Psychopomp | Handoffs, coordination, flow, delegation | Water 🜄 | Speak as the guide. What is uncoordinated? What dies in transit? |
+| 10 | **Validation** | Destroyer → Truth-Seeker | Stress, chaos, breaking, truth-finding | Earth 🜃 | Speak as the destroyer. What fails under pressure? |
 
 > **Node Mapping** (WAD metadata — not part of the lens identity):
 > N1=Infrastructure, N2=Persistence, N3=Engineering, N4=Integration,
@@ -170,8 +170,8 @@ Arcana-Nova Node framework. Other WADs may omit node entirely.
 > - `/meditate [subject] --lenses Architect,Skeptic,Pragmatist,Ethicist` → four named custom stances
 > - `/meditate [subject] --lenses Carmack,Torvalds,Knuth` → three legendary engineering personas
 >
-> Use lens names (lowercase, singular) for Omega Pantheon lenses.
-> For custom personas not in the Omega Pantheon, derive their domain from their
+> Use lens names (lowercase, singular) for Omega Node lenses.
+> For custom personas not in the Omega Node set, derive their domain from their
 > known area of mastery and their "Mandate Lens" from their most famous principle.
 
 ---
@@ -309,7 +309,7 @@ MANDATE FLAGS:
    "Do X before Y." is the required form.
 
 4. **NO DOMAIN BLEEDING**: Each voice speaks only from its domain.
-   Sekhmet does not talk about soul evolution. Lucifer does not talk
+   N1 Infrastructure does not talk about soul evolution. N7 Context does not talk
    about Podman containers. Domain purity = attention modulation = insight.
 
 5. **DISSENT IS MANDATORY**: Every voice from Voice 2 onwards must push back
@@ -325,7 +325,7 @@ MANDATE FLAGS:
 ## ⬡ USAGE EXAMPLES
 
 ```bash
-# Full Omega Pantheon meditation on a strategic question
+# Full Omega Node meditation on a strategic question
 /meditate Should we migrate from Qdrant to sqlite-vec now?
 
 # MaKaLi Triad only — fast dialectical synthesis

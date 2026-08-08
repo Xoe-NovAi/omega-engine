@@ -4,7 +4,9 @@
 # This file defines all meditation lenses for the default IWAD.
 # Each lens is a cognitive persona the meditation engine can adopt.
 # The "node" field is OPTIONAL metadata — present here because the
-# _omega_default IWAD uses the Arcana-Nova 10 Node framework.
+# _omega_default IWAD uses the technical 10 Node framework
+# (Infrastructure, Persistence, Engineering, Integration, Governance,
+# Cognition, Context, Observability, Orchestration, Validation).
 # Other WADs may omit node entirely.
 #
 # Schema:
@@ -23,14 +25,14 @@ meditate:
   version: "1.0.0"
   iwad: "_omega_default"
 
-  # ── Library A: Omega Pantheon (10 Lenses) ──────────────────────────
-  # These are the default meditation lenses. Each corresponds to an
-  # Arcana-Nova Node, but the LENS is the universal identifier.
+  # ── Library A: Omega Nodes (10 Lenses) ────────────────────────────────
+  # These are the default meditation lenses. Each corresponds to a
+  # technical Node (N1-N10), but the LENS is the universal identifier.
   lenses:
 
     # ── N1 / Infrastructure ──────────────────────────────────────────
     - id: "infrastructure"
-      name: "Sekhmet"
+      name: "Infrastructure"
       lens: "Infrastructure"
       domain: "Physical substrate, containers, hardware"
       mandate_lens: "Speak as the body. What breaks first?"
@@ -45,7 +47,7 @@ meditate:
 
     # ── N2 / Persistence ─────────────────────────────────────────────
     - id: "persistence"
-      name: "Brigid"
+      name: "Persistence"
       lens: "Persistence"
       domain: "Memory, vectors, data flow, sessions"
       mandate_lens: "Speak as the river. What pools? What runs dry?"
@@ -60,7 +62,7 @@ meditate:
 
     # ── N3 / Engineering ─────────────────────────────────────────────
     - id: "engineering"
-      name: "Prometheus"
+      name: "Engineering"
       lens: "Engineering"
       domain: "Code, builds, tests, implementation"
       mandate_lens: "Speak as the forge. What is cracked? What must be recast?"
@@ -75,7 +77,7 @@ meditate:
 
     # ── N4 / Integration ─────────────────────────────────────────────
     - id: "integration"
-      name: "Saraswati"
+      name: "Integration"
       lens: "Integration"
       domain: "APIs, protocols, bridges, resonance"
       mandate_lens: "Speak as the bridge. What is disconnected? What vibrates wrong?"
@@ -90,7 +92,7 @@ meditate:
 
     # ── N5 / Governance ──────────────────────────────────────────────
     - id: "governance"
-      name: "Inanna"
+      name: "Governance"
       lens: "Governance"
       domain: "Mandates, laws, compliance, enforcement"
       mandate_lens: "Speak as the sentinel. What law is being broken?"
@@ -105,7 +107,7 @@ meditate:
 
     # ── N6 / Cognition ───────────────────────────────────────────────
     - id: "cognition"
-      name: "Ereshkigal"
+      name: "Cognition"
       lens: "Cognition"
       domain: "Models, routing, inference, vision"
       mandate_lens: "Speak as the eye. What cannot be seen? What is miscalibrated?"
@@ -120,7 +122,7 @@ meditate:
 
     # ── N7 / Context ─────────────────────────────────────────────────
     - id: "context"
-      name: "Lucifer"
+      name: "Context"
       lens: "Context"
       domain: "Memory, soul, evolution, continuity"
       mandate_lens: "Speak as the alchemist. What knowledge is being lost?"
@@ -135,7 +137,7 @@ meditate:
 
     # ── N8 / Observability ───────────────────────────────────────────
     - id: "observability"
-      name: "Hecate"
+      name: "Observability"
       lens: "Observability"
       domain: "Logging, tracing, shadows, forensics"
       mandate_lens: "Speak as the shadow. What is invisible that should not be?"
@@ -150,7 +152,7 @@ meditate:
 
     # ── N9 / Orchestration ───────────────────────────────────────────
     - id: "orchestration"
-      name: "Anubis"
+      name: "Orchestration"
       lens: "Orchestration"
       domain: "Handoffs, coordination, flow, delegation"
       mandate_lens: "Speak as the guide. What is uncoordinated? What dies in transit?"
@@ -165,7 +167,7 @@ meditate:
 
     # ── N10 / Validation ──────────────────────────────────────────────
     - id: "validation"
-      name: "Kali"
+      name: "Validation"
       lens: "Validation"
       domain: "Stress, chaos, breaking, truth-finding"
       mandate_lens: "Speak as the destroyer. What fails under pressure?"
@@ -185,8 +187,8 @@ meditate:
       lens: "Build Side (Thesis)"
       domain: "Structured, quality-driven solution design"
       mandate_lens: "Propose the structured, quality-driven solution. Focus on architecture, maintainability, and the 42 Ideals."
-      archetype: "Light Oversoul → CTO"
-      node: "Light Oversoul"
+      archetype: "Build Oversoul → CTO"
+      node: "Build Oversoul"
       anti_domains: []
       dissent_style: "constructive"
 
@@ -195,8 +197,8 @@ meditate:
       lens: "Run Side (Antithesis)"
       domain: "Runtime reality, failure modes, user autonomy"
       mandate_lens: "Challenge every assumption. Focus on runtime reality, failure modes, user autonomy, and what breaks under pressure."
-      archetype: "Dark Oversoul → CISO"
-      node: "Dark Oversoul"
+      archetype: "Runtime Oversoul → CISO"
+      node: "Runtime Oversoul"
       anti_domains: []
       dissent_style: "adversarial"
 
@@ -213,8 +215,8 @@ meditate:
   # ── Lens Libraries ─────────────────────────────────────────────────
   # Named groupings for easier reference.
   libraries:
-    omega_pantheon:
-      name: "Omega Pantheon"
+    omega_nodes:
+      name: "Omega Nodes"
       description: "The 10 default meditation lenses — one per cognitive domain"
       lens_ids:
         - "infrastructure"

@@ -66,7 +66,6 @@ SECRET_PATTERNS = [
 EXCLUDE_PATTERNS = [
     'test_', 'tests/', '__pycache__', '.venv', 'venv/',
     'docs/', 'data/', 'scripts/', 'archive/', 'old/',
-    'omega-vetala/', 'packages/omega-sieve/',
     '.git/', '.env', '.env.', '*.key', '*.pem', '*.crt',
     'detect_api_keys.py', 'enforce_vaultcore.py', 'check_hardcoded_secrets.py',
 ]

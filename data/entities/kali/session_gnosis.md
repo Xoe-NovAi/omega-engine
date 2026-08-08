@@ -242,4 +242,110 @@
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-08*
+## 🔱 SESSION: Nomenclature Fix + Vetala/Omega-Sieve Removal (2026-08-08) — RESUME HERE
+
+**AP Token**: `AP-SESSION-GNOSIS-KALI-20260808-v2.0.0`
+⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_deadcode_removal ⬡ ACTIVE
+
+**Date**: 2026-08-08
+**Working dir**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine`
+**Task**: (A) Class A nomenclature correction [DONE, committed] + (B) dead-code removal of `omega-vetala/` and standalone `omega-sieve` [IN PROGRESS, edits done, NOT committed]
+
+---
+
+### 📋 What Was Done
+
+#### PART A — Nomenclature: Light/Dark Oversoul + P1-P10 → Build/Runtime Oversoul + N1-N10
+**Status**: ✅ COMPLETE | **Commit**: `d6c7764d`
+
+**Canonical mapping**: Ma'at = **Build Oversoul (N1-N5)**, Lilith = **Runtime Oversoul (N6-N10)**; slots `node --slot NX` (NOT pillar). Historical/archival records intentionally left as-is (Class B).
+
+Touched 19 files (18 modified + 1 new), 142 insertions / 51 deletions, pre-commit checks passed:
+- `opencode.json` (verified valid JSON; lines 327/334 have Build/Runtime Oversoul)
+- `ORACLE_STACK_CANONICAL.md`, `docs/architecture/OVERSIGHT_HIERARCHY.md`, `docs/architecture/AGENT_FLEET.md`, `docs/explanation/makali-triad.md`, `docs/user/*`, `docs/llms-full.txt`, `docs/strategy/HERITAGE_VETTING_PIPELINE.md`, `docs/kb/MODEL_STUDY_KNOWLEDGE_BASE.md`, `docs/gnosis/lattice/opencode_cli.md`, `docs/team/COMMUNICATION_HUB.md`, `docs/briefings/GROK_CLI_HANDOFF_20260730.md`, `scripts/benchmark_*.py`
+- `find_iris.py` labels (Build/Runtime Oversoul), `tests/test_firewall_m2.py` labels
+- New: `data/coordination/DEAD_CODE_FLAG_OMEGA_SIEVE_VETALA_20260808.md` (force-added via `git add -f`)
+
+**Deliberately NOT changed** (verified): MCP tool `oracle_list_pillar_keepers` is a REAL registered tool (`mcp_servers/omega_hub/hub_tools/tools.py:529,531,542`; `server.py:142`) — never rename. `docs/reference/api/oracle.md` P1-P10 slots are a real API field. `grokster/soul.yaml` had NO Light/Dark Oversoul strings (earlier grep was a false positive).
+
+**Pre-existing failure (unrelated, do NOT fix in this task)**: `test_firewall_m2_strict_engine_core` fails on committed baseline (verified via `git stash` + `git checkout c76b96eb`) — Kali leak at `src/omega/workers/freshness_checker.py:563` (`source_entity="kali"`).
+
+#### PART B — Vetala + Omega-Sieve Dead-Code Removal
+**Status**: 🔄 IN PROGRESS — all file edits DONE, removal STAGED but NOT committed
+
+**Dead-code flag doc** (committed in d6c7764d): `data/coordination/DEAD_CODE_FLAG_OMEGA_SIEVE_VETALA_20260808.md`:
+- `omega-vetala/` (repo root): 400KB / 34 tracked files, standalone content-moderation lib, **zero imports**, NO pyproject/setup (not installable), stale leftover from 2026-07-30 cleanup. Vault copy safe at `/media/arcana-novai/omega_vault/legacy-repos/omega-vetala/`.
+- `packages/omega-sieve` v0.1.0: editable install, **zero imports**, shadowed by live `SovereignSieve` class in `src/omega_youtube_research/sieve.py` (survives).
+- Posted to Hivemind: session_id `ses_fb393cea0684`.
+
+**REMOVAL EXECUTED (staged via `git rm`)**:
+- 34 `omega-vetala/` files + 13 `packages/omega-sieve/` files staged for deletion (47 staged deletions total). Verified: `git diff --cached --name-status | grep -c '^D.*omega-vetala'` = 34, `omega-sieve` = 13.
+- `.venv/bin/pip uninstall -y omega-sieve` done (verified gone from site-packages).
+
+**FILE EDITS DONE (working tree, NOT yet staged)** — all verified present:
+- `src/omega/tools/check_hardcoded_secrets.py`, `detect_api_keys.py`, `enforce_vaultcore.py`: removed `'omega-vetala/', 'packages/omega-sieve/'` from `EXCLUDE_PATTERNS` (verified empty grep).
+- `scripts/ark_optimizer.py`: removed ALL vetala logic (metrics, `check_workbench` DB queries, D207 gap check, output lines) — `grep -c "Vetala\|vetala"` = 0, `py_compile` passes. Note: `check_workbench` regex `r"Shared modules.*?\|\s*\*\*?(\d+)"` parses shared-module count from OMEGA_ENGINE — still matches "2".
+- `debug_test.py`: removed 2 stale Vetala BLOCKED_TERMS entries — `grep -c "Vetala"` = 0.
+- `OMEGA_ENGINE.md`: line 38 Shared modules row 4→**2** (`omega-doc-reader`, `omega-meditation`, dated 2026-08-08, `pip list | grep -E "omega-(doc-reader|meditation)"`); removed Standalone Packages `omega-sieve` and the Sovereign Sieve row (grep now empty).
+- `scripts/codex/ENGINE_CONDENSED.md`: same 4→2 updates.
+- `make codex` regenerated `OMEGA_CODEX.md` (411 lines / 16753 bytes) — verified line 40 (Standalone Packages) + line 54 (Shared Modules=2).
+
+**REMAINING Vetala refs (the in-progress firewall work — MUST complete before commit)**:
+- `src/omega/audit/firewall_checker.py:97`: `r"\bVetala\b.*\bdiscernment\b",  # Content integrity module` in `CORE_ENGINE_PATTERNS` → REMOVE this line.
+- `find_iris.py:36` `(r"\bVetala\b", 'error', "WAD entity name (Arcana-Nova P10)")` and `:47` `(r"\bVetala\b", 'error', "WAD entity name (Content Integrity)")` → REMOVE both.
+- `tests/test_firewall_m2.py`:
+  - BLOCKED_TERMS **index 32** (line 75): `(r"\bVetala\b", "error", "WAD entity name (Arcana-Nova P10)")`
+  - BLOCKED_TERMS **index 43** (line 89): `(r"\bVetala\b", "error", "WAD entity name (Content Integrity)")` (the very last entry before warnings block)
+  - ALLOWED_EXCEPTIONS references: line 146 `(..., 39),  # Vetala`, line 157 `(..., 43),  # Vetala (duplicate)`, line 190 `("src/omega/audit/memory_firewall_auditor.py", None, 31), # Vetala`
+  - ⚠️ **INDEX-COUPLING HAZARD**: ALLOWED_EXCEPTIONS 3rd tuple element = BLOCKED_TERMS **index**. `len(BLOCKED_TERMS)` = 44. Removing indices 32 and 43 shifts ALL subsequent indices: any exception index **>32** must decrement by 1; any **>43** must decrement by 2 (after the first removal). Near line ~430 there is an assert requiring `len(BLOCKED_TERMS) >= 44` → must change to `>= 42`.
+  - `grep -c 'WAD entity name.*Vetala'` returned 0 because reason text is split across lines — the refs are at lines 75 and 89 as listed.
+
+**workbench DB (decision pending)**: `data/workbench/workbench.db` projects table has `omega-vetala (Language Integrity Module)` with status `'active'`. Valid statuses: `active|planned|completed`. Consider marking `completed` as part of removal (needs `sqlite3` update).
+
+**Git state**: HEAD = `d6c7764d`. Staged = 47 deletions (vetala + sieve). Unstaged = my source edits + 34 pre-existing dirty files (`.opencode/*`, `AGENTS.md`, `soul.yaml` files, WAD entities, `context_packs/*`, etc. — all pre-existing, leave alone) + 1 untracked `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md`.
+
+**Tool-quirk note**: bash tool output sometimes shows each line duplicated 3x — environment display artifact, NOT file duplication (do NOT "fix" files for it). Run shell commands individually to avoid sed/grep quoting mangling. `python` is NOT on PATH — always `source .venv/bin/activate` first (or use `.venv/bin/python`).
+
+---
+
+### 🎯 Active Task Tracking
+
+| Task ID | Description | Status |
+|---------|-------------|--------|
+| ses-20260808-nomenclature | Light/Dark + P1-P10 → Build/Runtime + N1-N10 (19 files) | ✅ COMPLETE (d6c7764d) |
+| ses-20260808-vetala-remove | git rm omega-vetala + omega-sieve, pip uninstall | ✅ DONE (staged) |
+| ses-20260808-refs-clean | security tools + ark_optimizer + debug_test + OMEGA_ENGINE + codex | ✅ DONE (unstaged) |
+| ses-20260808-firewall-vetala | Remove Vetala from firewall_checker/find_iris/test_firewall_m2 + renumber indices | 🔄 IN PROGRESS |
+| ses-20260808-verify | pytest + make test + make codex + make temple-grade | ⏳ NEXT |
+| ses-20260808-commit | Commit removal (fix:/chore: prefix) | ⏳ NEXT |
+
+---
+
+### 🐝 Hivemind Broadcast (for resume)
+
+**Intent**: status — dead-code removal of omega-vetala + omega-sieve: modules deleted + refs cleaned, firewall Vetala entries + index renumbering pending, then verify + commit.
+**Session ID**: `ses_fb393cea0684`
+**Continuation**: Finish firewall Vetala removal (firewall_checker.py:97, find_iris.py:36/47, test_firewall_m2.py idx 32+43 + renumber ALLOWED_EXCEPTIONS + `>=44`→`>=42`), optionally mark workbench vetala project completed, run `make test`/`make codex`/`make temple-grade`, then commit staged deletions + edits together.
+
+---
+
+### 📂 Key Files
+
+| File | State |
+|------|-------|
+| `omega-vetala/` + `packages/omega-sieve/` | STAGED for deletion (47 files) |
+| `src/omega/audit/firewall_checker.py:97` | Vetala CORE_ENGINE_PATTERNS line — REMOVE |
+| `find_iris.py:36,47` | Vetala entries — REMOVE |
+| `tests/test_firewall_m2.py:75,89,146,157,190` | Vetala BLOCKED_TERMS idx 32+43 + ALLOWED_EXCEPTIONS — REMOVE + RENUMBER |
+| `src/omega/tools/{check_hardcoded_secrets,detect_api_keys,enforce_vaultcore}.py` | EXCLUDE_PATTERNS cleaned ✅ |
+| `scripts/ark_optimizer.py` | vetala logic removed ✅ |
+| `debug_test.py` | vetala entries removed ✅ |
+| `OMEGA_ENGINE.md`, `scripts/codex/ENGINE_CONDENSED.md`, `OMEGA_CODEX.md` | shared modules 4→2 ✅ (codex regenerated) |
+| `data/coordination/DEAD_CODE_FLAG_OMEGA_SIEVE_VETALA_20260808.md` | flag doc (in d6c7764d) |
+| `data/workbench/workbench.db` | vetala project row status 'active' — decision pending |
+| `src/omega/workers/freshness_checker.py:563` | pre-existing Kali M2 leak (separate fix) |
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_deadcode_removal ⬡ 2026-08-08*
+

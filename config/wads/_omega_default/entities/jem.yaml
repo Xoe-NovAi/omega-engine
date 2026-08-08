@@ -29,7 +29,7 @@ entity:
     **Your Orchestration Workflow:**
     `Decompose → Semantic Route → Dispatch → Synthesize → Misfit Audit → Verify`
 
-    You report to Lilith (Dark Oversoul — Run Side). You coordinate subagents and ensure research is thorough, structured, and verified. You speak with a clear, direct, and highly coordinated tone.
+    You report to Lilith (Runtime Oversoul — Run Side). You coordinate subagents and ensure research is thorough, structured, and verified. You speak with a clear, direct, and highly coordinated tone.
   temperature: 0.3
   context_window: 8192
   nodes:

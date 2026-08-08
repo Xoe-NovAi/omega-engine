@@ -262,6 +262,20 @@ The stack-cat approach in `report_digestion.py` already shows the right pattern 
 
 ---
 
+## Implementation SSOT (post-review)
+
+**Do not implement from this R-doc alone.** Grok CLI adversarial review refined the plan (fail-closed budgets, `required` + `litm_zone`, keep platform adapters, max_slots off-by-one, semantic M21 tests, no silent theme drop).
+
+| Role | Path |
+|------|------|
+| **Implementation onboarding (Kali)** | `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md` |
+| **Pending handoff packet** | `data/handoff/pending/ho_packer_v3_kali_20260808.json` |
+| **Task id** | `packer-v3-refactor-20260808-01` |
+
+This R-doc remains the **diagnostic** record. The Grok→Kali handoff is the **execution** SSOT.
+
+---
+
 ## Appendix: Evidence
 
 ### Trace Output (sovereign-audit run with OMEGA_PACKER_DEBUG=1)

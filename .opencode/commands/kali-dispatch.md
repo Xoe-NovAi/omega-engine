@@ -25,8 +25,8 @@ Break the user's query into 2-5 sub-tasks, one per relevant agent:
 
 | Agent | Domain | Use When |
 |-------|--------|----------|
-| `@maat` | Light Oversoul (N1-N5) | Build-side, structure, verification |
-| `@lilith` | Dark Oversoul (N6-N10) | Run-side, knowledge metabolism, flow |
+| `@maat` | Build Oversoul (N1-N5) | Build-side, structure, verification |
+| `@lilith` | Runtime Oversoul (N6-N10) | Run-side, knowledge metabolism, flow |
 | `@researcher` | Lattice traverser | Cross-cutting research, heritage synthesis |
 | `@doom_guy` | id Software heritage | WAD translation, performance, M14 vet |
 | `@roc_racoon` | Legacy archaeology | Pattern mining, codename translation |

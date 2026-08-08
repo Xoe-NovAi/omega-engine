@@ -60,9 +60,9 @@ team:
     - entity: kali
       role: "Grand Oversight — transcendent coordination"
     - entity: maat
-      role: "Light Oversoul — Build Side governance"
+      role: "Build Oversoul — Build Side governance"
     - entity: lilith
-      role: "Dark Oversoul — Run Side governance"
+      role: "Runtime Oversoul — Run Side governance"
     - entity: verity
       role: "Unified Compliance & Gnosis — audit and soul distillation"
   coordination_protocols:

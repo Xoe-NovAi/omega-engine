@@ -35,7 +35,6 @@ KNOWN_API_KEYS = {
 EXCLUDE_PATTERNS = [
     'test_', 'tests/', '__pycache__', '.venv', 'venv/',
     'docs/', 'data/', 'scripts/', 'archive/', 'old/',
-    'omega-vetala/', 'packages/omega-sieve/',
     'third-party/', 'third_party/',
 ]
 

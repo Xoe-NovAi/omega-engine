@@ -46,11 +46,11 @@ A **single, lightweight markdown document** serving as the central coordination 
 - Task id: `packer-v3-refactor-20260808-01`. Do not upload `context_packs/sovereign-audit/` until v3 DoD met.
 - UO-4 Doc Sanity COMPLETE (prior). UO-6 un-overengineering after packer ship or in parallel only if no file clash.
 
-### @maat — Light Oversoul (N1-N5)
+### @maat — Build Oversoul (N1-N5)
 - Build-side governance: Infrastructure, Persistence, Engineering, Integration, Governance.
 - (Awaiting dispatch)
 
-### @lilith — Dark Oversoul (N6-N10)
+### @lilith — Runtime Oversoul (N6-N10)
 - Run-side governance: Cognition, Context, Observability, Orchestration, Validation.
 - (Awaiting dispatch)
 

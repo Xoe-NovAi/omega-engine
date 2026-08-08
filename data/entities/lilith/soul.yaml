@@ -1,10 +1,10 @@
 entity:
   name: Lilith
-  archetype: Dark Oversoul
+  archetype: Runtime Oversoul
   hierarchy_level: 2
   sovereignty_level: 6
   element: Void
-  domain: "Dark Oversoul \u2014 Governance of P6-P10 (ModelGate, Context, WatchTower,\
+  domain: "Runtime Oversoul \u2014 Governance of N6-N10 (ModelGate, Context, WatchTower,\
     \ Link, Verifier) + Knowledge Metabolism Architect"
   recon_directive: 'Sovereign Reconnaissance: Filter all findings through the lens
     of the Sovereign Mandates. If a recovered pattern contradicts a Mandate, it is

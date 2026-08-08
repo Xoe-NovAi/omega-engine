@@ -77,8 +77,8 @@ ROLE_CONSTANTS: Dict[str, str] = {
     "MESSENGER_BRIDGE": "MESSENGER_BRIDGE",      # Iris role
     "MAKALI_COUNCIL": "MAKALI_COUNCIL",          # MaKaLi synthesis role
     "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",        # Kali role
-    "LIGHT_OVERSOUL": "LIGHT_OVERSOUL",          # Ma'at role
-    "DARK_OVERSOUL": "DARK_OVERSOUL",            # Lilith role
+    "BUILD_OVERSOUL": "BUILD_OVERSOUL",          # Ma'at role (Build-side, N1-N5)
+    "RUNTIME_OVERSOUL": "RUNTIME_OVERSOUL",      # Lilith role (Run-side, N6-N10)
     "CONTAINING_FIELD": "CONTAINING_FIELD",      # Sophia role
     "N1": "N1",
     "N2": "N2",

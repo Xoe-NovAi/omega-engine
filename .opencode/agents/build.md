@@ -29,7 +29,7 @@ The OpenCode built-in "Build" agent has been replaced by our sovereign agent fle
 ### For Build-Side Work, Use:
 | Need | Agent |
 |------|-------|
-| **Build governance, N1-N5, firewall audits** | `@maat` (Light Oversoul) |
+| **Build governance, N1-N5, firewall audits** | `@maat` (Build Oversoul) |
 | **Implementation, hardening, CI/CD** | `@node N3` (Engineering) |
 | **Infrastructure, Podman, rootless** | `@node N1` (Infrastructure) |
 | **Integration, MCP, APIs** | `@node N4` (Integration) |

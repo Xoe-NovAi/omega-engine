@@ -10,7 +10,7 @@
 - **Cognitive Sovereignty**: Local inference floor; local verification ceiling.
 - **Local-first**: Cloud = teacher, never dependency.
 - **WAD Architecture**: Engine → IWADs → PWADs (id Software heritage).
-- **Standalone Packages**: `omega-sieve`, `omega-doc-reader`, `omega-meditation` on PyPI.
+- **Standalone Packages**: `omega-doc-reader`, `omega-meditation` on PyPI.
 
 ---
 
@@ -24,7 +24,7 @@
 | Fleet | **12 agents** (cap: 14 per M10) | ✅ |
 | WADs | **4** (arcana_novai, torment, youtube_research, youtube_worker) | ✅ |
 | Heritage | **121 [id-soft:] tags** — all vetted | ✅ |
-| Shared Modules | **4** (omega-vetala, omega-sieve, omega-doc-reader, omega-meditation) | ✅ 3 on PyPI |
+| Shared Modules | **2** (omega-doc-reader, omega-meditation) | ✅ 2 on PyPI |
 | **WARP Proxy Pool** | **3-node pool operational** (8081/8082/8083) | ✅ **W-1 FIXED** |
 | **Gemma 4 31B workhorse** | **DEAD** — 16k free input TPM since Jul 15 | 🚨 **G-1 PENDING** |
 | **Antigravity OAuth** | **PARTIAL** — API-key only | 🟡 G-1b path |

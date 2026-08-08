@@ -8,7 +8,7 @@
 # Schema:
 #   entities:
 #     - name:          lowercase agent key (used as CAPABILITY_REGISTRY key)
-#       role:          ROLE_CONSTANT (GRAND_OVERSIGHT | LIGHT_OVERSOUL | DARK_OVERSOUL | N1-N10)
+#       role:          ROLE_CONSTANT (GRAND_OVERSIGHT | BUILD_OVERSOUL | RUNTIME_OVERSOUL | N1-N10)
 #       mode:          "primary" | "subagent"
 #       purpose:       human-readable description
 #       capabilities:  list of capability strings
@@ -104,10 +104,10 @@ entities:
     model: "qwen3-4b-think-q4_k_m"
 
   - name: "maat"
-    role: "LIGHT_OVERSOUL"
+    role: "BUILD_OVERSOUL"
     mode: "subagent"
-    purpose: "Light Oversoul — Governs N1-N5 on the build side"
-    capabilities: ["oversight_light", "build_governance", "hardening"]
+    purpose: "Build Oversoul — Governs N1-N5 on the build side"
+    capabilities: ["oversight_build", "build_governance", "hardening"]
     domains: ["build_side", "node_1_5"]
     node_slot: null
     task_tool_type: "buildmaster"
@@ -115,10 +115,10 @@ entities:
     model: "qwen3-4b-think-q4_k_m"
 
   - name: "lilith"
-    role: "DARK_OVERSOUL"
+    role: "RUNTIME_OVERSOUL"
     mode: "subagent"
-    purpose: "Dark Oversoul — Governs N6-N10 (Cognition through Validation) on the run side"
-    capabilities: ["oversight_dark", "run_governance", "operations", "vision_oversight", "knowledge_metabolism"]
+    purpose: "Runtime Oversoul — Governs N6-N10 (Cognition through Validation) on the run side"
+    capabilities: ["oversight_runtime", "run_governance", "operations", "vision_oversight", "knowledge_metabolism"]
     domains: ["run_side", "node_6_10", "vision_specialist", "multimodal", "knowledge_flow"]
     node_slot: null
     task_tool_type: "general"

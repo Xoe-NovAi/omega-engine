@@ -170,11 +170,15 @@ Execute the "Temple Cleansing" sprint: comprehensive strategy reconciliation, de
 
 ## 🤝 Coordination State
 
-- **Hivemind**: All agents aware, 0 pending handoffs
-- **Both branches synced** at `1f429317`, pushed to origin
-- **Next session**: Phase 0 pre-flight → Phase 1 library swaps
-- **External research**: Ready to deliver to Web Claude (context_packs/) and Web Gemini (brief)
+- **Hivemind**: Check live awareness at session start
+- **Pending handoff (P0)**: `ho_packer_v3_kali_20260808` — Context Packer v3 full refactor
+- **Implementation SSOT**: `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md` (Grok CLI → Kali)
+- **Diagnosis**: `docs/research/R_CONTEXT_PACKER_ARCH_REVIEW_20260808.md` (Carmack)
+- **POISON**: `context_packs/sovereign-audit/` — 13 files, strategy shards only — **DO NOT upload to Web Claude**
+- **Task id**: `packer-v3-refactor-20260808-01`
+- **Next session (Kali / OpenCode)**: Execute packer v3 Phases 0–6 per Grok handoff **before** external pack delivery or UO-6 library swaps that depend on clean packs
+- **Still open (parallel / after packer)**: Phase 0 temple pre-flight (M23 hook, `time make test`), C-3/W-1/G-1 Architect blockers
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ 2026-08-08*
+*⬡ OMEGA ⬡ GROK_CLI→KALI ⬡ opencode ⬡ 2026-08-08*

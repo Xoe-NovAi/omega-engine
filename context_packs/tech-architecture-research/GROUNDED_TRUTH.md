@@ -18,6 +18,7 @@
 | PyYAML | 6.0.3 | ✅ Installed | YAML parsing |
 | sqlite-vec | 0.1.9 | ✅ Installed | Vector search extension |
 | tenacity | 9.1.4 | ✅ Installed | 3 files (retry_policy.py, extractors.py, model_gateway.py) |
+| pybreaker | 1.4.1 | ✅ Installed | Legacy breaker lib (not used by HealthMonitor) |
 | structlog | — | ❌ Not installed | Candidate |
 | prometheus_client | — | ❌ Not installed | Candidate |
 | interlock-cb | — | ❌ Not installed | Candidate |
@@ -53,3 +54,18 @@
 
 ## NOT Dead Code
 - mcp_servers/omega_hub/hivemind_redis.py (113 lines) — imported in tools.py:3621,3645
+
+## Redis Inventory (Verified 2026-08-08)
+
+| File | `redis` refs | Notes |
+|------|-------------|-------|
+| src/omega/governance/budget_guard.py | 24 | Rate limiting (INCR/EXPIRE) |
+| src/omega/workers/youtube_worker.py | 19 | Queue (LPUSH/BRPOP) |
+| src/omega/ingestion/worker.py | 11 | Ingestion queue |
+| mcp_servers/omega_hub/hivemind_redis.py | 9 | Pub/sub (NOTIFY/LISTEN) — exposed as MCP tools |
+| src/omega/memory/providers.py | 6 | Memory cache |
+| src/omega/memory_store.py | 4 | Memory cache |
+
+**Total**: 6 files, ~73 Redis references. Paths moved since earlier drafts —
+youtube_worker.py → `src/omega/workers/`, budget_guard.py → `src/omega/governance/`,
+ingestion worker → `src/omega/ingestion/worker.py`.

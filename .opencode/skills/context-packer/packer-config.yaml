@@ -9,15 +9,42 @@ profiles:
   # ── Sovereign Audit (hardened — core_engine split into 5 sub-themes) ──────
   sovereign-audit:
     description: "Core Engine and Mandates Audit — hardened 2026-07-11"
+    target_platform: "web-claude"
+    target_model: "claude-sonnet-5"
     max_slots: 12
+    format: "xml"
+    bundle_ordering: "litm-u-shaped"
+    prompt_caching:
+      enabled: true
+      cache_prefix: ["manifest", "mandates", "engine_state"]
+    token_budget:
+      total: 150000
+      per_bundle: 15000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: "spotlighting"
     include:
+      # ── Mandates + Engine State ──
       - "SOVEREIGN_MANDATES.md"
       - "OMEGA_ENGINE.md"
       - "AGENTS.md"
-      - "src/omega/**/*.py"
+      # ── Core Engine (oracle/) ──
+      - "src/omega/oracle/**/*.py"
+      # ── Memory ──
+      - "src/omega/memory/**/*.py"
+      - "src/omega/memory_store.py"
+      # ── Observability ──
+      - "src/omega/observability/**/*.py"
+      - "src/omega/monitoring/**/*.py"
+      # ── MCP Hub ──
+      - "src/omega/mcp_runtime.py"
+      - "src/omega/hub.py"
+      - "src/omega/gateway/**/*.py"
+      # ── Strategy ──
+      - "docs/strategy/**/*.md"
+      # ── Config ──
       - "config/providers.yaml"
       - "config/models.yaml"
-      - "docs/strategy/**/*.md"
     exclude:
       - "**/__pycache__/**"
       - "**/*.pyc"
@@ -30,25 +57,10 @@ profiles:
         - "OMEGA_ENGINE.md"
         - "AGENTS.md"
       oracle_core:
-        - "src/omega/oracle/oracle.py"
-        - "src/omega/oracle/model_gateway.py"
-        - "src/omega/oracle/entity_registry.py"
-        - "src/omega/oracle/entity_workspace.py"
-        - "src/omega/oracle/orchestrator.py"
-        - "src/omega/oracle/resource_guard.py"
-        - "src/omega/oracle/cpu_optimizer.py"
-        - "src/omega/oracle/context_builder.py"
-        - "src/omega/oracle/session_lifecycle.py"
-        - "src/omega/oracle/iris.py"
+        - "src/omega/oracle/**/*.py"
       memory:
-        - "src/omega/memory_store.py"
         - "src/omega/memory/**/*.py"
-        # NOTE: context_builder.py belongs to oracle_core only — removed from here
-        # to prevent the file appearing in two XML bundles (token waste).
-      providers:
-        - "src/omega/oracle/backends/**/*.py"
-        - "config/providers.yaml"
-        - "config/models.yaml"
+        - "src/omega/memory_store.py"
       observability:
         - "src/omega/observability/**/*.py"
         - "src/omega/monitoring/**/*.py"
@@ -56,10 +68,162 @@ profiles:
         - "src/omega/mcp_runtime.py"
         - "src/omega/hub.py"
         - "src/omega/gateway/**/*.py"
-      # NOTE: `config` theme removed — its files are already covered by `providers`.
-      # Duplicate themes produce duplicate XML bundles and waste Claude quota.
       strategy:
         - "docs/strategy/**/*.md"
+      config:
+        - "config/providers.yaml"
+        - "config/models.yaml"
+
+  # ── Tech Architecture Research (for Web Claude deep research) ──────────────
+  # 8 technology architecture decisions: circuit breaker, Redis→SQLite+Honker,
+  # MCP SDK v2, httpx2, Pydantic YAML, memory architecture, observability,
+  # retry (stamina vs tenacity). Research brief + grounded truth are hand-built
+  # deliverable docs; source files are packed fresh from current repo state.
+  tech-architecture-research:
+    description: "Technology Architecture Research — 8 decisions (breaker, Redis, MCP SDK, httpx2, Pydantic YAML, memory, observability, retry)"
+    target_platform: "web-claude"
+    target_model: "claude-sonnet-5"
+    max_slots: 12
+    format: "xml"
+    bundle_ordering: "litm-u-shaped"
+    prompt_caching:
+      enabled: true
+      cache_prefix: ["manifest", "brief", "ground_truth", "mandates"]
+    token_budget:
+      total: 200000
+      per_bundle: 20000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: "spotlighting"
+    include:
+      # ── Research brief + grounded truth (hand-built deliverables) ──
+      - "context_packs/tech-architecture-research/RESEARCH_BRIEF.md"
+      - "context_packs/tech-architecture-research/GROUNDED_TRUTH.md"
+      - "context_packs/tech-architecture-research/DECISION_MATRIX_TEMPLATE.md"
+      - "context_packs/tech-architecture-research/PROJECT_KNOWLEDGE_INDEX.md"
+      # ── Mandates + strategy ──
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      - "docs/strategy/UNOVERENGINEERING_PLAN.md"
+      # ── Research Area 1: Circuit Breaker ──
+      - "src/omega/oracle/health_monitor.py"
+      - "src/omega/oracle/search_circuit_breaker.py"
+      - "src/omega/research/sandbox.py"
+      # ── Research Area 2: Redis sites (SQLite+Honker) ──
+      - "src/omega/workers/youtube_worker.py"
+      - "src/omega/governance/budget_guard.py"
+      - "src/omega/ingestion/worker.py"
+      - "src/omega/memory/providers.py"
+      - "mcp_servers/omega_hub/hivemind_redis.py"
+      - "src/omega/memory_store.py"
+      # ── Research Area 3: MCP SDK v2 Migration ──
+      - "mcp_servers/omega_hub/server.py"
+      - "mcp_servers/omega_hub/hub_tools/tools.py"
+      - "mcp_servers/omega_hub/hub_tools/task_registry.py"
+      - "mcp_servers/omega_hub/github_tools.py"
+      - "mcp_servers/omega_hub/mcp_client.py"
+      - "mcp_servers/omega_hub/middleware.py"
+      - "mcp_servers/firecrawl/server.py"
+      - "mcp_servers/searxng/server.py"
+      # ── Research Area 4: httpx2 Consumers ──
+      - "mcp_servers/omega_hub/library/extractor.py"
+      - "mcp_servers/omega_hub/library/discovery.py"
+      - "src/omega/oracle/backends/nemotron_pipeline.py"
+      - "src/omega/oracle/model_updater.py"
+      - "scripts/sieve.py"
+      - "mcp_servers/omega_hub/library/youtube_worker.py"
+      # ── Research Area 6: Memory Architecture ──
+      - "src/omega/memory/**/*.py"
+      - "src/omega/coordination/miap.py"
+      - "src/omega/memory/recall.py"
+      # ── Research Area 7: Observability ──
+      - "src/omega/observability/**/*.py"
+      - "src/omega/monitoring/**/*.py"
+      # ── Research Area 8: Retry (tenacity consumers) ──
+      - "src/omega/oracle/retry_policy.py"
+      - "src/omega/oracle/backends/extractors.py"
+      - "src/omega/oracle/model_gateway.py"
+      # ── Config ──
+      - "config/providers.yaml"
+      - "config/models.yaml"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      # NOTE: do NOT exclude context_packs/** here — the brief + grounded truth
+      # deliverables live in context_packs/tech-architecture-research/ and are
+      # packed fresh. Only exclude generated .xml bundles.
+      - "context_packs/tech-architecture-research/*.xml"
+      - "context_packs/tech-architecture-research/00_PROJECT_MANIFEST.md"
+      - "context_packs/tech-architecture-research/CLAUDE_PROJECT_SYSTEM_PROMPT.md"
+      - "context_packs/tech-architecture-research/CHAT_INITIATION_PROMPT.md"
+      - "context_packs/tech-architecture-research/*.md.bak"
+    themes:
+      brief:
+        - "context_packs/tech-architecture-research/RESEARCH_BRIEF.md"
+        - "context_packs/tech-architecture-research/GROUNDED_TRUTH.md"
+        - "context_packs/tech-architecture-research/DECISION_MATRIX_TEMPLATE.md"
+        - "context_packs/tech-architecture-research/PROJECT_KNOWLEDGE_INDEX.md"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+        - "OMEGA_ENGINE.md"
+      strategy:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+        - "docs/strategy/UNOVERENGINEERING_PLAN.md"
+      circuit_breaker:
+        - "src/omega/oracle/health_monitor.py"
+        - "src/omega/oracle/search_circuit_breaker.py"
+        - "src/omega/research/sandbox.py"
+      redis_sites:
+        - "src/omega/workers/youtube_worker.py"
+        - "src/omega/governance/budget_guard.py"
+        - "src/omega/ingestion/worker.py"
+        - "src/omega/memory/providers.py"
+        - "mcp_servers/omega_hub/hivemind_redis.py"
+        - "src/omega/memory_store.py"
+      mcp_sdk:
+        - "mcp_servers/omega_hub/server.py"
+        - "mcp_servers/omega_hub/hub_tools/tools.py"
+        - "mcp_servers/omega_hub/hub_tools/task_registry.py"
+        - "mcp_servers/omega_hub/github_tools.py"
+        - "mcp_servers/omega_hub/mcp_client.py"
+        - "mcp_servers/omega_hub/middleware.py"
+        - "mcp_servers/firecrawl/server.py"
+        - "mcp_servers/searxng/server.py"
+      httpx2:
+        - "mcp_servers/omega_hub/library/extractor.py"
+        - "mcp_servers/omega_hub/library/discovery.py"
+        - "src/omega/oracle/backends/nemotron_pipeline.py"
+        - "src/omega/oracle/model_updater.py"
+        - "scripts/sieve.py"
+        - "mcp_servers/omega_hub/library/youtube_worker.py"
+      memory:
+        - "src/omega/memory_store.py"
+        - "src/omega/memory/sqlite_vec_adapter.py"
+        - "src/omega/memory/vector_adapters.py"
+        - "src/omega/memory/embeddings.py"
+        - "src/omega/memory/hybrid_search.py"
+        - "src/omega/memory/fts_index.py"
+        - "src/omega/memory/providers.py"
+        - "src/omega/coordination/miap.py"
+        - "src/omega/memory/recall.py"
+      observability:
+        - "src/omega/observability/metrics_db.py"
+        - "src/omega/observability/token_ledger.py"
+        - "src/omega/observability/sovereignty.py"
+        - "src/omega/observability/observability_reader.py"
+        - "src/omega/observability/otel_exporter.py"
+        - "src/omega/observability/latency_tracker.py"
+        - "src/omega/monitoring/__init__.py"
+      retry:
+        - "src/omega/oracle/retry_policy.py"
+        - "src/omega/oracle/backends/extractors.py"
+        - "src/omega/oracle/model_gateway.py"
+      config:
+        - "config/providers.yaml"
+        - "config/models.yaml"
 
   # ── Provider Fabric Review (for Web Claude deep review) ─────────────────────
   provider-fabric-review:

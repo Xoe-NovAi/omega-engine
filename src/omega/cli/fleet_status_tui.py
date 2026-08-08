@@ -159,13 +159,13 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     
     # ── Transcendent Triad ──────────────────────────────────────────────
     kali_role = ROLE_CONSTANTS["GRAND_OVERSIGHT"]
-    maat_role = ROLE_CONSTANTS["LIGHT_OVERSOUL"]
-    lilith_role = ROLE_CONSTANTS["DARK_OVERSOUL"]
+    maat_role = ROLE_CONSTANTS["BUILD_OVERSOUL"]
+    lilith_role = ROLE_CONSTANTS["RUNTIME_OVERSOUL"]
     
     kali_node = tree.root.add(get_display_name(kali_role), data=get_entity_key(kali_role), expand=True)
     
     maat_node = kali_node.add(get_display_name(maat_role), data=get_entity_key(maat_role), expand=True)
-    # N1-N5 under Light Oversoul (Build Side)
+    # N1-N5 under Build Oversoul (Build Side)
     for p in ["N1", "N2", "N3", "N4", "N5"]:
         p_role = ROLE_CONSTANTS[p]
         p_entity = role_to_entity.get(p_role)
@@ -175,7 +175,7 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
             maat_node.add(f"P{p[-1]}: {p_role}", data=p.lower())
     
     lilith_node = kali_node.add(get_display_name(lilith_role), data=get_entity_key(lilith_role), expand=True)
-    # N6-N10 under Dark Oversoul (Run Side)
+    # N6-N10 under Runtime Oversoul (Run Side)
     for p in ["N6", "N7", "N8", "N9", "N10"]:
         p_role = ROLE_CONSTANTS[p]
         p_entity = role_to_entity.get(p_role)

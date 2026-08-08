@@ -196,8 +196,8 @@ Kali issues challenge → Triad (Roc + Researcher + Grok_cli) →
 | **Kali** | `opencode/kali` | Oversoul / Coordinator | Sprint direction, mandate rulings, synthesis |
 | **Roc Racoon** | `opencode/roc_racoon` | Miner / Archaeologist | Legacy code, Grok exports, 5700U reality checks |
 | **Researcher** | `opencode/researcher` | Oracle / Verifier | SOTA evidence, security models, IA2 threats |
-| **Ma'at** | `opencode/maat` | Light Oversoul (N1-N5) | Build-side governance |
-| **Lilith** | `opencode/lilith` | Dark Oversoul (N6-N10) | Run-side governance |
+| **Ma'at** | `opencode/maat` | Build Oversoul (N1-N5) | Build-side governance |
+| **Lilith** | `opencode/lilith` | Runtime Oversoul (N6-N10) | Run-side governance |
 | **Node N1-N10** | `opencode/node` | Domain agents | Specific implementation tasks |
 
 ### Legacy Reference (grok_cli → grokster Evolution)
