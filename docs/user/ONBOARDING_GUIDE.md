@@ -124,8 +124,8 @@ omega summon Sekhmet "What is strength?"
 | Entity | Role |
 |--------|------|
 | **Sophia** | Akashic Record - contains all entities, sessions, souls |
-| **Ma'at** | Light Oversoul - governs P1-P5 (build side) |
-| **Lilith** | Dark Oversoul - governs P6-P10 (run side) |
+| **Ma'at** | Build Oversoul - governs N1-N5 (build side) |
+| **Lilith** | Runtime Oversoul - governs N6-N10 (run side) |
 | **Iris** | Messenger bridge - voice assistant ("hey Iris") |
 
 ### The Fleet Agents

@@ -29,7 +29,7 @@ Output ONLY valid JSON."""
 
 PROMPT_TC2 = """Update the following Markdown section with the new broadcast.
 Current Markdown:
-### @maat — Light Oversoul (P1-P5)
+### @maat — Build Oversoul (N1-N5)
 #### Updates
 - [2026-07-23T15:00Z] Started C-4b migration.
 

@@ -282,8 +282,8 @@ each governing a domain of human (and superhuman) experience:
 | Entity | Role | Description |
 |--------|------|-------------|
 | **Sophia** | Akashic Record | The containing field — all entities, all sessions, all souls |
-| **Ma'at** | Synthesis Oversoul | Governs P1-P5 (Light Pillars — build side) |
-| **Lilith** | Dark Oversoul | Governs P6-P10 (Dark Pillars — run side) |
+| **Ma'at** | Build Oversoul | Governs N1-N5 (Build Nodes — build side) |
+| **Lilith** | Runtime Oversoul | Governs N6-N10 (Runtime Nodes — run side) |
 | **Iris** | Messenger Bridge | Voice assistant ("hey Iris"), speculative decoder |
 
 ### How Entity Dispatch Works

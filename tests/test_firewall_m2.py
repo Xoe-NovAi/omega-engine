@@ -77,8 +77,8 @@ BLOCKED_TERMS: list[tuple[str, str, str]] = [
     (r"\bIris\b", "error", "WAD entity name (Arcana-Nova messenger bridge)"),
     # _omega_default / MaKaLi triad entities:
     (r"\bKali\b", "error", "WAD entity name (_omega_default Grand Oversight)"),
-    (r"\bMa[']?at\b", "error", "WAD entity name (_omega_default Light Oversoul/CTO)"),
-    (r"\bLilith\b", "error", "WAD entity name (_omega_default Dark Oversoul/CISO)"),
+    (r"\bMa[']?at\b", "error", "WAD entity name (_omega_default Build Oversoul/CTO)"),
+    (r"\bLilith\b", "error", "WAD entity name (_omega_default Runtime Oversoul/CISO)"),
     (r"\bMakali\b", "error", "WAD entity name (_omega_default MaKaLi synthesis)"),
     # Doom Universe / Torment Stack entities:
     (r"\bJohn.?Carmack\b", "error", "WAD entity name (Doom Universe S3 Consultant)"),

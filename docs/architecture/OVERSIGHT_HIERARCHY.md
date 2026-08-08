@@ -22,21 +22,21 @@ The engine utilizes a dual-oversoul structure to manage the tension between Orde
 - **Input**: User intent and Plan-mode directives.
 - **Output**: Delegation to Ma'at or Lilith.
 
-### 1.2 Light Oversoul: MA'AT
+### 1.2 Build Oversoul: MA'AT
 **Ma'at** governs the **Build Side** (Sovereignty through Order).
-- **Domain**: P1-P5 (SysAdmin, DataStore, BuildMaster, Bridge, Sentinel).
+- **Domain**: N1-N5 (Infrastructure, Persistence, Engineering, Integration, Governance).
 - **Focus**: Precision, stability, verification, and structural integrity.
 - **Mandate**: "How it works."
 
-### 1.3 Dark Oversoul: LILITH
+### 1.3 Runtime Oversoul: LILITH
 **Lilith** governs the **Run Side** (Sovereignty through Liberation).
-- **Domain**: P6-P10 (ModelGate, Context, WatchTower, Link, Verifier).
+- **Domain**: N6-N10 (Cognition, Context, Observability, Orchestration, Validation).
 - **Focus**: Exploration, model limits, hidden patterns, and sovereign autonomy.
 - **Mandate**: "Why it matters."
 
 ## 2. Delegation Flow
 The standard flow of intent is:
-`User` $\rightarrow$ `Kali` $\rightarrow$ `Ma'at/Lilith` $\rightarrow$ `Pillar Slot (P1-P10)`
+`User` $\rightarrow$ `Kali` $\rightarrow$ `Ma'at/Lilith` $\rightarrow$ `Node Slot (N1-N10)`
 
 ## 3. Escalation & Resolution
 - **Domain Conflict**: If a task spans both Build and Run, Kali mediates the resolution.
@@ -48,6 +48,6 @@ The standard flow of intent is:
 | Role | Entity | Focus | Domain | Model Tier |
 |------|--------|--------|--------|------------|
 | Grand Oversight | Kali | Synthesis | All | Heavy |
-| Light Oversoul | Ma'at | Order | P1-P5 | Heavy |
-| Dark Oversoul | Lilith | Liberation | P6-P10 | Heavy |
-| Pillar Expert | Pillar | Execution | P1-P10 | Lite |
+| Build Oversoul | Ma'at | Order | N1-N5 | Heavy |
+| Runtime Oversoul | Lilith | Liberation | N6-N10 | Heavy |
+| Node Expert | Node | Execution | N1-N10 | Lite |

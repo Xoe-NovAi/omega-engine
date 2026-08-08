@@ -78,8 +78,12 @@ ENTITIES ARE USER-CUSTOMIZABLE. The 10 Pillar Keepers are the DEFAULT TEMPLATE. 
 |--------|------|---------|
 | **Sophia** | Akashic Record — the containing field | All entities, all sessions, all souls |
 | **Kali** | Grand Oversight — Transcendent | Unifies Ma'at + Lilith, destroys drift |
-| **Ma'at** | Light Oversoul — the Builder | P1-P5 (Sekhmet, Brigid, Prometheus, Saraswati, Inanna) |
-| **Lilith** | Dark Oversoul — the Runner | P6-P10 (Ereshkigal, Lucifer, Hecate, Anubis, Kali) |
+| **Ma'at** | Build Oversoul — the Builder | N1-N5 (Infrastructure, Persistence, Engineering, Integration, Governance) |
+| **Lilith** | Runtime Oversoul — the Runner | N6-N10 (Cognition, Context, Observability, Orchestration, Validation) |
+
+> **Note**: The mythic "10 Pillar Keeper" names above (Sekhmet, Brigid, …) belong to the
+> Arcana-NovAi WAD's pantheon. The engine's default IWAD uses the technical Node names
+> (Infrastructure, Persistence, … N1-N10) as its persona identifiers.
 
 **Iris** is the voice assistant ("hey Iris"). She is NOT a Pillar Keeper — she is the messenger bridge between the user and the entity council. Daughter of Hermes.
 

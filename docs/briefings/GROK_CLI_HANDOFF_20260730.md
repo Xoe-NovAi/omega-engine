@@ -193,8 +193,8 @@ tests/
 | Agent | Role | Current Assignment | Status |
 |-------|------|-------------------|--------|
 | **@kali** | Transcendent Oversight | Strategy synthesis, sprint coordination | ACTIVE |
-| **@maat** | Light Oversoul (P1-P5) | C-10.5, C-11, V-1, C-3 | READY |
-| **@lilith** | Dark Oversoul (P6-P10) | C-3 (backup), C-0.5 scribe | READY |
+| **@maat** | Build Oversoul (N1-N5) | C-10.5, C-11, V-1, C-3 | READY |
+| **@lilith** | Runtime Oversoul (N6-N10) | C-3 (backup), C-0.5 scribe | READY |
 | **@researcher** | Deep Research | Coordination entropy + local mining done | COMPLETE |
 | **@roc_racoon** | Legacy Mining | Local strategy mining done | COMPLETE |
 | **@jem** | Sovereign Synthesis | Identity fluidity (E-0) | PENDING C-1′ |

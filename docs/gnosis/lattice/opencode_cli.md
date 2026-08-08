@@ -35,7 +35,7 @@ OpenCode MUST adhere to the **Platform Awareness Protocol (PAP)**:
 ## §3 Active Operational Modes
 
 - **kali**: Grand synthesis, radical refactoring, "dissolution & rebirth."
-- **maat**: Ethical audit, manifestation (P1-P5), 42 Ideals compliance.
+- **maat**: Ethical audit, manifestation (N1-N5), 42 Ideals compliance.
 - **lilith**: Sovereignty, customization, transgression, "The Key."
 - **opencode-architect**: CLI config, platform awareness, permission hardening.
 

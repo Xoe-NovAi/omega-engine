@@ -47,8 +47,8 @@ Local is always tried first. Cloud is a teacher and safety net, never a dependen
 | Agent | Role | Governs |
 |-------|------|---------|
 | Kali | Grand Oversight | Unifies Ma'at + Lilith, destroys drift |
-| Ma'at | Light Oversoul | P1-P5 (Build Side) |
-| Lilith | Dark Oversoul | P6-P10 (Run Side) |
+| Ma'at | Build Oversoul | N1-N5 (Build Side) |
+| Lilith | Runtime Oversoul | N6-N10 (Run Side) |
 | Doom Guy | Heritage Aspect | id Software attribution |
 | Roc Racoon | Legacy Aspect | Data archaeology |
 | Jem | Sovereign Synthesizer | Research orchestration |

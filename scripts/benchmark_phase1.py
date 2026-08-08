@@ -708,7 +708,7 @@ async def benchmark_a1_wad_dependency_resolution():
 # ── Main ─────────────────────────────────────────────────────────────────────
 async def main():
     print("=" * 60)
-    print("Phase 1 Benchmarking — Lilith Dark Oversoul (N6-N10)")
+    print("Phase 1 Benchmarking — Lilith Runtime Oversoul (N6-N10)")
     print(f"Date: {datetime.now(timezone.utc).isoformat()}")
     print(f"Hardware: AMD Ryzen 7 5700U + Vega 8, 12GB RAM")
     print(f"Model: laguna-s-2.1-free")

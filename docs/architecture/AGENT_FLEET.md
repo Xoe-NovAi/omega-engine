@@ -14,7 +14,7 @@
 This document defines the structure, roles, and delegation paths of the consolidated Omega Engine Agent Fleet.
 
 ## 1. Fleet Philosophy: The Single Renderer Principle
-Inspired by id Software's engine design, the Omega Engine uses a **parameterized agent architecture**. Instead of maintaining dozens of separate agent files with nearly identical logic, the engine utilizes a single, highly optimized **Pillar Agent** that changes its behavior based on the `--slot` flag.
+Inspired by id Software's engine design, the Omega Engine uses a **parameterized agent architecture**. Instead of maintaining dozens of separate agent files with nearly identical logic, the engine utilizes a single, highly optimized **Node Agent** that changes its behavior based on the `--slot` flag.
 
 This ensures:
 - **Consistency**: Logic updates apply to all pillars simultaneously.
@@ -31,12 +31,12 @@ This ensures:
                            |
              ┌─────────────┴─────────────┐
              v                           v
-          [ maat ] (Light Oversoul)   [ lilith ] (Dark Oversoul)
-          (Governs P1-P5)             (Governs P6-P10)
+          [ maat ] (Build Oversoul)   [ lilith ] (Runtime Oversoul)
+          (Governs N1-N5)             (Governs N6-N10)
              |                           |
              └─────────────┬─────────────┘
                            v
-                [ pillar --slot PX ]
+                [ node --slot NX ]
                 (Single slot-based agent)
                            |
               ┌─────────────┼──────────────┐
@@ -64,20 +64,20 @@ This ensures:
 ### 3.2 Subagents (Delegated Access)
 | Agent | Mode | Purpose | Model Tier |
 |-------|------|---------|------------|
-| `maat` | Subagent | Light Oversoul — Build Side Governance (P1-P5) | Heavy |
-| `lilith` | Subagent | Dark Oversoul — Run Side Governance (P6-P10) | Heavy |
-| `pillar` | Subagent | Slot-based Domain Expert (P1-P10) | Lite |
+| `maat` | Subagent | Build Oversoul — Build Side Governance (N1-N5) | Heavy |
+| `lilith` | Subagent | Runtime Oversoul — Run Side Governance (N6-N10) | Heavy |
+| `node` | Subagent | Slot-based Domain Expert (N1-N10) | Lite |
 | `scribe` | Subagent | Sovereign Guardian & Gnosis Keeper — Code Review, Mandate Enforcement, L1→L2→L3 Distillation | Medium |
-| `pillar` | Subagent | Slot-based Domain Expert (P1-P10) | Lite |
+| `node` | Subagent | Slot-based Domain Expert (N1-N10) | Lite |
 
 ## 4. Delegation & Escalation Paths
 
 ### 4.1 The Standard Path
-`User` $\rightarrow$ `plan` $\rightarrow$ `kali` $\rightarrow$ `maat/lilith` $\rightarrow$ `pillar --slot PX`
+`User` $\rightarrow$ `plan` $\rightarrow$ `kali` $\rightarrow$ `maat/lilith` $\rightarrow$ `node --slot NX`
 
 ### 4.2 Specialized Paths
 - **Deep Research**: `kali` $\rightarrow$ `jem` $\rightarrow$ `[disc $\rightarrow$ synth $\rightarrow$ verif]` $\rightarrow$ `scribe` $\rightarrow$ `soul.yaml`
-- **Quality Gate**: `pillar/researcher` $\rightarrow$ `scribe` $\rightarrow$ `Sovereign Mandates Verification`
+- **Quality Gate**: `node/researcher` $\rightarrow$ `scribe` $\rightarrow$ `Sovereign Mandates Verification`
 - **Lattice Deep Dive**: `researcher` $\rightarrow$ `lattice traversal` $\rightarrow$ `Reflective Verification`
 
 ## 5. Mandate Compliance

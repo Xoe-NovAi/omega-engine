@@ -128,8 +128,8 @@ Models don't just differ in "smartness" — they differ in **cognitive mode**:
 ### Pattern 4: The Sovereign Fleet (OpenCode Native)
 ```
 KALI (Oversight)
-├── MA'AT (Build: P1-P5) ──▶ PILLARS P1-P5 (Infrastructure → Governance)
-└── LILITH (Run: P6-P10) ──▶ PILLARS P6-P10 (Cognition → Validation)
+├── MA'AT (Build: N1-N5) ──▶ NODES N1-N5 (Infrastructure → Governance)
+└── LILITH (Run: N6-N10) ──▶ NODES N6-N10 (Cognition → Validation)
 ```
 **Unique Value**: Persistent soul state, Hivemind coordination, mandate enforcement, gnosis distillation — no cloud model provides this.
 

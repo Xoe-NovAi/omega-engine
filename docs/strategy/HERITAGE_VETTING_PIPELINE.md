@@ -243,8 +243,8 @@ If implementation precedes vetting, the implementation is rolled back.
 | Agent | Can Vet | Cannot Vet |
 |-------|---------|------------|
 | **Kali** | All concepts (unification authority) | (unlimited) |
-| **Ma'at** | P1-P5 concepts (build side) | P6-P10 concepts |
-| **Lilith** | P6-P10 concepts (run side) | P1-P5 concepts |
+| **Ma'at** | N1-N5 concepts (build side) | N6-N10 concepts |
+| **Lilith** | N6-N10 concepts (run side) | N1-N5 concepts |
 | **Doom Guy** | Proposes, provides evidence | Final decision (conflict of interest) |
 | **User** | Override all | N/A |
 

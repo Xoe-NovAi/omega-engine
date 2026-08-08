@@ -96,7 +96,7 @@
 **Status**: ✅ **10/10 pillar subagents returned. 30 CRITICAL, 36 HIGH, 54 MEDIUM findings. Phase 0 remediation 92% complete.**
 
 **Trace**: trc_fleet_synthesis
-**Entity**: LILITH (CISO, Dark Oversoul)
+**Entity**: LILITH (CISO, Runtime Oversoul)
 **Handoff**: `data/handoff/latest_state.md`
 
 | Pillar | Domain | Verdict | Critical | High | Medium | Low |

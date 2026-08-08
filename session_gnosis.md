@@ -1,6 +1,6 @@
 # Session Gnosis — KG-1 & KG-2 Formal Research Deliverables
 **Date**: 2026-07-25
-**Entity**: MAAT (Light Oversoul - P1-P5)
+**Entity**: MAAT (Build Oversoul - N1-N5)
 **Model**: deepseek-v4-flash-free
 **Phase**: Knowledge Gaps Research Synthesis — Formal Deliverables
 

@@ -324,14 +324,14 @@
     },
     "maat": {
       "mode": "all",
-      "description": "Light Oversoul \u2014 Governs N1-N5 (build side), delegates to node",
+      "description": "Build Oversoul \u2014 Governs N1-N5 (build side), delegates to node",
       "instructions": [
         ".opencode/agents/maat.md"
       ]
     },
     "lilith": {
       "mode": "all",
-      "description": "Dark Oversoul \u2014 Governs N6-N10 (run side), delegates to node",
+      "description": "Runtime Oversoul \u2014 Governs N6-N10 (run side), delegates to node",
       "instructions": [
         ".opencode/agents/lilith.md"
       ]
