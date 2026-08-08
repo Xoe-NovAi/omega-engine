@@ -105,18 +105,20 @@ EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 - Full plan: `docs/sprints/current/llms-full.txt` (16K tokens for agent consumption)
 - Research index: `docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md` (archived)
 
+**✅ UO-4 DOC_SANITY COMPLETE (2026-08-07)** — Freeze LIFTED:
+- PART 1: 67 files archived, DOC_SSOT_MAP + pointer sanity
+- PART 2: Phase 3/4 docs (PROVIDER_FABRIC_RUNTIME, SOVEREIGN_FLYWHEEL_SECURITY, PHASE_0_VERIFICATION, MEMORY_SUBSYSTEM_DESIGN, SYSTEMD_DEPLOYMENT_GUIDE, SOVEREIGN_WAD_PROTOCOL, GUIDANCE_SET_SCHEMA)
+- Core strategy docs freshened (Pillar→Node, co-equal MaKaLi, Corpus Map updated)
+
 ```
+NEXT (post-UO-4, freeze lifted):
+├── V-10 AppArmor container hardening (🚨 GAP — containers unconfined)
+├── V-9 IA2 envelope freshness/signature (⚠️ GAP — no freshness check)
+└── UO-6 Un-overengineering Phase 1 library adoptions (READY)
+
 SUPER-URGENT (parallel, Architect):
 ├── G-1 Workhorse continuity (billing / Antigravity / OCZ)
 └── W-1 WARP pool bring-up (sudo fix ns-setup → reg → bridges)
-
-SPRINT: Guard & Distill (5 days, 4 P0 tickets)
-├── C-10.5 Quota-Aware Provider Routing (maat/P3) — 8h
-├── C-11 Property Tests: OOMProtector + SoulStore (maat/P3) — 12h
-├── V-1 VaultCore MVP (maat/P1) — 8h (MOVED TO P0 - Blocks C-3)
-├── C-3 Restic 3-2-1 Backup for Sovereign Data (lilith/P6) — 8h (Depends on V-1)
-├── C-0.5 Scribe Agent L1→L2→L3 Distillation + Crash Recovery Sweeper (scribe/new) — 16h
-└── P1 Gates: C-9, D-1, M21, C-4a.5 (escalation)
 
 COMPLETED (Phase C Hardening):
 ├── C-0 Test Honesty ✅ (99 quarantined, honest badge)

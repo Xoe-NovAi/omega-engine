@@ -1,12 +1,12 @@
 {
   "sprint_id": "UNOVERENGINEER-01",
   "campaign": "data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md",
-  "phase": "SSOT_AND_DOC_SANITY",
+  "phase": "DOC_SANITY_COMPLETE",
   "started": "2026-07-30T00:00:00Z",
-  "updated": "2026-07-30T05:45:00Z",
-  "owner": "grok_cli",
+  "updated": "2026-08-07T00:00:00Z",
+  "owner": "kali",
   "status": "ACTIVE",
-  "status_detail": "Strategy ratified; Cline ops health complete; mechanical Phase D PASS / operational NO-GO; doc consolidation handed to Cline",
+  "status_detail": "UO-4 DOC_SANITY COMPLETE (PART 1 archival + PART 2 web reconciliation + core docs freshened). Freeze LIFTED. Next: UO-6 un-overengineering + V-9/V-10 gap remediation.",
   "supersedes": [
     "FOUNDATION-STAB-01 (Jul 20 Phase Β — historical)",
     "docs/archive/sprints/EXECUTION_PLAN_20260725.md (sprint control)",
@@ -19,8 +19,8 @@
     "doc_sanity_cline": "data/coordination/CLINE_DOC_SANITY_HANDOFF_20260730.md"
   },
   "freeze": {
-    "active": true,
-    "until_gate": "DOC_SANITY_COMPLETE",
+    "active": false,
+    "until_gate": "DOC_SANITY_COMPLETE (MET 2026-08-07)",
     "frozen": [
       "bulk_code_deletions_phase1_until_doc_ssot_stable",
       "mcp_v2_full_migrate_until_pin_and_spike",
@@ -60,9 +60,10 @@
       ]
     },
     "doc_sanity": {
-      "status": "DISPATCHED_TO_CLINE",
-      "owner": "cline",
-      "packet": "data/coordination/CLINE_DOC_SANITY_HANDOFF_20260730.md"
+      "status": "COMPLETE",
+      "owner": "kali",
+      "completed": "2026-08-07T00:00:00Z",
+      "packet": "data/coordination/DOC_SSOT_MAP_20260807.md"
     },
     "unoverengineer_phase1": {
       "status": "PENDING",
@@ -99,10 +100,21 @@
     },
     "UO-4": {
       "task": "Documentation sanity — inventory, supersede, archive, consolidate (1M context)",
-      "owner": "cline",
-      "status": "READY",
+      "owner": "kali",
+      "status": "COMPLETE",
       "risk": "HIGH",
-      "why_cline": "Token-heavy multi-file reads; free tier + 1M context"
+      "why_cline": "Token-heavy multi-file reads; free tier + 1M context",
+      "completed": "2026-08-07T00:00:00Z",
+      "artifacts": [
+        "data/coordination/DOC_SSOT_MAP_20260807.md",
+        "docs/architecture/PROVIDER_FABRIC_RUNTIME.md",
+        "docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md",
+        "docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md",
+        "docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md",
+        "docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md",
+        "docs/architecture/SOVEREIGN_WAD_PROTOCOL.md",
+        "docs/architecture/GUIDANCE_SET_SCHEMA.md"
+      ]
     },
     "UO-5": {
       "task": "Architect: .env.backup + restic oneshot success",
@@ -112,8 +124,8 @@
     },
     "UO-6": {
       "task": "Un-overengineering Phase 1 library adoptions",
-      "owner": "cline+grok",
-      "status": "FROZEN_UNTIL_DOC_SANITY",
+      "owner": "kali",
+      "status": "READY",
       "risk": "MEDIUM"
     }
   },

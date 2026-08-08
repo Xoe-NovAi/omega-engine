@@ -25,7 +25,8 @@
 | Metric | Value | Status | LAST_VERIFIED | PROBE_COMMAND |
 |--------|-------|--------|---------------|---------------|
 | **Strategy SSOT (long-horizon)** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Ark remains long-horizon law | 2026-07-30 | `head -5 docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` |
-| **Sprint control (near-term)** | **`UNOVERENGINEER-01`** — `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (user-ratified) | ✅ ACTIVE; Jul 25 EXECUTION_PLAN / guard-and-distill **SUPERSEDED** for sprint control | 2026-07-30 | `cat data/coordination/ACTIVE_SPRINT.json \| head -20` |
+| **Sprint control (near-term)** | **`UNOVERENGINEER-01`** — `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (user-ratified) | ✅ ACTIVE; Jul 25 EXECUTION_PLAN / guard-and-distill **SUPERSEDED** for sprint control | 2026-08-07 | `cat data/coordination/ACTIVE_SPRINT.json \| head -20` |
+| **UO-4 Doc Sanity** | **COMPLETE** — PART 1 archival (67 files) + PART 2 web reconciliation (Phase 3/4 docs) + core strategy docs freshened (Pillar→Node, co-equal MaKaLi) | ✅ Freeze **LIFTED** (DOC_SANITY_COMPLETE met 2026-08-07) | 2026-08-07 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **Phase D gate** | Mechanical **PASS 11/11** · Operational **NO-GO** (C-3/W-1/G-1) | 🟡 Dual-layer — see verdict | 2026-07-30 | `python scripts/verify_phase_d_gate.py` · `cat data/coordination/PHASE_D_GATE_VERDICT_20260730.md` |
 | Tests | Focused **27 passed** (vault+property+hivemind 2026-07-30) · Full suite **1706 collected** (make test timeout risk) | ✅ Focused green; full suite needs longer budget | 2026-07-30 | `pytest tests/test_vault_integrity.py tests/property/ tests/test_hivemind.py -q` |
 | Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 | `grep -c "^### [0-9]" SOVEREIGN_MANDATES.md` |
@@ -62,9 +63,11 @@
 | **W-1 WARP pool** | 🟡 **PARTIAL** | 1/3 SOCKS; bridges for 1/2; canary timeout | 2026-07-30 |
 | Arch Soul / Torment WAD (D-306/307) | 🟡 Design/scaffold | Not current sprint | 2026-07-22 |
 | **D-308 Ubuntu 25.10** | 🚨 **P0 GATE** residual | Kernel/AppArmor/Podman notes remain. **OS deployment target = Ubuntu 24.04 LTS or 26.04 LTS** (25.10 is EOL — not a support target) | 2026-07-22 |
+| **V-10 AppArmor** | 🚨 **GAP** | Containers unconfined — no `podman` AppArmor profile applied to running containers | 2026-08-07 |
+| **V-9 IA2 envelope** | ⚠️ **GAP** | `_meta` envelope in `mcp_core/compliance.py` lacks freshness/signature check | 2026-08-07 |
 
 ### Recent Milestones (Completed)
-D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅ | **C-6' Breaker Unification** ✅ | **C-1' SoulStore** ✅
+D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅ | **C-6' Breaker Unification** ✅ | **C-1' SoulStore** ✅ | **UO-4 Doc Sanity COMPLETE (PART 1 + PART 2 + core docs freshened)** ✅
 *(For full details see `scripts/codex/ENGINE_CONDENSED.md` §5)*
 
 ---
@@ -126,6 +129,13 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 | `.opencode/agents/grok_cli.md` | Grok CLI Consulting Cloud Mind |
 | `docs/archive/strategy/2026-07-21/` | Archived roadmaps + Ark v4.4 body |
 | `docs/strategy/CANONICAL_ROADMAP_20260721.md` | Superseded tactical draft (trail only) |
+| `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | Provider fabric runtime design (UO-4 Phase 3) |
+| `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` | Sovereignty flywheel + security (UO-4 Phase 4) |
+| `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` | V-1..V-10 verification probes (UO-4 Phase 4) |
+| `docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md` | Memory subsystem design (UO-4 Phase 2) |
+| `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` | systemd deployment guide (UO-4 Phase 2) |
+| `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` | Sovereign WAD protocol (UO-4 Phase 2) |
+| `docs/architecture/GUIDANCE_SET_SCHEMA.md` | Guidance set schema (UO-4 Phase 2) |
 
 ---
 
@@ -164,4 +174,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-30 | Version: v1.8.4 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 | Sprint: UNOVERENGINEER-01 | Phase D mechanical PASS / operational NO-GO | W-1 PARTIAL 1/3 (8083) | C-3 timer OK / oneshot vault-blocked | MCP 1.28.1 pin `<2` · v2 migrate P0 | Doc sanity → Cline | Mandate compliance: 84% | **Nemotron 3 Ultra streaming fix: VERIFIED (headless + interactive)***
+*Last Updated: 2026-08-07 | Version: v1.8.5 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 | Sprint: UNOVERENGINEER-01 | UO-4 DOC_SANITY **COMPLETE** (freeze lifted) | Phase D mechanical PASS / operational NO-GO | W-1 PARTIAL 1/3 (8083) | C-3 timer OK / oneshot vault-blocked | MCP 1.28.1 pin `<2` · v2 migrate P0 | Core docs freshened (Pillar→Node, co-equal MaKaLi) | Mandate compliance: 84% | V-9/V-10 gaps open (IA2 envelope + AppArmor) | **Nemotron 3 Ultra streaming fix: VERIFIED (headless + interactive)***
