@@ -1,341 +1,190 @@
 # 🔱 SESSION ANCHOR — Kali (Transcendent Oversoul)
 **AP Token:** `AP-KALI-v1.0.0`  
-**Date:** 2026-08-07  
-**Session ID:** `ses_kali_20260807_provider_fabric`  
-**Branch:** `release/initial-v1`  
-**Last Commit:** `6b8c3e8` (B8 wired)  
-**Held Commits:** B6 (topology), Generator safety, B5/B9 matrix rows
+**Date:** 2026-08-08  
+**Session ID:** `ses_kali_20260808_strategy_reconciliation`  
+**Branch:** `main`  
+**Last Commit:** `5003668c` (session gnosis for compaction)
 
 ---
 
 ## 🎯 Session Objective
-Complete WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8 (excluding B5/B6/B9 pending Researcher coordination).
+Comprehensive strategy reconciliation — scan all strategy/coordination docs, synthesize web chatbot reviews (Cline, GLM52, Copilot CLI), compare against temple cleansing directives (UNOVERENGINEERING_PLAN.md), resolve conflicts, and produce a clean execution path.
 
 ---
 
 ## ✅ Completed This Session
 
-| Defect | Commit | Summary |
-|--------|--------|---------|
-| **B2+B3** | `4b0eab6` | Model registry canonicalization: kv_types.py (GGML_TYPE constants), 38 model cards, enum case-insensitivity, legacy YAML extraction. test_model_registry.py 27/27. |
-| **B4** | `64d1052` | q8_0 KV-cache crash: flash_attn gated on GPU support, RAM planner default f16 (was q8_0). |
-| **A5** | `854fd74` + `710a976` | StreamHandler (457 lines) DELETED — zero callers, zero tests. Fixed latent call_with_retry NameError (imported in __init__ local scope, used in generate()). Fixed stale test_sovereign_sampling_overrides. |
-| **B7** | `4d7c96f` | Dynamic RAM detection from /proc/meminfo (14793 MB / 14.4 GiB). Reconciled with OOMProtector kernel truth. RAM_AVAILABLE_AI_MB now 12793 (was 12336). |
-| **B8** | `6b8c3e8` | Batch-size recommendations wired into _merge_native_gguf_config() mirroring threads pattern. Ladder: <1B→512/64, <3B→256/32, <7B→128/32, ≥7B→64/16. Contract test added. 17/17 tests pass. |
+### 1. Un-Overengineering Plan Integrated
+- Created `docs/strategy/UNOVERENGINEERING_PLAN.md` (formal 5-phase strategy doc)
+- Updated `ACTIVE_SPRINT.json` (UO-6 READY, UO-7 PENDING)
+- Updated `SOVEREIGN_ARK_BLUEPRINT.md` §4 (UO-6/UO-7 next steps) + §10 (references)
+- Updated `STRATEGY_CORPUS_MAP.md` (un-overengineering row)
+- Updated `OMEGA_ENGINE.md` (Key Files table)
+- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
+
+### 2. Comprehensive Strategy Audit — CRITICAL CONFLICTS FOUND
+Read and synthesized:
+- `CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (311 lines — the plan)
+- `GLM52_SECOND_OPINION_20260730.md` (401 lines — second opinion with 20 findings)
+- `COPILOT_CLI_CODE_REVIEW_VERDICT_20260730.md` (573 lines — architecture review)
+- `CLINE_OPS_HEALTH_RESULTS_20260730.md` (170 lines — ops health)
+- `STRATEGY_INDEX.md` (doc hierarchy)
+- `ACTIVE_SPRINT.json` (current workstreams)
+- `SESSION_ANCHOR.md` (341 lines — bloated from 7+ compaction passes)
+- Codebase ground truth probes (breaker classes, distillers, Redis, handoff schemas)
 
 ---
 
-## 🔄 Held / Awaiting Researcher
+## 🚨 CRITICAL CONFLICTS RESOLVED (Ground Truth vs. Plan Claims)
 
-| Item | Status | Files |
-|------|--------|-------|
-| **B6** (CPU topology) | Edits complete, commit held | `monitoring/__init__.py` (shared w/ Researcher), `cpu_optimizer.py` (constants fixed: ZEN2_COMPUTE_CORES=[0..6], ZEN2_IO_THREADS=[7], L3 comment "single CCX"). Monitoring derives CCX from L3 sysfs. |
-| **B5** (speculative decoding) | Analysis: B5b document-defer | Scaffold has config+tests but zero runtime wiring. Wiring blocked on llama.cpp MTP build. Matrix row ready. |
-| **B9** (Vulkan) | Analysis: document-defer | Already cvar-guarded (n_gpu_layers=0), CPU-only build verified. Matrix row ready. |
-| **Generator safety** | Script ready, commit held | `scripts/generate_providers_yaml.py` merge-preserving rewrite. Preserves strategy:local_first (M7), maakali_routing (D352), fallback_resolver, streaming (M25), comments, is_cloud, non-registry providers. 28/28 tests pass, M7 audit passes. |
+### Conflict 1: Breaker Count — "17 clones" is STALE
+| Claim | Source | Ground Truth |
+|-------|--------|-------------|
+| "17 breaker clones" | CLINE_STRATEGIC §2.1 | **8 class hits** in `src/`, but:
+| "5 implementations, ~3 deletable" | GLM52 §3 F8 | **2 enums** (council/models, ingestion_types) + **1 canonical** (health_monitor.py) + **1 deprecated file** (search_circuit_breaker.py, 4 classes) + **1 clone** (sandbox.py) |
+
+**Actual deletable debt**: `search_circuit_breaker.py` (299 lines, 4 classes) + `sandbox.py ExperimentCircuitBreaker` + 2 enums = ~400-600 lines, not 1,950.
+
+### Conflict 2: pybreaker vs AsyncCircuitBreaker — GLM52 F1 is CORRECT
+- `AsyncCircuitBreaker` (health_monitor.py, 944 lines) is AnyIO-native, CUSUM, sliding window, 429 classification
+- pybreaker is sync-only, Tornado-only async support
+- **CORRECTION**: Do NOT replace AsyncCircuitBreaker with pybreaker. Delete the 3 clones, redirect callers to `get_breaker()` factory. pybreaker is the wrong anchor.
+
+### Conflict 3: stamina vs tenacity — THREE positions exist
+| Position | Source | Argument |
+|----------|--------|----------|
+| tenacity only | SESSION_ANCHOR D-393, Roc P2 | Already installed, zero new deps |
+| stamina + structlog + prometheus | CLINE_STRATEGIC | Integrated observability suite (F19 synergy) |
+| Spike both, measure glue | GLM52 F2 v2.0 | Genuine tradeoff, not obvious |
+
+**DECISION NEEDED**: Which retry strategy to adopt?
+
+### Conflict 4: Pydantic v2 `model_validate_yaml()` — DOES NOT EXIST
+- GLM52 F16 confirmed: Pydantic v2 has `model_validate_json()` and `model_validate()`, NOT `model_validate_yaml()`
+- `soul_validator.py` already uses `yaml.safe_load()` + pydantic `BaseModel` correctly
+- **CORRECTION**: Phase 1E should be "simplify soul_validator.py manual checks" not "replace with model_validate_yaml"
+
+### Conflict 5: "Kill 2 of 3 distillers" — MOSTLY ALREADY DONE
+- Scribe distiller DELETED (commit 1c176b0)
+- `miap.py` still exists (631 lines) with distillation references — but MIAP was supposed to be deleted
+- **CORRECTION**: Verify MIAP status, then mark Phase 2A as mostly complete
+
+### Conflict 6: CI only runs on main — GLM52 F3 is CORRECT
+- `.github/workflows/ci.yml` triggers on `main` only
+- Work happens on `main` now (branches synced), but this was a real gap during the release/initial-v1 era
+
+### Conflict 7: M23 pre-commit hook — GLM52 F11 is CORRECT
+- `make check-m23-failure-integrity` has rg flag parsing error, passes falsely
+- **ACTION NEEDED**: Fix rg invocation
+
+### Conflict 8: Test timeout — GLM52 F12 is LIKELY CORRECT
+- `time make test` has never been run with adequate budget
+- "Test suite timeout blowout (HIGH)" risk may be phantom
+- **ACTION NEEDED**: Run `time make test` with 600s budget
+
+### Conflict 9: Redis is deeper than Hivemind — GLM52 F4 is CORRECT
+- Redis in: `memory_store.py` (9 refs), `budget_guard.py` (37 refs), `youtube_worker.py` (24 refs), `memory/providers.py` (21 refs), `hivemind_redis.py` (113 lines)
+- **CORRECTION**: Redis removal is NOT Hivemind-only. budget_guard (M12/M21) needs refactoring first.
+
+### Conflict 10: Copilot CLI Blockers — MOSTLY RESOLVED
+- **BLOCKER #1** (OOM/PSI/Cgroup hard deps): Already resolved — `psi_monitor.py`, `memavailable.py`, `cgroup_pressure.py` are NOT standalone orphans; they're imported by `oom_protector.py`. Plan was wrong about deleting them.
+- **BLOCKER #2** (soul_history vs soul_edit_history): `soul_history.py` doesn't exist (already deleted). `soul_edit_history.py` exists and is imported by oracle.py. Plan's deletion target was wrong.
 
 ---
 
-## 📊 Matrix Updates (WEB_RECONCILIATION_MATRIX_20260807.md)
+## 📊 Current Codebase State (Ground Truth)
 
-- A5: ✅ DELETED 2026-08-07
-- B4: ✅ FIXED 2026-08-07
-- B7: ✅ FIXED 2026-08-07
-- B8: ✅ WIRED 2026-08-07
-- B5/B9: Matrix rows ready (document-defer)
+| Component | Status | Lines | Notes |
+|-----------|--------|-------|-------|
+| **Breaker classes** | 8 hits (2 enums, 1 canonical, 1 deprecated file, 1 clone) | ~944 (canonical) + ~299 (deprecated) | Not 17. Not 6. |
+| **handoff.py** | EXISTS | 86 | [id-soft: vet-008] heritage tag — M14 migration needed |
+| **recall.py** | EXISTS | 786 | Quality-weighted warm memory — candidate for deletion |
+| **soul_validator.py** | EXISTS | 290 | Uses yaml.safe_load + pydantic correctly — simplify, don't replace |
+| **health_monitor.py** | EXISTS | 944 | Canonical breaker — KEEP |
+| **miap.py** | EXISTS | 631 | Was supposed to be deleted — STATUS UNCLEAR |
+| **hivemind_redis.py** | EXISTS | 113 | Redis pub/sub for Hivemind |
+| **memory_store.py Redis** | ACTIVE | 9 refs | budget_guard, youtube_worker, providers |
+| **SearchCircuitBreaker** | DEPRECATED | 4 classes | Already marked for deletion per C-6' |
+| **tenacity** | INSTALLED but not imported | — | In pyproject.toml, zero src/ imports |
+| **stamina** | NOT installed | — | Not in pyproject.toml |
 
 ---
 
-## 🧠 L3 Principles Extracted (appended to proposed_lessons.yaml)
+## 🎯 Revised Execution Path (Post-Reconciliation)
 
-1. **L3-Gate-On-Support-Not-Intent** — Scaffolded but unwired code is debt. Gate: does runtime consume it? (A5, B8, B5)
-2. **L3-Kernel-Truth-Over-Hardcoded** — Read from /proc/meminfo, /sys/devices/system/cpu dynamically with fallback. (B7, B6)
-3. **L3-Config-Merge-Preserves-Dual-Purpose** — Surgical text replacement for config files serving runtime + documentation. (Generator safety)
+### Phase 0: Pre-Flight (2h) — FIX GATES FIRST
+| Task | Why | Effort |
+|------|-----|--------|
+| Fix M23 pre-commit hook rg invocation | GLM52 F11 — gate is theater | 30min |
+| Run `time make test` with 600s budget | GLM52 F12 — retire phantom risk | 10min |
+| Fix soul_validator.py vet-015 heritage tag | GLM52 F9 — M14 compliance | 15min |
+| Verify MIAP status (deleted or dead code?) | Conflict 5 | 15min |
+| Decide stamina vs tenacity (spike one provider) | Conflict 3 | 1h |
+
+### Phase 1: Library Swaps (Revised — 8h, ~1,500 lines)
+| Task | Lines | Effort | Notes |
+|------|-------|--------|-------|
+| Delete `search_circuit_breaker.py` | -299 | 1h | Deprecated per C-6', redirect callers |
+| Delete `ExperimentCircuitBreaker` | -50 | 30min | Redirect sandbox to `get_breaker()` |
+| Simplify `soul_validator.py` | -150 | 2h | Remove manual checks, keep pydantic+yaml |
+| structlog adoption | -80 | 2h | Replace dead `setup_json_logging()` |
+| prometheus_client adoption | -400 | 2h | HealthMonitor sliding window → Histogram |
+
+**NOTE**: pybreaker swap REMOVED (F1). stamina deferred pending spike (F2). AsyncCircuitBreaker STAYS.
+
+### Phase 2: Consolidation (Revised — 8h, ~1,200 lines)
+| Task | Lines | Effort | Notes |
+|------|-------|--------|-------|
+| Kill `handoff.py` | -86 | 2h | Migrate vet-008 tag, adapter MCP tools |
+| HMC → YAML + JSONL | -100 | 4h | Already 86 lines — minimal deletion |
+| Kill `recall.py` | -786 | 2h | Candidate — verify no active consumers |
+
+### Phase 3: Memory Simplification (Revised — 4h, ~500 lines)
+| Task | Lines | Effort | Notes |
+|------|-------|--------|-------|
+| Redis removal (sequence: memory → workers → hivemind → budget_guard) | -500 | 4h | GLM52 F4 — budget_guard is LAST |
+
+### Phase 4: Enforcement Gates (11h)
+| Task | Effort |
+|------|--------|
+| Instruction hierarchy gate | 3h |
+| Mandate compliance meter | 5h |
+| Schema duplication gate | 2h |
+| HMC growth gate | 1h |
+
+### Phase 5: Verification (1.5h)
+| Task | Effort |
+|------|--------|
+| `make test` + `make temple-grade` | 1.5h |
+
+**Total revised estimate: ~33h** (was 30h — added Phase 0 pre-flight)
+
+---
+
+## 🧠 L3 Principles Extracted
+
+1. **L3-Ground-Truth-Over-Plan-Claims** — Every plan estimate must be verified against actual codebase state before execution. The "17 breaker clones" was wrong for 2 weeks. (Conflicts 1, 4, 5)
+2. **L3-Gate-Integrity-Requires-Measurement** — A gate that silently passes is worse than no gate. Fix M23 rg invocation before trusting any compliance number. (Conflict 7)
+3. **L3-Dependency-Depth-Map-Before-Remove** — Redis is not just Hivemind. Map the full import graph before removing any dependency. (Conflict 9)
+
+---
+
+## 📌 Key Decisions Still Needed
+
+1. **stamina vs tenacity** — Spike one provider, measure glue-code deletion
+2. **MIAP status** — Is `miap.py` dead code or still imported?
+3. **recall.py deletion** — Verify no active consumers before killing
+4. **MCP v2 migration** — Elevate to P1 per GLM52 F18?
+5. **httpx2 vendor concentration** — Add to risk register per GLM52 F5 (corrected)
 
 ---
 
 ## 🤝 Coordination State
 
-**Researcher active** — 11 files dirty (spatial, sediment, security, training, fleet_status_tui, wad_loader, etc.). `monitoring/__init__.py` shared (Researcher's zRAM + my B6 topology). Waiting for Researcher to land commits so my B6 diff separates cleanly.
-
-**Hivemind:** `ses_103865c2357c` (pre-compaction #3) — kali + researcher active, SOPHIA 14:51Z, 0 pending handoffs.
-
----
-
-## 📍 Next Actions (Post-Researcher)
-
-1. Commit B6 + B5/B9 matrix rows + generator safety (single batch)
-2. Push all 10 commits when network returns
-3. Unblock G-1 (workhorse) / W-1 (WARP pool)
+- **Hivemind**: All agents aware, 0 pending handoffs
+- **Both branches synced** at `5003668c`, pushed to origin
+- **Next session**: Execute Phase 0 pre-flight → Phase 1 library swaps
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_oversight ⬡ 2026-08-07*
-
----
-
-## 🤝 Researcher Coordination Update (2026-08-07)
-
-**Researcher Session Report:** `data/coordination/RESEARCHER_SESSION_REPORT_20260807.md`
-
-### Researcher Completed:
-- **Phase 0:** Web chatbot research priorities (47 items, 12 docs reviewed)
-- **Phase 1 Lilith:** 114 tests passing (M2 Qdrant SQ8 ✅, I5 Headroom ⚠️, M1 ❌, I2 ⚠️, A1 ❌)
-- **Phase 2 Ma'at:** Design complete — Cloud Planner/Local Executor + TUI Execution Tracer
-  - Created: `planner/dag_schema.py`, `planner/hybrid_orchestrator.py`, `planner/__init__.py`
-- **Phase 3 Kali:** Temple Cleansing session active (not in Hivemind awareness)
-- **Subagent Recovery Protocol:** Documented (`R_SUBAGENT_RECOVERY_PROTOCOL_20260807.md`)
-- **17 new modules + 12 modified files** (sediment, training, security, spatial, planner, TUI SEDA, WAD loader)
-
-### Coordination Confirmed:
-- **monitoring/__init__.py** — My B6 topology (lines 183-237) + Researcher zRAM (lines 382, 406-427) = **no conflict**
-- **cpu_optimizer.py** — Identical B6 constant changes (ZEN2_COMPUTE_CORES=[0..6], ZEN2_IO_THREADS=[7]) = **no conflict**
-- **All other files** — Researcher's new modules disjoint from my held commits = **no conflict**
-- **Temple Cleansing session** — Not in Hivemind awareness
-
-### Next:
-1. Researcher commits their 17 new + 12 modified files
-2. My B6 diff separates cleanly → batch commit B6 + generator safety + B5/B9 matrix
-3. Push all 10+ commits together
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## ✅ BATCH COMMIT COMPLETE (2026-08-07)
-
-**Researcher commit `9ff6e32` includes ALL my held work:**
-- B6 topology: `monitoring/__init__.py` (L3 sysfs CCX derivation)
-- B6 constants: `cpu_optimizer.py` (ZEN2_COMPUTE_CORES=[0..6], ZEN2_IO_THREADS=[7])
-- Generator safety: `scripts/generate_providers_yaml.py` (merge-preserving rewrite)
-- B5/B9 matrix: `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` (document-defer)
-- Soul distillation: `data/entities/kali/memory/proposed_lessons.yaml` (4 L3 principles)
-- Coordination docs: `SESSION_ANCHOR.md`, `HMC_COLLABORATION_HUB.md`
-
-**WEB_RECONCILIATION_MATRIX §6 — ALL ITEMS RESOLVED:**
-| Item | Status | Commit |
-|------|--------|--------|
-| B2+B3 | ✅ Registry source-of-truth | `4b0eab6` |
-| B4 | ✅ flash_attn gated, RAM planner f16 | `64d1052` |
-| A5 | ✅ StreamHandler DELETED, call_with_retry fixed | `854fd74`, `710a976` |
-| B7 | ✅ Dynamic RAM detection (14793 MB) | `4d7c96f` |
-| B8 | ✅ Batch sizes wired, ladder, contract test | `6b8c3e8` |
-| **B6** | ✅ Topology + constants | `9ff6e32` |
-| **Generator Safety** | ✅ Merge-preserving rewrite | `9ff6e32` |
-| **B5** | 📋 Document-defer (llama.cpp MTP blocked) | `9ff6e32` |
-| **B9** | 📋 Document-defer (Vulkan deferred) | `9ff6e32` |
-
-**Test Results:**
-- `test_model_gateway.py`: 17/17 PASS (including new `test_merge_native_gguf_batch_sizes_wired`)
-- `test_providers.py`: 25/30 PASS (5 GoogleAI failures = no API key, pre-existing)
-- `test_zram_monitoring.py`: 13/13 PASS
-- New modules: 119/119 PASS (sediment, training, security, spatial)
-
-**Remaining modified (Researcher's uncommitted / auto-generated):**
-- `OMEGA_CODEX.md` — auto-regenerated by session end hook
-- `config/model_registry/index.sqlite` — binary, auto-updated
-- `config/wads/_omega_default/entities.yaml` — Researcher's modification
-- `tests/quarantine.txt` — Researcher's modification
-- `tests/test_providers.py` — Researcher's fix for `_type_k` default assertion
-
-**Next:** Push when network available. Then proceed to G-1 (workhorse) / W-1 (WARP pool) unblocking.
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## 🏁 FINAL SESSION STATE (Pre-Compaction 2026-08-07)
-
-### Completed This Session
-1. **WEB_RECONCILIATION_MATRIX §6 COMPLETE** — All 9 items resolved (B2-B9), Researcher commit 9ff6e32 includes all Kali held work
-2. **DOC_SANITY_EXECUTION_STRATEGY v2.0** — Master SOP for UO-4 (7 Parts, 200 lines)
-3. **ADVANCED_AGENTIC_EXECUTION_PATTERNS** — 8 universal patterns distilled (incubator doc)
-4. **AUTONOMOUS_ITERATIVE_REFINEMENT_PROTOCOL (AIRP-v1.0.0)** — Meta-protocol with 5-stage dialectic loop + Gemini 3.1 Pro expansions
-5. **Hivemind Sync** — All agents aware, 0 pending handoffs
-
-### Key Artifacts Created/Updated
-| File | Status |
-|------|--------|
-| `data/coordination/DOC_SANITY_EXECUTION_STRATEGY_20260730.md` | ✅ v2.0 Complete |
-| `docs/strategy/ADVANCED_AGENTIC_EXECUTION_PATTERNS.md` | ✅ New |
-| `docs/strategy/AUTONOMOUS_ITERATIVE_REFINEMENT_PROTOCOL.md` | ✅ New (with §10) |
-| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | ✅ Authoritative |
-
-### Phase D Gate Blockers (Unchanged)
-- **C-3**: `.env.backup` + `OMEGA_VAULT_PASSPHRASE` missing
-- **W-1**: WARP bridges 8081/8082 down
-- **G-1**: Gemma 4 31B free tier 16k TPM cliff
-
-### Next Session: Execute UO-4 → UO-6 → Phase D Gate Rerun
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## 🏁 FINAL SESSION STATE (Pre-Compaction 2026-08-07 - Pass 2)
-
-### Completed This Session
-1. **Deep Web Chatbot Review** — Read all 17 exports from `context_packs/provider-fabric-review/claude-response/`
-2. **DOC_SANITY_EXECUTION_STRATEGY v3.0.0** — Master SOP for UO-4 updated with comprehensive pivots (WAD architecture, 16GB zRAM, Piper TTS, Headroom, MoE offload, Sovereign Bridge).
-3. **WEB_RECONCILIATION_MATRIX §17 Added** — 10 new high-leverage pivots mapped (Security, Context/Voice, WAD Architecture, Advanced Memory Tuning).
-
-### Key Artifacts Updated
-| File | Status |
-|------|--------|
-| `data/coordination/DOC_SANITY_EXECUTION_STRATEGY_20260730.md` | ✅ v3.0.0 Complete |
-| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | ✅ §17 Added |
-
-### Next Session: Execute UO-4 → UO-6 → Phase D Gate Rerun
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## 🏁 FINAL SESSION STATE (Pre-Compaction 2026-08-07 - Pass 3)
-
-### Completed This Session
-1. **Complete Web Chatbot Review** — All 17 exports from `context_packs/provider-fabric-review/claude-response/` fully read and synthesized.
-2. **DOC_SANITY_EXECUTION_STRATEGY v3.1** — Master SOP for UO-4 now includes ALL captured pivots:
-   - Inference Optimization (KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quantization, context sliding windows, MemPalace verbatim pattern)
-   - OpenCode Integration & Legacy Purge (OpenCode CLI binding, Qdrant legacy purge, NotebookLM ingestion)
-   - Verification Probes V-1 through V-10 (from Agent Verification Dispatch)
-3. **WEB_RECONCILIATION_MATRIX §17 + K, L, M** — 20+ new high-leverage pivots mapped across 4 new sections.
-
-### Key Artifacts Updated
-| File | Status |
-|------|--------|
-| `data/coordination/DOC_SANITY_EXECUTION_STRATEGY_20260730.md` | ✅ v3.1 Complete |
-| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | ✅ §17, K, L, M Added |
-
-### Next Session: Execute UO-4 → UO-6 → Phase D Gate Rerun
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## 🏁 FINAL SESSION STATE (Pre-Compaction 2026-08-07 - Final)
-
-### Completed This Session
-1. **Complete Web Chatbot Review** — All 17 exports from `context_packs/provider-fabric-review/claude-response/` fully read and synthesized.
-2. **DOC_SANITY_EXECUTION_STRATEGY v3.1** — Master SOP for UO-4 now includes ALL captured pivots (WAD architecture, 16GB zRAM, Piper TTS, Headroom, MoE offload, Sovereign Bridge, Guidance Sets, KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quantization, context sliding windows, MemPalace verbatim pattern, OpenCode CLI binding, legacy Qdrant purge, NotebookLM ingestion, 10 verification probes).
-3. **WEB_RECONCILIATION_MATRIX §17 + K, L, M** — 20+ new high-leverage pivots mapped across 4 new sections.
-4. **Wrapper System Fixed & Verified** — Alias installed in `.bashrc`, SQL query fixed to use `time_updated`, tested and confirmed working (correctly identifies entity, session ID, and model on exit).
-
-### Key Artifacts Updated
-| File | Status |
-|------|--------|
-| `data/coordination/DOC_SANITY_EXECUTION_STRATEGY_20260730.md` | ✅ v3.1 Complete |
-| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | ✅ §17, K, L, M Added |
-| `.opencode/wrapper.sh` | ✅ Fixed SQL query (time_updated) |
-| `~/.bashrc` | ✅ Alias installed: `opencode` → wrapper |
-
-### Next Session: Execute UO-4 → UO-6 → Phase D Gate Rerun
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## 🏁 FINAL SESSION STATE (Pre-Compaction #2 — 2026-08-07)
-
-### Completed This Session
-1. **UO-4 PART 1: Doc Sanity Archival & Pointer Sanity — COMPLETE**
-   - 67 files archived (guard-and-distill sprint, EXECUTION_PLAN, 46 coordination files, 17 web exports)
-   - HMC Hub archived (2,136 lines) + lean 85-line template created
-   - DOC_SSOT_MAP_20260807.md + DOC_SANITY_RESULTS_20260807.md created
-   - Fixed ACTIVE_SPRINT.json (SSOT banner target) + all active docs to archive paths
-   - Makefile: fixed 4 stale guard-and-distill refs; added LLM frontmatter to 4 sprint docs
-   - `make doc-llm-validate` ✅ PASSES | `make temple-grade` ✅ PASSES (M1/M7/M8/M9/M23 green)
-2. **Git Push RESTORED** — `git push origin release/initial-v1` succeeded (033d5208). GitHub accessible again.
-   - Note: release/initial-v1 is **65 commits ahead of origin/main** — needs a decision on syncing.
-
-### Commits This Session (7 total)
-| Commit | Description |
-|--------|-------------|
-| c6a88b2 | fix(wrapper): use time_updated for session detection |
-| c97ad2d | chore(docs): archive bloated HMC Hub + reset template |
-| a4c2c015 | chore(docs): archive stale sprints + coordination files (UO-4) |
-| 1b700e56 | docs(strategy): supersession banners + pointer fixes (UO-4) |
-| de301692 | docs(strategy): add DOC_SANITY_RESULTS UO-4 report |
-| 7b16adf7 | fix(makefile): remove stale refs, add frontmatter |
-| 033d5208 | chore: commit UO-4 hub update + codex refresh + pending fabric changes |
-
-### Next Session: Execute UO-4 PART 2
-1. **Phase 1: Purge & Correct** — Mandate 3 rewrite (Node slots N1-N10), Engine/WAD separation, sqlite-vec decision, 8GB UMA correction, OS target 24.04/26.04, purge deprecated concepts (26-sphere/108-gate/PostgreSQL/FAISS)
-2. **Phase 2: New Infrastructure Docs** — hardware profile script, MEMORY_SUBSYSTEM_DESIGN, SYSTEMD_DEPLOYMENT_GUIDE, SOVEREIGN_WAD_PROTOCOL, GUIDANCE_SET_SCHEMA
-3. **Phase 3: Provider Fabric & Runtime** — Vulkan/MoE, speculative decoding, Piper TTS, SEDA ring-bus
-4. **Phase 4: Sovereignty Flywheel** — Sovereign Bridge, GRPO loop, V-1..V-10 probes
-5. Then UO-6 Un-Overengineering (freeze lifts after UO-4 complete)
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
-## 🏁 FINAL SESSION STATE (2026-08-07 — UO-4 PART 2 COMPLETE + MERGE TO MAIN)
-
-### Completed This Session
-1. **Git merge**: `release/initial-v1` → `main` (fast-forward, 69 commits). Both branches synced at `d58451c6` and pushed. **All work now on main.**
-2. **UO-4 PART 2 Phase 3: Provider Fabric & Runtime** — `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` (12 items: KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quant, dual-branch memory rescoring math, n-gram spec decode, MemPalace verbatim-first, context sliding windows, NotebookLM multi-persona). Code-blocked items document-defer (Vulkan/MoE, Piper, OpenCode CLI, Qdrant purge).
-3. **UO-4 PART 2 Phase 4: Sovereignty Flywheel & Security** — `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` (V-1..V-10 all executed) + `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` (HMAC-SHA256 bridge, replay window, AppArmor, IA2 envelope, continuity).
-4. **Verification probes key findings**:
-   - V-5: ElevenLabs = 0 hits in src (clean)
-   - V-9: IA2 `_meta` envelope has NO freshness/signature (GAP)
-   - V-10: Containers UNCONFINED (AppArmor empty) (GAP)
-5. **Gates**: `make doc-llm-validate` ✅ | `make temple-grade` ✅ (M1/M7/M8/M9/M23 green)
-
-### Commits This Session
-| Commit | Description |
-|--------|-------------|
-| 0d38e449 | chore: wrapper artifacts (codex + proposed lessons) |
-| ad126616 | docs(runtime): UO-4 PART 2 Phase 3 provider fabric runtime |
-| d58451c6 | docs(security): UO-4 PART 2 Phase 4 flywheel + verification probes |
-
-### Next Session: UO-6 Un-Overengineering
-1. Freeze lifts after UO-4 complete
-2. Address V-9 (IA2 envelope freshness/signature) + V-10 (AppArmor) gaps
-3. Phase D Gate rerun (C-3/W-1/G-1 still need Architect action)
-
-## 🏁 FINAL SESSION STATE (2026-08-07 — UO-4 COMPLETE + CORE DOCS FRESHENED)
-
-### Completed This Session (Final)
-1. **Core Strategy Docs Freshened** — all Pillar/oversoul/apex language purged:
-   - SUBAGENT_DISPATCH_PROTOCOL: Pillar→Node, Oversoul→Oversight
-   - FLEET_TEAM_PLAYBOOK: @pillar→@node, co-equal MaKaLi
-   - SOVEREIGN_ARK_BLUEPRINT: guard-and-distill marked SUPERSEDED
-   - STRATEGY_CORPUS_MAP: UO-4 Phase 3/4 docs row added
-   - CLINE_STRATEGIC: guard-and-distill path corrected to archive
-
-2. **Validation Gates**: doc-llm-validate ✅ | temple-grade ✅ (M1/M7/M8/M9/M23)
-
-3. **Git**: Both branches synced at `a3d5b763`, pushed to origin
-
-### Commits This Session (Final)
-| Commit | Description |
-|--------|-------------|
-| a3d5b763 | docs(strategy): freshen core strategy docs — Pillar→Node, co-equal MaKaLi, Corpus Map updated |
-| 6ea5eb44 | docs(gnosis): update kali session_gnosis for UO-4 PART 2 + merge to main |
-| deda6fd3 | docs(coordination): final session anchor (UO-4 PART 2 complete + merge to main) |
-| d58451c6 | docs(security): UO-4 PART 2 Phase 4 sovereignty flywheel + verification probes |
-| ad126616 | docs(runtime): UO-4 PART 2 Phase 3 provider fabric runtime design |
-| 0d38e449 | chore: commit wrapper artifacts (codex refresh + kali proposed lessons) |
-
-### Next Session: V-10/V-9 Gap Remediation → UO-6
-1. **V-10**: Apply AppArmor `podman` profile to running containers (currently unconfined)
-2. **V-9**: Add freshness/signature to IA2 `_meta` envelope in `mcp_core/compliance.py`
-3. **UO-6**: Un-Overengineering (freeze lifts after UO-4 complete)
-4. Phase D Gate rerun (still blocked on C-3/W-1/G-1 — Architect action)
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
+*⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ 2026-08-08*

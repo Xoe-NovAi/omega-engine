@@ -3,101 +3,145 @@
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_unoverengineering ⬡ 2026-07-30
 
 **Source**: `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (Cline ops health + strategy review)
-**Status**: Phase 1 READY (freeze lifted 2026-08-07), Phase 2-5 PENDING
+**Status**: Phase 0 pre-flight REQUIRED (GLM52 corrections), Phase 1-5 PENDING
 **Owner**: `@kali` (dispatch) / `@maat` (Phase 1 execution)
 **Ratified**: 2026-07-30 by Architect
+**Reconciled**: 2026-08-08 by Kali (GLM52 second opinion + Copilot CLI review + ground truth probes)
+
+---
+
+## ⚠️ RECONCILIATION CORRECTIONS (2026-08-08)
+
+The original plan had 10 critical errors identified by GLM52 second opinion (F1-F20) and Copilot CLI review. Key corrections applied:
+
+| # | Original Claim | Correction | Source |
+|---|----------------|------------|--------|
+| F1 | Replace breakers with pybreaker | **WRONG** — pybreaker is sync-only. Keep `AsyncCircuitBreaker`, delete clones, redirect to `get_breaker()` | GLM52 F1 (research-confirmed) |
+| F2 | Install stamina for retries | **TRADEOFF** — tenacity already installed; stamina gives free structlog+prometheus instrumentation. Spike both. | GLM52 F2 v2.0 |
+| F3 | CI gates protect the work | **WRONG** — CI only runs on `main`. Was a gap on `release/initial-v1`. | GLM52 F3 |
+| F4 | Redis removal is Hivemind-only | **WRONG** — Redis in budget_guard (M12/M21), youtube_worker, memory providers. Map full graph first. | GLM52 F4 |
+| F8 | "17 breaker clones" | **STALE** — actual: 8 class hits (2 enums, 1 canonical, 1 deprecated file, 1 clone) | Ground truth `rg` |
+| F9 | Heritage tags not mentioned | **MISSING** — handoff.py has vet-008, soul_validator.py has vet-015. M14 migration needed. | GLM52 F9 |
+| F11 | M23 compliance is 92% | **UNTRUSTABLE** — pre-commit hook rg invocation is broken, passes falsely | GLM52 F11 |
+| F12 | Test suite times out (HIGH risk) | **PHANTOM** — never measured with adequate budget | GLM52 F12 |
+| F16 | `model_validate_yaml()` exists | **WRONG** — doesn't exist in Pydantic v2 core. Use `yaml.safe_load()` + `model_validate()`. | GLM52 F16 |
+| F17 | "Kill 2 of 3 distillers" | **MOSTLY DONE** — scribe distiller already deleted. miap.py still exists. | Ground truth grep |
+
+**See**: `data/coordination/GLM52_SECOND_OPINION_20260730.md` for full evidence.
 
 ---
 
 ## §0 Executive Summary
 
-**Goal**: Delete ~5,500 lines of custom code, adopt 4 community libraries, declare Hivemind "shipped."
+**Goal**: Delete ~2,500 lines of custom code, adopt 2-3 community libraries, declare Hivemind "shipped."
 
 The engine won't be less capable — it'll be **more maintainable**, **more reliable**, and **less tiring**.
 
 | Metric | Before | After (Target) |
 |--------|--------|----------------|
-| Circuit breaker implementations | 8 classes | 1 (`pybreaker`) |
+| Circuit breaker implementations | 8 classes (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`AsyncCircuitBreaker`) |
 | Handoff schemas | 3 (HandoffPacket x2 + HandoffState) | 1 (HandoffPacket) |
-| Soul distillers | 2 (gnosis_proxy + soul_distiller deleted) | 1 canonical |
+| Soul distillers | Mostly deleted (scribe gone, miap.py pending) | 0 (all removed) |
 | HMC Hub size | 86 lines (already consolidated) | YAML + JSONL, ≤100 lines/week |
 | Memory tiers | 5 (Hot/Warm/Cold/Recall/Archival) | 3 (file-based, sqlite-vec+FTS5, raw archive) |
-| Custom lines deleted | — | **-5,500+** |
-| Community libraries adopted | — | **4** (pybreaker, stamina, structlog, prometheus_client) |
-| Pydantic v2 migration | Manual validator (290 lines) | Built-in `model_validate_yaml()` |
+| Custom lines deleted | — | **-2,500+** |
+| Community libraries adopted | — | **2-3** (structlog, prometheus_client, optionally stamina) |
+| Pydantic simplification | Manual validator (290 lines) | Simplified with `yaml.safe_load()` + `model_validate()` |
 
 ---
 
-## §1 Phase 1 — Library Swaps (13h, ~3,097 lines)
+## §1 Phase 0 — Pre-Flight (2h) — FIX GATES FIRST
 
-### §1.1 pybreaker — Replace Circuit Breaker Clones
-**Status**: C-6' factory done, **swap pending**
-**Current**: 8 breaker classes in `src/` + `mcp_servers/`
-**Files to delete**:
-- `src/omega/oracle/search_circuit_breaker.py` (299 lines — DEPRECATED per C-6')
-- `src/omega/oracle/health_monitor.py` (119 lines — AsyncCircuitBreaker class)
-- `src/omega/research/sandbox.py` (ExperimentCircuitBreaker)
-- `src/omega/ingestion/ingestion_types.py` (CircuitBreakerState enum)
-- `src/omega/council/models.py` (CircuitBreakerState enum)
+| Task | Why | Effort |
+|------|-----|--------|
+| Fix M23 pre-commit hook rg invocation | Gate is theater (GLM52 F11) | 30min |
+| Run `time make test` with 600s budget | Retire phantom risk (GLM52 F12) | 10min |
+| Fix soul_validator.py vet-015 heritage tag | M14 compliance (GLM52 F9) | 15min |
+| Verify MIAP status (deleted or dead code?) | Conflict resolution | 15min |
+| Decide stamina vs tenacity (spike one provider) | Three positions exist (GLM52 F2) | 1h |
 
-**Standard config**: `fail_max=3`, `reset_timeout=60s` (Netflix Hystrix defaults)
-**Effort**: 4h | **Net Δ**: -1,950 lines
+---
 
-### §1.2 Pydantic v2 — Replace soul_validator.py
+## §2 Phase 1 — Library Swaps (Revised — 8h, ~1,500 lines)
+
+### §2.1 Delete Deprecated Breakers (NOT pybreaker swap)
+**Status**: NOT STARTED
+**Current**: `search_circuit_breaker.py` (299 lines, 4 classes — DEPRECATED per C-6')
+**Action**: Delete `search_circuit_breaker.py`. Redirect callers to `get_breaker()` factory.
+**Keep**: `AsyncCircuitBreaker` (health_monitor.py, 944 lines) — AnyIO-native, CUSUM, sliding window, 429 classification
+**Do NOT**: Replace with pybreaker (sync-only, M1 violation — GLM52 F1)
+**Effort**: 1h | **Net Δ**: -299 lines
+
+### §2.2 Delete ExperimentCircuitBreaker
+**Status**: NOT STARTED
+**Current**: `sandbox.py ExperimentCircuitBreaker` (~50 lines)
+**Action**: Redirect sandbox to `get_breaker()` factory
+**Effort**: 30min | **Net Δ**: -50 lines
+
+### §2.3 Simplify soul_validator.py
 **Status**: NOT STARTED
 **Current**: `src/omega/oracle/soul_validator.py` (290 lines)
-**Action**: Use `pydantic.model_validate_yaml()`
-**Effort**: 3h | **Net Δ**: -290 lines
+**Action**: Remove manual REQUIRED_KEYS checks, keep `yaml.safe_load()` + pydantic `BaseModel`. Migrate vet-015 heritage tag.
+**Do NOT**: Claim `model_validate_yaml()` exists (GLM52 F16 — it doesn't)
+**Effort**: 2h | **Net Δ**: -150 lines
 
-### §1.3 stamina — Replace Hand-Rolled Retry Loops
-**Status**: NOT STARTED
-**Current**: ~10 files with manual `asyncio.sleep` backoff
-**Action**: Use `stamina` — async-native, jitter built in, decorator-based
-**Effort**: 2h | **Net Δ**: -300 lines
-
-### §1.4 structlog — Replace Custom JSON Logger
+### §2.4 structlog — Replace Custom JSON Logger
 **Status**: NOT STARTED
 **Current**: Dead `setup_json_logging()` (M9 blocker)
 **Action**: Replace with `structlog` (M8 compliant — local-only)
 **Effort**: 2h | **Net Δ**: -80 lines
 
-### §1.5 prometheus_client — Replace HealthMonitor Sliding Window
+### §2.5 prometheus_client — Replace HealthMonitor Sliding Window
 **Status**: NOT STARTED
-**Current**: HealthMonitor sliding window (786 lines)
+**Current**: HealthMonitor sliding window (944 lines)
 **Action**: Use `prometheus_client` v0.24.1 for Counter/Gauge/Histogram at `:8016/metrics`
-**Effort**: 2h | **Net Δ**: -500 lines
+**Effort**: 2h | **Net Δ**: -400 lines
+
+### §2.6 stamina (DEFERRED — pending spike)
+**Status**: DEFERRED
+**Decision needed**: tenacity (already installed, 0 new deps) vs stamina (free structlog+prometheus instrumentation)
+**Action**: Spike one provider, measure glue-code deletion, pick winner
+**Effort**: 1h spike | **Net Δ**: TBD
 
 ---
 
-## §2 Phase 2 — Kill Redundant Implementations (12h, ~2,186 lines)
+## §3 Phase 2 — Kill Redundant Implementations (Revised — 8h, ~1,200 lines)
 
-### §2.1 Kill HandoffState — Consolidate to HandoffPacket
+### §3.1 Kill HandoffState — Consolidate to HandoffPacket
 **Status**: NOT STARTED
 **Current**: 3 handoff schemas — `HandoffPacket` (x2: `mcp_coordinator.py`, `subagent_dispatcher.py`) + `HandoffState` (`handoff.py`)
-**Action**: Delete `src/omega/oracle/handoff.py` (86 lines). Adapter MCP tools to HandoffPacket.
+**Heritage**: `handoff.py` has `[id-soft: vet-008]` — M14 migration required before deletion
+**Action**: Delete `src/omega/oracle/handoff.py` (86 lines). Migrate vet-008 tag. Adapter MCP tools to HandoffPacket.
 **Effort**: 2h | **Δ**: -86 lines
 
-### §2.2 Kill 2 of 3 Soul Distillers — Keep 1 Canonical
-**Status**: PARTIAL — `soul_distiller.py` already deleted
-**Current**: `gnosis_proxy.py` (113 lines) — verify if this is a distiller or different concern
-**Action**: Pin canonical distiller. Extract shared pipeline to `src/omega/gnosis/pipeline.py` (~100 lines).
-**Effort**: 4h | **Δ**: -600 lines (net)
+### §3.2 Soul Distiller Cleanup (MOSTLY DONE)
+**Status**: ✅ Scribe distiller DELETED (commit 1c176b0)
+**Remaining**: `miap.py` (631 lines) has distillation references — verify if MIAP is dead code or still imported
+**Action**: If MIAP is dead code, delete it. If imported, add deprecation notice.
+**Effort**: 1h | **Δ**: 0-631 lines (depending on MIAP status)
 
-### §2.3 Kill HMC Hub → YAML + JSONL + Growth Gate
+### §3.3 Kill HMC Hub → YAML + JSONL + Growth Gate
 **Status**: PARTIAL — HMC already 86 lines
 **Current**: `data/coordination/HMC_COLLABORATION_HUB.md` (86 lines)
 **Action**: Create `hub_state.yaml` + `hub_log.jsonl`. Pre-commit gate: max 100 lines/week. TTL archival at 7 days.
-**Effort**: 4h | **Δ**: -1,500 lines
+**Effort**: 4h | **Δ**: -86 lines (minimal — already consolidated)
 
-### §2.4 Deprecate MIAP + Link P9
-**Status**: ✅ DONE — both deleted
-**Action**: No further work needed.
+### §3.4 Kill recall.py
+**Status**: NOT STARTED
+**Current**: `src/omega/memory/recall.py` (786 lines) — Quality-weighted warm memory with power-law decay
+**Action**: Verify no active consumers, then delete. Replace with FTS5 direct queries.
+**Effort**: 1h | **Δ**: -786 lines
+
+### §3.5 Deprecate MIAP + Link P9
+**Status**: ⚠️ UNCLEAR — `miap.py` still exists on disk (631 lines), was supposed to be deleted
+**Action**: Verify import graph. If no callers, delete. If callers exist, add deprecation notice.
+**Effort**: 1h | **Δ**: 0-631 lines
 
 ---
 
-## §3 Phase 3 — Simplify Memory Architecture (3h, ~500 lines)
+## §4 Phase 3 — Simplify Memory Architecture (Revised — 4h, ~500 lines)
 
-### §3.1 Kill Redundant Memory Tiers
+### §4.1 Kill Redundant Memory Tiers
 | Kill | Why |
 |------|-----|
 | Recall tier (`recall.py`, 786 lines) | Duplicates FTS5 ranking with extra complexity |
@@ -105,7 +149,16 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 | Archival tier (gzip) | Files ARE the archive. Extra compression wrapper = complexity. |
 | Knowledge graph adapter | No active use case consuming graph queries |
 
-**Effort**: 3h | **Δ**: -500 lines
+**⚠️ Redis removal is deeper than Hivemind** (GLM52 F4):
+- `memory_store.py` (9 refs) — RedisStorageProvider
+- `budget_guard.py` (37 refs) — M12/M21 quota enforcement
+- `youtube_worker.py` (24 refs) — worker queue
+- `memory/providers.py` (21 refs) — vector adapters
+- `hivemind_redis.py` (113 lines) — pub/sub
+
+**Sequence**: memory providers → workers → hivemind → budget_guard LAST (budget_guard needs SQLite fallback first)
+
+**Effort**: 4h | **Δ**: -500 lines
 
 ---
 
@@ -150,33 +203,43 @@ Gates on existing systems, not new infrastructure:
 
 ---
 
-## §7 Implementation Sequence
+## §7 Implementation Sequence (Revised)
+
+### Day 0 — Pre-Flight (FIX GATES FIRST)
+| Priority | Work | Effort |
+|----------|------|--------|
+| P0 | Fix M23 pre-commit hook rg invocation | 30min |
+| P0 | Run `time make test` with 600s budget | 10min |
+| P0 | Fix soul_validator.py vet-015 heritage tag | 15min |
+| P0 | Verify MIAP status | 15min |
+| P0 | Spike stamina vs tenacity (one provider) | 1h |
 
 ### Day 1 — Phase 1 Start
 | Priority | Work | Effort |
 |----------|------|--------|
-| P0 | pybreaker inventory + swap | 4h |
-| P0 | Install stamina + structlog + prometheus_client | 1h |
+| P0 | Delete search_circuit_breaker.py + sandbox breaker | 1.5h |
+| P0 | Simplify soul_validator.py | 2h |
+| P0 | Install structlog + prometheus_client | 30min |
 
 ### Day 2 — Phase 1 Finish
 | Priority | Work | Effort |
 |----------|------|--------|
-| P0 | soul_validator → Pydantic v2 | 3h |
-| P0 | Hand-rolled retry → stamina | 2h |
 | P0 | structlog adoption | 2h |
 | P0 | prometheus_client adoption | 2h |
+| P0 | Retry strategy decision (stamina or tenacity) | 1h |
 
 ### Day 3 — Phase 2
 | Priority | Work | Effort |
 |----------|------|--------|
-| P1 | Kill HandoffState | 2h |
-| P1 | Soul distiller consolidation | 4h |
+| P1 | Kill HandoffState (migrate vet-008) | 2h |
+| P1 | Kill recall.py | 1h |
+| P1 | Verify + kill MIAP | 1h |
 | P1 | HMC → YAML + JSONL | 4h |
 
 ### Day 4 — Phase 3 + Phase 5
 | Priority | Work | Effort |
 |----------|------|--------|
-| P1 | Memory tier consolidation | 3h |
+| P1 | Memory tier consolidation (Redis removal sequence) | 4h |
 | P2 | Enforcement gates (Phase 5) | 11h |
 
 ### Day 5 — Verify
@@ -186,7 +249,24 @@ Gates on existing systems, not new infrastructure:
 
 ---
 
-## §8 Sign-Off
+## §8 Success Criteria (Revised)
+
+| Metric | Before | After (Target) |
+|--------|--------|----------------|
+| Breaker classes | 8 (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`AsyncCircuitBreaker`) |
+| Handoff schemas | 3 | 1 (HandoffPacket) |
+| Distillers | Mostly deleted (miap.py pending) | 0 |
+| HMC Hub size | 86 lines | YAML + JSONL, ≤100 lines/week |
+| Memory tiers | 5 | 3 |
+| Recall tier | 786 lines | Deleted |
+| Custom lines deleted | — | **-2,500+** |
+| Community libraries adopted | — | **2-3** (structlog, prometheus_client, optionally stamina) |
+| M23 gates | 2 false-PASS | Both fixed and trustworthy |
+| Test suite timing | Unknown (phantom HIGH risk) | Measured and documented |
+
+---
+
+## §9 Sign-Off
 
 | Role | Entity | Status |
 |------|--------|--------|
