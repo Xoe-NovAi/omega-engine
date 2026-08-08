@@ -48,19 +48,21 @@ curl -fsSL https://x.ai/cli/install.sh | bash
 
 ### 1.3 Architecture (2026)
 - **Local-first terminal coding agent** — runs on your machine (TUI)
-- **Model**: `grok-code-fast-1` (coding-specialized, separate from Grok 4/5)
+- **Model**: `grok-4.5` (coding-specialized, launched July 8, 2026)
 - **Inference in cloud** but **snippet-only transmission** — no auto-upload of source files
 - **8 parallel sub-agents** with Arena Mode (auto-ranking)
-- **SWE-bench Verified**: 70.8% (grok-code-fast-1)
+- **SWE-bench Verified**: 70.8% (grok-code-fast-1); Grok 4.5 benchmarks pending
 - **OS-level sandbox**: Landlock (Linux) / Seatbelt (macOS)
 - **ACP (Agent Client Protocol)** for IDE integration (Zed, Neovim, Emacs, marimo)
 - **MCP server support** (planned/not yet documented as of May 2026)
 - **Hooks/skills** — local files in `~/.grok/`
 
 ### 1.4 Subscription Requirement
-- **SuperGrok Heavy required** (~$300/mo, $99/mo intro for 6 months)
+- **Limited-time free access to Grok 4.5** during launch window (verify at `x.ai/build`)
+- After launch promo ends: **SuperGrok Heavy required** (~$300/mo, $99/mo intro for 6 months)
 - Includes: Grok Build + Grok 4/5 + full SuperGrok + API access to Heavy models
-- **No free tier** for Grok Build
+- **No permanent free tier** for Grok Build — the July 2026 launch offer is time-limited
+- **Check your account**: x.ai/build shows current free usage status
 
 ---
 
@@ -361,12 +363,15 @@ grok -p "Run security audit" --single-turn --output-format json
 ### 9.1 Pricing (2026)
 | Tier | Cost | Includes |
 |------|------|----------|
+| **Launch Promo** | **$0** | **Grok 4.5 in Grok Build (limited time)** |
 | **SuperGrok Heavy (standard)** | $300/mo | Grok Build + Grok 4/5 + SuperGrok + Heavy API |
 | **SuperGrok Heavy (intro promo)** | $99/mo (6 mo) | Same as above |
-| Free tier | None | Not available |
+
+> **Important**: The free Grok 4.5 access in Grok Build is a **limited-time launch offer** (July 2026). Verify current status at `x.ai/build`. After the promo ends, SuperGrok Heavy ($300/mo) is required.
 
 ### 9.2 Model Access
-- **grok-code-fast-1** — coding-specialized model for Grok Build
+- **grok-4.5** — default coding model for Grok Build (launched July 8, 2026)
+- **grok-code-fast-1** — previous coding-specialized model
 - **Grok 4/5** — via SuperGrok Heavy subscription
 - **Grok 4 Heavy** — via SuperGrok Heavy
 - **xAI API** — separate developer product (usage-based, OpenAI-compatible SDK)
@@ -477,14 +482,15 @@ grok -p "Run security audit" --single-turn --output-format json
 
 **Before any Grok CLI interaction, agents MUST:**
 1. Read this document
-2. Verify SuperGrok Heavy subscription active
-3. Install Grok CLI: `curl -fsSL https://x.ai/cli/install.sh | bash`
-4. Authenticate (browser OAuth or `XAI_API_KEY`)
-5. Select sandbox profile (`workspace` for dev, `strict` for untrusted)
-6. Configure custom rules for Omega Engine mandates (M1, M7, M8, M13, M23)
-7. Set up local skills in `~/.grok/skills/` for reusable workflows
-8. For headless/ACP: use `grok agent stdio` or `-p` with `--output-format streaming-json`
-9. Log interaction in `data/coordination/HMC_COLLABORATION_HUB.md`
+2. Check free access status at `x.ai/build` (limited-time Grok 4.5 offer)
+3. If free access expired: verify SuperGrok Heavy subscription active
+4. Install Grok CLI: `curl -fsSL https://x.ai/cli/install.sh | bash`
+5. Authenticate (browser OAuth or `XAI_API_KEY`)
+6. Select sandbox profile (`workspace` for dev, `strict` for untrusted)
+7. Configure custom rules for Omega Engine mandates (M1, M7, M8, M13, M23)
+8. Set up local skills in `~/.grok/skills/` for reusable workflows
+9. For headless/ACP: use `grok agent stdio` or `-p` with `--output-format streaming-json`
+10. Log interaction in `data/coordination/HMC_COLLABORATION_HUB.md`
 
 ---
 

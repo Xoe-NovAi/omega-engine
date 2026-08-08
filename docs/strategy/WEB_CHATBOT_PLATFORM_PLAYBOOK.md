@@ -28,11 +28,11 @@
 |------|---------------|-------|-----|
 | Pre-refactor code review | **Web Claude** | ✅ Sonnet 5 | ~80-82% SWE-bench, instruction-following, XML system prompt |
 | Architecture vetting | **Web Claude** | ✅ Sonnet 5 | Long-doc QA, structured reasoning, RAG mitigation patterns |
-| Multi-source research synthesis | **Web Gemini** | ✅ Gemini 3.5 Flash | Deep Research, 1M context, code execution sandbox |
+| Multi-source research synthesis | **Web Gemini** | ✅ Gemini 3.6 Flash | Deep Research, 1M context, code execution sandbox |
 | Benchmark comparison | **Web Gemini** | ✅ Gemini 3.5 Flash | 92.7% GPQA Diamond, code execution for verification |
 | Real-time data / current events | **Web Grok** | ✅ Grok 3/4 Mini | Live X firehose, real-time sentiment |
 | Source-grounded analysis | **NotebookLM** | ✅ Free | Source citations, audio overview, multi-document synthesis |
-| **Local terminal coding agent** | **Grok CLI (Grok Build)** | ❌ $300/mo | Local file access, sandbox, 8 parallel sub-agents, ACP |
+| **Local terminal coding agent** | **Grok CLI (Grok Build)** | ⚠️ Promo | Grok 4.5 free during launch window; SuperGrok Heavy after |
 | Cross-validation of critical decisions | **Claude + Gemini** | ✅ Both free | Independent verification of architecture decisions |
 
 ### Omega Engine Workflow Decision Matrix
@@ -55,11 +55,12 @@
 | **Claude Sonnet 5** | ~80-82% | ~75% | ~90% | 1M | ✅ | Code review, deep analysis |
 | **Claude Haiku 4.5** | ~70% | ~65% | ~85% | 1M | ✅ | Quick answers, summaries |
 | ~~Claude Opus 4.8~~ | ~~82.1%~~ | ~~76%~~ | ~~90.5%~~ | ~~1M~~ | ❌ | ~~Deep reasoning (paid only)~~ |
-| **Gemini 3.5 Flash** | 78.8% | — | 92.7% | 1M | ✅ | Research, benchmarks, free |
-| **Gemini 3.1 Flash-Lite** | — | — | — | 1M | ✅ | Cost-optimized, high-volume |
-| ~~Gemini 3.1 Pro~~ | ~~65.2%~~ | ~~70%~~ | ~~95.3%~~ | ~~10M~~ | ❌ | ~~Ultra-long context (paid)~~ |
+| **Gemini 3.6 Flash** | — | — | — | 1M | ✅ | Default free, everyday tasks |
+| **Gemini 3.5 Flash** | 78.8% | — | 92.7% | 1M | ✅ | Coding, research, benchmarks |
+| **Gemini 3.1 Pro** | 65.2% | 70% | 95.3% | 2M | ⚠️ Varying | Deeper reasoning (switches to Flash) |
 | **Grok 3 / 4 Mini** | — | — | — | 1M | ✅ | Quick questions, fact checks |
-| ~~Grok 4.5~~ | ~~70.8%~~ | ~~65%~~ | ~~87.5%~~ | ~~1M~~ | ❌ | ~~Agentic, real-time X (paid)~~ |
+| ~~Grok 4.5 (Web)~~ | ~~70.8%~~ | ~~65%~~ | ~~87.5%~~ | ~~1M~~ | ❌ | ~~Agentic, real-time X (paid)~~ |
+| **Grok 4.5 (Build CLI)** | — | — | — | 500K | ⚠️ Promo | Coding agent (limited-time free) |
 | **grok-code-fast-1 (CLI)** | 70.8% | — | — | — | ❌ | Local coding, sub-agents |
 
 ---
