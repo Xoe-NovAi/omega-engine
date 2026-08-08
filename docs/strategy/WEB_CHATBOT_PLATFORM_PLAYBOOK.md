@@ -245,9 +245,11 @@ For critical decisions (architecture, mandate compliance, security):
 | Platform | Accounts | Rotation Strategy |
 |----------|----------|-------------------|
 | Web Claude | 8 | Sequential drain, parallel streams for different tasks |
-| Web Gemini | 1-2 | Sequential, longer sessions |
-| Web Grok | 1-2 | Sequential, real-time focused |
+| Web Gemini | 8 | Sequential drain, parallel streams for different tasks (same Google account pool) |
+| Web Grok | 8 | Sequential, real-time focused (free tier has unpublished caps) |
 | NotebookLM | Unlimited | No quota limits, source-based |
+
+> **Web Gemini rotation**: Apply the same sequential/parallel discipline as Web Claude. Google accounts in the pool each have independent free-tier quotas. Rotate top-to-bottom. Parallel streams should cover different research domains — never duplicate the same query across accounts.
 
 ---
 

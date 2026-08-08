@@ -206,11 +206,13 @@ Format findings for Google Docs/Sheets export:
 ### 6.2 Omega Engine Use Cases
 | Use Case | Recommended Model | Why |
 |----------|-------------------|-----|
-| Multi-source library research | Gemini 3 Pro | 94.1% GPQA, parallel search |
-| Technology adoption comparison | Gemini 3 Pro | Benchmark comparison, code execution |
-| Long-doc architecture review | Gemini 3.1 Pro | 10M context, no truncation |
-| Verification scripts | Gemini 3 Pro | Code execution sandbox |
-| Cross-validation of Claude findings | Gemini 3 Pro | Independent model perspective |
+| Multi-source library research | **Gemini 3.5 Flash** | 92.7% GPQA Diamond, parallel search, free ✅ |
+| Technology adoption comparison | **Gemini 3.5 Flash** | Benchmark comparison, code execution, free ✅ |
+| Long-doc architecture review | **Gemini 3.1 Pro** (varying access) | 2M context — use when available; falls back to Flash |
+| Verification scripts | **Gemini 3.5 Flash** | Code execution sandbox, free ✅ |
+| Cross-validation of Claude findings | **Gemini 3.6 Flash** | Default free model, independent perspective ✅ |
+
+> **Paid access note**: If you have a paid Google AI Studio plan, Gemini 3.1 Pro ($2/$12/MTok) gives guaranteed 2M context without fallback. For free-tier usage, use Flash models — they are capable for all Omega Engine tasks at these benchmarks.
 
 ### 6.3 Pricing Notes (2026)
 - **Gemini 3 Pro**: $1.25/$2.50/MTok (<200K), $2.50/$5.00/MTok (>200K)
@@ -260,11 +262,12 @@ Include runnable code for critical verifications (see §3.1).
 ## 9. QUICK REFERENCE
 
 ### Model Comparison
-| Model | Context | Input/Output | Best For |
-|-------|---------|--------------|----------|
-| Gemini 3 Flash | 1M | $0.075/$0.30/MTok | Cost-optimized, high-volume |
-| Gemini 3 Pro | 1-2M | $1.25/$2.50/MTok | Flagship, balanced |
-| Gemini 3.1 Pro | 10M | Preview | Ultra-long context |
+| Model | Context | Cost | Free? | Best For |
+|-------|---------|------|-------|----------|
+| **Gemini 3.6 Flash** | 1M | Free | ✅ Default | Everyday tasks, cross-validation |
+| **Gemini 3.5 Flash** | 1M | Free | ✅ | Coding, research, benchmarks (78.8% SWE-bench) |
+| **Gemini 3.1 Flash-Lite** | 1M | Free | ✅ | High-volume, cost-optimized |
+| **Gemini 3.1 Pro** | 2M | $2/$12/MTok | ⚠️ Varying | Deeper reasoning (switches to Flash on free) |
 
 ### Format Quick Reference
 | Layer | Format |

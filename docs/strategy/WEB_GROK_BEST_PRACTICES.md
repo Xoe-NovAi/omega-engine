@@ -33,9 +33,12 @@
 
 ### 1.1 Access
 1. Go to `grok.com` (or iOS/Android app)
-2. Sign in with SuperGrok or X Premium+ account
+2. Sign in with any X account (free tier) or SuperGrok account (paid)
 3. No installation required — runs in browser/app
-4. Select model from picker (Grok 4.5, Grok 4 Heavy for Heavy tier)
+4. **Free tier**: Grok 3 / Grok 4 Mini available immediately — no subscription needed
+5. **Paid tier**: Select model from picker after subscribing (Grok 4.5 → SuperGrok ~$30/mo; Grok 4 Heavy → SuperGrok Heavy ~$300/mo)
+
+> **Free tier is fully usable** for Omega Engine real-time X search tasks. Grok 3/4 Mini handles x_search queries and real-time sentiment well. Reserve SuperGrok for DeepSearch, Connectors, and Grok Skills.
 
 ### 1.2 Architecture (2026)
 - **Cloud-based** — no local file access, runs on xAI infrastructure
@@ -355,8 +358,14 @@ When referencing connector data in prompts:
 
 ### Setup Checklist
 ```
-☐ SuperGrok account active
-☐ Model selected (Grok 4.5 / 4 Heavy)
+FREE TIER (Grok 3 / Grok 4 Mini):
+☐ Sign in at grok.com with any X account
+☐ Real-time X search enabled (x_search tool available)
+☐ Use for: real-time sentiment, quick fact checks, X trend monitoring
+
+SUPERGROK (~$30/mo — Grok 4.5):
+☐ SuperGrok subscription active
+☐ Model selected (Grok 4.5)
 ☐ Custom Instructions in Markdown format
 ☐ Real-time X search enabled (x_search tool)
 ☐ Connectors configured (GitHub, Notion, Linear, etc.)
@@ -391,13 +400,14 @@ When referencing connector data in prompts:
 
 **Before any Web Grok interaction, agents MUST:**
 1. Read this document
-2. Verify SuperGrok account access
-3. Select appropriate model (Grok 4.5 / 4 Heavy)
-4. Prepare system prompt in Markdown format
-5. Configure Connectors and Grok Skills as needed
-6. Enable real-time X search (explicit x_search directives)
-7. Upload reference files with metadata
-8. Log interaction in `data/coordination/HMC_COLLABORATION_HUB.md`
+2. Determine tier needed: free (Grok 3/4 Mini, x_search) or paid (Grok 4.5+, DeepSearch, Connectors)
+3. Sign in at grok.com — free tier requires only an X account; paid requires SuperGrok subscription
+4. Select appropriate model (Grok 3/4 Mini free; Grok 4.5 SuperGrok; Grok 4 Heavy SuperGrok Heavy)
+5. Prepare system prompt in Markdown format
+6. Configure Connectors and Grok Skills as needed (SuperGrok only)
+7. Enable real-time X search (explicit x_search directives)
+8. Upload reference files with metadata
+9. Log interaction in `data/coordination/HMC_COLLABORATION_HUB.md`
 
 ---
 

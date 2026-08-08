@@ -105,9 +105,9 @@ This is the canonical end-to-end workflow. Every Web Claude engagement follows t
 │     → Paste system prompt into Custom Instructions          │
 │     → Upload knowledge files (≤12)                          │
 │                                                             │
-│  4. SESSION: Paste chat initiation prompt, run analysis     │
-│     → Use Sonnet 4.6 (Thinking) for deep work               │
-│     → Use Haiku 4.5 (Extended Thinking) for quick tasks     │
+     │  4. SESSION: Paste chat initiation prompt, run analysis     │
+     │     → Use Sonnet 5 (Extended Thinking) for deep work        │
+     │     → Use Haiku 4.5 (Extended Thinking) for quick tasks     │
 │     → Monitor token usage; if hitting limit → see §10       │
 │                                                             │
 │  5. EXTRACT: Download artifact as .md file                  │
@@ -418,8 +418,9 @@ Produce your output as a structured Markdown report ending with "ARTIFACT COMPLE
 ```
 
 ### 8.2 Model Selection
-- **Sonnet 4.6 (Thinking)**: All deep work — code review, architecture, complex synthesis
+- **Sonnet 5 (Extended Thinking)**: All deep work — code review, architecture, complex synthesis. This is the free default as of July 1, 2026.
 - **Haiku 4.5 (Extended Thinking)**: Quick tasks — summarization, extraction, simple Q&A
+- **Note**: Sonnet 4.6 is available via OpenCode CLI (Antigravity SDK) — a separate platform with a separate token budget. On Web Claude free tier, always use Sonnet 5.
 
 ### 8.3 Token Discipline During Session
 - Don't ask Claude to re-read files it already has in context — waste of tokens
@@ -629,7 +630,8 @@ SETUP (claude.ai):
 
 SESSION:
 ☐ Paste CHAT_INITIATION_PROMPT.md as first message
-☐ Select Sonnet 4.6 (Thinking) for deep work
+☐ Select Sonnet 5 (Extended Thinking) for deep work
+☐ Select Haiku 4.5 (Extended Thinking) for quick tasks
 ☐ Monitor token usage
 ☐ Wait for "ARTIFACT COMPLETE" signal
 
