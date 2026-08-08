@@ -136,6 +136,7 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 | `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` | systemd deployment guide (UO-4 Phase 2) |
 | `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` | Sovereign WAD protocol (UO-4 Phase 2) |
 | `docs/architecture/GUIDANCE_SET_SCHEMA.md` | Guidance set schema (UO-4 Phase 2) |
+| `docs/strategy/UNOVERENGINEERING_PLAN.md` | Temple cleansing sprint (5 phases, ~5,500 lines) |
 
 ---
 

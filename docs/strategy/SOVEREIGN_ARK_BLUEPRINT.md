@@ -114,7 +114,9 @@ EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 NEXT (post-UO-4, freeze lifted):
 ├── V-10 AppArmor container hardening (🚨 GAP — containers unconfined)
 ├── V-9 IA2 envelope freshness/signature (⚠️ GAP — no freshness check)
-└── UO-6 Un-overengineering Phase 1 library adoptions (READY)
+├── UO-6 Un-overengineering Phase 1 (library swaps: pybreaker, Pydantic v2, stamina, structlog, prometheus_client)
+│     Full plan: `docs/strategy/UNOVERENGINEERING_PLAN.md` (5 phases, ~5,500 lines, ~30h)
+└── UO-7 Un-overengineering Phase 2-5 (consolidation + memory + gates)
 
 SUPER-URGENT (parallel, Architect):
 ├── G-1 Workhorse continuity (billing / Antigravity / OCZ)
@@ -275,6 +277,7 @@ Full matrix: **`STRATEGY_CORPUS_MAP.md` §1**
 | `docs/strategy/STRATEGY_INDEX.md` | Doc hierarchy index |
 | **`docs/strategy/STRATEGY_CORPUS_MAP.md`** | **Fine-grained preservation (mandatory companion)** |
 | **`docs/strategy/FLEET_TEAM_PLAYBOOK.md`** | **Fleet teamwork & coordination playbook** |
+| `docs/strategy/UNOVERENGINEERING_PLAN.md` | Temple cleansing sprint (5 phases, ~5,500 lines) |
 | `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | Phase D detail (amended) |
 | `docs/strategy/CANONICAL_ROADMAP_20260721.md` | Superseded tactical draft (trail) |
 | `docs/archive/strategy/2026-07-21/SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md` | Ark v4.4 full body |

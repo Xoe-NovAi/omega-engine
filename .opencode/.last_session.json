@@ -2,12 +2,12 @@
   {
     "id": "ses_04be7836affe79QIYKEpbRMcf9",
     "agent": "kali",
-    "model": "{\"id\":\"nemotron-3-ultra-free\",\"providerID\":\"opencode\",\"variant\":\"medium\"}",
+    "model": "{\"id\":\"nemotron-3-ultra-free\",\"providerID\":\"opencode\",\"variant\":\"low\"}",
     "directory": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine",
     "time_created": 1785432931477,
-    "time_updated": 1786154765712,
-    "tokens_input": 26695077,
-    "tokens_output": 592138,
-    "cost": 8.849692800000001
+    "time_updated": 1786156269726,
+    "tokens_input": 28110787,
+    "tokens_output": 606806,
+    "cost": 9.045704800000001
   }
 ]

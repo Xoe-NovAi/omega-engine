@@ -8,7 +8,7 @@
   "status": "ACTIVE",
   "status_detail": "UO-4 DOC_SANITY COMPLETE (PART 1 archival + PART 2 web reconciliation + core docs freshened). Freeze LIFTED. Next: UO-6 un-overengineering + V-9/V-10 gap remediation.",
   "supersedes": [
-    "FOUNDATION-STAB-01 (Jul 20 Phase Β — historical)",
+    "FOUNDATION-STAB-01 (Jul 20 Phase \u0392 \u2014 historical)",
     "docs/archive/sprints/EXECUTION_PLAN_20260725.md (sprint control)",
     "docs/sprints/guard-and-distill/index.md (sprint control)"
   ],
@@ -67,19 +67,22 @@
     },
     "unoverengineer_phase1": {
       "status": "PENDING",
-      "depends_on": ["doc_sanity", "ssot_stable"],
-      "note": "pybreaker/stamina/structlog/prometheus — after docs sane"
+      "depends_on": [
+        "doc_sanity",
+        "ssot_stable"
+      ],
+      "note": "pybreaker/stamina/structlog/prometheus \u2014 after docs sane"
     }
   },
   "workstreams": {
     "UO-0": {
-      "task": "Ops Health A→B→C",
+      "task": "Ops Health A\u2192B\u2192C",
       "owner": "cline",
       "status": "COMPLETE",
       "risk": "MEDIUM"
     },
     "UO-1": {
-      "task": "SSOT reconciliation (ACTIVE_SPRINT, OMEGA §2, SESSION_ANCHOR, banners)",
+      "task": "SSOT reconciliation (ACTIVE_SPRINT, OMEGA \u00a72, SESSION_ANCHOR, banners)",
       "owner": "grok_cli",
       "status": "COMPLETE",
       "risk": "HIGH"
@@ -99,7 +102,7 @@
       "pin": "mcp>=1.28.1,<2"
     },
     "UO-4": {
-      "task": "Documentation sanity — inventory, supersede, archive, consolidate (1M context)",
+      "task": "Documentation sanity \u2014 inventory, supersede, archive, consolidate (1M context)",
       "owner": "kali",
       "status": "COMPLETE",
       "risk": "HIGH",
@@ -126,7 +129,15 @@
       "task": "Un-overengineering Phase 1 library adoptions",
       "owner": "kali",
       "status": "READY",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "artifact": "docs/strategy/UNOVERENGINEERING_PLAN.md"
+    },
+    "UO-7": {
+      "task": "Un-overengineering Phase 2-5 (consolidation + memory + gates)",
+      "owner": "kali",
+      "status": "PENDING",
+      "risk": "HIGH",
+      "artifact": "docs/strategy/UNOVERENGINEERING_PLAN.md"
     }
   },
   "decisions_locked": [
@@ -138,8 +149,9 @@
   ],
   "ark_strategy_ssot": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "notes": [
-    "Foundation Stabilization FOUNDATION-STAB-01 is historical — do not resume as current sprint.",
-    "make sovereignty target intentionally absent — do not implement.",
-    "Breaker clone count corrected to 17 (was 6 in early plan text)."
+    "Foundation Stabilization FOUNDATION-STAB-01 is historical \u2014 do not resume as current sprint.",
+    "make sovereignty target intentionally absent \u2014 do not implement.",
+    "Breaker clone count corrected to 17 (was 6 in early plan text).",
+    "UO-6 un-overengineering plan documented in docs/strategy/UNOVERENGINEERING_PLAN.md (formal strategy doc)"
   ]
 }
