@@ -20,13 +20,13 @@ The original plan had 10 critical errors identified by GLM52 second opinion (F1-
 | F2 | Install stamina for retries | **TRADEOFF** — tenacity already installed; stamina gives free structlog+prometheus instrumentation. interlock-cb v2 has built-in retry pipeline (timeout, bulkhead, breaker, retry, fallback). Spike both. | GLM52 F2 v2.0 + Researcher §1 |
 | F3 | CI gates protect the work | **WRONG** — CI only runs on `main`. Was a gap on `release/initial-v1`. | GLM52 F3 |
 | F4 | Redis removal is Hivemind-only | **WRONG** — Redis in budget_guard (M12/M21), youtube_worker, memory providers. Researcher recommends **SQLite + Honker** for single-node. | GLM52 F4 + Researcher §2 |
-| F5 | httpx2 is a fork risk | **CORRECTED** — httpx2 is the active fork (upstream httpx stalled). Already installed (v2.5.0). Adopt. | GLM52 F5 corrected + Researcher §4 |
+| F5 | httpx2 is a fork risk | **CORRECTED** — httpx2 is the active fork (upstream httpx stalled). Already installed (v2.5.0). Uses **anyio** for structured concurrency — M1 compliant. Adopt. | GLM52 F5 corrected + Researcher §4 |
 | F8 | "17 breaker clones" | **STALE** — actual: 8 class hits (2 enums, 1 canonical, 1 deprecated file, 1 clone) | Ground truth `rg` |
 | F9 | Heritage tags not mentioned | **MISSING** — handoff.py has vet-008, soul_validator.py has vet-015. M14 migration needed. | GLM52 F9 |
 | F11 | M23 compliance is 92% | **UNTRUSTABLE** — pre-commit hook rg invocation is broken, passes falsely | GLM52 F11 |
 | F12 | Test suite times out (HIGH risk) | **PHANTOM** — never measured with adequate budget | GLM52 F12 |
 | F16 | `model_validate_yaml()` exists | **WRONG** — doesn't exist in Pydantic v2 core. Use `yaml.safe_load()` + `model_validate()`. | GLM52 F16 + Researcher §5 |
-| F17 | "Kill 2 of 3 distillers" | **MOSTLY DONE** — scribe distiller already deleted. miap.py still exists. | Ground truth grep |
+| F17 | "Kill 2 of 3 distillers" | **MOSTLY DONE** — scribe distiller already deleted. miap.py (631 lines) still exists but has ZERO imports — dead code, needs deletion. | Ground truth grep |
 | F18 | MCP v2 is P2 | **ELEVATE to P1** — v2 stable July 27, 2026. Pin is deferral, not solution. | GLM52 F18 + Researcher §3 |
 
 **New findings from Researcher deep web research (2026-08-08):**
