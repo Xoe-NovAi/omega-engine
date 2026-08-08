@@ -103,7 +103,7 @@ EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 
 **Current Sprint**: `data/coordination/ACTIVE_SPRINT.json` (LLM-native format)
 - Full plan: `docs/sprints/current/llms-full.txt` (16K tokens for agent consumption)
-- Research index: `docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md`
+- Research index: `docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md` (archived)
 
 ```
 SUPER-URGENT (parallel, Architect):

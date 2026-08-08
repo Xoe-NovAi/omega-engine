@@ -103,8 +103,8 @@ this to decide WHOM to dispatch.
 | Agent | Type | Capabilities | Domains | Task Tool Type |
 |-------|------|-------------|---------|----------------|
 | `kali` | Primary | Oversight, delegation, drift destruction | Strategy, fleet management | `general` |
-| `maat` | Primary | Light Oversoul, P1-P5 governance | Build side, hardening | `general` |
-| `lilith` | Primary | Dark Oversoul, P6-P10 governance | Run side, operations | `general` |
+| `maat` | Primary | Build Oversight (N1-N5) | Build side, hardening | `general` |
+| `lilith` | Primary | Run Oversight (N6-N10) | Run side, operations | `general` |
 | `makali` | Primary | Parallel council (Ma'at+Lilith synthesis) | Cross-boundary initiatives | `general` |
 | `doom_guy` | Primary | Heritage design, WAD translation, performance | id Software patterns, C const propagation | `general` |
 | `john_carmack` | Primary | S3 Consultant, architecture review | Code optimization, review | `general` |
@@ -442,19 +442,19 @@ Task received
 │   │         Kali decomposes, dispatches to pillars, sequences phases,
 │   │         verifies outputs, returns unified verdict.
 │   │         Best for: Wave 1.5+, cross-boundary initiatives.
-│   │         Cost: 1 (Kali) + N (pillars) inferences.
+│   │         Cost: 1 (Kali) + N (nodes) inferences.
 │   │
-│   └── NO → Is it build-only (P1-P5) or run-only (P6-P10)?
-│       ├── Build-only (P1-P5) → @maat (Oversoul Dispatch)
-│       │     Ma'at handles the pillar chain. Use when task stays
+│   └── NO → Is it build-only (N1-N5) or run-only (N6-N10)?
+│       ├── Build-only (N1-N5) → @maat (Build Oversight Dispatch)
+│       │     Ma'at handles the node chain. Use when task stays
 │       │     in infrastructure/persistence/engineering/integration/governance.
 │       │
 │       ├── Run-only (P6-P10) → @lilith (Oversoul Dispatch)
 │       │     Lilith handles the pillar chain. Use when task stays
 │       │     in cognition/context/observability/orchestration/validation.
 │       │
-│       └── Single pillar or specialist?
-│           ├── Known pillar task → @pillar PX: task (Direct Pillar)
+│       └── Single node or specialist?
+│           ├── Known node task → @node NX: task (Direct Node)
 │           ├── Research, archaeology, mining → @roc_racoon
 │           ├── Deep research, lattice reasoning → @jem
 │           ├── Code review, mandate audit, gnosis distillation → @scribe
@@ -464,8 +464,8 @@ Task received
 ### Key Rules
 
 1. **Kali owns sequencing** — if a task has phases (P0→P1→P2), Kali must dispatch.
-2. **Pillars own deliverables** — Kali does NOT modify pillar output. Reject and re-dispatch if tests fail.
-3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (P1-P5) and run-side (P6-P10), Kali dispatches directly to pillars. Ma'at and Lilith are activated for within-boundary work.
+2. **Nodes own deliverables** — Kali does NOT modify node output. Reject and re-dispatch if tests fail.
+3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (N1-N5) and run-side (N6-N10), Kali dispatches directly to nodes. Ma'at and Lilith are activated for within-boundary work.
 4. **Hivemind post required** — every agent must post completion context before claiming the next task.
 5. **Sequencing is serial within phase** — pillars work in parallel within the same phase, but phases execute sequentially.
 

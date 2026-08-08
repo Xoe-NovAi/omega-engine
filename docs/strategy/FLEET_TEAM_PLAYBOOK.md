@@ -57,10 +57,10 @@ Use the role that matches the **ticket**, not your favorite persona.
 | Role | Entities | Owns | Does not own |
 |------|----------|------|----------------|
 | **Sprint Lead** | `@kali` | Priority calls, handoff routing, conflict resolution, Ark updates after decisions | Solo-implementing everything |
-| **Apex / Strategy** | `@makali` | Deep strategy, decompositions, board-level synthesis | Ground-troop file wars without dispatch |
-| **Build Oversoul** | `@maat` | P1–P5: infra, persistence, engineering, integration, governance build | Run-side soul metabolism alone |
-| **Run Oversoul** | `@lilith` | P6–P10: cognition, context, observability, orchestration, validation | Ignoring Build locks on shared files |
-| **Pillars** | `@pillar` P1–P10 | Domain tickets under Ma’at/Lilith | Creating new roadmaps |
+| **Synthesis / Council** | `@makali` | Deep strategy, decompositions, board-level synthesis | Ground-troop file wars without dispatch |
+| **Build Oversight (N1-N5)** | `@maat` | N1-N5: infra, persistence, engineering, integration, governance build | Run-side soul metabolism alone |
+| **Run Oversight (N6-N10)** | `@lilith` | N6-N10: cognition, context, observability, orchestration, validation | Ignoring Build locks on shared files |
+| **Nodes** | `@node NX` | Domain tickets under Ma'at/Lilith | Creating new roadmaps |
 | **Research** | `@researcher` | Gap audits, queue design, deep multi-source research | Shipping untested production writers |
 | **Legacy / Patterns** | `@roc_racoon` | Mine proven patterns; propose ports with file+line | Drive-by full rewrites without handoff |
 | **Heritage / Perf** | `@doom_guy` | M14 tags, WAD/id-soft, performance instincts | Strategy SSOT edits |
@@ -75,13 +75,13 @@ Use the role that matches the **ticket**, not your favorite persona.
 
 | Work | Lead | Support |
 |------|------|---------|
-| C-0 tests red | Ma’at/P10 or Verity | Pillar owning module |
-| C-1′ SoulStore | Ma’at/P3 or Lilith/P7 | Roc (pattern), Verity (M11) |
-| C-2′ / C-10 RAM | Ma’at/P1 | Carmack (review), Doom Guy (perf) |
-| C-4 MCP | Ma’at/P4 | Grok CLI (spec pressure), Researcher |
-| C-5 MaKaLi config | Kali | Lilith/P6 |
-| C-6′ breakers | Ma’at/P3 | Roc (don’t add 7th clone) |
-| D-1 content cache | Lilith/P6 + P3 | Carmack “R00” discipline |
+| C-0 tests red | Ma'at/N10 or Verity | Node owning module |
+| C-1′ SoulStore | Ma'at/N3 or Lilith/N7 | Roc (pattern), Verity (M11) |
+| C-2′ / C-10 RAM | Ma'at/N1 | Carmack (review), Doom Guy (perf) |
+| C-4 MCP | Ma'at/N4 | Grok CLI (spec pressure), Researcher |
+| C-5 MaKaLi config | Kali | Lilith/N6 |
+| C-6′ breakers | Ma'at/N3 | Roc (don't add 7th clone) |
+| D-1 content cache | Lilith/N6 + N3 | Carmack "R00" discipline |
 | E-0 Soul Kernel | Grokster | Kali go-ahead after C-1′ |
 | Adversarial review | Grok CLI or Grokster | Kali synthesis |
 | Strategy conflict | Kali | Makali if multi-horizon |
