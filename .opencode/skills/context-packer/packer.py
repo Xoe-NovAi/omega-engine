@@ -27,6 +27,15 @@ from typing import List, Dict, Any, Set, Tuple, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 
+# ── V3 security-hardened XML (manual §1.2 step 5, §1.3) ───────────────────────
+# defusedxml: PARSE-ONLY (its Element/SubElement are intentionally absent).
+# stdlib xml.etree.ElementTree: ELEMENT CREATION.
+import xml.etree.ElementTree as ETree
+from defusedxml import ElementTree as DET
+
+# ── V3 community substitution for _glob_files/_match_pattern (manual §1.2 step 1) ──
+from pathspec import GitIgnoreSpec
+
 try:
     import tiktoken
     ENCODER = tiktoken.get_encoding("cl100k_base")  # Claude's tokenizer
@@ -167,6 +176,173 @@ def _escape_bare_xml_chars(text: str) -> str:
     # Escape & only when not already part of a valid XML entity.
     text = re.sub(r'&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)', '&amp;', text)
     return text
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# V3 DETERMINISTIC 5-STEP CONTRACT API (manual §1.2, §2; Phase 3)
+# ============================================================================
+# These module-level functions are the v3 specification. The contract suite at
+# tests/contract/test_context_packer_v3.py pins their exact behavior. They are
+# ADDITIVE — they do not disturb the legacy v2 EnhancedContextPacker pipeline,
+# which remains for backward compatibility until the full Phase 3 rewrite wires
+# `pack()` onto these primitives (and the v2 surgical methods are removed).
+# ============================================================================
+
+# step 4 — LITM zone -> priority mapping (manual §1.2 step 4, §1.6)
+LITM_ZONE_PRIORITY: Dict[str, int] = {"start": 3, "middle": 2, "end": 1}
+
+
+def apply_litm_priority(bundle: Dict[str, Any]) -> Dict[str, Any]:
+    """Resolve a bundle's ``litm_zone`` into a prioritized copy (step 4).
+
+    ``start=3``, ``middle=2``, ``end=1``. Unknown or missing zone defaults to
+    middle (2). v3 owns the zone->priority mapping.
+    """
+    zone = bundle.get("litm_zone")
+    bundle["priority"] = LITM_ZONE_PRIORITY.get(zone, 2)
+    return bundle
+
+
+class PackValidationError(RuntimeError):
+    """Fail-closed validation error. Message carries ``[PACK-FAIL]`` (M23)."""
+
+
+def validate_pack(
+    bundles: Dict[str, List[Dict[str, Any]]],
+    cfg: "PlatformConfig",
+    required_themes: Optional[Set[str]] = None,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """FAIL-CLOSED validation (manual §1.2 step 3, §1.2.3; M23 / DoD P0-2).
+
+    Raises :class:`PackValidationError` (``[PACK-FAIL]``) if ANY of:
+      * a required theme is absent,
+      * a theme's summed ``token_count`` exceeds ``cfg.token_budget_per_bundle``,
+      * the total across all themes exceeds ``cfg.token_budget_total``,
+      * the number of bundles + 1 (the manifest) exceeds ``cfg.max_slots``.
+
+    Never trims or silently deletes themes to fit a budget — it hard-stops
+    with a diagnostic naming the offending theme and its largest files.
+    """
+    required_themes = required_themes or set()
+
+    present = set(bundles.keys())
+    missing = required_themes - present
+    if missing:
+        raise PackValidationError(
+            f"[PACK-FAIL] required theme missing: {sorted(missing)}. "
+            f"Present: {sorted(present)}"
+        )
+
+    offenders = []
+    for theme, files in bundles.items():
+        total = sum(int(f.get("token_count", 0)) for f in files)
+        per_limit = int(cfg.token_budget_per_bundle)
+        if total > per_limit:
+            offenders.append((theme, total - per_limit, files))
+    if offenders:
+        offenders.sort(key=lambda o: -o[1])
+        theme, _over, files = offenders[0]
+        largest = sorted(files, key=lambda f: -int(f.get("token_count", 0)))[:3]
+        top3 = "; ".join(f"{f.get('path', '?')}~{f.get('token_count', 0)}" for f in largest)
+        raise PackValidationError(
+            f"[PACK-FAIL] theme '{theme}' over per_bundle budget "
+            f"({int(cfg.token_budget_per_bundle)}) tokens. Largest files: {top3}"
+        )
+
+    total_all = sum(
+        int(f.get("token_count", 0)) for files in bundles.values() for f in files
+    )
+    if total_all > int(cfg.token_budget_total):
+        raise PackValidationError(
+            f"[PACK-FAIL] total budget exceeded: {total_all} > {int(cfg.token_budget_total)}"
+        )
+
+    slot_count = len(bundles) + 1  # manifest occupies a slot
+    if slot_count > int(cfg.max_slots):
+        raise PackValidationError(
+            f"[PACK-FAIL] max_slots exceeded: {slot_count} (incl. manifest) "
+            f"> {int(cfg.max_slots)}"
+        )
+
+    return bundles
+
+
+def resolve_theme_files(
+    profile: "PackProfile",
+    base_path: os.PathLike,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Expand a profile's ``themes`` globs into concrete file info (step 1).
+
+    Replaces the v2 ``_glob_files``/``_match_pattern`` hand-rolled matchers
+    with ``GitIgnoreSpec`` (full Git behavior: ``**`` recursion, basename
+    matching, negation). Returns ``{theme: [{path, full_path, ...}]}``.
+
+    ``profile.themes`` is the dict form ``{theme: [globs]}``. Each theme's
+    globs are resolved independently against ``base_path``.
+    """
+    base = LibPath(base_path)
+    # Skip heavy/non-source dirs during the walk (keeps O(N) sane over a huge
+    # repo). Themes reference src/, docs/, config/, etc. — never these.
+    _SKIPPED_DIRS = {".git", ".hg", ".venv", "venv", "__pycache__",
+                     "node_modules", "data", "context_packs", ".pytest_cache",
+                     ".mypy_cache", ".ruff_cache"}
+    all_files: List[LibPath] = []
+    for p in base.rglob("*"):
+        if not p.is_file():
+            continue
+        try:
+            if any(part in _SKIPPED_DIRS for part in p.parts):
+                continue
+        except ValueError:
+            continue
+        all_files.append(p)
+
+    # Precompute the POSIX relative path once per file (pathspec requires
+    # POSIX paths, manual §1.3; also avoids recomputing relative_to per pattern).
+    rel_map = [(p, p.relative_to(base).as_posix()) for p in all_files]
+
+    resolved: Dict[str, List[Dict[str, Any]]] = {}
+    for theme, patterns in (profile.themes or {}).items():
+        infos: List[Dict[str, Any]] = []
+        seen: Set[str] = set()
+        for pat in patterns:
+            spec = GitIgnoreSpec.from_lines([pat])
+            for f, rel in rel_map:
+                if rel in seen:
+                    continue
+                if spec.match_file(rel):
+                    infos.append({"path": rel, "full_path": str(f)})
+                    seen.add(rel)
+        resolved[theme] = infos
+    _debug_log(f"resolve_theme_files: themes={list(resolved.keys())}, "
+               f"sizes={ {k: len(v) for k, v in resolved.items()} }")
+    return resolved
+
+
+def write_pii_vault(
+    profile_dir: os.PathLike,
+    profile_name: str,
+    tokens: Dict[str, str],
+) -> LibPath:
+    """Persist a reversible PII token map to ``context_packs/<profile>/pii_vault.json``.
+
+    Per-profile encapsulation (DoD P0-8): the vault lives beside the generated
+    pack, NOT in the global ``data/coordination/pii_vaults/``. Atomic
+    ``.tmp -> .json`` rename (M8/M10 integrity).
+    """
+    profile_dir = LibPath(profile_dir)
+    profile_dir.mkdir(parents=True, exist_ok=True)
+    vault_path = profile_dir / "pii_vault.json"
+    payload = {
+        "profile": profile_name,
+        "generated_at": datetime.now().astimezone().isoformat(),
+        "tokens": tokens,
+    }
+    tmp = profile_dir / "pii_vault.json.tmp"
+    tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    os.replace(tmp, vault_path)
+    _debug_log(f"write_pii_vault: {vault_path} ({len(tokens)} tokens)")
+    return vault_path
 
 
 @dataclass

@@ -9,6 +9,8 @@ profiles:
   # ── Sovereign Audit (hardened — core_engine split into 5 sub-themes) ──────
   sovereign-audit:
     description: "Core Engine and Mandates Audit — hardened 2026-07-11"
+    tier: ship
+    tokenizer_encoding: cl100k_base
     target_platform: "web-claude"
     target_model: "claude-sonnet-5"
     max_slots: 12
@@ -81,6 +83,8 @@ profiles:
   # deliverable docs; source files are packed fresh from current repo state.
   tech-architecture-research:
     description: "Technology Architecture Research — 8 decisions (breaker, Redis, MCP SDK, httpx2, Pydantic YAML, memory, observability, retry)"
+    tier: ship
+    tokenizer_encoding: cl100k_base
     target_platform: "web-claude"
     target_model: "claude-sonnet-5"
     max_slots: 12
@@ -228,6 +232,8 @@ profiles:
   # ── Provider Fabric Review (for Web Claude deep review) ─────────────────────
   provider-fabric-review:
     description: "Deep review of local inference (NativeGGUFProvider) + provider fabric with cloud backends, routing, and streaming"
+    tier: internal
+    tokenizer_encoding: cl100k_base
     target_platform: "web-claude"
     target_model: "claude-sonnet-5"
     max_slots: 12
@@ -336,6 +342,8 @@ profiles:
   # ── Engineering N3 (unchanged, working) ───────────────────────────────────
   engineering-p3:
     description: "Full context for N3 Engineering Node"
+    tier: internal
+    tokenizer_encoding: o200k_base
     max_slots: 12
     include:
       - "src/omega/oracle/orchestrator.py"
@@ -355,6 +363,8 @@ profiles:
   # ── Kali Oversight Pack ────────────────────────────────────────────────────
   kali-oversight:
     description: "Grand Oversight context — mandates, fleet topology, decisions, agents"
+    tier: internal
+    tokenizer_encoding: o200k_base
     max_slots: 12
     include:
       - "SOVEREIGN_MANDATES.md"
@@ -388,6 +398,8 @@ profiles:
   # ── YouTube Research Primer ────────────────────────────────────────────────
   youtube-research-primer:
     description: "YouTube Research Module context — spec, implementation, and integration points"
+    tier: internal
+    tokenizer_encoding: o200k_base
     max_slots: 12
     include:
       - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
@@ -420,6 +432,8 @@ profiles:
   # Stripped: decisions, decree, exit_protocol, session_log, pivot_log.
   decision-tools-review:
     description: "Decision Tools implementation review — grounding, schema, CLI, MEDITATE integration (NOT content decisions)"
+    tier: internal
+    tokenizer_encoding: o200k_base
     max_slots: 12
     include:
       - "docs/strategy/GROUNDED_MEDITATE_DECISION_WORKSPACE_20260718.md"
@@ -454,6 +468,8 @@ profiles:
   # ── Sprint Context Pack ────────────────────────────────────────────────────
   sprint-context:
     description: "Current sprint research, analysis, and implementation plan"
+    tier: internal
+    tokenizer_encoding: o200k_base
     max_slots: 12
     include:
       - "docs/research/R_CONTEXT_ENGINEERING_INTEGRATION.md"
@@ -461,7 +477,7 @@ profiles:
       - "docs/research/R_SONNET46_FINAL_ANALYSIS.md"
       - "docs/research/R_IMPLEMENTATIONS_MANUAL.md"
       - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - "SOVEREIGN_MANDATES.md"
     exclude:
@@ -475,7 +491,7 @@ profiles:
       spec:
         - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer-config.yaml"
       mandates:
         - "SOVEREIGN_MANDATES.md"
@@ -485,12 +501,14 @@ profiles:
   # authoritative hardening spec (CONTEXT_PACKER_HARDENING_SPEC_20260719.md)
   context-packer-hardening-review:
     description: "Context Packer v2 hardening review — spec, implementation, gaps, mandates, platform tuning"
+    tier: internal
+    tokenizer_encoding: o200k_base
     max_slots: 12
     include:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - ".opencode/skills/context-packer/packer.py"
       - "src/omega/oracle/pii_masker.py"
@@ -511,7 +529,7 @@ profiles:
       platform_tuning:
         - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer.py"
         - "src/omega/oracle/pii_masker.py"
       config:
@@ -526,6 +544,8 @@ profiles:
   # ── Web Claude (Sonnet 5) ───────────────────────────────────────────────────
   web-claude-sonnet5:
     description: "Optimized for Claude Sonnet 5 / Opus 4.8 via Web Claude Projects"
+    tier: internal
+    tokenizer_encoding: cl100k_base
     target_platform: "web-claude"
     target_model: "claude-sonnet-5"
     max_slots: 12
@@ -543,7 +563,7 @@ profiles:
     include:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - ".opencode/skills/context-packer/packer.py"
       - "src/omega/oracle/pii_masker.py"
@@ -562,7 +582,7 @@ profiles:
       gaps:
         - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer.py"
         - "src/omega/oracle/pii_masker.py"
       config:
@@ -577,6 +597,8 @@ profiles:
   # ── Web Grok (Grok 4.3) ─────────────────────────────────────────────────────
   web-grok-4.3:
     description: "Optimized for Grok 4.3 via Web Grok / SuperGrok"
+    tier: internal
+    tokenizer_encoding: o200k_base
     target_platform: "web-grok"
     target_model: "grok-4.3"
     max_slots: 20
@@ -596,7 +618,7 @@ profiles:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - ".opencode/skills/context-packer/packer.py"
       - "src/omega/oracle/pii_masker.py"
@@ -617,7 +639,7 @@ profiles:
       platform_tuning:
         - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer.py"
         - "src/omega/oracle/pii_masker.py"
       config:
@@ -632,6 +654,8 @@ profiles:
   # ── Web Grok (Grok 4.1 Fast - Cost Optimized) ───────────────────────────────
   web-grok-4.1-fast:
     description: "Cost-optimized for high-volume review via Grok 4.1 Fast"
+    tier: internal
+    tokenizer_encoding: o200k_base
     target_platform: "web-grok"
     target_model: "grok-4.1-fast"
     max_slots: 20
@@ -645,7 +669,7 @@ profiles:
     include:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - "SOVEREIGN_MANDATES.md"
       - "OMEGA_ENGINE.md"
@@ -661,7 +685,7 @@ profiles:
       gaps:
         - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
       config:
         - ".opencode/skills/context-packer/packer-config.yaml"
       mandates:
@@ -672,6 +696,8 @@ profiles:
   # ── Web Gemini (Gemini 3 Pro) ───────────────────────────────────────────────
   web-gemini-3-pro:
     description: "Optimized for Gemini 3 Pro via Google AI Studio"
+    tier: internal
+    tokenizer_encoding: o200k_base
     target_platform: "web-gemini"
     target_model: "gemini-3-pro"
     max_slots: 30
@@ -689,7 +715,7 @@ profiles:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - ".opencode/skills/context-packer/packer.py"
       - "src/omega/oracle/pii_masker.py"
@@ -710,7 +736,7 @@ profiles:
       platform_tuning:
         - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer.py"
         - "src/omega/oracle/pii_masker.py"
       config:
@@ -725,6 +751,8 @@ profiles:
   # ── Web Gemini (Gemini 3.1 Pro - Ultra Long Context) ────────────────────────
   web-gemini-3.1-pro:
     description: "Ultra-long context for massive codebase analysis"
+    tier: internal
+    tokenizer_encoding: o200k_base
     target_platform: "web-gemini"
     target_model: "gemini-3.1-pro"
     max_slots: 100
@@ -739,7 +767,7 @@ profiles:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - ".opencode/skills/context-packer/packer.py"
       - "src/omega/oracle/pii_masker.py"
@@ -763,7 +791,7 @@ profiles:
       platform_tuning:
         - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer.py"
         - "src/omega/oracle/pii_masker.py"
       config:
@@ -784,6 +812,8 @@ profiles:
   # ── NotebookLM ──────────────────────────────────────────────────────────────
   notebooklm-research:
     description: "Source-grounded export for NotebookLM research workflows"
+    tier: internal
+    tokenizer_encoding: o200k_base
     target_platform: "notebooklm"
     target_model: "gemini-backend"
     max_slots: 50
@@ -801,7 +831,7 @@ profiles:
       - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
       - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
-      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer.py"
       - ".opencode/skills/context-packer/packer-config.yaml"
       - ".opencode/skills/context-packer/packer.py"
       - "src/omega/oracle/pii_masker.py"
@@ -822,7 +852,7 @@ profiles:
       platform_tuning:
         - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
       implementation:
-        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
         - ".opencode/skills/context-packer/packer.py"
         - "src/omega/oracle/pii_masker.py"
       config:

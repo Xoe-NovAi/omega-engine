@@ -360,6 +360,13 @@ class PlatformConfig:
     audio_overview_ready: bool = False
     guided_prompts: bool = False
     citation_format: str = "default"
+    # NEW (v3, manual §1.7.6): which tiktoken encoding this platform uses.
+    tokenizer_encoding: str = "cl100k_base"
+    # NEW (v3, manual §1.5): safety margin applied by the shared TokenEstimator
+    # (replaces the v2 hardcoded 1.3). Claude default 1.3; other platforms
+    # configured per profile.
+    token_margin_multiplier: float = 1.3
+    tier: str = "internal"  # NEW (v3, §2): ship | internal | template
 
     @classmethod
     def from_profile_config(cls, data: Dict[str, Any]) -> "PlatformConfig":
@@ -393,6 +400,9 @@ class PlatformConfig:
             audio_overview_ready=bool(data.get("audio_overview_ready", False)),
             guided_prompts=bool(data.get("guided_prompts", False)),
             citation_format=data.get("citation_format", "default"),
+            tokenizer_encoding=data.get("tokenizer_encoding", "cl100k_base"),
+            token_margin_multiplier=float(data.get("token_margin_multiplier", 1.3)),
+            tier=data.get("tier", "internal"),
         )
 
     @property

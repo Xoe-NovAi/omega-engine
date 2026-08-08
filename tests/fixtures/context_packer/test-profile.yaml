@@ -1,0 +1,18 @@
+profiles:
+  test-profile:
+    description: "Minimal curator test profile (2 themes, tiny budgets)"
+    tier: internal
+    target_platform: "web-claude"
+    tokenizer_encoding: "cl100k_base"
+    token_margin_multiplier: 1.3
+    max_slots: 4
+    format: "xml"
+    bundle_ordering: "litm-u-shaped"
+    token_budget:
+      total: 100000
+      per_bundle: 50000
+    themes:
+      theme_a:
+        - "theme_a/*.py"
+      theme_b:
+        - "theme_b/file3.md"
