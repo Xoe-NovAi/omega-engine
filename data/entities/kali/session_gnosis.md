@@ -214,4 +214,32 @@
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-08*
+## 🔄 Context Packer Hardening — 2026-08-08 (Continuation)
+
+### Bug Diagnosis
+- **Bundle explosion**: `sovereign-audit` pack produced 12 XML files (11 `strategy_part24-34` + `general.xml`) with all core engine themes (mandates, oracle_core, memory, observability, mcp_hub, config) DISCARDED.
+- **Root cause**: `_trim_to_token_limit` (packer.py:424) removes priority-1 themes in insertion order when total > `MAX_TOTAL_TOKENS` (150000). All theme names fail to match `CRITICAL_START_BUNDLES`/`CRITICAL_END_BUNDLES` keywords, so ALL get priority 1. Trim deletes mandates→oracle_core→memory→observability→mcp_hub→config first (insertion order), keeping only strategy split fragments at the end.
+- **v1 vs v2**: Original v1 packer had NO token enforcement, NO splitting, NO max_slots use (parsed but unused). Multi-part behavior is v2-introduced.
+
+### John Carmack Review (ses_01e504380ffe)
+- Verdict: "over-engineered garbage" — 9 phases of post-hoc surgery
+- Fix: Kill split/trim/consolidate pipeline; make config source of truth with explicit file lists + priorities; add `curate_packs.py` tool
+- Report: `docs/research/R_CONTEXT_PACKER_ARCH_REVIEW_20260808.md`
+
+### Tracing Added to packer.py
+- `OMEGA_PACKER_DEBUG=1` / `OMEGA_PACKER_TRACE=1` env vars enable phase-level diagnostics
+- Phase-by-phase logging: P1 include match counts, P4 theme distribution, P5/P6/P6b bundle counts, P6b final bundle list, P8 bundle writes
+- Zero-match warnings for includes/themes
+- Per-phase try/except with `[PACK-FAIL]` context
+- PII vault tracing
+
+### Next Steps
+1. Rewrite packer.py: simplified 4-phase pipeline (resolve → count → order → write), delete split/trim/consolidate
+2. Update packer-config.yaml: new schema with theme list (name, priority, files) + per-profile token budgets
+3. Create curate_packs.py: expand globs, count tokens, warn on over-budget themes
+4. Regenerate both packs (sovereign-audit, tech-architecture-research) — ≤12 bundles, all themes present
+5. XML system prompts, chat initiations, parallel-run guide, validate, commit, push
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-08*
