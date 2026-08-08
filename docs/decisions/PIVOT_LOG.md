@@ -523,3 +523,13 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ **COMPLETE**
 
 *⬡ OMEGA ⬡ KALI ⬡ D-511 ⬡ 2026-08-08*
+
+### D-512: sqlite-vec M14 Heritage Tag Correction
+* **Date**: 2026-08-08
+* **Decision**: Reclassify `[id-soft: sqlite-vec-2024]` → `[heritage: sqlite-vec 2024]` in
+  `src/omega/search/__init__.py` and `search_persistence.py`. sqlite-vec is a general
+  open-source heritage source, not an id Software technique. Caught by `ark_optimizer.py --dry-run`.
+* **Verification**: `grep -rn "id-soft.*sqlite" src/` = 0. `ark_optimizer.py --dry-run` no longer flags the mis-tag.
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-512 ⬡ 2026-08-08*

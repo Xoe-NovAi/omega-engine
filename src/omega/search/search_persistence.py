@@ -1,4 +1,4 @@
-# [id-soft: sqlite-vec-2024] Search Persistence Layer — SQLite-backed search history with full traceability
+# [heritage: sqlite-vec 2024] Search Persistence Layer — SQLite-backed search history with full traceability
 """
 Search Results Persistence System
 

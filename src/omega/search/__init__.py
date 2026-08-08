@@ -1,4 +1,4 @@
-# [id-soft: sqlite-vec-2024] Search Package — Persistence, metrics, and traceability for all search operations
+# [heritage: sqlite-vec 2024] Search Package — Persistence, metrics, and traceability for all search operations
 """
 Omega Search Package
 
