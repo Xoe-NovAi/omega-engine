@@ -34,7 +34,7 @@ def load_lens_library(name: str, iwad: str | None = None) -> PersonaLibrary:
     """Load a named lens library from the active WAD's lenses.yaml.
 
     Args:
-        name: Library name key (e.g., 'omega_pantheon', 'makali_triad').
+        name: Library name key (e.g., 'omega_nodes', 'makali_triad').
         iwad: IWAD name. If None, uses active_iwad from config/omega.yaml.
 
     Returns:

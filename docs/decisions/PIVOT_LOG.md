@@ -558,3 +558,20 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-514 ⬡ 2026-08-08*
+
+### D-515: Complete omega_pantheon → omega_nodes Rename (D-510 Follow-up Fix)
+* **Date**: 2026-08-08
+* **Context**: The D-510 nomenclature migration renamed the meditation lens library key
+  `omega_pantheon` → `omega_nodes` in `config/wads/_omega_default/meditate/lenses.yaml`
+  (Arcana-Nova Pantheon → technical 10-Node framework). Commit 5b806c1d propagated the
+  data rename but left the code docstring and test referencing the old name.
+* **Decision**: Complete the rename in `src/omega/meditate/lens_registry.py` (docstring) and
+  `tests/test_meditate_protocol.py` (`_omega_nodes()` helper, `test_omega_nodes_library`,
+  assertions updated to Omega Nodes persona names Infrastructure/Persistence/.../Validation).
+  This fixes a real regression: `load_lens_library("omega_pantheon")` raised KeyError because
+  the YAML key no longer existed.
+* **Verification**: `rg "omega_pantheon" src/ tests/` = 0. `tests/test_meditate_protocol.py`:
+  17 passed. Full suite meditate + world_state modules green in isolation.
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-515 ⬡ 2026-08-08*

@@ -19,15 +19,15 @@ from src.omega.meditate.lens_registry import load_lens_library
 
 # ── Fixture helpers ────────────────────────────────────────────────────────────
 # Loaded once per session to avoid repeated WAD YAML I/O in tests.
-_OMEGA_PANTHEON = None
+_OMEGA_NODES = None
 _MAKALI_TRIAD = None
 
 
-def _omega_pantheon():
-    global _OMEGA_PANTHEON
-    if _OMEGA_PANTHEON is None:
-        _OMEGA_PANTHEON = load_lens_library("omega_pantheon")
-    return _OMEGA_PANTHEON
+def _omega_nodes():
+    global _OMEGA_NODES
+    if _OMEGA_NODES is None:
+        _OMEGA_NODES = load_lens_library("omega_nodes")
+    return _OMEGA_NODES
 
 
 def _makali_triad():
@@ -101,14 +101,14 @@ def test_persona_spec_immutable():
 # ── PersonaLibrary Tests ───────────────────────────────────────────────────────
 
 
-def test_omega_pantheon_library():
-    """omega_pantheon library returns 10 personas with correct order."""
-    lib = _omega_pantheon()
-    assert lib.name == "Omega Pantheon"
+def test_omega_nodes_library():
+    """omega_nodes library returns 10 personas with correct order."""
+    lib = _omega_nodes()
+    assert lib.name == "Omega Nodes"
     assert len(lib) == 10
-    assert lib[0].name == "Sekhmet"
-    assert lib[1].name == "Brigid"
-    assert lib[9].name == "Kali"
+    assert lib[0].name == "Infrastructure"
+    assert lib[1].name == "Persistence"
+    assert lib[9].name == "Validation"
 
 
 def test_makali_triad_library():
@@ -133,7 +133,7 @@ def test_default_lenses_fallback():
 
 def test_meditation_spec_default():
     """A MeditationSpec with only required fields has sensible defaults."""
-    lens = _omega_pantheon()
+    lens = _omega_nodes()
     spec = MeditationSpec(
         subject="Should we adopt sqlite-vec?",
         lens_set=lens.personas,
