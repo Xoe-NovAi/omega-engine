@@ -41,7 +41,11 @@
 | `data/projects/warp-proxy-pool/CONTEXT.md` | P0/W-1 | WARP project one-turn hydration + live blockers |
 | `data/projects/antigravity-multi-account/CONTEXT.md` | G-1b | Antigravity OAuth multi-account |
 | `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | D | Phase D build detail |
-| **`docs/strategy/WEB_CHATBOT_PLATFORM_PLAYBOOK.md`** | — | **CANONICAL** — Single-source hydration for Web Claude, Gemini, Grok, NotebookLM |
+| **`docs/strategy/WEB_CHATBOT_PLATFORM_PLAYBOOK.md`** | — | **CANONICAL** — Index for platform-specific best practices |
+| **`docs/strategy/WEB_CLAUDE_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Claude (Projects, Code, API) best practices |
+| **`docs/strategy/WEB_GEMINI_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Gemini (AI Studio, Gems, API) best practices |
+| **`docs/strategy/WEB_GROK_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Grok (SuperGrok, Build, API) best practices |
+| **`docs/strategy/NOTEBOOKLM_BEST_PRACTICES.md`** | — | **CANONICAL** — NotebookLM (source-grounded research) best practices |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | — | Multi-agent coordination |
 | `docs/strategy/HIVEMIND_POST_TEMPLATE.md` | — | Hivemind post quality gate |
 | `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | — | Subagent delegation |
@@ -68,6 +72,22 @@ SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate**
 | `docs/ROADMAP.md` | Pointer stub → Ark |
 | `docs/strategy/RESEARCH_EXECUTION_UPDATE.md` | Jul 21 plan — absorbed into Game Plan archive |
 | `docs/strategy/HARDENING_PLAN_COMPLETE.md` | Carmack 5-phase plan — historical reference only |
+| **`docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md`** | **Superseded by** `WEB_CLAUDE_BEST_PRACTICES.md` |
+| **`docs/research/R_CLAUDE_PROJECT_INSTRUCTIONS.md`** | **Superseded by** `WEB_CLAUDE_BEST_PRACTICES.md` |
+| **`docs/research/R_CLAUDE_PROJECT_SETUP_PLAN.md`** | **Superseded by** `WEB_CLAUDE_BEST_PRACTICES.md` |
+| **`docs/kb/CLAUDE_PROJECTS.md`** | **Superseded by** `WEB_CLAUDE_BEST_PRACTICES.md` |
+| **`docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md`** | **Superseded by** platform-specific best practices docs |
+| **`docs/research/R_CONTEXT_PACKER_WEB_CLAUDE_REVIEW_20260718.md`** | **Superseded by** `WEB_CLAUDE_BEST_PRACTICES.md` |
+| **`docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md`** | **Superseded by** platform-specific best practices docs |
+| **`docs/research/R_CONTEXT_PACK_FORMAT_MD_VS_XML_20260808.md`** | **Superseded by** format decision tree in Playbook |
+| **`docs/research/GEMINI_DEEP_AUDIT_TASK.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
+| **`docs/research/GEMINI_CLI_QUICK_REF.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
+| **`docs/research/LEGACY_GEMINI_STRATEGY.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
+| **`docs/research/R_GEMINI_CLI_TECHNICAL_REPORT.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
+| **`docs/research/R_GROK_CLI_ARCHITECTURE.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/R_GROK_ECOSYSTEM_DEEP.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/GROK_CLI_KNOWLEDGE_GAPS.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
 SUPERSEDED: | `docs/archive/sprints/2026-07-25-guard-and-distill/index.md` | **SUPERSEDED** — archived to `docs/archive/sprints/2026-07-25/guard-and-distill/` |
 
 ## LAYER 4: ARCHIVE
