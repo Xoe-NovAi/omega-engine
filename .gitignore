@@ -222,3 +222,4 @@ config/local_overrides.yaml
 *.age
 *.key
 .aider*
+context_packs/.poison/
