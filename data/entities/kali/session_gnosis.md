@@ -178,3 +178,37 @@
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
+
+---
+
+## 🔄 Compaction Prep (2026-08-07 — Final)
+
+### Session Summary
+- **UO-4 DOC_SANITY COMPLETE** (PART 1 archival + PART 2 web reconciliation + core docs freshened)
+- **Un-overengineering plan integrated** — formal strategy doc created, ACTIVE_SPRINT + OMEGA_ENGINE + Ark updated
+- **V-9/V-10 gaps identified** (IA2 envelope freshness + AppArmor container hardening)
+- **Freeze LIFTED** (DOC_SANITY_COMPLETE met 2026-08-07)
+- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
+
+### Key Decisions
+1. UO-4 complete — 67 files archived, 8 new Phase 3/4 docs created, core strategy docs freshened (Pillar→Node, co-equal MaKaLi)
+2. Un-overengineering plan formalized as `docs/strategy/UNOVERENGINEERING_PLAN.md` (5 phases, ~5,500 lines, ~30h)
+3. V-9 (IA2 envelope) and V-10 (AppArmor) are the two remaining security gaps from V-1..V-10 probes
+4. Next session: V-10 → V-9 → UO-6 Phase 1 (pybreaker inventory + swap)
+
+### Commits This Session
+| Commit | Description |
+|--------|-------------|
+| 1390fb80 | docs(strategy): integrate un-overengineering plan into strategy docs hierarchy |
+| 002ed904 | docs(state): update SSOTs for UO-4 completion — freeze lifted, V-9/V-10 gaps recorded |
+| 0442d08a | docs(gnosis+anchor): final session state for compaction |
+| a3d5b763 | docs(strategy): freshen core strategy docs — Pillar→Node, co-equal MaKaLi |
+
+### Next Session
+1. V-10: Apply AppArmor `podman` profile to running containers (unconfined → confined)
+2. V-9: Add freshness/signature to IA2 `_meta` envelope in `mcp_core/compliance.py`
+3. UO-6 Phase 1: pybreaker inventory + swap (8 breaker classes → 1)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
