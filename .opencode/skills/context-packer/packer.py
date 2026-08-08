@@ -732,29 +732,27 @@ class EnhancedContextPacker:
         print(f"  📦 [Step 5] {bundles_written} bundle(s) written to {output_dir}")
 
         # Step 5b: PII VAULT + MANIFEST
-        vault_path = LibPath("context_packs") / profile_name / "pii_vault.json"
-        write_pii_vault(vault_path, profile_name, pii_vault)
+        # Fix Bug 1: Pass directory to write_pii_vault (not file path)
+        vault_dir = LibPath("context_packs") / profile_name
+        write_pii_vault(vault_dir, profile_name, pii_vault)
 
-        # Write manifest.xml with Ed25519 signature
-        await self._write_manifest(profile_name, output_dir, themed_bundles, adapter)
+        # Fix Bug 3: Write manifest to profile root (not generated/)
+        manifest_name = "00_PROJECT_MANIFEST.md"
+        manifest_path = vault_dir / manifest_name
+        manifest_content = await self._create_manifest(profile_name, themed_bundles, adapter)
+        await self._atomic_write(manifest_path, manifest_content)
+
+        # Sign manifest and capture returns (Fix: _sign_manifest now returns signature data)
+        sig_hex, pub_key = await self._sign_manifest(manifest_path, vault_dir)
+
+        # Fix Bug 2: Write pack_index.json
+        await self._write_pack_index(profile_name, themed_bundles, manifest_name, sig_hex, pub_key)
 
         _debug_log(f"═══ PACK COMPLETE: profile='{profile_name}' "
                    f"output_dir='{output_dir}' bundles={bundles_written} "
                    f"pii_entries={len(pii_vault)} ════")
         return output_dir
     
-    async def _write_manifest(self, profile_name: str, output_dir: LibPath,
-                              themed_bundles: Dict[str, List[Dict[str, Any]]],
-                              adapter):
-        """Write manifest with Ed25519 signature."""
-        # Create manifest content
-        manifest_content = await self._create_manifest(profile_name, themed_bundles, adapter)
-        manifest_path = output_dir / "00_PROJECT_MANIFEST.md"
-        await self._atomic_write(manifest_path, manifest_content)
-        
-        # Sign manifest with Ed25519
-        await self._sign_manifest(manifest_path, output_dir)
-
     async def _create_manifest(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
                                adapter=None) -> str:
         total_files = sum(len(files) for files in themed_bundles.values())
@@ -815,10 +813,10 @@ class EnhancedContextPacker:
         return "\n".join(lines)
     
     # ─── Manifest Signing (Ed25519) ────────────────────────────────────────────
-    async def _sign_manifest(self, manifest_path: LibPath, output_dir: LibPath):
-        """Sign manifest with Ed25519 and write signed version."""
+    async def _sign_manifest(self, manifest_path: LibPath, output_dir: LibPath) -> tuple[str, str]:
+        """Sign manifest with Ed25519 and write signed version. Returns (signature_hex, public_key_pem)."""
         if not ED25519_AVAILABLE:
-            return
+            return "", ""
         
         try:
             # Read current manifest
@@ -856,6 +854,12 @@ class EnhancedContextPacker:
             
             signature_hex = await anyio.to_thread.run_sync(_sign)
             
+            # Get public key PEM
+            pub_key_pem = private_key.public_key().public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            ).decode().strip()
+            
             # Append signature block
             signed_manifest = manifest_content + f"""
 
@@ -864,16 +868,56 @@ class EnhancedContextPacker:
 **Algorithm**: Ed25519
 **Signature**: `{signature_hex}`
 **Signed**: {datetime.now().isoformat()}
-**Public Key**: `{private_key.public_key().public_bytes(
-    encoding=serialization.Encoding.PEM,
-    format=serialization.PublicFormat.SubjectPublicKeyInfo
-).decode().strip()}`
+**Public Key**: `{pub_key_pem}`
 """
             # Write signed manifest
             await self._atomic_write(manifest_path, signed_manifest)
             
+            return signature_hex, pub_key_pem
+            
         except Exception as e:
             print(f"  ⚠️  Manifest signing failed: {e}")
+            return "", ""
+
+    # ─── Pack Index Writing ──────────────────────────────────────────────────
+    async def _write_pack_index(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
+                                manifest_name: str, sig_hex: str, pub_key: str):
+        """Write per-profile pack_index.json with bundle metadata and signature."""
+        profile_dir = LibPath("context_packs") / profile_name
+        
+        bundles_meta = []
+        total_files = 0
+        total_tokens = 0
+        
+        for theme, files in themed_bundles.items():
+            for f in files:
+                bundles_meta.append({
+                    "theme": theme,
+                    "file": f.get("relative_path", f.get("path", "unknown")),
+                    "tokens": f.get("token_count", 0),
+                    "litm_zone": f.get("litm_zone", "middle"),
+                    "required": f.get("required", False)
+                })
+                total_files += 1
+                total_tokens += f.get("token_count", 0)
+
+        profile = self.profiles[profile_name]
+        index_data = {
+            "profile": profile_name,
+            "generated_at": datetime.now().astimezone().isoformat(),
+            "total_files": total_files,
+            "total_tokens": total_tokens,
+            "max_slots": profile.platform.max_slots if profile.platform else 12,
+            "bundles": bundles_meta,
+            "manifest": manifest_name,
+            "signature": f"ed25519:{sig_hex}" if sig_hex else "none",
+            "public_key": pub_key if pub_key else "none",
+            "pii_vault": "pii_vault.json"
+        }
+        
+        index_path = profile_dir / "pack_index.json"
+        await self._atomic_write(index_path, json.dumps(index_data, indent=2))
+        _debug_log(f"write_pack_index: {index_path} ({total_files} bundles, {total_tokens} tokens)")
 
 async def main():
     import sys

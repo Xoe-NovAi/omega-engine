@@ -171,11 +171,13 @@ async def test_pack_produces_valid_output(tmp_path, monkeypatch):
         pytest.skip("engineering-p3 profile not present")
     output_dir = await packer.pack("engineering-p3")
 
-    manifest = Path(output_dir) / "00_PROJECT_MANIFEST.md"
-    assert manifest.exists(), "manifest not created"
+    # Manifest is now written to profile root (per v3 manual §1.8)
+    profile_root = Path("context_packs") / "engineering-p3"
+    manifest = profile_root / "00_PROJECT_MANIFEST.md"
+    assert manifest.exists(), "manifest not created at profile root"
     assert manifest.stat().st_size > 0
 
-    # At least one bundle file must exist.
+    # At least one bundle file must exist in generated/
     bundles = [p for p in Path(output_dir).iterdir() if p.suffix in (".xml", ".md")]
     assert len(bundles) > 0, "no bundle files produced"
 
