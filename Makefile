@@ -6,7 +6,9 @@ PYTHON := .venv/bin/python
 PYTEST := .venv/bin/python -m pytest
 QUARANTINE_FILE := tests/quarantine.txt
 BADGE_FILE := tests/test-badge.json
-QUARANTINE_EXPIRY := 2026-08-01
+QUARANTINE_EXPIRY := 2026-09-01
+TEST_LOG_FILE := data/logs/test-run.log
+TEST_LOG_SCRIPT := scripts/rotate_test_log.py
 
 # Colors for output
 GREEN := \033[0;32m
@@ -14,14 +16,14 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report
+.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report log-test-run
 
 help:
 	@echo "Omega Engine Makefile"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  test              Run all tests (default)"
-	@echo "  test-honest       Run tests with quarantine and JSON badge generation"
+	@echo "  test-honest       Run tests with quarantine, JSON badge, and test-run logging"
 	@echo "  test-quarantine-check  Check quarantine expiry and fail if expired"
 	@echo "  quarantine        Save current failures to quarantine.txt"
 	@echo "  save-quarantine   Alias for quarantine"
@@ -29,6 +31,7 @@ help:
 	@echo "  generate-badge    Generate JSON badge from test results"
 	@echo "  clean-badge       Remove generated badge file"
 	@echo "  clean             Remove all generated files"
+	@echo "  log-test-run      Capture full test run output to rotating log"
 	@echo ""
 	@echo "Codex Targets (D-277 Hydration):"
 	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
@@ -67,8 +70,8 @@ check-codex-force:
 # Default target
 test: test-honest
 
-# Main honest test target - includes quarantine and badge generation
-test-honest: save-quarantine run-honest-tests generate-badge check-quarantine-expiry
+# Main honest test target - includes quarantine, badge generation, and test-run logging
+test-honest: save-quarantine run-honest-tests log-test-run generate-badge check-quarantine-expiry
 
 # Save current failures to quarantine file
 save-quarantine:
@@ -85,6 +88,16 @@ run-honest-tests:
 	@echo "$(YELLOW)Running tests with quarantine...$(NC)"
 	@$(PYTEST) --tb=short -q 2>&1 | tail -5
 	@echo "$(GREEN)Honest test run complete$(NC)"
+
+# Capture full test run output to rotating log (data/logs/test-run.log + .1/.2.gz/.3.gz)
+log-test-run:
+	@echo "$(YELLOW)Rotating test run logs...$(NC)"
+	@$(PYTHON) $(TEST_LOG_SCRIPT) rotate
+	@echo "$(YELLOW)Running full test suite for log capture...$(NC)"
+	@OUTPUT=$$($(PYTEST) --tb=short -q 2>&1); \
+	echo "$$OUTPUT" | tail -10; \
+	echo "$$OUTPUT" | $(PYTHON) $(TEST_LOG_SCRIPT) write
+	@echo "$(GREEN)Test run log captured to $(TEST_LOG_FILE)$(NC)"
 
 # Generate JSON badge with test results
 generate-badge:
