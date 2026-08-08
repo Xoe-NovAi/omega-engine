@@ -109,7 +109,7 @@ INJECTION_PATTERNS = [
     # Encoding/obfuscation attempts
     r"(?i)base64\s*(?:encode|decode)",
     r"(?i)rot13\s*(?:encode|decode)",
-    r"(?i)hex\s*(?:encode|decode)",
+    r"(?i)hex\s*(encode|decode)",
     r"(?i)unicode\s*(?:encode|decode)",
     
     # Hypothetical framing
@@ -129,39 +129,18 @@ INJECTION_PATTERNS = [
     
     # Prompt leaking
     r"(?i)repeat\s+(?:the\s+)?(?:prompt|instructions?)",
-    r"(?i)echo\s+(?:the\s+)?(?:prompt|instructions?)",
+    r"(?i)echo\s+(?:the\s+)?(prompt|instructions?)",
     r"(?i)verbatim\s+(?:prompt|instructions?)",
 ]
 
 # Compile patterns for performance
 INJECTION_REGEXES = [re.compile(p) for p in INJECTION_PATTERNS]
 
-# ─── Token Limits ────────────────────────────────────────────────────────────
-# Per-bundle token limits (with safety margin for Claude Projects)
-MAX_BUNDLE_TOKENS = 15000  # Conservative limit per bundle
-MAX_TOTAL_TOKENS = 150000  # Total pack limit (well under 1M context)
-
-# ─── Lost-in-the-Middle Bundle Ordering ──────────────────────────────────────
-# Bundles that should be at START (positions 1-3) - critical for reviewer
-CRITICAL_START_BUNDLES = {
-    "grounding", "decisions", "decree", "verdict", "summary", "overview"
-}
-
-# Bundles that should be at END (last 2-3) - action items, next steps
-CRITICAL_END_BUNDLES = {
-    "handoff", "exit_protocol", "next_steps", "action_items", "verdict", "recommendations"
-}
-
-# Bundles that go in MIDDLE - reference material, evidence, logs
-MIDDLE_BUNDLES = {
-    "implementation", "engine_state", "mandates", "session_log", "research", 
-    "pivot_log", "evidence", "logs", "history", "appendix"
-}
 
 def _escape_bare_xml_chars(text: str) -> str:
     """Fully XML-escape file BODY content for valid XML output.
 
-    EVERY `<` and `>` in the body is escaped to `&lt;`/`&gt;` so content can
+    EVERY `<` and `>` in the body is escaped to `<`/`>` so content can
     never be mistaken for an XML tag or cause Claude truncation (Issue #59787).
     Bare `&` is escaped unless already part of a valid entity. The `<file>`
     wrapper tags are emitted by the packer separately (NOT part of content),
@@ -174,11 +153,11 @@ def _escape_bare_xml_chars(text: str) -> str:
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
     # Escape & only when not already part of a valid XML entity.
-    text = re.sub(r'&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)', '&amp;', text)
+    text = re.sub(r'&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)', '&lt;', text)
     return text
 
 
-# ════════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════════
 # V3 DETERMINISTIC 5-STEP CONTRACT API (manual §1.2, §2; Phase 3)
 # ============================================================================
 # These module-level functions are the v3 specification. The contract suite at
@@ -386,7 +365,7 @@ class EnhancedContextPacker:
             try:
                 platform = PlatformConfig.from_profile_config(data)
             except Exception as e:
-                print(f"  �� ⚠��️  Profile '{name}' platform config parse failed: {e}")
+                print(f"  ⚠️  Profile '{name}' platform config parse failed: {e}")
                 _debug_log(f"Profile '{name}' platform config parse failed: {e}")
             self.profiles[name] = PackProfile(
                 name=name,
@@ -398,8 +377,8 @@ class EnhancedContextPacker:
                 platform=platform,
             )
             _debug_log(f"Loaded profile '{name}': max_slots={data.get('max_slots', 12)}, "
-                      f"include={len(data.get('include', []))} patterns, "
-                      f"themes={list(data.get('themes', {}).keys())}")
+                       f"include={len(data.get('include', []))} patterns, "
+                       f"themes={list(data.get('themes', {}).keys())}")
     
     def _get_language(self, path: str) -> str:
         ext = os.path.splitext(path)[1].lower()
@@ -427,25 +406,14 @@ class EnhancedContextPacker:
             return sha256_hash.hexdigest()
         return await anyio.to_thread.run_sync(_hash)
     
-    async def _estimate_token_count(self, path: LibPath) -> int:
-        """Estimate token count with 30% safety margin.
-
-        tiktoken undercounts by 10-30% compared to Claude's actual tokenizer
-        (per researcher findings). We add a 30% margin to prevent exceeding
-        Claude's context window during Projects upload.
-        """
-        if ENCODER is None:
-            # Rough approximation: 4 characters per token, plus 30% margin
-            return int(os.path.getsize(path) // 4 * 1.3)
-        
-        def _count_tokens():
-            with open(str(path), "r", encoding="utf-8", errors="replace") as f:
-                text = f.read()
-            return len(ENCODER.encode(text))
-        
-        raw_count = await anyio.to_thread.run_sync(_count_tokens)
-        # Apply 30% safety margin (researcher finding: tiktoken undercounts 10-30%)
-        return int(raw_count * 1.3)
+    async def _estimate_token_count(self, path: LibPath, model: str = "cl100k_base", margin: float = 1.3) -> int:
+        """Estimate token count using shared TokenEstimator (v3 SSOT)."""
+        import sys
+        _engine_src = str(LibPath(__file__).resolve().parent.parent.parent.parent / "src")
+        if _engine_src not in sys.path:
+            sys.path.insert(0, _engine_src)
+        from omega.oracle.token_estimator import tokens_for_file_async
+        return await tokens_for_file_async(path, model=model, margin=margin)
     
     async def _get_purpose(self, path: LibPath) -> str:
         ext = os.path.splitext(path)[1].lower()
@@ -542,167 +510,310 @@ class EnhancedContextPacker:
                 detections.append(pattern.pattern[:50])
         return detections
 
-    # ─── Token Limit Enforcement ───────────────────────────────────────────────
-    def _enforce_token_limits(self, themed_bundles: Dict[str, List[dict]]) -> Dict[str, List[dict]]:
-        """Enforce per-bundle and total token limits by splitting oversized bundles."""
-        result = {}
-        total_tokens = 0
+    async def pack(self, profile_name: str):
+        if profile_name not in self.profiles:
+            raise ValueError(f"Profile '{profile_name}' not found in config. "
+                             f"Available: {list(self.profiles.keys())}")
+
+        profile = self.profiles[profile_name]
+        base = LibPath(self.config_path).parent.parent.parent.parent  # repo root
+        output_dir = LibPath("context_packs") / profile_name / "generated"
+        await anyio.to_thread.run_sync(lambda: output_dir.mkdir(parents=True, exist_ok=True))
+
+        _debug_log(f"═══ PACK START: profile='{profile_name}' "
+                   f"max_slots={profile.max_slots} themes={list(profile.themes.keys())} ═══")
+
+        # ── Step 1: RESOLVE ─────────────────────────────────────────────────────
+        themed = resolve_theme_files(profile, base)
+
+        # ── Step 2: COUNT (enrich with metadata + token counts) ────────────────
+        # Convert file info to full metadata with token counts
+        themed_bundles: Dict[str, List[Dict[str, Any]]] = {}
+        for theme, files in themed.items():
+            enriched_files = []
+            for file_info in files:
+                f_path = LibPath(file_info["full_path"])
+                try:
+                    stats = f_path.stat()
+                    sha = await self._calculate_sha256(f_path)
+                    lang = self._get_language(file_info["path"])
+                    purpose = await self._get_purpose(f_path)
+                    # Use platform-specific tokenizer encoding and margin from profile
+                    model = profile.platform.tokenizer_encoding if profile.platform else "cl100k_base"
+                    margin = profile.platform.token_margin_multiplier if profile.platform else 1.3
+                    tokens = await self._estimate_token_count(f_path, model=model, margin=margin)
+                except Exception as exc:
+                    print(f"  ❌ [META-ERR] file='{file_info['path']}': {exc}")
+                    raise
+
+                enriched_files.append({
+                    "path": file_info["path"],
+                    "full_path": file_info["full_path"],
+                    "size": stats.st_size,
+                    "language": lang,
+                    "sha256": sha,
+                    "purpose": purpose,
+                    "token_count": tokens,
+                    "path_obj": f_path,
+                    "stats": stats,
+                })
+            themed_bundles[theme] = enriched_files
+
+        _debug_log(f"  Step 2 complete: themes={list(themed_bundles.keys())}, "
+                   f"sizes={ {k: len(v) for k, v in themed_bundles.items()} }")
+
+        # ── Step 3: VALIDATE (fail-closed) ──────────────────────────────────────
+        # Determine required themes from profile config (themes that must be present)
+        required_themes = set(profile.themes.keys()) if profile.themes else set()
+        cfg = profile.platform if profile.platform else PlatformConfig.from_profile_config({})
+        validate_pack(themed_bundles, cfg, required_themes=required_themes)
+
+        # ── Step 4: ORDER ───────────────────────────────────────────────────────
+        # Apply LITM priority to each bundle, then use platform ordering strategy
+        for theme_name, files in themed_bundles.items():
+            for bundle in files:
+                # Each file in the bundle gets the theme's priority
+                apply_litm_priority(bundle)
         
+        # Build bundle dicts for the ordering strategy
+        bundle_dicts = []
         for theme, files in themed_bundles.items():
             if not files:
                 continue
-                
-            bundle_tokens = sum(f["token_count"] for f in files)
-            
-            if bundle_tokens <= MAX_BUNDLE_TOKENS:
-                result[theme] = files
-                total_tokens += bundle_tokens
+            # The theme's priority is derived from the first file (all have same priority)
+            priority = files[0].get("priority", 2)
+            bundle_dicts.append({
+                "theme": theme,
+                "files": files,
+                "token_count": sum(f["token_count"] for f in files),
+                "priority": priority,
+                "relevance": priority / 3.0,
+            })
+        
+        # Get ordering strategy from platform config
+        ordering_strategy = get_ordering_strategy(
+            profile.platform.bundle_ordering if profile.platform else None
+        )
+        _debug_log(f"  Step 4 ordering_strategy='{profile.platform.bundle_ordering if profile.platform else None}' "
+                   f"→ class={type(ordering_strategy).__name__}")
+        
+        ordered_bundles = ordering_strategy.order(bundle_dicts)
+        _debug_log(f"  Step 4 ordered order: {[b['theme'] for b in ordered_bundles]}")
+        themed_bundles = {b["theme"]: b["files"] for b in ordered_bundles}
+
+        # Resolve the format adapter for this profile (M-T)
+        adapter = get_format_adapter(profile.platform.format if profile.platform else None)
+        bundle_extension = adapter.extension
+        _debug_log(f"  Step 4 adapter: format='{profile.platform.format if profile.platform else None}' "
+                   f"→ class={type(adapter).__name__}, extension='{bundle_extension}'")
+
+        # ── Step 5: WRITE (per-profile artifacts) ───────────────────────────────
+        # PII masker setup (instantiate ONCE before the file loop)
+        # [heritage: anyio 2024] detect() is async; tokenize() is sync
+        # Lazy import keeps the skill decoupled from the engine at module load time.
+        # M8/M23: PII masking is MANDATORY for external packs. Import failure is a
+        # hard stop — never emit an unmasked pack (sovereignty breach).
+        _masker = None
+        try:
+            import sys as _sys
+            _engine_src = str(LibPath(__file__).resolve().parent.parent.parent.parent / "src")
+            if _engine_src not in _sys.path:
+                _sys.path.insert(0, _engine_src)
+            from omega.oracle.pii_masker import PIIMasker, PIIRedactionStyle
+            # TOKENIZE mode: replaces PII with reversible [EMAIL_1] placeholders.
+            # Use MASK_FULL (mask_full()) if you want non-reversible **** masking instead.
+            _masker = PIIMasker(redaction_style=PIIRedactionStyle.TOKENIZE)
+        except ImportError as e:
+            # M23 Failure Integrity: do NOT silently continue. Halt pack generation.
+            try:
+                from omega.errors import OmegaError
+            except ImportError:
+                raise RuntimeError(
+                    "[SEC-BLOCKER] PIIMasker unavailable — refusing to generate "
+                    f"unmasked pack for external upload. ImportError: {e}"
+                ) from e
+            raise OmegaError(
+                "[SEC-BLOCKER] PIIMasker unavailable — refusing to generate "
+                f"unmasked pack for external upload. ImportError: {e}"
+            ) from e
+
+        # Collect PII tokens for vault
+        pii_vault: Dict[str, str] = {}
+        bundles_written = 0
+        file_errors = 0
+
+        for theme, files in themed_bundles.items():
+            if not files:
+                _debug_log(f"  Step 5 skip empty theme: '{theme}'")
                 continue
             
-            # Split oversized bundle - REPLACE original with split parts
-            split_bundles = self._split_bundle_by_tokens(theme, files)
-            for split_theme, split_files in split_bundles.items():
-                result[split_theme] = split_files
-                total_tokens += sum(f["token_count"] for f in split_files)
-        
-        # Check total limit
-        if total_tokens > MAX_TOTAL_TOKENS:
-            # Trim lowest-priority bundles (middle bundles first)
-            result = self._trim_to_token_limit(result, MAX_TOTAL_TOKENS)
-        
-        return result
+            for file_info in files:
+                f_path = file_info["path_obj"]
+                
+                def _read_file():
+                    with open(str(f_path), "r", encoding="utf-8", errors="replace") as f:
+                        return f.read()
 
-    def _split_bundle_by_tokens(self, theme: str, files: List[dict]) -> Dict[str, List[dict]]:
-        """Split a bundle into multiple sub-bundles by token count."""
-        split_bundles = {}
-        current_bundle = []
-        current_tokens = 0
-        split_num = 1
-        
-        # Sort files by token count descending for better packing
-        sorted_files = sorted(files, key=lambda x: x["token_count"], reverse=True)
-        
-        for file_info in sorted_files:
-            if current_tokens + file_info["token_count"] > MAX_BUNDLE_TOKENS and current_bundle:
-                split_bundles[f"{theme}_part{split_num}"] = current_bundle
-                split_num += 1
-                current_bundle = []
-                current_tokens = 0
-            
-            current_bundle.append(file_info)
-            current_tokens += file_info["token_count"]
-        
-        if current_bundle:
-            split_bundles[f"{theme}_part{split_num}"] = current_bundle
-        
-        return split_bundles
+                try:
+                    raw_content = await anyio.to_thread.run_sync(_read_file)
+                except FileNotFoundError:
+                    file_errors += 1
+                    print(f"  ⚠️  [FILE-MISSING] '{file_info['path']}' vanished before pack — skipping")
+                    continue
+                except Exception as exc:
+                    file_errors += 1
+                    print(f"  ⚠️  [READ-ERR] '{file_info['path']}': {exc}")
+                    continue
 
-    def _trim_to_token_limit(self, themed_bundles: Dict[str, List[dict]], limit: int) -> Dict[str, List[dict]]:
-        """Trim bundles to fit within total token limit, removing lowest priority first."""
-        # Priority order: start bundles > end bundles > middle bundles
-        all_bundles = []
+                # Security: Scan for injection patterns before PII masking
+                injection_matches = await self._scan_for_injection(raw_content, file_info["path"])
+                if injection_matches:
+                    print(f"  ⚠️  Injection pattern detected in {file_info['path']}: {injection_matches}")
+                    # Log but continue - the content will be XML-escaped anyway
+                
+                # PII masking before external upload (M8 Zero Telemetry / M7 Local-First)
+                # API: detect() is async (runs in thread), tokenize() is sync.
+                # The masker instance was created once before this loop — do NOT re-instantiate here.
+                if _masker is not None:
+                    detections = await _masker.detect(raw_content)
+                    if detections:
+                        masked_content, token_map = _masker.tokenize(raw_content, detections)
+                        content = masked_content
+                        # Persist this file's reversible token map into the vault
+                        for placeholder, original in token_map.tokens.items():
+                            pii_vault[placeholder] = original
+                    else:
+                        content = raw_content  # No PII found — pass through unchanged
+                else:
+                    content = raw_content
+
+                pruned_content = await self._prune_content(content)
+
+                # B5 fix: escape bare & and stray < in the file BODY before wrapping
+                # in <file>. Preserves <file>/</file> and tag-like sequences; only
+                # escapes stray characters that would break XML parsing.
+                pruned_content = _escape_bare_xml_chars(pruned_content)
+
+                # XML-style file block. Attributes are escaped via xml_quoteattr();
+                # the BODY is fully XML-escaped by _escape_bare_xml_chars() (see B5 fix
+                # above) so the content is valid XML and cannot trigger Claude truncation
+                # (Issue #59787). The <file> wrapper tags are emitted by the packer, not
+                # part of content, so they remain real XML boundaries.
+                # xml_quoteattr() wraps the value in quotes AND escapes <, >, &, ", '
+                header = (
+                    f"<file"
+                    f" path={xml_quoteattr(file_info['path'])}"
+                    f" size={xml_quoteattr(str(file_info['size']))}"
+                    f" language={xml_quoteattr(file_info['language'])}"
+                    f" sha256={xml_quoteattr(file_info['sha256'])}"
+                    f" purpose={xml_quoteattr(file_info['purpose'])}"
+                    f" tokens={xml_quoteattr(str(file_info['token_count']))}>"
+                )
+                footer = "</file>"
+                # Body is fully XML-escaped by _escape_bare_xml_chars() above.
+                rendered_block = header + "\n" + pruned_content + "\n" + footer + "\n\n"
+                file_info["rendered"] = rendered_block
+
+            # Render the bundle via the profile's format adapter
+            try:
+                bundle_file = output_dir / f"{theme}{bundle_extension}"
+                rendered_bundle = adapter.render_bundle(theme, files, profile_name)
+                await self._atomic_write(bundle_file, rendered_bundle)
+                bundles_written += 1
+                bundle_token_total = sum(f["token_count"] for f in files)
+                _debug_log(f"  Step 5 wrote bundle '{theme}': {len(files)} files, "
+                           f"{bundle_token_total:,} tokens")
+            except Exception as exc:
+                raise RuntimeError(f"[BUNDLE-ERR] failed to render/write bundle "
+                                   f"'{theme}' ({len(files)} files): {exc}") from exc
+
+        if file_errors:
+            print(f"  ⚠️  [Step 5] {file_errors} file(s) had read errors during packaging")
+        print(f"  📦 [Step 5] {bundles_written} bundle(s) written to {output_dir}")
+
+        # Step 5b: PII VAULT + MANIFEST
+        vault_path = LibPath("context_packs") / profile_name / "pii_vault.json"
+        write_pii_vault(vault_path, profile_name, pii_vault)
+
+        # Write manifest.xml with Ed25519 signature
+        await self._write_manifest(profile_name, output_dir, themed_bundles, adapter)
+
+        _debug_log(f"═══ PACK COMPLETE: profile='{profile_name}' "
+                   f"output_dir='{output_dir}' bundles={bundles_written} "
+                   f"pii_entries={len(pii_vault)} ════")
+        return output_dir
+    
+    async def _write_manifest(self, profile_name: str, output_dir: LibPath,
+                              themed_bundles: Dict[str, List[Dict[str, Any]]],
+                              adapter):
+        """Write manifest with Ed25519 signature."""
+        # Create manifest content
+        manifest_content = await self._create_manifest(profile_name, themed_bundles, adapter)
+        manifest_path = output_dir / "00_PROJECT_MANIFEST.md"
+        await self._atomic_write(manifest_path, manifest_content)
+        
+        # Sign manifest with Ed25519
+        await self._sign_manifest(manifest_path, output_dir)
+
+    async def _create_manifest(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
+                               adapter=None) -> str:
+        total_files = sum(len(files) for files in themed_bundles.values())
+        total_tokens = sum(f["token_count"] for files in themed_bundles.values() for f in files)
+        profile = self.profiles[profile_name]
+
+        # M-T: if a format adapter is provided, delegate manifest rendering to it
+        # (carries target_model + prompt_caching metadata).
+        if adapter is not None:
+            bundles = []
+            for theme, files in themed_bundles.items():
+                if not files:
+                    continue
+                bundles.append({
+                    "theme": theme,
+                    "files": files,
+                    "token_count": sum(f["token_count"] for f in files),
+                })
+            platform = profile.platform
+            return adapter.render_manifest(
+                profile_name, bundles, total_files, total_tokens,
+                profile.description, profile.max_slots,
+                platform.target_model if platform else None,
+                platform.prompt_caching if platform else False,
+            )
+
+        # Fallback (no adapter): legacy markdown manifest
+        lines = [
+            f"# Enhanced Context Pack Manifest: {profile_name}",
+            f"Generated: {datetime.now().isoformat()}",
+            f"Description: {profile.description}",
+            f"Total Files: {total_files}",
+            f"Estimated Total Tokens: {total_tokens}",
+            f"Max Slots: {profile.max_slots}",
+            "",
+            "## Theme Breakdown",
+        ]
+        
         for theme, files in themed_bundles.items():
-            priority = 0
-            if any(kw in theme.lower() for kw in CRITICAL_START_BUNDLES):
-                priority = 3
-            elif any(kw in theme.lower() for kw in CRITICAL_END_BUNDLES):
-                priority = 2
-            else:
-                priority = 1
-            
-            bundle_tokens = sum(f["token_count"] for f in files)
-            all_bundles.append((priority, theme, files, bundle_tokens))
+            if files:
+                file_count = len(files)
+                theme_tokens = sum(f["token_count"] for f in files)
+                lines.append(f"- {theme}: {file_count} files, ~{theme_tokens} tokens")
+                for f in files[:3]:  # Show first 3 files as examples
+                    lines.append(f"  - {f['path']} ({f['token_count']} tokens)")
+                if len(files) > 3:
+                    lines.append(f"  - ... and {len(files) - 3} more")
         
-        # Sort by priority (lowest first for removal)
-        all_bundles.sort(key=lambda x: x[0])
+        lines.extend([
+            "",
+            "## Usage Notes",
+            "- This pack uses XML format for optimal Claude comprehension",
+            "- Each file is wrapped in <file> tags with metadata attributes",
+            "- The manifest should be reviewed first to understand the pack structure",
+            "- Token counts are estimates using cl100k_base encoder (Claude's tokenizer)",
+        ])
         
-        total_tokens = sum(b[3] for b in all_bundles)
-        result = {b[1]: b[2] for b in all_bundles}
-        
-        # Remove lowest priority bundles until under limit
-        for priority, theme, files, bundle_tokens in all_bundles:
-            if total_tokens <= limit:
-                break
-            if priority == 1:  # Only remove middle bundles
-                del result[theme]
-                total_tokens -= bundle_tokens
-        
-        return result
-
-    # ─── Lost-in-the-Middle Mitigation ─────────────────────────────────────────
-    def _reorder_bundles_for_litm(self, themed_bundles: Dict[str, List[dict]]) -> Dict[str, List[dict]]:
-        """Reorder bundles to place critical content at start and end (U-shaped attention)."""
-        start_bundles = {}
-        middle_bundles = {}
-        end_bundles = {}
-        
-        for theme, files in themed_bundles.items():
-            theme_lower = theme.lower()
-            
-            if any(kw in theme_lower for kw in CRITICAL_START_BUNDLES):
-                start_bundles[theme] = files
-            elif any(kw in theme_lower for kw in CRITICAL_END_BUNDLES):
-                end_bundles[theme] = files
-            else:
-                middle_bundles[theme] = files
-        
-        # Sort each group by token count (larger first for better context)
-        def sort_by_tokens(bundles):
-            return dict(sorted(bundles.items(), 
-                             key=lambda x: sum(f["token_count"] for f in x[1]), 
-                             reverse=True))
-        
-        start_bundles = sort_by_tokens(start_bundles)
-        middle_bundles = sort_by_tokens(middle_bundles)
-        end_bundles = sort_by_tokens(end_bundles)
-        
-        # Combine: start + middle + end
-        result = {}
-        result.update(start_bundles)
-        result.update(middle_bundles)
-        result.update(end_bundles)
-        
-        return result
-
-    # ─── Bundle Consolidation (≤12 files) ──────────────────────────────────────
-    def _consolidate_bundles(self, themed_bundles: Dict[str, List[dict]], max_slots: int) -> Dict[str, List[dict]]:
-        """Consolidate bundles to stay within max_slots limit (minus 1 for manifest)."""
-        max_bundles = max_slots - 1  # Reserve 1 slot for manifest
-        active_bundles = {k: v for k, v in themed_bundles.items() if v}
-        
-        if len(active_bundles) <= max_bundles:
-            return active_bundles
-        
-        # Sort by priority (start/end bundles kept, middle merged)
-        bundle_priorities = []
-        for theme, files in active_bundles.items():
-            theme_lower = theme.lower()
-            if any(kw in theme_lower for kw in CRITICAL_START_BUNDLES):
-                priority = 3
-            elif any(kw in theme_lower for kw in CRITICAL_END_BUNDLES):
-                priority = 2
-            else:
-                priority = 1
-            bundle_priorities.append((priority, theme, files))
-        
-        # Sort by priority (highest first)
-        bundle_priorities.sort(key=lambda x: x[0], reverse=True)
-        
-        # Keep high-priority bundles, merge rest into "general"
-        result = {}
-        general_files = []
-        
-        for priority, theme, files in bundle_priorities:
-            if len(result) < max_bundles:
-                result[theme] = files
-            else:
-                general_files.extend(files)
-        
-        if general_files:
-            result["general"] = general_files
-        
-        return result
-
+        return "\n".join(lines)
+    
     # ─── Manifest Signing (Ed25519) ────────────────────────────────────────────
     async def _sign_manifest(self, manifest_path: LibPath, output_dir: LibPath):
         """Sign manifest with Ed25519 and write signed version."""
@@ -764,541 +875,10 @@ class EnhancedContextPacker:
         except Exception as e:
             print(f"  ⚠️  Manifest signing failed: {e}")
 
-    async def pack(self, profile_name: str):
-        if profile_name not in self.profiles:
-            raise ValueError(f"Profile '{profile_name}' not found in config. "
-                             f"Available: {list(self.profiles.keys())}")
-
-        profile = self.profiles[profile_name]
-        output_dir = LibPath(f"context_packs/{profile_name}")
-        await anyio.to_thread.run_sync(lambda: output_dir.mkdir(parents=True, exist_ok=True))
-
-        _debug_log(f"═══ PACK START: profile='{profile_name}' "
-                   f"max_slots={profile.max_slots} themes={list(profile.themes.keys())} ═══")
-
-        # ── Phase 1: Selection ─────────────────────────────────────────────────
-        try:
-            selected_files: Set[str] = set()
-            for pattern in profile.include:
-                try:
-                    hits = await anyio.to_thread.run_sync(self._glob_files, pattern)
-                    selected_files.update(hits)
-                    _debug_log(f"  P1 include '{pattern}': {len(hits)} files")
-                    if len(hits) == 0:
-                        print(f"  ⚠️  [P1-ZERO-MATCH] include pattern matched nothing: '{pattern}'")
-                except Exception as exc:
-                    print(f"  ❌ [P1-GLOB-ERR] pattern='{pattern}': {exc}")
-                    raise
-
-            _debug_log(f"  P1 raw selected (before excludes): {len(selected_files)} files")
-
-            excluded_count = 0
-            final_files = []
-            for f in selected_files:
-                excluded = False
-                for pattern in profile.exclude:
-                    try:
-                        if self._match_pattern(f, pattern):
-                            excluded = True
-                            excluded_count += 1
-                            _trace_log(f"  P1 excluded '{f}' by pattern '{pattern}'")
-                            break
-                    except Exception as exc:
-                        print(f"  ❌ [P1-EXCLUDE-ERR] file='{f}' pattern='{pattern}': {exc}")
-                        raise
-                if not excluded:
-                    final_files.append(f)
-
-            print(f"  📁 [P1] {len(final_files)} files selected "
-                  f"({len(selected_files)} raw, {excluded_count} excluded)")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 1 (Selection) failed for '{profile_name}': {exc}") from exc
-
-        # ── Phase 2: Metadata + token counting ────────────────────────────────
-        try:
-            file_data = []
-            missing = 0
-            for f_rel in final_files:
-                f_path = LibPath(f_rel)
-                if not os.path.exists(f_rel):
-                    missing += 1
-                    print(f"  ⚠️  [P2-MISSING] file disappeared after glob: '{f_rel}'")
-                    continue
-                try:
-                    stats = f_path.stat()
-                    sha = await self._calculate_sha256(f_path)
-                    lang = self._get_language(f_rel)
-                    purpose = await self._get_purpose(f_path)
-                    tokens = await self._estimate_token_count(f_path)
-                except Exception as exc:
-                    print(f"  ❌ [P2-META-ERR] file='{f_rel}': {exc}")
-                    raise
-
-                file_data.append({
-                    "path": f_rel,
-                    "size": stats.st_size,
-                    "language": lang,
-                    "sha256": sha,
-                    "purpose": purpose,
-                    "token_count": tokens,
-                    "path_obj": f_path,
-                    "stats": stats,
-                })
-
-            _debug_log(f"  P2 metadata complete: {len(file_data)} files enriched, {missing} missing")
-            if missing:
-                print(f"  ⚠️  [P2] {missing} files disappeared between glob and metadata phase")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 2 (Metadata) failed for '{profile_name}': {exc}") from exc
-
-        # ── Phase 3: Sort by token count descending ────────────────────────────
-        file_data.sort(key=lambda x: x["token_count"], reverse=True)
-        total_raw_tokens = sum(f["token_count"] for f in file_data)
-        _debug_log(f"  P3 sorted {len(file_data)} files, total_tokens={total_raw_tokens:,}")
-        if file_data:
-            _debug_log(f"  P3 top-3 by tokens: "
-                       + ", ".join(f"{f['path']}({f['token_count']})" for f in file_data[:3]))
-
-        # ── Phase 4: Distribute across themes ─────────────────────────────────
-        try:
-            themed_bundles: Dict[str, List[dict]] = {theme: [] for theme in profile.themes}
-            themed_bundles["general"] = []
-
-            no_match_files = []
-            for file_info in file_data:
-                matched = False
-                matched_theme = None
-                matched_pattern = None
-                for theme, patterns in profile.themes.items():
-                    for pattern in patterns:
-                        try:
-                            if self._match_pattern(file_info["path"], pattern):
-                                themed_bundles[theme].append(file_info)
-                                matched = True
-                                matched_theme = theme
-                                matched_pattern = pattern
-                                break
-                        except Exception as exc:
-                            print(f"  ❌ [P4-MATCH-ERR] file='{file_info['path']}' "
-                                  f"theme='{theme}' pattern='{pattern}': {exc}")
-                            raise
-                    if matched:
-                        break
-                if not matched:
-                    themed_bundles["general"].append(file_info)
-                    no_match_files.append(file_info["path"])
-                else:
-                    _trace_log(f"  P4 '{file_info['path']}' → theme='{matched_theme}' "
-                               f"via pattern='{matched_pattern}'")
-
-            # Report theme distribution
-            print(f"  📦 [P4] Theme distribution ({len(file_data)} files):")
-            for theme, files in themed_bundles.items():
-                if files:
-                    tokens = sum(f["token_count"] for f in files)
-                    flag = " ⚠️ EMPTY" if not files else ""
-                    print(f"       {theme:25s}: {len(files):4} files, {tokens:7,} tokens{flag}")
-                elif theme in profile.themes:
-                    # Theme from config but matched zero files — warn
-                    print(f"       {theme:25s}:    0 files  ← ⚠️  ZERO MATCH (check patterns vs include)")
-
-            if no_match_files:
-                print(f"  ⚠️  [P4] {len(no_match_files)} files fell to 'general' (no theme matched):")
-                for p in no_match_files[:10]:
-                    print(f"         └─ {p}")
-                if len(no_match_files) > 10:
-                    print(f"         └─ ... and {len(no_match_files) - 10} more")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 4 (Theming) failed for '{profile_name}': {exc}") from exc
-
-        # ── Phase 5: Consolidate to max_slots ─────────────────────────────────
-        try:
-            n_before = len({k: v for k, v in themed_bundles.items() if v})
-            themed_bundles = self._consolidate_bundles(themed_bundles, profile.max_slots)
-            n_after = len(themed_bundles)
-            _debug_log(f"  P5 consolidate: {n_before} → {n_after} bundles (max_slots={profile.max_slots})")
-            if n_before != n_after:
-                print(f"  🔀 [P5] Consolidation: {n_before} → {n_after} bundles")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 5 (Consolidate) failed for '{profile_name}': {exc}") from exc
-
-        # ── Phase 6: Enforce per-bundle token limits ───────────────────────────
-        try:
-            n_before = len(themed_bundles)
-            oversized = [(t, sum(f["token_count"] for f in fs))
-                         for t, fs in themed_bundles.items()
-                         if sum(f["token_count"] for f in fs) > MAX_BUNDLE_TOKENS]
-            if oversized:
-                print(f"  ✂️  [P6] {len(oversized)} oversized bundle(s) will be split:")
-                for t, tok in oversized:
-                    print(f"         └─ '{t}': {tok:,} tokens > {MAX_BUNDLE_TOKENS:,} limit")
-            themed_bundles = self._enforce_token_limits(themed_bundles)
-            n_after = len(themed_bundles)
-            _debug_log(f"  P6 token-enforce: {n_before} → {n_after} bundles")
-            if n_after > n_before:
-                print(f"  ✂️  [P6] After split: {n_before} → {n_after} bundles "
-                      f"(max_slots={profile.max_slots})")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 6 (Token Limits) failed for '{profile_name}': {exc}") from exc
-
-        # ── Phase 6b: Re-consolidate after splitting ───────────────────────────
-        try:
-            n_before = len(themed_bundles)
-            themed_bundles = self._consolidate_bundles(themed_bundles, profile.max_slots)
-            n_after = len(themed_bundles)
-            print(f"  🔀 [P6b] Re-consolidate: {n_before} → {n_after} bundles")
-            print(f"  📋 [P6b] Final bundles:")
-            for theme, files in themed_bundles.items():
-                if files:
-                    tokens = sum(f["token_count"] for f in files)
-                    over = " ⚠️ OVER-LIMIT" if tokens > MAX_BUNDLE_TOKENS else ""
-                    print(f"         {theme:30s}: {len(files):4} files, {tokens:7,} tokens{over}")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 6b (Re-Consolidate) failed for '{profile_name}': {exc}") from exc
-
-        # ── Phase 7: Reorder bundles for lost-in-the-middle mitigation ─────────
-        try:
-            # M-T: use the profile's platform-specific ordering strategy (default LITM-U)
-            ordering_strategy = get_ordering_strategy(
-                profile.platform.bundle_ordering if profile.platform else None
-            )
-            _debug_log(f"  P7 ordering_strategy='{profile.platform.bundle_ordering if profile.platform else None}' "
-                       f"→ class={type(ordering_strategy).__name__}")
-
-            # Build bundle dicts with priority/relevance metadata for the strategy
-            bundle_dicts = []
-            for theme, files in themed_bundles.items():
-                if not files:
-                    continue
-                theme_lower = theme.lower()
-                priority = 1
-                if any(kw in theme_lower for kw in CRITICAL_START_BUNDLES):
-                    priority = 3
-                elif any(kw in theme_lower for kw in CRITICAL_END_BUNDLES):
-                    priority = 2
-                bundle_dicts.append({
-                    "theme": theme,
-                    "files": files,
-                    "token_count": sum(f["token_count"] for f in files),
-                    "priority": priority,
-                    "relevance": priority / 3.0,
-                })
-            _debug_log(f"  P7 bundle_dicts: {[(b['theme'], b['priority']) for b in bundle_dicts]}")
-            ordered_bundles = ordering_strategy.order(bundle_dicts)
-            _debug_log(f"  P7 ordered order: {[b['theme'] for b in ordered_bundles]}")
-            themed_bundles = {b["theme"]: b["files"] for b in ordered_bundles}
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 7 (Reorder) failed for '{profile_name}': {exc}") from exc
-
-        # Resolve the format adapter for this profile (M-T)
-        try:
-            adapter = get_format_adapter(profile.platform.format if profile.platform else None)
-            bundle_extension = adapter.extension
-            _debug_log(f"  P7 adapter: format='{profile.platform.format if profile.platform else None}' "
-                       f"→ class={type(adapter).__name__}, extension='{bundle_extension}'")
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Adapter resolution failed for '{profile_name}': {exc}") from exc
-        
-        # Phase 8: Packaging
-        manifest_entries = []
-        
-        # Create manifest first
-        manifest_content = await self._create_manifest(profile_name, themed_bundles, adapter)
-        manifest_path = output_dir / "00_PROJECT_MANIFEST.md"
-        await self._atomic_write(manifest_path, manifest_content)
-        manifest_entries.append("- 00_PROJECT_MANIFEST.md (manifest)")
-        
-        # ── PII masker setup (instantiate ONCE before the file loop) ──────────────
-        # [heritage: anyio 2024] detect() is async; tokenize() is sync
-        # Lazy import keeps the skill decoupled from the engine at module load time.
-        # M8/M23: PII masking is MANDATORY for external packs. Import failure is a
-        # hard stop — never emit an unmasked pack (sovereignty breach).
-        _masker = None
-        try:
-            import sys as _sys
-            _engine_src = str(LibPath(__file__).resolve().parent.parent.parent.parent / "src")
-            if _engine_src not in _sys.path:
-                _sys.path.insert(0, _engine_src)
-            from omega.oracle.pii_masker import PIIMasker, PIIRedactionStyle
-            # TOKENIZE mode: replaces PII with reversible [EMAIL_1] placeholders.
-            # Use MASK_FULL (mask_full()) if you want non-reversible **** masking instead.
-            _masker = PIIMasker(redaction_style=PIIRedactionStyle.TOKENIZE)
-        except ImportError as e:
-            # M23 Failure Integrity: do NOT silently continue. Halt pack generation.
-            try:
-                from omega.errors import OmegaError
-            except ImportError:
-                raise RuntimeError(
-                    "[SEC-BLOCKER] PIIMasker unavailable — refusing to generate "
-                    f"unmasked pack for external upload. ImportError: {e}"
-                ) from e
-            raise OmegaError(
-                "[SEC-BLOCKER] PIIMasker unavailable — refusing to generate "
-                f"unmasked pack for external upload. ImportError: {e}"
-            ) from e
-
-        # Pack each theme
-        # M8/M23: collect PII token maps for reversible vault persistence (OPF schema).
-        # The vault is written at data/coordination/pii_vaults/{profile}.json so the
-        # masked pack can be detokenized later (GDPR Recital 26 / EU AI Act Art. 10 lineage).
-        pii_vault: Dict[str, str] = {}
-        bundles_written = 0
-        try:
-            for theme, files in themed_bundles.items():
-                if not files:
-                    _debug_log(f"  P8 skip empty theme: '{theme}'")
-                    continue
-                
-                bundle_content = []
-                bundle_token_total = 0
-                file_errors = 0
-                
-                for file_info in files:
-                    f_path = file_info["path_obj"]
-                    
-                    def _read_file():
-                        with open(str(f_path), "r", encoding="utf-8", errors="replace") as f:
-                            return f.read()
-
-                    try:
-                        raw_content = await anyio.to_thread.run_sync(_read_file)
-                    except FileNotFoundError:
-                        file_errors += 1
-                        print(f"  ⚠️  [P8-FILE-MISSING] '{file_info['path']}' vanished before pack — skipping")
-                        continue
-                    except Exception as exc:
-                        file_errors += 1
-                        print(f"  ⚠️  [P8-READ-ERR] '{file_info['path']}': {exc}")
-                        continue
-
-                    # Security: Scan for injection patterns before PII masking
-                    injection_matches = await self._scan_for_injection(raw_content, file_info["path"])
-                    if injection_matches:
-                        print(f"  ⚠️  Injection pattern detected in {file_info['path']}: {injection_matches}")
-                        # Log but continue - the content will be XML-escaped anyway
-                    
-                    # PII masking before external upload (M8 Zero Telemetry / M7 Local-First)
-                    # API: detect() is async (runs in thread), tokenize() is sync.
-                    # The masker instance was created once before this loop — do NOT re-instantiate here.
-                    if _masker is not None:
-                        detections = await _masker.detect(raw_content)
-                        if detections:
-                            masked_content, token_map = _masker.tokenize(raw_content, detections)
-                            content = masked_content
-                            # Persist this file's reversible token map into the vault
-                            for placeholder, original in token_map.tokens.items():
-                                pii_vault[placeholder] = original
-                        else:
-                            content = raw_content  # No PII found — pass through unchanged
-                    else:
-                        content = raw_content
-
-                    pruned_content = await self._prune_content(content)
-
-                    # B5 fix: escape bare & and stray < in the file BODY before wrapping
-                    # in <file>. Preserves <file>/</file> and tag-like sequences; only
-                    # escapes stray characters that would break XML parsing.
-                    pruned_content = _escape_bare_xml_chars(pruned_content)
-
-                    # XML-style file block. Attributes are escaped via xml_quoteattr();
-                    # the BODY is fully XML-escaped by _escape_bare_xml_chars() (see B5 fix
-                    # above) so the content is valid XML and cannot trigger Claude truncation
-                    # (Issue #59787). The <file> wrapper tags are emitted by the packer, not
-                    # part of content, so they remain real XML boundaries.
-                    # xml_quoteattr() wraps the value in quotes AND escapes <, >, &, ", '
-                    header = (
-                        f"<file"
-                        f" path={xml_quoteattr(file_info['path'])}"
-                        f" size={xml_quoteattr(str(file_info['size']))}"
-                        f" language={xml_quoteattr(file_info['language'])}"
-                        f" sha256={xml_quoteattr(file_info['sha256'])}"
-                        f" purpose={xml_quoteattr(file_info['purpose'])}"
-                        f" tokens={xml_quoteattr(str(file_info['token_count']))}>"
-                    )
-                    footer = "</file>"
-                    # Body is fully XML-escaped by _escape_bare_xml_chars() above.
-                    rendered_block = header + "\n" + pruned_content + "\n" + footer + "\n\n"
-                    bundle_content.append(rendered_block)
-                    bundle_token_total += file_info["token_count"]
-
-                    # Store rendered block for the format adapter + PII vault
-                    file_info["rendered"] = rendered_block
-
-                    manifest_entries.append(f"- {file_info['path']} -> {theme}{bundle_extension} ({file_info['token_count']} tokens)")
-
-                # Check bundle token limit
-                if bundle_token_total > MAX_BUNDLE_TOKENS:
-                    print(f"  ⚠️  Bundle {theme} exceeds token limit: {bundle_token_total} > {MAX_BUNDLE_TOKENS}")
-
-                # M-T: render the bundle via the profile's format adapter
-                try:
-                    bundle_file = output_dir / f"{theme}{bundle_extension}"
-                    rendered_bundle = adapter.render_bundle(theme, files, profile_name)
-                    await self._atomic_write(bundle_file, rendered_bundle)
-                    bundles_written += 1
-                    _debug_log(f"  P8 wrote bundle '{theme}': {len(files)} files, "
-                               f"{bundle_token_total:,} tokens, {len(bundle_content)} rendered blocks")
-                except Exception as exc:
-                    raise RuntimeError(f"[P8-BUNDLE-ERR] failed to render/write bundle "
-                                       f"'{theme}' ({len(files)} files): {exc}") from exc
-
-            if file_errors:
-                print(f"  ⚠️  [P8] {file_errors} file(s) had read errors during packaging")
-            print(f"  📦 [P8] {bundles_written} bundle(s) written to {output_dir}")
-        except RuntimeError:
-            raise
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 8 (Packaging) failed for '{profile_name}': {exc}") from exc
-        
-        # Phase 8b: Persist reversible PII vault (OPF schema) — M8/M23.
-        # The vault lives at data/coordination/pii_vaults/{profile}.json (gitignored,
-        # local-only) so the masked pack can be detokenized later for lineage/audit.
-        if pii_vault:
-            vault_path = LibPath("data/coordination/pii_vaults") / f"{profile_name}.json"
-            await anyio.to_thread.run_sync(lambda: vault_path.parent.mkdir(parents=True, exist_ok=True))
-            vault_payload = {
-                "schema": "opf.reversible.v1",
-                "profile": profile_name,
-                "generated": datetime.now().isoformat(),
-                "token_count": len(pii_vault),
-                "tokens": pii_vault,
-            }
-            await self._atomic_write(vault_path, json.dumps(vault_payload, indent=2))
-            print(f"  �� 🔐 PII vault persisted: {vault_path} ({len(pii_vault)} tokens)")
-            _debug_log(f"  P8b PII vault written: {len(pii_vault)} placeholders")
-        else:
-            print("  �� 🔓 No PII detected in pack — no vault written.")
-            _debug_log("  P8b No PII detected, skipping vault")
-        
-        # Phase 9: Sign manifest with Ed25519 for integrity verification
-        try:
-            await self._sign_manifest(manifest_path, output_dir)
-        except Exception as exc:
-            raise RuntimeError(f"[PACK-FAIL] Phase 9 (Signing) failed for '{profile_name}': {exc}") from exc
-        
-        _debug_log(f"�═�═�═ PACK COMPLETE: profile='{profile_name}' "
-                   f"output_dir='{output_dir}' bundles={bundles_written} "
-                   f"pii_entries={len(pii_vault)} �� ═�═�═")
-        return output_dir
-    
-    async def _create_manifest(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
-                               adapter=None) -> str:
-        total_files = sum(len(files) for files in themed_bundles.values())
-        total_tokens = sum(f["token_count"] for files in themed_bundles.values() for f in files)
-        profile = self.profiles[profile_name]
-
-        # M-T: if a format adapter is provided, delegate manifest rendering to it
-        # (carries target_model + prompt_caching metadata).
-        if adapter is not None:
-            bundles = []
-            for theme, files in themed_bundles.items():
-                if not files:
-                    continue
-                bundles.append({
-                    "theme": theme,
-                    "files": files,
-                    "token_count": sum(f["token_count"] for f in files),
-                })
-            platform = profile.platform
-            return adapter.render_manifest(
-                profile_name, bundles, total_files, total_tokens,
-                profile.description, profile.max_slots,
-                platform.target_model if platform else None,
-                platform.prompt_caching if platform else False,
-            )
-
-        # Fallback (no adapter): legacy markdown manifest
-        lines = [
-            f"# Enhanced Context Pack Manifest: {profile_name}",
-            f"Generated: {datetime.now().isoformat()}",
-            f"Description: {profile.description}",
-            f"Total Files: {total_files}",
-            f"Estimated Total Tokens: {total_tokens}",
-            f"Max Slots: {profile.max_slots}",
-            "",
-            "## Theme Breakdown",
-        ]
-        
-        for theme, files in themed_bundles.items():
-            if files:
-                file_count = len(files)
-                theme_tokens = sum(f["token_count"] for f in files)
-                lines.append(f"- {theme}: {file_count} files, ~{theme_tokens} tokens")
-                for f in files[:3]:  # Show first 3 files as examples
-                    lines.append(f"  - {f['path']} ({f['token_count']} tokens)")
-                if len(files) > 3:
-                    lines.append(f"  - ... and {len(files) - 3} more")
-        
-        lines.extend([
-            "",
-            "## Usage Notes",
-            "- This pack uses XML format for optimal Claude comprehension",
-            "- Each file is wrapped in <file> tags with metadata attributes",
-            "- The manifest should be reviewed first to understand the pack structure",
-            "- Token counts are estimates using cl100k_base encoder (Claude's tokenizer)",
-        ])
-        
-        return "\n".join(lines)
-    
-    def _glob_files(self, pattern: str) -> List[str]:
-        import glob
-        return glob.glob(pattern, recursive=True)
-    
-    def _match_pattern(self, path: str, pattern: str) -> bool:
-        """Match path against glob pattern, supporting ** recursive globs.
-
-        [heritage: id-soft 1993] BSP-style path culling — O(1) pattern gate.
-        fnmatch treats `*` as non-recursive (stops at `/`); `**` maps to zero or
-        more directory segments so theme patterns like `src/omega/**/*.py` match
-        correctly instead of falling through to `general`.
-
-        NOTE: The originally-specified snippet (`(.+/)?` substitution) is broken —
-        it requires a trailing `/` inside the recursive group, so `a/**/b` can
-        never match `a/b` (zero directories). This implementation uses the correct
-        glob `**` semantics: `**/` → `(?:[^/]+/)*` (zero-or-more dir segments),
-        bare `**` → `.*` (rest of path), single `*` → `[^/]*` (one segment).
-        """
-        import fnmatch, re
-        if '**' not in pattern:
-            return fnmatch.fnmatch(path, pattern)
-
-        out = ['^']
-        i, n = 0, len(pattern)
-        while i < n:
-            c = pattern[i]
-            if c == '*':
-                if i + 1 < n and pattern[i + 1] == '*':
-                    i += 2
-                    if i < n and pattern[i] == '/':
-                        out.append('(?:[^/]+/)*')  # **/ → zero-or-more directory segments
-                        i += 1
-                    else:
-                        out.append('.*')  # trailing ** → rest of path (any depth)
-                    continue
-                out.append('[^/]*')  # single * → one path segment (no slash)
-                i += 1
-                continue
-            if c == '?':
-                out.append('[^/]')
-                i += 1
-                continue
-            if c == '.':
-                out.append(r'\.')
-                i += 1
-                continue
-            if c in '()[]{}|+^$\\':
-                out.append('\\' + c)
-                i += 1
-                continue
-            out.append(c)
-            i += 1
-        out.append('$')
-        return bool(re.match(''.join(out), path))
-
 async def main():
     import sys
     if len(sys.argv) < 2:
-        print("Usage: python enhanced_packer.py <profile_name>")
+        print("Usage: python packer.py <profile_name>")
         print("Available profiles: sovereign-audit, engineering-p3, kali-oversight,")
         print("                    youtube-research-primer, sprint-context,")
         print("                    decision-tools-review")
@@ -1313,12 +893,12 @@ async def main():
         profile = packer.profiles[profile_name]
         # Compute total tokens from manifest
         manifest_path = output_dir / "00_PROJECT_MANIFEST.md"
-        print(f"\n��✅ Pack '{profile_name}' generated at: {output_dir}")
+        print(f"\n✅ Pack '{profile_name}' generated at: {output_dir}")
         print(f"   Manifest: {manifest_path}")
-        print(f"\n���📡 Hivemind Broadcast (copy to operator):")
+        print(f"\n📡 Hivemind Broadcast (copy to operator):")
         print(f"   hivemind_post_context(")
         print(f"     channel='opencode', entity='packer',")
-        print(f"     model='enhanced-packer-v2',")
+        print(f"     model='enhanced-packer-v3',")
         print(f"     task_current='Context pack generated: {profile_name}',")
         print(f"     focus_chain=['context-packer', 'sprint-prep'],")
         print(f"     decisions=['Pack {profile_name} generated with PII masking and XML escaping'],")
@@ -1326,7 +906,7 @@ async def main():
         print(f"   )")
         _debug_log(f"main() completed successfully for profile='{profile_name}'")
     except Exception as e:
-        print(f"��❌ Error: {e}")
+        print(f"❌ Error: {e}")
         _debug_log(f"main() failed for profile='{profile_name}': {e}")
         raise
 
