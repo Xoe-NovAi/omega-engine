@@ -60,7 +60,7 @@ class TokenLedger:
         # 1. Log to the ObservabilityEngine event stream
         # This allows the BudgetGate to query current spend in real-time.
         obs = get_engine()
-        obs.log_event(
+        await obs.log_event(
             EventType.TOKEN_CONSUMPTION,
             trace_id,
             {
@@ -74,7 +74,7 @@ class TokenLedger:
         )
         
         # 1b. Persist to MetricsDB for performance and cost analytics
-        obs.record_performance(
+        await obs.record_performance(
             latency_ms=0.0, # Latency is handled by LatencyTracker, but we record tokens here
             provider=provider_name,
             prompt_tokens=tokens_in,

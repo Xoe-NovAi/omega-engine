@@ -1000,7 +1000,7 @@ class ObservabilityEngine:
             pass
 
     # ── Log an event ─────────────────────────────────────────────────
-    def log_event(
+    async def log_event(
         self,
         event_type: str,
         trace_id: str,
@@ -1010,6 +1010,7 @@ class ObservabilityEngine:
         """Log a single observability event.
 
         [id-soft: vet-015] ZONEID Pattern — integrity marker on every event
+        [M1 AnyIO] Async — directly awaits MetricsDB (lock-protected).
         """
         event = {
             "_zoneid": ZONEID_TRACE,  # Heritage marker for event lineage validation
@@ -1027,20 +1028,43 @@ class ObservabilityEngine:
         metrics_db = self.metrics_db
         if metrics_db:
             try:
-                anyio.from_thread.run(
-                    functools.partial(
-                        metrics_db.record_event,
-                        event_type=event_type,
-                        trace_id=trace_id,
-                        provider=data.get("provider"),
-                        payload=data,
-                    )
+                await metrics_db.record_event(
+                    event_type=event_type,
+                    trace_id=trace_id,
+                    provider=data.get("provider"),
+                    payload=data,
                 )
             except (OSError, RuntimeError) as e:
                 logger.debug("MetricsDB event recording failed: %s", e)
 
         # Also log to standard logger
         logger.debug(f"[{trace_id}] {event_type}: {json.dumps(data, default=str)[:200]}")
+
+    def log_event_sync(
+        self,
+        event_type: str,
+        trace_id: str,
+        data: Dict[str, Any],
+        parent_trace_id: Optional[str] = None,
+    ) -> None:
+        """Sync wrapper around :meth:`log_event` for genuinely sync callers.
+
+        [M1 AnyIO] Uses ``anyio.from_thread.run`` to bridge async MetricsDB
+        from a sync (non-event-loop) thread. Must NOT be called from within
+        an event-loop thread — use ``await log_event(...)`` there instead.
+        """
+        try:
+            anyio.from_thread.run(
+                functools.partial(
+                    self.log_event,
+                    event_type=event_type,
+                    trace_id=trace_id,
+                    data=data,
+                    parent_trace_id=parent_trace_id,
+                )
+            )
+        except (OSError, RuntimeError) as e:
+            logger.debug("MetricsDB event recording failed: %s", e)
 
 
     # ── Record a training example for fine-tuning ────────────────────
@@ -1083,7 +1107,7 @@ class ObservabilityEngine:
         self._dataset.append(example)
 
     # ── Record performance to MetricsDB ──────────────────────────────
-    def record_performance(
+    async def record_performance(
         self,
         latency_ms: float,
         provider: Optional[str] = None,
@@ -1098,23 +1122,21 @@ class ObservabilityEngine:
 
         Called after each inference to track latency, token usage, and cost.
         [id-soft: vet-040] Event System — structured performance logging.
+        [M1 AnyIO] Async — directly awaits MetricsDB (lock-protected).
         """
         metrics_db = self.metrics_db
         if not metrics_db:
             return
         try:
-            anyio.from_thread.run(
-                functools.partial(
-                    metrics_db.record_performance,
-                    latency_ms=latency_ms,
-                    provider=provider,
-                    model_used=model_used,
-                    prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens,
-                    is_cloud=is_cloud,
-                    trace_id=trace_id,
-                    entity_id=entity_id,
-                )
+            await metrics_db.record_performance(
+                latency_ms=latency_ms,
+                provider=provider,
+                model_used=model_used,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                is_cloud=is_cloud,
+                trace_id=trace_id,
+                entity_id=entity_id,
             )
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB performance recording failed: %s", e)
@@ -1153,7 +1175,7 @@ class ObservabilityEngine:
         }
         
         # Log to event stream
-        self.log_event(
+        self.log_event_sync(
             EventType.VAULT_AUDIT if hasattr(EventType, 'VAULT_AUDIT') else "vault.audit",
             trace_id,
             event_data,
@@ -1217,7 +1239,7 @@ class ObservabilityEngine:
         }
         
         # Log to event stream
-        self.log_event(
+        self.log_event_sync(
             EventType.VAULT_AUDIT,
             trace_id,
             event_data,
@@ -1248,7 +1270,7 @@ class ObservabilityEngine:
             except Exception as e:
                 logger.debug("UFL vault audit write failed: %s", e)
 
-    def record_metrics_error(
+    async def record_breaker_transition(
         self,
         provider: str,
         from_state: str,
@@ -1258,24 +1280,53 @@ class ObservabilityEngine:
     ) -> None:
         """Record a circuit breaker state transition to MetricsDB.
 
+        Mirrors ``MetricsDB.record_breaker_transition``.
         [id-soft: vet-040] Event System — breaker transition logging.
+        [M1 AnyIO] Async — directly awaits MetricsDB (lock-protected).
         """
         metrics_db = self.metrics_db
         if not metrics_db:
             return
         try:
-            anyio.from_thread.run(
-                functools.partial(
-                    metrics_db.record_breaker_transition,
-                    provider=provider,
-                    from_state=from_state,
-                    to_state=to_state,
-                    trace_id=trace_id,
-                    reason=reason,
-                )
+            await metrics_db.record_breaker_transition(
+                provider=provider,
+                from_state=from_state,
+                to_state=to_state,
+                trace_id=trace_id,
+                reason=reason,
             )
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB breaker recording failed: %s", e)
+
+    async def record_metrics_error(
+        self,
+        error_type: str,
+        error_message: str,
+        trace_id: Optional[str] = None,
+        provider: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+        entity_id: Optional[str] = None,
+    ) -> None:
+        """Record a structured error to the MetricsDB errors table.
+
+        Mirrors ``MetricsDB.record_error``. Used for forensic error capture
+        (e.g. regression detection alerts).
+        [M1 AnyIO] Async — directly awaits MetricsDB (lock-protected).
+        """
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            return
+        try:
+            await metrics_db.record_error(
+                error_type=error_type,
+                error_message=error_message,
+                trace_id=trace_id,
+                provider=provider,
+                context=context,
+                entity_id=entity_id,
+            )
+        except (OSError, RuntimeError) as e:
+            logger.debug("MetricsDB error recording failed: %s", e)
 
     # ── Persist dataset to disk ──────────────────────────────────────
     async def flush_dataset(self) -> Optional[Path]:
@@ -1302,7 +1353,11 @@ class ObservabilityEngine:
         return [self._event_log[i] for i in range(start, total)]
 
     # ── Stats ────────────────────────────────────────────────────────
-    def stats(self) -> Dict[str, Any]:
+    async def stats(self) -> Dict[str, Any]:
+        """Return observability statistics.
+
+        [M1 AnyIO] Async — directly awaits MetricsDB.get_stats (lock-protected).
+        """
         event_counts: Dict[str, int] = {}
         for event in self._event_log:
             event_counts[event["event"]] = event_counts.get(event["event"], 0) + 1
@@ -1318,6 +1373,36 @@ class ObservabilityEngine:
             },
         }
         # Add MetricsDB stats if available
+        metrics_db = self.metrics_db
+        if metrics_db:
+                try:
+                    result["metrics_db"] = await metrics_db.get_stats()
+                except (RuntimeError, OSError):
+                    result["metrics_db"] = {"error": "unavailable"}
+        else:
+            result["metrics_db"] = {"status": "not_initialized"}
+        return result
+
+    def stats_sync(self) -> Dict[str, Any]:
+        """Sync wrapper around :meth:`stats` for genuinely sync callers.
+
+        [M1 AnyIO] Uses ``anyio.from_thread.run`` to bridge async MetricsDB
+        from a sync (non-event-loop) thread.
+        """
+        event_counts: Dict[str, int] = {}
+        for event in self._event_log:
+            event_counts[event["event"]] = event_counts.get(event["event"], 0) + 1
+        result = {
+            "total_events": len(self._event_log),
+            "dataset_size": len(self._dataset),
+            "event_counts": event_counts,
+            "session_id": self._session_id,
+            "forensics": {
+                "has_crashed": self._forensics.has_crashed,
+                "recent_errors": len(self._forensics.recent_errors),
+                "last_crash": self._last_crash["timestamp"] if self._last_crash else None,
+            },
+        }
         metrics_db = self.metrics_db
         if metrics_db:
                 try:
@@ -1347,7 +1432,7 @@ class ObservabilityEngine:
             trace_id = get_current_trace_id()
         
         self._forensics.record_error(error, trace_id=trace_id, context=context)
-        self.log_event(
+        self.log_event_sync(
             EventType.ERROR,
             trace_id,  # No more "unknown" — guaranteed by safety net
             {
@@ -1410,7 +1495,7 @@ class TraceSession:
 
     def log(self, event_type: str, **data) -> None:
         """Log an event within this trace."""
-        self.engine.log_event(
+        self.engine.log_event_sync(
             event_type, 
             self.trace_id, 
             data, 

@@ -97,7 +97,7 @@ class ModelUpdaterWorker:
 
         self._stop_flag = False
         trace_id = str(uuid.uuid4())
-        self.observability.log_event(
+        await self.observability.log_event(
             EventType.WORKER_START,
             trace_id,
             {"event": "model_updater_started", "schedule": self.cfg.get("schedule", "0 * * * *")},
@@ -139,7 +139,7 @@ class ModelUpdaterWorker:
 
     async def _run_full_cycle(self) -> None:
         trace_id = str(uuid.uuid4())
-        self.observability.log_event(
+        await self.observability.log_event(
             EventType.WORKER_START,
             trace_id,
             {"event": "model_update_cycle_started"},
@@ -156,7 +156,7 @@ class ModelUpdaterWorker:
                 await self._apply_changes(changes, trace_id)
                 await self._render_markdown_report(trace_id)
             # 5️⃣ Emit completion
-            self.observability.log_event(
+            await self.observability.log_event(
                 EventType.WORKER_COMPLETE,
                 trace_id,
                 {
@@ -166,14 +166,14 @@ class ModelUpdaterWorker:
                 },
             )
         except OmegaError as exc:
-            self.observability.log_event(
+            await self.observability.log_event(
                 EventType.ERROR,
                 trace_id,
                 {"event": "model_update_cycle_failed", "error": str(exc)},
             )
             raise
         except (RuntimeError, OSError) as exc:
-            self.observability.log_event(
+            await self.observability.log_event(
                 EventType.ERROR,
                 trace_id,
                 {"event": "model_update_cycle_failed", "error": str(exc)},
@@ -217,7 +217,7 @@ class ModelUpdaterWorker:
                     return
                 except OmegaError as e:
                     await anyio.sleep(2**attempt)
-                    self.observability.log_event(
+                    await self.observability.log_event(
                         EventType.ERROR,
                         trace_id,
                         {
@@ -230,7 +230,7 @@ class ModelUpdaterWorker:
                 except (httpx.HTTPError, RuntimeError) as e:
                     await anyio.sleep(2**attempt)
                     logger.error(f"Provider {name} fetch error: {e}", exc_info=True)
-                    self.observability.log_event(
+                    await self.observability.log_event(
                         EventType.ERROR,
                         trace_id,
                         {
@@ -371,7 +371,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
 
         max_changes = self.cfg.get("max_changes_per_cycle", 30)
         if len(changes) > max_changes:
-            self.observability.log_event(
+            self.observability.log_event_sync(
                 EventType.WORKER_UPDATE,
                 trace_id,
                 {
@@ -430,7 +430,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
 
             await anyio.to_thread.run_sync(_write_audit)
 
-        self.observability.log_event(
+        self.observability.log_event_sync(
             EventType.WORKER_UPDATE,
             trace_id,
             {"event": "model_updater_changes_applied", "count": len(changes)},
@@ -458,7 +458,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
                 )
         report_path = Path("docs/research/model_db/CURRENT_MODELS.md")
         await anyio.to_thread.run_sync(report_path.write_text, "\n".join(md_lines))
-        self.observability.log_event(
+        await self.observability.log_event(
             EventType.WORKER_REPORT,
             trace_id,
             {"event": "model_updater_report_generated", "path": str(report_path)},

@@ -5,7 +5,8 @@
 # 🔱 PIVOT LOG (Active Index)
 
 | Decision | Summary | Status |
-|---|---|---|---|
+|---|---|---|
+| **D-517** | **GAP-0 Fix: ObservabilityEngine Async Refactor** — Made all MetricsDB-facing methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + `_sync` wrappers. Resolved P0 data-loss regression. | ✅ COMPLETE |
 | D-275 | Institutionalize Wave 3 refinement meta-process | Active |
 | D-276 | Implement ContextProtocol pipeline (15K budget) | Active |
 | D-277 | Soul Hydration Pipeline — fix schema mismatch, add soul_utils.py, hydration sequence, soul-verify gate | ✅ COMPLETE (Phase I) |
@@ -611,3 +612,32 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-516 ⬡ 2026-08-08*
+
+### D-517: GAP-0 Fix — ObservabilityEngine Async Refactor
+
+* **Date**: 2026-08-09
+* **Context**: The un-overengineering sprint (commit `24857ca7`) made `MetricsDB.record_*` and `MetricsDB.record_event` methods async (lock-protected via `anyio.to_thread.run_sync`). But the `ObservabilityEngine` wrapper methods (`record_performance`, `log_event`, `stats`) remained sync, using `anyio.from_thread.run()` bridges to call the now-async MetricsDB. This caused two failure modes:
+  1. **Data loss**: When called from async contexts (the majority of callers), `anyio.from_thread.run()` raises `RuntimeError` ("designed to be run from a non-async thread"), caught by the `except (OSError, RuntimeError)` handler → MetricsDB write silently never happens.
+  2. **TypeError**: `latency_tracker.py:33` and `health_monitor.py:295,365` used `await` on these sync methods → `TypeError: object NoneType can't be used in 'await' expression`.
+* **Decision**: Make all MetricsDB-facing `ObservabilityEngine` methods **async** (directly await MetricsDB, remove bridges). Add `_sync` wrappers for genuinely sync callers.
+  - `record_performance` → async (await `MetricsDB.record_performance`)
+  - `record_breaker_transition` → new async method (await `MetricsDB.record_breaker_transition")
+  - `record_metrics_error` → new async method (await `MetricsDB.record_error")
+  - `log_event` → async (await `MetricsDB.record_event") + `log_event_sync` wrapper
+  - `stats` → async (await `MetricsDB.get_stats") + `stats_sync` wrapper
+* **Files modified**: 11 source + 1 test
+  - `src/omega/observability/__init__.py` (core: 5 methods async + 2 `_sync` wrappers)
+  - `src/omega/observability/token_ledger.py`, `regression_watcher.py`
+  - `src/omega/oracle/oracle.py`, `health_monitor.py`, `model_gateway.py`, `sovereign_search_service.py`
+  - `src/omega/workers/model_updater.py`, `ingestion/persistence.py`, `search/search_persistence.py`
+  - `tests/test_metrics_db_integration.py`
+* **Verification**:
+  - `tests/contract/test_model_gateway_fallback.py` — 5/5 pass ✓
+  - `tests/test_metrics_db_integration.py` — 12/12 pass ✓ (was 11 failures at baseline)
+  - All 11 source files pass `py_compile` syntax check
+  - Comprehensive grep confirms zero remaining sync calls to async methods
+* **Architectural insight**: All `ObservabilityEngine` callers are in async contexts. The correct M1/AnyIO pattern is async methods + `_sync` wrappers for the few genuinely sync callers (model_updater `_exists`/`_write_audit`, search_persistence `wrap_search`, health_monitor `record_429`, sovereign_search_service `get_observability_stats`).
+* **Pre-existing failures (NOT caused by this change)**: `test_metrics_db.py` (23 failures — call async `MetricsDB.record_performance()` without await), `test_provider_fallback.py` (3 failures — reference dropped `omega.oracle.cascade_router`).
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-517 ⬡ 2026-08-09*

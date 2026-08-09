@@ -189,7 +189,7 @@ class RegressionWatcher:
         
         # Log to ObservabilityEngine
         obs = _get_obs_engine()
-        obs.log_event(
+        await obs.log_event(
             _get_event_type().ERROR,
             trace_id,
             {
@@ -210,7 +210,7 @@ class RegressionWatcher:
         )
         
         # Also record in MetricsDB errors table
-        obs.record_metrics_error(
+        await obs.record_metrics_error(
             error_type="REGRESSION_DETECTED",
             error_message=f"Performance regression: {metric_name} deviated from baseline",
             trace_id=trace_id,

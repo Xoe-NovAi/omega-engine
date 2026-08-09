@@ -950,7 +950,7 @@ class ModelGateway:
         if trace_id:
             try:
                 from omega.observability import get_engine, EventType
-                get_engine().log_event(
+                await get_engine().log_event(
                     EventType.BACKEND_FALLBACK, trace_id,
                     {"provider": provider.name, "model": model_name,
                      "event": "provider_failed"}

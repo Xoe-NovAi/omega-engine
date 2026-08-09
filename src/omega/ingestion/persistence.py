@@ -148,7 +148,7 @@ class IngestionPersistence:
         )
         
         # 2. Observability Event
-        self.obs.log_event(
+        await self.obs.log_event(
             event_type="ingestion_complete",
             trace_id=trace_id,
             data={

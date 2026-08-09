@@ -286,7 +286,7 @@ class AsyncCircuitBreaker:
                 try:
                     from omega.observability import get_engine, EventType
                     engine = get_engine()
-                    engine.log_event(
+                    await engine.log_event(
                         EventType.BACKEND_FALLBACK,
                         trace_id,
                         {"provider": self.name, "event": "circuit_closed",
@@ -354,7 +354,7 @@ class AsyncCircuitBreaker:
                 try:
                     from omega.observability import get_engine, EventType
                     engine = get_engine()
-                    engine.log_event(
+                    await engine.log_event(
                         EventType.BACKEND_FALLBACK,
                         trace_id,
                         {"provider": self.name, "event": "circuit_opened",
@@ -425,7 +425,7 @@ class AsyncCircuitBreaker:
             try:
                 from omega.observability import get_engine, EventType
                 engine = get_engine()
-                engine.log_event(
+                engine.log_event_sync(
                     EventType.BACKEND_FALLBACK,
                     trace_id,
                     {

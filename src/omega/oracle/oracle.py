@@ -914,7 +914,7 @@ class Oracle:
                 )
             
             # Record performance to MetricsDB
-            self.observability.record_performance(
+            await self.observability.record_performance(
                 latency_ms=res.latency_ms,
                 provider=res.provider_name,
                 model_used=res.model_used,
@@ -1022,7 +1022,7 @@ class Oracle:
         sigil_str = f" {sigil_tag}" if sigil_tag else ""
         
         # Record performance to MetricsDB
-        self.observability.record_performance(
+        await self.observability.record_performance(
             latency_ms=res.latency_ms,
             provider=res.provider_name,
             model_used=res.model_used,
@@ -1179,7 +1179,7 @@ class Oracle:
 
         try:
             from omega.observability import EventType
-            get_engine().log_event(
+            await get_engine().log_event(
                 EventType.ENTITY_INTERACTION, trace_id,
                 {"entity": entity_name, "event": "interaction_recorded"}
             )

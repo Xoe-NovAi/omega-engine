@@ -813,7 +813,7 @@ class SovereignSearchService:
     def get_observability_stats(self) -> Dict[str, Any]:
         """Get observability statistics."""
         if self.observability:
-            return self.observability.get_stats()
+            return self.observability.stats_sync()
         return {}
 
     def reset_circuit_breakers(self) -> None:

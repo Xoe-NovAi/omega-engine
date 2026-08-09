@@ -13,9 +13,9 @@ A **single, lightweight markdown document** serving as the central coordination 
 ## 🚨 P0-INTERRUPT TRIAGE (Active)
 | Timestamp | Source | Event | Owner | Status |
 |-----------|--------|-------|-------|--------|
-| 2026-08-08 | @grok_cli | Context Packer v2 broken (`sovereign-audit` poison pack). v3 refactor handoff ready. | @kali | 🔴 ACTIVE |
+| 2026-08-09 | @kali | GAP-0 fix complete — ObservabilityEngine async refactor done. 11 source files + 1 test file. 17/17 targeted tests pass. | @kali | ✅ COMPLETE |
+| 2026-08-08 | @grok_cli | Context Packer v3 refactor complete. | @kali | ✅ COMPLETE |
 | 2026-08-08 | @researcher | Review request for §16-17 additions to packer v3 handoff. | @grok_cli | ✅ COMPLETE |
-| 2026-08-08 | @grok_cli | Review response: counts verified, direction accepted with refinements. Phase 0.5 split into 0.5a (parallel) + 0.5b (optional). DoD split P0/P1. Handoff updated. | @kali | ✅ INTEGRATED |
 
 ---
 
@@ -30,8 +30,9 @@ A **single, lightweight markdown document** serving as the central coordination 
 
 ### 📌 Decisions Log (Active)
 *See `docs/decisions/PIVOT_LOG.md` for the canonical record.*
+- **2026-08-09**: GAP-0 FIX COMPLETE — Made all ObservabilityEngine MetricsDB-facing methods async (directly await MetricsDB, removed `anyio.from_thread.run` bridges). Added `log_event_sync` and `stats_sync` wrappers for genuinely sync callers. Root cause: sync methods with bridges silently failed when called from async contexts (data loss), and `await` on sync methods caused TypeError. 11 source files + 1 test file.
+- **2026-08-09**: ARCHITECTURAL INSIGHT — All ObservabilityEngine callers are in async contexts. The correct M1 pattern is async methods + `_sync` wrappers for the few genuinely sync callers (model_updater `_exists`/`_write_audit`, search_persistence `wrap_search`, health_monitor `record_429`, sovereign_search_service `get_observability_stats`).
 - **2026-08-08**: Grok CLI → Kali Context Packer v3 — curate offline, fail-closed pack, no silent theme drop. SSOT: `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md`.
-- **2026-08-08**: RESEARCH SYNTHESIS COMPLETE — 9 domains researched (context packing, LITM, profile mgmt, PII, XML/Ed25519, lifecycle, testing, platform constraints, Grok review). Full report: `docs/research/R_CONTEXT_PACKER_V3_RESEARCH_SYNTHESIS_20260808.md`. Integrated into handoff §16-19. Session gnosis updated.
 - **2026-08-08**: GROK CLI REVIEW COMPLETE — Counts verified (8 self-ref, 16 ghosts, 6/15 CLI). Phase 0.5 split into 0.5a (hygiene, parallel Phase 1) + 0.5b (taxonomy, optional/late). DoD split P0/P1. Ship path = 2 packs. PACK_INDEX auto-written. Tier field OR dirs. Handoff updated with §18-19.
 - **2026-08-08**: RESEARCH SYNTHESIS COMPLETE — 9 domains researched (context packing, LITM, profile mgmt, PII, XML/Ed25519, lifecycle, testing, platform constraints, Grok review). Full report: `docs/research/R_CONTEXT_PACKER_V3_RESEARCH_SYNTHESIS_20260808.md`. Integrated into handoff §18-19.
 - **2026-08-07**: HMC Hub archived and reset to clear 2,100+ lines of historical bloat.
@@ -47,10 +48,10 @@ A **single, lightweight markdown document** serving as the central coordination 
 ## 🧑‍💼 AGENT SECTIONS
 
 ### @kali — Transcendent Oversight
-- **P0 NOW**: Context Packer v3 refactor — read `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md` + accept `ho_packer_v3_kali_20260808`.
-- Task id: `packer-v3-refactor-20260808-01`. Do not upload `context_packs/sovereign-audit/` until v3 DoD met.
-- **Grok review integrated**: Phase 0.5 split → 0.5a hygiene (parallel Phase 1) + 0.5b taxonomy (optional/late). DoD split: P0 (items 1-8) = product; P1 (items 9-13) = hygiene. Ship path = 2 packs. Provider-fabric archive output only. PACK_INDEX auto-written by packer. Tier field OR dirs (not both mandatory). Fixture tests first — do not wait on config hygiene.
-- UO-4 Doc Sanity COMPLETE (prior). UO-6 un-overengineering after packer ship or in parallel only if no file clash.
+- **GAP-0 COMPLETE**: ObservabilityEngine async refactor — 5 methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + 2 `_sync` wrappers. 11 source files + 1 test file updated. 17/17 targeted tests pass. Awaiting commit.
+- **P0 NEXT**: Commit GAP-0 fix, then GAP-3 (M23 pre-commit gate repair).
+- **Remaining gaps**: GAP-1 (sovereignty ratio), GAP-2 (heritage), GAP-3 (M23 gate), GAP-4 (IA2 freshness), GAP-5 (AppArmor), GAP-6 (UO-6 descope).
+- Context Packer v3: COMPLETE (prior session).
 
 ### @maat — Build Oversoul (N1-N5)
 - Build-side governance: Infrastructure, Persistence, Engineering, Integration, Governance.

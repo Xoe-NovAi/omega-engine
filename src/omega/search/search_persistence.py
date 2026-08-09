@@ -306,12 +306,12 @@ class SearchPersistence:
         try:
             self.db.insert(record)
         except Exception as e:
-            # Log but don't fail the search
-            get_engine().log_event(
-                "search.persistence_failed",
-                record.trace_id,
-                {"error": str(e), "search_id": search_id}
-            )
+             # Log but don't fail the search
+             get_engine().log_event_sync(
+                 "search.persistence_failed",
+                 record.trace_id,
+                 {"error": str(e), "search_id": search_id}
+             )
         
         return search_id
     
