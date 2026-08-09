@@ -266,11 +266,18 @@ check-m7-local-first:
 	@grep -q 'strategy: local_first' config/providers.yaml || (echo "$(RED)FAIL: providers.yaml missing local_first strategy$(NC)" && false)
 	@echo "$(GREEN)M7 passed: Local-first strategy configured$(NC)"
 
-# Check M23: Failure integrity - no soft-failure patterns
+# Check M23: Failure integrity - no soft-failure patterns (AST-based via Ruff)
+# Uses ratchet: fails only on NEW violations vs config/m23_baseline.txt
 check-m23-failure-integrity:
 	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"
-	@! rg -n 'pass|continue' src/omega/ --type py --glob '!*test*' 2>/dev/null | rg -e '(except[^a-zA-Z_].*:|catch[^a-zA-Z_].*:)' | rg -v 'except Exception' | rg -v '# noqa' || (echo "$(RED)FAIL: Soft-failure patterns found$(NC)" && false)
-	@echo "$(GREEN)M23 passed: No soft-failure patterns$(NC)"
+	@$(PYTHON) scripts/m23_gate.py || (echo "$(RED)FAIL: M23 soft-failure patterns$(NC)" && false)
+	@echo "$(GREEN)M23 passed: No new soft-failure patterns$(NC)"
+
+# Regenerate the M23 baseline (run after intentionally fixing violations)
+m23-baseline:
+	@echo "$(YELLOW)Regenerating M23 baseline...$(NC)"
+	@$(PYTHON) -m ruff check src/omega --select S110,S112,BLE001,E722 --output-format concise 2>&1 | sed 's/:.*//' | sort | uniq -c | sort -rn > config/m23_baseline.txt
+	@echo "$(GREEN)Baseline regenerated: config/m23_baseline.txt$(NC)"
 
 # Run all mandate checks (CI gate)
 check-mandates: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity
@@ -286,4 +293,4 @@ ark-optimize-report:
 	@$(PYTHON) scripts/ark_optimizer.py
 	@echo "✅ Report written to data/coordination/ARK_OPTIMIZATION_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-mandates
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates

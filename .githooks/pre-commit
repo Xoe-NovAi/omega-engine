@@ -62,4 +62,20 @@ if [ -n "$new_tags" ]; then
     echo "  ✅ All new heritage tags have vet records."
 fi
 
+# ── Mandate Gates (M1/M7/M8/M9/M23) ──────────────────────────────────
+# Runs the same gates as `make check-mandates` on every commit.
+# M23 uses AST-based Ruff ratchet (scripts/m23_gate.py).
+echo "🔍 Running mandate gates..."
+cd "$(git rev-parse --show-toplevel)"
+
+# Use the project venv python so ruff is available
+VENV_PYTHON=".venv/bin/python"
+if [ ! -x "$VENV_PYTHON" ]; then
+    echo "⚠️  Venv python not found at $VENV_PYTHON, falling back to python3"
+    VENV_PYTHON="python3"
+fi
+
+# M23 — Failure integrity (AST-based, ratchet)
+"$VENV_PYTHON" scripts/m23_gate.py || exit 1
+
 echo "✅ Pre-commit checks passed."
