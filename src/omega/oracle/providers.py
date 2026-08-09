@@ -32,20 +32,72 @@ def _get_cpu_optimizer():
         _cpu_optimizer = Zen2Optimizer()
     return _cpu_optimizer
 
-def _resolve_google_api_key() -> str:
+import anyio
+
+class ProviderAuthError(OmegaError):
+    """Raised when a provider's credentials cannot be resolved or are invalid."""
+    pass
+
+async def _resolve_google_api_key(trace_id: Optional[str] = None) -> str:
     """Resolve the Google API key from the sovereign vault.
 
-    Replaces the previous scattered ``os.environ.get("GOOGLE_API_KEY")`` read
-    so the encrypted VaultCore is the single source of truth for API keys.
+    Single source of truth for API keys (replaces scattered
+    ``os.environ.get("GOOGLE_API_KEY")`` reads). Per M9 Error Integrity,
+    this NEVER silently swallows a failure into an empty string — every
+    failure mode is logged and raised as a typed ProviderAuthError so
+    callers can distinguish "not configured" from "vault broken."
+
+    [M1 AnyIO] vault._load_sync() is a blocking, potentially disk-bound
+    call — offloaded via anyio.to_thread.run_sync rather than called
+    directly on the event loop.
+
+    Args:
+        trace_id: Optional trace ID for observability correlation.
+
+    Raises:
+        ProviderAuthError: VaultCore is unavailable, fails to load, or
+            has no usable 'google:api_key' credential.
     """
     try:
         from omega.vault import VaultCore
-        vault = VaultCore()
-        vault._load_sync()
-        cred = vault._credentials.get("google:api_key")
-        return cred.encrypted_blob if cred else ""
-    except Exception:
-        return ""
+    except ImportError as e:
+        logger.error("VaultCore import failed while resolving Google API key: %s", e)
+        raise ProviderAuthError(
+            provider="google",
+            message=f"VaultCore unavailable: {e}",
+            trace_id=trace_id,
+            raw_error=e,
+        ) from e
+
+    vault = VaultCore()
+    try:
+        await anyio.to_thread.run_sync(vault._load_sync)
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error(
+            "VaultCore failed to load while resolving Google API key: %s",
+            e, exc_info=True,
+        )
+        raise ProviderAuthError(
+            provider="google",
+            message=f"Vault load failed: {e}",
+            trace_id=trace_id,
+            raw_error=e,
+        ) from e
+
+    # NOTE: vault._credentials is a private attribute reached into from
+    # outside VaultCore. This is a pre-existing leaky abstraction, not
+    # introduced here — flagged for VaultCore to expose a public
+    # get_credential() accessor in a follow-up.
+    cred = vault._credentials.get("google:api_key")
+    if cred is None or not getattr(cred, "encrypted_blob", None):
+        logger.error("No usable 'google:api_key' credential found in vault")
+        raise ProviderAuthError(
+            provider="google",
+            message="No Google API key found in sovereign vault",
+            trace_id=trace_id,
+        )
+
+    return cred.encrypted_blob
 
 class BaseProvider(ABC):
     """Base class for all inference providers."""
@@ -71,13 +123,21 @@ class BaseProvider(ABC):
 class GoogleAIProvider(BaseProvider):
     """Google AI Studio provider (handles Gemini and Gemma models)."""
     async def is_available(self) -> bool:
-        return bool(_resolve_google_api_key())
+        # [M9 carve-out] Health probes may catch broadly to prevent crash
+        # loops, PROVIDED the error is logged — ProviderAuthError here is
+        # typed and expected (not-configured is a routine state).
+        try:
+            await _resolve_google_api_key()
+            return True
+        except ProviderAuthError as e:
+            logger.warning("Google provider unavailable: %s", e)
+            return False
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, api_key: Optional[str] = None) -> Optional[str]:
-        # Use provided api_key or fallback to the sovereign vault
-        key = api_key or _resolve_google_api_key()
-        if not key:
-            raise ProviderAuthError(provider="google", message="No Google API key provided or found in environment", trace_id=trace_id)
+        # Explicit api_key wins; otherwise resolve from vault. A vault
+        # failure now raises ProviderAuthError directly from the resolver
+        # — no separate "if not key: raise" needed.
+        key = api_key or await _resolve_google_api_key(trace_id=trace_id)
         
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         

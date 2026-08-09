@@ -11,8 +11,9 @@
 # RRF Formula: score = sum( weight / (k + rank) ) where k=60 (Cormack et al. 2009)
 
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional, Sequence
+from typing import List, Dict, Any, Optional, Sequence, Awaitable, Callable
 import logging
+import anyio
 
 logger = logging.getLogger(__name__)
 
@@ -204,3 +205,76 @@ def get_hybrid_search_engine(k: int = HybridSearchEngine.DEFAULT_K) -> HybridSea
     if _default_engine is None or _default_engine.k != k:
         _default_engine = HybridSearchEngine(k=k)
     return _default_engine
+
+# ── Consolidated Fetch-and-Fuse Helper ──────────────────────────────────
+# Eliminates duplicated "fetch FTS + fetch vec concurrently, wrap into
+# FTSResult/VecResult, fuse" boilerplate previously copy-pasted in
+# MemoryStore.search() and SQLiteVecAdapter.hybrid_search().
+
+async def fetch_and_fuse(
+    *,
+    fts_fetch: Callable[[], Awaitable[List[Dict[str, Any]]]],
+    vec_fetch: Callable[[], Awaitable[List[tuple]]],
+    limit: int = 20,
+    fts_weight: float = 1.0,
+    vec_weight: float = 1.0,
+    k: int = HybridSearchEngine.DEFAULT_K,
+    doc_id_fn: Optional[Callable[[Dict[str, Any]], str]] = None,
+) -> List[HybridSearchResult]:
+    """Fetch FTS + vector results concurrently and fuse via RRF.
+
+    Single call site for the fetch-wrap-fuse pattern duplicated across
+    MemoryStore.search() and SQLiteVecAdapter.hybrid_search(). Callers
+    supply the two fetch coroutines (already scoped to their own query,
+    entity_name, embedding provider, etc.) — this function owns only the
+    concurrency and fusion mechanics.
+
+    Args:
+        fts_fetch: Zero-arg async callable returning raw FTS result dicts.
+        vec_fetch: Zero-arg async callable returning (score, metadata) tuples.
+        limit: Max fused results to return.
+        fts_weight / vec_weight: RRF source weights.
+        k: RRF constant (default 60, Cormack et al. 2009).
+        doc_id_fn: Optional custom doc_id extractor. Defaults to
+            "{session_id}:{timestamp}" composite key.
+
+    Returns:
+        List[HybridSearchResult], sorted by fused_score descending.
+    """
+    fts_results: List[Dict[str, Any]] = []
+    vec_results: List[tuple] = []
+
+    async def _run_fts():
+        nonlocal fts_results
+        fts_results = await fts_fetch()
+
+    async def _run_vec():
+        nonlocal vec_results
+        vec_results = await vec_fetch()
+
+    # [M1 AnyIO] Structured concurrency — both fetches run in parallel,
+    # task group guarantees both complete (or both are cancelled) before
+    # fusion proceeds.
+    async with anyio.create_task_group() as tg:
+        tg.start_soon(_run_fts)
+        tg.start_soon(_run_vec)
+
+    def _doc_id(meta: Dict[str, Any]) -> str:
+        if doc_id_fn is not None:
+            return doc_id_fn(meta)
+        return f"{meta.get('session_id', '')}:{meta.get('timestamp', '')}"
+
+    fts_objects = [
+        FTSResult(doc_id=_doc_id(r), rank=i + 1, metadata=r)
+        for i, r in enumerate(fts_results)
+    ]
+    vec_objects = [
+        VecResult(doc_id=_doc_id(meta), rank=i + 1, score=score, metadata=meta)
+        for i, (score, meta) in enumerate(vec_results)
+    ]
+
+    engine = get_hybrid_search_engine(k=k)
+    return engine.fuse(
+        fts_objects, vec_objects,
+        fts_weight=fts_weight, vec_weight=vec_weight, limit=limit,
+    )

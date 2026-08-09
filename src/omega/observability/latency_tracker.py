@@ -27,10 +27,10 @@ class LatencyTracker:
     def __init__(self):
         pass
 
-    def record(self, provider: str, model: str, latency_ms: float, status: str = "success", trace_id: Optional[str] = None, is_cloud: bool = False):
-        """Records a single inference latency event via the ObservabilityEngine."""
+    async def record(self, provider: str, model: str, latency_ms: float, status: str = "success", trace_id: Optional[str] = None, is_cloud: bool = False) -> None:
+        """Records a single inference latency event via the ObservabilityEngine. [M1 AnyIO]"""
         try:
-            get_engine().record_performance(
+            await get_engine().record_performance(
                 latency_ms=latency_ms,
                 provider=provider,
                 model_used=model,

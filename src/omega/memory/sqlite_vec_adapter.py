@@ -734,103 +734,63 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         fts_weight: float = 0.5,
         vec_weight: float = 0.5,
     ) -> List[Dict[str, Any]]:
-        """Hybrid search combining FTS5 and vec0 with Reciprocal Rank Fusion.
-        
-        This method is called by MemoryStore.search() to fuse FTS and vector results.
-        Uses HybridSearchEngine for unified RRF fusion (k=60).
-        
-        Correction C6: Python-side RRF fusion via HybridSearchEngine.
-        """
+        """Hybrid search combining FTS5 and vec0 with Reciprocal Rank Fusion."""
         await self._ensure_initialized()
-        
+
         if not query.strip() and not vector:
             return []
-        
-        # 1. Fetch FTS results
-        fts_results: List[Dict[str, Any]] = []
-        if query.strip():
+
+        from .hybrid_search import fetch_and_fuse
+
+        async def _fts_fetch() -> List[Dict[str, Any]]:
+            if not query.strip():
+                return []
+
+            def _sync_fts():
+                conn = self._get_conn()
+                cursor = conn.execute("""
+                    SELECT rowid, session_id, role, content, timestamp
+                    FROM omega_memory_fts
+                    WHERE omega_memory_fts MATCH ? AND entity_name = ?
+                    ORDER BY rank
+                    LIMIT ?
+                """, (query, entity_name, limit * 2))
+                return [
+                    {
+                        "rowid": row[0], "entity_name": entity_name,
+                        "session_id": row[1], "role": row[2],
+                        "content": row[3], "timestamp": row[4],
+                    }
+                    for row in cursor.fetchall()
+                ]
+
             try:
-                def _sync_fts():
-                    conn = self._get_conn()
-                    cursor = conn.execute("""
-                        SELECT rowid, session_id, role, content, timestamp
-                        FROM omega_memory_fts
-                        WHERE omega_memory_fts MATCH ? AND entity_name = ?
-                        ORDER BY rank
-                        LIMIT ?
-                    """, (query, entity_name, limit * 2))
-                    
-                    results = []
-                    for row in cursor.fetchall():
-                        metadata = {
-                            "rowid": row[0],
-                            "entity_name": entity_name,
-                            "session_id": row[1],
-                            "role": row[2],
-                            "content": row[3],
-                            "timestamp": row[4],
-                        }
-                        results.append(metadata)
-                    return results
-                
-                fts_results = await anyio.to_thread.run_sync(_sync_fts)
+                return await anyio.to_thread.run_sync(_sync_fts)
             except (sqlite3.Error, OSError) as e:
                 logger.warning("FTS search failed: %s", e)
-        
-        # 2. Fetch vector results
-        vec_results: List[Tuple[float, Dict[str, Any]]] = []
-        if vector:
+                return []
+
+        async def _vec_fetch() -> List[tuple]:
+            if not vector:
+                return []
             try:
-                vec_results = await self.query(
-                    entity_name=entity_name,
-                    vector=vector,
-                    limit=limit * 2,
-                )
+                return await self.query(entity_name=entity_name, vector=vector, limit=limit * 2)
             except (ProviderError, RuntimeError) as e:
                 logger.warning("Vector search failed: %s", e)
-        
-        # 3. Apply Reciprocal Rank Fusion (RRF) via HybridSearchEngine
-        # RRF formula: score = sum( weight / (k + rank) ) with k=60
-        engine = HybridSearchEngine(k=60)
-        
-        # Convert FTS results to FTSResult objects
-        fts_objects = []
-        for i, r in enumerate(fts_results):
-            doc_id = f"{r.get('session_id', '')}:{r.get('timestamp', '')}"
-            fts_objects.append(FTSResult(
-                doc_id=doc_id,
-                rank=i + 1,
-                metadata=r,
-            ))
-        
-        # Convert vector results to VecResult objects
-        vec_objects = []
-        for i, (score, payload) in enumerate(vec_results):
-            doc_id = f"{payload.get('session_id', '')}:{payload.get('timestamp', '')}"
-            vec_objects.append(VecResult(
-                doc_id=doc_id,
-                rank=i + 1,
-                score=score,
-                metadata=payload,
-            ))
-        
-        # Fuse using HybridSearchEngine
-        fused_results = engine.fuse(
-            fts_objects, vec_objects,
-            limit=limit,
-            fts_weight=fts_weight,
-            vec_weight=vec_weight,
+                return []
+
+        fused = await fetch_and_fuse(
+            fts_fetch=_fts_fetch, vec_fetch=_vec_fetch,
+            limit=limit, fts_weight=fts_weight, vec_weight=vec_weight,
         )
-        
-        # 4. Final results construction (convert to dict format for compatibility)
+
         final_results = []
-        for result in fused_results:
+        for result in fused:
             doc = result.metadata.copy()
             doc["_rrf_score"] = result.fused_score
             doc["_source_rank_fts"] = result.source_rank_fts
             doc["_source_rank_vec"] = result.source_rank_vec
             final_results.append(doc)
-        
         return final_results
 
     async def checkpoint_wal(self, mode: str = "RESTART") -> bool:

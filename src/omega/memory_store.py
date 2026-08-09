@@ -307,64 +307,30 @@ class MemoryStore:
         """
         if not query.strip():
             return []
-            
-        # 1. Fetch Keyword (FTS) and Vector results in parallel
-        fts_results = []
-        vec_results = []
-        
-        async with anyio.create_task_group() as tg:
-            async def _fetch_fts():
-                nonlocal fts_results
-                fts_results = await self.search_fts(query, entity_name, limit * 2)
 
-            async def _fetch_vec():
-                nonlocal vec_results
-                vector_adapter = await self._ensure_vector_store()
-                if vector_adapter:
-                    embedding, _ = await self.embedding_manager.get_embedding(query)
-                    vec_results = await vector_adapter.query(
-                        entity_name=entity_name,
-                        vector=embedding,
-                        limit=limit * 2
-                    )
+        from .memory.hybrid_search import fetch_and_fuse
 
-            tg.start_soon(_fetch_fts)
-            tg.start_soon(_fetch_vec)
+        async def _fts_fetch() -> List[Dict[str, Any]]:
+            return await self.search_fts(query, entity_name, limit * 2)
 
-        # 2. Apply Reciprocal Rank Fusion (RRF) via HybridSearchEngine
-        engine = HybridSearchEngine(k=60)
-        
-        # Convert FTS results to FTSResult objects
-        fts_objects = [
-            FTSResult(
-                doc_id=f"{r.get('session_id', '')}:{r.get('timestamp', '')}",
-                rank=i + 1,
-                metadata=r,
+        async def _vec_fetch() -> List[tuple]:
+            vector_adapter = await self._ensure_vector_store()
+            if not vector_adapter:
+                return []
+            embedding, _ = await self.embedding_manager.get_embedding(query)
+            return await vector_adapter.query(
+                entity_name=entity_name, vector=embedding, limit=limit * 2
             )
-            for i, r in enumerate(fts_results)
-        ]
-        
-        # Convert vector results to VecResult objects
-        vec_objects = [
-            VecResult(
-                doc_id=f"{payload.get('session_id', '')}:{payload.get('timestamp', '')}",
-                rank=i + 1,
-                score=score,
-                metadata=payload,
-            )
-            for i, (score, payload) in enumerate(vec_results)
-        ]
-        
-        # Fuse using HybridSearchEngine
-        fused_results = engine.fuse(fts_objects, vec_objects, fts_weight=1.0, vec_weight=1.0, limit=limit)
-        
-        # 3. Final results construction
+
+        fused = await fetch_and_fuse(
+            fts_fetch=_fts_fetch, vec_fetch=_vec_fetch, limit=limit,
+        )
+
         final_results = []
-        for result in fused_results:
+        for result in fused:
             doc_copy = result.metadata.copy()
             doc_copy["_rrf_score"] = result.fused_score
             final_results.append(doc_copy)
-            
         return final_results
 
     def _compute_simple_embedding(self, text: str) -> List[float]:
@@ -491,8 +457,8 @@ class MemoryStore:
         
         # [Horizon 2: MiMo] FTS5 Dual-Write
         try:
-            self.fts.index_exchange(session_id, entity_name, "user", user_message)
-            self.fts.index_exchange(session_id, entity_name, "assistant", response)
+            await self.fts.index_exchange(session_id, entity_name, "user", user_message)
+            await self.fts.index_exchange(session_id, entity_name, "assistant", response)
         except (RuntimeError, OSError) as e:
             logger.warning("FTS dual-write failed for %s: %s", session_id, e)
         

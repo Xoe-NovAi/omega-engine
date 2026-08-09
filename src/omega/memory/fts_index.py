@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 
+import anyio
+
 logger = logging.getLogger("omega.memory.fts")
 
 class ConversationFTSIndex:
@@ -22,6 +24,16 @@ class ConversationFTSIndex:
         self.db_path = db_path
         self._conn = None
         self._initialized = False
+        # [M1 AnyIO] Same rationale as MetricsDB — check_same_thread=False
+        # (set in initialize()) permits cross-thread use but does not
+        # serialize it. Lazy-init: constructing anyio.Lock() outside a
+        # running event loop is backend-dependent, so defer to first use.
+        self._write_lock: Optional[anyio.Lock] = None
+
+    def _get_write_lock(self) -> "anyio.Lock":
+        if self._write_lock is None:
+            self._write_lock = anyio.Lock()
+        return self._write_lock
 
     def initialize(self):
         """Initialize the FTS5 virtual table."""
@@ -56,26 +68,37 @@ class ConversationFTSIndex:
             logger.error("Failed to initialize FTS5 index: %s", e)
             self._initialized = False
 
-    def index_exchange(self, session_id: str, entity_name: str, role: str, content: str):
-        """Index a single exchange. [C2: try/except wrapped in MemoryStore]"""
+    async def index_exchange(self, session_id: str, entity_name: str, role: str, content: str) -> None:
+        """Index a single exchange. [M1 AnyIO] Offloaded + lock-serialized.
+
+        [C2: caller wraps this in try/except in MemoryStore] — this method
+        still swallows sqlite3.Error/RuntimeError internally for backward
+        compatibility with that call-site contract; it does not raise.
+        """
         if not self._initialized:
             return
-            
-        try:
+
+        timestamp = datetime.now(timezone.utc).isoformat()
+
+        def _sync_index() -> None:
             self._conn.execute(
                 "INSERT INTO exchanges (session_id, entity_name, role, content, timestamp) VALUES (?, ?, ?, ?, ?)",
-                (session_id, entity_name, role, content, datetime.now(timezone.utc).isoformat())
+                (session_id, entity_name, role, content, timestamp),
             )
             self._conn.commit()
+
+        try:
+            async with self._get_write_lock():
+                await anyio.to_thread.run_sync(_sync_index)
         except (sqlite3.Error, RuntimeError) as e:
             logger.warning("FTS index write failed for session %s: %s", session_id, e)
 
-    def search(self, query: str, entity_name: str, limit: int = 20) -> List[Dict[str, Any]]:
-        """Search across exchanges for a specific entity. [C3: entity_name REQUIRED]"""
+    async def search(self, query: str, entity_name: str, limit: int = 20) -> List[Dict[str, Any]]:
+        """Search across exchanges for a specific entity. [C3: entity_name REQUIRED] [M1 AnyIO]"""
         if not self._initialized:
             return []
-            
-        try:
+
+        def _sync_search():
             # BM25 ranking via FTS5 'rank'
             cursor = self._conn.execute("""
                 SELECT session_id, role, content, timestamp, rank
@@ -84,20 +107,26 @@ class ConversationFTSIndex:
                 ORDER BY rank
                 LIMIT ?
             """, (query, entity_name, limit))
-            
             return [dict(row) for row in cursor.fetchall()]
+
+        try:
+            return await anyio.to_thread.run_sync(_sync_search)
         except (sqlite3.Error, RuntimeError) as e:
             logger.error("FTS search failed: %s", e)
             return []
 
-    def remove_session(self, session_id: str):
-        """Remove all exchanges for a session (C1 fix)."""
+    async def remove_session(self, session_id: str) -> None:
+        """Remove all exchanges for a session (C1 fix). [M1 AnyIO]"""
         if not self._initialized:
             return
-            
-        try:
+
+        def _sync_remove() -> None:
             self._conn.execute("DELETE FROM exchanges WHERE session_id = ?", (session_id,))
             self._conn.commit()
+
+        try:
+            async with self._get_write_lock():
+                await anyio.to_thread.run_sync(_sync_remove)
             logger.info("Removed session %s from FTS index", session_id)
         except (sqlite3.Error, RuntimeError) as e:
             logger.error("Failed to remove session %s from FTS: %s", session_id, e)
@@ -124,12 +153,14 @@ class ConversationFTSIndex:
             self._conn = None
             self._initialized = False
 
-    def count(self) -> int:
-        """Return total number of indexed exchanges."""
+    async def count(self) -> int:
+        """Return total number of indexed exchanges. [M1 AnyIO]"""
         if not self._initialized:
             return 0
         try:
-            cursor = self._conn.execute("SELECT count(*) FROM exchanges")
-            return cursor.fetchone()[0]
+            def _sync_count():
+                cursor = self._conn.execute("SELECT count(*) FROM exchanges")
+                return cursor.fetchone()[0]
+            return await anyio.to_thread.run_sync(_sync_count)
         except (sqlite3.Error, RuntimeError):
             return 0

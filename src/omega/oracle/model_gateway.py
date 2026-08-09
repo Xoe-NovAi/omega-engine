@@ -142,6 +142,7 @@ class ModelGateway:
         
         self.models = self._load_models()
         self._kv_cache_config = self._load_kv_cache_config()
+        self._sampling_overrides = self._load_sampling_overrides()
         self._backend_cache: Dict[str, bool] = {}
         
         # Initialize Zen2Optimizer for hardware resonance
@@ -235,6 +236,68 @@ class ModelGateway:
             {"name": name, **spec}
             for name, spec in self.models.items()
         ]
+
+    def _load_sampling_overrides(self) -> dict:
+        """Load per-model sampling overrides (safety/stability floors).
+
+        [Sovereign Sampling Layer] Generalizes model-specific tuning that
+        was previously hardcoded in generate() (M2 Firewall violation —
+        stack-specific logic did not belong in the core engine's hot path).
+        """
+        if not self.config_path.exists():
+            return {}
+        with open(self.config_path, "r") as f:
+            data = yaml.safe_load(f)
+        return data.get("sampling_overrides", {}) if data else {}
+
+    def _resolve_sampling_override(self, model_name: str) -> Optional[dict]:
+        """Find the sampling override entry matching model_name, if any.
+
+        First match wins (dict preserves insertion order, Python 3.7+).
+        """
+        name_lower = model_name.lower()
+        for key, cfg in self._sampling_overrides.items():
+            match_mode = cfg.get("match", "substring")
+            if match_mode == "exact":
+                if name_lower == key.lower():
+                    return cfg
+            elif key.lower() in name_lower:
+                return cfg
+        return None
+
+    def _apply_sampling_overrides(
+        self,
+        model_name: str,
+        temperature: float,
+        repetition_penalty: float,
+        logit_bias: Optional[Dict[int, float]],
+    ) -> Tuple[float, float, Optional[Dict[int, float]]]:
+        """Apply config-driven per-model sampling floors and forced logit biases.
+
+        Replaces the previous hardcoded 'gemma-4-31b' special case in
+        generate(). New models get stability overrides via
+        config/models.yaml `sampling_overrides` — no code change required.
+        """
+        override = self._resolve_sampling_override(model_name)
+        if not override:
+            return temperature, repetition_penalty, logit_bias
+
+        min_temp = override.get("min_temperature")
+        if min_temp is not None:
+            temperature = max(temperature, min_temp)
+
+        min_rep = override.get("min_repetition_penalty")
+        if min_rep is not None:
+            repetition_penalty = max(repetition_penalty, min_rep)
+
+        forced_bias = override.get("forced_logit_bias")
+        if forced_bias:
+            # Defensive cast — YAML plain int keys parse as int already,
+            # but this guards against string keys from a hand-edited file.
+            forced_bias = {int(k): float(v) for k, v in forced_bias.items()}
+            logit_bias = {**(logit_bias or {}), **forced_bias}
+
+        return temperature, repetition_penalty, logit_bias
 
     def _load_sovereign_secrets(self) -> None:
         """Load API keys from .env file into environment variables.
@@ -870,13 +933,13 @@ class ModelGateway:
 
         return True
 
-    def _record_provider_failure(self, provider, model_name: str, trace_id: Optional[str] = None):
+    async def _record_provider_failure(self, provider, model_name: str, trace_id: Optional[str] = None):
         """Record provider failure with HealthMonitor and observability."""
         if self._health_monitor:
             self._health_monitor.record_failure(model_name)
         
         # Record failure in latency tracker (latency is 0 or estimated)
-        tracker.record(
+        await tracker.record(
             provider=provider.name,
             model=model_name,
             latency_ms=0.0,
@@ -989,24 +1052,12 @@ class ModelGateway:
             min_p = cvar_get("config.sampling.min_p", 0.0)
         
         # ── Sovereign Sampling Layer ──────────────────────────────────────────
-        # [Sovereign Sampling] Intervention for Gemma 4 31B to eliminate repetition loops.
-        # Target: gemma-4-31b-it (or any model identified as Gemma 4 31B)
-        if "gemma-4-31b" in model_name.lower():
-            # Increase temperature and repetition penalty to escape local probability peaks.
-            temperature = max(temperature, 0.85)
-            repetition_penalty = max(repetition_penalty, 1.2)
-            
-            # Verified token IDs for ' la' and 'la-' from COGNITIVE_STABILITY_PLAN.md
-            # These are used to mathematically forbid the model from selecting them.
-            GEMMA_LA_TOKENS = {
-                759: -10.0,    # ' la'
-                2149: -10.0,   # 'la-'
-                236772: -10.0, # 'la-' (variant)
-            }
-            if logit_bias is None:
-                logit_bias = GEMMA_LA_TOKENS
-            else:
-                logit_bias.update(GEMMA_LA_TOKENS)
+        # Config-driven per-model stability overrides — see
+        # config/models.yaml `sampling_overrides`. New models needing
+        # stability floors are added there, not here.
+        temperature, repetition_penalty, logit_bias = self._apply_sampling_overrides(
+            model_name, temperature, repetition_penalty, logit_bias
+        )
         
         last_exception = None
         errors = []
@@ -1185,7 +1236,7 @@ class ModelGateway:
                             # [M22 Response Provenance] is_cloud passed for
                             # Sovereignty Gate tracking (P0-2). This ensures
                             # the MetricsDB receives accurate local/cloud ratio.
-                            tracker.record(
+                            await tracker.record(
                                 provider=provider.name,
                                 model=model_name,
                                 latency_ms=_latency_ms,
@@ -1216,7 +1267,7 @@ class ModelGateway:
                         
                         if cancel_scope.cancelled_caught:
                             errors.append(f"{provider.name}: timed out ({timeout}s)")
-                            self._record_provider_failure(provider, model_name, trace_id)
+                            await self._record_provider_failure(provider, model_name, trace_id)
                             continue
             except CircuitOpenError:
                 errors.append(f"{provider.name}: circuit OPEN")
@@ -1236,7 +1287,7 @@ class ModelGateway:
                 continue
             except TimeoutError as e:
                 errors.append(f"{provider.name}: {e}")
-                self._record_provider_failure(provider, model_name, trace_id)
+                await self._record_provider_failure(provider, model_name, trace_id)
                 continue
             except Exception as e:
                 last_exception = e
@@ -1245,7 +1296,7 @@ class ModelGateway:
                     provider.name, trace_id, str(e), exc_info=True
                 )
                 errors.append(f"{provider.name}: {e}")
-                self._record_provider_failure(provider, model_name, trace_id)
+                await self._record_provider_failure(provider, model_name, trace_id)
                 continue
             finally:
                 # [C-10] Release admission token after local inference completes

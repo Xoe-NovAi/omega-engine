@@ -96,3 +96,22 @@ speculative_decode:
     server_flag: "--spec-type draft-mtp"
     pairs:
       gemma-4-26b-a4b-it: gemma-4-26b-a4b-it-assistant
+
+# ── Sovereign Sampling Layer: Per-Model Stability Overrides ──────────────
+# [M2 Firewall] Moved out of model_gateway.py's generate() hot path.
+# Any model can get safety/stability floors here without touching code.
+# `match: substring` checks if `key` appears anywhere in the requested
+# model_name (case-insensitive). `match: exact` requires full equality.
+sampling_overrides:
+  gemma-4-31b:
+    match: substring
+    min_temperature: 0.85
+    min_repetition_penalty: 1.2
+    forced_logit_bias:
+      759: -10.0        # ' la'
+      2149: -10.0       # 'la-'
+      236772: -10.0     # 'la-' (variant)
+    reason: >
+      Eliminates repetition-loop failure mode documented in
+      COGNITIVE_STABILITY_PLAN.md. Verified token IDs — do not
+      renumber without re-verifying against the model's tokenizer.

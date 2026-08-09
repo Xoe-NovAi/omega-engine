@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import anyio
+
 logger = logging.getLogger(__name__)
 
 SCHEMA_VERSION = 1
@@ -130,6 +132,17 @@ class MetricsDB:
     def __init__(self, db_path: Path):
         self.db_path = db_path
         self._conn: Optional[sqlite3.Connection] = None
+        # [M1 AnyIO] Serializes writes across anyio.to_thread.run_sync
+        # worker threads. check_same_thread=False (set in initialize())
+        # only disables Python's thread-identity check — it does not make
+        # concurrent execute() calls from different threads safe. Mirrors
+        # the pattern in sqlite_vec_adapter.py's _write_lock.
+        self._write_lock: Optional[anyio.Lock] = None
+
+    def _get_write_lock(self) -> anyio.Lock:
+        if self._write_lock is None:
+            self._write_lock = anyio.Lock()
+        return self._write_lock
 
     def initialize(self) -> None:
         """Initialize database with WAL mode and schema."""
@@ -175,22 +188,33 @@ class MetricsDB:
 
     # ── Event Recording ──────────────────────────────────────────────────
 
-    def record_event(
+    async def record_event(
         self,
         event_type: str,
         trace_id: Optional[str] = None,
         provider: Optional[str] = None,
         payload: Optional[Dict[str, Any]] = None,
     ) -> None:
-        """Record a general event."""
-        ts = int(time.time() * 1000)
-        self._conn.execute(
-            "INSERT INTO events (ts, event_type, trace_id, provider, payload) VALUES (?, ?, ?, ?, ?)",
-            (ts, event_type, trace_id, provider, json.dumps(payload) if payload else None),
-        )
-        self._conn.commit()
+        """Record a general event.
 
-    def record_error(
+        [M1 AnyIO] Blocking SQLite write offloaded via to_thread.run_sync;
+        [M9 Error Integrity] lock-serialized to prevent concurrent-thread
+        interleaving on the shared connection.
+        """
+        ts = int(time.time() * 1000)
+        payload_json = json.dumps(payload) if payload else None
+
+        def _sync_insert() -> None:
+            self._conn.execute(
+                "INSERT INTO events (ts, event_type, trace_id, provider, payload) VALUES (?, ?, ?, ?, ?)",
+                (ts, event_type, trace_id, provider, payload_json),
+            )
+            self._conn.commit()
+
+        async with self._get_write_lock():
+            await anyio.to_thread.run_sync(_sync_insert)
+
+    async def record_error(
         self,
         error_type: str,
         error_message: str,
@@ -199,16 +223,22 @@ class MetricsDB:
         context: Optional[Dict[str, Any]] = None,
         entity_id: Optional[str] = None,
     ) -> None:
-        """Record an error event."""
+        """Record an error event. [M1 AnyIO] See record_event for pattern rationale."""
         ts = int(time.time() * 1000)
-        self._conn.execute(
-            "INSERT INTO errors (ts, trace_id, provider, error_type, error_message, context, entity_id) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (ts, trace_id, provider, error_type, error_message, json.dumps(context) if context else None, entity_id),
-        )
-        self._conn.commit()
+        context_json = json.dumps(context) if context else None
 
-    def record_breaker_transition(
+        def _sync_insert() -> None:
+            self._conn.execute(
+                "INSERT INTO errors (ts, trace_id, provider, error_type, error_message, context, entity_id) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (ts, trace_id, provider, error_type, error_message, context_json, entity_id),
+            )
+            self._conn.commit()
+
+        async with self._get_write_lock():
+            await anyio.to_thread.run_sync(_sync_insert)
+
+    async def record_breaker_transition(
         self,
         provider: str,
         from_state: str,
@@ -216,16 +246,21 @@ class MetricsDB:
         trace_id: Optional[str] = None,
         reason: Optional[str] = None,
     ) -> None:
-        """Record a circuit breaker state transition."""
+        """Record a circuit breaker state transition. [M1 AnyIO]"""
         ts = int(time.time() * 1000)
-        self._conn.execute(
-            "INSERT INTO breaker_transitions (ts, provider, trace_id, from_state, to_state, reason) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (ts, provider, trace_id, from_state, to_state, reason),
-        )
-        self._conn.commit()
 
-    def record_performance(
+        def _sync_insert() -> None:
+            self._conn.execute(
+                "INSERT INTO breaker_transitions (ts, provider, trace_id, from_state, to_state, reason) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (ts, provider, trace_id, from_state, to_state, reason),
+            )
+            self._conn.commit()
+
+        async with self._get_write_lock():
+            await anyio.to_thread.run_sync(_sync_insert)
+
+    async def record_performance(
         self,
         latency_ms: float,
         provider: Optional[str] = None,
@@ -237,21 +272,39 @@ class MetricsDB:
         cost_usd: float = 0.0,
         entity_id: Optional[str] = None,
     ) -> None:
-        """Record a performance measurement (latency, tokens, cost)."""
+        """Record a performance measurement (latency, tokens, cost).
+
+        [M1 AnyIO] All arguments are captured by closure into `_sync_insert`
+        BEFORE the thread hop — the sync inner function touches no async
+        state, only the sqlite3 connection and locals, which is what makes
+        `anyio.to_thread.run_sync` safe here.
+
+        [M9 Error Integrity] Lock-serialized: this is the highest-frequency
+        write path in the engine (called once per successful inference from
+        ModelGateway.generate() -> LatencyTracker.record()). Without the
+        lock, concurrent inferences racing on the same connection object
+        risk `sqlite3.OperationalError: database is locked` even with
+        PRAGMA busy_timeout=5000 set, because busy_timeout governs
+        cross-process contention, not same-process cross-thread races on
+        one connection object.
+        """
         ts = int(time.time() * 1000)
         total_tokens = prompt_tokens + completion_tokens
-        self._conn.execute(
-            "INSERT INTO performance (ts, trace_id, provider, model_used, latency_ms, "
-            "prompt_tokens, completion_tokens, total_tokens, is_cloud, cost_usd, entity_id) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (ts, trace_id, provider, model_used, latency_ms,
-             prompt_tokens, completion_tokens, total_tokens, int(is_cloud), cost_usd, entity_id),
-        )
-        self._conn.commit()
 
-    # ── Baseline Management ──────────────────────────────────────────────
+        def _sync_insert() -> None:
+            self._conn.execute(
+                "INSERT INTO performance (ts, trace_id, provider, model_used, latency_ms, "
+                "prompt_tokens, completion_tokens, total_tokens, is_cloud, cost_usd, entity_id) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (ts, trace_id, provider, model_used, latency_ms,
+                 prompt_tokens, completion_tokens, total_tokens, int(is_cloud), cost_usd, entity_id),
+            )
+            self._conn.commit()
 
-    def set_baseline(
+        async with self._get_write_lock():
+            await anyio.to_thread.run_sync(_sync_insert)
+
+    async def set_baseline(
         self,
         metric_name: str,
         value: float,
@@ -261,27 +314,36 @@ class MetricsDB:
     ) -> None:
         """Set or update a baseline metric for regression detection."""
         now = int(time.time() * 1000)
-        self._conn.execute(
-            "INSERT OR REPLACE INTO baselines (metric_name, metric_value, sample_count, std_deviation, created_at, source) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (metric_name, value, sample_count, std_deviation, now, source),
-        )
-        self._conn.commit()
 
-    def get_baseline(self, metric_name: str) -> Optional[Dict[str, Any]]:
+        def _sync_insert() -> None:
+            self._conn.execute(
+                "INSERT OR REPLACE INTO baselines (metric_name, metric_value, sample_count, std_deviation, created_at, source) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (metric_name, value, sample_count, std_deviation, now, source),
+            )
+            self._conn.commit()
+
+        async with self._get_write_lock():
+            await anyio.to_thread.run_sync(_sync_insert)
+
+    # ── Query Methods ────────────────────────────────────────────────────
+    # [M1 AnyIO] Reads offloaded via to_thread.run_sync (no write lock needed;
+    # reads racing reads is safe, reads racing writes handled by busy_timeout).
+
+    async def get_baseline(self, metric_name: str) -> Optional[Dict[str, Any]]:
         """Get a baseline metric by name."""
-        row = self._conn.execute(
-            "SELECT metric_name, metric_value, sample_count, std_deviation, created_at, source "
-            "FROM baselines WHERE metric_name = ?",
-            (metric_name,),
-        ).fetchone()
-        if row:
-            return dict(row)
-        return None
+        def _sync_get():
+            row = self._conn.execute(
+                "SELECT metric_name, metric_value, sample_count, std_deviation, created_at, source "
+                "FROM baselines WHERE metric_name = ?",
+                (metric_name,),
+            ).fetchone()
+            return dict(row) if row else None
+        return await anyio.to_thread.run_sync(_sync_get)
 
     # ── Regression Detection ─────────────────────────────────────────────
 
-    def detect_regression(
+    async def detect_regression(
         self,
         metric_name: str,
         current_value: float,
@@ -292,7 +354,7 @@ class MetricsDB:
         Uses 3-sigma rule if std_deviation is available,
         otherwise falls back to percentage threshold.
         """
-        baseline = self.get_baseline(metric_name)
+        baseline = await self.get_baseline(metric_name)
         if not baseline:
             return False
 
@@ -311,57 +373,65 @@ class MetricsDB:
 
     # ── Query Methods ────────────────────────────────────────────────────
 
-    def get_performance_trend(
+    async def get_performance_trend(
         self,
         provider: Optional[str] = None,
         hours: int = 24,
     ) -> List[Dict[str, Any]]:
         """Get performance trend over time."""
         ts_threshold = int((time.time() - hours * 3600) * 1000)
-        if provider:
-            cursor = self._conn.execute(
-                "SELECT ts, latency_ms, provider, model_used, prompt_tokens, completion_tokens "
-                "FROM performance WHERE ts > ? AND provider = ? ORDER BY ts",
-                (ts_threshold, provider),
-            )
-        else:
-            cursor = self._conn.execute(
-                "SELECT ts, latency_ms, provider, model_used, prompt_tokens, completion_tokens "
-                "FROM performance WHERE ts > ? ORDER BY ts",
-                (ts_threshold,),
-            )
-        return [dict(row) for row in cursor.fetchall()]
+        def _sync_get():
+            if provider:
+                cursor = self._conn.execute(
+                    "SELECT ts, latency_ms, provider, model_used, prompt_tokens, completion_tokens "
+                    "FROM performance WHERE ts > ? AND provider = ? ORDER BY ts",
+                    (ts_threshold, provider),
+                )
+            else:
+                cursor = self._conn.execute(
+                    "SELECT ts, latency_ms, provider, model_used, prompt_tokens, completion_tokens "
+                    "FROM performance WHERE ts > ? ORDER BY ts",
+                    (ts_threshold,),
+                )
+            return [dict(row) for row in cursor.fetchall()]
+        return await anyio.to_thread.run_sync(_sync_get)
 
-    def get_error_summary(self, hours: int = 24) -> Dict[str, Any]:
+    async def get_error_summary(self, hours: int = 24) -> Dict[str, Any]:
         """Get error summary for the last N hours."""
         ts_threshold = int((time.time() - hours * 3600) * 1000)
-        cursor = self._conn.execute(
-            "SELECT error_type, COUNT(*) as count FROM errors WHERE ts > ? GROUP BY error_type ORDER BY count DESC",
-            (ts_threshold,),
-        )
-        return {row["error_type"]: row["count"] for row in cursor.fetchall()}
+        def _sync_get():
+            cursor = self._conn.execute(
+                "SELECT error_type, COUNT(*) as count FROM errors WHERE ts > ? GROUP BY error_type ORDER BY count DESC",
+                (ts_threshold,),
+            )
+            return {row["error_type"]: row["count"] for row in cursor.fetchall()}
+        return await anyio.to_thread.run_sync(_sync_get)
 
-    def get_breaker_history(self, provider: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
+    async def get_breaker_history(self, provider: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
         """Get circuit breaker transition history."""
-        if provider:
-            cursor = self._conn.execute(
-                "SELECT ts, provider, from_state, to_state, reason FROM breaker_transitions "
-                "WHERE provider = ? ORDER BY ts DESC LIMIT ?",
-                (provider, limit),
-            )
-        else:
-            cursor = self._conn.execute(
-                "SELECT ts, provider, from_state, to_state, reason FROM breaker_transitions "
-                "ORDER BY ts DESC LIMIT ?",
-                (limit,),
-            )
-        return [dict(row) for row in cursor.fetchall()]
+        def _sync_get():
+            if provider:
+                cursor = self._conn.execute(
+                    "SELECT ts, provider, from_state, to_state, reason FROM breaker_transitions "
+                    "WHERE provider = ? ORDER BY ts DESC LIMIT ?",
+                    (provider, limit),
+                )
+            else:
+                cursor = self._conn.execute(
+                    "SELECT ts, provider, from_state, to_state, reason FROM breaker_transitions "
+                    "ORDER BY ts DESC LIMIT ?",
+                    (limit,),
+                )
+            return [dict(row) for row in cursor.fetchall()]
+        return await anyio.to_thread.run_sync(_sync_get)
 
-    def get_stats(self) -> Dict[str, Any]:
+    async def get_stats(self) -> Dict[str, Any]:
         """Get database statistics."""
-        stats = {}
-        for table in ["events", "errors", "breaker_transitions", "performance", "baselines"]:
-            cursor = self._conn.execute(f"SELECT COUNT(*) as count FROM {table}")
-            stats[f"{table}_count"] = cursor.fetchone()["count"]
-        stats["db_size_bytes"] = self.db_path.stat().st_size if self.db_path.exists() else 0
-        return stats
+        def _sync_get():
+            stats = {}
+            for table in ["events", "errors", "breaker_transitions", "performance", "baselines"]:
+                cursor = self._conn.execute(f"SELECT COUNT(*) as count FROM {table}")
+                stats[f"{table}_count"] = cursor.fetchone()["count"]
+            stats["db_size_bytes"] = self.db_path.stat().st_size if self.db_path.exists() else 0
+            return stats
+        return await anyio.to_thread.run_sync(_sync_get)
