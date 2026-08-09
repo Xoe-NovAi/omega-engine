@@ -6,7 +6,8 @@
 
 | Decision | Summary | Status |
 |---|---|---|
-| **D-517** | **GAP-0 Fix: ObservabilityEngine Async Refactor** — Made all MetricsDB-facing methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + `_sync` wrappers. Resolved P0 data-loss regression. | ✅ COMPLETE |
+| **D-518** | **GAP-3 Fix: M23 Pre-commit Gate Repair** — Replaced broken `rg` pipeline (structurally incapable of failing) with AST-based Ruff ratchet (S110/S112/BLE001/E722). Ratchet: fails only on NEW violations vs baseline. | ✅ COMPLETE |
+| D-517 | **GAP-0 Fix: ObservabilityEngine Async Refactor** — Made all MetricsDB-facing methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + `_sync` wrappers. Resolved P0 data-loss regression. | ✅ COMPLETE |
 | D-275 | Institutionalize Wave 3 refinement meta-process | Active |
 | D-276 | Implement ContextProtocol pipeline (15K budget) | Active |
 | D-277 | Soul Hydration Pipeline — fix schema mismatch, add soul_utils.py, hydration sequence, soul-verify gate | ✅ COMPLETE (Phase I) |
@@ -641,3 +642,25 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-517 ⬡ 2026-08-09*
+
+### D-518: GAP-3 Fix — M23 Pre-commit Gate Repair
+
+* **Date**: 2026-08-09
+* **Context**: The M23 gate (`make check-m23-failure-integrity`) was structurally incapable of failing. `rg -n` is line-oriented, so the intersection of "line has `pass`/`continue`" AND "line has `except...:`" was always empty (idiomatic Python puts them on different lines). The empty pipeline made `rg` exit non-zero, `!` inverted to success, and the gate printed "passed" unconditionally — a false-pass, which is exactly the M23 class of bug.
+* **Decision**: Replace the grep pipeline with Ruff AST-based checking (S110, S112, BLE001, E722). Uses a ratchet: fails only on NEW violations vs baseline (`config/m23_baseline.txt`), so 293 existing violations don't block commits.
+* **Files modified**: 6
+  - `scripts/m23_gate.py` (new AST-based ratchet gate with ruff error detection)
+  - `config/m23_baseline.txt` (baseline: 98 files, 294 violations)
+  - `Makefile` (replaced broken target, added `m23-baseline`)
+  - `pyproject.toml` (`[tool.ruff]` config)
+  - `.githooks/pre-commit` (wired M23 gate, uses venv python)
+  - `tests/contract/test_mandate_gates.py` (mutation tests)
+* **Critical fix during implementation**: Discovered the gate would false-pass when run with system python3 (ruff binary not found). Added explicit ruff error detection (`[TOOL-CHAIN-COLLAPSE]`) to prevent the M23 class of bug in the M23 gate itself.
+* **Verification**:
+  - `tests/contract/test_mandate_gates.py` — 6 passed, 1 skipped ✓
+  - `make check-mandates` — all 5 gates pass ✓
+  - Mutation test: gate correctly fails on deliberately inserted S110 violation ✓
+  - Audit: M1/M7/M8/M9 gates functional (only M23 was broken)
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-518 ⬡ 2026-08-09*

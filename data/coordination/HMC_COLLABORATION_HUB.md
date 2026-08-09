@@ -48,9 +48,10 @@ A **single, lightweight markdown document** serving as the central coordination 
 ## 🧑‍💼 AGENT SECTIONS
 
 ### @kali — Transcendent Oversight
-- **GAP-0 COMPLETE**: ObservabilityEngine async refactor — 5 methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + 2 `_sync` wrappers. 11 source files + 1 test file updated. 17/17 targeted tests pass. Awaiting commit.
-- **P0 NEXT**: Commit GAP-0 fix, then GAP-3 (M23 pre-commit gate repair).
-- **Remaining gaps**: GAP-1 (sovereignty ratio), GAP-2 (heritage), GAP-3 (M23 gate), GAP-4 (IA2 freshness), GAP-5 (AppArmor), GAP-6 (UO-6 descope).
+- **GAP-0 COMPLETE**: ObservabilityEngine async refactor — 5 methods async + 2 `_sync` wrappers. 11 source files + 1 test file. 17/17 targeted tests pass. Committed `a5c09a8e`.
+- **GAP-3 COMPLETE**: M23 pre-commit gate replaced with AST-based Ruff ratchet. 6 files, 375 insertions. Mutation-tested. Committed `38baa432`.
+- **P1 NEXT**: GAP-1 (sovereignty ratio unification), then GAP-2 (heritage reconciliation).
+- **Remaining gaps**: GAP-1 (sovereignty), GAP-2 (heritage), GAP-4 (IA2 freshness), GAP-5 (AppArmor), GAP-6 (UO-6 descope).
 - Context Packer v3: COMPLETE (prior session).
 
 ### @maat — Build Oversoul (N1-N5)

@@ -4,7 +4,7 @@
 **Date:** 2026-08-09
 **Session ID:** `ses_kali_20260809_gap0_complete`
 **Branch:** `main`
-**Last Commit:** `32f72dd7` (fix(async-migration): resolve kwarg TypeError in anyio.from_thread.run bridges)
+**Last Commit:** `38baa432` (fix(gap3): replace broken M23 gate with AST-based Ruff ratchet)
 
 ---
 
@@ -14,7 +14,7 @@
 
 Resolve the P0 data-loss regression where `ObservabilityEngine` methods (`record_performance`, `record_breaker_transition`, `log_event`, `stats`) were sync methods using `anyio.from_thread.run()` bridges. When called from async contexts (the majority of callers), the bridge silently failed — MetricsDB writes never happened. Additionally, `latency_tracker.py:33` and `health_monitor.py:295,365` used `await` on these sync methods, causing `TypeError`.
 
-**Result**: ✅ **GAP-0 COMPLETE** — All ObservabilityEngine MetricsDB methods now async, all callers updated, 17/17 targeted tests pass.
+**Result**: ✅ **GAP-3 COMPLETE** — M23 pre-commit gate replaced with AST-based Ruff ratchet. 6 files, 375 insertions.
 
 ---
 
@@ -56,32 +56,49 @@ Resolve the P0 data-loss regression where `ObservabilityEngine` methods (`record
 - `tests/test_metrics_db.py` — 23 failures (call async `MetricsDB.record_performance()` without await)
 - `tests/contract/test_provider_fallback.py` — 3 failures (reference dropped `omega.oracle.cascade_router`)
 
+### 2. GAP-3: M23 Pre-commit Gate Repair
+
+**Problem**: The M23 gate (`make check-m23-failure-integrity`) was structurally incapable of failing. `rg -n` is line-oriented, so the intersection of "line has `pass`/`continue`" AND "line has `except...:`" was always empty (idiomatic Python puts them on different lines). The empty pipeline made `rg` exit non-zero, `!` inverted to success, and the gate printed "passed" unconditionally.
+
+**Fix**: Replaced the grep pipeline with Ruff AST-based checking (S110, S112, BLE001, E722). Uses a ratchet: fails only on NEW violations vs baseline.
+
+| File | Change |
+|------|--------|
+| `scripts/m23_gate.py` | New AST-based ratchet gate with ruff error detection (`[TOOL-CHAIN-COLLAPSE]` if ruff missing) |
+| `config/m23_baseline.txt` | Baseline of current violations (98 files, 294 total) |
+| `Makefile` | Replaced broken target with `m23_gate.py` call; added `m23-baseline` target |
+| `pyproject.toml` | Added `[tool.ruff]` config |
+| `.githooks/pre-commit` | Wired M23 gate into commit hook (uses venv python) |
+| `tests/contract/test_mandate_gates.py` | Mutation tests (gate must fail on deliberately inserted violations) |
+
+**Test results:**
+- `tests/contract/test_mandate_gates.py` — **6 passed, 1 skipped** ✓
+- `make check-mandates` — **all 5 gates pass** ✓
+
+**Audit of sibling gates**: M1/M7/M8/M9 all functional via mutation testing. Only M23 was broken.
+
+**Critical fix during implementation**: Discovered the gate would false-pass when run with system python3 (ruff binary not found). Added explicit ruff error detection to prevent the M23 class of bug in the M23 gate itself.
+
 ---
 
 ## 🔑 Current Git State (Ground Truth)
 
 ```
+38baa432  fix(gap3): replace broken M23 gate with AST-based Ruff ratchet [PUSHED]
+a5c09a8e  fix(gap0): make ObservabilityEngine MetricsDB methods async [PUSHED]
 32f72dd7  fix(async-migration): resolve kwarg TypeError in anyio.from_thread.run bridges [PUSHED]
 a17aaafa  fix(async-migration): resolve P0 data-loss regression from async MetricsDB migration [PUSHED]
 24857ca7  fix(un-overengineering): AnyIO thread-safety + M9 error integrity + M2 firewall [PUSHED]
 d3922f72  fix(context-packer): Phase 5 bugs — PII vault path, pack_index.json, manifest location [PUSHED]
 ```
 
-**Working tree**: Modified (GAP-0 fix applied but NOT yet committed)
-- 11 source files + 1 test file (all syntax-verified via `py_compile`)
+**Working tree**: Modified (uncommitted doc updates only)
+- `data/coordination/SESSION_ANCHOR.md`
+- `data/coordination/HMC_COLLABORATION_HUB.md`
 
 ---
 
 ## 📋 Work Remaining (Priority Order)
-
-### P0 — GAP-0 Commit [~5m]
-1. `git add` + commit with message: `fix(gap0): make ObservabilityEngine MetricsDB methods async to resolve data-loss regression`
-2. Push to `main`
-
-### P1 — GAP-3: M23 Pre-commit Gate [~4-6h]
-- `rg -n` line-oriented always returns 0; `!` inverts to success
-- Fix: AST-based bare `except:` detection (Ruff), wire into `.githooks/`
-- Owner: Verity / N5
 
 ### P1 — GAP-1: Sovereignty Ratio Unification [~6-8h]
 - 73.6% of rows corrupted, headline metric inverted (87.3% local → reality 13.8% local)
@@ -94,6 +111,15 @@ d3922f72  fix(context-packer): Phase 5 bugs — PII vault path, pack_index.json,
 
 ### P2 — GAP-4: V-9 IA2 Freshness [~5-6h, parallel]
 - Replay attack risk, reusable SovereignSigner HMAC pattern
+- Owner: Lilith / N4
+
+### P2 — GAP-5: V-10 AppArmor [~8-10h, parallel, needs sudo]
+- Containers unconfined (Ubuntu 25.10)
+- Owner: Architect + N1
+
+### P2 — GAP-6: UO-6 Descope [~2-3h, parallel]
+- pybreaker undeclared dep; add `make deps-audit`
+- Owner: Any
 - Owner: Lilith / N4
 
 ### P2 — GAP-5: V-10 AppArmor [~8-10h, parallel, needs sudo]
