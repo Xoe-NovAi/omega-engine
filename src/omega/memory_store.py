@@ -291,9 +291,7 @@ class MemoryStore:
         if not query.strip():
             return []
         
-        return await anyio.to_thread.run_sync(
-            self.fts.search, query, entity_name, limit
-        )
+        return await self.fts.search(query, entity_name, limit)
 
     async def search(
         self,
@@ -679,7 +677,7 @@ class MemoryStore:
             
             # [Horizon 2: MiMo] FTS5 Cleanup (C1 fix)
             try:
-                await anyio.to_thread.run_sync(self.fts.remove_session, session_id)
+                await self.fts.remove_session(session_id)
             except (RuntimeError, OSError) as e:
                 logger.warning("FTS cleanup failed for %s: %s", session_id, e)
             

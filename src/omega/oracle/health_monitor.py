@@ -292,7 +292,7 @@ class AsyncCircuitBreaker:
                         {"provider": self.name, "event": "circuit_closed",
                          "from": old_state.value, "to": self.state.value}
                     )
-                    engine.record_breaker_transition(
+                    await engine.record_breaker_transition(
                         provider=self.name,
                         from_state=old_state.value,
                         to_state=self.state.value,
@@ -362,7 +362,7 @@ class AsyncCircuitBreaker:
                          "failure_count": self.failure_count, "cusum": self.cusum_g}
                     )
                     # Also record to MetricsDB
-                    engine.record_breaker_transition(
+                    await engine.record_breaker_transition(
                         provider=self.name,
                         from_state=old_state.value,
                         to_state=self.state.value,

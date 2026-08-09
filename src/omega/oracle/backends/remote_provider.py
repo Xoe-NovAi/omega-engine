@@ -45,6 +45,7 @@ def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_c
 
     Lazily initializes the MetricsDB singleton on first call.
     Swallows all errors to avoid disrupting inference.
+    [M1 AnyIO] Uses anyio.from_thread.run() to call async MetricsDB from sync context.
     """
     global _metrics_db
     try:
@@ -52,7 +53,8 @@ def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_c
             from omega.observability.metrics_db import MetricsDB
             _metrics_db = MetricsDB(Path("data/observability/metrics.db"))
             _metrics_db.initialize()
-        _metrics_db.record_performance(
+        anyio.from_thread.run(
+            _metrics_db.record_performance,
             latency_ms=latency_ms,
             provider=provider,
             model_used=model,

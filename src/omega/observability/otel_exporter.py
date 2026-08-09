@@ -48,21 +48,22 @@ class OTelSQLiteExporter(SpanExporter):
         self._shutdown = False
     
     def export(self, spans) -> SpanExportResult:
-        """Export a batch of spans to MetricsDB."""
+        """Export spans to MetricsDB. Called by OTel SDK from background thread."""
         if self._shutdown:
+            return SpanExportResult.SUCCESS
+        
+        try:
+            for span in spans:
+                # [M1 AnyIO] Bridge sync OTel SDK thread to async MetricsDB
+                anyio.from_thread.run(self._export_span, span)
+        except Exception as e:
+            logger.error(f"OTel export failed: {e}")
             return SpanExportResult.FAILURE
-            
-        for span in spans:
-            try:
-                self._export_span(span)
-            except Exception as e:
-                logger.error(f"Failed to export span {span.name}: {e}")
-                return SpanExportResult.FAILURE
         
         return SpanExportResult.SUCCESS
     
-    def _export_span(self, span: Span) -> None:
-        """Export a single span to MetricsDB."""
+    async def _export_span(self, span: Span) -> None:
+        """Export a single span to MetricsDB. [M1 AnyIO] Now async."""
         # Extract GenAI attributes
         attrs = dict(span.attributes) if span.attributes else {}
         
@@ -91,7 +92,7 @@ class OTelSQLiteExporter(SpanExporter):
         is_cloud = self._is_cloud_provider(provider)
         
         # Record to MetricsDB performance table
-        self._metrics_db.record_performance(
+        await self._metrics_db.record_performance(
             latency_ms=latency_ms,
             provider=provider,
             model_used=model,
@@ -102,7 +103,7 @@ class OTelSQLiteExporter(SpanExporter):
         )
         
         # Also record as event for full traceability
-        self._metrics_db.record_event(
+        await self._metrics_db.record_event(
             event_type="gen_ai.span",
             trace_id=f"trc_{trace_id[:12]}",
             provider=provider,

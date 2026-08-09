@@ -1026,7 +1026,8 @@ class ObservabilityEngine:
         metrics_db = self.metrics_db
         if metrics_db:
             try:
-                metrics_db.record_event(
+                anyio.from_thread.run(
+                    metrics_db.record_event,
                     event_type=event_type,
                     trace_id=trace_id,
                     provider=data.get("provider"),
@@ -1099,7 +1100,8 @@ class ObservabilityEngine:
         if not metrics_db:
             return
         try:
-            metrics_db.record_performance(
+            anyio.from_thread.run(
+                metrics_db.record_performance,
                 latency_ms=latency_ms,
                 provider=provider,
                 model_used=model_used,
@@ -1257,7 +1259,8 @@ class ObservabilityEngine:
         if not metrics_db:
             return
         try:
-            metrics_db.record_breaker_transition(
+            anyio.from_thread.run(
+                metrics_db.record_breaker_transition,
                 provider=provider,
                 from_state=from_state,
                 to_state=to_state,
@@ -1311,7 +1314,7 @@ class ObservabilityEngine:
         metrics_db = self.metrics_db
         if metrics_db:
                 try:
-                    result["metrics_db"] = metrics_db.get_stats()
+                    result["metrics_db"] = anyio.from_thread.run(metrics_db.get_stats)
                 except (RuntimeError, OSError):
                     result["metrics_db"] = {"error": "unavailable"}
         else:
