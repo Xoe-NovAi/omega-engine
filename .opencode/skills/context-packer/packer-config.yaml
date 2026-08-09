@@ -15,17 +15,22 @@ profiles:
       - mandates
       - engine_state
     token_budget:
-      total: 180000
-      per_bundle: 50000
+      total: 250000
+      per_bundle: 60000
       reserved_output: 50000
     multishot_examples: true
     xml_delimiters: spotlighting
+    # Account & provenance metadata (for forensic linking)
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-08-09"
     include:
     - SOVEREIGN_MANDATES.md
     - OMEGA_ENGINE.md
     - AGENTS.md
     - src/omega/oracle/model_gateway.py
     - src/omega/oracle/providers.py
+    - src/omega/oracle/provider_registry.py
     - src/omega/oracle/oom_protector.py
     - src/omega/oracle/admission_controller.py
     - src/omega/oracle/health_monitor.py
@@ -37,7 +42,6 @@ profiles:
     - src/omega/memory/fts_index.py
     - src/omega/memory/vector_adapters.py
     - src/omega/memory/providers.py
-    - src/omega/memory/recall.py
     - src/omega/observability/bleg.py
     - src/omega/observability/context.py
     - src/omega/observability/latency_tracker.py
@@ -45,10 +49,17 @@ profiles:
     - src/omega/observability/sovereignty.py
     - src/omega/mcp_runtime.py
     - src/omega/hub.py
-    - docs/strategy/**/*.md
-    - '!docs/strategy/archive/**'
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/strategy/UNOVERENGINEERING_PLAN.md
+    - docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md
+    - docs/strategy/STRATEGY_CORPUS_MAP.md
+    - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+    - docs/strategy/HIVEMIND_PROTOCOL.md
+    - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
     - config/providers.yaml
     - config/models.yaml
+    - scripts/m23_gate.py
+    - config/m23_baseline.txt
     exclude:
     - '**/__pycache__/**'
     - '**/*.pyc'
@@ -63,6 +74,7 @@ profiles:
       oracle_core:
       - src/omega/oracle/model_gateway.py
       - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_registry.py
       - src/omega/oracle/health_monitor.py
       oracle_support:
       - src/omega/oracle/resource_guard.py
@@ -76,7 +88,6 @@ profiles:
       - src/omega/memory/fts_index.py
       - src/omega/memory/vector_adapters.py
       - src/omega/memory/providers.py
-      - src/omega/memory/recall.py
       observability:
       - src/omega/observability/bleg.py
       - src/omega/observability/context.py
@@ -89,9 +100,17 @@ profiles:
       strategy_core:
       - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
       - docs/strategy/UNOVERENGINEERING_PLAN.md
+      - docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md
+      - docs/strategy/STRATEGY_CORPUS_MAP.md
+      - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
       config:
       - config/providers.yaml
       - config/models.yaml
+      - config/m23_baseline.txt
+      gates:
+      - scripts/m23_gate.py
   tech-architecture-research:
     description: Technology Architecture Research — 8 decisions (breaker, Redis, MCP
       SDK, httpx2, Pydantic YAML, memory, observability, retry)

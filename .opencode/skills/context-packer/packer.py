@@ -19,13 +19,14 @@ import hashlib
 import os
 import re
 import json
+import uuid
+from datetime import datetime
 # Platform-specific tuning (M-T): format adapters + bundle ordering strategies
 from platform_adapters import PlatformConfig, get_format_adapter, get_ordering_strategy
 # xml_quoteattr() for attribute escaping only — do NOT import xml_escape for body content
 from xml.sax.saxutils import quoteattr as xml_quoteattr
 from typing import List, Dict, Any, Set, Tuple, Optional
 from dataclasses import dataclass, field
-from datetime import datetime
 
 # ── V3 security-hardened XML (manual §1.2 step 5, §1.3) ───────────────────────
 # defusedxml: PARSE-ONLY (its Element/SubElement are intentionally absent).
@@ -342,6 +343,10 @@ class PackProfile:
     exclude: List[str]
     themes: Dict[str, List[str]]
     platform: Optional["PlatformConfig"] = None  # platform-specific tuning (M7/M18)
+    # Account & provenance metadata (for forensic linking)
+    account: Optional[str] = None
+    project: Optional[str] = None
+    version: Optional[str] = None
 
 class EnhancedContextPacker:
     def __init__(self, config_path: str = ".opencode/skills/context-packer/packer-config.yaml"):
@@ -375,10 +380,14 @@ class EnhancedContextPacker:
                 exclude=data.get("exclude", []),
                 themes=data.get("themes", {}),
                 platform=platform,
+                account=data.get("account"),
+                project=data.get("project"),
+                version=data.get("version"),
             )
             _debug_log(f"Loaded profile '{name}': max_slots={data.get('max_slots', 12)}, "
                        f"include={len(data.get('include', []))} patterns, "
-                       f"themes={list(data.get('themes', {}).keys())}")
+                       f"themes={list(data.get('themes', {}).keys())}, "
+                       f"account={data.get('account')}")
     
     def _get_language(self, path: str) -> str:
         ext = os.path.splitext(path)[1].lower()
@@ -520,7 +529,11 @@ class EnhancedContextPacker:
         output_dir = LibPath("context_packs") / profile_name / "generated"
         await anyio.to_thread.run_sync(lambda: output_dir.mkdir(parents=True, exist_ok=True))
 
-        _debug_log(f"═══ PACK START: profile='{profile_name}' "
+        # Generate unique pack ID for forensic linking
+        pack_id = str(uuid.uuid4())
+        pack_timestamp = datetime.now().astimezone().isoformat()
+        
+        _debug_log(f"═══ PACK START: profile='{profile_name}' pack_id={pack_id} "
                    f"max_slots={profile.max_slots} themes={list(profile.themes.keys())} ═══")
 
         # ── Step 1: RESOLVE ─────────────────────────────────────────────────────
@@ -556,6 +569,9 @@ class EnhancedContextPacker:
                     "token_count": tokens,
                     "path_obj": f_path,
                     "stats": stats,
+                    # Forensic linking: pack ID in every file metadata
+                    "pack_id": pack_id,
+                    "pack_timestamp": pack_timestamp,
                 })
             themed_bundles[theme] = enriched_files
 
@@ -694,11 +710,7 @@ class EnhancedContextPacker:
                 # escapes stray characters that would break XML parsing.
                 pruned_content = _escape_bare_xml_chars(pruned_content)
 
-                # XML-style file block. Attributes are escaped via xml_quoteattr();
-                # the BODY is fully XML-escaped by _escape_bare_xml_chars() (see B5 fix
-                # above) so the content is valid XML and cannot trigger Claude truncation
-                # (Issue #59787). The <file> wrapper tags are emitted by the packer, not
-                # part of content, so they remain real XML boundaries.
+                # XML-style file block with forensic pack_id attribute
                 # xml_quoteattr() wraps the value in quotes AND escapes <, >, &, ", '
                 header = (
                     f"<file"
@@ -707,7 +719,8 @@ class EnhancedContextPacker:
                     f" language={xml_quoteattr(file_info['language'])}"
                     f" sha256={xml_quoteattr(file_info['sha256'])}"
                     f" purpose={xml_quoteattr(file_info['purpose'])}"
-                    f" tokens={xml_quoteattr(str(file_info['token_count']))}>"
+                    f" tokens={xml_quoteattr(str(file_info['token_count']))}"
+                    f" pack_id={xml_quoteattr(pack_id)}>"
                 )
                 footer = "</file>"
                 # Body is fully XML-escaped by _escape_bare_xml_chars() above.
@@ -731,7 +744,7 @@ class EnhancedContextPacker:
             print(f"  ⚠️  [Step 5] {file_errors} file(s) had read errors during packaging")
         print(f"  📦 [Step 5] {bundles_written} bundle(s) written to {output_dir}")
 
-        # Step 5b: PII VAULT + MANIFEST
+        # Step 5b: PII VAULT + MANIFEST + PROJECT OVERVIEW
         # Fix Bug 1: Pass directory to write_pii_vault (not file path)
         vault_dir = LibPath("context_packs") / profile_name
         write_pii_vault(vault_dir, profile_name, pii_vault)
@@ -739,22 +752,25 @@ class EnhancedContextPacker:
         # Fix Bug 3: Write manifest to profile root (not generated/)
         manifest_name = "00_PROJECT_MANIFEST.md"
         manifest_path = vault_dir / manifest_name
-        manifest_content = await self._create_manifest(profile_name, themed_bundles, adapter)
+        manifest_content = await self._create_manifest(profile_name, themed_bundles, adapter, pack_id, pack_timestamp)
         await self._atomic_write(manifest_path, manifest_content)
 
         # Sign manifest and capture returns (Fix: _sign_manifest now returns signature data)
         sig_hex, pub_key = await self._sign_manifest(manifest_path, vault_dir)
 
         # Fix Bug 2: Write pack_index.json
-        await self._write_pack_index(profile_name, themed_bundles, manifest_name, sig_hex, pub_key)
+        await self._write_pack_index(profile_name, themed_bundles, manifest_name, sig_hex, pub_key, pack_id, pack_timestamp, profile)
 
-        _debug_log(f"═══ PACK COMPLETE: profile='{profile_name}' "
+        # Generate Project Overview for system prompt assistance
+        await self._write_project_overview(profile_name, themed_bundles, vault_dir, pack_id, pack_timestamp, profile)
+
+        _debug_log(f"═══ PACK COMPLETE: profile='{profile_name}' pack_id={pack_id} "
                    f"output_dir='{output_dir}' bundles={bundles_written} "
                    f"pii_entries={len(pii_vault)} ════")
-        return output_dir
-    
+        return output_dir, pack_id, pack_timestamp
+
     async def _create_manifest(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
-                               adapter=None) -> str:
+                                adapter=None, pack_id: str = "", pack_timestamp: str = "") -> str:
         total_files = sum(len(files) for files in themed_bundles.values())
         total_tokens = sum(f["token_count"] for files in themed_bundles.values() for f in files)
         profile = self.profiles[profile_name]
@@ -777,12 +793,17 @@ class EnhancedContextPacker:
                 profile.description, profile.max_slots,
                 platform.target_model if platform else None,
                 platform.prompt_caching if platform else False,
+                pack_id, profile.account, profile.project, profile.version,
             )
 
         # Fallback (no adapter): legacy markdown manifest
         lines = [
             f"# Enhanced Context Pack Manifest: {profile_name}",
-            f"Generated: {datetime.now().isoformat()}",
+            f"Generated: {pack_timestamp or datetime.now().isoformat()}",
+            f"Pack ID: {pack_id}",
+            f"Account: {profile.account or 'unspecified'}",
+            f"Project: {profile.project or 'unspecified'}",
+            f"Version: {profile.version or 'unspecified'}",
             f"Description: {profile.description}",
             f"Total Files: {total_files}",
             f"Estimated Total Tokens: {total_tokens}",
@@ -805,14 +826,15 @@ class EnhancedContextPacker:
             "",
             "## Usage Notes",
             "- This pack uses XML format for optimal Claude comprehension",
-            "- Each file is wrapped in <file> tags with metadata attributes",
+            "- Each file is wrapped in <file> tags with metadata attributes including pack_id",
             "- The manifest should be reviewed first to understand the pack structure",
             "- Token counts are estimates using cl100k_base encoder (Claude's tokenizer)",
+            "- Pack ID enables forensic linking between pack materials and responses",
         ])
         
         return "\n".join(lines)
-    
-    # ─── Manifest Signing (Ed25519) ────────────────────────────────────────────
+
+    # --- Manifest Signing (Ed25519) ---
     async def _sign_manifest(self, manifest_path: LibPath, output_dir: LibPath) -> tuple[str, str]:
         """Sign manifest with Ed25519 and write signed version. Returns (signature_hex, public_key_pem)."""
         if not ED25519_AVAILABLE:
@@ -874,14 +896,15 @@ class EnhancedContextPacker:
             await self._atomic_write(manifest_path, signed_manifest)
             
             return signature_hex, pub_key_pem
-            
+        
         except Exception as e:
             print(f"  ⚠️  Manifest signing failed: {e}")
             return "", ""
 
     # ─── Pack Index Writing ──────────────────────────────────────────────────
     async def _write_pack_index(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
-                                manifest_name: str, sig_hex: str, pub_key: str):
+                                manifest_name: str, sig_hex: str, pub_key: str,
+                                pack_id: str, pack_timestamp: str, profile: "PackProfile"):
         """Write per-profile pack_index.json with bundle metadata and signature."""
         profile_dir = LibPath("context_packs") / profile_name
         
@@ -896,15 +919,16 @@ class EnhancedContextPacker:
                     "file": f.get("relative_path", f.get("path", "unknown")),
                     "tokens": f.get("token_count", 0),
                     "litm_zone": f.get("litm_zone", "middle"),
-                    "required": f.get("required", False)
+                    "required": f.get("required", False),
+                    "pack_id": f.get("pack_id", pack_id),
                 })
                 total_files += 1
                 total_tokens += f.get("token_count", 0)
-
-        profile = self.profiles[profile_name]
+        
         index_data = {
             "profile": profile_name,
-            "generated_at": datetime.now().astimezone().isoformat(),
+            "pack_id": pack_id,
+            "generated_at": pack_timestamp,
             "total_files": total_files,
             "total_tokens": total_tokens,
             "max_slots": profile.platform.max_slots if profile.platform else 12,
@@ -912,12 +936,220 @@ class EnhancedContextPacker:
             "manifest": manifest_name,
             "signature": f"ed25519:{sig_hex}" if sig_hex else "none",
             "public_key": pub_key if pub_key else "none",
-            "pii_vault": "pii_vault.json"
+            "pii_vault": "pii_vault.json",
+            # Account & provenance metadata
+            "account": profile.account,
+            "project": profile.project,
+            "version": profile.version,
         }
         
         index_path = profile_dir / "pack_index.json"
         await self._atomic_write(index_path, json.dumps(index_data, indent=2))
         _debug_log(f"write_pack_index: {index_path} ({total_files} bundles, {total_tokens} tokens)")
+
+    # ─── Project Overview Generation ────────────────────────────────────────────
+    async def _write_project_overview(self, profile_name: str, themed_bundles: Dict[str, List[dict]],
+                                      vault_dir: LibPath, pack_id: str, pack_timestamp: str, profile: "PackProfile"):
+        """Generate PROJECT_OVERVIEW.md to assist agents in creating effective system prompts and chat initiation prompts."""
+        total_files = sum(len(files) for files in themed_bundles.values())
+        total_tokens = sum(f["token_count"] for files in themed_bundles.values() for f in files)
+        
+        # Analyze bundle composition
+        theme_stats = {}
+        for theme, files in themed_bundles.items():
+            if files:
+                theme_stats[theme] = {
+                    "count": len(files),
+                    "tokens": sum(f["token_count"] for f in files),
+                    "top_files": sorted(files, key=lambda f: -f["token_count"])[:5]
+                }
+        
+        # Determine pack purpose from profile
+        purpose_keywords = {
+            "sovereign-audit": "architecture audit, mandate compliance, un-overengineering",
+            "tech-architecture-research": "technology architecture research, decision matrix, grounded truth",
+            "provider-fabric-review": "provider fabric deep review, local inference, cloud backends, routing",
+            "engineering-p3": "N3 Engineering Node context, core logic, validation",
+            "kali-oversight": "grand oversight, mandates, fleet topology, decisions, agents",
+            "youtube-research-primer": "YouTube research module, spec, implementation, integration",
+            "decision-tools-review": "decision tools implementation review, grounding, schema, CLI",
+            "sprint-context": "current sprint research, analysis, implementation plan",
+            "context-packer-hardening-review": "context packer v2 hardening review, spec, implementation, gaps",
+            "web-claude-sonnet5": "optimized for Claude Sonnet 5 via Web Claude Projects",
+            "web-grok-4.3": "optimized for Grok 4.3 via Web Grok / SuperGrok",
+            "web-grok-4.1-fast": "cost-optimized for high-volume review via Grok 4.1 Fast",
+            "web-gemini-3-pro": "optimized for Gemini 3 Pro via Google AI Studio",
+            "web-gemini-3.1-pro": "ultra-long context for massive codebase analysis",
+            "notebooklm-research": "source-grounded export for NotebookLM research workflows",
+        }
+        
+        pack_purpose = purpose_keywords.get(profile_name, "general context pack")
+        
+        lines = [
+            f"# Project Overview: {profile_name}",
+            f"",
+            f"**Pack ID**: `{pack_id}`",
+            f"**Generated**: {pack_timestamp}",
+            f"**Account**: {profile.account or 'unspecified'}",
+            f"**Project**: {profile.project or 'unspecified'}",
+            f"**Version**: {profile.version or 'unspecified'}",
+            f"**Profile**: {profile_name}",
+            f"**Purpose**: {pack_purpose}",
+            f"**Description**: {profile.description}",
+            f"",
+            f"## Pack Statistics",
+            f"- **Total Files**: {total_files}",
+            f"- **Estimated Total Tokens**: {total_tokens:,}",
+            f"- **Max Slots**: {profile.max_slots}",
+            f"- **Target Platform**: {profile.platform.profile.value if profile.platform else 'unspecified'}",
+            f"- **Target Model**: {profile.platform.target_model if profile.platform else 'unspecified'}",
+            f"- **Format**: {profile.platform.format if profile.platform else 'xml'}",
+            f"- **Bundle Ordering**: {profile.platform.bundle_ordering if profile.platform else 'litm-u-shaped'}",
+            f"",
+            f"## Theme Composition",
+            f"",
+        ]
+        
+        for theme, stats in theme_stats.items():
+            lines.append(f"### {theme} ({stats['count']} files, ~{stats['tokens']:,} tokens)")
+            lines.append(f"")
+            for f in stats['top_files']:
+                lines.append(f"- `{f['path']}` — {f['token_count']:,} tokens — {f['purpose'][:80]}")
+            lines.append(f"")
+        
+        lines.extend([
+            f"## Recommended System Prompt Structure",
+            f"",
+            f"Based on this pack's composition and purpose ({pack_purpose}), the system prompt should include:",
+            f"",
+            f"### 1. Role Definition",
+            f"- **Primary Persona**: Principal Architect / Security Auditor / Senior Engineer (match to pack purpose)",
+            f"- **Mindset**: Ruthless pragmatism, minimal abstractions, high performance, zero bloat",
+            f"- **Authority**: Custom instructions take absolute precedence over project knowledge",
+            f"",
+            f"### 2. Project Knowledge Reference",
+            f"- List all {len(theme_stats)} XML bundles with their themes",
+            f"- Reference the manifest (00_PROJECT_MANIFEST.md) as the entry point",
+            f"- Note the pack_id for forensic linking: `{pack_id}`",
+            f"",
+            f"### 3. Ground Truth (Hardware + Constraints)",
+            f"- Hardware: Ryzen 5 4600H, 16GB RAM, no GPU, 15W TDP",
+            f"- Python 3.13.7 on Linux (requires >=3.12)",
+            f"- 25 Sovereign Mandates (M1-M25) — non-negotiable",
+            f"- Current sprint: UNOVERENGINEER-01",
+            f"",
+            f"### 4. Mandate Compliance Matrix Template",
+            f"- All 11 critical mandates (M1, M2, M7, M8, M9, M13, M14, M22, M23, M24, M25)",
+            f"- Status: PASS/FAIL with specific violations",
+            f"- Files affected with line ranges",
+            f"",
+            f"### 5. Output Format Requirements",
+            f"- Structured Markdown with 7 sections (Executive Summary → Recommendations)",
+            f"- Evidence over opinion: every finding cites file + line range from XML bundles",
+            f"- 5-element formula for recommendations: [Role] + [Scope] + [Focus] + [Format] + [Severity]",
+            f"- Persona adoption: Strict Reviewer / Senior Architect / Security Auditor",
+            f"",
+            f"### 6. Account & Provenance Tracking",
+            f"- Account: {profile.account or 'unspecified'}",
+            f"- Pack Version: {pack_timestamp}",
+            f"- Response frontmatter template (REQUIRED on all responses):",
+            f"```yaml",
+            f"---",
+            f"account: {profile.account or 'unspecified'}",
+            f"pack_version: {pack_timestamp.split('T')[0]}",
+            f"pack_profile: {profile_name}",
+            f"pack_files: {total_files}",
+            f"pack_tokens: {total_tokens}",
+            f"session_date: YYYY-MM-DD",
+            f"session_type: audit|implementation|verification",
+            f"---",
+            f"```",
+            f"",
+            f"## Chat Initiation Prompt Template",
+            f"",
+            f"```markdown",
+            f"## Project: {profile.description}",
+            f"",
+            f"### Role",
+            f"You are a Principal Architect auditing the Omega Engine — a sovereign, local-first AI runtime. Your mindset is Carmack: ruthless pragmatism, minimal abstractions, high performance, zero bloat.",
+            f"",
+            f"### Ground Truth (Verified {pack_timestamp.split('T')[0]})",
+            f"- Python 3.13.7 on Linux (requires >=3.12)",
+            f"- Engine state: `OMEGA_ENGINE.md` in mandates.xml",
+            f"- Mandates: 25 non-negotiable laws in `SOVEREIGN_MANDATES.md` (mandates.xml)",
+            f"- Strategy: `SOVEREIGN_ARK_BLUEPRINT.md` (strategy_core.xml)",
+            f"- Current sprint: UNOVERENGINEER-01",
+            f"- Hardware: Ryzen 5 4600H, 16GB RAM, no GPU, 15W TDP",
+            f"- **Account**: {profile.account or 'unspecified'}",
+            f"- **Pack Version**: {pack_timestamp} (fresh, post-refactor)",
+            f"",
+            f"### Audit Scope ({len(theme_stats)} XML Bundles — {total_files} files, {total_tokens:,} tokens)",
+        ])
+        
+        for i, (theme, stats) in enumerate(theme_stats.items(), 1):
+            bundle_file = f"{theme}.xml"
+            lines.append(f"{i}. **{bundle_file}** — {theme.replace('_', ' ').title()} ({stats['count']} files, ~{stats['tokens']:,} tokens)")
+        
+        lines.extend([
+            f"",
+            f"### Known Gaps (Already Tracked)",
+            f"- [Reference CARMACK_REVIEW_WEB_CLAUDE_GAPS.md or equivalent]",
+            f"",
+            f"### Constraints (Non-Negotiable)",
+            f"- M1: AnyIO only (no direct asyncio imports)",
+            f"- M2: Core ≠ Stacks firewall",
+            f"- M7: Local-first (no cloud-only deps)",
+            f"- M8: Zero telemetry",
+            f"- M9: Error integrity (typed, traceable, no silent swallowing)",
+            f"- M13: Temple-grade quality (11 gates)",
+            f"- M14: Heritage vetting ([id-soft:] tags need vet records)",
+            f"- M22: Provenance (actual provider in logs)",
+            f"- M23: Failure integrity (no soft-failures)",
+            f"- M24: Venv sovereignty",
+            f"- M25: Streaming resilience (30s chunk timeout)",
+            f"",
+            f"### Task",
+            f"Perform a ruthless audit of the CURRENT implementation. For each mandate:",
+            f"1. **Verify compliance** — cite specific file + line range from XML bundles",
+            f"2. **Find violations** — code snippets that break the mandate",
+            f"3. **Identify un-overengineering targets** — what to delete/flatten",
+            f"4. **Flag concurrency risks** — blocking I/O, rogue asyncio, race conditions",
+            f"5. **Inventory technical debt** — duplicated logic, dead code, stale patterns",
+            f"",
+            f"### Output Format",
+            f"Structured Markdown report per system prompt:",
+            f"- Executive Summary",
+            f"- Mandate Compliance Matrix (table)",
+            f"- Critical Violations (MUST FIX)",
+            f"- Un-overengineering Targets (DELETE/FLATTEN)",
+            f"- Concurrency & Safety Risks",
+            f"- Technical Debt Inventory",
+            f"- Recommendations Priority Order (using 5-element formula: Role/Scope/Focus/Format/Severity)",
+            f"",
+            f"### Key Principle",
+            f"**Evidence over opinion.** Every finding must cite specific file + line range from the XML bundles. \"It looks like\" is not acceptable — we need proof from the code.",
+            f"",
+            f"### Response Frontmatter (REQUIRED on all responses)",
+            f"```yaml",
+            f"---",
+            f"account: {profile.account or 'unspecified'}",
+            f"pack_version: {pack_timestamp.split('T')[0]}",
+            f"pack_profile: {profile_name}",
+            f"pack_files: {total_files}",
+            f"pack_tokens: {total_tokens}",
+            f"session_date: YYYY-MM-DD",
+            f"session_type: audit|implementation|verification",
+            f"---",
+            f"```",
+            f"",
+            f"---",
+            f"",
+            f"*System prompt should be in CLAUDE_PROJECT_SYSTEM_PROMPT.md. Project knowledge files are the {len(theme_stats)} XML bundles in generated/. Begin audit upon receiving the chat initiation prompt.*",
+        ])
+        
+        overview_path = vault_dir / "PROJECT_OVERVIEW.md"
+        await self._atomic_write(overview_path, "\n".join(lines))
+        _debug_log(f"  Project Overview written: {overview_path}")
 
 async def main():
     import sys
@@ -925,7 +1157,10 @@ async def main():
         print("Usage: python packer.py <profile_name>")
         print("Available profiles: sovereign-audit, engineering-p3, kali-oversight,")
         print("                    youtube-research-primer, sprint-context,")
-        print("                    decision-tools-review")
+        print("                    decision-tools-review, tech-architecture-research,")
+        print("                    provider-fabric-review, context-packer-hardening-review,")
+        print("                    web-claude-sonnet5, web-grok-4.3, web-grok-4.1-fast,")
+        print("                    web-gemini-3-pro, web-gemini-3.1-pro, notebooklm-research")
         return
 
     profile_name = sys.argv[1]
@@ -933,22 +1168,35 @@ async def main():
     packer = EnhancedContextPacker()
     await packer.load_config()
     try:
-        output_dir = await packer.pack(profile_name)
+        output_dir, pack_id, pack_timestamp = await packer.pack(profile_name)
         profile = packer.profiles[profile_name]
-        # Compute total tokens from manifest
         manifest_path = output_dir / "00_PROJECT_MANIFEST.md"
+        overview_path = LibPath("context_packs") / profile_name / "PROJECT_OVERVIEW.md"
         print(f"\n✅ Pack '{profile_name}' generated at: {output_dir}")
+        print(f"   Pack ID: {pack_id}")
+        print(f"   Timestamp: {pack_timestamp}")
         print(f"   Manifest: {manifest_path}")
+        print(f"   Project Overview: {overview_path}")
+        print(f"   Pack Index: {LibPath('context_packs') / profile_name / 'pack_index.json'}")
+        print(f"\n📋 NEXT STEPS FOR AGENT:")
+        print(f"   1. READ: {overview_path}")
+        print(f"      → Contains recommended system prompt structure, chat initiation template,")
+        print(f"        and response frontmatter protocol for this specific pack")
+        print(f"   2. CREATE/UPDATE: CLAUDE_PROJECT_SYSTEM_PROMPT.md")
+        print(f"      → Use the 'Recommended System Prompt Structure' section as guide")
+        print(f"   3. CREATE/UPDATE: CHAT_INITIATION_PROMPT.md")
+        print(f"      → Use the 'Chat Initiation Prompt Template' section as guide")
+        print(f"   4. ENSURE all responses include the frontmatter template from the overview")
         print(f"\n📡 Hivemind Broadcast (copy to operator):")
         print(f"   hivemind_post_context(")
         print(f"     channel='opencode', entity='packer',")
         print(f"     model='enhanced-packer-v3',")
         print(f"     task_current='Context pack generated: {profile_name}',")
         print(f"     focus_chain=['context-packer', 'sprint-prep'],")
-        print(f"     decisions=['Pack {profile_name} generated with PII masking and XML escaping'],")
-        print(f"     continuation='Upload {output_dir} to Claude.ai Projects'")
+        print(f"     decisions=['Pack {profile_name} generated with PII masking, XML escaping, pack_id={pack_id[:8]}, PROJECT_OVERVIEW.md'],")
+        print(f"     continuation='Upload {output_dir} to Claude.ai Projects; review PROJECT_OVERVIEW.md for system prompt guidance'")
         print(f"   )")
-        _debug_log(f"main() completed successfully for profile='{profile_name}'")
+        _debug_log(f"main() completed successfully for profile='{profile_name}' pack_id={pack_id}")
     except Exception as e:
         print(f"❌ Error: {e}")
         _debug_log(f"main() failed for profile='{profile_name}': {e}")

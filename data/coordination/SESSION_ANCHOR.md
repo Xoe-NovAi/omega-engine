@@ -2,32 +2,29 @@
 
 **AP Token:** `AP-KALI-v1.0.0`
 **Date:** 2026-08-09
-**Session ID:** `ses_kali_20260809_gap0_complete`
+**Session ID:** `ses_kali_20260809_gap0_gap3_complete`
 **Branch:** `main`
-**Last Commit:** `38baa432` (fix(gap3): replace broken M23 gate with AST-based Ruff ratchet)
+**Last Commit:** `6161ca95` (docs: update continuation docs for GAP-0 + GAP-3 completion)
 
 ---
 
 ## 🎯 Session Objective
 
-**GAP-0 Fix: ObservabilityEngine Async Refactor**
+**GAP-0 & GAP-3 Complete — GAP-1 (Sovereignty Ratio) In Progress — Context Packer Enhanced**
 
-Resolve the P0 data-loss regression where `ObservabilityEngine` methods (`record_performance`, `record_breaker_transition`, `log_event`, `stats`) were sync methods using `anyio.from_thread.run()` bridges. When called from async contexts (the majority of callers), the bridge silently failed — MetricsDB writes never happened. Additionally, `latency_tracker.py:33` and `health_monitor.py:295,365` used `await` on these sync methods, causing `TypeError`.
+**GAP-0 (COMPLETE)**: Resolved P0 data-loss regression where `ObservabilityEngine` methods were sync with `anyio.from_thread.run()` bridges. When called from async contexts, the bridge silently failed. Fixed with dual-surface async API + `_sync` wrappers.
 
-**Result**: ✅ **GAP-3 COMPLETE** — M23 pre-commit gate replaced with AST-based Ruff ratchet. 6 files, 375 insertions.
+**GAP-3 (COMPLETE)**: Replaced broken M23 pre-commit gate (structurally incapable of failing) with AST-based Ruff ratchet (S110/S112/BLE001/E722). Mutation-tested, wired into `.githooks/pre-commit`.
+
+**GAP-1 (IN PROGRESS)**: Sovereignty Ratio Unification. 5 divergent cloud classifiers causing 73.6% misclassification. Created `ProviderRegistry` SSOT reading from `providers.yaml`. Next: wire into 5 call sites, build corrected SQL view, add invariant tests.
+
+**Context Packer Enhancement (COMPLETE)**: Enhanced context-packer with forensic linking (pack_id UUID), account/provenance metadata protocol, auto-generated PROJECT_OVERVIEW.md for agent guidance, and enhanced success message with explicit next steps. Updated system prompt and chat initiation prompt for Web Claude sovereign-audit pack.
 
 ---
 
 ## ✅ Completed This Session
 
 ### 1. GAP-0: ObservabilityEngine Async Refactor
-
-**Core change**: Made all MetricsDB-facing `ObservabilityEngine` methods **async** (directly await MetricsDB, removed `anyio.from_thread.run` bridges). Added `_sync` wrappers for genuinely sync callers.
-
-| Method | Change | Wrapper |
-|--------|--------|---------|
-| `record_performance` | sync → **async** | — |
-| `record_breaker_transition` | (new) **async** | — |
 | `record_metrics_error` | (new) **async** | — |
 | `log_event` | sync → **async** | `log_event_sync` |
 | `stats` | sync → **async** | `stats_sync` |
@@ -79,11 +76,34 @@ Resolve the P0 data-loss regression where `ObservabilityEngine` methods (`record
 
 **Critical fix during implementation**: Discovered the gate would false-pass when run with system python3 (ruff binary not found). Added explicit ruff error detection to prevent the M23 class of bug in the M23 gate itself.
 
+### 3. Context Packer Enhancement (NEW)
+
+**Problem**: The context-packer lacked forensic linking, account tracking, and agent guidance for system prompt creation.
+
+**Fix**: Enhanced the packer with:
+
+| File | Change |
+|------|--------|
+| `.opencode/skills/context-packer/packer.py` | Added pack_id UUID generation, account/project/version metadata, PROJECT_OVERVIEW.md generation, enhanced success message with agent instructions |
+| `.opencode/skills/context-packer/packer-config.yaml` | Added `account`, `project`, `version` fields to sovereign-audit profile |
+| `.opencode/skills/context-packer/platform_adapters.py` | Updated `render_manifest` to include pack_id, account, project, version |
+| `context_packs/sovereign-audit/CLAUDE_PROJECT_SYSTEM_PROMPT_v2.md` | Updated system prompt with web research best practices, 5-element formula, persona patterns, account tracking |
+| `context_packs/sovereign-audit/CHAT_INITIATION_PROMPT_v2.md` | Updated chat initiation prompt with fresh pack metadata |
+| `context_packs/sovereign-audit/PROJECT_OVERVIEW.md` | Auto-generated agent guide with system prompt structure, chat template, frontmatter protocol |
+| `context_packs/sovereign-audit/response/*.md` | Added YAML frontmatter with account tracking to all 4 Web Claude responses |
+
+**Key improvements:**
+- **Forensic linking**: Every pack gets a UUID (`pack_id`) embedded in XML file tags, manifest, pack_index.json, and PROJECT_OVERVIEW.md
+- **Account tracking**: `account: arcana.novai@gmail.com` embedded in all pack artifacts
+- **Agent guidance**: PROJECT_OVERVIEW.md provides recommended system prompt structure, chat initiation template, and response frontmatter protocol
+- **Success message**: Packer now outputs explicit next steps for agents creating system prompts
+
 ---
 
 ## 🔑 Current Git State (Ground Truth)
 
 ```
+6161ca95  docs: update continuation docs for GAP-0 + GAP-3 completion [PUSHED]
 38baa432  fix(gap3): replace broken M23 gate with AST-based Ruff ratchet [PUSHED]
 a5c09a8e  fix(gap0): make ObservabilityEngine MetricsDB methods async [PUSHED]
 32f72dd7  fix(async-migration): resolve kwarg TypeError in anyio.from_thread.run bridges [PUSHED]
@@ -92,18 +112,36 @@ a17aaafa  fix(async-migration): resolve P0 data-loss regression from async Metri
 d3922f72  fix(context-packer): Phase 5 bugs — PII vault path, pack_index.json, manifest location [PUSHED]
 ```
 
-**Working tree**: Modified (uncommitted doc updates only)
+**Working tree**: Modified (GAP-1 in progress + Context Packer enhancements)
+- `src/omega/oracle/provider_registry.py` (new — SSOT for provider classification)
+- `.opencode/skills/context-packer/packer.py` (enhanced with pack_id, account tracking, PROJECT_OVERVIEW)
+- `.opencode/skills/context-packer/packer-config.yaml` (added account/project/version)
+- `.opencode/skills/context-packer/platform_adapters.py` (updated render_manifest)
+- `context_packs/sovereign-audit/CLAUDE_PROJECT_SYSTEM_PROMPT_v2.md` (new)
+- `context_packs/sovereign-audit/CHAT_INITIATION_PROMPT_v2.md` (new)
+- `context_packs/sovereign-audit/PROJECT_OVERVIEW.md` (new, auto-generated)
+- `context_packs/sovereign-audit/response/*.md` (frontmatter added)
 - `data/coordination/SESSION_ANCHOR.md`
 - `data/coordination/HMC_COLLABORATION_HUB.md`
+- `docs/decisions/PIVOT_LOG.md`
+- `data/coordination/CARMACK_REVIEW_WEB_CLAUDE_GAPS.md` (new)
 
 ---
 
 ## 📋 Work Remaining (Priority Order)
 
 ### P1 — GAP-1: Sovereignty Ratio Unification [~6-8h]
-- 73.6% of rows corrupted, headline metric inverted (87.3% local → reality 13.8% local)
-- 5 divergent classifiers need unification
-- Owner: Kali / N6
+- Wire `ProviderRegistry` into 5 divergent call sites:
+  1. `model_gateway.py` (6 call sites: `_cloud_providers`, `_is_cloud_provider`, `_is_cloud_provider_name`)
+  2. `observability/__init__.py:686` (`_is_cloud_provider` substring denylist)
+  3. `otel_exporter.py:123` (hardcoded cloud set)
+  4. `remote_provider.py:387` (`_is_cloud_name` prefix match)
+  5. `ingestion/pipeline.py:139` (`_is_cloud_model` keyword match on model name)
+- Build `provider_classification` table + `v_performance_corrected` view (derived, not destructive UPDATE)
+- Update `get_sovereignty_ratio()` to read corrected view, filter `synthetic`
+- Add invariant test: `test_no_provider_has_split_classification`
+- Add `tests/contract/test_provider_classification.py`
+- **Note**: Headline metric will drop from 87.3% → 13.8% local. This is the *correction*.
 
 ### P1 — GAP-2: M14 Heritage Reconciliation [~4-5h]
 - 9 duplicate vet IDs, `make heritage-vet` doesn't exist
@@ -111,15 +149,6 @@ d3922f72  fix(context-packer): Phase 5 bugs — PII vault path, pack_index.json,
 
 ### P2 — GAP-4: V-9 IA2 Freshness [~5-6h, parallel]
 - Replay attack risk, reusable SovereignSigner HMAC pattern
-- Owner: Lilith / N4
-
-### P2 — GAP-5: V-10 AppArmor [~8-10h, parallel, needs sudo]
-- Containers unconfined (Ubuntu 25.10)
-- Owner: Architect + N1
-
-### P2 — GAP-6: UO-6 Descope [~2-3h, parallel]
-- pybreaker undeclared dep; add `make deps-audit`
-- Owner: Any
 - Owner: Lilith / N4
 
 ### P2 — GAP-5: V-10 AppArmor [~8-10h, parallel, needs sudo]
@@ -137,6 +166,7 @@ d3922f72  fix(context-packer): Phase 5 bugs — PII vault path, pack_index.json,
 - **Hivemind**: GAP-0 completion posted (ses_912f2f256a86)
 - **Research report**: `docs/research/R_UNOVERENGINEERING_REMAINING_GAPS_20260808.md` — 1,146 lines, 7 gaps
 - **Critical insight**: All `ObservabilityEngine` callers are in async contexts → async methods + `_sync` wrappers is the correct M1 pattern
+- **Context Packer**: Enhanced with forensic linking, account tracking, PROJECT_OVERVIEW.md, and agent guidance. Fresh pack generated (39 files, 217,990 tokens, pack_id: b70cdf7c-ad48-442e-8d8d-75c180a6548f)
 
 ---
 

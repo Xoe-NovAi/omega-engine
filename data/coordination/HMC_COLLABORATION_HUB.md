@@ -42,6 +42,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 
 ### 🚧 Blockers & Requests
 - **@kali -> Architect**: Need sudo/billing action on W-1 and G-1 to unblock Phase D Gate.
+- **@kali -> Web Claude**: Fresh sovereign-audit pack generated (pack_id: b70cdf7c-ad48-442e-8d8d-75c180a6548f, 39 files, 217,990 tokens). PROJECT_OVERVIEW.md ready with system prompt guidance. Ready for Web Claude re-audit of ProviderRegistry wiring (GAP-1).
 
 ---
 

@@ -7,6 +7,7 @@
 | Decision | Summary | Status |
 |---|---|---|
 | **D-518** | **GAP-3 Fix: M23 Pre-commit Gate Repair** — Replaced broken `rg` pipeline (structurally incapable of failing) with AST-based Ruff ratchet (S110/S112/BLE001/E722). Ratchet: fails only on NEW violations vs baseline. | ✅ COMPLETE |
+| **D-519** | **Context Packer Enhancement: Forensic Linking + Agent Guidance** — Added pack_id UUID generation, account/project/version metadata protocol, auto-generated PROJECT_OVERVIEW.md for system prompt guidance, enhanced success message with explicit next steps. Updated system prompt and chat initiation prompt for Web Claude sovereign-audit pack. | ✅ COMPLETE |
 | D-517 | **GAP-0 Fix: ObservabilityEngine Async Refactor** — Made all MetricsDB-facing methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + `_sync` wrappers. Resolved P0 data-loss regression. | ✅ COMPLETE |
 | D-275 | Institutionalize Wave 3 refinement meta-process | Active |
 | D-276 | Implement ContextProtocol pipeline (15K budget) | Active |
@@ -664,3 +665,26 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-518 ⬡ 2026-08-09*
+
+### D-519: Context Packer Enhancement — Forensic Linking + Agent Guidance
+
+* **Date**: 2026-08-09
+* **Context**: The sovereign-audit context pack lacked forensic traceability (no pack identity), account tracking, and agent guidance for system prompt creation. Web Claude's previous audit responses were not linked to a specific pack version, making it impossible to trace which pack generated which response.
+* **Decision**: Enhanced the context-packer with forensic linking, account tracking, and agent guidance for Web Claude sovereign-audit pack creation.
+* **Files modified/created**: 8
+  - `.opencode/skills/context-packer/packer.py` — Added pack_id UUID generation, account/project/version metadata, auto-generated PROJECT_OVERVIEW.md for agent guidance, enhanced success message with explicit next steps
+  - `.opencode/skills/context-packer/packer-config.yaml` — Added `account`, `project`, `version` fields to sovereign-audit profile
+  - `.opencode/skills/context-packer/platform_adapters.py` — Updated `render_manifest` to include pack_id, account, project, version
+  - `context_packs/sovereign-audit/CLAUDE_PROJECT_SYSTEM_PROMPT_v2.md` — Updated system prompt with web research best practices, 5-element formula, persona patterns, account tracking
+  - `context_packs/sovereign-audit/CHAT_INITIATION_PROMPT_v2.md` — Updated chat initiation prompt with fresh pack metadata
+  - `context_packs/sovereign-audit/PROJECT_OVERVIEW.md` — Auto-generated agent guide with system prompt structure, chat template, frontmatter protocol
+  - `context_packs/sovereign-audit/response/*.md` — Added YAML frontmatter with account tracking to all 4 Web Claude responses
+* **Key improvements**:
+  - **Forensic linking**: Every pack gets a UUID (`pack_id`) embedded in XML file tags, manifest, pack_index.json, and PROJECT_OVERVIEW.md
+  - **Account tracking**: `account: arcana.novai@gmail.com` embedded in all pack artifacts
+  - **Agent guidance**: PROJECT_OVERVIEW.md provides recommended system prompt structure, chat initiation template, and response frontmatter protocol
+  - **Success message**: Packer now outputs explicit next steps for agents creating system prompts
+* **Verification**: Fresh pack generated (pack_id: b70cdf7c-ad48-442e-8d8d-75c180a6548f, 39 files, 217,990 tokens). PROJECT_OVERVIEW.md ready with system prompt guidance. Ready for Web Claude re-audit of ProviderRegistry wiring (GAP-1).
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-519 ⬡ 2026-08-09*

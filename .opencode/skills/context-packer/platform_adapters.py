@@ -172,7 +172,9 @@ class FormatAdapter(ABC):
     def render_manifest(self, profile_name: str, bundles: List[Dict[str, Any]],
                         total_files: int, total_tokens: int, description: str,
                         max_slots: int, target_model: Optional[str],
-                        prompt_caching: bool) -> str:
+                        prompt_caching: bool, pack_id: str = "",
+                        account: Optional[str] = None, project: Optional[str] = None,
+                        version: Optional[str] = None) -> str:
         """Render the pack manifest."""
 
 
@@ -190,10 +192,16 @@ class XMLFormatAdapter(FormatAdapter):
     def render_manifest(self, profile_name: str, bundles: List[Dict[str, Any]],
                         total_files: int, total_tokens: int, description: str,
                         max_slots: int, target_model: Optional[str],
-                        prompt_caching: bool) -> str:
+                        prompt_caching: bool, pack_id: str = "",
+                        account: Optional[str] = None, project: Optional[str] = None,
+                        version: Optional[str] = None) -> str:
         lines = [
             f"# Enhanced Context Pack Manifest: {profile_name}",
             f"Generated: {datetime.now().isoformat()}",
+            f"Pack ID: {pack_id}",
+            f"Account: {account or 'unspecified'}",
+            f"Project: {project or 'unspecified'}",
+            f"Version: {version or 'unspecified'}",
             f"Description: {description}",
             f"Total Files: {total_files}",
             f"Estimated Total Tokens: {total_tokens}",
@@ -215,8 +223,10 @@ class XMLFormatAdapter(FormatAdapter):
             "",
             "## Usage Notes",
             "- This pack uses XML format for optimal Claude comprehension",
-            "- Each file is wrapped in <file> tags with metadata attributes",
+            "- Each file is wrapped in <file> tags with metadata attributes including pack_id",
             "- The manifest should be reviewed first to understand the pack structure",
+            "- Token counts are estimates using cl100k_base encoder (Claude's tokenizer)",
+            "- Pack ID enables forensic linking between pack materials and responses",
         ])
         return "\n".join(lines)
 
