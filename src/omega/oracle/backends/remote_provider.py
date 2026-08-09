@@ -15,11 +15,18 @@
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+import functools
 import logging
+import time
+import anyio
 import httpx2 as httpx
 from pathlib import Path
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from omega.errors import (
-    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
@@ -28,12 +35,6 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
-import time
-import anyio
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -54,18 +55,19 @@ def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_c
             _metrics_db = MetricsDB(Path("data/observability/metrics.db"))
             _metrics_db.initialize()
         anyio.from_thread.run(
-            _metrics_db.record_performance,
-            latency_ms=latency_ms,
-            provider=provider,
-            model_used=model,
-            prompt_tokens=tokens,
-            completion_tokens=tokens // 2,
-            is_cloud=is_cloud,
-            trace_id=f"trc_{int(time.monotonic() * 1000000):012d}",
+            functools.partial(
+                _metrics_db.record_performance,
+                latency_ms=latency_ms,
+                provider=provider,
+                model_used=model,
+                prompt_tokens=tokens,
+                completion_tokens=tokens // 2,
+                is_cloud=is_cloud,
+                trace_id=f"trc_{int(time.monotonic() * 1000000):012d}",
+            )
         )
     except Exception as e:
         logger.debug("MetricsDB recording failed (best-effort): %s", e)
-        pass  # MetricsDB recording is best-effort
 
 
 # ── BudgetGate integration (SPRINT-04 — cloud cost enforcement) ───

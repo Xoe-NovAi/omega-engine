@@ -24,6 +24,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
+import functools
 import logging
 import os
 import threading
@@ -1027,11 +1028,13 @@ class ObservabilityEngine:
         if metrics_db:
             try:
                 anyio.from_thread.run(
-                    metrics_db.record_event,
-                    event_type=event_type,
-                    trace_id=trace_id,
-                    provider=data.get("provider"),
-                    payload=data,
+                    functools.partial(
+                        metrics_db.record_event,
+                        event_type=event_type,
+                        trace_id=trace_id,
+                        provider=data.get("provider"),
+                        payload=data,
+                    )
                 )
             except (OSError, RuntimeError) as e:
                 logger.debug("MetricsDB event recording failed: %s", e)
@@ -1101,15 +1104,17 @@ class ObservabilityEngine:
             return
         try:
             anyio.from_thread.run(
-                metrics_db.record_performance,
-                latency_ms=latency_ms,
-                provider=provider,
-                model_used=model_used,
-                prompt_tokens=prompt_tokens,
-                completion_tokens=completion_tokens,
-                is_cloud=is_cloud,
-                trace_id=trace_id,
-                entity_id=entity_id,
+                functools.partial(
+                    metrics_db.record_performance,
+                    latency_ms=latency_ms,
+                    provider=provider,
+                    model_used=model_used,
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    is_cloud=is_cloud,
+                    trace_id=trace_id,
+                    entity_id=entity_id,
+                )
             )
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB performance recording failed: %s", e)
@@ -1260,12 +1265,14 @@ class ObservabilityEngine:
             return
         try:
             anyio.from_thread.run(
-                metrics_db.record_breaker_transition,
-                provider=provider,
-                from_state=from_state,
-                to_state=to_state,
-                trace_id=trace_id,
-                reason=reason,
+                functools.partial(
+                    metrics_db.record_breaker_transition,
+                    provider=provider,
+                    from_state=from_state,
+                    to_state=to_state,
+                    trace_id=trace_id,
+                    reason=reason,
+                )
             )
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB breaker recording failed: %s", e)
