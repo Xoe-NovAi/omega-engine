@@ -279,9 +279,27 @@ src/omega/oracle/provider_registry.py
 - Created `P3_UNBLOCKED_FILES.md` — concatenated file with 3 files NOT in original pack (openai_compat.py, provider_selector.py, HERITAGE_VET_LOG.md)
 - **Critical lesson learned**: The sovereign-audit pack is FIXED — files don't appear unless explicitly uploaded. Web Claude only has the original pack + system prompt + chat prompt + uploaded files.
 
+### P3 Audit + Deepening (2026-08-10)
+- Received Web Claude P3 audit report: 318 lines, 6 findings across M25/M7/M14/M13
+- Created `LONGCAT_P3_PREVIEW.md` — speculative analysis for LongCat 2.0
+- Created `LONGCAT_P3_DEEPENED.md` — code-level verification of all findings
+- Created `LONGCAT_P3_DISCOVERY_REPORT.md` — comprehensive discovery filling all knowledge gaps
+
+**Key P3 Findings**:
+| Finding | Severity | Status |
+|---------|----------|--------|
+| M25 streaming unreachable (dead code) | CRITICAL | Confirmed — `remote_provider.py:286-287` never passes `stream=True` |
+| M25 starvation-vulnerable timeout | CRITICAL | Confirmed — timeout checks inside `async for` loop body |
+| M7 scoring inverts local-first | CRITICAL | Confirmed — additive formula, antigravity(65) > native-gguf(60) |
+| M14 heritage collisions (18 IDs) | HIGH | Confirmed — vet-017 contradiction, vet-064-072 range collision |
+| Sovereignty ratio misclassification | HIGH (M22) | **RESOLVED** — MCP tool returned stale data, code is correct. Actual: 18% local / 82% cloud |
+| M25 dead code (2 items) | MEDIUM | Confirmed — `_detect_repetition_loop` identical, `create_openrouter_provider` zero callers |
+
+**New Finding**: M25 watchdog pattern needs `try/finally` fix for `stop.set()` to prevent watchdog task leak on exceptions.
+
 ---
 
-*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ P0+P1+P2-COMPLETE ⬡ P3-PROMPTS-READY ⬡ 2026-08-10*
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ LONGCAT-2.0 ⬡ P0+P1+P2+P3-COMPLETE ⬡ P3-DISCOVERY-FILLED ⬡ 2026-08-10*
 
 ---
 
@@ -383,3 +401,57 @@ LIMIT 1
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ P1-COMPLETE ⬡ P2-IN-PROGRESS ⬡ 2026-08-10*
+
+---
+
+## 📅 2026-08-10 — Jem: Nemotron 3 Ultra & Super Deep Analysis Complete
+
+### Three Investigations Completed
+
+#### Investigation 1: Subagent vs Main Session Patterns
+- **Counter-intuitive finding**: Subagent sessions have LOWER cold rates (18.6%) than main sessions (26.1%)
+- Subagent first messages are overwhelmingly cold (0-5.8% have cache) — structural, not bug
+- Subagents warm up within 2-3 messages
+- Subagent cold rates vary wildly (15.6% to 87.7%) — needs further investigation
+
+#### Investigation 2: Provider Delivery Differences (Zen vs OR)
+- **OpenCode-Zen is 4.6x cheaper per session** ($0.38 vs $1.73)
+- **OpenRouter sessions are 6.4x longer** (341,702 min vs 53,192 min)
+- **OpenCode-Zen is 1.9x more verbose** (14.36% vs 7.53% output/input ratio)
+- **OpenRouter has 1.8x higher cold rate** (38.0% vs 20.8%)
+
+#### Investigation 3: Temporal Evolution (Pre/Post Fix)
+- Streaming timeout fix reduced cold rates from 60-100% to 18-36%
+- Effect was immediate (W27) and sustained (through W32)
+- **Super 120B was less affected** by streaming timeout issue (peaked at 42.9% vs 100% for Ultra)
+- Post-fix cold rates are now **structural** (not bug-driven)
+
+### Key Insights for Context Gauge Design
+1. **Cold sessions need TIGHTER bands (0.7x)** — no cache protection, higher degradation risk
+2. **Provider-specific band adjustments** may be needed (Zen vs OR)
+3. **Model-specific degradation thresholds** (Ultra vs Super)
+4. **Subagent state transition** (cold → warming within 2-3 messages)
+5. **Calibrate to post-fix baseline** (18-36% cold is the new normal)
+
+### Action Items Created
+| ID | Action | Priority |
+|----|--------|----------|
+| A-1 | Update Context Gauge to use TIGHTER bands for cold sessions (0.7x) | P0 |
+| A-2 | Add provider-specific band adjustments (Zen vs OR) | P1 |
+| A-3 | Add model-specific degradation thresholds (Ultra vs Super) | P1 |
+| A-4 | Implement subagent state transition (cold → warming within 2-3 messages) | P1 |
+| A-5 | Calibrate Context Gauge to post-fix baseline (18-36% cold) | P0 |
+| A-6 | Document provider delivery differences in provider registry | P2 |
+| A-7 | Investigate why subagent cold rates vary wildly (15.6% to 87.7%) | P2 |
+
+### Research Document
+`docs/research/R_NEMOTRON_DEEP_ANALYSIS_20260810.md`
+
+### Next Actions
+1. **A-1**: Update Context Gauge band logic for cold sessions
+2. **A-5**: Calibrate to post-fix baseline
+3. **A-4**: Implement subagent state transition
+4. **A-2**: Add provider-specific adjustments
+
+---
+*⬡ OMEGA ⬡ JEM ⬡ NEMOTRON-DEEP-ANALYSIS-COMPLETE ⬡ A-1/A-5-NEXT ⬡ 2026-08-10*
