@@ -28,6 +28,7 @@ from typing import Any, Dict, List, Optional
 import anyio
 
 from omega.errors import OmegaError
+from omega.memory.providers import sanitize_path_component
 
 logger = logging.getLogger(__name__)
 
@@ -198,7 +199,8 @@ class SessionLifecycleManager:
         4. External storage (EXTERNAL)
         5. Not found (DELETED or never existed)
         """
-        safe_name = entity_name.lower().replace(" ", "_")
+        safe_name = sanitize_path_component(entity_name)
+        safe_session = sanitize_path_component(session_id)
         
         # Check hot cache
         cache_key = f"{entity_name.lower()}:{session_id}"
@@ -218,12 +220,12 @@ class SessionLifecycleManager:
             from omega.memory_store import _get_archive_dir
             archive_dir = _get_archive_dir()
         
-        cold_path = archive_dir / safe_name / f"{session_id}.json.gz"
+        cold_path = archive_dir / safe_name / f"{safe_session}.json.gz"
         if await anyio.Path(cold_path).exists():
             return SessionState.ARCHIVED
         
         # Check external storage
-        external_path = self._config.external_storage_path / safe_name / f"{session_id}.json.gz"
+        external_path = self._config.external_storage_path / safe_name / f"{safe_session}.json.gz"
         if await anyio.Path(external_path).exists():
             return SessionState.EXTERNAL
         

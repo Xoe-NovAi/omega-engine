@@ -146,6 +146,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         self._vec_tables_created: Dict[str, bool] = {}
         
         # Connection & locks
+        self._conn: Optional[sqlite3.Connection] = None
         self._write_lock = anyio.Lock()
         self._initialized = False
         self.timeout = timeout
@@ -155,14 +156,17 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         self._legacy_vec_created = False
 
     def _get_conn(self) -> sqlite3.Connection:
-        """Get a new SQLite connection with hardened PRAGMA stack and vec0 extension.
-        
-        Creates a new connection each call to ensure thread safety.
+        """Get the persistent SQLite connection with hardened PRAGMA stack and vec0 extension.
+
+        Connection is created once and reused across all operations (M1 AnyIO).
         Uses sqlite_policy memory profile (D-282 PRAGMA stack is law per A10).
         """
+        if self._conn is not None:
+            return self._conn
+
         # FS-Β4: Use sqlite_policy for profiled connection (memory profile)
         conn = get_sqlite_connection(self.db_path, profile="memory")
-        
+
         # Load sqlite-vec extension for this connection
         try:
             import sqlite_vec
@@ -175,7 +179,8 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         except sqlite3.Error as e:
             logger.error("Failed to load sqlite-vec extension: %s", e)
             raise
-        
+
+        self._conn = conn
         return conn
 
     def _load_extension(self, conn: sqlite3.Connection) -> None:
@@ -748,13 +753,16 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
 
             def _sync_fts():
                 conn = self._get_conn()
+                # [P2-6] Escape user query to prevent FTS5 MATCH syntax injection.
+                from .fts_index import escape_fts_query
+                fts_query = escape_fts_query(query)
                 cursor = conn.execute("""
                     SELECT rowid, session_id, role, content, timestamp
                     FROM omega_memory_fts
                     WHERE omega_memory_fts MATCH ? AND entity_name = ?
                     ORDER BY rank
                     LIMIT ?
-                """, (query, entity_name, limit * 2))
+                """, (fts_query, entity_name, limit * 2))
                 return [
                     {
                         "rowid": row[0], "entity_name": entity_name,
@@ -766,6 +774,10 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
 
             try:
                 return await anyio.to_thread.run_sync(_sync_fts)
+            except sqlite3.OperationalError as e:
+                # FTS5 syntax error from a malformed query — degrade gracefully.
+                logger.warning("FTS5 query syntax error (degraded): %s", e)
+                return []
             except (sqlite3.Error, OSError) as e:
                 logger.warning("FTS search failed: %s", e)
                 return []
@@ -897,12 +909,23 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             self._checkpoint_task = None
             logger.info("Stopped periodic WAL checkpoint task")
 
-    async def close(self) -> None:
-        """Close the database connection.
+    def _get_test_conn(self) -> sqlite3.Connection:
+        """Get a connection for testing purposes.
         
-        Note: Connections are created per-call via _get_conn() (thread-safe).
-        No persistent connection to close; just reset initialization state.
+        Returns the persistent connection if available, otherwise creates a new one.
         """
+        if self._conn is not None:
+            return self._conn
+        return self._get_conn()
+
+    async def close(self) -> None:
+        """Close the database connection and release resources."""
+        if self._conn is not None:
+            try:
+                await anyio.to_thread.run_sync(self._conn.close)
+            except (sqlite3.Error, OSError) as e:
+                logger.warning("Error closing SQLiteVecAdapter connection: %s", e)
+            self._conn = None
         self._initialized = False
         self._vec_tables_created.clear()
         logger.info("SQLiteVecAdapter closed")

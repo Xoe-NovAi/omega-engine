@@ -17,6 +17,30 @@ import anyio
 
 logger = logging.getLogger("omega.memory.fts")
 
+
+def escape_fts_query(query: str) -> str:
+    """Escape a user search string for the FTS5 MATCH operand.
+
+    FTS5 has its own query grammar (``AND``/``OR``/``NOT``/``NEAR``,
+    ``"phrase"``, ``-exclude``, ``*``). An unescaped user string containing
+    these tokens triggers ``sqlite3.OperationalError: fts5: syntax error`` —
+    a denial-of-service-by-error rather than data exposure.
+
+    Mitigation: wrap each whitespace-token in double quotes (phrase match)
+    and escape any embedded double quotes. This neutralizes FTS5 special
+    syntax while preserving the user's search intent.
+
+    [P2-6 / §4 audit] FTS5 MATCH syntax injection.
+    """
+    if not query:
+        return ""
+    tokens = query.split()
+    escaped = []
+    for tok in tokens:
+        safe = tok.replace('"', '\\"')
+        escaped.append(f'"{safe}"')
+    return " ".join(escaped)
+
 class ConversationFTSIndex:
     """SQLite FTS5 index for conversation exchanges."""
     
@@ -100,17 +124,23 @@ class ConversationFTSIndex:
 
         def _sync_search():
             # BM25 ranking via FTS5 'rank'
+            # [P2-6] Escape user query to prevent FTS5 MATCH syntax injection.
+            fts_query = escape_fts_query(query)
             cursor = self._conn.execute("""
                 SELECT session_id, role, content, timestamp, rank
                 FROM exchanges 
                 WHERE exchanges MATCH ? AND entity_name = ?
                 ORDER BY rank
                 LIMIT ?
-            """, (query, entity_name, limit))
+            """, (fts_query, entity_name, limit))
             return [dict(row) for row in cursor.fetchall()]
 
         try:
             return await anyio.to_thread.run_sync(_sync_search)
+        except sqlite3.OperationalError as e:
+            # FTS5 syntax error from a malformed query — degrade gracefully.
+            logger.warning("FTS5 query syntax error (degraded): %s", e)
+            return []
         except (sqlite3.Error, RuntimeError) as e:
             logger.error("FTS search failed: %s", e)
             return []

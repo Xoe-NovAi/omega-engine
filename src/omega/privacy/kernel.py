@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
+from omega.memory.providers import sanitize_path_component
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +172,8 @@ Text:
     
     async def start_session(self, session_id: str) -> PrivacyVault:
         """Start a new privacy session with vault."""
-        vault_path = self.vault_dir / f"{session_id}.json"
+        safe_session = sanitize_path_component(session_id)
+        vault_path = self.vault_dir / f"{safe_session}.json"
         
         if vault_path.exists():
             # Load existing vault
@@ -186,7 +188,8 @@ Text:
     async def end_session(self, session_id: str) -> None:
         """End session and save vault."""
         if self.current_vault and self.current_vault.session_id == session_id:
-            vault_path = self.vault_dir / f"{session_id}.json"
+            safe_session = sanitize_path_component(session_id)
+            vault_path = self.vault_dir / f"{safe_session}.json"
             vault_path.write_text(json.dumps(self.current_vault.to_dict(), indent=2))
             self.current_vault = None
     

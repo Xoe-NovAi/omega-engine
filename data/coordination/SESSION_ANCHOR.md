@@ -2,172 +2,377 @@
 
 **AP Token:** `AP-KALI-v1.0.0`
 **Date:** 2026-08-09
-**Session ID:** `ses_kali_20260809_gap0_gap3_complete`
+**Session ID:** `ses_kali_20260809_sdp_complete`
 **Branch:** `main`
-**Last Commit:** `6161ca95` (docs: update continuation docs for GAP-0 + GAP-3 completion)
+**Last Commit:** `fba8a556` (feat(context-packer): enhance with forensic linking + agent guidance + GAP-1 ProviderRegistry)
 
 ---
 
 ## 🎯 Session Objective
 
-**GAP-0 & GAP-3 Complete — GAP-1 (Sovereignty Ratio) In Progress — Context Packer Enhanced**
+**Sovereign Distillation Pipeline (SDP) — Complete Architecture & Documentation**
 
-**GAP-0 (COMPLETE)**: Resolved P0 data-loss regression where `ObservabilityEngine` methods were sync with `anyio.from_thread.run()` bridges. When called from async contexts, the bridge silently failed. Fixed with dual-surface async API + `_sync` wrappers.
-
-**GAP-3 (COMPLETE)**: Replaced broken M23 pre-commit gate (structurally incapable of failing) with AST-based Ruff ratchet (S110/S112/BLE001/E722). Mutation-tested, wired into `.githooks/pre-commit`.
-
-**GAP-1 (IN PROGRESS)**: Sovereignty Ratio Unification. 5 divergent cloud classifiers causing 73.6% misclassification. Created `ProviderRegistry` SSOT reading from `providers.yaml`. Next: wire into 5 call sites, build corrected SQL view, add invariant tests.
-
-**Context Packer Enhancement (COMPLETE)**: Enhanced context-packer with forensic linking (pack_id UUID), account/provenance metadata protocol, auto-generated PROJECT_OVERVIEW.md for agent guidance, and enhanced success message with explicit next steps. Updated system prompt and chat initiation prompt for Web Claude sovereign-audit pack.
+Formalized the manual multi-model orchestration strategy into a tripartite cognitive architecture:
+1. **Scaffold** (Cheap/Daily Cloud Models) → I/O, context building
+2. **Synthesize** (AGY Frontier Models) → Pure reasoning, zero tool calls
+3. **Execute** (Local Models) → Mechanical application, verification
 
 ---
 
 ## ✅ Completed This Session
 
-### 1. GAP-0: ObservabilityEngine Async Refactor
-| `record_metrics_error` | (new) **async** | — |
-| `log_event` | sync → **async** | `log_event_sync` |
-| `stats` | sync → **async** | `stats_sync` |
+### 1. SDP Documentation Suite (15 documents)
 
-**Production caller updates (11 files):**
+| Document | Path | Purpose |
+|---|---|---|
+| **Protocol** | `docs/strategy/COGNITIVE_SCAFFOLDING_PROTOCOL.md` | Manual operations |
+| **Manifesto** | `docs/research/R_SOVEREIGN_DISTILLATION_PIPELINE_MANIFESTO_20260809.md` | Philosophy |
+| **Blueprint** | `docs/strategy/SDP_AUTOMATION_BLUEPRINT.md` | Phased engineering plan |
+| **Impl Spec** | `docs/strategy/SDP_IMPLEMENTATION_SPEC.md` | Technical contracts |
+| **Hardware Horizon** | `docs/strategy/SDP_HARDWARE_HORIZON_SPEC.md` | KV cache, SomaticState, energy |
+| **Formal Routing** | `docs/strategy/SDP_FORMAL_ROUTING_SPEC.md` | Z3 verified constraints |
+| **Model-Aware Gauge** | `docs/strategy/SDP_MODEL_AWARE_GAUGE_SPEC.md` | Dynamic window detection |
+| **Failure Analysis** | `docs/strategy/SDP_FAILURE_MODE_ANALYSIS.md` | Resilience engineering |
+| **Final Synthesis** | `docs/strategy/SDP_FINAL_SYNTHESIS.md` | Master reference |
+| **Mining Report** | `data/entities/roc_racoon/workspace/mining_reports/SDP_INTEGRATION_MINING_REPORT_20260809.md` | Foundational research |
+| **Knowledge Gaps** | `data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | Gap research |
+| **Systems Sweep** | `data/entities/roc_racoon/workspace/mining_reports/SDP_SYSTEMS_SWEEP_REPORT_20260809.md` | Systems sweep |
+| **Duplicate Audit** | `data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md` | Duplicate & gap audit |
+| **Carmack Review** | `data/entities/john_carmack/workspace/reviews/SDP_CARMACK_REVIEW_20260809.md` | Brutal review |
+| **Session Ledger** | `data/coordination/AGY_SESSION_LEDGER.md` | Pool tracking |
 
-| File | Change |
-|------|--------|
-| `src/omega/observability/__init__.py` | 5 methods async + 2 `_sync` wrappers; internal sync callers use `_sync` |
-| `src/omega/observability/token_ledger.py` | `await` on `log_event` + `record_performance` |
-| `src/omega/oracle/oracle.py` | `await` on 2× `record_performance`, 1× `log_event` |
-| `src/omega/oracle/health_monitor.py` | `record_breaker_transition` (method now exists), `await` 2× `log_event`, 1× `log_event_sync` |
-| `src/omega/oracle/model_gateway.py` | `await` on `log_event` |
-| `src/omega/oracle/sovereign_search_service.py` | `get_stats()` → `stats_sync()` |
-| `src/omega/observability/regression_watcher.py` | `await` on `log_event` + `record_metrics_error` |
-| `src/omega/workers/model_updater.py` | 8 async `await` + 2 sync `log_event_sync` |
-| `src/omega/ingestion/persistence.py` | `await` on `self.obs.log_event` |
-| `src/omega/search/search_persistence.py` | `get_engine().log_event_sync` |
-| `tests/test_metrics_db_integration.py` | 10 tests → `async def` + `await`, 1 → `stats_sync()` |
+### 2. Verified Model Context Windows (Ground Truth)
 
-**Test results:**
-- `tests/contract/test_model_gateway_fallback.py` — **5/5 pass** ✓
-- `tests/test_metrics_db_integration.py` — **12/12 pass** ✓ (was 11 failures at baseline)
+| Model | Window | Tier | Pool |
+|---|---|---|---|
+| Nemotron 3 Ultra | 1,000,000 | 4 | Daily |
+| Laguna S 2.1 (free) | 262,144 | 3 | Daily |
+| Longcat 2.0 (free) | 1,000,000 | 4 | Daily |
+| Nemotron 3 Super | 262,144 | 3 | Daily |
+| Gemini 3.1 Pro | 1,048,576 | 4 | Weekly |
+| Claude Sonnet 4.6 | 200,000 | 2 | Weekly |
+| Claude Opus 4.6 | 200,000 | 2 | Weekly |
+| Gemini 3.6 Flash | 1,000,000 | 4 | Weekly |
+| Qwen3-1.7B (local) | 32,768 | 1 | Local |
 
-**Pre-existing failures (NOT caused by this change):**
-- `tests/test_metrics_db.py` — 23 failures (call async `MetricsDB.record_performance()` without await)
-- `tests/contract/test_provider_fallback.py` — 3 failures (reference dropped `omega.oracle.cascade_router`)
+**Critical Rule:** Free vs paid tiers of same model differ by up to 4×.
 
-### 2. GAP-3: M23 Pre-commit Gate Repair
+### 3. Ground Truth: What Exists vs. What's Missing
 
-**Problem**: The M23 gate (`make check-m23-failure-integrity`) was structurally incapable of failing. `rg -n` is line-oriented, so the intersection of "line has `pass`/`continue`" AND "line has `except...:`" was always empty (idiomatic Python puts them on different lines). The empty pipeline made `rg` exit non-zero, `!` inverted to success, and the gate printed "passed" unconditionally.
+**Already Built (Don't Build):**
+- V-1 Vault (2,039 LOC) at `src/omega/vault/`
+- Pool Tracker (237 LOC) at `pool_tracker.py`
+- Dialectic Logger (`record_council()`) at `dpo_logger.py:395`
+- Triage Router (constraint filtering) at `triage_router.py`
+- Token Estimator (tiktoken×1.3) at `token_estimator.py`
 
-**Fix**: Replaced the grep pipeline with Ruff AST-based checking (S110, S112, BLE001, E722). Uses a ratchet: fails only on NEW violations vs baseline.
+**Missing (Build):**
+- Context Gauge
+- RHP (Recovery Halt Point) — rename from SSP to avoid M20 collision
+- 3 MCP Tools (`get_context_pressure`, `write_rhp`, `request_agy_escalation`)
 
-| File | Change |
-|------|--------|
-| `scripts/m23_gate.py` | New AST-based ratchet gate with ruff error detection (`[TOOL-CHAIN-COLLAPSE]` if ruff missing) |
-| `config/m23_baseline.txt` | Baseline of current violations (98 files, 294 total) |
-| `Makefile` | Replaced broken target with `m23_gate.py` call; added `m23-baseline` target |
-| `pyproject.toml` | Added `[tool.ruff]` config |
-| `.githooks/pre-commit` | Wired M23 gate into commit hook (uses venv python) |
-| `tests/contract/test_mandate_gates.py` | Mutation tests (gate must fail on deliberately inserted violations) |
+### 4. Critical Blockers Found
 
-**Test results:**
-- `tests/contract/test_mandate_gates.py` — **6 passed, 1 skipped** ✓
-- `make check-mandates` — **all 5 gates pass** ✓
+| # | Blocker | Fix |
+|---|---|---|
+| G-3 | No `tokens` column in `message` table | Tokens in `data` JSON blob |
+| G-4 | Token accounting not additive | Use `input + cache.read` of latest message |
+| §4 | 4 of 5 cloud windows wrong | Use verified windows from §2 |
 
-**Audit of sibling gates**: M1/M7/M8/M9 all functional via mutation testing. Only M23 was broken.
+### 5. Quick Win Items (QW-1 through QW-10)
 
-**Critical fix during implementation**: Discovered the gate would false-pass when run with system python3 (ruff binary not found). Added explicit ruff error detection to prevent the M23 class of bug in the M23 gate itself.
+| # | Item | Est. | Priority |
+|---|---|---|---|
+| QW-1 | Fix model context windows in config | 1h | CRITICAL |
+| QW-2 | Rewrite Context Gauge to use `tokens.total` | 2h | CRITICAL |
+| QW-3 | Add CI guard against token counting bug | 30min | HIGH |
+| QW-4 | Import and wire `pool_tracker.py` | 2h | HIGH |
+| QW-5 | Add cloud entries to config | 1h | HIGH |
+| QW-6 | Extend TriageRouter with SDP constraints | 4h | MEDIUM |
+| QW-7 | Extend DPORecorder with dialectic schema | 3h | MEDIUM |
+| QW-8 | Build Context Gauge (greenfield) | 4h | MEDIUM |
+| QW-9 | Build RHP halt artifact (greenfield) | 2h | MEDIUM |
+| QW-10 | Build 3 MCP tools (greenfield) | 4h | MEDIUM |
 
-### 3. Context Packer Enhancement (NEW)
+### 6. L3 Gnosis Committed to Soul
 
-**Problem**: The context-packer lacked forensic linking, account tracking, and agent guidance for system prompt creation.
+```yaml
+  - id: L3-SDP-COMPOSITE-INTELLIGENCE
+    principle: "Intelligence is a Composite Material. The Monolithic Fallacy—using a single frontier model for all tasks—causes catastrophic token waste and context collapse. Optimal sovereignty requires a tripartite pipeline: Scaffolding (cheap I/O) -> Synthesis (frontier reasoning) -> Execution (mechanical application)."
+    mandates: [M7, M18]
+    confidence: 0.98
 
-**Fix**: Enhanced the packer with:
+  - id: L3-SDP-CORPUS-CALLOSUM
+    principle: "The File System is the Cross-Model Memory Bus. Because context windows cannot be perfectly transferred via API between different model families, forcing models to write highly structured insights to disk before switching creates a persistent, high-fidelity 'Corpus Callosum' that bypasses context degradation."
+    mandates: [M5, M19]
+    confidence: 0.99
 
-| File | Change |
-|------|--------|
-| `.opencode/skills/context-packer/packer.py` | Added pack_id UUID generation, account/project/version metadata, PROJECT_OVERVIEW.md generation, enhanced success message with agent instructions |
-| `.opencode/skills/context-packer/packer-config.yaml` | Added `account`, `project`, `version` fields to sovereign-audit profile |
-| `.opencode/skills/context-packer/platform_adapters.py` | Updated `render_manifest` to include pack_id, account, project, version |
-| `context_packs/sovereign-audit/CLAUDE_PROJECT_SYSTEM_PROMPT_v2.md` | Updated system prompt with web research best practices, 5-element formula, persona patterns, account tracking |
-| `context_packs/sovereign-audit/CHAT_INITIATION_PROMPT_v2.md` | Updated chat initiation prompt with fresh pack metadata |
-| `context_packs/sovereign-audit/PROJECT_OVERVIEW.md` | Auto-generated agent guide with system prompt structure, chat template, frontmatter protocol |
-| `context_packs/sovereign-audit/response/*.md` | Added YAML frontmatter with account tracking to all 4 Web Claude responses |
-
-**Key improvements:**
-- **Forensic linking**: Every pack gets a UUID (`pack_id`) embedded in XML file tags, manifest, pack_index.json, and PROJECT_OVERVIEW.md
-- **Account tracking**: `account: arcana.novai@gmail.com` embedded in all pack artifacts
-- **Agent guidance**: PROJECT_OVERVIEW.md provides recommended system prompt structure, chat initiation template, and response frontmatter protocol
-- **Success message**: Packer now outputs explicit next steps for agents creating system prompts
+  - id: L3-SDP-CONTEXT-HORIZON
+    principle: "Context is a depletable resource, not a static state. Operating blindly near the compaction cliff guarantees catastrophic fidelity loss. Agents must practice Context Horizon Budgeting, utilizing the '80% Redzone' as a hard operational ceiling where tasks are gracefully halted via Recovery Halt Points (RHP) rather than risked."
+    mandates: [M23, M18]
+    confidence: 0.97
+```
 
 ---
 
-## 🔑 Current Git State (Ground Truth)
+## 🔑 Current Git State
 
 ```
+fba8a556  feat(context-packer): enhance with forensic linking + agent guidance + GAP-1 ProviderRegistry [PUSHED]
 6161ca95  docs: update continuation docs for GAP-0 + GAP-3 completion [PUSHED]
 38baa432  fix(gap3): replace broken M23 gate with AST-based Ruff ratchet [PUSHED]
 a5c09a8e  fix(gap0): make ObservabilityEngine MetricsDB methods async [PUSHED]
-32f72dd7  fix(async-migration): resolve kwarg TypeError in anyio.from_thread.run bridges [PUSHED]
-a17aaafa  fix(async-migration): resolve P0 data-loss regression from async MetricsDB migration [PUSHED]
-24857ca7  fix(un-overengineering): AnyIO thread-safety + M9 error integrity + M2 firewall [PUSHED]
-d3922f72  fix(context-packer): Phase 5 bugs — PII vault path, pack_index.json, manifest location [PUSHED]
 ```
 
-**Working tree**: Modified (GAP-1 in progress + Context Packer enhancements)
-- `src/omega/oracle/provider_registry.py` (new — SSOT for provider classification)
-- `.opencode/skills/context-packer/packer.py` (enhanced with pack_id, account tracking, PROJECT_OVERVIEW)
-- `.opencode/skills/context-packer/packer-config.yaml` (added account/project/version)
-- `.opencode/skills/context-packer/platform_adapters.py` (updated render_manifest)
-- `context_packs/sovereign-audit/CLAUDE_PROJECT_SYSTEM_PROMPT_v2.md` (new)
-- `context_packs/sovereign-audit/CHAT_INITIATION_PROMPT_v2.md` (new)
-- `context_packs/sovereign-audit/PROJECT_OVERVIEW.md` (new, auto-generated)
-- `context_packs/sovereign-audit/response/*.md` (frontmatter added)
-- `data/coordination/SESSION_ANCHOR.md`
-- `data/coordination/HMC_COLLABORATION_HUB.md`
-- `docs/decisions/PIVOT_LOG.md`
-- `data/coordination/CARMACK_REVIEW_WEB_CLAUDE_GAPS.md` (new)
+**Working tree:** Modified (uncommitted SDP docs + context packer enhancements)
 
 ---
 
 ## 📋 Work Remaining (Priority Order)
 
-### P1 — GAP-1: Sovereignty Ratio Unification [~6-8h]
-- Wire `ProviderRegistry` into 5 divergent call sites:
-  1. `model_gateway.py` (6 call sites: `_cloud_providers`, `_is_cloud_provider`, `_is_cloud_provider_name`)
-  2. `observability/__init__.py:686` (`_is_cloud_provider` substring denylist)
-  3. `otel_exporter.py:123` (hardcoded cloud set)
-  4. `remote_provider.py:387` (`_is_cloud_name` prefix match)
-  5. `ingestion/pipeline.py:139` (`_is_cloud_model` keyword match on model name)
-- Build `provider_classification` table + `v_performance_corrected` view (derived, not destructive UPDATE)
-- Update `get_sovereignty_ratio()` to read corrected view, filter `synthetic`
-- Add invariant test: `test_no_provider_has_split_classification`
-- Add `tests/contract/test_provider_classification.py`
-- **Note**: Headline metric will drop from 87.3% → 13.8% local. This is the *correction*.
+### Immediate (First Session Back)
+- [ ] Run QW-1 through QW-5 (~7 hours) — Fix the data layer
+- [ ] Verify Context Gauge works on live sessions
+- [ ] Test 80% Redzone trigger on Nemotron 3 Ultra
 
-### P1 — GAP-2: M14 Heritage Reconciliation [~4-5h]
-- 9 duplicate vet IDs, `make heritage-vet` doesn't exist
-- Owner: doom_guy
+### Short-Term (This Month)
+- [ ] Extend TriageRouter with SDP constraints
+- [ ] Wire pool_tracker.py into routing logic
+- [ ] Build RHP halt artifact
+- [ ] Implement Content-Addressed Evidence Manifest
 
-### P2 — GAP-4: V-9 IA2 Freshness [~5-6h, parallel]
-- Replay attack risk, reusable SovereignSigner HMAC pattern
-- Owner: Lilith / N4
-
-### P2 — GAP-5: V-10 AppArmor [~8-10h, parallel, needs sudo]
-- Containers unconfined (Ubuntu 25.10)
-- Owner: Architect + N1
-
-### P2 — GAP-6: UO-6 Descope [~2-3h, parallel]
-- pybreaker undeclared dep; add `make deps-audit`
-- Owner: Any
+### Medium-Term (Next Quarter)
+- [ ] Build Auto-Router (wrapper around existing infrastructure)
+- [ ] Implement Predictive Routing
+- [ ] Build Dialectic Intelligence Flywheel
+- [ ] Implement Ensemble Routing (gate to <15%)
 
 ---
 
 ## 🤝 Coordination State
 
-- **Hivemind**: GAP-0 completion posted (ses_912f2f256a86)
-- **Research report**: `docs/research/R_UNOVERENGINEERING_REMAINING_GAPS_20260808.md` — 1,146 lines, 7 gaps
-- **Critical insight**: All `ObservabilityEngine` callers are in async contexts → async methods + `_sync` wrappers is the correct M1 pattern
-- **Context Packer**: Enhanced with forensic linking, account tracking, PROJECT_OVERVIEW.md, and agent guidance. Fresh pack generated (39 files, 217,990 tokens, pack_id: b70cdf7c-ad48-442e-8d8d-75c180a6548f)
+- **Hivemind:** SDP completion posted (ses_ab92cca892ad)
+- **Research report:** `data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md`
+- **Mining report:** `data/entities/roc_racoon/workspace/mining_reports/SDP_INTEGRATION_MINING_REPORT_20260809.md`
+- **Carmack review:** `data/entities/john_carmack/workspace/reviews/SDP_CARMACK_REVIEW_20260809.md`
+- **Final synthesis:** `docs/strategy/SDP_FINAL_SYNTHESIS.md`
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ longcat-2.0-free ⬡ opencode ⬡ GAP0-COMPLETE ⬡ 2026-08-09*
+## 📁 Key Files Modified This Session
+
+```
+# New Docs (15 total — see full list above)
+docs/strategy/SDP_*.md
+docs/research/R_SOVEREIGN_DISTILLATION_PIPELINE_MANIFESTO_20260809.md
+data/entities/*/workspace/{mining_reports,research_reviews,reviews}/SDP_*.md
+data/coordination/AGY_SESSION_LEDGER.md
+data/coordination/CARMACK_CONTEXT_PACK_UPDATE_REPORT.md
+data/coordination/CARMACK_REVIEW_KALI_INSIGHTS_20260809.md
+data/coordination/KALI_INSIGHTS_FOR_CARMACK_20260809.md
+data/coordination/KALI_UPDATE_20260809.md
+data/coordination/CLINE_REFACTORING_MANUAL_20260809.md
+
+# Context Packer Enhancements
+.opencode/skills/context-packer/packer.py
+.opencode/skills/context-packer/packer-config.yaml
+.opencode/skills/context-packer/platform_adapters.py
+context_packs/sovereign-audit/ (regenerated artifacts)
+
+# Soul Updates
+data/entities/kali/proposed_lessons.yaml (3 new L3 principles)
+
+# ProviderRegistry (GAP-1 foundation)
+src/omega/oracle/provider_registry.py
+```
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ SDP-COMPLETE ⬡ 2026-08-09*
+## 🆕 Updates (2026-08-09 — Config Implementation Complete)
+
+### Implementation Complete
+- **Global config** (`~/.config/opencode/opencode.json`): Added `google-standard` provider with `@ai-sdk/google` driver, separate TUI credential storage, Gemma 4 thinking variants with `thinkingLevel: "MINIMAL"` workaround. Corrected context windows per Kali's verified ground truth.
+- **Project config** (`opencode.json`): Added display names for Zen models (MiMo v2.5, Nemotron 3 Ultra, DeepSeek V4 Flash), corrected context limits (Nemotron 3 Ultra: 1M tokens).
+- **Subdirectory config** (`.opencode/opencode.json`): Removed standard Google models that collide with Antigravity plugin, implemented flat thinking variants schema (no `thinkingConfig` wrapper).
+- **Backups**: All 3 original configs backed up with timestamps.
+- **Tests**: All config/provider tests pass. Pre-existing failures (18) confirmed unrelated to changes.
+
+### Commits
+- `4a1fe8c7` feat(config): implement Web Gemini-verified OpenCode config architecture
+- `d2d396ad` chore: add backup of original .opencode/opencode.json before refactoring
+
+---
+*⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_implementation ⬡ COMPLETE*
+
+## 🆕 Updates (2026-08-10 — P0 Audit Fixes Complete)
+
+### P0 Fixes Complete (Web Claude v3 Round 2)
+- **§3.1 `_record_perf` async bridge** — Replaced `anyio.from_thread.run()` with async `_get_metrics_db()` + `await db.record_performance()`. Added `anyio.Lock()` for thread-safe lazy init.
+- **§3.2 `BudgetGate` concurrency** — Added `get_daily_cloud_spend()` and `update_cost()` to MetricsDB. Rewrote BudgetGate as async-only with locked API. Updated all call sites in `remote_provider.py` and `observability/__init__.py`.
+- **§3.3 Provider-selector fallback** — Replaced hardcoded 4-provider fallback list with `self.providers` (10 providers from config).
+- **§4 `health_monitor.py` record_breaker_failure** — Made `record_breaker_success`/`record_breaker_failure` async. Added exception handling to `record_breaker_failure` (previously zero handling).
+
+### Files Modified
+- `src/omega/oracle/backends/remote_provider.py`
+- `src/omega/oracle/health_monitor.py`
+- `src/omega/observability/__init__.py`
+- `src/omega/observability/metrics_db.py`
+- `src/omega/oracle/model_gateway.py`
+
+### Test Results
+- Provider classification: 5/5 ✅
+- Provider registry config: 3/3 ✅
+- Sovereignty ratio: 6/6 ✅
+- Context packer v3: 17/17 ✅
+- Lint: Passes (6910 warnings, down from 6921)
+
+### P1 Progress (2026-08-10)
+- **ProviderRegistry singleton consolidation** — ✅ COMPLETE (6 sites → 1 via `get_provider_registry()`)
+- **sovereignty.py schema caching** — ✅ COMPLETE (added `_schema_ensured_for` cache)
+- **SQLiteVecAdapter connection reuse** — ✅ COMPLETE (persistent `self._conn`, `check_same_thread=False` in `get_sqlite_connection`)
+- **Dead-code sweep** — ✅ COMPLETE (deleted `_try_*`, `_call_provider_with_resilience`, `openrouter_retry_policy`, `OpenRouterTransientError`, `OpenRouterFatalError` from `model_gateway.py`; kept `QdrantAdapter` — used by scripts/knowledge_catalog_build.py and tests)
+
+### Files Modified (P1)
+- `src/omega/oracle/provider_registry.py` — Added `get_provider_registry()` / `reset_provider_registry()`
+- `src/omega/oracle/model_gateway.py` — Use `get_provider_registry()` + dead-code deletion (~150 lines)
+- `src/omega/oracle/backends/remote_provider.py` — Use `get_provider_registry()`
+- `src/omega/observability/__init__.py` — Use `get_provider_registry()`
+- `src/omega/observability/otel_exporter.py` — Use `get_provider_registry()`
+- `src/omega/ingestion/pipeline.py` — Use `get_provider_registry()`
+- `src/omega/observability/metrics_db.py` — Use `get_provider_registry()`
+- `src/omega/observability/sovereignty.py` — Added schema caching
+- `src/omega/memory/sqlite_vec_adapter.py` — Persistent connection + `_get_test_conn()` for tests
+- `src/omega/infra/sqlite_policy.py` — Added `check_same_thread=False` for persistent connections
+- `tests/test_model_gateway.py` — Mock `gateway._provider_registry` for test providers not in config
+
+### Test Results (P1)
+- Provider classification: 5/5 ✅
+- Provider registry config: 3/3 ✅
+- Sovereignty ratio: 6/6 ✅
+- Context packer v3: 17/17 ✅
+- Model gateway: 17/17 ✅
+- SQLiteVecAdapter: 13/17 (4 pre-existing failures, 0 new regressions)
+- Memory store: 28/37 (9 pre-existing failures, 0 new regressions)
+
+### Next: P2
+- Tests for P0/P1 fixes (concurrent generate, budget gate, fallback chain)
+- Security hardening (path traversal in memory_store.py, FTS5 injection)
+- Performance optimization
+
+### P2 Complete (2026-08-10)
+| Category | Item | File | Result |
+|----------|------|------|--------|
+| Test | Concurrent RemoteProvider.generate() | tests/contract/test_remote_provider_metrics.py | 2/2 ✅ |
+| Test | Concurrent check_budget()/record_spend() | tests/contract/test_budget_gate.py | 3/3 ✅ |
+| Test | Fallback chain length == len(providers) | tests/contract/test_model_gateway_fallback.py | 2/2 ✅ (7/7 total) |
+| Test | AST from_thread.run()-inside-async-def | scripts/m23_gate.py | 0 violations ✅ |
+| Security | Path traversal sanitize entity/session | src/omega/memory/providers.py + memory_store.py + session_lifecycle.py + ics.py + privacy/kernel.py + ingestion/persistence.py | 16/16 ✅ |
+| Security | FTS5 query-term escaping | src/omega/memory/fts_index.py + sqlite_vec_adapter.py | 11/11 ✅ |
+
+**Test results**: 98 passed, 1 skipped in contract suite. 0 new regressions (38 pre-existing failures unchanged; 3 pre-existing SQLiteVec tests now FIXED by P1 connection reuse). Temple-grade: all gates green (M1, M7, M8, M9, M22, M23).
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ P0+P1+P2-COMPLETE ⬡ 2026-08-10*
+
+---
+
+## 📅 2026-08-10 — Jem: Config Refactoring + QW-3 Complete, QW-4/QW-8 Next
+
+### Completed Today
+1. **OpenCode Config Refactoring**: All 3 opencode.json files refactored per Web Gemini verification
+   - Global: Added `google-standard` provider (isolates from Antigravity plugin)
+   - Project: Corrected Zen model display names + context windows
+   - Subdirectory: Removed standard Google models, flat thinking variants
+   - Commits: `4a1fe8c7`, `d2d396ad`, `1dc16dcf`
+
+2. **Knowledge Gap Research**: Web + local research for W-1, G-1, QW-3, QW-4, QW-8
+   - Key finding: G-1a billing RULED OUT (16K TPM ceiling applies even at Tier 3)
+   - W-1 root cause: iptables "Empty interface" = unquoted empty variable
+   - Research docs: `data/coordination/JEM_RESEARCH_KNOWLEDGE_GAPS_20260810.md`
+                 `data/coordination/JEM_WEB_RESEARCH_GAPS_20260810.md`
+
+3. **QW-3 CI Guard Implementation**: Token counting accuracy
+   - Added `cache_read_tokens`, `provider_prompt_tokens`, `provider_completion_tokens` fields
+   - Added `get_token_divergence()` method for drift detection
+   - Added 5 CI tests verifying token counting accuracy
+   - Commit: `58695408`
+
+### Blockers
+| Ticket | Blocker | Owner |
+|--------|---------|-------|
+| W-1 WARP | `warp-ns-prep@1/2/3` failed — requires Architect sudo | Architect |
+| G-1 Workhorse | Free Gemma 4 31B dead — requires Architect billing/OAuth | Architect |
+
+### Next Actions
+1. **QW-4**: Wire `pool_tracker.py` into inference pipeline
+2. **QW-8**: Build Context Gauge greenfield per SDP spec
+3. **W-1**: Run fix script with Architect sudo
+4. **G-1b**: Antigravity OAuth (fastest workhorse unlock)
+
+### Fleet Status
+- **jem**: QW-3 complete, ready for QW-4/QW-8
+- **john_carmack**: P0 complete, P1 in progress (ProviderRegistry, sovereignty.py)
+- **kali**: SDP session complete, awaiting next dispatch
+
+---
+*⬡ OMEGA ⬡ JEM ⬡ QW-3-COMPLETE ⬡ QW-4/QW-8-NEXT ⬡ 2026-08-10*
+
+---
+
+## 📅 2026-08-10 — Jem: Gap-Filling Complete, QW-4/QW-8 Ready to Implement
+
+### Knowledge Gaps Filled (All Complete)
+
+#### QW-4: pool_tracker.py Winding
+| Gap | Finding |
+|-----|---------|
+| USAGE_POOL_LOG.json | EXISTS — 8 keys (agy_key_01-08), all active, zero usage |
+| RemoteProvider key rotation | Already rotates on 429 (reactive) — QW-4 adds proactive selection |
+| ProviderConfig.api_keys | Field exists, `resolve_current_api_key()` works |
+| AntigravityProvider | Inherits RemoteProvider.generate() — same rotation |
+| pool_tracker.py status | Standalone dead code — needs wiring |
+
+#### QW-8: Context Gauge Data Source (CRITICAL FINDINGS)
+| Gap | Finding |
+|-----|---------|
+| **G-4 blocker verified** | `session.tokens_input` overcounts by **~87×** (22M vs 253K) |
+| **Correct data source** | `message.data.tokens.total` from latest assistant message |
+| **Token JSON structure** | `tokens.total`, `tokens.input`, `tokens.output`, `tokens.reasoning`, `tokens.cache.read`, `tokens.cache.write` |
+| **Model identification** | `message.data.modelID` (e.g., "longcat-2.0-free") |
+| **Active models** | deepseek-v4-flash-free, nemotron-3-ultra-free, laguna-s-2.1-free, longcat-2.0-free |
+| **BudgetGate relationship** | Complementary (cost control) — not overlapping with Context Gauge |
+| **opencode.db access** | Read-only via Python sqlite3 (16GB, 2436 sessions, 106K messages) |
+
+### Critical Query for Context Gauge
+```sql
+SELECT json_extract(data, '$.tokens.total') AS working_set_tokens,
+       json_extract(data, '$.modelID') AS model_id
+FROM message 
+WHERE session_id = ? 
+  AND json_extract(data, '$.role') = 'assistant'
+ORDER BY time_created DESC 
+LIMIT 1
+```
+
+### Key Reference Docs Created
+| Doc | Path |
+|-----|------|
+| Gap-filling report | `data/coordination/JEM_GAP_FILLING_REPORT_20260810.md` |
+| opencode.db schema reference | `docs/research/R_OPENCODE_DB_SCHEMA_REFERENCE_20260810.md` |
+| QW-4/QW-8 implementation plan | `docs/strategy/QW4_QW8_IMPLEMENTATION_PLAN.md` |
+
+### Next Actions (Implementation Ready)
+1. **QW-4**: Wire pool_tracker into ModelGateway.generate() per implementation plan
+2. **QW-8**: Build ContextGauge class per SDP spec + verified data source
+3. **Update SDP_FINAL_SYNTHESIS.md** with verified G-4 data
+4. **Update SDP_MODEL_AWARE_GAUGE_SPEC.md** with correct query
+5. **Update AGENTS.md** with opencode.db access patterns
+
+---
+*⬡ OMEGA ⬡ JEM ⬡ GAP-FILLING-COMPLETE ⬡ QW-4/QW-8-READY ⬡ 2026-08-10*
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ P1-COMPLETE ⬡ P2-IN-PROGRESS ⬡ 2026-08-10*

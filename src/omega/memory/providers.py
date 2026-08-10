@@ -37,6 +37,59 @@ from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+# [P2-5] Canonical path-component sanitizer for memory persistence.
+# entity_name / session_id come from user/agent input and MUST NOT be able
+# to escape the memory data dir (path traversal: "../", absolute paths,
+# null bytes, separators). Replaces dangerous characters with "_" and
+# strips traversal attempts. A single canonical implementation prevents
+# divergent per-site sanitization.
+_SAFE_TRANS = str.maketrans({
+    '/': '_',
+    '\\': '_',
+    '\x00': '_',
+    ':': '_',
+    '|': '_',
+    '*': '_',
+    '?': '_',
+    '"': '_',
+    '<': '_',
+    '>': '_',
+})
+
+
+def sanitize_path_component(value: str, max_len: int = 128) -> str:
+    """Sanitize a single path component (entity_name, session_id, filename).
+
+    - Rejects/neutralizes traversal: ``..``, ``/``, ``\\``, null bytes.
+    - Replaces OS path metacharacters with ``_``.
+    - Strips leading/trailing dots (hidden/traversal entries).
+    - Collapses whitespace to underscores and lowercases (entity convention).
+    - Caps length to prevent path-length DoS.
+    - Returns ``"_unset"`` for empty input so callers never build "//".
+
+    Example:
+        "../evil"  -> "_evil"
+        "a/b\\c"   -> "a_b_c"
+    """
+    if not value:
+        return "_unset"
+    # Neutralize path traversal: collapse any remaining dot-dot sequences.
+    cleaned = value.translate(_SAFE_TRANS)
+    # Remove any residual '..' that survived (e.g. "a..b" is fine, but
+    # exact ".." as a full component is not; translate already replaced dots
+    # only in metachar set, so handle explicit traversal now).
+    cleaned = cleaned.replace("..", "_")
+    # Trim leading/trailing dots and whitespace
+    cleaned = cleaned.strip(" .")
+    # Lowercase + whitespace → underscore (entity/session naming convention)
+    cleaned = cleaned.lower().replace(" ", "_")
+    # Collapse repeated underscores
+    while "__" in cleaned:
+        cleaned = cleaned.replace("__", "_")
+    if not cleaned:
+        return "_unset"
+    return cleaned[:max_len]
+
 class DiskSpaceError(Exception):
     """Raised when disk space is below the safe threshold."""
     pass
@@ -181,12 +234,14 @@ class FileStorageProvider(StorageProvider):
         self.archive_dir = data_dir / "archive"
 
     def _entity_path(self, entity_name: str, session_id: str) -> Path:
-        safe_name = entity_name.lower().replace(" ", "_")
-        return self.entity_dir / safe_name / f"{session_id}.json"
+        safe_name = sanitize_path_component(entity_name)
+        safe_session = sanitize_path_component(session_id)
+        return self.entity_dir / safe_name / f"{safe_session}.json"
 
     def _archive_path(self, entity_name: str, session_id: str) -> Path:
-        safe_name = entity_name.lower().replace(" ", "_")
-        return self.archive_dir / safe_name / f"{session_id}.json.gz"
+        safe_name = sanitize_path_component(entity_name)
+        safe_session = sanitize_path_component(session_id)
+        return self.archive_dir / safe_name / f"{safe_session}.json.gz"
 
     async def _check_disk_space(self) -> bool:
         """Check if free space is above 10% threshold."""

@@ -36,6 +36,7 @@ from .memory.providers import (
     InMemoryStorageProvider,
     USMStorageProvider,
     DiskSpaceError,
+    sanitize_path_component,
 )
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 from .memory.sqlite_vec_adapter import SQLiteVecAdapter
@@ -715,14 +716,16 @@ class MemoryStore:
 
     def _get_session_jsonl_path(self, entity_name: str, session_id: str, filename: str) -> Path:
         """Get the path for a session's JSONL file (updates.jsonl or rewind_points.jsonl)."""
-        safe_entity = entity_name.lower().replace(" ", "_")
-        session_dir = _get_sessions_dir() / safe_entity / session_id
+        safe_entity = sanitize_path_component(entity_name)
+        safe_session = sanitize_path_component(session_id)
+        session_dir = _get_sessions_dir() / safe_entity / safe_session
         return session_dir / filename
 
     async def _ensure_session_dir(self, entity_name: str, session_id: str) -> Path:
         """Ensure the session directory exists for JSONL persistence."""
-        safe_entity = entity_name.lower().replace(" ", "_")
-        session_dir = _get_sessions_dir() / safe_entity / session_id
+        safe_entity = sanitize_path_component(entity_name)
+        safe_session = sanitize_path_component(session_id)
+        session_dir = _get_sessions_dir() / safe_entity / safe_session
         await anyio.Path(session_dir).mkdir(parents=True, exist_ok=True)
         return session_dir
 

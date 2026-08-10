@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 logger = logging.getLogger(__name__)
 
 import anyio
+from omega.memory.providers import sanitize_path_component
 from omega.memory_store import get_memory_store
 from omega.observability import get_engine as get_observability_engine, new_trace_id
 
@@ -28,11 +29,12 @@ class IngestionPersistence:
         self.entity_name = entity_name
         self.memory_store = get_memory_store()
         self.obs = get_observability_engine()
-        self.training_dir = Path(f"data/training/entities/{entity_name}")
+        safe_entity = sanitize_path_component(entity_name)
+        self.training_dir = Path(f"data/training/entities/{safe_entity}")
         self.training_dir.mkdir(parents=True, exist_ok=True)
         
         # Tri-Anchor Storage
-        self.knowledge_dir = Path(f"data/entities/{entity_name}/knowledge")
+        self.knowledge_dir = Path(f"data/entities/{safe_entity}/knowledge")
         self.raw_dir = self.knowledge_dir / "raw"
         self.quarantine_dir = self.knowledge_dir / "quarantine"
         self.raw_dir.mkdir(parents=True, exist_ok=True)

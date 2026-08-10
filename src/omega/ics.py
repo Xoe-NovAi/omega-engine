@@ -1,7 +1,6 @@
 # AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Engine — ICS (Intelligent Configuration System)
 # ⬡ OMEGA ⬡ KALI ⬡ minimax-m3-free ⬡ opencode ⬡ trc_ics_module ⬡ PHASE-II
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | MODEL: minimax-m3-free | CONTEXT: DYNAMIC-HEADER]
 """
 ICS — Intelligent Configuration System.
 
@@ -86,6 +85,7 @@ DEFAULT_IWAD = "_omega_default"
 # Fixes cwd-relative path bug in original _load_dispatch_config.
 
 from omega.governance.dispatch_registry import load_dispatch_yaml, get_entity_by_role
+from omega.memory.providers import sanitize_path_component
 
 
 def _load_dispatch_config(iwad: str = DEFAULT_IWAD, root: Path | str | None = None) -> dict:
@@ -269,7 +269,7 @@ def _read_entity_model(entity: str) -> Optional[str]:
     Returns:
         The model name string, or None if not found.
     """
-    soul_path = Path(f"data/entities/{entity.lower()}/soul.yaml")
+    soul_path = Path(f"data/entities/{sanitize_path_component(entity)}/soul.yaml")
     if not soul_path.exists():
         return None
     try:
