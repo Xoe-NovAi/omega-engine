@@ -272,9 +272,16 @@ src/omega/oracle/provider_registry.py
 
 **Test results**: 98 passed, 1 skipped in contract suite. 0 new regressions (38 pre-existing failures unchanged; 3 pre-existing SQLiteVec tests now FIXED by P1 connection reuse). Temple-grade: all gates green (M1, M7, M8, M9, M22, M23).
 
+### P3 Prompt Work (2026-08-10)
+- Created `P3_CHAT_PROMPT.md` — 8 investigations for P3 deepening audit
+- Created `CLAUDE_PROJECT_SYSTEM_PROMPT_v3.1.md` — updated system prompt
+- Created `P3_SUPPLEMENTAL_CONTEXT.md` — scope map for P3
+- Created `P3_UNBLOCKED_FILES.md` — concatenated file with 3 files NOT in original pack (openai_compat.py, provider_selector.py, HERITAGE_VET_LOG.md)
+- **Critical lesson learned**: The sovereign-audit pack is FIXED — files don't appear unless explicitly uploaded. Web Claude only has the original pack + system prompt + chat prompt + uploaded files.
+
 ---
 
-*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ P0+P1+P2-COMPLETE ⬡ 2026-08-10*
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ P0+P1+P2-COMPLETE ⬡ P3-PROMPTS-READY ⬡ 2026-08-10*
 
 ---
 

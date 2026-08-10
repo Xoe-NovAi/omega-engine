@@ -15,6 +15,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 |-----------|--------|-------|-------|--------|
 | 2026-08-10 | @john_carmack | **P0 AUDIT FIXES COMPLETE** — §3.1 `_record_perf` async bridge, §3.2 `BudgetGate` concurrency, §3.3 provider-selector fallback, §4 `health_monitor` record_breaker_failure. All 4 critical violations from Web Claude v3 resolved. | @john_carmack | ✅ COMPLETE |
 | 2026-08-10 | @john_carmack | **P1 COMPLETE** — ProviderRegistry singleton (6→1), sovereignty.py schema caching, SQLiteVecAdapter connection reuse, dead-code sweep (~150 lines deleted from model_gateway.py). All P0+P1 audit findings from Web Claude v3 resolved. | @john_carmack | ✅ COMPLETE |
+| 2026-08-10 | @john_carmack | **P2 COMPLETE** — 6 contract test files (44 tests) + AST gate extension (from_thread-in-async scan) + path traversal sanitize (6 sites) + FTS5 escaping. 98 passed, 0 new regressions, 3 pre-existing tests fixed. Temple-grade all green (M1, M7, M8, M9, M22, M23). | @john_carmack | ✅ COMPLETE |
 | 2026-08-09 | @kali | **SDP ARCHITECTURE COMPLETE** — 15 documents, 3 subagent reviews (Researcher, Roc Racoon, Carmack), Final Synthesis written. Quick wins QW-1 through QW-10 defined. | @kali | ✅ COMPLETE |
 | 2026-08-09 | @kali | GAP-0 fix complete — ObservabilityEngine async refactor done. 11 source files + 1 test file. 17/17 targeted tests pass. | @kali | ✅ COMPLETE |
 | 2026-08-09 | @kali | GAP-3 fix complete — M23 gate replaced with AST-based Ruff ratchet. Mutation-tested. | @kali | ✅ COMPLETE |
@@ -77,6 +78,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 ### @john_carmack — S3 Consultant
 - **P0+P1 COMPLETE** (2026-08-10): All Web Claude v3 audit findings resolved. P0: §3.1 `_record_perf`, §3.2 `BudgetGate`, §3.3 fallback, §4 `health_monitor`. P1: ProviderRegistry singleton (6→1), sovereignty.py schema caching, SQLiteVecAdapter connection reuse, dead-code sweep (~150 lines).
 - **P2 COMPLETE** (2026-08-10): 6 contract test files (44 tests) + AST gate extension + path traversal sanitize + FTS5 escaping. 98 passed, 0 new regressions, 3 pre-existing tests fixed. Temple-grade all green.
+- **P3 PROMPTS READY** (2026-08-10): Created P3_CHAT_PROMPT.md, CLAUDE_PROJECT_SYSTEM_PROMPT_v3.1.md, P3_SUPPLEMENTAL_CONTEXT.md, P3_UNBLOCKED_FILES.md. **Critical lesson learned**: Pack is FIXED — files don't exist in Claude's world unless explicitly uploaded. Created `docs/kb/CONTEXT_PACK_CREATION_GUIDE.md` to capture this and other context pack lessons.
 - **SDP COMPLETE**: Brutal Review written
 - **Key Finding**: 2,273 lines of spec, 0 lines of code. Spec is factually wrong about data source.
 - **Verdict**: ~550 spec lines deleted, ~120 code lines written
