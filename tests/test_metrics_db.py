@@ -158,6 +158,110 @@ class TestPerformanceRecording:
         cursor = metrics_db._conn.execute("SELECT is_cloud FROM performance")
         assert cursor.fetchone()[0] == 1
 
+    def test_performance_cache_read_tokens_tracked(self, metrics_db: MetricsDB):
+        """QW-3 CI GUARD: Cache read tokens must be tracked separately.
+
+        Verifies that cache_read_tokens field is recorded and defaults to 0.
+        This prevents the G-4 bug where token accounting was not additive
+        (must include cache.read tokens in total accounting).
+        """
+        metrics_db.record_performance(
+            latency_ms=200.0,
+            prompt_tokens=100,
+            completion_tokens=50,
+            cache_read_tokens=25,
+        )
+        cursor = metrics_db._conn.execute(
+            "SELECT prompt_tokens, completion_tokens, total_tokens, "
+            "cache_read_tokens FROM performance"
+        )
+        row = cursor.fetchone()
+        assert row[0] == 100  # prompt_tokens
+        assert row[1] == 50   # completion_tokens
+        assert row[2] == 175  # total_tokens = prompt + completion + cache_read
+        assert row[3] == 25   # cache_read_tokens
+
+    def test_performance_total_tokens_includes_cache(self, metrics_db: MetricsDB):
+        """QW-3 CI GUARD: total_tokens must include cache read tokens.
+
+        Prevents regression where cache reads are excluded from total accounting.
+        """
+        metrics_db.record_performance(
+            latency_ms=150.0,
+            prompt_tokens=200,
+            completion_tokens=100,
+            cache_read_tokens=50,
+        )
+        cursor = metrics_db._conn.execute("SELECT total_tokens FROM performance")
+        # total_tokens = prompt_tokens + completion_tokens + cache_read_tokens
+        assert cursor.fetchone()[0] == 350
+
+    def test_performance_provider_usage_logged(self, metrics_db: MetricsDB):
+        """QW-3 CI GUARD: Provider returned usage must be logged alongside estimate.
+
+        Verifies that both local estimate and provider returned usage are recorded.
+        This enables divergence auditing (estimate vs actual).
+        """
+        metrics_db.record_performance(
+            latency_ms=200.0,
+            prompt_tokens=100,
+            completion_tokens=50,
+            provider_prompt_tokens=105,  # Provider reported slightly more
+            provider_completion_tokens=48,
+        )
+        cursor = metrics_db._conn.execute(
+            "SELECT prompt_tokens, completion_tokens, "
+            "provider_prompt_tokens, provider_completion_tokens "
+            "FROM performance"
+        )
+        row = cursor.fetchone()
+        assert row[0] == 100  # local estimate prompt
+        assert row[1] == 50   # local estimate completion
+        assert row[2] == 105  # provider actual prompt
+        assert row[3] == 48   # provider actual completion
+
+    def test_token_counting_divergence_within_threshold(self, metrics_db: MetricsDB):
+        """QW-3 CI GUARD: Token counting divergence must be within threshold.
+
+        Verifies that local estimate does not diverge from provider returned
+        usage by more than the acceptable threshold (15%).
+        This catches tokenizer drift (tiktoken underestimates 41% for Claude).
+        """
+        # Simulate a request where local estimate is 100 tokens
+        # but provider reports 110 tokens (10% divergence — within threshold)
+        metrics_db.record_performance(
+            latency_ms=200.0,
+            prompt_tokens=100,
+            completion_tokens=50,
+            provider_prompt_tokens=110,
+            provider_completion_tokens=50,
+        )
+        # Divergence should be calculated and within threshold
+        divergence = metrics_db.get_token_divergence(hours=1)
+        # 10% divergence is within the 15% threshold
+        assert divergence["mean_ratio"] <= 1.15
+        assert divergence["max_ratio"] <= 1.15
+
+    def test_token_counting_divergence_exceeds_threshold(self, metrics_db: MetricsDB):
+        """QW-3 CI GUARD: Token counting divergence exceeding threshold must be flagged.
+
+        Verifies that when local estimate diverges from provider returned
+        usage by more than 15%, it is flagged as a potential tokenizer drift.
+        """
+        # Simulate a request where local estimate is 100 tokens
+        # but provider reports 150 tokens (50% divergence — exceeds threshold)
+        metrics_db.record_performance(
+            latency_ms=200.0,
+            prompt_tokens=100,
+            completion_tokens=50,
+            provider_prompt_tokens=150,  # 50% divergence
+            provider_completion_tokens=50,
+        )
+        divergence = metrics_db.get_token_divergence(hours=1)
+        # 50% divergence exceeds the 15% threshold
+        assert divergence["max_ratio"] > 1.15
+        assert divergence["drift_detected"] is True
+
 
 class TestBaselineManagement:
     """Test baseline metric management."""
