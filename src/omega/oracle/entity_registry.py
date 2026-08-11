@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Entity Registry — YAML-backed Entity CRUD
 # AP: AP-ENTITY-REGISTRY-v1.0.0
-# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]
 #
 # Replaces:
 #   - omega-stack enhanced_handler.py hardcoded ENTITY_ALIASES/ENTITY_DOMAINS dicts

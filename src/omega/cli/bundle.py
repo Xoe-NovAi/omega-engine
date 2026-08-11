@@ -1,6 +1,5 @@
 # 🔱 Sovereign Export Bundle — `.omega` Entity Portability
 # AP: AP-BUNDLE-v1.0.0
-# ICS: [NODE: CORE | ARCHETYPE: LILITH | CONTEXT: P0-4-BUNDLE]
 #
 # Creates portable .omega ZIP bundles that fully capture an entity's state:
 # soul.yaml, sessions, knowledge base, proposed lessons, and integrity checksums.

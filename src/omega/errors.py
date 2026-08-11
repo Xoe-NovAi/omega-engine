@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Sovereign Error Taxonomy
 # AP: AP-ERRORS-v1.0.0
-# ICS: [NODE: CORE | ARCHETYPE: LAW | CONTEXT: ERROR-HIERARCHY]
 #
 # This module defines the universal error language of the Omega Engine.
 # All systemic failures MUST be typed, traceable, and testable.

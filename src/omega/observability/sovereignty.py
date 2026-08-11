@@ -19,6 +19,34 @@ logger = logging.getLogger(__name__)
 # Default MetricsDB location (matches MetricsDB class default)
 METRICS_DB_PATH = Path("data/observability/metrics.db")
 
+# [Performance] Cache of db_paths for which the corrected schema has been
+# ensured. The classification table and view only need to be built once per
+# process per db_path — rebuilding on every sovereignty query wastes a
+# YAML parse + SQLite executescript.
+_schema_ensured_for: set[str] = set()
+
+
+def _ensure_corrected_schema(db_path: str | Path, force: bool = False) -> None:
+    """Ensure provider_classification + v_performance_corrected exist (M22 SSOT).
+
+    Idempotent. Uses MetricsDB so the classification table and corrected
+    view are the single, shared definition of cloud/local.
+    [Performance] Cached per db_path — only builds once per process unless
+    force=True (e.g., after a known config change).
+    """
+    key = str(db_path)
+    if not force and key in _schema_ensured_for:
+        return
+    from omega.observability.metrics_db import MetricsDB
+
+    db = MetricsDB(Path(db_path))
+    try:
+        db.initialize()
+        db.create_corrected_performance_view()
+        _schema_ensured_for.add(key)
+    finally:
+        db.close()
+
 
 def get_sovereignty_ratio(
     db_path: str | Path = METRICS_DB_PATH,
@@ -79,15 +107,17 @@ def get_sovereignty_ratio(
                 datetime.now(timezone.utc).timestamp() - since_days * 86400
             )
 
-        # Aggregate counts
+        # Aggregate counts (corrected classification from providers.yaml)
+        # Ensure the corrected schema/view exists before querying it.
+        _ensure_corrected_schema(db)
         if since_ts:
             cur.execute(
                 """
                 SELECT 
-                    SUM(CASE WHEN is_cloud = 0 THEN 1 ELSE 0 END) as local_count,
-                    SUM(CASE WHEN is_cloud = 1 THEN 1 ELSE 0 END) as cloud_count,
+                    SUM(CASE WHEN is_cloud_corrected = 0 THEN 1 ELSE 0 END) as local_count,
+                    SUM(CASE WHEN is_cloud_corrected = 1 THEN 1 ELSE 0 END) as cloud_count,
                     COUNT(*) as total
-                FROM performance
+                FROM v_performance_corrected
                 WHERE ts >= ?
                 """,
                 (since_ts,),
@@ -96,10 +126,10 @@ def get_sovereignty_ratio(
             cur.execute(
                 """
                 SELECT 
-                    SUM(CASE WHEN is_cloud = 0 THEN 1 ELSE 0 END) as local_count,
-                    SUM(CASE WHEN is_cloud = 1 THEN 1 ELSE 0 END) as cloud_count,
+                    SUM(CASE WHEN is_cloud_corrected = 0 THEN 1 ELSE 0 END) as local_count,
+                    SUM(CASE WHEN is_cloud_corrected = 1 THEN 1 ELSE 0 END) as cloud_count,
                     COUNT(*) as total
-                FROM performance
+                FROM v_performance_corrected
                 """
             )
 
@@ -108,14 +138,14 @@ def get_sovereignty_ratio(
         cloud_count = row["cloud_count"] or 0
         total = row["total"] or 0
 
-        # Provider breakdown
+        # Provider breakdown (corrected classification)
         if since_ts:
             cur.execute(
                 """
-                SELECT provider, is_cloud, COUNT(*) as cnt
-                FROM performance
+                SELECT provider, is_cloud_corrected, COUNT(*) as cnt
+                FROM v_performance_corrected
                 WHERE ts >= ?
-                GROUP BY provider, is_cloud
+                GROUP BY provider, is_cloud_corrected
                 ORDER BY cnt DESC
                 """,
                 (since_ts,),
@@ -123,9 +153,9 @@ def get_sovereignty_ratio(
         else:
             cur.execute(
                 """
-                SELECT provider, is_cloud, COUNT(*) as cnt
-                FROM performance
-                GROUP BY provider, is_cloud
+                SELECT provider, is_cloud_corrected, COUNT(*) as cnt
+                FROM v_performance_corrected
+                GROUP BY provider, is_cloud_corrected
                 ORDER BY cnt DESC
                 """
             )
@@ -134,7 +164,7 @@ def get_sovereignty_ratio(
         for prow in cur.fetchall():
             provider_breakdown[prow["provider"]] = {
                 "count": prow["cnt"],
-                "is_cloud": bool(prow["is_cloud"]),
+                "is_cloud": bool(prow["is_cloud_corrected"]),
             }
 
         conn.close()

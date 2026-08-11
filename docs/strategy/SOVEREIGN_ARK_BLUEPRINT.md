@@ -28,6 +28,10 @@ IMPORTANT (Next)
 ├── E-0 Identity Phase 0 (after C-1′)
 ├── D-1 Content persistence + TTL (+ D-T tests)
 ├── D-2 Job board YAML bridge (P0/P1 only)
+├── **SDP-1** Sovereign Distillation Pipeline — manual study phase
+│     Protocol: docs/strategy/COGNITIVE_SCAFFOLDING_PROTOCOL.md
+│     Gate: 10 manual executions + ledger data
+│     Blocker: V-1 Vault (for automation phase)
 ├── **NL-1** NotebookLM Ingestion Pipeline — implement `prepare_notebooklm.py` per R52c spec
 └── **V-1** Omega-Vault MVP — explicit ticket (GAP-08; unblocks fleet later)
 ```

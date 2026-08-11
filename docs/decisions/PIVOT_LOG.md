@@ -9,6 +9,17 @@
 | **D-518** | **GAP-3 Fix: M23 Pre-commit Gate Repair** — Replaced broken `rg` pipeline (structurally incapable of failing) with AST-based Ruff ratchet (S110/S112/BLE001/E722). Ratchet: fails only on NEW violations vs baseline. | ✅ COMPLETE |
 | **D-519** | **Context Packer Enhancement: Forensic Linking + Agent Guidance** — Added pack_id UUID generation, account/project/version metadata protocol, auto-generated PROJECT_OVERVIEW.md for system prompt guidance, enhanced success message with explicit next steps. Updated system prompt and chat initiation prompt for Web Claude sovereign-audit pack. | ✅ COMPLETE |
 | D-517 | **GAP-0 Fix: ObservabilityEngine Async Refactor** — Made all MetricsDB-facing methods async (`record_performance`, `record_breaker_transition`, `record_metrics_error`, `log_event`, `stats`) + `_sync` wrappers. Resolved P0 data-loss regression. | ✅ COMPLETE |
+| **D-520** | **GAP-1 Foundation: ProviderRegistry SSOT** — Created `src/omega/oracle/provider_registry.py` as the Single Source of Truth for provider classification, reading `is_cloud` directly from `config/providers.yaml`. Replaces 5 divergent hardcoded classifiers causing 73.6% misclassification. | ✅ COMPLETE |
+| **D-521** | **Sovereign Distillation Pipeline (SDP)** — Formalized the manual Cognitive Scaffolding Protocol. Replaces the search for a single "workhorse" model with a tripartite system: 1. Scaffold (cheap/daily model) → 2. Synthesize (AGY frontier model) → 3. Execute (local/cheap model). Implements the 80% Redzone context escalation rule and cross-model dialectics. | ✅ RATIFIED |
+| **D-522** | **SDP Ground Truth: Model Context Windows** — Verified actual context windows: Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K, Claude Sonnet 4.6 = 200K, Gemini 3.1 Pro = 1M. Free vs paid tiers of same model differ by up to 4×. Gauge must be keyed on model+tier, not model name alone. | ✅ VERIFIED |
+| **D-523** | **SDP Systems Audit: No Duplicates** — SDP is ~60% already built. V-1 Vault (2,039 LOC), Pool Tracker (237 LOC), Dialectic Logger (`record_council()`), Triage Router (constraint filtering), Token Estimator all exist. Do NOT build new systems — extend existing ones. | ✅ VERIFIED |
+| **D-524** | **SDP Quick Win Items** — QW-1 through QW-10 defined for Phase 1 implementation. Critical: QW-1 (fix model windows), QW-2 (fix token counting), QW-3 (CI guard), QW-4 (wire pool_tracker), QW-5 (cloud config). Total: ~24 hours for complete Phase 1 Context Gauge. | ✅ APPROVED |
+| **D-526** | **zswap > zRAM for Desktop with NVMe** — Migrate from zRAM to zswap + NVMe swap file. zswap: 25% pool (max_pool_percent), lzo_rle compressor, zsmalloc allocator. Confirmed by Chris Down (kernel developer), Fedora Project, kernel docs. Never run both simultaneously. | ✅ RATIFIED |
+| **D-527** | **Never Run zswap + zRAM Simultaneously** — They fight each other. Migration path: swapoff -a → rmmod zram → enable zswap → create NVMe swap → swapon -a. | ✅ LOCKED |
+| **D-528** | **pyresilience > tenacity for Circuit Breaker** — pyresilience is 10.4x faster than tenacity on happy path, 14.4x faster for async, 43% less memory, all 7 resilience patterns. Spike for 1h, fall back to tenacity if it fails. | ✅ APPROVED |
+| **D-529** | **Simplify OOMProtector to 2-Signal** — Remove cgroup pressure signal. Keep PSI + MemAvailable only. Carmack: "server-grade theater for single-user desktop." Lilith: "cgroup pressure duplicates PSI on bare metal." Saves ~1,200 lines. | ✅ RATIFIED |
+| **D-530** | **Context Gauge Uses tokens.total** — Never use session.tokens_input (overcounts ~87x). Use json_extract(data, '$.tokens.total') from message.data JSON blob. Token accounting is NOT additive. | ✅ LOCKED |
+| **D-531** | **Multi-Write Subagent Method Mandatory** — All subagent tasks must use phase-based execution with mandatory disk writes after each phase. Verified: 0% → 100% success rate. Update STRP protocol. | ✅ MANDATED |
 | D-275 | Institutionalize Wave 3 refinement meta-process | Active |
 | D-276 | Implement ContextProtocol pipeline (15K budget) | Active |
 | D-277 | Soul Hydration Pipeline — fix schema mismatch, add soul_utils.py, hydration sequence, soul-verify gate | ✅ COMPLETE (Phase I) |
@@ -688,3 +699,34 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-519 ⬡ 2026-08-09*
+
+## D-387: OpenCode Configuration Refactoring (2026-08-09)
+
+**Decision**: Implement Web Gemini-verified OpenCode configuration architecture across all 3 config files.
+
+**Rationale**: 
+- Antigravity plugin hijacks entire `google` namespace (verified via source code analysis)
+- Gemma 4 `includeThoughts: false` is broken (Cookbook Issue #1198)
+- Context windows were incorrect (Nemotron 3 Ultra: 1M tokens per Kali's ground truth)
+- Thinking variants used wrong schema (thinkingConfig wrapper instead of flat schema)
+
+**Changes**:
+1. Global config: Added `google-standard` provider with `@ai-sdk/google` driver
+2. Project config: Corrected Zen model display names + context windows
+3. Subdirectory config: Removed standard Google models, flat thinking variants
+
+**Verification**: 
+- Web Gemini research report (492 lines, 40+ citations)
+- 162 tests pass, 0 regressions
+- All 3 configs valid JSON
+
+**Files**: 
+- `~/.config/opencode/opencode.json`
+- `opencode.json`
+- `.opencode/opencode.json`
+- `.opencode/opencode.json.backup.20260809_114431`
+
+**Commits**: `4a1fe8c7`, `d2d396ad`
+
+---
+*⬡ OMEGA ⬡ KALI ⬡ trc_pivot ⬡ 2026-08-09*

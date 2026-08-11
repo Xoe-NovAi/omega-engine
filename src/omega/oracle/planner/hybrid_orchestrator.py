@@ -1,6 +1,5 @@
 # AP: AP-MAAT-PHASE2-DESIGN-v1.0.0
 # 🔱 Cloud Planner / Local Executor — Hybrid Orchestrator
-# ICS: [NODE: N3 | ARCHETYPE: HERMES | CONTEXT: PLANNER-ORCHESTRATOR]
 #
 # M7-compliant: Cloud is advisor/planner only; local is executor.
 # The planner emits a JSON DAG; the local executor validates and runs

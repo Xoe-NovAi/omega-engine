@@ -102,7 +102,7 @@ def get_sqlite_connection(
         # Read-only via URI (portable stdlib pattern) — A12
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=timeout)
     else:
-        conn = sqlite3.connect(str(path), timeout=timeout)
+        conn = sqlite3.connect(str(path), timeout=timeout, check_same_thread=False)
     
     conn.row_factory = sqlite3.Row
     

@@ -36,6 +36,14 @@ from ..library.enrichment import EnrichmentEngine
 
 logger = logging.getLogger(__name__)
 
+# [M22 SSOT] Lazy ProviderRegistry singleton for cloud classification.
+# Imported lazily to avoid a transitive circular import through omega.oracle.
+def _get_provider_registry():
+    """Return the cached ProviderRegistry, constructing it on first use.
+    Delegates to the process-wide singleton in provider_registry.py."""
+    from ..oracle.provider_registry import get_provider_registry
+    return get_provider_registry()
+
 # ⚠️ DEPRECATED — C-6' Unification (2026-07-22)
 
 class ResilienceContext:
@@ -137,10 +145,22 @@ class IngestionPipeline:
 
 
     def _is_cloud_model(self) -> bool:
-        """Checks if the current model is a cloud provider."""
-        model_name = self.config.model_name.lower()
-        cloud_keywords = ["google", "openai", "anthropic", "openrouter", "copilot", "gemini", "gpt", "claude"]
-        return any(kw in model_name for kw in cloud_keywords)
+        """Checks if the current model runs on a cloud provider.
+
+        [Decision 4] Resolves the serving provider from the model name via
+        ``providers.yaml`` ``supported_models`` (ProviderRegistry
+        ``get_provider_for_model``), then delegates cloud/local to the SSOT.
+        Unresolvable models stay pessimistic-cloud (M7 local-first).
+        """
+        registry = _get_provider_registry()
+        provider = registry.get_provider_for_model(self.config.model_name)
+        if provider is None:
+            logger.warning(
+                "M22: model %r not mapped to any provider; pessimistic cloud",
+                self.config.model_name,
+            )
+            return True
+        return registry.is_cloud(provider)
 
     async def run_source(self, source: Any) -> Optional[IngestionResult]:
         """Processes a single source through the resilience ladder."""

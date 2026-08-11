@@ -158,7 +158,7 @@ def _escape_bare_xml_chars(text: str) -> str:
     return text
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# ================================================================================
 # V3 DETERMINISTIC 5-STEP CONTRACT API (manual §1.2, §2; Phase 3)
 # ============================================================================
 # These module-level functions are the v3 specification. The contract suite at
@@ -264,7 +264,7 @@ def resolve_theme_files(
     # Skip heavy/non-source dirs during the walk (keeps O(N) sane over a huge
     # repo). Themes reference src/, docs/, config/, etc. — never these.
     _SKIPPED_DIRS = {".git", ".hg", ".venv", "venv", "__pycache__",
-                     "node_modules", "data", "context_packs", ".pytest_cache",
+                     "node_modules", "context_packs", ".pytest_cache",
                      ".mypy_cache", ".ruff_cache"}
     all_files: List[LibPath] = []
     for p in base.rglob("*"):
@@ -533,8 +533,8 @@ class EnhancedContextPacker:
         pack_id = str(uuid.uuid4())
         pack_timestamp = datetime.now().astimezone().isoformat()
         
-        _debug_log(f"═══ PACK START: profile='{profile_name}' pack_id={pack_id} "
-                   f"max_slots={profile.max_slots} themes={list(profile.themes.keys())} ═══")
+        _debug_log(f"=== PACK START: profile='{profile_name}' pack_id={pack_id} "
+                   f"max_slots={profile.max_slots} themes={list(profile.themes.keys())} ===")
 
         # ── Step 1: RESOLVE ─────────────────────────────────────────────────────
         themed = resolve_theme_files(profile, base)
@@ -764,9 +764,9 @@ class EnhancedContextPacker:
         # Generate Project Overview for system prompt assistance
         await self._write_project_overview(profile_name, themed_bundles, vault_dir, pack_id, pack_timestamp, profile)
 
-        _debug_log(f"═══ PACK COMPLETE: profile='{profile_name}' pack_id={pack_id} "
+        _debug_log(f"=== PACK COMPLETE: profile='{profile_name}' pack_id={pack_id} "
                    f"output_dir='{output_dir}' bundles={bundles_written} "
-                   f"pii_entries={len(pii_vault)} ════")
+                   f"pii_entries={len(pii_vault)} ===")
         return output_dir, pack_id, pack_timestamp
 
     async def _create_manifest(self, profile_name: str, themed_bundles: Dict[str, List[dict]],

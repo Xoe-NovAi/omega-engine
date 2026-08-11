@@ -1,7 +1,6 @@
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-R10-SOUL-VALIDATION-v1.0.0
 # 🔱 Soul Validator — R-10 Schema Enforcement
-# ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: SOUL-INTEGRITY]
 #
 # Implements the canonical soul schema defined in docs/research/R10_soul_schema_validation.md.
 # Ensures that entity souls are syntactically valid and structurally complete.

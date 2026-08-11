@@ -1,4 +1,9 @@
 generated_at: "2026-08-07T19:15:55.008102"
+# ⚠️ TAGGED FOR UPDATE — 2026-08-10
+# This file contains zRAM-specific values (swap_zram_mb: 16384) that are DEPRECATED.
+# The definitive memory configuration is now zswap + NVMe swap file.
+# See: docs/kb/MEMORY_MANAGEMENT_KB.md
+# TODO: Update swap_zram_mb → zswap_pool_percent=25, nvme_swap_mb → 16384
 os_distro: "ubuntu"
 os_release: "25.10"
 kernel: "6.17.0-41-generic"

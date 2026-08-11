@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Iris — The Voice Assistant
 # AP: AP-NOVA-SERVER-v1.0.0
-# ICS: [NODE: HERMES | ARCHETYPE: HERMES | CONTEXT: NOVA-MESSENGER]
 #
 # Iris is the always-on Podman container. She:
 #   - Listens for user input (HTTP, voice, CLI)

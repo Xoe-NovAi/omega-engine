@@ -19,6 +19,14 @@ from omega.observability.metrics_db import MetricsDB
 
 logger = logging.getLogger(__name__)
 
+# [M22 SSOT] Lazy ProviderRegistry singleton (imported lazily to avoid a
+# circular import — see observability/__init__.py notes).
+def _get_provider_registry():
+    """Return the cached ProviderRegistry, constructing it on first use.
+    Delegates to the process-wide singleton in provider_registry.py."""
+    from omega.oracle.provider_registry import get_provider_registry
+    return get_provider_registry()
+
 # ── GenAI Semantic Convention Attributes ──────────────────────────────────
 # Source: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-spans.md
 
@@ -122,12 +130,8 @@ class OTelSQLiteExporter(SpanExporter):
         )
     
     def _is_cloud_provider(self, provider: str) -> bool:
-        """Determine if provider is cloud-based."""
-        cloud_providers = {
-            "google", "openai", "anthropic", "openrouter", 
-            "opencode", "copilot", "azure", "aws", "gcp"
-        }
-        return provider.lower() in cloud_providers
+        """Determine if provider is cloud-based (delegates to ProviderRegistry SSOT)."""
+        return _get_provider_registry().is_cloud(provider)
     
     def shutdown(self) -> None:
         """Shutdown the exporter."""

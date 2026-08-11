@@ -1,7 +1,7 @@
 # Project Overview: sovereign-audit
 
-**Pack ID**: `b70cdf7c-ad48-442e-8d8d-75c180a6548f`
-**Generated**: 2026-08-09T10:34:33.059764-03:00
+**Pack ID**: `e11ce0eb-3961-47d7-ae18-879d7dcfd928`
+**Generated**: 2026-08-09T15:16:30.396885-03:00
 **Account**: arcana.novai@gmail.com
 **Project**: omega-engine
 **Version**: 2026-08-09
@@ -10,8 +10,8 @@
 **Description**: Core Engine and Mandates Audit — hardened 2026-07-11
 
 ## Pack Statistics
-- **Total Files**: 39
-- **Estimated Total Tokens**: 217,990
+- **Total Files**: 50
+- **Estimated Total Tokens**: 303,448
 - **Max Slots**: 12
 - **Target Platform**: web-claude
 - **Target Model**: claude-sonnet-5
@@ -28,12 +28,13 @@
 - `docs/strategy/UNOVERENGINEERING_PLAN.md` — 7,534 tokens — 🔱 Un-Overengineering Plan — Temple Cleansing Sprint
 - `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — 7,173 tokens — 🔱 Omega Engine — Subagent Dispatch Protocol
 
-### oracle_core (4 files, ~46,257 tokens)
+### oracle_core (6 files, ~55,809 tokens)
 
-- `src/omega/oracle/model_gateway.py` — 20,411 tokens — Standardized result of a model generation call.
+- `src/omega/oracle/model_gateway.py` — 20,451 tokens — Standardized result of a model generation call.
 - `src/omega/oracle/providers.py` — 13,656 tokens — Lazy-load Zen2Optimizer to avoid circular imports.
 - `src/omega/oracle/health_monitor.py` — 11,139 tokens — Get or create the singleton HealthMonitor.
-- `src/omega/oracle/provider_registry.py` — 1,051 tokens — Single source of truth for provider capability metadata (M7/M22).
+- `src/omega/oracle/backends/remote_provider.py` — 4,747 tokens — Record a performance entry to MetricsDB for sovereignty tracking.
+- `src/omega/ingestion/pipeline.py` — 3,877 tokens — Sovereign Ingestion Pipeline — Orchestrating entity deepening.
 
 ### memory (7 files, ~42,001 tokens)
 
@@ -43,13 +44,34 @@
 - `src/omega/memory/providers.py` — 4,590 tokens — Sovereign Storage Providers for Omega Memory.
 - `src/omega/memory/vector_adapters.py` — 4,535 tokens — Sovereign Vector Store Adapters for Omega Memory.
 
-### mandates (7 files, ~36,606 tokens)
+### mandates (7 files, ~36,679 tokens)
 
 - `AGENTS.md` — 16,456 tokens — 🔱 Omega Engine — OpenCode Agent Rules
 - `OMEGA_ENGINE.md` — 7,355 tokens — Omega Engine — Single Source of Truth
-- `SOVEREIGN_MANDATES.md` — 6,568 tokens — 🔱 Omega Engine — Sovereign Mandates
+- `SOVEREIGN_MANDATES.md` — 6,641 tokens — 🔱 Omega Engine — Sovereign Mandates
 - `third-party/llama.cpp/AGENTS.md` — 2,481 tokens — Instructions for llama.cpp
 - `third-party/mempalace/AGENTS.md` — 2,215 tokens — CLAUDE.md
+
+### observability (7 files, ~32,002 tokens)
+
+- `src/omega/observability/__init__.py` — 17,525 tokens — Return the cached ProviderRegistry, constructing it on first use.
+- `src/omega/observability/metrics_db.py` — 5,796 tokens — SQLite WAL-Mode Metrics Store for profiling baselines and regression detection.
+- `src/omega/observability/otel_exporter.py` — 3,234 tokens — OTel GenAI Semantic Convention Exporter to SQLite WAL.
+- `src/omega/observability/bleg.py` — 2,245 tokens — Body-Level Error Guard — inspects HTTP 200 OK bodies for errors.
+- `src/omega/observability/sovereignty.py` — 1,756 tokens — Ensure provider_classification + v_performance_corrected exist (M22 SSOT).
+
+### gnosis (3 files, ~28,646 tokens)
+
+- `docs/research/R_UNOVERENGINEERING_REMAINING_GAPS_20260808.md` — 21,425 tokens — R_UNOVERENGINEERING_REMAINING_GAPS — Deep Research & Implementation Proposal
+- `data/entities/kali/session_gnosis.md` — 3,884 tokens — 🔱 Session Gnosis — Kali Context Packer v3 + Web Claude Audit Sprint
+- `data/entities/kali/proposed_lessons.yaml` — 3,337 tokens — Config: proposals:
+
+### coordination (4 files, ~25,355 tokens)
+
+- `docs/decisions/PIVOT_LOG.md` — 19,620 tokens — 🔱 PIVOT LOG (Active Index)
+- `data/coordination/HMC_COLLABORATION_HUB.md` — 2,607 tokens — 🔱 HMC Collaboration Hub — Sprint Coordination Forum
+- `data/coordination/SESSION_ANCHOR.md` — 1,771 tokens — 🔱 SESSION ANCHOR — Kali (Transcendent Oversoul)
+- `data/coordination/CARMACK_REVIEW_WEB_CLAUDE_GAPS.md` — 1,357 tokens — 🔱 CARMACK REVIEW: Web Claude Audit Remediation
 
 ### oracle_support (3 files, ~10,385 tokens)
 
@@ -57,17 +79,9 @@
 - `src/omega/oracle/oom_protector.py` — 4,465 tokens — OOMProtector — Three-Signal Fusion for Admission Control
 - `src/omega/oracle/admission_controller.py` — 1,194 tokens — Local inference admission control for Ryzen 5700U.
 
-### observability (5 files, ~10,070 tokens)
+### config (3 files, ~7,410 tokens)
 
-- `src/omega/observability/metrics_db.py` — 4,839 tokens — SQLite WAL-Mode Metrics Store for profiling baselines and regression detection.
-- `src/omega/observability/bleg.py` — 2,245 tokens — Body-Level Error Guard — inspects HTTP 200 OK bodies for errors.
-- `src/omega/observability/sovereignty.py` — 1,540 tokens — Query the local vs cloud inference ratio from MetricsDB.
-- `src/omega/observability/latency_tracker.py` — 830 tokens — Sovereign Latency Tracker — Time-series monitoring for provider performance.
-- `src/omega/observability/context.py` — 616 tokens — Get current trace_id or generate a new one.
-
-### config (3 files, ~7,510 tokens)
-
-- `config/providers.yaml` — 4,249 tokens — Config: version: 1.3.1
+- `config/providers.yaml` — 4,149 tokens — Config: version: 1.3.1
 - `config/m23_baseline.txt` — 1,665 tokens — 21 src/omega/observability/__init__.py
 - `config/models.yaml` — 1,596 tokens — Model configurations with context budgets
 
@@ -90,9 +104,9 @@ Based on this pack's composition and purpose (architecture audit, mandate compli
 - **Authority**: Custom instructions take absolute precedence over project knowledge
 
 ### 2. Project Knowledge Reference
-- List all 9 XML bundles with their themes
+- List all 11 XML bundles with their themes
 - Reference the manifest (00_PROJECT_MANIFEST.md) as the entry point
-- Note the pack_id for forensic linking: `b70cdf7c-ad48-442e-8d8d-75c180a6548f`
+- Note the pack_id for forensic linking: `e11ce0eb-3961-47d7-ae18-879d7dcfd928`
 
 ### 3. Ground Truth (Hardware + Constraints)
 - Hardware: Ryzen 5 4600H, 16GB RAM, no GPU, 15W TDP
@@ -113,15 +127,15 @@ Based on this pack's composition and purpose (architecture audit, mandate compli
 
 ### 6. Account & Provenance Tracking
 - Account: arcana.novai@gmail.com
-- Pack Version: 2026-08-09T10:34:33.059764-03:00
+- Pack Version: 2026-08-09T15:16:30.396885-03:00
 - Response frontmatter template (REQUIRED on all responses):
 ```yaml
 ---
 account: arcana.novai@gmail.com
 pack_version: 2026-08-09
 pack_profile: sovereign-audit
-pack_files: 39
-pack_tokens: 217990
+pack_files: 50
+pack_tokens: 303448
 session_date: YYYY-MM-DD
 session_type: audit|implementation|verification
 ---
@@ -143,18 +157,20 @@ You are a Principal Architect auditing the Omega Engine — a sovereign, local-f
 - Current sprint: UNOVERENGINEER-01
 - Hardware: Ryzen 5 4600H, 16GB RAM, no GPU, 15W TDP
 - **Account**: arcana.novai@gmail.com
-- **Pack Version**: 2026-08-09T10:34:33.059764-03:00 (fresh, post-refactor)
+- **Pack Version**: 2026-08-09T15:16:30.396885-03:00 (fresh, post-refactor)
 
-### Audit Scope (9 XML Bundles — 39 files, 217,990 tokens)
+### Audit Scope (11 XML Bundles — 50 files, 303,448 tokens)
 1. **strategy_core.xml** — Strategy Core (7 files, ~59,303 tokens)
-2. **oracle_core.xml** — Oracle Core (4 files, ~46,257 tokens)
+2. **oracle_core.xml** — Oracle Core (6 files, ~55,809 tokens)
 3. **memory.xml** — Memory (7 files, ~42,001 tokens)
-4. **mandates.xml** — Mandates (7 files, ~36,606 tokens)
-5. **oracle_support.xml** — Oracle Support (3 files, ~10,385 tokens)
-6. **observability.xml** — Observability (5 files, ~10,070 tokens)
-7. **config.xml** — Config (3 files, ~7,510 tokens)
-8. **mcp_hub.xml** — Mcp Hub (2 files, ~4,347 tokens)
-9. **gates.xml** — Gates (1 files, ~1,511 tokens)
+4. **mandates.xml** — Mandates (7 files, ~36,679 tokens)
+5. **observability.xml** — Observability (7 files, ~32,002 tokens)
+6. **gnosis.xml** — Gnosis (3 files, ~28,646 tokens)
+7. **coordination.xml** — Coordination (4 files, ~25,355 tokens)
+8. **oracle_support.xml** — Oracle Support (3 files, ~10,385 tokens)
+9. **config.xml** — Config (3 files, ~7,410 tokens)
+10. **mcp_hub.xml** — Mcp Hub (2 files, ~4,347 tokens)
+11. **gates.xml** — Gates (1 files, ~1,511 tokens)
 
 ### Known Gaps (Already Tracked)
 - [Reference CARMACK_REVIEW_WEB_CLAUDE_GAPS.md or equivalent]
@@ -199,8 +215,8 @@ Structured Markdown report per system prompt:
 account: arcana.novai@gmail.com
 pack_version: 2026-08-09
 pack_profile: sovereign-audit
-pack_files: 39
-pack_tokens: 217990
+pack_files: 50
+pack_tokens: 303448
 session_date: YYYY-MM-DD
 session_type: audit|implementation|verification
 ---
@@ -208,4 +224,4 @@ session_type: audit|implementation|verification
 
 ---
 
-*System prompt should be in CLAUDE_PROJECT_SYSTEM_PROMPT.md. Project knowledge files are the 9 XML bundles in generated/. Begin audit upon receiving the chat initiation prompt.*
+*System prompt should be in CLAUDE_PROJECT_SYSTEM_PROMPT.md. Project knowledge files are the 11 XML bundles in generated/. Begin audit upon receiving the chat initiation prompt.*

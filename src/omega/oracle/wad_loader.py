@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 WAD Loader — Universal Runtime Container Loader
 # AP: AP-WAD-LOADER-v1.1.0
-# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]
 #
 # Implements the WAD (Where's All Data) architecture.
 # Loads self-contained stacks from config/wads/ and registers them into the

@@ -1,7 +1,6 @@
 # 🔱 Omega Observability — Deep Logging, Tracking & Dataset Collection
 # AP: AP-OBSERVABILITY-v2.0.0
 # [heritage: opentelemetry 2021] OpenTelemetry — GenAI semantic conventions for observability tracing
-# ICS: [NODE: MAAT | ARCHETYPE: SOPHIA | CONTEXT: OBSERVABILITY]
 #
 # Logs every query-response cycle with full provenance for:
 #   - Real-time monitoring (console + Redis streams)
@@ -51,6 +50,17 @@ from omega.observability.regression_watcher import (
 )
 
 logger = logging.getLogger(__name__)
+
+# [M22 SSOT] Lazy package-wide ProviderRegistry singleton for cloud
+# classification. Imported lazily (not at module level) to avoid a circular
+# import: importing omega.oracle at package init re-enters omega.observability
+# (orchestrator.py -> from omega.observability import ObservabilityEngine)
+# before this module is fully initialized.
+def _get_provider_registry():
+    """Return the cached ProviderRegistry, constructing it on first use.
+    Delegates to the process-wide singleton in provider_registry.py."""
+    from omega.oracle.provider_registry import get_provider_registry
+    return get_provider_registry()
 
 # ── Structured JSON Logging Formatter ───────────────────────────────────
 
@@ -611,7 +621,7 @@ class BudgetGate:
         "azure": {"input": 0.005, "output": 0.015},
         "aws": {"input": 0.005, "output": 0.015},
         "copilot": {"input": 0.0, "output": 0.0},  # Included in subscription
-        "opencode": {"input": 0.0, "output": 0.0},  # Included in subscription
+        "opencode-zen": {"input": 0.0, "output": 0.0},  # Included in subscription
     }
     
     def __init__(self, metrics_db: Optional["MetricsDB"] = None):
@@ -629,29 +639,24 @@ class BudgetGate:
         # Default conservative estimate for unknown cloud providers
         return {"input": 0.001, "output": 0.003}
     
-    def _get_today_spend(self) -> float:
-        """Get today's cloud spend from MetricsDB."""
+    async def _get_today_spend(self) -> float:
+        """Get today's cloud spend from MetricsDB. [M1 AnyIO]"""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        
+
         if self._cache_date == today and today in self._daily_spend_cache:
             return self._daily_spend_cache[today]
-        
+
         if not self._metrics_db:
             return 0.0
-        
+
         try:
             ts_start = int(datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp() * 1000)
-            cursor = self._metrics_db._conn.execute(
-                "SELECT SUM(cost_usd) as total FROM performance WHERE ts >= ? AND is_cloud = 1",
-                (ts_start,)
-            )
-            row = cursor.fetchone()
-            spend = row["total"] if row and row["total"] else 0.0
+            spend = await self._metrics_db.get_daily_cloud_spend(ts_start)
             self._daily_spend_cache[today] = spend
             self._cache_date = today
             return spend
-        except Exception as e:
-            logger.debug("BudgetGate daily spend query failed (returning 0.0): %s", e)
+        except (OSError, RuntimeError, sqlite3.Error) as e:
+            logger.warning("BudgetGate daily spend query failed (returning 0.0): %s", e)
             return 0.0
     
     def estimate_cost(self, provider: str, prompt_tokens: int, completion_tokens: int) -> float:
@@ -661,56 +666,46 @@ class BudgetGate:
         output_cost = (completion_tokens / 1000) * costs["output"]
         return input_cost + output_cost
     
-    def check_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
+    async def check_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
         """
         Check if a cloud request would exceed the daily budget.
-        
+
         Returns:
             (allowed: bool, reason: str)
         """
         # Local providers always allowed
         if not self._is_cloud_provider(provider):
             return True, "Local provider — no budget limit"
-        
+
         estimated_cost = self.estimate_cost(provider, prompt_tokens, completion_tokens)
-        current_spend = self._get_today_spend()
+        current_spend = await self._get_today_spend()
         projected_spend = current_spend + estimated_cost
-        
+
         if projected_spend > self._daily_budget:
             return False, (
                 f"Daily cloud budget exceeded: ${current_spend:.4f} spent, "
                 f"${estimated_cost:.4f} estimated, ${self._daily_budget:.2f} limit"
             )
-        
+
         return True, f"Budget OK: ${current_spend:.4f}/${self._daily_budget:.2f} used"
     
     def _is_cloud_provider(self, provider: str) -> bool:
-        """Check if provider is cloud-based (same logic as OTel exporter)."""
-        local_indicators = ["ollama", "lmstudio", "lm_studio", "native", "gguf", "llama.cpp", "local", "mock"]
-        provider_lower = provider.lower()
-        for indicator in local_indicators:
-            if indicator in provider_lower:
-                return False
-        return True
+        """Check if provider is cloud-based (delegates to ProviderRegistry SSOT)."""
+        return _get_provider_registry().is_cloud(provider)
     
-    def record_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
-        """Record actual spend after a cloud inference. Returns cost in USD."""
+    async def record_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
+        """Record actual spend after a cloud inference. Returns cost in USD. [M1 AnyIO]"""
         if not self._is_cloud_provider(provider):
             return 0.0
-        
+
         cost = self.estimate_cost(provider, prompt_tokens, completion_tokens)
-        
-        if self._metrics_db:
+
+        if self._metrics_db and trace_id:
             try:
-                ts = int(time.time() * 1000)
-                self._metrics_db._conn.execute(
-                    "UPDATE performance SET cost_usd = ? WHERE trace_id = ? AND is_cloud = 1",
-                    (cost, trace_id)
-                )
-                self._metrics_db._conn.commit()
-            except Exception as e:
-                logger.debug("BudgetGate cost recording failed: %s", e)
-        
+                await self._metrics_db.update_cost(trace_id, cost)
+            except (OSError, RuntimeError, sqlite3.Error) as e:
+                logger.warning("BudgetGate cost recording failed: %s", e)
+
         # Invalidate cache
         self._daily_spend_cache.clear()
         return cost
@@ -907,23 +902,19 @@ class ObservabilityEngine:
         """Access the BudgetGate (lazy-initialized)."""
         return self._ensure_budget_gate()
 
-    def check_cloud_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
+    async def check_cloud_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
         """Check if a cloud request would exceed the daily budget.
-        
+
         Returns:
             (allowed: bool, reason: str)
         """
         gate = self.budget_gate
-        if not gate:
-            return True, "BudgetGate not available — allowing"
-        return gate.check_budget(provider, prompt_tokens, completion_tokens)
+        return await gate.check_budget(provider, prompt_tokens, completion_tokens) if gate else (True, "BudgetGate not available — allowing")
 
-    def record_cloud_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
+    async def record_cloud_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
         """Record actual spend after a cloud inference. Returns cost in USD."""
         gate = self.budget_gate
-        if not gate:
-            return 0.0
-        return gate.record_spend(provider, prompt_tokens, completion_tokens, trace_id)
+        return await gate.record_spend(provider, prompt_tokens, completion_tokens, trace_id) if gate else 0.0
 
     @property
     def budget_status(self) -> Dict[str, Any]:

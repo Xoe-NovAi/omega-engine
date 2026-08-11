@@ -1,5 +1,11 @@
 # 🔱 Ryzen 7 5700U System Tuning
 # AP: AP-RYZEN-TUNING-v1.0.0
+# ⚠️ TAGGED FOR UPDATE — 2026-08-10
+# This script contains DEPRECATED values (swappiness=60, zRAM-specific).
+# The definitive memory configuration is now zswap + NVMe swap file.
+# See: docs/kb/MEMORY_MANAGEMENT_KB.md
+# TODO: Update swappiness → 100, dirty_ratio → 10, dirty_background_ratio → 5
+# TODO: Replace zRAM section with zswap enablement
 # Applies CPU-optimized kernel parameters for local AI inference.
 # Run: sudo bash scripts/tune_ryzen.sh
 

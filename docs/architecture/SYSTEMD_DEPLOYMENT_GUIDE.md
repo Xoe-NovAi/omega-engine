@@ -3,11 +3,12 @@ schema_version: "1.0"
 document_type: guide
 document_id: systemd-deployment-guide
 title: Systemd Deployment Guide
-status: ACTIVE
+status: DEPRECATED — See docs/kb/MEMORY_MANAGEMENT_KB.md
 version: "1.0.0"
 date: "2026-08-07"
+deprecated: "2026-08-10"
 owner: kali
-tags: [systemd, deployment, zram, swap, cgroup, vulkan]
+tags: [systemd, deployment, zram, swap, cgroup, vulkan, DEPRECATED]
 priority: P1
 depends_on:
   - detect-hardware-profile
@@ -29,6 +30,20 @@ llm_metadata:
   answer_first_sections: true
   self_contained_code: true
 ---
+
+# ⚠️ DEPRECATED — 2026-08-10
+
+> **This document is DEPRECATED.** It recommends 16GB zRAM and MemoryMax=12G, both
+> rejected by the Carmack review (2026-08-10). The definitive memory configuration is now
+> documented in **[docs/kb/MEMORY_MANAGEMENT_KB.md](../kb/MEMORY_MANAGEMENT_KB.md)**.
+>
+> **Key changes**:
+> - 16GB zRAM → **zswap + 16GB NVMe swap file**
+> - MemoryMax=12G → **MemoryMax=6G** (unreachable on 14.5GB system with 8GB UMA carveout)
+> - zstd compression → **lzo_rle** (lower CPU overhead for swap)
+> - 3-signal OOMProtector → **2-signal** (PSI + MemAvailable)
+>
+> Archived copy: `docs/archive/deprecated-memory-docs/SYSTEMD_DEPLOYMENT_GUIDE_ZRAM_DEPRECATED_20260810.md`
 
 # 🔱 Systemd Deployment Guide
 

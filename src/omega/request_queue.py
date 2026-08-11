@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Request Queue System
 # AP: AP-REQUEST-QUEUE-v1.0.0
-# ICS: [NODE: CORE | ARCHETYPE: QUEUE | CONTEXT: OFFLINE-MODE]
 #
 # Implements the "Data Comes Home" principle:
 # Offline research requests queue to disk for execution when connectivity returns.

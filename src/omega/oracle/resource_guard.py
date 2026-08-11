@@ -4,7 +4,6 @@
 # [heritage: anyio 2024] M1 AnyIO — Semaphore(1) concurrency guard (zone-purge semantics)
 # [id-soft: vet-015] ZONEID Pattern — critical sections guarded by ZONEID_PROBE marker
 # [id-soft: doom-1993] BSP Culling — precompute hard parts, trade memory for compute
-# ICS: [NODE: MAAT | ARCHETYPE: HERMES | CONTEXT: CONCURRENCY]
 #
 # Updates in v1.2.0 (C-2′ OOMProtector Integration):
 #   - Replaced inline OOMProtector with three-signal fusion OOMProtector (PSI + MemAvailable + cgroup v2)

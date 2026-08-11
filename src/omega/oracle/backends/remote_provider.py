@@ -17,6 +17,7 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import functools
 import logging
+import sqlite3
 import time
 import anyio
 import httpx2 as httpx
@@ -35,50 +36,62 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
+from omega.oracle.provider_registry import get_provider_registry
 
 logger = logging.getLogger(__name__)
 
+# [M22 SSOT] Module-level singleton for cloud classification.
+from omega.oracle.provider_registry import get_provider_registry
+
 # ── MetricsDB singleton (D203 — sovereignty ratio tracking) ────────
-_metrics_db = None
+_metrics_db: Optional["MetricsDB"] = None
+_metrics_db_lock = anyio.Lock()
 
-def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_cloud: bool = False) -> None:
-    """Record a performance entry to MetricsDB for sovereignty tracking.
 
-    Lazily initializes the MetricsDB singleton on first call.
-    Swallows all errors to avoid disrupting inference.
-    [M1 AnyIO] Uses anyio.from_thread.run() to call async MetricsDB from sync context.
-    """
+async def _get_metrics_db() -> "MetricsDB":
+    """Lazy singleton, safe under concurrent callers. [M1 AnyIO]"""
     global _metrics_db
-    try:
+    if _metrics_db is not None:
+        return _metrics_db
+    async with _metrics_db_lock:
         if _metrics_db is None:
             from omega.observability.metrics_db import MetricsDB
-            _metrics_db = MetricsDB(Path("data/observability/metrics.db"))
-            _metrics_db.initialize()
-        anyio.from_thread.run(
-            functools.partial(
-                _metrics_db.record_performance,
-                latency_ms=latency_ms,
-                provider=provider,
-                model_used=model,
-                prompt_tokens=tokens,
-                completion_tokens=tokens // 2,
-                is_cloud=is_cloud,
-                trace_id=f"trc_{int(time.monotonic() * 1000000):012d}",
-            )
+            db = MetricsDB(Path("data/observability/metrics.db"))
+            await anyio.to_thread.run_sync(db.initialize)  # initialize() is blocking
+            _metrics_db = db
+    return _metrics_db
+
+
+async def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_cloud: bool = False) -> None:
+    """Record a performance entry to MetricsDB. [M1 AnyIO] Fully async —
+    no from_thread bridge. Safe to await directly from RemoteProvider.generate().
+    """
+    try:
+        db = await _get_metrics_db()
+        await db.record_performance(
+            latency_ms=latency_ms,
+            provider=provider,
+            model_used=model,
+            prompt_tokens=tokens,
+            completion_tokens=tokens // 2,
+            is_cloud=is_cloud,
+            trace_id=f"trc_{int(time.monotonic() * 1000000):012d}",
         )
-    except Exception as e:
-        logger.debug("MetricsDB recording failed (best-effort): %s", e)
+    except (OSError, RuntimeError, sqlite3.Error) as e:
+        logger.warning("MetricsDB recording failed for provider=%s: %s", provider, e)
 
 
 # ── BudgetGate integration (SPRINT-04 — cloud cost enforcement) ───
 _budget_gate = None
 
-def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
+
+async def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
     """Check if cloud request would exceed daily budget.
 
     Returns True if allowed, False if blocked.
     Best-effort — always allows if BudgetGate unavailable.
     [id-soft: vet-016] cvar — lazy singleton pattern for budget gate.
+    [M1 AnyIO] Async — safe to await directly from RemoteProvider.generate().
     """
     global _budget_gate
     try:
@@ -90,19 +103,20 @@ def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
         # Estimate: split tokens 70/30 prompt/completion
         est_prompt = int(est_tokens * 0.7)
         est_completion = int(est_tokens * 0.3)
-        allowed, reason = _budget_gate.check_budget(provider, est_prompt, est_completion)
+        allowed, reason = await _budget_gate.check_budget(provider, est_prompt, est_completion)
         if not allowed:
             logger.warning(f"BudgetGate BLOCKED {provider}: {reason}")
         return allowed
-    except Exception as e:
-        logger.debug("BudgetGate check failed (allowing request): %s", e)
+    except (OSError, RuntimeError) as e:
+        logger.warning("BudgetGate check failed (allowing request): %s", e)
         return True
 
 
-def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional[str] = None) -> float:
+async def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional[str] = None) -> float:
     """Record cloud spend after successful inference. Returns cost in USD.
 
     Best-effort — returns 0.0 if BudgetGate unavailable.
+    [M1 AnyIO] Async — safe to await directly from RemoteProvider.generate().
     """
     global _budget_gate
     try:
@@ -113,9 +127,9 @@ def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional[str] 
             return 0.0
         est_prompt = int(est_tokens * 0.7)
         est_completion = int(est_tokens * 0.3)
-        return _budget_gate.record_spend(provider, est_prompt, est_completion, trace_id)
-    except Exception as e:
-        logger.debug("BudgetGate spend recording failed (returning 0.0): %s", e)
+        return await _budget_gate.record_spend(provider, est_prompt, est_completion, trace_id)
+    except (OSError, RuntimeError) as e:
+        logger.warning("BudgetGate spend recording failed (returning 0.0): %s", e)
         return 0.0
 
 
@@ -261,7 +275,7 @@ class RemoteProvider(ABC):
         # BudgetGate cloud cost check (SPRINT-04)
         if self._is_cloud_name():
             est_tokens = (len(system_prompt) + len(user_query)) // 4
-            if not _check_cloud_budget(self.name, est_tokens):
+            if not await _check_cloud_budget(self.name, est_tokens):
                 return None
 
         # Retry loop with exponential backoff
@@ -295,16 +309,10 @@ class RemoteProvider(ABC):
                     f"(attempt {attempt + 1})"
                 )
                 # Record performance to MetricsDB (D203 — sovereignty tracking)
-                try:
-                    _record_perf(self.name, model_name, elapsed_ms, est_tokens, is_cloud=self._is_cloud_name())
-                except Exception as perf_err:
-                    logger.debug(f"MetricsDB recording skipped: {perf_err}")
+                await _record_perf(self.name, model_name, elapsed_ms, est_tokens, is_cloud=self._is_cloud_name())
                 # Record cloud spend to BudgetGate (SPRINT-04)
                 if self._is_cloud_name():
-                    try:
-                        _record_cloud_spend(self.name, est_tokens, trace_id)
-                    except Exception as spend_err:
-                        logger.debug(f"BudgetGate spend recording skipped: {spend_err}")
+                    await _record_cloud_spend(self.name, est_tokens, trace_id)
                 return result
         
             except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
@@ -389,9 +397,8 @@ class RemoteProvider(ABC):
             )
 
     def _is_cloud_name(self) -> bool:
-        """Determine if this provider is cloud-based by name heuristic."""
-        cloud_prefixes = {"google", "openai", "anthropic", "openrouter", "antigravity", "opencode", "copilot"}
-        return any(self.name.lower().startswith(p) for p in cloud_prefixes)
+        """Determine if provider is cloud-based (delegates to ProviderRegistry SSOT)."""
+        return get_provider_registry().is_cloud(self.name)
 
     # ── Subclass interface ────────────────────────────────────────────
 

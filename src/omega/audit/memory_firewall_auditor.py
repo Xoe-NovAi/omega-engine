@@ -1,6 +1,5 @@
 # AP: AP-MEMORY-FIREWALL-AUDITOR-v1.0.0
 # 🔱 MemoryFirewallAuditor — Validates WAD content isolation in memory tiers
-# ICS: [NODE: AUDIT | ARCHETYPE: VERITY | CONTEXT: M2-FIREWALL-ENFORCEMENT]
 #
 # M2 Firewall: Memory tiers store opaque metadata dicts.
 # Engine Core NEVER inspects WAD-specific keys (element, chakra, sigil, etc.)

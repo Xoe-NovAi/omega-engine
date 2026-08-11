@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Model Gateway — Local-First Inference Abstraction
 # AP: AP-MODEL-GATEWAY-v2.4.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: MODEL-ABSTRACTION]
 #
 # LOCAL-FIRST provider fabric with automatic detection and fallback:
 #   0. native-gguf       (llama-cpp-python, Zen 2 optimized) [PRIMARY]
@@ -60,13 +59,6 @@ from omega.errors import (
 )
 import yaml
 from omega.cvar_table import cvar_get, cvar_namespace
-from tenacity import (
-    retry, 
-    stop_after_attempt, 
-    wait_exponential_jitter, 
-    retry_if_exception_type,
-    before_sleep_log
-)
 
 from .backends.mock import OfflineMockBackend
 from .backends.openai_compat import OpenAICompatProvider
@@ -76,6 +68,7 @@ from .backends.google_compat import GoogleCompatProvider
 from .resource_guard import ResourceGuard, get_resource_guard
 from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
 from .health_monitor import CircuitOpenError
+from .provider_registry import get_provider_registry
 
 from .gnosis_proxy import GnosisProxy
 from .entity_registry import EntityRegistry
@@ -93,25 +86,6 @@ from .retry_policy import call_with_retry, TransientProviderError
 
 logger = logging.getLogger(__name__)
 
-class OpenRouterTransientError(Exception):
-    """Exception for errors that should trigger a retry."""
-    pass
-
-class OpenRouterFatalError(Exception):
-    """Exception for errors that should fail immediately."""
-    pass
-
-# Retry configuration: 
-# - Start at 1s, max 10s, exponential growth
-# - Max 5 attempts
-# - Jitter to prevent thundering herd
-openrouter_retry_policy = retry(
-    stop=stop_after_attempt(5),
-    wait=wait_exponential_jitter(initial=1, max=10),
-    retry=retry_if_exception_type(OpenRouterTransientError),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-    reraise=True
-)
 
 class ModelGateway:
     """Abstracts local model inference. Auto-detects available backends.
@@ -152,6 +126,10 @@ class ModelGateway:
         self.resource_guard = get_resource_guard()
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
+        # [M22 SSOT] Cloud classification delegates to ProviderRegistry
+        # (reads config/providers.yaml is_cloud) — replaces the old
+        # hardcoded cloud-provider set.
+        self._provider_registry = get_provider_registry()
         # [id-soft: vet-055] Fixed-Size Active Set — 32-entry clip range for O(1) culling
         # Sprint 3 Hardening (N6): Split into Local/Cloud tiers to prevent
         # sovereignty drift (Mandate 7) — local providers always tried first.
@@ -886,14 +864,9 @@ class ModelGateway:
             return float(timeout)
         return 130.0
 
-    @property
-    def _cloud_providers(self) -> set:
-        """Set of cloud provider names for sovereignty tracking."""
-        return {"google", "openrouter", "opencode-zen", "cline"}
-
     def _is_cloud_provider(self, provider) -> bool:
-        """Check if a provider is a cloud provider."""
-        return provider.name in self._cloud_providers
+        """Check if a provider is a cloud provider (delegates to ProviderRegistry SSOT)."""
+        return self._provider_registry.is_cloud(provider.name)
 
     # [id-soft: vet-046] BSP Culling — O(1) pre-check skips broken providers
     async def _precheck_provider(self, provider, model_name: str) -> bool:
@@ -978,8 +951,8 @@ class ModelGateway:
             target.pop()
 
     def _is_cloud_provider_name(self, name: str) -> bool:
-        """Check if a provider name is a cloud provider."""
-        return name in self._cloud_providers
+        """Check if a provider name is a cloud provider (delegates to ProviderRegistry SSOT)."""
+        return self._provider_registry.is_cloud(name)
 
     def _fallback_response(self, model_name: str, system_prompt: str, user_query: str) -> str:
         """Generate a fallback response when all providers fail.
@@ -1076,8 +1049,15 @@ class ModelGateway:
             else:
                 raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
         except Exception as e:
-            logger.warning(f"ProviderSelector failed, falling back to priority list: {e}")
-            ordered_providers = ["native-gguf", "lmster", "antigravity", "google"]
+            logger.warning(
+                "ProviderSelector failed (%s) — falling back to the full configured "
+                "fabric order (%d providers) instead of a partial hardcoded list.",
+                e, len(self.providers),
+            )
+            # [M7 Local-First] self.providers is already priority-sorted from
+            # _load_provider_fabric() — this can never drift from providers.yaml
+            # the way a hand-maintained literal list can.
+            ordered_providers = list(self.providers)
         ordered_provider_names = []
         for p in ordered_providers:
             if isinstance(p, str):
@@ -1403,159 +1383,6 @@ class ModelGateway:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to load somatic state {state_id} from USM: {e}")
             return False
-
-
-
-    async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None, repetition_penalty=1.0, top_p=0.95):
-        """Wrapper to apply the OpenRouter retry policy."""
-        @openrouter_retry_policy
-        async def _do_call():
-            try:
-                return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id, repetition_penalty=repetition_penalty, top_p=top_p)
-            except (OmegaError, RuntimeError, OSError) as e:
-                # Map specific HTTP errors to Transient vs Fatal
-                err_msg = str(e).lower()
-                if "429" in err_msg and "provider returned error" in err_msg:
-                    raise OpenRouterFatalError(f"Upstream limit reached: {e}")
-                if any(code in err_msg for code in ["429", "502", "503", "504"]):
-                    raise OpenRouterTransientError(f"Transient error: {e}")
-                raise e
-        
-        return await _do_call()
-
-    # ── Backend: Ollama (OpenAI-compatible API) ──────────────────────
-    async def _try_ollama(
-        self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int
-    ) -> Optional[str]:
-        """Inference via Ollama's OpenAI-compatible API at 127.0.0.1:11434."""
-        import httpx2 as httpx
-
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_query},
-        ]
-        payload = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stream": False,
-        }
-
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.post(f"{self.OLLAMA_URL}/v1/chat/completions", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            choices = data.get("choices", [])
-            if choices:
-                return choices[0].get("message", {}).get("content", "").strip()
-        return None
-
-    # ── Backend: lmster (LM Studio Headless Server) ───────────────────
-    async def _try_lmster(
-        self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int
-    ) -> Optional[str]:
-        """Inference via lmster (LM Studio headless server) at 127.0.0.1:1234 OpenAI-compatible API."""
-        import httpx2 as httpx
-
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_query},
-        ]
-        payload = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stream": False,
-        }
-
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.post(f"{self.LMSTER_URL}/v1/chat/completions", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            choices = data.get("choices", [])
-            if choices:
-                return choices[0].get("message", {}).get("content", "").strip()
-        return None
-
-    # ── Backend: llama.cpp HTTP server ────────────────────────────────
-    async def _try_llama_server(
-        self, system_prompt: str, user_query: str, temperature: float, max_tokens: int
-    ) -> Optional[str]:
-        """Inference via llama.cpp HTTP server at 127.0.0.1:8080."""
-        import httpx2 as httpx
-
-        prompt = f"{system_prompt}\n\nUser: {user_query}\n\nEntity:"
-        payload = {
-            "prompt": prompt,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stop": ["User:", "\n\n"],
-        }
-
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.post(f"{self.LLAMA_CPP_URL}/completion", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            return data.get("content", "").strip()
-
-    # ── Backend: Direct GGUF CLI (llama-cli or llmster) ───────────────
-    async def _try_direct_gguf(
-        self, cli_name: str, model_path: str, system_prompt: str, user_query: str,
-        temperature: float, max_tokens: int
-    ) -> Optional[str]:
-        """Inference via direct CLI subprocess (llama-cli or llmster)."""
-        prompt = f"<|system|>{system_prompt}</s><|user|>{user_query}</s><|assistant|>"
-
-        result = await anyio.run_process(
-            [
-                cli_name,
-                "--model", model_path,
-                "--prompt", prompt,
-                "--temp", str(temperature),
-                "--n-predict", str(max_tokens),
-                "--no-display-prompt",
-            ],
-            capture_output=True,
-            check=False,
-        )
-
-        if result.returncode == 0:
-            output = result.stdout.decode().strip()
-            return output if output else None
-        return None
-
-    # ── Backend: ONNX Runtime ─────────────────────────────────────────
-    async def _try_onnx(
-        self, model_path: str, system_prompt: str, user_query: str,
-        temperature: float, max_tokens: int
-    ) -> Optional[str]:
-        """Inference via ONNX Runtime (optimized for Zen 2 CPU)."""
-        try:
-            import onnxruntime as ort
-        except ImportError:
-            logger.debug("ONNX Runtime not installed; skipping ONNX backend")
-            return None
-
-        try:
-            sess = ort.InferenceSession(
-                model_path,
-                providers=["CPUExecutionProvider"],
-                sess_options=ort.SessionOptions(),
-            )
-            input_name = sess.get_inputs()[0].name
-            # Simple text completion via ONNX (for compatible models)
-            input_text = f"{system_prompt}\n\nUser: {user_query}\n\nAssistant:"
-            inputs = {input_name: [input_text]}
-            outputs = sess.run(None, inputs)
-            if outputs and len(outputs[0]) > 0:
-                return str(outputs[0][0])[:max_tokens]
-        except OmegaError:
-            raise
-        except (OmegaError, RuntimeError, OSError) as e:
-            logger.error(f"ONNX inference failed: {e}", exc_info=True)
-            return None
 
     def is_onnx_available(self) -> bool:
         """Check if ONNX Runtime is installed and usable."""

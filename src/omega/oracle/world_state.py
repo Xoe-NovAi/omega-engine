@@ -1,7 +1,6 @@
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-WORLD-STATE-v1.0.0
 # 🔱 World State Manager — VR Omegaverse State Engine
-# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: WORLD-SENSES]
 #
 # Implements the 'First Breath' world-state activation.
 # Maintains a sovereign representation of the VR Omegaverse.

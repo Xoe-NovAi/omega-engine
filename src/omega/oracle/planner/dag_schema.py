@@ -1,6 +1,5 @@
 # AP: AP-MAAT-PHASE2-DESIGN-v1.0.0
 # 🔱 Cloud Planner / Local Executor — DAG Schema & Complexity Heuristic
-# ICS: [NODE: N3 | ARCHETYPE: HERMES | CONTEXT: PLANNER-DAG]
 #
 # M7-compliant design: Cloud is advisor/planner only; local is executor.
 # The planner emits a JSON DAG; the local executor validates and may reject

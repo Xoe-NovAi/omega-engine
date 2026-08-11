@@ -155,7 +155,3 @@ session_type: audit|implementation|verification
 ---
 ```
 </account_tracking>
-
----
-
-*System prompt v2. System prompt is in this file. Project knowledge files are the 9 XML bundles in generated/. Begin audit upon receiving the chat initiation prompt.*

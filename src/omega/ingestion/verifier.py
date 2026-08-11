@@ -52,11 +52,12 @@ class TriangulationVerifier:
 
         # 4. Consensus Hallucination Guard
         # Check if all sources are just mirroring the same original source.
+        disputes = []
         if not self._has_independent_provenance(provenance):
             confidence *= 0.5
-            disputes = disputes + ["Consensus Hallucination: Lack of independent provenance."] if dispute else ["Consensus Hallucination: Lack of independent provenance."]
-        else:
-            disputes = [dispute] if dispute else []
+            disputes.append("Consensus Hallucination: Lack of independent provenance.")
+        if dispute:
+            disputes.append(dispute)
 
         return VerificationResult(
             is_verified=confidence > 0.7,

@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega CLI — Oracle Commands
 # AP: AP-ORACLE-CLI-v1.0.0
-# ICS: [NODE: CORE | ARCHETYPE: HERMES | CONTEXT: CLI-COMMANDS]
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md

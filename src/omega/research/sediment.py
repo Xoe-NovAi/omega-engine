@@ -1,6 +1,5 @@
 # AP: AP-MAAT-SEDA-v1.0.0
 # 🔱 SEDA — Sovereign Engine Data Access Ring-Bus
-# ICS: [NODE: N4 | ARCHETYPE: HERMES | CONTEXT: SEDA-BUS]
 #
 # A lightweight event bus built on AnyIO memory object streams.
 # Provides topic-based pub/sub with back-pressure policies, subscriber

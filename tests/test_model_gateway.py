@@ -162,12 +162,17 @@ async def test_none_response_trips_breaker(monkeypatch):
     returns, so the circuit never opened. After the fix, the else clause detects
     the None result and manually calls breaker._on_failure().
     """
-    from unittest.mock import AsyncMock, MagicMock
+    from unittest.mock import AsyncMock, MagicMock, patch
 
     from omega.oracle.health_monitor import CircuitState, HealthMonitor
 
     gateway = ModelGateway()
     monkeypatch.setenv("OMEGA_ENV", "production")
+
+    # [M22 SSOT] Mock ProviderRegistry.is_cloud — test providers not in config
+    mock_registry = MagicMock()
+    mock_registry.is_cloud = MagicMock(return_value=False)
+    gateway._provider_registry = mock_registry
 
     hm = HealthMonitor(providers={"silent_provider": {"type": "cloud"}})
     gateway._health_monitor = hm
@@ -221,6 +226,11 @@ async def test_successful_response_keeps_breaker_closed(monkeypatch):
 
     gateway = ModelGateway()
     monkeypatch.setenv("OMEGA_ENV", "production")
+
+    # [M22 SSOT] Mock ProviderRegistry.is_cloud — test providers not in config
+    mock_registry = MagicMock()
+    mock_registry.is_cloud = MagicMock(return_value=False)
+    gateway._provider_registry = mock_registry
 
     hm = HealthMonitor(providers={"good_provider": {"type": "cloud"}})
     gateway._health_monitor = hm

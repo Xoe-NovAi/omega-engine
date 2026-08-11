@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Fleet Status TUI
 # AP: AP-FLEET-TUI-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: OBSERVABILITY-TUI]
 # Status: ACTIVE
 # 
 # This TUI provides a real-time view of the Sovereign Agent Fleet,

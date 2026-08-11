@@ -1,6 +1,5 @@
 # AP: AP-MAAT-PHASE2-DESIGN-v1.0.0
 # 🔱 Planner Package — Cloud Planner / Local Executor Pattern
-# ICS: [NODE: N3 | ARCHETYPE: HERMES | CONTEXT: PLANNER-PACKAGE]
 """
 Planner package: Cloud Planner / Local Executor pattern (A4).
 

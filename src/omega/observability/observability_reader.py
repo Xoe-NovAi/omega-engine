@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Observability Reader
 # AP: AP-OBS-READER-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: OBSERVABILITY-READ]
 # Status: ACTIVE
 # 
 # Unified, read-only facade for Omega Engine observability data.
@@ -198,15 +197,38 @@ class SovereignReader:
         return await anyio.to_thread.run_sync(self._sync_get_entity_cost, entity_id, session_id)
 
     def _sync_get_sovereignty_ratio(self, entity_id: str, window_secs: int = 300) -> float:
-        """Calculate local vs cloud inference ratio for an entity."""
+        """Calculate local vs cloud inference ratio for an entity.
+
+        [M22 SSOT / Decision 3] Queries the corrected view
+        ``v_performance_corrected`` (config-derived classification) so the
+        entity-level ratio always matches the global ratio in
+        ``sovereignty.py``.
+        """
         now = datetime.now(timezone.utc).timestamp()
         cutoff = now - window_secs
-        
+
+        # Preserve graceful degradation when the DB is absent (no side effects).
+        if not self.db_path.exists():
+            return 1.0
+
+        # Ensure the corrected schema/view exists (idempotent), mirroring
+        # sovereignty.py._ensure_corrected_schema so both paths share one view.
+        try:
+            from omega.observability.metrics_db import MetricsDB
+            db = MetricsDB(self.db_path)
+            try:
+                db.initialize()
+                db.create_corrected_performance_view()
+            finally:
+                db.close()
+        except sqlite3.Error as e:
+            raise ObservabilityError(f"Sovereignty schema ensure failed: {e}")
+
         query = """
             SELECT 
-                SUM(CASE WHEN is_cloud = 0 THEN 1 ELSE 0 END) as local_count,
-                SUM(CASE WHEN is_cloud = 1 THEN 1 ELSE 0 END) as cloud_count
-            FROM performance 
+                SUM(CASE WHEN is_cloud_corrected = 0 THEN 1 ELSE 0 END) as local_count,
+                SUM(CASE WHEN is_cloud_corrected = 1 THEN 1 ELSE 0 END) as cloud_count
+            FROM v_performance_corrected 
             WHERE entity_id = ? AND ts >= ?
         """
         

@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Automated Model Research & Update Worker
 # AP: AP-MODEL-UPDATER-v1.0.0
-# ICS: [NODE: SOPHIA | ARCHETYPE: AUTOMATED_RESEARCHER | CONTEXT: MODEL_UPDATER]
 #
 # Scheduled background worker that uses Gemma 4-31B to research
 # and verify free model offerings across all providers.
@@ -50,7 +49,7 @@ PROVIDER_ENDPOINTS = {
         "env_key": "GOOGLE_API_KEY",
         "parser": "google",
     },
-    "opencode": {
+    "opencode-zen": {
         "url": "https://opencode.ai/zen/v1/models",
         "auth": None,  # Public endpoint
         "parser": "opencode",
@@ -273,11 +272,11 @@ class ModelUpdaterWorker:
                     "context_window": m.get("inputTokenLimit", 0),
                     "supported_actions": m.get("supportedActions", []),
                 })
-        elif provider == "opencode":
+        elif provider == "opencode-zen":
             for m in data.get("data", []):
                 models.append({
                     "name": m["id"],
-                    "provider": "opencode",
+                    "provider": "opencode-zen",
                     "context_window": m.get("context_length", 0),
                     "pricing": m.get("pricing", {}),
                 })

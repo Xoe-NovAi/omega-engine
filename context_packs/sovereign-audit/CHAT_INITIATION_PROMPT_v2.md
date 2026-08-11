@@ -80,7 +80,3 @@ session_date: YYYY-MM-DD
 session_type: audit|implementation|verification
 ---
 ```
-
----
-
-*System prompt v2 is in CLAUDE_PROJECT_SYSTEM_PROMPT_v2.md. Project knowledge files are the 9 XML bundles in generated/. Begin audit.*

@@ -736,28 +736,32 @@ class HealthMonitor:
             )
         return self._breakers[name]
 
-    def record_breaker_success(self, name: str, trace_id: Optional[str] = None):
+    async def record_breaker_success(self, name: str, trace_id: Optional[str] = None):
         """Record a success on a named breaker.
 
         [A4] Implements the previously no-op stub. Fire-and-forget: dispatches
         ``_on_success`` on the breaker's event loop with latency=0 and quality=1.0
         (the caller has no timing info — use ``breaker.call()`` when latency
         matters). Mirrors ``record_breaker_failure``.
+        [M1 AnyIO] Async — safe to await directly from async context.
         """
         if name in self._breakers:
             breaker = self._breakers[name]
-            import anyio
             try:
-                anyio.from_thread.run(breaker._on_success, latency=0.0, quality=1.0, trace_id=trace_id)
+                await breaker._on_success(latency=0.0, quality=1.0, trace_id=trace_id)
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"record_breaker_success failed for {name}: {e}")
 
-    def record_breaker_failure(self, name: str, trace_id: Optional[str] = None):
-        """Record a failure on a named breaker."""
+    async def record_breaker_failure(self, name: str, trace_id: Optional[str] = None):
+        """Record a failure on a named breaker.
+        [M1 AnyIO] Async — safe to await directly from async context.
+        """
         if name in self._breakers:
             breaker = self._breakers[name]
-            import anyio
-            anyio.from_thread.run(breaker._on_failure, trace_id)
+            try:
+                await breaker._on_failure(trace_id)
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning(f"record_breaker_failure failed for {name}: {e}")
 
     # ── Search Provider Interface (SSP-V2) ──────────────────────────────
 

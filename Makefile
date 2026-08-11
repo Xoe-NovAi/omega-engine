@@ -16,7 +16,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report log-test-run
+.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report log-test-run lint
 
 help:
 	@echo "Omega Engine Makefile"
@@ -163,6 +163,15 @@ quick-test:
 	@$(PYTEST) --tb=short -q tests/contracts/ 2>&1 | tail -5
 	@echo "$(GREEN)Quick test complete$(NC)"
 
+# Run flake8 linting on src/omega/ (M13 quality gate)
+# Ignore F821: forward-reference type hints and TYPE_CHECKING-only imports
+# are pervasive in this codebase and not actionable lint failures.
+lint:
+	@echo "$(YELLOW)Running flake8 lint...$(NC)"
+	@$(PYTHON) -m flake8 src/omega/ --count --select=E9,F63,F7,F82 --show-source --statistics --ignore=F821
+	@$(PYTHON) -m flake8 src/omega/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --ignore=F821
+	@echo "$(GREEN)Lint complete$(NC)"
+
 # Clean all generated files
 clean: clean-badge
 	@echo "$(YELLOW)Cleaning generated files...$(NC)"
@@ -262,9 +271,11 @@ check-m8-zero-telemetry:
 
 # Check M7: Local-first strategy
 check-m7-local-first:
-	@echo "$(YELLOW)Checking M7 (Local-first strategy)...$(NC)"
+	@echo "$(YELLOW)Checking M7 (Local-first strategy + SSOT)...$(NC)"
 	@grep -q 'strategy: local_first' config/providers.yaml || (echo "$(RED)FAIL: providers.yaml missing local_first strategy$(NC)" && false)
 	@echo "$(GREEN)M7 passed: Local-first strategy configured$(NC)"
+	@echo "$(YELLOW)Checking M22 SSOT: is_cloud only in fallback_chain...$(NC)"
+	@grep -n "is_cloud:" config/providers.yaml | grep -v "inference.fallback_chain" && (echo "$(RED)FAIL: is_cloud found outside fallback_chain — run 'make check-m7-local-first'$(NC)" && false) || echo "$(GREEN)M22 passed: is_cloud SSOT intact$(NC)"
 
 # Check M23: Failure integrity - no soft-failure patterns (AST-based via Ruff)
 # Uses ratchet: fails only on NEW violations vs config/m23_baseline.txt

@@ -1,7 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Mem Palace — Spatial-Semantic Geometry
 # AP: AP-SPATIAL-v1.0.0
-# ICS: [NODE: MNEMOSYNE | ARCHETYPE: KALI | CONTEXT: SPATIAL-MAPPING]
 #
 # Implements a Force-Directed Graph (Fruchterman-Reingold) to map 
 # semantic entity relationships into 3D Euclidean space.

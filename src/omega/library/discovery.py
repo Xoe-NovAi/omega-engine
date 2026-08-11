@@ -387,7 +387,7 @@ class DiscoveryOrchestrator:
             "Content-Type": "application/json"
         }
         payload = {
-            "query": query,
+            "query": user_query,
             "type": "deep",
             "numResults": 10,
             "contents": {
