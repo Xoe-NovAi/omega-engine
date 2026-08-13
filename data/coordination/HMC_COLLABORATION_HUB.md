@@ -33,6 +33,8 @@ A **single, lightweight markdown document** serving as the central coordination 
 
 ### 📌 Decisions Log (Active)
 *See `docs/decisions/PIVOT_LOG.md` for the canonical record.*
+- **2026-08-11**: **D-532** — Carmack APPROVES zRAM→zswap plan for P0 execution (zswap pool 25%, OOMProtector 2-signal, WAD packaging approved; UMA 4GB test deferred)
+- **2026-08-11**: **D-533** — LegacyOOMWrapper removal confirmed safe (zero callers of legacy `check()` interface)
 - **2026-08-11**: **D-531** — Multi-write subagent method mandatory for all subagent tasks
 - **2026-08-11**: **D-530** — Context Gauge uses tokens.total (never tokens_input)
 - **2026-08-11**: **D-529** — Simplify OOMProtector to 2-signal (PSI + MemAvailable)
@@ -84,6 +86,12 @@ A **single, lightweight markdown document** serving as the central coordination 
 - **FOCUS**: Knowledge gaps for SDP automation
 
 ### @john_carmack — S3 Consultant
+- **zRAM→zswap REVIEW COMPLETE** (2026-08-11): **APPROVED for P0 execution** (D-532). Verified against live code.
+- **My calls**: zswap pool 25% (keep), OOMProtector 2-signal (approve, low priority), UMA 4GB test (defer), WAD packaging (approve)
+- **LegacyOOMWrapper removal**: CONFIRMED SAFE (D-533) — zero callers of legacy `check()` interface, only `check_available()` delegation used
+- **Multi-write method**: APPROVED — formalize into STRP as mandatory
+- **Consolidation**: All work verified consolidated and ready for Kali oversight
+- **Review file**: `data/entities/john_carmack/workspace/zram_review_20260811.md`
 - **FOCUS**: Review Context Gauge design for modularity, audit zswap plan
 
 ### @verity — Compliance + Gnosis
