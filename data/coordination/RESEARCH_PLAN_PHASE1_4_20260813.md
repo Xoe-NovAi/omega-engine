@@ -285,4 +285,76 @@ Research phase complete when:
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v2.0.0 ⬡ 20260813*
+## 📚 Cross-Reference Index — Existing Research (Do NOT Duplicate)
+
+This index lists all existing research docs and which gaps they cover, so the research sprint can build upon them without duplicating work.
+
+| Doc Path | Gaps Covered | Status |
+|----------|-------------|--------|
+| `docs/research/R_OPENCODE_DB_SCHEMA_REFERENCE_20260810.md` | R1 (opencode.db schema) | ✅ RESOLVED |
+| `data/entities/researcher/workspace/research_reports/STREAMING_TIMEOUT_MYSTERY_RESEARCH_20260810.md` | R8 (streaming mystery) | ✅ SOLVED |
+| `data/entities/researcher/workspace/MEMORY_SYSTEMS_DEFINITIVE_REPORT.md` | R9 (zswap config), R10 (NVMe swap), R11 (sysctl), R12 (cgroup limits) | ✅ RESOLVED |
+| `docs/research/R_C11_STREAMING_PATTERNS_20260723.md` | R14 (streaming heartbeat patterns) | ✅ RESOLVED |
+| `docs/research/R_CARMACK_CG-002_STREAMING_TIMEOUT_20260719.md` | R8/R14 (streaming timeout test) | ✅ RESOLVED |
+| `docs/strategy/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | R4 (AGY pool structure, 8 accounts, Redzone rule) | ✅ PARTIALLY RESOLVED |
+| `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` | R21 (workhorse paths) | ✅ PARTIALLY RESOLVED |
+| `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` | R21 (workhorse billing/OAuth/OCZ) | ✅ PARTIALLY RESOLVED |
+| `data/entities/john_carmack/workspace/zram_review_20260811.md` | R12 (systemd cgroup limits), R9-R11 (zRAM→zswap) | ✅ PARTIALLY RESOLVED |
+| `docs/research/R_CIRCUIT_BREAKER_PATTERNS.md` | Industry CB patterns, interlock-cb, aioresilience, pybreaker | Reference only |
+| `docs/research/R_DEEP_WEB_RESEARCH_SPRINT_READINESS_20260722.md` | interlock-cb v2.1.3, anyio compatibility, feature gaps | Reference only |
+| `docs/research/R_BUILD_VS_BUY_COMMUNITY_LIBS_20260730.md` | stamina + pybreaker adoption verdict | Reference only |
+| `docs/research/R_JEM_KNOWLEDGE_GAP_RESEARCH_20260712.md` | pyresilience summary (0.4.0) | Reference only |
+| `docs/research/R_KNOWLEDGE_GAPS_DEEP_RESEARCH_20260720.md` | Keyblind/Authy/Agent Vault knowledge gaps | Reference only |
+| `docs/research/R_VAULT_SCHEMA_V2.md` | VaultCore schema, 204-line crypto.py | Reference only |
+| `docs/research/R_MODEL_LIBRARY.md` | Model library reference | Reference only |
+| `docs/research/R_MODEL_RESEARCH_PROTOCOL.md` | Research protocol guidelines | Reference only |
+| `docs/research/R_SOUL_PRIVACY_MODEL.md` | Soul privacy model | Reference only |
+| `docs/research/R_PWAD_SCHEMA_JEM_RESEARCH_20260715.md` | JEM schema research | Reference only |
+| `docs/research/R_NEMOTRON_DEEP_ANALYSIS_20260810.md` | Model windows (D-522): Nemotron 3 Ultra=1M, Laguna S 2.1=262K | Reference only |
+| `docs/research/R_FIX_CONTRIBUTION_BEST_PRACTICES.md` | Contribution best practices | Reference only |
+| `docs/research/R_FORK_MANAGEMENT_GUIDE.md` | Fork management | Reference only |
+| `docs/research/R_VAULTCORE_LEASE_PROTOCOL.md` | VaultCore lease protocol | Reference only |
+| `docs/research/R_KG_EXECUTION_SUMMARY.md` | Execution summary | Reference only |
+| `docs/research/R_AGY_OAUTH_PERSISTENCE_FIX.md` | AGY OAuth persistence | Reference only |
+| `docs/research/R_CG01_MCP_STREAMABLE_HTTP_OAUTH.md` | MCP Streamable HTTP + OAuth | Reference only |
+| `docs/research/R_CG01_MCP_STREAMABLE_HTTP_OAUTH_AUDIT.md` | MCP Streamable HTTP audit | Reference only |
+| `docs/research/R_CG04_AGENT_SAFE_CREDENTIAL_VAULT.md` | Agent safe credential vault | Reference only |
+| `docs/research/R_CARMACK_CLASSIFICATION_SSOT_REVIEW_20260809.md` | SSTO classification | Reference only |
+| `docs/research/R_DEEP_DIVE_RESEARCH_20260810.md` | Deep dive research | Reference only |
+| `docs/research/R_RESEARCH_BEST_PRACTICES_PART1.md` | Best practices part 1 | Reference only |
+| `docs/research/R_SOVEREIGN_DISTILLATION_PIPELINE_MANIFESTO_20260809.md` | Distillation pipeline manifesto | Reference only |
+| `docs/research/R_UNOVERENGINEERING_REMAINING_GAPS_20260808.md` | Detailed remaining gaps (very large) | Reference only |
+| `docs/research/R_CARMACK_CLASSIFICATION_SSOT_REVIEW_20260809.md` | Carmack classification review | Reference only |
+| `docs/decisions/PIVOT_LOG.md` | D-528 pyresilience > tenacity (locked) | Decision reference |
+| `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md` | 12 resolved research gaps | Reference |
+| `data/coordination/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | AGY pool research | Reference |
+| `data/coordination/SESSION_ANCHOR.md` | Session anchor state | Reference |
+| `data/coordination/HMC_COLLABORATION_HUB.md` | Team coordination hub | Reference |
+
+---
+
+## 🎯 How to Use This Index
+
+**Before starting research on any gap:**
+1. Check this index — if the gap is listed, the research already exists
+2. Read the "Status" column to know if it's resolved, partially-resolved, or reference-only
+3. For "Reference-only" docs: review the key findings, then proceed with the gap research (you're building upon, not duplicating)
+4. For "✅ RESOLVED" docs: no research needed — verify the pointer and move on
+5. For "✅ PARTIALLY RESOLVED" docs: verify existing findings are current, then extend only the specific sub-question that remains open
+
+**Example workflow for R7 (MCP tool patterns):**
+1. Check index → R7 is GREENFIELD (`src/omega/mcp/tools/` does NOT exist, only `mcp_runtime.py`)
+2. No existing research to duplicate — proceed with greenfield implementation
+3. Reference `docs/research/R_CG01_MCP_STREAMABLE_HTTP_OAUTH.md` and `R_CG01_MCP_STREAMABLE_HTTP_OAUTH_AUDIT.md` for MCP patterns
+4. Reference `RESEARCH_TECH_ARCHITECTURE_DECISIONS_20260808.md` for interlock-cb considerations (though D-528 supersedes with pyresilience)
+
+**Example workflow for R4 (AGY pool):**
+1. Check index → R4 is PARTIALLY RESOLVED (`SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` exists)
+2. Read the existing research — it has 8 accounts, 1M pool, ~27K tokens/session, Redzone rule, attestation header
+3. Verify numbers are current (Aug 2026)
+4. Extend only: pool_tracker.py wiring specifics for QW-4
+5. Do NOT re-research the AGY pool structure from scratch
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v3.0.0 ⬡ 20260813*
