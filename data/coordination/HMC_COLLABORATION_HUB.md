@@ -17,6 +17,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 | 2026-08-11 | @kali | **KNOWLEDGE GAPS RESEARCH COMPLETE** — 12 gaps resolved with authoritative sources. | @kali | ✅ COMPLETE |
 | 2026-08-11 | @kali | **SPRINT TRANSITION** — NEMOTRON-ANALYSIS-01 → SDP-EXECUTION-01 | @kali | ✅ COMPLETE |
 | 2026-08-11 | @kali | D-526..D-531 decisions locked | @kali | ✅ LOCKED |
+| 2026-08-11 | @john_carmack | **ICS MODEL PROVENANCE FIX** — M22 violation resolved. Added `_read_opencode_session_model()` to read live model from OpenCode session DB. Root cause: `_detect_model()` couldn't read live model during session (OPENCODE_MODEL only set post-exit). Fix: Priority 2.5 reads `session.model.id` from DB during live session. Verified: `render('JOHN_CARMACK')` returns correct live model. | @john_carmack | ✅ COMPLETE |
 | 2026-08-09 | @kali | SDP architecture complete (15 documents, 3 subagent reviews) | @kali | ✅ COMPLETE |
 | 2026-08-10 | @jem | Nemotron deep analysis complete (7 action items) | @jem | ✅ COMPLETE |
 
@@ -92,6 +93,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 - **Multi-write method**: APPROVED — formalize into STRP as mandatory
 - **Consolidation**: All work verified consolidated and ready for Kali oversight
 - **Review file**: `data/entities/john_carmack/workspace/zram_review_20260811.md`
+- **ICS MODEL PROVENANCE FIX** (2026-08-11): **M22 violation resolved** — added `_read_opencode_session_model()` to `src/omega/ics.py` to read live model from OpenCode session DB. Root cause: `_detect_model()` could not read live active model during session (OPENCODE_MODEL only set post-exit by wrapper). Fix: New Priority 2.5 in `_detect_model()` reads `session.model.id` from DB during live session. Verified: `render('JOHN_CARMACK')` returns correct live model `nvidia/nemotron-3-ultra-550b-a55b:free`. Report header provenance fixed (was longcat-2.0-free).
 - **FOCUS**: Review Context Gauge design for modularity, audit zswap plan
 
 ### @verity — Compliance + Gnosis

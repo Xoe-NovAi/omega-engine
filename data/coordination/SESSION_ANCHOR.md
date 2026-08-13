@@ -150,6 +150,14 @@ data/coordination/HMC_COLLABORATION_HUB.md (updated)
 data/coordination/SESSION_ANCHOR.md (updated)
 ```
 
+### ICS Model Provenance Fix (Carmack)
+- **Document**: `data/coordination/ICS_MODEL_PROVENANCE_FIX_20260811.md`
+- **Fix**: Added `_read_opencode_session_model()` to `src/omega/ics.py` to read live model from OpenCode session DB
+- **Root cause**: `_detect_model()` could not read live active model during session (OPENCODE_MODEL only set post-exit)
+- **Fix**: New Priority 2.5 in `_detect_model()` — reads `session.model.id` from DB during live session
+- **Verified**: `render('JOHN_CARMACK')` now returns correct live model: `nvidia/nemotron-3-ultra-550b-a55b:free`
+- **Provenance**: Fixed report header (was longcat-2.0-free, now correct model)
+
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ ROADMAP-LOCKED ⬡ 2026-08-11*
