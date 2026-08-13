@@ -131,10 +131,58 @@ Roadmap says "Honker is SQLite-based" (UO-7.5). This is an **assumption**. R26 (
 
 ## 🎯 New Research Gaps to Add (v3)
 
-- **R30** — Circuit breaker library decision audit: 4-way spike (pyresilience vs tenacity vs stamina vs pybreaker) with maturity scoring
+- **R30** — Circuit breaker library decision audit: 5-way spike (pyresilience vs tenacity vs stamina vs pybreaker vs interlock-cb) with maturity scoring
 - **R27b** — NULL `tokens.total` handling strategy for Context Gauge
 - **R31** — Streaming plugin scope reduction: confirm native retry coverage, scope to OBS-1 + fallback + detection
 - **R32** — In-session gauge data source: DB-poll vs in-memory hook (real-time pressure accuracy)
+
+---
+
+## 🔍 COHERENCE AUDIT (DeepSeek V4 Flash pass — 2026-08-13)
+
+Cross-document consistency check of all planning docs. **Result: 3 remaining inconsistencies found and fixed.**
+
+### Conflict A — Circuit Breaker: interlock-cb vs pyresilience (RESOLVED → R30 5-way spike)
+
+| Source | Library | Date |
+|--------|---------|------|
+| `RESEARCH_TECH_ARCHITECTURE_DECISIONS_20260808.md` + `TECH_ARCHITECTURE_RESEARCH_BRIEF.md` + `TECH_ARCHITECTURE_RESEARCH_PLAN_20260808.md` | **interlock-cb v2.1.3** (adopted) | 2026-08-08 |
+| `PIVOT_LOG.md` D-528 | **pyresilience** (locked) | 2026-08-13 |
+
+**Issue:** Two authoritative sources conflict. The Aug 8 corpus adopted interlock-cb; D-528 (5 days later) picked pyresilience. Neither mentions the other.
+
+**Resolution:** D-528 is the LOCKED decision (more recent, in PIVOT_LOG). But interlock-cb remains a legitimate candidate given it was the prior front-runner. **R30 expanded to a 5-way spike** (pyresilience, tenacity, stamina, pybreaker, interlock-cb) so the conflict is resolved with data, not assumption. Roadmap UO-6.1 + readiness checklist corrected to pyresilience (honoring D-528).
+
+### Conflict B — Streaming plugin scope (RESOLVED)
+
+- `ACTIVE_SPRINT.json` PLUGIN-1..8 was **26h** with "timeout extension + fallback logic"
+- OpenCode v1.18.14 natively retries streaming timeouts (mystery SOLVED)
+
+**Issue:** 26h to re-implement what the runtime now does natively.
+
+**Resolution:** Scoped to **8h** — observability (OBS-1) + fallback chain + model detection. No retry re-impl. Updated in ACTIVE_SPRINT.json + roadmap.
+
+### Conflict C — OBS-1 owner (RESOLVED)
+
+- `ACTIVE_SPRINT.json` gate `streaming_observability` owner was **TBD**
+- Roadmap Phase 0 OBS-1 owner was **TBD**
+
+**Issue:** P0 task with no owner won't start.
+
+**Resolution:** Assigned **@jem** (owns streaming code path per PLUGIN tasks). Updated in ACTIVE_SPRINT.json + research plan R8b.
+
+### Verified Consistent (No Change Needed)
+
+| Item | Status |
+|------|--------|
+| Context Gauge uses `tokens.total` (D-530) | ✅ Consistent across all docs |
+| zswap 25% / lzo_rle / zsmalloc (D-526) | ✅ Consistent |
+| OOMProtector 2-signal (D-529) | ✅ Consistent |
+| Model windows (D-522) | ✅ Consistent |
+| 80% Redzone rule | ✅ Consistent |
+| Multi-write subagent method (D-531) | ✅ Consistent |
+| `tokens.total` NULL handling (R27b) | ✅ Added to research plan |
+| UMA carveout gate before cgroup | ✅ Flagged (P1-4 depends on P0-4) |
 
 ---
 

@@ -278,7 +278,7 @@ QW-2 TOKEN GAUGE FIX    QW-6 TRIAGE ROUTER          NL-1 NOTEBOOKLM
 - [ ] **UMA verification:** `dmesg` output captured
 - [ ] **zswap rollback:** fstab backup procedure documented
 - [ ] **Plugin scaffold:** OpenCode plugin API version confirmed
-- [ ] **interlock-cb:** AnyIO trio compatibility verified
+- [ ] **pyresilience:** AnyIO trio compatibility verified (4-way spike incl. interlock-cb, stamina, pybreaker)
 - [ ] **Honker:** SQLite NOTIFY/LISTEN tested
 
 ---

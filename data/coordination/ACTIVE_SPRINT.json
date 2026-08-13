@@ -80,8 +80,8 @@
     },
     "streaming_observability": {
       "status": "READY",
-      "owner": "TBD",
-      "note": "OBS-1: Add streaming timeout observability"
+      "owner": "jem",
+      "note": "OBS-1: Add streaming timeout observability (mystery SOLVED - v1.18.14 native retry; scope to observability + fallback + detection)"
     }
   },
   "workstreams": {
@@ -269,13 +269,13 @@
         },
         {
           "id": "PLUGIN-1..8",
-          "description": "Nemotron streaming timeout plugin",
+          "description": "Nemotron streaming observability + fallback plugin (scoped down from retry re-impl: OpenCode v1.18.14 natively retries streaming timeouts)",
           "owner": "jem",
           "ssots": ["NEMOTRON_PLUGIN_DEEP_PLANNING_20260810.md", "STREAMING_TIMEOUT_OBSERVABILITY_GAP_20260810.md"],
-          "deliverable": "Published npm package @omega-engine/nemotron-timeout-plugin",
-          "acceptance": ["Plugin scaffold + config + model detection", "Heartbeat manager + timeout extension + fallback logic", "Unit + integration tests (20+)", "Live test against Nemotron 3 Ultra", "Published to npm with docs"],
+          "deliverable": "Published npm package @omega-engine/nemotron-timeout-plugin (observability + fallback chain + model detection)",
+          "acceptance": ["Plugin scaffold + config + model detection", "Heartbeat manager + timeout event capture to MetricsDB + fallback chain (Ultra→Super→Laguna)", "Unit + integration tests (20+)", "Live test against Nemotron 3 Ultra", "Published to npm with docs"],
           "report_to": "data/entities/jem/workspace/reports/PLUGIN_IMPLEMENTATION_20260813.md",
-          "estimated_hours": 26
+          "estimated_hours": 8
         }
       ]
     },
