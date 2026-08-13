@@ -1,0 +1,697 @@
+{
+  "version": "1.0",
+  "updated": "2026-08-13T17:07:13.654046+00:00",
+  "tasks": [
+    {
+      "task_id": "v1-vault-legacy-mining-20260721",
+      "subagent_type": "roc_racoon",
+      "launched_by": "grokster",
+      "channel": "opencode",
+      "entity": "grokster",
+      "description": "V-1 Vault legacy mining for credential patterns",
+      "status": "completed",
+      "created_at": "2026-07-21T10:45:00Z",
+      "last_checkpoint": "2026-07-21T10:45:52Z",
+      "resumption_count": 1,
+      "context_verified": true,
+      "tags": [
+        "v1-vault",
+        "legacy-mining",
+        "credential-patterns"
+      ]
+    },
+    {
+      "task_id": "research-local-ai-crisis-frameworks-20260721",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Research local offline AI crisis intervention frameworks",
+      "status": "completed",
+      "created_at": "2026-07-21T09:00:00Z",
+      "last_checkpoint": "2026-07-21T11:26:55Z",
+      "resumption_count": 1,
+      "context_verified": false,
+      "tags": [
+        "local-ai",
+        "crisis-frameworks",
+        "offline"
+      ]
+    },
+    {
+      "task_id": "cognitive-bias-local-llm-detection-20260721",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Cognitive bias detection in small LLMs",
+      "status": "completed",
+      "created_at": "2026-07-21T09:00:00Z",
+      "last_checkpoint": "2026-07-21T11:26:55Z",
+      "resumption_count": 1,
+      "context_verified": false,
+      "tags": [
+        "cognitive-bias",
+        "local-llm",
+        "detection"
+      ]
+    },
+    {
+      "task_id": "carmack-research-audit-20260721",
+      "subagent_type": "john_carmack",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Research board compression audit",
+      "status": "completed",
+      "created_at": "2026-07-21T08:00:00Z",
+      "last_checkpoint": "2026-07-21T08:30:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "research-audit",
+        "compression",
+        "board"
+      ]
+    },
+    {
+      "task_id": "test-task-20260721",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Test task for registry",
+      "status": "completed",
+      "created_at": "2026-07-21T15:09:38.782231+00:00",
+      "last_checkpoint": "2026-07-21T12:00:00Z",
+      "resumption_count": 1,
+      "context_verified": true,
+      "tags": [
+        "test",
+        "registry"
+      ]
+    },
+    {
+      "task_id": "hub-comms-scribe-model-benchmark-20260723",
+      "subagent_type": "researcher",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Benchmark local models (qwen3-1.7b, qwen3-4b, phi-3-mini, gemma-2-2b) for structured JSON extraction from Hivemind broadcasts",
+      "status": "completed",
+      "created_at": "2026-07-23T17:00:01.448877+00:00",
+      "last_checkpoint": "2026-07-23T17:00:01.448902+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "hub-comms",
+        "scribe",
+        "model-benchmark",
+        "P0"
+      ]
+    },
+    {
+      "task_id": "ses-research-c11-property-20260723",
+      "subagent_type": "researcher",
+      "launched_by": "roc_racoon",
+      "channel": "opencode",
+      "entity": "roc_racoon",
+      "description": "C-11 Property Test Patterns Research - 5 domains, 25+ vectors",
+      "status": "active",
+      "created_at": "2026-07-23T19:53:20.968846+00:00",
+      "last_checkpoint": "2026-07-23T19:53:20.968870+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "C-11",
+        "property-tests",
+        "hypothesis",
+        "guard-and-distill"
+      ]
+    },
+    {
+      "task_id": "ses-research-gemma4-workhorse-20260724",
+      "subagent_type": "researcher",
+      "launched_by": "roc_racoon",
+      "channel": "opencode",
+      "entity": "roc_racoon",
+      "description": "Gemma 4 Workhorse Intelligence Research - 5 domains",
+      "status": "active",
+      "created_at": "2026-07-23T22:55:18.447773+00:00",
+      "last_checkpoint": "2026-07-23T22:55:18.447797+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "G-1",
+        "workhorse",
+        "gemma4",
+        "local-models",
+        "opencode-config"
+      ]
+    },
+    {
+      "task_id": "gemma4-workhorse-domain1-20260724",
+      "subagent_type": "researcher",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Gemma 4 Workhorse Domain 1: Google AI Studio / Vertex AI model catalog",
+      "status": "completed",
+      "created_at": "2026-07-24T00:00:31.368374+00:00",
+      "last_checkpoint": "2026-07-24T00:00:31.368396+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "researcher",
+        "gemma4",
+        "workhorse",
+        "domain1",
+        "google"
+      ]
+    },
+    {
+      "task_id": "ses-research-coord-entropy-20260730-001",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Coordination Entropy Prevention research report",
+      "status": "completed",
+      "created_at": "2026-07-30T01:28:35.599019+00:00",
+      "last_checkpoint": "2026-07-30T01:28:35.599046+00:00",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "research",
+        "coordination",
+        "entropy",
+        "hmc-hub"
+      ]
+    },
+    {
+      "task_id": "ses-roc-local-mining-20260730-001",
+      "subagent_type": "roc_racoon",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Local strategy mining for coordination patterns",
+      "status": "completed",
+      "created_at": "2026-07-30T01:28:37.358882+00:00",
+      "last_checkpoint": "2026-07-30T01:28:37.358909+00:00",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "mining",
+        "legacy",
+        "coordination",
+        "memory"
+      ]
+    },
+    {
+      "task_id": "ses-cline-ops-health-20260730-001",
+      "subagent_type": "cline_executor",
+      "launched_by": "grok_cli",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Ops health A-B-C: tests, restic, WARP, G-1 smokes, SSOT",
+      "status": "active",
+      "created_at": "2026-07-30T02:34:05.106253+00:00",
+      "last_checkpoint": "2026-07-30T02:34:05.106279+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "ops-health",
+        "P0",
+        "restic",
+        "warp",
+        "ssot",
+        "deepseek-v4-flash"
+      ]
+    },
+    {
+      "task_id": "temple-1e-soul-20260730",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 1E: Rewrite soul_validator.py to use yaml.safe_load + Pydantic model_validate",
+      "status": "active",
+      "created_at": "2026-07-30T21:40:54.660336+00:00",
+      "last_checkpoint": "2026-07-30T21:40:54.660359+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "temple-cleansing",
+        "phase-1e"
+      ]
+    },
+    {
+      "task_id": "vector-arch-sqlitevec-vs-qdrant-20260807",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Vector store architecture: sqlite-vec vs Qdrant layering analysis",
+      "status": "completed",
+      "created_at": "2026-08-07T03:46:47.749829+00:00",
+      "last_checkpoint": "2026-08-07T03:46:47.749849+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "vector-store",
+        "memory",
+        "qdrant",
+        "sqlite-vec",
+        "graphrag"
+      ]
+    },
+    {
+      "task_id": "research-phase1-benchmarking-20260807",
+      "subagent_type": "lilith",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Phase 1: Benchmark M2 Qdrant SQ8 + I5 Headroom + M1 dual-branch + I2 speculative + A1 WAD deps",
+      "status": "active",
+      "created_at": "2026-08-07T14:19:26.038090+00:00",
+      "last_checkpoint": "2026-08-07T14:19:26.038112+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "phase-1",
+        "benchmarking",
+        "m2",
+        "i5",
+        "m1",
+        "i2",
+        "a1"
+      ]
+    },
+    {
+      "task_id": "ses_research_phase2_lilith_20260807",
+      "subagent_type": "lilith",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Phase 2: S2 GRPO flywheel, M3 spatial coords, SEC1 taint protocol, OBS1 swap monitoring",
+      "status": "active",
+      "created_at": "2026-08-07T15:05:27.985992+00:00",
+      "last_checkpoint": "2026-08-07T15:05:27.986010+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "phase-2",
+        "s2",
+        "m3",
+        "sec1",
+        "obs1",
+        "lilith"
+      ]
+    },
+    {
+      "task_id": "ses_research_phase2_maat_20260807",
+      "subagent_type": "maat",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Phase 2: A4 WAD auto-loading, O1 TUI SEDA binding",
+      "status": "active",
+      "created_at": "2026-08-07T15:05:47.952807+00:00",
+      "last_checkpoint": "2026-08-07T15:05:47.952824+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "phase-2",
+        "a4",
+        "o1",
+        "maat"
+      ]
+    },
+    {
+      "task_id": "ses_research_phase3_kali_20260807",
+      "subagent_type": "kali",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Phase 3: SRP gating for ASPIRATIONAL items \u2014 CANCELLED, recovery documented",
+      "status": "failed",
+      "created_at": "2026-08-07T17:17:10.889582+00:00",
+      "last_checkpoint": "2026-08-07T17:17:10.889602+00:00",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "phase-3",
+        "srp-gating",
+        "cancelled",
+        "recovery-documented",
+        "relaunch-needed"
+      ]
+    },
+    {
+      "task_id": "ses_research_phase2_maat_20260807_relaunch",
+      "subagent_type": "maat",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Phase 2 A4+O1 design docs for cloud-planner/local-executor and TUI tracer",
+      "status": "active",
+      "created_at": "2026-08-07T17:24:23.550037+00:00",
+      "last_checkpoint": "2026-08-07T17:24:23.550055+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "phase2",
+        "a4",
+        "o1",
+        "design"
+      ]
+    },
+    {
+      "task_id": "packer-review-grokcli-20260808",
+      "subagent_type": "grok_cli",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Grok CLI advisory review of Context Packer implementation + Carmack report pre-refactor",
+      "status": "active",
+      "created_at": "2026-08-08T14:18:38.266918+00:00",
+      "last_checkpoint": "2026-08-08T14:18:38.266930+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "context-packer",
+        "advisory-review",
+        "pre-refactor",
+        "carmack-verification"
+      ]
+    },
+    {
+      "task_id": "kali-carmack-repo-hygiene-20260808",
+      "subagent_type": "john_carmack",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Repo hygiene verdict: ark_optimizer timer, PyPI fiction, junk cleanup",
+      "status": "completed",
+      "created_at": "2026-08-08T16:18:41.638820+00:00",
+      "last_checkpoint": "2026-08-08T16:18:41Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "hygiene",
+        "carmack",
+        "un-overengineering",
+        "pypi",
+        "ark-optimizer"
+      ]
+    },
+    {
+      "task_id": "packer-v3-grok-review-20260808-01",
+      "subagent_type": "grok_cli",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Review Researcher additions to Context Packer v3 handoff",
+      "status": "completed",
+      "created_at": "2026-08-08T18:09:58.530535+00:00",
+      "last_checkpoint": "2026-08-08T18:30:00+00:00",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "packer-v3",
+        "review",
+        "config-rot",
+        "grok-cli",
+        "completed"
+      ]
+    },
+    {
+      "task_id": "packer-v3-refactor-20260808-01",
+      "subagent_type": "cline",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Execute Context Packer v3 refactor per Master Manual",
+      "status": "active",
+      "created_at": "2026-08-08T20:40:59.509339+00:00",
+      "last_checkpoint": "2026-08-08T20:40:59.509357+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "context-packer",
+        "v3-refactor",
+        "sovereign"
+      ]
+    },
+    {
+      "task_id": "ses-research-classification-decisions-20260809-01",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Close knowledge gaps on 5 provider classification decisions",
+      "status": "active",
+      "created_at": "2026-08-09T16:14:52.083974+00:00",
+      "last_checkpoint": "2026-08-09T16:14:52.083991+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "classification",
+        "provider-registry",
+        "sovereignty-ratio",
+        "web-claude-handoff"
+      ]
+    },
+    {
+      "task_id": "carmack-zram-review-20260811",
+      "subagent_type": "john_carmack",
+      "launched_by": "roc_racoon",
+      "channel": "opencode",
+      "entity": "roc_racoon",
+      "description": "Review zRAM\u2192zswap architecture migration + multi-write subagent method; update Kali's consolidated tasks",
+      "status": "completed",
+      "created_at": "2026-08-11T00:00:00Z",
+      "last_checkpoint": "2026-08-11T00:00:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "zram-zswap",
+        "architecture-review",
+        "kali-consolidation",
+        "multi-write"
+      ]
+    },
+    {
+      "task_id": "jem-sdp-context-gauge-review-20260811",
+      "subagent_type": "jem",
+      "launched_by": "roc_racoon",
+      "channel": "opencode",
+      "entity": "roc_racoon",
+      "description": "Review SDP Context Gauge (A-1, A-5, QW-2, QW-8) + streaming plugin; update Kali's consolidated tasks",
+      "status": "pending",
+      "created_at": "2026-08-11T00:00:00Z",
+      "last_checkpoint": "2026-08-11T00:00:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "context-gauge",
+        "kali-consolidation",
+        "streaming-plugin"
+      ]
+    },
+    {
+      "task_id": "jem-phase1-context-gauge-20260813",
+      "subagent_type": "jem",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 1A: Context Gauge bands (A-1, A-5) + query layer (QW-2) + Context Gauge v1 (QW-8) + subagent state (A-4)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:30:00Z",
+      "last_checkpoint": "2026-08-13T20:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "phase1",
+        "context-gauge",
+        "A-1",
+        "A-5",
+        "QW-2",
+        "QW-8",
+        "A-4"
+      ]
+    },
+    {
+      "task_id": "maat-phase1-sdp-constraints-20260813",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 1B: TriageRouter SDP constraints (QW-6) + RHP halt artifact (QW-9) + 3 MCP tools (QW-10)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:30:00Z",
+      "last_checkpoint": "2026-08-13T20:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "phase1",
+        "triage-router",
+        "rhp",
+        "mcp-tools",
+        "QW-6",
+        "QW-9",
+        "QW-10"
+      ]
+    },
+    {
+      "task_id": "lilith-phase1-pool-tracker-20260813",
+      "subagent_type": "lilith",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 1C: Wire pool_tracker.py into inference pipeline (QW-4)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:30:00Z",
+      "last_checkpoint": "2026-08-13T20:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "phase1",
+        "pool-tracker",
+        "QW-4"
+      ]
+    },
+    {
+      "task_id": "roc-phase1-zswap-migration-20260813",
+      "subagent_type": "roc_racoon",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 1D: zswap migration + NVMe swap file + sysctl consolidation (P1-1, P1-2, P1-3)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:30:00Z",
+      "last_checkpoint": "2026-08-13T20:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "phase1",
+        "zswap",
+        "nvme-swap",
+        "sysctl",
+        "P1-1",
+        "P1-2",
+        "P1-3"
+      ]
+    },
+    {
+      "task_id": "maat-phase1-systemd-unit-20260813",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 1D: systemd unit with corrected cgroup limits + hardening (P1-4)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:30:00Z",
+      "last_checkpoint": "2026-08-13T20:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "phase1",
+        "systemd",
+        "cgroup",
+        "P1-4"
+      ]
+    },
+    {
+      "task_id": "research-phase1-gaps-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase R1 v2: R2,R3,R4,R5,R6,R7,R8b,R27,R28 (R1,R8,R14 resolved - skip)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:45:00Z",
+      "last_checkpoint": "2026-08-13T20:45:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "phase1",
+        "context-gauge",
+        "streaming-observability",
+        "R1-R8"
+      ]
+    },
+    {
+      "task_id": "research-phase2-gaps-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase R2 v2: R13,R14b,R26 (R9-R12,R14 resolved - skip)",
+      "status": "ready",
+      "created_at": "2026-08-13T20:45:00Z",
+      "last_checkpoint": "2026-08-13T20:45:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "phase2",
+        "zswap",
+        "streaming-plugin",
+        "R9-R14"
+      ]
+    },
+    {
+      "task_id": "research-phase3-gaps-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase R3: R15,R16,R17,R18,R19,R20",
+      "status": "ready",
+      "created_at": "2026-08-13T20:45:00Z",
+      "last_checkpoint": "2026-08-13T20:45:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "phase3",
+        "un-overengineering",
+        "pyresilience",
+        "R15-R20"
+      ]
+    },
+    {
+      "task_id": "research-phase4-gaps-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase R4: R21,R22,R23,R24,R25",
+      "status": "ready",
+      "created_at": "2026-08-13T20:45:00Z",
+      "last_checkpoint": "2026-08-13T20:45:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "phase4",
+        "phase-d",
+        "workhorse",
+        "warp",
+        "R21-R25"
+      ]
+    }
+  ]
+}
