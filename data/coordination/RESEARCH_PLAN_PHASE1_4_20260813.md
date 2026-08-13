@@ -43,7 +43,7 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 | **R5** | TriageRouter SDP constraint types — formal spec mapping to code, property test patterns | QW-6 | P1 | 3 |
 | **R6** | RHP (Recovery Halt Point) schema — YAML structure, resume_pointer format, corruption handling | QW-9 | P1 | 2 |
 | **R7** | MCP tool patterns **in THIS codebase** — `src/omega/mcp/tools/` registration, pydantic validation, server wiring | QW-10 | P1 | 3 |
-| **R8b** | **OBS-1 re-scoped**: Since mystery is SOLVED (v1.18.14 native retry), the remaining gap is *implementing* streaming observability — heartbeat logging to MetricsDB, timeout event capture, plugin detector | OBS-1 | **P0** | 3 |
+| **R8b** | **OBS-1 re-scoped**: Since mystery is SOLVED (v1.18.14 native retry), the remaining gap is *implementing* streaming observability — heartbeat logging to MetricsDB, timeout event capture, plugin detector. **Owner: @jem** (was TBD) | OBS-1 | **P0** | 3 |
 
 ---
 
@@ -89,6 +89,10 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 | **R27** | `tokens.total` **query verification against live DB** — confirm `json_extract(data,'$.tokens.total')` returns correct value on real sessions (R1 gave schema; this validates the actual gauge query) | QW-2 needs a working query, not just schema | QW-2 | P0 | 1 |
 | **R28** | **MCP Streamable HTTP + tool registration** — how Omega Hub exposes MCP tools to OpenCode (client SEP-2575), tool schema format | QW-10 needs to know how tools reach OpenCode | QW-10 | P1 | 2 |
 | **R29** | **OpenCode plugin detection** — how to scan loaded plugins (config + plugins dir), plugin manifest schema | OBS-4 (plugin detector) | OBS-4 | P1 | 2 |
+| **R27b** | **NULL `tokens.total` handling** — VERIFIED: live DB returns NULL for some assistant messages. Gauge must handle NULL (fallback to input+cache.read, or skip+sum rest). QW-2 acceptance must include NULL handling | QW-2 | **P0** | 1 |
+| **R30** | **Circuit breaker library decision audit** — 4-way spike: pyresilience vs tenacity (installed) vs stamina vs pybreaker. Maturity scoring (stars, last release, open issues) + AnyIO compat + happy-path latency. D-528 picked pyresilience (68 stars) — under-weighted maturity risk | UO-6.1 | **P0** | 3 |
+| **R31** | **Streaming plugin scope reduction** — confirm OpenCode v1.18.14 native retry coverage; scope PLUGIN-1..8 from 26h → ~8h (observability + fallback + detection only, NO retry re-impl) | PLUGIN-1..8 | P1 | 1 |
+| **R32** | **In-session gauge data source** — DB-poll (lags async writes) vs in-memory hook (real-time). For 80% pressure halt, real-time matters. Specify for R2/QW-2 | QW-2, R2 | P1 | 2 |
 
 ---
 
@@ -110,7 +114,7 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 
 | Day | Gaps | Deliverable |
 |-----|------|-------------|
-| Mon | R27 (verify tokens.total query), R8b | Gauge query validation + streaming observability impl plan |
+| Mon | R27 (verify tokens.total query), R27b (NULL handling), R8b | Gauge query validation + NULL strategy + streaming observability impl plan |
 | Tue | R2, R3 | Model window detection spec + subagent state machine |
 | Wed | R4, R5 | AGY pool structure + TriageRouter constraint mapping |
 | Thu | R6, R7, R28 | RHP schema + MCP tool patterns + Streamable HTTP |
@@ -259,7 +263,8 @@ Research phase complete when:
 |--------|--------|
 | **Marked 7 gaps RESOLVED** | R1, R8, R9, R10, R11, R12, R14 — pointer-only, no re-research |
 | **Re-scoped R8 → R8b** | Mystery SOLVED (v1.18.14 native retry); now about implementing observability |
-| **Added 4 NEW gaps** | R26 (Honker), R27 (tokens.total query validation), R28 (MCP Streamable HTTP), R29 (plugin detection) |
+| **Added 4 NEW gaps (v2)** | R26 (Honker), R27 (tokens.total query validation), R28 (MCP Streamable HTTP), R29 (plugin detection) |
+| **Added 5 NEW gaps (v3 Hy3)** | R27b (NULL tokens.total), R30 (CB library 4-way audit), R31 (plugin scope reduction), R32 (in-session gauge source), OBS-1 owner assigned (@jem) |
 | **Split R14 → R14b** | Heartbeat patterns resolved; fallback chain is the new gap |
 | **Reduced total** | 40h → 28h (removed resolved-gap hours) |
 
