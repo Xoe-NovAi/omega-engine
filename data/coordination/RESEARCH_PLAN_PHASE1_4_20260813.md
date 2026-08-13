@@ -1,11 +1,11 @@
-# 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v3)
-**AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.0.0`
+# 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v3.1)
+**AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.1.0`
 ⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ 20260813
 
 **Target:** @researcher (Sovereign Researcher — Polymathic Council)
 **Sprint:** SDP-EXECUTION-01
 **Priority:** P0 — All gaps block Phase 1-4 execution
-**Est. Total:** ~34 hours (v3: re-added 6h for partially-resolved verification + 4 new gaps)
+**Est. Total:** ~52 hours (v3.1: +18h for 6 new gaps R33-R38 from roadmap audit)
 
 ---
 
@@ -64,6 +64,10 @@ These gaps have substantial existing research. @researcher should **verify the e
 |---|-----|----------------|----------|------------|
 | **R13** | OpenCode **plugin architecture** — manifest, hooks, model detection, npm publish (config analysis exists; plugin build API is the gap) | PLUGIN-1..8 | P1 | 4 |
 | **R14b** | **Nemotron plugin fallback chain** — Nemotron 3 Ultra → Super → Laguna S 2.1, state preservation on failover | PLUGIN-5 | P1 | 2 |
+| **R33** | **Cold session context estimation** — detect "cold" sessions (0.7x multiplier), transition triggers cold→warm→hot, persistence across context resets | A-1 | P1 | 2 |
+| **R34** | **Provider-specific band adjustments** — how each provider (native-gguf, lmster, Ollama, Google, OCZ) behaves under context pressure; per-provider gauge bands | A-2 | P1 | 3 |
+| **R35** | **Model-specific degradation thresholds** — how each model (Qwen3-1.7b, Nemotron 3 Ultra, Gemma 4 31B) degrades under context pressure; degradation signatures | A-3 | P1 | 3 |
+| **R36** | **Baseline calibration methodology** — calibrate context gauge to post-fix baseline (18-36%), metrics to use, recalibration triggers, drift handling | A-5 | P1 | 2 |
 
 ---
 
@@ -77,6 +81,8 @@ These gaps have substantial existing research. @researcher should **verify the e
 | **R18** | prometheus_client textfile collector — local-only, :8016/metrics, M8 compliance | UO-6.4 | P1 | 2 |
 | **R19** | Retry strategy comparison — pyresilience vs tenacity vs stamina benchmarks (live spike) | UO-6.5 | P1 | 3 |
 | **R20** | Keyblind/Authy/Agent Vault verification — existence, stars, MCP integration, maturity | UO-6.6 | P0 | 4 |
+| **R37** | **Identity fluidity architecture** — entity persona transitions, state preservation across switches, soul continuity, "Identity Phase 0" architecture | E-0 | P2 | 4 |
+| **R38** | **NotebookLM integration** — `prepare_notebooklm.py` implementation, 5-notebook architecture, weekly sync, strategic pivot triggers | NL-1 | P2 | 4 |
 
 ---
 
@@ -142,8 +148,8 @@ These gaps have substantial existing research. @researcher should **verify the e
 | Mon | R13 | OpenCode plugin architecture + npm publish |
 | Tue | R14b | Nemotron plugin fallback chain |
 | Wed | R26 | Honker / Redis replacement verification |
-| Thu | Integration | Consolidated Phase 2 research package |
-| Fri | Buffer | Overflow / verification |
+| Thu | R33, R34 | Cold session context estimation + provider-specific band adjustments |
+| Fri | R35, R36 | Model-specific degradation thresholds + baseline calibration methodology |
 
 **Output:** `data/entities/researcher/workspace/research_reports/PHASE2_RESEARCH_20260813.md`
 
@@ -157,7 +163,7 @@ These gaps have substantial existing research. @researcher should **verify the e
 | Mon | R30 (5-way CB spike), R16 | CB library decision + pydantic v2 patterns |
 | Tue | R17, R18 | structlog + prometheus_client integration guide |
 | Wed | R19, R20 | Retry strategy decision + Vault replacement verification |
-| Thu | Integration | Consolidated Phase 3 research package |
+| Thu | R37, R38 | Identity fluidity architecture + NotebookLM integration |
 | Fri | Buffer | Overflow / verification |
 
 **Output:** `data/entities/researcher/workspace/research_reports/PHASE3_RESEARCH_20260813.md`
@@ -282,6 +288,9 @@ Research phase complete when:
 | **R15 subsumed by R30 (v3)** | pyresilience spike folded into 5-way CB audit — no separate research |
 | **R7 updated (v3)** | `src/omega/mcp/tools/` confirmed GREENFIELD (only `mcp_runtime.py` exists) |
 | **Reduced total** | 40h → 28h (v2) → **34h (v3)** — re-added verification for partially-resolved gaps |
+| **Added 6 NEW gaps (v3.1)** | R33 (cold session context), R34 (provider band adjustments), R35 (model degradation thresholds), R36 (baseline calibration), R37 (Identity Phase 0), R38 (NotebookLM) — from roadmap gap analysis |
+| **R37/R38 cross-reference added** | IDENTITY_FLUIDITY_ARCHITECTURE_20260721.md + R52c_notebooklm_ingestion_strategy.md to Cross-Reference Index |
+| **Total updated** | **34h → 52h (v3.1)** — 6 new gaps add ~18h |
 
 ---
 
@@ -330,6 +339,8 @@ This index lists all existing research docs and which gaps they cover, so the re
 | `data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | AGY pool research | Reference |
 | `data/coordination/SESSION_ANCHOR.md` | Session anchor state | Reference |
 | `data/coordination/HMC_COLLABORATION_HUB.md` | Team coordination hub | Reference |
+| `data/entities/grokster/workspace/IDENTITY_FLUIDITY_ARCHITECTURE_20260721.md` | R37 (E-0 Identity Phase 0 architecture) | Reference only |
+| `docs/research/archive/R52c_notebooklm_ingestion_strategy.md` | R38 (NL-1 NotebookLM 5-notebook architecture, weekly sync) | Reference only |
 
 ---
 
@@ -357,4 +368,4 @@ This index lists all existing research docs and which gaps they cover, so the re
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v3.0.0 ⬡ 20260813*
+*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v3.1.0 ⬡ 20260813*
