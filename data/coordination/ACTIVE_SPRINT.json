@@ -3,10 +3,10 @@
   "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "phase": "PLANNING_COMPLETE_EXECUTION_READY",
   "started": "2026-08-11T00:00:00Z",
-  "updated": "2026-08-11T04:00:00Z",
+  "updated": "2026-08-13T20:30:00Z",
   "owner": "kali",
   "status": "ACTIVE",
-  "status_detail": "Planning phase COMPLETE. Dev roadmap ratified. Knowledge gaps research done. 5-phase execution plan ready. Next: Phase 0 (security + Context Gauge bands).",
+  "status_detail": "Planning phase COMPLETE. Dev roadmap ratified. Knowledge gaps research done. 5-phase execution plan ready. Phase 0 (security + Context Gauge bands) ready for execution.",
   "supersedes": [
     "NEMOTRON-ANALYSIS-01 (Aug 10 — analysis complete, implementation pending)",
     "UNOVERENGINEER-01 (Jul 30 — historical, UO-4 DOC_SANITY COMPLETE)",
@@ -91,11 +91,54 @@
       "status": "READY",
       "risk": "CRITICAL",
       "subtasks": [
-        "Security: rm /etc/sudoers.d/zram",
-        "Swappiness: sysctl vm.swappiness=100",
-        "Swap reclaim: swapoff -a && swapon -a",
-        "A-1: Tighter bands (0.7x)",
-        "A-5: Calibrate baseline (18-36%)"
+        {
+          "id": "P0-1",
+          "description": "Remove zram sudoers file",
+          "command": "sudo rm /etc/sudoers.d/zram",
+          "owner": "architect",
+          "estimated_seconds": 10
+        },
+        {
+          "id": "P0-2",
+          "description": "Set swappiness to 100",
+          "command": "sudo sysctl vm.swappiness=100",
+          "owner": "architect",
+          "estimated_seconds": 10
+        },
+        {
+          "id": "P0-3",
+          "description": "Reclaim swap",
+          "command": "sudo swapoff -a && sudo swapon -a",
+          "owner": "architect",
+          "estimated_seconds": 10
+        },
+        {
+          "id": "P0-4",
+          "description": "Verify UMA carveout",
+          "command": "dmesg | grep -i uma",
+          "owner": "architect",
+          "estimated_minutes": 5
+        },
+        {
+          "id": "A-1",
+          "description": "Tighter Context Gauge bands for cold sessions (0.7x multiplier)",
+          "owner": "jem",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md", "R_NEMOTRON_DEEP_ANALYSIS_20260810.md"],
+          "deliverable": "src/omega/gauge/bands.py with 0.7x cold session multiplier",
+          "acceptance": ["Cold session fires Redzone 30% earlier than warm", "Config has band_multiplier: 0.7", "Tests pass"],
+          "report_to": "data/entities/jem/workspace/reports/SDP_GAUGE_BANDS_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "A-5",
+          "description": "Calibrate Context Gauge to post-fix baseline (18-36% cold)",
+          "owner": "jem",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md", "ACTIVE_SPRINT.json"],
+          "deliverable": "Calibration report with 10+ live session measurements",
+          "acceptance": ["Config has documented band_multiplier: 0.7", "10+ live sessions measured", "Baseline documented"],
+          "report_to": "data/entities/jem/workspace/reports/SDP_GAUGE_CALIBRATION_20260813.md",
+          "estimated_hours": 2
+        }
       ]
     },
     "PHASE-1": {
@@ -105,12 +148,76 @@
       "risk": "HIGH",
       "depends_on": ["PHASE-0"],
       "subtasks": [
-        "QW-2: Rewrite Context Gauge (tokens.total)",
-        "QW-8: Build Context Gauge (greenfield)",
-        "QW-4: Wire pool_tracker.py",
-        "QW-6: Extend TriageRouter",
-        "QW-9: Build RHP halt artifact",
-        "QW-10: Build 3 MCP tools"
+        {
+          "id": "QW-2",
+          "description": "Rewrite Context Gauge to use tokens.total from message.data JSON",
+          "owner": "jem",
+          "ssots": ["SDP_IMPLEMENTATION_SPEC.md", "R_OPENCODE_DB_SCHEMA_REFERENCE_20260810.md"],
+          "deliverable": "src/omega/gauge/context_gauge.py (rewritten query layer)",
+          "acceptance": ["Gauge reads json_extract(data, '$.tokens.total')", "Test proves no overcounting (old summing code deleted)", "Unit test: 3-message session → correct load, not 10x overcount"],
+          "report_to": "data/entities/jem/workspace/reports/SDP_GAUGE_QUERY_LAYER_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "QW-8",
+          "description": "Build Context Gauge v1 (greenfield)",
+          "owner": "jem",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md", "SDP_IMPLEMENTATION_SPEC.md"],
+          "deliverable": "src/omega/gauge/context_gauge.py — ContextGauge class with detect_session, calculate_load, get_pressure, check_redzone",
+          "acceptance": ["get_pressure() accurate ±5% on live sessions", "check_redzone() fires at 0.8", "Model window from config (not hardcoded)", "Tests in tests/test_context_gauge.py"],
+          "report_to": "data/entities/jem/workspace/reports/SDP_GAUGE_V1_20260813.md",
+          "estimated_hours": 4
+        },
+        {
+          "id": "A-4",
+          "description": "Implement subagent state transition (cold → warming within 2-3 msgs)",
+          "owner": "jem",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md", "R_NEMOTRON_DEEP_ANALYSIS_20260810.md"],
+          "deliverable": "src/omega/gauge/subagent_state.py — state machine",
+          "acceptance": ["Cold/warm/hot states defined", "State transition logic implemented", "Wired into gauge bands (A-1)"],
+          "report_to": "data/entities/jem/workspace/reports/SDP_SUBAGENT_STATE_20260813.md",
+          "estimated_hours": 4
+        },
+        {
+          "id": "QW-4",
+          "description": "Wire pool_tracker.py into inference pipeline",
+          "owner": "lilith",
+          "ssots": ["SDP_FINAL_SYNTHESIS.md", "AGY_SESSION_LEDGER.md"],
+          "deliverable": "Import wired into routing module + omega pool status command",
+          "acceptance": ["pool_tracker.py has ≥1 live importer", "omega pool status works", "80% Redzone model-switch rule implemented"],
+          "report_to": "data/entities/lilith/workspace/reports/SDP_POOL_TRACKER_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "QW-6",
+          "description": "Extend TriageRouter with SDP constraints",
+          "owner": "maat",
+          "ssots": ["SDP_FORMAL_ROUTING_SPEC.md", "SDP_IMPLEMENTATION_SPEC.md"],
+          "deliverable": "Extended src/omega/oracle/triage_router.py with SDP constraint types (local_only, synthesize_required, scaffold_sufficient) + src/omega/oracle/sdp_constraints.py",
+          "acceptance": ["All formal routing spec constraints implemented", "local_only + scaffold_sufficient routes to local GGUF", "Property tests from spec pass"],
+          "report_to": "data/entities/maat/workspace/reports/SDP_TRIAGEROUTER_20260813.md",
+          "estimated_hours": 4
+        },
+        {
+          "id": "QW-9",
+          "description": "Build RHP halt artifact",
+          "owner": "maat",
+          "ssots": ["SDP_IMPLEMENTATION_SPEC.md"],
+          "deliverable": "src/omega/gauge/rhp.py with write_rhp() and load_rhp() + RHP schema",
+          "acceptance": ["RHP schema: version, session_id, pack_id, pressure, model, tier, reason, resume_pointer, created_at", "3 test cases: write, load, corrupt-file rejection", "Writes to data/rhp/{session_id}.yaml"],
+          "report_to": "data/entities/maat/workspace/reports/SDP_RHP_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "QW-10",
+          "description": "Build 3 MCP tools",
+          "owner": "maat",
+          "ssots": ["SDP_IMPLEMENTATION_SPEC.md"],
+          "deliverable": "3 MCP tools in src/omega/mcp/tools/: context_pressure.py, write_rhp.py, agy_escalation.py + server registration",
+          "acceptance": ["get_context_pressure: returns {pressure, model, window, redzone}", "write_rhp: accepts halt-reason + resume-pointer, writes RHP", "request_agy_escalation: routes to AGY frontier with priority queue", "Each tool has unit test"],
+          "report_to": "data/entities/maat/workspace/reports/SDP_MCP_TOOLS_20260813.md",
+          "estimated_hours": 4
+        }
       ]
     },
     "PHASE-2": {
@@ -120,11 +227,56 @@
       "risk": "MEDIUM",
       "depends_on": ["PHASE-0"],
       "subtasks": [
-        "P1 zswap: Enable zswap (lzo_rle, 25% pool)",
-        "P1 NVMe swap: Create 16GB swap file",
-        "P1 sysctl: Consolidate into 99-omega-memory.conf",
-        "P1 systemd: Deploy unit with cgroup limits",
-        "PLUGIN-1..8: Streaming timeout plugin"
+        {
+          "id": "P1-1",
+          "description": "Enable zswap with correct config",
+          "owner": "roc_racoon",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md", "KNOWLEDGE_GAPS_RESEARCH_20260811.md"],
+          "deliverable": "GRUB: zswap.enabled=1 zswap.compressor=lzo_rle zswap.max_pool_percent=25 zswap.zsmalloc=zsmalloc",
+          "acceptance": ["zswap active: sysctl confirms", "pool at 25% of 14.5GB RAM"],
+          "report_to": "data/entities/roc_racoon/workspace/reports/SDP_ZSWAP_20260813.md",
+          "estimated_hours": 4
+        },
+        {
+          "id": "P1-2",
+          "description": "Create 16GB NVMe swap file",
+          "owner": "roc_racoon",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md"],
+          "deliverable": "16GB swap file on NVMe, swapon -a confirmed",
+          "acceptance": ["swapfile present at /swapfile", "swapon -a works"],
+          "report_to": "data/entities/roc_racoon/workspace/reports/SDP_NVME_SWAP_20260813.md",
+          "estimated_hours": 4
+        },
+        {
+          "id": "P1-3",
+          "description": "Consolidate sysctl into 99-omega-memory.conf",
+          "owner": "roc_racoon",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md"],
+          "deliverable": "/etc/sysctl.d/99-omega-memory.conf with all memory params",
+          "acceptance": ["sysctl -p loads without errors", "All params persistent"],
+          "report_to": "data/entities/roc_racoon/workspace/reports/SDP_SYSCTL_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "P1-4",
+          "description": "systemd unit with corrected cgroup limits + hardening",
+          "owner": "maat",
+          "ssots": ["SDP_MODEL_AWARE_GAUGE_SPEC.md"],
+          "deliverable": "systemd unit: MemoryMin=2G, MemoryHigh=5G, MemoryMax=6G + full hardening",
+          "acceptance": ["Unit starts successfully", "cgroup limits enforced", "Hardening directives present"],
+          "report_to": "data/entities/maat/workspace/reports/SDP_SYSTEMD_20260813.md",
+          "estimated_hours": 4
+        },
+        {
+          "id": "PLUGIN-1..8",
+          "description": "Nemotron streaming timeout plugin",
+          "owner": "jem",
+          "ssots": ["NEMOTRON_PLUGIN_DEEP_PLANNING_20260810.md", "STREAMING_TIMEOUT_OBSERVABILITY_GAP_20260810.md"],
+          "deliverable": "Published npm package @omega-engine/nemotron-timeout-plugin",
+          "acceptance": ["Plugin scaffold + config + model detection", "Heartbeat manager + timeout extension + fallback logic", "Unit + integration tests (20+)", "Live test against Nemotron 3 Ultra", "Published to npm with docs"],
+          "report_to": "data/entities/jem/workspace/reports/PLUGIN_IMPLEMENTATION_20260813.md",
+          "estimated_hours": 26
+        }
       ]
     },
     "PHASE-3": {
@@ -134,12 +286,66 @@
       "risk": "MEDIUM",
       "depends_on": ["PHASE-1"],
       "subtasks": [
-        "UO-6.1: Delete deprecated breakers + adopt pyresilience",
-        "UO-6.2: Simplify soul_validator.py",
-        "UO-6.3: Install structlog",
-        "UO-6.4: Install prometheus_client",
-        "UO-6.5: Retry strategy decision",
-        "UO-6.6: VaultCore → Keyblind + Authy"
+        {
+          "id": "UO-6.1",
+          "description": "Delete deprecated breakers + adopt pyresilience",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md"],
+          "deliverable": "1 canonical breaker path in health_monitor.py",
+          "acceptance": ["Spike pyresilience (1h) — if pass, adopt; if fail, keep AsyncCircuitBreaker"],
+          "report_to": "data/entities/maat/workspace/reports/UO6_BREAKER_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "UO-6.2",
+          "description": "Simplify soul_validator.py",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md"],
+          "deliverable": "soul_validator.py using pydantic v2",
+          "acceptance": ["Net Δ: -80 lines", "Tests pass"],
+          "report_to": "data/entities/maat/workspace/reports/UO6_SOUL_VALIDATOR_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "UO-6.3",
+          "description": "Install structlog + replace custom logger",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md"],
+          "deliverable": "structlog integrated, custom logger removed",
+          "acceptance": ["Net Δ: -80 lines", "Tests pass"],
+          "report_to": "data/entities/maat/workspace/reports/UO6_STRUCTLOG_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "UO-6.4",
+          "description": "Install prometheus_client + textfile collector",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md"],
+          "deliverable": "HealthMonitor sliding window replaced with textfile collector at :8016/metrics",
+          "acceptance": ["Net Δ: -400 lines", "M8 compliant (local-only)", "Tests pass"],
+          "report_to": "data/entities/maat/workspace/reports/UO6_PROMETHEUS_20260813.md",
+          "estimated_hours": 2
+        },
+        {
+          "id": "UO-6.5",
+          "description": "Retry strategy decision (pyresilience vs tenacity vs stamina)",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md"],
+          "deliverable": "Decision documented in PIVOT_LOG",
+          "acceptance": ["Spike one provider with Option A", "Measure glue-code deletion", "Pick winner, document"],
+          "report_to": "data/entities/maat/workspace/reports/UO6_RETRY_20260813.md",
+          "estimated_hours": 1
+        },
+        {
+          "id": "UO-6.6",
+          "description": "VaultCore → Keyblind + Authy + Agent Vault",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md"],
+          "deliverable": "VaultCore slimmed to ~500 lines",
+          "acceptance": ["Keep crypto.py (204 lines)", "Replace vault_core.py (836 lines) CRUD/lease/quota", "Replace blindvault_resolver.py (535 lines)", "Net Δ: -1,000+ lines", "Tests pass"],
+          "report_to": "data/entities/maat/workspace/reports/UO6_VAULT_20260813.md",
+          "estimated_hours": 10
+        }
       ]
     },
     "PHASE-4": {
@@ -149,11 +355,51 @@
       "risk": "HIGH",
       "depends_on": ["PHASE-3"],
       "subtasks": [
-        "G-1: Workhorse continuity (architect)",
-        "W-1: WARP proxy pool (architect)",
-        "C-3: Restic backup (architect)",
-        "V-10: AppArmor hardening",
-        "V-9: IA2 envelope freshness"
+        {
+          "id": "G-1",
+          "description": "Workhorse continuity (architect)",
+          "owner": "architect",
+          "ssots": ["CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md", "GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md"],
+          "deliverable": "Billing/OAuth/OCZ path resolved",
+          "acceptance": ["Workhorse model available for fat Omega sessions"],
+          "estimated_hours": 8
+        },
+        {
+          "id": "W-1",
+          "description": "WARP proxy pool (architect)",
+          "owner": "architect",
+          "ssots": ["warp-proxy-pool/scripts/warp-ns-setup.sh"],
+          "deliverable": "prep@1-3 active, node@1-3 active, SOCKS 8081-8083, 3 distinct exit IPs",
+          "acceptance": ["import warp_proxy_pool works", "3 distinct exit IPs"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "C-3",
+          "description": "Restic 3-2-1 backup (architect)",
+          "owner": "architect",
+          "ssots": ["SOVEREIGN_ARK_BLUEPRINT.md"],
+          "deliverable": "restic check --read-data-subset 5% weekly",
+          "acceptance": ["Backup timer enabled", "restic check passes"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "V-10",
+          "description": "AppArmor container hardening",
+          "owner": "maat",
+          "ssots": ["SOVEREIGN_ARK_BLUEPRINT.md"],
+          "deliverable": "All containers confined",
+          "acceptance": ["aa-status shows profiles loaded", "No unconfined containers"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "V-9",
+          "description": "IA2 envelope freshness/signature",
+          "owner": "maat",
+          "ssots": ["SOVEREIGN_ARK_BLUEPRINT.md"],
+          "deliverable": "Freshness check implemented",
+          "acceptance": ["IA2 envelopes have timestamp + signature verification"],
+          "estimated_hours": 4
+        }
       ]
     }
   },
@@ -201,6 +447,10 @@
     "Context Gauge must use tokens.total from message.data JSON blob",
     "Multi-write subagent method verified: 0% → 100% success rate",
     "Streaming timeout observability is CRITICAL gap — implement OBS-1 first",
-    "UMA carveout verification required before finalizing cgroup limits"
+    "UMA carveout verification required before finalizing cgroup limits",
+    "Carmack zRAM→zswap review APPROVED for P0 execution (2026-08-11)",
+    "Roc consolidation fully integrated across all docs",
+    "Jem collision avoidance P0-P2 declared (10 files, 3 phases)",
+    "Phase 0 security fix: 3 commands, 10 seconds total"
   ]
 }

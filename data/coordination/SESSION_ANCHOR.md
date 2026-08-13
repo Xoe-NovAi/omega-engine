@@ -160,4 +160,24 @@ data/coordination/SESSION_ANCHOR.md (updated)
 
 ---
 
+### Jem's Observability Enhancement Work
+- **Document**: `data/coordination/STREAMING_TIMEOUT_OBSERVABILITY_GAP_20260810.md`
+  - Identified critical observability gap: unable to trace what fixed Nemotron 3 Ultra streaming timeouts
+  - Found `better-opencode-retries` plugin was never loaded
+  - Determined OpenCode v1.8.14 (Aug 5) native retry logic was the actual fix
+- **Document**: `data/coordination/OTEP_v1.0.0_OBSERVABILITY_ENHANCEMENT_PLAN.md`
+  - Initial 8-workstream plan for observability & tracking enhancements
+  - Included Config Change Log, update detection, error monitoring, config drift detection
+- **Document**: `data/coordination/OTEP_v2.0.0_OBSERVABILITY_ENHANCEMENT_PLAN.md`
+  - Enhanced plan with Nemotron expert review
+  - Added Unified Telemetry Bus (P0 prerequisite), Causal Graph Engine, Provider Fingerprinting
+  - Included 8 local discovery + 8 web research tasks required before implementation
+- **Key Findings**:
+  - Streaming timeout fix was OpenCode v1.18.14 native retry logic (not the plugin)
+  - Error decline was gradual (10.4% → 0.9% → 0%), not sudden
+  - Post-fix errors changed from generic to NVIDIA-specific rate limiting (502/503/504)
+  - Plugin was never loaded in any config despite being installed
+
+---
+
 *⬡ OMEGA ⬡ KALI ⬡ ROADMAP-LOCKED ⬡ 2026-08-11*
