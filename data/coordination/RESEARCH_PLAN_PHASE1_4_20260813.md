@@ -296,7 +296,7 @@ This index lists all existing research docs and which gaps they cover, so the re
 | `data/entities/researcher/workspace/MEMORY_SYSTEMS_DEFINITIVE_REPORT.md` | R9 (zswap config), R10 (NVMe swap), R11 (sysctl), R12 (cgroup limits) | ✅ RESOLVED |
 | `docs/research/R_C11_STREAMING_PATTERNS_20260723.md` | R14 (streaming heartbeat patterns) | ✅ RESOLVED |
 | `docs/research/R_CARMACK_CG-002_STREAMING_TIMEOUT_20260719.md` | R8/R14 (streaming timeout test) | ✅ RESOLVED |
-| `docs/strategy/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | R4 (AGY pool structure, 8 accounts, Redzone rule) | ✅ PARTIALLY RESOLVED |
+| `data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | R4 (AGY pool structure, 8 accounts, Redzone rule) | ✅ PARTIALLY RESOLVED |
 | `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` | R21 (workhorse paths) | ✅ PARTIALLY RESOLVED |
 | `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` | R21 (workhorse billing/OAuth/OCZ) | ✅ PARTIALLY RESOLVED |
 | `data/entities/john_carmack/workspace/zram_review_20260811.md` | R12 (systemd cgroup limits), R9-R11 (zRAM→zswap) | ✅ PARTIALLY RESOLVED |
@@ -327,7 +327,7 @@ This index lists all existing research docs and which gaps they cover, so the re
 | `docs/research/R_CARMACK_CLASSIFICATION_SSOT_REVIEW_20260809.md` | Carmack classification review | Reference only |
 | `docs/decisions/PIVOT_LOG.md` | D-528 pyresilience > tenacity (locked) | Decision reference |
 | `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md` | 12 resolved research gaps | Reference |
-| `data/coordination/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | AGY pool research | Reference |
+| `data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` | AGY pool research | Reference |
 | `data/coordination/SESSION_ANCHOR.md` | Session anchor state | Reference |
 | `data/coordination/HMC_COLLABORATION_HUB.md` | Team coordination hub | Reference |
 
@@ -349,7 +349,7 @@ This index lists all existing research docs and which gaps they cover, so the re
 4. Reference `RESEARCH_TECH_ARCHITECTURE_DECISIONS_20260808.md` for interlock-cb considerations (though D-528 supersedes with pyresilience)
 
 **Example workflow for R4 (AGY pool):**
-1. Check index → R4 is PARTIALLY RESOLVED (`SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` exists)
+1. Check index → R4 is PARTIALLY RESOLVED (`data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` exists)
 2. Read the existing research — it has 8 accounts, 1M pool, ~27K tokens/session, Redzone rule, attestation header
 3. Verify numbers are current (Aug 2026)
 4. Extend only: pool_tracker.py wiring specifics for QW-4
