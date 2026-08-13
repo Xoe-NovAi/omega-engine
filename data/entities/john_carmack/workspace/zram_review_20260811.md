@@ -145,4 +145,6 @@ All work is **consolidated and ready for Kali's oversight**. Verified:
 
 ---
 
-*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/longcat-2.0-free ⬡ trc_zram_review ⬡ 2026-08-11*
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek/deepseek-v4-flash-0731 ⬡ opencode ⬡ trc_zram_review ⬡ 2026-08-11*
+
+> **Provenance correction (2026-08-11)**: This header was originally hand-typed with `opencode/longcat-2.0-free` (copied from a prior session's report). The actual active model is `deepseek/deepseek-v4-flash-0731` (verified via OpenCode session DB: `session.model.id`). This is an M22 Response Provenance violation — see `data/coordination/ICS_MODEL_PROVENANCE_FIX_20260811.md` for the systemic fix.

@@ -212,6 +212,14 @@ def _detect_model(entity: str) -> str:
     if env_model:
         return env_model
     
+    # Priority 2.5: OpenCode session DB — authoritative live model
+    # The OpenCode session DB stores the model in session.model JSON.
+    # This is the same source the wrapper reads post-exit, but accessible
+    # during the live session. See wrapper.sh:84-90.
+    db_model = _read_opencode_session_model()
+    if db_model:
+        return db_model
+    
     # Priority 3: opencode.json model key
     # (Deferred to caller — Oracle has the config loaded)
     
@@ -280,6 +288,43 @@ def _read_entity_model(entity: str) -> Optional[str]:
             return match.group(1).strip()
     except (OSError, UnicodeDecodeError):
         pass
+    return None
+
+
+def _read_opencode_session_model() -> Optional[str]:
+    """Read the active model from the OpenCode session DB.
+
+    The OpenCode session DB stores the authoritative model in
+    ``session.model`` as JSON: {"id": "...", "providerID": "...", ...}.
+    This is the same source the wrapper reads post-exit, but accessible
+    during the live session. See wrapper.sh:84-90.
+
+    Returns:
+        The model id string (e.g. "deepseek/deepseek-v4-flash-0731"),
+        or None if the DB is unreachable or has no session.
+    """
+    db_path = Path.home() / ".local/share/opencode/opencode.db"
+    if not db_path.exists():
+        return None
+    try:
+        import sqlite3
+        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT model FROM session ORDER BY time_updated DESC LIMIT 1"
+            )
+            row = cur.fetchone()
+            if row and row[0]:
+                import json
+                data = json.loads(row[0])
+                model_id = data.get("id")
+                if model_id:
+                    return model_id
+        finally:
+            conn.close()
+    except (sqlite3.Error, OSError, ValueError):
+        return None
     return None
 
 
