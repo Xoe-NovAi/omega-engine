@@ -1,17 +1,17 @@
-# 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v2)
-**AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v2.0.0`
+# 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v3)
+**AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ 20260813
 
 **Target:** @researcher (Sovereign Researcher — Polymathic Council)
 **Sprint:** SDP-EXECUTION-01
 **Priority:** P0 — All gaps block Phase 1-4 execution
-**Est. Total:** ~28 hours (reduced from 40 — 6 gaps already resolved)
+**Est. Total:** ~34 hours (v3: re-added 6h for partially-resolved verification + 4 new gaps)
 
 ---
 
 ## 🎯 Objective
 
-Fill all **genuinely open** knowledge gaps for Phase 1-4 execution. This v2 plan eliminates redundancy by marking already-resolved gaps (with pointers to existing docs) so @researcher does not re-research resolved items.
+Fill all **genuinely open** knowledge gaps for Phase 1-4 execution. This v3 plan eliminates redundancy by marking already-resolved gaps (pointer-only) and **partially-resolved gaps** (verify existing research, extend only where needed).
 
 ---
 
@@ -31,6 +31,18 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 
 ---
 
+## 🟡 PARTIALLY RESOLVED — Verify + Extend (Do NOT Re-Research From Scratch)
+
+These gaps have substantial existing research. @researcher should **verify the existing findings are current**, then extend only the specific sub-question that remains open.
+
+| # | Gap | Existing Research | What Remains Open |
+|---|-----|-------------------|-------------------|
+| **R4** | AGY account pool structure — 8 accounts, weekly token limits, 80% Redzone switch rule | `data/entities/researcher/workspace/research_reports/SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md` — 8 accounts, 1M pool, ~27K tokens/session, Redzone rule, attestation header | Verify pool numbers are current; confirm pool_tracker.py wiring specifics (QW-4) |
+| **R21** | OpenCode workhorse paths — billing Tier 1, Antigravity OAuth, OCZ+WARP, paid alt | `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` + `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` | Live verification: which path is currently viable (billing/OAuth/OCZ status as of Aug 2026) |
+| **R22** | WARP proxy pool fix — warp-ns-setup.sh source, iptables, bridge config | `warp-proxy-pool/scripts/warp-ns-setup.sh` (source exists; truncated in /usr/local/bin) | Confirm the fix path: restore from source, verify iptables/bridge config, 3 exit IPs |
+
+---
+
 ## 📋 GENUINELY OPEN Gaps by Phase
 
 ### Phase 1 — Context Gauge v1 (Week 1-2)
@@ -39,10 +51,9 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 |---|-----|----------------|----------|------------|
 | **R2** | Model context window **detection mechanism** — dynamic (from config/API) vs static, tier mapping, fallback. NOTE: windows themselves are known (D-522); the *detection code path* is the gap | QW-8 | P0 | 2 |
 | **R3** | Subagent state machine — cold/warm/hot definitions, transition triggers, persistence | A-4 | P1 | 3 |
-| **R4** | AGY account pool structure — 8 accounts, weekly token limits, 80% Redzone switch rule | QW-4 | P1 | 2 |
 | **R5** | TriageRouter SDP constraint types — formal spec mapping to code, property test patterns | QW-6 | P1 | 3 |
 | **R6** | RHP (Recovery Halt Point) schema — YAML structure, resume_pointer format, corruption handling | QW-9 | P1 | 2 |
-| **R7** | MCP tool patterns **in THIS codebase** — `src/omega/mcp/tools/` registration, pydantic validation, server wiring | QW-10 | P1 | 3 |
+| **R7** | MCP tool patterns **in THIS codebase** — NOTE: `src/omega/mcp/tools/` does NOT exist yet (only `src/omega/mcp_runtime.py`). GREENFIELD: registration, pydantic validation, server wiring | QW-10 | P1 | 3 |
 | **R8b** | **OBS-1 re-scoped**: Since mystery is SOLVED (v1.18.14 native retry), the remaining gap is *implementing* streaming observability — heartbeat logging to MetricsDB, timeout event capture, plugin detector. **Owner: @jem** (was TBD) | OBS-1 | **P0** | 3 |
 
 ---
@@ -60,7 +71,7 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 
 | # | Gap | Dependent Task | Priority | Est. Hours |
 |---|-----|----------------|----------|------------|
-| **R15** | pyresilience AnyIO/trio compatibility — spike test plan, async patterns (library is NEW 2026-03, only 68 stars) | UO-6.1 | P0 | 2 |
+| **R15** | pyresilience AnyIO/trio compatibility — **SUBSUMED by R30** (5-way spike). Do NOT research separately; covered in R30's pyresilience leg | UO-6.1 | P0 | 0 |
 | **R16** | pydantic v2 model_validate patterns — soul_validator.py migration | UO-6.2 | P1 | 2 |
 | **R17** | structlog integration — processors, formatters, OpenCode compatibility | UO-6.3 | P1 | 2 |
 | **R18** | prometheus_client textfile collector — local-only, :8016/metrics, M8 compliance | UO-6.4 | P1 | 2 |
@@ -73,8 +84,6 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 
 | # | Gap | Dependent Task | Priority | Est. Hours |
 |---|-----|----------------|----------|------------|
-| **R21** | OpenCode workhorse paths — billing Tier 1, Antigravity OAuth, OCZ+WARP, paid alt | G-1 | P0 | 3 |
-| **R22** | WARP proxy pool fix — warp-ns-setup.sh source, iptables, bridge config | W-1 | P0 | 3 |
 | **R23** | Restic passphrase management — OMEGA_VAULT_PASSPHRASE, .env.backup, timer | C-3 | P0 | 2 |
 | **R24** | AppArmor container profiles — confinement, profile generation, aa-status | V-10 | P1 | 3 |
 | **R25** | IA2 envelope freshness — timestamp, signature verification, replay protection | V-9 | P1 | 3 |
@@ -116,8 +125,8 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 |-----|------|-------------|
 | Mon | R27 (verify tokens.total query), R27b (NULL handling), R8b | Gauge query validation + NULL strategy + streaming observability impl plan |
 | Tue | R2, R3 | Model window detection spec + subagent state machine |
-| Wed | R4, R5 | AGY pool structure + TriageRouter constraint mapping |
-| Thu | R6, R7, R28 | RHP schema + MCP tool patterns + Streamable HTTP |
+| Wed | R4 (verify+extend), R5 | AGY pool verification + TriageRouter constraint mapping |
+| Thu | R6, R7, R28 | RHP schema + MCP tool patterns (greenfield) + Streamable HTTP |
 | Fri | Integration | Consolidated Phase 1 research package |
 
 **Output:** `data/entities/researcher/workspace/research_reports/PHASE1_RESEARCH_20260813.md`
@@ -145,7 +154,7 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 
 | Day | Gaps | Deliverable |
 |-----|------|-------------|
-| Mon | R15, R16 | pyresilience spike results + pydantic v2 patterns |
+| Mon | R30 (5-way CB spike), R16 | CB library decision + pydantic v2 patterns |
 | Tue | R17, R18 | structlog + prometheus_client integration guide |
 | Wed | R19, R20 | Retry strategy decision + Vault replacement verification |
 | Thu | Integration | Consolidated Phase 3 research package |
@@ -160,7 +169,7 @@ These gaps are fully resolved by existing research. @researcher should **verify 
 
 | Day | Gaps | Deliverable |
 |-----|------|-------------|
-| Mon | R21, R22 | Workhorse paths + WARP fix |
+| Mon | R21 (verify+extend), R22 (verify+extend) | Workhorse path verification + WARP fix confirmation |
 | Tue | R23, R24 | Restic passphrase + AppArmor profiles |
 | Wed | R25 | IA2 envelope freshness |
 | Thu | Integration | Consolidated Phase 4 research package |
@@ -238,10 +247,12 @@ Each research phase gets a task_id in TASK_REGISTRY.json:
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
 | pyresilience fails AnyIO test | Medium | High | Fallback to tenacity (already installed) |
+| interlock-cb vs pyresilience conflict unresolved | Medium | High | R30 5-way spike resolves with data; D-528 is locked default |
 | Keyblind/Authy don't exist | Medium | High | Keep VaultCore, slim to adapter only |
 | Streaming observability gap unsolvable | Low | Critical | Implement OBS-1 as best-effort, document |
 | Model window detection unreliable | Low | Medium | Use config fallback + manual override |
 | Honker doesn't exist | Medium | Medium | Keep Redis; defer removal (M12 advisory) |
+| Partially-resolved gap (R4/R21/R22) is stale | Medium | Medium | Verify existing research is current before extending |
 
 ---
 
@@ -264,9 +275,13 @@ Research phase complete when:
 | **Marked 7 gaps RESOLVED** | R1, R8, R9, R10, R11, R12, R14 — pointer-only, no re-research |
 | **Re-scoped R8 → R8b** | Mystery SOLVED (v1.18.14 native retry); now about implementing observability |
 | **Added 4 NEW gaps (v2)** | R26 (Honker), R27 (tokens.total query validation), R28 (MCP Streamable HTTP), R29 (plugin detection) |
-| **Added 5 NEW gaps (v3 Hy3)** | R27b (NULL tokens.total), R30 (CB library 4-way audit), R31 (plugin scope reduction), R32 (in-session gauge source), OBS-1 owner assigned (@jem) |
+| **Added 5 NEW gaps (v3 Hy3)** | R27b (NULL tokens.total), R30 (CB library 5-way audit), R31 (plugin scope reduction), R32 (in-session gauge source), OBS-1 owner assigned (@jem) |
 | **Split R14 → R14b** | Heartbeat patterns resolved; fallback chain is the new gap |
-| **Reduced total** | 40h → 28h (removed resolved-gap hours) |
+| **Marked 3 gaps PARTIALLY RESOLVED (v3)** | R4 (AGY pool), R21 (workhorse), R22 (WARP) — verify + extend, not re-research |
+| **R30 expanded 4-way → 5-way (v3)** | Added interlock-cb (prior front-runner in Aug 8 corpus) to resolve D-528 conflict with data |
+| **R15 subsumed by R30 (v3)** | pyresilience spike folded into 5-way CB audit — no separate research |
+| **R7 updated (v3)** | `src/omega/mcp/tools/` confirmed GREENFIELD (only `mcp_runtime.py` exists) |
+| **Reduced total** | 40h → 28h (v2) → **34h (v3)** — re-added verification for partially-resolved gaps |
 
 ---
 
