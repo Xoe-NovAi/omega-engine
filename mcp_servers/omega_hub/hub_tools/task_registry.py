@@ -79,7 +79,7 @@ async def task_registry_register(
         "channel": channel,
         "entity": entity,
         "description": description,
-        "status": "active",
+        "status": "in_progress",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "last_checkpoint": datetime.now(timezone.utc).isoformat(),
         "resumption_count": 0,
@@ -97,7 +97,7 @@ async def task_registry_query(
     launched_by: str = None,
     channel: str = None,
     entity: str = None,
-    status: Literal['backlog', 'ready', 'in_progress', 'blocked', 'completed', 'superseded', 'active', 'failed', 'pending'] = None,
+    status: Literal['backlog', 'ready', 'in_progress', 'blocked', 'completed', 'superseded', 'failed'] = None,
     tags: list[str] = None,
     limit: int = 50
 ) -> dict:
@@ -112,7 +112,7 @@ async def task_registry_query(
         launched_by: Filter by launching entity
         channel: Filter by execution channel
         entity: Filter by launching entity persona
-        status: Filter by status (active|completed|failed|all)
+        status: Filter by status (backlog|ready|in_progress|blocked|completed|superseded|failed)
         tags: Filter by tags (AND logic)
         limit: Maximum results
     
@@ -155,7 +155,7 @@ async def task_registry_query(
 @mcp.tool()
 async def task_registry_update(
     task_id: str,
-    status: Literal['backlog', 'ready', 'in_progress', 'blocked', 'completed', 'superseded'] = None,
+    status: Literal['backlog', 'ready', 'in_progress', 'blocked', 'completed', 'superseded', 'failed'] = None,
     last_checkpoint: str = None,  # ISO timestamp
     resumption_count: int = None,
     context_verified: bool = None,

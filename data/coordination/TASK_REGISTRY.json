@@ -350,7 +350,7 @@
       "channel": "opencode",
       "entity": "researcher",
       "description": "Phase 3: SRP gating for ASPIRATIONAL items \u2014 CANCELLED, recovery documented",
-      "status": "blocked",
+      "status": "superseded",
       "created_at": "2026-08-07T17:17:10.889582+00:00",
       "last_checkpoint": "2026-08-07T17:17:10.889602+00:00",
       "resumption_count": 0,
@@ -363,7 +363,7 @@
         "relaunch-needed"
       ],
       "migrated_from": "failed",
-      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
+      "migration_note": "Reclassified per Carmack review 2026-08-14: task was CANCELLED, not failed/blocked. superseded is correct."
     },
     {
       "task_id": "ses_research_phase2_maat_20260807_relaunch",

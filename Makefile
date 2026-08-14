@@ -242,7 +242,7 @@ doc-chunk-sprint:
 	@echo "$(GREEN)Chunking complete$(NC)"
 
 # Temple-grade includes Codex freshness and LLM doc validation
-temple-grade: check-codex-fix doc-llm-validate check-mandates check-tracking-state
+temple-grade: check-codex-stale doc-llm-validate check-mandates check-tracking-state
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	# Existing temple-grade checks would go here
 	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Tracking State)$(NC)"

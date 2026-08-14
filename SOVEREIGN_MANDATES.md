@@ -224,7 +224,8 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Mandate**: All execution state MUST adhere to the 5-Tier Tracking Architecture (constitution: `data/coordination/TRACKING_ARCHITECTURE.md`). No ad-hoc tracking files may be created.
 - **Constraint**: 
   - Gap IDs (R1-R99) are immutable and globally unique. `GAP_REGISTRY.json` is the ultimate authority on gap assignment. New plans MUST use a distinct prefix (P2-, S-, X-).
-  - Statuses MUST strictly follow the Unified Taxonomy: `backlog`, `ready`, `in_progress`, `blocked`, `completed`, `superseded`. No "WIP", "TBD", "stalled", "active", "pending", "failed".
+  - **Tier-0 (`ACTIVE_SPRINT.json`, planning)** MUST use: `backlog`, `ready`, `in_progress`, `blocked`, `completed`, `superseded`. No "WIP", "TBD", "stalled", "active", "pending", "failed".
+  - **Tier-3 (`TASK_REGISTRY.json`, execution records)** uses the 6 above PLUS `failed` (a subagent run can legitimately fail — distinct from `blocked`). Per Carmack review 2026-08-14: do NOT collapse `failed`→`blocked`.
   - Every agent MUST follow the 6-Step Mandatory Flow (read `NEXT_ACTION` → check `ACTIVE_SPRINT.json` → check `GAP_REGISTRY.json` → acquire lock → execute → update `TASK_REGISTRY.json`).
 - **Pattern**: Run `scripts/validate_tracking_state.py` to verify compliance (CI-gated via `make temple-grade`, `make test`, and pre-commit hook `omega-tracking-state`).
 - **Reason**: Prevents cognitive fragmentation, double-entry bookkeeping, and the collision of research plans. Ensures all agents operate from a single, deterministic source of truth.
