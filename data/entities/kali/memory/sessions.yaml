@@ -1,337 +1,216 @@
-# 🔱 Kali — Session History Database
-# ⬡ OMEGA ⬡ KALI ⬡ memory/sessions.yaml ⬡ v1.0
-#
-# Session logs, experiences, writebacks, and coordination events.
-# This is the archival record; soul.yaml is the lean identity.
+# 🔱 SESSION GNOSIS — Kali Deep Agent Directives Review
+**AP Token**: `AP-KALI-v1.0.0`
+**Date**: 2026-08-14
+**Session ID**: `ses_kali_20260814_agent_directives_deep_review`
+**Branch**: `main`
+**Last Commit**: `5337b2e3` (docs: refresh SESSION_ANCHOR — post-Nemotron hardening)
+**Model**: Nemotron 3 Ultra (1M context)
 
-session_log:
-  - date: '2026-06-04T19:00Z'
-    session_id: ses_20260604_kali_h1_heritage_vetting
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: Heritage Vetting Pipeline executed. 23 concepts audited, 4-gate pipeline
-      created, CI gate built, 3 non-standard tags fixed, 8-char cap rejected.
+---
 
-  - date: '2026-06-04T19:42Z'
-    session_id: ses_20260604_kali_soul_v52
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Soul v5.2 optimization: 10 issues fixed. 12,601 -> ~9,500 bytes.'
+## 🎯 Session Objective
 
-  - date: '2026-06-04T20:15Z'
-    session_id: ses_20260604_kali_config_overhaul
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'OpenCode configuration overhaul across 12 files. 7 stale refs fixed.'
+**Comprehensive review of all 16 agent custom instructions and 30+ entity soul files for enhancement/optimization opportunities. Deepened with Nemotron 3 Ultra's full parameter capacity after initial Nemotron 3 Lighting pass.**
 
-  - date: '2026-06-04T22:59Z'
-    session_id: ses_20260604_kali_handoff_execution
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Cline handoff execution. 4/4 P0 items verified.'
+---
 
-  - date: '2026-06-07T13:35Z'
-    session_id: ses_20260607_kali_hivemind_fix
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: Hivemind infrastructure fix. Q1/Q3/Q7/B1. Hivemind healthy on :8016.
+## ✅ What Was Done
 
-  - date: '2026-06-07T13:50Z'
-    session_id: ses_20260607_kali_coordination_protocol
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: Coordination protocol designed. SESSION_COORDINATION_PROTOCOL.md (10 sections).
+### 1. Complete Agent File Audit (16 files)
+Read all `.opencode/agents/*.md` + archive:
+- kali.md, maat.md, lilith.md, roc_racoon.md, researcher.md, jem.md, john_carmack.md, verity.md, makali.md, node.md, build.md, scribe.md, doom_guy.md, grok_cli.md (archive), grokster.md
 
-  - date: '2026-06-07T19:00Z'
-    session_id: ses_15cd503a7ffe2n8aPZQ5ILZo4C
-    model: deepseek-v4-flash-free
-    cli: opencode
-    summary: '6-wave deep research campaign. Breakthrough: interactive opencode spawns headless daemon.'
+### 2. Complete Soul File Audit (30 files)
+Read all `data/entities/*/soul.yaml`:
+- kali, maat, lilith, roc_racoon, researcher, sophia, verity, doom_guy, omnidroid, brigid, sekhmet, p10, prometheus, anubis, lucifer, antigravity, arch, cli_cline, cli_gemini, default, ereshkigal, grokster, hecate, inanna, iris, jem, john_carmack, makali, movie-expert, p10, prometheus, quality, saraswati, scribe, sekhmet, sophia, verity
 
-  - date: '2026-06-08'
-    session_id: ses_20260608_kali_strategy_finalization
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Strategy finalization. Error audit: 99 bare except patterns. Hivemind fix verified.'
+### 3. Cross-Reference Validation
+- SOVEREIGN_MANDATES.md (v3.8.0, 27 mandates)
+- SOUL_ARCHITECTURE_PROTOCOL v1.0 (superseded) + v2.0 (ratified 2026-07-15)
+- soul_validator.py (v6.1 lean schema enforcement)
+- HMC_COLLABORATION_HUB.md (current coordination hub)
+- AGENTS.md (6-step flow + distillation gate step 6.5)
+- TRACKING_ARCHITECTURE.md (5-tier constitution)
 
-  - date: '2026-06-09'
-    session_id: ses_20260609_kali_knowledge_gap
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: '5-agent knowledge gap synthesis. BSP culling NOT wired. Memory docs falsified.'
+---
 
-  - date: '2026-06-09'
-    session_id: ses_20260609_kali_standalone_hivemind
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Standalone Hivemind extracted. 430 lines, zero Omega dependencies.'
+## 🔴 CRITICAL FINDINGS (Corrected from Initial Pass)
 
-  - date: '2026-06-10'
-    session_id: ses_20260610_kali_compaction_docket
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Compaction docket. 113KB/1755 line soul.yaml diagnosed as structural debt.'
+### Finding 1: Mandate Version Drift — ALL 13 AGENTS WRONG
+**Every agent file** states: "25 Sovereign Mandates (v3.7.0)"
+**Reality**: SOVEREIGN_MANDATES.md is **v3.8.0** with **27 mandates** (M26 Doc Standards, M27 Tracking Integrity added 2026-08-14)
+**Impact**: Agents cannot self-validate against M26/M27; blind spots in "Key for..." mandate lists
 
-  - date: '2026-06-11'
-    session_id: ses_20260611_kali_sterilization
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Sterilization Mandate D-kal-101. All esoteric terms stripped from engine core.'
+### Finding 2: Soul Schema Non-Compliance — 28/30 ENTITIES VIOLATE v6.1
+The `soul_validator.py` enforces v6.1 lean schema (Pydantic). Required:
+- `entity.short` (2-6 chars): **10/30 compliant** (20 MISSING)
+- `entity.soul_version == "6.1"`: **2/30 compliant** (28 WRONG — v6.2 or v7.x)
+- `identity` block: **10/30** have it
+- `directives` list: **17/30** have it
+- `team`/`allies` block: **7/30** have it
+- `core_principles`: **2/30** have it (kali v7.2, roc_racoon v7.1)
+- FORBIDDEN fields check: UNKNOWN (validator skips strict validation for wrong version)
 
-  - date: '2026-06-11'
-    session_id: ses_20260611_kali_hivemind_split
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Hivemind API channel/entity split. cli parameter deprecated. 340/340 tests.'
+**Validator Loophole** (lines 116-123): Wrong `soul_version` → warning → **skips strict validation entirely**. 28/30 souls pass silently.
 
-  - date: '2026-06-11'
-    session_id: ses_20260611_kali_compact_failure
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Compact failure. Anchored summary survival path created.'
+### Finding 3: LIVE_FEED Protocol — 11/13 AGENTS EXECUTE AGAINST PURGED FILES
+All agents have coordination step: `4. Initialize live feed: data/coordination/{ENTITY}_LIVE_FEED.md`
+**Reality**: `ls data/coordination/*LIVE_FEED*` → **NO FILES EXIST** (purged)
+**Replacement**: HMC_COLLABORATION_HUB.md with `NEXT_ACTION` pointer + agent sections
+**Impact**: Silent coordination failure; agents write to non-existent files
 
-  - date: '2026-06-12'
-    session_id: ses_20260612_kali_shatter_glass
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Shatter-Glass: M2 Firewall sterilization. Identity contamination fixed.'
+### Finding 4: Distillation Pipeline — ARCHITECTURALLY DEFINED BUT UNENFORCED
+SOUL_ARCHITECTURE v2.0 §1: `Session → L1 → L2 → L3 → proposed_lessons.yaml (blind) → User review → approved_lessons.yaml → soul.yaml`
+**Current gaps**:
+- 28/30 entities lack `core_principles` (where approved lessons surface)
+- `memory/` directories + 3 files (`sessions.yaml`, `proposed_lessons.yaml`, `approved_lessons.yaml`) — existence unverified
+- Blind-Write Principle (agent NEVER reads `proposed_lessons.yaml`) — not enforced
+- AGENTS.md step 6.5 adds distillation gate but no CI gate verifies `proposed_lessons.yaml` written
+- `scribe.md` defines `SoulDistiller` class but not integrated into session hooks
+- `make soul-audit` gate (mandated by v2.0 §6) — **MISSING from Makefile**
 
-  - date: '2026-06-14'
-    session_id: ses_20260614_kali_carmack_axioms
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Carmack axioms received and distilled into soul. L3-5, L3-8 codified.'
+### Finding 5: Capability Discovery Gap — FLEET OF 14, ZERO PROGRAMMATIC DISCOVERY
+Hivemind knows WHO is active (`get_awareness`) but not WHAT they can do.
+Dispatch is manual (Kali knows from memory). `HIVEMIND_POST_TEMPLATE.md` has `intent` but no `capabilities` field.
 
-  - date: '2026-06-15'
-    session_id: ses_20260615_kali_phase_c_audit
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Phase C audit. 29 gaps found. D129-D133 tracked.'
+### Finding 6: Health Score Placeholder — 25/30 ENTITIES AT 50.0 (DEFAULT)
+All entities with `health_score` show `50.0` — appears to be a default/placeholder, not computed.
+6 entities missing entirely: default, grokster, iris, quality, roc_racoon, scribe.
+SoulHealthScorer (roc_racoon directive d-rr-014) defines 7-factor composite but not implemented.
 
-  - date: '2026-06-15'
-    session_id: ses_20260615_kali_sprint_b
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Sprint B memory adapters. 427/427 tests. Fleet consolidation complete.'
+### Finding 7: SOVEREIGN_MANDATES.md Header Mismatch
+File header: "## 🛡️ The Twenty-Five Laws of Sovereign Execution"
+**Actual count**: 27 mandates (grep "^### " = 27)
+M26 (Doc Standards) and M27 (Tracking Integrity) added 2026-08-14 but header not updated.
 
-  - date: '2026-06-15'
-    session_id: ses_20260615_kali_sprint_c
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Sprint C: verity consolidation. 4.9x test suite acceleration. 388 tests, 84s.'
+---
 
-  - date: '2026-06-17'
-    session_id: ses_20260617_kali_council_dispatch
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'MaKaLi Council Dispatch. GenerateResult fix. M21 Gate Integrity. 440/440 tests.'
+## 📊 COMPLIANCE MATRIX (30 Entities)
 
-  - date: '2026-06-18'
-    session_id: ses_20260618_kali_deep_siphon
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Operation Deep-Siphon synthesis. 96% metadata gap. ICS-F v1.0 schema.'
+| Requirement | Compliant | Gap | Severity |
+|-------------|-----------|-----|----------|
+| `entity.name` | 30/30 | 0 | — |
+| `entity.short` (2-6 chars) | **10/30** | **20** | **CRITICAL** |
+| `entity.soul_version == "6.1"` | **2/30** | **28** | **CRITICAL** |
+| `identity` block | 10/30 | 20 | HIGH |
+| `directives` list | 17/30 | 13 | HIGH |
+| `team`/`allies` block | 7/30 | 23 | HIGH |
+| `core_principles` | **2/30** | **28** | **CRITICAL** |
+| `health_score` present | 25/30 | 5 | MEDIUM |
+| `lessons_learned` present | 20/30 | 10 | MEDIUM |
 
-  - date: '2026-06-18'
-    session_id: ses_20260618_kali_hivemind_onboard
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'Hivemind onboard + heritage ratification. 2/6 patterns APPROVED.'
+---
 
-  - date: '2026-06-22'
-    session_id: ses_20260622_kali_v1_release
-    model: deepseek-v4-flash
-    cli: opencode-kali
-    summary: 'v1.0.0 Release. soul.yaml lean rebuild v6.0. Memory system separation.'
+## 🎯 TIERED RECOMMENDATIONS
 
-embodied_experiences:
-  - Unified the Omega Engine's TUI into a hierarchical command structure.
-  - Sprint 0 oversight: directed Doom Guy on ZONEID constants + lazy deletion + heritage protocol.
-  - Roc Racoon mining oversight: verified all 6 stacks complete.
-  - CI verification: audited Sprint 0 C1-C4 against actual filesystem.
-  - Documentation audit: identified and fixed 6 stale gaps.
-  - Sprint 1 closeout: verified cvar_table.py committed, heritage-map CI live.
-  - Subagent Dispatch Protocol created: HandoffPacket + CAPABILITY_REGISTRY.
-  - Knowledge Metabolism System designed: 3 layers (Lilith Flow, Ma'at Structure, Kali Metabolism).
-  - MiMo-V2.5 deep audit: Hivemind diagnosed as status board, not coordination fabric.
-  - 'Roc Racoon Mnemosyne synthesis: 33 files read. Verdict: EMPTY STUBS.'
-  - Sterilization Mandate D-kal-101 implemented.
-  - Kali Dispatch Protocol D-kal-103 codified (4 dispatch patterns).
-  - Wave 1.5 execution (Phases 1-2): 7 new MCP tools, 334/334 tests.
-  - Hivemind Protocol v1.3: channel/entity split, compact fallback.
+### TIER 0 — BLOCKING (Before ANY Sprint Execution)
 
-distillation_log:
-  - session: 1
-    date: '2026-05-29'
-    lessons_count: 0
-    note: First awakening. No lessons yet — only directives.
-  - session: 2
-    date: '2026-05-31'
-    lessons_count: 1
-    note: 'Adversarial Chaos Framework (L3: Antifragility).'
-  - session: 3
-    date: '2026-06-02'
-    lessons_count: 0
-    note: Fleet redesign oversight. No new L3.
-  - session: 4
-    date: '2026-06-03'
-    lessons_count: 1
-    note: Knowledge Metabolism L3.
-  - session: 5
-    date: '2026-06-04'
-    lessons_count: 1
-    note: 8-Char cap L3 (cargo-cult detection).
-  - session: 6
-    date: '2026-06-04'
-    lessons_count: 1
-    note: Engine-Stack Firewall WAD-agnostic L3.
-  - session: 7
-    date: '2026-06-04'
-    lessons_count: 1
-    note: OpenCode Configuration Drift L3.
-  - session: 8
-    date: '2026-06-04'
-    lessons_count: 1
-    note: Cline Handoff Execution L3.
-  - session: 9
-    date: '2026-06-04'
-    lessons_count: 1
-    note: Fleet Interface Completion L3.
-  - session: 10
-    date: '2026-06-05'
-    lessons_count: 1
-    note: Phase 2-4 Sprint Execution L3.
-  - session: 11
-    date: '2026-06-06'
-    lessons_count: 1
-    note: Strategic Context Build + Test Hardening L3.
-  - session: 12
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Migration Planning Sprint L3.
-  - session: 13
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Final Hardening Sprint L3.
-  - session: 14
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Accuracy audit L3.
-  - session: 15
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Workflow Correction L3.
-  - session: 16
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Hivemind Infrastructure Fix L3.
-  - session: 17
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Coordination Protocol Design L3.
-  - session: 18
-    date: '2026-06-07'
-    lessons_count: 1
-    note: 6-Wave Deep Research L3.
-  - session: 19
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Sovereign Research Crystallization L3.
-  - session: 20
-    date: '2026-06-07'
-    lessons_count: 1
-    note: Sovereign Agent Unification L3.
-  - session: 21
-    date: '2026-06-11'
-    lessons_count: 1
-    note: Phase 0 Gate L3.
-  - session: 22
-    date: '2026-06-08'
-    lessons_count: 1
-    note: Public Release Day L3.
-  - session: 23
-    date: '2026-06-08'
-    lessons_count: 1
-    note: Strategy Finalization L3.
-  - session: 24
-    date: '2026-06-09'
-    lessons_count: 1
-    note: 5-Agent Knowledge Gap Synthesis L3.
-  - session: 25
-    date: '2026-06-09'
-    lessons_count: 1
-    note: Standalone Hivemind Extraction L3.
-  - session: 26
-    date: '2026-06-09'
-    lessons_count: 1
-    note: Parallel Hivemind Hardening.
-  - session: 27
-    date: '2026-06-09'
-    lessons_count: 1
-    note: Sophia Rescue.
-  - session: 28
-    date: '2026-06-10'
-    lessons_count: 1
-    note: Compaction Docket.
-  - session: 29
-    date: '2026-06-11'
-    lessons_count: 1
-    note: Hivemind-First Communication Mandate.
-  - session: 30
-    date: '2026-06-11'
-    lessons_count: 1
-    note: MiMo Deep Audit + Sterilization.
-  - session: 31
-    date: '2026-06-12'
-    lessons_count: 1
-    note: Shatter-Glass M2 Firewall.
-  - session: 32
-    date: '2026-06-11'
-    lessons_count: 1
-    note: Hivemind API Split + Compact Failure.
-  - session: 33
-    date: '2026-06-15'
-    lessons_count: 1
-    note: Fleet Consolidation + Test Suite Acceleration.
-  - session: 34
-    date: '2026-06-15'
-    lessons_count: 1
-    note: Phase C Multi-Perspective Audit.
-  - session: 35
-    date: '2026-06-17'
-    lessons_count: 1
-    note: Council Dispatch + Truth-Anchor Protocol.
-  - session: 36
-    date: '2026-06-18'
-    lessons_count: 1
-    note: Deep-Siphon + Heritage Ratification.
-  - session: 37
-    date: '2026-06-22'
-    lessons_count: 1
-    note: v1.0.0 Release. Soul rebuild v6.0. Memory system separation.
+| # | Fix | Files | Effort |
+|---|-----|-------|--------|
+| **0.1** | Update all 13 agent files: mandate version → 3.8.0, count → 27, add M26/M27 to "Key for..." | `.opencode/agents/*.md` (13) | 20 min |
+| **0.2** | Migrate 28/30 soul files to v6.1 lean schema (soul_version="6.1", short, identity, directives with mandate_binding/validation/priority, team, core_principles min 1) | `data/entities/*/soul.yaml` (28) | 3-4 hrs |
+| **0.3** | Replace LIVE_FEED refs with HMC_COLLABORATION_HUB.md + NEXT_ACTION pattern | 11 agent files | 15 min |
+| **0.4** | Implement `make soul-audit` gate in Makefile (calls `scripts/validate_soul.py` on all entities) | `Makefile`, `scripts/validate_soul.py` | 30 min |
 
-patterns_learned:
-  - Carmack's Law applies to data structures: unify two duplicate tables before adding the third.
-  - Heritage is gravitational pull, not debt. Every [id-soft:] tag is a claim-check.
-  - Documentation decays in days, not months.
-  - The number of active documents in a directory is a proxy for cognitive load.
-  - A verification pass that finds unported items is the most valuable output.
-  - Hardware-specific optimizations don't transfer to Python.
-  - A pipeline without a gate is not a pipeline — it's a slide.
-  - Non-standard tags propagate like cracks.
-  - A handoff is not a document — it is a transfer of sovereignty.
-  - Silent except clauses hide real errors. M9 is about preventing bugs that haven't happened yet.
+### TIER 1 — HIGH LEVERAGE (Enables M5/M11/M27 Integration)
 
-pending_questions:
-  - Should the 14-agent fleet cap (M10) be reviewed? No, vetting is protocol, not agent. 14 holds.
-  - Should opencode-kali and kali be merged into one CLI identity in the HALL_OF_RECORDS?
-  - Should `make config-audit` exist as a formal Make target?
-  - The soul distiller wiring at shutdown: what transcript should it receive?
+| # | Fix | Files | Effort |
+|---|-----|-------|--------|
+| **1.1** | Add `core_principles` (min 1 L3 principle) to all 28 non-compliant souls with mandates/confidence/tags/source_session/evidence/directive_provenance | 28 soul files | 2-3 hrs |
+| **1.2** | Create `memory/` dirs + 3 required files for all entities | 30 entity dirs | 1 hr |
+| **1.3** | Add `directive_provenance` to all `core_principles` (link L3 principle → directive ID) | 30 soul files | 1 hr |
+| **1.4** | Add `capabilities` field to `hivemind_post_context` + update `hivemind_get_awareness` | MCP tools, agent files | 1 hr |
 
-drift_metrics:
-  persona_stability: 1.0
-  hysteresis_ratio: 0.94
-  last_drift_check: '2026-06-22T00:00:00Z'
-  drift_events_total: 1
-  drift_events_resolved: 1
-  notes: 'One drift event recorded: the 8-char cap implementation (vet-001 REJECTED). Resolved via Heritage Vetting Pipeline.'
+### TIER 2 — OPERATIONAL HARDENING
+
+| # | Fix | Effort |
+|---|-----|--------|
+| **2.1** | Fix validator backward-compat loophole (wrong version should FAIL, not skip) | 30 min |
+| **2.2** | Add workspace lock wait-time warning (log if acquire > 30s) | 20 min |
+| **2.3** | Fix Hivemind cold-store hydration to respect extended_checkin TTL | 30 min |
+| **2.4** | Add mandate coverage audit to pre-commit hook | 45 min |
+| **2.5** | Enforce Blind-Write Principle: exclude `proposed_lessons.yaml` from agent read path | 30 min |
+
+### TIER 3 — POLISH
+
+| # | Fix | Effort |
+|---|-----|--------|
+| **3.1** | Archive v6.0 fields to `archive/soul_v1_archive.yaml` per v2.0 §5 | 1 hr |
+| **3.2** | Add `source_session` to all L3 principles | 30 min |
+| **3.3** | Implement Intelligence Scorecard tracking (5 dimensions per v2.0 §3) | 2 hrs |
+| **3.4** | Fix SOVEREIGN_MANDATES.md header: "Twenty-Five" → "Twenty-Seven" | 5 min |
+
+---
+
+## 🔬 ROOT CAUSES
+
+1. **Template Trap**: All agent files from common template; template never updated when mandates evolved, LIVE_FEED purged, SOUL_ARCHITECTURE v2.0 ratified, distillation gate added.
+
+2. **Soul Schema Drift Without Migration Tooling**: v1.0→v2.0 migration required per-entity PRs; only 2/30 migrated. Validator has warning but no migration tool — warns then skips validation.
+
+3. **Distillation Pipeline Has No Enforcement Point**: Defined in docs + AGENTS.md step 6.5, but no session hook integration, no CI gate, no Blind-Write enforcement.
+
+4. **Capability Discovery Gap**: Fleet of 14 (cap M10), Hivemind knows WHO not WHAT. Dispatch manual.
+
+---
+
+## 📋 IMPLEMENTATION SEQUENCE (Dependency Order)
+
+```
+0.1 (agent mandate refs) → 0.4 (make soul-audit) → 0.2 (migrate 28 souls) 
+    → 1.2 (memory dirs) → 1.1 (core_principles) → 1.3 (directive_provenance)
+    → 0.3 (LIVE_FEED fix) → 1.4 (capabilities) → 2.1 (validator fix)
+    → 2.4 (mandate audit) → 2.5 (Blind-Write) → 2.2/2.3 (lock/cold-store)
+    → 3.x (polish)
+```
+
+**Critical Path**: 0.1 → 0.4 → 0.2 → 1.2 → 1.1 (~6-7 hrs)
+**Blocking Sprint**: YES — until Tier 0 complete
+
+---
+
+## 📁 FILES TO READ POST-COMPACTION
+
+1. **This file**: `data/entities/kali/memory/sessions.yaml` (session log entry)
+2. **SESSION_ANCHOR.md**: `data/coordination/SESSION_ANCHOR.md` (updated post-review)
+3. **HMC_COLLABORATION_HUB.md**: `data/coordination/HMC_COLLABORATION_HUB.md` (NEXT_ACTION)
+4. **ACTIVE_SPRINT.json**: `data/coordination/ACTIVE_SPRINT.json` (PHASE-0 ready)
+5. **SOUL_ARCHITECTURE v2.0**: `docs/archive/strategy/2026-07-21/SOUL_ARCHITECTURE_V2.md`
+6. **soul_validator.py**: `src/omega/oracle/soul_validator.py` (v6.1 schema)
+7. **AGENTS.md**: Step 6.5 distillation gate + 6-step flow
+
+---
+
+## 🔑 KEY VERIFIED FACTS
+
+- Validator runs ~25ms; pre-commit adds negligible friction
+- `register` writes `in_progress` (legal); `update` accepts `failed` for Tier-3
+- R-ID cross-check now scans `tags` + `description` + `ssots` — fires on real references
+- GAP_REGISTRY status enum enforced as ERROR (no silent drift)
+- Cross-tier: Tier-3 `failed` must sync to Tier-0 `blocked`/`superseded`
+- Distillation gate (step 6.5) mechanically couples M5/M11 to task completion
+- R30 spike (`UO-6.0`) registered — PHASE-3 won't stall on retry decision
+- All 11 sprint-blocking gaps RESOLVED (R13, R16-R20, R23-R26, R56)
+- PHASE-0 through PHASE-4 all UNBLOCKED per HMC_COLLABORATION_HUB.md
+
+---
+
+## ❓ OPEN QUESTIONS FOR POST-COMPACTION
+
+1. **Soul Migration Tooling**: Should we build `soul_schema_migrator.py` now (roc_racoon d-rr-018) or do manual migration for 28 entities?
+
+2. **Distillation Hook Integration**: The `.opencode/wrapper.sh` session end hook — does it currently call `SoulDistiller`? Need to verify `.opencode/hooks/session_end.py`.
+
+3. **Health Score Computation**: SoulHealthScorer (7-factor) defined in roc_racoon soul but not implemented. Should this be a daily cron writing to MetricsDB?
+
+4. **Capability Taxonomy**: What's the standard capability vocabulary? `["research", "code", "audit", "mining", "heritage", "synthesis", "infrastructure", "coordination"]`?
+
+5. **Mandate Coverage Mapping**: Per-agent "key mandates" lists — should we derive these from actual domain responsibility (Node assignments) rather than manual lists?
+
+6. **Archive Strategy**: 28 entities need v6.0 field archival. Batch script or per-entity PRs per v2.0 §5?
+
+7. **Intelligence Scorecard**: 5 dimensions (Task Completion, Decision Quality, Gnosis Coherence, Cross-Entity Resonance, User Trust) — who owns tracking?
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ DEEP-REVIEW-COMPLETE ⬡ 2026-08-14 (Nemotron-3-Ultra, 1M context)*
