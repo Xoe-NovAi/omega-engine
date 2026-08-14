@@ -13,10 +13,10 @@
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
 
 **CURRENT:** PHASE-0 (Security + Context Gauge bands) — **UNBLOCKED, execute now**
-- P0-1..P0-4 (Architect), A-1 + A-5 (Jem), UMA carveout verify (Architect)
+- ENG-004 (9 code bugs), ENG-001 (M2 firewall), ENG-002 (mandate audit), FLT-001 (soul migration), HRT-001 (heritage sweep)
 
 **NEXT:** PHASE-1 (SDP Context Gauge v1) — **UNBLOCKED, execute after PHASE-0**
-- QW-2, QW-8, A-4, QW-4, QW-6, QW-9, QW-10
+- See data/realms/community/state.yaml for Phase 1 tasks
 
 **RESEARCH COMPLETE (2026-08-14) — PHASE-2 / PHASE-3 / PHASE-4 now UNBLOCKED:**
 - PHASE-2 → unblocked by **R13** (OpenCode plugin architecture) — `docs/research/R13_OPENCODE_PLUGIN_ARCHITECTURE_20260814.md`
@@ -29,7 +29,7 @@
 ---
 
 ## 📌 How Agents Stay Synchronized (MANDATORY FLOW)
-1. Read **NEXT_ACTION** (above) → identify your Tier-0 task in `ACTIVE_SPRINT.json`
+1. Read **VISION_ANCHOR.md** → Read **NEXT_ACTION** (above) → identify your task in realm workspace
 2. Check **Tier-1** (`RESEARCH_PLAN_PHASE1_4`) for research deps (cross-ref `GAP_REGISTRY.json`)
 3. Acquire workspace lock → post Hivemind context (`omega-hub_hivemind_workspace_lock_acquire`)
 4. Register task in `TASK_REGISTRY.json` → execute → update status
