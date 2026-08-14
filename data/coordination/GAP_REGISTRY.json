@@ -1,0 +1,359 @@
+{
+  "version": "1.0",
+  "updated": "2026-08-14T13:05:00Z",
+  "purpose": "Authoritative registry of ALL research gap IDs. Prevents gap-number reuse across plans (root cause of the 2026-08-14 R13-R38 collision). Any new research plan MUST register its gaps here with a UNIQUE prefix.",
+  "rules": [
+    "Gap IDs R1-R38 are OWNED by RESEARCH_PLAN_PHASE1_4_20260813.md (authoritative).",
+    "R39-R56 are supplementary (Phase2-plan topics, renumbered 2026-08-14).",
+    "New plans MUST use a DISTINCT prefix (e.g. P2-, S-, X-) \u2014 NEVER reuse R1-R99 bare.",
+    "Before assigning any gap ID, CHECK THIS REGISTRY for collisions.",
+    "Superseded plans (e.g. Phase2) are archived, not authoritative."
+  ],
+  "authoritative_plan": "data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md",
+  "gaps": {
+    "R1": {
+      "topic": "tokens.total schema",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R_OPENCODE_DB_SCHEMA_REFERENCE_20260810.md"
+    },
+    "R2": {
+      "topic": "Model window detection",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R2_MODEL_WINDOW_DETECTION_20260813.md"
+    },
+    "R3": {
+      "topic": "Subagent state machine",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R3_SUBAGENT_STATE_MACHINE_20260813.md"
+    },
+    "R4": {
+      "topic": "AGY account pool",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md"
+    },
+    "R5": {
+      "topic": "TriageRouter constraints",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R5_TRIAGE_CONSTRAINT_TYPES_20260813.md"
+    },
+    "R6": {
+      "topic": "RHP schema",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R6_RHP_SCHEMA_20260813.md"
+    },
+    "R7": {
+      "topic": "MCP tool patterns",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R7_MCP_TOOL_PATTERNS_20260813.md"
+    },
+    "R8": {
+      "topic": "Streaming timeout mystery",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "STREAMING_TIMEOUT_MYSTERY_RESEARCH_20260810.md"
+    },
+    "R8b": {
+      "topic": "Streaming observability",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R8B_STREAMING_OBSERVABILITY_20260813.md"
+    },
+    "R9": {
+      "topic": "Memory system (zswap vs zRAM)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R10": {
+      "topic": "Memory system (OOMProtector)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R11": {
+      "topic": "Memory system (Circuit Breaker)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R12": {
+      "topic": "Memory system (Context Gauge)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R14": {
+      "topic": "Streaming heartbeat",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R_C11_STREAMING_PATTERNS_20260723.md"
+    },
+    "R14b": {
+      "topic": "Nemotron fallback chain",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R16": {
+      "topic": "pydantic v2",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R17": {
+      "topic": "structlog",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R18": {
+      "topic": "prometheus_client",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R19": {
+      "topic": "Retry strategy",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R20": {
+      "topic": "Keyblind/Authy/Vault",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R21": {
+      "topic": "Workhorse paths",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md"
+    },
+    "R22": {
+      "topic": "WARP proxy pool",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "warp-proxy-pool/scripts/warp-ns-setup.sh"
+    },
+    "R23": {
+      "topic": "Restic passphrase",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R24": {
+      "topic": "AppArmor profiles",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R25": {
+      "topic": "IA2 envelope freshness",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R26": {
+      "topic": "Honker/Redis",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R27": {
+      "topic": "tokens.total query verify",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R27_TOKENS_TOTAL_VERIFICATION_20260813.md"
+    },
+    "R27b": {
+      "topic": "NULL tokens.total",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R27B_NULL_TOKENS_TOTAL_HANDLING_20260813.md"
+    },
+    "R28": {
+      "topic": "MCP Streamable HTTP",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R28_MCP_STREAMABLE_HTTP_20260813.md"
+    },
+    "R29": {
+      "topic": "OpenCode plugin detection",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R29_OPENCODE_PLUGIN_DETECTION_20260813.md"
+    },
+    "R30": {
+      "topic": "5-way CB spike",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R30_CIRCUIT_BREAKER_BENCHMARK_20260813.md"
+    },
+    "R31": {
+      "topic": "Plugin scope reduction",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R32": {
+      "topic": "In-session gauge source",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R32_IN_SESSION_GAUGE_DATA_SOURCE_20260813.md"
+    },
+    "R33": {
+      "topic": "Cold session context",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R34": {
+      "topic": "Provider band adjustments",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R35": {
+      "topic": "Model degradation",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R36": {
+      "topic": "Baseline calibration",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R37": {
+      "topic": "Identity fluidity (E-0)",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R38": {
+      "topic": "NotebookLM integration",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R39": {
+      "topic": "Fleet Health Dashboard (SUPPLEMENTARY, Phase2-plan topic)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R39_FLEET_HEALTH_DASHBOARD_20260813.md"
+    },
+    "R40": {
+      "topic": "Subagent Pair-Execution Chains (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R40_SUBAGENT_PAIR_EXECUTION_20260813.md"
+    },
+    "R41": {
+      "topic": "Cross-Agent A2A Protocol (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R41_CROSS_AGENT_A2A_PROTOCOL_20260813.md"
+    },
+    "R42": {
+      "topic": "MemoryStore wiring (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R42_MEMORYSTORE_WIRING_VERIFICATION_20260813.md"
+    },
+    "R43": {
+      "topic": "Handoff Protocol v2 (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R43_HANDOFF_PROTOCOL_V2_20260813.md"
+    },
+    "R44": {
+      "topic": "Provider Chain Hardening (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R44_PROVIDER_CHAIN_HARDENING_20260813.md"
+    },
+    "R45": {
+      "topic": "Tokenomics Cost Modeling (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R45_TOKENOMICS_COST_MODELING_20260813.md"
+    },
+    "R46": {
+      "topic": "Firewall Audit (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R46_FIREWALL_AUDIT_20260813.md"
+    },
+    "R47": {
+      "topic": "Container Hardening (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R47_CONTAINER_HARDENING_20260813.md"
+    },
+    "R48": {
+      "topic": "Signature Freshness (SUPPLEMENTARY, partial overlap R25)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R48_SIGNATURE_FRESHNESS_20260813.md"
+    },
+    "R49": {
+      "topic": "Grok CLI Fabric Pool (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R49_GROK_FABRIC_POOL_20260813.md"
+    },
+    "R51": {
+      "topic": "Dimension/Free-Will Hub Split (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R51_DIMENSION_FREEWILL_HUB_SPLIT_20260813.md"
+    },
+    "R52": {
+      "topic": "Living Research OS Body (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R52_LIVING_RESEARCH_OS_BODY_20260813.md"
+    },
+    "R53": {
+      "topic": "Roadmap SSOT (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R53_ROADMAP_SSOT_20260813.md"
+    },
+    "R54": {
+      "topic": "Identity Fluidity (SUPPLEMENTARY, different from R37)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R54_IDENTITY_FLUIDITY_20260813.md"
+    },
+    "R55": {
+      "topic": "YouTube Research Deep Dive (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R55_YOUTUBE_RESEARCH_DEEP_DIVE_20260813.md"
+    },
+    "R56": {
+      "topic": "Lazy Loading (SUPPLEMENTARY, LOST \u2014 re-research queued)",
+      "status": "lost",
+      "plan": "phase2_supplementary",
+      "report": "R56_LAZY_LOADING_20260813.md"
+    }
+  },
+  "next_free_id": 57,
+  "collision_incidents": [
+    {
+      "date": "2026-08-14",
+      "description": "RESEARCH_PLAN_PHASE2_20260813.md (untracked) reused R13-R38 for DIFFERENT topics than RESEARCH_PLAN_PHASE1_4. Resolved by renumbering Phase2 reports to R39-R56. R56 lost during rename.",
+      "prevention": "GAP_REGISTRY.json created; new plans must use distinct prefixes."
+    }
+  ]
+}

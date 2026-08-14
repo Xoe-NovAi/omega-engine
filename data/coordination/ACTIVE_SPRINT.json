@@ -5,7 +5,7 @@
   "started": "2026-08-11T00:00:00Z",
   "updated": "2026-08-14T12:45:00Z",
   "owner": "kali",
-  "status": "ACTIVE",
+  "status": "in_progress",
   "status_detail": "Planning phase COMPLETE. Dev roadmap ratified. Knowledge gaps research done. 5-phase execution plan ready. Phase 0 (security + Context Gauge bands) ready for execution.",
   "supersedes": [
     "NEMOTRON-ANALYSIS-01 (Aug 10 — analysis complete, implementation pending)",
@@ -41,47 +41,47 @@
   },
   "gates": {
     "sdp_architecture": {
-      "status": "COMPLETE",
+      "status": "completed",
       "owner": "kali",
       "completed": "2026-08-09T00:00:00Z",
       "note": "15 documents, 3 subagent reviews, Final Synthesis written"
     },
     "nemotron_deep_analysis": {
-      "status": "COMPLETE",
+      "status": "completed",
       "owner": "jem",
       "completed": "2026-08-10T00:00:00Z",
       "note": "7 action items (A-1 through A-7)"
     },
     "knowledge_gaps_research": {
-      "status": "COMPLETE",
+      "status": "completed",
       "owner": "kali",
       "completed": "2026-08-13T23:05:00Z",
       "reconciled": "2026-08-14T12:40:00Z",
       "note": "R1-R38 plan executed 2026-08-13; reconciled 2026-08-14 (v3.2.0). Phase 1 gaps RESOLVED; 10 sprint-blocking gaps OUTSTANDING (R13,R16-R20,R23-R26). See RESEARCH_PLAN_PHASE1_4_20260813.md v3.2.0. KNOWLEDGE_GAPS_RESEARCH_20260811.md is SUPERSEDED (12-gap initial scan only)."
     },
     "dev_roadmap": {
-      "status": "COMPLETE",
+      "status": "completed",
       "owner": "kali",
       "completed": "2026-08-11T00:00:00Z",
       "note": "5-phase execution plan, 50 tasks, resource allocation"
     },
     "phase_0_security": {
-      "status": "READY",
+      "status": "ready",
       "owner": "architect",
       "note": "3 commands: rm sudoers.d/zram, sysctl swappiness=100, swapoff/swapon"
     },
     "context_gauge_bands": {
-      "status": "READY",
+      "status": "ready",
       "owner": "jem",
       "note": "A-1: TIGHTER bands for cold sessions (0.7x)"
     },
     "context_gauge_calibration": {
-      "status": "READY",
+      "status": "ready",
       "owner": "jem",
       "note": "A-5: Calibrate to post-fix baseline (18-36% cold)"
     },
     "streaming_observability": {
-      "status": "READY",
+      "status": "ready",
       "owner": "jem",
       "note": "OBS-1: Add streaming timeout observability (mystery SOLVED - v1.18.14 native retry; scope to observability + fallback + detection)"
     }
@@ -90,7 +90,7 @@
     "PHASE-0": {
       "task": "Security + Context Gauge bands",
       "owner": "kali",
-      "status": "READY",
+      "status": "ready",
       "risk": "CRITICAL",
       "subtasks": [
         {
@@ -146,7 +146,7 @@
     "PHASE-1": {
       "task": "SDP Context Gauge v1",
       "owner": "jem",
-      "status": "PENDING",
+      "status": "backlog",
       "risk": "HIGH",
       "depends_on": ["PHASE-0"],
       "subtasks": [
@@ -225,7 +225,7 @@
     "PHASE-2": {
       "task": "zswap migration + streaming plugin",
       "owner": "roc_racoon",
-      "status": "PENDING",
+      "status": "backlog",
       "risk": "MEDIUM",
       "depends_on": ["PHASE-0"],
       "subtasks": [
@@ -284,7 +284,7 @@
     "PHASE-3": {
       "task": "Un-overengineering",
       "owner": "maat",
-      "status": "PENDING",
+      "status": "backlog",
       "risk": "MEDIUM",
       "depends_on": ["PHASE-1"],
       "subtasks": [
@@ -353,7 +353,7 @@
     "PHASE-4": {
       "task": "Phase D gate closure",
       "owner": "kali",
-      "status": "PENDING",
+      "status": "backlog",
       "risk": "HIGH",
       "depends_on": ["PHASE-3"],
       "subtasks": [
