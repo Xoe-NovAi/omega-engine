@@ -289,6 +289,16 @@
       "depends_on": ["PHASE-1"],
       "subtasks": [
         {
+          "id": "UO-6.0",
+          "description": "R30 spike: 5-way pyresilience vs interlock-cb benchmark (gates UO-6.5 retry decision)",
+          "owner": "maat",
+          "ssots": ["UNOVERENGINEERING_PLAN.md", "R19_RETRY_STRATEGY_20260814.md", "R30_CIRCUIT_BREAKER_BENCHMARK_20260813.md"],
+          "deliverable": "Benchmark report: pyresilience vs interlock-cb vs tenacity vs stamina vs async-retry — latency, glue-code deletion, async-native score",
+          "acceptance": ["5 providers tested under identical load", "Glue-code deletion measured per provider", "Winner documented in PIVOT_LOG", "Unblocks UO-6.5"],
+          "report_to": "data/entities/maat/workspace/reports/R30_SPIKE_20260814.md",
+          "estimated_hours": 2
+        },
+        {
           "id": "UO-6.1",
           "description": "Delete deprecated breakers + adopt pyresilience",
           "owner": "maat",
