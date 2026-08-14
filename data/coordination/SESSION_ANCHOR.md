@@ -1,216 +1,99 @@
 # 🔱 SESSION ANCHOR — Kali (Transcendent Oversoul)
 
 **AP Token:** `AP-KALI-v1.0.0`
-**Date:** 2026-08-11
-**Session ID:** `ses_kali_20260811_roadmap`
+**Date:** 2026-08-14
+**Session ID:** `ses_kali_20260814_tracking_integration`
 **Branch:** `main`
-**Last Commit:** (pending)
+**Last Commit:** `f392e54f` (fix: apply Carmack architectural review — M27 tracking integration OPTIMAL)
 **Sprint:** SDP-EXECUTION-01
 
 ---
 
 ## 🎯 Session Objective
 
-**Complete planning phase and lock dev roadmap for execution.**
+**Execute + verify the M27 Tracking Integrity integration, then have @john_carmack review it for optimality.**
 
-Formalized the Sovereign Distillation Pipeline (SDP), researched 12 knowledge gaps, and produced a 5-phase dev roadmap. All planning docs updated and ready for team dispatch.
+Established a unified 5-Tier tracking architecture enforced at every mechanical boundary (MCP schema enums, pre-commit hook, Makefile CI gate, validator script). Carmack review found 5 defects; all fixed. Systems now OPTIMAL.
 
 ---
 
 ## ✅ Completed This Session
 
-### 1. Dev Roadmap (5 phases, 50 tasks)
-- **Document:** `data/coordination/KALI_DEV_ROADMAP_20260811.md`
-- Phase 0: Security + Context Gauge bands (~8h)
-- Phase 1: SDP Context Gauge v1 (~20h)
-- Phase 2: zswap migration + streaming plugin (~16h)
-- Phase 3: Un-overengineering (~30h)
-- Phase 4: Phase D gate closure (~20h)
-- Phase 5: Strategic items (~40h)
+### 1. M27 Coordination Integration (6 phases) — commit `9a5b1416`
+- **AGENTS.md**: 6-Step Mandatory Flow + Unified Status Taxonomy + GAP_REGISTRY pre-check
+- **SOVEREIGN_MANDATES.md**: M26 (Doc Standards) + M27 (Tracking Integrity), v3.8.0
+- **MCP `task_registry.py`**: `task_registry_update` status = strict `Literal` enum (rejects legacy)
+- **Validator** `scripts/validate_tracking_state.py`: hardened; 13 legacy tasks migrated
+- **Pre-commit** `.pre-commit-config.yaml`: `omega-tracking-state` Iron Gate
+- **Makefile**: `check-tracking-state` wired into `temple-grade` + `test-honest`
+- **Protocols**: STRP (Tier-0 task_id prefix), Dispatch (GAP_REGISTRY pre-flight), Hivemind template (`[Sprint Task: X]` tag), Fleet Playbook (LIVE_FEED → NEXT_ACTION)
+- **Orphaned refs purged**: `RESEARCH_JOB_BOARD.yaml`, `KNOWLEDGE_GAPS_RESEARCH_20260811.md`, `LIVE_FEED` across repo
 
-### 2. Knowledge Gaps Research (12 gaps resolved)
-- **Document:** `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md`
-- zswap > zRAM confirmed (25% pool, lzo_rle)
-- pyresilience > tenacity (10.4x faster, async-native)
-- OOMProtector simplify to 2-signal
-- Context Gauge uses tokens.total
-- Multi-write subagent method verified
-
-### 3. Oversight Portfolio
-- **Document:** `data/coordination/KALI_OVERSIGHT_PORTFOLIO_20260811.md`
-- Team direction for all 10 agents
-- Resource allocation across 5 phases
-
-### 4. Jem's Review
-- **Document:** `data/coordination/JEM_REVIEW_OPENCODE_CONFIG_20260809.md`
-- OpenCode config refactoring: APPROVED with minor additions
-- zRAM excavation: Phase 1 complete, 15 gaps identified
-
-### 5. Sprint Transition
-- **Document:** `data/coordination/ACTIVE_SPRINT.json`
-- Transitioned from NEMOTRON-ANALYSIS-01 to SDP-EXECUTION-01
-- Added D-526 through D-531 decisions
+### 2. Carmack Architectural Review — commit `f392e54f`
+Verdict: **HAS-DEFECTS → OPTIMAL** after 5 fixes:
+- FIX 1 (critical): `register` default `active`→`in_progress` (was illegal per validator)
+- FIX 2 (critical): deleted dead R-ID relational check (fired on 0/29 subtasks)
+- FIX 3 (high): `failed` added as distinct **Tier-3** status; cancelled task → `superseded`
+- FIX 4 (med): `query` Literal aligned (accepts `failed`, drops dead `active`/`pending`)
+- FIX 5 (med): `temple-grade` uses read-only `check-codex-stale` (no state mutation / M9)
+- Constitution + M27 + AGENTS.md updated to reflect Tier-0 vs Tier-3 taxonomy split
 
 ---
 
-## 🔑 Decisions Locked
+## 📐 Current Tracking Architecture (LIVE & ENFORCED)
 
-| ID | Decision |
-|----|----------|
-| **D-526** | zswap > zRAM for desktop with NVMe (25% pool, lzo_rle) |
-| **D-527** | Never run zswap and zRAM simultaneously |
-| **D-528** | pyresilience > tenacity for circuit breaker (spike first) |
-| **D-529** | Simplify OOMProtector to 2-signal (PSI + MemAvailable) |
-| **D-530** | Context Gauge uses tokens.total (never tokens_input) |
-| **D-531** | Multi-write subagent method mandatory for all subagent tasks |
+**Constitution:** `data/coordination/TRACKING_ARCHITECTURE.md`
+**Tiers:**
+| Tier | File | Role |
+|------|------|------|
+| 0 — EXECUTION | `ACTIVE_SPRINT.json` | Sprint tasks (6-status taxonomy) |
+| 1 — KNOWLEDGE | `RESEARCH_PLAN_PHASE1_4_20260813.md` | Gap catalog R1–R56 |
+| 1a — GAP REGISTRY | `GAP_REGISTRY.json` | Gap-ID → topic map (56 gaps) |
+| 2 — COORDINATION | `HMC_COLLABORATION_HUB.md` | `NEXT_ACTION` pointer |
+| 3 — RECORDS | `TASK_REGISTRY.json` | Subagent tasks (6 + `failed`) |
+| 4 — SESSION | `SESSION_ANCHOR.md` | This file |
 
----
+**Enforcement (triple-gate):** pre-commit `omega-tracking-state` → `make temple-grade` → `make test`. All pass.
 
-## 📋 Verified Model Context Windows
-
-| Model | Window | Tier | Pool |
-|---|---|---|---|
-| Nemotron 3 Ultra | 1,000,000 | 4 | Daily |
-| Laguna S 2.1 (free) | 262,144 | 3 | Daily |
-| Longcat 2.0 (free) | 1,000,000 | 4 | Daily |
-| Nemotron 3 Super | 262,144 | 3 | Daily |
-| Gemini 3.1 Pro | 1,048,576 | 4 | Weekly |
-| Claude Sonnet 4.6 | 200,000 | 2 | Weekly |
-| Claude Opus 4.6 | 200,000 | 2 | Weekly |
-| Gemini 3.6 Flash | 1,000,000 | 4 | Weekly |
-| Qwen3-1.7B (local) | 32,768 | 1 | Local |
+**6-Step Mandatory Flow (M27):** Read `NEXT_ACTION` → check `ACTIVE_SPRINT.json` → check `GAP_REGISTRY.json` → acquire lock → execute → update `TASK_REGISTRY.json`.
 
 ---
 
-## 📊 Ground Truth: What Exists vs. What's Missing
+## 🚦 Next Steps (post-compaction)
 
-**Already Built (Don't Build):**
-- V-1 Vault (2,039 LOC) at `src/omega/vault/`
-- Pool Tracker (237 LOC) at `pool_tracker.py`
-- Dialectic Logger (`record_council()`) at `dpo_logger.py:395`
-- Triage Router (constraint filtering) at `triage_router.py`
-- Token Estimator (tiktoken×1.3) at `token_estimator.py`
+1. **PHASE-0** (UNBLOCKED) — execute
+2. **PHASE-1** (UNBLOCKED) — execute
+3. Research **R13** → unblocks PHASE-2
+4. Research **R16–R20** → unblocks PHASE-3
+5. Research **R23–R26** → unblocks PHASE-4
+6. Re-research **R56** (Lazy Loading — lost during earlier rename; non-blocking)
 
-**Missing (Build):**
-- Context Gauge
-- RHP (Recovery Halt Point)
-- 3 MCP tools (`get_context_pressure`, `write_rhp`, `request_agy_escalation`)
+**Sprint-blocking gaps:** R13, R16, R17, R18, R19, R20, R23, R24, R25, R26
 
 ---
 
-## 🔴 Critical Blockers
+## 📁 Active File References (use THESE)
 
-| # | Blocker | Fix |
-|---|---|---|
-| G-3 | No `tokens` column in `message` table | Tokens in `data` JSON blob |
-| G-4 | Token accounting not additive | Use `input + cache.read` of latest message |
-| §4 | 4 of 5 cloud windows wrong | Use verified windows from §2 |
-| OBS-1 | Streaming timeout unknown | Implement observability first |
+- **Tracking constitution:** `data/coordination/TRACKING_ARCHITECTURE.md`
+- **Knowledge SSOT:** `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0)
+- **Gap registry:** `data/coordination/GAP_REGISTRY.json`
+- **Sprint:** `data/coordination/ACTIVE_SPRINT.json`
+- **Coordination hub:** `data/coordination/HMC_COLLABORATION_HUB.md` (`NEXT_ACTION`)
+- **Integration plan + Carmack review:** `docs/strategy/COORDINATION_ENHANCEMENT_PLAN_20260814.md`
+- **Validator:** `scripts/validate_tracking_state.py`
 
----
-
-## 📋 Work Remaining (Priority Order)
-
-### Immediate (First Session Back)
-- [ ] Run Phase 0: P0 security fix (Architect)
-- [ ] Run Phase 0: A-1 + A-5 (Jem)
-- [ ] Run Phase 0: Verify UMA carveout (Architect)
-- [ ] Commit all planning docs to git
-
-### Short-Term (This Week)
-- [ ] Phase 1: Context Gauge v1 (Jem + Ma'at + Lilith)
-- [ ] Phase 2: zswap migration (Roc Racoon)
-- [ ] Phase 2: Streaming plugin (Jem)
-
-### Medium-Term (This Month)
-- [ ] Phase 3: Un-overengineering (Ma'at)
-- [ ] Phase 4: Phase D gate closure (Architect + team)
+### Historical / Superseded (DO NOT use for active tracking)
+- `KALI_DEV_ROADMAP_20260811.md`, `KNOWLEDGE_GAPS_RESEARCH_20260811.md`, `RESEARCH_JOB_BOARD.yaml`, `SINGULAR_DIRECTION_20260814.md`, `CONFUSION_LOG_20260814.json` — all absorbed into the tiers above (per `TRACKING_ARCHITECTURE.md` superseded list).
 
 ---
 
-## 🤝 Coordination State
+## 🔑 Key Verified Facts (post-Carmack)
 
-- **Hivemind:** SDP execution posted
-- **Dev Roadmap:** `data/coordination/KALI_DEV_ROADMAP_20260811.md`
-- **Knowledge Gaps:** `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md`
-- **Oversight:** `data/coordination/KALI_OVERSIGHT_PORTFOLIO_20260811.md`
-- **ACTIVE_SPRINT:** Updated to SDP-EXECUTION-01
-
----
-
-## 📁 Key Files Modified This Session
-
-```
-data/coordination/ACTIVE_SPRINT.json (updated sprint)
-data/coordination/KALI_DEV_ROADMAP_20260811.md (new)
-data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md (new)
-data/coordination/KALI_OVERSIGHT_PORTFOLIO_20260811.md (new)
-data/coordination/JEM_REVIEW_OPENCODE_CONFIG_20260809.md (new)
-data/coordination/HMC_COLLABORATION_HUB.md (updated)
-data/coordination/SESSION_ANCHOR.md (updated)
-```
-
-### ICS Model Provenance Fix (Carmack)
-- **Document**: `data/coordination/ICS_MODEL_PROVENANCE_FIX_20260811.md`
-- **Fix**: Added `_read_opencode_session_model()` to `src/omega/ics.py` to read live model from OpenCode session DB
-- **Root cause**: `_detect_model()` could not read live active model during session (OPENCODE_MODEL only set post-exit)
-- **Fix**: New Priority 2.5 in `_detect_model()` — reads `session.model.id` from DB during live session
-- **Verified**: `render('JOHN_CARMACK')` now returns correct live model: `nvidia/nemotron-3-ultra-550b-a55b:free`
-- **Provenance**: Fixed report header (was longcat-2.0-free, now correct model)
+- Validator runs in ~25ms; pre-commit adds negligible friction.
+- `register` now writes `in_progress` (legal); `update` accepts `failed` for Tier-3.
+- R-ID cross-check removed (was dead); gap-topic uniqueness in `validate_gap_registry` prevents collisions.
+- `failed` ≠ `blocked`: execution records keep `failed` distinct (Carmack ruling).
 
 ---
 
-### Jem's Observability Enhancement Work
-- **Document**: `data/coordination/STREAMING_TIMEOUT_OBSERVABILITY_GAP_20260810.md`
-  - Identified critical observability gap: unable to trace what fixed Nemotron 3 Ultra streaming timeouts
-  - Found `better-opencode-retries` plugin was never loaded
-  - Determined OpenCode v1.8.14 (Aug 5) native retry logic was the actual fix
-- **Document**: `data/coordination/OTEP_v1.0.0_OBSERVABILITY_ENHANCEMENT_PLAN.md`
-  - Initial 8-workstream plan for observability & tracking enhancements
-  - Included Config Change Log, update detection, error monitoring, config drift detection
-- **Document**: `data/coordination/OTEP_v2.0.0_OBSERVABILITY_ENHANCEMENT_PLAN.md`
-  - Enhanced plan with Nemotron expert review
-  - Added Unified Telemetry Bus (P0 prerequisite), Causal Graph Engine, Provider Fingerprinting
-  - Included 8 local discovery + 8 web research tasks required before implementation
-- **Key Findings**:
-  - Streaming timeout fix was OpenCode v1.18.14 native retry logic (not the plugin)
-  - Error decline was gradual (10.4% → 0.9% → 0%), not sudden
-  - Post-fix errors changed from generic to NVIDIA-specific rate limiting (502/503/504)
-  - Plugin was never loaded in any config despite being installed
-
----
-
-## 🔄 POST-COMPACTION UPDATE (2026-08-14)
-
-**Compacted on HY3 model. State reconciled from CONFUSION_LOG_20260814.json + SINGULAR_DIRECTION_20260814.md.**
-
-### ⚠️ Critical: Plan Conflict Resolved
-The 2026-08-13 research round executed against an **untracked Phase2 plan** that redefined
-R13–R38 with different topics than the authoritative Phase1-4 plan. Reconciliation (2026-08-14):
-- Phase1-4 plan v3.2.0 = **AUTHORITATIVE SSOT** for dev sprint
-- 17 Phase2-topic reports renumbered R13–R38 → R39–R56 (R30 kept — both plans agree)
-- 10 sprint-blocking gaps OUTSTANDING: **R13, R16, R17, R18, R19, R20, R23, R24, R25, R26**
-- R56 (Lazy Loading) LOST during rename — re-research queued (non-blocking)
-
-### 🎯 Singular Direction (READ THIS)
-**`data/coordination/SINGULAR_DIRECTION_20260814.md`** — the single briefing for all agents.
-SSOT = `RESEARCH_PLAN_PHASE1_4_20260813.md` v3.2.0.
-
-### 🚦 Execution Order
-1. PHASE-0 (UNBLOCKED) → 2. PHASE-1 (UNBLOCKED) → 3. Research R13 → PHASE-2 →
-4. Research R16–R20 → PHASE-3 → 5. Research R23–R26 → PHASE-4
-
-### ⚠️ PRE-COMPACTION ANCHOR (2026-08-14)
-**Status:** Awaiting `/compact` command.
-**Post-Compaction Directive:** Immediately execute the 5-phase integration plan detailed in `docs/strategy/COORDINATION_ENHANCEMENT_PLAN_20260814.md`. This will update `AGENTS.md`, `Makefile`, protocols, and `SOVEREIGN_MANDATES.md` to permanently institutionalize the new tracking architecture.
-
-### 📁 Correct File References (supersedes 2026-08-11 pointers)
-- **Knowledge Gaps SSOT:** `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0)
-- **Superseded:** `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md` (12-gap initial scan only)
-- **Singular Direction:** `data/coordination/SINGULAR_DIRECTION_20260814.md`
-- **Confusion Log:** `data/coordination/CONFUSION_LOG_20260814.json`
-- **Sprint:** `data/coordination/ACTIVE_SPRINT.json` (now points knowledge_gaps to v3.2.0)
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ ROADMAP-LOCKED ⬡ 2026-08-11 (updated 2026-08-14 post-compaction)*
+*⬡ OMEGA ⬡ KALI ⬡ TRACKING-INTEGRATED ⬡ 2026-08-14 (OPTIMAL, Carmack-verified)*
