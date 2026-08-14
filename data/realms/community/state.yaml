@@ -1,0 +1,281 @@
+# Community Realm State
+# ⬡ OMEGA ⬡ KALI ⬡ COMMUNITY ⬡ VOS v1.0
+# AP Token: AP-VOS-COMMUNITY-20260814
+
+realm:
+  name: "community"
+  display_name: "Community & Launch"
+  owner: "kali"
+  node_slot: "N9"
+  version: "1.0.0"
+  status: "active"
+  last_updated: "2026-08-14T00:00:00Z"
+  updated_by: "kali"
+  session_id: "ses_vos_init_20260814"
+
+mandates:
+  primary: [M26]
+  secondary: [M7, M13, M14, M16, M24, M25]
+
+components:
+  - name: "One-Command Installer"
+    status: "planned"
+    description: "scripts/install.sh — curl -fsSL .../install.sh | bash works on fresh Ubuntu"
+    health_check: "test_installer.sh"
+    owner: "architect"
+    requirements:
+      - "Downloads models (~3GB)"
+      - "Sets up venv, dependencies"
+      - "Runs fix_permissions.sh"
+      - "Builds Docker images"
+      - "Runs health checks"
+      - "Optional: ingests library"
+  
+  - name: "Make Install Target"
+    status: "planned"
+    description: "make install wraps installer script"
+    health_check: "make install"
+    owner: "architect"
+  
+  - name: "Community Template WAD"
+    status: "blocked"
+    description: "config/wads/community-template/ — minimal working WAD for onboarding"
+    health_check: "test_community_template.py"
+    owner: "maat_n4"
+    blocked_by: ["ENG-001 (M2 firewall fix)"]
+    depends_on: ["STK-001"]
+  
+  - name: "QUICKSTART.md"
+    status: "planned"
+    description: "docs/community/QUICKSTART.md — 5-minute path to first inference"
+    health_check: "N/A"
+    owner: "kali"
+    depends_on: ["STK-001"]
+  
+  - name: "CONTRIBUTING.md"
+    status: "planned"
+    description: "docs/community/CONTRIBUTING.md — WAD development guide"
+    health_check: "N/A"
+    owner: "kali"
+    depends_on: ["STK-001"]
+  
+  - name: "Repository Hygiene"
+    status: "planned"
+    description: "LICENSE, CODE_OF_CONDUCT.md, CHANGELOG.md"
+    health_check: "N/A"
+    owner: "kali"
+  
+  - name: "Sovereignty Ratio Verification"
+    status: "planned"
+    description: "make sovereignty shows >80% local inference"
+    health_check: "make sovereignty"
+    owner: "kali"
+  
+  - name: "Doc LLM Validation"
+    status: "planned"
+    description: "make doc-llm-validate — all reference docs pass M26"
+    health_check: "make doc-llm-validate"
+    owner: "kali"
+  
+  - name: "README.md (Launch)"
+    status: "planned"
+    description: "Compelling README — mission, architecture, demo, links"
+    health_check: "N/A"
+    owner: "kali"
+    phase: "PHASE_2"
+  
+  - name: "Demo GIF/Video"
+    status: "planned"
+    description: "2-min demo — install → first inference → WAD extend"
+    health_check: "N/A"
+    owner: "architect"
+    phase: "PHASE_2"
+  
+  - name: "Launch Announcement"
+    status: "planned"
+    description: "Blog post, Hacker News, Reddit, Discord"
+    health_check: "N/A"
+    owner: "user"
+    phase: "PHASE_2"
+  
+  - name: "v1.0.0-debut Tag"
+    status: "planned"
+    description: "Signed commit, immutable release point"
+    health_check: "git tag -s v1.0.0-debut"
+    owner: "kali"
+    phase: "PHASE_2"
+  
+  - name: "Branch Protection + CI"
+    status: "planned"
+    description: "main branch protection — PR required, CI required (make test-unit + make temple-grade)"
+    health_check: "GitHub Actions workflow"
+    owner: "architect"
+    phase: "PHASE_2"
+
+interface_contract:
+  provides:
+    - "One-command install experience"
+    - "Community onboarding path (QUICKSTART → CONTRIBUTING)"
+    - "Launch artifacts (README, demo, announcement)"
+    - "CI/CD gates for community contributions"
+  requires:
+    - "Engine Core: Working omega talk/summon, health checks"
+    - "Stacks: Community template WAD validated"
+    - "Engine Core: Sovereignty ratio >80% local"
+    - "All Realms: Doc LLM validation passing"
+  consumes:
+    - "scripts/install.sh"
+    - "config/wads/community-template/"
+    - "docs/community/QUICKSTART.md"
+    - "docs/community/CONTRIBUTING.md"
+    - "GitHub Actions workflows"
+  produces:
+    - "Installable Omega Engine on fresh Ubuntu"
+    - "Community WAD contributions"
+    - "Launch announcement package"
+    - "v1.0.0-debut release tag"
+
+health:
+  overall: "planned"
+  last_check: "2026-08-14T00:00:00Z"
+  checks:
+    - name: "installer"
+      status: "not_started"
+    - name: "community_template"
+      status: "blocked"
+      details: "Requires ENG-001 (M2 firewall fix)"
+    - name: "quickstart"
+      status: "not_started"
+    - name: "contributing"
+      status: "not_started"
+    - name: "repo_hygiene"
+      status: "not_started"
+    - name: "sovereignty_ratio"
+      status: "unknown"
+      details: "Run make sovereignty after Phase 0"
+    - name: "doc_llm_validate"
+      status: "unknown"
+      details: "Run make doc-llm-validate after Phase 0"
+    - name: "readme_demo"
+      status: "not_started"
+      phase: "PHASE_2"
+    - name: "launch_announcement"
+      status: "not_started"
+      phase: "PHASE_2"
+    - name: "branch_protection_ci"
+      status: "not_started"
+      phase: "PHASE_2"
+
+active_work:
+  - task_id: "COM-001"
+    title: "Write scripts/install.sh — one-command bootstrap"
+    owner: "architect"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: ["ENG-001", "ENG-004"]
+  
+  - task_id: "COM-002"
+    title: "Add make install target wrapping installer"
+    owner: "architect"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: ["COM-001"]
+  
+  - task_id: "COM-003"
+    title: "Write docs/community/QUICKSTART.md — 5-minute path"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: ["STK-001"]
+  
+  - task_id: "COM-004"
+    title: "Write docs/community/CONTRIBUTING.md — WAD development guide"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: ["STK-001"]
+  
+  - task_id: "COM-005"
+    title: "Add LICENSE, CODE_OF_CONDUCT.md, CHANGELOG.md"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: []
+  
+  - task_id: "COM-006"
+    title: "Verify sovereignty ratio >80% local"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: ["ENG-001", "ENG-004"]
+  
+  - task_id: "COM-007"
+    title: "Run make doc-llm-validate — all reference docs pass"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_1"
+    depends_on: ["ENG-001", "ENG-004"]
+  
+  - task_id: "COM-008"
+    title: "Write compelling README.md — mission, architecture, demo, links"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_2"
+    depends_on: ["COM-001", "COM-003", "COM-004", "COM-005"]
+  
+  - task_id: "COM-009"
+    title: "Record 2-min demo GIF/video — install → inference → WAD extend"
+    owner: "architect"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_2"
+    depends_on: ["COM-001"]
+  
+  - task_id: "COM-010"
+    title: "Prepare launch announcement (blog, HN, Reddit, Discord)"
+    owner: "user"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_2"
+    depends_on: ["COM-008", "COM-009"]
+  
+  - task_id: "COM-011"
+    title: "Tag v1.0.0-debut with signed commit"
+    owner: "kali"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_2"
+    depends_on: ["COM-008", "COM-009", "COM-010"]
+  
+  - task_id: "COM-012"
+    title: "Freeze main branch protection — PR required, CI required"
+    owner: "architect"
+    status: "ready"
+    priority: "P0"
+    phase: "PHASE_2"
+    depends_on: ["COM-011"]
+
+blockers:
+  - "Community template WAD blocked on ENG-001 (M2 firewall fix)"
+  - "All Phase 1 community tasks depend on Phase 0 completion"
+
+deferred:
+  - "Community WAD marketplace/discovery"
+  - "Automated WAD review/approval pipeline"
+  - "Community forums/discord integration"
+  - "WAD analytics/telemetry (opt-in, local-only)"
+
+evolution_log:
+  - date: "2026-08-14"
+    decision: "VOS v1.0 instantiation"
+    author: "kali"
+    summary: "Community realm instantiated. All tasks planned across Phases 1-2. Critical dependency: ENG-001 (M2 firewall) must complete before community template WAD can be validated."
+    related_decisions: ["D-VOS-001"]

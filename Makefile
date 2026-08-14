@@ -280,10 +280,8 @@ check-m7-local-first:
 	@grep -q 'strategy: local_first' config/providers.yaml || (echo "$(RED)FAIL: providers.yaml missing local_first strategy$(NC)" && false)
 	@echo "$(GREEN)M7 passed: Local-first strategy configured$(NC)"
 	@echo "$(YELLOW)Checking M22 SSOT: is_cloud only in fallback_chain...$(NC)"
-	@grep -n "is_cloud:" config/providers.yaml | grep -v "inference.fallback_chain" && (echo "$(RED)FAIL: is_cloud found outside fallback_chain — run 'make check-m7-local-first'$(NC)" && false) || echo "$(GREEN)M22 passed: is_cloud SSOT intact$(NC)"
+	@$(PYTHON) scripts/check_m22_ssot.py
 
-# Check M23: Failure integrity - no soft-failure patterns (AST-based via Ruff)
-# Uses ratchet: fails only on NEW violations vs config/m23_baseline.txt
 check-m23-failure-integrity:
 	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"
 	@$(PYTHON) scripts/m23_gate.py || (echo "$(RED)FAIL: M23 soft-failure patterns$(NC)" && false)

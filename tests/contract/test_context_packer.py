@@ -169,7 +169,7 @@ async def test_pack_produces_valid_output(tmp_path, monkeypatch):
     # Use a small profile to keep the test fast (engineering-p3).
     if "engineering-p3" not in packer.profiles:
         pytest.skip("engineering-p3 profile not present")
-    output_dir = await packer.pack("engineering-p3")
+    output_dir, pack_id, pack_timestamp = await packer.pack("engineering-p3")
 
     # Manifest is now written to profile root (per v3 manual §1.8)
     profile_root = Path("context_packs") / "engineering-p3"
