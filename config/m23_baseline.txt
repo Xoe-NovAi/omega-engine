@@ -1,4 +1,4 @@
-     21 src/omega/observability/__init__.py
+     19 src/omega/observability/__init__.py
      11 src/omega/research/sediment.py
       9 src/omega/workers/freshness_checker.py
       9 src/omega/research/sandbox.py
@@ -14,7 +14,6 @@
       6 src/omega/governance/budget_guard.py
       6 src/omega/doc_reader/readers.py
       6 src/omega/agents/tty_agent.py
-      5 src/omega/oracle/backends/remote_provider.py
       5 src/omega/cli/fleet_status_tui.py
       5 src/omega/benchmarks/comprehensive_runner.py
       4 src/omega/vault/vault_core.py
@@ -69,6 +68,7 @@
       1 src/omega/soul/loader.py
       1 src/omega/research/schema.py
       1 src/omega/orchestrator/hmc_watcher.py
+      1 src/omega/oracle/soul_validator.py
       1 src/omega/oracle/session_manager.py
       1 src/omega/oracle/selective_hydration.py
       1 src/omega/oracle/security.py
@@ -95,4 +95,4 @@
       1 src/omega/config/loader.py
       1 src/omega/cli/vault.py
       1 src/omega/cli/bundle.py
-      1 Found 293 errors.
+      1 Found 287 errors.

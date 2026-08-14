@@ -176,7 +176,7 @@ class SoulValidator:
                 "allies": [],
                 "coordination_protocols": {
                     "workspace_lock": f"I check {entity_name.upper()}_WORKSPACE_LOCK before any file edit.",
-                    "live_feed": f"I post to {entity_name.upper()}_LIVE_FEED after each major task.",
+                    "live_feed": f"I post to {entity_name.upper()}_HMC_COLLABORATION_HUB after each major task.",
                     "hivemind": "I declare presence via hivemind_post_context at session start.",
                 },
             },

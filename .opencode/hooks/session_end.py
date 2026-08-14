@@ -38,15 +38,30 @@ CODEX_CAT_PATH = PROJECT_ROOT / "scripts" / "codex_cat.py"
 
 
 async def _write_timestamp(entity: str, session_id: str, model: str) -> None:
-    """Write minimal session timestamp to proposed_lessons.yaml (M5/M11)."""
+    """Write minimal session timestamp to proposed_lessons.yaml (M5/M11).
+    
+    Preserves any agent-written proposals from the just-completed session
+    rather than overwriting with an empty stub. This prevents the destructive
+    race where agents write proposals per AGENTS.md step 6.5, then the hook
+    fires and erases them.
+    """
     import yaml
 
     entity_name = entity if entity != "unknown" else "sophia"
     proposed_path = PROJECT_ROOT / "data" / "entities" / entity_name / "proposed_lessons.yaml"
+
+    # Read existing proposals first — preserve agent-written content
+    existing = {}
+    if proposed_path.exists():
+        with open(proposed_path) as f:
+            existing = yaml.safe_load(f) or {}
+
+    existing_proposals = existing.get("proposals", [])
+
     proposed_path.parent.mkdir(parents=True, exist_ok=True)
 
     data = {
-        "proposals": [],
+        "proposals": existing_proposals,
         "metadata": {
             "entity": entity_name,
             "session_id": session_id,
