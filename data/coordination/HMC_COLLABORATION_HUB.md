@@ -18,12 +18,13 @@
 **NEXT:** PHASE-1 (SDP Context Gauge v1) — **UNBLOCKED, execute after PHASE-0**
 - QW-2, QW-8, A-4, QW-4, QW-6, QW-9, QW-10
 
-**BLOCKED (research first — see RESEARCH_PLAN_PHASE1_4 v3.2.0 + GAP_REGISTRY.json):**
-- PHASE-2 → blocked on **R13** (Plugin Architecture)
-- PHASE-3 → blocked on **R16, R17, R18, R19, R20** (un-overengineering libs)
-- PHASE-4 → blocked on **R23, R24, R25, R26** (Phase D gate closure)
+**RESEARCH COMPLETE (2026-08-14) — PHASE-2 / PHASE-3 / PHASE-4 now UNBLOCKED:**
+- PHASE-2 → unblocked by **R13** (OpenCode plugin architecture) — `docs/research/R13_OPENCODE_PLUGIN_ARCHITECTURE_20260814.md`
+- PHASE-3 → unblocked by **R16, R17, R18, R19, R20** — `docs/research/R16..R20_*_20260814.md`
+- PHASE-4 → unblocked by **R23, R24, R25, R26** — `docs/research/R23..R26_*_20260814.md`
+- **R56** (Lazy Loading) re-researched — `docs/research/R56_LAZY_LOADING_20260814.md` (non-blocking)
 
-**SUPPLEMENTARY (not sprint-blocking):** R39–R56 reports (Phase2-plan topics). **LOST:** R56 (Lazy Loading) — re-research queued.
+**SUPPLEMENTARY:** R39–R56 reports (Phase2-plan topics) available in `docs/research/`.
 
 ---
 

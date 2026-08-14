@@ -74,19 +74,20 @@ different topics** than this plan. Example collisions:
 | R8 | Streaming timeout mystery | ✅ RESOLVED (pointer) | STREAMING_TIMEOUT_MYSTERY_RESEARCH_20260810.md |
 | R8b | Streaming observability | ✅ RESOLVED | `R8B_STREAMING_OBSERVABILITY_20260813.md` |
 | R9–R12 | Memory system | ✅ RESOLVED (pointer) | MEMORY_SYSTEMS_DEFINITIVE_REPORT.md |
+| R13 | OpenCode plugin architecture | ✅ RESOLVED | docs/research/R13_OPENCODE_PLUGIN_ARCHITECTURE_20260814.md |
 | R14 | Streaming heartbeat | ✅ RESOLVED (pointer) | R_C11_STREAMING_PATTERNS_20260723.md |
 | R14b | Nemotron fallback chain | 🔴 OUTSTANDING | not researched |
-| R16 | pydantic v2 | 🔴 OUTSTANDING | not researched (R42 is different topic) |
-| R17 | structlog | 🔴 OUTSTANDING | not researched (R43 is different topic) |
-| R18 | prometheus_client | 🔴 OUTSTANDING | not researched (R44 is different topic) |
-| R19 | Retry strategy | 🔴 OUTSTANDING | not researched (R45 is different topic) |
-| R20 | Keyblind/Authy/Vault | 🔴 OUTSTANDING | not researched |
+| R16 | pydantic v2 | ✅ RESOLVED | docs/research/R16_PYDANTIC_V2_MIGRATION_20260814.md |
+| R17 | structlog | ✅ RESOLVED | docs/research/R17_STRUCTLOG_ADOPTION_20260814.md |
+| R18 | prometheus_client | ✅ RESOLVED | docs/research/R18_PROMETHEUS_CLIENT_METRICS_20260814.md |
+| R19 | Retry strategy | ✅ RESOLVED | docs/research/R19_RETRY_STRATEGY_20260814.md |
+| R20 | Keyblind/Authy/Vault | ✅ RESOLVED | docs/research/R20_KEYBLIND_AUTHY_VAULT_20260814.md |
 | R21 | Workhorse paths | 🟡 PARTIAL (verify+extend) | CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md |
 | R22 | WARP proxy pool | 🟡 PARTIAL (verify+extend) | warp-proxy-pool/scripts/warp-ns-setup.sh |
-| R23 | Restic passphrase | 🔴 OUTSTANDING | not researched (R46 is different topic) |
-| R24 | AppArmor profiles | 🔴 OUTSTANDING | not researched (R47 is different topic) |
-| R25 | IA2 envelope freshness | 🔴 OUTSTANDING | not researched (R48 is different topic) |
-| R26 | Honker/Redis | 🔴 OUTSTANDING | not researched (R49 is different topic) |
+| R23 | Restic passphrase | ✅ RESOLVED | docs/research/R23_RESTIC_PASSPHRASE_20260814.md |
+| R24 | AppArmor profiles | ✅ RESOLVED | docs/research/R24_APPARMOR_PROFILES_20260814.md |
+| R25 | IA2 envelope freshness | ✅ RESOLVED | docs/research/R25_IA2_ENVELOPE_FRESHNESS_20260814.md |
+| R26 | Honker/Redis | ✅ RESOLVED | docs/research/R26_HONKER_REDIS_20260814.md |
 | R27 | tokens.total query verify | ✅ RESOLVED | `R27_TOKENS_TOTAL_VERIFICATION_20260813.md` |
 | R27b | NULL tokens.total | ✅ RESOLVED | `R27B_NULL_TOKENS_TOTAL_HANDLING_20260813.md` |
 | R28 | MCP Streamable HTTP | ✅ RESOLVED | `R28_MCP_STREAMABLE_HTTP_20260813.md` |
@@ -209,8 +210,8 @@ These gaps have substantial existing research. @researcher should **verify the e
 | # | Gap | Status | Action |
 |---|-----|--------|--------|
 | **G7** | Streaming timeout observability — **MYSTERY SOLVED** (v1.18.14 native retry) | Re-scoped | R8b: implement observability, not investigate |
-| **G8** | Keyblind/Authy/Agent Vault — existence unverified | Blocks UO-6.6 | R20 (P0) |
-| **G9** | Honker for Redis replacement — existence unverified | Blocks Redis removal | R26 (NEW, P2) |
+| **G8** | Keyblind/Authy/Agent Vault — **verified to exist** (2026-08-14) | Resolved by R20 | ✅ RESOLVED (R20) |
+| **G9** | Honker for Redis replacement — **verified to exist** (2026-08-14) | Resolved by R26 | ✅ RESOLVED (R26) |
 
 ---
 
@@ -347,10 +348,10 @@ Each research phase gets a task_id in TASK_REGISTRY.json:
 |------|------------|--------|------------|
 | pyresilience fails AnyIO test | Medium | High | Fallback to tenacity (already installed) |
 | interlock-cb vs pyresilience conflict unresolved | Medium | High | R30 5-way spike resolves with data; D-528 is locked default |
-| Keyblind/Authy don't exist | Medium | High | Keep VaultCore, slim to adapter only |
+| Keyblind/Authy don't exist | — | — | **INVALID — all three exist (verified 2026-08-14). Keep VaultCore regardless; external tools add SaaS/network deps unsuitable for sovereignty. See R20.** |
 | Streaming observability gap unsolvable | Low | Critical | Implement OBS-1 as best-effort, document |
 | Model window detection unreliable | Low | Medium | Use config fallback + manual override |
-| Honker doesn't exist | Medium | Medium | Keep Redis; defer removal (M12 advisory) |
+| Honker doesn't exist | — | — | **INVALID — Honker exists (russellromney/honker); Wafris moved Redis→SQLite. Evaluate Honker as local-first Redis replacement for single-node. See R26.** |
 | Partially-resolved gap (R4/R21/R22) is stale | Medium | Medium | Verify existing research is current before extending |
 
 ---
@@ -489,7 +490,7 @@ R13–R38. They do NOT satisfy this plan's outstanding gaps.
 | **R53** | R34 | Roadmap SSOT Conflict Verification | `R53_ROADMAP_SSOT_20260813.md` | research-roadmap-ssot-20260813 ✅ |
 | **R54** | R35 | Identity Fluidity E-0…E-5 Path Mapping | `R54_IDENTITY_FLUIDITY_20260813.md` | research-identity-fluidity-20260813 ✅ |
 | **R55** | R37 | YouTube Research Deep Dive | `R55_YOUTUBE_RESEARCH_DEEP_DIVE_20260813.md` | research-youtube-deep-dive-20260813 ✅ |
-| **R56** | R38 | OpenCode v1.17+ Lazy Loading | `R56_LAZY_LOADING_20260813.md` | research-lazy-loading-20260813 ⚠️ **LOST — stub only** |
+| **R56** | R38 | OpenCode v1.17+ Lazy Loading | `docs/research/R56_LAZY_LOADING_20260814.md` | research-lazy-loading-20260813 ✅ **RE-RESEARCHED 2026-08-14** |
 
 > **R56 data-loss note (M23):** The original `R38_LAZY_LOADING_20260813.md` was destroyed during
 > the reconciliation rename (source removed, destination not written; file was never git-tracked).

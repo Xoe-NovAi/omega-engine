@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-14T13:05:00Z",
+  "updated": "2026-08-14T14:30:00Z",
   "purpose": "Authoritative registry of ALL research gap IDs. Prevents gap-number reuse across plans (root cause of the 2026-08-14 R13-R38 collision). Any new research plan MUST register its gaps here with a UNIQUE prefix.",
   "rules": [
     "Gap IDs R1-R38 are OWNED by RESEARCH_PLAN_PHASE1_4_20260813.md (authoritative).",
@@ -89,6 +89,12 @@
       "plan": "phase1_4",
       "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
     },
+    "R13": {
+      "topic": "OpenCode plugin architecture",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R13_OPENCODE_PLUGIN_ARCHITECTURE_20260814.md"
+    },
     "R14": {
       "topic": "Streaming heartbeat",
       "status": "resolved",
@@ -103,33 +109,33 @@
     },
     "R16": {
       "topic": "pydantic v2",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R16_PYDANTIC_V2_MIGRATION_20260814.md"
     },
     "R17": {
       "topic": "structlog",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R17_STRUCTLOG_ADOPTION_20260814.md"
     },
     "R18": {
       "topic": "prometheus_client",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R18_PROMETHEUS_CLIENT_METRICS_20260814.md"
     },
     "R19": {
       "topic": "Retry strategy",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R19_RETRY_STRATEGY_20260814.md"
     },
     "R20": {
       "topic": "Keyblind/Authy/Vault",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R20_KEYBLIND_AUTHY_VAULT_20260814.md"
     },
     "R21": {
       "topic": "Workhorse paths",
@@ -145,27 +151,27 @@
     },
     "R23": {
       "topic": "Restic passphrase",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R23_RESTIC_PASSPHRASE_20260814.md"
     },
     "R24": {
       "topic": "AppArmor profiles",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R24_APPARMOR_PROFILES_20260814.md"
     },
     "R25": {
       "topic": "IA2 envelope freshness",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R25_IA2_ENVELOPE_FRESHNESS_20260814.md"
     },
     "R26": {
       "topic": "Honker/Redis",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "docs/research/R26_HONKER_REDIS_20260814.md"
     },
     "R27": {
       "topic": "tokens.total query verify",
@@ -342,10 +348,10 @@
       "report": "R55_YOUTUBE_RESEARCH_DEEP_DIVE_20260813.md"
     },
     "R56": {
-      "topic": "Lazy Loading (SUPPLEMENTARY, LOST \u2014 re-research queued)",
-      "status": "lost",
+      "topic": "Lazy Loading (SUPPLEMENTARY, re-researched 2026-08-14)",
+      "status": "resolved",
       "plan": "phase2_supplementary",
-      "report": "R56_LAZY_LOADING_20260813.md"
+      "report": "docs/research/R56_LAZY_LOADING_20260814.md"
     }
   },
   "next_free_id": 57,
