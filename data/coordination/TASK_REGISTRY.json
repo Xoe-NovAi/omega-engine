@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-13T17:07:13.654046+00:00",
+  "updated": "2026-08-14T12:45:00Z",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -618,8 +618,9 @@
       "launched_by": "kali",
       "channel": "opencode",
       "entity": "kali",
-      "description": "Phase R1 v3: R2,R3,R5,R6,R7,R8b,R27,R27b,R28,R29,R32 (R1,R8,R14 resolved; R4 verify+extend)",
-      "status": "ready",
+      "description": "Phase R1 v3: R2,R3,R5,R6,R7,R8b,R27,R27b,R28,R29,R32 (R1,R8,R14 resolved; R4 verify+extend). 11 gaps resolved with research reports written to research_reports/. Hivemind post sent ses_9453a1a3b873.",
+      "status": "completed",
+      "notes": "RESOLVED 2026-08-14 reconciliation: reports R2,R3,R5,R6,R7,R8b,R27,R27b,R28,R29,R32 exist (matching this plan's topics). See RESEARCH_PLAN_PHASE1_4_20260813.md v3.2.0 \u00a7RECONCILIATION.",
       "created_at": "2026-08-13T20:45:00Z",
       "last_checkpoint": "2026-08-13T20:45:00Z",
       "resumption_count": 0,
@@ -630,7 +631,10 @@
         "context-gauge",
         "streaming-observability",
         "R1-R8"
-      ]
+      ],
+      "plan_source": "PHASE1_4_PLAN v3.2.0 (AUTHORITATIVE SSOT)",
+      "gap_mapping_note": "Phase1-4 plan Phase 1 gaps (R2,R3,R5,R6,R7,R8b,R27,R27b,R28,R29,R32) \u2014 RESOLVED",
+      "is_sprint_blocker": false
     },
     {
       "task_id": "research-phase2-gaps-20260813",
@@ -640,6 +644,7 @@
       "entity": "kali",
       "description": "Phase R2 v3.1: R13,R14b,R26,R31,R33,R34,R35,R36 (R9-R12,R14 resolved - skip)",
       "status": "ready",
+      "notes": "OUTSTANDING after 2026-08-14 reconciliation: @researcher researched DIFFERENT topics under these numbers (now renumbered R39-R55). This plan's R13(plugin arch),R14b(Nemotron),R26(Honker/Redis),R31(plugin scope),R33(cold ctx),R34(provider bands),R35(model degradation),R36(baseline calib) remain UNRESEARCHED. See plan v3.2.0.",
       "created_at": "2026-08-13T20:45:00Z",
       "last_checkpoint": "2026-08-13T20:45:00Z",
       "resumption_count": 0,
@@ -650,7 +655,10 @@
         "zswap",
         "streaming-plugin",
         "R9-R14"
-      ]
+      ],
+      "plan_source": "PHASE1_4_PLAN v3.2.0 (AUTHORITATIVE SSOT)",
+      "gap_mapping_note": "Phase1-4 plan Phase 2 gaps (R13,R14b,R26,R31,R33,R34,R35,R36) \u2014 OUTSTANDING, sprint-blocking",
+      "is_sprint_blocker": true
     },
     {
       "task_id": "research-phase3-gaps-20260813",
@@ -660,6 +668,7 @@
       "entity": "kali",
       "description": "Phase R3 v3.1: R30 5-way CB spike (subsumes R15),R16,R17,R18,R19,R20,R37,R38",
       "status": "ready",
+      "notes": "PARTIAL after 2026-08-14 reconciliation: R30 (5-way CB spike) RESOLVED (report R30_CIRCUIT_BREAKER_BENCHMARK). R16(pydantic),R17(structlog),R18(prometheus),R19(retry),R20(vault),R37(identity E-0),R38(notebooklm) NOT researched \u2014 @researcher researched different topics (now R40,R43,R44,R45,R54,R55). See plan v3.2.0.",
       "created_at": "2026-08-13T20:45:00Z",
       "last_checkpoint": "2026-08-13T20:45:00Z",
       "resumption_count": 0,
@@ -670,7 +679,10 @@
         "un-overengineering",
         "pyresilience",
         "R15-R20"
-      ]
+      ],
+      "plan_source": "PHASE1_4_PLAN v3.2.0 (AUTHORITATIVE SSOT)",
+      "gap_mapping_note": "Phase1-4 plan Phase 3 gaps (R16,R17,R18,R19,R20,R37,R38) \u2014 OUTSTANDING, sprint-blocking (R16-R20)",
+      "is_sprint_blocker": true
     },
     {
       "task_id": "research-phase4-gaps-20260813",
@@ -680,6 +692,7 @@
       "entity": "kali",
       "description": "Phase R4 v3: R23,R24,R25 (R21,R22 verify+extend)",
       "status": "ready",
+      "notes": "OUTSTANDING after 2026-08-14 reconciliation: R23(restic),R24(apparmor),R25(IA2 envelope) NOT researched \u2014 @researcher researched different topics (now R46,R47,R48). R21,R22 remain verify+extend (not in @researcher's round). See plan v3.2.0.",
       "created_at": "2026-08-13T20:45:00Z",
       "last_checkpoint": "2026-08-13T20:45:00Z",
       "resumption_count": 0,
@@ -691,7 +704,419 @@
         "workhorse",
         "warp",
         "R21-R25"
-      ]
+      ],
+      "plan_source": "PHASE1_4_PLAN v3.2.0 (AUTHORITATIVE SSOT)",
+      "gap_mapping_note": "Phase1-4 plan Phase 4 gaps (R23,R24,R25) \u2014 OUTSTANDING, sprint-blocking",
+      "is_sprint_blocker": true
+    },
+    {
+      "task_id": "research-fleet-health-dashboard-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2A: Agent Fleet Health Dashboard \u2014 real-time soul health metrics across all entities (soul health scores, directive compliance, l3 adoption rates). Integrate SoulHealthScorer across fleet; post to Hivemind for fleet awareness.",
+      "status": "completed",
+      "created_at": "2026-08-13T21:00:00Z",
+      "last_checkpoint": "2026-08-13T14:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "fleet-health",
+        "soul-health",
+        "m5"
+      ],
+      "notes": "SoulHealthScorer executed against 31 entities. Fleet health 14.09/100. Report written.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R39 (Phase2 topic: Fleet Health Dashboard) \u2014 NOT Phase1-4 R13 (Plugin Architecture)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-subagent-chains-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2B: Subagent Pair-Execution Chains \u2014 walk ancestor/descendant trees; trace pair-execution chains (executor-opus + executor-gpt); identify orchestrators. Build /doctor-style tool for chain-of-custody auditing.",
+      "status": "completed",
+      "created_at": "2026-08-13T21:05:00Z",
+      "last_checkpoint": "2026-08-13T14:45:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "subagent-chains",
+        "coordination",
+        "audit"
+      ],
+      "notes": "PairExecutionChain designed + tested. Tree-walking + chain-of-custody auditing. Report + impl written.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R40 (Phase2 topic: Pair-Execution Chains) \u2014 NOT Phase1-4 R14 (Streaming Heartbeat, resolved)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-a2a-protocol-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2C: Cross-Agent A2A Protocol \u2014 design Abstract-to-Agent protocol for discovery, delegation, handoff. Document current Hivemind broadcast limitations; define contract layer, acceptance, completion, archive actions, TTL-based expiration.",
+      "status": "completed",
+      "created_at": "2026-08-13T21:10:00Z",
+      "last_checkpoint": "2026-08-13T15:00:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "a2a-protocol",
+        "fleet",
+        "handoff"
+      ],
+      "notes": "A2A protocol designed. Builds on existing A2A infrastructure (Agent Cards, SPIFFE auth, skill mapping). Adds A2AMessage, A2ADiscovery, A2ADelegation. Integrates with HandoffPacket + CAPABILITY_REGISTRY.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R41 (Phase2 topic: Cross-Agent A2A) \u2014 NOT Phase1-4 R15 (pyresilience, subsumed by R30)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-memory-wiring-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2D: MemoryStore \u2192 Oracle.py Wiring Verification \u2014 confirm add_exchange() calls at lines 153, 318, 387 are complete; add missing exchange points; test cross-pollination with soul.yaml lessons; verify L1\u2192L2\u2192L3 pipeline flows correctly.",
+      "status": "completed",
+      "created_at": "2026-08-13T21:15:00Z",
+      "last_checkpoint": "2026-08-13T15:15:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "memory-wiring",
+        "cross-pollination",
+        "m13"
+      ],
+      "notes": "Wiring verified. Two add_exchange() call sites confirmed at oracle.py:699 and oracle.py:1212. Phase 2 plan line numbers (153,318,387) were incorrect \u2014 actual lines are 699 and 1212. Template written for future exchange points.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R42 (Phase2 topic: MemoryStore wiring) \u2014 NOT Phase1-4 R16 (pydantic v2)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-handoff-v2-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2E: Handoff Protocol v2 \u2014 full A2A handoff protocol with contract layer, acceptance, completion, archive actions, TTL-based expiration. Current handoff is basic; v2 adds audit trails, priority levels (0/1/2), and TTL-based expiration.",
+      "status": "completed",
+      "notes": "RESOLVED 2026-08-14: report R43_HANDOFF_PROTOCOL_V2_20260813.md exists (renumbered from R17). Marked completed to match sibling Phase2-topic tasks.",
+      "created_at": "2026-08-13T21:20:00Z",
+      "last_checkpoint": "2026-08-13T21:20:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "handoff-v2",
+        "contract",
+        "mcp"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R43 (Phase2 topic: Handoff Protocol v2) \u2014 NOT Phase1-4 R17 (structlog)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-provider-chain-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2F: Provider Chain Hardening \u2014 formalize local-first strategy (native-gguf\u2192lmster\u2192Ollama\u2192Google\u2192OpenRouter\u2192OCZ); add breaker unification per R6\u2032; implement fallback chain per provider. Enforce M8 zero telemetry throughout.",
+      "status": "completed",
+      "created_at": "2026-08-13T21:25:00Z",
+      "last_checkpoint": "2026-08-13T15:45:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "provider-chain",
+        "m7",
+        "m8"
+      ],
+      "notes": "Provider chain hardened. local_first verified. antigravity fallback corrected (added openrouter, opencode-zen). sovereignty ratio template written. is_cloud flags verified.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R44 (Phase2 topic: Provider Chain Hardening) \u2014 NOT Phase1-4 R18 (prometheus_client)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-tokenomics-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2G: Tokenomics & Cost Modeling \u2014 cost model per provider per model per workload; sovereignty ratio tracking; billing ledger that works. Reference M18 mandate: every token must serve a purpose. Include per-chunk timeout configs, total stream timeouts, and provider sovereignty scores.",
+      "status": "completed",
+      "created_at": "2026-08-13T21:30:00Z",
+      "last_checkpoint": "2026-08-13T16:00:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "tokenomics",
+        "m18",
+        "cost-model"
+      ],
+      "notes": "Tokenomics designed. Cost model template written. Sovereignty ratio integrates with MetricsDB is_cloud_corrected field. Provider cost matrix documented. Integrates with omega-hub_sovereignty_ratio().",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R45 (Phase2 topic: Tokenomics) \u2014 NOT Phase1-4 R19 (Retry strategy)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-lorraine-firewall-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 3A: Lorraine Code / Cline-M3 Firewall Audit \u2014 D-208 heritage vetting. Audit firewall rules; ensure [id-soft:] tags properly vetted; no over-attribution. M14 compliance gate.",
+      "status": "completed",
+      "created_at": "2026-08-13T22:00:00Z",
+      "last_checkpoint": "2026-08-14T01:00:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "firewall-audit",
+        "m14",
+        "heritage"
+      ],
+      "notes": "Firewall audit complete. 12 [id-soft:] tags audited, 5 vet-015 ZONEID entries verified, 3 over-attributed tags stripped. M14 compliance confirmed. All retained tags have proper vet records with scope declarations.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R46 (Phase2 topic: Firewall Audit) \u2014 NOT Phase1-4 R23 (Restic passphrase)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-container-hardening-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 3B: OEM-003: Container Hardening \u2014 AppArmor profile hardening; capability bounding; seccomp profiles for Omega containers. Current: containers unconfined (V-10 gap). Produce hardened quadlet spec.",
+      "status": "completed",
+      "created_at": "2026-08-13T22:05:00Z",
+      "last_checkpoint": "2026-08-14T01:15:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "container-hardening",
+        "v-10",
+        "podman"
+      ],
+      "notes": "Container hardening complete. 7 Quadlets audited with UserNS=keep-id + User=1000. 3 :U flags removed from shared host volumes. M6 compliance confirmed across all Quadlets.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R47 (Phase2 topic: Container Hardening) \u2014 NOT Phase1-4 R24 (AppArmor profiles)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-ia2-freshness-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 3C: OEM-004: IA2 Signature Freshness / Envelope \u2014 freshness check mechanism; signature validation; replay attack prevention. M22 (Response Provenance) compliance. Design envelope format with timestamp + nonce + signature.",
+      "status": "completed",
+      "created_at": "2026-08-13T22:10:00Z",
+      "last_checkpoint": "2026-08-14T01:30:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "ia2",
+        "m22",
+        "envelope"
+      ],
+      "notes": "IA2 signature freshness designed. Half-life decay (FACT:180d, EVENT:30d, PREFERENCE:90d, ENTITY:365d, RELATION:180d, PERMANENT:\u221e) + access boost (1+ln(1+count)) + floor 0.1. Integrates with sovereignty gate M7 local-first ratio \u2265 0.80.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R48 (Phase2 topic: Signature Freshness) \u2014 PARTIAL overlap with Phase1-4 R25 (IA2 envelope freshness)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-grok-pool-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 3D: Grok CLI 8-Account Fabric Pool \u2014 D-360\u2032: vault \u2192 smoke \u2192 pool (not 4h fantasy). Single ACP smoke test first, then pool. Vault MVP (V-1 ticket) must exist before 8-account fabric can be built.",
+      "status": "completed",
+      "notes": "RESOLVED 2026-08-14: report R49_GROK_FABRIC_POOL_20260813.md exists (renumbered from R26). Marked completed to match sibling Phase2-topic tasks.",
+      "created_at": "2026-08-13T22:15:00Z",
+      "last_checkpoint": "2026-08-13T22:15:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "grok-pool",
+        "v-1",
+        "fabric"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R49 (Phase2 topic: Grok CLI pool) \u2014 NOT Phase1-4 R26 (Honker/Redis)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-cb-benchmark-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2 Critical: Circuit Breaker Benchmark \u2014 benchmark 5 libraries (pyresilience, tenacity, stamina, pybreaker, interlock-cb) under load. Document failure detection latency, false positive rates, recovery time, resource overhead. Live benchmarks required, not assumptions. Blocks UO-6.1. \u2014 COMPLETED: Live benchmark of 5 CB libraries. Recommendation: interlock 2.6.0 (mature, sync+async, full pipeline). pybreaker ruled out (sync-only, M1 violation). Report: R30_CIRCUIT_BREAKER_BENCHMARK_20260813.md",
+      "status": "completed",
+      "created_at": "2026-08-13T22:30:00Z",
+      "last_checkpoint": "2026-08-13T19:55:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "sdp",
+        "circuit-breaker",
+        "u-o-6-1",
+        "resilience"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R30 (AGREES in both plans: 5-way CB spike) \u2014 RESOLVED for both",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-dimension-freewill-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2 Critical: Dimension / Free-Will / Phase \u0393 Hub Split \u2014 map to Cognitive Sovereign evolution from functional runtime. How the 3-tier memory (Hot/Warm/Cold) interacts with free-will dimension markers and phase \u0393 hub architecture. Block vision integration without this. \u2014 COMPLETED: Mapped Dimension Framework (Tri-Store Concept Graph), Free-Will (Cognitive Sovereign Pillar 1 Navigator), Phase \u0393 Hub Split (M16 modularization). All PARKED long-arc, dependency chain defined. Report: R31_DIMENSION_FREEWILL_HUB_SPLIT_20260813.md",
+      "status": "completed",
+      "created_at": "2026-08-13T22:35:00Z",
+      "last_checkpoint": "2026-08-13T20:10:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "sdp",
+        "dimension",
+        "free-will",
+        "cognitive-sovereign"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R51 (Phase2 topic: Dimension/Free-Will) \u2014 NOT Phase1-4 R31 (Plugin scope reduction)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-living-os-body-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2 Critical: Living Research OS Body \u2014 D-371/D-372 amendments; body SUPERSEDED by banner + Ark \u00a73.2. Formal decision required: implement/archive/replace. Read D-371, D-372, D-371\u2032, D-372\u2032. Block spec integrity without this decision. \u2014 COMPLETED: Decision = ARCHIVE body, KEEP vision+banner. D-371/D-372 are PHANTOM REFERENCES (never created). Spec already has supersession banner (D-357, D-358, D-364). Report: R33_LIVING_RESEARCH_OS_BODY_20260813.md",
+      "status": "completed",
+      "created_at": "2026-08-13T22:40:00Z",
+      "last_checkpoint": "2026-08-13T20:25:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "sdp",
+        "living-os-body",
+        "spec-integrity",
+        "d-371"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R52 (Phase2 topic: Living Research OS) \u2014 NOT Phase1-4 R33 (Cold session context)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-roadmap-ssot-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2 Critical: CANONICAL_ROADMAP vs STRATEGY_CORPUS_MAP conflict \u2014 verify no competing roadmaps exist that could fragment dev direction. STRATEGY_ARK_BLUEPRINT.md is SSOT v5.1; CANONICAL_ROADMAP was absorbed. Check for any roadmaps claiming critical path without supersession banners. \u2014 COMPLETED: No competing roadmaps. 24 roadmap files found: 1 pointer (docs/ROADMAP.md SUPERSEDED-STUB), 1 proposal (KALI_DEV_ROADMAP synthesizes SSOTs), 2 drafts (researcher workspace), 19 archived. SSOT hierarchy intact: Ark v5.1 \u2192 Corpus Map \u2192 Fleet Playbook. Report: R34_ROADMAP_SSOT_20260813.md",
+      "status": "completed",
+      "created_at": "2026-08-13T22:45:00Z",
+      "last_checkpoint": "2026-08-13T20:40:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "sdp",
+        "roadmap-ssot",
+        "canonical-roadmap",
+        "d-354"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R53 (Phase2 topic: Roadmap SSOT) \u2014 NOT Phase1-4 R34 (Provider band adjustments)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-identity-fluidity-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 2 Critical: Identity Fluidity E-0\u2026E-5 paths \u2014 map grokster workspace paths to actual Omega entity directives, core_principles, and soul.yaml fields. D-367 added E-0\u2026E-5 paths; need mapping to actual entity structure. Block grokster integration without this. \u2014 COMPLETED: Mapping defined. E-0\u2026E-5 are PHANTOM REFERENCES (D-368 cites them, files dont exist). Actual mapping: Soul Kernel\u2192entity block, Temporal Trace\u2192legacy+session_gnosis, Voice Calibration\u2192traits.voice, Auto-Hydration\u2192omega-hub_entity_hydrate (future). Report: R35_IDENTITY_FLUIDITY_20260813.md",
+      "status": "completed",
+      "created_at": "2026-08-13T22:50:00Z",
+      "last_checkpoint": "2026-08-13T20:55:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "sdp",
+        "identity-fluidity",
+        "e-0-to-e-5",
+        "grokster"
+      ],
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R54 (Phase2 topic: Identity Fluidity) \u2014 NOT Phase1-4 R35 (Model degradation)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-youtube-deep-dive-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 4: YouTube Research Sessions Deep Dive \u2014 24 proposals \u2192 top 5 force multipliers (Ornith-9B, Vulkan, Instruction Router, Hardening, llama-optimus). Read CARMACK_DEFINITIVE_STRATEGY_20260730.md. 5,000+ lines across 6 documents. Phase 0 strategy: research complete, awaiting implementation go/no-go.",
+      "status": "completed",
+      "created_at": "2026-08-13T23:00:00Z",
+      "last_checkpoint": "2026-08-14T02:00:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "youtube-research",
+        "force-multipliers",
+        "carmack"
+      ],
+      "notes": "YouTube research deep dive designed. 5 force multipliers: prompt cache fix, workstation hardening, model-aware instruction router, GPU + build infrastructure, model fabric expansion. Integrates with CARMACK_DEFINITIVE_STRATEGY_20260730.md. Phase 0 strategy complete, awaiting go/no-go.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R55 (Phase2 topic: YouTube Deep Dive) \u2014 NOT Phase1-4 R37 (Identity fluidity E-0)",
+      "is_sprint_blocker": false
+    },
+    {
+      "task_id": "research-lazy-loading-20260813",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Phase 4: OpenCode v1.17+ Lazy Loading Edge Cases \u2014 v1.17.0 plugins from config array silently not loaded. Edge case documentation: when does lazy loading fail? How to recover? Document recovery procedures for missing packages, bad entrypoints, version conflicts.",
+      "status": "completed",
+      "created_at": "2026-08-13T23:05:00Z",
+      "last_checkpoint": "2026-08-14T02:15:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "sdp",
+        "lazy-loading",
+        "v1.17",
+        "plugin-recovery"
+      ],
+      "notes": "\u26a0\ufe0f ARTIFACT LOST during 2026-08-14 reconciliation rename (source removed, destination not written; file was never git-tracked). Report R56_LAZY_LOADING_20260813.md is a RECONSTRUCTED STUB only. Re-research required. Original execution on 2026-08-13 is recorded here but the deliverable is missing.",
+      "plan_source": "PHASE2_PLAN (superseded, archived 2026-08-14)",
+      "gap_mapping_note": "R56 (Phase2 topic: Lazy Loading) \u2014 LOST artifact; NOT Phase1-4 R38 (NotebookLM). Re-research queued.",
+      "is_sprint_blocker": false
     }
   ]
 }

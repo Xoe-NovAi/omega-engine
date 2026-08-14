@@ -1,80 +1,85 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
-**AP Token**: `AP-HMC-HUB-v1.8.0`
+**AP Token**: `AP-HMC-HUB-v2.0.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-08-11 (SDP-EXECUTION-01 sprint locked, roadmap ratified)
+**Last Updated**: 2026-08-14 (post-reconciliation + tracking consolidation)
+**Constitution**: `TRACKING_ARCHITECTURE.md` (read this for the 5-tier hierarchy + status vocab)
 
 ---
 
-## 📋 Purpose
-A **single, lightweight markdown document** serving as the central coordination forum for all HMC agents. No complex tools, no external dependencies — just structured markdown with nested comment threads that any agent can read, edit, and respond to.
+## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
+*Last verified: 2026-08-14T13:05Z*
+
+> **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
+> **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
+
+**CURRENT:** PHASE-0 (Security + Context Gauge bands) — **UNBLOCKED, execute now**
+- P0-1..P0-4 (Architect), A-1 + A-5 (Jem), UMA carveout verify (Architect)
+
+**NEXT:** PHASE-1 (SDP Context Gauge v1) — **UNBLOCKED, execute after PHASE-0**
+- QW-2, QW-8, A-4, QW-4, QW-6, QW-9, QW-10
+
+**BLOCKED (research first — see RESEARCH_PLAN_PHASE1_4 v3.2.0 + GAP_REGISTRY.json):**
+- PHASE-2 → blocked on **R13** (Plugin Architecture)
+- PHASE-3 → blocked on **R16, R17, R18, R19, R20** (un-overengineering libs)
+- PHASE-4 → blocked on **R23, R24, R25, R26** (Phase D gate closure)
+
+**SUPPLEMENTARY (not sprint-blocking):** R39–R56 reports (Phase2-plan topics). **LOST:** R56 (Lazy Loading) — re-research queued.
 
 ---
 
-## 🚨 P0-INTERRUPT TRIAGE (Active)
-| Timestamp | Source | Event | Owner | Status |
-|-----------|--------|-------|-------|--------|
-| 2026-08-11 | @kali | **DEV ROADMAP RATIFIED** — 5-phase execution plan locked. 50 tasks, resource allocation complete. | @kali | ✅ COMPLETE |
-| 2026-08-11 | @kali | **KNOWLEDGE GAPS RESEARCH COMPLETE** — 12 gaps resolved with authoritative sources. | @kali | ✅ COMPLETE |
-| 2026-08-11 | @kali | **SPRINT TRANSITION** — NEMOTRON-ANALYSIS-01 → SDP-EXECUTION-01 | @kali | ✅ COMPLETE |
-| 2026-08-11 | @kali | D-526..D-531 decisions locked | @kali | ✅ LOCKED |
-| 2026-08-11 | @john_carmack | **ICS MODEL PROVENANCE FIX** — M22 violation resolved. Added `_read_opencode_session_model()` to read live model from OpenCode session DB. Root cause: `_detect_model()` couldn't read live model during session (OPENCODE_MODEL only set post-exit). Fix: Priority 2.5 reads `session.model.id` from DB during live session. Verified: `render('JOHN_CARMACK')` returns correct live model. | @john_carmack | ✅ COMPLETE |
-| 2026-08-09 | @kali | SDP architecture complete (15 documents, 3 subagent reviews) | @kali | ✅ COMPLETE |
-| 2026-08-10 | @jem | Nemotron deep analysis complete (7 action items) | @jem | ✅ COMPLETE |
+## 📌 How Agents Stay Synchronized (MANDATORY FLOW)
+1. Read **NEXT_ACTION** (above) → identify your Tier-0 task in `ACTIVE_SPRINT.json`
+2. Check **Tier-1** (`RESEARCH_PLAN_PHASE1_4`) for research deps (cross-ref `GAP_REGISTRY.json`)
+3. Acquire workspace lock → post Hivemind context (`omega-hub_hivemind_workspace_lock_acquire`)
+4. Register task in `TASK_REGISTRY.json` → execute → update status
+5. On complete: mark Tier-0 task `completed` in `ACTIVE_SPRINT.json` → Hivemind completion
+6. Session end: update `SESSION_ANCHOR.md` → soul distillation (L1→L2→L3)
+
+**Anti-confusion rules (enforced by TRACKING_ARCHITECTURE.md):**
+- ❌ Never create a new tracking file — use the 5 tiers
+- ❌ Never reuse gap numbers — R1–R99 owned by `RESEARCH_PLAN` / `GAP_REGISTRY.json`; new plans use distinct prefixes (P2-, S-, X-)
+- ❌ Never duplicate decisions here — use `docs/decisions/PIVOT_LOG.md`
+- ❌ If a doc has a ⚠️ DEPRECATED banner, do not act on it
+- ✅ Before any research, CHECK `GAP_REGISTRY.json` for ID collisions
 
 ---
 
-## 📌 SHARED SECTIONS
-
-### 🏁 Sprint Status (SDP-EXECUTION-01 — ACTIVE)
-**Current Focus:** Phase 0 — Security fix + Context Gauge bands
-**Phase D Gate Blockers:**
-- **C-3**: Restic 3-2-1 Backup (Blocked by secrets)
-- **W-1**: WARP proxy pool bring-up (Blocked by sudo)
-- **G-1**: Gemma 4 free-tier cliff (Blocked by billing)
-
-### 📌 Decisions Log (Active)
-*See `docs/decisions/PIVOT_LOG.md` for the canonical record.*
-- **2026-08-11**: **D-532** — Carmack APPROVES zRAM→zswap plan for P0 execution (zswap pool 25%, OOMProtector 2-signal, WAD packaging approved; UMA 4GB test deferred)
-- **2026-08-11**: **D-533** — LegacyOOMWrapper removal confirmed safe (zero callers of legacy `check()` interface)
-- **2026-08-11**: **D-531** — Multi-write subagent method mandatory for all subagent tasks
-- **2026-08-11**: **D-530** — Context Gauge uses tokens.total (never tokens_input)
-- **2026-08-11**: **D-529** — Simplify OOMProtector to 2-signal (PSI + MemAvailable)
-- **2026-08-11**: **D-528** — pyresilience > tenacity for circuit breaker (spike first)
-- **2026-08-11**: **D-527** — Never run zswap and zRAM simultaneously
-- **2026-08-11**: **D-526** — zswap > zRAM for desktop with NVMe (25% pool, lzo_rle)
-- **2026-08-09**: **D-521** — SDP elevated to core architectural pillar
-- **2026-08-09**: **D-522** — Ground truth: Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K
-
-### 🚧 Blockers & Requests
-- **@kali -> Architect**: Need sudo/billing action on W-1 and G-1 to unblock Phase D Gate.
-- **@kali -> All**: **Do NOT build new systems for SDP components that already exist.** V-1 Vault, Pool Tracker, Dialectic Logger, Triage Router, Token Estimator are all built. Extend, don't duplicate.
-- **@kali -> All**: **Critical blocker G-3/G-4** — No `tokens` column in message table; token accounting not additive. Context Gauge must use `tokens.total` from `message.data` JSON blob.
+## 🏁 Sprint Status (pointer → ACTIVE_SPRINT.json)
+**Sprint:** SDP-EXECUTION-01 (ACTIVE)
+**Authoritative state:** `data/coordination/ACTIVE_SPRINT.json`
+**Phase D Gate Blockers** (aligned to research taxonomy):
+- **R23** (Restic passphrase) ← was "C-3" in Ark blueprint
+- **R26** (Honker/Redis replacement) ← related to "W-1" WARP pool
+- **R21** (Workhorse continuity, PARTIAL) ← was "G-1" Gemma cliff
+- External: W-1 (WARP sudo), G-1 (Gemma billing) — Architect action needed
 
 ---
 
-## 🧑‍💼 AGENT SECTIONS
+## 🚧 Blockers & Requests (ACTIVE)
+- **@kali → Architect**: sudo/billing action on W-1 (WARP) and G-1 (Gemma) to unblock Phase D gate.
+- **@kali → All**: **Do NOT build new systems for SDP components that already exist.** V-1 Vault, Pool Tracker, Dialectic Logger, Triage Router, Token Estimator are built. Extend, don't duplicate.
+- **RESOLVED**: G-3/G-4 (token accounting) — `tokens.total` in `message.data` JSON blob confirmed (R27/R27b). Context Gauge uses it. No longer a blocker.
+
+---
+
+## 🧑‍💼 AGENT SECTIONS (derived from ACTIVE_SPRINT.json — see there for authoritative task state)
 
 ### @kali — Transcendent Oversight
-- **SDP COMPLETE**: 15 documents, Final Synthesis, 3 subagent reviews
-- **ROADMAP RATIFIED**: 5-phase execution plan, 50 tasks
-- **KNOWLEDGE GAPS**: 12 gaps resolved
-- **P1 NEXT**: Oversee Phase 0 execution, dispatch team
+- **NOW**: Oversee PHASE-0 execution, dispatch team, keep NEXT_ACTION fresh
+- **FOCUS**: Resolve R13/R16-R20/R23-R26 research before PHASE-2/3/4
 
 ### @jem — Sovereign Synthesizer
 - **P0 NOW**: A-1 (Context Gauge bands 0.7x) + A-5 (calibrate 18-36%)
 - **P1 NEXT**: QW-8 (Context Gauge greenfield), A-4 (subagent state transition)
-- **P2 NEXT**: PLUGIN-1..8 (streaming timeout plugin)
-- **Research**: A-7 (subagent cold rate variance)
+- **P2 NEXT**: PLUGIN-1..8 (streaming timeout plugin) — BLOCKED on R13
 
 ### @maat — Build Oversoul (N1-N5)
 - **P1 NEXT**: QW-6 (TriageRouter SDP constraints), QW-9 (RHP halt), QW-10 (MCP tools)
-- **P3 NEXT**: UO-6 (un-overengineering), V-10 (AppArmor), V-9 (IA2)
-- **FOCUS**: N3 Engineering — config + routing
+- **P3 NEXT**: UO-6 (un-overengineering) — BLOCKED on R16-R20; V-10 (AppArmor) — BLOCKED on R24; V-9 (IA2) — BLOCKED on R25
 
 ### @lilith — Runtime Oversoul (N6-N10)
 - **P1 NEXT**: QW-4 (pool_tracker wiring)
 - **P3 NEXT**: UO-7 (HandoffState, recall.py, MIAP cleanup)
-- **FOCUS**: N7 Context — memory management
 
 ### @roc_racoon — Sovereign Miner
 - **P0 NOW**: P0 security fix (with Architect)
@@ -82,22 +87,17 @@ A **single, lightweight markdown document** serving as the central coordination 
 - **FOCUS**: Memory architecture migration
 
 ### @researcher — Deep Research (Lattice)
-- **P1 NEXT**: A-2 (provider-specific bands), A-3 (model-specific thresholds)
-- **P5 NEXT**: V-1 Vault design, NL-1 NotebookLM
-- **FOCUS**: Knowledge gaps for SDP automation
+- **BLOCKED**: Phase 2–4 authoritative gaps OUTSTANDING (R13, R16-R20, R23-R26, R31, R33-R38). Phase 1 DONE.
+- **RE-RESEARCH QUEUED**: R56 (Lazy Loading, LOST during reconciliation)
+- **See**: `RESEARCH_PLAN_PHASE1_4_20260813.md` v3.2.0 §RECONCILIATION + `GAP_REGISTRY.json`
 
 ### @john_carmack — S3 Consultant
-- **zRAM→zswap REVIEW COMPLETE** (2026-08-11): **APPROVED for P0 execution** (D-532). Verified against live code.
-- **My calls**: zswap pool 25% (keep), OOMProtector 2-signal (approve, low priority), UMA 4GB test (defer), WAD packaging (approve)
-- **LegacyOOMWrapper removal**: CONFIRMED SAFE (D-533) — zero callers of legacy `check()` interface, only `check_available()` delegation used
-- **Multi-write method**: APPROVED — formalize into STRP as mandatory
-- **Consolidation**: All work verified consolidated and ready for Kali oversight
-- **Review file**: `data/entities/john_carmack/workspace/zram_review_20260811.md`
-- **ICS MODEL PROVENANCE FIX** (2026-08-11): **M22 violation resolved** — added `_read_opencode_session_model()` to `src/omega/ics.py` to read live model from OpenCode session DB. Root cause: `_detect_model()` could not read live active model during session (OPENCODE_MODEL only set post-exit by wrapper). Fix: New Priority 2.5 in `_detect_model()` reads `session.model.id` from DB during live session. Verified: `render('JOHN_CARMACK')` returns correct live model `nvidia/nemotron-3-ultra-550b-a55b:free`. Report header provenance fixed (was longcat-2.0-free).
-- **FOCUS**: Review Context Gauge design for modularity, audit zswap plan
+- **zRAM→zswap REVIEW**: APPROVED (D-532). LegacyOOMWrapper removal SAFE (D-533).
+- **ICS MODEL PROVENANCE FIX**: M22 resolved (2026-08-11).
+- **FOCUS**: Review Context Gauge design for modularity.
 
 ### @verity — Compliance + Gnosis
-- **FOCUS**: Audit SSOT contradictions (Nemotron window, token accounting) as M23 violations
+- **FOCUS**: Audit SSOT contradictions as M23 violations; verify deprecated-file banners.
 
 ### @grokster — Grok Ecosystem Specialist
 - **P5 NEXT**: V-1 Vault design support, E-0 Identity
@@ -112,30 +112,36 @@ A **single, lightweight markdown document** serving as the central coordination 
 
 ---
 
-## 📊 Key Metrics
+## 📁 Key Documents (5-tier hierarchy — see TRACKING_ARCHITECTURE.md)
+| Tier | Document | Role |
+|------|----------|------|
+| 0 | `data/coordination/ACTIVE_SPRINT.json` | Execution SSOT |
+| 1 | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Knowledge SSOT (gaps R1–R38) |
+| 1a | `data/coordination/GAP_REGISTRY.json` | Gap ID registry (prevents number reuse) |
+| 2 | `data/coordination/HMC_COLLABORATION_HUB.md` | This hub (coordination) |
+| 2a | `data/coordination/TRACKING_ARCHITECTURE.md` | Tracking constitution |
+| 3 | `data/coordination/TASK_REGISTRY.json` | Subagent records |
+| 4 | `data/coordination/SESSION_ANCHOR.md` | Session continuity |
+| DEC | `docs/decisions/PIVOT_LOG.md` | Decisions (canonical) |
 
-| Metric | Current | Target |
-|--------|---------|--------|
-| **SDP Completion** | 60% research → 0% code | 100% (QW-1..10 done) |
-| **Context Gauge** | None | Live + bands |
-| **Memory pressure** | 6.9GB zRAM at PSI=0.00 | <2GB at PSI=0.00 |
-| **Security vulns** | 1 critical (sudoers) | 0 |
-| **Cold session rate** | 18-36% | <15% |
-| **Phase D gate** | NO-GO | GO |
-
----
-
-## 📁 Key Documents
-
-| Document | Purpose |
-|----------|---------|
-| `data/coordination/KALI_DEV_ROADMAP_20260811.md` | 5-phase execution plan |
-| `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md` | 12 gaps resolved |
-| `data/coordination/KALI_OVERSIGHT_PORTFOLIO_20260811.md` | Team direction |
-| `docs/strategy/SDP_FINAL_SYNTHESIS.md` | SDP architecture |
-| `docs/strategy/COGNITIVE_SCAFFOLDING_PROTOCOL.md` | SDP manual ops |
-| `docs/kb/MEMORY_MANAGEMENT_KB.md` | zRAM/zswap KB |
+**Deprecated (do not use — all tagged ⚠️):** KALI_DEV_ROADMAP_20260811.md · KALI_OVERSIGHT_PORTFOLIO_20260811.md · KNOWLEDGE_GAPS_RESEARCH_20260811.md · RESEARCH_JOB_BOARD.yaml · SESSION_ANCHOR_KALI.md
 
 ---
 
-*⬡ OMEGA ⬡ HMC ⬡ v1.8.0 ⬡ 2026-08-11*
+## 📜 Historical Log (pre-2026-08-14 — archived)
+<details>
+<summary>2026-08-11 sprint lock events (click to expand)</summary>
+
+- 2026-08-11 @kali: DEV ROADMAP RATIFIED (5-phase, 50 tasks)
+- 2026-08-11 @kali: KNOWLEDGE GAPS RESEARCH COMPLETE (12 gaps)
+- 2026-08-11 @kali: SPRINT TRANSITION NEMOTRON-ANALYSIS-01 → SDP-EXECUTION-01
+- 2026-08-11 @kali: D-526..D-531 locked
+- 2026-08-11 @john_carmack: ICS MODEL PROVENANCE FIX (M22)
+- 2026-08-09 @kali: SDP architecture complete (15 docs, 3 reviews)
+- 2026-08-10 @jem: Nemotron deep analysis complete
+
+</details>
+
+---
+
+*⬡ OMEGA ⬡ HMC ⬡ v2.0.0 ⬡ 2026-08-14 (refreshed post-reconciliation)*

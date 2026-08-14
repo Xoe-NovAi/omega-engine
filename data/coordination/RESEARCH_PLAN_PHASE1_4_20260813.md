@@ -1,17 +1,110 @@
-# 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v3.1)
-**AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.1.0`
-⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ 20260813
+# 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v3.2.0 — RECONCILED)
+**AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.2.0`
+⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ 20260813 (reconciled 2026-08-14)
 
 **Target:** @researcher (Sovereign Researcher — Polymathic Council)
 **Sprint:** SDP-EXECUTION-01
 **Priority:** P0 — All gaps block Phase 1-4 execution
 **Est. Total:** ~52 hours (v3.1: +18h for 6 new gaps R33-R38 from roadmap audit)
 
+> **⚠️ v3.2.0 RECONCILIATION NOTE (2026-08-14):** @researcher executed research per an
+> **untracked** plan `RESEARCH_PLAN_PHASE2_20260813.md` that **redefined gaps R13–R38 with
+> DIFFERENT topics** than this plan (e.g. its R13 = Fleet Health Dashboard; this plan's R13 =
+> Plugin Architecture). To resolve the numbering collision (the dev sprint depends on THIS
+> plan's gap definitions), the Phase2-topic reports were **renumbered R13–R38 → R39–R56**
+> (R30 kept — both plans agree it is the 5-way CB spike). Phase 1 reports (R2,R3,R5,R6,R7,R8b,
+> R27,R27b,R28,R29,R32) MATCH this plan and are RESOLVED. The original Phase1-4 topics for
+> R13,R14b,R16,R17,R18,R19,R23,R24,R25,R26,R31,R33,R34,R35,R37,R38 remain **OUTSTANDING**
+> (not researched). **R56 (lazy loading) report was LOST during reconciliation — reconstructed
+> stub only, needs re-research.** See §RECONCILIATION below.
+
 ---
 
 ## 🎯 Objective
 
 Fill all **genuinely open** knowledge gaps for Phase 1-4 execution. This v3 plan eliminates redundancy by marking already-resolved gaps (pointer-only) and **partially-resolved gaps** (verify existing research, extend only where needed).
+
+---
+
+## 🔄 RESEARCH EXECUTION RECONCILIATION (v3.2.0 — 2026-08-14)
+
+### The Conflict
+@researcher completed a large research round (2026-08-13). It was executed against
+**`RESEARCH_PLAN_PHASE2_20260813.md`** (an **untracked** plan, not in git, which references a
+non-existent `CROSS_REFERENCE_INDEX.md`). That plan **redefined gaps R13–R38 with completely
+different topics** than this plan. Example collisions:
+
+| Gap # | This plan (v3.2, dev-sprint authoritative) | Phase2 plan (what @researcher researched) |
+|-------|---------------------------------------------|--------------------------------------------|
+| R13 | OpenCode **plugin architecture** | **Agent Fleet Health Dashboard** |
+| R14 | Streaming heartbeat patterns (resolved) | Subagent **Pair-Execution Chains** |
+| R16 | pydantic v2 patterns | **MemoryStore → Oracle.py wiring** |
+| R17 | structlog integration | **Handoff Protocol v2** |
+| R23 | Restic passphrase mgmt | **Firewall Audit** |
+| R25 | IA2 envelope freshness | **Signature Freshness** (same intent, diff scope) |
+| R26 | Honker/Redis replacement | **Grok CLI 8-Account Fabric Pool** |
+| R30 | 5-way CB spike | 5-way CB spike (**SAME — both plans agree**) |
+| R33 | Cold session context estimation | **Living Research OS Body** |
+| R37 | Identity fluidity (E-0) | **YouTube Research Deep Dive** |
+| R38 | NotebookLM integration | **OpenCode v1.17+ Lazy Loading** |
+
+### Resolution
+1. **This plan's R1–R38 gap definitions remain authoritative** (PLUGIN-1..8, UO-6.x, V-9, V-10,
+   A-1/A-2/A-3, E-0, NL-1, C-3, Redis decision all depend on them).
+2. **Phase 1 reports match this plan** → RESOLVED: R2, R3, R5, R6, R7, R8b, R27, R27b, R28, R29, R32.
+3. **R30 matches both plans** → RESOLVED (5-way CB spike; report `R30_CIRCUIT_BREAKER_BENCHMARK_20260813.md`).
+4. **@researcher's Phase2-topic reports were renumbered R13–R38 → R39–R56** to eliminate the
+   collision. R30 was kept (both plans agree). See §RESOLVED PHASE2 DELIVERABLES (R39–R56).
+5. **This plan's original Phase2/3/4 topics (R13,R14b,R16,R17,R18,R19,R23,R24,R25,R26,R31,R33,
+   R34,R35,R37,R38) remain OUTSTANDING** — they were NOT researched (different topics were).
+6. **R56 (lazy loading) report was LOST** during the rename (source removed, destination not
+   written; file was never git-tracked). A reconstructed stub exists; **re-research required**.
+
+### Status Summary (this plan's gaps)
+
+| Gap | Topic (this plan) | Status | Report / Note |
+|-----|-------------------|--------|---------------|
+| R1 | tokens.total schema | ✅ RESOLVED (pointer) | R_OPENCODE_DB_SCHEMA_REFERENCE_20260810.md |
+| R2 | Model window detection | ✅ RESOLVED | `R2_MODEL_WINDOW_DETECTION_20260813.md` |
+| R3 | Subagent state machine | ✅ RESOLVED | `R3_SUBAGENT_STATE_MACHINE_20260813.md` |
+| R4 | AGY account pool | 🟡 PARTIAL (verify+extend) | SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md |
+| R5 | TriageRouter constraints | ✅ RESOLVED | `R5_TRIAGE_CONSTRAINT_TYPES_20260813.md` |
+| R6 | RHP schema | ✅ RESOLVED | `R6_RHP_SCHEMA_20260813.md` |
+| R7 | MCP tool patterns | ✅ RESOLVED | `R7_MCP_TOOL_PATTERNS_20260813.md` |
+| R8 | Streaming timeout mystery | ✅ RESOLVED (pointer) | STREAMING_TIMEOUT_MYSTERY_RESEARCH_20260810.md |
+| R8b | Streaming observability | ✅ RESOLVED | `R8B_STREAMING_OBSERVABILITY_20260813.md` |
+| R9–R12 | Memory system | ✅ RESOLVED (pointer) | MEMORY_SYSTEMS_DEFINITIVE_REPORT.md |
+| R14 | Streaming heartbeat | ✅ RESOLVED (pointer) | R_C11_STREAMING_PATTERNS_20260723.md |
+| R14b | Nemotron fallback chain | 🔴 OUTSTANDING | not researched |
+| R16 | pydantic v2 | 🔴 OUTSTANDING | not researched (R42 is different topic) |
+| R17 | structlog | 🔴 OUTSTANDING | not researched (R43 is different topic) |
+| R18 | prometheus_client | 🔴 OUTSTANDING | not researched (R44 is different topic) |
+| R19 | Retry strategy | 🔴 OUTSTANDING | not researched (R45 is different topic) |
+| R20 | Keyblind/Authy/Vault | 🔴 OUTSTANDING | not researched |
+| R21 | Workhorse paths | 🟡 PARTIAL (verify+extend) | CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md |
+| R22 | WARP proxy pool | 🟡 PARTIAL (verify+extend) | warp-proxy-pool/scripts/warp-ns-setup.sh |
+| R23 | Restic passphrase | 🔴 OUTSTANDING | not researched (R46 is different topic) |
+| R24 | AppArmor profiles | 🔴 OUTSTANDING | not researched (R47 is different topic) |
+| R25 | IA2 envelope freshness | 🔴 OUTSTANDING | not researched (R48 is different topic) |
+| R26 | Honker/Redis | 🔴 OUTSTANDING | not researched (R49 is different topic) |
+| R27 | tokens.total query verify | ✅ RESOLVED | `R27_TOKENS_TOTAL_VERIFICATION_20260813.md` |
+| R27b | NULL tokens.total | ✅ RESOLVED | `R27B_NULL_TOKENS_TOTAL_HANDLING_20260813.md` |
+| R28 | MCP Streamable HTTP | ✅ RESOLVED | `R28_MCP_STREAMABLE_HTTP_20260813.md` |
+| R29 | OpenCode plugin detection | ✅ RESOLVED | `R29_OPENCODE_PLUGIN_DETECTION_20260813.md` |
+| R30 | 5-way CB spike | ✅ RESOLVED | `R30_CIRCUIT_BREAKER_BENCHMARK_20260813.md` |
+| R31 | Plugin scope reduction | 🔴 OUTSTANDING | not researched (R51 is different topic) |
+| R32 | In-session gauge source | ✅ RESOLVED | `R32_IN_SESSION_GAUGE_DATA_SOURCE_20260813.md` |
+| R33 | Cold session context | 🔴 OUTSTANDING | not researched (R52 is different topic) |
+| R34 | Provider band adjustments | 🔴 OUTSTANDING | not researched (R53 is different topic) |
+| R35 | Model degradation | 🔴 OUTSTANDING | not researched (R54 is different topic) |
+| R36 | Baseline calibration | 🔴 OUTSTANDING | not researched |
+| R37 | Identity fluidity (E-0) | 🔴 OUTSTANDING | not researched (R55 is different topic) |
+| R38 | NotebookLM integration | 🔴 OUTSTANDING | not researched. **NOTE: R56 (Lazy Loading) ≠ R38 (NotebookLM)** — the rename preserved the Phase2-topic name; R56 is supplementary, R38 is this-plan gap. Both separate. |
+
+> **Bottom line:** Phase 1 of this plan is fully researched. Phase 2–4 topics (plugin arch,
+> un-overengineering libs, Phase D gate closure, identity E-0, NotebookLM) are still open and
+> must be researched against THIS plan's definitions — the R39–R56 reports cover different,
+> valuable but non-overlapping topics.
 
 ---
 
@@ -368,4 +461,42 @@ This index lists all existing research docs and which gaps they cover, so the re
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v3.1.0 ⬡ 20260813*
+---
+
+## 📦 RESOLVED PHASE2 DELIVERABLES (R39–R56 — @researcher's actual research)
+
+These are the reports @researcher produced (2026-08-13) per `RESEARCH_PLAN_PHASE2_20260813.md`.
+They were **renumbered from R13–R38 → R39–R56** to avoid colliding with this plan's gap
+definitions. They are **RESOLVED and valuable**, but cover **different topics** than this plan's
+R13–R38. They do NOT satisfy this plan's outstanding gaps.
+
+| New # | Original # (Phase2 plan) | Topic | Report File | TASK_REGISTRY |
+|-------|--------------------------|-------|-------------|---------------|
+| **R39** | R13 | Agent Fleet Health Dashboard (+ SoulHealthScorer, 31 entities) | `R39_FLEET_HEALTH_DASHBOARD_20260813.md` | research-fleet-health-dashboard-20260813 ✅ |
+| **R40** | R14 | Subagent Pair-Execution Chains | `R40_SUBAGENT_PAIR_EXECUTION_20260813.md` | research-subagent-chains-20260813 ✅ |
+| **R41** | R15 | Cross-Agent A2A Protocol | `R41_CROSS_AGENT_A2A_PROTOCOL_20260813.md` | research-a2a-protocol-20260813 ✅ |
+| **R42** | R16 | MemoryStore → Oracle.py Wiring Verification | `R42_MEMORYSTORE_WIRING_VERIFICATION_20260813.md` | research-memory-wiring-20260813 ✅ |
+| **R43** | R17 | Handoff Protocol v2 | `R43_HANDOFF_PROTOCOL_V2_20260813.md` | research-handoff-v2-20260813 ✅ |
+| **R44** | R18 | Provider Chain Hardening | `R44_PROVIDER_CHAIN_HARDENING_20260813.md` | research-provider-chain-20260813 ✅ |
+| **R45** | R19 | Tokenomics & Cost Modeling | `R45_TOKENOMICS_COST_MODELING_20260813.md` | research-tokenomics-20260813 ✅ |
+| **R46** | R23 | Lorraine Code / Cline-M3 Firewall Audit | `R46_FIREWALL_AUDIT_20260813.md` | research-firewall-audit-20260813 ✅ |
+| **R47** | R24 | Container Hardening | `R47_CONTAINER_HARDENING_20260813.md` | research-container-hardening-20260813 ✅ |
+| **R48** | R25 | IA2 Signature Freshness | `R48_SIGNATURE_FRESHNESS_20260813.md` | research-signature-freshness-20260813 ✅ |
+| **R49** | R26 | Grok CLI 8-Account Fabric Pool | `R49_GROK_FABRIC_POOL_20260813.md` | research-grok-fabric-pool-20260813 ✅ |
+| **R50** | — | *(skipped; R30 kept)* | — | — |
+| **R51** | R31 | Dimension / Free-Will / Phase Γ Hub Split | `R51_DIMENSION_FREEWILL_HUB_SPLIT_20260813.md` | research-hub-split-20260813 ✅ |
+| **R52** | R33 | Living Research OS Body: Formal Decision | `R52_LIVING_RESEARCH_OS_BODY_20260813.md` | research-living-os-body-20260813 ✅ |
+| **R53** | R34 | Roadmap SSOT Conflict Verification | `R53_ROADMAP_SSOT_20260813.md` | research-roadmap-ssot-20260813 ✅ |
+| **R54** | R35 | Identity Fluidity E-0…E-5 Path Mapping | `R54_IDENTITY_FLUIDITY_20260813.md` | research-identity-fluidity-20260813 ✅ |
+| **R55** | R37 | YouTube Research Deep Dive | `R55_YOUTUBE_RESEARCH_DEEP_DIVE_20260813.md` | research-youtube-deep-dive-20260813 ✅ |
+| **R56** | R38 | OpenCode v1.17+ Lazy Loading | `R56_LAZY_LOADING_20260813.md` | research-lazy-loading-20260813 ⚠️ **LOST — stub only** |
+
+> **R56 data-loss note (M23):** The original `R38_LAZY_LOADING_20260813.md` was destroyed during
+> the reconciliation rename (source removed, destination not written; file was never git-tracked).
+> The `R56_LAZY_LOADING_20260813.md` present now is a **reconstructed stub** preserving only
+> metadata. The `research-lazy-loading-20260813` TASK_REGISTRY entry should be treated as
+> **incomplete** until the research is re-executed.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v3.2.0 ⬡ 20260813 (reconciled 2026-08-14)*
