@@ -94,7 +94,7 @@ The components are built. The problem is they aren't wired into a closed loop.
 - `TopicScheduler` reads from `config/research_topics.yaml` — 6 hardcoded topics (voice latency, llama.cpp optimization, MCP ecosystem, soul metrics, P2P soul exchange, VR mapping)
 - `_grow_frontier()` scans `docs/research/INDEX.md` for 🔲/🔄 markers, scrapes FIXME/TODO comments (now disabled per D-kal-163), checks entity knowledge gaps, reads checkpoint recovery
 - `EnhancedPriorityQueue` receives topics from scheduler + frontier
-- **The YAML job board** (`data/coordination/RESEARCH_JOB_BOARD.yaml`) has 18 well-crafted jobs with dependencies, capabilities, timeboxing
+- **The YAML job board** (`data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md`) has 18 well-crafted jobs with dependencies, capabilities, timeboxing
 - **No code reads the YAML job board programmatically** — it's a manual checklist
 
 **What's missing**: A bridge between the job board and the background researcher's queue. The background researcher should read open P0/P1 jobs from the board and inject them into its `EnhancedPriorityQueue`.
@@ -134,7 +134,7 @@ The components are built. The problem is they aren't wired into a closed loop.
 │  • contradiction flags — pending_review.md                          │
 │  • human-proposed topics — config/research_topics.yaml              │
 │  • auto-research follow-ups — GnosisPacket.recommended_directions   │
-│  • job board open items — RESEARCH_JOB_BOARD.yaml unclaimed P0/P1   │
+│  • job board open items — RESEARCH_PLAN_PHASE1_4_20260813.md unclaimed P0/P1   │
 │                                                                     │
 │  Output: prioritized list of ResearchTask objects                   │
 └───────────────────────────┬─────────────────────────────────────────┘
@@ -363,13 +363,13 @@ The script will output to `notebooklm_export/{NB-ID}/{filename}`, allowing for s
 
 **File to modify**: `src/omega/workers/background_researcher/loop.py`
 
-**Change**: Add `_load_board_jobs()` method that reads from `data/coordination/RESEARCH_JOB_BOARD.yaml` and injects unclaimed P0/P1 jobs into the `EnhancedPriorityQueue`.
+**Change**: Add `_load_board_jobs()` method that reads from `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` and injects unclaimed P0/P1 jobs into the `EnhancedPriorityQueue`.
 
 **New method in `BackgroundResearcherLoop`**:
 ```python
 async def _load_board_jobs(self) -> None:
     """Load open P0/P1 jobs from the research board into the queue."""
-    board_path = Path("data/coordination/RESEARCH_JOB_BOARD.yaml")
+    board_path = Path("data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md")
     if not board_path.exists():
         return
 
@@ -558,7 +558,7 @@ class GapDetector:
 | `EntityGapScanner` | `data/entities/*/knowledge/` | Empty or <5 files. Gap = "Build knowledge base for [entity]." |
 | `ContradictionScanner` | `data/research/pending_review.md` | Unresolved contradictions. Gap = topic + "resolve contradiction." |
 | `FollowupScanner` | `data/research/pending_followups.jsonl` | Distiller T3 recommendations. Gap = recommended topic. |
-| `BoardGapScanner` | `data/coordination/RESEARCH_JOB_BOARD.yaml` | Open P0/P1 jobs. Gap = job title + queries. |
+| `BoardGapScanner` | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Open P0/P1 jobs. Gap = job title + queries. |
 
 **Integration**: Replace `_grow_frontier()` in `loop.py` with:
 ```python

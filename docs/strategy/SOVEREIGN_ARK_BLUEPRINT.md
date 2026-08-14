@@ -293,7 +293,7 @@ Full matrix: **`STRATEGY_CORPUS_MAP.md` §1**
 | `data/coordination/RESEARCHER_QUEUE_DESIGN_20260721.md` | Queue / SQLite / gates deep design |
 | `data/coordination/CARMACK_RESEARCH_AUDIT_20260721.md` | Research board compression |
 `docs/research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md` | **Top-5 force multipliers strategy (2026-07-30)** — Ornith-9B, Vulkan, Instruction Router, Hardening, llama-optimus deep dives |
-| `data/coordination/RESEARCH_JOB_BOARD.yaml` | 18 jobs (D-2 input) |
+| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | 18 jobs (D-2 input) |
 | `docs/decisions/PIVOT_LOG.md` | Decision history |
 
 ---

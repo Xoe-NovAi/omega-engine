@@ -219,6 +219,11 @@ field: value
 - [ ] If research: the specific gaps/hypotheses to validate are listed
 - [ ] If implementation: the exact files to modify and patterns to follow
 
+**M27 Pre-Flight Check (mandatory before ANY dispatch):**
+- [ ] Read `data/coordination/HMC_COLLABORATION_HUB.md` `NEXT_ACTION` — confirm this dispatch maps to a Tier-0 task in `ACTIVE_SPRINT.json`
+- [ ] If research dispatch references a gap (R-XX): **verify the Gap ID exists in `data/coordination/GAP_REGISTRY.json`** — never assign or reuse a gap number not in the registry
+- [ ] Include the Tier-0 task ID as the `task_id` prefix per STRP Rule 2 (e.g., `QW-2-context-gauge-review-20260814`)
+
 ### Step 4: Launch via Task Tool
 
 ```json

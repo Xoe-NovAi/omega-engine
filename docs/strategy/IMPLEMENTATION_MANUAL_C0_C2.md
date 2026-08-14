@@ -14,7 +14,7 @@
 2. **Read the Decision Gate** — the one thing the ticket decides
 3. **Follow the Steps** — code snippets are copy-paste ready
 4. **Run the Verification** — pass/fail gate before moving on
-5. **Update the Job Board** — mark complete in `data/coordination/RESEARCH_JOB_BOARD.yaml`
+5. **Update the Job Board** — mark complete in `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md`
 
 **Hardware Context**: Ryzen 5700U, 15W, 16GB RAM (~8GB available), 8MB L3/2 CCX.
 **Sovereign Context**: M1 AnyIO, M2 Firewall, M7 Local-First, M13 Temple-Grade, M23 Failure Integrity.

@@ -61,7 +61,7 @@
 | `data/coordination/RESEARCHER_QUEUE_DESIGN_20260721.md` | D | Queue/SQLite/gates deep design |
 | `data/coordination/CARMACK_RESEARCH_AUDIT_20260721.md` | D | Research board compression |
 | `data/coordination/GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | D | Fleet-aware research notes |
-| `data/coordination/RESEARCH_JOB_BOARD.yaml` | D | 18 jobs (D-2 input) |
+| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | D | 18 jobs (D-2 input) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
 | **`docs/sprints/current/AGENT_SPRINT_CARD.md`** | **D Gate** | **ACTIVE SPRINT** — one-page agent card |
 SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
@@ -109,8 +109,8 @@ grep -rl "your-term" docs/archive/strategy/2026-07-21/ docs/archive/strategy/202
 | Document | Purpose |
 |----------|---------|
 | `data/coordination/SESSION_ANCHOR.md` | Session recovery |
-| `data/coordination/*_LIVE_FEED.md` | Agent activity logs |
-| `data/coordination/RESEARCH_JOB_BOARD.yaml` | Research jobs (Phase D-2 input) |
+| `data/coordination/HMC_COLLABORATION_HUB.md` | Team sync + `NEXT_ACTION` (Tier-2) |
+| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Research jobs (Phase D-2 input) |
 
 ---
 

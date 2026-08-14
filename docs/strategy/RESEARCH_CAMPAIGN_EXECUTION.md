@@ -53,7 +53,7 @@ Is available at:
 
 - **Hardening Plan**: `docs/strategy/HARDENING_PLAN_COMPLETE.md` (master reference)
 - **Phase Details**: `docs/strategy/hardening_plan/PART_00_OVERVIEW.md` through `PART_04_PHASE_4_5_POLICY_STRESS.md`
-- **Research Queue**: `data/coordination/RESEARCH_JOB_BOARD.yaml` (source data)
+- **Research Queue**: `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` (source data)
 - **Completed Research**: `docs/research/R_*.md` (for reference)
 
 **What would you like me to help you with first?**

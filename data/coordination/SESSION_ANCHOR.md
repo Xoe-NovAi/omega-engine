@@ -200,6 +200,10 @@ SSOT = `RESEARCH_PLAN_PHASE1_4_20260813.md` v3.2.0.
 1. PHASE-0 (UNBLOCKED) → 2. PHASE-1 (UNBLOCKED) → 3. Research R13 → PHASE-2 →
 4. Research R16–R20 → PHASE-3 → 5. Research R23–R26 → PHASE-4
 
+### ⚠️ PRE-COMPACTION ANCHOR (2026-08-14)
+**Status:** Awaiting `/compact` command.
+**Post-Compaction Directive:** Immediately execute the 5-phase integration plan detailed in `docs/strategy/COORDINATION_ENHANCEMENT_PLAN_20260814.md`. This will update `AGENTS.md`, `Makefile`, protocols, and `SOVEREIGN_MANDATES.md` to permanently institutionalize the new tracking architecture.
+
 ### 📁 Correct File References (supersedes 2026-08-11 pointers)
 - **Knowledge Gaps SSOT:** `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0)
 - **Superseded:** `data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md` (12-gap initial scan only)

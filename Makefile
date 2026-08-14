@@ -71,7 +71,7 @@ check-codex-force:
 test: test-honest
 
 # Main honest test target - includes quarantine, badge generation, and test-run logging
-test-honest: save-quarantine run-honest-tests log-test-run generate-badge check-quarantine-expiry
+test-honest: check-tracking-state save-quarantine run-honest-tests log-test-run generate-badge check-quarantine-expiry
 
 # Save current failures to quarantine file
 save-quarantine:
@@ -242,10 +242,15 @@ doc-chunk-sprint:
 	@echo "$(GREEN)Chunking complete$(NC)"
 
 # Temple-grade includes Codex freshness and LLM doc validation
-temple-grade: check-codex-fix doc-llm-validate check-mandates
+temple-grade: check-codex-fix doc-llm-validate check-mandates check-tracking-state
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	# Existing temple-grade checks would go here
-	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Tracking State)$(NC)"
+
+# Cognitive State Validator (M27 Tracking Integrity)
+check-tracking-state:
+	@echo "$(YELLOW)Validating tracking state (M27)...$(NC)"
+	@$(PYTHON) scripts/validate_tracking_state.py
 
 # =============================================================================
 # Mandate Checks (CI-only, moved from runtime Vetter per Carmack Verdict)

@@ -158,7 +158,7 @@ These are **architectural omissions** — not in any ticket, not in any handoff,
 
 1. `docs/strategy/UNIFIED_EXECUTION_PLAN_20260722.md` — Add Gap A/B/C tickets, assign owners
 2. `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` §4 Priority Stack — Insert Soul Distillation as C-0.5
-3. `data/coordination/RESEARCH_JOB_BOARD.yaml` — Add Scribe agent research job
+3. `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` — Add Scribe agent research job
 4. `.opencode/agents/scribe.md` — Create if Option A chosen
 5. `config/providers.yaml` — Verify fallback chain config matches implementation
 

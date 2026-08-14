@@ -111,7 +111,7 @@
 | Content cache `.firecrawl/{hash}.md` | Spec Phase 1 | **D-1** |
 | TTL eviction 30d / 10GB | Grokster + Spec risks | **D-1 required** |
 | Tiered TTL T1=30d T2=14d T3=7d | Researcher queue design | **D-1 detail** (prefer when implementing) |
-| YAML job board 18 jobs | `data/coordination/RESEARCH_JOB_BOARD.yaml` | **D-2 input** |
+| YAML job board 18 jobs | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | **D-2 input** |
 | `_load_board_jobs()` P0/P1 only | Researcher | **D-2** (P2 manual) |
 | Claim TTL + reclaim orphan claims | Researcher | **D-2** with flock; SQLite later |
 | SQLite research_jobs.db schema | Researcher / Spec §5 | **DEFERRED** until >100 jobs or multi-claimer |
@@ -256,7 +256,7 @@ These are **not cancelled**. They are out of Phase C critical path. Full text in
 | `SUBAGENT_DISPATCH_PROTOCOL.md` | Delegation rules |
 | `SOVEREIGN_CONTINUITY_STRATEGY.md` | M15 |
 | `HERITAGE_VETTING_PIPELINE.md` | M14 process |
-| `data/coordination/RESEARCH_JOB_BOARD.yaml` | 18 research jobs (D-2) |
+| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | 18 research jobs (D-2) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | Ubuntu gate tracker |
 | `docs/decisions/PIVOT_LOG.md` | Immutable decisions |
 

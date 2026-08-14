@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-14T12:45:00Z",
+  "updated": "2026-08-14T13:33:27.148181+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -117,7 +117,7 @@
       "channel": "opencode",
       "entity": "roc_racoon",
       "description": "C-11 Property Test Patterns Research - 5 domains, 25+ vectors",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-07-23T19:53:20.968846+00:00",
       "last_checkpoint": "2026-07-23T19:53:20.968870+00:00",
       "resumption_count": 0,
@@ -128,7 +128,9 @@
         "property-tests",
         "hypothesis",
         "guard-and-distill"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "ses-research-gemma4-workhorse-20260724",
@@ -137,7 +139,7 @@
       "channel": "opencode",
       "entity": "roc_racoon",
       "description": "Gemma 4 Workhorse Intelligence Research - 5 domains",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-07-23T22:55:18.447773+00:00",
       "last_checkpoint": "2026-07-23T22:55:18.447797+00:00",
       "resumption_count": 0,
@@ -149,7 +151,9 @@
         "gemma4",
         "local-models",
         "opencode-config"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "gemma4-workhorse-domain1-20260724",
@@ -216,7 +220,7 @@
       "channel": "cline",
       "entity": "omega-engine",
       "description": "Ops health A-B-C: tests, restic, WARP, G-1 smokes, SSOT",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-07-30T02:34:05.106253+00:00",
       "last_checkpoint": "2026-07-30T02:34:05.106279+00:00",
       "resumption_count": 0,
@@ -228,7 +232,9 @@
         "warp",
         "ssot",
         "deepseek-v4-flash"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "temple-1e-soul-20260730",
@@ -237,7 +243,7 @@
       "channel": "opencode",
       "entity": "kali",
       "description": "Phase 1E: Rewrite soul_validator.py to use yaml.safe_load + Pydantic model_validate",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-07-30T21:40:54.660336+00:00",
       "last_checkpoint": "2026-07-30T21:40:54.660359+00:00",
       "resumption_count": 0,
@@ -245,7 +251,9 @@
       "tags": [
         "temple-cleansing",
         "phase-1e"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "vector-arch-sqlitevec-vs-qdrant-20260807",
@@ -274,7 +282,7 @@
       "channel": "opencode",
       "entity": "researcher",
       "description": "Phase 1: Benchmark M2 Qdrant SQ8 + I5 Headroom + M1 dual-branch + I2 speculative + A1 WAD deps",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-07T14:19:26.038090+00:00",
       "last_checkpoint": "2026-08-07T14:19:26.038112+00:00",
       "resumption_count": 0,
@@ -287,7 +295,9 @@
         "m1",
         "i2",
         "a1"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "ses_research_phase2_lilith_20260807",
@@ -296,7 +306,7 @@
       "channel": "opencode",
       "entity": "researcher",
       "description": "Phase 2: S2 GRPO flywheel, M3 spatial coords, SEC1 taint protocol, OBS1 swap monitoring",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-07T15:05:27.985992+00:00",
       "last_checkpoint": "2026-08-07T15:05:27.986010+00:00",
       "resumption_count": 0,
@@ -308,7 +318,9 @@
         "sec1",
         "obs1",
         "lilith"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "ses_research_phase2_maat_20260807",
@@ -317,7 +329,7 @@
       "channel": "opencode",
       "entity": "researcher",
       "description": "Phase 2: A4 WAD auto-loading, O1 TUI SEDA binding",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-07T15:05:47.952807+00:00",
       "last_checkpoint": "2026-08-07T15:05:47.952824+00:00",
       "resumption_count": 0,
@@ -327,7 +339,9 @@
         "a4",
         "o1",
         "maat"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "ses_research_phase3_kali_20260807",
@@ -336,7 +350,7 @@
       "channel": "opencode",
       "entity": "researcher",
       "description": "Phase 3: SRP gating for ASPIRATIONAL items \u2014 CANCELLED, recovery documented",
-      "status": "failed",
+      "status": "blocked",
       "created_at": "2026-08-07T17:17:10.889582+00:00",
       "last_checkpoint": "2026-08-07T17:17:10.889602+00:00",
       "resumption_count": 0,
@@ -347,7 +361,9 @@
         "cancelled",
         "recovery-documented",
         "relaunch-needed"
-      ]
+      ],
+      "migrated_from": "failed",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "ses_research_phase2_maat_20260807_relaunch",
@@ -356,7 +372,7 @@
       "channel": "opencode",
       "entity": "maat",
       "description": "Phase 2 A4+O1 design docs for cloud-planner/local-executor and TUI tracer",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-07T17:24:23.550037+00:00",
       "last_checkpoint": "2026-08-07T17:24:23.550055+00:00",
       "resumption_count": 0,
@@ -367,7 +383,9 @@
         "a4",
         "o1",
         "design"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "packer-review-grokcli-20260808",
@@ -376,7 +394,7 @@
       "channel": "opencode",
       "entity": "kali",
       "description": "Grok CLI advisory review of Context Packer implementation + Carmack report pre-refactor",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-08T14:18:38.266918+00:00",
       "last_checkpoint": "2026-08-08T14:18:38.266930+00:00",
       "resumption_count": 0,
@@ -386,7 +404,9 @@
         "advisory-review",
         "pre-refactor",
         "carmack-verification"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "kali-carmack-repo-hygiene-20260808",
@@ -435,7 +455,7 @@
       "channel": "opencode",
       "entity": "kali",
       "description": "Execute Context Packer v3 refactor per Master Manual",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-08T20:40:59.509339+00:00",
       "last_checkpoint": "2026-08-08T20:40:59.509357+00:00",
       "resumption_count": 0,
@@ -444,7 +464,9 @@
         "context-packer",
         "v3-refactor",
         "sovereign"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "ses-research-classification-decisions-20260809-01",
@@ -453,7 +475,7 @@
       "channel": "opencode",
       "entity": "kali",
       "description": "Close knowledge gaps on 5 provider classification decisions",
-      "status": "active",
+      "status": "in_progress",
       "created_at": "2026-08-09T16:14:52.083974+00:00",
       "last_checkpoint": "2026-08-09T16:14:52.083991+00:00",
       "resumption_count": 0,
@@ -464,7 +486,9 @@
         "provider-registry",
         "sovereignty-ratio",
         "web-claude-handoff"
-      ]
+      ],
+      "migrated_from": "active",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "carmack-zram-review-20260811",
@@ -492,7 +516,7 @@
       "channel": "opencode",
       "entity": "roc_racoon",
       "description": "Review SDP Context Gauge (A-1, A-5, QW-2, QW-8) + streaming plugin; update Kali's consolidated tasks",
-      "status": "pending",
+      "status": "ready",
       "created_at": "2026-08-11T00:00:00Z",
       "last_checkpoint": "2026-08-11T00:00:00Z",
       "resumption_count": 0,
@@ -502,7 +526,9 @@
         "context-gauge",
         "kali-consolidation",
         "streaming-plugin"
-      ]
+      ],
+      "migrated_from": "pending",
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
     },
     {
       "task_id": "jem-phase1-context-gauge-20260813",

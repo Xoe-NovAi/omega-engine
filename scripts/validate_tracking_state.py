@@ -14,7 +14,9 @@ GAP_REGISTRY_PATH = DATA_DIR / "GAP_REGISTRY.json"
 # Unified Taxonomy per TRACKING_ARCHITECTURE.md
 ALLOWED_STATUSES = {"backlog", "ready", "in_progress", "blocked", "completed", "superseded"}
 # Subagent tasks might legitimately fail, which is an execution state, not a planning state.
-ALLOWED_EXECUTION_STATUSES = ALLOWED_STATUSES.union({"failed", "active", "pending"}) # Allow legacy for now, but warn
+# Per M27 (Tracking Integrity) + TRACKING_ARCHITECTURE.md line 53: JSON files MUST use the
+# unified taxonomy. Legacy statuses are now ERRORS, not warnings.
+ALLOWED_EXECUTION_STATUSES = ALLOWED_STATUSES  # Strict: no legacy statuses
 
 def print_error(msg):
     print(f"❌ ERROR: {msg}", file=sys.stderr)
@@ -70,6 +72,12 @@ def validate_active_sprint():
     errors = 0
     warnings = 0
     
+    # Load GAP_REGISTRY for relational cross-check
+    gap_ids = set()
+    if GAP_REGISTRY_PATH.exists():
+        gap_data = load_json(GAP_REGISTRY_PATH)
+        gap_ids = set(gap_data.get("gaps", {}).keys())
+    
     # Check workstreams/phases
     workstreams = data.get("workstreams", {})
     for ws_name, ws_data in workstreams.items():
@@ -84,6 +92,16 @@ def validate_active_sprint():
                 if st_status and st_status not in ALLOWED_STATUSES:
                     print_error(f"Subtask '{st.get('id', 'unknown')}' in '{ws_name}' has invalid status: '{st_status}'")
                     errors += 1
+                
+                # Relational integrity: any R- ID referenced in a subtask must exist in GAP_REGISTRY
+                st_id = st.get("id", "")
+                for token in st_id.replace("/", " ").replace(",", " ").split():
+                    token_upper = token.upper()
+                    if token_upper.startswith("R") and token_upper[1:].isdigit():
+                        gap_key = f"R{int(token_upper[1:])}"
+                        if gap_ids and gap_key not in gap_ids:
+                            print_error(f"Subtask '{st_id}' references gap '{gap_key}' which is NOT in GAP_REGISTRY. Must register the gap first.")
+                            errors += 1
 
     if errors == 0:
         print_ok("ACTIVE_SPRINT statuses are compliant.")
@@ -103,14 +121,11 @@ def validate_task_registry():
     for t in tasks:
         status = t.get("status", "").lower()
         if status not in ALLOWED_EXECUTION_STATUSES:
-            print_error(f"Task '{t.get('task_id')}' has invalid status: '{status}'")
+            print_error(f"Task '{t.get('task_id')}' has invalid status: '{status}'. Allowed: {sorted(ALLOWED_EXECUTION_STATUSES)}")
             errors += 1
-        elif status not in ALLOWED_STATUSES:
-            print_warn(f"Task '{t.get('task_id')}' uses legacy/execution status '{status}'. Consider migrating to unified taxonomy.")
-            warnings += 1
 
     if errors == 0:
-        print_ok(f"TASK_REGISTRY is healthy ({len(tasks)} tasks). {warnings} warnings.")
+        print_ok(f"TASK_REGISTRY is healthy ({len(tasks)} tasks).")
     return errors == 0
 
 def main():

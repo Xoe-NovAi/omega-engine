@@ -47,7 +47,7 @@ omega-hub_hivemind_post_context(
 | `channel` | ✅ | Execution environment | `"opencode"` |
 | `entity` | ✅ | Persona identity | `"maat"` |
 | `model` | ✅ | **Actual** model (not configured) | `"nemotron-3-ultra-free"` |
-| `task_current` | ✅ | Current work + dispatch mode | `"[LOCAL] Hardening cvar_table heritage tags"` |
+| `task_current` | ✅ | Current work + dispatch mode + **sprint/gap tag (M27)** | `"[LOCAL][QW-2] Hardening cvar_table heritage tags"` |
 | `focus_chain` | ✅ | 3-7 step plan (not wishlist) | `["Audit tags", "Fix CREDITS.md", "Verify tests"]` |
 | `decisions` | ✅ | Architectural choices made | `["D112: Consolidate breakers", "D113: ZONEID=0x1d4a17"]` |
 | `continuation` | ✅ | **Actionable** next step + owner | `"Next: verify with @verity — blocked on test infra"` |
@@ -56,6 +56,10 @@ omega-hub_hivemind_post_context(
 | `suggested_model` | ❌ | Hint for dispatched subagent | `"lmstudio/qwen3-4b-thinking"` |
 | `task_ids` | ✅ | Active subagent task IDs | `["v1-vault-legacy-mining-20260721", "search-catalogue-deep-research-20260721"]` |
 | `resumption_status` | ✅ | Subagent resumption state | `"verified" | "failed" | "pending" | "none"` |
+
+**M27 Tagging Rule (mandatory):** Every Hivemind post MUST tag the sprint/gap context in `task_current`:
+- Format: `[Sprint Task: <Tier0-ID>]` or `[Gap: RXX]` (e.g., `[LOCAL][QW-2] ...`, `[RESEARCH][R13] ...`)
+- This lets reading agents instantly know which Tier-0/Tier-1 item a post affects without manual cross-referencing.
 
 ---
 

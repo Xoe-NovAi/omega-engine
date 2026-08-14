@@ -53,13 +53,19 @@ result = task(
 ### **Rule 1: ALWAYS Use Task IDs**
 - Every `task()` call **MUST** include a `task_id`
 - No exceptions — even for "quick" tasks
-- Task ID format: `{domain}-{action}-{date}-{sequence}`
+- Task ID format: `{Tier0-SprintTaskID}-{domain}-{action}-{date}-{sequence}` (see Rule 2)
 
 ### **Rule 2: Standardized Task ID Format**
 ```
-{domain}-{action}-{date}-{sequence}
+{Tier0-SprintTaskID}-{domain}-{action}-{date}-{sequence}
+
+When executing a sprint task from ACTIVE_SPRINT.json (Tier-0), the task_id
+MUST be prefixed with the Tier-0 task ID to preserve the relational link
+between Tier 3 (TASK_REGISTRY) and Tier 0 (ACTIVE_SPRINT).
 
 Examples:
+- QW-2-context-gauge-review-20260814
+- P0-1-provider-fabric-audit-20260814
 - v1-vault-legacy-mining-20260721
 - search-catalogue-deep-research-20260721
 - identity-fluidity-phase1-design-20260721

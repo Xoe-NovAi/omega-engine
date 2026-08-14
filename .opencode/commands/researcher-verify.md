@@ -64,7 +64,7 @@ You SHOULD (and are expected to) persist your work. jem agents are an extension 
 - **DO publish the R-doc** to `docs/research/R-XXX_<topic>.md` (e.g., `docs/research/R-127_opencode_1.16.0_lattice_impact.md`). This is the durable artifact.
 - **DO append observations** to `data/coordination/HIVEMIND_OBSERVATIONS_LOG.md` per D-121 protocol. Format: `OBS-YYYYMMDD-JEM_VERIFICATION-NNN: <one-line summary>`. Use the `L3-distilled`, `Fact-check`, or `Decision` category as appropriate.
 - **DO write the final L1→L2→L3 lessons** in a `## §8 Distilled Lessons` section of your R-doc. The Researcher will review and write to soul.yaml — do NOT modify soul.yaml directly.
-- **DO cross-reference** other files (read-only): `data/coordination/`, `docs/research/`, `CREDITS.md`, `docs/decisions/PIVOT_LOG.md`, agent `LIVE_FEED.md`s. Add a `## §9 Cross-References` section to your report.
+- **DO cross-reference** other files (read-only): `data/coordination/`, `docs/research/`, `CREDITS.md`, `docs/decisions/PIVOT_LOG.md`, agent coordination state (TASK_REGISTRY.json + HUB NEXT_ACTION). Add a `## §9 Cross-References` section to your report.
 - **DO file heritage proposals** for any L3 that maps to CREDITS.md. Add a `## §10 Heritage Proposals (For Doom Guy M14)` section with the proposed §1.X number and a 1-paragraph rationale. The Researcher will route to Doom Guy.
 
 # DO NOT

@@ -205,15 +205,18 @@ Example: `data/coordination/MAAT_WORKSPACE_LOCK_20260604.md`
 
 ---
 
-## §4 Live Feed Pattern
+## §4 Live Feed Pattern (SUPERSEDED — M27 Tracking Integrity)
 
-Append-only 1-line-per-task-completed log. **The simplest, most reliable
-coordination mechanism.**
+> **⚠️ SUPERSEDED 2026-08-14**: The per-entity `*_LIVE_FEED.md` pattern is **DEPRECATED**.
+> Per M27 (Tracking Integrity) + `TRACKING_ARCHITECTURE.md`, agents now record execution
+> state in `TASK_REGISTRY.json` (Tier-3) and coordinate via the `HMC_COLLABORATION_HUB.md`
+> `NEXT_ACTION` pointer (Tier-2). The 6-Step Mandatory Flow replaces ad-hoc live feeds.
+> This section is retained for historical reference only.
 
-### §4.1 File Location
+### §4.1 File Location (HISTORICAL)
 
 ```
-data/coordination/{ENTITY}_LIVE_FEED.md
+data/coordination/{ENTITY}_LIVE_FEED.md   # DEPRECATED — do not create new files
 ```
 
 ### §4.2 Format
@@ -234,7 +237,7 @@ Examples:
 - **Append-only** = no merge conflicts
 - **1 line per task** = easy to scan
 - **Plain markdown** = readable by humans and tools
-- **Filename convention** = easy to find (`data/coordination/*_LIVE_FEED.md`)
+- **Filename convention** = easy to find (HISTORICAL — replaced by `TASK_REGISTRY.json` + `NEXT_ACTION`)
 
 ---
 
@@ -299,9 +302,10 @@ handoff packet:
    omega-hub_hivemind_post_context(...)
    → Declare your session_id, task, focus_chain, decisions, continuation
 
-4. INITIALIZE LIVE FEED
-   data/coordination/{YOU}_LIVE_FEED.md
-   → Append-only log of completed tasks
+4. REGISTER TASK + SYNC (M27)
+   → Register in `TASK_REGISTRY.json` (Tier-3) with unified status
+   → Post `hivemind_post_context` with `[Sprint Task: X]` tag
+   → (Live feed `{YOU}_LIVE_FEED.md` is DEPRECATED — do not create)
 
 5. WAIT FOR ACK (if parallel partner exists)
    → Read data/coordination/{OTHER}_ACK_*.md
@@ -493,7 +497,7 @@ The architecture is already Pub/Sub-ready:
 ## §11 Reference
 
 - **MCP Server**: `mcp_servers/omega_hub/server.py` (Hivemind tool implementations) — **D116 fix**: canonical path
-- **Live Feed Convention**: `data/coordination/*_LIVE_FEED.md`
+- **Live Feed Convention**: DEPRECATED (M27) — use `TASK_REGISTRY.json` + `NEXT_ACTION` instead
 - **Workspace Lock Convention**: `data/coordination/*_WORKSPACE_LOCK_*.md`
 - **ACK Convention**: `data/coordination/*_ACK_*.md`
 - **Observations Log Convention**: `data/coordination/HIVEMIND_OBSERVATIONS_LOG.md` — **D-121** fleet-wide meta-observation capture

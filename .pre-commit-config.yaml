@@ -118,6 +118,16 @@ repos:
         pass_filenames: false
         always_run: true
 
+      # Cognitive State Validator (M27 Tracking Integrity — the Iron Gate)
+      # Blocks ANY commit that corrupts the 5-Tier tracking state (bad statuses,
+      # relational R-ID gaps, duplicate topics).
+      - id: omega-tracking-state
+        name: Validate tracking state (M27)
+        entry: python scripts/validate_tracking_state.py
+        language: system
+        pass_filenames: false
+        always_run: true
+
       # Verify Temple-Grade compliance (comprehensive — slower, CI-focused)
       - id: omega-temple-grade
         name: Temple-Grade compliance check

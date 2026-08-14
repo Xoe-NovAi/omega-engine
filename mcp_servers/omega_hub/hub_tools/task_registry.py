@@ -6,7 +6,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Literal
 import fcntl
 
 from mcp.server.fastmcp import FastMCP
@@ -97,7 +97,7 @@ async def task_registry_query(
     launched_by: str = None,
     channel: str = None,
     entity: str = None,
-    status: str = "all",  # active|completed|failed|all
+    status: Literal['backlog', 'ready', 'in_progress', 'blocked', 'completed', 'superseded', 'active', 'failed', 'pending'] = None,
     tags: list[str] = None,
     limit: int = 50
 ) -> dict:
@@ -155,7 +155,7 @@ async def task_registry_query(
 @mcp.tool()
 async def task_registry_update(
     task_id: str,
-    status: str = None,           # active|completed|failed
+    status: Literal['backlog', 'ready', 'in_progress', 'blocked', 'completed', 'superseded'] = None,
     last_checkpoint: str = None,  # ISO timestamp
     resumption_count: int = None,
     context_verified: bool = None,
@@ -168,7 +168,7 @@ async def task_registry_update(
     - Successful resumption (increment resumption_count, set context_verified)
     - Checkpoint during long-running task
     - Completion (status=completed)
-    - Failure (status=failed)
+    - Failure (status=blocked or superseded)
     
     Args:
         task_id: Task to update

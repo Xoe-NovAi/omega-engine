@@ -145,7 +145,7 @@ Gap crosswalk: Ark §3.0.1 + Corpus Map §2.
      - workspace lock: data/coordination/{entity}_WORKSPACE_LOCK_{YYYYMMDD}.md
      - post_context intent=status
 4. Heartbeat every 5–10 min on long tasks
-5. Append major milestones to data/coordination/{ENTITY}_LIVE_FEED.md
+5. Update `TASK_REGISTRY.json` (Tier-3) + post Hivemind completion — per the 6-Step Mandatory Flow (M27). Individual `*_LIVE_FEED.md` files are DEPRECATED; use `HMC_COLLABORATION_HUB.md` `NEXT_ACTION` instead.
 ```
 
 ### 4.2 Claiming work
@@ -367,7 +367,8 @@ FREEZE     new providers · D before Process Reform · fleet before vault · new
 | `HIVEMIND_POST_TEMPLATE.md` | Post quality |
 | `SUBAGENT_DISPATCH_PROTOCOL.md` | Child agents |
 | `LIVING_RESEARCH_OS_SPEC_20260721.md` | Phase D detail (after gate) |
-| `data/coordination/*_LIVE_FEED.md` | Per-entity activity |
+| `TRACKING_ARCHITECTURE.md` | 5-Tier coordination constitution (M27) |
+| `HMC_COLLABORATION_HUB.md` | Team sync + `NEXT_ACTION` pointer (Tier-2) |
 
 ---
 

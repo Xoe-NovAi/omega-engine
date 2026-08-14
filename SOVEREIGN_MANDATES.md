@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.7.0
+**Version**: 3.8.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-07-19 (Added M24 Venv Sovereignty, M25 Streaming Resilience)
+**Updated**: 2026-08-14 (Added M26 Doc Standards, M27 Tracking Integrity)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -212,6 +212,26 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
   - `make test-streaming` validates chunk timeout behavior
   - `config/providers.yaml` MUST have `streaming` section for all cloud providers
   - Heartbeat logs at INFO level: "Stream alive, {elapsed}s since last chunk"
+
+### 26. Doc Standards (NEW — 2026-08-14)
+- **Mandate**: All reference documentation MUST pass `make doc-llm-validate`.
+- **Constraint**: Sprint plans use the `docs/sprints/<name>/` structure; generate `llms-full.txt` via `make sprint-plan-llm`. No reference doc may be merged that fails LLM-friendly validation.
+- **Pattern**: `make doc-llm-validate` (T2 gate). See `docs/standards/DOC_STYLE_GUIDE.md` + `docs/standards/LLM_FRIENDLY_DOCS_BP.md`.
+- **Reason**: The fleet runs on documentation. Docs that fail LLM validation are unreadable by agents, causing cognitive loops and duplicated effort.
+- **Enforcement**: `make temple-grade` includes `doc-llm-validate` as a hard gate.
+
+### 27. Tracking Integrity (NEW — 2026-08-14)
+- **Mandate**: All execution state MUST adhere to the 5-Tier Tracking Architecture (constitution: `data/coordination/TRACKING_ARCHITECTURE.md`). No ad-hoc tracking files may be created.
+- **Constraint**: 
+  - Gap IDs (R1-R99) are immutable and globally unique. `GAP_REGISTRY.json` is the ultimate authority on gap assignment. New plans MUST use a distinct prefix (P2-, S-, X-).
+  - Statuses MUST strictly follow the Unified Taxonomy: `backlog`, `ready`, `in_progress`, `blocked`, `completed`, `superseded`. No "WIP", "TBD", "stalled", "active", "pending", "failed".
+  - Every agent MUST follow the 6-Step Mandatory Flow (read `NEXT_ACTION` → check `ACTIVE_SPRINT.json` → check `GAP_REGISTRY.json` → acquire lock → execute → update `TASK_REGISTRY.json`).
+- **Pattern**: Run `scripts/validate_tracking_state.py` to verify compliance (CI-gated via `make temple-grade`, `make test`, and pre-commit hook `omega-tracking-state`).
+- **Reason**: Prevents cognitive fragmentation, double-entry bookkeeping, and the collision of research plans. Ensures all agents operate from a single, deterministic source of truth.
+- **Enforcement**: 
+  - Pre-commit hook: `omega-tracking-state` blocks commits with corrupted tracking state
+  - CI gate: `make temple-grade` + `make test` include `check-tracking-state`
+  - Relational integrity: any R-ID referenced in `ACTIVE_SPRINT.json` MUST exist in `GAP_REGISTRY.json`
 
 ---
 

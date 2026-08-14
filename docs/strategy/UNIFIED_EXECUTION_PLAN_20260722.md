@@ -133,7 +133,7 @@ To prevent a 12-week bottleneck on P3, workloads are distributed across the Pill
 | `docs/research/R_GROK_ECOSYSTEM_DEEP.md` | R33 deliverable (585 lines) |
 | `docs/research/R_SOVEREIGN_SEARCH_IMPL.md` | R34 deliverable (934 lines) |
 | `docs/research/R_V1_VAULT_IMPL.md` | R35 deliverable (869 lines) |
-| `data/coordination/RESEARCH_JOB_BOARD.yaml` | Fixed (39 jobs corrected) |
+| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Fixed (39 jobs corrected) |
 
 ---
 

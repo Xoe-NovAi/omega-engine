@@ -71,7 +71,7 @@ You SHOULD (and are expected to) persist your work. jem agents are an extension 
 - **DO append observations** to `data/coordination/HIVEMIND_OBSERVATIONS_LOG.md` per D-121 protocol. Format: `OBS-YYYYMMDD-JEM_SYNTHESIS-NNN: <one-line summary>`. Use the `Meta`, `Gap`, or `Pattern` category as appropriate.
 - **DO propose L2→L3 candidates** at the end of your report (a `## §6 L3 Candidates (For Verifier)` section). Each candidate should be a single sentence with the 4-criterion L3 promotion gate pre-applied (your best guess at which criteria it would pass/fail). The Researcher + jem Verification will review and write to soul.yaml — do NOT modify soul.yaml directly.
 - **DO flag heritage proposals** for any pattern that maps to CREDITS.md. Add a `## §7 Heritage Proposals` section with the proposed §1.X number and a 1-paragraph rationale. The Researcher will route to Doom Guy for M14 vetting.
-- **DO cross-reference** other files (read-only): `data/coordination/`, `docs/research/`, `CREDITS.md`, `docs/decisions/PIVOT_LOG.md`, agent `LIVE_FEED.md`s. Add a `## §8 Cross-References` section to your report.
+- **DO cross-reference** other files (read-only): `data/coordination/`, `docs/research/`, `CREDITS.md`, `docs/decisions/PIVOT_LOG.md`, agent coordination state (TASK_REGISTRY.json + HUB NEXT_ACTION). Add a `## §8 Cross-References` section to your report.
 
 ## DO NOT
 
