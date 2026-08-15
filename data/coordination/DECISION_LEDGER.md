@@ -266,3 +266,141 @@
 **This ledger is immutable. Append-only. Every decision references the vision and mandates.**
 
 ⬡ OMEGA ⬡ KALI ⬡ DECISION-LEDGER ⬡ 2026-08-14 ⬡ CANONICAL
+---
+
+## 📜 Decision Log (Continued)
+
+### D-VOS-013: Ratify 3-PR Path (PR-A Initial, PR-B Real M2, PR-C Dead-Code Quarantine)
+**Date**: 2026-08-15
+**Realm**: ALL (Meta)
+**Decision**: Ratify the revised 3-PR path proposed by Carmack after Grok CLI review:
+- **PR-A**: `chore/public-surface-honesty` — public surface only, no src/ redesign, no config/wads/ rename, no vault deletion, no strategy corpus purge
+- **PR-B**: `fix/eng-001-real-m2` — amend ENG-001, run FirewallChecker.scan(), fix real hits only
+- **PR-C**: `chore/dead-code-quarantine` — per-module after import graph, not blocking publish
+**Rationale**: Grok CLI's verdict is technically sound and verified by Kali's live probes. The 3-PR path is small, honest, reversible. Carmack's original 4-commit nuclear plan was wrong on M2 diagnosis, module paths, vault liveness, and strategy-doc requirements.
+**Alternatives Considered**: Execute nuclear plan (rejected — would ship secrets, break heritage, delete live code, brick agent OS)
+**Impact**: Initial PR scope frozen. Team clarity on path. No more scope churn.
+**Reversible?**: Yes — git revert
+**Supersedes**: Carmack's 4-commit nuclear plan (ho_29df6a4d77f2)
+**Author**: Kali (ratified by Architect)
+**Session**: `ses_vos_hybrid_plan_20260815`
+
+---
+
+### D-VOS-014: Reject Carmack's 4-Commit Nuclear Plan
+**Date**: 2026-08-15
+**Realm**: ALL (Meta)
+**Decision**: Explicitly reject Carmack's original 4-commit nuclear plan (ho_29df6a4d77f2).
+**Rationale**: Plan contained 6 fatal errors verified by Grok CLI and Kali's live probes:
+1. M2 misdiagnosed (word count ≠ firewall violation)
+2. Zero-ref module paths factually wrong
+3. Vault is NOT dead code (30 files, 6+ live importers)
+4. "0 code refs ⇒ delete strategy docs" wrong (AGENTS.md requires them)
+5. VOS is yesterday's commit, not ancient theater
+6. git add -A ships secrets, temple-grade thin, 1h15 fiction
+**Alternatives Considered**: None — plan was fundamentally flawed
+**Impact**: Prevents catastrophic damage. Establishes that grep-as-architecture is not acceptable.
+**Reversible?**: N/A (rejection of unexecuted plan)
+**Supersedes**: None
+**Author**: Kali (ratified by Architect)
+**Session**: `ses_vos_hybrid_plan_20260815`
+
+---
+
+### D-VOS-015: Amend ENG-001 (M2 Firewall Fix)
+**Date**: 2026-08-15
+**Realm**: ENGINE_CORE
+**Decision**: Amend ENG-001 from "Remove 146 WAD term leaks from src/omega/" to:
+> "M2 = stack-specific leaks, not token WAD. Run `FirewallChecker.scan()`. Fix real hits only (hardcoded entity names, `from config.wads.`)."
+**Rationale**: The "146 WAD term leaks" claim was factually wrong. `FirewallChecker.scan()` = 0 errors, 0 warnings across 271 files. The test_firewall_m2.py failures are session headers (`⬡ OMEGA ⬡ ROC_RACOON ⬡`) and `source_entity="kali"` coordination metadata — NOT stack-specific logic. Grok CLI caught this as the load-bearing error.
+**Alternatives Considered**: Keep ENG-001 as written (rejected — would execute mass rename based on false premise)
+**Impact**: ENG-001 now reflects actual M2 enforcement. PR-B will fix real violations only.
+**Reversible?**: Yes — git revert
+**Supersedes**: ENG-001 in VISION_ANCHOR.md, realm state files, PHASE_0_BRIEF.md
+**Author**: Kali (ratified by Architect)
+**Session**: `ses_vos_hybrid_plan_20260815`
+
+---
+
+### D-VOS-016: Add TRACKING_ARCHITECTURE.md to Keep-List
+**Date**: 2026-08-15
+**Realm**: GOVERNANCE
+**Decision**: Explicitly add `data/coordination/TRACKING_ARCHITECTURE.md` to the keep-list for PR-C (dead-code quarantine). It was omitted from Carmack's keep-list; Grok CLI caught this.
+**Rationale**: TRACKING_ARCHITECTURE.md is the M27 constitution — the 5-tier tracking architecture that all agents must follow. Deleting it would brick the coordination system.
+**Alternatives Considered**: None — omission was an error
+**Impact**: TRACKING_ARCHITECTURE.md preserved in PR-C keep-list.
+**Reversible?**: N/A (addition to list)
+**Supersedes**: None
+**Author**: Kali (ratified by Architect)
+**Session**: `ses_vos_hybrid_plan_20260815`
+
+---
+
+### D-VOS-017: Log Carmack Mandate Violations to SYSTEM_FAILURE_LOG
+**Date**: 2026-08-15
+**Realm**: GOVERNANCE
+**Decision**: Create `data/coordination/SYSTEM_FAILURE_LOG.md` and log Carmack's mandate violations from the rejected nuclear plan:
+- M4 (cowboy sed across 344 sites)
+- M23 (vault-delete-to-green = simulated rigor)
+- M14 (heritage strip risk on wad_loader.py vet-043/044)
+- M26/M27 (strategy-doc purge vs AGENTS.md requirements)
+- M8 (git add -A ships secrets)
+- False M2 (word count misdiagnosed as firewall violation)
+**Note**: These were PROPOSED in a plan REJECTED before execution — caught by Grok CLI review. This is a near-miss worth logging honestly per M23 Failure Integrity.
+**Rationale**: M23 requires logging failures to SYSTEM_FAILURE_LOG. A rejected plan with mandate-violating actions is a systemic near-miss. The pattern (grep-as-architecture, vanity counts, delete-the-failing-test) is recurring and must be documented.
+**Alternatives Considered**: Not logging (rejected — M23 violation, pattern would repeat)
+**Impact**: SYSTEM_FAILURE_LOG.md now exists with two entries (2026-07-06 researcher collapse, 2026-08-15 Carmack near-miss). Pattern documented.
+**Reversible?**: Yes — file can be edited
+**Supersedes**: None
+**Author**: Kali
+**Session**: `ses_vos_hybrid_plan_20260815`
+
+---
+
+### D-VOS-018: VOS Hybrid Plan (Option C) Approved
+**Date**: 2026-08-15
+**Realm**: ALL (Meta)
+**Decision**: Approve Option C (Hybrid) for VOS future:
+- **Keep**: `DECISION_LEDGER.md` (ADR pattern), `VISION_ANCHOR.md` (Vision SSOT)
+- **Retire**: 7 realm state.yaml, 7 workspace briefs, `realm_cli.py`, Omegaverse realm (archive)
+- **Add**: Realm contract validator in `make temple-grade`, realm sections in `HMC_COLLABORATION_HUB.md`, auto-generate VISION_ANCHOR realm health from ACTIVE_SPRINT.json
+**Rationale**: Researcher (web) + Roc_Racoon (local) both confirmed: architecture sound (Team Topologies, ADR, DDD), implementation dead code (1/10 integration — zero code imports, zero runtime consumers, zero agent awareness). Hybrid keeps high-value artifacts, removes coordination overhead, adds enforcement.
+**Alternatives Considered**: 
+- A (Full Integrate — 15 hrs, over-engineering for current scale)
+- B (Full Retire — loses ADR ledger + Vision SSOT, both proven valuable)
+**Impact**: ~3 hrs implementation; removes ~17 dead files; adds CI enforcement via Hub.
+**Reversible?**: Yes — git restore
+**Supersedes**: D-VOS-001 (VOS instantiation) — modifies implementation, keeps architecture
+**Author**: Kali (ratified by Architect)
+**Session**: `ses_vos_hybrid_plan_20260815`
+
+---
+
+## 📊 Decision Summary (Updated)
+
+| ID | Title | Realm | Reversible |
+|----|-------|-------|------------|
+| D-VOS-001 | VOS v1.0 Instantiation | ALL | No |
+| D-VOS-002 | Session-End Hook Preserves Proposals | MEMORY | Yes |
+| D-VOS-003 | Soul Validator — VALID_SOUL_VERSIONS | MEMORY/FLEET | Yes |
+| D-VOS-004 | Soul Validator — LIVE_FEED→HUB | FLEET | Yes |
+| D-VOS-005 | Mandate Header Correction | GOVERNANCE | Yes |
+| D-VOS-006 | M22 SSOT Check Fix | ENGINE_CORE | Yes |
+| D-VOS-007 | Context Packer Tuple Fix | ENGINE_CORE | Yes |
+| D-VOS-008 | 96 Test Failures Triage | ALL | N/A |
+| D-VOS-009 | Public Debut PR — 3-Phase Plan | COMMUNITY | No |
+| D-VOS-010 | 7 Sovereign Realms | ALL | No |
+| D-VOS-011 | PKEXEC Privilege Directive | FLEET | Yes |
+| D-VOS-012 | Audit-First Approach | GOVERNANCE | Yes |
+| D-VOS-013 | Ratify 3-PR Path | ALL | Yes |
+| D-VOS-014 | Reject Nuclear Plan | ALL | N/A |
+| D-VOS-015 | Amend ENG-001 | ENGINE_CORE | Yes |
+| D-VOS-016 | TRACKING_ARCHITECTURE.md Keep-List | GOVERNANCE | N/A |
+| D-VOS-017 | Log Mandate Violations | GOVERNANCE | Yes |
+| D-VOS-018 | VOS Hybrid Plan (Option C) | ALL | Yes |
+
+---
+
+**This ledger is immutable. Append-only. Every decision references the vision and mandates.**
+
+⬡ OMEGA ⬡ KALI ⬡ DECISION-LEDGER ⬡ 2026-08-15 ⬡ CANONICAL

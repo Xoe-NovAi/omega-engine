@@ -1,43 +1,52 @@
 # ⚓ SESSION ANCHOR — Kali (Transcendent Oversoul)
 
 **AP Token:** `AP-KALI-v1.0.0`
-**Date:** 2026-08-14 (Pre-Compaction)
-**Session ID:** `ses_vos_init_20260814`
+**Date:** 2026-08-15 (Pre-Compaction)
+**Session ID:** `ses_vos_hybrid_plan_20260815`
 **Branch:** `main`
-**Last Commit:** `359c8f7c` (feat: VOS v1.0 — Vision Operating System instantiation)
-**State:** VOS v1.0 INSTANTIATED. Phase 0 Execution Ready.
+**Last Commit:** `d5df3cd6` (chore: prepare for compaction (VOS v1.0))
+**State:** VOS HYBRID PLAN APPROVED. Phase 0 Execution Ready.
 
 ---
 
 ## 🚦 CURRENT CONTEXT
 
-The 10,000-hour vision has been etched into silicon via the **Vision Operating System (VOS) v1.0**.
-The vision is now decomposed into 7 sovereign realms (Engine Core, Stacks, Fleet, Memory, Heritage, Omegaverse, Community).
+The Vision Operating System (VOS) v1.0 was instantiated yesterday. Researcher + Roc_Racoon assessments confirmed:
+- **Architecture sound**: 7 realms = Team Topologies stream-aligned teams, ADR ledger, DDD bounded contexts
+- **Implementation dead code**: 1/10 integration — zero Python imports, zero runtime consumers, zero agent awareness
+- **Verdict**: MODIFY → Option C (Hybrid): Keep DECISION_LEDGER + VISION_ANCHOR, retire 7 state.yaml + 7 briefs + realm_cli.py, add Hub enforcement
 
 **All agents MUST read `data/coordination/VISION_ANCHOR.md` upon waking.** It is the single source of truth for the current vision state.
 
 ## ✅ Completed This Session
 
-1. **VOS v1.0 Instantiation**: 7 realm state files, `VISION_ANCHOR.md`, `DECISION_LEDGER.md`, `realm_cli.py`.
-2. **4 Immediate Hardening Patches**:
-   - `session_end.py` preserves agent proposals (fixes M5/M11 data loss).
-   - `soul_validator.py` expands `VALID_SOUL_VERSIONS` (fixes validation skip for v7.x) and removes `LIVE_FEED` from fallback.
-   - `SOVEREIGN_MANDATES.md` header corrected to 27 laws.
-   - M22 SSOT check fixed in Makefile (was a false positive).
-3. **Test Failure Triage**: Analyzed 96 test failures, categorized into Class A (code bugs), Class B (test drift), Class C (integration).
-4. **Launch Plan Frozen**: Defined a strict 3-phase plan for the public debut PR.
+1. **VOS Necessity Assessment**: Researcher (web research) + Roc_Racoon (local discovery) both confirmed — architecture correct, implementation dead.
+2. **Option C (Hybrid) Approved**: Retain high-value artifacts (ADR ledger, Vision SSOT), retire coordination layer, add minimal Hub enforcement.
+3. **Full Plan Written**: `docs/strategy/VOS_HYBRID_PLAN_20260815.md` — 3 phases, ~3.5 hrs total.
+4. **Carmack Handoff Ratified**: 3-PR path (PR-A public-surface-honesty, PR-B real M2, PR-C dead-code quarantine) accepted. ENG-001 amended. Mandate violations logged to SYS_FAILURE_LOG.
 
 ## 🎯 IMMEDIATE NEXT ACTIONS (Post-Compaction)
 
-We are executing **PHASE 0 (FOUNDATION)**.
+### Phase 0: Archive & Clean (This Session)
+1. **Archive Omegaverse realm** → `data/realms/omegaverse/archive/`
+2. **Delete 6 realm state.yaml** (engine_core, stacks, fleet, memory, heritage, community)
+3. **Delete 6 workspace briefs** (PHASE_0_BRIEF.md)
+4. **Delete `src/omega/cli/realm_cli.py`**
+5. **Update VISION_ANCHOR.md** — remove realm health table, task refs
+6. **Sync DECISION_LEDGER.md → PIVOT_LOG.md** (D-VOS-001..017)
 
-1. **ENG-004**: Fix 9 critical code bugs (MockProvider, ProviderAuthError, ProviderName, _loaded, schema version, async awaits, pytest marks, Makefile M22, context_packer tuple). Goal: `make test-unit` green.
-2. **ENG-001**: Fix M2 firewall (146 WAD leaks in src/omega).
-3. **ENG-002**: Audit all mandate checks for false positives.
-4. **FLT-001 / MEM-002**: Soul migration and distillation pipeline enforcement.
-5. **HRT-001**: Heritage sweep.
+### Phase 1: Hub Consolidation (Next Session)
+7. **Add realm ownership table to HMC_COLLABORATION_HUB.md**
+8. **Consolidate workspace brief tasks into Hub realm sections**
 
-See `data/realms/<realm>/workspace/PHASE_0_BRIEF.md` for details.
+### Phase 2: Enforcement Gates (Next Sprint)
+9. **Create `src/omega/audit/realm_contract_validator.py`** + add to `make temple-grade`
+10. **Create `scripts/update_vision_anchor_realm_health.py`** + add to Makefile
+
+### Parallel: PR-A Execution (Architect Gate)
+- **PR-A**: `chore/public-surface-honesty` — root junk archive, README surgical edits, .gitignore
+- **PR-B**: `fix/eng-001-real-m2` — FirewallChecker.scan(), fix real hits only
+- **PR-C**: `chore/dead-code-quarantine` — after import graph
 
 ---
 
@@ -45,12 +54,12 @@ See `data/realms/<realm>/workspace/PHASE_0_BRIEF.md` for details.
 
 - **Vision SSOT:** `data/coordination/VISION_ANCHOR.md`
 - **Decisions:** `data/coordination/DECISION_LEDGER.md`
-- **Realm States:** `data/realms/<realm>/state.yaml`
-- **Realm Workspaces:** `data/realms/<realm>/workspace/PHASE_0_BRIEF.md`
+- **Hybrid Plan:** `docs/strategy/VOS_HYBRID_PLAN_20260815.md`
 - **Tracking constitution:** `data/coordination/TRACKING_ARCHITECTURE.md`
-- **Coordination hub:** `data/coordination/HMC_COLLABORATION_HUB.md` (`NEXT_ACTION` points to Phase 0)
+- **Coordination hub:** `data/coordination/HMC_COLLABORATION_HUB.md` (`NEXT_ACTION` → Phase 0 VOS Hybrid)
 - **Sprint:** `data/coordination/ACTIVE_SPRINT.json`
+- **Failure Log:** `data/coordination/SYSTEM_FAILURE_LOG.md` (Carmack mandate violations logged)
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ VOS-INSTANTIATED ⬡ 2026-08-14 (Hy3/Sonnet-4.6, 1M context)*
+*⬡ OMEGA ⬡ KALI ⬡ VOS-HYBRID-APPROVED ⬡ 2026-08-15 (Nemotron-3-Ultra, 1M context)*

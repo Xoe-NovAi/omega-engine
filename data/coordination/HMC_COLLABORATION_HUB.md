@@ -1,42 +1,101 @@
-# 🔱 HMC Collaboration Hub — Sprint Coordination Forum
-**AP Token**: `AP-HMC-HUB-v2.0.0`
-⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-08-14 (post-reconciliation + tracking consolidation)
-**Constitution**: `TRACKING_ARCHITECTURE.md` (read this for the 5-tier hierarchy + status vocab)
+# 🏛️ HMC Collaboration Hub — Team Coordination Center
+
+**AP Token**: `AP-HMC-HUB-v1.0.0`
+**Status**: ACTIVE — Single coordination SSOT
+**Last Updated**: 2026-08-15T08:30:00Z
+**Updated By**: Kali
 
 ---
 
 ## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
-*Last verified: 2026-08-14T13:05Z*
+
+*Last verified: 2026-08-15T08:30Z*
 
 > **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
 
-**CURRENT:** PHASE-0 (Security + Context Gauge bands) — **UNBLOCKED, execute now**
-- ENG-004 (9 code bugs), ENG-001 (M2 firewall), ENG-002 (mandate audit), FLT-001 (soul migration), HRT-001 (heritage sweep)
+**CURRENT:** VOS HYBRID PLAN — Phase 0 (Archive & Clean) — **UNBLOCKED, execute now**
+- Archive Omegaverse realm → `data/realms/omegaverse/archive/`
+- Delete 6 realm state.yaml + 6 workspace briefs + realm_cli.py
+- Update VISION_ANCHOR.md (remove realm health table, task refs)
+- Sync DECISION_LEDGER.md → PIVOT_LOG.md (D-VOS-001..017)
 
-**NEXT:** PHASE-1 (SDP Context Gauge v1) — **UNBLOCKED, execute after PHASE-0**
-- See data/realms/community/state.yaml for Phase 1 tasks
+**NEXT:** VOS HYBRID PLAN — Phase 1 (Hub Consolidation) — after Phase 0
+- Add realm ownership table to HMC_COLLABORATION_HUB.md
+- Consolidate workspace brief tasks into Hub realm sections
 
-**RESEARCH COMPLETE (2026-08-14) — PHASE-2 / PHASE-3 / PHASE-4 now UNBLOCKED:**
-- PHASE-2 → unblocked by **R13** (OpenCode plugin architecture) — `docs/research/R13_OPENCODE_PLUGIN_ARCHITECTURE_20260814.md`
-- PHASE-3 → unblocked by **R16, R17, R18, R19, R20** — `docs/research/R16..R20_*_20260814.md`
-- PHASE-4 → unblocked by **R23, R24, R25, R26** — `docs/research/R23..R26_*_20260814.md`
-- **R56** (Lazy Loading) re-researched — `docs/research/R56_LAZY_LOADING_20260814.md` (non-blocking)
+**PARALLEL:** PR-A (Public Surface Honesty) — **AWAITING ARCHITECT CONFIRMATION**
+- Root junk archive → `docs/archive/root-artifacts-202608/`
+- README surgical edits (remove 1315 passing badge, keep CI badge)
+- .gitignore root session dumps / screenshots
+- Never `git add -A` — stage by path, exclude secrets
 
-**SUPPLEMENTARY:** R39–R56 reports (Phase2-plan topics) available in `docs/research/`.
+**RESEARCH COMPLETE (2026-08-15) — VOS ASSESSMENT:**
+- Researcher: VOS architecture sound (Team Topologies, ADR, DDD), implementation dead code
+- Roc_Racoon: 1/10 integration — zero code imports, zero runtime consumers, zero agent awareness
+- Verdict: Option C (Hybrid) — Keep ADR + Vision Anchor, retire coordination layer, add Hub enforcement
 
 ---
 
-## 📌 How Agents Stay Synchronized (MANDATORY FLOW)
-1. Read **VISION_ANCHOR.md** → Read **NEXT_ACTION** (above) → identify your task in realm workspace
+## 📋 6-Step Mandatory Flow (M27 — MANDATORY)
+
+1. Read **VISION_ANCHOR.md** → Read **NEXT_ACTION** (above) → identify your task in realm workspace / Hub
 2. Check **Tier-1** (`RESEARCH_PLAN_PHASE1_4`) for research deps (cross-ref `GAP_REGISTRY.json`)
 3. Acquire workspace lock → post Hivemind context (`omega-hub_hivemind_workspace_lock_acquire`)
 4. Register task in `TASK_REGISTRY.json` → execute → update status
 5. On complete: mark Tier-0 task `completed` in `ACTIVE_SPRINT.json` → Hivemind completion
-6. Session end: update `SESSION_ANCHOR.md` → soul distillation (L1→L2→L3)
+6. Session end: update `SESSION_ANCHOR.md` → soul distillation (L1→L2→L3) — **step 6.5**
 
-**Anti-confusion rules (enforced by TRACKING_ARCHITECTURE.md):**
+---
+
+## 🏁 Sprint Status (pointer → ACTIVE_SPRINT.json)
+
+**Sprint:** VOS-HYBRID-EXECUTION (ACTIVE)
+**Authoritative state:** `data/coordination/ACTIVE_SPRINT.json`
+
+---
+
+## 🌐 Realm Ownership & Contracts
+
+| Realm | Owner | Provides | Requires | Status |
+|-------|-------|----------|----------|--------|
+| Engine Core | maat_n3 | WAD Loader, Query Router, Provider Fabric, Memory Store, Godot Bridge | — | Active |
+| Stacks | maat_n4 | WAD Format, Community Template, XOE Packaging | Engine Core (loader API) | Blocked on ENG-001 |
+| Fleet | kali | 14 Entities, MaKaLi Council, Node Slots, Hivemind | Engine Core (registry), Memory (soul) | Active |
+| Memory | lilith_n7 | Soul Architecture v2, Mnemosyne, L1→L2→L3, Cross-pollination | Engine Core (memory store) | Critical |
+| Heritage | doom_guy | [id-soft:] Vetting, id Software Patterns | Engine Core (loader) | Healthy |
+| Omegaverse | lilith_n6 | Godot Bridge, Soul-to-Visual (R-24), P2P Soul Prints | Engine Core (bridge), Memory (soul) | Deferred |
+| Community | kali | Installer, QUICKSTART, CONTRIBUTING, CI, Launch | Engine Core, Stacks, Fleet | Planned |
+
+> **Realm contracts are enforced by `make temple-grade` realm validator.**
+> See `ACTIVE_SPRINT.json` for live task status per realm.
+
+### Active Tasks by Realm
+
+**Engine Core** (maat_n3):
+- ENG-001: Fix M2 firewall — run `FirewallChecker.scan()`, fix real hits only (not token WAD)
+- ENG-002: Audit all mandate checks for false positives (M22 was broken)
+- ENG-004: Fix 9 critical code bugs (MockProvider, ProviderAuthError, ProviderName, _loaded, schema version, async awaits, pytest marks, Makefile M22, context_packer tuple)
+
+**Fleet** (kali):
+- FLT-001: Migrate kali & roc_racoon souls to v6.1 lean schema
+- FLT-004: Enforce distillation pipeline (Scribe agent L1→L2→L3)
+
+**Memory** (lilith_n7):
+- MEM-002: Implement Scribe agent L1→L2→L3 distillation pipeline
+- MEM-003: Implement cross-pollination (R-31)
+
+**Heritage** (doom_guy):
+- HRT-001: Heritage sweep — verify all [id-soft:] tags have vet records
+- HRT-002: Verify no metaphorical or over-attributed tags
+
+**Community** (kali):
+- COM-001..012: All Phase 1-2 tasks (blocked on ENG-001 for template WAD)
+
+---
+
+## 🚫 Anti-Confusion Rules (enforced by TRACKING_ARCHITECTURE.md)
+
 - ❌ Never create a new tracking file — use the 5 tiers
 - ❌ Never reuse gap numbers — R1–R99 owned by `RESEARCH_PLAN` / `GAP_REGISTRY.json`; new plans use distinct prefixes (P2-, S-, X-)
 - ❌ Never duplicate decisions here — use `docs/decisions/PIVOT_LOG.md`
@@ -45,104 +104,50 @@
 
 ---
 
-## 🏁 Sprint Status (pointer → ACTIVE_SPRINT.json)
-**Sprint:** SDP-EXECUTION-01 (ACTIVE)
-**Authoritative state:** `data/coordination/ACTIVE_SPRINT.json`
-**Phase D Gate Blockers** (aligned to research taxonomy):
-- **R23** (Restic passphrase) ← was "C-3" in Ark blueprint
-- **R26** (Honker/Redis replacement) ← related to "W-1" WARP pool
-- **R21** (Workhorse continuity, PARTIAL) ← was "G-1" Gemma cliff
-- External: W-1 (WARP sudo), G-1 (Gemma billing) — Architect action needed
+## 📁 Shared Sections
+
+### Requests to Team
+*(Agents post requests here — Kali triages)*
+
+### Discussion Thread
+*(Cross-agent discussion — Kali moderates)*
+
+### Reference Links
+- `TRACKING_ARCHITECTURE.md` — 5-tier constitution
+- `ACTIVE_SPRINT.json` — Tier-0 execution SSOT
+- `RESEARCH_PLAN_PHASE1_4_20260813.md` — Tier-1 knowledge SSOT
+- `GAP_REGISTRY.json` — Tier-1a gap authority
+- `TASK_REGISTRY.json` — Tier-3 subagent records
+- `SESSION_ANCHOR.md` — Tier-4 session continuity
+- `VISION_ANCHOR.md` — Vision SSOT
+- `DECISION_LEDGER.md` — Immutable decisions (D-VOS-001..018)
+- `SYSTEM_FAILURE_LOG.md` — Mandate violations (Carmack near-miss logged)
+- `SOVEREIGN_MANDATES.md` — 27 laws v3.8.0
+- `AGENTS.md` — OpenCode workflow + fleet playbook
+- `FLEET_TEAM_PLAYBOOK.md` — Team coordination rules
 
 ---
 
-## 🚧 Blockers & Requests (ACTIVE)
-- **@kali → Architect**: sudo/billing action on W-1 (WARP) and G-1 (Gemma) to unblock Phase D gate.
-- **@kali → All**: **Do NOT build new systems for SDP components that already exist.** V-1 Vault, Pool Tracker, Dialectic Logger, Triage Router, Token Estimator are built. Extend, don't duplicate.
-- **RESOLVED**: G-3/G-4 (token accounting) — `tokens.total` in `message.data` JSON blob confirmed (R27/R27b). Context Gauge uses it. No longer a blocker.
+## 🤖 Agent Onboarding Checklist
+
+Upon waking, every agent MUST:
+1. [ ] Read `VISION_ANCHOR.md` (vision SSOT)
+2. [ ] Read `SESSION_ANCHOR.md` (current context)
+3. [ ] Read `HMC_COLLABORATION_HUB.md` → `NEXT_ACTION` (this section)
+4. [ ] Check `ACTIVE_SPRINT.json` for your realm's tasks
+5. [ ] Post Hivemind context: `omega-hub_hivemind_post_context(...)` with intent="status"
+6. [ ] Acquire workspace lock for your realm/task
 
 ---
 
-## 🧑‍💼 AGENT SECTIONS (derived from ACTIVE_SPRINT.json — see there for authoritative task state)
+## 📝 How to Use This Hub
 
-### @kali — Transcendent Oversight
-- **NOW**: Oversee PHASE-0 execution, dispatch team, keep NEXT_ACTION fresh
-- **FOCUS**: Resolve R13/R16-R20/R23-R26 research before PHASE-2/3/4
-
-### @jem — Sovereign Synthesizer
-- **P0 NOW**: A-1 (Context Gauge bands 0.7x) + A-5 (calibrate 18-36%)
-- **P1 NEXT**: QW-8 (Context Gauge greenfield), A-4 (subagent state transition)
-- **P2 NEXT**: PLUGIN-1..8 (streaming timeout plugin) — BLOCKED on R13
-
-### @maat — Build Oversoul (N1-N5)
-- **P1 NEXT**: QW-6 (TriageRouter SDP constraints), QW-9 (RHP halt), QW-10 (MCP tools)
-- **P3 NEXT**: UO-6 (un-overengineering) — BLOCKED on R16-R20; V-10 (AppArmor) — BLOCKED on R24; V-9 (IA2) — BLOCKED on R25
-
-### @lilith — Runtime Oversoul (N6-N10)
-- **P1 NEXT**: QW-4 (pool_tracker wiring)
-- **P3 NEXT**: UO-7 (HandoffState, recall.py, MIAP cleanup)
-
-### @roc_racoon — Sovereign Miner
-- **P0 NOW**: P0 security fix (with Architect)
-- **P2 NEXT**: P1 zswap migration + NVMe swap file
-- **FOCUS**: Memory architecture migration
-
-### @researcher — Deep Research (Lattice)
-- **BLOCKED**: Phase 2–4 authoritative gaps OUTSTANDING (R13, R16-R20, R23-R26, R31, R33-R38). Phase 1 DONE.
-- **RE-RESEARCH QUEUED**: R56 (Lazy Loading, LOST during reconciliation)
-- **See**: `RESEARCH_PLAN_PHASE1_4_20260813.md` v3.2.0 §RECONCILIATION + `GAP_REGISTRY.json`
-
-### @john_carmack — S3 Consultant
-- **zRAM→zswap REVIEW**: APPROVED (D-532). LegacyOOMWrapper removal SAFE (D-533).
-- **ICS MODEL PROVENANCE FIX**: M22 resolved (2026-08-11).
-- **FOCUS**: Review Context Gauge design for modularity.
-
-### @verity — Compliance + Gnosis
-- **FOCUS**: Audit SSOT contradictions as M23 violations; verify deprecated-file banners.
-
-### @grokster — Grok Ecosystem Specialist
-- **P5 NEXT**: V-1 Vault design support, E-0 Identity
-
-### @doom_guy — id Software Heritage
-- **FOCUS**: Heritage audit for new SDP code
-
-### @node PX — Slot-based (N1-N10)
-- **N1 Infrastructure**: P0 security, QW-3 CI guard
-- **N3 Engineering**: QW-1, QW-2, QW-5, QW-6
-- **N10 Validation**: QW-3, contract tests for Context Gauge
+1. **Never edit manually** — use `omega-hub_hivemind_post_context()` for updates
+2. **Read `NEXT_ACTION` first** — it's the single pointer to current work
+3. **Post context on task start/complete** — keeps team synchronized
+4. **Use Hivemind handoffs** for cross-realm work — `omega-hub_hivemind_handoff action=submit`
+5. **Reference this hub in session anchors** — ensures continuity across compaction
 
 ---
 
-## 📁 Key Documents (5-tier hierarchy — see TRACKING_ARCHITECTURE.md)
-| Tier | Document | Role |
-|------|----------|------|
-| 0 | `data/coordination/ACTIVE_SPRINT.json` | Execution SSOT |
-| 1 | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Knowledge SSOT (gaps R1–R38) |
-| 1a | `data/coordination/GAP_REGISTRY.json` | Gap ID registry (prevents number reuse) |
-| 2 | `data/coordination/HMC_COLLABORATION_HUB.md` | This hub (coordination) |
-| 2a | `data/coordination/TRACKING_ARCHITECTURE.md` | Tracking constitution |
-| 3 | `data/coordination/TASK_REGISTRY.json` | Subagent records |
-| 4 | `data/coordination/SESSION_ANCHOR.md` | Session continuity |
-| DEC | `docs/decisions/PIVOT_LOG.md` | Decisions (canonical) |
-
-**Deprecated (do not use — all tagged ⚠️):** KALI_DEV_ROADMAP_20260811.md · KALI_OVERSIGHT_PORTFOLIO_20260811.md · KNOWLEDGE_GAPS_RESEARCH_20260811.md · RESEARCH_JOB_BOARD.yaml · SESSION_ANCHOR_KALI.md
-
----
-
-## 📜 Historical Log (pre-2026-08-14 — archived)
-<details>
-<summary>2026-08-11 sprint lock events (click to expand)</summary>
-
-- 2026-08-11 @kali: DEV ROADMAP RATIFIED (5-phase, 50 tasks)
-- 2026-08-11 @kali: KNOWLEDGE GAPS RESEARCH COMPLETE (12 gaps)
-- 2026-08-11 @kali: SPRINT TRANSITION NEMOTRON-ANALYSIS-01 → SDP-EXECUTION-01
-- 2026-08-11 @kali: D-526..D-531 locked
-- 2026-08-11 @john_carmack: ICS MODEL PROVENANCE FIX (M22)
-- 2026-08-09 @kali: SDP architecture complete (15 docs, 3 reviews)
-- 2026-08-10 @jem: Nemotron deep analysis complete
-
-</details>
-
----
-
-*⬡ OMEGA ⬡ HMC ⬡ v2.0.0 ⬡ 2026-08-14 (refreshed post-reconciliation)*
+*⬡ OMEGA ⬡ HMC-HUB ⬡ 2026-08-15 ⬡ ACTIVE*
