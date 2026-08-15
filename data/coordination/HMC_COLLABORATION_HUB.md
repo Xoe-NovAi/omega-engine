@@ -77,6 +77,7 @@
 - ENG-001: Fix M2 firewall — run `FirewallChecker.scan()`, fix real hits only (not token WAD)
 - ENG-002: Audit all mandate checks for false positives (M22 was broken)
 - ENG-004: Fix 9 critical code bugs (MockProvider, ProviderAuthError, ProviderName, _loaded, schema version, async awaits, pytest marks, Makefile M22, context_packer tuple)
+- ENG-005: Context Packer refactor — address F2-F9 from advisory review (litm_zone placebo, dead include/exclude, reserved_output unenforced, CWD-relative paths, third-party/ walk, injection scanner FP, duplicate config, stale manifest)
 
 **Fleet** (kali):
 - FLT-001: Migrate kali & roc_racoon souls to v6.1 lean schema
@@ -113,6 +114,20 @@
 ### Discussion Thread
 *(Cross-agent discussion — Kali moderates)*
 
+**2026-08-15** — **Context Packer Advisory Review Complete** (Grok via cline/omega-engine):
+- **F1 CRITICAL FIXED**: `_escape_bare_xml_chars` escaped bare `&` as `<` → round-trips to `<`, silently corrupting content (AT&T → AT<T). Fixed in `packer.py:157` + regression test `test_escape_bare_ampersand_roundtrip`. 28/28 contract tests pass.
+- **F2-F9 OPEN** (see `R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md`):
+  - F2 (HIGH): `litm_zone` never set in production → LITM-U ordering is placebo
+  - F3 (MED): `include/exclude` dead config — files in include not in theme silently dropped
+  - F4 (MED): `reserved_output` (50K) never enforced — both packs would fail if honored
+  - F5 (MED): CWD-relative config path — fragile CLI
+  - F6 (LOW): Full-repo rglob walk includes `third-party/`
+  - F7 (LOW): Injection scanner false positives on legit content
+  - F8 (LOW): Duplicate config entries
+  - F9 (LOW): Stale duplicate manifest in `generated/`
+- Deliverables: `sovereign-audit` pack (12 slots, 306K tokens, pack_id c1c5be23), `tech-architecture-research` pack (12 slots, 310K tokens, pack_id e748178c), both curated OK.
+- **Owner for F2-F9**: Context Packer skill owner (maat/jem) — needs triage for refactor.
+
 ### Reference Links
 - `TRACKING_ARCHITECTURE.md` — 5-tier constitution
 - `ACTIVE_SPRINT.json` — Tier-0 execution SSOT
@@ -126,6 +141,7 @@
 - `SOVEREIGN_MANDATES.md` — 27 laws v3.8.0
 - `AGENTS.md` — OpenCode workflow + fleet playbook
 - `FLEET_TEAM_PLAYBOOK.md` — Team coordination rules
+- `docs/research/R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md` — Context Packer audit (F1 fixed, F2-F9 open)
 
 ---
 
