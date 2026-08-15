@@ -2,27 +2,28 @@
 
 **AP Token**: `AP-HMC-HUB-v1.0.0`
 **Status**: ACTIVE — Single coordination SSOT
-**Last Updated**: 2026-08-15T08:30:00Z
+**Last Updated**: 2026-08-15T05:45:00Z
 **Updated By**: Kali
 
 ---
 
 ## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
 
-*Last verified: 2026-08-15T08:30Z*
+*Last verified: 2026-08-15T05:45Z*
 
 > **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
 
-**CURRENT:** VOS HYBRID PLAN — Phase 0 (Archive & Clean) — **UNBLOCKED, execute now**
-- Archive Omegaverse realm → `data/realms/omegaverse/archive/`
-- Delete 6 realm state.yaml + 6 workspace briefs + realm_cli.py
-- Update VISION_ANCHOR.md (remove realm health table, task refs)
-- Sync DECISION_LEDGER.md → PIVOT_LOG.md (D-VOS-001..017)
+**CURRENT:** VOS HYBRID PLAN — Phase 1 (Hub Consolidation) — **READY, execute next session**
+- Verify realm ownership table (below) matches current state
+- Consolidate active tasks into Hub realm sections (ENG-001..004, FLT-001/004, MEM-002/003, HRT-001/002, COM-001..012)
+- Update VISION_ANCHOR.md to reference HMC for task status
 
-**NEXT:** VOS HYBRID PLAN — Phase 1 (Hub Consolidation) — after Phase 0
-- Add realm ownership table to HMC_COLLABORATION_HUB.md
-- Consolidate workspace brief tasks into Hub realm sections
+**COMPLETED:** VOS HYBRID PLAN — Phase 0 (Archive & Clean) — `2cbcad97`
+- Omegaverse realm archived → `data/realms/omegaverse/archive/state.yaml`
+- 6 realm state.yaml deleted, 4 workspace briefs deleted, realm_cli.py deleted
+- VISION_ANCHOR.md updated (realm health → auto-gen note, M2 status fixed)
+- PIVOT_LOG.md synced with D-VOS-001..018
 
 **PARALLEL:** PR-A (Public Surface Honesty) — **AWAITING ARCHITECT CONFIRMATION**
 - Root junk archive → `docs/archive/root-artifacts-202608/`
@@ -64,10 +65,10 @@
 | Fleet | kali | 14 Entities, MaKaLi Council, Node Slots, Hivemind | Engine Core (registry), Memory (soul) | Active |
 | Memory | lilith_n7 | Soul Architecture v2, Mnemosyne, L1→L2→L3, Cross-pollination | Engine Core (memory store) | Critical |
 | Heritage | doom_guy | [id-soft:] Vetting, id Software Patterns | Engine Core (loader) | Healthy |
-| Omegaverse | lilith_n6 | Godot Bridge, Soul-to-Visual (R-24), P2P Soul Prints | Engine Core (bridge), Memory (soul) | Deferred |
+| Omegaverse | lilith_n6 | Godot Bridge, Soul-to-Visual (R-24), P2P Soul Prints | Engine Core (bridge), Memory (soul) | Deferred (archived) |
 | Community | kali | Installer, QUICKSTART, CONTRIBUTING, CI, Launch | Engine Core, Stacks, Fleet | Planned |
 
-> **Realm contracts are enforced by `make temple-grade` realm validator.**
+> **Realm contracts are enforced by `make temple-grade` realm validator (Phase 2).**
 > See `ACTIVE_SPRINT.json` for live task status per realm.
 
 ### Active Tasks by Realm
