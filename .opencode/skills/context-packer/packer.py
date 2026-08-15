@@ -154,7 +154,9 @@ def _escape_bare_xml_chars(text: str) -> str:
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
     # Escape & only when not already part of a valid XML entity.
-    text = re.sub(r'&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)', '&lt;', text)
+    # CRITICAL: bare & MUST become &amp; (not &lt;). Escaping it as &lt; corrupts
+    # content on round-trip (e.g. "AT&T" -> "AT<T") — silent data corruption (M23).
+    text = re.sub(r'&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)', '&amp;', text)
     return text
 
 

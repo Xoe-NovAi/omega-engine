@@ -230,6 +230,37 @@ class TestWritePhase:
         assert "defusedxml" in src
         assert "xml.etree.ElementTree" in src or "ElementTree as" in src
 
+    def test_escape_bare_ampersand_roundtrip(self):
+        """M23: bare & must become &amp; (NOT &lt;). Round-trip must be lossless.
+
+        Regression: `_escape_bare_xml_chars` escaped bare & as `&lt;`, so
+        `if a & b` became `if a < b` after XML unescape — silent content
+        corruption in every bundled file (AT&T -> AT<T, && -> <<).
+        """
+        from xml.sax.saxutils import unescape
+        import packer
+
+        # Raw content with no pre-escaped entities: round-trip must be lossless.
+        cases = [
+            "if a & b: pass",
+            "AT&T telecom",
+            "C:\\path & more",
+            "<file> tag in docstring & stuff",
+            "&& && & &&",
+        ]
+        for raw in cases:
+            escaped = packer._escape_bare_xml_chars(raw)
+            # Bare & must NEVER become &lt; (that is the regression).
+            assert "&lt; " not in escaped, \
+                f"bare & corrupted to &lt;: {escaped!r}"
+            # Round-trip must reconstruct the raw source exactly.
+            assert unescape(escaped) == raw, \
+                f"round-trip mismatch: {raw!r} -> {escaped!r}"
+
+        # Pre-escaped entities must NOT be double-escaped (they pass through).
+        pre = "x = a &lt; b &amp; c"
+        assert packer._escape_bare_xml_chars(pre) == pre
+
     def test_ed25519_signature(self):
         """Manifest signed with Ed25519; public key serialized to PEM (manual §5.5)."""
         from cryptography.hazmat.primitives.asymmetric import ed25519
