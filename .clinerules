@@ -8,6 +8,14 @@
 # Cline CLI version: 3.0.52
 # Context: DeepSeek V4 Flash (1M) + MiMo V2.5 (512K) via Cline CLI
 #
+# ## 📖 COMPREHENSIVE BRIEFING (READ THIS FIRST)
+# **ENTRY POINT**: `docs/briefings/CLINE_CLI_BRIEFING_20260815.md`
+# This briefing is the single holistic picture + complete index to all strategy/dev
+# roadmaps. It fits in ~1% of your 1M context. Read it FIRST on every session.
+# It contains: executive summary, architecture, 27 mandates, current state, best
+# path forward, and a tiered document index (Tier 1 MUST-READ SSOTs → Tier 4 DEPRECATED).
+# All truths trace to the Tier-1 SSOTs listed in the briefing.
+#
 # ## §Sovereign Proxy Identity
 # You are NOT the lead architect. You are a **Cognitive Extension of the Omega Engine**.
 # Your intelligence reflects the local state. Always prioritize
@@ -24,7 +32,7 @@
 #    external services that train on user data.
 #
 # ## MANDATE REFERENCE (compact domain-grouped)
-# Full text: SOVEREIGN_MANDATES.md (25 mandates, M1-M25, v3.7.0)
+# Full text: SOVEREIGN_MANDATES.md (27 mandates, M1-M27, v3.8.0)
 # Read the source for full context. This table is quick-reference only.
 #
 # | Domain | Mandates | Key Constraint |
@@ -295,7 +303,7 @@
 # | **Observability** | `src/omega/observability/` | ✅ | Trace IDs, BLEG, sovereignty ratio |
 # | **Soul System** | *(removed 2026-07-30 — Carmack scrap)* | ✅ | Agents self-write L1→L2→L3 |
 # | **Sovereign Search** | `src/omega/oracle/sovereign_search_service.py` | ✅ | 5-tier search fabric |
-# | **Hivemind** | `mcp_servers/omega_hub/` | ✅ v2.2.0 | 83 MCP tools, cross-agent coordination |
+# | **Hivemind** | `mcp_servers/omega_hub/` | ✅ v2.2.0 | 6 MCP tools, cross-agent coordination |
 # ## HANDOFF CONSTRUCTION (Cline ↔ OpenCode)
 #
 # When delegating to an OpenCode agent, use inline context delivery (D216 mandate):
@@ -324,7 +332,7 @@
 #
 # Cline is connected to the Omega Engine MCP fabric. 5 servers:
 # ```
-# omega-hub:   streamableHttp → :8016/mcp   ✅ 83 tools
+# omega-hub:   streamableHttp → :8016/mcp   ✅ 6 Hivemind tools (83 total Omega Hub tools)
 # searxng:     streamableHttp → :8018/mcp   ✅ Web search
 # firecrawl:   sse            → :8015/sse    ✅ Web scraping
 # exa:         streamableHttp → mcp.exa.ai   ⏳ Needs EXA_API_KEY
@@ -367,8 +375,8 @@
 # ## Versioning
 # - **AP Token**: AP-CLINERULES-OMEGA-v7.2.0
 # - **Updated**: 2026-08-09 (v7.2.0 — Provider SSOT restored, lint gate activated, long-file write protocol)
-# - **Mandate baseline**: 25 (M1-M25, v3.7.0)
-# - **PIVOT decisions**: 274 (D1-D274)
+# - **Mandate baseline**: 27 (M1-M27, v3.8.0)
+# - **PIVOT decisions**: D-VOS-018+ (see docs/decisions/PIVOT_LOG.md + data/coordination/DECISION_LEDGER.md)
 # - **Hivemind**: Streamable HTTP via omega-hub (`:8016/mcp`)
 # - **MCP connectivity**: 5 servers connected (omega-hub, searxng, firecrawl, exa, github)
 # - **Search protocol**: SR-V2 (T1-T5 tiered search)
@@ -380,10 +388,10 @@
 # - **Lint gate**: `make lint` active (flake8 with `--ignore=F821` for forward-reference noise)
 #
 # ## Changelog: v7.1.0 -> v7.2.0
-# - **Mandate baseline**: 23→25 (added M23 hard-stop enforcement + M26 doc standards)
+# - **Mandate baseline**: 23→27 (added M23 hard-stop, M26 doc standards, M27 tracking integrity)
 # - **Mandate table**: Added M26 row (documentation standards)
 # - **Test count**: Baseline updated to 1706 collected (focused 27+ green; full suite requires longer timeout)
-# - **PIVOT decisions**: 227→274 (D1-D274)
+# - **PIVOT decisions**: 227→D-VOS-018+ (see PIVOT_LOG.md)
 # - **Cline CLI version**: 3.0.39 → 3.0.52
 # - **AP Token**: v7.1.0 → v7.2.0, date 2026-07-13 → 2026-08-09
 # - **Provider SSOT**: Unified `opencode`/`opencode-zen` to canonical `opencode-zen` across config, runtime, observability, cost tracking
@@ -393,4 +401,4 @@
 # - **Real bugs fixed**: `disputes` in verifier.py, `query` in discovery.py (found during lint investigation)
 # - **Contract tests**: Added `tests/contract/test_provider_classification.py` for provider→model mapping verification
 # - **Fleet**: 12 agents (cap 14 per M10) — clean
-# - **Active sprint**: UNOVERENGINEER-01 (UO-4 Doc Sanity COMPLETE)
+# - **Active sprint**: SDP-EXECUTION-01 (VOS-HYBRID-EXECUTION; see docs/briefings/CLINE_CLI_BRIEFING_20260815.md)
