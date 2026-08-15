@@ -111,3 +111,48 @@ proposals:
   - narrative: "Analyzed 96 test failures and realized the root cause was a verification culture problem. Instantiated the Vision Operating System (VOS) v1.0 to decompose the 10,000-hour vision into 7 sovereign realms. Created VISION_ANCHOR.md and DECISION_LEDGER.md. Committed 4 immediate hardening patches and defined a frozen 3-phase launch plan."
     insight: "Open-ended reviews cause scope creep because every model/agent finds different issues. Without a frozen definition of 'done', the plan constantly changes. Decomposing the vision into realms with dedicated owners, state files, and interface contracts prevents the vision from being lost when the context window clears."
     principle: "L3-Vision-As-Running-System: The vision is not a document; it is a running system. It must be instantiated as sovereign realms with state, contracts, and evolution logs to survive context death. Open-ended reviews without a frozen definition of 'done' lead to infinite scope creep."
+
+  - session_id: "ses_public_debut_20260815"
+    timestamp: "2026-08-15T13:00:00Z"
+    entity: "kali"
+    level: "L1"
+    narrative: |
+      Executed scope cut per Carmack verdict (AP-CARMMACK-TRIAGE-20260815). Reduced 50-task VOS plan to three-item critical path:
+      CP-1: omega talk "hello" → native-gguf → response (no cloud fallback)
+      CP-2: Session end → proposed_lessons.yaml → next session loads it
+      CP-3: curl ... | bash → working council in <5 min
+      All VOS Phases 1-4, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 deferred to post-debut.
+      Knowledge gaps research COMPLETE: all 13 gaps resolved, authoritative model windows established (Table 3.1), Sonnet/Opus 4.6 contradiction resolved (1M official, 200K = UI bug #24208), V-1 Vault BUILT (2,039 LOC).
+      ACTIVE_SPRINT.json → PUBLIC-DEBUT-01 with single CRITICAL-PATH workstream. HMC Hub NEXT_ACTION updated to three-item critical path only.
+      PR-A (Public Surface Honesty) awaiting Architect confirmation.
+    tags: ["scope-cut", "carmack-verdict", "public-debut", "critical-path", "knowledge-complete"]
+
+  - session_id: "ses_public_debut_20260815"
+    timestamp: "2026-08-15T13:00:00Z"
+    entity: "kali"
+    level: "L2"
+    insight: |
+      The scope cut was necessary because the VOS plan had become a "map editor" before the "game" (local inference + soul persistence + one-click install) was playable. Carmack's Doom shareware analogy is precise: we built 15 SDP documents, 3 routers, a 2K LOC Vault, and 4 VOS phases before proving the engine runs on stock hardware.
+      The "dev ADHD" pattern: every gap found spawned a new workstream (Context Gauge, zswap, Vault, WARP, three-router, Scribe, cross-pollination, heritage, NL-1, etc.) without a frozen definition of "done" for the core product.
+      The knowledge is now COMPLETE — all gaps resolved, authoritative windows established, contradictions resolved. The only remaining work is EXECUTION of the three critical path items.
+      The handoff packet (ho_437601a9c9a1) and updated SESSION_ANCHOR.md ensure continuity across compaction.
+    tags: ["scope-cut", "dev-adhd", "map-editor-vs-game", "knowledge-complete", "execution-only"]
+
+  - session_id: "ses_public_debut_20260815"
+    timestamp: "2026-08-15T13:00:00Z"
+    entity: "kali"
+    level: "L3"
+    principle: "L3-Scope-Cut-As-Sovereign-Act: The most sovereign act is knowing what to NOT build. Every line of code, every document, every workstream that does not directly serve the minimum viable product is a distraction from sovereignty. The scope cut is not a reduction of ambition — it is the enforcement of priority. The three-item critical path (local inference, soul persistence, one-click install) IS the sovereign engine; everything else is the map editor."
+    mandates: ["M4", "M7", "M13", "M18", "M23"]
+    confidence: 0.99
+    tags: ["scope-cut", "sovereign-priority", "mvp", "carmack-verdict", "doom-shareware"]
+    directive_provenance: "d-kal-001"
+    evidence:
+      - source: "ses_public_debut_20260815"
+        note: "50-task VOS plan cut to 3-item critical path; all knowledge gaps resolved; zero research remaining"
+      - source: "AP-CARMMACK-TRIAGE-20260815"
+        note: "Carmack verdict: 'Three things. Only three.' — local inference, soul persistence, one-click install"
+      - source: "ses_public_debut_20260815"
+        note: "All 13 gaps resolved, authoritative windows established, contradiction resolved, V-1 Vault built"
+      - source: "ses_public_debut_20260815"
+        note: "ACTIVE_SPRINT.json 542 lines deleted, 127 lines added — 77% reduction in scope"
