@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-14T14:14:52.616053+00:00",
+  "updated": "2026-08-15T10:13:04.811707+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -394,11 +394,11 @@
       "channel": "opencode",
       "entity": "kali",
       "description": "Grok CLI advisory review of Context Packer implementation + Carmack report pre-refactor",
-      "status": "in_progress",
+      "status": "completed",
       "created_at": "2026-08-08T14:18:38.266918+00:00",
-      "last_checkpoint": "2026-08-08T14:18:38.266930+00:00",
-      "resumption_count": 0,
-      "context_verified": false,
+      "last_checkpoint": "2026-08-15T10:13:04.811707+00:00",
+      "resumption_count": 1,
+      "context_verified": true,
       "tags": [
         "context-packer",
         "advisory-review",
@@ -406,7 +406,10 @@
         "carmack-verification"
       ],
       "migrated_from": "active",
-      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14"
+      "migration_note": "Migrated to unified taxonomy (M27) on 2026-08-14",
+      "completed_at": "2026-08-15T10:13:04.811707+00:00",
+      "executed_by": "cline/omega-engine (handoff ho_8bfa50cb1e1d, stale reaped 2026-08-09 \u2192 accepted)",
+      "completion_note": "Advisory review DELIVERED by cline/omega-engine on 2026-08-15. Report: docs/research/R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md. 9 findings beyond Carmack; F1 (bare & escape corruption) FIXED in packer.py:157 + regression test (28/28 contract tests pass, commit 5a145f9d). F2-F9 open for refactor owner: litm_zone un-wired (F2), include/exclude dead config (F3), reserved_output unenforced (F4), CWD-relative config path (F5), third-party rglob (F6), scanner false positives (F7), dup config entries (F8), stale duplicate manifest (F9). Both Web Claude packs regenerated: sovereign-audit + tech-architecture-research, 11 bundles + manifest = 12 slots each. Executed under cline task context-packer-advisory-review-20260815."
     },
     {
       "task_id": "kali-carmack-repo-hygiene-20260808",
@@ -1161,6 +1164,60 @@
         "M27",
         "gaps",
         "SDP-EXECUTION-01"
+      ]
+    },
+    {
+      "task_id": "context-packer-advisory-review-20260815",
+      "subagent_type": "cline-omega-engine",
+      "launched_by": "kali",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Independent advisory review of Context Packer (packer.py) + Carmack arch review, deliver 2 Web Claude packs (ho_8bfa50cb1e1d)",
+      "status": "completed",
+      "created_at": "2026-08-15T08:57:10.370402+00:00",
+      "last_checkpoint": "2026-08-15T06:10:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "context-packer",
+        "advisory-review",
+        "handoff"
+      ]
+    },
+    {
+      "task_id": "local-discovery-gaps-20260815",
+      "subagent_type": "roc_racoon",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Local discovery for open knowledge gaps (R14b, R31, R33-R38, R4, R21, R22, Context Packer F2-F9)",
+      "status": "in_progress",
+      "created_at": "2026-08-15T09:49:27.121234+00:00",
+      "last_checkpoint": "2026-08-15T09:49:27.121252+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "local-discovery",
+        "knowledge-gaps",
+        "phase1-4"
+      ]
+    },
+    {
+      "task_id": "web-research-gaps-20260815",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Deep web research for open knowledge gaps (R14b, R31, R33-R38, R4/R21/R22 verification)",
+      "status": "in_progress",
+      "created_at": "2026-08-15T09:49:30.836387+00:00",
+      "last_checkpoint": "2026-08-15T09:49:30.836406+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "web-research",
+        "knowledge-gaps",
+        "phase1-4"
       ]
     }
   ]
