@@ -730,3 +730,22 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 
 ---
 *⬡ OMEGA ⬡ KALI ⬡ trc_pivot ⬡ 2026-08-09*
+
+| **D-VOS-001** | **VOS v1.0 Instantiation** — 7 sovereign realms (Engine Core, Stacks, Fleet, Memory, Heritage, Omegaverse, Community) with state.yaml, VISION_ANCHOR.md, DECISION_LEDGER.md, realm_cli.py | ✅ COMPLETE |
+| **D-VOS-002** | **Session-End Hook Preserves Proposals** — session_end.py no longer overwrites agent proposals with `[]` | ✅ COMPLETE |
+| **D-VOS-003** | **Soul Validator — VALID_SOUL_VERSIONS** — Expanded to {6.1,7.0,7.1,7.2} | ✅ COMPLETE |
+| **D-VOS-004** | **Soul Validator — LIVE_FEED→HUB** — Replaced LIVE_FEED references with HMC_COLLABORATION_HUB.md | ✅ COMPLETE |
+| **D-VOS-005** | **Mandate Header Correction** — SOVEREIGN_MANDATES.md "Twenty-Five" → "Twenty-Seven" | ✅ COMPLETE |
+| **D-VOS-006** | **M22 SSOT Check Fix** — Fixed false positive on `is_cloud` in providers.yaml | ✅ COMPLETE |
+| **D-VOS-007** | **Context Packer Tuple Fix** — test_context_packer.py tuple unpack fix | ✅ COMPLETE |
+| **D-VOS-008** | **96 Test Failures Triage** — Class A (code bugs ~20), B (test drift ~50), C (integration ~26) | ✅ COMPLETE |
+| **D-VOS-009** | **Public Debut PR — 3-Phase Plan** — Phase 1 (root junk), Phase 2 (README), Phase 3 (.gitignore) | ✅ RATIFIED |
+| **D-VOS-010** | **7 Sovereign Realms** — Domain decomposition for vision persistence | ✅ COMPLETE |
+| **D-VOS-011** | **PKEXEC Privilege Directive** — N1/Architect privileged ops use pkexec, not sudo | ✅ RATIFIED |
+| **D-VOS-012** | **Audit-First Approach** — Verify all claims before execution | ✅ RATIFIED |
+| **D-VOS-013** | **Ratify 3-PR Path** — PR-A (public-surface-honesty), PR-B (real M2), PR-C (dead-code quarantine) | ✅ RATIFIED |
+| **D-VOS-014** | **Reject Carmack Nuclear Plan** — 6 fatal errors (M2 misdiagnosis, wrong paths, vault liveness, strategy-doc purge, VOS age, git add -A secrets) | ✅ LOGGED |
+| **D-VOS-015** | **Amend ENG-001** — "146 WAD term leaks" → "M2 = stack-specific leaks, run FirewallChecker.scan()" | ✅ AMENDED |
+| **D-VOS-016** | **TRACKING_ARCHITECTURE.md Keep-List** — Added to PR-C keep-list (M27 constitution) | ✅ AMENDED |
+| **D-VOS-017** | **Log Carmack Mandate Violations** — SYSTEM_FAILURE_LOG.md created with M4/M23/M14/M26/M27/M8/false-M2 | ✅ LOGGED |
+| **D-VOS-018** | **VOS Hybrid Plan (Option C) Approved** — Keep DECISION_LEDGER + VISION_ANCHOR, retire 7 state.yaml + 7 briefs + realm_cli.py, add Hub enforcement | ✅ APPROVED |

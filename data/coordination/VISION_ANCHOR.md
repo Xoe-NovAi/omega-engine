@@ -3,10 +3,10 @@
 
 **AP Token**: `AP-VISION-ANCHOR-20260814`  
 **Status**: CANONICAL — Updated by Architect at every major decision point  
-**Last Updated**: 2026-08-14T00:00:00Z  
-**Updated By**: Architect (User)  
-**Session**: ses_vos_init_20260814  
-**VOS Version**: 1.0.0
+**Last Updated**: 2026-08-15T05:40:00Z  
+**Updated By**: Kali (VOS Hybrid Plan — Option C)  
+**Session**: ses_vos_hybrid_plan_20260815  
+**VOS Version**: 1.0.0 → Hybrid (DECISION_LEDGER + VISION_ANCHOR retained; realm state.yaml retired)
 
 ---
 
@@ -100,7 +100,7 @@ CLOUD (Priority 3-9) — Systematized, NOT expanded
 | # | Mandate | Status |
 |---|---------|--------|
 | M1 | AnyIO Absolute | ✅ |
-| M2 | Engine-Stack Firewall | ⚠️ 146 WAD leaks in engine core |
+| M2 | Engine-Stack Firewall | ⚠️ ENG-001 amended — run FirewallChecker.scan(), fix real hits only |
 | M3 | Iris Constant | ✅ |
 | M4 | Sequentiality (Plan→Verify→Execute) | ✅ |
 | M5 | Gnosis Preservation (L1→L2→L3) | ❌ Pipeline unenforced |
@@ -133,18 +133,7 @@ CLOUD (Priority 3-9) — Systematized, NOT expanded
 
 **Goal**: `make test-unit` green, all mandate gates genuinely passing, heritage clean, souls compliant.
 
-### Active P0 Tasks (7 Total)
-
-| ID | Task | Owner | Status | Depends On |
-|----|------|-------|--------|------------|
-| ENG-001 | Fix M2 firewall: remove 146 WAD term leaks from src/omega/ | maat_n1 | ready | — |
-| ENG-002 | Audit ALL mandate checks for false positives | kali | ready | — |
-| ENG-003 | Add make test-unit / make test-integration split | kali | ready | — |
-| ENG-004 | Fix 9 critical code bugs | maat_n3 | in_progress | — |
-| FLT-001 | Migrate kali & roc_racoon souls to v6.1 lean schema | kali | ready | — |
-| FLT-004 | Enforce distillation pipeline (Scribe agent) | verity | ready | FLT-001 |
-| HRT-001 | Heritage sweep: verify all [id-soft:] tags | doom_guy | ready | — |
-| MEM-002 | Implement Scribe agent L1→L2→L3 pipeline | verity | ready | FLT-001 |
+> **Active tasks** are tracked in `ACTIVE_SPRINT.json` (Tier-0 SSOT) and consolidated by realm in `HMC_COLLABORATION_HUB.md`. See those files for live task status.
 
 ### Completed This Session (4 Hardening Patches)
 1. **session_end.py** — Preserves agent proposals instead of overwriting with `[]`
@@ -179,15 +168,7 @@ CLOUD (Priority 3-9) — Systematized, NOT expanded
 
 ## 📊 Realm Health Summary
 
-| Realm | Owner | Status | Critical Blockers |
-|-------|-------|--------|-------------------|
-| Engine Core | Ma'at (N3) | Degraded | M2 firewall (146 leaks), mandate check audit |
-| Stacks | Ma'at (N4) | Degraded | Community template blocked on ENG-001 |
-| Fleet | Kali | Degraded | Soul compliance, distillation pipeline |
-| Memory | Lilith (N7) | Critical | Distillation pipeline broken, cross-pollination missing |
-| Heritage | Doom_Guy | Healthy | Phase 0 sweep needed |
-| Omegaverse | Lilith (N6) | Deferred | R-24 soul-to-visual mapping |
-| Community | Kali | Planned | Blocked on ENG-001 |
+> **Auto-generated from `ACTIVE_SPRINT.json`** via `make update-vision-anchor` (Phase 2 of VOS Hybrid Plan). See `HMC_COLLABORATION_HUB.md` for live realm ownership and task status.
 
 ---
 
