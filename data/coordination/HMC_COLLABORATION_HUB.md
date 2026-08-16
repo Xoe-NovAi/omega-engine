@@ -9,19 +9,26 @@
 
 ## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
 
-*Last verified: 2026-08-15T14:30Z*
+*Last verified: 2026-08-16T22:30Z*
 
 > **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
 
-**SCOPE CUT EXECUTED 2026-08-15** per Carmack verdict (AP-CARMMACK-TRIAGE-20260815).
+**KALI RATIFICATION 2026-08-16 (D-532)**: Roc readiness audit ratified — see `ACTIVE_SPRINT.json` → `READINESS-REMEDIATION` workstream + `ROC_RACOON_KALI_REPORT_20260816.md`.
 
-**CURRENT:** PUBLIC DEBUT — Three-Item Critical Path — **ALL THREE COMPLETED**
-- ✅ **CP-1 COMPLETED**: Local inference end-to-end (`omega talk "hello"` → native-gguf → response, no cloud fallback, PROVIDER_NAME=native-gguf, IS_CLOUD=False)
-- ✅ **CP-2 COMPLETED**: Soul persistence (session end → `proposed_lessons.yaml` → next session hydrates from `approved_lessons.yaml`) — verified end-to-end
-- ✅ **CP-3 COMPLETED**: One-click install (`curl ... | bash` → working council in <5 min) — Owner: kali
+**CURRENT:** PUBLIC DEBUT — Three-Item Critical Path COMPLETE ✅ → **READINESS REMEDIATION IN PROGRESS**
 
-**CARMACK REVIEW (2026-08-15)**: NO-GO on proposed monitoring stack. **20-line fix** for native-gguf cleanup (`__exit__` + `__del__` + `malloc_trim`) is the highest-leverage change. All other monitoring (Prometheus, loguru, PSI→Redis) CUT.
+**🚨 LIVE INCIDENT (P0-1)**: Real API keys are **already pushed to `origin/main`** (commits `df174496`, `13351f9d`; files `docs/archive/stale/migrate_keys_full.py` 16× `sk-`, `docs/guides/PROVIDER_FREE_TIER_GUIDE.md` 6× `sk-`/`csk-`).
+1. **ARCHITECT ACTION REQUIRED NOW**: rotate all exposed keys at provider consoles (OpenAI-style, Cerebras, SiliconFlow) — rotation MUST precede scrub
+2. After rotation confirmed → Roc: `git filter-repo` scrub all branches → gitleaks CI gate
+
+**PHASE 1 (Roc executing — has full context)**: Fix 63 test failures (1825 total). Clusters: P1-1 async/sync (~20), P1-2 VaultCore drift (~18, keep `bury_credential`), P1-3 mcp import (9), P1-4 mock sig (1), P1-5 logic (~5), P1-6 verify green (verity).
+
+**PHASE 2 (Ma'at/N3, after Phase 1)**: Lint debt 11,400 flake8 violations (--exit-zero blind spot). P2-5 `make heritage-map` target → kali (ready).
+
+**PHASE 3 (Verity)**: CI/hygiene. **PHASE 4 (kali)**: Debut polish.
+
+**COMPLETED (pre-ratification)**: CP-1 local inference ✅ · CP-2 soul persistence ✅ · CP-3 one-click install ✅ · C-6' breaker migration (Roc) ✅
 
 **ALL OTHER WORK DEFERRED TO POST-DEBUT:**
 - VOS Phases 1-4 (Context Gauge, zswap, NVMe, sysctl, un-overengineering, Restic, AppArmor, IA2)
@@ -34,8 +41,7 @@
 - Fleet soul migration to v6.1
 - Scribe agent L1→L2→L3 automation
 - Cross-pollination (R-31)
-- Heritage sweep
-- Community installer/QUICKSTART/CONTRIBUTING/CI
+- Community installer/QUICKSTART/CONTRIBUTING/CI (P4 partial)
 - NL-1 NotebookLM pipeline
 - Restic/AppArmor/IA2
 

@@ -79,6 +79,7 @@ from .entity_registry import EntityRegistry
 from .entity_affinity import EntityAffinityResolver, AffinityResult
 from .budget_gate import BudgetGate
 from .provider_selector import ProviderSelector
+from .pii_masker import PIIMasker
 from omega.observability.token_ledger import TokenLedger
 from omega.observability.latency_tracker import tracker
 from omega.state.usm import USMManager
@@ -172,6 +173,7 @@ class ModelGateway:
         
         # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
         self._limiter = anyio.CapacityLimiter(10)
+        self.pii_masker = PIIMasker()
         self.provider_selector = ProviderSelector(self, health_monitor=self._health_monitor)
         from .rate_limiter import RateLimiter
         self.rate_limiter = RateLimiter()

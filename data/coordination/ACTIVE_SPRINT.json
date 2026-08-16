@@ -1,136 +1,358 @@
 {
-  "sprint_id": "PUBLIC-DEBUT-01",
-  "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
-  "phase": "EXECUTION_MINIMAL",
-  "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-15T23:50:00Z",
-  "owner": "kali",
-  "status": "in_progress",
-  "status_detail": "Scope cut executed per Carmack verdict. Three-item critical path only. All VOS phases, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 DEFERRED to post-debut.",
-  "supersedes": [
-    "SDP-EXECUTION-01 (Aug 11 — full 5-phase plan, now archived)",
-    "NEMOTRON-ANALYSIS-01 (Aug 10 — analysis complete)",
-    "UNOVERENGINEER-01 (Jul 30 — historical)",
-    "FOUNDATION-STAB-01 (Jul 20 Phase Β — historical)"
-  ],
-  "primary_handoffs": {
-    "dev_roadmap": "data/coordination/KALI_DEV_ROADMAP_20260811.md",
-    "knowledge_gaps": "data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md",
-    "knowledge_gaps_superseded": "data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md",
-    "oversight_portfolio": "data/coordination/KALI_OVERSIGHT_PORTFOLIO_20260811.md",
-    "sdp_final_synthesis": "docs/strategy/SDP_FINAL_SYNTHESIS.md",
-    "context_gauge_spec": "docs/strategy/SDP_MODEL_AWARE_GAUGE_SPEC.md",
-    "nemotron_deep_analysis": "docs/research/R_NEMOTRON_DEEP_ANALYSIS_20260810.md",
-    "memory_management_kb": "docs/kb/MEMORY_MANAGEMENT_KB.md",
-    "p0_audit_handoff": "data/coordination/SESSION_ANCHOR.md"
-  },
-  "freeze": {
-    "active": false,
-    "until_gate": "NONE — Freeze LIFTED",
-    "frozen": [],
-    "allowed": [
-      "local_inference_end_to_end",
-      "soul_persistence",
-      "one_click_install"
-    ]
-  },
-  "gates": {
-    "local_inference_end_to_end": {
-      "status": "completed",
-      "owner": "maat_n3",
-      "note": "VERIFIED: omega talk \"hello\" → native-gguf → response. No cloud fallback. PROVIDER_NAME=native-gguf, IS_CLOUD=False. Latency 16.8s cold (model load), <5s warm. Metrics DB migration fixed (cache_read_tokens columns added)."
-    },
-    "soul_persistence": {
-      "status": "completed",
-      "owner": "lilith_n7",
-      "note": "VERIFIED: Agent writes L1→L2→L3 to proposed_lessons.yaml (5 lessons this session); session_end.py preserves + timestamps; next session hydrates from approved_lessons.yaml via get_soul_prompt(); entity identity persists via soul.yaml load."
-    },
-    "one_click_install": {
-      "status": "completed",
-      "owner": "kali",
-      "note": "VERIFIED: install.sh provisions venv, downloads Qwen3-1.7B-Q6_K.gguf from lmstudio-community, sets OMEGA_MODELS_DIR, omega talk exits cleanly (EXIT 0). python-age>=0.1.0 fix applied. ModelGateway.shutdown() + CLI finally blocks ensure clean exit."
-    }
-  },
-  "workstreams": {
-    "CRITICAL-PATH": {
-      "task": "Three-Item Public Debut",
-      "owner": "kali",
-      "status": "in_progress",
-      "risk": "CRITICAL",
-      "subtasks": [
-        {
-          "id": "CP-1",
-          "description": "Local inference end-to-end: omega talk → native-gguf → response",
-          "owner": "maat_n3",
-          "ssots": ["config/providers.yaml", "src/omega/oracle/model_gateway.py", "src/omega/oracle/backends/native_gguf.py"],
-          "deliverable": "VERIFIED: omega talk \"hello\" returns local response without cloud fallback",
-          "acceptance": ["native-gguf provider responds", "No cloud provider invoked", "Response latency <5s (warm)"],
-          "estimated_hours": 2,
-          "status": "completed",
-          "completed_at": "2026-08-15T14:30:00Z",
-          "notes": "CP-1 COMPLETE. Native-gguf inference verified. Metrics DB schema migration fixed. Carmack review: implement 20-line cleanup fix in native_gguf.py (__exit__ + __del__ + malloc_trim) to prevent OOM on abnormal exit."
-        },
-        {
-          "id": "CARMACK-FIX",
-          "description": "P0 OOM hardening: NativeGGUFProvider context manager + malloc_trim + systemd MemoryMax=8G + Delegate=yes",
-          "owner": "maat_n3",
-          "ssots": ["src/omega/oracle/providers.py", "config/systemd/omega-inference.service"],
-          "deliverable": "20-line Carmack fix applied: __enter__/__exit__ context manager, robust shutdown() with kill() fallback, malloc_trim(0) in worker + parent, systemd unit with MemoryMax=8G + Delegate=yes",
-          "acceptance": ["Context manager protocol on NativeGGUFProvider", "shutdown() calls malloc_trim(0)", "Worker process trims on shutdown signal", "systemd unit created with MemoryMax=8G + Delegate=yes", "All 13 provider tests pass"],
-          "estimated_hours": 1,
-          "status": "completed",
-          "completed_at": "2026-08-15T19:45:00Z",
-          "notes": "CARMACK FIX APPLIED. Root cause (2.5GB leak per hung test process) addressed: (1) __enter__/__exit__ enables `with NativeGGUFProvider() as p:`, (2) shutdown() hardened with terminate()+kill() fallback + malloc_trim(0), (3) worker process trims on shutdown signal, (4) systemd unit omega-inference.service with MemoryMax=8G + Delegate=yes keeps worker in cgroup. All monitoring stack CUT per Carmack NO-GO."
-        },
-        {
-          "id": "CP-2",
-          "description": "Soul persistence: session end → proposed_lessons.yaml → next session loads",
-          "owner": "lilith_n7",
-          "ssots": ["src/omega/oracle/entity_workspace.py", "data/entities/kali/proposed_lessons.yaml", ".opencode/hooks/session_end.py"],
-          "deliverable": "VERIFIED: Agent writes L1→L2→L3 to proposed_lessons.yaml (blind staging); session_end.py preserves + timestamps; next session hydrates from approved_lessons.yaml via get_soul_prompt()",
-          "acceptance": ["proposed_lessons.yaml written on session end (agent + hook timestamp)", "Next session reads approved_lessons.yaml (get_soul_prompt hydrates)", "Entity identity persists (soul.yaml loaded)"],
-          "estimated_hours": 4,
-          "status": "completed",
-          "completed_at": "2026-08-15T19:55:00Z",
-          "notes": "CP-2 VERIFIED. All 3 criteria pass: (1) Agent writes L1→L2→L3 to proposed_lessons.yaml (5 lessons written this session), session_end.py hook preserves proposals + writes timestamp; (2) get_soul_prompt() hydrates from approved_lessons.yaml (end-to-end test passed with temp entity); (3) soul.yaml loaded on every session start (entity identity persists). session_end.py EXISTS at .opencode/hooks/session_end.py (preserves agent proposals, regenerates OMEGA_CODEX.md)."
-        },
-        {
-          "id": "CP-3",
-          "description": "One-click install: curl | bash → working council in <5 min",
-          "owner": "kali",
-          "ssots": ["scripts/install.sh", "config/omega.yaml"],
-          "deliverable": "Install script that provisions venv, pulls models, starts services, verifies omega talk",
-          "acceptance": ["Fresh machine: curl | bash completes in <300s", "omega talk works post-install", "No manual config required"],
-          "estimated_hours": 8,
-          "status": "completed",
-          "completed_at": "2026-08-15T23:45:00Z",
-          "notes": "CP-3 COMPLETED. install.sh created with correct lmstudio-community HF URL (Qwen3-1.7B-Q6_K.gguf). python-age>=1.0.0 → >=0.1.0 fix applied. ModelGateway.shutdown() added to terminate native-gguf worker; CLI talk/summon finally blocks call shutdown() so omega talk exits cleanly (EXIT 0). All model_gateway (17), oracle (26), provider (24) tests pass. Install script completes in ~289s on current machine (model download skipped)."
-        }
-      ]
-    }
-  },
-  "blockers": {},
-  "decisions_locked": [
-    "D-521 SDP elevated to core architectural pillar — DEFERRED",
-    "D-522 Ground truth: Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K — PRESERVED for config",
-    "D-523 Cold sessions need TIGHTER bands (0.7x) — DEFERRED",
-    "D-524 Provider-specific band adjustments required — DEFERRED",
-    "D-525 Post-fix cold rate baseline is 18-36% — DEFERRED",
-    "D-526 zswap > zRAM for desktop with NVMe — DEFERRED",
-    "D-527 Never run zswap and zRAM simultaneously — DEFERRED",
-    "D-528 pyresilience > tenacity for circuit breaker — DEFERRED",
-    "D-529 Simplify OOMProtector to 2-signal — DEFERRED",
-    "D-530 Context Gauge uses tokens.total (never tokens_input) — DEFERRED",
-    "D-531 Multi-write subagent method mandatory — DEFERRED"
-  ],
-  "ark_strategy_ssot": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
-  "notes": [
-    "SCOPE CUT EXECUTED 2026-08-15 per Carmack verdict (AP-CARMMACK-TRIAGE-20260815)",
-    "All VOS Phases 1-4, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 → POST-DEBUT",
-    "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
-    "Knowledge gaps research COMPLETE — authoritative model windows established (Table 3.1)",
-    "Sonnet/Opus 4.6 contradiction RESOLVED — 1M official, 200K = UI bug #24208",
-    "V-1 Vault BUILT (2,039 LOC) but DEFERRED — embed keyring in ModelGateway post-debut",
-    "Three-router fragmentation → pick ProviderSelector, delete TriageRouter + SemanticRouter POST-DEBUT"
+ "sprint_id": "PUBLIC-DEBUT-01",
+ "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
+ "phase": "EXECUTION_MINIMAL",
+ "started": "2026-08-15T00:00:00Z",
+ "updated": "2026-08-16T22:28:19.589810+00:00",
+ "owner": "kali",
+ "status": "in_progress",
+ "status_detail": "Scope cut executed per Carmack verdict. Three-item critical path COMPLETE. NEW: Readiness Remediation (Roc audit ratified) \u2014 P0-1 live key exposure on origin/main (rotate+scrub), P0-2 63 test failures (Phase 1 test suite green, Roc executing), P2 lint debt (11,400), P3 CI/hygiene, P4 polish. All VOS phases, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 DEFERRED to post-debut.",
+ "supersedes": [
+  "SDP-EXECUTION-01 (Aug 11 \u2014 full 5-phase plan, now archived)",
+  "NEMOTRON-ANALYSIS-01 (Aug 10 \u2014 analysis complete)",
+  "UNOVERENGINEER-01 (Jul 30 \u2014 historical)",
+  "FOUNDATION-STAB-01 (Jul 20 Phase \u0392 \u2014 historical)"
+ ],
+ "primary_handoffs": {
+  "dev_roadmap": "data/coordination/KALI_DEV_ROADMAP_20260811.md",
+  "knowledge_gaps": "data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md",
+  "knowledge_gaps_superseded": "data/coordination/KNOWLEDGE_GAPS_RESEARCH_20260811.md",
+  "oversight_portfolio": "data/coordination/KALI_OVERSIGHT_PORTFOLIO_20260811.md",
+  "sdp_final_synthesis": "docs/strategy/SDP_FINAL_SYNTHESIS.md",
+  "context_gauge_spec": "docs/strategy/SDP_MODEL_AWARE_GAUGE_SPEC.md",
+  "nemotron_deep_analysis": "docs/research/R_NEMOTRON_DEEP_ANALYSIS_20260810.md",
+  "memory_management_kb": "docs/kb/MEMORY_MANAGEMENT_KB.md",
+  "p0_audit_handoff": "data/coordination/SESSION_ANCHOR.md"
+ },
+ "freeze": {
+  "active": false,
+  "until_gate": "NONE \u2014 Freeze LIFTED",
+  "frozen": [],
+  "allowed": [
+   "local_inference_end_to_end",
+   "soul_persistence",
+   "one_click_install"
   ]
+ },
+ "gates": {
+  "local_inference_end_to_end": {
+   "status": "completed",
+   "owner": "maat_n3",
+   "note": "VERIFIED: omega talk \"hello\" \u2192 native-gguf \u2192 response. No cloud fallback. PROVIDER_NAME=native-gguf, IS_CLOUD=False. Latency 16.8s cold (model load), <5s warm. Metrics DB migration fixed (cache_read_tokens columns added)."
+  },
+  "soul_persistence": {
+   "status": "completed",
+   "owner": "lilith_n7",
+   "note": "VERIFIED: Agent writes L1\u2192L2\u2192L3 to proposed_lessons.yaml (5 lessons this session); session_end.py preserves + timestamps; next session hydrates from approved_lessons.yaml via get_soul_prompt(); entity identity persists via soul.yaml load."
+  },
+  "one_click_install": {
+   "status": "completed",
+   "owner": "kali",
+   "note": "VERIFIED: install.sh provisions venv, downloads Qwen3-1.7B-Q6_K.gguf from lmstudio-community, sets OMEGA_MODELS_DIR, omega talk exits cleanly (EXIT 0). python-age>=0.1.0 fix applied. ModelGateway.shutdown() + CLI finally blocks ensure clean exit."
+  }
+ },
+ "workstreams": {
+  "CRITICAL-PATH": {
+   "task": "Three-Item Public Debut",
+   "owner": "kali",
+   "status": "in_progress",
+   "risk": "CRITICAL",
+   "subtasks": [
+    {
+     "id": "CP-1",
+     "description": "Local inference end-to-end: omega talk \u2192 native-gguf \u2192 response",
+     "owner": "maat_n3",
+     "ssots": [
+      "config/providers.yaml",
+      "src/omega/oracle/model_gateway.py",
+      "src/omega/oracle/backends/native_gguf.py"
+     ],
+     "deliverable": "VERIFIED: omega talk \"hello\" returns local response without cloud fallback",
+     "acceptance": [
+      "native-gguf provider responds",
+      "No cloud provider invoked",
+      "Response latency <5s (warm)"
+     ],
+     "estimated_hours": 2,
+     "status": "completed",
+     "completed_at": "2026-08-15T14:30:00Z",
+     "notes": "CP-1 COMPLETE. Native-gguf inference verified. Metrics DB schema migration fixed. Carmack review: implement 20-line cleanup fix in native_gguf.py (__exit__ + __del__ + malloc_trim) to prevent OOM on abnormal exit."
+    },
+    {
+     "id": "CARMACK-FIX",
+     "description": "P0 OOM hardening: NativeGGUFProvider context manager + malloc_trim + systemd MemoryMax=8G + Delegate=yes",
+     "owner": "maat_n3",
+     "ssots": [
+      "src/omega/oracle/providers.py",
+      "config/systemd/omega-inference.service"
+     ],
+     "deliverable": "20-line Carmack fix applied: __enter__/__exit__ context manager, robust shutdown() with kill() fallback, malloc_trim(0) in worker + parent, systemd unit with MemoryMax=8G + Delegate=yes",
+     "acceptance": [
+      "Context manager protocol on NativeGGUFProvider",
+      "shutdown() calls malloc_trim(0)",
+      "Worker process trims on shutdown signal",
+      "systemd unit created with MemoryMax=8G + Delegate=yes",
+      "All 13 provider tests pass"
+     ],
+     "estimated_hours": 1,
+     "status": "completed",
+     "completed_at": "2026-08-15T19:45:00Z",
+     "notes": "CARMACK FIX APPLIED. Root cause (2.5GB leak per hung test process) addressed: (1) __enter__/__exit__ enables `with NativeGGUFProvider() as p:`, (2) shutdown() hardened with terminate()+kill() fallback + malloc_trim(0), (3) worker process trims on shutdown signal, (4) systemd unit omega-inference.service with MemoryMax=8G + Delegate=yes keeps worker in cgroup. All monitoring stack CUT per Carmack NO-GO."
+    },
+    {
+     "id": "CP-2",
+     "description": "Soul persistence: session end \u2192 proposed_lessons.yaml \u2192 next session loads",
+     "owner": "lilith_n7",
+     "ssots": [
+      "src/omega/oracle/entity_workspace.py",
+      "data/entities/kali/proposed_lessons.yaml",
+      ".opencode/hooks/session_end.py"
+     ],
+     "deliverable": "VERIFIED: Agent writes L1\u2192L2\u2192L3 to proposed_lessons.yaml (blind staging); session_end.py preserves + timestamps; next session hydrates from approved_lessons.yaml via get_soul_prompt()",
+     "acceptance": [
+      "proposed_lessons.yaml written on session end (agent + hook timestamp)",
+      "Next session reads approved_lessons.yaml (get_soul_prompt hydrates)",
+      "Entity identity persists (soul.yaml loaded)"
+     ],
+     "estimated_hours": 4,
+     "status": "completed",
+     "completed_at": "2026-08-15T19:55:00Z",
+     "notes": "CP-2 VERIFIED. All 3 criteria pass: (1) Agent writes L1\u2192L2\u2192L3 to proposed_lessons.yaml (5 lessons written this session), session_end.py hook preserves proposals + writes timestamp; (2) get_soul_prompt() hydrates from approved_lessons.yaml (end-to-end test passed with temp entity); (3) soul.yaml loaded on every session start (entity identity persists). session_end.py EXISTS at .opencode/hooks/session_end.py (preserves agent proposals, regenerates OMEGA_CODEX.md)."
+    },
+    {
+     "id": "CP-3",
+     "description": "One-click install: curl | bash \u2192 working council in <5 min",
+     "owner": "kali",
+     "ssots": [
+      "scripts/install.sh",
+      "config/omega.yaml"
+     ],
+     "deliverable": "Install script that provisions venv, pulls models, starts services, verifies omega talk",
+     "acceptance": [
+      "Fresh machine: curl | bash completes in <300s",
+      "omega talk works post-install",
+      "No manual config required"
+     ],
+     "estimated_hours": 8,
+     "status": "completed",
+     "completed_at": "2026-08-15T23:45:00Z",
+     "notes": "CP-3 COMPLETED. install.sh created with correct lmstudio-community HF URL (Qwen3-1.7B-Q6_K.gguf). python-age>=1.0.0 \u2192 >=0.1.0 fix applied. ModelGateway.shutdown() added to terminate native-gguf worker; CLI talk/summon finally blocks call shutdown() so omega talk exits cleanly (EXIT 0). All model_gateway (17), oracle (26), provider (24) tests pass. Install script completes in ~289s on current machine (model download skipped)."
+    }
+   ]
+  },
+  "READINESS-REMEDIATION": {
+   "task": "Public Debut Readiness Remediation (Roc audit 2026-08-16, ratified by Kali)",
+   "owner": "kali",
+   "status": "in_progress",
+   "risk": "CRITICAL",
+   "source": "data/coordination/ROC_RACOON_KALI_REPORT_20260816.md",
+   "subtasks": [
+    {
+     "id": "P0-1",
+     "description": "SECURITY INCIDENT: 12+ real API keys in git (migrate_keys_full.py 16x sk-, FREE_TIER_GUIDE 6x sk-/csk-) \u2014 ALREADY PUSHED to origin/main (commits df174496, 13351f9d)",
+     "owner": "architect+kali",
+     "status": "in_progress",
+     "subtasks": [
+      {
+       "id": "P0-1a",
+       "description": "Rotate ALL exposed keys at provider consoles (OpenAI-style, Cerebras, SiliconFlow)",
+       "owner": "architect",
+       "status": "blocked",
+       "note": "BLOCKED on Architect action \u2014 rotation MUST precede scrub"
+      },
+      {
+       "id": "P0-1b",
+       "description": "git filter-repo scrub both files from ALL history (all branches: main, release/initial-v1, sprint/*)",
+       "owner": "roc_racoon",
+       "status": "ready",
+       "note": "Start after rotation confirmed"
+      },
+      {
+       "id": "P0-1c",
+       "description": "Add gitleaks/trufflehog secret scan to CI + pre-commit",
+       "owner": "maat_n3",
+       "status": "backlog"
+      },
+      {
+       "id": "P0-1d",
+       "description": "Full secret sweep: git grep sk-, csk-, AIza, ghp_, xai- patterns beyond known files",
+       "owner": "roc_racoon",
+       "status": "ready"
+      }
+     ]
+    },
+    {
+     "id": "P0-2",
+     "description": "63 test failures (1825 total: 47 errors + 13 failures + 60 skipped) \u2014 CI RED. Root causes: ~20 async/sync mismatch, ~18 VaultCore drift, 9 ImportError, 1 mock mismatch, ~5 logic",
+     "owner": "roc_racoon",
+     "status": "ready",
+     "subtasks": [
+      {
+       "id": "P1-1",
+       "description": "Fix async/sync cluster (~20 tests): add await to MetricsDB calls, BudgetGate.check_budget, fts_memory, search_tools, hub_health",
+       "owner": "roc_racoon",
+       "status": "ready"
+      },
+      {
+       "id": "P1-2",
+       "description": "Fix VaultCore cluster (~18 tests): align to bury_credential API, age-armor encrypted_blob, update imports (Kali decision: keep bury_credential, do NOT restore store_credential alias)",
+       "owner": "roc_racoon",
+       "status": "ready"
+      },
+      {
+       "id": "P1-3",
+       "description": "Fix mcp_servers.omega_hub.tools import (9 tests)",
+       "owner": "roc_racoon",
+       "status": "ready"
+      },
+      {
+       "id": "P1-4",
+       "description": "Fix qdrant mock signature (1 test)",
+       "owner": "roc_racoon",
+       "status": "ready"
+      },
+      {
+       "id": "P1-5",
+       "description": "Fix individual logic failures (~5 tests)",
+       "owner": "roc_racoon",
+       "status": "ready"
+      },
+      {
+       "id": "P1-6",
+       "description": "Verify make test + full serial suite GREEN",
+       "owner": "verity",
+       "status": "backlog"
+      }
+     ]
+    },
+    {
+     "id": "P2",
+     "description": "Lint debt: 11,400 flake8 violations invisible to CI (--exit-zero blind spot)",
+     "owner": "maat_n3",
+     "status": "backlog",
+     "subtasks": [
+      {
+       "id": "P2-1",
+       "description": "Auto-fix mechanical violations W293/W291/E302/E303/E305",
+       "owner": "maat_n3",
+       "status": "backlog"
+      },
+      {
+       "id": "P2-2",
+       "description": "F401 unused imports (929) \u2014 ruff check --select F401 --fix + review",
+       "owner": "maat_n3",
+       "status": "backlog"
+      },
+      {
+       "id": "P2-3",
+       "description": "E501 line-too-long (4,859) \u2014 DECISION: max-line-length 100 + ruff format (Kali recommended)",
+       "owner": "kali+maat_n3",
+       "status": "backlog"
+      },
+      {
+       "id": "P2-4",
+       "description": "Tighten CI lint gate: remove --exit-zero, gate on E9,F63,F7,F82 + F401",
+       "owner": "maat_n3",
+       "status": "backlog"
+      },
+      {
+       "id": "P2-5",
+       "description": "Add make heritage-map target (referenced in AGENTS.md, missing from Makefile)",
+       "owner": "kali",
+       "status": "ready"
+      }
+     ]
+    },
+    {
+     "id": "P3",
+     "description": "CI & Hygiene",
+     "owner": "verity",
+     "status": "backlog",
+     "subtasks": [
+      {
+       "id": "P3-1",
+       "description": "Update test.yml/ci.yml: full suite without -x, real pass/fail counts",
+       "owner": "verity",
+       "status": "backlog"
+      },
+      {
+       "id": "P3-2",
+       "description": "Commit hygiene: review 81 uncommitted files; handle config/model_registry/index.sqlite binary",
+       "owner": "kali",
+       "status": "backlog"
+      },
+      {
+       "id": "P3-3",
+       "description": "Verify make temple-grade green end-to-end (add lint + test gates)",
+       "owner": "verity",
+       "status": "backlog"
+      },
+      {
+       "id": "P3-4",
+       "description": "Final secret re-scan + git log review before first public push",
+       "owner": "verity",
+       "status": "backlog"
+      }
+     ]
+    },
+    {
+     "id": "P4",
+     "description": "Debut Polish (optional)",
+     "owner": "kali",
+     "status": "backlog",
+     "subtasks": [
+      {
+       "id": "P4-1",
+       "description": "README refresh",
+       "owner": "kali",
+       "status": "backlog"
+      },
+      {
+       "id": "P4-2",
+       "description": "CONTRIBUTING.md + issue/PR templates",
+       "owner": "kali",
+       "status": "backlog"
+      },
+      {
+       "id": "P4-3",
+       "description": "Release tag v0.1.0 + CHANGELOG",
+       "owner": "kali",
+       "status": "backlog"
+      },
+      {
+       "id": "P4-4",
+       "description": "Verify pip install -e . from clean checkout",
+       "owner": "verity",
+       "status": "backlog"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "blockers": {},
+ "decisions_locked": [
+  "D-521 SDP elevated to core architectural pillar \u2014 DEFERRED",
+  "D-522 Ground truth: Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K \u2014 PRESERVED for config",
+  "D-523 Cold sessions need TIGHTER bands (0.7x) \u2014 DEFERRED",
+  "D-524 Provider-specific band adjustments required \u2014 DEFERRED",
+  "D-525 Post-fix cold rate baseline is 18-36% \u2014 DEFERRED",
+  "D-526 zswap > zRAM for desktop with NVMe \u2014 DEFERRED",
+  "D-527 Never run zswap and zRAM simultaneously \u2014 DEFERRED",
+  "D-528 pyresilience > tenacity for circuit breaker \u2014 DEFERRED",
+  "D-529 Simplify OOMProtector to 2-signal \u2014 DEFERRED",
+  "D-530 Context Gauge uses tokens.total (never tokens_input) \u2014 DEFERRED",
+  "D-531 Multi-write subagent method mandatory \u2014 DEFERRED",
+  "D-532 KALI-RATIFY-ROC-READINESS-20260816: Remediation plan ratified (Phase 0-4). P0-1 keys ALREADY on origin/main \u2014 LIVE INCIDENT, rotate-then-scrub. VaultCore: keep bury_credential (align tests). CI single truth: make test + make lint + make temple-grade. E501: max-line-length 100 recommended."
+ ],
+ "ark_strategy_ssot": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
+ "notes": [
+  "SCOPE CUT EXECUTED 2026-08-15 per Carmack verdict (AP-CARMMACK-TRIAGE-20260815)",
+  "All VOS Phases 1-4, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 \u2192 POST-DEBUT",
+  "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
+  "Knowledge gaps research COMPLETE \u2014 authoritative model windows established (Table 3.1)",
+  "Sonnet/Opus 4.6 contradiction RESOLVED \u2014 1M official, 200K = UI bug #24208",
+  "V-1 Vault BUILT (2,039 LOC) but DEFERRED \u2014 embed keyring in ModelGateway post-debut",
+  "Three-router fragmentation \u2192 pick ProviderSelector, delete TriageRouter + SemanticRouter POST-DEBUT"
+ ]
 }

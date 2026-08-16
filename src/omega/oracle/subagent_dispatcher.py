@@ -314,7 +314,7 @@ def build_dispatch_prompt(packet: HandoffPacket) -> str:
     lines.append("## Heritage & Mandates")
     lines.append("- Refer to PIVOT_LOG.md for prior architectural decisions.")
     lines.append("- Sovereign Mandate 13 (Temple-Grade T1-T11) applies to all changes.")
-    lines.append("- Heritage attribution: every id Software-derived pattern MUST carry [id-soft: GAME-YEAR] inline tags with scope.")
+    lines.append("- Heritage attribution: every id Software-derived pattern MUST carry id-soft inline tags (format in CREDITS.md) with scope.")
     lines.append("- This is an atomic dispatch. Complete it, then return your result.")
     lines.append("")
 

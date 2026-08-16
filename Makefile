@@ -1,14 +1,9 @@
-# Omega Engine Test Suite Makefile
-# Implements C-0 Test Suite Honesty: Quarantine + JSON Badge + Makefile Fix
+# Omega Engine Test Suite Makefile — Carmack Mode v2
+# First public release — this IS the legacy.
 
 # Configuration — M24: Always use project venv Python
 PYTHON := .venv/bin/python
 PYTEST := .venv/bin/python -m pytest
-QUARANTINE_FILE := tests/quarantine.txt
-BADGE_FILE := tests/test-badge.json
-QUARANTINE_EXPIRY := 2026-09-01
-TEST_LOG_FILE := data/logs/test-run.log
-TEST_LOG_SCRIPT := scripts/rotate_test_log.py
 
 # Colors for output
 GREEN := \033[0;32m
@@ -16,22 +11,29 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report log-test-run lint
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map
 
 help:
 	@echo "Omega Engine Makefile"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  test              Run all tests (default)"
-	@echo "  test-honest       Run tests with quarantine, JSON badge, and test-run logging"
-	@echo "  test-quarantine-check  Check quarantine expiry and fail if expired"
-	@echo "  quarantine        Save current failures to quarantine.txt"
-	@echo "  save-quarantine   Alias for quarantine"
-	@echo "  load-quarantine   Run quarantined tests (marked as xfail)"
-	@echo "  generate-badge    Generate JSON badge from test results"
-	@echo "  clean-badge       Remove generated badge file"
+	@echo "  test              Fast offline unit tests (parallel), stop on first failure"
+	@echo "  test-all          Full suite, parallel, short tracebacks"
+	@echo "  test-prepush      Fast + only affected tests (testmon incrementality)"
+	@echo "  test-clarity      Enhanced output: instafail + tldr + json-report + clarity"
+	@echo "  test-json         JSON report only (for tooling/CI)"
+	@echo "  test-summary      Ultra-short summary (tldr)"
+	@echo "  test-watch        Auto-re-run on file change (entr)"
+	@echo "  test-watch-all    Watch full suite"
+	@echo "  test-pick         Interactive test selection (fzf/skim)"
+	@echo "  test-pick-skim    Interactive test selection (skim)"
+	@echo "  notify-test       Desktop notification via OSC 9"
+	@echo "  test-random       Randomized order to expose flakes"
+	@echo "  test-flake-hunt   Randomized flake hunt"
+	@echo "  test-cov          Coverage report"
+	@echo "  test-debug        Run single test with full output (TEST=pattern)"
+	@echo "  test-clean        Clean testmon cache"
 	@echo "  clean             Remove all generated files"
-	@echo "  log-test-run      Capture full test run output to rotating log"
 	@echo ""
 	@echo "Codex Targets (D-277 Hydration):"
 	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
@@ -64,104 +66,91 @@ check-codex-force:
 	@$(PYTHON) scripts/check_codex_stale.py --force
 
 # =============================================================================
-# Test Suite Targets
+# Test Suite Targets — Carmack Mode v2
 # =============================================================================
 
-# Default target
-test: test-honest
+# Default: fast unit tests only (<10s), parallel, stop on first failure
+.PHONY: test
+test:
+	$(PYTEST) -x --tb=short -m "not integration" tests/
 
-# Main honest test target - includes quarantine, badge generation, and test-run logging
-test-honest: check-tracking-state save-quarantine run-honest-tests log-test-run generate-badge check-quarantine-expiry
+# Full suite: everything, parallel, short tracebacks
+.PHONY: test-all
+test-all:
+	$(PYTEST) --tb=short tests/
 
-# Save current failures to quarantine file
-save-quarantine:
-	@echo "$(YELLOW)Saving test failures to quarantine...$(NC)"
-	@$(PYTEST) --tb=short -q 2>&1 | grep "^FAILED" | sed 's/FAILED //' | sed 's/ - .*//' > $(QUARANTINE_FILE) || true
-	@if [ -s $(QUARANTINE_FILE) ]; then \
-		echo "$(GREEN)Quarantine saved to $(QUARANTINE_FILE) with $$(wc -l < $(QUARANTINE_FILE)) tests$(NC)"; \
-	else \
-		echo "$(GREEN)No failures detected — quarantine empty$(NC)"; \
-	fi
+# Pre-push: fast + only affected tests (testmon incrementality)
+.PHONY: test-prepush
+test-prepush:
+	$(PYTEST) --tb=short --testmon -m "not integration" tests/
 
-# Run tests with quarantine (flaky tests marked as xfail)
-run-honest-tests:
-	@echo "$(YELLOW)Running tests with quarantine...$(NC)"
-	@$(PYTEST) --tb=short -q 2>&1 | tail -5
-	@echo "$(GREEN)Honest test run complete$(NC)"
+# Enhanced output: instafail + json-report + clarity (auto)
+.PHONY: test-clarity
+test-clarity:
+	$(PYTEST) -x --tb=short --instafail --json-report --json-report-file=test-report.json -m "not integration" tests/
 
-# Capture full test run output to rotating log (data/logs/test-run.log + .1/.2.gz/.3.gz)
-log-test-run:
-	@echo "$(YELLOW)Rotating test run logs...$(NC)"
-	@$(PYTHON) $(TEST_LOG_SCRIPT) rotate
-	@echo "$(YELLOW)Running full test suite for log capture...$(NC)"
-	@OUTPUT=$$($(PYTEST) --tb=short -q 2>&1); \
-	echo "$$OUTPUT" | tail -10; \
-	echo "$$OUTPUT" | $(PYTHON) $(TEST_LOG_SCRIPT) write
-	@echo "$(GREEN)Test run log captured to $(TEST_LOG_FILE)$(NC)"
+# JSON report only (for tooling/CI)
+.PHONY: test-json
+test-json:
+	$(PYTEST) --tb=short --json-report --json-report-file=test-report.json --json-report-summary tests/
 
-# Generate JSON badge with test results
-generate-badge:
-	@echo "$(YELLOW)Generating JSON badge...$(NC)"
-	@$(PYTHON) -c "\
-import json, datetime, subprocess, os; \
-total = passed = failed = skipped = xfailed = xpassed = 0; \
-quarantined = sum(1 for _ in open('$(QUARANTINE_FILE)')) if os.path.exists('$(QUARANTINE_FILE)') else 0; \
-result = subprocess.run(['python3', '-m', 'pytest', '--tb=no', '-q', '--co'], capture_output=True, text=True); \
-lines = result.stdout.strip().split('\n'); \
-total = len([l for l in lines if '::' in l]); \
-result2 = subprocess.run(['python3', '-m', 'pytest', '--tb=no', '-q'], capture_output=True, text=True); \
-summary = result2.stdout.strip().split('\n')[-1] if result2.stdout.strip() else ''; \
-import re; \
-m = re.search(r'(\d+) passed', summary); passed = int(m.group(1)) if m else 0; \
-m = re.search(r'(\d+) failed', summary); failed = int(m.group(1)) if m else 0; \
-m = re.search(r'(\d+) skipped', summary); skipped = int(m.group(1)) if m else 0; \
-m = re.search(r'(\d+) xfailed', summary); xfailed = int(m.group(1)) if m else 0; \
-m = re.search(r'(\d+) xpassed', summary); xpassed = int(m.group(1)) if m else 0; \
-badge = {\"passed\": passed, \"failed\": failed, \"quarantined\": quarantined, \"xpassed\": xpassed, \"skipped\": skipped, \"xfailed\": xfailed, \"timestamp\": datetime.datetime.now().isoformat(), \"version\": \"1.0.0\", \"quarantine_file\": \"$(QUARANTINE_FILE)\", \"expiry_date\": \"$(QUARANTINE_EXPIRY)\"}; \
-f = open('$(BADGE_FILE)', 'w'); json.dump(badge, f, indent=2); f.close(); \
-print('Created $(BADGE_FILE)')"
+# Summary only (ultra-short)
+.PHONY: test-summary
+test-summary:
+	$(PYTEST) --tldr tests/
 
-# Check quarantine expiry and fail if expired
-check-quarantine-expiry:
-	@if [ -f $(QUARANTINE_FILE) ] && [ -s $(QUARANTINE_FILE) ]; then \
-		echo "$(YELLOW)Checking quarantine expiry...$(NC)"; \
-		expiry_date="$(QUARANTINE_EXPIRY)"; \
-		today="$$(date +%Y-%m-%d)"; \
-		if [ "$$today" \> "$$expiry_date" ]; then \
-			echo "$(RED)ERROR: Quarantine expired on $(QUARANTINE_EXPIRY)$(NC)"; \
-			echo "$(RED)All quarantined tests must be remediated before this date$(NC)"; \
-			exit 1; \
-		else \
-			echo "$(GREEN)Quarantine is still valid until $(QUARANTINE_EXPIRY)$(NC)"; \
-		fi; \
-	else \
-		echo "$(YELLOW)No quarantine file to check$(NC)"; \
-	fi
+# Watch mode: entr watches src/ + tests/, re-runs 'make test' on change
+.PHONY: test-watch
+test-watch:
+	@command -v entr >/dev/null 2>&1 || { echo "entr not installed. Ubuntu: apt install entr | macOS: brew install entr"; exit 1; }
+	@find src tests -name "*.py" -o -name "*.toml" -o -name "*.yaml" | entr -c $(MAKE) test
 
-# Load quarantined tests (run only quarantined tests)
-load-quarantine:
-	@if [ ! -f $(QUARANTINE_FILE) ]; then \
-		echo "$(YELLOW)No quarantine file found. Run 'make quarantine' first.$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(YELLOW)Running quarantined tests...$(NC)"
-	@$(PYTEST) --tb=short -q -k "$$(cat $(QUARANTINE_FILE) | tr '\n' ' or ')" 2>&1 | tail -10
-	@echo "$(GREEN)Quarantine test run complete$(NC)"
+# Watch full suite (opt-in)
+.PHONY: test-watch-all
+test-watch-all:
+	@command -v entr >/dev/null 2>&1 || { echo "entr not installed"; exit 1; }
+	@find src tests -name "*.py" -o -name "*.toml" -o -name "*.yaml" | entr -c $(MAKE) test-all
 
-# Clean up generated badge
-clean-badge:
-	@if [ -f $(BADGE_FILE) ]; then \
-		echo "$(YELLOW)Removing $(BADGE_FILE)$(NC)"; \
-		rm -f $(BADGE_FILE); \
-	else \
-		echo "$(YELLOW)$(BADGE_FILE) not found$(NC)"; \
-	fi
+# Interactive test selection via fzf/skim (Unix philosophy, zero plugins)
+.PHONY: test-pick
+test-pick:
+	@command -v fzf >/dev/null 2>&1 || command -v sk >/dev/null 2>&1 || { echo "fzf or skim not installed"; exit 1; }
+	$(PYTEST) --collect-only -q -p no:tldr | fzf --multi | xargs -r $(PYTEST) -v
 
-# Quick test run for development
-quick-test:
-	@echo "$(YELLOW)Running quick test...$(NC)"
-	@$(PYTEST) --tb=short -q tests/contracts/ 2>&1 | tail -5
-	@echo "$(GREEN)Quick test complete$(NC)"
+.PHONY: test-pick-skim
+test-pick-skim:
+	@command -v sk >/dev/null 2>&1 || { echo "skim not installed"; exit 1; }
+	$(PYTEST) --collect-only -q -p no:tldr | sk --multi | xargs -r $(PYTEST) -v
+
+# Desktop notification via OSC 9 (terminal standard: iTerm2, WezTerm, Kitty)
+# Fallback to notify-send for terminals without OSC 9 support
+.PHONY: notify-test
+notify-test:
+	@$(MAKE) test && (printf '\e]9;✅ Tests passed\a'; command -v notify-send >/dev/null && notify-send "Omega" "Tests passed") || printf '\e]9;❌ Tests failed\a'
+
+# Flake detection: expose via randomization (don't mask with --reruns)
+.PHONY: test-random
+test-random:
+	$(PYTEST) --randomly-seed=$$(shuf -i 1-1000000 -n 1) -x --tb=short tests/
+
+.PHONY: test-flake-hunt
+test-flake-hunt:
+	$(PYTEST) --randomly-seed=$$(shuf -i 1-1000000 -n 1) -x --tb=short tests/
+
+# Coverage report
+.PHONY: test-cov
+test-cov:
+	$(PYTEST) -n auto --tb=short --cov=src/omega --cov-report=term-missing --cov-report=html tests/
+
+# Debug: run single test with full output
+.PHONY: test-debug
+test-debug:
+	$(PYTEST) -v --tb=long -k "$(TEST)" tests/
+
+# Clean testmon cache
+.PHONY: test-clean
+test-clean:
+	@rm -rf .testmondata .pytest_cache htmlcov test-report.json
 
 # Run flake8 linting on src/omega/ (M13 quality gate)
 # F821 is now enforced — all forward references use TYPE_CHECKING blocks
@@ -172,9 +161,8 @@ lint:
 	@echo "$(GREEN)Lint complete$(NC)"
 
 # Clean all generated files
-clean: clean-badge
+clean: test-clean
 	@echo "$(YELLOW)Cleaning generated files...$(NC)"
-	@rm -f $(QUARANTINE_FILE)
 	@echo "$(GREEN)Clean complete$(NC)"
 
 # =============================================================================
@@ -261,6 +249,21 @@ check-m1-anyio:
 	@! rg -n 'import asyncio|from asyncio' src/omega/ --type py --glob '!*test*' --glob '!*governance*' --glob '!*tty_agent*' 2>/dev/null || (echo "$(RED)FAIL: asyncio imports found in src/omega/$(NC)" && false)
 	@echo "$(GREEN)M1 passed: No asyncio imports in core$(NC)"
 
+# Check M1 companion (audit r2 §1): any module driven by anyio.run() must NOT
+# import asyncio. Catches the P0-1 bug class (asyncio.sleep under anyio.run)
+# without banning standalone asyncio utilities (scripts that call asyncio.run
+# directly are fine — they are not part of the anyio fabric).
+check-asyncio-import:
+	@echo "$(YELLOW)Checking M1 companion (no asyncio in anyio.run modules)...$(NC)"
+	@failed=0; \
+	for f in $$(rg -l 'anyio\.run\(' src/ scripts/ --type py --glob '!*test*' 2>/dev/null); do \
+		if rg -q '^\s*import asyncio|^\s*from asyncio' "$$f" 2>/dev/null; then \
+			echo "$(RED)FAIL: $$f uses anyio.run() but imports asyncio$(NC)"; failed=1; \
+		fi; \
+	done; \
+	if [ $$failed -ne 0 ]; then exit 1; fi
+	@echo "$(GREEN)M1 companion passed: No asyncio in anyio.run() modules$(NC)"
+
 # Check M9: Error integrity - no bare except:
 check-m9-error-integrity:
 	@echo "$(YELLOW)Checking M9 (Error integrity)...$(NC)"
@@ -293,8 +296,19 @@ m23-baseline:
 	@echo "$(GREEN)Baseline regenerated: config/m23_baseline.txt$(NC)"
 
 # Run all mandate checks (CI gate)
-check-mandates: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity
 	@echo "$(GREEN)All mandate checks passed$(NC)"
+
+# Mandate Compliance Meter (D-532 / T06) — mechanical compliance measurement.
+# Parses SOVEREIGN_MANDATES.md for denominator (27, v3.8.0), runs per-mandate
+# mechanical checks, emits JSON {"total": 27, "passed": N, ...}.
+# Exit 0 = no failures (untested mandates are not counted, not failed).
+check-mandate-compliance:
+	@$(PYTHON) scripts/check_mandate_compliance.py
+	@echo "$(GREEN)Mandate compliance meter passed$(NC)"
+
+check-mandate-compliance-json:
+	@$(PYTHON) scripts/check_mandate_compliance.py --json
 
 ## Run Ark Blueprint drift & M14 integrity check (read-only dry-run)
 ark-optimize:
@@ -306,4 +320,13 @@ ark-optimize-report:
 	@$(PYTHON) scripts/ark_optimizer.py
 	@echo "✅ Report written to data/coordination/ARK_OPTIMIZATION_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates
+## M14 Heritage Vet Gate — every [id-soft:] tag must have a vet record (HERITAGE_VET_LOG.md)
+heritage-vet:
+	@bash scripts/heritage_vet.sh
+
+## M14 Heritage Map — audit + classification of all [id-soft:] tags, writes HERITAGE_AUDIT_REPORT.md
+heritage-map:
+	@$(PYTHON) scripts/heritage_audit.py --output-report
+	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
+
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json

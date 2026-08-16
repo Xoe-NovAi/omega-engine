@@ -37,77 +37,77 @@ proposals:
   - narrative: "Closed B4 [GAP] (q8_0 KV-cache crash conditions) from WEB_RECONCILIATION_MATRIX §6. The manual's fix text was never recoverable externally; reconstructed from verified fragments + actual code. Root cause 1: NativeGGUFProvider._worker forced flash_attn=True for any quantized KV cache, but this is a CPU-only build (llama_supports_gpu_offload()=False) — forcing LLAMA_FLASH_ATTN_TYPE_ENABLED on a non-GPU llama_context crashes. Fix: gate flash_attn on n_gpu_layers>0 AND llama_supports_gpu_offload(). Root cause 2: RAM planner defaulted kv_quant=q8_0 (scale 1.0) while runtime defaults f16 (scale 2.0) — admission math undercounted real footprint 2x. Fix: default kv_quant=f16. Committed B2+B3 (4b0eab6, 50 files) and B4 (64d1052)."
     insight: "A [GAP] in a defect manual is not a dead end: cross-references to the same finding elsewhere + the actual code under inspection can reconstruct the fix with fidelity. The dangerous belief was 'flash_attn is required for quantized KV cache on CPU' — flash attn is an accelerator optimization, not a KV-quant prerequisite; gating it on GPU support is the correct invariant."
     principle: "L3-Gate-On-Support-Not-Intent: Hardware-specific flags must be gated on the build's ACTUAL capability probes (llama_supports_gpu_offload), never on a derived configuration intent (KV quantization). Planning defaults must mirror runtime defaults or admission math becomes a lie."
-- session_id: "ses_kali_20260807_provider_fabric"
-  timestamp: "2026-08-07T15:30:00Z"
-  entity: "kali"
-  level: "L1"
-  narrative: |
-    Completed WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8 (excluding B5/B6/B9).
-    B2+B3: Model registry canonicalization (kv_types.py, 38 model cards, enum normalization).
-    B4: q8_0 KV-cache crash fixed — flash_attn gated on GPU support, RAM planner default f16.
-    A5: StreamHandler (457 lines) DELETED — zero callers, zero tests, intelligence already in health_monitor.record_429() + openai_compat._stream_completion().
-    B7: Dynamic RAM detection from /proc/meminfo (14793 MB detected, reconciled with OOMProtector kernel truth).
-    B8: Batch-size recommendations wired into provider merge (mirroring threads pattern), contract test added.
-    Generator safety: scripts/generate_providers_yaml.py rewritten merge-preserving — preserves strategy:local_first (M7), maakali_routing (D352), fallback_resolver, streaming (M25), comments, is_cloud classification, non-registry providers. Version bumps instead of clobbering.
-  tags: ["provider-fabric", "matrix", "B2", "B3", "B4", "A5", "B7", "B8", "generator-safety"]
-- session_id: "ses_kali_20260807_provider_fabric"
-  timestamp: "2026-08-07T15:30:00Z"
-  entity: "kali"
-  level: "L2"
-  insight: |
-    The provider-fabric defects followed a clear pattern: scaffolded but unwired (A5, B8), hardcoded constants never reconciled with kernel truth (B7), crash conditions from refactor gaps (B4).
-    The "scaffolded but unwired" pattern (StreamHandler, batch sizes, speculative decoding) is a systemic smell — code written for a future integration that never happened.
-    The fix for B7 (dynamic RAM) and B8 (wired batch sizes) shows that runtime config merge is the right integration point — it already consumes the relevant keys (n_batch, n_ubatch, threads).
-    The generator safety rewrite revealed that config/providers.yaml is a dual-purpose file: runtime config (read by ModelGateway) AND documentation (comments, D352 routing). Surgical text replacement preserves both.
-  tags: ["pattern", "scaffolded-unwired", "kernel-truth", "config-merge", "dual-purpose-config"]
-- session_id: "ses_kali_20260807_provider_fabric"
-  timestamp: "2026-08-07T15:30:00Z"
-  entity: "kali"
-  level: "L3"
-  principle: "L3-Gate-On-Support-Not-Intent — Code that is scaffolded but never wired is not 'future-proofing'; it is debt. The gate for keeping code is: does the runtime actually consume it? If zero callers exist outside tests, the code is dead regardless of intent. This applies to StreamHandler (A5), batch sizes (B8), and speculative decoding (B5 — scaffold has config+tests but zero runtime wiring)."
-  mandates: ["M4", "M13", "M18", "M23"]
-  confidence: 0.98
-  tags: ["gate-on-support", "dead-code", "scaffolded-unwired", "runtime-consumption"]
-  directive_provenance: "d-kal-001"
-  evidence:
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "StreamHandler 457 lines, zero callers, zero tests, zero consumers of its exception types"
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "get_recommended_batch_sizes() computed per-model, zero callers until B8 wired it"
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "SpeculativeDecodeConfig + record_speculative_attempt + suggest_draft_tokens: zero runtime callers"
-- session_id: "ses_kali_20260807_provider_fabric"
-  timestamp: "2026-08-07T15:30:00Z"
-  entity: "kali"
-  level: "L3"
-  principle: "L3-Kernel-Truth-Over-Hardcoded — Any constant that can be read from kernel sysfs (/proc/meminfo, /sys/devices/system/cpu) must be read dynamically. Hardcoded values (RAM_TOTAL_MB=14336, ZEN2_COMPUTE_CORES=[0,2,4,6,8,10,12], CCX split) drift from reality and create planning errors. The fix is a one-line import-time read with fallback, not a new detection script."
-  mandates: ["M4", "M7", "M16", "M18"]
-  confidence: 0.97
-  tags: ["kernel-truth", "dynamic-detection", "hardcoded-constants", "sysfs"]
-  directive_provenance: "d-kal-001"
-  evidence:
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "RAM_TOTAL_MB hardcoded 14336 vs kernel 14793; ZEN2_COMPUTE_CORES mixed physical+SMT vs actual [0..6]"
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "OOMProtector already reads /proc/meminfo — cpu_optimizer now reconciled"
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "Monitoring CCX hardcoded [0-3]/[4-7] vs actual single-CCX 0-7 from L3 sysfs"
-- session_id: "ses_kali_20260807_provider_fabric"
-  timestamp: "2026-08-07T15:30:00Z"
-  entity: "kali"
-  level: "L3"
-  principle: "L3-Config-Merge-Preserves-Dual-Purpose — Config files that serve both runtime and documentation (comments, routing tables) must be updated via surgical text replacement, not YAML round-trip. yaml.dump strips comments; the fix is to load existing text, surgically replace only the registry-derived sections (inference.fallback_chain, inference.providers), and preserve all other sections verbatim."
-  mandates: ["M4", "M14", "M18", "M26"]
-  confidence: 0.96
-  tags: ["config-merge", "comment-preservation", "surgical-replacement", "dual-purpose-config"]
-  directive_provenance: "d-kal-001"
-  evidence:
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "Original generator clobbered maakali_routing, fallback_resolver, streaming, comments"
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "Surgical write preserves 3 critical comments, all runtime sections, version bumps"
-    - source: "ses_kali_20260807_provider_fabric"
-      note: "M7 audit passes, 28/28 tests pass, flake8 clean"
+  - session_id: "ses_kali_20260807_provider_fabric"
+    timestamp: "2026-08-07T15:30:00Z"
+    entity: "kali"
+    level: "L1"
+    narrative: |
+      Completed WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8 (excluding B5/B6/B9).
+      B2+B3: Model registry canonicalization (kv_types.py, 38 model cards, enum normalization).
+      B4: q8_0 KV-cache crash fixed — flash_attn gated on GPU support, RAM planner default f16.
+      A5: StreamHandler (457 lines) DELETED — zero callers, zero tests, intelligence already in health_monitor.record_429() + openai_compat._stream_completion().
+      B7: Dynamic RAM detection from /proc/meminfo (14793 MB detected, reconciled with OOMProtector kernel truth).
+      B8: Batch-size recommendations wired into provider merge (mirroring threads pattern), contract test added.
+      Generator safety: scripts/generate_providers_yaml.py rewritten merge-preserving — preserves strategy:local_first (M7), maakali_routing (D352), fallback_resolver, streaming (M25), comments, is_cloud classification, non-registry providers. Version bumps instead of clobbering.
+    tags: ["provider-fabric", "matrix", "B2", "B3", "B4", "A5", "B7", "B8", "generator-safety"]
+  - session_id: "ses_kali_20260807_provider_fabric"
+    timestamp: "2026-08-07T15:30:00Z"
+    entity: "kali"
+    level: "L2"
+    insight: |
+      The provider-fabric defects followed a clear pattern: scaffolded but unwired (A5, B8), hardcoded constants never reconciled with kernel truth (B7), crash conditions from refactor gaps (B4).
+      The "scaffolded but unwired" pattern (StreamHandler, batch sizes, speculative decoding) is a systemic smell — code written for a future integration that never happened.
+      The fix for B7 (dynamic RAM) and B8 (wired batch sizes) shows that runtime config merge is the right integration point — it already consumes the relevant keys (n_batch, n_ubatch, threads).
+      The generator safety rewrite revealed that config/providers.yaml is a dual-purpose file: runtime config (read by ModelGateway) AND documentation (comments, D352 routing). Surgical text replacement preserves both.
+    tags: ["pattern", "scaffolded-unwired", "kernel-truth", "config-merge", "dual-purpose-config"]
+  - session_id: "ses_kali_20260807_provider_fabric"
+    timestamp: "2026-08-07T15:30:00Z"
+    entity: "kali"
+    level: "L3"
+    principle: "L3-Gate-On-Support-Not-Intent — Code that is scaffolded but never wired is not 'future-proofing'; it is debt. The gate for keeping code is: does the runtime actually consume it? If zero callers exist outside tests, the code is dead regardless of intent. This applies to StreamHandler (A5), batch sizes (B8), and speculative decoding (B5 — scaffold has config+tests but zero runtime wiring)."
+    mandates: ["M4", "M13", "M18", "M23"]
+    confidence: 0.98
+    tags: ["gate-on-support", "dead-code", "scaffolded-unwired", "runtime-consumption"]
+    directive_provenance: "d-kal-001"
+    evidence:
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "StreamHandler 457 lines, zero callers, zero tests, zero consumers of its exception types"
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "get_recommended_batch_sizes() computed per-model, zero callers until B8 wired it"
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "SpeculativeDecodeConfig + record_speculative_attempt + suggest_draft_tokens: zero runtime callers"
+  - session_id: "ses_kali_20260807_provider_fabric"
+    timestamp: "2026-08-07T15:30:00Z"
+    entity: "kali"
+    level: "L3"
+    principle: "L3-Kernel-Truth-Over-Hardcoded — Any constant that can be read from kernel sysfs (/proc/meminfo, /sys/devices/system/cpu) must be read dynamically. Hardcoded values (RAM_TOTAL_MB=14336, ZEN2_COMPUTE_CORES=[0,2,4,6,8,10,12], CCX split) drift from reality and create planning errors. The fix is a one-line import-time read with fallback, not a new detection script."
+    mandates: ["M4", "M7", "M16", "M18"]
+    confidence: 0.97
+    tags: ["kernel-truth", "dynamic-detection", "hardcoded-constants", "sysfs"]
+    directive_provenance: "d-kal-001"
+    evidence:
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "RAM_TOTAL_MB hardcoded 14336 vs kernel 14793; ZEN2_COMPUTE_CORES mixed physical+SMT vs actual [0..6]"
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "OOMProtector already reads /proc/meminfo — cpu_optimizer now reconciled"
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "Monitoring CCX hardcoded [0-3]/[4-7] vs actual single-CCX 0-7 from L3 sysfs"
+  - session_id: "ses_kali_20260807_provider_fabric"
+    timestamp: "2026-08-07T15:30:00Z"
+    entity: "kali"
+    level: "L3"
+    principle: "L3-Config-Merge-Preserves-Dual-Purpose — Config files that serve both runtime and documentation (comments, routing tables) must be updated via surgical text replacement, not YAML round-trip. yaml.dump strips comments; the fix is to load existing text, surgically replace only the registry-derived sections (inference.fallback_chain, inference.providers), and preserve all other sections verbatim."
+    mandates: ["M4", "M14", "M18", "M26"]
+    confidence: 0.96
+    tags: ["config-merge", "comment-preservation", "surgical-replacement", "dual-purpose-config"]
+    directive_provenance: "d-kal-001"
+    evidence:
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "Original generator clobbered maakali_routing, fallback_resolver, streaming, comments"
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "Surgical write preserves 3 critical comments, all runtime sections, version bumps"
+      - source: "ses_kali_20260807_provider_fabric"
+        note: "M7 audit passes, 28/28 tests pass, flake8 clean"
   - narrative: "Analyzed 96 test failures and realized the root cause was a verification culture problem. Instantiated the Vision Operating System (VOS) v1.0 to decompose the 10,000-hour vision into 7 sovereign realms. Created VISION_ANCHOR.md and DECISION_LEDGER.md. Committed 4 immediate hardening patches and defined a frozen 3-phase launch plan."
     insight: "Open-ended reviews cause scope creep because every model/agent finds different issues. Without a frozen definition of 'done', the plan constantly changes. Decomposing the vision into realms with dedicated owners, state files, and interface contracts prevents the vision from being lost when the context window clears."
     principle: "L3-Vision-As-Running-System: The vision is not a document; it is a running system. It must be instantiated as sovereign realms with state, contracts, and evolution logs to survive context death. Open-ended reviews without a frozen definition of 'done' lead to infinite scope creep."

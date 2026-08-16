@@ -308,7 +308,7 @@ class SentinelScore:
 
     async def _metric_heritage_coverage(self) -> SubMetric:
         """Metric 6: Heritage Tag Coverage.
-        Heritage files with [id-soft: GAME-YEAR] tags. Target: > 80%.
+        Heritage files with id-soft inline tags (format documented in CREDITS.md). Target: > 80%.
         """
         tagged = 0
         eligible = 0

@@ -215,7 +215,44 @@ class PIIMasker:
         # Normalize excessive whitespace
         sanitized = re.sub(r"\s+", " ", sanitized)
         return sanitized.strip()
-    
+
+    # ── Sync PII Detection (for ProviderSelector scoring) ─────────────
+    def detect_pii(self, text: str) -> bool:
+        """Quick synchronous PII detection using legacy regex patterns.
+        
+        Used by ProviderSelector._calculate_score() to penalize cloud
+        providers when PII is detected in the query. Checks for:
+        - Email addresses
+        - SSN (XXX-XX-XXXX)
+        - Credit card numbers (13-19 digits)
+        - API keys (sk-, csk-, AIza, ghp_, xai- prefixes)
+        - Phone numbers
+        - IP addresses
+        
+        Args:
+            text: Input text to scan
+            
+        Returns:
+            True if PII patterns detected, False otherwise
+        """
+        if not text:
+            return False
+        
+        # Common PII regex patterns
+        patterns = [
+            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',  # Email
+            r'\b\d{3}-\d{2}-\d{4}\b',  # SSN
+            r'\b\d{13,19}\b',  # Credit card (13-19 digits)
+            r'\b(?:sk-|csk-|AIza|ghp_|xai-)[A-Za-z0-9_-]{20,}\b',  # API keys
+            r'\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b',  # Phone
+            r'\b(?:\d{1,3}\.){3}\d{1,3}\b',  # IPv4
+        ]
+        
+        for pattern in patterns:
+            if re.search(pattern, text):
+                return True
+        return False
+
     # ── Primary: Detect PII ───────────────────────────────────────────
     async def detect(
         self,
