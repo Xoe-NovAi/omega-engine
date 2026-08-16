@@ -302,7 +302,7 @@ class AMFOEvaluator:
 # Build tier-specific prompt
         prompt = self._build_tier_prompt(proposal, tier)
 
-        tier_start = time.perf_counter()   # ← ADD THIS LINE (before try)
+        tier_start = time.perf_counter()
         try:
             # M1: AnyIO timeout wrapper
             with anyio.move_on_after(budget_sec):

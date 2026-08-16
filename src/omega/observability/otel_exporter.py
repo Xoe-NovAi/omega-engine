@@ -6,7 +6,7 @@ Exports OpenTelemetry GenAI spans to the unified MetricsDB (SQLite WAL).
 Implements GenAI semantic conventions: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-spans.md
 """
 
-import anyio                           # ← ADD THIS LINE
+import anyio
 import logging
 import time
 from typing import Any, Dict, Optional

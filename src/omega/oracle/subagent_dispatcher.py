@@ -11,7 +11,7 @@
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
-import anyio                           # ← ADD THIS LINE
+import anyio
 import json
 import logging
 import uuid

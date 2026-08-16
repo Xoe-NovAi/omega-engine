@@ -602,3 +602,75 @@ has no knowledge of specific model names, providers, or WAD contents.
 ---
 
 — Ma'at, 2026-06-03 (updated 2026-06-04 per D116/D117/D118)
+
+---
+
+## §14 Dual-Artifact Handoff Pattern for Crucible Runs (NEW — 2026-08-16)
+
+### The Problem: Execution-Model Contamination
+
+**Validated by F821 Study (AP-L25-SYNTHESIS-STUDY-v1.0.0)**: When an execution agent receives multiple plan documents via Hivemind handoff, they:
+1. **Copy instructional markers** into production code (`# <-- ADD THIS LINE`)
+2. **Merge superseded documents** — implement "according to both" even when one supersedes
+3. **Cannot resolve document hierarchy** — lack contextual judgment
+
+### The Solution: Dual-Artifact Handoff
+
+When Kali dispatches an execution agent for a Crucible run (L3 Frontier Review with multiple planners), the Hivemind handoff MUST follow the Dual-Artifact pattern:
+
+| Artifact | Purpose | Read By |
+|----------|---------|---------|
+| **Artifact A (Cognitive Guide)** | Unified forensic analysis, teaching patterns, anti-patterns | Humans, DPO extractor, Scribe/Verity |
+| **Artifact B (Machine Patch)** | Single, comment-free, unambiguous execution plan | **Execution agent ONLY** |
+
+### Handoff Protocol Update
+
+**In `hivemind_post_context` for Crucible dispatches, the `context` field MUST include:**
+
+```json
+{
+  "context": "CRUCIBLE EXECUTION HANDOFF — Dual-Artifact Pattern\n\nArtifact B (Machine Patch): docs/sprints/<sprint>/AGENT_EXECUTION_PLAN.md\n\nPROHIBITIONS — VIOLATIONS ARE FAILURES:\n1. Do NOT read any other file in this sprint directory. Artifact B is the only source of truth.\n2. Do NOT copy instructional markers into code. No comment containing \"<--\", \"ADD\", \"CHANGE\", or \"TODO(plan)\" may be written.\n3. Do NOT use regex, sed, or scripted import injection. Use the edit tool only.\n4. Do NOT add \"# noqa\" or \"# type: ignore\" suppressions.\n5. Do NOT add a top-level import when Artifact B specifies an inline import.\n6. Do NOT add an import when Artifact B specifies a call-site rename.\n7. Do NOT modify any file not listed in Artifact B.\n\nVERIFICATION: All gates in Artifact B must pass. Commit contract in Artifact B must be followed exactly."
+}
+```
+
+### HandoffPacket Schema Extension
+
+The `HandoffPacket` in `SUBAGENT_DISPATCH_PROTOCOL.md` §2 is extended with:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `artifact_b_path` | `str` | For Crucible runs | Path to Artifact B (Machine Patch) — the ONLY document the executor reads |
+| `artifact_a_path` | `str` | Optional | Path to Artifact A (Cognitive Guide) — for human/DPO reference only |
+| `dual_artifact` | `bool` | For Crucible runs | `true` if this is a Dual-Artifact handoff |
+
+### Hivemind Awareness Integration
+
+When an execution agent accepts a Dual-Artifact handoff, their `hivemind_post_context` MUST declare:
+
+```python
+omega-hub_hivemind_post_context(
+    channel="opencode",
+    entity="roc_racoon",
+    model="nemotron-3-ultra-free",
+    task_current="[CRUCIBLE-EXEC] F821 Remediation — Artifact B only",
+    focus_chain=["OP-01..OP-20", "Gates 1-3", "Commit 1+2"],
+    decisions=["Dual-Artifact handoff accepted", "Prohibitions acknowledged"],
+    continuation="Execute Artifact B operations sequentially",
+    session_id="ses_...",
+    intent="command",
+)
+```
+
+### Enforcement
+
+- **Kali (orchestrator)** is responsible for curating the execution agent's context window
+- **Pre-commit hook** (`scripts/socratic_commit_check.py`) enforces Socratic markers on `fix:` commits
+- **DPO extractor** (`scripts/extract_dpo_pairs.py`) mines Artifact A for training data
+- **Any execution agent reading Artifact A** is a protocol violation — log to `SYSTEM_FAILURE_LOG.md`
+
+### Reference
+
+- **Study**: `docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md`
+- **Protocol**: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` §12
+- **Artifact A (F821)**: `docs/sprints/f821-remediation/HYBRID_STRATEGIC_GUIDE.md`
+- **Artifact B (F821)**: `docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md`

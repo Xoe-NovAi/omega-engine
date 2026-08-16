@@ -13,14 +13,13 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-merge-conflict
-      - id: debug-logger
       - id: detect-private-key
       - id: detect-aws-credentials
         args: ['--allow-missing-credentials']
 
   # Python formatting
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 26.5.1
     hooks:
       - id: black
         language_version: python3.12
@@ -28,14 +27,14 @@ repos:
 
   # Import sorting
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 9.0.0b2
     hooks:
       - id: isort
         args: ["--profile=black", "--line-length=100"]
 
   # Type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v2.3.1
     hooks:
       - id: mypy
         additional_dependencies: [types-requests, types-PyYAML, types-cryptography]
@@ -142,5 +141,5 @@ repos:
         entry: make temple-grade
         language: system
         pass_filenames: false
-        stages: [push]
+        stages: [pre-push]
         always_run: true

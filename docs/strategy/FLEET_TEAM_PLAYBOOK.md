@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Fleet Team Playbook
-**AP Token**: `AP-FLEET-TEAM-PLAYBOOK-v1.0.0`  
-⬡ OMEGA ⬡ KALI ⬡ GROK_CLI ⬡ opencode ⬡ trc_fleet_team ⬡ PLAYBOOK
+**AP Token**: `AP-FLEET-TEAM-PLAYBOOK-v1.1.0`  
+⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_fleet_team ⬡ PLAYBOOK
 
-**Date**: 2026-07-21  
+**Date**: 2026-08-16  
 **Status**: **ACTIVE — All agents read this before multi-agent or Phase C work**  
 **Owner**: Kali (sprint coordination) · Architect (direction) · All fleet (execution)
 
@@ -58,6 +58,7 @@ Use the role that matches the **ticket**, not your favorite persona.
 |------|----------|------|----------------|
 | **Sprint Lead** | `@kali` | Priority calls, handoff routing, conflict resolution, Ark updates after decisions | Solo-implementing everything |
 | **Synthesis / Council** | `@makali` | Deep strategy, decompositions, board-level synthesis | Ground-troop file wars without dispatch |
+| **L2.5 Synthesis (NEW)** | `@kali` (dispatch) → DeepSeek-class | **Resolve multi-planner conflicts + emit Dual Artifacts (A+B)** | Direct execution — synthesis is a distinct phase |
 | **Build Oversight (N1-N5)** | `@maat` | N1-N5: infra, persistence, engineering, integration, governance build | Run-side soul metabolism alone |
 | **Run Oversight (N6-N10)** | `@lilith` | N6-N10: cognition, context, observability, orchestration, validation | Ignoring Build locks on shared files |
 | **Nodes** | `@node NX` | Domain tickets under Ma'at/Lilith | Creating new roadmaps |
@@ -169,6 +170,23 @@ Every handoff packet must include:
 5. **Links** to Ark section + any Corpus Map row  
 
 Template: `HIVEMIND_POST_TEMPLATE.md`. Protocol: `HIVEMIND_PROTOCOL.md`.
+
+### 4.3b Dual-Artifact Handoff for Crucible Runs (NEW — 2026-08-16)
+
+When a task triggers a Crucible run (L3 Frontier Review with multiple planners), the handoff MUST follow the **Dual-Artifact Pattern** (see `HIVEMIND_PROTOCOL.md` §14, `SUBAGENT_DISPATCH_PROTOCOL.md` §12):
+
+| Artifact | Document | Read By |
+|----------|----------|---------|
+| **Artifact A (Cognitive Guide)** | `docs/sprints/<sprint>/HYBRID_STRATEGIC_GUIDE.md` | Humans, DPO extractor, Scribe/Verity |
+| **Artifact B (Machine Patch)** | `docs/sprints/<sprint>/AGENT_EXECUTION_PLAN.md` | **Execution agent ONLY** |
+
+**Handoff requirements:**
+- `artifact_b_path` field in HandoffPacket points to Artifact B
+- `dual_artifact: true` flag set
+- Handoff context includes the 7 Prohibitions (see `HIVEMIND_PROTOCOL.md` §14)
+- Execution agent reads ONLY Artifact B — reading Artifact A is a protocol violation
+
+**Why**: Execution models copy instructional markers (`# <-- ADD THIS LINE`) and merge superseded docs when given multiple plans. The Dual-Artifact pattern eliminates this contamination entirely.
 
 ### 4.4 Conflict resolution
 

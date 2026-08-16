@@ -476,4 +476,87 @@ Task received
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH ⬡ v2.0.0*
+## §12 L2.5 Synthesis Layer & Dual-Artifact Rule (NEW — 2026-08-16)
+
+### The Problem: Execution-Model Contamination
+
+**Validated by F821 Study (AP-L25-SYNTHESIS-STUDY-v1.0.0)**: When an execution agent (e.g., Nemotron 3 Ultra, Qwen3-1.7B) is given multiple plan documents (tactical + strategic), they:
+1. **Copy instructional markers** into production code (`# <-- ADD THIS LINE`, `# CHANGE THIS`)
+2. **Merge superseded documents** — implement "according to both" even when one supersedes the other
+3. **Cannot resolve document hierarchy** — lack the contextual judgment to know which plan wins
+
+**Root cause**: Execution models are literal constraint-satisfaction engines. They treat pedagogical scaffolding as artifact, and cannot distinguish "instruction to reader" from "code to write."
+
+### The Solution: L2.5 Synthesis Layer + Dual-Artifact Rule
+
+When a task triggers a Crucible run (L3 Frontier Review) and MULTIPLE frontier planners produce documents (e.g., Sonnet tactical + Opus strategic), the orchestrator (Kali) MUST:
+
+1. **Invoke L2.5 Synthesis**: Dispatch a cheaper synthesizing model (DeepSeek-class) to read ALL planner outputs + execution observations
+2. **Emit exactly two artifacts**:
+   - **Artifact A (Cognitive Guide)**: Unified forensic analysis, teaching patterns, anti-patterns, decision records. Read by humans and the DPO extractor. **Execution agents are FORBIDDEN from reading it.**
+   - **Artifact B (Machine Patch)**: Single, comment-free, unambiguous machine-executable plan. The **ONLY** document the executing agent reads.
+3. **Handoff ONLY Artifact B** to the execution agent with explicit prohibition: *"Read ONLY this file. Do not read any other document in this sprint directory."*
+
+### Mandatory Protocol for Crucible Runs
+
+| Step | Action | Responsible |
+|------|--------|-------------|
+| 1 | L1 Local draft (if applicable) | Local model |
+| 2 | L2 Interrogation Gate — assess blast radius | Kali |
+| 3 | L3a Frontier Tactical Plan (Sonnet-class) | Tactical planner |
+| 4 | L3b Frontier Strategic Guide (Opus-class) | Strategic planner |
+| **5** | **L2.5 Synthesis — read ALL above + execution logs → emit Artifact A + B** | **Synthesizer (DeepSeek-class)** |
+| 6 | L4 Integration — hand off Artifact B ONLY to executor | Kali |
+| 7 | Execute from Artifact B only | Execution agent |
+| 8 | L5 Distill → DPO extraction from Artifact A | Scribe/Verity |
+
+### Artifact B Requirements (Machine Patch)
+
+Artifact B MUST be:
+- **Comment-free** — no `# <-- ADD THIS LINE`, `# CHANGE THIS`, `# TODO(plan)` markers
+- **Conflict-free** — all planner conflicts resolved (documented in Artifact A)
+- **Single-source** — no references to other documents
+- **Structured** — YAML frontmatter + numbered operations (OP-01..OP-N) with exact before/after states
+- **Self-contained** — includes all prohibitions, verification gates, commit contract
+
+### Handoff Template Update
+
+When dispatching an execution agent for a Crucible run, the handoff prompt MUST include:
+
+```
+## 🔱 CRUCIBLE EXECUTION HANDOFF
+
+**Artifact B (Machine Patch)**: `docs/sprints/<sprint>/AGENT_EXECUTION_PLAN.md`
+
+**PROHIBITIONS — VIOLATIONS ARE FAILURES**:
+1. Do NOT read any other file in this sprint directory. Artifact B is the only source of truth.
+2. Do NOT copy instructional markers into code. No comment containing "<--", "ADD", "CHANGE", or "TODO(plan)" may be written.
+3. Do NOT use regex, sed, or scripted import injection. Use the edit tool only.
+4. Do NOT add "# noqa" or "# type: ignore" suppressions.
+5. Do NOT add a top-level import when Artifact B specifies an inline import.
+6. Do NOT add an import when Artifact B specifies a call-site rename.
+7. Do NOT modify any file not listed in Artifact B.
+
+**VERIFICATION**: All gates in Artifact B must pass. Commit contract in Artifact B must be followed exactly.
+```
+
+### Token Economics Justification
+
+| Approach | Cost | Contamination Risk |
+|----------|------|-------------------|
+| Multiple planners → direct to executor | High (Opus × N) | **Critical** — observed 6/6 failure modes |
+| Multiple planners → L2.5 Synthesis (DeepSeek) → Artifact B → executor | Low (Opus × 2 + DeepSeek × 1) | **Zero** — Artifact B is single, clean, conflict-free |
+
+The synthesis layer costs ~1-2% of Opus regeneration and **eliminates execution-model contamination entirely**.
+
+### Reference Implementation
+
+- **Study**: `docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md`
+- **Artifact A (F821)**: `docs/sprints/f821-remediation/HYBRID_STRATEGIC_GUIDE.md`
+- **Artifact B (F821)**: `docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md`
+- **DPO Extractor**: `scripts/extract_dpo_pairs.py` (format-tolerant)
+- **DPO Dataset**: `data/training/dpo_dataset.jsonl` (14 pairs)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ SUBAGENT-DISPATCH ⬡ v3.0.0*
