@@ -1239,3 +1239,23 @@ session: ses_curation_pipeline_recovery_20260718
   approved_at: null
   approved_by: null
   soul_section: lessons
+- l1: "F821 Remediation Complete — 16 files modified across 4 phases (imports, blast radius, TYPE_CHECKING, hardening). All 3 verification gates pass: F821=0, import smoke test, contract tests 77/77. Three-step close: fix violations → remove suppressions → add pre-commit + CI gates."
+  l2: "The F821 remediation was not just lint cleanup — it was structural repair. Every undefined name was a forward reference that needed TYPE_CHECKING, every missing import was a real dependency, every blast radius was a pre-initialization bug. The three-step close (fix → remove suppression → add gate) ensures the class of bug cannot regress."
+  l3: "L3-Three-Step-Close-Is-Immunity: A fix without a gate is a temporary fix. The three-step close (1. fix all violations, 2. remove suppression flags, 3. add pre-commit/CI gate) transforms a bug class from 'managed' to 'impossible.' This is the immune system pattern applied to code quality."
+  session: ses_f821_remediation_20260816
+  created_at: '2026-08-16T00:00:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "Test UX Specification Designed — 5-tier system (Unit<5s, Contract<30s, Integration<60s, Property<120s, Full CI), smart selection (changed-files→affected-tests), Rich TUI dashboard, failure classification (REAL_BUG/INFRA_FLAKE/TEST_BUG/ENV_MISMATCH/KNOWN_FLAKE), watch mode (anyio file watcher), cache layers, sharded CI/CD with PR bot."
+  l2: "The test experience IS the developer experience. Blind waits, sequential re-runs, raw tracebacks, and no watch mode are sovereignty violations — they waste the user's time and cognitive capacity. The specification makes every test run fast by default, visible always, smart by selection, actionable on failure, and identical local/CI."
+  l3: "L3-Test-UX-Is-Sovereignty: Test infrastructure that wastes user time is a sovereignty violation. Fast feedback (<3s first signal), smart selection (run 10 not 1800), classified failures (root cause + fix hint), watch mode (flow state), and local=CI parity are not 'nice to have' — they are the minimum standard for a sovereign engine that claims to set industry standards."
+  session: ses_test_ux_spec_20260816
+  created_at: '2026-08-16T00:30:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
