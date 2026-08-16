@@ -11,7 +11,11 @@ import anyio
 import logging
 import pybreaker
 from omega.errors import OmegaError
-from typing import List, Optional, AsyncGenerator, Dict, Any
+from typing import List, Optional, AsyncGenerator, Dict, Any, TYPE_CHECKING
+
+# ── TYPE_CHECKING block for forward references ──
+if TYPE_CHECKING:
+    from omega.oracle.health_monitor import AsyncCircuitBreaker
 from pathlib import Path
 from datetime import datetime, timezone
 

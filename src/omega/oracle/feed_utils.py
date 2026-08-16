@@ -12,7 +12,7 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone   # ← extend existing import
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 

@@ -2,8 +2,10 @@
      11 src/omega/research/sediment.py
       9 src/omega/workers/freshness_checker.py
       9 src/omega/research/sandbox.py
+      9 src/omega/oracle/providers.py
       9 src/omega/audit/mandate_auditor.py
       8 src/omega/integrations/quota_pollers.py
+      8 src/omega/cli/oracle_cli.py
       7 src/omega/memory_store.py
       6 src/omega/workers/youtube_worker.py
       6 src/omega/tools/firecrawl_direct.py
@@ -22,13 +24,11 @@
       4 src/omega/memory/sleep_time.py
       4 src/omega/infra/subagent_pool/mcp_coordinator.py
       4 src/omega/coordination/watchdog.py
-      4 src/omega/cli/oracle_cli.py
       3 src/omega/tools/searxng_direct.py
       3 src/omega/teachers/nemotron_pipeline.py
       3 src/omega/skills/autonomous_meditation_pipeline.py
       3 src/omega/research/scorecard.py
       3 src/omega/research/hivemind_bridge.py
-      3 src/omega/oracle/providers.py
       3 src/omega/oracle/oracle.py
       3 src/omega/oracle/health_monitor.py
       3 src/omega/oracle/cgroup_pressure.py
@@ -68,7 +68,6 @@
       1 src/omega/soul/loader.py
       1 src/omega/research/schema.py
       1 src/omega/orchestrator/hmc_watcher.py
-      1 src/omega/oracle/soul_validator.py
       1 src/omega/oracle/session_manager.py
       1 src/omega/oracle/selective_hydration.py
       1 src/omega/oracle/security.py
@@ -95,4 +94,4 @@
       1 src/omega/config/loader.py
       1 src/omega/cli/vault.py
       1 src/omega/cli/bundle.py
-      1 Found 287 errors.
+      1 Found 296 errors.

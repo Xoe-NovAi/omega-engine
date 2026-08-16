@@ -26,7 +26,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
+
+# ── TYPE_CHECKING block for forward references ──
+if TYPE_CHECKING:
+    from omega.research.schema import ResearchProposal, TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from omega.errors import OmegaError, InvariantViolationError

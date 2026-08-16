@@ -104,7 +104,10 @@ def talk(
             result = await oracle.talk(query, transient=transient)
             _display_response(result)
         finally:
-            pass  # Oracle has async context management; no explicit close needed
+            try:
+                oracle.model_gateway.shutdown()
+            except Exception:
+                pass  # best-effort cleanup; never block exit
     anyio.run(_run)
 
 
@@ -128,7 +131,10 @@ def summon(
             result = await oracle.summon(entity, query, transient=transient, model_override=model)
             _display_response(result)
         finally:
-            pass  # Oracle has async context management; no explicit close needed
+            try:
+                oracle.model_gateway.shutdown()
+            except Exception:
+                pass  # best-effort cleanup; never block exit
     anyio.run(_run)
 
 

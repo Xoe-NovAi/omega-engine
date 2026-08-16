@@ -652,6 +652,7 @@ class Orchestrator:
             
             if updater_cfg.get("enabled", True):
                 from omega.oracle.health_monitor import get_health_monitor
+                from omega.workers.model_updater import ModelUpdaterWorker
                 self.model_updater = ModelUpdaterWorker(
                     model_gateway=ModelGateway(health_monitor=get_health_monitor()),
                     observability=get_engine(),

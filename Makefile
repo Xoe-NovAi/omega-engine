@@ -164,12 +164,11 @@ quick-test:
 	@echo "$(GREEN)Quick test complete$(NC)"
 
 # Run flake8 linting on src/omega/ (M13 quality gate)
-# Ignore F821: forward-reference type hints and TYPE_CHECKING-only imports
-# are pervasive in this codebase and not actionable lint failures.
+# F821 is now enforced — all forward references use TYPE_CHECKING blocks
 lint:
 	@echo "$(YELLOW)Running flake8 lint...$(NC)"
-	@$(PYTHON) -m flake8 src/omega/ --count --select=E9,F63,F7,F82 --show-source --statistics --ignore=F821
-	@$(PYTHON) -m flake8 src/omega/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --ignore=F821
+	@$(PYTHON) -m flake8 src/omega/ --count --select=E9,F63,F7,F82 --show-source --statistics
+	@$(PYTHON) -m flake8 src/omega/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 	@echo "$(GREEN)Lint complete$(NC)"
 
 # Clean all generated files

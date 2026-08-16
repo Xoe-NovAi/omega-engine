@@ -4,6 +4,7 @@ AP: AP-ITERATIVE-RESEARCH-v1.0.0
 """
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
+import re                              # ← ADD THIS LINE
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
 from ..memory_store import get_memory_store

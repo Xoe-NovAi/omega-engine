@@ -465,8 +465,27 @@ class NativeGGUFProvider(BaseProvider):
         """
         try:
             self.shutdown()
-        except (RuntimeError, OSError):
+        except Exception:
+            # ImportError: sys.meta_path is None during interpreter shutdown
+            # Any other cleanup failure must NOT crash GC
             pass
+
+    def __enter__(self) -> "NativeGGUFProvider":
+        """Context manager entry — enables `with NativeGGUFProvider(...) as p:`.
+        
+        [Carmack Fix 2026-08-15] Guarantees shutdown() on normal exit, exception,
+        or context break. __del__ alone is unreliable in async Python (see
+        llama-cpp-python #1442 — del not guaranteed if references persist).
+        """
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        """Context manager exit — clean up worker process unconditionally.
+        
+        Returns False to propagate any exception (do not suppress).
+        """
+        self.shutdown()
+        return False
 
     async def is_available(self) -> bool:
         """Check if llama-cpp-python is installed and model path exists."""
@@ -649,6 +668,13 @@ class NativeGGUFProvider(BaseProvider):
                     # Get request from queue
                     request = req_queue.get()
                     if request is None:  # Shutdown signal
+                        # [Carmack Fix 2026-08-15] Return freed pages to OS
+                        # before worker process exits (model weights released).
+                        try:
+                            import ctypes
+                            ctypes.CDLL("libc.so.6").malloc_trim(0)
+                        except (OSError, AttributeError):
+                            pass
                         break
                     
                     # Handle Somatic State Commands
@@ -1016,7 +1042,15 @@ class NativeGGUFProvider(BaseProvider):
         }
 
     def shutdown(self):
-        """Cleanly shut down the isolated inference executor."""
+        """Cleanly shut down the isolated inference executor.
+
+        [Carmack Fix 2026-08-15] Hardened cleanup to prevent OOM accumulation:
+        - Send None to req_queue (worker breaks loop, exits cleanly)
+        - join(timeout=10) — wait for clean exit
+        - terminate() if still alive — force kill orphaned worker
+        - kill() as last resort — SIGKILL if terminate() hangs
+        - malloc_trim(0) — return freed pages to OS immediately (parent process)
+        """
         if self._worker_process is not None:
             if self._req_queue is not None:
                 try:
@@ -1025,5 +1059,26 @@ class NativeGGUFProvider(BaseProvider):
                     pass
             self._worker_process.join(timeout=10)
             if self._worker_process.is_alive():
-                self._worker_process.terminate()
-        self._executor.shutdown(wait=False)
+                try:
+                    self._worker_process.terminate()  # SIGTERM
+                    self._worker_process.join(timeout=5)
+                except (RuntimeError, OSError):
+                    pass
+            if self._worker_process.is_alive():
+                try:
+                    self._worker_process.kill()  # SIGKILL as last resort
+                except (RuntimeError, OSError):
+                    pass
+            self._worker_process = None
+            self._req_queue = None
+            self._res_queue = None
+        # Return freed pages to OS (parent process holds ThreadPoolExecutor + queues)
+        try:
+            import ctypes
+            ctypes.CDLL("libc.so.6").malloc_trim(0)
+        except (OSError, AttributeError):
+            pass
+        try:
+            self._executor.shutdown(wait=False)
+        except (RuntimeError, OSError):
+            pass

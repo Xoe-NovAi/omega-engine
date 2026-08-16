@@ -6,66 +6,7 @@ Sovereign Extractors — Model-specific extraction logic.
 # DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import json
 import time
-import httpx2 as httpx
-import anyio
-from typing import AsyncGenerator, Optional, Dict, Any
-from pathlib import Path
-from .ingestion_types import ExtractionSchema, IngestionConfig
-
-# The Standard Sovereign Extraction Schema
-# This is the core of the Entity Deepening Protocol.
-EXTRACTION_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "technical_facts": {
-            "type": "array",
-            "items": {"type": "string"},
-            "description": "Technical facts, decisions, and implementation details from the text"
-        },
-        "personality_patterns": {
-            "type": "array",
-            "items": {"type": "string"},
-            "description": "Observable patterns in personality, habits, communication style"
-        },
-        "gnosis_principles": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "principle": {"type": "string", "description": "Name of the principle"},
-                    "description": {"type": "string", "description": "Detailed explanation"}
-                },
-                "required": ["principle", "description"]
-            },
-            "description": "Universal engineering or life principles distilled from the text"
-        },
-        "heritage_patterns": {
-            "type": "array",
-            "items": {"type": "string"},
-            "description": "Patterns that could be ported to other systems (id Software heritage, etc)"
-        },
-        "dpo_pairs": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "prompt": {"type": "string", "description": "A question about the text"},
-                    "chosen": {"type": "string", "description": "Authentic answer based on the text"},
-                    "rejected": {"type": "string", "description": "Generic or incorrect answer"}
-                },
-                "required": ["prompt", "chosen", "rejected"]
-            },
-            "description": "Direct Preference Optimization training pairs"
-        }
-    },
-    "required": ["technical_facts", "personality_patterns", "gnosis_principles", "heritage_patterns", "dpo_pairs"]
-}
-
-"""
-Sovereign Extractors — Model-specific extraction logic.
-"""
-import json
-import time
+from pydantic import ValidationError
 import httpx2 as httpx
 import anyio
 from typing import AsyncGenerator, Optional, Dict, Any

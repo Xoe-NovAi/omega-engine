@@ -25,7 +25,11 @@ from pathlib import Path
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+# ── TYPE_CHECKING block for forward references ──
+if TYPE_CHECKING:
+    from omega.observability.metrics_db import MetricsDB
 
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,

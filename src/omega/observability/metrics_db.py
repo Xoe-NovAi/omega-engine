@@ -165,14 +165,27 @@ class MetricsDB:
         # Create schema
         self._conn.executescript(_SCHEMA_SQL)
 
-        # Migration: add cost_usd column if missing (schema v1 -> v2)
+        # Migration: add cost_usd + v3 token columns if missing (schema v1/v2 -> v3).
+        # The live DB may predate schema v3 (cache_read_tokens, provider_prompt_tokens,
+        # provider_completion_tokens). Without this, record_performance() raises
+        # sqlite3.OperationalError and crashes the entire oracle response (CP-1 blocker).
         try:
             cursor = self._conn.execute("PRAGMA table_info(performance)")
             columns = [row["name"] for row in cursor.fetchall()]
-            if "cost_usd" not in columns:
-                self._conn.execute("ALTER TABLE performance ADD COLUMN cost_usd REAL DEFAULT 0.0")
+            _migration_cols = {
+                "cost_usd": "REAL DEFAULT 0.0",
+                "cache_read_tokens": "INTEGER DEFAULT 0",
+                "provider_prompt_tokens": "INTEGER DEFAULT 0",
+                "provider_completion_tokens": "INTEGER DEFAULT 0",
+            }
+            added = []
+            for col, col_type in _migration_cols.items():
+                if col not in columns:
+                    self._conn.execute(f"ALTER TABLE performance ADD COLUMN {col} {col_type}")
+                    added.append(col)
+            if added:
                 self._conn.commit()
-                logger.info("MetricsDB migration: added cost_usd column to performance table")
+                logger.info("MetricsDB migration: added columns %s to performance table", added)
         except Exception as e:
             logger.warning("MetricsDB migration check failed: %s", e)
 

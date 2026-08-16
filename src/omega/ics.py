@@ -36,7 +36,11 @@ import re
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+# ── TYPE_CHECKING block for forward references ──
+if TYPE_CHECKING:
+    from omega.oracle.oracle import OracleResponse
 
 # ── Constants ──────────────────────────────────────────────────────────
 ICS_TEMPLATE_FULL = "⬡ OMEGA ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase}"
@@ -371,7 +375,7 @@ def render(
 
 
 def render_for_response(
-    response: "OracleResponse",  # type: ignore[name-defined]
+    response: "OracleResponse",
     mode: str = "full",
 ) -> str:
     """Render an ICS-S header from an existing OracleResponse.

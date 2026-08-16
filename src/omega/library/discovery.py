@@ -16,6 +16,7 @@ import json
 import logging
 import os
 import uuid
+import yaml
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,7 +25,6 @@ from typing import Any, Dict, List, Optional
 import httpx2 as httpx
 import anyio
 from omega.errors import (
-    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,

@@ -118,6 +118,14 @@ repos:
         pass_filenames: false
         always_run: true
 
+      # F821 Gate — Enforce no undefined names (forward refs must use TYPE_CHECKING)
+      - id: omega-check-f821
+        name: Check F821 undefined names
+        entry: python -m flake8 src/omega/ --select=F821 --count
+        language: system
+        pass_filenames: false
+        always_run: true
+
       # Cognitive State Validator (M27 Tracking Integrity — the Iron Gate)
       # Blocks ANY commit that corrupts the 5-Tier tracking state (bad statuses,
       # relational R-ID gaps, duplicate topics).

@@ -25,7 +25,11 @@ import subprocess
 import time
 import inspect
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, NamedTuple, AsyncIterator
+from typing import Any, Dict, List, Optional, Tuple, NamedTuple, AsyncIterator, TYPE_CHECKING
+
+# ── TYPE_CHECKING block for forward references ──
+if TYPE_CHECKING:
+    from omega.oracle.cpu_optimizer import SpeculativeDecodeConfig
 from dataclasses import dataclass
 import anyio
 
@@ -175,6 +179,20 @@ class ModelGateway:
         # Only used for opencode-zen provider to bypass rate limits.
         # Set via oracle.py: ModelGateway.proxy_pool = EphemeralWarpPool()
         self.proxy_pool: Optional[Any] = None
+
+    def shutdown(self) -> None:
+        """Shut down all providers (terminate worker processes, close connections).
+
+        [CP-3 Fix 2026-08-15] Ensures one-shot CLI commands (omega talk / summon)
+        exit cleanly instead of hanging on the native-gguf worker subprocess.
+        Best-effort: never raises — shutdown failures are logged and ignored.
+        """
+        for provider in self.providers:
+            try:
+                if hasattr(provider, "shutdown"):
+                    provider.shutdown()
+            except Exception as e:  # noqa: BLE001 - shutdown is best-effort
+                logger.warning("Provider %s shutdown failed (non-fatal): %s", getattr(provider, "name", "?"), e)
 
     def list_providers(self) -> List[Dict[str, Any]]:
         """Return a list of all registered providers and their current health."""

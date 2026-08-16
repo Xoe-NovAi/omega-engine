@@ -95,7 +95,7 @@ class RegressionWatcher:
         if not baselines:
             return
         
-        obs = get_engine()
+        obs = _get_obs_engine()
         
         for baseline in baselines:
             metric_name = baseline["metric_name"]
@@ -253,7 +253,7 @@ async def get_regression_watcher(
     if _watcher is None:
         if metrics_db is None:
             from omega.observability import get_engine
-            obs = get_engine()
+            obs = _get_obs_engine()
             metrics_db = obs.metrics_db
         _watcher = RegressionWatcher(metrics_db, interval_seconds, threshold)
     return _watcher

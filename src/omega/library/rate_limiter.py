@@ -9,6 +9,7 @@
 # DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 from __future__ import annotations
 
+import anyio                           # ← ADD THIS LINE
 import logging
 import math
 import time

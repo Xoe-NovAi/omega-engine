@@ -1,0 +1,20 @@
+{
+  "entity": "Iris",
+  "session_id": "ses_20260816_default_004",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-08-16T00:02:03.656359+00:00",
+      "user": "hello",
+      "assistant": "Hello! How can I assist you today? \ud83d\ude0a",
+      "metadata": {
+        "trace_id": "trc_0364cbfe1dd1",
+        "confidence": 1.0,
+        "model": "mock",
+        "backend": "native-gguf",
+        "timestamp": "2026-08-16T00:02:03.656307+00:00"
+      }
+    }
+  ]
+}

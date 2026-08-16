@@ -11,10 +11,10 @@
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+import anyio                           # ← ADD THIS LINE
 import json
 import logging
 import uuid
-import yaml
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
