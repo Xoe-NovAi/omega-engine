@@ -29,13 +29,13 @@ from typing import Dict, Optional
 # The map below intentionally omits removed types (Q4_2=4, Q4_3=5) that would
 # have been accepted by the old providers.py map but crash the C backend.
 KV_TYPE_MAP: Dict[str, int] = {
-    "f32": 0,     # GGML_TYPE_F32
-    "f16": 1,     # GGML_TYPE_F16
-    "q4_0": 2,    # GGML_TYPE_Q4_0
-    "q5_0": 6,    # GGML_TYPE_Q5_0 (NOT 5 — 4/5 were removed types)
-    "q8_0": 8,    # GGML_TYPE_Q8_0
-    "q6_k": 14,   # GGML_TYPE_Q6_K
-    "q8_k": 15,   # GGML_TYPE_Q8_K
+    "f32": 0,  # GGML_TYPE_F32
+    "f16": 1,  # GGML_TYPE_F16
+    "q4_0": 2,  # GGML_TYPE_Q4_0
+    "q5_0": 6,  # GGML_TYPE_Q5_0 (NOT 5 — 4/5 were removed types)
+    "q8_0": 8,  # GGML_TYPE_Q8_0
+    "q6_k": 14,  # GGML_TYPE_Q6_K
+    "q8_k": 15,  # GGML_TYPE_Q8_K
 }
 
 

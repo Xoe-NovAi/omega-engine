@@ -42,12 +42,13 @@ logger = logging.getLogger(__name__)
 
 class SoulStoreWriteError(Exception):
     """Raised when atomic write fails (fsync error, disk full, etc.)."""
+
     pass
 
 
 class SoulStore:
     """Atomic file writer for soul data.
-    
+
     Single-writer pattern: one SoulStore per process handles all soul writes.
     Uses fcntl.flock() for writer exclusion across processes.
     """
@@ -61,7 +62,7 @@ class SoulStore:
 
     async def write_atomic(self, path: Path, content: str) -> None:
         """Write content to path atomically with fsync guarantees.
-        
+
         The write sequence is:
         1. Acquire exclusive flock on target file
         2. Create tempfile in same directory (same-device rename)
@@ -71,39 +72,39 @@ class SoulStore:
         6. fsync parent directory (directory entry on media)
         7. Rotate .bak files
         8. Release flock
-        
+
         On fsync error: raises SoulStoreWriteError (caller should CRASH,
         per Postgres fsyncgate guidance — kernel has forgotten which pages failed).
-        
+
         Args:
             path: Target file path (must be on local filesystem, not NFS)
             content: String content to write
-            
+
         Raises:
             SoulStoreWriteError: If fsync fails (data may be lost — do NOT retry)
             OSError: If file operations fail
         """
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         # Step 1: Acquire exclusive flock
         lock_path = path.with_suffix(path.suffix + ".lock")
         lock_fd = os.open(str(lock_path), os.O_CREAT | os.O_RDWR)
         try:
             fcntl.flock(lock_fd, fcntl.LOCK_EX)
-            
+
             # Step 2: Create tempfile in same directory (same-device atomic rename)
             fd, tmp_path = tempfile.mkstemp(
                 dir=str(path.parent),
                 prefix=f".{path.name}.",
                 suffix=".tmp",
             )
-            
+
             try:
                 # Step 3: Write content
                 data = content.encode("utf-8")
                 os.write(fd, data)
-                
+
                 # Step 4: fsync tempfile (data on media)
                 try:
                     os.fsync(fd)
@@ -111,15 +112,14 @@ class SoulStore:
                     # [fsyncgate] On fsync error, kernel has lost track of pages.
                     # Do NOT retry — raise to signal data loss risk.
                     raise SoulStoreWriteError(
-                        f"fsync failed on tempfile {tmp_path}: {e}. "
-                        f"Data may be lost. Do NOT retry."
+                        f"fsync failed on tempfile {tmp_path}: {e}. Data may be lost. Do NOT retry."
                     ) from e
                 finally:
                     os.close(fd)
-                
+
                 # Step 5: Atomic rename (same directory = same device)
                 os.replace(tmp_path, str(path))
-                
+
                 # Step 6: fsync parent directory (directory entry on media)
                 try:
                     parent_fd = os.open(str(path.parent), os.O_RDONLY)
@@ -132,14 +132,15 @@ class SoulStore:
                     # (data is already on media from step 4). Log but don't raise.
                     logger.warning(
                         "Parent dir fsync failed for %s: %s (data safe, entry may be lost)",
-                        path, e,
+                        path,
+                        e,
                     )
-                
+
                 # Step 7: Rotate .bak files
                 await self._rotate_backups(path)
-                
+
                 logger.debug("Atomic write complete: %s (%d bytes)", path, len(data))
-                
+
             except BaseException:
                 # Clean up tempfile on any error
                 try:
@@ -147,7 +148,7 @@ class SoulStore:
                 except OSError:
                     pass
                 raise
-                
+
         finally:
             # Step 8: Release flock
             fcntl.flock(lock_fd, fcntl.LOCK_UN)
@@ -155,26 +156,26 @@ class SoulStore:
 
     async def read_with_recovery(self, path: Path) -> Optional[str]:
         """Read file content, falling back to .bak if main file is corrupt.
-        
+
         Args:
             path: File path to read
-            
+
         Returns:
             File content as string, or None if no readable file found
         """
         path = Path(path)
-        
+
         # Try main file first
         if await self._isReadable(path):
             return path.read_text(encoding="utf-8")
-        
+
         # Try rolling .bak files
         for i in range(1, self.max_backups + 1):
             bak_path = path.with_suffix(path.suffix + f".{i}.bak")
             if await self._isReadable(bak_path):
                 logger.warning("Main file corrupt, recovering from %s", bak_path)
                 return bak_path.read_text(encoding="utf-8")
-        
+
         return None
 
     async def _rotate_backups(self, path: Path) -> None:
@@ -186,7 +187,7 @@ class SoulStore:
                 if dst.exists():
                     dst.unlink()
                 src.rename(dst)
-        
+
         # Create new .1.bak from current file (before rename overwrote it)
         # Actually, the file was just renamed, so we can't back up the old one.
         # Instead, we back up BEFORE the next write. This is a simplified rotation.
@@ -195,6 +196,7 @@ class SoulStore:
         if path.exists() and not bak_1.exists():
             # First backup — copy current file
             import shutil
+
             shutil.copy2(str(path), str(bak_1))
 
     async def _isReadable(self, path: Path) -> bool:

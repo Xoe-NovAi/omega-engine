@@ -13,6 +13,7 @@ from omega.oracle.entity_registry import EntityRegistry
 # if not installed (fallback behavior in each method)
 try:
     import headroom
+
     HAS_HEADROOM = True
 except ImportError:
     HAS_HEADROOM = False
@@ -22,28 +23,33 @@ except ImportError:
 
 logger = logging.getLogger("omega.headroom")
 
+
 @dataclass
 class HeadroomResult:
     compressed_text: str
     original_ref: Optional[str] = None
     tokens_saved: int = 0
 
+
 class HeadroomMiddleware:
     """
     Sovereign Semantic Compression Middleware.
     Integrates the headroom-ai library to reduce token usage in the context window.
     """
+
     def __init__(self, entity_registry: Optional[EntityRegistry] = None):
         self.registry = entity_registry
 
-    async def compress_context(self, entity_name: str, messages: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[HeadroomResult]]:
+    async def compress_context(
+        self, entity_name: str, messages: List[Dict[str, Any]]
+    ) -> Tuple[List[Dict[str, Any]], List[HeadroomResult]]:
         """
         Compresses a list of messages using semantic/structural compression.
-        
+
         Args:
             entity_name: The target entity (used for cache isolation).
             messages: The list of messages to compress.
-            
+
         Returns:
             A tuple of (compressed_messages, results_metadata).
         """
@@ -53,15 +59,18 @@ class HeadroomMiddleware:
             # [M1 AnyIO Absolute] Wrap blocking CPU-bound compression in run_sync
             result = await anyio.to_thread.run_sync(headroom.compress, messages)
             compressed_messages = result.messages
-            
-            # In a full implementation, we would track the tokens saved and the 
+
+            # In a full implementation, we would track the tokens saved and the
             # reference IDs for the CCR (Compress-Cache-Retrieve) store.
             # For now, we return the compressed messages and a generic result.
-            
-            results = [HeadroomResult(compressed_text=m.get("content", ""), tokens_saved=0) for m in compressed_messages]
-            
+
+            results = [
+                HeadroomResult(compressed_text=m.get("content", ""), tokens_saved=0)
+                for m in compressed_messages
+            ]
+
             return compressed_messages, results
-            
+
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Headroom compression failed for {entity_name}: {e}")
             # Fallback: return original messages to ensure the system doesn't crash
@@ -80,7 +89,9 @@ class HeadroomMiddleware:
             logger.error(f"Headroom retrieval failed for {ref_id}: {e}")
             return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
 
+
 _headroom_instance: Optional[HeadroomMiddleware] = None
+
 
 def get_headroom_middleware() -> HeadroomMiddleware:
     """Singleton provider for HeadroomMiddleware."""
@@ -88,5 +99,3 @@ def get_headroom_middleware() -> HeadroomMiddleware:
     if _headroom_instance is None:
         _headroom_instance = HeadroomMiddleware()
     return _headroom_instance
-
-

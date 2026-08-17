@@ -30,6 +30,7 @@ DB_PATH = LIBRARY_DIR / "library.db"
 class CatalogError(OmegaError):
     """Base for library catalog errors."""
 
+
 class DocumentNotFoundError(CatalogError):
     """Document not found in catalog."""
 
@@ -45,6 +46,7 @@ class LibraryCatalog:
 
     async def ensure_db(self):
         """Create the database and tables if they don't exist."""
+
         def _init():
             self._db_path.parent.mkdir(parents=True, exist_ok=True)
             conn = sqlite3.connect(str(self._db_path))
@@ -80,11 +82,13 @@ class LibraryCatalog:
         title: Optional[str] = None,
         author: Optional[str] = None,
         source_url: Optional[str] = None,
-        quality_vector: List[float] = None, # [integrity, coherence, completeness, structure, domain_fit]
+        quality_vector: List[
+            float
+        ] = None,  # [integrity, coherence, completeness, structure, domain_fit]
     ) -> bool:
         """Register a document in the catalog with multi-dimensional quality."""
         await self.ensure_db()
-        
+
         # Calculate average quality for sorting
         avg_q = sum(quality_vector) / len(quality_vector) if quality_vector else 0.0
         q_json = json.dumps(quality_vector) if quality_vector else "[]"
@@ -97,7 +101,14 @@ class LibraryCatalog:
                        (id, path, domain, title, author, source_url, quality_vector, avg_quality, created_at)
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (
-                        doc_id, path, domain, title, author, source_url, q_json, avg_q,
+                        doc_id,
+                        path,
+                        domain,
+                        title,
+                        author,
+                        source_url,
+                        q_json,
+                        avg_q,
                         datetime.now(timezone.utc).isoformat(),
                     ),
                 )
@@ -140,12 +151,12 @@ class LibraryCatalog:
 
                 rows = conn.execute(sql, params).fetchall()
                 results = [dict(r) for r in rows]
-                
+
                 # Deserialize quality vectors
                 for r in results:
                     if r.get("quality_vector"):
                         r["quality_vector"] = json.loads(r["quality_vector"])
-                
+
                 return results
             except sqlite3.Error as e:
                 raise CatalogError(f"Search failed: {e}") from e
@@ -187,9 +198,9 @@ class LibraryCatalog:
                 by_domain = conn.execute(
                     "SELECT domain, COUNT(*) FROM documents GROUP BY domain"
                 ).fetchall()
-                avg_quality = conn.execute(
-                    "SELECT AVG(avg_quality) FROM documents"
-                ).fetchone()[0] or 0.0
+                avg_quality = (
+                    conn.execute("SELECT AVG(avg_quality) FROM documents").fetchone()[0] or 0.0
+                )
                 return {
                     "total_documents": total,
                     "by_domain": dict(by_domain),

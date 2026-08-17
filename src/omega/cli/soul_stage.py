@@ -6,17 +6,18 @@ before they are committed to an entity's soul.yaml.
 """
 # DocRef: docs/architecture/SOUL_ARCHITECTURE_PROTOCOL.md
 
-import anyio
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Static, DataTable, Button, Input, Label
+from textual.widgets import Header, Footer, DataTable, Button, Label
 from textual.containers import Container, Horizontal, Vertical
 from textual.binding import Binding
 
 from omega.oracle.entity_registry import EntityRegistry
 from omega.state import get_usm
 
+
 class SoulStageApp(App):
     """TUI for staging soul distillation proposals."""
+
     CSS = """
     Screen {
         align: center middle;
@@ -38,7 +39,7 @@ class SoulStageApp(App):
         align: center middle;
     }
     """
-    
+
     BINDINGS = [
         Binding("q", "quit", "Quit"),
         Binding("a", "approve", "Approve"),
@@ -74,7 +75,7 @@ class SoulStageApp(App):
         table = self.query_one("#proposal_table", DataTable)
         table.clear()
         table.add_columns("ID", "L1 Narrative", "L2 Insight", "L3 Principle")
-        
+
         # In a real implementation, this reads from proposed_lessons.yaml
         # For now, we mock some data to verify the TUI
         mock_proposals = [
@@ -82,19 +83,19 @@ class SoulStageApp(App):
                 "id": "prop_001",
                 "L1": "Observed that local inference is 10x faster for 1.7B models.",
                 "L2": "Small models are sufficient for routing tasks.",
-                "L3": "The Right Approximation: Use the smallest model that meets the precision requirement."
+                "L3": "The Right Approximation: Use the smallest model that meets the precision requirement.",
             },
             {
                 "id": "prop_002",
                 "L1": "SomaticState capture caused a segfault in llama-cpp.",
                 "L2": "C-FFI calls are unstable in the main thread.",
-                "L3": "Sovereign Isolation: Wrap all C-FFI in isolated processes."
-            }
+                "L3": "Sovereign Isolation: Wrap all C-FFI in isolated processes.",
+            },
         ]
-        
+
         for p in mock_proposals:
             table.add_row(p["id"], p["L1"][:50] + "...", p["L2"][:50] + "...", p["L3"][:50] + "...")
-        
+
         self.proposals = mock_proposals
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
@@ -112,11 +113,11 @@ class SoulStageApp(App):
             # Logic to move from proposed_lessons.yaml to soul.yaml
             self.notify(f"Approved {self.current_proposal['id']}")
             # Implementation: update soul.yaml
-            
+
     async def action_reject(self) -> None:
         if self.current_proposal:
             self.notify(f"Rejected {self.current_proposal['id']}")
-            
+
     async def action_defer(self) -> None:
         if self.current_proposal:
             self.notify(f"Deferred {self.current_proposal['id']}")
@@ -128,6 +129,7 @@ class SoulStageApp(App):
             await self.action_reject()
         elif event.button.id == "btn_defer":
             await self.action_defer()
+
 
 if __name__ == "__main__":
     # Example usage

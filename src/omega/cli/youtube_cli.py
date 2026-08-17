@@ -48,8 +48,7 @@ def _fetch_transcript(video_id: str) -> str:
         from youtube_transcript_api import YouTubeTranscriptApi
     except ImportError:
         raise RuntimeError(
-            "youtube-transcript-api not installed. "
-            "Run: pip install 'youtube-transcript-api>=0.6.3'"
+            "youtube-transcript-api not installed. Run: pip install 'youtube-transcript-api>=0.6.3'"
         )
 
     try:
@@ -65,6 +64,7 @@ def _fetch_transcript(video_id: str) -> str:
 def _extract_video_id(url: str) -> str:
     """Extract the YouTube video ID from a URL or return it if already an ID."""
     import re
+
     # Handle: https://www.youtube.com/watch?v=VIDEO_ID
     # Handle: https://youtu.be/VIDEO_ID
     # Handle: VIDEO_ID directly
@@ -81,7 +81,7 @@ def _extract_video_id(url: str) -> str:
 
 async def _ingest_one(
     video_url: str,
-    mod,           # YouTubeResearchModule — caller owns lifecycle (init/close)
+    mod,  # YouTubeResearchModule — caller owns lifecycle (init/close)
     quiet: bool = False,
 ) -> Optional[str]:
     """Ingest a single YouTube URL using a pre-initialised module.
@@ -110,9 +110,7 @@ async def _ingest_one(
         typer.echo(f"  📥 Fetching transcript: {video_id} ({video_url})")
 
     try:
-        raw_transcript = await anyio.to_thread.run_sync(
-            lambda: _fetch_transcript(video_id)
-        )
+        raw_transcript = await anyio.to_thread.run_sync(lambda: _fetch_transcript(video_id))
     except RuntimeError as exc:
         typer.echo(f"  ❌ Transcript fetch failed: {exc}", err=True)
         return None
@@ -133,13 +131,14 @@ async def _ingest_one(
         #                 wrap a coroutine in anyio.to_thread.run_sync().
         try:
             from omega.memory_store import MemoryStore
+
             store = MemoryStore()
             metadata = mod.to_memory_metadata(result)
             # session_id convention: use source_id so ingest events are grouped
             # under the video's own session rather than polluting a user session.
             await store.add_exchange(
                 entity_name="omega_youtube_research",
-                session_id=result.source_id,          # REQUIRED — was missing
+                session_id=result.source_id,  # REQUIRED — was missing
                 user_message=f"Ingested YouTube transcript: {video_url}",
                 response=result.attestation.cleaned_text_hash,  # param is `response`
                 metadata=metadata,
@@ -148,9 +147,7 @@ async def _ingest_one(
                 typer.echo(f"  🔗 Provenance wired to MemoryStore")
         except Exception as mem_exc:
             # Non-fatal: provenance is already in SQLite; MemoryStore wire is best-effort
-            typer.echo(
-                f"  ⚠️  MemoryStore wire failed (non-fatal): {mem_exc}", err=True
-            )
+            typer.echo(f"  ⚠️  MemoryStore wire failed (non-fatal): {mem_exc}", err=True)
 
         if not quiet:
             typer.echo(
@@ -203,7 +200,7 @@ def batch(
     file: Path = typer.Argument(
         ...,
         help="Path to file containing YouTube URLs (one per line). "
-             "Defaults to youtube-links-for-ingestion.txt",
+        "Defaults to youtube-links-for-ingestion.txt",
         exists=True,
     ),
     quiet: bool = typer.Option(False, "--quiet", "-q", help="Suppress per-video output"),
@@ -254,7 +251,7 @@ def batch(
 
     anyio.run(_run_batch)
 
-    typer.echo(f"\n{'='*60}")
+    typer.echo(f"\n{'=' * 60}")
     typer.echo(f"✅ Succeeded: {len(success_ids)}")
     typer.echo(f"❌ Failed:    {len(failed)}")
     if failed:
@@ -297,8 +294,10 @@ def verify(
             valid = chain.verify(prov_chunks)
 
             if valid:
-                typer.echo(f"  ✅ Chain VALID — {len(chunks)} chunks, "
-                           f"hash={attestation.provenance_hash[:32]}...")
+                typer.echo(
+                    f"  ✅ Chain VALID — {len(chunks)} chunks, "
+                    f"hash={attestation.provenance_hash[:32]}..."
+                )
             else:
                 typer.echo(f"  ❌ Chain INVALID — tamper or reorder detected!", err=True)
             return valid

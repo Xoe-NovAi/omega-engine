@@ -13,11 +13,10 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import yaml
-import uuid
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-from omega.errors import SoulCorruptionError, OmegaPersistenceError, OmegaError
+from omega.errors import OmegaError
 
 from pydantic import BaseModel, Field, model_validator, ConfigDict
 from pydantic import ValidationError as PydanticValidationError
@@ -27,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 class SoulValidationError(Exception):
     """Raised when a soul file violates the R-10 schema."""
+
     def __init__(self, message: str, original_exception: Optional[Exception] = None):
         super().__init__(message)
         self.original_exception = original_exception
@@ -34,9 +34,7 @@ class SoulValidationError(Exception):
 
 REQUIRED_TOP_KEYS = {"entity"}
 # Core required fields in the entity block (backward compatible)
-REQUIRED_ENTITY_KEYS = {
-    "name"
-}
+REQUIRED_ENTITY_KEYS = {"name"}
 # v6.1 recommended blocks (not required for validation but checked for consistency)
 RECOMMENDED_ENTITY_BLOCKS = {"identity", "directives", "team"}
 # Fields that were required in v6.0 but forbidden in v6.1 lean schema
@@ -89,7 +87,9 @@ class SoulValidator:
             logger.error(f"Soul validation failure for {entity_name}: {e}")
             return False, None
         except (OmegaError, RuntimeError, OSError) as e:
-            logger.critical(f"Unexpected error during soul validation for {entity_name}: {e}", exc_info=True)
+            logger.critical(
+                f"Unexpected error during soul validation for {entity_name}: {e}", exc_info=True
+            )
             return False, None
 
     def validate_dict(self, data: Any) -> None:

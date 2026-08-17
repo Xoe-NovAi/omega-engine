@@ -30,11 +30,13 @@ logger = logging.getLogger(__name__)
 
 class LocalInferenceBusyError(Exception):
     """Local inference slot is busy — route to cloud."""
+
     pass
 
 
 class OOMRiskError(Exception):
     """Insufficient RAM for model load — route to cloud."""
+
     pass
 
 
@@ -50,8 +52,9 @@ class LocalInferenceAdmission:
         self._current_model: Optional[str] = None
         self._oom_protector = OOMProtector(config=oom_config or OOMProtectorConfig())
 
-    async def acquire(self, model_name: str, model_ram_mb: int = 1700,
-                      kv_cache_mb: int = 512) -> bool:
+    async def acquire(
+        self, model_name: str, model_ram_mb: int = 1700, kv_cache_mb: int = 512
+    ) -> bool:
         """Try to acquire local inference slot.
 
         Checks:
@@ -66,7 +69,8 @@ class LocalInferenceAdmission:
         if not await self._oom_protector.check_available(required_gb):
             logger.warning(
                 "OOM risk for %s (need %.1fGB) — failing fast to cloud",
-                model_name, required_gb,
+                model_name,
+                required_gb,
             )
             return False
 
@@ -75,7 +79,8 @@ class LocalInferenceAdmission:
             # Already at capacity
             logger.warning(
                 "Local inference busy with %s — %s would queue",
-                self._current_model, model_name,
+                self._current_model,
+                model_name,
             )
             return False
 

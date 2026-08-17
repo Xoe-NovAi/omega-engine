@@ -20,7 +20,7 @@ import threading
 from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
 
-from omega.constants import ZONEID_PROBE, ZONEID_TOMBSTONE, ZONEID_ATOMIC, validate_zoneid
+from omega.constants import ZONEID_PROBE, ZONEID_ATOMIC, validate_zoneid
 from omega.cvar_table import cvar_get
 from omega.oracle.oom_protector import OOMProtector, AdmissionResult, OOMProtectorConfig
 
@@ -51,6 +51,7 @@ def _get_available_ram_mb(meminfo_path: Optional[str] = None) -> Optional[int]:
     # Primary: psutil
     try:
         import psutil
+
         available_bytes = psutil.virtual_memory().available
         return int(available_bytes / (1024 * 1024))
     except ImportError:
@@ -68,6 +69,7 @@ def _get_available_ram_mb(meminfo_path: Optional[str] = None) -> Optional[int]:
         return None
 
     return None
+
 
 # ── Task-Local Storage for Held Weights (Re-entrancy) ─────────────────
 # Maps a task identifier to the weight it currently holds.
@@ -94,6 +96,7 @@ def _get_current_task_id() -> Any:
     _fallback_counter += 1
     return (id(threading.current_thread()), _fallback_counter)
 
+
 _fallback_counter = 0
 
 
@@ -102,6 +105,7 @@ class AtomicLock:
 
     [id-soft: vet-015] ZONEID Pattern — ensures lock integrity.
     """
+
     def __init__(self):
         self._magic = ZONEID_ATOMIC
         self._lock = anyio.Lock()
@@ -126,12 +130,14 @@ class AtomicLock:
 # This wrapper maintains backward compatibility for legacy callers
 # while delegating to the new three-signal fusion engine.
 
+
 class LegacyOOMWrapper:
     """Legacy-compatible wrapper around the new three-signal OOMProtector.
 
     Keeps the old `check(model_name, model_spec) -> bool` interface while
     internally using PSI + MemAvailable + cgroup v2 fusion.
     """
+
     RESERVED_MARGIN_MB: int = 1024
 
     def __init__(self, min_ram_mb: int = 2048, meminfo_path: Optional[str] = None):
@@ -192,7 +198,7 @@ class LegacyOOMWrapper:
 
     async def check_available(self, required_gb: float) -> bool:
         """Check if required memory is available with safety margin.
-        
+
         Delegates to the underlying OOMProtector's check_available method.
         """
         return await self._protector.check_available(required_gb)
@@ -204,16 +210,17 @@ class LegacyOOMWrapper:
 
 class ResourceGuard:
     """Ensures model resource usage doesn't exceed system capacity.
-    
+
     Uses a RAM-based tracking system to allow multiple light models
     to run concurrently while restricting heavy models.
-    
+
     v1.2.0 — RAM-Aware: tracks actual memory usage in MB instead of
     abstract weights.
-    
+
     [id-soft: vet-015] ZONEID Pattern — critical sections guarded by
     ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
     """
+
     def __init__(self, max_ram_mb: Optional[int] = None, meminfo_path: Optional[str] = None):
         # [id-soft: vet-015] ZONEID Pattern — runtime state marker
         self._magic = ZONEID_PROBE
@@ -228,6 +235,7 @@ class ResourceGuard:
 
         # Hardware Lock: Zen 2 Optimizer for resource resonance
         from omega.oracle.cpu_optimizer import Zen2Optimizer
+
         self._optimizer = Zen2Optimizer()
 
         # ── P0-1: OOM Hard-Stop Protector (Three-Signal Fusion) ──
@@ -241,18 +249,19 @@ class ResourceGuard:
         )
 
     @asynccontextmanager
-    async def lock(self, weight: int = 1, model_spec: Optional[dict] = None,
-                   timeout: Optional[float] = None):
+    async def lock(
+        self, weight: int = 1, model_spec: Optional[dict] = None, timeout: Optional[float] = None
+    ):
         """Hardware Lock: concurrency gate + OOM pre-check + CPU affinity.
-        
-        [C-2′] RAM tracking removed — OOMProtector (three-signal fusion) is 
+
+        [C-2′] RAM tracking removed — OOMProtector (three-signal fusion) is
         the sole RAM arbiter. This lock provides:
           1. OOM hard-stop (fail-fast before RAM exhaustion)
           2. Semaphore(1) concurrency gate (one inference at a time)
           3. Zen 2 CPU affinity enforcement
           4. ContextVar re-entrancy (same task can nest without deadlock)
-        
-        [hardening-p4] Re-entrancy — uses immutable ContextVar updates to 
+
+        [hardening-p4] Re-entrancy — uses immutable ContextVar updates to
         prevent race conditions across concurrent tasks.
         """
         validate_zoneid(self._magic, ZONEID_PROBE, "ResourceGuard.lock")
@@ -262,7 +271,7 @@ class ResourceGuard:
         # below the safety threshold. This is a hard stop, not a soft-failure.
         # Uses model_spec to compute an accurate estimate of required RAM.
         _model_name_for_oom = (model_spec or {}).get("name") or "unknown"
-        
+
         # Calculate required memory from model_spec
         required_gb = 0.0
         if model_spec:
@@ -273,9 +282,10 @@ class ResourceGuard:
         else:
             # Fallback: default model + reserve
             required_gb = 1.7 + 0.5 + 1.0  # 3.2 GB
-        
+
         if not await self._oom_protector.check_available(required_gb):
             from omega.errors import InferenceOOMError
+
             if model_spec:
                 raise InferenceOOMError(
                     f"Refusing model load '{_model_name_for_oom}': "
@@ -292,7 +302,7 @@ class ResourceGuard:
         # Get a local copy of the current held weights
         held = _held_weights.get().copy()
         already_held = held.get(task_id, 0)
-        
+
         # ── 1. Concurrency Gate (Semaphore) ──
         # [C-2′] Software RAM counter removed. Semaphore(1) provides
         # mutual exclusion for inference — only one load at a time.
@@ -304,11 +314,9 @@ class ResourceGuard:
                 else:
                     await self._semaphore.acquire()
             except TimeoutError:
-                logger.warning(
-                    "ResourceGuard acquisition timed out after %.1fs", timeout
-                )
+                logger.warning("ResourceGuard acquisition timed out after %.1fs", timeout)
                 raise
-        
+
             # Update immutable state: mark this task as holding capacity
             held[task_id] = weight
             _held_weights.set(held)
@@ -316,7 +324,6 @@ class ResourceGuard:
             # Re-entrant path: just increment the weight in the local copy
             held[task_id] = already_held + weight
             _held_weights.set(held)
-
 
         try:
             if model_spec:
@@ -331,7 +338,7 @@ class ResourceGuard:
             if already_held == 0:
                 # This was the outermost acquisition — release semaphore
                 self._semaphore.release()
-                
+
                 # Remove task from held weights entirely
                 if task_id in current_held:
                     del current_held[task_id]

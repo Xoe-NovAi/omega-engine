@@ -3,7 +3,7 @@
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ OBSERVABILITY
 #
 # Implements the precise token tracking required for the Sovereign Intelligence Economy.
-# Every inference transaction is recorded to ensure budget compliance and 
+# Every inference transaction is recorded to ensure budget compliance and
 # provider efficiency analysis.
 #
 # [id-soft: vet-016] Cvar System — ledger persistence settings from cvar_table
@@ -19,15 +19,14 @@
 import logging
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional
 from datetime import datetime, timezone
 import anyio
 
 from omega.observability import get_engine, EventType
-from omega.cvar_table import cvar_get
 from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
+
 
 class TokenLedger:
     """
@@ -40,16 +39,11 @@ class TokenLedger:
         self.ledger_path.parent.mkdir(parents=True, exist_ok=True)
 
     async def record_transaction(
-        self, 
-        trace_id: str, 
-        entity: str, 
-        tokens_in: int, 
-        tokens_out: int, 
-        provider_name: str
+        self, trace_id: str, entity: str, tokens_in: int, tokens_out: int, provider_name: str
     ) -> None:
         """
         Record the token usage of a completed inference transaction.
-        
+
         Args:
             trace_id: Unique identifier for the trace.
             entity: The entity that generated the response.
@@ -69,19 +63,19 @@ class TokenLedger:
                 "completion_tokens": tokens_out,
                 "total_tokens": tokens_in + tokens_out,
                 "provider_name": provider_name,
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            }
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            },
         )
-        
+
         # 1b. Persist to MetricsDB for performance and cost analytics
         await obs.record_performance(
-            latency_ms=0.0, # Latency is handled by LatencyTracker, but we record tokens here
+            latency_ms=0.0,  # Latency is handled by LatencyTracker, but we record tokens here
             provider=provider_name,
             prompt_tokens=tokens_in,
             completion_tokens=tokens_out,
-            trace_id=trace_id
+            trace_id=trace_id,
         )
-        
+
         # 2. Persist to the local JSONL ledger for auditing
         transaction = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -92,9 +86,11 @@ class TokenLedger:
             "total_tokens": tokens_in + tokens_out,
             "provider_name": provider_name,
         }
-        
+
         try:
-            async with await anyio.open_file(str(self.ledger_path), mode="a", encoding="utf-8") as f:
+            async with await anyio.open_file(
+                str(self.ledger_path), mode="a", encoding="utf-8"
+            ) as f:
                 await f.write(json.dumps(transaction) + "\n")
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to persist token transaction to ledger: {e}")
@@ -102,21 +98,23 @@ class TokenLedger:
     async def get_entity_spend(self, entity_name: str) -> int:
         """
         Calculate total tokens consumed by an entity from the persisted ledger.
-        
-        Note: For real-time budget gating, the BudgetGate queries the 
+
+        Note: For real-time budget gating, the BudgetGate queries the
         ObservabilityEngine's in-memory event log. This method is for auditing.
         """
         total = 0
         if not self.ledger_path.exists():
             return 0
-            
+
         try:
-            async with await anyio.open_file(str(self.ledger_path), mode="r", encoding="utf-8") as f:
+            async with await anyio.open_file(
+                str(self.ledger_path), mode="r", encoding="utf-8"
+            ) as f:
                 async for line in f:
                     tx = json.loads(line)
                     if tx.get("entity") == entity_name:
                         total += tx.get("total_tokens", 0)
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to read token ledger for spend calculation: {e}")
-            
+
         return total

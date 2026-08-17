@@ -32,8 +32,8 @@ AgentMode = Literal["primary", "subagent"]
 ResolverStrategy = Literal["terminate", "escalate", "fallback", "retry"]
 
 # ── TTL constants (aligned with MCP background reaper) ──────────────────────
-PENDING_TTL: int = 14400     # 4h — pending → stale
-ACTIVE_TTL: int = 172800     # 48h — active → stale
+PENDING_TTL: int = 14400  # 4h — pending → stale
+ACTIVE_TTL: int = 172800  # 48h — active → stale
 COMPLETED_TTL: int = 604800  # 7d — completed → archive
 
 # ── ZONEID for handoff packets ───────────────────────────────────────────
@@ -48,10 +48,10 @@ from omega.cvar_table import ZONEID_HANDOFF  # noqa: F401
 @dataclass
 class HandoffPacket:
     """Typed handoff between agents. Mandate 9 (Error Integrity) compliant.
-    
+
     Every dispatch creates one of these. It tracks the full lifecycle:
     pending -> active -> completed/stale, with traceable IDs at every step.
-    
+
     Core concept (agent dispatch) is the user's original design.
     Uses [id-soft: vet-015] ZONEID Pattern for packet integrity.
     """
@@ -72,12 +72,14 @@ class HandoffPacket:
     status: PacketStatus = "pending"
     expected_output: str = ""
     ttl_seconds: int = 14400  # 4h — aligned with PENDING_TTL
-    resolver_strategy: ResolverStrategy = "escalate"  # Decree 2: default escalate to Grand Oversight
+    resolver_strategy: ResolverStrategy = (
+        "escalate"  # Decree 2: default escalate to Grand Oversight
+    )
     resolved_by: Optional[str] = None
     error: Optional[str] = None
     result: Optional[str] = None
     created_at: float = 0.0
-    
+
     # Loop Guard Fields (T2-5)
     visited_agents: List[str] = field(default_factory=list)
     hop_count: int = 0
@@ -87,14 +89,18 @@ class HandoffPacket:
         if not self.packet_id:
             now = datetime.now()
             short = uuid.uuid4().hex[:8]
-            self.packet_id = f"hdp_{now.strftime('%Y%m%d')}_{self.source_agent}_{self.target_agent}_{short}"
+            self.packet_id = (
+                f"hdp_{now.strftime('%Y%m%d')}_{self.source_agent}_{self.target_agent}_{short}"
+            )
         if not self.trace_id:
             self.trace_id = uuid.uuid4().hex
         if not self.created_at:
             self.created_at = datetime.now().timestamp()
         if self.zoneid != ZONEID_HANDOFF:
-            raise ValueError(f"Invalid ZONEID_HANDOFF: expected {ZONEID_HANDOFF:#x}, got {self.zoneid:#x}")
-        
+            raise ValueError(
+                f"Invalid ZONEID_HANDOFF: expected {ZONEID_HANDOFF:#x}, got {self.zoneid:#x}"
+            )
+
         # Initialize visited set with source
         if self.source_agent not in self.visited_agents:
             self.visited_agents.append(self.source_agent)
@@ -111,6 +117,7 @@ class HandoffPacket:
     @property
     def expired(self) -> bool:
         import time
+
         return time.time() > (self.created_at + self.ttl_seconds)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -123,33 +130,37 @@ class HandoffPacket:
         """Saves the packet. Returns the identifier (path or USM hash)."""
         if use_usm:
             from omega.state import get_usm
+
             usm = get_usm()
             # Use packet_id as the state key for USM
             state_key = f"handoff:{self.packet_id}"
             # We use a wrapper to store the packet data
             data = {"packet": self.to_dict()}
-            # Note: save_state is async, but save() is sync. 
+            # Note: save_state is async, but save() is sync.
             # We must use anyio.run or similar, but better to make save async.
             # For now, we'll stick to file-based or provide an async version.
             # Let's implement save_async.
             return "USM_ASYNC_REQUIRED"
-        
+
         path = Path(archive_dir) / f"{self.packet_id}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(self.to_json())
         logger.info("HandoffPacket saved: %s", path)
         return str(path)
 
-    async def save_async(self, archive_dir: str = "data/handoff/archive", use_usm: bool = False) -> str:
+    async def save_async(
+        self, archive_dir: str = "data/handoff/archive", use_usm: bool = False
+    ) -> str:
         """Async version of save, supporting USM."""
         if use_usm:
             from omega.state import get_usm
+
             usm = get_usm()
             state_key = f"handoff:{self.packet_id}"
             data = {"packet": self.to_dict()}
             await usm.save_state(state_key, data)
             return state_key
-        
+
         path = Path(archive_dir) / f"{self.packet_id}.json"
         await anyio.Path(path.parent).mkdir(parents=True, exist_ok=True)
         await anyio.Path(path).write_text(self.to_json())
@@ -161,6 +172,7 @@ class HandoffPacket:
         """Async load from path or USM hash."""
         if use_usm:
             from omega.state import get_usm
+
             usm = get_usm()
             # If identifier is a USM key (starts with handoff:)
             if identifier.startswith("handoff:"):
@@ -170,7 +182,7 @@ class HandoffPacket:
             # Fallback to path
             raw = await anyio.Path(identifier).read_text()
             return cls(**json.loads(raw))
-        
+
         raw = Path(identifier).read_text()
         return cls(**json.loads(raw))
 
@@ -261,8 +273,7 @@ def get_agent_capabilities(agent_name: str) -> Optional[AgentDescriptor]:
 def list_available_agents(mode: Optional[AgentMode] = None) -> List[str]:
     """List all registered agents, optionally filtered by mode."""
     return [
-        name for name, desc in CAPABILITY_REGISTRY.items()
-        if mode is None or desc["mode"] == mode
+        name for name, desc in CAPABILITY_REGISTRY.items() if mode is None or desc["mode"] == mode
     ]
 
 
@@ -274,7 +285,7 @@ def _extract_heritage_tags(file_path: str) -> List[str]:
         if path.exists() and path.is_file():
             content = path.read_text(encoding="utf-8")
             # Find all [id-soft: ...] patterns
-            matches = re.findall(r'\[id-soft:[^\]]+\]', content)
+            matches = re.findall(r"\[id-soft:[^\]]+\]", content)
             tags.extend(matches)
     except OSError as e:
         logger.debug("Failed to read heritage tags from %s: %s", file_path, e)
@@ -342,11 +353,15 @@ def build_dispatch_prompt(packet: HandoffPacket) -> str:
     lines.append("## Heritage & Mandates")
     lines.append("- Refer to PIVOT_LOG.md for prior architectural decisions.")
     lines.append("- Sovereign Mandate 13 (Temple-Grade T1-T11) applies to all changes.")
-    lines.append("- Heritage attribution: every id Software-derived pattern MUST carry id-soft inline tags (format in CREDITS.md) with scope.")
+    lines.append(
+        "- Heritage attribution: every id Software-derived pattern MUST carry id-soft inline tags (format in CREDITS.md) with scope."
+    )
     lines.append("- This is an atomic dispatch. Complete it, then return your result.")
     lines.append("")
 
-    lines.append(f"*Dispatch from {packet.source_agent} to {packet.target_agent} — {packet.packet_id}*")
+    lines.append(
+        f"*Dispatch from {packet.source_agent} to {packet.target_agent} — {packet.packet_id}*"
+    )
 
     return "\n".join(lines)
 

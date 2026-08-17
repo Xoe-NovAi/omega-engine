@@ -15,15 +15,11 @@ content into curated assets using free, no-key-required library APIs.
 import logging
 from typing import Any, Dict, List, Optional
 
-import anyio
-from omega.errors import OmegaError
 
 # ── Canonical source for all client implementations ─────────────────────
 from omega.library.api_clients import (
     LibraryAPIConfig,
     LibraryMetadata,
-    DomainCategory,
-    DeweyDecimalClass,
     LibraryAPIOrchestrator,  # coordinates all 4 clients
 )
 
@@ -32,6 +28,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # ENRICHMENT ENGINE — Thin orchestration layer
 # ============================================================================
+
 
 class EnrichmentEngine:
     """Coordinates multiple library clients to enrich a curated document.
@@ -117,6 +114,7 @@ class EnrichmentEngine:
 # ============================================================================
 # HIGH-LEVEL WRAPPER
 # ============================================================================
+
 
 async def enrich_document(
     doc_body: str,

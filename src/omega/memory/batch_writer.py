@@ -17,14 +17,12 @@ from __future__ import annotations
 import json
 import logging
 import time
-import traceback
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import anyio
 
-from omega.constants import ZONEID_MEMORY
 from omega.errors import OmegaError
 
 if TYPE_CHECKING:
@@ -34,16 +32,17 @@ logger = logging.getLogger("batch_writer")
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-BATCH_SIZE: int = 50           # flush when this many writes accumulate
-FLUSH_INTERVAL: float = 2.0    # flush at least every N seconds
-BUFFER_CAPACITY: int = 2000    # in-memory channel depth before backpressure
-DLQ_MAX_ENTRIES: int = 10000   # max dead-letter queue entries on disk
+BATCH_SIZE: int = 50  # flush when this many writes accumulate
+FLUSH_INTERVAL: float = 2.0  # flush at least every N seconds
+BUFFER_CAPACITY: int = 2000  # in-memory channel depth before backpressure
+DLQ_MAX_ENTRIES: int = 10000  # max dead-letter queue entries on disk
 DLQ_DIR: str = "data/batch_dlq"
 
 
 @dataclass
 class _WriteOp:
     """A single pending write operation."""
+
     entity_name: str
     session_id: str
     exchanges: List[Dict[str, Any]]
@@ -149,7 +148,7 @@ class BatchPersistenceWriter:
 
     async def flush(self) -> None:
         """Explicitly flush any pending writes.
-        
+
         If the background loop is running, writes are flushed automatically within
         FLUSH_INTERVAL. If not running, writes are committed immediately on write(),
         so this is a no-op.
@@ -238,9 +237,7 @@ class BatchPersistenceWriter:
 
         self._stats["direct_writes"] += 1
 
-    async def _push_to_dlq(
-        self, batch: List[_WriteOp], error: str
-    ) -> None:
+    async def _push_to_dlq(self, batch: List[_WriteOp], error: str) -> None:
         """
         On provider failure, write serialisable op metadata to disk DLQ
         for later replay. Uses atomic write (tmp → rename).
@@ -255,20 +252,22 @@ class BatchPersistenceWriter:
 
             entries = []
             for op in batch:
-                entries.append({
-                    "entity_name": op.entity_name,
-                    "session_id": op.session_id,
-                    "exchanges_count": len(op.exchanges),
-                    "exchanges": op.exchanges,
-                    "enqueued_at": op.enqueued_at,
-                    "error": error,
-                })
+                entries.append(
+                    {
+                        "entity_name": op.entity_name,
+                        "session_id": op.session_id,
+                        "exchanges_count": len(op.exchanges),
+                        "exchanges": op.exchanges,
+                        "enqueued_at": op.enqueued_at,
+                        "error": error,
+                    }
+                )
 
             # Atomic write: tmp → rename
             tmp_path = dlq_file.with_suffix(".tmp")
             tmp_path.write_text(json.dumps(entries, default=str, indent=2))
             tmp_path.rename(dlq_file)
-            
+
             self._stats["dlq_pushes"] += len(batch)
             logger.info(
                 "Pushed %d failed records to DLQ: %s",

@@ -159,13 +159,15 @@ class MeditationSpec:
     anti_collapse_laws: List[AntiCollapseLaw] = field(default_factory=lambda: list(AntiCollapseLaw))
     """Which laws to enforce. Default: all five."""
 
-    phases: List[MeditatePhase] = field(default_factory=lambda: [
-        MeditatePhase.PHASE_0_CALIBRATION,
-        MeditatePhase.PHASE_1_IMMERSION,
-        MeditatePhase.PHASE_2_COLLISION,
-        MeditatePhase.PHASE_3_SEQUENCING,
-        MeditatePhase.PHASE_4_VERDICT,
-    ])
+    phases: List[MeditatePhase] = field(
+        default_factory=lambda: [
+            MeditatePhase.PHASE_0_CALIBRATION,
+            MeditatePhase.PHASE_1_IMMERSION,
+            MeditatePhase.PHASE_2_COLLISION,
+            MeditatePhase.PHASE_3_SEQUENCING,
+            MeditatePhase.PHASE_4_VERDICT,
+        ]
+    )
     """Which phases to execute. Phase 5 (INTEGRATION) is optional."""
 
     integrate: bool = False
@@ -194,7 +196,12 @@ class MeditationSpec:
             subject=data["subject"],
             lens_set=[PersonaSpec.from_dict(p) for p in data["lens_set"]],
             mode=OutputMode(data.get("mode", "strategic")),
-            phases=[MeditatePhase(p) for p in data.get("phases", ["calibration", "immersion", "collision", "sequencing", "verdict"])],
+            phases=[
+                MeditatePhase(p)
+                for p in data.get(
+                    "phases", ["calibration", "immersion", "collision", "sequencing", "verdict"]
+                )
+            ],
             integrate=data.get("integrate", False),
             trace_id=data.get("trace_id", uuid.uuid4().hex[:16]),
             model_hint=data.get("model_hint"),
@@ -297,14 +304,29 @@ def get_default_lenses() -> list[PersonaSpec]:
     WAD-backed loading via ``lens_registry.py`` is the primary path.
     """
     return [
-        PersonaSpec(name="Infrastructure", domain="Infrastructure",
-                     mandate_lens="Focus on physical substrate, systems, and reliability."),
-        PersonaSpec(name="Engineering", domain="Engineering",
-                     mandate_lens="Focus on code quality, architecture, and implementation."),
-        PersonaSpec(name="Governance", domain="Governance",
-                     mandate_lens="Focus on compliance, standards, and mandates."),
-        PersonaSpec(name="Integration", domain="Integration",
-                     mandate_lens="Focus on APIs, protocols, and connections between systems."),
-        PersonaSpec(name="Validation", domain="Validation",
-                     mandate_lens="Focus on testing, stress, and breaking assumptions."),
+        PersonaSpec(
+            name="Infrastructure",
+            domain="Infrastructure",
+            mandate_lens="Focus on physical substrate, systems, and reliability.",
+        ),
+        PersonaSpec(
+            name="Engineering",
+            domain="Engineering",
+            mandate_lens="Focus on code quality, architecture, and implementation.",
+        ),
+        PersonaSpec(
+            name="Governance",
+            domain="Governance",
+            mandate_lens="Focus on compliance, standards, and mandates.",
+        ),
+        PersonaSpec(
+            name="Integration",
+            domain="Integration",
+            mandate_lens="Focus on APIs, protocols, and connections between systems.",
+        ),
+        PersonaSpec(
+            name="Validation",
+            domain="Validation",
+            mandate_lens="Focus on testing, stress, and breaking assumptions.",
+        ),
     ]

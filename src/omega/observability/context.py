@@ -22,17 +22,17 @@ from typing import Optional
 
 # Context variable for trace_id propagation across async boundaries
 _current_trace_id: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
-    'current_trace_id', default=None
+    "current_trace_id", default=None
 )
 
 
 def get_current_trace_id() -> str:
     """Get current trace_id or generate a new one.
-    
+
     This is the central function that all subsystems should call
     to obtain the current trace context. It's the safety net when
     context hasn't been explicitly propagated across async boundaries.
-    
+
     Returns:
         A trace_id string starting with 'trc_'.
     """
@@ -45,10 +45,10 @@ def get_current_trace_id() -> str:
 
 def set_current_trace_id(trace_id: str) -> None:
     """Set trace_id in current context.
-    
+
     Called at the start of an async operation to establish
     the trace context for all child tasks.
-    
+
     Args:
         trace_id: The trace ID string to set.
     """
@@ -57,7 +57,7 @@ def set_current_trace_id(trace_id: str) -> None:
 
 def reset_current_trace_id() -> None:
     """Reset the current trace_id to None.
-    
+
     Useful for testing and for cleanly starting new trace contexts.
     """
     _current_trace_id.set(None)

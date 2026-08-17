@@ -37,7 +37,9 @@ def load_knowledge_signals() -> List[Dict[str, Any]]:
         try:
             data = json.loads(path.read_text())
             if data.get("zoneid") != ZONEID_KNOWLEDGE:
-                logger.warning("SKIP %s: invalid ZONEID (expected 0x%08x)", path.name, ZONEID_KNOWLEDGE)
+                logger.warning(
+                    "SKIP %s: invalid ZONEID (expected 0x%08x)", path.name, ZONEID_KNOWLEDGE
+                )
                 continue
             signals.append(data)
         except (json.JSONDecodeError, KeyError) as e:
@@ -183,7 +185,13 @@ def _update_cross_ref_index(ref_dir: Path, consumer: str, cross_ref_id: str, pro
     if index_path.exists():
         index = json.loads(index_path.read_text())
     else:
-        index = {"agent": consumer, "updated_at": "", "cross_references": [], "total_consumed": 0, "unique_producers": []}
+        index = {
+            "agent": consumer,
+            "updated_at": "",
+            "cross_references": [],
+            "total_consumed": 0,
+            "unique_producers": [],
+        }
 
     index["updated_at"] = datetime.now(timezone.utc).isoformat() + "Z"
     if cross_ref_id not in index["cross_references"]:

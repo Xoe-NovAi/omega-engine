@@ -9,7 +9,7 @@ from .models import HardwareProfile
 
 def detect_hardware_profile() -> HardwareProfile:
     """Auto-detect hardware profile for optimal council configuration.
-    
+
     Returns:
         HardwareProfile based on available RAM, GPU, and thermal limits.
     """
@@ -18,6 +18,6 @@ def detect_hardware_profile() -> HardwareProfile:
     # - Check GPU availability via torch.cuda or nvidia-smi
     # - Check thermal limits via /sys/class/thermal/
     # - Check CPU cores via os.cpu_count()
-    
+
     # Default: LOCAL_16GB (Ryzen 5700U, 16GB RAM — current dev environment)
     return HardwareProfile.LOCAL_16GB

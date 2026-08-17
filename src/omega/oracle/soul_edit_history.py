@@ -28,11 +28,10 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
-import os
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 import anyio
 import yaml
@@ -53,10 +52,10 @@ DEFAULT_HISTORY_LIMIT = 50
 @dataclass
 class SoulEditEntry:
     """A single immutable entry in the soul edit history.
-    
+
     Records one atomic mutation to an entity's soul.yaml.
     Entries are never modified or deleted — the log is append-only.
-    
+
     Attributes:
         timestamp: Unix timestamp of the edit.
         entity_name: The entity whose soul was modified.
@@ -71,6 +70,7 @@ class SoulEditEntry:
         agent_name: Optional name of the agent that requested the change.
         summary: Optional human-readable summary of the change.
     """
+
     entity_name: str
     field_path: str
     old_value: Any = None
@@ -88,10 +88,10 @@ class SoulEditEntry:
 
 class SoulEditHistory:
     """Append-only audit trail for soul.yaml mutations.
-    
+
     Thread-safe via anyio.Lock. Atomic writes via tmp+rename.
     Stored as a YAML list at data/entities/{entity_name}/soul_edit_history.yaml.
-    
+
     Usage:
         history = SoulEditHistory()
         await history.append(SoulEditEntry(
@@ -107,14 +107,16 @@ class SoulEditHistory:
 
     def __init__(self, entities_dir: Optional[Path] = None) -> None:
         """Initialize the SoulEditHistory manager.
-        
+
         Args:
             entities_dir: Base directory for entity data.
                 Defaults to data/entities/ relative to project root.
         """
         if entities_dir is None:
             # Resolve relative to the Omega Engine project root
-            entities_dir = Path(__file__).resolve().parent.parent.parent.parent / "data" / "entities"
+            entities_dir = (
+                Path(__file__).resolve().parent.parent.parent.parent / "data" / "entities"
+            )
         self._entities_dir = entities_dir
         self._lock = anyio.Lock()
 
@@ -124,23 +126,23 @@ class SoulEditHistory:
 
     async def append(self, entry: SoulEditEntry) -> None:
         """Append an entry to the entity's soul edit history.
-        
+
         The write is atomic: data is written to a .tmp file, then
         atomically renamed. This prevents partial-write corruption.
-        
+
         Args:
             entry: The SoulEditEntry to append.
-            
+
         Raises:
             OSError: If the atomic write fails.
         """
         path = self._get_history_path(entry.entity_name)
-        
+
         async with self._lock:
             # Ensure parent directory exists
             # Use lambda for keyword args (run_sync only accepts positional args)
             await anyio.to_thread.run_sync(lambda: path.parent.mkdir(parents=True, exist_ok=True))
-            
+
             # Read existing history
             existing: List[dict] = []
             if await anyio.to_thread.run_sync(path.exists):
@@ -153,28 +155,31 @@ class SoulEditHistory:
                 except (OmegaError, RuntimeError, OSError) as exc:
                     logger.warning(
                         "Failed to read existing soul edit history for %s: %s. "
-                        "Starting fresh append.", entry.entity_name, exc
+                        "Starting fresh append.",
+                        entry.entity_name,
+                        exc,
                     )
-            
+
             # Append new entry
             entry_data = {k: v for k, v in asdict(entry).items() if v is not None}
             existing.append(entry_data)
-            
+
             # Atomic write: tmp → rename
             tmp_path = path.with_suffix(".yaml.tmp")
             yaml_content = await anyio.to_thread.run_sync(
                 lambda: yaml.safe_dump(existing, default_flow_style=False, indent=2)
             )
-            
+
             # Write to tmp
             await anyio.to_thread.run_sync(tmp_path.write_text, yaml_content)
-            
+
             # Atomic rename (crash-safe on POSIX)
             await anyio.to_thread.run_sync(tmp_path.rename, path)
-            
+
             logger.debug(
                 "Soul edit history appended for %s: %s → %s [source=%s]",
-                entry.entity_name, entry.field_path,
+                entry.entity_name,
+                entry.field_path,
                 str(entry.new_value)[:60] if entry.new_value else "<deleted>",
                 entry.source,
             )
@@ -187,7 +192,7 @@ class SoulEditHistory:
         after_timestamp: Optional[float] = None,
     ) -> List[dict]:
         """Retrieve edit history for an entity.
-        
+
         Args:
             entity_name: The entity whose history to retrieve.
             limit: Maximum number of entries to return (most recent first).
@@ -195,64 +200,59 @@ class SoulEditHistory:
             source: Optional filter — only return entries from this source.
             after_timestamp: Optional filter — only return entries after
                 this Unix timestamp.
-                
+
         Returns:
             List of SoulEditEntry dicts, most recent first.
         """
         path = self._get_history_path(entity_name)
-        
+
         if not await anyio.to_thread.run_sync(path.exists):
             return []
-        
+
         try:
             content = await anyio.to_thread.run_sync(path.read_text)
             if not content.strip():
                 return []
-            
+
             parsed = await anyio.to_thread.run_sync(yaml.safe_load, content)
             if not isinstance(parsed, list):
                 logger.warning("Soul edit history for %s is not a list", entity_name)
                 return []
-            
+
             # Apply filters
             filtered = parsed
             if source:
                 filtered = [e for e in filtered if e.get("source") == source]
             if after_timestamp:
-                filtered = [
-                    e for e in filtered
-                    if e.get("timestamp", 0) > after_timestamp
-                ]
-            
+                filtered = [e for e in filtered if e.get("timestamp", 0) > after_timestamp]
+
             # Sort most recent first, apply limit
             filtered.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
             return filtered[:limit]
-            
+
         except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as exc:
-            logger.warning(
-                "Failed to read soul edit history for %s: %s", entity_name, exc
-            )
+            logger.warning("Failed to read soul edit history for %s: %s", entity_name, exc)
             return []
 
     async def count_entries(self, entity_name: str) -> int:
         """Count total entries in the edit history for an entity.
-        
+
         Args:
             entity_name: The entity to count entries for.
-            
+
         Returns:
             Number of entries, or 0 if no history file exists.
         """
         path = self._get_history_path(entity_name)
-        
+
         if not await anyio.to_thread.run_sync(path.exists):
             return 0
-        
+
         try:
             content = await anyio.to_thread.run_sync(path.read_text)
             if not content.strip():
                 return 0
-            
+
             parsed = await anyio.to_thread.run_sync(yaml.safe_load, content)
             if isinstance(parsed, list):
                 return len(parsed)
@@ -262,27 +262,27 @@ class SoulEditHistory:
 
     async def get_unique_sources(self, entity_name: str) -> List[str]:
         """Get the list of unique sources that have modified an entity's soul.
-        
+
         Args:
             entity_name: The entity to query sources for.
-            
+
         Returns:
             Sorted list of unique source names.
         """
         path = self._get_history_path(entity_name)
-        
+
         if not await anyio.to_thread.run_sync(path.exists):
             return []
-        
+
         try:
             content = await anyio.to_thread.run_sync(path.read_text)
             if not content.strip():
                 return []
-            
+
             parsed = await anyio.to_thread.run_sync(yaml.safe_load, content)
             if not isinstance(parsed, list):
                 return []
-            
+
             sources: set = set()
             for entry in parsed:
                 src = entry.get("source")

@@ -31,6 +31,7 @@ class Status(str, Enum):
 @dataclass
 class ModelArchitecture:
     """Model architecture parameters (total/active params, MoE config, quantization)."""
+
     total: str = "Unknown"
     active: str = "Unknown"
     architecture: str = "unknown"  # dense, MoE, hybrid, router
@@ -47,6 +48,7 @@ class ModelArchitecture:
 @dataclass
 class Parameters:
     """Model sampling/generation parameters."""
+
     temperature: float = 0.7
     top_p: float = 0.95
     top_k: int = 40
@@ -63,6 +65,7 @@ class Parameters:
 @dataclass
 class ModelArchitecture:
     """Model architecture parameters (total/active params, MoE config, quantization)."""
+
     total: str = "Unknown"
     active: str = "Unknown"
     architecture: str = "unknown"
@@ -79,6 +82,7 @@ class ModelArchitecture:
 @dataclass
 class BenchmarkSources:
     """Benchmark citations for capability scores."""
+
     reasoning: str = ""
     code_generation: str = ""
     knowledge: str = ""
@@ -195,6 +199,7 @@ class ProviderFabric:
 @dataclass
 class BenchmarkSources:
     """Source URLs for capability scores."""
+
     reasoning: str = ""
     code_generation: str = ""
     knowledge: str = ""

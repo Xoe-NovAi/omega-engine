@@ -27,31 +27,35 @@ import uuid
 import yaml
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 from datetime import datetime, timezone
-from contextlib import asynccontextmanager
 
-from omega.errors import (
-    OmegaError,
-    ProviderError, ProviderRateLimitError,
-    ProviderUnavailableError, ProviderAuthError
-)
+from omega.errors import OmegaError, ProviderRateLimitError, ProviderAuthError
 from omega.memory_store import get_memory_store, MemoryStore
 from omega.library.indexer import Indexer
-from omega.oracle.search_providers import (
-    FirecrawlProvider, ExaProvider, SearXNGProvider
+from omega.oracle.search_providers import FirecrawlProvider, ExaProvider, SearXNGProvider
+from omega.oracle.search_router import (
+    SearchRouter,
+    SearchIntent,
+    TIER_LOCAL,
+    TIER_SEARXNG,
+    TIER_EXA,
+    TIER_FIRECRAWL,
 )
-from omega.oracle.search_router import SearchRouter, SearchIntent, TIER_LOCAL, TIER_SEARXNG, TIER_EXA, TIER_FIRECRAWL
 from omega.oracle.search_cache import SovereignCache
 from omega.oracle.skeptical_verifier import SkepticalVerifier
 from omega.oracle.credit_budget import APICreditBudget
 from omega.oracle.search_circuit_breaker import (
-    get_circuit_breaker_registry, initialize_circuit_breakers, TIER_CONFIGS,
+    initialize_circuit_breakers,
+    TIER_CONFIGS,
 )
-from omega.oracle.health_monitor import get_health_monitor
 from omega.oracle.search_observability import (
-    get_search_observability, SearchOutcome, SearchPipelineTrace, TierExecutionRecord,
-    get_tier_name, log_search_event, log_search_error
+    get_search_observability,
+    SearchOutcome,
+    SearchPipelineTrace,
+    get_tier_name,
+    log_search_event,
+    log_search_error,
 )
 
 logger = logging.getLogger(__name__)
@@ -121,13 +125,13 @@ class SovereignSearchService:
         self.memory_store = memory_store or get_memory_store()
         self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
         self.indexer = indexer or Indexer()
-        
+
         # Initialize SovereignCache (Sovereign persistence for T0/T3)
         self.cache = SovereignCache(
             cache_dir=cache_cfg.get("directory", ".firecrawl"),
-            ttl_seconds=cache_cfg.get("ttl_seconds", 86400)
+            ttl_seconds=cache_cfg.get("ttl_seconds", 86400),
         )
-        
+
         self.budget = APICreditBudget()
 
         # Feature flags
@@ -137,7 +141,11 @@ class SovereignSearchService:
 
         # Configure T1 (SearXNG) from config with caller override
         t1_cfg = tiers_cfg.get("T1", {})
-        resolved_searxng_url = (searxng_url or os.environ.get("SEARXNG_BASE_URL") or t1_cfg.get("url", "http://127.0.0.1:8018")).rstrip("/")
+        resolved_searxng_url = (
+            searxng_url
+            or os.environ.get("SEARXNG_BASE_URL")
+            or t1_cfg.get("url", "http://127.0.0.1:8018")
+        ).rstrip("/")
         t1_timeout = t1_cfg.get("timeout_seconds", 15)
         t1_retries = t1_cfg.get("retries", 2)
         t1_delays = t1_cfg.get("retry_delay_seconds", [5.0, 10.0])
@@ -157,10 +165,10 @@ class SovereignSearchService:
         # [C-6'] Initialize HealthMonitor-backed breakers (canonical)
         self._health_monitor = get_health_monitor()
         self._tier_to_provider = {
-            0: "local",    # T0: Local providers
+            0: "local",  # T0: Local providers
             1: "searxng",  # T1: SearXNG
-            2: "exa",      # T2: Exa
-            3: "firecrawl",# T3: Firecrawl
+            2: "exa",  # T2: Exa
+            3: "firecrawl",  # T3: Firecrawl
         }
         for tier, name in self._tier_to_provider.items():
             config = TIER_CONFIGS.get(tier)
@@ -172,7 +180,7 @@ class SovereignSearchService:
                 window_seconds=60.0,
                 max_failures_per_window=config.failure_threshold * 2 if config else 6,
             )
-        
+
         # Initialize circuit breakers (DEPRECATED — will be removed in C-6' final pass)
         if self.enable_circuit_breaker:
             self.circuit_breakers = initialize_circuit_breakers()
@@ -244,7 +252,13 @@ class SovereignSearchService:
                 search_intent=search_intent_dict,
             )
 
-        log_search_event("search_start", trace_id, query_hash=hash(query) % 1000000, entity=entity_name, intent=search_intent_dict)
+        log_search_event(
+            "search_start",
+            trace_id,
+            query_hash=hash(query) % 1000000,
+            entity=entity_name,
+            intent=search_intent_dict,
+        )
 
         report: Dict[str, Any] = {
             "trace_id": trace_id,
@@ -260,8 +274,16 @@ class SovereignSearchService:
         evidence_pool: List[Dict[str, Any]] = []
 
         # Determine tiers to execute
-        effective_tier = search_intent.force_tier if search_intent.force_tier is not None else search_intent.primary_tier
-        effective_max = search_intent.force_tier if search_intent.force_tier is not None else search_intent.max_tier
+        effective_tier = (
+            search_intent.force_tier
+            if search_intent.force_tier is not None
+            else search_intent.primary_tier
+        )
+        effective_max = (
+            search_intent.force_tier
+            if search_intent.force_tier is not None
+            else search_intent.max_tier
+        )
         effective_max = min(effective_max, max_tier)
 
         tiers_to_execute = list(range(effective_tier, effective_max + 1))
@@ -311,15 +333,21 @@ class SovereignSearchService:
 
         # Complete observability trace
         if trace and self.observability:
-            final_outcome = SearchOutcome.SUCCESS if report["status"] == "success" else SearchOutcome.ERROR
+            final_outcome = (
+                SearchOutcome.SUCCESS if report["status"] == "success" else SearchOutcome.ERROR
+            )
             self.observability.complete_trace(
                 trace,
                 final_tier=report["final_tier"],
                 outcome=final_outcome,
-                verification_status=report["verification"].get("status") if report["verification"] else None,
+                verification_status=report["verification"].get("status")
+                if report["verification"]
+                else None,
             )
 
-        log_search_event("search_complete", trace_id, status=report["status"], final_tier=report["final_tier"])
+        log_search_event(
+            "search_complete", trace_id, status=report["status"], final_tier=report["final_tier"]
+        )
 
         return report
 
@@ -334,28 +362,39 @@ class SovereignSearchService:
         evidence_pool: List[Dict[str, Any]],
     ) -> Optional[Dict[str, Any]]:
         """Execute multiple tiers in parallel, return first successful result."""
-        
+
         async def execute_tier_with_breaker(tier: int) -> Optional[Dict[str, Any]]:
             """Execute a single tier with circuit breaker protection."""
             tier_name = get_tier_name(tier)
-            
+
             # Check circuit breaker
             if self.circuit_breakers and not self.circuit_breakers.can_execute(tier):
                 circuit_state = self.circuit_breakers.get_breaker(tier).state.value
-                log_search_event("circuit_open", trace.trace_id if trace else "unknown", tier=tier, state=circuit_state)
+                log_search_event(
+                    "circuit_open",
+                    trace.trace_id if trace else "unknown",
+                    tier=tier,
+                    state=circuit_state,
+                )
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.CIRCUIT_OPEN,
-                        circuit_state_before=circuit_state, circuit_state_after=circuit_state,
-                        provider_health=self._provider_health_cache.get(tier)
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.CIRCUIT_OPEN,
+                        circuit_state_before=circuit_state,
+                        circuit_state_after=circuit_state,
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "circuit_open",
-                    "message": f"Tier {tier} circuit breaker is OPEN",
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "circuit_open",
+                        "message": f"Tier {tier} circuit breaker is OPEN",
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
                 return None
 
             # Record circuit state before
@@ -368,157 +407,206 @@ class SovereignSearchService:
             try:
                 result = await self._execute_tier(tier, query, entity_name, limit)
                 latency_ms = (time.time() - start_time) * 1000
-                
+
                 if result:
                     # Success
                     if self.circuit_breakers:
                         self.circuit_breakers.record_success(tier)
-                    
+
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
                         circuit_state_after = self.circuit_breakers.get_breaker(tier).state.value
-                    
+
                     if trace and self.observability:
                         self.observability.record_tier_execution(
-                            trace, tier, tier_name, SearchOutcome.SUCCESS,
+                            trace,
+                            tier,
+                            tier_name,
+                            SearchOutcome.SUCCESS,
                             result=result,
                             circuit_state_before=circuit_state_before,
                             circuit_state_after=circuit_state_after,
-                            provider_health=self._provider_health_cache.get(tier)
+                            provider_health=self._provider_health_cache.get(tier),
                         )
-                    
-                    log_search_event("tier_success", trace.trace_id if trace else "unknown", 
-                                   tier=tier, latency_ms=round(latency_ms, 2), result_len=len(result))
-                    
+
+                    log_search_event(
+                        "tier_success",
+                        trace.trace_id if trace else "unknown",
+                        tier=tier,
+                        latency_ms=round(latency_ms, 2),
+                        result_len=len(result),
+                    )
+
                     return {"tier": tier, "finding": result}
                 else:
                     # Empty result
                     if self.circuit_breakers:
                         self.circuit_breakers.record_failure(tier, Exception("Empty result"))
-                    
+
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
                         circuit_state_after = self.circuit_breakers.get_breaker(tier).state.value
-                    
+
                     if trace and self.observability:
                         self.observability.record_tier_execution(
-                            trace, tier, tier_name, SearchOutcome.EMPTY,
+                            trace,
+                            tier,
+                            tier_name,
+                            SearchOutcome.EMPTY,
                             circuit_state_before=circuit_state_before,
                             circuit_state_after=circuit_state_after,
-                            provider_health=self._provider_health_cache.get(tier)
+                            provider_health=self._provider_health_cache.get(tier),
                         )
-                    
-                    report["fallback_log"].append({
-                        "tier": tier,
-                        "outcome": "empty",
-                        "message": f"Tier {tier} returned no results.",
-                        "trace_id": trace.trace_id if trace else "unknown",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                    })
+
+                    report["fallback_log"].append(
+                        {
+                            "tier": tier,
+                            "outcome": "empty",
+                            "message": f"Tier {tier} returned no results.",
+                            "trace_id": trace.trace_id if trace else "unknown",
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                        }
+                    )
                     return None
-                    
+
             except ProviderAuthError as e:
                 latency_ms = (time.time() - start_time) * 1000
                 if self.circuit_breakers:
                     self.circuit_breakers.record_failure(tier, e)
-                
-                circuit_state_after = "open" if self.circuit_breakers and self.circuit_breakers.get_breaker(tier).state.value == "open" else "closed"
-                
+
+                circuit_state_after = (
+                    "open"
+                    if self.circuit_breakers
+                    and self.circuit_breakers.get_breaker(tier).state.value == "open"
+                    else "closed"
+                )
+
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.AUTH_ERROR,
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.AUTH_ERROR,
                         error=e,
                         circuit_state_before=circuit_state_before,
                         circuit_state_after=circuit_state_after,
-                        provider_health=self._provider_health_cache.get(tier)
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                
-                log_search_error(trace.trace_id if trace else "unknown", tier, e, {"phase": "tier_execution"})
-                
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "auth_error",
-                    "message": str(e),
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
+
+                log_search_error(
+                    trace.trace_id if trace else "unknown", tier, e, {"phase": "tier_execution"}
+                )
+
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "auth_error",
+                        "message": str(e),
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
                 return None
-                
+
             except ProviderRateLimitError as e:
                 latency_ms = (time.time() - start_time) * 1000
                 if self.circuit_breakers:
                     self.circuit_breakers.record_failure(tier, e)
-                
-                circuit_state_after = "open" if self.circuit_breakers and self.circuit_breakers.get_breaker(tier).state.value == "open" else "closed"
-                
+
+                circuit_state_after = (
+                    "open"
+                    if self.circuit_breakers
+                    and self.circuit_breakers.get_breaker(tier).state.value == "open"
+                    else "closed"
+                )
+
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.RATE_LIMITED,
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.RATE_LIMITED,
                         error=e,
                         circuit_state_before=circuit_state_before,
                         circuit_state_after=circuit_state_after,
-                        provider_health=self._provider_health_cache.get(tier)
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                
-                log_search_error(trace.trace_id if trace else "unknown", tier, e, {"phase": "tier_execution"})
-                
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "rate_limited",
-                    "message": str(e),
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
+
+                log_search_error(
+                    trace.trace_id if trace else "unknown", tier, e, {"phase": "tier_execution"}
+                )
+
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "rate_limited",
+                        "message": str(e),
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
                 return None
-                
+
             except Exception as e:
                 latency_ms = (time.time() - start_time) * 1000
                 if self.circuit_breakers:
                     self.circuit_breakers.record_failure(tier, e)
-                
-                circuit_state_after = "open" if self.circuit_breakers and self.circuit_breakers.get_breaker(tier).state.value == "open" else "closed"
-                
+
+                circuit_state_after = (
+                    "open"
+                    if self.circuit_breakers
+                    and self.circuit_breakers.get_breaker(tier).state.value == "open"
+                    else "closed"
+                )
+
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.ERROR,
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.ERROR,
                         error=e,
                         circuit_state_before=circuit_state_before,
                         circuit_state_after=circuit_state_after,
-                        provider_health=self._provider_health_cache.get(tier)
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                
-                log_search_error(trace.trace_id if trace else "unknown", tier, e, {"phase": "tier_execution"})
-                
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "error",
-                    "message": str(e),
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
+
+                log_search_error(
+                    trace.trace_id if trace else "unknown", tier, e, {"phase": "tier_execution"}
+                )
+
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "error",
+                        "message": str(e),
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
                 return None
 
         # Race: execute all tiers concurrently, return first success
         tasks = [execute_tier_with_breaker(tier) for tier in tiers]
-        
+
         # Use anyio task group for proper cancellation
         async with anyio.create_task_group() as tg:
             results: List[Optional[Dict[str, Any]]] = [None] * len(tasks)
-            
+
             async def run_task(idx: int, coro):
                 results[idx] = await coro
                 # If we got a result, cancel remaining
                 if results[idx] is not None:
                     tg.cancel_scope.cancel()
-            
+
             for idx, coro in enumerate(tasks):
                 tg.start_soon(run_task, idx, coro)
-        
+
         # Return first successful result
         for result in results:
             if result is not None:
                 return result
-        
+
         return None
 
     async def _execute_tiers_sequential(
@@ -534,24 +622,35 @@ class SovereignSearchService:
         """Execute tiers sequentially (original behavior with circuit breaker)."""
         for tier in tiers:
             tier_name = get_tier_name(tier)
-            
+
             # Check circuit breaker
             if self.circuit_breakers and not self.circuit_breakers.can_execute(tier):
                 circuit_state = self.circuit_breakers.get_breaker(tier).state.value
-                log_search_event("circuit_open", trace.trace_id if trace else "unknown", tier=tier, state=circuit_state)
+                log_search_event(
+                    "circuit_open",
+                    trace.trace_id if trace else "unknown",
+                    tier=tier,
+                    state=circuit_state,
+                )
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.CIRCUIT_OPEN,
-                        circuit_state_before=circuit_state, circuit_state_after=circuit_state,
-                        provider_health=self._provider_health_cache.get(tier)
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.CIRCUIT_OPEN,
+                        circuit_state_before=circuit_state,
+                        circuit_state_after=circuit_state,
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "circuit_open",
-                    "message": f"Tier {tier} circuit breaker is OPEN",
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "circuit_open",
+                        "message": f"Tier {tier} circuit breaker is OPEN",
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
                 continue
 
             circuit_state_before = "closed"
@@ -560,124 +659,162 @@ class SovereignSearchService:
 
             try:
                 result = await self._execute_tier(tier, query, entity_name, limit)
-                
+
                 if result:
                     if self.circuit_breakers:
                         self.circuit_breakers.record_success(tier)
-                    
+
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
                         circuit_state_after = self.circuit_breakers.get_breaker(tier).state.value
-                    
+
                     if trace and self.observability:
                         self.observability.record_tier_execution(
-                            trace, tier, tier_name, SearchOutcome.SUCCESS,
+                            trace,
+                            tier,
+                            tier_name,
+                            SearchOutcome.SUCCESS,
                             result=result,
                             circuit_state_before=circuit_state_before,
                             circuit_state_after=circuit_state_after,
-                            provider_health=self._provider_health_cache.get(tier)
+                            provider_health=self._provider_health_cache.get(tier),
                         )
-                    
+
                     return {"tier": tier, "finding": result}
                 else:
                     if self.circuit_breakers:
                         self.circuit_breakers.record_failure(tier, Exception("Empty result"))
-                    
+
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
                         circuit_state_after = self.circuit_breakers.get_breaker(tier).state.value
-                    
+
                     if trace and self.observability:
                         self.observability.record_tier_execution(
-                            trace, tier, tier_name, SearchOutcome.EMPTY,
+                            trace,
+                            tier,
+                            tier_name,
+                            SearchOutcome.EMPTY,
                             circuit_state_before=circuit_state_before,
                             circuit_state_after=circuit_state_after,
-                            provider_health=self._provider_health_cache.get(tier)
+                            provider_health=self._provider_health_cache.get(tier),
                         )
-                    
-                    report["fallback_log"].append({
-                        "tier": tier,
-                        "outcome": "empty",
-                        "message": f"Tier {tier} returned no results.",
-                        "trace_id": trace.trace_id if trace else "unknown",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                    })
-                    
+
+                    report["fallback_log"].append(
+                        {
+                            "tier": tier,
+                            "outcome": "empty",
+                            "message": f"Tier {tier} returned no results.",
+                            "trace_id": trace.trace_id if trace else "unknown",
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                        }
+                    )
+
             except ProviderAuthError as e:
                 if self.circuit_breakers:
                     self.circuit_breakers.record_failure(tier, e)
-                
-                circuit_state_after = "open" if self.circuit_breakers and self.circuit_breakers.get_breaker(tier).state.value == "open" else "closed"
-                
+
+                circuit_state_after = (
+                    "open"
+                    if self.circuit_breakers
+                    and self.circuit_breakers.get_breaker(tier).state.value == "open"
+                    else "closed"
+                )
+
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.AUTH_ERROR,
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.AUTH_ERROR,
                         error=e,
                         circuit_state_before=circuit_state_before,
                         circuit_state_after=circuit_state_after,
-                        provider_health=self._provider_health_cache.get(tier)
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                
+
                 log_search_error(trace.trace_id if trace else "unknown", tier, e)
-                
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "auth_error",
-                    "message": str(e),
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
-                
+
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "auth_error",
+                        "message": str(e),
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
+
             except ProviderRateLimitError as e:
                 if self.circuit_breakers:
                     self.circuit_breakers.record_failure(tier, e)
-                
-                circuit_state_after = "open" if self.circuit_breakers and self.circuit_breakers.get_breaker(tier).state.value == "open" else "closed"
-                
+
+                circuit_state_after = (
+                    "open"
+                    if self.circuit_breakers
+                    and self.circuit_breakers.get_breaker(tier).state.value == "open"
+                    else "closed"
+                )
+
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.RATE_LIMITED,
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.RATE_LIMITED,
                         error=e,
                         circuit_state_before=circuit_state_before,
                         circuit_state_after=circuit_state_after,
-                        provider_health=self._provider_health_cache.get(tier)
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                
+
                 log_search_error(trace.trace_id if trace else "unknown", tier, e)
-                
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "rate_limited",
-                    "message": str(e),
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
-                
+
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "rate_limited",
+                        "message": str(e),
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
+
             except Exception as e:
                 if self.circuit_breakers:
                     self.circuit_breakers.record_failure(tier, e)
-                
-                circuit_state_after = "open" if self.circuit_breakers and self.circuit_breakers.get_breaker(tier).state.value == "open" else "closed"
-                
+
+                circuit_state_after = (
+                    "open"
+                    if self.circuit_breakers
+                    and self.circuit_breakers.get_breaker(tier).state.value == "open"
+                    else "closed"
+                )
+
                 if trace and self.observability:
                     self.observability.record_tier_execution(
-                        trace, tier, tier_name, SearchOutcome.ERROR,
+                        trace,
+                        tier,
+                        tier_name,
+                        SearchOutcome.ERROR,
                         error=e,
                         circuit_state_before=circuit_state_before,
                         circuit_state_after=circuit_state_after,
-                        provider_health=self._provider_health_cache.get(tier)
+                        provider_health=self._provider_health_cache.get(tier),
                     )
-                
+
                 log_search_error(trace.trace_id if trace else "unknown", tier, e)
-                
-                report["fallback_log"].append({
-                    "tier": tier,
-                    "outcome": "error",
-                    "message": str(e),
-                    "trace_id": trace.trace_id if trace else "unknown",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
-        
+
+                report["fallback_log"].append(
+                    {
+                        "tier": tier,
+                        "outcome": "error",
+                        "message": str(e),
+                        "trace_id": trace.trace_id if trace else "unknown",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
+
         return None
 
     async def _refresh_provider_health(self) -> None:
@@ -685,15 +822,17 @@ class SovereignSearchService:
         now = time.time()
         if now - self._health_cache_time < self._health_cache_ttl:
             return
-        
+
         # Check each provider
         tier_map = {TIER_SEARXNG: "searxng", TIER_EXA: "exa", TIER_FIRECRAWL: "firecrawl"}
         for tier, name in tier_map.items():
             try:
-                self._provider_health_cache[tier] = self.model_gateway.health_monitor.is_available(name)
+                self._provider_health_cache[tier] = self.model_gateway.health_monitor.is_available(
+                    name
+                )
             except Exception:
                 self._provider_health_cache[tier] = False
-        
+
         self._health_cache_time = now
 
     def _extract_evidence_from_finding(self, finding: str) -> List[Dict[str, Any]]:
@@ -706,24 +845,30 @@ class SovereignSearchService:
         pattern = re.compile(r"Source \[(https?://[^\]]+)\]:\n(.*?)(?=\n\nSource \[|\Z)", re.DOTALL)
         matches = pattern.findall(finding)
         for url, content in matches:
-            evidence.append({
-                "content": content.strip(),
-                "source_id": url,
-                "authority_score": 0.8 if "arxiv.org" in url or "github.com" in url else 0.5
-            })
+            evidence.append(
+                {
+                    "content": content.strip(),
+                    "source_id": url,
+                    "authority_score": 0.8 if "arxiv.org" in url or "github.com" in url else 0.5,
+                }
+            )
 
         # Also match provider-specific snippets
         if not evidence:
             for line in finding.split("\n\n"):
-                if line.strip() and not line.startswith("Exa Neural Search:") and not line.startswith("Firecrawl Search (Snippets):"):
-                    evidence.append({
-                        "content": line.strip(),
-                        "source_id": "snippet",
-                        "authority_score": 0.5
-                    })
+                if (
+                    line.strip()
+                    and not line.startswith("Exa Neural Search:")
+                    and not line.startswith("Firecrawl Search (Snippets):")
+                ):
+                    evidence.append(
+                        {"content": line.strip(), "source_id": "snippet", "authority_score": 0.5}
+                    )
         return evidence
 
-    async def _execute_tier(self, tier: int, query: str, entity_name: str, limit: int) -> Optional[str]:
+    async def _execute_tier(
+        self, tier: int, query: str, entity_name: str, limit: int
+    ) -> Optional[str]:
         """Internal dispatcher for the SSP-V2 4-Tier protocol."""
         if tier == TIER_LOCAL:
             return await self._tier_0_local_cache(query, entity_name, limit)
@@ -791,7 +936,7 @@ class SovereignSearchService:
 
     async def extract(self, query: str, limit: int = 10) -> Optional[str]:
         """Direct access to T3 (Firecrawl) Deep Extraction.
-        
+
         Bypasses the tiered routing to force a high-fidelity extraction.
         """
         return await self._tier_3_firecrawl(query, limit)

@@ -15,13 +15,29 @@ import json
 import sqlite3
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    ProviderError,
+    ProviderRateLimitError,
+    ProviderAuthError,
+    ProviderTimeoutError,
+    ProviderUnavailableError,
+    ProviderValidationError,
+    ProviderSafetyError,
+    InferenceError,
+    InferenceOOMError,
+    InferenceLoadError,
+    InferenceRuntimeError,
+    OmegaPersistenceError,
+    SoulCorruptionError,
+    SessionPersistenceError,
+    StateIntegrityError,
+    SovereignDiskFullError,
+    ConfigError,
+    WADError,
+    BoundaryViolationError,
+    InvariantViolationError,
+    EntityTombstonedError,
+    ModelNotFoundError,
 )
 import functools
 import logging
@@ -43,13 +59,14 @@ from omega.observability.ufl import UFLWriter, get_ufl_writer
 from omega.observability.metrics_db import MetricsDB
 from omega.observability.otel_exporter import OTelSQLiteExporter, setup_otel_exporter
 from omega.observability.regression_watcher import (
-    RegressionWatcher, 
-    start_regression_watcher, 
+    RegressionWatcher,
+    start_regression_watcher,
     stop_regression_watcher,
     get_regression_watcher,
 )
 
 logger = logging.getLogger(__name__)
+
 
 # [M22 SSOT] Lazy package-wide ProviderRegistry singleton for cloud
 # classification. Imported lazily (not at module level) to avoid a circular
@@ -60,9 +77,12 @@ def _get_provider_registry():
     """Return the cached ProviderRegistry, constructing it on first use.
     Delegates to the process-wide singleton in provider_registry.py."""
     from omega.oracle.provider_registry import get_provider_registry
+
     return get_provider_registry()
 
+
 # ── Structured JSON Logging Formatter ───────────────────────────────────
+
 
 class JsonFormatter(logging.Formatter):
     """Structured JSON logging formatter.
@@ -107,13 +127,16 @@ def setup_json_logging(logger_name: str = "omega") -> None:
 # Resolve DATA_DIR relative to project root if OMEGA_DATA_DIR is not set
 _root = Path(__file__).resolve().parent.parent.parent.parent
 
+
 def _get_data_dir() -> Path:
     """Get the current data directory, respecting OMEGA_DATA_DIR env var."""
     return Path(os.environ.get("OMEGA_DATA_DIR", str(_root / "data")))
 
+
 def get_metrics_db_path() -> Path:
     """Get the MetricsDB path at runtime, respecting current OMEGA_DATA_DIR."""
     return _get_data_dir() / "observability" / "metrics.db"
+
 
 # Backward compatibility - compute once at import for non-test usage
 DATA_DIR = _get_data_dir()
@@ -166,6 +189,7 @@ class EventType:
 
 # ── Forensics Manager (Last Gasp Protocol) ────────────────────────────
 
+
 class ForensicsManager:
     """
     Last Gasp crash dump system. Implements the Crash Dump & Forensics
@@ -195,9 +219,15 @@ class ForensicsManager:
         if os.environ.get("OMEGA_ENV") != "test":
             try:
                 import signal
+
                 if threading.current_thread() is threading.main_thread():
-                    for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGILL,
-                                signal.SIGFPE, signal.SIGTERM):
+                    for sig in (
+                        signal.SIGSEGV,
+                        signal.SIGABRT,
+                        signal.SIGILL,
+                        signal.SIGFPE,
+                        signal.SIGTERM,
+                    ):
                         try:
                             signal.signal(sig, self._sync_signal_handler)
                         except (ValueError, OSError):
@@ -214,6 +244,7 @@ class ForensicsManager:
         only perform minimal synchronous I/O here.
         """
         import signal
+
         try:
             sig_name = signal.Signals(signum).name
         except (ValueError, AttributeError):
@@ -221,6 +252,7 @@ class ForensicsManager:
         self.write_death_marker(reason=f"signal_{sig_name}")
         # Re-raise to the default handler (which will terminate the process).
         import signal as _sig
+
         _sig.signal(signum, _sig.SIG_DFL)
         _sig.raise_signal(signum)
 
@@ -234,14 +266,16 @@ class ForensicsManager:
 
         Thread-safe recording of error metadata into a ring buffer.
         """
-        self._recent_errors.append({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "error_type": type(error).__name__,
-            "error_message": str(error)[:500],
-            "traceback": traceback.format_exc()[:2000],
-            "trace_id": trace_id or "unknown",
-            "context": context or {},
-        })
+        self._recent_errors.append(
+            {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "error_type": type(error).__name__,
+                "error_message": str(error)[:500],
+                "traceback": traceback.format_exc()[:2000],
+                "trace_id": trace_id or "unknown",
+                "context": context or {},
+            }
+        )
 
     async def snapshot(
         self,
@@ -326,6 +360,7 @@ class ForensicsManager:
         [hardening-p8] Deep state capture: thread dumps, memory maps, fd audit.
         """
         import threading
+
         state: Dict[str, Any] = {
             "providers_available": 0,
             "circuit_breakers_open": [],
@@ -344,13 +379,13 @@ class ForensicsManager:
         try:
             from omega.oracle.health_monitor import get_health_monitor
             from omega.oracle.model_gateway import ModelGateway
+
             gw = ModelGateway(health_monitor=get_health_monitor())
-            providers = gw.providers if hasattr(gw, 'providers') else []
+            providers = gw.providers if hasattr(gw, "providers") else []
             state["providers_count"] = len(providers)
-            state["providers_available"] = len([
-                p for p in providers
-                if hasattr(p, 'is_available') and p.is_available
-            ])
+            state["providers_available"] = len(
+                [p for p in providers if hasattr(p, "is_available") and p.is_available]
+            )
         except OmegaError:
             pass
         except (RuntimeError, OSError) as e:
@@ -359,6 +394,7 @@ class ForensicsManager:
 
         try:
             import psutil
+
             proc = psutil.Process()
             state["rss_mb"] = proc.memory_info().rss / 1024 / 1024
         except ImportError:
@@ -381,6 +417,7 @@ class ForensicsManager:
         """Capture stack traces of all live threads. [hardening-p8]"""
         import sys
         import threading
+
         try:
             frames = sys._current_frames()
             result = []
@@ -389,12 +426,15 @@ class ForensicsManager:
                 name = thread.name if thread else f"Unknown-{tid}"
                 # Format the stack trace
                 import traceback
+
                 stack = traceback.format_stack(frame, limit=8)
-                result.append({
-                    "thread_id": str(tid),
-                    "thread_name": name,
-                    "stack": "".join(stack)[:2000],
-                })
+                result.append(
+                    {
+                        "thread_id": str(tid),
+                        "thread_name": name,
+                        "stack": "".join(stack)[:2000],
+                    }
+                )
             return result
         except (OSError, RuntimeError) as e:
             return [{"error": str(e)}]
@@ -435,6 +475,7 @@ class ForensicsManager:
         }
         try:
             import psutil
+
             info["rss_mb"] = psutil.Process().memory_info().rss / 1024 / 1024
             info["cpu_percent"] = psutil.cpu_percent(interval=0.1)
         except ImportError:
@@ -450,6 +491,7 @@ class ForensicsManager:
         """
         try:
             import sniffio
+
             return sniffio.current_async_library()
         except (OSError, RuntimeError) as e:
             logger.error("Unexpected error detecting anyio backend: %s", e, exc_info=True)
@@ -535,7 +577,9 @@ class ForensicsManager:
                 except OmegaError:
                     continue
                 except (OSError, json.JSONDecodeError) as e:
-                    logger.error("Unexpected failure reading event log for crash dump: %s", e, exc_info=True)
+                    logger.error(
+                        "Unexpected failure reading event log for crash dump: %s", e, exc_info=True
+                    )
                     continue
 
         return {
@@ -567,15 +611,18 @@ class ForensicsManager:
         if soul_path.exists():
             try:
                 import yaml
+
                 with open(str(soul_path)) as f:
                     soul = yaml.safe_load(f) or {}
                 lessons = soul.setdefault("lessons", [])
                 if isinstance(lessons, list):
-                    lessons.append({
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                        "trace_id": trace_id,
-                        "lesson": lesson,
-                    })
+                    lessons.append(
+                        {
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                            "trace_id": trace_id,
+                            "lesson": lesson,
+                        }
+                    )
                     if len(lessons) > 100:
                         lessons[:] = lessons[-100:]
                     with open(str(soul_path), "w") as f:
@@ -601,17 +648,18 @@ class ForensicsManager:
 # ── Budget Gate (M7 Local-First Enforcement) ────────────────────────────
 # [id-soft: vet-008] Zone Memory — resource guard with budget enforcement.
 
+
 class BudgetGate:
     """
     Enforces cloud inference budget limits per Mandate 7 (Local-First).
-    
+
     Tracks daily cloud token spend and blocks cloud requests when budget exceeded.
     Local inference is always allowed (budget-free).
     """
-    
+
     # Default daily budget in USD (configurable via env)
     DEFAULT_DAILY_BUDGET_USD = float(os.environ.get("OMEGA_DAILY_CLOUD_BUDGET_USD", "1.00"))
-    
+
     # Cost per 1K tokens for known cloud providers (approximate)
     PROVIDER_COSTS = {
         "google": {"input": 0.000125, "output": 0.000375},  # Gemini 1.5 Flash
@@ -623,13 +671,13 @@ class BudgetGate:
         "copilot": {"input": 0.0, "output": 0.0},  # Included in subscription
         "opencode-zen": {"input": 0.0, "output": 0.0},  # Included in subscription
     }
-    
+
     def __init__(self, metrics_db: Optional["MetricsDB"] = None):
         self._metrics_db = metrics_db
         self._daily_budget = self.DEFAULT_DAILY_BUDGET_USD
         self._daily_spend_cache: Dict[str, float] = {}  # date -> spend
         self._cache_date: Optional[str] = None
-    
+
     def _get_provider_costs(self, provider: str) -> Dict[str, float]:
         """Get cost per 1K tokens for a provider."""
         provider_lower = provider.lower()
@@ -638,7 +686,7 @@ class BudgetGate:
                 return costs
         # Default conservative estimate for unknown cloud providers
         return {"input": 0.001, "output": 0.003}
-    
+
     async def _get_today_spend(self) -> float:
         """Get today's cloud spend from MetricsDB. [M1 AnyIO]"""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -650,7 +698,12 @@ class BudgetGate:
             return 0.0
 
         try:
-            ts_start = int(datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp() * 1000)
+            ts_start = int(
+                datetime.now(timezone.utc)
+                .replace(hour=0, minute=0, second=0, microsecond=0)
+                .timestamp()
+                * 1000
+            )
             spend = await self._metrics_db.get_daily_cloud_spend(ts_start)
             self._daily_spend_cache[today] = spend
             self._cache_date = today
@@ -658,15 +711,17 @@ class BudgetGate:
         except (OSError, RuntimeError, sqlite3.Error) as e:
             logger.warning("BudgetGate daily spend query failed (returning 0.0): %s", e)
             return 0.0
-    
+
     def estimate_cost(self, provider: str, prompt_tokens: int, completion_tokens: int) -> float:
         """Estimate cost in USD for a cloud inference request."""
         costs = self._get_provider_costs(provider)
         input_cost = (prompt_tokens / 1000) * costs["input"]
         output_cost = (completion_tokens / 1000) * costs["output"]
         return input_cost + output_cost
-    
-    async def check_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
+
+    async def check_budget(
+        self, provider: str, prompt_tokens: int, completion_tokens: int
+    ) -> tuple[bool, str]:
         """
         Check if a cloud request would exceed the daily budget.
 
@@ -688,12 +743,18 @@ class BudgetGate:
             )
 
         return True, f"Budget OK: ${current_spend:.4f}/${self._daily_budget:.2f} used"
-    
+
     def _is_cloud_provider(self, provider: str) -> bool:
         """Check if provider is cloud-based (delegates to ProviderRegistry SSOT)."""
         return _get_provider_registry().is_cloud(provider)
-    
-    async def record_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
+
+    async def record_spend(
+        self,
+        provider: str,
+        prompt_tokens: int,
+        completion_tokens: int,
+        trace_id: Optional[str] = None,
+    ) -> float:
         """Record actual spend after a cloud inference. Returns cost in USD. [M1 AnyIO]"""
         if not self._is_cloud_provider(provider):
             return 0.0
@@ -709,7 +770,7 @@ class BudgetGate:
         # Invalidate cache
         self._daily_spend_cache.clear()
         return cost
-    
+
     async def get_status(self) -> Dict[str, Any]:
         """Get current budget status. [M1 AnyIO]"""
         spend = await self._get_today_spend()
@@ -748,7 +809,9 @@ class ObservabilityEngine:
         self._session_id = uuid.uuid4().hex[:8]
         self._event_log: deque = deque(maxlen=1000)
         self._dataset: List[Dict[str, Any]] = []
-        self._event_persist_enabled = os.environ.get("OMEGA_PERSIST_EVENTS", "true").lower() == "true"
+        self._event_persist_enabled = (
+            os.environ.get("OMEGA_PERSIST_EVENTS", "true").lower() == "true"
+        )
         self._load_persisted_events()
 
         # Forensics / Crash Dump support
@@ -763,15 +826,15 @@ class ObservabilityEngine:
         # [id-soft: vet-040] Event System — structured event logging for observability.
         self._metrics_db = metrics_db
         self._metrics_db_initialized = False
-        
+
         # OTel GenAI Exporter — exports spans to MetricsDB
         self._otel_exporter: Optional[OTelSQLiteExporter] = None
         self._otel_initialized = False
-        
+
         # Regression Watcher — automated baseline regression detection
         self._regression_watcher: Optional[RegressionWatcher] = None
         self._regression_watcher_started = False
-        
+
         # Budget Gate — M7 Local-First enforcement
         self._budget_gate: Optional[BudgetGate] = None
         self._budget_gate_initialized = False
@@ -804,14 +867,14 @@ class ObservabilityEngine:
         if self._otel_initialized:
             return self._otel_exporter
         self._otel_initialized = True
-        
+
         metrics_db = self.metrics_db
         if not metrics_db:
             return None
-            
+
         if os.environ.get("OMEGA_ENV") == "test":
             return None
-            
+
         try:
             self._otel_exporter = setup_otel_exporter(metrics_db)
             logger.info("OTel GenAI SQLite exporter initialized")
@@ -830,36 +893,30 @@ class ObservabilityEngine:
         return self._ensure_metrics_db()
 
     async def start_regression_watcher(
-        self, 
-        interval_seconds: int = 300, 
-        threshold: float = 0.1
+        self, interval_seconds: int = 300, threshold: float = 0.1
     ) -> Optional[RegressionWatcher]:
         """Start the regression watcher background task.
-        
+
         Args:
             interval_seconds: Check interval in seconds (default 300 = 5 min)
             threshold: Regression threshold as percentage (default 0.1 = 10%)
-            
+
         Returns:
             The RegressionWatcher instance, or None if MetricsDB not available
         """
         if self._regression_watcher_started:
             return self._regression_watcher
-        
+
         metrics_db = self.metrics_db
         if not metrics_db:
             logger.warning("Cannot start RegressionWatcher: MetricsDB not available")
             return None
-        
+
         if os.environ.get("OMEGA_ENV") == "test":
             return None
-        
+
         try:
-            self._regression_watcher = RegressionWatcher(
-                metrics_db, 
-                interval_seconds, 
-                threshold
-            )
+            self._regression_watcher = RegressionWatcher(metrics_db, interval_seconds, threshold)
             await self._regression_watcher.start()
             self._regression_watcher_started = True
             logger.info("RegressionWatcher started")
@@ -880,14 +937,14 @@ class ObservabilityEngine:
         if self._budget_gate_initialized:
             return self._budget_gate
         self._budget_gate_initialized = True
-        
+
         metrics_db = self.metrics_db
         if not metrics_db:
             return None
-        
+
         if os.environ.get("OMEGA_ENV") == "test":
             return None
-        
+
         try:
             self._budget_gate = BudgetGate(metrics_db)
             # Ensure cost_usd column exists
@@ -902,19 +959,35 @@ class ObservabilityEngine:
         """Access the BudgetGate (lazy-initialized)."""
         return self._ensure_budget_gate()
 
-    async def check_cloud_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
+    async def check_cloud_budget(
+        self, provider: str, prompt_tokens: int, completion_tokens: int
+    ) -> tuple[bool, str]:
         """Check if a cloud request would exceed the daily budget.
 
         Returns:
             (allowed: bool, reason: str)
         """
         gate = self.budget_gate
-        return await gate.check_budget(provider, prompt_tokens, completion_tokens) if gate else (True, "BudgetGate not available — allowing")
+        return (
+            await gate.check_budget(provider, prompt_tokens, completion_tokens)
+            if gate
+            else (True, "BudgetGate not available — allowing")
+        )
 
-    async def record_cloud_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
+    async def record_cloud_spend(
+        self,
+        provider: str,
+        prompt_tokens: int,
+        completion_tokens: int,
+        trace_id: Optional[str] = None,
+    ) -> float:
         """Record actual spend after a cloud inference. Returns cost in USD."""
         gate = self.budget_gate
-        return await gate.record_spend(provider, prompt_tokens, completion_tokens, trace_id) if gate else 0.0
+        return (
+            await gate.record_spend(provider, prompt_tokens, completion_tokens, trace_id)
+            if gate
+            else 0.0
+        )
 
     @property
     def budget_status(self) -> Dict[str, Any]:
@@ -925,12 +998,12 @@ class ObservabilityEngine:
         return gate.get_status()
 
     # ── Trace an entire interaction cycle ────────────────────────────
-    def trace(self, trace_id: Optional[str] = None, parent_trace_id: Optional[str] = None) -> "TraceSession":
+    def trace(
+        self, trace_id: Optional[str] = None, parent_trace_id: Optional[str] = None
+    ) -> "TraceSession":
         """Start a new trace session for an interaction."""
         return TraceSession(
-            trace_id=trace_id or new_trace_id(),
-            engine=self,
-            parent_trace_id=parent_trace_id
+            trace_id=trace_id or new_trace_id(), engine=self, parent_trace_id=parent_trace_id
         )
 
     # ── Persist a single event to disk ─────────────────────────────
@@ -970,6 +1043,7 @@ class ObservabilityEngine:
             return
         try:
             import datetime as dt
+
             today = dt.date.today()
             for i in range(max_days):
                 day = (today - dt.timedelta(days=i)).isoformat()
@@ -1073,7 +1147,6 @@ class ObservabilityEngine:
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB event recording failed: %s", e)
 
-
     # ── Record a training example for fine-tuning ────────────────────
     def record_training_example(
         self,
@@ -1092,7 +1165,7 @@ class ObservabilityEngine:
         """Save a query-response pair as a fine-tuning dataset entry."""
         if not self.enable_dataset_collection:
             return
-        
+
         example = {
             "trace_id": trace_id,
             "session_id": session_id or self._session_id,
@@ -1158,10 +1231,10 @@ class ObservabilityEngine:
         trace_id: Optional[str] = None,
     ) -> None:
         """Record a VaultCore audit event to the observability system.
-        
+
         This integrates the VaultCore JSONL audit log with the observability
         engine's event stream, UFL writer, and MetricsDB.
-        
+
         Args:
             action: The action performed (store, get, decrypt, lease_grant, lease_release, etc.)
             credential_ref: The credential reference (provider:key_id)
@@ -1172,7 +1245,7 @@ class ObservabilityEngine:
         # Generate trace_id if not provided
         if trace_id is None:
             trace_id = new_trace_id()
-        
+
         # Create event data
         event_data = {
             "action": action,
@@ -1180,14 +1253,14 @@ class ObservabilityEngine:
             "success": success,
             "details": details,
         }
-        
+
         # Log to event stream
         self.log_event_sync(
-            EventType.VAULT_AUDIT if hasattr(EventType, 'VAULT_AUDIT') else "vault.audit",
+            EventType.VAULT_AUDIT if hasattr(EventType, "VAULT_AUDIT") else "vault.audit",
             trace_id,
             event_data,
         )
-        
+
         # Record to MetricsDB if available
         if self._metrics_db:
             try:
@@ -1195,21 +1268,23 @@ class ObservabilityEngine:
                 self._metrics_db._conn.execute(
                     """INSERT INTO vault_audit (ts, trace_id, action, credential_ref, success, details)
                        VALUES (?, ?, ?, ?, ?, ?)""",
-                    (ts, trace_id, action, credential_ref, int(success), details)
+                    (ts, trace_id, action, credential_ref, int(success), details),
                 )
                 self._metrics_db._conn.commit()
             except Exception as e:
                 logger.debug("MetricsDB vault audit recording failed: %s", e)
-        
+
         # Also write to UFL (Unified Forensic Ledger)
         if self._ufl:
             try:
-                self._ufl.append({
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "trace_id": trace_id,
-                    "event_type": "vault.audit",
-                    "data": event_data,
-                })
+                self._ufl.append(
+                    {
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "trace_id": trace_id,
+                        "event_type": "vault.audit",
+                        "data": event_data,
+                    }
+                )
             except Exception as e:
                 logger.debug("UFL vault audit write failed: %s", e)
 
@@ -1222,10 +1297,10 @@ class ObservabilityEngine:
         trace_id: Optional[str] = None,
     ) -> None:
         """Record a VaultCore audit event to the observability system.
-        
+
         This integrates the VaultCore JSONL audit log with the observability
         engine's event stream, UFL writer, and MetricsDB.
-        
+
         Args:
             action: The action performed (store, get, decrypt, lease_grant, lease_release, etc.)
             credential_ref: The credential reference (provider:key_id)
@@ -1236,7 +1311,7 @@ class ObservabilityEngine:
         # Generate trace_id if not provided
         if trace_id is None:
             trace_id = new_trace_id()
-        
+
         # Create event data
         event_data = {
             "action": action,
@@ -1244,14 +1319,14 @@ class ObservabilityEngine:
             "success": success,
             "details": details,
         }
-        
+
         # Log to event stream
         self.log_event_sync(
             EventType.VAULT_AUDIT,
             trace_id,
             event_data,
         )
-        
+
         # Record to MetricsDB if available
         if self._metrics_db:
             try:
@@ -1259,21 +1334,23 @@ class ObservabilityEngine:
                 self._metrics_db._conn.execute(
                     """INSERT INTO vault_audit (ts, trace_id, action, credential_ref, success, details)
                        VALUES (?, ?, ?, ?, ?, ?)""",
-                    (ts, trace_id, action, credential_ref, int(success), details)
+                    (ts, trace_id, action, credential_ref, int(success), details),
                 )
                 self._metrics_db._conn.commit()
             except Exception as e:
                 logger.debug("MetricsDB vault audit recording failed: %s", e)
-        
+
         # Also write to UFL (Unified Forensic Ledger)
         if self._ufl:
             try:
-                self._ufl.append({
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "trace_id": trace_id,
-                    "event_type": "vault.audit",
-                    "data": event_data,
-                })
+                self._ufl.append(
+                    {
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "trace_id": trace_id,
+                        "event_type": "vault.audit",
+                        "data": event_data,
+                    }
+                )
             except Exception as e:
                 logger.debug("UFL vault audit write failed: %s", e)
 
@@ -1382,10 +1459,10 @@ class ObservabilityEngine:
         # Add MetricsDB stats if available
         metrics_db = self.metrics_db
         if metrics_db:
-                try:
-                    result["metrics_db"] = await metrics_db.get_stats()
-                except (RuntimeError, OSError):
-                    result["metrics_db"] = {"error": "unavailable"}
+            try:
+                result["metrics_db"] = await metrics_db.get_stats()
+            except (RuntimeError, OSError):
+                result["metrics_db"] = {"error": "unavailable"}
         else:
             result["metrics_db"] = {"status": "not_initialized"}
         return result
@@ -1412,10 +1489,10 @@ class ObservabilityEngine:
         }
         metrics_db = self.metrics_db
         if metrics_db:
-                try:
-                    result["metrics_db"] = anyio.from_thread.run(metrics_db.get_stats)
-                except (RuntimeError, OSError):
-                    result["metrics_db"] = {"error": "unavailable"}
+            try:
+                result["metrics_db"] = anyio.from_thread.run(metrics_db.get_stats)
+            except (RuntimeError, OSError):
+                result["metrics_db"] = {"error": "unavailable"}
         else:
             result["metrics_db"] = {"status": "not_initialized"}
         return result
@@ -1429,15 +1506,16 @@ class ObservabilityEngine:
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Record an error for forensic analysis.
-        
+
         Uses contextvars safety net if trace_id is not explicitly provided,
         ensuring errors never carry trace_id="unknown".
         """
         # [M22] Use contextvars safety net if trace_id not provided
         if trace_id is None:
             from .context import get_current_trace_id
+
             trace_id = get_current_trace_id()
-        
+
         self._forensics.record_error(error, trace_id=trace_id, context=context)
         self.log_event_sync(
             EventType.ERROR,
@@ -1483,7 +1561,9 @@ class ObservabilityEngine:
 class TraceSession:
     """A single interaction trace. Context manager for easy lifecycle."""
 
-    def __init__(self, trace_id: str, engine: ObservabilityEngine, parent_trace_id: Optional[str] = None):
+    def __init__(
+        self, trace_id: str, engine: ObservabilityEngine, parent_trace_id: Optional[str] = None
+    ):
         self.trace_id = trace_id
         self.engine = engine
         self.parent_trace_id = parent_trace_id
@@ -1503,10 +1583,7 @@ class TraceSession:
     def log(self, event_type: str, **data) -> None:
         """Log an event within this trace."""
         self.engine.log_event_sync(
-            event_type, 
-            self.trace_id, 
-            data, 
-            parent_trace_id=self.parent_trace_id
+            event_type, self.trace_id, data, parent_trace_id=self.parent_trace_id
         )
 
     def record(
@@ -1551,7 +1628,7 @@ def get_engine() -> ObservabilityEngine:
 
 def reset_observability() -> None:
     """Reset the ObservabilityEngine singleton. Used for testing.
-    
+
     Closes the MetricsDB SQLite connection (WAL-mode) before abandoning
     the engine to prevent ResourceWarning and database corruption when
     OMEGA_DATA_DIR changes between tests. Without this, a stale MetricsDB
@@ -1562,7 +1639,7 @@ def reset_observability() -> None:
     if _engine is not None:
         # Close MetricsDB connection if it was initialized (non-test mode)
         metrics_db = _engine._metrics_db
-        if metrics_db is not None and hasattr(metrics_db, 'close'):
+        if metrics_db is not None and hasattr(metrics_db, "close"):
             try:
                 metrics_db.close()
             except (RuntimeError, OSError, sqlite3.Error):

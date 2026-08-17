@@ -23,14 +23,13 @@ import json
 import time
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import anyio
 
 from omega.oracle.pool_state import (
     AccountMapping,
     KeyHealth,
-    PoolConfig,
     PoolHealth,
     PoolState,
 )
@@ -119,17 +118,13 @@ class PoolTrackingData:
                 pool_g_tokens=key_entry.get("pool_g_tokens", 0),
                 pool_g_quota_hit_at=key_entry.get("pool_g_quota_hit_at"),
                 pool_g_failures=key_entry.get("pool_g_failures", []),
-                pool_g_remaining_fraction=key_entry.get(
-                    "pool_g_remaining_fraction"
-                ),
+                pool_g_remaining_fraction=key_entry.get("pool_g_remaining_fraction"),
                 pool_g_reset_time=key_entry.get("pool_g_reset_time"),
                 pool_c_calls=key_entry.get("pool_c_calls", 0),
                 pool_c_tokens=key_entry.get("pool_c_tokens", 0),
                 pool_c_quota_hit_at=key_entry.get("pool_c_quota_hit_at"),
                 pool_c_failures=key_entry.get("pool_c_failures", []),
-                pool_c_remaining_fraction=key_entry.get(
-                    "pool_c_remaining_fraction"
-                ),
+                pool_c_remaining_fraction=key_entry.get("pool_c_remaining_fraction"),
                 pool_c_reset_time=key_entry.get("pool_c_reset_time"),
                 low_calls=key_entry.get("low_calls", 0),
                 medium_calls=key_entry.get("medium_calls", 0),
@@ -169,10 +164,7 @@ class UsagePoolTracker:
         account_map_path: Optional[Path] = None,
     ) -> None:
         self.pool_state = pool_state
-        self._tracking_path = (
-            tracking_path
-            or pool_state.tracking.tracking_path
-        )
+        self._tracking_path = tracking_path or pool_state.tracking.tracking_path
         self._account_map: Optional[AccountMapping] = None
         if account_map_path and account_map_path.exists():
             self._account_map = AccountMapping.from_yaml(account_map_path)
@@ -185,6 +177,7 @@ class UsagePoolTracker:
         """Load tracking data from disk. Creates default if missing."""
         path = Path(self._tracking_path)
         if path.exists():
+
             def _read():
                 with open(path, "r") as f:
                     return json.load(f)
@@ -195,9 +188,7 @@ class UsagePoolTracker:
             # Initialize from pool_state config
             self._data = PoolTrackingData(
                 schema_version="2.0",
-                last_updated=time.strftime(
-                    "%Y-%m-%dT%H:%M:%SZ", time.gmtime()
-                ),
+                last_updated=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             )
             for key_id in self.pool_state.all_keys:
                 email = None
@@ -214,9 +205,7 @@ class UsagePoolTracker:
 
     async def _save(self) -> None:
         """Atomic write to USAGE_POOL_LOG.json."""
-        self._data.last_updated = time.strftime(
-            "%Y-%m-%dT%H:%M:%SZ", time.gmtime()
-        )
+        self._data.last_updated = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         path = Path(self._tracking_path)
         path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -331,20 +320,14 @@ class UsagePoolTracker:
             return True
         return (time.time() * 1000) >= record.cool_until
 
-    def _apply_anti_thrashing(
-        self, record: KeyUsageRecord, pool: str
-    ) -> None:
+    def _apply_anti_thrashing(self, record: KeyUsageRecord, pool: str) -> None:
         """
         Apply anti-thrashing rules to a failed key.
 
         3 failures in 5 min → COOLING for 1 hour
         5 quota hits in day → DRAINED for 24 hours
         """
-        failures = (
-            record.pool_g_failures
-            if pool == "pool_g"
-            else record.pool_c_failures
-        )
+        failures = record.pool_g_failures if pool == "pool_g" else record.pool_c_failures
         now = time.time() * 1000
 
         # Check DRAINED first (5 quota hits in day)
@@ -408,15 +391,9 @@ class UsagePoolTracker:
                 email=record.email,
                 status=record.status,
                 cool_until=record.cool_until,
-                calls_this_week=(
-                    record.pool_g_calls
-                    if pool == "pool_g"
-                    else record.pool_c_calls
-                ),
+                calls_this_week=(record.pool_g_calls if pool == "pool_g" else record.pool_c_calls),
                 tokens_this_week=(
-                    record.pool_g_tokens
-                    if pool == "pool_g"
-                    else record.pool_c_tokens
+                    record.pool_g_tokens if pool == "pool_g" else record.pool_c_tokens
                 ),
                 remaining_fraction=(
                     record.pool_g_remaining_fraction
@@ -424,9 +401,7 @@ class UsagePoolTracker:
                     else record.pool_c_remaining_fraction
                 ),
                 reset_time=(
-                    record.pool_g_reset_time
-                    if pool == "pool_g"
-                    else record.pool_c_reset_time
+                    record.pool_g_reset_time if pool == "pool_g" else record.pool_c_reset_time
                 ),
                 last_error=record.last_error,
             )
@@ -444,14 +419,10 @@ class UsagePoolTracker:
 
         # Calculate remaining quota percentage across the pool
         remaining = [
-            k.remaining_fraction
-            for k in health.keys.values()
-            if k.remaining_fraction is not None
+            k.remaining_fraction for k in health.keys.values() if k.remaining_fraction is not None
         ]
         if remaining:
-            health.remaining_quota_pct = (
-                sum(remaining) / len(remaining)
-            ) * 100.0
+            health.remaining_quota_pct = (sum(remaining) / len(remaining)) * 100.0
 
         return health
 
@@ -503,9 +474,7 @@ class UsagePoolTracker:
 
     # ── Batch Quota Update ──────────────────────────────────────────────
 
-    async def update_quota_from_check(
-        self, quota_results: List[dict]
-    ) -> None:
+    async def update_quota_from_check(self, quota_results: List[dict]) -> None:
         """
         Batch update quota data from check-quota results.
 
@@ -582,9 +551,7 @@ class UsagePoolTracker:
             record.status = "active"
             record.cool_until = None
 
-        self._data.weekly_reset_date = time.strftime(
-            "%Y-%m-%dT%H:%M:%SZ", time.gmtime()
-        )
+        self._data.weekly_reset_date = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         await self._save()
 
     async def get_tracking_summary(self) -> dict:
@@ -593,28 +560,14 @@ class UsagePoolTracker:
             await self.load()
 
         total_keys = len(self._data.keys)
-        active = sum(
-            1 for r in self._data.keys.values() if r.status == "active"
-        )
-        cooling = sum(
-            1 for r in self._data.keys.values() if r.status == "cooling"
-        )
-        drained = sum(
-            1 for r in self._data.keys.values() if r.status == "drained"
-        )
+        active = sum(1 for r in self._data.keys.values() if r.status == "active")
+        cooling = sum(1 for r in self._data.keys.values() if r.status == "cooling")
+        drained = sum(1 for r in self._data.keys.values() if r.status == "drained")
 
-        pool_g_total_calls = sum(
-            r.pool_g_calls for r in self._data.keys.values()
-        )
-        pool_g_total_tokens = sum(
-            r.pool_g_tokens for r in self._data.keys.values()
-        )
-        pool_c_total_calls = sum(
-            r.pool_c_calls for r in self._data.keys.values()
-        )
-        pool_c_total_tokens = sum(
-            r.pool_c_tokens for r in self._data.keys.values()
-        )
+        pool_g_total_calls = sum(r.pool_g_calls for r in self._data.keys.values())
+        pool_g_total_tokens = sum(r.pool_g_tokens for r in self._data.keys.values())
+        pool_c_total_calls = sum(r.pool_c_calls for r in self._data.keys.values())
+        pool_c_total_tokens = sum(r.pool_c_tokens for r in self._data.keys.values())
 
         return {
             "total_keys": total_keys,

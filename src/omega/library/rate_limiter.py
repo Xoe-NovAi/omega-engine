@@ -130,6 +130,7 @@ class TokenBucketRateLimiter:
     def _get_domain(self, url: str) -> str:
         """Extract the domain from a URL."""
         from urllib.parse import urlparse
+
         parsed = urlparse(url)
         hostname = parsed.hostname or "unknown"
         # Strip leading www. for normalization
@@ -147,7 +148,9 @@ class TokenBucketRateLimiter:
             self._buckets[domain] = TokenBucket(rate=rate, max_tokens=max_tokens)
             logger.debug(
                 "Rate limit bucket created: %s (%.1f/s, burst=%d)",
-                domain, rate, int(max_tokens),
+                domain,
+                rate,
+                int(max_tokens),
             )
         return self._buckets[domain]
 
@@ -170,7 +173,10 @@ class TokenBucketRateLimiter:
 
         logger.debug(
             "Rate limit passed: %s (%.1f tokens, %.1f/%.1f remaining)",
-            domain, tokens, bucket.tokens, bucket.max_tokens,
+            domain,
+            tokens,
+            bucket.tokens,
+            bucket.max_tokens,
         )
 
     async def try_acquire(self, url: str, tokens: float = 1.0) -> bool:

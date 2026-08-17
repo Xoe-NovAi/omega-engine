@@ -17,7 +17,7 @@ import tempfile
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import anyio
 import typer
@@ -42,7 +42,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 def _get_data_dir() -> Path:
     """Resolve data directory at call time, respecting OMEGA_DATA_DIR env var.
-    
+
     This allows tests using monkeypatch.setenv("OMEGA_DATA_DIR", tmp_path)
     to properly isolate without leaking into production.
     """
@@ -59,23 +59,29 @@ def _get_bundles_dir() -> Path:
     return _get_data_dir() / "bundles"
 
 
-app = typer.Typer(help="🔱 Sovereign Bundle — export/import entity state as portable .omega bundles")
+app = typer.Typer(
+    help="🔱 Sovereign Bundle — export/import entity state as portable .omega bundles"
+)
 
 
 # ═══════════════════════════════════════════════════════════════════
 # Export
 # ═══════════════════════════════════════════════════════════════════
 
+
 @app.command()
 def export(
     entity_name: str = typer.Argument(..., help="Entity name to export"),
-    output: Optional[str] = typer.Option(None, "--output", "-o", help="Output path for the .omega.zip bundle"),
+    output: Optional[str] = typer.Option(
+        None, "--output", "-o", help="Output path for the .omega.zip bundle"
+    ),
 ):
     """Export an entity's state to a portable .omega ZIP bundle.
 
     Packages soul.yaml, sessions, knowledge base, proposed lessons,
     and integrity checksums into a single ZIP file.
     """
+
     async def _run():
         try:
             result = await _export_entity(entity_name, output)
@@ -103,7 +109,9 @@ async def _export_entity(entity_name: str, output_path: Optional[str] = None) ->
         registry = EntityRegistry()
         entity_obj = registry.get(safe_name)
         if not entity_obj:
-            logger.warning(f"Entity '{entity_name}' not found in entity registry — exporting from directory only")
+            logger.warning(
+                f"Entity '{entity_name}' not found in entity registry — exporting from directory only"
+            )
     except (OmegaError, RuntimeError, OSError) as e:
         logger.warning(f"Entity registry unavailable ({e}) — exporting from directory only")
 
@@ -174,11 +182,13 @@ async def _export_entity(entity_name: str, output_path: Optional[str] = None) ->
                 rel_name = kf.name
                 kf_data = await anyio.to_thread.run_sync(lambda p=kf: p.read_bytes())
                 files_to_bundle[f"knowledge/{rel_name}"] = kf_data
-                knowledge_index.append({
-                    "filename": rel_name,
-                    "size_bytes": len(kf_data),
-                    "extension": kf.suffix,
-                })
+                knowledge_index.append(
+                    {
+                        "filename": rel_name,
+                        "size_bytes": len(kf_data),
+                        "extension": kf.suffix,
+                    }
+                )
 
         files_to_bundle["knowledge/index.json"] = json.dumps(
             knowledge_index, indent=2, default=str
@@ -270,11 +280,13 @@ def _extract_session_metadata(session_files: Dict[str, bytes]) -> dict:
     sessions = []
     for s in parsed:
         if isinstance(s, dict):
-            sessions.append({
-                "session_id": s.get("session_id", s.get("id", "unknown")),
-                "created_at": str(s.get("created_at", s.get("timestamp", "unknown"))),
-                "summary": str(s.get("summary", s.get("continuation", "")))[:200],
-            })
+            sessions.append(
+                {
+                    "session_id": s.get("session_id", s.get("id", "unknown")),
+                    "created_at": str(s.get("created_at", s.get("timestamp", "unknown"))),
+                    "summary": str(s.get("summary", s.get("continuation", "")))[:200],
+                }
+            )
         elif isinstance(s, str):
             sessions.append({"session_id": s})
 
@@ -304,17 +316,20 @@ def _extract_recent_exchanges(session_files: Dict[str, bytes]) -> List[dict]:
         if isinstance(s, dict):
             summary = s.get("summary", s.get("continuation", ""))
             if summary:
-                exchanges.append({
-                    "session_id": s.get("session_id", s.get("id", "unknown")),
-                    "summary": str(summary)[:500],
-                    "timestamp": str(s.get("created_at", s.get("timestamp", ""))),
-                })
+                exchanges.append(
+                    {
+                        "session_id": s.get("session_id", s.get("id", "unknown")),
+                        "summary": str(summary)[:500],
+                        "timestamp": str(s.get("created_at", s.get("timestamp", ""))),
+                    }
+                )
 
     return exchanges[-20:]  # Last 20 only
 
 
 def _display_bundle_contents(bundle_path: str):
     """Display the contents of a .omega bundle in a table."""
+
     def _read_manifest():
         with zipfile.ZipFile(bundle_path, "r") as zf:
             if "manifest.json" in zf.namelist():
@@ -355,16 +370,20 @@ def _display_bundle_contents(bundle_path: str):
 # Import
 # ═══════════════════════════════════════════════════════════════════
 
+
 @app.command()
 def import_bundle(
     bundle_path: str = typer.Argument(..., help="Path to the .omega.zip bundle to import"),
-    overwrite: bool = typer.Option(False, "--overwrite", "-f", help="Overwrite existing entity data"),
+    overwrite: bool = typer.Option(
+        False, "--overwrite", "-f", help="Overwrite existing entity data"
+    ),
 ):
     """Import an entity from a .omega ZIP bundle.
 
     Extracts soul.yaml, knowledge base, and proposed lessons into the
     entity's workspace. Validates checksums for integrity.
     """
+
     async def _run():
         try:
             entity_name = await _import_entity(bundle_path, overwrite)
@@ -379,7 +398,9 @@ def import_bundle(
                 table.add_column("Value", style="white")
                 table.add_row("Name", entity_obj.name)
                 table.add_row("Model", entity_obj.model or "—")
-                table.add_row("Domains", ", ".join(entity_obj.domains) if entity_obj.domains else "—")
+                table.add_row(
+                    "Domains", ", ".join(entity_obj.domains) if entity_obj.domains else "—"
+                )
                 if entity_obj.slots:
                     table.add_row("Slots", ", ".join(entity_obj.slots))
                 console.print(table)
@@ -427,14 +448,20 @@ async def _import_entity(bundle_path: str, overwrite: bool = False) -> str:
         checksum_errors = _validate_checksums(contents)
         if checksum_errors:
             error_msg = "\n".join(checksum_errors)
-            console.print(f"[yellow]⚠ Checksum validation had {len(checksum_errors)} issue(s):[/yellow]")
+            console.print(
+                f"[yellow]⚠ Checksum validation had {len(checksum_errors)} issue(s):[/yellow]"
+            )
             for err in checksum_errors:
                 console.print(f"  [red]{err}[/red]")
             if not overwrite:
-                console.print("[yellow]Use --overwrite/-f to import despite checksum issues[/yellow]")
+                console.print(
+                    "[yellow]Use --overwrite/-f to import despite checksum issues[/yellow]"
+                )
                 raise ValueError(f"Checksum validation failed ({len(checksum_errors)} errors)")
     else:
-        console.print("[yellow]⚠ Bundle missing checksums.sha256 — integrity not verifiable[/yellow]")
+        console.print(
+            "[yellow]⚠ Bundle missing checksums.sha256 — integrity not verifiable[/yellow]"
+        )
 
     # Check for existing entity
     entity_dir = _get_entities_dir() / safe_name
@@ -489,7 +516,9 @@ async def _import_entity(bundle_path: str, overwrite: bool = False) -> str:
                 if sessions_meta.get("sessions"):
                     sessions_yaml_path = memory_dir / "sessions.yaml"
                     with open(sessions_yaml_path, "w") as f:
-                        yaml.dump(sessions_meta["sessions"], f, default_flow_style=False, sort_keys=False)
+                        yaml.dump(
+                            sessions_meta["sessions"], f, default_flow_style=False, sort_keys=False
+                        )
             except (json.JSONDecodeError, OSError):
                 pass
 
@@ -503,7 +532,7 @@ async def _import_entity(bundle_path: str, overwrite: bool = False) -> str:
 
 def _validate_checksums(contents: Dict[str, bytes]) -> List[str]:
     """Validate checksums.sha256 against file contents.
-    
+
     Returns a list of error messages (empty = all valid).
     """
     if "checksums.sha256" not in contents:
@@ -530,7 +559,9 @@ def _validate_checksums(contents: Dict[str, bytes]) -> List[str]:
 
         actual_hash = hashlib.sha256(actual_data).hexdigest()
         if actual_hash != expected_hash:
-            errors.append(f"Checksum mismatch for {fname}: expected {expected_hash}, got {actual_hash}")
+            errors.append(
+                f"Checksum mismatch for {fname}: expected {expected_hash}, got {actual_hash}"
+            )
 
     return errors
 
@@ -538,6 +569,7 @@ def _validate_checksums(contents: Dict[str, bytes]) -> List[str]:
 # ═══════════════════════════════════════════════════════════════════
 # List / Info commands
 # ═══════════════════════════════════════════════════════════════════
+
 
 @app.command()
 def list_bundles():
@@ -573,6 +605,7 @@ def info(
     bundle_path: str = typer.Argument(..., help="Path to the .omega.zip bundle to inspect"),
 ):
     """Show detailed information about a .omega bundle without importing it."""
+
     async def _run():
         try:
             _display_bundle_contents(bundle_path)

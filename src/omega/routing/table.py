@@ -9,6 +9,7 @@ import yaml
 
 ROUTING_TABLE_PATH = Path("config/routing_table.yaml")
 
+
 @dataclass
 class RoutingDecision:
     action: Literal["local", "cloud"]
@@ -19,6 +20,7 @@ class RoutingDecision:
     rule_name: str = ""
     priority: int = 0
     rationale: str = ""
+
 
 @dataclass
 class RoutingRequest:
@@ -31,24 +33,25 @@ class RoutingRequest:
     latency_budget_ms: int = 5000
     cost_budget_usd: float = 0.10
 
+
 class RoutingTable:
     """Static routing table loaded from YAML. No ML. No learning."""
-    
+
     def __init__(self, path: Path = ROUTING_TABLE_PATH):
         self.path = path
         self._rules = []
         self._providers = {}
         self._local_models = {}
         self._load()
-    
+
     def _load(self):
         with open(self.path) as f:
             data = yaml.safe_load(f)
-        
+
         self._rules = sorted(data.get("rules", []), key=lambda r: -r.get("priority", 0))
         self._providers = data.get("providers", {})
         self._local_models = data.get("local_models", {})
-    
+
     def route(self, request: RoutingRequest) -> RoutingDecision:
         """Evaluate rules in priority order. First match wins."""
         for rule in self._rules:
@@ -63,7 +66,7 @@ class RoutingTable:
                     priority=rule.get("priority", 0),
                     rationale=rule.get("rationale", ""),
                 )
-        
+
         # Should never reach here (default rule catches all)
         return RoutingDecision(
             action="local",
@@ -71,7 +74,7 @@ class RoutingTable:
             rule_name="default_sovereign",
             rationale="M7 Local-First: default to sovereignty",
         )
-    
+
     def _evaluate_condition(self, condition: str, request: RoutingRequest) -> bool:
         """Safely evaluate routing condition."""
         # Replace variables with request values
@@ -87,21 +90,32 @@ class RoutingTable:
             "true": True,
             "false": False,
         }
-        
+
         try:
             # Only allow safe operations
-            allowed_names = set(local_vars.keys()) | {"in", "and", "or", "not", "==", "!=", ">", "<", ">=", "<="}
+            allowed_names = set(local_vars.keys()) | {
+                "in",
+                "and",
+                "or",
+                "not",
+                "==",
+                "!=",
+                ">",
+                "<",
+                ">=",
+                "<=",
+            }
             # Simple eval with restricted globals
             return eval(condition, {"__builtins__": {}}, local_vars)
         except Exception:
             return False
-    
+
     def get_provider_config(self, provider: str) -> dict:
         return self._providers.get(provider, {})
-    
+
     def get_local_model(self, model: str) -> dict:
         return self._local_models.get(model, {})
-    
+
     def list_rules(self) -> list:
         return [
             {
@@ -113,6 +127,7 @@ class RoutingTable:
             }
             for r in self._rules
         ]
+
 
 # ── Convenience Function ──────────────────────────────────────────────
 def route_request(
@@ -133,18 +148,21 @@ def route_request(
     )
     return table.route(request)
 
+
 # ── CLI ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import sys
     import json
-    
+
     if len(sys.argv) < 2:
-        print("Usage: python -m src.omega.routing.table <task_category> [privacy_tag] [context_tokens]")
+        print(
+            "Usage: python -m src.omega.routing.table <task_category> [privacy_tag] [context_tokens]"
+        )
         sys.exit(1)
-    
+
     task = sys.argv[1]
     privacy = sys.argv[2].lower() == "true" if len(sys.argv) > 2 else False
     context = int(sys.argv[3]) if len(sys.argv) > 3 else 0
-    
+
     decision = route_request(task, privacy, context)
     print(json.dumps(decision.__dict__, indent=2))

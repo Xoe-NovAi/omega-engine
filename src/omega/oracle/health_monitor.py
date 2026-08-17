@@ -26,9 +26,11 @@ from collections import deque
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Deque, Dict, Optional, Tuple
+from typing import Any, Callable, Deque, Dict, Optional
+
 # Module-level singleton
 _health_monitor: Optional[HealthMonitor] = None
+
 
 def get_health_monitor() -> HealthMonitor:
     """Get or create the singleton HealthMonitor."""
@@ -36,7 +38,6 @@ def get_health_monitor() -> HealthMonitor:
     if _health_monitor is None:
         _health_monitor = HealthMonitor()
     return _health_monitor
-
 
 
 from omega.constants import ZONEID_BREAKER, validate_zoneid
@@ -47,12 +48,13 @@ logger = logging.getLogger("omega.health_monitor")
 
 # ── Enums ──────────────────────────────────────────────────────────────
 
+
 class CircuitState(Enum):
-    CLOSED = "closed"         # Normal operation (HEALTHY)
-    DEGRADED = "degraded"     # High latency or minor error spikes
-    OPEN = "open"             # Failing fast, no requests (CRITICAL)
-    HALF_OPEN = "half_open"   # Probe allowed (PROBATION)
-    UNKNOWN = "unknown"       # Initial state / Cold start
+    CLOSED = "closed"  # Normal operation (HEALTHY)
+    DEGRADED = "degraded"  # High latency or minor error spikes
+    OPEN = "open"  # Failing fast, no requests (CRITICAL)
+    HALF_OPEN = "half_open"  # Probe allowed (PROBATION)
+    UNKNOWN = "unknown"  # Initial state / Cold start
 
 
 class ProviderStatus(Enum):
@@ -65,19 +67,20 @@ class ProviderStatus(Enum):
 @dataclass
 class QuotaStatus:
     """Tracks quota usage for a provider."""
+
     requests_remaining: int = 0
     tokens_remaining: int = 0
     requests_limit: int = 0
     tokens_limit: int = 0
     requests_reset: float = 0.0  # Unix timestamp
-    tokens_reset: float = 0.0    # Unix timestamp
+    tokens_reset: float = 0.0  # Unix timestamp
     exhausted: bool = False
-    
+
     @property
     def requests_reset_in(self) -> float:
         """Seconds until request quota resets."""
         return max(0, self.requests_reset - time.time())
-    
+
     @property
     def tokens_reset_in(self) -> float:
         """Seconds until token quota resets."""
@@ -85,6 +88,7 @@ class QuotaStatus:
 
 
 # ── Data Classes ───────────────────────────────────────────────────────
+
 
 @dataclass
 class LatencySnapshot:
@@ -111,22 +115,24 @@ class LatencySnapshot:
 # responsive failure-rate tracking.
 #
 
+
 class CircuitOpenError(Exception):
     """Raised when circuit breaker is open and requests are blocked."""
+
     pass
 
 
 class AsyncCircuitBreaker:
     """Lightweight circuit breaker — AnyIO compliant, zero external deps.
-    
+
     [C-6'] Canonical breaker. All clones must migrate here.
-    
+
     Two failure detection modes:
-    - 'cusum': CUSUM drift detection (default) — detects sustained 
+    - 'cusum': CUSUM drift detection (default) — detects sustained
       changes in failure rate. Better for detecting gradual degradation.
     - 'sliding_window': Rate-based sliding window — counts failures
       within a time window. Better for burst detection.
-    
+
     Key features:
     - 5-state FSM: CLOSED → DEGRADED → OPEN → HALF_OPEN → CLOSED
     - CUSUM anomaly detection for gradual degradation
@@ -155,37 +161,37 @@ class AsyncCircuitBreaker:
         # [id-soft: vet-015] ZONEID Pattern — magic constant for circuit breaker state integrity
         self.magic = ZONEID_BREAKER
         self.state = CircuitState.CLOSED
-        
+
         # --- Stochastic Metrics ---
         self.ema_latency = 0.0
         self.ema_quality = 1.0
         self.cusum_g = 0.0
         self.failure_count = 0
-        
+
         # Constants from R_SOVEREIGN_INFRA_HARDENING
         self.alpha_lat = 0.2
         self.alpha_qual = 0.3
         self.cusum_drift = 0.5
         self.cusum_threshold = 4.0
-        
+
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.half_open_max_requests = half_open_max_requests
         self.half_open_requests = 0
         self.last_failure_time: Optional[float] = None
         self._lock = anyio.Lock()
-        
+
         # Sliding window mode (C-6')
         self.mode = mode
         self.window_seconds = window_seconds
         self.max_failures_per_window = max_failures_per_window
         self._window_failures: list = []  # [(timestamp, ...), ...]
-        
+
         # 429 Classification (hardening P0 — from sprint research 2026-07-22)
         # Prevents the bug class: circuit breakers conflating rate-limit 429s
         # with quota-exhausted 429s (resilient-llm-router pattern)
-        self.rate_limit_until: Optional[float] = None   # timestamp when rate limit expires
-        self.quota_until: Optional[float] = None        # timestamp when quota resets
+        self.rate_limit_until: Optional[float] = None  # timestamp when rate limit expires
+        self.quota_until: Optional[float] = None  # timestamp when quota resets
         self.quota_keywords = re.compile(
             r"monthly.quota|daily.limit|out.of.credits|quota.exceeded|"
             r"insufficient.credit|billing|payment|plan.limit",
@@ -201,15 +207,13 @@ class AsyncCircuitBreaker:
                     self.half_open_requests = 0
                 else:
                     raise CircuitOpenError(
-                        f"Circuit '{self.name}' is OPEN. "
-                        f"Retry in {self._recovery_remaining():.0f}s"
+                        f"Circuit '{self.name}' is OPEN. Retry in {self._recovery_remaining():.0f}s"
                     )
 
             if self.state == CircuitState.HALF_OPEN:
                 if self.half_open_requests >= self.half_open_max_requests:
                     raise CircuitOpenError(
-                        f"Circuit '{self.name}' is HALF_OPEN "
-                        f"(probe limit reached)"
+                        f"Circuit '{self.name}' is HALF_OPEN (probe limit reached)"
                     )
                 self.half_open_requests += 1
 
@@ -220,7 +224,7 @@ class AsyncCircuitBreaker:
             else:
                 result = func(*args, **kwargs)
             latency = (time.monotonic() - start) * 1000
-            
+
             # We assume success if no exception. Quality is 1.0 for basic success.
             await self._on_success(latency=latency, quality=1.0, trace_id=trace_id)
             return result
@@ -232,21 +236,27 @@ class AsyncCircuitBreaker:
                 await self._on_failure(trace_id=trace_id)
             raise
 
-    async def _on_success(self, latency: float, quality: float = 1.0, trace_id: Optional[str] = None):
+    async def _on_success(
+        self, latency: float, quality: float = 1.0, trace_id: Optional[str] = None
+    ):
         # [id-soft: vet-015] ZONEID Pattern — magic constant for circuit breaker state integrity
         validate_zoneid(self.magic, ZONEID_BREAKER, f"AsyncCircuitBreaker._on_success({self.name})")
         async with self._lock:
             old_state = self.state
-            
+
             # 1. Update EMA Latency (SOTA: EWMA for smooth health tracking)
             if self.ema_latency == 0:
                 self.ema_latency = latency
             else:
-                self.ema_latency = (self.alpha_lat * latency) + ((1 - self.alpha_lat) * self.ema_latency)
-            
+                self.ema_latency = (self.alpha_lat * latency) + (
+                    (1 - self.alpha_lat) * self.ema_latency
+                )
+
             # 2. Update EMA Quality
-            self.ema_quality = (self.alpha_qual * quality) + ((1 - self.alpha_qual) * self.ema_quality)
-            
+            self.ema_quality = (self.alpha_qual * quality) + (
+                (1 - self.alpha_qual) * self.ema_quality
+            )
+
             # 3. Update detection metric based on mode
             if self.mode == "sliding_window":
                 # [C-6'] Sliding window: on success, just decay the window count
@@ -255,12 +265,12 @@ class AsyncCircuitBreaker:
                 cutoff = now - self.window_seconds
                 self._window_failures = [t for t in self._window_failures if t > cutoff]
                 recent_failures = len(self._window_failures)
-                
+
                 if recent_failures < self.max_failures_per_window // 4:
                     self.state = CircuitState.CLOSED
                 elif recent_failures < self.max_failures_per_window // 2:
                     self.state = CircuitState.DEGRADED
-                
+
                 if self.state == CircuitState.HALF_OPEN:
                     self.state = CircuitState.CLOSED
             else:
@@ -268,29 +278,34 @@ class AsyncCircuitBreaker:
                 # Z_t = max(0, g_{t-1} + (y_t - mu_0) / sigma_0)
                 # For success, y_t = 0. mu_0 is the baseline failure rate.
                 self.cusum_g = max(0.0, self.cusum_g - 0.5)
-                
+
                 # 4. State Transition (SOTA: 5-State FSM)
                 # Optimal (CLOSED) -> Stressed (DEGRADED) -> Critical (OPEN)
                 if self.cusum_g < 1.0 and self.ema_latency < 1500:
                     self.state = CircuitState.CLOSED
                 elif self.cusum_g < self.cusum_threshold:
                     self.state = CircuitState.DEGRADED
-                
+
                 if self.state == CircuitState.HALF_OPEN:
                     self.state = CircuitState.CLOSED
-                
+
             self.failure_count = 0
             self.half_open_requests = 0
-            
+
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType
+
                     engine = get_engine()
                     await engine.log_event(
                         EventType.BACKEND_FALLBACK,
                         trace_id,
-                        {"provider": self.name, "event": "circuit_closed",
-                         "from": old_state.value, "to": self.state.value}
+                        {
+                            "provider": self.name,
+                            "event": "circuit_closed",
+                            "from": old_state.value,
+                            "to": self.state.value,
+                        },
                     )
                     await engine.record_breaker_transition(
                         provider=self.name,
@@ -310,7 +325,7 @@ class AsyncCircuitBreaker:
             self.failure_count += 1
             self.last_failure_time = time.monotonic()
             old_state = self.state
-            
+
             if self.mode == "sliding_window":
                 # [C-6'] Rate-based sliding-window failure detection
                 # Count failures within a time window — trip if rate exceeds threshold.
@@ -320,7 +335,7 @@ class AsyncCircuitBreaker:
                 cutoff = now - self.window_seconds
                 self._window_failures = [t for t in self._window_failures if t > cutoff]
                 recent_failures = len(self._window_failures)
-                
+
                 if recent_failures >= self.max_failures_per_window:
                     self.state = CircuitState.OPEN
                 elif self.state == CircuitState.HALF_OPEN:
@@ -335,7 +350,7 @@ class AsyncCircuitBreaker:
                 # Z_t = max(0, g_{t-1} + (y_t - mu_0) / sigma_0)
                 # For failure, y_t = 1. mu_0 is baseline failure rate.
                 self.cusum_g = max(0.0, self.cusum_g + 1.0 - self.cusum_drift)
-                
+
                 # 2. State Transition (SOTA: 5-State FSM)
                 # Optimal (CLOSED) -> Stressed (DEGRADED) -> Critical (OPEN)
                 if self.cusum_g > self.cusum_threshold:
@@ -349,17 +364,23 @@ class AsyncCircuitBreaker:
                     self.state = CircuitState.DEGRADED
                 else:
                     self.state = CircuitState.CLOSED
-            
+
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType
+
                     engine = get_engine()
                     await engine.log_event(
                         EventType.BACKEND_FALLBACK,
                         trace_id,
-                        {"provider": self.name, "event": "circuit_opened",
-                         "from": old_state.value, "to": self.state.value,
-                         "failure_count": self.failure_count, "cusum": self.cusum_g}
+                        {
+                            "provider": self.name,
+                            "event": "circuit_opened",
+                            "from": old_state.value,
+                            "to": self.state.value,
+                            "failure_count": self.failure_count,
+                            "cusum": self.cusum_g,
+                        },
                     )
                     # Also record to MetricsDB
                     await engine.record_breaker_transition(
@@ -381,12 +402,12 @@ class AsyncCircuitBreaker:
         trace_id: Optional[str] = None,
     ) -> None:
         """Classify a 429 response as rate-limit or quota-exhausted.
-        
+
         [HARDENING-2026-07-22] Prevents the bug class where circuit breakers
         conflate transient rate limits with quota exhaustion (resilient-llm-router
         pattern). Rate limits use Retry-After (seconds); quotas use period-based
         cooldown (hours/days).
-        
+
         Args:
             retry_after: Retry-After header value in seconds, if present.
             response_body: Response body text for quota keyword detection.
@@ -394,16 +415,16 @@ class AsyncCircuitBreaker:
             trace_id: Optional trace ID for observability.
         """
         now = time.monotonic()
-        
+
         if is_quota is None:
             # Auto-detect: check body for quota keywords, then headers
             has_quota_keywords = bool(self.quota_keywords.search(response_body))
             has_rate_limit_headers = retry_after is not None and retry_after < 3600
             # If retry_after is > 1 hour, treat as quota (not a per-minute rate limit)
             is_long_cooldown = retry_after is not None and retry_after >= 3600
-            
+
             is_quota = has_quota_keywords or is_long_cooldown
-        
+
         if is_quota:
             # Quota exhausted — cooldown until period rolls over
             cooldown = retry_after or 86400.0  # default 24h if no Retry-After
@@ -420,10 +441,11 @@ class AsyncCircuitBreaker:
                 f"[{self.name}] 429 RATE-LIMIT — cooldown {cooldown:.0f}s "
                 f"(until {datetime.now(timezone.utc).isoformat()})"
             )
-        
+
         if trace_id:
             try:
                 from omega.observability import get_engine, EventType
+
                 engine = get_engine()
                 engine.log_event_sync(
                     EventType.BACKEND_FALLBACK,
@@ -437,42 +459,38 @@ class AsyncCircuitBreaker:
                 )
             except (OmegaError, RuntimeError, OSError):
                 pass
-    
+
     def is_429_blocked(self) -> bool:
         """Check if this breaker is blocked by a 429 (rate-limit or quota).
-        
+
         [HARDENING-2026-07-22] Check BEFORE calling provider. The guard()
         method handles circuit state; this handles 429 cooldowns.
-        
+
         Returns:
             True if blocked by rate-limit or quota, False otherwise.
         """
         now = time.monotonic()
-        
+
         if self.quota_until and now < self.quota_until:
             remaining = self.quota_until - now
-            logger.debug(
-                f"[{self.name}] BLOCKED by quota — {remaining:.0f}s remaining"
-            )
+            logger.debug(f"[{self.name}] BLOCKED by quota — {remaining:.0f}s remaining")
             return True
-        
+
         if self.rate_limit_until and now < self.rate_limit_until:
             remaining = self.rate_limit_until - now
-            logger.debug(
-                f"[{self.name}] BLOCKED by rate-limit — {remaining:.0f}s remaining"
-            )
+            logger.debug(f"[{self.name}] BLOCKED by rate-limit — {remaining:.0f}s remaining")
             return True
-        
+
         return False
-    
+
     def can_proceed(self) -> bool:
         """Check if a request may proceed through this breaker (non-raising).
-        
+
         Mirrors the admission logic in ``call()`` but returns a boolean
         instead of raising ``CircuitOpenError``. Used by callers that want
         to skip work gracefully (e.g., ingestion pre-flight checks) rather
         than catch an exception.
-        
+
         Returns:
             True if the breaker is CLOSED/DEGRADED, OPEN-but-ready-for-HALF_OPEN
             probe, or HALF_OPEN within its probe budget. False if the breaker
@@ -485,10 +503,10 @@ class AsyncCircuitBreaker:
         if self.state == CircuitState.HALF_OPEN:
             return self.half_open_requests < self.half_open_max_requests
         return False
-    
+
     def get_429_status(self) -> Dict[str, Any]:
         """Get current 429 classification status for observability.
-        
+
         Returns:
             Dict with rate_limit_until, quota_until, and remaining times.
         """
@@ -500,7 +518,6 @@ class AsyncCircuitBreaker:
             "quota_remaining": max(0, (self.quota_until or 0) - now),
             "is_blocked": self.is_429_blocked(),
         }
-
 
     def _should_transition_to_half_open(self) -> bool:
         if self.last_failure_time is None:
@@ -527,8 +544,16 @@ class AsyncCircuitBreaker:
 
         error_str = str(exc).lower()
         circuit_breaking_keywords = [
-            "connection", "timeout", "500", "502", "503", "504",
-            "unavailable", "refused", "rate limit", "too many requests",
+            "connection",
+            "timeout",
+            "500",
+            "502",
+            "503",
+            "504",
+            "unavailable",
+            "refused",
+            "rate limit",
+            "too many requests",
         ]
         return any(kw in error_str for kw in circuit_breaking_keywords)
 
@@ -538,6 +563,7 @@ class AsyncCircuitBreaker:
 
 
 # ── Health Monitor ─────────────────────────────────────────────────────
+
 
 class HealthMonitor:
     """
@@ -658,29 +684,30 @@ class HealthMonitor:
     def has_quota(self, provider_name: str) -> bool:
         """
         Check if provider has remaining quota for today.
-        
+
         Returns True if either requests or tokens have remaining quota.
         """
         quota = self._quotas.get(provider_name)
         if not quota:
             # No quota tracking = assume available
             return True
-        
+
         # Check if either resource has remaining quota
-        return (quota.requests_remaining > 0 or quota.requests_limit == 0) and \
-               (quota.tokens_remaining > 0 or quota.tokens_limit == 0)
+        return (quota.requests_remaining > 0 or quota.requests_limit == 0) and (
+            quota.tokens_remaining > 0 or quota.tokens_limit == 0
+        )
 
     def record_quota_usage(self, provider_name: str, tokens_used: int, requests_used: int = 1):
         """
         Record quota consumption from response headers.
-        
+
         Updates the quota tracking based on response headers from providers.
         """
         if provider_name not in self._quotas:
             self._quotas[provider_name] = QuotaStatus()
-        
+
         quota = self._quotas[provider_name]
-        
+
         # Decrement remaining tokens (assumes tokens_limit was set by a prior
         # record that knows the provider's cap). If limit is unknown (0),
         # we only track cumulative usage via tokens_remaining going negative —
@@ -711,12 +738,12 @@ class HealthMonitor:
             if self.get_quota_usage(provider) >= 1.0:
                 return ProviderStatus.DEGRADED
             return ProviderStatus.HEALTHY
-        
+
         # Check search providers
         if provider in self._search_providers:
             search_info = self._search_providers[provider]
             return search_info.get("status", ProviderStatus.OFFLINE)
-        
+
         return ProviderStatus.OFFLINE
 
     # ── Circuit Breaker Factory (C-6') ──────────────────────────────────
@@ -731,10 +758,10 @@ class HealthMonitor:
         max_failures_per_window: int = 10,
     ) -> AsyncCircuitBreaker:
         """Get or create a circuit breaker for a named provider.
-        
+
         [C-6'] This is the SINGLE factory for all circuit breakers in the engine.
         All callers MUST use this instead of instantiating their own breaker.
-        
+
         Args:
             name: Provider/service name (e.g., 'google', 'searxng_t1', 'exa_t2')
             failure_threshold: Consecutive failures before opening (CUSUM mode)
@@ -742,7 +769,7 @@ class HealthMonitor:
             mode: 'cusum' (default) or 'sliding_window'
             window_seconds: Time window in seconds (sliding_window mode)
             max_failures_per_window: Max failures in window before tripping
-            
+
         Returns:
             AsyncCircuitBreaker instance (shared singleton per name)
         """
@@ -821,22 +848,16 @@ class HealthMonitor:
     def record_latency(self, model_name: str, latency_ms: float):
         """Record a latency observation for a model."""
         if model_name not in self._latency_windows:
-            self._latency_windows[model_name] = deque(
-                maxlen=self._latency_window_size
-            )
+            self._latency_windows[model_name] = deque(maxlen=self._latency_window_size)
         self._latency_windows[model_name].append(latency_ms)
 
     def record_success(self, model_name: str):
         """Record a successful request."""
-        self._success_counts[model_name] = (
-            self._success_counts.get(model_name, 0) + 1
-        )
+        self._success_counts[model_name] = self._success_counts.get(model_name, 0) + 1
 
     def record_failure(self, model_name: str):
         """Record a failed request."""
-        self._failure_counts[model_name] = (
-            self._failure_counts.get(model_name, 0) + 1
-        )
+        self._failure_counts[model_name] = self._failure_counts.get(model_name, 0) + 1
 
     def record_token_usage(self, provider: str, tokens: int):
         """Track token usage against quota."""
@@ -879,9 +900,7 @@ class HealthMonitor:
                 if provider_name in self._breakers:
                     self._breakers[provider_name].failure_count = 0
 
-            logger.debug(
-                "Provider %s healthy: %.0fms", provider_name, latency_ms
-            )
+            logger.debug("Provider %s healthy: %.0fms", provider_name, latency_ms)
             return True
 
         except Exception as e:
@@ -951,12 +970,13 @@ class HealthMonitor:
                 "status": info.get("status", ProviderStatus.OFFLINE).value,
                 "failure_count": info.get("failure_count", 0),
                 "last_check": info.get("last_check", 0),
-                "circuit_state": self._breakers.get(name, {}).state.value if name in self._breakers else "none",
+                "circuit_state": self._breakers.get(name, {}).state.value
+                if name in self._breakers
+                else "none",
             }
 
         for model_name in set(
-            list(self._latency_windows.keys())
-            + list(self._success_counts.keys())
+            list(self._latency_windows.keys()) + list(self._success_counts.keys())
         ):
             snap = self.get_latency_snapshot(model_name)
             report["models"][model_name] = {

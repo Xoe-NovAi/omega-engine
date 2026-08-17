@@ -54,7 +54,6 @@ from src.omega.mcp_core.compliance import (
     RateLimitHeadersMiddleware,
     ServerDiscoverHandler,
     ProtectedResourceMetadataHandler,
-    PROTOCOL_VERSION_CURRENT,
     SUPPORTED_PROTOCOL_VERSIONS,
 )
 
@@ -76,15 +75,15 @@ def run_mcp(
 ):
     """
     Run an MCP server with dual-transport support AND 2026-07-28 compliance.
-    
+
     Transport endpoints:
         SSE:            GET  /sse → SSE stream → POST /messages/
         Streamable HTTP: POST /mcp → direct JSON-RPC
-    
+
     Compliance endpoints (when enable_compliance=True):
         GET  /.well-known/oauth-protected-resource  (RFC 9728)
         RPC  server/discover                        (SEP-2575)
-    
+
     Args:
         mcp: FastMCP instance to run.
         modify_app: Optional callback to add custom HTTP routes to the
@@ -140,10 +139,13 @@ def run_mcp(
 
         async def handle_sse(request: Request) -> Response:
             async with sse.connect_sse(
-                request.scope, request.receive, request._send,
+                request.scope,
+                request.receive,
+                request._send,
             ) as streams:
                 await mcp._mcp_server.run(
-                    streams[0], streams[1],
+                    streams[0],
+                    streams[1],
                     mcp._mcp_server.create_initialization_options(),
                     stateless=True,
                 )
@@ -171,7 +173,11 @@ def run_mcp(
         compliance_routes = []
         if enable_compliance:
             compliance_routes = [
-                Route("/.well-known/oauth-protected-resource", endpoint=handle_protected_resource, methods=["GET"]),
+                Route(
+                    "/.well-known/oauth-protected-resource",
+                    endpoint=handle_protected_resource,
+                    methods=["GET"],
+                ),
                 Route("/mcp/discover", endpoint=handle_server_discover, methods=["POST"]),
             ]
 
@@ -191,7 +197,12 @@ def run_mcp(
             # Header validation (SEP-2243) — non-strict for legacy MCP clients (OpenCode, Cline)
             middleware.append(Middleware(MCPHeaderValidationMiddleware, strict=False))
             # _meta envelope (SEP-2575) — innermost compliance
-            middleware.append(Middleware(MCPMetaEnvelopeMiddleware, server_info={"name": server_name, "version": server_version}))
+            middleware.append(
+                Middleware(
+                    MCPMetaEnvelopeMiddleware,
+                    server_info={"name": server_name, "version": server_version},
+                )
+            )
 
         # ── Lifespan: run StreamableHTTP session manager + cleanup ────
         @contextlib.asynccontextmanager
@@ -202,7 +213,7 @@ def run_mcp(
             async with anyio.create_task_group() as tg:
                 if on_startup:
                     result = on_startup(tg)
-                    if hasattr(result, '__await__'):
+                    if hasattr(result, "__await__"):
                         await result
                 async with streamable_mgr.run():
                     yield
@@ -211,9 +222,9 @@ def run_mcp(
             # [id-soft: vet-008] Zone Memory — deterministic cleanup via zone-purge semantics
             if on_shutdown:
                 try:
-                    if hasattr(on_shutdown, '__call__'):
+                    if hasattr(on_shutdown, "__call__"):
                         result = on_shutdown()
-                        if hasattr(result, '__await__'):
+                        if hasattr(result, "__await__"):
                             await result
                 except (Exception, RuntimeError, OSError) as e:
                     logger.warning(f"Shutdown callback failed: {e}")
@@ -299,14 +310,18 @@ def run_mcp(
 
 # ── Convenience: Register server/discover with FastMCP ────────────────────
 
-def register_discover_method(mcp: Any, server_name: str = "omega-engine", server_version: str = "1.0.0"):
+
+def register_discover_method(
+    mcp: Any, server_name: str = "omega-engine", server_version: str = "1.0.0"
+):
     """
     Register server/discover method with FastMCP instance.
-    
+
     Call this after creating your FastMCP instance:
         mcp = FastMCP("my-server")
         register_discover_method(mcp)
     """
+
     @mcp.tool(name="server/discover")
     async def server_discover() -> dict:
         """MCP 2026-07-28 server/discover method (SEP-2575)."""
@@ -321,7 +336,7 @@ def register_discover_method(mcp: Any, server_name: str = "omega-engine", server
             "serverInfo": {"name": server_name, "version": server_version},
             "instructions": "Omega Engine MCP Server — Dual transport (SSE + Streamable HTTP)",
         }
-    
+
     return server_discover
 
 

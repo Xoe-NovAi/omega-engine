@@ -29,7 +29,6 @@
 import argparse
 import json
 import logging
-import os
 import re
 import signal
 import subprocess
@@ -50,18 +49,22 @@ import yaml
 
 from omega.errors import (
     OmegaError,
-    ProviderError, ProviderTimeoutError, ProviderUnavailableError,
+    ProviderError,
+    ProviderTimeoutError,
+    ProviderUnavailableError,
 )
-from omega.library.coordinator import COORDINATOR, WorkerState
+from omega.library.coordinator import COORDINATOR
 from omega.oracle.resource_guard import ResourceGuard
 
 logger = logging.getLogger(__name__)
 
 # ── Data Models ──────────────────────────────────────────────────────────────
 
+
 @dataclass
 class IngestJob:
     """A single YouTube ingestion job."""
+
     job_id: str
     url: str
     source: str  # "queue" | "playlist" | "topic" | "file"
@@ -75,6 +78,7 @@ class IngestJob:
 @dataclass
 class SynthesisResult:
     """Result of cross-video synthesis."""
+
     topic: str
     video_count: int
     key_insights: List[str]
@@ -83,14 +87,15 @@ class SynthesisResult:
     recommendations: List[str]
     source_urls: List[str]
 
+
 # ── YouTube URL Helpers ──────────────────────────────────────────────────────
 
 _YOUTUBE_URL_PATTERNS = [
-    r'(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)([a-zA-Z0-9_-]{11})',
+    r"(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)([a-zA-Z0-9_-]{11})",
 ]
 _PLAYLIST_URL_PATTERNS = [
-    r'[?&]list=([a-zA-Z0-9_-]+)',
-    r'youtube\.com/playlist\?list=([a-zA-Z0-9_-]+)',
+    r"[?&]list=([a-zA-Z0-9_-]+)",
+    r"youtube\.com/playlist\?list=([a-zA-Z0-9_-]+)",
 ]
 
 
@@ -121,7 +126,9 @@ def is_youtube_url(url: str) -> bool:
     """Check if a URL is a YouTube video."""
     return extract_video_id(url) is not None
 
+
 # ── Playlist Expander ────────────────────────────────────────────────────────
+
 
 class PlaylistExpander:
     """Expands YouTube playlist URLs into individual video URLs via yt-dlp."""
@@ -135,6 +142,7 @@ class PlaylistExpander:
         Returns list of dicts with keys: id, url, title, channel
         Uses yt-dlp --flat-playlist for fast extraction (no video download).
         """
+
         def _run_ytdlp() -> List[Dict[str, str]]:
             try:
                 result = subprocess.run(
@@ -162,12 +170,14 @@ class PlaylistExpander:
                         data = json.loads(line)
                         video_id = data.get("id", "")
                         if video_id:
-                            videos.append({
-                                "id": video_id,
-                                "url": f"https://www.youtube.com/watch?v={video_id}",
-                                "title": data.get("title", "Unknown"),
-                                "channel": data.get("channel", data.get("uploader", "Unknown")),
-                            })
+                            videos.append(
+                                {
+                                    "id": video_id,
+                                    "url": f"https://www.youtube.com/watch?v={video_id}",
+                                    "title": data.get("title", "Unknown"),
+                                    "channel": data.get("channel", data.get("uploader", "Unknown")),
+                                }
+                            )
                     except json.JSONDecodeError:
                         continue
                 return videos
@@ -185,6 +195,7 @@ class PlaylistExpander:
 
     async def get_playlist_title(self, playlist_url: str) -> str:
         """Get the title of a playlist."""
+
         def _run_ytdlp() -> str:
             try:
                 result = subprocess.run(
@@ -208,7 +219,9 @@ class PlaylistExpander:
 
         return await anyio.to_thread.run_sync(_run_ytdlp)
 
+
 # ── Topic Searcher ───────────────────────────────────────────────────────────
+
 
 class TopicSearcher:
     """Searches YouTube for videos on a given topic via SearXNG."""
@@ -248,19 +261,23 @@ class TopicSearcher:
                     video_id = extract_video_id(url)
                     if not video_id:
                         continue
-                    results.append({
-                        "url": f"https://www.youtube.com/watch?v={video_id}",
-                        "title": item.get("title", "Unknown"),
-                        "channel": item.get("engine", "Unknown"),
-                        "snippet": item.get("content", "")[:300],
-                    })
+                    results.append(
+                        {
+                            "url": f"https://www.youtube.com/watch?v={video_id}",
+                            "title": item.get("title", "Unknown"),
+                            "channel": item.get("engine", "Unknown"),
+                            "snippet": item.get("content", "")[:300],
+                        }
+                    )
                 return results
 
         except (OmegaError, httpx.HTTPError, RuntimeError) as e:
             logger.warning("Topic search via SearXNG failed: %s", e)
             return []
 
+
 # ── Transcript Fetcher ───────────────────────────────────────────────────────
+
 
 class TranscriptFetcher:
     """Fetches YouTube transcripts via youtube-transcript-api.
@@ -288,9 +305,12 @@ class TranscriptFetcher:
         def _fetch() -> Optional[str]:
             try:
                 from youtube_transcript_api import (
-                    TranscriptsDisabled, NoTranscriptFound,
-                    VideoUnavailable, YouTubeTranscriptApi,
+                    TranscriptsDisabled,
+                    NoTranscriptFound,
+                    VideoUnavailable,
+                    YouTubeTranscriptApi,
                 )
+
                 ytt_api = YouTubeTranscriptApi()
                 transcript = ytt_api.fetch(video_id)
                 if transcript and transcript.snippets:
@@ -308,7 +328,9 @@ class TranscriptFetcher:
 
         return await anyio.to_thread.run_sync(_fetch)
 
+
 # ── Video Ingester ───────────────────────────────────────────────────────────
+
 
 class VideoIngester:
     """Ingests a single YouTube video via youtube-transcript-api + YouTubeResearchModule.
@@ -322,14 +344,13 @@ class VideoIngester:
     def __init__(self, config: Optional[Dict] = None):
         self._module: Optional[Any] = None
         self.config = config or {}
-        self._fetcher = TranscriptFetcher(
-            request_delay=self.config.get("request_delay", 2.0)
-        )
+        self._fetcher = TranscriptFetcher(request_delay=self.config.get("request_delay", 2.0))
 
     async def _get_module(self):
         """Lazy-load the YouTubeResearchModule with proper init."""
         if self._module is None:
             from omega_youtube_research import YouTubeResearchModule
+
             self._module = YouTubeResearchModule()
             await self._module.init()
         return self._module
@@ -375,7 +396,9 @@ class VideoIngester:
             logger.error("Sieve-and-Sign pipeline failed for %s: %s", job.url, e)
             return None
 
+
 # ── Cross-Video Synthesizer ─────────────────────────────────────────────────
+
 
 class CrossVideoSynthesizer:
     """Synthesizes knowledge across multiple ingested videos on the same topic.
@@ -489,16 +512,17 @@ Be precise, cite video titles where relevant, and prioritize signal over noise."
     ) -> SynthesisResult:
         """Generate a basic synthesis without LLM (title-based metadata)."""
         titles = [vr.get("title", vr.get("source_id", "Unknown")) for vr in video_results]
-        channels = list(set(
-            vr.get("channel", "Unknown") for vr in video_results if vr.get("channel")
-        ))
+        channels = list(
+            set(vr.get("channel", "Unknown") for vr in video_results if vr.get("channel"))
+        )
 
         return SynthesisResult(
             topic=topic,
             video_count=len(video_results),
             key_insights=[
                 f"Analyzed {len(video_results)} videos on '{topic}'",
-            ] + ([f"Source channels: {', '.join(channels[:5])}"] if channels else []),
+            ]
+            + ([f"Source channels: {', '.join(channels[:5])}"] if channels else []),
             patterns=[
                 f"Videos span {max(len(channels), 1)} unique channel(s)",
             ],
@@ -509,7 +533,9 @@ Be precise, cite video titles where relevant, and prioritize signal over noise."
             source_urls=[vr.get("url", "") for vr in video_results],
         )
 
+
 # ── Hivemind Logger ──────────────────────────────────────────────────────────
+
 
 class HivemindLogger:
     """Atomic JSONL logger for HALL_OF_RECORDS ingestion and synthesis events."""
@@ -556,6 +582,7 @@ class HivemindLogger:
     @staticmethod
     async def _append_jsonl(path: Path, entry: Dict):
         """Atomic append to a JSONL file (tmp + replace)."""
+
         def _append():
             existing = b""
             if path.exists():
@@ -566,7 +593,9 @@ class HivemindLogger:
 
         await anyio.to_thread.run_sync(_append)
 
+
 # ── Main Worker ──────────────────────────────────────────────────────────────
+
 
 class YouTubeWorker:
     """Autonomous YouTube ingestion and synthesis daemon.
@@ -693,20 +722,20 @@ class YouTubeWorker:
 
     # ── Queue Operations ─────────────────────────────────────────────────
 
-    async def submit_url(self, url: str, source: str = "queue",
-                         topic: Optional[str] = None) -> str:
+    async def submit_url(self, url: str, source: str = "queue", topic: Optional[str] = None) -> str:
         """Submit a URL to the Redis queue."""
         r = await self._get_redis()
         job = IngestJob(
             job_id=f"yt_{uuid.uuid4().hex[:12]}",
-            url=url, source=source, topic=topic,
+            url=url,
+            source=source,
+            topic=topic,
         )
         await r.lpush(self.queue_name, json.dumps(asdict(job)))
         logger.info("Submitted to queue: %s (%s)", job.job_id, url)
         return job.job_id
 
-    async def submit_playlist(self, playlist_url: str,
-                              topic: Optional[str] = None) -> int:
+    async def submit_playlist(self, playlist_url: str, topic: Optional[str] = None) -> int:
         """Expand a playlist and submit all videos to the queue."""
         videos = await self.playlist_expander.expand_playlist(playlist_url)
         if not videos:
@@ -746,7 +775,9 @@ class YouTubeWorker:
         for video in results:
             job = IngestJob(
                 job_id=f"yt_{uuid.uuid4().hex[:12]}",
-                url=video["url"], source="topic", topic=topic,
+                url=video["url"],
+                source="topic",
+                topic=topic,
             )
             await r.lpush(self.queue_name, json.dumps(asdict(job)))
             count += 1
@@ -764,7 +795,8 @@ class YouTubeWorker:
 
         content = await anyio.to_thread.run_sync(path.read_text)
         urls = [
-            line.strip() for line in content.splitlines()
+            line.strip()
+            for line in content.splitlines()
             if line.strip() and line.strip().startswith("http")
         ]
 
@@ -773,7 +805,8 @@ class YouTubeWorker:
         for url in urls:
             job = IngestJob(
                 job_id=f"yt_{uuid.uuid4().hex[:12]}",
-                url=url, source="file",
+                url=url,
+                source="file",
             )
             await r.lpush(self.queue_name, json.dumps(asdict(job)))
             count += 1
@@ -795,8 +828,7 @@ class YouTubeWorker:
           6. Release lock
         """
         cycle_id = (
-            f"yt_cycle_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-            f"_{self._cycle_count}"
+            f"yt_cycle_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{self._cycle_count}"
         )
         self._cycle_count += 1
 
@@ -847,10 +879,12 @@ class YouTubeWorker:
                         await r.lpush(self.queue_name, json.dumps(asdict(job)))
                         logger.warning(
                             "Ingestion failed for %s, re-queued (retry %d)",
-                            job.url, job.retry_count,
+                            job.url,
+                            job.retry_count,
                         )
                     return {
-                        "cycle_id": cycle_id, "job_id": job.job_id,
+                        "cycle_id": cycle_id,
+                        "job_id": job.job_id,
                         "url": job.url,
                         "action": "retry" if job.retry_count < 3 else "failed",
                     }
@@ -860,12 +894,14 @@ class YouTubeWorker:
 
                 # 5. Track topic for auto-synthesis
                 topic = job.topic or "general"
-                self._topic_buckets[topic].append({
-                    "url": job.url,
-                    "source_id": ingest_result.get("source_id", ""),
-                    "title": job.url,  # Will be enriched by yt-dlp in future
-                    "chunk_count": ingest_result.get("chunk_count", 0),
-                })
+                self._topic_buckets[topic].append(
+                    {
+                        "url": job.url,
+                        "source_id": ingest_result.get("source_id", ""),
+                        "title": job.url,  # Will be enriched by yt-dlp in future
+                        "chunk_count": ingest_result.get("chunk_count", 0),
+                    }
+                )
 
                 # 6. Log to Hivemind
                 await self._hivemind.log_ingestion(cycle_id, job, ingest_result)
@@ -876,7 +912,8 @@ class YouTubeWorker:
                     if len(bucket) >= self._synth_threshold:
                         logger.info(
                             "Threshold reached for topic '%s' (%d videos) — synthesizing",
-                            topic, len(bucket),
+                            topic,
+                            len(bucket),
                         )
                         synth_result = await self.synthesizer.synthesize(
                             topic=topic,
@@ -892,7 +929,8 @@ class YouTubeWorker:
                             self._topic_buckets[topic] = []
                             logger.info(
                                 "Synthesis complete for topic '%s': %d insights",
-                                topic, len(synth_result.key_insights),
+                                topic,
+                                len(synth_result.key_insights),
                             )
 
                 return {
@@ -939,17 +977,21 @@ class YouTubeWorker:
             ingest_result = await self.ingester.ingest(job)
             if ingest_result:
                 self.metrics["total_ingested"] += 1
-                results.append({
-                    "job_id": job.job_id,
-                    "source_id": ingest_result.get("source_id", ""),
-                    "status": "ok",
-                })
+                results.append(
+                    {
+                        "job_id": job.job_id,
+                        "source_id": ingest_result.get("source_id", ""),
+                        "status": "ok",
+                    }
+                )
             else:
                 self.metrics["total_errors"] += 1
-                results.append({
-                    "job_id": job.job_id,
-                    "status": "error",
-                })
+                results.append(
+                    {
+                        "job_id": job.job_id,
+                        "status": "error",
+                    }
+                )
 
         return {
             "batch_size": len(results),
@@ -985,10 +1027,7 @@ class YouTubeWorker:
         """Return current worker status."""
         r = await self._get_redis()
         queue_len = await r.llen(self.queue_name)
-        topic_counts = {
-            topic: len(videos)
-            for topic, videos in self._topic_buckets.items()
-        }
+        topic_counts = {topic: len(videos) for topic, videos in self._topic_buckets.items()}
         return {
             "running": self._running,
             "cycle_count": self._cycle_count,
@@ -1012,6 +1051,7 @@ def _handle_signal(signum, _frame):
 def _cpu_percent() -> float:
     try:
         import psutil  # noqa: F401 — psutil is an Omega dependency
+
         return float(psutil.cpu_percent(interval=0.1))
     except Exception:
         return 0.0
@@ -1056,7 +1096,9 @@ async def run_daemon(
 
     logger.info(
         "YouTube worker daemon started (cpu_ceiling=%.0f%%, interval=%.0fs, max_cycles=%d)",
-        cpu_ceiling, cycle_interval, max_cycles,
+        cpu_ceiling,
+        cycle_interval,
+        max_cycles,
     )
 
     while not _SHUTDOWN.is_set():
@@ -1078,13 +1120,16 @@ async def run_daemon(
             consecutive_failures += 1
             logger.error(
                 "Cycle %d crashed (%d/%d): %s",
-                cycles + 1, consecutive_failures, MAX_CONSECUTIVE_FAILURES, e,
+                cycles + 1,
+                consecutive_failures,
+                MAX_CONSECUTIVE_FAILURES,
+                e,
                 exc_info=True,
             )
             if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
                 logger.error("Crash-loop detected — aborting YouTube worker")
                 return 1
-            backoff = min(2 ** consecutive_failures, 60)
+            backoff = min(2**consecutive_failures, 60)
             logger.info("Watchdog backoff: %.0fs", backoff)
             await anyio.sleep(backoff)
 
@@ -1100,6 +1145,7 @@ async def run_daemon(
 
 # ── CLI Entry Point ──────────────────────────────────────────────────────────
 
+
 async def main():
     signal.signal(signal.SIGTERM, _handle_signal)
     signal.signal(signal.SIGINT, _handle_signal)
@@ -1113,16 +1159,20 @@ async def main():
     parser.add_argument("--playlist", type=str, help="Expand and ingest a playlist")
     parser.add_argument("--topic", type=str, help="Search and ingest by topic")
     parser.add_argument("--file", type=str, help="Submit URLs from a file")
-    parser.add_argument("--max-cycles", type=int, default=0,
-                        help="Max cycles (0=unlimited)")
-    parser.add_argument("--cpu-ceiling", type=float, default=85.0,
-                        help="CPU throttle threshold (%%), daemon only")
-    parser.add_argument("--interval", type=float, default=5.0,
-                        help="Seconds between cycles, daemon only")
-    parser.add_argument("--config", type=str, default=None,
-                        help="Path to YAML config (default: config/youtube_worker.yaml)")
-    parser.add_argument("--batch-size", type=int, default=10,
-                        help="Max jobs for --batch")
+    parser.add_argument("--max-cycles", type=int, default=0, help="Max cycles (0=unlimited)")
+    parser.add_argument(
+        "--cpu-ceiling", type=float, default=85.0, help="CPU throttle threshold (%%), daemon only"
+    )
+    parser.add_argument(
+        "--interval", type=float, default=5.0, help="Seconds between cycles, daemon only"
+    )
+    parser.add_argument(
+        "--config",
+        type=str,
+        default=None,
+        help="Path to YAML config (default: config/youtube_worker.yaml)",
+    )
+    parser.add_argument("--batch-size", type=int, default=10, help="Max jobs for --batch")
     args = parser.parse_args()
 
     # Load config

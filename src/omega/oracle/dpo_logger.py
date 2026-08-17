@@ -12,7 +12,7 @@ import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Literal
+from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 import anyio
@@ -24,43 +24,46 @@ logger = logging.getLogger(__name__)
 
 class RewardSource(str, Enum):
     """Source of the reward signal for DPO pair generation."""
-    ENVIRONMENTAL = "environmental"      # Test pass/fail, build success, runtime metrics
-    COUNCIL = "council"                  # Oversoul evaluation (Ma'at/Lilith/Kali rejection)
-    USER = "user"                        # Direct user correction/preference
+
+    ENVIRONMENTAL = "environmental"  # Test pass/fail, build success, runtime metrics
+    COUNCIL = "council"  # Oversoul evaluation (Ma'at/Lilith/Kali rejection)
+    USER = "user"  # Direct user correction/preference
 
 
 class ResonanceMode(str, Enum):
     """DPO data collection mode per D16-2."""
+
     DISABLED = "disabled"
-    EXPLICIT = "explicit"      # User explicitly marks chosen/rejected
-    IMPLICIT = "implicit"      # Auto-infer from interaction patterns
-    HYBRID = "hybrid"          # Both explicit and implicit
+    EXPLICIT = "explicit"  # User explicitly marks chosen/rejected
+    IMPLICIT = "implicit"  # Auto-infer from interaction patterns
+    HYBRID = "hybrid"  # Both explicit and implicit
 
 
 @dataclass
 class DPORecord:
     """Single DPO training record in standard format."""
+
     prompt: str
     chosen: str
     rejected: str
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     # Lineage tracking
     lineage_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     trace_id: Optional[str] = None
     session_id: Optional[str] = None
     entity_name: Optional[str] = None
-    
+
     # Reward signals
     reward_source: Optional[RewardSource] = None
     reward_details: Dict[str, Any] = field(default_factory=dict)
-    
+
     # Timestamps
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     # Schema version for migration
     schema_version: int = 2
-    
+
     def to_jsonl(self) -> str:
         """Serialize to JSONL line."""
         data = asdict(self)
@@ -68,7 +71,7 @@ class DPORecord:
         if self.reward_source:
             data["reward_source"] = self.reward_source.value
         return json.dumps(data, ensure_ascii=False)
-    
+
     @classmethod
     def from_jsonl(cls, line: str) -> "DPORecord":
         """Deserialize from JSONL line."""
@@ -81,6 +84,7 @@ class DPORecord:
 @dataclass
 class DPOManifestEntry:
     """Manifest entry for reproducibility (per training_setup_logs pattern)."""
+
     file_path: str
     sha256: str
     record_count: int
@@ -92,16 +96,16 @@ class DPOManifestEntry:
 class DPORecorder:
     """
     Sovereign DPO Training Data Recorder.
-    
+
     Collects prompt/chosen/rejected triples from three reward sources:
     1. Environmental — test results, build status, runtime metrics
     2. Council — Oversoul evaluations (Ma'at/Lilith/Kali)
     3. User — Direct corrections, thumbs up/down, edits
-    
+
     All data passes through PII masking before write (M7/M8).
     JSONL files with time-based rotation (per ChunkHashLogger pattern).
     """
-    
+
     def __init__(
         self,
         output_dir: str = "data/training/dpo",
@@ -118,23 +122,25 @@ class DPORecorder:
         self.queue_capacity = queue_capacity
         self.pii_masker = pii_masker or PIIMasker()
         self.resonance_mode = resonance_mode
-        
+
         # Async write queue
-        self._send_stream, self._receive_stream = anyio.create_memory_object_stream(max_buffer_size=queue_capacity)
+        self._send_stream, self._receive_stream = anyio.create_memory_object_stream(
+            max_buffer_size=queue_capacity
+        )
         self._cancel_scope: Optional[anyio.CancelScope] = None
         self._shutdown = False
-        
+
         # Current file handle
         self._current_handle = None
         self._current_file_opened_at = 0.0
         self._current_file_path = None
         self._current_model_name = ""
-        
+
         # Manifest for reproducibility
         self._manifest: List[DPOManifestEntry] = []
         self._manifest_path = self.output_dir / "manifest.json"
         self._load_manifest()
-        
+
     def _load_manifest(self) -> None:
         """Load existing manifest if present."""
         if self._manifest_path.exists():
@@ -145,7 +151,7 @@ class DPORecorder:
             except Exception as e:
                 logger.warning(f"Failed to load DPO manifest: {e}")
                 self._manifest = []
-                
+
     def _save_manifest(self) -> None:
         """Save manifest to disk."""
         try:
@@ -153,13 +159,13 @@ class DPORecorder:
                 json.dump([asdict(entry) for entry in self._manifest], f, indent=2)
         except Exception as e:
             logger.error(f"Failed to save DPO manifest: {e}")
-            
+
     async def start(self, task_group: Optional[anyio.abc.TaskGroup] = None) -> None:
         """Start the background writer task.
-        
+
         If a task_group is provided, spawns the writer into it (structured concurrency).
         Otherwise, defers writing until a task_group is available via start_with_group().
-        
+
         Args:
             task_group: Optional AnyIO task group for structured concurrency.
         """
@@ -170,17 +176,17 @@ class DPORecorder:
         else:
             # Defer: writer will be started when start_with_group() is called
             logger.info("DPORecorder initialized (deferred start): %s", self.output_dir)
-            
+
     async def start_with_group(self, task_group: anyio.abc.TaskGroup) -> None:
         """Start the background writer within a structured task group.
-        
+
         Call this when a task_group becomes available after deferred initialization.
         """
         if self._cancel_scope is None:
             self._cancel_scope = task_group.cancel_scope
             task_group.start_soon(self._writer_loop)
             logger.info("DPORecorder background writer started: %s", self.output_dir)
-            
+
     async def stop(self) -> None:
         """Stop the background writer and flush queue."""
         self._shutdown = True
@@ -190,13 +196,13 @@ class DPORecorder:
         self._close_current_file()
         self._save_manifest()
         logger.info("DPORecorder stopped")
-        
+
     def _get_current_file_path(self, model_name: str = "") -> Path:
         """Generate current file path with timestamp and model name."""
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         model_suffix = f"_{model_name}" if model_name else ""
         return self.output_dir / f"dpo_pairs_{timestamp}{model_suffix}.jsonl"
-        
+
     def _needs_rotation(self, now: float, model_name: str) -> bool:
         """Check if current file needs rotation."""
         if self._current_handle is None:
@@ -207,31 +213,32 @@ class DPORecorder:
         if model_name and self._current_model_name and model_name != self._current_model_name:
             return True
         return False
-        
+
     def _rotate_file(self, now: float, model_name: str) -> None:
         """Rotate to a new JSONL file."""
         self._close_current_file()
-        
+
         self._current_file_path = self._get_current_file_path(model_name)
         self._current_handle = open(self._current_file_path, "a", encoding="utf-8")
         self._current_file_opened_at = now
         self._current_model_name = model_name
-        
+
         logger.info(f"DPO log rotated: {self._current_file_path.name}")
-        
+
     def _close_current_file(self) -> None:
         """Close current file and update manifest."""
         if self._current_handle:
             self._current_handle.close()
             self._current_handle = None
-            
+
         if self._current_file_path and self._current_file_path.exists():
             # Calculate SHA256 and record count
             import hashlib
+
             sha256 = hashlib.sha256()
             record_count = 0
             lineage_ids = []
-            
+
             with open(self._current_file_path, "rb") as f:
                 for line in f:
                     sha256.update(line)
@@ -243,7 +250,7 @@ class DPORecorder:
                     except Exception as e:
                         logger.debug("Malformed DPO JSONL line skipped: %s", e)
                         pass
-                        
+
             entry = DPOManifestEntry(
                 file_path=str(self._current_file_path),
                 sha256=sha256.hexdigest(),
@@ -252,7 +259,7 @@ class DPORecorder:
                 lineage_ids=lineage_ids,
             )
             self._manifest.append(entry)
-            
+
             # Enforce max_files retention
             if len(self._manifest) > self.max_files:
                 # Remove oldest files
@@ -263,9 +270,9 @@ class DPORecorder:
                     except Exception as e:
                         logger.debug("Failed to unlink old DPO file: %s", e)
                         pass
-                        
+
             self._save_manifest()
-            
+
     async def _writer_loop(self) -> None:
         """Background writer loop - processes queue and writes to JSONL."""
         async with self._receive_stream:
@@ -273,22 +280,22 @@ class DPORecorder:
                 if self._shutdown:
                     break
                 await self._write_entry(entry)
-                
+
     async def _write_entry(self, record: DPORecord) -> None:
         """Write a single DPO record to current JSONL file."""
         now = time.time()
         model_name = record.metadata.get("model_name", "")
-        
+
         if self._needs_rotation(now, model_name):
             self._rotate_file(now, model_name)
-            
+
         if self._current_handle:
             # Apply PII masking to the record before writing
             masked_record = await self._mask_record(record)
             line = masked_record.to_jsonl() + "\n"
             self._current_handle.write(line)
             self._current_handle.flush()
-            
+
     async def _mask_record(self, record: DPORecord) -> DPORecord:
         """Apply PII masking to DPO record fields."""
         # Mask prompt, chosen, rejected
@@ -297,10 +304,10 @@ class DPORecorder:
             user_query=record.prompt,
             provider_name="local",  # DPO data always stored locally
         )
-        
+
         masked_chosen = await self.pii_masker.process_response(record.chosen, token_map)
         masked_rejected = await self.pii_masker.process_response(record.rejected, token_map)
-        
+
         # Create masked copy
         masked = DPORecord(
             prompt=masked_prompt,
@@ -317,7 +324,7 @@ class DPORecorder:
             schema_version=record.schema_version,
         )
         return masked
-        
+
     async def record(
         self,
         prompt: str,
@@ -333,12 +340,12 @@ class DPORecorder:
     ) -> str:
         """
         Record a DPO preference pair.
-        
+
         Returns the lineage_id for tracking.
         """
         if self.resonance_mode == ResonanceMode.DISABLED:
             return ""
-            
+
         record = DPORecord(
             prompt=prompt,
             chosen=chosen,
@@ -350,20 +357,20 @@ class DPORecorder:
             entity_name=entity_name,
             metadata=metadata or {},
         )
-        
+
         if model_name:
             record.metadata["model_name"] = model_name
-            
+
         # Non-blocking enqueue
         try:
             await self._send_stream.send(record)
         except anyio.WouldBlock:
             logger.warning("DPO recorder queue full, dropping record")
-            
+
         return record.lineage_id
-        
+
     # ── Convenience methods for each reward source ─────────────────────────
-    
+
     async def record_environmental(
         self,
         prompt: str,
@@ -391,14 +398,14 @@ class DPORecorder:
             entity_name=entity_name,
             model_name=model_name,
         )
-        
+
     async def record_council(
         self,
         prompt: str,
         chosen: str,
         rejected: str,
         oversoul: str,  # "maat" | "lilith" | "kali"
-        verdict: str,   # "approved" | "rejected" | "deferred"
+        verdict: str,  # "approved" | "rejected" | "deferred"
         reason: str,
         trace_id: Optional[str] = None,
         session_id: Optional[str] = None,
@@ -421,7 +428,7 @@ class DPORecorder:
             entity_name=entity_name,
             model_name=model_name,
         )
-        
+
     async def record_user(
         self,
         prompt: str,
@@ -447,9 +454,9 @@ class DPORecorder:
             entity_name=entity_name,
             model_name=model_name,
         )
-        
+
     # ── Implicit inference from interaction patterns ───────────────────────
-    
+
     async def infer_from_interaction(
         self,
         query: str,
@@ -463,7 +470,7 @@ class DPORecorder:
     ) -> Optional[str]:
         """
         Infer DPO pair from interaction patterns (implicit mode).
-        
+
         Heuristics:
         - User re-phrases same query → original response was rejected
         - User says "no, do X instead" → correction pair
@@ -471,20 +478,28 @@ class DPORecorder:
         """
         if self.resonance_mode not in [ResonanceMode.IMPLICIT, ResonanceMode.HYBRID]:
             return None
-            
+
         if not follow_up_query:
             return None
-            
+
         # Simple heuristic: if follow-up is a correction/clarification
         correction_indicators = [
-            "no,", "actually,", "instead,", "rather,", "correct",
-            "that's wrong", "not what i meant", "try again",
-            "do it differently", "change", "fix"
+            "no,",
+            "actually,",
+            "instead,",
+            "rather,",
+            "correct",
+            "that's wrong",
+            "not what i meant",
+            "try again",
+            "do it differently",
+            "change",
+            "fix",
         ]
-        
+
         follow_up_lower = follow_up_query.lower()
         is_correction = any(ind in follow_up_lower for ind in correction_indicators)
-        
+
         if is_correction and follow_up_response:
             # Original response was rejected, follow-up response is chosen
             return await self.record(
@@ -517,9 +532,9 @@ class DPORecorder:
                 entity_name=entity_name,
                 model_name=model_name,
             )
-            
+
         return None
-        
+
     def get_stats(self) -> Dict[str, Any]:
         """Get recorder statistics."""
         total_records = sum(entry.record_count for entry in self._manifest)
@@ -528,7 +543,9 @@ class DPORecorder:
             "total_files": len(self._manifest),
             "total_records": total_records,
             "current_file": str(self._current_file_path) if self._current_file_path else None,
-            "queue_size": self._send_stream.statistics().current_buffer_used if hasattr(self._send_stream, 'statistics') else "unknown",
+            "queue_size": self._send_stream.statistics().current_buffer_used
+            if hasattr(self._send_stream, "statistics")
+            else "unknown",
             "resonance_mode": self.resonance_mode.value,
             "rotation_interval_hours": self.rotation_interval_sec / 3600,
         }
@@ -548,7 +565,7 @@ def get_dpo_recorder() -> DPORecorder:
             mode = ResonanceMode(mode_str)
         except ValueError:
             mode = ResonanceMode.DISABLED
-            
+
         _dpo_recorder = DPORecorder(resonance_mode=mode)
     return _dpo_recorder
 

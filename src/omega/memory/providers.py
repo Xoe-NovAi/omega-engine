@@ -12,28 +12,18 @@ import fcntl
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    OmegaPersistenceError,
 )
 from omega.errors import (
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    OmegaPersistenceError,
 )
 import redis.asyncio as redis
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -43,18 +33,20 @@ logger = logging.getLogger(__name__)
 # null bytes, separators). Replaces dangerous characters with "_" and
 # strips traversal attempts. A single canonical implementation prevents
 # divergent per-site sanitization.
-_SAFE_TRANS = str.maketrans({
-    '/': '_',
-    '\\': '_',
-    '\x00': '_',
-    ':': '_',
-    '|': '_',
-    '*': '_',
-    '?': '_',
-    '"': '_',
-    '<': '_',
-    '>': '_',
-})
+_SAFE_TRANS = str.maketrans(
+    {
+        "/": "_",
+        "\\": "_",
+        "\x00": "_",
+        ":": "_",
+        "|": "_",
+        "*": "_",
+        "?": "_",
+        '"': "_",
+        "<": "_",
+        ">": "_",
+    }
+)
 
 
 def sanitize_path_component(value: str, max_len: int = 128) -> str:
@@ -90,19 +82,26 @@ def sanitize_path_component(value: str, max_len: int = 128) -> str:
         return "_unset"
     return cleaned[:max_len]
 
+
 class DiskSpaceError(Exception):
     """Raised when disk space is below the safe threshold."""
+
     pass
+
 
 class StorageProvider(ABC):
     """Abstract base class for memory storage providers."""
-    
+
     @abstractmethod
-    async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
+    async def get_history(
+        self, entity_name: str, session_id: str, limit: int
+    ) -> List[Dict[str, Any]]:
         pass
 
     @abstractmethod
-    async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
+    async def save_history(
+        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
+    ) -> None:
         pass
 
     @abstractmethod
@@ -113,17 +112,18 @@ class StorageProvider(ABC):
     async def close(self) -> None:
         pass
 
+
 class RedisStorageProvider(StorageProvider):
     """Hot storage provider using Redis Streams and Hashes."""
-    
+
     def __init__(self, host: str = "localhost", port: int = 6379, password: str = "omega"):
         self.client = redis.Redis(
-            host=host, 
-            port=port, 
-            password=password, 
+            host=host,
+            port=port,
+            password=password,
             decode_responses=True,
             socket_timeout=1.0,
-            socket_connect_timeout=1.0
+            socket_connect_timeout=1.0,
         )
         self.meta_prefix = "omega:session"
         self.hist_prefix = "omega:session:hist"
@@ -132,6 +132,7 @@ class RedisStorageProvider(StorageProvider):
     async def check_health(self) -> bool:
         """Check if Redis is available with a short timeout."""
         import time
+
         start = time.time()
         try:
             await self.client.ping()
@@ -147,14 +148,16 @@ class RedisStorageProvider(StorageProvider):
             logger.debug(f"Redis health check failed after {elapsed:.2f}s")
             return False
 
-    async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
+    async def get_history(
+        self, entity_name: str, session_id: str, limit: int
+    ) -> List[Dict[str, Any]]:
         if not self.is_available:
             if not await self.check_health():
                 return []
         try:
             key = f"{self.hist_prefix}:{session_id}"
             raw_entries = await self.client.xrevrange(key, max="+", min="-", count=limit)
-            
+
             exchanges = []
             for _, data in reversed(raw_entries):
                 try:
@@ -170,29 +173,34 @@ class RedisStorageProvider(StorageProvider):
             self.is_available = False
             raise OmegaPersistenceError(f"Redis get_history failed: {e}", raw_error=e) from e
 
-    async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
+    async def save_history(
+        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
+    ) -> None:
         if not self.is_available:
             if not await self.check_health():
                 return
         try:
             meta_key = f"{self.meta_prefix}:{session_id}"
-            await self.client.hset(meta_key, mapping={
-                "entity": entity_name,
-                "last_updated": datetime.now(timezone.utc).isoformat(),
-                "count": len(exchanges)
-            })
+            await self.client.hset(
+                meta_key,
+                mapping={
+                    "entity": entity_name,
+                    "last_updated": datetime.now(timezone.utc).isoformat(),
+                    "count": len(exchanges),
+                },
+            )
             await self.client.expire(meta_key, 86400)
-            
+
             hist_key = f"{self.hist_prefix}:{session_id}"
             await self.client.delete(hist_key)
-            
+
             if exchanges:
                 pipeline = await self.client.pipeline()
                 for ex in exchanges:
                     pipeline.xadd(hist_key, {"json": json.dumps(ex, default=str)})
                 await pipeline.execute()
                 await self.client.xtrim(hist_key, maxlen=100, approximate=True)
-            
+
             await self.client.expire(hist_key, 86400)
         except OmegaError:
             raise
@@ -225,9 +233,10 @@ class RedisStorageProvider(StorageProvider):
             logger.error("Failed to close Redis connection: %s", e, exc_info=True)
             raise OmegaError(f"Redis close failed: {e}", raw_error=e) from e
 
+
 class FileStorageProvider(StorageProvider):
     """Warm storage provider using JSON files on disk with disk guard and file locking."""
-    
+
     def __init__(self, data_dir: Path):
         self.data_dir = data_dir
         self.entity_dir = data_dir / "entities"
@@ -252,7 +261,9 @@ class FileStorageProvider(StorageProvider):
             usage = await anyio.to_thread.run_sync(shutil.disk_usage, str(target_dir))
             free_percent = usage.free / usage.total
             if free_percent < 0.10:
-                logger.error(f"Disk space guard triggered: {free_percent:.2%} free space remaining on {target_dir}")
+                logger.error(
+                    f"Disk space guard triggered: {free_percent:.2%} free space remaining on {target_dir}"
+                )
                 return False
             return True
         except (OSError, RuntimeError) as e:
@@ -260,9 +271,12 @@ class FileStorageProvider(StorageProvider):
             logger.warning(f"Failed to check disk space: {e}")
             return True
 
-    async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
+    async def get_history(
+        self, entity_name: str, session_id: str, limit: int
+    ) -> List[Dict[str, Any]]:
         path = self._entity_path(entity_name, session_id)
         if await anyio.Path(path).exists():
+
             def _read_with_lock():
                 lock_path = path.with_suffix(".lock")
                 lock_path.touch(exist_ok=True)
@@ -273,6 +287,7 @@ class FileStorageProvider(StorageProvider):
                             return f.read()
                     finally:
                         fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
             try:
                 raw = await anyio.to_thread.run_sync(_read_with_lock)
                 data = json.loads(raw)
@@ -282,13 +297,17 @@ class FileStorageProvider(StorageProvider):
                 return []
         return []
 
-    async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
+    async def save_history(
+        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
+    ) -> None:
         if not await self._check_disk_space():
-            logger.warning(f"Disk space below 10% threshold on {self.data_dir} — continuing anyway (non-fatal)")
-            
+            logger.warning(
+                f"Disk space below 10% threshold on {self.data_dir} — continuing anyway (non-fatal)"
+            )
+
         path = self._entity_path(entity_name, session_id)
         await anyio.Path(path.parent).mkdir(parents=True, exist_ok=True)
-        
+
         temp_path = path.with_suffix(f".{os.getpid()}.tmp")
         data = {
             "entity": entity_name,
@@ -297,7 +316,7 @@ class FileStorageProvider(StorageProvider):
             "last_updated": datetime.now(timezone.utc).isoformat(),
             "exchanges": exchanges,
         }
-        
+
         def _write_and_lock_sync():
             try:
                 lock_path = path.with_suffix(".lock")
@@ -310,16 +329,19 @@ class FileStorageProvider(StorageProvider):
                     finally:
                         fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
             except (OSError, RuntimeError) as e:
-                logger.error(f"FileStorageProvider.save_history failed for {entity_name}/{session_id}: {e}", exc_info=True)
+                logger.error(
+                    f"FileStorageProvider.save_history failed for {entity_name}/{session_id}: {e}",
+                    exc_info=True,
+                )
                 raise
-                    
+
         await anyio.to_thread.run_sync(_write_and_lock_sync)
 
     async def archive(self, entity_name: str, session_id: str) -> bool:
         warm_path = self._entity_path(entity_name, session_id)
         if not await anyio.Path(warm_path).exists():
             return False
-        
+
         def _read_with_lock():
             lock_path = warm_path.with_suffix(".lock")
             with open(lock_path, "r+") as lock_file:
@@ -329,7 +351,7 @@ class FileStorageProvider(StorageProvider):
                         return f.read()
                 finally:
                     fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
-                    
+
         try:
             raw = await anyio.to_thread.run_sync(_read_with_lock)
         except OmegaError:
@@ -337,17 +359,17 @@ class FileStorageProvider(StorageProvider):
         except (OSError, RuntimeError) as e:
             logger.error(f"Failed to read warm path for archiving: {e}", exc_info=True)
             raise OmegaPersistenceError(f"File archive read failed: {e}", raw_error=e) from e
-        
+
         cold_path = self._archive_path(entity_name, session_id)
         await anyio.Path(cold_path.parent).mkdir(parents=True, exist_ok=True)
-        
+
         temp_path = cold_path.with_suffix(f".{os.getpid()}.tmp")
         compressed = gzip.compress(raw.encode())
-        
+
         async with await anyio.open_file(str(temp_path), "wb") as f:
             await f.write(compressed)
         await anyio.to_thread.run_sync(os.replace, str(temp_path), str(cold_path))
-        
+
         await anyio.Path(warm_path).unlink()
         try:
             lock_path = warm_path.with_suffix(".lock")
@@ -362,36 +384,43 @@ class FileStorageProvider(StorageProvider):
     async def close(self) -> None:
         pass
 
+
 class InMemoryStorageProvider(StorageProvider):
     """Volatile storage provider using a local dictionary."""
-    
+
     def __init__(self):
         self._storage: Dict[str, List[Dict[str, Any]]] = {}
-    
-    async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
+
+    async def get_history(
+        self, entity_name: str, session_id: str, limit: int
+    ) -> List[Dict[str, Any]]:
         key = f"{entity_name}:{session_id}"
         return self._storage.get(key, [])[-limit:]
-    
-    async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
+
+    async def save_history(
+        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
+    ) -> None:
         key = f"{entity_name}:{session_id}"
         self._storage[key] = exchanges
-    
+
     async def archive(self, entity_name: str, session_id: str) -> bool:
         key = f"{entity_name}:{session_id}"
         return bool(self._storage.pop(key, None))
-    
+
     async def close(self) -> None:
         self._storage.clear()
 
+
 class USMStorageProvider(StorageProvider):
     """A StorageProvider that delegates all persistence to the Unified State Manager.
-    
+
     This allows MemoryStore to benefit from CAS deduplication and atomic snapshots
     without changing its internal API.
     """
 
     def __init__(self):
         from omega.state import get_usm
+
         self.usm = get_usm()
         self.is_available = True
 
@@ -401,24 +430,28 @@ class USMStorageProvider(StorageProvider):
             await self.usm.get("usm.health_check")
             return True
         except OmegaPersistenceError:
-            return True # It's fine if the key doesn't exist
+            return True  # It's fine if the key doesn't exist
         except Exception as e:
             logger.warning(f"USM health check failed: {e}")
             return False
 
-    async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
+    async def get_history(
+        self, entity_name: str, session_id: str, limit: int
+    ) -> List[Dict[str, Any]]:
         """Retrieve history from USM."""
         state_key = f"mem:{entity_name}:{session_id}"
         data = await self.usm.get(state_key)
-        
+
         if not data:
             return []
-            
+
         # USM stores the whole session; we return the last 'limit' exchanges
         exchanges = data.get("exchanges", [])
         return exchanges[-limit:]
 
-    async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
+    async def save_history(
+        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
+    ) -> None:
         """Save history to USM."""
         state_key = f"mem:{entity_name}:{session_id}"
         data = {
@@ -433,15 +466,14 @@ class USMStorageProvider(StorageProvider):
         """Archive session in USM (by moving to an archive key)."""
         state_key = f"mem:{entity_name}:{session_id}"
         archive_key = f"archive:mem:{entity_name}:{session_id}"
-        
+
         data = await self.usm.get(state_key)
         if not data:
             return False
-            
+
         await self.usm.put(archive_key, data)
         return True
 
     async def close(self) -> None:
         """Close USM resources."""
         pass
-

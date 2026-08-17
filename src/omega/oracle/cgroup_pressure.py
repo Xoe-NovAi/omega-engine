@@ -8,6 +8,7 @@ Compatible with systemd-oomd pressure levels.
 Kernel 5.2+ (memory.pressure), 5.15+ (memory.pressure_level)
 Kernel source: kernel/cgroup/cgroup.c -- memory_pressure_read aggregates PSI per cgroup
 """
+
 import anyio
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,6 +25,7 @@ Window = Literal["avg10", "avg60", "avg300"]
 @dataclass(frozen=True)
 class CgroupPressureSnapshot:
     """Parsed cgroup memory.pressure snapshot"""
+
     cgroup_path: str
     some_avg10: float
     some_avg60: float
@@ -227,6 +229,7 @@ class CgroupPressureMonitor:
 
 # Convenience functions
 
+
 async def read_cgroup_pressure(
     cgroup_path: str = "/sys/fs/cgroup",
     stall_type: StallType = "some",
@@ -237,7 +240,9 @@ async def read_cgroup_pressure(
     return await monitor.get_pressure(stall_type, window)
 
 
-async def read_cgroup_snapshot(cgroup_path: str = "/sys/fs/cgroup") -> Optional[CgroupPressureSnapshot]:
+async def read_cgroup_snapshot(
+    cgroup_path: str = "/sys/fs/cgroup",
+) -> Optional[CgroupPressureSnapshot]:
     """One-shot full cgroup pressure snapshot"""
     monitor = CgroupPressureMonitor(cgroup_path)
     try:

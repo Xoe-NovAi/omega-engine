@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class MCPServerConfig:
     """Configuration for an agent's MCP server."""
+
     account_id: str
     port: int
     host: str = "127.0.0.1"
@@ -40,6 +41,7 @@ class MCPServerConfig:
 @dataclass
 class HandoffPacket:
     """MCP handoff packet (CAO pattern)."""
+
     id: str
     source_account: str
     target_account: str
@@ -53,6 +55,7 @@ class HandoffPacket:
 @dataclass
 class AgentState:
     """Agent state retrieved via MCP."""
+
     account_id: str
     status: str  # idle, busy, error
     current_task: Optional[str] = None
@@ -63,36 +66,36 @@ class AgentState:
 
 class MockMCPClient:
     """Mock MCP client for development/testing."""
-    
+
     def __init__(self, account_id: str):
         self.account_id = account_id
         self._state = AgentState(account_id=account_id, status="idle")
-    
+
     async def call_tool(self, tool: str, args: dict[str, Any]) -> Any:
         """Mock tool call."""
         logger.debug(f"Mock MCP call: {tool} for {self.account_id}")
-        
+
         if tool == "handoff":
             self._state.status = "busy"
             self._state.current_task = args.get("packet", {}).get("task", {}).get("id")
             return {"success": True, "packet_id": args.get("packet", {}).get("id")}
-        
+
         elif tool == "assign":
             self._state.status = "busy"
             self._state.current_task = args.get("task", {}).get("id")
             return {"success": True, "assigned": True}
-        
+
         elif tool == "send_message":
             return {"success": True, "delivered": True}
-        
+
         elif tool == "get_state":
             return self._state.__dict__
-        
+
         elif tool == "get_capabilities":
             return {"capabilities": ["code_gen", "reasoning"]}
-        
+
         return {"success": False, "error": f"Unknown tool: {tool}"}
-    
+
     async def close(self):
         pass
 
@@ -100,7 +103,7 @@ class MockMCPClient:
 class MCPCoordinator:
     """
     MCP-based coordination for headless agent pool (CAO pattern).
-    
+
     Each agent runs an MCP server exposing:
     - handoff: Transfer task to another agent
     - assign: Assign new task to agent
@@ -138,17 +141,17 @@ class MCPCoordinator:
     ) -> MCPServerConfig:
         """Register an agent's MCP server."""
         port = self._get_port(account.id)
-        
+
         config = MCPServerConfig(
             account_id=account.id,
             port=port,
             capabilities=capabilities or list(account.capabilities),
         )
-        
+
         async with self._lock:
             self._servers[account.id] = config
             await self._persist_config(config)
-        
+
         logger.info(f"Registered MCP server for {account.id} on port {port}")
         return config
 
@@ -190,12 +193,12 @@ class MCPCoordinator:
     async def start_agent_server(self, account: Account) -> MCPServerConfig:
         """Start MCP server for an agent (spawns process)."""
         config = await self.register_agent(account)
-        
+
         # In production, this would spawn the agent with MCP server
         # For now, mark as started
         config.started_at = datetime.now()
         config.pid = 0  # Would be actual PID
-        
+
         await self._persist_config(config)
         logger.info(f"Started MCP server for {account.id} on port {config.port}")
         return config
@@ -205,15 +208,16 @@ class MCPCoordinator:
         config = await self.get_server_config(account_id)
         if not config:
             return False
-        
+
         # In production, would kill the process
         if config.pid:
             try:
                 import os
+
                 os.kill(config.pid, 15)  # SIGTERM
             except ProcessLookupError:
                 pass
-        
+
         config.pid = None
         config.started_at = None
         await self._persist_config(config)
@@ -263,7 +267,7 @@ class MCPCoordinator:
     ) -> HandoffPacket:
         """
         Handoff task from one agent to another (CAO handoff primitive).
-        
+
         This is the primary coordination mechanism - agents hand off
         tasks to each other via MCP.
         """
@@ -278,18 +282,21 @@ class MCPCoordinator:
 
         # Send handoff to target agent via MCP
         client = await self._get_client(target_account)
-        result = await client.call_tool("handoff", {
-            "packet": {
-                "id": packet.id,
-                "source_account": packet.source_account,
-                "target_account": packet.target_account,
-                "task": packet.task.to_dict(),
-                "context": packet.context,
-                "priority": packet.priority,
-                "created_at": packet.created_at.isoformat(),
-                "metadata": packet.metadata,
-            }
-        })
+        result = await client.call_tool(
+            "handoff",
+            {
+                "packet": {
+                    "id": packet.id,
+                    "source_account": packet.source_account,
+                    "target_account": packet.target_account,
+                    "task": packet.task.to_dict(),
+                    "context": packet.context,
+                    "priority": packet.priority,
+                    "created_at": packet.created_at.isoformat(),
+                    "metadata": packet.metadata,
+                }
+            },
+        )
 
         if not result.get("success"):
             raise RuntimeError(f"Handoff failed: {result.get('error')}")
@@ -306,15 +313,18 @@ class MCPCoordinator:
     ) -> bool:
         """
         Assign task to agent (CAO assign primitive).
-        
+
         Async fire-and-forget with optional callback.
         """
         client = await self._get_client(account_id)
-        result = await client.call_tool("assign", {
-            "task": task.to_dict(),
-            "context": context or {},
-            "callback": callback,
-        })
+        result = await client.call_tool(
+            "assign",
+            {
+                "task": task.to_dict(),
+                "context": context or {},
+                "callback": callback,
+            },
+        )
 
         if not result.get("success"):
             logger.error(f"Assign failed for {account_id}: {result.get('error')}")
@@ -331,14 +341,17 @@ class MCPCoordinator:
     ) -> bool:
         """
         Send message to agent (CAO send_message primitive).
-        
+
         Communicates with existing agent session.
         """
         client = await self._get_client(account_id)
-        result = await client.call_tool("send_message", {
-            "message": message,
-            "type": message_type,
-        })
+        result = await client.call_tool(
+            "send_message",
+            {
+                "message": message,
+                "type": message_type,
+            },
+        )
 
         if not result.get("success"):
             logger.error(f"Send message failed for {account_id}: {result.get('error')}")
@@ -352,19 +365,21 @@ class MCPCoordinator:
         try:
             client = await self._get_client(account_id)
             result = await client.call_tool("get_state", {})
-            
+
             if result.get("success") is not False:
                 return AgentState(
                     account_id=account_id,
                     status=result.get("status", "unknown"),
                     current_task=result.get("current_task"),
                     context_usage=result.get("context_usage", 0.0),
-                    last_activity=datetime.fromisoformat(result["last_activity"]) if result.get("last_activity") else None,
+                    last_activity=datetime.fromisoformat(result["last_activity"])
+                    if result.get("last_activity")
+                    else None,
                     metadata=result.get("metadata", {}),
                 )
         except Exception as e:
             logger.error(f"Failed to get state for {account_id}: {e}")
-        
+
         return None
 
     async def get_agent_capabilities(self, account_id: str) -> list[str]:
@@ -386,15 +401,15 @@ class MCPCoordinator:
         """Broadcast message to all agents in pool."""
         exclude = exclude or []
         results = {}
-        
+
         for account_id, config in self._servers.items():
             if account_id in exclude:
                 continue
             if pool and not account_id.startswith(pool.value):
                 continue
-            
+
             results[account_id] = await self.send_message(account_id, message)
-        
+
         return results
 
     async def health_check_all(self) -> dict[str, bool]:
@@ -424,9 +439,11 @@ class MCPCoordinator:
 
 # --- CAO Fleet Coordination (Multi-Node) ---
 
+
 @dataclass
 class FleetNode:
     """Fleet node configuration (CAO fleet pattern)."""
+
     name: str
     host: str
     port: int = 9889
@@ -437,7 +454,7 @@ class FleetNode:
 class FleetCoordinator:
     """
     Multi-node fleet coordination (CAO fleet pattern).
-    
+
     Coordinates pool across multiple machines:
     - fleet.json registry (git-ignored)
     - Concurrent health checks with per-node isolation
@@ -453,23 +470,23 @@ class FleetCoordinator:
         """Load fleet configuration from file."""
         if not self.fleet_config_path.exists():
             return []
-        
+
         content = await anyio.to_thread.run_sync(self.fleet_config_path.read_text)
         data = json.loads(content)
-        
+
         nodes = []
         for node_data in data.get("machines", []):
             nodes.append(FleetNode(**node_data))
-        
+
         async with self._lock:
             self._nodes = {n.name: n for n in nodes}
-        
+
         return nodes
 
     async def save_fleet_config(self, nodes: list[FleetNode]) -> None:
         """Save fleet configuration to file."""
         self.fleet_config_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         data = {
             "port": 9889,
             "machines": [
@@ -483,12 +500,12 @@ class FleetCoordinator:
                 for n in nodes
             ],
         }
-        
+
         await anyio.to_thread.run_sync(
             self.fleet_config_path.write_text,
             json.dumps(data, indent=2),
         )
-        
+
         async with self._lock:
             self._nodes = {n.name: n for n in nodes}
 
@@ -503,12 +520,13 @@ class FleetCoordinator:
         node = self._nodes.get(node_name)
         if not node:
             raise ValueError(f"Unknown fleet node: {node_name}")
-        
+
         # Would proxy to node's MCP coordinator
         return f"launched-on-{node_name}"
 
 
 # --- Convenience Functions ---
+
 
 async def create_coordinator(
     base_port: int = 9800,

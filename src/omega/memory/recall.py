@@ -15,7 +15,6 @@
 
 import json
 import logging
-import math
 import re
 import sqlite3
 from dataclasses import dataclass, field
@@ -44,6 +43,7 @@ CHARS_PER_TOKEN: int = 4
 
 # ── Dataclasses ─────────────────────────────────────────────────────
 
+
 @dataclass
 class Turn:
     """A single conversation turn with quality and decay metadata.
@@ -54,6 +54,7 @@ class Turn:
     decayed_score is a computed property — always calculated live from
     base_quality, decay_alpha, and current age.
     """
+
     id: int = 0
     entity_name: str = ""
     session_id: str = ""
@@ -107,6 +108,7 @@ class ExchangePair:
     Used as the return type for window() — ContextBuilder consumes
     exchanges as (user_content, assistant_content) pairs.
     """
+
     turn_index: int
     user_content: str
     assistant_content: str
@@ -122,6 +124,7 @@ class ExchangePair:
 @dataclass
 class DecayStats:
     """Statistics from a decay_pass() run."""
+
     turns_updated: int = 0
     entities_processed: int = 0
     average_decay: float = 0.0
@@ -129,6 +132,7 @@ class DecayStats:
 
 
 # ── RecallStore ─────────────────────────────────────────────────────
+
 
 class RecallStore:
     """Quality-weighted warm memory with power-law decay.
@@ -147,6 +151,7 @@ class RecallStore:
     def __init__(self, db_path: Optional[Path] = None, block_store: Optional[Any] = None):
         if db_path is None:
             from omega.memory_store import _get_memory_dir
+
             db_path = _get_memory_dir() / "omega_memory.db"
         self.db_path = db_path
         self._conn: Optional[sqlite3.Connection] = None
@@ -164,7 +169,7 @@ class RecallStore:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
             # FS-B4: Use sqlite_policy memory profile (32MB cache, D-282)
             self._conn = get_sqlite_connection(self.db_path, profile="memory")
-            
+
             # Operational PRAGMA (per A13 — not connection setup)
             self._conn.execute("PRAGMA optimize=0x10002")
         return self._conn
@@ -238,10 +243,8 @@ class RecallStore:
             score += 0.1
 
         # 2. Technical content (0.0-0.2)
-        has_code = bool(re.search(r'```|`[^`]+`|import |def |class |function ', content))
-        has_reference = bool(
-            re.search(r'\[\d+\]|\(.*\d{4}\)|http[s]?://|arXiv|doi:', content)
-        )
+        has_code = bool(re.search(r"```|`[^`]+`|import |def |class |function ", content))
+        has_reference = bool(re.search(r"\[\d+\]|\(.*\d{4}\)|http[s]?://|arXiv|doi:", content))
         if has_code:
             score += 0.15
         if has_reference:
@@ -251,8 +254,15 @@ class RecallStore:
         has_question = "?" in content or any(
             kw in content.lower()
             for kw in [
-                "what", "how", "why", "when", "where",
-                "who", "which", "can you", "could you",
+                "what",
+                "how",
+                "why",
+                "when",
+                "where",
+                "who",
+                "which",
+                "can you",
+                "could you",
             ]
         )
         if has_question:
@@ -314,8 +324,15 @@ class RecallStore:
                  base_quality, decay_alpha, metadata_json)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
-                    entity_name, session_id, turn_index, role, content,
-                    timestamp, base_quality, decay_alpha, metadata_json,
+                    entity_name,
+                    session_id,
+                    turn_index,
+                    role,
+                    content,
+                    timestamp,
+                    base_quality,
+                    decay_alpha,
+                    metadata_json,
                 ),
             )
             row_id = cursor.lastrowid
@@ -490,10 +507,7 @@ class RecallStore:
             pair.combined_quality /= 2.0
 
         # Filter to complete pairs (both user and assistant present)
-        complete_pairs = [
-            p for p in pair_map.values()
-            if p.user_content and p.assistant_content
-        ]
+        complete_pairs = [p for p in pair_map.values() if p.user_content and p.assistant_content]
 
         if not complete_pairs:
             return []
@@ -565,9 +579,7 @@ class RecallStore:
                     )
                     total_updated += cursor.rowcount
                 except Exception as e:
-                    logger.error(
-                        "decay_pass failed for entity %s: %s", entity_name, e
-                    )
+                    logger.error("decay_pass failed for entity %s: %s", entity_name, e)
                     stats.errors.append(f"{entity_name}: {e}")
 
             stats.turns_updated = total_updated
@@ -621,6 +633,7 @@ class RecallStore:
         # Close any implicit read transaction before write (avoids BEGIN IMMEDIATE conflict)
         def _sync_rollback():
             self._get_conn().rollback()
+
         await anyio.to_thread.run_sync(_sync_rollback)
 
         # 2. Compose into structured block text
@@ -700,9 +713,7 @@ class RecallStore:
             ValueError: If alpha is not in [0.0, 1.0].
         """
         if not 0.0 <= alpha <= 1.0:
-            raise ValueError(
-                f"Alpha must be between 0.0 and 1.0, got {alpha}"
-            )
+            raise ValueError(f"Alpha must be between 0.0 and 1.0, got {alpha}")
 
         await self._ensure_initialized()
 
@@ -727,15 +738,12 @@ class RecallStore:
 
         def _sync_stats():
             conn = self._get_conn()
-            total = conn.execute(
-                "SELECT COUNT(*) as c FROM recall_turns"
-            ).fetchone()["c"]
+            total = conn.execute("SELECT COUNT(*) as c FROM recall_turns").fetchone()["c"]
             entities = conn.execute(
                 "SELECT COUNT(DISTINCT entity_name) as c FROM recall_turns"
             ).fetchone()["c"]
             sessions = conn.execute(
-                "SELECT COUNT(DISTINCT entity_name || ':' || session_id) as c "
-                "FROM recall_turns"
+                "SELECT COUNT(DISTINCT entity_name || ':' || session_id) as c FROM recall_turns"
             ).fetchone()["c"]
             avg_quality = conn.execute(
                 "SELECT AVG(base_quality) as a FROM recall_turns"

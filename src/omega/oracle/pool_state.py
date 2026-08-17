@@ -35,7 +35,7 @@ class PoolConfig:
 
     def __post_init__(self) -> None:
         if not self.key_ids:
-            self.key_ids = [f"agy_key_{i+1:02d}" for i in range(self.key_count)]
+            self.key_ids = [f"agy_key_{i + 1:02d}" for i in range(self.key_count)]
 
     @property
     def available_models(self) -> List[str]:
@@ -78,11 +78,11 @@ class AntiThrashingConfig:
 class KeyRotationConfig:
     """Key rotation configuration."""
 
-    algorithm: str = "sticky"  # Round-robin ERADICATED per D-1 — Google bans rapid multi-account switching
-    cool_period_seconds: int = 3600
-    anti_thrashing: AntiThrashingConfig = field(
-        default_factory=AntiThrashingConfig
+    algorithm: str = (
+        "sticky"  # Round-robin ERADICATED per D-1 — Google bans rapid multi-account switching
     )
+    cool_period_seconds: int = 3600
+    anti_thrashing: AntiThrashingConfig = field(default_factory=AntiThrashingConfig)
 
 
 @dataclass
@@ -212,9 +212,7 @@ class PoolState:
             )
             # Resolve emails if account map is available
             if account_map:
-                pool_g_config.key_ids = cls._resolve_key_ids(
-                    pool_g_config.key_count, account_map
-                )
+                pool_g_config.key_ids = cls._resolve_key_ids(pool_g_config.key_count, account_map)
 
         # Parse Pool C (Claude)
         pool_c_config = None
@@ -228,9 +226,7 @@ class PoolState:
                 reset_cron=pc.get("reset", "weekly Monday 00:00 UTC"),
             )
             if account_map:
-                pool_c_config.key_ids = cls._resolve_key_ids(
-                    pool_c_config.key_count, account_map
-                )
+                pool_c_config.key_ids = cls._resolve_key_ids(pool_c_config.key_count, account_map)
 
         # Parse key rotation
         rotation_config = KeyRotationConfig()
@@ -238,7 +234,8 @@ class PoolState:
             kr = pools["key_rotation"]
             rotation_config = KeyRotationConfig(
                 algorithm=kr.get(
-                    "algorithm", "sticky"  # Round-robin ERADICATED per D-1
+                    "algorithm",
+                    "sticky",  # Round-robin ERADICATED per D-1
                 ),
                 cool_period_seconds=kr.get("cool_period_seconds", 3600),
                 anti_thrashing=AntiThrashingConfig(
@@ -274,7 +271,7 @@ class PoolState:
         account_map: AccountMapping,
     ) -> List[str]:
         """Build key_ids list, preserving email mapping where available."""
-        key_ids = [f"agy_key_{i+1:02d}" for i in range(key_count)]
+        key_ids = [f"agy_key_{i + 1:02d}" for i in range(key_count)]
         # Ensure all generated keys have entries in the account map
         # (missing entries will just return None for get_email)
         return key_ids
@@ -296,6 +293,7 @@ class PoolState:
         if self.pool_c:
             keys.update(self.pool_c.key_ids)
         return sorted(keys)
+
 
 # ── Pool Health ─────────────────────────────────────────────────────────────
 

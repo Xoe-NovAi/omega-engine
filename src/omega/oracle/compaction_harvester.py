@@ -32,9 +32,11 @@ METRICS_WINDOW = 500
 # MODELS
 # ============================================================================
 
+
 @dataclass
 class CompactionEvent:
     """A recorded compaction event."""
+
     entity_name: str
     session_id: str
     before_count: int
@@ -51,6 +53,7 @@ class CompactionEvent:
 @dataclass
 class SessionSizeReport:
     """Report on a session's size relative to compaction thresholds."""
+
     entity_name: str
     session_id: str
     exchange_count: int
@@ -61,6 +64,7 @@ class SessionSizeReport:
 @dataclass
 class CompactionMetrics:
     """Aggregated metrics for compaction activity."""
+
     total_events: int = 0
     total_exchanges_saved: int = 0
     average_exchanges_saved: float = 0.0
@@ -71,6 +75,7 @@ class CompactionMetrics:
 # ============================================================================
 # HARVESTER ENGINE
 # ============================================================================
+
 
 class CompactionHarvester:
     """
@@ -231,7 +236,8 @@ class CompactionHarvester:
         task_group.start_soon(self._harvest_loop)
         logger.info(
             "CompactionHarvester online — max=%d warn=%d",
-            self.max_exchanges, self.warn_threshold,
+            self.max_exchanges,
+            self.warn_threshold,
         )
 
     async def stop(self) -> None:
@@ -275,6 +281,7 @@ def reset_harvester() -> None:
 # ============================================================================
 # INTEGRATION
 # ============================================================================
+
 
 async def start_compaction_harvester(task_group: anyio.abc.TaskGroup):
     """Helper to start the harvester within a TaskGroup."""

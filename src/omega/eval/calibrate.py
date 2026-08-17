@@ -16,7 +16,7 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -90,9 +90,14 @@ class JudgeCalibrator:
 
         logger.info(
             "Judge calibrated: ECE %.3f -> %.3f on %d samples (saved %s)",
-            ece_before, ece_after, len(judgments), output_path,
+            ece_before,
+            ece_after,
+            len(judgments),
+            output_path,
         )
-        return CalibratedModel(path=str(out), ece_before=ece_before, ece_after=ece_after, n_samples=len(judgments))
+        return CalibratedModel(
+            path=str(out), ece_before=ece_before, ece_after=ece_after, n_samples=len(judgments)
+        )
 
     @staticmethod
     def apply(model_path: str, score: float) -> float:
@@ -134,7 +139,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Omega Judge Calibration (S2)")
     parser.add_argument("--dataset", default="data/eval/golden_v1.jsonl")
     parser.add_argument("--output", default="config/eval/calibrated_model.pkl")
-    parser.add_argument("--human-labels", default=None, help="Optional JSON list of 0/1 human labels")
+    parser.add_argument(
+        "--human-labels", default=None, help="Optional JSON list of 0/1 human labels"
+    )
     args = parser.parse_args()
 
     # Load golden dataset
@@ -151,18 +158,25 @@ def main() -> None:
         import random
 
         random.seed(7)
-        judgments = [random.uniform(0.85, 0.98) if l == 1 else random.uniform(0.2, 0.5) for l in human_labels]
+        judgments = [
+            random.uniform(0.85, 0.98) if l == 1 else random.uniform(0.2, 0.5) for l in human_labels
+        ]
     else:
         judgments, human_labels = _synthetic_labels(samples)
 
     calibrator = JudgeCalibrator()
     result = calibrator.calibrate(judgments, human_labels, args.output)
-    print(json.dumps({
-        "ece_before": round(result.ece_before, 4),
-        "ece_after": round(result.ece_after, 4),
-        "n_samples": result.n_samples,
-        "model_path": result.path,
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "ece_before": round(result.ece_before, 4),
+                "ece_after": round(result.ece_after, 4),
+                "n_samples": result.n_samples,
+                "model_path": result.path,
+            },
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

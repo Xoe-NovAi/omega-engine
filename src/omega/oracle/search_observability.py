@@ -15,7 +15,7 @@ import logging
 import uuid
 import json
 from typing import Dict, Any, Optional, List
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from enum import Enum
@@ -25,11 +25,12 @@ logger = logging.getLogger(__name__)
 
 class SearchTier(Enum):
     """SSP-V2 Search Tiers."""
+
     T0_LOCAL = 0
     T1_SEARXNG = 1
     T2_EXA = 2
     T3_FIRECRAWL = 3
-    
+
     @property
     def name_str(self) -> str:
         return self.name
@@ -37,6 +38,7 @@ class SearchTier(Enum):
 
 class SearchOutcome(Enum):
     """Search execution outcomes."""
+
     SUCCESS = "success"
     EMPTY = "empty"
     ERROR = "error"
@@ -50,6 +52,7 @@ class SearchOutcome(Enum):
 @dataclass
 class TierExecutionRecord:
     """Record of a single tier execution attempt."""
+
     tier: int
     tier_name: str
     trace_id: str
@@ -64,11 +67,13 @@ class TierExecutionRecord:
     circuit_state_before: Optional[str] = None
     circuit_state_after: Optional[str] = None
     provider_health: Optional[bool] = None
-    
+
     def mark_start(self) -> None:
         self.start_time = time.time()
-    
-    def mark_end(self, outcome: SearchOutcome, result: str = "", error: Optional[Exception] = None) -> None:
+
+    def mark_end(
+        self, outcome: SearchOutcome, result: str = "", error: Optional[Exception] = None
+    ) -> None:
         self.end_time = time.time()
         self.latency_ms = (self.end_time - self.start_time) * 1000
         self.outcome = outcome
@@ -76,7 +81,7 @@ class TierExecutionRecord:
         if error:
             self.error_type = type(error).__name__
             self.error_message = str(error)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "tier": self.tier,
@@ -97,6 +102,7 @@ class TierExecutionRecord:
 @dataclass
 class SearchPipelineTrace:
     """Complete trace of a search pipeline execution."""
+
     trace_id: str
     query: str
     entity_name: str
@@ -109,17 +115,19 @@ class SearchPipelineTrace:
     final_outcome: SearchOutcome = SearchOutcome.ERROR
     verification_status: Optional[str] = None
     fallback_count: int = 0
-    
+
     def add_tier_execution(self, record: TierExecutionRecord) -> None:
         self.tier_executions.append(record)
-    
+
     def mark_complete(self, final_tier: Optional[int], outcome: SearchOutcome) -> None:
         self.end_time = time.time()
         self.total_latency_ms = (self.end_time - self.start_time) * 1000
         self.final_tier = final_tier
         self.final_outcome = outcome
-        self.fallback_count = len([r for r in self.tier_executions if r.outcome != SearchOutcome.SUCCESS])
-    
+        self.fallback_count = len(
+            [r for r in self.tier_executions if r.outcome != SearchOutcome.SUCCESS]
+        )
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "trace_id": self.trace_id,
@@ -137,12 +145,12 @@ class SearchPipelineTrace:
 
 class SearchObservability:
     """Central observability coordinator for search pipeline."""
-    
+
     def __init__(self, enable_console_logging: bool = True):
         self.enable_console_logging = enable_console_logging
         self._traces: Dict[str, SearchPipelineTrace] = {}
-        self._lock = __import__('threading').RLock()
-    
+        self._lock = __import__("threading").RLock()
+
     @asynccontextmanager
     async def trace_search(
         self,
@@ -159,21 +167,21 @@ class SearchObservability:
             start_time=time.time(),
             search_intent=search_intent,
         )
-        
+
         with self._lock:
             self._traces[trace_id] = trace
-        
+
         logger.info(
             f"[SEARCH-TRACE] trace_id={trace_id} entity={entity_name} "
             f"query_hash={hash(query) % 1000000} intent={search_intent}"
         )
-        
+
         try:
             yield trace
         finally:
             # Trace is completed by caller via trace.mark_complete()
             pass
-    
+
     def record_tier_execution(
         self,
         trace: SearchPipelineTrace,
@@ -199,9 +207,9 @@ class SearchObservability:
         record.circuit_state_before = circuit_state_before
         record.circuit_state_after = circuit_state_after
         record.provider_health = provider_health
-        
+
         trace.add_tier_execution(record)
-        
+
         # Structured log
         log_data = {
             "trace_id": trace.trace_id,
@@ -214,16 +222,16 @@ class SearchObservability:
             "circuit_state_before": circuit_state_before,
             "circuit_state_after": circuit_state_after,
         }
-        
+
         if outcome == SearchOutcome.SUCCESS:
             logger.info(f"[SEARCH-TIER] {json.dumps(log_data)}")
         elif outcome == SearchOutcome.CIRCUIT_OPEN:
             logger.warning(f"[SEARCH-TIER] {json.dumps(log_data)}")
         else:
             logger.error(f"[SEARCH-TIER] {json.dumps(log_data)}")
-        
+
         return record
-    
+
     def complete_trace(
         self,
         trace: SearchPipelineTrace,
@@ -234,43 +242,39 @@ class SearchObservability:
         """Mark trace as complete."""
         trace.mark_complete(final_tier, outcome)
         trace.verification_status = verification_status
-        
+
         # Log completion
         log_data = trace.to_dict()
         if outcome == SearchOutcome.SUCCESS:
             logger.info(f"[SEARCH-COMPLETE] {json.dumps(log_data)}")
         else:
             logger.error(f"[SEARCH-COMPLETE] {json.dumps(log_data)}")
-        
+
         # Store for potential retrieval
         with self._lock:
             self._traces[trace.trace_id] = trace
-    
+
     def get_trace(self, trace_id: str) -> Optional[SearchPipelineTrace]:
         """Retrieve a trace by ID."""
         with self._lock:
             return self._traces.get(trace_id)
-    
+
     def get_recent_traces(self, limit: int = 100) -> List[Dict[str, Any]]:
         """Get recent traces as dicts."""
         with self._lock:
-            traces = sorted(
-                self._traces.values(),
-                key=lambda t: t.start_time,
-                reverse=True
-            )
+            traces = sorted(self._traces.values(), key=lambda t: t.start_time, reverse=True)
             return [t.to_dict() for t in traces[:limit]]
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get aggregate statistics."""
         with self._lock:
             traces = list(self._traces.values())
             if not traces:
                 return {"total_traces": 0}
-            
+
             successful = [t for t in traces if t.final_outcome == SearchOutcome.SUCCESS]
             failed = [t for t in traces if t.final_outcome != SearchOutcome.SUCCESS]
-            
+
             tier_stats = {}
             for t in traces:
                 for rec in t.tier_executions:
@@ -281,24 +285,30 @@ class SearchObservability:
                         tier_stats[rec.tier]["successes"] += 1
                     if rec.latency_ms:
                         tier_stats[rec.tier]["total_latency"] += rec.latency_ms
-            
+
             for tier, stats in tier_stats.items():
-                stats["success_rate"] = stats["successes"] / stats["calls"] if stats["calls"] > 0 else 0
-                stats["avg_latency_ms"] = stats["total_latency"] / stats["calls"] if stats["calls"] > 0 else 0
-            
+                stats["success_rate"] = (
+                    stats["successes"] / stats["calls"] if stats["calls"] > 0 else 0
+                )
+                stats["avg_latency_ms"] = (
+                    stats["total_latency"] / stats["calls"] if stats["calls"] > 0 else 0
+                )
+
             return {
                 "total_traces": len(traces),
                 "successful_traces": len(successful),
                 "failed_traces": len(failed),
                 "success_rate": len(successful) / len(traces) if traces else 0,
-                "avg_total_latency_ms": sum(t.total_latency_ms or 0 for t in traces) / len(traces) if traces else 0,
+                "avg_total_latency_ms": sum(t.total_latency_ms or 0 for t in traces) / len(traces)
+                if traces
+                else 0,
                 "tier_stats": tier_stats,
             }
 
 
 # Global observability instance
 _search_observability: Optional[SearchObservability] = None
-_obs_lock = __import__('threading').Lock()
+_obs_lock = __import__("threading").Lock()
 
 
 def get_search_observability() -> SearchObservability:
@@ -312,12 +322,7 @@ def get_search_observability() -> SearchObservability:
 
 
 # Convenience functions for structured logging
-def log_search_event(
-    event_type: str,
-    trace_id: str,
-    tier: Optional[int] = None,
-    **kwargs
-) -> None:
+def log_search_event(event_type: str, trace_id: str, tier: Optional[int] = None, **kwargs) -> None:
     """Log a structured search event."""
     log_data = {
         "event": event_type,

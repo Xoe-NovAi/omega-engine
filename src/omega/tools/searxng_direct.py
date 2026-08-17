@@ -9,7 +9,7 @@ Use these for all technical research queries when SearXNG instance is healthy.
 import os
 import httpx
 import logging
-from typing import Optional, List, Dict, Any
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ async def searxng_search_direct(
     pageno: int = 1,
 ) -> str:
     """Direct SearXNG search — no MCP dependency.
-    
+
     Args:
         query: Search query string.
         limit: Maximum results (default 10).
@@ -35,7 +35,7 @@ async def searxng_search_direct(
         language: Language code (default 'auto').
         time_range: Time filter (day, week, month, year).
         pageno: Page number (default 1).
-    
+
     Returns:
         Formatted search results string.
     """
@@ -105,6 +105,7 @@ async def searxng_preferences_direct() -> str:
             resp.raise_for_status()
             data = resp.json()
             import json
+
             return json.dumps(data, indent=2)
         except Exception as e:
             logger.error(f"SearXNG preferences failed: {e}")
@@ -113,6 +114,7 @@ async def searxng_preferences_direct() -> str:
 
 # Synchronous wrappers for OpenCode tool registration
 import anyio
+
 
 def searxng_search(
     query: str,
@@ -124,11 +126,15 @@ def searxng_search(
     pageno: int = 1,
 ) -> str:
     """Synchronous wrapper for OpenCode tool registration."""
-    return anyio.run(searxng_search_direct, query, limit, categories, engines, language, time_range, pageno)
+    return anyio.run(
+        searxng_search_direct, query, limit, categories, engines, language, time_range, pageno
+    )
+
 
 def searxng_health() -> str:
     """Synchronous wrapper for OpenCode tool registration."""
     return anyio.run(searxng_health_direct)
+
 
 def searxng_preferences() -> str:
     """Synchronous wrapper for OpenCode tool registration."""
@@ -137,6 +143,7 @@ def searxng_preferences() -> str:
 
 if __name__ == "__main__":
     import sys
+
     if len(sys.argv) > 1:
         if sys.argv[1] == "search":
             print(anyio.run(searxng_search_direct, " ".join(sys.argv[2:]), 5))

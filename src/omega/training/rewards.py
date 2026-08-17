@@ -22,12 +22,10 @@ import logging
 import math
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 from enum import Enum
 
-import anyio
 
-from omega.errors import OmegaError
 from omega.memory.embeddings import SovereignFallbackEmbeddingProvider
 
 logger = logging.getLogger(__name__)
@@ -35,13 +33,15 @@ logger = logging.getLogger(__name__)
 
 # ── Reward Signal Types ─────────────────────────────────────────────────
 
+
 class RewardSignal(Enum):
     """Types of reward signals computed by the reward function."""
-    CORRECTNESS = "correctness"       # Semantic match to reference
-    HELPFULNESS = "helpfulness"       # Completeness + relevance
-    ALIGNMENT = "alignment"           # Safety + constitutional compliance
-    CONCISENESS = "conciseness"       # Length efficiency
-    NOVELTY = "novelty"               # Diversity from other group members
+
+    CORRECTNESS = "correctness"  # Semantic match to reference
+    HELPFULNESS = "helpfulness"  # Completeness + relevance
+    ALIGNMENT = "alignment"  # Safety + constitutional compliance
+    CONCISENESS = "conciseness"  # Length efficiency
+    NOVELTY = "novelty"  # Diversity from other group members
 
 
 @dataclass
@@ -50,6 +50,7 @@ class RewardComponents:
 
     The final reward is a weighted sum of these components.
     """
+
     correctness: float = 0.0
     helpfulness: float = 0.0
     alignment: float = 0.0
@@ -72,6 +73,7 @@ class RewardConfig:
 
     All weights must sum to 1.0 for a balanced reward.
     """
+
     # Component weights (must sum to 1.0)
     correctness_weight: float = 0.35
     helpfulness_weight: float = 0.25
@@ -81,29 +83,33 @@ class RewardConfig:
 
     # Correctness thresholds
     correctness_similarity_threshold: float = 0.7  # Min cosine sim for full credit
-    correctness_min_threshold: float = 0.3         # Below this = 0 correctness
+    correctness_min_threshold: float = 0.3  # Below this = 0 correctness
 
     # Helpfulness thresholds
-    helpfulness_min_keywords: int = 3   # Min keyword matches for full credit
+    helpfulness_min_keywords: int = 3  # Min keyword matches for full credit
     helpfulness_max_keywords: int = 15  # Beyond this, no additional credit
 
     # Conciseness thresholds
-    conciseness_optimal_tokens: int = 150   # Optimal response length
-    conciseness_penalty_tokens: int = 500   # Beyond this, heavy penalty
+    conciseness_optimal_tokens: int = 150  # Optimal response length
+    conciseness_penalty_tokens: int = 500  # Beyond this, heavy penalty
 
     # Alignment patterns (regex)
-    alignment_refusal_patterns: List[str] = field(default_factory=lambda: [
-        r"(?i)\bi cannot\b",
-        r"(?i)\bi should not\b",
-        r"(?i)\bi must not\b",
-        r"(?i)\bi will not\b",
-        r"(?i)\bi'm not able to\b",
-    ])
-    alignment_safety_patterns: List[str] = field(default_factory=lambda: [
-        r"(?i)\b(system|admin|root)\b.{0,50}\b(password|credential|secret|key)\b",
-        r"(?i)\b(api[_-]?key|token|secret)\s*[=:]\s*\S+",
-        r"(?i)\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b",  # IP addresses
-    ])
+    alignment_refusal_patterns: List[str] = field(
+        default_factory=lambda: [
+            r"(?i)\bi cannot\b",
+            r"(?i)\bi should not\b",
+            r"(?i)\bi must not\b",
+            r"(?i)\bi will not\b",
+            r"(?i)\bi'm not able to\b",
+        ]
+    )
+    alignment_safety_patterns: List[str] = field(
+        default_factory=lambda: [
+            r"(?i)\b(system|admin|root)\b.{0,50}\b(password|credential|secret|key)\b",
+            r"(?i)\b(api[_-]?key|token|secret)\s*[=:]\s*\S+",
+            r"(?i)\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b",  # IP addresses
+        ]
+    )
 
     def validate(self) -> None:
         """Validate that weights sum to ~1.0 and thresholds are reasonable."""
@@ -115,9 +121,7 @@ class RewardConfig:
             + self.novelty_weight
         )
         if abs(total - 1.0) > 0.01:
-            raise ValueError(
-                f"Reward weights must sum to 1.0, got {total:.4f}"
-            )
+            raise ValueError(f"Reward weights must sum to 1.0, got {total:.4f}")
         if not (0.0 <= self.correctness_similarity_threshold <= 1.0):
             raise ValueError("correctness_similarity_threshold must be in [0, 1]")
         if self.conciseness_optimal_tokens <= 0:
@@ -131,6 +135,7 @@ def create_default_reward_config() -> RewardConfig:
 
 # ── Token Estimation ────────────────────────────────────────────────────
 
+
 def estimate_tokens(text: str) -> int:
     """Estimate token count from text (rough: 4 chars per token).
 
@@ -142,6 +147,7 @@ def estimate_tokens(text: str) -> int:
 
 
 # ── GRPO Reward Function ────────────────────────────────────────────────
+
 
 class GRPORewardFunction:
     """Local-only reward function for GRPO training.
@@ -186,9 +192,7 @@ class GRPORewardFunction:
             try:
                 return await self._embedding_provider.get_embedding(text)
             except Exception as e:
-                logger.warning(
-                    "Embedding provider failed (%s), falling back to hash", e
-                )
+                logger.warning("Embedding provider failed (%s), falling back to hash", e)
 
         # Zero-dependency fallback: deterministic feature hashing
         return await self._fallback_embedder.get_embedding(text)
@@ -207,9 +211,7 @@ class GRPORewardFunction:
 
     # ── Individual Component Scorers ────────────────────────────────────
 
-    async def _score_correctness(
-        self, response: str, reference: str
-    ) -> float:
+    async def _score_correctness(self, response: str, reference: str) -> float:
         """Score semantic correctness via embedding similarity to reference.
 
         Returns 0.0-1.0. Full credit when cosine sim >= threshold.
@@ -234,8 +236,7 @@ class GRPORewardFunction:
 
         # Linear interpolation between min and threshold
         t = (sim - self.config.correctness_min_threshold) / (
-            self.config.correctness_similarity_threshold
-            - self.config.correctness_min_threshold
+            self.config.correctness_similarity_threshold - self.config.correctness_min_threshold
         )
         return max(0.0, min(1.0, t))
 
@@ -253,15 +254,9 @@ class GRPORewardFunction:
         score = 0.0
 
         # 1. Keyword overlap with prompt (0.0-0.4)
-        prompt_words = set(
-            w.lower().strip(".,!?;:\"'()[]{}")
-            for w in prompt.split()
-            if len(w) > 3
-        )
+        prompt_words = set(w.lower().strip(".,!?;:\"'()[]{}") for w in prompt.split() if len(w) > 3)
         response_words = set(
-            w.lower().strip(".,!?;:\"'()[]{}")
-            for w in response.split()
-            if len(w) > 3
+            w.lower().strip(".,!?;:\"'()[]{}") for w in response.split() if len(w) > 3
         )
 
         if prompt_words:
@@ -326,7 +321,7 @@ class GRPORewardFunction:
 
         # Gaussian decay around optimal
         sigma = optimal / 2.0
-        penalty = math.exp(-((token_count - optimal) ** 2) / (2 * sigma ** 2))
+        penalty = math.exp(-((token_count - optimal) ** 2) / (2 * sigma**2))
 
         # Additional penalty for exceeding penalty threshold
         if token_count > self.config.conciseness_penalty_tokens:
@@ -334,9 +329,7 @@ class GRPORewardFunction:
 
         return max(0.0, min(1.0, penalty))
 
-    def _score_novelty(
-        self, response: str, other_responses: List[str]
-    ) -> float:
+    def _score_novelty(self, response: str, other_responses: List[str]) -> float:
         """Score novelty relative to other responses in the group.
 
         Uses word-level Jaccard similarity. Higher = more novel.
@@ -395,9 +388,7 @@ class GRPORewardFunction:
         components.helpfulness = self._score_helpfulness(response, prompt)
         components.alignment = self._score_alignment(response)
         components.conciseness = self._score_conciseness(response)
-        components.novelty = self._score_novelty(
-            response, other_responses or []
-        )
+        components.novelty = self._score_novelty(response, other_responses or [])
 
         # Weighted sum
         total = (
@@ -463,7 +454,11 @@ class GRPORewardFunction:
 
         # Correctness via fallback embedding (sync)
         if reference:
-            ref_emb = self._fallback_embedder.get_embedding(reference) if hasattr(self._fallback_embedder, 'get_embedding') else [0.0] * 256
+            ref_emb = (
+                self._fallback_embedder.get_embedding(reference)
+                if hasattr(self._fallback_embedder, "get_embedding")
+                else [0.0] * 256
+            )
             # For sync, use a simple hash-based similarity
             ref_hash = hash(reference) % 1000
             resp_hash = hash(response) % 1000

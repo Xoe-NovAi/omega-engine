@@ -18,16 +18,16 @@ from pydantic import BaseModel, Field, field_validator, computed_field
 
 
 class CredentialType(str, Enum):
-    OAUTH = "oauth"           # AGY: access_token + refresh_token
-    API_KEY = "api_key"       # OpenRouter, Exa, Firecrawl
-    GCP_SA = "gcp_sa"         # Google Service Account JSON
-    GROK_AUTH = "grok_auth"   # Grok CLI auth.json blob
+    OAUTH = "oauth"  # AGY: access_token + refresh_token
+    API_KEY = "api_key"  # OpenRouter, Exa, Firecrawl
+    GCP_SA = "gcp_sa"  # Google Service Account JSON
+    GROK_AUTH = "grok_auth"  # Grok CLI auth.json blob
 
 
 class CredentialTier(str, Enum):
     FREE = "free"
     PAID = "paid"
-    BYOK = "byok"             # Bring Your Own Key (OpenRouter BYOK)
+    BYOK = "byok"  # Bring Your Own Key (OpenRouter BYOK)
 
 
 class CredentialStatus(str, Enum):
@@ -46,6 +46,7 @@ class VisibilityTier(str, Enum):
 
 class ProviderName(str, Enum):
     """Known provider names for credential storage."""
+
     GOOGLE = "google"
     ANTIGRAVITY = "antigravity"
     OPENROUTER = "openrouter"
@@ -90,7 +91,9 @@ class VaultCredential(BaseModel):
     tier: CredentialTier = CredentialTier.FREE
     daily_limit: int = Field(default=0, description="Requests per day (0 = unlimited)")
     used_today: int = Field(default=0, description="Counter reset at midnight UTC")
-    cooldown_until: Optional[datetime] = Field(default=None, description="ISO timestamp when cooldown ends")
+    cooldown_until: Optional[datetime] = Field(
+        default=None, description="ISO timestamp when cooldown ends"
+    )
     status: CredentialStatus = CredentialStatus.ACTIVE
 
     # Rotation & Audit
@@ -110,11 +113,14 @@ class VaultCredential(BaseModel):
     tags: Dict[str, str] = Field(default_factory=dict)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-    @field_validator('encrypted_blob')
+    @field_validator("encrypted_blob")
     @classmethod
     def validate_age_armor(cls, v: str) -> str:
         """Ensure blob is age-armored (starts with 'age-encryption.org/v1' or '-----BEGIN AGE ENCRYPTED FILE-----')."""
-        if not (v.startswith("age-encryption.org/v1") or v.startswith("-----BEGIN AGE ENCRYPTED FILE-----")):
+        if not (
+            v.startswith("age-encryption.org/v1")
+            or v.startswith("-----BEGIN AGE ENCRYPTED FILE-----")
+        ):
             raise ValueError("encrypted_blob must be age-armored ciphertext")
         return v
 
@@ -143,15 +149,19 @@ class VaultCredential(BaseModel):
 
 class VaultLeaseRequest(BaseModel):
     """Request to lease a credential for a time-bounded operation."""
+
     agent_id: str = Field(description="Requesting agent identifier")
     provider: str = Field(description="Target provider")
-    key_id: Optional[str] = Field(default=None, description="Specific key, or None for any available")
+    key_id: Optional[str] = Field(
+        default=None, description="Specific key, or None for any available"
+    )
     ttl_seconds: int = Field(default=300, le=3600, description="Max lease duration (1 hour)")
     purpose: str = Field(default="inference", description="Operation purpose for audit")
 
 
 class VaultLease(BaseModel):
     """Granted lease for a credential."""
+
     lease_id: str
     credential_ref: str = Field(description="provider:key_id")
     agent_id: str
@@ -177,12 +187,20 @@ class VaultLease(BaseModel):
 
 class VaultAuditEntry(BaseModel):
     """Immutable audit log entry."""
+
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     agent_id: str
     action: Literal[
-        "lease_granted", "lease_released", "lease_expired",
-        "credential_used", "credential_rotated", "credential_locked",
-        "credential_created", "credential_deleted", "credential_retrieved", "credential_updated"
+        "lease_granted",
+        "lease_released",
+        "lease_expired",
+        "credential_used",
+        "credential_rotated",
+        "credential_locked",
+        "credential_created",
+        "credential_deleted",
+        "credential_retrieved",
+        "credential_updated",
     ]
     credential_ref: str
     details: Dict[str, Any] = Field(default_factory=dict)
@@ -199,6 +217,7 @@ class VaultAuditEntry(BaseModel):
 # CPE Types for Credential Operations
 # =============================================================================
 
+
 class CPEAction(str, Enum):
     PASS = "pass"
     WARN = "warn"
@@ -209,6 +228,7 @@ class CPEAction(str, Enum):
 @dataclass
 class CredentialPIIEntity:
     """PII entity extracted from credential."""
+
     value: str
     type: str
     turn: int
@@ -220,13 +240,13 @@ class CredentialCPESession:
 
     # Entity weights for credential-related PII
     ENTITY_WEIGHTS = {
-        "API_KEY": 0.8,       # Direct credential exposure
-        "OAUTH_TOKEN": 0.7,   # Access token
-        "REFRESH_TOKEN": 0.9, # Long-lived, high value
-        "PRIVATE_KEY": 1.0,   # GCP SA private key — critical
-        "PROJECT_ID": 0.2,    # Metadata
-        "EMAIL": 0.3,         # Service account email
-        "ENDPOINT": 0.1,      # API endpoint URL
+        "API_KEY": 0.8,  # Direct credential exposure
+        "OAUTH_TOKEN": 0.7,  # Access token
+        "REFRESH_TOKEN": 0.9,  # Long-lived, high value
+        "PRIVATE_KEY": 1.0,  # GCP SA private key — critical
+        "PROJECT_ID": 0.2,  # Metadata
+        "EMAIL": 0.3,  # Service account email
+        "ENDPOINT": 0.1,  # API endpoint URL
     }
 
     COOCCURRENCE_BOOST = {
@@ -236,10 +256,10 @@ class CredentialCPESession:
     }
 
     THRESHOLDS = {
-        "LOW": 1.0,      # Pass — log but allow
-        "MODERATE": 2.0, # Warn — log, require acknowledgment
-        "HIGH": 3.0,     # Pseudonymize — mask in logs/audit
-        "CRITICAL": 4.0, # Block — hard stop operation
+        "LOW": 1.0,  # Pass — log but allow
+        "MODERATE": 2.0,  # Warn — log, require acknowledgment
+        "HIGH": 3.0,  # Pseudonymize — mask in logs/audit
+        "CRITICAL": 4.0,  # Block — hard stop operation
     }
 
     def __init__(self, threshold: float = 2.0, alpha: float = 0.3):
@@ -292,53 +312,62 @@ class CredentialCPESession:
 
         # Provider-specific PII types
         if credential.cred_type == CredentialType.GCP_SA:
-            entities.append(CredentialPIIEntity(
-                value=credential.metadata.get("project_id", ""),
-                type="PROJECT_ID",
-                turn=len(self.registry.get("PROJECT_ID", [])),
-                span=(0, 0)
-            ))
-            entities.append(CredentialPIIEntity(
-                value=credential.metadata.get("client_email", ""),
-                type="EMAIL",
-                turn=len(self.registry.get("EMAIL", [])),
-                span=(0, 0)
-            ))
-            entities.append(CredentialPIIEntity(
-                value=credential.metadata.get("private_key", ""),
-                type="PRIVATE_KEY",
-                turn=len(self.registry.get("PRIVATE_KEY", [])),
-                span=(0, 0)
-            ))
+            entities.append(
+                CredentialPIIEntity(
+                    value=credential.metadata.get("project_id", ""),
+                    type="PROJECT_ID",
+                    turn=len(self.registry.get("PROJECT_ID", [])),
+                    span=(0, 0),
+                )
+            )
+            entities.append(
+                CredentialPIIEntity(
+                    value=credential.metadata.get("client_email", ""),
+                    type="EMAIL",
+                    turn=len(self.registry.get("EMAIL", [])),
+                    span=(0, 0),
+                )
+            )
+            entities.append(
+                CredentialPIIEntity(
+                    value=credential.metadata.get("private_key", ""),
+                    type="PRIVATE_KEY",
+                    turn=len(self.registry.get("PRIVATE_KEY", [])),
+                    span=(0, 0),
+                )
+            )
         elif credential.cred_type == CredentialType.OAUTH:
-            entities.append(CredentialPIIEntity(
-                value=credential.metadata.get("access_token", ""),
-                type="OAUTH_TOKEN",
-                turn=len(self.registry.get("OAUTH_TOKEN", [])),
-                span=(0, 0)
-            ))
-            entities.append(CredentialPIIEntity(
-                value=credential.metadata.get("refresh_token", ""),
-                type="REFRESH_TOKEN",
-                turn=len(self.registry.get("REFRESH_TOKEN", [])),
-                span=(0, 0)
-            ))
+            entities.append(
+                CredentialPIIEntity(
+                    value=credential.metadata.get("access_token", ""),
+                    type="OAUTH_TOKEN",
+                    turn=len(self.registry.get("OAUTH_TOKEN", [])),
+                    span=(0, 0),
+                )
+            )
+            entities.append(
+                CredentialPIIEntity(
+                    value=credential.metadata.get("refresh_token", ""),
+                    type="REFRESH_TOKEN",
+                    turn=len(self.registry.get("REFRESH_TOKEN", [])),
+                    span=(0, 0),
+                )
+            )
         elif credential.cred_type == CredentialType.API_KEY:
-            entities.append(CredentialPIIEntity(
-                value=credential.metadata.get("api_key", ""),
-                type="API_KEY",
-                turn=len(self.registry.get("API_KEY", [])),
-                span=(0, 0)
-            ))
+            entities.append(
+                CredentialPIIEntity(
+                    value=credential.metadata.get("api_key", ""),
+                    type="API_KEY",
+                    turn=len(self.registry.get("API_KEY", [])),
+                    span=(0, 0),
+                )
+            )
 
         return [e for e in entities if e.value]
 
     def _compute_cpe(self) -> float:
         """CPE = Σ(entity_weight * count) + α * Σ(edge_weight * cooccurrence_boost)"""
-        base = sum(
-            self.ENTITY_WEIGHTS.get(t, 0.1) * len(ents)
-            for t, ents in self.registry.items()
-        )
+        base = sum(self.ENTITY_WEIGHTS.get(t, 0.1) * len(ents) for t, ents in self.registry.items())
         graph_boost = sum(
             self.COOCCURRENCE_BOOST.get(edge, 0) * weight
             for edge, weight in self.cooccurrence_graph.items()
@@ -349,6 +378,7 @@ class CredentialCPESession:
     def pseudonymize_audit_entry(self, entry: VaultAuditEntry) -> VaultAuditEntry:
         """Retroactive pseudonymization for HIGH/Critical CPE audit entries."""
         from faker import Faker
+
         fake = Faker()
 
         new_details = entry.details.copy()
@@ -359,7 +389,9 @@ class CredentialCPESession:
                     if ent_type == "PRIVATE_KEY":
                         self.pseudonym_map[ent.value] = "<<PRIVATE_KEY_REDACTED>>"
                     elif ent_type == "REFRESH_TOKEN":
-                        self.pseudonym_map[ent.value] = f"<<REFRESH_TOKEN_{len(self.pseudonym_map)}>>"
+                        self.pseudonym_map[ent.value] = (
+                            f"<<REFRESH_TOKEN_{len(self.pseudonym_map)}>>"
+                        )
                     elif ent_type == "API_KEY":
                         self.pseudonym_map[ent.value] = f"<<API_KEY_{len(self.pseudonym_map)}>>"
                     elif ent_type == "OAUTH_TOKEN":
@@ -369,6 +401,7 @@ class CredentialCPESession:
 
         # Rewrite entry details
         import json
+
         details_str = json.dumps(new_details)
         for real, fake_val in self.pseudonym_map.items():
             details_str = details_str.replace(real, fake_val)

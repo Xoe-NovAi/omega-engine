@@ -3,51 +3,54 @@
 # DocRef: docs/architecture/MESH_NETWORK_SPEC.md
 import logging
 from pathlib import Path
-from typing import Optional, AsyncGenerator, Dict, Any, Union
 
 import anyio
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, status
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from omega.oracle.oracle import Oracle, OracleResponse
 from omega.errors import OmegaError
 from omega.observability.token_ledger import TokenLedger
 
 # ── Conceptual Equivalents ────────────────────────────────────────────────
-# As per requirements, these provide the necessary gates and ledgering 
+# As per requirements, these provide the necessary gates and ledgering
 # when the specific modules are not yet instantiated in the filesystem.
+
 
 class BudgetGate:
     """
      conceptual equivalent to src/omega/oracle/budget_gate.py.
     Enforces hard-stop cloud budget gates for sovereign inference.
     """
+
     @staticmethod
     async def check_budget(entity_name: str, trace_id: str) -> bool:
         """
         Verify if the entity has remaining budget for cloud inference.
-        
+
         Args:
             entity_name: The entity requesting inference.
             trace_id: The trace ID for the request.
-            
+
         Returns:
             True if budget is available, False otherwise.
         """
-        # Default to True for bridge implementation; 
+        # Default to True for bridge implementation;
         # real implementation would query a budget store.
         return True
+
 
 # ── Bridge Implementation ────────────────────────────────────────────────
 
 logger = logging.getLogger("omega.bridge.opencode")
 
+
 class OpenCodeBridge:
     """
     FastAPI WebSocket bridge between OpenCode clients and the Omega Oracle.
-    
-    Implements the transfer of user messages to the Oracle and streams 
+
+    Implements the transfer of user messages to the Oracle and streams
     responses back while enforcing budget gates and ledgering.
     """
-    
+
     def __init__(self):
         self.oracle = Oracle()
         self.app = FastAPI(title="Omega OpenCode Bridge")
@@ -56,10 +59,10 @@ class OpenCodeBridge:
     def _load_soul_context(self, entity_name: str) -> str:
         """
         Minimal SOUL.md loader for entity-specific bridge context.
-        
+
         Args:
             entity_name: The entity to load soul data for.
-            
+
         Returns:
             The content of the SOUL.md file or an empty string if not found.
         """
@@ -76,37 +79,37 @@ class OpenCodeBridge:
         Coordinate the inference flow: Budget Gate -> Oracle -> Ledger.
         """
         trace_id = "bridge-" + str(anyio.current_time())
-        
+
         # 1. Budget Gate Check
         # We assume the default entity for the bridge unless a summon is detected
-        entity_name = "default" 
+        entity_name = "default"
         if not await BudgetGate.check_budget(entity_name, trace_id):
             await websocket.send_text("❌ Budget gate exceeded. Cloud inference blocked.")
             return
 
         try:
             # 2. Forward to Oracle
-            # Note: Oracle.talk is async. We use anyio.to_thread.run_sync for 
-            # blocking wrap if the implementation were synchronous, but 
-            # since Oracle.talk is async, we await it directly to avoid 
+            # Note: Oracle.talk is async. We use anyio.to_thread.run_sync for
+            # blocking wrap if the implementation were synchronous, but
+            # since Oracle.talk is async, we await it directly to avoid
             # event loop collisions.
             response: OracleResponse = await self.oracle.talk(query)
-            
+
             # 3. Token Ledger Integration
             # Conceptual token count calculation (mocked for bridge)
             tokens_in = len(query) // 4
             tokens_out = len(response.text) // 4
-            
+
             await TokenLedger().record_transaction(
                 trace_id=response.trace_id or trace_id,
                 entity=response.entity,
                 tokens_in=tokens_in,
                 tokens_out=tokens_out,
-                provider_name=response.backend or "unknown"
+                provider_name=response.backend or "unknown",
             )
 
             # 4. Stream tokens back
-            # Since Oracle.talk returns a full response, we simulate streaming 
+            # Since Oracle.talk returns a full response, we simulate streaming
             # by chunking the response text to maintain bridge protocol.
             for i in range(0, len(response.text), 50):
                 chunk = response.text[i : i + 50]
@@ -122,7 +125,7 @@ class OpenCodeBridge:
 
     def _setup_routes(self):
         """Configure FastAPI endpoints."""
-        
+
         @self.app.get("/health")
         async def health_check():
             """Sovereign health probe for the bridge."""
@@ -142,6 +145,7 @@ class OpenCodeBridge:
                 logger.info("OpenCode client disconnected from bridge.")
             except (RuntimeError, OSError) as e:
                 logger.error(f"WebSocket session error: {e}")
+
 
 # Initialize the bridge for the FastAPI server
 bridge = OpenCodeBridge()

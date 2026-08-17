@@ -44,7 +44,6 @@ from .dag_schema import (
     SubTaskSchema,
     TaskResult,
     should_run_locally,
-    classify_complexity,
 )
 
 logger = logging.getLogger(__name__)
@@ -75,6 +74,7 @@ the sub-task. Output valid JSON."""
 
 
 # ─── Hybrid Orchestrator ────────────────────────────────────────────────────────
+
 
 class HybridOrchestrator:
     """Cloud Planner / Local Executor with M7-compliant routing.
@@ -286,7 +286,10 @@ class HybridOrchestrator:
                 for task in ready:
                     tg.start_soon(
                         self._execute_task_with_retry,
-                        task, context_store, trace_id, results,
+                        task,
+                        context_store,
+                        trace_id,
+                        results,
                     )
 
             for res in results:
@@ -295,9 +298,7 @@ class HybridOrchestrator:
                     if task:
                         task.status = "failed"
                         task.error = res.error
-                    raise RuntimeError(
-                        f"Task '{res.task_id}' failed: {res.error}"
-                    )
+                    raise RuntimeError(f"Task '{res.task_id}' failed: {res.error}")
 
                 task = plan.get_task(res.task_id)
                 if task:
@@ -327,10 +328,7 @@ class HybridOrchestrator:
         [M7] Local-first: tries local providers first.
         Escalation to cloud only after max_local_retries failures.
         """
-        dep_inputs = {
-            dep_id: context_store.get(dep_id)
-            for dep_id in task.dependencies
-        }
+        dep_inputs = {dep_id: context_store.get(dep_id) for dep_id in task.dependencies}
 
         last_error = ""
         for attempt in range(1, self.max_local_retries + 1):
@@ -352,9 +350,7 @@ class HybridOrchestrator:
                 last_error = result.error or "Unknown error"
             except Exception as e:
                 last_error = str(e)
-                logger.warning(
-                    f"[Executor] Task '{task.id}' failed attempt {attempt}: {e}"
-                )
+                logger.warning(f"[Executor] Task '{task.id}' failed attempt {attempt}: {e}")
 
         # All local retries exhausted — escalate to cloud (M7: fallback only)
         logger.info(
@@ -411,7 +407,8 @@ class HybridOrchestrator:
                         error=f"JSON parse failed: {res.text[:200]}",
                         provider=res.provider_name,
                         is_local=not res.is_cloud,
-                        tokens_used=getattr(res, 'prompt_tokens', 0) + getattr(res, 'completion_tokens', 0),
+                        tokens_used=getattr(res, "prompt_tokens", 0)
+                        + getattr(res, "completion_tokens", 0),
                         latency_ms=latency_ms,
                     )
 
@@ -420,7 +417,7 @@ class HybridOrchestrator:
                 task=task,
                 provider=res.provider_name,
                 is_local=not res.is_cloud,
-                tokens_used=getattr(res, 'prompt_tokens', 0) + getattr(res, 'completion_tokens', 0),
+                tokens_used=getattr(res, "prompt_tokens", 0) + getattr(res, "completion_tokens", 0),
                 latency_ms=latency_ms,
                 status="completed",
                 trace_id=trace_id,
@@ -432,7 +429,7 @@ class HybridOrchestrator:
                 output=output,
                 provider=res.provider_name,
                 is_local=not res.is_cloud,
-                tokens_used=getattr(res, 'prompt_tokens', 0) + getattr(res, 'completion_tokens', 0),
+                tokens_used=getattr(res, "prompt_tokens", 0) + getattr(res, "completion_tokens", 0),
                 latency_ms=latency_ms,
             )
 
@@ -488,7 +485,7 @@ class HybridOrchestrator:
                 task=task,
                 provider=res.provider_name,
                 is_local=False,
-                tokens_used=getattr(res, 'prompt_tokens', 0) + getattr(res, 'completion_tokens', 0),
+                tokens_used=getattr(res, "prompt_tokens", 0) + getattr(res, "completion_tokens", 0),
                 latency_ms=latency_ms,
                 status="escalated",
                 trace_id=trace_id,
@@ -500,7 +497,7 @@ class HybridOrchestrator:
                 output=res.text,
                 provider=res.provider_name,
                 is_local=False,
-                tokens_used=getattr(res, 'prompt_tokens', 0) + getattr(res, 'completion_tokens', 0),
+                tokens_used=getattr(res, "prompt_tokens", 0) + getattr(res, "completion_tokens", 0),
                 latency_ms=latency_ms,
                 escalated=True,
             )
@@ -554,10 +551,10 @@ class HybridOrchestrator:
         [O1 Phase 2] Enables the TUI to render a visual DAG.
         """
         try:
-            from omega.research.sediment import SEDABus, SEDATopic, SEDAEvent
+            from omega.research.sediment import SEDATopic, SEDAEvent
 
             # Check if SEDA bus is available (may not be in all contexts)
-            bus = getattr(self, '_seda_bus', None)
+            bus = getattr(self, "_seda_bus", None)
             if bus is None:
                 return
 
@@ -569,9 +566,7 @@ class HybridOrchestrator:
                     "tasks": [t.to_dict() for t in plan.tasks],
                     "completed_tasks": list(completed),
                     "pending_tasks": list(pending.keys()),
-                    "failed_tasks": [
-                        t.id for t in plan.tasks if t.status == "failed"
-                    ],
+                    "failed_tasks": [t.id for t in plan.tasks if t.status == "failed"],
                     "final": final,
                 },
                 entity="system",
@@ -597,9 +592,9 @@ class HybridOrchestrator:
         [O1 Phase 2] Enables the TUI to render a real-time step trace table.
         """
         try:
-            from omega.research.sediment import SEDABus, SEDATopic, SEDAEvent
+            from omega.research.sediment import SEDATopic, SEDAEvent
 
-            bus = getattr(self, '_seda_bus', None)
+            bus = getattr(self, "_seda_bus", None)
             if bus is None:
                 return
 

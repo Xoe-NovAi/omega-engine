@@ -17,11 +17,10 @@ import anyio
 import logging
 import os
 import shlex
-import subprocess
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 from .models import Account
 from .profile_manager import AgentProfile, LaunchConfig
@@ -30,13 +29,30 @@ logger = logging.getLogger(__name__)
 
 # CAO env var allowlist - only these are passed through to tmux sessions
 CAO_ENV_ALLOWLIST = {
-    "HOME", "PATH", "SHELL", "USER", "LANG", "LC_ALL",
-    "TERM", "COLORTERM", "EDITOR", "VISUAL",
+    "HOME",
+    "PATH",
+    "SHELL",
+    "USER",
+    "LANG",
+    "LC_ALL",
+    "TERM",
+    "COLORTERM",
+    "EDITOR",
+    "VISUAL",
     # CAO-specific
-    "CAO_*", "KIRO_*", "MISE_*", "AWS_*",
+    "CAO_*",
+    "KIRO_*",
+    "MISE_*",
+    "AWS_*",
     # Provider-specific (will be expanded at runtime)
-    "GROK_*", "GITHUB_*", "DEEPSEEK_*", "ANTHROPIC_*", "OPENAI_*",
-    "XAI_*", "GOOGLE_*", "AZURE_*",
+    "GROK_*",
+    "GITHUB_*",
+    "DEEPSEEK_*",
+    "ANTHROPIC_*",
+    "OPENAI_*",
+    "XAI_*",
+    "GOOGLE_*",
+    "AZURE_*",
 }
 
 
@@ -59,6 +75,7 @@ def _filter_env(env: dict[str, str]) -> dict[str, str]:
 @dataclass
 class TmuxSession:
     """Represents a managed tmux session."""
+
     name: str
     account_id: str
     created_at: float = field(default_factory=time.time)
@@ -71,7 +88,7 @@ class TmuxSession:
 class TmuxManager:
     """
     Manages tmux sessions for 24 isolated agent accounts (CAO pattern).
-    
+
     Each account gets its own tmux session with:
     - Isolated environment
     - Per-account credentials forwarded via env vars
@@ -120,7 +137,7 @@ class TmuxManager:
         """Build filtered environment for tmux session."""
         # Start with current environment
         env = dict(os.environ)
-        
+
         # Add profile env vars (credentials from Omega-Vault)
         for key, value in profile.env_vars.items():
             if value.startswith("${VAULT:"):
@@ -129,13 +146,13 @@ class TmuxManager:
                 env[key] = value
             else:
                 env[key] = value
-        
+
         # Add account metadata
         env["OMEGA_POOL_ACCOUNT_ID"] = account.id
         env["OMEGA_POOL_TYPE"] = account.pool.value
         env["OMEGA_POOL_MODEL"] = account.model
         env["OMEGA_POOL_CONTEXT_WINDOW"] = str(account.context_window)
-        
+
         # Filter to allowlist
         return _filter_env(env)
 
@@ -147,16 +164,16 @@ class TmuxManager:
     ) -> str:
         """
         Create isolated tmux session for account (CAO pattern).
-        
+
         Returns session name.
         """
         session_name = self._session_name(account)
-        
+
         # Check if session already exists
         if await self.session_exists(session_name):
             logger.warning(f"Session {session_name} already exists, reusing")
             return session_name
-        
+
         # Build launch command
         if launch_config:
             cmd_parts = [launch_config.command] + launch_config.args
@@ -171,32 +188,35 @@ class TmuxManager:
             }
             binary, args = provider_config.get(profile.provider, ("bash", []))
             cmd_parts = [binary] + args
-        
+
         command = " ".join(shlex.quote(p) for p in cmd_parts)
-        
+
         # Build environment
         env = self._build_env(account, profile)
-        
+
         # Create session
         working_dir = str(self.base_dir / account.id)
         os.makedirs(working_dir, exist_ok=True)
-        
+
         # tmux new-session -d -s <name> -c <dir> <command>
         returncode, stdout, stderr = await self._run_tmux(
-            "new-session", "-d",
-            "-s", session_name,
-            "-c", working_dir,
+            "new-session",
+            "-d",
+            "-s",
+            session_name,
+            "-c",
+            working_dir,
             command,
         )
-        
+
         if returncode != 0:
             raise RuntimeError(f"Failed to create tmux session: {stderr}")
-        
+
         # Get pane info
         returncode, stdout, stderr = await self._run_tmux(
             "list-panes", "-t", session_name, "-F", "#{pane_id} #{pane_pid}"
         )
-        
+
         pane_id = None
         pid = None
         if returncode == 0 and stdout.strip():
@@ -207,7 +227,7 @@ class TmuxManager:
                     pid = int(pid_str)
                 except ValueError:
                     pass
-        
+
         # Track session
         session = TmuxSession(
             name=session_name,
@@ -218,7 +238,7 @@ class TmuxManager:
             command=command,
         )
         self._sessions[session_name] = session
-        
+
         logger.info(f"Created tmux session {session_name} for {account.id}")
         return session_name
 
@@ -234,7 +254,7 @@ class TmuxManager:
             cmd.append(keys + " Enter")
         else:
             cmd.append(keys)
-        
+
         returncode, _, stderr = await self._run_tmux(*cmd)
         if returncode != 0:
             logger.error(f"Failed to send keys to {session_name}: {stderr}")
@@ -258,7 +278,7 @@ class TmuxManager:
         if pane:
             args.extend(["-t", pane])
         args.extend(["-p", "-S", f"-{lines}"])
-        
+
         returncode, stdout, stderr = await self._run_tmux(*args)
         if returncode != 0:
             logger.error(f"Failed to capture output from {session_name}: {stderr}")
@@ -270,7 +290,7 @@ class TmuxManager:
         # Check session exists
         if not await self.session_exists(session_name):
             return False
-        
+
         # Try to capture output (verifies tmux is responsive)
         output = await self.capture_output(session_name, lines=1)
         return output is not None
@@ -278,19 +298,19 @@ class TmuxManager:
     async def terminate_session(self, session_name: str, graceful: bool = True) -> bool:
         """
         Terminate tmux session (CAO shutdown pattern).
-        
+
         Graceful: sends SIGTERM to pane process, waits, then kills session.
         Force: immediately kills session.
         """
         if not await self.session_exists(session_name):
             logger.warning(f"Session {session_name} does not exist")
             return True
-        
+
         if graceful:
             # Send Ctrl+C to gracefully stop agent
             await self.send_keys(session_name, "C-c", enter=False)
             await anyio.sleep(1)
-            
+
             # Check if process is still alive
             session = self._sessions.get(session_name)
             if session and session.pid:
@@ -308,10 +328,10 @@ class TmuxManager:
                         pass  # Process exited
                 except ProcessLookupError:
                     pass  # Already dead
-        
+
         # Kill tmux session
         returncode, _, stderr = await self._run_tmux("kill-session", "-t", session_name)
-        
+
         if returncode == 0:
             self._sessions.pop(session_name, None)
             logger.info(f"Terminated tmux session {session_name}")
@@ -326,7 +346,7 @@ class TmuxManager:
         returncode, stdout, stderr = await self._run_tmux(
             "list-sessions", "-F", "#{session_name} #{session_created} #{session_attached}"
         )
-        
+
         sessions = []
         if returncode == 0:
             for line in stdout.strip().split("\n"):
@@ -344,14 +364,14 @@ class TmuxManager:
                                 created_at=float(created) if created.isdigit() else time.time(),
                             )
                         sessions.append(session)
-        
+
         return sessions
 
     async def get_session_info(self, session_name: str) -> Optional[TmuxSession]:
         """Get detailed session info."""
         if session_name in self._sessions:
             return self._sessions[session_name]
-        
+
         # Try to get from tmux
         sessions = await self.list_sessions()
         for s in sessions:
@@ -368,9 +388,7 @@ class TmuxManager:
 
     async def set_window_title(self, session_name: str, title: str) -> bool:
         """Set window title for identification."""
-        returncode, _, stderr = await self._run_tmux(
-            "rename-window", "-t", session_name, title
-        )
+        returncode, _, stderr = await self._run_tmux("rename-window", "-t", session_name, title)
         return returncode == 0
 
     async def cleanup_stale_sessions(self, max_age_hours: int = 24) -> int:
@@ -378,13 +396,13 @@ class TmuxManager:
         now = time.time()
         max_age = max_age_hours * 3600
         cleaned = 0
-        
+
         sessions = await self.list_sessions()
         for session in sessions:
             if now - session.created_at > max_age:
                 if await self.terminate_session(session.name):
                     cleaned += 1
-        
+
         return cleaned
 
     async def get_session_log(self, session_name: str, lines: int = 1000) -> str:
@@ -393,9 +411,7 @@ class TmuxManager:
 
     async def pipe_pane(self, session_name: str, command: str) -> bool:
         """Pipe pane output to command (for logging)."""
-        returncode, _, stderr = await self._run_tmux(
-            "pipe-pane", "-t", session_name, "-o", command
-        )
+        returncode, _, stderr = await self._run_tmux("pipe-pane", "-t", session_name, "-o", command)
         return returncode == 0
 
     def get_tracked_sessions(self) -> dict[str, TmuxSession]:
@@ -405,10 +421,11 @@ class TmuxManager:
 
 # --- CAO-style Session Management ---
 
+
 class CAOSessionManager:
     """
     Higher-level session manager following CAO patterns.
-    
+
     Handles:
     - Session lifecycle (create, attach, detach, shutdown)
     - Environment isolation
@@ -427,15 +444,15 @@ class CAOSessionManager:
     ) -> str:
         """Launch agent in isolated tmux session."""
         session_name = await self.tmux.create_session(account, profile, launch_config)
-        
+
         # Wait for agent to be ready
         await anyio.sleep(2)
-        
+
         # Verify health
         if not await self.tmux.health_check(session_name):
             await self.tmux.terminate_session(session_name)
             raise RuntimeError(f"Agent failed to start in {session_name}")
-        
+
         return session_name
 
     async def shutdown_agent(self, session_name: str) -> bool:
@@ -451,7 +468,7 @@ class CAOSessionManager:
         """Restart agent in same or new session."""
         if session_name:
             await self.shutdown_agent(session_name)
-        
+
         return await self.launch_agent(account, profile)
 
     async def send_to_agent(self, session_name: str, message: str) -> bool:

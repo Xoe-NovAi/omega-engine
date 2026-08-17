@@ -7,25 +7,42 @@
 
 from .coordinator import MultiAgentCoordinator
 from .models import (
-    NodeReport, DigestedReport, Conflict, CouncilConfig,
-    HardwareProfile, ExecutionMode, StageResult, CouncilResult
+    NodeReport,
+    DigestedReport,
+    Conflict,
+    CouncilConfig,
+    HardwareProfile,
+    ExecutionMode,
+    StageResult,
+    CouncilResult,
 )
 from .report_digestion import ReportDigester
 from .hardware_detector import detect_hardware_profile
 from .execution_mode import select_execution_mode
 from .failure_layer import (
-    CouncilFailure, CoordinatedRecovery,
-    RetryPolicy, FallbackChain, CircuitBreakerState
+    CouncilFailure,
+    CoordinatedRecovery,
+    RetryPolicy,
+    FallbackChain,
+    CircuitBreakerState,
 )
 
 __all__ = [
     "MultiAgentCoordinator",
-    "NodeReport", "DigestedReport", "Conflict",
-    "CouncilConfig", "HardwareProfile", "ExecutionMode",
-    "StageResult", "CouncilResult",
+    "NodeReport",
+    "DigestedReport",
+    "Conflict",
+    "CouncilConfig",
+    "HardwareProfile",
+    "ExecutionMode",
+    "StageResult",
+    "CouncilResult",
     "ReportDigester",
     "detect_hardware_profile",
     "select_execution_mode",
-    "CouncilFailure", "CoordinatedRecovery",
-    "RetryPolicy", "FallbackChain", "CircuitBreakerState",
+    "CouncilFailure",
+    "CoordinatedRecovery",
+    "RetryPolicy",
+    "FallbackChain",
+    "CircuitBreakerState",
 ]

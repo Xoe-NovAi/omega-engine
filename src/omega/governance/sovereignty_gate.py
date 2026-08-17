@@ -59,12 +59,16 @@ class SovereigntyGate:
         if not passed:
             logger.error(
                 "SOVEREIGNTY GATE FAILED: local ratio %.2f < threshold %.2f (total=%d)",
-                ratio_local, self.min_local_ratio, total,
+                ratio_local,
+                self.min_local_ratio,
+                total,
             )
         else:
             logger.info(
                 "SOVEREIGNTY GATE PASSED: local ratio %.2f >= %.2f (total=%d)",
-                ratio_local, self.min_local_ratio, total,
+                ratio_local,
+                self.min_local_ratio,
+                total,
             )
         return passed
 
@@ -87,15 +91,20 @@ class SovereigntyGate:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Omega Sovereignty Gate (M7 Local-First)")
     parser.add_argument(
-        "--min-ratio", type=float, default=SovereigntyGate.MIN_LOCAL_RATIO,
+        "--min-ratio",
+        type=float,
+        default=SovereigntyGate.MIN_LOCAL_RATIO,
         help="Minimum local inference ratio (default 0.80)",
     )
     parser.add_argument(
-        "--db-path", type=str, default=DEFAULT_METRICS_DB,
+        "--db-path",
+        type=str,
+        default=DEFAULT_METRICS_DB,
         help="Path to MetricsDB (default data/observability/metrics.db)",
     )
     parser.add_argument(
-        "--strict", action="store_true",
+        "--strict",
+        action="store_true",
         help="Fail if no inference is recorded (prod CI that runs real inference)",
     )
     args = parser.parse_args(argv)

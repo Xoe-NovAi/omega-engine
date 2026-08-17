@@ -84,17 +84,23 @@ ENTITY_FIELD_TYPES = {
 
 logger = logging.getLogger(__name__)
 
+
 class WADLoader:
     """Loads Omega Engine stacks (WADs) from the filesystem."""
 
-    def __init__(self, registry: EntityRegistry, wads_dir: Optional[Path] = None, adapter_registry: Optional[Any] = None):
+    def __init__(
+        self,
+        registry: EntityRegistry,
+        wads_dir: Optional[Path] = None,
+        adapter_registry: Optional[Any] = None,
+    ):
         self.registry = registry
         # OMEGA_WADS_DIR env override preserved; default from config_resolver (D-281 Phase II)
         self.wads_dir = wads_dir or Path(os.environ.get("OMEGA_WADS_DIR", str(WADS_DIR)))
         self._startup_messages: Dict[str, str] = {}  # stack_name -> startup message
         self.active_hierarchy_path: Optional[Path] = None
         self._adapter_registry = adapter_registry  # MemoryAdapterRegistry (optional)
-        
+
         if os.environ.get("OMEGA_ENV") != "test":
             try:
                 self.wads_dir.mkdir(parents=True, exist_ok=True)
@@ -148,15 +154,17 @@ class WADLoader:
                     elif not isinstance(dependencies, list):
                         dependencies = []
 
-                    discovered.append({
-                        "name": stack_name,
-                        "type": wad_type,
-                        "dependencies": dependencies,
-                        "priority": manifest.get("priority", 0),
-                        "version": manifest.get("version", "unknown"),
-                        "path": wad_path,
-                        "manifest_path": manifest_path,
-                    })
+                    discovered.append(
+                        {
+                            "name": stack_name,
+                            "type": wad_type,
+                            "dependencies": dependencies,
+                            "priority": manifest.get("priority", 0),
+                            "version": manifest.get("version", "unknown"),
+                            "path": wad_path,
+                            "manifest_path": manifest_path,
+                        }
+                    )
                 except (OSError, yaml.YAMLError) as e:
                     logger.warning(f"Failed to read manifest for WAD {stack_name}: {e}")
                     continue
@@ -209,8 +217,7 @@ class WADLoader:
                     in_degree[name] += 1
                 else:
                     logger.warning(
-                        f"WAD {name} depends on unknown WAD '{dep}'. "
-                        f"Dependency will be ignored."
+                        f"WAD {name} depends on unknown WAD '{dep}'. Dependency will be ignored."
                     )
 
         # Kahn's algorithm with priority queue (sorted by effective priority)
@@ -299,10 +306,10 @@ class WADLoader:
 
     async def load_single_wad(self, stack_name: str, priority: int = 10) -> bool:
         """Load only a single named WAD.
-        
+
         Unlike load_all_wads(), this loads exactly one IWAD and skips the rest.
         The selected IWAD gets higher priority so its entities override entities.yaml.
-        
+
         Args:
             stack_name: Name of the WAD directory to load
             priority: Override priority (default 10 — overrides entities.yaml baseline)
@@ -313,7 +320,7 @@ class WADLoader:
 
     def get_startup_message(self, stack_name: Optional[str] = None) -> Optional[str]:
         """Return the startup personality message for a given WAD stack.
-        
+
         If no stack_name is specified, returns the message from the last-loaded WAD
         that defined one (useful for --iwad mode where a specific IWAD is active).
         """
@@ -326,7 +333,7 @@ class WADLoader:
 
     async def load_wad(self, stack_name: str, priority: int = 0) -> Tuple[bool, Optional[Path]]:
         """Load a specific WAD stack.
-        
+
         Returns:
             Tuple of (success_status, hierarchy_path)
         """
@@ -338,11 +345,11 @@ class WADLoader:
 
         wad_path = resolved_wad_path
         manifest_path = wad_path / "manifest.yaml"
-        
+
         if not await anyio.Path(manifest_path).exists():
             logger.warning(f"WAD {stack_name} missing manifest.yaml. Skipping.")
             return False, None
-            
+
         # S1.5a: File size guard — reject manifests over 1 MB
         try:
             manifest_stat = await anyio.Path(manifest_path).stat()
@@ -354,24 +361,26 @@ class WADLoader:
                 return False, None
         except OSError:
             pass  # stat() failure is non-fatal; yaml.safe_load will catch truncation
-            
+
         try:
             async with await anyio.open_file(str(manifest_path), "r") as f:
                 manifest = yaml.safe_load(await f.read())
-                
+
             if manifest is None:
                 raise ValueError(f"WAD {stack_name} manifest is empty")
-            
+
             # Support both flat (name/version/entities) and wad:-wrapped manifests
             if "wad" in manifest:
                 manifest = manifest["wad"]
-            
+
             # Validate required fields
             required_fields = ["name", "version", "entities"]
             missing = [f for f in required_fields if f not in manifest]
             if missing:
-                raise ValueError(f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}")
-            
+                raise ValueError(
+                    f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}"
+                )
+
             # S1.5a: Validate field types (V1 core + V2 heritage optional)
             field_types = {**MANIFEST_FIELD_TYPES, **MANIFEST_V2_OPTIONAL_FIELD_TYPES}
             for field, expected_type in field_types.items():
@@ -380,7 +389,7 @@ class WADLoader:
                         f"WAD {stack_name} manifest field '{field}' has wrong type: "
                         f"expected {expected_type}, got {type(manifest[field]).__name__}"
                     )
-            
+
             # extra="forbid" — reject unknown manifest fields (V1 core ∪ V2 heritage)
             # Do NOT loosen to extra=allow; only versioned explicit fields pass.
             known_manifest_fields = set(field_types.keys())
@@ -390,29 +399,31 @@ class WADLoader:
                     f"WAD {stack_name} manifest has unknown fields: {sorted(unknown_manifest_fields)}. "
                     f"Known fields: {sorted(known_manifest_fields)}"
                 )
-            
+
             # S1.5a: Validate name and version are non-empty strings
             if not manifest.get("name", "").strip():
                 raise ValueError(f"WAD {stack_name} manifest 'name' is empty")
             if not manifest.get("version", "").strip():
                 raise ValueError(f"WAD {stack_name} manifest 'version' is empty")
-            
+
             # Capture startup personality if defined
             if manifest.get("startup") and manifest["startup"].get("message"):
                 self._startup_messages[stack_name] = manifest["startup"]["message"]
-            
-            logger.info(f"Loading stack {stack_name} (version {manifest.get('version', 'unknown')})")
-            
+
+            logger.info(
+                f"Loading stack {stack_name} (version {manifest.get('version', 'unknown')})"
+            )
+
             # 1. Load Entities
             entities_dir = wad_path / "entities"
             if await anyio.Path(entities_dir).exists():
                 await self._load_entities(entities_dir, wad_source=stack_name, priority=priority)
-                
+
             # 2. Load Voices (currently mapped to entities in this simple version)
             voices_dir = wad_path / "voices"
             if await anyio.Path(voices_dir).exists():
                 await self._load_voices(voices_dir, wad_source=stack_name)
-            
+
             # 3. Resolve Hierarchy Path (if specified in manifest or exists in WAD root)
             hierarchy_path = None
             if "hierarchy" in manifest:
@@ -462,7 +473,9 @@ class WADLoader:
         module_path = memory_adapter_cfg.get("module")
         class_name = memory_adapter_cfg.get("class")
         if not module_path or not class_name:
-            logger.warning(f"WAD {stack_name} has incomplete memory adapter config: {memory_adapter_cfg}")
+            logger.warning(
+                f"WAD {stack_name} has incomplete memory adapter config: {memory_adapter_cfg}"
+            )
             return
 
         try:
@@ -474,14 +487,17 @@ class WADLoader:
                     f"Allowed: {sorted(ADAPTER_MODULE_WHITELIST)}"
                 )
                 return
-                
+
             # Dynamic import
             import importlib
+
             module = importlib.import_module(module_path)
             adapter_class = getattr(module, class_name)
 
             if self._adapter_registry is None:
-                logger.warning(f"Cannot register adapter for WAD {stack_name}: no adapter registry set")
+                logger.warning(
+                    f"Cannot register adapter for WAD {stack_name}: no adapter registry set"
+                )
                 return
 
             # Import IMemoryAdapter for type check
@@ -504,7 +520,7 @@ class WADLoader:
 
             # Map all entities loaded from this WAD to the adapter
             for entity_key, entity in self.registry.list().items():
-                if hasattr(entity, 'wad_source') and entity.wad_source == stack_name:
+                if hasattr(entity, "wad_source") and entity.wad_source == stack_name:
                     # N2: Conflict detection — warn if entity already mapped to different WAD
                     existing_wad = self._adapter_registry._entity_to_adapter.get(entity.name)
                     if existing_wad and existing_wad != stack_name:
@@ -515,15 +531,21 @@ class WADLoader:
                     self._adapter_registry.register_entity_to_wad(entity.name, stack_name)
 
         except ImportError as e:
-            logger.error(f"Failed to import adapter module '{module_path}' for WAD {stack_name}: {e}")
+            logger.error(
+                f"Failed to import adapter module '{module_path}' for WAD {stack_name}: {e}"
+            )
         except AttributeError as e:
-            logger.error(f"Adapter class '{class_name}' not found in '{module_path}' for WAD {stack_name}: {e}")
+            logger.error(
+                f"Adapter class '{class_name}' not found in '{module_path}' for WAD {stack_name}: {e}"
+            )
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to register adapter for WAD {stack_name}: {e}", exc_info=True)
 
-    async def _load_entities(self, entities_dir: Path, wad_source: str = "", priority: int = 0) -> None:
+    async def _load_entities(
+        self, entities_dir: Path, wad_source: str = "", priority: int = 0
+    ) -> None:
         """Load all .yaml files from the entities directory.
-        
+
         Args:
             entities_dir: Path to the entities directory
             wad_source: WAD name to tag entities with (for IWAD tracking)
@@ -537,22 +559,28 @@ class WADLoader:
                 entity_name = path.stem  # e.g., "sysadmin.yaml" → "sysadmin"
             else:
                 continue
-            
+
             if not entity_name:
                 continue
-            
+
             # Collision detection with priority resolution
             existing = self.registry.get(entity_name)
             if existing:
                 existing_priority = 0  # entities.yaml entities have base priority 0
                 if existing.wad_source and existing.wad_source == wad_source:
-                    logger.warning(f"Entity {entity_name} already registered from WAD {wad_source}. Skipping duplicate.")
+                    logger.warning(
+                        f"Entity {entity_name} already registered from WAD {wad_source}. Skipping duplicate."
+                    )
                     continue
                 if priority <= existing_priority:
-                    logger.info(f"Entity {entity_name} already registered (priority {existing_priority} >= {priority}). Skipping from WAD {wad_source}.")
+                    logger.info(
+                        f"Entity {entity_name} already registered (priority {existing_priority} >= {priority}). Skipping from WAD {wad_source}."
+                    )
                     continue
-                logger.info(f"Entity {entity_name} already registered (priority {existing_priority} < {priority}). Overriding from WAD {wad_source}.")
-            
+                logger.info(
+                    f"Entity {entity_name} already registered (priority {existing_priority} < {priority}). Overriding from WAD {wad_source}."
+                )
+
             try:
                 # S1.5a: File size guard for entity files
                 try:
@@ -564,17 +592,17 @@ class WADLoader:
                         continue
                 except OSError:
                     pass  # Non-fatal; yaml.safe_load will handle truncation
-                    
+
                 async with await anyio.open_file(str(path), "r") as f:
                     data = yaml.safe_load(await f.read())
-                    
+
                     if data is None:
                         logger.warning(f"Entity file {path.name} is empty. Skipping.")
                         continue
-                    
+
                     # Create Entity object
                     ent_data = data.get("entity", {})
-                    
+
                     if not ent_data:
                         logger.warning(f"Entity file {path.name} missing 'entity' key. Skipping.")
                         continue
@@ -591,7 +619,7 @@ class WADLoader:
                             f"Entity {entity_name} has invalid field types: {'; '.join(type_errors)}. Skipping."
                         )
                         continue
-                    
+
                     # D-282: extra="forbid" — reject unknown fields (prevents silent typos)
                     known_fields = set(ENTITY_FIELD_TYPES.keys()) | {"wad_source", "priority"}
                     unknown_fields = set(ent_data.keys()) - known_fields
@@ -601,7 +629,7 @@ class WADLoader:
                             f"Known fields: {sorted(known_fields)}. Skipping."
                         )
                         continue
-                    
+
                     # D-282: Range constraints for numeric fields
                     range_errors = []
                     if "temperature" in ent_data:
@@ -621,7 +649,7 @@ class WADLoader:
                             f"Entity {entity_name} has range violations: {'; '.join(range_errors)}. Skipping."
                         )
                         continue
-                    
+
                     # S1.5a: Validate entity name length
                     entity_name_raw = ent_data.get("name", entity_name)
                     if len(entity_name_raw) > MAX_ENTITY_NAME_LENGTH:
@@ -629,7 +657,7 @@ class WADLoader:
                             f"Entity name too long ({len(entity_name_raw)} chars): {entity_name_raw[:50]}... Skipping."
                         )
                         continue
-                    
+
                     # S1.5a: Validate domains count
                     domains = ent_data.get("domains", [])
                     if len(domains) > MAX_DOMAINS_PER_ENTITY:
@@ -642,12 +670,22 @@ class WADLoader:
                     # [M2] Engine-Stack Firewall: engine sees slots + opaque metadata.
                     # WAD defines: element, chakra, planet, sigil, glyph, pantheon, etc.
                     core_entity_fields = {
-                        "name", "domains", "model", "personality", "temperature",
-                        "context_window", "slots", "role", "container", "port",
-                        "wad_source", "priority",
+                        "name",
+                        "domains",
+                        "model",
+                        "personality",
+                        "temperature",
+                        "context_window",
+                        "slots",
+                        "role",
+                        "container",
+                        "port",
+                        "wad_source",
+                        "priority",
                     }
                     wad_metadata = {
-                        k: v for k, v in ent_data.items()
+                        k: v
+                        for k, v in ent_data.items()
                         if k not in core_entity_fields and v is not None
                     }
 
@@ -671,28 +709,30 @@ class WADLoader:
             except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as e:
                 logger.warning(f"Failed to load entity from {path}: {e}")
 
-
-
     async def _load_voices(self, voices_dir: Path, wad_source: str = "") -> None:
         """Load voice configurations from the voices directory."""
-        # In the current architecture, voices are essentially entities with 
+        # In the current architecture, voices are essentially entities with
         # specific activation phrases and roles.
         async for path in anyio.Path(voices_dir).glob("*.yaml"):
             try:
                 async with await anyio.open_file(str(path), "r") as f:
                     data = yaml.safe_load(await f.read())
-                    
+
                 voice_name = path.stem
                 existing = self.registry.get(voice_name)
                 if existing:
                     existing_priority = 0
                     if existing.wad_source and existing.wad_source == wad_source:
-                        logger.warning(f"Voice {voice_name} already registered from WAD {wad_source}. Skipping.")
+                        logger.warning(
+                            f"Voice {voice_name} already registered from WAD {wad_source}. Skipping."
+                        )
                         continue
                     if wad_source and existing.wad_source != wad_source:
-                        logger.info(f"Voice {voice_name} already registered from WAD {existing.wad_source}. Skipping voice from WAD {wad_source}.")
+                        logger.info(
+                            f"Voice {voice_name} already registered from WAD {existing.wad_source}. Skipping voice from WAD {wad_source}."
+                        )
                         continue
-                
+
                 # Create a voice entity
                 entity = Entity(
                     name=voice_name,
@@ -709,10 +749,9 @@ class WADLoader:
             except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as e:
                 logger.warning(f"Failed to load voice from {path}: {e}")
 
-
     async def _load_world_state(self, world_dir: Path, wad_source: str = "") -> None:
         """Load world-lumps for VR Omegaverse. [id-soft: doom-1993]
-        
+
         Structure: world/<sector_id>/<lump_id>.yaml
         """
         async for sector_path in anyio.Path(world_dir).iterdir():
@@ -722,18 +761,16 @@ class WADLoader:
                     try:
                         async with await anyio.open_file(str(lump_path), "r") as f:
                             data = yaml.safe_load(await f.read())
-                        
+
                         lump_id = lump_path.stem
                         lump = WorldLump(
                             lump_id=lump_id,
                             data=data.get("world_data", {}),
-                            metadata={
-                                "wad_source": wad_source,
-                                "path": str(lump_path)
-                            }
+                            metadata={"wad_source": wad_source, "path": str(lump_path)},
                         )
                         await world_state.load_lump(sector_id, lump)
-                        logger.info(f"World State: Loaded lump {lump_id} in sector {sector_id} from {wad_source}")
+                        logger.info(
+                            f"World State: Loaded lump {lump_id} in sector {sector_id} from {wad_source}"
+                        )
                     except (OmegaError, RuntimeError, OSError) as e:
                         logger.warning(f"Failed to load world lump {lump_path}: {e}")
-

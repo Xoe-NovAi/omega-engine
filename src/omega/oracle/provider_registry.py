@@ -50,9 +50,7 @@ class ProviderRegistry:
         """Load from config/providers.yaml (or a custom path for tests)."""
         if path is None:
             path = (
-                Path(__file__).resolve().parent.parent.parent.parent
-                / "config"
-                / "providers.yaml"
+                Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
             )
         if not path.exists():
             logger.warning("Provider config not found at %s. Using empty registry.", path)
@@ -61,9 +59,7 @@ class ProviderRegistry:
             config = yaml.safe_load(f)
         fabric_cfg = config.get("inference", {}).get("fallback_chain", [])
         registry = cls(fabric_cfg)
-        registry._load_model_map(
-            config.get("inference", {}).get("providers", {})
-        )  # noqa: SLF001
+        registry._load_model_map(config.get("inference", {}).get("providers", {}))  # noqa: SLF001
         return registry
 
     @classmethod
@@ -135,9 +131,7 @@ class ProviderRegistry:
             if not getattr(self, "_warned_names", None):
                 self._warned_names = set()  # type: ignore[attr-defined]
             if name not in self._warned_names:  # type: ignore[attr-defined]
-                logger.warning(
-                    "M22: unknown provider %r classified CLOUD (pessimistic)", name
-                )
+                logger.warning("M22: unknown provider %r classified CLOUD (pessimistic)", name)
                 self._warned_names.add(name)  # type: ignore[attr-defined]
             return self._UNKNOWN_IS_CLOUD
         return self._is_cloud[name]

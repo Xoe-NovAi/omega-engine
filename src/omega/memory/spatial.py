@@ -19,13 +19,10 @@ import logging
 import math
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
-from datetime import datetime, timezone
 
-import anyio
 
-from .blocks import MemoryBlock, BlockCategory, GovernanceLevel
+from .blocks import MemoryBlock, BlockCategory
 from .block_store import SQLiteBlockStore, get_sqlite_block_store
-from .block_tools import BlockTools
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +34,7 @@ class SpatialCoordinate:
     Coordinates are computed by the ForceDirectedSpatialResolver and
     stored alongside memory blocks for spatial retrieval.
     """
+
     x: float = 0.0
     y: float = 0.0
     z: float = 0.0
@@ -44,9 +42,7 @@ class SpatialCoordinate:
     def dist_to(self, other: "SpatialCoordinate") -> float:
         """Euclidean distance to another coordinate."""
         return math.sqrt(
-            (self.x - other.x) ** 2
-            + (self.y - other.y) ** 2
-            + (self.z - other.z) ** 2
+            (self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2
         )
 
     def to_tuple(self) -> Tuple[float, float, float]:
@@ -76,6 +72,7 @@ class SpatialMemoryBlock:
     The coordinates are computed by the ForceDirectedSpatialResolver
     based on semantic relationships between blocks.
     """
+
     block: MemoryBlock
     coordinates: SpatialCoordinate = field(default_factory=SpatialCoordinate)
     spatial_metadata: Dict[str, Any] = field(default_factory=dict)
@@ -318,9 +315,7 @@ class SpatialIndex:
         block_ids = self._entity_blocks.get(entity_name, [])
         return [self._blocks[bid] for bid in block_ids if bid in self._blocks]
 
-    def update_coordinates(
-        self, block_id: str, coords: SpatialCoordinate
-    ) -> bool:
+    def update_coordinates(self, block_id: str, coords: SpatialCoordinate) -> bool:
         """Update coordinates for an existing block.
 
         Returns True if block was found and updated.
@@ -384,6 +379,7 @@ class SpatialMemoryManager:
         """Lazy-load the spatial resolver to avoid circular imports."""
         if self._resolver is None:
             from omega.oracle.spatial_resolver import get_spatial_resolver
+
             self._resolver = get_spatial_resolver()
         return self._resolver
 
@@ -420,12 +416,10 @@ class SpatialMemoryManager:
         for block in blocks:
             coords = coords_map.get(
                 block.label,
-                SpatialCoordinate(
-                    x=0.0, y=0.0, z=0.0
-                ),
+                SpatialCoordinate(x=0.0, y=0.0, z=0.0),
             )
             # Convert Point3D to SpatialCoordinate if needed
-            if hasattr(coords, 'x') and hasattr(coords, 'y') and hasattr(coords, 'z'):
+            if hasattr(coords, "x") and hasattr(coords, "y") and hasattr(coords, "z"):
                 spatial_coords = SpatialCoordinate(x=coords.x, y=coords.y, z=coords.z)
             else:
                 spatial_coords = SpatialCoordinate()
@@ -468,9 +462,7 @@ class SpatialMemoryManager:
         min_cluster_size: int = 2,
     ) -> List[List[SpatialMemoryBlock]]:
         """Get spatial clusters for an entity (for SleepTimeAgent consolidation)."""
-        return self._spatial_index.spatial_cluster(
-            entity_name, max_radius, min_cluster_size
-        )
+        return self._spatial_index.spatial_cluster(entity_name, max_radius, min_cluster_size)
 
     def get_index_stats(self) -> Dict[str, Any]:
         """Get spatial index statistics."""
@@ -478,6 +470,7 @@ class SpatialMemoryManager:
 
 
 # ── Integration with SleepTimeAgent ──────────────────────────────────────
+
 
 async def spatial_consolidation(
     entity_name: str,
@@ -508,23 +501,23 @@ async def spatial_consolidation(
     index_result = await manager.index_entity_blocks(entity_name)
 
     # Get spatial clusters
-    clusters = manager.get_spatial_clusters(
-        entity_name, max_radius, min_cluster_size
-    )
+    clusters = manager.get_spatial_clusters(entity_name, max_radius, min_cluster_size)
 
     # Build cluster summaries
     cluster_summaries = []
     for i, cluster in enumerate(clusters):
-        cluster_summaries.append({
-            "cluster_id": i,
-            "block_count": len(cluster),
-            "labels": [b.label for b in cluster],
-            "centroid": {
-                "x": sum(b.coordinates.x for b in cluster) / len(cluster),
-                "y": sum(b.coordinates.y for b in cluster) / len(cluster),
-                "z": sum(b.coordinates.z for b in cluster) / len(cluster),
-            },
-        })
+        cluster_summaries.append(
+            {
+                "cluster_id": i,
+                "block_count": len(cluster),
+                "labels": [b.label for b in cluster],
+                "centroid": {
+                    "x": sum(b.coordinates.x for b in cluster) / len(cluster),
+                    "y": sum(b.coordinates.y for b in cluster) / len(cluster),
+                    "z": sum(b.coordinates.z for b in cluster) / len(cluster),
+                },
+            }
+        )
 
     return {
         "entity": entity_name,

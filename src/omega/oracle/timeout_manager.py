@@ -8,45 +8,50 @@
 import anyio
 import logging
 import time
-from typing import Optional, Callable, Any, Dict
+from typing import Callable, Any, Dict
 from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class TimeoutContext:
     """Context for a specific timeout layer."""
+
     name: str
     timeout: float
     start_time: float = field(default_factory=time.time)
     cancelled: bool = False
 
+
 class TimeoutManager:
     """
     Implements a 4-layer nested cancellation hierarchy:
     Tool -> Group -> Turn -> Workflow
-    
+
     If a higher layer times out, all nested lower layers are immediately cancelled.
     """
-    
+
     def __init__(self):
         self._layers = {
-            "workflow": 300.0, # 5 mins
-            "turn": 60.0,      # 1 min
-            "group": 30.0,     # 30 secs
-            "tool": 10.0,      # 10 secs
+            "workflow": 300.0,  # 5 mins
+            "turn": 60.0,  # 1 min
+            "group": 30.0,  # 30 secs
+            "tool": 10.0,  # 10 secs
         }
         self._active_contexts: Dict[str, TimeoutContext] = {}
 
     async def execute(self, layer: str, func: Callable, *args, **kwargs) -> Any:
         """Executes a function within a specific timeout layer."""
         if layer not in self._layers:
-            raise ValueError(f"Invalid timeout layer: {layer}. Must be one of {list(self._layers.keys())}")
-        
+            raise ValueError(
+                f"Invalid timeout layer: {layer}. Must be one of {list(self._layers.keys())}"
+            )
+
         timeout = self._layers[layer]
         ctx = TimeoutContext(name=layer, timeout=timeout)
         self._active_contexts[layer] = ctx
-        
+
         try:
             # [AnyIO 4.x] fail_after is a synchronous context manager
             with anyio.fail_after(timeout):

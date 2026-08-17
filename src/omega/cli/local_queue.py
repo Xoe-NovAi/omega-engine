@@ -3,14 +3,11 @@
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ trc_local_worker ⬡ CLI
 
 import typer
-import json
 import anyio
-from typing import Optional, List
-from pathlib import Path
+from typing import Optional
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
-from rich.syntax import Syntax
 from datetime import datetime
 
 from omega.observability import DATA_DIR
@@ -42,7 +39,7 @@ def queue_task(
     entity: str = typer.Option("roc_racoon", "--entity", "-e", help="Entity name for tracking"),
 ) -> None:
     """Queue a local inference task (fire-and-forget). Returns task_id immediately."""
-    
+
     async def _queue():
         task_id = await queue_local_task(
             prompt=prompt,
@@ -57,7 +54,7 @@ def queue_task(
         console.print(f"  Model: {model}")
         console.print(f"  Entity: {entity}")
         console.print(f"  Prompt: {prompt[:80]}{'...' if len(prompt) > 80 else ''}")
-    
+
     anyio.run(_queue)
 
 
@@ -66,22 +63,22 @@ def task_status(
     task_id: str = typer.Argument(..., help="Task ID to check"),
 ) -> None:
     """Get status of a local task."""
-    
+
     async def _status():
         status = await get_local_task_status(task_id)
         if not status:
             console.print(f"[red]Task not found: {task_id}[/red]")
             return
-        
+
         table = Table(title=f"Task Status: {task_id}")
         table.add_column("Field", style="cyan")
         table.add_column("Value", style="white")
-        
+
         for key, value in status.items():
             table.add_row(key, str(value))
-        
+
         console.print(table)
-    
+
     anyio.run(_status)
 
 
@@ -91,25 +88,27 @@ def task_result(
     raw: bool = typer.Option(False, "--raw", "-r", help="Output raw JSON"),
 ) -> None:
     """Get result of a completed local task."""
-    
+
     async def _cat():
         result = await get_local_task_result(task_id)
         if not result:
             console.print(f"[red]Result not found: {task_id}[/red]")
             console.print("Task may not be completed yet. Check status first.")
             return
-        
+
         if raw:
             console.print_json(result.to_json())
         else:
             # Pretty print
-            console.print(Panel(
-                result.text,
-                title=f"Result: {task_id}",
-                subtitle=f"Model: {result.model} | Provider: {result.provider_name} | Tokens: {result.tokens_generated} | Latency: {result.latency_ms}ms",
-                border_style="green",
-            ))
-            
+            console.print(
+                Panel(
+                    result.text,
+                    title=f"Result: {task_id}",
+                    subtitle=f"Model: {result.model} | Provider: {result.provider_name} | Tokens: {result.tokens_generated} | Latency: {result.latency_ms}ms",
+                    border_style="green",
+                )
+            )
+
             # Show metadata
             meta_table = Table(title="Metadata")
             meta_table.add_column("Field", style="cyan")
@@ -123,18 +122,20 @@ def task_result(
             meta_table.add_row("Trace ID", result.trace_id)
             meta_table.add_row("Completed At", result.completed_at)
             console.print(meta_table)
-    
+
     anyio.run(_cat)
 
 
 @app.command("list")
 def list_tasks(
-    status: Optional[str] = typer.Option(None, "--status", "-s", help="Filter by status (queued/completed/dead)"),
+    status: Optional[str] = typer.Option(
+        None, "--status", "-s", help="Filter by status (queued/completed/dead)"
+    ),
     limit: int = typer.Option(20, "--limit", "-l", help="Max tasks to show"),
     entity: Optional[str] = typer.Option(None, "--entity", "-e", help="Filter by entity"),
 ) -> None:
     """List local tasks with optional filters."""
-    
+
     async def _list():
         status_enum = None
         if status:
@@ -143,13 +144,13 @@ def list_tasks(
             except ValueError:
                 console.print(f"[red]Invalid status: {status}. Use: queued, completed, dead[/red]")
                 return
-        
+
         tasks = await list_local_tasks(status=status_enum, limit=limit, entity=entity)
-        
+
         if not tasks:
             console.print("[yellow]No tasks found[/yellow]")
             return
-        
+
         table = Table(title=f"Local Tasks ({len(tasks)} found)")
         table.add_column("Task ID", style="cyan")
         table.add_column("Status", style="yellow")
@@ -157,7 +158,7 @@ def list_tasks(
         table.add_column("Entity", style="magenta")
         table.add_column("Created", style="dim")
         table.add_column("Prompt Preview", style="white")
-        
+
         for task in tasks:
             # Format timestamp
             try:
@@ -165,7 +166,7 @@ def list_tasks(
                 created_str = dt.strftime("%m-%d %H:%M")
             except (ValueError, AttributeError, KeyError):
                 created_str = task["created_at"][:16]
-            
+
             table.add_row(
                 task["task_id"],
                 task["status"],
@@ -174,9 +175,9 @@ def list_tasks(
                 created_str,
                 task["prompt_preview"],
             )
-        
+
         console.print(table)
-    
+
     anyio.run(_list)
 
 
@@ -190,12 +191,12 @@ def run_daemon(
     console.print(f"  Poll interval: {interval}s")
     console.print(f"  Max concurrent: {max_concurrent}")
     console.print("  Press Ctrl+C to stop")
-    
+
     from omega.oracle.local_worker_pool import LocalWorkerPool
     from omega.oracle.model_gateway import ModelGateway
     from omega.oracle.health_monitor import HealthMonitor
     from omega.oracle.resource_guard import ResourceGuard
-    
+
     async def _daemon():
         pool = LocalWorkerPool(
             model_gateway=ModelGateway(health_monitor=HealthMonitor()),
@@ -203,7 +204,7 @@ def run_daemon(
             poll_interval=interval,
             max_concurrent=max_concurrent,
         )
-        
+
         try:
             await pool.start()
             # Keep running until cancelled
@@ -214,33 +215,36 @@ def run_daemon(
         finally:
             await pool.stop()
             console.print("[green]Daemon stopped[/green]")
-    
+
     anyio.run(_daemon)
 
 
 @app.command("clean")
 def clean_tasks(
-    status: str = typer.Option("dead", "--status", "-s", help="Status to clean (dead/completed/queued/all)"),
-    older_than_days: int = typer.Option(7, "--older-than", "-d", help="Only clean tasks older than N days"),
+    status: str = typer.Option(
+        "dead", "--status", "-s", help="Status to clean (dead/completed/queued/all)"
+    ),
+    older_than_days: int = typer.Option(
+        7, "--older-than", "-d", help="Only clean tasks older than N days"
+    ),
     dry_run: bool = typer.Option(True, "--dry-run/--execute", help="Dry run (default) or execute"),
 ) -> None:
     """Clean old task files and artifacts."""
-    from pathlib import Path
     import time
-    
+
     status_dirs = {
         "queued": DATA_DIR / "requests" / "local_worker_queue" / "queued",
         "completed": DATA_DIR / "requests" / "local_worker_queue" / "completed",
         "dead": DATA_DIR / "requests" / "local_worker_queue" / "dead",
     }
-    
+
     artifact_dir = DATA_DIR / "artifacts" / "local_worker"
-    
+
     cutoff_time = time.time() - (older_than_days * 86400)
     cleaned = 0
-    
+
     dirs_to_clean = [status_dirs[status]] if status != "all" else list(status_dirs.values())
-    
+
     for task_dir in dirs_to_clean:
         for task_file in task_dir.glob("*.json"):
             if task_file.stat().st_mtime < cutoff_time:
@@ -253,10 +257,11 @@ def clean_tasks(
                     artifact_task_dir = artifact_dir / task_id
                     if artifact_task_dir.exists():
                         import shutil
+
                         shutil.rmtree(artifact_task_dir)
                     console.print(f"[green]Removed: {task_file}[/green]")
                 cleaned += 1
-    
+
     if dry_run:
         console.print(f"\n[yellow]Dry run: {cleaned} files would be removed[/yellow]")
         console.print("Run with --execute to actually clean")

@@ -21,11 +21,10 @@
 
 import logging
 import os
-import subprocess
 import time
 import inspect
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, NamedTuple, AsyncIterator, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 # ── TYPE_CHECKING block for forward references ──
 if TYPE_CHECKING:
@@ -33,17 +32,19 @@ if TYPE_CHECKING:
 from dataclasses import dataclass
 import anyio
 
+
 @dataclass
 class GenerateResult:
     """Standardized result of a model generation call.
-    
+
     [M22: Response Provenance Mandate] Ensures the actual provider
     that served the response is tracked for sovereignty auditing.
-    
+
     [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: logprobs field added.
     Per-token log probabilities from the inference backend. Populated
     when the provider supports logprobs (e.g., NativeGGUF with logprobs=5).
     """
+
     text: str
     provider_name: str
     is_cloud: bool
@@ -51,26 +52,31 @@ class GenerateResult:
     model_used: Optional[str] = None
     logprobs: Optional[list] = None
 
+
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    ProviderRateLimitError,
+    ProviderUnavailableError,
+    InferenceError,
+    ConfigError,
 )
 import yaml
-from omega.cvar_table import cvar_get, cvar_namespace
+from omega.cvar_table import cvar_get
 
 from .backends.mock import OfflineMockBackend
 from .backends.openai_compat import OpenAICompatProvider
 from .backends.antigravity_provider import AntigravityProvider
 from .backends.remote_provider import ProviderConfig
 from .backends.google_compat import GoogleCompatProvider
-from .resource_guard import ResourceGuard, get_resource_guard
-from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
+from .resource_guard import get_resource_guard
+from .providers import (
+    GoogleAIProvider,
+    LocallmsterProvider,
+    OllamaProvider,
+    MockProvider,
+    NativeGGUFProvider,
+)
 from .health_monitor import CircuitOpenError
 from .provider_registry import get_provider_registry
 
@@ -82,12 +88,11 @@ from .provider_selector import ProviderSelector
 from .pii_masker import PIIMasker
 from omega.observability.token_ledger import TokenLedger
 from omega.observability.latency_tracker import tracker
-from omega.state.usm import USMManager
 
 # [A5+call_with_retry scope fix] Module-level import: retry_policy helpers are
 # used inside generate() (lines ~1145/1154). Previously imported only in
 # __init__ local scope -> NameError on the retry path (latent bug).
-from .retry_policy import call_with_retry, TransientProviderError
+from .retry_policy import call_with_retry
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +100,7 @@ logger = logging.getLogger(__name__)
 class ModelGateway:
     """Abstracts local model inference. Auto-detects available backends.
     DocRef: docs/reference/api/model_gateway.md
-    
+
     Supports Zen 2 optimizations:
 
       - KV cache quantization per-model
@@ -112,22 +117,25 @@ class ModelGateway:
         if config_path is None:
             config_path = os.environ.get(
                 "OMEGA_MODELS_CONFIG",
-                str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "models.yaml"),
+                str(
+                    Path(__file__).resolve().parent.parent.parent.parent / "config" / "models.yaml"
+                ),
             )
         self.config_path = Path(config_path)
-        
+
         # Load Sovereign Secrets from .env
         self._load_sovereign_secrets()
-        
+
         self.models = self._load_models()
         self._kv_cache_config = self._load_kv_cache_config()
         self._sampling_overrides = self._load_sampling_overrides()
         self._backend_cache: Dict[str, bool] = {}
-        
+
         # Initialize Zen2Optimizer for hardware resonance
         from .cpu_optimizer import Zen2Optimizer
+
         self._cpu_optimizer = Zen2Optimizer()
-        
+
         self.resource_guard = get_resource_guard()
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
@@ -150,8 +158,9 @@ class ModelGateway:
 
         # Sovereign State Manager (USM) for SomaticState (M20)
         from omega.state import get_usm
+
         self.usm = get_usm()
-        
+
         self._entity_registry = EntityRegistry()
         self._gnosis_proxy = GnosisProxy(self._entity_registry)
         # B5: HealthMonitor for latency and success/failure recording
@@ -160,22 +169,26 @@ class ModelGateway:
         # Handoff: ho_8135d6122230 — Lilith Phase 1 port from xna-omega-legacy
         # R3: Cross-references provider IDs against config/providers.yaml
         self.affinity_resolver = EntityAffinityResolver(
-            yaml_path=Path(__file__).resolve().parent.parent.parent.parent / "config" / "entity_model_affinity.yaml"
+            yaml_path=Path(__file__).resolve().parent.parent.parent.parent
+            / "config"
+            / "entity_model_affinity.yaml"
         )
         # Seed known providers from loaded fabric for R3 validation
         provider_names = {p.name for p in self.providers}
         self.affinity_resolver.set_known_providers(provider_names)
-        
+
         # A2A Bridge — Sovereign Agent Identity (Google A2A v1.0)
         # Maps EntityRegistry entities to A2A Agent Cards for cross-agent discovery
         from .a2a_bridge import A2ABridge
+
         self._a2a_bridge = A2ABridge(entity_registry=self._entity_registry)
-        
+
         # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
         self._limiter = anyio.CapacityLimiter(10)
         self.pii_masker = PIIMasker()
         self.provider_selector = ProviderSelector(self, health_monitor=self._health_monitor)
         from .rate_limiter import RateLimiter
+
         self.rate_limiter = RateLimiter()
         # [M8 Zero Telemetry] WARP Proxy Pool — optional, injected by Oracle
         # Only used for opencode-zen provider to bypass rate limits.
@@ -194,15 +207,21 @@ class ModelGateway:
                 if hasattr(provider, "shutdown"):
                     provider.shutdown()
             except Exception as e:  # noqa: BLE001 - shutdown is best-effort
-                logger.warning("Provider %s shutdown failed (non-fatal): %s", getattr(provider, "name", "?"), e)
+                logger.warning(
+                    "Provider %s shutdown failed (non-fatal): %s", getattr(provider, "name", "?"), e
+                )
 
     def list_providers(self) -> List[Dict[str, Any]]:
         """Return a list of all registered providers and their current health."""
+
         def _get_prio(p):
-            if hasattr(p, 'priority'): return p.priority
-            if hasattr(p, 'config'):
-                if isinstance(p.config, dict): return p.config.get('priority', 999)
-                if hasattr(p.config, 'priority'): return p.config.priority
+            if hasattr(p, "priority"):
+                return p.priority
+            if hasattr(p, "config"):
+                if isinstance(p.config, dict):
+                    return p.config.get("priority", 999)
+                if hasattr(p.config, "priority"):
+                    return p.config.priority
             return 999
 
         return [
@@ -210,14 +229,14 @@ class ModelGateway:
                 "name": p.name,
                 "priority": _get_prio(p),
                 "type": p.__class__.__name__,
-                "healthy": self._backend_cache.get(p.name, False)
+                "healthy": self._backend_cache.get(p.name, False),
             }
             for p in self.providers
         ]
 
     async def get_available_providers(self, model_name: str) -> List[Any]:
         """Return providers that are available (healthy or untested) for a model.
-        
+
         Filters by health cache — providers with known-false status are excluded.
         Returns all providers if none have been health-checked yet.
         """
@@ -230,10 +249,7 @@ class ModelGateway:
 
     def list_models(self) -> List[Dict[str, Any]]:
         """Return a list of all configured models and their specs."""
-        return [
-            {"name": name, **spec}
-            for name, spec in self.models.items()
-        ]
+        return [{"name": name, **spec} for name, spec in self.models.items()]
 
     def _load_sampling_overrides(self) -> dict:
         """Load per-model sampling overrides (safety/stability floors).
@@ -299,15 +315,15 @@ class ModelGateway:
 
     def _load_sovereign_secrets(self) -> None:
         """Load API keys from .env file into environment variables.
-        
-        Implements the Sovereign Gateway pattern: secrets are stored in a 
+
+        Implements the Sovereign Gateway pattern: secrets are stored in a
         single .env file and injected into the process environment.
         """
         env_path = Path(__file__).resolve().parent.parent.parent.parent / ".env"
         if not env_path.exists():
             logger.warning(f"Sovereign secrets file not found at {env_path}. Using system env.")
             return
-        
+
         try:
             with open(env_path, "r") as f:
                 for line in f:
@@ -324,7 +340,6 @@ class ModelGateway:
             logger.error(f"Failed to load sovereign secrets: {e}", exc_info=True)
             raise ConfigError(f"Sovereign secrets load failed: {e}", raw_error=e) from e
 
-
     @staticmethod
     def _create_openrouter(name: str, cfg: dict) -> OpenAICompatProvider:
         """Factory for OpenRouter from raw YAML config dict.
@@ -332,18 +347,24 @@ class ModelGateway:
         [S3 B5 / D205] Supports both legacy single `api_key` and new
         `api_keys` list (8-account Active-Passive sharding).
         """
-        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "api_keys", "base_url")}
+        extra = {
+            k: v
+            for k, v in cfg.items()
+            if k not in ("provider", "priority", "api_key", "api_keys", "base_url")
+        }
         # Resolve key list: prefer api_keys list, fall back to wrapping api_key
         api_keys = cfg.get("api_keys", [])
         if not api_keys and cfg.get("api_key"):
             api_keys = [cfg["api_key"]]
-        return OpenAICompatProvider(ProviderConfig(
-            name=name,
-            priority=cfg.get("priority", 0),
-            api_keys=api_keys,
-            base_url=cfg.get("base_url", "https://openrouter.ai/api").rstrip("/v1"),
-            extra=extra,
-        ))
+        return OpenAICompatProvider(
+            ProviderConfig(
+                name=name,
+                priority=cfg.get("priority", 0),
+                api_keys=api_keys,
+                base_url=cfg.get("base_url", "https://openrouter.ai/api").rstrip("/v1"),
+                extra=extra,
+            )
+        )
 
     @staticmethod
     def _create_antigravity(name: str, cfg: dict) -> AntigravityProvider:
@@ -356,18 +377,24 @@ class ModelGateway:
         [S3 B5 / D205] Supports both legacy single `api_key` and new
         `api_keys` list (8-account Active-Passive sharding).
         """
-        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "api_keys", "base_url")}
+        extra = {
+            k: v
+            for k, v in cfg.items()
+            if k not in ("provider", "priority", "api_key", "api_keys", "base_url")
+        }
         # Resolve key list: prefer api_keys list, fall back to wrapping api_key
         api_keys = cfg.get("api_keys", [])
         if not api_keys and cfg.get("api_key"):
             api_keys = [cfg["api_key"]]
-        return AntigravityProvider(ProviderConfig(
-            name=name,
-            priority=cfg.get("priority", 0),
-            api_keys=api_keys,
-            base_url=cfg.get("base_url", "https://api.antigravity.ai/v1"),
-            extra=extra,
-        ))
+        return AntigravityProvider(
+            ProviderConfig(
+                name=name,
+                priority=cfg.get("priority", 0),
+                api_keys=api_keys,
+                base_url=cfg.get("base_url", "https://api.antigravity.ai/v1"),
+                extra=extra,
+            )
+        )
 
     def _merge_native_gguf_config(self, p_cfg: dict, models: dict) -> dict:
         """Merge models.yaml model spec into native-gguf provider config.
@@ -386,6 +413,7 @@ class ModelGateway:
         This fix makes the preference **explicit** and handles the edge case
         where ``path`` is also set in providers.yaml.
         """
+
         # Resolve env: prefixes in provider config values (e.g. model_path)
         def _resolve_env_prefix(val: str) -> str:
             if isinstance(val, str) and val.startswith("env:"):
@@ -410,12 +438,19 @@ class ModelGateway:
                 merged["model_path"] = resolved
 
         # Keys to pull from models.yaml — ALWAYS prefer models.yaml path
-        for key in ("size_gb", "ram_mb", "context_window",
-                     "threads", "load_strategy", "entity",
-                     "kv_cache_key_type", "kv_cache_value_type"):
+        for key in (
+            "size_gb",
+            "ram_mb",
+            "context_window",
+            "threads",
+            "load_strategy",
+            "entity",
+            "kv_cache_key_type",
+            "kv_cache_value_type",
+        ):
             if key in default_spec and key not in merged:
                 merged[key] = default_spec[key]
-        
+
         # Path override: models.yaml ``path`` ALWAYS wins over providers.yaml ``model_path``
         if "path" in default_spec:
             models_path = _resolve_env_prefix(default_spec["path"])
@@ -427,14 +462,14 @@ class ModelGateway:
         elif "path" in default_spec and "model_path" not in merged:
             # Fallback: resolve env: prefix on models.yaml path
             merged["model_path"] = _resolve_env_prefix(default_spec["path"])
-        
+
         # Clean up any orphan ``path`` key from provider config
         if "path" in merged:
             del merged["path"]
 
         # Optimize threads based on model size if not explicitly set
         if "threads" not in merged:
-            model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
+            model_size_b = default_spec.get("size_gb", 1.7)  # Default to 1.7B if unknown
             merged["threads"] = self._cpu_optimizer.get_recommended_threads(model_size_b)
 
         # [B8] Optimize batch sizes based on model size if not explicitly set.
@@ -442,7 +477,7 @@ class ModelGateway:
         # computed per-model but never wired into the provider config. Zen 2
         # L2 cache is 512KB/core; batch fits in L2 for prompt processing speed.
         if "n_batch" not in merged and "batch_size" not in merged:
-            model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
+            model_size_b = default_spec.get("size_gb", 1.7)  # Default to 1.7B if unknown
             _batch_rec = self._cpu_optimizer.get_recommended_batch_sizes(model_size_b)
             merged["n_batch"] = _batch_rec["batch_size"]
             merged["n_ubatch"] = _batch_rec["ubatch_size"]
@@ -457,8 +492,10 @@ class ModelGateway:
         from .kv_types import KV_TYPE_MAP
 
         kv_map = KV_TYPE_MAP
-        for yaml_key, prov_key in [("kv_cache_key_type", "type_k"),
-                                    ("kv_cache_value_type", "type_v")]:
+        for yaml_key, prov_key in [
+            ("kv_cache_key_type", "type_k"),
+            ("kv_cache_value_type", "type_v"),
+        ]:
             if yaml_key in merged:
                 merged[prov_key] = kv_map.get(merged.pop(yaml_key), 8)
 
@@ -477,7 +514,9 @@ class ModelGateway:
         if os.environ.get("OMEGA_ENV") == "test":
             return [MockProvider("mock", {"timeout_seconds": 5.0})]
 
-        providers_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
+        providers_path = (
+            Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
+        )
         if not providers_path.exists():
             logger.warning(f"Provider config not found at {providers_path}. Using defaults.")
             return [MockProvider("mock", {})]
@@ -519,14 +558,15 @@ class ModelGateway:
 
         def _get_priority(p):
             """Extract priority from provider config — handles both dict and dataclass (ProviderConfig)."""
-            cfg = getattr(p, 'config', None)
+            cfg = getattr(p, "config", None)
             if cfg is None:
                 return 999
             if isinstance(cfg, dict):
-                return cfg.get('priority', 999)
-            if hasattr(cfg, 'priority'):
+                return cfg.get("priority", 999)
+            if hasattr(cfg, "priority"):
                 return cfg.priority
             return 999
+
         instances.sort(key=_get_priority)
 
         return instances if instances else [MockProvider("mock", {})]
@@ -574,7 +614,7 @@ class ModelGateway:
         spec = self.models.get(model_name)
         if not spec:
             return None
-        
+
         def resolve_path(p: str) -> str:
             if p.startswith("env:"):
                 env_var = p[4:].split("/")[0]
@@ -599,13 +639,13 @@ class ModelGateway:
 
     def get_model_weight(self, model_name: str) -> int:
         """Return resource weight for a model based on RAM requirements (in MB).
-        
+
         Sovereign-Sized: returns actual RAM requirement from models.yaml.
         """
         spec = self.models.get(model_name)
         if not spec:
-            return 1024 # Default to 1GiB if unknown
-        
+            return 1024  # Default to 1GiB if unknown
+
         return spec.get("ram_mb", 1024)
 
     # ── Backend availability detection ─────────────────────────────────
@@ -613,6 +653,7 @@ class ModelGateway:
         """Check if lmster (LM Studio headless) is running (127.0.0.1:1234/v1/models)."""
         try:
             import httpx2 as httpx
+
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.LMSTER_URL}/v1/models")
                 return r.status_code == 200
@@ -623,6 +664,7 @@ class ModelGateway:
         """Check if Ollama is running (127.0.0.1:11434/api/tags)."""
         try:
             import httpx2 as httpx
+
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.OLLAMA_URL}/api/tags")
                 return r.status_code == 200
@@ -633,6 +675,7 @@ class ModelGateway:
         """Check if llama.cpp server is running (127.0.0.1:8080/health)."""
         try:
             import httpx2 as httpx
+
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.LLAMA_CPP_URL}/health")
                 return r.status_code == 200
@@ -669,7 +712,7 @@ class ModelGateway:
 
     async def get_preferred_backend(self) -> str:
         """Return the name of the best available backend.
-        
+
         Cloud-first priority: Google → OpenRouter → OpenCode → Copilot → lmster → Ollama.
         Local inference backends detect available servers.
         """
@@ -685,7 +728,7 @@ class ModelGateway:
     # ── Speculative decoding config (from cpu_optimizer) ─────────────
     # Port 3.5: expose the CPU-level speculative decode config for Oracle/Iris.
     @property
-    def spec_decode_config(self) -> 'SpeculativeDecodeConfig':
+    def spec_decode_config(self) -> "SpeculativeDecodeConfig":
         """Expose the Zen 2-optimized speculative decode configuration.
 
         Returns:
@@ -708,22 +751,22 @@ class ModelGateway:
 
     def set_entity_model(self, entity_name: str, model_name: str) -> None:
         """Set a per-entity model override.
-        
+
         DEPRECATED: Use config/entity_model_affinity.yaml for persistent routing.
         This method still works for temporary runtime overrides.
         """
         logger.warning(
             "set_entity_model() is deprecated. Use config/entity_model_affinity.yaml "
             "for sovereign routing. Runtime override applied: %s -> %s",
-            entity_name, model_name
+            entity_name,
+            model_name,
         )
         self._entity_model_map[entity_name.lower().strip()] = model_name
         logger.debug("Entity model affinity set: %s -> %s", entity_name.lower(), model_name)
 
-
     def remove_entity_model(self, entity_name: str) -> None:
         """Remove a per-entity model override, reverting to default resolution.
-        
+
         DEPRECATED: Use config/entity_model_affinity.yaml for persistent routing.
         """
         logger.warning(
@@ -772,7 +815,10 @@ class ModelGateway:
                 if result and result.best_match:
                     logger.debug(
                         "Affinity resolver matched '%s' → model=%s tier=%s provider=%s",
-                        key, result.best_match, result.tier, result.provider,
+                        key,
+                        result.best_match,
+                        result.tier,
+                        result.provider,
                     )
                     return result.best_match
             except (OmegaError, RuntimeError, OSError) as e:
@@ -793,7 +839,7 @@ class ModelGateway:
             domain = entity.domains[0].lower()
             # Check if models.yaml has domain->model mappings
             domain_key = f"domain.{domain}"
-            if domain_key in getattr(self, 'models', {}):
+            if domain_key in getattr(self, "models", {}):
                 domain_model = self.models[domain_key].get("model")
                 if domain_model:
                     return domain_model
@@ -808,13 +854,13 @@ class ModelGateway:
         context: Optional[Dict[str, Any]] = None,
     ) -> Optional[AffinityResult]:
         """Resolve full entity→model affinity including inference presets.
-        
+
         Returns the full AffinityResult dataclass with model, provider, tier,
         and inference_presets (temperature, system_prompt, preferred_context).
-        
+
         This is the primary integration point for Oracle._summon() to apply
         entity-specific inference tuning from the YAML affinity database.
-        
+
         Args:
             entity_name: Entity to resolve affinity for.
             query: The user query (used for prompt_length_lt matching).
@@ -825,9 +871,11 @@ class ModelGateway:
             try:
                 await self.affinity_resolver.load()
             except (OmegaError, RuntimeError, OSError) as e:
-                logger.warning("Affinity resolver load failed (non-fatal): %s", str(e), exc_info=True)
+                logger.warning(
+                    "Affinity resolver load failed (non-fatal): %s", str(e), exc_info=True
+                )
                 return None
-        
+
         try:
             return await self.affinity_resolver.resolve(
                 entity_name=entity_name,
@@ -835,7 +883,9 @@ class ModelGateway:
                 context=context,
             )
         except (OmegaError, RuntimeError, OSError) as e:
-            logger.warning("Entity affinity resolution failed (non-fatal): %s", str(e), exc_info=True)
+            logger.warning(
+                "Entity affinity resolution failed (non-fatal): %s", str(e), exc_info=True
+            )
             return None
 
     @staticmethod
@@ -852,6 +902,7 @@ class ModelGateway:
         """
         try:
             import httpx2 as httpx
+
             async with httpx.AsyncClient(timeout=3.0) as client:
                 r = await client.get(f"{self.OLLAMA_URL}/api/tags")
                 if r.status_code == 200:
@@ -891,7 +942,7 @@ class ModelGateway:
     # [id-soft: vet-046] BSP Culling — O(1) pre-check skips broken providers
     async def _precheck_provider(self, provider, model_name: str) -> bool:
         """BSP-style pre-check: is this provider worth trying?
-        
+
         [id-soft: vet-046] BSP Culling — single O(1) circuit breaker check
         skips entire provider subtree, adapted from Doom's static BSP tree
         to dynamic provider health state.
@@ -912,7 +963,7 @@ class ModelGateway:
                 return False
 
         # Provider self-health check (sync or async)
-        if hasattr(provider, 'is_available'):
+        if hasattr(provider, "is_available"):
             try:
                 if inspect.iscoroutinefunction(provider.is_available):
                     if not await provider.is_available():
@@ -921,36 +972,44 @@ class ModelGateway:
                     if not provider.is_available():
                         return False
             except (OmegaError, RuntimeError, OSError) as e:
-                logger.warning("Provider %s availability check failed: %s", getattr(provider, 'name', '?'), e)
+                logger.warning(
+                    "Provider %s availability check failed: %s", getattr(provider, "name", "?"), e
+                )
                 return False
 
         return True
 
-    async def _record_provider_failure(self, provider, model_name: str, trace_id: Optional[str] = None):
+    async def _record_provider_failure(
+        self, provider, model_name: str, trace_id: Optional[str] = None
+    ):
         """Record provider failure with HealthMonitor and observability."""
         if self._health_monitor:
             self._health_monitor.record_failure(model_name)
-        
+
         # Record failure in latency tracker (latency is 0 or estimated)
         await tracker.record(
             provider=provider.name,
             model=model_name,
             latency_ms=0.0,
             status="failure",
-            trace_id=trace_id
+            trace_id=trace_id,
         )
-        
+
         if trace_id:
             try:
                 from omega.observability import get_engine, EventType
+
                 await get_engine().log_event(
-                    EventType.BACKEND_FALLBACK, trace_id,
-                    {"provider": provider.name, "model": model_name,
-                     "event": "provider_failed"}
+                    EventType.BACKEND_FALLBACK,
+                    trace_id,
+                    {"provider": provider.name, "model": model_name, "event": "provider_failed"},
                 )
             except (OmegaError, RuntimeError, OSError) as e:
-                logger.warning("Failed to log BACKEND_FALLBACK event for provider %s: %s",
-                                getattr(provider, 'name', '?'), e)
+                logger.warning(
+                    "Failed to log BACKEND_FALLBACK event for provider %s: %s",
+                    getattr(provider, "name", "?"),
+                    e,
+                )
 
     def _update_active_set(self, provider_name: str) -> None:
         """Maintain tiered fixed-size active sets of successful providers (LRU).
@@ -976,7 +1035,7 @@ class ModelGateway:
 
     def _fallback_response(self, model_name: str, system_prompt: str, user_query: str) -> str:
         """Generate a fallback response when all providers fail.
-        
+
         Returns a helpful message indicating that no inference backend is available
         and instructions for enabling local or cloud inference.
         """
@@ -993,18 +1052,24 @@ class ModelGateway:
         )
 
     async def generate(
-        self, model_name: str, system_prompt: str, user_query: str,
-        temperature: Optional[float] = None, max_tokens: int = 1024, trace_id: Optional[str] = None,
-        session_id: Optional[str] = None, entity_name: Optional[str] = None,
+        self,
+        model_name: str,
+        system_prompt: str,
+        user_query: str,
+        temperature: Optional[float] = None,
+        max_tokens: int = 1024,
+        trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        entity_name: Optional[str] = None,
         logit_bias: Optional[Dict[int, float]] = None,
         repetition_penalty: Optional[float] = None,
         top_p: Optional[float] = None,
-    ) -> 'GenerateResult':
+    ) -> "GenerateResult":
         """Iterate provider fabric with circuit breaker protection.
-        
+
         [id-soft: vet-055] Fixed-Size Active Set — first try the 32 most recently
         successful providers before falling back to the full fabric.
-        
+
         Sampling parameter resolution order (highest to lowest priority):
         1. Explicit per-request parameter
         2. Model config (models.yaml)
@@ -1015,35 +1080,35 @@ class ModelGateway:
         # Resolve sampling parameters with layered defaults
         # Model config as intermediate layer
         spec = self.get_model_spec(model_name)
-        
+
         # Temperature: per-request > model config > cvar > hardcoded
         if temperature is None:
             temperature = spec.get("temperature") if spec else None
         if temperature is None:
             temperature = cvar_get("config.sampling.temperature", 0.7)
-        
+
         # Top-p: per-request > model config > cvar > hardcoded
         if top_p is None:
             top_p = spec.get("top_p") if spec else None
         if top_p is None:
             top_p = cvar_get("config.sampling.top_p", 0.95)
-        
+
         # Repetition penalty: per-request > model config > cvar > hardcoded
         if repetition_penalty is None:
             repetition_penalty = spec.get("repetition_penalty") if spec else None
         if repetition_penalty is None:
             repetition_penalty = cvar_get("config.sampling.repetition_penalty", 1.0)
-        
+
         # Top-k: per-request > model config > cvar > hardcoded
         top_k = spec.get("top_k") if spec else None
         if top_k is None:
             top_k = cvar_get("config.sampling.top_k", 40)
-        
+
         # Min-p: per-request > model config > cvar > hardcoded
         min_p = spec.get("min_p") if spec else None
         if min_p is None:
             min_p = cvar_get("config.sampling.min_p", 0.0)
-        
+
         # ── Sovereign Sampling Layer ──────────────────────────────────────────
         # Config-driven per-model stability overrides — see
         # config/models.yaml `sampling_overrides`. New models needing
@@ -1051,28 +1116,33 @@ class ModelGateway:
         temperature, repetition_penalty, logit_bias = self._apply_sampling_overrides(
             model_name, temperature, repetition_penalty, logit_bias
         )
-        
+
         last_exception = None
         errors = []
         success_provider = None
         _latency_ms = 0.0  # [M22] Initialize before loop for fallback path
-        
+
         # ── Provider Selection Layer ──────────────────────────────────────────
         # [FIX 0.3] Priority-first routing (M7 Local-First): use ProviderSelector as primary
         try:
-            ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
+            ordered_providers = await self.provider_selector.get_ordered_providers(
+                model_name, user_query
+            )
             if ordered_providers:
                 logger.info(
                     f"Priority-first routing selected {ordered_providers[0].name} "
                     f"with fallback chain: {' -> '.join([p.name for p in ordered_providers[1:4]])}"
                 )
             else:
-                raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
+                raise ProviderUnavailableError(
+                    message=f"No providers available for model {model_name}"
+                )
         except Exception as e:
             logger.warning(
                 "ProviderSelector failed (%s) — falling back to the full configured "
                 "fabric order (%d providers) instead of a partial hardcoded list.",
-                e, len(self.providers),
+                e,
+                len(self.providers),
             )
             # [M7 Local-First] self.providers is already priority-sorted from
             # _load_provider_fabric() — this can never drift from providers.yaml
@@ -1084,25 +1154,27 @@ class ModelGateway:
                 ordered_provider_names.append(p)
             else:
                 ordered_provider_names.append(p.name)
-        
+
         # [M8 Zero Telemetry] WARP Proxy Pool injection for opencode-zen
         # If proxy_pool is configured, inject socks5h:// proxy URL into the
         # opencode-zen provider's extra config before the provider loop.
         # This ensures DNS is resolved through the WARP exit node (socks5h://),
         # preventing local DNS leaks per the Sovereign Security Protocol.
-        proxy_pool = getattr(self, 'proxy_pool', None)
+        proxy_pool = getattr(self, "proxy_pool", None)
         if proxy_pool is not None:
             for provider_name in ordered_provider_names:
                 if provider_name == "opencode-zen":
                     # Find the provider instance
                     for p in self.providers:
-                        if p.name == provider_name and hasattr(p, 'config'):
+                        if p.name == provider_name and hasattr(p, "config"):
                             try:
                                 proxy_url = await proxy_pool.get_proxy_url()
                                 p.config.extra["proxy_url"] = proxy_url
                                 logger.debug("WARP proxy injected for opencode-zen: %s", proxy_url)
                             except Exception as exc:
-                                logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
+                                logger.warning(
+                                    "WARP proxy injection failed for opencode-zen: %s", exc
+                                )
                             break
 
         for provider_name in ordered_provider_names:
@@ -1112,7 +1184,7 @@ class ModelGateway:
                 if p.name == provider_name:
                     provider = p
                     break
-            
+
             if provider is None:
                 errors.append(f"{provider_name}: not found in provider fabric")
                 continue
@@ -1121,14 +1193,14 @@ class ModelGateway:
             if not await self._precheck_provider(provider, model_name):
                 errors.append(f"{provider.name}: culled by precheck")
                 continue
-            
+
             # Step 1.5: Sovereign Budget Gate (Shatter-Glass Phase 3)
             # Only check budget for cloud providers
             if self._is_cloud_provider(provider) and entity_name:
                 if not await BudgetGate.check_budget(entity_name, trace_id or "unknown"):
                     errors.append(f"{provider.name}: cloud budget exhausted for {entity_name}")
                     continue
-            
+
             # Step 1.6: [C-10.5] 429 Guard — pre-call check BEFORE rate limiter
             # Checks provider-side rate-limit and quota blocks via circuit breaker.
             # This prevents dispatch to a provider that's cooldown-blocked from a
@@ -1143,17 +1215,18 @@ class ModelGateway:
                         f"quota_remaining={status['quota_remaining']:.0f}s)"
                     )
                     continue
-            
+
             # Rate Limiting: Check if provider has available tokens
             if not await self.rate_limiter.check_limit(provider.name):
                 errors.append(f"{provider.name}: rate limit exceeded")
                 continue
-            
+
             # Step 2: [C-10] Admission control for local inference
             # Max 1 concurrent local inference, fail-fast to cloud on contention or OOM risk
             admission_token = None
             if not self._is_cloud_provider(provider):
                 from omega.oracle.admission_controller import get_admission_controller
+
                 admission_ctrl = get_admission_controller()
                 spec = self.get_model_spec(model_name)
                 model_ram_mb = spec.get("ram_mb", 1700) if spec else 1700
@@ -1169,18 +1242,18 @@ class ModelGateway:
             # Step 3: Execute with Hardware Lock and breaker protection
             timeout = self._get_provider_timeout(provider)
             breaker = None  # Initialize for else-clause scope
-            
+
             # Use Hardware Lock to prevent resource contention
             weight = self.get_model_weight(model_name)
             spec = self.get_model_spec(model_name)
-            
+
             # [B1] Cloud guard + timeout: cloud providers must fail-fast on
             # semaphore contention rather than queue indefinitely behind a slow
             # local inference (inverts M7 Local-First). Pass a short acquisition
             # timeout so a busy resource_guard lock routes to the next provider.
             _is_cloud = self._is_cloud_provider(provider)
             lock_timeout = None if not _is_cloud else min(timeout, 5.0)
-            
+
             try:
                 async with self.resource_guard.lock(
                     weight=weight, model_spec=spec, timeout=lock_timeout
@@ -1188,50 +1261,72 @@ class ModelGateway:
                     with anyio.move_on_after(timeout) as cancel_scope:
                         # [M22 Response Provenance] Start latency measurement
                         _start_time = time.monotonic()
-                        
+
                         # Use HealthMonitor's breaker if available, otherwise direct call.
                         if self._health_monitor:
                             breaker = self._health_monitor._breakers.get(provider.name)
                             if breaker:
+
                                 async def _call_with_none_as_failure():
                                     r = await provider.generate(
-                                        model=model_name, system_prompt=system_prompt, user_query=user_query,
-                                        temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
+                                        model=model_name,
+                                        system_prompt=system_prompt,
+                                        user_query=user_query,
+                                        temperature=temperature,
+                                        max_tokens=max_tokens,
+                                        trace_id=trace_id,
                                         session_id=session_id,
                                         logit_bias=logit_bias,
                                         repetition_penalty=repetition_penalty,
                                         top_p=top_p,
                                     )
                                     if not r:
-                                        raise TimeoutError(f"Provider {provider.name} returned empty response")
+                                        raise TimeoutError(
+                                            f"Provider {provider.name} returned empty response"
+                                        )
                                     return r
-                                result = await breaker.call(_call_with_none_as_failure, trace_id=trace_id)
+
+                                result = await breaker.call(
+                                    _call_with_none_as_failure, trace_id=trace_id
+                                )
                             else:
-                                result = await call_with_retry(provider.generate(
-                                    model=model_name, system_prompt=system_prompt, user_query=user_query,
-                                    temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
+                                result = await call_with_retry(
+                                    provider.generate(
+                                        model=model_name,
+                                        system_prompt=system_prompt,
+                                        user_query=user_query,
+                                        temperature=temperature,
+                                        max_tokens=max_tokens,
+                                        trace_id=trace_id,
+                                        session_id=session_id,
+                                        logit_bias=logit_bias,
+                                        repetition_penalty=repetition_penalty,
+                                        top_p=top_p,
+                                    )
+                                )
+                        else:
+                            result = await call_with_retry(
+                                provider.generate(
+                                    model=model_name,
+                                    system_prompt=system_prompt,
+                                    user_query=user_query,
+                                    temperature=temperature,
+                                    max_tokens=max_tokens,
+                                    trace_id=trace_id,
                                     session_id=session_id,
                                     logit_bias=logit_bias,
                                     repetition_penalty=repetition_penalty,
                                     top_p=top_p,
-                                ))
-                        else:
-                            result = await call_with_retry(provider.generate(
-                                model=model_name, system_prompt=system_prompt, user_query=user_query,
-                                temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
-                                session_id=session_id,
-                                logit_bias=logit_bias,
-                                repetition_penalty=repetition_penalty,
-                                top_p=top_p,
-                            ))
-                        
+                                )
+                            )
+
                         if result:
                             # [M22 Response Provenance] Record latency immediately after provider returns
                             _latency_ms = (time.monotonic() - _start_time) * 1000
                             if self._health_monitor:
                                 self._health_monitor.record_success(model_name)
                             self._update_active_set(provider.name)
-                            
+
                             # Record latency to time-series tracker
                             # [M22 Response Provenance] is_cloud passed for
                             # Sovereignty Gate tracking (P0-2). This ensures
@@ -1244,27 +1339,26 @@ class ModelGateway:
                                 trace_id=trace_id,
                                 is_cloud=self._is_cloud_provider(provider),
                             )
-                            
+
                             success_provider = provider
-                            
-                            
+
                             # Sovereign Token Ledger Integration
                             # Capture actual usage from provider or estimate
                             # Note: In a full implementation, providers would return a structured response
                             # containing usage metadata. For now, we use the bridge's estimation.
                             tokens_in = len(system_prompt) // 4
                             tokens_out = len(result) // 4
-                            
+
                             await TokenLedger().record_transaction(
                                 trace_id=trace_id or "unknown",
                                 entity=entity_name or "system",
                                 tokens_in=tokens_in,
                                 tokens_out=tokens_out,
-                                provider_name=provider.name
+                                provider_name=provider.name,
                             )
-                            
+
                             break
-                        
+
                         if cancel_scope.cancelled_caught:
                             errors.append(f"{provider.name}: timed out ({timeout}s)")
                             await self._record_provider_failure(provider, model_name, trace_id)
@@ -1277,7 +1371,7 @@ class ModelGateway:
                 if self._health_monitor:
                     breaker_rl = self._health_monitor._breakers.get(provider.name)
                     if breaker_rl:
-                        retry_after = getattr(e, 'retry_after', None)
+                        retry_after = getattr(e, "retry_after", None)
                         breaker_rl.record_429(
                             retry_after=retry_after,
                             response_body=str(e),
@@ -1293,7 +1387,10 @@ class ModelGateway:
                 last_exception = e
                 logger.error(
                     "ModelGateway.generate: unexpected error from provider=%s trace=%s err=%s",
-                    provider.name, trace_id, str(e), exc_info=True
+                    provider.name,
+                    trace_id,
+                    str(e),
+                    exc_info=True,
                 )
                 errors.append(f"{provider.name}: {e}")
                 await self._record_provider_failure(provider, model_name, trace_id)
@@ -1303,38 +1400,39 @@ class ModelGateway:
                 if admission_token is not None:
                     admission_token.release()
 
-        
         if success_provider:
             # [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: capture logprobs from provider.
             # Duck-typing: NativeGGUFProvider sets _last_logprobs after each generate().
             # Other providers don't have this attribute — getattr defaults to None.
-            logprobs = getattr(success_provider, '_last_logprobs', None)
+            logprobs = getattr(success_provider, "_last_logprobs", None)
             return GenerateResult(
                 text=result,
                 provider_name=success_provider.name,
                 is_cloud=self._is_cloud_provider(success_provider),
                 logprobs=logprobs,
-                latency_ms=_latency_ms,      # [M22] Actual latency from measurement
-                model_used=model_name,        # [M22] Actual model that served
+                latency_ms=_latency_ms,  # [M22] Actual latency from measurement
+                model_used=model_name,  # [M22] Actual model that served
             )
-        
-# If all providers failed, propagate the last critical error if it exists
+
+        # If all providers failed, propagate the last critical error if it exists
         if last_exception and isinstance(last_exception, (InferenceError, OmegaError)):
-            logger.critical(f"All providers failed. Propagating last critical error: {last_exception}")
+            logger.critical(
+                f"All providers failed. Propagating last critical error: {last_exception}"
+            )
             raise last_exception
 
-        logger.warning("All providers failed. Trace: %s | Errors: %s", trace_id, '; '.join(errors))
+        logger.warning("All providers failed. Trace: %s | Errors: %s", trace_id, "; ".join(errors))
         return GenerateResult(
             text=self._fallback_response(model_name, system_prompt, user_query),
             provider_name="fallback",
             is_cloud=self._is_cloud_provider_name("fallback"),  # Derived from provider_name per M22
-            latency_ms=_latency_ms,   # [M22] Report measured latency (0.0 if never reached a provider)
-            model_used=model_name,    # [M22] Report the model that was requested
+            latency_ms=_latency_ms,  # [M22] Report measured latency (0.0 if never reached a provider)
+            model_used=model_name,  # [M22] Report the model that was requested
         )
 
     # ── Somatic State API (M20) ──────────────────────────────────────────
-    
-    def _get_native_gguf_provider(self) -> Optional['NativeGGUFProvider']:
+
+    def _get_native_gguf_provider(self) -> Optional["NativeGGUFProvider"]:
         """Find the NativeGGUFProvider in the provider fabric."""
         for provider in self.providers:
             if isinstance(provider, NativeGGUFProvider):
@@ -1343,13 +1441,13 @@ class ModelGateway:
 
     async def save_state(self, state_id: str) -> bool:
         """Save the current model's somatic state (KV cache) to the USM.
-        
+
         Delegates to the NativeGGUFProvider to capture bytes, then
         persists them via the Unified State Manager.
-        
+
         Args:
             state_id: Unique identifier for the state snapshot.
-            
+
         Returns:
             True if state was captured and saved successfully, False otherwise.
         """
@@ -1357,30 +1455,30 @@ class ModelGateway:
         if provider is None:
             logger.warning("No NativeGGUFProvider available for save_state")
             return False
-        
+
         try:
             # Capture raw bytes from the provider
             state_bytes = await provider.save_state()
-            
+
             # Persist bytes in the USM
             # We use a specific namespace for somatic states
             usm_key = f"somatic:{state_id}"
             await self.usm.put(usm_key, state_bytes)
-            
+
             logger.info(f"Somatic state saved to USM for {state_id}")
             return True
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to save somatic state {state_id} to USM: {e}")
             return False
-    
+
     async def load_state(self, state_id: str) -> bool:
         """Load a somatic state (KV cache) from the USM into the current model.
-        
+
         Delegates to the USM to retrieve bytes, then pushes them to the provider.
-        
+
         Args:
             state_id: Unique identifier for the state snapshot.
-            
+
         Returns:
             True if state was loaded successfully, False otherwise.
         """
@@ -1388,16 +1486,16 @@ class ModelGateway:
         if provider is None:
             logger.warning("No NativeGGUFProvider available for load_state")
             return False
-        
+
         try:
             # Retrieve bytes from the USM
             usm_key = f"somatic:{state_id}"
             state_bytes = await self.usm.get(usm_key)
-            
+
             if state_bytes is None:
                 logger.warning(f"No somatic state found in USM for {state_id}")
                 return False
-            
+
             # Push bytes to the provider
             return await provider.load_state(state_bytes)
         except (OmegaError, RuntimeError, OSError) as e:
@@ -1408,13 +1506,14 @@ class ModelGateway:
         """Check if ONNX Runtime is installed and usable."""
         try:
             import onnxruntime as ort
+
             return "CPUExecutionProvider" in ort.get_available_providers()
         except ImportError:
             return False
 
     def get_provider_for_entity(self, entity_name: str):
         """Get the provider instance that was last used for an entity.
-        
+
         This is used for somatic state capture (M20).
         """
         # The active provider is tracked in the active set
@@ -1427,14 +1526,15 @@ class ModelGateway:
     # ── Fallback ──────────────────────────────────────────────────────
     async def embed(self, text: str) -> List[float]:
         """Generate a vector embedding for the given text.
-        
-        Currently uses a mock implementation. In a full implementation, this 
-        would route to a local embedding model (e.g., SentenceTransformers) 
+
+        Currently uses a mock implementation. In a full implementation, this
+        would route to a local embedding model (e.g., SentenceTransformers)
         or a cloud provider.
         """
         # Mock embedding: 384-dim vector (standard for MiniLM)
         # In production, this would call a real embedding model.
         import numpy as np
+
         return np.random.rand(384).tolist()
 
     # ── Diagnostics ───────────────────────────────────────────────────
@@ -1452,7 +1552,7 @@ class ModelGateway:
             is_avail = await p.is_available()
             fabric_status[name] = {
                 "available": is_avail,
-                "priority": getattr(p.config, 'priority', 999) if hasattr(p, 'config') else 999,
+                "priority": getattr(p.config, "priority", 999) if hasattr(p, "config") else 999,
             }
         return {
             "fabric": fabric_status,
@@ -1460,17 +1560,17 @@ class ModelGateway:
                 "lmster": {
                     "available": backends.get("lmster", False),
                     "url": self.LMSTER_URL,
-                    "note": "LM Studio headless. Start: `lms server start`"
+                    "note": "LM Studio headless. Start: `lms server start`",
                 },
                 "ollama": {
                     "available": backends.get("ollama", False),
                     "url": self.OLLAMA_URL,
-                    "note": "Ollama fallback. Run: `ollama run qwen3:1.7b`"
+                    "note": "Ollama fallback. Run: `ollama run qwen3:1.7b`",
                 },
                 "llama_cpp": {
                     "available": backends.get("llama_cpp", False),
                     "url": self.LLAMA_CPP_URL,
-                    "note": "llama.cpp HTTP server"
+                    "note": "llama.cpp HTTP server",
                 },
             },
         }

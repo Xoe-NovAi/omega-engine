@@ -8,7 +8,6 @@ Implements R_VAULT_SCHEMA_V2.md encryption architecture:
 - age encryption via pyrage.passphrase (scrypt-based)
 """
 
-import os
 import logging
 from typing import Optional
 
@@ -19,6 +18,7 @@ try:
     import pyrage
     import pyrage.passphrase as pp
     from argon2 import PasswordHasher
+
     _HAS_CRYPTO = True
 except ImportError:
     _HAS_CRYPTO = False
@@ -27,43 +27,46 @@ except ImportError:
 
 class VaultCryptoError(Exception):
     """Base exception for vault crypto operations."""
+
     pass
 
 
 class VaultCrypto:
     """
     Vault encryption using Argon2id + age (pyrage.passphrase).
-    
+
     Key Derivation:
     Master Password → Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes) → 32-byte key
     → age passphrase encryption (scrypt) → age-armored ciphertext
     """
-    
+
     def __init__(self, master_key: str):
         """
         Initialize vault crypto.
-        
+
         Args:
             master_key: Master password/key for encryption
         """
         if not _HAS_CRYPTO:
-            raise VaultCryptoError("Crypto dependencies not installed. Run: pip install pyrage argon2-cffi")
-        
+            raise VaultCryptoError(
+                "Crypto dependencies not installed. Run: pip install pyrage argon2-cffi"
+            )
+
         self._ph = PasswordHasher(
             time_cost=3,
             memory_cost=65536,  # 64 MB
             parallelism=4,
             hash_len=32,
-            salt_len=16
+            salt_len=16,
         )
         self._master_key = master_key
         self._derived_key: Optional[bytes] = None
         self._salt: Optional[bytes] = None
-    
+
     def _derive_key(self, salt: bytes) -> bytes:
         """
         Derive encryption key from master password + salt.
-        
+
         Uses Argon2id hash which includes salt. We extract raw key material
         from the hash for use as age passphrase.
         """
@@ -72,51 +75,51 @@ class VaultCrypto:
         hash_str = self._ph.hash(self._master_key.encode() + salt)
         # Use first 32 bytes of hash as key
         return hash_str.encode()[:32]
-    
+
     def encrypt(self, plaintext: str) -> str:
         """
         Encrypt plaintext JSON to age-armored ciphertext.
-        
+
         Returns:
             age-armored ciphertext (includes salt in header via scrypt)
         """
         # Use master key directly as passphrase - age handles scrypt salt internally
         ciphertext = pp.encrypt(plaintext.encode(), self._master_key, armored=True)
-        
+
         return ciphertext.decode()
-    
+
     def decrypt(self, armored: str) -> str:
         """
         Decrypt age-armored ciphertext to plaintext JSON.
-        
+
         Args:
             armored: age-armored ciphertext format
-            
+
         Returns:
             Decrypted plaintext
         """
         # Use master key directly as passphrase
         plaintext_bytes = pp.decrypt(armored.encode(), self._master_key)
-        
+
         return plaintext_bytes.decode()
-    
+
     def rotate_key(self, old_armored: str, new_master_key: str) -> str:
         """
         Re-encrypt ciphertext with new master key.
-        
+
         Args:
             old_armored: Existing age-armored ciphertext
             new_master_key: New master password
-            
+
         Returns:
             New age-armored ciphertext
         """
         # Decrypt with current key
         plaintext = self.decrypt(old_armored)
-        
+
         # Create new crypto instance with new key
         new_crypto = VaultCrypto(new_master_key)
-        
+
         # Re-encrypt
         return new_crypto.encrypt(plaintext)
 
@@ -124,36 +127,36 @@ class VaultCrypto:
 class VaultCryptoManager:
     """
     Manages multiple vault crypto instances for different key versions.
-    
+
     Supports key rotation by maintaining multiple key versions.
     """
-    
+
     def __init__(self):
         self._ciphers: dict[str, VaultCrypto] = {}
         self._default_version: Optional[str] = None
-    
+
     def add_key(self, version: str, master_key: str, default: bool = False) -> None:
         """Add a key version."""
         self._ciphers[version] = VaultCrypto(master_key)
         if default or self._default_version is None:
             self._default_version = version
-    
+
     def get_cipher(self, version: Optional[str] = None) -> VaultCrypto:
         """Get cipher for version (or default)."""
         version = version or self._default_version
         if version not in self._ciphers:
             raise ValueError(f"No cipher for version: {version}")
         return self._ciphers[version]
-    
+
     def encrypt(self, plaintext: str, version: Optional[str] = None) -> str:
         """Encrypt with specified or default version."""
         cipher = self.get_cipher(version)
         return cipher.encrypt(plaintext)
-    
+
     def decrypt(self, armored: str) -> str:
         """
         Decrypt trying all key versions.
-        
+
         Tries each version until one succeeds.
         """
         last_error = None
@@ -164,15 +167,15 @@ class VaultCryptoManager:
                 last_error = e
                 continue
         raise ValueError(f"Failed to decrypt with any key version: {last_error}")
-    
+
     def rotate(self, old_version: str, new_version: str, new_master_key: str) -> None:
         """Rotate from old version to new version."""
         if old_version not in self._ciphers:
             raise ValueError(f"Old version not found: {old_version}")
-        
+
         old_cipher = self._ciphers[old_version]
         new_cipher = VaultCrypto(new_master_key)
-        
+
         self._ciphers[new_version] = new_cipher
         self._default_version = new_version
 
@@ -180,6 +183,7 @@ class VaultCryptoManager:
 # =============================================================================
 # FACTORY
 # =============================================================================
+
 
 def create_vault_crypto(master_key: str) -> VaultCrypto:
     """Factory: create VaultCrypto with master key."""

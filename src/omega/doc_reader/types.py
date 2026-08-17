@@ -9,6 +9,7 @@ from typing import Dict, Any, Optional
 @dataclass
 class DocumentMetadata:
     """Extracted document metadata."""
+
     path: str
     format: str
     size_bytes: int

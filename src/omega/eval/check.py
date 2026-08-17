@@ -70,4 +70,5 @@ class EvalChecker:
 
 def logger_missing(metric: str) -> None:
     import logging
+
     logging.getLogger(__name__).warning("EvalResult missing metric %s — failing check", metric)

@@ -8,7 +8,7 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Optional
+from typing import List
 
 import anyio
 
@@ -57,6 +57,7 @@ class IterativeRAG:
 
                 # Step 2: retrieve evidence for the latest sub-question
                 if self.memory_store is not None:
+
                     def _retrieve(q: str):
                         try:
                             return self.memory_store.search_fts(q, limit=3)

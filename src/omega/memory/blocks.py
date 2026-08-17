@@ -18,29 +18,31 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Literal
+from typing import Any, Dict, List, Literal
 
 logger = logging.getLogger(__name__)
 
 
 class GovernanceLevel(str, Enum):
     """Cross-entity memory sharing governance levels."""
-    PRIVATE = "private"           # Owner only
-    SHARED_READ = "shared_read"   # Allowlisted entities can read
-    SHARED_WRITE = "shared_write" # Allowlisted entities can append
-    PUBLIC = "public"             # All entities can read
+
+    PRIVATE = "private"  # Owner only
+    SHARED_READ = "shared_read"  # Allowlisted entities can read
+    SHARED_WRITE = "shared_write"  # Allowlisted entities can append
+    PUBLIC = "public"  # All entities can read
 
 
 class BlockCategory(str, Enum):
     """Memory block categories for decay and retrieval."""
-    IDENTITY = "identity"         # persona, human — slow decay
-    STRATEGY = "strategy"         # project-*, decisions — medium decay
-    ASSUMPTION = "assumption"     # inferred context — faster decay
-    PREFERENCE = "preference"     # user prefs — medium decay
-    GOAL = "goal"                 # active objectives — fast decay
-    EVENT = "event"               # episodic — fast decay
-    FAILURE = "failure"           # errors — very fast decay
-    CONTEXT = "context"           # scratchpad — fastest decay
+
+    IDENTITY = "identity"  # persona, human — slow decay
+    STRATEGY = "strategy"  # project-*, decisions — medium decay
+    ASSUMPTION = "assumption"  # inferred context — faster decay
+    PREFERENCE = "preference"  # user prefs — medium decay
+    GOAL = "goal"  # active objectives — fast decay
+    EVENT = "event"  # episodic — fast decay
+    FAILURE = "failure"  # errors — very fast decay
+    CONTEXT = "context"  # scratchpad — fastest decay
 
 
 # Category-specific decay rates (per day) — 2026 consensus from StructureMA, BunsDev, FSRS-6
@@ -60,7 +62,7 @@ CATEGORY_DECAY_RATES: Dict[BlockCategory, float] = {
 class MemoryBlock:
     """
     Letta 2026 Memory Block — typed contract between agent and developer.
-    
+
     Fields:
         id: UUID — unique identifier
         label: Human-readable label (e.g., "persona", "project-omega", "decisions")
@@ -79,6 +81,7 @@ class MemoryBlock:
         created_by_id: Agent/entity that created
         last_updated_by_id: Agent/entity that last modified
     """
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     label: str = ""
     value: str = ""
@@ -318,8 +321,7 @@ def create_domain_block(
     """
     if label not in DOMAIN_BLOCKS:
         raise ValueError(
-            f"Unknown domain block label: {label}. "
-            f"Valid: {list(DOMAIN_BLOCKS.keys())}"
+            f"Unknown domain block label: {label}. Valid: {list(DOMAIN_BLOCKS.keys())}"
         )
 
     template = DOMAIN_BLOCKS[label]
@@ -337,7 +339,9 @@ def create_domain_block(
     )
 
 
-def create_essential_block(label: str, owner_entity: str, created_by: str, value: str = "") -> MemoryBlock:
+def create_essential_block(
+    label: str, owner_entity: str, created_by: str, value: str = ""
+) -> MemoryBlock:
     """Create a single essential block (persona, human, safety) from template.
 
     This is the singular version used by BlockTools.create_essential_block().
@@ -356,7 +360,9 @@ def create_essential_block(label: str, owner_entity: str, created_by: str, value
         ValueError: If label is not in ESSENTIAL_BLOCKS.
     """
     if label not in ESSENTIAL_BLOCKS:
-        raise ValueError(f"Unknown essential block label: {label}. Valid: {list(ESSENTIAL_BLOCKS.keys())}")
+        raise ValueError(
+            f"Unknown essential block label: {label}. Valid: {list(ESSENTIAL_BLOCKS.keys())}"
+        )
 
     template = ESSENTIAL_BLOCKS[label]
     return MemoryBlock(
@@ -373,7 +379,9 @@ def create_essential_block(label: str, owner_entity: str, created_by: str, value
     )
 
 
-def create_domain_blocks(owner_entity: str, created_by: str, domain: str = "general") -> List[MemoryBlock]:
+def create_domain_blocks(
+    owner_entity: str, created_by: str, domain: str = "general"
+) -> List[MemoryBlock]:
     """Create domain-specific blocks for an entity."""
     blocks = []
     for label, template in DOMAIN_BLOCKS.items():

@@ -4,7 +4,7 @@
 
 import os
 from pathlib import Path
-from typing import Optional, Tuple, Dict, Any
+from typing import Tuple, Dict
 
 from .readers import get_reader, SUPPORTED_FORMATS
 from .types import DocumentMetadata
@@ -17,6 +17,7 @@ class DocumentReader:
         self._cache: Dict[str, Tuple[str, DocumentMetadata]] = {}
         # Import here to avoid circular import
         from .readers import _READERS
+
         self._readers = _READERS
 
     def read(self, path: str, use_cache: bool = True) -> str:

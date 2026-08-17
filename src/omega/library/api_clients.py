@@ -19,7 +19,6 @@
 import logging
 import time
 from dataclasses import dataclass, asdict, field
-from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, TypeVar
 from abc import ABC, abstractmethod
@@ -34,8 +33,10 @@ logger = logging.getLogger(__name__)
 # ENUMS
 # ============================================================================
 
+
 class DomainCategory(str, Enum):
     """Content domain categories for curation routing."""
+
     CODE = "code"
     SCIENCE = "science"
     DATA = "data"
@@ -46,8 +47,10 @@ class DomainCategory(str, Enum):
     FICTION = "fiction"
     REFERENCE = "reference"
 
+
 class DeweyDecimalClass(str, Enum):
     """Dewey Decimal Classification for library cataloging."""
+
     COMPUTER_SCIENCE = "000"
     PHILOSOPHY = "100"
     RELIGION = "200"
@@ -58,6 +61,7 @@ class DeweyDecimalClass(str, Enum):
     ARTS = "700"
     LITERATURE = "800"
     HISTORY = "900"
+
 
 DEWEY_TO_DOMAIN = {
     "000": DomainCategory.CODE,
@@ -71,9 +75,11 @@ DEWEY_TO_DOMAIN = {
 # DATA MODELS
 # ============================================================================
 
+
 @dataclass
 class LibraryAPIConfig:
     """Configuration for library API integrations. Zero required keys."""
+
     loc_api_base_url: str = "https://www.loc.gov/books/services/web/search.json"
     openlibrary_api_base_url: str = "https://openlibrary.org"
     archive_api_base_url: str = "https://archive.org/advancedsearch.php"
@@ -86,14 +92,14 @@ class LibraryAPIConfig:
 
     enable_cache: bool = True
     user_agent: str = (
-        "OmegaEngine/1.0.0 (Sovereign Library Client; "
-        "+https://github.com/Xoe-NovAi/omega-engine)"
+        "OmegaEngine/1.0.0 (Sovereign Library Client; +https://github.com/Xoe-NovAi/omega-engine)"
     )
 
 
 @dataclass
 class LibraryMetadata:
     """Enriched metadata from library API responses."""
+
     isbn: Optional[str] = None
     title: Optional[str] = None
     authors: List[str] = field(default_factory=list)
@@ -117,8 +123,10 @@ class LibraryMetadata:
 # TYPED ERRORS [id-soft: vet-026] Hard-Boundary — typed error hierarchy as boundary layer
 # ============================================================================
 
+
 class LibraryAPIError(OmegaError):
     """Base error for library API operations."""
+
 
 class ClientNotFoundError(LibraryAPIError):
     """Requested library client is not registered."""
@@ -129,6 +137,7 @@ class ClientNotFoundError(LibraryAPIError):
 # ============================================================================
 
 T = TypeVar("T")
+
 
 class BaseLibraryClient(ABC):
     """Abstract base for sovereign library API clients.
@@ -184,12 +193,12 @@ class BaseLibraryClient(ABC):
             self._client = None
 
     @abstractmethod
-    async def search(self, query: str, **kwargs: Any) -> List[LibraryMetadata]:
-        ...
+    async def search(self, query: str, **kwargs: Any) -> List[LibraryMetadata]: ...
 
     @abstractmethod
-    async def get_by_identifier(self, identifier: str, id_type: str) -> Optional[LibraryMetadata]:
-        ...
+    async def get_by_identifier(
+        self, identifier: str, id_type: str
+    ) -> Optional[LibraryMetadata]: ...
 
 
 # ============================================================================
@@ -197,6 +206,7 @@ class BaseLibraryClient(ABC):
 # ============================================================================
 
 # ── Open Library (openlibrary.org) ──────────────────────────────────
+
 
 class OpenLibraryClient(BaseLibraryClient):
     """Open Library search and ISBN lookup. No API key required."""
@@ -221,22 +231,26 @@ class OpenLibraryClient(BaseLibraryClient):
             results = []
             for doc in data.get("docs", [])[:5]:
                 isbns = doc.get("isbn")
-                results.append(LibraryMetadata(
-                    isbn=isbns[0] if isinstance(isbns, list) and isbns else None,
-                    title=doc.get("title"),
-                    authors=doc.get("author_name", []),
-                    publication_date=str(doc.get("first_publish_year", "")),
-                    subjects=doc.get("subject", [])[:5],
-                    source_apis=["openlibrary"],
-                    enrichment_confidence=0.7,
-                ))
+                results.append(
+                    LibraryMetadata(
+                        isbn=isbns[0] if isinstance(isbns, list) and isbns else None,
+                        title=doc.get("title"),
+                        authors=doc.get("author_name", []),
+                        publication_date=str(doc.get("first_publish_year", "")),
+                        subjects=doc.get("subject", [])[:5],
+                        source_apis=["openlibrary"],
+                        enrichment_confidence=0.7,
+                    )
+                )
             self._set_cache(cache_key, results)
             return results
         except (httpx.HTTPError, RuntimeError) as exc:
             logger.error("OpenLibrary search failed: %s", exc)
             return []
 
-    async def get_by_identifier(self, identifier: str, id_type: str = "isbn") -> Optional[LibraryMetadata]:
+    async def get_by_identifier(
+        self, identifier: str, id_type: str = "isbn"
+    ) -> Optional[LibraryMetadata]:
         if id_type != "isbn":
             return None
         cache_key = f"ol:isbn:{identifier}"
@@ -265,7 +279,9 @@ class OpenLibraryClient(BaseLibraryClient):
                     title=details.get("title"),
                     authors=[a.get("name", "") for a in authors_raw if isinstance(a, dict)],
                     publication_date=str(details.get("publish_date", "")),
-                    publisher=publishers_raw[0] if isinstance(publishers_raw, list) and publishers_raw else None,
+                    publisher=publishers_raw[0]
+                    if isinstance(publishers_raw, list) and publishers_raw
+                    else None,
                     subjects=details.get("subjects", [])[:5],
                     source_apis=["openlibrary"],
                     enrichment_confidence=0.85,
@@ -278,6 +294,7 @@ class OpenLibraryClient(BaseLibraryClient):
 
 
 # ── Internet Archive (archive.org) ──────────────────────────────────
+
 
 class InternetArchiveClient(BaseLibraryClient):
     """Internet Archive text search and metadata lookup. No API key required."""
@@ -306,22 +323,28 @@ class InternetArchiveClient(BaseLibraryClient):
                 creators = doc.get("creator", [])
                 if isinstance(creators, str):
                     creators = [creators]
-                results.append(LibraryMetadata(
-                    title=doc.get("title"),
-                    authors=creators,
-                    publication_date=doc.get("date"),
-                    description=(doc.get("description", "")[:500] if doc.get("description") else None),
-                    subjects=doc.get("subject", [])[:5] if doc.get("subject") else [],
-                    source_apis=["internetarchive"],
-                    enrichment_confidence=0.65,
-                ))
+                results.append(
+                    LibraryMetadata(
+                        title=doc.get("title"),
+                        authors=creators,
+                        publication_date=doc.get("date"),
+                        description=(
+                            doc.get("description", "")[:500] if doc.get("description") else None
+                        ),
+                        subjects=doc.get("subject", [])[:5] if doc.get("subject") else [],
+                        source_apis=["internetarchive"],
+                        enrichment_confidence=0.65,
+                    )
+                )
             self._set_cache(cache_key, results)
             return results
         except (httpx.HTTPError, RuntimeError) as exc:
             logger.error("InternetArchive search failed: %s", exc)
             return []
 
-    async def get_by_identifier(self, identifier: str, id_type: str = "archive_id") -> Optional[LibraryMetadata]:
+    async def get_by_identifier(
+        self, identifier: str, id_type: str = "archive_id"
+    ) -> Optional[LibraryMetadata]:
         try:
             await self._rate_limit()
             client = await self._get_client()
@@ -342,7 +365,9 @@ class InternetArchiveClient(BaseLibraryClient):
                 title=meta_dict.get("title"),
                 authors=creators,
                 publication_date=meta_dict.get("date"),
-                description=(meta_dict.get("description", "")[:500] if meta_dict.get("description") else None),
+                description=(
+                    meta_dict.get("description", "")[:500] if meta_dict.get("description") else None
+                ),
                 subjects=subjects_raw[:5],
                 source_apis=["internetarchive"],
                 enrichment_confidence=0.70,
@@ -353,6 +378,7 @@ class InternetArchiveClient(BaseLibraryClient):
 
 
 # ── Library of Congress (loc.gov) ───────────────────────────────────
+
 
 class LibraryOfCongressClient(BaseLibraryClient):
     """Library of Congress catalog search. No API key required."""
@@ -373,23 +399,31 @@ class LibraryOfCongressClient(BaseLibraryClient):
 
             results = []
             for record in data.get("results", [])[:5]:
-                results.append(LibraryMetadata(
-                    title=record.get("title"),
-                    authors=record.get("creators", []),
-                    publication_date=record.get("date"),
-                    description=(record.get("description", "")[:500] if record.get("description") else None),
-                    subjects=record.get("subjects", [])[:5],
-                    lcc=record.get("classification"),
-                    source_apis=["loc"],
-                    enrichment_confidence=0.80,
-                ))
+                results.append(
+                    LibraryMetadata(
+                        title=record.get("title"),
+                        authors=record.get("creators", []),
+                        publication_date=record.get("date"),
+                        description=(
+                            record.get("description", "")[:500]
+                            if record.get("description")
+                            else None
+                        ),
+                        subjects=record.get("subjects", [])[:5],
+                        lcc=record.get("classification"),
+                        source_apis=["loc"],
+                        enrichment_confidence=0.80,
+                    )
+                )
             self._set_cache(cache_key, results)
             return results
         except (httpx.HTTPError, RuntimeError) as exc:
             logger.error("LOC search failed: %s", exc)
             return []
 
-    async def get_by_identifier(self, identifier: str, id_type: str = "lccn") -> Optional[LibraryMetadata]:
+    async def get_by_identifier(
+        self, identifier: str, id_type: str = "lccn"
+    ) -> Optional[LibraryMetadata]:
         if id_type == "lccn":
             res = await self.search(identifier, limit=1)
             return res[0] if res else None
@@ -397,6 +431,7 @@ class LibraryOfCongressClient(BaseLibraryClient):
 
 
 # ── Project Gutenberg via Gutendex ──────────────────────────────────
+
 
 class ProjectGutenbergClient(BaseLibraryClient):
     """Project Gutenberg search via Gutendex API. No API key required.
@@ -425,31 +460,35 @@ class ProjectGutenbergClient(BaseLibraryClient):
 
             results = []
             for book in data.get("results", [])[:5]:
-                authors = [a.get("name", "") for a in book.get("authors", []) if isinstance(a, dict)]
+                authors = [
+                    a.get("name", "") for a in book.get("authors", []) if isinstance(a, dict)
+                ]
                 subjects = book.get("subjects", [])[:5]
                 languages = book.get("languages", [])
 
-                results.append(LibraryMetadata(
-                    title=book.get("title"),
-                    authors=authors,
-                    subjects=subjects if subjects else languages,
-                    cover_url=book.get("formats", {}).get("image/jpeg"),
-                    source_apis=["gutenberg"],
-                    enrichment_confidence=0.60,
-                ))
+                results.append(
+                    LibraryMetadata(
+                        title=book.get("title"),
+                        authors=authors,
+                        subjects=subjects if subjects else languages,
+                        cover_url=book.get("formats", {}).get("image/jpeg"),
+                        source_apis=["gutenberg"],
+                        enrichment_confidence=0.60,
+                    )
+                )
             self._set_cache(cache_key, results)
             return results
         except (httpx.HTTPError, RuntimeError) as exc:
             logger.error("Gutenberg search failed: %s", exc)
             return []
 
-    async def get_by_identifier(self, identifier: str, id_type: str = "gutenberg_id") -> Optional[LibraryMetadata]:
+    async def get_by_identifier(
+        self, identifier: str, id_type: str = "gutenberg_id"
+    ) -> Optional[LibraryMetadata]:
         try:
             await self._rate_limit()
             client = await self._get_client()
-            resp = await client.get(
-                f"{self.config.gutenberg_api_base_url}/books/{identifier}"
-            )
+            resp = await client.get(f"{self.config.gutenberg_api_base_url}/books/{identifier}")
             resp.raise_for_status()
             data = resp.json()
             authors = [a.get("name", "") for a in data.get("authors", []) if isinstance(a, dict)]
@@ -469,6 +508,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
 # ============================================================================
 # ORCHESTRATOR [id-soft: vet-028] WAD System — swapable, hot-pluggable data sources
 # ============================================================================
+
 
 class LibraryAPIOrchestrator:
     """Coordinates multiple library clients to provide enriched metadata.

@@ -31,11 +31,12 @@ logger = logging.getLogger(__name__)
 @dataclass
 class AgentProfile:
     """CAO-compatible agent profile."""
+
     name: str
     description: str
-    provider: str                    # grok_cli, copilot_cli, cline_cli, claude_code, codex, etc.
-    role: str                        # supervisor, developer, reviewer, researcher
-    allowed_tools: list[str]         # Tool restrictions (CAO pattern)
+    provider: str  # grok_cli, copilot_cli, cline_cli, claude_code, codex, etc.
+    role: str  # supervisor, developer, reviewer, researcher
+    allowed_tools: list[str]  # Tool restrictions (CAO pattern)
     model: str
     env_vars: dict[str, str] = field(default_factory=dict)
     memory_scopes: list[str] = field(default_factory=list)  # CAO memory scopes
@@ -65,10 +66,10 @@ class AgentProfile:
         match = re.match(r"^---\n(.*?)\n---\n(.*)$", content, re.DOTALL)
         if not match:
             raise ValueError("Invalid profile format: missing frontmatter")
-        
+
         frontmatter = yaml.safe_load(match.group(1))
         system_prompt = match.group(2).strip()
-        
+
         return cls(
             name=frontmatter.get("name", ""),
             description=frontmatter.get("description", ""),
@@ -170,6 +171,7 @@ PROVIDER_CONFIGS = {
 @dataclass
 class LaunchConfig:
     """Launch configuration for an agent."""
+
     command: str
     args: list[str]
     env: dict[str, str]
@@ -180,7 +182,7 @@ class LaunchConfig:
 class ProfileManager:
     """
     Manages cross-provider agent profiles (CAO pattern).
-    
+
     Generates profiles from account configurations, handles
     provider-specific settings, and manages profile persistence.
     """
@@ -209,7 +211,7 @@ class ProfileManager:
             "reviewer.md": self._create_template("reviewer"),
             "researcher.md": self._create_template("researcher"),
         }
-        
+
         for name, content in templates.items():
             path = self.templates_dir / name
             if not path.exists():
@@ -218,7 +220,7 @@ class ProfileManager:
     def _create_template(self, role: str) -> str:
         """Create a profile template for a role."""
         role_config = CAO_ROLES.get(role, CAO_ROLES["developer"])
-        
+
         frontmatter = {
             "name": "{{account_id}}-{role}",
             "description": "{{pool}} {role} agent",
@@ -235,7 +237,7 @@ class ProfileManager:
                 "created_by": "ProfileManager",
             },
         }
-        
+
         yaml_str = yaml.dump(frontmatter, sort_keys=False, default_flow_style=False)
         return f"---\n{yaml_str}---\n\n{frontmatter['systemPrompt']}"
 
@@ -251,7 +253,7 @@ class ProfileManager:
     def _get_role(self, account: Account) -> str:
         """Determine CAO role from account capabilities."""
         caps = account.capabilities
-        
+
         if "orchestrate" in caps or "delegate" in caps:
             return "supervisor"
         elif "code_review" in caps or "audit" in caps:
@@ -265,22 +267,22 @@ class ProfileManager:
         """Map capabilities to CAO tool vocabulary."""
         base_tools = CAO_ROLES.get(role, CAO_ROLES["developer"])["allowed_tools"]
         tools = list(base_tools)
-        
+
         # Add capability-specific tools
         if "code_gen" in account.capabilities or "code_impl" in account.capabilities:
             if "fs_*" not in tools:
                 tools.append("fs_*")
             if "execute_bash" not in tools:
                 tools.append("execute_bash")
-        
+
         if "web_search" in account.capabilities:
             if "web_fetch" not in tools:
                 tools.append("web_fetch")
-        
+
         if "read_only" in account.capabilities:
             # Restrict to read-only
             tools = ["@builtin", "@cao-mcp-server", "fs_read", "fs_list", "web_fetch"]
-        
+
         return tools
 
     def _get_env_vars(self, account: Account) -> dict[str, str]:
@@ -288,7 +290,7 @@ class ProfileManager:
         # These would be populated from Omega-Vault at runtime
         pool = account.pool
         env = {}
-        
+
         if pool == PoolType.GROK:
             env["GROK_API_KEY"] = f"${{VAULT:{account.credentials_ref}:api_key}}"
         elif pool == PoolType.COPILOT:
@@ -298,25 +300,25 @@ class ProfileManager:
                 env["DEEPSEEK_API_KEY"] = f"${{VAULT:{account.credentials_ref}:api_key}}"
             elif "mimo" in account.model.lower():
                 env["MIMO_API_KEY"] = f"${{VAULT:{account.credentials_ref}:api_key}}"
-        
+
         return env
 
     async def create_profile(self, account: Account) -> AgentProfile:
         """Generate profile for a specific account."""
         cache_key = f"{account.id}:{account.model}"
-        
+
         async with self._lock:
             if cache_key in self._profile_cache:
                 return self._profile_cache[cache_key]
-        
+
         provider = self._get_provider(account.pool)
         role = self._get_role(account)
         allowed_tools = self._get_allowed_tools(account, role)
         env_vars = self._get_env_vars(account)
-        
+
         # Get provider config
         provider_config = PROVIDER_CONFIGS.get(provider, {})
-        
+
         # Build system prompt
         role_config = CAO_ROLES.get(role, CAO_ROLES["developer"])
         system_prompt = (
@@ -328,7 +330,7 @@ class ProfileManager:
             f"Context Window: {account.context_window:,} tokens\n\n"
             f"Follow the Sovereign Mandates and Omega Engine protocols."
         )
-        
+
         profile = AgentProfile(
             name=f"{account.id}-{role}",
             description=f"{account.pool.value} {role} agent ({account.model})",
@@ -347,13 +349,13 @@ class ProfileManager:
                 "created_by": "ProfileManager",
             },
         )
-        
+
         async with self._lock:
             self._profile_cache[cache_key] = profile
-        
+
         # Persist profile
         await self._persist_profile(account.id, profile)
-        
+
         return profile
 
     async def _persist_profile(self, account_id: str, profile: AgentProfile) -> None:
@@ -366,7 +368,7 @@ class ProfileManager:
         path = self.profiles_dir / f"{account_id}.md"
         if not path.exists():
             return None
-        
+
         content = await anyio.to_thread.run_sync(path.read_text)
         return AgentProfile.from_markdown(content)
 
@@ -375,7 +377,7 @@ class ProfileManager:
         provider = self._get_provider(account.pool)
         provider_config = PROVIDER_CONFIGS.get(provider, {})
         binary = provider_config.get("binary", provider)
-        
+
         # Build command based on provider
         if provider == "grok_cli":
             command = binary
@@ -389,10 +391,10 @@ class ProfileManager:
         else:
             command = binary
             args = ["--model", account.model]
-        
+
         # Get profile for env vars
         profile = await self.create_profile(account)
-        
+
         return LaunchConfig(
             command=command,
             args=args,
@@ -434,18 +436,19 @@ class ProfileManager:
         profile = await self.get_profile(account_id)
         if not profile:
             return None
-        
+
         profile.metadata.update(metadata)
         await self._persist_profile(account_id, profile)
-        
+
         async with self._lock:
             cache_key = f"{account_id}:{profile.model}"
             self._profile_cache[cache_key] = profile
-        
+
         return profile
 
 
 # --- Convenience Functions ---
+
 
 async def create_profile_manager(
     profiles_dir: Optional[Path] = None,

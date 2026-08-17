@@ -37,20 +37,25 @@ INDEX_PATH = REQUESTS_DIR / "INDEX.json"
 
 # ── Error Types ──────────────────────────────────────────────────────────────
 
+
 class QueueError(OmegaError):
     """Base for queue system errors."""
+
 
 class QueueFullError(QueueError):
     """Queue is at capacity."""
 
+
 class RequestNotFoundError(QueueError):
     """Request ID not found in any queue."""
+
 
 class RequestStaleError(QueueError):
     """Request is too old to process."""
 
 
 # ── Queue Manager ────────────────────────────────────────────────────────────
+
 
 class RequestQueue:
     """
@@ -182,9 +187,7 @@ class RequestQueue:
 
     # ── Process / Complete ───────────────────────────────────────────────
 
-    async def complete_request(
-        self, req_id: str, result: Dict[str, Any]
-    ) -> bool:
+    async def complete_request(self, req_id: str, result: Dict[str, Any]) -> bool:
         """Move a request from queued/review to completed with result."""
         source_dirs = [self._queued_dir, self._review_dir]
         for directory in source_dirs:
@@ -207,11 +210,9 @@ class RequestQueue:
                 return True
         return False
 
-    async def fail_request(
-        self, req_id: str, error: str, permanent: bool = False
-    ) -> bool:
+    async def fail_request(self, req_id: str, error: str, permanent: bool = False) -> bool:
         """
-        Handle request failure. 
+        Handle request failure.
         If permanent=True or retries exhausted, move to dead-letter queue.
         """
         source_dirs = [self._queued_dir, self._review_dir]
@@ -220,7 +221,7 @@ class RequestQueue:
             exists = await anyio.to_thread.run_sync(filepath.exists)
             if exists:
                 request = await anyio.to_thread.run_sync(self._read_json, filepath)
-                
+
                 # Update retry count
                 retries = request.get("retries", 0) + 1
                 request["retries"] = retries
@@ -252,9 +253,7 @@ class RequestQueue:
         pruned = 0
 
         for directory in [self._queued_dir, self._review_dir, self._completed_dir]:
-            files = await anyio.to_thread.run_sync(
-                lambda: list(directory.glob("*.json"))
-            )
+            files = await anyio.to_thread.run_sync(lambda: list(directory.glob("*.json")))
             for fpath in files:
                 mtime = await anyio.to_thread.run_sync(fpath.stat)
                 if mtime.st_mtime < cutoff and fpath.name != "INDEX.json":
@@ -279,7 +278,9 @@ class RequestQueue:
         """Count JSON files in a directory (excludes INDEX.json)."""
         try:
             files = await anyio.to_thread.run_sync(
-                lambda: [f for f in directory.iterdir() if f.suffix == ".json" and f.name != "INDEX.json"]
+                lambda: [
+                    f for f in directory.iterdir() if f.suffix == ".json" and f.name != "INDEX.json"
+                ]
             )
             return len(files)
         except FileNotFoundError:
@@ -288,9 +289,7 @@ class RequestQueue:
     async def _load_requests(self, directory: Path) -> List[Dict[str, Any]]:
         """Load all JSON request files from a directory."""
         try:
-            files = await anyio.to_thread.run_sync(
-                lambda: sorted(directory.glob("*.json"))
-            )
+            files = await anyio.to_thread.run_sync(lambda: sorted(directory.glob("*.json")))
             results = []
             for fpath in files:
                 if fpath.name == "INDEX.json":

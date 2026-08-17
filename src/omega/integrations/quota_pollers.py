@@ -30,17 +30,19 @@ import httpx
 
 class QuotaStatusLevel(Enum):
     """Quota status levels."""
-    HEALTHY = "healthy"           # >50% remaining
-    MODERATE = "moderate"         # 20-50% remaining
-    LOW = "low"                   # 5-20% remaining
-    CRITICAL = "critical"         # 1-5% remaining
-    EXHAUSTED = "exhausted"       # 0% remaining
-    UNKNOWN = "unknown"           # Cannot determine status
+
+    HEALTHY = "healthy"  # >50% remaining
+    MODERATE = "moderate"  # 20-50% remaining
+    LOW = "low"  # 5-20% remaining
+    CRITICAL = "critical"  # 1-5% remaining
+    EXHAUSTED = "exhausted"  # 0% remaining
+    UNKNOWN = "unknown"  # Cannot determine status
 
 
 @dataclass
 class QuotaSnapshot:
     """Standardized quota information across all providers."""
+
     provider: str
     status: QuotaStatusLevel
     remaining: float
@@ -105,9 +107,9 @@ class QuotaPoller(ABC):
         """Calculate quota status based on remaining percentage."""
         if total <= 0:
             return QuotaStatusLevel.UNKNOWN
-        
+
         percent = (remaining / total) * 100
-        
+
         if percent <= 0:
             return QuotaStatusLevel.EXHAUSTED
         elif percent < 5:
@@ -122,20 +124,20 @@ class QuotaPoller(ABC):
     async def poll(self, force: bool = False) -> QuotaSnapshot:
         """
         Poll quota with rate limiting and caching.
-        
+
         Args:
             force: Force immediate poll, bypassing rate limit
-            
+
         Returns:
             QuotaSnapshot with current quota information
         """
         now = time.time()
-        
+
         # Rate limit check
         if not force and (now - self._last_poll_time) < self._min_poll_interval:
             if self._last_snapshot:
                 return self._last_snapshot
-        
+
         # Attempt with retries
         last_error = None
         for attempt in range(self.max_retries):
@@ -148,8 +150,8 @@ class QuotaPoller(ABC):
                 last_error = str(e)
                 if attempt < self.max_retries - 1:
                     # Exponential backoff: 1s, 2s, 4s
-                    await anyio.sleep(2 ** attempt)
-        
+                    await anyio.sleep(2**attempt)
+
         # All retries failed
         error_snapshot = QuotaSnapshot(
             provider=self.provider_name,
@@ -176,11 +178,11 @@ class QuotaPoller(ABC):
 class GrokQuotaPoller(QuotaPoller):
     """
     Grok (xAI) quota poller via gRPC-web GetGrokCreditsConfig.
-    
+
     Endpoint: POST https://grok.com/grok_api_v2.GrokBuildBilling/GetGrokCreditsConfig
     Content-Type: application/grpc-web+proto
     Auth: Bearer token (xAI OAuth from Hermes, NOT xAI API key)
-    
+
     Rate limit: 1 request per 30 seconds
     """
 
@@ -201,12 +203,12 @@ class GrokQuotaPoller(QuotaPoller):
     async def _fetch_quota(self) -> QuotaSnapshot:
         """Fetch Grok quota via gRPC-web endpoint."""
         url = f"{self.base_url}/grok_api_v2.GrokBuildBilling/GetGrokCreditsConfig"
-        
+
         headers = {
             "Content-Type": "application/grpc-web+proto",
             "Authorization": f"Bearer {self.api_key}",
         }
-        
+
         # Empty body for proto3 request
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -216,7 +218,7 @@ class GrokQuotaPoller(QuotaPoller):
                 timeout=self.timeout_seconds,
             )
             response.raise_for_status()
-        
+
         # Parse gRPC-web response (simplified - real impl needs proto parsing)
         # For now, assume JSON response from mock or test endpoint
         try:
@@ -233,18 +235,18 @@ class GrokQuotaPoller(QuotaPoller):
                 percent_remaining=0,
                 error="gRPC-web proto parsing not implemented",
             )
-        
+
         # Extract fields from response
         credit_usage_percent = data.get("credit_usage_percent", 0)
         billing_period_start = data.get("billing_period_start")
         billing_period_end = data.get("billing_period_end")
         on_demand_cap = data.get("on_demand_cap", 0)
         on_demand_used = data.get("on_demand_used", 0)
-        
+
         # Calculate remaining
         remaining = on_demand_cap - on_demand_used
         percent_remaining = (remaining / on_demand_cap * 100) if on_demand_cap > 0 else 0
-        
+
         # Parse reset time
         reset_time = None
         reset_seconds = None
@@ -254,7 +256,7 @@ class GrokQuotaPoller(QuotaPoller):
                 reset_seconds = int((reset_time - datetime.now(timezone.utc)).total_seconds())
             except Exception:
                 pass
-        
+
         return QuotaSnapshot(
             provider="grok",
             status=self._calculate_status(remaining, on_demand_cap),
@@ -274,11 +276,11 @@ class GrokQuotaPoller(QuotaPoller):
 class OpenRouterQuotaPoller(QuotaPoller):
     """
     OpenRouter credits/limits poller.
-    
+
     Endpoints:
     - GET /api/v1/credits → {data: {total_credits, total_usage}}
     - GET /api/v1/key → {data: {limit, limit_remaining, limit_reset, usage, ...}}
-    
+
     Error codes:
     - 402: insufficient credits
     - 429: rate limit + X-RateLimit-* headers
@@ -303,7 +305,7 @@ class OpenRouterQuotaPoller(QuotaPoller):
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        
+
         async with httpx.AsyncClient() as client:
             # Fetch credits
             credits_response = await client.get(
@@ -313,7 +315,7 @@ class OpenRouterQuotaPoller(QuotaPoller):
             )
             credits_response.raise_for_status()
             credits_data = credits_response.json().get("data", {})
-            
+
             # Fetch key info
             key_response = await client.get(
                 f"{self.base_url}/api/v1/key",
@@ -322,18 +324,18 @@ class OpenRouterQuotaPoller(QuotaPoller):
             )
             key_response.raise_for_status()
             key_data = key_response.json().get("data", {})
-        
+
         # Extract fields
         total_credits = credits_data.get("total_credits", 0)
         total_usage = credits_data.get("total_usage", 0)
         remaining = total_credits - total_usage
-        
+
         limit = key_data.get("limit", 0)
         limit_remaining = key_data.get("limit_remaining", 0)
         limit_reset = key_data.get("limit_reset")
         usage = key_data.get("usage", 0)
         is_free_tier = key_data.get("is_free_tier", False)
-        
+
         # Parse reset time
         reset_time = None
         reset_seconds = None
@@ -343,11 +345,11 @@ class OpenRouterQuotaPoller(QuotaPoller):
                 reset_seconds = int((reset_time - datetime.now(timezone.utc)).total_seconds())
             except Exception:
                 pass
-        
+
         # Determine rate limits based on free tier status
         rate_limit_rpm = 20  # Default
         rate_limit_rpd = 50 if is_free_tier else 1000
-        
+
         return QuotaSnapshot(
             provider="openrouter",
             status=self._calculate_status(remaining, total_credits),
@@ -374,10 +376,10 @@ class OpenRouterQuotaPoller(QuotaPoller):
 class GCPQuotaPoller(QuotaPoller):
     """
     Google Cloud Monitoring quota poller.
-    
+
     Uses Service Usage API to query quota information.
     Requires monitoring.read scope.
-    
+
     Endpoint: GET https://serviceusage.googleapis.com/v1beta1/projects/{project}/services/{service}
     """
 
@@ -402,18 +404,18 @@ class GCPQuotaPoller(QuotaPoller):
     async def _get_access_token(self) -> str:
         """Get or refresh OAuth2 access token."""
         now = time.time()
-        
+
         # Return cached token if valid
         if self._access_token and now < self._token_expiry - 60:
             return self._access_token
-        
+
         # For production, use google-auth library
         # For now, assume token is provided or use service account
         if self.credentials_json:
             # TODO: Implement proper OAuth2 token exchange
             # This is a placeholder for the actual implementation
             raise NotImplementedError("OAuth2 token exchange not implemented")
-        
+
         # Use application default credentials
         # In production, this would use google.auth.default()
         raise NotImplementedError("GCP authentication not configured")
@@ -421,14 +423,14 @@ class GCPQuotaPoller(QuotaPoller):
     async def _fetch_quota(self) -> QuotaSnapshot:
         """Fetch GCP quota via Service Usage API."""
         token = await self._get_access_token()
-        
+
         url = f"{self.base_url}/v1beta1/projects/{self.project_id}/services/{self.service_name}"
-        
+
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
         }
-        
+
         async with httpx.AsyncClient() as client:
             response = await client.get(
                 url,
@@ -437,17 +439,17 @@ class GCPQuotaPoller(QuotaPoller):
             )
             response.raise_for_status()
             data = response.json()
-        
+
         # Extract quota information
         quotas = data.get("quotas", [])
-        
+
         # Find the relevant quota (e.g., request_count)
         quota_info = None
         for quota in quotas:
             if quota.get("metric") == "serviceruntime.googleapis.com/api/consumer/request_count":
                 quota_info = quota
                 break
-        
+
         if not quota_info:
             return QuotaSnapshot(
                 provider="gcp",
@@ -458,12 +460,12 @@ class GCPQuotaPoller(QuotaPoller):
                 percent_remaining=0,
                 error="No quota information found",
             )
-        
+
         # Extract values
         limit = quota_info.get("limit", 0)
         usage = quota_info.get("usage", 0)
         remaining = limit - usage
-        
+
         return QuotaSnapshot(
             provider="gcp",
             status=self._calculate_status(remaining, limit),
@@ -482,12 +484,12 @@ class GCPQuotaPoller(QuotaPoller):
 class ExaQuotaPoller(QuotaPoller):
     """
     Exa Search API rate limit poller.
-    
+
     Rate limits:
     - /search: 10 QPS
     - /contents: 100 QPS
     - /answer: 10 QPS
-    
+
     Note: Exa doesn't provide a dedicated quota endpoint.
     We track usage locally and infer rate limits.
     """
@@ -510,7 +512,7 @@ class ExaQuotaPoller(QuotaPoller):
     async def _fetch_quota(self) -> QuotaSnapshot:
         """
         Check Exa API health and rate limits.
-        
+
         Since Exa doesn't have a quota endpoint, we:
         1. Make a lightweight search request
         2. Track response headers for rate limit info
@@ -520,14 +522,14 @@ class ExaQuotaPoller(QuotaPoller):
             "x-api-key": self.api_key,
             "Content-Type": "application/json",
         }
-        
+
         # Minimal search request to check API health
         payload = {
             "query": "test",
             "type": "instant",
             "numResults": 1,
         }
-        
+
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{self.base_url}/search",
@@ -535,25 +537,25 @@ class ExaQuotaPoller(QuotaPoller):
                 json=payload,
                 timeout=self.timeout_seconds,
             )
-            
+
             # Track request time
             now = time.time()
             self._request_times.append(now)
-            
+
             # Clean old request times (keep last 60 seconds)
             self._request_times = [t for t in self._request_times if now - t < 60]
-        
+
         # Calculate QPS from recent requests
         recent_requests = len([t for t in self._request_times if now - t < 1])
-        
+
         # Exa rate limits (from documentation)
         search_limit = 10  # QPS
         contents_limit = 100  # QPS
         answer_limit = 10  # QPS
-        
+
         # Calculate remaining capacity
         search_remaining = max(0, search_limit - recent_requests)
-        
+
         return QuotaSnapshot(
             provider="exa",
             status=self._calculate_status(search_remaining, search_limit),
@@ -575,10 +577,10 @@ class ExaQuotaPoller(QuotaPoller):
 class FirecrawlQuotaPoller(QuotaPoller):
     """
     Firecrawl credits poller.
-    
+
     Endpoint: GET /v2/team/credit-usage
     Response: {success: true, data: {remainingCredits, planCredits, billingPeriodStart, billingPeriodEnd}}
-    
+
     Credit costs:
     - Scrape: 1 credit/page
     - Crawl: 1 credit/page
@@ -606,7 +608,7 @@ class FirecrawlQuotaPoller(QuotaPoller):
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        
+
         async with httpx.AsyncClient() as client:
             response = await client.get(
                 f"{self.base_url}/v2/team/credit-usage",
@@ -615,7 +617,7 @@ class FirecrawlQuotaPoller(QuotaPoller):
             )
             response.raise_for_status()
             data = response.json()
-        
+
         if not data.get("success"):
             return QuotaSnapshot(
                 provider="firecrawl",
@@ -626,16 +628,16 @@ class FirecrawlQuotaPoller(QuotaPoller):
                 percent_remaining=0,
                 error=data.get("error", "Unknown error"),
             )
-        
+
         # Extract fields
         remaining_credits = data.get("data", {}).get("remainingCredits", 0)
         plan_credits = data.get("data", {}).get("planCredits", 0)
         billing_period_start = data.get("data", {}).get("billingPeriodStart")
         billing_period_end = data.get("data", {}).get("billingPeriodEnd")
-        
+
         # Calculate used
         used = plan_credits - remaining_credits if plan_credits > 0 else 0
-        
+
         # Parse reset time
         reset_time = None
         reset_seconds = None
@@ -645,7 +647,7 @@ class FirecrawlQuotaPoller(QuotaPoller):
                 reset_seconds = int((reset_time - datetime.now(timezone.utc)).total_seconds())
             except Exception:
                 pass
-        
+
         return QuotaSnapshot(
             provider="firecrawl",
             status=self._calculate_status(remaining_credits, plan_credits),
@@ -675,14 +677,14 @@ def create_quota_poller(
 ) -> QuotaPoller:
     """
     Factory function to create appropriate quota poller.
-    
+
     Args:
         provider: Provider name (grok, openrouter, gcp, exa, firecrawl)
         **kwargs: Provider-specific configuration
-        
+
     Returns:
         QuotaPoller instance
-        
+
     Raises:
         ValueError: If provider is not supported
     """
@@ -693,10 +695,10 @@ def create_quota_poller(
         "exa": ExaQuotaPoller,
         "firecrawl": FirecrawlQuotaPoller,
     }
-    
+
     if provider not in pollers:
         raise ValueError(f"Unsupported provider: {provider}. Supported: {list(pollers.keys())}")
-    
+
     return pollers[provider](**kwargs)
 
 

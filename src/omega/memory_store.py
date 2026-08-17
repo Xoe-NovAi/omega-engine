@@ -3,7 +3,6 @@ AP: AP-MEMORY-STORE-v1.0.0
 # [heritage: rrf-algorithm 2009] Reciprocal Rank Fusion — FTS5 + vector score fusion
 """
 
-import gzip
 import json
 import logging
 import os
@@ -13,21 +12,17 @@ import uuid
 from collections import OrderedDict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    OmegaPersistenceError,
+    EntityTombstonedError,
 )
 
-from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY, validate_zoneid
+from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY
 from .errors import EntityTombstonedError
 from .memory.providers import (
     StorageProvider,
@@ -35,46 +30,46 @@ from .memory.providers import (
     FileStorageProvider,
     InMemoryStorageProvider,
     USMStorageProvider,
-    DiskSpaceError,
     sanitize_path_component,
 )
-from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from .memory.vector_adapters import IVectorStoreAdapter, MemoryVectorAdapter
 from .memory.sqlite_vec_adapter import SQLiteVecAdapter
 from .memory.fts_index import ConversationFTSIndex
-from .memory.embeddings import (
-    EmbeddingManager, 
-    OllamaEmbeddingProvider, 
-    SovereignFallbackEmbeddingProvider,
-    GemmaGGUFEmbeddingProvider,
-    StaticEmbeddingProvider
-)
-from .memory.adapters import MemoryAdapterRegistry, IMemoryAdapter
-from .memory.hybrid_search import HybridSearchEngine, FTSResult, VecResult
+from .memory.embeddings import EmbeddingManager, GemmaGGUFEmbeddingProvider, StaticEmbeddingProvider
+from .memory.adapters import MemoryAdapterRegistry
 
 logger = logging.getLogger(__name__)
 
+
 def _get_data_dir() -> Path:
     """Get data directory, respecting OMEGA_DATA_DIR env var."""
-    return Path(os.environ.get(
-        "OMEGA_DATA_DIR",
-        str(Path(__file__).resolve().parent.parent.parent / "data")
-    ))
+    return Path(
+        os.environ.get(
+            "OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data")
+        )
+    )
+
 
 def _get_memory_dir() -> Path:
     return _get_data_dir() / "memory"
 
+
 def _get_trace_dir() -> Path:
     return _get_memory_dir() / "trace"
+
 
 def _get_entity_dir() -> Path:
     return _get_memory_dir() / "entities"
 
+
 def _get_archive_dir() -> Path:
     return _get_memory_dir() / "archive"
+
 
 def _get_sessions_dir() -> Path:
     """Get the sessions directory for JSONL persistence (ACP event stream)."""
     return _get_data_dir() / "coordination" / "sessions"
+
 
 MAX_HOT_SESSIONS = 50
 MAX_HISTORY = MAX_HISTORY_EXCHANGES
@@ -97,7 +92,7 @@ ARCHIVE_TO_EXTERNAL_DAYS = 90
 class MemoryStore:
     """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback.
     DocRef: docs/reference/api/memory_store.md
-    
+
     [id-soft: vet-015] ZONEID Pattern — integrity marker embedded in every
 
     persisted exchange entry, verified on load to catch data corruption.
@@ -119,7 +114,13 @@ class MemoryStore:
     ZONEID = ZONEID_MEMORY
     BATCH_THRESHOLD: int = 25  # flush after this many pending writes
 
-    def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None, adapter_registry: Optional[MemoryAdapterRegistry] = None):
+    def __init__(
+        self,
+        providers: Optional[List[StorageProvider]] = None,
+        vector_store: Optional[IVectorStoreAdapter] = None,
+        embedding_manager: Optional[EmbeddingManager] = None,
+        adapter_registry: Optional[MemoryAdapterRegistry] = None,
+    ):
         self._hot: Dict[str, OrderedDict] = {}
         self._adapter_registry = adapter_registry
         # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
@@ -128,54 +129,65 @@ class MemoryStore:
         # [id-soft: vet-037] Temp Tier — transient scratchpad memory
         # Used for in-flight inference results that should not be persisted.
         self._temp: Dict[str, Any] = {}
-        self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0, "batch_flushes": 0}
-        
+        self._stats: Dict[str, int] = {
+            "loads": 0,
+            "saves": 0,
+            "archives": 0,
+            "fallbacks": 0,
+            "batch_flushes": 0,
+        }
+
         # ── Batch Persistence Buffer ──
         # Groups pending writes by (entity_name, session_id) to minimize
         # provider round-trips. Prevents connection pool exhaustion under
         # concurrent oracle.talk() load.
         from .memory.batch_writer import BatchPersistenceWriter
+
         self._batch_writer = BatchPersistenceWriter(providers=providers)
         self._batch_buffer: Dict[tuple, List[Dict[str, Any]]] = {}
         self._batch_count: int = 0
-        
+
         if providers is not None:
             self.providers = providers
         else:
             self.providers = []
-            
+
             # 0. USM Provider (Sovereign Primary)
             self.providers.append(USMStorageProvider())
-            
+
             # Skip Redis in test environment to keep tests fast
             is_test = os.environ.get("OMEGA_ENV") == "test"
-            
+
             if not is_test:
                 # 1. Redis Provider (Hot)
                 try:
                     redis_host = os.environ.get("OMEGA_REDIS_HOST", "localhost")
                     redis_port = int(os.environ.get("OMEGA_REDIS_PORT", "6379"))
                     redis_password = os.environ.get("OMEGA_REDIS_PASSWORD", "omega")
-                    self.providers.append(RedisStorageProvider(host=redis_host, port=redis_port, password=redis_password))
+                    self.providers.append(
+                        RedisStorageProvider(
+                            host=redis_host, port=redis_port, password=redis_password
+                        )
+                    )
                 except OmegaError:
                     raise
                 except (ConnectionError, RuntimeError) as e:
                     logger.error(f"Failed to initialize RedisStorageProvider: {e}", exc_info=True)
                     raise OmegaPersistenceError(f"Redis init failed: {e}", raw_error=e) from e
-                
+
             # 2. File Provider (Warm) - Always enabled to support persistence tests and local-first fallback
             try:
                 self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
             except (OSError, RuntimeError) as e:
                 logger.warning(f"Failed to initialize FileStorageProvider: {e}")
-                
+
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
-        
+
         # FS-Β1: Embedding Strategy SSOT — canonical_dimension=768
         # The 1024-dim fallback (SovereignFallbackEmbeddingProvider) is REMOVED.
         # All providers MUST output 768-dim via MRL truncation.
-        
+
         if vector_store is not None:
             self.vector_store = vector_store
         else:
@@ -191,17 +203,22 @@ class MemoryStore:
             # Gemma + Nomic primary/fallback with MRL truncation to 768
             # MiniLM/static demoted to non-default collections (Option A)
             from .memory.embedding_strategy import get_embedding_strategy
+
             strategy = get_embedding_strategy()
             target_dim = strategy.canonical_dimension  # 768
-            
-            self.embedding_manager = EmbeddingManager([
-                GemmaGGUFEmbeddingProvider(target_dim=target_dim), 
-                StaticEmbeddingProvider(model_name="blobbybob/potion-mxbai-micro", target_dim=target_dim), 
-            ])
+
+            self.embedding_manager = EmbeddingManager(
+                [
+                    GemmaGGUFEmbeddingProvider(target_dim=target_dim),
+                    StaticEmbeddingProvider(
+                        model_name="blobbybob/potion-mxbai-micro", target_dim=target_dim
+                    ),
+                ]
+            )
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")
         self.fts.initialize()
-        
+
         # Ensure batch writer has the fully populated providers list
         self._batch_writer._providers = self.providers
 
@@ -252,7 +269,7 @@ class MemoryStore:
             if hasattr(provider, "check_health"):
                 if not await provider.check_health():
                     continue
-                    
+
             try:
                 exchanges = await provider.get_history(entity_name, session_id, limit=MAX_HISTORY)
                 if exchanges:
@@ -262,7 +279,10 @@ class MemoryStore:
                         if ex.get("_zoneid") != ZONEID_MEMORY:
                             logger.warning(
                                 "Exchange missing/invalid zoneid in %s/%s (expected 0x%08x, got %s)",
-                                entity_name, session_id, ZONEID_MEMORY, ex.get("_zoneid")
+                                entity_name,
+                                session_id,
+                                ZONEID_MEMORY,
+                                ex.get("_zoneid"),
                             )
                             # Tag it with the marker so it passes next time
                             ex["_zoneid"] = ZONEID_MEMORY
@@ -273,7 +293,10 @@ class MemoryStore:
             except OmegaError:
                 continue
             except (RuntimeError, OSError) as e:
-                logger.error(f"Provider {provider.__class__.__name__} failed to get_history: {e}", exc_info=True)
+                logger.error(
+                    f"Provider {provider.__class__.__name__} failed to get_history: {e}",
+                    exc_info=True,
+                )
                 self._stats["fallbacks"] += 1
                 continue
 
@@ -286,12 +309,12 @@ class MemoryStore:
         limit: int = 20,
     ) -> List[Dict[str, Any]]:
         """Search across conversation history using FTS5 (BM25 ranking).
-        
+
         [C3: entity_name REQUIRED] for sovereign isolation.
         """
         if not query.strip():
             return []
-        
+
         return await self.fts.search(query, entity_name, limit)
 
     async def search(
@@ -301,7 +324,7 @@ class MemoryStore:
         limit: int = 20,
     ) -> List[Dict[str, Any]]:
         """Hybrid search: FTS5 + Vector, re-ranked via RRF.
-        
+
         [C3: entity_name REQUIRED] for sovereign isolation.
         """
         if not query.strip():
@@ -322,7 +345,9 @@ class MemoryStore:
             )
 
         fused = await fetch_and_fuse(
-            fts_fetch=_fts_fetch, vec_fetch=_vec_fetch, limit=limit,
+            fts_fetch=_fts_fetch,
+            vec_fetch=_vec_fetch,
+            limit=limit,
         )
 
         final_results = []
@@ -334,46 +359,137 @@ class MemoryStore:
 
     def _compute_simple_embedding(self, text: str) -> List[float]:
         """Lightweight bag-of-words embedding for sovereign fallback.
-        
+
         Uses a stable MD5-based Feature Hashing (hashing trick) to map
         tokens deterministically to a fixed 256-dimensional space.
         """
         import hashlib
         import math
-        
+
         vec = [0.0] * 256
         if not text:
             return vec
-            
+
         tokens = re.findall(r"[a-zA-Z]\w+", text.lower())
         # Filter stopwords to keep the semantic signal clean
         stopwords = {
-            "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-            "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
-            "being", "have", "has", "had", "do", "does", "did", "will", "would",
-            "could", "should", "may", "might", "shall", "can", "need", "dare",
-            "this", "that", "these", "those", "i", "me", "my", "we", "our", "you",
-            "your", "he", "him", "his", "she", "her", "it", "its", "they", "them",
-            "their", "what", "which", "who", "whom", "when", "where", "why", "how",
-            "all", "each", "every", "both", "few", "more", "most", "other", "some",
-            "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too",
-            "very", "just", "because", "as", "until", "while", "about", "between",
-            "through", "during", "before", "after", "above", "below", "up", "down",
+            "the",
+            "a",
+            "an",
+            "and",
+            "or",
+            "but",
+            "in",
+            "on",
+            "at",
+            "to",
+            "for",
+            "of",
+            "with",
+            "by",
+            "from",
+            "is",
+            "are",
+            "was",
+            "were",
+            "be",
+            "been",
+            "being",
+            "have",
+            "has",
+            "had",
+            "do",
+            "does",
+            "did",
+            "will",
+            "would",
+            "could",
+            "should",
+            "may",
+            "might",
+            "shall",
+            "can",
+            "need",
+            "dare",
+            "this",
+            "that",
+            "these",
+            "those",
+            "i",
+            "me",
+            "my",
+            "we",
+            "our",
+            "you",
+            "your",
+            "he",
+            "him",
+            "his",
+            "she",
+            "her",
+            "it",
+            "its",
+            "they",
+            "them",
+            "their",
+            "what",
+            "which",
+            "who",
+            "whom",
+            "when",
+            "where",
+            "why",
+            "how",
+            "all",
+            "each",
+            "every",
+            "both",
+            "few",
+            "more",
+            "most",
+            "other",
+            "some",
+            "such",
+            "no",
+            "nor",
+            "not",
+            "only",
+            "own",
+            "same",
+            "so",
+            "than",
+            "too",
+            "very",
+            "just",
+            "because",
+            "as",
+            "until",
+            "while",
+            "about",
+            "between",
+            "through",
+            "during",
+            "before",
+            "after",
+            "above",
+            "below",
+            "up",
+            "down",
         }
         tokens = [t for t in tokens if t not in stopwords and len(t) > 2]
         if not tokens:
             return vec
-            
+
         for token in tokens:
             h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
             dim = h % 256
             vec[dim] += 1.0
-            
+
         # L2 normalize
         norm = math.sqrt(sum(x * x for x in vec))
         if norm > 0:
             vec = [x / norm for x in vec]
-            
+
         return vec
 
     async def add_exchange(
@@ -387,7 +503,10 @@ class MemoryStore:
     ) -> None:
         """Record a user-assistant exchange in entity memory."""
         if not session_id:
-            logger.warning("add_exchange called with None/empty session_id for entity=%s, skipping", entity_name)
+            logger.warning(
+                "add_exchange called with None/empty session_id for entity=%s, skipping",
+                entity_name,
+            )
             return
         cache_key = f"{entity_name.lower()}:{session_id}"
 
@@ -434,7 +553,7 @@ class MemoryStore:
         # Hot cache (above) is updated immediately — providers get batched writes.
         await self._batch_writer.write(entity_name, session_id, exchanges)
         self._stats["saves"] += 1
-        
+
         # ── Vault Update via Adapter Registry ──
         if self._adapter_registry:
             adapter = self._adapter_registry.get_for_entity(entity_name)
@@ -449,18 +568,15 @@ class MemoryStore:
                         vault["last_trace_id"] = trace_id
                     await adapter.put_vault(entity_name, "shadow", vault)
                 except (OmegaError, RuntimeError) as e:
-                    logger.warning(
-                        "Vault update failed for %s/%s: %s",
-                        entity_name, session_id, e
-                    )
-        
+                    logger.warning("Vault update failed for %s/%s: %s", entity_name, session_id, e)
+
         # [Horizon 2: MiMo] FTS5 Dual-Write
         try:
             await self.fts.index_exchange(session_id, entity_name, "user", user_message)
             await self.fts.index_exchange(session_id, entity_name, "assistant", response)
         except (RuntimeError, OSError) as e:
             logger.warning("FTS dual-write failed for %s: %s", session_id, e)
-        
+
         # Sovereign Vector Update
         vector_adapter = await self._ensure_vector_store()
         if vector_adapter:
@@ -471,10 +587,10 @@ class MemoryStore:
                     entity_name=entity_name,
                     vector=embedding,
                     metadata={
-                        "session_id": session_id, 
+                        "session_id": session_id,
                         "timestamp": exchange["timestamp"],
-                        "embedding_provider": provider_name
-                    }
+                        "embedding_provider": provider_name,
+                    },
                 )
             except (OmegaError, RuntimeError) as e:
                 logger.warning("Vector upsert failed for %s: %s", session_id, e)
@@ -530,18 +646,23 @@ class MemoryStore:
         if not self.vector_store:
             self.vector_store = MemoryVectorAdapter()
             return self.vector_store
-            
+
         if isinstance(self.vector_store, MemoryVectorAdapter):
             return self.vector_store
-            
+
         try:
             status = await self.vector_store.get_status()
             if status.get("status") == "healthy":
                 return self.vector_store
-            logger.warning("Vector store unhealthy (%s), falling back to MemoryVectorAdapter", status.get("error"))
+            logger.warning(
+                "Vector store unhealthy (%s), falling back to MemoryVectorAdapter",
+                status.get("error"),
+            )
         except Exception as e:
-            logger.error("Vector store health check failed: %s, falling back to MemoryVectorAdapter", e)
-            
+            logger.error(
+                "Vector store health check failed: %s, falling back to MemoryVectorAdapter", e
+            )
+
         self.vector_store = MemoryVectorAdapter()
         return self.vector_store
 
@@ -572,20 +693,21 @@ class MemoryStore:
         provider_name: str = "external",
     ) -> str:
         """Sovereign Ingestion Pipeline: Sieve -> Sign -> Index.
-        
+
         Ensures all external data is sanitized, PII-masked, and signed
         before entering the sovereign memory.
         """
         from omega.oracle.ingestion import get_ingestion_pipeline
+
         pipeline = get_ingestion_pipeline()
-        
+
         # 1. Process through the sovereign sieve
         doc = await pipeline.ingest(content, metadata, provider_name)
-        
+
         # 2. Index into MemoryStore (as a synthetic exchange)
         # We create a synthetic exchange to leverage existing persistence
         session_id = f"ingest_{int(time.time())}_{uuid.uuid4().hex[:8]}"
-        
+
         await self.add_exchange(
             entity_name=entity_name,
             session_id=session_id,
@@ -598,12 +720,14 @@ class MemoryStore:
                 "ingested_at": doc.timestamp,
                 "is_ingested": True,
             },
-            trace_id=None
+            trace_id=None,
         )
-        
+
         return session_id
 
-    async def _compact(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    async def _compact(
+        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Compact long conversation: keep first + last N exchanges, summarize middle."""
         logger.info(f"Compacting {entity_name}/{session_id}: {len(exchanges)} exchanges")
         self._stats["archives"] += 1
@@ -614,12 +738,15 @@ class MemoryStore:
         keep = MAX_HISTORY // 2
         kept = exchanges[:keep] + exchanges[-keep:]
         middle_count = len(exchanges) - (keep * 2)
-        kept.insert(keep, {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "system": f"[{middle_count} exchanges compacted]",
-            "user": "[summarized]",
-            "assistant": f"[{middle_count} previous exchanges were compacted. Context preserved.]",
-        })
+        kept.insert(
+            keep,
+            {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "system": f"[{middle_count} exchanges compacted]",
+                "user": "[summarized]",
+                "assistant": f"[{middle_count} previous exchanges were compacted. Context preserved.]",
+            },
+        )
         return kept
 
     async def get_summary(
@@ -643,7 +770,7 @@ class MemoryStore:
         session_id: str,
     ) -> bool:
         """Move a session to cold storage / archive across all providers.
-        
+
         [id-soft: vet-008] Lazy Deletion — instead of popping the hot cache
         entry immediately, tombstone it for TOMBSTONE_GRACE_SECONDS so any
         in-flight add_exchange operations complete safely. The slot is
@@ -657,15 +784,17 @@ class MemoryStore:
             except OmegaError:
                 continue
             except (RuntimeError, OSError) as e:
-                logger.error(f"Provider {provider.__class__.__name__} failed to archive: {e}", exc_info=True)
+                logger.error(
+                    f"Provider {provider.__class__.__name__} failed to archive: {e}", exc_info=True
+                )
                 continue
-        
+
         if archived_any:
             cache_key = f"{entity_name.lower()}:{session_id}"
             # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
             # [id-soft: vet-008] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
             self._tombstoned[cache_key] = time.time()
-            
+
             # Sovereign Vector Cleanup (C4 Fix)
             if self.vector_store:
                 try:
@@ -673,16 +802,18 @@ class MemoryStore:
                     logger.info("Vector cleanup completed for session %s", session_id)
                 except (OmegaError, RuntimeError) as e:
                     logger.warning("Vector cleanup failed for %s: %s", session_id, e)
-            
+
             self._stats["archives"] += 1
-            
+
             # [Horizon 2: MiMo] FTS5 Cleanup (C1 fix)
             try:
                 await self.fts.remove_session(session_id)
             except (RuntimeError, OSError) as e:
                 logger.warning("FTS cleanup failed for %s: %s", session_id, e)
-            
-            logger.info(f"Archived session {session_id} across providers (tombstoned, grace={TOMBSTONE_GRACE_SECONDS}s)")
+
+            logger.info(
+                f"Archived session {session_id} across providers (tombstoned, grace={TOMBSTONE_GRACE_SECONDS}s)"
+            )
             return True
         return False
 
@@ -738,16 +869,16 @@ class MemoryStore:
         trace_id: Optional[str] = None,
     ) -> None:
         """Append an ACP event to the session's updates.jsonl (source of truth).
-        
+
         This is the append-only event stream that survives OOM/kill.
         Pattern from Grok CLI: xai-sqlite-journal/src/lib.rs
         """
         if not session_id:
             return
-            
+
         await self._ensure_session_dir(entity_name, session_id)
         jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "updates.jsonl")
-        
+
         event = {
             "event_type": event_type,
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -757,7 +888,7 @@ class MemoryStore:
         }
         if trace_id:
             event["trace_id"] = trace_id
-            
+
         # Append to JSONL (atomic write via anyio)
         async with await anyio.open_file(str(jsonl_path), "a") as f:
             await f.write(json.dumps(event, default=str) + "\n")
@@ -769,7 +900,7 @@ class MemoryStore:
         exchange: Dict[str, Any],
     ) -> None:
         """Internal: log an exchange as an ACP event to updates.jsonl.
-        
+
         Called from add_exchange to maintain the append-only event stream.
         """
         await self.log_acp_event(
@@ -788,15 +919,15 @@ class MemoryStore:
         trace_id: Optional[str] = None,
     ) -> None:
         """Create a periodic filesystem snapshot in rewind_points.jsonl.
-        
+
         Pattern from Grok CLI: /rewind command replays journal to restore state.
         """
         if not session_id:
             return
-            
+
         await self._ensure_session_dir(entity_name, session_id)
         jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "rewind_points.jsonl")
-        
+
         rewind_point = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "entity": entity_name,
@@ -805,7 +936,7 @@ class MemoryStore:
         }
         if trace_id:
             rewind_point["trace_id"] = trace_id
-            
+
         async with await anyio.open_file(str(jsonl_path), "a") as f:
             await f.write(json.dumps(rewind_point, default=str) + "\n")
 
@@ -816,14 +947,14 @@ class MemoryStore:
         target_timestamp: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
         """Restore session state from rewind_points.jsonl.
-        
+
         If target_timestamp is provided, restores to the latest rewind point
         at or before that timestamp. Otherwise, restores the latest rewind point.
         """
         jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "rewind_points.jsonl")
         if not await anyio.Path(jsonl_path).exists():
             return None
-            
+
         rewind_points = []
         async with await anyio.open_file(str(jsonl_path), "r") as f:
             async for line in f:
@@ -833,16 +964,17 @@ class MemoryStore:
                         rewind_points.append(json.loads(line))
                     except json.JSONDecodeError:
                         continue
-                        
+
         if not rewind_points:
             return None
-            
+
         if target_timestamp:
             # Find latest rewind point at or before target
-            target_dt = datetime.fromisoformat(target_timestamp.replace('Z', '+00:00'))
+            target_dt = datetime.fromisoformat(target_timestamp.replace("Z", "+00:00"))
             candidates = [
-                rp for rp in rewind_points
-                if datetime.fromisoformat(rp["timestamp"].replace('Z', '+00:00')) <= target_dt
+                rp
+                for rp in rewind_points
+                if datetime.fromisoformat(rp["timestamp"].replace("Z", "+00:00")) <= target_dt
             ]
             if not candidates:
                 return None
@@ -861,7 +993,7 @@ class MemoryStore:
         jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "updates.jsonl")
         if not await anyio.Path(jsonl_path).exists():
             return []
-            
+
         events = []
         async with await anyio.open_file(str(jsonl_path), "r") as f:
             async for line in f:
@@ -892,11 +1024,13 @@ class MemoryStore:
                     cache_key = f"{entity_name.lower()}:{path.stem}"
                     if self._is_tombstoned(cache_key):
                         continue
-                    sessions.append({
-                        "session_id": path.stem,
-                        "entity": entity_name,
-                        "path": str(path),
-                    })
+                    sessions.append(
+                        {
+                            "session_id": path.stem,
+                            "entity": entity_name,
+                            "path": str(path),
+                        }
+                    )
                 sessions.sort(key=lambda s: s["session_id"], reverse=True)
                 sessions = sessions[:limit]
         else:
@@ -906,11 +1040,13 @@ class MemoryStore:
                         cache_key = f"{ent_dir.name}:{path.stem}"
                         if self._is_tombstoned(cache_key):
                             continue
-                        sessions.append({
-                            "session_id": path.stem,
-                            "entity": ent_dir.name,
-                            "path": str(path),
-                        })
+                        sessions.append(
+                            {
+                                "session_id": path.stem,
+                                "entity": ent_dir.name,
+                                "path": str(path),
+                            }
+                        )
             sessions.sort(key=lambda s: s["session_id"], reverse=True)
             sessions = sessions[:limit]
         return sessions
@@ -946,7 +1082,9 @@ class MemoryStore:
                     try:
                         await provider.save_history(entity_name, session_id, exchanges)
                     except (OmegaError, RuntimeError, OSError) as e:
-                        logger.warning(f"Failed to flush to {provider.__class__.__name__} on close: {e}")
+                        logger.warning(
+                            f"Failed to flush to {provider.__class__.__name__} on close: {e}"
+                        )
 
         for provider in self.providers:
             try:
@@ -954,12 +1092,14 @@ class MemoryStore:
             except OmegaError:
                 pass
             except (RuntimeError, OSError) as e:
-                logger.error(f"Failed to close provider {provider.__class__.__name__}: {e}", exc_info=True)
+                logger.error(
+                    f"Failed to close provider {provider.__class__.__name__}: {e}", exc_info=True
+                )
                 pass
 
         # Close FTS5 index (must be called here, not in reset_memory_store,
         # because close() is async and needs the event loop)
-        if hasattr(self, 'fts') and self.fts is not None:
+        if hasattr(self, "fts") and self.fts is not None:
             try:
                 await anyio.to_thread.run_sync(self.fts.close)
             except (RuntimeError, OSError) as e:
@@ -969,7 +1109,7 @@ class MemoryStore:
 
     async def archive_old_sessions(self, older_than_days: int = ARCHIVE_AFTER_DAYS) -> int:
         """Auto-archive sessions older than N days.
-        
+
         Session Lifecycle Policy:
         - 7 days: Archive to cold storage (local disk)
         - 90 days: Move to external 8TB storage drive for permanent archival
@@ -995,23 +1135,25 @@ class MemoryStore:
                         count += 1
         return count
 
-    async def move_to_external_storage(self, older_than_days: int = ARCHIVE_TO_EXTERNAL_DAYS) -> int:
+    async def move_to_external_storage(
+        self, older_than_days: int = ARCHIVE_TO_EXTERNAL_DAYS
+    ) -> int:
         """Move sessions older than N days to external 8TB storage drive.
-        
+
         This implements the 90-day permanent archival policy. Sessions are moved
         (not deleted) to preserve data while freeing local disk space.
         """
         count = 0
         now = time.time()
-        
+
         # Ensure external storage directory exists
         await anyio.Path(EXTERNAL_STORAGE_PATH).mkdir(parents=True, exist_ok=True)
-        
+
         # Check archive directory for old sessions
         archive_dir = _get_archive_dir()
         if not await anyio.Path(archive_dir).exists():
             return 0
-            
+
         async for ent_dir in anyio.Path(archive_dir).iterdir():
             if not await anyio.Path(ent_dir).is_dir():
                 continue
@@ -1023,20 +1165,22 @@ class MemoryStore:
                     entity_name = ent_dir.name
                     external_entity_dir = EXTERNAL_STORAGE_PATH / entity_name
                     await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
-                    
+
                     # Move the file
                     dest_path = external_entity_dir / path.name
                     await anyio.Path(path).rename(dest_path)
                     count += 1
                     logger.info("Moved session %s to external storage: %s", path.name, dest_path)
-        
+
         return count
+
 
 _memory_store: Optional[MemoryStore] = None
 
+
 def reset_memory_store() -> None:
     """Reset the singleton instance. Used for testing.
-    
+
     Closes the FTS5 SQLite connection before abandoning the store.
     Batch persistence buffer is flushed via the async close() path
     when possible; on sync abandon, pending writes are logged and lost.
@@ -1054,7 +1198,7 @@ def reset_memory_store() -> None:
 
         # Close the FTS5 SQLite connection before abandoning to prevent
         # ResourceWarning from sqlite3 connections being garbage-collected.
-        if hasattr(_memory_store, 'fts') and _memory_store.fts is not None:
+        if hasattr(_memory_store, "fts") and _memory_store.fts is not None:
             try:
                 _memory_store.fts.close()
             except (RuntimeError, OSError):
@@ -1063,12 +1207,14 @@ def reset_memory_store() -> None:
     else:
         _memory_store = None
 
+
 async def async_reset_memory_store() -> None:
     """Async reset: flushes batch buffer before abandoning. Preferred in tests."""
     global _memory_store
     if _memory_store is not None:
         await _memory_store.close()
         _memory_store = None
+
 
 def get_memory_store() -> MemoryStore:
     global _memory_store

@@ -20,18 +20,14 @@ import sys
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    InferenceError,
+    BoundaryViolationError,
 )
 import httpx2 as httpx
 import os
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Callable
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 
@@ -41,12 +37,13 @@ from .context_builder import ContextBuilder
 from .capability_registry import CapabilityRegistry
 from .entity_registry import EntityRegistry
 from .handoff import HandoffState, format_handoff_prompt
-from omega.observability import ObservabilityEngine, get_engine
+from omega.observability import get_engine
 from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.health_monitor import get_health_monitor
 from omega.errors import BrakeViolationError, BoundaryViolationError
 
 logger = logging.getLogger(__name__)
+
 
 def _parse_comma_env(raw: str) -> List[str]:
     """Parse a comma-separated environment variable safely.
@@ -67,6 +64,7 @@ class BackgroundWorker:
     Uses standard ModelGateway provider fabric for inference.
     [Sovereign Workhorse Protocol: pw_model_15]
     """
+
     def __init__(self, model_gateway: Any, api_keys: List[str]):
         self.gateway = model_gateway
         self.keys = api_keys
@@ -74,7 +72,14 @@ class BackgroundWorker:
         self.semaphore = anyio.Semaphore(len(api_keys) if api_keys else 1)
         self.active_tasks: Dict[str, anyio.Task] = {}
 
-    async def submit_task(self, task_group: anyio.abc.TaskGroup, task_id: str, model: str, prompt: str, context: str = ""):
+    async def submit_task(
+        self,
+        task_group: anyio.abc.TaskGroup,
+        task_id: str,
+        model: str,
+        prompt: str,
+        context: str = "",
+    ):
         """
         Submits a task to the background group.
         """
@@ -82,7 +87,9 @@ class BackgroundWorker:
         self.active_tasks[task_id] = task
         return task_id
 
-    async def _execute_with_retry(self, task_id: str, model: str, prompt: str, context: str, retries: int = 2):
+    async def _execute_with_retry(
+        self, task_id: str, model: str, prompt: str, context: str, retries: int = 2
+    ):
         """
         The core execution loop:
         1. Acquire semaphore
@@ -99,7 +106,7 @@ class BackgroundWorker:
                     user_query=prompt,
                     trace_id=task_id,
                 )
-                
+
                 if not result.text:
                     raise InferenceError(message="Sensing returned no data", trace_id=task_id)
 
@@ -108,13 +115,12 @@ class BackgroundWorker:
                 # Step B: Local Distillation (Gemma 4 L2/L3)
                 # Step C: Gold Synthesis (Final assembly)
                 gold_sheet = await self._apply_gold_filter(result.text, task_id)
-                
+
                 # 3. Hivemind Registration
-                from omega.hub import hivemind_post_context # hypothetical import, check actual
                 # Actually, we use the MCP tool via the hub or a direct call.
                 # For now, we'll log it to the live feed.
                 logger.info(f"Worker {task_id} completed. Gold Sheet generated.")
-                
+
         except (OmegaError, RuntimeError, OSError) as e:
             if retries > 0:
                 logger.warning(f"Worker {task_id} failed, retrying... ({retries} left): {e}")
@@ -133,39 +139,38 @@ class BackgroundWorker:
         # This is a simplified implementation of the pipeline
         # In a full version, this would call specific distilled models
         distilled = f"L2 Insight: {raw_data[:200]}...\nL3 Principle: Sovereign sensing verified."
-        
+
         return {
             "trace_id": task_id,
             "context_source": "Gemma 4 Sensing",
             "distilled_insights": distilled,
-            "critical_payload": raw_data[:1000]
+            "critical_payload": raw_data[:1000],
         }
 
 
 class Orchestrator:
-
     """Spawns and manages headless CLI agents (Cline, OpenCode) and monitors MCP health."""
 
     def __init__(self, resource_guard: Optional[ResourceGuard] = None):
         self.guard = resource_guard or ResourceGuard(max_ram_mb=1024)
-        
+
         # Sovereign Capability Registry for Agent Discovery
         self.registry = CapabilityRegistry()
-        
+
         # Initialize Background Worker
         # Collect all Google API keys from the sovereign vault.
         # The vault is the single source of truth (no scattered
         # os.getenv reads for API keys).
         from omega.vault import VaultCore
+
         vault = VaultCore()
         vault._load_sync()
         google_creds = [c for c in vault._credentials.values() if c.provider.value == "google"]
         keys = [c.encrypted_blob for c in google_creds]
         self.background_worker = BackgroundWorker(
-            model_gateway=ModelGateway(health_monitor=get_health_monitor()),
-            api_keys=keys
+            model_gateway=ModelGateway(health_monitor=get_health_monitor()), api_keys=keys
         )
-        
+
         # Orchestrator manages EXTERNAL MCP servers only (firecrawl, searxng).
         # The omega-hub server is managed by systemd — NOT by Orchestrator.
         # Including it here caused infinite recursive spawn (RCA_RUNAWAY_MCP_SPAWN_20260706).
@@ -182,7 +187,7 @@ class Orchestrator:
 
         # Model Updater is initialized asynchronously during start_workers()
         self.model_updater = None
-        
+
         # Start EXTERNAL MCP servers only (firecrawl, searxng)
         for name in self.mcp_ports:
             proc = self._start_mcp_server(name)
@@ -198,19 +203,19 @@ class Orchestrator:
         if not script:
             logger.warning(f"No script configured for MCP {name}")
             return None
-        
+
         # Project root is 4 levels up from this file (src/omega/oracle/orchestrator.py)
         project_root = Path(__file__).resolve().parent.parent.parent.parent
         script_path = project_root / script
-        
+
         if not script_path.exists():
             logger.error(f"MCP script not found: {script_path}")
             return None
-        
+
         env = os.environ.copy()
         env["PYTHONPATH"] = str(project_root / "src")
         env["MCP_PORT"] = str(self.mcp_ports[name])
-        
+
         try:
             proc = subprocess.Popen(
                 [sys.executable, str(script_path)],
@@ -235,7 +240,7 @@ class Orchestrator:
             except TimeoutError:
                 existing.kill()
                 await anyio.to_thread.run_sync(existing.wait)
-        
+
         # Start new process
         proc = self._start_mcp_server(name)
         if proc:
@@ -258,19 +263,23 @@ class Orchestrator:
                                 self._mcp_status[name] = {
                                     "status": "healthy",
                                     "last_check": datetime.now().isoformat(),
-                                    "port": port
+                                    "port": port,
                                 }
                             else:
-                                logger.warning(f"MCP {name} returned {response.status_code} on port {port}. Triggering restart...")
+                                logger.warning(
+                                    f"MCP {name} returned {response.status_code} on port {port}. Triggering restart..."
+                                )
                                 self._mcp_status[name] = {"status": "degraded", "port": port}
                                 await self._restart_mcp(name)
                     except (httpx.ConnectError, httpx.TimeoutException, httpx.ReadError):
                         self._mcp_status[name] = {
                             "status": "unresponsive",
                             "last_check": datetime.now().isoformat(),
-                            "port": port
+                            "port": port,
                         }
-                        logger.warning(f"MCP {name} is unresponsive on port {port}. Triggering restart...")
+                        logger.warning(
+                            f"MCP {name} is unresponsive on port {port}. Triggering restart..."
+                        )
                         try:
                             await self._restart_mcp(name)
                         except OmegaError:
@@ -278,8 +287,8 @@ class Orchestrator:
                         except (OmegaError, RuntimeError, OSError) as e:
                             logger.error(f"Failed to restart {name}: {e}", exc_info=True)
                             raise OmegaError(f"MCP restart failed: {e}", raw_error=e) from e
-                
-                await anyio.sleep(60) # One check per minute is enough for background health
+
+                await anyio.sleep(60)  # One check per minute is enough for background health
 
     async def _restart_mcp(self, name: str):
         """Restart an MCP server by spawning it as a background process."""
@@ -291,42 +300,36 @@ class Orchestrator:
         }
         script = script_map.get(name)
         if not script:
-            logger.warning(f"No restart script mapped for MCP {name} (omega-hub is managed by systemd)")
+            logger.warning(
+                f"No restart script mapped for MCP {name} (omega-hub is managed by systemd)"
+            )
             return
-        
+
         project_root = Path(__file__).resolve().parent.parent.parent.parent
         script_path = project_root / script
-        
+
         if not script_path.exists():
             logger.error(f"MCP script not found: {script_path}")
             return
-        
+
         # Kill existing process if any
         try:
             await anyio.run_process(["pkill", "-f", f"{script}"], check=False)
             await anyio.sleep(1)
         except Exception as e:
             logger.debug("pkill cleanup (expected if no prior process): %s", e)
-        
+
         # Spawn new process
         env = os.environ.copy()
         env["PYTHONPATH"] = str(project_root / "src")
         try:
-            await anyio.run_process(
-                [sys.executable, str(script_path)],
-                env=env,
-                check=False
-            )
+            await anyio.run_process([sys.executable, str(script_path)], env=env, check=False)
             logger.info(f"Restarted MCP {name} ({script})")
         except Exception as e:
             logger.error(f"Failed to restart MCP {name}: {e}", exc_info=True)
 
     async def spawn_background_worker(
-        self, 
-        task_id: str, 
-        model: str, 
-        prompt: str, 
-        context: str = ""
+        self, task_id: str, model: str, prompt: str, context: str = ""
     ) -> str:
         """
         Spawns a background worker for high-throughput sensing.
@@ -334,11 +337,7 @@ class Orchestrator:
         """
         async with anyio.create_task_group() as tg:
             await self.background_worker.submit_task(
-                task_group=tg, 
-                task_id=task_id, 
-                model=model, 
-                prompt=prompt, 
-                context=context
+                task_group=tg, task_id=task_id, model=model, prompt=prompt, context=context
             )
         return f"Worker {task_id} spawned successfully."
 
@@ -349,7 +348,7 @@ class Orchestrator:
     def _verify_sovereign_brake(self, task_prompt: str):
         """
         Enforces the Sovereign Brake and the Sovereign Communication Protocol (SCP).
-        
+
         Validates:
         1. [VERIFICATION] block presence.
         2. Structural RTCO pattern: Role, Task, Constraints, and Output must be explicitly defined.
@@ -359,21 +358,21 @@ class Orchestrator:
                 "Sovereign Brake Triggered: Dispatch missing [VERIFICATION] block. "
                 "All subagent requests must be preceded by a verification of intent."
             )
-        
+
         # Structural RTCO validation: Ensure each required section is followed by actual content.
         required_blocks = {
             "Role:": "The role of the agent is not specified.",
             "Task:": "The specific task for the agent is not specified.",
             "Constraints:": "The operational constraints are not specified.",
-            "Output:": "The expected output format is not specified."
+            "Output:": "The expected output format is not specified.",
         }
-        
+
         missing_or_empty = []
         for marker, error_msg in required_blocks.items():
             if marker not in task_prompt:
                 missing_or_empty.append(marker)
                 continue
-            
+
             # Check if the block is empty (nothing between current marker and next marker/end of string)
             lines = task_prompt.splitlines()
             found_marker = False
@@ -389,7 +388,7 @@ class Orchestrator:
                     # If we found the marker and then a non-empty line, it's not empty
                     content_found = True
                     break
-            
+
             if not content_found:
                 missing_or_empty.append(marker)
 
@@ -404,7 +403,10 @@ class Orchestrator:
         Scales agent drive based on task complexity.
         """
         prompt_lower = task_prompt.lower()
-        if any(k in prompt_lower for k in ["exhaustive", "deep dive", "comprehensive", "audit", "complex"]):
+        if any(
+            k in prompt_lower
+            for k in ["exhaustive", "deep dive", "comprehensive", "audit", "complex"]
+        ):
             return "Sovereign Drive: COMPLEX. Execute with maximum depth, iterative verification, and exhaustive analysis."
         elif any(k in prompt_lower for k in ["quick", "simple", "list", "check", "trivial"]):
             return "Sovereign Drive: TRIVIAL. Execute with minimal overhead. Direct and concise."
@@ -418,6 +420,7 @@ class Orchestrator:
         """
         try:
             from mcp_servers.omega_hub.state import _awareness, _awareness_lock
+
             async with _awareness_lock:
                 # Check if any agent with this entity name is currently active in the Hivemind
                 active_agents = [aid for aid in _awareness if aid.endswith(f"/{entity_name}")]
@@ -427,25 +430,29 @@ class Orchestrator:
                             f"Coordination Hazard: Agent 'kali' is already active ({active_agents[0]}). "
                             "Sovereign protocol forbids spawning multiple KALI instances."
                         )
-                    logger.info(f"Agent '{entity_name}' is already active ({active_agents[0]}). Proceeding with caution.")
+                    logger.info(
+                        f"Agent '{entity_name}' is already active ({active_agents[0]}). Proceeding with caution."
+                    )
         except ImportError:
-            logger.warning("Hivemind state not available for coordination check. Skipping hazard detection.")
+            logger.warning(
+                "Hivemind state not available for coordination check. Skipping hazard detection."
+            )
         except BoundaryViolationError:
             raise
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Coordination check failed (non-fatal): {e}")
 
     async def dispatch_agent(
-        self, 
-        cli_type: str, 
-        task_prompt: str, 
+        self,
+        cli_type: str,
+        task_prompt: str,
         entity_name: str,
         timeout: int = 300,
         handoff_state: Optional[HandoffState] = None,
-        trace_id: Optional[str] = None
+        trace_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Dispatch a headless CLI agent with the entity's soul injected.
-        
+
         Args:
             cli_type: 'cline' or 'opencode'
             task_prompt: The objective for the agent
@@ -453,16 +460,16 @@ class Orchestrator:
             timeout: Maximum execution time in seconds
             handoff_state: Optional state for transferring context from another agent
             trace_id: Optional trace ID for observability propagation
-            
+
         Returns:
             Dict containing the exit status and stdout of the agent.
         """
         # Sovereign Brake & SCP Enforcement
         self._verify_sovereign_brake(task_prompt)
-        
+
         # Coordination Hazard Check (C-8)
         await self._check_coordination_hazard(entity_name)
-        
+
         # Loop Guard Check (T2-5)
         if handoff_state:
             if handoff_state.is_loop(entity_name):
@@ -478,17 +485,17 @@ class Orchestrator:
             # Add current target to visited list for the next hop
             if entity_name not in handoff_state.visited_agents:
                 handoff_state.visited_agents.append(entity_name)
-        
+
         dampening_field = self._calculate_sovereign_dampening(task_prompt)
 
         logger.info(f"Preparing to dispatch {cli_type} for entity '{entity_name}'")
-        
+
         # Ensure workspace exists (auto-scaffold on first dispatch)
         EntityWorkspaceManager.scaffold_workspace(entity_name)
-        
+
         # Load the soul profile
         soul_prompt = await EntityWorkspaceManager.get_soul_prompt(entity_name)
-        
+
         # BLOCKER FIX #1: Load entity's designated model from entity registry
         try:
             entity_registry = EntityRegistry()
@@ -498,9 +505,12 @@ class Orchestrator:
         except OmegaError:
             raise
         except (OmegaError, RuntimeError, OSError) as e:
-            logger.error(f"Failed to load entity model for '{entity_name}': {e}. Using default.", exc_info=True)
+            logger.error(
+                f"Failed to load entity model for '{entity_name}': {e}. Using default.",
+                exc_info=True,
+            )
             entity_model = "qwen3-1.7b-q6_k"
-        
+
         # Combine the soul prompt with the task prompt and dampening field
         full_prompt = (
             f"{soul_prompt}\n\n"
@@ -509,7 +519,6 @@ class Orchestrator:
             f"IMPORTANT: You are operating headlessly. When finished, use the omega-hivemind MCP "
             f"to post your context, or simply conclude the task."
         )
-
 
         if handoff_state:
             full_prompt = format_handoff_prompt(handoff_state) + "\n\n" + full_prompt
@@ -525,46 +534,42 @@ class Orchestrator:
             return {"status": "error", "message": f"Unsupported CLI type: {cli_type}"}
 
         logger.info(f"Waiting for ResourceGuard to spawn {cli_type} with model {entity_model}...")
-        
+
         try:
             # Prepare environment with entity model override
             env = os.environ.copy()
-            env['OPENCODE_MODEL'] = entity_model  # Pass entity's designated model to OpenCode CLI
-            
+            env["OPENCODE_MODEL"] = entity_model  # Pass entity's designated model to OpenCode CLI
+
             # Propagate trace_id to subprocess for observability continuity
             if trace_id:
-                env['OMEGA_TRACE_ID'] = trace_id
-            
-            # The async context manager from resource_guard.py has no __aenter__ / __aexit__ natively 
+                env["OMEGA_TRACE_ID"] = trace_id
+
+            # The async context manager from resource_guard.py has no __aenter__ / __aexit__ natively
             # if it's returning an AsyncContextManager but wait, resource_guard.py defines it as:
             # @asynccontextmanager
             # async def lock(self): ...
             # So `async with self.guard.lock():` is correct.
             async with self.guard.lock():
                 logger.info(f"ResourceGuard acquired. Spawning {cli_type}...")
-                
+
                 # Execute the subprocess with entity's model environment override
                 with anyio.fail_after(timeout):
-                    result = await anyio.run_process(
-                        cmd,
-                        capture_output=True,
-                        check=False,
-                        env=env
-                    )
-                
-                stdout = result.stdout.decode(errors='replace')
-                stderr = result.stderr.decode(errors='replace')
-                
+                    result = await anyio.run_process(cmd, capture_output=True, check=False, env=env)
+
+                stdout = result.stdout.decode(errors="replace")
+                stderr = result.stderr.decode(errors="replace")
+
                 success = result.returncode == 0
                 logger.info(f"Agent {cli_type} completed. Success: {success}")
 
                 # Trigger soul distillation on session end (Mandate 11)
                 try:
-                    # We assume a session was created for this dispatch. 
+                    # We assume a session was created for this dispatch.
                     # If handoff_state provided a session_id, use it; else use trace_id.
                     sid = handoff_state.session_id if handoff_state else "unknown"
                     # Note: We use the Oracle singleton if available, or create one.
                     from omega.oracle.oracle import Oracle
+
                     oracle_instance = Oracle()
                     await oracle_instance.close_session(entity_name, sid)
                 except (OmegaError, RuntimeError, OSError) as e:
@@ -573,10 +578,10 @@ class Orchestrator:
                 return {
                     "status": "success" if success else "failed",
                     "returncode": result.returncode,
-                    "stdout": stdout[-2000:], # keep tail
-                    "stderr": stderr[-2000:]
+                    "stdout": stdout[-2000:],  # keep tail
+                    "stderr": stderr[-2000:],
                 }
-                                
+
         except TimeoutError:
             logger.error(f"Agent {cli_type} timed out after {timeout}s.")
             return {"status": "timeout", "message": "Agent execution timed out."}
@@ -587,16 +592,16 @@ class Orchestrator:
             return {"status": "error", "message": str(e)}
 
     async def delegate_task(
-        self, 
-        task_description: str, 
-        entity_name: str, 
+        self,
+        task_description: str,
+        entity_name: str,
         cli_type: Optional[str] = None,
         timeout: int = 300,
-        handoff_state: Optional[HandoffState] = None
+        handoff_state: Optional[HandoffState] = None,
     ) -> Dict[str, Any]:
         """
         Delegate a task to the best-suited agent discovered via the CapabilityRegistry.
-        
+
         Args:
             task_description: Description of the task to be performed.
             entity_name: The awakened entity's name for soul injection.
@@ -605,14 +610,14 @@ class Orchestrator:
             handoff_state: Optional state for transferring context from another agent.
         """
         logger.info(f"Delegating task: {task_description[:50]}...")
-        
+
         # 1. Discover the best agent if cli_type is not provided
         target_cli = cli_type
         if not target_cli:
             best_agent = await self.registry.discover_expert(task_description)
             if best_agent:
                 # Assume agent_id contains the cli_type (e.g., 'opencode-builder')
-                target_cli = best_agent.split('-')[0]
+                target_cli = best_agent.split("-")[0]
                 logger.info(f"Registry discovered expert agent: {best_agent} -> using {target_cli}")
             else:
                 # Fallback to opencode if no expert found
@@ -625,9 +630,8 @@ class Orchestrator:
             task_prompt=task_description,
             entity_name=entity_name,
             timeout=timeout,
-            handoff_state=handoff_state
+            handoff_state=handoff_state,
         )
-
 
     async def start_workers(self) -> None:
         """Start all background workers."""
@@ -638,21 +642,25 @@ class Orchestrator:
     async def _init_model_updater(self) -> None:
         """Asynchronously initialize the ModelUpdaterWorker."""
         try:
-            config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-            
+            config_path = (
+                Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+            )
+
             def _load_cfg():
                 if not config_path.exists():
                     return {}
                 import yaml
+
                 with open(config_path, "r") as f:
                     return yaml.safe_load(f) or {}
 
             cfg = await anyio.to_thread.run_sync(_load_cfg)
             updater_cfg = cfg.get("omega", {}).get("model_updater", {})
-            
+
             if updater_cfg.get("enabled", True):
                 from omega.oracle.health_monitor import get_health_monitor
                 from omega.workers.model_updater import ModelUpdaterWorker
+
                 self.model_updater = ModelUpdaterWorker(
                     model_gateway=ModelGateway(health_monitor=get_health_monitor()),
                     observability=get_engine(),

@@ -89,7 +89,7 @@ __all__ = [
     "MockMCPClient",
     "FleetNode",
     "FleetCoordinator",
-# Profile Manager
+    # Profile Manager
     "ProfileManager",
     "AgentProfile",
     "LaunchConfig",

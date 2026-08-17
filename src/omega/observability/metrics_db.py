@@ -7,7 +7,6 @@ import json
 import logging
 import sqlite3
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -126,10 +125,10 @@ CREATE INDEX IF NOT EXISTS idx_vault_audit_action ON vault_audit(action);
 
 class MetricsDB:
     """SQLite WAL-mode metrics store for profiling baselines and regression detection.
-    
+
     [id-soft: vet-040] Event System — structured event logging for observability.
     [id-soft: vet-016] cvar pattern — named constant registry for metric names.
-    
+
     Uses WAL-mode for high-concurrency, non-blocking reads/writes.
     Designed for Carmack's profiler baselines and UFL (Unified Forensic Ledger).
     """
@@ -196,7 +195,9 @@ class MetricsDB:
             (SCHEMA_VERSION, now),
         )
         self._conn.commit()
-        logger.info("MetricsDB initialized at %s (WAL-mode, schema v%d)", self.db_path, SCHEMA_VERSION)
+        logger.info(
+            "MetricsDB initialized at %s (WAL-mode, schema v%d)", self.db_path, SCHEMA_VERSION
+        )
 
     def close(self) -> None:
         """Close the database connection."""
@@ -234,8 +235,7 @@ class MetricsDB:
         )
         # Migrate pre-existing tables created before the is_synthetic column.
         cols = [
-            row["name"]
-            for row in self._conn.execute("PRAGMA table_info(provider_classification)")
+            row["name"] for row in self._conn.execute("PRAGMA table_info(provider_classification)")
         ]
         if "is_synthetic" not in cols:
             self._conn.execute(
@@ -406,11 +406,24 @@ class MetricsDB:
                 "provider_prompt_tokens, provider_completion_tokens, "
                 "is_cloud, cost_usd, entity_id) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (ts, trace_id, provider, model_used, latency_ms,
-                 prompt_tokens, completion_tokens, total_tokens, cache_read_tokens,
-                 provider_prompt_tokens if provider_prompt_tokens is not None else prompt_tokens,
-                 provider_completion_tokens if provider_completion_tokens is not None else completion_tokens,
-                 int(is_cloud), cost_usd, entity_id),
+                (
+                    ts,
+                    trace_id,
+                    provider,
+                    model_used,
+                    latency_ms,
+                    prompt_tokens,
+                    completion_tokens,
+                    total_tokens,
+                    cache_read_tokens,
+                    provider_prompt_tokens if provider_prompt_tokens is not None else prompt_tokens,
+                    provider_completion_tokens
+                    if provider_completion_tokens is not None
+                    else completion_tokens,
+                    int(is_cloud),
+                    cost_usd,
+                    entity_id,
+                ),
             )
             self._conn.commit()
 
@@ -419,6 +432,7 @@ class MetricsDB:
 
     async def get_daily_cloud_spend(self, since_ts_ms: int) -> float:
         """Sum cost_usd for cloud rows since a ms timestamp. [M1 AnyIO]"""
+
         def _sync_get() -> float:
             row = self._conn.execute(
                 "SELECT SUM(cost_usd) as total FROM performance WHERE ts >= ? AND is_cloud = 1",
@@ -485,6 +499,7 @@ class MetricsDB:
     async def update_cost(self, trace_id: str, cost_usd: float) -> None:
         """Set cost_usd on the performance row for trace_id. [M1 AnyIO] Lock-serialized —
         this is a write and must not race concurrent record_performance() writes."""
+
         def _sync_update() -> None:
             self._conn.execute(
                 "UPDATE performance SET cost_usd = ? WHERE trace_id = ? AND is_cloud = 1",
@@ -523,6 +538,7 @@ class MetricsDB:
 
     async def get_baseline(self, metric_name: str) -> Optional[Dict[str, Any]]:
         """Get a baseline metric by name."""
+
         def _sync_get():
             row = self._conn.execute(
                 "SELECT metric_name, metric_value, sample_count, std_deviation, created_at, source "
@@ -530,6 +546,7 @@ class MetricsDB:
                 (metric_name,),
             ).fetchone()
             return dict(row) if row else None
+
         return await anyio.to_thread.run_sync(_sync_get)
 
     # ── Regression Detection ─────────────────────────────────────────────
@@ -541,7 +558,7 @@ class MetricsDB:
         threshold: float = 0.1,
     ) -> bool:
         """Detect if current value regresses from baseline.
-        
+
         Uses 3-sigma rule if std_deviation is available,
         otherwise falls back to percentage threshold.
         """
@@ -571,6 +588,7 @@ class MetricsDB:
     ) -> List[Dict[str, Any]]:
         """Get performance trend over time."""
         ts_threshold = int((time.time() - hours * 3600) * 1000)
+
         def _sync_get():
             if provider:
                 cursor = self._conn.execute(
@@ -585,21 +603,27 @@ class MetricsDB:
                     (ts_threshold,),
                 )
             return [dict(row) for row in cursor.fetchall()]
+
         return await anyio.to_thread.run_sync(_sync_get)
 
     async def get_error_summary(self, hours: int = 24) -> Dict[str, Any]:
         """Get error summary for the last N hours."""
         ts_threshold = int((time.time() - hours * 3600) * 1000)
+
         def _sync_get():
             cursor = self._conn.execute(
                 "SELECT error_type, COUNT(*) as count FROM errors WHERE ts > ? GROUP BY error_type ORDER BY count DESC",
                 (ts_threshold,),
             )
             return {row["error_type"]: row["count"] for row in cursor.fetchall()}
+
         return await anyio.to_thread.run_sync(_sync_get)
 
-    async def get_breaker_history(self, provider: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
+    async def get_breaker_history(
+        self, provider: Optional[str] = None, limit: int = 50
+    ) -> List[Dict[str, Any]]:
         """Get circuit breaker transition history."""
+
         def _sync_get():
             if provider:
                 cursor = self._conn.execute(
@@ -614,10 +638,12 @@ class MetricsDB:
                     (limit,),
                 )
             return [dict(row) for row in cursor.fetchall()]
+
         return await anyio.to_thread.run_sync(_sync_get)
 
     async def get_stats(self) -> Dict[str, Any]:
         """Get database statistics."""
+
         def _sync_get():
             stats = {}
             for table in ["events", "errors", "breaker_transitions", "performance", "baselines"]:
@@ -625,4 +651,5 @@ class MetricsDB:
                 stats[f"{table}_count"] = cursor.fetchone()["count"]
             stats["db_size_bytes"] = self.db_path.stat().st_size if self.db_path.exists() else 0
             return stats
+
         return await anyio.to_thread.run_sync(_sync_get)

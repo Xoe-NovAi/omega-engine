@@ -5,15 +5,19 @@ Sovereign Extractors — Model-specific extraction logic.
 
 # DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import json
-import time
 from pydantic import ValidationError
 import httpx2 as httpx
-import anyio
-from typing import AsyncGenerator, Optional, Dict, Any
-from pathlib import Path
+from typing import AsyncGenerator
 from tenacity import retry, stop_after_attempt, wait_random_exponential, retry_if_exception_type
 from json_repair import repair_json
-from .ingestion_types import ExtractionSchema, IngestionConfig, IngestionError, SovereigntyError, ProviderServerError, TransportError, SchemaError
+from .ingestion_types import (
+    ExtractionSchema,
+    IngestionConfig,
+    SovereigntyError,
+    ProviderServerError,
+    TransportError,
+    SchemaError,
+)
 
 # The Standard Sovereign Extraction Schema
 # This is the core of the Entity Deepening Protocol.
@@ -23,12 +27,12 @@ EXTRACTION_SCHEMA = {
         "technical_facts": {
             "type": "array",
             "items": {"type": "string"},
-            "description": "Technical facts, decisions, and implementation details from the text"
+            "description": "Technical facts, decisions, and implementation details from the text",
         },
         "personality_patterns": {
             "type": "array",
             "items": {"type": "string"},
-            "description": "Observable patterns in personality, habits, communication style"
+            "description": "Observable patterns in personality, habits, communication style",
         },
         "gnosis_principles": {
             "type": "array",
@@ -36,16 +40,16 @@ EXTRACTION_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "principle": {"type": "string", "description": "Name of the principle"},
-                    "description": {"type": "string", "description": "Detailed explanation"}
+                    "description": {"type": "string", "description": "Detailed explanation"},
                 },
-                "required": ["principle", "description"]
+                "required": ["principle", "description"],
             },
-            "description": "Universal engineering or life principles distilled from the text"
+            "description": "Universal engineering or life principles distilled from the text",
         },
         "heritage_patterns": {
             "type": "array",
             "items": {"type": "string"},
-            "description": "Patterns that could be ported to other systems (id Software heritage, etc)"
+            "description": "Patterns that could be ported to other systems (id Software heritage, etc)",
         },
         "dpo_pairs": {
             "type": "array",
@@ -53,19 +57,30 @@ EXTRACTION_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "prompt": {"type": "string", "description": "A question about the text"},
-                    "chosen": {"type": "string", "description": "Authentic answer based on the text"},
-                    "rejected": {"type": "string", "description": "Generic or incorrect answer"}
+                    "chosen": {
+                        "type": "string",
+                        "description": "Authentic answer based on the text",
+                    },
+                    "rejected": {"type": "string", "description": "Generic or incorrect answer"},
                 },
-                "required": ["prompt", "chosen", "rejected"]
+                "required": ["prompt", "chosen", "rejected"],
             },
-            "description": "Direct Preference Optimization training pairs"
-        }
+            "description": "Direct Preference Optimization training pairs",
+        },
     },
-    "required": ["technical_facts", "personality_patterns", "gnosis_principles", "heritage_patterns", "dpo_pairs"]
+    "required": [
+        "technical_facts",
+        "personality_patterns",
+        "gnosis_principles",
+        "heritage_patterns",
+        "dpo_pairs",
+    ],
 }
+
 
 class BaseExtractor:
     """Abstract base for all sovereign extractors."""
+
     async def extract_stream(self, text: str, config: IngestionConfig) -> AsyncGenerator[str, None]:
         raise NotImplementedError
 
@@ -74,7 +89,7 @@ class BaseExtractor:
         full_text = ""
         async for chunk in self.extract_stream(text, config):
             full_text += chunk
-        
+
         # Robust JSON repair and validation
         try:
             repaired_json = repair_json(full_text)
@@ -83,9 +98,10 @@ class BaseExtractor:
         except (json.JSONDecodeError, ValidationError, RuntimeError, OSError) as e:
             raise SchemaError(f"Failed to parse extraction result even after repair: {str(e)}")
 
+
 class GoogleExtractor(BaseExtractor):
     """Google Gemini API extractor with SSE streaming and responseJsonSchema."""
-    
+
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models"
@@ -94,13 +110,13 @@ class GoogleExtractor(BaseExtractor):
         stop=stop_after_attempt(3),
         wait=wait_random_exponential(multiplier=1, max=60),
         retry=retry_if_exception_type((ProviderServerError, TransportError)),
-        reraise=True
+        reraise=True,
     )
     async def extract_stream(self, text: str, config: IngestionConfig) -> AsyncGenerator[str, None]:
         url = f"{self.base_url}/{config.model_name}:streamGenerateContent?alt=sse"
-        
+
         prompt = f"Extract data about the entity from the source text below. Focus on technical decisions, personality traits, universal principles, reusable patterns, and training data.\n\n{text[:240000]}"
-        
+
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
@@ -110,14 +126,20 @@ class GoogleExtractor(BaseExtractor):
                 "responseJsonSchema": EXTRACTION_SCHEMA,
             },
         }
-        
+
         async with httpx.AsyncClient(timeout=180.0) as client:
             try:
-                async with client.stream("POST", url, json=payload, headers={"x-goog-api-key": self.api_key}) as response:
+                async with client.stream(
+                    "POST", url, json=payload, headers={"x-goog-api-key": self.api_key}
+                ) as response:
                     if response.status_code == 403:
-                        raise SovereigntyError(f"HTTP 403: API Key invalid or quota exceeded. {await response.aread()}")
+                        raise SovereigntyError(
+                            f"HTTP 403: API Key invalid or quota exceeded. {await response.aread()}"
+                        )
                     if response.status_code >= 500:
-                        raise ProviderServerError(f"HTTP {response.status_code}: Provider internal error.")
+                        raise ProviderServerError(
+                            f"HTTP {response.status_code}: Provider internal error."
+                        )
                     if response.status_code != 200:
                         raise TransportError(f"HTTP {response.status_code}: Unexpected response.")
 

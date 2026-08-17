@@ -17,10 +17,8 @@ import json
 import logging
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-import anyio
 import httpx
 
 logger = logging.getLogger("omega.mcp.client")
@@ -47,6 +45,7 @@ REQUIRED_RESPONSE_HEADERS = {
 # RESULT TYPES
 # =============================================================================
 
+
 @dataclass
 class MCPClientResult:
     """Standardized MCP client result with provenance tracking."""
@@ -63,6 +62,7 @@ class MCPClientResult:
 # =============================================================================
 # CLIENT
 # =============================================================================
+
 
 class MCPClient:
     """
@@ -128,7 +128,9 @@ class MCPClient:
 
         # SEP-414: Trace context
         if trace_id:
-            body.setdefault("_meta", {})["traceparent"] = f"00-{trace_id}-{uuid.uuid4().hex[:16]}-01"
+            body.setdefault("_meta", {})["traceparent"] = (
+                f"00-{trace_id}-{uuid.uuid4().hex[:16]}-01"
+            )
 
         headers = {
             "Content-Type": "application/json",
@@ -147,7 +149,10 @@ class MCPClient:
 
         logger.debug(
             "MCP call_tool: %s method=%s name=%s rid=%s",
-            self.server_url, method, name, request_id,
+            self.server_url,
+            method,
+            name,
+            request_id,
         )
 
         try:
@@ -271,6 +276,7 @@ class MCPClient:
 # =============================================================================
 # FACTORY
 # =============================================================================
+
 
 def create_mcp_client(
     server_url: str,

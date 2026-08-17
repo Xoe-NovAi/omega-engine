@@ -26,9 +26,9 @@ Failure Modes (engine-generic):
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import logging
 
@@ -37,8 +37,10 @@ logger = logging.getLogger(__name__)
 
 # ── Severity & Finding Types ──────────────────────────────────────────
 
+
 class Severity(str, Enum):
     """Severity levels for failure mode findings."""
+
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -48,6 +50,7 @@ class Severity(str, Enum):
 @dataclass(frozen=True, slots=True)
 class Finding:
     """A single detection result from a failure mode scanner."""
+
     name: str
     severity: Severity
     description: str
@@ -58,6 +61,7 @@ class Finding:
 @dataclass(frozen=True, slots=True)
 class RecoveryPath:
     """A typed recovery action for a failure mode."""
+
     mode: str
     action: str
     description: str
@@ -66,9 +70,11 @@ class RecoveryPath:
 
 # ── Pattern Registry ──────────────────────────────────────────────────
 
+
 @dataclass(slots=True)
 class PatternDef:
     """A single detection pattern."""
+
     name: str
     pattern: re.Pattern[str]
     severity: Severity
@@ -98,14 +104,11 @@ _PATTERNS: List[PatternDef] = [
     ),
     PatternDef(
         name="legacy_import_statement",
-        pattern=re.compile(
-            r"from\s+src\.omega\s+import|import\s+src\.omega", re.IGNORECASE
-        ),
+        pattern=re.compile(r"from\s+src\.omega\s+import|import\s+src\.omega", re.IGNORECASE),
         severity=Severity.MEDIUM,
         description="Legacy src.omega import detected",
         failure_mode="LEGACY_ROT",
     ),
-
     # ── TELEMETRY_LEAK: Zero-telemetry enforcement (M8) ───────────────
     PatternDef(
         name="sentry_dsn",
@@ -124,7 +127,6 @@ _PATTERNS: List[PatternDef] = [
         description="External telemetry endpoint reference detected",
         failure_mode="TELEMETRY_LEAK",
     ),
-
     # ── Credential leaks ──────────────────────────────────────────────
     PatternDef(
         name="api_key_literal",
@@ -141,6 +143,7 @@ _PATTERNS: List[PatternDef] = [
 
 
 # ── FailureModeRegistry ───────────────────────────────────────────────
+
 
 class FailureModeRegistry:
     """M17 Cognitive Integrity — named failure modes with recovery paths.
@@ -246,13 +249,15 @@ class FailureModeRegistry:
             if match:
                 raw = match.group(0)
                 preview = raw[:6] + "*" * min(len(raw) - 6, 24)
-                findings.append(Finding(
-                    name=pdef.name,
-                    severity=pdef.severity,
-                    description=pdef.description,
-                    match_preview=preview,
-                    failure_mode=pdef.failure_mode,
-                ))
+                findings.append(
+                    Finding(
+                        name=pdef.name,
+                        severity=pdef.severity,
+                        description=pdef.description,
+                        match_preview=preview,
+                        failure_mode=pdef.failure_mode,
+                    )
+                )
         return findings
 
     def sanitize(self, content: str) -> str:
@@ -276,9 +281,7 @@ class FailureModeRegistry:
         Compliant = no critical or high findings.
         """
         findings = self.scan(content)
-        deduction = sum(
-            SEVERITY_WEIGHT.get(f.severity, 0.1) for f in findings
-        )
+        deduction = sum(SEVERITY_WEIGHT.get(f.severity, 0.1) for f in findings)
         purity_score = max(0.0, round(1.0 - deduction, 2))
 
         critical = [f for f in findings if f.severity == Severity.CRITICAL]
@@ -349,7 +352,9 @@ class FailureModeRegistry:
             "recovery": {
                 "action": recovery.action,
                 "description": recovery.description,
-            } if recovery else None,
+            }
+            if recovery
+            else None,
             "auto_recover": recovery.auto_recover if recovery else False,
         }
 
@@ -372,9 +377,7 @@ class FailureModeRegistry:
         return {
             "total_patterns": len(self._patterns),
             "failure_modes": list(self._recovery_paths.keys()),
-            "total_recovery_paths": sum(
-                len(paths) for paths in self._recovery_paths.values()
-            ),
+            "total_recovery_paths": sum(len(paths) for paths in self._recovery_paths.values()),
             "patterns_by_mode": {
                 mode: sum(1 for p in self._patterns if p.failure_mode == mode)
                 for mode in self._recovery_paths

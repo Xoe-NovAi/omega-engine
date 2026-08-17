@@ -75,9 +75,7 @@ async def estimate_tokens_async(
     margin: float = DEFAULT_TOKEN_MARGIN,
 ) -> int:
     """Async wrapper around :func:`estimate_tokens` (M1: CPU-bound -> thread)."""
-    return await anyio.to_thread.run_sync(
-        estimate_tokens, text, model, margin
-    )
+    return await anyio.to_thread.run_sync(estimate_tokens, text, model, margin)
 
 
 def tokens_for_file(
@@ -97,6 +95,4 @@ async def tokens_for_file_async(
     margin: float = DEFAULT_TOKEN_MARGIN,
 ) -> int:
     """Async file token estimation (M1: blocking I/O + CPU -> thread)."""
-    return await anyio.to_thread.run_sync(
-        tokens_for_file, path, model, margin
-    )
+    return await anyio.to_thread.run_sync(tokens_for_file, path, model, margin)

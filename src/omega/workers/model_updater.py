@@ -14,21 +14,15 @@ import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 import httpx2 as httpx
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from omega.observability import ObservabilityEngine, EventType
 from omega.oracle.model_gateway import ModelGateway
@@ -79,14 +73,14 @@ class ModelUpdaterWorker:
         self.db_path = Path("docs/research/model_db/CURRENT_MODELS.json")
         self.audit_dir = Path("data/audit/model_updater")
         self.audit_dir.mkdir(parents=True, exist_ok=True)
-        self.lock = anyio.Lock()           # protects DB writes
-        self._running_lock = anyio.Lock() # guards against concurrent cycles
+        self.lock = anyio.Lock()  # protects DB writes
+        self._running_lock = anyio.Lock()  # guards against concurrent cycles
 
     # ── Lifecycle ────────────────────────────────────────────────────────
 
     async def start(self) -> None:
         """Enable the worker's scheduled operation.
-        
+
         Does not start a background loop — the caller should manage the
         task lifecycle via run_forever() in their own TaskGroup.
         """
@@ -101,7 +95,9 @@ class ModelUpdaterWorker:
             trace_id,
             {"event": "model_updater_started", "schedule": self.cfg.get("schedule", "0 * * * *")},
         )
-        logger.info(f"ModelUpdaterWorker enabled with schedule: {self.cfg.get('schedule', '0 * * * *')}")
+        logger.info(
+            f"ModelUpdaterWorker enabled with schedule: {self.cfg.get('schedule', '0 * * * *')}"
+        )
 
     async def run_forever(self) -> None:
         """Run the update loop indefinitely. Call inside a TaskGroup or via anyio.run()."""
@@ -125,7 +121,7 @@ class ModelUpdaterWorker:
 
     async def run_update_cycle(self) -> None:
         """One full research → diff → update cycle.
-        
+
         Uses a concurrency guard to prevent overlapping runs.
         """
         # Acquire the running lock; if already in a cycle, skip silently.
@@ -134,7 +130,6 @@ class ModelUpdaterWorker:
                 await self._run_full_cycle()
         else:
             logger.warning("Model update cycle already in progress. Skipping.")
-
 
     async def _run_full_cycle(self) -> None:
         trace_id = str(uuid.uuid4())
@@ -257,36 +252,40 @@ class ModelUpdaterWorker:
         models = []
         if provider == "openrouter":
             for m in data.get("data", []):
-                models.append({
-                    "name": m["id"],
-                    "provider": "openrouter",
-                    "context_window": m.get("context_length", 0),
-                    "pricing": m.get("pricing", {}),
-                })
+                models.append(
+                    {
+                        "name": m["id"],
+                        "provider": "openrouter",
+                        "context_window": m.get("context_length", 0),
+                        "pricing": m.get("pricing", {}),
+                    }
+                )
         elif provider == "google":
             for m in data.get("models", []):
                 name = m["name"].replace("models/", "")
-                models.append({
-                    "name": name,
-                    "provider": "google",
-                    "context_window": m.get("inputTokenLimit", 0),
-                    "supported_actions": m.get("supportedActions", []),
-                })
+                models.append(
+                    {
+                        "name": name,
+                        "provider": "google",
+                        "context_window": m.get("inputTokenLimit", 0),
+                        "supported_actions": m.get("supportedActions", []),
+                    }
+                )
         elif provider == "opencode-zen":
             for m in data.get("data", []):
-                models.append({
-                    "name": m["id"],
-                    "provider": "opencode-zen",
-                    "context_window": m.get("context_length", 0),
-                    "pricing": m.get("pricing", {}),
-                })
+                models.append(
+                    {
+                        "name": m["id"],
+                        "provider": "opencode-zen",
+                        "context_window": m.get("context_length", 0),
+                        "pricing": m.get("pricing", {}),
+                    }
+                )
         return models
 
     # ── 2️⃣ Gemma research ─────────────────────────────────────────────
 
-    async def _research_with_gemma(
-        self, provider_data: List[Dict], trace_id: str
-    ) -> Dict:
+    async def _research_with_gemma(self, provider_data: List[Dict], trace_id: str) -> Dict:
         """Use Gemma 4-31B to verify and enrich the fetched model data."""
         prompt = self._build_research_prompt(provider_data)
         response_str = ""
@@ -311,9 +310,7 @@ class ModelUpdaterWorker:
         except (json.JSONDecodeError, RuntimeError) as e:
             preview = response_str[:200] if response_str else "<no response>"
             logger.error(f"Gemma JSON parse failure: {e}", exc_info=True)
-            raise RuntimeError(
-                f"Gemma returned non-JSON content: {preview}... Error: {e}"
-            ) from e
+            raise RuntimeError(f"Gemma returned non-JSON content: {preview}... Error: {e}") from e
 
     def _build_research_prompt(self, provider_data: List[Dict]) -> str:
         return f"""Verify the free-tier model catalog.
@@ -336,9 +333,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
 
     # ── 3️⃣ Diff engine ─────────────────────────────────────────────────
 
-    async def _compute_diffs(
-        self, research: Dict, trace_id: str
-    ) -> List[Dict]:
+    async def _compute_diffs(self, research: Dict, trace_id: str) -> List[Dict]:
         """Compare research results against the current database."""
         async with self.lock:
             current = await self._load_current_db()
@@ -360,13 +355,15 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
 
         for d in research.get("discrepancies", []):
             if d.get("confidence", 0) >= self.cfg.get("confidence_minimum", 0.85):
-                changes.append({
-                    "type": "update",
-                    "model_name": d.get("model", ""),
-                    "field": d.get("field", ""),
-                    "old": d.get("old_value"),
-                    "new": d.get("new_value"),
-                })
+                changes.append(
+                    {
+                        "type": "update",
+                        "model_name": d.get("model", ""),
+                        "field": d.get("field", ""),
+                        "old": d.get("old_value"),
+                        "new": d.get("new_value"),
+                    }
+                )
 
         max_changes = self.cfg.get("max_changes_per_cycle", 30)
         if len(changes) > max_changes:
@@ -384,9 +381,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
 
     # ── 4️⃣ Apply changes ──────────────────────────────────────────────
 
-    async def _apply_changes(
-        self, changes: List[Dict], trace_id: str
-    ) -> None:
+    async def _apply_changes(self, changes: List[Dict], trace_id: str) -> None:
         """Persist verified changes to the DB atomically."""
         async with self.lock:
             db = await self._load_current_db()
@@ -423,9 +418,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
             # Audit snapshot
             def _write_audit():
                 path = self.audit_dir / f"{ts}_{trace_id}.json"
-                path.write_text(
-                    json.dumps({"changes": changes, "db_snapshot": db}, indent=2)
-                )
+                path.write_text(json.dumps({"changes": changes, "db_snapshot": db}, indent=2))
 
             await anyio.to_thread.run_sync(_write_audit)
 
@@ -468,9 +461,7 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
     async def _load_current_db(self) -> Dict:
         """Load the current model database via thread pool."""
         if self.db_path.exists():
-            return await anyio.to_thread.run_sync(
-                lambda: json.loads(self.db_path.read_text())
-            )
+            return await anyio.to_thread.run_sync(lambda: json.loads(self.db_path.read_text()))
         return {"timestamp": datetime.now(timezone.utc).isoformat(), "providers": {}}
 
     # ── Status ───────────────────────────────────────────────────────────

@@ -17,7 +17,7 @@ Key Design:
 
 import json
 import logging
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from enum import Enum
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 class AgentAuthType(str, Enum):
     """Supported authentication types for Agent Cards."""
+
     NONE = "none"
     SPIFFE = "spiffe"
     OAUTH2 = "oauth2"
@@ -35,6 +36,7 @@ class AgentAuthType(str, Enum):
 
 class SkillCategory(str, Enum):
     """Skill categories mapped from EntityRegistry domains."""
+
     DOMAIN_ROUTING = "domain_routing"
     CAPABILITY_MATCH = "capability_match"
     RESEARCH = "research"
@@ -52,6 +54,7 @@ class A2ASkill:
     [A2A v1.0] Skills represent fine-grained capabilities that other agents
     can discover and invoke.
     """
+
     id: str
     name: str
     description: str
@@ -80,6 +83,7 @@ class A2AAuth:
     [draft-klrc-aiagent-auth-02] Implements WIMSE/SPIFFE-based
     authentication as the primary scheme, with OAuth 2.0 fallback.
     """
+
     auth_type: AgentAuthType = AgentAuthType.SPIFFE
     spiffe_id: Optional[str] = None
     oauth_scopes: List[str] = field(default_factory=list)
@@ -98,10 +102,12 @@ class A2AAuth:
             schemes.append(scheme)
 
         if self.oauth_scopes:
-            schemes.append({
-                "type": AgentAuthType.OAUTH2.value,
-                "scopes": self.oauth_scopes,
-            })
+            schemes.append(
+                {
+                    "type": AgentAuthType.OAUTH2.value,
+                    "scopes": self.oauth_scopes,
+                }
+            )
 
         return {"schemes": schemes}
 
@@ -116,6 +122,7 @@ class A2AAgentCard:
     [draft-klrc-aiagent-auth-02] Carries SPIFFE identity for
     agent auth and optional cryptographic signature.
     """
+
     name: str
     description: str
     url: str
@@ -229,7 +236,7 @@ class A2ABridge:
         Returns:
             A2AAgentCard instance
         """
-        entity_name = getattr(entity, 'name', 'unknown')
+        entity_name = getattr(entity, "name", "unknown")
 
         # [draft-klrc-aiagent-auth-02] SPIFFE ID = primary agent identifier
         spiffe_id = f"spiffe://{self._spiffe_trust_domain}/entity/{entity_name.lower()}"
@@ -239,8 +246,7 @@ class A2ABridge:
 
         card = A2AAgentCard(
             name=entity_name,
-            description=getattr(entity, 'description',
-                                f"Sovereign entity: {entity_name}"),
+            description=getattr(entity, "description", f"Sovereign entity: {entity_name}"),
             url=f"{self._base_url}/.well-known/agent-card.json",
             provider_name=self._get_provider_name(entity),
             provider_url=self._base_url,
@@ -253,8 +259,7 @@ class A2ABridge:
         )
 
         self._agent_cards[entity_name.lower()] = card
-        logger.info("Registered A2A Agent Card for '%s' with %d skills",
-                    entity_name, len(skills))
+        logger.info("Registered A2A Agent Card for '%s' with %d skills", entity_name, len(skills))
         return card
 
     def _map_entity_to_skills(self, entity: Any) -> List[A2ASkill]:
@@ -264,55 +269,59 @@ class A2ABridge:
         that other agents can discover and invoke.
         """
         skills: List[A2ASkill] = []
-        entity_name = getattr(entity, 'name', 'unknown')
+        entity_name = getattr(entity, "name", "unknown")
 
         # Get domains - try multiple possible attribute names
-        domains = getattr(entity, 'domains', [])
+        domains = getattr(entity, "domains", [])
         if isinstance(domains, str):
             domains = [domains]
         if not domains:
-            domain = getattr(entity, 'domain', 'general')
+            domain = getattr(entity, "domain", "general")
             domains = [domain]
 
         # Primary skills: domain routing
         for i, domain in enumerate(domains):
-            skills.append(A2ASkill(
-                id=f"{entity_name.lower()}.domain.{i}",
-                name=domain.replace('_', ' ').title(),
-                description=f"Domain routing for {domain}",
-                tags=["domain", domain, entity_name],
-                examples=[f"Summon {entity_name} for {domain} tasks"],
-            ))
+            skills.append(
+                A2ASkill(
+                    id=f"{entity_name.lower()}.domain.{i}",
+                    name=domain.replace("_", " ").title(),
+                    description=f"Domain routing for {domain}",
+                    tags=["domain", domain, entity_name],
+                    examples=[f"Summon {entity_name} for {domain} tasks"],
+                )
+            )
 
         # Secondary skill: capability-based (if entity has capabilities)
-        capabilities = getattr(entity, 'capabilities', None) or getattr(
-            entity, 'skills', None)
+        capabilities = getattr(entity, "capabilities", None) or getattr(entity, "skills", None)
         if isinstance(capabilities, dict):
             for cap_name, cap_desc in capabilities.items():
-                skills.append(A2ASkill(
-                    id=f"{entity_name.lower()}.{cap_name}",
-                    name=cap_name.replace('_', ' ').title(),
-                    description=str(cap_desc)[:200],
-                    tags=["capability", cap_name],
-                    examples=[],
-                ))
+                skills.append(
+                    A2ASkill(
+                        id=f"{entity_name.lower()}.{cap_name}",
+                        name=cap_name.replace("_", " ").title(),
+                        description=str(cap_desc)[:200],
+                        tags=["capability", cap_name],
+                        examples=[],
+                    )
+                )
         elif isinstance(capabilities, list):
             for cap in capabilities:
                 cap_str = str(cap)
-                skills.append(A2ASkill(
-                    id=f"{entity_name.lower()}.{cap_str.lower()[:20]}",
-                    name=cap_str.replace('_', ' ').title()[:50],
-                    description=f"Capability: {cap_str}",
-                    tags=["capability"],
-                    examples=[],
-                ))
+                skills.append(
+                    A2ASkill(
+                        id=f"{entity_name.lower()}.{cap_str.lower()[:20]}",
+                        name=cap_str.replace("_", " ").title()[:50],
+                        description=f"Capability: {cap_str}",
+                        tags=["capability"],
+                        examples=[],
+                    )
+                )
 
         return skills
 
     def _get_provider_name(self, entity: Any) -> str:
         """Get the provider/organization name for an entity."""
-        provider = getattr(entity, 'provider', None) or getattr(
-            entity, 'organization', None)
+        provider = getattr(entity, "provider", None) or getattr(entity, "organization", None)
         if provider:
             return str(provider)
         return "Xoe-NovAi Foundation"
@@ -366,23 +375,17 @@ class A2ABridge:
                 "url": self._base_url,
                 "organization": "Xoe-NovAi Foundation",
             },
-            "agents": {
-                name: card.to_dict()
-                for name, card in self._agent_cards.items()
-            },
+            "agents": {name: card.to_dict() for name, card in self._agent_cards.items()},
             "metadata": {
                 "generated_at": datetime.now(timezone.utc).isoformat(),
                 "total_agents": len(self._agent_cards),
                 "specification": "https://github.com/google/A2A",
-                "auth_framework": (
-                    "https://datatracker.ietf.org/doc/draft-klrc-aiagent-auth/"
-                ),
+                "auth_framework": ("https://datatracker.ietf.org/doc/draft-klrc-aiagent-auth/"),
             },
         }
         return json.dumps(cards, indent=2)
 
-    async def verify_agent_identity(self, spiffe_id: str,
-                                    certificate: bytes) -> bool:
+    async def verify_agent_identity(self, spiffe_id: str, certificate: bytes) -> bool:
         """Verify an agent's identity using SPIFFE X.509-SVID.
 
         [draft-klrc-aiagent-auth-02 §5] Short-lived credentials
@@ -396,16 +399,15 @@ class A2ABridge:
             True if identity is verified, False otherwise
         """
         if not spiffe_id.startswith(f"spiffe://{self._spiffe_trust_domain}/"):
-            logger.warning("SPIFFE ID %s not in trust domain %s",
-                           spiffe_id, self._spiffe_trust_domain)
+            logger.warning(
+                "SPIFFE ID %s not in trust domain %s", spiffe_id, self._spiffe_trust_domain
+            )
             return False
 
-        entity_name = spiffe_id.split('/')[-1]
+        entity_name = spiffe_id.split("/")[-1]
         if entity_name not in self._agent_cards:
-            logger.warning("Unknown entity: %s (SPIFFE: %s)",
-                           entity_name, spiffe_id)
+            logger.warning("Unknown entity: %s (SPIFFE: %s)", entity_name, spiffe_id)
             return False
 
-        logger.info("Agent identity verified: %s (SPIFFE: %s)",
-                    entity_name, spiffe_id)
+        logger.info("Agent identity verified: %s (SPIFFE: %s)", entity_name, spiffe_id)
         return True

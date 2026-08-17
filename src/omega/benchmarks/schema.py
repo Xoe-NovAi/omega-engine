@@ -5,7 +5,6 @@
 import sqlite3
 from pathlib import Path
 from typing import Optional, List, Dict, Any
-from dataclasses import dataclass
 from contextlib import contextmanager
 
 DB_PATH = Path("data/benchmarks/benchmark_runs.db")
@@ -47,16 +46,17 @@ MIGRATIONS = {
     # 2: "ALTER TABLE benchmark_runs ADD COLUMN new_column TEXT;",
 }
 
+
 def init_db(db_path: Path = DB_PATH) -> sqlite3.Connection:
     """Initialize database with schema and migrations."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     # Check current version
     cursor = conn.execute("PRAGMA user_version")
     current_version = cursor.fetchone()[0]
-    
+
     if current_version == 0:
         # Fresh database
         conn.executescript(SCHEMA)
@@ -67,9 +67,10 @@ def init_db(db_path: Path = DB_PATH) -> sqlite3.Connection:
             if v in MIGRATIONS:
                 conn.executescript(MIGRATIONS[v])
         conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
-    
+
     conn.commit()
     return conn
+
 
 @contextmanager
 def get_db(db_path: Path = DB_PATH):
@@ -80,16 +81,17 @@ def get_db(db_path: Path = DB_PATH):
     finally:
         conn.close()
 
+
 # ── Query Helpers ─────────────────────────────────────────────────────
 def insert_run(conn: sqlite3.Connection, run: Dict[str, Any]) -> None:
     """Insert a benchmark run. Expects dict with all schema columns."""
     columns = ", ".join(run.keys())
     placeholders = ", ".join(["?"] * len(run))
     conn.execute(
-        f"INSERT INTO benchmark_runs ({columns}) VALUES ({placeholders})",
-        tuple(run.values())
+        f"INSERT INTO benchmark_runs ({columns}) VALUES ({placeholders})", tuple(run.values())
     )
     conn.commit()
+
 
 def query_runs(
     db_path: Path = DB_PATH,
@@ -104,7 +106,7 @@ def query_runs(
     with get_db(db_path) as conn:
         conditions = []
         params = []
-        
+
         if task_category:
             conditions.append("task_category = ?")
             params.append(task_category)
@@ -120,10 +122,10 @@ def query_runs(
         if min_quality is not None:
             conditions.append("quality_score >= ?")
             params.append(min_quality)
-        
+
         where = "WHERE " + " AND ".join(conditions) if conditions else ""
         params.append(limit)
-        
+
         query = f"""
             SELECT * FROM benchmark_runs
             {where}
@@ -133,6 +135,7 @@ def query_runs(
         cursor = conn.execute(query, params)
         return [dict(row) for row in cursor.fetchall()]
 
+
 def get_pareto_frontier(
     db_path: Path = DB_PATH,
     execution_mode: str = "local",  # "local" or "cloud"
@@ -140,11 +143,13 @@ def get_pareto_frontier(
 ) -> List[Dict[str, Any]]:
     """Get Pareto frontier for routing decisions."""
     with get_db(db_path) as conn:
-        provider_filter = "provider IS NULL" if execution_mode == "local" else "provider IS NOT NULL"
+        provider_filter = (
+            "provider IS NULL" if execution_mode == "local" else "provider IS NOT NULL"
+        )
         task_filter = f"AND task_category = '{task_category}'" if task_category else ""
-        
+
         query = f"""
-            SELECT 
+            SELECT
                 model_id,
                 AVG(quality_score) as avg_quality,
                 AVG(latency_ms) as avg_latency,
@@ -159,6 +164,7 @@ def get_pareto_frontier(
         cursor = conn.execute(query)
         return [dict(row) for row in cursor.fetchall()]
 
+
 def get_routing_validation(
     db_path: Path = DB_PATH,
     routing_table_path: str = "config/routing_table.yaml",
@@ -168,43 +174,48 @@ def get_routing_validation(
     # Requires task history with known categories
     pass
 
+
 # ── Export Helpers ────────────────────────────────────────────────────
 def export_csv(db_path: Path = DB_PATH, output_path: Path = Path("benchmarks_export.csv")):
     """Export all runs to CSV."""
     with get_db(db_path) as conn:
         cursor = conn.execute("SELECT * FROM benchmark_runs ORDER BY timestamp")
         rows = cursor.fetchall()
-        
+
         if rows:
             import csv
+
             with open(output_path, "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(rows[0].keys())
                 writer.writerows(rows)
             print(f"Exported {len(rows)} runs to {output_path}")
 
+
 def export_json(db_path: Path = DB_PATH, output_path: Path = Path("benchmarks_export.json")):
     """Export all runs to JSON."""
     with get_db(db_path) as conn:
         cursor = conn.execute("SELECT * FROM benchmark_runs ORDER BY timestamp")
         rows = [dict(row) for row in cursor.fetchall()]
-        
+
         import json
+
         with open(output_path, "w") as f:
             json.dump(rows, f, indent=2)
         print(f"Exported {len(rows)} runs to {output_path}")
 
+
 # ── CLI ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import sys
-    
+
     if len(sys.argv) < 2:
         print("Usage: python -m src.omega.benchmarks.schema <command>")
         print("Commands: init, export-csv, export-json, pareto-local, pareto-cloud")
         sys.exit(1)
-    
+
     cmd = sys.argv[1]
-    
+
     if cmd == "init":
         init_db()
         print(f"Database initialized at {DB_PATH}")
@@ -215,10 +226,14 @@ if __name__ == "__main__":
     elif cmd == "pareto-local":
         results = get_pareto_frontier(execution_mode="local")
         for r in results:
-            print(f"{r['model_id']}: qual={r['avg_quality']:.2f}, lat={r['avg_latency']:.0f}ms, energy={r['avg_energy']:.2f}J, n={r['n_runs']}")
+            print(
+                f"{r['model_id']}: qual={r['avg_quality']:.2f}, lat={r['avg_latency']:.0f}ms, energy={r['avg_energy']:.2f}J, n={r['n_runs']}"
+            )
     elif cmd == "pareto-cloud":
         results = get_pareto_frontier(execution_mode="cloud")
         for r in results:
-            print(f"{r['model_id']}: qual={r['avg_quality']:.2f}, lat={r['avg_latency']:.0f}ms, cost=${r['avg_cost']:.4f}, n={r['n_runs']}")
+            print(
+                f"{r['model_id']}: qual={r['avg_quality']:.2f}, lat={r['avg_latency']:.0f}ms, cost=${r['avg_cost']:.4f}, n={r['n_runs']}"
+            )
     else:
         print(f"Unknown command: {cmd}")

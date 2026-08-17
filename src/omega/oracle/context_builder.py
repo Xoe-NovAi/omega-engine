@@ -21,53 +21,59 @@
 
 import logging
 import re
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple, Protocol
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Protocol
 from dataclasses import dataclass, field
 from enum import Enum
 
 from ..memory_store import get_memory_store, MemoryStore
-from ..constants import DEFAULT_CONTEXT_LIMIT
 from .world_state import world_state
-from .middleware.headroom import get_headroom_middleware, HeadroomResult
-from .selective_hydration import SelectiveHydration, L3Principle
+from .middleware.headroom import get_headroom_middleware
+from .selective_hydration import SelectiveHydration
 from ..errors import OmegaError
 from omega.errors import OmegaError
 from ..memory.blocks import MemoryBlock
 from ..memory.block_tools import BlockTools, get_block_store
-from ..memory.recall import RecallStore, get_recall_store
+
 # New constant for token-aware sliding window
-DEFAULT_TOKEN_LIMIT = 4000 
+DEFAULT_TOKEN_LIMIT = 4000
 
 logger = logging.getLogger(__name__)
 
 # ── Compaction Framework (Microsoft Agent Framework Pattern) ────────────────
 
+
 class Message:
     """Simple message representation for compaction logic."""
+
     def __init__(self, role: str, content: str, metadata: Optional[Dict[str, Any]] = None):
         self.role = role
         self.content = content
         self.metadata = metadata or {}
 
+
 class CompactionStrategy(Protocol):
     """Protocol for compaction strategies."""
+
     async def __call__(self, messages: List[Message], budget: int) -> bool:
         """Apply compaction. Return True if budget is met, False otherwise."""
         ...
 
+
 class StrategyAggressiveness(Enum):
-    LOW = "low"           # ToolResult — no LLM, zero cost
-    MEDIUM = "medium"     # Summarization — requires LLM
-    HIGH = "high"         # SlidingWindow — drops groups
+    LOW = "low"  # ToolResult — no LLM, zero cost
+    MEDIUM = "medium"  # Summarization — requires LLM
+    HIGH = "high"  # SlidingWindow — drops groups
     EMERGENCY = "emergency"  # Truncation — backstop
+
 
 @dataclass
 class PipelineCompactionStrategy:
     """Composes multiple strategies into a sequential pipeline."""
+
     token_budget: int
     strategies: List[CompactionStrategy] = field(default_factory=list)
-    
+
     async def __call__(self, messages: List[Message]) -> bool:
         """Run strategies in order, stopping when budget is met."""
         for strategy in self.strategies:
@@ -75,16 +81,18 @@ class PipelineCompactionStrategy:
                 return True
         return False
 
+
 class ObservationMaskingStrategy:
-    """High-efficiency filter that culls repetitive 'logged' or 'confirmed' 
+    """High-efficiency filter that culls repetitive 'logged' or 'confirmed'
     lines in tool outputs to save context tokens.
-    
+
     Source: [id-soft: vet-046] BSP Culling (O(1) culling of redundant data)
     """
+
     def __init__(self, cull_keywords: List[str] = None, preserve_first_n: int = 2):
         self.cull_keywords = cull_keywords or ["logged", "confirmed", "processed"]
         self.preserve_first_n = preserve_first_n
-    
+
     async def __call__(self, messages: List[Message], budget: int) -> bool:
         modified = False
         for msg in messages:
@@ -92,17 +100,17 @@ class ObservationMaskingStrategy:
                 lines = msg.content.splitlines()
                 if len(lines) <= self.preserve_first_n:
                     continue
-                
+
                 # Preserve headers, cull the rest based on keywords
-                new_lines = lines[:self.preserve_first_n]
-                for line in lines[self.preserve_first_n:]:
+                new_lines = lines[: self.preserve_first_n]
+                for line in lines[self.preserve_first_n :]:
                     if not any(kw in line.lower() for kw in self.cull_keywords):
                         new_lines.append(line)
-                
+
                 if len(new_lines) < len(lines):
                     msg.content = "\n".join(new_lines)
                     modified = True
-        
+
         return modified or (self._estimate_tokens(messages) <= budget)
 
     def _estimate_tokens(self, messages: List[Message]) -> int:
@@ -111,31 +119,34 @@ class ObservationMaskingStrategy:
 
 class TruncationStrategy:
     """Emergency backstop — hard truncate to budget."""
+
     async def __call__(self, messages: List[Message], budget: int) -> bool:
         current_tokens = sum(len(m.content) // 4 for m in messages)
         if current_tokens <= budget:
             return True
-            
+
         # Hard truncate from oldest to newest
         while messages and sum(len(m.content) // 4 for m in messages) > budget:
             messages.pop(0)
         return True
+
 
 class ACONOptimizer:
     """
     Agent Context Optimization (ACON) — Failure-driven guideline optimization.
     Source: Microsoft Research, ICML 2026.
     """
+
     def __init__(self, model: str = "qwen3-1.7b"):
         self.model = model
         self.guidelines: Dict[str, str] = {}
-    
+
     async def optimize_guidelines(
-        self, 
+        self,
         full_context_trajectory: List[Dict],
         compressed_context_trajectory: List[Dict],
         full_succeeds: bool,
-        compressed_fails: bool
+        compressed_fails: bool,
     ) -> str:
         """Analyze failure causes and update compression guidelines."""
         if full_succeeds and compressed_fails:
@@ -146,16 +157,16 @@ class ACONOptimizer:
             self.guidelines["preserve_patterns"] = "decision_nodes, error_traces"
         return self.guidelines
 
+
 # ── Default constants ─────────────────────────────────────────────────
 # DEFAULT_CONTEXT_LIMIT is imported from src/omega/oracle/constants.py
 MAX_EXCHANGE_DISPLAY_LENGTH = 500  # truncate individual messages to avoid prompt bloat
 
 
-
 class ContextBuilder:
     """Builds structured memory context blocks for LLM system prompts.
     DocRef: docs/reference/api/context_builder.md
-    
+
     Fetches recent conversation history from MemoryStore and formats it
 
     as a clean, readable string block. Designed to be prepended to an
@@ -212,8 +223,8 @@ class ContextBuilder:
             score += 0.1
 
         # 2. Technical content (0.0-0.2): code blocks, references, specific terms
-        has_code = bool(re.search(r'```|`[^`]+`|import |def |class |function ', combined))
-        has_reference = bool(re.search(r'\[\d+\]|\(.*\d{4}\)|http[s]?://|arXiv|doi:', combined))
+        has_code = bool(re.search(r"```|`[^`]+`|import |def |class |function ", combined))
+        has_reference = bool(re.search(r"\[\d+\]|\(.*\d{4}\)|http[s]?://|arXiv|doi:", combined))
         if has_code:
             score += 0.15
         if has_reference:
@@ -222,7 +233,17 @@ class ContextBuilder:
         # 3. Contains a question (0.0-0.2): Q&A pairs are more valuable
         has_question = "?" in user_msg or any(
             kw in user_msg.lower()
-            for kw in ["what", "how", "why", "when", "where", "who", "which", "can you", "could you"]
+            for kw in [
+                "what",
+                "how",
+                "why",
+                "when",
+                "where",
+                "who",
+                "which",
+                "can you",
+                "could you",
+            ]
         )
         if has_question:
             score += 0.2
@@ -244,13 +265,13 @@ class ContextBuilder:
         query: Optional[str] = None,
     ) -> str:
         """Fetch recent memory and current world state for an entity/session.
-        
+
         Args:
             entity_name: Name of the entity (e.g., 'EntityA', 'EntityB').
             session_id: Unique session identifier for the conversation.
             token_limit: Maximum tokens for the memory block.
             degradation_level: Current system pressure level (Optimal, Stressed, Critical, Disabled).
-        
+
         Returns:
             A formatted string block containing recent conversation history,
             L3 gnosis principles, and the current world state, or an empty
@@ -264,33 +285,37 @@ class ContextBuilder:
                 token_limit = int(token_limit * 0.25)
             elif degradation_level == "Disabled":
                 token_limit = 0
-        
+
         try:
             # 1. Fetch memory blocks (D-283 Mnemosyne Core tier)
             core_blocks = await self._block_tools.get_core_blocks(entity_name)
             blocks_text = self._format_memory_blocks(core_blocks)
-            
+
             # 2. Fetch recent memory
             exchanges = await self.memory_store.get_history(
                 entity_name=entity_name,
                 session_id=session_id,
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
-            memory_block = await self._compact_and_format_exchanges(entity_name, exchanges, token_limit) if exchanges else ""
-            
+            memory_block = (
+                await self._compact_and_format_exchanges(entity_name, exchanges, token_limit)
+                if exchanges
+                else ""
+            )
+
             # 3. Fetch L3 gnosis principles (Selective Hydration)
             # [id-soft: vet-046] BSP Culling — top-K principles only
             gnosis_block = await self._build_gnosis_block(entity_name, query)
-            
+
             # 4. Fetch and format world state
             world_block = self._format_world_state()
-            
+
             # Combine blocks: world state + gnosis + memory blocks + memory
             # Order: world state (global) → gnosis (principles) → blocks (entity identity) → memory (conversation)
             parts = [world_block, gnosis_block, blocks_text, memory_block]
             full_context = "\n".join(p for p in parts if p and p.strip())
             return full_context.strip() if full_context else ""
-            
+
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to build context for {entity_name}/{session_id}: {e}")
             return ""
@@ -322,20 +347,21 @@ class ContextBuilder:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(
                 "SelectiveHydration: gnosis block skipped for %s: %s",
-                entity_name, e,
+                entity_name,
+                e,
             )
             return ""
 
     def _format_memory_blocks(self, blocks: List[MemoryBlock]) -> str:
         """Format memory blocks for context injection.
-        
+
         Core blocks (persona, human, safety, decisions) are always included
         in the system prompt. They represent the entity's identity and
         constitutional principles.
         """
         if not blocks:
             return ""
-        
+
         lines = ["## Entity Memory Blocks (Core Tier)\n"]
         for block in blocks:
             if block.value and block.value.strip():
@@ -343,10 +369,10 @@ class ContextBuilder:
                 lines.append(f"{block.description}")
                 lines.append(f"{block.value}")
                 lines.append("")  # blank line between blocks
-        
+
         if len(lines) == 1:  # Only header
             return ""
-        
+
         return "\n".join(lines) + "---\n\n"
 
     async def build_context_for_user(
@@ -356,7 +382,7 @@ class ContextBuilder:
         token_limit: int = DEFAULT_TOKEN_LIMIT,
     ) -> str:
         """Fetch recent traces for a user across all entities and include world state.
-        
+
         Implements a token-aware sliding window for user-level context.
         """
         try:
@@ -366,37 +392,41 @@ class ContextBuilder:
                 session_id=session_id,
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
-            memory_block = await self._compact_and_format_exchanges("user", exchanges, token_limit) if exchanges else ""
-            
+            memory_block = (
+                await self._compact_and_format_exchanges("user", exchanges, token_limit)
+                if exchanges
+                else ""
+            )
+
             # 2. Fetch and format world state
             world_block = self._format_world_state()
-            
+
             # Combine blocks
             full_context = f"{world_block}\n{memory_block}"
             return full_context.strip()
-            
+
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to build user context for {user_id}/{session_id}: {e}")
             return ""
 
     # ── Formatting ────────────────────────────────────────────────────
-    
+
     def _format_world_state(self) -> str:
         """Format the current active world state into a readable context block.
-        
+
         Queries the WorldState singleton for global parameters and active sectors.
         """
         # Get global state
         globals_data = {}
         # Use public API if possible, but world_state._global_state is accessible
-        # Let's just iterate over the keys if it were a public method, 
+        # Let's just iterate over the keys if it were a public method,
         # but since we are inside the engine, we can access it or use a loop.
         # Wait, world_state doesn't have a get_all_globals().
         # I'll just use the internal dict for now as this is internal core logic.
         globals_dict = world_state._global_state
         if globals_dict:
             globals_data = {k: v for k, v in globals_dict.items()}
-        
+
         # Get active sectors
         sectors = world_state.get_all_sectors()
         sector_data = {}
@@ -404,18 +434,18 @@ class ContextBuilder:
             data = world_state.lattice_query(sector_id=s_id, lump_id=None)
             if data:
                 sector_data[s_id] = data
-        
+
         if not globals_data and not sector_data:
             return ""
-            
+
         lines = ["## Active World State Context\n"]
-        
+
         if globals_data:
             lines.append("### Global Parameters")
             for k, v in globals_data.items():
                 lines.append(f"- {k}: {v}")
             lines.append("")
-            
+
         if sector_data:
             lines.append("### Active Sectors")
             for s_id, lumps in sector_data.items():
@@ -423,14 +453,20 @@ class ContextBuilder:
                 for l_id, l_data in lumps.items():
                     lines.append(f"  - Lump {l_id}: {l_data}")
             lines.append("")
-            
+
         return "".join(lines) + "---\n\n"
 
-    async def _compact_and_format_exchanges(self, entity_name: str, exchanges: List[Dict[str, Any]], token_limit: int, quality_weighted: bool = False) -> str:
+    async def _compact_and_format_exchanges(
+        self,
+        entity_name: str,
+        exchanges: List[Dict[str, Any]],
+        token_limit: int,
+        quality_weighted: bool = False,
+    ) -> str:
         """Format exchanges into a context block using the ACON compaction pipeline.
-        
+
         Implements the PipelineCompactionStrategy: ToolResult -> Summarization -> SlidingWindow -> Truncation.
-        
+
         When quality_weighted=True, exchanges are scored and sorted by quality
         before the sliding window, ensuring higher-quality exchanges fill the
         token budget first. Default behavior (quality_weighted=False) preserves
@@ -442,16 +478,20 @@ class ContextBuilder:
         # Build Message objects from exchanges for compaction pipeline
         messages: List[Message] = []
         for ex in exchanges:
-            messages.append(Message(
-                role="user",
-                content=ex.get("user", ""),
-                metadata={"timestamp": ex.get("timestamp")}
-            ))
-            messages.append(Message(
-                role="assistant",
-                content=ex.get("assistant", ""),
-                metadata={"timestamp": ex.get("timestamp")}
-            ))
+            messages.append(
+                Message(
+                    role="user",
+                    content=ex.get("user", ""),
+                    metadata={"timestamp": ex.get("timestamp")},
+                )
+            )
+            messages.append(
+                Message(
+                    role="assistant",
+                    content=ex.get("assistant", ""),
+                    metadata={"timestamp": ex.get("timestamp")},
+                )
+            )
 
         # Run the Observation Masking pass — culls repetitive 'logged' lines (zero cost).
         # Budget enforcement is done in the formatting loop below.
@@ -462,15 +502,15 @@ class ContextBuilder:
         # Apply semantic/structural compression to the messages.
         # This reduces token usage by 60-95% while preserving meaning.
         headroom_mw = get_headroom_middleware()
-        compressed_messages, _ = await headroom_mw.compress_context(entity_name, [
-            {"role": m.role, "content": m.content} for m in messages
-        ])
-        
+        compressed_messages, _ = await headroom_mw.compress_context(
+            entity_name, [{"role": m.role, "content": m.content} for m in messages]
+        )
+
         # Update messages with compressed content
         for i, msg in enumerate(messages):
             if i < len(compressed_messages):
                 msg.content = compressed_messages[i].get("content", msg.content)
-        
+
         # Format with sliding window — iterate from newest to oldest,
 
         # collecting exchanges that fit within token budget.
@@ -482,12 +522,18 @@ class ContextBuilder:
         pairs: List[Dict[str, Any]] = []
         i = 0
         while i < len(messages):
-            if i + 1 < len(messages) and messages[i].role == "user" and messages[i+1].role == "assistant":
-                pairs.append({
-                    "timestamp": messages[i].metadata.get("timestamp", ""),
-                    "user": messages[i].content,
-                    "assistant": messages[i+1].content,
-                })
+            if (
+                i + 1 < len(messages)
+                and messages[i].role == "user"
+                and messages[i + 1].role == "assistant"
+            ):
+                pairs.append(
+                    {
+                        "timestamp": messages[i].metadata.get("timestamp", ""),
+                        "user": messages[i].content,
+                        "assistant": messages[i + 1].content,
+                    }
+                )
                 i += 2
             else:
                 i += 1
@@ -525,9 +571,9 @@ class ContextBuilder:
         return full_block
 
     def _estimate_tokens(self, text: str) -> int:
-        """Estimate token count. 
-        
-        Uses a rough approximation (4 chars per token) since tiktoken 
+        """Estimate token count.
+
+        Uses a rough approximation (4 chars per token) since tiktoken
         is not available in the current environment.
         """
         return len(text) // 4

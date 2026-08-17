@@ -36,22 +36,27 @@ logger = logging.getLogger(__name__)
 
 # ─── Errors ─────────────────────────────────────────────────────────────────────
 
+
 class SEDAError(OmegaError):
     """Base error for SEDA bus failures."""
+
     pass
 
 
 class SEDAOverflowError(SEDAError):
     """Raised when a subscriber's buffer overflows and the policy is 'reject'."""
+
     pass
 
 
 class SEDASubscriptionError(SEDAError):
     """Raised when subscription operations fail."""
+
     pass
 
 
 # ─── Enums & Constants ──────────────────────────────────────────────────────────
+
 
 class SEDATopic(str, Enum):
     """Named topics for SEDA event routing.
@@ -59,6 +64,7 @@ class SEDATopic(str, Enum):
     Topics correspond to observability data categories that the TUI
     and other consumers need to subscribe to.
     """
+
     TRACES = "traces"
     METRICS = "metrics"
     FLEET_HEALTH = "fleet_health"
@@ -82,6 +88,7 @@ class BackPressurePolicy(str, Enum):
     - REJECT: Raise SEDAOverflowError (fail-fast, M23).
     - BLOCK: Wait for buffer space (may stall publisher).
     """
+
     BUFFER = "buffer"
     REJECT = "reject"
     BLOCK = "block"
@@ -108,6 +115,7 @@ DEFAULT_BUFFER_SIZES: Dict[str, int] = {
 
 # ─── Data Models ────────────────────────────────────────────────────────────────
 
+
 @dataclass
 class SEDAEvent:
     """A single event flowing through the SEDA bus.
@@ -120,6 +128,7 @@ class SEDAEvent:
         timestamp: ISO 8601 UTC timestamp.
         priority: Event priority (0=normal, 1=high, 2=critical).
     """
+
     topic: SEDATopic
     payload: Any
     entity: str = "system"
@@ -140,6 +149,7 @@ class SEDAEvent:
 
 # ─── O1 Phase 2: DAG & Step Trace Event Dataclasses ─────────────────────────────
 
+
 @dataclass
 class DAGUpdateEvent:
     """Published when a DAG is created, updated, or completed.
@@ -157,6 +167,7 @@ class DAGUpdateEvent:
         trace_id: Correlation ID for tracing.
         timestamp: ISO 8601 UTC timestamp.
     """
+
     dag_id: str
     goal: str
     tasks: List[Dict[str, Any]]
@@ -200,6 +211,7 @@ class StepTraceEvent:
         trace_id: Correlation ID.
         timestamp: ISO 8601 UTC timestamp.
     """
+
     step_id: str
     dag_id: str
     task_id: str
@@ -248,6 +260,7 @@ class MemoryScoreEvent:
         trace_id: Correlation ID.
         timestamp: ISO 8601 UTC timestamp.
     """
+
     entity: str
     declarative_score: float
     episodic_score: float
@@ -283,6 +296,7 @@ class SEDASubscriber:
         policy: Back-pressure policy.
         active: Whether this subscriber is currently active.
     """
+
     id: str
     topics: Set[str]
     send_stream: anyio.streams.memory.ObjectSendStream
@@ -294,6 +308,7 @@ class SEDASubscriber:
 
 
 # ─── SEDA Bus ───────────────────────────────────────────────────────────────────
+
 
 class SEDABus:
     """Sovereign Engine Data Access ring-bus.
@@ -385,7 +400,9 @@ class SEDABus:
         self._subscribers[subscriber_id] = subscriber
         self._topic_subscribers.setdefault(topic_str, []).append(subscriber_id)
 
-        logger.debug(f"Subscriber '{subscriber_id}' subscribed to topic '{topic_str}' (buffer={buf_size})")
+        logger.debug(
+            f"Subscriber '{subscriber_id}' subscribed to topic '{topic_str}' (buffer={buf_size})"
+        )
         return send_stream, recv_stream
 
     async def unsubscribe(self, subscriber_id: str) -> bool:
@@ -535,6 +552,7 @@ class SEDABus:
 
 # ─── SEDA Reader Adapter ────────────────────────────────────────────────────────
 
+
 class SEDAReader:
     """Adapter that bridges SovereignReader to the SEDA bus.
 
@@ -625,7 +643,10 @@ class SEDAReader:
             await self._bus.publish(
                 SEDAEvent(
                     topic=SEDATopic.FLEET_HEALTH,
-                    payload={"breaker_states": health.breaker_states, "global_error_rate": health.global_error_rate},
+                    payload={
+                        "breaker_states": health.breaker_states,
+                        "global_error_rate": health.global_error_rate,
+                    },
                     entity=entity,
                     trace_id=self._trace_id,
                 )
@@ -647,7 +668,7 @@ class SEDAReader:
             await self._bus.publish(
                 SEDAEvent(
                     topic=SEDATopic.TRACES,
-                    payload=[t.to_dict() if hasattr(t, 'to_dict') else t.__dict__ for t in traces],
+                    payload=[t.to_dict() if hasattr(t, "to_dict") else t.__dict__ for t in traces],
                     entity=entity,
                     trace_id=self._trace_id,
                 )
@@ -661,7 +682,10 @@ class SEDAReader:
             await self._bus.publish(
                 SEDAEvent(
                     topic=SEDATopic.COGNITIVE_VELOCITY,
-                    payload={"tokens_per_second": velocity.tokens_per_second, "acceleration": velocity.acceleration},
+                    payload={
+                        "tokens_per_second": velocity.tokens_per_second,
+                        "acceleration": velocity.acceleration,
+                    },
                     entity=entity,
                     trace_id=self._trace_id,
                 )

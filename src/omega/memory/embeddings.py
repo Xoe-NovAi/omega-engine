@@ -9,23 +9,24 @@ import os
 import re
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import anyio
 import httpx2 as httpx
 
-from omega.cvar_table import ZONEID_EMBEDDING, validate_zoneid
+from omega.cvar_table import ZONEID_EMBEDDING
 from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 
+
 class IEmbeddingProvider(ABC):
     """Abstract base class for embedding providers.
-    
+
     Ensures the Omega Engine can swap embedding models (Local vs Cloud)
     without affecting the memory store logic.
     """
-    
+
     @abstractmethod
     async def get_embedding(self, text: str) -> List[float]:
         """Convert text to a fixed-size vector."""
@@ -37,28 +38,120 @@ class IEmbeddingProvider(ABC):
         """The dimensionality of the vectors produced by this provider."""
         pass
 
+
 class SovereignFallbackEmbeddingProvider(IEmbeddingProvider):
     """Sovereign Fallback — Deterministic Feature Hashing (Hashing Trick).
-    
+
     [Right Approximation: evolved from FISR, id Software 1999]
-    Provides a zero-dependency, O(1) embedding that is 'right enough' 
+    Provides a zero-dependency, O(1) embedding that is 'right enough'
     for basic semantic retrieval when no model is available.
     """
-    
+
     def __init__(self, dimension: int = 256):
         self._dimension = dimension
         self._stopwords = {
-            "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-            "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
-            "being", "have", "has", "had", "do", "does", "did", "will", "would",
-            "could", "should", "may", "might", "shall", "can", "need", "dare",
-            "this", "that", "these", "those", "i", "me", "my", "we", "our", "you",
-            "your", "he", "him", "his", "she", "her", "it", "its", "they", "them",
-            "their", "what", "which", "who", "whom", "when", "where", "why", "how",
-            "all", "each", "every", "both", "few", "more", "most", "other", "some",
-            "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too",
-            "very", "just", "because", "as", "until", "while", "about", "between",
-            "through", "during", "before", "after", "above", "below", "up", "down",
+            "the",
+            "a",
+            "an",
+            "and",
+            "or",
+            "but",
+            "in",
+            "on",
+            "at",
+            "to",
+            "for",
+            "of",
+            "with",
+            "by",
+            "from",
+            "is",
+            "are",
+            "was",
+            "were",
+            "be",
+            "been",
+            "being",
+            "have",
+            "has",
+            "had",
+            "do",
+            "does",
+            "did",
+            "will",
+            "would",
+            "could",
+            "should",
+            "may",
+            "might",
+            "shall",
+            "can",
+            "need",
+            "dare",
+            "this",
+            "that",
+            "these",
+            "those",
+            "i",
+            "me",
+            "my",
+            "we",
+            "our",
+            "you",
+            "your",
+            "he",
+            "him",
+            "his",
+            "she",
+            "her",
+            "it",
+            "its",
+            "they",
+            "them",
+            "their",
+            "what",
+            "which",
+            "who",
+            "whom",
+            "when",
+            "where",
+            "why",
+            "how",
+            "all",
+            "each",
+            "every",
+            "both",
+            "few",
+            "more",
+            "most",
+            "other",
+            "some",
+            "such",
+            "no",
+            "nor",
+            "not",
+            "only",
+            "own",
+            "same",
+            "so",
+            "than",
+            "too",
+            "very",
+            "just",
+            "because",
+            "as",
+            "until",
+            "while",
+            "about",
+            "between",
+            "through",
+            "during",
+            "before",
+            "after",
+            "above",
+            "below",
+            "up",
+            "down",
         }
 
     @property
@@ -69,54 +162,61 @@ class SovereignFallbackEmbeddingProvider(IEmbeddingProvider):
         vec = [0.0] * self._dimension
         if not text:
             return vec
-            
+
         tokens = re.findall(r"[a-zA-Z]\w+", text.lower())
         tokens = [t for t in tokens if t not in self._stopwords and len(t) > 2]
         if not tokens:
             return vec
-            
+
         for token in tokens:
             h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
             dim = h % self._dimension
             vec[dim] += 1.0
-            
+
         norm = math.sqrt(sum(x * x for x in vec))
         if norm > 0:
             vec = [x / norm for x in vec]
-            
+
         return vec
+
 
 class OllamaEmbeddingProvider(IEmbeddingProvider):
     """Ollama-based embedding provider using nomic-embed-text v1.5.
-    
+
     [Right Approximation: evolved from FISR, id Software 1999]
     Provides high-quality 768-dim embeddings via local Ollama inference,
     falling back gracefully if Ollama is unavailable.
-    
+
     Model: nomic-embed-text:v1.5 (Q8_0, 274MB, 768-dim, 62.28 MTEB)
     Endpoint: http://127.0.0.1:11434/api/embed
     """
-    
-    def __init__(self, model: str = "nomic-embed-text:v1.5", base_url: str = "http://127.0.0.1:11434", dimension: int = 768, target_dim: Optional[int] = None):
+
+    def __init__(
+        self,
+        model: str = "nomic-embed-text:v1.5",
+        base_url: str = "http://127.0.0.1:11434",
+        dimension: int = 768,
+        target_dim: Optional[int] = None,
+    ):
         self._model = model
         self._base_url = base_url.rstrip("/")
         self._native_dimension = dimension
         self._target_dim = target_dim  # FS-Β1: MRL truncation target
         self._client: Optional[httpx.AsyncClient] = None
-    
+
     @property
     def dimension(self) -> int:
         return self._target_dim if self._target_dim is not None else self._native_dimension
-    
+
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=30.0)
         return self._client
-    
+
     async def get_embedding(self, text: str) -> List[float]:
         if not text:
             return [0.0] * self.dimension
-        
+
         client = await self._get_client()
         try:
             response = await client.post(
@@ -130,9 +230,9 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
                 vec = embeddings[0]
                 # FS-Β1: MRL truncation to target_dim
                 if self._target_dim is not None and len(vec) > self._target_dim:
-                    return vec[:self._target_dim]
+                    return vec[: self._target_dim]
                 return vec
-            
+
             logger.warning("Ollama returned empty embeddings for: %.50s", text)
             return [0.0] * self.dimension
         except httpx.HTTPStatusError as e:
@@ -144,7 +244,7 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
         except (httpx.HTTPError, RuntimeError) as e:
             logger.warning("Ollama embedding error: %s", e)
             raise
-    
+
     async def close(self):
         if self._client:
             await self._client.aclose()
@@ -249,10 +349,10 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
             return [0.0] * self._native_dimension
 
         vec = await anyio.to_thread.run_sync(_embed)
-        
+
         # FS-Β1: MRL truncation to target_dim
         if self._target_dim is not None and len(vec) > self._target_dim:
-            vec = vec[:self._target_dim]
+            vec = vec[: self._target_dim]
         elif len(vec) != self._native_dimension:
             logger.warning(
                 "LocalGGUFEmbeddingProvider: expected dim=%d, got %d — padding/truncating",
@@ -263,11 +363,11 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
                 vec = vec + [0.0] * (self._native_dimension - len(vec))
             else:
                 vec = vec[: self._native_dimension]
-        
+
         # FS-Β1: Final MRL truncation to target_dim
         if self._target_dim is not None and len(vec) > self._target_dim:
-            vec = vec[:self._target_dim]
-            
+            vec = vec[: self._target_dim]
+
         return vec
 
     async def close(self):
@@ -279,38 +379,40 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
 
 class StaticEmbeddingProvider(IEmbeddingProvider):
     """Static embedding provider via model2vec (potion models).
-    
+
     [id-soft: doom-1993] Precomputed Lookup — static embeddings computed
     once, looked up via numpy at inference time. ~0.01ms per sentence,
     zero GPU, zero cloud dependencies.
-    
+
     Model: minishlab/potion-base-2M (2M params, 64-dim, ~2MB)
     Fallback: blobbybob/potion-mxbai-micro (768-dim, ~14MB) for higher quality
     """
-    
-    def __init__(self, model_name: str = "minishlab/potion-base-2M", target_dim: Optional[int] = None):
+
+    def __init__(
+        self, model_name: str = "minishlab/potion-base-2M", target_dim: Optional[int] = None
+    ):
         self._model_name = model_name
         self._model: any = None
         self._native_dimension = 0
         self._target_dim = target_dim
         self._loaded = False
-    
+
     @property
     def dimension(self) -> int:
         return self._target_dim if self._target_dim is not None else self._native_dimension
-    
+
     async def _ensure_loaded(self):
         if self._loaded and self._model is not None:
             return
         from model2vec import StaticModel
-        
+
         def _load():
             return StaticModel.from_pretrained(self._model_name)
-        
+
         self._model = await anyio.to_thread.run_sync(_load)
         # Attempt to discover dimension via encode
         test_emb = await anyio.to_thread.run_sync(self._model.encode, "test")
-        self._native_dimension = test_emb.shape[0] if hasattr(test_emb, 'shape') else len(test_emb)
+        self._native_dimension = test_emb.shape[0] if hasattr(test_emb, "shape") else len(test_emb)
         self._loaded = True
         logger.info(
             "StaticEmbeddingProvider: loaded %s (native_dim=%d, target_dim=%s)",
@@ -318,21 +420,21 @@ class StaticEmbeddingProvider(IEmbeddingProvider):
             self._native_dimension,
             self._target_dim,
         )
-    
+
     async def get_embedding(self, text: str) -> List[float]:
         if not text:
             return [0.0] * self.dimension
         await self._ensure_loaded()
-        
+
         def _encode():
             vec = self._model.encode(text)
-            return vec.tolist() if hasattr(vec, 'tolist') else list(vec)
-        
+            return vec.tolist() if hasattr(vec, "tolist") else list(vec)
+
         vec = await anyio.to_thread.run_sync(_encode)
-        
+
         # FS-Β1: MRL truncation to target_dim
         if self._target_dim is not None and len(vec) > self._target_dim:
-            vec = vec[:self._target_dim]
+            vec = vec[: self._target_dim]
         elif len(vec) != self._native_dimension:
             logger.warning(
                 "StaticEmbeddingProvider: expected dim=%d, got %d — padding/truncating",
@@ -343,13 +445,13 @@ class StaticEmbeddingProvider(IEmbeddingProvider):
                 vec = vec + [0.0] * (self._native_dimension - len(vec))
             else:
                 vec = vec[: self._native_dimension]
-        
+
         # FS-Β1: Final MRL truncation to target_dim
         if self._target_dim is not None and len(vec) > self._target_dim:
-            vec = vec[:self._target_dim]
-            
+            vec = vec[: self._target_dim]
+
         return vec
-    
+
     async def close(self):
         self._model = None
         self._loaded = False
@@ -375,10 +477,10 @@ class GemmaGGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
 
 class EmbeddingManager:
     """Manages the embedding provider chain (Local -> Static -> Ollama -> Fallback).
-    
+
     Ensures that the engine always has a way to vectorize text,
     preferring high-quality local models over the sovereign fallback.
-    
+
     Default provider chain (local-first):
         1. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (384-dim)
         2. GemmaGGUFEmbeddingProvider — EmbeddingGemma 300M via llama-cpp-python (768-dim)
@@ -386,23 +488,32 @@ class EmbeddingManager:
         4. OllamaEmbeddingProvider — nomic-embed-text via Ollama (768-dim)
         5. SovereignFallbackEmbeddingProvider — deterministic hashing (256-dim)
     """
-    
+
     def __init__(self, providers: Optional[List[IEmbeddingProvider]] = None):
         if providers is not None:
             self._providers = providers
         else:
             # FS-Β1: Use EmbeddingStrategy SSOT for target dimension
             from .embedding_strategy import get_embedding_strategy
+
             strategy = get_embedding_strategy()
             target_dim = strategy.canonical_dimension  # 768
-            
+
             self._providers = [
-                GemmaGGUFEmbeddingProvider(target_dim=target_dim),        # 768-dim, 300M, primary (quality-first)
-                OllamaEmbeddingProvider(dimension=target_dim),            # 768-dim, nomic-embed-text, local fallback
-                LocalGGUFEmbeddingProvider(target_dim=target_dim),         # 384-dim native, truncated to 768 via MRL
-                StaticEmbeddingProvider(target_dim=target_dim),            # 64-dim native, truncated to 768 via MRL
+                GemmaGGUFEmbeddingProvider(
+                    target_dim=target_dim
+                ),  # 768-dim, 300M, primary (quality-first)
+                OllamaEmbeddingProvider(
+                    dimension=target_dim
+                ),  # 768-dim, nomic-embed-text, local fallback
+                LocalGGUFEmbeddingProvider(
+                    target_dim=target_dim
+                ),  # 384-dim native, truncated to 768 via MRL
+                StaticEmbeddingProvider(
+                    target_dim=target_dim
+                ),  # 64-dim native, truncated to 768 via MRL
             ]
-        
+
     async def get_embedding(self, text: str) -> Tuple[List[float], str]:
         # [test-mode] Short-circuit in test env — returns zero vector to avoid
         # loading the 300M Gemma GGUF embedding model via llama-cpp-python.
@@ -411,7 +522,7 @@ class EmbeddingManager:
         if os.environ.get("OMEGA_ENV") == "test":
             dim = self.current_dimension
             return [0.0] * dim, "mock"
-        
+
         for provider in self._providers:
             try:
                 embedding = await provider.get_embedding(text)
@@ -419,10 +530,10 @@ class EmbeddingManager:
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Embedding provider {provider.__class__.__name__} failed: {e}")
                 continue
-        
+
         # This should theoretically never be reached if Fallback is last
         raise RuntimeError("All embedding providers failed.")
-    
+
     @property
     def current_dimension(self) -> int:
         if not self._providers:

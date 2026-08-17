@@ -6,7 +6,6 @@ Direct HTTP API wrappers for Firecrawl v2. No MCP dependency.
 Use these for all technical research queries.
 """
 
-import os
 import httpx
 import logging
 from typing import Optional, List, Dict, Any
@@ -22,10 +21,11 @@ def _resolve_api_key() -> str:
     global FIRECRAWL_API_KEY
     if FIRECRAWL_API_KEY:
         return FIRECRAWL_API_KEY
-    
+
     # Try VaultCore first
     try:
         from omega.vault import VaultCore
+
         vault = VaultCore()
         vault._load_sync()
         cred = vault._credentials.get("firecrawl:api_key")
@@ -35,7 +35,7 @@ def _resolve_api_key() -> str:
             return FIRECRAWL_API_KEY
     except Exception as e:
         logger.debug(f"VaultCore resolution failed: {e}")
-    
+
     # No fallback to environment - VaultCore is the single source of truth
     logger.error("No FIRECRAWL_API_KEY found in VaultCore — direct tools will fail")
     return ""
@@ -49,21 +49,21 @@ async def firecrawl_search_direct(
     origin: str = "web",
 ) -> str:
     """Direct Firecrawl search — no MCP dependency.
-    
+
     Args:
         query: Search query string.
         limit: Maximum results (default 10, max 50).
         lang: Language code (default 'en').
         tbs: Time-based search filter (e.g. 'qdr:d' for past day, 'qdr:w' for week).
         origin: Result type — 'web', 'news', or 'images'.
-    
+
     Returns:
         Formatted search results string.
     """
     api_key = _resolve_api_key()
     if not api_key:
         return "ERROR: No Firecrawl API key available"
-    
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             kwargs: Dict[str, Any] = {"limit": min(limit, 50), "lang": lang}
@@ -71,25 +71,31 @@ async def firecrawl_search_direct(
                 kwargs["tbs"] = tbs
             if origin and origin != "web":
                 kwargs["sources"] = [origin]
-            
+
             response = await client.post(
                 f"{BASE_URL}/search",
                 headers={"Authorization": f"Bearer {api_key}"},
-                json={"query": query, **kwargs}
+                json={"query": query, **kwargs},
             )
             response.raise_for_status()
             data = response.json()
-            
+
             results = []
             if origin == "news":
-                results = [r.model_dump() if hasattr(r, 'model_dump') else r for r in (data.news or [])]
+                results = [
+                    r.model_dump() if hasattr(r, "model_dump") else r for r in (data.news or [])
+                ]
             elif origin == "images":
-                results = [r.model_dump() if hasattr(r, 'model_dump') else r for r in (data.images or [])]
+                results = [
+                    r.model_dump() if hasattr(r, "model_dump") else r for r in (data.images or [])
+                ]
             else:
-                results = [r.model_dump() if hasattr(r, 'model_dump') else r for r in (data.web or [])]
-            
+                results = [
+                    r.model_dump() if hasattr(r, "model_dump") else r for r in (data.web or [])
+                ]
+
             return _format_results(results[:limit], f"search {origin} results")
-            
+
         except httpx.HTTPStatusError as e:
             logger.error(f"Firecrawl search HTTP error: {e}")
             return f"Firecrawl search failed: {e.response.status_code} - {e.response.text}"
@@ -109,7 +115,7 @@ async def firecrawl_scrape_direct(
     max_chars: int = 0,
 ) -> str:
     """Direct Firecrawl scrape with configurable content length.
-    
+
     Args:
         url: The URL to scrape.
         only_main: Extract only the main content (no sidebars/ads).
@@ -119,14 +125,14 @@ async def firecrawl_scrape_direct(
         wait_for: Milliseconds to wait for page load before extraction.
         timeout: Request timeout in seconds.
         max_chars: Maximum characters to return (0 = no limit).
-    
+
     Returns:
         Full scraped content as markdown.
     """
     api_key = _resolve_api_key()
     if not api_key:
         return "ERROR: No Firecrawl API key available"
-    
+
     async with httpx.AsyncClient(timeout=timeout) as client:
         try:
             options: Dict[str, Any] = {"formats": formats.split(",") if formats else ["markdown"]}
@@ -138,21 +144,21 @@ async def firecrawl_scrape_direct(
                 options["exclude_tags"] = exclude_tags.split(",")
             if wait_for:
                 options["wait_for"] = wait_for
-            
+
             response = await client.post(
                 f"{BASE_URL}/scrape",
                 headers={"Authorization": f"Bearer {api_key}"},
-                json={"url": url, "scrape_options": options}
+                json={"url": url, "scrape_options": options},
             )
             response.raise_for_status()
             data = response.json()
-            
+
             scrape_data = data.get("data", {})
             md = scrape_data.get("markdown", "")
-            
+
             if max_chars and max_chars > 0:
                 md = md[:max_chars]
-            
+
             # Include metadata
             meta = scrape_data.get("metadata", {})
             meta_parts = []
@@ -161,12 +167,12 @@ async def firecrawl_scrape_direct(
                 if v:
                     meta_parts.append(f"{k}: {v}")
             meta_str = "\n".join(meta_parts) + "\n\n" if meta_parts else ""
-            
+
             links = scrape_data.get("links", [])
             links_str = f"\n\n[{len(links)} links extracted]" if links else ""
-            
+
             return f"URL: {url}\n\n{meta_str}{md}{links_str}"
-            
+
         except httpx.HTTPStatusError as e:
             logger.error(f"Firecrawl scrape HTTP error: {e}")
             return f"Firecrawl scrape failed: {e.response.status_code} - {e.response.text}"
@@ -182,20 +188,20 @@ async def firecrawl_map_direct(
     limit: int = 50,
 ) -> str:
     """Direct Firecrawl map — discover URLs on a website.
-    
+
     Args:
         url: The root URL to map.
         search: Optional search query to filter mapped URLs.
         include_subdomains: Include subdomains in mapping.
         limit: Maximum number of URLs (default 50, max 500).
-    
+
     Returns:
         List of discovered URLs.
     """
     api_key = _resolve_api_key()
     if not api_key:
         return "ERROR: No Firecrawl API key available"
-    
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             options: Dict[str, Any] = {
@@ -204,25 +210,25 @@ async def firecrawl_map_direct(
             }
             if search:
                 options["search"] = search
-            
+
             response = await client.post(
                 f"{BASE_URL}/map",
                 headers={"Authorization": f"Bearer {api_key}"},
-                json={"url": url, **options}
+                json={"url": url, **options},
             )
             response.raise_for_status()
             data = response.json()
-            
+
             links = data.get("links", [])
             if not links:
                 return "No URLs found."
-            
+
             lines = [f"{len(links)} URLs mapped from {url}:"]
             for i, link in enumerate(links[:limit], 1):
                 href = link.get("url", str(link)) if isinstance(link, dict) else str(link)
                 lines.append(f"  [{i}] {href}")
             return "\n".join(lines)
-            
+
         except Exception as e:
             logger.error(f"Firecrawl map error: {e}")
             return f"Firecrawl map failed: {e}"
@@ -236,22 +242,23 @@ async def firecrawl_crawl_direct(
     scrape_options: str = "",
 ) -> str:
     """Direct Firecrawl crawl — full website crawl (synchronous).
-    
+
     Args:
         url: The starting URL.
         max_depth: Maximum crawl depth (default 2).
         limit: Maximum URLs to return in results (default 50).
         max_pages: Maximum pages to crawl (default 100).
         scrape_options: JSON string of scrape options (e.g. '{"formats":["markdown"]}').
-    
+
     Returns:
         Crawl summary with page details.
     """
     api_key = _resolve_api_key()
     if not api_key:
         return "ERROR: No Firecrawl API key available"
-    
+
     import json
+
     async with httpx.AsyncClient(timeout=120.0) as client:
         try:
             opts: Dict[str, Any] = {
@@ -263,19 +270,19 @@ async def firecrawl_crawl_direct(
                     opts["scrape_options"] = json.loads(scrape_options)
                 except json.JSONDecodeError:
                     return f"Invalid JSON in scrape_options: {scrape_options}"
-            
+
             response = await client.post(
                 f"{BASE_URL}/crawl",
                 headers={"Authorization": f"Bearer {api_key}"},
-                json={"url": url, **opts}
+                json={"url": url, **opts},
             )
             response.raise_for_status()
             data = response.json()
-            
+
             job_data = data.get("data", [])
             if not job_data:
                 return f"Crawl of {url} returned no data."
-            
+
             lines = [f"Crawl of {url} completed: {len(job_data)} pages fetched."]
             for doc in job_data[:limit]:
                 meta = doc.get("metadata", {})
@@ -286,7 +293,7 @@ async def firecrawl_crawl_direct(
                 lines.append(f"  Title: {title}")
                 lines.append(f"  Content: {md_len} chars")
             return "\n".join(lines)
-            
+
         except Exception as e:
             logger.error(f"Firecrawl crawl error: {e}")
             return f"Firecrawl crawl failed: {e}"
@@ -297,15 +304,15 @@ async def firecrawl_credit_usage_direct() -> str:
     api_key = _resolve_api_key()
     if not api_key:
         return "ERROR: No Firecrawl API key available"
-    
+
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:
             response = await client.get(
-                f"{BASE_URL}/credit-usage",
-                headers={"Authorization": f"Bearer {api_key}"}
+                f"{BASE_URL}/credit-usage", headers={"Authorization": f"Bearer {api_key}"}
             )
             response.raise_for_status()
             import json
+
             return json.dumps(response.json(), indent=2)
         except Exception as e:
             logger.error(f"Firecrawl credit usage error: {e}")
@@ -316,7 +323,7 @@ def _format_results(results: List[Dict[str, Any]], label: str) -> str:
     """Format search results for LLM consumption."""
     if not results:
         return f"0 {label} returned."
-    
+
     lines = [f"{len(results)} {label}:"]
     for i, r in enumerate(results[:20], 1):
         title = r.get("title") or r.get("name") or "Untitled"
@@ -333,9 +340,13 @@ def _format_results(results: List[Dict[str, Any]], label: str) -> str:
 # Synchronous wrappers for OpenCode tool registration
 import anyio
 
-def firecrawl_search(query: str, limit: int = 10, lang: str = "en", tbs: str = "", origin: str = "web") -> str:
+
+def firecrawl_search(
+    query: str, limit: int = 10, lang: str = "en", tbs: str = "", origin: str = "web"
+) -> str:
     """Synchronous wrapper for OpenCode tool registration."""
     return anyio.run(firecrawl_search_direct, query, limit, lang, tbs, origin)
+
 
 def firecrawl_scrape(
     url: str,
@@ -348,11 +359,25 @@ def firecrawl_scrape(
     max_chars: int = 0,
 ) -> str:
     """Synchronous wrapper for OpenCode tool registration."""
-    return anyio.run(firecrawl_scrape_direct, url, only_main, formats, include_tags, exclude_tags, wait_for, timeout, max_chars)
+    return anyio.run(
+        firecrawl_scrape_direct,
+        url,
+        only_main,
+        formats,
+        include_tags,
+        exclude_tags,
+        wait_for,
+        timeout,
+        max_chars,
+    )
 
-def firecrawl_map(url: str, search: str = "", include_subdomains: bool = False, limit: int = 50) -> str:
+
+def firecrawl_map(
+    url: str, search: str = "", include_subdomains: bool = False, limit: int = 50
+) -> str:
     """Synchronous wrapper for OpenCode tool registration."""
     return anyio.run(firecrawl_map_direct, url, search, include_subdomains, limit)
+
 
 def firecrawl_crawl(
     url: str,
@@ -364,6 +389,7 @@ def firecrawl_crawl(
     """Synchronous wrapper for OpenCode tool registration."""
     return anyio.run(firecrawl_crawl_direct, url, max_depth, limit, max_pages, scrape_options)
 
+
 def firecrawl_credit_usage() -> str:
     """Synchronous wrapper for OpenCode tool registration."""
     return anyio.run(firecrawl_credit_usage_direct)
@@ -372,6 +398,7 @@ def firecrawl_credit_usage() -> str:
 if __name__ == "__main__":
     # Quick test
     import sys
+
     if len(sys.argv) > 1:
         if sys.argv[1] == "search":
             print(anyio.run(firecrawl_search_direct, " ".join(sys.argv[2:]), 5))

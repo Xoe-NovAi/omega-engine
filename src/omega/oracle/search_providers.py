@@ -11,29 +11,33 @@ import logging
 import anyio
 import httpx2 as httpx
 import os
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 from omega.errors import OmegaError, ProviderError, ProviderAuthError, ProviderRateLimitError
 from omega.observability.bleg import BLEGMiddleware
-import json
 
 logger = logging.getLogger(__name__)
 
+
 class SearchProvider:
     """Base class for all sovereign search providers."""
+
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         raise NotImplementedError
 
+
 class FirecrawlProvider(SearchProvider):
     """T2: Firecrawl Deep Extraction Provider."""
+
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or self._resolve_from_vault()
         self.base_url = "https://api.firecrawl.dev/v1"
-    
+
     @staticmethod
     def _resolve_from_vault() -> str:
         """Fallback to vault if no key passed explicitly."""
         try:
             from omega.vault import VaultCore
+
             vault = VaultCore()
             vault._load_sync()
             cred = vault._credentials.get("firecrawl:api_key")
@@ -49,7 +53,7 @@ class FirecrawlProvider(SearchProvider):
                 response = await client.post(
                     f"{self.base_url}/search",
                     headers={"Authorization": f"Bearer {self.api_key}"},
-                    json={"query": query, "limit": limit}
+                    json={"query": query, "limit": limit},
                 )
                 if response.status_code == 401:
                     raise ProviderAuthError("firecrawl", "Firecrawl API key invalid")
@@ -64,15 +68,15 @@ class FirecrawlProvider(SearchProvider):
                     trace_id="unknown",
                     url=str(response.url),
                 )
-                
+
                 search_data = response.json()
                 results = search_data.get("data", [])
                 if not results:
                     return None
-                
+
                 # 2. Scrape the top results for actual content (Deep Extraction)
                 content_snippets = []
-                for res in results[:3]: # Scrape top 3 for efficiency
+                for res in results[:3]:  # Scrape top 3 for efficiency
                     url = res.get("url")
                     if not url:
                         continue
@@ -80,7 +84,7 @@ class FirecrawlProvider(SearchProvider):
                         scrape_res = await client.post(
                             f"{self.base_url}/scrape",
                             headers={"Authorization": f"Bearer {self.api_key}"},
-                            json={"url": url, "formats": ["markdown"]}
+                            json={"url": url, "formats": ["markdown"]},
                         )
                         if scrape_res.status_code == 200:
                             scrape_data = scrape_res.json()
@@ -89,12 +93,12 @@ class FirecrawlProvider(SearchProvider):
                                 content_snippets.append(f"Source [{url}]:\n{markdown[:1000]}")
                     except (OmegaError, RuntimeError, OSError) as e:
                         logger.warning(f"Failed to scrape {url}: {e}")
-                
+
                 if not content_snippets:
                     # Fallback to descriptions if scraping fails
                     snippets = [r.get("description", "")[:500] for r in results]
                     return f"Firecrawl Search (Snippets): {'\n\n'.join(snippets[:3])}"
-                
+
                 return f"Firecrawl Deep Extraction:\n\n" + "\n\n---\n\n".join(content_snippets)
             except ProviderError:
                 raise
@@ -104,6 +108,7 @@ class FirecrawlProvider(SearchProvider):
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Firecrawl unexpected error: {e}")
                 raise ProviderError("firecrawl", f"Firecrawl system failure: {e}")
+
 
 class SearXNGProvider(SearchProvider):
     """T1: SearXNG Broad Discovery Provider — privacy-first metasearch."""
@@ -115,7 +120,9 @@ class SearXNGProvider(SearchProvider):
         retries: int = 2,
         retry_delays: Optional[List[float]] = None,
     ):
-        self.base_url = (base_url or os.environ.get("SEARXNG_BASE_URL", "http://127.0.0.1:8017")).rstrip("/")
+        self.base_url = (
+            base_url or os.environ.get("SEARXNG_BASE_URL", "http://127.0.0.1:8017")
+        ).rstrip("/")
         self.timeout = timeout
         self.retries = retries
         self.retry_delays = retry_delays or [5.0, 10.0]
@@ -168,21 +175,35 @@ class SearXNGProvider(SearchProvider):
                     if not snippets:
                         return None
 
-                    return f"SearXNG Search ({len(results)} results):\n\n" + "\n\n---\n\n".join(snippets[:5])
+                    return f"SearXNG Search ({len(results)} results):\n\n" + "\n\n---\n\n".join(
+                        snippets[:5]
+                    )
 
             except httpx.HTTPStatusError as e:
                 last_error = e
                 if e.response.status_code in (429, 502, 503, 504):
-                    delay = self.retry_delays[attempt] if attempt < len(self.retry_delays) else self.retry_delays[-1]
-                    logger.info(f"SearXNG attempt {attempt + 1}/{self.retries + 1} failed ({e.response.status_code}), retrying in {delay}s")
+                    delay = (
+                        self.retry_delays[attempt]
+                        if attempt < len(self.retry_delays)
+                        else self.retry_delays[-1]
+                    )
+                    logger.info(
+                        f"SearXNG attempt {attempt + 1}/{self.retries + 1} failed ({e.response.status_code}), retrying in {delay}s"
+                    )
                     await anyio.sleep(delay)
                 else:
                     logger.error(f"SearXNG HTTP error: {e}")
                     raise ProviderError("searxng", f"SearXNG API failure: {e}")
             except httpx.TimeoutException as e:
                 last_error = e
-                delay = self.retry_delays[attempt] if attempt < len(self.retry_delays) else self.retry_delays[-1]
-                logger.info(f"SearXNG attempt {attempt + 1}/{self.retries + 1} timed out, retrying in {delay}s")
+                delay = (
+                    self.retry_delays[attempt]
+                    if attempt < len(self.retry_delays)
+                    else self.retry_delays[-1]
+                )
+                logger.info(
+                    f"SearXNG attempt {attempt + 1}/{self.retries + 1} timed out, retrying in {delay}s"
+                )
                 await anyio.sleep(delay)
             except (OmegaError, RuntimeError, OSError) as e:
                 last_error = e
@@ -195,15 +216,17 @@ class SearXNGProvider(SearchProvider):
 
 class ExaProvider(SearchProvider):
     """T2: Neural Search (Exa) Provider."""
+
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or self._resolve_from_vault()
         self.base_url = "https://api.exa.ai/search"
-    
+
     @staticmethod
     def _resolve_from_vault() -> str:
         """Fallback to vault if no key passed explicitly."""
         try:
             from omega.vault import VaultCore
+
             vault = VaultCore()
             vault._load_sync()
             cred = vault._credentials.get("exa:api_key")
@@ -221,14 +244,10 @@ class ExaProvider(SearchProvider):
                     "query": query,
                     "numResults": limit,
                     "type": "auto",
-                    "contents": {
-                        "highlights": True
-                    }
+                    "contents": {"highlights": True},
                 }
                 response = await client.post(
-                    self.base_url,
-                    headers={"x-api-key": self.api_key},
-                    json=payload
+                    self.base_url, headers={"x-api-key": self.api_key}, json=payload
                 )
                 if response.status_code == 401:
                     raise ProviderAuthError("exa", "Exa API key invalid")
@@ -243,22 +262,22 @@ class ExaProvider(SearchProvider):
                     trace_id="unknown",
                     url=str(response.url),
                 )
-                
+
                 data = response.json()
                 results = data.get("results", [])
                 if not results:
                     return None
-                
+
                 # Extract highlights as the primary signal for the triage phase
                 snippets = []
                 for r in results:
                     content = r.get("highlights", r.get("text", ""))
                     if content:
                         snippets.append(f"Source [{r.get('url')}]:\n{content[:500]}")
-                
+
                 if not snippets:
                     return None
-                    
+
                 return f"Exa Neural Search (Highlights):\n\n" + "\n\n---\n\n".join(snippets[:3])
             except ProviderError:
                 raise

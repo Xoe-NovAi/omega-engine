@@ -20,6 +20,7 @@ from uuid import uuid4
 @dataclass(frozen=True)
 class FirewallViolation:
     """A single firewall violation found during scanning."""
+
     file: Path
     line: int
     pattern: str
@@ -30,6 +31,7 @@ class FirewallViolation:
 @dataclass(frozen=True)
 class FirewallReport:
     """Complete firewall scan report."""
+
     violations: list[FirewallViolation]
     scanned_files: int
     clean: bool
@@ -80,29 +82,29 @@ class FirewallChecker:
     # These are fleet infrastructure / architectural concepts, not WAD content
     CORE_ENGINE_PATTERNS: list[str] = [
         # Oversoul agents (universal architecture, not WAD-specific)
-        r"\bKali\b",                              # Grand Oversight agent
-        r"\bMa[']?at\b",                          # Build Oversoul / CTO
-        r"\bLilith\b",                            # Runtime Oversoul / CISO
-        r"\bJem\b",                               # Sovereign Synthesizer
-        r"\bSophia\b",                            # Containing Field / Rank 0
-        r"\bIris\b",                              # Voice Assistant / Messenger Bridge
-        r"\bMnemosyne\b",                         # Memory System Archetype
-        r"\bPrometheus\b",                        # Discovery Pipeline (P3)
-        r"\bSekhmet\b",                           # Protection Pillar (P1)
-        r"\bJohn\.?Carmack\b",                    # S3 Consultant
-        r"\bDoom\.?Guy\b",                        # Doom Universe Architect
-        r"\bRoc\.?Rac?oon\b",                     # Legacy Miner / Ideas Guy
+        r"\bKali\b",  # Grand Oversight agent
+        r"\bMa[']?at\b",  # Build Oversoul / CTO
+        r"\bLilith\b",  # Runtime Oversoul / CISO
+        r"\bJem\b",  # Sovereign Synthesizer
+        r"\bSophia\b",  # Containing Field / Rank 0
+        r"\bIris\b",  # Voice Assistant / Messenger Bridge
+        r"\bMnemosyne\b",  # Memory System Archetype
+        r"\bPrometheus\b",  # Discovery Pipeline (P3)
+        r"\bSekhmet\b",  # Protection Pillar (P1)
+        r"\bJohn\.?Carmack\b",  # S3 Consultant
+        r"\bDoom\.?Guy\b",  # Doom Universe Architect
+        r"\bRoc\.?Rac?oon\b",  # Legacy Miner / Ideas Guy
         # Kabbalistic / Esoteric Architecture (universal memory model)
-        r"\bDa[']?at\b",                          # Knowledge Sphere
-        r"\bSephiroth\b",                         # Sephirotic Tree
-        r"\bKabbal(?:ah|istic|ist)\b",            # Kabbalistic Tradition
-        r"\bQliphoth\b",                          # Qliphothic Shells
+        r"\bDa[']?at\b",  # Knowledge Sphere
+        r"\bSephiroth\b",  # Sephirotic Tree
+        r"\bKabbal(?:ah|istic|ist)\b",  # Kabbalistic Tradition
+        r"\bQliphoth\b",  # Qliphothic Shells
         # Default WAD name (constant, not leakage)
-        r"_omega_default",                        # Default WAD name (constant)
+        r"_omega_default",  # Default WAD name (constant)
         # Stack name references in paths (legitimate config)
-        r"arcana_novai",                          # Stack name in paths
-        r"doom_universe",                         # Stack name in paths
-        r"torment_stack",                         # Stack name in paths
+        r"arcana_novai",  # Stack name in paths
+        r"doom_universe",  # Stack name in paths
+        r"torment_stack",  # Stack name in paths
         # Oversoul architecture references
         r"\bBuild\s*Oversoul\b",
         r"\bRuntime\s*Oversoul\b",
@@ -178,26 +180,30 @@ class FirewallChecker:
             # example values in field-definition comments are not flagged.
             # Real code leaks (string literals, imports) carry no leading "#".
             code = line.split(" #")[0].split("\t#")[0]
-            
+
             # Skip sandbox's legitimate WAD workspace path
             # This is an exception for the sandbox's legitimate workspace
             if "config/wads/omega_research/workspaces" in code:
                 continue
-            
+
             # Skip legitimate Core Engine references (Oversouls, Iris, Kali, etc.)
             # These are architectural concepts, not WAD leakage
-            is_core_ref = any(re.search(core_p, code, re.IGNORECASE) for core_p in self.CORE_ENGINE_PATTERNS)
+            is_core_ref = any(
+                re.search(core_p, code, re.IGNORECASE) for core_p in self.CORE_ENGINE_PATTERNS
+            )
             if is_core_ref:
                 continue
-                
+
             for pattern, severity in self._compiled:
                 if pattern.search(code):
-                    violations.append(FirewallViolation(
-                        file=path,
-                        line=line_num,
-                        pattern=pattern.pattern,
-                        severity=severity,
-                    ))
+                    violations.append(
+                        FirewallViolation(
+                            file=path,
+                            line=line_num,
+                            pattern=pattern.pattern,
+                            severity=severity,
+                        )
+                    )
 
         return violations
 
@@ -236,7 +242,6 @@ class FirewallChecker:
 
 def main() -> int:
     """CLI entry point for `make firewall-check`."""
-    import sys
 
     checker = FirewallChecker()
     report = checker.scan()

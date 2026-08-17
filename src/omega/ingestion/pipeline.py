@@ -4,32 +4,29 @@ Sovereign Ingestion Pipeline — Orchestrating entity deepening.
 """
 
 # DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
-import json
 import time
 import uuid
-import anyio
 import logging
 from omega.errors import OmegaError
-from typing import List, Optional, AsyncGenerator, Dict, Any, TYPE_CHECKING
+from typing import List, Optional, Dict, Any, TYPE_CHECKING
 
 # ── TYPE_CHECKING block for forward references ──
 if TYPE_CHECKING:
     from omega.oracle.health_monitor import AsyncCircuitBreaker
-from pathlib import Path
 from datetime import datetime, timezone
 
 from .ingestion_types import (
-    IngestionConfig, IngestionResult, ExtractionSchema,
-    CircuitBreakerState, IngestionError, SovereigntyError,
-    ProviderServerError, TransportError,
-    BudgetExceededError, SentryFailure
+    IngestionConfig,
+    IngestionResult,
+    TransportError,
+    BudgetExceededError,
+    SentryFailure,
 )
 from .extractors import BaseExtractor, GoogleExtractor
 from .persistence import IngestionPersistence
 from .sources import FileSource
 from .guards import SovereignSentry, BudgetGuard
 from .scraper import SovereignScraper
-from .worker import SovereignWorker
 from .verifier import TriangulationVerifier
 from ..oracle.pii_masker import PIIMasker
 from ..archive.cas import CASArchiver
@@ -39,31 +36,36 @@ from ..library.enrichment import EnrichmentEngine
 
 logger = logging.getLogger(__name__)
 
+
 # [M22 SSOT] Lazy ProviderRegistry singleton for cloud classification.
 # Imported lazily to avoid a transitive circular import through omega.oracle.
 def _get_provider_registry():
     """Return the cached ProviderRegistry, constructing it on first use.
     Delegates to the process-wide singleton in provider_registry.py."""
     from ..oracle.provider_registry import get_provider_registry
+
     return get_provider_registry()
 
+
 # ⚠️ DEPRECATED — C-6' Unification (2026-07-22)
+
 
 class ResilienceContext:
     """
     Unified resilience stack for the Ingestion Pipeline.
     Injects Sentry + Budget + Guard + Verifier into both run_source and _process_job.
-    
+
     This eliminates the "divergent resilience stacks" between the Pipeline and Worker.
     """
+
     def __init__(
         self,
         config: IngestionConfig,
-        breaker: 'AsyncCircuitBreaker',
+        breaker: "AsyncCircuitBreaker",
         sentry: SovereignSentry,
         budget: BudgetGuard,
         verifier: TriangulationVerifier,
-        resource_guard=None
+        resource_guard=None,
     ):
         self.config = config
         self.breaker = breaker
@@ -77,7 +79,7 @@ class ResilienceContext:
         if not self.breaker.can_proceed():
             logger.warning("Circuit breaker open, skipping source")
             return False
-        
+
         # Run sentry probe (can be skipped for worker jobs)
         if self.sentry:
             try:
@@ -85,7 +87,7 @@ class ResilienceContext:
             except SentryFailure as e:
                 logger.error(f"Sentry probe failed: {e}")
                 return False
-        
+
         return True
 
     def check_budget(self, estimated_tokens: int) -> bool:
@@ -99,7 +101,9 @@ class ResilienceContext:
         if self.budget:
             self.budget.update_spend(tokens)
 
-    async def verify_web_content(self, t1_result: Dict, t3_result: Dict, domain_key: Optional[str] = None):
+    async def verify_web_content(
+        self, t1_result: Dict, t3_result: Dict, domain_key: Optional[str] = None
+    ):
         """Verifies web content using the Triangulation Verifier."""
         if self.verifier:
             return await self.verifier.verify(t1_result, t3_result, domain_key)
@@ -116,18 +120,20 @@ class ResilienceContext:
         if self.resource_guard:
             await self.resource_guard.release()
 
+
 class IngestionPipeline:
     """
     Orchestrates the full ingestion flow:
     Sentry Probe -> Budget Check -> Guarded Extraction -> Triangulation -> Persistence
     """
-    
+
     def __init__(self, config: IngestionConfig, extractor: BaseExtractor):
         self.config = config
         self.extractor = extractor
         self.persistence = IngestionPersistence(config.entity_name)
         from src.omega.oracle.health_monitor import HealthMonitor
-        self.breaker = HealthMonitor().get_breaker('ingestion')
+
+        self.breaker = HealthMonitor().get_breaker("ingestion")
         self.sentry = SovereignSentry(config)
         self.budget = BudgetGuard(config)
         self.verifier = TriangulationVerifier(EnrichmentEngine())
@@ -136,16 +142,15 @@ class IngestionPipeline:
         self.cas = CASArchiver()
         self.scraper = SovereignScraper(cas_archiver=self.cas)
         self.pii_masker = PIIMasker()
-        
+
         # Unified Resilience Context
         self.resilience = ResilienceContext(
             config=config,
             breaker=self.breaker,
             sentry=self.sentry,
             budget=self.budget,
-            verifier=self.verifier
+            verifier=self.verifier,
         )
-
 
     def _is_cloud_model(self) -> bool:
         """Checks if the current model runs on a cloud provider.
@@ -170,22 +175,24 @@ class IngestionPipeline:
         # Use unified resilience context
         if not await self.resilience.pre_flight_check():
             return None
-        
+
         # Handle both FileSource and URL strings
-        if hasattr(source, 'read'):
+        if hasattr(source, "read"):
             source_name, text = await source.read()
         else:
             source_name = source
-            text = source # Assume it's a URL
-        
+            text = source  # Assume it's a URL
+
         trace_id = f"ingest_{uuid.uuid4().hex[:12]}"
-        
-        print(f"\n🚀 Ingesting: {source_name} ({len(text) if isinstance(text, str) else 'URL'} chars)")
+
+        print(
+            f"\n🚀 Ingesting: {source_name} ({len(text) if isinstance(text, str) else 'URL'} chars)"
+        )
         print(f"Model: {self.config.model_name} | Budget: {self.budget.get_status()}")
         print("-" * 60)
-        
+
         t0 = time.time()
-        
+
         try:
             # 1. Web Ingestion Path (Sovereign-Sieve)
             if source_name.startswith(("http://", "https://")):
@@ -193,50 +200,51 @@ class IngestionPipeline:
                 t1_res = await self.scraper.scrape(source_name, tier="fast")
                 if not t1_res.success:
                     raise TransportError(f"T1 Fast Scrape failed: {t1_res.error}")
-                
+
                 # T3: Deep Scrape (Sovereign-Sieve)
                 t3_res = await self.scraper.scrape(source_name, tier="deep")
                 if not t3_res.success:
                     logger.warning(f"T3 Deep Scrape failed for {source_name}, falling back to T1")
-                    t3_res = t1_res # Fallback to T1 for triangulation
-                
+                    t3_res = t1_res  # Fallback to T1 for triangulation
+
                 # Triangulation Verification using resilience context
                 verification = await self.resilience.verify_web_content(
                     t1_result={"content": t1_res.content, "metadata": t1_res.metadata},
-                    t3_result={"content": t3_res.content, "metadata": t3_res.metadata}
+                    t3_result={"content": t3_res.content, "metadata": t3_res.metadata},
                 )
-                
+
                 if verification and not verification.is_verified:
-                    print(f"⚠️  Triangulation failed for {source_name}. Confidence: {verification.confidence_score:.2f}")
+                    print(
+                        f"⚠️  Triangulation failed for {source_name}. Confidence: {verification.confidence_score:.2f}"
+                    )
                     if verification.confidence_score < 0.4:
                         return None
-                
-                raw_content = t3_res.content.encode('utf-8')
+
+                raw_content = t3_res.content.encode("utf-8")
                 text = t3_res.content
             else:
                 # Standard File Path
                 # 1. Pre-Extraction Quality Gate (Right Approximation)
                 temp_content = ExtractedContent(
-                    source=source_name,
-                    source_type="file",
-                    title=source_name,
-                    body=text
+                    source=source_name, source_type="file", title=source_name, body=text
                 )
                 curated = await self.curation._curate(temp_content)
                 quality_score = curated.quality_score
                 domain = curated.domain
-                
+
                 if quality_score < 0.3:
-                    print(f"⚠️  Low quality source ({quality_score:.2f} < 0.3). Skipping extraction.")
+                    print(
+                        f"⚠️  Low quality source ({quality_score:.2f} < 0.3). Skipping extraction."
+                    )
                     return None
-                
+
                 print(f"💎 Quality Score: {quality_score:.2f} | Domain: {domain}")
-                raw_content = text.encode('utf-8') if isinstance(text, str) else text
+                raw_content = text.encode("utf-8") if isinstance(text, str) else text
 
             # --- TRI-ANCHOR SYSTEM IMPLEMENTATION ---
             # Stage 1: Raw Anchor (Immutable Ground Truth)
             source_id = await self.persistence.persist_raw_anchor(source_name, raw_content)
-            
+
             # Stage 2: Sovereign Continuity Anchor (SCA)
             sca_metadata = {
                 "source_id": source_id,
@@ -245,38 +253,46 @@ class IngestionPipeline:
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "model": self.config.model_name,
                 "intent": "Entity Deepening",
-                "context": f"Ingesting {source_name} for {self.config.entity_name}"
+                "context": f"Ingesting {source_name} for {self.config.entity_name}",
             }
             await self.persistence.persist_sca(source_id, sca_metadata, quarantine=True)
             # ----------------------------------------
 
             # --- SOVEREIGN FILTER (PII Masking) ---
             if self._is_cloud_model():
-                print(f"🛡️  Applying Sovereign Filter (PII Masking) for cloud model {self.config.model_name}...")
+                print(
+                    f"🛡️  Applying Sovereign Filter (PII Masking) for cloud model {self.config.model_name}..."
+                )
                 detections = await self.pii_masker.detect(text)
                 text, _ = self.pii_masker.tokenize(text, detections)
             # --------------------------------------
 
             # 2. Budget Guard (via resilience context)
-            if not self.resilience.check_budget(estimated_tokens=len(text)//4 + 1000):
-                raise BudgetExceededError(f"Hard budget limit of ${self.config.max_budget_usd} reached.")
-            
+            if not self.resilience.check_budget(estimated_tokens=len(text) // 4 + 1000):
+                raise BudgetExceededError(
+                    f"Hard budget limit of ${self.config.max_budget_usd} reached."
+                )
+
             # 3. Guarded Extraction (via resilience context breaker)
-            extraction = await self.resilience.breaker.call(self.extractor.extract, text, self.config)
-            
+            extraction = await self.resilience.breaker.call(
+                self.extractor.extract, text, self.config
+            )
+
             # 4. Validation Gate (Standard Quality Check)
             if not extraction.technical_facts and not extraction.personality_patterns:
                 print(f"⚠️  Extraction empty for {source_name}. Marking as corrupt.")
                 return None
-            
+
             latency = time.time() - t0
-            
+
             # 5. Enrichment (Sovereign Library Layer)
             enrichment_meta = await self.enrichment.enrich(
                 title=extraction.technical_facts[0] if extraction.technical_facts else source_name,
-                authors=extraction.personality_patterns[0] if extraction.personality_patterns else None
+                authors=extraction.personality_patterns[0]
+                if extraction.personality_patterns
+                else None,
             )
-            
+
             # 6. Persistence
             session_id = await self.persistence.persist_extraction(
                 source_id=source_id,
@@ -285,18 +301,20 @@ class IngestionPipeline:
                 extraction_data=extraction.to_dict(),
                 latency_s=latency,
                 trace_id=trace_id,
-                quality_score=0.8, # Default for verified web content
+                quality_score=0.8,  # Default for verified web content
                 domain="web",
-                enrichment=enrichment_meta.to_dict()
+                enrichment=enrichment_meta.to_dict(),
             )
-            
+
             # Update budget based on actual usage (approximate)
-            self.resilience.update_spend(tokens=len(text)//4 + 1000)
+            self.resilience.update_spend(tokens=len(text) // 4 + 1000)
 
             print(f"✅ Persisted to session {session_id}")
-            print(f"Items: {sum(len(v) if isinstance(v, list) else 0 for v in extraction.to_dict().values())}")
+            print(
+                f"Items: {sum(len(v) if isinstance(v, list) else 0 for v in extraction.to_dict().values())}"
+            )
             print(f"Latency: {latency:.2f}s")
-            
+
             return IngestionResult(
                 source_name=source_name,
                 model_name=self.config.model_name,
@@ -305,7 +323,7 @@ class IngestionPipeline:
                 input_chars=len(text),
                 trace_id=trace_id,
                 quality_score=0.8,
-                domain="web"
+                domain="web",
             )
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Ingestion failed for {source_name}: {e}")
@@ -323,11 +341,12 @@ class IngestionPipeline:
             if not self.resilience.breaker.can_proceed():
                 print("\n🛑 [CIRCUIT BREAKER TRIPPED] Halting batch ingestion.")
                 break
-                
+
             res = await self.run_source(source)
             if res:
                 results.append(res)
         return results
+
 
 async def create_pipeline(config: IngestionConfig) -> IngestionPipeline:
     """Factory to create a pipeline based on the model."""
@@ -335,5 +354,5 @@ async def create_pipeline(config: IngestionConfig) -> IngestionPipeline:
         extractor = GoogleExtractor(config.api_key)
     else:
         raise NotImplementedError(f"No extractor implemented for model {config.model_name}")
-        
+
     return IngestionPipeline(config, extractor)

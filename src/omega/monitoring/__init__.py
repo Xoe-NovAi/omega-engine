@@ -2,13 +2,13 @@
 # ⬡ OMEGA ⬡ Sovereign Hardware Telemetry
 # AP: AP-HARDWARE-MONITOR-v1.0.0
 # AP: AP-HARDWARE-MONITOR-v1.0.0
-# 
+#
 # Captures per-core CPU utilization, memory pressure, thread contention,
 # and thermal/throttling data. Designed to be always-available to agents
 # via MCP tools and CLI commands.
 #
 # Zero external deps beyond psutil (stdlib for procfs fallback).
-# 
+#
 # Hardware floor: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14Gi RAM)
 # [id-soft: vet-038] Surface Cache — understand the physical fetch path
 #   before optimizing the logical algorithm.
@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 _PSUTIL_AVAILABLE = False
 try:
     import psutil as _psutil
+
     _PSUTIL_AVAILABLE = True
 except ImportError:
     _psutil = None  # type: ignore
@@ -80,10 +81,11 @@ def _cpu_total(jiffies: Dict[str, int]) -> int:
 
 class CpuSnapshot:
     """Point-in-time CPU utilization snapshot.
-    
+
     Stores /proc/stat jiffies for delta calculation.
     Lightweight — no psutil required.
     """
+
     def __init__(self, jiffies_per_core: Dict[str, Dict[str, int]]):
         self.jiffies_per_core = jiffies_per_core
         self.timestamp = time.monotonic()
@@ -125,11 +127,11 @@ class CpuSnapshot:
 
 class HardwareMonitor:
     """Always-available hardware telemetry.
-    
+
     Captures per-core CPU, memory pressure, thread contention, and OOM risk.
     Designed for zero-dependency operation — falls back to /proc when psutil
     is unavailable.
-    
+
     Usage:
         hm = HardwareMonitor()
         report = hm.collect_all()  # single snapshot
@@ -151,7 +153,7 @@ class HardwareMonitor:
         phys_cores = set()
         siblings: Dict[int, List[int]] = {}
         current_proc = None
-        
+
         for line in data.splitlines():
             if line.startswith("processor"):
                 current_proc = int(line.split(":")[1].strip())
@@ -201,9 +203,7 @@ class HardwareMonitor:
                 except ValueError:
                     continue
             # Physical CCX cores = logical ids below physical core count
-            phys_ccx = [
-                [c for c in g if c < total_cores] for g in ccx_groups
-            ]
+            phys_ccx = [[c for c in g if c < total_cores] for g in ccx_groups]
             # Drop empty groups; if any remain, use them, else fall back
             phys_ccx = [g for g in phys_ccx if g]
             if phys_ccx:
@@ -212,9 +212,7 @@ class HardwareMonitor:
                 l3_per_instance = 8 // len(phys_ccx)
             else:
                 ccx0_cores = list(range(min(total_cores, 4)))
-                ccx1_cores = (
-                    list(range(4, total_cores)) if total_cores > 4 else []
-                )
+                ccx1_cores = list(range(4, total_cores)) if total_cores > 4 else []
                 l3_per_instance = 4
         else:
             # No L3 sysfs info: single-CCX assumption for monolithic dies
@@ -236,7 +234,6 @@ class HardwareMonitor:
             "ccx0_cores": ccx0_cores,
             "ccx1_cores": ccx1_cores,
         }
-
 
     def get_per_core_utilization(self, interval: float = 0.5) -> Dict[str, float]:
         """Get per-CPU utilization % over an interval."""
@@ -307,11 +304,13 @@ class HardwareMonitor:
                 if "python" in name.lower():
                     t = proc.info.get("num_threads", 0)
                     total_threads += t
-                    py_procs.append({
-                        "pid": proc.info["pid"],
-                        "name": name,
-                        "threads": t,
-                    })
+                    py_procs.append(
+                        {
+                            "pid": proc.info["pid"],
+                            "name": name,
+                            "threads": t,
+                        }
+                    )
             return {"total_python_threads": total_threads, "processes": py_procs}
         return {"total_python_threads": 0, "processes": []}
 
@@ -341,10 +340,19 @@ class HardwareMonitor:
                 "total_mb": mem.get("MemTotal", 0),
                 "available_mb": mem.get("MemAvailable", 0),
                 "used_mb": mem.get("MemTotal", 0) - mem.get("MemAvailable", 0),
-                "percent": round((1 - mem.get("MemAvailable", 0) / max(mem.get("MemTotal", 1), 1)) * 100, 1),
+                "percent": round(
+                    (1 - mem.get("MemAvailable", 0) / max(mem.get("MemTotal", 1), 1)) * 100, 1
+                ),
                 "swap_total_mb": mem.get("SwapTotal", 0),
                 "swap_used_mb": mem.get("SwapTotal", 0) - mem.get("SwapFree", 0),
-                "swap_percent": round((mem.get("SwapTotal", 0) - mem.get("SwapFree", 0)) / max(mem.get("SwapTotal", 1), 1) * 100, 1) if mem.get("SwapTotal", 0) > 0 else 0,
+                "swap_percent": round(
+                    (mem.get("SwapTotal", 0) - mem.get("SwapFree", 0))
+                    / max(mem.get("SwapTotal", 1), 1)
+                    * 100,
+                    1,
+                )
+                if mem.get("SwapTotal", 0) > 0
+                else 0,
             }
 
         # OOM risk assessment
@@ -352,7 +360,7 @@ class HardwareMonitor:
         model_gb = 1.7  # Qwen3-1.7B approximate at Q6_K
         kv_overhead_gb = 0.5  # ~512MB for 4K context at q8_0/f16
         system_overhead = 1.0  # ~1GB for OS + services
-        
+
         total_needed_for_inference = model_gb + kv_overhead_gb + system_overhead
         oom_risk_mb = total_needed_for_inference * 1024 - avail_mb
 
@@ -375,7 +383,7 @@ class HardwareMonitor:
             "total_needed_gb": round(total_needed_for_inference, 1),
             "surplus_deficit_mb": round(-oom_risk_mb),  # positive = surplus
             "risk_level": risk,
-            "deficit_mb": round(max(0, oom_risk_mb)),   # positive = how much more we need
+            "deficit_mb": round(max(0, oom_risk_mb)),  # positive = how much more we need
         }
 
         # zRAM stats (OBS1 — Swap/zRAM Monitoring)
@@ -389,12 +397,12 @@ class HardwareMonitor:
         avail_mb = mem.get("available_mb", 0)
         total_mb = mem.get("total_mb", 1)
         swap_pct = mem.get("swap_percent", 0)
-        
+
         # Available memory pressure (lower is worse)
         avail_pressure = max(0, 1.0 - avail_mb / (total_mb * 0.3))
         # Swap pressure
         swap_pressure = min(1.0, swap_pct / 50.0)
-        
+
         return round(min(1.0, avail_pressure * 0.7 + swap_pressure * 0.3), 3)
 
     def get_oom_risk_level(self) -> str:
@@ -465,9 +473,7 @@ class HardwareMonitor:
                             total_compressed += compr_size
 
                             if compr_size > 0:
-                                dev_stats["compression_ratio"] = round(
-                                    orig_size / compr_size, 2
-                                )
+                                dev_stats["compression_ratio"] = round(orig_size / compr_size, 2)
                             else:
                                 dev_stats["compression_ratio"] = 0.0
                     except (ValueError, OSError) as e:
@@ -513,9 +519,7 @@ class HardwareMonitor:
             result["total_failures"] = total_failures
 
             if total_compressed > 0:
-                result["overall_compression_ratio"] = round(
-                    total_original / total_compressed, 2
-                )
+                result["overall_compression_ratio"] = round(total_original / total_compressed, 2)
             else:
                 result["overall_compression_ratio"] = 0.0
 
@@ -587,13 +591,19 @@ class HardwareMonitor:
             "effective_swap_used_mb": round(effective_swap_used, 1),
             "effective_swap_percent": round(
                 (effective_swap_used / max(effective_swap_total, 1)) * 100, 1
-            ) if effective_swap_total > 0 else 0,
+            )
+            if effective_swap_total > 0
+            else 0,
             "pressure_score": round(pressure, 3),
             "pressure_level": (
-                "CRITICAL" if pressure > 0.8
-                else "HIGH" if pressure > 0.6
-                else "MODERATE" if pressure > 0.4
-                else "LOW" if pressure > 0.2
+                "CRITICAL"
+                if pressure > 0.8
+                else "HIGH"
+                if pressure > 0.6
+                else "MODERATE"
+                if pressure > 0.4
+                else "LOW"
+                if pressure > 0.2
                 else "SAFE"
             ),
         }
@@ -613,13 +623,15 @@ class HardwareMonitor:
                         for temp_input in hwmon.glob("temp*_input"):
                             idx = temp_input.name.replace("temp", "").replace("_input", "")
                             label_path = hwmon / f"temp{idx}_label"
-                            label = label_path.read_text().strip() if label_path.exists() else f"T{idx}"
+                            label = (
+                                label_path.read_text().strip() if label_path.exists() else f"T{idx}"
+                            )
                             try:
                                 temp = int(temp_input.read_text()) / 1000
                                 result["celsius"].append({"label": label, "temp": temp})
                             except (OSError, ValueError) as e:
                                 logger.warning("Failed to read temperature from hwmon: %s", e)
-                        
+
                         if result["celsius"]:
                             result["available"] = True
         except (OSError, RuntimeError) as e:
@@ -634,14 +646,13 @@ class HardwareMonitor:
                         result["celsius"].append({"label": tz.name, "temp": temp})
                     except (OSError, ValueError) as e:
                         logger.warning("Failed to read thermal zone %s: %s", tz.name, e)
-                    
+
                     if result["celsius"]:
                         result["available"] = True
             except (OSError, RuntimeError) as e:
                 logger.warning("Thermal fallback failed: %s", e)
-        
-        return result
 
+        return result
 
     def is_thermal_throttling(self) -> bool:
         """Check if CPU is currently thermal throttling."""
@@ -711,21 +722,34 @@ class HardwareMonitor:
         """Compute diff between two collect_all snapshots for benchmark profiling."""
         return {
             "cpu_utilization_delta": round(
-                after.get("cpu", {}).get("avg_percent", 0) - before.get("cpu", {}).get("avg_percent", 0), 1
+                after.get("cpu", {}).get("avg_percent", 0)
+                - before.get("cpu", {}).get("avg_percent", 0),
+                1,
             ),
             "memory_delta_mb": round(
-                after.get("memory", {}).get("used_mb", 0) - before.get("memory", {}).get("used_mb", 0), 1
+                after.get("memory", {}).get("used_mb", 0)
+                - before.get("memory", {}).get("used_mb", 0),
+                1,
             ),
             "swap_delta_mb": round(
-                after.get("memory", {}).get("swap_used_mb", 0) - before.get("memory", {}).get("swap_used_mb", 0), 1
+                after.get("memory", {}).get("swap_used_mb", 0)
+                - before.get("memory", {}).get("swap_used_mb", 0),
+                1,
             ),
             "zram_compressed_delta_mb": round(
                 after.get("memory", {}).get("zram", {}).get("total_compressed_mb", 0)
-                - before.get("memory", {}).get("zram", {}).get("total_compressed_mb", 0), 1
+                - before.get("memory", {}).get("zram", {}).get("total_compressed_mb", 0),
+                1,
             ),
             "temperature_delta": round(
-                max((t["temp"] for t in after.get("temperatures", {}).get("celsius", [])), default=0)
-                - max((t["temp"] for t in before.get("temperatures", {}).get("celsius", [])), default=0), 1
+                max(
+                    (t["temp"] for t in after.get("temperatures", {}).get("celsius", [])), default=0
+                )
+                - max(
+                    (t["temp"] for t in before.get("temperatures", {}).get("celsius", [])),
+                    default=0,
+                ),
+                1,
             ),
             "memory_pressure_delta": round(
                 after.get("memory_pressure", 0) - before.get("memory_pressure", 0), 3
@@ -739,12 +763,16 @@ class HardwareMonitor:
 
 # ── Simple CLI Entry Point ───────────────────────────────────────────────────
 
+
 def main_cli():
     """Print hardware stats to stdout (for `omega hardware-stats` or direct use)."""
     import argparse
+
     parser = argparse.ArgumentParser(description="Omega Hardware Monitor")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument("--watch", type=float, default=0, help="Continuous monitoring interval (seconds)")
+    parser.add_argument(
+        "--watch", type=float, default=0, help="Continuous monitoring interval (seconds)"
+    )
     parser.add_argument("--oom", action="store_true", help="Quick OOM risk check only")
     args = parser.parse_args()
 
@@ -759,7 +787,9 @@ def main_cli():
         print(f"Swap: {mem['swap_used_mb']}/{mem['swap_total_mb']}MB ({mem['swap_percent']}%)")
         zram = mem.get("zram", {})
         if zram.get("available"):
-            print(f"zRAM: {zram.get('total_compressed_mb', 0):.0f}MB compressed / {zram.get('total_original_mb', 0):.0f}MB original (ratio: {zram.get('overall_compression_ratio', 0):.1f}x)")
+            print(
+                f"zRAM: {zram.get('total_compressed_mb', 0):.0f}MB compressed / {zram.get('total_original_mb', 0):.0f}MB original (ratio: {zram.get('overall_compression_ratio', 0):.1f}x)"
+            )
         else:
             print("zRAM: not available")
         return
@@ -796,7 +826,9 @@ def _print_terminal(stats: Dict):
     print("=" * 60)
 
     print(f"\n📦 Topology: {topo.get('physical_cores', '?')}C/{topo.get('logical_threads', '?')}T")
-    print(f"   L3: {topo.get('l3_cache_mb', '?')}MB ({topo.get('l3_instances', '?')} instances × {topo.get('l3_per_instance_mb', '?')}MB)")
+    print(
+        f"   L3: {topo.get('l3_cache_mb', '?')}MB ({topo.get('l3_instances', '?')} instances × {topo.get('l3_per_instance_mb', '?')}MB)"
+    )
 
     print(f"\n🔥 CPU: {cpu.get('avg_percent', 0):.1f}% avg")
     per_core = cpu.get("per_core_percent", {})
@@ -810,8 +842,10 @@ def _print_terminal(stats: Dict):
         print(row)
 
     load = cpu.get("load", {})
-    print(f"   Load: {load.get('load_1min', 0):.2f} / {load.get('load_5min', 0):.2f} / {load.get('load_15min', 0):.2f}")
-    
+    print(
+        f"   Load: {load.get('load_1min', 0):.2f} / {load.get('load_5min', 0):.2f} / {load.get('load_15min', 0):.2f}"
+    )
+
     if cpu.get("thermal_throttling"):
         print("   ⚠️  THERMAL THROTTLING ACTIVE")
 
@@ -819,23 +853,33 @@ def _print_terminal(stats: Dict):
         temp_str = " | ".join(f"{t['label']}: {t['temp']:.0f}°C" for t in temps["celsius"])
         print(f"   Temp: {temp_str}")
 
-    print(f"\n🧠 Memory: {mem.get('used_mb', 0):.0f}/{mem.get('total_mb', 0):.0f}MB ({mem.get('percent', 0):.1f}%)")
+    print(
+        f"\n🧠 Memory: {mem.get('used_mb', 0):.0f}/{mem.get('total_mb', 0):.0f}MB ({mem.get('percent', 0):.1f}%)"
+    )
     print(f"   Available: {mem.get('available_mb', 0):.0f}MB")
-    print(f"   Swap: {mem.get('swap_used_mb', 0):.0f}/{mem.get('swap_total_mb', 0):.0f}MB ({mem.get('swap_percent', 0):.1f}%)")
+    print(
+        f"   Swap: {mem.get('swap_used_mb', 0):.0f}/{mem.get('swap_total_mb', 0):.0f}MB ({mem.get('swap_percent', 0):.1f}%)"
+    )
     print(f"   OOM Risk: {stats.get('oom_risk', 'UNKNOWN')}")
     print(f"   Memory Pressure: {stats.get('memory_pressure', 0):.3f}")
 
     # zRAM stats (OBS1)
     zram = mem.get("zram", {})
     if zram.get("available"):
-        print(f"   zRAM: {zram.get('total_compressed_mb', 0):.0f}MB compressed / {zram.get('total_original_mb', 0):.0f}MB original (ratio: {zram.get('overall_compression_ratio', 0):.1f}x)")
+        print(
+            f"   zRAM: {zram.get('total_compressed_mb', 0):.0f}MB compressed / {zram.get('total_original_mb', 0):.0f}MB original (ratio: {zram.get('overall_compression_ratio', 0):.1f}x)"
+        )
 
     # Swap+zRAM pressure
     szp = stats.get("swap_zram_pressure", {})
     if szp:
-        print(f"   Swap+zRAM Pressure: {szp.get('pressure_level', 'UNKNOWN')} (score: {szp.get('pressure_score', 0):.3f})")
+        print(
+            f"   Swap+zRAM Pressure: {szp.get('pressure_level', 'UNKNOWN')} (score: {szp.get('pressure_score', 0):.3f})"
+        )
 
-    print(f"\n🧵 Threads: Python processes total threads: {stats.get('threads', {}).get('total_python_threads', 0)}")
+    print(
+        f"\n🧵 Threads: Python processes total threads: {stats.get('threads', {}).get('total_python_threads', 0)}"
+    )
 
     print("=" * 60)
 

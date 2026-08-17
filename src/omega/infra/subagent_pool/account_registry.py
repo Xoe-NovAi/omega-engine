@@ -141,7 +141,9 @@ class AccountRegistry:
                     "context_window": acc.context_window,
                     "health": acc.health.value,
                     "rate_limit_remaining": acc.rate_limit_remaining,
-                    "rate_limit_reset": acc.rate_limit_reset.isoformat() if acc.rate_limit_reset else None,
+                    "rate_limit_reset": acc.rate_limit_reset.isoformat()
+                    if acc.rate_limit_reset
+                    else None,
                     "last_used": acc.last_used.isoformat() if acc.last_used else None,
                     "credentials_ref": acc.credentials_ref,
                     "capabilities": list(acc.capabilities),
@@ -175,7 +177,9 @@ class AccountRegistry:
                     continue
                 if not account.is_available(min_context):
                     continue
-                if required_capabilities and not required_capabilities.issubset(account.capabilities):
+                if required_capabilities and not required_capabilities.issubset(
+                    account.capabilities
+                ):
                     continue
                 available.append(account)
 

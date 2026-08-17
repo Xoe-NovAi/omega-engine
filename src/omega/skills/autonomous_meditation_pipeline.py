@@ -12,7 +12,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Protocol
-from abc import ABC, abstractmethod
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
@@ -23,12 +22,16 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # PLATFORM ABSTRACTION LAYER (M16: Modularization & Portability)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class OracleClient(Protocol):
     """Protocol for oracle/LLM calls. Implementations provided by platform."""
+
     async def talk(self, prompt: str) -> str: ...
+
 
 class SearchClient(Protocol):
     """Protocol for web search. Implementations provided by platform."""
+
     async def search(self, query: str, limit: int = 5) -> str: ...
     async def fetch(self, url: str) -> str: ...
     async def searxng(self, query: str, limit: int = 5) -> str: ...
@@ -36,7 +39,7 @@ class SearchClient(Protocol):
 
 class PlatformClients:
     """Container for platform-specific clients. Injected at runtime."""
-    
+
     def __init__(
         self,
         oracle: Optional[OracleClient] = None,
@@ -44,48 +47,50 @@ class PlatformClients:
     ):
         self.oracle = oracle
         self.search = search
-    
+
     @classmethod
     def from_opencode(cls, mcp_endpoint: str = "http://127.0.0.1:8016/mcp") -> "PlatformClients":
         """Factory for OpenCode environment (uses local MCP Hub via SovereignMCPClient)."""
         try:
             from src.omega.skills.opencode_client import OpenCodePlatformClients
-            
+
             opencode_clients = OpenCodePlatformClients(mcp_endpoint)
-            
+
             class OpenCodeOracle:
                 def __init__(self, oracle_client):
                     self._oracle = oracle_client
-                
+
                 async def talk(self, prompt: str) -> str:
                     return await self._oracle.talk(prompt)
-            
+
             class OpenCodeSearch:
                 def __init__(self, search_client):
                     self._search = search_client
-                
+
                 async def search(self, query: str, limit: int = 5) -> str:
                     return await self._search.search(query, limit)
-                
+
                 async def fetch(self, url: str) -> str:
                     return await self._search.fetch(url)
-                
+
                 async def searxng(self, query: str, limit: int = 5) -> str:
                     return await self._search.searxng(query, limit)
-            
+
             return cls(
                 oracle=OpenCodeOracle(opencode_clients.get_oracle()),
                 search=OpenCodeSearch(opencode_clients.get_search()),
             )
         except ImportError:
             return cls()  # No clients available
-    
+
     @classmethod
-    def from_cli(cls, oracle_cmd: str = "opencode", search_cmd: str = "websearch") -> "PlatformClients":
+    def from_cli(
+        cls, oracle_cmd: str = "opencode", search_cmd: str = "websearch"
+    ) -> "PlatformClients":
         """Factory for CLI environment (subprocess calls)."""
         # Implementation would use subprocess to call CLI tools
         return cls()
-    
+
     @classmethod
     def null(cls) -> "PlatformClients":
         """Null implementation for testing/dry-run."""
@@ -96,12 +101,13 @@ class PlatformClients:
 # PIPELINE CORE (Pure Engine Logic — No Platform Dependencies)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class AutonomousMeditationPipeline:
     """
     Core pipeline logic. Platform-agnostic.
     Receives clients via dependency injection (M16).
     """
-    
+
     def __init__(
         self,
         problem_statement: str,
@@ -176,8 +182,8 @@ class AutonomousMeditationPipeline:
 ```
 
 ## Rationale:
-- **Lens set**: {lens_set} — {rationale['lens_set']}
-- **Output mode**: {mode} — {rationale['mode']}
+- **Lens set**: {lens_set} — {rationale["lens_set"]}
+- **Output mode**: {mode} — {rationale["mode"]}
 - **Context injected**: M2, M7, M8, M11, M13, M16, M23 mandates; Heritage refs; Constraints
 
 ## Anti-Collapse Contract: ACTIVE
@@ -192,7 +198,7 @@ class AutonomousMeditationPipeline:
         mode = "STRATEGIC"
         rationale = {
             "lens_set": "Full Omega Pantheon (10 lenses) — systemic cross-cutting problem",
-            "mode": "STRATEGIC — production architecture with measurable metrics"
+            "mode": "STRATEGIC — production architecture with measurable metrics",
         }
         if any(kw in problem_lower for kw in ["bug", "error", "fail", "broken", "crash"]):
             lens_set = "engineering,validation,observability,infrastructure"
@@ -201,7 +207,10 @@ class AutonomousMeditationPipeline:
         elif any(kw in problem_lower for kw in ["creative", "explore", "future", "what if"]):
             lens_set = "Architect,Skeptic,Pragmatist,Ethicist"
             mode = "CREATIVE"
-            rationale = {"lens_set": "Creative personas", "mode": "CREATIVE — explore possibilities"}
+            rationale = {
+                "lens_set": "Creative personas",
+                "mode": "CREATIVE — explore possibilities",
+            }
         elif any(kw in problem_lower for kw in ["audit", "compliance", "verify"]):
             lens_set = "governance,validation,observability,infrastructure"
             mode = "AUDIT"
@@ -259,7 +268,7 @@ Include: 1) Architecture diagram (ASCII), 2) Non-negotiables, 3) MVP scope, 4) I
         content = f"""# RESEARCH PROMPT
 **Generated**: {datetime.now().isoformat()} | **Run**: {self.run_id}
 ## Queries:
-{chr(10).join(f'{i+1}. {q}' for i, q in enumerate(queries))}
+{chr(10).join(f"{i + 1}. {q}" for i, q in enumerate(queries))}
 ## Search Strategy: T0(local) → T1(websearch) → T2(webfetch) → T3(SearXNG) → T4(Exa) → T5(Firecrawl)
 ## Success Criteria: Prior art, benchmarks, security advisories, impl refs, failure modes
 """
@@ -276,9 +285,11 @@ Include: 1) Architecture diagram (ASCII), 2) Non-negotiables, 3) MVP scope, 4) I
             return content
         all_findings = []
         for i, query in enumerate(queries):
-            print(f"  Query {i+1}/{len(queries)}: {query[:80]}...")
+            print(f"  Query {i + 1}/{len(queries)}: {query[:80]}...")
             findings = await self._execute_tiered_search(query)
-            all_findings.append({"query": query, "findings": findings, "timestamp": datetime.now().isoformat()})
+            all_findings.append(
+                {"query": query, "findings": findings, "timestamp": datetime.now().isoformat()}
+            )
         content = f"""# RESEARCH RAW OUTPUT
 **Executed**: {datetime.now().isoformat()} | **Run**: {self.run_id}
 {json.dumps(all_findings, indent=2)}
@@ -287,14 +298,21 @@ Include: 1) Architecture diagram (ASCII), 2) Non-negotiables, 3) MVP scope, 4) I
         return content
 
     async def _execute_tiered_search(self, query: str) -> Dict[str, Any]:
-        findings = {"query": query, "tier_1_websearch": [], "tier_2_webfetch": [], "tier_3_searxng": []}
+        findings = {
+            "query": query,
+            "tier_1_websearch": [],
+            "tier_2_webfetch": [],
+            "tier_3_searxng": [],
+        }
         try:
             result = await self._call_websearch(query, limit=5)
             findings["tier_1_websearch"] = json.loads(result) if isinstance(result, str) else result
         except Exception as e:
             findings["tier_1_websearch"] = {"error": str(e)}
         try:
-            if isinstance(findings["tier_1_websearch"], dict) and findings["tier_1_websearch"].get("results"):
+            if isinstance(findings["tier_1_websearch"], dict) and findings["tier_1_websearch"].get(
+                "results"
+            ):
                 top_url = findings["tier_1_websearch"]["results"][0].get("url")
                 if top_url:
                     result = await self._call_webfetch(top_url)
@@ -360,24 +378,44 @@ proposals:
     # ─── Main Run Loop ──────────────────────────────────────────────────
 
     async def run(self) -> Dict[int, str]:
-        print(f"\n{'='*60}\n🚀 AUTONOMOUS MEDITATION PIPELINE\nRun ID: {self.run_id}\nProblem: {self.problem}\n{'='*60}")
-        
+        print(
+            f"\n{'=' * 60}\n🚀 AUTONOMOUS MEDITATION PIPELINE\nRun ID: {self.run_id}\nProblem: {self.problem}\n{'=' * 60}"
+        )
+
         stages = [
             (0, "Prompt Crafting", lambda: self.stage_0_prompt_crafting()),
             (1, "Meditation", lambda: self.stage_1_meditate_execution(self._read_stage(0) or "")),
             (2, "Synthesis", lambda: self.stage_2_synthesis(self._read_stage(1) or "")),
-            (3, "Research Prompt", lambda: self.stage_3_research_prompt_crafting(self._read_stage(2) or "", self._read_stage(1) or "")),
+            (
+                3,
+                "Research Prompt",
+                lambda: self.stage_3_research_prompt_crafting(
+                    self._read_stage(2) or "", self._read_stage(1) or ""
+                ),
+            ),
             (4, "Research", lambda: self.stage_4_research_execution(self._read_stage(3) or [])),
-            (5, "Grounded Report", lambda: self.stage_5_grounded_report(self._read_stage(1) or "", self._read_stage(4) or "")),
+            (
+                5,
+                "Grounded Report",
+                lambda: self.stage_5_grounded_report(
+                    self._read_stage(1) or "", self._read_stage(4) or ""
+                ),
+            ),
             (6, "Gnosis", lambda: self.stage_6_gnosis_distillation(self._read_stage(5) or "")),
-            (7, "Integration", lambda: self.stage_7_integration(self._read_stage(6) or "", self._read_stage(5) or "")),
+            (
+                7,
+                "Integration",
+                lambda: self.stage_7_integration(
+                    self._read_stage(6) or "", self._read_stage(5) or ""
+                ),
+            ),
         ]
-        
+
         for stage_num, name, func in stages:
             if stage_num < self.resume_from:
                 print(f"\n⏭️  Skipping Stage {stage_num} ({name})")
                 continue
-            print(f"\n{'─'*60}")
+            print(f"\n{'─' * 60}")
             try:
                 await func()
                 print(f"  ✅ Stage {stage_num} complete")
@@ -385,8 +423,10 @@ proposals:
                 print(f"  ❌ Stage {stage_num} failed: {e}")
                 if not self.dry_run:
                     raise
-        
-        print(f"\n{'='*60}\n✅ PIPELINE COMPLETE: {self.run_id}\nOutputs: {self.output_dir}\n{'='*60}")
+
+        print(
+            f"\n{'=' * 60}\n✅ PIPELINE COMPLETE: {self.run_id}\nOutputs: {self.output_dir}\n{'=' * 60}"
+        )
         return self.stage_outputs
 
 
@@ -394,38 +434,38 @@ proposals:
 # ENTRY POINTS (Platform-Specific Factories)
 # ════════════════════════════════════════════════════════════════════════════
 
+
 def create_pipeline_opencode(problem: str, **kwargs) -> AutonomousMeditationPipeline:
     """Factory for OpenCode environment."""
     return AutonomousMeditationPipeline(
-        problem_statement=problem,
-        clients=PlatformClients.from_opencode(),
-        **kwargs
+        problem_statement=problem, clients=PlatformClients.from_opencode(), **kwargs
     )
+
 
 def create_pipeline_cli(problem: str, **kwargs) -> AutonomousMeditationPipeline:
     """Factory for CLI environment."""
     return AutonomousMeditationPipeline(
-        problem_statement=problem,
-        clients=PlatformClients.from_cli(),
-        **kwargs
+        problem_statement=problem, clients=PlatformClients.from_cli(), **kwargs
     )
+
 
 def create_pipeline_standalone(problem: str, **kwargs) -> AutonomousMeditationPipeline:
     """Factory for standalone/testing (no platform clients)."""
     # dry_run defaults to True for standalone; allow override via kwargs
-    kwargs.setdefault('dry_run', True)
+    kwargs.setdefault("dry_run", True)
     return AutonomousMeditationPipeline(
-        problem_statement=problem,
-        clients=PlatformClients.null(),
-        **kwargs
+        problem_statement=problem, clients=PlatformClients.null(), **kwargs
     )
 
 
 async def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Autonomous Meditation Pipeline")
     parser.add_argument("problem", help="Problem statement")
-    parser.add_argument("--platform", choices=["opencode", "cli", "standalone"], default="standalone")
+    parser.add_argument(
+        "--platform", choices=["opencode", "cli", "standalone"], default="standalone"
+    )
     parser.add_argument("--resume-from", type=int, default=0)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--output-dir", type=Path)
@@ -436,7 +476,7 @@ async def main():
         "cli": create_pipeline_cli,
         "standalone": create_pipeline_standalone,
     }
-    
+
     pipeline = factories[args.platform](
         args.problem,
         resume_from=args.resume_from,
@@ -448,4 +488,5 @@ async def main():
 
 if __name__ == "__main__":
     import anyio
+
     anyio.run(main)

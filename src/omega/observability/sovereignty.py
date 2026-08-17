@@ -84,9 +84,7 @@ def get_sovereignty_ratio(
         cur = conn.cursor()
 
         # Check if performance table exists
-        cur.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='performance'"
-        )
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
         if not cur.fetchone():
             conn.close()
             return {
@@ -103,9 +101,7 @@ def get_sovereignty_ratio(
         # Time filter
         since_ts = None
         if since_days:
-            since_ts = (
-                datetime.now(timezone.utc).timestamp() - since_days * 86400
-            )
+            since_ts = datetime.now(timezone.utc).timestamp() - since_days * 86400
 
         # Aggregate counts (corrected classification from providers.yaml)
         # Ensure the corrected schema/view exists before querying it.
@@ -113,7 +109,7 @@ def get_sovereignty_ratio(
         if since_ts:
             cur.execute(
                 """
-                SELECT 
+                SELECT
                     SUM(CASE WHEN is_cloud_corrected = 0 THEN 1 ELSE 0 END) as local_count,
                     SUM(CASE WHEN is_cloud_corrected = 1 THEN 1 ELSE 0 END) as cloud_count,
                     COUNT(*) as total
@@ -125,7 +121,7 @@ def get_sovereignty_ratio(
         else:
             cur.execute(
                 """
-                SELECT 
+                SELECT
                     SUM(CASE WHEN is_cloud_corrected = 0 THEN 1 ELSE 0 END) as local_count,
                     SUM(CASE WHEN is_cloud_corrected = 1 THEN 1 ELSE 0 END) as cloud_count,
                     COUNT(*) as total

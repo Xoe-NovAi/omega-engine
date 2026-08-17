@@ -17,13 +17,18 @@ import logging
 import math
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from pathlib import Path
 
 import anyio
 
 from omega.errors import OmegaError
-from .rewards import GRPORewardFunction, RewardConfig, RewardComponents, create_default_reward_config
+from .rewards import (
+    GRPORewardFunction,
+    RewardConfig,
+    RewardComponents,
+    create_default_reward_config,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +39,7 @@ class TrainingSample:
 
     Contains the prompt, reference answer, and a group of generated responses.
     """
+
     prompt: str
     reference: str
     responses: List[str] = field(default_factory=list)
@@ -50,6 +56,7 @@ class GRPOConfig:
 
     All parameters are local-only — no cloud dependencies.
     """
+
     # Model configuration
     model_path: str = ""  # Path to local GGUF model
     n_ctx: int = 2048
@@ -57,17 +64,17 @@ class GRPOConfig:
     n_gpu_layers: int = 0  # CPU-only for sovereignty
 
     # GRPO hyperparameters
-    group_size: int = 4          # Number of responses per prompt (GRPO group)
-    kl_beta: float = 0.1         # KL divergence coefficient
-    clip_epsilon: float = 0.2    # PPO clipping epsilon
-    value_clip: float = 0.2      # Value function clipping
-    max_grad_norm: float = 1.0   # Gradient clipping
-    entropy_coef: float = 0.01   # Entropy bonus
+    group_size: int = 4  # Number of responses per prompt (GRPO group)
+    kl_beta: float = 0.1  # KL divergence coefficient
+    clip_epsilon: float = 0.2  # PPO clipping epsilon
+    value_clip: float = 0.2  # Value function clipping
+    max_grad_norm: float = 1.0  # Gradient clipping
+    entropy_coef: float = 0.01  # Entropy bonus
 
     # Training loop
     max_epochs: int = 1
     learning_rate: float = 1e-5
-    batch_size: int = 1          # GRPO processes one sample at a time
+    batch_size: int = 1  # GRPO processes one sample at a time
     warmup_steps: int = 10
     total_steps: int = 1000
 
@@ -95,6 +102,7 @@ class GRPOResult:
 
     Contains metrics for observability and debugging.
     """
+
     step: int
     loss: float
     kl_divergence: float
@@ -144,9 +152,7 @@ class GRPOTrainer:
     ):
         self.config = config or GRPOConfig()
         self.config.validate()
-        self.reward_fn = reward_fn or GRPORewardFunction(
-            config=self.config.reward_config
-        )
+        self.reward_fn = reward_fn or GRPORewardFunction(config=self.config.reward_config)
         self._model: Optional[Any] = None
         self._initialized = False
         self._step = 0
@@ -170,6 +176,7 @@ class GRPOTrainer:
         def _load_model():
             try:
                 from llama_cpp import Llama
+
                 return Llama(
                     model_path=str(model_path),
                     n_ctx=self.config.n_ctx,
@@ -178,9 +185,7 @@ class GRPOTrainer:
                     verbose=False,
                 )
             except ImportError:
-                logger.warning(
-                    "llama-cpp-python not available — GRPO trainer in dry-run mode"
-                )
+                logger.warning("llama-cpp-python not available — GRPO trainer in dry-run mode")
                 return None
 
         self._model = await anyio.to_thread.run_sync(_load_model)
@@ -209,9 +214,7 @@ class GRPOTrainer:
         [M7 Local-First] Uses only local inference.
         """
         if not self._initialized:
-            raise OmegaError(
-                message="GRPOTrainer not initialized — call initialize() first"
-            )
+            raise OmegaError(message="GRPOTrainer not initialized — call initialize() first")
 
         if self._model is None:
             # Dry-run mode: return a mock response for testing
@@ -278,9 +281,7 @@ class GRPOTrainer:
             GRPOResult with loss, rewards, and metrics.
         """
         if not self._initialized:
-            raise OmegaError(
-                message="GRPOTrainer not initialized — call initialize() first"
-            )
+            raise OmegaError(message="GRPOTrainer not initialized — call initialize() first")
 
         start_time = time.monotonic()
         self._step += 1
@@ -318,8 +319,7 @@ class GRPOTrainer:
             if old_log_probs is not None and len(old_log_probs) == len(rewards):
                 # Compute KL using log prob ratios
                 kl_div = sum(
-                    abs(lp - math.log(max(r, 1e-8)))
-                    for lp, r in zip(old_log_probs, rewards)
+                    abs(lp - math.log(max(r, 1e-8))) for lp, r in zip(old_log_probs, rewards)
                 ) / len(rewards)
             else:
                 kl_div = 0.0  # No old policy to compare against
@@ -327,13 +327,18 @@ class GRPOTrainer:
             # PPO clipped loss (simplified)
             # L = min(ratio * advantage, clip(ratio, 1-eps, 1+eps) * advantage)
             # For this spec layer, we compute the loss as a weighted combination
-            loss = sum(
-                max(
-                    -adv * self.config.kl_beta,  # KL penalty
-                    -adv * self.config.clip_epsilon,  # Clipped
+            loss = (
+                sum(
+                    max(
+                        -adv * self.config.kl_beta,  # KL penalty
+                        -adv * self.config.clip_epsilon,  # Clipped
+                    )
+                    for adv in advantages
                 )
-                for adv in advantages
-            ) / len(advantages) if advantages else 0.0
+                / len(advantages)
+                if advantages
+                else 0.0
+            )
 
             # Add KL penalty to loss
             loss += self.config.kl_beta * kl_div

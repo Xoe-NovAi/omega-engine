@@ -16,6 +16,7 @@ from uuid import uuid4
 
 class PoolType(str, Enum):
     """CLI agent pool types."""
+
     GROK = "grok"
     COPILOT = "copilot"
     CLINE = "cline"
@@ -23,6 +24,7 @@ class PoolType(str, Enum):
 
 class AccountHealth(str, Enum):
     """Health states for pool accounts."""
+
     HEALTHY = "healthy"
     RATE_LIMITED = "rate_limited"
     CREDENTIAL_ERROR = "credential_error"
@@ -31,6 +33,7 @@ class AccountHealth(str, Enum):
 
 class TaskType(str, Enum):
     """Task types for routing."""
+
     DEEP_RESEARCH = "deep_research"
     CODE_IMPL = "code_impl"
     CODE_REVIEW = "code_review"
@@ -42,6 +45,7 @@ class TaskType(str, Enum):
 
 class RoutingHint(str, Enum):
     """Optional routing hints for task dispatch."""
+
     PREFER_GROK = "prefer_grok"
     PREFER_COPILOT = "prefer_copilot"
     PREFER_CLINE = "prefer_cline"
@@ -54,15 +58,16 @@ class RoutingHint(str, Enum):
 @dataclass
 class Account:
     """Represents a single CLI agent account in the pool."""
-    id: str                              # e.g., "grok-cli-3"
+
+    id: str  # e.g., "grok-cli-3"
     pool: PoolType
-    model: str                           # Current model assignment
-    context_window: int                  # 128_000, 512_000, 1_000_000
+    model: str  # Current model assignment
+    context_window: int  # 128_000, 512_000, 1_000_000
     health: AccountHealth = AccountHealth.HEALTHY
     rate_limit_remaining: int = 1000
     rate_limit_reset: Optional[datetime] = None
     last_used: Optional[datetime] = None
-    credentials_ref: str = ""            # Omega-Vault reference
+    credentials_ref: str = ""  # Omega-Vault reference
     capabilities: set[str] = field(default_factory=set)  # "web_search", "reasoning", "code_gen"
     tmux_session: Optional[str] = None
     mcp_endpoint: Optional[str] = None
@@ -94,7 +99,9 @@ class Account:
             "context_window": self.context_window,
             "health": self.health.value,
             "rate_limit_remaining": self.rate_limit_remaining,
-            "rate_limit_reset": self.rate_limit_reset.isoformat() if self.rate_limit_reset else None,
+            "rate_limit_reset": self.rate_limit_reset.isoformat()
+            if self.rate_limit_reset
+            else None,
             "last_used": self.last_used.isoformat() if self.last_used else None,
             "credentials_ref": self.credentials_ref,
             "capabilities": list(self.capabilities),
@@ -125,6 +132,7 @@ class Account:
 @dataclass
 class PoolTask:
     """A task to be dispatched to the pool."""
+
     id: str = field(default_factory=lambda: str(uuid4())[:8])
     type: TaskType = TaskType.DEEP_RESEARCH
     prompt: str = ""
@@ -172,6 +180,7 @@ class PoolTask:
 @dataclass
 class SubTask:
     """A decomposed subtask for parallel execution."""
+
     id: str = field(default_factory=lambda: str(uuid4())[:8])
     parent_task_id: str = ""
     prompt: str = ""
@@ -195,6 +204,7 @@ class SubTask:
 @dataclass
 class RoutingPlan:
     """Plan for routing a task to one or more accounts."""
+
     parallel: bool = False
     account: Optional[Account] = None
     subtasks: list[SubTask] = field(default_factory=list)
@@ -210,6 +220,7 @@ class RoutingPlan:
 @dataclass
 class AccountResult:
     """Result from a single account execution."""
+
     account_id: str
     pool: PoolType
     task_id: str
@@ -239,6 +250,7 @@ class AccountResult:
 @dataclass
 class AggregatedResult:
     """Aggregated result from multiple accounts with diversity weighting."""
+
     synthesis: str = ""
     confidence: float = 0.0
     minority_dissent: list[str] = field(default_factory=list)
@@ -260,6 +272,7 @@ class AggregatedResult:
 @dataclass
 class PoolHealthReport:
     """Health report for the entire pool."""
+
     total_accounts: int = 0
     healthy: int = 0
     rate_limited: int = 0
@@ -283,6 +296,7 @@ class PoolHealthReport:
 @dataclass
 class PoolStatus:
     """Real-time pool status."""
+
     available_accounts: int = 0
     queue_depth: int = 0
     tasks_completed: int = 0
@@ -308,6 +322,7 @@ class PoolStatus:
 @dataclass
 class RebalanceReport:
     """Report from a rebalance operation."""
+
     accounts_restored: list[str] = field(default_factory=list)
     accounts_marked_offline: list[str] = field(default_factory=list)
     tasks_redistributed: int = 0
@@ -325,35 +340,46 @@ class RebalanceReport:
 # Default account configurations for the 24-account pool
 DEFAULT_ACCOUNTS: list[dict[str, Any]] = [
     # Grok CLI - 8 accounts
-    *[{
-        "id": f"grok-cli-{i}",
-        "pool": "grok",
-        "model": "grok-3" if i <= 3 else "grok-2",
-        "context_window": 1_000_000 if i <= 4 else 128_000,
-        "health": "healthy",
-        "capabilities": ["web_search", "reasoning", "synthesis"],
-        "credentials_ref": f"vault:grok-cli-{i}",
-    } for i in range(1, 9)],
+    *[
+        {
+            "id": f"grok-cli-{i}",
+            "pool": "grok",
+            "model": "grok-3" if i <= 3 else "grok-2",
+            "context_window": 1_000_000 if i <= 4 else 128_000,
+            "health": "healthy",
+            "capabilities": ["web_search", "reasoning", "synthesis"],
+            "credentials_ref": f"vault:grok-cli-{i}",
+        }
+        for i in range(1, 9)
+    ],
     # Copilot CLI - 8 accounts
-    *[{
-        "id": f"copilot-cli-{i}",
-        "pool": "copilot",
-        "model": "gpt-4o" if i <= 4 else "o1",
-        "context_window": 128_000,
-        "health": "healthy",
-        "capabilities": ["code_gen", "code_review", "implementation"],
-        "credentials_ref": f"vault:copilot-cli-{i}",
-    } for i in range(1, 9)],
+    *[
+        {
+            "id": f"copilot-cli-{i}",
+            "pool": "copilot",
+            "model": "gpt-4o" if i <= 4 else "o1",
+            "context_window": 128_000,
+            "health": "healthy",
+            "capabilities": ["code_gen", "code_review", "implementation"],
+            "credentials_ref": f"vault:copilot-cli-{i}",
+        }
+        for i in range(1, 9)
+    ],
     # Cline CLI - 8 accounts
-    *[{
-        "id": f"cline-cli-{i}",
-        "pool": "cline",
-        "model": "deepseek-v4-flash" if i <= 4 else "mimo-v2.5",
-        "context_window": 1_000_000 if i <= 4 else 512_000,
-        "health": "healthy",
-        "capabilities": ["deep_research", "large_refactor", "code_gen"] if i <= 4 else ["code_gen", "code_review"],
-        "credentials_ref": f"vault:cline-cli-{i}",
-    } for i in range(1, 9)],
+    *[
+        {
+            "id": f"cline-cli-{i}",
+            "pool": "cline",
+            "model": "deepseek-v4-flash" if i <= 4 else "mimo-v2.5",
+            "context_window": 1_000_000 if i <= 4 else 512_000,
+            "health": "healthy",
+            "capabilities": ["deep_research", "large_refactor", "code_gen"]
+            if i <= 4
+            else ["code_gen", "code_review"],
+            "credentials_ref": f"vault:cline-cli-{i}",
+        }
+        for i in range(1, 9)
+    ],
 ]
 
 

@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from omega.cvar_table import cvar_get, cvar_namespace
+from omega.cvar_table import cvar_get
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
@@ -28,13 +28,7 @@ except ImportError:
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity, Orchestrator, ModelGateway
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 from omega.request_queue import RequestQueue
 from omega.oracle.feed_utils import load_demand_signals, transition_demand, summarize_feed
@@ -47,6 +41,7 @@ app = typer.Typer(help="🔱 Omega Engine CLI")
 # ── YouTube Research sub-commands (§3.2 — Track 2) ──────────────────────
 try:
     from omega.cli.youtube_cli import app as youtube_app
+
     app.add_typer(youtube_app, name="youtube", help="YouTube Research operations")
 except ImportError:
     pass  # youtube-transcript-api not installed — subcommand unavailable
@@ -54,13 +49,19 @@ except ImportError:
 # ── Bundle sub-commands (P0-4 Sovereign Export Bundle) ──────────────────
 try:
     from omega.cli.bundle import app as bundle_app
-    app.add_typer(bundle_app, name="bundle", help="Sovereign Bundle — export/import entity state as .omega bundles")
+
+    app.add_typer(
+        bundle_app,
+        name="bundle",
+        help="Sovereign Bundle — export/import entity state as .omega bundles",
+    )
 except ImportError:
     pass  # bundle module not available
 
 # ── Vault sub-commands (V-1 VaultCore MVP) ───────────────────────────────
 try:
     from omega.cli.vault import vault as vault_app
+
     app.add_typer(vault_app, name="vault", help="Sovereign credential vault (age + Argon2id)")
 except ImportError:
     pass  # vault module not available
@@ -68,9 +69,11 @@ except ImportError:
 # ── Local Queue sub-commands (Phase 2 Local Worker Pool) ─────────────────
 try:
     from omega.cli.local_queue import app as local_queue_app
+
     app.add_typer(local_queue_app, name="local-queue", help="Fire-and-forget local inference queue")
 except ImportError:
     pass  # local_queue module not available
+
 
 def _load_config() -> dict:
     """Load core omega config."""
@@ -78,6 +81,7 @@ def _load_config() -> dict:
     if not config_path.exists():
         return {}
     import yaml
+
     with open(config_path, "r") as f:
         return yaml.safe_load(f) or {}
 
@@ -86,6 +90,7 @@ def _save_config(config: dict):
     """Save core omega config."""
     config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
     import yaml
+
     with open(config_path, "w") as f:
         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
@@ -94,10 +99,13 @@ def _save_config(config: dict):
 @app.command()
 def talk(
     query: str = typer.Argument(..., help="Your question for the Oracle"),
-    transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
+    transient: bool = typer.Option(
+        False, "--transient", "-t", help="Run in transient mode (no soul updates)"
+    ),
     iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load"),
 ):
     """Ask the Oracle anything. Routes to the best entity automatically."""
+
     async def _run():
         oracle = Oracle()
         try:
@@ -108,6 +116,7 @@ def talk(
                 oracle.model_gateway.shutdown()
             except Exception:
                 pass  # best-effort cleanup; never block exit
+
     anyio.run(_run)
 
 
@@ -116,15 +125,23 @@ def talk(
 def summon(
     entity: str = typer.Argument(..., help="Entity name to summon"),
     query: str = typer.Argument(..., help="Your question for this entity"),
-    transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
-    model: Optional[str] = typer.Option(None, "--model", "-m", help="[D118] Model override — bypass TriageRouter and use specific model (e.g., qwen3-1.7b)"),
+    transient: bool = typer.Option(
+        False, "--transient", "-t", help="Run in transient mode (no soul updates)"
+    ),
+    model: Optional[str] = typer.Option(
+        None,
+        "--model",
+        "-m",
+        help="[D118] Model override — bypass TriageRouter and use specific model (e.g., qwen3-1.7b)",
+    ),
     iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load"),
 ):
     """Summon a specific entity by name.
-    
+
     [D118 Dual-Inference Mandate] Use --model to bypass TriageRouter and route
     to a specific model. Example: omega summon roc_racoon "hello" --model qwen3-1.7b
     """
+
     async def _run():
         oracle = Oracle()
         try:
@@ -135,6 +152,7 @@ def summon(
                 oracle.model_gateway.shutdown()
             except Exception:
                 pass  # best-effort cleanup; never block exit
+
     anyio.run(_run)
 
 
@@ -148,11 +166,12 @@ def default_entity(
     if not registry.get(name):
         console.print(f"[red]Error: Entity '{name}' not found in pantheon.[/red]")
         raise typer.Exit(1)
-    
+
     config = _load_config()
     config.setdefault("omega", {}).setdefault("entity", {})["default"] = name
     _save_config(config)
     console.print(f"[green]✅ Default entity set to: {name}[/green]")
+
 
 # ── ENTITY — Show detailed information about a specific entity ──────────
 @app.command(name="entity")
@@ -166,7 +185,9 @@ def entity_cmd(
         console.print(f"[red]Error: Entity '{name}' not found in pantheon.[/red]")
         available = [e.name for e in EntityRegistry().list()]
         if available:
-            console.print(f"[dim]Available entities: {', '.join(available[:10])}{'...' if len(available) > 10 else ''}[/dim]")
+            console.print(
+                f"[dim]Available entities: {', '.join(available[:10])}{'...' if len(available) > 10 else ''}[/dim]"
+            )
         raise typer.Exit(1)
 
     table = Table(title=f"🔱 Entity: {entity.name}", show_header=True, header_style="bold cyan")
@@ -180,7 +201,9 @@ def entity_cmd(
     table.add_row("Temperature", str(entity.temperature))
     table.add_row("Container", str(entity.container) if entity.container else "—")
     if entity.personality:
-        personality_preview = entity.personality[:200] + ("..." if len(entity.personality) > 200 else "")
+        personality_preview = entity.personality[:200] + (
+            "..." if len(entity.personality) > 200 else ""
+        )
         table.add_row("Personality", personality_preview)
 
     console.print(table)
@@ -192,7 +215,7 @@ def entity_workspace_status(
     entity: str = typer.Argument(..., help="Entity name to inspect workspace for"),
 ):
     """Show workspace block utilization for an entity (knowledge + workspace).
-    
+
     Reads data/entities/{entity}/knowledge/ and data/entities/{entity}/workspace/
     and calculates character counts per file, per-domain breakdowns, and
     total utilization. Block limits are displayed if defined in entity config.
@@ -205,7 +228,9 @@ def entity_workspace_status(
         registry = EntityRegistry()
         available = [e.name for e in registry.list()]
         if available:
-            console.print(f"[dim]Available entities: {', '.join(available[:15])}{'...' if len(available) > 15 else ''}[/dim]")
+            console.print(
+                f"[dim]Available entities: {', '.join(available[:15])}{'...' if len(available) > 15 else ''}[/dim]"
+            )
         raise typer.Exit(1)
 
     knowledge_dir = entity_dir / "knowledge"
@@ -221,18 +246,22 @@ def entity_workspace_status(
             if f.is_file():
                 try:
                     text = f.read_text(encoding="utf-8", errors="replace")
-                    file_stats.append({
-                        "path": str(f.relative_to(entity_dir)),
-                        "chars": len(text),
-                        "lines": text.count("\n") + 1,
-                    })
+                    file_stats.append(
+                        {
+                            "path": str(f.relative_to(entity_dir)),
+                            "chars": len(text),
+                            "lines": text.count("\n") + 1,
+                        }
+                    )
                 except (OmegaError, RuntimeError, OSError) as e:
-                    file_stats.append({
-                        "path": str(f.relative_to(entity_dir)),
-                        "chars": 0,
-                        "lines": 0,
-                        "error": str(e),
-                    })
+                    file_stats.append(
+                        {
+                            "path": str(f.relative_to(entity_dir)),
+                            "chars": 0,
+                            "lines": 0,
+                            "error": str(e),
+                        }
+                    )
         return file_stats
 
     knowledge_files = _count_chars(knowledge_dir)
@@ -266,7 +295,9 @@ def entity_workspace_status(
         elif hasattr(entity_obj, "block_limit"):
             block_limit = entity_obj.block_limit
 
-    table = Table(title=f"Workspace Block Utilization: {entity}", show_header=True, header_style="bold cyan")
+    table = Table(
+        title=f"Workspace Block Utilization: {entity}", show_header=True, header_style="bold cyan"
+    )
     table.add_column("Domain", style="cyan")
     table.add_column("Files", style="white")
     table.add_column("Characters", style="yellow")
@@ -279,11 +310,29 @@ def entity_workspace_status(
     w_lines = sum(f["lines"] for f in workspace_files)
     s_lines = soul_stats["lines"] if soul_stats else 0
 
-    table.add_row("knowledge/", str(n_knowledge), f"{knowledge_chars:,}", f"{k_lines:,}", str(block_limit or "N/A"))
-    table.add_row("workspace/", str(n_workspace), f"{workspace_chars:,}", f"{w_lines:,}", str(block_limit or "N/A"))
+    table.add_row(
+        "knowledge/",
+        str(n_knowledge),
+        f"{knowledge_chars:,}",
+        f"{k_lines:,}",
+        str(block_limit or "N/A"),
+    )
+    table.add_row(
+        "workspace/",
+        str(n_workspace),
+        f"{workspace_chars:,}",
+        f"{w_lines:,}",
+        str(block_limit or "N/A"),
+    )
     table.add_row("soul.yaml", "1" if soul_stats else "0", f"{soul_chars:,}", f"{s_lines:,}", "—")
     table.add_row("", "", "", "", "")
-    table.add_row("TOTAL", str(len(all_files)), f"{total_chars:,}", f"{k_lines + w_lines + s_lines:,}", str(block_limit or "N/A"))
+    table.add_row(
+        "TOTAL",
+        str(len(all_files)),
+        f"{total_chars:,}",
+        f"{k_lines + w_lines + s_lines:,}",
+        str(block_limit or "N/A"),
+    )
 
     console.print(table)
 
@@ -293,7 +342,7 @@ def entity_workspace_status(
         detail_table.add_column("Path", style="cyan")
         detail_table.add_column("Chars", style="yellow")
         detail_table.add_column("Lines", style="green")
-        for f in (knowledge_files + workspace_files):
+        for f in knowledge_files + workspace_files:
             detail_table.add_row(
                 f["path"],
                 f"{f['chars']:,}",
@@ -317,7 +366,9 @@ def transient(
     config = _load_config()
     if mode is None:
         current = cvar_get("config.entity.allow_transient", True)
-        console.print(f"Transient mode is currently: [bold cyan]{'ON' if current else 'OFF'}[/bold cyan]")
+        console.print(
+            f"Transient mode is currently: [bold cyan]{'ON' if current else 'OFF'}[/bold cyan]"
+        )
         return
 
     if mode.lower() in ["on", "true", "1"]:
@@ -326,7 +377,7 @@ def transient(
     else:
         config.setdefault("omega", {}).setdefault("entity", {})["allow_transient"] = False
         console.print("[yellow]⚠️ Transient mode disabled by default.[/yellow]")
-    
+
     _save_config(config)
 
 
@@ -348,7 +399,7 @@ def header(
     else:
         console.print("[red]Error: Invalid mode. Use 'full', 'compact', or 'off'.[/red]")
         raise typer.Exit(1)
-    
+
     _save_config(config)
 
 
@@ -367,12 +418,12 @@ def list_entities():
     for entity in registry.list():
         if entity.container:
             # Nova gets special display
-                table.add_row(
-                    entity.name,
-                    "Voice Interface",
-                    entity.model,
-                    str(entity.temperature),
-                )
+            table.add_row(
+                entity.name,
+                "Voice Interface",
+                entity.model,
+                str(entity.temperature),
+            )
         else:
             table.add_row(
                 entity.name,
@@ -404,8 +455,10 @@ def add_entity():
     )
 
     registry = EntityRegistry()
+
     async def _run():
         await registry.add(entity)
+
     anyio.run(_run)
     console.print(f"[green]✅ {name} added to pantheon![/green]")
     console.print("[dim]Edit ~/omega/config/entities.yaml to add node mappings, sigils, etc.[/dim]")
@@ -414,28 +467,33 @@ def add_entity():
 # ── REMOVE-ENTITY — Delete an entity ───────────────────────────────────
 @app.command()
 def mcp_restart(
-    service: str = typer.Argument(..., help="The service name to restart (e.g., omega-research)")
+    service: str = typer.Argument(..., help="The service name to restart (e.g., omega-research)"),
 ):
     """Restart a specific MCP service."""
+
     async def _run():
         console.print(f"[yellow]🔄 Restarting {service}...[/yellow]")
         import subprocess
+
         try:
-            await anyio.to_thread.run_sync(subprocess.run, ["systemctl", "--user", "restart", f"{service}.service"], check=True)
+            await anyio.to_thread.run_sync(
+                subprocess.run, ["systemctl", "--user", "restart", f"{service}.service"], check=True
+            )
             console.print(f"[green]✅ {service} restarted.[/green]")
         except OmegaError as e:
             console.print(f"[red]OmegaError restarting {service}: {e}[/red]")
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected error restarting {service}: {e}", exc_info=True)
             console.print(f"[red]Unexpected error restarting {service}: {e}[/red]")
-    anyio.run(_run)
 
+    anyio.run(_run)
 
 
 # ── BACKENDS — Provider Fabric Status ────────────────────────────────────
 @app.command()
 def backends():
     """Show the current provider fabric and health status."""
+
     async def _run():
         gateway = ModelGateway()
         providers = gateway.list_providers()
@@ -448,12 +506,14 @@ def backends():
             status = "[green]HEALTHY[/green]" if p["healthy"] else "[red]DEAD/UNKNOWN[/red]"
             table.add_row(p["name"], str(p["priority"]), p["type"], status)
         console.print(table)
+
     anyio.run(_run)
 
 
 @app.command(name="model-status")
 def model_status():
     """Show all configured models and their specifications."""
+
     async def _run():
         gateway = ModelGateway()
         models = gateway.list_models()
@@ -467,9 +527,10 @@ def model_status():
                 m["name"],
                 str(m.get("context_window", "N/A")),
                 str(m.get("threads", "N/A")),
-                str(m.get("kv_cache", "N/A"))
+                str(m.get("kv_cache", "N/A")),
             )
         console.print(table)
+
     anyio.run(_run)
 
 
@@ -500,19 +561,21 @@ def _display_response(result: OracleResponse):
     # no longer carried in OracleResponse — they are WAD content, not engine data.
 
     console.print(f"{prefix}")
-    
+
     output_text = result.text
     if result.cost_warning:
         output_text += f"\n\n[bold yellow]{result.cost_warning}[/bold yellow]"
-        
+
     console.print(f"{output_text}\n")
 
 
 # ── REQUEST QUEUE COMMANDS ──────────────────────────────────────────────
 
+
 @app.command()
 def queue_status():
     """Show pending queued/review items."""
+
     async def _run():
         q = RequestQueue()
         stats = await q.stats()
@@ -520,7 +583,7 @@ def queue_status():
         console.print(f"  Queued:       {stats['queued']}")
         console.print(f"  Pending Review: {stats['pending_review']}")
         console.print(f"  Completed:    {stats['completed']}")
-        if stats['queued'] > 0:
+        if stats["queued"] > 0:
             requests = await q.get_queued_requests()
             table = Table(title="Queued Requests")
             table.add_column("ID", style="cyan")
@@ -535,11 +598,14 @@ def queue_status():
                     r.get("created_at", "?")[:19],
                 )
             console.print(table)
+
     anyio.run(_run)
+
 
 @app.command()
 def process_queue():
     """Process all queued research requests."""
+
     async def _run():
         q = RequestQueue()
         requests = await q.get_queued_requests()
@@ -552,11 +618,14 @@ def process_queue():
             result = {"status": "processed", "note": "Implement execution logic in Phase C"}
             await q.complete_request(req["id"], result)
         console.print("[green]Done.[/green]")
+
     anyio.run(_run)
+
 
 @app.command()
 def review_pending():
     """Process all pending cloud review requests."""
+
     async def _run():
         q = RequestQueue()
         reviews = await q.get_review_requests()
@@ -569,39 +638,51 @@ def review_pending():
             result = {"status": "reviewed", "note": "Implement review logic in Phase C"}
             await q.complete_request(rev["id"], result)
         console.print("[green]Done.[/green]")
+
     anyio.run(_run)
+
 
 @app.command()
 def queue_prune(
     days: int = typer.Option(7, "--stale", "-s", help="Prune requests older than N days"),
 ):
     """Archive stale requests older than N days."""
+
     async def _run():
         q = RequestQueue()
         pruned = await q.prune_stale(days)
         console.print(f"[green]Pruned {pruned} stale requests (>{days} days).[/green]")
+
     anyio.run(_run)
 
+
 # ── LIBRARY COMMANDS ────────────────────────────────────────────────────
+
 
 @app.command()
 def library_curate(
     domain: str = typer.Option("all", "--domain", "-d", help="Domain to curate (e.g., P7, all)"),
 ):
     """Run domain curation."""
+
     async def _run():
         from omega.library.catalog import LibraryCatalog
+
         c = LibraryCatalog()
         await c.ensure_db()
         console.print(f"[bold]Library curation triggered for domain: {domain}[/bold]")
         console.print("[yellow]Curator dispatch logic — implement agent dispatch here[/yellow]")
+
     anyio.run(_run)
+
 
 @app.command()
 def library_status():
     """Show library catalog statistics."""
+
     async def _run():
         from omega.library.catalog import LibraryCatalog
+
         c = LibraryCatalog()
         stats = await c.stats()
         console.print("[bold]Library Catalog Status[/bold]")
@@ -610,7 +691,9 @@ def library_status():
         console.print("  By Domain:")
         for domain, count in stats.get("by_domain", {}).items():
             console.print(f"    {domain}: {count}")
+
     anyio.run(_run)
+
 
 @app.command()
 def library_search(
@@ -618,8 +701,10 @@ def library_search(
     domain: Optional[str] = typer.Option(None, "--domain", "-d", help="Filter by domain"),
 ):
     """Search the library catalog."""
+
     async def _run():
         from omega.library.catalog import LibraryCatalog
+
         c = LibraryCatalog()
         results = await c.search(domain=domain, query=query)
         if not results:
@@ -638,9 +723,12 @@ def library_search(
                 str(round(r.get("avg_quality", 0), 2)),
             )
         console.print(table)
+
     anyio.run(_run)
 
+
 # ── BENCHMARK COMMANDS ───────────────────────────────────────────────────
+
 
 @app.command()
 def bench_run(
@@ -649,8 +737,10 @@ def bench_run(
     samples: int = typer.Option(10, "--samples", "-s", help="Number of samples to run"),
 ):
     """Run a benchmark for a specific model and role."""
+
     async def _run():
         from omega.benchmarks.runner import BenchmarkRunner
+
         runner = BenchmarkRunner()
         result = await runner.run(model, role, samples=samples)
         console.print(f"[bold]Benchmark Complete: {model} for {role}[/bold]")
@@ -659,15 +749,19 @@ def bench_run(
         console.print(f"  Peak RAM: {result.peak_ram_mb}MB")
         console.print(f"  Avg Quality: {result.avg_quality_score}")
         console.print(f"  Scores: {result.scores}")
+
     anyio.run(_run)
+
 
 @app.command()
 def bench_compare(
     role: str = typer.Argument(..., help="Role to compare models for"),
 ):
     """Compare all benchmarked models for a specific role."""
+
     async def _run():
         from omega.benchmarks.runner import BenchmarkRunner
+
         runner = BenchmarkRunner()
         results = await runner.compare(role)
         if not results:
@@ -680,17 +774,27 @@ def bench_compare(
         table.add_column("RAM (MB)", style="magenta")
         table.add_column("Quality", style="blue")
         for r in results:
-            table.add_row(r.model, str(r.ttft_ms), str(r.tokens_per_sec), str(r.peak_ram_mb), str(r.avg_quality_score))
+            table.add_row(
+                r.model,
+                str(r.ttft_ms),
+                str(r.tokens_per_sec),
+                str(r.peak_ram_mb),
+                str(r.avg_quality_score),
+            )
         console.print(table)
+
     anyio.run(_run)
+
 
 @app.command()
 def bench_rank(
     role: str = typer.Argument(..., help="Role to rank models for"),
 ):
     """Show the best model for a specific role based on quality."""
+
     async def _run():
         from omega.benchmarks.runner import BenchmarkRunner
+
         runner = BenchmarkRunner()
         ranked = await runner.rank(role)
         if not ranked:
@@ -704,13 +808,17 @@ def bench_rank(
         for i, r in enumerate(ranked, 1):
             table.add_row(str(i), r.model, str(r.avg_quality_score))
         console.print(table)
+
     anyio.run(_run)
+
 
 @app.command()
 def bench_list():
     """List all completed benchmark runs."""
+
     async def _run():
         from omega.benchmarks.runner import BenchmarkRunner
+
         runner = BenchmarkRunner()
         results = await runner.list_runs()
         if not results:
@@ -723,13 +831,17 @@ def bench_list():
         for r in results:
             table.add_row(r.model, r.role, r.timestamp[:10])
         console.print(table)
+
     anyio.run(_run)
+
 
 # ── CROSS-POLLINATION COMMANDS ───────────────────────────────────────────
 @app.command(name="check-feed")
 def check_feed_cmd(
     agent: str = typer.Option("sophia", "--agent", "-a", help="Agent name to check feed for"),
-    consume: bool = typer.Option(False, "--consume", "-c", help="Mark unconsumed signals as consumed"),
+    consume: bool = typer.Option(
+        False, "--consume", "-c", help="Mark unconsumed signals as consumed"
+    ),
 ):
     """Check knowledge feed and demand signals for unconsumed content."""
     from omega.oracle.feed_utils import (
@@ -775,7 +887,9 @@ def check_feed_cmd(
         console.print(f"[dim]No new knowledge signals for {agent}.[/dim]")
 
     consumed_count = summary["total_signals"] - len(unconsumed)
-    console.print(f"  KSIGs: {summary['total_signals']} ({consumed_count} consumed, {len(unconsumed)} new)")
+    console.print(
+        f"  KSIGs: {summary['total_signals']} ({consumed_count} consumed, {len(unconsumed)} new)"
+    )
     console.print(f"  DEMs: {summary['total_demands']} ({summary['open_demands']} open)")
 
 
@@ -821,6 +935,7 @@ def demand_status(
     for status, count in sorted(summary.get("demand_status_counts", {}).items()):
         console.print(f"  {status}: {count}")
 
+
 @app.command(name="demand-claim")
 def demand_claim(
     demand_id: str = typer.Argument(..., help="Demand ID to claim"),
@@ -836,6 +951,7 @@ def demand_claim(
         return
     console.print(f"[green]✓ Demand {demand_id} claimed by {agent} (OPEN → ASSIGNED)[/green]")
 
+
 @app.command(name="demand-fulfill")
 def demand_fulfill(
     demand_id: str = typer.Argument(..., help="Demand ID to fulfill"),
@@ -847,6 +963,7 @@ def demand_fulfill(
         console.print(f"[red]Demand not found: {demand_id}[/red]")
         raise typer.Exit(1)
     console.print(f"[green]✓ Demand {demand_id} fulfilled by signal: {signal_id}[/green]")
+
 
 # ── WORKER COMMANDS ───────────────────────────────────────────────────────
 @app.command()
@@ -860,26 +977,28 @@ def worker_spawn(
     Spawn a background worker for high-throughput sensing.
     [Sovereign Workhorse Protocol: pw_model_15]
     """
+
     async def _run():
         orchestrator = Orchestrator()
         try:
             result = await orchestrator.spawn_background_worker(
-                task_id=task_id,
-                model=model,
-                prompt=prompt,
-                context=context
+                task_id=task_id, model=model, prompt=prompt, context=context
             )
             console.print(f"[green]✅ {result}[/green]")
         except OmegaError as e:
             console.print(f"[red]OmegaError spawning worker: {e}[/red]")
         except (OmegaError, RuntimeError, OSError) as e:
             console.print(f"[red]Unexpected error spawning worker: {e}[/red]")
+
     anyio.run(_run)
+
 
 # ── HARDWARE STATS ───────────────────────────────────────────────────────────
 @app.command(name="hardware-stats")
 def hardware_stats(
-    watch: float = typer.Option(0, "--watch", "-w", help="Continuous monitoring interval in seconds (0 = one-shot)"),
+    watch: float = typer.Option(
+        0, "--watch", "-w", help="Continuous monitoring interval in seconds (0 = one-shot)"
+    ),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output raw JSON"),
     oom_check: bool = typer.Option(False, "--oom", "-o", help="Quick OOM risk check only"),
 ):
@@ -904,16 +1023,23 @@ def hardware_stats(
     if oom_check:
         risk = hm.get_oom_risk_level()
         mem = hm.get_memory_status()
-        console.print(f"[bold]OOM Risk:[/bold] [{'red' if risk in ('HIGH','CRITICAL') else 'yellow' if risk == 'MODERATE' else 'green'}]{risk}[/]")
-        console.print(f"Memory: {mem['used_mb']:.0f}/{mem['total_mb']:.0f}MB ({mem['percent']:.1f}%)")
+        console.print(
+            f"[bold]OOM Risk:[/bold] [{'red' if risk in ('HIGH', 'CRITICAL') else 'yellow' if risk == 'MODERATE' else 'green'}]{risk}[/]"
+        )
+        console.print(
+            f"Memory: {mem['used_mb']:.0f}/{mem['total_mb']:.0f}MB ({mem['percent']:.1f}%)"
+        )
         console.print(f"Available: {mem['available_mb']:.0f}MB")
-        console.print(f"Swap: {mem['swap_used_mb']:.0f}/{mem['swap_total_mb']:.0f}MB ({mem['swap_percent']:.1f}%)")
+        console.print(
+            f"Swap: {mem['swap_used_mb']:.0f}/{mem['swap_total_mb']:.0f}MB ({mem['swap_percent']:.1f}%)"
+        )
         return
 
     def _show():
         stats = hm.collect_all()
         if json_output:
             import json
+
             console.print(json.dumps(stats, indent=2, default=str))
             return
 
@@ -927,10 +1053,14 @@ def hardware_stats(
         console.print(f"[bold cyan]  {topo.get('model', '')}[/]")
         console.print("[bold cyan]══════════════════════════════════════════[/]")
 
-        console.print(f"\n[bold]CPU:[/] {topo.get('physical_cores', '?')}C/{topo.get('logical_threads', '?')}T "
-                      f"| L3: {topo.get('l3_cache_mb', '?')}MB ({topo.get('l3_instances', '?')} instances)")
-        console.print(f"   Avg: {cpu['avg_percent']:.1f}%  "
-                      f"Load: {cpu['load'].get('load_1min', 0):.2f}/{cpu['load'].get('load_5min', 0):.2f}/{cpu['load'].get('load_15min', 0):.2f}")
+        console.print(
+            f"\n[bold]CPU:[/] {topo.get('physical_cores', '?')}C/{topo.get('logical_threads', '?')}T "
+            f"| L3: {topo.get('l3_cache_mb', '?')}MB ({topo.get('l3_instances', '?')} instances)"
+        )
+        console.print(
+            f"   Avg: {cpu['avg_percent']:.1f}%  "
+            f"Load: {cpu['load'].get('load_1min', 0):.2f}/{cpu['load'].get('load_5min', 0):.2f}/{cpu['load'].get('load_15min', 0):.2f}"
+        )
 
         per_core = cpu.get("per_core_percent", {})
         if per_core:
@@ -957,21 +1087,37 @@ def hardware_stats(
         # Memory with color
         mem_pct = mem["percent"]
         mem_color = "green" if mem_pct < 60 else "yellow" if mem_pct < 80 else "red"
-        console.print(f"\n[bold]Memory:[/] [{mem_color}]{mem['used_mb']:.0f}/{mem['total_mb']:.0f}MB ({mem_pct:.1f}%)[/]")
-        console.print(f"   Available: {mem['available_mb']:.0f}MB"
-                      f"  Swap: {mem['swap_used_mb']:.0f}/{mem['swap_total_mb']:.0f}MB ({mem['swap_percent']:.1f}%)")
+        console.print(
+            f"\n[bold]Memory:[/] [{mem_color}]{mem['used_mb']:.0f}/{mem['total_mb']:.0f}MB ({mem_pct:.1f}%)[/]"
+        )
+        console.print(
+            f"   Available: {mem['available_mb']:.0f}MB"
+            f"  Swap: {mem['swap_used_mb']:.0f}/{mem['swap_total_mb']:.0f}MB ({mem['swap_percent']:.1f}%)"
+        )
 
         oom = mem.get("oom_risk", {})
-        oom_color = "green" if oom.get("risk_level") == "SAFE" else "yellow" if oom.get("risk_level") == "LOW" else "red"
-        console.print(f"   OOM Risk: [{oom_color}]{oom.get('risk_level', 'UNKNOWN')}[/]"
-                      f"  Pressure: {stats.get('memory_pressure', 0):.3f}")
+        oom_color = (
+            "green"
+            if oom.get("risk_level") == "SAFE"
+            else "yellow"
+            if oom.get("risk_level") == "LOW"
+            else "red"
+        )
+        console.print(
+            f"   OOM Risk: [{oom_color}]{oom.get('risk_level', 'UNKNOWN')}[/]"
+            f"  Pressure: {stats.get('memory_pressure', 0):.3f}"
+        )
 
         thread_info = stats.get("threads", {})
         if thread_info:
-            console.print(f"\n[bold]Threads:[/] Python total: {thread_info.get('total_python_threads', 0)}")
+            console.print(
+                f"\n[bold]Threads:[/] Python total: {thread_info.get('total_python_threads', 0)}"
+            )
 
-        console.print(f"\n[dim]Disk I/O: nvme0 reads: {stats.get('disk_io', {}).get('nvme0n1', {}).get('reads_completed', 0)} | "
-                      f"writes: {stats.get('disk_io', {}).get('nvme0n1', {}).get('writes_completed', 0)}[/]")
+        console.print(
+            f"\n[dim]Disk I/O: nvme0 reads: {stats.get('disk_io', {}).get('nvme0n1', {}).get('reads_completed', 0)} | "
+            f"writes: {stats.get('disk_io', {}).get('nvme0n1', {}).get('writes_completed', 0)}[/]"
+        )
         console.print("[bold cyan]══════════════════════════════════════════[/]")
 
     if watch > 0:
@@ -979,6 +1125,7 @@ def hardware_stats(
             while True:
                 _show()
                 import time
+
                 time.sleep(watch)
         except KeyboardInterrupt:
             console.print("\n[dim]Stopped.[/]")
@@ -989,10 +1136,11 @@ def hardware_stats(
 @app.command()
 def soul_stage(entity: str):
     """Sovereign Soul Staging Gate TUI.
-    
+
     Review and approve proposed L3 principles for an entity.
     """
     from omega.cli.soul_stage import SoulStageApp
+
     app_tui = SoulStageApp(entity_name=entity)
     app_tui.run()
 
@@ -1002,7 +1150,9 @@ def soul_stage(entity: str):
 
 def main():
     if not TYPER_AVAILABLE:
-        console.print("[red]Error: typer and rich are required. Install with: pip install typer rich[/red]")
+        console.print(
+            "[red]Error: typer and rich are required. Install with: pip install typer rich[/red]"
+        )
         sys.exit(1)
     app()
 

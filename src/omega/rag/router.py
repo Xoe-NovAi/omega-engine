@@ -44,10 +44,16 @@ _EMBEDDED_TRAINING: list[tuple[str, int]] = [
     ("What is the difference between Qdrant and Redis?", 0),
     # ── complex (1) ──
     ("Compare the 23 Sovereign Mandates across all nodes and identify contradictions", 1),
-    ("Analyze the trade-offs between local-first and cloud fallback inference under RAM constraints", 1),
+    (
+        "Analyze the trade-offs between local-first and cloud fallback inference under RAM constraints",
+        1,
+    ),
     ("Synthesize a migration plan from the omega-stack to the new engine architecture", 1),
     ("Evaluate the long-term implications of the Engine-Stack Firewall on community WADs", 1),
-    ("Trace how a query flows from Iris speculative decode through domain routing to entity generation", 1),
+    (
+        "Trace how a query flows from Iris speculative decode through domain routing to entity generation",
+        1,
+    ),
     ("Compare and contrast the memory tiers and recommend an eviction policy", 1),
     ("Identify contradictions between the persisted memory and distilled gnosis", 1),
     ("Design a resilience strategy combining circuit breakers and dead-letter queues", 1),
@@ -66,14 +72,37 @@ _EMBEDDED_TRAINING: list[tuple[str, int]] = [
 
 # Strong-signal heuristic keywords (authoritative override before SVM).
 _COMPLEX_SIGNALS = (
-    "compare", "contrast", "analyze", "synthesize", "evaluate", "trace",
-    "identify contradictions", "multi-hop", "reconcile", "critique", "decompose",
-    "assess", "reason about", "map the dependency", "trend report", "trade-offs",
-    "long-term implications", "migration plan", "failure modes", "research loop",
+    "compare",
+    "contrast",
+    "analyze",
+    "synthesize",
+    "evaluate",
+    "trace",
+    "identify contradictions",
+    "multi-hop",
+    "reconcile",
+    "critique",
+    "decompose",
+    "assess",
+    "reason about",
+    "map the dependency",
+    "trend report",
+    "trade-offs",
+    "long-term implications",
+    "migration plan",
+    "failure modes",
+    "research loop",
 )
 _SIMPLE_SIGNALS = (
-    "what time", "who is", "what is the weather", "tell me a joke", "define ",
-    "list the", "how many", "where is", "show me",
+    "what time",
+    "who is",
+    "what is the weather",
+    "tell me a joke",
+    "define ",
+    "list the",
+    "how many",
+    "where is",
+    "show me",
 )
 
 
@@ -171,6 +200,7 @@ class RAGRouter:
             return "complex"
 
         try:
+
             def _predict() -> int:
                 feats = self.vectorizer.transform([query])
                 return int(self.classifier.predict(feats)[0])

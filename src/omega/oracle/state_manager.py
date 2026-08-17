@@ -3,9 +3,7 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import os
 import hashlib
-import shutil
 import logging
-from typing import Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -15,19 +13,23 @@ from anyio.to_thread import run_sync
 
 logger = logging.getLogger("omega.state_manager")
 
+
 @dataclass
 class SomaticStateKey:
     """Unique identifier for a binary model state."""
+
     model_hash: str
     session_id: str
     kv_size: int
     version: str = "1.0.0"
+
 
 class CASBlobStore:
     """
     Content Addressable Storage for engine state.
     Implements M12 (Queue Integrity) via atomic renames.
     """
+
     def __init__(self, base_dir: str = "data/somatic/blobs"):
         self.base_dir = Path(base_dir)
         self._ensure_dir()
@@ -39,7 +41,7 @@ class CASBlobStore:
         """Writes data to a blob and returns its SHA256 hash."""
         blob_hash = hashlib.sha256(data).hexdigest()
         blob_path = self.base_dir / f"{blob_hash}.bin"
-        
+
         if blob_path.exists():
             return blob_hash
 
@@ -49,7 +51,7 @@ class CASBlobStore:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to write blob {blob_hash}: {e}")
             raise
-        
+
         return blob_hash
 
     def _write_atomic(self, tmp_path: Path, final_path: Path, data: bytes):
@@ -64,7 +66,7 @@ class CASBlobStore:
         blob_path = self.base_dir / f"{blob_hash}.bin"
         if not blob_path.exists():
             raise FileNotFoundError(f"Blob {blob_hash} not found in CAS")
-        
+
         return await run_sync(self._read_blob, blob_path)
 
     def _read_blob(self, path: Path) -> bytes:
@@ -74,11 +76,13 @@ class CASBlobStore:
     async def exists(self, blob_hash: str) -> bool:
         return await run_sync(lambda: (self.base_dir / f"{blob_hash}.bin").exists())
 
+
 class SomaticStateSerializer:
     """
     High-fidelity binary state serialization for llama-cpp-python.
     Implements M20 (SomaticState).
     """
+
     def __init__(self, model: any):
         self.model = model
 
@@ -90,6 +94,7 @@ class SomaticStateSerializer:
         # Use the low-level C-API bindings for maximum fidelity
         # llama_get_state_size -> llama_copy_state_data
         import llama_cpp
+
         try:
             size = llama_cpp.llama_cpp.llama_get_state_size(self.model.model)
             buffer = bytearray(size)
@@ -105,22 +110,27 @@ class SomaticStateSerializer:
 
     def _apply(self, data: bytes):
         import llama_cpp
+
         try:
             # Verify size before applying to prevent segfaults
             expected_size = llama_cpp.llama_cpp.llama_get_state_size(self.model.model)
             if len(data) != expected_size:
-                raise ValueError(f"Somatic state size mismatch: expected {expected_size}, got {len(data)}")
-            
+                raise ValueError(
+                    f"Somatic state size mismatch: expected {expected_size}, got {len(data)}"
+                )
+
             llama_cpp.llama_cpp.llama_set_state_data(self.model.model, data)
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic apply failed: {e}")
             raise
+
 
 class UnifiedStateManager:
     """
     The facade for managing all engine state.
     Coordinates between CAS, SomaticState, and Entity Memory.
     """
+
     def __init__(self, model: any, base_dir: str = "data/somatic"):
         self.blob_store = CASBlobStore()
         self.somatic = SomaticStateSerializer(model)
@@ -138,21 +148,22 @@ class UnifiedStateManager:
         # 1. Capture binary model state
         somatic_blob = await self.somatic.capture_state()
         somatic_hash = await self.blob_store.put(somatic_blob)
-        
+
         # 2. Store memory and session as blobs
         mem_hash = await self.blob_store.put(memory_data)
         sess_hash = await self.blob_store.put(session_data)
-        
+
         # 3. Create a state bundle manifest
         bundle = {
             "entity_id": entity_id,
             "somatic_hash": somatic_hash,
             "memory_hash": mem_hash,
             "session_hash": sess_hash,
-            "timestamp": anyio.current_time() if hasattr(anyio, 'current_time') else None,
+            "timestamp": anyio.current_time() if hasattr(anyio, "current_time") else None,
         }
-        
+
         import json
+
         bundle_data = json.dumps(bundle, sort_keys=True).encode()
         return await self.blob_store.put(bundle_data)
 
@@ -163,15 +174,16 @@ class UnifiedStateManager:
         # 1. Load bundle manifest
         bundle_data = await self.blob_store.get(bundle_hash)
         import json
+
         bundle = json.loads(bundle_data)
-        
+
         # 2. Restore binary state first
-        somatic_blob = await self.blob_store.get(bundle['somatic_hash'])
+        somatic_blob = await self.blob_store.get(bundle["somatic_hash"])
         await self.somatic.apply_state(somatic_blob)
-        
+
         # 3. Return memory and session data for the engine to load
         return {
-            "memory": await self.blob_store.get(bundle['memory_hash']),
-            "session": await self.blob_store.get(bundle['session_hash']),
-            "entity_id": bundle['entity_id']
+            "memory": await self.blob_store.get(bundle["memory_hash"]),
+            "session": await self.blob_store.get(bundle["session_hash"]),
+            "entity_id": bundle["entity_id"],
         }

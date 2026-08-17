@@ -2,14 +2,14 @@
 Sovereign WARP Proxy Pool — Delegation Layer
 AP: AP-WARP-POOL-v1.1.0
 
-This module delegates all proxy pool orchestration to the standalone 
+This module delegates all proxy pool orchestration to the standalone
 `warp-proxy-pool` package.
 """
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional
 import warp_proxy_pool
 
 # Export the class for the Oracle's type checking and attachment
@@ -18,9 +18,11 @@ EphemeralWarpPool = warp_proxy_pool.EphemeralWarpPool
 # ── Configuration ──────────────────────────────────────────────────────────────
 SOCKS5_TEMPLATE = "socks5h://127.0.0.1:{port}"
 
+
 def get_pool() -> warp_proxy_pool.EphemeralWarpPool:
     """Return the global singleton pool instance from the sovereign package."""
     return warp_proxy_pool.get_pool()
+
 
 async def get_proxy_url() -> str:
     """
@@ -28,6 +30,7 @@ async def get_proxy_url() -> str:
     """
     port = await get_pool().get_active_port()
     return SOCKS5_TEMPLATE.format(port=port)
+
 
 async def get_healthy_proxy_url() -> Optional[str]:
     """
@@ -37,4 +40,3 @@ async def get_healthy_proxy_url() -> Optional[str]:
     if port:
         return SOCKS5_TEMPLATE.format(port=port)
     return None
-

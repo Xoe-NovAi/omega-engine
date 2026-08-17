@@ -15,6 +15,7 @@ from uuid import UUID, uuid4
 
 class ProposalStatus(Enum):
     """Lifecycle states for a research proposal."""
+
     DRAFT = "DRAFT"
     SCOUTING = "SCOUTING"
     VALIDATING = "VALIDATING"
@@ -27,28 +28,34 @@ class ProposalStatus(Enum):
 class CLEARScore:
     """
     CLEAR-Pareto Sovereignty Scorecard — 5 Dimensions of Research Quality.
-    
+
     Dimensions:
     - C: Cost Efficiency (USD per insight, lower = better) → normalized 0-1 (higher better)
     - L: Local-First Ratio (local inference %, higher = better)
     - E: Epistemic Rigor (citations, verification, reproducibility)
     - A: Adversarial Robustness (red-team survival rate)
     - R: Reproducibility (deterministic re-run success rate)
-    
+
     Pareto dominance: A dominates B iff A >= B on all dims and A > B on >=1.
     """
-    
-    __slots__ = ("cost_efficiency", "local_first_ratio", "epistemic_rigor", 
-                 "adversarial_robustness", "reproducibility", "timestamp")
-    
+
+    __slots__ = (
+        "cost_efficiency",
+        "local_first_ratio",
+        "epistemic_rigor",
+        "adversarial_robustness",
+        "reproducibility",
+        "timestamp",
+    )
+
     def __init__(
         self,
-        cost_efficiency: float,      # 0.0-1.0 (higher better, normalized from USD/insight)
-        local_first_ratio: float,    # 0.0-1.0 (higher better)
-        epistemic_rigor: float,      # 0.0-1.0 (higher better)
+        cost_efficiency: float,  # 0.0-1.0 (higher better, normalized from USD/insight)
+        local_first_ratio: float,  # 0.0-1.0 (higher better)
+        epistemic_rigor: float,  # 0.0-1.0 (higher better)
         adversarial_robustness: float,  # 0.0-1.0 (higher better)
-        reproducibility: float,      # 0.0-1.0 (higher better)
-        timestamp: datetime | None = None
+        reproducibility: float,  # 0.0-1.0 (higher better)
+        timestamp: datetime | None = None,
     ):
         self.cost_efficiency = max(0.0, min(1.0, cost_efficiency))
         self.local_first_ratio = max(0.0, min(1.0, local_first_ratio))
@@ -56,7 +63,7 @@ class CLEARScore:
         self.adversarial_robustness = max(0.0, min(1.0, adversarial_robustness))
         self.reproducibility = max(0.0, min(1.0, reproducibility))
         self.timestamp = timestamp or datetime.now(timezone.utc)
-    
+
     def to_vector(self) -> tuple[float, float, float, float, float]:
         """Return as normalized vector for Pareto comparison.
         Note: cost_efficiency is inverted (lower cost = higher score) so we negate for max comparison."""
@@ -65,10 +72,10 @@ class CLEARScore:
             self.local_first_ratio,
             self.epistemic_rigor,
             self.adversarial_robustness,
-            self.reproducibility
+            self.reproducibility,
         )
-    
-    def dominates(self, other: 'CLEARScore') -> bool:
+
+    def dominates(self, other: "CLEARScore") -> bool:
         """True if self Pareto-dominates other (>= on all, > on at least one)."""
         if not isinstance(other, CLEARScore):
             return False
@@ -77,7 +84,7 @@ class CLEARScore:
         all_ge = all(s >= o for s, o in zip(self_vec, other_vec))
         any_gt = any(s > o for s, o in zip(self_vec, other_vec))
         return all_ge and any_gt
-    
+
     def to_dict(self) -> dict:
         return {
             "cost_efficiency": self.cost_efficiency,
@@ -87,9 +94,9 @@ class CLEARScore:
             "reproducibility": self.reproducibility,
             "timestamp": self.timestamp.isoformat(),
         }
-    
+
     @classmethod
-    def from_dict(cls, data: dict) -> 'CLEARScore':
+    def from_dict(cls, data: dict) -> "CLEARScore":
         ts = data.get("timestamp")
         if isinstance(ts, str):
             ts = datetime.fromisoformat(ts)
@@ -101,23 +108,26 @@ class CLEARScore:
             reproducibility=data["reproducibility"],
             timestamp=ts,
         )
-    
+
     def __repr__(self) -> str:
-        return (f"CLEARScore(C={self.cost_efficiency:.2f}, L={self.local_first_ratio:.2f}, "
-                f"E={self.epistemic_rigor:.2f}, A={self.adversarial_robustness:.2f}, "
-                f"R={self.reproducibility:.2f})")
+        return (
+            f"CLEARScore(C={self.cost_efficiency:.2f}, L={self.local_first_ratio:.2f}, "
+            f"E={self.epistemic_rigor:.2f}, A={self.adversarial_robustness:.2f}, "
+            f"R={self.reproducibility:.2f})"
+        )
 
 
 @dataclass
 class ResearchProposal:
     """
     Ω-Research Proposal — Autonomous research unit with full lifecycle.
-    
+
     Carries causal_trace_id (M17) linking to Hivemind discovery / L3 principle.
     """
+
     id: UUID = field(default_factory=uuid4)
     causal_trace_id: str = field(default_factory=lambda: str(uuid4()))  # M17
-    domain: str = ""           # N6-N10 (Cognition, Context, Observability, Orchestration, Validation)
+    domain: str = ""  # N6-N10 (Cognition, Context, Observability, Orchestration, Validation)
     hypothesis: str = ""
     experiment_spec: dict = field(default_factory=dict)  # Sandbox spec + AMFO tier config
     estimated_clear: CLEARScore | None = None
@@ -131,7 +141,7 @@ class ResearchProposal:
     final_clear: CLEARScore | None = None
     consensus_signals: list[dict] = field(default_factory=list)  # AgentSignal records
     _tier_outputs: list[str] = field(default_factory=list, repr=False)
-    
+
     def __post_init__(self):
         if isinstance(self.id, str):
             self.id = UUID(self.id)
@@ -141,7 +151,7 @@ class ResearchProposal:
             self.estimated_clear = CLEARScore.from_dict(self.estimated_clear)
         if self.final_clear and isinstance(self.final_clear, dict):
             self.final_clear = CLEARScore.from_dict(self.final_clear)
-    
+
     def advance_status(self, new_status: ProposalStatus) -> None:
         """Advance proposal status with timestamp update."""
         valid_transitions = {
@@ -159,11 +169,11 @@ class ResearchProposal:
         self.updated_at = datetime.now(timezone.utc)
         if new_status in (ProposalStatus.ARCHIVED, ProposalStatus.REJECTED):
             self.completed_at = datetime.now(timezone.utc)
-    
+
     def is_terminal(self) -> bool:
         """M12 Queue Integrity: Terminal states have no outgoing transitions."""
         return self.status in (ProposalStatus.ARCHIVED, ProposalStatus.REJECTED)
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "id": str(self.id),
@@ -182,7 +192,7 @@ class ResearchProposal:
             "final_clear": self.final_clear.to_dict() if self.final_clear else None,
             "consensus_signals": self.consensus_signals,
         }
-    
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ResearchProposal:
         obj = cls(
@@ -194,9 +204,15 @@ class ResearchProposal:
             budget_usd=data.get("budget_usd", 0.0),
             assigned_agents=data.get("assigned_agents", []),
             status=ProposalStatus(data.get("status", "DRAFT")),
-            created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else datetime.now(timezone.utc),
-            updated_at=datetime.fromisoformat(data["updated_at"]) if data.get("updated_at") else datetime.now(timezone.utc),
-            completed_at=datetime.fromisoformat(data["completed_at"]) if data.get("completed_at") else None,
+            created_at=datetime.fromisoformat(data["created_at"])
+            if data.get("created_at")
+            else datetime.now(timezone.utc),
+            updated_at=datetime.fromisoformat(data["updated_at"])
+            if data.get("updated_at")
+            else datetime.now(timezone.utc),
+            completed_at=datetime.fromisoformat(data["completed_at"])
+            if data.get("completed_at")
+            else None,
             result_summary=data.get("result_summary", ""),
             consensus_signals=data.get("consensus_signals", []),
         )
@@ -213,6 +229,7 @@ class AgentSignal:
     Cross-pollination signal from a peer research agent.
     Carries causal_trace_id for M17 contradiction detection.
     """
+
     agent_id: str
     proposal_id: UUID
     causal_trace_id: str
@@ -222,7 +239,7 @@ class AgentSignal:
     domain_expertise: float  # 0.0-1.0, agent's historical accuracy in this domain
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     trace_id: str = field(default_factory=lambda: str(uuid4()))
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "agent_id": self.agent_id,
@@ -235,7 +252,7 @@ class AgentSignal:
             "timestamp": self.timestamp.isoformat(),
             "trace_id": self.trace_id,
         }
-    
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> AgentSignal:
         return cls(
@@ -246,7 +263,9 @@ class AgentSignal:
             content=data["content"],
             confidence=data["confidence"],
             domain_expertise=data["domain_expertise"],
-            timestamp=datetime.fromisoformat(data["timestamp"]) if data.get("timestamp") else datetime.now(timezone.utc),
+            timestamp=datetime.fromisoformat(data["timestamp"])
+            if data.get("timestamp")
+            else datetime.now(timezone.utc),
             trace_id=data.get("trace_id", str(uuid4())),
         )
 
@@ -254,6 +273,7 @@ class AgentSignal:
 @dataclass
 class ConsensusResult:
     """Aggregated result from cross-pollination synthesis."""
+
     proposal_id: UUID
     accepted: bool
     weighted_score: float
@@ -276,21 +296,22 @@ AMFO_TIERS = [
 class CalibratedJudge:
     """
     Isotonic regression calibrated judge for CLEAR scoring.
-    
+
     Trained on 250 oracle labels → ECE 0.18 → 0.06.
     Judge model: qwen3-4b-thinking-q4_k_m (local, M7).
     """
-    
+
     def __init__(self, model: str = "qwen3-4b-thinking-q4_k_m"):
         self.model = model
         self._calibrator = None  # sklearn.isotonic.IsotonicRegression
         self._calibrated = False
-    
+
     def calibrate(self, oracle_labels: list[tuple[float, float]]) -> None:
         """Calibrate using isotonic regression on (raw_score, oracle_score) pairs."""
         try:
             from sklearn.isotonic import IsotonicRegression
             import numpy as np
+
             X = np.array([x for x, _ in oracle_labels]).reshape(-1, 1)
             y = np.array([y for _, y in oracle_labels])
             self._calibrator = IsotonicRegression(out_of_bounds="clip")
@@ -299,14 +320,15 @@ class CalibratedJudge:
         except ImportError:
             # sklearn not available — skip calibration
             self._calibrated = False
-    
+
     def judge(self, raw_score: float) -> float:
         """Apply calibration if available."""
         if self._calibrated and self._calibrator is not None:
             import numpy as np
+
             return float(self._calibrator.predict(np.array([[raw_score]]))[0])
         return raw_score
-    
+
     async def evaluate_proposal(self, proposal: ResearchProposal, oracle_summon) -> CLEARScore:
         """Evaluate proposal using calibrated judge."""
         prompt = f"""Evaluate this research proposal on CLEAR dimensions (0-1 each):
@@ -350,6 +372,7 @@ Return JSON:
 @dataclass
 class AMFOResult:
     """Result from a single AMFO tier."""
+
     tier_name: str
     fidelity: str
     model_used: str
@@ -365,6 +388,7 @@ class AMFOResult:
 @dataclass
 class AMFOEvaluation:
     """Complete AMFO evaluation result."""
+
     proposal_id: str
     tier_results: list[AMFOResult] = field(default_factory=list)
     final_clear: CLEARScore | None = None
@@ -379,7 +403,7 @@ class AMFOEvaluation:
 class AMFOEvaluator:
     """
     Tiered fidelity evaluation for 300% throughput on 14Gi RAM.
-    
+
     M1: AnyIO async
     M7: Local-first (qwen3 models)
     M11: causal_trace_id → L3 distillation
@@ -390,7 +414,7 @@ class AMFOEvaluator:
     M22: Provider provenance from response
     M23: No soft-failures (timeouts = hard failures)
     """
-    
+
     def __init__(
         self,
         oracle_summon,
@@ -400,27 +424,27 @@ class AMFOEvaluator:
         self.oracle_summon = oracle_summon
         self.judge = judge or CalibratedJudge()
         self.tiers = tiers or AMFO_TIERS
-    
+
     async def evaluate(self, proposal: ResearchProposal) -> AMFOEvaluation:
         """
         Execute AMFO evaluation pipeline.
-        
+
         Flow:
         1. SCOUT (60s, qwen3-0.6b) — Rapid feasibility
         2. If promising → VALIDATE (300s, qwen3-1.7b) — Source verification
         3. If promising → SYNTHESIZE (1800s, qwen3-4b-thinking) — Deep reasoning
-        
+
         Early stopping if any tier exceeds threshold.
         """
         eval_result = AMFOEvaluation(proposal_id=str(proposal.id))
-        
+
         for tier in self.tiers:
             tier_start = time.perf_counter()
-            
+
             # Execute tier evaluation
             tier_result = await self._run_tier(proposal, tier)
             eval_result.tier_results.append(tier_result)
-            
+
             # Update proposal status
             status_map = {
                 "scout": ProposalStatus.SCOUTING,
@@ -429,60 +453,64 @@ class AMFOEvaluator:
             }
             proposal.advance_status(status_map.get(tier["name"], ProposalStatus.SCOUTING))
             proposal._tier_outputs.append(tier_result.raw_output)
-            
+
             # Check early stop condition
             if tier_result.success and tier_result.clear_score:
-                if (tier_result.clear_score.local_first_ratio > 0.8 and 
-                    tier_result.clear_score.epistemic_rigor > 0.7):
+                if (
+                    tier_result.clear_score.local_first_ratio > 0.8
+                    and tier_result.clear_score.epistemic_rigor > 0.7
+                ):
                     eval_result.early_stop_tier = tier["name"]
                     eval_result.consensus_reached = True
                     break
-            
+
             # Budget check
             if eval_result.total_time_sec > tier["budget_sec"] * 1.5:
                 break
-        
+
         eval_result.total_time_sec = sum(r.execution_time_sec for r in eval_result.tier_results)
-        
+
         # Final score from highest fidelity completed tier
         successful_tiers = [r for r in eval_result.tier_results if r.success and r.clear_score]
         if successful_tiers:
             eval_result.final_clear = successful_tiers[-1].clear_score
             eval_result.calibrated_judge_used = True
             eval_result.judge_provider = successful_tiers[-1].provider_name
-        
+
         # Update proposal with final result
         proposal.final_clear = eval_result.final_clear
-        proposal.result_summary = f"AMFO completed: {[r.tier_name for r in eval_result.tier_results]}"
+        proposal.result_summary = (
+            f"AMFO completed: {[r.tier_name for r in eval_result.tier_results]}"
+        )
         if eval_result.final_clear:
             proposal.advance_status(ProposalStatus.CONSENSUS)
-        
+
         return eval_result
-    
+
     async def _run_tier(self, proposal: ResearchProposal, tier: dict) -> AMFOResult:
         """Execute a single AMFO tier with AnyIO timeout (M1, M23)."""
         import anyio
-        
+
         tier_name = tier["name"]
         model = tier["model"]
         budget_sec = tier["budget_sec"]
         tier_start = time.perf_counter()
-        
+
         prompt = self._build_tier_prompt(proposal, tier)
-        
+
         try:
             # M1: AnyIO timeout wrapper — M23: timeout = hard failure
             with anyio.move_on_after(budget_sec) as scope:
                 response = await self.oracle_summon(model, prompt)
-            
+
             if scope.cancelled_caught:
                 raise TimeoutError(f"Tier {tier_name} exceeded {budget_sec}s budget")
-            
+
             provider_name = getattr(response, "provider_name", "unknown")
-            
+
             # Parse tier output
             clear_score = self._parse_tier_output(response.text, tier_name)
-            
+
             return AMFOResult(
                 tier_name=tier_name,
                 fidelity=tier["fidelity"],
@@ -520,7 +548,7 @@ class AMFOEvaluator:
                 success=False,
                 error=str(e),
             )
-    
+
     def _build_tier_prompt(self, proposal: ResearchProposal, tier: dict) -> str:
         fidelity = tier["fidelity"]
         if fidelity == "low":
@@ -565,7 +593,7 @@ Return JSON with CLEAR scores:
   "reproducibility": 0.0-1.0,
   "l3_principle_candidate": "Universal principle extracted..."
 }}"""
-    
+
     def _parse_tier_output(self, output: str, tier_name: str) -> CLEARScore:
         """Parse tier output into CLEARScore."""
         try:
@@ -604,6 +632,7 @@ async def oracle_summon(model: str, prompt: str):
     Adapter for Omega Hub oracle_summon.
     Returns response with provider_name for M22 provenance.
     """
+
     # This will be replaced by actual Omega Hub call at runtime
     # For testing, returns a mock response
     class MockResponse:
@@ -611,9 +640,12 @@ async def oracle_summon(model: str, prompt: str):
             self.text = text
             self.provider_name = provider_name
             self.tokens_used = tokens_used
-    
+
     # In production, this calls: omega_hub_oracle_summon(entity_name="lilith", query=prompt, model=model)
-    return MockResponse('{"cost_efficiency":0.7,"local_first_ratio":0.8,"epistemic_rigor":0.7,"adversarial_robustness":0.6,"reproducibility":0.7}', "mock")
+    return MockResponse(
+        '{"cost_efficiency":0.7,"local_first_ratio":0.8,"epistemic_rigor":0.7,"adversarial_robustness":0.6,"reproducibility":0.7}',
+        "mock",
+    )
 
 
 # ── Contract Test Helpers (M21 Gate Integrity) ───────────────────────────

@@ -18,12 +18,11 @@ Results are cached and stored in data/research/.
 import json
 import logging
 import os
-import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import anyio
 
@@ -76,6 +75,7 @@ class ResearchEngine:
     def __init__(self, library: Optional[Any] = None, indexer: Optional[Any] = None):
         from .library import Library
         from .indexer import Indexer
+
         self.library = library or Library()
         self.indexer = indexer or Indexer()
 
@@ -100,7 +100,15 @@ class ResearchEngine:
             research_id=research_id,
             query=query,
             depth=depth,
-            sources_used=[{"doc_id": s.doc_id, "title": s.title, "domain": s.domain, "quality_score": s.quality_score} for s in sources],
+            sources_used=[
+                {
+                    "doc_id": s.doc_id,
+                    "title": s.title,
+                    "domain": s.domain,
+                    "quality_score": s.quality_score,
+                }
+                for s in sources
+            ],
             synthesis=synthesis,
             key_findings=key_findings,
             confidence=confidence,
@@ -108,7 +116,9 @@ class ResearchEngine:
         )
 
         await self._save_result(result)
-        logger.info(f"Research complete [{depth}] {query[:60]} — {len(sources)} sources, confidence={confidence:.2f}")
+        logger.info(
+            f"Research complete [{depth}] {query[:60]} — {len(sources)} sources, confidence={confidence:.2f}"
+        )
         return result
 
     async def _gather_sources(
@@ -131,19 +141,28 @@ class ResearchEngine:
                 sources.append(doc)
 
         if len(sources) < depth_config["min_sources"]:
-            extra = await self.library.search(query, domain=domain, limit=depth_config["max_sources"])
+            extra = await self.library.search(
+                query, domain=domain, limit=depth_config["max_sources"]
+            )
             for doc in extra:
                 if doc not in sources and doc.quality_score >= 0.3:
                     sources.append(doc)
 
-        return sources[:depth_config["max_sources"]]
+        return sources[: depth_config["max_sources"]]
 
     def _synthesize(self, sources: List[Any], query: str, depth: int) -> str:
         """Generate a synthesis from gathered sources."""
         if not sources:
-            return f"No library sources found for: {query}. Try ingesting content first via the inbox."
+            return (
+                f"No library sources found for: {query}. Try ingesting content first via the inbox."
+            )
 
-        lines = [f"# Research: {query}", f"Depth: Level {depth} ({RESEARCH_DEPTHS[depth]['label']})", f"Sources: {len(sources)}", ""]
+        lines = [
+            f"# Research: {query}",
+            f"Depth: Level {depth} ({RESEARCH_DEPTHS[depth]['label']})",
+            f"Sources: {len(sources)}",
+            "",
+        ]
 
         for i, source in enumerate(sources, 1):
             lines.append(f"## Source {i}: {source.title}")
@@ -154,10 +173,14 @@ class ResearchEngine:
 
         lines.append("## Synthesis")
         if len(sources) == 1:
-            lines.append(f"Based on the single source '{sources[0].title}', the key points are: {sources[0].summary}")
+            lines.append(
+                f"Based on the single source '{sources[0].title}', the key points are: {sources[0].summary}"
+            )
         elif len(sources) >= 2:
             domains = set(s.domain for s in sources)
-            lines.append(f"Analysis across {len(sources)} sources from {len(domains)} domains ({', '.join(domains)}):")
+            lines.append(
+                f"Analysis across {len(sources)} sources from {len(domains)} domains ({', '.join(domains)}):"
+            )
             for j, source in enumerate(sources[:3], 1):
                 lines.append(f"{j}. {source.title[:100]} — {source.summary[:200]}")
 
@@ -212,12 +235,14 @@ class ResearchEngine:
         for path in sorted(RESEARCH_DIR.glob("*.json"), reverse=True)[:limit]:
             async with await anyio.open_file(str(path)) as f:
                 data = json.loads(await f.read())
-            results.append({
-                "research_id": data["research_id"],
-                "query": data["query"],
-                "depth": data["depth"],
-                "sources": len(data["sources_used"]),
-                "confidence": data["confidence"],
-                "created_at": data["created_at"],
-            })
+            results.append(
+                {
+                    "research_id": data["research_id"],
+                    "query": data["query"],
+                    "depth": data["depth"],
+                    "sources": len(data["sources_used"]),
+                    "confidence": data["confidence"],
+                    "created_at": data["created_at"],
+                }
+            )
         return results

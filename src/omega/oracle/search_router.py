@@ -25,13 +25,42 @@ TIER_FIRECRAWL = 3
 
 # Query category keywords
 _TECHNICAL_KEYWORDS = {
-    "github", "git", "python", "rust", "c++", "api", "sdk", "library",
-    "module", "class", "function", "import", "compile", "debug", "test",
-    "docker", "podman", "systemd", "nginx", "ssh", "database", "sql",
+    "github",
+    "git",
+    "python",
+    "rust",
+    "c++",
+    "api",
+    "sdk",
+    "library",
+    "module",
+    "class",
+    "function",
+    "import",
+    "compile",
+    "debug",
+    "test",
+    "docker",
+    "podman",
+    "systemd",
+    "nginx",
+    "ssh",
+    "database",
+    "sql",
 }
 _RESEARCH_KEYWORDS = {
-    "paper", "arxiv", "study", "research", "analysis", "survey", "review",
-    "theorem", "proof", "methodology", "experiment", "hypothesis",
+    "paper",
+    "arxiv",
+    "study",
+    "research",
+    "analysis",
+    "survey",
+    "review",
+    "theorem",
+    "proof",
+    "methodology",
+    "experiment",
+    "hypothesis",
 }
 _URL_PATTERN = re.compile(r"https?://\S+")
 
@@ -39,14 +68,15 @@ _URL_PATTERN = re.compile(r"https?://\S+")
 @dataclass
 class SearchIntent:
     """Contract between Oracle and search pipeline.
-    
+
     Produced by SearchRouter, consumed by SovereignSearchService.
     """
+
     primary_tier: int = TIER_SEARXNG
     max_tier: int = TIER_FIRECRAWL
     force_tier: Optional[int] = None
-    query_category: str = "factual"       # factual|research|technical|deep
-    search_depth: str = "standard"        # quick|standard|deep
+    query_category: str = "factual"  # factual|research|technical|deep
+    search_depth: str = "standard"  # quick|standard|deep
     entity_name: Optional[str] = None
     max_results: int = 10
     allow_cloud_search: bool = True
@@ -57,14 +87,14 @@ class SearchIntent:
 
 class SearchRouter:
     """Analyzes query signals and produces a SearchIntent.
-    
+
     Lightweight, no LLM calls, pure rule-based dispatch.
     Designed to be called before every search operation.
     """
-    
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
-    
+
     def route(
         self,
         query: str,
@@ -75,7 +105,7 @@ class SearchRouter:
         provider_health: Optional[Dict[int, bool]] = None,
     ) -> SearchIntent:
         """Analyze signals and produce a SearchIntent.
-        
+
         Args:
             query: The search query string.
             entity_name: Entity context (if any).
@@ -86,7 +116,7 @@ class SearchRouter:
         """
         signals: Dict[str, Any] = {}
         reasoning: List[str] = []
-        
+
         has_url = bool(_URL_PATTERN.search(query))
         signals["has_url"] = has_url
         signals["iris_confidence"] = iris_confidence
@@ -163,7 +193,9 @@ class SearchRouter:
                 primary_tier = TIER_FIRECRAWL
 
         # 5. Special Case: Technical Entity
-        if entity_name and any(x in entity_name.lower() for x in ["dev", "eng", "tech", "architect"]):
+        if entity_name and any(
+            x in entity_name.lower() for x in ["dev", "eng", "tech", "architect"]
+        ):
             reasoning.append(f"Technical entity ({entity_name}) → prefer T2 (Exa)")
             if primary_tier < TIER_EXA:
                 primary_tier = TIER_EXA
@@ -180,12 +212,12 @@ class SearchRouter:
             signals_used=signals,
             routing_reasoning=reasoning,
         )
-    
+
     def _classify_query(self, query: str) -> str:
         """Classify query into a category based on keywords."""
         lower = query.lower()
         words = set(lower.split())
-        
+
         if words & _TECHNICAL_KEYWORDS:
             return "technical"
         if words & _RESEARCH_KEYWORDS:

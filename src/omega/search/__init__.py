@@ -17,7 +17,7 @@ from .search_persistence import (
 
 __all__ = [
     "SearchDB",
-    "SearchRecord", 
+    "SearchRecord",
     "SearchPersistence",
     "persist_search",
     "record_search",

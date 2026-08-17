@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 logger = logging.getLogger("omega.ingestion.verifier")
 
+
 @dataclass
 class VerificationResult:
     is_verified: bool
@@ -15,16 +16,20 @@ class VerificationResult:
     disputes: List[str]
     provenance_chain: List[str]
 
+
 class TriangulationVerifier:
     """
     The Sovereign-Sieve: Verifies knowledge by triangulating multiple extraction tiers.
-    
+
     Sovereignty: Defeats sycophancy and consensus hallucinations via independent provenance.
     """
+
     def __init__(self, enrichment_engine=None):
         self.enrichment = enrichment_engine
 
-    async def verify(self, t1_result: Dict, t3_result: Dict, domain_key: Optional[str] = None) -> VerificationResult:
+    async def verify(
+        self, t1_result: Dict, t3_result: Dict, domain_key: Optional[str] = None
+    ) -> VerificationResult:
         """
         Implements the Sovereign-Sieve feedback loop.
         T1: Fast extraction
@@ -32,11 +37,13 @@ class TriangulationVerifier:
         """
         # 1. Compare T1 and T3 for factual deltas
         delta = self._calculate_delta(t1_result["content"], t3_result["content"])
-        
+
         # 2. If delta is high, we have a contradiction.
         # In a full implementation, this would trigger a T2 (Surgical) extraction.
         if delta > 0.3:
-            logger.warning(f"Significant delta detected between T1 and T3 ({delta:.2f}). Triggering T2 Surgical path...")
+            logger.warning(
+                f"Significant delta detected between T1 and T3 ({delta:.2f}). Triggering T2 Surgical path..."
+            )
             # T2 logic would go here. For now, we mark as disputed.
             dispute = "High delta between Fast and Deep extraction tiers."
         else:
@@ -45,9 +52,7 @@ class TriangulationVerifier:
         # 3. Triangulate Metadata (Author, Date, DOI)
         # We use the enrichment engine to get authoritative ground truth.
         resolved_meta, confidence, provenance = await self._triangulate_metadata(
-            t1_result.get("metadata", {}), 
-            t3_result.get("metadata", {}),
-            domain_key
+            t1_result.get("metadata", {}), t3_result.get("metadata", {}), domain_key
         )
 
         # 4. Consensus Hallucination Guard
@@ -64,7 +69,7 @@ class TriangulationVerifier:
             confidence_score=confidence,
             resolved_metadata=resolved_meta,
             disputes=disputes,
-            provenance_chain=provenance
+            provenance_chain=provenance,
         )
 
     def _calculate_delta(self, text1: str, text2: str) -> float:
@@ -77,7 +82,9 @@ class TriangulationVerifier:
         union = len(set1.union(set2))
         return 1.0 - (intersection / union)
 
-    async def _triangulate_metadata(self, meta1: Dict, meta3: Dict, domain_key: Optional[str]) -> Tuple[Dict, float, List[str]]:
+    async def _triangulate_metadata(
+        self, meta1: Dict, meta3: Dict, domain_key: Optional[str]
+    ) -> Tuple[Dict, float, List[str]]:
         """
         Corroborates metadata across extraction tiers and authoritative APIs.
         """
@@ -87,11 +94,11 @@ class TriangulationVerifier:
 
         # Fields to triangulate
         fields = ["author", "date", "doi", "title"]
-        
+
         for field in fields:
             val1 = meta1.get(field)
             val3 = meta3.get(field)
-            
+
             # Get authoritative value from enrichment engine if available
             auth_val = None
             if self.enrichment and (val1 or val3):
@@ -104,7 +111,7 @@ class TriangulationVerifier:
             # 2. T1 == T3 wins (Confidence 0.8)
             # 3. T3 wins over T1 (Confidence 0.6)
             # 4. Disagreement (Confidence 0.2)
-            
+
             if auth_val:
                 resolved[field] = auth_val
                 scores.append(1.0)

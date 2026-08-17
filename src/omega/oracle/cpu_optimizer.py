@@ -32,7 +32,7 @@ Speculative decoding (Oracle already implements this):
   Draft: speculative-decoder (qwen3-1.7b-270m, always-on, ~300MB)
   Target: Node (loaded on demand)
   Acceptance: heuristic-based confidence check
-  
+
   Can be enhanced with dynamic speculation:
   - Track acceptance rate per entity
   - Adjust speculation length (target tokens per draft)
@@ -43,13 +43,7 @@ Speculative decoding (Oracle already implements this):
 import logging
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 import os
 import platform
@@ -125,6 +119,7 @@ TARGET_ACCEPTANCE_RATE = 0.6  # Aim for 60% draft acceptance
 @dataclass
 class CompilationFlags:
     """llama.cpp compilation flags for Zen 2 optimization."""
+
     march: str = "znver2"
     avx2: bool = True
     fma: bool = True
@@ -162,14 +157,17 @@ class CompilationFlags:
 @dataclass
 class KVCacheConfig:
     """KV cache quantization configuration for llama-server."""
-    key_cache_type: str = "q8_0"   # q8_0, q4_0, f16
-    value_cache_type: str = "q8_0" # q8_0, q4_0, f16
-    mul_matq_input: bool = True     # Enable Q8_0 input optimization
+
+    key_cache_type: str = "q8_0"  # q8_0, q4_0, f16
+    value_cache_type: str = "q8_0"  # q8_0, q4_0, f16
+    mul_matq_input: bool = True  # Enable Q8_0 input optimization
 
     def to_llama_server_flags(self) -> List[str]:
         flags = [
-            "-ctk", self.key_cache_type,
-            "-ctv", self.value_cache_type,
+            "-ctk",
+            self.key_cache_type,
+            "-ctv",
+            self.value_cache_type,
         ]
         if self.mul_matq_input:
             flags.extend(["-mli", "1"])
@@ -184,6 +182,7 @@ class SpeculativeDecodeConfig:
       - "ngram": lightweight n-gram drafter (default, no extra model load)
       - "mtp": Gemma 4 native Multi-Token Prediction draft via `--spec-type draft-mtp`
     """
+
     draft_model: str = "qwen3-1.7b"
     draft_type: str = "ngram"  # "ngram" | "mtp"
     mtp_draft_model: Optional[str] = None  # e.g. "gemma-4-26b-it-assistant"
@@ -305,7 +304,9 @@ class Zen2Optimizer:
         elif remaining_ram_mb > q4_0_total_mb * 1.5:
             return KVCacheConfig(key_cache_type="q4_0", value_cache_type="q4_0")
         else:
-            logger.warning(f"Limited RAM: {remaining_ram_mb:.0f}MB for KV cache of {context_window} tokens")
+            logger.warning(
+                f"Limited RAM: {remaining_ram_mb:.0f}MB for KV cache of {context_window} tokens"
+            )
             # Need to reduce context or use aggressive quantization
             return KVCacheConfig(key_cache_type="q4_0", value_cache_type="q4_0")
 
@@ -431,6 +432,7 @@ class Zen2Optimizer:
 
         try:
             import anyio
+
             result = await anyio.run_process(
                 ["awk", "/MemAvailable/{print $2}", "/proc/meminfo"],
                 capture_output=True,
@@ -464,11 +466,13 @@ class Zen2Optimizer:
             pressure["kv_recommendation"] = "q4_0"
             pressure["can_keep_nova"] = False
 
-        self._memory_log.append({
-            "timestamp": time.time(),
-            "available_mb": avail,
-            "pressure_level": pressure["pressure_level"],
-        })
+        self._memory_log.append(
+            {
+                "timestamp": time.time(),
+                "available_mb": avail,
+                "pressure_level": pressure["pressure_level"],
+            }
+        )
         self._memory_log = self._memory_log[-100:]
 
         return pressure
@@ -499,8 +503,14 @@ class Zen2Optimizer:
         """
         # Model RAM: rough estimates per quantization
         quant_factors = {
-            "q2_k": 300, "q3_k_m": 400, "q4_0": 450, "q4_k_m": 500,
-            "q5_k_m": 600, "q6_k": 700, "q8_0": 800, "f16": 1400,
+            "q2_k": 300,
+            "q3_k_m": 400,
+            "q4_0": 450,
+            "q4_k_m": 500,
+            "q5_k_m": 600,
+            "q6_k": 700,
+            "q8_0": 800,
+            "f16": 1400,
         }
         factor = quant_factors.get(quantization, 500)
         model_mb = model_size_b * factor
@@ -578,8 +588,8 @@ class Zen2Optimizer:
                 "compute_cores": ZEN2_COMPUTE_CORES,
                 "io_threads": ZEN2_IO_THREADS,
                 "is_optimal_for_local_ai": (
-                    cpu_info.get("has_avx2", False) and
-                    not cpu_info.get("has_avx512", False)  # no wasted AVX-512 codegen
+                    cpu_info.get("has_avx2", False)
+                    and not cpu_info.get("has_avx512", False)  # no wasted AVX-512 codegen
                 ),
             },
             "compilation": {
@@ -593,9 +603,7 @@ class Zen2Optimizer:
             },
             "speculative_decoding": {
                 "draft_model": self.spec_decode.draft_model,
-                "overall_acceptance_rate": round(
-                    self.get_speculative_acceptance_rate(), 3
-                ),
+                "overall_acceptance_rate": round(self.get_speculative_acceptance_rate(), 3),
                 "entity_rates": self.spec_decode.entity_acceptance_rates,
                 "suggested_draft_tokens": self.suggest_speculation_length(),
             },
@@ -676,12 +684,16 @@ class Zen2Optimizer:
             # Override compute cores with detected physical cores if available
             if physical:
                 # Use even-indexed logical cores (physical cores, not SMT)
-                topology["compute_cores"] = sorted(
-                    [i for i in range(len(physical)) if i % 2 == 0]
-                ) if len(physical) >= 4 else physical[:len(physical)//2]
-                topology["io_threads"] = sorted(
-                    [i for i in range(len(physical)) if i % 2 == 1]
-                ) if len(physical) >= 4 else physical[len(physical)//2:]
+                topology["compute_cores"] = (
+                    sorted([i for i in range(len(physical)) if i % 2 == 0])
+                    if len(physical) >= 4
+                    else physical[: len(physical) // 2]
+                )
+                topology["io_threads"] = (
+                    sorted([i for i in range(len(physical)) if i % 2 == 1])
+                    if len(physical) >= 4
+                    else physical[len(physical) // 2 :]
+                )
 
         except OmegaError:
             pass
@@ -803,31 +815,32 @@ class Zen2Optimizer:
         extra_env: Optional[Dict[str, str]] = None,
     ) -> Dict[str, str]:
         """Build environment variables for a pinned inference process.
-        
+
         Args:
             threads: Thread count. Defaults to ZEN2_RECOMMENDED_THREADS.
             concurrent_agents: Number of agents running in parallel.
             extra_env: Additional environment variables to merge.
-        
+
         Returns:
             Complete environment dict for the subprocess.
         """
         if threads is None:
             # Scale threads down based on concurrency to avoid SMT thrashing
             threads = max(1, ZEN2_RECOMMENDED_THREADS // concurrent_agents)
-        
+
         env = os.environ.copy()
-        env.update({
-            "OMP_NUM_THREADS": str(threads),
-            "OMP_PROC_BIND": "close",
-            "OMP_PLACES": "cores",
-            "OPENBLAS_CORETYPE": "ZEN",
-            "LLAMA_CPU_HINT": "1",
-        })
+        env.update(
+            {
+                "OMP_NUM_THREADS": str(threads),
+                "OMP_PROC_BIND": "close",
+                "OMP_PLACES": "cores",
+                "OPENBLAS_CORETYPE": "ZEN",
+                "LLAMA_CPU_HINT": "1",
+            }
+        )
         if extra_env:
             env.update(extra_env)
         return env
-
 
     # ── System Overview ─────────────────────────────────────────────────
 

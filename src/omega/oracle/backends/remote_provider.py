@@ -15,7 +15,6 @@
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
-import functools
 import logging
 import sqlite3
 import time
@@ -32,13 +31,8 @@ if TYPE_CHECKING:
     from omega.observability.metrics_db import MetricsDB
 
 from omega.errors import (
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    ProviderRateLimitError,
 )
 from omega.oracle.provider_registry import get_provider_registry
 
@@ -60,13 +54,16 @@ async def _get_metrics_db() -> "MetricsDB":
     async with _metrics_db_lock:
         if _metrics_db is None:
             from omega.observability.metrics_db import MetricsDB
+
             db = MetricsDB(Path("data/observability/metrics.db"))
             await anyio.to_thread.run_sync(db.initialize)  # initialize() is blocking
             _metrics_db = db
     return _metrics_db
 
 
-async def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_cloud: bool = False) -> None:
+async def _record_perf(
+    provider: str, model: str, latency_ms: float, tokens: int, is_cloud: bool = False
+) -> None:
     """Record a performance entry to MetricsDB. [M1 AnyIO] Fully async —
     no from_thread bridge. Safe to await directly from RemoteProvider.generate().
     """
@@ -101,6 +98,7 @@ async def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
     try:
         if _budget_gate is None:
             from omega.observability import get_engine
+
             _budget_gate = get_engine().budget_gate
         if _budget_gate is None:
             return True
@@ -116,7 +114,9 @@ async def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
         return True
 
 
-async def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional[str] = None) -> float:
+async def _record_cloud_spend(
+    provider: str, est_tokens: int, trace_id: Optional[str] = None
+) -> float:
     """Record cloud spend after successful inference. Returns cost in USD.
 
     Best-effort — returns 0.0 if BudgetGate unavailable.
@@ -126,6 +126,7 @@ async def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional
     try:
         if _budget_gate is None:
             from omega.observability import get_engine
+
             _budget_gate = get_engine().budget_gate
         if _budget_gate is None:
             return 0.0
@@ -139,6 +140,7 @@ async def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional
 
 class ProviderHealth(Enum):
     """Health states for a remote provider."""
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -148,6 +150,7 @@ class ProviderHealth(Enum):
 @dataclass
 class ProviderMetrics:
     """Runtime metrics for a remote provider instance."""
+
     total_requests: int = 0
     successful_requests: int = 0
     failed_requests: int = 0
@@ -173,6 +176,7 @@ class ProviderMetrics:
 @dataclass
 class ProviderConfig:
     """Configuration for a remote provider, loaded from providers.yaml."""
+
     name: str
     priority: int
     enabled: bool = True
@@ -217,14 +221,14 @@ class RemoteProvider(ABC):
 
     def resolve_current_api_key(self) -> Optional[str]:
         """Resolve the current active API key from config.
-        
+
         Resolution chain:
         1. Config has api_keys list → return key at _active_key_index
         2. No keys → return None
         """
         if not self.config.api_keys:
             return None
-        
+
         # Ensure index is within bounds
         self._active_key_index %= len(self.config.api_keys)
         return self.config.api_keys[self._active_key_index]
@@ -251,29 +255,35 @@ class RemoteProvider(ABC):
         max_tokens: int = 1024,
         trace_id: Optional[str] = None,
         session_id: Optional[str] = None,
-        logit_bias: Optional[Dict[int, float]] = None,      # Ignored (not supported by remote)
-        repetition_penalty: float = 1.0,                     # Ignored (not supported by remote)
+        logit_bias: Optional[Dict[int, float]] = None,  # Ignored (not supported by remote)
+        repetition_penalty: float = 1.0,  # Ignored (not supported by remote)
         **kwargs,  # Swallow any future params for forward compatibility
     ) -> Optional[str]:
         """Generate a response with retry, circuit breaking, and metrics.
-        
+
         Returns None if the provider is unavailable or all retries fail.
         """
         # Log unsupported params for debugging
         if logit_bias:
-            logger.debug(f"{self.__class__.__name__} ignoring logit_bias (not supported by remote provider)")
+            logger.debug(
+                f"{self.__class__.__name__} ignoring logit_bias (not supported by remote provider)"
+            )
         if repetition_penalty != 1.0:
-            logger.debug(f"{self.__class__.__name__} ignoring repetition_penalty (not supported by remote provider)")
+            logger.debug(
+                f"{self.__class__.__name__} ignoring repetition_penalty (not supported by remote provider)"
+            )
         if kwargs:
             logger.debug(f"{self.__class__.__name__} ignoring extra kwargs: {list(kwargs.keys())}")
         if not await self.is_available():
             logger.debug(f"Provider {self.name} unavailable (health={self.health.value})")
             return None
-        
+
         # Budget check (per-provider token limit)
         if self.config.daily_token_budget is not None:
             if self.metrics.total_tokens_used >= self.config.daily_token_budget:
-                logger.warning(f"Provider {self.name} daily budget exhausted ({self.metrics.total_tokens_used} tokens)")
+                logger.warning(
+                    f"Provider {self.name} daily budget exhausted ({self.metrics.total_tokens_used} tokens)"
+                )
                 return None
 
         # BudgetGate cloud cost check (SPRINT-04)
@@ -288,44 +298,51 @@ class RemoteProvider(ABC):
             try:
                 start_ms = time.monotonic() * 1000
                 result = await self._send_request(
-                    model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id, session_id=session_id
+                    model_name,
+                    system_prompt,
+                    user_query,
+                    temperature,
+                    max_tokens,
+                    trace_id=trace_id,
+                    session_id=session_id,
                 )
                 elapsed_ms = (time.monotonic() * 1000) - start_ms
-        
+
                 # [S3 B4] Repetition Loop Detector — abort degenerate output
                 # Moved to base class so ALL providers inherit this guard
                 self._detect_repetition_loop(result, model_name)
-        
+
                 # Record success
                 self.metrics.total_requests += 1
                 self.metrics.successful_requests += 1
                 self.metrics.total_latency_ms += elapsed_ms
                 self.metrics.consecutive_failures = 0
                 self.metrics.last_success_time = time.monotonic()
-        
+
                 # Estimate token usage (rough: 4 chars per token)
                 if result:
                     est_tokens = (len(system_prompt) + len(user_query) + len(result)) // 4
                     self.metrics.total_tokens_used += est_tokens
-        
+
                 logger.info(
-                    f"Provider {self.name} responded in {elapsed_ms:.0f}ms "
-                    f"(attempt {attempt + 1})"
+                    f"Provider {self.name} responded in {elapsed_ms:.0f}ms (attempt {attempt + 1})"
                 )
                 # Record performance to MetricsDB (D203 — sovereignty tracking)
-                await _record_perf(self.name, model_name, elapsed_ms, est_tokens, is_cloud=self._is_cloud_name())
+                await _record_perf(
+                    self.name, model_name, elapsed_ms, est_tokens, is_cloud=self._is_cloud_name()
+                )
                 # Record cloud spend to BudgetGate (SPRINT-04)
                 if self._is_cloud_name():
                     await _record_cloud_spend(self.name, est_tokens, trace_id)
                 return result
-        
+
             except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
                 last_error = e
                 self.metrics.total_requests += 1
                 self.metrics.failed_requests += 1
                 self.metrics.consecutive_failures += 1
                 self.metrics.last_failure_time = time.monotonic()
-        
+
                 # D205: Sticky Active-Passive Key Sharding
                 # If it's a rate limit (429), rotate to the next key immediately
                 is_rate_limit = False
@@ -333,25 +350,30 @@ class RemoteProvider(ABC):
                     is_rate_limit = True
                 elif isinstance(e, ProviderRateLimitError):
                     is_rate_limit = True
-                
+
                 if is_rate_limit and len(self.config.api_keys) > 1:
-                    self._active_key_index = (self._active_key_index + 1) % len(self.config.api_keys)
-                    logger.info(f"Provider {self.name} rate limited. Rotating to key index {self._active_key_index}")
-                
+                    self._active_key_index = (self._active_key_index + 1) % len(
+                        self.config.api_keys
+                    )
+                    logger.info(
+                        f"Provider {self.name} rate limited. Rotating to key index {self._active_key_index}"
+                    )
+
                 logger.warning(
                     f"Provider {self.name} attempt {attempt + 1}/{self.config.max_retries} "
                     f"failed: {e}"
                 )
-        
+
                 # Exponential backoff
                 if attempt < self.config.max_retries - 1:
                     delay = min(
-                        self.config.backoff_base * (2 ** attempt),
+                        self.config.backoff_base * (2**attempt),
                         self.config.backoff_max,
                     )
                     import anyio
+
                     await anyio.sleep(delay)
-        
+
         logger.error(f"Provider {self.name} exhausted all retries. Last error: {last_error}")
         return None
 
@@ -388,12 +410,12 @@ class RemoteProvider(ABC):
         """
         if not content or len(content) < 60:
             return
-        
+
         # Split into ~20-char windows and check last `threshold` are identical
         window = 20
         chunks = [
-            content[i:i+window]
-            for i in range(max(0, len(content)-window*threshold), len(content), window)
+            content[i : i + window]
+            for i in range(max(0, len(content) - window * threshold), len(content), window)
         ]
         if len(chunks) >= threshold and all(c == chunks[0] for c in chunks):
             raise RuntimeError(
@@ -418,7 +440,7 @@ class RemoteProvider(ABC):
         session_id: Optional[str] = None,
     ) -> str:
         """Send the actual API request. Subclasses implement this.
-        
+
         Should raise an exception on failure (will be retried).
         Should return the generated text on success.
         """

@@ -12,12 +12,9 @@ import hmac
 import logging
 import os
 import time
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 from dataclasses import dataclass, field
 
-import anyio
-from omega.errors import OmegaError, OmegaPersistenceError
 from omega.oracle.pii_masker import PIIMasker, PIITokenMap
 from omega.ingestion.persistence import IngestionPersistence
 
@@ -27,6 +24,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class IngestedDocument:
     """A document that has passed through the sovereign sieve."""
+
     content: str
     metadata: Dict[str, Any]
     provenance_hash: str
@@ -40,6 +38,7 @@ class SovereignSieve:
     Ensures that all external data is sanitized and PII-masked before
     entering the sovereign memory.
     """
+
     def __init__(self, pii_masker: PIIMasker):
         self.pii_masker = pii_masker
 
@@ -71,11 +70,10 @@ class SovereignSigner:
     Adds cryptographic provenance stamps to ingested data to prevent
     silent corruption or unauthorized modification.
     """
+
     def __init__(self, secret_key: Optional[str] = None):
         # [M8 Zero Telemetry] Secret loaded from env, never hardcoded
-        key = secret_key or os.environ.get(
-            "OMEGA_INGESTION_SECRET", "omega-sovereign-change-me"
-        )
+        key = secret_key or os.environ.get("OMEGA_INGESTION_SECRET", "omega-sovereign-change-me")
         self.secret_key = key.encode()
 
     def sign(self, content: str, metadata: Dict[str, Any]) -> str:
@@ -100,6 +98,7 @@ class SovereignIngestionPipeline:
     Coordinates the Sieve and Sign layers before indexing data into USM/Vector stores.
     Renamed from 'IngestionPipeline' to avoid collision with omega.ingestion.pipeline.IngestionPipeline.
     """
+
     def __init__(self, pii_masker: PIIMasker, signer: Optional[SovereignSigner] = None):
         self.sieve = SovereignSieve(pii_masker)
         self.signer = signer or SovereignSigner()
@@ -119,7 +118,8 @@ class SovereignIngestionPipeline:
 
         logger.info(
             "Sovereign Ingestion: processed %d chars, PII masked: %s",
-            len(raw_content), "Yes" if token_map else "No",
+            len(raw_content),
+            "Yes" if token_map else "No",
         )
 
         return IngestedDocument(
@@ -135,6 +135,7 @@ class SovereignIngestionCoordinator:
 
     Ties together the Sieve-and-Sign pipeline with the Tri-Anchor persistence.
     """
+
     def __init__(self, pii_masker: PIIMasker):
         self.pipeline = SovereignIngestionPipeline(pii_masker)
         self._persistence_cache: Dict[str, IngestionPersistence] = {}
@@ -187,7 +188,8 @@ class SovereignIngestionCoordinator:
 
         logger.info(
             "Sovereign Ingestion: Anchored source %s to entity %s",
-            source_id, target_entity,
+            source_id,
+            target_entity,
         )
         return source_id, doc
 
@@ -200,5 +202,6 @@ def get_ingestion_coordinator() -> SovereignIngestionCoordinator:
     global _coordinator
     if _coordinator is None:
         from omega.oracle.pii_masker import PIIMasker
+
         _coordinator = SovereignIngestionCoordinator(PIIMasker())
     return _coordinator

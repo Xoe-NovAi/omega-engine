@@ -27,6 +27,7 @@ class DescriptorRef:
     A lightweight reference to a high-density data object.
     Prevents context bloat by passing a pointer instead of the full payload.
     """
+
     descriptor_id: str
     resource_type: str
     uri: str
@@ -38,9 +39,10 @@ class GnosisProxy:
     Middleware for Tool RAG Discovery and State Transfer.
     Implements the "Invisible RAG" pattern for tools.
     """
+
     MAX_TRANSFER_STORE_SIZE = 1000
 
-    def __init__(self, registry: 'EntityRegistry'):
+    def __init__(self, registry: "EntityRegistry"):
         self.registry = registry
         # In-memory cache for descriptors (Sovereign-Lite)
         self.transfer_store: Dict[str, Any] = {}
@@ -59,7 +61,7 @@ class GnosisProxy:
         query_words = query.lower().split()
         matched_tools = []
         for tool in entity_tools:
-            desc = tool['description'].lower()
+            desc = tool["description"].lower()
             if any(word in desc for word in query_words):
                 matched_tools.append(tool)
 
@@ -86,7 +88,7 @@ class GnosisProxy:
             descriptor_id=descriptor_id,
             resource_type=resource_type,
             uri=uri,
-            metadata={"size": len(str(data))}
+            metadata={"size": len(str(data))},
         )
 
     def resolve_descriptor(self, descriptor_id: str) -> Optional[Any]:

@@ -9,31 +9,34 @@ from __future__ import annotations
 import logging
 import json
 import hashlib
-import os
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 from dataclasses import dataclass, asdict
 from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class CacheEntry:
     """A single cached search result."""
+
     content: str
     timestamp: str
     query: str
     entity: str
     metadata: Dict[str, Any]
 
+
 class SovereignCache:
     """
     Implements a local filesystem cache for SSP-V2 search results.
-    
+
     Focuses on T3 (Firecrawl) results which are expensive to produce but
     highly valuable to persist.
     """
+
     def __init__(self, cache_dir: str = ".firecrawl", ttl_seconds: int = 86400):
         self.cache_dir = Path(cache_dir)
         self.ttl_seconds = ttl_seconds
@@ -61,9 +64,11 @@ class SovereignCache:
             # Check TTL
             created_at = datetime.fromisoformat(entry.timestamp)
             delta = (datetime.now(timezone.utc) - created_at).total_seconds()
-            
+
             if delta > self.ttl_seconds:
-                logger.info(f"Cache expired for {query} (delta={delta:.0f}s > TTL={self.ttl_seconds}s)")
+                logger.info(
+                    f"Cache expired for {query} (delta={delta:.0f}s > TTL={self.ttl_seconds}s)"
+                )
                 cache_file.unlink()
                 return None
 
@@ -74,7 +79,9 @@ class SovereignCache:
             logger.warning(f"Cache read error for {key}: {e}")
             return None
 
-    def set(self, query: str, entity: str, content: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
+    def set(
+        self, query: str, entity: str, content: str, metadata: Optional[Dict[str, Any]] = None
+    ) -> bool:
         """Persist a search result to the local cache."""
         key = self._generate_key(query, entity)
         cache_file = self.cache_dir / key
@@ -85,7 +92,7 @@ class SovereignCache:
                 timestamp=datetime.now(timezone.utc).isoformat(),
                 query=query,
                 entity=entity,
-                metadata=metadata or {}
+                metadata=metadata or {},
             )
             with open(cache_file, "w", encoding="utf-8") as f:
                 json.dump(asdict(entry), f, indent=2)

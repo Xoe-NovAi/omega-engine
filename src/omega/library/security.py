@@ -17,7 +17,6 @@ import ipaddress
 import logging
 import socket
 from pathlib import Path
-from typing import Optional
 from urllib.parse import urlparse
 
 import anyio
@@ -30,6 +29,7 @@ logger = logging.getLogger(__name__)
 # Ported from BSP leaf-culling: skip invisible subtrees in O(1).
 # Here: skip internal IP ranges in O(1) CIDR check.
 
+
 class SSRFGuard:
     """Network guard that validates URLs against private/internal IP ranges.
 
@@ -40,18 +40,18 @@ class SSRFGuard:
 
     # CIDR ranges that are NEVER valid for external crawling
     FORBIDDEN_RANGES = [
-        ipaddress.ip_network("127.0.0.0/8"),       # Loopback
-        ipaddress.ip_network("10.0.0.0/8"),         # Private A (RFC 1918)
-        ipaddress.ip_network("172.16.0.0/12"),      # Private B (RFC 1918)
-        ipaddress.ip_network("192.168.0.0/16"),     # Private C (RFC 1918)
-        ipaddress.ip_network("169.254.0.0/16"),     # Link-local
-        ipaddress.ip_network("0.0.0.0/8"),          # "This" network
-        ipaddress.ip_network("100.64.0.0/10"),      # Carrier-grade NAT
-        ipaddress.ip_network("198.18.0.0/15"),      # Benchmarking
-        ipaddress.ip_network("240.0.0.0/4"),        # Multicast / Reserved
-        ipaddress.ip_network("::1/128"),            # IPv6 loopback
-        ipaddress.ip_network("fc00::/7"),           # IPv6 unique-local
-        ipaddress.ip_network("fe80::/10"),          # IPv6 link-local
+        ipaddress.ip_network("127.0.0.0/8"),  # Loopback
+        ipaddress.ip_network("10.0.0.0/8"),  # Private A (RFC 1918)
+        ipaddress.ip_network("172.16.0.0/12"),  # Private B (RFC 1918)
+        ipaddress.ip_network("192.168.0.0/16"),  # Private C (RFC 1918)
+        ipaddress.ip_network("169.254.0.0/16"),  # Link-local
+        ipaddress.ip_network("0.0.0.0/8"),  # "This" network
+        ipaddress.ip_network("100.64.0.0/10"),  # Carrier-grade NAT
+        ipaddress.ip_network("198.18.0.0/15"),  # Benchmarking
+        ipaddress.ip_network("240.0.0.0/4"),  # Multicast / Reserved
+        ipaddress.ip_network("::1/128"),  # IPv6 loopback
+        ipaddress.ip_network("fc00::/7"),  # IPv6 unique-local
+        ipaddress.ip_network("fe80::/10"),  # IPv6 link-local
     ]
 
     @staticmethod
@@ -69,9 +69,7 @@ class SSRFGuard:
                 return False
 
             # Resolve hostname to all associated IPs (thread-safe)
-            addrinfo = await anyio.to_thread.run_sync(
-                socket.getaddrinfo, parsed.hostname, None
-            )
+            addrinfo = await anyio.to_thread.run_sync(socket.getaddrinfo, parsed.hostname, None)
 
             for family, _type, _proto, _canon, sockaddr in addrinfo:
                 ip = ipaddress.ip_address(sockaddr[0])
@@ -79,7 +77,9 @@ class SSRFGuard:
                     if ip in cidr:
                         logger.warning(
                             "SSRF blocked: %s resolves to %s (%s)",
-                            url[:80], ip, cidr,
+                            url[:80],
+                            ip,
+                            cidr,
                         )
                         return False
 
@@ -118,7 +118,8 @@ def validate_path_scope(target_path: Path, base_dir: Path) -> bool:
 
         logger.warning(
             "Path traversal blocked: %s escapes base %s",
-            resolved_target, resolved_base,
+            resolved_target,
+            resolved_base,
         )
         return False
 
@@ -129,6 +130,7 @@ def validate_path_scope(target_path: Path, base_dir: Path) -> bool:
 
 # ── [id-soft: vet-035] Download Size Guard — fixed-timestep pre-check on download size ──
 # Ported from Quake's fixed-timestep pre-check: validate before executing.
+
 
 async def validate_download_size(
     url: str,
@@ -154,7 +156,9 @@ async def validate_download_size(
             if content_length and int(content_length) > max_bytes:
                 logger.warning(
                     "Download blocked: %s is %s bytes (max %s)",
-                    url[:80], content_length, max_bytes,
+                    url[:80],
+                    content_length,
+                    max_bytes,
                 )
                 return False
 

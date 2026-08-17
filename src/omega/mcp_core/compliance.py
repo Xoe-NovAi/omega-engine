@@ -19,15 +19,14 @@ Implements Sprint 1 (Transport Core) from R_CG01_MCP_STREAMABLE_HTTP_OAUTH_AUDIT
 # [heritage: w3c-trace-context 2021] Distributed tracing
 # [heritage: mcp 2024] MCP Protocol — AI-tool communication
 
-import json
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import Response, JSONResponse
-from starlette.types import ASGIApp, Scope, Receive, Send
+from starlette.responses import JSONResponse
+from starlette.types import ASGIApp
 
 logger = logging.getLogger("omega.mcp.compliance")
 
@@ -60,34 +59,35 @@ ERROR_CODES = {
 # MIDDLEWARE 1: W3C TRACE CONTEXT PROPAGATION (SEP-414)
 # =============================================================================
 
+
 class TraceContextMiddleware(BaseHTTPMiddleware):
     """
     Propagate W3C Trace Context headers (traceparent, tracestate, baggage).
-    
+
     Per SEP-414: Extract from incoming request, inject into outgoing response,
     and include in _meta envelope for distributed tracing.
     """
-    
+
     async def dispatch(self, request: Request, call_next):
         # Skip SSE transport paths
         if request.url.path.startswith("/messages") or request.url.path == "/sse":
             return await call_next(request)
-        
+
         # Extract trace context from headers
         traceparent = request.headers.get("traceparent")
         tracestate = request.headers.get("tracestate")
         baggage = request.headers.get("baggage")
-        
+
         # Store in request state for downstream use
         request.state.trace_context = {
             "traceparent": traceparent,
             "tracestate": tracestate,
             "baggage": baggage,
         }
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Inject trace context into response headers
         if traceparent:
             response.headers["traceparent"] = traceparent
@@ -95,7 +95,7 @@ class TraceContextMiddleware(BaseHTTPMiddleware):
             response.headers["tracestate"] = tracestate
         if baggage:
             response.headers["baggage"] = baggage
-        
+
         return response
 
 
@@ -103,48 +103,50 @@ class TraceContextMiddleware(BaseHTTPMiddleware):
 # MIDDLEWARE 2: HEADER VALIDATION (SEP-2243)
 # =============================================================================
 
+
 class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
     """
     Validate required MCP headers per SEP-2243.
-    
+
     Required headers:
     - POST: Mcp-Method, Mcp-Name, MCP-Protocol-Version
     - GET:  MCP-Protocol-Version
     - ALL:  MCP-Protocol-Version
-    
+
     Validation rules:
     - Mcp-Method must match body.method
     - Mcp-Name must match params.name or params.uri
     - MCP-Protocol-Version must match _meta.protocolVersion
     - Mismatch = 400 with error code -32600
     """
-    
+
     def __init__(self, app: ASGIApp, strict: bool = True):
         super().__init__(app)
         self.strict = strict
-    
+
     async def dispatch(self, request: Request, call_next):
         # Only validate MCP endpoints
         if not self._is_mcp_endpoint(request):
             return await call_next(request)
-        
+
         method = request.method.upper()
         headers = {k.lower(): v for k, v in request.headers.items()}
-        
+
         # Check required headers
         required = REQUIRED_HEADERS_POST if method == "POST" else REQUIRED_HEADERS_GET
         missing = required - set(headers.keys())
-        
+
         if missing:
             if not self.strict:
                 # Non-strict mode: pass through for non-SEP-2243 clients (OpenCode, Cline, etc.)
                 return await call_next(request)
             return self._error_response(
-                400, ERROR_CODES["INVALID_REQUEST"],
+                400,
+                ERROR_CODES["INVALID_REQUEST"],
                 f"Missing required headers: {', '.join(sorted(missing))}",
-                request_id=None
+                request_id=None,
             )
-        
+
         # Validate MCP-Protocol-Version
         proto_version = headers.get("mcp-protocol-version")
         if proto_version and proto_version not in SUPPORTED_PROTOCOL_VERSIONS:
@@ -152,47 +154,51 @@ class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
                 # Non-strict mode: pass through for unsupported versions
                 return await call_next(request)
             return self._error_response(
-                400, ERROR_CODES["PROTOCOL_VERSION_MISMATCH"],
+                400,
+                ERROR_CODES["PROTOCOL_VERSION_MISMATCH"],
                 f"Unsupported protocol version: {proto_version}. Supported: {SUPPORTED_PROTOCOL_VERSIONS}",
-                request_id=None
+                request_id=None,
             )
-        
+
         # For POST, validate body headers match
         if method == "POST":
             try:
                 body = await request.json()
                 request.state.mcp_body = body  # Cache for downstream
-                
+
                 # Validate Mcp-Method matches body.method
                 if "mcp-method" in headers and "method" in body:
                     if headers["mcp-method"] != body["method"]:
                         return self._error_response(
-                            400, ERROR_CODES["HEADER_MISMATCH"],
+                            400,
+                            ERROR_CODES["HEADER_MISMATCH"],
                             f"Mcp-Method header ({headers['mcp-method']}) does not match body.method ({body['method']})",
-                            request_id=body.get("id")
+                            request_id=body.get("id"),
                         )
-                
+
                 # Validate Mcp-Name matches params.name/uri
                 if "mcp-name" in headers:
                     params = body.get("params", {})
                     expected_name = params.get("name") or params.get("uri")
                     if expected_name and headers["mcp-name"] != expected_name:
                         return self._error_response(
-                            400, ERROR_CODES["HEADER_MISMATCH"],
+                            400,
+                            ERROR_CODES["HEADER_MISMATCH"],
                             f"Mcp-Name header ({headers['mcp-name']}) does not match params.name/uri ({expected_name})",
-                            request_id=body.get("id")
+                            request_id=body.get("id"),
                         )
-                        
+
             except Exception as e:
                 if self.strict:
                     return self._error_response(
-                        400, ERROR_CODES["PARSE_ERROR"],
+                        400,
+                        ERROR_CODES["PARSE_ERROR"],
                         f"Failed to parse JSON body: {e}",
-                        request_id=None
+                        request_id=None,
                     )
-        
+
         return await call_next(request)
-    
+
     def _is_mcp_endpoint(self, request: Request) -> bool:
         """Check if request is to an MCP endpoint."""
         path = request.url.path
@@ -203,15 +209,17 @@ class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
         if path.startswith("/messages"):
             return False
         return path.startswith("/mcp")
-    
-    def _error_response(self, status: int, code: int, message: str, request_id: Any) -> JSONResponse:
+
+    def _error_response(
+        self, status: int, code: int, message: str, request_id: Any
+    ) -> JSONResponse:
         return JSONResponse(
             status_code=status,
             content={
                 "jsonrpc": "2.0",
                 "id": request_id,
-                "error": {"code": code, "message": message}
-            }
+                "error": {"code": code, "message": message},
+            },
         )
 
 
@@ -219,18 +227,19 @@ class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
 # MIDDLEWARE 3: _META ENVELOPE EXTRACTION/INJECTION (SEP-2575)
 # =============================================================================
 
+
 class MCPMetaEnvelopeMiddleware(BaseHTTPMiddleware):
     """
     Extract _meta envelope from request and inject into response.
-    
+
     Per SEP-2575: _meta carries protocolVersion, clientInfo, clientCapabilities,
     serverInfo, traceparent, tracestate, baggage.
     """
-    
+
     def __init__(self, app: ASGIApp, server_info: Optional[Dict[str, Any]] = None):
         super().__init__(app)
         self.server_info = server_info or {"name": "omega-engine", "version": "1.0.0"}
-    
+
     async def dispatch(self, request: Request, call_next):
         # Skip SSE transport paths
         if request.url.path.startswith("/messages") or request.url.path == "/sse":
@@ -243,21 +252,21 @@ class MCPMetaEnvelopeMiddleware(BaseHTTPMiddleware):
             if body and "_meta" in body:
                 request_meta = body["_meta"]
                 request.state.request_meta = request_meta
-        
+
         # Merge with trace context from middleware
         trace_ctx = getattr(request.state, "trace_context", {})
         if trace_ctx:
             request_meta.update({k: v for k, v in trace_ctx.items() if v})
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Inject _meta into response (for JSON-RPC responses)
         if isinstance(response, JSONResponse):
             # We can't easily modify the response body here without re-reading
             # The actual injection happens in the MCP server handler
             pass
-        
+
         return response
 
 
@@ -267,10 +276,11 @@ class MCPMetaEnvelopeMiddleware(BaseHTTPMiddleware):
 
 import uuid
 
+
 class RequestIDMiddleware(BaseHTTPMiddleware):
     """
     Generate and propagate request IDs for tracing and rate-limiting.
-    
+
     If the client provides an X-Request-Id header, it is preserved.
     If not, a UUID is generated automatically.
     The request ID is stored in request.state.request_id and echoed
@@ -294,6 +304,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
 # =============================================================================
 # MIDDLEWARE 5: RATE-LIMIT HEADERS
 # =============================================================================
+
 
 class RateLimitHeadersMiddleware(BaseHTTPMiddleware):
     """
@@ -338,6 +349,7 @@ class RateLimitHeadersMiddleware(BaseHTTPMiddleware):
     async def _get_reset_at(self, request: Request) -> int:
         """Return Unix timestamp when the window resets."""
         import time
+
         return int(time.time()) + self.window_seconds
 
 
@@ -345,14 +357,15 @@ class RateLimitHeadersMiddleware(BaseHTTPMiddleware):
 # SERVER DISCOVER HANDLER (SEP-2575)
 # =============================================================================
 
+
 @dataclass
 class ServerDiscoverHandler:
     """Handle server/discover RPC method per SEP-2575."""
-    
+
     server_name: str = "omega-engine"
     server_version: str = "1.0.0"
     capabilities: Optional[Dict[str, Any]] = None
-    
+
     def __post_init__(self):
         if self.capabilities is None:
             self.capabilities = {
@@ -361,11 +374,11 @@ class ServerDiscoverHandler:
                 "prompts": {"listChanged": True},
                 "logging": {},
             }
-    
+
     async def handle(self, request: Dict[str, Any]) -> Dict[str, Any]:
         """Handle server/discover request."""
         request_id = request.get("id")
-        
+
         result = {
             "protocolVersions": SUPPORTED_PROTOCOL_VERSIONS,
             "capabilities": self.capabilities,
@@ -375,13 +388,13 @@ class ServerDiscoverHandler:
             },
             "instructions": "Omega Engine MCP Server — Dual transport (SSE + Streamable HTTP)",
         }
-        
+
         response = {
             "jsonrpc": "2.0",
             "id": request_id,
             "result": result,
         }
-        
+
         # Add _meta with cache metadata (SEP-2549)
         response["_meta"] = {
             "protocolVersion": PROTOCOL_VERSION_CURRENT,
@@ -389,7 +402,7 @@ class ServerDiscoverHandler:
             "ttlMs": 3600000,  # 1 hour cache
             "cacheScope": "server",
         }
-        
+
         return response
 
 
@@ -397,16 +410,17 @@ class ServerDiscoverHandler:
 # RFC 9728 PROTECTED RESOURCE METADATA HANDLER
 # =============================================================================
 
+
 @dataclass
 class ProtectedResourceMetadataHandler:
     """Handle RFC 9728 OAuth 2.1 Protected Resource Metadata."""
-    
+
     resource_url: str = "https://omega-engine.local/mcp"
     auth_server_url: str = "https://omega-engine.local/oauth"
     scopes: List[str] = field(default_factory=lambda: ["mcp:tools", "mcp:resources", "mcp:prompts"])
     bearer_methods: List[str] = field(default_factory=lambda: ["header"])
     documentation_url: str = "https://omega-engine.local/docs/mcp"
-    
+
     async def handle(self, request: Request) -> JSONResponse:
         """Return Protected Resource Metadata per RFC 9728."""
         metadata = {
@@ -416,7 +430,7 @@ class ProtectedResourceMetadataHandler:
             "scopes_supported": self.scopes,
             "resource_documentation": self.documentation_url,
         }
-        
+
         return JSONResponse(metadata)
 
 
@@ -424,7 +438,10 @@ class ProtectedResourceMetadataHandler:
 # TTL/CACHE SCOPE HELPER (SEP-2549)
 # =============================================================================
 
-def add_cache_metadata(response: Dict[str, Any], ttl_ms: int = 300000, cache_scope: str = "server") -> Dict[str, Any]:
+
+def add_cache_metadata(
+    response: Dict[str, Any], ttl_ms: int = 300000, cache_scope: str = "server"
+) -> Dict[str, Any]:
     """Add ttlMs and cacheScope to _meta per SEP-2549."""
     if "_meta" not in response:
         response["_meta"] = {}
@@ -436,6 +453,7 @@ def add_cache_metadata(response: Dict[str, Any], ttl_ms: int = 300000, cache_sco
 # =============================================================================
 # MCP-PARAM-* HEADERS HELPER (SEP-2243)
 # =============================================================================
+
 
 def extract_mcp_param_headers(request: Request) -> Dict[str, str]:
     """Extract x-mcp-header tool parameters as Mcp-Param-* headers per SEP-2243."""
@@ -450,14 +468,15 @@ def extract_mcp_param_headers(request: Request) -> Dict[str, str]:
 # INPUT REQUIRED RESULT FOR MRTR (SEP-2322)
 # =============================================================================
 
+
 @dataclass
 class InputRequiredResult:
     """InputRequiredResult for Multi-Round-Trip Requests (SEP-2322)."""
-    
+
     request_id: str
     prompt: str
     schema: Dict[str, Any] = field(default_factory=lambda: {"type": "string"})
-    
+
     def to_result(self) -> Dict[str, Any]:
         return {
             "type": "input_required",
@@ -471,38 +490,39 @@ class InputRequiredResult:
 # SUBSCRIPTION MANAGER FOR NOTIFICATIONS (SSE)
 # =============================================================================
 
+
 class SubscriptionManager:
     """Manage subscriptions/listen for notifications per MCP spec."""
-    
+
     def __init__(self):
         self._subscribers: Dict[str, List[Any]] = {
             "tools": [],
             "resources": [],
             "prompts": [],
         }
-    
+
     async def subscribe(self, category: str, send_stream: Any):
         if category in self._subscribers:
             self._subscribers[category].append(send_stream)
-    
+
     async def unsubscribe(self, category: str, send_stream: Any):
         if category in self._subscribers:
             try:
                 self._subscribers[category].remove(send_stream)
             except ValueError:
                 pass
-    
+
     async def notify(self, category: str, notification: Dict[str, Any]):
         if category not in self._subscribers:
             return
-        
+
         dead = []
         for stream in self._subscribers[category]:
             try:
                 await stream.send(notification)
             except Exception:
                 dead.append(stream)
-        
+
         for stream in dead:
             await self.unsubscribe(category, stream)
 

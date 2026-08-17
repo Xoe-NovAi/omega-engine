@@ -10,12 +10,9 @@ Gate criterion fix — connection-setup PRAGMAs only in sqlite_policy.py; allow 
 
 import sqlite3
 import threading
-import time
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Literal, Optional
-
-from omega.governance.config_resolver import DATA_DIR, PROJECT_ROOT
 
 
 Profile = Literal["memory", "search", "metrics", "reader"]
@@ -28,37 +25,40 @@ PROFILE_PRAGMAS: dict[Profile, list[tuple[str, str]]] = {
     "memory": [
         ("journal_mode", "WAL"),
         ("synchronous", "NORMAL"),
-        ("cache_size", "-32768"),          # 32MB (D-282)
-        ("mmap_size", "268435456"),        # 256MB
+        ("cache_size", "-32768"),  # 32MB (D-282)
+        ("mmap_size", "268435456"),  # 256MB
         ("temp_store", "MEMORY"),
-        ("busy_timeout", "30000"),         # 30s (D-282)
+        ("busy_timeout", "30000"),  # 30s (D-282)
         ("foreign_keys", "ON"),
-        ("wal_autocheckpoint", "10000"),   # 2026: writer profile — 10k pages (~40MB) before autocheckpoint
-        ("journal_size_limit", "67108864"), # 64MB (D-282)
+        (
+            "wal_autocheckpoint",
+            "10000",
+        ),  # 2026: writer profile — 10k pages (~40MB) before autocheckpoint
+        ("journal_size_limit", "67108864"),  # 64MB (D-282)
         ("page_size", "4096"),
     ],
     "search": [
         ("journal_mode", "WAL"),
         ("synchronous", "NORMAL"),
-        ("cache_size", "-65536"),          # 64MB
+        ("cache_size", "-65536"),  # 64MB
         ("mmap_size", "268435456"),
         ("temp_store", "MEMORY"),
-        ("busy_timeout", "30000"),         # 30s for search concurrency
+        ("busy_timeout", "30000"),  # 30s for search concurrency
         ("foreign_keys", "ON"),
-        ("wal_autocheckpoint", "10000"),   # 2026: writer profile
-        ("journal_size_limit", "67108864"), # 64MB
+        ("wal_autocheckpoint", "10000"),  # 2026: writer profile
+        ("journal_size_limit", "67108864"),  # 64MB
         ("page_size", "4096"),
     ],
     "metrics": [
         ("journal_mode", "WAL"),
         ("synchronous", "NORMAL"),
         ("cache_size", "-32768"),
-        ("mmap_size", "134217728"),        # 128MB
+        ("mmap_size", "134217728"),  # 128MB
         ("temp_store", "MEMORY"),
-        ("busy_timeout", "10000"),         # 10s
+        ("busy_timeout", "10000"),  # 10s
         ("foreign_keys", "ON"),
-        ("wal_autocheckpoint", "10000"),   # 2026: writer profile
-        ("journal_size_limit", "67108864"), # 64MB
+        ("wal_autocheckpoint", "10000"),  # 2026: writer profile
+        ("journal_size_limit", "67108864"),  # 64MB
         ("page_size", "4096"),
     ],
     "reader": [
@@ -69,7 +69,7 @@ PROFILE_PRAGMAS: dict[Profile, list[tuple[str, str]]] = {
         ("temp_store", "MEMORY"),
         ("busy_timeout", "30000"),
         ("foreign_keys", "ON"),
-        ("wal_autocheckpoint", "0"),       # 2026: readers NEVER trigger checkpoints
+        ("wal_autocheckpoint", "0"),  # 2026: readers NEVER trigger checkpoints
         ("journal_size_limit", "67108864"),
         ("page_size", "4096"),
     ],
@@ -83,34 +83,34 @@ def get_sqlite_connection(
     timeout: float = 30.0,
 ) -> sqlite3.Connection:
     """Get a standardized SQLite connection with profiled PRAGMA stack.
-    
+
     Args:
         path: Database file path
         profile: Profile name — "memory", "search", or "metrics"
         readonly: If True, open read-only via URI (portable stdlib pattern)
         timeout: Connection timeout in seconds (default 30s for rw)
-    
+
     Returns:
         Configured sqlite3.Connection with row_factory=sqlite3.Row
-    
+
     Raises:
         sqlite3.Error: If connection fails
     """
     path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     if readonly:
         # Read-only via URI (portable stdlib pattern) — A12
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=timeout)
     else:
         conn = sqlite3.connect(str(path), timeout=timeout, check_same_thread=False)
-    
+
     conn.row_factory = sqlite3.Row
-    
+
     # Apply profile-specific PRAGMA stack
     pragmas = PROFILE_PRAGMAS.get(profile, PROFILE_PRAGMAS["memory"])
     for pragma, value in pragmas:
         conn.execute(f"PRAGMA {pragma} = {value}")
-    
+
     return conn
 
 
@@ -122,16 +122,16 @@ def sqlite_transaction(
     timeout: float = 30.0,
 ):
     """Context manager for atomic SQLite transactions.
-    
+
     Args:
         path: Database file path
         profile: Profile name — "memory", "search", or "metrics"
         readonly: If True, open read-only (no commit/rollback)
         timeout: Connection timeout in seconds
-    
+
     Yields:
         sqlite3.Connection with profiled PRAGMAs applied
-    
+
     Example:
         with sqlite_transaction(path, profile="search") as conn:
             conn.execute("INSERT INTO ...")
@@ -152,7 +152,7 @@ def sqlite_transaction(
 
 def init_database(path: Path, schema_sql: str, profile: Profile = "memory") -> None:
     """Initialize database with schema (idempotent).
-    
+
     Args:
         path: Database file path
         schema_sql: SQL schema script (CREATE TABLE, etc.)
@@ -164,13 +164,13 @@ def init_database(path: Path, schema_sql: str, profile: Profile = "memory") -> N
 
 def verify_pragmas(conn: sqlite3.Connection, profile: Profile = "memory") -> dict[str, any]:
     """Verify that connection has the expected PRAGMAs applied.
-    
+
     Used by contract tests to validate profile compliance.
-    
+
     Args:
         conn: SQLite connection to verify
         profile: Expected profile name
-    
+
     Returns:
         Dict of pragma_name -> actual_value
     """
@@ -179,13 +179,17 @@ def verify_pragmas(conn: sqlite3.Connection, profile: Profile = "memory") -> dic
     for pragma, expected in pragmas:
         cursor = conn.execute(f"PRAGMA {pragma}")
         actual = cursor.fetchone()[0]
-        results[pragma] = {"expected": expected, "actual": actual, "match": str(actual) == str(expected)}
+        results[pragma] = {
+            "expected": expected,
+            "actual": actual,
+            "match": str(actual) == str(expected),
+        }
     return results
 
 
 def optimize_connection(conn: sqlite3.Connection) -> None:
     """Run PRAGMA optimize on connection (call before close for query planner stats).
-    
+
     Per SQLite docs: run just before closing each connection, or on a timer for long-running apps.
     Updates sqlite_stat1/sqlite_stat4 for better query plans.
     """
@@ -212,22 +216,22 @@ _optimize_stop = threading.Event()
 
 def start_optimize_timer(interval_seconds: int = 3600) -> None:
     """Start background thread that runs PRAGMA optimize on all open connections periodically.
-    
+
     Args:
         interval_seconds: Interval between optimize runs (default 1 hour)
     """
     global _optimize_timer
     if _optimize_timer is not None and _optimize_timer.is_alive():
         return  # Already running
-    
+
     _optimize_stop.clear()
-    
+
     def _optimize_loop():
         while not _optimize_stop.wait(interval_seconds):
             # Note: In a real implementation, you'd track open connections
             # For now, this is a placeholder for the pattern
             pass
-    
+
     _optimize_timer = threading.Thread(target=_optimize_loop, daemon=True, name="sqlite-optimize")
     _optimize_timer.start()
 

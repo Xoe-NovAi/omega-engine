@@ -33,6 +33,7 @@ class SimpleRAG:
         contexts: List[str] = []
         try:
             if self.memory_store is not None:
+
                 def _retrieve():
                     try:
                         return self.memory_store.search_fts(query, limit=k)

@@ -5,8 +5,6 @@ Model Registry Query Interface
 Extends query_model_study.py with unified registry queries.
 """
 
-import sqlite3
-from pathlib import Path
 from typing import Optional
 from dataclasses import dataclass
 
@@ -16,6 +14,7 @@ from .registry import ModelRegistry
 @dataclass
 class QueryResult:
     """Query result with metadata."""
+
     rows: list[dict]
     count: int
     sql: str
@@ -37,45 +36,70 @@ class ModelRegistryQuery:
         return self.query("SELECT * FROM models ORDER BY tier, provider, model_id")
 
     def get_models_by_tier(self, tier: str) -> QueryResult:
-        return self.query("SELECT * FROM models WHERE tier = ? ORDER BY provider, model_id", (tier,))
+        return self.query(
+            "SELECT * FROM models WHERE tier = ? ORDER BY provider, model_id", (tier,)
+        )
 
     def get_models_by_platform(self, platform: str) -> QueryResult:
-        return self.query("SELECT * FROM models WHERE platform = ? ORDER BY tier, model_id", (platform,))
+        return self.query(
+            "SELECT * FROM models WHERE platform = ? ORDER BY tier, model_id", (platform,)
+        )
 
     def get_models_by_provider(self, provider: str) -> QueryResult:
-        return self.query("SELECT * FROM models WHERE provider = ? ORDER BY tier, model_id", (provider,))
+        return self.query(
+            "SELECT * FROM models WHERE provider = ? ORDER BY tier, model_id", (provider,)
+        )
 
     def get_free_models(self) -> QueryResult:
-        return self.query("SELECT * FROM models WHERE free_tier = 1 ORDER BY tier, provider, model_id")
+        return self.query(
+            "SELECT * FROM models WHERE free_tier = 1 ORDER BY tier, provider, model_id"
+        )
 
     def get_engine_routable_models(self) -> QueryResult:
-        return self.query("SELECT * FROM models WHERE engine_routable = 1 ORDER BY tier, provider, model_id")
+        return self.query(
+            "SELECT * FROM models WHERE engine_routable = 1 ORDER BY tier, provider, model_id"
+        )
 
     def get_model_by_id(self, model_id: str) -> Optional[dict]:
         rows = self.query("SELECT * FROM models WHERE model_id = ?", (model_id,))
         return rows.rows[0] if rows.rows else None
 
     def search_models(self, search_term: str) -> QueryResult:
-        return self.query("""
+        return self.query(
+            """
             SELECT * FROM models
             WHERE model_id LIKE ? OR display_name LIKE ? OR tags LIKE ?
             ORDER BY tier, provider, model_id
-        """, (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"))
+        """,
+            (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"),
+        )
 
     def get_capability_leaders(self, capability: str, limit: int = 5) -> QueryResult:
         """Get top models by capability score. Supports extended capability fields."""
-        valid_caps = ["reasoning", "code_generation", "knowledge", "creative",
-                       "tool_use", "structured_output", "multimodal",
-                       "code_execution", "parallel_search", "workspace_integration"]
+        valid_caps = [
+            "reasoning",
+            "code_generation",
+            "knowledge",
+            "creative",
+            "tool_use",
+            "structured_output",
+            "multimodal",
+            "code_execution",
+            "parallel_search",
+            "workspace_integration",
+        ]
         if capability not in valid_caps:
             raise ValueError(f"Invalid capability: {capability}. Must be one of {valid_caps}")
-        return self.query(f"""
+        return self.query(
+            f"""
             SELECT model_id, display_name, provider, tier, {capability}
             FROM models
             WHERE {capability} > 0
             ORDER BY {capability} DESC
             LIMIT ?
-        """, (limit,))
+        """,
+            (limit,),
+        )
 
     def get_provider_chain(self) -> QueryResult:
         """Get provider fallback chain ordered by priority."""
@@ -93,17 +117,35 @@ class ModelRegistryQuery:
         """Get registry statistics."""
         stats = {}
         stats["total_models"] = self.query("SELECT COUNT(*) as c FROM models").rows[0]["c"]
-        stats["total_providers"] = self.query("SELECT COUNT(*) as c FROM providers WHERE enabled = 1").rows[0]["c"]
-        stats["total_research_profiles"] = self.query("SELECT COUNT(*) as c FROM research_profiles").rows[0]["c"]
+        stats["total_providers"] = self.query(
+            "SELECT COUNT(*) as c FROM providers WHERE enabled = 1"
+        ).rows[0]["c"]
+        stats["total_research_profiles"] = self.query(
+            "SELECT COUNT(*) as c FROM research_profiles"
+        ).rows[0]["c"]
 
-        stats["by_tier"] = {row["tier"]: row["c"] for row in
-            self.query("SELECT tier, COUNT(*) as c FROM models GROUP BY tier").rows}
-        stats["by_platform"] = {row["platform"]: row["c"] for row in
-            self.query("SELECT platform, COUNT(*) as c FROM models GROUP BY platform").rows}
-        stats["by_provider"] = {row["provider"]: row["c"] for row in
-            self.query("SELECT provider, COUNT(*) as c FROM models GROUP BY provider").rows}
-        stats["free_models"] = self.query("SELECT COUNT(*) as c FROM models WHERE free_tier = 1").rows[0]["c"]
-        stats["engine_routable"] = self.query("SELECT COUNT(*) as c FROM models WHERE engine_routable = 1").rows[0]["c"]
+        stats["by_tier"] = {
+            row["tier"]: row["c"]
+            for row in self.query("SELECT tier, COUNT(*) as c FROM models GROUP BY tier").rows
+        }
+        stats["by_platform"] = {
+            row["platform"]: row["c"]
+            for row in self.query(
+                "SELECT platform, COUNT(*) as c FROM models GROUP BY platform"
+            ).rows
+        }
+        stats["by_provider"] = {
+            row["provider"]: row["c"]
+            for row in self.query(
+                "SELECT provider, COUNT(*) as c FROM models GROUP BY provider"
+            ).rows
+        }
+        stats["free_models"] = self.query(
+            "SELECT COUNT(*) as c FROM models WHERE free_tier = 1"
+        ).rows[0]["c"]
+        stats["engine_routable"] = self.query(
+            "SELECT COUNT(*) as c FROM models WHERE engine_routable = 1"
+        ).rows[0]["c"]
 
         return stats
 
@@ -190,7 +232,9 @@ def main():
             result = query.get_all_models()
 
         for row in result.rows:
-            print(f"{row['model_id']:50s} | {row['tier']:3s} | {row['platform']:6s} | {row['provider']:15s} | free={row['free_tier']} | routable={row['engine_routable']}")
+            print(
+                f"{row['model_id']:50s} | {row['tier']:3s} | {row['platform']:6s} | {row['provider']:15s} | free={row['free_tier']} | routable={row['engine_routable']}"
+            )
 
     elif cmd == "model":
         if len(sys.argv) < 3:
@@ -209,7 +253,9 @@ def main():
             return
         result = query.search_models(sys.argv[2])
         for row in result.rows:
-            print(f"{row['model_id']:50s} | {row['tier']:3s} | {row['platform']:6s} | {row['provider']:15s}")
+            print(
+                f"{row['model_id']:50s} | {row['tier']:3s} | {row['platform']:6s} | {row['provider']:15s}"
+            )
 
     elif cmd == "leaders":
         if len(sys.argv) < 3:
@@ -218,12 +264,16 @@ def main():
             return
         result = query.get_capability_leaders(sys.argv[2])
         for row in result.rows:
-            print(f"{row['model_id']:50s} | {row['capability']:.2f} | {row['tier']:3s} | {row['provider']:15s}")
+            print(
+                f"{row['model_id']:50s} | {row['capability']:.2f} | {row['tier']:3s} | {row['provider']:15s}"
+            )
 
     elif cmd == "providers":
         result = query.get_provider_chain()
         for row in result.rows:
-            print(f"Priority {row['priority']:2d}: {row['provider']:20s} | enabled={row['enabled']} | {row['description']}")
+            print(
+                f"Priority {row['priority']:2d}: {row['provider']:20s} | enabled={row['enabled']} | {row['description']}"
+            )
 
     elif cmd == "profile":
         if len(sys.argv) < 3:

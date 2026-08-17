@@ -18,7 +18,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import yaml
 
@@ -67,9 +67,7 @@ class AxiomRegistry:
         axioms_path = self.wad_dir / AXIOMS_FILENAME
 
         if not axioms_path.exists():
-            logger.warning(
-                "AxiomRegistry: %s not found; returning empty registry.", axioms_path
-            )
+            logger.warning("AxiomRegistry: %s not found; returning empty registry.", axioms_path)
             self._loaded = True
             return self._axioms
 

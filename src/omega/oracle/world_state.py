@@ -13,21 +13,24 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class WorldLump:
     """A discrete unit of world-state data. [id-soft: doom-1993]"""
+
     lump_id: str
     data: Dict[str, Any]
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+
 class WorldState:
     """Sovereign World State Manager for the VR Omegaverse."""
-    
+
     _instance = None
 
     def __new__(cls):
@@ -63,7 +66,7 @@ class WorldState:
     def lattice_query(self, sector_id: Optional[str], lump_id: Optional[str]) -> Optional[Any]:
         """
         Sector-culling query primitive. Heritage: inspired by Doom 1993 BSP sector culling (REJECTED per vet-028)
-        
+
         Efficiently queries world-state by culling irrelevant sectors.
         If sector_id is provided, we skip all other sectors (O(1) culling).
         """
@@ -72,15 +75,15 @@ class WorldState:
             sector = self._sectors.get(sector_id)
             if not sector:
                 return None
-            
+
             # 2. Cull by lump
             if lump_id:
                 lump = sector.get(lump_id)
                 return lump.data if lump else None
-            
+
             # Return entire sector if no lump_id
             return {k: v.data for k, v in sector.items()}
-        
+
         # Fallback: if no sector_id, we would have to scan all sectors (expensive)
         # In a strict sector-culling system, we might forbid this or return global
         return None
@@ -94,6 +97,7 @@ class WorldState:
         self._sectors.clear()
         self._global_state.clear()
         logger.debug("WorldState reset for testing")
+
 
 # Singleton instance for engine-wide access
 world_state = WorldState()

@@ -8,6 +8,7 @@ in exponentially weighted moving average windows.
 Kernel 4.20+ (PSI merged), 5.15+ (triggers supported)
 Kernel source: kernel/sched/psi.c -- psi_avgs_work updates EWMA every 2s
 """
+
 import anyio
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,6 +25,7 @@ Window = Literal["avg10", "avg60", "avg300"]
 @dataclass(frozen=True)
 class PSISnapshot:
     """Single PSI reading for a resource"""
+
     resource: Resource
     some_avg10: float
     some_avg60: float
@@ -216,6 +218,7 @@ class PSIMonitor:
 
 # Convenience functions for one-shot reads
 
+
 async def get_psi_some_avg60() -> float:
     """One-shot read of memory PSI some.avg60"""
     monitor = PSIMonitor()
@@ -247,6 +250,7 @@ async def read_psi_snapshot(resource: Resource = "memory") -> Optional[PSISnapsh
 
 
 # Synchronous versions for non-async contexts
+
 
 def read_memory_pressure_sync(
     stall_type: StallType = "some",

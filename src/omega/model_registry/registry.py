@@ -6,14 +6,30 @@ Unified model registry loading YAML frontmatter model cards,
 provider configs, and research profiles. Builds SQLite index.
 """
 
-import os
 import yaml
 import sqlite3
 from pathlib import Path
 from typing import Optional
-from dataclasses import asdict
 
-from .models import ModelCard, Platform, Tier, Status, Capabilities, Pricing, Routing, IdentityHistory, CommunityIntelligence, LiveAPIState, ResearchProfile, TestRun, Synergy, EmpiricalEvidence, ProviderFabric, Parameters, BenchmarkSources
+from .models import (
+    ModelCard,
+    Platform,
+    Tier,
+    Status,
+    Capabilities,
+    Pricing,
+    Routing,
+    IdentityHistory,
+    CommunityIntelligence,
+    LiveAPIState,
+    ResearchProfile,
+    TestRun,
+    Synergy,
+    EmpiricalEvidence,
+    ProviderFabric,
+    Parameters,
+    BenchmarkSources,
+)
 from .providers import ProviderConfig
 from .research import ResearchProfile as ResearchProfileData
 
@@ -277,7 +293,9 @@ class ModelRegistry:
                 structured_output=data.get("capabilities", {}).get("structured_output", False),
                 code_execution=data.get("capabilities", {}).get("code_execution", False),
                 parallel_search=data.get("capabilities", {}).get("parallel_search", False),
-                workspace_integration=data.get("capabilities", {}).get("workspace_integration", False),
+                workspace_integration=data.get("capabilities", {}).get(
+                    "workspace_integration", False
+                ),
             )
 
             pricing = Pricing(
@@ -288,7 +306,9 @@ class ModelRegistry:
             routing = Routing(
                 engine_routable=data.get("routing", {}).get("engine_routable", True),
                 opencode_cli_only=data.get("routing", {}).get("opencode_cli_only", False),
-                recommended_engine_alternative=data.get("routing", {}).get("recommended_engine_alternative"),
+                recommended_engine_alternative=data.get("routing", {}).get(
+                    "recommended_engine_alternative"
+                ),
             )
 
             identity_history = None
@@ -398,9 +418,12 @@ class ModelRegistry:
         """Get model card by ID."""
         return self._model_cards.get(model_id)
 
-    def get_models(self, platform: Optional[Platform] = None,
-                   tier: Optional[Tier] = None,
-                   provider: Optional[str] = None) -> list[ModelCard]:
+    def get_models(
+        self,
+        platform: Optional[Platform] = None,
+        tier: Optional[Tier] = None,
+        provider: Optional[str] = None,
+    ) -> list[ModelCard]:
         """Get models with optional filters."""
         models = list(self._model_cards.values())
         if platform:
@@ -509,80 +532,89 @@ class ModelRegistry:
             )
         """)
 
-# Insert models
+        # Insert models
         for model in self._model_cards.values():
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT OR REPLACE INTO models VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                model.model_id,
-                model.display_name,
-                model.version,
-                model.provider,
-                model.platform.value,
-                model.tier.value,
-                model.status.value,
-                model.context_window,
-                model.max_output_tokens,
-                model.capabilities.reasoning,
-                model.capabilities.code_generation,
-                model.capabilities.knowledge,
-                model.capabilities.creative,
-                model.capabilities.tool_use,
-                model.capabilities.structured_output,
-                model.capabilities.multimodal,
-                model.capabilities.code_execution,
-                model.capabilities.parallel_search,
-                model.capabilities.workspace_integration,
-                model.pricing.input_per_mtok,
-                model.pricing.output_per_mtok,
-                model.pricing.free_tier,
-                model.latency_p99_ms,
-                model.uptime_percent,
-                model.routing.engine_routable,
-                model.routing.opencode_cli_only,
-                model.routing.recommended_engine_alternative,
-                model.parameters.temperature,
-                model.parameters.top_p,
-                model.parameters.top_k,
-                model.parameters.repetition_penalty,
-                model.parameters.max_tokens,
-                ",".join(model.parameters.stop_sequences),
-                model.parameters.presence_penalty,
-                model.parameters.frequency_penalty,
-                ",".join(model.tags),
-                model.created_at,
-                model.updated_at,
-                model.schema_version,
-            ))
+            """,
+                (
+                    model.model_id,
+                    model.display_name,
+                    model.version,
+                    model.provider,
+                    model.platform.value,
+                    model.tier.value,
+                    model.status.value,
+                    model.context_window,
+                    model.max_output_tokens,
+                    model.capabilities.reasoning,
+                    model.capabilities.code_generation,
+                    model.capabilities.knowledge,
+                    model.capabilities.creative,
+                    model.capabilities.tool_use,
+                    model.capabilities.structured_output,
+                    model.capabilities.multimodal,
+                    model.capabilities.code_execution,
+                    model.capabilities.parallel_search,
+                    model.capabilities.workspace_integration,
+                    model.pricing.input_per_mtok,
+                    model.pricing.output_per_mtok,
+                    model.pricing.free_tier,
+                    model.latency_p99_ms,
+                    model.uptime_percent,
+                    model.routing.engine_routable,
+                    model.routing.opencode_cli_only,
+                    model.routing.recommended_engine_alternative,
+                    model.parameters.temperature,
+                    model.parameters.top_p,
+                    model.parameters.top_k,
+                    model.parameters.repetition_penalty,
+                    model.parameters.max_tokens,
+                    ",".join(model.parameters.stop_sequences),
+                    model.parameters.presence_penalty,
+                    model.parameters.frequency_penalty,
+                    ",".join(model.tags),
+                    model.created_at,
+                    model.updated_at,
+                    model.schema_version,
+                ),
+            )
 
         # Insert providers
         for provider in self._providers.values():
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT OR REPLACE INTO providers VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                provider.provider,
-                provider.priority,
-                provider.enabled,
-                provider.description,
-                provider.api_key,
-                provider.base_url,
-                provider.endpoint,
-                ",".join(provider.supported_models),
-            ))
+            """,
+                (
+                    provider.provider,
+                    provider.priority,
+                    provider.enabled,
+                    provider.description,
+                    provider.api_key,
+                    provider.base_url,
+                    provider.endpoint,
+                    ",".join(provider.supported_models),
+                ),
+            )
 
         # Insert research profiles
         for profile in self._research_profiles.values():
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT OR REPLACE INTO research_profiles VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (
-                profile.profile,
-                profile.context_window,
-                profile.reasoning_depth,
-                profile.tool_fidelity,
-                profile.failure_signature,
-                profile.shadow_focus,
-                ",".join(profile.guardrails),
-            ))
+            """,
+                (
+                    profile.profile,
+                    profile.context_window,
+                    profile.reasoning_depth,
+                    profile.tool_fidelity,
+                    profile.failure_signature,
+                    profile.shadow_focus,
+                    ",".join(profile.guardrails),
+                ),
+            )
 
         conn.commit()
         conn.close()

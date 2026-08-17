@@ -19,9 +19,8 @@ Storage layout:
 import json
 import logging
 import os
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import anyio
 
@@ -48,6 +47,7 @@ class Library:
         self._index_ensured: bool = False
         # Use SQLiteVecAdapter (unified fabric) with sovereign fallback to MemoryVectorAdapter
         from omega.memory.sqlite_vec_adapter import SQLiteVecAdapter
+
         self._indexer = Indexer(vector_adapter=SQLiteVecAdapter())
         self._load()
 
@@ -100,13 +100,23 @@ class Library:
         link_path = domain_dir / f"{document.doc_id}.json"
         if not link_path.exists():
             async with await anyio.open_file(str(link_path), "w") as f:
-                await f.write(json.dumps({"doc_id": document.doc_id, "title": document.title, "domain": document.domain}, indent=2))
+                await f.write(
+                    json.dumps(
+                        {
+                            "doc_id": document.doc_id,
+                            "title": document.title,
+                            "domain": document.domain,
+                        },
+                        indent=2,
+                    )
+                )
 
         self._documents[document.doc_id] = document
         await self._indexer.index_document(document)
         # Notify Hivemind about new knowledge (Phase 4 H2-N)
         try:
             from .hivemind_bridge import BRIDGE
+
             await BRIDGE.publish_new_document(document)
         except ImportError:
             pass  # hivemind_bridge not yet created
@@ -129,7 +139,9 @@ class Library:
                 logger.warning(f"Failed to load {doc_id}: {e}")
         return None
 
-    async def search(self, query: str, domain: Optional[str] = None, limit: int = 20) -> List[CuratedDocument]:
+    async def search(
+        self, query: str, domain: Optional[str] = None, limit: int = 20
+    ) -> List[CuratedDocument]:
         """Hybrid search across all documents using FTS5 + vector RRF.
 
         Uses Reciprocal Rank Fusion to merge BM25 keyword scores with
@@ -139,14 +151,14 @@ class Library:
         await self._ensure_index_lazy()
         # Call hybrid_search which uses RRF to merge FTS + vector results
         results = await self._indexer.hybrid_search(query, domain, limit)
-        
+
         # Look up full CuratedDocument for each result
         docs = []
         for res in results:
             doc = await self.get(res["doc_id"])
             if doc:
                 docs.append(doc)
-        
+
         return docs
 
     async def search_by_domain(self, domain: str, limit: int = 50) -> List[CuratedDocument]:
@@ -219,7 +231,6 @@ class Library:
         limit: int = 5,
     ) -> List[CuratedDocument]:
         """Process pending inbox items through curation into the library."""
-        from .inbox import InboxItem
         pending = await inbox_manager.list_pending(limit=limit)
         ingested = []
         for item in pending:
@@ -237,7 +248,9 @@ class Library:
                     ingested.append(doc)
                     await inbox_manager.mark_completed(item.item_id)
                 else:
-                    logger.info(f"Below threshold, skipping: {doc.title} (score={doc.quality_score:.2f})")
+                    logger.info(
+                        f"Below threshold, skipping: {doc.title} (score={doc.quality_score:.2f})"
+                    )
                     await inbox_manager.mark_completed(item.item_id)
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Failed to ingest {item.source}: {e}")

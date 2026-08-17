@@ -6,11 +6,13 @@ and integrates approved lessons from proposed_lessons.yaml to close the distilla
 
 [M2 Engine-Stack Firewall]: This module is in src/omega/ (Core Engine).
 """
+
 import yaml
 import logging
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
 
 def extract_soul_context(soul: dict, max_items: int = 3) -> str:
     """
@@ -18,16 +20,16 @@ def extract_soul_context(soul: dict, max_items: int = 3) -> str:
     Returns up to `max_items` lines of context as a formatted string.
     """
     lines = []
-    
+
     # Path 1: v2 schema — soul_evolution L3 principles
     se = soul.get("soul_evolution") or {}
     if isinstance(se, dict):
-        for lesson in (se.get("lessons_learned") or [])[:max_items * 2]:
+        for lesson in (se.get("lessons_learned") or [])[: max_items * 2]:
             if isinstance(lesson, dict) and "L3" in lesson:
                 lines.append(f"- {lesson['L3']}")
             if len(lines) >= max_items:
                 break
-    
+
     # Path 2: directives (v1 schema — kali, roc_racoon, iris, makali, verity)
     if not lines:
         for directive in (soul.get("directives") or [])[:max_items]:
@@ -36,7 +38,7 @@ def extract_soul_context(soul: dict, max_items: int = 3) -> str:
                 rule = directive.get("rule") or directive.get("directive", "")
                 if rule:
                     lines.append(f"- {rule[:150]}")
-    
+
     # Path 3: identity values + strengths (minimal fallback)
     if not lines:
         identity = soul.get("identity") or {}
@@ -47,8 +49,9 @@ def extract_soul_context(soul: dict, max_items: int = 3) -> str:
                 lines.append(f"- Values: {', '.join(str(v) for v in values[:5])}")
             if strengths:
                 lines.append(f"- Strengths: {', '.join(str(s) for s in strengths[:5])}")
-    
+
     return "\n".join(lines[:max_items])
+
 
 def load_entity_soul_context(entity_name: str, data_dir: Path) -> str:
     """
@@ -57,13 +60,17 @@ def load_entity_soul_context(entity_name: str, data_dir: Path) -> str:
     """
     entity_dir = data_dir / "entities" / entity_name.lower()
     context_lines = []
-    
+
     # 1. Check proposed_lessons.yaml for recently approved distillations
     pl_path = entity_dir / "proposed_lessons.yaml"
     if pl_path.exists():
         try:
             pl_data = yaml.safe_load(pl_path.read_text(encoding="utf-8")) or {}
-            proposals = pl_data.get("proposals", []) if isinstance(pl_data, dict) else (pl_data if isinstance(pl_data, list) else [])
+            proposals = (
+                pl_data.get("proposals", [])
+                if isinstance(pl_data, dict)
+                else (pl_data if isinstance(pl_data, list) else [])
+            )
             for p in proposals:
                 if isinstance(p, dict) and p.get("status") == "approved" and p.get("L3"):
                     context_lines.append(f"- {p['L3']}")
@@ -84,6 +91,6 @@ def load_entity_soul_context(entity_name: str, data_dir: Path) -> str:
                             context_lines.append(line)
         except (OSError, yaml.YAMLError) as e:
             logger.warning("Soul load failed for '%s': %s", entity_name, e)
-    
+
     # M18 Token Efficiency: Cap at 3 items total
     return "\n".join(context_lines[:3])

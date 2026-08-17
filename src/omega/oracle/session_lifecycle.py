@@ -42,10 +42,11 @@ class SessionState(Enum):
     - EXTERNAL → Cache (cold, external drive)
     - DELETED → Purged (beyond retention)
     """
-    ACTIVE = "active"        # 0-7 days: hot cache + warm providers
-    ARCHIVED = "archived"    # 7-30 days: cold storage (gzip compressed)
-    EXTERNAL = "external"    # 90+ days: external 8TB storage
-    DELETED = "deleted"      # Beyond retention policy
+
+    ACTIVE = "active"  # 0-7 days: hot cache + warm providers
+    ARCHIVED = "archived"  # 7-30 days: cold storage (gzip compressed)
+    EXTERNAL = "external"  # 90+ days: external 8TB storage
+    DELETED = "deleted"  # Beyond retention policy
 
 
 @dataclass
@@ -57,6 +58,7 @@ class SessionLifecycleConfig:
     - 30 days: compressed in cold storage (gzip)
     - 90 days: move to external 8TB storage drive
     """
+
     archive_after_days: int = 7
     compress_after_days: int = 30  # Already compressed by FileStorageProvider on archive
     external_after_days: int = 90
@@ -71,6 +73,7 @@ class SessionLifecycleConfig:
 @dataclass
 class SessionInfo:
     """Metadata about a session's lifecycle state."""
+
     entity_name: str
     session_id: str
     state: SessionState
@@ -83,6 +86,7 @@ class SessionInfo:
 @dataclass
 class LifecycleStats:
     """Aggregate statistics from a lifecycle sweep."""
+
     archived: int = 0
     externalized: int = 0
     deleted: int = 0
@@ -191,7 +195,7 @@ class SessionLifecycleManager:
         session_id: str,
     ) -> SessionState:
         """Determine current lifecycle state of a session.
-        
+
         Checks locations in order:
         1. Hot cache (ACTIVE)
         2. USM State (ACTIVE)
@@ -201,34 +205,38 @@ class SessionLifecycleManager:
         """
         safe_name = sanitize_path_component(entity_name)
         safe_session = sanitize_path_component(session_id)
-        
+
         # Check hot cache
         cache_key = f"{entity_name.lower()}:{session_id}"
         if cache_key in self._store._hot:
             return SessionState.ACTIVE
-        
+
         # Check USM
         from omega.state import get_usm
+
         usm = get_usm()
         state_key = f"mem:{entity_name}:{session_id}"
         if await usm.exists(state_key):
             return SessionState.ACTIVE
-        
+
         # Check cold storage
-        archive_dir = self._store._get_archive_dir() if hasattr(self._store, '_get_archive_dir') else None
+        archive_dir = (
+            self._store._get_archive_dir() if hasattr(self._store, "_get_archive_dir") else None
+        )
         if archive_dir is None:
             from omega.memory_store import _get_archive_dir
+
             archive_dir = _get_archive_dir()
-        
+
         cold_path = archive_dir / safe_name / f"{safe_session}.json.gz"
         if await anyio.Path(cold_path).exists():
             return SessionState.ARCHIVED
-        
+
         # Check external storage
         external_path = self._config.external_storage_path / safe_name / f"{safe_session}.json.gz"
         if await anyio.Path(external_path).exists():
             return SessionState.EXTERNAL
-        
+
         return SessionState.DELETED
 
     async def get_session_info(
@@ -239,11 +247,11 @@ class SessionLifecycleManager:
         """Get detailed info about a session including age and path."""
         state = await self.get_session_state(entity_name, session_id)
         safe_name = entity_name.lower().replace(" ", "_")
-        
+
         path = None
         compressed = False
         last_modified = None
-        
+
         if state == SessionState.ACTIVE:
             # Check hot cache first
             cache_key = f"{entity_name.lower()}:{session_id}"
@@ -258,15 +266,19 @@ class SessionLifecycleManager:
             else:
                 # Check USM
                 from omega.state import get_usm
+
                 usm = get_usm()
                 state_key = f"mem:{entity_name}:{session_id}"
                 if await usm.exists(state_key):
                     path = f"usm://{state_key}"
                     data = await usm.load_state(state_key)
-                    last_modified = datetime.fromisoformat(data.get("last_updated", datetime.now(timezone.utc).isoformat())).timestamp()
+                    last_modified = datetime.fromisoformat(
+                        data.get("last_updated", datetime.now(timezone.utc).isoformat())
+                    ).timestamp()
                 else:
                     # Fallback to warm storage (for legacy sessions)
                     from omega.memory_store import _get_entity_dir
+
                     entity_dir = _get_entity_dir()
                     p = entity_dir / safe_name / f"{session_id}.json"
                     if await anyio.Path(p).exists():
@@ -275,6 +287,7 @@ class SessionLifecycleManager:
                         last_modified = stat.st_mtime
         elif state == SessionState.ARCHIVED:
             from omega.memory_store import _get_archive_dir
+
             archive_dir = _get_archive_dir()
             p = archive_dir / safe_name / f"{session_id}.json.gz"
             if await anyio.Path(p).exists():
@@ -289,11 +302,11 @@ class SessionLifecycleManager:
                 compressed = True
                 stat = await anyio.Path(p).stat()
                 last_modified = stat.st_mtime
-        
+
         age_days = 0.0
         if last_modified:
             age_days = (time.time() - last_modified) / 86400
-        
+
         return SessionInfo(
             entity_name=entity_name,
             session_id=session_id,
@@ -324,7 +337,12 @@ class SessionLifecycleManager:
         """
         safe_name = entity_name.lower().replace(" ", "_")
         external_path = self._config.external_storage_path / safe_name / f"{session_id}.json.gz"
-        local_path = self._config.external_storage_path.parent / "archive" / safe_name / f"{session_id}.json.gz"
+        local_path = (
+            self._config.external_storage_path.parent
+            / "archive"
+            / safe_name
+            / f"{session_id}.json.gz"
+        )
 
         if not await anyio.Path(external_path).exists():
             logger.warning("Session %s/%s not found in external storage", entity_name, session_id)
@@ -336,6 +354,7 @@ class SessionLifecycleManager:
 
             # Copy from external to local (preserves original in external)
             import shutil
+
             await anyio.to_thread.run_sync(shutil.copy2, str(external_path), str(local_path))
             logger.info("Recalled session %s/%s from external to local", entity_name, session_id)
             return True
@@ -376,6 +395,7 @@ class SessionLifecycleManager:
         now = time.time()
 
         from omega.memory_store import _get_archive_dir
+
         archive_dir = _get_archive_dir()
 
         if not await anyio.Path(archive_dir).exists():
@@ -388,24 +408,24 @@ class SessionLifecycleManager:
             if not await anyio.Path(ent_dir).is_dir():
                 continue
             async for path in anyio.Path(ent_dir).glob("*.json.gz"):
-                    try:
-                        stat = await anyio.Path(path).stat()
-                        age_days = (now - stat.st_mtime) / 86400
-                        if age_days > self._config.external_after_days:
-                            entity_name = ent_dir.name
-                            external_entity_dir = self._config.external_storage_path / entity_name
-                            await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
-                            
-                            dest_path = external_entity_dir / path.name
-                            await anyio.Path(path).rename(dest_path)
-                            count += 1
-                            logger.info("Moved session %s to external storage: %s", path.name, dest_path)
-                    except (OmegaError, RuntimeError, OSError) as e:
-                        logger.warning("Failed to move %s to external: %s", path, e)
+                try:
+                    stat = await anyio.Path(path).stat()
+                    age_days = (now - stat.st_mtime) / 86400
+                    if age_days > self._config.external_after_days:
+                        entity_name = ent_dir.name
+                        external_entity_dir = self._config.external_storage_path / entity_name
+                        await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
 
+                        dest_path = external_entity_dir / path.name
+                        await anyio.Path(path).rename(dest_path)
+                        count += 1
+                        logger.info(
+                            "Moved session %s to external storage: %s", path.name, dest_path
+                        )
+                except (OmegaError, RuntimeError, OSError) as e:
+                    logger.warning("Failed to move %s to external: %s", path, e)
 
         return count
-
 
     async def _delete_beyond_retention(self) -> int:
         """Delete sessions beyond retention policy.

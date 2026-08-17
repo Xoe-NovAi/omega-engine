@@ -30,11 +30,7 @@ def get_active_iwad() -> str:
         return "_omega_default"
     with open(omega_yaml, encoding="utf-8") as f:
         data: dict[str, Any] = yaml.safe_load(f) or {}
-    return (
-        data.get("omega", {})
-        .get("entity", {})
-        .get("active_iwad", "_omega_default")
-    )
+    return data.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
 
 
 def get_wad_path(wad_name: str) -> Path:

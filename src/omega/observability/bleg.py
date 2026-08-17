@@ -32,29 +32,30 @@ logger = logging.getLogger(__name__)
 
 ERROR_SIGNATURES: Dict[str, tuple] = {
     # Numeric code matches FIRST — exact status codes.
-    "error.code": {                            # {"error": {"code": 429}}
+    "error.code": {  # {"error": {"code": 429}}
         429: ProviderRateLimitError,
         401: ProviderAuthError,
         403: ProviderAuthError,
     },
-    "code": {                                  # {"code": 429}
+    "code": {  # {"code": 429}
         429: ProviderRateLimitError,
         401: ProviderAuthError,
         403: ProviderAuthError,
     },
-    "status": {                                # {"status": 429}
+    "status": {  # {"status": 429}
         429: ProviderRateLimitError,
         401: ProviderAuthError,
         403: ProviderAuthError,
     },
     # Keyword matches — rate limit indicators.
     "quota_exceeded": (None, ProviderRateLimitError),  # {"quota_exceeded": true}
-    "error.type": (                            # {"error": {"type": "rate_limit_error"}}
-        "rate_limit", ProviderRateLimitError
+    "error.type": (  # {"error": {"type": "rate_limit_error"}}
+        "rate_limit",
+        ProviderRateLimitError,
     ),
     # Generic string matches — last resort.
-    "error.message": (None, ProviderError),    # {"error": {"message": ...}}
-    "error": ("__string__", ProviderError),    # {"error": "string message"}
+    "error.message": (None, ProviderError),  # {"error": {"message": ...}}
+    "error": ("__string__", ProviderError),  # {"error": "string message"}
 }
 
 
@@ -166,9 +167,10 @@ class BLEGMiddleware:
                 continue
 
             # Determine the error message from a meaningful source
-            msg = str(value) if isinstance(value, (str, int, float)) else str(
-                parsed.get("error", {}).get("message",
-                parsed.get("message", str(parsed)))
+            msg = (
+                str(value)
+                if isinstance(value, (str, int, float))
+                else str(parsed.get("error", {}).get("message", parsed.get("message", str(parsed))))
             )
 
             if isinstance(match_spec, dict):

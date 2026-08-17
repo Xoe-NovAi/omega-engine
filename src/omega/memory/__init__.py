@@ -13,9 +13,19 @@ from .providers import (
 )
 from .vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 from .sqlite_vec_adapter import SQLiteVecAdapter
-from .embeddings import IEmbeddingProvider, OllamaEmbeddingProvider, SovereignFallbackEmbeddingProvider
+from .embeddings import (
+    IEmbeddingProvider,
+    OllamaEmbeddingProvider,
+    SovereignFallbackEmbeddingProvider,
+)
 from .fts_index import ConversationFTSIndex
-from .adapters import IMemoryAdapter, MemoryAdapterRegistry, MemoryRecord, MemoryType, MemoryPriority
+from .adapters import (
+    IMemoryAdapter,
+    MemoryAdapterRegistry,
+    MemoryRecord,
+    MemoryType,
+    MemoryPriority,
+)
 from .blocks import (
     MemoryBlock,
     BlockCategory,

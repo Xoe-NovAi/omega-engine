@@ -15,9 +15,8 @@ import math
 import os
 from typing import Dict, List, Optional, Tuple
 
-import anyio
 
-from omega.memory.embeddings import EmbeddingManager, IEmbeddingProvider, SovereignFallbackEmbeddingProvider
+from omega.memory.embeddings import EmbeddingManager, SovereignFallbackEmbeddingProvider
 from omega.oracle.entity_registry import EntityRegistry, Entity
 from omega.errors import OmegaError
 
@@ -97,14 +96,18 @@ class SemanticRouter:
         # [Right Approximation] Skip semantic routing in test env where embedding
         # models aren't available — hash-based fallback produces unreliable vectors.
         if os.getenv("OMEGA_ENV") == "test":
-            logger.info("SemanticRouter: test env — semantic routing disabled, using keyword fallback")
+            logger.info(
+                "SemanticRouter: test env — semantic routing disabled, using keyword fallback"
+            )
             return
 
         # [Right Approximation] Skip semantic routing when only the hash-based
         # fallback provider is available — hash embeddings don't provide
         # meaningful cosine similarity for entity routing.
         if self._is_fallback_only():
-            logger.info("SemanticRouter: only fallback provider available — semantic routing disabled")
+            logger.info(
+                "SemanticRouter: only fallback provider available — semantic routing disabled"
+            )
             return
 
         # [id-soft: vet-046] BSP Culling — O(1) culling of irrelevant entities via precomputed routing structure
@@ -147,7 +150,7 @@ class SemanticRouter:
         Hash embeddings produce deterministic but not semantically meaningful
         vectors — cosine similarity is unreliable for routing.
         """
-        if not hasattr(self._embedding_manager, '_providers'):
+        if not hasattr(self._embedding_manager, "_providers"):
             return False
         providers = self._embedding_manager._providers
         if not providers:
@@ -155,8 +158,7 @@ class SemanticRouter:
         # Check if any provider besides the fallback is likely functional
         # (i.e., not just the SovereignFallbackEmbeddingProvider)
         has_quality_provider = any(
-            not isinstance(p, SovereignFallbackEmbeddingProvider)
-            for p in providers
+            not isinstance(p, SovereignFallbackEmbeddingProvider) for p in providers
         )
         return not has_quality_provider
 

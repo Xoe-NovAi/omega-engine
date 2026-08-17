@@ -12,7 +12,6 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
-import os
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 class APICreditExhausted(Exception):
     """Raised when a provider's monthly quota is exhausted."""
+
     pass
 
 
@@ -160,8 +160,7 @@ class APICreditBudget:
                 if data.get("month") == current_month:
                     self.month = current_month
                     self.budgets = {
-                        name: ProviderBudget(**b)
-                        for name, b in data.get("budgets", {}).items()
+                        name: ProviderBudget(**b) for name, b in data.get("budgets", {}).items()
                     }
                     self.daily_used = data.get("daily_used", {})
                     self._today = data.get("today", "")
@@ -186,7 +185,9 @@ class APICreditBudget:
     def _reset_month(self) -> None:
         """Reset all budgets for a new month."""
         self.month = datetime.now(timezone.utc).strftime("%Y-%m")
-        self.budgets = {name: ProviderBudget(**asdict(b)) for name, b in self.DEFAULT_BUDGETS.items()}
+        self.budgets = {
+            name: ProviderBudget(**asdict(b)) for name, b in self.DEFAULT_BUDGETS.items()
+        }
         self.daily_used = {}
         self._today = ""
         self._save()

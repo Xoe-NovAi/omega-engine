@@ -17,10 +17,8 @@ from pathlib import Path
 from typing import Optional, List, Dict, Any, Set
 from enum import Enum
 
-from omega.oracle.providers import NativeGGUFProvider
 from omega.oracle.resource_guard import ResourceGuard
 from omega.oracle.model_gateway import ModelGateway
-from omega.oracle.health_monitor import HealthMonitor
 from omega.observability import DATA_DIR
 
 logger = logging.getLogger(__name__)
@@ -49,6 +47,7 @@ class TaskStatus(Enum):
 @dataclass
 class LocalTask:
     """Task queued for local inference."""
+
     task_id: str
     prompt: str
     model: str
@@ -62,14 +61,14 @@ class LocalTask:
     status: str = TaskStatus.QUEUED.value
     retries: int = 0
     max_retries: int = 3
-    
+
     def to_json(self) -> str:
         return json.dumps(asdict(self), indent=2)
-    
+
     @classmethod
     def from_json(cls, data: str) -> "LocalTask":
         return cls(**json.loads(data))
-    
+
     @property
     def prompt_preview(self) -> str:
         return self.prompt[:80] + ("..." if len(self.prompt) > 80 else "")
@@ -78,6 +77,7 @@ class LocalTask:
 @dataclass
 class LocalResult:
     """Result of local inference."""
+
     task_id: str
     text: str
     model: str
@@ -88,10 +88,10 @@ class LocalResult:
     trace_id: str
     completed_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     error: str = ""
-    
+
     def to_json(self) -> str:
         return json.dumps(asdict(self), indent=2)
-    
+
     @classmethod
     def from_json(cls, data: str) -> "LocalResult":
         return cls(**json.loads(data))
@@ -101,7 +101,7 @@ class LocalResult:
 async def _atomic_write(path: Path, content: str) -> None:
     """
     Crash-safe atomic write: temp file in same dir -> fsync -> os.replace.
-    
+
     Uses tempfile.mkstemp in target directory to guarantee same filesystem.
     fsync ensures data hits physical disk before replace.
     os.replace is atomic on POSIX and Windows (NTFS).
@@ -109,7 +109,7 @@ async def _atomic_write(path: Path, content: str) -> None:
     # Create temp file in SAME directory as target (required for atomic replace)
     fd, tmp_path = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
     try:
-        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(content)
             f.flush()
             os.fsync(f.fileno())  # Force to physical disk
@@ -135,11 +135,11 @@ async def queue_local_task(
 ) -> str:
     """
     Queue a local inference task. Returns task_id immediately (fire-and-forget).
-    
+
     This is the primary API for agents to offload work to local models.
     """
     task_id = trace_id or f"lw_{uuid.uuid4().hex[:12]}"
-    
+
     task = LocalTask(
         task_id=task_id,
         prompt=prompt,
@@ -151,11 +151,11 @@ async def queue_local_task(
         entity=entity,
         trace_id=trace_id or task_id,
     )
-    
+
     # Atomic write: .tmp -> os.replace -> fsync
     task_file = LOCAL_QUEUED_DIR / f"{task_id}.json"
     await _atomic_write(task_file, task.to_json())
-    
+
     logger.info("Queued local task: %s (model=%s, entity=%s)", task_id, model, entity)
     return task_id
 
@@ -193,7 +193,7 @@ async def list_local_tasks(
 ) -> List[Dict[str, Any]]:
     """List local tasks with optional filters."""
     tasks = []
-    
+
     search_dirs = [LOCAL_QUEUED_DIR, LOCAL_COMPLETED_DIR, LOCAL_DEAD_DIR]
     if status:
         if status == TaskStatus.QUEUED:
@@ -202,33 +202,37 @@ async def list_local_tasks(
             search_dirs = [LOCAL_COMPLETED_DIR]
         elif status == TaskStatus.DEAD:
             search_dirs = [LOCAL_DEAD_DIR]
-    
+
     for dir_path in search_dirs:
-        for task_file in sorted(dir_path.glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True):
+        for task_file in sorted(
+            dir_path.glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True
+        ):
             if len(tasks) >= limit:
                 break
             try:
                 task = LocalTask.from_json(task_file.read_text())
                 if entity and task.entity != entity:
                     continue
-                tasks.append({
-                    "task_id": task.task_id,
-                    "status": task.status,
-                    "model": task.model,
-                    "entity": task.entity,
-                    "created_at": task.created_at,
-                    "prompt_preview": task.prompt_preview,
-                })
+                tasks.append(
+                    {
+                        "task_id": task.task_id,
+                        "status": task.status,
+                        "model": task.model,
+                        "entity": task.entity,
+                        "created_at": task.created_at,
+                        "prompt_preview": task.prompt_preview,
+                    }
+                )
             except Exception as e:
                 logger.warning("Failed to parse task %s: %s", task_file, e)
-    
+
     return tasks
 
 
 class LocalWorkerPool:
     """
     Background daemon that processes local inference tasks.
-    
+
     Architecture:
     - Polls queued directory at interval
     - Acquires ResourceGuard (Semaphore=1 + OOMProtector)
@@ -236,7 +240,7 @@ class LocalWorkerPool:
     - Writes atomic artifacts to completed/ + artifact store
     - Integrates with WorkerCoordinator for resource pressure pause
     """
-    
+
     def __init__(
         self,
         model_gateway: ModelGateway,
@@ -254,15 +258,16 @@ class LocalWorkerPool:
         self._background_tasks: Set[anyio.abc.Task] = set()
         # Track in-progress task IDs to prevent re-picking the same task
         self._processing_task_ids: Set[str] = set()
-        
-# Register with WorkerCoordinator
+
+        # Register with WorkerCoordinator
         from omega.library.coordinator import COORDINATOR
+
         self.coordinator = COORDINATOR
 
     def _spawn_background_task(self, coro, name: str = "background"):
         """
         Spawn a fire-and-forget background task with GC protection.
-        
+
         Python 3.12+: asyncio.create_task() tasks can be GC'd before running.
         Fix: Store strong reference in set, add done_callback to clean up.
         """
@@ -274,21 +279,21 @@ class LocalWorkerPool:
         """Start the worker pool daemon."""
         if self._running:
             return
-        
+
         await self.coordinator.register("local_worker_pool")
         self._running = True
-        
+
         async with anyio.create_task_group() as tg:
             self._task_group = tg
             tg.start_soon(self._worker_loop)
             logger.info("LocalWorkerPool started (poll_interval=%.1fs)", self.poll_interval)
-            
+
             # Keep running until cancelled
             try:
                 await anyio.sleep_forever()
             except anyio.get_cancelled_exc_class():
                 pass
-    
+
     async def stop(self) -> None:
         """Stop the worker pool."""
         self._running = False
@@ -296,7 +301,7 @@ class LocalWorkerPool:
             self._task_group.cancel_scope.cancel()
         await self.coordinator.unregister("local_worker_pool")
         logger.info("LocalWorkerPool stopped")
-    
+
     async def _worker_loop(self) -> None:
         """Main worker loop: poll queue, process tasks."""
         while self._running:
@@ -305,12 +310,12 @@ class LocalWorkerPool:
                 if await self.coordinator.is_paused("local_worker_pool"):
                     await anyio.sleep(self.poll_interval)
                     continue
-                
+
                 # Check concurrent limit
                 if len(self._background_tasks) >= self.max_concurrent:
                     await anyio.sleep(self.poll_interval)
                     continue
-                
+
                 # Get next queued task
                 task = await self._get_next_task()
                 if task:
@@ -324,19 +329,19 @@ class LocalWorkerPool:
                     self._task_group.start_soon(self._process_task, task)
                 else:
                     await anyio.sleep(self.poll_interval)
-                    
+
             except anyio.get_cancelled_exc_class():
                 break
             except Exception as e:
                 logger.error("Worker loop error: %s", e)
                 await anyio.sleep(self.poll_interval)
-    
+
     async def _get_next_task(self) -> Optional[LocalTask]:
         """Get the oldest queued task."""
         task_files = sorted(LOCAL_QUEUED_DIR.glob("*.json"), key=lambda f: f.stat().st_mtime)
         if not task_files:
             return None
-        
+
         task_file = task_files[0]
         try:
             task = LocalTask.from_json(task_file.read_text())
@@ -346,21 +351,21 @@ class LocalWorkerPool:
             # Move corrupted file to dead
             task_file.replace(LOCAL_DEAD_DIR / task_file.name)
             return None
-    
+
     async def _process_task(self, task: LocalTask) -> None:
         """Process a single local inference task."""
         task_id = task.task_id
-        
+
         try:
             # Move to processing (atomic rename - just delete queued file)
             queued_file = LOCAL_QUEUED_DIR / f"{task_id}.json"
             if queued_file.exists():
                 queued_file.unlink()
-            
+
             # Update status to running (we track via artifact dir existence)
             artifact_dir = LOCAL_ARTIFACT_DIR / task_id
             artifact_dir.mkdir(parents=True, exist_ok=True)
-            
+
             # Write task metadata for distillation pipeline
             metadata = {
                 "task_id": task_id,
@@ -373,7 +378,7 @@ class LocalWorkerPool:
                 "status": "processing",
             }
             await _atomic_write(artifact_dir / "task_metadata.json", json.dumps(metadata, indent=2))
-            
+
             # Run inference with ResourceGuard protection
             async with self.resource_guard.lock(
                 weight=1,
@@ -381,7 +386,7 @@ class LocalWorkerPool:
             ):
                 # Update heartbeat
                 await self.coordinator.heartbeat("local_worker_pool", f"inference:{task_id}")
-                
+
                 # Generate via ModelGateway (uses NativeGGUFProvider for local models)
                 result = await self.model_gateway.generate(
                     model_name=task.model,
@@ -391,7 +396,7 @@ class LocalWorkerPool:
                     temperature=task.temperature,
                     top_p=task.top_p,
                 )
-                
+
                 # Build result
                 local_result = LocalResult(
                     task_id=task_id,
@@ -403,18 +408,20 @@ class LocalWorkerPool:
                     entity=task.entity,
                     trace_id=task.trace_id,
                 )
-                
+
                 # Write result atomically
                 await _atomic_write(artifact_dir / "result.json", local_result.to_json())
-                
+
                 # Update metadata
                 metadata["status"] = "completed"
                 metadata["completed_at"] = datetime.now(timezone.utc).isoformat()
                 metadata["provider_name"] = result.provider_name
                 metadata["tokens_generated"] = result.tokens_generated
                 metadata["latency_ms"] = result.latency_ms
-                await _atomic_write(artifact_dir / "task_metadata.json", json.dumps(metadata, indent=2))
-                
+                await _atomic_write(
+                    artifact_dir / "task_metadata.json", json.dumps(metadata, indent=2)
+                )
+
                 # Move task to completed
                 completed_file = LOCAL_COMPLETED_DIR / f"{task_id}.json"
                 completed_task = LocalTask(
@@ -432,39 +439,52 @@ class LocalWorkerPool:
                     retries=task.retries,
                 )
                 await _atomic_write(completed_file, completed_task.to_json())
-                
-                logger.info("Completed local task: %s (provider=%s, tokens=%d, latency=%dms)",
-                           task_id, result.provider_name, result.tokens_generated, result.latency_ms)
-                
+
+                logger.info(
+                    "Completed local task: %s (provider=%s, tokens=%d, latency=%dms)",
+                    task_id,
+                    result.provider_name,
+                    result.tokens_generated,
+                    result.latency_ms,
+                )
+
         except Exception as e:
             logger.error("Task %s failed: %s", task_id, e)
             await self._handle_task_failure(task, str(e))
         finally:
             self._processing_task_ids.discard(task_id)
-    
+
     async def _handle_task_failure(self, task: LocalTask, error: str) -> None:
         """Handle task failure with retry logic."""
         task_id = task.task_id
-        
+
         if task.retries < task.max_retries:
             # Re-queue with incremented retry count
             task.retries += 1
             task.status = TaskStatus.QUEUED.value
             await _atomic_write(LOCAL_QUEUED_DIR / f"{task_id}.json", task.to_json())
-            logger.warning("Task %s re-queued (retry %d/%d)", task_id, task.retries, task.max_retries)
+            logger.warning(
+                "Task %s re-queued (retry %d/%d)", task_id, task.retries, task.max_retries
+            )
         else:
             # Move to dead letter
             task.status = TaskStatus.DEAD.value
             await _atomic_write(LOCAL_DEAD_DIR / f"{task_id}.json", task.to_json())
-            
+
             # Write failure reason for debugging
             artifact_dir = LOCAL_ARTIFACT_DIR / task_id
             artifact_dir.mkdir(parents=True, exist_ok=True)
-            await _atomic_write(artifact_dir / "failure_reason.json", json.dumps({
-                "task_id": task_id,
-                "error": error,
-                "retries": task.retries,
-                "failed_at": datetime.now(timezone.utc).isoformat(),
-            }, indent=2))
-            
+            await _atomic_write(
+                artifact_dir / "failure_reason.json",
+                json.dumps(
+                    {
+                        "task_id": task_id,
+                        "error": error,
+                        "retries": task.retries,
+                        "failed_at": datetime.now(timezone.utc).isoformat(),
+                    },
+                    indent=2,
+                ),
+            )
+
             logger.error("Task %s moved to dead letter after %d retries", task_id, task.retries)

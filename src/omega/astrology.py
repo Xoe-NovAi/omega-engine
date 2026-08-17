@@ -14,11 +14,9 @@
 import logging
 import sqlite3
 import os
-import yaml
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional, Tuple, Dict, Any
+from typing import Optional, Dict, Any
 
 import anyio
 from omega.errors import OmegaError
@@ -32,18 +30,21 @@ logger = logging.getLogger(__name__)
 # Path to the birth records database
 BIRTH_DB_PATH = DATA_DIR / "memory" / "entity_births.db"
 
+
 @dataclass
 class BirthRecord:
     """The cosmic signature of an entity's awakening."""
+
     entity_id: str
     utc_timestamp: str
     latitude: float
     longitude: float
     timezone: str
 
+
 def _init_db() -> None:
     """Initialize the birth records table if it doesn't exist.
-    
+
     Idempotency: Uses IF NOT EXISTS.
     Uses try/finally instead of `with` to work around Python 3.13
     ResourceWarning bug where sqlite3.Connection.__del__ fires even
@@ -65,9 +66,10 @@ def _init_db() -> None:
     finally:
         conn.close()
 
+
 def _record_birth_sync(entity_id: str, lat: float, lon: float, tz: str) -> bool:
     """Synchronous implementation of birth recording.
-    
+
     Atomic Capture: Uses INSERT ... ON CONFLICT DO NOTHING to ensure
     the birth is recorded exactly once.
     Uses try/finally instead of `with` (see Python 3.13 ResourceWarning bug).
@@ -80,7 +82,7 @@ def _record_birth_sync(entity_id: str, lat: float, lon: float, tz: str) -> bool:
         cursor = conn.execute(
             "INSERT INTO entity_birth_records (entity_id, utc_timestamp, latitude, longitude, timezone) "
             "VALUES (?, ?, ?, ?, ?) ON CONFLICT(entity_id) DO NOTHING",
-            (eid_lower, utc_now, lat, lon, tz)
+            (eid_lower, utc_now, lat, lon, tz),
         )
         conn.commit()
         return cursor.rowcount > 0
@@ -89,6 +91,7 @@ def _record_birth_sync(entity_id: str, lat: float, lon: float, tz: str) -> bool:
         raise OmegaError(f"Failed to record first breath for {entity_id}: {e}")
     finally:
         conn.close()
+
 
 def _get_birth_sync(entity_id: str) -> Optional[BirthRecord]:
     """Synchronous retrieval of birth record."""
@@ -99,8 +102,7 @@ def _get_birth_sync(entity_id: str) -> Optional[BirthRecord]:
     try:
         conn.row_factory = sqlite3.Row
         row = conn.execute(
-            "SELECT * FROM entity_birth_records WHERE entity_id = ?", 
-            (eid_lower,)
+            "SELECT * FROM entity_birth_records WHERE entity_id = ?", (eid_lower,)
         ).fetchone()
         if row:
             return BirthRecord(**dict(row))
@@ -110,7 +112,16 @@ def _get_birth_sync(entity_id: str) -> Optional[BirthRecord]:
     finally:
         conn.close()
 
-def _record_birth_markdown(entity_id: str, timestamp: str, response_text: str, trace_id: str, lat: float, lon: float, tz: str) -> None:
+
+def _record_birth_markdown(
+    entity_id: str,
+    timestamp: str,
+    response_text: str,
+    trace_id: str,
+    lat: float,
+    lon: float,
+    tz: str,
+) -> None:
     """Sovereign Atomic Write of the birth record to the entity's workspace."""
     workspace_path = DATA_DIR / "entities" / entity_id.lower() / "workspace"
     workspace_path.mkdir(parents=True, exist_ok=True)
@@ -134,15 +145,16 @@ def _record_birth_markdown(entity_id: str, timestamp: str, response_text: str, t
         os.fsync(f.fileno())
     tmp_file.replace(birth_file)
 
+
 async def record_first_breath(entity_id: str, response_text: str, trace_id: str) -> bool:
     """
     Record the first utterance of an entity.
-    
+
     Sovereign Implementation:
     1. Captures host location/timezone from config.
     2. Records to SQLite (Fast Index).
     3. Records to birth_records.md (Sovereign Record).
-    
+
     Returns True if this was the first breath, False if already recorded.
     """
     # 1. Resolve Sovereign Location from config
@@ -152,7 +164,7 @@ async def record_first_breath(entity_id: str, response_text: str, trace_id: str)
 
     # 2. Record to SQLite (Atomic check)
     is_first = await anyio.to_thread.run_sync(_record_birth_sync, entity_id, lat, lon, tz)
-    
+
     if is_first:
         # 3. Record to Markdown (Sovereign Record)
         timestamp = datetime.now(timezone.utc).isoformat()
@@ -163,26 +175,29 @@ async def record_first_breath(entity_id: str, response_text: str, trace_id: str)
             logger.info(f"Sovereign birth record created for {entity_id}")
         except (OSError, RuntimeError) as e:
             logger.error(f"Failed to write sovereign birth record for {entity_id}: {e}")
-            # We don't raise here to avoid blocking the response, 
+            # We don't raise here to avoid blocking the response,
             # but the DB record still marks them as born.
 
     return is_first
+
 
 async def get_birth_record(entity_id: str) -> Optional[BirthRecord]:
     """Retrieve the birth record for an entity."""
     return await anyio.to_thread.run_sync(_get_birth_sync, entity_id)
 
+
 # ── ASTROLOGY HOOKS ────────────────────────────────────────────────────
+
 
 async def prepare_astrological_data(entity_id: str) -> Dict[str, Any]:
     """
-    Skeletal utility to prepare birth data for external astrology engines 
+    Skeletal utility to prepare birth data for external astrology engines
     (e.g., Kerykeion, pyswisseph).
     """
     record = await get_birth_record(entity_id)
     if not record:
         return {"status": "no_record", "message": "Entity has not yet spoken."}
-    
+
     return {
         "status": "ready",
         "birth_data": {
@@ -191,5 +206,5 @@ async def prepare_astrological_data(entity_id: str) -> Dict[str, Any]:
             "timezone": record.timezone,
         },
         "engine_target": "Kerykeion/pyswisseph",
-        "note": "Ready for chart generation."
+        "note": "Ready for chart generation.",
     }

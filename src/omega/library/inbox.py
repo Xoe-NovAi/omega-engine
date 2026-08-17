@@ -18,7 +18,6 @@ Tiers:
 import json
 import logging
 import os
-import time
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
@@ -28,13 +27,7 @@ from typing import Any, Dict, List, Optional
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 
 logger = logging.getLogger(__name__)
@@ -151,7 +144,9 @@ class InboxManager:
         logger.info(f"Inbox added [{source_type}] {item.title}")
         return item
 
-    async def add_url(self, url: str, tags: Optional[List[str]] = None, priority: int = 0) -> InboxItem:
+    async def add_url(
+        self, url: str, tags: Optional[List[str]] = None, priority: int = 0
+    ) -> InboxItem:
         """Quick-add a URL to the inbox."""
         return await self.add(url, source_type="url", tags=tags, priority=priority)
 
@@ -177,7 +172,12 @@ class InboxManager:
         pending = len(list(PENDING_DIR.glob("*.json")))
         processing = len(list(PROCESSING_DIR.glob("*.json")))
         failed = len(list(FAILED_DIR.glob("*.json")))
-        return {"pending": pending, "processing": processing, "failed": failed, "total": pending + processing + failed}
+        return {
+            "pending": pending,
+            "processing": processing,
+            "failed": failed,
+            "total": pending + processing + failed,
+        }
 
     async def mark_processing(self, item_id: str) -> Optional[InboxItem]:
         """Move item from pending to processing (atomic rename)."""
@@ -230,14 +230,14 @@ class InboxManager:
         for d in [PENDING_DIR, PROCESSING_DIR, FAILED_DIR]:
             path = d / f"{item_id}.json"
             if path.exists():
-                    try:
-                        text = await anyio.Path(path).read_text()
-                        return InboxItem.from_dict(json.loads(text))
-                    except OmegaError:
-                        continue
-                    except (OmegaError, RuntimeError, OSError) as e:
-                        logger.error("Failed to load inbox item from %s: %s", path, e, exc_info=True)
-                        continue
+                try:
+                    text = await anyio.Path(path).read_text()
+                    return InboxItem.from_dict(json.loads(text))
+                except OmegaError:
+                    continue
+                except (OmegaError, RuntimeError, OSError) as e:
+                    logger.error("Failed to load inbox item from %s: %s", path, e, exc_info=True)
+                    continue
         return None
 
     async def clear_completed(self) -> int:

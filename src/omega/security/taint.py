@@ -17,21 +17,20 @@
 # DocRef: docs/architecture/TAINTED_DATA_PROTOCOL.md
 
 import logging
-import json
 import hashlib
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
 
-from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 
 
 # ── Taint Levels ────────────────────────────────────────────────────────
+
 
 class TaintLevel(Enum):
     """Taint levels for data provenance tracking.
@@ -39,11 +38,12 @@ class TaintLevel(Enum):
     Contamination model: CLEAN < LOW < MEDIUM < HIGH < CONTAMINATED
     Once data is tainted, derived data inherits the higher level.
     """
-    CLEAN = 0           # Internal, trusted data (system prompts, code)
-    LOW = 1             # External but verified (e.g., GitHub Xoe-NovAi)
-    MEDIUM = 2          # External unverified (e.g., web search results)
-    HIGH = 3            # External untrusted (e.g., arbitrary URLs)
-    CONTAMINATED = 4    # Mixed with HIGH/CONTAMINATED sources
+
+    CLEAN = 0  # Internal, trusted data (system prompts, code)
+    LOW = 1  # External but verified (e.g., GitHub Xoe-NovAi)
+    MEDIUM = 2  # External unverified (e.g., web search results)
+    HIGH = 3  # External untrusted (e.g., arbitrary URLs)
+    CONTAMINATED = 4  # Mixed with HIGH/CONTAMINATED sources
 
     def __lt__(self, other: "TaintLevel") -> bool:
         return self.value < other.value
@@ -71,12 +71,11 @@ class TaintSource:
 
     Tracks where tainted data originated for audit and traceability.
     """
-    name: str                    # e.g., "web_search", "firecrawl", "user_upload"
-    url: Optional[str] = None    # Source URL if applicable
+
+    name: str  # e.g., "web_search", "firecrawl", "user_upload"
+    url: Optional[str] = None  # Source URL if applicable
     provider: Optional[str] = None  # Provider name (e.g., "searxng", "firecrawl")
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 @dataclass
@@ -85,14 +84,13 @@ class TaintRecord:
 
     Links a data identifier to its taint level and source.
     """
-    data_id: str                 # Hash or UUID of the data
+
+    data_id: str  # Hash or UUID of the data
     taint_level: TaintLevel
     source: TaintSource
     derived_from: List[str] = field(default_factory=list)  # Parent data_ids
     metadata: Dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -128,6 +126,7 @@ class TaintRecord:
 
 
 # ── Taint Propagation Engine ────────────────────────────────────────────
+
 
 class TaintPropagation:
     """Transitive taint propagation engine.
@@ -209,7 +208,9 @@ class TaintPropagation:
         self._records[data_id] = record
         logger.debug(
             "Tagged data %s with taint level %s from source %s",
-            data_id, taint_level.name, source.name
+            data_id,
+            taint_level.name,
+            source.name,
         )
 
         return data_id
@@ -241,10 +242,7 @@ class TaintPropagation:
             if pid in self._records:
                 parent_levels.append(self._records[pid].taint_level)
             else:
-                logger.warning(
-                    "Parent data_id %s not found in taint records — assuming CLEAN",
-                    pid
-                )
+                logger.warning("Parent data_id %s not found in taint records — assuming CLEAN", pid)
 
         max_level = TaintLevel.max(*parent_levels) if parent_levels else TaintLevel.CLEAN
 
@@ -260,8 +258,10 @@ class TaintPropagation:
                         most_tainted_level = rec.taint_level
                         most_tainted_parent = rec
 
-            source = most_tainted_parent.source if most_tainted_parent else TaintSource(
-                name="derived", timestamp=datetime.now(timezone.utc).isoformat()
+            source = (
+                most_tainted_parent.source
+                if most_tainted_parent
+                else TaintSource(name="derived", timestamp=datetime.now(timezone.utc).isoformat())
             )
         else:
             source = TaintSource(name="derived", timestamp=datetime.now(timezone.utc).isoformat())
@@ -277,7 +277,9 @@ class TaintPropagation:
         self._records[data_id] = record
         logger.debug(
             "Derived data %s with taint level %s (from %d parents)",
-            data_id, max_level.name, len(parent_ids)
+            data_id,
+            max_level.name,
+            len(parent_ids),
         )
 
         return data_id
@@ -331,7 +333,10 @@ class TaintPropagation:
 
         logger.warning(
             "Taint elevated for data %s: %s → %s (%s)",
-            data_id, old_level.name, new_level.name, reason
+            data_id,
+            old_level.name,
+            new_level.name,
+            reason,
         )
 
         # Propagate elevation to derived data
@@ -365,17 +370,11 @@ class TaintPropagation:
         Returns:
             List of data_ids that meet the taint threshold.
         """
-        return [
-            did for did in data_ids
-            if self.get_taint_level(did) <= max_level
-        ]
+        return [did for did in data_ids if self.get_taint_level(did) <= max_level]
 
     def get_contaminated_sources(self) -> List[TaintRecord]:
         """Get all records with HIGH or CONTAMINATED taint level."""
-        return [
-            r for r in self._records.values()
-            if r.taint_level >= TaintLevel.HIGH
-        ]
+        return [r for r in self._records.values() if r.taint_level >= TaintLevel.HIGH]
 
     def get_stats(self) -> Dict[str, Any]:
         """Get taint tracking statistics."""
@@ -396,6 +395,7 @@ class TaintPropagation:
 
 
 # ── Taint-Aware Ingestion Integration ───────────────────────────────────
+
 
 class TaintAwareIngestion:
     """Integrates taint tracking with the SovereignIngestionPipeline.
@@ -462,17 +462,23 @@ class TaintAwareIngestion:
         if source_url:
             url_lower = source_url.lower()
             import re
+
             for pattern, level in cls.TAINT_MAP.items():
                 pat_lower = pattern.lower()
                 # Use regex word-boundary matching to avoid false positives
                 # (e.g., "exa" matching "example.com")
                 # Match if pattern appears as a domain/path component
-                if re.search(r'(?<![a-zA-Z0-9])' + re.escape(pat_lower) + r'(?![a-zA-Z0-9])', url_lower):
+                if re.search(
+                    r"(?<![a-zA-Z0-9])" + re.escape(pat_lower) + r"(?![a-zA-Z0-9])", url_lower
+                ):
                     return level
                 # Also check if any URL domain component is a substring of the pattern
                 # (e.g., "searx" in URL matching "searxng" pattern)
-                if any(pat_lower.startswith(comp) or pat_lower.endswith(comp)
-                       for comp in re.split(r'[^a-zA-Z0-9]+', url_lower) if comp):
+                if any(
+                    pat_lower.startswith(comp) or pat_lower.endswith(comp)
+                    for comp in re.split(r"[^a-zA-Z0-9]+", url_lower)
+                    if comp
+                ):
                     return level
             # URL provided but no trusted pattern matched → external untrusted
             return TaintLevel.HIGH
@@ -513,9 +519,7 @@ class TaintAwareIngestion:
             Tuple of (source_id, ingested_document_with_taint).
         """
         # 1. Determine taint level
-        taint_level = self.determine_taint_level(
-            provider_name, source_url, metadata
-        )
+        taint_level = self.determine_taint_level(provider_name, source_url, metadata)
 
         # 2. Tag the data
         source = TaintSource(
@@ -548,7 +552,9 @@ class TaintAwareIngestion:
 
         logger.info(
             "Ingested data with taint level %s (data_id=%s, source_id=%s)",
-            taint_level.name, data_id, source_id
+            taint_level.name,
+            data_id,
+            source_id,
         )
 
         return source_id, doc
@@ -559,6 +565,7 @@ class TaintAwareIngestion:
 
 
 # ── Taint-Aware Memory Integration ──────────────────────────────────────
+
 
 class TaintAwareMemory:
     """Integrates taint tracking with memory block operations.

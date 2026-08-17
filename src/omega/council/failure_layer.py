@@ -8,47 +8,41 @@
 # 4. WAL checkpointing (crash recovery)
 
 from __future__ import annotations
-from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
 from typing import Optional
-import math
 import random
-import time
 
-from .models import RetryPolicy, FallbackChain, CircuitBreakerState
+from .models import RetryPolicy
 
 
 class CoordinatedRecovery:
     """Manages recovery across all 4 failure layers."""
-    
+
     def __init__(self):
         from src.omega.oracle.health_monitor import HealthMonitor
-        self.circuit_breaker = HealthMonitor().get_breaker('council')
+
+        self.circuit_breaker = HealthMonitor().get_breaker("council")
         self.wal = WriteAheadLog()
-    
+
     def should_retry(self, attempt: int, policy: Optional[RetryPolicy] = None) -> bool:
         """Check if retry should be attempted with jitter."""
         policy = policy or RetryPolicy()
         if attempt >= policy.max_retries:
             return False
-        if self.circuit_breaker.current_state != 'closed':
+        if self.circuit_breaker.current_state != "closed":
             return False
         return True
-    
+
     def wait_time(self, attempt: int, policy: Optional[RetryPolicy] = None) -> float:
         """Calculate exponential backoff with jitter."""
         policy = policy or RetryPolicy()
-        delay = min(
-            policy.base_delay_ms * (2 ** attempt),
-            policy.max_delay_ms
-        )
+        delay = min(policy.base_delay_ms * (2**attempt), policy.max_delay_ms)
         jitter = delay * random.uniform(-policy.jitter_factor, policy.jitter_factor)
         return max(0.001, (delay + jitter) / 1000.0)  # Return seconds
 
 
 class WriteAheadLog:
     """Write-Ahead Log for crash recovery during council operations.
-    
+
     Records each stage's progress with:
     - session_id
     - stage name
@@ -56,13 +50,13 @@ class WriteAheadLog:
     - timestamp
     - artifact paths
     """
-    
+
     def __init__(self, log_dir: str = "data/council/wal/"):
         self.log_dir = log_dir
-    
+
     def checkpoint(self, session_id: str, stage: str, state: str, **metadata):
         """Write a WAL checkpoint entry.
-        
+
         TODO: Implement atomic write with .tmp → .json rename.
         """
         pass

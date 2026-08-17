@@ -8,9 +8,8 @@ Follows Mandate 1 (AnyIO Absolute) and Mandate 12 (Queue Integrity).
 """
 
 import logging
-import time
 from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 
 import anyio
 from omega.oracle.session_lifecycle import SessionLifecycleManager, SessionLifecycleConfig
@@ -28,6 +27,7 @@ HARVEST_INTERVAL = 86400.0
 # ============================================================================
 # HARVESTER ENGINE
 # ============================================================================
+
 
 class LifecycleHarvester:
     """
@@ -57,27 +57,33 @@ class LifecycleHarvester:
             try:
                 logger.info("Starting scheduled session lifecycle sweep...")
                 stats = await self.manager.run_lifecycle()
-                
+
                 # Record stats for observability
-                self.stats_history.append({
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "stats": stats.to_dict()
-                })
-                
+                self.stats_history.append(
+                    {"timestamp": datetime.now(timezone.utc).isoformat(), "stats": stats.to_dict()}
+                )
+
                 logger.info(
                     "Lifecycle sweep complete: archived=%d, externalized=%d, deleted=%d, errors=%d",
-                    stats.archived, stats.externalized, stats.deleted, stats.errors
+                    stats.archived,
+                    stats.externalized,
+                    stats.deleted,
+                    stats.errors,
                 )
             except Exception as e:
                 logger.error("Lifecycle harvest failed: %s", e, exc_info=True)
-            
+
             await anyio.sleep(HARVEST_INTERVAL)
+
 
 # ============================================================================
 # INTEGRATION
 # ============================================================================
 
-async def start_lifecycle_harvester(task_group: anyio.abc.TaskGroup, config: Optional[SessionLifecycleConfig] = None):
+
+async def start_lifecycle_harvester(
+    task_group: anyio.abc.TaskGroup, config: Optional[SessionLifecycleConfig] = None
+):
     """Helper to start the lifecycle harvester within a TaskGroup."""
     harvester = LifecycleHarvester(config=config)
     await harvester.start(task_group)

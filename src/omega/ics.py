@@ -34,7 +34,7 @@ from __future__ import annotations
 import os
 import re
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
 
@@ -53,9 +53,9 @@ ICS_DEFAULT_PHASE = "PHASE-II"
 # Channel constants (generic — WAD-agnostic)
 ICS_CHANNEL_OPENCODE = "opencode"
 ICS_CHANNEL_CLI = "cli"
-ICS_CHANNEL_OVERSIGHT = "oversight"   # Grand Oversight channel
-ICS_CHANNEL_BUILD = "build"           # Build-side channel (Ma'at)
-ICS_CHANNEL_RUN = "run"               # Run-side channel (Lilith)
+ICS_CHANNEL_OVERSIGHT = "oversight"  # Grand Oversight channel
+ICS_CHANNEL_BUILD = "build"  # Build-side channel (Ma'at)
+ICS_CHANNEL_RUN = "run"  # Run-side channel (Lilith)
 
 # ROLE_CONSTANTS — Engine defines SLOTS; WADs provide ENTITIES.
 # These constants are the engine's slot identifiers. The actual entity
@@ -94,15 +94,15 @@ from omega.memory.providers import sanitize_path_component
 
 def _load_dispatch_config(iwad: str = DEFAULT_IWAD, root: Path | str | None = None) -> dict:
     """Load the agent dispatch configuration from the active IWAD.
-    
+
     Args:
         iwad: The IWAD name (default: DEFAULT_IWAD).
         root: DEPRECATED — kept for signature compatibility. Ignored.
               Path resolution now uses WADS_DIR from config_resolver (M2 Firewall).
-    
+
     Returns:
         Parsed YAML dict with "entities" list.
-    
+
     Raises:
         FileNotFoundError: If dispatch.yaml not found.
         yaml.YAMLError: If YAML is malformed.
@@ -112,11 +112,11 @@ def _load_dispatch_config(iwad: str = DEFAULT_IWAD, root: Path | str | None = No
 
 def _get_entity_by_role(role: str, iwad: str = DEFAULT_IWAD) -> dict | None:
     """Look up an entity definition by its ROLE constant.
-    
+
     Args:
         role: The ROLE_CONSTANT key (e.g., "GRAND_OVERSIGHT").
         iwad: The IWAD name (default: DEFAULT_IWAD).
-    
+
     Returns:
         Entity dict with name, role, mode, capabilities, etc., or None if not found.
     """
@@ -149,19 +149,19 @@ def _get_channel_for_role(role: str, iwad: str = DEFAULT_IWAD) -> str:
 @dataclass
 class ICSContext:
     """Context for rendering an ICS-S header.
-    
+
     All fields are optional except ``entity``. Missing fields are
     auto-detected from runtime state (model, phase) or generated
     (trace).
     """
-    
+
     entity: str
     model: Optional[str] = None
     channel: str = ICS_CHANNEL_OPENCODE
     trace_id: Optional[str] = None
     phase: Optional[str] = None
     mode: str = "full"  # "full" | "compact" | "off"
-    
+
     def render(self) -> str:
         """Render the ICS-S header string for this context."""
         if self.mode == "off":
@@ -171,12 +171,12 @@ class ICSContext:
                 entity=self.entity.upper(),
                 phase=self.phase or _detect_phase(),
             )
-        
+
         # Full mode — auto-detect missing values
         model = self.model or _detect_model(self.entity)
         trace = self.trace_id or _generate_trace()
         phase = self.phase or _detect_phase()
-        
+
         return ICS_TEMPLATE_FULL.format(
             entity=self.entity.upper(),
             model=model,
@@ -188,9 +188,10 @@ class ICSContext:
 
 # ── Detection functions ────────────────────────────────────────────────
 
+
 def _detect_model(entity: str) -> str:
     """Detect the active model for this entity.
-    
+
     Priority (D118-aware, ordered most-specific to least):
         1. **model_override parameter** (D118 Dual-Inference) — explicit
            opt-in local routing
@@ -199,10 +200,10 @@ def _detect_model(entity: str) -> str:
         4. **TriageRouter last_selected_model** — runtime cache
         5. **Entity soul.yaml** ``inference.model`` — entity default
         6. **"unknown"** — graceful fallback
-    
+
     Args:
         entity: The entity name (for entity-config lookup in priority 5)
-    
+
     Returns:
         The detected model name, or ``"unknown"`` if none could be found.
     """
@@ -210,12 +211,12 @@ def _detect_model(entity: str) -> str:
     override = os.environ.get("OMEGA_MODEL_OVERRIDE", "")
     if override:
         return override
-    
+
     # Priority 2: OPENCODE_MODEL env
     env_model = os.environ.get("OPENCODE_MODEL", "")
     if env_model:
         return env_model
-    
+
     # Priority 2.5: OpenCode session DB — authoritative live model
     # The OpenCode session DB stores the model in session.model JSON.
     # This is the same source the wrapper reads post-exit, but accessible
@@ -223,25 +224,25 @@ def _detect_model(entity: str) -> str:
     db_model = _read_opencode_session_model()
     if db_model:
         return db_model
-    
+
     # Priority 3: opencode.json model key
     # (Deferred to caller — Oracle has the config loaded)
-    
+
     # Priority 4: TriageRouter last_selected_model
     # (Deferred to caller — Oracle has the router reference)
-    
+
     # Priority 5: Entity soul.yaml
     soul_model = _read_entity_model(entity)
     if soul_model:
         return soul_model
-    
+
     # Priority 6: graceful fallback
     return "unknown"
 
 
 def _detect_phase() -> str:
     """Detect the current phase from SOVEREIGN_ARK_BLUEPRINT.md.
-    
+
     Scans the blueprint for the highest completed Strike marker.
     Falls back to :data:`ICS_DEFAULT_PHASE` if the blueprint is unreadable.
     """
@@ -312,15 +313,15 @@ def _read_opencode_session_model() -> Optional[str]:
         return None
     try:
         import sqlite3
+
         conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
         try:
             cur = conn.cursor()
-            cur.execute(
-                "SELECT model FROM session ORDER BY time_updated DESC LIMIT 1"
-            )
+            cur.execute("SELECT model FROM session ORDER BY time_updated DESC LIMIT 1")
             row = cur.fetchone()
             if row and row[0]:
                 import json
+
                 data = json.loads(row[0])
                 model_id = data.get("id")
                 if model_id:
@@ -333,6 +334,7 @@ def _read_opencode_session_model() -> Optional[str]:
 
 
 # ── Public API ─────────────────────────────────────────────────────────
+
 
 def render(
     entity: str,
@@ -379,14 +381,14 @@ def render_for_response(
     mode: str = "full",
 ) -> str:
     """Render an ICS-S header from an existing OracleResponse.
-    
+
     Convenience wrapper that pulls entity/model/trace/phase from the
     response object.
-    
+
     Args:
         response: An :class:`OracleResponse` instance
         mode: ``"full"`` | ``"compact"`` | ``"off"``
-    
+
     Returns:
         The formatted ICS-S header string.
     """

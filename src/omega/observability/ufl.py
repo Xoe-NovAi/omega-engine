@@ -54,12 +54,19 @@ class UFLWriter:
         data_dir: Optional[Path] = None,
         rotate_daily: bool = True,
     ):
-        self._data_dir = (data_dir or Path(
-            os.environ.get(
-                "OMEGA_DATA_DIR",
-                str(Path(__file__).resolve().parent.parent.parent.parent / "data")
+        self._data_dir = (
+            (
+                data_dir
+                or Path(
+                    os.environ.get(
+                        "OMEGA_DATA_DIR",
+                        str(Path(__file__).resolve().parent.parent.parent.parent / "data"),
+                    )
+                )
             )
-        )) / "observability" / "forensic"
+            / "observability"
+            / "forensic"
+        )
         self._data_dir.mkdir(parents=True, exist_ok=True)
         self._rotate_daily = rotate_daily
         self._current_date: Optional[str] = None

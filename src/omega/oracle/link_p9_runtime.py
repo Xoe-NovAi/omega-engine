@@ -19,16 +19,10 @@ import json
 import logging
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
@@ -36,7 +30,6 @@ from typing import Any, Dict, List, Literal, Optional
 from omega.cvar_table import ZONEID_PRESENCE, ZONEID_HANDOFF  # noqa: F401
 from omega.oracle.subagent_dispatcher import (
     HandoffPacket,
-    CAPABILITY_REGISTRY,
 )
 
 logger = logging.getLogger(__name__)
@@ -55,6 +48,7 @@ class AgentPresence:
 
     [id-soft: vet-015] ZONEID Pattern — magic constant for agent presence integrity
     """
+
     agent_name: str
     last_heartbeat: float
     ttl_seconds: float = 300.0  # 5 min default
@@ -66,8 +60,7 @@ class AgentPresence:
     def __post_init__(self) -> None:
         if self.zoneid != ZONEID_PRESENCE:
             raise ValueError(
-                f"Invalid ZONEID_PRESENCE: expected {ZONEID_PRESENCE:#x}, "
-                f"got {self.zoneid:#x}"
+                f"Invalid ZONEID_PRESENCE: expected {ZONEID_PRESENCE:#x}, got {self.zoneid:#x}"
             )
 
     @property
@@ -118,7 +111,7 @@ class LinkN9Runtime:
     def __init__(self, archive_dir: str = "data/handoff/archive") -> None:
         self._presence: Dict[str, AgentPresence] = {}
         self._outbox: List[HandoffPacket] = []  # packets I'm sending
-        self._inbox: List[HandoffPacket] = []   # packets addressed to me
+        self._inbox: List[HandoffPacket] = []  # packets addressed to me
         self._archive_dir = Path(archive_dir)
         self._archive_dir.mkdir(parents=True, exist_ok=True)
         self._dispatch_log: List[Dict[str, Any]] = []
@@ -174,10 +167,7 @@ class LinkN9Runtime:
     def prune_dead(self) -> List[str]:
         """Remove agents marked as dead. Returns names of pruned agents."""
         pruned = []
-        dead = [
-            name for name, p in self._presence.items()
-            if p.status == "dead"
-        ]
+        dead = [name for name, p in self._presence.items() if p.status == "dead"]
         for name in dead:
             del self._presence[name]
             pruned.append(name)
@@ -193,14 +183,16 @@ class LinkN9Runtime:
         it gets the packet from the inbox.
         """
         self._outbox.append(packet)
-        self._dispatch_log.append({
-            "action": "send",
-            "packet_id": packet.packet_id,
-            "source": packet.source_agent,
-            "target": packet.target_agent,
-            "task_type": packet.task_type,
-            "timestamp": time.time(),
-        })
+        self._dispatch_log.append(
+            {
+                "action": "send",
+                "packet_id": packet.packet_id,
+                "source": packet.source_agent,
+                "target": packet.target_agent,
+                "task_type": packet.task_type,
+                "timestamp": time.time(),
+            }
+        )
         logger.info(
             "Packet queued: %s → %s [%s]",
             packet.source_agent,
@@ -215,18 +207,19 @@ class LinkN9Runtime:
         Sets status to 'accepted' on retrieval.
         """
         pending = [
-            p for p in self._outbox
-            if p.target_agent == agent_name and p.status == "pending"
+            p for p in self._outbox if p.target_agent == agent_name and p.status == "pending"
         ]
         for p in pending:
             p.status = "accepted"
             self._inbox.append(p)
-            self._dispatch_log.append({
-                "action": "accept",
-                "packet_id": p.packet_id,
-                "target": agent_name,
-                "timestamp": time.time(),
-            })
+            self._dispatch_log.append(
+                {
+                    "action": "accept",
+                    "packet_id": p.packet_id,
+                    "target": agent_name,
+                    "timestamp": time.time(),
+                }
+            )
             logger.info("Packet accepted: %s by %s", p.packet_id, agent_name)
         return pending
 
@@ -243,11 +236,13 @@ class LinkN9Runtime:
         packet.status = "completed"
         packet.result = result
         self._archive(packet)
-        self._dispatch_log.append({
-            "action": "complete",
-            "packet_id": packet_id,
-            "timestamp": time.time(),
-        })
+        self._dispatch_log.append(
+            {
+                "action": "complete",
+                "packet_id": packet_id,
+                "timestamp": time.time(),
+            }
+        )
         logger.info("Packet completed: %s", packet_id)
         return packet
 
@@ -264,12 +259,14 @@ class LinkN9Runtime:
         packet.status = "failed"
         packet.error = error
         self._archive(packet)
-        self._dispatch_log.append({
-            "action": "fail",
-            "packet_id": packet_id,
-            "error": error,
-            "timestamp": time.time(),
-        })
+        self._dispatch_log.append(
+            {
+                "action": "fail",
+                "packet_id": packet_id,
+                "error": error,
+                "timestamp": time.time(),
+            }
+        )
         logger.warning("Packet failed: %s — %s", packet_id, error)
         return packet
 
@@ -285,11 +282,13 @@ class LinkN9Runtime:
         packet.status = "timed_out"
         packet.error = f"TTL expired ({packet.ttl_seconds}s)"
         self._archive(packet)
-        self._dispatch_log.append({
-            "action": "timeout",
-            "packet_id": packet_id,
-            "timestamp": time.time(),
-        })
+        self._dispatch_log.append(
+            {
+                "action": "timeout",
+                "packet_id": packet_id,
+                "timestamp": time.time(),
+            }
+        )
         logger.warning("Packet timed out: %s", packet_id)
         return packet
 
@@ -356,9 +355,7 @@ class LinkN9Runtime:
         state_path.parent.mkdir(parents=True, exist_ok=True)
 
         state = {
-            "presence": {
-                name: p.to_dict() for name, p in self._presence.items()
-            },
+            "presence": {name: p.to_dict() for name, p in self._presence.items()},
             "outbox": [p.to_dict() for p in self._outbox],
             "inbox": [p.to_dict() for p in self._inbox],
             "dispatch_log": self._dispatch_log[-100:],  # last 100 entries

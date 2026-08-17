@@ -3,11 +3,12 @@
 Subagent Watchdog — Failure Observability for Agent Orchestration.
 Provides full visibility into subagent thinking, errors, and failures.
 """
+
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Optional, List, Dict, Any, Callable, Awaitable
+from typing import Optional, List, Dict, Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class FailureClass(Enum):
     """Classification of subagent failure types."""
+
     TIMEOUT = "timeout"
     TOOL_CHAIN_COLLAPSE = "tool_chain"
     MANDATE_VIOLATION = "mandate"
@@ -30,6 +32,7 @@ class FailureClass(Enum):
 @dataclass
 class SubagentThinkingStep:
     """Single step in subagent thinking trace."""
+
     timestamp: datetime
     step_type: str  # "reasoning" | "tool_call" | "tool_result" | "decision"
     content: str
@@ -41,6 +44,7 @@ class SubagentThinkingStep:
 @dataclass
 class FailureReport:
     """Complete failure report with full observability."""
+
     subagent_id: str
     subagent_type: str
     task_description: str
@@ -57,16 +61,19 @@ class FailureReport:
 @dataclass
 class WatchdogConfig:
     """Configuration for watchdog behavior."""
+
     capture_thinking: bool = True
     capture_tool_calls: bool = True
     max_thinking_steps: int = 1000
     auto_log_hivemind: bool = True
     alert_on_failure: bool = True
-    retry_on: List[FailureClass] = field(default_factory=lambda: [
-        FailureClass.TIMEOUT,
-        FailureClass.STREAMING_TIMEOUT,
-        FailureClass.RESOURCE_EXHAUSTION,
-    ])
+    retry_on: List[FailureClass] = field(
+        default_factory=lambda: [
+            FailureClass.TIMEOUT,
+            FailureClass.STREAMING_TIMEOUT,
+            FailureClass.RESOURCE_EXHAUSTION,
+        ]
+    )
     thinking_capture_interval: float = 0.1  # seconds
 
 
@@ -108,42 +115,70 @@ The watchdog is your safety net — it ensures no failure goes unobserved.
 """
 
 
-def classify_failure(error_message: str, thinking_trace: List[SubagentThinkingStep], partial_output: str) -> FailureClass:
+def classify_failure(
+    error_message: str, thinking_trace: List[SubagentThinkingStep], partial_output: str
+) -> FailureClass:
     """Classify failure based on error + context."""
     error_lower = error_message.lower()
-    
+
     # M23 - Tool chain collapse
-    if any(kw in error_lower for kw in ["websearch", "webfetch", "tool not found", "mandatory tool", "tool unavailable"]):
+    if any(
+        kw in error_lower
+        for kw in ["websearch", "webfetch", "tool not found", "mandatory tool", "tool unavailable"]
+    ):
         return FailureClass.TOOL_CHAIN_COLLAPSE
-    
+
     # M24 - Venv violation
-    if any(kw in error_lower for kw in ["--break-system-packages", "system package", "break-system-packages"]):
+    if any(
+        kw in error_lower
+        for kw in ["--break-system-packages", "system package", "break-system-packages"]
+    ):
         return FailureClass.VENV_VIOLATION
-    
+
     # M25 - Streaming timeout
-    if any(kw in error_lower for kw in ["chunk timeout", "stream timeout", "streaming timeout", "stream stalled"]):
+    if any(
+        kw in error_lower
+        for kw in ["chunk timeout", "stream timeout", "streaming timeout", "stream stalled"]
+    ):
         return FailureClass.STREAMING_TIMEOUT
-    
+
     # M14 - Heritage violation
     if "[id-soft:]" in error_lower and "unvetted" in error_lower:
         return FailureClass.HERITAGE_VIOLATION
-    
+
     # Resource exhaustion
-    if any(kw in error_lower for kw in ["oom", "out of memory", "memory error", "rate limit", "429", "thermal", "throttl"]):
+    if any(
+        kw in error_lower
+        for kw in [
+            "oom",
+            "out of memory",
+            "memory error",
+            "rate limit",
+            "429",
+            "thermal",
+            "throttl",
+        ]
+    ):
         return FailureClass.RESOURCE_EXHAUSTION
-    
+
     # Version mismatch
-    if any(kw in error_lower for kw in ["version mismatch", "incompatible version", "breaking change", "api version"]):
+    if any(
+        kw in error_lower
+        for kw in ["version mismatch", "incompatible version", "breaking change", "api version"]
+    ):
         return FailureClass.VERSION_MISMATCH
-    
+
     # Credential error
-    if any(kw in error_lower for kw in ["credential", "api key", "auth failed", "unauthorized", "401", "403"]):
+    if any(
+        kw in error_lower
+        for kw in ["credential", "api key", "auth failed", "unauthorized", "401", "403"]
+    ):
         return FailureClass.CREDENTIAL_ERROR
-    
+
     # Generic timeout
     if "timeout" in error_lower:
         return FailureClass.TIMEOUT
-    
+
     return FailureClass.UNKNOWN
 
 
@@ -165,14 +200,12 @@ def retry_recommendation(failure_class: FailureClass, context: Dict[str, Any]) -
 
 
 async def log_failure_to_hivemind(
-    failure: FailureReport,
-    launching_entity: str = "kali",
-    launching_channel: str = "opencode"
+    failure: FailureReport, launching_entity: str = "kali", launching_channel: str = "opencode"
 ) -> str:
     """Log failure to Hivemind for coordination and alerting."""
     try:
         from omega_hub import hivemind_submit_handoff
-        
+
         packet_id = await hivemind_submit_handoff(
             target_channel=launching_channel,
             target_entity=launching_entity,
@@ -189,7 +222,7 @@ async def log_failure_to_hivemind(
                 f"Retry recommendation: {failure.retry_recommendation}\n"
                 f"Timestamp: {failure.timestamp.isoformat()}"
             ),
-            priority=2  # Critical
+            priority=2,  # Critical
         )
         return packet_id
     except Exception as e:
@@ -201,6 +234,7 @@ async def log_system_failure(failure: FailureReport) -> None:
     """Log to SYSTEM_FAILURE_LOG (M23 compliance)."""
     try:
         import anyio
+
         log_path = "data/coordination/SYSTEM_FAILURE_LOG.md"
         entry = f"""
 ## [{failure.timestamp.isoformat()}] SUBAGENT FAILURE: {failure.failure_class.value}
@@ -226,6 +260,7 @@ async def alert_launching_agent(failure: FailureReport, launching_entity: str = 
     """Alert launching agent via Hivemind heartbeat."""
     try:
         from omega_hub import hivemind_redis_publish
+
         await hivemind_redis_publish(
             channel="watchdog_alerts",
             message={
@@ -236,7 +271,7 @@ async def alert_launching_agent(failure: FailureReport, launching_entity: str = 
                 "retry_recommendation": failure.retry_recommendation,
                 "timestamp": failure.timestamp.isoformat(),
             },
-            ttl=300
+            ttl=300,
         )
     except Exception as e:
         logger.warning(f"Failed to publish watchdog alert: {e}")
@@ -244,40 +279,39 @@ async def alert_launching_agent(failure: FailureReport, launching_entity: str = 
 
 # --- Task Wrapper with Watchdog ---
 
+
 async def task_with_watchdog(
     subagent_type: str,
     description: str,
     prompt: str,
     config: Optional["WatchdogConfig"] = None,
     launching_entity: str = "kali",
-    launching_channel: str = "opencode"
+    launching_channel: str = "opencode",
 ) -> tuple[Any, Optional[FailureReport]]:
     """
     Spawns subagent with watchdog monitoring.
     Returns (result, failure_report) — failure_report is None on success.
     """
     from opencode import task  # OpenCode task tool
-    
+
     config = config or WatchdogConfig()
     subagent_id = f"{subagent_type}_{uuid.uuid4().hex[:8]}"
-    
+
     # Build watchdog-aware prompt
     watchdog_prompt = f"{WATCHDOG_SYSTEM_PROMPT}\n\n---\nORIGINAL TASK:\n{prompt}"
-    
+
     thinking_trace: List[SubagentThinkingStep] = []
     partial_output = ""
-    
+
     try:
         # Note: OpenCode's task() tool doesn't natively support thinking capture.
         # This is a wrapper that catches exceptions and builds FailureReport.
         # Full thinking capture requires OpenCode runtime support or Hivemind integration.
-        
+
         result = await task(
-            subagent_type=subagent_type,
-            description=description,
-            prompt=watchdog_prompt
+            subagent_type=subagent_type, description=description, prompt=watchdog_prompt
         )
-        
+
         # Check for failure indicators in result
         if _is_failure_result(result):
             failure = FailureReport(
@@ -291,22 +325,24 @@ async def task_with_watchdog(
                 timestamp=datetime.now(timezone.utc),
                 hivemind_packet_id="",
                 retry_recommendation="escalate",
-                context={"result_type": type(result).__name__}
+                context={"result_type": type(result).__name__},
             )
-            failure.failure_class = classify_failure(failure.error_message, [], failure.partial_output)
+            failure.failure_class = classify_failure(
+                failure.error_message, [], failure.partial_output
+            )
             failure.retry_recommendation = retry_recommendation(failure.failure_class, {})
-            
+
             if config.auto_log_hivemind:
                 failure.hivemind_packet_id = await log_failure_to_hivemind(failure)
                 await log_system_failure(failure)
-            
+
             if config.alert_on_failure:
                 await alert_launching_agent(failure)
-            
+
             return None, failure
-        
+
         return result, None
-        
+
     except Exception as e:
         # Tool-level exception (timeout, connection error, etc.)
         failure = FailureReport(
@@ -320,16 +356,16 @@ async def task_with_watchdog(
             timestamp=datetime.now(timezone.utc),
             hivemind_packet_id="",
             retry_recommendation=retry_recommendation(FailureClass.UNKNOWN, {}),
-            context={"exception_type": type(e).__name__}
+            context={"exception_type": type(e).__name__},
         )
-        
+
         if config.auto_log_hivemind:
             failure.hivemind_packet_id = await log_failure_to_hivemind(failure)
             await log_system_failure(failure)
-        
+
         if config.alert_on_failure:
             await alert_launching_agent(failure)
-        
+
         return None, failure
 
 
@@ -356,6 +392,7 @@ def _extract_error_message(result: Any) -> str:
 
 # --- Hivemind Integration (requires omega_hub) ---
 
+
 async def _hivemind_submit_handoff(
     target_channel: str,
     target_entity: str,
@@ -363,7 +400,7 @@ async def _hivemind_submit_handoff(
     source_entity: str,
     task: str,
     context: str,
-    priority: int = 0
+    priority: int = 0,
 ) -> str:
     """Submit handoff to Hivemind (placeholder for actual omega_hub call)."""
     # This would call omega_hub_hivemind_submit_handoff
@@ -374,7 +411,7 @@ async def _hivemind_submit_handoff(
 # Export for use
 __all__ = [
     "FailureClass",
-    "SubagentThinkingStep", 
+    "SubagentThinkingStep",
     "FailureReport",
     "WatchdogConfig",
     "WATCHDOG_SYSTEM_PROMPT",

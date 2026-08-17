@@ -11,13 +11,8 @@
 import logging
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    EntityTombstonedError,
 )
 import os
 import time
@@ -39,6 +34,7 @@ from omega.governance.config_resolver import get_active_iwad, get_wad_path
 
 logger = logging.getLogger(__name__)
 
+
 class SymbolicMetadata(TypedDict, total=False):
     """Run Side symbolic coordinate system (Lilith Synthesis 2026-07-11).
 
@@ -49,12 +45,15 @@ class SymbolicMetadata(TypedDict, total=False):
 
     [heritage: lilith-2026] SymbolicMetadata framework — Run Side semantic coordinates
     """
-    element: str            # e.g., "earth", "water", "fire", "air", "aether"
-    energy_center: str      # e.g., "root", "sacral", "solar_plexus", "heart", "throat", "third_eye", "crown"
-    celestial_body: str     # e.g., "gaia", "neptune", "jupiter", "mars", "mercury", "uranus", "pluto", "transpluto", "venus", "saturn"
-    archetypal_ally: str    # e.g., "brigid", "lilith", "maat", "sekhmet", "lucifer", "isis", "hecate", "anubis", "kali", "inanna"
-    glyph: str              # e.g., "🜃", "🜄", "🜂", "🜁", "⛤"
-    invocation: str         # e.g., "By earth and root, I stand"
+
+    element: str  # e.g., "earth", "water", "fire", "air", "aether"
+    energy_center: (
+        str  # e.g., "root", "sacral", "solar_plexus", "heart", "throat", "third_eye", "crown"
+    )
+    celestial_body: str  # e.g., "gaia", "neptune", "jupiter", "mars", "mercury", "uranus", "pluto", "transpluto", "venus", "saturn"
+    archetypal_ally: str  # e.g., "brigid", "lilith", "maat", "sekhmet", "lucifer", "isis", "hecate", "anubis", "kali", "inanna"
+    glyph: str  # e.g., "🜃", "🜄", "🜂", "🜁", "⛤"
+    invocation: str  # e.g., "By earth and root, I stand"
 
     @staticmethod
     def validate(data: Dict[str, Any]) -> "SymbolicMetadata":
@@ -65,19 +64,29 @@ class SymbolicMetadata(TypedDict, total=False):
         This is a pure structural filter — no semantic inspection of values
         (M2 Firewall: Engine Core never interprets WAD-specific content).
         """
-        valid_keys = {"element", "energy_center", "celestial_body", "archetypal_ally", "glyph", "invocation"}
+        valid_keys = {
+            "element",
+            "energy_center",
+            "celestial_body",
+            "archetypal_ally",
+            "glyph",
+            "invocation",
+        }
         return {k: v for k, v in data.items() if k in valid_keys}
 
 
 class SovereignPermissionError(Exception):
     """Raised when an unauthorized entity attempts to write to constitutional files."""
+
     pass
+
 
 SOVEREIGN_USER_TOKEN = os.getenv("SOVEREIGN_USER_TOKEN", "SOVEREIGN_DEFAULT_SECURE_TOKEN_2026")
 
+
 async def write_soul_file(entity_path: str, filename: str, content: str, token: str = None) -> None:
     """Writes a soul file using the Atomic Rename Pattern under strict permission guard.
-    
+
     [id-soft: vet-053] Hard-Boundary — strictly separates User/Agent write access.
     """
     if filename in ["soul.yaml", "approved_lessons.yaml"]:
@@ -85,22 +94,23 @@ async def write_soul_file(entity_path: str, filename: str, content: str, token: 
             raise SovereignPermissionError(
                 f"Write access to {filename} is restricted. SovereignUserToken required."
             )
-            
+
     file_path = Path(entity_path) / filename
     tmp_path = Path(entity_path) / f"{filename}.tmp"
-    
+
     await tmp_path.write_text(content)
     await tmp_path.rename(file_path)
 
+
 async def with_soul_lock(entity_name: str, action):
     """Ensure exclusive access to soul files during read-modify-write cycles.
-    
+
     Prevents 'Lost Updates' during parallel agent operations (MaKaLi).
     """
     safe_name = entity_name.lower().replace(" ", "_").replace("'", "")
     lock_path = Path(f"data/entities/{safe_name}/.soul.lock")
     lock_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     async with await anyio.open_file(lock_path, "a") as f:
         # Use fcntl for advisory locking on the file descriptor
         fcntl.flock(f.fileno(), fcntl.LOCK_EX)
@@ -108,6 +118,7 @@ async def with_soul_lock(entity_name: str, action):
             return await action()
         finally:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
 
 # Test-mode YAML cache: parses entities.yaml once per test run (~5.8s → ~0.001s)
 # The 982KB file takes 5.8s to parse; caching it cuts total test suite from 7m to ~2m.
@@ -120,15 +131,15 @@ DEFAULT_IWAD = "_omega_default"
 @dataclass
 class Entity:
     """A user-definable entity — a Node, custom persona, or free agent.
-    
+
     Engine knows: name, slots, domains, model, personality, capabilities.
     Everything else: metadata dict (WAD-defined, engine-agnostic).
-    
+
     [id-soft: doom-1993] ZONEID Pattern — magic constant validated on get()
     to catch stale references and tombstoned entities.
     [id-soft: vet-053] Hard-Boundary — engine zone vs game zone separation.
     """
-    
+
     # ── Engine Zone (structural, read-only for game logic) ──
     name: str
     domains: List[str]
@@ -142,19 +153,19 @@ class Entity:
     port: Optional[int] = None
     wad_source: Optional[str] = None
     priority: int = 0  # [Project 3] Layer priority for Shadow-Stacking
-    
+
     # ── Slot System (replaces hardcoded NODE_SLOTS) ──
     # Engine uses these for get("N1") resolution.
     # The engine does NOT interpret what "N1" means — that's WAD content.
     slots: List[str] = field(default_factory=list)
-    
+
     # ── Generic Metadata (WAD-defined, engine-agnostic) ──
     # Replaces: traits, pantheon, sigil, first_breath, element, chakra,
     # planet, invocation, secondary_keeper — all WAD-specific fields.
     # The engine NEVER reads specific keys from this dict.
     # The WAD fills it; the engine passes it through.
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
     magic: int = field(default=ZONEID_ENTITY, compare=False)
     # [id-soft: vet-054] High-Bit Trick — bitfield flag encoding with high-bit markers
@@ -195,7 +206,7 @@ class Entity:
 
     def is_system(self) -> bool:
         """Check if this is a system-level entity (high-bit flag).
-        
+
         [id-soft: vet-054] High-Bit Trick — single bit check
         instead of separate boolean field. 1 AND instruction vs 1 struct field.
         """
@@ -203,7 +214,7 @@ class Entity:
 
     def get_symbolic_metadata(self) -> SymbolicMetadata:
         """Extract typed SymbolicMetadata from metadata["symbolic"] sub-dict.
-        
+
         [heritage: lilith-2026] SymbolicMetadata — Run Side semantic coordinates.
         Engine Core provides schema; WAD provides values. Zero firewall risk (M2):
         the core field `metadata: Dict[str, Any]` is preserved; symbolic_metadata
@@ -216,7 +227,7 @@ class Entity:
 
     def set_symbolic_metadata(self, data: Dict[str, Any]) -> None:
         """Store a validated SymbolicMetadata dict at metadata["symbolic"].
-        
+
         [heritage: lilith-2026] SymbolicMetadata — Run Side semantic coordinates.
         Preserves the core `metadata: Dict[str, Any]` field; only populates the
         "symbolic" sub-key with the 6 typed fields. Unknown keys are filtered.
@@ -225,15 +236,15 @@ class Entity:
 
     def __getattr__(self, name: str) -> Any:
         """Proxy attribute access to the metadata dictionary for WAD-specific content.
-        
-        This ensures backward compatibility with tests and legacy code while 
+
+        This ensures backward compatibility with tests and legacy code while
         maintaining the M2 Firewall by avoiding hardcoded fields in the dataclass.
         Example: entity.element -> entity.metadata["element"]
         """
         if name in self.metadata:
             return self.metadata[name]
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
-    
+
     def mark_system(self) -> None:
         """Mark this entity as system-level (high-bit).
 
@@ -260,29 +271,42 @@ class Entity:
 class EntityRegistry:
     """Loads, saves, and manages entities from YAML config.
     DocRef: docs/reference/api/entity_registry.md
-    
+
     [id-soft: doom-1993] Lazy Deletion — entities are tombstoned (magic =
     ZONEID_TOMBSTONE) on remove() and reaped after a grace period.
     [id-soft: quake-1996] Grace Period — 0.5s delay for safety.
     """
-    
+
     # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
     TOMBSTONE_GRACE_SECONDS = 0.5
-    
+
     # [id-soft: vet-054] High-Bit Trick — bitfield flag encoding with high-bit markers
     FLAG_SYSTEM = 0x80000000  # Bit 31: system-level entity (vs user-created)
-    FLAG_WAD = 0x40000000     # Bit 30: loaded from a WAD (vs runtime-created)
+    FLAG_WAD = 0x40000000  # Bit 30: loaded from a WAD (vs runtime-created)
     FLAG_ACTIVE = 0x00000000  # Default: active entity (low bits = slot flags)
-    
+
     # [id-soft: vet-052] Hard-Boundary Struct — engine zone vs game zone
-    ENGINE_ZONE_ATTRS = frozenset({
-        "magic", "name", "domains", "model", "role",
-        "container", "port", "wad_source", "slots",
-    })
-    GAME_ZONE_ATTRS = frozenset({
-        "personality", "temperature", "context_window",
-    })
-    
+    ENGINE_ZONE_ATTRS = frozenset(
+        {
+            "magic",
+            "name",
+            "domains",
+            "model",
+            "role",
+            "container",
+            "port",
+            "wad_source",
+            "slots",
+        }
+    )
+    GAME_ZONE_ATTRS = frozenset(
+        {
+            "personality",
+            "temperature",
+            "context_window",
+        }
+    )
+
     # Slot system is fully dynamic — no hardcoded NODE_SLOTS.
     # The engine discovers occupied slots from loaded entities.
     # WADs define slot labels ("N1: Flesh"); the engine sees only "N1".
@@ -290,12 +314,8 @@ class EntityRegistry:
     @property
     def occupied_slots(self) -> frozenset:
         """All slot IDs currently occupied by loaded entities (engine-agnostic)."""
-        return frozenset(
-            s.lower()
-            for e in self.active_iter()
-            for s in e.slots
-        )
-    
+        return frozenset(s.lower() for e in self.active_iter() for s in e.slots)
+
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
             # D-281 Phase III: resolve entities.yaml via config_resolver (M2)
@@ -303,20 +323,23 @@ class EntityRegistry:
                 active = get_active_iwad()
                 config_path = str(get_wad_path(active) / "entities.yaml")
             except (OmegaError, RuntimeError, OSError) as e:
-                logger.error(f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default.")
+                logger.error(
+                    f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default."
+                )
                 config_path = str(get_wad_path(DEFAULT_IWAD) / "entities.yaml")
-        
+
         self.config_path = Path(config_path)
         # [Project 3: Shadow-Stacking] Store entities as a list of layers sorted by priority
         self._entities: Dict[str, List[Entity]] = {}
-        self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
+        self._wad_sources: Dict[
+            str, List[str]
+        ] = {}  # lowercase entity name -> list of WAD source names
         # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
         self._capability_index: Dict[str, List[str]] = {}
         self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
-            # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
+        # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
         self._tombstoned: Dict[str, float] = {}  # key -> time.monotonic() of tombstone
         self._load()
-
 
     def _load(self) -> None:
         """Load entities from YAML file.
@@ -341,7 +364,7 @@ class EntityRegistry:
                 raise ValueError(f"entities.yaml is empty or malformed: {e}")
             if os.environ.get("OMEGA_ENV") == "test":
                 _entity_yaml_cache[cache_key] = data
-        
+
         if data is None:
             raise ValueError("entities.yaml is empty or malformed")
 
@@ -350,21 +373,31 @@ class EntityRegistry:
             if raw is None or not isinstance(raw, dict):
                 logger.warning(f"Entity '{key}' has empty or malformed definition, skipping")
                 continue
-            
+
             # Define core structural fields that belong to the Engine Zone
             # [id-soft: vet-053] Hard-Boundary — engine-zone vs game-zone boundary enforcement
             # metadata is a core field, NOT a WAD-specific field. Without this,
             # nested metadata dicts from YAML are absorbed as WAD-specific metadata.
             core_fields = {
-                "name", "domains", "capabilities", "model", "personality", 
-                "temperature", "context_window", "slots", "role", 
-                "container", "port", "wad_source", "priority",
+                "name",
+                "domains",
+                "capabilities",
+                "model",
+                "personality",
+                "temperature",
+                "context_window",
+                "slots",
+                "role",
+                "container",
+                "port",
+                "wad_source",
+                "priority",
                 "metadata",  # D-kal-180: prevent recursive nesting corruption
             }
-            
+
             # Everything else is WAD-specific metadata
             wad_metadata = {k: v for k, v in raw.items() if k not in core_fields}
-            
+
             # ── Backward-Compatible Slot Migration ──
             # Old YAML format used "nodes: ['N1: Flesh']" or "nodes: ['1']".
             # New format uses "slots: ['N1']". Migrate automatically.
@@ -384,7 +417,7 @@ class EntityRegistry:
             # If "nodes" key exists in raw YAML, remove from wad_metadata
             # (it's been consumed for migration; don't duplicate in metadata dict)
             wad_metadata.pop("nodes", None)
-            
+
             entity = Entity(
                 name=raw.get("name", key),
                 domains=raw.get("domains", []),
@@ -404,14 +437,14 @@ class EntityRegistry:
             # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
             entity.magic = ZONEID_ENTITY
             self._entities[key] = [entity]
-            
+
             # Track wad_source for entities that have it
             if entity.wad_source:
                 if key not in self._wad_sources:
                     self._wad_sources[key] = []
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
-            
+
             # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
             for cap in entity.domains + entity.capabilities:
                 cap_lower = cap.lower()
@@ -420,25 +453,24 @@ class EntityRegistry:
                 if key not in self._capability_index[cap_lower]:
                     self._capability_index[cap_lower].append(key)
 
-
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
     def get(self, name: str, raise_on_tombstoned: bool = False) -> Optional[Entity]:
         """Get entity by name, role, or Slot ID (3-Tier Resolution).
-        
+
         Tier 1: Direct entity match (e.g., "sekhmet")
         Tier 2: Slot match (e.g., "p1" or "node 1") — dynamic, no hardcoded slots
         Tier 3: Role match (e.g., "sysadmin")
-        
+
         [Project 3: Shadow-Stacking] Projects a single Entity by merging layers.
         [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
         [id-soft: doom-1993] Lazy Deletion — tombstoned entities treated as not found
         """
         if not name:
             return None
-            
+
         name_lower = name.lower().strip()
-        
+
         # Tier 1: Direct Entity Match (e.g., "sekhmet")
         layers = self._entities.get(name_lower)
         if layers:
@@ -451,10 +483,10 @@ class EntityRegistry:
                         message=f"Entity '{name}' was removed (tombstoned) — call active_iter() for current entities",
                     )
                 return None
-            
+
             # [Project 3: Shadow-Stacking] Project the layered entity
             return self._project_entity(active_layers)
-            
+
         # Tier 2: Slot Match (e.g., "p1" or "node 1")
         # Fully dynamic — no hardcoded NODE_SLOTS. The engine discovers
         # occupied slots from loaded entities. WADs define slot semantics.
@@ -466,7 +498,7 @@ class EntityRegistry:
             projected = self._project_entity(active_layers)
             if any(s.lower() == slot_key for s in projected.slots):
                 return projected
-        
+
         # Tier 3: Role Match (e.g., "sysadmin")
         for key, layers in self._entities.items():
             active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
@@ -475,18 +507,18 @@ class EntityRegistry:
             projected = self._project_entity(active_layers)
             if projected.role and projected.role.lower() == name_lower:
                 return projected
-                
+
         return None
 
     def _project_entity(self, layers: List[Entity]) -> Entity:
         """Project a single Entity by merging multiple layers.
-        
+
         Engine Zone: Highest priority layer wins (Standard Override).
         Game Zone: metadata is merged (Highest priority wins for shared keys).
         """
         # Base layer is the lowest priority (last in list)
         base = layers[-1]
-        
+
         # Start with a copy of the base
         projected = Entity(
             name=base.name,
@@ -502,9 +534,9 @@ class EntityRegistry:
             container=base.container,
             port=base.port,
             wad_source=base.wad_source,
-            priority=layers[0].priority, # Highest priority of the stack
+            priority=layers[0].priority,  # Highest priority of the stack
         )
-        
+
         # Merge layers from lowest to highest priority
         for layer in reversed(layers):
             # 1. Engine Zone: Override (Highest priority wins)
@@ -513,77 +545,84 @@ class EntityRegistry:
             projected.container = layer.container if layer.container else projected.container
             projected.port = layer.port or projected.port
             projected.wad_source = layer.wad_source or projected.wad_source
-            
+
             # 2. Game Zone: Merge/Union
             # Domains & Capabilities: Set Union
             projected.domains = list(set(projected.domains + layer.domains))
             projected.capabilities = list(set(projected.capabilities + layer.capabilities))
-            
+
             # Metadata: Merge dictionaries (Highest priority wins for shared keys)
             projected.metadata.update(layer.metadata)
-            
+
             # Personality: Concatenation
             if layer.personality and layer.personality != projected.personality:
-                projected.personality = f"{layer.personality}\n\n{projected.personality}" if projected.personality else layer.personality
-                
+                projected.personality = (
+                    f"{layer.personality}\n\n{projected.personality}"
+                    if projected.personality
+                    else layer.personality
+                )
+
             # Other core fields: Highest priority wins
             projected.temperature = layer.temperature or projected.temperature
             projected.context_window = layer.context_window or projected.context_window
 
-            
         # Final validation
         projected.magic = ZONEID_ENTITY
         return projected
 
-
     def get_by_capability(self, capability: str) -> List[Entity]:
         """Find all active entities that possess a specific capability.
-        
+
         [id-soft: doom-1993] Multi-Index Entity — O(1) capability lookup
         """
         if not capability:
             return []
-        
+
         cap_lower = capability.lower()
         keys = self._capability_index.get(cap_lower, [])
-        
+
         # Filter out tombstoned entities
-        return [self._entities[k] for k in keys if k in self._entities and self._entities[k].magic != ZONEID_TOMBSTONE]
+        return [
+            self._entities[k]
+            for k in keys
+            if k in self._entities and self._entities[k].magic != ZONEID_TOMBSTONE
+        ]
 
     def list(self) -> List[Entity]:
         """List all non-tombstoned entities.
-        
+
         [id-soft: vet-054] Lazy Deletion — tombstoned entities filtered out.
         """
         return self.active_iter()
-    
+
     def list_node_keepers(self) -> List[Entity]:
         """List entities with slot assignments (forward-compat alias).
-        
+
         The term "Node" is Arcana-NovAi WAD content. The engine
         discovers slot-holding entities dynamically rather than enforcing
         a hardcoded 10-slot grid. This method queries any entity that has
         at least one slot assigned.
         """
         return [e for e in self.active_iter() if e.slots]
-    
+
     def names(self) -> List[str]:
         """Return list of non-tombstoned entity names."""
         return [e.name for e in self.list()]
-    
+
     def get_all(self) -> Dict[str, Entity]:
         """Return all entities as a dict keyed by lowercase name.
-        
+
         [id-soft: doom-1993] Lazy Deletion — tombstoned entities excluded.
         """
-        return {k: self._project_entity([l for l in layers if l.magic != ZONEID_TOMBSTONE]) 
-                for k, layers in self._entities.items() 
-                if any(l.magic != ZONEID_TOMBSTONE for l in layers)}
-    
+        return {
+            k: self._project_entity([l for l in layers if l.magic != ZONEID_TOMBSTONE])
+            for k, layers in self._entities.items()
+            if any(l.magic != ZONEID_TOMBSTONE for l in layers)
+        }
+
     def get_by_wad(self, wad_name: str) -> List[Entity]:
         """Return all non-tombstoned entities from a specific WAD."""
         return [e for e in self.active_iter() if e.wad_source == wad_name]
-
 
     def get_wad_sources(self, name: str) -> List[str]:
         """Return list of WAD sources for a given entity name (lowercase lookup).
@@ -595,7 +634,7 @@ class EntityRegistry:
 
     async def add(self, entity: Entity) -> None:
         """Add a new entity layer.
-        
+
         [Project 3: Shadow-Stacking] Entities are stored as a list of layers.
         New layers are appended and sorted by priority (highest first).
         """
@@ -604,21 +643,21 @@ class EntityRegistry:
         async with self._lock:
             name_key = self._validate_name(entity.name)
             entity.name = name_key  # Normalize to lowercase
-            
+
             # [id-soft: vet-054] High-Bit Trick — bitfield flag encoding with high-bit markers
             if entity.wad_source:
                 entity.flags |= EntityRegistry.FLAG_WAD
                 entity.__engine_zone__["flags"] = entity.flags
-            
+
             key = name_key
-            
+
             # Track WAD source if present
             if entity.wad_source:
                 if key not in self._wad_sources:
                     self._wad_sources[key] = []
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
-            
+
             # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
             for cap in entity.domains + entity.capabilities:
                 cap_lower = cap.lower()
@@ -626,26 +665,24 @@ class EntityRegistry:
                     self._capability_index[cap_lower] = []
                 if key not in self._capability_index[cap_lower]:
                     self._capability_index[cap_lower].append(key)
-            
+
             # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
             entity.magic = ZONEID_ENTITY
-            
+
             # [Project 3: Shadow-Stacking] Layered storage
             if key not in self._entities:
                 self._entities[key] = []
             self._entities[key].append(entity)
             # Sort layers by priority (descending)
             self._entities[key].sort(key=lambda e: e.priority, reverse=True)
-            
+
             await self._save()
-            
+
             # Automatically scaffold persistent workspace for the awakened entity
             scaffold_fn = functools.partial(
-                EntityWorkspaceManager.scaffold_workspace,
-                entity.name, entity.role, entity.slots
+                EntityWorkspaceManager.scaffold_workspace, entity.name, entity.role, entity.slots
             )
             await anyio.to_thread.run_sync(scaffold_fn)
-
 
     async def remove(self, name: str) -> bool:
         """Remove an entity by name. Returns True if removed.
@@ -716,10 +753,7 @@ class EntityRegistry:
         active set with [id-soft: vet-065] Mobj Dual-Linking pattern.
         """
         return [
-            e
-            for layers in self._entities.values()
-            for e in layers
-            if e.magic != ZONEID_TOMBSTONE
+            e for layers in self._entities.values() for e in layers if e.magic != ZONEID_TOMBSTONE
         ]
 
     def count_active(self) -> int:
@@ -744,12 +778,14 @@ class EntityRegistry:
         truncated = name[:max_len]
         if len(name) > max_len:
             logger.warning(
-                "short_name_hash: name '%s' truncated to '%s' "
-                "(%d chars, max %d).",
-                name, truncated, len(name), max_len,
+                "short_name_hash: name '%s' truncated to '%s' (%d chars, max %d).",
+                name,
+                truncated,
+                len(name),
+                max_len,
             )
-        padded = truncated.ljust(max_len, '\x00')[:8]
-        return struct.unpack('>Q', padded.encode('ascii', errors='replace'))[0]
+        padded = truncated.ljust(max_len, "\x00")[:8]
+        return struct.unpack(">Q", padded.encode("ascii", errors="replace"))[0]
 
     def _validate_name(self, name: str) -> str:
         """Validate and normalize an entity name.
@@ -763,7 +799,7 @@ class EntityRegistry:
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.
-        
+
         Matches Nodes only (Nova handles routing separately).
         Scores each entity by how many domain keywords appear in the text.
         Uses word-boundary matching to avoid substring false positives.
@@ -777,14 +813,14 @@ class EntityRegistry:
         best_entity: Optional[Entity] = None
         best_first_pos: int = len(text_lower) + 1
         words = set(text_lower.split())
-        
+
         for key, layers in self._entities.items():
             active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
             if not active_layers:
                 continue
             projected = self._project_entity(active_layers)
             # All entities are routable by domain — no node gate (D179)
-                
+
             score = 0
             first_pos = len(text_lower) + 1
             for keyword in projected.domains:
@@ -794,13 +830,14 @@ class EntityRegistry:
                     pos = text_lower.find(kw_lower)
                     if pos != -1 and pos < first_pos:
                         first_pos = pos
-            if score > best_score or (score == best_score and score > 0 and first_pos < best_first_pos):
+            if score > best_score or (
+                score == best_score and score > 0 and first_pos < best_first_pos
+            ):
                 best_score = score
                 best_entity = projected
                 best_first_pos = first_pos
-        
-        return best_entity if best_score > 0 else None
 
+        return best_entity if best_score > 0 else None
 
     def find_by_name_fragment(self, fragment: str) -> Optional[Entity]:
         """Find entity by partial name match (for 'summon' detection)."""
@@ -816,13 +853,13 @@ class EntityRegistry:
 
     async def _save(self) -> None:
         """Save current entities back to YAML file.
-        
+
         Uses Sovereign Atomic Write (Flush -> Sync -> Commit -> Anchor) to prevent data loss on crash.
-        
+
         [id-soft: doom-1993] Lazy Deletion — reap tombstoned entities before save.
         This prevents tombstoned entities from persisting to disk and coming
         back alive on the next _load().
-        
+
         Integrity Guard: Detects recursive/bloated entity data (>1MB) and aborts the
         save to prevent `entities.yaml` corruption from circular serialization bugs.
         """
@@ -838,10 +875,12 @@ class EntityRegistry:
                     continue
                 projected = self._project_entity(active_layers)
                 data["entities"][key] = projected.to_dict()
-            
+
             # Integrity Guard: Check for bloated data before writing
             # (prevents recursive/circular serialization bugs from corrupting entities.yaml)
-            serialized = yaml.dump(data, default_flow_style=False, sort_keys=False, allow_unicode=True)
+            serialized = yaml.dump(
+                data, default_flow_style=False, sort_keys=False, allow_unicode=True
+            )
             if len(serialized) > 1_000_000:  # 1MB threshold
                 logger.error(
                     f"INTEGRITY GUARD: entities.yaml serialization is {len(serialized)} bytes "
@@ -851,9 +890,11 @@ class EntityRegistry:
                 # Log the first and last entity key to help debug the cause
                 if data["entities"]:
                     first_key = next(iter(data["entities"]))
-                    logger.error(f"First entity key: {first_key}, dict size: {len(str(data['entities'][first_key]))}")
+                    logger.error(
+                        f"First entity key: {first_key}, dict size: {len(str(data['entities'][first_key]))}"
+                    )
                 return
-            
+
             temp_dir = self.config_path.parent
             fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
             try:
@@ -862,23 +903,22 @@ class EntityRegistry:
                     tf.write(serialized)
                     tf.flush()
                     os.fsync(tf.fileno())
-                
+
                 # 2. Atomic Replace
                 os.replace(temp_path, self.config_path)
-                
+
                 # 3. Anchor: Sync Parent Directory
                 dir_fd = os.open(str(temp_dir), os.O_RDONLY)
                 try:
                     os.fsync(dir_fd)
                 finally:
                     os.close(dir_fd)
-                
+
                 logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
             except (OmegaError, RuntimeError, OSError) as e:
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
                 raise e
-
 
         await anyio.to_thread.run_sync(_sync_save)
 
@@ -894,48 +934,82 @@ class EntityRegistry:
 
         tools = []
         for domain in entity.domains:
-            tools.append({
-                "name": f"domain_{domain.replace(' ', '_')}",
-                "description": f"Handle queries related to {domain} — {entity.name}'s domain of expertise",
-                "entity": entity.name,
-                "domains": [domain],
-            })
+            tools.append(
+                {
+                    "name": f"domain_{domain.replace(' ', '_')}",
+                    "description": f"Handle queries related to {domain} — {entity.name}'s domain of expertise",
+                    "entity": entity.name,
+                    "domains": [domain],
+                }
+            )
 
         # Add a general-purpose tool for the entity's core personality
-        tools.append({
-            "name": f"summon_{entity.name.lower()}",
-            "description": f"Summon {entity.name} for general guidance: {entity.personality[:120]}",
-            "entity": entity.name,
-            "domains": entity.domains,
-        })
+        tools.append(
+            {
+                "name": f"summon_{entity.name.lower()}",
+                "description": f"Summon {entity.name} for general guidance: {entity.personality[:120]}",
+                "entity": entity.name,
+                "domains": entity.domains,
+            }
+        )
 
         # ── Local Worker Pool Tool (Phase 2) ─────────────────────────────
         # Entities that can offload work to local GGUF models
         local_worker_entities = {
-            "roc_racoon", "scribe", "verity", "youtube_worker", "researcher",
-            "kali", "maat", "lilith", "jem", "doom_guy", "john_carmack",
+            "roc_racoon",
+            "scribe",
+            "verity",
+            "youtube_worker",
+            "researcher",
+            "kali",
+            "maat",
+            "lilith",
+            "jem",
+            "doom_guy",
+            "john_carmack",
         }
         if entity.name.lower() in local_worker_entities:
-            tools.append({
-                "name": "spawn_local_worker",
-                "description": "Fire-and-forget local inference using GGUF models. Returns task_id immediately. "
-                              "Use for: mining, distillation, pattern extraction, synthesis, pre-commit checks. "
-                              "Args: task (str), model (str, default: qwen3-1.7b), system_prompt (str), "
-                              "max_tokens (int, default: 1024), temperature (float, default: 0.7).",
-                "entity": entity.name,
-                "domains": ["local_inference", "background_processing"],
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "task": {"type": "string", "description": "The prompt/task for local inference"},
-                        "model": {"type": "string", "description": "GGUF model to use", "default": "qwen3-1.7b"},
-                        "system_prompt": {"type": "string", "description": "System prompt", "default": ""},
-                        "max_tokens": {"type": "integer", "description": "Max tokens to generate", "default": 1024},
-                        "temperature": {"type": "number", "description": "Sampling temperature", "default": 0.7},
+            tools.append(
+                {
+                    "name": "spawn_local_worker",
+                    "description": "Fire-and-forget local inference using GGUF models. Returns task_id immediately. "
+                    "Use for: mining, distillation, pattern extraction, synthesis, pre-commit checks. "
+                    "Args: task (str), model (str, default: qwen3-1.7b), system_prompt (str), "
+                    "max_tokens (int, default: 1024), temperature (float, default: 0.7).",
+                    "entity": entity.name,
+                    "domains": ["local_inference", "background_processing"],
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "task": {
+                                "type": "string",
+                                "description": "The prompt/task for local inference",
+                            },
+                            "model": {
+                                "type": "string",
+                                "description": "GGUF model to use",
+                                "default": "qwen3-1.7b",
+                            },
+                            "system_prompt": {
+                                "type": "string",
+                                "description": "System prompt",
+                                "default": "",
+                            },
+                            "max_tokens": {
+                                "type": "integer",
+                                "description": "Max tokens to generate",
+                                "default": 1024,
+                            },
+                            "temperature": {
+                                "type": "number",
+                                "description": "Sampling temperature",
+                                "default": 0.7,
+                            },
+                        },
+                        "required": ["task"],
                     },
-                    "required": ["task"],
-                },
-            })
+                }
+            )
 
         return tools
 

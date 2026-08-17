@@ -17,8 +17,7 @@ to the SPIFFE SDK integration (Phase 2).
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +31,7 @@ class SPIFFEID:
 
     [draft-klrc-aiagent-auth-02 §4.1]
     """
+
     trust_domain: str
     path: str
 
@@ -39,7 +39,7 @@ class SPIFFEID:
         return f"spiffe://{self.trust_domain}/{self.path}"
 
     @classmethod
-    def parse(cls, spiffe_id: str) -> 'SPIFFEID':
+    def parse(cls, spiffe_id: str) -> "SPIFFEID":
         """Parse a SPIFFE ID string into its components.
 
         Args:
@@ -48,10 +48,10 @@ class SPIFFEID:
         Returns:
             SPIFFEID instance with trust_domain and path extracted.
         """
-        parts = spiffe_id.replace('spiffe://', '').split('/', 1)
+        parts = spiffe_id.replace("spiffe://", "").split("/", 1)
         return cls(
             trust_domain=parts[0],
-            path=parts[1] if len(parts) > 1 else '',
+            path=parts[1] if len(parts) > 1 else "",
         )
 
 
@@ -63,6 +63,7 @@ class AgentCredential:
     Credentials must be bound to the agent's identity,
     short-lived (~1h), and dynamically rotated.
     """
+
     spiffe_id: SPIFFEID
     issued_at: datetime
     expires_at: datetime
@@ -92,7 +93,6 @@ class AgentCredential:
             logger.warning("Credential expired for %s", self.spiffe_id)
             return False
         if str(self.spiffe_id) != str(expected_spiffe_id):
-            logger.warning("SPIFFE ID mismatch: %s != %s",
-                           self.spiffe_id, expected_spiffe_id)
+            logger.warning("SPIFFE ID mismatch: %s != %s", self.spiffe_id, expected_spiffe_id)
             return False
         return True

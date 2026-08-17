@@ -28,17 +28,19 @@ logger = logging.getLogger(__name__)
 
 class MemoryType(Enum):
     """Classification of a memory record by cognitive function."""
-    EPISODIC = "episodic"      # What happened — raw events, exchanges
-    SEMANTIC = "semantic"      # What is known — extracted facts, abstractions
+
+    EPISODIC = "episodic"  # What happened — raw events, exchanges
+    SEMANTIC = "semantic"  # What is known — extracted facts, abstractions
     PROCEDURAL = "procedural"  # How to do things — workflows, patterns
 
 
 class MemoryPriority(Enum):
     """Retention priority for a memory record."""
+
     CRITICAL = 10  # Must never be pruned (decisions, principles)
-    HIGH = 8       # Long-term retention (key insights)
-    NORMAL = 5     # Standard retention
-    LOW = 2        # May be pruned under pressure
+    HIGH = 8  # Long-term retention (key insights)
+    NORMAL = 5  # Standard retention
+    LOW = 2  # May be pruned under pressure
     TRANSIENT = 1  # Ephemeral — safe to discard any time
 
 
@@ -143,16 +145,12 @@ class IMemoryAdapter(ABC):
     # ── Vault Operations (Entity-Specific Shadow State) ──
 
     @abstractmethod
-    async def get_vault(
-        self, entity_name: str, vault_key: str
-    ) -> Optional[Dict[str, Any]]:
+    async def get_vault(self, entity_name: str, vault_key: str) -> Optional[Dict[str, Any]]:
         """Read a value from the entity's vault (shadow state)."""
         ...
 
     @abstractmethod
-    async def put_vault(
-        self, entity_name: str, vault_key: str, data: Dict[str, Any]
-    ) -> None:
+    async def put_vault(self, entity_name: str, vault_key: str, data: Dict[str, Any]) -> None:
         """Write a value to the entity's vault (shadow state)."""
         ...
 
@@ -165,7 +163,7 @@ class IMemoryAdapter(ABC):
 
         Default implementation returns an empty list.
         Override in WAD adapters to distill session insights.
-        
+
         Args:
             entity_name: Name of the entity
             session_transcript: Full session transcript for distillation
@@ -173,9 +171,7 @@ class IMemoryAdapter(ABC):
         """
         return []
 
-    async def on_pre_compact(
-        self, entity_name: str, session_id: str
-    ) -> Dict[str, Any]:
+    async def on_pre_compact(self, entity_name: str, session_id: str) -> Dict[str, Any]:
         """Called before context compaction. May return state to preserve.
 
         Default implementation returns an empty dict.
@@ -195,9 +191,7 @@ class IMemoryAdapter(ABC):
         """
         return {}
 
-    async def get_qliphoth(
-        self, entity_name: Optional[str] = None
-    ) -> Dict[str, Any]:
+    async def get_qliphoth(self, entity_name: Optional[str] = None) -> Dict[str, Any]:
         """Retrieve Qliphothic failure taxonomy for an entity.
 
         Default implementation returns empty dict.
@@ -264,10 +258,7 @@ class MemoryAdapterRegistry:
 
     def list_adapters(self) -> Dict[str, str]:
         """List all registered adapters and their WAD names."""
-        return {
-            wad_name: type(adapter).__name__
-            for wad_name, adapter in self._adapters.items()
-        }
+        return {wad_name: type(adapter).__name__ for wad_name, adapter in self._adapters.items()}
 
     def get_stats(self) -> Dict[str, Any]:
         """Get registry statistics for observability."""

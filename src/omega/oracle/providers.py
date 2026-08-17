@@ -8,15 +8,21 @@ import atexit
 import logging
 import httpx2 as httpx
 import os
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 from ..errors import (
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError
+    OmegaError,
+    ProviderError,
+    ProviderRateLimitError,
+    ProviderAuthError,
+    ProviderTimeoutError,
+    ProviderUnavailableError,
+    ProviderSafetyError,
+    InferenceError,
+    InferenceOOMError,
+    InferenceLoadError,
+    InferenceRuntimeError,
 )
 
 logger = logging.getLogger(__name__)
@@ -24,15 +30,19 @@ logger = logging.getLogger(__name__)
 # Lazy import for cpu_optimizer (avoids circular imports at module load time)
 _cpu_optimizer = None
 
+
 def _get_cpu_optimizer():
     """Lazy-load Zen2Optimizer to avoid circular imports."""
     global _cpu_optimizer
     if _cpu_optimizer is None:
         from .cpu_optimizer import Zen2Optimizer
+
         _cpu_optimizer = Zen2Optimizer()
     return _cpu_optimizer
 
+
 import anyio
+
 
 async def _resolve_google_api_key(trace_id: Optional[str] = None) -> str:
     """Resolve the Google API key from the sovereign vault.
@@ -71,7 +81,8 @@ async def _resolve_google_api_key(trace_id: Optional[str] = None) -> str:
     except (OSError, RuntimeError, ValueError) as e:
         logger.error(
             "VaultCore failed to load while resolving Google API key: %s",
-            e, exc_info=True,
+            e,
+            exc_info=True,
         )
         raise ProviderAuthError(
             provider="google",
@@ -102,8 +113,10 @@ async def _resolve_google_api_key(trace_id: Optional[str] = None) -> str:
 
     return cred.encrypted_blob
 
+
 class BaseProvider(ABC):
     """Base class for all inference providers."""
+
     def __init__(self, name: str, config: Dict[str, Any]):
         self.name = name
         self.config = config
@@ -116,15 +129,30 @@ class BaseProvider(ABC):
         return overrides.get(model_name, model_name)
 
     @abstractmethod
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
+    async def generate(
+        self,
+        model: str,
+        system_prompt: str,
+        user_query: str,
+        temperature: float,
+        max_tokens: int,
+        trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
+        top_p: Optional[float] = None,
+        **kwargs,
+    ) -> Optional[str]:
         pass
 
     @abstractmethod
     async def is_available(self) -> bool:
         pass
 
+
 class GoogleAIProvider(BaseProvider):
     """Google AI Studio provider (handles Gemini and Gemma models)."""
+
     async def is_available(self) -> bool:
         # [M9 carve-out] Health probes may catch broadly to prevent crash
         # loops, PROVIDED the error is logged — ProviderAuthError here is
@@ -136,61 +164,102 @@ class GoogleAIProvider(BaseProvider):
             logger.warning("Google provider unavailable: %s", e)
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
+    async def generate(
+        self,
+        model: str,
+        system_prompt: str,
+        user_query: str,
+        temperature: float,
+        max_tokens: int,
+        trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
+        top_p: Optional[float] = None,
+        **kwargs,
+    ) -> Optional[str]:
         # Explicit api_key wins; otherwise resolve from vault. A vault
         # failure now raises ProviderAuthError directly from the resolver
         # — no separate "if not key: raise" needed.
         api_key = kwargs.get("api_key")
         key = api_key or await _resolve_google_api_key(trace_id=trace_id)
-        
+
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-        
+
         payload = {
-            "contents": [{
-                "parts": [{"text": f"{system_prompt}\n\nUser: {user_query}"}]
-            }],
+            "contents": [{"parts": [{"text": f"{system_prompt}\n\nUser: {user_query}"}]}],
             "generationConfig": {
                 "temperature": temperature,
                 "maxOutputTokens": max_tokens,
                 "repetitionPenalty": repetition_penalty,
-            }
+            },
         }
         if logit_bias:
             # Google AI Studio uses a different format for logit bias (if supported)
             # For now, we pass it in a way that doesn't crash, or omit if not supported by the specific model
             payload["generationConfig"]["logitBias"] = logit_bias
-        
+
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.post(
-                    url, 
-                    json=payload, 
-                    headers={"x-goog-api-key": key}
-                )
-                
+                response = await client.post(url, json=payload, headers={"x-goog-api-key": key})
+
                 if response.status_code == 429:
-                    raise ProviderRateLimitError(provider="google", message="Google API quota exceeded", status_code=429, trace_id=trace_id)
+                    raise ProviderRateLimitError(
+                        provider="google",
+                        message="Google API quota exceeded",
+                        status_code=429,
+                        trace_id=trace_id,
+                    )
                 if response.status_code in (401, 403):
-                    raise ProviderAuthError(provider="google", message="Google API authentication failed", status_code=response.status_code, trace_id=trace_id)
+                    raise ProviderAuthError(
+                        provider="google",
+                        message="Google API authentication failed",
+                        status_code=response.status_code,
+                        trace_id=trace_id,
+                    )
                 if response.status_code >= 500:
-                    raise ProviderUnavailableError(provider="google", message="Google API server error", status_code=response.status_code, trace_id=trace_id)
-                
+                    raise ProviderUnavailableError(
+                        provider="google",
+                        message="Google API server error",
+                        status_code=response.status_code,
+                        trace_id=trace_id,
+                    )
+
                 response.raise_for_status()
                 data = response.json()
-                
+
                 # Handle safety blocks
-                if data.get("candidates") and "finishReason" in data["candidates"][0] and data["candidates"][0]["finishReason"] == "SAFETY":
-                    raise ProviderSafetyError(provider="google", message="Response blocked by Google safety filters", trace_id=trace_id)
-                
+                if (
+                    data.get("candidates")
+                    and "finishReason" in data["candidates"][0]
+                    and data["candidates"][0]["finishReason"] == "SAFETY"
+                ):
+                    raise ProviderSafetyError(
+                        provider="google",
+                        message="Response blocked by Google safety filters",
+                        trace_id=trace_id,
+                    )
+
                 if not data.get("candidates"):
                     return None
-                
+
                 return data["candidates"][0]["content"]["parts"][0]["text"].strip()
         except httpx.TimeoutException as e:
-            raise ProviderTimeoutError(provider="google", message=f"Google API timeout: {e}", trace_id=trace_id, raw_error=e)
+            raise ProviderTimeoutError(
+                provider="google",
+                message=f"Google API timeout: {e}",
+                trace_id=trace_id,
+                raw_error=e,
+            )
         except httpx.HTTPStatusError as e:
             # Fallback for any other HTTP errors not caught by status checks
-            raise ProviderError(provider="google", message=f"Google API HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
+            raise ProviderError(
+                provider="google",
+                message=f"Google API HTTP error: {e}",
+                status_code=e.response.status_code,
+                trace_id=trace_id,
+                raw_error=e,
+            )
         except OmegaError as e:
             # Allow our custom typed errors to propagate untouched
             raise e
@@ -198,10 +267,17 @@ class GoogleAIProvider(BaseProvider):
             raise
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected Google API failure: {e}", exc_info=True)
-            raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e) from e
+            raise ProviderError(
+                provider="google",
+                message=f"Unexpected Google API failure: {e}",
+                trace_id=trace_id,
+                raw_error=e,
+            ) from e
+
 
 class LocallmsterProvider(BaseProvider):
     """LM Studio headless server provider."""
+
     async def is_available(self) -> bool:
         url = self.config.get("endpoint", "http://127.0.0.1:1234")
         try:
@@ -211,7 +287,20 @@ class LocallmsterProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
+    async def generate(
+        self,
+        model: str,
+        system_prompt: str,
+        user_query: str,
+        temperature: float,
+        max_tokens: int,
+        trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
+        top_p: Optional[float] = None,
+        **kwargs,
+    ) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:1234")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -221,10 +310,11 @@ class LocallmsterProvider(BaseProvider):
         # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
         try:
             from omega.cvar_table import cvar_get
+
             stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
         except ImportError:
             stop_tokens = ["</s>", "User:", "\n\n"]
-        
+
         payload = {
             "model": resolved_model,
             "messages": messages,
@@ -239,12 +329,22 @@ class LocallmsterProvider(BaseProvider):
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(f"{url}/v1/chat/completions", json=payload)
-                
+
                 if response.status_code == 429:
-                    raise ProviderRateLimitError(provider="lmster", message="LM Studio rate limit exceeded", status_code=429, trace_id=trace_id)
+                    raise ProviderRateLimitError(
+                        provider="lmster",
+                        message="LM Studio rate limit exceeded",
+                        status_code=429,
+                        trace_id=trace_id,
+                    )
                 if response.status_code >= 500:
-                    raise ProviderUnavailableError(provider="lmster", message="LM Studio server error", status_code=response.status_code, trace_id=trace_id)
-                
+                    raise ProviderUnavailableError(
+                        provider="lmster",
+                        message="LM Studio server error",
+                        status_code=response.status_code,
+                        trace_id=trace_id,
+                    )
+
                 response.raise_for_status()
                 data = response.json()
                 message = data["choices"][0]["message"]
@@ -252,19 +352,34 @@ class LocallmsterProvider(BaseProvider):
                 reasoning = message.get("reasoning_content", "").strip()
                 return f"{reasoning}\n\n{content}".strip() if reasoning else content
         except httpx.TimeoutException as e:
-            raise ProviderTimeoutError(provider="lmster", message=f"LM Studio timeout: {e}", trace_id=trace_id, raw_error=e)
+            raise ProviderTimeoutError(
+                provider="lmster", message=f"LM Studio timeout: {e}", trace_id=trace_id, raw_error=e
+            )
         except httpx.HTTPStatusError as e:
-            raise ProviderError(provider="lmster", message=f"LM Studio HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
+            raise ProviderError(
+                provider="lmster",
+                message=f"LM Studio HTTP error: {e}",
+                status_code=e.response.status_code,
+                trace_id=trace_id,
+                raw_error=e,
+            )
         except OmegaError as e:
             raise e
         except OmegaError:
             raise
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected LM Studio failure: {e}", exc_info=True)
-            raise ProviderError(provider="lmster", message=f"Unexpected LM Studio failure: {e}", trace_id=trace_id, raw_error=e) from e
+            raise ProviderError(
+                provider="lmster",
+                message=f"Unexpected LM Studio failure: {e}",
+                trace_id=trace_id,
+                raw_error=e,
+            ) from e
+
 
 class OllamaProvider(BaseProvider):
     """Ollama local provider."""
+
     async def is_available(self) -> bool:
         url = self.config.get("endpoint", "http://127.0.0.1:11434")
         try:
@@ -274,7 +389,20 @@ class OllamaProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
+    async def generate(
+        self,
+        model: str,
+        system_prompt: str,
+        user_query: str,
+        temperature: float,
+        max_tokens: int,
+        trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
+        top_p: Optional[float] = None,
+        **kwargs,
+    ) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:11434")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -285,10 +413,11 @@ class OllamaProvider(BaseProvider):
         # Port 1.3: ChatML stop tokens prevent hallucinated conversation turns
         try:
             from omega.cvar_table import cvar_get
+
             stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
         except ImportError:
             stop_tokens = ["</s>", "User:", "\n\n"]
-        
+
         payload = {
             "model": resolved_model,
             "messages": messages,
@@ -303,12 +432,22 @@ class OllamaProvider(BaseProvider):
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(f"{url}/v1/chat/completions", json=payload)
-                
+
                 if response.status_code == 429:
-                    raise ProviderRateLimitError(provider="ollama", message="Ollama rate limit exceeded", status_code=429, trace_id=trace_id)
+                    raise ProviderRateLimitError(
+                        provider="ollama",
+                        message="Ollama rate limit exceeded",
+                        status_code=429,
+                        trace_id=trace_id,
+                    )
                 if response.status_code >= 500:
-                    raise ProviderUnavailableError(provider="ollama", message="Ollama server error", status_code=response.status_code, trace_id=trace_id)
-                
+                    raise ProviderUnavailableError(
+                        provider="ollama",
+                        message="Ollama server error",
+                        status_code=response.status_code,
+                        trace_id=trace_id,
+                    )
+
                 response.raise_for_status()
                 data = response.json()
                 message = data["choices"][0]["message"]
@@ -316,16 +455,30 @@ class OllamaProvider(BaseProvider):
                 reasoning = message.get("reasoning_content", "").strip()
                 return f"{reasoning}\n\n{content}".strip() if reasoning else content
         except httpx.TimeoutException as e:
-            raise ProviderTimeoutError(provider="ollama", message=f"Ollama timeout: {e}", trace_id=trace_id, raw_error=e)
+            raise ProviderTimeoutError(
+                provider="ollama", message=f"Ollama timeout: {e}", trace_id=trace_id, raw_error=e
+            )
         except httpx.HTTPStatusError as e:
-            raise ProviderError(provider="ollama", message=f"Ollama HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
+            raise ProviderError(
+                provider="ollama",
+                message=f"Ollama HTTP error: {e}",
+                status_code=e.response.status_code,
+                trace_id=trace_id,
+                raw_error=e,
+            )
         except OmegaError as e:
             raise e
         except OmegaError:
             raise
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected Ollama failure: {e}", exc_info=True)
-            raise ProviderError(provider="ollama", message=f"Unexpected Ollama failure: {e}", trace_id=trace_id, raw_error=e) from e
+            raise ProviderError(
+                provider="ollama",
+                message=f"Unexpected Ollama failure: {e}",
+                trace_id=trace_id,
+                raw_error=e,
+            ) from e
+
 
 class MockProvider(BaseProvider):
     """Offline mock provider — last resort when no inference backend is available."""
@@ -333,12 +486,25 @@ class MockProvider(BaseProvider):
     async def is_available(self) -> bool:
         return True
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
+    async def generate(
+        self,
+        model: str,
+        system_prompt: str,
+        user_query: str,
+        temperature: float,
+        max_tokens: int,
+        trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
+        top_p: Optional[float] = None,
+        **kwargs,
+    ) -> Optional[str]:
         demo = os.environ.get("OMEGA_DEMO")
         if demo:
             return (
                 f"I am the Omega Engine — sovereign AI runtime.\n\n"
-                f"You asked: \"{user_query}\"\n\n"
+                f'You asked: "{user_query}"\n\n'
                 f"I hear you through the Oracle, routed by the Iris decoder, "
                 f"enhanced by memory from the Soul Engine.\n\n"
                 f"This is a demo response. Connect a local GGUF model at "
@@ -356,6 +522,7 @@ class MockProvider(BaseProvider):
             f"     → `lms server start`\n\n"
             f"Quick start: https://github.com/Xoe-NovAi/omega-engine#quickstart"
         )
+
 
 class NativeGGUFProvider(BaseProvider):
     """Native GGUF provider using llama-cpp-python with full Zen 2 optimizations.
@@ -388,6 +555,7 @@ class NativeGGUFProvider(BaseProvider):
         # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
         try:
             from omega.cvar_table import cvar_get, validate_llama_kwargs
+
             # Port 1.1: validate llama-cpp kwargs — moved to _ensure_loaded
             # where the actual llama_cpp.Llama() kwargs are built. Validating
             # the raw provider config here caused false positives because
@@ -459,11 +627,11 @@ class NativeGGUFProvider(BaseProvider):
 
     def __del__(self):
         """Destructor — clean up worker process on garbage collection.
-        
+
         BUG-002 (2026-07-02): Without this, when a NativeGGUFProvider goes
         out of scope (e.g., during A/B testing with multiple instances),
         the worker subprocess keeps running as a zombie holding model memory.
-        
+
         atexit.register(self.shutdown) at line 346 only fires on clean exit.
         __del__ catches GC-time collection.
         """
@@ -476,7 +644,7 @@ class NativeGGUFProvider(BaseProvider):
 
     def __enter__(self) -> "NativeGGUFProvider":
         """Context manager entry — enables `with NativeGGUFProvider(...) as p:`.
-        
+
         [Carmack Fix 2026-08-15] Guarantees shutdown() on normal exit, exception,
         or context break. __del__ alone is unreliable in async Python (see
         llama-cpp-python #1442 — del not guaranteed if references persist).
@@ -485,7 +653,7 @@ class NativeGGUFProvider(BaseProvider):
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         """Context manager exit — clean up worker process unconditionally.
-        
+
         Returns False to propagate any exception (do not suppress).
         """
         self.shutdown()
@@ -497,6 +665,7 @@ class NativeGGUFProvider(BaseProvider):
             return False
         try:
             import llama_cpp  # noqa: F401
+
             return True
         except ImportError:
             return False
@@ -553,7 +722,12 @@ class NativeGGUFProvider(BaseProvider):
         except OmegaError:
             raise
         except (OmegaError, RuntimeError, OSError) as e:
-            logger.error("Failed to estimate memory for model '%s': %s", self.model_path or '?', e, exc_info=True)
+            logger.error(
+                "Failed to estimate memory for model '%s': %s",
+                self.model_path or "?",
+                e,
+                exc_info=True,
+            )
             return {"model_mb": 0, "kv_cache_mb": 0, "total_mb": 0, "fits_in_ram": True}
 
     def _select_optimal_context(self, requested_ctx: Optional[int] = None) -> int:
@@ -588,7 +762,11 @@ class NativeGGUFProvider(BaseProvider):
         target_ctx = self._select_optimal_context(n_ctx)
 
         # Skip reload if same model and context already loaded
-        if self._worker_process is not None and self._loaded_model == self.model_path and self._loaded_ctx >= target_ctx:
+        if (
+            self._worker_process is not None
+            and self._loaded_model == self.model_path
+            and self._loaded_ctx >= target_ctx
+        ):
             return
 
         # Apply CPU affinity before loading
@@ -605,15 +783,29 @@ class NativeGGUFProvider(BaseProvider):
         self._res_queue = Queue()
 
         # Worker function that loads the model and runs inference
-        def _worker(req_queue, res_queue, model_path, n_threads, n_threads_batch,
-                      n_ctx, n_batch, n_ubatch, type_k, type_v,
-                      use_mmap, use_mlock, n_gpu_layers, kwarg_filter_enabled):
+        def _worker(
+            req_queue,
+            res_queue,
+            model_path,
+            n_threads,
+            n_threads_batch,
+            n_ctx,
+            n_batch,
+            n_ubatch,
+            type_k,
+            type_v,
+            use_mmap,
+            use_mlock,
+            n_gpu_layers,
+            kwarg_filter_enabled,
+        ):
             import llama_cpp
+
             try:
                 from omega.cvar_table import validate_llama_kwargs
             except ImportError:
                 validate_llama_kwargs = None
-            
+
             # Build the exact kwargs we'll pass to Llama(), then validate them
             llama_kwargs = {
                 "model_path": model_path,
@@ -640,6 +832,7 @@ class NativeGGUFProvider(BaseProvider):
             if n_gpu_layers and n_gpu_layers > 0:
                 try:
                     import llama_cpp as _lc
+
                     if _lc.llama_supports_gpu_offload():
                         _flash_attn = True
                 except Exception:
@@ -650,11 +843,13 @@ class NativeGGUFProvider(BaseProvider):
                 kwarg_warnings = validate_llama_kwargs(llama_kwargs, "NativeGGUFProvider.worker")
                 if kwarg_warnings:
                     import logging
+
                     logging.getLogger("omega.workers").warning(
                         "NativeGGUFProvider.worker: %d kwarg warnings:\n  %s",
-                        len(kwarg_warnings), "\n  ".join(kwarg_warnings)
+                        len(kwarg_warnings),
+                        "\n  ".join(kwarg_warnings),
                     )
-            
+
             # Load the model — wrap in try/except to signal load failure
             try:
                 llm = llama_cpp.Llama(**llama_kwargs)
@@ -662,10 +857,10 @@ class NativeGGUFProvider(BaseProvider):
                 # Send load failure back to parent, then exit
                 res_queue.put({"status": "load_error", "error": repr(e)})
                 return
-            
+
             # Signal that loading succeeded
             res_queue.put({"status": "ready"})
-            
+
             # Keep the worker alive, waiting for requests
             while True:
                 try:
@@ -676,11 +871,12 @@ class NativeGGUFProvider(BaseProvider):
                         # before worker process exits (model weights released).
                         try:
                             import ctypes
+
                             ctypes.CDLL("libc.so.6").malloc_trim(0)
                         except (OSError, AttributeError):
                             pass
                         break
-                    
+
                     # Handle Somatic State Commands
                     if "command" in request:
                         cmd = request["command"]
@@ -702,9 +898,6 @@ class NativeGGUFProvider(BaseProvider):
                                 res_queue.put(e)
                             continue
 
-
-
-
                     # Unpack request
                     system_prompt = request["system_prompt"]
                     user_query = request["user_query"]
@@ -715,7 +908,7 @@ class NativeGGUFProvider(BaseProvider):
                     enable_thinking = request.get("enable_thinking", False)
                     logit_bias = request.get("logit_bias")
                     repetition_penalty = request.get("repetition_penalty", 1.0)
-                    
+
                     # [id-soft: vet-002] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
                     # to properly apply the GGUF's embedded Jinja chat template.
                     # This enables thinking mode control via chat_template_kwargs.
@@ -732,6 +925,7 @@ class NativeGGUFProvider(BaseProvider):
                     # which wraps itself → infinite recursion.
                     if enable_thinking is not None and not enable_thinking:
                         import llama_cpp.llama_chat_format as _chat_fmt
+
                         # Reset to prevent self-wrapping recursion
                         llm.chat_handler = None
                         base_handler = (
@@ -740,22 +934,28 @@ class NativeGGUFProvider(BaseProvider):
                             or _chat_fmt.get_chat_completion_handler(llm.chat_format)
                         )
                         _template_kwargs = {"enable_thinking": False}
+
                         def _handler_with_kwargs(*args, **kwargs):
                             return base_handler(*args, **{**_template_kwargs, **kwargs})
+
                         llm.chat_handler = _handler_with_kwargs
-                    
+
                     messages = [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_query},
                     ]
-                    kwargs = {k: v for k, v in {
-                        "messages": messages,
-                        "max_tokens": max_tokens,
-                        "temperature": temperature,
-                        "stop": stop,
-                        "logit_bias": logit_bias,
-                        "repeat_penalty": repetition_penalty,
-                    }.items() if v is not None}
+                    kwargs = {
+                        k: v
+                        for k, v in {
+                            "messages": messages,
+                            "max_tokens": max_tokens,
+                            "temperature": temperature,
+                            "stop": stop,
+                            "logit_bias": logit_bias,
+                            "repeat_penalty": repetition_penalty,
+                        }.items()
+                        if v is not None
+                    }
                     if logprobs:
                         kwargs["logprobs"] = logprobs
                     response = llm.create_chat_completion(**kwargs)
@@ -765,6 +965,7 @@ class NativeGGUFProvider(BaseProvider):
 
                 except (OmegaError, RuntimeError, OSError) as e:
                     import logging
+
                     logging.getLogger("omega.workers").error(
                         f"Worker process error: {e}", exc_info=True
                     )
@@ -775,11 +976,19 @@ class NativeGGUFProvider(BaseProvider):
         self._worker_process = Process(
             target=_worker,
             args=(
-                self._req_queue, self._res_queue,
-                self.model_path, self._n_threads, self._n_threads_batch,
-                target_ctx, self._n_batch, self._n_ubatch,
-                self._type_k, self._type_v,
-                self._use_mmap, self._use_mlock, self._n_gpu_layers,
+                self._req_queue,
+                self._res_queue,
+                self.model_path,
+                self._n_threads,
+                self._n_threads_batch,
+                target_ctx,
+                self._n_batch,
+                self._n_ubatch,
+                self._type_k,
+                self._type_v,
+                self._use_mmap,
+                self._use_mlock,
+                self._n_gpu_layers,
                 self._kwarg_filter_enabled,
             ),
         )
@@ -787,9 +996,7 @@ class NativeGGUFProvider(BaseProvider):
 
         # Wait for the worker to signal ready or load failure (30s timeout)
         try:
-            init_signal = await anyio.to_thread.run_sync(
-                lambda: self._res_queue.get(timeout=120)
-            )
+            init_signal = await anyio.to_thread.run_sync(lambda: self._res_queue.get(timeout=120))
             if isinstance(init_signal, dict) and init_signal.get("status") == "load_error":
                 error_msg = init_signal.get("error", "Unknown load error")
                 self._worker_process.terminate()
@@ -818,26 +1025,25 @@ class NativeGGUFProvider(BaseProvider):
         self._loaded_model = self.model_path
         logger.info(f"Worker process initialized: {target_ctx} context, {self._n_threads} threads")
 
-
     async def save_state(self) -> bytes:
         """Captures the current model state and returns the raw bytes.
-        
+
         This allows the ModelGateway to store the state in a sovereign
         Content Addressable Storage (CAS) system.
         """
         if self._worker_process is None:
             raise InferenceRuntimeError("No worker process active; cannot capture state")
-        
+
         try:
             # Send SAVE_STATE command to worker
             await anyio.to_thread.run_sync(self._req_queue.put, {"command": "SAVE_STATE"})
-            
+
             # Wait for state bytes from worker
             response = await anyio.to_thread.run_sync(self._res_queue.get)
-            
+
             if isinstance(response, dict) and response.get("status") == "state_captured":
                 return response.get("data")
-            
+
             raise InferenceRuntimeError(f"Worker failed to capture state: {response}")
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic capture failed: {e}")
@@ -845,26 +1051,25 @@ class NativeGGUFProvider(BaseProvider):
 
     async def load_state(self, state_bytes: bytes) -> bool:
         """Restores a model state from raw bytes into the worker process.
-        
+
         Returns:
             True if state was restored successfully.
         """
         if self._worker_process is None:
             raise InferenceRuntimeError("No worker process active; cannot restore state")
-        
+
         try:
             # Send LOAD_STATE command to worker with bytes
-            await anyio.to_thread.run_sync(self._req_queue.put, {
-                "command": "LOAD_STATE", 
-                "state_bytes": state_bytes
-            })
-            
+            await anyio.to_thread.run_sync(
+                self._req_queue.put, {"command": "LOAD_STATE", "state_bytes": state_bytes}
+            )
+
             # Wait for confirmation
             response = await anyio.to_thread.run_sync(self._res_queue.get)
             if isinstance(response, dict) and response.get("status") == "state_restored":
                 logger.info("Somatic state restored successfully")
                 return True
-            
+
             raise InferenceRuntimeError(f"Worker failed to restore state: {response}")
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic restore failed: {e}")
@@ -885,7 +1090,7 @@ class NativeGGUFProvider(BaseProvider):
         top_p: float = 0.95,
     ) -> Optional[str]:
         """Perform local inference with Zen 2 optimizations.
-        
+
         Args:
             model: Model identifier (used for logging).
             system_prompt: System prompt text.
@@ -898,26 +1103,29 @@ class NativeGGUFProvider(BaseProvider):
             logit_bias: Optional mapping of token IDs to bias values.
             repetition_penalty: Penalty for repeating tokens.
             top_p: Top-p sampling threshold (nucleus sampling).
-        
+
         Returns:
             Generated text or None on failure.
         """
         import anyio
+
         await self._ensure_loaded(n_ctx)
-        
+
         # [id-soft: vet-002] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
         # separately. The worker uses create_chat_completion() which applies the GGUF's
         # embedded Jinja chat template, enabling proper thinking mode control via
         # chat_template_kwargs={"enable_thinking": False}.
-        
+
         if session_id:
-            logger.debug("Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id)
-        
+            logger.debug(
+                "Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id
+            )
+
         # [Operation Deep-Siphon] Reset last logprobs before each inference.
         # Prevents stale data from a previous successful call leaking
         # after a subsequent error (ICS-F v1.0 Sprint 0).
         self._last_logprobs = None
-        
+
         # Send request to worker process (system_prompt + user_query, not pre-formatted)
         # [heritage: llama-cpp-python 2023] logit_bias — forwarded to llama-cpp-python
         # worker (see worker loop line 603). Supported since v0.2.0 (commit 07e47f5).
@@ -933,18 +1141,18 @@ class NativeGGUFProvider(BaseProvider):
         }
         if logit_bias:
             request["logit_bias"] = logit_bias
-        
+
         try:
             # Send request to worker (threaded — Queue.put blocks on serialization)
             await anyio.to_thread.run_sync(self._req_queue.put, request)
-            
+
             # Wait for response (threaded — Queue.get blocks on I/O)
             response = await anyio.to_thread.run_sync(self._res_queue.get)
-            
+
             # Check if response is an exception
             if isinstance(response, Exception):
                 raise response
-            
+
             if response is None:
                 logger.warning("NativeGGUF inference returned None response")
                 return None
@@ -961,7 +1169,7 @@ class NativeGGUFProvider(BaseProvider):
                     text = (choice["message"]["content"] or "").strip()
                 elif "text" in choice:
                     text = choice["text"].strip()
-                
+
                 # Capture logprobs from response for ICS-F v1.0 compliance
                 # Use `or {}` because logprobs key may exist with None value
                 # when logprobs were not requested (logprobs=False in worker).
@@ -971,7 +1179,9 @@ class NativeGGUFProvider(BaseProvider):
                 if trace_id:
                     logger.debug(
                         "NativeGGUF inference complete [trace_id=%s] tokens=%d chars=%d",
-                        trace_id, response.get("usage", {}).get("completion_tokens", 0), len(text),
+                        trace_id,
+                        response.get("usage", {}).get("completion_tokens", 0),
+                        len(text),
                     )
                 return text
         except OmegaError:
@@ -979,19 +1189,19 @@ class NativeGGUFProvider(BaseProvider):
         except (OmegaError, RuntimeError, OSError) as e:
             # Check for OOM patterns in the error message
             err_msg = str(e).lower()
-            if "cuda malloc" in err_msg or "out of memory" in err_msg or "allocation failed" in err_msg:
+            if (
+                "cuda malloc" in err_msg
+                or "out of memory" in err_msg
+                or "allocation failed" in err_msg
+            ):
                 raise InferenceOOMError(
-                    message=f"Native GGUF OOM: {e}", 
-                    trace_id=trace_id, 
-                    raw_error=e
+                    message=f"Native GGUF OOM: {e}", trace_id=trace_id, raw_error=e
                 )
             if "illegal instruction" in err_msg or "segmentation fault" in err_msg:
                 raise InferenceRuntimeError(
-                    message=f"Native GGUF runtime crash: {e}", 
-                    trace_id=trace_id, 
-                    raw_error=e
+                    message=f"Native GGUF runtime crash: {e}", trace_id=trace_id, raw_error=e
                 )
-            
+
             logger.error(f"NativeGGUF inference failed: {e}", exc_info=True)
             # BUG-002 (2026-07-02): Must call shutdown() before dropping the
             # worker reference. Previously, self._worker_process = None was set
@@ -1000,7 +1210,9 @@ class NativeGGUFProvider(BaseProvider):
             self.shutdown()
             self._worker_process = None
             self._loaded_ctx = 0
-            raise InferenceError(message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e) from e
+            raise InferenceError(
+                message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e
+            ) from e
 
     async def reload_with_context(self, n_ctx: int) -> bool:
         """Explicitly reload the model with a new context length.
@@ -1029,7 +1241,9 @@ class NativeGGUFProvider(BaseProvider):
             # [id-soft: vet-058] Rollback — restore old state on failure
             self._worker_process = old_worker
             self._loaded_ctx = old_ctx if old_worker else 0
-            logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}", exc_info=True)
+            logger.error(
+                f"Context reload failed, rolled back to {self._loaded_ctx}: {e}", exc_info=True
+            )
             return False
 
     def get_status(self) -> Dict[str, Any]:
@@ -1079,6 +1293,7 @@ class NativeGGUFProvider(BaseProvider):
         # Return freed pages to OS (parent process holds ThreadPoolExecutor + queues)
         try:
             import ctypes
+
             ctypes.CDLL("libc.so.6").malloc_trim(0)
         except (OSError, AttributeError):
             pass

@@ -20,13 +20,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from omega.errors import (
     OmegaError,
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 from pydantic import BaseModel
 
@@ -95,6 +89,7 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
     except (RuntimeError, OSError) as e:
         from omega.oracle.failure_registry import get_failure_registry
+
         classification = get_failure_registry().classify_error(e)
         logger.error(f"Chat system error [{classification['mode']}]: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
@@ -121,6 +116,7 @@ async def voice(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
     except (RuntimeError, OSError) as e:
         from omega.oracle.failure_registry import get_failure_registry
+
         classification = get_failure_registry().classify_error(e)
         logger.error(f"Voice system error [{classification['mode']}]: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
@@ -145,4 +141,5 @@ async def list_entities():
 # ── Direct entry point ──────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=8080)

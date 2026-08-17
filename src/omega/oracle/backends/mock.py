@@ -1,13 +1,14 @@
 # AP: AP-OFFLINE-MOCK-v1.0.0
-import logging
-from typing import Optional, Dict, Any
+from typing import Optional
+
 
 class OfflineMockBackend:
     """Mock backend for OMEGA_ENV=test.
-    
+
     Returns deterministic responses to unblock CI/CD and avoid
     unnecessary inference overhead during testing.
     """
+
     def __init__(self, name: str = "mock", config: Optional[dict] = None):
         self.name = name
         self.config = config or {}
@@ -24,7 +25,7 @@ class OfflineMockBackend:
         """Return a static mock response."""
         return "The core mission of the Omega Engine is to sever the umbilical cord of Big AI."
 
-# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+    # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
     async def generate(
         self,
         model_name: str,

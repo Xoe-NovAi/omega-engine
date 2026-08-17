@@ -28,9 +28,9 @@
 # DocRef: docs/standards/DOC_STYLE_GUIDE.md
 import logging
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 # Canonical data dir resolution (mirrors observability.py and library modules).
 # Inlined here to avoid circular import with constants.py.
@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 # ═══════════════════════════════════════════════════════════════════════
 # §1 — CvarDef Dataclass
 # ═══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class CvarDef:
@@ -61,6 +62,7 @@ class CvarDef:
         subsystem: Which subsystem owns this cvar (e.g. "EntityRegistry").
         modification_count: Incremented on every set(). Zero at creation.
     """
+
     name: str
     value: Any
     type: str
@@ -70,8 +72,7 @@ class CvarDef:
 
     def __repr__(self) -> str:
         return (
-            f"CvarDef({self.name}={self.value!r}, "
-            f"type={self.type}, mods={self.modification_count})"
+            f"CvarDef({self.name}={self.value!r}, type={self.type}, mods={self.modification_count})"
         )
 
 
@@ -80,22 +81,22 @@ class CvarDef:
 # ═══════════════════════════════════════════════════════════════════════
 
 # ZONEID constants — runtime integrity magic markers (id Software ZONEID pattern)
-ZONEID_MEMORY = 0x1d4a11        # MemoryStore entry validation
-ZONEID_ENTITY = 0x1d4a12        # EntityRegistry entity validation
-ZONEID_BREAKER = 0x1d4a13       # Circuit breaker state marker
-ZONEID_TRACE = 0x1d4a14         # Trace/session lineage marker
-ZONEID_PROBE = 0x1d4a15         # ResourceGuard critical section guard
-ZONEID_HANDOFF = 0x1d4a16       # SubagentHandoffPacket integrity marker
-ZONEID_PRESENCE = 0x1d4a17      # Agent Presence dataclass integrity marker
-ZONEID_KNOWLEDGE = 0x1d4a18     # Knowledge Signal integrity marker
-ZONEID_DEMAND = 0x1d4a19        # Demand Signal integrity marker
-ZONEID_VERIFICATION = 0x1d4a1a  # Verification audit trail integrity marker
-ZONEID_ATOMIC = 0x1d4a1b        # Critical section atomic lock marker
-ZONEID_SOMATIC = 0x1d4a1c       # Somatic snapshot integrity marker
+ZONEID_MEMORY = 0x1D4A11  # MemoryStore entry validation
+ZONEID_ENTITY = 0x1D4A12  # EntityRegistry entity validation
+ZONEID_BREAKER = 0x1D4A13  # Circuit breaker state marker
+ZONEID_TRACE = 0x1D4A14  # Trace/session lineage marker
+ZONEID_PROBE = 0x1D4A15  # ResourceGuard critical section guard
+ZONEID_HANDOFF = 0x1D4A16  # SubagentHandoffPacket integrity marker
+ZONEID_PRESENCE = 0x1D4A17  # Agent Presence dataclass integrity marker
+ZONEID_KNOWLEDGE = 0x1D4A18  # Knowledge Signal integrity marker
+ZONEID_DEMAND = 0x1D4A19  # Demand Signal integrity marker
+ZONEID_VERIFICATION = 0x1D4A1A  # Verification audit trail integrity marker
+ZONEID_ATOMIC = 0x1D4A1B  # Critical section atomic lock marker
+ZONEID_SOMATIC = 0x1D4A1C  # Somatic snapshot integrity marker
 # [id-soft: vet-023] Precomputed Lookup — embedding cache integrity marker
 # Embedding provider cache validation. Validated on every embed read/write to
 # catch corrupt or stale embedding vectors in the hot cache.
-ZONEID_EMBEDDING = 0x1d4a1d
+ZONEID_EMBEDDING = 0x1D4A1D
 
 
 # [id-soft: vet-008] Lazy Deletion — sentinel value for tombstoned entities
@@ -105,6 +106,7 @@ ZONEID_TOMBSTONE = 0xDEADBEEF
 
 
 # ── ZONEID Validation Helper ─────────────────────────────────────────
+
 
 def validate_zoneid(value: int, expected: int, context: str = "") -> None:
     """Validate a ZONEID magic constant.
@@ -136,19 +138,71 @@ def validate_zoneid(value: int, expected: int, context: str = "") -> None:
 # directly. New code should use CVAR_TABLE or cvar_get().
 
 ZONEID_TABLE = {
-    "memory": {"id": ZONEID_MEMORY, "subsystem": "MemoryStore", "description": "Memory load/save integrity"},
-    "entity": {"id": ZONEID_ENTITY, "subsystem": "EntityRegistry", "description": "Entity dataclass validation"},
-    "breaker": {"id": ZONEID_BREAKER, "subsystem": "HealthMonitor", "description": "Circuit breaker state marker"},
-    "trace": {"id": ZONEID_TRACE, "subsystem": "ObservabilityEngine", "description": "Trace/session lineage"},
-    "probe": {"id": ZONEID_PROBE, "subsystem": "ResourceGuard", "description": "Critical section guard"},
-    "handoff": {"id": ZONEID_HANDOFF, "subsystem": "SubagentDispatcher", "description": "HandoffPacket integrity marker"},
-    "presence": {"id": ZONEID_PRESENCE, "subsystem": "LinkN9Runtime", "description": "Agent presence record marker"},
-    "knowledge": {"id": ZONEID_KNOWLEDGE, "subsystem": "CrossPollination", "description": "Knowledge signal integrity marker"},
-    "demand": {"id": ZONEID_DEMAND, "subsystem": "CrossPollination", "description": "Demand signal integrity marker"},
-    "tombstone": {"id": ZONEID_TOMBSTONE, "subsystem": "EntityRegistry", "description": "Lazy deletion sentinel"},
-    "verification": {"id": ZONEID_VERIFICATION, "subsystem": "Sentinel", "description": "Verification audit trail integrity marker"},
-    "somatic": {"id": ZONEID_SOMATIC, "subsystem": "SomaticState", "description": "Somatic snapshot integrity marker (Phase C)"},
-    "embedding": {"id": ZONEID_EMBEDDING, "subsystem": "EmbeddingProvider", "description": "Embedding cache integrity marker"},
+    "memory": {
+        "id": ZONEID_MEMORY,
+        "subsystem": "MemoryStore",
+        "description": "Memory load/save integrity",
+    },
+    "entity": {
+        "id": ZONEID_ENTITY,
+        "subsystem": "EntityRegistry",
+        "description": "Entity dataclass validation",
+    },
+    "breaker": {
+        "id": ZONEID_BREAKER,
+        "subsystem": "HealthMonitor",
+        "description": "Circuit breaker state marker",
+    },
+    "trace": {
+        "id": ZONEID_TRACE,
+        "subsystem": "ObservabilityEngine",
+        "description": "Trace/session lineage",
+    },
+    "probe": {
+        "id": ZONEID_PROBE,
+        "subsystem": "ResourceGuard",
+        "description": "Critical section guard",
+    },
+    "handoff": {
+        "id": ZONEID_HANDOFF,
+        "subsystem": "SubagentDispatcher",
+        "description": "HandoffPacket integrity marker",
+    },
+    "presence": {
+        "id": ZONEID_PRESENCE,
+        "subsystem": "LinkN9Runtime",
+        "description": "Agent presence record marker",
+    },
+    "knowledge": {
+        "id": ZONEID_KNOWLEDGE,
+        "subsystem": "CrossPollination",
+        "description": "Knowledge signal integrity marker",
+    },
+    "demand": {
+        "id": ZONEID_DEMAND,
+        "subsystem": "CrossPollination",
+        "description": "Demand signal integrity marker",
+    },
+    "tombstone": {
+        "id": ZONEID_TOMBSTONE,
+        "subsystem": "EntityRegistry",
+        "description": "Lazy deletion sentinel",
+    },
+    "verification": {
+        "id": ZONEID_VERIFICATION,
+        "subsystem": "Sentinel",
+        "description": "Verification audit trail integrity marker",
+    },
+    "somatic": {
+        "id": ZONEID_SOMATIC,
+        "subsystem": "SomaticState",
+        "description": "Somatic snapshot integrity marker (Phase C)",
+    },
+    "embedding": {
+        "id": ZONEID_EMBEDDING,
+        "subsystem": "EmbeddingProvider",
+        "description": "Embedding cache integrity marker",
+    },
 }
 
 
@@ -159,310 +213,444 @@ ZONEID_TABLE = {
 CVAR_TABLE: Dict[str, CvarDef] = {
     # ── zoneid.* namespace (magic constants from §2) ──────────────
     "zoneid.memory": CvarDef(
-        "zoneid.memory", ZONEID_MEMORY, "zoneid",
-        "Memory load/save integrity marker", "MemoryStore",
+        "zoneid.memory",
+        ZONEID_MEMORY,
+        "zoneid",
+        "Memory load/save integrity marker",
+        "MemoryStore",
     ),
     "zoneid.entity": CvarDef(
-        "zoneid.entity", ZONEID_ENTITY, "zoneid",
-        "Entity dataclass validation marker", "EntityRegistry",
+        "zoneid.entity",
+        ZONEID_ENTITY,
+        "zoneid",
+        "Entity dataclass validation marker",
+        "EntityRegistry",
     ),
     "zoneid.breaker": CvarDef(
-        "zoneid.breaker", ZONEID_BREAKER, "zoneid",
-        "Circuit breaker state marker", "HealthMonitor",
+        "zoneid.breaker",
+        ZONEID_BREAKER,
+        "zoneid",
+        "Circuit breaker state marker",
+        "HealthMonitor",
     ),
     "zoneid.trace": CvarDef(
-        "zoneid.trace", ZONEID_TRACE, "zoneid",
-        "Trace/session lineage marker", "ObservabilityEngine",
+        "zoneid.trace",
+        ZONEID_TRACE,
+        "zoneid",
+        "Trace/session lineage marker",
+        "ObservabilityEngine",
     ),
     "zoneid.probe": CvarDef(
-        "zoneid.probe", ZONEID_PROBE, "zoneid",
-        "Critical section guard marker", "ResourceGuard",
+        "zoneid.probe",
+        ZONEID_PROBE,
+        "zoneid",
+        "Critical section guard marker",
+        "ResourceGuard",
     ),
     "zoneid.handoff": CvarDef(
-        "zoneid.handoff", ZONEID_HANDOFF, "zoneid",
-        "HandoffPacket integrity marker (SubagentDispatcher)", "SubagentDispatcher",
+        "zoneid.handoff",
+        ZONEID_HANDOFF,
+        "zoneid",
+        "HandoffPacket integrity marker (SubagentDispatcher)",
+        "SubagentDispatcher",
     ),
     "zoneid.presence": CvarDef(
-        "zoneid.presence", ZONEID_PRESENCE, "zoneid",
-        "Agent presence record marker (Link N9 Runtime)", "LinkN9Runtime",
+        "zoneid.presence",
+        ZONEID_PRESENCE,
+        "zoneid",
+        "Agent presence record marker (Link N9 Runtime)",
+        "LinkN9Runtime",
     ),
     "zoneid.tombstone": CvarDef(
-        "zoneid.tombstone", ZONEID_TOMBSTONE, "zoneid",
-        "Lazy deletion sentinel", "EntityRegistry",
+        "zoneid.tombstone",
+        ZONEID_TOMBSTONE,
+        "zoneid",
+        "Lazy deletion sentinel",
+        "EntityRegistry",
     ),
     "zoneid.verification": CvarDef(
-        "zoneid.verification", ZONEID_VERIFICATION, "zoneid",
-        "Verification audit trail integrity marker (N5 Sentinel)", "Sentinel",
+        "zoneid.verification",
+        ZONEID_VERIFICATION,
+        "zoneid",
+        "Verification audit trail integrity marker (N5 Sentinel)",
+        "Sentinel",
     ),
     "zoneid.atomic": CvarDef(
-        "zoneid.atomic", ZONEID_ATOMIC, "zoneid",
-        "Critical section atomic lock marker", "ResourceGuard",
+        "zoneid.atomic",
+        ZONEID_ATOMIC,
+        "zoneid",
+        "Critical section atomic lock marker",
+        "ResourceGuard",
     ),
     "zoneid.somatic": CvarDef(
-        "zoneid.somatic", ZONEID_SOMATIC, "zoneid",
-        "Somatic snapshot integrity marker (Phase C Cognitive Substrate)", "SomaticState",
+        "zoneid.somatic",
+        ZONEID_SOMATIC,
+        "zoneid",
+        "Somatic snapshot integrity marker (Phase C Cognitive Substrate)",
+        "SomaticState",
     ),
     "zoneid.embedding": CvarDef(
-        "zoneid.embedding", ZONEID_EMBEDDING, "zoneid",
-        "Embedding cache integrity marker (LocalGGUFEmbeddingProvider)", "EmbeddingProvider",
+        "zoneid.embedding",
+        ZONEID_EMBEDDING,
+        "zoneid",
+        "Embedding cache integrity marker (LocalGGUFEmbeddingProvider)",
+        "EmbeddingProvider",
     ),
-
     # ── config.entity.* — Entity Registry knobs ─────────────────
     "config.entity.default": CvarDef(
-        "config.entity.default", "default", "str",
-        "Default entity name for Oracle talk/summon", "EntityRegistry",
+        "config.entity.default",
+        "default",
+        "str",
+        "Default entity name for Oracle talk/summon",
+        "EntityRegistry",
     ),
     "config.entity.user": CvarDef(
-        "config.entity.user", "arch", "str",
-        "Default user name for entity workspace paths", "EntityRegistry",
+        "config.entity.user",
+        "arch",
+        "str",
+        "Default user name for entity workspace paths",
+        "EntityRegistry",
     ),
     "config.entity.allow_transient": CvarDef(
-        "config.entity.allow_transient", True, "bool",
-        "Allow transient sessions that aren't recorded to soul", "EntityRegistry",
+        "config.entity.allow_transient",
+        True,
+        "bool",
+        "Allow transient sessions that aren't recorded to soul",
+        "EntityRegistry",
     ),
-
     # ── config.data.* — Global data paths ──────────────────────
     "config.data.dir": CvarDef(
-        "config.data.dir", str(DATA_DIR), "str",
-        "Root directory for all engine data (entities, sessions, logs)", "EntityRegistry",
+        "config.data.dir",
+        str(DATA_DIR),
+        "str",
+        "Root directory for all engine data (entities, sessions, logs)",
+        "EntityRegistry",
     ),
-
     # ── config.resource_guard.* — Resource Guard knobs ─────────
     "config.resource_guard.max_ram_mb": CvarDef(
-        "config.resource_guard.max_ram_mb", 12288, "int",
-        "Global max RAM (MB) for concurrent model inference", "ResourceGuard",
+        "config.resource_guard.max_ram_mb",
+        12288,
+        "int",
+        "Global max RAM (MB) for concurrent model inference",
+        "ResourceGuard",
     ),
-
     # ── config.hivemind.* — Hivemind/Hub knobs ─────────────────
     "config.hivemind.enabled": CvarDef(
-        "config.hivemind.enabled", True, "bool",
-        "Enable cross-agent awareness via Omega Hub", "LinkN9Runtime",
+        "config.hivemind.enabled",
+        True,
+        "bool",
+        "Enable cross-agent awareness via Omega Hub",
+        "LinkN9Runtime",
     ),
     "config.hivemind.endpoint": CvarDef(
-        "config.hivemind.endpoint", "http://127.0.0.1:8016", "str",
-        "Base URL for the Omega Hub MCP server", "LinkN9Runtime",
+        "config.hivemind.endpoint",
+        "http://127.0.0.1:8016",
+        "str",
+        "Base URL for the Omega Hub MCP server",
+        "LinkN9Runtime",
     ),
-
     # ── config.session_header.* — ICS/Session header knobs ─────────
     "config.session_header.mode": CvarDef(
-        "config.session_header.mode", "compact", "str",
-        "Session header display mode (compact|verbose|off)", "Oracle",
+        "config.session_header.mode",
+        "compact",
+        "str",
+        "Session header display mode (compact|verbose|off)",
+        "Oracle",
     ),
-
     # ── config.hivemind.retention.* — TTL Alignment (D-kal-045) ────
     # N7 Dark Council Synthesis: workspace (was 7d) and observation log (30d)
     # had a 23-day silent data loss zone. Aligned both to 30d with 25% grace.
     "config.hivemind.retention.workspace_days": CvarDef(
-        "config.hivemind.retention.workspace_days", 30, "int",
-        "Workspace file retention (days) — aligned with observation log", "LinkN9Runtime",
+        "config.hivemind.retention.workspace_days",
+        30,
+        "int",
+        "Workspace file retention (days) — aligned with observation log",
+        "LinkN9Runtime",
     ),
     "config.hivemind.retention.observation_days": CvarDef(
-        "config.hivemind.retention.observation_days", 30, "int",
-        "Observation log retention (days)", "LinkN9Runtime",
+        "config.hivemind.retention.observation_days",
+        30,
+        "int",
+        "Observation log retention (days)",
+        "LinkN9Runtime",
     ),
     "config.hivemind.retention.grace_ratio": CvarDef(
-        "config.hivemind.retention.grace_ratio", 0.25, "float",
-        "Grace period as ratio of base TTL (id Software Quake 1996 pattern)", "LinkN9Runtime",
+        "config.hivemind.retention.grace_ratio",
+        0.25,
+        "float",
+        "Grace period as ratio of base TTL (id Software Quake 1996 pattern)",
+        "LinkN9Runtime",
     ),
     "config.hivemind.retention.warm_ttl_hours": CvarDef(
-        "config.hivemind.retention.warm_ttl_hours", 24, "int",
-        "Warm awareness tier retention (hours)", "LinkN9Runtime",
+        "config.hivemind.retention.warm_ttl_hours",
+        24,
+        "int",
+        "Warm awareness tier retention (hours)",
+        "LinkN9Runtime",
     ),
     "config.hivemind.retention.hot_ttl_minutes": CvarDef(
-        "config.hivemind.retention.hot_ttl_minutes", 5, "int",
-        "Hot presence tier retention (minutes) — in-memory", "LinkN9Runtime",
+        "config.hivemind.retention.hot_ttl_minutes",
+        5,
+        "int",
+        "Hot presence tier retention (minutes) — in-memory",
+        "LinkN9Runtime",
     ),
-
     # ── config.gguf.* — Native GGUF Provider knobs ───────────────
     "config.gguf.n_gpu_layers": CvarDef(
-        "config.gguf.n_gpu_layers", 0, "int",
+        "config.gguf.n_gpu_layers",
+        0,
+        "int",
         "GPU layers for native GGUF inference (0=CPU only, prevents iGPU crash)",
         "NativeGGUFProvider",
     ),
     "config.gguf.stop_tokens": CvarDef(
-        "config.gguf.stop_tokens", ["</s>", "User:", "\n\n"], "list",
+        "config.gguf.stop_tokens",
+        ["</s>", "User:", "\n\n"],
+        "list",
         "ChatML stop tokens for generation boundary (prevents hallucinated turns)",
         "ModelGateway",
     ),
     "config.gguf.kwarg_filter": CvarDef(
-        "config.gguf.kwarg_filter", True, "bool",
+        "config.gguf.kwarg_filter",
+        True,
+        "bool",
         "Enable llama-cpp kwarg validation before model load (rejects unknown keys)",
         "NativeGGUFProvider",
     ),
     "config.gguf.n_ctx": CvarDef(
-        "config.gguf.n_ctx", 4096, "int",
+        "config.gguf.n_ctx",
+        4096,
+        "int",
         "Default context window for native GGUF inference",
         "NativeGGUFProvider",
     ),
     "config.gguf.n_threads": CvarDef(
-        "config.gguf.n_threads", 6, "int",
+        "config.gguf.n_threads",
+        6,
+        "int",
         "Number of threads for native GGUF (Zen 2: 6 physical cores [0,2,4,6])",
         "NativeGGUFProvider",
     ),
     "config.gguf.type_k": CvarDef(
-        "config.gguf.type_k", 8, "int",
+        "config.gguf.type_k",
+        8,
+        "int",
         "KV cache key quantization type (8=q8_0, 1=f16, 2=q4_0, 0=F32)",
         "NativeGGUFProvider",
     ),
     "config.gguf.type_v": CvarDef(
-        "config.gguf.type_v", 8, "int",
+        "config.gguf.type_v",
+        8,
+        "int",
         "KV cache value quantization type (8=q8_0, 1=f16, 2=q4_0, 0=F32)",
         "NativeGGUFProvider",
     ),
-
     # ── config.sampling.* — Global inference sampling defaults ─────
     "config.sampling.temperature": CvarDef(
-        "config.sampling.temperature", 0.7, "float",
+        "config.sampling.temperature",
+        0.7,
+        "float",
         "Global default temperature for all providers (0.0=greedy, higher=more random)",
         "ModelGateway",
     ),
     "config.sampling.top_p": CvarDef(
-        "config.sampling.top_p", 0.95, "float",
+        "config.sampling.top_p",
+        0.95,
+        "float",
         "Global default top-p (nucleus sampling) for all providers",
         "ModelGateway",
     ),
     "config.sampling.top_k": CvarDef(
-        "config.sampling.top_k", 40, "int",
+        "config.sampling.top_k",
+        40,
+        "int",
         "Global default top-k sampling for all providers (0=disabled)",
         "ModelGateway",
     ),
     "config.sampling.repetition_penalty": CvarDef(
-        "config.sampling.repetition_penalty", 1.0, "float",
+        "config.sampling.repetition_penalty",
+        1.0,
+        "float",
         "Global default repetition penalty for all providers (1.0=disabled)",
         "ModelGateway",
     ),
     "config.sampling.min_p": CvarDef(
-        "config.sampling.min_p", 0.0, "float",
+        "config.sampling.min_p",
+        0.0,
+        "float",
         "Global default min-p sampling for all providers (0.0=disabled)",
         "ModelGateway",
     ),
-
     # ── config.providers.* — Provider-specific knobs ─────────────
     "config.providers.google.auth_header": CvarDef(
-        "config.providers.google.auth_header", "x-goog-api-key", "str",
+        "config.providers.google.auth_header",
+        "x-goog-api-key",
+        "str",
         "HTTP header name for Google API key (key in header, not URL)",
         "GoogleAIProvider",
     ),
     "config.providers.lmster.endpoint": CvarDef(
-        "config.providers.lmster.endpoint", "http://127.0.0.1:1234", "str",
+        "config.providers.lmster.endpoint",
+        "http://127.0.0.1:1234",
+        "str",
         "LM Studio headless server base URL",
         "LocallmsterProvider",
     ),
     "config.providers.ollama.endpoint": CvarDef(
-        "config.providers.ollama.endpoint", "http://127.0.0.1:11434", "str",
+        "config.providers.ollama.endpoint",
+        "http://127.0.0.1:11434",
+        "str",
         "Ollama API base URL",
         "OllamaProvider",
     ),
-
     # ── config.observability.* — Observability knobs ────────────
     "config.observability.trace_id_propagation": CvarDef(
-        "config.observability.trace_id_propagation", True, "bool",
+        "config.observability.trace_id_propagation",
+        True,
+        "bool",
         "Propagate trace_id to all provider logging and observability events",
         "ObservabilityEngine",
     ),
     "config.observability.json_logging": CvarDef(
-        "config.observability.json_logging", True, "bool",
+        "config.observability.json_logging",
+        True,
+        "bool",
         "Enable structured JSON logging (vs plain text)",
         "ObservabilityEngine",
     ),
-
     # ── config.somatic.* — Phase C Somatic / Dreaming / Symmetry knobs ──
     "config.somatic.enable": CvarDef(
-        "config.somatic.enable", False, "bool",
+        "config.somatic.enable",
+        False,
+        "bool",
         "MASTER KILL SWITCH — disables ALL Phase C features (Somatic, Dreaming, Symmetry)",
         "PhaseC",
     ),
     "config.somatic.snapshot_on_turn": CvarDef(
-        "config.somatic.snapshot_on_turn", False, "bool",
+        "config.somatic.snapshot_on_turn",
+        False,
+        "bool",
         "Per-turn snapshot vs interruption-only (default: interruption-only, lower NVMe wear)",
         "PhaseC",
     ),
     "config.somatic.max_snapshots_per_entity": CvarDef(
-        "config.somatic.max_snapshots_per_entity", 3, "int",
+        "config.somatic.max_snapshots_per_entity",
+        3,
+        "int",
         "Max snapshot files retained per entity (FIFO eviction on overflow)",
         "PhaseC",
     ),
     "config.somatic.memory_budget_mb": CvarDef(
-        "config.somatic.memory_budget_mb", 1024, "int",
+        "config.somatic.memory_budget_mb",
+        1024,
+        "int",
         "Per-snapshot memory budget (MB) — snapshot exceeds this → discard",
         "PhaseC",
     ),
     "config.somatic.page_size_mb": CvarDef(
-        "config.somatic.page_size_mb", 2, "int",
+        "config.somatic.page_size_mb",
+        2,
+        "int",
         "mmap page size for somatic snapshots (MB). 2MB = Zen 2 hugepage alignment",
         "PhaseC",
     ),
     "config.somatic.ctypes_safe_mode": CvarDef(
-        "config.somatic.ctypes_safe_mode", True, "bool",
+        "config.somatic.ctypes_safe_mode",
+        True,
+        "bool",
         "Use llama-cpp-python save_state/load_state instead of raw ctypes CDLL",
         "PhaseC",
     ),
-
     # ── config.dreaming.* — Dreaming Cycle knobs ─────────────────
     "config.dreaming.enable": CvarDef(
-        "config.dreaming.enable", False, "bool",
+        "config.dreaming.enable",
+        False,
+        "bool",
         "Sub-switch — enable the Dreaming Cycle background process",
         "PhaseC",
     ),
     "config.dreaming.model": CvarDef(
-        "config.dreaming.model", "qwen3-0.6b", "str",
+        "config.dreaming.model",
+        "qwen3-0.6b",
+        "str",
         "Model for Dreaming Cycle (MUST be small — 0.6B, not the primary model)",
         "PhaseC",
     ),
     "config.dreaming.n_ctx": CvarDef(
-        "config.dreaming.n_ctx", 4096, "int",
+        "config.dreaming.n_ctx",
+        4096,
+        "int",
         "Context window for Dreaming Cycle. Short — distillation doesn't need full history",
         "PhaseC",
     ),
     "config.dreaming.max_rss_mb": CvarDef(
-        "config.dreaming.max_rss_mb", 1500, "int",
+        "config.dreaming.max_rss_mb",
+        1500,
+        "int",
         "Hard memory cap for Dreaming Cycle process (MB). OOM-killed if exceeded",
         "PhaseC",
     ),
     "config.dreaming.max_hours_per_day": CvarDef(
-        "config.dreaming.max_hours_per_day", 4, "int",
+        "config.dreaming.max_hours_per_day",
+        4,
+        "int",
         "Max active distillation hours per day. Budget tracked in data/state/dreaming_usage.json",
         "PhaseC",
     ),
     "config.dreaming.session_minutes": CvarDef(
-        "config.dreaming.session_minutes", 30, "int",
+        "config.dreaming.session_minutes",
+        30,
+        "int",
         "Max duration of a single dreaming session (minutes). Beyond this → cool-down",
         "PhaseC",
     ),
     "config.dreaming.cooldown_minutes": CvarDef(
-        "config.dreaming.cooldown_minutes", 60, "int",
+        "config.dreaming.cooldown_minutes",
+        60,
+        "int",
         "CPU cool-down period between dreaming sessions. Allows 5700U to drop to 45-50°C",
         "PhaseC",
     ),
     "config.dreaming.preferred_window": CvarDef(
-        "config.dreaming.preferred_window", "02:00-06:00", "str",
+        "config.dreaming.preferred_window",
+        "02:00-06:00",
+        "str",
         "Preferred overnight distillation window (HH:MM-HH:MM, local time)",
         "PhaseC",
     ),
     "config.dreaming.poll_interval_ms": CvarDef(
-        "config.dreaming.poll_interval_ms", 100, "int",
+        "config.dreaming.poll_interval_ms",
+        100,
+        "int",
         "archon_active file poll interval during inference (ms). 100ms = token-level yield",
         "PhaseC",
     ),
-
     # ── config.symmetry.* — Symmetry-Break Audit knobs ──────────
     "config.symmetry.enable": CvarDef(
-        "config.symmetry.enable", False, "bool",
+        "config.symmetry.enable",
+        False,
+        "bool",
         "Sub-switch — enable the Symmetry-Break Audit (C.3.x)",
         "PhaseC",
     ),
     "config.symmetry.mode": CvarDef(
-        "config.symmetry.mode", "fast", "str",
+        "config.symmetry.mode",
+        "fast",
+        "str",
         "Symmetry mode: 'fast' (Lilith only), 'slow' (Ma'at + Lilith, sequential)",
         "PhaseC",
     ),
     "config.symmetry.max_attempts": CvarDef(
-        "config.symmetry.max_attempts", 2, "int",
+        "config.symmetry.max_attempts",
+        2,
+        "int",
         "Skeptical Circuit Breaker — max verification attempts before fallback",
         "PhaseC",
     ),
     "config.symmetry.semantic_delta_threshold": CvarDef(
-        "config.symmetry.semantic_delta_threshold", 0.3, "float",
+        "config.symmetry.semantic_delta_threshold",
+        0.3,
+        "float",
         "Semantic delta threshold for SymmetryBreakError (0.0-1.0). Empirical — needs validation",
         "PhaseC",
     ),
@@ -472,6 +660,7 @@ CVAR_TABLE: Dict[str, CvarDef] = {
 # ═══════════════════════════════════════════════════════════════════════
 # §4 — Cvar Access Helpers
 # ═══════════════════════════════════════════════════════════════════════
+
 
 def cvar_get(name: str, default: Any = None) -> Any:
     """Get a cvar value by dotted name.
@@ -542,9 +731,7 @@ def cvar_summary() -> str:
         val_str = str(cvar.value)
         if len(val_str) > 60:
             val_str = val_str[:57] + "..."
-        lines.append(
-            f"║ {cvar.name:40s} = {val_str:30s} ║"
-        )
+        lines.append(f"║ {cvar.name:40s} = {val_str:30s} ║")
     lines.append("╚══════════════════════════════════════════════════════════════╝")
     return "\n".join(lines)
 
@@ -559,23 +746,37 @@ LLAMA_CPP_VALID_KWARGS: set = {
     # Model path
     "model_path",
     # Threading
-    "n_threads", "n_threads_batch",
+    "n_threads",
+    "n_threads_batch",
     # Context
-    "n_ctx", "n_ctx_max",
+    "n_ctx",
+    "n_ctx_max",
     # Batches (Zen 2 tuned)
-    "n_batch", "n_ubatch",
+    "n_batch",
+    "n_ubatch",
     # KV cache quantization
-    "type_k", "type_v",
+    "type_k",
+    "type_v",
     # Memory
-    "use_mmap", "use_mlock", "n_gpu_layers", "tensor_split",
+    "use_mmap",
+    "use_mlock",
+    "n_gpu_layers",
+    "tensor_split",
     # Sampling (usually passed at inference, not init)
-    "logits_all", "embedding", "last_n_tokens_size",
+    "logits_all",
+    "embedding",
+    "last_n_tokens_size",
     # Verbosity
-    "verbose", "seed", "rope_scaling_type", "rope_freq_base",
+    "verbose",
+    "seed",
+    "rope_scaling_type",
+    "rope_freq_base",
     # LoRA
-    "lora_base", "lora_path",
+    "lora_base",
+    "lora_path",
     # Flash Attention
-    "flash_attn", "flash_attn_impl",
+    "flash_attn",
+    "flash_attn_impl",
     # Grammar
     "grammar",
 }
@@ -604,8 +805,17 @@ def validate_llama_kwargs(kwargs: dict, context: str = "") -> list:
             logger.warning("validate_llama_kwargs: %s", msg)
 
     # Check type correctness for known int params
-    int_params = {"n_ctx", "n_threads", "n_threads_batch", "n_batch",
-                  "n_ubatch", "type_k", "type_v", "n_gpu_layers", "seed"}
+    int_params = {
+        "n_ctx",
+        "n_threads",
+        "n_threads_batch",
+        "n_batch",
+        "n_ubatch",
+        "type_k",
+        "type_v",
+        "n_gpu_layers",
+        "seed",
+    }
     for key in int_params:
         if key in kwargs and not isinstance(kwargs[key], int):
             warnings.append(

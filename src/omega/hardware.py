@@ -8,6 +8,7 @@ import os
 import psutil
 from dataclasses import dataclass
 
+
 @dataclass
 class HardwareProfile:
     total_ram_gb: float
@@ -24,8 +25,8 @@ class HardwareProfile:
 def detect_hardware() -> HardwareProfile:
     """Detect current hardware capabilities."""
     mem = psutil.virtual_memory()
-    total_gb = mem.total / (1024 ** 3)
-    avail_gb = mem.available / (1024 ** 3)
+    total_gb = mem.total / (1024**3)
+    avail_gb = mem.available / (1024**3)
 
     # Simple Zen 2 detection via /proc/cpuinfo
     is_zen2 = False

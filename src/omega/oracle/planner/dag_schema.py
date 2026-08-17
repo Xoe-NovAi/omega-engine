@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 # ─── Enums ──────────────────────────────────────────────────────────────────────
 
+
 class ActionType(str, Enum):
     """Action types for sub-tasks in the execution DAG.
 
@@ -39,11 +40,12 @@ class ActionType(str, Enum):
     Only EXTRACT, CODE, SUMMARIZE, and CLASSIFY are safe for local execution.
     REASON and SYNTHESIZE require cloud-level reasoning and are cloud-only.
     """
-    EXTRACT = "extract"        # Deterministic extraction (names, dates, etc.)
-    CODE = "code"              # Atomic code operations (single function, test, regex)
-    SUMMARIZE = "summarize"    # Text translation/formatting
-    CLASSIFY = "classify"      # Discrete output choices
-    REASON = "reason"          # Multi-step deductive reasoning (cloud-only)
+
+    EXTRACT = "extract"  # Deterministic extraction (names, dates, etc.)
+    CODE = "code"  # Atomic code operations (single function, test, regex)
+    SUMMARIZE = "summarize"  # Text translation/formatting
+    CLASSIFY = "classify"  # Discrete output choices
+    REASON = "reason"  # Multi-step deductive reasoning (cloud-only)
     SYNTHESIZE = "synthesize"  # Long context cross-referencing (cloud-only)
 
 
@@ -53,14 +55,16 @@ class ComplexityTier(str, Enum):
     Used by should_run_local() to determine if a sub-task can run
     on local inference hardware (Zen 2, 12GB RAM).
     """
-    TRIVIAL = "trivial"        # 0-2 steps, <512 tokens, deterministic
-    SIMPLE = "simple"          # 2-4 steps, <2048 tokens, schema-constrained
-    MODERATE = "moderate"      # 4-8 steps, <8192 tokens, some ambiguity
-    COMPLEX = "complex"        # 8+ steps, >8192 tokens, multi-domain
-    AMBIGUOUS = "ambiguous"    # Underspecified, requires judgment
+
+    TRIVIAL = "trivial"  # 0-2 steps, <512 tokens, deterministic
+    SIMPLE = "simple"  # 2-4 steps, <2048 tokens, schema-constrained
+    MODERATE = "moderate"  # 4-8 steps, <8192 tokens, some ambiguity
+    COMPLEX = "complex"  # 8+ steps, >8192 tokens, multi-domain
+    AMBIGUOUS = "ambiguous"  # Underspecified, requires judgment
 
 
 # ─── Pydantic Schemas (for cloud-emitted JSON DAGs) ─────────────────────────────
+
 
 class SubTaskSchema(BaseModel):
     """Pydantic schema for a single sub-task in the execution DAG.
@@ -72,17 +76,30 @@ class SubTaskSchema(BaseModel):
     [M7] The local_feasible field is set by should_run_local() —
     the local executor can reject cloud planner sub-tasks.
     """
+
     model_config = {"extra": "forbid"}
 
     id: str = Field(..., description="Unique sub-task identifier, e.g. 'step_1'")
     description: str = Field(..., description="Detailed description of the atomic step")
-    action_type: str = Field(..., description="Type of action: extract|code|summarize|classify|reason|synthesize")
-    complexity: str = Field(..., description="Complexity tier: trivial|simple|moderate|complex|ambiguous")
-    dependencies: List[str] = Field(default_factory=list, description="IDs of sub-tasks that must complete first")
-    input_context: Dict[str, Any] = Field(default_factory=dict, description="Input data from dependency tasks")
-    expected_output_schema: Optional[str] = Field(None, description="JSON schema or GBNF grammar for output")
+    action_type: str = Field(
+        ..., description="Type of action: extract|code|summarize|classify|reason|synthesize"
+    )
+    complexity: str = Field(
+        ..., description="Complexity tier: trivial|simple|moderate|complex|ambiguous"
+    )
+    dependencies: List[str] = Field(
+        default_factory=list, description="IDs of sub-tasks that must complete first"
+    )
+    input_context: Dict[str, Any] = Field(
+        default_factory=dict, description="Input data from dependency tasks"
+    )
+    expected_output_schema: Optional[str] = Field(
+        None, description="JSON schema or GBNF grammar for output"
+    )
     estimated_tokens: int = Field(default=0, description="Estimated token count for this sub-task")
-    local_feasible: bool = Field(default=True, description="Set by complexity heuristic — can this run locally?")
+    local_feasible: bool = Field(
+        default=True, description="Set by complexity heuristic — can this run locally?"
+    )
 
 
 class ExecutionPlanSchema(BaseModel):
@@ -92,12 +109,15 @@ class ExecutionPlanSchema(BaseModel):
     validate the cloud's DAG output. The local executor then applies
     should_run_local() to each sub-task and may reject cloud suggestions.
     """
+
     model_config = {"extra": "forbid"}
 
     goal: str = Field(..., description="Original user goal")
     reasoning: str = Field(..., description="High-level breakdown strategy from the planner")
     tasks: List[SubTaskSchema] = Field(..., description="Ordered list or DAG of atomic sub-tasks")
-    planner_model: str = Field(..., description="Cloud model that emitted this plan (advisory only)")
+    planner_model: str = Field(
+        ..., description="Cloud model that emitted this plan (advisory only)"
+    )
     planner_provider: str = Field(..., description="Cloud provider name (advisory only)")
     created_at: str = Field(..., description="ISO 8601 timestamp of plan creation")
     trace_id: str = Field(..., description="Correlation ID for tracing")
@@ -105,12 +125,14 @@ class ExecutionPlanSchema(BaseModel):
 
 # ─── Internal Dataclasses (for local use) ──────────────────────────────────────
 
+
 @dataclass
 class SubTask:
     """Internal representation of a sub-task for local execution.
 
     Wraps SubTaskSchema with runtime state (status, result, error).
     """
+
     id: str
     description: str
     action_type: ActionType
@@ -164,6 +186,7 @@ class ExecutionPlan:
     Created from a validated ExecutionPlanSchema, with runtime
     state tracking for each sub-task.
     """
+
     goal: str
     reasoning: str
     tasks: List[SubTask]
@@ -203,9 +226,9 @@ class ExecutionPlan:
     def ready_tasks(self, completed: set) -> List[SubTask]:
         """Return tasks whose dependencies are all completed."""
         return [
-            t for t in self.tasks
-            if t.status == "pending"
-            and set(t.dependencies).issubset(completed)
+            t
+            for t in self.tasks
+            if t.status == "pending" and set(t.dependencies).issubset(completed)
         ]
 
     def to_dict(self) -> Dict[str, Any]:
@@ -225,6 +248,7 @@ class ExecutionPlan:
 @dataclass
 class TaskResult:
     """Result of executing a single sub-task."""
+
     task_id: str
     status: str  # "SUCCESS" or "FAILED"
     output: Any = None
@@ -240,8 +264,8 @@ class TaskResult:
 
 # Complexity thresholds (from Qdrant Full doc §3, line 1355)
 # Adapted for Omega Engine's Zen 2 + 12GB RAM hardware profile
-MAX_DEPENDENCY_DEPTH = 2       # >2 deps → cloud (compounding error)
-MAX_LOCAL_TOKENS = 4096        # >4096 tokens → cloud (local distraction)
+MAX_DEPENDENCY_DEPTH = 2  # >2 deps → cloud (compounding error)
+MAX_LOCAL_TOKENS = 4096  # >4096 tokens → cloud (local distraction)
 MAX_LOCAL_COMPLEXITY = ComplexityTier.SIMPLE  # Only trivial/simple run local
 
 # Action types safe for local execution
@@ -297,28 +321,23 @@ def should_run_locally(subtask: SubTask) -> bool:
     # Rule 3: Unconstrained reasoning → cloud
     if subtask.action_type in CLOUD_ONLY_ACTIONS:
         logger.debug(
-            f"SubTask '{subtask.id}' → cloud: action_type "
-            f"{subtask.action_type.value} is cloud-only"
+            f"SubTask '{subtask.id}' → cloud: action_type {subtask.action_type.value} is cloud-only"
         )
         return False
 
     # Rule 4: Schema-constrained trivial/simple → local
-    if (
-        subtask.expected_output_schema
-        and subtask.complexity in (ComplexityTier.TRIVIAL, ComplexityTier.SIMPLE)
+    if subtask.expected_output_schema and subtask.complexity in (
+        ComplexityTier.TRIVIAL,
+        ComplexityTier.SIMPLE,
     ):
         logger.debug(
-            f"SubTask '{subtask.id}' → local: schema-constrained "
-            f"{subtask.complexity.value} task"
+            f"SubTask '{subtask.id}' → local: schema-constrained {subtask.complexity.value} task"
         )
         return True
 
     # Rule 5: Default — local only for trivial/simple
     if subtask.complexity in (ComplexityTier.TRIVIAL, ComplexityTier.SIMPLE):
-        logger.debug(
-            f"SubTask '{subtask.id}' → local: complexity "
-            f"{subtask.complexity.value}"
-        )
+        logger.debug(f"SubTask '{subtask.id}' → local: complexity {subtask.complexity.value}")
         return True
 
     logger.debug(
@@ -353,19 +372,11 @@ def classify_complexity(
         return ComplexityTier.COMPLEX
 
     # Trivial: deterministic, single-step, <512 tokens
-    if (
-        action_type in LOCAL_SAFE_ACTIONS
-        and estimated_tokens < 512
-        and dependency_depth <= 1
-    ):
+    if action_type in LOCAL_SAFE_ACTIONS and estimated_tokens < 512 and dependency_depth <= 1:
         return ComplexityTier.TRIVIAL
 
     # Simple: 2-4 steps, <2048 tokens, schema-constrained
-    if (
-        action_type in LOCAL_SAFE_ACTIONS
-        and estimated_tokens < 2048
-        and dependency_depth <= 2
-    ):
+    if action_type in LOCAL_SAFE_ACTIONS and estimated_tokens < 2048 and dependency_depth <= 2:
         return ComplexityTier.SIMPLE
 
     # Moderate: 4-8 steps, <8192 tokens

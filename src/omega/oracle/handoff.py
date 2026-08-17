@@ -3,12 +3,12 @@
 AP: AP-HANDOFF-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: HANDOFF]
 
-Defines the formal structure for transferring session context, goals, and state 
+Defines the formal structure for transferring session context, goals, and state
 between agents to eliminate "Agent Amnesia".
 
 [id-soft: vet-008] Grace Period — state preservation during transition
-  Similar to Quake's delayed entity removal, the HandoffState ensures that 
-  the target agent has a complete snapshot of the previous agent's 
+  Similar to Quake's delayed entity removal, the HandoffState ensures that
+  the target agent has a complete snapshot of the previous agent's
   consciousness before the source agent is decommissioned.
 """
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
@@ -26,14 +26,15 @@ HandoffStatus = Literal["pending", "active", "completed", "stale", "archived"]
 class HandoffState:
     """
     A formal context bridge between agent sessions.
-    
+
     L1 (Narrative): What was the source agent doing?
     L2 (Insight): What has been discovered so far?
     L3 (Universal Principle): What is the overarching goal?
-    
+
     Status lifecycle: pending → active → completed / stale
     Aligned with subagent_dispatcher.HandoffPacket (D-270 Decree 2).
     """
+
     session_id: str
     source_entity: str
     target_entity: str
@@ -44,7 +45,7 @@ class HandoffState:
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     trace_id: Optional[str] = None
     status: HandoffStatus = "pending"
-    
+
     # Loop Guard Fields (T2-5)
     visited_agents: List[str] = field(default_factory=list)
     hop_count: int = 0
@@ -64,9 +65,10 @@ class HandoffState:
         return json.dumps(asdict(self), indent=2)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'HandoffState':
+    def from_dict(cls, data: Dict[str, Any]) -> "HandoffState":
         """Reconstruct handoff state from a dictionary."""
         return cls(**data)
+
 
 def format_handoff_prompt(state: HandoffState) -> str:
     """

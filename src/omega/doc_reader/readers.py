@@ -5,8 +5,7 @@
 import os
 from pathlib import Path
 from abc import ABC, abstractmethod
-from typing import Tuple, Optional
-from dataclasses import dataclass, field
+from typing import Tuple
 
 from .types import DocumentMetadata
 
@@ -26,10 +25,11 @@ class DocxReader(BaseReader):
     def read(self, path: str) -> Tuple[str, DocumentMetadata]:
         try:
             import docx
+
             doc = docx.Document(path)
 
             paragraphs = [p.text for p in doc.paragraphs]
-            text = '\n'.join(paragraphs)
+            text = "\n".join(paragraphs)
 
             core_props = doc.core_properties
             metadata = DocumentMetadata(
@@ -45,7 +45,7 @@ class DocxReader(BaseReader):
                     "category": core_props.category or None,
                     "comments": core_props.comments or None,
                     "keywords": core_props.keywords or None,
-                }
+                },
             )
             return text, metadata
 
@@ -61,10 +61,11 @@ class PdfReader(BaseReader):
     def read(self, path: str) -> Tuple[str, DocumentMetadata]:
         try:
             import fitz  # PyMuPDF
+
             doc = fitz.open(path)
 
             pages_text = [page.get_text() for page in doc]
-            text = '\n'.join(pages_text)
+            text = "\n".join(pages_text)
 
             pdf_meta = doc.metadata
             metadata = DocumentMetadata(
@@ -81,7 +82,7 @@ class PdfReader(BaseReader):
                     "creator": pdf_meta.get("creator"),
                     "subject": pdf_meta.get("subject"),
                     "keywords": pdf_meta.get("keywords"),
-                }
+                },
             )
             return text, metadata
 
@@ -98,20 +99,20 @@ class OdtReader(BaseReader):
         try:
             from odf.opendocument import load
             from odf import text, teletype, meta
+
             doc = load(path)
 
-            paragraphs = [
-                teletype.extractText(p)
-                for p in doc.getElementsByType(text.P)
-            ]
-            text = '\n'.join(paragraphs)
+            paragraphs = [teletype.extractText(p) for p in doc.getElementsByType(text.P)]
+            text = "\n".join(paragraphs)
 
             meta_elem = doc.meta
+
             def safe_get(attr):
                 try:
                     return meta_elem.getAttribute(attr) if meta_elem else None
                 except (ValueError, KeyError):
                     return None
+
             metadata = DocumentMetadata(
                 path=path,
                 format=".odt",
@@ -122,7 +123,7 @@ class OdtReader(BaseReader):
                 title=safe_get("dc:title"),
                 extra={
                     "paragraphs": len(paragraphs),
-                }
+                },
             )
             return text, metadata
 
@@ -138,15 +139,13 @@ class RtfReader(BaseReader):
     def read(self, path: str) -> Tuple[str, DocumentMetadata]:
         try:
             from striprtf.striprtf import rtf_to_text
-            with open(path, 'r') as f:
+
+            with open(path, "r") as f:
                 content = f.read()
             text = rtf_to_text(content)
 
             metadata = DocumentMetadata(
-                path=path,
-                format=".rtf",
-                size_bytes=os.path.getsize(path),
-                extra={}
+                path=path, format=".rtf", size_bytes=os.path.getsize(path), extra={}
             )
             return text, metadata
 
@@ -162,28 +161,31 @@ class HtmlReader(BaseReader):
     def read(self, path: str) -> Tuple[str, DocumentMetadata]:
         try:
             from bs4 import BeautifulSoup
-            with open(path, 'r') as f:
-                soup = BeautifulSoup(f.read(), 'html.parser')
+
+            with open(path, "r") as f:
+                soup = BeautifulSoup(f.read(), "html.parser")
 
             text = soup.get_text()
 
-            title_tag = soup.find('title')
+            title_tag = soup.find("title")
             metadata = DocumentMetadata(
                 path=path,
                 format=".html",
                 size_bytes=os.path.getsize(path),
                 title=title_tag.get_text() if title_tag else None,
                 extra={
-                    "has_forms": bool(soup.find('form')),
-                    "has_tables": bool(soup.find('table')),
-                    "links": len(soup.find_all('a')),
-                    "images": len(soup.find_all('img')),
-                }
+                    "has_forms": bool(soup.find("form")),
+                    "has_tables": bool(soup.find("table")),
+                    "links": len(soup.find_all("a")),
+                    "images": len(soup.find_all("img")),
+                },
             )
             return text, metadata
 
         except ImportError:
-            raise ImportError("beautifulsoup4 not installed. Install with: pip install beautifulsoup4")
+            raise ImportError(
+                "beautifulsoup4 not installed. Install with: pip install beautifulsoup4"
+            )
         except Exception as e:
             raise RuntimeError(f"Failed to read HTML: {e}")
 
@@ -194,18 +196,15 @@ class TextReader(BaseReader):
     def read(self, path: str) -> Tuple[str, DocumentMetadata]:
         try:
             try:
-                with open(path, 'r', encoding='utf-8') as f:
+                with open(path, "r", encoding="utf-8") as f:
                     text = f.read()
             except UnicodeDecodeError:
-                with open(path, 'r', encoding='latin-1') as f:
+                with open(path, "r", encoding="latin-1") as f:
                     text = f.read()
 
             ext = Path(path).suffix.lower()
             metadata = DocumentMetadata(
-                path=path,
-                format=ext,
-                size_bytes=os.path.getsize(path),
-                extra={}
+                path=path, format=ext, size_bytes=os.path.getsize(path), extra={}
             )
             return text, metadata
 

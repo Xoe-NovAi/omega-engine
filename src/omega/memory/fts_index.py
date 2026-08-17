@@ -7,7 +7,6 @@ Provides BM25-ranked search across conversation history with sovereign isolation
 # DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 import sqlite3
-import json
 import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -41,9 +40,10 @@ def escape_fts_query(query: str) -> str:
         escaped.append(f'"{safe}"')
     return " ".join(escaped)
 
+
 class ConversationFTSIndex:
     """SQLite FTS5 index for conversation exchanges."""
-    
+
     def __init__(self, db_path: Path):
         self.db_path = db_path
         self._conn = None
@@ -68,7 +68,7 @@ class ConversationFTSIndex:
             # [id-soft: quake-1996] WAL journal mode — allows concurrent reads
             # from foreground + background (Dreaming Cycle) without contention.
             self._conn.execute("PRAGMA journal_mode=WAL")
-            
+
             # Create FTS5 virtual table with Porter stemmer
             # session_id: unique session UUID
             # entity_name: sovereign owner of the memory
@@ -92,7 +92,9 @@ class ConversationFTSIndex:
             logger.error("Failed to initialize FTS5 index: %s", e)
             self._initialized = False
 
-    async def index_exchange(self, session_id: str, entity_name: str, role: str, content: str) -> None:
+    async def index_exchange(
+        self, session_id: str, entity_name: str, role: str, content: str
+    ) -> None:
         """Index a single exchange. [M1 AnyIO] Offloaded + lock-serialized.
 
         [C2: caller wraps this in try/except in MemoryStore] — this method
@@ -126,13 +128,16 @@ class ConversationFTSIndex:
             # BM25 ranking via FTS5 'rank'
             # [P2-6] Escape user query to prevent FTS5 MATCH syntax injection.
             fts_query = escape_fts_query(query)
-            cursor = self._conn.execute("""
+            cursor = self._conn.execute(
+                """
                 SELECT session_id, role, content, timestamp, rank
-                FROM exchanges 
+                FROM exchanges
                 WHERE exchanges MATCH ? AND entity_name = ?
                 ORDER BY rank
                 LIMIT ?
-            """, (fts_query, entity_name, limit))
+            """,
+                (fts_query, entity_name, limit),
+            )
             return [dict(row) for row in cursor.fetchall()]
 
         try:
@@ -178,7 +183,7 @@ class ConversationFTSIndex:
                 logger.debug("FTS5 index optimized")
             except (sqlite3.Error, RuntimeError) as e:
                 logger.warning("FTS index optimize failed: %s", e)
-            
+
             self._conn.close()
             self._conn = None
             self._initialized = False
@@ -188,9 +193,11 @@ class ConversationFTSIndex:
         if not self._initialized:
             return 0
         try:
+
             def _sync_count():
                 cursor = self._conn.execute("SELECT count(*) FROM exchanges")
                 return cursor.fetchone()[0]
+
             return await anyio.to_thread.run_sync(_sync_count)
         except (sqlite3.Error, RuntimeError):
             return 0

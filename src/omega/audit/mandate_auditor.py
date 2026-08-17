@@ -38,12 +38,12 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass(frozen=True)
 class MandateResult:
     """Result of a single mandate check."""
+
     mandate_id: str
     name: str
     passed: bool
@@ -54,6 +54,7 @@ class MandateResult:
 @dataclass(frozen=True)
 class AuditReport:
     """Complete audit report for all checked mandates."""
+
     results: tuple[MandateResult, ...]
     passed: int
     failed: int
@@ -71,22 +72,21 @@ class MandateAuditor:
         self.root = Path(root).resolve()
         self.results: list[MandateResult] = []
 
-    def _check(self, mandate_id: str, name: str, condition: bool, detail: str = "", severity: str = "error") -> None:
+    def _check(
+        self, mandate_id: str, name: str, condition: bool, detail: str = "", severity: str = "error"
+    ) -> None:
         """Record a mandate check result."""
-        self.results.append(MandateResult(
-            mandate_id=mandate_id,
-            name=name,
-            passed=condition,
-            detail=detail,
-            severity=severity
-        ))
+        self.results.append(
+            MandateResult(
+                mandate_id=mandate_id, name=name, passed=condition, detail=detail, severity=severity
+            )
+        )
 
     def check_m3_iris_constant(self) -> None:
         """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Node slot (N1-N10)."""
-        from omega.governance.config_resolver import WADS_DIR
         from omega.ics import ROLE_CONSTANTS
         import yaml
-        
+
         iris_in_node = False
         violations: list[str] = []
 
@@ -123,15 +123,19 @@ class MandateAuditor:
                     continue
                 for line_no, line in enumerate(content.split("\n"), 1):
                     line_lower = line.lower()
-                    if "messenger_bridge" in line_lower and any(f"P{i}" in line for i in range(1, 11)):
+                    if "messenger_bridge" in line_lower and any(
+                        f"P{i}" in line for i in range(1, 11)
+                    ):
                         if not line.strip().startswith("#"):
                             iris_in_node = True
-                            violations.append(f"{f.relative_to(self.root)}:{line_no}: {line.strip()[:80]}")
+                            violations.append(
+                                f"{f.relative_to(self.root)}:{line_no}: {line.strip()[:80]}"
+                            )
             self._check(
                 "M3",
                 "MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not in Node slots",
                 not iris_in_node,
-                f"{len(violations)} violations" if violations else ""
+                f"{len(violations)} violations" if violations else "",
             )
             return
 
@@ -149,7 +153,7 @@ class MandateAuditor:
             "M3",
             "MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not in Node slots",
             not iris_in_node,
-            f"{len(violations)} violations" if violations else ""
+            f"{len(violations)} violations" if violations else "",
         )
 
     def check_m6_podman_sovereignty(self) -> None:
@@ -172,14 +176,18 @@ class MandateAuditor:
                     except Exception:
                         continue
                     for line_no, line in enumerate(content.split("\n"), 1):
-                        if ":U" in line and "UserNS" not in line and not line.strip().startswith("#"):
+                        if (
+                            ":U" in line
+                            and "UserNS" not in line
+                            and not line.strip().startswith("#")
+                        ):
                             u_flag_violations.append(f"{f.relative_to(self.root)}:{line_no}")
 
         self._check(
             "M6",
             "Podman Sovereignty — no :U flags in Quadlets",
             len(u_flag_violations) == 0,
-            f"{len(u_flag_violations)} lines with :U flags" if u_flag_violations else ""
+            f"{len(u_flag_violations)} lines with :U flags" if u_flag_violations else "",
         )
 
     def check_m7_local_first(self) -> None:
@@ -197,14 +205,16 @@ class MandateAuditor:
             "M7",
             "Local-First — providers.yaml strategy is local_first",
             has_local_first and not has_cloud_first,
-            "cloud_first found" if has_cloud_first else "local_first not found"
+            "cloud_first found" if has_cloud_first else "local_first not found",
         )
 
     def check_m10_fleet_integrity(self) -> None:
         """M10: Fleet Integrity — Agent file count <= 14."""
         agents_dir = self.root / ".opencode" / "agents"
         if not agents_dir.exists():
-            self._check("M10", "Fleet Integrity — agent count <= 14", False, ".opencode/agents/ not found")
+            self._check(
+                "M10", "Fleet Integrity — agent count <= 14", False, ".opencode/agents/ not found"
+            )
             return
 
         agent_files = list(agents_dir.glob("*.md"))
@@ -215,14 +225,19 @@ class MandateAuditor:
             "M10",
             "Fleet Integrity — agent count <= 14",
             agent_count <= 14,
-            f"{agent_count} agents (max 14): {', '.join(agent_names)}"
+            f"{agent_count} agents (max 14): {', '.join(agent_names)}",
         )
 
     def check_m11_soul_integrity(self) -> None:
         """M11: Soul Integrity — proposed_lessons.yaml has content."""
         entities_dir = self.root / "data" / "entities"
         if not entities_dir.exists():
-            self._check("M11", "Soul Integrity — proposed_lessons.yaml has content", False, "data/entities/ not found")
+            self._check(
+                "M11",
+                "Soul Integrity — proposed_lessons.yaml has content",
+                False,
+                "data/entities/ not found",
+            )
             return
 
         entity_dirs = [d for d in entities_dir.iterdir() if d.is_dir()]
@@ -244,7 +259,7 @@ class MandateAuditor:
             "M11",
             "Soul Integrity — proposed_lessons.yaml has L3 principles",
             entities_with_lessons > 0,
-            f"{entities_with_lessons}/{len(entity_dirs)} entities have L3 principles"
+            f"{entities_with_lessons}/{len(entity_dirs)} entities have L3 principles",
         )
 
     def check_m12_queue_integrity(self) -> None:
@@ -275,14 +290,19 @@ class MandateAuditor:
             "M12",
             "Queue Integrity — atomic write patterns in core",
             len(atomic_files) > 0,
-            f"{len(atomic_files)} files with atomic patterns"
+            f"{len(atomic_files)} files with atomic patterns",
         )
 
     def check_m15_sovereign_continuity(self) -> None:
         """M15: Sovereign Continuity — session_gnosis.md exists for active agents."""
         entities_dir = self.root / "data" / "entities"
         if not entities_dir.exists():
-            self._check("M15", "Sovereign Continuity — session_gnosis.md exists", False, "data/entities/ not found")
+            self._check(
+                "M15",
+                "Sovereign Continuity — session_gnosis.md exists",
+                False,
+                "data/entities/ not found",
+            )
             return
 
         entity_dirs = [d for d in entities_dir.iterdir() if d.is_dir()]
@@ -298,7 +318,7 @@ class MandateAuditor:
             "M15",
             "Sovereign Continuity — session_gnosis.md exists",
             agents_with_gnosis > 0,
-            f"{agents_with_gnosis} entities have session_gnosis.md"
+            f"{agents_with_gnosis} entities have session_gnosis.md",
         )
 
     def check_m16_modularization(self) -> None:
@@ -340,20 +360,21 @@ class MandateAuditor:
             "M16",
             "Modularization — no hardcoded absolute paths in core",
             len(hardcoded_violations) == 0,
-            f"{len(hardcoded_violations)} hardcoded paths" if hardcoded_violations else ""
+            f"{len(hardcoded_violations)} hardcoded paths" if hardcoded_violations else "",
         )
 
     def check_m20_somatic_state(self) -> None:
         """M20: SomaticState — llama-cpp-python ctypes visible (best-effort)."""
         try:
             import llama_cpp
+
             has_llama = hasattr(llama_cpp, "llama_copy_state_data") or hasattr(llama_cpp, "Llama")
             self._check(
                 "M20",
                 "SomaticState — llama-cpp-python ctypes visible",
                 has_llama,
                 "llama_cpp not installed" if not has_llama else "",
-                severity="warning"  # Best-effort, not a hard failure
+                severity="warning",  # Best-effort, not a hard failure
             )
         except ImportError:
             # Not a hard failure — llama-cpp-python may not be installed in CI/test
@@ -362,7 +383,7 @@ class MandateAuditor:
                 "SomaticState — llama-cpp-python ctypes visible",
                 True,  # Pass with warning
                 "llama_cpp not installed — best-effort check",
-                severity="warning"
+                severity="warning",
             )
 
     def run_all(self) -> AuditReport:
@@ -385,10 +406,7 @@ class MandateAuditor:
         warnings = sum(1 for r in self.results if not r.passed and r.severity == "warning")
 
         return AuditReport(
-            results=tuple(self.results),
-            passed=passed,
-            failed=failed,
-            warnings=warnings
+            results=tuple(self.results), passed=passed, failed=failed, warnings=warnings
         )
 
     def print_report(self, report: AuditReport) -> None:

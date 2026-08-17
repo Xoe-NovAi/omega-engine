@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Optional
 
@@ -261,8 +261,7 @@ class WorkerCoordinator:
 
                 if under_pressure and not self._global_paused:
                     logger.warning(
-                        "Resource pressure detected: pausing all workers "
-                        "(CPU >%s%% or MEM >%s%%)",
+                        "Resource pressure detected: pausing all workers (CPU >%s%% or MEM >%s%%)",
                         self._config.cpu_high_watermark,
                         self._config.memory_high_watermark,
                     )
@@ -283,6 +282,7 @@ class WorkerCoordinator:
         """
         try:
             import psutil
+
             cpu = psutil.cpu_percent(interval=0.5)
             mem = psutil.virtual_memory()
             mem_pct = mem.percent if hasattr(mem, "percent") else 0.0

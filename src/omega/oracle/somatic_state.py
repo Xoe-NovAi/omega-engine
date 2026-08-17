@@ -8,21 +8,21 @@
 import logging
 import anyio
 import os
-from typing import Optional
 from pathlib import Path
 import llama_cpp
 from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 
+
 class SomaticStateManager:
     """
     Handles the capture and restoration of the LLM's internal state (KV cache).
-    
-    This allows the Omega Engine to 'freeze' a model's cognitive state and 
+
+    This allows the Omega Engine to 'freeze' a model's cognitive state and
     resume it later without re-processing the entire prompt.
     """
-    
+
     def __init__(self, state_dir: Path):
         self.state_dir = state_dir
         self.state_dir.mkdir(parents=True, exist_ok=True)
@@ -30,7 +30,7 @@ class SomaticStateManager:
     async def capture_state(self, context_ptr: int, state_id: str) -> bool:
         """
         Captures the current state of the LLM context and saves it to disk.
-        
+
         Args:
             context_ptr: The raw pointer to the llama_context.
             state_id: Unique identifier for the state snapshot.
@@ -40,19 +40,19 @@ class SomaticStateManager:
             state_bytes = await anyio.to_thread.run_sync(
                 llama_cpp.llama_copy_state_data, context_ptr
             )
-            
+
             if not state_bytes:
                 logger.error(f"Somatic capture failed: No state data returned for {state_id}")
                 return False
-            
+
             file_path = self.state_dir / f"{state_id}.somatic"
-            
+
             def _write_state(path: Path, data: bytes):
                 with open(path, "wb") as f:
                     f.write(data)
-            
+
             await anyio.to_thread.run_sync(_write_state, file_path, state_bytes)
-                
+
             logger.info(f"Somatic state captured: {state_id} ({len(state_bytes)} bytes)")
             return True
         except (OmegaError, RuntimeError, OSError) as e:
@@ -62,7 +62,7 @@ class SomaticStateManager:
     async def restore_state(self, context_ptr: int, state_id: str) -> bool:
         """
         Restores a previously captured state into the LLM context.
-        
+
         Args:
             context_ptr: The raw pointer to the llama_context.
             state_id: Unique identifier for the state snapshot.
@@ -72,16 +72,12 @@ class SomaticStateManager:
             if not file_path.exists():
                 logger.error(f"Somatic restore failed: State file {state_id} not found")
                 return False
-            
-            state_bytes = await anyio.to_thread.run_sync(
-                lambda: file_path.read_bytes()
-            )
-            
+
+            state_bytes = await anyio.to_thread.run_sync(lambda: file_path.read_bytes())
+
             # Wrap blocking C-call in anyio thread
-            await anyio.to_thread.run_sync(
-                llama_cpp.llama_set_state_data, context_ptr, state_bytes
-            )
-            
+            await anyio.to_thread.run_sync(llama_cpp.llama_set_state_data, context_ptr, state_bytes)
+
             logger.info(f"Somatic state restored: {state_id}")
             return True
         except (OmegaError, RuntimeError, OSError) as e:

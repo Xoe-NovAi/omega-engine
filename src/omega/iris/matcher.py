@@ -13,7 +13,9 @@ class IntentMatcher:
     """Detects user intent from query text."""
 
     # Patterns for entity-less routing
-    GREETING = re.compile(r"^\b(hi|hello|hey|greetings|good\s+(morning|afternoon|evening))\b", re.IGNORECASE)
+    GREETING = re.compile(
+        r"^\b(hi|hello|hey|greetings|good\s+(morning|afternoon|evening))\b", re.IGNORECASE
+    )
     FAREWELL = re.compile(r"^\b(bye|goodbye|exit|quit|thanks?|thank you)\b", re.IGNORECASE)
     HELP = re.compile(r"^\b(help|what can you do|commands|how do i)\b[?.]*$", re.IGNORECASE)
 
@@ -66,9 +68,7 @@ class IntentMatcher:
     def is_iris_capable(self, text: str) -> bool:
         """Can Iris answer this directly without routing to a Node?"""
         return bool(
-            self.GREETING.match(text)
-            or self.FAREWELL.match(text)
-            or self.HELP.search(text)
+            self.GREETING.match(text) or self.FAREWELL.match(text) or self.HELP.search(text)
         )
 
     def iris_response(self, text: str) -> Optional[str]:

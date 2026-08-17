@@ -33,9 +33,8 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import hashlib
 import logging
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 from omega.memory.embeddings import EmbeddingManager
 from omega.memory.vector_adapters import IVectorStoreAdapter
@@ -126,7 +125,7 @@ class L3Principle:
     def format(self) -> str:
         """Format for context injection."""
         score_str = f"[{self.similarity:.2f}]" if self.similarity > 0 else ""
-        return f"- {score_str} \"{self.content}\" ({self.domain})"
+        return f'- {score_str} "{self.content}" ({self.domain})'
 
 
 class SelectiveHydration:
@@ -213,7 +212,8 @@ class SelectiveHydration:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(
                 "SelectiveHydration: vector query failed for %s: %s",
-                entity_name, e,
+                entity_name,
+                e,
             )
             return []
 
@@ -233,7 +233,7 @@ class SelectiveHydration:
 
         # Sort by similarity descending and return top-K
         principles.sort(key=lambda p: p.similarity, reverse=True)
-        return principles[:self._top_k]
+        return principles[: self._top_k]
 
     async def store(self, principle: L3Principle) -> str:
         """Store an L3 principle in the vector store.
@@ -266,7 +266,6 @@ class SelectiveHydration:
             )
             return principle.principle_id
 
-
         # Step 2: Upsert into vector adapter
         entity_ns = self._collection_prefix + principle.entity_name
         try:
@@ -285,11 +284,15 @@ class SelectiveHydration:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(
                 "SelectiveHydration: failed to store principle for %s: %s",
-                principle.entity_name, e,
+                principle.entity_name,
+                e,
             )
             raise OmegaError(
                 message=f"Failed to store L3 principle: {e}",
-                detail={"entity_name": principle.entity_name, "principle_id": principle.principle_id},
+                detail={
+                    "entity_name": principle.entity_name,
+                    "principle_id": principle.principle_id,
+                },
                 raw_error=e,
             ) from e
 
@@ -314,7 +317,8 @@ class SelectiveHydration:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(
                 "SelectiveHydration: get_all failed for %s: %s",
-                entity_name, e,
+                entity_name,
+                e,
             )
             return []
 
@@ -348,7 +352,9 @@ class SelectiveHydration:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(
                 "SelectiveHydration: remove failed for %s/%s: %s",
-                entity_name, principle_id[:12], e,
+                entity_name,
+                principle_id[:12],
+                e,
             )
             return False
 
@@ -356,7 +362,7 @@ class SelectiveHydration:
 
     async def _get_query_embedding(self, query: str) -> Optional[List[float]]:
         """Embed the query via the EmbeddingManager chain.
-        
+
         Returns None if the embedding fails (empty or None).
         Zero-vector embeddings are accepted — they are valid in test mode
         and will simply result in zero similarity scores.

@@ -14,7 +14,7 @@ import logging
 from typing import Optional
 
 from omega.oracle.backends.remote_provider import RemoteProvider, ProviderConfig
-from omega.errors import OmegaError, ProviderAuthError, ProviderUnavailableError
+from omega.errors import ProviderAuthError, ProviderUnavailableError
 
 logger = logging.getLogger(__name__)
 

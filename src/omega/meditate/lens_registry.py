@@ -114,8 +114,7 @@ def load_lens_by_id(lens_id: str, iwad: str | None = None) -> PersonaSpec:
     all_lenses = load_all_lenses(iwad)
     if lens_id not in all_lenses:
         raise KeyError(
-            f"Lens id '{lens_id}' not found. "
-            f"Available lenses: {list(all_lenses.keys())}"
+            f"Lens id '{lens_id}' not found. Available lenses: {list(all_lenses.keys())}"
         )
     return all_lenses[lens_id]
 
@@ -160,9 +159,7 @@ def _load_lenses_config(iwad: str) -> dict[str, Any]:
         raw = config_path.read_text(encoding="utf-8")
         data: dict[str, Any] = yaml.safe_load(raw) or {}
     except yaml.YAMLError as exc:
-        raise ValueError(
-            f"Malformed YAML in lens config: {config_path}\n{exc}"
-        ) from exc
+        raise ValueError(f"Malformed YAML in lens config: {config_path}\n{exc}") from exc
 
     meditate_section = data.get(LENSES_SECTION_KEY)
     if not meditate_section or not isinstance(meditate_section, dict):

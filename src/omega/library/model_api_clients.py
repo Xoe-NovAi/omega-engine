@@ -33,9 +33,11 @@ logger = logging.getLogger(__name__)
 # DATA MODELS
 # ============================================================================
 
+
 @dataclass
 class AAModelScore:
     """Artificial Analysis benchmark scores for a single model."""
+
     slug: str
     name: str
     creator: str
@@ -99,6 +101,7 @@ class AAModelScore:
 @dataclass
 class HFModelConfig:
     """HuggingFace Hub model configuration extracted from config.json."""
+
     model_id: str
     model_type: Optional[str] = None
     architectures: List[str] = field(default_factory=list)
@@ -139,6 +142,7 @@ class HFModelConfig:
 @dataclass
 class ModelEnrichmentResult:
     """Combined enrichment from AA + HF Hub for a single model."""
+
     model_id: str
     aa_score: Optional[AAModelScore] = None
     hf_config: Optional[HFModelConfig] = None
@@ -153,6 +157,7 @@ class ModelEnrichmentResult:
 # ============================================================================
 # BASE CLIENT
 # ============================================================================
+
 
 class BaseModelClient(ABC):
     """Abstract base for model registry API clients."""
@@ -196,6 +201,7 @@ class BaseModelClient(ABC):
 # ============================================================================
 # ARTIFICIAL ANALYSIS CLIENT
 # ============================================================================
+
 
 class ArtificialAnalysisClient(BaseModelClient):
     """Client for Artificial Analysis Data API (artificialanalysis.ai/api/v2).
@@ -262,13 +268,11 @@ class ArtificialAnalysisClient(BaseModelClient):
             creator=item.get("model_creator", {}).get("name", ""),
             release_date=item.get("release_date"),
             reasoning_model=item.get("reasoning_model", False),
-
             intelligence_index=evals.get("artificial_analysis_intelligence_index"),
             coding_index=evals.get("artificial_analysis_coding_index"),
             agentic_index=evals.get("artificial_analysis_agentic_index"),
             multilingual_index=evals.get("artificial_analysis_multilingual_index"),
             openness_index=evals.get("artificial_analysis_openness_index"),
-
             mmlu_pro=evals.get("mmlu_pro"),
             gpqa_diamond=evals.get("gpqa_diamond"),
             hle=evals.get("hle"),
@@ -279,22 +283,21 @@ class ArtificialAnalysisClient(BaseModelClient):
             critpt=evals.get("critpt"),
             aa_lcr=evals.get("aa_lcr"),
             aa_omniscience_accuracy=evals.get("aa_omniscience_accuracy"),
-            aa_omniscience_non_hallucination_rate=evals.get("aa_omniscience_non_hallucination_rate"),
+            aa_omniscience_non_hallucination_rate=evals.get(
+                "aa_omniscience_non_hallucination_rate"
+            ),
             gdpval_aa_elo=evals.get("gdpval_aa_elo"),
             tau_banking=evals.get("tau_banking"),
             terminalbench_v2_1=evals.get("terminalbench_v2_1"),
             ifbench=evals.get("ifbench"),
-
             price_input=pricing.get("price_1m_input_tokens"),
             price_output=pricing.get("price_1m_output_tokens"),
             price_blended_3_to_1=pricing.get("price_1m_blended_3_to_1"),
             price_cache_hit=pricing.get("price_1m_cache_hit_tokens"),
             cost_per_task=cost_per_task,
-
             median_output_tokens_per_second=perf.get("median_output_tokens_per_second"),
             median_ttft=perf.get("median_time_to_first_token_seconds"),
             median_end_to_end_response=perf.get("median_end_to_end_response_time_seconds"),
-
             context_window_tokens=item.get("context_window_tokens"),
             parameters_total=params.get("total"),
             parameters_active=params.get("active"),
@@ -302,7 +305,6 @@ class ArtificialAnalysisClient(BaseModelClient):
             huggingface_url=item.get("huggingface_url"),
             modalities_input={k: v for k, v in modal_in.items() if isinstance(v, bool)},
             modalities_output={k: v for k, v in modal_out.items() if isinstance(v, bool)},
-
             intelligence_index_version=version,
         )
 
@@ -343,9 +345,11 @@ class ArtificialAnalysisClient(BaseModelClient):
                         model = self._parse_model(item, version)
                         # Filter by query (name or creator contains query)
                         q_lower = query.lower()
-                        if (q_lower in model.name.lower()
-                                or q_lower in model.creator.lower()
-                                or q_lower in model.slug.lower()):
+                        if (
+                            q_lower in model.name.lower()
+                            or q_lower in model.creator.lower()
+                            or q_lower in model.slug.lower()
+                        ):
                             all_models.append(model)
 
                     pagination = data.get("pagination", {})
@@ -387,6 +391,7 @@ class ArtificialAnalysisClient(BaseModelClient):
 # ============================================================================
 # HUGGINGFACE HUB CLIENT
 # ============================================================================
+
 
 class HuggingFaceHubClient(BaseModelClient):
     """Client for HuggingFace Hub REST API (huggingface.co/api/models).
@@ -458,7 +463,12 @@ class HuggingFaceHubClient(BaseModelClient):
             try:
                 resp = await client.get(
                     self.base_url,
-                    params={"search": query, "limit": limit, "sort": "downloads", "direction": "-1"},
+                    params={
+                        "search": query,
+                        "limit": limit,
+                        "sort": "downloads",
+                        "direction": "-1",
+                    },
                 )
                 resp.raise_for_status()
                 models = resp.json()
@@ -497,6 +507,7 @@ class HuggingFaceHubClient(BaseModelClient):
 # ============================================================================
 # MODEL ENRICHMENT ORCHESTRATOR
 # ============================================================================
+
 
 class ModelEnrichmentOrchestrator:
     """Coordinates AA API + HF Hub to produce ModelEnrichmentResult.
@@ -568,9 +579,7 @@ class ModelEnrichmentOrchestrator:
             # Search HF for cross-reference
             hf_results = await self.hf.search(query, limit=5)
             if hf_results:
-                hf_config, match_confidence, match_method = self._match_models(
-                    aa_score, hf_results
-                )
+                hf_config, match_confidence, match_method = self._match_models(aa_score, hf_results)
 
         # Build enrichment fields list
         fields = []

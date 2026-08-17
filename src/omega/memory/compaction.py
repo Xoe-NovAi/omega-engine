@@ -14,11 +14,11 @@
 
 import logging
 import anyio
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 from .block_tools import BlockTools, get_block_store
-from .recall import RecallStore, get_recall_store
+from .recall import RecallStore
 
 logger = logging.getLogger(__name__)
 
@@ -26,13 +26,14 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_TRIGGER_THRESHOLD = 0.80  # Compact when core > 80% of context window
 DEFAULT_TARGET_REDUCTION = 0.50  # Compact to 50% of current usage
-DEFAULT_CONTEXT_LIMIT = 4000     # Default context window tokens
-TOKEN_ESTIMATE_RATIO = 4         # ~4 chars per token
+DEFAULT_CONTEXT_LIMIT = 4000  # Default context window tokens
+TOKEN_ESTIMATE_RATIO = 4  # ~4 chars per token
 
 
 @dataclass
 class CompactionResult:
     """Result of a compaction cycle."""
+
     triggered: bool = False
     tokens_freed: int = 0
     tokens_before: int = 0
@@ -114,8 +115,12 @@ class CompactionManager:
                 logger.info(
                     "Core compaction triggered for %s: %d/%d tokens (%.0f%%). "
                     "Target: %d tokens (%d to free)",
-                    entity_name, total_tokens, max_tokens, usage_ratio * 100,
-                    target_tokens, tokens_to_free,
+                    entity_name,
+                    total_tokens,
+                    max_tokens,
+                    usage_ratio * 100,
+                    target_tokens,
+                    tokens_to_free,
                 )
 
                 # 3. For each over-limit block, promote excess to recall
@@ -135,7 +140,10 @@ class CompactionManager:
                     # Block exceeds fair share — promote some content to recall
                     excess_tokens = block_tokens - share_per_block
                     promoted = await self._promote_block_excess(
-                        block, excess_tokens, entity_name, session_id,
+                        block,
+                        excess_tokens,
+                        entity_name,
+                        session_id,
                     )
                     if promoted > 0:
                         turns_promoted += promoted
@@ -184,7 +192,10 @@ class CompactionManager:
         logger.debug(
             "Block %s/%s exceeds fair share by %d tokens. "
             "Block length: %d chars. Turn-tracking needed for promotion",
-            entity_name, block.label, excess_tokens, len(block.value or ""),
+            entity_name,
+            block.label,
+            excess_tokens,
+            len(block.value or ""),
         )
         return 0
 

@@ -25,22 +25,17 @@ from typing import Any, Dict, List, Optional
 import httpx2 as httpx
 import anyio
 from omega.errors import (
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
+    ProviderError,
+    OmegaPersistenceError,
 )
 from omega.vault import VaultCore
 
 logger = logging.getLogger(__name__)
 
-DATA_DIR = Path(os.environ.get(
-    "OMEGA_DATA_DIR",
-    str(Path(__file__).resolve().parent.parent.parent / "data")
-))
+DATA_DIR = Path(
+    os.environ.get("OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data"))
+)
 JOBS_DIR = DATA_DIR / "jobs"
 JOBS_PENDING_DIR = JOBS_DIR / "pending"
 JOBS_RUNNING_DIR = JOBS_DIR / "running"
@@ -54,6 +49,7 @@ for d in [JOBS_PENDING_DIR, JOBS_RUNNING_DIR, JOBS_COMPLETED_DIR, JOBS_FAILED_DI
 @dataclass
 class DiscoveryReport:
     """Consolidated report from the discovery pipeline."""
+
     query: str
     recon_summary: str = ""
     subtopics: List[Dict[str, Any]] = field(default_factory=list)
@@ -80,7 +76,7 @@ class DiscoveryReport:
 
 class DiscoveryOrchestrator:
     """Orchestrates multiple search providers into a unified discovery report.
-    
+
     [HARDENING-2026-07-22] No longer hardcodes cloud-only model names. Uses
     the ModelGateway's local-first provider chain. Degrades gracefully when
     no inference provider is available.
@@ -187,7 +183,7 @@ class DiscoveryOrchestrator:
         report = DiscoveryReport(query=query, status="running")
         self._jobs[job_id] = report
         self._persist_job(job_id, report)
-        
+
         # In a real system, we'd use a task queue or a persistent store.
         # For now, we'll use the event loop.
         return job_id
@@ -196,7 +192,7 @@ class DiscoveryOrchestrator:
         """Internal task to run the full discovery pipeline for a job."""
         if job_id not in self._jobs:
             return
-            
+
         report = self._jobs[job_id]
         try:
             # Phase 1: Recon & Decomposition
@@ -208,12 +204,12 @@ class DiscoveryOrchestrator:
             async with anyio.create_task_group() as tg:
                 for st in subtopics:
                     tg.start_soon(self._research_subtopic, report, st)
-            
+
             # Phase 3: Final Synthesis
             report.final_synthesis = await self._phase_synthesize(report)
             report.status = "complete"
             self._persist_job(job_id, report)
-            
+
         except OmegaError as e:
             logger.error(f"Discovery job {job_id} failed (OmegaError): {e}")
             report.status = "failed"
@@ -242,7 +238,7 @@ class DiscoveryOrchestrator:
 
     async def _phase_recon(self, query: str) -> str:
         """Phase 1: High-level synthesis via local-first provider chain.
-        
+
         [HARDENING-2026-07-22] Uses local-first provider chain (M7).
         Degrades gracefully: returns structured summary from web if no
         inference provider is available.
@@ -252,7 +248,7 @@ class DiscoveryOrchestrator:
             "identifying key entities, dates, and technical terms. Focus on providing a "
             "structured summary suitable for deep research."
         )
-        
+
         result = await self._try_generate(
             system_prompt=system_prompt,
             user_query=query,
@@ -268,20 +264,20 @@ class DiscoveryOrchestrator:
             "decompose the topic into 3-5 distinct sub-queries that cover different angles "
             "(technical, historical, practical, etc.). Output ONLY a JSON list of strings."
         )
-        
+
         response = await self._try_generate(
             system_prompt=system_prompt,
             user_query=f"Query: {query}\n\nRecon Summary:\n{recon_summary}",
             temperature=0.1,
         )
-        
+
         # Try to extract JSON if there's markdown
         clean = response.strip()
         if "```json" in clean:
             clean = clean.split("```json")[1].split("```")[0].strip()
         elif "```" in clean:
             clean = clean.split("```")[1].split("```")[0].strip()
-        
+
         try:
             topics = json.loads(clean)
             return [{"query": t, "status": "pending"} for t in topics]
@@ -294,15 +290,15 @@ class DiscoveryOrchestrator:
         """Run discovery for a single subtopic."""
         sub_query = subtopic["query"]
         subtopic["status"] = "running"
-        
+
         try:
             # Simplified pipeline for subtopics
             sources = await self._phase_discovery(sub_query)
             report.sources.extend(sources)
-            
+
             # Note: Content extraction (Tavily) removed per D-kal-164.
             # Sources from Exa already include content via highlights.
-            
+
             subtopic["status"] = "complete"
         except OmegaError:
             raise
@@ -323,7 +319,7 @@ class DiscoveryOrchestrator:
         context += "Extracted Evidence:\n"
         for ex in report.extracted_content[:5]:
             context += f"- {ex.get('title')}: {ex.get('content', '')[:500]}...\n"
-        
+
         result = await self._try_generate(
             system_prompt=system_prompt,
             user_query=context,
@@ -340,13 +336,13 @@ class DiscoveryOrchestrator:
         max_tokens: int = 1024,
     ) -> str:
         """Try generation with local-first provider chain; degrade gracefully.
-        
+
         [HARDENING-2026-07-22] Library discovery tools MUST NOT fail when no
         local or cloud inference is available. This method:
         1. Lets the ModelGateway try its local-first chain (M7)
         2. On total provider failure, returns a degraded stub
         3. Never raises — always returns useful text
-        
+
         Returns:
             Generated text, or a degraded stub explaining what's missing.
         """
@@ -367,7 +363,7 @@ class DiscoveryOrchestrator:
             logger.warning(f"Generation failed — using degraded stub: {e}")
         except (RuntimeError, OSError) as e:
             logger.warning(f"Generation failed — using degraded stub: {e}")
-        
+
         # Graceful degradation: return a stub so the pipeline continues
         return (
             f"[Inference unavailable — degraded mode]\n"
@@ -380,21 +376,16 @@ class DiscoveryOrchestrator:
         if not self.exa_key:
             logger.warning("EXA_API_KEY missing. Using mock discovery.")
             return [{"title": "Mock Source", "url": "https://example.com", "score": 0.9}]
-        
+
         url = "https://api.exa.ai/search"
-        headers = {
-            "x-api-key": self.exa_key,
-            "Content-Type": "application/json"
-        }
+        headers = {"x-api-key": self.exa_key, "Content-Type": "application/json"}
         payload = {
             "query": user_query,
             "type": "deep",
             "numResults": 10,
-            "contents": {
-                "highlights": True
-            }
+            "contents": {"highlights": True},
         }
-        
+
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 resp = await client.post(url, json=payload, headers=headers)
