@@ -1,11 +1,17 @@
 # 🔱 SDP Failure Mode Analysis
 ## Resilience Engineering for the Sovereign Distillation Pipeline
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **HUMAN PROTOCOL — DO NOT IMPLEMENT.**
+> SDP automation is PARKED by `DEBUT_REMEDIATION_MANUAL_20260817.md` (PUBLIC-DEBUT-01).
+> Manual Cognitive Scaffolding Protocol continues; regex/automation pipeline is scrapped.
+> Agents write L1→L2→L3 directly to `proposed_lessons.yaml`.
+
+
 **AP Token:** `AP-SDP-FAILURE-ANALYSIS-v1.0.0`
 ⬡ OMEGA ⬡ STRATEGY ⬡ FAILURE-ANALYSIS
 
 **Date:** 2026-08-09
-**Status:** ACTIVE — Mandatory Reference for All Phase Implementations
+**Status:** PARKED (DOC-1, 2026-08-17)
 **Mandate Binding:** M23 (Failure Integrity), M9 (Error Integrity)
 
 ---

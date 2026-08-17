@@ -1,6 +1,12 @@
 # 🔱 Sovereign Distillation Pipeline — Final Synthesis
 ## The Complete Architecture for Cloud+Local Cognitive Orchestration
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **HUMAN PROTOCOL — DO NOT IMPLEMENT.**
+> SDP automation is PARKED by `DEBUT_REMEDIATION_MANUAL_20260817.md` (PUBLIC-DEBUT-01).
+> Manual Cognitive Scaffolding Protocol continues; regex/automation pipeline is scrapped.
+> Agents write L1→L2→L3 directly to `proposed_lessons.yaml`.
+
+
 **AP Token:** `AP-SDP-FINAL-SYNTHESIS-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ STRATEGY ⬡ FINAL-SYNTHESIS
 

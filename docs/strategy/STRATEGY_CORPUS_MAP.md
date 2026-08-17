@@ -8,11 +8,35 @@
 **P0 ops**: [`CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`](CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md)  
 **Purpose**: Ensure **no agent strategy is orphaned**. The Ark ranks *what to do now*; this map records *where every fine-grained idea lives* and whether it is active, deferred, absorbed, or archive-only.
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: Execution authority is now
+> `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` + `data/coordination/ACTIVE_SPRINT.json`
+> (PUBLIC-DEBUT-01). **Rule 2 is INVERTED**: nothing below is ACTIVE unless the manual or
+> ACTIVE_SPRINT.json says so. See §0 DOC-1 Override Table for flipped dispositions.
+
 ### Rules
-1. **Priority** always comes from the Ark. This file does not override critical path.
-2. **Nothing is “deleted by silence.”** If an idea is not on the critical path, it appears here as DEFERRED / PARKED / ARCHIVE with a path.
+1. **Priority** always comes from the **execution SSOT** (`DEBUT_REMEDIATION_MANUAL_20260817.md` + `ACTIVE_SPRINT.json`). This file does not override the critical path.
+2. **Nothing is “deleted by silence.”** If an idea is not on the critical path, it appears here as DEFERRED / PARKED / ARCHIVE with a path. **(INVERTED 2026-08-17: rows marked ACTIVE below are PRESERVED but NOT executable unless the manual/ACTIVE_SPRINT re-activates them.)**
 3. When a new agent review lands, add a row here **and** either a Ark §3 ticket or a DEFERRED line.
-4. Conflict resolution: Mandates → Ark → this map → individual specs.
+4. Conflict resolution: Mandates → Manual/ACTIVE_SPRINT → Ark → this map → individual specs.
+
+---
+
+## §0 DOC-1 Override Table (2026-08-17 — disposition flips)
+
+| Item | Old disposition | New disposition (DOC-1) |
+|------|-----------------|--------------------------|
+| G-1 (Gemma workhorse) | ACTIVE P0 | **PARKED** — post-debut; manual §0 |
+| W-1 (WARP pool) | ACTIVE P0 | **PARKED** — post-debut; manual §0 |
+| Instruction Router (deep dive) | ACTIVE Phase 0 | **PARKED** — post-debut; manual §0 |
+| Qdrant / QdrantAdapter | ACTIVE | **ARCHIVE** — DEL-1 week 1 deletes QdrantAdapter; sqlite-vec is the vector path |
+| JIT Graph RAG briefs | ACTIVE | **PARKED** — JIT = ContextBuilder may call HybridSearch; no new package |
+| UO library swaps (Phase 1) | ACTIVE Phase 1 | **SUPERSEDED** — replaced by DEL-1 (manual §5); §2.6 = rejected option |
+| Vault lease / FleetOrchestrator | ACTIVE | **PARKED** — vault honesty = DEL-1 week 3; FleetOrchestrator = DEL-1 week 1 delete |
+| Identity Fluidity (E-0…E-5) | Phase E | **PARKED** — post-debut; preserved at entity workspace |
+| SDP-1 / SDP_*.md | ACTIVE | **PARKED** — `HUMAN PROTOCOL — DO NOT IMPLEMENT` |
+| NL-1 (NotebookLM) | ACTIVE | **PARKED** — post-debut |
+| V-1 (Omega-Vault MVP) | ACTIVE | **PARKED** — post-debut |
+| C-0.5 regex distillation | ACTIVE | **SCRAPPED** — manual §2.3: agents write L1→L2→L3 directly |
 
 ---
 

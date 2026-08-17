@@ -7,20 +7,25 @@
 **Owner**: Kali (sprint coordination) · Architect (direction) · All fleet (execution)
 
 > **Purpose**: Get the fleet moving in one direction again — integrity first, team coordination, no strategy thrash.  
-> This is the **how we work together** guide. Priority ranking lives in the Ark. Fine-grained ideas live in the Corpus Map.
+> This is the **how we work together** guide. Priority ranking lives in the execution SSOT (below). Fine-grained ideas live in the Corpus Map.
+
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **Priority = `data/coordination/ACTIVE_SPRINT.json`**
+> (PUBLIC-DEBUT-01) + `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md`.
+> **Compact: do not add a control plane.** The debut cut is P0-1 → PUB-1 → INST-1 → DEL-1 → DOC-1.
 
 ---
 
 ## §0 The Team Compact (Memorize This)
 
-1. **One priority list** — `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` (v5.1+). No competing “canonical roadmaps.”  
+1. **One priority list** — `data/coordination/ACTIVE_SPRINT.json` (PUBLIC-DEBUT-01) + `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md`. No competing “canonical roadmaps.”  
 2. **One memory of ideas** — `docs/strategy/STRATEGY_CORPUS_MAP.md`. Park, don’t ghost.  
 3. **One integrity bar** — SoulStore + honest tests before Living Research OS / fleet pool / new features that write soul.  
 4. **One coordination layer** — Hivemind awareness → lock → handoff → complete. Don’t steal active work.  
 5. **Hardware is real** — Ryzen 5700U, ~8GB available. Prefer 1 local inference; never 3 local council voices.  
 6. **Cloud is teacher, not architecture** — No new free-tier providers until fabric is systematized (D-351).  
 7. **Ship small, green slices** — PR-shaped work. God-modules don’t grow past 1k without a split.  
-8. **Team > hero** — Declare, hand off, review. No silent parallel rewrites of the same file.
+8. **Team > hero** — Declare, hand off, review. No silent parallel rewrites of the same file.  
+9. **No new control planes** — One router, one admission, one breaker factory (DEL-1). Do not add a second authority while the debut cut is in flight.
 
 If a task violates the compact, **stop and post a blocker** — do not “just finish it.”
 

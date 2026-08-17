@@ -9,6 +9,13 @@
 **Reconciled**: 2026-08-08 by Kali (GLM52 second opinion + Copilot CLI review + ground truth probes)
 **Vault Reconciliation**: 2026-08-08 by Kali (John Carmack vault audit — ~1,500 lines custom vault code → 3 community tools)
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: Execution authority has moved to
+> `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` (PUBLIC-DEBUT-01).
+> **Phase 1 library swaps are SUPERSEDED by DEL-1** (delete dead modules first, then collapse
+> to one router / one admission). **§2.6 (VaultCore → Keyblind/Authy/Agent Vault) is a REJECTED
+> OPTION for debut** — DEL-1 week 3 picks vault honesty path A or B instead. This plan remains
+> preserved for post-debut reference.
+
 ---
 
 ## ⚠️ RECONCILIATION CORRECTIONS (2026-08-08)
@@ -119,6 +126,10 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 **Effort**: 1h spike | **Net Δ**: TBD
 
 ### §2.6 VaultCore — Replace with Keyblind + Authy + Agent Vault (Carmack Audit 2026-08-08)
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **REJECTED OPTION for debut.** DEL-1 week 3 (vault honesty)
+> picks path A (delete `src/omega/vault/` from product surface, keep `crypto.py`) or path B
+> (minimal store; Gateway reads env/keyring only). Keyblind/Authy/Agent Vault are **NOT adopted
+> for debut**. Keep this section as a documented rejected alternative.
 **Status**: NOT STARTED — **NEW FINDING** from John Carmack vault audit
 **Current**: ~2,000 lines custom vault code across:
 - `src/omega/vault/vault_core.py` (836 lines) — CRUD, lease, quota, BlindVault, Bury, CPE

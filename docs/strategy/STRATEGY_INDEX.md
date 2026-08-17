@@ -1,11 +1,16 @@
-# 🔱 STRATEGY INDEX — Canonical Reference (Updated 2026-07-25)
-**Date**: 2026-07-25 | **v6.0 Process-Corrected** | **Supersedes**: v5.2 (2026-07-22)
+# 🔱 STRATEGY INDEX — Canonical Reference (Updated 2026-08-17)
+**Date**: 2026-08-17 | **v6.1 Debut-Corrected** | **Supersedes**: v6.0 (2026-07-25)
 
-**Read First (Strategy)**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` **v5.2**  
-**🚨 P0 TODAY**: `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` — Gemma workhorse (G-1) + WARP pool (W-1)  
+> **⚠️ EXECUTION SSOT (2026-08-17, DOC-1 stamp)**: This month's execution authority is
+> `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` + `data/coordination/ACTIVE_SPRINT.json`
+> (PUBLIC-DEBUT-01). The Ark below is **read-only vision** until Kali marks it superseded.
+> G-1/W-1/V-1/SDP/NL-1 are **PARKED**; C-0.5 regex distillation is **SCRAPPED**.
+
+**Read First (Strategy)**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` **v5.2** (vision, read-only)  
+**🚨 EXECUTION SSOT**: `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` + `data/coordination/ACTIVE_SPRINT.json`  
 **Process Improvement Plan**: `docs/strategy/PROCESS_IMPROVEMENT_PLAN_20260725.md` **NEW** — fixes 10 systemic issues from 2026-07-25 audit  
-**Architect RUNME**: `data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md`  
-**Forensic evidence**: `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`  
+**Architect RUNME**: `data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md` (PARKED)  
+**Forensic evidence**: `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` (PARKED)  
 **Fine-grained (no idea lost)**: `docs/strategy/STRATEGY_CORPUS_MAP.md`  
 **Team coordination**: `docs/strategy/FLEET_TEAM_PLAYBOOK.md`  
 **Read First (State)**: `OMEGA_ENGINE.md`  
@@ -17,7 +22,7 @@
 | Document | Purpose |
 |----------|---------|
 | `OMEGA_ENGINE.md` | What the engine IS — metrics, subsystems |
-| `SOVEREIGN_MANDATES.md` | 25 laws M1–M25 |
+| `SOVEREIGN_MANDATES.md` | 27 laws M1–M27 |
 | `AGENTS.md` | How to work from OpenCode |
 | `OMEGA_CODEX.md` | Generated hydration pack (`make codex`) |
 | `docs/adr/ADR-002-documentation-architecture.md` | Documentation as Runtime Interface for Sovereign AI |
@@ -25,8 +30,9 @@
 ## LAYER 1: STRATEGY SSOT
 | Document | Purpose |
 |----------|---------|
-| **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`** | **START HERE** — Unified strategy & critical path (v5.2) |
-| **`docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`** | **🚨 P0** — Twin tickets **G-1** (workhorse) + **W-1** (WARP); D-377…D-381 |
+| **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`** | **START HERE (vision)** — Unified strategy & critical path (v5.2) |
+| **`docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md`** | **🚨 EXECUTION SSOT (this month)** — P0-1 → PUB-1 → INST-1 → DEL-1 → DOC-1 |
+| **`docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`** | **PARKED** — Twin tickets **G-1** (workhorse) + **W-1** (WARP); D-377…D-381 |
 | `docs/strategy/STRATEGY_INDEX.md` | This file — hierarchy only |
 | **🚀 POST-PR ROSTER** | **`docs/strategy/POST_PR_ROSTER.md`** | **What to ship after the initial PR** — 7 items ranked, dependencies, effort, why scratched |
 | **🧠 DEF. STRATEGY** | [`docs/research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md`](../research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md) | Full dependency graph, risk matrix, validation gates for all 5 force multipliers |

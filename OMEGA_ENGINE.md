@@ -25,7 +25,7 @@
 | Metric | Value | Status | LAST_VERIFIED | PROBE_COMMAND |
 |--------|-------|--------|---------------|---------------|
 | **Strategy SSOT (long-horizon)** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Ark remains long-horizon law | 2026-07-30 | `head -5 docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` |
-| **Sprint control (near-term)** | **`UNOVERENGINEER-01`** — `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (user-ratified) | ✅ ACTIVE; Jul 25 EXECUTION_PLAN / guard-and-distill **SUPERSEDED** for sprint control | 2026-08-07 | `cat data/coordination/ACTIVE_SPRINT.json \| head -20` |
+| **Sprint control (near-term)** | **`PUBLIC-DEBUT-01`** — `data/coordination/ACTIVE_SPRINT.json` + `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` (P0-1 → PUB-1 → INST-1 → DEL-1 → DOC-1) | ✅ ACTIVE; UNOVERENGINEER-01 **SUPERSEDED** for sprint control (DOC-1, 2026-08-17) | 2026-08-17 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **UO-4 Doc Sanity** | **COMPLETE** — PART 1 archival (67 files) + PART 2 web reconciliation (Phase 3/4 docs) + core strategy docs freshened (Pillar→Node, co-equal MaKaLi) | ✅ Freeze **LIFTED** (DOC_SANITY_COMPLETE met 2026-08-07) | 2026-08-07 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **Phase D gate** | Mechanical **PASS 11/11** · Operational **NO-GO** (C-3/W-1/G-1) | 🟡 Dual-layer — see verdict | 2026-07-30 | `python scripts/verify_phase_d_gate.py` · `cat data/coordination/PHASE_D_GATE_VERDICT_20260730.md` |
 | Tests | Focused **27 passed** (vault+property+hivemind 2026-07-30) · Full suite **1706 collected** (make test timeout risk) | ✅ Focused green; full suite needs longer budget | 2026-07-30 | `pytest tests/test_vault_integrity.py tests/property/ tests/test_hivemind.py -q` |
@@ -36,7 +36,7 @@
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, N1: 5/5, N2: 6/6, N3: 1/4 | ✅ P0-N2 Complete | 2026-07-18 | `grep -c "status: cloned" data/coordination/THIRD_PARTY_REGISTRY.yaml` |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ \| wc -l` |
 | Shared modules | **1** (`omega-meditation` — local editable only) | ✅ 0 on PyPI | 2026-08-08 | `pip list \| grep omega-meditation` |
-| **Foundation Stabilization** | **HISTORICAL** — Gate Α/Β done; not current sprint | 📦 Superseded by UNOVERENGINEER-01 | 2026-07-30 | `cat data/coordination/ACTIVE_SPRINT.json` |
+| **Foundation Stabilization** | **HISTORICAL** — Gate Α/Β done; not current sprint | 📦 Superseded by PUBLIC-DEBUT-01 | 2026-08-17 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 | `head -30 src/omega/memory/sqlite_policy.py` |
 | **C-0.5 Soul distillation hook** | **SCRAPPED per Carmack Verdict 2026-07-30** — Regex-based L1/L2/L3 extraction was fortune-cookie generation. Now: minimal timestamp write + codex refresh (~40 lines, no false promises). Agents write their own lessons. That works. | ✅ M5/M11 compliant | 2026-07-30 | `.opencode/wrapper.sh` + `.opencode/hooks/session_end.py` |
 | **Nemotron 3 Ultra Streaming Fix** | **PIVOTED TO HUMAN-IN-THE-LOOP** — Auto-retry plugin removed (blinded agents). Implemented `error-capture.ts` and `awareness.ts` plugins. Subagent errors now pause the session and notify parent agent via Hivemind. Agents now have real-time event stream awareness. | ✅ M25 Streaming Resilience (via observability) | 2026-07-30 | `.opencode/plugin/error-capture.ts` + `.opencode/plugin/awareness.ts` |
@@ -179,4 +179,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-08-07 | Version: v1.8.5 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 | Sprint: UNOVERENGINEER-01 | UO-4 DOC_SANITY **COMPLETE** (freeze lifted) | Phase D mechanical PASS / operational NO-GO | W-1 PARTIAL 1/3 (8083) | C-3 timer OK / oneshot vault-blocked | MCP 1.28.1 pin `<2` · v2 migrate P0 | Core docs freshened (Pillar→Node, co-equal MaKaLi) | Mandate compliance: 84% | V-9/V-10 gaps open (IA2 envelope + AppArmor) | **Nemotron 3 Ultra streaming fix: VERIFIED (headless + interactive)***
+*Last Updated: 2026-08-17 | Version: v1.8.6 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 (vision, read-only) | Sprint: PUBLIC-DEBUT-01 (DEBUT_REMEDIATION_MANUAL_20260817) | P0-1 secret scrub COMPLETE | P0-2 test suite COMPLETE (1768/1768) | Phase 2 lint COMPLETE (255 files) | DOC-1 stamps LANDED | PUB-1 allowlist drafted | INST-1 ready (maat) | DEL-1 backlog | Mandate compliance: 27 laws (M26/M27 added 2026-08-14) | G-1/W-1/V-1/SDP/NL-1 PARKED*

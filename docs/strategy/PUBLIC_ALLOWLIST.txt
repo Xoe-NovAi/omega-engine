@@ -1,0 +1,77 @@
+# 🔱 PUBLIC ALLOWLIST — What the Public `omega-engine` Repo Is
+**AP Token**: `AP-PUBLIC-ALLOWLIST-20260817`
+**Status**: DRAFT — awaiting Architect (Node 0) confirmation
+**Source**: `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` §3.1 (PUB-1)
+**Date**: 2026-08-17
+
+> **Purpose**: The public repo is an **allowlist**, not "gitignore harder."
+> Everything not listed here is FORGE (this machine or private `omega-forge`).
+> Preferred mechanic: branch/export `release/debut` from this allowlist — do NOT
+> mass-delete `main` the same week as a history rewrite.
+
+---
+
+## ✅ ALLOW — Public Surface
+
+```
+# Core engine (after DEL-1)
+src/omega/
+
+# Tests that exercise the public contract
+tests/                        # talk / summon / soul / sqlite-vec / firewall import-path only
+
+# Config (local-first chain)
+config/models.yaml
+config/providers.yaml
+config/omega.yaml
+config/wads/_omega_default/
+
+# Install + docs
+scripts/install.sh
+README.md
+LICENSE
+CONTRIBUTING.md
+docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+docs/strategy/PUBLIC_ALLOWLIST.txt
+SOVEREIGN_MANDATES.md
+AGENTS.md
+.gitignore
+
+# CI
+.github/workflows/            # unit tests + gitleaks only
+
+# Build
+Makefile
+pyproject.toml
+```
+
+## 🚫 FORGE — NOT on Public Surface
+
+```
+docs/research/
+docs/archive/
+docs/strategy/                # EXCEPT the allowlisted files above
+data/entities/                # EXCEPT one default soul (e.g. _omega_default)
+data/coordination/
+data/handoff/
+data/autonomous/
+data/training/
+third-party/
+opencode-antigravity-auth/
+warp-proxy-pool/
+```
+
+## ⚠️ Explicit Exclusions (do NOT delete, just keep off public)
+
+- `data/entities/*/soul.yaml` for the default demo entity — KEEP (needed for demo)
+- `config/model_registry/index.sqlite` — do NOT commit (runtime artifact)
+
+## Acceptance
+
+- A clone of the public ref has **no** `docs/research/` corpus, **no** agent workspace dumps, **no** handoff JSON.
+- `git ls-files data/entities` is a **short default-soul set**, not 1,072 files.
+- `git ls-files docs/strategy` is the manual + allowlist + mandates pointers, not 123 files.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-17 ⬡ awaiting Architect confirmation*

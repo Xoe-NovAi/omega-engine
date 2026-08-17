@@ -1,7 +1,10 @@
 # 📦 JIT RAG Config Design — Knowledge Gaps Filled
 **AP Token**: `AP-RESEARCHER-JIT-RAG-CONFIG-20260816`
 **Date**: 2026-08-16
-**Status**: COMPLETE — Production-ready config template
+**Status**: PARKED (DOC-1, 2026-08-17) — design preserved
+
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **PARKED.** JIT = ContextBuilder may call HybridSearch.
+> No new package, no Qdrant. Per `DEBUT_REMEDIATION_MANUAL_20260817.md`.
 
 ---
 

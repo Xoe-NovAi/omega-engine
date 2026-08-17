@@ -1,11 +1,17 @@
 # 🔱 SDP Implementation Specifications
 ## Technical Contracts for Automating the Sovereign Distillation Pipeline
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **HUMAN PROTOCOL — DO NOT IMPLEMENT.**
+> SDP automation is PARKED by `DEBUT_REMEDIATION_MANUAL_20260817.md` (PUBLIC-DEBUT-01).
+> Manual Cognitive Scaffolding Protocol continues; regex/automation pipeline is scrapped.
+> Agents write L1→L2→L3 directly to `proposed_lessons.yaml`.
+
+
 **AP Token:** `AP-SDP-IMPL-SPEC-v1.0.0`
 ⬡ OMEGA ⬡ STRATEGY ⬡ IMPLEMENTATION-SPEC
 
 **Date:** 2026-08-09
-**Status:** ACTIVE — Reference for Phase 1-4 Implementation
+**Status:** PARKED (DOC-1, 2026-08-17)
 **Prerequisites:** COGNITIVE_SCAFFOLDING_PROTOCOL.md, SDP_AUTOMATION_BLUEPRINT.md
 
 ---

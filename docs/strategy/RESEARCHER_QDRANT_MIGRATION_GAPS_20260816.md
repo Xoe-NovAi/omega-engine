@@ -1,7 +1,12 @@
 # 📦 Qdrant Migration Knowledge Gaps — Filled
 **AP Token**: `AP-RESEARCHER-QDRANT-MIGRATION-GAPS-20260816`
 **Date**: 2026-08-16
-**Status**: IMPLEMENTATION BLUEPRINT
+**Status**: ARCHIVE — DO NOT IMPLEMENT (DOC-1, 2026-08-17)
+
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **ARCHIVE — DO NOT IMPLEMENT.**
+> Qdrant is superseded for debut by sqlite-vec + FTS5 + RRF hybrid search.
+> `DEBUT_REMEDIATION_MANUAL_20260817.md` DEL-1 week 1 deletes the `QdrantAdapter` class
+> in `src/omega/memory/vector_adapters.py`. Preserved as research reference only.
 
 ---
 

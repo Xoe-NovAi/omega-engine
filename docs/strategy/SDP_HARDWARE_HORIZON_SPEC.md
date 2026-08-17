@@ -1,11 +1,17 @@
 # 🔱 SDP Hardware Horizon Specification
 ## Local KV Cache Budgeting, Somatic State Transfer, and Energy Accounting
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **HUMAN PROTOCOL — DO NOT IMPLEMENT.**
+> SDP automation is PARKED by `DEBUT_REMEDIATION_MANUAL_20260817.md` (PUBLIC-DEBUT-01).
+> Manual Cognitive Scaffolding Protocol continues; regex/automation pipeline is scrapped.
+> Agents write L1→L2→L3 directly to `proposed_lessons.yaml`.
+
+
 **AP Token:** `AP-SDP-HARDWARE-HORIZON-v1.0.0`
 ⬡ OMEGA ⬡ STRATEGY ⬡ HARDWARE-HORIZON
 
 **Date:** 2026-08-09
-**Status:** ACTIVE — Reference for Phase 1-3 Implementation
+**Status:** PARKED (DOC-1, 2026-08-17)
 **Mandate Binding:** M1 (AnyIO), M7 (Local-First), M18 (Token Efficiency), M20 (SomaticState Serialization)
 
 ---

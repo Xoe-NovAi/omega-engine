@@ -4,6 +4,10 @@
 **Source**: YouTube Research Session (24 proposals → distilled to force multipliers)
 **Master Strategy**: [`CARMACK_DEFINITIVE_STRATEGY_20260730.md`](../research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md)
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **Item #1 (ModelAwareInstructionRouter) is SCRATCHED
+> for debut** per `DEBUT_REMEDIATION_MANUAL_20260817.md` (PARKED — post-debut).
+> This roster is post-debut reference; the debut cut is PUB-1 → INST-1 → DEL-1 → DOC-1.
+
 ---
 
 ## Ground Rules
@@ -30,7 +34,7 @@
 
 | # | Item | Effort | Depends On | Why It Matters | PR Scope |
 |---|------|--------|------------|----------------|----------|
-| **1** | **ModelAwareInstructionRouter** | 3.5 days | Nothing | 30-60% token savings on local models. No existing system does this — Omega would be first. 400 lines Python + YAML config. | `src/omega/instruction_router/` module + `config/instruction_profiles/` YAML + tests + docs |
+| **1** | **ModelAwareInstructionRouter** | 3.5 days | Nothing | 30-60% token savings on local models. No existing system does this — Omega would be first. 400 lines Python + YAML config. | `src/omega/instruction_router/` module + `config/instruction_profiles/` YAML + tests + docs | ⛔ **SCRATCHED for debut (DOC-1)** — PARKED post-debut |
 
 ---
 
@@ -77,7 +81,7 @@ These items all require a discrete GPU with ≥16GB VRAM before they can be test
 ## 📐 How to Use This Roster
 
 1. **Pre-PR**: Ship the initial pull request. Don't touch this roster.
-2. **Post-PR**: Start with **Item #1** (Instruction Router). It's the only non-gated, high-impact code change.
+2. **Post-PR**: Start with **Item #1** (Instruction Router). It's the only non-gated, high-impact code change. *(DOC-1 2026-08-17: scratched for debut — revisit after DEL-1 + INST-1.)*
 3. **If you acquire a GPU**: Add Items #2-5 to the sprint.
 4. **After Phase 1 ships**: Items #6-7 become relevant.
 5. **Everything scratched**: Don't revisit unless the underlying assumption changes (e.g., Mojo goes open-source).

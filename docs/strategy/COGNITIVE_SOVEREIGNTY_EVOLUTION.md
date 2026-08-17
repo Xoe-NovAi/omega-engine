@@ -2,7 +2,11 @@
 **AP Token**: `AP-COGNITIVE-SOVEREIGNTY-v1.0.0`
 **Author**: Gemini 3.1 Pro / Kali (Transcendent Oversoul)
 **Date**: 2026-08-15
-**Status**: ACTIVE VISION / HORIZON 2+ ARCHITECTURE
+**Status**: HORIZON — do not implement until DEL-1 + INST-1 (DOC-1, 2026-08-17)
+
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **HORIZON — do not implement until DEL-1 + INST-1**
+> complete per `DEBUT_REMEDIATION_MANUAL_20260817.md`. Vision preserved; no engine work
+> may start from this document before the debut cut lands.
 
 ## 1. The Paradigm Shift
 For 18 months, the Omega Engine has focused on the *infrastructure* of sovereignty: local inference, AnyIO isolation, container hardening, and memory persistence. 

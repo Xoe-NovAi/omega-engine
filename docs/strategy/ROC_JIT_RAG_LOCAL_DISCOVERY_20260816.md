@@ -1,7 +1,10 @@
 # 🔍 JIT RAG Local Discovery Report (Roc Racoon)
 **AP Token**: `AP-ROC-JIT-RAG-DISCOVERY-20260816`
 **Date**: 2026-08-16
-**Status**: SUPPLEMENT FOR QDRANT MIGRATION IMPLEMENTATION
+**Status**: PARKED (DOC-1, 2026-08-17) — research preserved
+
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **PARKED.** Qdrant superseded by sqlite-vec for debut.
+> Per `DEBUT_REMEDIATION_MANUAL_20260817.md`.
 
 ---
 

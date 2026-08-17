@@ -1,11 +1,17 @@
 # 🔱 SDP Model-Aware Gauge Specification
 ## Dynamic Context Window Detection and Per-Model Threshold Calculation
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: **HUMAN PROTOCOL — DO NOT IMPLEMENT.**
+> SDP automation is PARKED by `DEBUT_REMEDIATION_MANUAL_20260817.md` (PUBLIC-DEBUT-01).
+> Manual Cognitive Scaffolding Protocol continues; regex/automation pipeline is scrapped.
+> Agents write L1→L2→L3 directly to `proposed_lessons.yaml`.
+
+
 **AP Token:** `AP-SDP-MODEL-AWARE-GAUGE-v1.0.0`
 ⬡ OMEGA ⬡ STRATEGY ⬡ MODEL-AWARE-GAUGE
 
 **Date:** 2026-08-09
-**Status:** ACTIVE — Mandatory for Phase 1 Context Gauge Implementation
+**Status:** PARKED (DOC-1, 2026-08-17)
 **Mandate Binding:** M1 (AnyIO), M23 (Failure Integrity), M18 (Token Efficiency)
 
 ---

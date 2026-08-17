@@ -1,9 +1,13 @@
 # 🔱 VOS Hybrid Plan (Option C) — Execution Specification
 **AP Token**: `AP-VOS-HYBRID-PLAN-20260815`
-**Status**: APPROVED — Ready for Execution
+**Status**: COMPLETE after Phase 0 (DOC-1, 2026-08-17) — do not add realm validators
 **Date**: 2026-08-15
 **Author**: Kali (ratified by Architect)
 **Session**: `ses_vos_hybrid_plan_20260815`
+
+> **⚠️ DOC-1 STAMP (2026-08-17)**: Plan is **complete after Phase 0**. Per
+> `DEBUT_REMEDIATION_MANUAL_20260817.md`: **do not add realm validators**. No further
+> VOS work until DEL-1 + INST-1.
 
 ---
 

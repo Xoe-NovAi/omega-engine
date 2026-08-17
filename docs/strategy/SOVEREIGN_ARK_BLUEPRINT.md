@@ -1,7 +1,13 @@
 ## §4 Priority Stack (Do This Order)
 
+> **⚠️ DOC-1 STAMP (2026-08-17)**: Sprint authority has moved to
+> `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` + `data/coordination/ACTIVE_SPRINT.json`
+> (PUBLIC-DEBUT-01). This section is **historical vision — read-only** until Kali marks it superseded.
+> **G-1 / W-1 / V-1 / SDP-1 / NL-1 = PARKED.** **C-0.5 regex distillation = SCRAPPED** (manual §2.3:
+> agents write L1→L2→L3 directly; no regex pipeline).
+
 ```
-🚨 SUPER-URGENT (Architect-elevated 2026-07-22) — PARALLEL TO PHASE C
+🚨 SUPER-URGENT (Architect-elevated 2026-07-22) — PARALLEL TO PHASE C — ⛔ PARKED (DOC-1, 2026-08-17)
 ├── **G-1** Gemma/OpenCode workhorse continuity after free-tier cliff
 │     Forensic: docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md
 │     Ops path: docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md
@@ -10,7 +16,7 @@
 
 PHASE C — COMPLETED ✅ (Keep below for historical trace; items no longer pending)
 ├── C-0  Test honesty ✅ (95/95 Phase 2 hardening, false count ban)
-├── C-0.5 Soul Distillation Pipeline ✅ (Hook registered in opencode.json + script exists; needs OpenCode restart)
+├── C-0.5 Soul Distillation Pipeline ❌ **SCRAPPED** (DOC-1, 2026-08-17 — manual §2.3: regex distillation scrapped; agents write L1→L2→L3 directly)
 ├── C-2′ One RAM truth ✅ (OOMProtector 3-signal fusion)
 ├── C-1′ SoulStore ✅ (Atomic writer, 4-layer guarantee)
 ├── C-3  Restic 3-2-1 Backup 🟡 (Amended: local repo acceptable; timer not enabled — only remaining required Phase D gate failure)
@@ -23,7 +29,7 @@ PHASE C — COMPLETED ✅ (Keep below for historical trace; items no longer pend
 ├── C-9  GenerationPolicy extract ❌ (Not started — optional Phase D criterion)
 └── C-11 Property tests ✅ (16/16 pass; 1 skip; OOM/breaker/soul store coverage)
 
-IMPORTANT (Next)
+IMPORTANT (Next) — ⛔ ALL PARKED (DOC-1, 2026-08-17) — execution authority = DEBUT_REMEDIATION_MANUAL
 ├── C-7 / C-8
 ├── E-0 Identity Phase 0 (after C-1′)
 ├── D-1 Content persistence + TTL (+ D-T tests)
