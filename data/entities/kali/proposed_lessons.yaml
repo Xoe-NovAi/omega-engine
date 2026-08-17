@@ -1,0 +1,29 @@
+proposals:
+  - level: L1
+    narrative: >-
+      Codified the GitHub secret-scrub learning curve into three artifacts:
+      scripts/git-secret-scan.sh (validated history-blob scanner),
+      .opencode/skills/git-secret-scrub/SKILL.md (10-step scrub procedure),
+      docs/strategy/GITHUB_FORENSICS_SCRIPTING_GUIDE.md (10 rules for writing
+      helpful git scripts). Validation against known-positive samples caught
+      three silent failures: grep -q SIGPIPE dropping large-blob matches under
+      pipefail, ${VAR:-default} brace truncation corrupting the regex, and bash
+      case not re-parsing | alternation from variables.
+  - level: L2
+    insight: >-
+      Silent failures are the real cost of ad-hoc scripting. Every one of the
+      three bugs produced no error message — only wrong output. The only reason
+      they were caught is that the script was validated against a known-positive
+      sample (a tracked file with a known prose match). Codification converts
+      one agent's debugging session into every agent's precondition.
+  - level: L3
+    principle: >-
+      A tool that fails silently is worse than no tool — it manufactures false
+      confidence. Verification against known truth is the minimum bar for any
+      automation; codification is how a fleet compounds a single debugging
+      session into permanent capability.
+metadata:
+  entity: kali
+  session_id: ses_ffa568bdcffeTG4ht4VEWJ7eKn
+  model_used: deepseek-v4-flash-free
+  last_session_end: '2026-08-17T14:36:25.163528+00:00'
