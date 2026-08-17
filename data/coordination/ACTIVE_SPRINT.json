@@ -3,7 +3,7 @@
   "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "phase": "EXECUTION_MINIMAL",
   "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-17T19:15:00.000000+00:00",
+  "updated": "2026-08-17T19:45:00.000000+00:00",
   "owner": "kali",
   "status": "in_progress",
   "status_detail": "Scope cut executed per Carmack verdict. Three-item critical path COMPLETE. Readiness Remediation (P0-1 scrub + P1 test suite) COMPLETE — 1797/1797 tests pass, make temple-grade PASSES. Execution SSOT = DEBUT_REMEDIATION_MANUAL_20260817.md §5. DOC-1 strategy stamps COMPLETE (668d58eb). P0-1 history scrub COMPLETE (all reachable history clean; only prose/test-mock false positives). PUB-1 allowlist in_progress (G1-G4 gaps open, awaiting Architect confirmation). INST-1 ready (maat_n3). DEL-1 backlog (after INST-1). P2 lint debt (11,400) + P3 CI/hygiene + P4 polish after DEL-1 week 1. 2 commits pushed (668d58eb, 5cc51a26). 137 checkpoints pruned. P0-1c gitleaks MOVED to pre-debut critical path (Q4 ratified). All VOS phases, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 DEFERRED to post-debut.",
@@ -406,6 +406,61 @@
           "acceptance": [
             "Planted sk- fixture fails CI",
             "gitleaks runs in pre-commit"
+          ]
+        }
+      ]
+    },
+    "PLANNING-DEBUT-CLEANSING": {
+      "task": "Joint Kali+Cline plan for debut completion + post-debut cleansing + strategic improvement",
+      "owner": "kali+cline",
+      "status": "in_progress",
+      "risk": "HIGH",
+      "source": "docs/strategy/PLAN_DEBUT_CLEANSING_20260817.md",
+      "subtasks": [
+        {
+          "id": "PLAN-REVIEW",
+          "description": "Cline reviews plan draft; adds risk/gap analysis; joint ratification",
+          "owner": "cline",
+          "status": "ready",
+          "acceptance": [
+            "Cline review complete",
+            "Joint ratification recorded"
+          ]
+        },
+        {
+          "id": "PLAN-RATIFY",
+          "description": "Plan enters ACTIVE_SPRINT.json as only planning workstream; Architect/Ma'at/Verity review lanes",
+          "owner": "kali",
+          "status": "backlog",
+          "depends_on": [
+            "PLAN-REVIEW"
+          ]
+        },
+        {
+          "id": "PHASE-A",
+          "description": "Phase A: PR/Debut completion (Week 1-2) - allowlist, INST-1, P0-1c, verification, tag",
+          "owner": "kali+maat+architect",
+          "status": "backlog",
+          "depends_on": [
+            "PLAN-RATIFY"
+          ]
+        },
+        {
+          "id": "PHASE-B",
+          "description": "Phase B: Post-debut cleansing DEL-1 to P4 (Week 3-6)",
+          "owner": "roc+maat+verity",
+          "status": "backlog",
+          "depends_on": [
+            "PHASE-A"
+          ]
+        },
+        {
+          "id": "PHASE-C",
+          "description": "Phase C: Strategic improvement UO-6/7, MCP v2, Heritage, Fleet Pool, Instruction Router",
+          "owner": "fleet",
+          "status": "backlog",
+          "depends_on": [
+            "PHASE-B"
           ]
         }
       ]
