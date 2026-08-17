@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-17T02:00:10.975079+00:00",
+  "updated": "2026-08-17T19:02:40.894141+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -1280,6 +1280,26 @@
         "parallel-launch-pending",
         "in-progress",
         "p1-2-complete"
+      ]
+    },
+    {
+      "task_id": "coordination-debut-consolidation-20260817-01",
+      "subagent_type": "kali",
+      "launched_by": "omega-engine",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Debut roadmap consolidation handoff written to disk for Kali \u2014 unified plan, G1-G4 gap closure, 4 decisions pending",
+      "status": "in_progress",
+      "created_at": "2026-08-17T19:02:40.894020+00:00",
+      "last_checkpoint": "2026-08-17T19:02:40.894044+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "debut",
+        "consolidation",
+        "handoff",
+        "pub-1",
+        "inst-1"
       ]
     }
   ]

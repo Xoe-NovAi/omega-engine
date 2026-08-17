@@ -56,15 +56,44 @@ data/coordination/
 data/handoff/
 data/autonomous/
 data/training/
+data/requests/
 third-party/
 opencode-antigravity-auth/
 warp-proxy-pool/
+archive/                      # G4 — background_researcher, scribe_agent, tests_20260730
+configs/                      # G4 — token_budgets.yaml etc.
+context_packs/                # G4 — sovereign-audit, tech-architecture-research
+deploy/                       # G4 — infra/, systemd/, warp_pool
+packages/                     # G4 — omega-meditation (standalone)
+plugins/                      # G4 — jem_mode, sovereign
+podman/                       # G4 — omega-ark-optimizer service/timer
+research/                     # G4 — GAP_ANALYSIS, opencode-rd
+models/gguf/                  # G4 — runtime model cache (gitkeep only)
+schemas/                      # G4 — llm_doc_frontmatter.json
+.llm-chat-history/            # G4 — raw chat history dumps
+.aider/ .gemini/ .githooks/   # G4 — tool-private state
+aider-ai/ github-mcp-server/  # G4 — vendored tool sources
+.mcp-*.json .llm-*.json       # G4 — tool scratch
+
+# Stray root-level junk — G4 (one-off files, not a project)
+server_output.log
+debug_test.py
+trim_scope.py
+find_iris.py
+failed-subagent-copy-paste.txt
+file
+tui.json
+old-claude-sys-prompt.md
+migrate_heritage.py
 ```
 
 ## ⚠️ Explicit Exclusions (do NOT delete, just keep off public)
 
 - `data/entities/*/soul.yaml` for the default demo entity — KEEP (needed for demo)
 - `config/model_registry/index.sqlite` — do NOT commit (runtime artifact)
+- `tests/tmp/` — runtime vault fixtures, FORGE only (G1)
+- `.firecrawl/` — scrape cache, FORGE only (G2)
+- `config/github_accounts.yaml` — credential file, FORGE only (G3)
 
 ## Acceptance
 
