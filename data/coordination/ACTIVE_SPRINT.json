@@ -3,10 +3,10 @@
  "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
  "phase": "EXECUTION_MINIMAL",
  "started": "2026-08-15T00:00:00Z",
- "updated": "2026-08-16T22:28:19.589810+00:00",
+ "updated": "2026-08-17T05:15:00.000000+00:00",
  "owner": "kali",
  "status": "in_progress",
- "status_detail": "Scope cut executed per Carmack verdict. Three-item critical path COMPLETE. NEW: Readiness Remediation (Roc audit ratified) \u2014 P0-1 live key exposure on origin/main (rotate+scrub), P0-2 63 test failures (Phase 1 test suite green, Roc executing), P2 lint debt (11,400), P3 CI/hygiene, P4 polish. All VOS phases, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 DEFERRED to post-debut.",
+ "status_detail": "Scope cut executed per Carmack verdict. Three-item critical path COMPLETE. Readiness Remediation Phase 1 (test suite) COMPLETE — 1797/1797 tests pass, make temple-grade PASSES. P0-1 live key exposure on origin/main (rotate+scrub BLOCKED on Architect), P2 lint debt (11,400), P3 CI/hygiene, P4 polish. All VOS phases, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 DEFERRED to post-debut.",
  "supersedes": [
   "SDP-EXECUTION-01 (Aug 11 \u2014 full 5-phase plan, now archived)",
   "NEMOTRON-ANALYSIS-01 (Aug 10 \u2014 analysis complete)",
@@ -181,50 +181,57 @@
       }
      ]
     },
-    {
-     "id": "P0-2",
-     "description": "63 test failures (1825 total: 47 errors + 13 failures + 60 skipped) \u2014 CI RED. Root causes: ~20 async/sync mismatch, ~18 VaultCore drift, 9 ImportError, 1 mock mismatch, ~5 logic",
-     "owner": "roc_racoon",
-     "status": "ready",
-     "subtasks": [
-      {
-       "id": "P1-1",
-       "description": "Fix async/sync cluster (~20 tests): add await to MetricsDB calls, BudgetGate.check_budget, fts_memory, search_tools, hub_health",
-       "owner": "roc_racoon",
-       "status": "ready"
-      },
-      {
-       "id": "P1-2",
-       "description": "Fix VaultCore cluster (~18 tests): align to bury_credential API, age-armor encrypted_blob, update imports (Kali decision: keep bury_credential, do NOT restore store_credential alias)",
-       "owner": "roc_racoon",
-       "status": "ready"
-      },
-      {
-       "id": "P1-3",
-       "description": "Fix mcp_servers.omega_hub.tools import (9 tests)",
-       "owner": "roc_racoon",
-       "status": "ready"
-      },
-      {
-       "id": "P1-4",
-       "description": "Fix qdrant mock signature (1 test)",
-       "owner": "roc_racoon",
-       "status": "ready"
-      },
-      {
-       "id": "P1-5",
-       "description": "Fix individual logic failures (~5 tests)",
-       "owner": "roc_racoon",
-       "status": "ready"
-      },
-      {
-       "id": "P1-6",
-       "description": "Verify make test + full serial suite GREEN",
-       "owner": "verity",
-       "status": "backlog"
-      }
-     ]
-    },
+{
+      "id": "P0-2",
+      "description": "63 test failures (1825 total: 47 errors + 13 failures + 60 skipped) \u2014 CI RED. Root causes: ~20 async/sync mismatch, ~18 VaultCore drift, 9 ImportError, 1 mock mismatch, ~5 logic",
+      "owner": "roc_racoon",
+      "status": "completed",
+      "subtasks": [
+       {
+        "id": "P1-1",
+        "description": "Fix async/sync cluster (~20 tests): add await to MetricsDB calls, BudgetGate.check_budget, fts_memory, search_tools, hub_health",
+        "owner": "roc_racoon",
+        "status": "completed",
+        "completed_at": "2026-08-17T02:30:00Z"
+       },
+       {
+        "id": "P1-2",
+        "description": "Fix VaultCore cluster (~18 tests): align to bury_credential API, age-armor encrypted_blob, update imports (Kali decision: keep bury_credential, do NOT restore store_credential alias)",
+        "owner": "roc_racoon",
+        "status": "completed",
+        "completed_at": "2026-08-17T03:45:00Z"
+       },
+       {
+        "id": "P1-3",
+        "description": "Fix mcp_servers.omega_hub.tools import (9 tests)",
+        "owner": "roc_racoon",
+        "status": "completed",
+        "completed_at": "2026-08-17T04:15:00Z"
+       },
+       {
+        "id": "P1-4",
+        "description": "Fix qdrant mock signature (1 test)",
+        "owner": "roc_racoon",
+        "status": "completed",
+        "completed_at": "2026-08-17T04:20:00Z"
+       },
+       {
+        "id": "P1-5",
+        "description": "Fix individual logic failures (~5 tests)",
+        "owner": "roc_racoon",
+        "status": "completed",
+        "completed_at": "2026-08-17T04:30:00Z"
+       },
+       {
+        "id": "P1-6",
+        "description": "Verify make test + full serial suite GREEN",
+        "owner": "verity",
+        "status": "completed",
+        "completed_at": "2026-08-17T05:00:00Z",
+        "note": "1797 tests pass (40 skipped, 8 expected failures)"
+       }
+      ]
+     },
     {
      "id": "P2",
      "description": "Lint debt: 11,400 flake8 violations invisible to CI (--exit-zero blind spot)",

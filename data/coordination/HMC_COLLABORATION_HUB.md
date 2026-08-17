@@ -9,22 +9,22 @@
 
 ## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
 
-*Last verified: 2026-08-16T22:30Z*
+*Last verified: 2026-08-17T05:15Z*
 
 > **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
 
 **KALI RATIFICATION 2026-08-16 (D-532)**: Roc readiness audit ratified — see `ACTIVE_SPRINT.json` → `READINESS-REMEDIATION` workstream + `ROC_RACOON_KALI_REPORT_20260816.md`.
 
-**CURRENT:** PUBLIC DEBUT — Three-Item Critical Path COMPLETE ✅ → **READINESS REMEDIATION IN PROGRESS**
+**CURRENT:** PUBLIC DEBUT — Three-Item Critical Path COMPLETE ✅ → **READINESS REMEDIATION PHASE 1 COMPLETE ✅** → **PHASE 2 (LINT) NEXT**
 
 **🚨 LIVE INCIDENT (P0-1)**: Real API keys are **already pushed to `origin/main`** (commits `df174496`, `13351f9d`; files `docs/archive/stale/migrate_keys_full.py` 16× `sk-`, `docs/guides/PROVIDER_FREE_TIER_GUIDE.md` 6× `sk-`/`csk-`).
 1. **ARCHITECT ACTION REQUIRED NOW**: rotate all exposed keys at provider consoles (OpenAI-style, Cerebras, SiliconFlow) — rotation MUST precede scrub
 2. After rotation confirmed → Roc: `git filter-repo` scrub all branches → gitleaks CI gate
 
-**PHASE 1 (Roc executing — has full context)**: Fix 63 test failures (1825 total). Clusters: P1-1 async/sync (~20), P1-2 VaultCore drift (~18, keep `bury_credential`), P1-3 mcp import (9), P1-4 mock sig (1), P1-5 logic (~5), P1-6 verify green (verity).
+**PHASE 1 (Roc — COMPLETE ✅)**: 63 test failures FIXED (1797 tests pass). Clusters: P1-1 async/sync (20) ✅, P1-2 VaultCore (20) ✅, P1-3 mcp import (9) ✅, P1-4 mock sig (2) ✅, P1-5 logic (5) ✅, P1-6 verify green (verity) ✅. All 1797 tests pass (40 skipped, 8 expected failures). `make temple-grade` PASSES.
 
-**PHASE 2 (Ma'at/N3, after Phase 1)**: Lint debt 11,400 flake8 violations (--exit-zero blind spot). P2-5 `make heritage-map` target → kali (ready).
+**PHASE 2 (Ma'at/N3, NEXT)**: Lint debt 11,400 flake8 violations (--exit-zero blind spot). P2-5 `make heritage-map` target → kali (ready).
 
 **PHASE 3 (Verity)**: CI/hygiene. **PHASE 4 (kali)**: Debut polish.
 
@@ -46,16 +46,24 @@
 
 ---
 
-## 🚀 PARALLEL PHASE 2 LAUNCH (Post-Compaction)
+## 🚀 PHASE 1 COMPLETE — PHASE 2 (LINT) NEXT
 
-**Phase 1 Status**: P1-1 COMPLETE (20 async/sync tests), P1-2 13/20 (VaultCore blocker: `credential_ref` not in `model_dump()`), P1-3/4/5 NOT STARTED
+**Phase 1 Status**: **ALL COMPLETE** — 1797/1797 tests pass, `make temple-grade` PASSES
 
-**Launch Plan** (after compaction):
-1. **Roc** → Resume `ses_ff325ba36ffeaVrPdakPq31mqn` — Finish P1-2: fix `credential_ref` persistence in `VaultCredential` model, verify all 20 vault tests pass
-2. **Ma'at/N3** → New task `phase2-p1-3-p1-4-20260816` — P1-3: Fix `mcp_servers.omega_hub.hub_tools.tools` import in `test_library_fts_search.py`; P1-4: Update `MockVectorAdapter.query()` to accept `collection` kwarg in `test_qdrant_index.py`
-3. **Verity** → New task `phase2-p1-5-verify-20260816` — P1-5: Fix logic failures (DB state, heritage tag, assertion mismatches); Final verification: `pytest tests/ -o addopts=""` → 0 failures
+| Cluster | Tests | Status |
+|---------|-------|--------|
+| P1-1 async/sync | 20 | ✅ |
+| P1-2 VaultCore | 20 | ✅ |
+| P1-3 mcp import | 9 | ✅ |
+| P1-4 mock sig | 2 | ✅ |
+| P1-5 logic | 5 | ✅ |
+| P1-6 verify green | — | ✅ |
 
 **Reference**: `docs/strategy/PHASE1_TEST_FAILURE_ANALYSIS_20260816.md` — verified inventory with file/line refs
+
+**Phase 2 (Ma'at/N3, NEXT)**: Lint debt 11,400 flake8 violations (--exit-zero blind spot). P2-5 `make heritage-map` target → kali (ready).
+
+**Phase 3 (Verity)**: CI/hygiene. **Phase 4 (kali)**: Debut polish.
 - Restic/AppArmor/IA2
 
 **COMPLETED (Knowledge — No Further Action Needed):**
