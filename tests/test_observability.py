@@ -11,7 +11,7 @@ def test_log_event():
     engine = ObservabilityEngine(enable_dataset_collection=False)
     engine.clear_log()
     tid = new_trace_id()
-    engine.log_event("test.event", tid, {"key": "value"})
+    engine.log_event_sync("test.event", tid, {"key": "value"})
     assert len(engine._event_log) == 1
     assert engine._event_log[0]["event"] == "test.event"
     assert engine._event_log[0]["data"]["key"] == "value"
@@ -60,10 +60,10 @@ def test_stats():
     engine = ObservabilityEngine(enable_dataset_collection=False)
     engine.clear_log()
     tid = new_trace_id()
-    engine.log_event("query.received", tid, {})
-    engine.log_event("response.delivered", tid, {})
+    engine.log_event_sync("query.received", tid, {})
+    engine.log_event_sync("response.delivered", tid, {})
 
-    stats = engine.stats()
+    stats = engine.stats_sync()
     assert stats["total_events"] == 2
     assert stats["event_counts"]["query.received"] == 1
     assert stats["event_counts"]["response.delivered"] == 1

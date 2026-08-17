@@ -54,7 +54,7 @@ class TierExecutionRecord:
     tier_name: str
     trace_id: str
     query: str
-    start_time: float
+    start_time: Optional[float] = None
     end_time: Optional[float] = None
     latency_ms: Optional[float] = None
     outcome: SearchOutcome = SearchOutcome.ERROR

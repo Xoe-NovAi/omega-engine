@@ -1,6 +1,6 @@
 proposals: []
 metadata:
   entity: roc_racoon
-  session_id: ses_012cc488affeSkorWFJxH9IO4s
-  model_used: longcat-2.0-free
-  last_session_end: '2026-08-10T22:39:06.090218+00:00'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  model_used: deepseek-v4-flash-free
+  last_session_end: '2026-08-16T21:41:25.427754+00:00'

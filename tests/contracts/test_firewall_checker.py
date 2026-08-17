@@ -38,8 +38,8 @@ class TestFirewallCheckerContracts:
         # Verify specific violations detected
         patterns_found = {v.pattern for v in result}
         assert any("config\\.wads" in p for p in patterns_found), "Should detect config.wads import"
-        assert any("Sekhmet" in p for p in patterns_found), "Should detect Sekhmet reference"
-        assert any("arcana_novai" in p for p in patterns_found), "Should detect WAD identifier"
+        assert any("Brigid" in p for p in patterns_found), "Should detect Brigid reference"
+        assert any("Saraswati" in p for p in patterns_found), "Should detect Saraswati reference"
 
     def test_firewall_checker_clean_file(self) -> None:
         """FirewallChecker.check_file returns List[FirewallViolation] for clean engine file."""

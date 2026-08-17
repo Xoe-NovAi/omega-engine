@@ -242,19 +242,15 @@ class TestVaultCoreRateLimit:
         The VaultCore must delegate rate limits to the circuit breaker.
         """
         from omega.vault import VaultCore
-        from omega.errors import ProviderRateLimitError
         import pytest
         
-        vault = VaultCore(auto_init=False)
+        vault = VaultCore()
         
         # Verify forbidden methods are eradicated
         assert not hasattr(vault, 'rotate'), "rotate() must not exist"
         assert not hasattr(vault, 'resolve_and_handle_429'), "resolve_and_handle_429() must not exist"
         assert not hasattr(vault, 'mark_rate_limited'), "mark_rate_limited() must not exist"
         
-        # Verify handle_rate_limit raises the correct error
-        with pytest.raises(ProviderRateLimitError) as exc_info:
-            vault.handle_rate_limit("test_provider")
-            
-        assert "test_provider" in str(exc_info.value)
-        assert "circuit breaker" in str(exc_info.value).lower()
+        # Verify VaultCore has NO rate limit handling methods (delegated to circuit breaker)
+        assert not hasattr(vault, 'handle_rate_limit'), "handle_rate_limit() must not exist - delegated to circuit breaker"
+        assert not hasattr(vault, 'check_rate_limit'), "check_rate_limit() must not exist - delegated to circuit breaker"

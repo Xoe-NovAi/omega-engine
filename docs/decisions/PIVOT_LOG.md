@@ -20,6 +20,7 @@
 | **D-529** | **Simplify OOMProtector to 2-Signal** — Remove cgroup pressure signal. Keep PSI + MemAvailable only. Carmack: "server-grade theater for single-user desktop." Lilith: "cgroup pressure duplicates PSI on bare metal." Saves ~1,200 lines. | ✅ RATIFIED |
 | **D-530** | **Context Gauge Uses tokens.total** — Never use session.tokens_input (overcounts ~87x). Use json_extract(data, '$.tokens.total') from message.data JSON blob. Token accounting is NOT additive. | ✅ LOCKED |
 | **D-531** | **Multi-Write Subagent Method Mandatory** — All subagent tasks must use phase-based execution with mandatory disk writes after each phase. Verified: 0% → 100% success rate. Update STRP protocol. | ✅ MANDATED |
+| **D-532** | **Mandate Compliance Measured Mechanically, Not Hand-Written** — Compliance % in OMEGA_ENGINE.md must be derived from `make check-mandate-compliance` (parses SOVEREIGN_MANDATES.md for denominator = 27, mechanically checks each mandate), never hand-edited. Root cause of 3-way SSOT contradiction (25/26/27 counts): hand-written compliance against different denominators. | ✅ RATIFIED |
 | D-275 | Institutionalize Wave 3 refinement meta-process | Active |
 | D-276 | Implement ContextProtocol pipeline (15K budget) | Active |
 | D-277 | Soul Hydration Pipeline — fix schema mismatch, add soul_utils.py, hydration sequence, soul-verify gate | ✅ COMPLETE (Phase I) |
@@ -749,3 +750,32 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 | **D-VOS-016** | **TRACKING_ARCHITECTURE.md Keep-List** — Added to PR-C keep-list (M27 constitution) | ✅ AMENDED |
 | **D-VOS-017** | **Log Carmack Mandate Violations** — SYSTEM_FAILURE_LOG.md created with M4/M23/M14/M26/M27/M8/false-M2 | ✅ LOGGED |
 | **D-VOS-018** | **VOS Hybrid Plan (Option C) Approved** — Keep DECISION_LEDGER + VISION_ANCHOR, retire 7 state.yaml + 7 briefs + realm_cli.py, add Hub enforcement | ✅ APPROVED |
+
+---
+
+## D-532: Mandate Compliance Measured Mechanically, Not Hand-Written (2026-08-16)
+
+**Decision**: Mandate compliance percentages MUST be derived from a mechanical check (`make check-mandate-compliance`), never hand-written. The compliance denominator is fixed at 27 (M1-M27, v3.8.0).
+
+**Context**: Web Claude audit r2 §4 found three disagreeing mandate counts across the SSOT docs:
+- `SOVEREIGN_MANDATES.md`: 27 laws (v3.8.0) — CORRECT
+- `AGENTS.md` line 10: 25 laws (v3.7.0) — STALE
+- `AGENTS.md` line 264: 26 mandates (M1-M27) — internally inconsistent (26 ≠ 27)
+
+This drove the 92% vs 84% vs 72% compliance contradictions in OMEGA_ENGINE.md — hand-written compliance % against different denominators. Fixed in T04 (AGENTS.md all 6 locations → 27 laws v3.8.0 / M1-M27).
+
+**Rationale**: The engine's sovereignty claims rest on verifiable mandate compliance (M13 Temple-Grade). A hand-written percentage is drift-prone and untestable. A mechanical meter is:
+1. **Deterministic** — same command, same result
+2. **Auditable** — each mandate maps to a specific check (grep, config parse, test)
+3. **Self-healing** — CI fails if the claimed % drifts from the measured %
+
+**Implementation**:
+- `scripts/check_mandate_compliance.py` — parses `SOVEREIGN_MANDATES.md` for the denominator (27 `### N. Title` sections), runs per-mandate mechanical checks, emits JSON `{"total": 27, "passed": N, "checks": [...]}`
+- `make check-mandate-compliance` — wraps the script
+- Mandates with no mechanical check yet are reported as `untested` (not silently counted as passing)
+
+**Mandate**: M13 (Temple-Grade), M27 (Tracking Integrity), M26 (Doc Standards)
+
+**Status**: ✅ RATIFIED
+
+*⬡ OMEGA ⬡ KALI ⬡ audit-remediation T05 ⬡ 2026-08-16*

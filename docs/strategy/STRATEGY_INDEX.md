@@ -52,6 +52,10 @@
 | `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | — | Subagent delegation |
 | `docs/strategy/SOVEREIGN_CONTINUITY_STRATEGY.md` | — | M15 continuity |
 | `docs/strategy/HERITAGE_VETTING_PIPELINE.md` | — | M14 heritage |
+| `docs/strategy/ROC_JIT_RAG_LOCAL_DISCOVERY_20260816.md` | C | **Roc Racoon's JIT RAG local discovery — critical architectural findings** |
+| `docs/strategy/RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md` | C | **Researcher's Qdrant migration blueprint** |
+| `docs/strategy/SONNET_STRATEGIC_REVIEW_20260816.md` | C | **Sonnet 4.6 strategic review — anticipatory forensics, federated gnosis** |
+| `docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md` | C | **L2.5 Synthesis Layer validation — F821 Crucible proof** |
 | `data/entities/grokster/workspace/IDENTITY_FLUIDITY_ARCHITECTURE_20260721.md` | E | Identity Fluidity architecture |
 | `data/entities/grokster/workspace/SPEC_IDENTITY_FLUIDITY_v1.md` | E | Identity Fluidity build spec |
 | `data/coordination/UNKNOWN_UNKNOWNS_AUDIT_20260721.md` | C | 12-gap analysis |
@@ -65,6 +69,19 @@
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
 | **`docs/sprints/current/AGENT_SPRINT_CARD.md`** | **D Gate** | **ACTIVE SPRINT** — one-page agent card |
 SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
+
+## LAYER 2B: ARCHITECTURE REFERENCE (Engine Internals)
+| Document | Purpose |
+|----------|---------|
+| `docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md` | **Core vector store: sqlite-vec unified fabric (7 per-model collections + FTS5 + RRF)** |
+| `docs/architecture/VECTOR_STORE_ADAPTER_PATTERN.md` | **IVectorStoreAdapter ABC — 3 implementations (SQLiteVecAdapter, MemoryVectorAdapter, QdrantAdapter)** |
+| `docs/architecture/ORACLE_DEEP_DIVE.md` | Oracle intent detection, Iris speculative decode, entity routing |
+| `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | 8-backend provider fabric, local-first chain, admission control |
+| `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` | Sovereignty flywheel, security model, threat vectors |
+| `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` | WAD structure, IWAD/PWAD, entity.yaml, guidance sets |
+| `docs/architecture/OVERSIGHT_HIERARCHY.md` | MaKaLi triad, 10 Nodes, Pillar Keepers, entity governance |
+| `docs/architecture/KNOWLEDGE_LIBRARY.md` | Ingestion pipeline, TriangulationVerifier, CAS, library domains |
+| `docs/architecture/MEMORY_STORE_DEEP_DIVE.md` | MemoryStore tiers, hybrid search, recall, ACP event stream |
 
 ## LAYER 3: SUPERSEDED BUT KEPT IN TREE (trail only — do not treat as master)
 | Document | Note |

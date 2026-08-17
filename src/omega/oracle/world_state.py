@@ -89,5 +89,11 @@ class WorldState:
         """Return list of active world sectors."""
         return list(self._sectors.keys())
 
+    def reset(self):
+        """Reset world state for testing."""
+        self._sectors.clear()
+        self._global_state.clear()
+        logger.debug("WorldState reset for testing")
+
 # Singleton instance for engine-wide access
 world_state = WorldState()

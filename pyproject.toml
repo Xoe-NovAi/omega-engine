@@ -79,7 +79,21 @@ dependencies = [
 [project.optional-dependencies]
 native = ["llama-cpp-python>=0.3.0,<0.4.0"]
 cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0"]
-dev = ["pytest>=9.0.0", "pytest-asyncio>=0.25.0", "pytest-cov>=6.0.0", "pytest-timeout>=2.4.0", "flake8>=7.0.0", "hypothesis>=6.100.0"]
+dev = [
+    "pytest>=9.0.0",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "pytest-timeout>=2.4.0",
+    "flake8>=7.0.0",
+    "hypothesis>=6.100.0",
+    "pytest-xdist>=3.5",
+    "pytest-testmon>=1.4",
+    "pytest-clarity",
+    "pytest-json-report",
+    "pytest-instafail",
+    "pytest-tldr",
+    "pytest-randomly",
+]
 all = ["omega[native,cli,dev]"]
 
 [project.scripts]
@@ -96,7 +110,22 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 anyio_mode = "auto"
-addopts = "--ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
+pythonpath = ["."]
+# Tier markers (2 tiers max - Carmack)
+markers = [
+    "unit: fast tests (<10s total), run by default",
+    "integration: slow tests (DB, network, full stack), opt-in",
+]
+
+# Default: fast tier only, parallel, stop on first failure, short traceback
+# NOTE: -m "not integration" REMOVED from addopts — it over-reached and made
+# test-all/test-cov/test-random silently skip integration tests.
+# Individual targets (test, test-prepush, test-clarity) pass -m explicitly.
+addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
+
+# testmon config (incremental re-runs) — enabled per-target via --testmon flag
+# testmon = true        # REMOVED: caused PytestConfigWarning (invalid global option)
+# testmon_store = ".testmondata"  # REMOVED: invalid config option
 
 [tool.coverage.run]
 source = ["src/omega"]
@@ -105,6 +134,9 @@ omit = [
     "src/omega/ingestion/*",
     "src/omega/library/*",
 ]
+
+[tool.coverage.report]
+fail_under = 80
 
 [tool.ruff]
 line-length = 100

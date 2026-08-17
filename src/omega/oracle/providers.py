@@ -34,10 +34,6 @@ def _get_cpu_optimizer():
 
 import anyio
 
-class ProviderAuthError(OmegaError):
-    """Raised when a provider's credentials cannot be resolved or are invalid."""
-    pass
-
 async def _resolve_google_api_key(trace_id: Optional[str] = None) -> str:
     """Resolve the Google API key from the sovereign vault.
 
@@ -90,6 +86,13 @@ async def _resolve_google_api_key(trace_id: Optional[str] = None) -> str:
     # get_credential() accessor in a follow-up.
     cred = vault._credentials.get("google:api_key")
     if cred is None or not getattr(cred, "encrypted_blob", None):
+        # Fallback: env var (local dev / CI / testing). Vault is primary
+        # (sovereign), env is the last-resort fallback — NOT a silent swallow
+        # (M9): we log the vault miss and only use env if explicitly present.
+        env_key = os.environ.get("GOOGLE_API_KEY")
+        if env_key:
+            logger.info("Vault has no 'google:api_key'; using GOOGLE_API_KEY env fallback")
+            return env_key
         logger.error("No usable 'google:api_key' credential found in vault")
         raise ProviderAuthError(
             provider="google",
@@ -113,7 +116,7 @@ class BaseProvider(ABC):
         return overrides.get(model_name, model_name)
 
     @abstractmethod
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
         pass
 
     @abstractmethod
@@ -133,10 +136,11 @@ class GoogleAIProvider(BaseProvider):
             logger.warning("Google provider unavailable: %s", e)
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, api_key: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
         # Explicit api_key wins; otherwise resolve from vault. A vault
         # failure now raises ProviderAuthError directly from the resolver
         # — no separate "if not key: raise" needed.
+        api_key = kwargs.get("api_key")
         key = api_key or await _resolve_google_api_key(trace_id=trace_id)
         
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -207,7 +211,7 @@ class LocallmsterProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:1234")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -270,7 +274,7 @@ class OllamaProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:11434")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -329,7 +333,7 @@ class MockProvider(BaseProvider):
     async def is_available(self) -> bool:
         return True
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, top_p: Optional[float] = None, **kwargs) -> Optional[str]:
         demo = os.environ.get("OMEGA_DEMO")
         if demo:
             return (

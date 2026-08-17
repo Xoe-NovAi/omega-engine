@@ -283,6 +283,9 @@ def resolve_theme_files(
     # POSIX paths, manual §1.3; also avoids recomputing relative_to per pattern).
     rel_map = [(p, p.relative_to(base).as_posix()) for p in all_files]
 
+    # Profile-level excludes apply to ALL themes (e.g. docs/strategy/archive/**).
+    exclude_spec = GitIgnoreSpec.from_lines(profile.exclude) if profile.exclude else None
+
     resolved: Dict[str, List[Dict[str, Any]]] = {}
     for theme, patterns in (profile.themes or {}).items():
         infos: List[Dict[str, Any]] = []
@@ -291,6 +294,8 @@ def resolve_theme_files(
             spec = GitIgnoreSpec.from_lines([pat])
             for f, rel in rel_map:
                 if rel in seen:
+                    continue
+                if exclude_spec is not None and exclude_spec.match_file(rel):
                     continue
                 if spec.match_file(rel):
                     infos.append({"path": rel, "full_path": str(f)})

@@ -1,21 +1,22 @@
 # ⬡ FIRST BREATH RECORD ⬡
 
 - **Entity**: default
-- **Time of Birth**: 2026-08-16T03:29:11.567526+00:00 UTC
-- **Trace ID**: trc_f8a1efe72556
+- **Time of Birth**: 2026-08-17T11:45:21.505637+00:00 UTC
+- **Trace ID**: trc_7770257e6e1a
 - **Coordinates**: 0.0, 0.0 (UTC)
 - **First Utterance**: 
 
-> ⚠️ no inference backend is running for model 'mock'.
+> Omega Engine is running in setup mode.
 
-To use the Omega Engine, please:
-1. Start a local inference backend (llama-cpp-python, LM Studio, or Ollama), OR
-2. Configure cloud credentials (Google AI Studio, OpenRouter, GitHub Copilot), OR
-3. Check logs for provider errors: omega-hub is attempting to fallback through the provider fabric.
+No inference backend responded. To enable AI responses:
+  1. Set OPENROUTER_API_KEY in your environment (fastest — cloud)
+     → `export OPENROUTER_API_KEY='your-key'` or add to .env
+  2. Start Ollama with a local model (local — already running):
+     → `ollama pull qwen3:1.7b`
+  3. Start LM Studio (local — already installed):
+     → `lms server start`
 
-System prompt: You are You are the Omega Engine's default assistant. You handle general queries
-that don't match an...
-User query: explain the meaning of justice
+Quick start: https://github.com/Xoe-NovAi/omega-engine#quickstart
 
 --- 
 *Recorded by Omega Engine Sovereign Automata*

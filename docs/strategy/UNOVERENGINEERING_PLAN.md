@@ -49,7 +49,7 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 
 | Metric | Before | After (Target) |
 |--------|--------|----------------|
-| Circuit breaker implementations | 8 classes (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`AsyncCircuitBreaker`) |
+| Circuit breaker implementations | 8 classes (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`HealthMonitor.get_breaker()` factory — EXISTS since D-376b; redirect callers) |
 | Handoff schemas | 3 (HandoffPacket x2 + HandoffState) | 1 (HandoffPacket) |
 | Soul distillers | Mostly deleted (scribe gone, miap.py pending) | 0 (all removed) |
 | HMC Hub size | 86 lines (already consolidated) | YAML + JSONL, ≤100 lines/week |
@@ -78,12 +78,14 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 ### §2.1 Delete Deprecated Breakers + Adopt interlock-cb
 **Status**: NOT STARTED
 **Current**: `search_circuit_breaker.py` (299 lines, 4 classes — DEPRECATED per C-6')
+**⚠️ CORRECTED 2026-08-16 (Web Claude audit r2 Q13)**: `HealthMonitor.get_breaker()` **already exists** as the SINGLE canonical factory since D-376b (2026-07-22). The consolidation task is **REDIRECT CALLERS to the existing factory**, NOT build a new factory. Update tracking tables to reflect "redirect-callers" not "build-factory".
 **Researcher recommendation**: `interlock-cb v2.1.3` (sync+async, sliding-window, slow-call detection, httpx2 transport)
 **Action**:
 1. Delete `search_circuit_breaker.py` (299 lines)
 2. Delete `ExperimentCircuitBreaker` in sandbox.py (~50 lines)
 3. Install `interlock-cb` and verify AnyIO trio compatibility
 4. If interlock-cb fails trio verification: keep `AsyncCircuitBreaker` as canonical, redirect clones to `get_breaker()`
+5. **Redirect all 6 clone callers to `HealthMonitor.get_breaker()`** (canonical factory — see `src/omega/oracle/health_monitor.py`)
 **Keep**: `AsyncCircuitBreaker` (health_monitor.py, 944 lines) as fallback
 **Do NOT**: Use pybreaker (sync-only, M1 violation)
 **Effort**: 2h | **Net Δ**: -349 lines
@@ -199,7 +201,7 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 - `budget_guard.py` (37 refs) — M12/M21 quota enforcement
 - `youtube_worker.py` (24 refs) — worker queue
 - `memory/providers.py` (21 refs) — vector adapters
-- `hivemind_redis.py` (113 lines) — pub/sub (NOT imported anywhere — dead code)
+- `hivemind_redis.py` (113 lines) — pub/sub (⚠️ CORRECTED 2026-08-16: NOT dead code — actively imported by `hub_tools/tools.py` `hivemind_redis_publish/subscribe`, `src/omega/coordination/watchdog.py:228`, `src/omega/research/hivemind_bridge.py:336`, and covered by `tests/test_hivemind_redis.py`. Earlier "NOT imported anywhere" claim was stale — verify before delete per M4.)
 
 **Researcher recommendation**: SQLite + Honker for single-node (wafris.org precedent; Honker 2957 stars)
 - Honker (russellromney/honker): SQLite extension adding Postgres-style NOTIFY/LISTEN, task queues, event streams, cron scheduling — without client polling or a daemon
@@ -271,6 +273,7 @@ Gates on existing systems, not new infrastructure:
 |----------|------|--------|
 | P0 | Install + verify interlock-cb | 1h |
 | P0 | Delete search_circuit_breaker.py + sandbox breaker | 1h |
+| P0 | Redirect 6 clone callers to `HealthMonitor.get_breaker()` (factory EXISTS since D-376b — audit r2 Q13) | 1h |
 | P0 | Simplify soul_validator.py | 2h |
 | P0 | Install structlog + prometheus_client | 30min |
 
@@ -311,13 +314,13 @@ Gates on existing systems, not new infrastructure:
 
 | Metric | Before | After (Target) |
 |--------|--------|----------------|
-| Breaker classes | 8 (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`AsyncCircuitBreaker`) or `interlock-cb` |
+| Breaker classes | 8 (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`HealthMonitor.get_breaker()` — EXISTS since D-376b; redirect callers) or `interlock-cb` |
 | Handoff schemas | 3 | 1 (HandoffPacket) |
 | Distillers | Mostly deleted (miap.py pending) | 0 |
 | HMC Hub size | 86 lines | YAML + JSONL, ≤100 lines/week |
 | Memory tiers | 5 | 3 (sqlite-vec + FTS5 + file archive) |
 | Recall tier | 786 lines | Deleted |
-| Redis dependencies | 5 files (memory_store, budget_guard, youtube_worker, providers, hivemind_redis) | 0 (replaced by Honker/SQLite) |
+| Redis dependencies | 5 files (memory_store, budget_guard, youtube_worker, providers, hivemind_redis) | 0 (replaced by Honker/SQLite) — ⚠️ hivemind_redis.py is LIVE (hub_tools/watchdog/bridge), migrate before delete |
 | Custom lines deleted | — | **-4,000+** |
 | Community libraries adopted | — | **5-6** (structlog, prometheus_client, interlock-cb, optionally stamina, Keyblind, Authy, Agent Vault) |
 | VaultCore custom code | ~2,000 lines | **~500 lines** (crypto kept, rest → thin adapter) |

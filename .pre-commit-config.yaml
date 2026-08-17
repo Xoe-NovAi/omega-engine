@@ -92,6 +92,12 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: omega-check-asyncio-import
+        name: Check M1 companion (no asyncio in anyio.run modules)
+        entry: make check-asyncio-import
+        language: system
+        pass_filenames: false
+        always_run: true
       - id: omega-check-m9-error-integrity
         name: Check M9 Error Integrity (no bare except)
         entry: make check-m9-error-integrity

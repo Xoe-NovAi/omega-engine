@@ -9,7 +9,6 @@ import time
 import uuid
 import anyio
 import logging
-import pybreaker
 from omega.errors import OmegaError
 from typing import List, Optional, AsyncGenerator, Dict, Any, TYPE_CHECKING
 
@@ -20,9 +19,9 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 from .ingestion_types import (
-    IngestionConfig, IngestionResult, ExtractionSchema, 
-    CircuitBreakerState, IngestionError, SovereigntyError, 
-    ProviderServerError, TransportError, SchemaError,
+    IngestionConfig, IngestionResult, ExtractionSchema,
+    CircuitBreakerState, IngestionError, SovereigntyError,
+    ProviderServerError, TransportError,
     BudgetExceededError, SentryFailure
 )
 from .extractors import BaseExtractor, GoogleExtractor
@@ -268,7 +267,6 @@ class IngestionPipeline:
             # 4. Validation Gate (Standard Quality Check)
             if not extraction.technical_facts and not extraction.personality_patterns:
                 print(f"⚠️  Extraction empty for {source_name}. Marking as corrupt.")
-                self.resilience.breaker.record_failure(SchemaError("Extraction empty"))
                 return None
             
             latency = time.time() - t0
@@ -294,8 +292,7 @@ class IngestionPipeline:
             
             # Update budget based on actual usage (approximate)
             self.resilience.update_spend(tokens=len(text)//4 + 1000)
-            self.resilience.breaker.record_success()
-            
+
             print(f"✅ Persisted to session {session_id}")
             print(f"Items: {sum(len(v) if isinstance(v, list) else 0 for v in extraction.to_dict().values())}")
             print(f"Latency: {latency:.2f}s")

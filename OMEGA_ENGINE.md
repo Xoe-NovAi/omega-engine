@@ -80,9 +80,14 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 | **Entity Registry** | `src/omega/oracle/entity_registry.py` | ✅ Operational | YAML-backed entity CRUD, auto-scaffolds sovereign workspaces |
 | **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock). N3 fixed graceful fallback + path/spec resolution |
 | **Memory Store** | `src/omega/memory_store.py` | ✅ Operational | Hot/Warm/Cold/Temp tiers, hybrid FTS5+vector search |
-| **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | ✅ Strike 10 COMPLETE | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + vec0 + SQL edges). PRAGMA SSOT converged: cache_size 32MB, wal_autocheckpoint 500 |
+| **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | ✅ Strike 10 COMPLETE | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + 7 per-model vec0 collections + SQL edges). PRAGMA SSOT converged: cache_size 32MB, wal_autocheckpoint 500 |
+| **Vector Adapter Pattern** | `src/omega/memory/vector_adapters.py` | ✅ Operational | `IVectorStoreAdapter` ABC with 3 implementations: `SQLiteVecAdapter` (core), `MemoryVectorAdapter` (fallback), `QdrantAdapter` (deprecated heritage ref) |
 
-> **Vector Store Decision (UO-4)**: `sqlite-vec` is the **SINGLE Core store** for the engine. It is native on SQLite (FTS5 + vec0 + SQL edges) and powers GraphRAG natively. **Qdrant** (with TurboQuant BITS4) is an **optional WAD adapter only** — used by stacks that opt into external vector infrastructure. No new core dependency on Qdrant/FAISS/PostgreSQL is permitted.
+> **Vector Store Decision (UO-4)**: `sqlite-vec` is the **SINGLE Core store** for the engine. It is native on SQLite (FTS5 + 7 per-model vec0 collections + SQL edges) and powers GraphRAG natively. **Qdrant** is an **optional WAD adapter only** — implements `IVectorStoreAdapter` for stacks that opt into external vector infrastructure. No new core dependency on Qdrant/FAISS/PostgreSQL is permitted.
+>
+> **Current Unified Fabric**: 7 per-model vec0 collections (`omega_vec_gemma_768`, `omega_vec_nomic_768`, `omega_vec_nomic_512`, `omega_vec_nomic_256`, `omega_vec_minilm_384`, `omega_vec_static_64`, `omega_vec_library_256`) + FTS5 BM25 + RRF fusion (k=60) via `HybridSearchEngine`. All working in production.
+>
+> **Qdrant Migration Strategy**: Implement `QdrantAdapter` as a **swappable backend** implementing `IVectorStoreAdapter` (not a replacement). Add config toggle in `config/jit_rag.yaml`: `vector_store: {type: qdrant|sqlite_vec}`. Migrate primary collection (`omega_vec_gemma_768`) first, parity test per collection (≥95% recall), keep SQLite-vec as hot standby for 30 days.
 | **Config Resolver** | `src/omega/governance/config_resolver.py` | ✅ Phase II COMPLETE | Pure Path constants, lazy `get_active_iwad()`, single source of truth for all WAD paths |
 | **Hybrid Search** | `src/omega/memory/hybrid_search.py` | ✅ D-283 Phase 1 COMPLETE | RRF k=60 fusion of FTS5 + vector results. 20 contract tests + 8 RRF math vectors |
 | **Recall Store** | `src/omega/memory/recall.py` | 🟡 D-283 Phase 2 DESIGN COMPLETE | Quality-weighted warm memory tier with power-law decay. 27/29 tests pass |

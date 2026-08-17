@@ -710,9 +710,9 @@ class BudgetGate:
         self._daily_spend_cache.clear()
         return cost
     
-    def get_status(self) -> Dict[str, Any]:
-        """Get current budget status."""
-        spend = self._get_today_spend()
+    async def get_status(self) -> Dict[str, Any]:
+        """Get current budget status. [M1 AnyIO]"""
+        spend = await self._get_today_spend()
         return {
             "daily_budget_usd": self._daily_budget,
             "current_spend_usd": spend,
@@ -1054,6 +1054,22 @@ class ObservabilityEngine:
                     parent_trace_id=parent_trace_id,
                 )
             )
+        except anyio.NoEventLoopError:
+            # Called from within an event-loop thread (e.g. a sync helper
+            # invoked inside an async test). Append the event directly so
+            # it is never silently dropped.
+            event = {
+                "_zoneid": ZONEID_TRACE,
+                "event": event_type,
+                "trace_id": trace_id,
+                "parent_trace_id": parent_trace_id,
+                "session_id": self._session_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "data": data,
+            }
+            self._event_log.append(event)
+            self._persist_event(event)
+            logger.debug(f"[{trace_id}] {event_type}: {json.dumps(data, default=str)[:200]}")
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB event recording failed: %s", e)
 

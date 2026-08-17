@@ -1,22 +1,18 @@
 # Test fixture: Contains WAD-specific imports/references for firewall testing
 # This file SHOULD trigger firewall violations
 
-from config.wads.arcana_novai import entities  # Forbidden: config.wads import
-import config.wads.doom_universe  # Forbidden: config.wads import
+from config.wads.forbidden_wad import entities  # Forbidden: config.wads import
+import config.wads.another_forbidden_wad  # Forbidden: config.wads import
 
-# Forbidden WAD entity references
-SEKHMET = "Sekhmet"
+# Forbidden WAD entity references (NOT in CORE_ENGINE_PATTERNS)
 BRIGID = "Brigid"
-PROMETHEUS = "Prometheus"
 SARASWATI = "Saraswati"
 INANNA = "Inanna"
 ERESHKIGAL = "Ereshkigal"
 LUCIFER = "Lucifer"
 HECATE = "Hecate"
 ANUBIS = "Anubis"
-KALI = "Kali"
 
-# Forbidden WAD identifiers
-WAD_ID = "arcana_novai"
-WAD_ID_2 = "doom_universe"
-WAD_ID_3 = "torment_stack"
+# Forbidden WAD identifiers (NOT in CORE_ENGINE_PATTERNS)
+WAD_ID = "forbidden_wad_name"
+WAD_ID_2 = "another_forbidden_wad"

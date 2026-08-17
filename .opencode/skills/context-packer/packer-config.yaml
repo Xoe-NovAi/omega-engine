@@ -395,6 +395,7 @@ profiles:
     - tests/test_orchestrator.py
     exclude:
     - '**/__pycache__/**'
+    - 'docs/strategy/archive/**'
     themes:
       core_logic:
       - src/omega/oracle/orchestrator.py
@@ -889,3 +890,136 @@ profiles:
       - OMEGA_ENGINE.md
       roadmap:
       - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+
+  hybrid-benchmark-strategy:
+    description: Hybrid Local/Cloud Benchmarking Strategy — Carmack-validated shed, routing table, Pareto frontiers
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 15
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - mandates
+      - strategy
+      - benchmark
+      - routing
+    token_budget:
+      total: 320000
+      per_bundle: 60000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-08-16"
+    include:
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - AGENTS.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+    - docs/strategy/HIVEMIND_PROTOCOL.md
+    - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+    - config/routing_table.yaml
+    - config/cloud_pricing.yaml
+    - scripts/benchmark_hybrid.py
+    - src/omega/routing/table.py
+    - src/omega/benchmarks/schema.py
+    - docs/benchmarks/hybrid_week1.md
+    - src/omega/oracle/model_gateway.py
+    - src/omega/oracle/providers.py
+    - src/omega/oracle/provider_selector.py
+    - src/omega/oracle/cascade_router.py
+    - src/omega/oracle/health_monitor.py
+    - src/omega/oracle/resource_guard.py
+    - src/omega/oracle/oom_protector.py
+    - src/omega/oracle/admission_controller.py
+    - src/omega/memory/sqlite_vec_adapter.py
+    - src/omega/memory/vector_adapters.py
+    - src/omega/memory/hybrid_search.py
+    - src/omega/memory/embeddings.py
+    - src/omega/memory/fts_index.py
+    - src/omega/memory/providers.py
+    - src/omega/observability/metrics_db.py
+    - src/omega/observability/sovereignty.py
+    - src/omega/observability/token_ledger.py
+    - docs/strategy/RESEARCHER_JIT_RAG_CONFIG_DESIGN_20260816.md
+    - docs/strategy/ROC_JIT_RAG_LOCAL_DISCOVERY_20260816.md
+    - docs/strategy/RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md
+    - docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md
+    - docs/strategy/SONNET_STRATEGIC_REVIEW_20260816.md
+    - data/coordination/ROC_LEGACY_BENCHMARK_MINING_20260816.md
+    - docs/research/R_LOCAL_MODEL_BENCHMARKING_2026_BEST_PRACTICES.md
+    - docs/research/R_LOCAL_MODEL_BENCHMARKING_2026_BEST_PRACTICES.md
+    - docs/strategy/UNOVERENGINEERING_PLAN.md
+    - docs/decisions/PIVOT_LOG.md
+    - config/providers.yaml
+    - config/models.yaml
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      - OMEGA_ENGINE.md
+      - AGENTS.md
+      strategy_core:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      benchmark_infrastructure:
+      - config/routing_table.yaml
+      - config/cloud_pricing.yaml
+      - scripts/benchmark_hybrid.py
+      - src/omega/routing/table.py
+      - src/omega/benchmarks/schema.py
+      - docs/benchmarks/hybrid_week1.md
+      oracle_routing:
+      - src/omega/oracle/model_gateway.py
+      - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_selector.py
+      - src/omega/oracle/cascade_router.py
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/resource_guard.py
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/admission_controller.py
+      memory_layer:
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/providers.py
+      observability:
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/observability/token_ledger.py
+      jit_rag_research:
+      - docs/strategy/RESEARCHER_JIT_RAG_CONFIG_DESIGN_20260816.md
+      - docs/strategy/ROC_JIT_RAG_LOCAL_DISCOVERY_20260816.md
+      - docs/strategy/RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md
+      synthesis_validation:
+      - docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md
+      - docs/strategy/SONNET_STRATEGIC_REVIEW_20260816.md
+      legacy_mining:
+      - data/coordination/ROC_LEGACY_BENCHMARK_MINING_20260816.md
+      benchmark_research:
+      - docs/research/R_LOCAL_MODEL_BENCHMARKING_2026_BEST_PRACTICES.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      decisions:
+      - docs/decisions/PIVOT_LOG.md
+      config:
+      - config/providers.yaml
+      - config/models.yaml

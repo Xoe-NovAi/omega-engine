@@ -43,6 +43,19 @@
 - Cross-pollination (R-31)
 - Community installer/QUICKSTART/CONTRIBUTING/CI (P4 partial)
 - NL-1 NotebookLM pipeline
+
+---
+
+## 🚀 PARALLEL PHASE 2 LAUNCH (Post-Compaction)
+
+**Phase 1 Status**: P1-1 COMPLETE (20 async/sync tests), P1-2 13/20 (VaultCore blocker: `credential_ref` not in `model_dump()`), P1-3/4/5 NOT STARTED
+
+**Launch Plan** (after compaction):
+1. **Roc** → Resume `ses_ff325ba36ffeaVrPdakPq31mqn` — Finish P1-2: fix `credential_ref` persistence in `VaultCredential` model, verify all 20 vault tests pass
+2. **Ma'at/N3** → New task `phase2-p1-3-p1-4-20260816` — P1-3: Fix `mcp_servers.omega_hub.hub_tools.tools` import in `test_library_fts_search.py`; P1-4: Update `MockVectorAdapter.query()` to accept `collection` kwarg in `test_qdrant_index.py`
+3. **Verity** → New task `phase2-p1-5-verify-20260816` — P1-5: Fix logic failures (DB state, heritage tag, assertion mismatches); Final verification: `pytest tests/ -o addopts=""` → 0 failures
+
+**Reference**: `docs/strategy/PHASE1_TEST_FAILURE_ANALYSIS_20260816.md` — verified inventory with file/line refs
 - Restic/AppArmor/IA2
 
 **COMPLETED (Knowledge — No Further Action Needed):**

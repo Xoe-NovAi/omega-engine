@@ -52,6 +52,7 @@ Key components:
 - **Omega Hub** (`mcp_servers/omega_hub/`): Modularized cross-CLI awareness server — 5 modules (state, background, gateway, middleware, tools). All agents post/read shared context via Hivemind protocol.
 - **Hivemind Protocol**: 6 MCP tools (post_context, get_awareness, heartbeat, get_live_feed, get_workspace_lock, acknowledge) for cross-agent coordination, workspace locks, and live feeds. See `docs/strategy/HIVEMIND_PROTOCOL.md`.
 - **Verity** (`verity.md`): Sprint C unified agent merging Quality (compliance audit) + Scribe (L1→L2→L3 gnosis distillation). Reports to Kali.
+- **Vector Store Adapter Pattern** (`src/omega/memory/vector_adapters.py`): `IVectorStoreAdapter` ABC with 3 implementations — `SQLiteVecAdapter` (core unified fabric), `MemoryVectorAdapter` (sovereign fallback), `QdrantAdapter` (deprecated heritage reference). **Current fabric**: 7 per-model vec0 collections + FTS5 BM25 + RRF fusion (k=60) via `HybridSearchEngine`.
 
 ## §4 THE 10 PILLAR KEEPERS
 
@@ -121,12 +122,14 @@ Every interaction generates:
 | Container | Image | Purpose | Limit | CPUs |
 |-----------|-------|---------|-------|------|
 | redis | redis:7-alpine | Session/cache | 256M | none |
-| qdrant | qdrant/qdrant | Vector store | 1G | none |
+| **qdrant** | qdrant/qdrant | **Optional WAD adapter** (not core) | 6G | 4 cores (80%) |
 | postgres | pgvector-pg17 | SQL persistence | 512M | none |
 | caddy | caddy:alpine | Reverse proxy | 64M | none |
 | iris | omega-iris | Voice assistant container | 512M | pinned 4,6 |
 
 All containers run rootless (user 1000) using the Sovereign Permission Protocol (UserNS=keep-id + User=1000).
+
+> **Qdrant Status**: Deployed as optional WAD adapter only. Core engine uses `SQLiteVecAdapter` (sqlite-vec unified fabric). Qdrant implements `IVectorStoreAdapter` for stacks opting into external vector infrastructure. Migration strategy: adapter swap with config toggle (`config/jit_rag.yaml`), not wholesale replacement.
 
 ## §9 HARDWARE TARGET
 

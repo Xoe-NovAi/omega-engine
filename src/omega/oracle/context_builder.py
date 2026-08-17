@@ -241,6 +241,7 @@ class ContextBuilder:
         session_id: str,
         token_limit: int = DEFAULT_TOKEN_LIMIT,
         degradation_level: Optional[str] = None,
+        query: Optional[str] = None,
     ) -> str:
         """Fetch recent memory and current world state for an entity/session.
         
@@ -279,7 +280,7 @@ class ContextBuilder:
             
             # 3. Fetch L3 gnosis principles (Selective Hydration)
             # [id-soft: vet-046] BSP Culling — top-K principles only
-            gnosis_block = await self._build_gnosis_block(entity_name)
+            gnosis_block = await self._build_gnosis_block(entity_name, query)
             
             # 4. Fetch and format world state
             world_block = self._format_world_state()
@@ -294,7 +295,7 @@ class ContextBuilder:
             logger.warning(f"Failed to build context for {entity_name}/{session_id}: {e}")
             return ""
 
-    async def _build_gnosis_block(self, entity_name: str) -> str:
+    async def _build_gnosis_block(self, entity_name: str, query: Optional[str] = None) -> str:
         """Build the L3 gnosis principles block via Selective Hydration.
 
         Retrieves relevant L3 principles for the entity and formats them
@@ -308,10 +309,10 @@ class ContextBuilder:
             return ""
 
         try:
-            # Use the entity's domain/role as the hydration query
-            # to get generally relevant principles.
+            # Use the actual user query for semantic retrieval
+            # to get query-relevant L3 principles.
             principles = await self._selective_hydration.hydrate(
-                query=entity_name,
+                query=query if query else entity_name,
                 entity_name=entity_name,
             )
             if not principles:

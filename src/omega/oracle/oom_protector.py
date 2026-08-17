@@ -15,10 +15,13 @@ from enum import Enum
 from typing import Optional
 
 import anyio
+import logging
 
 from .psi_monitor import PSIMonitor, get_psi_some_avg60, get_psi_full_avg10
 from .memavailable import MemAvailableReader, get_memavailable_gb
 from .cgroup_pressure import CgroupPressureMonitor, read_cgroup_pressure, cgroup_pressure_available
+
+logger = logging.getLogger(__name__)
 
 
 class AdmissionResult(Enum):
@@ -273,21 +276,38 @@ async def quick_check_available(required_gb: float) -> bool:
 
 def quick_check_sync() -> AdmissionResult:
     """Synchronous one-shot check (uses sync readers)"""
-    from .psi_monitor import PSIMonitor
+    from .psi_monitor import PSIMonitor, read_memory_pressure_sync, psi_available
     from .memavailable import get_memavailable_gb_sync
     from .cgroup_pressure import read_cgroup_pressure_sync, cgroup_pressure_available
     
     cfg = OOMProtectorConfig()
     
     # PSI
-    psi = PSIMonitor()
-    psi_some_avg60 = 0.0
-    psi_full_avg10 = 0.0
-    try:
-        psi_some_avg60 = anyio.run(psi.get_pressure("some", "avg60"))
-        psi_full_avg10 = anyio.run(psi.get_pressure("full", "avg10"))
-    except Exception:
-        pass
+    # [FIX P1-1 / audit r2 §3] On PSI read failure we must NOT silently treat
+    # PSI as 0% (least cautious interpretation — could admit while thrashing).
+    # Unknown PSI => THROTTLE (fail-closed). Log the failure per M9 (typed,
+    # traceable — no silent swallow).
+    # [FIX P1-1 / audit r2 §3 companion] Previously used
+    # `anyio.run(psi.get_pressure(...))` — but get_pressure() returns a
+    # coroutine, so anyio.run() raised "'coroutine' object is not callable",
+    # which the bare `except Exception: pass` silently swallowed. PSI-based
+    # DENY_THRASHING/THROTTLE therefore NEVER fired in the sync path. Use the
+    # proper sync reader (read_memory_pressure_sync) which returns fractions.
+    psi_some_avg60: Optional[float] = None
+    psi_full_avg10: Optional[float] = None
+    psi_read_failed = False
+    if psi_available():
+        try:
+            psi_some_avg60 = read_memory_pressure_sync("some", "avg60")
+            psi_full_avg10 = read_memory_pressure_sync("full", "avg10")
+        except Exception as e:
+            psi_read_failed = True
+            logger.warning("PSI read failed in quick_check_sync — treating pressure as unknown (THROTTLE): %s", e)
+    else:
+        # PSI genuinely unavailable on this kernel/container — cannot be
+        # confused with a healthy 0% reading. Fail closed with THROTTLE.
+        psi_read_failed = True
+        logger.warning("PSI unavailable (/proc/pressure/memory missing) in quick_check_sync — THROTTLE")
     
     # MemAvailable
     memavailable_gb = get_memavailable_gb_sync()
@@ -302,12 +322,17 @@ def quick_check_sync() -> AdmissionResult:
     # Fuse
     if memavailable_gb < cfg.min_reserve_gb:
         return AdmissionResult.DENY_OOM_RISK
-    if psi_full_avg10 > cfg.psi_full_critical:
-        return AdmissionResult.DENY_THRASHING
+    # [FIX P1-1] Unknown PSI is NOT healthy — fail closed with THROTTLE.
+    # Only enforce PSI thresholds when PSI data is actually available.
+    if not psi_read_failed:
+        if psi_full_avg10 and psi_full_avg10 > cfg.psi_full_critical:
+            return AdmissionResult.DENY_THRASHING
+        if psi_some_avg60 and psi_some_avg60 > cfg.psi_some_warning:
+            return AdmissionResult.THROTTLE
+    else:
+        return AdmissionResult.THROTTLE
     if cgroup_full_avg10 and cgroup_full_avg10 > cfg.cgroup_full_critical:
         return AdmissionResult.DENY_THRASHING
-    if psi_some_avg60 > cfg.psi_some_warning:
-        return AdmissionResult.THROTTLE
     if cgroup_some_avg60 and cgroup_some_avg60 > cfg.cgroup_some_warning:
         return AdmissionResult.THROTTLE
     if memavailable_gb < cfg.throttle_gb:

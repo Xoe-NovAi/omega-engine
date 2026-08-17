@@ -465,6 +465,27 @@ class AsyncCircuitBreaker:
         
         return False
     
+    def can_proceed(self) -> bool:
+        """Check if a request may proceed through this breaker (non-raising).
+        
+        Mirrors the admission logic in ``call()`` but returns a boolean
+        instead of raising ``CircuitOpenError``. Used by callers that want
+        to skip work gracefully (e.g., ingestion pre-flight checks) rather
+        than catch an exception.
+        
+        Returns:
+            True if the breaker is CLOSED/DEGRADED, OPEN-but-ready-for-HALF_OPEN
+            probe, or HALF_OPEN within its probe budget. False if the breaker
+            is OPEN and not yet eligible for a probe.
+        """
+        if self.state in (CircuitState.CLOSED, CircuitState.DEGRADED):
+            return True
+        if self.state == CircuitState.OPEN:
+            return self._should_transition_to_half_open()
+        if self.state == CircuitState.HALF_OPEN:
+            return self.half_open_requests < self.half_open_max_requests
+        return False
+    
     def get_429_status(self) -> Dict[str, Any]:
         """Get current 429 classification status for observability.
         

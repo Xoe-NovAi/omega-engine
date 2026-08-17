@@ -11,7 +11,7 @@ class MockVectorAdapter(IVectorStoreAdapter):
     async def upsert(self, entity_name, vector, metadata, id=None):
         return "mock_id"
     
-    async def query(self, entity_name, vector, limit=10, filter=None):
+    async def query(self, entity_name, vector, limit=10, filter=None, collection=None):
         return self.mock_results
     
     async def delete(self, entity_name, ids):

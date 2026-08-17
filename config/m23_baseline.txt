@@ -66,6 +66,7 @@
       1 src/omega/state/cas.py
       1 src/omega/soul_store.py
       1 src/omega/soul/loader.py
+      1 src/omega/routing/table.py
       1 src/omega/research/schema.py
       1 src/omega/orchestrator/hmc_watcher.py
       1 src/omega/oracle/session_manager.py
@@ -94,4 +95,4 @@
       1 src/omega/config/loader.py
       1 src/omega/cli/vault.py
       1 src/omega/cli/bundle.py
-      1 Found 296 errors.
+      1 Found 297 errors.

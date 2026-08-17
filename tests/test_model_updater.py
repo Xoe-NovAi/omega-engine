@@ -41,7 +41,7 @@ def mock_model_gateway():
 @pytest.fixture
 def mock_observability():
     obs = MagicMock()
-    obs.log_event = MagicMock()
+    obs.log_event = AsyncMock()
     return obs
 
 
@@ -234,6 +234,6 @@ async def test_parse_provider_models_opencode():
             {"id": "deepseek-v4-flash", "context_length": 1000000, "pricing": {}},
         ]
     }
-    models = ModelUpdaterWorker._parse_provider_models("opencode", data)
+    models = ModelUpdaterWorker._parse_provider_models("opencode-zen", data)
     assert len(models) == 1
     assert models[0]["name"] == "deepseek-v4-flash"

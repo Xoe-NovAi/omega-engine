@@ -44,10 +44,17 @@ def test_check_mandates_target_exists():
     assert result.returncode == 0, (
         f"Make target 'check-mandates' not found: {result.stderr}"
     )
-    # Should reference all 5 sub-targets
-    for target in MAKE_CHECK_TARGETS:
-        assert target in result.stdout, (
-            f"'check-mandates' missing sub-target '{target}'"
+    # Should run all 5 sub-targets (verify by their echo messages in dry-run output)
+    expected_echoes = [
+        "Checking M1 (AnyIO compliance)",
+        "Checking M9 (Error integrity)",
+        "Checking M8 (Zero telemetry)",
+        "Checking M7 (Local-first strategy",
+        "Checking M23 (Failure integrity)",
+    ]
+    for echo in expected_echoes:
+        assert echo in result.stdout, (
+            f"'check-mandates' missing sub-target echo '{echo}' in stdout:\n{result.stdout}"
         )
 
 

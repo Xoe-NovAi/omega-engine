@@ -3,10 +3,14 @@ import subprocess
 import os
 import shutil
 from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
 # 🔱 Omega Engine — Search Tool Verification Suite
 # AP: AP-SEARCH-VERIFY-v1.0.0
 # ICS: [NODE: VERIFIER | ARCHETYPE: SENTINEL | CONTEXT: SEARCH-PROTOCOL-GATE]
+
+# All tests in this module hit real external services (Firecrawl, Exa, Google)
+pytestmark = pytest.mark.integration
 
 def run_command(cmd):
     """Helper to run shell commands and return output."""
@@ -17,7 +21,6 @@ def has_firecrawl_cli():
     """Check if Firecrawl CLI is available."""
     return shutil.which("firecrawl") is not None
 
-@pytest.mark.skipif(os.getenv("CI") == "true", reason="Network tests skipped in CI")
 @pytest.mark.skipif(not has_firecrawl_cli(), reason="Firecrawl CLI not installed — integration test only")
 def test_firecrawl_connectivity():
     """
@@ -69,83 +72,110 @@ def test_cache_growth():
     if not files:
         print("\n[WARN] .firecrawl/ cache is currently empty.")
 
-def test_credit_exhaustion_handling():
+@pytest.mark.anyio
+async def test_credit_exhaustion_handling():
     """
     Verify the protocol's response to 402 (Payment Required).
     This is a logic test: if tool returns 402, does the system suggest Tier 1/3?
     """
-    import asyncio
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import AsyncMock, patch, MagicMock
     from omega.oracle.model_gateway import GenerateResult
     from omega.oracle.sovereign_search_service import SovereignSearchService
+    from omega.oracle.search_router import SearchIntent, TIER_FIRECRAWL
+    from omega.oracle.skeptical_verifier import VerificationResult
 
-    async def run_test():
-        # Setup service with mocked dependencies to avoid DB connections
-        mock_gateway = AsyncMock()
-        mock_gateway.generate = AsyncMock(
-            return_value=GenerateResult(text="NEUTRAL", provider_name="mock", is_cloud=False)
-        )
-        service = SovereignSearchService(
-            memory_store=AsyncMock(),
-            indexer=AsyncMock(),
-            model_gateway=mock_gateway
-        )
+    # Setup service with mocked dependencies to avoid DB connections
+    mock_gateway = AsyncMock()
+    mock_gateway.generate = AsyncMock(
+        return_value=GenerateResult(text="NEUTRAL", provider_name="mock", is_cloud=False)
+    )
+    # Mock health_monitor to avoid coroutine in provider_health
+    mock_health_monitor = MagicMock()
+    mock_health_monitor.is_available = MagicMock(return_value=True)
+    mock_gateway.health_monitor = mock_health_monitor
+    
+    # Mock verifier to avoid NLI calls
+    mock_verifier = AsyncMock()
+    mock_verifier.verify = AsyncMock(return_value=VerificationResult(
+        status="UNVERIFIED",
+        claim="test query",
+        reasoning="Mocked verification",
+        verified_at="2026-01-01T00:00:00Z"
+    ))
+    
+    service = SovereignSearchService(
+        memory_store=AsyncMock(),
+        indexer=AsyncMock(),
+        model_gateway=mock_gateway,
+        verifier=mock_verifier
+    )
+    
+    # Mock Tier 2 (Exa) to fail with auth error, T3 (Firecrawl) returns result
+    # Use search_intent to force max_tier=3 so all tiers are tried
+    intent = SearchIntent(primary_tier=0, max_tier=TIER_FIRECRAWL)
+    with patch.object(service, '_tier_0_local_cache', new_callable=AsyncMock, return_value=None), \
+         patch.object(service, '_tier_1_searxng', new_callable=AsyncMock, return_value=None), \
+         patch.object(service, '_tier_2_exa', new_callable=AsyncMock, side_effect=Exception("402 Payment Required")), \
+         patch.object(service, '_tier_3_firecrawl', new_callable=AsyncMock, return_value="Firecrawl result"):
         
-        # Mock Tier 2 (Exa) to fail with auth error, T3 (Firecrawl) returns result
-        # Use search_intent to force max_tier=3 so all tiers are tried
-        from omega.oracle.search_router import SearchIntent, TIER_FIRECRAWL
-        intent = SearchIntent(primary_tier=0, max_tier=TIER_FIRECRAWL)
-        with patch.object(service, '_tier_0_local_cache', return_value=None), \
-             patch.object(service, '_tier_1_searxng', return_value=None), \
-             patch.object(service, '_tier_2_exa', side_effect=Exception("402 Payment Required")), \
-             patch.object(service, '_tier_3_firecrawl', return_value="Firecrawl result"):
-            
-            report = await service.search("test query", "test_entity", search_intent=intent)
-            
-            assert report["status"] == "success"
-            assert report["final_tier"] == 3
-            assert any(log.get("tier") == 2 and "402" in log.get("message", "") for log in report["fallback_log"])
+        report = await service.search("test query", "test_entity", search_intent=intent)
+        
+        assert report["status"] == "success"
+        assert report["final_tier"] == 3
+        assert any(log.get("tier") == 2 and "402" in log.get("message", "") for log in report["fallback_log"])
 
-    asyncio.run(run_test())
 
-def test_error_matrix_compliance():
+@pytest.mark.anyio
+async def test_error_matrix_compliance():
     """
     Verify the error matrix is documented and covers critical codes (401, 429, 500).
     """
-    import asyncio
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import AsyncMock, patch, MagicMock
     from omega.oracle.model_gateway import GenerateResult
     from omega.oracle.sovereign_search_service import SovereignSearchService
+    from omega.oracle.search_router import SearchIntent, TIER_FIRECRAWL
+    from omega.oracle.skeptical_verifier import VerificationResult
 
-    async def run_test():
-        # Setup service with mocked dependencies
-        mock_gateway = AsyncMock()
-        mock_gateway.generate = AsyncMock(
-            return_value=GenerateResult(text="NEUTRAL", provider_name="mock", is_cloud=False)
-        )
-        service = SovereignSearchService(
-            memory_store=AsyncMock(),
-            indexer=AsyncMock(),
-            model_gateway=mock_gateway
-        )
+    # Setup service with mocked dependencies
+    mock_gateway = AsyncMock()
+    mock_gateway.generate = AsyncMock(
+        return_value=GenerateResult(text="NEUTRAL", provider_name="mock", is_cloud=False)
+    )
+    # Mock health_monitor to avoid coroutine in provider_health
+    mock_health_monitor = MagicMock()
+    mock_health_monitor.is_available = MagicMock(return_value=True)
+    mock_gateway.health_monitor = mock_health_monitor
+    
+    # Mock verifier to avoid NLI calls
+    mock_verifier = AsyncMock()
+    mock_verifier.verify = AsyncMock(return_value=VerificationResult(
+        status="UNVERIFIED",
+        claim="test query",
+        reasoning="Mocked verification",
+        verified_at="2026-01-01T00:00:00Z"
+    ))
+    
+    service = SovereignSearchService(
+        memory_store=AsyncMock(),
+        indexer=AsyncMock(),
+        model_gateway=mock_gateway,
+        verifier=mock_verifier
+    )
+    
+    # Mock multiple failures to test resilience
+    # Use search_intent to force max_tier=3 so all tiers are tried
+    intent = SearchIntent(primary_tier=0, max_tier=TIER_FIRECRAWL)
+    with patch.object(service, '_tier_0_local_cache', new_callable=AsyncMock, return_value=None), \
+         patch.object(service, '_tier_1_searxng', new_callable=AsyncMock, side_effect=Exception("500 Internal Error")), \
+         patch.object(service, '_tier_2_exa', new_callable=AsyncMock, side_effect=Exception("429 Too Many Requests")), \
+         patch.object(service, '_tier_3_firecrawl', new_callable=AsyncMock, return_value="Firecrawl result"):
         
-        # Mock multiple failures to test resilience
-        # Use search_intent to force max_tier=3 so all tiers are tried
-        from omega.oracle.search_router import SearchIntent, TIER_FIRECRAWL
-        intent = SearchIntent(primary_tier=0, max_tier=TIER_FIRECRAWL)
-        with patch.object(service, '_tier_0_local_cache', return_value=None), \
-             patch.object(service, '_tier_1_searxng', side_effect=Exception("500 Internal Error")), \
-             patch.object(service, '_tier_2_exa', side_effect=Exception("429 Too Many Requests")), \
-             patch.object(service, '_tier_3_firecrawl', return_value="Firecrawl result"):
-            
-            report = await service.search("test query", "test_entity", search_intent=intent)
-            
-            assert report["status"] == "success"
-            assert report["final_tier"] == 3
-            assert any(log.get("tier") == 1 and "500" in log.get("message", "") for log in report["fallback_log"])
-            assert any(log.get("tier") == 2 and "429" in log.get("message", "") for log in report["fallback_log"])
-
-    asyncio.run(run_test())
+        report = await service.search("test query", "test_entity", search_intent=intent)
+        
+        assert report["status"] == "success"
+        assert report["final_tier"] == 3
+        assert any(log.get("tier") == 1 and "500" in log.get("message", "") for log in report["fallback_log"])
+        assert any(log.get("tier") == 2 and "429" in log.get("message", "") for log in report["fallback_log"])
 
 def test_search_summary():
     """

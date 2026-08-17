@@ -14,7 +14,7 @@ from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 from dataclasses import dataclass
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, computed_field
 
 
 class CredentialType(str, Enum):
@@ -118,6 +118,7 @@ class VaultCredential(BaseModel):
             raise ValueError("encrypted_blob must be age-armored ciphertext")
         return v
 
+    @computed_field(return_type=str)
     @property
     def credential_ref(self) -> str:
         """Unique reference: provider:key_id"""
@@ -181,7 +182,7 @@ class VaultAuditEntry(BaseModel):
     action: Literal[
         "lease_granted", "lease_released", "lease_expired",
         "credential_used", "credential_rotated", "credential_locked",
-        "credential_created", "credential_deleted"
+        "credential_created", "credential_deleted", "credential_retrieved", "credential_updated"
     ]
     credential_ref: str
     details: Dict[str, Any] = Field(default_factory=dict)

@@ -114,7 +114,7 @@ class VaultCore:
                 content = self.credentials_file.read_text(encoding="utf-8")
                 creds_data = json.loads(content)
                 self.credentials = {
-                    cred["provider"]: VaultCredential(**cred)
+                    cred["credential_ref"]: VaultCredential(**cred)
                     for cred in creds_data.values()
                 }
             except Exception as e:
@@ -138,7 +138,14 @@ class VaultCore:
         if self.audit_file.exists():
             try:
                 content = self.audit_file.read_text(encoding="utf-8")
-                audit_data = json.loads(content)
+                # Handle both JSONL (new) and JSON array (old) formats
+                content = content.strip()
+                if content.startswith("["):
+                    # Old JSON array format
+                    audit_data = json.loads(content)
+                else:
+                    # New JSONL format (one JSON object per line)
+                    audit_data = [json.loads(line) for line in content.split("\n") if line.strip()]
                 self.audit = [VaultAuditEntry(**entry) for entry in audit_data]
             except Exception as e:
                 logger.error(f"Failed to load audit: {e}")
@@ -150,28 +157,25 @@ class VaultCore:
     # Backward compatibility: _load_sync renamed to _load_data (13+ callers)
     _load_sync = _load_data
     
-    def _save_data(self) -> None:
+    async def _save_data(self) -> None:
         """Save vault data to files atomically."""
         # Save credentials
         creds_data = {cred.key_id: cred.model_dump() for cred in self.credentials.values()}
-        self._atomic_write(self.credentials_file, json.dumps(creds_data, indent=2, default=str))
+        await self._atomic_write(self.credentials_file, json.dumps(creds_data, indent=2, default=str))
         
         # Save leases
         leases_data = {lease.lease_id: lease.model_dump() for lease in self.leases.values()}
-        self._atomic_write(self.leases_file, json.dumps(leases_data, indent=2, default=str))
+        await self._atomic_write(self.leases_file, json.dumps(leases_data, indent=2, default=str))
         
         # Save audit (only last 1000 entries to prevent unbounded growth)
         audit_data = self.audit[-1000:]
-        self._atomic_write(self.audit_file, json.dumps(
-            [entry.model_dump() for entry in audit_data], 
-            indent=2, 
-            default=str
-        ))
+        audit_lines = [json.dumps(entry.model_dump(), default=str) for entry in audit_data]
+        await self._atomic_write(self.audit_file, "\n".join(audit_lines) + "\n")
     
-    def _atomic_write(self, path: Path, content: str) -> None:
+    async def _atomic_write(self, path: Path, content: str) -> None:
         """Atomic write using SoulStore."""
         store = get_soul_store()
-        anyio.run(store.write_atomic(path, content))
+        await store.write_atomic(path, content)
     
     # =============================================================================
     # Credential Operations
@@ -186,6 +190,7 @@ class VaultCore:
         tier: CredentialTier = CredentialTier.FREE,
         visibility: VisibilityTier = VisibilityTier.PRIVATE,
         metadata: Optional[Dict[str, Any]] = None,
+        daily_limit: int = 0,
     ) -> VaultCredential:
         """
         Create a new credential.
@@ -198,6 +203,7 @@ class VaultCore:
             tier: Tier for quota management
             visibility: Privacy visibility tier
             metadata: Additional metadata
+            daily_limit: Daily request limit (0 = unlimited)
             
         Returns:
             Created credential
@@ -208,8 +214,9 @@ class VaultCore:
         if provider not in ("antigravity", "grok", "google", "openrouter", "exa", "firecrawl"):
             raise VaultError(f"Invalid provider: {provider}")
         
-        if key_id in self.credentials:
-            raise VaultError(f"Credential already exists: {provider}:{key_id}")
+        credential_ref = f"{provider}:{key_id}"
+        if credential_ref in self.credentials:
+            raise VaultError(f"Credential already exists: {credential_ref}")
         
         credential = VaultCredential(
             provider=provider,
@@ -219,9 +226,10 @@ class VaultCore:
             tier=tier,
             visibility=visibility,
             metadata=metadata or {},
+            daily_limit=daily_limit,
         )
         
-        self.credentials[credential.key_id] = credential
+        self.credentials[credential.credential_ref] = credential
         await self._log_audit(
             action="credential_created",
             credential_ref=credential.credential_ref,
@@ -231,10 +239,11 @@ class VaultCore:
                 "cred_type": cred_type.value,
                 "tier": tier.value,
                 "visibility": visibility.value,
-            }
+            },
+            agent_id="system",
         )
         
-        self._save_data()
+        await self._save_data()
         return credential
     
     async def get_credential(self, provider: str, key_id: str) -> VaultCredential:
@@ -255,12 +264,25 @@ class VaultCore:
         if credential_key not in self.credentials:
             raise CredentialNotFoundError(f"Credential not found: {provider}:{key_id}")
         
-        return self.credentials[credential_key]
+        credential = self.credentials[credential_key]
+        
+        # Log access
+        await self._log_audit(
+            action="credential_retrieved",
+            credential_ref=credential.credential_ref,
+            details={},
+            agent_id="system",
+        )
+        
+        return credential
     
     # Backward compatibility: retrieve_credential renamed to get_credential
     async def retrieve_credential(self, provider: str, key_id: str = "default") -> Optional[VaultCredential]:
-        """Backward-compatible alias for get_credential."""
-        return await self.get_credential(provider=provider, key_id=key_id)
+        """Backward-compatible alias for get_credential that returns None instead of raising."""
+        try:
+            return await self.get_credential(provider=provider, key_id=key_id)
+        except CredentialNotFoundError:
+            return None
     
     async def update_credential(
         self,
@@ -294,14 +316,15 @@ class VaultCore:
         updated_data.update(update_data)
         updated_credential = VaultCredential(**updated_data)
         
-        self.credentials[credential.key_id] = updated_credential
+        self.credentials[credential.credential_ref] = updated_credential
         await self._log_audit(
             action="credential_updated",
             credential_ref=credential.credential_ref,
-            details={"fields_updated": list(update_data.keys())}
+            details={"fields_updated": list(update_data.keys())},
+            agent_id="system",
         )
         
-        self._save_data()
+        await self._save_data()
         return updated_credential
     
     async def delete_credential(self, provider: str, key_id: str) -> bool:
@@ -323,10 +346,11 @@ class VaultCore:
         await self._log_audit(
             action="credential_deleted",
             credential_ref=credential.credential_ref,
-            details={}
+            details={},
+            agent_id="system",
         )
         
-        self._save_data()
+        await self._save_data()
         return True
     
     async def list_credentials(
@@ -422,10 +446,11 @@ class VaultCore:
                 "agent_id": request.agent_id,
                 "ttl_seconds": request.ttl_seconds,
                 "purpose": request.purpose,
-            }
+            },
+            agent_id=request.agent_id,
         )
         
-        self._save_data()
+        await self._save_data()
         return lease
     
     async def release_lease(self, lease_id: str) -> bool:
@@ -445,21 +470,20 @@ class VaultCore:
         
         # Update credential lease info
         credential_ref = lease.credential_ref
-        if ":" in credential_ref:
-            provider, key_id = credential_ref.split(":", 1)
-            if provider in self.credentials:
-                cred = self.credentials[provider]
-                if cred.current_lease_agent == lease.agent_id:
-                    cred.current_lease_agent = None
-                    cred.lease_expires_at = None
+        if credential_ref in self.credentials:
+            cred = self.credentials[credential_ref]
+            if cred.current_lease_agent == lease.agent_id:
+                cred.current_lease_agent = None
+                cred.lease_expires_at = None
         
         await self._log_audit(
             action="lease_released",
             credential_ref=lease.credential_ref,
-            details={"lease_id": lease_id, "agent_id": lease.agent_id}
+            details={"lease_id": lease_id, "agent_id": lease.agent_id},
+            agent_id=lease.agent_id,
         )
         
-        self._save_data()
+        await self._save_data()
         return True
     
     async def heartbeat_lease(self, lease_id: str) -> bool:
@@ -478,7 +502,7 @@ class VaultCore:
         lease = self.leases[lease_id]
         lease.last_heartbeat = datetime.utcnow()
         
-        self._save_data()
+        await self._save_data()
         return True
     
     async def cleanup_expired_leases(self) -> List[str]:
@@ -499,22 +523,21 @@ class VaultCore:
             
             # Update credential lease info
             credential_ref = lease.credential_ref
-            if ":" in credential_ref:
-                provider, key_id = credential_ref.split(":", 1)
-                if provider in self.credentials:
-                    cred = self.credentials[provider]
-                    if cred.current_lease_agent == lease.agent_id:
-                        cred.current_lease_agent = None
-                        cred.lease_expires_at = None
+            if credential_ref in self.credentials:
+                cred = self.credentials[credential_ref]
+                if cred.current_lease_agent == lease.agent_id:
+                    cred.current_lease_agent = None
+                    cred.lease_expires_at = None
             
             await self._log_audit(
                 action="lease_expired",
                 credential_ref=lease.credential_ref,
-                details={"lease_id": lease_id, "agent_id": lease.agent_id}
+                details={"lease_id": lease_id, "agent_id": lease.agent_id},
+                agent_id=lease.agent_id,
             )
         
         if expired_leases:
-            self._save_data()
+            await self._save_data()
         
         return expired_leases
     
@@ -542,14 +565,22 @@ class VaultCore:
             return False
         
         credential.used_today += 1
-        self._save_data()
+        
+        # Update status if quota exhausted
+        if credential.daily_limit > 0 and credential.used_today >= credential.daily_limit:
+            credential.status = CredentialStatus.EXHAUSTED
+        
+        await self._save_data()
         return True
     
     async def reset_daily_quota(self) -> None:
         """Reset daily usage counters for all credentials."""
         for credential in self.credentials.values():
             credential.used_today = 0
-        self._save_data()
+            # Reset status to ACTIVE if it was EXHAUSTED due to quota
+            if credential.status == CredentialStatus.EXHAUSTED:
+                credential.status = CredentialStatus.ACTIVE
+        await self._save_data()
     
     async def cleanup_cooldown(self) -> None:
         """Remove expired cooldowns."""
@@ -557,7 +588,7 @@ class VaultCore:
         for credential in self.credentials.values():
             if credential.cooldown_until and now >= credential.cooldown_until:
                 credential.cooldown_until = None
-        self._save_data()
+        await self._save_data()
     
     # =============================================================================
     # Privacy Operations
@@ -692,7 +723,8 @@ class VaultCore:
             details={
                 "agent_id": agent_id,
                 "session_token": session_token,
-            }
+            },
+            agent_id=agent_id,
         )
         
         return session_token
@@ -708,6 +740,7 @@ class VaultCore:
         details: Dict[str, Any],
         success: bool = True,
         error: Optional[str] = None,
+        agent_id: str = "system",
     ) -> None:
         """Log audit entry."""
         entry = VaultAuditEntry(
@@ -716,6 +749,7 @@ class VaultCore:
             details=details,
             success=success,
             error=error,
+            agent_id=agent_id,
         )
         
         self.audit.append(entry)
@@ -724,7 +758,7 @@ class VaultCore:
         if action in ["credential_created", "credential_updated", "credential_deleted"]:
             await self._process_credential_pii_cpe(entry)
         
-        self._save_data()
+        await self._save_data()
     
     async def _log_credential_access(
         self,
@@ -741,6 +775,7 @@ class VaultCore:
                 "decrypted_length": len(decrypted),
             },
             success=True,
+            agent_id=agent_id,
         )
         
         # Process CPE for this access
@@ -752,10 +787,10 @@ class VaultCore:
         # This is a simplified implementation
         cpe_action = self.cpe_scorer.process_credential_access(
             VaultCredential(
-                provider="temp",
+                provider="openrouter",
                 key_id="temp",
                 cred_type=CredentialType.API_KEY,
-                encrypted_blob="",
+                encrypted_blob="age-encryption.org/v1->X25519->mock",
             ),
             entry.action,
         )
@@ -771,7 +806,7 @@ class VaultCore:
         index = len(self.audit) - 1
         self.audit[index] = entry
         
-        self._save_data()
+        await self._save_data()
     
     # =============================================================================
     # Utility Methods

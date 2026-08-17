@@ -54,3 +54,32 @@ The F821 remediation is the reference case for the entire protocol. Artifacts:
 1. Execution models copy instructional comments into code → Artifact B must be comment-free.
 2. Execution models merge superseded documents → one source of truth, enforced by handoff prompt.
 3. Frontier documents drift in formatting → extractors must be tolerant regex, not strict schema.
+
+## 7. The Horizon: Five Strategic Opportunities (Added 2026-08-16)
+
+The Crucible and Dual-Artifact Rule are foundational. The following five strategic vectors represent the next evolution of the Omega Engine, transforming it from a reactive tool into an anti-fragile, self-improving organism.
+
+### 7.1. Just-In-Time (JIT) Cognitive Scaffolding (RAG for DPO)
+*   **The Opportunity:** Fine-tuning local models on `dpo_dataset.jsonl` is computationally expensive and slow.
+*   **The Alchemy:** Implement Retrieval-Augmented Generation (RAG) for execution prompts. Before an execution agent is dispatched, the orchestrator queries the vector database for similar past failures. If the agent is assigned an import bug, the orchestrator retrieves Opus’s "Pattern 1: Lazy Import Wrapper Misuse" and injects it directly into the system prompt as a few-shot example.
+*   **The Impact:** Local models instantly inherit frontier-level wisdom at runtime, bypassing the LoRA training bottleneck.
+
+### 7.2. The Autodidactic CI/CD Loop (The Self-Healing Engine)
+*   **The Opportunity:** The Crucible is currently triggered manually by Node 0 or Kali.
+*   **The Alchemy:** Wire the Crucible directly into the test suite. If `make test` fails, the engine autonomously triggers an L1 (Local) repair attempt. If L1 fails twice, it escalates to L3 (Frontier) → L2.5 (Synthesis) → L4 (Execution). The engine fixes its own regressions in the background, emitting a Socratic commit message explaining *why* it failed and *how* it fixed it.
+*   **The Impact:** The codebase becomes an anti-fragile organism that heals its own technical debt.
+
+### 7.3. "Shadow Mode" as a Routing Heuristic
+*   **The Opportunity:** Shadow Mode is currently conceived as a passive benchmark.
+*   **The Alchemy:** Elevate Shadow Mode to an active router. When a new task arrives, run it through a local model in the background and algorithmically compare the proposed execution plan against our DPO database of "Frontier Standards." If the local model's confidence and structural alignment score is >90%, execute locally (Free). If <90%, dynamically escalate to the cloud (Paid).
+*   **The Impact:** Achieves the absolute mathematical minimum of cloud API spend while mathematically guaranteeing frontier-level quality.
+
+### 7.4. The Synaptic Sync (Cross-Pollination of Gnosis)
+*   **The Opportunity:** Agents distill L1→L2→L3 lessons into isolated `proposed_lessons.yaml` files. Kali’s lessons do not automatically benefit Doom Guy.
+*   **The Alchemy:** Build a "Synaptic Sync" cron job. Weekly, a cheap synthesis model reads all `proposed_lessons.yaml` files across the fleet, deduplicates them, resolves contradictions, and compiles them into a unified `OMEGA_CODEX.md` (shared semantic memory bank).
+*   **The Impact:** The fleet evolves a shared consciousness. A mistake made by one agent on Monday prevents a bug from being written by another agent on Friday.
+
+### 7.5. The Node 0 Command Bridge (TUI)
+*   **The Opportunity:** Managing Dual-Artifacts, approving Socratic commits, and reviewing DPO pairs via raw markdown files in a terminal is high-friction.
+*   **The Alchemy:** Build a rich Terminal User Interface (TUI) using Python's `Textual` library. A dashboard where Node 0 can watch the 5-tier Crucible execute in real-time, view side-by-side diff comparisons of Artifact A vs Artifact B, and use a Tinder-style "Approve/Reject" interface for new DPO training pairs.
+*   **The Impact:** Elevates the human user from "Terminal Operator" to "Prime Architect," managing the flow of intelligence rather than the flow of text.

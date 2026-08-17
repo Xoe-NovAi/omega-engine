@@ -174,7 +174,7 @@ class TestSQLiteVecUpsert:
             assert fts_count >= 1
             
             # Vec count (collection-specific table)
-            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_omega_vec_static_64")
+            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_static_64")
             vec_count = cursor.fetchone()[0]
             assert vec_count >= 1
         

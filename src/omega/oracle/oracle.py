@@ -665,7 +665,8 @@ class Oracle:
             memory_context = await self.context_builder.build_context(
                 entity_name, 
                 session_id, 
-                degradation_level=degradation_level
+                degradation_level=degradation_level,
+                query=query
             )
             if memory_context:
                 prompt_parts.append(f"\nContext from recent interactions:\n{memory_context}")

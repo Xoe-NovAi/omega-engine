@@ -537,6 +537,9 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 for row in cursor.fetchall():
                     rowid = row[0]
                     distance = row[1]
+                    # vec0 returns NULL distance for rows in non-matching partitions
+                    if distance is None:
+                        continue
                     score = 1.0 - distance
                     
                     # Get metadata from the data table (O(1) join by rowid)
@@ -577,15 +580,28 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 raw_error=e
             ) from e
 
-    async def delete(self, entity_name: str, ids: List[str]) -> bool:
+    async def delete(self, entity_name: str, ids: List[str], collection: str = "omega_vec_gemma_768") -> bool:
         """Delete specific vectors by UUID.
         
         Args:
             entity_name: The entity that owns the vectors.
             ids: List of UUID strings to delete.
+            collection: Target collection name (must be in self._collections).
+            
+        [FIX P0-2 / audit r2 §2] The ABC signature (IVectorStoreAdapter.delete)
+        has no collection param, so callers (MemoryStore, SelectiveHydration,
+        Indexer) always hit the default collection. A vector may have been
+        upserted into ANY created collection. rowid is scoped to exactly one
+        vec0 table per upsert() call, so issuing DELETE against every created
+        collection is safe — at most one matches, the rest are no-ops.
+        Table names come from self._vec_tables_created keys (derived from the
+        hardcoded COLLECTIONS dict, not user input) — no injection risk.
         """
         if not ids:
             return False
+        
+        if collection not in self._collections:
+            raise ValueError(f"Unknown collection: {collection}. Valid: {list(self._collections.keys())}")
         
         await self._ensure_initialized()
         
@@ -610,10 +626,16 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                         
                         rowid = row[0]
                         
-                        # Delete from all three tables
+                        # Delete from data + FTS tables
                         conn.execute("DELETE FROM omega_memory_data WHERE id = ?", (rowid,))
                         conn.execute("DELETE FROM omega_memory_fts WHERE rowid = ?", (rowid,))
-                        conn.execute("DELETE FROM omega_memory_vec WHERE rowid = ?", (rowid,))
+                        # [FIX P0-2] Delete from EVERY created vec0 collection —
+                        # rowid is scoped to exactly one, rest are no-op DELETEs.
+                        for collection_name in self._vec_tables_created:
+                            conn.execute(
+                                f"DELETE FROM {collection_name} WHERE rowid = ?",
+                                (rowid,)
+                            )
                         deleted_any = True
                     
                     conn.commit()
@@ -629,8 +651,26 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                     raw_error=e
                 ) from e
 
-    async def delete_session(self, entity_name: str, session_id: str) -> bool:
-        """Delete all vectors associated with a specific session."""
+    async def delete_session(self, entity_name: str, session_id: str, collection: str = "omega_vec_gemma_768") -> bool:
+        """Delete all vectors associated with a specific session.
+        
+        Args:
+            entity_name: The entity that owns the vectors.
+            session_id: Session identifier.
+            collection: Target collection name (must be in self._collections).
+            
+        [FIX P0-2 / audit r2 §2] Same multi-collection issue as delete(): the
+        ABC signature (IVectorStoreAdapter.delete_session) has no collection
+        param, so callers (MemoryStore) always hit the default collection.
+        A session's vectors may live in ANY created vec0 collection. rowid is
+        scoped to exactly one vec0 table per upsert() call, so issuing DELETE
+        against every created collection is safe — at most one matches, the
+        rest are no-ops. Table names come from self._vec_tables_created keys
+        (derived from the hardcoded COLLECTIONS dict, not user input).
+        """
+        if collection not in self._collections:
+            raise ValueError(f"Unknown collection: {collection}. Valid: {list(self._collections.keys())}")
+        
         await self._ensure_initialized()
         
         async with self._write_lock:
@@ -651,11 +691,17 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                     if not rowids:
                         return False
                     
-                    # Delete from all three tables
+                    # Delete from data + FTS tables
                     placeholders = ",".join("?" for _ in rowids)
                     conn.execute(f"DELETE FROM omega_memory_data WHERE id IN ({placeholders})", rowids)
                     conn.execute(f"DELETE FROM omega_memory_fts WHERE rowid IN ({placeholders})", rowids)
-                    conn.execute(f"DELETE FROM omega_memory_vec WHERE rowid IN ({placeholders})", rowids)
+                    # [FIX P0-2] Delete from EVERY created vec0 collection —
+                    # rowids are scoped to exactly one, rest are no-op DELETEs.
+                    for collection_name in self._vec_tables_created:
+                        conn.execute(
+                            f"DELETE FROM {collection_name} WHERE rowid IN ({placeholders})",
+                            rowids,
+                        )
                     
                     conn.commit()
                     return True

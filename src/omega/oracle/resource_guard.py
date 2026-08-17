@@ -143,6 +143,11 @@ class LegacyOOMWrapper:
         self._meminfo_path = meminfo_path
         self.min_ram_mb = min_ram_mb
 
+    @property
+    def config(self) -> OOMProtectorConfig:
+        """Expose underlying OOMProtector config for legacy access (e.g., reserve_gb)."""
+        return self._protector.config
+
     async def check(
         self,
         model_name: Optional[str] = None,
@@ -366,3 +371,9 @@ def get_resource_guard() -> "ResourceGuard":
     if _resource_guard is None:
         _resource_guard = ResourceGuard()
     return _resource_guard
+
+
+def reset_resource_guard() -> None:
+    """Reset for tests. Mirrors reset_provider_registry()/reset_memory_store()."""
+    global _resource_guard
+    _resource_guard = None

@@ -8,8 +8,11 @@ import yaml
 
 from omega.memory_store import MemoryStore, reset_memory_store
 from omega.oracle.context_builder import ContextBuilder
+from omega.oracle.world_state import world_state
 from omega.state import initialize_usm
 from omega.observability import reset_observability
+from omega.oracle.provider_registry import reset_provider_registry
+from omega.oracle.resource_guard import reset_resource_guard
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +42,9 @@ async def _set_test_env(tmp_path, monkeypatch, request, anyio_backend):
     monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
     reset_memory_store()
     reset_observability()
+    reset_provider_registry()
+    reset_resource_guard()
+    world_state.reset()
     from omega.state import reset_usm
     await reset_usm()
     await initialize_usm()
@@ -46,6 +52,9 @@ async def _set_test_env(tmp_path, monkeypatch, request, anyio_backend):
     def teardown():
         reset_memory_store()
         reset_observability()
+        reset_provider_registry()
+        reset_resource_guard()
+        world_state.reset()
     
     request.addfinalizer(teardown)
 

@@ -14,6 +14,7 @@
 import anyio
 import json
 import logging
+import re
 import uuid
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
@@ -265,6 +266,23 @@ def list_available_agents(mode: Optional[AgentMode] = None) -> List[str]:
     ]
 
 
+def _extract_heritage_tags(file_path: str) -> List[str]:
+    """Extract [id-soft:] heritage tags from a file."""
+    tags = []
+    try:
+        path = Path(file_path)
+        if path.exists() and path.is_file():
+            content = path.read_text(encoding="utf-8")
+            # Find all [id-soft: ...] patterns
+            matches = re.findall(r'\[id-soft:[^\]]+\]', content)
+            tags.extend(matches)
+    except OSError as e:
+        logger.debug("Failed to read heritage tags from %s: %s", file_path, e)
+    except re.error as e:
+        logger.debug("Regex error extracting heritage tags from %s: %s", file_path, e)
+    return tags
+
+
 def build_dispatch_prompt(packet: HandoffPacket) -> str:
     """Build the Task tool prompt from a HandoffPacket.
 
@@ -305,6 +323,16 @@ def build_dispatch_prompt(packet: HandoffPacket) -> str:
         for f in packet.relevant_files:
             lines.append(f"- `{f}`")
         lines.append("")
+
+        # Extract heritage tags from relevant files
+        heritage_tags = []
+        for f in packet.relevant_files:
+            heritage_tags.extend(_extract_heritage_tags(f))
+        if heritage_tags:
+            lines.append("## Heritage Tags in Referenced Files")
+            for tag in heritage_tags:
+                lines.append(f"- {tag}")
+            lines.append("")
 
     if packet.expected_output:
         lines.append("## Expected Output")

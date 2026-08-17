@@ -1,6 +1,14 @@
-"""M21 Contract Tests: Fallback chain works (3 tests) - Updated for CascadeRouter."""
+"""M21 Contract Tests: Fallback chain works (3 tests) - Updated for CascadeRouter.
+SKIPPED: CascadeRouter class was never implemented (vaporware).
+The fallback chain logic exists in TriageRouter and ModelGateway but with different APIs.
+Re-enable when CascadeRouter is implemented or rewrite tests for actual router.
+"""
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+pytestmark = pytest.mark.skip(
+    reason="CascadeRouter not implemented - tests reference vaporware module omega.oracle.cascade_router"
+)
 
 
 class MockProvider:

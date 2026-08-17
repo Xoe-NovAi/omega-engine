@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from mcp_servers.omega_hub import state as _state
+from mcp_servers.omega_hub.hub_tools import tools as tools_mod
 
 
 # ── CuratedDocument stub (mirrors omega.library.curator.CuratedDocument) ──
@@ -79,7 +80,6 @@ class TestLibraryFtsSearch:
     @pytest.mark.anyio
     async def test_empty_query_returns_error(self):
         """Empty query string should return JSON error, not call Library.search."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         with patch.object(tools_mod, "_require_service"):
             result = await tools_mod.library_fts_search(query="   ", domain="", limit=10)
@@ -91,7 +91,6 @@ class TestLibraryFtsSearch:
     @pytest.mark.anyio
     async def test_query_exceeding_500_chars_returns_error(self):
         """Query over 500 chars should return JSON error."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         with patch.object(tools_mod, "_require_service"):
             long_query = "a" * 501
@@ -104,7 +103,6 @@ class TestLibraryFtsSearch:
     @pytest.mark.anyio
     async def test_search_returns_formatted_results(self):
         """Valid query should call Library.search() and format results."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         stub_docs = [
             _StubDocument(
@@ -151,7 +149,6 @@ class TestLibraryFtsSearch:
     @pytest.mark.anyio
     async def test_search_with_empty_domain_passes_none(self):
         """Empty domain string should be converted to None for Library.search()."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         mock_library = MagicMock()
         mock_library.search = AsyncMock(return_value=[])
@@ -175,7 +172,6 @@ class TestLibraryFtsSearch:
     @pytest.mark.anyio
     async def test_library_exception_returns_error_json(self):
         """Library.search() exception should be caught and returned as JSON error."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         mock_library = MagicMock()
         mock_library.search = AsyncMock(side_effect=RuntimeError("FTS5 index not initialized"))
@@ -198,7 +194,6 @@ class TestLibraryFtsSearch:
     @pytest.mark.anyio
     async def test_summary_truncated_to_300_chars(self):
         """Document summaries longer than 300 chars should be truncated."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         long_summary = "x" * 500
         stub_doc = _StubDocument(summary=long_summary)
@@ -224,7 +219,6 @@ class TestLibraryFtsSearchIntegration:
 
     def test_tool_function_exists_and_is_async(self):
         """library_fts_search should be defined and be a coroutine function."""
-        from mcp_servers.omega_hub import tools as tools_mod
         fn = getattr(tools_mod, "library_fts_search", None)
         assert fn is not None, "library_fts_search not found in tools module"
         import inspect
@@ -233,7 +227,6 @@ class TestLibraryFtsSearchIntegration:
     def test_tool_has_correct_signature(self):
         """library_fts_search should accept query, domain, limit params."""
         import inspect
-        from mcp_servers.omega_hub import tools as tools_mod
         sig = inspect.signature(tools_mod.library_fts_search)
         params = list(sig.parameters.keys())
         assert "query" in params
@@ -243,7 +236,6 @@ class TestLibraryFtsSearchIntegration:
     @pytest.mark.anyio
     async def test_results_include_source_fts5_marker(self):
         """Results JSON should include source=library_fts5 to distinguish from web search."""
-        from mcp_servers.omega_hub import tools as tools_mod
 
         mock_library = MagicMock()
         mock_library.search = AsyncMock(return_value=[])

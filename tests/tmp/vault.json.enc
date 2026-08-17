@@ -3,13 +3,13 @@
     "provider": "google",
     "key_id": "api_key",
     "cred_type": "api_key",
-    "encrypted_blob": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNjcnlwdCBhR1NlcUQzaG5HakI5ckZT\nVHlpVlZ3IDE4ClJzenVCa1pQU3g3Q250cFV1YTZlRG1ybkRSNHQ3S1draXhRblJI\nUVJyNk0KLS0tIHVFUTVpdm9GcFUvMWJwQ0J3RW00c2JHREplRUpqQVRyT3BMMER3\nZTFNNG8KWf+6F9mgf5FIldb/8Ta2yfUuOUWhE5DaemcDDeABuV5cDySJCW+fKNZO\nENdQLrqlp4E=\n-----END AGE ENCRYPTED FILE-----\n",
+    "encrypted_blob": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNjcnlwdCBuNnI0ay9iOTlZdjdFaDVF\neWFUQ25BIDE5CldOMVk4TWZ3QU9QbjdRSU5DL2k2Q3NwRVlhZlZaMFVWcUthSXIy\neGthc3MKLS0tIHBGMy9FVmJEcW9HWlMwRnZjeExYZmpaNXNXamdoeUU0MHhCOThC\nWlY0elEKuc/qulreo9j4xJGnu/m5Air6/AKrEqZPExi6+xzBox/gfAWVDiixrSzS\nFhoIpqd+PYk=\n-----END AGE ENCRYPTED FILE-----\n",
     "tier": "free",
     "daily_limit": 0,
     "used_today": 0,
     "cooldown_until": null,
     "status": "active",
-    "rotated_at": "2026-08-16 03:30:52.236983+00:00",
+    "rotated_at": "2026-08-17 12:22:08.271445+00:00",
     "rotation_count": 0,
     "last_used_at": null,
     "last_error": null,
@@ -17,6 +17,7 @@
     "lease_expires_at": null,
     "visibility": "private",
     "tags": {},
-    "metadata": {}
+    "metadata": {},
+    "credential_ref": "google:api_key"
   }
 }

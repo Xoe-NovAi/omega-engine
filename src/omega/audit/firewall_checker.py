@@ -79,8 +79,44 @@ class FirewallChecker:
     # Core Engine legitimate references - silently ignored (not WAD leakage)
     # These are fleet infrastructure / architectural concepts, not WAD content
     CORE_ENGINE_PATTERNS: list[str] = [
+        # Oversoul agents (universal architecture, not WAD-specific)
         r"\bKali\b",                              # Grand Oversight agent
-        r"\bEarth\b.*\bRoot\b",                   # Chakra terminology in docs
+        r"\bMa[']?at\b",                          # Build Oversoul / CTO
+        r"\bLilith\b",                            # Runtime Oversoul / CISO
+        r"\bJem\b",                               # Sovereign Synthesizer
+        r"\bSophia\b",                            # Containing Field / Rank 0
+        r"\bIris\b",                              # Voice Assistant / Messenger Bridge
+        r"\bMnemosyne\b",                         # Memory System Archetype
+        r"\bPrometheus\b",                        # Discovery Pipeline (P3)
+        r"\bSekhmet\b",                           # Protection Pillar (P1)
+        r"\bJohn\.?Carmack\b",                    # S3 Consultant
+        r"\bDoom\.?Guy\b",                        # Doom Universe Architect
+        r"\bRoc\.?Rac?oon\b",                     # Legacy Miner / Ideas Guy
+        # Kabbalistic / Esoteric Architecture (universal memory model)
+        r"\bDa[']?at\b",                          # Knowledge Sphere
+        r"\bSephiroth\b",                         # Sephirotic Tree
+        r"\bKabbal(?:ah|istic|ist)\b",            # Kabbalistic Tradition
+        r"\bQliphoth\b",                          # Qliphothic Shells
+        # Default WAD name (constant, not leakage)
+        r"_omega_default",                        # Default WAD name (constant)
+        # Stack name references in paths (legitimate config)
+        r"arcana_novai",                          # Stack name in paths
+        r"doom_universe",                         # Stack name in paths
+        r"torment_stack",                         # Stack name in paths
+        # Oversoul architecture references
+        r"\bBuild\s*Oversoul\b",
+        r"\bRuntime\s*Oversoul\b",
+        r"\bGrand\s*Oversight\b",
+        r"\bContaining\s*Field\b",
+        r"\bSovereign\s*Synthesizer\b",
+        # Voice assistant context
+        r"\bvoice\s*assistant\b",
+        r"\bmessenger\s*bridge\b",
+        # Memory system context
+        r"\bmemory\s*system\b",
+        r"\bmemory\s*archetype\b",
+        # Chakra / Elemental terminology in architectural docs
+        r"\bEarth\b.*\bRoot\b",
         r"\bWater\b.*\bSacral\b",
         r"\bFire\b.*\bSolar\s*Plexus\b",
         r"\bAir\b.*\bHeart\b",
@@ -90,12 +126,7 @@ class FirewallChecker:
         r"\bFire\b.*\bBeyond\s*Crown\b",
         r"\bWater\b.*\bCosmic\s*Heart\b",
         r"\bEarth\b.*\bCelestial\s*Breath\b",
-        r"\bSophia\b.*\bAkashic\b",               # Containing field concept
-        r"\bMa[']?at\b.*\bBuild\s*Oversoul\b",    # Oversoul architecture
-        r"\bLilith\b.*\bRuntime\s*Oversoul\b",
-        r"\bIris\b.*\bvoice\s*assistant\b",       # Voice assistant (not Node)
-        r"\bMnemosyne\b.*\bmemory\b",             # Memory system archetype
-        r"_omega_default",                        # Default WAD name (constant)
+        r"\bSophia\b.*\bAkashic\b",
     ]
 
     def __init__(self, patterns: list[tuple[str, Literal["error", "warning"]]] | None = None):

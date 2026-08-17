@@ -7,6 +7,7 @@ should have existed since Day 1.
 AP Token: AP-HUB-HEALTH-TESTS-v1.0.0
 """
 import json
+import socket
 from pathlib import Path
 import pytest
 import httpx2 as httpx
@@ -15,12 +16,20 @@ import httpx2 as httpx
 HUB_BASE = "http://127.0.0.1:8016"
 
 
-# ── Mark all tests as requiring a running hub ──
-# These tests hit the LIVE omega-hub. Skip if it's not running.
-pytestmark = pytest.mark.skipif(
-    not pytest.importorskip("httpx"),
-    reason="httpx not installed",
-)
+def _hub_reachable() -> bool:
+    """Check if omega-hub is reachable at 127.0.0.1:8016."""
+    try:
+        with socket.create_connection(("127.0.0.1", 8016), timeout=1.0):
+            return True
+    except OSError:
+        return False
+
+
+# ── Module-level markers: integration tier + clean skip when hub is down ──
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(not _hub_reachable(), reason="omega-hub not running at 127.0.0.1:8016"),
+]
 
 
 @pytest.fixture(scope="module")
@@ -93,7 +102,7 @@ class TestToolRegistration:
         import subprocess
         result = subprocess.run(
             ["grep", "-c", "@mcp.tool()",
-             "mcp_servers/omega_hub/tools.py"],
+             "mcp_servers/omega_hub/hub_tools/tools.py"],
             capture_output=True, text=True,
             cwd=str(Path(__file__).resolve().parent.parent),
         )
