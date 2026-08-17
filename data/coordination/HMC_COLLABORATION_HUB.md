@@ -2,7 +2,7 @@
 
 **AP Token**: `AP-HMC-HUB-v1.0.0`
 **Status**: ACTIVE — Single coordination SSOT
-**Last Updated**: 2026-08-17T06:35:00Z
+**Last Updated**: 2026-08-17T14:13:10.759934Z
 **Updated By**: kali
 
 ---
@@ -16,9 +16,9 @@
 
 **KALI RATIFICATION 2026-08-16 (D-532)**: Roc readiness audit ratified — see `ACTIVE_SPRINT.json` → `READINESS-REMEDIATION` workstream + `ROC_RACOON_KALI_REPORT_20260816.md`.
 
-**CURRENT:** PUBLIC DEBUT — Three-Item Critical Path COMPLETE ✅ → **READINESS REMEDIATION PHASE 1 COMPLETE ✅** → **PHASE 2 (LINT) NEXT**
+**CURRENT:** PUBLIC DEBUT — Three-Item Critical Path COMPLETE ✅ → **READINESS REMEDIATION PHASE 1 COMPLETE ✅** → **PHASE 2 (LINT) COMPLETE ✅** → **PHASE 3 (CI/HYGIENE) NEXT**
 
-**✅ P0-1 RESOLVED (Private Repo — Scrubbed from History)**: Real API keys were pushed to `origin/main` (commits `df174496`, `13351f9d`). **REPO IS PRIVATE** — scrubbed from ALL history via `git filter-repo` (no rotation needed). Files removed: `migrate_keys_full.py`, `PROVIDER_FREE_TIER_GUIDE.md`, `test_failure_registry.py`. Force-pushed all branches (main, release/initial-v1, sprint/*). No secrets remain in git history.
+**✅ P0-1 RESOLVED (Private Repo — Scrubbed from History)**: Real API keys were pushed to `origin/main`. **REPO IS PRIVATE** — scrubbed from ALL history via `git filter-repo` (no rotation needed). Files removed/redacted: `migrate_keys_full.py`, `PROVIDER_FREE_TIER_GUIDE.md`, `test_failure_registry.py`, `SECURITY_AUDIT_2026_05_19.md` (2 paths), `migrate_keys.py`, `GOOGLE_GEMMA_MODEL_REFERENCE.md` (AIza key redacted). Cline checkpoints pruned. Force-pushed all branches (main, release/initial-v1, sprint/*). **No real secrets remain in git history** (only 6 prose/test false positives).
 
 **PHASE 1 (Roc — COMPLETE ✅)**: 63 test failures FIXED (1797 tests pass). Clusters: P1-1 async/sync (20) ✅, P1-2 VaultCore (20) ✅, P1-3 mcp import (9) ✅, P1-4 mock sig (2) ✅, P1-5 logic (5) ✅, P1-6 verify green (verity) ✅. All 1797 tests pass (40 skipped, 8 expected failures). `make temple-grade` PASSES.
 
