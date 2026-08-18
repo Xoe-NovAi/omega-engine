@@ -3,10 +3,10 @@
   "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "phase": "EXECUTION_MINIMAL",
   "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-18T00:45:00.000000+00:00",
+  "updated": "2026-08-18T03:30:00.000000+00:00",
   "owner": "kali",
   "status": "in_progress",
-  "status_detail": "MaKaLi Council Verdict 2026-08-17: INST-1 BLOCKED (6 critical fixes). DEL-1 CONDITIONAL PASS (3 conditions). PUB-1 READY (awaiting Architect). DOC-1 COMPLETE. Three-item critical path verified on THIS machine but INST-1 acceptance gate FAILS on fresh clone. Execution SSOT = DEBUT_REMEDIATION_MANUAL_20260817.md §5. P0-1 scrub COMPLETE. PUB-1 allowlist drafted (G1-G4 closed). INST-1 blocked: install.sh uses .[all], pyproject.toml extras not split, Redis not opt-in, _load_sovereign_secrets active, version drift, README badge. DEL-1 requires: test baseline green (1 failure), observability emission spec, atomic god-module split. 1797 tests pass (1 fail, 40 skip, 8 xfail). make temple-grade PASSES.",
+  "status_detail": "Cline CLI Insights 2026-08-18: INST-1 execution plan refined (single-thread, Nemotron 30B for fixes 1,2,5,6; DeepSeek 1M for 3,4). OOM test is test bug — expect DENY_THRASHING (correct C-2′ behavior). DEL-1 Week 2: 3 anti-hallucination rules (contract first, read-only map, atomic ship). Observability: 5 mandatory events on existing ObservabilityEngine. Vault Path B OK + delete omega vault CLI. 1 active Cline instance max. Fleet WAD MVP = config+doc only. INST-1 unblocked — Cline executing Fixes 1-6 now. Test baseline fix: update expectation to DENY_THRASHING. 1797 tests pass (1 fail, 40 skip, 8 xfail). make temple-grade PASSES.",
   "supersedes": [
     "SDP-EXECUTION-01 (Aug 11 — full 5-phase plan, now archived)",
     "NEMOTRON-ANALYSIS-01 (Aug 10 — analysis complete)",
@@ -385,37 +385,49 @@
               "id": "INST-1-fix1",
               "description": "install.sh: change pip install -e \".[all]\" to \".[native,cli]\"",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "in_progress",
+              "model": "Nemotron 30B",
+              "notes": "Localized bash edit, fast iteration (Cline Q1)"
             },
             {
               "id": "INST-1-fix2",
               "description": "pyproject.toml: move warp-proxy-pool to [warp], qdrant-client/redis/youtube-transcript-api/yt-dlp to extras; add import guards",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "Nemotron 30B",
+              "notes": "TOML structural edit; deterministic (Cline Q1)"
             },
             {
               "id": "INST-1-fix3",
               "description": "memory_store.py: guard Redis construction behind OMEGA_REDIS_HOST; remove default 'omega' password",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "DeepSeek 1M",
+              "notes": "Cross-file: RedisStorageProvider import + MemoryStore init + config chain (Cline Q1)"
             },
             {
               "id": "INST-1-fix4",
               "description": "model_gateway.py: remove _load_sovereign_secrets() from __init__; delete method; document required env vars",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "DeepSeek 1M",
+              "notes": "Highest blast radius: import edge, env chain, tests reference it (Cline Q1)"
             },
             {
               "id": "INST-1-fix5",
               "description": "src/omega/__init__.py: single version source via importlib.metadata.version('omega')",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "Nemotron 30B",
+              "notes": "Trivial importlib.metadata one-liner (Cline Q1)"
             },
             {
               "id": "INST-1-fix6",
               "description": "README.md: remove 1315 badge; add make setup target matching install.sh OR delete lines",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "Nemotron 30B",
+              "notes": "Documentation + Makefile target (Cline Q1)"
             }
           ]
         },
@@ -436,21 +448,34 @@
           "conditions": [
             {
               "id": "DEL-1-C1",
-              "description": "Test baseline green (0 failures) before Week 1 — currently 1 failure: test_oom_protector_RAM_check_under_pressure",
+              "description": "Test baseline green (0 failures) before Week 1 — OOM test is test bug: update expectation to DENY_THRASHING (correct C-2′ fusion behavior)",
               "owner": "verity",
-              "status": "backlog"
+              "status": "in_progress",
+              "model": "Nemotron 30B",
+              "notes": "Test bug, not logic bug. DENY_THRASHING is correct under pressure (Cline Q2)"
             },
             {
               "id": "DEL-1-C2",
-              "description": "Observability emission spec in Week 2 PR: trace.log(\"model.selected\", ...) + trace.log(\"domain.routed\", method=\"provider_selector\", ...) in new routing path",
+              "description": "Observability emission spec: 5 mandatory events on existing ObservabilityEngine (router.entity_match, router.model_selected, router.local_slot_busy, router.cloud_fallback, talk.latency)",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "DeepSeek 1M",
+              "notes": "Reuse existing emitter, no new emitter (Cline Q4)"
             },
             {
               "id": "DEL-1-C3",
-              "description": "Atomic god-module split in Week 2 PR: oracle.py → dispatcher + router (<500 lines each); model_gateway.py → provider_loader + generator (<500 lines each)",
+              "description": "DEL-1 Week 2 surgical workflow: 3 anti-hallucination rules — (1) contract test first, (2) read-only extraction MAP pass, (3) atomic 3-file ship (new module + oracle.py delegate + passing contract test)",
               "owner": "maat_n3",
-              "status": "backlog"
+              "status": "backlog",
+              "model": "DeepSeek 1M",
+              "notes": "DeepSeek 1M is ONLY role in DEL-1 Week 2 (Cline Q3)"
+            },
+            {
+              "id": "DEL-1-C4",
+              "description": "Vault Path B (50-line minimal, keyring only) + DELETE omega vault CLI entirely + 3-line README secrets section",
+              "owner": "maat_n3",
+              "status": "backlog",
+              "notes": "Path B sufficient for ModelGateway; CLI adds zero debut value (Cline Q5)"
             }
           ]
         },
@@ -551,7 +576,14 @@
     "D-550 Test suite baseline must be green (0 failures) before DEL-1 Week 1",
     "D-551 God-module freeze requires atomic split of oracle.py + model_gateway.py in DEL-1 Week 2",
     "D-552 Vault Path A (delete from product surface) recommended over Path B",
-    "D-553 release/debut branch from allowlist is the publication mechanic (not in-place git rm)"
+    "D-553 release/debut branch from allowlist is the publication mechanic (not in-place git rm)",
+    "D-557 Cline DeepSeek V4 Flash = 1M context (corrected from 200K) — primary surgical tool for DEL-1 Week 2",
+    "D-558 Fleet architecture PARKED per Carmack — only DeepSeek-assisted IntentRouter extraction survives",
+    "D-559 INST-1 execution model assignment: Nemotron 30B for logic/bash fixes, DeepSeek 1M for cross-file surgery",
+    "D-560 DEL-1 Week 2 workflow: Human-driven incremental extraction with contract tests at each step",
+    "D-561 OOM test is test bug — expect DENY_THRASHING (correct C-2′ fusion behavior)",
+    "D-562 Vault Path B (50-line minimal, keyring only) + DELETE omega vault CLI entirely",
+    "D-563 1 active Cline instance max; 8 accounts = rate-limit resilience not parallelism"
   ],
   "ark_strategy_ssot": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "notes": [

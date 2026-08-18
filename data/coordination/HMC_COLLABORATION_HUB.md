@@ -2,7 +2,7 @@
 
 **AP Token**: `AP-HMC-HUB-v1.0.0`
 **Status**: ACTIVE — Single coordination SSOT
-**Last Updated**: 2026-08-18T00:50:00.000000Z
+**Last Updated**: 2026-08-18T03:35:00.000000Z
 **Updated By**: kali
 
 ---
@@ -16,7 +16,7 @@
 
 **KALI RATIFICATION 2026-08-16 (D-532)**: Roc readiness audit ratified — see `ACTIVE_SPRINT.json` → `READINESS-REMEDIATION` workstream + `ROC_RACOON_KALI_REPORT_20260816.md`.
 
-**CURRENT:** PUBLIC DEBUT — **Execution SSOT: `DEBUT_REMEDIATION_MANUAL_20260817.md` §5** → **P0-1 scrub COMPLETE ✅** → **DOC-1 stamps COMPLETE ✅** → **PUB-1 allowlist READY (G1–G4 closed, awaiting Architect)** → **INST-1 BLOCKED (6 fixes: install.sh, pyproject.toml extras, Redis opt-in, _load_sovereign_secrets, version, README)** → **DEL-1 CONDITIONAL (3 conditions: test green, observability spec, atomic split)** → **P2/P3/P4 after DEL-1 week 1**
+**CURRENT:** PUBLIC DEBUT — **Execution SSOT: `DEBUT_REMEDIATION_MANUAL_20260817.md` §5** → **P0-1 scrub COMPLETE ✅** → **DOC-1 stamps COMPLETE ✅** → **PUB-1 allowlist READY (G1–G4 closed, awaiting Architect)** → **INST-1 EXECUTING (Cline: Fixes 1,2,5,6 Nemotron 30B; Fixes 3,4 DeepSeek 1M)** → **Test baseline: OOM test bug — expect DENY_THRASHING** → **DEL-1 Week 1 (after INST-1 + green tests)** → **DEL-1 Week 2: IntentRouter extraction (DeepSeek 1M, 3 anti-hallucination rules)** → **P2/P3/P4 after DEL-1**
 
 **✅ P0-1 RESOLVED (Private Repo — Scrubbed from History)**: Real API keys were pushed to `origin/main`. **REPO IS PRIVATE** — scrubbed from ALL history via `git filter-repo` (no rotation needed). Files removed/redacted: `migrate_keys_full.py`, `PROVIDER_FREE_TIER_GUIDE.md`, `test_failure_registry.py`, `SECURITY_AUDIT_2026_05_19.md` (2 paths), `migrate_keys.py`, `GOOGLE_GEMMA_MODEL_REFERENCE.md` (AIza key redacted). Cline checkpoints pruned. Force-pushed all branches (main, release/initial-v1, sprint/*). **No real secrets remain in git history** (only 6 prose/test false positives).
 
@@ -192,6 +192,18 @@
 - **DOC-1 COMPLETE** — 11 files stamped, `rg "P0 TODAY"` gone
 - **Decisions locked**: D-548 through D-553
 - **Verdict artifact**: `data/coordination/MAKALI_COUNCIL_VERDICT_20260817.md`
+
+**2026-08-18T03:15Z** — **CLINE CLI INSIGHTS Q1-Q7** (Hardware-Grounded Execution Plan):
+- **Q1**: Single-thread INST-1 — Nemotron 30B for fixes 1,2,5,6; DeepSeek 1M for 3,4. Do NOT parallelize (5700U/14Gi can't run 30B+1M concurrently).
+- **Q2**: OOM test is test bug — DENY_THRASHING is correct C-2′ fusion behavior; fix expectation, not OOMProtector.
+- **Q3**: DEL-1 W2 workflow viable + 3 anti-hallucination rules: contract test first, read-only extraction MAP pass, atomic 3-file ship.
+- **Q4**: Observability = 5 mandatory events reusing existing ObservabilityEngine, no new emitter.
+- **Q5**: Vault Path B OK + delete omega vault CLI entirely; 3-line README secrets section.
+- **Q6**: 1 active Cline instance max; 8 accounts = rate-limit resilience, not parallelism.
+- **Q7**: Fleet WAD MVP = config+doc only, consumer-only, no engine code.
+- **Artifacts**: `data/coordination/CLINE_INSIGHTS_Q1_Q7_20260818.md`, `ACTIVE_SPRINT.json` updated with model assignments, DEL-1 conditions refined.
+- **Decisions locked**: D-557 through D-563.
+- **Status**: INST-1 unblocked — Cline executing Fixes 1-6 now. Test baseline fix: update expectation to DENY_THRASHING.
 
 ---
 
