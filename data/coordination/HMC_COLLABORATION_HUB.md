@@ -2,7 +2,7 @@
 
 **AP Token**: `AP-HMC-HUB-v1.0.0`
 **Status**: ACTIVE — Single coordination SSOT
-**Last Updated**: 2026-08-17T14:13:10.759934Z
+**Last Updated**: 2026-08-18T00:50:00.000000Z
 **Updated By**: kali
 
 ---
@@ -16,7 +16,7 @@
 
 **KALI RATIFICATION 2026-08-16 (D-532)**: Roc readiness audit ratified — see `ACTIVE_SPRINT.json` → `READINESS-REMEDIATION` workstream + `ROC_RACOON_KALI_REPORT_20260816.md`.
 
-**CURRENT:** PUBLIC DEBUT — **Execution SSOT: `DEBUT_REMEDIATION_MANUAL_20260817.md` §5** → **P0-1 scrub COMPLETE ✅** → **DOC-1 stamps COMPLETE ✅** → **PUB-1 allowlist IN PROGRESS (G1–G4 gaps, awaiting Architect)** → **INST-1 (maat) READY — next executable** → **DEL-1 (roc/maat) backlog** → **P2/P3/P4 after DEL-1 week 1**
+**CURRENT:** PUBLIC DEBUT — **Execution SSOT: `DEBUT_REMEDIATION_MANUAL_20260817.md` §5** → **P0-1 scrub COMPLETE ✅** → **DOC-1 stamps COMPLETE ✅** → **PUB-1 allowlist READY (G1–G4 closed, awaiting Architect)** → **INST-1 BLOCKED (6 fixes: install.sh, pyproject.toml extras, Redis opt-in, _load_sovereign_secrets, version, README)** → **DEL-1 CONDITIONAL (3 conditions: test green, observability spec, atomic split)** → **P2/P3/P4 after DEL-1 week 1**
 
 **✅ P0-1 RESOLVED (Private Repo — Scrubbed from History)**: Real API keys were pushed to `origin/main`. **REPO IS PRIVATE** — scrubbed from ALL history via `git filter-repo` (no rotation needed). Files removed/redacted: `migrate_keys_full.py`, `PROVIDER_FREE_TIER_GUIDE.md`, `test_failure_registry.py`, `SECURITY_AUDIT_2026_05_19.md` (2 paths), `migrate_keys.py`, `GOOGLE_GEMMA_MODEL_REFERENCE.md` (AIza key redacted). Cline checkpoints pruned. Force-pushed all branches (main, release/initial-v1, sprint/*). **No real secrets remain in git history** (only 6 prose/test false positives).
 
@@ -184,6 +184,14 @@
 - `get_soul_prompt()` hydrates from `approved_lessons.yaml` (end-to-end test passed with temp entity)
 - Entity identity persists via `soul.yaml` load (verified)
 - **ALL 3 CP-2 CRITERIA VERIFIED**
+
+**2026-08-17T22:00Z** — **MAKALI COUNCIL VERDICT** (Debut Hardening Review):
+- **INST-1 BLOCKED** — 6 critical fixes required (install.sh, pyproject.toml extras, MemoryStore Redis opt-in, ModelGateway secrets, version alignment, README badge)
+- **DEL-1 CONDITIONAL PASS** — 3 conditions: (C1) test baseline green (1 failure), (C2) observability emission spec for router collapse, (C3) atomic god-module split (oracle.py + model_gateway.py)
+- **PUB-1 READY** — Awaiting Architect allowlist confirmation + `release/debut` branch mechanic
+- **DOC-1 COMPLETE** — 11 files stamped, `rg "P0 TODAY"` gone
+- **Decisions locked**: D-548 through D-553
+- **Verdict artifact**: `data/coordination/MAKALI_COUNCIL_VERDICT_20260817.md`
 
 ---
 

@@ -3,10 +3,10 @@
   "campaign": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "phase": "EXECUTION_MINIMAL",
   "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-17T19:45:00.000000+00:00",
+  "updated": "2026-08-18T00:45:00.000000+00:00",
   "owner": "kali",
   "status": "in_progress",
-  "status_detail": "Scope cut executed per Carmack verdict. Three-item critical path COMPLETE. Readiness Remediation (P0-1 scrub + P1 test suite) COMPLETE — 1797/1797 tests pass, make temple-grade PASSES. Execution SSOT = DEBUT_REMEDIATION_MANUAL_20260817.md §5. DOC-1 strategy stamps COMPLETE (668d58eb). P0-1 history scrub COMPLETE (all reachable history clean; only prose/test-mock false positives). PUB-1 allowlist in_progress (G1-G4 gaps open, awaiting Architect confirmation). INST-1 ready (maat_n3). DEL-1 backlog (after INST-1). P2 lint debt (11,400) + P3 CI/hygiene + P4 polish after DEL-1 week 1. 2 commits pushed (668d58eb, 5cc51a26). 137 checkpoints pruned. P0-1c gitleaks MOVED to pre-debut critical path (Q4 ratified). All VOS phases, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 DEFERRED to post-debut.",
+  "status_detail": "MaKaLi Council Verdict 2026-08-17: INST-1 BLOCKED (6 critical fixes). DEL-1 CONDITIONAL PASS (3 conditions). PUB-1 READY (awaiting Architect). DOC-1 COMPLETE. Three-item critical path verified on THIS machine but INST-1 acceptance gate FAILS on fresh clone. Execution SSOT = DEBUT_REMEDIATION_MANUAL_20260817.md §5. P0-1 scrub COMPLETE. PUB-1 allowlist drafted (G1-G4 closed). INST-1 blocked: install.sh uses .[all], pyproject.toml extras not split, Redis not opt-in, _load_sovereign_secrets active, version drift, README badge. DEL-1 requires: test baseline green (1 failure), observability emission spec, atomic god-module split. 1797 tests pass (1 fail, 40 skip, 8 xfail). make temple-grade PASSES.",
   "supersedes": [
     "SDP-EXECUTION-01 (Aug 11 — full 5-phase plan, now archived)",
     "NEMOTRON-ANALYSIS-01 (Aug 10 — analysis complete)",
@@ -366,11 +366,57 @@
           "id": "INST-1",
           "description": "Install honesty — remove warp-proxy-pool hard dep (optional extra [warp]); move qdrant-client/redis/youtube-transcript-api/yt-dlp to extras; install.sh uses .[native,cli] not .[all]; MemoryStore no Redis default; stop _load_sovereign_secrets .env dump; version align; README 1315-badge removal",
           "owner": "maat_n3",
-          "status": "ready",
+          "status": "blocked",
           "depends_on": [],
           "acceptance": [
             "Fresh venv WITHOUT warp-proxy-pool + WITHOUT Redis: pip install -e .[native,cli]",
             "omega talk \"hello\" → native-gguf, IS_CLOUD=False, exit 0"
+          ],
+          "blockers": [
+            "install.sh uses .[all] instead of .[native,cli]",
+            "pyproject.toml: warp-proxy-pool, qdrant-client, redis, youtube-transcript-api, yt-dlp in main deps (not extras)",
+            "memory_store.py: Redis constructs by default with hardcoded 'omega' password (no OMEGA_REDIS_HOST guard)",
+            "model_gateway.py: _load_sovereign_secrets() called in __init__, dumps .env into os.environ",
+            "src/omega/__init__.py version 1.0.0 vs pyproject.toml 1.2.0 (no importlib.metadata single source)",
+            "README.md: 1315 badge present; make setup target missing"
+          ],
+          "subtasks": [
+            {
+              "id": "INST-1-fix1",
+              "description": "install.sh: change pip install -e \".[all]\" to \".[native,cli]\"",
+              "owner": "maat_n3",
+              "status": "backlog"
+            },
+            {
+              "id": "INST-1-fix2",
+              "description": "pyproject.toml: move warp-proxy-pool to [warp], qdrant-client/redis/youtube-transcript-api/yt-dlp to extras; add import guards",
+              "owner": "maat_n3",
+              "status": "backlog"
+            },
+            {
+              "id": "INST-1-fix3",
+              "description": "memory_store.py: guard Redis construction behind OMEGA_REDIS_HOST; remove default 'omega' password",
+              "owner": "maat_n3",
+              "status": "backlog"
+            },
+            {
+              "id": "INST-1-fix4",
+              "description": "model_gateway.py: remove _load_sovereign_secrets() from __init__; delete method; document required env vars",
+              "owner": "maat_n3",
+              "status": "backlog"
+            },
+            {
+              "id": "INST-1-fix5",
+              "description": "src/omega/__init__.py: single version source via importlib.metadata.version('omega')",
+              "owner": "maat_n3",
+              "status": "backlog"
+            },
+            {
+              "id": "INST-1-fix6",
+              "description": "README.md: remove 1315 badge; add make setup target matching install.sh OR delete lines",
+              "owner": "maat_n3",
+              "status": "backlog"
+            }
           ]
         },
         {
@@ -386,6 +432,26 @@
             "rg RoutingTable src/omega empty",
             "rg miap src/omega empty",
             "one RouteDecision contract test (fails if second router imported)"
+          ],
+          "conditions": [
+            {
+              "id": "DEL-1-C1",
+              "description": "Test baseline green (0 failures) before Week 1 — currently 1 failure: test_oom_protector_RAM_check_under_pressure",
+              "owner": "verity",
+              "status": "backlog"
+            },
+            {
+              "id": "DEL-1-C2",
+              "description": "Observability emission spec in Week 2 PR: trace.log(\"model.selected\", ...) + trace.log(\"domain.routed\", method=\"provider_selector\", ...) in new routing path",
+              "owner": "maat_n3",
+              "status": "backlog"
+            },
+            {
+              "id": "DEL-1-C3",
+              "description": "Atomic god-module split in Week 2 PR: oracle.py → dispatcher + router (<500 lines each); model_gateway.py → provider_loader + generator (<500 lines each)",
+              "owner": "maat_n3",
+              "status": "backlog"
+            }
           ]
         },
         {
@@ -479,7 +545,13 @@
     "D-529 Simplify OOMProtector to 2-signal — DEFERRED",
     "D-530 Context Gauge uses tokens.total (never tokens_input) — DEFERRED",
     "D-531 Multi-write subagent method mandatory — DEFERRED",
-    "D-532 KALI-RATIFY-ROC-READINESS-20260816: Remediation plan ratified (Phase 0-4). P0-1 keys ALREADY on origin/main — LIVE INCIDENT, rotate-then-scrub. VaultCore: keep bury_credential (align tests). CI single truth: make test + make lint + make temple-grade. E501: max-line-length 100 recommended."
+    "D-532 KALI-RATIFY-ROC-READINESS-20260816: Remediation plan ratified (Phase 0-4). P0-1 keys ALREADY on origin/main — LIVE INCIDENT, rotate-then-scrub. VaultCore: keep bury_credential (align tests). CI single truth: make test + make lint + make temple-grade. E501: max-line-length 100 recommended.",
+    "D-548 INST-1 BLOCKED — 6 critical fixes required before DEL-1 can begin",
+    "D-549 DEL-1 scope validated but requires observability emission spec for router collapse",
+    "D-550 Test suite baseline must be green (0 failures) before DEL-1 Week 1",
+    "D-551 God-module freeze requires atomic split of oracle.py + model_gateway.py in DEL-1 Week 2",
+    "D-552 Vault Path A (delete from product surface) recommended over Path B",
+    "D-553 release/debut branch from allowlist is the publication mechanic (not in-place git rm)"
   ],
   "ark_strategy_ssot": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
   "notes": [
