@@ -15,8 +15,13 @@
 | **3** | `VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART3.md` | SecretRegistry, Egress Sanitization, Zero-Knowledge Agents, RBAC | ~600 |
 | **4** | `VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART4.md` | Install Hardening, Cross-Platform Sandboxing, Deletion Plan, SoulSanitizer | ~600 |
 | **5** | `VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md` | Integration Tests, Residual Risks, Final Checklist | ~500 |
+| **R1** | `VAULT_OVERHAUL_REVIEW_ENHANCEMENTS_20260818.md` | **REVIEW**: Verdict matrix, 10 research findings (pyrage CVE, keyring headless, flashtext dead, ProtectHome conflict) | ~250 |
+| **R2** | `VAULT_OVERHAUL_REVIEW_ENHANCEMENTS_20260818_PART2.md` | **ENHANCED**: CredentialProvider v2 (headless), Sanitizer v2 (flashtext2), Editor v2 (micro 2.0.15+checksum), systemd v2, Export/Import/Rekey | ~400 |
+| **R3** | `VAULT_OVERHAUL_REVIEW_ENHANCEMENTS_20260818_PART3.md` | **ENHANCED**: Test matrix v2 (T1-T30), Risk register v2, Implementation plan v2 | ~250 |
 
-**Total**: ~2,600 lines of implementation-ready specification
+**Total**: ~3,500 lines of implementation-ready specification
+
+> **⚠️ SUPERSESSION NOTICE (2026-08-18)**: Where the Review (R1-R3) conflicts with the original spec (Parts 1-5), **the Review wins**. Key corrections: headless KEK fallback (F-3), flashtext→flashtext2 (F-5), ProtectHome reconciliation (F-7), Windows threshold 2000 chars (F-4), micro 2.0.15 + checksums (F-6), format-pattern detection (G-2), export/import/rekey (G-1).
 
 ---
 
