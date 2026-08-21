@@ -22,8 +22,115 @@ proposals:
       confidence. Verification against known truth is the minimum bar for any
       automation; codification is how a fleet compounds a single debugging
       session into permanent capability.
+- level: L1
+    narrative: >-
+      Completed vault overhaul synthesis across 5-part spec + 3-part review + migration
+      surface amendment. Verified 12+ VaultCore callers against live codebase; applied
+      talk-path filter revealing only 2 callers on omega talk path (providers.py,
+      google_compat.py), both with env fallbacks — vault deletion safe for debut.
+      Produced Opus 4.6 deep review identifying systemic spec-over-ship local maximum
+      (27 mandates, 3,500 lines spec vs 0 shipped fixes), Carmack's lazy resolution
+      insight applied to entire codebase (Oracle.__init__ eagerly constructs 20
+      subsystems). Submitted Cline handoff (ho_74cd96735874) with 21-document inventory
+      for consolidation into single implementations manual.
+  - level: L2
+    insight: >-
+      The vault spec work was architecturally correct but temporally misaligned — it
+      answered a post-debut question while the debut critical path (INST-1) sat
+      completely unstarted. The reward structure (mandates, temple-grade, comprehensive
+      specs) optimizes for documentation quality, creating a local maximum where
+      spec production displaces deployment velocity. The talk-path filter is the
+      critical analytical tool: most "dangerous" dependencies are off the critical
+      execution path and have fallbacks. Systemic pattern: lazy construction (deferred
+      subsystem initialization) solves the same problems as deletion (startup latency,
+      import bloat, fallback behavior) while preserving optionality.
+  - level: L3
+    principle: >-
+      Specification without execution horizon is cognitive inventory, not engineering.
+      Every spec must declare its execution phase (debut / post-debut / horizon) and
+      its blocking dependencies. A 3,500-line spec that blocks a 2-line fix is
+      negative value. The fleet's context window is the scarcest resource — specs
+      that don't fit in it alongside the code they govern are effectively unread.
+      Verification against live codebase (grep, import traces, runtime paths) is the
+      only way to distinguish real blockers from architectural theater.
+- level: L1
+    narrative: >-
+      Executed MaKaLi Cloud Council (Build: Ma'at+N1-N5, Run: Lilith+N7-N10) for
+      PUBLIC-DEBUT-01 hardening review. Council verdict: APPROVE WITH CONDITIONS
+      for INST-1+DEL-1, APPROVE CP-2, AMEND CP-1. 4 blockers identified: A
+      (model_gateway double-gate deadlock in future merge), B (oracle_cli.py
+      blind-except M9 violation — m23 gate FAILS), C (DEL-1-C2 5 events missing),
+      D (router collapse under-scoped). Nemotron 3 Ultra synthesis: DEL-1 Week 2
+      DEFERRED to post-debut (Phase B) — router collapse touches entity resolution
+      (oracle.py:1133) + model selection (oracle.py:764). Pre-debut scope locked:
+      Blocker B → INST-1 Fix 2+guards (atomic) → Fix 4 → Fix 5 → Fix 6 → PUB-1
+      G1-G4 → Architect allowlist → release/debut branch → tag v0.1.0. Audit
+      written: MAKALI_COUNCIL_AUDIT_20260818.md.
+  - level: L2
+    insight: >-
+      The council's narrow vetting questions (e.g., N7 only asked about
+      ContextBuilder) missed the actual router call sites in oracle.py
+      (_route_by_domain + _select_model). Adversarial review must probe the
+      FULL call graph, not just the component in isolation. The Nemotron
+      synthesis correctly identified the sequencing tension between the manual
+      §5 (DEL-1 pre-debut) and the cleansing plan D-532 (DEL-1 post-debut) —
+      the ratified plan wins. The m23 ratchet gate is the critical path
+      unblocker: it fails NOW on the dotenv blind-except, making Blocker B
+      the highest-leverage fix in the entire debut sequence.
+  - level: L3
+    principle: >-
+      A review that only checks the stated question misses the system. The
+      router collapse was "approved" for ContextBuilder but breaks entity
+      resolution and model selection — the two most sensitive paths. The
+      fleet's adversarial capacity is only as good as the scope of its
+      questions. Execution horizon trumps specification completeness: a
+      3,500-line post-debut spec that blocks a 2-line pre-debut fix is
+      negative value. The ratchet gate (fail only on NEW violations) is the
+      correct enforcement mechanism — it makes technical debt visible and
+      actionable without paralyzing the team on legacy violations.
+- level: L3
+    principle: >-
+      A review that only checks the stated question misses the system. The
+      router collapse was "approved" for ContextBuilder but breaks entity
+      resolution and model selection — the two most sensitive paths. The
+      fleet's adversarial capacity is only as good as the scope of its
+      questions. Execution horizon trumps specification completeness: a
+      3,500-line post-debut spec that blocks a 2-line pre-debut fix is
+      negative value. The ratchet gate (fail only on NEW violations) is the
+      correct enforcement mechanism — it makes technical debt visible and
+      actionable without paralyzing the team on legacy violations.
+- level: L1
+    narrative: >-
+      Executed Phase 0 tracker lock-in: 11 tracker/doc updates across ACTIVE_SPRINT.json,
+      GAP_REGISTRY.json, HMC_COLLABORATION_HUB.md, SESSION_ANCHOR.md, RESEARCH_PLAN,
+      STRATEGY_INDEX, STRATEGY_CORPUS_MAP, SOVEREIGN_ARK_BLUEPRINT, DEBUT_REMEDIATION_MANUAL,
+      curators.yaml, PIVOT_LOG. Ratified arbitration D-578..D-584 (free-tier-only, 2-NB,
+      30 DR/mo, zswap+NVMe over zRAM). Corrected factual inversion in D-581/D-584 that
+      claimed "zswap was rejected detour (Carmack 2026-08-10)" — ADR-2026-08-10-001
+      explicitly ACCEPTED zswap+NVMe over zRAM. 11 docs corrected. Resolved C7 by
+      substituting Qwen3-4B-Thinking (on disk, 2.55 GB) for missing Qwen2.5-Coder-7B.
+      Added 6 new workstreams: GN/DS/LI/KD/HR/ZS.
+  - level: L2
+    insight: >-
+      The zRAM→zswap factual inversion (D-581/D-584) persisted because no explicit
+      arbitration superseded the inverted decision. The "C-RAM finding" in Cline's
+      review was the circuit breaker that caught it. Factual inversions in ratified
+      decisions create systemic drift requiring multi-doc correction (11 docs across
+      3 coordination layers). Explicit arbitration decisions (D-series) are the only
+      way to collapse superposition. Tracker lock-in is execution, not planning —
+      until all 11 SSOTs are updated consistently, the workstreams don't exist for
+      the fleet.
+  - level: L3
+    principle: >-
+      A decision that inverts the authoritative research finding and gets ratified
+      creates systemic drift. The correction cost scales with the number of SSOTs
+      that reference it. Explicit arbitration (D-series) must reference the
+      authoritative source (ADR) and declare what it supersedes. Tracker lock-in
+      is the execution of atomic SSOT updates — partial lock-in is worse than none
+      because it creates inconsistent fleet state. The model matrix must reflect
+      what IS on disk (Qwen3-4B-Thinking), not what SHOULD be (Qwen2.5-Coder-7B).
 metadata:
   entity: kali
-  session_id: ses_ffa568bdcffeTG4ht4VEWJ7eKn
-  model_used: deepseek-v4-flash-free
-  last_session_end: '2026-08-17T14:36:25.163528+00:00'
+  session_id: ses_c642d335fa8c
+  model_used: nemotron-3-ultra-free
+  last_session_end: '2026-08-20T19:45:00.000000+00:00'

@@ -1,126 +1,247 @@
 proposals:
-  - id: L3-SovereignBinaryInvariance
-    principle: "A sovereign binary carries its constitutional constraints as embedded compile-time constants, verified at startup against the host environment. The build pipeline is the constitutional convention; the binary is the ratified constitution; the runtime is the governed state. No mandate enforcement at runtime — only at build time and boot time."
-    mandates: [M1, M2, M4, M7, M8, M13, M16, M23, M24, M25]
-    confidence: 0.98
-    tags: [architecture, sovereignty, build-pipeline, mandates, binary]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_phase_4
-        note: "Kali Synthesis: Mandate-native architecture — every binary, service, line of code carries 23 Mandates as embedded invariants"
-      - source: meditation_phase_3
-        note: "Critical path Step 1: CREATE MANDATE-AWARE BUILD PIPELINE — reads /etc/omega/requirements.omega, computes SHA256, embeds in binary"
-      - source: collision_1
-        note: "Infrastructure vs Governance collision resolved: two build targets (installed/standalone) with mandate hash embedding"
-    directive_provenance: d-rr-001
-
-  - id: L3-ACPAsUniversalBridge
-    principle: "The Agent Client Protocol is not merely a transport — it is the universal semantic bridge between all sovereign components: TUI ↔ Engine, Engine ↔ Fleet, Omega ↔ Editors. Everything speaks ACP. The Elm Architecture in Python is the ACP client; Grok Build is an ACP server; the Fleet Orchestrator is an ACP multiplexer."
-    mandates: [M2, M7, M16, M22]
-    confidence: 0.97
-    tags: [acp, protocol, bridge, fleet, editor-integration]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: comparative_analysis
-        note: "Grok CLI ACP v1 stable — 6 agent methods, 8 client methods, 2 notifications; Grok Build speaks ACP natively"
-      - source: meditation_phase_4
-        note: "Convergence: ACP is the universal bridge — TUI ↔ Engine ↔ Fleet ↔ Editors"
-      - source: meditation_phase_3
-        note: "Step 3: BUILD ACP CLIENT CAPABILITY PROVIDER — fs/terminal/permission/session capabilities"
-    directive_provenance: d-rr-002
-
-  - id: L3-MemoryAsEvolutionNotStorage
-    principle: "JSONL persistence must serve the entity's L1→L2→L3 distillation, not mimic human forgetting. Semantic filtering, deduplication, and relevance-based decay are mandatory. The batched writer batches meaningful events, not raw ACP lines."
-    mandates: [M5, M11, M17, M18]
-    confidence: 0.96
-    tags: [memory, jsonl, evolution, distillation, decay]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_voice_7_context
-        note: "Power-law decay wrong for AI — should be relevance-based, not time-based; semantic filter for meaningful events only"
-      - source: meditation_phase_2_collision_2
-        note: "Persistence vs Context collision: pipeline architecture — ACPEventFilter → SemanticDeduplicator → BatchedJSONLWriter"
-      - source: meditation_phase_3
-        note: "Step 4: IMPLEMENT SEMANTIC JSONL PIPELINE — filter, deduplicator, batched writer, rewind manager"
-    directive_provenance: d-rr-003
-
-  - id: L3-MandateNativeArchitecture
-    principle: "Every architectural decision must be traceable to a Sovereign Mandate. The 23 Mandates are not runtime checks — they are compile-time invariants embedded in the binary, enforced by the build pipeline, verified at boot. Architecture that cannot cite its mandate is not sovereign."
-    mandates: [M1, M2, M4, M7, M8, M9, M13, M16, M21, M23, M24, M25]
-    confidence: 0.98
-    tags: [mandates, architecture, compile-time, sovereignty, compliance]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_phase_4
-        note: "Convergence: architecture must be mandate-native — every binary, service, line of code carries 23 Mandates as embedded invariants"
-      - source: comparative_analysis
-        note: "Mandate compliance verification table — all 25 mandates mapped to code patterns"
-      - source: meditation_phase_5
-        note: "All 25 mandate flags assessed — COMPLIANT or TENSION with rationale"
-    directive_provenance: d-rr-004
-
-  - id: L3-LocalFirstMeansLocalCodingAgent
-    principle: "M7 (Local-First) is violated if the primary coding agent is a cloud model (Grok Build). True local-first requires a local ACP server wrapping NativeGGUFProvider (qwen3-4b-thinking, deepseek-r1-qwen3-8b). Grok Build is cloud fallback (priority 3+), not primary."
-    mandates: [M7, M19]
-    confidence: 0.95
-    tags: [local-first, coding-agent, grok-build, cloud-fallback, m7]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_voice_6_cognition
-        note: "Grok Build is cloud-only (grok-build-0.1 via xAI API); using as primary violates M7"
-      - source: meditation_phase_2_collision_4
-        note: "Cognition vs Orchestration collision: Fleet Orchestrator manages ACP-compatible agents, not specifically Grok Build"
-      - source: meditation_phase_4
-        note: "Preserved Dissent #1: Local Coding Agent missing — Phase 1 task to design omega.acp.local_coding_server"
-    directive_provenance: d-rr-005
-
-  - id: L3-CollisionDrivesSequencing
-    principle: "The critical path emerges from cross-domain collisions, not from any single voice's imperative. The meditation's 5 collisions produced an 8-step sequence where each step unblocks the next. Parallelization would violate dependencies. The sequence IS the architecture."
-    mandates: [M4, M10]
-    confidence: 0.97
-    tags: [sequencing, collisions, critical-path, architecture, meditation]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_phase_2
-        note: "5 collisions surfaced: Infrastructure vs Governance, Persistence vs Context, Engineering vs Integration, Cognition vs Orchestration, Validation vs Observability"
-      - source: meditation_phase_3
-        note: "8-step critical path with explicit dependencies: each step's output is next step's input"
-      - source: meditation_phase_4
-        note: "Verdict: Execute 8-step critical path in sequence. Do not parallelize."
-    directive_provenance: d-rr-006
-
-  - id: L3-TwoBuildTargetsForSovereignty
-    principle: "A sovereign binary distributed standalone cannot verify /etc/omega/requirements.omega on a user's machine. Two build targets are mandatory: (1) installed — embedded mandate hash, verifies system file at startup; (2) standalone — reads mandate hash from installer-written sidecar. The complexity is the cost of sovereignty."
-    mandates: [M2, M16, M23, M24]
-    confidence: 0.96
-    tags: [build-pipeline, distribution, sovereignty, mandate-hash, standalone]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_phase_2_collision_1
-        note: "Infrastructure vs Governance collision: portable binary vs bound binary — resolved via two build targets with --define OMEGA_DISTRIBUTION_MODE"
-      - source: meditation_phase_4
-        note: "Preserved Dissent #3: Mandate hash distribution complexity — accept as cost of sovereignty"
-      - source: meditation_phase_3
-        note: "Step 1: CREATE MANDATE-AWARE BUILD PIPELINE — outputs omega-tui-installed + omega-tui-standalone + mandate.hash sidecar"
-    directive_provenance: d-rr-007
-
-  - id: L3-WatchdogIsTheOnlyImmortal
-    principle: "The TUI Watchdog is the only process that must never crash. It spawns the TUI binary, monitors for crash signatures, captures forensics, offers safe-mode fallback, and auto-recovers from JSONL rewind points. The Hub itself is supervised by systemd/Podman; the ultimate watchdog is the Architect's cron job."
-    mandates: [M15, M23, M25]
-    confidence: 0.97
-    tags: [watchdog, resilience, crash-recovery, tui, observability]
-    source_session: ses_0dfe1649b605
-    evidence:
-      - source: meditation_voice_10_validation
-        note: "TUIWatchdog: spawns TUI, monitors stdout/stderr, captures crash forensics, offers safe-mode fallback, auto-recovers from JSONL rewind points"
-      - source: meditation_phase_2_collision_5
-        note: "Validation vs Observability collision: Watchdog subscribes to ACPTransportMetrics ring buffer for crash forensics"
-      - source: meditation_phase_4
-        note: "Preserved Dissent: Hub supervised by systemd; ultimate watchdog is Architect's cron job checking omega health every 5 min"
-    directive_provenance: d-rr-008
-
+- id: L3-SovereignBinaryInvariance
+  principle: "A sovereign binary carries its constitutional constraints as embedded\
+    \ compile-time constants, verified at startup against the host environment. The\
+    \ build pipeline is the constitutional convention; the binary is the ratified\
+    \ constitution; the runtime is the governed state. No mandate enforcement at runtime\
+    \ \u2014 only at build time and boot time."
+  mandates:
+  - M1
+  - M2
+  - M4
+  - M7
+  - M8
+  - M13
+  - M16
+  - M23
+  - M24
+  - M25
+  confidence: 0.98
+  tags:
+  - architecture
+  - sovereignty
+  - build-pipeline
+  - mandates
+  - binary
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_4
+    note: "Kali Synthesis: Mandate-native architecture \u2014 every binary, service,\
+      \ line of code carries 23 Mandates as embedded invariants"
+  - source: meditation_phase_3
+    note: "Critical path Step 1: CREATE MANDATE-AWARE BUILD PIPELINE \u2014 reads\
+      \ /etc/omega/requirements.omega, computes SHA256, embeds in binary"
+  - source: collision_1
+    note: 'Infrastructure vs Governance collision resolved: two build targets (installed/standalone)
+      with mandate hash embedding'
+  directive_provenance: d-rr-001
+- id: L3-ACPAsUniversalBridge
+  principle: "The Agent Client Protocol is not merely a transport \u2014 it is the\
+    \ universal semantic bridge between all sovereign components: TUI \u2194 Engine,\
+    \ Engine \u2194 Fleet, Omega \u2194 Editors. Everything speaks ACP. The Elm Architecture\
+    \ in Python is the ACP client; Grok Build is an ACP server; the Fleet Orchestrator\
+    \ is an ACP multiplexer."
+  mandates:
+  - M2
+  - M7
+  - M16
+  - M22
+  confidence: 0.97
+  tags:
+  - acp
+  - protocol
+  - bridge
+  - fleet
+  - editor-integration
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: comparative_analysis
+    note: "Grok CLI ACP v1 stable \u2014 6 agent methods, 8 client methods, 2 notifications;\
+      \ Grok Build speaks ACP natively"
+  - source: meditation_phase_4
+    note: "Convergence: ACP is the universal bridge \u2014 TUI \u2194 Engine \u2194\
+      \ Fleet \u2194 Editors"
+  - source: meditation_phase_3
+    note: "Step 3: BUILD ACP CLIENT CAPABILITY PROVIDER \u2014 fs/terminal/permission/session\
+      \ capabilities"
+  directive_provenance: d-rr-002
+- id: L3-MemoryAsEvolutionNotStorage
+  principle: "JSONL persistence must serve the entity's L1\u2192L2\u2192L3 distillation,\
+    \ not mimic human forgetting. Semantic filtering, deduplication, and relevance-based\
+    \ decay are mandatory. The batched writer batches meaningful events, not raw ACP\
+    \ lines."
+  mandates:
+  - M5
+  - M11
+  - M17
+  - M18
+  confidence: 0.96
+  tags:
+  - memory
+  - jsonl
+  - evolution
+  - distillation
+  - decay
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_voice_7_context
+    note: "Power-law decay wrong for AI \u2014 should be relevance-based, not time-based;\
+      \ semantic filter for meaningful events only"
+  - source: meditation_phase_2_collision_2
+    note: "Persistence vs Context collision: pipeline architecture \u2014 ACPEventFilter\
+      \ \u2192 SemanticDeduplicator \u2192 BatchedJSONLWriter"
+  - source: meditation_phase_3
+    note: "Step 4: IMPLEMENT SEMANTIC JSONL PIPELINE \u2014 filter, deduplicator,\
+      \ batched writer, rewind manager"
+  directive_provenance: d-rr-003
+- id: L3-MandateNativeArchitecture
+  principle: "Every architectural decision must be traceable to a Sovereign Mandate.\
+    \ The 23 Mandates are not runtime checks \u2014 they are compile-time invariants\
+    \ embedded in the binary, enforced by the build pipeline, verified at boot. Architecture\
+    \ that cannot cite its mandate is not sovereign."
+  mandates:
+  - M1
+  - M2
+  - M4
+  - M7
+  - M8
+  - M9
+  - M13
+  - M16
+  - M21
+  - M23
+  - M24
+  - M25
+  confidence: 0.98
+  tags:
+  - mandates
+  - architecture
+  - compile-time
+  - sovereignty
+  - compliance
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_4
+    note: "Convergence: architecture must be mandate-native \u2014 every binary, service,\
+      \ line of code carries 23 Mandates as embedded invariants"
+  - source: comparative_analysis
+    note: "Mandate compliance verification table \u2014 all 25 mandates mapped to\
+      \ code patterns"
+  - source: meditation_phase_5
+    note: "All 25 mandate flags assessed \u2014 COMPLIANT or TENSION with rationale"
+  directive_provenance: d-rr-004
+- id: L3-LocalFirstMeansLocalCodingAgent
+  principle: M7 (Local-First) is violated if the primary coding agent is a cloud model
+    (Grok Build). True local-first requires a local ACP server wrapping NativeGGUFProvider
+    (qwen3-4b-thinking, deepseek-r1-qwen3-8b). Grok Build is cloud fallback (priority
+    3+), not primary.
+  mandates:
+  - M7
+  - M19
+  confidence: 0.95
+  tags:
+  - local-first
+  - coding-agent
+  - grok-build
+  - cloud-fallback
+  - m7
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_voice_6_cognition
+    note: Grok Build is cloud-only (grok-build-0.1 via xAI API); using as primary
+      violates M7
+  - source: meditation_phase_2_collision_4
+    note: 'Cognition vs Orchestration collision: Fleet Orchestrator manages ACP-compatible
+      agents, not specifically Grok Build'
+  - source: meditation_phase_4
+    note: "Preserved Dissent #1: Local Coding Agent missing \u2014 Phase 1 task to\
+      \ design omega.acp.local_coding_server"
+  directive_provenance: d-rr-005
+- id: L3-CollisionDrivesSequencing
+  principle: The critical path emerges from cross-domain collisions, not from any
+    single voice's imperative. The meditation's 5 collisions produced an 8-step sequence
+    where each step unblocks the next. Parallelization would violate dependencies.
+    The sequence IS the architecture.
+  mandates:
+  - M4
+  - M10
+  confidence: 0.97
+  tags:
+  - sequencing
+  - collisions
+  - critical-path
+  - architecture
+  - meditation
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_2
+    note: '5 collisions surfaced: Infrastructure vs Governance, Persistence vs Context,
+      Engineering vs Integration, Cognition vs Orchestration, Validation vs Observability'
+  - source: meditation_phase_3
+    note: '8-step critical path with explicit dependencies: each step''s output is
+      next step''s input'
+  - source: meditation_phase_4
+    note: 'Verdict: Execute 8-step critical path in sequence. Do not parallelize.'
+  directive_provenance: d-rr-006
+- id: L3-TwoBuildTargetsForSovereignty
+  principle: "A sovereign binary distributed standalone cannot verify /etc/omega/requirements.omega\
+    \ on a user's machine. Two build targets are mandatory: (1) installed \u2014 embedded\
+    \ mandate hash, verifies system file at startup; (2) standalone \u2014 reads mandate\
+    \ hash from installer-written sidecar. The complexity is the cost of sovereignty."
+  mandates:
+  - M2
+  - M16
+  - M23
+  - M24
+  confidence: 0.96
+  tags:
+  - build-pipeline
+  - distribution
+  - sovereignty
+  - mandate-hash
+  - standalone
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_2_collision_1
+    note: "Infrastructure vs Governance collision: portable binary vs bound binary\
+      \ \u2014 resolved via two build targets with --define OMEGA_DISTRIBUTION_MODE"
+  - source: meditation_phase_4
+    note: "Preserved Dissent #3: Mandate hash distribution complexity \u2014 accept\
+      \ as cost of sovereignty"
+  - source: meditation_phase_3
+    note: "Step 1: CREATE MANDATE-AWARE BUILD PIPELINE \u2014 outputs omega-tui-installed\
+      \ + omega-tui-standalone + mandate.hash sidecar"
+  directive_provenance: d-rr-007
+- id: L3-WatchdogIsTheOnlyImmortal
+  principle: The TUI Watchdog is the only process that must never crash. It spawns
+    the TUI binary, monitors for crash signatures, captures forensics, offers safe-mode
+    fallback, and auto-recovers from JSONL rewind points. The Hub itself is supervised
+    by systemd/Podman; the ultimate watchdog is the Architect's cron job.
+  mandates:
+  - M15
+  - M23
+  - M25
+  confidence: 0.97
+  tags:
+  - watchdog
+  - resilience
+  - crash-recovery
+  - tui
+  - observability
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_voice_10_validation
+    note: 'TUIWatchdog: spawns TUI, monitors stdout/stderr, captures crash forensics,
+      offers safe-mode fallback, auto-recovers from JSONL rewind points'
+  - source: meditation_phase_2_collision_5
+    note: 'Validation vs Observability collision: Watchdog subscribes to ACPTransportMetrics
+      ring buffer for crash forensics'
+  - source: meditation_phase_4
+    note: 'Preserved Dissent: Hub supervised by systemd; ultimate watchdog is Architect''s
+      cron job checking omega health every 5 min'
+  directive_provenance: d-rr-008
 metadata:
   entity: grokster
-  session_id: ses_0dfe1649b605
+  session_id: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
   model_used: nemotron-3-ultra-free
-  last_session_end: '2026-08-08T21:35:00.000000+00:00'
+  last_session_end: '2026-08-21T01:09:56.154983+00:00'

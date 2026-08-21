@@ -18,10 +18,13 @@
 | **R1** | `VAULT_OVERHAUL_REVIEW_ENHANCEMENTS_20260818.md` | **REVIEW**: Verdict matrix, 10 research findings (pyrage CVE, keyring headless, flashtext dead, ProtectHome conflict) | ~250 |
 | **R2** | `VAULT_OVERHAUL_REVIEW_ENHANCEMENTS_20260818_PART2.md` | **ENHANCED**: CredentialProvider v2 (headless), Sanitizer v2 (flashtext2), Editor v2 (micro 2.0.15+checksum), systemd v2, Export/Import/Rekey | ~400 |
 | **R3** | `VAULT_OVERHAUL_REVIEW_ENHANCEMENTS_20260818_PART3.md` | **ENHANCED**: Test matrix v2 (T1-T30), Risk register v2, Implementation plan v2 | ~250 |
+| **MS** | `VAULT_OVERHAUL_MIGRATION_SURFACE_20260818.md` | **MIGRATION SURFACE** (Kali): maps every `VaultCore`/`env:`/`google_creds` consumption site to `CredentialProvider`; closes G-α…G-ε; corrects Day-4 deletion plan | ~250 |
 
-**Total**: ~3,500 lines of implementation-ready specification
+**Total**: ~3,750 lines of implementation-ready specification
 
 > **⚠️ SUPERSESSION NOTICE (2026-08-18)**: Where the Review (R1-R3) conflicts with the original spec (Parts 1-5), **the Review wins**. Key corrections: headless KEK fallback (F-3), flashtext→flashtext2 (F-5), ProtectHome reconciliation (F-7), Windows threshold 2000 chars (F-4), micro 2.0.15 + checksums (F-6), format-pattern detection (G-2), export/import/rekey (G-1).
+>
+> **⚠️ MIGRATION SURFACE NOTICE (2026-08-18)**: The original deletion plan (`git rm -r src/omega/vault/` + 6-file modify list) is **INCOMPLETE** — four modules (`search_providers.py`, `providers.py`, `google_compat.py`, `orchestrator.py`) import `VaultCore` and reach into private `vault._credentials`. **MS doc is MANDATORY reading before Day 4.** Also fold Carmack M1-M3 (lazy regex / micro commit hash / `loginctl enable-linger`) into R1-R3 before dispatch.
 
 ---
 
@@ -53,10 +56,10 @@
 | **M2 Firewall** | CredentialProvider isolated in `src/omega/security/` |
 | **M7 Local-First** | OS keyring primary; pyrage/cryptography offline fallbacks |
 | **M16 Modularization** | Thin `credential_provider.py` wrapper; no engine logic in secret store |
-| **M18 Token Efficiency** | Zero custom crypto; `flashtext` O(N) sanitization |
+| **M18 Token Efficiency** | Zero custom crypto; `flashtext2` O(N) sanitization (F-5) |
 | **M22 Provenance** | Credential access at runtime, auditable via SOPS-style metadata |
 | **M23 Failure Integrity** | No soft-fail; explicit errors on missing credentials |
-| **M24 Venv Sovereignty** | All deps in `.venv`; `pyrage` wheels + `cryptography` pure-Python |
+| **M24 Venv Sovereignty** | All deps in `.venv`; `pyrage` wheels + `cryptography` (Rust-backed, musllinux wheels exist) |
 | **M27 Tracking Integrity** | All tasks registered in `ACTIVE_SPRINT.json` |
 
 ---
@@ -90,6 +93,8 @@ All specifications backed by deep web research (5 gaps × 2 research sprints):
 ## 📋 Final Checklist Before Implementation
 
 - [ ] All 5 spec parts reviewed and approved
+- [ ] **`VAULT_OVERHAUL_MIGRATION_SURFACE_20260818.md` read by Ma'at (Day 4 safety) — closes G-α…G-ε**
+- [ ] Carmack M1-M3 folded into R1-R3 (lazy regex / micro commit hash / `loginctl enable-linger`)
 - [ ] `ACTIVE_SPRINT.json` updated with vault-overhaul tasks
 - [ ] `HMC_COLLABORATION_HUB.md` NEXT_ACTION updated
 - [ ] Ma'at and Lilith briefed on their Day 1-2 deliverables
@@ -102,7 +107,7 @@ All specifications backed by deep web research (5 gaps × 2 research sprints):
 
 ## 🏁 Go/No-Go Decision
 
-**GO** — All research complete, all gaps closed, architecture validated across Linux/macOS/Windows, mandates satisfied, implementation plan sequenced.
+**GO (with precondition)** — All research complete, all gaps closed, architecture validated across Linux/macOS/Windows, mandates satisfied, implementation plan sequenced. **Precondition**: Ma'at/Lilith/Verity must read `VAULT_OVERHAUL_MIGRATION_SURFACE_20260818.md` before Day 4 (the original deletion plan breaks 4 modules reaching into `vault._credentials`); Carmack M1-M3 must be folded into R1-R3 before dispatch.
 
 **Next Command**: Dispatch Ma'at and Lilith to begin Phase 1 implementation.
 

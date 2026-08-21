@@ -223,3 +223,9 @@ config/local_overrides.yaml
 *.key
 .aider*
 context_packs/.poison/
+
+# Runtime artifacts (debut hygiene, 2026-08-22)
+data/state/blobs/
+data/requests/
+tests/tmp/
+.opencode/.last_session.json

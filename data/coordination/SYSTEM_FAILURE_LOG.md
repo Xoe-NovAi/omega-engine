@@ -94,3 +94,10 @@ Historical session transcripts (`ECHO_session-ses_0eac.md`, `iterative-refinemen
 ---
 
 *⬡ OMEGA ⬡ SYS-FAILURE-LOG ⬡ 2026-08-15 ⬡ CANONICAL*
+
+## 2026-08-22 — roc_racoon held session (ses_fddd00b4cffehe4KBN6eMwTU0Y) unresponsive
+- Context: N7 Deep ICS Review mission; code-review pass dispatched to held Roc session.
+- Failure: TWO consecutive task() returns with EMPTY final reply AND zero bytes written to KB (verified by grep/tail). Initial pass + MR-5 recovery-once both failed identically.
+- Impact: Roc ICS code-review section absent from KB. N7 covered code-review ground directly in synthesis (`data/entities/lilith/workspace/N7_ICS_REVIEW_20260822.md`); no soft-fail synthesis of Roc's alleged work — there was none.
+- Action: session treated as wedged; do NOT resume without fresh investigation. Logged per M23.
+- trc_n7_ics_review · entity: lilith/N7

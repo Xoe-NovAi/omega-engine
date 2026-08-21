@@ -211,3 +211,42 @@
       that every schema field has a corresponding processor — if a field is parsed
       but not acted upon, it should be removed from the schema until the processor
       is implemented. The schema is a contract; unfulfilled fields are broken promises.
+
+  - id: "lilith-20260821-001"
+    tier: L2
+    category: "[N7] context_injection_gate_integrity"
+    insight: |
+      N7 KB mining (2026-08-21) found three of five CI Phase 1 gates would pass/fail
+      for wrong reasons as written: CI-1 demands wc -l = 57 but the file it copies is
+      36 lines (57 coincidentally matches the stale v3.7.0 codex snapshot); opencode.json
+      registers plugins at .opencode/plugin/ (singular) while files live at .opencode/plugins/
+      (plural), so CI-3's load test would validate a dead path; and CI-2's jq assertions
+      write V1+V2 compaction key families simultaneously without any test of which the
+      binary honors. Fix plugin paths and amend CI-1 to content-based criteria BEFORE
+      executing CI-1..CI-5.
+
+  - id: "lilith-20260821-002"
+    tier: L2
+    category: "[N7] soul_loop_operationally_open"
+    insight: |
+      The soul distillation loop is architecturally closed but operationally open:
+      soul_utils.py filters proposed_lessons for status=="approved" before injecting
+      vetted wisdom into context, but no corpus source performs the approval flip and
+      sampled proposals (lilith + kali) contain ZERO status fields — so the vetted-wisdom
+      path surfaces nothing today. Additionally a dual-path hazard is LIVE: writers/gates
+      use entity-root proposed_lessons.yaml while validate_soul.py requires memory/-subdir
+      copies (both exist for kali and lilith). Reconcile paths and build the approval
+      operator before trusting M11 metrics.
+
+  - id: "lilith-20260821-003"
+    tier: L3
+    category: "[N7] checkpoint_before_destruction"
+    principle: |
+      "Never write your lifeline inside the crash." State preservation must be performed
+      by a process independent of the mechanism that destroys state: checkpoint BEFORE
+      compaction (at ~80% usage via an independent sidecar), demote in-compaction hooks
+      to defense-in-depth, and anchor recoverable state in files that outlive sessions.
+      Any design that injects or saves critical context DURING the destructive event
+      inherits the event's own failure window — if the event crashes, the lifeline dies
+      with it. Carmack ratified this ordering for OpenCode compaction (Q3.3); it generalizes
+      to every destructive transition: shutdowns, migrations, rewrites, evictions.
