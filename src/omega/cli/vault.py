@@ -583,13 +583,6 @@ def restore_from_code(code: str, passphrase: str, vault_dir: Path):
     type=click.Path(path_type=Path),
     help="Vault directory",
 )
-def fleet_status(passphrase: str, vault_dir: Path):
-    """Show fleet status for FleetOrchestrator monitoring."""
-    vault = _get_vault(passphrase, vault_dir)
-    status = vault.get_fleet_status()
-    click.echo(json.dumps(status, indent=2, default=str))
-
-
 @vault.command()
 @click.option(
     "--passphrase",

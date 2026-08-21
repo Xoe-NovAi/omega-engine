@@ -161,14 +161,15 @@ class MemoryStore:
             if not is_test:
                 # 1. Redis Provider (Hot)
                 try:
-                    redis_host = os.environ.get("OMEGA_REDIS_HOST", "localhost")
-                    redis_port = int(os.environ.get("OMEGA_REDIS_PORT", "6379"))
-                    redis_password = os.environ.get("OMEGA_REDIS_PASSWORD", "omega")
-                    self.providers.append(
-                        RedisStorageProvider(
-                            host=redis_host, port=redis_port, password=redis_password
+                    redis_host = os.environ.get("OMEGA_REDIS_HOST")
+                    if redis_host:
+                        redis_port = int(os.environ.get("OMEGA_REDIS_PORT", "6379"))
+                        redis_password = os.environ.get("OMEGA_REDIS_PASSWORD")
+                        self.providers.append(
+                            RedisStorageProvider(
+                                host=redis_host, port=redis_port, password=redis_password
+                            )
                         )
-                    )
                 except OmegaError:
                     raise
                 except (ConnectionError, RuntimeError) as e:

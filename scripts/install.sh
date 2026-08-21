@@ -74,7 +74,7 @@ source .venv/bin/activate
 # ── 3. Install dependencies (M24 Venv Sovereignty) ────────────────────────
 info "Upgrading pip + installing Omega (native + cli + dev)..."
 pip install --quiet --upgrade pip wheel setuptools
-pip install --quiet -e ".[all]"
+pip install --quiet -e ".[native,cli]"
 ok "Omega installed with native-gguf backend (llama-cpp-python)"
 
 # ── 4. Model download (M7 Local-First) ─────────────────────────────────────

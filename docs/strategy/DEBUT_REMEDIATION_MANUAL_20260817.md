@@ -421,7 +421,34 @@ Temple-grade after non-trivial changes (M13). If a mandatory tool is broken → 
 
 ---
 
-## 9. Commit and coordination rules
+## 9. Post-Debut Phase (Phase B — Week 2-6)
+
+**Authority**: `ACTIVE_SPRINT.json` (PUBLIC-DEBUT-01) + `SOVEREIGN_ARK_BLUEPRINT.md` §4 Priority Stack (Phase 0 Post-Debut Workstreams)
+
+**6 New Workstreams** (added 2026-08-20, D-578..D-584):
+
+| Workstream | Prefix | Owner | Scope |
+|------------|--------|-------|-------|
+| **GEMINI-NOTEBOOK** | GN | researcher | Free-tier-only (3 acct, 30 DR/mo), 2-NB (Active Research + Knowledge Base), notebooklm-py[mcp], master_token.json auth, SDP §10 gate honored |
+| **DOCUMENTATION-SYSTEM** | DS | kali | Modular domain docs (workspace + runtime + curator + validated copy sync), `scripts/sync_domain_docs.py`, `config/domains/curators.yaml` |
+| **LOCAL-INFERENCE-OPT** | LI | maat_n3 | Sequential loading, q8_0 KV cache, adaptive context buffer, Tier 0/1/2 matrix (Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B), llama-fit-params probe |
+| **KNOWLEDGE-DOMAINS** | KD | kali | Runtime modules + workspace authoring + curator model, affinity presets per domain |
+| **HEADROOM-INTEGRATION** | HR | maat_n3 | Semantic compression for tool outputs + RAG (40-90% savings), HeadroomMiddleware, MCP headroom tools |
+| **ZSWAP-SUBSYSTEM** | ZS | maat_n3 | 16GB NVMe swap, zswap enabled (max_pool_percent=25, lzo_rle, zsmalloc), zRAM DISABLED, swappiness=100, cgroup MemoryMin=2G/MemoryHigh=5G/MemoryMax=6G |
+
+**Execution Order** (after PUB-1 allowlist + INST-1 + DEL-1 Week 1):
+1. **GN-1..GN-5**: Deploy notebooklm-py[mcp], create 2 strategic notebooks, free-tier fetch pipeline, smoke test, SDP distillation
+2. **DS-1..DS-5**: Create DOMAIN_DOCUMENTATION_SYSTEM.md, workspace structure, runtime modules, sync script, STRATEGY_INDEX/CORPUS_MAP updates
+3. **LI-1..LI-5**: AdaptiveContextBuffer, SequentialModelLoader, llama-fit-params, Tier 0 matrix, startup script
+4. **KD-1..KD-3**: Domain module schema, curator model, affinity presets
+5. **HR-1..HR-3**: HeadroomMiddleware, adaptive context integration, MCP headroom tools
+6. **ZS-1..ZS-3**: zswap sysctl + kernel cmdline, 16GB NVMe swap + systemd unit, WAD packaging
+
+**Dependencies**: DEL-1 Week 2 (router collapse) → QDRANT-MIGRATION (H2) → COGNITIVE-ARCH (H3) → VAULT-SPRINT → P2/P3/P4
+
+---
+
+## 10. Commit and coordination rules
 
 - Prefix: `fix:`, `refactor:`, `docs:`, `chore:`, `test:`, `ci:`, `feat:` (feat only for INST-1 extras split).
 - One ticket per PR/commit cluster. DEL-1 week 1 ≠ week 2.

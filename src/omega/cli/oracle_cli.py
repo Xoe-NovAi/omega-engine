@@ -7,6 +7,7 @@
 import anyio
 import logging
 import sys
+from contextlib import suppress
 from pathlib import Path
 from typing import Optional
 
@@ -14,6 +15,13 @@ from omega.cvar_table import cvar_get
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+
+# Load .env at CLI process edge so providers.yaml env: prefix resolves correctly
+# This is the sole .env → os.environ injection point; all other credential
+# resolution goes through providers.yaml env: or keyring fallbacks.
+with suppress(ImportError):
+    from dotenv import load_dotenv
+    load_dotenv()
 
 try:
     import typer
