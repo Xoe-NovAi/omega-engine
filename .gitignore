@@ -229,3 +229,10 @@ data/state/blobs/
 data/requests/
 tests/tmp/
 .opencode/.last_session.json
+
+# B4/B5 guards (CLINE_DISPATCH_20260822) — never re-track
+github-mcp-server
+config/model_registry/index.sqlite
+data/cache/sovereign_cache.sqlite
+vault.json.enc
+data/training/entities/*/https___example_com_secret_*.json
