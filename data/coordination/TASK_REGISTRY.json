@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-17T19:02:40.894141+00:00",
+  "updated": "2026-08-21T03:06:33.918021+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -1300,6 +1300,162 @@
         "handoff",
         "pub-1",
         "inst-1"
+      ]
+    },
+    {
+      "task_id": "coordination-q1-q7-insights-20260818-01",
+      "subagent_type": "kali",
+      "launched_by": "omega-engine",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Responded to Kali's Q1-Q7 strategic update with hardware-grounded insights (single-threaded INST-1, OOM test-bug verdict, DEL-1 W2 contract-first workflow, observability spec, vault Path B, compute limits)",
+      "status": "in_progress",
+      "created_at": "2026-08-18T03:17:38.519357+00:00",
+      "last_checkpoint": "2026-08-18T03:17:38.519385+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "debut",
+        "inst-1",
+        "insights",
+        "q1-q7"
+      ]
+    },
+    {
+      "task_id": "coordination-vault-consolidation-20260818-01",
+      "subagent_type": "cline",
+      "launched_by": "kali",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Consolidated 21 vault-overhaul docs into single implementation manual, archived 10 source docs, rewrote master index, applied 4 ACTIVE_SPRINT status corrections + D-565/566/567",
+      "status": "in_progress",
+      "created_at": "2026-08-18T11:58:39.769235+00:00",
+      "last_checkpoint": "2026-08-18T11:58:39.769247+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "debut",
+        "vault",
+        "consolidation",
+        "archive",
+        "post-debut"
+      ]
+    },
+    {
+      "task_id": "coordination-vault-partH-audit-20260818-01",
+      "subagent_type": "cline",
+      "launched_by": "cli-user",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Definitive security-surface audit (Part H): found 4 missed VaultCore consumers, reconciled pii_masker pattern, 2 hardcoded default secrets S1/S2, 24 env vars cataloged, full test inventory. Manual now 1086 lines Parts A-H.",
+      "status": "in_progress",
+      "created_at": "2026-08-18T12:33:32.095850+00:00",
+      "last_checkpoint": "2026-08-18T12:33:32.095877+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "debut",
+        "vault",
+        "security-audit",
+        "part-h",
+        "exhaustive"
+      ]
+    },
+    {
+      "task_id": "coordination-vault-deep-pass-20260818-01",
+      "subagent_type": "cline",
+      "launched_by": "cli-user",
+      "channel": "cline",
+      "entity": "omega-engine",
+      "description": "Deep-pass amendment to Vault Overhaul manual: VaultCore non-functional finding (Part I/D-568), H.1.4 (5 outside-src consumers), H.2.5/.6 migration, H.7 corrected, H.9 counts, Part D R11/R12/R13, Phase 1/4 updates, ACTIVE_SPRINT VAULT-SPRINT workstream.",
+      "status": "in_progress",
+      "created_at": "2026-08-18T13:15:47.785340+00:00",
+      "last_checkpoint": "2026-08-18T13:15:47.785361+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "vault",
+        "deep-pass",
+        "amendment",
+        "part-i",
+        "d-568"
+      ]
+    },
+    {
+      "task_id": "notebooklm-nlga-20260820-01",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "NLG-A: NotebookLM existential verification (GAP-3 ToS/ban risk, GAP-4 Deep Research automation) + MCP selection (GAP-1 tool surface, GAP-2 deployment)",
+      "status": "completed",
+      "created_at": "2026-08-20T14:05:46.250410+00:00",
+      "last_checkpoint": "2026-08-20T14:05:46.250425+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "notebooklm",
+        "gap-research",
+        "nlga",
+        "existential",
+        "mcp"
+      ]
+    },
+    {
+      "task_id": "notebooklm-nlgb-20260820-01",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "NLG-B: NotebookLM operational research (GAP-10 OAuth/session, GAP-7 token density, GAP-9 Pro vs free cost-benefit)",
+      "status": "completed",
+      "created_at": "2026-08-20T14:11:49.699438+00:00",
+      "last_checkpoint": "2026-08-20T14:11:49.699454+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "notebooklm",
+        "gap-research",
+        "nlgb",
+        "operational"
+      ]
+    },
+    {
+      "task_id": "notebooklm-nlgc-20260820-01",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "NLG-C: NotebookLM arbitration support (GAP-5 notebook architecture, GAP-6 account budget math, GAP-8 SDP gate conflict)",
+      "status": "completed",
+      "created_at": "2026-08-20T14:11:50.672609+00:00",
+      "last_checkpoint": "2026-08-20T14:11:50.672621+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "notebooklm",
+        "gap-research",
+        "nlgc",
+        "arbitration"
+      ]
+    },
+    {
+      "task_id": "n7-mine-kb-20260821-01",
+      "subagent_type": "roc_racoon",
+      "launched_by": "n7_context_session",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "N7 Node KB mining: roc_racoon mines context/memory corpus into N7_CONTEXT_KB_20260821.md (recovery pass appended)",
+      "status": "completed",
+      "created_at": "2026-08-21T02:54:11.241489+00:00",
+      "last_checkpoint": "2026-08-21T02:54:11.241505+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "N7",
+        "context-injection",
+        "mining",
+        "node-expert-sessions"
       ]
     }
   ]

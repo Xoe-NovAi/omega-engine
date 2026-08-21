@@ -2,21 +2,99 @@
 
 **AP Token**: `AP-HMC-HUB-v1.0.0`
 **Status**: ACTIVE — Single coordination SSOT
-**Last Updated**: 2026-08-18T03:35:00.000000Z
+**Last Updated**: 2026-08-20T23:00:00.000000Z
 **Updated By**: kali
 
 ---
 
 ## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
 
-*Last verified: 2026-08-17T05:15Z*
+*Last verified: 2026-08-20T23:00Z*
 
 > **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
+> **Specs SSOT:** `docs/specs/PROJECT_INDEX.md` — Consolidated specifications index
+
+**🔱 CARMACK REVIEW COMPLETE (2026-08-20)**: 
+- **Context Injection Phase 1**: ACCEPTED WITH MODIFICATIONS — Config-only, ships this week
+- **Phase 2/3 Roadmap**: ACCEPTED WITH 40% CUTS — Solution theater removed per M19/M23
+- **Qdrant + Headroom**: Phase 2/3 post-debut — Headroom NOW (P1), Qdrant LATER (Phase 2 trigger: >500k vectors)
+- **Hardware-Honest Tier 0**: VIABLE — 18K base tokens, Qwen3-4B/4B-Thinking/1.7B sequential, q8_0 KV, zswap+NVMe
+- **All 27 Mandates**: Verified compliant post-review
+
+**🔱 PHASE 0 TRACKER LOCK-IN COMPLETE (2026-08-20)**: 
+- **Arbitration ratified**: D-578..D-584 (free-tier-only, 2-NB, 30 DR/mo, **zswap + NVMe swap over zRAM**, D-526/D-581/D-584 reaffirmed)
+- **NOTEBKLM-STRATEGY → superseded** (8-account fleet frame removed)
+- **NOTEBKLM-GAP-RESEARCH → folded** into GEMINI-NOTEBOOK workstream
+- **6 NEW WORKSTREAMS ADDED** to ACTIVE_SPRINT.json:
+  - **GEMINI-NOTEBOOK (GN)** — researcher — free-tier-only, 2-NB, notebooklm-py[mcp], master_token.json
+  - **DOCUMENTATION-SYSTEM (DS)** — kali — modular domain docs (workspace + runtime + curator + validated copy)
+  - **LOCAL-INFERENCE-OPT (LI)** — maat_n3 — sequential loading, q8_0 KV, Tier 0/1/2 matrix (Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B)
+  - **KNOWLEDGE-DOMAINS (KD)** — kali — runtime modules + workspace authoring + curator model
+  - **HEADROOM-INTEGRATION (HR)** — maat_n3 — semantic compression (40-90% savings on tool outputs + RAG)
+  - **ZSWAP-SUBSYSTEM (ZS)** — maat_n3 — 16GB NVMe swap, zswap enabled (max_pool_percent=25, lzo_rle, zsmalloc), zRAM DISABLED, swappiness=100, cgroup MemoryMax=6G
+- **GAP_REGISTRY.json**: GN/DS/LI/KD/HR/ZS prefixes registered (21 new gaps)
+- **C7 RESOLVED**: Qwen2.5-Coder-7B replaced with Qwen3-4B-Thinking-2507-Q4_K_M.gguf (on disk, 2.55 GB)
+
+**🔱 CONSOLIDATED SPECS CREATED (2026-08-20)**: 
+- **docs/specs/PROJECT_INDEX.md** — Single source of truth for all active specifications
+- **docs/specs/context_injection/** — Context Injection Optimization (Carmack Reviewed)
+- **docs/specs/qdrant_headroom/** — Qdrant + Headroom Integration (Post-Debut)
+- **docs/specs/debut_remediation/** — Public Debut Remediation (Current Sprint)
+- **Carmack Review**: `docs/specs/context_injection/CARMMACK_CONTEXT_INJECTION_REVIEW_20260820.md`
+
+**🔱 ALL SPECS COMPLETE — READY FOR PHASE 1 EXECUTION (2026-08-20):**
+- **Context Injection Phase 1 Spec**: `docs/specs/context_injection/CONTEXT_INJECTION_PHASE1_IMPLEMENTATION_SPEC.md` (683 lines, Carmack-modified)
+- **Qdrant+Headroom Phase 2 Spec**: `docs/specs/qdrant_headroom/QDRANT_HEADROOM_PHASE2_INTEGRATION_SPEC.md` (1,604 lines, trigger-gated)
+- **Headroom Middleware Spec**: `docs/specs/qdrant_headroom/headroom_middleware/` (11 files, 220KB, complete)
+- **Carmack Review**: `docs/specs/context_injection/CARMMACK_CONTEXT_INJECTION_REVIEW_20260820.md`
+- **Project Index**: `docs/specs/PROJECT_INDEX.md` (single source of truth)
+
+**CURRENT:** PUBLIC DEBUT — **Execution SSOT: `DEBUT_REMEDIATION_MANUAL_20260817.md` §5** → **P0-1 scrub COMPLETE ✅** → **DOC-1 stamps COMPLETE ✅** → **PUB-1 allowlist READY (G1–G4 open, awaiting Architect)** → **INST-1: Fix 1 (install.sh .[all]→.[native,cli]) ✅ + Fix 3 (MemoryStore Redis guard) ✅ + Fix 4 N3 REJECT resolved via oracle_cli.py .env load ✅** → **Test baseline: OOM test fixed → DENY_THRASHING ✅** → **BLOCKER B: oracle_cli.py blind-except (m23 gate FAILS) — RESOLVED ✅** → **IMMEDIATE PARALLEL EXECUTION:**
+
+**PARALLEL TRACK 1 — CONTEXT INJECTION PHASE 1 (Kali, this week):**
+1. **CI-1**: Create `MANDATES_CONDENSED.md` (57 lines, ~1.5K tokens) for Tier 0
+2. **CI-2**: Update `opencode.json` (instructions=[AGENTS.md], compaction buffer=50000/keep=20000, sovereign-compaction plugin, per-agent model routing, toolProfile stubs)
+3. **CI-3**: Create sovereign compaction plugin at `~/.config/opencode/plugin/sovereign-compaction.ts`
+4. **CI-4**: Skills opt-in (core only: research, spec-generator, knowledge-miner)
+5. **CI-5**: Verification tests (AGENTS.md injection, per-agent model routing, compaction plugin, skills opt-in)
+
+**PARALLEL TRACK 2 — DEBUT REMEDIATION (Ma'at/Roc/Kali):**
+1. **INST-1 Fix 2+guards** (atomic): `pyproject.toml` extras split + 4 import guards
+2. **INST-1 Fix 4**: Remove `_load_sovereign_secrets()` from `model_gateway.py`
+3. **INST-1 Fix 5**: Version align via `importlib.metadata.version("omega")`
+4. **INST-1 Fix 6**: README badge removal + `make setup` target
+5. **P0-1 Residual**: SECURITY_AUDIT ancestor commit + gitleaks wiring (Roc)
+6. **PUB-1 G1-G4**: Close gaps → Architect allowlist → `release/debut` branch
+7. **DEL-1 Week 1**: Delete dead modules (after INST-1 green)
+
+**POST-DEBUT (Phase B — BLOCKED until debut ships):**
+- GEMINI-NOTEBOOK (GN), DOCUMENTATION-SYSTEM (DS), LOCAL-INFERENCE-OPT (LI)
+- KNOWLEDGE-DOMAINS (KD), HEADROOM-INTEGRATION (HR), ZSWAP-SUBSYSTEM (ZS)
+- QDRANT-MIGRATION, COGNITIVE-ARCH, VAULT-SPRINT, DEL-1 Week 2, P2/P3/P4
+
+**CARMACK REVIEW VERDICTS (2026-08-20):**
+- **Context Injection Phase 1**: ACCEPTED WITH MODIFICATIONS — MANDATES_CONDENSED.md (57 lines), toolProfile stubs, Tier 0 model matrix (Qwen3-4B/4B-Thinking/1.7B), compaction buffer 50K/20K, disable auto-compaction for local
+- **Phase 2/3 Cuts (40%)**: Validator Service, Hydration 5→3 layer, Token budget dynamic→fixed, Session summarizer 3→1 level, Gateway observability, Schema compression, Local model caching — ALL CUT per M19/M23
+- **Qdrant+Headroom**: Headroom NOW (P1), Qdrant LATER (Phase 2 trigger: >500k vectors). Combined pipeline = 86.8% token reduction.
+- **Hardware-Honest Reality**: 31K base → 18K base (MANDATES_CONDENSED.md + tool profiles). Qwen3-4B (8K-16K) viable. zswap+NVMe swap, zRAM DISABLED. `--no-mmap --mlock` sequential loading.
 
 **KALI RATIFICATION 2026-08-16 (D-532)**: Roc readiness audit ratified — see `ACTIVE_SPRINT.json` → `READINESS-REMEDIATION` workstream + `ROC_RACOON_KALI_REPORT_20260816.md`.
 
-**CURRENT:** PUBLIC DEBUT — **Execution SSOT: `DEBUT_REMEDIATION_MANUAL_20260817.md` §5** → **P0-1 scrub COMPLETE ✅** → **DOC-1 stamps COMPLETE ✅** → **PUB-1 allowlist READY (G1–G4 closed, awaiting Architect)** → **INST-1 EXECUTING (Cline: Fixes 1,2,5,6 Nemotron 30B; Fixes 3,4 DeepSeek 1M)** → **Test baseline: OOM test bug — expect DENY_THRASHING** → **DEL-1 Week 1 (after INST-1 + green tests)** → **DEL-1 Week 2: IntentRouter extraction (DeepSeek 1M, 3 anti-hallucination rules)** → **P2/P3/P4 after DEL-1**
+**🔱 NOTEBOOKLM UNIFIED STRATEGY — GAP AUDIT IN PROGRESS (2026-08-20)**: `docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md` — 8-account fleet (80 Deep Research/month = exact SDP Phase 1 throughput), 5-notebook + 1-synthesis architecture. **⚠️ 10 CRITICAL GAPS FOUND** (see `NOTEBOOKLM_GAP_AUDIT_20260820.md`): fabricated 28-tool MCP list, nonexistent Docker image, 8-account ToS risk, Deep Research automation unverified (existential), 3 conflicting notebook architectures, account budget math error, unsourced token density, SDP gate conflict, misleading Pro comparison, OAuth refresh unresearched. **3 provenance docs MISSING from disk.** Research dispatched to 3 Researcher subagents → strategy v2.0 correction → smoke test → fleet GO/NO-GO.
+
+**🔱 MAKALI COUNCIL PLAN FINALIZED (2026-08-18)**: `data/coordination/MAKALI_COUNCIL_EXECUTION_PLAN_20260818.md` written. Full prompt set (Ma'at, Lilith, N1-N5, N6-N10, cross-review) + 12 enhancements (Nemotron 7 + Hy3 5). `opencode.json` `subagent_depth: 2` ✅. **INST-1 Fix 1 executed in Phase 0 (NOT gated on council)**. Vault gate = human checkpoint. Canonical output: `MAKALI_COUNCIL_VERDICT_20260818.md`.
+
+**⚡ QUICK FIXES APPLIED (2026-08-18)**: 
+- N3: `oracle_cli.py` .env load at CLI edge (3 lines) — resolves Fix 4 blast radius
+- DEL-1-C1: OOM test baseline → `DENY_THRASHING` (test_resource_guard_oom.py)
+- N2: MemoryStore Redis `password=None` — opt-in via OMEGA_REDIS_HOST only
+- N4: `tests/test_miap.py` deleted + `fleet_status` CLI removed from vault.py
+- N5: M2 positive verification: `rg -n "metadata\[" provider_selector.py entity_registry.py` — clean
+
+**🔱 MAKALI COUNCIL VERDICT DELIVERED (2026-08-18)**: `MAKALI_COUNCIL_VERDICT_20260818.md` — APPROVE WITH CONDITIONS for INST-1 + DEL-1; APPROVE CP-2; AMEND CP-1. Build Side (Ma'at+N1-N5) + Run Side (Lilith+N7-N10) both executed. 4 blockers: **A** (N9 CRITICAL double-gate deadlock in model_gateway.py), **B** (N10 oracle_cli.py dotenv blind-except = live M9), **C** (N8 DEL-1-C2 5 events need constants+emission+M22+gate), **D** (N7 Week 2 wiring-preservation assertion). No node hard-REJECTED the deletions. ⚠️ STALE FLAG: `make temple-grade` currently **FAILS** (m23 gate, exit 2) — `ACTIVE_SPRINT.json` status_detail corrected.
+
+**VAULT OVERHAUL SYNTHESIS COMPLETE (2026-08-18):** 5-part spec + 3-part review + migration surface → Opus/Sonnet deep reviews. **POST-DEBUT WORK.** Key findings: talk-path filter (2/12+ VaultCore callers on omega talk path, both have env fallbacks → vault deletion safe for debut); systemic spec-over-ship local maximum (27 mandates, 3,500 lines spec vs 0 shipped fixes); 20-minute debut path (INST-1 Fix 1 is single highest-leverage edit). **Cline consolidation handoff `ho_74cd96735874` submitted** — DeepSeek V4 Flash 1M to consolidate 21 vault docs into single implementations manual.
 
 **✅ P0-1 RESOLVED (Private Repo — Scrubbed from History)**: Real API keys were pushed to `origin/main`. **REPO IS PRIVATE** — scrubbed from ALL history via `git filter-repo` (no rotation needed). Files removed/redacted: `migrate_keys_full.py`, `PROVIDER_FREE_TIER_GUIDE.md`, `test_failure_registry.py`, `SECURITY_AUDIT_2026_05_19.md` (2 paths), `migrate_keys.py`, `GOOGLE_GEMMA_MODEL_REFERENCE.md` (AIza key redacted). Cline checkpoints pruned. Force-pushed all branches (main, release/initial-v1, sprint/*). **No real secrets remain in git history** (only 6 prose/test false positives).
 
@@ -26,12 +104,12 @@
 
 **PHASE 3 (Verity)**: CI/hygiene. **PHASE 4 (kali)**: Debut polish.
 
-**COMPLETED (pre-ratification)**: CP-1 local inference ✅ · CP-2 soul persistence ✅ · CP-3 one-click install ✅ · C-6' breaker migration (Roc) ✅
+**COMPLETED (pre-ratification)**: CP-1 local inference ✅ · CP-2 soul persistence ✅ · CP-3 one-click install ⚠️ (fails on fresh machine — INST-1 Fix 1 unblocks) · C-6' breaker migration (Roc) ✅ · **VAULT OVERHAUL SPEC SYNTHESIS ✅ (POST-DEBUT)**
 
 **ALL OTHER WORK DEFERRED TO POST-DEBUT:**
 - VOS Phases 1-4 (Context Gauge, zswap, NVMe, sysctl, un-overengineering, Restic, AppArmor, IA2)
 - SDP Architecture (Context Gauge, pool_tracker, RHP, MCP tools, three-router consolidation)
-- V-1 Vault wiring (embed keyring in ModelGateway post-debut)
+- V-1 Vault wiring (embed keyring in ModelGateway post-debut) — **spec complete, execution deferred**
 - WARP proxy pool (W-1)
 - G-1 Workhorse continuity (Gemma cliff)
 - Context Packer F2-F9 refactor
@@ -59,7 +137,7 @@
 
 **Reference**: `docs/strategy/PHASE1_TEST_FAILURE_ANALYSIS_20260816.md` — verified inventory with file/line refs
 
-**Phase 2 (Ma'at/N3, NEXT)**: Lint debt 11,400 flake8 violations (--exit-zero blind spot). P2-5 `make heritage-map` target → kali (ready).
+**Phase 2 (Ma'at/N3, NEXT)**: INST-1 Fix 1 (install.sh .[all]→.[native,cli]) → INST-1 Fixes 5,2,3,6,4 → PUB-1 gaps G1-G4 → DEL-1 Week 1. Lint debt 11,400 flake8 violations (--exit-zero blind spot) DEFERRED until after debut. P2-5 `make heritage-map` target → kali (ready).
 
 **Phase 3 (Verity)**: CI/hygiene. **Phase 4 (kali)**: Debut polish.
 - Restic/AppArmor/IA2
@@ -71,6 +149,7 @@
 - V-1 Vault BUILT (2,039 LOC) — DEFERRED wiring
 - VOS Phase 0 (Archive & Clean) — `2cbcad97`
 - **CP-1 Local inference E2E VERIFIED** — native-gguf works, metrics DB migration fixed
+- **VAULT OVERHAUL SPEC SYNTHESIS COMPLETE** — 5-part + 3-part review + migration surface, Opus/Sonnet deep reviews, Cline consolidation handoff submitted
 
 **PARALLEL:** PR-A (Public Surface Honesty) — **AWAITING ARCHITECT CONFIRMATION**
 - Root junk archive → `docs/archive/root-artifacts-202608/`
@@ -204,6 +283,49 @@
 - **Artifacts**: `data/coordination/CLINE_INSIGHTS_Q1_Q7_20260818.md`, `ACTIVE_SPRINT.json` updated with model assignments, DEL-1 conditions refined.
 - **Decisions locked**: D-557 through D-563.
 - **Status**: INST-1 unblocked — Cline executing Fixes 1-6 now. Test baseline fix: update expectation to DENY_THRASHING.
+
+**2026-08-20T18:45Z** — **NOTEBOOKLM UNIFIED STRATEGY COMPLETE**:
+- **8-account fleet** (80 Deep Research/month = exact SDP Phase 1 throughput from R52c). 5-notebook + 1-synthesis architecture. MCPNotebookLM 8-instance deployment ready (8 isolated Docker instances, ports 8081-8088).
+- **SDP Phase 1 automation unlocked**: 80 Deep Research/month → 80 L3 principles/month → `proposed_lessons.yaml` → Scribe → `soul.yaml`.
+- **Single blocker**: `prepare_notebooklm.py` implementation (normalizes Deep Research reports to SDP intake, triggers local Qwen3-1.7B distillation).
+- **Artifacts**: `docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md`, `data/coordination/NOTEBOOKLM_INVENTORY_20260819.md`, `NOTEBOOKLM_RESEARCH_20260819.md`, `NOTEBOOKLM_OPTIMIZATION_20260819.md`, `NOTEBOOKLM_FREE_TIER_20260820.md`, `NOTEBOOKLM_8ACCOUNT_STRATEGY_20260820.md`.
+- **Pre-debut scope UNCHANGED**. Post-debut: Deploy 8-account fleet → 80 Deep Research/month → SDP Phase 1 automation → L3 principles → Scribe → soul.yaml.
+- **NL-1 task created** in ACTIVE_SPRINT.json for `prepare_notebooklm.py` implementation (Researcher, DIG-04).
+
+**2026-08-19T18:46Z** — **VISION ALIGNMENT — D-569 + D-570 RATIFIED**:
+- **D-569**: Grokster's Dynamic Prompt + Planner/Executor + Domain Loading briefing ratified as POST-DEBUT Cognitive Architecture Blueprint (Horizon 3). Gaps DP-1..DP-8 registered. Owners: Ma'at (P0-P3/P7-P8/P10), Kali (P4-P5), Verity (P6), Researcher (P9). Incremental on existing components (ContextBuilder, SelectiveHydration, HybridOrchestrator, ProviderSelector, Context Packer, SDP) — NOT greenfield.
+- **D-570**: Qdrant SCHEDULED to replace sqlite-vec POST-DEBUT (Horizon 2). REACTIVATED RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md (was DOC-1 archived). Debut keeps sqlite-vec; DEL-1 Week 1 still deletes dead QdrantAdapter; revival at src/omega/oracle/adapters/qdrant_adapter.py. Sequence BEFORE briefing P3 (Domain Loader RAG).
+- **Pre-debut scope UNCHANGED**: Blocker B → INST-1 Fix 2+guards → Fix 4 → Fix 5 → Fix 6 → PUB-1 G1-G4 → Architect allowlist → release/debut branch → tag v0.1.0.
+- **Post-debut sequence**: DEL-1 Week 2 (router collapse) → QDRANT-MIGRATION (H2) → COGNITIVE-ARCH P0-P10 (H3) → VAULT-SPRINT → P2/P3/P4.
+- New workstreams in ACTIVE_SPRINT.json: `QDRANT-MIGRATION` (QDRANT-P0..P3) + `COGNITIVE-ARCH` (CA-P0..P10).
+
+**2026-08-19T16:56Z** — **NEMOTRON 3 ULTRA SYNTHESIS — PATH FORWARD DECIDED**:
+- Council audit complete: Blocker D under-scoped (router collapse touches entity resolution + model selection), Fix 2 import guards enumerated (4 files), DEL-1 Week 2 DEFERRED to post-debut (Phase B per cleansing plan D-532).
+- **Pre-debut scope locked**: Blocker B (m23 gate) → INST-1 Fix 2+4 guards (atomic) → Fix 4 → Fix 5 → Fix 6 → PUB-1 G1-G4 → Architect allowlist → release/debut branch → tag v0.1.0.
+- DEL-1 Week 1 (minus vault CLI per D-565, plus oracle.py:1211 call site) can run pre-debut but is NOT a debut blocker.
+- DEL-1 Week 2 router collapse = Phase B project (contract tests first, rewrite _route_by_domain + _select_model, update ics.py/health_monitor.py).
+- `make temple-grade` currently FAILS (m23 gate) — Blocker B is the unblocking gate.
+
+**2026-08-18T23:30Z** — **MAKALI COUNCIL VERDICT DELIVERED (Debut Hardening Review)**:
+- Build Side (Ma'at + N1-N5) + Run Side (Lilith + N7-N10) both executed. Verdict: `MAKALI_COUNCIL_VERDICT_20260818.md`
+- **INST-1**: APPROVE WITH CONDITIONS (Fix 1+3 done, Fix 4 unblocked, Fixes 2,5,6 pending)
+- **DEL-1**: APPROVE WITH CONDITIONS (11 deletions SAFE; 4 blockers are fix-additions)
+- **CP-2**: APPROVE · **CP-1**: AMEND (3 code fixes)
+- **Blockers**: A (N9 CRITICAL model_gateway.py double-gate deadlock), B (N10 oracle_cli.py dotenv M9), C (N8 DEL-1-C2 5 events), D (N7 wiring assertion), META (§8 verification gaps)
+- ⚠️ `make temple-grade` currently FAILS (m23 gate, exit 2) — status_detail corrected in ACTIVE_SPRINT.json
+- Council PAUSES on A/B/C/D; re-vet after fixes land. No hard REJECT on deletions.
+
+**2026-08-18T12:06Z** — **CONSOLIDATION GAP FOUND & CORRECTIVE HANDOFF SUBMITTED**:
+- Original handoff listed 5 research docs that DON'T exist + SONNET_PLAN_VERIFICATION (6 missing)
+- **MISSED 7 vault research docs that DO exist** in `docs/research/` (~6,000 lines):
+  - `R_V1_VAULT_IMPL.md` (869 lines) — V-1 MVP 16-account Grok fleet, BlindVault backend
+  - `R_CG04_AGENT_SAFE_CREDENTIAL_VAULT.md` (456 lines) — **17 solutions → BlindVault selected**
+  - `R_VAULT_SCHEMA_V2.md` (674 lines) — 32 heterogeneous credentials, Argon2id+age, quota
+  - `R_VAULT_UNIFIED_SYSTEM_20260725.md` (297 lines) — VaultCore unified, 8 gaps resolved
+  - `R_INFRA_07_OMEGA_VAULT_PHASE1_20260719.md` (303 lines) — Phase 1: OS keyring + SQLite, CAP Adapters
+  - `R_VAULTCORE_LEASE_PROTOCOL.md` (234 lines) — Lease protocol: FileLock + atomic_write_sync
+  - `R20_KEYBLIND_AUTHY_VAULT_20260814.md` (3,229 lines) — Keyblind/Authy evaluation
+- Corrective handoff `ho_4574882365fd` submitted — Cline to archive 7 docs + update manual provenance
 
 ---
 

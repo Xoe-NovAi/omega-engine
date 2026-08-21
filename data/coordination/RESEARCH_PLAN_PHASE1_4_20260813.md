@@ -501,3 +501,18 @@ R13–R38. They do NOT satisfy this plan's outstanding gaps.
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ RESEARCH-PLAN ⬡ v3.2.0 ⬡ 20260813 (reconciled 2026-08-14)*
+
+---
+
+## 🆕 Phase 5 — Post-Debut Workstreams (NEW — 2026-08-20)
+
+These jobs support the 6 new workstreams added in Phase 0 tracker lock-in (GN/DS/LI/KD/HR/ZS).
+
+| Job ID | Topic | Priority | Owner | Deliverable |
+|--------|-------|----------|-------|-------------|
+| **R57** | Headroom integration benchmarks (local models) | P1 | researcher | `R_HEADROOM_LOCAL_BENCHMARKS.md` |
+| **R58** | Domain module loader performance | P2 | researcher | `R_DOMAIN_LOADER_PERF.md` |
+| **R59** | Free-tier Gemini Notebook ToS mitigation validation | P1 | researcher | `R_GEMINI_TOS_MITIGATION.md` |
+| **R60** | Adaptive context buffer quality metrics | P2 | researcher | `R_ADAPTIVE_CONTEXT_QUALITY.md` |
+| **R61** | zswap + NVMe swap production validation | P1 | researcher | `R_ZSWAP_PRODUCTION_VALIDATION.md` |
+| **R62** | SequentialModelLoader cold/warm latency profiling | P2 | researcher | `R_SEQUENTIAL_LOADER_PROFILING.md` |
