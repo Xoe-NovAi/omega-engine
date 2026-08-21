@@ -2,14 +2,21 @@
 
 **AP Token**: `AP-HMC-HUB-v1.0.0`
 **Status**: ACTIVE — Single coordination SSOT
-**Last Updated**: 2026-08-20T23:00:00.000000Z
+**Last Updated**: 2026-08-22 (pre-debut consolidation pass)
 **Updated By**: kali
 
 ---
 
 ## 🚦 NEXT_ACTION (Single Sync Pointer — read this first)
 
-*Last verified: 2026-08-20T23:00Z*
+*Last verified: 2026-08-22*
+
+> **DEBUT NIGHT STATE**: 10 strategic commits landed (ICS D-588/D-589, protocols,
+> Node sessions D-586, research corpus, specs, engine fixes, trackers).
+> Coordination archive: data/coordination/archive/ (10 superseded docs, -5.9K lines).
+> ICS community doc: docs/architecture/ICS_SYSTEM.md.
+> HIGH PRIORITY NEXT: CI-0..CI-5 execution (spec remediated, binary pinned 1.18.19/V1).
+> Awaiting Architect: PUB-1 allowlist rulings, ZS-1 sudo, CI go.
 
 > **Tracking hierarchy:** See `TRACKING_ARCHITECTURE.md`. Status vocab: `backlog|ready|in_progress|blocked|completed|superseded`.
 > **Execution SSOT:** `ACTIVE_SPRINT.json` · **Knowledge SSOT:** `RESEARCH_PLAN_PHASE1_4_20260813.md` (v3.2.0) · **Gap registry:** `GAP_REGISTRY.json`
