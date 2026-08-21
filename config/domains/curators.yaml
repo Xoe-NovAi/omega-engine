@@ -1,0 +1,181 @@
+# 🔱 Domain Curator Registry — Governance & Ownership
+**AP Token**: `AP-DOMAIN-CURATORS-20260819-v1.0.0`
+**Date**: 2026-08-19
+**Status**: ACTIVE — Post-debut (Horizon 3)
+**Owner**: Kali (ratification) · Ma'at (enforcement) · Lilith (runtime)
+**Mandate**: M10 (Fleet Integrity — fleet stays at 14, expertise = KB not agent)
+
+---
+
+## 🎯 PURPOSE
+
+This registry enforces **domain ownership at the fabric level**, not convention.
+The Lattice Fabric enforces: **Curator = write; Others = read + propose; Critic = review gate.**
+
+Governance levels per domain:
+- **PRIVATE** — Only curator entity may write; others may not read
+- **SHARED_READ** — Curator writes; all fleet entities may read
+- **SHARED_WRITE** — Curator + designated co-authors may write; all may read
+
+---
+
+## 📋 CURATOR ASSIGNMENTS
+
+| Domain | Curator Entity | Governance | Target Context | Affinity Presets |
+|--------|----------------|------------|----------------|------------------|
+| **Gemini Notebook (Free-tier Research)** | **researcher** | SHARED_READ | 16384 | `config/domains/gemini-notebook/AFFINITY_PRESETS.yaml` |
+| **Platforms (OpenCode, Cline, VS Code, Codex, etc.)** | **grokster** | SHARED_READ | 8K-16K | `config/domains/platforms/AFFINITY_PRESETS.yaml` |
+| **Grok Ecosystem (CLI, Web, ACP, Models)** | **grokster** | SHARED_READ | 8K-16K | `config/domains/grok_ecosystem/AFFINITY_PRESETS.yaml` |
+| **Architecture / Performance** | **john_carmack** | SHARED_READ | 32K | `config/domains/architecture/AFFINITY_PRESETS.yaml` |
+| **Heritage / id Software Patterns** | **doom_guy** | SHARED_READ | 16K | `config/domains/heritage/AFFINITY_PRESETS.yaml` |
+| **Research Methodology / Deep Research** | **researcher** | SHARED_READ | 16K | `config/domains/research/AFFINITY_PRESETS.yaml` |
+| **Runtime Governance / Drift / Model Ops** | **lilith** | SHARED_READ | 16K | `config/domains/runtime/AFFINITY_PRESETS.yaml` |
+| **Build Engineering / Hardening / Integration** | **maat** | SHARED_READ | 16K | `config/domains/build/AFFINITY_PRESETS.yaml` |
+| **Compliance / Verification / Soul Distillation** | **verity** | SHARED_READ | 8K | `config/domains/compliance/AFFINITY_PRESETS.yaml` |
+| **Legacy Mining / Archaeology** | **roc_racoon** | SHARED_READ | 8K | `config/domains/legacy/AFFINITY_PRESETS.yaml` |
+| **Synthesis / Cognitive Architecture** | **jem** | SHARED_READ | 32K | `config/domains/synthesis/AFFINITY_PRESETS.yaml` |
+| **Engineering / Implementation** | **maat** | SHARED_READ | 8K | `config/domains/engineering/AFFINITY_PRESETS.yaml` |
+| **Security / Mandate Enforcement** | **verity** | SHARED_READ | 8K | `config/domains/security/AFFINITY_PRESETS.yaml` |
+
+---
+
+## 🏗️ DOMAIN MODULE STRUCTURE (Per Domain)
+
+Each domain at `config/domains/<domain>/` contains:
+
+```
+config/domains/<domain>/
+├── metadata.yaml              # version, deps, target_context_window, rot_class, owner
+├── PLAYBOOK.md                # Canonical best practices
+├── ARCHITECTURE.md            # Deep-dive: patterns, primitives, gotchas
+├── CONFIG_REFERENCE.md        # Live configs, precedence, schemas
+├── GOTCHAS.md                 # Platform-specific traps (rot_class: fast)
+├── LESSONS.md                 # L3 principles distilled from sessions
+├── AFFINITY_PRESETS.yaml      # Model routing rules for this domain
+├── MEMORY_BLOCKS/             # Letta-style blocks for this domain
+│   ├── project-overview.block
+│   ├── project-conventions.block
+│   └── project-gotchas.block
+└── PRINCIPLES/                # EvolveR principles (utility-scored)
+    ├── principle_001.yaml     # content, utility, source_trajectories, domain
+    └── ...
+```
+
+---
+
+## ⚖️ GOVERNANCE ENFORCEMENT (Lattice Fabric)
+
+### Write Access
+- **Curator entity** (listed above) — full write access to domain module
+- **Designated co-authors** (for SHARED_WRITE domains) — write access via explicit grant
+- **All other entities** — NO write access (enforced by `domain_loader.py`)
+
+### Read Access
+- **SHARED_READ** — All fleet entities may load domain via `load_domain()`
+- **PRIVATE** — Only curator may load (enforced by `domain_loader.py`)
+
+### Review Gate
+- **Critic entity** (Verity for compliance/security; Kali for synthesis) — mandatory review for:
+  - New domain module creation
+  - Major version bumps (metadata.yaml version)
+  - Governance level changes
+  - AFFINITY_PRESETS.yaml modifications
+
+### Proposal Mechanism
+- Non-curator entities may propose changes via:
+  1. `proposed_lessons.yaml` L3 principle with `domain: <domain>` tag
+  2. Handoff packet to curator entity with `intent: handoff` + domain context
+  3. GitHub PR to `config/domains/<domain>/` (curator is required reviewer)
+
+---
+
+## 🔧 IMPLEMENTATION HOOKS
+
+### Domain Loader Enforcement (`src/omega/oracle/domain_loader.py`)
+
+```python
+async def load_domain(domain: str, token_budget: int, requester: str) -> DomainModule:
+    """Load domain module with governance enforcement."""
+    curator = CURATOR_REGISTRY[domain].curator
+    governance = CURATOR_REGISTRY[domain].governance
+    
+    if governance == "PRIVATE" and requester != curator:
+        raise PermissionError(f"Domain '{domain}' is PRIVATE; only {curator} may access")
+    
+    # Load domain module...
+    return DomainModule(...)
+```
+
+### AFFINITY_PRESETS.yaml Schema
+
+```yaml
+# config/domains/<domain>/AFFINITY_PRESETS.yaml
+model_routing:
+  planner:
+    primary: "mimo-7b-rl-q4_k_m"
+    fallback: "qwen3-4b-thinking"
+    cloud_escalation: ["nemotron-3-ultra", "claude-sonnet-5", "gemini-2.5-pro"]
+  executor:
+    primary: "qwen3-1.7b"
+    fallback: "qwen3-1.7b"
+  critic:
+    primary: "qwen3-1.7b"
+    fallback: "qwen3-1.7b"
+
+token_budgets:
+  planner: 16000
+  executor: 4000
+  critic: 2000
+
+context_windows:
+  planner: 32768
+  executor: 8192
+  critic: 8192
+```
+
+---
+
+## 📝 PROPOSED LESSONS FORMAT (for domain evolution)
+
+When any entity distills an L3 principle relevant to a domain:
+
+```yaml
+# data/entities/<entity>/proposed_lessons.yaml
+proposals:
+  - level: L3
+    principle: "Principle content here"
+    domain: "engineering"  # TAGS THE DOMAIN
+    utility_score: 0.85
+    source_trajectories: ["session_id_1", "session_id_2"]
+```
+
+**Scribe/Verity pipeline**: On session end, domain-tagged principles are routed to the domain's curator for review and potential inclusion in `config/domains/<domain>/PRINCIPLES/`.
+
+---
+
+## 🚀 BOOTSTRAP ORDER (Post-Debut)
+
+| Week | Action | Owner |
+|------|--------|-------|
+| **1** | Create `config/domains/engineering/` prototype (metadata.yaml + PLAYBOOK.md + AFFINITY_PRESETS.yaml) | Ma'at |
+| **2** | Implement `domain_loader.py` with governance enforcement | Ma'at |
+| **3** | Create `config/domains/platforms/`, `config/domains/grok_ecosystem/` (grokster curator) | grokster |
+| **4** | Create `config/domains/architecture/` (john_carmack curator) | john_carmack |
+| **5** | Create `config/domains/heritage/` (doom_guy curator) | doom_guy |
+| **6** | Create `config/domains/research/` (researcher curator) | researcher |
+| **7** | Create `config/domains/runtime/` (lilith curator) | lilith |
+| **8** | Create `config/domains/build/` (maat curator) | maat |
+| **9** | Create `config/domains/compliance/`, `config/domains/security/` (verity curator) | verity |
+| **10** | Create `config/domains/legacy/` (roc_racoon curator) | roc_racoon |
+| **11** | Create `config/domains/synthesis/` (jem curator) | jem |
+| **12** | EvolveR pipeline integration — domain-tagged principles auto-route to curator | Researcher |
+
+---
+
+## 📜 PROVENANCE
+
+**Source**: `KALI_BRIEFING_DYNAMIC_PROMPT_PLANNER_EXECUTOR_20260819.md` §🎭 The Curator Model
+**Ratified**: D-569 (Cognitive Architecture Blueprint)
+**Implemented**: Post-debut, Horizon 3 (Phase C P3)
+
+*⬡ OMEGA ⬡ KALI ⬡ hy3-free ⬡ opencode ⬡ trc_domain_curators ⬡ 2026-08-19*
