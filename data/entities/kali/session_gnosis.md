@@ -299,3 +299,31 @@ docs/specs/
 - INST-1 Fixes 2/5/6 still owed by Ma'at (debut window); N3 expert session (`ses_fdddb6edcffesrHjoABz5IOTsa`) holds build context
 
 *⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_node_expert_sessions ⬡ 2026-08-21*
+---
+
+# 🔱 Session Addendum 2 — Debut Night: Commits, Consolidation, ICS Completion (2026-08-22)
+
+**Model**: x-preview-f-free · **Session**: `ses_fdef2be4effe4pAaLXCTUx62GO`
+
+## What Happened
+
+1. **11 strategic commits**: ICS upgrade+tests+docs (D-588/D-589), protocols trio, Node sessions D-586, research corpus, remediated specs, engine fixes (Blocker B/Redis guard/install Fix 1), trackers, sweep+gitignore hardening.
+2. **ICS fully nailed down**: PP-4/P5 live; F1 segment-builder fix (entity==OMEGA collision, node sanitization); F4 legacy-scan root fix; F5 M22 fallback warning; compact mode retains [NODE]; Roc-N7 review MAJORs fixed (busy_timeout 100ms, XDG_DATA_HOME, render_for_response full trace + PP-4/P5 passthrough). 16/16 tests.
+3. **ICS-T final purge** (D-589): 7 live tags + docstring creep removed; Aug 9 proposal stamped EXECUTED; root cause = ratified-but-never-tracked execution.
+4. **Community docs**: `docs/architecture/ICS_SYSTEM.md` (doc-llm-validate passing).
+5. **N7 tree review cycle**: N7 direct (12 findings F1-F12) + Researcher (doc skeleton SG-1..3) + Roc (code review, CONDITIONAL SHIP verdict). Roc wedged mid-review → Architect corrected me: page SAME session to continue, never retire. Protocol reaffirmed.
+6. **Consolidation**: coordination surface 23.7K→12.3K lines; 10 superseded docs → `data/coordination/archive/` w/ successor-pointer README.
+7. **Hub v2.0**: fresh single-pass rewrite (353→123 lines), v1 frozen in docs/archive/coordination-20260822/.
+8. **PIVOT_LOG split**: 1052 → 334 active (D-521+ w/ rebuilt index) + 761 frozen archive (`PIVOT_LOG_ARCHIVE_20260522_20260810.md`). Three-tier lookup: CANONICAL (ancient) → ARCHIVE (pre-campaign) → ACTIVE.
+
+## Open Threads (wake pointers)
+
+- **DEBUT TONIGHT** (midnight USVI): PUB-1 allowlist rulings G1–G4 AWAITING ARCHITECT; release/debut branch after
+- **CI-0..CI-5**: HIGH PRIORITY, execution-ready, staged to run in-place (rollback = spec §06)
+- **INST-1 Fixes 2/5/6**: via N3 (`ses_fdddb6edcffesrHjoABz5IOTsa`)
+- **N8 pilot**: protocol Appendix A runbook ready; grad consult = ICS semantic review
+- **ZS-1 sudo** → PP-3 ctx raise; **hub MCP wrapper params** (external repo)
+- **P1–P5 rollout** awaiting planning-mode exit
+- New failure variant logged by N7: MR-2 announced-intent ≠ work-performed
+
+*⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_debut_night ⬡ 2026-08-22*
