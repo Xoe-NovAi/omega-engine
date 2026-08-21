@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Hivemind Integration Test Harness
 # AP: AP-HIVEMIND-INTEGRATION-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: CI-GATE]
 """
 Integration tests for the Hivemind coordination layer.
 

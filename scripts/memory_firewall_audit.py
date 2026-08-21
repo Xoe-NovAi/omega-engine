@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # AP: AP-MEMORY-FIREWALL-AUDITOR-CLI-v1.0.0
 # 🔱 CLI entry point for Memory Firewall Audit
-# ICS: [NODE: AUDIT | ARCHETYPE: VERITY | CONTEXT: M2-FIREWALL-CLI]
 
 import sys
 from omega.audit.memory_firewall_auditor import MemoryFirewallAuditor

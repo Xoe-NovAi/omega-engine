@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Hivemind MCP Test Harness
 # AP: AP-HIVEMIND-TESTS-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: CI-GATE]
 """
 Unit tests for the Hivemind MCP tools.
 

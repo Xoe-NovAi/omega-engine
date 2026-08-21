@@ -1,5 +1,6 @@
 # 🔱 ICS Tag System — Noise Reduction Proposal
 **AP Token:** `AP-ICS-TAG-CLEANUP-20260809-v1.0.0`
+> **STATUS: EXECUTED — 2026-08-22.** All ICS-T tags removed (final purge: 7 live tags in scripts//tests/ + docstring). Superseded by docs/architecture/ICS_SYSTEM.md. Do not reintroduce ICS-T.
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_ics_cleanup ⬡ PROPOSAL
 
 **Date:** 2026-08-09

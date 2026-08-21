@@ -8,14 +8,14 @@ Single source of truth for the ``⬡ OMEGA`` agent signature system. Agents
 should NEVER hand-type session headers — they call :func:`render` and the
 template is filled with live runtime state.
 
-The two ICS systems are:
-    - **ICS-S** (Signature): ``⬡ OMEGA ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase}``
+The ICS system is:
+    - **ICS-S** (Signature): ``⬡ OMEGA ⬡ [{node}] ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase} ⬡ {session_id}``
       — the agent's runtime header, auto-generated from live state.
-    - **ICS-T** (Tag): ``# ICS: [NODE: ... | ARCHETYPE: ... | MODEL: ... | CONTEXT: ...]``
-      — the code module's lineage marker, static annotation, validated by CI.
+      ``[{node}]`` (PP-4) renders only when the agent acts under a Node;
+      ``{session_id}`` (P5) renders only when provided.
 
-This module owns ICS-S. ICS-T remains in code files as inline comments with
-``[id-soft:`` tags (see :mod:`src.omega.cvar_table` for related config).
+    (ICS-T code tags were DEPRECATED and REMOVED per Carmack review —
+    final remnants purged 2026-08-22. Do not reintroduce.)
 
 Heritage
 --------
@@ -37,10 +37,13 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
+import logging
 
 # ── TYPE_CHECKING block for forward references ──
 if TYPE_CHECKING:
     from omega.oracle.oracle import OracleResponse
+
+logger = logging.getLogger(__name__)
 
 # ── Constants ──────────────────────────────────────────────────────────
 ICS_TEMPLATE_FULL = "⬡ OMEGA ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase}"
@@ -153,6 +156,14 @@ class ICSContext:
     All fields are optional except ``entity``. Missing fields are
     auto-detected from runtime state (model, phase) or generated
     (trace).
+
+    ``node`` (PP-4, 2026-08-22): Node designation when the agent acts
+        under a Node expert session (e.g., ``"N7"``). Rendered as
+        ``[N7]`` immediately after the entity. Provenance for shared-
+        file writes (soul, gnosis) made by Node-acting agents.
+    ``session_id`` (P5, 2026-08-22): OpenCode session ID rendered as a
+        trailing segment; also scopes the session-DB model lookup so
+        multi-instance environments detect the CORRECT model (B1 fix).
     """
 
     entity: str
@@ -161,48 +172,73 @@ class ICSContext:
     trace_id: Optional[str] = None
     phase: Optional[str] = None
     mode: str = "full"  # "full" | "compact" | "off"
+    node: Optional[str] = None
+    session_id: Optional[str] = None
 
     def render(self) -> str:
         """Render the ICS-S header string for this context."""
         if self.mode == "off":
             return ICS_TEMPLATE_OFF
         if self.mode == "compact":
-            return ICS_TEMPLATE_COMPACT.format(
-                entity=self.entity.upper(),
-                phase=self.phase or _detect_phase(),
-            )
+            entity_upper = self.entity.upper()
+            segments = [entity_upper]
+            if self.node:
+                sanitized_node = re.sub(r"[^A-Z0-9_-]", "", self.node.upper())
+                if sanitized_node:
+                    segments.append(f"[{sanitized_node}]")
+            segments.append(self.phase or _detect_phase())
+            return "⬡ " + " ⬡ ".join(segments)
 
         # Full mode — auto-detect missing values
-        model = self.model or _detect_model(self.entity)
+        model = self.model or _detect_model(self.entity, session_id=self.session_id)
         trace = self.trace_id or _generate_trace()
         phase = self.phase or _detect_phase()
 
-        return ICS_TEMPLATE_FULL.format(
-            entity=self.entity.upper(),
-            model=model,
-            channel=self.channel,
-            trace=trace,
-            phase=phase,
-        )
+        # Build header from segments (F1 fix: robust node insertion, sanitized)
+        entity_upper = self.entity.upper()
+        segments = [
+            "OMEGA",
+            entity_upper,
+        ]
+        # F1 fix: sanitize node value, insert after entity
+        if self.node:
+            sanitized_node = re.sub(r"[^A-Z0-9_-]", "", self.node.upper())
+            if sanitized_node:
+                segments.append(f"[{sanitized_node}]")
+        segments.extend([
+            model,
+            self.channel,
+            trace,
+            phase,
+        ])
+        header = "⬡ " + " ⬡ ".join(segments)
+
+        # P5: session ID as trailing segment
+        if self.session_id:
+            header = f"{header} ⬡ {self.session_id}"
+
+        return header
 
 
 # ── Detection functions ────────────────────────────────────────────────
 
 
-def _detect_model(entity: str) -> str:
+def _detect_model(entity: str, session_id: Optional[str] = None) -> str:
     """Detect the active model for this entity.
 
     Priority (D118-aware, ordered most-specific to least):
         1. **model_override parameter** (D118 Dual-Inference) — explicit
            opt-in local routing
         2. **OPENCODE_MODEL env var** — session-level override
-        3. **opencode.json** ``model`` key — user config
-        4. **TriageRouter last_selected_model** — runtime cache
-        5. **Entity soul.yaml** ``inference.model`` — entity default
-        6. **"unknown"** — graceful fallback
+        3. **OpenCode session DB** — authoritative live model, scoped to
+           ``session_id`` when provided (B1 fix: global-latest lookup
+           returns WRONG models in multi-instance environments)
+        4. **Entity soul.yaml** ``inference.model`` — entity default
+        5. **"unknown"** — graceful fallback
 
     Args:
-        entity: The entity name (for entity-config lookup in priority 5)
+        entity: The entity name (for entity-config lookup in priority 4)
+        session_id: Optional OpenCode session ID scoping the DB lookup
 
     Returns:
         The detected model name, or ``"unknown"`` if none could be found.
@@ -217,38 +253,63 @@ def _detect_model(entity: str) -> str:
     if env_model:
         return env_model
 
-    # Priority 2.5: OpenCode session DB — authoritative live model
-    # The OpenCode session DB stores the model in session.model JSON.
-    # This is the same source the wrapper reads post-exit, but accessible
-    # during the live session. See wrapper.sh:84-90.
-    db_model = _read_opencode_session_model()
+    # Priority 3: OpenCode session DB — authoritative live model.
+    # Scoped to session_id when provided (B1 fix, 2026-08-22); the old
+    # global-latest query crossed instance boundaries in multi-window
+    # environments. Former TriageRouter/opencode.json priorities were
+    # caller-deferred and removed with the router (D-536).
+    db_model = _read_opencode_session_model(session_id=session_id)
     if db_model:
         return db_model
 
-    # Priority 3: opencode.json model key
-    # (Deferred to caller — Oracle has the config loaded)
-
-    # Priority 4: TriageRouter last_selected_model
-    # (Deferred to caller — Oracle has the router reference)
-
-    # Priority 5: Entity soul.yaml
+    # Priority 4: Entity soul.yaml — M22 provenance: log fallback
+    import warnings
+    warnings.warn(
+        f"ICS model detection: DB lookup failed for entity '{entity}' "
+        f"(session_id={session_id}); falling back to soul.yaml. "
+        f"Header may show stale model. Set OPENCODE_MODEL or OMEGA_MODEL_OVERRIDE "
+        f"to pin explicitly.",
+        RuntimeWarning,
+        stacklevel=2,
+    )
     soul_model = _read_entity_model(entity)
     if soul_model:
         return soul_model
 
-    # Priority 6: graceful fallback
+    # Priority 5: graceful fallback
     return "unknown"
 
 
 def _detect_phase() -> str:
-    """Detect the current phase from SOVEREIGN_ARK_BLUEPRINT.md.
+    """Detect the current phase.
 
-    Scans the blueprint for the highest completed Strike marker.
-    Falls back to :data:`ICS_DEFAULT_PHASE` if the blueprint is unreadable.
+    Priority (2026-08-22, B2 fix):
+        1. ``data/coordination/ACTIVE_SPRINT.json`` ``.phase`` — Tier-0
+           tracker (M27), always current
+        2. Legacy blueprint scan ("Strike N ✅" / "Epoch" markers)
+        3. :data:`ICS_DEFAULT_PHASE` fallback
     """
+    # Priority 1: ACTIVE_SPRINT.json — single execution SSOT
+    root = os.environ.get("OMEGA_ENGINE_ROOT", "")
+    base = Path(root) if root else Path.cwd()
+    sprint_path = base / "data" / "coordination" / "ACTIVE_SPRINT.json"
+    if sprint_path.exists():
+        try:
+            import json
+
+            data = json.loads(sprint_path.read_text(encoding="utf-8"))
+            phase = data.get("phase")
+            if phase:
+                return str(phase)
+        except (OSError, ValueError) as exc:
+            logger.debug("ICS phase: ACTIVE_SPRINT.json unreadable (%s); falling back", exc)
+
+    # Priority 2: legacy roadmap scan (B3 fix: use root resolution)
+    root = os.environ.get("OMEGA_ENGINE_ROOT", "")
+    base = Path(root) if root else Path.cwd()
     roadmap_paths = [
-        Path("docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"),
-        Path("docs/ROADMAP.md"),
+        base / "docs" / "strategy" / "SOVEREIGN_ARK_BLUEPRINT.md",
+        base / "docs" / "ROADMAP.md",
     ]
     for path in roadmap_paths:
         if path.exists():
@@ -263,7 +324,8 @@ def _detect_phase() -> str:
                 epoch_match = re.search(r"Epoch (I{1,3}V?|IV|V)", content)
                 if epoch_match:
                     return f"Epoch {epoch_match.group(1)}"
-            except (OSError, UnicodeDecodeError):
+            except (OSError, UnicodeDecodeError) as exc:
+                logger.debug("ICS phase: roadmap %s unreadable (%s)", path.name, exc)
                 continue
     return ICS_DEFAULT_PHASE
 
@@ -276,13 +338,19 @@ def _generate_trace() -> str:
 def _read_entity_model(entity: str) -> Optional[str]:
     """Read the model name from the entity's soul.yaml file.
 
+    Path resolution (M16 portability, B3 fix): honors
+    ``OMEGA_ENGINE_ROOT`` env var when set; otherwise assumes CWD is the
+    repo root (historical behavior).
+
     Args:
         entity: The entity name (e.g., "grand_oversight", "build_oversoul")
 
     Returns:
         The model name string, or None if not found.
     """
-    soul_path = Path(f"data/entities/{sanitize_path_component(entity)}/soul.yaml")
+    root = os.environ.get("OMEGA_ENGINE_ROOT", "")
+    base = Path(root) if root else Path.cwd()
+    soul_path = base / "data" / "entities" / sanitize_path_component(entity) / "soul.yaml"
     if not soul_path.exists():
         return None
     try:
@@ -291,33 +359,50 @@ def _read_entity_model(entity: str) -> Optional[str]:
         match = re.search(r"^\s*model:\s*['\"]?([^'\"\n]+)['\"]?\s*$", content, re.MULTILINE)
         if match:
             return match.group(1).strip()
-    except (OSError, UnicodeDecodeError):
-        pass
+    except (OSError, UnicodeDecodeError) as exc:
+        logger.debug("ICS model: soul.yaml for %s unreadable (%s)", entity, exc)
     return None
 
 
-def _read_opencode_session_model() -> Optional[str]:
+def _read_opencode_session_model(session_id: Optional[str] = None) -> Optional[str]:
     """Read the active model from the OpenCode session DB.
 
     The OpenCode session DB stores the authoritative model in
     ``session.model`` as JSON: {"id": "...", "providerID": "...", ...}.
-    This is the same source the wrapper reads post-exit, but accessible
-    during the live session. See wrapper.sh:84-90.
+
+    Args:
+        session_id: When provided, look up THIS session only (B1 fix —
+            the previous global-latest query crossed instance boundaries
+            in multi-window environments and returned wrong models).
+            When None, falls back to most-recently-updated session.
 
     Returns:
         The model id string (e.g. "deepseek/deepseek-v4-flash-0731"),
-        or None if the DB is unreachable or has no session.
+        or None if the DB is unreachable or has no matching session.
     """
-    db_path = Path.home() / ".local/share/opencode/opencode.db"
+    # XDG_DATA_HOME support (M16 portability) — opencode honors it
+    xdg = os.environ.get("XDG_DATA_HOME")
+    if xdg:
+        db_path = Path(xdg) / "opencode" / "opencode.db"
+    else:
+        db_path = Path.home() / ".local" / "share" / "opencode" / "opencode.db"
     if not db_path.exists():
         return None
     try:
         import sqlite3
 
-        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        # Short timeout + busy_timeout to avoid blocking event loop (M1)
+        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=0.25)
         try:
             cur = conn.cursor()
-            cur.execute("SELECT model FROM session ORDER BY time_updated DESC LIMIT 1")
+            cur.execute("PRAGMA busy_timeout=100")  # 100ms max wait on lock
+            if session_id:
+                cur.execute(
+                    "SELECT model FROM session WHERE id = ? ORDER BY time_updated DESC LIMIT 1",
+                    (session_id,),
+                )
+            else:
+                cur.execute("SELECT model FROM session ORDER BY time_updated DESC LIMIT 1")
             row = cur.fetchone()
             if row and row[0]:
                 import json
@@ -343,6 +428,8 @@ def render(
     trace_id: Optional[str] = None,
     phase: Optional[str] = None,
     mode: str = "full",
+    node: Optional[str] = None,
+    session_id: Optional[str] = None,
 ) -> str:
     """Render an ICS-S header string.
 
@@ -354,8 +441,14 @@ def render(
         model: Optional model override (D118). If None, auto-detected.
         channel: The execution channel (default: ``"opencode"``)
         trace_id: Optional trace ID. If None, auto-generated.
-        phase: Optional phase string. If None, auto-detected from ROADMAP.
+        phase: Optional phase string. If None, auto-detected from
+            ACTIVE_SPRINT.json (M27) with blueprint fallback.
         mode: ``"full"`` | ``"compact"`` | ``"off"`` (default: ``"full"``)
+        node: Optional Node designation when acting under a Node expert
+            session (PP-4, e.g., ``"N7"``). Rendered as ``[N7]`` after
+            the entity. Omit for prime-agent headers.
+        session_id: Optional OpenCode session ID (P5). Rendered as a
+            trailing segment AND scopes the session-DB model lookup.
 
     Returns:
         The formatted ICS-S header string.
@@ -364,6 +457,8 @@ def render(
         >>> from omega.ics import render
         >>> render("GRAND_OVERSIGHT", model="minimax-m3-free", trace_id="trc_abc123")
         '⬡ OMEGA ⬡ GRAND_OVERSIGHT ⬡ minimax-m3-free ⬡ opencode ⬡ trc_abc123 ⬡ H2-F'
+        >>> render("LILITH", node="N7", session_id="ses_x")  # doctest: +SKIP
+        '⬡ OMEGA ⬡ LILITH ⬡ [N7] ⬡ ... ⬡ ses_x'
     """
     ctx = ICSContext(
         entity=entity,
@@ -372,6 +467,8 @@ def render(
         trace_id=trace_id,
         phase=phase,
         mode=mode,
+        node=node,
+        session_id=session_id,
     )
     return ctx.render()
 
@@ -382,8 +479,8 @@ def render_for_response(
 ) -> str:
     """Render an ICS-S header from an existing OracleResponse.
 
-    Convenience wrapper that pulls entity/model/trace/phase from the
-    response object.
+    Convenience wrapper that pulls entity/model/trace/phase/channel/node/session_id
+    from the response object. Includes PP-4 node and P5 session_id when present.
 
     Args:
         response: An :class:`OracleResponse` instance
@@ -395,9 +492,12 @@ def render_for_response(
     return render(
         entity=response.entity,
         model=response.model,
-        trace_id=response.trace_id[:8] if response.trace_id else None,
+        trace_id=response.trace_id if response.trace_id else None,
         phase=response.phase,
         mode=mode,
+        channel=getattr(response, "channel", ICS_CHANNEL_OPENCODE),
+        node=getattr(response, "node", None),
+        session_id=getattr(response, "session_id", None),
     )
 
 

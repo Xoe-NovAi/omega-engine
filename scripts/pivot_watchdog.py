@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — PIVOT Watchdog
 # AP: AP-PIVOT-WATCHDOG-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: CI-GATE]
 """
 Scans PIVOT_LOG.md for decisions with 'Status: pending' that are older than 7 days.
 Flags them for review by P5 Sentinel.

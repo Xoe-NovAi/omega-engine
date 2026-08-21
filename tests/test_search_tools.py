@@ -7,7 +7,6 @@ from unittest.mock import AsyncMock, patch
 
 # 🔱 Omega Engine — Search Tool Verification Suite
 # AP: AP-SEARCH-VERIFY-v1.0.0
-# ICS: [NODE: VERIFIER | ARCHETYPE: SENTINEL | CONTEXT: SEARCH-PROTOCOL-GATE]
 
 # All tests in this module hit real external services (Firecrawl, Exa, Google)
 pytestmark = pytest.mark.integration

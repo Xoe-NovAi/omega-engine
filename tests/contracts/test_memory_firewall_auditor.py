@@ -1,6 +1,5 @@
 # AP: AP-MEMORY-FIREWALL-AUDITOR-TEST-v1.0.0
 # 🔱 Contract Tests for MemoryFirewallAuditor (M21 Gate Integrity)
-# ICS: [NODE: TEST | ARCHETYPE: VERITY | CONTEXT: CONTRACT-TEST]
 
 import pytest
 from dataclasses import dataclass

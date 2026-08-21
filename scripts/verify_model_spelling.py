@@ -1,6 +1,5 @@
 # 🔱 Omega Engine — Model Spelling Verifier
 # AP: AP-MODEL-VERIFY-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: CI-GATE]
 """
 Verifies that all model names used across the engine are consistent and 
 defined in the Single Source of Truth (models.yaml).
