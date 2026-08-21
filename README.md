@@ -8,7 +8,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
 [![Version](https://img.shields.io/badge/version-1.2.0-blue)]()
-  [![Tests](https://img.shields.io/badge/tests-1315%20passing-brightgreen)]()
+  [![Tests](https://img.shields.io/badge/tests-unit%2Bintegration-blue)]()
 
 
 ---
@@ -16,14 +16,14 @@
 ## Quick Start — 3 Commands, No Cloud Key Needed
  
  ```bash
- # 1. Clone and install (Python 3.12+, venv auto-setup)
+ # 1. One-click install (Python 3.12+, venv auto-setup, local model bundled)
  git clone https://github.com/Xoe-NovAi/omega-engine.git
  cd omega-engine
- make setup
+ ./scripts/install.sh
  
- # 2. Download the default local model (Qwen 1.7B GGUF, ~1.6GB)
- # This is the primary sovereign backend. No internet needed after this step.
- make model-download
+ # 2. (optional) Re-download / verify the default local model (Qwen 1.7B GGUF, ~1.6GB)
+ # The engine auto-discovers backends — no internet needed after the model is present.
+ ./scripts/download_model.sh
  
  # 3. Talk to it — entirely on your CPU, zero cloud calls
  omega talk "hello"
@@ -62,7 +62,7 @@ omega backends                           # List available inference backends
 omega health                             # Show provider status and latency
 omega talk "hello" --iwad arcana_novai   # Load a specific IWAD stack
 omega version                            # Show version
-make test                                # Run the 1315-test suite
+make test                                # Run the fast unit-tier test suite
 make temple-grade                        # Verify all 11 Temple-Grade gates
 make menu                                # Full command menu
 ```
@@ -77,7 +77,7 @@ Omega auto-detects available inference backends. **Local providers are tried fir
  
  | Priority | Provider | Setup | Speed | Sovereign |
  |:--------:|----------|-------|-------|:---------:|
- | **1** | **Native GGUF** | `make model-download` | 🏠 CPU, llama-cpp-python | ✅ Full |
+ | **1** | **Native GGUF** | `./scripts/download_model.sh` | 🏠 CPU, llama-cpp-python | ✅ Full |
  | **2** | **LM Studio** | `lms server start` (port 1234) | 🏠 CPU/GPU | ✅ Full |
  | **3** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
  | **4** | **Mock** | Automatic in `OMEGA_ENV=test` | Instant, deterministic | ✅ Test |
@@ -191,7 +191,7 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 
 | Gate | Status |
 |------|--------|
-| Test Suite | **911 collected, 911 passing** (43 skipped, 3 xfailed) |
+| Test Suite | Two-tier: fast unit tier (default `make test`) + opt-in integration (`make test-all`) |
 | Temple-Grade (T1-T11) | **✅ VERIFIED (v7.5.4)** |
 | Sovereign Mandates (M1-M22) | **All 22 enforced** (see `SOVEREIGN_MANDATES.md`) |
 | Agent Fleet | **11 agents** (10 Pillar + 1 Oversoul), M10 compliant |
