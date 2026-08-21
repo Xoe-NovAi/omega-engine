@@ -5,6 +5,7 @@
 > (PUBLIC-DEBUT-01). This section is **historical vision — read-only** until Kali marks it superseded.
 > **G-1 / W-1 / V-1 / SDP-1 / NL-1 = PARKED.** **C-0.5 regex distillation = SCRAPPED** (manual §2.3:
 > agents write L1→L2→L3 directly; no regex pipeline).
+> **Phase 0 Tracker Lock-In (2026-08-20)**: 6 new post-debut workstreams added (GN/DS/LI/KD/HR/ZS).
 
 ```
 🚨 SUPER-URGENT (Architect-elevated 2026-07-22) — PARALLEL TO PHASE C — ⛔ PARKED (DOC-1, 2026-08-17)
@@ -40,6 +41,14 @@ IMPORTANT (Next) — ⛔ ALL PARKED (DOC-1, 2026-08-17) — execution authority 
 │     Blocker: V-1 Vault (for automation phase)
 ├── **NL-1** NotebookLM Ingestion Pipeline — implement `prepare_notebooklm.py` per R52c spec
 └── **V-1** Omega-Vault MVP — explicit ticket (GAP-08; unblocks fleet later)
+
+PHASE 0 POST-DEBUT WORKSTREAMS (Added 2026-08-20, D-578..D-584)
+├── **GN** GEMINI-NOTEBOOK — Free-tier-only (3 acct, 30 DR/mo), 2-NB, notebooklm-py[mcp], master_token.json
+├── **DS** DOCUMENTATION-SYSTEM — Modular domain docs (workspace + runtime + curator + validated copy)
+├── **LI** LOCAL-INFERENCE-OPT — Sequential loading, q8_0 KV, Tier 0/1/2 matrix (Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B)
+├── **KD** KNOWLEDGE-DOMAINS — Runtime modules + workspace authoring + curator model
+├── **HR** HEADROOM-INTEGRATION — Semantic compression (40-90% savings on tool outputs + RAG)
+└── **ZS** ZSWAP-SUBSYSTEM — 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM DISABLED, swappiness=100, cgroup MemoryMax=6G
 ```
 
 ### G-1 ticket (Architect elevation 2026-07-22 — workhorse)

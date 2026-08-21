@@ -2,9 +2,9 @@
 **AP Token**: `AP-STRATEGY-CORPUS-MAP-v1.0.0`
 ⬡ OMEGA ⬡ GROK_CLI ⬡ opencode ⬡ trc_corpus_map ⬡ LAYER-2
 
-**Date**: 2026-07-25 (KG-3..6 + VaultCore + MCP Sprint 1 — updated)  
+**Date**: 2026-08-19 (DP-1..DP-8 + Cognitive Architecture + Qdrant reactivation — updated)  
 **Status**: LAYER 2 — companion to strategy SSOT  
-**Master**: [`SOVEREIGN_ARK_BLUEPRINT.md`](SOVEREIGN_ARK_BLUEPRINT.md) v5.1+  
+**Master**: [`SOVEREIGN_ARK_BLUEPRINT.md`](SOVEREIGN_ARK_BLUEPRINT.md) v5.2+  
 **P0 ops**: [`CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`](CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md)  
 **Purpose**: Ensure **no agent strategy is orphaned**. The Ark ranks *what to do now*; this map records *where every fine-grained idea lives* and whether it is active, deferred, absorbed, or archive-only.
 
@@ -15,9 +15,10 @@
 
 ### Rules
 1. **Priority** always comes from the **execution SSOT** (`DEBUT_REMEDIATION_MANUAL_20260817.md` + `ACTIVE_SPRINT.json`). This file does not override the critical path.
-2. **Nothing is “deleted by silence.”** If an idea is not on the critical path, it appears here as DEFERRED / PARKED / ARCHIVE with a path. **(INVERTED 2026-08-17: rows marked ACTIVE below are PRESERVED but NOT executable unless the manual/ACTIVE_SPRINT re-activates them.)**
+2. **Nothing is "deleted by silence."** If an idea is not on the critical path, it appears here as DEFERRED / PARKED / ARCHIVE with a path. **(INVERTED 2026-08-17: rows marked ACTIVE below are PRESERVED but NOT executable unless the manual/ACTIVE_SPRINT re-activates them.)**
 3. When a new agent review lands, add a row here **and** either a Ark §3 ticket or a DEFERRED line.
 4. Conflict resolution: Mandates → Manual/ACTIVE_SPRINT → Ark → this map → individual specs.
+5. **Phase 0 Tracker Lock-In (2026-08-20)**: 6 new post-debut workstreams added (GN/DS/LI/KD/HR/ZS) — preserved as ACTIVE post-debut.
 
 ---
 
@@ -37,6 +38,12 @@
 | NL-1 (NotebookLM) | ACTIVE | **PARKED** — post-debut |
 | V-1 (Omega-Vault MVP) | ACTIVE | **PARKED** — post-debut |
 | C-0.5 regex distillation | ACTIVE | **SCRAPPED** — manual §2.3: agents write L1→L2→L3 directly |
+| **GN (Gemini Notebook v2.0)** | — | **ACTIVE POST-DEBUT** — free-tier-only, 2-NB, 30 DR/mo (D-582/D-583) |
+| **DS (Documentation System)** | — | **ACTIVE POST-DEBUT** — modular domain docs (workspace + runtime + curator + validated copy) |
+| **LI (Local Inference Opt)** | — | **ACTIVE POST-DEBUT** — sequential loading, q8_0 KV, Tier 0/1/2 matrix |
+| **KD (Knowledge Domains)** | — | **ACTIVE POST-DEBUT** — runtime modules + workspace authoring + curator model |
+| **HR (Headroom Integration)** | — | **ACTIVE POST-DEBUT** — semantic compression (40-90% savings) |
+| **ZS (zswap Subsystem)** | — | **ACTIVE POST-DEBUT** — 16GB NVMe swap, zswap enabled, zRAM disabled |
 
 ---
 
@@ -56,7 +63,9 @@
 | **Grokster** | `IDENTITY_FLUIDITY_ARCHITECTURE_20260721.md` + `SPEC_IDENTITY_FLUIDITY_v1.md` + `prototypes/` | Soul Kernel, Auto-Hydration MCP, Temporal Trace, Voice Calibration, Session Bridge; Phase 0–5 build order | **Phase E** in Ark §3.3; specs stay at entity workspace paths |
 | **Grokster** | `GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | Compress board; Grok JSONL as persistence; R19 Grok Build patterns; R20 MCP migration research; fleet as force multiplier | **Selective**: MCP deadline active; fleet/JSONL bridge **DEFERRED** (vault first); board compression informs D-2 |
 | **Grokster** | Briefings `BRIEFING_KALI_GROKSTER_*` | Phase Γ Hub split (tools.py); XNAi patterns vs 2026; Identity Phase 0 ready | Hub split → PARKED post-C; patterns → Roc/C-6′; Phase 0 → E-0 |
-| **John Carmack** | `CARMACK_RESEARCH_AUDIT_20260721.md` | 18-sprint ≈ process theater; compress to 3–4 days; search persistence = R00 not R18 | **Absorbed** into Phase D ordering (content first); full audit Layer 2 |
+| **Grokster** | **`KALI_BRIEFING_DYNAMIC_PROMPT_PLANNER_EXECUTOR_20260819.md`** + **`DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md`** + **`DYNAMIC_PROMPT_SYSTEM_BLUEPRINT_20260819.md`** | Dynamic Prompt Builder + Planner/Executor split + Domain Loading architecture; 5-layer convergent architecture (Context Window Registry, DynamicPromptBuilder, Domain Loader, Planner/Executor Engine, Local Optimization); 8 critical gaps (DP-1..DP-8); Curator model with governance levels; mimo-7b-rl/qwen3-1.7b local pipeline; EvolveR distillation pipeline; Freshness system | **RATIFIED D-569** — POST-DEBUT Cognitive Architecture Blueprint (Horizon 3). Gaps DP-1..DP-8 registered in GAP_REGISTRY.json. Owners: Ma'at P0-P3/P7-P8/P10, Kali P4-P5, Verity P6, Researcher P9. Incremental on existing components (ContextBuilder, SelectiveHydration, HybridOrchestrator, ProviderSelector, Context Packer, SDP). |
+| **Kali** | **Phase 0 Tracker Lock-In (2026-08-20)** — `ACTIVE_SPRINT.json` + `GAP_REGISTRY.json` + `HMC_COLLABORATION_HUB.md` + `SESSION_ANCHOR.md` + `RESEARCH_PLAN_PHASE1_4_20260813.md` + `STRATEGY_INDEX.md` + `STRATEGY_CORPUS_MAP.md` + `SOVEREIGN_ARK_BLUEPRINT.md` + `DEBUT_REMEDIATION_MANUAL_20260817.md` + `curators.yaml` | 6 new post-debut workstreams added: GN (Gemini Notebook), DS (Documentation System), LI (Local Inference Opt), KD (Knowledge Domains), HR (Headroom Integration), ZS (zswap Subsystem). Arbitration D-578..D-584 ratified (free-tier-only, 2-NB, 30 DR/mo, zswap+NVMe over zRAM). C7 resolved (Qwen3-4B-Thinking). All docs corrected. | **ACTIVE POST-DEBUT** — Phase 0 complete; execution begins after PUBLIC-DEBUT-01 |
+| **Researcher** | **Ornith-9B Deep Dive** — `docs/research/youtube_research_sessions/session_20260730/04_evidence/ORNITH_9B_TECHNICAL_DEEP_DIVE.md` | Qwen3.5 fine-tune (24 GatedDeltaNet + 8 Gated Attention), MIT license confirmed, 69.4 SWE-Bench verified (agentic eval, temp=1.0, 5-run avg), prose-bias failure mode requires dual-routing with Qwen3.5-9B, 400K context on 16GB GPU, cost-sensitive quantization (Q4_K_M=5.63GB exact match parity with fp32) | **ACTIVE Phase 2** — hardware-gated (needs 16GB+ VRAM) |
 | **Researcher + Carmack** | **YouTube Research Session (2026-07-30)** — `docs/research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md` | **24 proposals → top-5 force multipliers** with deep-dive research (5,000+ lines total): Ornith-9B architecture (MIT, 69.4 SWE-Bench, prose-bias risk), Vulkan llama.cpp backend (14k/14k tests pass, 8-15 tok/s on 5700U iGPU), llama-optimus auto-tuning (real project, 15-35% speedup, 42★), ModelAwareInstructionRouter (no existing system does this, ~400 lines Python), Workstation hardening (IDE supply chain = #1 vector 2026). | **ACTIVE — Phase 0** (next research/pause phase before implementation). Detailed in `CARMACK_DEFINITIVE_STRATEGY_20260730.md`:
 | **Grok CLI** | `GROK_CLI_CODEBASE_STRATEGY_REVIEW_20260721.md` | SoulStore multi-path; CB unify; god-modules; test vanity; SSOT dual docs; GenerationPolicy; fleet vs vault | **Absorbed** as C-0, C-1′, C-6′, C-9, structural gates §9 |
 | **Fleet (prior)** | Ark v4.4 CANONICAL | Strike 11 SWP, 11.5 Council, Dimension Framework, Free-Will datasets, Advanced Ingestion, Tier 0 Ship-It, Jem gaps S1–S5 | **PARKED long-arc** → archive path; summarized Ark §2 |
@@ -124,6 +133,29 @@
 | GAP-NL-03 | Lilith Tarot / 7-entity pantheon not in current philosophy docs | P2 | **Philosophy lineage** — add to `philosophy-dual-flame` as Era 0 origin |
 | GAP-NL-04 | Mnemosyne 13-sphere memory not mapped to current soul.yaml | P2 | **Migration script** — map spheres to soul.yaml sections |
 | GAP-NL-05 | Grok 8-account exports indexed but not searchable via current RAG | P1 | **XNAI-RAG extension** — add Grok DB as searchable source |
+| GAP-DP-01 | Dynamic Prompt Builder — template engine, role-aware composition, domain injection | P0 | **DP-1** → Cognitive Architecture P1 (Horizon 3) |
+| GAP-DP-02 | Context Window Registry — single source for all model context windows | P0 | **DP-2** → Cognitive Architecture P0 (Horizon 3) |
+| GAP-DP-03 | Planner/Executor Model Router — routes by role + context window need | P0 | **DP-3** → Cognitive Architecture P2 (Horizon 3) |
+| GAP-DP-04 | Domain Module Loader — unified load_domain() API with packaging | P0 | **DP-4** → Cognitive Architecture P3 (Horizon 3; needs Qdrant) |
+| GAP-DP-05 | Per-Role Token Budget Manager — planner vs executor budgets | P0 | **DP-5** → Cognitive Architecture P1 (Horizon 3) |
+| GAP-DP-06 | Domain Context Window Map — domain → optimal context window | P0 | **DP-6** → Cognitive Architecture P0 (Horizon 3) |
+| GAP-DP-07 | Planner/Executor Prompt Templates — versioned, validated templates | P0 | **DP-7** → Cognitive Architecture P4 (Horizon 3) |
+| GAP-DP-08 | SomaticState Planner Integration — state save/restore for planning continuity | P1 | **DP-8** → Cognitive Architecture P8 (Horizon 3) |
+
+---
+
+## §2.5 Dynamic Prompt + Planner/Executor + Domain Loading Gaps (NEW — 2026-08-19 Mining)
+
+| Gap | Name | Priority | Disposition |
+|-----|------|----------|-------------|
+| DP-1 | Dynamic Prompt Builder — template engine, role-aware composition, domain injection | P0 | **Cognitive Architecture P1** (Horizon 3) |
+| DP-2 | Context Window Registry — single source for all model context windows | P0 | **Cognitive Architecture P0** (Horizon 3) |
+| DP-3 | Planner/Executor Model Router — routes by role + context window need | P0 | **Cognitive Architecture P2** (Horizon 3) |
+| DP-4 | Domain Module Loader — unified load_domain() API with packaging | P0 | **Cognitive Architecture P3** (Horizon 3; needs Qdrant) |
+| DP-5 | Per-Role Token Budget Manager — planner vs executor budgets | P0 | **Cognitive Architecture P1** (Horizon 3) |
+| DP-6 | Domain Context Window Map — domain → optimal context window | P0 | **Cognitive Architecture P0** (Horizon 3) |
+| DP-7 | Planner/Executor Prompt Templates — versioned, validated templates | P0 | **Cognitive Architecture P4** (Horizon 3) |
+| DP-8 | SomaticState Planner Integration — state save/restore for planning continuity | P1 | **Cognitive Architecture P8** (Horizon 3) |
 
 ---
 

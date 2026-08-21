@@ -68,13 +68,29 @@
 | `data/coordination/ROC_LEGACY_MINING_REPORT_20260721.md` | C | Legacy patterns to port |
 | `data/coordination/GROKSTER_ADVERSARIAL_REVIEW_20260721.md` | C | Strategy adversarial review |
 | `data/coordination/GROK_CLI_CODEBASE_STRATEGY_REVIEW_20260721.md` | C | Structural code+strategy review |
-| `data/coordination/RESEARCHER_QUEUE_DESIGN_20260721.md` | D | Queue/SQLite/gates deep design |
+| `data/coordination/RESEARCHER_QUEUE_DESSIGN_20260721.md` | D | Queue/SQLite/gates deep design |
 | `data/coordination/CARMACK_RESEARCH_AUDIT_20260721.md` | D | Research board compression |
 | `data/coordination/GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | D | Fleet-aware research notes |
-| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | D | 18 jobs (D-2 input) |
+| `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | D | 18 jobs (D-2 input) + Phase 5 (R57-R62) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
 | **`docs/sprints/current/AGENT_SPRINT_CARD.md`** | **D Gate** | **ACTIVE SPRINT** — one-page agent card |
-SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
+| SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
+
+## LAYER 2A: DOMAIN DOCUMENTATION SYSTEM (NEW — 2026-08-20)
+| Document | Purpose |
+|----------|---------|
+| `docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md` | **Meta-doc** — workspace + runtime + curator + validated copy sync |
+| `docs/strategy/domains/gemini-notebook/STRATEGY_V2.md` | Domain strategy (free-tier-only, 2-NB, 30 DR/mo) |
+| `docs/strategy/domains/gemini-notebook/CONTEXT.md` | Single file: PLAYBOOK + ARCHITECTURE + GOTCHAS + LESSONS |
+| `docs/strategy/domains/gemini-notebook/PROMPTS/` | planner.txt, executor.txt, critic.txt |
+| `docs/strategy/domains/gemini-notebook/metadata.yaml` | accounts=3, dr_per_month=30, cost_model=free_tier_only |
+| `docs/strategy/domains/gemini-notebook/ARCHIVE/` | Pre-arbitration docs (GAP_AUDIT, GAP_RESEARCH, RESEARCH_A/B/C, BEST_PRACTICES_v1, R52c_INGESTION_v1, etc.) |
+| `config/domains/gemini-notebook/metadata.yaml` | Runtime copy of workspace metadata |
+| `config/domains/gemini-notebook/CONTEXT.md` | Runtime copy of workspace CONTEXT |
+| `config/domains/gemini-notebook/PROMPTS/` | Runtime copy of workspace PROMPTS |
+| `config/domains/gemini-notebook/sources/` | Symlinks to actual source docs |
+| `config/domains/curators.yaml` | Curator governance (gemini-notebook row: researcher, SHARED_READ, 16384) |
+| `scripts/sync_domain_docs.py` | Validated copy (not symlink) + pre-commit hook |
 
 ## LAYER 2B: ARCHITECTURE REFERENCE (Engine Internals)
 | Document | Purpose |
