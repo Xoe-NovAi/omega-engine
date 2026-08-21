@@ -37,6 +37,24 @@ NotebookLM is the **primary platform** for source-grounded research synthesis, l
 
 ## 1. SETUP & ARCHITECTURE
 
+### 1.0 Automation Tool — `notebooklm-py` (RPC) — **v2.1 Update (2026-08-20)**
+
+**Recommended automation library**: **`notebooklm-py`** (teng-lin) with `[mcp]` extra — the ONLY library with documented Deep Research **report** trigger (`source add-research --mode deep`) + Markdown export (`download`). RPC-based (no browser at runtime) → best fit for local-first (M7) headless systemd deployment.
+
+```bash
+# Deployment (per account, M24 venv sovereignty)
+source .venv/bin/activate && pip install "notebooklm-py[mcp]"
+
+# Per-account isolated auth profile (mitigates ToS ban risk)
+notebooklm profile create acct1 --auth <isolated-session>
+export NOTEBOOKLM_PROFILE=acct1   # separate HOME/data dir per account
+
+# systemd user service runs the MCP server (stdio) or guarded HTTP
+notebooklm mcp --transport stdio     # or: notebooklm server --http --host 127.0.0.1
+```
+
+> **Critical**: `notebooklm-mcp` (TheSethRose) `research_start --mode deep` is **source-finding, NOT the quota-consuming Deep Research report**. Do NOT use it for the report path. Use `notebooklm-py` for Deep Research automation.
+
 ### 1.1 Notebook Creation
 1. `notebooklm.google.com` → "Create Notebook"
 2. Name after **research question** (e.g., "Omega Engine Technology Adoption Decision Matrix")

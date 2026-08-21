@@ -1,12 +1,22 @@
 # 📦 Qdrant Migration Knowledge Gaps — Filled
 **AP Token**: `AP-RESEARCHER-QDRANT-MIGRATION-GAPS-20260816`
 **Date**: 2026-08-16
-**Status**: ARCHIVE — DO NOT IMPLEMENT (DOC-1, 2026-08-17)
+**Status**: ⚡ REACTIVATED (D-570, 2026-08-19) — POST-DEBUT MIGRATION REFERENCE
 
-> **⚠️ DOC-1 STAMP (2026-08-17)**: **ARCHIVE — DO NOT IMPLEMENT.**
+> **⚠️ DOC-1 STAMP (2026-08-17)**: ~~ARCHIVE — DO NOT IMPLEMENT.~~
 > Qdrant is superseded for debut by sqlite-vec + FTS5 + RRF hybrid search.
 > `DEBUT_REMEDIATION_MANUAL_20260817.md` DEL-1 week 1 deletes the `QdrantAdapter` class
 > in `src/omega/memory/vector_adapters.py`. Preserved as research reference only.
+>
+> **⚡ D-570 REACTIVATION (2026-08-19)**: Qdrant is SCHEDULED to replace sqlite-vec
+> **post-debut** (Horizon 2, per SOVEREIGN_ARK_BLUEPRINT Horizon 2 "Optimize Qdrant").
+> The debut-scope decision STANDS (sqlite-vec = zero-dependency for fresh-machine
+> install honesty). DEL-1 Week 1 still deletes the dead `QdrantAdapter` (heritage only).
+> Post-debut: revive a PROPER `QdrantAdapter` at `src/omega/oracle/adapters/qdrant_adapter.py`
+> (see §Revival below), migration script `scripts/migrate_sqlite_vec_to_qdrant.py`,
+> scalar quantization BITS4, payload indexes, gRPC pool=20, telemetry disabled (M8).
+> Sequence BEFORE briefing P3 (Domain Module Loader RAG paradigm).
+> Tracked as `QDRANT-MIGRATION` workstream in ACTIVE_SPRINT.json.
 
 ---
 
