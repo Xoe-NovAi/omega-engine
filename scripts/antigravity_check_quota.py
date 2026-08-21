@@ -36,7 +36,7 @@ import httpx
 DEFAULT_CLIENT_ID = (
     "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com"
 )
-DEFAULT_CLIENT_SECRET = "***REMOVED***"
+DEFAULT_CLIENT_SECRET = os.environ.get("ANTIGRAVITY_CLIENT_SECRET", "")
 
 CLOUD_CODE_BASE = "https://cloudcode-pa.googleapis.com"
 TOKEN_URL = "https://oauth2.googleapis.com/token"

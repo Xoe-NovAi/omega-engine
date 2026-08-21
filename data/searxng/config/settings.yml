@@ -17,7 +17,7 @@ use_default_settings:
       - docker hub
 
 server:
-  secret_key: "***REMOVED***"
+  secret_key: "CHANGE_ME_RUN: openssl rand -hex 32  # redacted from repo (B1)"
   limiter: false
   image_proxy: true
   bind_address: "0.0.0.0"
