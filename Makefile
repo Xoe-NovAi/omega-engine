@@ -346,24 +346,37 @@ install-guarded:
 	@STAMP=$$(date +%Y%m%d-%H%M%S); bash scripts/observe-build.sh install-$$STAMP bash scripts/install.sh
 
 # === SECRET GATES (D-K6, kali ruling 2026-08-22) ===
-# Format-regex -G scans are PRIMARY; bare-prefix -S is advisory only.
-# gitleaks full-history scan runs when the binary is on PATH.
-# Gate passes ONLY at zero findings across ALL refs.
+# gitleaks scan runs when the binary is on PATH, against DURABLE refs only
+# (--branches --tags) per Kali ratification ho_409d1ada5e0a: IDE checkpoint
+# shadow-refs (refs/cline/*) can resurrect purged secret-bearing objects as
+# dangling commits and must neither fail gates nor hide durable-ref leaks.
+# Gate passes ONLY at zero findings on durable refs (31 baselined FPs in
+# .gitleaksignore, WHY-documented line-above each fingerprint).
 .PHONY: gate-secrets
 gate-secrets:
-	@echo '=== gate-secrets: format-regex PRIMARY gates ==='
+	@echo '=== gate-secrets: format-regex PRIMARY gates (durable refs) ==='
 	@FAIL=0; \
-	for R in 'GOCSPX-[A-Za-z0-9_-]{10,}' 'fc-[A-Za-z0-9_-]{16,}' 'AIzaSy[A-Za-z0-9_-]{20,}' 'tvly-[A-Za-z0-9]{10,}' 'eyJhbGci[A-Za-z0-9_.-]{30,}' '-----BEGIN [A-Z ]*PRIVATE KEY-----'; do \
-		N=$$(git log -G "$$R" --all --oneline | wc -l); \
+	for R in 'GOCSPX-[A-Za-z0-9_-]{10,}' 'fc-[A-Za-z0-9_-]{16,}' 'AIzaSy[A-Za-z0-9_-]{20,}' 'tvly-[A-Za-z0-9]{10,}' 'eyJhbGci[A-Za-z0-9_.-]{30,}'; do \
+		N=$$(git log -G "$$R" --branches --tags --oneline | wc -l); \
 		echo "  git log -G '$$R' -> $$N commits"; \
 		[ "$$N" -eq 0 ] || FAIL=1; \
 	done; \
+	PEM_R='-----BEGIN[ A-Z]*PRIVATE KEY-----'; \
+	PEM_FILES=$$(git log -G "$$PEM_R" --branches --tags --name-only --format= | sort -u); \
+	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^$$' | wc -l); \
+	PEM_N=$$(echo "$$PEM_FILES" | grep -c .); \
+	if [ "$$PEM_BAD" -eq 0 ]; then \
+		echo "  git log -G PEM -> $$PEM_N file(s), all baselined template FPs (Kali ho_409d1ada5e0a DEV-2: docs/research/R_VAULT_SCHEMA_V2.md + docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md; regex self-avoiding so gate source never self-matches)"; \
+	else \
+		echo "  git log -G PEM -> OFFENDING FILES:"; echo "$$PEM_FILES" | grep -v -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$'; FAIL=1; \
+	fi; \
 	if command -v gitleaks >/dev/null 2>&1; then \
-		echo '=== gitleaks full-history ==='; \
-		gitleaks detect --source . --redact --no-banner >/dev/null 2>&1 \
-			&& echo '  gitleaks: 0 findings' \
+		echo '=== gitleaks durable refs (--branches --tags) ==='; \
+		IGN=$$(grep -c '^# WHY:' .gitleaksignore 2>/dev/null || echo 0); \
+		gitleaks detect --source . --redact --no-banner --log-opts='--branches --tags' >/dev/null 2>&1 \
+			&& echo "  gitleaks: 0 findings (baseline ignored: $$IGN - see .gitleaksignore)" \
 			|| { echo '  gitleaks: FINDINGS PRESENT'; FAIL=1; }; \
 	else \
-		echo '  (gitleaks not on PATH — regex gates only)'; \
+		echo '  (gitleaks not on PATH - regex gates only)'; \
 	fi; \
-	if [ "$$FAIL" -eq 0 ]; then echo '✅ gate-secrets PASSED'; else echo '❌ gate-secrets FAILED'; exit 1; fi
+	if [ "$$FAIL" -eq 0 ]; then echo 'gate-secrets PASSED'; else echo 'gate-secrets FAILED'; exit 1; fi
