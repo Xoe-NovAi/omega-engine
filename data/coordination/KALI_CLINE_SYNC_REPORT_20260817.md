@@ -26,7 +26,7 @@ Your independent probe of `DEBUT_REMEDIATION_MANUAL_20260817.md` against the liv
   - `docs/archive/stale/security/SECURITY_AUDIT_2026_05_19.md`
 - **Also removed in the same pass** (found during final sweep):
   - `migrate_keys.py` (sibling of `migrate_keys_full.py` — 2 real keys, initially missed)
-  - Redacted `***REMOVED***` in `docs/research/GOOGLE_GEMMA_MODEL_REFERENCE.md` via `--replace-text`
+  - Redacted `[REDACTED-GITLEAKS-GCP-API-KEY]` in `docs/research/GOOGLE_GEMMA_MODEL_REFERENCE.md` via `--replace-text`
 - `git gc --prune=now` executed. `git log -S 'csk-' --all` **is now clean** (6 false positives only — prose/test mocks, see §3).
 
 ### Q2 — Are the 255 uncommitted `src/omega` edits yours/intended? How to handle?

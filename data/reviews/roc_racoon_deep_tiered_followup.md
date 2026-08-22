@@ -203,7 +203,7 @@ The Python `FirecrawlProvider` has its OWN key resolution chain:
 This is used when `sovereign_search_service` calls the provider directly (bypassing MCP).
 
 #### Key Status
-- `.env` has: `FIRECRAWL_API_KEY=***REMOVED***` — key exists
+- `.env` has: `FIRECRAWL_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]` — key exists
 - `KeyVault` was initialized during Sprint C (2026-06-23) — should have the key
 - `state.py:169` passes `firecrawl_key=_fc_key` to `SovereignSearchService` at init
 
@@ -225,7 +225,7 @@ This is used when `sovereign_search_service` calls the provider directly (bypass
 }
 ```
 - Uses `${EXA_API_KEY}` which OpenCode resolves from env at runtime
-- `.env` has `EXA_API_KEY=***REMOVED***`
+- `.env` has `EXA_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]`
 - **Cannot verify expiry** without making a live API call
 
 ### SearXNG (Tier 3) — ✅ WORKING
@@ -247,7 +247,7 @@ This is used when `sovereign_search_service` calls the provider directly (bypass
 
 The Firecrawl MCP server on port 8015 needs to be started with the API key. If it's a systemd or Quadlet service, add:
 ```
-FIRECRAWL_API_KEY=***REMOVED***
+FIRECRAWL_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]
 ```
 Or if the MCP server accepts it via environment, ensure the `.env` is sourced.
 

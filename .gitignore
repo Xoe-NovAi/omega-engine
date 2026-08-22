@@ -236,3 +236,6 @@ config/model_registry/index.sqlite
 data/cache/sovereign_cache.sqlite
 vault.json.enc
 data/training/entities/*/https___example_com_secret_*.json
+
+# Session evidence dirs hold LIVE SECRET INVENTORIES (gitleaks raw output) - NEVER commit
+docs/research/evidence_*/

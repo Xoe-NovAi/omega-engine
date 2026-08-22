@@ -13,8 +13,8 @@
 
 | Source | Value | Status |
 |--------|-------|--------|
-| `.env` file | `EXA_API_KEY=***REMOVED***` | ✅ Works via curl |
-| Shell env | `EXA_API_KEY=***REMOVED***` | ✅ Works via curl |
+| `.env` file | `EXA_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]` | ✅ Works via curl |
+| Shell env | `EXA_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]` | ✅ Works via curl |
 | Shell export check | `declare -x EXA_API_KEY="b19a6fa8-..."` | ✅ Exported |
 | Curl `api.exa.ai/search` with .env key | HTTP 200 | ✅ Authenticates |
 | Curl `api.exa.ai/search` with shell key | HTTP 200 | ✅ Authenticates |
@@ -50,7 +50,7 @@ OpenCode startup
   │   │   `--no-compile-autoload-dotenv` flag — auto-loading is ON by default)
   │   │
   │   ├── Bun auto-loads .env from CWD → omega-engine/.env
-  │   │   → EXA_API_KEY=***REMOVED***
+  │   │   → EXA_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]
   │   │
   │   └── This OVERRIDES shell env value (b19a6fa8-...)
   │       if .env exists in CWD
@@ -492,7 +492,7 @@ The most critical fix for the 401 issue is **config consolidation**:
 }
 
 # 4. Ensure shell always has EXA_API_KEY exported
-echo 'export EXA_API_KEY="***REMOVED***"' >> ~/.bashrc
+echo 'export EXA_API_KEY="[REDACTED-GITLEAKS-GENERIC-API-KEY]"' >> ~/.bashrc
 ```
 
 ---

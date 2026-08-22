@@ -112,7 +112,7 @@ Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/data:/var/cache/searxng/
 # Environment — SEARXNG_SECRET from .env file (generate with: openssl rand -hex 32)
 # If using systemd env file: EnvironmentFile=%h/.config/searxng.env
 # Then reference: SEARXNG_SECRET=${SEARXNG_SECRET}
-Environment=SEARXNG_SECRET=***REMOVED***
+Environment=SEARXNG_SECRET=[REDACTED-GITLEAKS-GENERIC-API-KEY]
 Environment=SEARXNG_BASE_URL=http://localhost:8017
 Environment=SEARXNG_PORT=8080
 Environment=SEARXNG_HOST=0.0.0.0

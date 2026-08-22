@@ -165,7 +165,7 @@ Podman's auto-update (`podman auto-update`) works by checking the registry for a
 
 Line 35:
 ```ini
-Environment=SEARXNG_SECRET=***REMOVED***
+Environment=SEARXNG_SECRET=[REDACTED-GITLEAKS-GENERIC-API-KEY]
 ```
 
 This is a 64-character hex string that's now in:
@@ -184,7 +184,7 @@ EnvironmentFile=%h/.config/searxng/searxng.env
 And the env file (not tracked in git):
 ```bash
 # ~/.config/searxng/searxng.env
-SEARXNG_SECRET=***REMOVED***
+SEARXNG_SECRET=[REDACTED-GITLEAKS-GENERIC-API-KEY]
 ```
 
 ### 2.6 Volume Mounts — No `:U` Flag (Good)

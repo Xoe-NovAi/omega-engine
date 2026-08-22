@@ -97,7 +97,7 @@ Antigravity is Google's **undocumented internal Unified Gateway API** that provi
    - `grant_type=refresh_token`
    - `refresh_token={stored_refresh_token}`
    - `client_id=1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com`
-   - `client_secret=***REMOVED***`
+   - `client_secret=[REDACTED-GITLEAKS-GENERIC-API-KEY]`
 
 2. **Response**: Returns `access_token` + `expires_in` (typically 3600s)
 

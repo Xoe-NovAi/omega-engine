@@ -82,9 +82,9 @@ ExecStart=.../mcp/omega-stats/server.py  ← PATH DOES NOT EXIST
 **Root cause**: The omega-stats MCP was consolidated into the omega-hub (Decision 050), but the systemd service still points to the old `mcp/omega-stats/server.py` path. The `omega-stats.socket` (port 8012) activates this service on connection, generating repeated failures.
 
 **API key exposure in service file**: The service file contains **3 API keys in plaintext** in the `Environment=` lines:
-- `BRAVE_API_KEY=***REMOVED***`
-- `EXA_API_KEY=***REMOVED***`
-- `TAVILY_API_KEY=***REMOVED***`
+- `BRAVE_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]`
+- `EXA_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]`
+- `TAVILY_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]`
 
 **Fix**:
 ```bash

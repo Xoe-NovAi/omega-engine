@@ -19,8 +19,8 @@ Detailed verification:
 
 | Test | Result | Evidence |
 |------|--------|----------|
-| `$FIRECRAWL_API_KEY` exists | ✅ YES | `.env` line 7: `FIRECRAWL_API_KEY=***REMOVED***` |
-| `$EXA_API_KEY` exists | ✅ YES | `.env` line 6: `EXA_API_KEY=***REMOVED***` |
+| `$FIRECRAWL_API_KEY` exists | ✅ YES | `.env` line 7: `FIRECRAWL_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]` |
+| `$EXA_API_KEY` exists | ✅ YES | `.env` line 6: `EXA_API_KEY=[REDACTED-GITLEAKS-GENERIC-API-KEY]` |
 | Firecrawl scrape test | ✅ HTTP 200 | `curl -s "https://api.firecrawl.dev/v1/scrape"` → `{"success":true,...}` Returns real markdown. Credits used: 1. Cache hit. |
 | Exa search test | ✅ HTTP 200 | `curl -s "https://api.exa.ai/search"` → Returns search results. Cost: $0.007/query |
 | Exa contents fetch | ✅ HTTP 200 | `curl -s "https://api.exa.ai/contents"` → Returns page content with entities |

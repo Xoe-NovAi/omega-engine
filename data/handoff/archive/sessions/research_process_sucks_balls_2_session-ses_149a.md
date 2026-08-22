@@ -1710,8 +1710,8 @@ Let's read `opencode.json` to see if it contains any compression settings.
 45:         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/dummy_mcp.sh"
 46:       ],
 47:       "environment": {
-48:         "FIRECRAWL_API_KEY": "***REMOVED***",
-49:         "FIRECRAWL_TOKEN": "***REMOVED***"
+48:         "FIRECRAWL_API_KEY": "[REDACTED-GITLEAKS-GENERIC-API-KEY]",
+49:         "FIRECRAWL_TOKEN": "[REDACTED-GITLEAKS-GENERIC-API-KEY]"
 50:       },
 51:       "enabled": true
 52:     },
@@ -1719,7 +1719,7 @@ Let's read `opencode.json` to see if it contains any compression settings.
 54:       "type": "remote",
 55:       "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
 56:       "headers": {
-57:         "x-api-key": "***REMOVED***"
+57:         "x-api-key": "[REDACTED-GITLEAKS-GENERIC-API-KEY]"
 58:       },
 59:       "enabled": true
 60:     }
@@ -3524,7 +3524,7 @@ Let's check `~/.config/opencode/opencode.json` and `~/.config/opencode/antigravi
 141:       ],
 142:       "enabled": true,
 143:       "environment": {
-144:         "FIRECRAWL_API_KEY": "***REMOVED***"
+144:         "FIRECRAWL_API_KEY": "[REDACTED-GITLEAKS-GENERIC-API-KEY]"
 145:       },
 146:       "type": "local"
 147:     },

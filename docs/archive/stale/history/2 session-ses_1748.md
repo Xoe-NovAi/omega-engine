@@ -3193,7 +3193,7 @@ I will read `/home/arcana-novai/Documents/Xoe-NovAi/API-keys.md`.
 193: # Kilo
 194: 
 195: **Arcana.NovAi**
-196: ***REMOVED***
+196: [REDACTED-GITLEAKS-JWT]
 
 (End of file - total 196 lines)
 </content>

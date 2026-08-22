@@ -252,7 +252,7 @@ podman run -d \
   -p 127.0.0.1:8017:8080 \
   -v ~/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/ \
   -v ~/Documents/Xoe-NovAi/omega-engine/data/searxng/data:/var/cache/searxng/ \
-  -e SEARXNG_SECRET=***REMOVED*** \
+  -e SEARXNG_SECRET=[REDACTED-GITLEAKS-GENERIC-API-KEY] \
   -e SEARXNG_BASE_URL=http://localhost:8017 \
   docker.io/searxng/searxng:2026.5.31-7159b8aed
 ```
@@ -284,7 +284,7 @@ PublishPort=127.0.0.1:8017:8080
 Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/
 Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/data:/var/cache/searxng/
 
-Environment=SEARXNG_SECRET=***REMOVED***
+Environment=SEARXNG_SECRET=[REDACTED-GITLEAKS-GENERIC-API-KEY]
 Environment=SEARXNG_BASE_URL=http://localhost:8017
 Environment=SEARXNG_PORT=8080
 Environment=SEARXNG_HOST=0.0.0.0

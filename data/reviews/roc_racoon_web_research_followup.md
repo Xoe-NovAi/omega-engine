@@ -304,7 +304,7 @@ Port the `ProviderMetricsCollector` pattern from legacy. The weighted composite 
 **CONFIRMED: Contains hardcoded OAuth client credentials.**
 ```python
 _DEFAULT_CLIENT_ID = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com"
-_DEFAULT_CLIENT_SECRET = "***REMOVED***"
+_DEFAULT_CLIENT_SECRET = "[REDACTED-GITLEAKS-GENERIC-API-KEY]"
 ```
 Lines 27-28. These are Google OAuth credentials embedded in the source code. The comment says "public — embedded in plugin binary" but this is still a security concern. These should be environment variables only, not hardcoded defaults.
 
