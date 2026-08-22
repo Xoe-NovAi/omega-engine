@@ -344,3 +344,26 @@ observe:
 .PHONY: install-guarded
 install-guarded:
 	@STAMP=$$(date +%Y%m%d-%H%M%S); bash scripts/observe-build.sh install-$$STAMP bash scripts/install.sh
+
+# === SECRET GATES (D-K6, kali ruling 2026-08-22) ===
+# Format-regex -G scans are PRIMARY; bare-prefix -S is advisory only.
+# gitleaks full-history scan runs when the binary is on PATH.
+# Gate passes ONLY at zero findings across ALL refs.
+.PHONY: gate-secrets
+gate-secrets:
+	@echo '=== gate-secrets: format-regex PRIMARY gates ==='
+	@FAIL=0; \
+	for R in 'GOCSPX-[A-Za-z0-9_-]{10,}' 'fc-[A-Za-z0-9_-]{16,}' 'AIzaSy[A-Za-z0-9_-]{20,}' 'tvly-[A-Za-z0-9]{10,}' 'eyJhbGci[A-Za-z0-9_.-]{30,}' '-----BEGIN [A-Z ]*PRIVATE KEY-----'; do \
+		N=$$(git log -G "$$R" --all --oneline | wc -l); \
+		echo "  git log -G '$$R' -> $$N commits"; \
+		[ "$$N" -eq 0 ] || FAIL=1; \
+	done; \
+	if command -v gitleaks >/dev/null 2>&1; then \
+		echo '=== gitleaks full-history ==='; \
+		gitleaks detect --source . --redact --no-banner >/dev/null 2>&1 \
+			&& echo '  gitleaks: 0 findings' \
+			|| { echo '  gitleaks: FINDINGS PRESENT'; FAIL=1; }; \
+	else \
+		echo '  (gitleaks not on PATH — regex gates only)'; \
+	fi; \
+	if [ "$$FAIL" -eq 0 ]; then echo '✅ gate-secrets PASSED'; else echo '❌ gate-secrets FAILED'; exit 1; fi

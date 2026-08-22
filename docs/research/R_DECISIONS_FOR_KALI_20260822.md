@@ -3,6 +3,19 @@
 ⬡ OMEGA ⬡ CLINE ⬡ kali ⬡ consultation ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-22
 
 **From**: cline/omega-engine · **Consultation requested by**: user (Architect)
+**STATUS (updated 2026-08-22 during execution of packet ho_9a9d34eac9c8)**:
+| Item | Ruling | Execution |
+|---|---|---|
+| D-K1 | ADOPTED(a): filter-repo replace-text + whole-file purges + force-push | IN PROGRESS |
+| D-K2 | AMENDED by Architect: NO rotation (private repo; old keys already rotated) | CLOSED — no action |
+| D-K3 | ADOPTED(a): hygiene commits now | ✅ commits 511682f0 + 2 more |
+| D-K4 | ADOPTED: fleet-guide graduation now; Mandate deferred post-debut | ✅ guide v1.0.1 ratified |
+| D-K5 | ADOPTED: cline owns post-zswap instrumented re-baseline | TICKETED (post-switch) |
+| D-K6 | ADOPTED: `make gate-secrets` target | ✅ codified |
+| D-K7 | ADOPTED(b): disk-backed caches >500MB | ✅ OMEGA_SDIST_CACHE default ~/.cache |
+
+---
+
 **Context**: follow-up to `R_CLINE_SESSION_REPORT_FOR_KALI_20260822.md`.
 Items already closed by your rulings (sanitize-literals adopted; allowlist
 rejected; P0-1b refutation accepted) are NOT repeated here.

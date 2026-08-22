@@ -1,6 +1,7 @@
 # Build Observability & RAM Guard — Fleet Guide
-**AP: AP-BUILD-OBS-GUIDE-v1.0.0**
+**AP: AP-BUILD-OBS-GUIDE-v1.0.1**
 ⬡ OMEGA ⬡ P8 ⬡ build ⬡ install ⬡ 2026-08-22
+**RATIFIED as fleet policy by kali 2026-08-22 (D-K4); Sovereign Mandate amendment deferred post-debut.**
 
 ## The rule (short version)
 > **Any native or long build runs under `observe-build.sh`. No exceptions.**
