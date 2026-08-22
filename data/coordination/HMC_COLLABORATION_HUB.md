@@ -120,4 +120,31 @@ Page format in §3. N7 = fully developed reference expert.
 
 ---
 
+## 🔧 OPS NOTE — Native Build RAM Guard + Observability (2026-08-22, cline/omega-engine)
+
+**Context**: llama-cpp-python source builds OOM'd the box (~13GiB peak, all 16 threads).
+
+**Findings (measured, not guessed)**:
+1. scikit-build-core (llama-cpp build backend) passes **no `-j`** to `cmake --build`
+   (verified in skbuild-core 1.0.3 source, `builder/builder.py:488`). CMake then
+   falls back to env var **`CMAKE_BUILD_PARALLEL_LEVEL`**.
+2. `CMAKE_BUILD_PARALLEL_JOBS` and `MAKEFLAGS` are **dead vars** on this path.
+3. Measured via `scripts/observe-build.sh`: 6 jobs → peak <10GiB total *with*
+   cline+opencode IDEs resident; 16 jobs → ~13GiB RSS peak **plus ~1.88GiB
+   overflow into zRAM swap** (compressed size — true memory demand estimated
+   17–19GiB on a 14GiB box) before the OOM. Residual zRAM usage (~1.8GiB)
+   persisted after the incident; reclaimable with `swapoff -a && swapon -a`
+   when convenient.
+4. **Gotcha**: `pip download` for an sdist triggers a full wheel build just for
+   metadata extraction → double compile. Fetch sdists with `curl` instead.
+
+**Decisions**:
+- `scripts/install.sh` exports `CMAKE_BUILD_PARALLEL_LEVEL=8` (physical cores,
+  override via env). Evidence trail in comments there.
+- New P8 tool: **`scripts/observe-build.sh <run-name> <cmd...>`** — per-second
+  metrics.csv (top-PID RAM attribution), console.log, auto summary.txt postmortem.
+  Use it for ANY native/long build. Run artifacts under `/tmp/opencode/obs/<run>/`.
+
+---
+
 *⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_hub_v2 ⬡ EXECUTION_MINIMAL ⬡ 2026-08-22*

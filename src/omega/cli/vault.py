@@ -24,14 +24,14 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from src.omega.vault.vault_core import (
-    VaultCore,
-    VaultCredential,
+from omega.vault.vault_core import VaultCore
+from omega.vault.models import (
     ProviderName,
     CredentialType,
     CredentialTier,
-    VaultCoreError,
+    VaultCredential,
 )
+from omega.vault.vault_core import VaultError as VaultCoreError
 
 
 @click.group()
