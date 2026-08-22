@@ -9,9 +9,7 @@ description = "Omega Engine — Sovereign AI Runtime — Local-first, entity-cen
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "warp-proxy-pool",
-
-    "headroom-ai[all]",
+    "headroom-ai",
     "aiosqlite==0.22.1",
     "annotated-doc==0.0.4",
     "annotated-types==0.7.0",
@@ -79,6 +77,7 @@ dependencies = [
 [project.optional-dependencies]
 native = ["llama-cpp-python>=0.3.0,<0.4.0"]
 cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0"]
+warp = ["warp-proxy-pool"]
 dev = [
     "pytest>=9.0.0",
     "pytest-asyncio>=0.25.0",

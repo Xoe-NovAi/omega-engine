@@ -73,6 +73,19 @@ source .venv/bin/activate
 
 # ── 3. Install dependencies (M24 Venv Sovereignty) ────────────────────────
 info "Upgrading pip + installing Omega (native + cli + dev)..."
+# RAM guard (14GiB host): cap native build parallelism (default 8 = physical cores).
+# scikit-build-core calls `cmake --build` with NO -j; cmake then falls back to
+# the documented CMAKE_BUILD_PARALLEL_LEVEL env var (ninja inherits it).
+# NOTE: CMAKE_BUILD_PARALLEL_JOBS / MAKEFLAGS are NOT honored by this backend
+# (verified against scikit-build-core 1.0.3 source, builder/builder.py:488).
+# Measured 2026-08-21 (scripts/observe-build.sh, run llama6lvl-class):
+#   6 jobs -> peak < 10GiB total WITH cline+opencode IDEs (~1GiB each) resident.
+#   16 jobs (unpinned) -> ~13GiB RSS peak PLUS ~1.88GiB overflow into zRAM swap
+#   (compressed size; true demand est. 17-19GiB on a 14GiB box) before OOM.
+# 8 jobs ≈ physical core count on Ryzen 7 5700U; override via env if needed.
+export CMAKE_BUILD_PARALLEL_LEVEL="${CMAKE_BUILD_PARALLEL_LEVEL:-8}"
+info "Build parallelism capped at ${CMAKE_BUILD_PARALLEL_LEVEL} jobs (RAM guard)"
+
 pip install --quiet --upgrade pip wheel setuptools
 pip install --quiet -e ".[native,cli]"
 ok "Omega installed with native-gguf backend (llama-cpp-python)"

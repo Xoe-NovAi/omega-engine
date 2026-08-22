@@ -330,3 +330,17 @@ heritage-map:
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
 .PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json
+
+# === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
+# Wrap ANY long/native build with telemetry + auto-postmortem.
+#   make observe CMD='bash scripts/install.sh'
+# Artifacts -> /tmp/opencode/obs/<run-name>/ ; policy: docs/guides/BUILD_OBSERVABILITY.md
+.PHONY: observe
+observe:
+	@if [ -z "$(CMD)" ]; then echo "usage: make observe CMD='<command>'"; exit 1; fi;
+	@STAMP=$$(date +%Y%m%d-%H%M%S); bash scripts/observe-build.sh run-$$STAMP $(CMD)
+
+# RAM-guarded install through the observer (llama-cpp builds etc.)
+.PHONY: install-guarded
+install-guarded:
+	@STAMP=$$(date +%Y%m%d-%H%M%S); bash scripts/observe-build.sh install-$$STAMP bash scripts/install.sh
