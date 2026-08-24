@@ -38,3 +38,21 @@ backfill-manual entry. Final invariant: 1,444 annotations = 1,444 ledger lines.
 - Redis publish to maat failed (auth required) — T0 query pattern shared via script docstring + tests + this gnosis instead.
 - Residual: 1,432 files UNANCHORED (no session IDs in headers) — inherent limit, honestly labeled.
 - Commit pending at report time; paths listed in W4_PROVENANCE_ENHANCEMENT_REPORT_20260824.md.
+
+## Session kg-resource-platform-research-20260824 (2026-08-24)
+- Nine knowledge gaps closed (G1-G9 + httpx2). Deliverables:
+  docs/research/R_RESOURCE_GOVERNANCE_20260824.md + R_OPENCODE_PLATFORM_INTERNALS_20260824.md.
+- G1 headline: collection floor 665MB; 4 files = 440MB of it (subtraction method, not per-file sums).
+  test_youtube_research_v2.py → faithfulness.py module-level torch/transformers/sklearn imports.
+  Lesson: try/except ImportError guards absence, not weight.
+- G2: MemoryMax works rootless here but swap-thrashes silently without MemorySwapMax=0 (exit 137 = deterministic kill).
+- G6: opencode db pipe truncation reproduced (silent, exit 0, ~1.3MB@4.8MB payload, scales with payload).
+  Canonical rule: temp-file staging, never pipe. Mechanism THEORY (async-pump race vs short-write).
+- G7: no OPENCODE_SESSION_ID in subprocess env (only OPENCODE_PID/OPENCODE=1) — wrapper attribution stays approximate.
+- G8: compaction doctrine "85%" is MYTH as mechanism; real rule = limit − max(output, buffer≈20K); number coincidental.
+- G9: typer add_typer appends metadata only; ALL Click construction deferred to app() — even --help triggers it.
+  Import-smoke must invoke --help; import alone insufficient.
+- httpx2 = Pydantic's fork of httpx, pinned intentionally (pyproject:27, Strike 7.1). Not a shim.
+- Method lesson (L2): attribution-by-exclusion beats per-item profiling (shared imports double-count in sums).
+- Residuals: local -t8/-t16 benchmark pending; capped llama-cpp-python build untested (no cmake on host);
+  truncation mechanism unresolved; one empty-file redirect transient unexplained.

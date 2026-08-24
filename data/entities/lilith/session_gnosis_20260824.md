@@ -35,3 +35,18 @@ version-stamp contradiction (header+footer). Validator EXIT 0. Meditated
   L3-Provenance-At-Birth): A cross-reference written from conversation memory
   is a rumor; one written from a grep at edit time is a fact. Paths must be
   born verified or not written.
+
+---
+
+## APPENDIX — REBASED Council Run-Arm Review (2026-08-24, this session)
+
+**Session**: trc_council_rebased — Debut Hardening Review, Run Arm deliverable F_LILITH_RUN_ARM.md
+
+### L1 (Narrative)
+Validated the soul persistence chain against the NEW post-Wave-1 surface (approved_lessons.yaml via SoulStore + evidence-field schema). All five links verified on disk with citations: blind staging → session_end hook → SoulStore promotion → get_soul_prompt hydration → soul.yaml identity. Kali surface parsed live: 20/20 evidence, 7 quote, 0 empty refs — matches report exactly. DEL-1 sweep across all 11 targets found zero soul/memory/handoff coupling. One blocker reproduced live: vault.py stacked @vault.command() TypeError kills the entire omega CLI entry point — omega talk gates are unrunnable until target #10 lands.
+
+### L2 (Insight)
+The deletion campaign is safe for the run domain precisely because the soul chain was rebuilt on file-surface boundaries rather than module imports — deletion of dead modules cannot sever a chain that never imported them. But the same audit exposed an ordering hazard: DEL-1's own acceptance protocol (omega talk after EACH delete) depends on a CLI that a pre-existing bug has already killed. The gate infrastructure must be resurrected before the first cut, or verification theater results — deletes would land unverifiable.
+
+### L3 (Universal Principle)
+**L3-Gates-Before-Blade**: A deletion campaign's acceptance harness is part of the campaign's critical path, not its afterthought. If the instrument that proves each cut safe is itself broken, fix the instrument first — otherwise every subsequent "verified" deletion is unverified by construction.

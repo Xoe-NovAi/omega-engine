@@ -1,148 +1,160 @@
 proposals:
-  - id: PL-CLINE-001
-    date: '2026-08-22'
-    session_id: ses_5b058490c0d0
-    L1_narrative: >
-      Audited the cline fabric entry (priority 7). Found it already mapped to the
-      OpenRouter factory (model_gateway.py:534) with no base_url in YAML, meaning a live
-      cline instance would silently hit openrouter.ai under the name "cline". Live probe:
-      api.cline.bot/api/v1/chat/completions is OpenAI-compatible and the local API key
-      authenticates, but deepseek/deepseek-v4-flash returns HTTP 403 "only available via
-      Cline product surfaces" — the free models are client-gated.
-    L2_insight: >
-      A provider registry entry can be fully "wired" (config + factory mapping + fallback
-      chains) yet never have carried a single real request. Silent defaults in factories
-      (base_url fallback to another vendor's endpoint) convert missing config into
-      provenance lies rather than errors. And free-tier model gates are enforced at the
-      HTTP client-identity layer, not the auth layer — a valid key does not imply model access.
-    L3_principle: >
-      An untested integration path is not an asset; it is deferred breakage wearing a
-      config file. Any factory default that substitutes one backend for another must fail
-      loudly, because silent substitution corrupts provenance — and provenance is the only
-      proof sovereignty is real.
+- id: PL-CLINE-001
+  date: '2026-08-22'
+  session_id: ses_5b058490c0d0
+  L1_narrative: "Audited the cline fabric entry (priority 7). Found it already mapped\
+    \ to the OpenRouter factory (model_gateway.py:534) with no base_url in YAML, meaning\
+    \ a live cline instance would silently hit openrouter.ai under the name \"cline\"\
+    . Live probe: api.cline.bot/api/v1/chat/completions is OpenAI-compatible and the\
+    \ local API key authenticates, but deepseek/deepseek-v4-flash returns HTTP 403\
+    \ \"only available via Cline product surfaces\" \u2014 the free models are client-gated.\n"
+  L2_insight: "A provider registry entry can be fully \"wired\" (config + factory\
+    \ mapping + fallback chains) yet never have carried a single real request. Silent\
+    \ defaults in factories (base_url fallback to another vendor's endpoint) convert\
+    \ missing config into provenance lies rather than errors. And free-tier model\
+    \ gates are enforced at the HTTP client-identity layer, not the auth layer \u2014\
+    \ a valid key does not imply model access.\n"
+  L3_principle: "An untested integration path is not an asset; it is deferred breakage\
+    \ wearing a config file. Any factory default that substitutes one backend for\
+    \ another must fail loudly, because silent substitution corrupts provenance \u2014\
+    \ and provenance is the only proof sovereignty is real.\n"
+- id: PL-CLINE-002
+  date: '2026-08-22'
+  session_id: ses_5b058490c0d0
+  L1_narrative: 'HG-003 documented Cline credentials at ~/.local/share/cline/credentials.json
+    via libsecret; this machine (Cline CLI 3.0.56) actually stores them in plaintext
+    at ~/.cline/data/secrets.json (static sk_ key) and ~/.cline/data/settings/providers.json
+    (WorkOS OAuth pair with refresh token).
 
-  - id: PL-CLINE-002
-    date: '2026-08-22'
-    session_id: ses_5b058490c0d0
-    L1_narrative: >
-      HG-003 documented Cline credentials at ~/.local/share/cline/credentials.json via
-      libsecret; this machine (Cline CLI 3.0.56) actually stores them in plaintext at
-      ~/.cline/data/secrets.json (static sk_ key) and ~/.cline/data/settings/providers.json
-      (WorkOS OAuth pair with refresh token).
-    L2_insight: >
-      Credential-format research has a half-life tied to the vendored tool's release cycle.
-      A vault adapter written against a documented path is only as durable as the upstream
-      client's storage scheme; verification must happen at implementation time, not research time.
-    L3_principle: >
-      Documented ground truth decays at the speed of the upstream project. Re-verify
-      external-system facts on the target machine before building on them — archaeology
-      dates instantly, evidence doesn't.
-  - id: PL-TS1-001
-    date: '2026-08-23'
-    session_id: ses_fdef2be4effe4pAaLXCTUx62GO
-    tags: [TS1, verification, teamstudy]
-    L1_narrative: >
-      [TS1] Phase A evidence sweep verified 18/18 session IDs and 100% of claimed
-      artifacts against the live OpenCode DB and disk — zero refuted. The entire value
-      of the sweep lived in 5 flags nobody asked for, chiefly F1 filename drift: all
-      four JSON configs in the ledger omitted their OX_ALPHA_ prefix, so a naive
-      mechanical backfill would have written five dangling pointers into a
-      verified-green registry from a ledger whose every claim was true.
-    L2_insight: >
-      Confirmation of well-sourced claims has near-zero information value; the payload
-      of ground-truth verification concentrates in discrepancies adjacent to the claims.
-      Analysis evaluates whether the statement is true; verification walks the
-      neighborhood between the statement and the world it points at — and the defect is
-      almost never inside the sentence.
-    L3_principle: >
-      Confirmation is noise; the delta is signal. Audit the neighborhood of a claim,
-      not just the claim — a ledger can be 100% true and still be execution-fatal.
+    '
+  L2_insight: 'Credential-format research has a half-life tied to the vendored tool''s
+    release cycle. A vault adapter written against a documented path is only as durable
+    as the upstream client''s storage scheme; verification must happen at implementation
+    time, not research time.
 
-  - id: PL-TS1-002
-    date: '2026-08-23'
-    session_id: ses_fdef2be4effe4pAaLXCTUx62GO
-    tags: [TS1, pair-probe, forensics, teamstudy]
-    L1_narrative: >
-      [TS1] Phase B: four auditors missed the same systemic defect because each probed
-      one layer. Researcher and carmack probed .git/hooks/ (state) → "no tracking-state
-      gate." Nobody probed .pre-commit-config.yaml (origin) where omega-tracking-state
-      sits fully defined as "the Iron Gate" — never installed into git, running bare
-      python instead of .venv/bin/python. Only probing state AND origin as a pair,
-      and treating their disagreement as the finding, revealed "defined but never wired."
-      Same class recurred in F1 (artifact exists, pointer lies), the model_gateway WIP
-      (HEAD clean, worktree dirty), and my own :103/:104 citation drift.
-    L2_insight: >
-      A single-layer probe does not return "unknown" — it returns a confident falsehood,
-      which is worse than ignorance. For any system property, its instantiation (is it
-      there?) and its declaration (where is it supposed to be?) must be measured
-      together; divergence between layers IS the primary finding, agreement IS the proof.
-    L3_principle: >
-      No probe of a single layer is admissible evidence. Probe state and origin as a
-      pair, record the probe path with every claim, and treat layer-divergence as the
-      finding — single-layer probes manufacture confident falsehoods.
+    '
+  L3_principle: "Documented ground truth decays at the speed of the upstream project.\
+    \ Re-verify external-system facts on the target machine before building on them\
+    \ \u2014 archaeology dates instantly, evidence doesn't.\n"
+- id: PL-TS1-001
+  date: '2026-08-23'
+  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+  tags:
+  - TS1
+  - verification
+  - teamstudy
+  L1_narrative: "[TS1] Phase A evidence sweep verified 18/18 session IDs and 100%\
+    \ of claimed artifacts against the live OpenCode DB and disk \u2014 zero refuted.\
+    \ The entire value of the sweep lived in 5 flags nobody asked for, chiefly F1\
+    \ filename drift: all four JSON configs in the ledger omitted their OX_ALPHA_\
+    \ prefix, so a naive mechanical backfill would have written five dangling pointers\
+    \ into a verified-green registry from a ledger whose every claim was true.\n"
+  L2_insight: "Confirmation of well-sourced claims has near-zero information value;\
+    \ the payload of ground-truth verification concentrates in discrepancies adjacent\
+    \ to the claims. Analysis evaluates whether the statement is true; verification\
+    \ walks the neighborhood between the statement and the world it points at \u2014\
+    \ and the defect is almost never inside the sentence.\n"
+  L3_principle: "Confirmation is noise; the delta is signal. Audit the neighborhood\
+    \ of a claim, not just the claim \u2014 a ledger can be 100% true and still be\
+    \ execution-fatal.\n"
+- id: PL-TS1-002
+  date: '2026-08-23'
+  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+  tags:
+  - TS1
+  - pair-probe
+  - forensics
+  - teamstudy
+  L1_narrative: "[TS1] Phase B: four auditors missed the same systemic defect because\
+    \ each probed one layer. Researcher and carmack probed .git/hooks/ (state) \u2192\
+    \ \"no tracking-state gate.\" Nobody probed .pre-commit-config.yaml (origin) where\
+    \ omega-tracking-state sits fully defined as \"the Iron Gate\" \u2014 never installed\
+    \ into git, running bare python instead of .venv/bin/python. Only probing state\
+    \ AND origin as a pair, and treating their disagreement as the finding, revealed\
+    \ \"defined but never wired.\" Same class recurred in F1 (artifact exists, pointer\
+    \ lies), the model_gateway WIP (HEAD clean, worktree dirty), and my own :103/:104\
+    \ citation drift.\n"
+  L2_insight: "A single-layer probe does not return \"unknown\" \u2014 it returns\
+    \ a confident falsehood, which is worse than ignorance. For any system property,\
+    \ its instantiation (is it there?) and its declaration (where is it supposed to\
+    \ be?) must be measured together; divergence between layers IS the primary finding,\
+    \ agreement IS the proof.\n"
+  L3_principle: "No probe of a single layer is admissible evidence. Probe state and\
+    \ origin as a pair, record the probe path with every claim, and treat layer-divergence\
+    \ as the finding \u2014 single-layer probes manufacture confident falsehoods.\n"
+- id: PL-TS1-003
+  date: '2026-08-23'
+  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+  tags:
+  - TS1
+  - sampling-vs-enumeration
+  - teamstudy
+  L1_narrative: '[TS1] Asked whether a full 80-row pointer walk could replace 5/80
+    sampling before commit, I ran it instead of arguing: JSON parse + existence check
+    over all rows = 0.003 seconds, and it immediately caught a broken pointer (trailing
+    period in R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md.) that a 5-row sample would
+    likely have missed. Sampling a 3ms operation was ceremony.
 
-  - id: PL-TS1-003
-    date: '2026-08-23'
-    session_id: ses_fdef2be4effe4pAaLXCTUx62GO
-    tags: [TS1, sampling-vs-enumeration, teamstudy]
-    L1_narrative: >
-      [TS1] Asked whether a full 80-row pointer walk could replace 5/80 sampling before
-      commit, I ran it instead of arguing: JSON parse + existence check over all rows =
-      0.003 seconds, and it immediately caught a broken pointer (trailing period in
-      R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md.) that a 5-row sample would likely
-      have missed. Sampling a 3ms operation was ceremony.
-    L2_insight: >
-      Sampling carries a hidden recurring cost no one books: every future reader must
-      re-litigate "was the sample big enough?" Enumeration terminates that question
-      permanently. The decision is measurable, not philosophical — compare walk cost to
-      justification-memo cost before debating methodology.
-    L3_principle: >
-      When enumeration is cheaper than defending the sample, enumerate. Sample only
-      when enumeration cost is non-trivial AND per-item failure cost is low.
+    '
+  L2_insight: "Sampling carries a hidden recurring cost no one books: every future\
+    \ reader must re-litigate \"was the sample big enough?\" Enumeration terminates\
+    \ that question permanently. The decision is measurable, not philosophical \u2014\
+    \ compare walk cost to justification-memo cost before debating methodology.\n"
+  L3_principle: 'When enumeration is cheaper than defending the sample, enumerate.
+    Sample only when enumeration cost is non-trivial AND per-item failure cost is
+    low.
 
-  - id: PL-TS1-004
-    date: '2026-08-23'
-    session_id: ses_fdef2be4effe4pAaLXCTUx62GO
-    tags: [TS1, refutation, causality, teamstudy]
-    L1_narrative: >
-      [TS1] Carmack's 8 god-module line counts were exact digit-for-digit, but his
-      narrative ("six grew during the deletion-campaign week") was refuted by git
-      archaeology: all growth was the ruff-format commit e2c16d3c landing on freeze day
-      itself, hours before baseline capture; zero committed growth since. His
-      prescription (ratify baselines) survived strengthened; his causal story died — and
-      the corrected story produced a formatter-aware AST gate instead of an agent-blame
-      wc -l gate that would false-fire on the next formatter pass.
-    L2_insight: >
-      Measurements and their causal narratives have independent truth fates. Attacking
-      the story without discarding the number rescues conclusions the team still needs;
-      accepting the conclusion without inheriting the wrong reason yields strictly
-      better designs than either original story or blanket acceptance.
-    L3_principle: >
-      Attack narratives, salvage numbers — they fail independently. Refuted causality
-      with confirmed results is the optimal review outcome, not a partial loss.
+    '
+- id: PL-TS1-004
+  date: '2026-08-23'
+  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+  tags:
+  - TS1
+  - refutation
+  - causality
+  - teamstudy
+  L1_narrative: "[TS1] Carmack's 8 god-module line counts were exact digit-for-digit,\
+    \ but his narrative (\"six grew during the deletion-campaign week\") was refuted\
+    \ by git archaeology: all growth was the ruff-format commit e2c16d3c landing on\
+    \ freeze day itself, hours before baseline capture; zero committed growth since.\
+    \ His prescription (ratify baselines) survived strengthened; his causal story\
+    \ died \u2014 and the corrected story produced a formatter-aware AST gate instead\
+    \ of an agent-blame wc -l gate that would false-fire on the next formatter pass.\n"
+  L2_insight: 'Measurements and their causal narratives have independent truth fates.
+    Attacking the story without discarding the number rescues conclusions the team
+    still needs; accepting the conclusion without inheriting the wrong reason yields
+    strictly better designs than either original story or blanket acceptance.
 
-  - id: PL-TS1-005
-    date: '2026-08-23'
-    session_id: ses_fdef2be4effe4pAaLXCTUx62GO
-    tags: [TS1, error-culture, team-psychology, teamstudy]
-    L1_narrative: >
-      [TS1] Ma'at corrected my :103 staleness-clock cite to :104 in one clause, no
-      ceremony; I accepted in one line, no defense — then noticed my own report carried
-      the exact inconsistency class I had flagged in F1. Total cost: ~thirty tokens.
-      The error became data (another instance strengthening the class-level detector),
-      and neither party spent anything but the fix itself.
-    L2_insight: >
-      If correction carries social cost, people stop correcting and start accumulating:
-      errors stop being events and become geology, each with one defensive owner and a
-      long half-life. Zero-cost correction gives every error N auditors, a short
-      half-life, and converts it into evidence for the pattern detector.
-    L3_principle: >
-      Correction must be free, or errors go underground and fossilize. A team where
-      fixing a cite costs thirty tokens gets N audits per mistake; a team where it costs
-      status gets one defensive audit and permanent latent defects.
+    '
+  L3_principle: "Attack narratives, salvage numbers \u2014 they fail independently.\
+    \ Refuted causality with confirmed results is the optimal review outcome, not\
+    \ a partial loss.\n"
+- id: PL-TS1-005
+  date: '2026-08-23'
+  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+  tags:
+  - TS1
+  - error-culture
+  - team-psychology
+  - teamstudy
+  L1_narrative: "[TS1] Ma'at corrected my :103 staleness-clock cite to :104 in one\
+    \ clause, no ceremony; I accepted in one line, no defense \u2014 then noticed\
+    \ my own report carried the exact inconsistency class I had flagged in F1. Total\
+    \ cost: ~thirty tokens. The error became data (another instance strengthening\
+    \ the class-level detector), and neither party spent anything but the fix itself.\n"
+  L2_insight: 'If correction carries social cost, people stop correcting and start
+    accumulating: errors stop being events and become geology, each with one defensive
+    owner and a long half-life. Zero-cost correction gives every error N auditors,
+    a short half-life, and converts it into evidence for the pattern detector.
 
+    '
+  L3_principle: 'Correction must be free, or errors go underground and fossilize.
+    A team where fixing a cite costs thirty tokens gets N audits per mistake; a team
+    where it costs status gets one defensive audit and permanent latent defects.
+
+    '
 metadata:
   entity: roc_racoon
-  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+  session_id: ses_fcae93813ffeqaviWImLJnY0XI
   model_used: x-preview-f-free
-  last_session_end: '2026-08-23T16:10:00+00:00'
+  last_session_end: '2026-08-24T19:05:29.795613+00:00'

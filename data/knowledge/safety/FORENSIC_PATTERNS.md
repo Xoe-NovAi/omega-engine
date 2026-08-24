@@ -89,3 +89,10 @@ actual_models(Tier0): n/a
 
 ### FP-11 REFINEMENT (Architect, 2026-08-23 late)
 The mechanism itself (wrapper passes authored text + routing hint) is ACCEPTABLE. The violation is OPACITY: neither Principal nor agent knew the channel existed until hour ~10,000. Restated rule: the plague is invisible instruction channels, not visible ones. Every synthetic pathway must be DOCUMENTED for users and DETECTABLE by agents. Transparency converts forgery-risk into ordinary routing. — This refinement is the FP's true lesson: audit the awareness, not just the artifact.
+
+## FP-12: Unverified Environment Premise in Dispatch (2026-08-24)
+- **TRIGGER**: A dispatch prompt asserts environment facts ("Fedora-class", "16GB RAM", "tool X installed") without citing a canonical source. Dispatcher fabricated "Fedora-class (dnf)" from pattern-completion; ground truth was Ubuntu 25.10 — available in M6 of SOVEREIGN_MANDATES (in-context), config/hardware_profile.yaml:7-8, and /etc/os-release. Fresh-session agent complied with the false premise and wrote dnf instructions throughout; primed session caught it via live os-release check.
+- **VERIFY**: Any environment claim in a prompt must either (a) cite `config/hardware_profile.yaml` fields, or (b) carry its one-line verification command (`cat /etc/os-release`, `command -v X`). A0 Premise Audit (charter v0.2 §7 rev 1) applies AT DISPATCH, not just inside studies.
+- **RECOVER**: Receiver agents: when a prompt's environment claim conflicts with or omits canonical sourcing, run the 1-second check BEFORE writing instructions and note the correction in the deliverable. Dispatchers: regenerate hardware_profile.yaml via `scripts/detect_hardware_profile.py` rather than asserting from memory.
+- **Structural fix shipped**: hardware_profile.yaml regenerated from live detection 2026-08-24 (was stale-tagged since Aug 10 with an unexecuted zswap TODO that itself contradicted live zRAM state).
+- **Incident**: BTOP second-dive dispatch, 2026-08-24 — fresh Jem session produced unusable dnf instructions for an Ubuntu box.

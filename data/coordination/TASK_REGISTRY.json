@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-24T16:12:10Z",
+  "updated": "2026-08-24T21:57:48.397472+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -1545,6 +1545,226 @@
         "sprint-20260824",
         "commit:540b65fe"
       ]
+    },
+    {
+      "task_id": "makali-council-buildside-20260824",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "MaKaLi council build arm: INST-1 steps, DEL-1 verify, Vault Path B spec, Router Collapse plan",
+      "status": "completed",
+      "created_at": "2026-08-24T17:21:32Z",
+      "last_checkpoint": "2026-08-24T17:47:10Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-council",
+        "debut-hardening",
+        "rebased-20260824"
+      ]
+    },
+    {
+      "task_id": "makali-council-runside-20260824",
+      "subagent_type": "lilith",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "MaKaLi council run arm: soul persistence vs evidence surface, DEL-1 impact, runtime integrity",
+      "status": "completed",
+      "created_at": "2026-08-24T17:21:32Z",
+      "last_checkpoint": "2026-08-24T17:47:10Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-council",
+        "debut-hardening",
+        "rebased-20260824"
+      ]
+    },
+    {
+      "task_id": "n0-vault-cli-resurrect-20260824",
+      "subagent_type": "kali",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "vault cli resurrect 20260824",
+      "status": "completed",
+      "created_at": "2026-08-24T19:36:15Z",
+      "last_checkpoint": "2026-08-24T19:36:15Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-dag",
+        "debut-hardening",
+        "commit:0d1ee1cb"
+      ]
+    },
+    {
+      "task_id": "n1-import-smoke-gate-20260824",
+      "subagent_type": "kali",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "import smoke gate 20260824",
+      "status": "completed",
+      "created_at": "2026-08-24T19:36:15Z",
+      "last_checkpoint": "2026-08-24T19:36:15Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-dag",
+        "debut-hardening",
+        "commit:d17ae4d3"
+      ]
+    },
+    {
+      "task_id": "n2-inst1-fix2-r1-fused-20260824",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "inst1 fix2 r1 fused 20260824",
+      "status": "completed",
+      "created_at": "2026-08-24T19:36:15Z",
+      "last_checkpoint": "2026-08-24T19:36:15Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-dag",
+        "debut-hardening",
+        "commit:ea8d3f2e"
+      ]
+    },
+    {
+      "task_id": "n3-acceptance-run-20260824",
+      "subagent_type": "roc_racoon",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "acceptance run 20260824",
+      "status": "completed",
+      "created_at": "2026-08-24T19:36:15Z",
+      "last_checkpoint": "2026-08-24T19:36:15Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-dag",
+        "debut-hardening",
+        "commit:d16558c7"
+      ]
+    },
+    {
+      "task_id": "n4-del1-ordered-deletions-20260824",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "del1 ordered deletions 20260824",
+      "status": "completed",
+      "created_at": "2026-08-24T19:36:15Z",
+      "last_checkpoint": "2026-08-24T21:31:01Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-dag",
+        "debut-hardening",
+        "commits:8a9b3fa2..12379b0b"
+      ]
+    },
+    {
+      "task_id": "kg-resource-platform-research-20260824",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "resource platform research 20260824",
+      "status": "completed",
+      "created_at": "2026-08-24T19:36:15Z",
+      "last_checkpoint": "2026-08-24T21:43:18Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "makali-dag",
+        "debut-hardening",
+        "owed:platform-doc+meditation+commits",
+        "commit:7036d78c+g8-fix:f4b62381"
+      ]
+    },
+    {
+      "task_id": "btop-alternatives-research-20260824-jem-001",
+      "subagent_type": "jem",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Jem first-dive: BTOP alternatives research \u2014 15-tool comparison, top-3 recs (Mission Center/Glances/bottom), deliverable BTOP_ALTERNATIVES_RESEARCH_20260824.md",
+      "status": "in_progress",
+      "created_at": "2026-08-24T20:21:33.347717+00:00",
+      "last_checkpoint": "2026-08-24T20:21:33.347730+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
+    },
+    {
+      "task_id": "btop-second-dive-fresh-20260824-jem-002",
+      "subagent_type": "jem",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Jem second-dive (FRESH session ses_fcab1e899ffe3625jJhqjyGnnR \u2014 spawned in task_id error, FP-12/R-4a incident): authored SD-1..5 into shared file; contained Fedora premise error corrected by sibling pass",
+      "status": "in_progress",
+      "created_at": "2026-08-24T20:21:36.106330+00:00",
+      "last_checkpoint": "2026-08-24T20:21:36.106348+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
+    },
+    {
+      "task_id": "btop-second-dive-primed-20260824-jem-003",
+      "subagent_type": "jem",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Jem second-dive (PRIMED session ses_fcabcf1ceffe75GGEWW3rV5Hlw, resumed via task_id): verification pass + standalone 490-line report with 3 material divergences (Ubuntu not Fedora, RAPL available via intel-rapl, rustnet undersold) + 12 convergences",
+      "status": "in_progress",
+      "created_at": "2026-08-24T20:21:38.661244+00:00",
+      "last_checkpoint": "2026-08-24T20:21:38.661255+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
+    },
+    {
+      "task_id": "d602-torchfree-lazyimport-20260824",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "D-602 P0: lazy-import torch/transformers/sklearn in faithfulness.py (torch-free compliance + collection-weight fix)",
+      "status": "completed",
+      "created_at": "2026-08-24T21:31:01Z",
+      "last_checkpoint": "2026-08-24T21:43:18Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "d602",
+        "torch-free",
+        "p0",
+        "commit:f51925f3"
+      ]
+    },
+    {
+      "task_id": "fallback-slug-runbook-20260824-researcher-001",
+      "subagent_type": "researcher",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "D1(b) fallback-slug runbook: Tier-A live-probed (nemotron-3-ultra-550b:free, nemotron-3-super:free, deepseek-v4-flash all HTTP 200), Tier-B historical liveness from messages.modelID stamps, exact opencode.json:321-322 switch procedure, 3-option recommendation. Deliverable FALLBACK_SLUG_RUNBOOK_20260824.md",
+      "status": "in_progress",
+      "created_at": "2026-08-24T21:57:48.397420+00:00",
+      "last_checkpoint": "2026-08-24T21:57:48.397434+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
     }
   ]
 }

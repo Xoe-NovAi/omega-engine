@@ -58,9 +58,13 @@ proposals:
   last_verified: '2026-08-22'
 - level: L3
   tag: '[R_SS]'
-  narrative: 'Gate-verification ownership collided in N9 review: two agents each assumed the other verified gate claims. Originator-context makes verification cheapest at the source; overseer verification does not scale past debut.'
-  insight: 'Verification quality decays with distance from the work; oversight adds most value as spot-audit sampling, not primary verification duty.'
-  principle: 'The originator verifies; the overseer spot-audits. Never assign primary verification to an agent without originator context.'
+  narrative: 'Gate-verification ownership collided in N9 review: two agents each assumed
+    the other verified gate claims. Originator-context makes verification cheapest
+    at the source; overseer verification does not scale past debut.'
+  insight: Verification quality decays with distance from the work; oversight adds
+    most value as spot-audit sampling, not primary verification duty.
+  principle: The originator verifies; the overseer spot-audits. Never assign primary
+    verification to an agent without originator context.
   utility_score: 0.9
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -68,9 +72,13 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[R-REG]'
-  narrative: '13 researcher-lane dispatches across two days were absent from TASK_REGISTRY.json because registration depended on end-of-session discipline; only kali-lane tasks got backfilled.'
-  insight: 'A ledger updated after the fact records archaeology, not state; registration deferred past compaction or session end is registration lost.'
-  principle: 'Register every dispatch at completion time, with session ID and artifact path, or the registry records only what survived by luck.'
+  narrative: 13 researcher-lane dispatches across two days were absent from TASK_REGISTRY.json
+    because registration depended on end-of-session discipline; only kali-lane tasks
+    got backfilled.
+  insight: A ledger updated after the fact records archaeology, not state; registration
+    deferred past compaction or session end is registration lost.
+  principle: Register every dispatch at completion time, with session ID and artifact
+    path, or the registry records only what survived by luck.
   utility_score: 0.92
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -78,9 +86,13 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[R-SWEEP]'
-  narrative: 'ox-alpha-100t-research-20260822 sat marked in_progress despite completed deliverables on disk; the new 7-day staleness sweep would have misclassified delivered work as zombie.'
-  insight: 'Automated lifecycle sweeps are only as honest as the statuses they read; sweeping unverified statuses launders false data into permanent record.'
-  principle: 'Verify status against disk artifacts BEFORE any automated lifecycle sweep runs; status-first sweeps convert bookkeeping errors into history.'
+  narrative: ox-alpha-100t-research-20260822 sat marked in_progress despite completed
+    deliverables on disk; the new 7-day staleness sweep would have misclassified delivered
+    work as zombie.
+  insight: Automated lifecycle sweeps are only as honest as the statuses they read;
+    sweeping unverified statuses launders false data into permanent record.
+  principle: Verify status against disk artifacts BEFORE any automated lifecycle sweep
+    runs; status-first sweeps convert bookkeeping errors into history.
   utility_score: 0.88
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -88,20 +100,33 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[R-COMP]'
-  narrative: 'Two completed missions became unreconstructable from live context after provider-stream loss and compaction, because session IDs lived only in conversation, not in gnosis; recovery required disk-artifact forensics.'
-  insight: 'Chain of custody is broken not by crashes but by the gap between doing the work and writing down where the work lives; compaction exploits exactly that gap.'
-  principle: 'Write session ID plus artifact path at mission completion, never at session end; anything recorded only in conversation is already lost.'
+  narrative: Two completed missions became unreconstructable from live context after
+    provider-stream loss and compaction, because session IDs lived only in conversation,
+    not in gnosis; recovery required disk-artifact forensics.
+  insight: Chain of custody is broken not by crashes but by the gap between doing
+    the work and writing down where the work lives; compaction exploits exactly that
+    gap.
+  principle: Write session ID plus artifact path at mission completion, never at session
+    end; anything recorded only in conversation is already lost.
   utility_score: 0.93
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: research
   last_verified: '2026-08-23'
-
 - level: L3
   tag: '[TS1]'
-  narrative: 'Team Study #1: my "~20 orphans" estimate was wrong twice — first ~10x low (measured 226 dispatches vs 27 registrations), then ~8x high after recounting (~170-200 vs Lilith''s 23 clusters) because the recount swallowed continuations, probes, and excluded sessions into the orphan bucket.'
-  insight: 'Both failures shared one root: a lower-resolution instrument answering a higher-resolution question. A guess answered a counting question; a count answered a taxonomy question. Measurement corrects magnitude once; only classification corrects it permanently — and the O1/O2/O3 tiering I built caught my own second error.'
-  principle: 'Measurement corrects magnitude once; taxonomy corrects it forever. Attach the query to any number that drives decisions, or repetition converts the estimate into everyone''s fact.'
+  narrative: "Team Study #1: my \"~20 orphans\" estimate was wrong twice \u2014 first\
+    \ ~10x low (measured 226 dispatches vs 27 registrations), then ~8x high after\
+    \ recounting (~170-200 vs Lilith's 23 clusters) because the recount swallowed\
+    \ continuations, probes, and excluded sessions into the orphan bucket."
+  insight: "Both failures shared one root: a lower-resolution instrument answering\
+    \ a higher-resolution question. A guess answered a counting question; a count\
+    \ answered a taxonomy question. Measurement corrects magnitude once; only classification\
+    \ corrects it permanently \u2014 and the O1/O2/O3 tiering I built caught my own\
+    \ second error."
+  principle: Measurement corrects magnitude once; taxonomy corrects it forever. Attach
+    the query to any number that drives decisions, or repetition converts the estimate
+    into everyone's fact.
   utility_score: 0.95
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -109,9 +134,17 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[TS1]'
-  narrative: 'Carmack cut two of my three CEB checkpoints (claim-time helper, heartbeat). Reading his reasoning against my own design text showed each cut was demanded by my design''s stated anti-theater guardrail — a voluntary helper is prompt-compliance with extra steps, the disease wearing the cure''s coat.'
-  insight: 'Concessions derived from the design''s own principles cost nothing principled and produce convergence; concessions from fatigue produce relitigation. What survived the cuts was the architecture (commit-time + sweep-time = canonical OTel trio); only redundant artifacts died.'
-  principle: 'Concede from your design''s own guardrails, never from pressure — a designer who can distinguish losing an artifact from losing the architecture can concede anything except the architecture.'
+  narrative: "Carmack cut two of my three CEB checkpoints (claim-time helper, heartbeat).\
+    \ Reading his reasoning against my own design text showed each cut was demanded\
+    \ by my design's stated anti-theater guardrail \u2014 a voluntary helper is prompt-compliance\
+    \ with extra steps, the disease wearing the cure's coat."
+  insight: Concessions derived from the design's own principles cost nothing principled
+    and produce convergence; concessions from fatigue produce relitigation. What survived
+    the cuts was the architecture (commit-time + sweep-time = canonical OTel trio);
+    only redundant artifacts died.
+  principle: "Concede from your design's own guardrails, never from pressure \u2014\
+    \ a designer who can distinguish losing an artifact from losing the architecture\
+    \ can concede anything except the architecture."
   utility_score: 0.93
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -119,9 +152,17 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[TS1]'
-  narrative: 'Named "claims-outpace-mechanisms at every altitude" in Phase B while carrying a false number ("~20") in the same report — mandate text, registry statuses, gnosis addenda, protocol docs, and my own deliverable all exhibited claim drift; the observer of the pattern was inside it.'
-  insight: 'Claim generation structurally outruns verification because writing a claim costs a sentence but verifying one costs a tool call; drift rate scales with claim velocity divided by verification velocity. The only proof a discipline is real rather than performed is self-application under cost.'
-  principle: 'Claims outrun verification at every altitude including yours — bind verification to claim creation mechanically, and run your own detectors on your own output before shipping; self-exemption turns a standard into decoration.'
+  narrative: "Named \"claims-outpace-mechanisms at every altitude\" in Phase B while\
+    \ carrying a false number (\"~20\") in the same report \u2014 mandate text, registry\
+    \ statuses, gnosis addenda, protocol docs, and my own deliverable all exhibited\
+    \ claim drift; the observer of the pattern was inside it."
+  insight: Claim generation structurally outruns verification because writing a claim
+    costs a sentence but verifying one costs a tool call; drift rate scales with claim
+    velocity divided by verification velocity. The only proof a discipline is real
+    rather than performed is self-application under cost.
+  principle: "Claims outrun verification at every altitude including yours \u2014\
+    \ bind verification to claim creation mechanically, and run your own detectors\
+    \ on your own output before shipping; self-exemption turns a standard into decoration."
   utility_score: 0.96
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -129,9 +170,17 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[TS1]'
-  narrative: 'Study #1 converged in Round 1 with zero standing objections across twelve settled points because every load-bearing claim arrived pre-attached to its kill command (file path, grep, SQL query), making disagreement resolvable by evidence rather than stamina; Node consults absorbed what would have been Round 2.'
-  insight: 'Research discipline''s contribution to discourse is falsifiability, not answers: pre-specified checks retire objections in minutes, and a convergence criterion written first makes zero-objections verifiable rather than vibes-based. Discourse amplifies whatever enters it — including error — symmetrically.'
-  principle: 'Bring kill commands, not convictions: evidence-attached claims convert discourse from a contest of stamina into a contest of evidence, and entire rounds disappear.'
+  narrative: 'Study #1 converged in Round 1 with zero standing objections across twelve
+    settled points because every load-bearing claim arrived pre-attached to its kill
+    command (file path, grep, SQL query), making disagreement resolvable by evidence
+    rather than stamina; Node consults absorbed what would have been Round 2.'
+  insight: "Research discipline's contribution to discourse is falsifiability, not\
+    \ answers: pre-specified checks retire objections in minutes, and a convergence\
+    \ criterion written first makes zero-objections verifiable rather than vibes-based.\
+    \ Discourse amplifies whatever enters it \u2014 including error \u2014 symmetrically."
+  principle: 'Bring kill commands, not convictions: evidence-attached claims convert
+    discourse from a contest of stamina into a contest of evidence, and entire rounds
+    disappear.'
   utility_score: 0.9
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -139,20 +188,34 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[TS1]'
-  narrative: 'Challenged carmack''s Ruling #1 (ratify current god-module baselines) out-of-lane, flagged as such, framed as a five-line Makefile alternative naming the self-undermining mechanism (ratifying drift converts a violated freeze into a defended ceiling); Ma''at adopted it verbatim and upgraded the detector to AST node-counts (ruling O5).'
-  insight: 'The challenge landed because it arrived as a cheaper bargain rather than an objection, named the original''s failure mode in the original''s own terms, and carried no ego attachment — adoption with a better detector substituted was still total victory.'
-  principle: 'Challenge rulings as bargains, not objections: dissent framed as a cheaper alternative with implementation costs attached gets absorbed and upgraded; dissent framed as resistance gets defended against.'
+  narrative: 'Challenged carmack''s Ruling #1 (ratify current god-module baselines)
+    out-of-lane, flagged as such, framed as a five-line Makefile alternative naming
+    the self-undermining mechanism (ratifying drift converts a violated freeze into
+    a defended ceiling); Ma''at adopted it verbatim and upgraded the detector to AST
+    node-counts (ruling O5).'
+  insight: "The challenge landed because it arrived as a cheaper bargain rather than\
+    \ an objection, named the original's failure mode in the original's own terms,\
+    \ and carried no ego attachment \u2014 adoption with a better detector substituted\
+    \ was still total victory."
+  principle: 'Challenge rulings as bargains, not objections: dissent framed as a cheaper
+    alternative with implementation costs attached gets absorbed and upgraded; dissent
+    framed as resistance gets defended against.'
   utility_score: 0.91
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: collaborative-discourse
   last_verified: '2026-08-23'
-
 - level: L3
   tag: '[R-PROV]'
-  narrative: 'Four agents misidentified themselves from stale session metadata while the database carried per-message runtime stamps that were correct all along; a strategy was built on the wrong identity before cross-checking.'
-  insight: 'Self-reports and convenience metadata decay; runtime-stamped records do not. Provenance must be resolved mechanically from the closest-to-dispatch source, never from what an agent or column claims.'
-  principle: 'Attribute from stamps written at response time, corroborate with independent signals, and treat every self-report as a hypothesis — the cheapest source of truth is usually already persisted.'
+  narrative: Four agents misidentified themselves from stale session metadata while
+    the database carried per-message runtime stamps that were correct all along; a
+    strategy was built on the wrong identity before cross-checking.
+  insight: Self-reports and convenience metadata decay; runtime-stamped records do
+    not. Provenance must be resolved mechanically from the closest-to-dispatch source,
+    never from what an agent or column claims.
+  principle: "Attribute from stamps written at response time, corroborate with independent\
+    \ signals, and treat every self-report as a hypothesis \u2014 the cheapest source\
+    \ of truth is usually already persisted."
   utility_score: 0.95
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -160,9 +223,16 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[R-GNOSIS]'
-  narrative: 'A 37-hour multi-model session produced abundant strategy documents but its most valuable content — twelve failure/recovery patterns — existed only as live incidents; proposals to codify everything threatened bloat equal to the loss itself.'
-  insight: 'Knowledge not converted into a consumable, verifiable artifact during its window of cheap creation becomes verification debt charged against scarcer future resources; but volume without named consumers converts it into noise debt instead.'
-  principle: 'Mine incidents before insights, and let a consumption contract (who reads it, at what trigger, verified how) gate every crystallization — no consumer, no artifact.'
+  narrative: "A 37-hour multi-model session produced abundant strategy documents but\
+    \ its most valuable content \u2014 twelve failure/recovery patterns \u2014 existed\
+    \ only as live incidents; proposals to codify everything threatened bloat equal\
+    \ to the loss itself."
+  insight: Knowledge not converted into a consumable, verifiable artifact during its
+    window of cheap creation becomes verification debt charged against scarcer future
+    resources; but volume without named consumers converts it into noise debt instead.
+  principle: "Mine incidents before insights, and let a consumption contract (who\
+    \ reads it, at what trigger, verified how) gate every crystallization \u2014 no\
+    \ consumer, no artifact."
   utility_score: 0.93
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -170,17 +240,55 @@ proposals:
   last_verified: '2026-08-23'
 - level: L3
   tag: '[R-ENF]'
-  narrative: 'Three false completions in one day across three different agents (a password declared removed but live, lessons claimed staged but absent, a blocker status inverted) despite adversarial fleet review; all three were caught by mechanical checks in seconds.'
-  insight: 'LLM verification of LLM claims is circular regardless of how many models review; deterministic gates (grep, AST parse, test run) catch claim-reality divergence that no amount of agent diligence prevents.'
-  principle: 'No completion claim transitions state without a mechanical gate against disk truth — code verifies structure, agents verify logic, never the reverse.'
+  narrative: Three false completions in one day across three different agents (a password
+    declared removed but live, lessons claimed staged but absent, a blocker status
+    inverted) despite adversarial fleet review; all three were caught by mechanical
+    checks in seconds.
+  insight: LLM verification of LLM claims is circular regardless of how many models
+    review; deterministic gates (grep, AST parse, test run) catch claim-reality divergence
+    that no amount of agent diligence prevents.
+  principle: "No completion claim transitions state without a mechanical gate against\
+    \ disk truth \u2014 code verifies structure, agents verify logic, never the reverse."
   utility_score: 0.94
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: research
   last_verified: '2026-08-23'
-
+- level: L3
+  tag: '[R-DISP]'
+  narrative: A dispatch prompt asserted "Fedora-class" from pattern-completion; the
+    box was Ubuntu 25.10, knowable from three sources including a mandate in the dispatcher
+    own context and the canonical hardware profile. The fresh agent complied with
+    the false premise and produced unusable instructions.
+  insight: 'Environment premises in dispatch prompts are load-bearing: downstream
+    agents treat them as ground truth rather than claims, so an unverified premise
+    propagates into every deliverable and is cheapest to fix before transmission.'
+  principle: "Every environment claim in a dispatch must cite the canonical source\
+    \ or carry its one-line verification command \u2014 A0 premise audit applies at\
+    \ dispatch time, not only inside formal studies."
+  utility_score: 0.94
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: research
+  last_verified: '2026-08-24'
+- level: L3
+  tag: '[R-DUAL]'
+  narrative: 'Two Jem passes ran the identical research prompt: a fresh session authored
+    original recon but embedded a false premise; the primed session (resumed via task_id
+    with first-dive context) caught it plus two more errors, contributing corrections
+    the fresh pass could not see.'
+  insight: Fresh sessions generate breadth; context-carrying sessions generate depth
+    and error-correction, because prior knowledge of which claims are load-bearing
+    directs skepticism where it pays.
+  principle: "For follow-on research dives, resume the primed session via task_id\
+    \ \u2014 continuity converts verification from re-reading into genuine falsification."
+  utility_score: 0.9
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: research
+  last_verified: '2026-08-24'
 metadata:
   entity: researcher
-  session_id: ses_fd81c19dcffe1nkbPqFg5kRt2v
+  session_id: ses_fca928918ffeFjsaOkVv17Gl71
   model_used: x-preview-f-free
-  last_session_end: '2026-08-23T16:51:10.146066+00:00'
+  last_session_end: '2026-08-24T20:40:24.750793+00:00'

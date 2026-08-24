@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-23T16:51:10.179664+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-24T20:40:24.809242+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-08-23T16:51:10.179664+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-08-24T20:40:24.809242+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
@@ -329,8 +329,8 @@ omega summon Ma'at "status"   # Direct entity
 
 ### ORACLE_STACK.md
 **Type**: markdown
-**Size**: 1276 bytes
-**Lines**: 15
+**Size**: 1820 bytes
+**Lines**: 23
 
 ---
 **Canonical Source**: [ORACLE_STACK_CANONICAL.md](ORACLE_STACK_CANONICAL.md)
@@ -338,6 +338,14 @@ omega summon Ma'at "status"   # Direct entity
 # 🔱 Omega Engine Architecture (Active)
 
 **Core Flow**: Query → Oracle.talk() → Iris speculative decode → ModelGateway → provider fabric
+
+> ⚠️ **IRIS RESOURCE CLASS (2026-08-24 — Architect directive after kali misclassification)**:
+> "Messenger bridge" describes Iris's ROLE in the pantheon, NOT her resource class.
+> She runs LIVE MODEL INFERENCE (speculative decode) inside the omega-iris container
+> and must be resourced as an LLM workload: memory-bandwidth-bound, physical-core
+> pinning beneficial, SMT siblings harmful to decode latency. NEVER classify her as
+> a lightweight proxy. (Mandate M3 governs her pantheon role; this block governs
+> her resource treatment.)
 
 **Provider Fabric (Local-First)**: native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode
 
