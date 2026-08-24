@@ -96,7 +96,9 @@ If OpenCode changes stamping behavior (e.g., batches responses, stamps at queue-
 ---
 *⬡ OMEGA ⬡ RESEARCHER ⬡ R_MESSAGE_PROVENANCE_HIERARCHY ⬡ v1.0 ⬡ 2026-08-23*
 
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
-actual_models(Tier0): n/a
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:34Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: VERIFIED
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, big-pickle, nvidia/nemotron-3-super-120b-a12b:free, hy3-free, gemini-3.7-flash
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-24T06:51:34Z
 -->
+

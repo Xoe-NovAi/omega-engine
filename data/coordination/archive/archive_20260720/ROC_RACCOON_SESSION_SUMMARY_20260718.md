@@ -125,7 +125,9 @@
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ PHASE_A_COMPLETE ⬡ JEM_VERIFICATION_ACTIVE ⬡ GROK_CLI_BRIEFED ⬡ 2026-07-18*
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:33Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | session refs not found in DB
 actual_models(Tier0): n/a
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-24T06:51:33Z
 -->
+

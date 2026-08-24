@@ -325,7 +325,9 @@ The database uses SQLite's JSON1 extension. All JSON queries use `json_extract()
 
 *⬡ OMEGA ⬡ REFERENCE ⬡ OPENCODE_DB ⬡ 2026-08-10*
 
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: OPENCODE_DB | verdict: UNANCHORED | no session anchor in header zone
-actual_models(Tier0): n/a
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:34Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: OPENCODE_DB | verdict: AMBIGUOUS | multi-model session; candidates: longcat-2.0-free, laguna-s-2.1-free, nvidia/nemotron-3-super-120b-a12b:free, nemotron-3-ultra-free
+actual_models(Tier0): longcat-2.0-free, laguna-s-2.1-free, nvidia/nemotron-3-super-120b-a12b:free, nemotron-3-ultra-free, gemini-3.1-pro-preview-customtools, antigravity-claude-sonnet-4-6
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-24T06:51:34Z
 -->
+

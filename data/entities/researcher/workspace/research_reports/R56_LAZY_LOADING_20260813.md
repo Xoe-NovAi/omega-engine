@@ -48,7 +48,9 @@ metadata so the gap is not silently dropped. The actual research
 *Reconstructed by @kali 2026-08-14 after accidental deletion. Original
 content irrecoverable. See Hivemind session `ses_af9c20d5a2d5` for context.*
 
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:33Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | session refs not found in DB
 actual_models(Tier0): n/a
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-24T06:51:33Z
 -->
+

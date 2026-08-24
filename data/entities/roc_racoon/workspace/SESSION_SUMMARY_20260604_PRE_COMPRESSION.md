@@ -126,7 +126,9 @@ Content below is preserved as-is for historical reference. See `config/wads/_ome
 
 ---
 
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:34Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | session refs not found in DB
 actual_models(Tier0): n/a
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-24T06:51:34Z
 -->
+

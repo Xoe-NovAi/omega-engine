@@ -334,7 +334,9 @@ Origin: https://github.com/Xoe-NovAi/omega-engine.git (synced)
 
 — Cline-M3 (MiniMax M3, 1M context), 2026-06-04 03:02 UTC
 
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: minimax/m3 | verdict: UNANCHORED | no session anchor in header zone
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:33Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/m3 | verdict: UNANCHORED | session refs not found in DB
 actual_models(Tier0): n/a
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-24T06:51:33Z
 -->
+

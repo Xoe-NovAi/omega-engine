@@ -26,3 +26,8 @@ For massive refactors or deep architectural analysis (e.g., Ox Alpha consuming 1
 *   Do not chunk the codebase. Load the entire subsystem.
 *   The 1M window is not just for reading; it is for maintaining the *state of the system across time* during a long session. 
 *   **Warning**: High-context messages carry high latency and cost (if not on free tiers). Use only when the relational complexity between files exceeds what a `grep` can reveal.
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:35Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

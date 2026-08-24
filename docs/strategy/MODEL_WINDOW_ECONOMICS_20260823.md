@@ -89,3 +89,8 @@ Architect challenged both the "$21 recorded cost" claim and session-level audit 
 
 ### CHALLENGE MECHANISM — CODIFIED (standing practice)
 Any disputed design/performance/value claim between Architect and agents → roc_racoon (or designated auditor) mines recorded data → verdict with receipts, three-way possible (A vindicated / split / agent vindicated), both parties pre-committed to bowing. First invocation: NEMOTRON_VALUE_ADJUDICATION_20260823.md (verdict: SPLIT — Architect right on operational value, kali right on chain position; both cost-figure and methodology corrections issued post-verdict by Architect spot-challenge).
+<!-- PROVENANCE-CORRECTED 2026-08-24T06:51:35Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+
