@@ -43,3 +43,8 @@ The Omega Hub possesses a "Sovereign Moat" built on **Governance, Heritage, and 
 - `SOVEREIGN_MANDATES.md`
 - `CREDITS.md` (id Software Heritage)
 - `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: PHASE-III | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

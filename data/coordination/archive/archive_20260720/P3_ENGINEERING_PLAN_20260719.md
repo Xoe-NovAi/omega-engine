@@ -1113,3 +1113,7 @@ The phase ordering is correct:
 ---
 
 *⬡ OMEGA ⬡ PILLAR P3 ⬡ ENGINEERING ⬡ trc_p3_eng_plan ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: P3 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

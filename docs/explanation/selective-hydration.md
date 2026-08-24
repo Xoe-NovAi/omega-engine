@@ -86,3 +86,8 @@ Agents write to `proposed_lessons.yaml`. Only the user (or user-approved automat
 `[id-soft: doom-1993] BSP Culling — O(1) culling of irrelevant principles`
 `[id-soft: doom-1993] Precomputed Lookup — embeddings precomputed at store time`
 `[id-soft: quake-1996] 4-Tier Memory — L3 principles live in the Cache tier`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

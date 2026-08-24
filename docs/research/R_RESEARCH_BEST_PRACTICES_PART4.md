@@ -291,3 +291,8 @@ temporal_awareness:
 *⬡ OMEGA ⬡ RESEARCHER ⬡ RESEARCH-BEST-PRACTICES ⬡ v2.0.0 ⬡ 2026-07-24*
 *Part 4/6: Tool Design Principles — Enhanced with tool confidence tiers, decision flow, common mistakes, and Sovereign Verification Mandate*
 *This guide is a living document. Updates must be made via PR with spec-driven changes.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -15,3 +15,8 @@ Always pass `timeout` as milliseconds.
 Verified via `firecrawl_firecrawl_scrape(timeout=30000, url=...)` $\rightarrow$ SUCCESS.
 
 **Mandate**: All agents using Firecrawl must adhere to this millisecond-scale timeout.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trace_firecrawl_fix | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -281,3 +281,8 @@ And conversely: "If you find yourself asking Claude.ai to produce a specific cod
 | Subagent delegation patterns (OpenClaw Academy) | https://inbounter.com/learn/claude/workflows/subagents |
 | GitHub bug report — Agent tool not available to subagents | https://github.com/anthropics/claude-code/issues/46424 |
 | GitHub — Claude Code architecture docs | https://github.com/nirholas/claude-code/blob/main/docs/architecture.md |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

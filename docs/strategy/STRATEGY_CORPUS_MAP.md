@@ -76,6 +76,7 @@
 | **Researcher** | **Hardening Deep Dive** — `docs/research/youtube_research_sessions/session_20260730/04_evidence/HARDENING_DEEP_DIVE.md` | IDE extensions = #1 supply chain vector (May 19 GitHub breach: 3,800 repos via one extension), 454K malicious packages 2025-2026, TrapDoor hits npm/PyPI/Crates.io simultaneously, FIDO2 SSH production-ready (OpenSSH 9.6+), CIS v2.0.0 + USG baseline, systemd-analyze security as CI gate | **ACTIVE Phase 0** — `scripts/omega-harden-workstation.sh` created, run now |
 | **OMEGA_ENGINE** | Deferred table | D-290…D-308 | **PARKED** → Ark §2.1 expanded |
 | **Kali** | **Un-Overengineering Plan** — `docs/strategy/UNOVERENGINEERING_PLAN.md` | 5-phase temple cleansing: Phase 1 (5 library swaps: pybreaker, Pydantic v2, stamina, structlog, prometheus_client), Phase 2 (kill HandoffState, soul distiller consolidation, HMC→YAML+JSONL), Phase 3 (memory tier simplification), Phase 4 (Hivemind freeze — SHIPPED), Phase 5 (enforcement gates). ~5,500 lines deleted, 4 community libs adopted. | **ACTIVE Phase 1** → UO-6/UO-7 workstreams in ACTIVE_SPRINT.json |
+| **Kali + Fleet (4-agent)** | **Team-Synthesis Study #1 (2026-08-23)** — `data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md` (+ A/B/C/D/E corpus + `C_discourse_ledger.md` §6 stamp) | 4-agent brokered-discourse protocol validation (researcher/roc/carmack/jem lanes; lilith/ma'at authority consults); converged Round 1, zero objections; 10 rulings stamped; 25 L3 principles; ≥5 cross-agent-only discoveries; skill candidate `/teamsynth` gated on Study #2 reproducing ≥1 cross-agent discovery; tracking-system closeout rulings (pre-commit framework per Ma'at F1 ordering, AST freeze gate > wc-l, explicit evidence field day one, verify-mandate-claims P0, backfill = roc table × Lilith 23-cluster enumeration) | **PRESERVED Layer 2** — protocol validated RUN AGAIN 4/4; `/teamsynth` NOT built until Study #2 gate passes; DOC-1 applies (rulings feed tracking closeout only where manual/ACTIVE_SPRINT activates) |
 
 ---
 
@@ -355,3 +356,8 @@ When you produce a strategy artifact:
 ---
 
 *⬡ OMEGA ⬡ STRATEGY-CORPUS-MAP ⬡ v1.0.0 ⬡ 2026-07-21*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -85,3 +85,8 @@ This mirrors the transition from linear WAD lumps to **BSP Partitioning**—cull
 - **Retrieval Breadth**: Ratio of "non-obvious" but relevant nodes retrieved via SA vs. pure vector search.
 - **Hierarchical Consistency**: Distance correlation between L3 $\rightarrow$ L2 $\rightarrow$ L1 in Poincaré space.
 - **Sovereign Precision**: Accuracy of "Gnosis Gap" detection when Graph and Vector paths diverge.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_memory_spatial | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -100,3 +100,7 @@ print(f"Global Error Rate: {health.global_error_rate}")
 ```
 
 *Document maintained by Jem (Sovereign Synthesizer). Tasked by Roc Racoon.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hivemind | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

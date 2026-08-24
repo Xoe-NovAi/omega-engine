@@ -149,3 +149,8 @@ Reset in: 166 hours (approximately 7 days)
 | Silent failure on quota | ✅ **CONFIRMED** | Exit 0, no stdout |
 | MCP config parse error | ✅ **FOUND** | `mcp_config.json` was empty (0 bytes) — **FIXED** |
 | Model persistence burns quota | ✅ **CONFIRMED** | Saved Opus model used for every prompt |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: research-fleet | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

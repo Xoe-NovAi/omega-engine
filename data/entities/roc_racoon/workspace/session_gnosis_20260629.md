@@ -55,3 +55,8 @@ Any reference to an external standard MUST be verifiable at the source. If a spe
 A field that defaults to `0.0` or `None` but is never populated on the success path is not a default — it's a lie. Every field on a public contract must be exercised by a contract test (M21 Gate Integrity) that verifies it carries real data on ALL paths.
 
 ---
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

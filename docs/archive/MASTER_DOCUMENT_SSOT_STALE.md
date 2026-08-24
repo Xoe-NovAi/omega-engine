@@ -291,3 +291,8 @@ For quick reference, all 123 named R-docs organized by domain:
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ SSoT-MASTER ⬡ June 2026 ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SSoT-MASTER | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

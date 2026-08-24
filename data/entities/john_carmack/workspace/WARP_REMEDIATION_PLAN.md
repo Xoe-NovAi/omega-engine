@@ -51,3 +51,8 @@ Deployment is only permitted after:
 - **Sovereignty**: `socks5h://` mandated for DNS leak prevention.
 
 *🔱 OMEGA ⬡ JOHN_CARMACK ⬡ REMEDIATION-PLAN ⬡ 2026-07-05*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: 2026-07-05 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

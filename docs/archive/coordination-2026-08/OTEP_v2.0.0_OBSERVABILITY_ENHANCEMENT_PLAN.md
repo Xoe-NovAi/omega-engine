@@ -616,3 +616,7 @@ The core insight: **You don't need more logs. You need a nervous system.**
 *⬡ OMEGA ⬡ OBSERVABILITY ⬡ PLANNING ⬡ OTEP-v2.0.0 ⬡ 2026-08-10*
 
 **Status:** DRAFT — Awaiting approval to implement
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: PLANNING | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

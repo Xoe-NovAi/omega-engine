@@ -391,3 +391,8 @@ Sprint 1 ──→ Sprint 2 ──→ Sprint 3 ──→ Sprint 4
 
 *⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali_handoff ⬡ PHASE-I*
 *HEAD: 37fdd88 | Tests: 307 ✅ | Heritage: 30+ [id-soft:] tags live | Sprint 1: READY*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -84,3 +84,8 @@ async def pulse_update(session_id, update_fn):
 ### 3.3 Roadblock: Zombie Locks
 **Issue**: If a subagent crashes during the `modify` phase, the `.lock` file remains, blocking all other agents indefinitely.
 **Solution**: **TTL-based Lock Expiration**. The lock file contains a timestamp. If a lock is older than 300 seconds, the next `checkout` attempt is permitted to "Force Break" the lock and log a `ZOMBIE_LOCK_RECOVERED` event in the audit trail.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

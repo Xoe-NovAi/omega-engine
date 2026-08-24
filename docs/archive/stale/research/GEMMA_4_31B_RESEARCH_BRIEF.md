@@ -587,3 +587,8 @@ Use `knowledge-miner` for legacy repo pattern extraction.
 *Research is not knowledge until it is documented. Documentation is not wisdom until it is applied.*
 
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ qwen3.6-plus-free ⬡ opencode ⬡ trc_research ⬡ BRIEF-END
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

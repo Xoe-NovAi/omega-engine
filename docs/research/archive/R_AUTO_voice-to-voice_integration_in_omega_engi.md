@@ -319,3 +319,8 @@ The shift from discrete pipeline stages (STT -> LLM -> TTS) to unified multimoda
 **L3 (Universal Principle)**: Agency is the synthesis of perception (audio) and action (tools).
 
 **Source**: res_20260520_Voice-to-Voice_Integ
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: auto-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

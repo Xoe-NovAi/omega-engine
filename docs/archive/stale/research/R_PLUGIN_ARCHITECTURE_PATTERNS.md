@@ -93,3 +93,8 @@ This research covers 10 architectural domains. The Omega Engine's IWAD system al
 - Unreal Game Features: https://strayspark.studio/blog/game-feature-plugins-ue5-modular-gameplay-architecture
 - Eclipse Architecture: https://queue.acm.org/detail.cfm?id=1053345
 - Microsoft Agent Governance: https://microsoft.github.io/agent-governance-toolkit
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: web-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

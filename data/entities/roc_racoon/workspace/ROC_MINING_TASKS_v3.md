@@ -184,3 +184,8 @@ The "Oh! That's it" was the user *remembering* T-06. So T-07 is the original for
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_mining_tasks ⬡ PHASE-II*
 
 *3 new tasks added: T-05 (HLOC strategy), T-06 (54.6KB compaction — CRITICAL), T-07 (user-forgotten placeholder). T-06 is P0 because it affects every session the fleet runs.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

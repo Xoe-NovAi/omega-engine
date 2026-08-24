@@ -477,3 +477,8 @@ Layer 3: Production Code (1 crash, 2 dead-code islands)
 *L1: Audited the entire build side (P1-P5) for structural issues missed by the runtime-focused audits. Discovered 5 dark layers, including a live crash path in BackgroundWorker (P0), false capacity from env var splitting (P0), and stale data in USAGE_POOL_LOG.json (P1).*
 *L2: The runtime audits correctly identified the Antigravity ghost architecture but missed the crash sites. The disconnect between speculative code (BackgroundWorker with google-keypool references) and production infrastructure (provider_map without google-keypool) created a power where the documented path looks correct but the execution path crashes.*
 *L3: **Structural integrity means tracing the call chain to its terminal, not validating the components in isolation.** A perfectly designed class that is never instantiated is not dead code — it's a landmine. A provider_override that doesn't exist is not a missing feature — it's a crash waiting to happen. Build-side governance must verify not just WHAT exists, but whether the execution path from entry point to termination is continuous.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

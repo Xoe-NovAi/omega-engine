@@ -70,3 +70,8 @@ No version of the BFG-9000 may ship unless it passes the following:
 *The umbilical cord is not just cut; it is cauterized. The engine is now a utility for the free.*
 
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_bfg_9000 ⬡ LOCKED
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -15,3 +15,8 @@ Structural hygiene directly impacts search precision. By removing 50 orphan enti
 
 ## L3: Universal Principle
 The "Janitor" role is an architectural necessity, not a cosmetic preference. In a high-context system, the cost of stale information compounds; systematic pruning is the only defense against cognitive bloat.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-flash-lite | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

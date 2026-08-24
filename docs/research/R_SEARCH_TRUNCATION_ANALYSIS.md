@@ -83,3 +83,8 @@ Agents must perform a **Truncation Audit** on every high-value extraction. A res
 - **Firecrawl Documentation**: /scrape endpoint and `actions` parameter specs.
 - **Sovereign System Spec**: Ken W. Alger (2026) - "Sieve-and-Sign" and "Sovereign Inference Patterns."
 - **Empirical Testing**: Side-by-side comparison of `webfetch` vs `firecrawl_scrape` on long-form technical articles.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

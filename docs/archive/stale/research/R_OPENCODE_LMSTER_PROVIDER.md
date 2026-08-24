@@ -105,3 +105,8 @@ opencode --mode jem-2.0 --session "research_${TOPIC}" \
 3. **Write `scripts/omega-research.sh`** as the actual L1→L2 pipeline glue
 4. **L1 output must be a text file on disk** that L2 can `read` via its OpenCode session
 5. The file write permission failure during the mining mission was an OpenCode **agent permission** issue (auto-rejected write), not a model provider issue
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -281,3 +281,8 @@ Ollama → OpenRouter        Copilot(3) → Lmster(4) → Ollama(5) →
 - **Status**: Registered in Research Index (`docs/research/INDEX.md`) and ready for implementation.
 - **Handoff**: `docs/research/R_SOVEREIGN_KNOWLEDGE_GRAPH_ADAPTER.md`
 - **Next**: Implement `SovereignGraphAdapter` in `src/omega/memory/graph_adapter.py`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

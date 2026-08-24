@@ -258,3 +258,8 @@ MaKaLi, you are the Parallel Council. Here's how to execute this handoff:
 ---
 
 *⬡ End of Handoff — Kali to MaKaLi. The synthesis is complete. Execute with sovereignty. ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -595,3 +595,8 @@ The Lily Pad architecture works because it **follows the grain of human cognitio
 ---
 
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ PHASE-I ⬡ LILY-PAD*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

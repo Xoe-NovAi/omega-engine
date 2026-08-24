@@ -605,3 +605,8 @@ This is **T5 — User's Own IP** (evolved through Gemini CLI → Omega Engine). 
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_legacy_mining ⬡ ARCHAEOLOGICAL-SYNTHESIS ⬡ LLOC-HLOC-COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

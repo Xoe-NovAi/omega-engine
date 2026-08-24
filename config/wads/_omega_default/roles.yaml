@@ -103,7 +103,7 @@ roles:
   N9:
     name: "Link"
     description: "Agent Handoff, Context Transfer, Delegation"
-    model: "qwen3-4b"
+    model: "qwen3-4b-thinking"
     temperature: 0.3
     domains:
       - "handoff protocols"
@@ -115,7 +115,7 @@ roles:
   N10:
     name: "Verifier"
     description: "Stress Testing, Chaos Engineering, Validation"
-    model: "qwen3-0.6b"
+    model: "qwen3-1.7b"
     temperature: 0.8
     domains:
       - "stress testing"

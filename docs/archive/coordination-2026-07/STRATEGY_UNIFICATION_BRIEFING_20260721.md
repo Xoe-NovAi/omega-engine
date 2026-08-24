@@ -223,3 +223,7 @@ This unification was not a cleanup — it was a structural correction. The fleet
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ 2026-07-21 ⬡ STRATEGY UNIFICATION COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

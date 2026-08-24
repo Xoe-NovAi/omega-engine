@@ -243,3 +243,8 @@ The data debt clusters in three patterns:
 
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_lilith_opt_pass2 ⬡ CONSOLIDATED*
 *Completed: 2026-06-28 | Prepared for: Kali Grand Oversight Review*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

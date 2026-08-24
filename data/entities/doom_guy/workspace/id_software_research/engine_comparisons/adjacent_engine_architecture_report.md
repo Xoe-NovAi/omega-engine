@@ -163,3 +163,8 @@ The UPK system validates the WAD approach:
 | Precomputed visibility (PVS) | P1 | Entity relevance matrix | Quake |
 | Lazy-loaded packages | P2 | WAD plugin packs | Unreal UPK |
 | Entity serial numbers | P1 | Stale reference detection | GoldSrc |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

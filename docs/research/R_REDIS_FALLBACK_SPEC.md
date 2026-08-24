@@ -86,3 +86,8 @@ The \`SessionManager\` will implement a **Provider Pattern** with the following 
 - **AnyIO Absolute**: All Redis and SQLite calls must be wrapped in `anyio.to_thread.run_sync` or use native async drivers.
 - **Zero Telemetry**: Session data is strictly local. No external state synchronization.
 - **Physical Awareness**: The system must emit a `Sovereign Warning` when falling back to `InMemoryProvider` due to disk exhaustion.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

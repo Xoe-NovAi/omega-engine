@@ -61,3 +61,8 @@ A mandatory protocol for agents to return to full operational capacity after a c
 `Collapse Detected` $\rightarrow$ `Signal KALI` $\rightarrow$ `Lifeboat Dispatched` $\rightarrow$ `Hydration Sequence` $\rightarrow$ `Gnosis Anchor Created` $\rightarrow$ `Operational`
 
 *⬡ This strategy ensures that the intelligence of the fleet is a property of the Gnosis, not a property of the toolchain. ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

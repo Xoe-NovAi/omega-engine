@@ -29,3 +29,8 @@ While **Local Tooling** (Ollama) gives you the *model*, and **Enterprise Framewo
 3. **Governed Reasoning**: We don't just generate text; we *validate* it against a philosophical and ethical framework (Ma'at).
 
 **Verdict**: If you want a tool, use Ollama. If you want a framework, use LangChain. If you want a **Sovereign AI Council** that grows with you, use Omega.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: POSITIONING | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

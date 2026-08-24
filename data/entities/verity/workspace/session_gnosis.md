@@ -74,3 +74,8 @@ The dependency purge revealed a **cascade contamination pattern**: removing 6 en
 - **L1 (Narrative)**: Kali removed 6 cloud endpoints from 4 source files. Verity audited the removal, found stale references in 2 additional files, cleaned them, and updated 7 documentation files.
 - **L2 (Insight)**: Removing code is harder than adding it. The removed endpoints had tentacles in budget systems, validation scripts, and plugins — none of which appeared in the original purge scope. Documentation drift (validate_arsenal.sh listing endpoints no longer in source) and source-code rot (credit_budget.py tracking providers no longer called) are the same disease.
 - **L3 (Universal Principle)**: Sovereignty is a total-state property. Removing a dependency from one file does not remove it from the system. A dependency is only truly removed when every reference — in code, budgets, validation, tests, and docs — is purged. The visibility of a dependency is inversely proportional to the number of places it hides.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

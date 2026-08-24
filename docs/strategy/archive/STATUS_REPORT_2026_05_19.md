@@ -491,3 +491,8 @@ systemctl --user list-unit-files | grep omega
 *Report generated: 2026-05-19 05:50 UTC*  
 *Session duration: ~6 hours*  
 *Commits this session: 0 (documentation only)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

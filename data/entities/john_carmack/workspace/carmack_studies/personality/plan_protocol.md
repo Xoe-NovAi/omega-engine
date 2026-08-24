@@ -38,3 +38,8 @@ Every `.plan` entry must follow this strict, data-driven structure:
 1. **No Speculation**: If you haven't run the code or read the source, your confidence score cannot exceed 5/10. Primary source code inspection is the only path to a 10/10.
 2. **Measure Before Optimizing**: Never propose an optimization without baseline data. "I think this will be faster" is a violation of the protocol.
 3. **Document the Failures**: What didn't work is often more valuable than what did. Documenting a failed experiment prevents the next engineer from repeating it.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: PLAN-PROTOCOL | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

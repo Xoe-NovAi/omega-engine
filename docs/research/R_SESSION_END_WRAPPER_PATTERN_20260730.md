@@ -206,3 +206,7 @@ opencode  # bypasses wrapper
 ---
 
 *This document establishes the canonical session-end hook architecture for Omega Engine. All agents MUST use `.opencode/wrapper.sh` for session execution to satisfy M5/M11.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

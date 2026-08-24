@@ -48,3 +48,8 @@ Builder agents should implement a `doc-lint` script or use the `omega-doc-archit
 ## References
 - `docs/research/INDEX.md`
 - `.opencode/skills/omega-doc-architect/SKILL.md`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

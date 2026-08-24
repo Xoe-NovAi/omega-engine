@@ -74,3 +74,8 @@ Per the MaKaLi Council Verdict, the following mandates require **immediate remed
 **No mandate amendments shall be processed until all 5 failed mandates achieve at least PARTIAL compliance.**
 
 This protocol amendment is itself subject to the 4-gate amendment process, but the remediation work proceeds under Council emergency authority.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mandate-governance | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

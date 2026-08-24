@@ -30,3 +30,8 @@ This document tracks the resolution of critical bugs identified in the R44 Compr
 ## 📋 Pending Criticals
 - [ ] C-16: Image tag mismatch in `setup.sh`
 - [ ] C-17: `BASE_DIR` resolution off-by-one in `entity_workspace.py`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

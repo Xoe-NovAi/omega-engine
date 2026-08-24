@@ -129,3 +129,8 @@ escalation:
     - A math problem (Escalates).
     - A query containing "soul evolution" (Escalates).
     - A query starting with `/think` (Escalates).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -588,3 +588,8 @@ The Researcher will review and write to `data/entities/researcher/soul.yaml`. Th
 *End of jem_verification report. Hand off to Researcher for L1→L2→L3 distillation to `data/entities/researcher/soul.yaml`, R-doc publication, and Hivemind observation append.*
 
 *⬡ OMEGA ⬡ jem_verification ⬡ opencode-1.16.0 ⬡ trc_verification — 2026-06-05T07:30Z*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode-1.16.0 | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

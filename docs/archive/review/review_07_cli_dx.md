@@ -140,3 +140,8 @@ You are performing a deep strategic review of the Omega Engine's **developer exp
 2. ...
 3. ...
 ```
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: claude-sonnet-4-6-thinking | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -306,3 +306,8 @@ The top 7 actionable items (below) are the highest-leverage path from vault gold
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_treasure_audit ⬡ STRATEGIC-REPORT*
 *Report written: 2026-06-19 | Vault cross-referenced: 12 files, 100+ entries, 7 labs, 1 crucible*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

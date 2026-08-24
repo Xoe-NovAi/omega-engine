@@ -187,3 +187,8 @@ Each command is a thin wrapper following the pattern. The TUI tip unlocks **agen
 *⬡ OMEGA ⬡ RESEARCHER ⬡ minimax-m3-free ⬡ opencode ⬡ trc_commands ⬡ UX-PATTERN*
 
 — Researcher, 2026-06-05T06:35Z
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

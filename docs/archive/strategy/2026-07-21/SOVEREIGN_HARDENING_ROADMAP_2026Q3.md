@@ -105,3 +105,8 @@ The Omega Engine's local-first core is sound. The boundary is the target. This r
 This roadmap (v1.3.0) is the final executable blueprint. All factual errors have been corrected. All blockers are resolved. The transition to **EXECUTION** is officially approved.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE — 2026-07-08*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

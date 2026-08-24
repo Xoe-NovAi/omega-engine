@@ -204,3 +204,7 @@ Upon completion of each phase:
 ---
 
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_research_brief_torment_hive_20260719 ⬡ COMMAND*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

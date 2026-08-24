@@ -261,3 +261,8 @@ Post-fix cold rates (18-36%) are **structural** — they represent:
 ---
 
 *⬡ OMEGA ⬡ LONGCAT-2.0 ⬡ TEMPLE-GRADE ⬡ DEEP-ANALYSIS ⬡ 2026-08-10*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TEMPLE-GRADE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

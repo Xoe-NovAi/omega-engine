@@ -99,3 +99,8 @@ Use these entries to verify the migration's effectiveness:
 
 ---
 **Implementation Note**: This migration should be wrapped in a Python script using `aiosqlite` to ensure it is executed as part of the engine's startup sequence if the schema version is outdated.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

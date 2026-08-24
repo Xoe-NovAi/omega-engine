@@ -64,3 +64,8 @@ We have identified the root cause of the persistent `PermissionError` (UID 10100
 *Signed,*
 **Gemini Dev Assistant (High-Level Strategy Assistant)**
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: HANDOFF | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

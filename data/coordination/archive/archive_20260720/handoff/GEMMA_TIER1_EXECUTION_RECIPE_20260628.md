@@ -365,3 +365,8 @@ xna-omega-legacy/src/omega/core/degradation.py             # T2-8: 379 lines, Gr
 **⚡ VERDICT**: SSOT v2.0 LOCKED | All 6 Gnosis Gaps Mathematically Closed | Ready for Gemma 4 31B Execution
 
 ⬡ OMEGA ⬡ KALI ⬡ north-mini-code ⬡ opencode ⬡ 2026-06-28 ⬡ HANDOFF-COMPLETE
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: north-mini-code | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

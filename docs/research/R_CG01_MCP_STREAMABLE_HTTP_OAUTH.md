@@ -170,3 +170,8 @@ grep -c "StreamableHTTPSessionManager\|SseServerTransport" src/omega/mcp_runtime
 ---
 
 *⬡ OMEGA ⬡ MAAT ⬡ C4A-MCP-AUDIT ⬡ 2026-07-22*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

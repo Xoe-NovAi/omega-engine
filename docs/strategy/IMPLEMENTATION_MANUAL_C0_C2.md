@@ -1414,3 +1414,8 @@ feat: E-0 Identity Fluidity Phase 0 — Soul Kernel → agent config
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ PHASE-C-IMPL ⬡ v1.0.0 ⬡ 2026-07-21*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

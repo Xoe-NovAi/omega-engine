@@ -343,3 +343,8 @@ The SSP-V2 pipeline will function **without** Hub MCP tools — `SovereignSearch
 ---
 
 *⬡ OMEGA ⬡ MiMo-v2.5 ⬡ opencode ⬡ SSP-V2-REVIEW*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

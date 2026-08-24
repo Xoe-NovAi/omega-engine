@@ -1334,3 +1334,8 @@ WEEK 4 (Supply Chain):
 **Lines**: ~1,200
 **Research tier**: T1 (websearch) + T2 (webfetch) — 12 parallel searches across 10 domains
 **Council**: Triangulated through Architect, Adversary, Alchemist, Archivist
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: POLYMATHIC-COUNCIL | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

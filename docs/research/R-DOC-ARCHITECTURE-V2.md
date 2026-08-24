@@ -282,3 +282,8 @@ For the MkDocs setup (Phase 2, item 6): install `mkdocs-material`, create `mkdoc
 - [ ] Kali — Grand Oversight
 - [ ] Ma'at — Build Side
 - [ ] Verity — Compliance Audit
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: BIG-PICKLE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

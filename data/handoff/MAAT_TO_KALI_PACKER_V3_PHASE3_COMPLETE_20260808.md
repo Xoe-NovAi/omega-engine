@@ -120,3 +120,7 @@ The v3 primitives (`resolve_theme_files`, `validate_pack`, `apply_litm_priority`
 ---
 
 *⬡ OMEGA ⬡ MAAT ⬡ N3 ⬡ PHASE-3-COMPLETE ⬡ 2026-08-08*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: N3 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

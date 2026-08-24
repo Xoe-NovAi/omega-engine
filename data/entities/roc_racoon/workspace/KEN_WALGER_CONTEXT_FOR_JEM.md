@@ -368,3 +368,8 @@ Phase 4: Unload Qwen → Load Phi-3 (3.5GB) → all2md verification + blog inges
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ KEN_CONTEXT_FOR_JEM ⬡ 2026-07-18 ⬡ ACTIVE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

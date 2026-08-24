@@ -294,3 +294,7 @@ The MCP runtime supports both transports simultaneously:
 ---
 
 *⬡ OMEGA ⬡ MCP-CLIENT ⬡ v1.0.0 ⬡ 2026-07-25*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TRACK-D | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

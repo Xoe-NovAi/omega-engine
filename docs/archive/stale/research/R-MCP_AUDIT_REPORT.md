@@ -296,3 +296,8 @@ async with await anyio.open_file(str(metrics_path), "r") as f:
 **Total**: 12 MCPs, ~70+ tools  
 **Issues found**: 3 AnyIO/blocking violations, 3 duplicate MCPs, 1 relative path bug  
 **Firecrawl**: ✅ Fully working, API key valid, tools responsive, custom instructions updated
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

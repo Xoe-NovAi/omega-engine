@@ -97,3 +97,8 @@ Omega Engine's goal is "Local-First, Sovereign AI."
 ## Implementation Note
 _For: Antigravity IDE / Cline / Gemini CLI_
 Use this guide to refine the system prompts of all agents in the `.opencode/agents/` directory. Specifically, ensure that primary agents are instructed to proactively leverage the skill system and that subagents are optimized for narrow, high-density data return.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

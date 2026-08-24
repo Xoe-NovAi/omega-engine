@@ -458,3 +458,8 @@ File-based handoff (not session memory) is the verified pattern:
 | 52 | Codebase RAG MCP | https://github.com/suyash2013/codebase-rag-mcp |
 | 53 | RAG MCP Comparison Guide | https://github.com/michelabboud/claude-code-helper/blob/main/guides/RAG-MCP-GUIDE.md |
 | 54 | DORA Metrics + AI (3-month trial) | https://claudecode.jp/en/news/23665 |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

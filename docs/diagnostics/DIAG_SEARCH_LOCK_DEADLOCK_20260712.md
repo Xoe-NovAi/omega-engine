@@ -125,3 +125,7 @@ async with _get_service_lock(name):
 > **L3-LOCK-HIERARCHY**: A lock protecting initialization must never be held while acquiring another resource that might need the same lock. Initialize dependencies FIRST, then lock for the final assignment.
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_diag_search_lock ⬡ DIAGNOSIS*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

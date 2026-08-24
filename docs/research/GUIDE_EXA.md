@@ -137,3 +137,8 @@ Include these snippets in the system prompt of any agent using Exa to prevent ha
   - Describe the TYPE of page you want to find.
 </exa_query_optimization>
 ```
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

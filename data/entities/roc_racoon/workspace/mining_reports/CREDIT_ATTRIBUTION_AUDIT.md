@@ -451,3 +451,8 @@ attribution alongside implementation, not after.
 
 *Audit completed: 2026-06-21 | Attribution score: 2/10 | Target: 9/10*
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_credit_audit ⬡ COMPLIANCE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -48,3 +48,8 @@ The "Build" phase on July 2nd will consist solely of:
 1. Creating the agent in the dashboard.
 2. Pasting the pre-engineered system prompt.
 3. Mapping the Tool endpoints to the public `omega-hub` URL.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -250,3 +250,7 @@ Per sub-question, execute with tool budget discipline:
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_gap001_scribe ⬡ 2026-07-22*
 *This spec is the contract. Execution follows the spec. Spec lives in `docs/research/specs/GAP001_Scribe_Distillation_Job_Spec.md`.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_gap001_scribe | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

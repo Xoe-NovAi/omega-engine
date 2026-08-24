@@ -1179,3 +1179,8 @@ def on_compaction_event():
 **Workaround Used**: Tavily Search + built-in websearch as primary sources. Results cross-validated against each other for accuracy.
 
 **Key Insight from Research Cross-Referencing**: The 3-tier abstraction model was independently validated by **four** separate research papers (Stanford Generative Agents, RAPTOR, Fractal Metacognition, H²R) without any single source citing the others — strong evidence that this hierarchical abstraction pattern is a convergent finding in the field.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

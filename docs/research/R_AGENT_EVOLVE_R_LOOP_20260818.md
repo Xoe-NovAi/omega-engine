@@ -301,3 +301,7 @@ def run_distillation(buffer: ExperienceBuffer, store: PrincipleStore, llm: LLM):
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_evolver ⬡ DELIVERABLE-5*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

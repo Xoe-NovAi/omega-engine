@@ -438,3 +438,8 @@ SELECT id, MIN(depth) FROM graph_expand GROUP BY id;  -- RRF-fuse with semantic 
 
 *🔱 OMEGA ⬡ RESEARCHER ⬡ NEXTSTEP-GAPS ⬡ RESEARCH-COMPLETE ⬡ 2026-07-13*
 *Sources: 30+ verified 2026 URLs (Redis 8.x docs, RAGAS docs/issues, Soul Protocol GitHub/PyPI, ctxgraph/Mako/sqlite-graph, vstash arXiv+PyPI, SparseCL ICML'25, SphereLFU arXiv). All tiers T0–T5 returned data; no tool-chain collapse.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

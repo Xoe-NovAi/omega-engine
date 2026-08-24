@@ -516,3 +516,8 @@ These jobs support the 6 new workstreams added in Phase 0 tracker lock-in (GN/DS
 | **R60** | Adaptive context buffer quality metrics | P2 | researcher | `R_ADAPTIVE_CONTEXT_QUALITY.md` |
 | **R61** | zswap + NVMe swap production validation | P1 | researcher | `R_ZSWAP_PRODUCTION_VALIDATION.md` |
 | **R62** | SequentialModelLoader cold/warm latency profiling | P2 | researcher | `R_SEQUENTIAL_LOADER_PROFILING.md` |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: RESEARCH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

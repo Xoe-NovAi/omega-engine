@@ -331,4 +331,90 @@ This drove the 92% vs 84% vs 72% compliance contradictions in OMEGA_ENGINE.md �
 
 **Status**: ✅ EXECUTED
 
-*⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_arbitration_20260820 ⬡ 2026-08-20*
+---
+
+## D-587: Third Oversight Line — Jem Runs N11–N13 (2026-08-22)
+
+**Decision**: 
+- PLAN §1 architecture amendment: "Ma'at runs N1–N5, Lilith runs N6–N10, **Jem runs N11–N13**" (third oversight line)
+- Charters for N11 evaluator, N12 curator, N13 arcana → PLAN §4 (lines 93-100)
+- Amendment batch (single ratification):
+  - Standing Order 10: structured-gnosis sections (L1→L2→L3 per Node, tagged `[N_XX]`)
+  - Ceiling governance: soft-13 / hard-14 Node cap; growth gate ≥3 off-domain pages/month; ≤3 concurrent active sessions
+  - PLAN §6 sync: PP-4/P5 status updated (PP-4 shipped 2026-08-22 per ICS_SYSTEM; PP-5 live)
+  - 10 one-sentence charter amendments for N1–N10 (per Plan §4 charters)
+- Zero new agent files created (M10 Fleet Integrity maintained)
+- Session IDs assigned at genesis: N12 `ses_fd76309f6ffezokrxycnfDEZEG` (dormant, CONSULTABLE); N11/N13 genesis-pending
+- Universality principle affirmed: Nodes are knowledge domains, NOT exclusive to overseers — ANY agent may page ANY Node
+
+**Evidence**: Researcher session `ses_fd81c19dcffe1nkbPqFg5kRt2v` (6 missions, full arc); Jem-N12 Wave 1 genesis complete (G→M→A→D→W→C→E); DR-2 settled FALSE (p2-p9 workspaces don't exist — Plan §4 charters = sole Node SSOT).
+
+**Mandate**: M10 (Fleet Integrity), M11 (Soul Integrity), M27 (Tracking Integrity).
+
+**Status**: ✅ RATIFIED (Kali + Architect)
+
+---
+
+## D-590: SovereignSigner Hardcoded Secret Removed — Fail-Closed (2026-08-22)
+
+**Decision**: `src/omega/oracle/ingestion.py:76` (`SovereignSigner.__init__`) used a hardcoded fallback secret `"omega-sovereign-change-me"` when `OMEGA_INGESTION_SECRET` env var was unset — directly contradicting the M8 comment on line 75 ("Secret loaded from env, never hardcoded"). This made every provenance HMAC-SHA256 stamp forgeable by anyone knowing the default, violating **M8 (Zero Telemetry / no hardcoded secrets)** and **M22 (Provenance truth-anchor)**.
+
+**Fix** (Kali, M8/M22 enforcement):
+- Removed the hardcoded default.
+- Fail-closed: if neither `secret_key` arg nor `OMEGA_INGESTION_SECRET` env is present, raise `OmegaError` (no silent insecure fallback).
+- Added regression test `tests/unit/test_sovereign_signer.py` (4 tests: raises-when-unset, signs-when-passed, signs-when-env-set, verify-roundtrip) — all passing.
+
+**Deployment prerequisite**: `OMEGA_INGESTION_SECRET` MUST be provisioned in the runtime environment (env var or passed to `SovereignSigner`). Without it, the ingestion pipeline raises at construction (line 104: `self.signer = signer or SovereignSigner()`). This is the correct secure posture — the previous silent-default was the vulnerability.
+
+**Discovery**: Researcher N12 Gotchas triage (T2, G2, P0) flagged this as debut-blocking. N5 sentinel owns verification; N10 verifier owns regression-test stewardship going forward.
+
+**Mandate**: M8 (Zero Telemetry), M22 (Provenance), M9 (Error Integrity), M21 (Contract Tests).
+
+**Status**: ✅ FIXED (code + tests green; env provisioning = Architect deployment action)
+
+---
+
+## D-591: youtube_worker Account Policy Ratified (2026-08-22)
+
+**Decision**: For the PUBLIC-DEBUT-01 window, the youtube_worker daemon operates **cookieless / transcript-only**. No throwaway cookies, no authenticated ingestion. The full anti-blocking SOP (yt-dlp PO-token regime, perishable player_client ~12h, rate etiquette, on-host ingestion) is **documented but GATED POST-DEBUT**.
+
+**Rationale**: Minimizes debut attack surface (no account bans, no credential leakage, no ToS escalation). Transcript-first via youtube-transcript-api recovers the bulk of value (origin-era strategy sessions, vision-era one-page-spec chats) without authenticated risk.
+
+**Owner**: N12 curator (SOP authorship + staging) · N5 sentinel (allowlist enforcement) · Architect retains veto (window open, concurred with Kali recommendation 2026-08-22).
+
+**Mandate**: M8 (Zero Telemetry), M23 (no soft-failure theater).
+
+**Status**: ✅ RATIFIED (Architect concurrence; post-debut SOP gated)
+
+---
+
+## D-592: Omega Hub Eager Service Fallback Resolution Fix (2026-08-22)
+
+**Decision**: Replaced broken `__import__('mcp_servers.omega_hub.state')` in `mcp_servers/omega_hub/state.py` line 193 with direct leaf module reference `sys.modules.get(__name__)`.
+
+**Context / Bug**: `__import__` with dotted path returns the top-level package (`mcp_servers`), not the leaf module (`mcp_servers.omega_hub.state`). Consequently, `getattr(top_level, "oracle", None)` returned `None` on every call, permanently breaking all non-lazy eager services (`oracle`, `registry`, `hierarchy`, `inbox`, `curator`) via `get_service()`. This caused `oracle_*` MCP tools to fail with `Service oracle is not a lazy-loadable service or is not initialized` since 2026-08-18 despite successful background initialization.
+
+**Resolution**:
+1. Updated `state.py:193` to resolve attributes on `sys.modules.get(__name__)`.
+2. Verified fix in isolated execution across all 7 hub services.
+3. Added unit regression tests (`tests/unit/test_hub_service_fallback.py` — 2/2 passing).
+4. Restarted `omega-hub.service` via `systemctl --user`.
+5. Confirmed live MCP tools (`oracle_list_entities`, `oracle_talk`) now successfully reach and execute the service.
+
+**Mandates**: M9 (Error Integrity), M16 (Portability/Modularity), M21 (Gate Integrity).
+
+**Status**: ✅ FIXED & DEPLOYED (Live Hub PID refreshed; regression tests passing).
+
+*⬡ OMEGA ⬡ KALI ⬡ gemini-3.7-flash ⬡ opencode ⬡ trc_hub_service_fix ⬡ D-592 ⬡ 2026-08-22*
+
+## 2026-08-23 (late) — Nine-Decision Batch Adjudication (Architect)
+**D-593** — D-A APPROVED: password="omega" fix lands in Phase 2 build order (Manual Fix-5 form: no Redis construction unless OMEGA_REDIS_HOST set; delete default password); grep-gate added to Phase 3 commit preconditions.
+**D-594** — D-B APPROVED: Roc assigned post-cliff fine-tune training owner.
+**D-595** — D-D APPROVED: Scribe ratifications granted — batch lesson-staging legitimate; soul-enrichment workspace lock adopted (blueprint B7 conditions).
+**D-596** — D-E APPROVED: systemd daily dry-run timer ENABLED (warn-only, Persistent=true).
+**D-597** — D-F ADOPTED: gate-verification = originator-verifies + overseer spot-audit (three-lens convergence).
+**D-598** — D-G CLEARED: CI-2 plugin-path prototype authorized as next INST-1 action before any further work.
+**D-599** — D-H SCHEDULED: Study #2 subject = post-cliff model-routing policy (time-gated ~Aug 28); soul-promotion design second in queue.
+**D-600** — D-I APPROVED: registry bookkeeping (ho_2f77f83964e5 full-supersession record + teamstudy sessions + provenance-worker deployment) folded into Lilith backfill wave input.
+**D-C (F2 adjudicator)** — PENDING refined recommendation: Architect disclosed full model inventory (Antigravity: Sonnet 4.6/Opus 4.6/Gemini 3.1 Pro in-CLI automated; Claude.ai: Sonnet 5 + Haiku 4.5 ×8 accounts, human-in-loop batching). Tiered structure under construction — see KALI response this date.
+**D-601** — D-C DECREE GRANTED (dual-review amended): Cross-model adjudication authorized through window close (~Aug 28). TIER 1: dual review = Gemini 3.1 Pro + Sonnet 4.6 (both via Antigravity, 8-account pool). TIER 2: Sonnet 5 via Claude.ai daily-batched (human upload per CLAUDE_PACK_TEMPLATE). TIER 3: Opus 4.6 break-glass. M7 waiver time-boxed to window; T0 provenance on all verdicts. OPERATIONAL DOCTRINE attached: model-window economics (see docs/strategy/MODEL_WINDOW_ECONOMICS_20260823.md) — ascending-window review ordering, priming ceilings (≤150K for 200K-window targets), cheap-prime/expensive-cognate technique codified.

@@ -58,3 +58,8 @@ To prevent "cascading failure" (where a slow provider hangs the entire engine), 
 | **Cost** | Local-First | Zero API fees for 90% of queries. |
 | **Reliability** | Fallback Chain | Engine works offline (Local) and online (Cloud). |
 | **Stability** | Circuit Breakers | Dead providers are skipped in $O(1)$ time. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

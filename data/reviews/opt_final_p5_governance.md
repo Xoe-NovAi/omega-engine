@@ -511,3 +511,8 @@ The Sprint C consolidation merged Quality + Scribe into Verity. But Verity has n
 ---
 
 *⬡ OMEGA ⬡ GOVERNANCE-P5 ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_opt_final_governance ⬡ SYNTHESIS*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

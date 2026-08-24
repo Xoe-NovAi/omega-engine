@@ -50,3 +50,8 @@ This research and its derived implementations are fully credited to the original
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ RESEARCH ⬡ v1.0.0 ⬡ R-32*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: RESEARCH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

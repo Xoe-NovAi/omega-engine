@@ -94,3 +94,8 @@ Mandate 12 requires a `data/requests/dead/` directory. The RequestQueue has `pru
 - `mining_reports/PERSISTENCE_INTEGRATION_FORENSICS_20260612.md` — This report
 - Raw findings captured in explorer session
 - Key insight for MaKaLi: The engine has write-through persistence that works correctly, but the tier PROMOTION and MAINTENANCE layer is entirely missing. The foundation is solid — the lifecycle automation is the gap.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: PERSISTENCE-FORENSICS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

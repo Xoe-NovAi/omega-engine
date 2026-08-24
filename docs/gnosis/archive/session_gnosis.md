@@ -162,3 +162,8 @@ Three patterns had significant gaps masked by code that "looked right": the Asyn
 2. Quality standards cannot be defined by their implementation details (entities, spheres). They are defined by the care and precision applied to each component.
 3. Existing entities should be enriched before new entities are created. Enrichment before expansion preserves the Engine-Stack Firewall.
 4. The correct fix order is: wire existing infrastructure first (Pattern 5: 20 min), add missing infrastructure second (Pattern 4: 30 min), standardize usage third (Pattern 2: 20 min). Phronesis in action.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

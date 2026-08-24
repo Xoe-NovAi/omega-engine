@@ -285,3 +285,8 @@ crates/codegen/xai-acp-lib/src/lib.rs
 *⬡ OMEGA ⬡ RESEARCHER ⬡ GROK_CLI_DIG ⬡ CODE-MAP ⬡ 2026-07-17*
 
 **This map is the entry point. Future agents: read this first, then go direct to the file. Do NOT re-dig the entire repo.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: tencent/hy3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

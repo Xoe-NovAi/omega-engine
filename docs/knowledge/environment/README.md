@@ -24,3 +24,8 @@ When you discover a hardware-specific optimization, document it here. Focus on:
 - **Exact configuration** that improved performance
 - **Baseline measurements** before and after
 - **Trade-offs** made (e.g., quality vs. speed)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

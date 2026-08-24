@@ -144,3 +144,7 @@ Fix omega-hub MCP not showing in OpenCode, resolve vault crypto issues, complete
 
 ## 🏁 Session Complete
 **Ready for compaction.** All critical state persisted to disk. Next session has clear actionable items.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

@@ -52,3 +52,8 @@ To prevent loss of progress, agents are mandated to use the **Hivemind MCP** for
 ---
 **Implementation Note for @Cline / @Antigravity**:
 Implement an `AgentSession` class in `orchestrator.py` to track these states. Replace the simple `dispatch_agent` return dict with an `AgentSession` object that can be queried for status.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

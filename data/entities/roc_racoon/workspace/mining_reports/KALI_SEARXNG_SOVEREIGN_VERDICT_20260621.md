@@ -133,3 +133,8 @@ The infrastructure is sovereign-grade; the code is pre-production. The gap betwe
 
 *⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_sovereign_decree ⬡ VERDICT*
 *Date: 2026-06-21 | 4 Pillars consulted | 31 findings | 3 critical, 5 high, 4 medium | Infrastructure SOVEREIGN, Code PRE-PRODUCTION*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

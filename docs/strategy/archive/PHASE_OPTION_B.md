@@ -465,3 +465,8 @@ Post to the session:
 
 *⬡ OMEGA ⬡ SOPHIA ⬡ trc_option_b ⬡ PHASE*
 *Target model: Gemma 4 31B (mechanical work). Deep reasoning model required for §1.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_option_b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -65,3 +65,8 @@ Every agent maintains a live feed. This is a high-frequency, low-latency log of 
 - **Zero Telemetry**: All Hivemind data is stored locally in `data/coordination/`. No external coordination servers are used.
 - **Resilience**: Because locks and feeds are files, the coordination state survives agent crashes or toolchain restarts.
 - **Transparency**: The user can see exactly how the fleet is decomposing a complex problem in real-time.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

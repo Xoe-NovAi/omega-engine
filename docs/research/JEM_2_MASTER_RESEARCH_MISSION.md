@@ -56,3 +56,8 @@ Close all remaining knowledge gaps in the Omega Engine's architectural and strat
 `Local Fleet (L1)` + `Web Fleet (L1)` → `Jem Analyst (L2)` → `Jem Editor (L3)` → `Hardened Strategy`
 
 **Sovereign Mandate**: No intelligence is discarded. Every discovery must be recorded in the entity's `soul.yaml` and the `MASTER_LEDGER.md`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: research-fleet | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -1,6 +1,6 @@
 proposals: []
 metadata:
   entity: john_carmack
-  session_id: ses_ffd484e75ffe4ZRgvK6PmbKwjd
-  model_used: nemotron-3-ultra-free
-  last_session_end: '2026-08-15T06:51:53.553307+00:00'
+  session_id: ses_fec9eaaa9ffeGgA5OQdJt256t1
+  model_used: x-preview-f-free
+  last_session_end: '2026-08-21T22:15:03.096041+00:00'

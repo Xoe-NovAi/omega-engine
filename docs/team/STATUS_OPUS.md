@@ -160,3 +160,8 @@ NEXT:
 | 4.0.0 | 2026-05-14 | Research program launched. Sovereign agent fabric created. Provider chain updated. AGENTS.md v3.0.0. |
 | 3.0.0 | 2026-05-14 | Founding PR merged. Full session history. Agent fleet reassigned. |
 | 2.1.0 | 2026-05-14 | Grand strategy recorded by OpenCode fleet. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opus-4.6 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

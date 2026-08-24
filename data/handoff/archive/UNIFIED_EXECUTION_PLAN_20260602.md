@@ -243,3 +243,8 @@ Sprint 0 ✅ ──→ Sprint 1 ──→ Sprint 2 ──→ Sprint 3 ──→ 
 *⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_unified_plan ⬡ UNIFIED-PLAN-v2.0.0*
 *Revised: 2026-06-03 after Kali parallel session verification*
 *HEAD: 37fdd88 | Tests: 307 ✅ | T2.1+T2.3 DONE | Sprint 1: READY*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

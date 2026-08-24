@@ -463,3 +463,8 @@ is defined above with exact file/line targets. No additional research needed.
 
 *⬡ OMEGA ⬡ ANTIGRAVITY ⬡ claude-sonnet-4.6-thinking ⬡ trc_synthesis ⬡ PHASE-I-FINALE*
 *"Six agents. Five platforms. One Hivemind. Conflicts resolved. The queue is set. Execute."*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: claude-sonnet-4.6-thinking | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

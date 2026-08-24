@@ -365,3 +365,7 @@ context_engineering:
 ### GAP-012: Token Budget for Distillation Pipeline (C-10.5 Integration)
 
 [Continued in Part 2...]
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_soul_gaps | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

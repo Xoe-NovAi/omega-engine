@@ -125,3 +125,7 @@ The UI must respect the hardware constraints of local inference. "Smoke and ligh
 
 *⬡ OMEGA ⬡ PRAGMATIC UI/UX ARCHITECTURE COMPLETE ⬡ 2026-08-08*
 *Focus: Intelligence, Performance, Stability, Inference.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

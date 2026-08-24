@@ -86,3 +86,8 @@ The Sovereign Crucible is a 3-pass cross-model training pipeline:
 ---
 *Last Updated: 2026-06-06 (Session 4 — Soul Integrity Restoration)*
 *Roc Racoon — Sovereign Miner & Knowledge Curator*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: CRUCIBLE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -137,3 +137,8 @@ The proper fix is for OpenCode to:
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_cwd_recovery ⬡ WORKAROUND-v1.1.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

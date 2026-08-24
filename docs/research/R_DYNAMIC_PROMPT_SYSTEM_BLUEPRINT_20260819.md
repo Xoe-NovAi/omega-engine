@@ -801,3 +801,7 @@ This blueprint integrates findings from all six research deliverables:
 ---
 
 *End of R_DYNAMIC_PROMPT_SYSTEM_BLUEPRINT_20260819.md*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

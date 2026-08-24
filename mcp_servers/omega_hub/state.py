@@ -189,8 +189,11 @@ async def get_service(name: str) -> Any:
                     gateway = _SG(model_gateway=model_gateway)
         return gateway
 
-    # Fallback to direct getattr for already initialized services
-    val = getattr(_state if '_state' in globals() else __import__('mcp_servers.omega_hub.state'), name, None)
+    # Fallback for already-initialized (eager) services: oracle, registry,
+    # hierarchy, inbox, curator. Use the leaf module via sys.modules[__name__]
+    # — __import__() returns the TOP-LEVEL package, which lacks these attrs.
+    _mod = sys.modules.get(__name__)
+    val = getattr(_mod, name, None)
     if val is not None:
         return val
     raise RuntimeError(f"Service {name} is not a lazy-loadable service or is not initialized.")

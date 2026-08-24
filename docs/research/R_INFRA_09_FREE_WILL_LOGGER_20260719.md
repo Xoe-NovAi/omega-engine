@@ -212,3 +212,8 @@ async def export_training_data(
 ---
 
 *⬡ OMEGA ⬡ PARANOID ⬡ o1 ⬡ opencode ⬡ trc_infra_09_free_will ⬡ 2026-07-19*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: o1 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

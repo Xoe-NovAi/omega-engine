@@ -182,3 +182,7 @@ PYTHONPATH=src python3 -m pytest tests/test_orchestrator.py -v -k "live"
 ---
 
 *Discovery Report reviewed and approved by Opus 4.6. Phase 1a and 1b implemented. Updated 2026-05-14.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: claude-opus-4 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

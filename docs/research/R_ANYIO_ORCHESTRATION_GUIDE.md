@@ -130,3 +130,8 @@ async def orchestrate():
 - [ ] Remote calls are wrapped in `move_on_after` or `fail_after`.
 - [ ] Task lifetimes are managed via `create_task_group()`.
 - [ ] `ExceptionGroup` handling is implemented for multi-provider failures.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

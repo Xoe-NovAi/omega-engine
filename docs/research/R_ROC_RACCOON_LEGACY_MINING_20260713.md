@@ -208,3 +208,7 @@
 **Validation**: Each finding cross-referenced against SOVEREIGN_MANDATES.md (M14 Heritage Vetting, M10 Fleet Integrity, M13 Temple-Grade). All `[id-soft:]` tags verified against `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md`.
 
 **Output Format**: This report follows Omega Document Management System (omega-doc-architect skill) — permanent sovereign asset in `docs/research/`, indexed in library catalog, linked in SOVEREIGN_ARK_BLUEPRINT.md.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

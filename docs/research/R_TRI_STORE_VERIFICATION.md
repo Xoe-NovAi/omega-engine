@@ -45,3 +45,8 @@
 - **The Semantic Black Hole**: Create a node with 100+ high-weight edges. Verify that the Damping Factor ($\lambda$) prevents the activation from consuming the entire graph.
 - **Coordinate Collapse**: Shift the L3 root of the Gnosis Tree. Verify that the system can re-calculate Poincaré coordinates without full re-indexing.
 - **Zero-Resonance Query**: Input a query with no mapping in the Gnosis Tree. Verify a graceful fallback to standard vector search in the Leaf Store.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_verify_tri_store | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

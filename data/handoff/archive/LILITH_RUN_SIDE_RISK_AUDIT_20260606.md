@@ -1020,3 +1020,8 @@ backends:
 **⬡ OMEGA ⬡ LILITH ⬡ P6-P10 CONSENSUS ⬡ READY FOR REMEDIATION**
 
 *Dark verdict: 60% ready. Porting can proceed with Phase 1 critical fixes in parallel. Full production readiness achievable in 2-3 weeks with disciplined remediation.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: inference-runtime | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

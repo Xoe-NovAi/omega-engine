@@ -79,3 +79,8 @@ The implementation agent should prioritize the following:
 2. Implement the cleaning logic as a set of modular functions (e.g., `clean_markdown()`, `clean_python()`).
 3. Ensure the script can be run as a standalone utility: `python3 scripts/prepare_notebooklm.py --output ./export`.
 4. Add a summary log at the end of execution showing the count of sources per notebook to verify they are under the 50-source limit.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

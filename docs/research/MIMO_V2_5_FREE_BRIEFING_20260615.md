@@ -526,3 +526,8 @@ For the Ryzen 5700U (Zen 2, 8C/16T, AVX2):
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_model_evaluation ⬡ RESEARCH-DOC*
 *Document created: 2026-06-15 | Classification: Model Evaluation Briefing*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_model_evaluation | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

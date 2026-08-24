@@ -165,3 +165,7 @@ flock -x /run/warp-reg-global.lock -c '
 
 *Part 1 of 3 — Architecture & Root Causes*
 *Next: Part 2 — Implementation Details & Code Patterns*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WARP-KB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

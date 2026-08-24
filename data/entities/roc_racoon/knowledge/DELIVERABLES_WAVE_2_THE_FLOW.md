@@ -56,3 +56,8 @@ Pillars are instructed to:
 1. Audit all `src/omega/` code for `asyncio` leaks and replace with `anyio`.
 2. Implement the `HandoffState` schema in `src/omega/oracle/handoff.py`.
 3. Update MCP server transport to Streamable HTTP.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: EXTRACTION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

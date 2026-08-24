@@ -295,3 +295,8 @@ The AAIF's origin story is instructive: "Three competitors (Anthropic, Block, Op
 3. **GOVERNANCE.md should define**: BDFL model with advisory board. Sandbox/Incubation/Graduated lifecycle for projects. Decision-making by lazy consensus (Apache Way). Role of the Oversoul hierarchy (Sophia as containing field).
 
 4. **Origin story**: Lead with the reclaimation narrative (PIVOT_LOG.md). The Omega Engine is a vision reclaimed from 14 months of architectural drift. Show the lineage without showing the cruft.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

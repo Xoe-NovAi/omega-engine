@@ -21,3 +21,8 @@ The "Local AI" space is flooded with stateless wrappers and cloud-first framewor
 
 ## 4. Launch Recommendation
 This project must be pitched to **Hacker News (Show HN)** as a **Sovereign Systems Engineering** breakthrough, not just another "AI wrapper." The HN community will validate the architecture, while the r/LocalLLaMA community will drive immediate local adoption.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: LAUNCH-LAB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

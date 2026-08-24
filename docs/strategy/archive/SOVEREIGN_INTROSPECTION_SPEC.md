@@ -81,3 +81,7 @@ To prevent the AI from becoming a "Yes-Man" that reinforces the user's delusions
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ trc_introspection_spec ⬡ SOVEREIGN-INTROSPECTION*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_introspection_spec | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

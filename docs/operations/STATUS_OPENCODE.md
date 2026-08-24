@@ -172,3 +172,8 @@ Every output must include:
 | 3.1.0 | 2026-05-14 | Phase 0.5 COMPLETE. Workspace purged. All infra locked. |
 | 3.0.0 | 2026-05-14 | Consolidated Copilot tasks. Infrastructure sprint defined. |
 | 2.1.0 | 2026-05-14 | Grand strategy recorded. Config cleanup tasks defined. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

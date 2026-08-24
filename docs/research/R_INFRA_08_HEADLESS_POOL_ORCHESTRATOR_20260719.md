@@ -209,3 +209,8 @@ async def rotate_credentials(self, pool: str, index: int):
 ---
 
 *⬡ OMEGA ⬡ PRACTICAL ⬡ qwen3-1.7b ⬡ opencode ⬡ trc_infra_08_pool ⬡ 2026-07-19*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3-1.7b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

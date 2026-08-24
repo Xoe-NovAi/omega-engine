@@ -98,3 +98,8 @@ The BUG_LOG.md is a standalone markdown file with no connection to the engine ru
 **Status**: OPEN (P1 — Qdrant wiring)
 
 **Note**: This is a Qdrant hybrid search wiring issue. The bag-of-words fallback works, but Qdrant (:6333) is not wired into the library. Moved to P1 as Qdrant integration is the appropriate scope.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

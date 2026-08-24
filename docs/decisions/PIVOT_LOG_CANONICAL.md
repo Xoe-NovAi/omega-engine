@@ -2504,3 +2504,8 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Gate**: `make test && make temple-grade && make hydration-report`
 - **L3 Principle**: L3-Compaction-Is-A-Forcing-Function — Every context compaction is a sovereignty checkpoint. The agent that recovers cleanly is stronger than one that never faced interruption. Build the receipt, not the workaround.
 - **Status**: 🔲 ACTIVE
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

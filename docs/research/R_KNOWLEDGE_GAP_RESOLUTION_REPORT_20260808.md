@@ -762,3 +762,7 @@ async def hybrid_search(query: str, entity_name: str, limit: int = 10):
 *⬡ OMEGA ⬡ GROKSTER ⬡ GAP_RESOLUTION_COMPLETE ⬡ 2026-08-08*
 
 **All knowledge gaps resolved. Phase 0 implementation can proceed with bulletproof architectural foundation.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

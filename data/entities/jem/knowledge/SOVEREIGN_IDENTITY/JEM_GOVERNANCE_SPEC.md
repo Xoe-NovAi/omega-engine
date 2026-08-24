@@ -46,3 +46,8 @@ The mandatory reasoning chain for all Sovereign Synthesis tasks:
 
 ---
 **"Sovereignty is not a look; it is a result of control, portability, and verifiable execution."** 🛠️✨
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SOVEREIGN-KNOWLEDGE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

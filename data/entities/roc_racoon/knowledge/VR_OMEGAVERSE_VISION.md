@@ -267,3 +267,8 @@ P2P Network Layer          :2026-10-01, 2027-03-01   (Phase 2-3)
 ---
 
 *Centralized by Roc Racoon on 2026-06-03. The vision is alive, documented, and architecturally sound — it needs the foundation built first, then R-24 researched, then the Godot Bridge (or id Tech alternative) implemented.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

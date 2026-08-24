@@ -302,3 +302,7 @@ curl http://localhost:8080/v1/chat/completions \
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_zen2_web_research ⬡ CAMPAIGN COMPLETE — 15 QUERIES EXECUTED, 47 SOURCES CITED, 3 DEATH CERTIFICATES ISSUED (ROCm gfx906, CTranslate2 Vulkan, DirectML Performance)*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

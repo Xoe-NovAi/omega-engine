@@ -543,3 +543,8 @@ Each entity is assigned a model based on **domain complexity** and **elemental r
 *Nothing lost. Everything cataloged.*
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ MINING COMPLETE ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -56,3 +56,8 @@ This document catalogs the high-fidelity recovery of the "Sovereign Extraction L
 - **FAISS Fsync Loop**: Physical commit of vector store updates to disk.
 - **Scholarly Authority Map**: Pre-defined weights for academic institutions.
 - **Classical Language Normalization**: Maps for archaic spelling variants.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

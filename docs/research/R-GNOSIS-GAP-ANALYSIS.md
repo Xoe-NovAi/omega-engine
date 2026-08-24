@@ -80,3 +80,8 @@ To bridge these gaps, the following technical primitives must be implemented in 
 - **Primitive**: JSON-based Structural Causal Model.
 - **Function**: Before moving L2 $\rightarrow$ L3, the model must draft a causal graph: `(Observation A) $\rightarrow$ (Mechanism B) $\rightarrow$ (Outcome C)`.
 - **Goal**: Ensure the "Universal Principle" is based on a causal mechanism, not a statistical correlation.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

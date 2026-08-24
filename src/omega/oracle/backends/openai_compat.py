@@ -226,16 +226,6 @@ class OpenAICompatProvider(RemoteProvider):
             )
 
 
-def create_openrouter_provider(config: ProviderConfig) -> OpenAICompatProvider:
-    """Create an OpenRouter provider with correct base URL."""
-    config.base_url = config.base_url or "https://openrouter.ai/api"
-    config.extra.setdefault("headers", {}).update(
-        {
-            "HTTP-Referer": "https://github.com/arcana-novai/omega-engine",
-            "X-Title": "Omega Engine",
-        }
-    )
-    return OpenAICompatProvider(config)
-
-
 # OpenAI provider factory removed per D-kal-164 sovereign dependency purge.
+# create_openrouter_provider() also removed 2026-08-22: dead code (zero callers)
+# carrying the same silent-default bug shape fixed in model_gateway._create_openrouter (M22).

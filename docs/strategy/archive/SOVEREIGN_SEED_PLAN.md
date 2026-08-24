@@ -54,3 +54,8 @@ Transition the Omega Engine from a stateless tool into a **Sovereign Runtime**.
 4. **The zRAM Buffer Rule**: Use the 14GB-18GB "Yellow Zone" for graceful degradation, not for permanent model residency.
 5. **The Sequentiality Mandate**: All multi-model reasoning must be sequential to preserve CPU cycles for zRAM compression and inference.
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

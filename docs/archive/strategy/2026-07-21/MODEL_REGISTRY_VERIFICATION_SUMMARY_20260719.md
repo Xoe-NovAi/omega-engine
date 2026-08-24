@@ -72,3 +72,8 @@ All validation gates passed
 ---
 
 *⬡ OMEGA ⬡ CLINE ⬡ VERIFICATION-SUMMARY ⬡ 2026-07-19*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: VERIFICATION-SUMMARY | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

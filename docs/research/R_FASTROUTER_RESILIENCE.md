@@ -112,3 +112,8 @@ The `HealthMonitor` background probe loop can be configured to ping the FastRout
 1. **Capability Warnings**: When falling back to local, the `OracleResponse` should include a metadata flag `is_sovereign_fallback: true`. This allows the UI to notify the user: *"Switching to local sovereign mode for resilience."*
 2. **Local Model Warming**: Ensure the `NativeGGUFProvider` keeps the default fallback model (e.g., Qwen3-1.7B) "warm" in RAM to avoid a 5-10s load delay during a critical failover.
 3. **Timeout Aggression**: Set the `FastRouter` timeout more aggressively (e.g., 15s) than the `NativeGGUF` timeout to ensure the switch happens before the user perceives a hang.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

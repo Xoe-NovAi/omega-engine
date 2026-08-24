@@ -68,3 +68,8 @@ The `soul.yaml` acts as the **Personalized Filter** for the global KB:
 | **Phase 2** | Wire the L1$\rightarrow$L2$\rightarrow$L3 pipeline to generate the Gnosis Tree | Hierarchical Indexing |
 | **Phase 3** | Build the Concept Graph based on the 14 Mandates | Relationship Mapping |
 | **Phase 4** | Deploy the "Divergence Detector" to trigger autonomous research | Perpetual Evolution |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_architecture | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

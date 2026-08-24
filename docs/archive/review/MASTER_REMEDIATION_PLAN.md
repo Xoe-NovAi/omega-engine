@@ -154,3 +154,8 @@ Once all findings are fixed, add these to the CI pipeline:
 ---
 
 *End of MASTER_REMEDIATION_PLAN. Updated: 2026-05-23. All 29 findings FIXED.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

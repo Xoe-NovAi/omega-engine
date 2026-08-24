@@ -78,3 +78,8 @@ Gemini CLI implements **ACP (JSON-RPC 2.0)** for programmatic control.
 | **MCP Config** | `/home/arcana-novai/.config/gemini/mcp_config.json` |
 | **Session Store** | `/home/arcana-novai/.gemini/tmp/<project>/chats/*.jsonl` |
 | **Tmp Outputs** | `/home/arcana-novai/.gemini/tmp/<project>/tool-outputs/` |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_platform_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

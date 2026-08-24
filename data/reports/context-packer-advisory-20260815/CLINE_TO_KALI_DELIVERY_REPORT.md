@@ -11,7 +11,7 @@
 
 ## 1. What Kali Needs to Know (30-second read)
 
-**Kali's original request** (advisory review of Context Packer + Carmack report *before* refactor) **has been executed**, and the refactor has since landed (v3). My audit of the **current** v3 state found **9 issues beyond Carmack's report**. One is a **critical silent-corruption bug — already FIXED and shipped** (commit `5a145f9d`). The remaining **8 are Open and need refactor-owner action** (F2 is the priority).
+**Kali's original request** (advisory review of Context Packer + Carmack report *before* refactor) **has been executed**, and the refactor has since landed (v3). My audit of the **current** v3 state found **9 issues beyond Carmack's report**. One is a **critical silent-corruption bug — already FIXED and shipped** (commit `e81e28d9`). The remaining **8 are Open and need refactor-owner action** (F2 is the priority).
 
 **Bottom line**: the v3 refactor is *mostly right* (budgets fail-closed, config is SSOT, curator works, both ship packs = 12 slots) but it contains one *dead feature* (LITM ordering — F2) and several *silent-failure risks* that will bite the next config editor (F3, F4).
 
@@ -21,7 +21,7 @@
 
 | # | Deliverable | Location / Evidence | Status |
 |---|-------------|--------------------|--------|
-| 1 | **Full advisory R-doc** | `docs/research/R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md` (209 lines, 9 findings, evidence, priority table) | ✅ committed (5a145f9d) |
+| 1 | **Full advisory R-doc** | `docs/research/R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md` (209 lines, 9 findings, evidence, priority table) | ✅ committed (e81e28d9) |
 | 2 | **Critical fix (F1)** | `packer.py:157` bare `&` → `&amp;`; regression test `test_escape_bare_ampersand_roundtrip` | ✅ 28/28 contract tests pass |
 | 3 | **Web Claude pack: `sovereign-audit`** | `context_packs/sovereign-audit/generated/` — 11 XML bundles + manifest (12 slots), 306,103 tokens | ✅ curated OK |
 | 4 | **Web Claude pack: `tech-architecture-research`** | `context_packs/tech-architecture-research/generated/` — 11 XML bundles + manifest (12 slots), 309,612 tokens | ✅ curated OK |
@@ -33,7 +33,7 @@
 
 | # | Finding | Severity | Verdict / Action Needed |
 |---|---------|----------|--------------------------|
-| **F1** | `_escape_bare_xml_chars` escaped bare `&` as `&lt;` → round-trips to `<`, silently corrupting every bundled file (`AT&T` → `AT<T`) | **Critical** | ✅ **FIXED** (5a145f9d) + regression test |
+| **F1** | `_escape_bare_xml_chars` escaped bare `&` as `&lt;` → round-trips to `<`, silently corrupting every bundled file (`AT&T` → `AT<T`) | **Critical** | ✅ **FIXED** (e81e28d9) + regression test |
 | **F2** | `litm_zone` never set in production → `LITMUShapedStrategy` gets all-priority-2 → U-shape is a placebo; contract tests pass on synthetic data only | **High** | ⏳ **DECIDE**: wire per-theme `litm_zone`/`priority` into config schema, or delete the strategy. Carmack said delete; I recommend wire (20 lines). |
 | **F3** | `include`/`exclude` are dead config — file in `include` but not in any `themes` list is **silently dropped** | **Medium** | ⏳ Fail-closed orphan check: every `include` entry must resolve to ≥1 theme or raise `[PACK-FAIL]` (M23) |
 | **F4** | `reserved_output` (50K) parsed but never enforced — both ship packs would FAIL if honored (306K/309K vs 270K effective) | **Medium** | ⏳ Enforce in `validate_pack` + `curate_packs.py` |
@@ -68,7 +68,7 @@
 | Handoff packet | `ho_8bfa50cb1e1d` (accepted `cline/omega-engine` 2026-08-15; completed) |
 | Task registry | `packer-review-grokcli-20260808` → `completed` (2026-08-15) |
 | Execution task | `context-packer-advisory-review-20260815` (cline registry) |
-| Commits | `5a145f9d` (fix + R-doc) · `3148ddaa` (lesson distillation) |
+| Commits | `e81e28d9` (fix + R-doc) · `3148ddaa` (lesson distillation) |
 | Workspace lock | `context-packer-review` — acquired & released |
 | Hivemind | broadcast `ses_20260815_cline_context_packer_review` (intent=status) + this report |
 | R-doc (SSOT) | `docs/research/R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md` |

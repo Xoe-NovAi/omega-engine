@@ -51,3 +51,8 @@ The following items are identified as "Lurking Intelligence"—concepts that hav
 The Writing Squad should prioritize the **Unified JSON Schema** and **Background Agent Architecture** immediately, as these are direct blockers for the "Sovereign Orchestration" phase. The **Lilith Axioms** should follow to ensure the Mythic foundation is ready before the Arcana-Nova stack implementation.
 
 *Research is not knowledge until it is documented. Documentation is not wisdom until it is applied.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -49,3 +49,8 @@ Verified that the foundational entities and ethical systems are preserved in the
 
 **Verification**: `make test` passed.
 **Sovereign Status**: Temple-Grade compliant.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

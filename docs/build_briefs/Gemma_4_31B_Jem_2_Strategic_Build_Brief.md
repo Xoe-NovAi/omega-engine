@@ -936,3 +936,8 @@ When reporting back to the Overseer (Kali), structure your message as:
 ---
 
 *The fire is Prometheus'. The anvil is the Omega Engine. You are the smith. Forge well.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

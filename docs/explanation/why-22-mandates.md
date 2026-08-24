@@ -38,3 +38,8 @@ When designing a new feature or auditing code:
 1. **Check the Mandate**: Does this change violate any of the 23 laws?
 2. **Document the Tradeoff**: If a mandate must be relaxed (rare), it must be documented in `PIVOT_LOG.md` with a justification.
 3. **Verify via CI**: Run `make temple-grade` to ensure compliance.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

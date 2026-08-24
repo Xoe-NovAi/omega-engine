@@ -565,3 +565,8 @@ must be set correctly.
 *End of Review — Heritage Gatekeeper Doom Guy, 2026-06-19*
 *Ratified by Sovereign Mandate M14 (Heritage Vetting) and M1-M22 baseline.*
 *PIVOT_LOG entry: D-review-20260619 — Heritage & Performance Review of Fleet Model Proposal*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

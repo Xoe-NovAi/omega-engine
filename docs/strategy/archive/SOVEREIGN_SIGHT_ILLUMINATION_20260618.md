@@ -102,3 +102,8 @@ To transition from a "hardened runtime" to an "integrated intelligence," we must
 ---
 
 *⬡ OMEGA ⬡ MAKALI ⬡ gemini-3.5-flash ⬡ opencode ⬡ trace_sovereign_sight ⬡ ILLUMINATION ⬡ v1.0.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.5-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

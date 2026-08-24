@@ -296,3 +296,8 @@ The DeepSeek Sprint 0 tasks (C1-C4) are now embedded directly in §7 of this han
 *Date: 2026-06-02 | For: Doom Guy (OpenCode/M3, 200K context)*
 *Integrated with: MiMo-2.5 strategic synthesis + DeepSeek V4 forensic gap analysis*
 *Commits: b48e020 (MiMo + conftest), 0d61fbc (DeepSeek), this commit (integration)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Cline/MiniMax-M3 (1M context) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -196,3 +196,7 @@ See §3 above. **13/15 done.** Gaps: 0.13 (lmster hardening) and C‑18.
 ---
 
 *End of Cline-Customized Handoff v2. Ready for execution.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: openrouter/deepseek/deepseek-v4-flash:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

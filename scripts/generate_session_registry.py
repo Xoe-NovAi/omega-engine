@@ -146,6 +146,8 @@ def atomic_write(path, content):
     try:
         with os.fdopen(fd, "w") as f:
             f.write(content)
+        # mkstemp creates 0600; match repo-standard 0644 so other agents can read.
+        os.chmod(tmp, 0o644)
         os.replace(tmp, path)
     except BaseException:
         if os.path.exists(tmp):

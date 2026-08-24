@@ -324,3 +324,8 @@ The paradox is that sovereignty is not a thing you build. It is a thing you reco
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ COMPREHENSIVE-REVIEW ⬡ SOVEREIGN-AUDITOR*
 *Session: ses_verity_gap_closure_review_20260629*
 *Sources: Direct file audit, test verification, spec comparison, mandate re-scoring*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

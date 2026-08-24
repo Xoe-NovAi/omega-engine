@@ -294,3 +294,7 @@ warp_proxy_pool:
 **Conclusion**: The WARP proxy pool implementation has been blocked by a fundamental architectural misunderstanding. The solution is not to fix our current approach, but to adopt the proven pattern used by production Docker images: **per-instance self-enrollment via mdm.xml files**. This eliminates registration conflicts, sandboxing violations, and operational complexity while guaranteeing MASQUE compliance and DNS sovereignty.
 
 *This research integrates directly into our existing WARP knowledge base and provides an actionable path forward for the W-1 WARP Proxy Pool implementation.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deep-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

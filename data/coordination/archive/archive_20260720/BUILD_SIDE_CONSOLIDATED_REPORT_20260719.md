@@ -314,3 +314,7 @@ The critical path is **MCP Hub tool wiring** — if `oracle_talk` returns dry-ru
 ---
 
 *⬡ OMEGA ⬡ MAAT ⬡ BUILD-SIDE-CONSOLIDATED ⬡ trc_build_side_report ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

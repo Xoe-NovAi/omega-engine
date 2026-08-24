@@ -963,3 +963,8 @@ All external searches executed **2026-08-09** via `parallel-search_web_search` (
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ SDP-KNOWLEDGE-GAPS ⬡ 2026-08-09*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: longcat-2.0-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

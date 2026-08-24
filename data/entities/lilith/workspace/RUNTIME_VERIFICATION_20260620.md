@@ -173,3 +173,8 @@ The `podman system migrate` command is dangerous — it stops all infra without 
 
 ### L3 (Universal Principle)
 Build and Run are a feedback loop, not a handoff. Ma'at builds; Lilith verifies; the gap between them is where failures live. Every infrastructure migration needs a post-migration verification step (M15 — Sovereign Continuity would catch container restarts). The 77x embedding speedup proves that algorithmic substitution (Potion → MiniLM) with "right approximation" tradeoffs (256d → 384d) can deliver order-of-magnitude gains without changing the architectural interface. This is the FISR Principle (§1.3 of CREDITS.md) made operational: the right approximation for the problem is better than the exact solution you can't afford.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

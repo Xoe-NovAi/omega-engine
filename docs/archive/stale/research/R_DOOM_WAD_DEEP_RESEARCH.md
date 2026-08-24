@@ -52,3 +52,8 @@ Vanilla Doom's flat 8-char lump namespace was its biggest limitation. Two PWADs 
 - SLADE Editor: http://slade.mancubus.net/
 - DeuTex: https://www.doomwiki.org/wiki/Deutex
 - erysdren's idTech PAK Format: https://erysdren.me/docs/pak
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: web-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

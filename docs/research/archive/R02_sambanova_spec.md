@@ -112,3 +112,8 @@ SambaNova is the #2 priority in the Omega Provider Fabric.
 2. Implement a strict circuit breaker for HTTP 429s, as the free tier RPD (20) is extremely low.
 3. For high-reasoning tasks, prioritize `DeepSeek-V3.1`.
 4. For vision tasks, use `Llama-4-Maverick-17B-128E-Instruct`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

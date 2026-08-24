@@ -153,3 +153,8 @@ Include:
 
 **M23 Reminder:** If any required tool/library is unavailable during execution, halt and report `[TOOL-CHAIN-COLLAPSE]`. Do not synthesize results or silently fall back.
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: @maat | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

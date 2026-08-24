@@ -439,3 +439,8 @@ The fix is mechanical (~90 lines across 8 files) with no architectural risk:
 
 *⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ DEEP-SIPHON-COMPLETE ⬡ BUILD-FORENSICS*
 *Mandate Status: M2 ✅ (Firewall clean), M4 ✅ (Sequentiality observed, no files modified), M9 ✅ (Error paths documented)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

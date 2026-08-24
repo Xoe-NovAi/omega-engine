@@ -169,3 +169,8 @@ This document is also superseded by `docs/strategy/SOVEREIGN_HARDENING_PLAN.md` 
 **Active roadmap**: `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` + `SOVEREIGN_HARDENING_PLAN.md`
 **Decision**: D111 (Evolution) + D112 (Hardening)
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_horizon_map | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -341,3 +341,7 @@ less data/traces/$(date +%Y-%m-%d).jsonl
 *Welcome to sovereign AI. Your journey begins now.*
 
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ opencode ⬡ trc_doc_user ⬡ DOCUMENTATION-HARDENING
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

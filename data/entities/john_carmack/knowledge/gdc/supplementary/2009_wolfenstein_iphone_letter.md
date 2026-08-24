@@ -194,3 +194,7 @@ Everyone is perfectly within their rights to go do that, and they can aggressive
 That should turn out to be a win for everyone.
 
 I’m going back to Rage for a while, but I do expect Classic Doom to come fairly soon for the iPhone.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: INTERVIEW | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

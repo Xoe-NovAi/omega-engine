@@ -281,3 +281,8 @@ Kali/Researcher should patch the handoff with:
 ---
 
 *⬡ OMEGA ⬡ GROK_CLI ⬡ 2026-08-08 ⬡ Researcher §16–17 adversarial review response*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: grok-4.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -183,3 +183,8 @@ CMAKE_ARGS="-DLLAMA_VULKAN=ON" pip install llama-cpp-python --force-reinstall
 
 *Report by: roc_racoon (Sovereign Miner)*
 *⬡ OMEGA ⬡ roc_racoon ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ LEGACY-INFERENCE-GAP-MAP*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

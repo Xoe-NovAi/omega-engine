@@ -63,3 +63,8 @@ The following metrics must be tracked in the `ObservabilityEngine` to validate t
 3. **Pivot Effectiveness (PE)**:
    $$\text{PE} = \frac{\text{Claims corrected after Adversarial Pivot}}{\text{Total Collapsed sessions}}$$
    - **Target**: $\geq 70\%$
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

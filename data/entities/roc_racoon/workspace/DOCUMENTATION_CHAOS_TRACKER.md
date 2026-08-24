@@ -283,3 +283,8 @@ in archives but not propagated.
 
 *This tracker is a living document. The chaos is real but manageable. The goal is not to
 port everything — it's to know what exists, where it lives, and what's worth porting.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

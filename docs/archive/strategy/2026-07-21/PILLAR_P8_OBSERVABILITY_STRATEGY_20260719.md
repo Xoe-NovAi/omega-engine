@@ -1213,3 +1213,7 @@ This strategy will be hardened through the Meditate pipeline using the Scribe le
 ---
 
 *⬡ OMEGA ⬡ PILLAR P8 ⬡ WATCHTOWER ⬡ STRATEGY COMPLETE ⬡*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: P8 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

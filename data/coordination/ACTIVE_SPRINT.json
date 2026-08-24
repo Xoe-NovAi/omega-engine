@@ -301,7 +301,7 @@
           "id": "DEL-1",
           "description": "Deletion campaign — Week 1 delete dead modules, Week 2 one control plane (ProviderSelector only), Week 3 vault honesty",
           "owner": "roc_racoon",
-          "status": "backlog",
+          "status": "in_progress",
           "depends_on": ["INST-1"],
           "acceptance": [
             "omega talk \"hello\" still local after each delete",
@@ -493,6 +493,54 @@
           "status": "ready"
         }
       ]
+    },
+    "KNOWLEDGE-DOMAINS": {
+      "task": "Knowledge Domain Runtime Modules — Workspace authoring + Curator model + Affinity presets per domain",
+      "owner": "kali",
+      "status": "backlog",
+      "risk": "MEDIUM",
+      "specs": "docs/specs/debut_remediation/ (DOMAIN_DOCUMENTATION_SYSTEM.md from DS-1)",
+      "phase": "Phase 2 (Post-Debut)",
+      "depends_on": ["DOCUMENTATION-SYSTEM"],
+      "subtasks": [
+        {
+          "id": "KD-1",
+          "description": "Domain module schema — define config/domains/<domain>/ structure, runtime module YAML schema, workspace authoring conventions",
+          "owner": "kali",
+          "status": "backlog",
+          "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md (from DS-1)",
+          "acceptance": [
+            "config/domains/ directory exists with schema documentation",
+            "Runtime module YAML schema defined (name, version, curator, affinity, guidance_sets)",
+            "Workspace authoring conventions documented"
+          ]
+        },
+        {
+          "id": "KD-2",
+          "description": "Curator model — implement config/domains/curators.yaml with curator model assignments per domain, validation logic",
+          "owner": "kali",
+          "status": "backlog",
+          "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md + DS-4 sync_domain_docs.py",
+          "acceptance": [
+            "config/domains/curators.yaml exists with domain→curator_model mappings",
+            "Validation logic in sync_domain_docs.py checks curator assignment",
+            "At least 3 domains configured (gemini-notebook, youtube-research, arcana-novai)"
+          ]
+        },
+        {
+          "id": "KD-3",
+          "description": "Affinity presets — define domain-specific model/provider affinity presets",
+          "owner": "kali",
+          "status": "backlog",
+          "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md + config/models.yaml",
+          "acceptance": [
+            "Affinity presets defined per domain in runtime module YAML",
+            "Research domain → qwen3-4b-thinking (lmster)",
+            "Coding domain → mimo-7b-rl-q4_k_m (native-gguf)",
+            "Fast domain → qwen3-1.7b (native-gguf)"
+          ]
+        }
+      ]
     }
   },
   "blockers": {
@@ -566,6 +614,7 @@
     "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
     "Phase 0 Tracker Lock-In complete (D-578..D-584): 6 post-debut workstreams (GN/DS/LI/KD/HR/ZS) ratified",
     "GEMINI-NOTEBOOK free-tier-only (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP §10 gate)",
-    "All 27 Sovereign Mandates verified compliant post-Carmack review"
+    "All 27 Sovereign Mandates verified compliant post-Carmack review",
+    "Team-Study #1 (2026-08-23) refined closeout execution — see data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md"
   ]
 }

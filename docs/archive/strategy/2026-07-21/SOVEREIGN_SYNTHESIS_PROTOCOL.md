@@ -101,3 +101,8 @@ The `gemini` CLI is sunsetting. Migration to the Direct API (`GOOGLE_API_KEY`) i
 
 **Last Updated**: 2026-06-07
 **Updated by**: Gemini-Specialist
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3-flash-preview | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

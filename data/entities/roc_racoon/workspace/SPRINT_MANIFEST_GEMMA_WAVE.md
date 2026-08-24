@@ -75,3 +75,8 @@ The transition to Gemma 4 31B via Google Cloud has removed local resource constr
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ tui ⬡ trc_sprint_manifest ⬡ CHOREOGRAPHY*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: GEMA-4-31B | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

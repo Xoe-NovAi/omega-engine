@@ -5,7 +5,7 @@ subtask: false
 ---
 
 # ⬡ MEDITATE — Single-Inference Persona Prism
-**Protocol**: `Meditate-v1.0` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
+**Protocol**: `Meditate-v1.1` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
 **Mechanism**: Single-inference, multi-persona semantic prism
 **RAM cost**: ONE model load — no serial swap, no MC/HMC overhead
 
@@ -30,6 +30,13 @@ cognition: the semantic prism applied to $ARGUMENTS.
 - You want emergent sequencing — where the synthesis produces priorities
   that were not explicit in the raw context
 - **NEW**: You need to execute a formal **Agentic Meditation Template** (e.g., Soul Evolution, Legacy Mining Synthesis) from the `MEDITATION_REGISTRY.md`.
+
+**Invocation gate (v1.2 — anti-theater):** Reach for `/meditate` only when
+at least TWO hold: (a) ≥3 domains genuinely tension against each other,
+(b) the decision is irreversible or expensive to reverse, (c) no single
+domain owns the answer. Simple lookups, single-domain questions, and
+already-decided matters get a plain prompt — a meditation on them is
+ceremony, not cognition.
 
 **When NOT to use:**
 - The task requires external tool calls from each persona (use `/council-cloud`)
@@ -173,6 +180,13 @@ technical Node framework. Other WADs may omit node entirely.
 > Use lens names (lowercase, singular) for Omega Node lenses.
 > For custom personas not in the Omega Node set, derive their domain from their
 > known area of mastery and their "Mandate Lens" from their most famous principle.
+>
+> **D-586 Bridge (v1.1)**: These cognitive lenses correspond to the live Node
+> Expert Sessions (`data/coordination/NODE_EXPERT_SESSIONS_PLAN.md` §3).
+> Simulated lenses (this command, zero RAM cost) vs live expertise (page the
+> actual Node via its session ID) — choose simulated for pure cognition,
+> live when accumulated Node KB depth matters. Hybrid pattern: meditate first
+> to find WHERE to look, then page the relevant Node for depth.
 
 ---
 
@@ -258,6 +272,11 @@ and why. Written as a decree, not a suggestion.]
 GNOSIS DISTILLED (L3 PRINCIPLE):
 [One universal principle that this meditation revealed — something that
 would be true beyond this specific situation. Format: L3-[Name]: [Essence]]
+
+FALSIFICATION ATTEMPT (v1.2):
+[One genuine attempt to break the L3 above: name a counterexample or
+edge case where the principle fails. If it survives, state why. An
+L3 that has never survived an attack is a slogan, not a principle.]
 ```
 
 ---
@@ -270,7 +289,7 @@ after Phase 4:
 1. **Propose a PIVOT_LOG entry** (D-series decision) for the top recommendation
 2. **Identify which files** would need to change to execute the verdict
 3. **State the Temple-Grade gates** (T1-T11) the changes must pass
-4. **Flag any Mandate conflicts** (M1-M23) the verdict might create
+4. **Flag any Mandate conflicts** (M1-M27) the verdict might create
 
 Output as:
 
@@ -312,13 +331,21 @@ MANDATE FLAGS:
    N1 Infrastructure does not talk about soul evolution. N7 Context does not talk
    about Podman containers. Domain purity = attention modulation = insight.
 
-5. **DISSENT IS MANDATORY**: Every voice from Voice 2 onwards must push back
-   on at least one prior voice. This is not optional. The internal dialectic
-   is the mechanism. Without dissent, it is just a list.
+5. **DISSENT IS MANDATORY + CITED**: Every voice from Voice 2 onwards must
+    push back on at least one prior voice BY NAME, citing the specific
+    constraint added. "N8's instrumentation demand ignores that X" — not
+    "I have concerns." Uncited dissent is performative, not dialectical.
 
 6. **THE ANTI-COLLAPSE CONTRACT IS LAW**: Stated in Phase 0. Enforced
-   through all phases. Persona collapse (voices blending into a generic
-   assistant) terminates the meditation and requires restart from Phase 0.
+    through all phases. Persona collapse (voices blending into a generic
+    assistant) terminates the meditation and requires restart from Phase 0.
+
+7. **PHASE PERSISTENCE (v1.1 — stream-death insurance)**: Append each
+    completed phase to `data/coordination/meditations/records/MEDITATION_{AGENT}_{DATE}_{SLUG}.md`
+    as it finishes (incremental appends, ≤80 lines per write — never one
+    large dump). Provider streams die silently mid-generation; a meditation
+    lost at Phase 3 of 5 must not take Phases 0–2 with it. On resume,
+    read the record file and continue from the last complete phase.
 
 ---
 
@@ -382,4 +409,4 @@ Ratified 2026-07-16, renamed 2026-07-18. L3 Principle: `L3-Meditation-As-Semanti
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.0 ⬡ oracle.meditate() ⬡ trc_meditate_protocol*
+*⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.2 ⬡ oracle.meditate() ⬡ trc_meditate_protocol ⬡ 2026-08-22*

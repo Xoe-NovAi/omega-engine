@@ -96,11 +96,23 @@ inference:
     priority: 6
     enabled: true
     description: OpenCode Zen - CLI-exclusive cloud models
+    # M22 repair 2026-08-22: endpoint forensically extracted from ~/.opencode/bin/opencode
+    # binary provider registry ("api":"https://opencode.ai/zen/v1", @ai-sdk/openai-compatible).
+    # NOTE: _load_provider_fabric() passes ONLY this flat chain entry to the factory —
+    # the inference.providers: dicts are NOT read for base_url.
+    base_url: https://opencode.ai/zen/v1
+    # Credential via env var (resolved by model_gateway env: support, 2026-08-22).
+    # Export before engine-path zen calls: key lives in ~/.local/share/opencode/auth.json.
+    # Unset var = entry dropped cleanly (no garbage bearer token); call will 401 until set.
+    api_key: env:OPENCODE_API_KEY
     is_cloud: true
   - provider: cline
     priority: 7
     enabled: true
     description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
+    # M22 repair 2026-08-22: endpoint per CLINE_PROVIDER_ACTIVATION_AUDIT_20260822.md
+    # (openai_compat.py:94 URL math -> https://api.cline.bot/api/v1/chat/completions).
+    base_url: https://api.cline.bot/api
     is_cloud: true
   - provider: anthropic
     priority: 8

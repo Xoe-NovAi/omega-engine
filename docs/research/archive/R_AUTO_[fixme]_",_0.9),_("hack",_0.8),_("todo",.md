@@ -6286,3 +6286,8 @@ Explicit markers of imperfection are the most efficient pointers to the next nec
 **L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
 
 **Source**: res_20260601__FIXME_____0_9_____H
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: auto-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

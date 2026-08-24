@@ -539,3 +539,7 @@ If you're new to designing research jobs in Omega, follow this starter guide:
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp_kb ⬡ 2026-07-22*
 *This is Part 6 of 8. Continue to Part 7 for Living Document Maintenance and Evolution.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

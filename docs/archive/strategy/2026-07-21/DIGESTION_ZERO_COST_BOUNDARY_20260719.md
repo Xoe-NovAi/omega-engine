@@ -170,3 +170,7 @@ PHASE 4 (Kali):      Read 2 Syntheses → Write FINAL_SYNTHESIS.md + RESEARCH_GA
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_digestion_boundary ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

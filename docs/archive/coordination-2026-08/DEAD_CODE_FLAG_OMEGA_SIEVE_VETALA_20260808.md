@@ -85,3 +85,8 @@ pattern lists. Default recommendation: **(a) remove** — the live `SovereignSie
 
 - **Owner**: @kali (audit) → Architect/Ma'at (approval) → N3 Engineering (execution)
 - **Not**: Part of the Light/Dark → Build/Runtime nomenclature task (separate concern, done 2026-08-08)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

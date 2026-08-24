@@ -223,3 +223,7 @@ Every major Omega Engine feature traces to a specific conversation in these expo
 ---
 
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_mining ⬡ STRIKE-COMPLETE
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -26,3 +26,8 @@ To launch the fleet using the native OpenCode runner (and the selected cloud mod
 
 ## 🛠️ OPERATIONAL MANDATE
 Always verify the `opencode.json` agent keys before calling the `task` tool. If a subagent call aborts, check the JSON keys immediately. Do NOT use delegation tools for native subagent orchestration.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: NATIVE-SUBAGENTS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

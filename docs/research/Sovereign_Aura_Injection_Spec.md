@@ -111,3 +111,8 @@ class AuraInjector:
 - **Council Tension**: Initial tests suggest that the `Polymathic Council` can sometimes make the response too clinical. The `Voice Constraint` layer is critical to pull the reasoning back into the entity's specific mythic persona.
 - **Lesson Decay**: Soul lessons can become stale. A future iteration should include a 'decay' or 'weight' factor for lessons based on their age or frequency of use.
 - **Context Budget**: The full blend can be token-heavy. For T3 entities or simpler tasks, the `Archetype Logic` can be simplified to just the `System Prompt` without the full `Council` and `Protocol`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -143,3 +143,8 @@ soul_evolution:
 _For: Builder mode (Gemma 4 31B)_
 
 Start with the highest-impact, lowest-risk change: add `status` and `certainty` fields to `lessons_learned` in soul.yaml templates. This requires modifying: (1) `src/omega/oracle/entity_registry.py:entity_scaffold()` to include new fields in scaffolded soul.yaml, (2) `soul_updater.py` to write status=certainty on new entries, (3) the Gnosis Preservation Protocol to prompt for certainty scores. Drift detection and dream pass are Phase 2 work.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

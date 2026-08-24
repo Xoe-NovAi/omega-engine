@@ -529,3 +529,8 @@ The integrated recommendations prioritize the P0 product DoD (8 items) over P1 h
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ laguna-s-2.1-free ⬡ opencode ⬡ trc_synthesis ⬡ 2026-08-08 ⬡ Context Packer v3 research synthesis complete*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: laguna-s-2.1-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

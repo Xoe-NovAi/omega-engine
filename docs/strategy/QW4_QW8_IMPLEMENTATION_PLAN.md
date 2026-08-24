@@ -341,3 +341,8 @@ async def get_context_pressure(session_id: str) -> dict:
 ---
 
 *⬡ OMEGA ⬡ IMPLEMENTATION ⬡ QW4 ⬡ QW8 ⬡ PLAN ⬡ 2026-08-10*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: QW4 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

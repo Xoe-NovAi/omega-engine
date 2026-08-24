@@ -69,3 +69,8 @@ I have indexed the Antigravity integration roadmap and identified the following 
 3.  **Instruct Cline-M3**: I am standing by to provide targeted legacy code fragments for his Antigravity mapping upon request.
 
 ⬡ OMEGA ⬡ GEMINI_CLI ⬡ VALIDATED ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-validation | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

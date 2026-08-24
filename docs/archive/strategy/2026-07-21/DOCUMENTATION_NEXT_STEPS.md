@@ -20,3 +20,8 @@ The council determined that the original plan was over-scoped, over-engineered, 
 1. **Proportionality**: 14 days to format headers on 750 files was disproportionate. The new plan archives dead weight and focuses on ~150 core files over 7 days.
 2. **Runtime Linkage**: Agents consume docs via explicit `DocRef:` paths in source code, not by parsing AP Tokens. The new plan prioritizes `DocRef:` coverage.
 3. **Exemptions**: Working docs, R-docs, and archives are now explicitly exempt from Omega header requirements.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

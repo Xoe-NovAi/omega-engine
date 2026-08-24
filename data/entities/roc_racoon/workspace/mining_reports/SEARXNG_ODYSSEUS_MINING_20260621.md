@@ -127,3 +127,8 @@ Priority order:
 **L2 (Insight)**: The crash loop is entirely preventable — Odysseus solved the same problem via image pinning (issue #1414 — 2026.6.2 broke with `KeyError: 'default_doi_resolver'`) and a simpler health check hitting `/` instead of the nonexistent `/healthz`. The 60s graceful shutdown pattern strongly suggests the new 2026.6.20 image may have added validation that fails on the empty `secret_key: ""` in settings.yml.
 
 **L3 (Universal Principle)**: When container health checks use endpoints the software doesn't expose, the entire deployment is a "zombie" — it appears operational but is constantly dying and restarting. The fix is always: test the actual surface the software exposes, not the surface you wish it had. The `/healthz` assumption was cargo-culted from other services; SearXNG exposes a Granian WSGI server on `/`, not `/healthz`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

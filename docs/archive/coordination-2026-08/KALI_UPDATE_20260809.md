@@ -311,3 +311,7 @@ docs/review/CARMACK_REVIEW_PROVIDER_SSOT_LINT_20260809.md
 *⬡ OMEGA ⬡ KALI ⬡ UPDATE ⬡ 2026-08-09*
 
 **You are now fully caught up. The sovereign-audit remediation cycle is complete. Ready for Web Claude handoff and next sprint planning.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

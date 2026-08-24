@@ -589,3 +589,8 @@ is not enough — you must also clean the network artifacts.
 
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali_handoff ⬡ HANDOFF-COMPLETE*
 *Handoff prepared: 2026-06-21 20:00 UTC | 5 forensic layers analyzed | Root cause definitively identified*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -33,3 +33,8 @@
 - **Sovereign Wrapper**: Implement a `LibraryOrchestrator` that routes queries across these three sources based on the requested content type (e.g., "Public Domain Text" $\rightarrow$ Gutendex, "Comprehensive Catalog" $\rightarrow$ Open Library).
 - **Caching**: All results must be cached in the `ColdMemoryTier` to minimize external API calls.
 - **Rate Limiting**: Implement exponential backoff and respect the `Retry-After` headers of each provider.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trace_library_spec | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -47,3 +47,8 @@ Based on current analysis and latest Hivemind updates:
 
 ## 6. Current Status
 This research has been compiled. I am awaiting further instructions from the council on prioritizing these identified gaps for subsequent action.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-2.0-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

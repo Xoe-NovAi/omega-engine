@@ -401,3 +401,8 @@ Based on our model setup (Gemma 4-31B remote, lmster local, various free-tier mo
 | Configurable Threshold FR | https://github.com/anomalyco/opencode/issues/11314 |
 | Compaction Prune Issue | https://github.com/anomalyco/opencode/issues/14825 |
 | LobeHub Config Reference | https://lobehub.com/ar/skills/fkxxyz-cclover-skills-opencode-configuration |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

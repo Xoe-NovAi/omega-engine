@@ -207,3 +207,7 @@ HG-006 (WAD Protocol) → Strike 11 → Layer 4 complete
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_knowledge_gaps ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

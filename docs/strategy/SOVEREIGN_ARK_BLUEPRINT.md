@@ -129,6 +129,12 @@ EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 - PART 2: Phase 3/4 docs (PROVIDER_FABRIC_RUNTIME, SOVEREIGN_FLYWHEEL_SECURITY, PHASE_0_VERIFICATION, MEMORY_SUBSYSTEM_DESIGN, SYSTEMD_DEPLOYMENT_GUIDE, SOVEREIGN_WAD_PROTOCOL, GUIDANCE_SET_SCHEMA)
 - Core strategy docs freshened (Pillar→Node, co-equal MaKaLi, Corpus Map updated)
 
+> **Team-Synthesis Study #1 refinement (2026-08-23)**: tracking-system closeout refined by
+> brokered-discourse rulings (`data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md` +
+> `C_discourse_ledger.md` §6 stamp) — pre-commit framework install per Ma'at F1 ordering;
+> AST node-count freeze gate supersedes wc-l; explicit evidence field day one;
+> verify-mandate-claims P0; backfill = roc table × Lilith 23-cluster enumeration.
+
 ```
 NEXT (post-UO-4, freeze lifted):
 ├── V-10 AppArmor container hardening (🚨 GAP — containers unconfined)

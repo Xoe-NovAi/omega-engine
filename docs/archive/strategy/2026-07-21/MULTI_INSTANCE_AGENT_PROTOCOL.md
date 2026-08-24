@@ -918,3 +918,7 @@ async def write_distillation(entity: str, l1: str, l2: str, l3: str, proposed_le
 ---
 
 *⬡ OMEGA ⬡ MIAP ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_miap ⬡ SPECIFICATION COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

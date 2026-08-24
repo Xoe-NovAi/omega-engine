@@ -101,3 +101,8 @@ Each provider implementation must now act as a translator between the Omega Sche
 ---
 **Implementation Note for @Cline / @Antigravity**:
 Update `BaseProvider.generate` to accept `OmegaInferenceRequest` and return `OmegaInferenceResponse`. Refactor `ModelGateway.generate` to handle these types instead of raw strings.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

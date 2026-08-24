@@ -215,3 +215,7 @@ An architecture without an immune system is not sovereign — it is a waiting ch
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.0 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_meditate_chasm_immunity ⬡ IMMUNITY-SECURED*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Meditate-v1.0 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

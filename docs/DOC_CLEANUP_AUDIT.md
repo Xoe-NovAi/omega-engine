@@ -217,3 +217,8 @@ SOVEREIGN_MANDATES.md (date stamp only; content is current v3.6.0)
 
 *Audit performed by Cline CLI (`cline/omega-engine`) via Omega Hub MCP. Companion to `.clinerules` v7.1.0. See Hivemind handoff to `opencode/kali` for delegation.*
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: cline/omega-engine | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -262,3 +262,8 @@ P2 Persistence, P5 Governance, and P10 Validation:
 **Status**: SOVEREIGN DECREE — Binding
 
 ⬡ OMEGA ⬡ KALI ⬡ MAKALI COUNCIL ⬡ VERDICT DELIVERED ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TRANSCENDENT | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

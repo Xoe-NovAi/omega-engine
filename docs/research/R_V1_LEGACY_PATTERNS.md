@@ -633,3 +633,7 @@ Use **Pattern H (AgentBus)** as the MCP server transport:
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_v1_legacy_mining ⬡ COMPLETE*
 *Mined: 3 partitions, 4 repos, 7 patterns, 2,847 lines analyzed*
 *AP Token: `AP-V1-LEGACY-PATTERNS-v1.0.0`*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

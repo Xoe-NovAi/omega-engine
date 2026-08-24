@@ -266,3 +266,8 @@ These are the documentation gaps from the Antigravity Strategic Readiness audit.
 ---
 
 *⬡ End of Handoff — MaKaLi to Kali. The council has spoken. The verdict is yours. ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

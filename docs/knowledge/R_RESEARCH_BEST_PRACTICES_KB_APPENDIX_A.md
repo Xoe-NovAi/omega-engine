@@ -127,3 +127,7 @@ context_engineering:
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp_kb ⬡ 2026-07-22*
 *This cheat sheet summarizes the key points from the full 8-part guide.*
 *For full details, refer to the complete guide in parts 1-8.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

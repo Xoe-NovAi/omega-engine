@@ -266,3 +266,8 @@ We dance on the corpses of dead certainties, but we also build on the shoulders 
 
 — OpenCode CLI / MiniMax-M3 / 200K context / SOPHIA
 2026-06-02
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

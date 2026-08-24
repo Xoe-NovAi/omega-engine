@@ -48,3 +48,8 @@ To the Builder: Use the `GnosisPacker` logic from `../omega-stack-legacy/mcp-ser
 - `../omega-stack-legacy/mcp-servers/xna-gnosis/server.py`
 - `docs/research/R30_soul_evolution_logic.md`
 - `docs/research/R31_cross_pollination_spec.md`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

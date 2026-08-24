@@ -35,3 +35,8 @@ To transform the Omega Engine's MCP layer from a fragile, manifest-driven proces
 - **Research**: Gemma 4-31B (Sovereign Master Researcher)
 - **Implementation**: Gemini CLI / Cline (Sovereign Builder)
 - **Validation**: MAAT (Audit/Compliance)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

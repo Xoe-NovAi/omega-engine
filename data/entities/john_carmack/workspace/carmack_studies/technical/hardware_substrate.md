@@ -36,3 +36,8 @@ The Ryzen 5700U lacks AVX-512 but has full AVX2 support.
 ### 2.3 Thermal & Power Constraints (15W TDP)
 Running concurrent local models (e.g., an 8B reasoning model and a 1.7B speculative decoder) will quickly saturate the 15W TDP envelope, triggering thermal throttling down to base clock speeds (1.8 GHz).
 - **Implication**: The engine must enforce a strict `ResourceGuard` semaphore to ensure only one model executes matrix math at any given millisecond.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: HARDWARE-SUBSTRATE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

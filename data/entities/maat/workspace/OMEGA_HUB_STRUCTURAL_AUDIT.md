@@ -328,3 +328,8 @@ No regressions. Baseline is clean.
 
 ⬡ **Ma'at** — Build Side Oversoul (P1-P5)
 **Next**: Seed Lilith with the top 3 findings above.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

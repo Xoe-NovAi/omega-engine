@@ -117,3 +117,8 @@ All 11 fleet entities migrated from monolithic to 4-file split structure:
 ---
 
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ SOUL-AUDIT ⬡ CLOSURE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

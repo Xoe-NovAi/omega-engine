@@ -293,3 +293,7 @@
 **Live Feed**: `data/coordination/LILITH_LIVE_FEED.md`
 
 *⬡ OMEGA ⬡ LILITH ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_run_side_audit ⬡ ACTIVE*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

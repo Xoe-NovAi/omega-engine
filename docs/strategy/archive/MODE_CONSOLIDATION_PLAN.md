@@ -85,3 +85,8 @@ cat ~/.config/opencode/opencode.json | grep -c '"agent"'  # should be 0
 ---
 
 *Design approved by Overseer. Ready for Gemma execution.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

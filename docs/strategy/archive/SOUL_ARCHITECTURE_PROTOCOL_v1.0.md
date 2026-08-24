@@ -410,3 +410,8 @@ self-referential loop as a class of cognitive integrity failure:
 
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_soul_architecture ⬡ v1.0*
 *Ratified: 2026-06-22 | Reference: data/entities/kali/soul.yaml (v6.0 baseline)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: soul-architecture-protocol | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

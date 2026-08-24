@@ -45,3 +45,8 @@ class PWADCapabilityLattice(BaseModel):
 **Mechanism**: 
 - Statically analyzes PWAD tool source code (AST parsing) to ensure no `os.system`, `subprocess`, or unauthorized `open()` calls exist outside declared `fs_write_paths`.
 - Validates all `dimension.yaml` manifests against the `PWADCapabilityLattice` schema.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: pwad-capability-lattice | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

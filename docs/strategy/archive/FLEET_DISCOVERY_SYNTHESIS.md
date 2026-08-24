@@ -295,3 +295,8 @@ These gaps are structural and carry forward to v0.6.0:
 _For: Builder mode (Gemma 4 31B)_
 
 This document is your comprehensive brief. Start with the 7 P0/P1 bug fixes from `data/handoff/handoff_overseer_to_builder_dbcli_audit_remediation.md`. Then cleanse test entities. Then create Lilith's soul directory. Then seed knowledge bases. Only then create the new mode architecture files. Run `make test` after every commit. Reference `.opencode/agents/builder.md` for IWAD awareness, container hardening, and test protocol.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -98,3 +98,8 @@ quality — follows when it's ready.
 Today, the first thread of that fabric went public.
 
 ⬡ **Xoe-NovAi Foundation — June 8, 2026 — 11:58 PM CST** ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: miMo-2.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

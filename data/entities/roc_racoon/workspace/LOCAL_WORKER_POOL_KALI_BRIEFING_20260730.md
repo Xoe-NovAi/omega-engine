@@ -196,3 +196,7 @@ async def spawn_local_worker(self, task: str, model: str = "qwen3-1.7b",
 
 **Submitted for Kali Review**: 2026-07-30
 **Next Action**: Await Kali verdict → Execute 4 fixes → Build worker pool → Verify
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

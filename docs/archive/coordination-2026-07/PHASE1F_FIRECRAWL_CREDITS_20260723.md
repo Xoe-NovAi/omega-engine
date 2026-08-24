@@ -310,3 +310,7 @@ async def firecrawl_deep_research(query: str, max_depth: int = 3) -> AgentRespon
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PHASE1F-COMPLETE ⬡ 2026-07-23*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro-preview-customtools | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -79,3 +79,8 @@ This mirrors exactly how the Omega Engine's heritage patterns work: the `[id-sof
 ---
 
 *Sources: milwaukeetool.com, documents.milwaukeetool.com (TIY404/460/515/520/527), service.milwaukeetool.com, onekeysupport.milwaukeetool.com, protoolreviews.com, garagejournal.com, redtoolstore.com, powertoolstoday.com, hub.its.co.uk.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

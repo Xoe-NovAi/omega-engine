@@ -746,3 +746,8 @@ Task 2.5: Metrics collection     ← Depends on 2.3b (needs rotation data)
 | Local-first discovery | Quansight DeepDoc / Local AI Master 2026 | Local scan → RAG → cloud enrich pattern |
 | Hybrid routing | Local AI Master 2026 / LiteLLM | 85-95% local, route by complexity, circuit breakers |
 | File-based atomic locking | POSIX standard | `mkdir` atomicity, `rename` atomicity on same filesystem |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

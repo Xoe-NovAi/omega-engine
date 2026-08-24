@@ -168,3 +168,7 @@ await hivemind_complete_handoff(packet_id=packet.packet_id, result=result)
 ---
 
 **Next Action**: Launch all 4 critical path subagents in parallel.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

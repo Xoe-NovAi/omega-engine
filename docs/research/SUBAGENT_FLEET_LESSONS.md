@@ -99,3 +99,7 @@ This allows the `ModelGateway` to route to the appropriate model.
 4. **Use `architect` for Design, `scribe` for Docs, `general` for Exploration**: Route subagent types to their strengths.
 
 5. **Verification Loop**: After spawning a subagent, always run a `glob` check to confirm the file was created before proceeding.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: overseer | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

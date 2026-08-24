@@ -363,3 +363,8 @@ From `MNEMOSYNE_BLOCKERS_PLAN.md`, the 8 blockers that stopped the entire Mnemos
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash ⬡ opencode ⬡ DEEP-MINE-COMPLETE ⬡*
 
 **Total files read: 50+ | 4 partitions searched | 38 Mnemosyne + 20 Memory-Bank files cataloged**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

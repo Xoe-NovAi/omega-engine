@@ -24,3 +24,8 @@ The watcher implements the following state machine:
 
 ## 5. Verification
 - **T7 (HMCWatcher)**: Verified via  (pending).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

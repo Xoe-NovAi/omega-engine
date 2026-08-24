@@ -273,3 +273,8 @@ The handoff is complete when Grok CLI has:
 
 *Handoff created by Kali on 2026-07-19 | Packet ho_749ed27155cd | 102 files at 3542188*
 *⬡ OMEGA ⬡ KALI ⬡ HANDOFF-DECISION-WORKSPACE ⬡ ho_749ed27155cd ⬡ 2026-07-19*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

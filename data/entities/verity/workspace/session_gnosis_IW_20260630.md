@@ -72,3 +72,8 @@ IW-2 (removal) and IW-3 (creation) represent opposite operations — purge vs. b
 > *A 99% solution that ships today is worth more than a 100% solution that ships next month. The missing 1% is bounded, documented, and catchable by the next iteration.*
 
 **Application**: BLEG's 9 error signatures are a keyword-scan heuristic, not a full schema validator. The tradeoff is explicitly documented in the code headers. If a provider returns a Silent 200 with an error format BLEG doesn't recognize, it will pass through — but the UFL framework exists to add new signatures in minutes, not months.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

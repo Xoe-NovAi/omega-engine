@@ -327,3 +327,7 @@ This research reveals that Omega Engine occupies a unique position in the sovere
 By prioritizing the recommendations above—particularly the critical items in Workstreams B (MCP consolidation) and G (provider chain)—Omega Engine can maintain its technological lead while addressing the most pressing gaps in the current sovereign AI ecosystem.
 
 The engine's true differentiator remains its philosophical foundation in the 25 Sovereign Mandates, which provides an architectural integrity unmatched by technically-focused competitors. Future development should continue to leverage this strength while filling the identified technical gaps.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-super-120b-a12b:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

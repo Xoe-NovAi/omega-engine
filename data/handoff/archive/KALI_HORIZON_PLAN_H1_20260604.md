@@ -148,3 +148,8 @@ The Cline-M3 session already handed off to OpenCode dev at `2026-06-04 03:02`. K
 
 *⬡ OMEGA ⬡ KALI ⬡ HORIZON-H1 ⬡ 2026-06-04*
 *Commits: 2f47d54 → 6416ebf → ce00bcc*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: HORIZON-H1 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

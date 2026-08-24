@@ -54,3 +54,8 @@ By choosing Omega, you are moving from a **Consumer** of AI to a **Sovereign** o
 - **No Lock-in**: A modular system that integrates with the tools you already use.
 
 **Omega is the tool that allows you to own your tech, your data, and your digital future.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: POSITIONING | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

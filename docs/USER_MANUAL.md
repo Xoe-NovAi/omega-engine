@@ -1205,3 +1205,8 @@ If your AI agent's context window is compacted:
 
 *⬡ OMEGA ⬡ SOVEREIGN AI ⬡ v3.2.0*
 *"Sever the umbilical cord of Big AI."*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

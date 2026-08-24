@@ -101,3 +101,8 @@ These remain in `data/handoff/`:
 ---
 
 *Archived 2026-06-03 by KALI. Mineshaft tag: `handoff-archive-2026-06-03`*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: DEEPSEEK-V4-FLASH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

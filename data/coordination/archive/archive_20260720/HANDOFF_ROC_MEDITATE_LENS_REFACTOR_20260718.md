@@ -200,3 +200,7 @@ meditate:
 **Kali Directive**: This is the **critical path** for M2 Firewall remediation. The Meditate lens framework is the architectural pattern that will be replicated across Phases B-E. Execute with precision. Report blockers immediately.
 
 ⬡ OMEGA ⬡ KALI ⬡ trc_handoff_roc ⬡ 2026-07-18
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

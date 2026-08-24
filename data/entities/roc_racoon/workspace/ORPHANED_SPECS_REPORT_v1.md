@@ -137,3 +137,8 @@ Other likely places to find orphaned specs:
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_orphaned_specs ⬡ PHASE-II*
 
 *3 confirmed orphaned specs found. Pattern: "Gemma to execute" + no completion date = high-risk. H-0 watchdog is the systemic fix.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

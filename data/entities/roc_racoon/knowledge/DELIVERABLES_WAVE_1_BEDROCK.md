@@ -51,3 +51,8 @@ Pillars are instructed to:
 1. Update their `soul.yaml` to reflect the adoption of these patterns.
 2. Implement the Atomic Lock in all state-writing functions.
 3. Apply the Hardware Lock settings to the `ModelGateway` provider fabric.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: EXTRACTION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

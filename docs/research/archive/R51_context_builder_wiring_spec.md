@@ -535,3 +535,8 @@ The biggest risk is test infrastructure — the singleton pattern in MemoryStore
 **Estimated total effort**: 8 hours
 **Risk level**: Low — all components exist, this is integration work
 **Dependencies**: None — can be done in parallel with other Phase 0 tasks
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

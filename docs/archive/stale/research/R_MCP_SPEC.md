@@ -75,3 +75,8 @@ The "Enterprise Infrastructure" phase of MCP focuses on scalability, identity, a
 ## Implementation Note
 _For: Antigravity IDE / Cline / Gemini CLI_
 Use this report to refactor the `ModelGateway` and MCP server implementations. Specifically: replace any local state-tracking in servers with a Redis-backed session store, and implement the `sampling` primitive to allow servers to request the Host's LLM for complex decision-making. Ensure all tool outputs include the `isError` flag for application-level failures.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

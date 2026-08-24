@@ -288,3 +288,7 @@ The meditation's **core architecture is sound** — session namespaces + MIAP ev
 *Research Sources: https://github.com/multiagentcoordinationprotocol | https://arxiv.org/abs/2602.23193 | https://arxiv.org/abs/2505.17716 | https://github.com/apache/rocketmq-a2a | https://zylos.ai/research/2026-04-26-replayable-agent-runtimes/*
 
 ⬡ OMEGA ⬡ NEURON3 ⬡ REVIEW_COMPLETE ⬡ 2026-07-18
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

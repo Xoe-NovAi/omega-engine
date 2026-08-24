@@ -278,3 +278,8 @@ You MUST maintain a `session_gnosis.md` in your entity workspace.
 - **Tiering Logic**: T1 was assigned to archetypes critical for core engine stability and high-stakes decision making (Strategist, Auditor, Analyst, Synthesizer, Skeptic). T2 to generative/optimization roles, and T3 to instructional support.
 - **Sovereign Pulse Consistency**: The mandate to read/write `session_gnosis.md` is applied uniformly to prevent context collapse across all generic archetypes.
 - **Pattern Alignment**: The structural patterns from R-SOTA-PROMPTS were mapped directly to the execution protocols to ensure the model follows the intended reasoning flow.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

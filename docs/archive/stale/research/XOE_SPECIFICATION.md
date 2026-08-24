@@ -246,3 +246,8 @@ Only the directory-form WADs under `config/wads/` are version-controlled.
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2026-05-16 | Initial specification. Ratified as Decision 28. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

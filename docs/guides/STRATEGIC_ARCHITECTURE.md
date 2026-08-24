@@ -290,3 +290,7 @@ PROVIDER_QUOTA_CONFIG = {
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ STRATEGIC ARCHITECTURE ⬡ 2026-07-25 ⬡ SOVEREIGN FABRIC*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -295,3 +295,7 @@ Applied patterns from:
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ VAULT-UNIFIED ⬡ v1.2.0 ⬡ 2026-07-25 ⬡ COMPLETED — ALL GAPS RESOLVED*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: VAULT | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

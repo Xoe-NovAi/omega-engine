@@ -272,3 +272,8 @@ Each mode includes:
 ---
 
 *The Omegaverse is not a future destination. It is the present moment, waiting to be realized.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: claude-haiku-4.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

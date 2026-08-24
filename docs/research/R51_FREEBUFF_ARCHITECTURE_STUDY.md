@@ -363,3 +363,7 @@ FREEBUFF_MODE=true bun cli/scripts/build-binary.ts freebuff <version>
 ---
 
 *This report is stored for future reference when building the Omega Engine custom UI. Cross-reference with `R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` for comparative analysis of Rust/Elm vs TypeScript/React TUI architectures.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

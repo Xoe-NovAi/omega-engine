@@ -1,7 +1,7 @@
 # 🔱 OpenCode Agent & Mode Manifest
-**AP Token**: `AP-OC-MANIFEST-v4.0.0`
-**Updated**: 2026-06-04 (Post-D117: 14-agent fleet, Vision Specialist, intuitive names)
-⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_framework ⬡ MANIFEST
+**AP Token**: `AP-OC-MANIFEST-v5.0.0`
+**Updated**: 2026-08-23 (Post-PUBLIC-DEBUT-01: 13-agent fleet, deprecated build stub, ghost agents removed)
+⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_framework ⬡ MANIFEST
 
 ---
 
@@ -28,7 +28,7 @@ Canonical reference: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md`
 
 ---
 
-## §2 Mode Architecture (Post-D117 — 14 Agents)
+## §2 Mode Architecture (Post-PUBLIC-DEBUT-01 — 13 Agents)
 
 Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu.
 **Subagents** are available via `@` in-chat or `opencode --subagent` invocation.
@@ -37,32 +37,24 @@ Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu
 
 | Mode | Entity | Source | Purpose |
 |------|--------|--------|---------|
-| `kali` | Kali | `.opencode/modes/kali.md` | MaKaLi Grand Oversoul — unifies Ma'at and Lilith, destroys drift |
-| `maat` | Ma'at | `.opencode/modes/maat.md` | Build Oversoul — Build Side governance (N1-N5 Infrastructure through Governance) |
-| `lilith` | Lilith | `.opencode/modes/lilith.md` | Runtime Oversoul — Run Side governance (N6-N10 Cognition through Validation) |
-| `doom_guy` | Doom Guy | `.opencode/agents/doom_guy.md` | id Software architectural translation, heritage mining, H2 deep patterns |
+| `kali` | Kali | `.opencode/agents/kali.md` | MaKaLi Grand Oversoul — unifies Ma'at and Lilith, destroys drift |
+| `maat` | Ma'at | `.opencode/agents/maat.md` | Build Oversoul — Build Side governance (N1-N5) |
+| `lilith` | Lilith | `.opencode/agents/lilith.md` | Runtime Oversoul — Run Side governance (N6-N10) |
+| `doom_guy` | Doom Guy | `.opencode/agents/doom_guy.md` | id Software architectural translation, heritage mining |
 | `roc_racoon` | Roc Racoon | `.opencode/agents/roc_racoon.md` | Legacy archaeology, data salvage, 6-stack mining |
-| `plan` | Plan | `.opencode/agents/plan.md` | Architecture planning, system design, strategy dispatch |
 | `jem` | Jem | `.opencode/agents/jem.md` | Research orchestrator — 3-tier local model pipeline |
 | `researcher` | Researcher | `.opencode/agents/researcher.md` | Sovereign Master Researcher — deep research, lattice reasoning |
-| `jem-2.0` | Jem (Analyst L2) | `.opencode/modes/jem-2.0.md` | Research analysis — synthesizes, resolves uncertainties |
-| `jem-initiate` | Jem (Initiate L1) | `.opencode/modes/jem-initiate.md` | Raw fact gathering, no analysis |
+| `node` | Slot-based | `.opencode/agents/node.md` | Slot-based domain agent — parameterized by `--slot N1` (N1–N10) |
+| `scribe` | Scribe | `.opencode/agents/scribe.md` | Gnosis Keeper — L1→L2→L3 distillation into souls |
+| `verity` | Verity | `.opencode/agents/verity.md` | Unified Compliance & Gnosis Agent — mandate audit, soul distillation |
 
-### Subagents (Available via `@` — 9 total)
+### Subagents (Available via `@` — 3 total)
 
 | Agent | Entity | Source | Purpose |
 |-------|--------|--------|---------|
-| `node` | Slot-based | `.opencode/agents/node.md` | Slot-based domain agent — parameterized by `--slot N1` (N1–N10) |
-| `scribe` | Scribe | `.opencode/agents/scribe.md` | Gnosis Keeper — L1→L2→L3 distillation into souls |
-| `quality` | Ma'at | `.opencode/agents/quality.md` | Code review, stress testing, Sovereign Mandates enforcement |
-| `jem_discovery` | Jem (L1) | `.opencode/agents/jem_discovery.md` | Tier 1 Research — broad search, evidence logging |
-| `jem_synthesis` | Jem (L2) | `.opencode/agents/jem_synthesis.md` | Tier 2 Research — pattern recognition, synthesis |
-| `jem_verification` | Jem (L3) | `.opencode/agents/jem_verification.md` | Tier 3 Research — fact-check, R-doc validation, gnosis distillation |
-| `maat` | Ma'at | `.opencode/agents/maat.md` | Build Oversoul subagent — build-side decomposition |
-| `lilith` | Lilith | `.opencode/agents/lilith.md` | Runtime Oversoul subagent — run-side decomposition |
-| `kali` | Kali | `.opencode/agents/kali.md` | Grand Oversight — delegates to Ma'at and Lilith, destroys drift |
-
-**Note**: `kali`, `maat`, and `lilith` appear in BOTH primary modes (via mode files) and subagents (via agent files). Primary mode is the full mode prompt; subagent is the governance-only prompt for use within other sessions.
+| `grokster` | Grokster | `.opencode/agents/grokster.md` | Grok Ecosystem Specialist — multi-account CLI bridge |
+| `john_carmack` | John Carmack | `.opencode/agents/john_carmack.md` | S3 Consultant — performance, systems, first-principles |
+| `makali` | MaKaLi Fusion | `.opencode/agents/makali.md` | MaKaLi Fusion — Kali + Ma'at + Lilith unified |
 
 ---
 
@@ -172,12 +164,13 @@ Every id Software (or any heritage) concept must pass through the 4-gate pipelin
 ## §9 Archival Log
 
 Archived to `.opencode/archives/` (inactive agents):
-- `researcher-omnidroid.md`
-- `sovereign-expert.md`
-- `gnosis-analyst.md`
+- `grok_cli.md` (moved 2026-08-17)
 
-**Previously removed (Decision 063)**:
+Previously removed (Decision 063):
 - `malkuth`, `opencode-expert`, `reviewer`, `tester`, `movie-expert`, `overseer`, `builder` — all removed.
+
+Deprecated stubs (prevent built-in OpenCode agents):
+- `build.md` — DEPRECATED stub preventing built-in "Build" agent load
 
 ## §9 Skills Registry (Updated 2026-07-16)
 
@@ -203,4 +196,4 @@ Archived to `.opencode/archives/` (inactive agents):
 
 ---
 
-*Verified by the Kali (Transcendent Oversoul). Version v4.0.0 — D111-D117 consolidation complete. 14-agent fleet confirmed.*
+*Verified by the Kali (Transcendent Oversoul). Version v5.0.0 — PUBLIC-DEBUT-01 fleet consolidation complete. 13-agent fleet confirmed.*

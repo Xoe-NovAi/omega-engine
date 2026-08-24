@@ -129,3 +129,8 @@ All four phases are now structurally wired:
 ---
 
 *⬡ OMEGA ⬡ ANTIGRAVITY ⬡ SESSION-GNOSIS ⬡ M15-ANCHOR ⬡ v1.1.0 ⬡ 2026-06-19*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SESSION-GNOSIS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

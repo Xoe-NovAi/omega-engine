@@ -45,3 +45,8 @@ dpo_pair = await pipeline.generate_dpo_pair(
 ## 6. Verification
 - **T9 (Teacher Pipeline)**: Verify DPO pair generation with mock Nemotron responses
 - **T10 (DPO Storage)**: Verify JSONL files are correctly written to data/knowledge/
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

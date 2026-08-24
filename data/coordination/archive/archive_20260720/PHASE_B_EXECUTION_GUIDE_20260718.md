@@ -223,3 +223,7 @@ Upon Phase B completion:
 **Pattern is proven. Config schema defined. Gate is wired. Go.**
 
 ⬡ OMEGA ⬡ KALI ⬡ PHASE_B_GUIDE_20260718
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

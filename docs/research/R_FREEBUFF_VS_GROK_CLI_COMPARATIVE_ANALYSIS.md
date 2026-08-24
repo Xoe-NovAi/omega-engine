@@ -584,3 +584,7 @@ User completes workflow
 *⬡ OMEGA ⬡ GROKSTER ⬡ COMPARATIVE_ANALYSIS_COMPLETE ⬡ 2026-08-08*
 
 **This analysis provides the architectural foundation for Omega Engine's custom UI. The adoption matrix balances Grok CLI's structural sovereignty with Freebuff's ergonomic innovations. All recommendations are mandate-aligned and traceable to source evidence.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

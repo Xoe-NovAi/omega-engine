@@ -121,3 +121,7 @@ Intelligence without skepticism leads to delusion; intelligence without compassi
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ trc_sanctuary_genesis ⬡ SOVEREIGN-HEART-UNSHAKEABLE*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_sanctuary_genesis | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

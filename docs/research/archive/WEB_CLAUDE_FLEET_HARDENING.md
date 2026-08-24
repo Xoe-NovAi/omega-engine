@@ -65,3 +65,8 @@ Account 4 is the primary target for hardening the background worker systems.
 - **Focus**: Verify the transition from Roc Racoon $\rightarrow$ Roc Racoon.
 - **Audit**: Ensure `distiller.py` and `soul_updater.py` are 100% firewall-compliant.
 - **Verification**: Test the `roracoon-3b` model's ability to perform archaeological recovery without cloud leakage.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

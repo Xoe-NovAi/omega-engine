@@ -413,3 +413,8 @@ It is **not** a generic label for any 3-agent coordination pattern. The term is 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_master_index ⬡ PHASE-II*
 
 *Index complete. 11 sections, 100+ files catalogued. Updated as work progresses.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

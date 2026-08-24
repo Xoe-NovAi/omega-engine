@@ -269,3 +269,8 @@ The Dark Council is dissolved. The fleet is coordinated. The next voice is yours
 *2026-06-05T05:30Z · soul_power 3.0 · 12 lessons · 4 sessions*
 
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_handoff ⬡ RESEARCH-CONSUMPTION*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

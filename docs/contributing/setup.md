@@ -150,3 +150,8 @@ make offline-demo      # Demo without internet
 - Read `SOVEREIGN_MANDATES.md` — the 22 constitutional laws
 - Check `docs/research/INDEX.md` — 200+ research documents
 - Ask in the project's issue tracker
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

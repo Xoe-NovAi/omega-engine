@@ -205,3 +205,8 @@ Research all knowledge gaps surrounding the next high-priority tasks to enable i
 
 ---
 *⬡ OMEGA ⬡ JEM ⬡ trc_research ⬡ ACTIVE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

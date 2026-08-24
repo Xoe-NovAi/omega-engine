@@ -598,3 +598,8 @@ known_unknowns:
 ---
 
 *This document is the most comprehensive review of the Omega Engine to date. All findings are backed by direct code inspection from 3 parallel subagents. Confidence levels are 9-10/10 for all critical findings.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

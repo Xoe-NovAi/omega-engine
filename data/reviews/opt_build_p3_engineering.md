@@ -354,3 +354,8 @@ This audit was conducted by reading the complete Makefile (686 lines), all 11 ag
 **P5 and P2 reports checked**: P5 covered PIVOT_LOG/D64 compaction, strategy doc archiving, heritage pipeline overhead, and handoff debris — non-overlapping with this P3 engineering audit. P2 covered entity workspace bloat, soul.yaml health, memory growth, and storage patterns — also non-overlapping.
 
 **Hivemind awareness checked**: Active agents — Kali (MaKaLi Council Pass 2), Ma'at (Build-side optimization), Lilith (Run-side optimization), P2 (complete), P5 (heartbeat-only), P7 (complete), P8 (active). This report is filed for Ma'at's build-side review and MaKaLi Council synthesis.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

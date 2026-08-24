@@ -149,3 +149,8 @@ To ensure the remediation works, we implement the **Persona Health Suite**.
 | 3 | Update `_prepare_system_prompt` in `oracle.py` for reinjection | Kali/P3 | P0 |
 | 4 | Implement PDI and Amnesia probes in `test_compaction_remediation.py` | Quality | P1 |
 | 5 | Verify voice restoration via `make test` and manual audit | Lilith | P1 |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

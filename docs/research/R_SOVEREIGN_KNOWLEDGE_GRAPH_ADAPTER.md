@@ -161,3 +161,8 @@ class SovereignGraphAdapter:
 ```
 
 Verify the implementation by writing a unit test in `tests/test_graph_adapter.py` that asserts node/edge insertion, shortest-path calculation, and multi-signal scoring accuracy. All 444 tests must continue to pass.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.5-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

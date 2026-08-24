@@ -196,3 +196,8 @@ Based on the Forge Cycle 1 collision, D-282 is now scoped as:
 *🔱 OMEGA ⬡ KALI ⬡ HMC-FORGE-1-SYNTHESIS ⬡ VERDICT-RENDERED*
 *Two-Source Rule satisfied: Both Roc's legacy evidence and Researcher's SOTA verification have been synthesized.*
 *Awaiting Architect's confirmation to dispatch next directives.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

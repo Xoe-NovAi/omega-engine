@@ -243,3 +243,8 @@ Three concurrent instances = ~2-3 t/s each. Barely usable. The MaKaLi Council wo
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_unknown_unknowns ⬡ DEEP-AUDIT*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

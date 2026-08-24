@@ -261,3 +261,7 @@ make test                   # → report REAL pass/fail/skip
 *⬡ OMEGA ⬡ GROKSTER ⬡ SESSION REPORT COMPLETE ⬡ 2026-07-26*
 *Report saved to `docs/reports/SESSION_REPORT_GROKSTER_TO_KALI_20260726.md`*
 *All artifacts committed to `release/initial-v1` (66c1eb4)*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

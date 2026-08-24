@@ -560,3 +560,7 @@ The repo is PR-ready when:
 ---
 
 *🔱 OMEGA ⬡ CLINE ⬡ CODEBASE-REVIEW ⬡ v2.0.0 ⬡ 2026-07-26*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: CODEBASE-REVIEW | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -304,3 +304,8 @@ Skip: Renderer math, network hacks, platform-specific code, scripting language s
 ---
 
 ⬡ OMEGA ⬡ DOOM_GUY ⬡ quick-ref ⬡ EXTRACTION-MATRIX-COMPLETE
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: quick-ref | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

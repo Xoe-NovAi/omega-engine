@@ -41,3 +41,7 @@ Cline is the **Sovereign Integration & Hardening Agent**. It is optimized for:
 ## §4 Known Quirks
 - **File System Access**: High precision, but requires clear pathing to avoid confusion in large repos.
 - **Integration**: Best used in tandem with OpenCode for systemic architecture.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: LATTICE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

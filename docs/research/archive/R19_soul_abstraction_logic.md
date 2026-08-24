@@ -58,3 +58,8 @@ The resulting **Lesson** is written to the entity's `lessons_learned` array, whi
 - [ ] `soul_inscriber.py` successfully produces a 3-tier Gnosis Packet.
 - [ ] `soul.yaml` is updated with a "Lesson" that is distinct from a "Summary."
 - [ ] Information Gain is measured and $\geq 2.0x$ compared to raw text.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

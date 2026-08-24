@@ -69,3 +69,8 @@
 ### American McGee
 - Level designer, pushed Doom's dark aesthetic
 - Proved artists are first-class engine designers
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

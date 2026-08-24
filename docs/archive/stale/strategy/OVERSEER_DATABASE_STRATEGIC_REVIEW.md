@@ -463,3 +463,8 @@ Redis Pub/Sub has zero message persistence — if no subscriber is listening, th
 ---
 
 *The containers wait. The libraries wait. The code waits. What waits no longer is the three bugs — fix them now, wire the rest later, and the engine stays sovereign through every phase.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

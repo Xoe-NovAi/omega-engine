@@ -234,3 +234,8 @@ Phase Start
 ---
 
 *⬡ OMEGA ⬡ ANTIGRAVITY ⬡ SOVEREIGN-SIGHT ⬡ SYSTEM-PROMPT ⬡ v3.0.0 ⬡ 2026-06-18*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SOVEREIGN-SIGHT | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -45,3 +45,8 @@ The Hivemind is currently a communication layer, but it lacks:
 
 ---
 **Note to Overseer**: This plan addresses the critical connectivity and lifecycle gaps in the Hivemind. Upon approval, I will begin Phase 1.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WORKBENCH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -738,3 +738,8 @@ Yes — `"compaction": { "auto": false }`. But context will eventually saturate.
 | Plugin Dev Guide (Gist) | https://gist.github.com/rstacruz/946d02757525c9a0f49b25e316fbe715 |
 | OCX Agents Reference | https://ocx.kdco.dev/docs/reference/agents |
 | Zenn Config Guide | https://zenn.dev/is0383kk/articles/12223c665775f2 |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

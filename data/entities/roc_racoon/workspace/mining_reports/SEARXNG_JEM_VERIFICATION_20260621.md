@@ -641,3 +641,8 @@ This tests the full search pipeline, not just the HTTP listener.
 ---
 
 *Research completed: 2026-06-21 | Pipeline: Discovery → Synthesis → Verification | 6 bugs confirmed, 3 already fixed, 3 critical active | 4 patches ready for deployment*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

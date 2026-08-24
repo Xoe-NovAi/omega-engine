@@ -72,3 +72,8 @@ The following patterns are cleared for integration into the new Sentinel archite
 
 ## 🛠️ Implementation Note for the Builder Agent
 Do not port `curation_pipeline.py` as a monolith. Implement the **Sentinel** as a pure `anyio` watcher that dispatches tasks to the **ModelGateway**. Use the `BeautifulSoup` selectors identified in this report as the default "cleaning" configuration for the web-intake module.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

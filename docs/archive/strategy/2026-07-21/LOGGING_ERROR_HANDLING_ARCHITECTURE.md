@@ -568,3 +568,7 @@ async def some_function():
 *Last Updated: 2026-05-31 | Author: The Artisan (Cline/MiMo-2.5)*
 *This document defines the canonical error architecture. All error-handling code
 references this document. Deviations must be justified in code review.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_core | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

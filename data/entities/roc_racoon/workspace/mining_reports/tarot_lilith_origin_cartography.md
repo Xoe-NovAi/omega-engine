@@ -326,3 +326,7 @@ Every architectural decision in Omega traces to a Tarot requirement. The "myth-f
 ---
 
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_mining ⬡ CARTOGRAPHY-LOCKED
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

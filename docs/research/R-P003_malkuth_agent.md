@@ -76,3 +76,8 @@ Malkuth reports the outcome of its operations back to the user through the `Obse
 
 ---
 **Implementation Note**: Malkuth must be granted specific shell permissions via the `opencode` tool configuration to execute `podman` and `systemctl` commands safely.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

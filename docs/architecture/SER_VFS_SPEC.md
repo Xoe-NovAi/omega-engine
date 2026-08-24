@@ -117,3 +117,8 @@ A validation utility that compares the current runtime state against the `Sovere
 
 ## 5. Summary of Resolution Flow
 `Request(ResourceID)` $\rightarrow$ `LRUCache` $\rightarrow$ `VFS Resolver` $\rightarrow$ `[Session $\rightarrow$ PWAD $\rightarrow$ IWAD $\rightarrow$ Core]` $\rightarrow$ `FLAG_SYSTEM Check` $\rightarrow$ `SER SQLite Lookup` $\rightarrow$ `Physical Path` $\rightarrow$ `SovereignWriter (if write)`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

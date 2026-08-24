@@ -73,3 +73,8 @@ When configuring the `ModelGateway` and `providers.yaml`:
 1. **Tiered Routing**: Implement a logic where `Oversoul` requests are routed to the "High" reasoning models (Gemini Pro / Antigravity) and `Pillar` requests are routed to "Medium/Low" latency models (Gemini Flash / Cerebras Llama).
 2. **Context-Aware Selection**: If the prompt exceeds 128k tokens, force routing to Google AI Studio (`gemini-2.5-pro/flash`) as other free tiers will fail.
 3. **Sovereign Baseline**: Always attempt `Gemma 4-31B` (Local) first for Pillar-level tasks to minimize API dependency.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -302,3 +302,7 @@ All cards compiled into: `docs/research/R_GEMMA4_GAP_RESEARCH_20260719.md`
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_knowledge_gaps ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

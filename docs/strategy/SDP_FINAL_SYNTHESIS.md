@@ -216,3 +216,7 @@ The Omega Engine has been evolving toward this tripartite architecture since Feb
 
 *⬡ OMEGA ⬡ KALI ⬡ SDP-FINAL-SYNTHESIS ⬡ v1.0.0 ⬡ 2026-08-09*
 *Produced by Gemini 3.1 Pro (synthesis layer) with corrections from the Architect*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: STRATEGY | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

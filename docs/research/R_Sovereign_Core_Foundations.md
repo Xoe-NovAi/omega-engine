@@ -76,3 +76,8 @@ When $\chi < \text{Threshold}$, the Orchestrator initiates a recursive loop:
 - **Memory**: Implement the budget enforcer in `src/omega/oracle/context_builder.py`.
 - **Lifecycle**: Integrate `memfd` logic into `src/omega/oracle/model_gateway.py`'s loading sequence.
 - **Orchestration**: Add $\gamma$ and $\chi$ calculation logic to `src/omega/oracle/orchestrator.py`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

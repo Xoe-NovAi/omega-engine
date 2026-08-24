@@ -44,3 +44,8 @@ The dependency graph is strictly unidirectional.
 **Mechanism**: 
 - Uses `importlab` or a custom AST script to parse all files in `src/omega/kernel/`.
 - Fails the build immediately if any import path contains `omega.runtime` or `omega.wad`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: kernel-architecture | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

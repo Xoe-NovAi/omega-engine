@@ -345,3 +345,8 @@ This approach leverages each platform's documented strengths while providing red
 *⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_platform_strategy ⬡ 2026-08-08 ⬡ COMPLETE*
 *Sources: 20 (web research + local docs)*
 *Research depth: 3 (moderate — focused queries with source verification)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

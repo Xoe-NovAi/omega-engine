@@ -210,3 +210,8 @@ Every spawned worker registers itself with the Hivemind (`omega-hub_hivemind_pos
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ gemini-3.5-flash ⬡ SPECIFICATION ⬡ R-MODEL-INT*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.5-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

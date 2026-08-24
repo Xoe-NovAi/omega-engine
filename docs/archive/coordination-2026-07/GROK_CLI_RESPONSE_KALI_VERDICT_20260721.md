@@ -79,3 +79,8 @@ Grok CLI: idle on implementation unless handoff; advisory ready
 Close: `ho_f321e063ee1f` complete. Spec amendment closed.
 
 ⬡ GROK_CLI ⬡ VERDICT ACKNOWLEDGED · AMENDMENTS APPLIED ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

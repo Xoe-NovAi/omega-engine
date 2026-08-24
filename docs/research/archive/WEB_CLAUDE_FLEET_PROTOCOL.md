@@ -339,3 +339,8 @@ The fleet is managed through a dedicated system of documents:
 ---
 
 *The fleet is your force multiplier. Eight lenses see more than one. Five deep dives each see more than eight.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

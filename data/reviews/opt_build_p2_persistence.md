@@ -386,3 +386,8 @@ This audit was conducted by reading source files (entity_registry.py lines 1-350
 **P5 report checked before writing**: P5's governance audit covers PIVOT_LOG compaction, strategy documentation, heritage pipeline overhead, and handoff debris — non-overlapping with this P2 audit.
 
 **Hivemind awareness checked before writing**: Active agents — Kali (MaKaLi Council Pass 2), Ma'at (Build-side optimization), Lilith (Run-side optimization), P5 (heartbeat). This report is filed for Ma'at's build-side review and MaKaLi Council synthesis.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

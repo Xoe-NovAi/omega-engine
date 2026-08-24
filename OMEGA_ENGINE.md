@@ -31,7 +31,7 @@
 | Tests | Focused **27 passed** (vault+property+hivemind 2026-07-30) · Full suite **1706 collected** (make test timeout risk) | ✅ Focused green; full suite needs longer budget | 2026-07-30 | `pytest tests/test_vault_integrity.py tests/property/ tests/test_hivemind.py -q` |
 | Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 | `grep -c "^### [0-9]" SOVEREIGN_MANDATES.md` |
 | **Mandate Compliance** | **23/25 FULL (92%)** — 0 Partial, 2 Fail | ✅ M5, M11 fixed via wrapper (EXIT trap + DB integration) | 2026-07-30 | `grep -r "M5\|M11" SOVEREIGN_MANDATES.md \| head -5` |
-| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 | `ls .opencode/agents/ \| wc -l` |
+| Fleet | **13 agents (cap 14 per M10)** | ✅ Clean | 2026-08-22 | `ls .opencode/agents/ \| wc -l` |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ \| wc -l` |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, N1: 5/5, N2: 6/6, N3: 1/4 | ✅ P0-N2 Complete | 2026-07-18 | `grep -c "status: cloned" data/coordination/THIRD_PARTY_REGISTRY.yaml` |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ \| wc -l` |
@@ -98,7 +98,6 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 | **Document Reader (Standalone)** | `scripts/universal_doc_reader.py` | ✅ v1.0.0 | Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml |
 | **Observability** | `src/omega/observability.py` | ✅ Operational | Trace IDs, event logging, fine-tuning dataset collection |
 | **Hivemind** | `mcp_servers/omega_hub/` | ✅ Operational | 6 MCP tools for cross-agent coordination, workspace locks, live feeds |
-| **Hive (NEW)** | `src/omega/hive/` | 🟡 Design Complete | 5-layer collective consciousness: Sensorium, Thought Transmission, Neural Synchrony, Territorial Instinct, Incarnation Engine. Hivemind API compatible. |
 | **MaKaLi Apex Mind (NEW)** | `config/wads/_omega_default/entities.yaml` | ✅ Deployed | Mastermind agent — deep research, genius blueprinting, high-level strategy, philosophical deep dives. Replaces Sophia (Akashic Record) in default WAD. NOT a builder — directs ground troops (Kali, Lilith, Maat, Nodes, Carmack). |
 | **Arch Soul (NEW)** | `data/entities/arch/` | 🟡 Design Complete | User's sovereign journey externalized: 24 entity facets = Nameless One incarnations, Mandates = regret-prevention physics, Qliphoth = Fortress of Regrets, Death/Rebirth = session lifecycle hooks |
 | **CLI** | `src/omega/cli/oracle_cli.py` | ✅ Operational | Typer CLI (talk, summon, list-entities, add-entity, entity-info, backends, version) |
@@ -179,4 +178,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-08-17 | Version: v1.8.6 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 (vision, read-only) | Sprint: PUBLIC-DEBUT-01 (DEBUT_REMEDIATION_MANUAL_20260817) | P0-1 secret scrub COMPLETE | P0-2 test suite COMPLETE (1768/1768) | Phase 2 lint COMPLETE (255 files) | DOC-1 stamps LANDED | PUB-1 allowlist drafted | INST-1 ready (maat) | DEL-1 backlog | Mandate compliance: 27 laws (M26/M27 added 2026-08-14) | G-1/W-1/V-1/SDP/NL-1 PARKED*
+*Last Updated: 2026-08-23 | Version: v1.8.8 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 (vision, read-only) | Sprint: PUBLIC-DEBUT-01 (DEBUT_REMEDIATION_MANUAL_20260817) | P0-1d in_progress (SECURITY_AUDIT residual) | P0-2 test suite COMPLETE (1768/1768) | Mechanical lint pass COMPLETE (255 files, e2c16d3c, pre-Manual) — full P2 lint campaign PARKED per Manual until post-DEL-1 | DOC-1 stamps LANDED | PUB-1 allowlist drafted | INST-1 in_progress (maat) | DEL-1 in_progress | Mandate compliance: 27 laws (M26/M27 added 2026-08-14) | G-1/W-1/V-1/SDP/NL-1 PARKED | Team-Study #1 COMPLETE (converged R1, 10 rulings stamped — data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md); tracking-system closeout refined: pre-commit framework install pending per Ma'at F1 ordering, AST freeze gate supersedes wc-l, explicit evidence field day one, verify-mandate-claims P0, backfill = roc table × Lilith 23-cluster enumeration*

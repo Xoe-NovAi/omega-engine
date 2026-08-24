@@ -131,3 +131,8 @@ When implementing the `CerebrasProvider` in `src/omega/oracle/model_gateway.py`:
 3. Implement a strict `max_tokens` cap of 8,192 for free-tier requests to avoid 400 errors.
 4. Map `gpt-oss-120b` to the **Oversoul** tier and `llama3.1-8b` to the **Pillar** tier.
 5. Leverage the `time_info` field in the response to log actual inference latency for observability.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

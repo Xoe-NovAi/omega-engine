@@ -22,3 +22,8 @@ Add your API keys to `.env`:
 
 ## 3. Adjusting Priority
 Edit `config/providers.yaml` to change the fallback chain. The `local_first` strategy is mandated by M7.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: la-docs | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -293,3 +293,8 @@ This is the **empirical proof** that the Triad is functioning as intended: indep
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_makali_mining ⬡ PHASE-II*
 
 *Deep mining complete. 7 phases, 11+ sources, full timeline. The MaKaLi Triad is mapped from xna-omega-legacy to d-rr-031. ⬡⚖️🌙🔥*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

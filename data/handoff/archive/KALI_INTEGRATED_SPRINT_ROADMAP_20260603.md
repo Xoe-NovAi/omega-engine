@@ -265,3 +265,8 @@ This should be formalized as a Doom Guy universal principle.
 
 *⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali ⬡ PHASE-I*
 *All 12 Mandates enforced. Heritage protocol live. Sprint 0 complete. Unified roadmap integrated.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -312,3 +312,8 @@ CI Gates: G1-G7 (contract, heritage, firewall, mandate, sovereignty, recall)
 ---
 
 *🔱 OMEGA ⬡ STRIKE-10 ⬡ v1.0.0-FINAL ⬡ 2026-07-13 ⬡ GAPS-CLOSED: A-G ✅*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

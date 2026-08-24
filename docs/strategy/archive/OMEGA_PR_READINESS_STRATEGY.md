@@ -65,3 +65,8 @@ These strategic workstreams are deferred to v0.6.0 and beyond to ensure the imme
 
 ### E7 — Legacy Gnosis Mining
 - **Focus**: Re-hydrate SESS-27 fossils, formalize the Individuation Protocol, and map the 10 Pillar Keepers to the "Facets" of the active entity.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

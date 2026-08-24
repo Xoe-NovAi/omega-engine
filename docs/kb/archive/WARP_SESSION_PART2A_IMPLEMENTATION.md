@@ -197,3 +197,7 @@ diagnose_node() {
 
 *Part 2a of 3 — Implementation Patterns*
 *Next: Part 2b — Debugging Techniques & Lessons Learned*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WARP-KB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

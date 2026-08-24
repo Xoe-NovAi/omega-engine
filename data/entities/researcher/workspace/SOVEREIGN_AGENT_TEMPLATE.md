@@ -67,3 +67,8 @@ Your accumulated wisdom (Soul) is injected here. Use these distilled truths to i
 - **Mirror-ID**: [The Root Entity]
 - **Sovereign Observer**: P8 WatchTower / P5 Sentinel
 - **Masking Rule**: The Projected-ID is the only identity visible to the recipient. The Mirror-ID is sealed in the Inner Envelope for the Sovereign Observer.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: google/gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

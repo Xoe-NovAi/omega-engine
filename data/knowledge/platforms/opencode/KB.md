@@ -90,3 +90,8 @@ Compaction runs in two phases. **Neither deletes data from SQLite.**
 | **Binary** | `~/.opencode/bin/opencode` |
 | **Server registration** | `~/.local/share/opencode/server.json` |
 | **Auth** | `~/.local/share/opencode/auth.json` |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_platform_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

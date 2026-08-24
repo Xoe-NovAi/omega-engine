@@ -105,3 +105,8 @@ I recommend integrating the **Hugging Face Inference Router** as a primary "Meta
 ## 📡 Implementation Note
 For the implementation agent (Antigravity/Cline): 
 The Hugging Face Router requires an `HF_TOKEN`. The base URL is `https://router.huggingface.co/v1`. Model IDs should be passed in the format `author/model:policy` (e.g., `meta-llama/Llama-3.1-8B-Instruct:fastest`).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

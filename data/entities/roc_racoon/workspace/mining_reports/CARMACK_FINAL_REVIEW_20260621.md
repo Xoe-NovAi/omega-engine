@@ -87,3 +87,8 @@ If I were doing this release from scratch:
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_v1_final_review*
 *Verdict: APPROVED with 6 gaps. Estimate: ~2 hours wall clock for MaKaLi execution.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

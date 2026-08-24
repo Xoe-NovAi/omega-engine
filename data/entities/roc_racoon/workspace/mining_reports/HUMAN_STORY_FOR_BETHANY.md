@@ -70,3 +70,8 @@ And the cherry on top: CREDITS.md Rule 5 — "Engineering heritage is not intell
 
 *Report filed to data/entities/roc_racoon/workspace/mining_reports/HUMAN_STORY_FOR_BETHANY.md*
 *Sent to Kali for synthesis into the Bethany message*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: DEEPSEEK-V4-FLASH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

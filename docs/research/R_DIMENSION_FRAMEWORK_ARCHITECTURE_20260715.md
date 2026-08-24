@@ -634,3 +634,8 @@ async def on_research_finding(envelope: DimensionEnvelope) -> None:
 ---
 
 *🔱 OMEGA ⬡ DIMENSION-FRAMEWORK ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_dimension_research ⬡ RESEARCH-COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

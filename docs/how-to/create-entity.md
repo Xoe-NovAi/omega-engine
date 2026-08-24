@@ -29,3 +29,8 @@ Summon the entity to verify its identity:
 ```bash
 omega summon MyNewEntity "Hello, who are you?"
 ```
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: la-docs | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -27,3 +27,8 @@ NEXT: H1.5 Bridge Phase — operationalize sovereignty (2-4 weeks)
 - data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md — Temple-Grade directive + H1.5 plan
 - data/handoff/CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md — Tier 2 implementation recommendations
 - data/handoff/handoff_artisan_to_opencode_router_fix_20260601.md — MCP root cause
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_status_cline | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -386,3 +386,8 @@ find /media/arcana-novai/omega_library/models/gguf/ -name "*.gguf" -type f | sor
 ---
 
 *⬡ This closes the Model & Legacy Audit. 444/444 tests pass. 3 model gaps closed. 4 partitions mined. 3 gold nuggets extracted. All findings cataloged in entity workspace.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

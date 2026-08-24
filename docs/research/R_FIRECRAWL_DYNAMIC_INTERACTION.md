@@ -63,3 +63,8 @@ Every interaction returns a `liveViewUrl` and an `interactiveLiveViewUrl`.
 ## Implementation Note
 _For: P6 Cognition / ModelGateway_
 The `ModelGateway` should implement a `BrowserSession` class that manages the `scrapeId` and the lifecycle of the interaction. It should provide a high-level `execute_action(prompt_or_code)` method that handles the `POST` requests to the `/interact` endpoint and ensures `stop_interaction()` is called upon session expiry or task completion.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

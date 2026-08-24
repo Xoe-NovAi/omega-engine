@@ -564,3 +564,8 @@ PY
 ---
 
 *⬡ OMEGA ⬡ GROK-CLI ⬡ GEMMA4_FREE_TIER_FORENSIC ⬡ 2026-07-22*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

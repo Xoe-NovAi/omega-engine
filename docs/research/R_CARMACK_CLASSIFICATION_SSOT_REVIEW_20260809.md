@@ -137,3 +137,7 @@ New:
 
 *⬡ OMEGA ⬡ CLINE ⬡ CARMACK-REVIEW ⬡ 2026-08-09*
 **Spec claimed** the registry "already exists, reads `config/providers.yaml`." **Reality:** resolved path was `.../omega-engine/src/config/providers.yaml` (3 `.parent` from file = `src/`, needs 4 = repo root) → registry loaded **zero** providers → every `is_cloud()` hit the pessimistic unknown→cloud branch. Left untouched, all 5 call sites "wired" to the SSOT would have returned `True` for everything. **Fixed** one-line path correction.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: CLINE-CLI | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

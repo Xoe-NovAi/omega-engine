@@ -693,3 +693,8 @@ When implementing a markdown linter rule for citation standard, encode these rul
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_citation_standard*
 *Designer: Verity (Compliance & Gnosis Agent) | Date: 2026-06-21*
 *Reviewed by: — (pending fleet review)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

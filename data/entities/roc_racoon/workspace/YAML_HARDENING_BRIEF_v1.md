@@ -305,3 +305,8 @@ This is the sovereign way to handle fleet-wide concerns.
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_yaml_hardening ⬡ HANDOFF*
 
 *Brief complete. Handing off to Kali. This is exactly the d-rr-036 pattern in action — design the problem, delegate the implementation, observe the results.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

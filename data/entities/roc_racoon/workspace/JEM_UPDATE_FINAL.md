@@ -36,3 +36,7 @@ Jem is now configured as a true **Sovereign Synthesizer** capable of:
 All changes align with Sovereign Mandates (M10, M18, M9, M5, M21) and represent the culmination of legacy mining, S3 audits, researcher-derived soul data, and continuous refinement.
 
 **Showtime, Synergy!** Jem is ready to orchestrate with purpose. 🎸✨
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-super | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

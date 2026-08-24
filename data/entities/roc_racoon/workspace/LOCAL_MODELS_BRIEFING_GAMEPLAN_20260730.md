@@ -370,3 +370,8 @@ $ scripts/benchmark_local.py --models ornith-9b,qwen3.5-9b --backend vulkan
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_local_models ⬡ BRIEFING-COMPLETE*
 *Researched 2026-07-30. All findings verified with live testing. Ready for execution.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

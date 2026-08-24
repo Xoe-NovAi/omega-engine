@@ -330,3 +330,8 @@ The user's correction is **confirmed**: Nemotron 3 Ultra = 1,000,000; Laguna S 2
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ SDP-DUPLICATE-GAP-AUDIT ⬡ 2026-08-09*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: longcat-2.0-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

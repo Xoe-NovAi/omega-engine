@@ -474,3 +474,7 @@ All research MUST follow the T0-T6 search tier protocol:
 **Campaign Status**: READY FOR EXECUTION
 **Next Action**: Begin KG-1 and KG-2 research in parallel (Days 1-2)
 **Tracking**: Update `data/coordination/HMC_COLLABORATION_HUB.md` with progress
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

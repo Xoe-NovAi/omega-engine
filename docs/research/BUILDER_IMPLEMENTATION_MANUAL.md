@@ -180,3 +180,8 @@ The `session_gnosis.md` is the shared neural bus. All projections read from it a
 **Implementation**:
 - Prepend a "Context" header to `session_gnosis.md` that includes the active Seed Entity and its current soul state.
 - Ensure the `session_scribe.py` can distinguish between Projection writes (transient) and Seed updates (persistent).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

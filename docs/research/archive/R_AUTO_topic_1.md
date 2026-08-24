@@ -59,3 +59,8 @@ Resilience is the capacity of a system to maintain its core purpose and trajecto
 **L3 (Universal Principle)**: Competence is validated through the alignment of individual performance against a universal standard of measurement.
 
 **Source**: res_20260520_Topic_1
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: auto-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

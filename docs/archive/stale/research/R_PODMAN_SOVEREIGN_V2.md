@@ -166,3 +166,8 @@ As part of Decision 50, the following MCP servers were consolidated into the Ome
 - [x] `.opencode/agents/overseer.md` — Container hardening mandate added
 - [x] `.opencode/agents/builder.md` — Container hardening protocol updated
 - [ ] Final verification: `make test` green, `find ... -user 101000` = 0
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -179,3 +179,8 @@ We talked about the consoles that Rage is coming out for. Are you interested in 
 JC: I haven't been over there yet. You know, interestingly I have a six-year-old son now. The only games I play at home are Wii and DS games. I'm an old-school Mario fan, and all that. I don't play the hardcore shooters. Some of that is because, when you see how the sausage is made, you're not quite as excited about that. I kind of like the pure and simple games because I don't have ten hours over the weekend to spend gaming, but I do have fun sitting down and playing simple things.
 
 Many, many years ago, we had negative experiences with Nintendo, but the only reason we're not doing anything with Nintendo now is just that the technologies are out of sync. It's a perfect opportunity to do PC, 360, PS3, but you couldn't have the same content base also targeting the Wii. But, you know, the new platform is probably just right there. It would probably be straightforward to target our stuff over there. It would depend on what the business case is for any of that.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: INTERVIEW | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

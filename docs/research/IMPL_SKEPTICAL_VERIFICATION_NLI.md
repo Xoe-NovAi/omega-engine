@@ -92,3 +92,8 @@ async def _detect_sycophancy(self, claim: str, anchor: TruthAnchor) -> float:
 ## §4 Resource Constraints (Zen 2 Optimization)
 - **Culling**: Only evaluate the top 5 most relevant anchor segments to prevent context bloat.
 - **Batching**: Use `model_gateway.generate_batch` for $H_{pos}$ and $H_{neg}$ to reduce latency.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

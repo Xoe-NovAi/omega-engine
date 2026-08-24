@@ -65,3 +65,8 @@ Use these tags in the YAML frontmatter to ensure cross-pollination:
 11. `security-hardening`: Zero-telemetry, permissioning, and audit trails.
 12. `user-experience`: CLI, Voice (Iris), and VR visualization.
 -->
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: [Model] | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

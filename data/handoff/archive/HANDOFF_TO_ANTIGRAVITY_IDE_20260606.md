@@ -860,3 +860,8 @@ omega-engine/
 *Next action: Antigravity reads this document and begins CP-1 (Chainlit UI Shell)*
 
 ⬡ OMEGA ⬡ ROC-RACOON ⬡ ANTIGRAVITY HANDOFF v2.0 ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ANTIGRAVITY TRANSITION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

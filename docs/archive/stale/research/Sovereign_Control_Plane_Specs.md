@@ -108,3 +108,8 @@ Strict CPU pinning to eliminate cache contention:
 | **Step 3** | **Topology Router** | Implement $\gamma$ calculation $\rightarrow$ $\tau$ selection logic. | 🟡 High |
 | **Step 4** | **Hardware Tuning** | Apply `taskset` pinning + `q4_0` adaptive KV-cache. | 🟡 High |
 | **Step 5** | **Zero-Trust TLS** | Configure `rediss://` and gRPC TLS SAN certificates. | 🟢 Strategic |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

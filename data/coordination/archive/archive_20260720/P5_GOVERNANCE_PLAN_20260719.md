@@ -665,3 +665,7 @@ async def _post_hivemind_alert(self, alert_type: str, message: str):
 ---
 
 *⬡ OMEGA ⬡ PILLAR P5 ⬡ GOVERNANCE ⬡ trc_p5_gov_plan ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: P5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

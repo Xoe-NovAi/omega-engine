@@ -60,3 +60,8 @@ Observability data from FastRouter is used to evolve the entity's soul.
 - **AnyIO Absolute**: All gateway calls and circuit breaker logic must be AnyIO-compliant.
 - **Sovereign Fallback**: The `NativeGGUFProvider` must remain the ultimate, non-negotiable fallback.
 - **Zero Telemetry**: Ensure FastRouter is configured for minimum data retention and maximum privacy.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

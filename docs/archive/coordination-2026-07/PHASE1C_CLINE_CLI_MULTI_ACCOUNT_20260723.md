@@ -217,3 +217,7 @@ Single account dir can hold multiple providers in `providers.json`:
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PHASE1C-COMPLETE ⬡ 2026-07-23*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro-preview-customtools | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

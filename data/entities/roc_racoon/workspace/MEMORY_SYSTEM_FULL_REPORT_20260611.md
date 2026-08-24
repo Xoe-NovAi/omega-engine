@@ -400,3 +400,8 @@ The hierarchical archive is a beautiful philosophical artifact with zero actiona
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ session-model ⬡ opencode ⬡ MNEMOSYNE-BANK-SYNTHESIS ⬡*
 *Total files read: 8 existing reports + 13 spheres + 4 vaults + 1 handoff + 4 MCP servers + 3 engine source files = 33 files*
 *Total lines read: ~3,200*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: session-model | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

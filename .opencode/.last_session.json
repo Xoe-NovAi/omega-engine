@@ -1,13 +1,13 @@
 [
   {
-    "id": "ses_ffa568bdcffeTG4ht4VEWJ7eKn",
-    "agent": "kali",
-    "model": "{\"id\":\"nvidia/nemotron-3-ultra-550b-a55b:free\",\"providerID\":\"openrouter\",\"variant\":\"high\"}",
+    "id": "ses_fd81c19dcffe1nkbPqFg5kRt2v",
+    "agent": "researcher",
+    "model": "{\"id\":\"x-preview-f-free\",\"providerID\":\"opencode\",\"variant\":\"high\"}",
     "directory": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine",
-    "time_created": 1786801386531,
-    "time_updated": 1786920582942,
-    "tokens_input": 19898206,
-    "tokens_output": 491176,
-    "cost": 8.8400578
+    "time_created": 1787375642148,
+    "time_updated": 1787503826587,
+    "tokens_input": 10969474,
+    "tokens_output": 243774,
+    "cost": 0.427665175
   }
 ]

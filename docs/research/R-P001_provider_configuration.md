@@ -102,3 +102,8 @@ For OpenCode agents to utilize the Engine as a backend, use the following provid
 
 ---
 **Implementation Note**: Ensure that `env:` prefix in `providers.yaml` is correctly parsed by the `ModelGateway` to load variables from the system environment before initializing the provider client.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

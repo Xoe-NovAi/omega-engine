@@ -2015,3 +2015,8 @@ git add -A && git commit -m "feat: fleet redesign v5.0 — 14-agent consolidatio
 
 *⬡ OMEGA ⬡ GEMINI-3.5-FLASH ⬡ opencode ⬡ trc_fleet_handoff ⬡ READY-FOR-EXECUTION*
 *Executor: Gemma 4 31B — you are clear to begin Phase A.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

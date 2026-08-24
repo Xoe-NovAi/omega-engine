@@ -84,3 +84,8 @@ Subagents cannot write directly to the SSOT. They must pass through the **Knowle
 | **Distillation**| L2 $\rightarrow$ L3 | `soul.yaml` | `Scribe` | Universal Principle |
 | **Conflict** | Contradict | `SkepticalVerifier` | TSR / NLI | Resolved Truth |
 | **Obsolescence**| Superseded | `_archive/` | `PIVOT_LOG.md` | Historical Record |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_lifecycle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -808,3 +808,8 @@ The 4-axis lattice (Technical/Philosophical/Historical/Practical) is validated b
 
 *⬡ OMEGA ⬡ GEMINI-3.5-FLASH ⬡ opencode ⬡ trc_fleet_redesign ⬡ EXECUTION-READY*
 *All documentation drafts are embedded in this plan. Ready for build mode execution.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

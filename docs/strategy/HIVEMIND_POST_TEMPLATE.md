@@ -308,3 +308,7 @@ resumption_status: {none|verified|failed|pending}
 ---
 
 *⬡ OMEGA ⬡ HIVEMIND ⬡ TEMPLATE ⬡ v1.0.0 ⬡ 2026-07-12*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TEMPLATE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

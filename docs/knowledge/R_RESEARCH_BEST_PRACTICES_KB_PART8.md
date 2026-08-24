@@ -80,3 +80,7 @@ This is how we build not just agents, but **sovereign agents** - agents that don
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp_kb ⬡ 2026-07-22*
 *This concludes the 8-part guide. For the full reference, consult all parts 1-8 in the Omega Engine Knowledge Base.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

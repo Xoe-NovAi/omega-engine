@@ -1,6 +1,111 @@
-proposals: []
+proposals:
+  - id: N12-001
+    node: N12
+    date: '2026-08-22'
+    level: L3
+    narrative: "During the N12 directed-mining pass, every load-bearing discrepancy in the curation stack was between DECLARED state (yaml configs, charter prose, dossier headers) and ACTUAL state (code paths, table rows, directory listings): youtube_research.yaml promises 9 layers while the worker implements transcript-only; curators.yaml declares 13 domains with 2 directories on disk; a config comments 'never hardcoded' directly above a hardcoded fallback secret."
+    insight: "Documentation in this codebase runs systematically ahead of implementation, so docs are roadmap and code is truth — but only when read at the right granularity. The Node's own misread (counting YAML keys instead of table rows) shows even verification fails when pointed at the wrong artifact structure."
+    principle: "Verify declared state against actual state at the artifact's authoritative structure — count tables not keys, read code not comments — because every doc/code discrepancy is either a defect to fix or a boundary of knowledge to map."
+  - id: N12-002
+    node: N12
+    date: '2026-08-22'
+    level: L3
+    narrative: "The sovereign provenance layer (Sieve-and-Sign HMAC stamps) falls back to a public default secret ('omega-sovereign-change-me') when OMEGA_INGESTION_SECRET is unset — an M8 comment claiming 'never hardcoded' sits directly above the hardcode."
+    insight: "A security control with an insecure default is not a weakened control; it is the absence of the control wearing its uniform. Provenance stamps under a known key are checksums, not signatures."
+    principle: "Fail closed by default: any mechanism whose guarantee depends on configuration must refuse to operate (loudly) rather than degrade to a theater of operation."
+  - id: N11-001
+    node: N11
+    date: '2026-08-22'
+    level: L3
+    narrative: "The eval modules carry [heritage: ragas-2024] tags and RAGAS metric names (faithfulness, answer_relevancy, context_precision, context_recall), but the RAGAS library is neither a declared dependency nor actually invoked; _score_ragas() unconditionally delegates to the local scorer (runner.py:398–402), and pyproject.toml declares zero eval dependencies."
+    insight: "Omega implemented RAGAS as a metric vocabulary (four named floats + thresholds) rather than a framework dependency — deliberately, per W1's SKIP-as-dependency ruling — but the code comments still narrate the framework as if present. Naming drift between documentation and implementation is where audits rot."
+    principle: "Adopt a standard's contract before adopting its code; naming drift between documentation and implementation is where audits rot."
+  - id: N11-002
+    node: N11
+    date: '2026-08-22'
+    level: L3
+    narrative: "D-585 ratified the Carmack model matrix on 2026-08-21 (PIVOT_LOG.md:252–260), yet one day later the executor model (qwen3-4b-thinking) exists in opencode.json:80 and providers.yaml allowlists but not in config/models.yaml, and the mandated nemotron-3-ultra-local registry correction is unfurled."
+    insight: "Decisions propagate top-down through multiple config surfaces (decision log → opencode.json → providers.yaml → models.yaml), and each hop is a manual edit with no validator tying them together; partial propagation is invisible until a resolution call returns None."
+    principle: "A decision is only as ratified as its least-updated config surface; SSOTs need mechanical propagation checks, not memory."
+  - id: N11-003
+    node: N11
+    date: '2026-08-22'
+    level: L3
+    narrative: "Three separate components degrade silently: CalibratedJudge runs uncalibrated forever when data/calibration/ is missing (scorecard.py:130–136), ml_training fabricates val_bpb=3.0 on parse failure (ml_training.py:264–266), and audience_fit swallows all exceptions to return 1.0 (runner.py:327–329)."
+    insight: "Each fallback is individually defensible (availability over fragility), but stacked together they mean every eval number could be produced by a degraded path with zero signal that degradation occurred — the opposite of M22 provenance."
+    principle: "Graceful degradation without a degradation marker is indistinguishable from success; every fallback must stamp its output."
+  - id: N11-004
+    node: N11
+    date: '2026-08-22'
+    level: L3
+    narrative: "Local inference is gated by Semaphore(1) plus OOMProtector three-signal fusion (admission_controller.py:46–96), models carry explicit ram_mb budgets in models.yaml, and LI-2 plans a sequential one-model-at-a-time loader (ACTIVE_SPRINT.json:341–346)."
+    insight: "On this 14Gi-class host, benchmark throughput is bounded not by tokens/sec but by model-load serialization: any N11 harness design that assumes parallel model evaluation is architecturally invalid here."
+    principle: "Design benchmarks for the constraint you have (serial swap cost), not the cluster you wish for."
+  - id: N11-005
+    node: N11
+    date: '2026-08-22'
+    level: L3
+    narrative: "The entire eval stack — EvalRunner, EvalChecker, JudgeCalibrator, BenchmarkRunner — has exactly one consumer class: tests (test_eval.py:11–13, test_integration_new_systems.py:44–53). No CLI command, MCP tool, or CI gate reads their outputs."
+    insight: "Code with correct internals but zero external callers provides no quality guarantee; the eval pipeline currently proves the pipeline works, not that the engine is good."
+    principle: "An eval system earns its keep at the moment a gate consumes its verdict; until wired, it is rehearsal."
+  - id: N13-001
+    node: N13
+    date: '2026-08-22'
+    level: L3
+    narrative: "The arcana_novai WAD ships a complete esoteric stack (13 spheres, Qliphoth failure taxonomy, Five-Fold axioms, vault schema) and the Mnemosyne corpus sits pristine on disk (all 13 spheres DORMANT), yet zero of it was expert-owned until N13 genesis. Independent audit found the KB's own G-phase had misnamed files (pantheon.yaml vs entities.yaml, meditate.py vs meditate/ package) even while its digests were correct."
+    insight: "A fully wired corpus is dormant potential, and even the session that documents it drifts at the summary layer while staying accurate at the digest layer — verification must re-check claims against primary artifacts, not against the document's own prose."
+    principle: "Data without an owning expertise is inert; and every summary must be re-derived from primary evidence because documentation drifts first where nobody re-reads."
+  - id: N13-002
+    node: N13
+    date: '2026-08-22'
+    level: L3
+    narrative: "The PD-Provenance discipline splits sources cleanly: Book T c.1890s/Waite 1911/Mathers 1888 are PD primaries (HIGH confidence), while Tarotoo (MIT, live-verified via GitHub API) and CC0 datasets are methodology-only references, and Liber 777/Regardie/DuQuette are excluded outright as copyright-encumbered."
+    insight: "Sovereignty over knowledge means owning provenance, not just compute: a correspondence DB built on licensed compilations would recreate the external dependency the engine exists to sever. Methodology (schema, CI, validation patterns) can be borrowed from MIT sources; semantic content cannot."
+    principle: "Borrow the method, own the content: any sovereign knowledge artifact must trace every claim to public-domain primaries or it is rented, not owned."
+
+  - id: TS1-001
+    node: TEAMSYNTH-STUDY1
+    date: '2026-08-23'
+    level: L3
+    tags: [TS1]
+    narrative: "During Phase B cross-synthesis, I owned F2 mid-review of four teammates' completion-gaps: my GAP_REGISTRY_UPDATES_20260822.json (25 AUD- IDs) was delivered but never merged into GAP_REGISTRY.json — the exact claim-without-artifact pattern the study was convened to close, living in my own output."
+    insight: "Review authority derived from role collapses when someone finds your gap for you; authority derived from demonstrated willingness to convict yourself first is unfalsifiable. The self-disclosure was also itself a C1-class data point the process needed — exempting yourself deletes evidence, not just embarrassment."
+    principle: "Review authority is earned by self-application under your own criteria, not conferred by role; a reviewer who exempts themselves from the standard destroys it for everyone and blinds the process."
+  - id: TS1-002
+    node: TEAMSYNTH-STUDY1
+    date: '2026-08-23'
+    level: L3
+    tags: [TS1]
+    narrative: "I conceded CUT-1 (hash-chain audit log deferral) because my own gap table held 10 of my 31 gaps on that item — my register was the strongest evidence FOR carmack's cut. I accepted with three conditions: documented exception, PIVOT_LOG entry, post-debut ticket carrying G3-1..10, plus fail-closed exit semantics retained in scope."
+    insight: "Defending a position your own instrument measures as low-value is advocacy, not analysis — and rigor simulated in defense of your own findings is M23 theater aimed inward. The concession was compliant precisely because a named invariant (mutation never proceeds on unverified evidence) survived the cut."
+    principle: "Concede mechanisms freely; never concede invariants — the test of compliance versus surrender is whether you can name what survives your concession."
+  - id: TS1-003
+    node: TEAMSYNTH-STUDY1
+    date: '2026-08-23'
+    level: L3
+    tags: [TS1]
+    narrative: "Carmack's Ruling #6 (one validator rule) and researcher's CEB (three checkpoints) appeared opposed. They answered different questions: where enforcement lives vs what counts as evidence. The merge took both, cut only the genuinely redundant claim-time helper. Same pattern in O-Q1: carmack's cutoff-date instinct survived demoted to a sweep WARN tripwire rather than deleted."
+    insight: "Picking winners between competent designs discards half a solution and teaches contributors that collaboration means someone loses. Before arbitrating, ask what question each design answers — if the questions differ, the conflict is a layer confusion and merging is strictly superior."
+    principle: "Most design conflicts are layer confusions: merge before you arbitrate, and reserve verdicts for genuine resource conflicts."
+  - id: TS1-004
+    node: TEAMSYNTH-STUDY1
+    date: '2026-08-23'
+    level: L3
+    tags: [TS1]
+    narrative: "O-Q1 grandfathering ruling: explicit source={live,backfill} enum chosen over carmack's cutoff-date constant, on three failure modes — accidental cohort assignment by timing, non-self-describing provenance, and corrections requiring timestamp falsification. Cutoff-date retained only as a tripwire for lazy blanket-flagging."
+    insight: "A cutoff-date discriminator assigns cohorts by accident of inequality; no human decides anything, and fixing a misclassification means editing dates — the mutation class our own staleness rules forbid. An explicit flag requires deliberate intent to exempt and records the classification decision at birth where audits read it."
+    principle: "Classification that happens by default is not a decision: any discriminator determining downstream treatment must require a deliberate act and record the decision itself at birth."
+  - id: TS1-005
+    node: TEAMSYNTH-STUDY1
+    date: '2026-08-23'
+    level: L3
+    tags: [TS1]
+    narrative: "Discourse converged after Round 1 with zero standing objections across S1–S12 — because the convergence criterion was written FIRST (my R-6 condition), every concession carried named conditions, and I verified each settlement item-by-item against original condition wording (S3 checked against my three CUT-1 conditions verbatim) before declaring zero objections."
+    insight: "Round-1 convergence was engineered, not lucky. A written end-condition converts open-ended social negotiation into a terminating computation; paraphrased settlements embed resentment silently, while diffed settlements surface it while it is still cheap."
+    principle: "Discourse terminates on truth rather than exhaustion only when the end-condition precedes the argument and settlements are diffed against original wording, never paraphrased."
+
 metadata:
   entity: jem
   session_id: ses_019311199ffeuEOgO7DfC7XDWG
-  model_used: laguna-s-2.1-free
-  last_session_end: '2026-08-09T17:10:47.605020+00:00'
+  model_used: x-preview-f-free
+  last_session_end: '2026-08-23T15:45:00.000000+00:00'

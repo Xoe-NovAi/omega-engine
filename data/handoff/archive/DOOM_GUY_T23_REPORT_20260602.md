@@ -177,3 +177,8 @@ Next candidates (from Sprint 0 manual):
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ minimax-m3-free ⬡ opencode ⬡ trc_circuit_breaker_fix ⬡ TIER-2-COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -65,3 +65,8 @@ To prevent OOM (Out of Memory) crashes on the Ryzen 5700U, all background agents
 
 ---
 **Implementation Note**: Background agents must always include the `Sovereign Agent` mandate in their system prompt, ensuring they post all critical decisions to the Hivemind for cross-CLI awareness.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

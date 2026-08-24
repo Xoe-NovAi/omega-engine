@@ -98,3 +98,8 @@ observer postmortem hook; (b) point heavy build caches at disk-backed paths
 - Wedged PID 997626 gone (self-resolved before reaping required)
 
 *⬡ OMEGA ⬡ CLINE ⬡ omega-engine ⬡ decisions ⬡ awaiting-kali ⬡ 2026-08-22*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: kali | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -118,3 +118,8 @@ The Oikos Council implementation exists at `omega-stack-legacy/app/oikos_service
 _For: Builder mode (Gemma 4 31B)_
 
 The Plan mode should be implemented as an Anthropic-style orchestrator-worker pattern. Key implementation details: (1) `orchestrator.py` has empty `submit_task()` and `_execute_with_retry()` stubs — fill these first. (2) Use `anyio.Queue` for subagent result collection. (3) Subagents write findings to `data/entities/{entity}/workspace/` on filesystem. (4) Synthesis pass reads all workspace files. (5) Add Hearth Matrix as a 3-question pre-flight check before any dispatch.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

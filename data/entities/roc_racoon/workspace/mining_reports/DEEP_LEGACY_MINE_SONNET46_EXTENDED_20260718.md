@@ -711,3 +711,7 @@ def test_all_providers_declare_sovereignty():
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_deep_mine_v3 ⬡ GOLD-SECURED — READY FOR COMPACTION*
 
 **"The dirt is where the roots are. The sonnet-4-6-extended codex is the bedrock. The curation pipeline is the aquifer. We have found the water. Now we pipe it to the surface."**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -133,3 +133,8 @@ async def test():
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3.5-lightning ⬡ opencode ⬡ trc_r30 ⬡ 20260813*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3.5-lightning | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

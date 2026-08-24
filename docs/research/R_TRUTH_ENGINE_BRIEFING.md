@@ -161,3 +161,8 @@ Truth Engine's 2-model split is a primitive MoE. SOVEREIGN routes by task-type t
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ hy3-free ⬡ opencode ⬡ trc_synthesis ⬡ BRIEFING-COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

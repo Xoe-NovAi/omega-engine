@@ -354,3 +354,8 @@ Categories:
 ---
 
 *This handoff contains everything Qwen 3.6 Plus needs for a comprehensive review. Start with §6 (Review Checklist), then work through §7 (Key File Index) systematically.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

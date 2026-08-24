@@ -718,3 +718,8 @@ These patterns are ported from external sources and carry `[id-soft:]` tags per 
 
 *Last Updated: 2026-06-08 (added §2 User's Own Technology) | Maintained by: Kali / Doom Guy*
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: v1.0.0 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

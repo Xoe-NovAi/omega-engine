@@ -295,3 +295,8 @@ git checkout 9c91e97 -- src/omega/hardware.py
 
 *⬡ OMEGA ⬡ SOPHIA ⬡ opencode ⬡ trc_big_pickle_handoff ⬡ HANDOFF*
 *Big Pickle Review complete. Option B ready for execution.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

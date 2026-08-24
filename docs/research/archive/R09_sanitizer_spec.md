@@ -67,3 +67,8 @@ A hybrid approach is recommended to balance accuracy and performance:
 ## Implementation Note
 _For: Antigravity IDE / Cline_
 Implement as a class `OmegaSanitizer` in `src/omega/oracle/sanitizer.py`. Integrate into `ModelGateway._send_request` to ensure all outgoing prompts are cleaned before transmission.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

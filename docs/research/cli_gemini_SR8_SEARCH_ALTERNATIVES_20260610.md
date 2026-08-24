@@ -48,3 +48,8 @@ Given the current 401 (Unauthorized) status of Exa, the council requires a resil
 
 ---
 *Authored by: Gemini CLI — Heavy Research Specialist*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-2.0-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

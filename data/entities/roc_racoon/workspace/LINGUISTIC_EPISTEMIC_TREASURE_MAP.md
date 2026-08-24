@@ -69,3 +69,8 @@ This is the most mature part of the Truth-Defender's toolkit, transforming raw n
 **Mining Status**: 🟢 COMPLETE
 **Sovereign Value**: HIGH
 **Next Step**: Integrate these patterns into the `SkepticalVerifier` and `SovereignSiphon` modules.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Sovereign Miner | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

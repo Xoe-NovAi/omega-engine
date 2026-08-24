@@ -256,3 +256,8 @@ The `make heritage-vet` command executes the above algorithm. A non-zero exit co
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_spdx_heritage ⬡ SOVEREIGN-SPEC*
 *Last Updated: 2026-07-11 | SPDX 3.1 Heritage Profile v3.0.0 | Formal Specification*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

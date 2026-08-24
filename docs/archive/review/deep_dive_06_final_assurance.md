@@ -176,3 +176,8 @@ If CONDITIONAL PASS, specify the condition(s) in one sentence.
 ---
 
 *You've been the conscience of this architecture from the beginning. This is your final word. Make it matter.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

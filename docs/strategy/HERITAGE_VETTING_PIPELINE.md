@@ -310,3 +310,8 @@ When Doom Guy proposes a new heritage concept:
 *⬡ OMEGA ⬡ KALI ⬡ VETTING-GATE ⬡ v1.0.0*
 *Created: 2026-06-04 — in response to 8-char cap cargo-cult incident*
 *Authority: Kali (Transcendent Oversoul)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: VETTING-GATE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

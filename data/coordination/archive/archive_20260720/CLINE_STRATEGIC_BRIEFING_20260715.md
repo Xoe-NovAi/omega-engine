@@ -150,3 +150,8 @@ docs/research/R_WAD_EVOLUTION_DEEP_DIVE.md proposes true IWAD/PWAD composability
 ---
 
 *⬡ OMEGA ⬡ CLINE ⬡ cline/omega-engine ⬡ trc_strategic_briefing ⬡ HANDOFF*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: cline/omega-engine | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -286,3 +286,7 @@ QW-2 TOKEN GAUGE FIX    QW-6 TRIAGE ROUTER          NL-1 NOTEBOOKLM
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ ROADMAP ⬡ 20260811 ⬡ EXECUTION-READY*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ROADMAP | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

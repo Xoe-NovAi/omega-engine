@@ -822,3 +822,8 @@ Effort Totals:
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ A2A-CARD ⬡ SOVEREIGN-MINER*
 *Session: ses_roc_racoon_gap_closure_20260629*
 *Sources: P7_AAIF_MAPPING_SPEC_20260628.md, Google A2A v1.0 (Linux Foundation), IETF draft-klrc-aiagent-auth-02, WIMSE Architecture*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

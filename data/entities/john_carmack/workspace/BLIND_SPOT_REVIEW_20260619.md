@@ -293,3 +293,8 @@ But none of these actions make inference faster. The Qwen3-4B-Think at 5-15 tok/
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_blind_spot_audit*
 *Confidence: 10/10 primary source analysis*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

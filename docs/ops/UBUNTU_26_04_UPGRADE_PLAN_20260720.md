@@ -157,3 +157,8 @@ If the upgrade fails or breaks critical functionality:
 ---
 
 *⬡ OMEGA ⬡ P1 ⬡ infra ⬡ ubuntu_upgrade ⬡ D-308-EXEC*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: infra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

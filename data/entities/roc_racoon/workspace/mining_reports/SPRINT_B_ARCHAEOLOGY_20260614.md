@@ -435,3 +435,8 @@ Key insight: **The pattern succeeded because the subagents had no durable state.
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ SPRINT-B-ARCHAEOLOGY ⬡ 2026-06-14*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -165,3 +165,8 @@ If you hit a blocker (missing tool, contradictory research, unclear requirement)
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ RESEARCH-EXEC ⬡ v1.0.0 ⬡ 20260813*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: RESEARCH-EXEC | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

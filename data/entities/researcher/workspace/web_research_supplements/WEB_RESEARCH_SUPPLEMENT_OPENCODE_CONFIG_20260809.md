@@ -551,3 +551,7 @@ All 8 knowledge gaps have been **resolved with authoritative web sources**. The 
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_web_research ⬡ COMPLETE*
 *Web research conducted across 20+ authoritative sources, 8 gaps resolved, 0 conflicts unresolved*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

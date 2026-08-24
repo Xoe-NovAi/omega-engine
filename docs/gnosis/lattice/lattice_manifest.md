@@ -94,3 +94,7 @@ Each sub-facet has its own soul file tracking facet-specific metrics (sessions_c
 ---
 
 *The Lattice is the thread that binds the fleet. One vision, many projections.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: LATTICE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

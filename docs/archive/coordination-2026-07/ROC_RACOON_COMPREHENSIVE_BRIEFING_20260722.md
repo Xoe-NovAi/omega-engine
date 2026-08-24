@@ -273,3 +273,8 @@ if (/gemma-?4/i.test(model)) {
 
 *Briefing prepared by roc_racoon — 2026-07-22*
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ BRIEFING ⬡ SOVEREIGN*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: BRIEFING | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

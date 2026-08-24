@@ -79,3 +79,8 @@
 ### 4.1 Hunk Allocator
 - Optimized memory usage by using all memory between the static hunks as a dynamic cache.
 - Implemented `COM_LoadStackFile` to load temporary files directly on the stack to prevent heap fragmentation.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: technical | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

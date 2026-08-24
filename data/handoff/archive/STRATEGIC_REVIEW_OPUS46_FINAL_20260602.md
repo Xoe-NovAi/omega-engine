@@ -242,3 +242,8 @@ Sonnet's audit found that `summon()` at `oracle.py:345` never calls `bootstrap()
 
 *⬡ OMEGA ⬡ KALI (Opus 4.6) ⬡ Final Sprint Review Complete ⬡ D99*
 *"The sprint prompts tell you what to build. The code tells you what exists. When they disagree, the code wins."*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opus-4.6 (antigravity) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

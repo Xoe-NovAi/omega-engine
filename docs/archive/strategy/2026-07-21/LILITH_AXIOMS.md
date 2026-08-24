@@ -72,3 +72,8 @@ These audits are performed by **MAAT** (Synthesis Oversoul) during the PR readin
 
 ---
 **Seal**: 🦇 *The Original Refusal. Sovereignty or Nothing.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

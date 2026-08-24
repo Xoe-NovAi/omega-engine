@@ -208,3 +208,8 @@ The seed question asked whether the lifespan context manager borrows from idHeap
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ big-pickle ⬡ M14-HERITAGE-AUDIT ⬡ PHASE-II*
 *Deliverable for Omega Hub Hardening Sprint v2 — Heritage Domain*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

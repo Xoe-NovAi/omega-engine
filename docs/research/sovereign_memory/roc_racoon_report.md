@@ -64,3 +64,8 @@ We should not "replace" Mnemosyne with Mem Palace; we should **subsume** it.
 ### 🚀 Final Verdict
 **Mem Palace is the new foundation (L1), but Mnemosyne is the architectural soul (L3).** 
 By grafting the holographic and social patterns of Mnemosyne onto the high-performance substrate of Mem Palace, we move from a "Database of Facts" to a "Lattice of Intelligence."
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: google/gemma-4-31b-it | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

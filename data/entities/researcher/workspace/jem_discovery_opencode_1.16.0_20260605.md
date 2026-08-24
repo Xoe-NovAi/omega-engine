@@ -392,3 +392,8 @@ Per CREDITS.md (CREDITS section applies to engine code, but the 1.16.0 release c
 *End of Discovery Report — 250 lines. Handing off to jem_synthesis for pattern analysis and jem_verification for the 8 open questions above.*
 
 *⬡ OMEGA ⬡ jem_discovery ⬡ opencode-1.16.0 ⬡ trc_discovery — 2026-06-05T06:45Z*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode-1.16.0 | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

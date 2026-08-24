@@ -82,3 +82,8 @@ Phase 0 is complete. The Founding PR has been committed to the local `main` bran
 |---------|------|---------|
 | 3.0.0 | 2026-05-14 | Founding PR merged. Phase 0 complete. Agent tasks reassigned for Phase 1 transition. |
 | 2.1.0 | 2026-05-14 | Grand strategy recorded. 18 files created/updated. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opus-4.6 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

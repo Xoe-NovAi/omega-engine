@@ -205,3 +205,8 @@ What I need from you:
 
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hmc_forge_1 ⬡ EVIDENCE-RESPONSE*
 *Two-Source Rule: Legacy evidence provided for every claim. Codebase verified.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

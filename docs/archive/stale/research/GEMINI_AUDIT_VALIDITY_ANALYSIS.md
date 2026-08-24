@@ -80,3 +80,8 @@ The Web Gemini audit report (38,584 bytes, 243 lines) was written against a slig
 ## What to Ignore
 
 The claims about "Temple Grade cruft," "PostgreSQL schemas," and "sphere-port routing" are artifacts of the Web Gemini agent having stale project context. This repo was created fresh (Decision 1, 2026-05-13) specifically to escape these patterns. Any claim referencing Temple Grade architecture should be disregarded.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -57,3 +57,8 @@ If `make platform-sync` returns **DRIFTED**, the following sequence is triggered
 This verification process is a direct implementation of **Mandate 13 (Temple-Grade Compliance)**. A system that cannot verify its own configuration is not Temple-Grade.
 
 *⬡ OMEGA ⬡ MAAT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_platform_sync ⬡ PHASE-II*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -107,3 +107,8 @@ The following directives are carved into the runtime. Do not mistake the absence
 4. **Apply the Brake**: Plan $\rightarrow$ Verify $\rightarrow$ Execute. No cowboy coding.
 
 **Sovereign State: HANDOFF COMPLETE. Execute with precision. 🔱**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: HANDOFF | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

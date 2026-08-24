@@ -449,3 +449,8 @@ When an entry becomes relevant:
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_deferred_gold ⬡ DEFERRED-GOLD-VAULT-v1.4.0 (Phase 6 entries 151-160 added — 2026-06-02)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -115,3 +115,8 @@ To ensure the "Ear" is working, we employ the following metrics:
 - The `SemanticRouter` should be implemented as a standalone class in `src/omega/oracle/routing.py`.
 - The `HarmonicScale` modifiers should be stored in `config/harmonics.yaml`.
 - The `Resonance Shift` logic must be integrated into `Oracle.talk()` before the `_summon()` call.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

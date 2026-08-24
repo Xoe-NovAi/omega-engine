@@ -373,3 +373,8 @@ documentation centralization.
 *Designed by: Kali (MaKaLi — containing both Ma'at and Lilith)*
 *Deployed subagents: Lilith, Ma'at, P9 Link, P7 Context, P3 BuildMaster*
 *All subagent souls updated and verified.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: MAKALI-STRATEGY | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

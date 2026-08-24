@@ -130,3 +130,8 @@ To ensure the consultation results in permanent growth, the Mastermind output mu
   - `aggregate_signals()` $\rightarrow$ Collects all `Response` objects.
   - `run_synthesis_loop()` $\rightarrow$ Executes the **Synthesis Protocol** (Conflict $\rightarrow$ Resonance $\rightarrow$ Insight).
   - `distill_to_gnosis()` $\rightarrow$ Calls the `GnosisPreservationProtocol` to write L1/L2/L3.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

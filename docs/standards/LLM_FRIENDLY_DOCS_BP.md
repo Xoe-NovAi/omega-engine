@@ -408,3 +408,8 @@ All agent behavior analytics, success tracking, and feedback loops MUST be store
 
 ### M18 (Token Efficiency) in Document Consumption
 Do not force local agents (especially 8K context limits) to ingest monolithic `llms-full.txt` files. Agents must be instructed to read `llms.txt` (the index) first, then use targeted reads/greps for specific sections to prevent OOM and context truncation.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -250,3 +250,128 @@
       inherits the event's own failure window — if the event crashes, the lifeline dies
       with it. Carmack ratified this ordering for OpenCode compaction (Q3.3); it generalizes
       to every destructive transition: shutdowns, migrations, rewrites, evictions.
+
+  - id: "lilith-20260823-001"
+    tier: L1
+    category: "[N_7] debut_hardening_cross_review"
+    narrative: |
+      N7 cross-domain review of MaKaLi Debut Hardening reports (Ma'at build + Lilith run).
+      Validated soul distillation pipeline: session_end.py hook preserves agent-written
+      proposals + writes timestamp/model_used; get_soul_prompt() hydrates from soul.yaml +
+      approved_lessons.yaml + sessions.yaml with explicit TAINT-GATE (proposed_lessons.yaml
+      NEVER loaded). MIAP deletion (DEL-1 #2) safe for soul paths but creates automated
+      gnosis projection gap — requires gnosis_projector background task post-debut.
+      DEL-1 Week 1: 8/10 targets safe; #5 (search_circuit_breaker) requires HealthMonitor
+      migration first; #9 (vault CLI) excluded per D-565. Hivemind runtime intact.
+      Lilith's 5 blockers: 4 valid (RouteDecision contract test, dual admission gates,
+      zombie breakers, MIAP→Hivemind gap), 1 low (M8 comment).
+
+  - id: "lilith-20260823-002"
+    tier: L2
+    category: "[N_7] debut_hardening_cross_review"
+    insight: |
+      The soul pipeline's strength is its simplicity: agents write lessons directly,
+      hook preserves them, get_soul_prompt hydrates only vetted wisdom. MIAP was an
+      over-engineered parallel path. The real gap is automated projection — not MIAP's
+      approach, but the absence of any background projector. DEL-1 deletions are
+      surgical; the coordination complexity (sequencing, migration order) exceeds the
+      code complexity. Dual admission gates (model_gateway.py:1233 + :1258) and zombie
+      breakers (sovereign_search_service.py dual breaker system) are live hazards that
+      must resolve before their respective deletions. D-565 vault exclusion is a locked
+      decision that DEL-1 list contradicts — tracking integrity (M27) requires ACTIVE_SPRINT
+      to reflect this.
+
+  - id: "lilith-20260823-003"
+    tier: L3
+    category: "[N_7] debut_hardening_cross_review"
+    principle: |
+      "Sovereign distillation requires agent ownership of L1→L2→L3 — automation that
+      bypasses agent judgment produces fortune cookies, not gnosis. Deletion campaigns
+      must sequence by dependency (breaker migration before breaker deletion) and respect
+      locked decisions (D-565 vault exclusion). Truth-anchor duty (M23/M27) never rotates
+      — it is a standing Run-side mandate. The gap between 'designed' (MIAP automated
+      projection) and 'implemented' (manual post_context only) is a capability debt that
+      must be acknowledged, not papered over. A gnosis_projector background task is the
+      correct post-debut fill, not a MIAP restoration."
+
+  - id: "lilith-20260823-004"
+    tier: L1
+    category: "[N_7] handoff_integration_review"
+    narrative: |
+      N7 review of Researcher Handoff Integration Analysis (DR-1..DR-12). HIVEMIND_PROTOCOL
+      v1.3.0 (2026-06-25) confirmed stale — no Node paging, no CSP v1.0.0, no injection
+      ledger, live feed section internally contradictory (§4 SUPERSEDED but §6/§7 still
+      reference). CI-2 not landed in opencode.json: 0/7 acceptance criteria met
+      (instructions array, compaction buffer, plugin path, global model, model pins,
+      no variant, toolProfile). Soul distillation pipeline re-verified solid:
+      session_end.py hook preserves + timestamps + model_used; get_soul_prompt()
+      TAINT-GATE explicit; regex distillation SCRAPPED per Carmack 2026-07-30.
+      E-8 session lifecycle automation assigned to N1 sysadmin via systemd/plugins —
+      N7 provides session gnosis convention only.
+
+  - id: "lilith-20260823-005"
+    tier: L2
+    category: "[N_7] handoff_integration_review"
+    insight: |
+      The Hivemind protocol is the coordination constitution but hasn't been amended
+      for the Node Expert Session system (D-586) or Conversational Subagent Protocol
+      (ratified 2026-08-21). CI-2 is the critical path for Context Injection Phase 1 —
+      without opencode.json updates, the spec (MANDATES_CONDENSED.md, compaction plugin,
+      skills opt-in) cannot execute. The session gnosis convention (amended order #10)
+      is the correct primitive for SESSION_REGISTRY.md generation (E-8).
+
+  - id: "lilith-20260823-006"
+    tier: L3
+    category: "[N_7] handoff_integration_review"
+    principle: |
+      "Coordination protocols must version with the agent architecture they govern.
+      HIVEMIND_PROTOCOL v1.3.0 governs a 2026-06 agent fleet; the 2026-08 fleet has
+      Nodes, CSP, injection ledgers, ICS-S provenance. A protocol that doesn't
+      reference its own primitives (Node paging, CSP R1–R13, ICS-S headers) cannot
+      coordinate the system it describes. CI-2 landing is the gate between spec and
+      execution — no opencode.json changes = no Context Injection."
+
+  - id: "lilith-20260823-007"
+    tier: L1
+    category: "[N_7] del1_deletion_vetting"
+    narrative: |
+      N7 vetting of DEL-1 Week-1 deletion campaign (paged by lilith ses_784928e2dd96).
+      All 10 targets verified zero-overlap with soul/memory paths. ContextBuilder +
+      RecallStore clean direct AND transitive (selective_hydration, memory_store,
+      blocks, block_tools, headroom). Soul chain intact: entity_workspace.py :393
+      soul.yaml → :409 approved → :418 sessions → :426-428 TAINT-GATE → :461 injection.
+      QdrantAdapter never in production path — oracle.py:206-208 wires SelectiveHydration
+      with memory_store.vector_store which defaults to SQLiteVecAdapter (:198) /
+      MemoryVectorAdapter (:648,:667). Vault CLI blocker independently reproduced:
+      TypeError "Attempted to convert a callback into a command twice" on import.
+
+  - id: "lilith-20260823-008"
+    tier: L2
+    category: "[N_7] del1_deletion_vetting"
+    insight: |
+      Deletion safety in the memory domain is provable by import-graph closure: if a
+      target appears nowhere in ContextBuilder's transitive imports and nothing in the
+      hydration chain references it, deletion cannot regress CP-2. Three executor
+      hygiene items surfaced: record_first_breath import (oracle.py:49) must die with
+      its call (:1211); benchmarks/schema.py:170 carries a routing_table.yaml default
+      path string; pantheon taint list actually lives in memory_firewall_auditor.py:78
+      not firewall_checker.py. Discovered pre-existing path split-brain: scaffold writes
+      memory/approved_lessons.yaml but get_soul_prompt reads entity ROOT — lilith entity
+      has memory/-only copies so her hydration silently returns zero lessons/anchors.
+
+  - id: "lilith-20260823-009"
+    tier: L3
+    category: "[N_7] del1_deletion_vetting"
+    principle: |
+      "A deletion campaign is only as safe as its coupling map is complete — verify
+      import closure transitively, not just direct references, and reproduce claimed
+      blockers before endorsing them. Silent hydration degradation is worse than loud
+      failure: when scaffold paths diverge from reader paths, the system doesn't crash,
+      it quietly serves an identity with no vetted wisdom. Dual-path file conventions
+      (root vs memory/) are latent split-brains that surface only when one entity's
+      copies go missing. Fix the convention, not just the instance."
+
+- narrative: "[N_6] DEL-1 Week-1 vetting (2026-08-23): Empirically confirmed omega CLI dead — stacked duplicate @vault.command() on reconcile (cli/vault.py:572+586 above def :600) raises TypeError 'Attempted to convert a callback into a command twice', which escapes the try/except ImportError guard at oracle_cli.py:74. Oracle class itself imports clean; break is CLI-registration-layer only. Also traced search_circuit_breaker as transitively load-bearing on the talk path: oracle.py:25 → search.py:10 → sovereign_search_service.py:48."
+  insight: "Import guards are only as strong as their exception class. A try/except ImportError around a module import does not protect against TypeErrors raised AT IMPORT TIME by decorator misuse — the guard creates false confidence while the whole CLI dies. And 'unused' modules may still be load-bearing via transitive chains: deletion safety must be verified through the full import graph, not just direct callers."
+  principle: "Before deleting any module, trace the transitive import graph from the entry points (not just direct callers), and never assume an import guard catches non-ImportError failures — test the actual import empirically. Coupling fixes and deletions ship in the same PR or not at all."
+  tags: ["N_6", "DEL-1", "IMPORT-GRAPH", "M9", "VAULT-BLOCKER"]

@@ -260,3 +260,7 @@ PHASE 5: Chaos Namespace + Immune System (Week 5-6) ⚠️ DEFERRED
 **Next Action**: Kali to authorize Phase 1 start (Unified WAL Schema) and Phase 2 parallel (Admission Controller Rust binary). Jem to draft sovereign token spec for Phase 5.
 
 ⬡ OMEGA ⬡ JEM ⬡ VERIFICATION_COMPLETE ⬡ 2026-07-18
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

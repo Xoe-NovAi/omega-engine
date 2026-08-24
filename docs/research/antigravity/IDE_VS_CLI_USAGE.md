@@ -99,3 +99,8 @@ This is the **critical integration path** for the Omega Provider Fabric. Combine
 - `RESOURCE_EXHAUSTED` code 429 confirmed via log inspection
 - Binary verification: `~/.local/bin/agy` = 175MB
 - MCP config fix: `~/.gemini/config/mcp_config.json` was empty, now `{}`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: research-fleet | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -444,3 +444,8 @@ Auto-created by Heritage-as-Issues pipeline (D-kal-163, Phase 4)
 *⬡ This document is the canonical strategy for GitHub integration. All agents reference it. ⬡*
 *Decision: D-kal-163 — GitHub as Sovereign Memory Layer*
 *Owner: Kali (Grand Oversight) → Ma'at (Phase 0,3) → Lilith (Phase 1,5) → Doom Guy (Phase 4)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

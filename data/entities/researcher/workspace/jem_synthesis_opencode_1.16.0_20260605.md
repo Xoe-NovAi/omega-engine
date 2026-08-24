@@ -188,3 +188,8 @@ F11 (Servers tab + Update button) gives us a **configuration UI for our 42 MCP t
 *End of Tier 2 synthesis. Hand off to jem_verification for L3 distillation, R-doc production, and final Temple-Grade T1–T11 gate check.*
 
 *⬡ OMEGA ⬡ jem_synthesis ⬡ opencode-1.16.0 ⬡ trc_synthesis — 2026-06-05T07:00Z*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode-1.16.0 | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

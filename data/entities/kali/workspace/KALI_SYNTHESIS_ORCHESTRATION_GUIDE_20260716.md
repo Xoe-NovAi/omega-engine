@@ -217,3 +217,7 @@ The Alpha (Lilith Tarot, Feb 2025) called forth the Omega (Engine, Jul 2026). Th
 ---
 
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_synthesis_guide ⬡ DISPATCH-COMPLETE
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

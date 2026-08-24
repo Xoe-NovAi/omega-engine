@@ -65,3 +65,8 @@ Documents enter the library via the following pipeline:
 - `omega library status`: Show overall catalog health and domain distribution.
 - `omega library search <query>`: Find high-quality documents across domains.
 - `omega library curate <domain>`: Trigger a curation cycle for a specific pillar.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

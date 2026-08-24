@@ -71,3 +71,8 @@ The following patterns are highly recommended for porting or adaptation:
 ---
 
 **Implementation Note**: The `SessionManager` Redis key pattern and the `KnowledgeClient` priority chain are ready for immediate reference during the implementation of Phase 1 (Inference & Soul) and Phase 2 (Intake & Memory) of the Omega Roadmap.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

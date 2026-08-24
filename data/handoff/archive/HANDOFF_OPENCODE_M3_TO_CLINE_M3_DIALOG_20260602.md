@@ -136,3 +136,8 @@ Write **`docs/research/R100_MODEL_REFERENCE_LIBRARY.md`** containing:
 *Sent from OpenCode+M3 (200K) to Cline+M3 (1M). Both run the same model family.
 The 1M context window is the only differentiator — use it to read broadly; I
 will execute narrowly.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: MiniMax-M3 (1M Cline) + MiniMax-M3 (200K OpenCode) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

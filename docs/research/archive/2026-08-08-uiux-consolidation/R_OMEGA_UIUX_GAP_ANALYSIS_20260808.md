@@ -179,3 +179,7 @@
 *⬡ OMEGA ⬡ GROKSTER ⬡ GAP ANALYSIS COMPLETE ⬡ 2026-08-08*
 
 **Our pragmatic plan was directionally correct but missed the ACP protocol depth. The gaps above are not optional — they are the difference between a demo and a sovereign agent runtime.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

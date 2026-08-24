@@ -255,3 +255,8 @@ GAP 1 (IA2 Security) ──→ Depends on GAP 4 (auth patterns inform A2A signin
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hlmc_mining ⬡ DEEP-MINING*
 *Reconnaissance complete. 16 ore files extracted. 4 gaps mapped. Priority: GAP 2 first — it's a finishing job, not a design problem.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

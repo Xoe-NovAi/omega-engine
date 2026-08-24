@@ -88,3 +88,8 @@ By aligning the 10 Pillars with intuitive names while retaining their mythic dom
 ---
 
 *Handoff prepared by Kali. Ready for Cline CLI takeover.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

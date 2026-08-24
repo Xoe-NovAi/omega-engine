@@ -174,3 +174,8 @@ Then — and only then — begin Tier 2 (Doom Guy's circuit breaker work).
 Minimal CI: ruff + pytest + temple-grade gates. Reference: any standard Python project workflow. Goal is enabling T4 (Code Quality) and T11 (Agent Security) gates to graduate from AMBER/RED.
 
 ---
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3 (OpenCode Zen, 200K) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

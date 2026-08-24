@@ -199,3 +199,8 @@ All in a single Python process with `MemoryMax=2G`. Peak usage 1.6GB + 512MB swa
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ TRC_DIAGNOSTIC ⬡ FLEET-STATUS*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

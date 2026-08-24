@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 
 from omega.oracle.pii_masker import PIIMasker, PIITokenMap
 from omega.ingestion.persistence import IngestionPersistence
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 
@@ -72,8 +73,16 @@ class SovereignSigner:
     """
 
     def __init__(self, secret_key: Optional[str] = None):
-        # [M8 Zero Telemetry] Secret loaded from env, never hardcoded
-        key = secret_key or os.environ.get("OMEGA_INGESTION_SECRET", "omega-sovereign-change-me")
+        # [M8 Zero Telemetry] Secret loaded from env, never hardcoded.
+        # Fail-closed: no hardcoded default. Signing with a known constant
+        # would make every provenance stamp forgeable (M8 + M22 violation).
+        key = secret_key or os.environ.get("OMEGA_INGESTION_SECRET")
+        if not key:
+            raise OmegaError(
+                "OMEGA_INGESTION_SECRET is required for SovereignSigner provenance "
+                "stamps. Set the environment variable or pass secret_key explicitly. "
+                "Refusing to use a hardcoded fallback (M8 violation)."
+            )
         self.secret_key = key.encode()
 
     def sign(self, content: str, metadata: Dict[str, Any]) -> str:

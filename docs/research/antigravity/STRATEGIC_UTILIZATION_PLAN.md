@@ -152,3 +152,8 @@ async def infer(prompt: str, model: str = "gemini-3.5-flash") -> str:
 |-------------------|-----------|------------|
 | Gemini 3.5 Flash | Google AI Studio | OpenRouter |
 | Claude Opus 4.6 | OpenRouter | None (unique) |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: research-fleet | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

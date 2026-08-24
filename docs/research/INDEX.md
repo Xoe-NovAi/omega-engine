@@ -199,3 +199,8 @@
 | R_YOUTUBE_RESEARCHER_ENHANCED_SPEC_V2 | YouTube Researcher → Temporal Knowledge Observatory (9 layers) | 🔴 Critical | ✅ | [R_YOUTUBE_RESEARCHER_ENHANCED_SPEC_V2.md](R_YOUTUBE_RESEARCHER_ENHANCED_SPEC_V2.md) | 2026-07-13 |
 | R_GROK_CLI_ARCHITECTURE | Grok Build CLI Complete Architecture Research (4 Rounds) — 8-crate decomposition, Elm state machine, JSONL persistence, Landlock sandbox, ACP protocol, skill system, unified extensions modal, agent dashboard, config pinning | 🔴 Critical | ✅ | [R_GROK_CLI_ARCHITECTURE.md](R_GROK_CLI_ARCHITECTURE.md) | 2026-07-17 |
 | R_GROK_CLI_DIGGING_MAP | Grok CLI Codebase Digging Map — Field notes for future agents. Crate map (Omega→Grok), Elm architecture file locations, config pinning priority layers, sandbox pattern, JSONL persistence, views directory guide, dashboard/extensions/command-palette deep dives, navigation tips, open gaps | 🔴 Critical | ✅ | [R_GROK_CLI_DIGGING_MAP.md](R_GROK_CLI_DIGGING_MAP.md) | 2026-07-17 |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

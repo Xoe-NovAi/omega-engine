@@ -346,3 +346,8 @@ result = resolver.resolve_in_command(
 ---
 
 *⬡ OMEGA ⬡ P3 ⬡ vault ⬡ v2.0.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: vault | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

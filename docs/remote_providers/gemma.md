@@ -52,3 +52,8 @@ Append the directive to the end of the prompt: `[/style:poetic]` or `[/style:con
 - [ ] Implement `src/omega/oracle/backends/gemma_api.py`.
 - [ ] Integrate fallback logic in `ModelGateway`.
 - [ ] Add unit tests in `tests/test_gemma_api.py`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

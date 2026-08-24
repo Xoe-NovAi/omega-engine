@@ -375,3 +375,8 @@ Ordered by impact/effort ratio:
 This audit was conducted by reading primary source files (PIVOT_LOG.md, CREDITS.md, SOVEREIGN_MANDATES.md, HERITAGE_VET_LOG.md) in full, performing directory listings of all strategy, handoff, coordination, and review directories, and using line/byte counting for quantitative analysis. No files were modified. No repositories were cloned or searched beyond the working tree.
 
 **Hivemind awareness checked before writing**: Active agents — Kali (MaKaLi Council Pass 2), Ma'at (Build-side optimization pass), Lilith (Run-side optimization pass). This report is filed for review during the MaKaLi Council synthesis.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

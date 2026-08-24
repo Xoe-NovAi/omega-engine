@@ -63,3 +63,8 @@ The fleet doesn't need more agents; it needs **Identity Hardening**.
 2. **Formalize the Lattice**: Make "Lattice Traversal" a mandatory part of the `researcher`'s operational pattern.
 3. **Automate the Scribe**: Wire the Scribe into the `Oracle.close()` hook to ensure Mandate 11 is enforced automatically, not manually.
 4. **Activate the Pillars**: Give each Pillar a distinct "Soul-Weight" or specialized prompt that forces them to think from their domain's unique perspective.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

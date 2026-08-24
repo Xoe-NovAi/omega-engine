@@ -25,3 +25,8 @@ When you solve an infrastructure problem, document the solution here. Focus on:
 - **The exact commands** that worked
 - **What went wrong** before finding the solution
 - **System-specific details** (hardware, OS, kernel version)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

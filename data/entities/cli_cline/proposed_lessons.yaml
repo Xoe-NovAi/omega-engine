@@ -14,7 +14,7 @@ proposed_lessons:
     source_session: ses_20260815_cline_context_packer_review
     evidence:
       - docs/research/R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md
-      - commit 5a145f9d
+      - commit e81e28d9 (git-verified 2026-08-23; originally mis-cited as phantom 5a145f9d)
 
   - id: ccp-20260815-002
     level: L2

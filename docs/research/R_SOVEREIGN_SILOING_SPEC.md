@@ -270,3 +270,8 @@ Step 4: Data Quality Fix (entity_registry.py:to_dict) + save cycle  ← 30 min
 ---
 
 *⬡ This spec maps directly to code. Each § section has target file, line numbers, and change description. Ready for P3 (BuildMaster) implementation. ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

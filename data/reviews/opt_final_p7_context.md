@@ -738,3 +738,8 @@ The pattern across all four failures is **write-only architecture with no cleanu
 
 *⬡ OMEGA ⬡ P7-CONTEXT ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_final_p7 ⬡ CROSS-DOMAIN-SYNTHESIS*
 *Date: 2026-06-28 | Confidential — Sovereign Council Review*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

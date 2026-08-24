@@ -309,3 +309,8 @@ venv: `pip show mcp`
 *⬡ OMEGA ⬡ DEEPSEEK ⬡ CLINE ⬡ STRATEGIC-CLEANSE ⬡ v1.0.0 ⬡ 2026-07-30*
 
 **Next action**: Execute Ops Health A→B→C (Grok handoff), then begin Phase 1 swap-outs.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: CLINE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

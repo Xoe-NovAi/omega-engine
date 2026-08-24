@@ -586,3 +586,8 @@ has no knowledge of specific model names, providers, or WAD contents.
 ---
 
 — Ma'at, 2026-06-03 (updated 2026-06-04 per D116/D117/D118)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

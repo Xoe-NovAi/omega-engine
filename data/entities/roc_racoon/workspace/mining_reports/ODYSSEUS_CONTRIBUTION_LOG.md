@@ -586,3 +586,8 @@ proven solution path.
 *Workstream 3/3 complete. 8 candidates identified. 0 security issues (clean bill).*
 *Priority order documented. 1 C-07 informational, 2 C-01/C-04 HIGH, rest MEDIUM/LOW.*
 *Next: Post to Hivemind, then contribute issues to github.com/pewdiepie-archdaemon/odysseus.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

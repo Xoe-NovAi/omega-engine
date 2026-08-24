@@ -561,3 +561,8 @@ Format: Native or OpenAI-compatible
 
 *Maintained by: OpenCode CLI (Research Agent)*
 *Next update: 2026-05-22 (or upon Google I/O 2026 announcements)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

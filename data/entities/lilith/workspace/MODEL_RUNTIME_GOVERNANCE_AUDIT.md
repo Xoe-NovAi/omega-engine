@@ -464,3 +464,8 @@ scale. Without coordination, pool exhaustion is a death by a thousand 429s.
 *L1: Analyzed the runtime gap between Antigravity's dual-pool architecture and the Omega Engine's provider fabric. Found 7 gaps across P6-P10, with the root cause being GoogleKeyPoolProvider as dead code and soul.yaml pool configuration being invisible to the runtime.*
 *L2: The engine has two complete-but-disconnected systems for cloud inference. The Antigravity 8-key rotation strategy is well-designed on paper but structurally invisible to the runtime that dispatches inference calls. Knowledge existed for 10+ days but architectural bridging was never implemented.*
 *L3: **Structural invisibility is the most dangerous form of debt.** A pattern that exists only in documentation is not a pattern at all — it's a fantasy. For sovereignty to be real, configuration must be machine-readable at the point of execution, not just human-readable at the point of design.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

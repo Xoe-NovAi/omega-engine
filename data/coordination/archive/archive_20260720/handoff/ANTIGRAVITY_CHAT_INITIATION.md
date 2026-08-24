@@ -263,3 +263,8 @@ RELEASE: make test · make temple-grade · make heritage-map
 ---
 
 *⬡ OMEGA ⬡ KALI → ANTIGRAVITY ⬡ GOOGLE ANTIGRAVITY + CLAUDE POOLS ⬡ PHASE C ⬡ 2026-06-15*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: PHASE C | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

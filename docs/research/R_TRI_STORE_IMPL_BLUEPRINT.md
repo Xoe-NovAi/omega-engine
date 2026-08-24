@@ -129,3 +129,8 @@ The Tri-Store overlays the existing tiers as follows:
 - **SA Complexity**: $O(V + E)$ per traversal, where $V$ is activated nodes and $E$ is their edges.
 - **Poincaré Distance**: $d(u, v) = \text{acosh}(1 + 2\frac{\|u-v\|^2}{(1-\|u\|^2)(1-\|v\|^2)})$. Computed via NumPy.
 - **Damping**: Activation $A_{t+1}(v) = \sum_{u \in N(v)} A_t(u) \cdot W(u, v) \cdot \lambda$.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_impl_tri_store | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -505,3 +505,7 @@ async def clean_db(adapter):
 *🔱 OMEGA ⬡ RESEARCHER ⬡ HMC-FORGE-1-RESEARCH ⬡ ACTIVE*
 *Two-Source Rule satisfied: All claims backed by legacy code + 2026 SOTA web research.*
 *Sources: 40+ URLs from T1-T5 search tiers, all dated 2025-2026.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

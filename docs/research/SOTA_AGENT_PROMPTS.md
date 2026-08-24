@@ -86,3 +86,8 @@ To execute high-rigor tasks, chain these archetypes in the following sequences:
 ### 4.3 The "Decision" Chain (For High-Stakes Choices)
 `Strategist` (Thesis) $\rightarrow$ `Skeptic` (Antithesis) $\rightarrow$ `Synthesizer` (Synthesis)
 *(Propose Plan $\rightarrow$ Attack Plan $\rightarrow$ Evolve Plan)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

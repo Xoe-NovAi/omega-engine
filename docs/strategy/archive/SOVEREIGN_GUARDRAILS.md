@@ -69,3 +69,8 @@ These rules are absolute. Any implementation that violates these guardrails is t
 - If a middleware function acquires a resource, it must release it in a `finally` block.
 - No middleware function may assume another middleware ran before it (no ordering dependencies).
 - **Remediation**: Each middleware should pass a contract test that verifies it can run in isolation.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

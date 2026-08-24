@@ -213,3 +213,8 @@ provider priority order?"* — verify accurate pull before declaring the account
 ---
 
 *⬡ OMEGA ⬡ LILITH ⬡ trc_claude_project_instructions ⬡ WEB-2-COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_claude_project_instructions | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

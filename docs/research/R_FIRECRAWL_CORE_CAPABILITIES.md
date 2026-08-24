@@ -72,3 +72,8 @@ This document provides a comprehensive architectural audit of Firecrawl's core d
 ## Implementation Note
 _For: P6 Cognition / ModelGateway_
 When implementing the Firecrawl provider, the `ModelGateway` should expose three distinct methods: `map_site()`, `scrape_url()`, and `crawl_domain()`. The `map_site` method should be the default entry point for any "find information on site X" query to optimize credit usage and latency.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

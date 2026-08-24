@@ -361,3 +361,8 @@ The Ark §X scorecard covers 11 dimensions. All PENDING items have clear owners 
 
 *Review written to disk per M11 (Soul Integrity) and M15 (Sovereign Continuity).*
 *Model: mimo-v2.5-free (per M22 Response Provenance — actual inference backend, not configured intent).*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

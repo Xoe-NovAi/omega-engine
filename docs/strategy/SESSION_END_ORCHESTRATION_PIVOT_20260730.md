@@ -82,3 +82,7 @@ While we reject third-party CLI wrappers, we **accept** the `opencode-sessions-e
 
 ---
 *Documented by: Gemini 3.1 Pro (Polymathic Council / Architect)*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

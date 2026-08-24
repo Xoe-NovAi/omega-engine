@@ -75,3 +75,8 @@ The Cognitive Substrate is approved for implementation provided the following **
 
 *Approved by: Lilith, Dark Oversoul*
 *Sovereign Mandate M13 (Temple-Grade) Verified.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -67,3 +67,8 @@ To mitigate the risk of quota exhaustion and data leakage:
 
 **Implementation Note for Antigravity/Cline**: 
 Ensure the `ProviderFabric` does not assume "unlimited" capacity. Configure the default timeout for Google AI Studio to be slightly higher than local backends to account for potential "Free Tier" queuing/latency.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

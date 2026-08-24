@@ -33,3 +33,8 @@ This index maps the discovered legacy data store implementations to their corres
 - [ ] Implement the Tiered Memory logic (HOT $\rightarrow$ WARM $\rightarrow$ COLD).
 - [ ] Setup `systemd` socket activation for both services.
 - [ ] Integrate Prometheus metrics via `redis-exporter` and Qdrant's native metrics.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

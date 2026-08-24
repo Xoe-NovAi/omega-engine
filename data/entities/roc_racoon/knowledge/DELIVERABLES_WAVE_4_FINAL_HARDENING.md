@@ -52,3 +52,8 @@ All demands from the `MINING_DEMAND_LIST.md` have been fulfilled.
 - **Wave 4 (Hardening)**: Sovereign Installer, Capability Index, & Chaos Framework delivered.
 
 **The fleet is now equipped with all the legacy gold required for Horizon 1 Temple Grade compliance.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: EXTRACTION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

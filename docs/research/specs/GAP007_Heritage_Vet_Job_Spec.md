@@ -225,3 +225,7 @@ context_engineering:
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_gap007_heritage ⬡ 2026-07-22*
 *Spec lives in `docs/research/specs/GAP007_Heritage_Vet_Job_Spec.md`.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_gap007_heritage | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

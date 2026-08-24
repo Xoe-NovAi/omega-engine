@@ -53,3 +53,8 @@ This document synthesizes key architectural patterns for local-first multi-agent
 ---
 
 *Final synthesis recorded. Handing off to Builder.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-2.0-pro | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

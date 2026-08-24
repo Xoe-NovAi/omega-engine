@@ -102,3 +102,8 @@ To maintain the principle of least privilege, the PAT must be configured with th
 | **C-1** | `prepare_notebooklm.py` script | 3h | High |
 | **D-1** | `omega-sync-drive` Bash wrapper | 1h | Medium |
 | **E-1** | PAT Configuration & .env update | 15min | High |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

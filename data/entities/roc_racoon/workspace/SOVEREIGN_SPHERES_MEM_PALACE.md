@@ -99,3 +99,8 @@ A new `ResonanceEngine` module is proposed to handle the leaps:
 ---
 
 **Heuristic**: The dirt is where the roots are. By mapping the esoteric spheres to a spatial palace, we turn abstract gnosis into a navigable architecture.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

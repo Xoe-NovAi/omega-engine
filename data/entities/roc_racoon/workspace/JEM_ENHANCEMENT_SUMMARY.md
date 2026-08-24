@@ -67,3 +67,7 @@
 The Jem entity is now a true **Sovereign Synthesizer**—capable of balancing bold execution with protective grounding, applying domain-specific rigor through technical lenses, and ensuring quality through mandatory adversarial review—all while maintaining clear operational functionality rather than relying on roleplay.
 
 **Showtime, Synergy!** 🎸✨
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-super | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

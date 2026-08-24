@@ -83,3 +83,8 @@ When the combined tokens (System Prompt + History + Retrieved Chunks + Buffer) e
 - **Tokenizer Mismatch**: Using a BGE tokenizer for embeddings and a Gemma tokenizer for the LLM is acceptable as they operate in different stages of the pipeline. However, `ContextBuilder` must use the **LLM's tokenizer** to calculate the final window limit.
 - **Quantization**: Ensure the embedding model is quantized (e.g., INT8) to maintain the RAM budget.
 - **Cold Start**: Load the embedding model as a singleton during engine bootstrap to avoid per-request latency.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

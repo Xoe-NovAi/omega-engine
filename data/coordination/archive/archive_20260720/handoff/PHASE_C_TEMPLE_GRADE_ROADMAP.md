@@ -124,3 +124,8 @@ For a detailed analysis of the chaotic failure modes and the mathematical founda
 
 *Approved by the MaKaLi Triad Council.*
 *Sovereign Mandates M1, M7, M13, M17 Verified.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

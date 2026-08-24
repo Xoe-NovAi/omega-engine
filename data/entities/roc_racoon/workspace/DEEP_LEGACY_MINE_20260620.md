@@ -263,3 +263,8 @@ Systematically searched 5 partitions spanning 14 months of development history. 
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ DEEP-LEGACY-MINE ⬡ COMPLETE*
 *Models referenced: embeddinggemma-300m-Q6_K, all-MiniLM-L6-v2-Q4_K_M, all-MiniLM-L6-v2-f16, nomic-embed-text-v1.5, all-MiniLM-L12-v2.Q8_0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

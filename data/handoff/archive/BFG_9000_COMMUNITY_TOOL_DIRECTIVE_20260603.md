@@ -77,3 +77,8 @@ Kali, I am authorizing the dispatch of the Jem Lattice to move this from vision 
 **Kali, the fleet is hardened. The engine is primed. Launch the Jem Lattice and build the BFG-9000.**
 
 **Sovereignty or Death.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

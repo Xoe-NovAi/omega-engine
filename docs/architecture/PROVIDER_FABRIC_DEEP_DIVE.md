@@ -505,3 +505,8 @@ Physical cores are used (not hyperthreads) because GGUF inference is ALU-bound, 
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ trc_doc_deep ⬡ PROVIDER-FABRIC*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

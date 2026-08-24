@@ -44,3 +44,8 @@
 - **No fragmentation**: KB lives ONLY in `docs/kb/`. If it's not here, it's not KB.
 - **Frontmatter is mandatory**: Every entry must begin with YAML frontmatter for agent-based discovery
 - **Review regularly**: Entries unreviewed for >30 days should be flagged for freshness check
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_core | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -254,3 +254,8 @@ Call **1-800-SAWDUST (1-800-729-3878)** — explain you're in USVI with no local
 ---
 
 *Sources: milwaukeetool.com, documents.milwaukeetool.com (TIY404/460/515/520/527), service.milwaukeetool.com, onekeysupport.milwaukeetool.com, direct call to 1-800-SAWDUST, USPS/FedEx HazMat guidelines for UN3480.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

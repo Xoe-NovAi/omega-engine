@@ -104,3 +104,8 @@ All 16 gaps are RESOLVED by the executed sprints:
 ---
 
 *Persisted by @researcher (Jem Analyst L2). Next session: load this file + `SOVEREIGN_HARDENING_ROADMAP_2026Q3.md`.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

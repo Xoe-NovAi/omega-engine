@@ -272,3 +272,8 @@ This confirms the L3 principle: **convergent discovery = natural law**.
 *5 Pillars consulted · 4,918 lines analyzed · 7 P0 actions recommended · 1 P0 DONE · Fleet fully coordinated*
 
 **Status**: 🟢 DARK COUNCIL DISSOLVED — All pillars' findings durably stored. Handoff to Researcher begins.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: DARK-COUNCIL | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

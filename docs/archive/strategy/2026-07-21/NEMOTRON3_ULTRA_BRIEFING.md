@@ -37,3 +37,8 @@ We no longer write standalone strategy documents. Every capability is an atomic 
 - `PWAD_CAPABILITY_LATTICE.md` extends `R_WAD_EVOLUTION_DEEP_DIVE.md`.
 - `MANDATE_GOVERNANCE_PROTOCOL.md` governs `SOVEREIGN_MANDATES.md`.
 - `OMEGA_KERNEL_ARCHITECTURE.md` refines `OMEGA_IWAD_ARCHITECTURE.md`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: master-synthesis | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

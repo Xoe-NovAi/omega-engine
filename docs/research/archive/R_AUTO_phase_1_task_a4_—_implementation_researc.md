@@ -1656,3 +1656,8 @@ Without a connection to a reasoning model, no true distillation is possible.
 **L3 (Universal Principle)**: Without external model access, no enrichment beyond local capability is possible. Sovereign operation continues.
 
 **Source**: res_20260519_Phase_1_task_A4_—_im
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: auto-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

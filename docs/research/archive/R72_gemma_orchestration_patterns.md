@@ -1395,3 +1395,7 @@ Implement patterns incrementally:
 All patterns use AnyIO primitives. No `asyncio` imports. All blocking I/O wrapped in `anyio.to_thread.run_sync`.
 
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ R-72
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

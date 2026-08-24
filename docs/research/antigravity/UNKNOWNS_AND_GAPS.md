@@ -77,3 +77,8 @@
 | DEV.to community posts | **MEDIUM** | Hands-on, may be incomplete |
 | Medium articles | **MEDIUM** | Anecdotal |
 | GitHub Issues | **HIGH** for bugs | Verified user reports |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: research-fleet | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

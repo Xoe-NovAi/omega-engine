@@ -283,3 +283,7 @@ omega-hub_hivemind_post_context(
 *This protocol was born from a real cancellation recovery. The researcher session completed 12 web searches + 1 fetch, synthesized all 10 topics, but failed to write output files. The work was recovered from reasoning parts in the SQLite database using the session explorer tools. This protocol ensures it never happens again.*
 
 **⬡ OMEGA ⬡ KALI ⬡ SCRP-v1.0.0 ⬡ CANONICAL**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

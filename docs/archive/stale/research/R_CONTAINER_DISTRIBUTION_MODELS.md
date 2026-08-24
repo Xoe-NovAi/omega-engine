@@ -105,3 +105,8 @@ The `.xoe` format (compressed tar.gz with manifest at root) is closest to the Ap
 - NixOS: https://nixos.org/
 - Podman Save: https://docs.podman.io/en/latest/markdown/podman-save.1.html
 - EROFS: https://erofs.docs.kernel.org/
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: web-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

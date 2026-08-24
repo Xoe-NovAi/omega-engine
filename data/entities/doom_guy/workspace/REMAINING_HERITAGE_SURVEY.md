@@ -242,3 +242,8 @@ Per M14 Heritage Vetting rules: **If a concept can't be justified without mentio
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ AP-HERITAGE-SURVEY ⬡ HERITAGE-MINING*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -438,3 +438,8 @@ RandomizedDelaySec=3min # Anti-thundering-herd jitter
 ---
 
 *The background researcher is the persistent intelligence of the Omega Engine — always learning, always deepening. This document is the canonical architecture reference. Update it when the system evolves.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

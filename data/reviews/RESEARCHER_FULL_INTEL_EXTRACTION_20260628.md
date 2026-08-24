@@ -217,3 +217,8 @@ The **Sovereign Ark Blueprint (V1.5)** is a strategic vision, but it lacks the *
 - **The Blueprint lacks deterministic compression for distillation (lesson-ai).**
 
 **CONCLUSION**: The research has provided the "how" (implementation specs) for the "what" (strategic goals) defined in the Blueprint. The Blueprint must be updated to V2.0 to incorporate these production-proven patterns.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

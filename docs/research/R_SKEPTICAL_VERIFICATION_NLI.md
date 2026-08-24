@@ -87,3 +87,8 @@ To resolve stalemates or break collapse, the framework implements **The Adversar
 | **Anchor Fidelity** | $\frac{\text{Verified Claims}}{\text{Total Claims}}$ | $\geq 0.95$ | Measures how well the engine adheres to its own mandates. |
 | **Sycophancy Rate** | $\frac{\text{High SDM Events}}{\text{Total Verifications}}$ | $\leq 0.05$ | Measures the degree of "echo-chamber" behavior. |
 | **Tension Ratio** | $\frac{\text{Avg. Divergence}}{\text{Convergence Speed}}$ | $0.4 - 0.7$ | Ensures healthy dialectic debate before synthesis. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

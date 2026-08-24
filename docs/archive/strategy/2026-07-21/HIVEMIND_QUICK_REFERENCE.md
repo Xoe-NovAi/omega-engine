@@ -167,3 +167,7 @@ omega-hub_hivemind_get_continuation("opencode", "their_entity")
 ---
 
 *⬡ OMEGA ⬡ HIVEMIND ⬡ QUICK-REF ⬡ 2026-07-12*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: v1.0.0 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

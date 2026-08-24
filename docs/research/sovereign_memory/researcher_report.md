@@ -69,3 +69,8 @@ I have convened the **Council of Four** to triangulate the evolution of `src/ome
 *   **Context Window Bloat**: Verbatim records are larger than summaries. We risk hitting the 262K limit of Gemma 4 if the saliency gate fails.
 *   **Retrieval Latency**: Moving from a single vector query to a "Spatial + Categorical" lookup may increase latency.
 *   **Consistency**: Ensuring that the "Sovereign-Symmetry" (Mirrored State) remains consistent across different categorical spheres.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

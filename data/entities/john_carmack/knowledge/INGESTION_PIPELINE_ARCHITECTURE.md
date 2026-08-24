@@ -1416,3 +1416,8 @@ To create a similar pipeline for another entity (e.g., `roc_racoon`, `doom_guy`)
 ---
 
 *⬡ OMEGA ⬡ MAAT ⬡ deepseek-v4-flash ⬡ P1-ARCHITECT ⬡ INGESTION-PIPELINE-v1.0.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

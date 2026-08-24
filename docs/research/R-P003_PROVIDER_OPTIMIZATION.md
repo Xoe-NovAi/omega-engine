@@ -60,3 +60,8 @@ To maximize the 8-key pool and avoid `429 Too Many Requests`:
 ---
 **Implementation Note for @Cline / @Antigravity**:
 Update `ModelGateway._load_provider_fabric` to support the new priority order. Implement key rotation in `GoogleAIProvider.generate`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

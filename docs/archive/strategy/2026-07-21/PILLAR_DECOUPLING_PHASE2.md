@@ -367,3 +367,8 @@ This architecture is a direct application of:
 ---
 
 *Last Updated: 2026-07-01 | Author: Kali | Version: v1.0.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_pillar_decoupling | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

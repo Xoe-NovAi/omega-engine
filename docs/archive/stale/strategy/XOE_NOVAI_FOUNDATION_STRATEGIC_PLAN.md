@@ -550,3 +550,8 @@ This system will:
 **The Community Tool is the third priority (estimated: 2 weeks to prototype).**
 
 *This document completes the legacy recovery. The full picture — from Lilith's Tarot deck in March 2025 to the Xoe-NovAi Foundation today — is now documented, organized, and actionable.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

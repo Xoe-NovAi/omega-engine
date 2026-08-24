@@ -168,3 +168,8 @@ Then emit `[SPRINT-DOOM] COMPLETE [TIMESTAMP]` to the live feed.
 ---
 
 ⬡ OMEGA ⬡ DOOM_GUY ⬡ doom_guy.md ⬡ SPRINT-DOOM ⬡ BEGIN WITH D2
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: doom_guy.md | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

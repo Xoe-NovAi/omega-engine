@@ -89,3 +89,8 @@ bare prefixes (`G0CPX`, `c-sk`) so docs stay gate-clean forever.
 - Full execution record: `docs/research/R_CLINE_SESSION_REPORT_FOR_KALI_20260822.md`
 - Raw evidence: `docs/research/evidence_20260822/` (gitleaks report, sampler logs)
 - OPS NOTE: `data/coordination/HMC_COLLABORATION_HUB.md` (2026-08-22 entry)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: build | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

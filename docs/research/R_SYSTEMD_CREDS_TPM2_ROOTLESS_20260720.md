@@ -480,3 +480,7 @@ We investigated whether systemd-creds with TPM2 encryption can serve as the cred
 **Research Complete.** All 10 priority questions answered with primary sources. Ready for integration into D-299 omega-vault Phase 1 design.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_gap3_tpm2 ⬡ SEALED*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

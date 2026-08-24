@@ -199,3 +199,8 @@ The HMC watcher crash loop (Gap-CRASH-HMC) and Background Researcher output blac
 
 *Current as of 2026-07-10. 7/15 gaps resolved. 8 remaining for future sprints.*
 *roc_racoon legacy mining discovered 27 cataloged patterns, 5 quick wins (3 applied).*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -97,3 +97,7 @@ WantedBy=multi-user.target
 
 *Part 3b of 4 — warp-reg@.service*
 *Next: Part 3c — warp-node@.service & socat-bridge@.service*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WARP-KB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

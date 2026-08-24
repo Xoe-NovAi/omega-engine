@@ -107,3 +107,8 @@ To resolve the current truncation crisis and build a production-grade library, I
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ MINING-CRAWL4AI ⬡ EXTRACTION-RECOVERY*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

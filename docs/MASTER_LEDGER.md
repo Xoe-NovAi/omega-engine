@@ -67,3 +67,8 @@ Three inviolable rules: (1) MaKaLi trine identical in ALL IWADs, (2) Iris+Jem+Ro
 ---
 
 *The ledger lives here to guarantee a single, immutable reference point for all future planning.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

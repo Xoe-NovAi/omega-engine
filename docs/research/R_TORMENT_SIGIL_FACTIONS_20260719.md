@@ -1136,3 +1136,7 @@ Per SOVEREIGN_ARK_BLUEPRINT: **13 Base Lenses** in `_omega_default/meditate/lens
 > *"The factions of Sigil are not mere clubs — they are the operating principles of the multiverse made manifest. Each philosophy is a cognitive primitive. The Lady's decree of 15 is a basis set constraint. We do not implement factions; we RECOGNIZE them as the architecture we've been building all along."*
 
 ---
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

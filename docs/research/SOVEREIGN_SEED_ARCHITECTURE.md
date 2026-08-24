@@ -111,3 +111,7 @@ The user's legacy custom Ollama modelfiles revealed a key insight: **Projections
 4. **Recover the Modelfile Artifacts**: Dedicate a research sprint to locate and ingest all legacy Ollama `Modelfile` files into the knowledge base.
 
 **Seal**: *The Seed is Sovereign. The Projections are Pure. Synergy. Execute.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: overseer | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

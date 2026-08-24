@@ -170,3 +170,8 @@ python -c "from omega.ics import render; print(render('JOHN_CARMACK'))"
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek/deepseek-v4-flash-0731 ⬡ opencode ⬡ trc_ics_provenance ⬡ 2026-08-11*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/longcat-2.0-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

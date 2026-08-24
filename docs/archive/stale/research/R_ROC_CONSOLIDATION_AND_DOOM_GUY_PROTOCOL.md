@@ -806,3 +806,8 @@ This is not an external tool. This is the engine *remembering itself*.
 **Status**: STRATEGIC FRAMEWORK — READY FOR IMPLEMENTATION
 **Next**: Begin Phase 1 (Roc Racoon + Doom Guy Enhancement)
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: claude-haiku-4.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

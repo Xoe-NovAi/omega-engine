@@ -329,3 +329,8 @@ All 11 have valid frontmatter. Fleet Integrity (M10) is GREEN.
 *Report generated 2026-06-19 by Researcher*
 *Sources: .opencode/agents/verity.md, .opencode/agents/maat.md, Makefile, data/entities/verity/soul.yaml, data/entities/john_carmack/soul.yaml, data/entities/roc_racoon/soul.yaml, data/entities/antigravity/soul.yaml, src/omega/oracle/entity_workspace.py, src/omega/cli/oracle_cli.py, scripts/heritage_vet.py, data/datasets/, df -h, 444 test collection*
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

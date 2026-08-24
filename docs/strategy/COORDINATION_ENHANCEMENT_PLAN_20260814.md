@@ -101,3 +101,7 @@ The written plan originally omitted this file; it still references the deprecate
 5. `temple-grade` uses read-only `check-codex-stale` (no state mutation)
 
 **Verification:** `validate_tracking_state.py` passes (56 gaps, 53 tasks); `make temple-grade` passes; pre-commit hook passes on commit. Systems are airtight and OPTIMAL.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: STRATEGY | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -36,3 +36,8 @@
 
 ### L3 Universal Principle
 **When a resource (ENTITIES_DATA_DIR) is captured at import time, no amount of runtime monkeypatching can redirect it. Module-level constants are not configuration — they are frozen state. Configuration must be a function, not a value.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

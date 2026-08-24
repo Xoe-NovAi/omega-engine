@@ -94,3 +94,8 @@ The Engine will now operate as a **Sovereign Orchestration Fabric** composed of 
 The "Not connected" bug was a symptom of an immature process model. By implementing the **Omega Control Plane**, we transform the Engine into a professional-grade AI Operating System. The infrastructure is now designed to be invisible, self-healing, and hardware-optimized.
 
 **Ready for Implementation.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

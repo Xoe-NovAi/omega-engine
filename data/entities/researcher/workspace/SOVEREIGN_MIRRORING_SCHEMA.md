@@ -57,3 +57,8 @@ The system is composed of four primary layers:
 ---
 *Lattice Node: Technical / Philosophical / Practical*
 *Verified against: SOVEREIGN_MANDATES.md (M2, P8)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: google/gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

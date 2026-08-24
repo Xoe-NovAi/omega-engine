@@ -186,3 +186,8 @@ Evidence: P3 audit compared against P0/P1/P2 fixes to verify resolution.
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ LONGCAT-2.0 ⬡ SESSION-GNOSIS-20260810 ⬡ 2026-08-10*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: longcat-2.0-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

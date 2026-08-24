@@ -24,3 +24,8 @@ This document maps the classic id Software architectural patterns to their moder
 - **id Software Original**: Doom (1993) marked thinkers with a sentinel instead of immediately freeing them, sweeping and reaping them on the next tick.
 - **Omega Adaptation**: `EntityRegistry.remove()` marks entities with a `ZONEID_TOMBSTONE` sentinel and a 0.5s grace period before reaping them during the next save cycle.
 - **Persona Interpretation**: Immediate deletion in a multi-threaded or asynchronous environment causes race conditions and stale reference crashes. Mark, wait, then reap safely.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ALGORITHMS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

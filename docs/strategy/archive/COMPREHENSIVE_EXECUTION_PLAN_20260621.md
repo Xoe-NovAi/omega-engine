@@ -185,3 +185,8 @@ Archive all 30 stale handoff packets from data/handoff/
 
 ---
 *Omega Engine - Cline CLI - deepseek-v4-flash - Comprehensive Execution Plan v1.0.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

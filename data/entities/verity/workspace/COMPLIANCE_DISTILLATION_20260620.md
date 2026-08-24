@@ -96,3 +96,8 @@ The antigravity module (`src/omega/oracle/antigravity/`) produces 5 heritage-map
 ---
 
 *⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_compliance_distillation*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

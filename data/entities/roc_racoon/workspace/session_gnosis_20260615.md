@@ -40,3 +40,8 @@
 ## Next Action
 - Hand off vet-037 through vet-041 recommendations to Doom Guy for M14 pipeline
 - Proceed to Option 2: XNAI Blueprint Deep Extraction (714-line P0 asset)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

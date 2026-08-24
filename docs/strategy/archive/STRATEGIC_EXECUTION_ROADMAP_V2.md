@@ -518,3 +518,8 @@ Replace the Phase 1a table entry with this expanded Phase 1b:
 ---
 
 *This roadmap is the authoritative execution guide. It supersedes all prior planning documents for Phase 1b. For divergences, this document wins.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -173,3 +173,7 @@ curl -x socks5h://127.0.0.1:8081 https://1.1.1.1/cdn-cgi/trace
 
 *Part 2b of 3 — Debugging & Lessons*
 *Next: Part 3 — Complete Service Files & Deploy Script*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WARP-KB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

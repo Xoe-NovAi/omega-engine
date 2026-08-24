@@ -17,3 +17,8 @@
 ---
 
 OPUS-FINAL-REVIEW COMPLETE 2026-06-02T19:09UTC — 2 critical, 3 correctness, 2 process findings. Must-fix: F1 (OmegaConfig phantom), F3 (garbled markdown). D99 logged.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opus-4.6 (antigravity) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

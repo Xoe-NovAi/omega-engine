@@ -85,3 +85,8 @@ The gaps follow a consistent pattern: **the "last mile" is always where things b
 
 ### L3: Universal Principle
 **An optimization that isn't wired into the hot path is not an optimization — it's a lie.** Every feature has a "last mile" where it must connect to the execution pipeline. Until it does, the feature does not exist operationally. The measure of a system is not what it *can* do, but what it *actually does* under load.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

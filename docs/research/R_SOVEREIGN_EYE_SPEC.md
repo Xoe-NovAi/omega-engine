@@ -80,3 +80,8 @@ The **Sovereign Eye** is a vision-augmented auditing utility designed to ensure 
 1. **Eye-Scribe Utility**: Create a script to automate the capture of CLI screenshots and Mermaid exports.
 2. **Vision Gateway**: Integrate GPT-4o/Gemini 1.5 Pro via the `ModelGateway` with a specific `SovereignEye` system prompt.
 3. **Audit-to-Workbench**: Pipe the audit outputs directly into `workbench.db` as 'Audit Tasks' (P1/P2) for the implementation agents to fix.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

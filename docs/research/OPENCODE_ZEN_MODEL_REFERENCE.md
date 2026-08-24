@@ -312,3 +312,8 @@ When choosing a model for a task:
 ---
 
 *This document is auto-update ready. Run `scripts/sync-zen-models.sh` to refresh the model roster from OpenCode Zen's live API.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

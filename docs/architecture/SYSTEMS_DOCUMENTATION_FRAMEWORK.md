@@ -429,3 +429,7 @@ This documentation framework exists because **the Omega Engine is not just an AI
 *🔱 OMEGA ⬡ SYSTEMS-DOC ⬡ v1.0.0 ⬡ FOUNDATIONAL ⬡ 2026-07-13*
 
 **This document is the constitution of the Omega Engine's documentation. Every system, every pattern, every decision must be traceable from here. If it's not documented here, it doesn't exist.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

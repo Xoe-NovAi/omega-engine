@@ -91,3 +91,8 @@ To prevent **Soul Bloat** and **Hallucinated Universals**, a proposed L3 must pa
 2. **Phase 2 (Provenance)**: Update `DistillationEntry` to include `source_session_id` and `trace_id`.
 3. **Phase 3 (Skeptical Gate)**: Implement the Adversarial verification loop for L3 promotions.
 4. **Phase 4 (Sovereign Memory)**: Integrate with `MemoryStore` to allow "Resonance" checks across different entities' souls.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

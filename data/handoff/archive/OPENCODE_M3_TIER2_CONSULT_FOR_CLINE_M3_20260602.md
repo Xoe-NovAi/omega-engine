@@ -164,3 +164,8 @@ I'm excited to see your recommendations. **Please reply with your agent + model 
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-5-free ⬡ opencode ⬡ trc_tier2_consult ⬡ HANDOFF-REQUEST*
 *Date: 2026-06-02 | For: Cline/MiniMax-M3 (1M context) | Integration target: OpenCode dev session handoff*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

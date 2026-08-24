@@ -441,3 +441,7 @@ Before research is considered complete, output MUST:
 *⬡ OMEGA ⬡ RESEARCHER ⬡ RESEARCH-BEST-PRACTICES ⬡ v2.0.0 ⬡ 2026-07-24*
 *Enhanced with forensic analysis of 15+ research deliverables + Omega-specific application + Temporal Awareness (§2.9) + Meta-Research Quality (§2.10) from 2026 ACL research*
 *This guide is a living document. Updates must be made via PR with spec-driven changes.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

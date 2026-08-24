@@ -166,3 +166,7 @@ omega talk "hello"  # Test oracle
 *Handoff prepared by: The Artisan (Cline/MiMo-2.5)*
 *OpenCode Status: ✅ Operational — 7 valid agents ready*
 *This handoff replaces all previous handoff files in `data/handoff/`*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: MiMo-2.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

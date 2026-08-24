@@ -60,3 +60,8 @@ Monitors can trigger notifications via:
 ## Implementation Note
 _For: P8 Observability / WatchTower_
 The `WatchTower` entity should utilize the `/monitor` endpoint to track the health and content of critical external dependencies. The `monitor.page` webhook should be integrated into the Omega Engine's event bus to trigger "Sovereign Alerts" when meaningful changes are detected in target domains.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

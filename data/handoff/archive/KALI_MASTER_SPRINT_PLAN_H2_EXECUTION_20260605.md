@@ -320,3 +320,8 @@ Oversouls then delegate to specific Pillar subagents:
 
 *⬡ OMEGA ⬡ KALI ⬡ Sovereign Sprint Coordinator ⬡ 2026-06-05*
 *Baseline: 312/312 tests · D118 IMPLEMENTED · D120 ENFORCED · MaKaLi Triad SYNTHESIZED*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_sprint_plan_H2_execution | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

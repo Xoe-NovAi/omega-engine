@@ -971,3 +971,7 @@ config/wads/_omega_default/
 ---
 
 *⬡ OMEGA ⬡ P9-LINK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_p9_orchestration ⬡ STRATEGY COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -236,3 +236,8 @@ No separate `mode` section. No duplicate registration. No shadowing.
 - **Related pattern**: Sovereign Mandate M10 (Fleet Integrity — agent count ≤ 14,
   later expanded to 15 with john_carmack)
 - **Related session gnosis**: `data/entities/lilith/workspace/session_gnosis.md`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SCRIBE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

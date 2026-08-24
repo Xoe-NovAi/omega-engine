@@ -48,3 +48,8 @@ Evaluation is performed by a "Judge" model using:
 - **Lite Tier (0.6B-1.7B)**: Fine-tunable locally on 14GB RAM.
 - **Medium Tier (3B-4B)**: Inference only.
 - **Heavy Tier (8B+)**: Inference only (or cloud-delegated fine-tuning).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

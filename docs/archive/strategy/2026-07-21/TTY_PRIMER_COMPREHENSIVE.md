@@ -533,3 +533,7 @@ TTY_HIVEMIND_DIR = Path("data/coordination/tty_hivemind")
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_tty_primer ⬡ COMPLETE*
 
 **This primer transforms "Ctrl+Alt+F3 is a weird text mode" into "Ctrl+Alt+F3 is my sovereign research terminal."**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -42,3 +42,8 @@ Pillars are instructed to:
 1. Wire `soul_distiller.py` into their session close hooks.
 2. Implement the 13-Sphere mapping in the `MemoryStore` to replace flat storage.
 3. Update `soul.yaml` with L3 principles derived from this wave.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: EXTRACTION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

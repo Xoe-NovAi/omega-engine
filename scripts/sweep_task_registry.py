@@ -95,6 +95,8 @@ def atomic_write_json(path, data):
         with os.fdopen(fd, "w") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write("\n")
+        # mkstemp creates 0600; match repo-standard 0644 so other agents can read.
+        os.chmod(tmp, 0o644)
         os.replace(tmp, path)
     except BaseException:
         if os.path.exists(tmp):
@@ -135,6 +137,8 @@ def write_review_list(review):
     fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
     with os.fdopen(fd, "w") as f:
         f.write("\n".join(lines) + "\n")
+    # mkstemp creates 0600; match repo-standard 0644 so other agents can read.
+    os.chmod(tmp, 0o644)
     os.replace(tmp, path)
     return path
 

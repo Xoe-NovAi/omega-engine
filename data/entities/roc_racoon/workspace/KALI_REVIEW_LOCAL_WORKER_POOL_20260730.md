@@ -329,3 +329,7 @@ While Roc executes Phases 0-2, Kali will:
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ trc_review ⬡ 2026-07-30*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

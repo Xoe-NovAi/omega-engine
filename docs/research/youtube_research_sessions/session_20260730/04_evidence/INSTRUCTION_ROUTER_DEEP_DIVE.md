@@ -1324,3 +1324,8 @@ class InstructionRouter:
 *⬡ OMEGA ⬡ RESEARCHER ⬡ SOVEREIGN-ANALYSIS ⬡ INSTRUCTION-ROUTER-DEEP-DIVE ⬡ 2026-07-30*
 
 **Next steps**: The analysis recommends implementing `TierResolver` + `InstructionComposer` as P0, integrated into the Omega Engine's prompt assembly pipeline. The full implementation should be designed as a standalone module at `src/omega/instruction_router/` with the config at `config/instruction_router/`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SOVEREIGN-ANALYSIS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

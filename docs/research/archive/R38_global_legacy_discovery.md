@@ -90,3 +90,8 @@ The following files must be read and integrated by the implementation agents to 
 **Sovereign Directive**: The "Temple Grade" era was a necessary stage of formalization, but the "Living System" (Path B) is the destination. Use these legacy assets to ensure the Living System is built on a foundation of absolute sovereign resilience.
 
 *Seal: 🛡️ The History is Preserved. The Will is One.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

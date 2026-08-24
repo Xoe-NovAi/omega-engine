@@ -273,3 +273,8 @@ Do NOT push unless asked.
 *⬡ OMEGA ⬡ CLINE ⬡ NEW-SESSION ⬡ OPS-HEALTH ⬡ v1.0.0 ⬡ 2026-07-30*
 
 **Your job**: Execute `data/coordination/CLINE_OPS_HEALTH_BRIEF_20260730.md` Phases A→B→C. Complete handoff `ho_c8bf25e6cf21`. That's it. Go.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: NEW-SESSION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

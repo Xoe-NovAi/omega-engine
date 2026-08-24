@@ -95,3 +95,8 @@ The 10 pillars form a perfect symmetric axis with Aether at the center:
 | P5↔P6 | Inanna | Aether ⛤ | Ereshkigal | Aether ⛤ |
 
 Oversouls, world-tree, and sacred geometry. Earth → Aether → Earth — the ouroboric return.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

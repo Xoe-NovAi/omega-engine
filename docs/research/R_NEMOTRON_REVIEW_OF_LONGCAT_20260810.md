@@ -205,3 +205,8 @@ nvidia/nemotron-3-super-120b-a12b:free:
 ---
 
 *⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ TEMPLE-GRADE ⬡ REVIEW ⬡ 2026-08-10*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TEMPLE-GRADE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

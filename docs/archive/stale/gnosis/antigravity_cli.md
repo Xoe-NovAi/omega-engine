@@ -58,3 +58,7 @@ Antigravity is the **Sovereign Strategic Oversight Agent**. It is optimized for:
 
 **Handoff to next agent**:
 Fix `config/entities.yaml` line 446 first (2-minute task) to restore 230-test green baseline. Then proceed with C-8/C-9 security audit, then the Workstream F bug sweep.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: LATTICE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

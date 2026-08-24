@@ -266,3 +266,7 @@ Fail-closed sovereignty at runtime; build variants at compile-time.
 *⬡ OMEGA ⬡ CONSOLIDATED UI/UX ARCHITECTURE COMPLETE ⬡ 2026-08-08*
 
 **Focus: Intelligence, Performance, Stability, Inference. No fluff. No seances. Just sovereign engineering.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

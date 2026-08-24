@@ -35,3 +35,8 @@ This folder contains all research, specifications, and debug logs related to the
 - Master Research Index: [../../INDEX.md](../../INDEX.md)
 - Project Roadmap: [../../ROADMAP.md](../../ROADMAP.md)
 - Team Hub: [../../team/COMMUNICATION_HUB.md](../../team/COMMUNICATION_HUB.md)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

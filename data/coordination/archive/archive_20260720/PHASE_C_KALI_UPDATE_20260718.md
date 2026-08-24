@@ -219,3 +219,7 @@ Fallback to hardcoded "Iris" display name is intentional for transition. Remove 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_phase_c_complete ⬡ KALI-UPDATE*
 
 **Ready for Kali approval to proceed to Phase D (ics.py).**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

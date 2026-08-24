@@ -160,3 +160,7 @@ gantt
 ## §4 The Vision Statement
 
 > The Omega Engine is Prometheus' Fire. The XOE containers (`.xoe`) are the tools forged in that fire. Each user forges their own future — whether that future is a Hermetic temple of 10 Pillar Keepers, a Phobos base overrun by demons, a wing commander's starfighter bridge, or a wonderland of their own imagination. The Foundation provides the spark, the anvil, the container format, and the P2P metropolis. The user brings the vision. The entities bring the life. The VR brings the world. And the `.xoe` brings it all home.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: openrouter/gpt-oss-120b:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

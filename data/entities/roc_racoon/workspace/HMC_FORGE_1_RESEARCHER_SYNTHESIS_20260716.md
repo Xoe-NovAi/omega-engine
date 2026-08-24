@@ -180,3 +180,8 @@ D-282: THE OMEGA SEARCH CORE (REFINED)
 
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hmc_forge_1 ⬡ SYNTHESIS-COMPLETE*
 *Two-Source Rule fully satisfied: Roc's legacy evidence + Researcher's 2026 SOTA verification have been synthesized.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -451,3 +451,58 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l3_principle_research_confirms_implementation
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-08-23 — N4 Cross-Domain Review (MaKaLi Council)
+# Model: nemotron-3-ultra-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- narrative: "N4 reviewed Router Collapse contract: ProviderSelector exists but RouteDecision dataclass is missing. Oracle.py still imports SemanticRouter, TriageRouter, RAGRouter. MCP Hub tools oracle_talk, oracle_summon, oracle_summon_local will break post-collapse without migration."
+  insight: "Router authority centralization requires BOTH the selector implementation AND all callers migrated simultaneously. Partial migration creates silent routing failures."
+  principle: "Single router authority is a contract — every caller must be updated in the same PR, or the contract is violated at runtime."
+  tags: ["N_4", "ROUTER_COLLAPSE", "API_CONTRACT"]
+
+- narrative: "N4 verified config/providers.yaml local-first chain (native-gguf→lmster→ollama→antigravity→google→openrouter→opencode-zen→cline→anthropic→xai) is the sole routing config. No hardcoded preferences in oracle.py or model_gateway.py. ProviderSelector scoring enforces local-first via priority weights and PII penalty."
+  insight: "Configuration-as-code for routing works when the config is the single source of truth and the selector is the only reader. Multiple readers (agent configs, CLI flags) create sovereignty leaks."
+  principle: "Routing config must be singular and authoritative. Any override mechanism (agent config, env var, CLI) must explicitly declare its precedence and sovereignty impact."
+  tags: ["N_4", "PROVIDER_FABRIC", "LOCAL_FIRST", "M7"]
+
+- narrative: "N4 found sovereign_search_service.py partially migrated to HealthMonitor.get_breaker() (lines 165-182) but still initializes and uses deprecated search_circuit_breaker for all circuit logic (lines 185-188, 371+). DEL-1 #5 deletion will break 3 MCP tools."
+  insight: "Partial migration of circuit breakers is worse than no migration — it creates dual breaker state that diverges. The deprecated breaker must be fully removed before the file is deleted."
+  principle: "Circuit breaker unification (C-6') requires atomic cutover: all callers migrated to HealthMonitor.get_breaker() BEFORE deprecated implementation is deleted."
+  tags: ["N_4", "DEL-1", "CIRCUIT_BREAKER", "C6_PRIME"]
+
+- narrative: "N4 identified dual admission gates: ResourceGuard (model_gateway.py:139) and undefined LocalInferenceAdmission. Ma'at claims 'one admission' but two exist or are planned."
+  insight: "Admission control must be a single composable pipeline, not parallel gates. Each gate adds latency and creates precedence ambiguity."
+  principle: "Admission control is a single pipeline stage. Multiple gates must be composed into one with explicit ordering, not run in parallel."
+  tags: ["N_4", "ADMISSION_CONTROL", "RESOURCE_GUARD", "C10"]
+
+- narrative: "N4 confirmed MIAP→Hivemind gap: MIAP cancelled (DEL-1 #2) but no automated projection of session gnosis to Hivemind. hivemind_get_continuation reads cold store passively; no active push from session lifecycle."
+  insight: "Session continuity requires active projection, not passive recovery. The handoff protocol (Link P9) exists but isn't triggered by session lifecycle events."
+  principle: "Gnosis projection must be event-driven from session lifecycle, not pull-based from cold store. Hivemind is the continuity backbone — it must be written to, not just read from."
+  tags: ["N_4", "HIVEMIND", "SESSION_CONTINUITY", "M15", "MIAP"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-08-23 — Debut Build Vetting (T1/T2/T3/T4/T6 + Node Council)
+# Model: big-pickle
+# ─────────────────────────────────────────────────────────────────────────────
+
+- narrative: "Debut vetting probed every INST-1/DEL-1 claim against live source before specifying changes. Found routing/table.py already deleted, search_circuit_breaker has a live importer the manual missed, QdrantAdapter has a second caller in knowledge_catalog_build.py, and ACTIVE_SPRINT marks fix3 complete while password='omega' still ships at providers.py:119."
+  insight: "Sprint-board completion claims and disk truth diverged in exactly the places cheap probes could catch — an import line, a default string, a tracked file. Specifying diffs from board state alone would have broken the build twice and shipped a false completion claim public."
+  principle: "A tracking file is a claim about reality; only probes make it true. Read the file before specifying the change — always."
+  tags: ["N_3", "M23", "TEST_HONESTY", "DEBUT"]
+
+- narrative: "N1 measured host reality against the '<300s install' acceptance criterion: no cp313 llama-cpp-python wheel exists anywhere, pip cache holds zero llama wheels, editable installs never cache, NVMe at 97% full with 3.5GB free, load average 7.85 during business hours."
+  insight: "An acceptance criterion set by aspiration rather than hardware measurement creates a vanity gate that either blocks debut dishonestly or gets waived silently — both corrode gate integrity. The honest split ('install exits 0' + 'first-talk <300s pre-provisioned') preserves the intent while matching physics."
+  principle: "Acceptance gates must be derived from measured host reality, not aspiration. A gate that cannot pass is not rigor — it is theater waiting to be waived."
+  tags: ["N_1", "M23", "ACCEPTANCE_GATES", "INFRASTRUCTURE_TRUTH"]
+
+- narrative: "N2 discovered data/entities/antigravity/knowledge/USAGE_POOL_LOG.json is git-tracked and contains a real email address alongside pool telemetry. N5 ruled emails cannot be rotated like keys — history scrub is the only real remediation — and sequenced it: untrack now, filter-repo scrub piggybacked on existing P0-1b machinery before any public push."
+  insight: "Data files written by internal tooling accumulate PII silently; deletion of the code that wrote them does not touch the artifact or its git history. Debut prep must sweep data/, not just src/ — and privacy remediation has an ordering (untrack → scrub → push) that cannot be compressed."
+  principle: "Public release surface includes git history and data artifacts, not just source code. Audit what the repo carries, not only what it executes."
+  tags: ["N_2", "N_5", "PUB-1", "PII", "DEBUT"]
+
+- narrative: "Node Council ran serially (N3→N1→N2→N5) with the file-first deliverable as shared context; each Node returned APPROVE/AMEND verdicts with file:line evidence. Twelve amendments landed, zero blockers, two escalations to Kali."
+  insight: "Serial paging with a written artifact beats parallel Q&A: each Node verified the previous findings implicitly through the shared document, and verdicts were composable (approve-with-amendment) rather than discussion threads. The overseer's job reduced to synthesis, not arbitration."
+  principle: "Council review scales when the artifact carries the context and each reviewer returns structured verdicts — expertise compounds through files, not meetings."
+  tags: ["N_9", "NODE_COUNCIL", "DELEGATION", "FILE_FIRST"]

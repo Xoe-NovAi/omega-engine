@@ -103,3 +103,8 @@ Memory is not objective; it is filtered through the entity's lens. Every memory 
 4. **Phase 4 (Reflection)**: Build the background "Sovereign Janitor" to automate the Reflection $\rightarrow$ Distillation loop.
 
 **Implementation Note for Agent**: Priority should be given to the **Episodic Stream** first, as it provides the raw data necessary for all subsequent tiers.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

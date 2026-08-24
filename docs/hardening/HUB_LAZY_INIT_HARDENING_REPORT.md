@@ -337,3 +337,8 @@ The core architecture fix (lazy init eliminating the ~61s wall) is sound. The cr
 2. **Remove duplicate SovereignGateway** — without this, the lazy init is partially defeated
 
 Recommended next step: A focused 45-minute hardening sprint to resolve P0-P1 findings.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

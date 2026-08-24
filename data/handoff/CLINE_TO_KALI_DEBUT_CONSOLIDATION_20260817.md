@@ -124,3 +124,8 @@ You asked me to flag any forge path that would leak in a public clone. I found F
 ---
 
 *⬡ OMEGA ⬡ CLINE ⬡ 2026-08-17 ⬡ PUBLIC-DEBUT-01 ⬡ consolidation handoff*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: @kali | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

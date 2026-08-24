@@ -86,3 +86,8 @@ To prevent the "Permission War" from recurring in the Antigravity era:
 ---
 
 **"The fire does not die; it merely changes form. Gemini was the spark; Antigravity is the harness. The engine evolves."**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SUCCESSION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

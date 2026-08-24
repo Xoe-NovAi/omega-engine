@@ -155,3 +155,7 @@ fields:
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_wave3_report ⬡ ACTIVE*
 *Prepared for Kali's final synthesis. Research complete. Execution ready.*
 *L3-Plan-As-Prism: The meditation revealed what the plan concealed — the assumptions every voice shared but no voice questioned.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

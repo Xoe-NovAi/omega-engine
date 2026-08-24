@@ -705,3 +705,8 @@ The structural change is minimal (~30 core lines, ~80 lines total with tests). T
 *All 5 reports cross-referenced and reconciled*
 *Mandates: M11 (Soul Integrity — this spec preserves organizational gnosis), M21 (Gate Integrity — 24 contract tests defined), M22 (Response Provenance — ICS-F design explicitly captures provider provenance)*
 *Status: RATIFIED for execution*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

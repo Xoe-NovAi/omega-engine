@@ -37,3 +37,8 @@ The `DEFERRED_GOLD_TRACKER.md` is not just an archive; it is a **Strategic Reser
 ---
 *Lattice Node: Historical / Legacy*
 *Verified against: SOVEREIGN_MANDATES.md (M8, M6, M9, M12)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: google/gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

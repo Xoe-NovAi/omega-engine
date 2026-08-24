@@ -225,3 +225,8 @@ The Researcher closed **6 distinct gaps** (vstash, STE-QAT, semantic cache, VR/3
 
 *🔱 OMEGA ⬡ JEM ⬡ INFRA-GAPS ⬡ VERIFICATION-COMPLETE ⬡ 2026-07-13*
 *Corrections: GAP 5 JEM-2 premise falsified (Omega Hub already dual-transport). GAP 4/7 hypotheses confirmed.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

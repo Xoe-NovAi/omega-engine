@@ -180,3 +180,8 @@ pytest tests/test_oracle.py -v         # Must pass after entity changes
 |---------|------|---------|
 | 3.0.0 | 2026-05-14 | Phase 1 research sprint defined with 3-subagent fleet. Implementation tasks updated. |
 | 2.1.0 | 2026-05-14 | Grand strategy recorded. Phase 0 CLI commands defined. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

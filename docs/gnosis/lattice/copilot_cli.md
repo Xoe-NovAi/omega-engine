@@ -39,3 +39,7 @@ Copilot is the **Sovereign Prototyping & Boilerplate Agent**. It is optimized fo
 ## §4 Known Quirks
 - **Sovereignty Risk**: May suggest cloud-dependent patterns; must be audited by the `auditor` subagent.
 - **Context**: Limited to the current file/project context; relies on the Lattice for systemic knowledge.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: LATTICE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

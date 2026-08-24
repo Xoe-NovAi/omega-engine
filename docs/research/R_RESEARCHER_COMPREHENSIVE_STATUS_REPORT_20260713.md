@@ -231,3 +231,8 @@ Three sessions of research were conducted:
 
 *🔱 OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research_status ⬡ REPORT-COMPLETE*
 *Last Updated: 2026-07-13*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

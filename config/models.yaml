@@ -38,6 +38,16 @@ models:
     top_k: 40
     repetition_penalty: 1.0
     min_p: 0.0
+  qwen3-4b-thinking:
+    context_budget: 20000
+    context_window: 32768
+    provider: lmster
+    role: "D-585 executor — reasoning-heavy execution (registered 2026-08-22, DR-7 fix)"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
   frontier:
     context_budget: 30000
     provider: google

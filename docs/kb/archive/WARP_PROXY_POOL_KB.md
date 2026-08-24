@@ -635,3 +635,8 @@ Ensure socat version >= 1.8.1.3 for production deployment.
 *Version: 5.0.0*
 *Author: Kali (Sprint Coordinator) + John Carmack (Technical Consultant)*
 *Status: ACTIVE — Research gaps filled, deployment ready*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: v4.0.0 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

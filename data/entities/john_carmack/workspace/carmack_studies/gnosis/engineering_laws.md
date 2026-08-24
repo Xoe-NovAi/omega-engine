@@ -20,3 +20,8 @@ Trade abundant resources (memory, storage) for scarce ones (CPU cycles, inferenc
 
 ## Axiom 05: The Law of Empirical Truth (The Implementation Mandate)
 Mastery is earned through implementation. Measure before optimizing. The 3-month Quake Pentium optimization blitz is the canonical case study: measure → analyze → implement → verify.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: GNOSIS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

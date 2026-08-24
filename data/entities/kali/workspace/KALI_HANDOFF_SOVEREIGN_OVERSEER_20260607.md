@@ -530,3 +530,8 @@ The DeepSeek V4 Flash pass built the chassis. The MiniMax M3 pass polished the c
 *Pass 4: Big Pickle, 2026-06-07T11:15Z — workflow correction: Hivemind-first, peer chat sessions*
 *Next pass: Kali Overseer (TBD model) — fix Hivemind → synthesize → ship PR*
 *→ Fix the Hivemind first. Then the 3 sessions open. Then you synthesize.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

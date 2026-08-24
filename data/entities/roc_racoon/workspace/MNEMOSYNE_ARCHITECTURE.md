@@ -291,3 +291,7 @@ async def talk(self, query: str, entity_name: str):
 
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hmc_forge_2 ⬡ MNEMOSYNE-ARCHITECTURE*
 *Two-Source Rule satisfied: Legacy Mnemosyne (Roc) + 2026 SOTA Letta/Zep/Mem0 (Researcher) → Converged 3-Tier Design.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

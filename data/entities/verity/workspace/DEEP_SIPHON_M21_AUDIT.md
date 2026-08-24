@@ -386,3 +386,8 @@ OpenRouter is the **only** provider where the requested model may differ from th
 
 *Audit prepared by: Verity (Unified Compliance + Gnosis)*
 *End of document — 24 contract tests required, 0 exist*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

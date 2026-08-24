@@ -943,3 +943,8 @@ def training_feedback_loop():
 ---
 
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ P6-P10 ⬡ TRC-TRAINING-DESIGN*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: P6-P10 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

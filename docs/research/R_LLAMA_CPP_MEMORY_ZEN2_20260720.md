@@ -495,3 +495,7 @@ Roc's archaeological mining of LM Studio configs revealed that **q8_0 KV cache q
 **Research Complete.** Ready for integration into `config/models.yaml`, `config/providers.yaml`, and llama-server preset generation.
 
 *⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_gap2_memory ⬡ SEALED*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

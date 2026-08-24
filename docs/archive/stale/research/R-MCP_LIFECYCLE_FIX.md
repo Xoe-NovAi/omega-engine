@@ -83,3 +83,8 @@ Add the following commands to the `omega` CLI:
 4. **Function Test**: Call `omega-research_research` $\rightarrow$ Confirm JSON response (No "Not connected").
 
 **Related Research**: R-MCP_RUNTIME_DEBUG, R-29 (MCP Hub Design).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

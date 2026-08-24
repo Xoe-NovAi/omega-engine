@@ -232,3 +232,8 @@ The pattern was proven in `src/omega/agents/scribe/agy_oauth_persistence.py`:
 ✅ **AnyIO concurrency bridge** — Thread-pool with fallback to sync
 ✅ **3 lease types defined** — Short (1h), Medium (24h), Long (30d)
 ✅ **VaultCore Lease API designed** — `acquire()`, `renew()`, `release()` with lock-safe semantics
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TRACK-C | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

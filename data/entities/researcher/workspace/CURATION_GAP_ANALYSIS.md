@@ -374,3 +374,8 @@ The 3,284 lines of Era 1-3 code recovered by Roc Racoon Mining #48 represent **~
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ GAP-ANALYSIS ⬡ CURATION*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

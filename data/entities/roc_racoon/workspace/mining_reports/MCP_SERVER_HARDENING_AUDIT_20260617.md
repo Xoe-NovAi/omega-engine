@@ -437,3 +437,8 @@ The omega-stats service file contained API keys in `Environment=` declarations â
 
 *Report by: roc_racoon, Sovereign Miner*
 *Next scheduled audit: D144 (7-day cadence)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z â€” FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -228,3 +228,7 @@ hf download sentence-transformers/all-MiniLM-L6-v2-GGUF all-MiniLM-L6-v2-Q4_K_M.
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_briefing_embedding ⬡ SEALED 2026-07-20*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

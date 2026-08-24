@@ -582,3 +582,8 @@ These are the bugs that erode trust. Fix them now.
 ---
 
 *The infra is provisioned. The libraries are installed. The architecture is planned. But the code paths that currently work have 13 bugs — 3 critical, 5 high, 5 medium — that must be fixed before we wire anything new.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

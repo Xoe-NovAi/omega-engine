@@ -329,3 +329,8 @@ Default fully local. No cloud dependency for basic operation.
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ FLEET ⬡ PHASE-D-GATE ⬡ EXEC-PLAN-v1.1 ⬡ 2026-07-25*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: FLEET | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

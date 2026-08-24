@@ -94,3 +94,8 @@ When rebuilding the data store for the Omega Control Plane:
 2. **Preserve Tiers**: Keep the HOT (Redis) $\rightarrow$ WARM (Qdrant) $\rightarrow$ COLD (Postgres) flow; it is proven for the Ryzen 5700U's RAM limits.
 3. **Standardize Ports**: Use 6379 (Redis) and 6333 (Qdrant).
 4. **Use Socket Activation**: Move these from `docker-compose` to `systemd` user units as per `R-MCP_SOVEREIGN_BLUEPRINT.md`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

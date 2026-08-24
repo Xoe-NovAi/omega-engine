@@ -62,3 +62,8 @@ This system implements **Sovereign-Symmetry**. By forcing a problem to be viewed
         │  N1-N5 Nodes   │          │ N6-N10 Nodes   │
         └────────────────┘          └────────────────┘
 ```
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

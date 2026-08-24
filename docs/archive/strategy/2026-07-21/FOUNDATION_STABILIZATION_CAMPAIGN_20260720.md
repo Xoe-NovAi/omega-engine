@@ -588,3 +588,8 @@ T+1d   Start Β.1 embedding dim (highest technical risk)
 *⬡ OMEGA ⬡ GROK-CLI ⬡ FOUNDATION-STABILIZATION ⬡ STRUCTURE-BEFORE-FEATURES ⬡ 2026-07-20*
 
 > *The dark layer is not the absence of light — it is two suns claiming the same sky. Pick one star per domain, then build.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: grok-4.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

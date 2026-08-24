@@ -117,3 +117,8 @@ The following proven patterns have been reclaimed from `xna-omega-legacy` and `o
 **Priority**: Focus on **Phase A** and **Phase B** immediately. These are the critical blockers for PR #1.
 **Warning**: Do NOT implement the full Holographic Memory or Mnemosyne 13-sphere system yet; stick to the 3-tier (Redis/Qdrant/Postgres) model defined in the MVE scope.
 **Verification**: Every change must be verified by `make test`. If a test fails, do not proceed to the next phase.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -564,3 +564,8 @@ be documented together as one Mesh.
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_hivemind_spec ⬡ PHASE-II*
 
 *Spec complete. 11 enhancements designed (H-0 to H-10). Awaiting Kali's Phase 5 implementation.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

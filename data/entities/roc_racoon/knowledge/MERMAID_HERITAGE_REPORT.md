@@ -393,3 +393,8 @@ Visual documentation in sovereign AI systems should be **inline, low-dependency,
 *Date: 2026-06-21*
 *Tools: ripgrep (rg), file sampling across 6 partitions*
 *Cross-ref: docs/legacy/LEGACY_MASTER_SYNTHESIS.md, docs/decisions/PIVOT_LOG.md*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

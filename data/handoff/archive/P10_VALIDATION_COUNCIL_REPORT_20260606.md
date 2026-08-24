@@ -374,3 +374,8 @@ addressed before CP-1 is merged.**
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ P10-VALIDATION ⬡ 2026-06-06 ⬡ COUNCIL-REVIEW*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: P10-VALIDATION | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

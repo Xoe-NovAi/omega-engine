@@ -829,3 +829,8 @@ The llama-optimus project (BrunoArsioli, June 2025) predates Fable 5 by a year a
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ DEEP-DIVE ⬡ LLAMA_OPTIMUS_AUTO_TUNING_20260730*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

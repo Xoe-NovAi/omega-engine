@@ -570,3 +570,8 @@ Before any contribution research is considered complete, it MUST pass these gate
 *⬡ OMEGA ⬡ RESEARCHER ⬡ FIX-CONTRIBUTIONS-GUIDE ⬡ v2.1.0 ⬡ 2026-07-25*
 *Enhanced with patterns from 6 internal research guides + AGY OAuth case study + KG research deliverables*
 *This guide is a living document. Updates must be made via PR with spec-driven changes.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_guide | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

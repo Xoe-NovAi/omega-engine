@@ -324,3 +324,8 @@ CoAgent MTPO protocol (SJTU, ICML 2026):
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ ENHANCED-COORD-STRATEGY ⬡ v2.0.0 ⬡ 2026-07-30T02:00Z*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ENHANCED-STRATEGY | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

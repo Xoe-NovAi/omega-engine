@@ -329,3 +329,7 @@
 *⬡ OMEGA ⬡ RESEARCHER ⬡ trc_soul_gaps ⬡ 2026-07-22*
 *This guide is the single source of truth for soul.yaml enhancement knowledge gaps.*
 *All research outputs must be written to `docs/research/` or `docs/strategy/` per Doc Standards.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_soul_gaps | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

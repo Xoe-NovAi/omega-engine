@@ -86,3 +86,7 @@ To implement a high-performance, sovereign identity runtime that balances stable
   - **Verdict**: We trade "modular tidiness" for "runtime performance." The cost is a slightly messier `soul.yaml`, but the benefit is a faster, more stable engine.
 
 **Sovereign Seal**: synergy. execute. iterate. 🎸✨
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

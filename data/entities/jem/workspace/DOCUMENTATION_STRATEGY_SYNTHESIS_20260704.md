@@ -242,3 +242,8 @@ This documentation strategy bridges two traditions:
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ BIG-PICKLE ⬡ opencode ⬡ trc_synthesis ⬡ DOC-STRATEGY-SYNTHESIS*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: BIG-PICKLE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

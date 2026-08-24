@@ -271,3 +271,8 @@ The toolchain is stable. The version drift between installed (1.26.0) and specif
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_research ⬡ GAP-CLOSURE*
 *Generated: 2026-06-19T07:00:00Z*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -89,3 +89,8 @@ Deploy the "Coding Profile" (`k:q8_0 / v:q8_0`) as the default for all coding-ce
 
 ## 🧬 L1-L2-L3 Distillation (Final Synthesis)
 *Pending completion of all 10 areas.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

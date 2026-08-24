@@ -61,3 +61,8 @@ All 10 non-Kali entities currently suffer from the self-referential poisoning lo
 **Mechanism**: 
 - Parses all `soul.yaml` files to ensure no forbidden keys (`wisdom_text`, `soul_axioms`) exist.
 - Scans agent prompts/context builders to ensure `proposed_lessons.yaml` is strictly excluded from the read path.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: soul-architecture-protocol | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -220,3 +220,8 @@ Omega evolution: Static table → runtime-loadable from YAML. Modification count
 
 *Handoff from Doom Guy to Cline/M3. Review, validate, then delegate to BuildMaster for implementation.*
 *All [id-soft:] tags in this doc are design proposals — actual code tags will be added during implementation.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

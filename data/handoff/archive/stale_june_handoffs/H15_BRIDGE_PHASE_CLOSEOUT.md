@@ -123,3 +123,8 @@ Horizon 2 begins NOW. The Bridge Phase delivered:
 ---
 
 *The bridge is crossed. Horizon 2 awaits.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: H15-CLOSEOUT | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

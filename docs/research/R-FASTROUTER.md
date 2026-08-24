@@ -57,3 +57,8 @@ FastRouter reduces the architectural complexity of the Omega Engine by:
 **Proposed Next Step**: Implement a `FastRouterProvider` extending `OpenAICompatProvider` and update `TriageRouter` to support Virtual Alias selection.
 
 **Hardware Note**: Since FastRouter is a remote gateway, it does not impact the Ryzen 5700U's local RAM usage, though it introduces a network hop. Local `NativeGGUFProvider` should remain the ultimate sovereign fallback.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

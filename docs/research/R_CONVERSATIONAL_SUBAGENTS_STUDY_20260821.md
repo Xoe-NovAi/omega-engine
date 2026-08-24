@@ -139,3 +139,8 @@ Grokster wrote HOP-1 report (26 deliverable paths, DP-1..DP-8 table, load_domain
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_conv_subagents ⬡ 2026-08-21*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

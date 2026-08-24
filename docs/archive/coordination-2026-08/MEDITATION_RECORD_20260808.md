@@ -212,3 +212,7 @@ All 25 mandates assessed: 23 COMPLIANT, 1 TENSION (M7 — Local Coding Agent def
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ MEDITATION COMPLETE ⬡ 2026-08-08 21:30 UTC ⬡ ses_0dfe1649b605*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

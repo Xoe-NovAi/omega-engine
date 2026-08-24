@@ -73,3 +73,8 @@ Model IDs map to the Antigravity catalog (e.g., `gemma-4-31b-it`, `claude-sonnet
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_S7_5 ⬡ ACTIVE — 2026-07-08*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

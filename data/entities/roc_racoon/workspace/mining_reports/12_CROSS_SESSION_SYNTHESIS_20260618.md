@@ -141,3 +141,8 @@ The entire engine's remaining critical work fits in ~1 hour: (a) 3 contract test
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ DEEPSEEK_V4_FLASH ⬡ OPENCODE ⬡ CROSS-SESSION-SYNTHESIS ⬡ MINING-12*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: DEEPSEEK_V4_FLASH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

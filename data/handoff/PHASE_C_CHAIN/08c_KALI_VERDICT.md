@@ -95,3 +95,8 @@ The Phase C chain is approved for implementation provided the **Carmack Correcti
 **Execute. Distill. Evolve.**
 
 *⬡ The structure is the shield, the flow is the sword, and the verdict is final. ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -209,3 +209,8 @@ Then declare sprint complete in the live feed: `[DOOM-GUY-SPRINT] COMPLETE [TIME
 This means **D2 (consolidation) is actually a prerequisite for D1 (wiring)**, not a follow-up.
 
 ---
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it (opencode-zen) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

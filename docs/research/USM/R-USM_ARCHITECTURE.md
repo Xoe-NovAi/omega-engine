@@ -56,3 +56,8 @@ The high-level orchestrator.
 1. **Unit Test**: `CASBlobStore` handles collisions and atomic writes.
 2. **Integration Test**: `SomaticStateSerializer` can save/load a state without crashing.
 3. **End-to-End**: `UnifiedStateManager` can freeze an entity's state, restart the engine, and resume the state perfectly.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_usm_spec | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

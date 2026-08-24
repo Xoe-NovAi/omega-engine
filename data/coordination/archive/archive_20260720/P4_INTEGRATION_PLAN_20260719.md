@@ -847,3 +847,7 @@ exec opencode "$@"
 ---
 
 *⬡ OMEGA ⬡ PILLAR P4 ⬡ INTEGRATION ⬡ trc_p4_integration_plan ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: P4 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

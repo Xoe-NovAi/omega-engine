@@ -65,3 +65,8 @@ To activate Jem-2.0 mode, use the following prompt:
 - [ ] **Telemetry Audit**: Implement `scripts/telemetry_audit.py`.
 - [ ] **Sovereign Spec**: Finalize the technical spec for v0.6.0.
 - [ ] **Omnidroid Integration**: Map the 5 Omnidroid tools to Omega Engine capabilities.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: transition | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

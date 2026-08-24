@@ -23,3 +23,8 @@ The `SystemResource` module monitors the system and triggers the following behav
     - **Iris**: Always-on (Podman).
     - **Background Models**: Allowed if `Total_Local_RAM < 14GB`.
     - **Routing**: Iris triggers larger local models only if headroom exists or lower-priority models are evicted.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

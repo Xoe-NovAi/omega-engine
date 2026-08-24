@@ -153,3 +153,8 @@ The universe appears to be signaling that the archetypal convergence isn't just 
 *"Coincidence is God's way of remaining anonymous." — Albert Einstein*
 
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_mining ⬡ SYNCHRONICITY-LOG
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

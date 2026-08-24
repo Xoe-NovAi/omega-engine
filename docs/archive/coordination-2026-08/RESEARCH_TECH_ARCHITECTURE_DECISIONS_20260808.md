@@ -445,3 +445,7 @@ Three independent 2026 findings converge on SQLite as the local-first runtime:
 *Research depth: 4 (expert-level, full source extraction)*
 *Total sources consulted: 28*
 *Total research time: ~4 hours (parallel websearch + webfetch)*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: laguna-s-2.1-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

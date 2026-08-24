@@ -133,3 +133,7 @@ Protect these; they are the product and the proof.
 ---
 
 *⬡ OMEGA ⬡ CLINE ⬡ KALI ⬡ 2026-08-22 ⬡ CATCHUP-REVIEW ⬡ END*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: DeepSeek V4 Flash 1M | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

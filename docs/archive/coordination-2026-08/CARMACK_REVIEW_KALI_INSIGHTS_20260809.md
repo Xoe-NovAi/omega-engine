@@ -146,3 +146,7 @@ Your insights were well-structured. The 75% false positive calibration on Web Cl
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ DECISIONS ⬡ 2026-08-09*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

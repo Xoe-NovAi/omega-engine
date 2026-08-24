@@ -542,3 +542,8 @@ socat TCP-LISTEN:808${NODE_ID},fork,reuseaddr \
 *Version: 1.0.0*
 *Author: John Carmack (Technical Consultant)*
 *Status: COMPLETE — All research gaps filled*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: v1.0.0 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

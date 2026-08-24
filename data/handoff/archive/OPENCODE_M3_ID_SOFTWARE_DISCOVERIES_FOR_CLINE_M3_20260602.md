@@ -625,3 +625,8 @@ work, 1911 insertions). All 12 R-docs (R-19 through R-30) are in
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_id_for_cline ⬡ HANDOFF-INPUT*
 *Date: 2026-06-02 | For: Cline/MiniMax-M3 (1M context) | Input to: OpenCode dev session handoff*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -42,3 +42,8 @@ Ryzen 5700U is 2 CCX with 4MB L3 each, memory-bandwidth-bound. One concurrent ll
 3. **Honest Test Principle** — A test badge that lies is worse than no badge. Quarantine preserves test code and run visibility while enabling honest CI gating. The quarantine expiry prevents permanent acceptance of failure.
 4. **Protocol Contingency Principle** — When an upstream protocol changes its wire format (MCP 2026-07-28), the sovereign fallback is to decouple coordination from that protocol entirely. File-based coordination has zero external dependencies and is the ultimate M23 safety net.
 5. **Hardware Humbling Principle** — The Ryzen 5700U's 4MB per-CCX L3 cache and 51 GB/s memory bandwidth define hard inference limits. No amount of software optimization overcomes these physical constraints. The correct architectural response is admission control, not optimization heroics.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

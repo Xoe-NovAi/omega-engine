@@ -161,3 +161,8 @@ class OpenRouterKeyRotator:
 2. **Phase 2**: Implement `openrouter_retry_policy` wrapper around the HTTP client.
 3. **Phase 3**: Update `providers.yaml` parser to inject the `provider` object into requests based on `model_overrides`.
 4. **Phase 4**: Add integration tests simulating 429s and 502s to verify rotation and backoff.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

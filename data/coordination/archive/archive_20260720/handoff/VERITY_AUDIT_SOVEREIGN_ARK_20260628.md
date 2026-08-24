@@ -138,3 +138,7 @@ All critical infrastructure, mandate compliance, task breakdowns, and launch seq
 <function=omega-hub_hivemind_post_context>
 <parameter=channel>
 opencode
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nvidia/nemotron-3-ultra-550b-a55b:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

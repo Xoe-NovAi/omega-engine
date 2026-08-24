@@ -54,3 +54,8 @@ Antigravity is an external plugin system (`npm:opencode-antigravity-auth`) that 
 | **Accounts** | `~/.config/opencode/antigravity-accounts.json` |
 | **Plugin Source** | `github.com/NoeFabris/opencode-antigravity-auth` |
 | **Logs** | `~/.config/opencode/antigravity-logs/` |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_platform_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

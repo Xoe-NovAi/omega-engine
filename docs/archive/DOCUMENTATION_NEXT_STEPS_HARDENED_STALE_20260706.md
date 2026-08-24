@@ -173,3 +173,7 @@ The added controls transform this from a documentation project into a **resilien
 **Execute with precision.**
 
 ⬡ OMEGA ⬡ NEMOTRON-3-SUPER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_doc_super ⬡ ACTIVE
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

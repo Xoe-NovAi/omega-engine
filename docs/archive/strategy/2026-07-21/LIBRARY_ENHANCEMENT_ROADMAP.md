@@ -148,3 +148,7 @@ Captured during parallel architecture review of this roadmap. Applied inline abo
 ---
 
 *End of Roadmap. Track progress in `OMEGA_ENGINE.md` and `PIVOT_LOG.md`. Reviewed 2026-07-08 (Roc Racoon) — R1–R12 from Carmack handoff `ho_5b378d09a029`.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-r1-qwen3-8b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

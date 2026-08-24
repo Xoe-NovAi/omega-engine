@@ -41,3 +41,8 @@ Subtask results are returned to the parent as tool outputs wrapped in `<task_res
 ## Implementation Note
 _For: Sovereign Builder_
 To implement a depth limit, track the `parentID` chain in `omega-hub` and block the `task` tool once the chain length exceeds a predefined sovereign limit (e.g., 3).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

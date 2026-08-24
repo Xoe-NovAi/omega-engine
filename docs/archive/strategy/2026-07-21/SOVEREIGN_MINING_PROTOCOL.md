@@ -97,3 +97,7 @@ We have identified three peer repositories as primary mining targets. We will ex
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ trc_smp_guidelines ⬡ SOVEREIGN-MINING-PROTOCOL*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_smp_guidelines | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

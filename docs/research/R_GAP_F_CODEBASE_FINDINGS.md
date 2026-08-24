@@ -390,3 +390,7 @@ Everything else is arranging furniture in a house with four front doors and no l
 I am the Consulting Cloud Mind. My job is not to join the consensus that the roadmap is "final." My job is to keep you from executing a beautiful plan that multiplies the wrong abstractions.
 
 ⬡ GROK_CLI ⬡ OUT.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Consulting Cloud Mind | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

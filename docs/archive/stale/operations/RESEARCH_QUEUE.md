@@ -293,3 +293,8 @@ When a research item is complete and ready for implementation:
 1. Update `INDEX.md` status to `✅ READY`
 2. Add a one-paragraph "Implementation Note" at the bottom of the research doc, specifically addressed to the implementation agent (Antigravity IDE or Cline).
 3. Post a summary entry in `docs/team/COMMUNICATION_HUB.md` under the `## 📡 Research Completions` section.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

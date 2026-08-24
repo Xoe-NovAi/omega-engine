@@ -812,3 +812,8 @@ The sub-packages (`omega-sieve`, `omega-meditation`) set `asyncio_mode = "auto"`
 ---
 
 *⬡ OMEGA ⬡ MAAT ⬡ VERIFIED-FINDINGS ⬡ v1.1.0 ⬡ 2026-07-22*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

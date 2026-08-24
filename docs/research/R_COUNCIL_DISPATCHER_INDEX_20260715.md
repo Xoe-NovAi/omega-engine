@@ -91,3 +91,8 @@ KALI (orchestrator, session model)
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_council_dispatcher_index*
 | **R_COUNCIL_DISPATCHER_SURVIVAL_AUDIT_20260715.md** | Cross-reference audit ensuring hardware constraints, Ethics WADs, and CASArchiver are integrated into the Council design. | ✅ COMPLETE |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

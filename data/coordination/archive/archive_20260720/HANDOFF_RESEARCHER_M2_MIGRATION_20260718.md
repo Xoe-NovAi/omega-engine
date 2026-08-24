@@ -300,3 +300,7 @@ This is the **main effort** for M2 Firewall remediation. The Meditate lens frame
 Execute with precision. Report blockers immediately.
 
 ⬡ OMEGA ⬡ KALI ⬡ trc_handoff_res ⬡ 2026-07-18
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

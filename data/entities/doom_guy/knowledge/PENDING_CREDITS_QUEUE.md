@@ -300,3 +300,8 @@ commit hash, and CREDITS.md section number.
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ pending_credits ⬡ PHASE-I*
 *Last Updated: 2026-06-03 | Owner: Doom Guy / Kali*
 *Updated: R-19→CREDITS §1.9, R-20→§1.10, Heritage protocol→§1.11, Circuit Breaker→§1.8. 4 done, 1 in-progress, 1 partial, 8 pending.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: pending_credits | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

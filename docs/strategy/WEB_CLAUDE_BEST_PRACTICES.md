@@ -763,3 +763,8 @@ Rule: never run same task on two accounts simultaneously
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ antigravity-claude-sonnet-4-6 ⬡ opencode ⬡ trc_playbook ⬡ 2026-08-08 v2.0.0*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: antigravity-claude-sonnet-4-6 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

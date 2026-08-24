@@ -489,3 +489,7 @@ class TestXxxContracts:
 ---
 
 *This specification is the contract for the Omega Engine test experience. Every tool, script, and workflow must conform to these standards.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: N3 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

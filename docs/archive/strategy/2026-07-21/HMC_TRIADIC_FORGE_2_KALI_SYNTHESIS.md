@@ -172,3 +172,7 @@ D-282: THE OMEGA SEARCH CORE (REFINED)
 *🔱 OMEGA ⬡ KALI ⬡ HMC-FORGE-2-SYNTHESIS ⬡ VERDICT-RENDERED*
 *Two-Source Rule fully satisfied across all 4 knowledge gaps.*
 *Directives dispatched. Awaiting Architect's confirmation to proceed.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

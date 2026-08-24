@@ -511,3 +511,8 @@ The observability system has a **foundational asymmetry**: excellent at crash su
 ---
 
 *⬡ OMEGA ⬡ P8 ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_p8_final_review ⬡ SYNTHESIS*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -20,3 +20,8 @@ While the failure integrity (M23) principles outlined here remain valid, the und
 1. **Scope Reduction**: The sprint has been cut from 14 days to 7 days.
 2. **Focus Shift**: The primary metric of success is no longer "files with headers" but "agents finding the right doc" via `DocRef:` backlinks.
 3. **Clutter Reduction**: This file itself is an example of documentation bloat (planning docs about planning docs). It is retained only for historical continuity.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

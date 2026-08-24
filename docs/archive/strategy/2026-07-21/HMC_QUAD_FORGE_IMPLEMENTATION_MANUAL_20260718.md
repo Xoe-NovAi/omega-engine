@@ -771,3 +771,7 @@ cline run --file specs/M2_PHASE_B_SPEC.md \
 **End of Manual**
 
 ⬡ OMEGA ⬡ KALI ⬡ HMC_QUAD_FORGE ⬡ 2026-07-18 ⬡ CANONICAL
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

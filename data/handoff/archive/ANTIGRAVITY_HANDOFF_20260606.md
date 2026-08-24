@@ -32,3 +32,8 @@ The vision has evolved: **Local Inference is the floor; Local Verification is th
 
 ---
 *⬡ OMEGA ⬡ KALI ⬡ gemini-3.5-flash ⬡ trc_antigravity ⬡ HANDOFF*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.5-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

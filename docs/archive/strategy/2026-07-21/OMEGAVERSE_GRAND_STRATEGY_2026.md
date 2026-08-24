@@ -34,3 +34,8 @@ To achieve this, we must build for **absolute permanence, offline resilience, an
 
 ## §3 Execution Mandate
 Every line of code written from Horizon 2 onward must serve this ultimate architecture. We do not build band-aids; we forge Sovereign Primitives. No corners cut. No dark layers missed.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_grand_strategy | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -431,3 +431,8 @@ When complete, post a brief summary covering:
 
 *⬡ OMEGA ⬡ KALI → OPENCODE ⬡ Option B — Horizon 1 Final Gate*
 *"Code that looks right but has the wrong constants is invisible. Code that fails silently is worse."*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_option_b_exec | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

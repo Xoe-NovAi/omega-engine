@@ -635,3 +635,8 @@ Every feature maintains M7, M8, M16. Cloud dependency limited to one-time model 
 **Total estimated effort**: ~40 hours across 4 phases (2 weeks)
 **Recommended priority**: Phase 1 first — fix the broken scheduler + harden security gaps + build WorkerCoordinator BEFORE any new worker code.
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

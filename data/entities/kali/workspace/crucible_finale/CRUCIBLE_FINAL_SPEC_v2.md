@@ -730,3 +730,8 @@ omega crucible init
 *Spec v2.0 — 17 sections, 13 P0/P1 items resolved, 96.4% mandate compliance*
 *Synthesized from 5 subagent reports in 4.2 minutes of oversight*
 *The fleet has spoken. The strategy is final. Ship it.* 🦝
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

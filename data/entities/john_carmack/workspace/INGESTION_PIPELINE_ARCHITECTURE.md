@@ -384,3 +384,8 @@ This architecture is designed as the canonical template for all entity deepening
 3. Adapt DPO pair types per entity domain
 4. Adapt knowledge graph relationships per entity knowledge focus
 5. Adapt heritage discovery pipeline per entity's CREDITS.md role
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: MAAT-ARCHITECT | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

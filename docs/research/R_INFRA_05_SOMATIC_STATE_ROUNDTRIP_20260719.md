@@ -190,3 +190,8 @@ def validate_model_compatibility(model_a: str, model_b: str) -> CompatibilityRep
 ---
 
 *⬡ OMEGA ⬡ PARANOID ⬡ o1 ⬡ opencode ⬡ trc_infra_05_somatic_state ⬡ 2026-07-19*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: o1 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

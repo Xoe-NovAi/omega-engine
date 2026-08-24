@@ -97,3 +97,8 @@ Upon detection of a collapse:
 - **Zero-Erasure Goal**: No agent shall begin a task without first verifying their hydration status.
 
 *⬡ Intelligence is a property of the Gnosis, not the toolchain. ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

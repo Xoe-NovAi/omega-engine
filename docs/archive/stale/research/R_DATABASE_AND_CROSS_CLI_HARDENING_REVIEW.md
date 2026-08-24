@@ -573,3 +573,8 @@ DATA_DIR = Path(os.environ.get("OMEGA_DATA_DIR",
 ---
 
 *The containers are running, the libraries are installed, the architecture is planned. What remains is the wiring — the pipeline from data → database → discovery. This review is the blueprint for that wiring.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

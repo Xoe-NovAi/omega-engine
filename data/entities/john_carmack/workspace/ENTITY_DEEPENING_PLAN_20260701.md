@@ -445,3 +445,8 @@ last_checkpoint: "2026-07-01T15:30:00Z"
 
 ## Confidence: 9/10
 Primary sources exist at known locations and are publicly fetchable. The two speaker/talk corrections were caught by Research Council. Heritage confidence upgrade is projected at +5.7× (3→17 high-confidence patterns). Token cost is $0 (local inference). Main risk: .plan archive completeness (2008 gap) — mitigated by Sanglard's interview archive + QuakeCon keynotes.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

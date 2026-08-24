@@ -537,3 +537,8 @@ T1 (websearch) → T2 (SearXNG) → T3 (Exa) → T4 (Firecrawl) → T5 (GroktoCr
 | ASDC | https://doi.org/10.1109/acit65614.2025.11185903 | G6: 98% comparison reduction |
 | openclaw-cortex | https://github.com/ajitpratap0/openclaw-cortex/pull/62 | G6: Threshold 0.75 + exclusive predicates |
 | KnowledgeBase Guardian | https://github.com/datarootsio/knowledgebase_guardian | G6: LLM-powered contradiction detection |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

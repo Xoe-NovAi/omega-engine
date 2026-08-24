@@ -536,3 +536,8 @@ entries easy to spot — if the source line has changed, the entry is wrong.
 reviews. Scribe owns L1→L2→L3 distillation. The library lives at
 `docs/research/R100_MODEL_REFERENCE_LIBRARY.md` and is the single index for
 every free inference + research resource in the Omega Engine.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

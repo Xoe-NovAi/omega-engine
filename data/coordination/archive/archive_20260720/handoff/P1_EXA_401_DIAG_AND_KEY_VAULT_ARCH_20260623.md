@@ -498,3 +498,8 @@ echo 'export EXA_API_KEY="[REDACTED-GITLEAKS-GENERIC-API-KEY]"' >> ~/.bashrc
 ---
 
 *⬡ OMEGA ⬡ P1 ⬡ pillar ⬡ infrastructure ⬡ KEY-VAULT ⬡ COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: pillar | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

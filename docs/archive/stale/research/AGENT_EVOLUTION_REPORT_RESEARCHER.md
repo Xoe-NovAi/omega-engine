@@ -45,3 +45,8 @@ To guide the OpenCode Research Specialist in evolving its skills by integrating 
 
 ## 📈 Next Milestone
 Demonstrate these new skills during the **EXP-002: Gnosis Proxy Design** research mission.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

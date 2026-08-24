@@ -246,3 +246,8 @@ git config --global merge.conflictStyle diff3
 ✅ **Conflict resolution guide** — Prevention strategies + resolution steps
 ✅ **Automated sync workflow** — GitHub Actions template for weekly sync
 ✅ **18-month stale fork cautionary tale** — Real incident with lessons learned
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: RESEARCH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

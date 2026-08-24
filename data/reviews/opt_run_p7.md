@@ -510,3 +510,8 @@ The Context pillar has solid architectural foundations (3-tier memory, hybrid se
 
 *⬡ OMEGA ⬡ P7-PILLAR ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_p7_opt ⬡ DISCOVERY-REPORT*
 *Completed: 2026-06-28 | Next: Present findings to Lilith for run-side orchestration*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

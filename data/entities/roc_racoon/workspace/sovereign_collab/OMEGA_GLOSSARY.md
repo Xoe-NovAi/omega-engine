@@ -487,3 +487,7 @@
 ---
 
 *⬡ OMEGA ⬡ GLOSSARY v1.0 ⬡ 2026-07-18 ⬡ LIVING DOCUMENT*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

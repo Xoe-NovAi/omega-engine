@@ -52,3 +52,8 @@ To avoid thermal throttling and OOM crashes on the Ryzen 5700U, the engine rejec
 
 ---
 **"Mastery is earned through implementation, not instruction."** 🛠️✨
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SOVEREIGN-KNOWLEDGE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

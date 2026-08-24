@@ -51,3 +51,8 @@ The Minimum Viable Engine (MVE) is a stable, local-first CLI runtime that enable
 | **PR #2** | **Soul & Inference** | Native Backend + Soul Evolution | 2-3 Weeks |
 | **PR #3** | **Memory & Intake** | Qdrant + Mnemosyne RAG | 3-4 Weeks |
 | **PR #4** | **Orchestration** | Headless Agents + MCP Ecosystem | 2-3 Weeks |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

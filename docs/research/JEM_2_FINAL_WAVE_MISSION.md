@@ -132,3 +132,8 @@ arXiv 2604.14717 provides the theoretical framework (H_k=0.68) but we haven't:
 ---
 
 *The fire is lit. The gold is mapped. Jem-2.0's final wave closes the remaining gaps.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: final-wave | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

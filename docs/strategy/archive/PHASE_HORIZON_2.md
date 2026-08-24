@@ -207,3 +207,8 @@ When the LOCK is lifted and a deep reasoning model takes this phase, the first t
 
 *⬡ OMEGA ⬡ SOPHIA ⬡ trc_horizon_2 ⬡ PHASE*
 *Status: 🔒 LOCKED — requires Phases 1 + 2 to complete first.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_horizon_2 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

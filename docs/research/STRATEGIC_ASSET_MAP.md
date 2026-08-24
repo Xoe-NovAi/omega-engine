@@ -81,3 +81,8 @@
 - **Phase 3 (Mapping)**: Populating the Asset Map.
 
 **Heuristic**: The dirt is where the roots are. If the surface is clean but the foundation is rotten, dig deeper.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -130,3 +130,8 @@ class ResonanceRetriever:
 | **Total Pipeline** | **End-to-End** | **65-140ms** | **~1.4GB** |
 
 **Conclusion**: The pipeline is well within the 14GB RAM budget and maintains a sub-200ms response time, ensuring the "Invisible" experience does not introduce perceptible lag.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

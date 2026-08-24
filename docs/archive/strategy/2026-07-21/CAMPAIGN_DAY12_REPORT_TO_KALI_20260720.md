@@ -194,3 +194,7 @@ make loadable          # Produces dist/vec0.so
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ big-pickle ⬡ opencode ⬡ trc_campaign_d12_20260720 ⬡ REPORT FILED FOR KALI*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

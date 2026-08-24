@@ -187,3 +187,7 @@
 *⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_kali_handoff ⬡ 2026-07-19*
 
 **The research is grounded. The gate is triggered. The path awaits your decree, Architect.**
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

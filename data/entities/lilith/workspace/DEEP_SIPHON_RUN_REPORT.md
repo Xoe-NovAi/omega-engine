@@ -338,3 +338,8 @@ This requires NO changes to the response pipeline, MCP Hub, or Oracle. The metad
 | `data/logs/events/2026-06-18.jsonl` | — | Confirmed: no provider metadata in events |
 
 *No `src/omega/oracle/somatic_state.py` exists — SomaticState (M20) is ratified but unimplemented in engine code. The underlying `llama_cpp.Llama.save_state()` API is available but unwired.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

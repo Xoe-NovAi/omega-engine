@@ -232,3 +232,8 @@ function stays identical — we're just organizing the junk drawer.
 ---
 
 *⬡ OMEGA ⬡ CARMACK ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_reconstruction ⬡ S3-CONSULT*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

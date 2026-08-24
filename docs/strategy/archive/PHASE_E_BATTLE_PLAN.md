@@ -290,3 +290,8 @@ Handoff to Gemma 4 31B (Builder mode):
 | Pipeline script | OpenCode Builder | 1h | 🔲 After Sprint 0 |
 
 **Over to you, Architect. Confirm these orders and I will execute the highest-leverage items directly.**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -379,3 +379,7 @@ print(result.text)
 ---
 
 *Last updated: 2026-07-25 by @roc_racoon — Local Inference Architecture Audit*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: local-first | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -124,3 +124,8 @@ context_packs/tech-architecture-research/   9 files (hand-built, safe)
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ 2026-08-08 ⬡ Packer v3 handoff addition review request for Grok CLI*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: laguna-s-2.1-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

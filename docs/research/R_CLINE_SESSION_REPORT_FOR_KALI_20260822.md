@@ -308,3 +308,8 @@ extraction (PEP 517 fallback), which is why a detached chain wedged for 52+ min
 sdist once via `curl` from files.pythonhosted.org, then
 `pip install -v --no-deps --force-reinstall <local-tar.gz>` — no metadata dance,
 no dependency re-resolution. This is the documented efficient loop in §8.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

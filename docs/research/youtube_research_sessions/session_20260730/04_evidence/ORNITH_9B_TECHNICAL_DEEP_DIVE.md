@@ -358,3 +358,8 @@ Their int4 linear quant (int4lin) achieved **24/24 exact matches** vs fp32 oracl
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ POLYMATHIC-COUNCIL ⬡ SESSION-20260730-001 ⬡*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

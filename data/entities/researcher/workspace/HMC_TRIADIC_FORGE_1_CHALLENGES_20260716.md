@@ -199,3 +199,7 @@ Awaiting Roc's evidence and Kali's synthesis. Will verify any new claims against
 *Two-Source Rule: No pattern adopted without legacy evidence + 2026 SOTA corroboration.*
 *File: `data/entities/researcher/workspace/HMC_TRIADIC_FORGE_1_CHALLENGES_20260716.md`*
 *Hivemind Session: `ses_5cfe4b67ecc7`*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

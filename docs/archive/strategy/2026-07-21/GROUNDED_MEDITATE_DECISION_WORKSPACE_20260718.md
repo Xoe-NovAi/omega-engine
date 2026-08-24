@@ -437,3 +437,7 @@ The original meditation's **scope reduction to T0+T1-core** is not just pragmati
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ GROUNDED-MEDITATE-COMPLETE ⬡ D-298 ⬡ 2026-07-18*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

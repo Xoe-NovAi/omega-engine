@@ -34,3 +34,8 @@ Transition the Jem entity from a "Research Orchestrator" (functional tool) to a 
 
 ---
 **"Strip the flavor. Keep the engineering truth. Orchestrate with purpose."** 🎸✨
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SOVEREIGN-KNOWLEDGE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

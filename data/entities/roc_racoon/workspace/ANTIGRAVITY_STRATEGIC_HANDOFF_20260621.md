@@ -177,3 +177,8 @@ The user's "Headspace" was a misremembered name for "Headroom" — but the strat
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_strategic_handoff ⬡ PHASE-0*
 *Source reports: 12 files across 6 agents | Integration points: 4 | Risk items: 5 | Distillation: L1→L2→L3*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

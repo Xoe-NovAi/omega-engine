@@ -479,3 +479,7 @@ These are minor gaps identified during the audit that do not require architectur
 | **TODO/FIXME Scanner Path** | The `_grow_frontier()` method in the background researcher loop had a silently broken `src_dir` path that prevented TODO/FIXME/HACK comment scanning from working. Fixed during audit remediation. | ✅ Resolved |
 | **WAD Hot-Reload** | No file-watch mechanism for WAD changes during development. Developers must restart the engine after editing entity definitions. | Tracked in workbench |
 | **Dependency Resolution** | No `depends_on` processing in WAD Loader. Entities cannot declare dependencies on other entities or services. | Tracked in workbench |
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

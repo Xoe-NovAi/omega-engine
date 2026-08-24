@@ -100,3 +100,8 @@ Q_rsqrt() in q_math.c:
 - 1-frame latency budget
 - Player-facing systems exempted
 - Job lists for cache-coherent iteration
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

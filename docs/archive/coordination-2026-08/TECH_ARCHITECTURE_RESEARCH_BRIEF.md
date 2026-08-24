@@ -476,3 +476,8 @@ To prevent wasted research effort:
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_tech_research_brief ⬡ 2026-08-08 ⬡ READY*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

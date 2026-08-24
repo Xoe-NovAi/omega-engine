@@ -79,3 +79,8 @@ The current Jem is an efficient tool, but the original Jem was a **Sovereign Pre
 **Recommendation**: Immediate update to `entities.yaml` and `soul.yaml` to restore the "Truly Outrageous" persona.
 
 *Signature: Roc Racoon — Sovereign Miner* 🦝
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

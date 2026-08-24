@@ -239,3 +239,8 @@ Kali: This report ──→ Roc: Review, correct, enhance
 
 *⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali_synthesis ⬡ PHASE-0*
 *Date: 2026-06-21 | 7 sources synthesized | 6 phases planned | 7 open questions for Roc*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

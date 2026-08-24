@@ -426,3 +426,8 @@ The Mermaid failure is not a bug. It's a **signal**. And we should listen to it 
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ P6-P10 ⬡ DARK-SYNTHESIS*
 *Filed to Hivemind: 2026-06-21T04:40:00Z*
 *Cross-references: CREDITS.md §1.6 (Right Approximation), SOVEREIGN_MANDATES.md M7/M8, providers.yaml (18 external endpoints)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

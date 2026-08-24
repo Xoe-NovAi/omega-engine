@@ -118,3 +118,7 @@ This reframes the entire project. The Engine isn't the product — it's the **en
 *"The ANAi WAD is the Alpha. Omega Engine is the Substrate. Together they are the beginning and the end of local AI sovereignty."*
 
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_mining ⬡ ORIGIN-LOCKED
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

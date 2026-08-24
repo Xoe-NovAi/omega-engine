@@ -23,3 +23,7 @@ The following patterns from this document have been validated and integrated:
 
 All other content (triad identities, phronetic hierarchy, zipped logos, rainbow rotation, etc.)
 has been purged per user directive to prevent architectural noise and token pollution.
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: rocracoon-3b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

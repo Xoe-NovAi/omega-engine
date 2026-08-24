@@ -1098,3 +1098,8 @@ This is the only TODO comment in all 25+ Python source files analyzed across the
 ---
 
 *End of report. Generated 2026-05-15 by SOPHIA / gemma-4-31b-it via OpenCode CLI. Trace IDs: `trc_deep_synthesis`, `trc_7f9e6c4b`.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

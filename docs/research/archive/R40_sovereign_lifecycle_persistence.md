@@ -164,3 +164,8 @@ Description=Omega Engine Service Group
 - [ ] Apply `CPUAffinity` and `MemoryHigh` to all unit files.
 - [ ] Implement `sd_listen_fds` handover in `src/omega/mcp/` server entries.
 - [ ] Verify transition: `systemctl --user stop <service>` $\rightarrow$ `curl localhost:5001` $\rightarrow$ `systemctl --user status <service>` (should be active).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

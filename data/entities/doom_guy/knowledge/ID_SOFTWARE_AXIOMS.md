@@ -89,3 +89,8 @@ When an agent is unsure of a design choice, they should refer to this table:
 ---
 
 *This document is a living asset. New axioms are added as the source code is mined.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: AXIOMS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

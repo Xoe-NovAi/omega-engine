@@ -332,3 +332,8 @@ opencode-antigravity-auth/docs/MULTI-ACCOUNT.md
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ deep-search ⬡ antigravity-recovery ⬡ COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deep-search | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -100,3 +100,8 @@ Tools exist for auto-seeding knowledge from source code:
 _For: Builder mode (Gemma 4 31B)_
 
 Two concrete tasks: (1) Write a `seed_knowledge_bases.py` script that scans `docs/research/` for domain tags and copies L2 abstracts into `data/entities/{entity}/knowledge/` — this is a one-shot seed. (2) Modify `background_researcher/soul_updater.py` to write research findings to entity knowledge dirs based on topic matching. (3) Add INDEX.md generation to entity scaffold in `entity_registry.py`.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

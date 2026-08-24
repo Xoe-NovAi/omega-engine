@@ -113,3 +113,8 @@ Projects like PersonaOS, ability.ai, and Elastic Personas are building modular A
 - Multi-Tenant: https://blaxel.ai/blog/multi-tenant-isolation-ai-agents
 - Ollama: https://github.com/ollama/ollama
 - PersonaOS: https://github.com/personaos/PersonaOS
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: web-research | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

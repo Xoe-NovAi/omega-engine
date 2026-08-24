@@ -492,3 +492,8 @@ At scale, CLAUDE.md is not project documentation — it is the operating system 
 **Source**: `https://claudefa.st/blog/guide/development/large-codebase-playbook`
 
 > "The model is one ingredient. The harness around it is the rest."
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

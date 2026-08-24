@@ -155,3 +155,8 @@ AI-generated code has created new community engagement challenges:
 ✅ **Handling rejection gracefully** — Scripted responses for disagreement
 ✅ **Psychological safety insights** — Data on contributor retention, insider/outsider gap
 ✅ **2026 AI slop context** — Disclosure requirements and quality standards
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: RESEARCH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

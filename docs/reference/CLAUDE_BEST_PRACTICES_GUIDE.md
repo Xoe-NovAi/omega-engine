@@ -633,3 +633,7 @@ Production fleet → Local (Llama 4 Scout 10M, $0)
 **Version**: 1.0.0 | **Last Updated**: 2026-07-19 | **Next Review**: 2026-10-19
 
 *⬡ OMEGA ⬡ KALI ⬡ CLAUDE-GUIDE-COMPLETE ⬡ 2026-07-19*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: RESEARCH-COMPLETE | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

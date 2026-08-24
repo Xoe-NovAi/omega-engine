@@ -87,3 +87,8 @@ The engine is currently "Cognitively Bloated," maintaining redundant instruction
 1. **P0**: Refactor `kali.md` as a thin-wrapper prototype $\rightarrow$ Deploy to all agents.
 2. **P0**: Synthesize `capabilities.json` from entity YAMLs $\rightarrow$ Integrate into `orchestrator.py`.
 3. **P1**: Execute formal Sovereign Alignment Audit via P5 (Sentinel) and P7 (Context).
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

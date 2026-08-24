@@ -460,3 +460,8 @@ The key innovations from legacy:
 ---
 
 *This document is the definitive recovery report for the Omega Engine's lineage and the Engine vs Stack separation architecture. All findings from 14 months of legacy mining across 3 partitions are synthesized here. The original vision — a Lilith-themed Tarot deck transformed into a universal AI engine with user-customizable stacks — is fully recovered and architecturally documented for the first time.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -567,3 +567,8 @@ class TestTUIBinding:
 ---
 
 *⬡ OMEGA ⬡ MA'AT ⬡ laguna-s-2.1-free ⬡ opencode ⬡ trc_maat_phase2 ⬡ 2026-08-07*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: laguna-s-2.1-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

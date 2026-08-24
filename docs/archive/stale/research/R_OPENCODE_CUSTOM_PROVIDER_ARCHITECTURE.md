@@ -135,3 +135,8 @@ The research was conducted via a 3-subagent fleet:
 - OpenCode config schema: `https://opencode.ai/config.json` (ProviderConfig definition)
 - Vercel AI SDK: `@ai-sdk/openai-compatible` npm package
 - OpenCode docs: `https://opencode.ai/docs/providers/` (scroll to "Custom provider")
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

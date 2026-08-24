@@ -176,3 +176,8 @@ This is the Temple Grade covenant. It is not enforced by tooling. It is carried 
 - [ ] Publish Temple Grade Standard as part of the Omega Engine documentation
 - [ ] Allow community IWADs to declare their own quality standards, with Temple Grade as the baseline
 - [ ] Create a Temple Grade badge for IWADs that pass the automated audit
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: TRC_STRATEGIC | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

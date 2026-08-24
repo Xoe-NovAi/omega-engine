@@ -329,3 +329,7 @@ G-1 remains open for the specific question of which daily-refresh model handles 
 
 *⬡ OMEGA ⬡ KALI ⬡ SOVEREIGN-DISTILLATION-PIPELINE ⬡ v1.0.0 ⬡ 2026-08-09*
 *Produced by Gemini 3.1 Pro (strategic layer) + Claude Sonnet 4.6 (additive layer) in a live demonstration of §7 Sequential Dialectic Pattern.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: STRATEGY | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

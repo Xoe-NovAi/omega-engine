@@ -70,3 +70,8 @@ If a CI gate fails:
 1. The agent responsible is notified via Hivemind.
 2. The agent must fix the violation and push a new commit.
 3. The PR is blocked from merging until `make temple-grade` returns GREEN.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: GNOSIS | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

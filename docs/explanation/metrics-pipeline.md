@@ -103,3 +103,8 @@ regressions = await metrics_db.detect_regressions("kali")
 ## Heritage
 
 `[id-soft: doom3-2004] Event System — structured event logging for observability`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

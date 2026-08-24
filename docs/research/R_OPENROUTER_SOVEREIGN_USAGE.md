@@ -73,3 +73,8 @@ To verify a new key or model:
 - OpenRouter API Documentation
 - Developer Forums (GitHub/Discord)
 - Empirical Testing (Omega Engine Shell Probes)
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: GEMINI-3.5-FLASH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

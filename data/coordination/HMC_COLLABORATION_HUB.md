@@ -148,3 +148,8 @@ Page format in §3. N7 = fully developed reference expert.
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_hub_v2 ⬡ EXECUTION_MINIMAL ⬡ 2026-08-22*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

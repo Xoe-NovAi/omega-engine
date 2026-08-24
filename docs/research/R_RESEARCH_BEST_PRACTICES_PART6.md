@@ -454,3 +454,8 @@ Human reviewers focus on gates that are hard to automate:
 *⬡ OMEGA ⬡ RESEARCHER ⬡ RESEARCH-BEST-PRACTICES ⬡ v2.0.0 ⬡ 2026-07-24*
 *Part 6/6: Quality Gates and Evaluation — Enhanced with Gate 10 (Temporal Validity), Gate 11 (Meta-Research Quality / Two-Axis Evaluation), quality scoring system, gate responsibility matrix, and common failure modes*
 *This guide is a living document. Updates must be made via PR with spec-driven changes.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

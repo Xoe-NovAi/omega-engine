@@ -208,3 +208,8 @@ If you find blocking issues (Severity 🔴), write the review and exit immediate
 **PIVOT_LOG entry required on completion: D99 (Opus 4.6 final sprint plan review).**
 
 
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opus-4.6 (antigravity) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

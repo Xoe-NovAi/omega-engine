@@ -886,3 +886,8 @@ This roadmap is built on 5 non-negotiable principles:
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_lilith_roadmap ⬡ SOVEREIGN-PATH-v3.0.0*
 
 *HEAD: 37fdd88 | Tests: 307 ✅ | T2.1+T2.3 DONE | Sprint 1: READY | Handoff: DESIGNED | UI: EMPTY*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

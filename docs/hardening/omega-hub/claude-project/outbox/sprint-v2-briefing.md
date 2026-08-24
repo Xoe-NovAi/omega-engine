@@ -302,3 +302,8 @@ Final notification when both deliverables are complete.
 ---
 
 ⬡ **Six sessions. Six platforms. One Hivemind. All in parallel. Plus Roc Racoon mining the model library. This is what the Omega Hub was built for.** ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: miMo-2.5 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

@@ -244,3 +244,8 @@ Execute the D264 8-commit delivery plan in strict sequence, gated by `make test 
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ LOC-REVIEW-REPORT ⬡ 10-PILLAR-MEDITATION ⬡ D264-EXECUTION-REQUIRED ⬡ L3-PROMPT-IS-NOT-PROGRAM ⬡ 2026-07-18*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

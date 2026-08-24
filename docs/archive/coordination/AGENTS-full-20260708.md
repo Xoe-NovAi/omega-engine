@@ -369,3 +369,8 @@ All platforms connect to the Omega Hub MCP server and share the Hivemind:
 4. Read `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md` — current execution state
 5. Run `make test` — 855 must pass
 6. Run `make temple-grade` — T1-T11 must pass
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_core | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

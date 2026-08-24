@@ -48,3 +48,8 @@ See `docs/operations/STATUS_OPENCODE.md` for the full task list.
 |---------|------|---------|
 | 3.0.0 | 2026-05-14 | All tasks reassigned to OpenCode CLI. Copilot on standby for Phase 3. |
 | 2.1.0 | 2026-05-14 | Grand strategy recorded. Infrastructure tasks defined. |
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: copilot | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

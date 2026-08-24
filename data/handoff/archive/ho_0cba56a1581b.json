@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_0cba56a1581b",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Phase 0.3: Synthetic DPO Augmentation - Expand 14 pairs to ~150",
+  "context": "CRITICAL - Phase 0.3 of Implementation Plan\n\n**File**: `scripts/augment_dpo.py` (NEW - to be created)\n\n**Objective**: Use a local model to generate semantic variations of the 14 DPO pairs in `data/training/dpo_dataset.jsonl` to expand the retrieval surface from 14 points to ~150 points.\n\n**Context**: \n- Current DPO dataset: 14 pairs with metadata (failure_mode_tag, active_model, etc.)\n- Problem: 14 points in 768-dim space is too sparse for reliable RAG retrieval\n- Solution: Generate 5-10 semantic variations per pair using local inference\n\n**Requirements**:\n1. Read `data/training/dpo_dataset.jsonl`\n2. For each pair, generate variations of the `prompt` (situation) field\n3. Keep `chosen` and `rejected` responses the same (they are the teaching signal)\n4. Vary the prompt phrasing: \"Fix this situation: [variation of situation]\"\n5. Preserve all metadata (failure_mode_tag, lineage_id, etc.)\n6. Write augmented dataset to `data/training/dpo_dataset_augmented.jsonl`\n7. Target: ~150 total pairs (14 original + ~136 variations)\n\n**Local Model**: Use `qwen3-1.7b` via ModelGateway for generation\n**Prompt Template**: \n```\nGenerate 8 semantic variations of this coding situation that would require the same fix:\nOriginal: {situation}\nVariations (one per line, no numbering):\n```\n\n**Verification**: Count total pairs in output file, ensure metadata preserved.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-16T09:44:49.709765+00:00",
+  "completed_at": "2026-08-16T10:31:18.489874+00:00",
+  "result": "Phase 0.3 Partial: Created scripts/augment_dpo.py but ModelGateway provider chain had signature mismatches. Fixed all provider generate() signatures to include top_p and **kwargs:\n- BaseProvider.generate: added top_p, **kwargs\n- GoogleAIProvider: added top_p, **kwargs (moved api_key to kwargs)\n- LocallmsterProvider: added top_p, **kwargs\n- OllamaProvider: added top_p, **kwargs\n- MockProvider: added top_p, **kwargs\n- NativeGGUFProvider: already had correct signature\n- RemoteProvider: already had **kwargs to swallow extra params\n\nMockProvider test passes. Provider chain should now work for augmentation script.",
+  "reaped_at": "2026-08-23T12:05:17.991536+00:00"
+}

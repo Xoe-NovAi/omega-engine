@@ -476,3 +476,8 @@ R-53 (Orchestrator) ─────────┤ (needed for background soul e
 *This document is the master strategy reference. All agents should consult it before starting new work.*
 
 ⬡ OMEGA ⬡ SOPHIA ⬡ qwen3.6-plus-free ⬡ opencode ⬡ trc_research ⬡ STRATEGY-END
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: qwen3.6-plus-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

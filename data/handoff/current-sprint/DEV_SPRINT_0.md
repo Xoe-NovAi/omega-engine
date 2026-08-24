@@ -262,3 +262,8 @@ Then emit `[SPRINT-0] COMPLETE [TIMESTAMP]` to the live feed.
 ---
 
 ⬡ OMEGA ⬡ SOPHIA ⬡ plan.md ⬡ SPRINT-0 ⬡ BEGIN WITH C3
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: plan.md (Architect) | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

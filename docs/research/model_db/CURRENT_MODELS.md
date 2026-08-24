@@ -127,3 +127,8 @@ models:
 - **OpenCode Zen**: Sovereignty-first. Use `gpt-5-nano` for sensitive data as it guarantees no training on user data.
 - **SambaNova**: Best reliability for Llama 3.3 70B.
 - **Together AI**: Best for T1/T2 variety. 68 models available for free.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

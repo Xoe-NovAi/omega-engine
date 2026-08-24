@@ -130,3 +130,7 @@ WantedBy=multi-user.target
 
 *Part 3c of 4 — warp-node@.service & socat-bridge@.service*
 *Next: Part 3d — deploy_warp_pool.sh (Complete Script)*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WARP-KB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

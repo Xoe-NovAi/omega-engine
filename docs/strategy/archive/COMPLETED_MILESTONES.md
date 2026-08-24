@@ -50,3 +50,8 @@ This document serves as the historical record of completed phases and milestones
 - **2026-05-27** – **Env Remediation + MCP Hardening + System Consistency Sweep**: `.env` restored, Zen 2 tuning recovered, 57 stale entity directories purged. ✅
 - **2026-05-27** – **Tool Remediation & Embedding Research**: Fixed Firecrawl env expansion, disabled broken MCPs, finalized 768-dim embedding strategy. ✅
 - **2026-05-27** – **Sovereign Storage Remediation & FTS Index Seeding**: Reclaimed 9.4GB root partition bloat. Seeded 124 foundational documents. ✅
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

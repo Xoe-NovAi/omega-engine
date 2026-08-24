@@ -145,3 +145,7 @@ pip install "omega-sieve[all]"
 - [API: CAS](../reference/api/cas.md) — Content-Addressable Storage reference
 - [API: omega-sieve](../reference/api/omega_sieve.md) — Standalone package API reference
 - [Selective Hydration](../reference/selective-hydration.md) — L3 principle retrieval from sqlite-vec
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

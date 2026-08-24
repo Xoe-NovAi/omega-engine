@@ -125,3 +125,8 @@ Content below is preserved as-is for historical reference. See `config/wads/_ome
 - Action: Update summary (DONE), commit work, stop adding new content, ready for resume
 
 ---
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

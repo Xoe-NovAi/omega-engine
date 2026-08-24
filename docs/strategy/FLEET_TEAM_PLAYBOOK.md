@@ -408,3 +408,8 @@ FREEZE     new providers · D before Process Reform · fleet before vault · new
 ---
 
 *⬡ OMEGA ⬡ FLEET-TEAM-PLAYBOOK ⬡ v1.0.0 ⬡ ONE-DIRECTION ⬡ 2026-07-21*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

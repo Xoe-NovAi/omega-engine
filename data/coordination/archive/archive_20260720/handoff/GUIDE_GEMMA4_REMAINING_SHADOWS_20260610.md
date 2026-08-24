@@ -485,3 +485,8 @@ This guide's patterns derive from:
 
 *⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_lilith ⬡ PHASE-II-Guide*
 *Generated: 2026-06-10T13:05Z | Version: 1.0.0 | EOL: 2026-06-20 (10-day shelf life)*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

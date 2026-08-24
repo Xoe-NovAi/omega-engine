@@ -176,3 +176,7 @@ The pack was regenerated *after* Phase 1 but *before* Phase 2 decisions. Should 
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ INSIGHTS-FOR-CARMACK ⬡ 2026-08-09*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

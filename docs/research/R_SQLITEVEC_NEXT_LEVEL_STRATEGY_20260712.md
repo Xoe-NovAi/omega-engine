@@ -217,3 +217,7 @@ LIMIT ?;
 
 *🔱 OMEGA ⬡ KALI ⬡ SQLITEVEC-NEXT-LEVEL-SYNTHESIS ⬡ COMPLETE ⬡ 2026-07-12*
 *Sources: Researcher novel-spin (6 threads), Jem verification (R_SQLITEVEC_VERIFICATION_20260712.md), Jem gap-closure (prior)*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

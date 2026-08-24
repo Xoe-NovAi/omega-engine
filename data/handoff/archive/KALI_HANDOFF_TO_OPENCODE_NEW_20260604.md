@@ -149,3 +149,8 @@ The engine is in **Clean Slate** state (D117). All P0 items are **fixed, committ
 *Git: 8b058ac on main (97 files, +9116/−313, pushed)*
 *Hivemind: ses_8232fa83f36b*
 *Session closed: 2026-06-04 20:00 UTC*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->

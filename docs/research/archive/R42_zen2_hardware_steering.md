@@ -53,3 +53,8 @@ Force `q8_0` quantization for the KV cache in `LocalLlmConfig`.
 - [ ] `get_cpu_affinity()` returns `[0, 1, 2, 3, 4, 5]`.
 - [ ] RAM usage for KV cache is reduced by $\approx 50\%$ compared to FP16.
 - [ ] Latency variance (jitter) is reduced by $\geq 20\%$ after pinning.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it H opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

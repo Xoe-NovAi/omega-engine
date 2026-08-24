@@ -96,3 +96,8 @@ Following the legacy Chainlit pattern, a shared Redis store will manage real-tim
 
 **Implementation Note for the Artisan (Cline/Gemini)**:
 The most critical immediate step is the **OmegaShell** wrapper. The CLI must be able to read `config/omega.yaml` and prepend the `⬡ OMEGA ⬡ ...` header to every output regardless of the tool being used. This establishes the "Sovereign" feel of the interface.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

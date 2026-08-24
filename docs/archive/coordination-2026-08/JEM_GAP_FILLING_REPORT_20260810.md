@@ -215,3 +215,8 @@ This is **reactive** (only on 429). QW-4 should add **proactive** drain-aware se
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ longcat-2.0-free ⬡ opencode ⬡ trc_gap_filling ⬡ COMPLETE*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: longcat-2.0-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

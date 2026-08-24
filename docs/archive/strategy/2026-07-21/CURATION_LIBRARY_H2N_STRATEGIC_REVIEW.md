@@ -89,3 +89,8 @@ These issues must be resolved before enabling Phase 4 (autonomous background exe
 5. **Phase 3.2 & 4**: Proceed with tiered storage and Hivemind bridge integration.
 
 *Recorded by KALI (Opus 4.6 Synthesis).*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_strategic_review | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

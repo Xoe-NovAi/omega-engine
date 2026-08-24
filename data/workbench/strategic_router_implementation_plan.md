@@ -75,3 +75,8 @@ routing:
 
 ---
 **Note to Overseer**: This plan is a high-level blueprint. Detailed code implementations will be provided in subsequent workbench updates for your review.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WORKBENCH | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

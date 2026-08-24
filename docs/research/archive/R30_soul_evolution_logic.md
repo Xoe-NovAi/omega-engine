@@ -91,3 +91,8 @@ Implement as `src/omega/oracle/soul_evolution.py`.
 2. Integrate with `EntityWorkspaceManager` for `soul.yaml` access.
 3. Use `ModelGateway` for prompt execution.
 4. Wrap in `ResourceGuard` to prevent OOM.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

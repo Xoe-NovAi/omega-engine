@@ -249,3 +249,7 @@ Every research job you design and execute:
 *This guide is the single source of truth for autonomous agent research job design best practices in the Omega Engine ecosystem.*
 *All research outputs must be written to `docs/research/` or `docs/strategy/` per Doc Standards.*
 *This is a living document. Updates must be made via PR with spec-driven changes.*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_research_bp_kb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

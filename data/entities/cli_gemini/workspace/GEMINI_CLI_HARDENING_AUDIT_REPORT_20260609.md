@@ -95,3 +95,8 @@ The Hub remains functional but requires these surgical updates to maintain its "
 3.  **Update Handoff** for Kali's final synthesis.
 
 ⬡ OMEGA ⬡ GEMINI_CLI ⬡ AUDITED ⬡
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hardening-audit | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

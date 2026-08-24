@@ -80,3 +80,8 @@ To expand the Omega Engine's **Heritage Map** by identifying non-obvious archite
 3. **Implement `P4 (Job-Worker)`**: Formalize the `task()` delegation in the Hivemind as a "Cognitive Job" with budget constraints.
 4. **Implement `P5 (Prompt Baking)`**: Create a `prompt_fusion` utility in the `ContextBuilder` to bake soul principles into task-specific prompts.
 5. **Implement `P6 (Leak Detection)`**: Add a `gnosis-leak-check` tool for the `Scribe` to validate `soul.yaml` integrity.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

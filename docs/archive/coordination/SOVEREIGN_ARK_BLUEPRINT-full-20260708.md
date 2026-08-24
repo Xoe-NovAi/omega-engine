@@ -1010,3 +1010,8 @@ The engine cannot be declared "Sovereign" until this baseline is met.
 3. **M2 Firewall Audit**: Remove all absolute paths in `src/omega/`.
 4. **ResourceGuard Upgrade**: Transition from count-based to `ram_mb`-based tracking. ✅ **DONE**
 5. **E2E Chain Implementation**: Implement `test_e2e_inference_chain.py`. ✅ **DONE**
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_ark_blueprint | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

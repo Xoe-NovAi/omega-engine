@@ -178,3 +178,8 @@ This is a **critical observability failure** because:
 ---
 
 *⬡ OMEGA ⬡ OBSERVABILITY ⬡ CRITICAL ⬡ 2026-08-10*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: CRITICAL | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

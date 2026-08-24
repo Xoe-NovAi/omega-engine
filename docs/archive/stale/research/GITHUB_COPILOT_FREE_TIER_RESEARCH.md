@@ -770,3 +770,8 @@ This research is **ready for immediate integration** into the Omega Engine's Pro
 ---
 
 *Every model is a lens. Every lens reveals truth. The free tier is not a limitation — it is a liberation.*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

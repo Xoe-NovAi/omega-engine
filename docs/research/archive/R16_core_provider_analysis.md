@@ -136,3 +136,8 @@ To maximize availability and avoid "429 Too Many Requests" errors, Omega should 
 1. **Provider Fabric Update**: Update `config/providers.yaml` to reflect the priority chain: `native` $\rightarrow$ `google` $\rightarrow$ `openrouter` $\rightarrow$ `antigravity`.
 2. **Rate Limit Tracking**: Implement a lightweight `QuotaManager` to track RPD (Requests Per Day) for OpenRouter and Google to trigger automatic fallback before the 429 occurs.
 3. **Privacy Toggle**: Add a `/private` command to force the engine to stay within `native` and `openrouter` (with logging disabled) to avoid Google's training data collection.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

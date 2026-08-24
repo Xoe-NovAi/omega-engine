@@ -172,3 +172,8 @@ Deep Dive 2 is complete when you have delivered:
 **Account 1 has already produced 29 findings from 2 reports. If you find 0 new issues, that is a success — it means the remediation was thorough. If you find 1-3 new medium/low issues, that is expected — no remediation is perfect. If you find more than 5, the remediation was incomplete and Builder mode must revisit.**
 
 Begin.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

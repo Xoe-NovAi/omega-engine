@@ -1548,3 +1548,8 @@ Including here for context so implementing agents do not over-build.
 *Author: MaKaLi Council (Sonnet 4.6)*
 *Decisions ratified: D149, D150, D151*
 *Next review: After Phase 6 verification complete*
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_strategic_synthesis | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

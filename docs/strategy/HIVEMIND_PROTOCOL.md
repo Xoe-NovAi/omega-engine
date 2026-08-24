@@ -674,3 +674,8 @@ omega-hub_hivemind_post_context(
 - **Protocol**: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` §12
 - **Artifact A (F821)**: `docs/sprints/f821-remediation/HYBRID_STRATEGIC_GUIDE.md`
 - **Artifact B (F821)**: `docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md`
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

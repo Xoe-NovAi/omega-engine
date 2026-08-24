@@ -140,3 +140,7 @@ This remains a **creative synthesis** — not a proposed implementation. However
 - **L3-THE-NAMELESS-ONE'S-WISDOM**: Sometimes, not knowing *is* the most sophisticated form of knowing — embrace strategic forgetting.
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_planescape_wad ⬡ CREATIVE-SYNTHESIS*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b-it | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

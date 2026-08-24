@@ -157,3 +157,8 @@ For the Omega Engine, I recommend a **Tiered Research Pipeline** rather than a s
   - Add these services to `Orchestrator.mcp_ports` so they appear in `/status`.
 
 **Current State**: The search pipeline is fully functional via HTTP, despite the MCP "disconnection" reported in the CLI.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemma-4-31b | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

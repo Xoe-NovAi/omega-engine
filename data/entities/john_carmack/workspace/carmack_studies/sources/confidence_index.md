@@ -20,3 +20,8 @@ When making technical assertions:
 1. State the source tier.
 2. If Tier 4, attempt to verify against Tier 1 or Tier 2 before implementing.
 3. Never treat a Tier 4 assertion as a non-negotiable constraint.
+
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: SOURCES | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
