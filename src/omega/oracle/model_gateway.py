@@ -123,8 +123,11 @@ class ModelGateway:
             )
         self.config_path = Path(config_path)
 
-        # Load Sovereign Secrets from .env
-        self._load_sovereign_secrets()
+        # [INST-1-fix4] _load_sovereign_secrets() REMOVED — the gateway must not
+        # mutate global process env as a construction side effect (M16). The sole
+        # .env → os.environ injection point is the CLI process edge
+        # (src/omega/cli/oracle_cli.py load_dotenv()); credential resolution goes
+        # through providers.yaml env: prefixes or keyring fallbacks.
 
         self.models = self._load_models()
         self._kv_cache_config = self._load_kv_cache_config()
@@ -312,33 +315,6 @@ class ModelGateway:
             logit_bias = {**(logit_bias or {}), **forced_bias}
 
         return temperature, repetition_penalty, logit_bias
-
-    def _load_sovereign_secrets(self) -> None:
-        """Load API keys from .env file into environment variables.
-
-        Implements the Sovereign Gateway pattern: secrets are stored in a
-        single .env file and injected into the process environment.
-        """
-        env_path = Path(__file__).resolve().parent.parent.parent.parent / ".env"
-        if not env_path.exists():
-            logger.warning(f"Sovereign secrets file not found at {env_path}. Using system env.")
-            return
-
-        try:
-            with open(env_path, "r") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    if "=" in line:
-                        key, value = line.split("=", 1)
-                        os.environ[key.strip()] = value.strip()
-            logger.info("Sovereign secrets loaded successfully from .env")
-        except OmegaError:
-            raise
-        except (OmegaError, RuntimeError, OSError) as e:
-            logger.error(f"Failed to load sovereign secrets: {e}", exc_info=True)
-            raise ConfigError(f"Sovereign secrets load failed: {e}", raw_error=e) from e
 
     @staticmethod
     def _create_openrouter(name: str, cfg: dict) -> OpenAICompatProvider:

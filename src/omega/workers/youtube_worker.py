@@ -26,6 +26,11 @@
 
 # DocRef: docs/research/R_YOUTUBE_BACKGROUND_WORKER_SPEC.md
 
+# [INST-1-fix2/R1] Lazy annotations: `-> redis.Redis` signatures below are
+# evaluated at class-definition time; with the redis=None ImportError stub
+# they would crash at import. PEP 563 defers evaluation.
+from __future__ import annotations
+
 import argparse
 import json
 import logging
@@ -44,7 +49,16 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anyio
-import redis.asyncio as redis
+# [INST-1-fix2/R1] Redis is an OPTIONAL dependency (omega[memory] extra).
+# Guard pattern from src/omega/governance/budget_guard.py:23-29 — module must
+# import cleanly on a core-only install; use-site guard in _get_redis().
+try:
+    import redis.asyncio as redis
+
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis = None
+    REDIS_AVAILABLE = False
 import yaml
 
 from omega.errors import (
@@ -691,6 +705,14 @@ class YouTubeWorker:
     # ── Redis Connection ─────────────────────────────────────────────────
 
     async def _get_redis(self) -> redis.Redis:
+        if not REDIS_AVAILABLE:
+            # [INST-1-fix2/R1] Core install ships without redis. Fail loudly
+            # with a typed error instead of AttributeError on the None stub.
+            raise ProviderUnavailableError(
+                provider="redis",
+                message="redis package not installed — YouTube queue unavailable. "
+                "Install the optional extra: pip install 'omega[youtube]'",
+            )
         if self._redis is None:
             self._redis = redis.from_url(self.redis_url, decode_responses=True)
         return self._redis

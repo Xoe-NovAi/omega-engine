@@ -7,9 +7,6 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
-[![Version](https://img.shields.io/badge/version-1.2.0-blue)]()
-  [![Tests](https://img.shields.io/badge/tests-unit%2Bintegration-blue)]()
-
 
 ---
 
@@ -31,6 +28,21 @@
  
  **No API keys. No GPU. No cloud account.** Your first sovereign AI interaction in under 5 minutes.
 
+Prefer manual install? `pip install -e ".[native,cli]"` — the same minimal set `install.sh` uses.
+
+### Optional Extras
+
+The core install pulls only what local inference needs. Subsystem dependencies are opt-in:
+
+| Extra | Installs | Enables |
+|-------|----------|---------|
+| `[memory]` | redis | Redis hot-storage memory provider (optional; file/memory providers work without it) |
+| `[vectors]` | qdrant-client | Qdrant vector adapter (SQLite-vec ships in core) |
+| `[youtube]` | youtube-transcript-api, yt-dlp, redis | YouTube background ingestion worker + queue |
+| `[warp]` | warp-proxy-pool | WARP multi-namespace proxy pool for IP-rotated cloud backends |
+| `[dev]` | pytest, flake8, hypothesis, ... | Test and lint toolchain |
+
+Example: `pip install -e ".[native,cli,memory,youtube]"`
 
 ---
 

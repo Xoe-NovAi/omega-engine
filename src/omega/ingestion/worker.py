@@ -4,7 +4,16 @@
 import logging
 import random
 import anyio
-import redis.asyncio as redis
+# [INST-1-fix2/R1] Redis is an OPTIONAL dependency (omega[memory] extra).
+# Guard pattern from src/omega/governance/budget_guard.py:23-29 — module must
+# import cleanly on a core-only install; use-site guard in SovereignWorker.__init__.
+try:
+    import redis.asyncio as redis
+
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis = None
+    REDIS_AVAILABLE = False
 import json
 from typing import Optional, Dict
 from dataclasses import dataclass, asdict
@@ -51,6 +60,13 @@ class SovereignWorker:
         cas: Optional[CASArchiver] = None,
         resilience: Optional["ResilienceContext"] = None,
     ):
+        if not REDIS_AVAILABLE:
+            # [INST-1-fix2/R1] Core install ships without redis. Fail loudly
+            # with a typed error instead of AttributeError on the None stub.
+            raise OmegaError(
+                "redis package not installed — SovereignWorker unavailable. "
+                "Install the optional extra: pip install 'omega[memory]'"
+            )
         self.redis = redis.from_url(redis_url, decode_responses=True)
         self.queue_name = queue_name
         self.resource_guard = resource_guard

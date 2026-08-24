@@ -269,6 +269,14 @@ omega talk "hello"    # native-gguf, IS_CLOUD=False, exit 0
 
 If that fails, INST-1 is not done. Do not mark CP-3 complete in public docs until this passes.
 
+**Execution note (2026-08-24, N2 / council DAG)**: Steps 2+6 landed as ONE fused commit
+(`feat(n2)`) per H_KALI_UNIFIED_VERDICT — extras split fused with redis.asyncio lazy-guards
+at `src/omega/memory/providers.py`, `src/omega/ingestion/worker.py`,
+`src/omega/workers/youtube_worker.py` (pattern: `governance/budget_guard.py:23-29`).
+Extras: `[memory]` (redis), `[vectors]` (qdrant-client), `[youtube]` (transcript-api + yt-dlp + redis);
+core install is `.[native,cli]`. `.env` loading lives solely at the CLI process edge
+(`oracle_cli.load_dotenv()`); `ModelGateway._load_sovereign_secrets` deleted.
+
 ---
 
 ### DEL-1 — Deletion campaign

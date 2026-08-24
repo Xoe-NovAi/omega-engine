@@ -19,7 +19,17 @@ from omega.errors import (
     OmegaError,
     OmegaPersistenceError,
 )
-import redis.asyncio as redis
+# [INST-1-fix2/R1] Redis is an OPTIONAL dependency (omega[memory] extra).
+# Guard copied verbatim from src/omega/governance/budget_guard.py:23-29 —
+# a core-only install must not crash at import time (memory_store.py imports
+# this module at top level). Use-site guard in RedisStorageProvider.__init__.
+try:
+    import redis.asyncio as redis
+
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis = None
+    REDIS_AVAILABLE = False
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from pathlib import Path
@@ -128,6 +138,13 @@ class RedisStorageProvider(StorageProvider):
         # (memory_store.py gates construction on OMEGA_REDIS_HOST and passes
         # the password explicitly).
         password = password or os.environ.get("OMEGA_REDIS_PASSWORD")
+        if not REDIS_AVAILABLE:
+            # [INST-1-fix2/R1] Core install ships without redis. Fail loudly
+            # with a typed error instead of AttributeError on the None stub.
+            raise OmegaPersistenceError(
+                "redis package not installed — RedisStorageProvider unavailable. "
+                "Install the optional extra: pip install 'omega[memory]'"
+            )
         self.client = redis.Redis(
             host=host,
             port=port,

@@ -99,6 +99,16 @@ wait
 ok "Infrastructure images pulled"
 
 # ── 7. Verify setup ────────────────────────────────────────────────────
+# [INST-1-fix2 tripwire] Console-script smoke check BEFORE the heavy Oracle
+# probe — a broken CLI import fails here in <1s, not after model load.
+info "Smoke-checking console script: omega --help..."
+if ! omega --help > /dev/null 2>&1; then
+    err "omega --help failed — console script is broken. Setup is NOT valid."
+    err "Debug: source .venv/bin/activate && omega --help"
+    exit 1
+fi
+ok "Console script OK"
+
 info "Verifying installation..."
 python3 -c "
 from omega.oracle import Oracle, EntityRegistry

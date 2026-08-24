@@ -55,16 +55,12 @@ dependencies = [
     "tenacity==9.1.4",
     "tiktoken>=0.7.0",
     "typer==0.25.1",
-    "youtube-transcript-api>=0.6.3",
-    "yt-dlp>=2025.1.1",
     "typing-inspection==0.4.2",
     "typing_extensions==4.15.0",
     "tzlocal==5.3.1",
     "uvicorn==0.46.0",
     "prompt-toolkit==3.0.52",
     "psutil==7.2.2",
-    "qdrant-client==1.18.0",
-    "redis==7.4.1",
     "sqlite-vec>=0.1.9,<0.2.0",
     "rich==15.0.0",
     "python-docx==1.2.0",
@@ -77,6 +73,15 @@ dependencies = [
 [project.optional-dependencies]
 native = ["llama-cpp-python>=0.3.0,<0.4.0"]
 cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0"]
+# [INST-1-fix2] Optional subsystem extras — core install (.[native,cli]) must
+# NOT pull these; every module importing them carries an ImportError lazy-guard.
+memory = ["redis==7.4.1"]
+vectors = ["qdrant-client==1.18.0"]
+youtube = [
+    "youtube-transcript-api>=0.6.3",
+    "yt-dlp>=2025.1.1",
+    "redis==7.4.1",
+]
 warp = ["warp-proxy-pool"]
 dev = [
     "pytest>=9.0.0",
@@ -93,7 +98,7 @@ dev = [
     "pytest-tldr",
     "pytest-randomly",
 ]
-all = ["omega[native,cli,dev]"]
+all = ["omega[native,cli,dev,memory,vectors,youtube]"]
 
 [project.scripts]
 omega = "omega.cli.oracle_cli:main"

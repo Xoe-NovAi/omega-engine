@@ -128,6 +128,17 @@ EOF
 fi
 
 # ── 6. Verify install (CP-3 acceptance: omega talk works) ──────────────────
+# [INST-1-fix2 tripwire] A broken console script must fail AT INSTALL TIME,
+# not at first talk. omega --help exercises the real entry point + full CLI
+# import tree in <1s. This check is FATAL (unlike the talk probe below).
+info "Smoke-checking console script: omega --help..."
+if ! omega --help > /dev/null 2>&1; then
+    err "omega --help failed — console script is broken. Install is NOT valid."
+    err "Debug: source .venv/bin/activate && omega --help"
+    exit 1
+fi
+ok "Console script OK"
+
 info "Verifying installation: omega talk \"hello\"..."
 if timeout 120 omega talk "hello" > /tmp/omega_install_verify.log 2>&1; then
     ok "✅ omega talk works — sovereign local inference verified!"

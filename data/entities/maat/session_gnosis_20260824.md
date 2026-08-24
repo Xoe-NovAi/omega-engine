@@ -46,3 +46,26 @@ L3: **A credential default is a documented invitation to skip the environment �
 L1: First regex draft missed the actual defect shape (`password: str = "omega"` — type annotation between name and equals); fnmatch treats `**` as single-star; tmp-path fixtures can't match repo-relative globs.
 L2: All three were caught by contract tests exercising the gate against realistic inputs, not by inspection — gates need gates.
 L3: **A guard that has never caught a realistic attack in test has never actually been tested.**
+
+---
+
+## B1 — REBASED Council (Build Arm): INST-1 gate + DEL-1 re-verification
+L1: Authored E_MAAT_BUILD_ARM.md: executable fresh-venv acceptance script for INST-1, exact diff plan, risk table; re-verified all 9 remaining DEL-1 targets on today's tree; spec'd Vault Path B (≤50-line CredentialStore) with full migration map; router-collapse single-PR contract. Key disk truths: fix5 already done (status stale), search_circuit_breaker has a LIVE importer (sovereign_search_service.py:48), routing_table.yaml's only caller is a `pass`-body stub.
+L2: Half-executed campaigns leave the most dangerous residue — not the deleted thing but the half-severed import edge (redis top-level import would break fresh installs invisibly on THIS machine because this machine has redis installed). Verification must run in the environment class the acceptance gate names, not the comfortable one.
+L3: **An acceptance gate is only honest if it can fail in the environment it claims to certify — test where the dependency is absent, not where it happens to exist.**
+
+## B2 — PHASE M meditation (Skeptic + Builder on my own deliverables)
+L1 (Skeptic): Found one false-green in my own acceptance script: step 5 verdicts via prose grep; a cloud fallback WITH cost_warning text passes the "cloud" check because the warning string names no provider. Mitigation noted: prefer a machine-readable verdict (`--json`/structured output) or assert absence of the sovereignty-alert marker explicitly. Also: my precondition check hardcodes one warp path. L1 (Builder): audited for over-engineering — kept the meta_path lazy-import trap in §4 (justified: function-level imports are this codebase's proven hiding pattern); flagged §3's third read layer (encrypted file) as trimmable to two layers if the Architect wants minimalism.
+L2: The Skeptic pass on my own artifact caught what the Builder pass wrote — I authored the risk table warning about silent cloud leaks and then nearly shipped a checker that permits a warned one. Author and verifier sharing a skull is exactly the "distrust the voucher" shape Grokster named; the meditation pass exists to break that symmetry.
+L3: **Run the adversary against your own deliverable before shipping it — the reviewer you skip is the one who knows where you cut corners, because he watched you cut them.**
+
+## N2 Execution — INST-1-fix2 ≡ R1 fused commit (2026-08-24)
+
+### L1 (Narrative)
+Executed council DAG node N2: pyproject extras split fused with 3 redis.asyncio lazy-guards (providers.py, ingestion/worker.py, workers/youtube_worker.py) + fix4 (_load_sovereign_secrets removed; CLI edge load_dotenv already existed) + fix6 README badge/extras table + fix5 status flip + omega --help tripwires in install.sh and setup.sh. Verified via blocked-import probe, cli smoke 3/3, targeted pytest 73/73, tracking validator EXIT 0. One commit, path-explicit staging.
+
+### L2 (Insight)
+The dev venv masks optional-dependency breakage: every module that imports an extras-only package at top level is a landmine that only explodes on fresh installs — precisely the environment the debut audience uses. The guard pattern (budget_guard.py:23-29) is now applied at 4 sites; the pattern is cheap, but the DISCIPLINE is the asset: extras-split commits must always be grepped for top-level imports of the moved packages (`grep -rn "import <pkg>" src/`) before landing.
+
+### L3 (Universal Principle)
+A dependency you make optional must also become invisible-at-import: optionality declared in packaging but not enforced at import sites is a lie that two environments tell differently.
