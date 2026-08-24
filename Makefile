@@ -235,9 +235,28 @@ temple-grade: check-codex-stale doc-llm-validate check-mandates check-tracking-s
 	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Tracking State)$(NC)"
 
 # Cognitive State Validator (M27 Tracking Integrity)
+# Wired into temple-grade + pre-commit (omega-tracking-state). Includes the
+# M1 staleness rule (in_progress > 7d = error) and M3 warn-only schema checks.
 check-tracking-state:
 	@echo "$(YELLOW)Validating tracking state (M27)...$(NC)"
 	@$(PYTHON) scripts/validate_tracking_state.py
+
+# Tier-3 zombie sweep (M27, G5-1 amendment) — MANUAL ONLY.
+# NEVER wire into pre-commit/temple-grade: --apply mutates TASK_REGISTRY.json
+# and ambiguous cases route to a review list (exit 3), which would brick CI.
+# Dry-run by default; pass APPLY=1 to execute.
+sweep-tasks:
+	@echo "$(YELLOW)Sweeping TASK_REGISTRY zombies (dry-run)...$(NC)"
+	@$(PYTHON) scripts/sweep_task_registry.py $(if $(APPLY),--apply,)
+
+# Self-test for the sweep (fail-closed proof, M13/M21)
+sweep-self-test:
+	@$(PYTHON) scripts/sweep_task_registry.py --self-test
+
+# Regenerate EXPERT_SESSION_REGISTRY.md from TASK_REGISTRY.json +
+# session_annotations.yaml (M4). Output is GENERATED — never hand-edit.
+session-registry:
+	@$(PYTHON) scripts/generate_session_registry.py
 
 # =============================================================================
 # Mandate Checks (CI-only, moved from runtime Vetter per Carmack Verdict)

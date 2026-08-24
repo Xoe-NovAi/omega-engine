@@ -354,7 +354,7 @@
       "report": "docs/research/R56_LAZY_LOADING_20260814.md"
     },
     "DP-1": {
-      "topic": "Dynamic Prompt Builder — template engine, role-aware composition, domain injection",
+      "topic": "Dynamic Prompt Builder \u2014 template engine, role-aware composition, domain injection",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -362,7 +362,7 @@
       "phase": "P1"
     },
     "DP-2": {
-      "topic": "Context Window Registry — single source for all model context windows",
+      "topic": "Context Window Registry \u2014 single source for all model context windows",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -370,7 +370,7 @@
       "phase": "P0"
     },
     "DP-3": {
-      "topic": "Planner/Executor Model Router — routes by role + context window need",
+      "topic": "Planner/Executor Model Router \u2014 routes by role + context window need",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -378,7 +378,7 @@
       "phase": "P2"
     },
     "DP-4": {
-      "topic": "Domain Module Loader — unified load_domain() API with packaging",
+      "topic": "Domain Module Loader \u2014 unified load_domain() API with packaging",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -387,7 +387,7 @@
       "depends_on": "QDRANT-MIGRATION (vector store scale-up)"
     },
     "DP-5": {
-      "topic": "Per-Role Token Budget Manager — planner vs executor budgets",
+      "topic": "Per-Role Token Budget Manager \u2014 planner vs executor budgets",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -395,7 +395,7 @@
       "phase": "P1"
     },
     "DP-6": {
-      "topic": "Domain Context Window Map — domain → optimal context window",
+      "topic": "Domain Context Window Map \u2014 domain \u2192 optimal context window",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -403,7 +403,7 @@
       "phase": "P0"
     },
     "DP-7": {
-      "topic": "Planner/Executor Prompt Templates — versioned, validated templates",
+      "topic": "Planner/Executor Prompt Templates \u2014 versioned, validated templates",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -411,7 +411,7 @@
       "phase": "P4"
     },
     "DP-8": {
-      "topic": "SomaticState Planner Integration — state save/restore for planning continuity",
+      "topic": "SomaticState Planner Integration \u2014 state save/restore for planning continuity",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
       "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
@@ -420,168 +420,168 @@
     },
     "GN-1": {
       "topic": "notebooklm-py[mcp] deployment with isolated auth profiles",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "owner": "maat_n3"
     },
     "GN-2": {
-      "topic": "2 strategic notebooks: Ω-ACTIVE-RESEARCH + Ω-KNOWLEDGE-BASE",
-      "status": "ready",
+      "topic": "2 strategic notebooks: \u03a9-ACTIVE-RESEARCH + \u03a9-KNOWLEDGE-BASE",
+      "status": "outstanding",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "owner": "researcher"
     },
     "GN-3": {
       "topic": "Free-tier fetch pipeline + systemd timer (30 DR/mo budget)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "owner": "maat_n3"
     },
     "GN-4": {
       "topic": "Single-account free-tier Deep Research smoke test",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "owner": "researcher"
     },
     "GN-5": {
       "topic": "SDP distillation pipeline + Scribe handoff (manual mode)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "owner": "researcher"
     },
     "DS-1": {
       "topic": "Documentation system meta-doc (DOMAIN_DOCUMENTATION_SYSTEM.md)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "documentation_system_20260820",
       "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
       "owner": "kali"
     },
     "DS-2": {
       "topic": "docs/strategy/domains/gemini-notebook/ workspace structure",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "documentation_system_20260820",
       "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
       "owner": "kali"
     },
     "DS-3": {
       "topic": "config/domains/gemini-notebook/ runtime module",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "documentation_system_20260820",
       "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
       "owner": "maat_n3"
     },
     "DS-4": {
       "topic": "scripts/sync_domain_docs.py (validated copy, not symlink)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "documentation_system_20260820",
       "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
       "owner": "maat_n3"
     },
     "DS-5": {
       "topic": "STRATEGY_INDEX.md + STRATEGY_CORPUS_MAP.md Domain layer updates",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "documentation_system_20260820",
       "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
       "owner": "kali"
     },
     "LI-1": {
       "topic": "AdaptiveContextBuffer implementation",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "local_inference_opt_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "LI-2": {
       "topic": "SequentialModelLoader (no mmap, keep context alive)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "local_inference_opt_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "LI-3": {
       "topic": "llama-fit-params hardware probe at startup",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "local_inference_opt_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "LI-4": {
       "topic": "Tier 0 model matrix: Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "local_inference_opt_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "LI-5": {
       "topic": "Startup script (zRAM + THP + pinning + prompt caching)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "local_inference_opt_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "KD-1": {
       "topic": "Domain module schema (metadata.yaml + CONTEXT.md + PROMPTS/ + sources/)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "knowledge_domains_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "kali"
     },
     "KD-2": {
       "topic": "Curator model implementation (config/domains/curators.yaml governance)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "knowledge_domains_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "kali"
     },
     "KD-3": {
       "topic": "Affinity presets per domain (AFFINITY_PRESETS.yaml)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "knowledge_domains_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "kali"
     },
     "HR-1": {
       "topic": "HeadroomMiddleware implementation (src/omega/oracle/middleware/headroom.py)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "headroom_integration_20260820",
       "report": "data/coordination/HEADROOM_RESEARCH_20260820.md",
       "owner": "maat_n3"
     },
     "HR-2": {
       "topic": "Adaptive context buffer integration (src/omega/research/adaptive_context.py)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "headroom_integration_20260820",
       "report": "data/coordination/HEADROOM_RESEARCH_20260820.md",
       "owner": "maat_n3"
     },
     "HR-3": {
       "topic": "MCP headroom tools (compress tool outputs before context injection)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "headroom_integration_20260820",
       "report": "data/coordination/HEADROOM_RESEARCH_20260820.md",
       "owner": "maat_n3"
     },
     "ZS-1": {
       "topic": "zswap sysctl + kernel cmdline deployment (max_pool_percent=25, lzo_rle, zsmalloc, zswap.enabled=1)",
-      "status": "in_progress",
+      "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "ZS-2": {
       "topic": "16GB NVMe swap file + systemd cgroup config (MemoryMin=2G, MemoryHigh=5G, MemoryMax=6G, MemorySwapMax=infinity)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
     },
     "ZS-3": {
       "topic": "WAD packaging (zswap-config.wad for community stacks)",
-      "status": "ready",
+      "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "owner": "maat_n3"
@@ -602,7 +602,7 @@
       "ratified": "2026-08-19"
     },
     "gemini_notebook_20260820": {
-      "name": "Gemini Notebook v2.0 — Free-tier-only, 2-NB, 30 DR/mo (D-582/D-583)",
+      "name": "Gemini Notebook v2.0 \u2014 Free-tier-only, 2-NB, 30 DR/mo (D-582/D-583)",
       "source": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "horizon": "H1 (post-debut)",
       "ratified": "2026-08-20",
@@ -623,21 +623,21 @@
       "prefix": "LI"
     },
     "knowledge_domains_20260820": {
-      "name": "Knowledge Domains — Runtime + Workspace + Curator (D-579)",
+      "name": "Knowledge Domains \u2014 Runtime + Workspace + Curator (D-579)",
       "source": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "horizon": "H1 (post-debut)",
       "ratified": "2026-08-20",
       "prefix": "KD"
     },
     "headroom_integration_20260820": {
-      "name": "Headroom Integration — Semantic Compression (40-90%)",
+      "name": "Headroom Integration \u2014 Semantic Compression (40-90%)",
       "source": "data/coordination/HEADROOM_RESEARCH_20260820.md",
       "horizon": "H1 (post-debut)",
       "ratified": "2026-08-20",
       "prefix": "HR"
     },
     "zswap_subsystem_20260820": {
-      "name": "zswap + NVMe Swap Subsystem — 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM disabled (D-526/D-581/D-584)",
+      "name": "zswap + NVMe Swap Subsystem \u2014 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM disabled (D-526/D-581/D-584)",
       "source": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
       "horizon": "H1 (post-debut)",
       "ratified": "2026-08-20",

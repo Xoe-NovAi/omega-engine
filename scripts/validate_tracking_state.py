@@ -1,7 +1,19 @@
 #!/usr/bin/env python3
+"""M27 Tracking Integrity validator (Cognitive State Validator).
+
+M1 (2026-08-23): staleness rule — `in_progress` tasks with `last_checkpoint`
+older than STALENESS_DAYS are errors. Shared `_parse_ts()` helper handles the
+three coexisting ISO-8601 formats in TASK_REGISTRY.json (`Z` suffix,
+`+00:00` offset, microsecond variants) per G5-2 of
+RESEARCHER_SESSION_TRACKING_GAPS_20260823.md.
+M3 (2026-08-23): warn-only schema checks for optional `superseded_by` and
+`artifact_path` fields (legacy records grandfathered, never errored).
+"""
 import json
+import subprocess
 import sys
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Configuration
@@ -23,6 +35,64 @@ ALLOWED_EXECUTION_STATUSES = ALLOWED_STATUSES.union({"failed"})
 
 # GAP_REGISTRY allowed statuses
 ALLOWED_GAP_STATUSES = {"resolved", "outstanding", "partial", "lost"}
+
+# M1: staleness threshold (days). `in_progress` tasks whose last_checkpoint is
+# older than this are errors. 7d sits in the empirical gap of the age
+# distribution (legitimate work clusters <=6d, zombies >=8d) — Researcher
+# Ruling 1, RESEARCHER_SESSION_TRACKING_GAPS_20260823.md.
+STALENESS_DAYS = 7
+
+
+def _parse_ts(value):
+    """Parse an ISO-8601 timestamp tolerating format heterogeneity (G5-2).
+
+    Normalizes the `Z` suffix (rejected by fromisoformat pre-3.11), assumes
+    UTC when naive. Returns a timezone-aware datetime or None on failure.
+    Shared by validate_tracking_state.py, sweep_task_registry.py, and
+    generate_session_registry.py — do NOT duplicate parsing logic elsewhere.
+    """
+    if not value or not isinstance(value, str):
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
+def _resolve_pointer(pointer: object, task_ids: set) -> bool:
+    """Resolve a superseded_by pointer per G3 priority order.
+
+    1. task_id present in the registry
+    2. git commit hash (verified via `git rev-parse --verify`)
+    3. repo-relative doc/file path existing on disk
+
+    Returns True if the pointer resolves under any strategy.
+    """
+    pointer = str(pointer or "").strip()
+    # Strip scheme prefixes used by convention (commit:<sha>, task:<id>, doc:<path>)
+    # and trailing prose annotations ("docs/x.md Phase 1 (replaced ...)").
+    pointer = re.sub(r"^(commit|task|doc|file|path):", "", pointer)
+    candidates = [pointer] + pointer.split()[:2]
+    for cand in candidates:
+        if not cand:
+            continue
+        if cand in task_ids:
+            return True
+        try:
+            result = subprocess.run(
+                ["git", "rev-parse", "--verify", "--quiet", f"{cand}^{{commit}}"],
+                cwd=ROOT_DIR, capture_output=True, timeout=10,
+            )
+            if result.returncode == 0:
+                return True
+        except (OSError, subprocess.SubprocessError):
+            pass
+        if (ROOT_DIR / cand).exists():
+            return True
+    return False
 
 def print_error(msg):
     print(f"��� ERROR: {msg}", file=sys.stderr)
@@ -146,11 +216,58 @@ def validate_task_registry():
     warnings = 0
     
     tasks = data.get("tasks", [])
+    task_ids = {t.get("task_id", "") for t in tasks}
     for t in tasks:
         status = t.get("status", "").lower()
         if status not in ALLOWED_EXECUTION_STATUSES:
             print_error(f"Task '{t.get('task_id')}' has invalid status: '{status}'. Allowed: {sorted(ALLOWED_EXECUTION_STATUSES)}")
             errors += 1
+
+    # M1: Staleness rule — `in_progress` with stale last_checkpoint is an error.
+    now = datetime.now(timezone.utc)
+    stale_offenders = []
+    for t in tasks:
+        if t.get("status", "").lower() != "in_progress":
+            continue
+        ts = _parse_ts(t.get("last_checkpoint"))
+        if ts is None:
+            print_warn(f"Task '{t.get('task_id')}' is in_progress but has missing/unparseable last_checkpoint. Cannot assess staleness.")
+            warnings += 1
+            continue
+        age_days = (now - ts).days
+        if age_days > STALENESS_DAYS:
+            stale_offenders.append((t.get("task_id"), age_days))
+    if stale_offenders:
+        for task_id, age_days in stale_offenders:
+            print_error(f"Stale in_progress task: '{task_id}' — last_checkpoint {age_days}d ago (threshold: {STALENESS_DAYS}d). Sweep it (`make sweep-tasks`) or close it out.")
+            errors += 1
+
+    # G5-2 drift item 2: inverted clocks — checkpoint must not precede creation.
+    for t in tasks:
+        created = _parse_ts(t.get("created_at"))
+        checked = _parse_ts(t.get("last_checkpoint"))
+        if created and checked and checked < created:
+            print_warn(f"Task '{t.get('task_id')}' has last_checkpoint earlier than created_at (inverted clock). Fix the timestamps.")
+            warnings += 1
+
+    # M3: optional schema fields — warn-only, never error (legacy grandfathering).
+    for t in tasks:
+        task_id = t.get("task_id", "")
+        status = t.get("status", "").lower()
+        if status == "superseded":
+            pointer = t.get("superseded_by")
+            if not pointer or not str(pointer).strip():
+                print_warn(f"Superseded task '{task_id}' lacks a non-empty superseded_by pointer (successor task_id, commit hash, or repo-relative doc path). Legacy records are grandfathered; new records MUST set it.")
+                warnings += 1
+            elif not _resolve_pointer(pointer, task_ids):
+                print_warn(f"Superseded task '{task_id}' has superseded_by '{pointer}' which does NOT resolve (no such task_id / commit / path).")
+                warnings += 1
+        artifact = t.get("artifact_path")
+        if artifact:
+            artifact_path = ROOT_DIR / artifact
+            if not artifact_path.exists():
+                print_warn(f"Task '{task_id}' cites artifact_path '{artifact}' which does not exist on disk.")
+                warnings += 1
 
     # FIX 1: Cross-tier validation — Tier-3 `failed` must sync to Tier-0 `blocked`/`superseded`
     if ACTIVE_SPRINT_PATH.exists():

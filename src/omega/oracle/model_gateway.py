@@ -352,16 +352,41 @@ class ModelGateway:
             for k, v in cfg.items()
             if k not in ("provider", "priority", "api_key", "api_keys", "base_url")
         }
-        # Resolve key list: prefer api_keys list, fall back to wrapping api_key
-        api_keys = cfg.get("api_keys", [])
-        if not api_keys and cfg.get("api_key"):
-            api_keys = [cfg["api_key"]]
+        # Resolve key list: prefer api_keys list, fall back to wrapping api_key.
+        # env: prefixes resolve here (mirrors native-gguf model_path handling)
+        # so credentials stay out of YAML; unset vars drop the entry cleanly
+        # rather than sending a literal "env:X" string as a bearer token.
+        def _resolve_env_key(val: str) -> Optional[str]:
+            if isinstance(val, str) and val.startswith("env:"):
+                return os.environ.get(val[4:]) or None
+            return val
+
+        raw_keys = cfg.get("api_keys") or ([cfg["api_key"]] if cfg.get("api_key") else [])
+        api_keys = [k for k in (_resolve_env_key(v) for v in raw_keys) if k]
+        # M22 provenance fix (2026-08-22): silent default to OpenRouter removed.
+        # This factory serves multiple providers (openrouter, opencode-zen,
+        # cline, github-copilot); routing any of them to OpenRouter's endpoint
+        # under a foreign name is a provenance violation. Only openrouter has
+        # a legitimate default; everything else must declare its endpoint.
+        _KNOWN_BASE_URLS = {
+            "openrouter": "https://openrouter.ai/api",
+        }
+        base_url = cfg.get("base_url")
+        if base_url is None:
+            if name in _KNOWN_BASE_URLS:
+                base_url = _KNOWN_BASE_URLS[name]
+            else:
+                raise ConfigError(
+                    f"provider '{name}' requires an explicit base_url "
+                    f"(silent OpenRouter fallback removed per M22; "
+                    f"see PLATFORM_GROUND_TRUTH_LOG.md entry #10)"
+                )
         return OpenAICompatProvider(
             ProviderConfig(
                 name=name,
                 priority=cfg.get("priority", 0),
                 api_keys=api_keys,
-                base_url=cfg.get("base_url", "https://openrouter.ai/api").rstrip("/v1"),
+                base_url=base_url.removesuffix("/v1"),
                 extra=extra,
             )
         )
