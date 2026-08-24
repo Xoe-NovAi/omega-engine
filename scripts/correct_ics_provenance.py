@@ -9,7 +9,10 @@ audit trail. Emits a training-purity manifest for DPO/SFT pipelines.
 Modes:
   --dry-run   (default) report only, no writes
   --apply     append provenance-correction annotations to affected files
-              AND emit one ledger line per annotated file
+              AND emit one ledger line per annotated file.
+              FAIL-CLOSED (DC-01): if opencode.db is unreachable, --apply
+              aborts with exit 2 and zero writes — a db outage must never
+              degrade stored Tier-0 verdicts into n/a rewrites.
   --manifest PATH  emit JSONL manifest {file -> verified attribution}
 
 W1-4 enhancements (2026-08-24):
@@ -279,13 +282,26 @@ def audit(entry: dict) -> None:
         os.fsync(fh.fileno())
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--manifest", type=Path, default=None)
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     con = open_db_ro()
+    if con is None and args.apply:
+        # DC-01 (fail-closed): a db outage must NEVER reach the write path.
+        # With the resolver down, every session-anchored claim degrades to
+        # UNANCHORED/n/a and idempotency machinery would rewrite real
+        # Tier-0 verdicts into misleading n/a annotations (exit 0, no
+        # signal — M23 anti-pattern). Dry-run KEEPS graceful degradation.
+        print(
+            "[TOOL-CHAIN-COLLAPSE] --apply aborted: opencode.db unreachable "
+            f"at {DB_PATH} — refusing to overwrite Tier-0 verdicts with "
+            "n/a. Restore db access, or re-run without --apply (dry-run).",
+            file=sys.stderr,
+        )
+        return 2
     findings = []
     for root in SCAN_ROOTS:
         if not root.exists():

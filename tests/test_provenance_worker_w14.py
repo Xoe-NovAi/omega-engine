@@ -220,3 +220,49 @@ def test_annotation_block_regex_matches_legacy_format():
     assert ex["verdict"] == "UNANCHORED"
     assert ex["note"] == "no session anchor in header zone"
     assert ex["models"] == []
+
+
+# ------------------------------------------------------- DC-01 fail-closed
+
+def _annotated_file(worker_env, name="dc01.md"):
+    f = worker_env / name
+    f.write_text(
+        "# Doc\n⬡ OMEGA ⬡ KALI ⬡ big pickle ⬡ opencode ⬡ trc_x ⬡ ACTIVE\n"
+        "Session ID: ses_single22222222\n"
+        "\n<!-- PROVENANCE-CORRECTED 2026-08-24T03:00:00Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit\n"
+        "claimed_model: big pickle | verdict: VERIFIED\n"
+        "actual_models(Tier0): big-pickle\n-->\n", encoding="utf-8")
+    return f
+
+
+def test_apply_aborts_when_db_unreachable(worker_env, monkeypatch):
+    """DC-01 REGRESSION: db outage on the write path must fail CLOSED —
+    nonzero exit, zero file mutations, zero ledger lines. The old
+    graceful-n/a fallback would have rewritten real Tier-0 verdicts."""
+    f = _annotated_file(worker_env)
+    before = f.read_text(encoding="utf-8")
+    monkeypatch.setattr(prov, "open_db_ro", lambda: None)  # simulate outage
+    rc = prov.main(["--apply"])
+    assert rc != 0
+    assert f.read_text(encoding="utf-8") == before          # zero mutations
+    assert not prov.AUDIT_LOG.exists()                      # zero ledger lines
+
+
+def test_apply_abort_names_db_path(worker_env, monkeypatch, capsys):
+    """The collapse message must name the unresolved DB_PATH (forensics)."""
+    _annotated_file(worker_env)
+    monkeypatch.setattr(prov, "open_db_ro", lambda: None)
+    prov.main(["--apply"])
+    err = capsys.readouterr().err
+    assert "[TOOL-CHAIN-COLLAPSE]" in err
+    assert str(prov.DB_PATH) in err
+
+
+def test_dry_run_stays_graceful_when_db_unreachable(worker_env, monkeypatch, capsys):
+    """Dry-run KEEPS graceful n/a degradation (read-only luxury)."""
+    f = _annotated_file(worker_env)
+    monkeypatch.setattr(prov, "open_db_ro", lambda: None)
+    rc = prov.main([])
+    assert rc == 0
+    assert f.read_text(encoding="utf-8").count("PROVENANCE-CORRECTED") == 1  # untouched
+    assert not prov.AUDIT_LOG.exists()
