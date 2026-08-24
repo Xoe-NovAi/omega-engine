@@ -273,6 +273,16 @@ cat data/entities/sekhmet/soul.yaml
 cat data/entities/sekhmet/proposed_lessons.yaml
 ```
 
+#### Lesson Evidence Fields (2026-08-24)
+
+Lessons support an optional structured `evidence:` field — a list of refs
+with `session_id`, `artifact` (repo-relative probe path), and/or `quote`
+(at least one required). Missing evidence is warn-only (ruling S5,
+Team-Study #1); promotion into the approved surface requires evidence.
+Promote staged lessons via `scripts/promote_soul_lessons.py --entity <name>`
+(uses the SoulStore atomic writer exclusively). Schema:
+`src/omega/soul/lessons.py`.
+
 ---
 
 ## 🛠️ Troubleshooting
