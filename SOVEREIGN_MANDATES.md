@@ -25,6 +25,9 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Mandate**: Iris is the messenger bridge, NOT a Node.
 - **Constraint**: Do not assign Iris a Node (N1-N10). She is the interface.
 - **Reason**: Preserves the cosmological purity of the 10 Nodes.
+- **Clarification (2026-08-24)**: "Bridge, not Node" is about PANTHEON ROLE, not
+  resource class. Iris runs live model inference (speculative decode) and is
+  resourced as an LLM workload. See ORACLE_STACK.md §Iris Resource Class.
 
 ### 4. The Sequentiality Mandate
 - **Mandate**: Complex architectural changes must follow the "Plan → Verify → Execute" loop.

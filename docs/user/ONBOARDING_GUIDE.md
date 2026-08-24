@@ -367,3 +367,9 @@ The `omega` console script is smoke-tested on every CI run (`tests/test_cli_smok
 the real entry point must render `--help` with exit 0. The `vault` subcommand is
 temporarily unmounted while Vault Path A/B (council decree N6) decides its return —
 the vault module remains importable for programmatic use.
+
+### Parallel OpenCode instances (2026-08-24)
+Running 2-3 `opencode` instances concurrently is fully supported. The session-end
+wrapper attributes each exit to the sessions ITS instance created (baseline ID
+set-diff + directory scoping) — never to another instance's active session.
+Distillation across simultaneous exits is serialized via `.opencode/.distill.lock`.

@@ -5,6 +5,14 @@
 
 **Core Flow**: Query → Oracle.talk() → Iris speculative decode → ModelGateway → provider fabric
 
+> ⚠️ **IRIS RESOURCE CLASS (2026-08-24 — Architect directive after kali misclassification)**:
+> "Messenger bridge" describes Iris's ROLE in the pantheon, NOT her resource class.
+> She runs LIVE MODEL INFERENCE (speculative decode) inside the omega-iris container
+> and must be resourced as an LLM workload: memory-bandwidth-bound, physical-core
+> pinning beneficial, SMT siblings harmful to decode latency. NEVER classify her as
+> a lightweight proxy. (Mandate M3 governs her pantheon role; this block governs
+> her resource treatment.)
+
 **Provider Fabric (Local-First)**: native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode
 
 ## ⚠️ Provider Stitching Artifacts (stall-echo) — 2026-08-22
