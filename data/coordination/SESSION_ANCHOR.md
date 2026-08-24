@@ -203,3 +203,33 @@ OOM fix: pytest -n auto→4 (pyproject). Protocol additions logged: orchestrator
 dispatch-pairing verification, architect time-reversal capability, research-via-dedicated-subagent,
 pre-commit meditation, sequential dispatch under memory pressure.
 NEXT: review council (read-only, findings to disk) → morning review with Architect.
+
+## POST-COMPACT EXECUTION ORDER (2026-08-24 evening lock-in)
+**FIRST TASK AFTER COMPACT: D1(a) Blueprint Phase 0 mining** — decision axioms + golden set
+extraction from opencode.db via T0 message-level modelID pattern. Window closes ~Aug 28.
+Researcher main session (ses_fd81c19dcffe1nkbPqFg5kRt2v) is primed and awaiting go;
+she self-registers tasks, kali reconciles registry.
+
+### Day's commit ledger (2026-08-24, 23+ commits)
+Wave-1: 12b8b54b 02c75f17 59b32809 540b65fe · Council/pre-gates: fda442a0 b8810490 7b27b0fb cd0d5e8f ·
+DAG: 0d1ee1cb d17ae4d3 ea8d3f2e d16558c7 · Perf: ac1de936 e6791c15 3f06a014 · Wrapper/Iris: 2bc4e1f2 ·
+N4: 8a9b3fa2 23f38a97 f9240dcb 62e4f2e9 43a083bb 624a9ada fb5489c5 12379b0b 3406aeef ·
+Docs/protocols: f6757023 78057665(prev) bbb3cf01 · D-602: f51925f3 · R-docs: 7036d78c f4b62381
+
+### Infrastructure state
+- Monitoring stack INSTALLED: podman.socket 5.4.2 ✓ Mission Center (flatpak) ✓ Glances 4.5.6 ✓
+  bottom 0.14.8 ✓ s-tui 1.1.6 ✓ — sensor-grounded bottom.toml STAGED not deployed (SECOND_DIVE_JEM §1)
+- Iris: HEALTHY first time ever (healthcheck quote bug fixed); 6-core affinity CONFIGURED but binds
+  only after reboot (cpuset delegation drop-in landed via pkexec; needs relogin)
+- Compaction threshold G8: VERIFIED-BY-ARCHITECT — configurable, set 85%, tool-boundary evaluation
+- Torch-free D-602 landed: collection floor 484MB→93MB; residual ~93MB = numpy guards (chunker/cas_archiver)
+
+### Open queue post-compact
+1. D1(a) Phase 0 mining (CLOCK-BOUND ~Aug 28) ← FIRST
+2. Fallback slug decision (Architect): ride nemotron-3-ultra-free default / GLM-5.2:free Option 1b /
+   OpenRouter 550B — runbook at FALLBACK_SLUG_RUNBOOK_20260824.md
+3. N5 router collapse (Week 2 per charter)
+4. Wave-2 dispatch-doctrine wiring charter (FP-12 teeth, task_id, completeness disclaimers)
+5. Jem ground-truth sweep (ZS disposition, declared-vs-actual)
+6. Reboot → verify iris binds CPUs 0,2,4,6,8,10
+7. Optional: search-tier comparison study (P10 → data); bottom.toml deploy; footprint playbook run
