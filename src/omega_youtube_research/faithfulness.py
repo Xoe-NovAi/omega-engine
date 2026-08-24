@@ -31,23 +31,20 @@ import math
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
-try:
-    import numpy as np
+if TYPE_CHECKING:  # D-602: static-only; never imported at runtime
     from sklearn.isotonic import IsotonicRegression
-    SKLEARN_AVAILABLE = True
-except ImportError:
-    SKLEARN_AVAILABLE = False
-
-try:
-    import torch
-    from transformers import AutoModelForSequenceClassification, AutoTokenizer
-    TRANSFORMERS_AVAILABLE = True
-except ImportError:
-    TRANSFORMERS_AVAILABLE = False
 
 from .chunker import TemporalChunk
+
+
+# ── D-602 Torch-Free Compliance ───────────────────────────────────────────────
+# torch / transformers / sklearn are BANNED at module level (PIVOT_LOG D-602).
+# Module-level guarded imports still cost ~484MB RSS per pytest xdist worker at
+# COLLECTION time. All ML imports are deferred to first-use (__init__ / fit).
+# Module import succeeds with ZERO ML libraries present; RuntimeError is raised
+# at RUNTIME only when NLI scoring / calibration is actually attempted.
 
 
 # ── NLI Model (DeBERTa-v3-large-NLI) ──────────────────────────────────────────
@@ -58,12 +55,21 @@ class NLIEntailmentScorer:
     
     Per arXiv:2511.07659: DeBERTa-v3-large-NLI trained on 33 datasets
     (MultiNLI, Fever-NLI, ANLI, LingNLI, WANLI) — 885K pairs.
+    
+    D-602: torch/transformers imported lazily in __init__. Instantiation
+    requires them; mere module import does not.
     """
     
     def __init__(self, model_name: str = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"):
-        if not TRANSFORMERS_AVAILABLE:
-            raise RuntimeError("transformers not installed. pip install transformers torch")
+        try:
+            import torch
+            from transformers import AutoModelForSequenceClassification, AutoTokenizer
+        except ImportError as exc:
+            raise RuntimeError(
+                "transformers not installed. pip install transformers torch"
+            ) from exc
         
+        self._torch = torch
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForSequenceClassification.from_pretrained(model_name)
         self.model.eval()
@@ -74,6 +80,7 @@ class NLIEntailmentScorer:
         
         Labels: 0=entailment, 1=neutral, 2=contradiction (standard NLI)
         """
+        torch = self._torch
         inputs = self.tokenizer(
             premise, hypothesis,
             return_tensors="pt",
@@ -91,6 +98,10 @@ class NLIEntailmentScorer:
 
 
 # ── Lexical Match (lm) ────────────────────────────────────────────────────────
+
+def _clip01(x: float) -> float:
+    """Clamp to [0, 1] without numpy (D-602: no ML deps in hot paths)."""
+    return max(0.0, min(1.0, float(x)))
 
 def lexical_match(answer: str, reference: str) -> int:
     """
@@ -196,8 +207,11 @@ class CalibratedJudge:
         Returns:
             Self for chaining
         """
-        if not SKLEARN_AVAILABLE:
-            raise RuntimeError("scikit-learn not installed. pip install scikit-learn")
+        # D-602: sklearn imported lazily — only when calibration actually runs.
+        try:
+            from sklearn.isotonic import IsotonicRegression
+        except ImportError as exc:
+            raise RuntimeError("scikit-learn not installed. pip install scikit-learn") from exc
         
         # Filter to oracle-labeled samples
         oracle_indices = [i for i, m in enumerate(oracle_mask) if m]
@@ -259,7 +273,7 @@ class CalibratedJudge:
         if self.global_calibrator is None:
             return judge_scores  # Uncalibrated fallback
         preds = self.global_calibrator.predict(judge_scores)
-        return [float(np.clip(p, 0.0, 1.0)) for p in preds]
+        return [_clip01(p) for p in preds]
     
     def predict_oof(self, judge_scores: list[float], fold_ids: list[int]) -> list[float]:
         """Out-of-fold predictions using per-fold calibrators."""
@@ -270,7 +284,7 @@ class CalibratedJudge:
                 preds.append(score)
             else:
                 pred = cal.predict([score])[0]
-                preds.append(float(np.clip(pred, 0.0, 1.0)))
+                preds.append(_clip01(pred))
         return preds
     
     def get_fold_models_for_oua(self) -> list[Optional[IsotonicRegression]]:
@@ -289,7 +303,11 @@ class CalibratedJudge:
     
     def save(self) -> None:
         """Persist calibration to disk."""
-        if not SKLEARN_AVAILABLE:
+        # D-602: sklearn availability is implied by fit state — fit_cv raises
+        # RuntimeError when sklearn is absent, so a fitted judge guarantees
+        # sklearn was importable. Unfitted judges (incl. sklearn-free ones)
+        # skip the write, preserving the old graceful-degradation behavior.
+        if self.global_calibrator is None:
             return
         
         self.calibration_path.parent.mkdir(parents=True, exist_ok=True)

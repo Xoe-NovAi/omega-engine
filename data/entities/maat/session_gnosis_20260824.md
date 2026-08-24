@@ -82,3 +82,16 @@ Executed all eight ordered sub-deletions (4a-4h) as eight atomic commits (`8a9b3
 
 ### L3 (Universal Principle)
 A deletion is not complete when the file is gone; it is complete when everything that pointed at it has been accounted for — redirected, pruned, or pinned as deliberately dead. And a verifier's claim is a hypothesis with a timestamp, not a fact: re-verify the registry before growing it.
+
+---
+
+## Session Addition — D-602 Torch-Free Compliance (2026-08-24, maat)
+
+### L1 (Narrative)
+D-602 decreed torch/transformers/sklearn banned at module level in src/. faithfulness.py held a guarded module-level import block: "safe" absence, but paid presence — every pytest xdist worker burned ~484MB RSS at COLLECTION just to import what only NLI scoring needs. Converted to lazy imports (torch/transformers in NLIEntailmentScorer.__init__, sklearn in fit_cv), replaced np.clip with a pure-Python _clip01, added TYPE_CHECKING block per the model_gateway.py canonical pattern. Collection RSS fell 495MB → 95MB (−81%); all 19 targeted tests green; module now imports with ML libs hard-blocked.
+
+### L2 (Insight)
+A try/except ImportError at module level is not "graceful degradation" — it is unconditional payment. The guard only prevents a crash; it does not prevent the cost. Graceful degradation that respects M18 (Token Efficiency's resource cousin) must defer BOTH the failure and the expense to first use. Also: `float(np.clip(x,...))` on scalars never needed numpy at all — some heavy deps are habits, not requirements.
+
+### L3 (Universal Principle)
+An optional dependency must be paid for at the moment of use, not at the moment of import — otherwise "optional" is a lie told to every importer in the chain.
