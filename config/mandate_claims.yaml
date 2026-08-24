@@ -20,3 +20,17 @@ claims:
       - '**/*.md'
     probe_paths:
       - scripts/verify_mandate_claims.py
+
+# Forbidden patterns — HARD-FAIL rules (unlike claims above, these exit 1
+# regardless of warn-only phase). Scanned across the WHOLE tree, not just
+# the diff: re-introduction anywhere must break the gate.
+forbidden:
+  - id: d593-hardcoded-redis-password
+    # Matches bare AND type-annotated defaults: password="omega",
+    # password: str = 'omega', self.password: Optional[str] = "omega".
+    pattern: 'password\s*(?::[^=\n]+)?=\s*["'']omega["'']'
+    file_globs:
+      - 'src/**/*.py'
+      - 'tests/**/*.py'
+      - 'scripts/**/*.py'
+    reference: 'D-593 / DC-29 — use OMEGA_REDIS_PASSWORD env lookup; never a literal default'

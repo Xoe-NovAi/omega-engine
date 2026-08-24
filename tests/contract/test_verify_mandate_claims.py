@@ -204,14 +204,74 @@ class TestCLI:
 
     def test_json_output_shape(self, tmp_path, capsys):
         f = tmp_path / "x.md"
-        f.write_text("claimed_model: m\n")  # verify-claims:exempt (fixture)
+        f.write_text("claimed_model: m\n")
         vmc.main(["--files", str(f), "--json"])
         import json
 
         payload = json.loads(capsys.readouterr().out)
-        assert payload["mode"] == "warn-only"
+        assert payload["mode"] == "warn-only+forbidden-hard-fail"
         assert payload["files_scanned"] == 1
         assert isinstance(payload["findings"], list)
+
+
+# ── Forbidden rules (DC-29 hard-fail) ─────────────────────────────────
+
+
+class TestForbiddenRules:
+    RULES = [
+        {
+            "id": "d593-hardcoded-redis-password",
+            "pattern": r"password\s*(?::[^=\n]+)?=\s*[\"']omega[\"']",  # verify-claims:exempt (fixture)
+            "file_globs": ["src/**/*.py"],
+            "reference": "D-593 — use OMEGA_REDIS_PASSWORD env lookup",
+        }
+    ]
+
+    def test_true_positive_hard_fail(self, tmp_path):
+        f = tmp_path / "providers.py"
+        trigger = "def __init__(self, password: str = 'om" + "ega'):\n"  # split: no literal in source
+        f.write_text(trigger)
+        result = vmc.detect_forbidden(f, f.read_text(), self.RULES,
+                                      rel_override="src/providers.py")
+        assert len(result.findings) == 1
+        assert result.findings[0].rule == "hard-fail:d593-hardcoded-redis-password"
+        assert result.findings[0].line == 1
+
+    def test_true_negative_env_lookup(self, tmp_path):
+        f = tmp_path / "providers.py"
+        f.write_text(
+            "password = password or os.environ.get('OMEGA_REDIS_PASSWORD')\n"
+            "password: Optional[str] = None\n"
+        )
+        result = vmc.detect_forbidden(f, f.read_text(), self.RULES,
+                                      rel_override="src/providers.py")
+        assert result.findings == []
+
+    def test_glob_scope_enforced(self, tmp_path):
+        # Same literal outside src/ globs must NOT be flagged by this rule.
+        f = tmp_path / "docs_note.md"
+        f.write_text("historical note: password='omega' was removed\n")  # verify-claims:exempt (fixture)
+        result = vmc.detect_forbidden(f, f.read_text(), self.RULES,
+                                      rel_override="docs/notes.md")
+        assert result.findings == []
+
+    def test_cli_exits_one_on_forbidden_hit(self, tmp_path, monkeypatch, capsys):
+        # Fake repo root containing the pattern under src/ — no real-tree writes.
+        (tmp_path / "src").mkdir()
+        (tmp_path / "src" / "_dc29_tp_fixture.py").write_text(
+            "x = password = 'om" + "ega'\n")  # split: no literal in source
+        monkeypatch.setattr(vmc, "REPO_ROOT", tmp_path)
+        rc = vmc.main([])
+        assert rc == 1
+        out = capsys.readouterr().out
+        assert "d593-hardcoded-redis-password" in out
+
+    def test_live_repo_clean(self):
+        """D-593 regression gate: the real tree must carry no hit."""
+        rules = vmc.load_forbidden_rules()
+        assert rules, "forbidden rules missing from config/mandate_claims.yaml"
+        rc = vmc.main(["--json"])
+        assert rc == 0
 
 
 # ── Harness self-scan must stay clean (sanitation law) ───────────────

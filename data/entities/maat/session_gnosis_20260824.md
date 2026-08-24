@@ -36,3 +36,13 @@ L3: **Write the test from the implementation's promise, not from your mental mod
 
 ---
 *⬡ OMEGA ⬡ MAAT ⬡ GNOSIS-L1L2L3 ⬡ WAVE-1-WIRED ⬡ 2026-08-24*
+
+## A7 — DC-29: D-593 landed (hardcoded redis password default removed)
+L1: Replaced `password="omega"` default at providers.py with Optional[str]=None + OMEGA_REDIS_PASSWORD env fallback; added a data-driven hard-fail `forbidden:` rule class to the claims harness (whole-tree scan, exit 1 regardless of warn-only phase).
+L2: The defect was dead code on the hot path but live as a booby trap and a debut-credibility liability; four independent sources converging on it shows the C2 pattern (documenting without landing) is systemic, not incidental.
+L3: **A credential default is a documented invitation to skip the environment — credentials enter only through configuration, never through signatures.**
+
+## A8 — Gate-engineering lessons from the DC-29 wiring
+L1: First regex draft missed the actual defect shape (`password: str = "omega"` — type annotation between name and equals); fnmatch treats `**` as single-star; tmp-path fixtures can't match repo-relative globs.
+L2: All three were caught by contract tests exercising the gate against realistic inputs, not by inspection — gates need gates.
+L3: **A guard that has never caught a realistic attack in test has never actually been tested.**

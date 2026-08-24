@@ -38,7 +38,9 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
+import os
 import re
 import subprocess
 import sys
@@ -446,10 +448,104 @@ def detect_claim_violations(path: Path, text: str, rules: list[dict]) -> ScanRes
     return result
 
 
+def load_forbidden_rules() -> list[dict]:
+    """Load HARD-FAIL forbidden-pattern rules from config/mandate_claims.yaml.
+
+    Schema (under ``forbidden:``):
+        - id: d593-hardcoded-redis-password
+          pattern: 'password\\s*=\\s*["'']omega["'']'
+          file_globs: ['src/**/*.py']
+          reference: 'why + fix pointer'
+
+    Unlike claim rules, forbidden rules scan the WHOLE tree and exit 1 on
+    any hit regardless of warn-only phase (DC-29: some regressions are too
+    cheap to prevent to allow warn-only).
+    """
+    if not CLAIMS_CONFIG_PATH.exists():
+        return []
+    try:
+        import yaml
+
+        data = yaml.safe_load(CLAIMS_CONFIG_PATH.read_text(encoding="utf-8")) or {}
+        return list(data.get("forbidden") or [])
+    except Exception as e:  # noqa: BLE001
+        print(f"[WARN][harness] unreadable forbidden rules in {CLAIMS_CONFIG_PATH}: {e}",
+              file=sys.stderr)
+        return []
+
+
+def _glob_match(rel: str, pattern: str) -> bool:
+    """Glob match with proper ``**`` semantics (fnmatch treats it as one *).
+
+    ``src/**/*.py`` must match ``src/a.py`` AND ``src/x/y/a.py``.
+    """
+    if "**" not in pattern:
+        return fnmatch.fnmatch(rel, pattern)
+    rx = re.escape(pattern)
+    rx = rx.replace(re.escape("**/"), "(?:[^/]+/)*")
+    rx = rx.replace(re.escape("*"), "[^/]*")
+    rx = rx.replace(re.escape("?"), "[^/]")
+    return re.fullmatch(rx, rel) is not None
+
+
+def detect_forbidden(
+    path: Path, text: str, rules: list[dict], rel_override: str | None = None
+) -> ScanResult:
+    """Scan one file against hard-fail forbidden patterns.
+
+    Args:
+        rel_override: repo-relative path used for glob matching when the
+            physical path lives outside REPO_ROOT (unit-test fixtures).
+    """
+    result = ScanResult()
+    if rel_override is not None:
+        rel = rel_override
+    else:
+        rel = str(path.relative_to(REPO_ROOT)) if path.is_relative_to(REPO_ROOT) else str(path)
+    for rule in rules:
+        globs = rule.get("file_globs") or []
+        if not any(_glob_match(rel, g) for g in globs):
+            continue
+        try:
+            rx = re.compile(rule["pattern"])
+        except (KeyError, re.error) as e:
+            print(f"[WARN][harness] bad forbidden rule '{rule.get('id')}': {e}",
+                  file=sys.stderr)
+            continue
+        for lineno, raw in enumerate(text.splitlines(), start=1):
+            if _is_exempt(raw) or not rx.search(raw):
+                continue
+            result.findings.append(Finding(
+                "forbidden", f"hard-fail:{rule.get('id')}", rel, lineno,
+                f"FORBIDDEN pattern present — {rule.get('reference', 'see rule id')}",
+                raw))
+    return result
+
+
+def forbidden_scan_targets(rules: list[dict]) -> list[Path]:
+    """All tracked-tree files matching any forbidden rule's globs."""
+    skip_dirs = {".git", ".venv", "node_modules", "__pycache__", ".ruff_cache"}
+    targets: dict[str, Path] = {}
+    for root, dirs, files in os.walk(REPO_ROOT):
+        dirs[:] = [d for d in dirs if d not in skip_dirs]
+        for name in files:
+            rel = str(Path(root, name).relative_to(REPO_ROOT))
+            if rel not in targets and any(
+                _glob_match(rel, g) for r in rules for g in (r.get("file_globs") or [])
+            ):
+                targets[rel] = REPO_ROOT / rel
+    return sorted(targets.values())
+
+
 # ── Orchestration ──────────────────────────────────────────────────────
 
 
-def scan_file(path: Path, rules: list[dict], markers: list[str]) -> ScanResult:
+def scan_file(
+    path: Path,
+    rules: list[dict],
+    markers: list[str],
+    forbidden_rules: list[dict] | None = None,
+) -> ScanResult:
     try:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError as e:
@@ -462,6 +558,8 @@ def scan_file(path: Path, rules: list[dict], markers: list[str]) -> ScanResult:
     result.merge(detect_fp11(path, text))
     result.merge(detect_t0_attribution(path, text))
     result.merge(detect_claim_violations(path, text, rules))
+    if forbidden_rules:
+        result.merge(detect_forbidden(path, text, forbidden_rules))
     return result
 
 
@@ -479,6 +577,7 @@ def main(argv: list[str] | None = None) -> int:
 
     markers = load_local_markers()
     rules = load_claim_rules()
+    forbidden_rules = load_forbidden_rules()
 
     if args.files:
         files = [Path(f) for f in args.files]
@@ -487,23 +586,45 @@ def main(argv: list[str] | None = None) -> int:
 
     total = ScanResult()
     for f in files:
-        total.merge(scan_file(f, rules, markers))
+        total.merge(scan_file(f, rules, markers, forbidden_rules))
+
+    # Forbidden rules scan the WHOLE tree (not just the diff): a regression
+    # anywhere must break the gate. HARD-FAIL semantics per DC-29.
+    if forbidden_rules:
+        for f in forbidden_scan_targets(forbidden_rules):
+            try:
+                text = f.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            total.merge(detect_forbidden(f, text, forbidden_rules))
+
+    forbidden_hits = [f for f in total.findings if f.detector == "forbidden"]
 
     if args.json:
         print(json.dumps({
-            "mode": "warn-only",
+            "mode": "warn-only+forbidden-hard-fail",
             "files_scanned": total.files_scanned,
             "claims_checked": total.claims_checked,
+            "forbidden_hits": len(forbidden_hits),
             "findings": [f.__dict__ for f in total.findings],
         }, indent=2))
+        # JSON mode: failure signal is the exit code + forbidden_hits field;
+        # no trailing human text (would break parsers).
     else:
         print(f"verify-mandate-claims: scanned {total.files_scanned} file(s), "
               f"{total.claims_checked} claim assertion(s), "
-              f"{len(total.findings)} warning(s) [WARN-ONLY mode]")
+              f"{len(total.findings)} warning(s) "
+              f"[warn-only mode; forbidden rules hard-fail]")
         for f in total.findings:
             print(f.render())
+        if forbidden_hits:
+            print(f"[FAIL] {len(forbidden_hits)} forbidden-pattern hit(s) — see above. "
+                  "These are hard-fail rules and do not respect warn-only phase.")
 
-    # WARN-ONLY phase (S5/F2): always EXIT 0. --strict reserved for post-debut.
+    # HARD-FAIL: forbidden-pattern hits exit 1 regardless of warn-only phase
+    # (DC-29). --strict additionally fails on warn-only findings post-debut.
+    if forbidden_hits:
+        return 1
     if args.strict and total.findings:
         return 1
     return 0

@@ -23,7 +23,7 @@ import redis.asyncio as redis
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +116,18 @@ class StorageProvider(ABC):
 class RedisStorageProvider(StorageProvider):
     """Hot storage provider using Redis Streams and Hashes."""
 
-    def __init__(self, host: str = "localhost", port: int = 6379, password: str = "omega"):
+    def __init__(
+        self,
+        host: str = "localhost",
+        port: int = 6379,
+        password: Optional[str] = None,
+    ):
+        # [D-593/DC-29] No hardcoded credential default. Callers pass an
+        # explicit password; the env lookup is a convenience fallback that
+        # returns None when unset — matching the hot path's semantics
+        # (memory_store.py gates construction on OMEGA_REDIS_HOST and passes
+        # the password explicitly).
+        password = password or os.environ.get("OMEGA_REDIS_PASSWORD")
         self.client = redis.Redis(
             host=host,
             port=port,

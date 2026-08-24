@@ -254,6 +254,12 @@ gh auth login
 3. **L3 Principles** stored in entity's `soul.yaml`
 4. **Next session**: ContextBuilder injects soul wisdom
 
+Redis hot-tier storage is opt-in via `OMEGA_REDIS_HOST`; its password comes
+exclusively from the `OMEGA_REDIS_PASSWORD` environment variable — there is
+no hardcoded default (D-593). A hard-fail gate in
+`scripts/verify_mandate_claims.py` blocks any literal credential default
+from re-entering `src/`.
+
 ### Soul File Location
 
 ```
