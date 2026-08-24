@@ -45,10 +45,7 @@ from omega.oracle.search_router import (
 from omega.oracle.search_cache import SovereignCache
 from omega.oracle.skeptical_verifier import SkepticalVerifier
 from omega.oracle.credit_budget import APICreditBudget
-from omega.oracle.search_circuit_breaker import (
-    initialize_circuit_breakers,
-    TIER_CONFIGS,
-)
+from omega.oracle.health_monitor import CircuitState, get_health_monitor
 from omega.oracle.search_observability import (
     get_search_observability,
     SearchOutcome,
@@ -61,6 +58,65 @@ from omega.oracle.search_observability import (
 logger = logging.getLogger(__name__)
 
 _CONFIG_PATH = Path(__file__).parent.parent.parent.parent / "config" / "search.yaml"
+
+# [C-6' final pass — DEL-1 4d] Tier thresholds preserved verbatim from the
+# deleted omega.oracle.search_circuit_breaker.TIER_CONFIGS (retired 2026-08-24).
+_TIER_BREAKER_PARAMS: Dict[int, Dict[str, float]] = {
+    0: {"failure_threshold": 5, "recovery_timeout": 30.0},  # Local — more tolerant
+    1: {"failure_threshold": 3, "recovery_timeout": 60.0},  # SearXNG
+    2: {"failure_threshold": 3, "recovery_timeout": 60.0},  # Exa
+    3: {"failure_threshold": 2, "recovery_timeout": 120.0},  # Firecrawl — stricter (credits)
+}
+
+
+class _TierBreakerFacade:
+    """[C-6' final pass — DEL-1 4d] Canonical breaker facade for search tiers.
+
+    Replaces the deleted ``omega.oracle.search_circuit_breaker`` registry.
+    Wraps the HealthMonitor.get_breaker() instances created in
+    SovereignSearchService.__init__ (names: local/searxng/exa/firecrawl)
+    behind the old registry call-shape so tier call sites stay untouched.
+
+    State reads are sync (breaker.state); success/failure recording goes
+    through the canonical async HealthMonitor.record_breaker_* path.
+    """
+
+    def __init__(self, health_monitor, tier_to_provider: Dict[int, str]) -> None:
+        self._hm = health_monitor
+        self._breakers = {
+            tier: self._hm.get_breaker(name) for tier, name in tier_to_provider.items()
+        }
+
+    def can_execute(self, tier: int) -> bool:
+        """Canonical AsyncCircuitBreaker admission check (probe-aware)."""
+        return self._breakers[tier].can_proceed()
+
+    def get_breaker(self, tier: int):
+        return self._breakers[tier]
+
+    async def record_success(self, tier: int) -> None:
+        await self._hm.record_breaker_success(self._breakers[tier].name)
+
+    async def record_failure(self, tier: int, exception: Optional[Exception] = None) -> None:
+        await self._hm.record_breaker_failure(self._breakers[tier].name)
+
+    def get_all_stats(self) -> Dict[int, Dict[str, Any]]:
+        return {
+            tier: {
+                "name": b.name,
+                "state": b.state.value,
+                "failure_count": b.failure_count,
+                **b.get_429_status(),
+            }
+            for tier, b in self._breakers.items()
+        }
+
+    def reset_all(self) -> None:
+        for b in self._breakers.values():
+            b.state = CircuitState.CLOSED
+            b.failure_count = 0
+            b.half_open_requests = 0
+            b.last_failure_time = None
 
 
 def _load_search_config() -> Dict[str, Any]:
@@ -171,19 +227,22 @@ class SovereignSearchService:
             3: "firecrawl",  # T3: Firecrawl
         }
         for tier, name in self._tier_to_provider.items():
-            config = TIER_CONFIGS.get(tier)
+            params = _TIER_BREAKER_PARAMS.get(tier, {})
             self._health_monitor.get_breaker(
                 name=name,
-                failure_threshold=config.failure_threshold if config else 3,
-                recovery_timeout=config.recovery_timeout if config else 60.0,
+                failure_threshold=int(params.get("failure_threshold", 3)),
+                recovery_timeout=params.get("recovery_timeout", 60.0),
                 mode="sliding_window",  # Burst detection for search tiers
                 window_seconds=60.0,
-                max_failures_per_window=config.failure_threshold * 2 if config else 6,
+                max_failures_per_window=int(params.get("failure_threshold", 3)) * 2,
             )
 
-        # Initialize circuit breakers (DEPRECATED — will be removed in C-6' final pass)
+        # [C-6' final pass] Canonical breakers only — the deprecated
+        # search_circuit_breaker registry was deleted (DEL-1 4d).
         if self.enable_circuit_breaker:
-            self.circuit_breakers = initialize_circuit_breakers()
+            self.circuit_breakers = _TierBreakerFacade(
+                self._health_monitor, self._tier_to_provider
+            )
         else:
             self.circuit_breakers = None
 
@@ -411,7 +470,7 @@ class SovereignSearchService:
                 if result:
                     # Success
                     if self.circuit_breakers:
-                        self.circuit_breakers.record_success(tier)
+                        await self.circuit_breakers.record_success(tier)
 
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
@@ -441,7 +500,7 @@ class SovereignSearchService:
                 else:
                     # Empty result
                     if self.circuit_breakers:
-                        self.circuit_breakers.record_failure(tier, Exception("Empty result"))
+                        await self.circuit_breakers.record_failure(tier, Exception("Empty result"))
 
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
@@ -472,7 +531,7 @@ class SovereignSearchService:
             except ProviderAuthError as e:
                 latency_ms = (time.time() - start_time) * 1000
                 if self.circuit_breakers:
-                    self.circuit_breakers.record_failure(tier, e)
+                    await self.circuit_breakers.record_failure(tier, e)
 
                 circuit_state_after = (
                     "open"
@@ -511,7 +570,7 @@ class SovereignSearchService:
             except ProviderRateLimitError as e:
                 latency_ms = (time.time() - start_time) * 1000
                 if self.circuit_breakers:
-                    self.circuit_breakers.record_failure(tier, e)
+                    await self.circuit_breakers.record_failure(tier, e)
 
                 circuit_state_after = (
                     "open"
@@ -550,7 +609,7 @@ class SovereignSearchService:
             except Exception as e:
                 latency_ms = (time.time() - start_time) * 1000
                 if self.circuit_breakers:
-                    self.circuit_breakers.record_failure(tier, e)
+                    await self.circuit_breakers.record_failure(tier, e)
 
                 circuit_state_after = (
                     "open"
@@ -662,7 +721,7 @@ class SovereignSearchService:
 
                 if result:
                     if self.circuit_breakers:
-                        self.circuit_breakers.record_success(tier)
+                        await self.circuit_breakers.record_success(tier)
 
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
@@ -683,7 +742,7 @@ class SovereignSearchService:
                     return {"tier": tier, "finding": result}
                 else:
                     if self.circuit_breakers:
-                        self.circuit_breakers.record_failure(tier, Exception("Empty result"))
+                        await self.circuit_breakers.record_failure(tier, Exception("Empty result"))
 
                     circuit_state_after = "closed"
                     if self.circuit_breakers:
@@ -712,7 +771,7 @@ class SovereignSearchService:
 
             except ProviderAuthError as e:
                 if self.circuit_breakers:
-                    self.circuit_breakers.record_failure(tier, e)
+                    await self.circuit_breakers.record_failure(tier, e)
 
                 circuit_state_after = (
                     "open"
@@ -747,7 +806,7 @@ class SovereignSearchService:
 
             except ProviderRateLimitError as e:
                 if self.circuit_breakers:
-                    self.circuit_breakers.record_failure(tier, e)
+                    await self.circuit_breakers.record_failure(tier, e)
 
                 circuit_state_after = (
                     "open"
@@ -782,7 +841,7 @@ class SovereignSearchService:
 
             except Exception as e:
                 if self.circuit_breakers:
-                    self.circuit_breakers.record_failure(tier, e)
+                    await self.circuit_breakers.record_failure(tier, e)
 
                 circuit_state_after = (
                     "open"
