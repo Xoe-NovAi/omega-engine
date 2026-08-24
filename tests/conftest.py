@@ -8,17 +8,15 @@ import yaml
 
 
 def pytest_xdist_auto_num_workers(config):
-    """Memory-aware -n auto (2026-08-24 OOM root-cause fix).
+    """Memory-aware -n auto (2026-08-24 OOM root-cause fix, v2 — MEASURED).
 
-    The OOM was not tests-vs-nothing: 16 blind workers (~200-400MB each)
-    collided with multiple opencode agent sessions (~1GB+ each) on a 14Gi
-    box. A hard cap throws away parallelism when the box is idle; instead,
-    compute workers from ACTUALLY AVAILABLE memory at launch time:
-    full speed when idle, graceful throttle only under real pressure.
-    Reads /proc/meminfo directly -- zero new dependencies.
+    Field data from the second OOM: full-suite COLLECTION alone (zero tests
+    executed) holds ~683MB RSS per process — every xdist worker pays that
+    toll because collection imports every test module. v1 assumed 350MB and
+    still OOM'd the box. Numbers below are measured, not guessed.
     """
-    per_worker_mb = 350   # measured: ~180MB real; headroom for fixture-heavy suites
-    reserve_mb = 2500     # opencode session(s) + desktop + qdrant
+    per_worker_mb = 750   # measured: 683MB collection floor + execution margin
+    reserve_mb = 4000     # opencode agent session(s) + desktop + qdrant + headroom
     try:
         info = {}
         with open("/proc/meminfo") as fh:
@@ -31,6 +29,59 @@ def pytest_xdist_auto_num_workers(config):
         return 4  # non-Linux fallback: conservative default
     by_mem = max(1, (avail_mb - reserve_mb) // per_worker_mb)
     return max(1, min(os.cpu_count() or 4, by_mem))
+
+
+# ── Per-worker peak-RSS visibility [Architect demand: 2026-08-24] ─────────
+# Each process (controller + workers) records its kernel-maintained high-water
+# mark (VmHWM — monotonic, zero sampling cost); workers ship it back via
+# workeroutput; the controller prints a per-worker table at session end.
+# Every test run now ANSWERS "how much memory did we actually use?"
+
+def _vmhwm_mb():
+    try:
+        with open("/proc/self/status") as fh:
+            for line in fh:
+                if line.startswith("VmHWM:"):
+                    return int(line.split()[1]) // 1024
+    except OSError:
+        pass
+    return -1
+
+
+_PEAK_ATTR = "_omega_peak_rss_mb"
+
+
+def pytest_configure(config):
+    setattr(config, _PEAK_ATTR, _vmhwm_mb())
+
+
+def pytest_sessionfinish(session, exitstatus):
+    peak = getattr(session.config, _PEAK_ATTR, -1)
+    if hasattr(session.config, "workeroutput"):
+        session.config.workeroutput["peak_rss_mb"] = peak
+
+
+_nodes = []
+
+
+def pytest_testnodedown(node, error):
+    _nodes.append(getattr(node, "workeroutput", {}).get("peak_rss_mb", -1))
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    own = getattr(config, _PEAK_ATTR, -1)
+    worker_peaks = [p for p in _nodes if p and p > 0]
+    lines = [f"┬─ resource report ─ controller peak: {own}MB"]
+    if worker_peaks:
+        lines.append(
+            f"   ├─ {len(worker_peaks)} xdist workers · peaks {min(worker_peaks)}"
+            f"-{max(worker_peaks)}MB · aggregate ~{sum(worker_peaks)}MB"
+        )
+    lines.append("   └─ budget: 750MB/worker + 4GB system reserve (memory-aware -n auto)")
+    tr = terminalreporter._tw
+    tr.sep_title = None
+    for ln in lines:
+        terminalreporter.write_line(ln)
 
 
 from omega.memory_store import MemoryStore, reset_memory_store
