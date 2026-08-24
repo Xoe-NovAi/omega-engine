@@ -29,15 +29,10 @@ from .quota_pollers import (
     create_quota_poller,
 )
 
-from .fleet_orchestrator import (
-    ProviderType,
-    RouteDecision,
-    ProviderFleet,
-    RouteRequest,
-    RouteResponse,
-    FleetOrchestrator,
-    create_default_orchestrator,
-)
+# [DEL-1 4h] fleet_orchestrator default exports removed 2026-08-24 —
+# zero importers verified (MaKaLi council N4). The file itself stays on
+# disk until the Week-2 router collapse (its private RouteDecision would
+# collide with the single-control-plane gate, N4(4h)->N5 edge).
 
 __all__ = [
     # Grok CLI
@@ -61,12 +56,4 @@ __all__ = [
     "ExaQuotaPoller",
     "FirecrawlQuotaPoller",
     "create_quota_poller",
-    # Fleet Orchestrator
-    "ProviderType",
-    "RouteDecision",
-    "ProviderFleet",
-    "RouteRequest",
-    "RouteResponse",
-    "FleetOrchestrator",
-    "create_default_orchestrator",
 ]
