@@ -46,7 +46,6 @@ from ..errors import OmegaError
 from ..cvar_table import cvar_get
 from .entity_registry import EntityRegistry
 from ..memory_store import get_memory_store
-from ..astrology import record_first_breath
 from ..orchestration.triage_router import (
     TriageRouter,
     TriageRequest,
@@ -1206,9 +1205,6 @@ class Oracle:
             trace_id=trace.trace_id,
             entity_id=entity.name,
         )
-        # [Sovereign] Record the "First Breath" for astrological alignment
-        logger.info(f"Recording first breath for routed entity: {entity.name}")
-        await record_first_breath(entity.name, res.text, trace.trace_id)
 
         # [D16-1] Audience Calibration - transform response to target register
         calibrated_text = res.text
