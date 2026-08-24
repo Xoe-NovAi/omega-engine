@@ -6,6 +6,33 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import tempfile
 import yaml
 
+
+def pytest_xdist_auto_num_workers(config):
+    """Memory-aware -n auto (2026-08-24 OOM root-cause fix).
+
+    The OOM was not tests-vs-nothing: 16 blind workers (~200-400MB each)
+    collided with multiple opencode agent sessions (~1GB+ each) on a 14Gi
+    box. A hard cap throws away parallelism when the box is idle; instead,
+    compute workers from ACTUALLY AVAILABLE memory at launch time:
+    full speed when idle, graceful throttle only under real pressure.
+    Reads /proc/meminfo directly -- zero new dependencies.
+    """
+    per_worker_mb = 350   # measured: ~180MB real; headroom for fixture-heavy suites
+    reserve_mb = 2500     # opencode session(s) + desktop + qdrant
+    try:
+        info = {}
+        with open("/proc/meminfo") as fh:
+            for line in fh:
+                if ":" in line:
+                    key, val = line.split(":", 1)
+                    info[key.strip()] = int(val.split()[0])
+        avail_mb = info.get("MemAvailable", 4_000_000) // 1024
+    except OSError:
+        return 4  # non-Linux fallback: conservative default
+    by_mem = max(1, (avail_mb - reserve_mb) // per_worker_mb)
+    return max(1, min(os.cpu_count() or 4, by_mem))
+
+
 from omega.memory_store import MemoryStore, reset_memory_store
 from omega.oracle.context_builder import ContextBuilder
 from omega.oracle.world_state import world_state

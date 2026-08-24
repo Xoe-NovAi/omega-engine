@@ -120,10 +120,12 @@ markers = [
 # NOTE: -m "not integration" REMOVED from addopts — it over-reached and made
 # test-all/test-cov/test-random silently skip integration tests.
 # Individual targets (test, test-prepush, test-clarity) pass -m explicitly.
-# NOTE: -n auto (2026-08-24 OOM postmortem) spawned 16 workers on this 14Gi
-# box → ~6GB RSS + ~2 dozen python instances when tests spawn subprocesses.
-# Capped at 4 workers; override ad hoc with -n <N> or -p no:xdist for serial.
-addopts = "-n 4 -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
+# NOTE (2026-08-24 OOM root-cause fix): -n auto is now MEMORY-AWARE via
+# pytest_xdist_auto_num_workers in tests/conftest.py — workers computed from
+# MemAvailable at launch (350MB/worker + 2.5GB system reserve). Full speed on
+# an idle box; throttles only under real agent-session pressure. The earlier
+# hard -n 4 was symptom mitigation; this is the mechanism.
+addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
 
 # testmon config (incremental re-runs) — enabled per-target via --testmon flag
 # testmon = true        # REMOVED: caused PytestConfigWarning (invalid global option)
