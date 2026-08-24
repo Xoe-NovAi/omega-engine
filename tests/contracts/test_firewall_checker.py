@@ -36,10 +36,13 @@ class TestFirewallCheckerContracts:
             "All items must be FirewallViolation instances"
 
         # Verify specific violations detected
+        # [DEL-1 4f] Pantheon-name regexes removed from FORBIDDEN_PATTERNS —
+        # only structural import-path rules remain. Name-based WAD policing
+        # lives in audit/memory_firewall_auditor.py's taint-list.
         patterns_found = {v.pattern for v in result}
         assert any("config\\.wads" in p for p in patterns_found), "Should detect config.wads import"
-        assert any("Brigid" in p for p in patterns_found), "Should detect Brigid reference"
-        assert any("Saraswati" in p for p in patterns_found), "Should detect Saraswati reference"
+        assert not any("Brigid" in p for p in patterns_found), "Name regexes must stay dead"
+        assert not any("Saraswati" in p for p in patterns_found), "Name regexes must stay dead"
 
     def test_firewall_checker_clean_file(self) -> None:
         """FirewallChecker.check_file returns List[FirewallViolation] for clean engine file."""

@@ -49,33 +49,23 @@ class FirewallChecker:
     """Scans src/omega/ for forbidden WAD-specific imports/references.
 
     M2 Firewall: Engine Core must remain WAD-agnostic.
-    Forbidden patterns:
+    Forbidden patterns (structural only, per DEL-1 4f — MaKaLi council
+    2026-08-24):
     - Imports from config.wads.*
     - References to config/wads/
-    - Hardcoded WAD entity names (Pantheon, Elemental, Chakral, Planetary,
-      Divine Allies, Tarot, Sefirot archetypes)
+
+    Pantheon-name regexes were removed: they duplicated the CORE_ENGINE
+    allowlist (Sekhmet/Prometheus/stack names appeared in BOTH lists,
+    so the forbid side was dead code), and name-based WAD policing is
+    owned by audit/memory_firewall_auditor.py's taint-list instead.
     """
 
-    # Core forbidden patterns - always errors
+    # Core forbidden patterns - always errors (import-path rules ONLY)
     FORBIDDEN_PATTERNS: list[tuple[str, Literal["error", "warning"]]] = [
         # Direct WAD config imports
         (r"from config\.wads\.", "error"),
         (r"import config\.wads", "error"),
         (r"config/wads/", "error"),
-        # WAD-specific entity references (Pantheon archetypes)
-        (r"\bSekhmet\b", "error"),
-        (r"\bBrigid\b", "error"),
-        (r"\bPrometheus\b", "error"),
-        (r"\bSaraswati\b", "error"),
-        (r"\bInanna\b", "error"),
-        (r"\bEreshkigal\b", "error"),
-        (r"\bLucifer\b", "error"),
-        (r"\bHecate\b", "error"),
-        (r"\bAnubis\b", "error"),
-        # WAD-specific config references
-        (r"arcana_novai", "error"),
-        (r"doom_universe", "error"),
-        (r"torment_stack", "error"),
     ]
 
     # Core Engine legitimate references - silently ignored (not WAD leakage)
@@ -89,8 +79,6 @@ class FirewallChecker:
         r"\bSophia\b",  # Containing Field / Rank 0
         r"\bIris\b",  # Voice Assistant / Messenger Bridge
         r"\bMnemosyne\b",  # Memory System Archetype
-        r"\bPrometheus\b",  # Discovery Pipeline (P3)
-        r"\bSekhmet\b",  # Protection Pillar (P1)
         r"\bJohn\.?Carmack\b",  # S3 Consultant
         r"\bDoom\.?Guy\b",  # Doom Universe Architect
         r"\bRoc\.?Rac?oon\b",  # Legacy Miner / Ideas Guy
@@ -101,10 +89,6 @@ class FirewallChecker:
         r"\bQliphoth\b",  # Qliphothic Shells
         # Default WAD name (constant, not leakage)
         r"_omega_default",  # Default WAD name (constant)
-        # Stack name references in paths (legitimate config)
-        r"arcana_novai",  # Stack name in paths
-        r"doom_universe",  # Stack name in paths
-        r"torment_stack",  # Stack name in paths
         # Oversoul architecture references
         r"\bBuild\s*Oversoul\b",
         r"\bRuntime\s*Oversoul\b",
