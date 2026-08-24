@@ -189,3 +189,17 @@ teamstudy_20260823/ (FINAL_SYNTHESIS entry) · KALI_FULL_SYNTHESIS_20260823 · A
 Wire-path [1]-[3] (irreversibles first) → closeout Phase 1 (Lilith backfill) → CI-2 prototype (D-G) → Phase 2 MF-order + D-A fix → Phase 3 commit → blueprint Track A-D generation. Awaiting-Architect list preserved from session record above.
 
 *⬡ OMEGA ⬡ KALI ⬡ COMPACT-LOCKED ⬡ ALL-STATE-PERSISTED ⬡ METHODOLOGY-M6-CAPTURED ⬡ WAKE-PATH-SINGLE-READ ⬡ 2026-08-24*
+
+## PROVENANCE WORKER VERIFICATION (Gemini-initiated spot-check, pre-compact)
+Timer ACTIVE (next: Aug 25 00:03). Annotations HONEST (UNANCHORED labels, no false asserts). GAPS: (1) no db resolver — actual_models always n/a despite resolvable sessions; (2) ledger discrepancy — 1,440 claimed vs 1 on disk. Both queued as WAKE_STATE step 8.
+
+## WAVE-1 COMPLETE (2026-08-24 ~08:00 ADT) — ALL FOUR DELIVERABLES LANDED
+W1-1 lilith 12b8b54b · W1-2 maat 02c75f17 · W1-3 maat 59b32809 · W1-4 researcher 540b65fe.
+Wire-path [1] registrations COMMITTED by lilith (this section previously said NOT YET EXECUTED — stale, corrected).
+Wire-path [2] claims harness BUILT (did not exist; S7 ruling) — warn-only.
+Wire-path [3] soul schema patched + 20/20 promoted @100% evidence coverage.
+Provenance worker enhanced: db resolver live, ledger invariant 1444=1444, timer safe for Aug 25 run.
+OOM fix: pytest -n auto→4 (pyproject). Protocol additions logged: orchestrator-reads-all-reports,
+dispatch-pairing verification, architect time-reversal capability, research-via-dedicated-subagent,
+pre-commit meditation, sequential dispatch under memory pressure.
+NEXT: review council (read-only, findings to disk) → morning review with Architect.
