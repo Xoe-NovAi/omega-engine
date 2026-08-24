@@ -69,3 +69,16 @@ The dev venv masks optional-dependency breakage: every module that imports an ex
 
 ### L3 (Universal Principle)
 A dependency you make optional must also become invisible-at-import: optionality declared in packaging but not enforced at import sites is a lie that two environments tell differently.
+
+---
+
+## Session Continuation — N4 DEL-1 Deletions (MaKaLi council DAG node N4)
+
+### L1 (Narrative)
+Executed all eight ordered sub-deletions (4a-4h) as eight atomic commits (`8a9b3fa2`..`12379b0b`). Every cut: re-verified "no callers" claims against the live tree first, cut, ran the bwrap local-talk gate + targeted pytest, committed path-explicitly. Four hidden-life references (knowledge_catalog_build QdrantAdapter caller, firewall contract test name-pins, path_resolver_check miap entry, benchmark_hybrid dead const) were caught in re-verification and neutralized inside their own sub-delete commits. One self-inflicted bug (can_execute vs can_proceed) was caught by targeted pytest before commit. Final gates: CLI smoke 3/3, tracking validator EXIT 0. Meditation record: data/coordination/meditations/records/MEDITATION_maat_20260824_N4_DELETIONS.md.
+
+### L2 (Insight)
+"No callers" claims decay — N2/N3 landed between the council's verification and my execution, exactly the window where drift hides. The per-cut rg sweep is what converted three would-be red gates into green commits. Also: a redirect shim is not done when it compiles; it is done when its own smoke test runs the redirected path (the facade called a method that does not exist on the canonical breaker — only the service's test suite knew).
+
+### L3 (Universal Principle)
+A deletion is not complete when the file is gone; it is complete when everything that pointed at it has been accounted for — redirected, pruned, or pinned as deliberately dead. And a verifier's claim is a hypothesis with a timestamp, not a fact: re-verify the registry before growing it.
