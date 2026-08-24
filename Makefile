@@ -315,8 +315,16 @@ m23-baseline:
 	@echo "$(GREEN)Baseline regenerated: config/m23_baseline.txt$(NC)"
 
 # Run all mandate checks (CI gate)
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity verify-mandate-claims
 	@echo "$(GREEN)All mandate checks passed$(NC)"
+
+# Claims harness (Team-Study #1 ruling S7, P0): claims-vs-disk gate +
+# sanitation / FP-11 / T0 detectors over changed files. WARN-ONLY phase
+# (ruling S5) — always EXIT 0; findings are structured warnings.
+verify-mandate-claims:
+	@echo "$(YELLOW)Running verify-mandate-claims (warn-only)...$(NC)"
+	@$(PYTHON) scripts/verify_mandate_claims.py
+	@echo "$(GREEN)verify-mandate-claims passed (warn-only mode)$(NC)"
 
 # Mandate Compliance Meter (D-532 / T06) — mechanical compliance measurement.
 # Parses SOVEREIGN_MANDATES.md for denominator (27, v3.8.0), runs per-mandate
@@ -348,7 +356,7 @@ heritage-map:
 	@$(PYTHON) scripts/heritage_audit.py --output-report
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims
 
 # === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
 # Wrap ANY long/native build with telemetry + auto-postmortem.

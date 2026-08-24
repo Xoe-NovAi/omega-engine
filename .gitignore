@@ -239,3 +239,9 @@ data/training/entities/*/https___example_com_secret_*.json
 
 # Session evidence dirs hold LIVE SECRET INVENTORIES (gitleaks raw output) - NEVER commit
 docs/research/evidence_*/
+
+# SANITATION LAW: exact architect markers live ONLY in this untracked local file
+data/knowledge/safety/sanitation_markers.local.yaml
+
+# SoulStore flock artifacts (transient writer-exclusion locks)
+data/entities/*/*.yaml.lock

@@ -1,0 +1,22 @@
+# mandate_claims.yaml — data-driven claims-vs-disk rules (verify-mandate-claims)
+#
+# Each rule: a document pattern that ASSERTS a mechanical fact, plus the
+# probe paths that must exist on disk for the claim to be true.
+# Born from C2-class finding: 4 documents asserted an uninstalled pre-commit
+# hook (Team-Study #1, ruling S7). Probe-path bound to each evidence claim
+# per ledger O-Q4 concurrence.
+claims:
+  - id: tracking-precommit-hook-installed
+    pattern: '(pre-commit|tracking-state) hook .*(installed|active|wired|enforced)'
+    file_globs:
+      - '**/*.md'
+    probe_paths:
+      - .pre-commit-config.yaml
+    probe_contains:
+      - omega-tracking-state
+  - id: verify-mandate-claims-wired
+    pattern: 'verify-mandate-claims .*(wired|installed|enforced|in CI)'
+    file_globs:
+      - '**/*.md'
+    probe_paths:
+      - scripts/verify_mandate_claims.py
