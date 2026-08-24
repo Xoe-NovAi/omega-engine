@@ -1,5 +1,5 @@
-# 🔱 STRATEGY INDEX — Canonical Reference (Updated 2026-08-17)
-**Date**: 2026-08-17 | **v6.1 Debut-Corrected** | **Supersedes**: v6.0 (2026-07-25)
+# 🔱 STRATEGY INDEX — Canonical Reference (Updated 2026-08-24)
+**Date**: 2026-08-24 | **v6.1 Debut-Corrected** | **Supersedes**: v6.0 (2026-07-25)
 
 > **⚠️ EXECUTION SSOT (2026-08-17, DOC-1 stamp)**: This month's execution authority is
 > `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` + `data/coordination/ACTIVE_SPRINT.json`
@@ -73,6 +73,9 @@
 | `data/coordination/GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | D | Fleet-aware research notes |
 | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | D | 18 jobs (D-2 input) + Phase 5 (R57-R62) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
+| **`docs/strategy/MODEL_WINDOW_ECONOMICS_20260823.md`** | — | **CANONICAL DOCTRINE (D-601)** — 6 laws of model-window orchestration; dual-review standard play; challenge mechanism codified |
+| **`docs/strategy/COGNITIVE_ROUTING_PLAYBOOK.md`** | — | **CANONICAL METHODOLOGY (D-601)** — priming maneuver, dual-review dialectic (ascending windows), 1M fat workflow |
+| **`data/knowledge/safety/FORENSIC_PATTERNS.md`** | — | **Safety doctrine** — incident-derived patterns FP-01…FP-11 (incl. FP-11 @-wrapper attribution forgery) |
 | **`docs/sprints/current/AGENT_SPRINT_CARD.md`** | **D Gate** | **ACTIVE SPRINT** — one-page agent card |
 | SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
 
@@ -150,6 +153,10 @@ grep -rl "your-term" docs/archive/strategy/2026-07-21/ docs/archive/strategy/202
 | `data/coordination/SESSION_ANCHOR.md` | Session recovery |
 | `data/coordination/HMC_COLLABORATION_HUB.md` | Team sync + `NEXT_ACTION` (Tier-2) |
 | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Research jobs (Phase D-2 input) |
+| `data/coordination/THE_VISION_CANONICAL_DRAFT_20260823.md` | **Canonical vision spine** — Era 0→6 excavation (Roc, 645 lines) |
+| `data/coordination/ARCHITECT_OVERSIGHT_PATTERNS_20260823.md` | Human oversight patterns P1–P7 + Methodology M1–M6 |
+| `data/coordination/THE_FORGE_CHRONICLE_CHARTER_20260823.md` | Book project charter (sanitation law applies) |
+| `data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md` | Team-Synthesis Study #1 rulings (input to D-593…D-601) |
 
 ---
 
@@ -167,4 +174,4 @@ SUPERSEDED: 3. **Sprint execution / process** → `docs/archive/sprints/EXECUTIO
 
 ---
 
-*⬡ OMEGA ⬡ STRATEGY-INDEX ⬡ v6.0 ⬡ 2026-07-25*
+*⬡ OMEGA ⬡ STRATEGY-INDEX ⬡ v6.1 ⬡ 2026-08-24*
