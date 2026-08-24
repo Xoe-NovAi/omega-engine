@@ -93,7 +93,16 @@ the fragile inference FP-04 warns about. Exact attribution is impossible today.
 forensics per mandate M22) is a strong consumer. Until shipped, PID+timestamp correlation stays
 documented as APPROXIMATE, never cited as Tier-0 ground truth.
 
-### G8 — Compaction threshold doctrine — MECHANISM VERIFIED-CITED; "85%" figure MYTH-PENDING-EVIDENCE
+### G8 — Compaction threshold doctrine — ⚠️ SUPERSEDED BY ARCHITECT GROUND TRUTH (2026-08-24)
+
+> **VERIFIED-BY-ARCHITECT (overrides the analysis below per FP-04/T0 hierarchy; see PIVOT_LOG D-602):**
+> The compaction threshold is **CONFIGURABLE**, not formula-fixed. It was 75%; the Architect
+> raised it to **85%** to extend long-context ceiling on smaller-window models. 85% is the
+> hard trigger: auto-compact NEVER fires below it without manual /compact. Overshoot past
+> 85% occurs only when a tool call that STARTED before the mark completes and pushes the
+> window over — i.e., evaluation happens at tool-completion boundaries. The upstream
+> default formula cited below describes stock behavior, not our configuration.
+> The kg-session analysis that follows is retained as upstream-mechanism reference ONLY.
 
 Official documentation (opencode.ai/v2/docs/compaction) states automatic compaction triggers
 when:
