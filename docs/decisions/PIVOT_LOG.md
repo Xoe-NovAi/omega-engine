@@ -418,3 +418,15 @@ This drove the 92% vs 84% vs 72% compliance contradictions in OMEGA_ENGINE.md �
 **D-600** — D-I APPROVED: registry bookkeeping (ho_2f77f83964e5 full-supersession record + teamstudy sessions + provenance-worker deployment) folded into Lilith backfill wave input. Registry SSOT: `data/coordination/TASK_REGISTRY.json`; input report: `data/entities/researcher/workspace/RESEARCHER_REPORT_FOR_KALI_20260823.md`.
 **D-C (F2 adjudicator)** — PENDING refined recommendation: Architect disclosed full model inventory (Antigravity: Sonnet 4.6/Opus 4.6/Gemini 3.1 Pro in-CLI automated; Claude.ai: Sonnet 5 + Haiku 4.5 ×8 accounts, human-in-loop batching). Tiered structure under construction — see KALI response this date.
 **D-601** — D-C DECREE GRANTED (dual-review amended): Cross-model adjudication authorized through window close (~Aug 28). TIER 1: dual review = Gemini 3.1 Pro + Sonnet 4.6 (both via Antigravity, 8-account pool). TIER 2: Sonnet 5 via Claude.ai daily-batched (human upload per CLAUDE_PACK_TEMPLATE). TIER 3: Opus 4.6 break-glass. M7 waiver time-boxed to window; T0 provenance on all verdicts. OPERATIONAL DOCTRINE attached: model-window economics (see docs/strategy/MODEL_WINDOW_ECONOMICS_20260823.md) — ascending-window review ordering, priming ceilings (≤150K for 200K-window targets), cheap-prime/expensive-cognate technique codified. Companion methodology: docs/strategy/COGNITIVE_ROUTING_PLAYBOOK.md (priming maneuver + dual-review dialectic).
+
+## D-602 (2026-08-24) — TORCH-FREE REPO DECLARATION (Architect)
+The Omega Engine is a TORCH-FREE repo: `torch`, `transformers`, `sklearn` must not be
+imported at any module level in src/. VIOLATION FOUND: `src/omega_youtube_research/
+faithfulness.py` imports all three at module top (guarded try, but presence is paid at
+import = 484MB collection floor per pytest worker, 66% of suite collection weight).
+FIX REQUIRED: lazy-import inside NLIEntailmentScorer.__init__ or drop the dependency.
+Queued P0 post-N4. Also logged: compaction threshold G8 corrected by Architect ground
+truth — threshold is CONFIGURABLE (was 75%, Architect raised to 85%), evaluated at
+tool-completion boundaries (overshoot occurs only via in-flight tool outputs); public
+docs describe default formula, not our config. VERIFIED-BY-ARCHITECT overrides web-cited
+theory per FP-04/T0 hierarchy.

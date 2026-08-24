@@ -108,3 +108,14 @@ agent filter) and resume THAT session with task_id — NEVER dispatch a fresh se
 unfinished work. A fresh session doesn't know what the agent discovered, and may rewrite
 or conflict with uncommitted working-tree state. Corollary: orchestrator must record the
 task_id of every dispatch AT DISPATCH TIME (interrupted calls return nothing).
+
+## P9 — PARALLEL-DISPATCH INTEGRITY (2026-08-24, Architect-mandated)
+Claiming a parallel launch REQUIRES same-block multi-call dispatch. One task() call in
+the block = serial, whatever the prose says. Agents must self-audit: "did I claim N and
+fire N?" Orchestrator counts calls before sending. Violations observed twice today.
+
+## P10 — SEARCH-PROTOCOL ADOPTION GAP (2026-08-24, Architect observation)
+Firecrawl MCP active + cache populated, yet agents default to native websearch,
+bypassing SR-V1 tiered pipeline (AGENTS.md §Search Tool Protocol). Infra isn't the
+problem — discipline is. All agents: check .firecrawl/ cache first, SearXNG next,
+Exa then Firecrawl for deep scrapes. Native websearch is LAST resort, not first.
