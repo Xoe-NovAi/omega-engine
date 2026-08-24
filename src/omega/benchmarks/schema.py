@@ -165,16 +165,6 @@ def get_pareto_frontier(
         return [dict(row) for row in cursor.fetchall()]
 
 
-def get_routing_validation(
-    db_path: Path = DB_PATH,
-    routing_table_path: str = "config/routing_table.yaml",
-) -> List[Dict[str, Any]]:
-    """Validate routing table against benchmark data."""
-    # This would compare actual routes taken vs routing table predictions
-    # Requires task history with known categories
-    pass
-
-
 # ── Export Helpers ────────────────────────────────────────────────────
 def export_csv(db_path: Path = DB_PATH, output_path: Path = Path("benchmarks_export.csv")):
     """Export all runs to CSV."""

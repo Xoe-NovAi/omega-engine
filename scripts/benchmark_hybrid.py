@@ -20,7 +20,6 @@ import anyio
 # ── Configuration ──────────────────────────────────────────────────────
 DB_PATH = Path("data/benchmarks/benchmark_runs.db")
 MODELS_DIR = Path("/media/arcana-novai/omega_library/models/gguf")
-ROUTING_TABLE = Path("config/routing_table.yaml")
 CLOUD_PRICING = Path("config/cloud_pricing.yaml")
 
 # Local models to benchmark (3 configs × 3 thermal states = 27 runs)
