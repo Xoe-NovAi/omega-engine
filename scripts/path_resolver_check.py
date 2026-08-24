@@ -73,8 +73,6 @@ ALLOWLIST = {
     "src/omega/benchmarks/comprehensive_runner.py",
     # Request queue needs data dir
     "src/omega/request_queue.py",
-    # MIAP coordination needs project root
-    "src/omega/coordination/miap.py",
     # Key vault needs vault path
     "src/omega/vault/key_vault.py",
     # Entity workspace needs data dir
