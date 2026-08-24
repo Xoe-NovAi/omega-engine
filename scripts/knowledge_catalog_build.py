@@ -25,7 +25,8 @@ from typing import Dict, List, Any, Optional
 from collections import defaultdict
 
 from src.omega.library.indexer import Indexer
-from src.omega.memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from src.omega.memory.sqlite_vec_adapter import SQLiteVecAdapter
+from src.omega.memory.vector_adapters import IVectorStoreAdapter, MemoryVectorAdapter
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CONSTANTS [id-soft: doom-1993] ZONEID Pattern — manifest integrity marker
@@ -116,10 +117,10 @@ async def aggregate_manifests(indices: Dict[str, Path]) -> Dict[str, Any]:
     total_topics = 0
     
     # Initialize vector adapter for manifest indexing
+    # [DEL-1 4e] QdrantAdapter retired — SQLiteVecAdapter/MemoryVectorAdapter
+    # are the production adapters (D225 unified fabric).
     try:
-        qdrant = QdrantAdapter()
-        status = await qdrant.get_status()
-        vector_adapter = qdrant if status.get("status") == "healthy" else MemoryVectorAdapter()
+        vector_adapter = SQLiteVecAdapter()
         logger.info("Using %s for manifest vector indexing", vector_adapter.__class__.__name__)
     except Exception as e:
         logger.warning("Failed to init vector adapter, using MemoryVectorAdapter: %s", e)

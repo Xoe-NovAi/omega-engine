@@ -11,7 +11,7 @@ from .providers import (
     USMStorageProvider,
     DiskSpaceError,
 )
-from .vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from .vector_adapters import IVectorStoreAdapter, MemoryVectorAdapter
 from .sqlite_vec_adapter import SQLiteVecAdapter
 from .embeddings import (
     IEmbeddingProvider,
@@ -62,7 +62,6 @@ __all__ = [
     "DiskSpaceError",
     # Vector adapters
     "IVectorStoreAdapter",
-    "QdrantAdapter",
     "MemoryVectorAdapter",
     "SQLiteVecAdapter",
     # Embeddings
