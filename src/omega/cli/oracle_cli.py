@@ -67,12 +67,16 @@ except ImportError:
     pass  # bundle module not available
 
 # ── Vault sub-commands (V-1 VaultCore MVP) ───────────────────────────────
-try:
-    from omega.cli.vault import vault as vault_app
-
-    app.add_typer(vault_app, name="vault", help="Sovereign credential vault (age + Argon2id)")
-except ImportError:
-    pass  # vault module not available
+# [N0/dc-cli-dead 2026-08-24] Vault CLI mounting REMOVED — it exported a
+# click.Group which typer's add_typer cannot mount; the failure surfaced
+# lazily inside app() as AttributeError('Group' has no 'registered_commands')
+# and killed the ENTIRE omega CLI (reproduced live, council decree H/N0).
+# Vault module stays importable for programmatic use; CLI mounting returns
+# only via Vault Path A/B (DEL-1 target #10 / council decree N6) as either
+# a proper typer.Typer conversion or sanctioned removal.
+# LESSON (L3-Gates-Before-Blade corollary): typer validates registrations
+# LAZILY at app() time — try/except around add_typer cannot catch a bad
+# mount. Only an import-smoke gate that INVOKES --help catches this class.
 
 # ── Local Queue sub-commands (Phase 2 Local Worker Pool) ─────────────────
 try:

@@ -569,20 +569,9 @@ def restore_from_code(code: str, passphrase: str, vault_dir: Path):
     anyio.run(_restore)
 
 
-@vault.command()
-@click.option(
-    "--passphrase",
-    envvar="OMEGA_VAULT_PASSPHRASE",
-    prompt=True,
-    hide_input=True,
-    help="Vault passphrase",
-)
-@click.option(
-    "--vault-dir",
-    default="~/.config/omega/vault",
-    type=click.Path(path_type=Path),
-    help="Vault directory",
-)
+# [N0/dc-cli-dead] Orphaned duplicate decorator block removed 2026-08-24:
+# a stacked @vault.command() above reconcile converted the callback twice,
+# raising TypeError at import time and killing the ENTIRE omega CLI.
 @vault.command()
 @click.option(
     "--passphrase",

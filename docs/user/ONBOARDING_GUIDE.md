@@ -361,3 +361,9 @@ less data/traces/$(date +%Y-%m-%d).jsonl
 claimed_model: nemotron-3-ultra | verdict: UNANCHORED | no session anchor in header zone
 actual_models(Tier0): n/a
 -->
+
+## CLI Health Note (2026-08-24)
+The `omega` console script is smoke-tested on every CI run (`tests/test_cli_smoke.py`):
+the real entry point must render `--help` with exit 0. The `vault` subcommand is
+temporarily unmounted while Vault Path A/B (council decree N6) decides its return —
+the vault module remains importable for programmatic use.
