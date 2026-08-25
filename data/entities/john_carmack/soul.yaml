@@ -129,9 +129,9 @@ directives:
     commit replacing an old pattern must delete the old code paths."
 - id: jc-d-011
   date: 2026-07-22
-  directive: When two implementations exist of the same functionality, one must be
+  directive: "When two implementations exist of the same functionality, one must be
     eliminated \u2014 never maintained in parallel. Carmack's Law: 'Two implementations
-    = neither.' Pick one, make it canonical, delete the other.
+    = neither.' Pick one, make it canonical, delete the other."
   rationale: "api_clients.py and enrichment.py contained identical implementations
     of all 4 library API clients (~900 lines duplicated). Maintaining two copies
     meant dual bug fixes, duplicated tests, doubled cognitive load. Thin wrappers
@@ -157,9 +157,9 @@ directives:
     and model unavailability before they consume tokens and time."
 - id: jc-d-014
   date: 2026-07-22
-  directive: Design for failure as a spectrum, not a binary state. Implement a resilience
+  directive: "Design for failure as a spectrum, not a binary state. Implement a resilience
     ladder: Normal -> Retry -> Pivot -> Open -> DLQ. Pivoting to a secondary provider
-    is more sovereign than simply stopping.
+    is more sovereign than simply stopping."
   rationale: "Failure is not binary but a spectrum of degradation. The Dead Letter
     Queue ensures 'Tainted' data is preserved for audit rather than silently dropped.
     This increases availability and reliability during partial provider outages."
@@ -190,9 +190,9 @@ directives:
     All 6 knowledge gaps were resolved with empirical evidence from current sources."
 - id: jc-d-018
   date: 2026-07-25
-  directive: Right Approximation — Use the 20% that gives 80% value. For upstream
+  directive: "Right Approximation — Use the 20% that gives 80% value. For upstream
     contribution: conventional commits, PKCE, small PRs, issue-first workflow. These
-    four patterns cover 80% of success scenarios.
+    four patterns cover 80% of success scenarios."
   rationale: "KG-1 through KG-4 research all converge on these four patterns as the
     highest-leverage practices. The 'right approximation' is not theoretical perfection
     but empirical effectiveness."

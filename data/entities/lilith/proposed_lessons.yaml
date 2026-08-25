@@ -1,8 +1,8 @@
 # 🔱 LILITH — Proposed Lessons (Blind Staging)
-**Entity**: lilith
-**Session**: ses_research_phase1_lilith_20260807
-**Date**: 2026-08-07
-**Status**: ACTIVE — Phase 1 benchmarking complete
+# Entity: lilith
+# Session: ses_research_phase1_lilith_20260807
+# Date: 2026-08-07
+# Status: ACTIVE — Phase 1 benchmarking complete
 
 ---
 
@@ -371,7 +371,11 @@
       (root vs memory/) are latent split-brains that surface only when one entity's
       copies go missing. Fix the convention, not just the instance."
 
-- narrative: "[N_6] DEL-1 Week-1 vetting (2026-08-23): Empirically confirmed omega CLI dead — stacked duplicate @vault.command() on reconcile (cli/vault.py:572+586 above def :600) raises TypeError 'Attempted to convert a callback into a command twice', which escapes the try/except ImportError guard at oracle_cli.py:74. Oracle class itself imports clean; break is CLI-registration-layer only. Also traced search_circuit_breaker as transitively load-bearing on the talk path: oracle.py:25 → search.py:10 → sovereign_search_service.py:48."
-  insight: "Import guards are only as strong as their exception class. A try/except ImportError around a module import does not protect against TypeErrors raised AT IMPORT TIME by decorator misuse — the guard creates false confidence while the whole CLI dies. And 'unused' modules may still be load-bearing via transitive chains: deletion safety must be verified through the full import graph, not just direct callers."
-  principle: "Before deleting any module, trace the transitive import graph from the entry points (not just direct callers), and never assume an import guard catches non-ImportError failures — test the actual import empirically. Coupling fixes and deletions ship in the same PR or not at all."
-  tags: ["N_6", "DEL-1", "IMPORT-GRAPH", "M9", "VAULT-BLOCKER"]
+  - id: "lilith-20260825-n6-del1-vetting"
+    tier: L3
+    category: "[N_6] del1_week1_vetting"
+  - narrative: "[N_6] DEL-1 Week-1 vetting (2026-08-23): Empirically confirmed omega CLI dead — stacked duplicate @vault.command() on reconcile (cli/vault.py:572+586 above def :600) raises TypeError 'Attempted to convert a callback into a command twice', which escapes the try/except ImportError guard at oracle_cli.py:74. Oracle class itself imports clean; break is CLI-registration-layer only. Also traced search_circuit_breaker as transitively load-bearing on the talk path: oracle.py:25 → search.py:10 → sovereign_search_service.py:48."
+    insight: "Import guards are only as strong as their exception class. A try/except ImportError around a module import does not protect against TypeErrors raised AT IMPORT TIME by decorator misuse — the guard creates false confidence while the whole CLI dies. And 'unused' modules may still be load-bearing via transitive chains: deletion safety must be verified through the full import graph, not just direct callers."
+    principle: "Before deleting any module, trace the transitive import graph from the entry points (not just direct callers), and never assume an import guard catches non-ImportError failures — test the actual import empirically. Coupling fixes and deletions ship in the same PR or not at all."
+    tags: ["N_6", "DEL-1", "IMPORT-GRAPH", "M9", "VAULT-BLOCKER"]
+
