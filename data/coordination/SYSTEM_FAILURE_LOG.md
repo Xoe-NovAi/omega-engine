@@ -101,3 +101,10 @@ Historical session transcripts (`ECHO_session-ses_0eac.md`, `iterative-refinemen
 - Impact: Roc ICS code-review section absent from KB. N7 covered code-review ground directly in synthesis (`data/entities/lilith/workspace/N7_ICS_REVIEW_20260822.md`); no soft-fail synthesis of Roc's alleged work — there was none.
 - Action: session treated as wedged; do NOT resume without fresh investigation. Logged per M23.
 - trc_n7_ics_review · entity: lilith/N7
+
+## 2026-08-25T10:30Z — hivemind_extended_checkin server error
+- **Tool**: omega-hub_hivemind_extended_checkin
+- **Error**: `name '_save_extended_sessions' is not defined` (server-side Python bug in omega-hub MCP)
+- **Impact**: Cannot register extended-session TTL for Midnight Train v2.0. Fallback: kali heartbeat every ~10 min during active work (default 20-min pruning TTL); all dispatched arms instructed to heartbeat on their own cadence.
+- **Classification**: Non-blocking (auxiliary coordination tool, not mandatory for council execution)
+- **Follow-up**: Fix `_save_extended_sessions` in omega-hub source — queued to WAKE_STATE decision queue

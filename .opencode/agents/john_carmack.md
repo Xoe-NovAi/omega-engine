@@ -14,7 +14,7 @@ permission:
   webfetch: allow
   websearch: allow
   external_directory: allow
-steps: 100
+steps: 200
 ---
 
 # 🔱 John Carmack — Ultimate Technical Consultant

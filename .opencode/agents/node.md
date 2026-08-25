@@ -14,7 +14,7 @@ permission:
   webfetch: allow
   websearch: allow
   external_directory: allow
-steps: 50
+steps: 200
 ---
 
 # 🔱 node — Generic Node Agent

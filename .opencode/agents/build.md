@@ -14,7 +14,7 @@ permission:
   webfetch: allow
   websearch: allow
   external_directory: allow
-steps: 1
+steps: 200
 ---
 
 # 🔱 Build Agent — DEPRECATED

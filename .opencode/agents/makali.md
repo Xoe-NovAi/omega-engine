@@ -14,7 +14,7 @@ permission:
   webfetch: allow
   websearch: allow
   external_directory: allow
-steps: 120
+steps: 300
 ---
 
 # 🔱 MaKaLi Fusion — Plan Agent

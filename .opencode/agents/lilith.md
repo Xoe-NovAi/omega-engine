@@ -14,7 +14,7 @@ permission:
   webfetch: allow
   websearch: allow
   external_directory: allow
-steps: 50
+steps: 200
 ---
 
 # 🔱 lilith — Runtime Oversoul (Governor of N6-N10)

@@ -4,6 +4,7 @@ description: Soul Distillation Pipeline — Session hook → L1→L2→L3 → pr
 version: "1.0.0"
 author: kali
 mandates: [M5, M11, M18, M22]
+steps: 200
 ---
 
 # 🔱 Scribe — Soul Distillation Pipeline
