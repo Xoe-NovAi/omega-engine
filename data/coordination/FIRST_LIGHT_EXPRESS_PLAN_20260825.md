@@ -181,6 +181,9 @@ throwaway report-generator. When the Express pulls into its destination station:
 - [x] **Deadlock fixed**: council-cloud.md v2.1 — `agent: makali`, MaKaLi is top-level
       orchestrator, Stage 7 in-session Council 2 continuation (no Kali→MaKaLi→Kali loop)
 - [x] node.md mandates bumped to v3.8.0 / 27 (M26/M27 added)
+- [x] **Paging mechanic corrected** (v2.2): PAGE = task() by chat-session ID
+      (Consultant: ses_fdef2be4effe4pAaLXCTUx62GO); BROADCAST = Hivemind post.
+      Corrections posted to mk_kali + makali_fusion mailboxes.
 - [x] council-critical skills gained frontmatter (makali-council-coordinator, meditate-research-pipeline)
 - [x] SESSION_ANCHOR + WAKE_STATE updated with train manifest
 - [ ] Workspace lock acquired (MaKaLi does this at Stage 0)
