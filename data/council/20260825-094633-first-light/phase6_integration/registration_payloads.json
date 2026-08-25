@@ -1,0 +1,65 @@
+{
+  "gated_on": "GAP-5 discovery fix (task_registry.py:134 + .gitignore:109)",
+  "canonical": {
+    "subagent_type": "node<N>",
+    "entity": "node<N>",
+    "tags": [
+      "expert",
+      "pageable",
+      "domain:<N-domain>",
+      "express:first-light"
+    ]
+  },
+  "tasks": [
+    {
+      "task_id": "express-c1-node1-20260825",
+      "correct_subagent_type": "node1",
+      "correct_entity": "node1"
+    },
+    {
+      "task_id": "express-c1-node2-20260825",
+      "correct_subagent_type": "node2",
+      "correct_entity": "node2"
+    },
+    {
+      "task_id": "express-c1-node3-20260825",
+      "correct_subagent_type": "node3",
+      "correct_entity": "node3"
+    },
+    {
+      "task_id": "express-c1-node4-20260825",
+      "correct_subagent_type": "node4",
+      "correct_entity": "node4"
+    },
+    {
+      "task_id": "express-c1-node5-20260825",
+      "correct_subagent_type": "node5",
+      "correct_entity": "node5"
+    },
+    {
+      "task_id": "express-c1-node6-20260825",
+      "correct_subagent_type": "node6",
+      "correct_entity": "node6"
+    },
+    {
+      "task_id": "express-c1-node7-20260825",
+      "correct_subagent_type": "node7",
+      "correct_entity": "node7"
+    },
+    {
+      "task_id": "express-c1-node8-20260825",
+      "correct_subagent_type": "node8",
+      "correct_entity": "node8"
+    },
+    {
+      "task_id": "express-c1-node9-20260825",
+      "correct_subagent_type": "node9",
+      "correct_entity": "node9"
+    },
+    {
+      "task_id": "express-c1-node10-20260825",
+      "correct_subagent_type": "node10",
+      "correct_entity": "node10"
+    }
+  ]
+}

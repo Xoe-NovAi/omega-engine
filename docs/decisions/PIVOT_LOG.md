@@ -430,3 +430,6 @@ truth — threshold is CONFIGURABLE (was 75%, Architect raised to 85%), evaluate
 tool-completion boundaries (overshoot occurs only via in-flight tool outputs); public
 docs describe default formula, not our config. VERIFIED-BY-ARCHITECT overrides web-cited
 theory per FP-04/T0 hierarchy.
+
+## D-600 — First Light Express Council 1 Decree (2026-08-25)
+Council 1 (TEAM-INFRASTRUCTURE AUDIT) fused decree at `data/council/20260825-094633-first-light/phase5_fusion/SOVEREIGN_DECREE.md`. Root cause named: claims-that-outlive-their-mechanisms; one fix class = derivation checks. 12 articles, 30 bash gates, audited-clean register, Council-2 validator-first inheritance guards. M11 Arm-Relay Clause ratified as standing law (depth deferred, GAP-11). M11 entity-YAML repair executed in Stage-6 window (G8 green). Remediation backlog = decree Art. X priority order (P0 truth-bearing infrastructure → P2 hygiene). Runtime baseline honest: suite NOT green at audit time (3F + M8 gate false-positive).

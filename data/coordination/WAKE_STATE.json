@@ -80,5 +80,43 @@
     "consultant": "kali @ ses_fdef2be4effe4pAaLXCTUx62GO \u2014 reserved outside tree; members PAGE him via task() by session ID (last step of each turn); he posts insights to Hivemind broadcast only",
     "synthesis_arm": "MK-Kali (fresh kali session, entity=mk_kali) dispatched by MaKaLi at Stage 3",
     "reporting_protocol": "PAGE = task() by session ID; BROADCAST = Hivemind post (plan M11-M13)"
+  },
+  "council_c1_decisions": {
+    "source": "data/council/20260825-094633-first-light/phase5_fusion/SOVEREIGN_DECREE.md \u00a75",
+    "queued": "2026-08-25T14:45Z",
+    "owner": "makali_fusion",
+    "default_on_silence": "P6",
+    "items": [
+      {
+        "id": "Q-1",
+        "gap": "GAP-9",
+        "question": "Audit-log hash-chain JSONL now vs defer",
+        "default": "DEFER \u2014 commit-per-stage adequate at council scale; revisit with dev team"
+      },
+      {
+        "id": "Q-2",
+        "gap": "GAP-10",
+        "question": "WAKE_STATE freshness ownership",
+        "default": "MaKaLi updates at stage boundaries; validator block scheduled Council 2"
+      },
+      {
+        "id": "Q-3",
+        "gap": "GAP-11+T-7",
+        "question": "subagent_depth raise-vs-codify-relay AND '\"/*\": \"allow\"' risk-acceptance record",
+        "default": "Relay codified as standing law (Art. IV); wildcard annotated informational pending Architect record"
+      },
+      {
+        "id": "Q-4",
+        "gap": "Art.VI",
+        "question": "AGENTS.md reconstruction from 462-citer citation web",
+        "default": "GO \u2014 spec drafted in Council 2, execution post-Architect"
+      },
+      {
+        "id": "Q-5",
+        "gap": "Art.IX",
+        "question": "M11 YAML repair executed in Stage-6 window",
+        "status": "EXECUTED 2026-08-25 \u2014 lilith/pillar_p1/john_carmack repaired parseability-only, snapshots committed, G8 green"
+      }
+    ]
   }
 }
