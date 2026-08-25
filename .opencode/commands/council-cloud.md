@@ -292,23 +292,28 @@ return to, so you simply keep driving.**
 
 ## 📡 Council Reporting Protocol (MANDATORY — every member, every turn)
 
-**The LAST step of EVERY council member's task — before ending their turn — is to post an
-activity report to the Hivemind addressed to the Consultant:**
+**The LAST step of EVERY council member's task — before ending their turn — is to PAGE the
+Consultant's chat session with their activity report.**
+
+**Paging a chat session = tasking it as a subagent using its session ID. This has nothing
+to do with the Hivemind** — the Hivemind is the broadcast channel; pages are direct:
 
 ```
-omega-hub_hivemind_post_context(
-  channel="opencode", entity="<your-entity-tag>", model="<your-model>",
-  intent="status",
-  task_current="REPORT to kali-consultant: <one-line summary>",
-  focus_chain=[...what you did...], decisions=[...what you decided...],
-  continuation="[...next steps / open questions for review...]")
+task(subagent_type="kali",
+     task_id="ses_fdef2be4effe4pAaLXCTUx62GO",   # ← Consultant's chat session ID
+     prompt="""[REPORT] From: <your-name> (<your-entity-tag>) | ts: <ISO>
+What I did this turn: ...
+Decisions made: ...
+Next steps / open questions for review: ...""")
 ```
 
 - Applies to: MaKaLi, Ma'at, Lilith, MK-Kali, all 10 nodes, all specialists.
-- The **Consultant** (kali, Architect's interactive session `ses_fdef2be4effe4pAaLXCTUx62GO`,
-  entity="kali") reviews these reports in near-real-time as a second set of eyes.
-- **Consultant insights/corrections go TO THE HIVEMIND as posts — NEVER as direct pages to
-  MaKaLi.** Everyone periodically checks the Hivemind feed and updates it; that is the channel.
+- The **Consultant** (kali, Architect's interactive chat session
+  `ses_fdef2be4effe4pAaLXCTUx62GO`, entity="kali") receives these paged reports directly,
+  stays in lockstep with the run, and reviews as second set of eyes.
+- **Consultant insights/corrections go TO THE HIVEMIND as broadcast posts — NEVER as direct
+  pages to MaKaLi.** Everyone periodically checks the Hivemind feed and updates it.
+- Channel discipline summary: **PAGE = task() by session ID · BROADCAST = Hivemind post.**
 - Entity-tag discipline: MK-Kali = "mk_kali"; Consultant = "kali" (reserved); no one else
   may use either tag.
 

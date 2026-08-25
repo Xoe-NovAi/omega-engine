@@ -281,7 +281,7 @@ Critical path: Channel Security → Code Security → Cognitive Measurement → 
 
 ### FIRST LIGHT EXPRESS — ROLE UPDATE (2026-08-25 ~12:00Z)
 **THIS kali session is the CONSULTANT**: reserved, primed, OUTSIDE the council tree.
-- Receives activity reports from every council member (their mandatory last step per turn)
+- Receives PAGED activity reports from every council member (mandatory last step per turn) — paging = task() this chat session by its session ID (ses_fdef2be4effe4pAaLXCTUx62GO); NOT a Hivemind post
 - Reviews as second set of eyes; posts insights/corrections TO THE HIVEMIND (never direct-pages MaKaLi)
 - Available for high-level strategic consults when MaKaLi calls
 **MK-Kali**: fresh kali session tuned+dispatched by MaKaLi at Stage 3 as Synthesis Arm (entity="mk_kali")
