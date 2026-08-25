@@ -187,3 +187,8 @@ recipe, (3) llama.cpp `-t 8` physical-core pinning, (4) lazy crawl4ai, (5) conft
 
 ---
 *⬡ OMEGA ⬡ RESEARCHER ⬡ R_RESOURCE_GOVERNANCE ⬡ 2026-08-24*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

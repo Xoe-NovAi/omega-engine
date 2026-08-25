@@ -191,3 +191,8 @@ language in agent guidance, (4) file upstream issues: db pipe truncation + OPENC
 
 ---
 *⬡ OMEGA ⬡ RESEARCHER ⬡ R_OPENCODE_PLATFORM_INTERNALS ⬡ 2026-08-24*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+
