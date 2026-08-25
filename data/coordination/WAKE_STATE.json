@@ -120,9 +120,9 @@
       {
         "id": "Q-6",
         "gap": "Carmack Pass-2 Finding 2",
-        "question": "Schema-corruption repair sizing: 131 flagged records / 49 files (tiered KEYSET_DRIFT vs hard-corruption per q6 probe)",
-        "default": "CONTAINMENT-PENDING-SIZING \u2014 dev team builds schema_quarantine.py (tiered isolation, byte-exact preservation, validator-first); FINAL SIZING ARCHITECT-OWNED",
-        "status": "RULED 2026-08-25 SYNC-1 (Consultant-cleared 96d4fa6e)"
+        "question": "Schema-corruption sizing \u2014 CLASS-RECONCILED per triple-verification: ~29 hard split-record cases (S-2 instrument) + 131 keyset-drift flags (q6 instrument, files_scanned=49; disk now 50 \u2014 makali_fusion lessons added post-scan). Instruments are DISJOINT, not conflicting.",
+        "default": "CONTAINMENT-PENDING-SIZING: quarantine tooling tiered by class; Architect sizes using q6_inventory.json + S-2 list (15-min decision, inputs ready)",
+        "status": "VERIFIED 2026-08-25T22:45Z \u2014 Carmack P1 refuted by Tier-0 grep (Q-6 present); P2 file-count claim refuted (49 correct at scan time)"
       }
     ]
   },
