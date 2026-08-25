@@ -85,3 +85,11 @@ RESUMPTION PROTOCOL (any agent, any session):
 4. Track-D launches in ../fle-dev worktree via Part 2 paste. Study continues dispute-driven per Carmack scope cuts.
 Successor orchestrator: Main Kali session ses_fdef2be4effe4pAaLXCTUx62GO (Architect directive — history beats prompt engineering).
 ⬡ END OF MANIFEST ⬡
+
+## §12 CONTEXT-INFRA AUDIT ADDENDUM (2026-08-25T23:15Z — CARMACK_CONTEXT_INFRA_AUDIT.md)
+**HMC Hub autopsied**: TWO organs share the acronym. (1) HMC Collaboration Hub — markdown coordination forum from July Hivemind outage, correctly archived 2026-08-07 (why hydration never sees it). (2) HMC Watcher src/omega/orchestrator/hmc_watcher.py — core loop uses `anyio.Path.watch`, AN API THAT DOES NOT EXIST IN ANYIO (live probe False). NEVER executed. Zero wiring. Tests pass by mocking everything, never calling crashing start(). OMEGA_ENGINE.md:70 awards it "HMC Quad-Forge ✅".
+**STRUCTURAL ROOT CAUSE (why kali missed it)**: institutional memory is an EVENT LEDGER; nothing is an INVENTORY LEDGER. Never-ran code generates no events → no memory trace. Her blind class is definable and permanent without tooling.
+**Doc-vs-disk delta (6 mismatches)**: Quad-Forge medal over dead code · spec documents fabricated API · scribe.md advertises scrapped pipeline · **soul_promote cited by tutorial+M11 texts but EXISTS NOWHERE (staging is a one-way door — souls grow only by hand-edit)** · codex auto-refresh claimed every session but ~13h stale · anchored-summary was 105-byte stub until tonight.
+**Ceremony census**: PURE = HMC watcher, scribe def, data/handoffs synonym dir · GHOST = soul_promote · PARTIAL = codex refresh · LOAD-BEARING VERIFIED = MemoryStore chain, headroom, CompactionHarvester, session_end hook, WAKE_STATE, Hivemind continuation.
+**Tutorial blind side**: no Step-0 verification commands · no ephemeral-state teardown · no uncommitted-work sweep (entities.yaml sat all day) · trusts silently-failed automation · no secrets scan · NO INVENTORY REFLEX.
+**Remediation queue**: (1) scripts/infra_inventory.py ~3h — component×(exists/implemented/wired/documented) matrix, CI-gated, derivation-check applied to infrastructure itself; (2) excise necrotic tissue: delete watcher 20min, cut scribe 10min, implement-or-de-document soul_promote 45min, diagnose codex silence 1h.
