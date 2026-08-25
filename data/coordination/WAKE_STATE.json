@@ -120,8 +120,9 @@
       {
         "id": "Q-6",
         "gap": "Carmack Pass-2 Finding 2",
-        "question": "Schema-corruption repair sizing: 29 flagged records (lilith+maat L44-52) vs WP-IX single-locus premise",
-        "default": "Architect sizes before WP-IX enters bootstrap; until then S-2 probe reports count, never asserts health"
+        "question": "Schema-corruption repair sizing: 131 flagged records / 49 files (tiered KEYSET_DRIFT vs hard-corruption per q6 probe)",
+        "default": "CONTAINMENT-PENDING-SIZING \u2014 dev team builds schema_quarantine.py (tiered isolation, byte-exact preservation, validator-first); FINAL SIZING ARCHITECT-OWNED",
+        "status": "RULED 2026-08-25 SYNC-1 (Consultant-cleared 96d4fa6e)"
       }
     ]
   },
