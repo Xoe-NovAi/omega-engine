@@ -1,0 +1,58 @@
+{
+  "status": "AWAITING_WAKE",
+  "timestamp": "2026-08-24T06:00:00Z",
+  "target_agent": "kali",
+  "critical_warnings": [
+    "DO NOT RUN GIT CHECKOUT OR GIT RESET. 129 files are uncommitted.",
+    "DO NOT START TRACK A-D GENERATION UNTIL PHASE 3 COMMIT LANDS."
+  ],
+  "immediate_execution_queue": [
+    {
+      "step": 1,
+      "action": "P12 signed dispatches + ICS Phase 1 (acting_role + timestamp segments)"
+    },
+    {
+      "step": 2,
+      "action": "Pre-commit hooks install + M13 Temple-Grade enforcement (Carmack P0)"
+    },
+    {
+      "step": 3,
+      "action": "ctxNN context-at-write telemetry implementation"
+    },
+    {
+      "step": 4,
+      "action": "Wire truth_events.jsonl to omega_memory_search hybrid retrieval"
+    },
+    {
+      "step": 5,
+      "action": "Formalize MYTHIC_ARCHETYPES bootstrap for Tier-1 entities"
+    },
+    {
+      "step": 6,
+      "action": "GSCA T2 inbound relay (Architect holds)"
+    },
+    {
+      "step": 7,
+      "action": "D1(a) Blueprint Phase 0 mining \u2014 CLOCK BOUND ~Aug 28"
+    },
+    {
+      "step": 8,
+      "action": "Fallback slug decision briefing"
+    },
+    {
+      "step": 9,
+      "action": "N5 router collapse (Week 2 per charter)"
+    },
+    {
+      "step": 10,
+      "action": "Legacy GitHub repo mining (needs public/download from Architect)"
+    }
+  ],
+  "verification_notes": {
+    "worker_status": "timer ACTIVE, next run 2026-08-25 00:03 ADT",
+    "annotation_style": "conservative UNANCHORED labels \u2014 honest, no false corrections",
+    "gap_1": "db resolver missing \u2014 actual_models always n/a",
+    "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
+  },
+  "updated": "2026-08-25T09:26:17Z"
+}
