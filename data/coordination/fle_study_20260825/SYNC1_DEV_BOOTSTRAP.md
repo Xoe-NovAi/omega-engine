@@ -35,6 +35,15 @@ YOU OWN: docs/specs/team_infra/* execution targets · production files named in 
 YOU MUST NOT TOUCH: data/council/20260825-* (council artifacts — READ-ONLY forever) ·
   data/coordination/fle_study_20260825/ (study track's space) · WAKE_STATE.json
   (orchestrator single-writer) · anything not named in an executed spec.
+SANCTIONED EXCEPTION (F2): scripts/hydrate_c2_errata.py --apply IS authorized to mutate
+  its E-target files inside data/council/20260825-094633-first-light-c2/phase1_nodes/
+  and docs/specs/team_infra/ — those specific writes are pre-ratified by the errata
+  ledger. Nothing else in council space may be written.
+
+STEP ZERO (before any read): confirm you are operating in the isolated worktree
+  ../fle-dev on branch feat/sprint-1-execution (`git -C .. worktree list` shows it).
+  If not: HALT and report — branching inside the shared tree moves HEAD globally
+  and collides with Track-S (gnosis §6.1 / audit F9).
 
 READ ORDER:
 1. data/coordination/WAKE_STATE.json → wake_briefing + council_c1_decisions (Q-rulings below are binding)
@@ -45,7 +54,9 @@ READ ORDER:
 5. Your assigned spec(s) in docs/specs/team_infra/
 
 FIRST ACTIONS (in order):
-a. Run: .venv/bin/python scripts/hydrate_c2_errata.py --dry-run  → review diffs
+a. Run: .venv/bin/python scripts/hydrate_c2_errata.py   → review diffs
+   (NOTE: bare invocation IS dry-run — the script defaults to it; there is no
+   --dry-run flag. Mutation requires explicit --apply. Audit F3.)
 b. Run: .venv/bin/python scripts/hydrate_c2_errata.py --apply    → EXPECT EXIT 2.
    Exit-2 is the HONEST state (3 known TODO items ruled in Part 1). DO NOT bypass,
    patch, or silence it. Record exit code in your first [TELEMETRY] block.
@@ -67,6 +78,10 @@ output_tokens: <n>
 duration_ms: <n>
 gate_status: green|red
 ceremony_census: <count of steps that would still pass if their mechanism were deleted>
+DUAL-CHANNEL RULE (audit F1 — mechanical): the SAME [TELEMETRY] block MUST also be
+pasted into the BODY of your final git commit message for each task. The collector
+(scripts/collect_telemetry.py) parses COMMIT BODIES, not chat summaries. A block that
+exists only in a summary is invisible to measurement.
 
 STANDING LAWS: Hop Rule (pagee never pages pager; replies = end-of-task summaries) ·
 Arm-Relay clause (leaves write reports+payloads to disk; no leaf paging steps) ·

@@ -28,13 +28,18 @@ E-4 dropped · E-6=8h authored · E-10 dropped · hydration bypass REJECTED (exi
 ## §5 THREE EARLY STUDY FINDINGS
 F1 digester EXPANDED 9.5% (generative summarization anti-compresses; C2 skipped it, 21× compression) · F2 orchestrator 25.5% / coordination tier 46% token overhead · F3 Q-6 blast radius 131 records/49 files (KEYSET_DRIFT vs hard-corruption tiers).
 
-## §6 OPEN ITEMS / NEXT STEPS
-1. **⚠ CRITICAL UNRESOLVED — shared-worktree flaw**: all OpenCode forks share ONE physical git working tree. Fork #2 branching (`feat/sprint-1-execution`) moves HEAD globally — breaks dual-fork parallelism. FIX BEFORE LAUNCH: `git worktree add ../fle-dev feat/sprint-1-execution` (separate dir) OR serialize disk ops. Must be added to bootstrap Part 2 pre-launch.
-2. Scorecard M2 Ceremony Index formula ambiguous (passed/falsified ≡ 1.0 when honest) → v1.1: ceremony = gates lacking falsification evidence / total gates.
-3. Authorship headers in strategy docs are Tier-2 self-reports; DB messages.modelID is Tier-0 truth (GT log). Study attribution via DB.
-4. Uncommitted: config/wads/_omega_default/entities.yaml (214-line diff, unknown provenance — ARCHITECT REVIEW), .opencode runtime files, 3 handoff archives (commit safe).
-5. Track-D launch pending: Architect opens Fork #2, applies worktree fix, pastes SYNC1 Part 2.
-6. Study Phases 2-4 continue here: provenance traces, scorecard calibration at SYNC-2, AAR drafting, verity+carmack final audit passes.
+## §6 OPEN ITEMS / NEXT STEPS (updated post-Carmack campaign audit — CARMACK_CAMPAIGN_AUDIT.md)
+1. ~~Shared-worktree flaw~~ **FIXED in bootstrap** (STEP ZERO + audit F9): Fork #2 must operate in `git worktree add ../fle-dev feat/sprint-1-execution` — worktree step now in SYNC1 Part 2.
+2. ~~Telemetry channel gap~~ **FIXED** (audit F1): DUAL-CHANNEL RULE added — [TELEMETRY] blocks must appear in commit bodies (collector channel) AND summaries.
+3. ~~Bootstrap self-contradiction~~ **FIXED** (audit F2): sanctioned-exception clause for hydration E-targets added to ownership manifest.
+4. ~~--dry-run flag crash~~ **FIXED** (audit F3): bootstrap corrected — bare invocation IS dry-run; no flag exists.
+5. ~~Theorems vapor~~ **FIXED** (audit F5): renamed H1-H5 with falsification criteria, persisted in Scorecard §0. M2 formula fixed (v1.1).
+6. Q-6 sizing: inputs on disk contradict 4.5× (29 vs 131; all KEYSET_DRIFT per probe) — 15-min Architect decision, inputs ready in q6_inventory.json.
+7. Study scope CUT per audit: Vector 4 cut entirely, Vector 5 cut (answered), Vector 3 dispute-driven only.
+8. Governance note: P6 silence-consent scope clarified by Kali (defaults-only); Q-3-style reserved items need explicit Architect input.
+9. Uncommitted: config/wads/_omega_default/entities.yaml (214-line diff, unknown provenance — ARCHITECT REVIEW).
+10. Track-D launch pending: Architect opens Fork #2 in ../fle-dev worktree, pastes SYNC1 Part 2 (now audit-hardened).
+11. Study Phases 2-4 continue here: provenance traces (dispute-driven), scorecard calibration at SYNC-2, AAR draft, verity+carmack final passes.
 
 ## §7 KEY SESSION IDS
 fork#1 (here) ses_fc5b80e85ffeAjhjtroU76Gfo2 · virgin main ses_fc758e6ddffeNEKptpEzboVfYq · Consultant kali ses_fdef2be4effe4pAaLXCTUx62GO · C1 workspace data/council/20260825-094633-first-light/ · C2 ...-c2/ · study dir data/coordination/fle_study_20260825/

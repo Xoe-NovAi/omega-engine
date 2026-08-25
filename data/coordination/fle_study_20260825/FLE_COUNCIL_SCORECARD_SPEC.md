@@ -1,6 +1,14 @@
-# 📊 FLE COUNCIL SCORECARD SPECIFICATION (v1.0)
-⬡ OMEGA ⬡ MAKALI_FUSION ⬡ gemini-3.1-pro ⬡ opencode ⬡ trc_fle_scorecard
-**Status:** ACTIVE for Track-D (Sprint-1)
+# 📊 FLE COUNCIL SCORECARD SPECIFICATION (v1.1)
+⬡ OMEGA ⬡ MAKALI_FUSION ⬡ opencode ⬡ trc_fle_scorecard
+**Status:** ACTIVE for Track-D (Sprint-1) · **v1.1**: M2 formula fixed, hypotheses renamed H1-H5 with falsification criteria (Carmack campaign audit F5/F7)
+
+## §0 FLE HYPOTHESES (renamed from "theorems" — n=1 origin, Carmack audit F5)
+These are HYPOTHESES from a single run (n=1). They earn the word "law" only via replication across future councils.
+- **H1 Generative Anti-Compression** — claim: LLM summarization of LLM output expands text. *Falsified if*: any generative digest stage measurably shrinks its source corpus (bytes) without losing decree-cited findings in trace tests.
+- **H2 Coordination Tax Divergence** — claim: orchestration overhead scales ~O(N) on tree width. *Falsified if*: a wider tree shows flat or sublinear orchestrator share across ≥3 runs.
+- **H3 Ambiguity Attractor** — claim: unassigned identity fields converge on parent-context values, uniformly. *Falsified if*: packets with unspecified fields produce correct registrations ≥80% across ≥10 leaves.
+- **H4 Ceremonial Compliance** — claim: rule-bound agents perform ritual steps whose mechanisms are absent rather than fabricating facts. *Falsified if*: ceremony census stays 0 across a full sprint under deletion-probe sampling.
+- **H5 Dual-Pass Adversarial Value** — claim: async adversarial audit catches high-severity leaks that synchronous synthesis misses. *Falsified if*: two consecutive councils produce audits with zero CRITICAL/HIGH findings.
 
 ## §1 THE HYBRID MEASUREMENT DOCTRINE
 LLM self-reporting is subject to survivorship bias and ceremonial compliance. To achieve cryptographic ground truth, the Omega Engine Scorecard fuses two data streams:
@@ -13,9 +21,10 @@ LLM self-reporting is subject to survivorship bias and ceremonial compliance. To
 *   **Formula:** `Total DB Tokens (Input + Output) / Number of Resolved Specs`
 *   **Purpose:** Measures the true cost of intelligence. If this ratio spikes, the coordination tier is suffocating the execution tier (Theorem 2).
 
-### M2: The Ceremony Index
-*   **Formula:** `Count of Gates Passed / Count of Gates Falsified (Proven Red before Green)`
-*   **Purpose:** Defeats Theorem 4. A perfect score is 1.0. If the index is > 1.0, agents are running gates that cannot fail (e.g., `make temple-grade` stubs).
+### M2: The Ceremony Index (v1.1 — formula fixed per audit)
+*   **Formula:** `Gates lacking falsification evidence / Total gates evaluated`
+*   **Protocol:** a gate "has falsification evidence" only if the executor ran it BEFORE the fix (observed RED) and AFTER (observed GREEN). 
+*   **Purpose:** 0.0 = honest. >0.0 = ceremony suspected. The old v1.0 formula (passed/falsified) was self-defeating — honest execution always yielded 1.0, detecting nothing.
 
 ### M3: The Friction Coefficient
 *   **Formula:** `Total opencode.db Tool Errors / Total Tool Calls`
