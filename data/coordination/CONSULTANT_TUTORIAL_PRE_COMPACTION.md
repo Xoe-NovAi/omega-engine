@@ -37,7 +37,7 @@ hard timeout never crashes wrapper. The regex distillation pipeline was SCRAPPED
 agents write their own lessons (which you did correctly via blind staging).
 
 **Soul staging rule:** lessons go to `data/entities/<entity>/proposed_lessons.yaml`
-ONLY (blind staging); promotion requires explicit soul_promote. Never write soul.yaml
+ONLY (blind staging); promotion is implemented at `scripts/soul_promote.py` (review-gated: dry-run default, `--apply --confirm` required). Never write soul.yaml
 directly. ✅ YOU DID THIS (6 lessons staged).
 
 ## §3 THE HOUSE FORMAT — `.opencode/anchored-summary.md` structure
