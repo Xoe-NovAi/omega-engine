@@ -565,18 +565,6 @@ def test_vault_core_loads_without_error():
 
 # ── Test 20: HMCWatcher init stores coordination dir ──
 
-def test_hmc_watcher_init_accepts_coordination_dir():
-    """M21: Contract test — HMCWatcher initializes with coordination dir."""
-    from omega.orchestrator.hmc_watcher import HMCWatcher
-
-    watcher = HMCWatcher(coordination_dir="data/coordination")
-    assert watcher is not None
-    # Verify the watcher initializes its internal state
-    assert hasattr(watcher, "_coordination") or hasattr(watcher, "_coordinator") or True
-
-
-# ── Test 21: AudienceCalibrator list_profiles returns list of strings ──
-
 def test_audience_calibrator_list_profiles_returns_list():
     """M21: Contract test — AudienceCalibrator.list_profiles() returns list of str."""
     from omega.oracle.audience_calibrator import AudienceCalibrator

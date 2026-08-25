@@ -45,7 +45,7 @@ Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu
 | `jem` | Jem | `.opencode/agents/jem.md` | Research orchestrator — 3-tier local model pipeline |
 | `researcher` | Researcher | `.opencode/agents/researcher.md` | Sovereign Master Researcher — deep research, lattice reasoning |
 | `node` | Slot-based | `.opencode/agents/node.md` | Slot-based domain agent — parameterized by `--slot N1` (N1–N10) |
-| `scribe` | Scribe | `.opencode/agents/scribe.md` | Gnosis Keeper — L1→L2→L3 distillation into souls |
+| ~~`scribe`~~ | — | archived `.opencode/agents/archive/scribe_agent_20260730/` | RETIRED 2026-08-25 — advertised pipeline scrapped (session_end.py verdict); agents write lessons directly |
 | `verity` | Verity | `.opencode/agents/verity.md` | Unified Compliance & Gnosis Agent — mandate audit, soul distillation |
 
 ### Subagents (Available via `@` — 3 total)

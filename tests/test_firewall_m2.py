@@ -272,10 +272,8 @@ ALLOWED_EXCEPTIONS: list[tuple[str, int | None, int]] = [
     ("src/omega/rag/router.py", 36, 33),  # Iris (docstring example)
     ("src/omega/rag/router.py", 50, 33),  # Iris (docstring example)
 
-    # HMC watcher - oracle summon calls (trace keys, not entity logic)
-    ("src/omega/orchestrator/hmc_watcher.py", 48, 38),  # John Carmack (oracle summon trace key)
-    ("src/omega/orchestrator/hmc_watcher.py", 51, 40),  # Roc Racoon (oracle summon trace key)
-    ("src/omega/orchestrator/hmc_watcher.py", 52, 40),  # Roc Racoon (oracle summon trace key)
+    # HMC watcher entries REMOVED 2026-08-25 — module excised (Carmack context-infra audit:
+    # fabricated anyio.Path.watch API, never executable; see INFRA_INVENTORY_FIRST_RUN.md)
 
     # ─────────────────────────────────────────────────────────────────
     # [UI/DISPLAY] - TUI/UI displaying entity names (should load from WAD)

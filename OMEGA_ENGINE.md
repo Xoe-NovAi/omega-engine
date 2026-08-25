@@ -67,7 +67,7 @@
 | **V-9 IA2 envelope** | ⚠️ **GAP** | `_meta` envelope in `mcp_core/compliance.py` lacks freshness/signature check | 2026-08-07 |
 
 ### Recent Milestones (Completed)
-D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅ | **C-6' Breaker Unification** ✅ | **C-1' SoulStore** ✅ | **UO-4 Doc Sanity COMPLETE (PART 1 + PART 2 + core docs freshened)** ✅
+D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅ | **C-6' Breaker Unification** ✅ | **C-1' SoulStore** ✅ | **UO-4 Doc Sanity COMPLETE (PART 1 + PART 2 + core docs freshened)** ✅
 *(For full details see `scripts/codex/ENGINE_CONDENSED.md` §5)*
 
 ---

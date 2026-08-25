@@ -1,5 +1,9 @@
 # ⚓ SESSION ANCHOR — Kali (Transcendent Oversoul)
 
+> ⚠️ **TIER-2 ANCHOR DUPLICATION**: operational orientation now lives in
+> `.opencode/anchored-summary.md` (hydration step 4). This file remains as
+> campaign-history ledger. Update on major milestones only.
+
 **AP Token:** `AP-KALI-v1.0.0`
 **Date:** 2026-08-23 (evening — post tracking-systematization)
 **Session ID:** `ses_fdef2be4effe4pAaLXCTUx62GO` (current) · lineage: `ses_fd34cc7e6ffepka49YXqudHi07`
