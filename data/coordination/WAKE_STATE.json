@@ -116,7 +116,28 @@
         "gap": "Art.IX",
         "question": "M11 YAML repair executed in Stage-6 window",
         "status": "EXECUTED 2026-08-25 \u2014 lilith/pillar_p1/john_carmack repaired parseability-only, snapshots committed, G8 green"
+      },
+      {
+        "id": "Q-6",
+        "gap": "Carmack Pass-2 Finding 2",
+        "question": "Schema-corruption repair sizing: 29 flagged records (lilith+maat L44-52) vs WP-IX single-locus premise",
+        "default": "Architect sizes before WP-IX enters bootstrap; until then S-2 probe reports count, never asserts health"
       }
     ]
+  },
+  "wake_briefing": {
+    "generated": "2026-08-25T16:50Z",
+    "by": "makali_fusion",
+    "run": "FIRST LIGHT EXPRESS (two councils, in-session)",
+    "decrees": [
+      "data/council/20260825-094633-first-light/phase5_fusion/SOVEREIGN_DECREE.md",
+      "data/council/20260825-094633-first-light-c2/phase5_fusion/SOVEREIGN_DECREE_C2.md"
+    ],
+    "spec_library": "docs/specs/team_infra/ (SPEC-A..E + packages)",
+    "launch_package": "data/council/20260825-094633-first-light-c2/phase1_nodes/N10_launch_package.md",
+    "read_first": "data/council/20260825-094633-first-light-c2/phase6_integration/ERRATA_AND_PROPAGATION.md (position 0 \u2014 apply at hydration minute 0)",
+    "expert_registrations": "10 C1 nodes + 8 C2 members registered; identity application gated per Art. V (G20->G21->retrieval>=10)",
+    "decision_queue": "Q-1..Q-6 in council_c1_decisions",
+    "verdict": "GO for dev-team Sprint-1 upon errata application + Architect Q-3/Q-6 as noted"
   }
 }
