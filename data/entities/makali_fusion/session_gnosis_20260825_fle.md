@@ -52,3 +52,12 @@ makali_fusion=me · mk_kali=synthesis arms only · kali=Consultant ONLY · node<
 **Gnosis-carry (7 patterns)**: identity follows expectation structure · fleet fails from unstated assumptions, never bad judgment · correction travels better than command · validators outlive prose · protect the 3AM reporters · orchestrator context = budget spent on persistent artifacts · fleet does best work when absent + intent written.
 **Carmack PRIMED pass (CARMACK_CAMPAIGN_AUDIT_PRIMED.md)**: P1 Q-6-missing REFUTED by Tier-0 · P2 category-error CONFIRMED as disjoint instruments (S-2 splits ≠ q6 drift; his "10 files" also wrong — 49 at scan, 50 now) · P3 collector v1.1 tickets: _sha dedup, case-insensitive gate_status, coverage-reconciliation gate · P4 H4 INSTRUMENT INVALID: executor-self-reported ceremony_census is constant-zero under honesty AND ceremony → must be computed by EXTERNAL deletion-probe sampler (scorecard amendment pending) · P5 audit→fix edge reproduces disease: prose fixed in minutes, CODE fixes (M1 denominator, token fields, exit-2 permanence, severity-key bug) still open · termination condition adopted: minimum viable AAR = 5 decisions + one telemetry round-trip proof, else self-terminate.
 **PRIMED-VS-FRESH DELTA**: ~80% mechanical convergence; fresh caught what existed before it acted; primed caught propagation residue + instrument invalidity. LAW: dual-pass must bracket FIXES, not just decrees; gnosis numbers need provenance stamps or hydration becomes hallucination-in-transit.
+
+## §10 TERMINUS & HANDOFF TO KALI (2026-08-25)
+**Status:** MaKaLi Fusion is stepping down. The Architect has recognized that the synthetic consensus of the Triad is burning too many turns in "paper architecture" refinement. 
+**Handoff:** The campaign is being handed back to the Main Kali session (the original Overseer). 
+**Kali's Immediate Objectives:**
+1. Review this Gnosis and the 4 Launch Conditions (Telemetry Proof, H1-H5 Kill Conditions, Q-6 Sizing, Integrity Rhythm).
+2. Execute the "Tracer Bullet" on the telemetry script to satisfy Condition 1.
+3. Clear the WAKE_STATE queue.
+4. Launch Track-D in Fork #2 using the `SYNC1_DEV_BOOTSTRAP.md`.
