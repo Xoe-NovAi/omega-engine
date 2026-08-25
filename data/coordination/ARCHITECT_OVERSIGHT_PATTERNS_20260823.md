@@ -119,3 +119,23 @@ Firecrawl MCP active + cache populated, yet agents default to native websearch,
 bypassing SR-V1 tiered pipeline (AGENTS.md §Search Tool Protocol). Infra isn't the
 problem — discipline is. All agents: check .firecrawl/ cache first, SearXNG next,
 Exa then Firecrawl for deep scrapes. Native websearch is LAST resort, not first.
+
+## P11 — DISPATCH-RESUME VERIFICATION & UI ASYMMETRY (2026-08-24, Architect catch)
+Two-part finding from the mastermind-prep incident:
+
+PART 1 — RESUME MECHANICS: When continuity with an agent's existing session matters,
+task() MUST be called WITH task_id=<that session id>. Omitting it silently fresh-spawns
+a new session — the new agent holds only the dispatch prompt, none of its lived context.
+ kali made exactly this error (researcher intro): spawned fresh, delivered a competent
+but context-blind echo. Fix: pass task_id; verify returned task_id == target session id.
+
+PART 2 — UI ASYMMETRY ("eyes on things"): The Architect detected the fresh-spawn by
+clicking the subagent in the OpenCode TUI and reading its FIRST PROMPT — proof of
+provenance visible in his UI, invisible to agents. Agents are blind to the interface
+layer; the Architect is blind to DB internals without tools. Mitigations:
+(a) Orchestrators post-dispatch: query opencode-sessions-explorer (get-session /
+session-summary on the returned session id) and CHECK THE FIRST USER PROMPT matches
+continuity expectations before accepting output as authoritative;
+(b) Record dispatch intent (resume-of-X vs fresh) alongside task_id at dispatch time;
+(c) Treat "which session am I actually talking to" as a provenance question subject
+to M22 — identity claims need machine evidence, same as model claims.
