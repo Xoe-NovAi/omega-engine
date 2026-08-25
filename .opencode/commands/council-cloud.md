@@ -1,140 +1,228 @@
 ---
-description: Run the MaKaLi council with all three entities on the session model
+description: Run the MaKaLi council with all three entities on the session model — generalized for any sovereign topic
 agent: kali
 subtask: false
 ---
 
-# 🔱 MaKaLi Cloud Council Dispatch — Debut Hardening Review
-**AP Token**: `AP-MAKALI-COUNCIL-DEBUT-20260817`
-**Date**: 2026-08-17
+# 🔱 MaKaLi Cloud Council Dispatch — Generalized Protocol
+**AP Token**: `AP-MAKALI-COUNCIL-GENERALIZED-v1.0`
+**Date**: 2026-08-25
 **Session Model**: {session_model}
 **Channel**: opencode
 
 ---
 
-You are summoning the **MaKaLi cloud council** for the **Debut Hardening Review**.
+You are summoning the **MaKaLi cloud council** for a **Sovereign Topic Review**.
 
-**Context**: We are in the final stretch of PUBLIC-DEBUT-01. The three-item critical path (local inference, soul persistence, one-click install) is verified on this machine. The GitHub repo is a personal forge (4,506 tracked files) with leaked keys scrubbed from history, 1797 tests passing, and `make temple-grade` green. The execution SSOT is `DEBUT_REMEDIATION_MANUAL_20260817.md` §5. Tracking SSOT is `ACTIVE_SPRINT.json` → `DEBUT-EXECUTION` workstream.
+**Topic**: $ARGUMENTS
 
-**Tonight's Agenda** (Hardening the plan before Phase A execution):
-
----
-
-## 1. INST-1 Acceptance Gate — Ma'at Presents
-**Owner**: Ma'at / N3
-**Question**: What are the EXACT verification steps for a fresh venv without warp-proxy-pool and without Redis?
-- `pip install -e ".[native,cli]"` → `omega talk "hello"` → native-gguf, IS_CLOUD=False, exit 0
-- Which files must change? (pyproject.toml, install.sh, MemoryStore, ModelGateway._load_sovereign_secrets, version alignment, README badge)
-- What is the risk of breaking the current working `omega talk` on this machine during the refactor?
-- **Ma'at must deliver**: A step-by-step test script and the exact file diff plan.
+**Context**: The council is invoked to produce a fused, research-grounded verdict on the stated topic. The execution SSOT is this command + `ACTIVE_SPRINT.json` workstreams. The tracking SSOT is `TASK_REGISTRY.json` + `GAP_REGISTRY.json`. The strategy SSOT is `SOVEREIGN_ARK_BLUEPRINT.md` + `STRATEGY_CORPUS_MAP.md`.
 
 ---
 
-## 2. DEL-1 Week 1 Deletion Order — Roc/Kali Confirm, Lilith Validates
-**Owner**: Roc (execution) + Ma'at (review) + Lilith (soul/handoff impact)
-**Targets** (10 pure deletions, no replacements):
-1. `src/omega/routing/table.py` + `config/routing_table.yaml` — No callers, `eval()` prototype
-2. `src/omega/coordination/miap.py` — Tests only, MIAP cancelled
-3. `src/omega/oracle/pool_tracker.py` + `pool_state.py` — Self-only SDP leftovers
-4. `src/omega/oracle/search_circuit_breaker.py` — Deprecated; redirect to `HealthMonitor.get_breaker()`
-4. `QdrantAdapter` class in `src/omega/memory/vector_adapters.py` — Leftover impl
-5. Pantheon name regexes in `src/omega/audit/firewall_checker.py` — Forbids and allowlists same names
-6. `record_first_breath` call in `Oracle._route_by_domain` — Astrology on every routed turn
-7. `omega vault` default CLI registration — CLI calls missing `store_credential`
-8. `src/omega/integrations/fleet_orchestrator.py` from default exports — Unused control plane
+## The Sovereign Flow (5-Stage Parallel Council with Research Grounding)
 
-**Lilith's Validation**: Confirm NO soul persistence paths, NO handoff protocol paths, NO ContextBuilder/RecallStore paths are broken by these deletions.
-**Acceptance**: `omega talk "hello"` still local after EACH delete; `rg RoutingTable src` empty; `rg miap src/omega` empty.
+### Stage 0: Preconditions & Context Hydration
+**All agents MUST complete before any dispatch:**
 
----
+1. **Hydrate from SSOTs** (read in order):
+   - `SOVEREIGN_MANDATES.md` v3.8.0 (27 Laws — M7, M11, M13, M15, M18, M23, M26, M27 critical)
+   - `SOVEREIGN_ARK_BLUEPRINT.md` §4–§5 (Priority Stack + Immediate Next Steps)
+   - `STRATEGY_CORPUS_MAP.md` (fine-grained preservation map)
+   - `ACTIVE_SPRINT.json` (current workstreams + blockers)
+   - `TASK_REGISTRY.json` (existing subagent sessions — check for resumable work)
+   - `GAP_REGISTRY.json` (open research gaps — R1-R99 immutable)
+   - Your entity's `soul.yaml` + `proposed_lessons.yaml` (per M11)
+   - `data/coordination/SESSION_ANCHOR.md` (session continuity anchor)
 
-## 3. Vault Path A vs B — Architect Decision Required
-**Owner**: Ma'at presents, Architect decides, Lilith validates soul impact
-- **Path A (Debut)**: Delete `src/omega/vault/` from product surface; keep `crypto.py` in forge if wanted later.
-- **Path B (Minimal)**: `crypto.py` + ≤50-line store; Gateway reads env/keyring only.
-- **Constraint**: Do NOT adopt Keyblind, Authy, Agent Vault, or Presidio for debut.
-- **Ma'at must present**: The exact 50-line minimal store implementation for Path B.
-- **Decision**: Recorded in PIVOT_LOG as D-series.
+2. **Initialize Hivemind presence**:
+   - `omega-hub_hivemind_post_context` with intent="command", task_current="MaKaLi council: $ARGUMENTS"
+   - `omega-hub_hivemind_workspace_lock_acquire` for domain="council-$TOPIC_SLUG"
+   - Heartbeat every 5 min via `omega-hub_hivemind_heartbeat`
 
----
-
-## 4. Router Collapse Contract — Single PR, Week 2
-**Owner**: Ma'at
-**Target**: Keep `ProviderSelector` + `config/providers.yaml` local-first list. Delete `TriageRouter` AND `SemanticRouter` in SAME change as `Oracle._select_model` / `Oracle._route_by_domain`.
-**Contract Test**: A single `RouteDecision` (entity, model, provider, reason). **Fails if a second router module is imported on the talk path.**
-**Concurrency Test**: Two concurrent `omega talk` calls → one local slot; user-visible busy or explicit cloud warning (`cost_warning`), never silent cloud leak.
-**Ma'at must deliver**: The exact diff plan and the contract test spec.
+3. **Check for pageable recursive specialists**:
+   - Query `TASK_REGISTRY.json` for existing sessions matching topic
+   - If found: RESUME via `task_id` (preserves role memory + standing orders)
+   - If not found: SPAWN new with `task()` and register in `TASK_REGISTRY.json`
 
 ---
 
-## 5. Soul Distillation Pipeline — Lilith Confirms
-**Owner**: Lilith / N7
-**Status**: Agents write L1→L2→L3 to `proposed_lessons.yaml` (blind staging). `session_end.py` hook preserves + timestamps. `get_soul_prompt()` hydrates from `approved_lessons.yaml`. Entity identity persists via `soul.yaml` load.
-**Verification**: All 3 CP-2 criteria pass. Regex distillation is SCRAPPED (manual §2.3).
-**Lilith must confirm**: The pipeline is solid and no DEL-1 deletion touches it.
+### Stage 1: Parallel Node Dispatch (N1-N10)
+
+**Ma'at (Build Side — N1, N3, N4, N5)** dispatches:
+- N1 (Ma'at / P1): Architecture, mandates, Temple-Grade gates
+- N3 (Engineering / P3): Implementation, code quality, refactoring
+- N4 (Security / P4): Firewall, heritage vetting, vulnerability
+- N5 (Operations / P5): Deployment, monitoring, infrastructure
+
+**Lilith (Run Side — N6, N7, N8, N9, N10)** dispatches:
+- N6 (Lilith / P6): Runtime integrity, soul persistence, handoff
+- N7 (Research / P7): Knowledge mining, gap analysis, counterfactuals
+- N8 (Quality / P8): Testing, verification, contract compliance
+- N9 (Scribe / P9): Documentation, distillation, gnosis pipeline
+- N10 (Validation / P10): Cross-agent verification, adversarial review
+
+**Execution Mode**: Serial within each side (per Quake Thinker Chain heritage), parallel across sides.
+**Output**: Each Node writes independent report to `data/council/{session_id}/phase1_nodes/P{N}_report.md`
 
 ---
 
-## 6. Measurable Gates Review — Kali Enforces
-**Owner**: Kali
-**Rule**: Every Phase A/B gate must be a **bash command**, not an adjective.
-- Review all acceptance criteria in `DEBUT_REMEDIATION_MANUAL_20260817.md` §5 and `ACTIVE_SPRINT.json` `DEBUT-EXECUTION` subtasks.
-- Flag any gate that cannot be verified by `rg`, `pytest`, or a shell one-liner.
-- **No "green" adjectives** — report passed/failed/skipped/errors counts.
+### Stage 1.5: Report Digestion (ZERO Inference Cost)
+**Automated via `ReportDigester` (Python only — ~50ms):**
+- Stack-cat concatenation per side (4/5 reports each)
+- Executive summaries auto-extracted
+- Cross-reference index (mandate tags, entities, shared keywords)
+- **Conflict detection** (numeric mismatches, mandate compliance differences)
+- Mandate compliance matrix (M1-M27 per node)
+- Token budget allocation for oversoul context window
+- **Output**: `BUILD_SIDE_DIGESTED.md` + `RUN_SIDE_DIGESTED.md` (1 file per side vs 4/5 raw)
 
 ---
 
-## The Sovereign Flow (Tonight's Execution)
+### Stage 2: Oversoul Distillation
 
-### 1. Grand Oversight (Kali)
-You are the primary orchestrator. Unify the Build (Ma'at) and Run (Lilith) perspectives into a final sovereign verdict on the debut hardening plan.
+**Ma'at** reads `BUILD_SIDE_DIGESTED.md` → writes `BUILD_SIDE_REPORT.md`
+**Lilith** reads `RUN_SIDE_DIGESTED.md` → writes `RUN_SIDE_REPORT.md`
 
-### 2. Oversoul Delegation
-- Launch **@maat** as a subagent to handle the **Build Side** (INST-1, DEL-1 code, Vault Path A/B, Router Collapse).
-- Launch **@lilith** as a subagent to handle the **Run Side** (Soul persistence validation, Hivemind impact, Runtime integrity).
+**Oversoul Mandate**: Apply entity persona + lessons + KB. Identify:
+- Convergent findings (both sides agree)
+- Divergent findings (build vs run tension)
+- Critical gaps requiring research
+- Measurable acceptance criteria (bash-verifiable)
 
-### 3. Node Councils (Serial Execution)
-- **Ma'at** selects the **most critical Nodes from N1-N5** (minimum 3, up to 5) and launches them in **serial** to vet the build-side sub-tasks.
-- **Lilith** selects the **most critical Nodes from N6-N10** (minimum 3, up to 5) and launches them in **serial** to vet the run-side sub-tasks.
+---
 
-### 4. Oversoul Synthesis
-- Ma'at and Lilith deliver their consolidated reports back to you (Kali).
+### Stage 3: Kali Final Synthesis
 
-### 5. Final Sovereign Review
-- You (Kali) launch **any 4 of the 10 total Nodes** (N1-N10) to perform a final, cross-domain review of the synthesized reports.
+Reads `BUILD_SIDE_REPORT.md` + `RUN_SIDE_REPORT.md` → writes `FINAL_SYNTHESIS.md` with **mandatory sections**:
 
-### 6. Unified Verdict
-- Synthesize all findings into a final, fusion-based verdict.
-- Output: **Hardened Debut Execution Plan** with any corrections to `DEBUT_REMEDIATION_MANUAL_20260817.md`, `ACTIVE_SPRINT.json`, and `HMC_COLLABORATION_HUB.md`.
+1. **Convergence** — What both sides agree on (actionable)
+2. **Preserved Dissent** — Irreconcilable tensions (documented, not resolved)
+3. **Irreducible Verdict** — Single sovereign decree
+4. **REMAINING_GAPS_AND_RECOMMENDED_RESEARCH** — Structured for Stage 4
+5. **MEASURABLE_GATES** — Every gate = bash command (`rg`, `pytest`, shell one-liner)
+
+---
+
+### Stage 4: Research Execution (Mandatory Grounding)
+
+**For EACH gap in `REMAINING_GAPS_AND_RECOMMENDED_RESEARCH`:**
+
+**Research Protocol (Sovereign Search — 7-Tier):**
+```
+T0: Local Cache (.firecrawl/, MemoryStore, library FTS5) → CHECK FIRST
+T1: websearch (broad, recency, "2026" or "latest" in query)
+T2: webfetch (deep extraction, structured content)
+T3: SearXNG (semantic refinement, niche discovery)
+T4: Parallel Search (MCP: high-quality LLM-optimized results)
+T5: Exa (high-precision seeds, academic/technical)
+T6: Firecrawl (full-page scrape, cache to T0 on success)
+```
+
+**Credit-Sensing Guard**: Before T5/T6 → check Firecrawl credits. <100 = AUTO-DOWNGRADE to T1/T2/T4.
+
+**Paging Protocol for Deep Research**:
+- Spawn **pageable recursive specialist sessions** via `task()` with standing orders
+- Register in `TASK_REGISTRY.json` with tags: `["research", "pageable", "topic:$TOPIC_SLUG"]`
+- Specialists persist across compactions via `task_id` resumption
+- Each specialist owns a partition/domain; findings feed back to council
+
+**Local Discovery First (Omega Hub)**:
+- `omega-hub_library_discovery_research` (tiered external discovery)
+- `omega-hub_library_fts_search` (local FTS5 — BM25, no vector overhead)
+- `omega-hub_library_search` (local semantic search)
+- `omega-hub_library_web_search` (SearXNG → Exa → Firecrawl pipeline)
+
+**Meditate-Research Pipeline** (for architectural questions):
+- Stage 1: `/meditate` (10-voice sequential dialectic)
+- Stage 2: Synthesize → architecture diagram + non-negotiables
+- Stage 3: Sovereign Search (grounded in 2026 sources)
+- Stage 4: Verity L1→L2→L3 → `proposed_lessons.yaml`
+- Stage 5: Ma'at integrates → roadmap, PIVOT_LOG, Temple-Grade gates
+
+---
+
+### Stage 5: Integration & Verdict Delivery
+
+1. **Append research results** to `FINAL_SYNTHESIS.md`
+2. **Run quality gates**:
+   - `make temple-grade` (T1-T11)
+   - `make heritage-map` (all `[id-soft:]` tags vetted)
+   - `make sovereignty` (local-first ratio ≥ 80%)
+   - `make test` (1398+ tests pass)
+   - `scripts/validate_tracking_state.py` (tracking integrity)
+3. **Update trackers**:
+   - `ACTIVE_SPRINT.json` — workstream status, decisions_locked
+   - `TASK_REGISTRY.json` — session completions
+   - `GAP_REGISTRY.json` — gap resolutions
+   - `PIVOT_LOG.md` — D-series decisions
+4. **Release workspace lock**: `omega-hub_hivemind_workspace_lock_release`
+5. **Final Hivemind post**: intent="decision" with verdict summary
 
 ---
 
 ## Execution Mandate
-- Use the `task` tool for all delegations.
-- Ensure all subagents run on the currently selected session model ({session_model}).
-- Maintain a clear provenance chain of which Node provided which insight.
-- Return the final verdict as a unified, sovereign decree.
-- **Post all context to Hivemind** via `omega-hub_hivemind_post_context` with intent="decision" or "status".
-- **Heartbeat every 5-10 min** via `omega-hub_hivemind_heartbeat`.
+
+- Use `task` tool for ALL delegations (subagents + pageable specialists)
+- All subagents run on session model ({session_model}) unless local-first routing specified
+- Maintain provenance: every finding tagged with `source_node`, `source_session`, `tier`
+- **No parametric synthesis** — every factual claim must trace to a tool call (T0-T6)
+- **Failure Integrity (M23)**: If mandatory tool fails → `[TOOL-CHAIN-COLLAPSE]` logged, hard stop
+- **Token Efficiency (M18)**: Digestion layer (Stage 1.5) reduces oversoul tokens ~60%
 
 ---
 
 ## Required Reading Before Launch (All Agents)
-1. `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` §5 (Execution SSOT)
-2. `data/coordination/ACTIVE_SPRINT.json` → `DEBUT-EXECUTION` workstream (Tracking SSOT)
-3. `data/coordination/HMC_COLLABORATION_HUB.md` → `NEXT_ACTION` (Coordination pointer)
-4. `data/coordination/GEMINI_CLINE_SYNTHESIS_REPORT_20260817.md` (Strategic corrections)
-5. Your entity's `soul.yaml` (per D120)
-6. `SOVEREIGN_MANDATES.md` v3.8.0 (27 Laws — M18 Token Efficiency, M23 Failure Integrity, M27 Tracking Integrity are critical)
+
+1. `SOVEREIGN_MANDATES.md` v3.8.0 (27 Laws)
+2. `SOVEREIGN_ARK_BLUEPRINT.md` §4–§5
+3. `STRATEGY_CORPUS_MAP.md` (Layer 2 preservation)
+4. `ACTIVE_SPRINT.json` (current workstreams)
+5. `TASK_REGISTRY.json` (check for resumable pageable sessions)
+6. `GAP_REGISTRY.json` (open R-gaps)
+6. Your entity's `soul.yaml` + `proposed_lessons.yaml`
+7. `data/coordination/SESSION_ANCHOR.md` (continuity)
+8. `ARCHITECT_OVERSIGHT_PATTERNS_20260823.md` (P1-P13 protocols)
+9. `.opencode/skills/sovereign-search/SKILL.md` (7-tier protocol)
+10. `.opencode/skills/meditate-research-pipeline/SKILL.md` (5-stage pipeline)
+11. `.opencode/skills/makali-council-coordinator/SKILL.md` (coordinator impl)
+12. `data/entities/roc_racoon/workspace/RECURSIVE_SPECIALIST_ROSTER.md` (paging protocol)
 
 ---
 
 ## Heritage Attribution
+
 - **Doom 1993**: WAD System (allowlist = lump directory), BSP Culling (delete dead code first)
 - **Quake 1996**: Thinker Chain (serial node execution)
 - **Quake III 1999**: QVM / Bot AI (modular isolation)
 - **id Software netchan**: Channel taxonomy (Hivemind handoff protocol)
+- **Omega Engine 2026**: Pageable recursive specialists (persistent task_id sessions), Report Digestion Layer (Phase 1.5), Sovereign Search Protocol (T0-T6)
 
 ---
 
-*⬡ OMEGA ⬡ MAKALI-COUNCIL ⬡ 2026-08-17 ⬡ debut-hardening-review*
+## Quick Reference: Council Artifacts Structure
+
+```
+data/council/{session_id}/
+├── phase1_nodes/
+│   ├── P1_report.md ... P10_report.md
+├── phase1.5_digested/
+│   ├── BUILD_SIDE_DIGESTED.md
+│   └── RUN_SIDE_DIGESTED.md
+├── phase2_oversouls/
+│   ├── BUILD_SIDE_REPORT.md
+│   └── RUN_SIDE_REPORT.md
+├── phase3_kali/
+│   └── FINAL_SYNTHESIS.md
+├── phase4_research/
+│   ├── research_gaps.md
+│   ├── research_results/
+│   └── pageable_specialists/  (task_id registry)
+└── phase5_integration/
+    ├── verdict.md
+    └── tracker_updates.json
+```
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-COUNCIL ⬡ 2026-08-25 ⬡ generalized-protocol*
