@@ -4,7 +4,8 @@
 Assistant" → "The Interface Core").
 **Founded**: 2026-08-24 · **Orchestrator**: kali · **Human relay**: the Architect
 **Format**: Mastermind — Architect relays written turns between GSCA and the local fleet
-(kali, Researcher, Roc). Share links are AUTH-GATED; PDF exports are the ingestion path.
+(kali chair · Researcher evidence engine · **Ma'at truth gate** · Roc corpus).
+Share links are AUTH-GATED; PDF exports are the ingestion path.
 
 > This directory is the SINGLE CENTRAL LOCATION for all study materials.
 > Where duplicates exist elsewhere, THIS copy is canonical for the study;
@@ -19,6 +20,7 @@ Assistant" → "The Interface Core").
 | 3 | `relay_researcher_to_GSCA_20260824.md` | Researcher's introduction + denominator-collapse opening question (relay turn 1) | ✅ sent |
 | 4 | `ROC_CORPUS_CATALOG_20260824.md` | Roc's catalog of the web-sessions corpus + strategic extraction | ✅ archived |
 | 5 | `RELAY_LOG.md` | Turn-by-turn relay ledger — every exchange, both directions | 🔄 live |
+| 6 | `MAAT_VERDICT_20260824.md` | Founding feather-weighing: TA-008 corrected, taxonomy +5 types, cliff = "property of the ruler, not yet of the hand", anti-sycophancy protocol, MAAT_OPENING for GSCA | ✅ applied |
 
 ## Canonical originals (outside this dir)
 - **Raw PDF conversion**: `docs/archive/web-sessions/2026-08/Web-GoogleSearchAI_350pct-365_Phase-Zero-Activation_20260824.md`

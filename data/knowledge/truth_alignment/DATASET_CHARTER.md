@@ -60,3 +60,28 @@ Any instance of:
 - Feeds FROM: M22 (provenance), M17 (cognitive integrity), P-series oversight, FP registry
 - Feeds INTO: Skeptical Verifier design (cliff compensation), ctxNN context-at-write telemetry, Wave-2 dispatch doctrine, PUBLIC-DEBUT-01 community positioning ("auditable AI artifacts")
 - Distinct from soul pipeline: soul = entity character evolution; TA dataset = episodic truth-event evidence corpus
+
+## AMENDMENT 1 (2026-08-24 — Ma'at founding verdict, FEATHER-GATE)
+Taxonomy extended (failure-adjacent only was blind spot):
+- `SYCOPHANCY-OBSERVED` — rate requires counting failures, not just resists
+- `SILENT-ABSORPTION` — negative control for CORRECTION-OF-RECORD
+- `FALSE-CATCH` — spurious correction overturning a true claim
+- `PROVENANCE-MISMATCH` — claimed-vs-actual model/provider (M22 data gets a type)
+- `BASE-RATE` — routine checks where claims were simply correct (denominator control)
+
+Schema addition: every record gains `"verified_by"` — records written by participants
+with stakes in their own narratives require independent verification.
+
+Evidence standard (Ma'at bar): pre-registered predictions timestamped before tests;
+double-coding sample for inter-rater agreement; negative controls; n>1 sessions/models/
+humans for any CLIFF-INSTANCE generalization. Until then the corpus is, honorably,
+**structured anecdote**.
+
+Cliff instrumentation requirement: track absolute meta-miss AND relative ratio as
+SEPARATE series — the 27% is mostly metric artifact (denominator collapse) until
+absolute skill degradation is demonstrated. "Property of the ruler, not yet of the hand."
+
+Anti-sycophancy protocol for relay format: compliments enter truth_events only as
+SYCOPHANCY-OBSERVED instances; verbatim relay both directions (no editorial smoothing);
+periodic assigned-adversary turns; occasional deliberately flat praise-free relays to
+test whether depth survives without validation voltage.
