@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-25T14:07:50.878092+00:00",
+  "updated": "2026-08-25T20:50:45.726288+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -1994,6 +1994,251 @@
         "pageable",
         "domain:validation",
         "express:first-light"
+      ]
+    },
+    {
+      "task_id": "research-gap5-7-jem-20260825-01",
+      "subagent_type": "jem",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "jem",
+      "description": "Stage 4 deep-dive: GAP-5 (task_registry_query tag false-negative), GAP-6 (oracle_summon_local slug authority), GAP-7 (council.yaml consumer audit) \u2014 recon only, deliverable JEM_DEEP_DIVE_GAPS_5_7.md",
+      "status": "completed",
+      "created_at": "2026-08-25T14:27:10.244789+00:00",
+      "last_checkpoint": "2026-08-25T14:27:10.244805+00:00",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "research",
+        "pageable",
+        "topic:first-light-c1"
+      ]
+    },
+    {
+      "task_id": "research-firstlight-gaps14-20260825",
+      "subagent_type": "researcher",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "Stage 4 empirical mechanism testing: GAP-1 plugin autoload dirs, GAP-2 request-time permission enforcement, GAP-3 nested-vs-root config precedence, GAP-4 agent-level instructions[] legacy path",
+      "status": "completed",
+      "created_at": "2026-08-25T14:27:40.088626+00:00",
+      "last_checkpoint": "2026-08-25T14:27:40.088646+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "research",
+        "pageable",
+        "topic:first-light-c1"
+      ]
+    },
+    {
+      "task_id": "express-c2-node1-speca",
+      "subagent_type": "node1",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node1",
+      "description": "Council-2 Build Arm node1: draft SPEC-A (P0 truth-bearing infrastructure) to docs/specs/team_infra/",
+      "status": "completed",
+      "created_at": "2026-08-25T15:23:54.134633+00:00",
+      "last_checkpoint": "2026-08-25T15:23:54.134646+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:speca",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "express-c2-node2-specb",
+      "subagent_type": "node2",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node2",
+      "description": "Council-2 Build Arm node2: draft SPEC-B (P1 mechanism honesty) to docs/specs/team_infra/",
+      "status": "completed",
+      "created_at": "2026-08-25T15:40:10.992711+00:00",
+      "last_checkpoint": "2026-08-25T15:40:10.992728+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:specb",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "express-c2-node3-specc",
+      "subagent_type": "node3",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node3",
+      "description": "Council-2 Build Arm node3: draft SPEC-C (P1 security-posture records) to docs/specs/team_infra/",
+      "status": "completed",
+      "created_at": "2026-08-25T15:52:10.199200+00:00",
+      "last_checkpoint": "2026-08-25T15:52:10.199211+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:specc",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "infra-specd-20260825-01",
+      "subagent_type": "node6",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "node6",
+      "description": "SPEC-D P2 hygiene spec drafted (docs/specs/team_infra/SPEC-D-p2-hygiene.md)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T15:59:48.840629+00:00",
+      "last_checkpoint": "2026-08-25T15:59:48.840640+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:spec-d",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "infra-spece-20260825-01",
+      "subagent_type": "node7",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "node7",
+      "description": "SPEC-E AGENTS.md reconstruction spec drafted (docs/specs/team_infra/SPEC-E-agents-md-reconstruction.md)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T15:59:50.189865+00:00",
+      "last_checkpoint": "2026-08-25T15:59:50.189877+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:spec-e",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "infra-workpkg-20260825-01",
+      "subagent_type": "node8",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "node8",
+      "description": "Work packages + resources built (N8_work_packages.md, N8_resources.md)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T15:59:51.826976+00:00",
+      "last_checkpoint": "2026-08-25T15:59:51.826989+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:work-packages",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "infra-docplan-20260825-01",
+      "subagent_type": "node9",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "node9",
+      "description": "Doc update plan, dependency-ordered edit list (N9_doc_update_plan.md)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T15:59:53.372304+00:00",
+      "last_checkpoint": "2026-08-25T15:59:53.372323+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:doc-update-plan",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "infra-launch-20260825-01",
+      "subagent_type": "node10",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "node10",
+      "description": "Dev-team launch package skeleton (N10_launch_package.md)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T15:59:54.502916+00:00",
+      "last_checkpoint": "2026-08-25T15:59:54.502927+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:launch-package",
+        "express:first-light-c2"
+      ]
+    },
+    {
+      "task_id": "fle-study-preflight-20260825-verity",
+      "subagent_type": "verity",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "makali_fusion",
+      "description": "Campaign pre-flight compliance audit of FLE strategy docs \u2014 GO verdict with 4 hydration flags",
+      "status": "in_progress",
+      "created_at": "2026-08-25T20:50:42.490785+00:00",
+      "last_checkpoint": "2026-08-25T20:50:42.490802+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "study",
+        "pageable",
+        "fle-study",
+        "preflight"
+      ]
+    },
+    {
+      "task_id": "fle-study-tooling-20260825-maat",
+      "subagent_type": "maat",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "makali_fusion",
+      "description": "Deterministic tooling: hydrate_c2_errata.py (16 ops, 3 TODO-manual) + q6_corruption_dryrun.py (131 findings)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T20:50:45.421492+00:00",
+      "last_checkpoint": "2026-08-25T20:50:45.421509+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "study",
+        "pageable",
+        "fle-study",
+        "tooling"
+      ]
+    },
+    {
+      "task_id": "fle-study-mining-20260825-researcher",
+      "subagent_type": "researcher",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "makali_fusion",
+      "description": "Phase-1 mechanical mining: FLE_METRICS_BASELINE.md draft v1 \u2014 tree, tokenomics, failure census, compression anomaly",
+      "status": "in_progress",
+      "created_at": "2026-08-25T20:50:45.726205+00:00",
+      "last_checkpoint": "2026-08-25T20:50:45.726225+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "study",
+        "pageable",
+        "fle-study",
+        "mining"
       ]
     }
   ]
