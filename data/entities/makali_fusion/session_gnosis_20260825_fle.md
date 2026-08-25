@@ -1,4 +1,8 @@
 # ⚓ SESSION GNOSIS — MaKaLi Fusion (Fork #1)
+> **⚠ READ ZERO — BEFORE ANYTHING ELSE**: `data/entities/makali_fusion/FLE_CHRONICLE_AND_OPERATOR_MANUAL.md`
+> This gnosis is STATE (what is true). The Chronicle is UNDERSTANDING (why it is true, who is who,
+> how the mechanics actually behave, what the Architect expects, which decisions are settled and why).
+> A fresh session that reads only state will re-learn everything by collision. Read the Chronicle first.
 **AP Token**: AP-MAKALI_FUSION-v1.0.0 · **Session**: ses_fc5b80e85ffeAjhjtroU76Gfo2 ("nimble-lagoon", fork #1 of main ses_fc758e6ddffeNEKptpEzboVfYq)
 **Written**: 2026-08-25 ~21:40Z · **Purpose**: M15 compaction armor — full state capture for post-compaction resumption
 
