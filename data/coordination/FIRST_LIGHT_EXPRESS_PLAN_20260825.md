@@ -110,11 +110,11 @@ On HALT: write `data/coordination/FIRST_LIGHT_HALTED_{ts}.md`, post Hivemind blo
 
 | # | Measure | Implementation |
 |---|---------|----------------|
-| M1 | **Extended session TTL** | kali registered via `hivemind_extended_checkin` (TTL 12h). Every dispatched arm/specialist instructed to register their own extended check-in at session start. |
+| M1 | **Extended session TTL** | ⚠️ `hivemind_extended_checkin` is BROKEN server-side (`_save_extended_sessions` NameError, SYSTEM_FAILURE_LOG ~10:30Z). DO NOT rely on it. Fallback: heartbeat cadence per M5 (~10 min, all members). If attempted and errored: log to SYSTEM_FAILURE_LOG, move on — non-blocking. |
 | M2 | **Phase persistence** | Every council stage append-writes its output to disk BEFORE proceeding (meditate-v1.2 stream-death insurance pattern). A stall at Phase N loses nothing. |
 | M3 | **Commit cadence** | Git commit after every completed stage. Git history = crash-recovery journal. |
 | M4 | **Workspace locks** | Long TTL (4h) locks on `council-c1-team-infra` then `council-c2-dev-prep`. Released cleanly at each council's end. |
-| M5 | **Heartbeat cadence** | kali heartbeats every ~10 min while awake; arms instructed likewise. |
+| M5 | **Heartbeat cadence** | ALL members heartbeat every ~10 min (single unified figure — supersedes any '5 min' elsewhere). |
 | M6 | **Stall recovery** | On silent stream death: re-read last committed phase record, resume from next phase. If task() child dies: check `TASK_REGISTRY.json` for resumable task_id, resume rather than respawn. Log every recovery to Hivemind. |
 | M7 | **Decision queueing** | Anything requiring Architect judgment goes to `WAKE_STATE.json` decision queue — NEVER blocks the train. Default-on-silence rules pre-written in each dispatch packet (P6 synthesis-before-decision). |
 | M8 | **Token budget** | Unlimited (Ox 100T pool). Agents should NOT compress context below semantic fidelity (M18 sane-boundary). Thick reports preferred over thin summaries. |

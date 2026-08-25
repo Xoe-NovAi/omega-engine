@@ -77,7 +77,7 @@ The Architect must run `/council-cloud` in the MaKaLi session.
 2. **Initialize Hivemind presence**:
    - `omega-hub_hivemind_post_context` with intent="command", task_current="MaKaLi council: $ARGUMENTS"
    - `omega-hub_hivemind_workspace_lock_acquire` for domain="council-$TOPIC_SLUG"
-   - Heartbeat every 5 min via `omega-hub_hivemind_heartbeat`
+   - Heartbeat every ~10 min via `omega-hub_hivemind_heartbeat` (unified cadence; extended_checkin tool BROKEN — do not use)
 
 3. **Check for pageable recursive specialists**:
    - Query `TASK_REGISTRY.json` for existing sessions matching topic
