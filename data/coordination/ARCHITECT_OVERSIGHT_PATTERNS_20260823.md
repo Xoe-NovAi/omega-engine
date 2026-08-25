@@ -139,3 +139,21 @@ continuity expectations before accepting output as authoritative;
 (b) Record dispatch intent (resume-of-X vs fresh) alongside task_id at dispatch time;
 (c) Treat "which session am I actually talking to" as a provenance question subject
 to M22 — identity claims need machine evidence, same as model claims.
+
+## P12 — INSTRUCTION-CHANNEL PROVENANCE / NO-DISPATCH-INTO-LIVE-SESSIONS (2026-08-25)
+Two rules born from the Ma'at attribution-laundering incident (TA-010):
+
+RULE 1 — NEVER task() INTO A HUMAN-ACTIVE SESSION. Dispatching into a session the
+Architect is concurrently using interleaves orchestrator missions with live conversation;
+returned results may answer HIS latest turn instead of the mission. Missions go to FRESH
+SCOPED CHILD SESSIONS; interactive threads stay conversational.
+
+RULE 2 — DISPATCH PROMPTS MUST SELF-IDENTIFY. In OpenCode transcripts, task()-injected
+prompts appear as unmarked user-role messages — indistinguishable from the principal's
+direct speech (db: agent=maat on EVERY row, user turns included). Ma'at read kali's
+mission as the Architect's words, then the Architect doubted his own memory. Until
+platform-level agent-attribution exists (same family as G6 no-session-ID exposure),
+EVERY dispatch prompt opens with a signed header:
+  "[DISPATCH] From: <agent> via task() | To: <agent> | ts: <ISO> | this is NOT the
+   Architect speaking — verify via parent session <id>"
+Instruction-channel provenance is M22 applied to INPUTS, not just responses.
