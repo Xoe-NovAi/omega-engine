@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-25T12:10:28Z",
+  "updated": "2026-08-25T23:44:39Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -67,6 +67,18 @@
     {
       "item": "Council 2 decree review + dev team launch GO",
       "priority": "P0 \u2014 on wake"
+    },
+    {
+      "item": "soul_promote review-gate: grokster has 8 staged meditation lessons awaiting promotion (python scripts/soul_promote.py grokster --all --apply --confirm)",
+      "priority": "P2"
+    },
+    {
+      "item": "Hook residual risks ticketed: terminal SIGKILL staleness + long-lived-TUI codex staleness (recommend timer or session.idle plugin wiring)",
+      "priority": "P2"
+    },
+    {
+      "item": "entities.yaml 214-line uncommitted diff review (carried from FLE handoff \u00a77 \u2014 still pending)",
+      "priority": "P1"
     }
   ],
   "first_light_express": {

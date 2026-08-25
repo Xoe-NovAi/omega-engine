@@ -1301,9 +1301,9 @@
       "channel": "cline",
       "entity": "omega-engine",
       "description": "Debut roadmap consolidation handoff written to disk for Kali \u2014 unified plan, G1-G4 gap closure, 4 decisions pending",
-      "status": "in_progress",
+      "status": "superseded",
       "created_at": "2026-08-17T19:02:40.894020+00:00",
-      "last_checkpoint": "2026-08-17T19:02:40.894044+00:00",
+      "last_checkpoint": "2026-08-25T23:44:20Z",
       "resumption_count": 0,
       "context_verified": false,
       "tags": [
@@ -1312,7 +1312,8 @@
         "handoff",
         "pub-1",
         "inst-1"
-      ]
+      ],
+      "superseded_by": "FLE campaign + context-infra remediation sprint (2026-08-25); debut consolidation absorbed into PUBLIC-DEBUT-01 closeout"
     },
     {
       "task_id": "coordination-q1-q7-insights-20260818-01",
