@@ -25,12 +25,24 @@ from pathlib import Path
 
 import anyio
 
+LOG_DIR = Path(__file__).parent.parent / "logs"
+
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s] [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%dT%H:%M:%SZ",
     stream=sys.stderr,
 )
+# Persistent file log [2026-08-25 jem fix]: stderr is captured by wrapper.sh
+# but lost when the terminal closes. Future silence becomes diagnosable.
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    _fh = logging.FileHandler(LOG_DIR / "session_end.log")
+    _fh.setFormatter(logging.Formatter(
+        "[%(asctime)s] [%(levelname)s] %(message)s", datefmt="%Y-%m-%dT%H:%M:%SZ"))
+    logging.getLogger().addHandler(_fh)
+except OSError as e:  # never crash the hook over a log file (M23)
+    logging.getLogger().warning(f"File logging unavailable: {e}")
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -85,17 +97,18 @@ async def _regenerate_codex() -> None:
         return
     try:
         def _run():
-            result = subprocess.run(
+            return subprocess.run(
                 [sys.executable, str(CODEX_CAT_PATH)],
                 capture_output=True, text=True, timeout=30, cwd=str(PROJECT_ROOT),
             )
-            return result.returncode
 
-        returncode = await anyio.to_thread.run_sync(_run)
-        if returncode == 0:
+        result = await anyio.to_thread.run_sync(_run)
+        if result.returncode == 0:
             logger.info("[Codex] OMEGA_CODEX.md refreshed")
         else:
-            logger.warning(f"[Codex] Refresh failed (exit {returncode})")
+            # [2026-08-25 jem fix] surface WHY it failed, not just that it did
+            tail = (result.stderr or result.stdout or "")[-500:].strip()
+            logger.warning(f"[Codex] Refresh failed (exit {result.returncode}): {tail}")
     except Exception as e:
         logger.warning(f"[Codex] Refresh error: {e}")
 

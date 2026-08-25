@@ -30,9 +30,13 @@ VENV_PYTHON="${PROJECT_ROOT}/.venv/bin/python"
 DISTILL_TIMEOUT="${DISTILL_TIMEOUT:-30}"  # seconds
 SESSION_CACHE="${PROJECT_ROOT}/.opencode/.last_session.json"
 
-# Logging
+# Logging — persistent (stderr AND .opencode/logs/wrapper.log) so post-exit
+# failures are diagnosable after the terminal closes [2026-08-25 jem fix]
+LOG_DIR="${PROJECT_ROOT}/.opencode/logs"
+mkdir -p "${LOG_DIR}" 2>/dev/null || true
+LOG_FILE="${LOG_DIR}/wrapper.log"
 log() {
-    echo "[wrapper] $*" >&2
+    echo "[$(date '+%Y-%m-%dT%H:%M:%S%z')] [wrapper] $*" | tee -a "${LOG_FILE}" >&2
 }
 
 log "Starting OpenCode wrapper (pid $$)"
@@ -77,9 +81,12 @@ if command -v jq &>/dev/null; then
 fi
 
 # Run OpenCode — blocks until ANY exit
+# [2026-08-25 jem fix] `set -e` + bare invocation killed this wrapper BEFORE
+# distillation whenever opencode exited non-zero (crash / SIGINT / kill).
+# Every such session silently skipped codex refresh. Capture the code instead.
+OPENCODE_EXIT_CODE=0
 log "Executing: ${OPENCODE_BIN} $*"
-"${OPENCODE_BIN}" "$@"
-OPENCODE_EXIT_CODE=$?
+"${OPENCODE_BIN}" "$@" || OPENCODE_EXIT_CODE=$?
 
 log "OpenCode exited with code ${OPENCODE_EXIT_CODE}"
 
