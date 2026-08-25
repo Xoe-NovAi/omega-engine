@@ -489,3 +489,8 @@ Score: **12 convergences, 3 material divergences (distro, RAPL, rustnet depth),
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_synthesis ⬡ DIVE2-INDEPENDENT-COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

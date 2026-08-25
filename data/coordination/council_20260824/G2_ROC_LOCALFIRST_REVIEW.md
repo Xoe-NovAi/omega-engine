@@ -156,3 +156,8 @@ Sweep of all eleven DEL-1 targets + both routers + vault tree for `[id-soft:]` t
 | **Earliest-catching gate** | CI import-smoke (`from omega.cli.oracle_cli import app`) — catches the vault TypeError at import time, pre-install. Within the ratified plan: Maat's install.sh `omega --help` tripwire (diff item 6). Adopt both. |
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ G2-LOCALFIRST ⬡ REBASED-COUNCIL ⬡ PLAN-SOUND-ASSERTIONS-BROKEN ⬡ 2026-08-24*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

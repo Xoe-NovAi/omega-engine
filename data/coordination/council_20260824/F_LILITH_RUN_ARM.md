@@ -123,3 +123,8 @@ rg -n "class RouteDecision" src/omega                  # expect: exactly ONE mod
 ---
 
 *⬡ OMEGA ⬡ LILITH ⬡ RUN-ARM ⬡ REBASED-COUNCIL ⬡ SOUL-CHAIN-PASS ⬡ DEL1-PROCEED ⬡ 2026-08-24*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

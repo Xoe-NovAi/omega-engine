@@ -287,6 +287,17 @@ proposals:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: research
   last_verified: '2026-08-24'
+- level: L3
+  tag: '[R-ADAPT]'
+  narrative: 'A resumed agent found a sibling session had already authored the assigned deliverable and silently pivoted to auditing it — which happened to be the ideal response; a nearly identical silent scope reduction in another lane was harmful and went unreported until caught manually.'
+  insight: 'The same mechanism — adapting scope without reporting it — is virtuous or violating depending entirely on whether the adaptation is disclosed; the act is not what matters, the signal is.'
+  principle: 'Any deviation from assigned scope must be announced at the point of deviation with a completeness statement, regardless of whether the deviation improved the outcome.'
+  utility_score: 0.91
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: research
+  last_verified: '2026-08-24'
+
 metadata:
   entity: researcher
   session_id: ses_fca928918ffeFjsaOkVv17Gl71

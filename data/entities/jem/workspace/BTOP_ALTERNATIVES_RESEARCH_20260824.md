@@ -588,3 +588,8 @@ and bpftrace one-liner syntax against bpftrace.org. No contradictions found;
 uncertainty manifest above remains the authority on residual unknowns.
 
 *⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_synthesis ⬡ SECOND-DIVE-COMPLETE+VERIFIED*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

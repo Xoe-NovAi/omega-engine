@@ -184,3 +184,8 @@ Honorable mention (outside my 5 but on record): P0-1b residual — 3 real-format
 **Top-3 risks**: (1) false-green prose-grep assertions may exist beyond the one found — sweep owned by Roc, P0; (2) fix2/R1 split under time pressure — single-commit rule + bare-runner import-sweep, owned by Ma'at; (3) search-breaker delete-without-redirect by a literal-minded executor — ticket phrased "REDIRECT+DELETE (atomic)", owned by Roc.
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ x-preview-f-free ⬡ opencode ⬡ trc_council_rebased ⬡ ORDERING-ARM-G1 ⬡ 2026-08-24*
+<!-- PROVENANCE-CORRECTED 2026-08-25T03:09:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

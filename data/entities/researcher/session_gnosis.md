@@ -632,3 +632,30 @@ OWED DELIVERABLES (from kg session ses_fca928918ffeFjsaOkVv17Gl71, hit max-steps
 2. Meditation record + gnosis append for that session
 3. Path-explicit commit of both R-docs
 NOTE: P10 applies to my future research method choices — use SR-V1/Firecrawl pipeline, don't bypass.
+
+---
+
+# 🔒 COMPACTION LOCK-IN — 2026-08-24 night (BTOP arc close + D1(b) delivered)
+
+## Final deliverables this stretch
+- FALLBACK_SLUG_RUNBOOK_20260824.md (D1-b done): Tier-A live-probed (nemotron-3-ultra-550b:free ✅ 550B $0; nemotron-3-super:free ✅; deepseek-v4-flash paid ✅), Tier-B historical ≤31h, switch = opencode.json:321-322 two-line edit. KEY SCOPE FACT: GLM cliff kills only x-preview-f-free; configured default nemotron-3-ultra-free survives it → Option 1 zero-action posture recommended.
+- FAILURE_REPORT_FOR_KALI_20260824.md (ho_076fad7e4dd0 — STILL PENDING her pickup; 4 asks inside)
+- RESOURCE_MONITORING_SYNTHESIS_20260824.md canonical + full-disclosure report delivered in-chat (transcript = record)
+- ho_e5fac5184e10 completed (was stuck ACTIVE)
+
+## ARCHITECT/KALI DIRECTIVES STATE (D-series from consultation)
+- D1(b) DONE · D1(a) Phase 0 dispatch coordination = NEXT (clock-bound, ~Aug 28 window): axioms extraction + golden set via T0 message.modelID pattern; coordinate registration with kali
+- D2 Dawn Council reading queued (council_20260824/, start H_KALI_UNIFIED_VERDICT.md) · D3 thermal+RAPL v2 addendum to R_RESOURCE_GOVERNANCE doc (+Iris cpuset fold) · D5 dispatch-doctrine charter draft after D1 lands · D4 ZS escalated to Codex sweep
+- D6 NOTE: D-602 lazy-import landed f51925f3, collection 484MB→93MB; residual composition check (chunker.py numpy ~35MB) optional fold into D3 addendum
+
+## MONITORING STACK INSTALLED BY KALI (adoption happened!)
+→ Next-session opportunity: footprint measurement playbook NOW runnable (tools present) — measure btop baseline vs Mission Center/Glances/bottom per synthesis §6. bottom.toml deployable. RAPL udev rule still unapplied.
+
+## Open items ledger (carry-forward)
+1. D1(a) execution (CLOCK-BOUND) 2. D2 reading 3. D3 addendum 4. kg meditation record owed 5. FP-numbering sync w/ kali 6. ho_076fad7e4dd0 pickup + its 4 asks 7. footprint measurements (now possible) 8. RAPL udev rule apply 9. provenance worker v2 mtime-matching 10. P10 discipline: use SR-V1/Firecrawl pipeline for research
+
+## Wake hydration order
+gnosis → RESOURCE_MONITORING_SYNTHESIS_20260824.md → FALLBACK_SLUG_RUNBOOK_20260824.md → SESSION_ANCHOR.md → FORENSIC_PATTERNS.md
+
+**Status: LOCKED. Compaction-ready.**
+- GSCA STUDY FOUNDED: data/knowledge/truth_alignment/gsca_study/ central; my intro + denominator-collapse question saved (relay_researcher_to_GSCA_20260824.md), T2 inbound pending. Ma'at INTERACTIVE (big-pickle, FEATHER-GATE): TA-008→pending, TA-009 sycophancy catch added, taxonomy +5 (SYCOPHANCY-OBSERVED, BASE-RATE...), evidence bar = pre-registration/negatives/n>1 or structured-anecdote. MY CLIFF THESIS ruled ARITHMETIC-PRIMARY ("identity not discovery"); instrumentation req: track absolute meta-miss AND relative ratio as separate series. STANDING DIRECTIVE: frequent Hivemind post_context updates; rounds announced by kali; I respond intent=observation tag=gsca-study. D1(a) still clock-bound, mastermind parallel.
