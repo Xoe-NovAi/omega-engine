@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-24T21:57:48.397472+00:00",
+  "updated": "2026-08-25T14:07:50.878092+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -1765,6 +1765,236 @@
       "resumption_count": 0,
       "context_verified": false,
       "tags": []
+    },
+    {
+      "task_id": "express-c1-runarm-lilith-20260825",
+      "subagent_type": "lilith",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "First Light Express Council 1 RUN ARM \u2014 dispatch N6-N10 nodes serially, digest raw reports, write RUN_SIDE_REPORT.md, page Consultant",
+      "status": "completed",
+      "created_at": "2026-08-25T13:06:12.422933+00:00",
+      "last_checkpoint": "2026-08-25T14:05:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:run-arm-orchestration",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-arm-maat-20260825",
+      "subagent_type": "maat",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Build Arm of First Light Express Council 1 team-infrastructure audit \u2014 serial dispatch of N1-N5 build nodes (S7/S1/S4/S5/S2), digestion, BUILD_SIDE_REPORT",
+      "status": "completed",
+      "created_at": "2026-08-25T13:06:16.004025+00:00",
+      "last_checkpoint": "2026-08-25T13:06:16.004036+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:build-oversoul",
+        "express:first-light",
+        "arm"
+      ]
+    },
+    {
+      "task_id": "express-c1-node1-20260825",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node1",
+      "description": "N1 Infrastructure recon: config-instruction consistency audit (Surface S7)",
+      "status": "completed",
+      "created_at": "2026-08-25T13:06:50.219502+00:00",
+      "last_checkpoint": "2026-08-25T13:45:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:N1-infrastructure",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node6-20260825",
+      "subagent_type": "node6",
+      "launched_by": "makali_fusion",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "N6 Cognition audit of S3: instruction technical mechanics \u2014 agent frontmatter LIVE-vs-decorative fields, instructions-from-files injection, session_model substitution, permission model enforcement",
+      "status": "completed",
+      "created_at": "2026-08-25T13:07:02.289316+00:00",
+      "last_checkpoint": "2026-08-25T13:45:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:cognition",
+        "express:first-light",
+        "report:P6_report.md"
+      ]
+    },
+    {
+      "task_id": "express-c1-node2-20260825",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Council 1 Node N2 \u2014 Persistence: audit tracking architecture STRUCTURE/DURABILITY (ACTIVE_SPRINT.json, TASK_REGISTRY.json, GAP_REGISTRY.json, TRACKING_ARCHITECTURE.md, validator, SESSION_ANCHOR.md, WAKE_STATE.json)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T13:18:49.862814+00:00",
+      "last_checkpoint": "2026-08-25T13:18:49.862830+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:N2-persistence",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node7-20260825",
+      "subagent_type": "lilith",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "N7 Context audit \u2014 S6 documentation organization (docs tree, SSOT maps, archive discipline, doc-llm-validate, M26)",
+      "status": "in_progress",
+      "created_at": "2026-08-25T13:22:43.924770+00:00",
+      "last_checkpoint": "2026-08-25T13:22:43.924780+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:context",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node3-20260825",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node3",
+      "description": "RECON ONLY: Audit .opencode/commands/*.md \u2014 currency, correctness, overlap between council variants, dead commands, $ARGUMENTS handling, cross-check against agents/skills inventories",
+      "status": "in_progress",
+      "created_at": "2026-08-25T13:28:23.568394+00:00",
+      "last_checkpoint": "2026-08-25T13:28:23.568406+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:N3-engineering",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node8-20260825",
+      "subagent_type": "node8",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "N8 Observability \u2014 Surface S1b: tracking DRIFT/status telemetry audit (status drift in practice, validator coverage vs reality, staleness detection, audit-log absence)",
+      "status": "completed",
+      "created_at": "2026-08-25T13:32:31.641329+00:00",
+      "last_checkpoint": "2026-08-25T13:41:14.235Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:observability",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node4-20260825",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node4",
+      "description": "RECON-ONLY audit of Surface S5 (.opencode/skills/*/SKILL.md): frontmatter presence, overlap pairs, staleness, broken references, description accuracy",
+      "status": "in_progress",
+      "created_at": "2026-08-25T13:38:28.464699+00:00",
+      "last_checkpoint": "2026-08-25T13:38:28.464710+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:N4-integration",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node9-20260825",
+      "subagent_type": "node9",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "N9 Orchestration \u2014 S8 coordination protocols audit (Hivemind, handoffs, locks, P1-P13)",
+      "status": "completed",
+      "created_at": "2026-08-25T13:43:05.771521+00:00",
+      "last_checkpoint": "2026-08-25T13:55:00Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:orchestration",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node5-20260825",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "node5",
+      "description": "N5/S2 instruction-content audit: AGENTS.md, OMEGA_CODEX.md, SOVEREIGN_MANDATES.md, SUBAGENT_DISPATCH_PROTOCOL.md, ARCHITECT_OVERSIGHT_PATTERNS",
+      "status": "in_progress",
+      "created_at": "2026-08-25T13:49:07.208784+00:00",
+      "last_checkpoint": "2026-08-25T13:49:07.208797+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:N5-governance",
+        "express:first-light"
+      ]
+    },
+    {
+      "task_id": "express-c1-node10-20260825",
+      "subagent_type": "lilith",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "N10 Validation: cross-surface enforcement-vs-text delta sweep + run-side QA + Delivered-Home registration check",
+      "status": "completed",
+      "created_at": "2026-08-25T13:49:43.042794+00:00",
+      "last_checkpoint": "2026-08-25T14:00:30Z",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert",
+        "pageable",
+        "domain:validation",
+        "express:first-light"
+      ]
     }
   ]
 }
