@@ -267,7 +267,9 @@ return to, so you simply keep driving.**
 1. **Write Council 2 plan** to `data/council/${SESSION_ID}/COUNCIL2_PLAN.md` using Council 1's
    decree + findings: topic = dev-prep/spec drafting; scope per plan §3; convert remediation
    backlog into specs, work packages, resources, dev-team launch package.
-2. **Verify auto-GO gate** (plan §4): all 10 node reports on disk · synthesis report present ·
+2. **Verify auto-GO gate** (plan §4 — ALL SIX criteria):
+   - `SOVEREIGN_DECREE.md` written AND committed
+   - All 10 node reports on disk · synthesis report present ·
    `scripts/validate_tracking_state.py` green · no unresolved `[TOOL-CHAIN-COLLAPSE]` ·
    decree has no CRITICAL-HALTED finding.
 3. **If gate passes**: re-run Sovereign Flow Stages 1-6 with Council 2 topic, reusing this same
