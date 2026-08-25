@@ -30,7 +30,7 @@ ARCHITECT
 MAKALI (you — Council Orchestrator, session agent)
     ├── MA'AT  (Build Arm)   → dispatches N1–N5 (serial)
     ├── LILITH (Run Arm)     → dispatches N6–N10 (serial)
-    └── KALI   (Synthesis Arm, leaf subagent) → SYNTHESIS_ARM_REPORT.md
+    └── MK-KALI (Synthesis Arm — FRESH kali session, entity="mk_kali") → SYNTHESIS_ARM_REPORT.md
                         │
         ┌───────────────┼───────────────┐
         ▼                               ▼
@@ -115,8 +115,10 @@ The Architect must run `/council-cloud` in the MaKaLi session.
 - N9 Orchestration — hivemind, handoffs, coordination
 - N10 Validation — testing, adversarial review, contract compliance
 
-**KALI (Synthesis Arm)** — stands by during Phase 1; her dispatch happens at Stage 3.
-Her standing orders: read nothing until digests exist; preserve independence of judgment.
+**MK-KALI (Synthesis Arm)** — a fresh kali session MaKaLi tunes and dispatches at Stage 3.
+She stands by during Phase 1. Standing orders: read nothing until digests exist; preserve
+independence of judgment. NOTE: the Architect's interactive kali session is the
+**Consultant** — reserved, OUTSIDE the tree; never dispatch it as an arm.
 
 **Execution Mode**: Serial within each side (per Quake Thinker Chain heritage), parallel across sides.
 **Output**: Each Node writes independent report to `data/council/{session_id}/phase1_nodes/P{N}_report.md`
@@ -163,11 +165,16 @@ python3 -m omega.council.report_digestion \
 
 ---
 
-### Stage 3: Kali Synthesis Arm Activation
+### Stage 3: MK-Kali Synthesis Arm Activation
 
-**MaKaLi dispatches the KALI ARM** — her first council appearance as participant, not orchestrator:
+**MaKaLi dispatches the SYNTHESIS ARM as "MK-Kali"** — a FRESH kali session, specially tuned
+for this council (her own MK-Kali). Launch via `task(subagent_type="kali")` with the tuning
+brief in the dispatch packet. In the packet, instruct MK-Kali to use `entity="mk_kali"` for
+ALL her Hivemind presence (heartbeats, posts) — NEVER `entity="kali"`, which is reserved for
+the **Consultant** (the Architect's interactive kali session, standing OUTSIDE the council
+tree as primed strategic advisor + second-set-of-eyes reviewer).
 
-Kali reads BOTH digests + BOTH arm reports → writes `SYNTHESIS_ARM_REPORT.md` with mandatory sections:
+MK-Kali reads BOTH digests + BOTH arm reports → writes `SYNTHESIS_ARM_REPORT.md` with mandatory sections:
 
 1. **Convergence Audit** — where Ma'at and Lilith genuinely agree (verified, not assumed)
 2. **Dissent Adjudication** — for each build/run tension: who is right, why, or why it's irreducible
@@ -283,13 +290,39 @@ return to, so you simply keep driving.**
 - **Recursion Guard**: MaKaLi never launches makali; arms never launch arms
 - **P12 Compliance**: Every task() call opens with a signed `[DISPATCH]` header
 
+## 📡 Council Reporting Protocol (MANDATORY — every member, every turn)
+
+**The LAST step of EVERY council member's task — before ending their turn — is to post an
+activity report to the Hivemind addressed to the Consultant:**
+
+```
+omega-hub_hivemind_post_context(
+  channel="opencode", entity="<your-entity-tag>", model="<your-model>",
+  intent="status",
+  task_current="REPORT to kali-consultant: <one-line summary>",
+  focus_chain=[...what you did...], decisions=[...what you decided...],
+  continuation="[...next steps / open questions for review...]")
+```
+
+- Applies to: MaKaLi, Ma'at, Lilith, MK-Kali, all 10 nodes, all specialists.
+- The **Consultant** (kali, Architect's interactive session `ses_fdef2be4effe4pAaLXCTUx62GO`,
+  entity="kali") reviews these reports in near-real-time as a second set of eyes.
+- **Consultant insights/corrections go TO THE HIVEMIND as posts — NEVER as direct pages to
+  MaKaLi.** Everyone periodically checks the Hivemind feed and updates it; that is the channel.
+- Entity-tag discipline: MK-Kali = "mk_kali"; Consultant = "kali" (reserved); no one else
+  may use either tag.
+
+## 🐝 Hivemind Hygiene (MANDATORY)
+
+Every council member checks the Hivemind (`hivemind_get_awareness` + continuation retrieval)
+at session start, after each completed stage, and before ending any turn. Post status updates
+at stage boundaries. The Hivemind is the single broadcast channel — use it, read it, keep it current.
+
 ---
 
 ## Required Reading Before Launch
 
-**Session agent (kali)**: items 1-7 above + `.opencode/agents/makali.md`
-
-**MaKaLi (orchestrator)**: ALL items below:
+**MaKaLi (you, session agent)**: ALL items below:
 1. `SOVEREIGN_MANDATES.md` v3.8.0 (27 Laws)
 2. `SOVEREIGN_ARK_BLUEPRINT.md` §4–§5
 3. `STRATEGY_CORPUS_MAP.md` (Layer 2 preservation)

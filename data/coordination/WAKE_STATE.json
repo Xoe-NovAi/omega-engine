@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-25T11:02:58Z",
+  "updated": "2026-08-25T12:05:11Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -76,6 +76,9 @@
     "gate": "auto-GO criteria in plan \u00a74; HALT conditions defined",
     "council_2": "Dev-Prep & Spec Drafting (specs, work packages, dev-team launch package)",
     "post_train": "Architect reviews both decrees; dev team launches on explicit GO",
-    "delivered_home_doctrine": "10 nodes launch as pageable expert sessions; deliver reports + registrations home"
+    "delivered_home_doctrine": "10 nodes launch as pageable expert sessions; deliver reports + registrations home",
+    "consultant": "kali @ ses_fdef2be4effe4pAaLXCTUx62GO \u2014 reserved outside tree; receives member reports; posts insights to Hivemind only",
+    "synthesis_arm": "MK-Kali (fresh kali session, entity=mk_kali) dispatched by MaKaLi at Stage 3",
+    "reporting_protocol": "every member pages consultant as last step of turn (plan M11); hivemind hygiene M12"
   }
 }

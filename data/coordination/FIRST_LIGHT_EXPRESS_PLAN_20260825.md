@@ -119,7 +119,10 @@ On HALT: write `data/coordination/FIRST_LIGHT_HALTED_{ts}.md`, post Hivemind blo
 | M7 | **Decision queueing** | Anything requiring Architect judgment goes to `WAKE_STATE.json` decision queue — NEVER blocks the train. Default-on-silence rules pre-written in each dispatch packet (P6 synthesis-before-decision). |
 | M8 | **Token budget** | Unlimited (Ox 100T pool). Agents should NOT compress context below semantic fidelity (M18 sane-boundary). Thick reports preferred over thin summaries. |
 | M9 | **Provenance** | Every finding carries source_arm/source_node/tier tags. Final decrees include full provenance chains. |
-| M10 | **Wake deliverable** | By morning: two decrees + spec library + dev-team launch package + updated trackers + a single consolidated wake briefing at top of SESSION_ANCHOR.md. |
+| M10 | **Wake deliverable** | By end of run: two decrees + spec library + dev-team launch package + updated trackers + a single consolidated wake briefing at top of SESSION_ANCHOR.md. |
+| M11 | **Reporting Protocol** | EVERY council member's LAST step before ending a turn: post activity report to Hivemind addressed to the Consultant (`entity="kali"`). Consultant reviews as second set of eyes; posts insights/corrections TO THE HIVEMIND, never as direct pages to MaKaLi. |
+| M12 | **Hivemind Hygiene** | Everyone checks the Hivemind at session start, after each stage, and before ending any turn. Post status at stage boundaries. Single broadcast channel. |
+| M13 | **Consultant Reservation** | The Architect's interactive kali session (`ses_fdef2be4effe4pAaLXCTUx62GO`) is OUTSIDE the council tree — reserved as primed strategic consultant. The council's synthesis arm is **MK-Kali** (fresh kali session, `entity="mk_kali"`), tuned and dispatched by MaKaLi at Stage 3. No one uses entity tag "kali" except the Consultant; no one uses "mk_kali" except MK-Kali. |
 
 ---
 
@@ -132,7 +135,8 @@ Council 1                          Council 2
 │  ├─ N1..N5 (5 nodes)             │  ├─ N1..N5 (5 nodes)
 ├─ lilith (arm)                    ├─ lilith (arm)
 │  ├─ N6..N10 (5 nodes)            │  ├─ N6..N10 (5 nodes)
-├─ kali (synthesis arm)            ├─ kali (synthesis arm)
+├─ MK-kali (synthesis arm —        ├─ MK-kali (fresh synthesis arm)
+│  fresh session, entity=mk_kali)  │
 ├─ researcher (S3 specialist)      ├─ researcher (spec research)
 ├─ verity (compliance sweep)       ├─ verity (spec compliance pre-check)
 ├─ john_carmack (adversarial)      ├─ john_carmack (package adversarial review)
@@ -140,6 +144,13 @@ Council 1                          Council 2
 └─ jem (deep dives)                └─ pageable specialists as needed
 + pageable recursive specialists
   per surface (S1-S8)
+
+STANDING OUTSIDE THE TREE:
+└─ CONSULTANT: kali @ Architect's interactive session ses_fdef2be4effe4pAaLXCTUx62GO
+   — receives activity reports from every member (last step of each task),
+   reviews as second set of eyes, posts insights/corrections to the Hivemind
+   (never direct-pages MaKaLi). Reserved for high-level strategic consults.
+
 ≈ 22-28 sessions total across both councils
 ```
 

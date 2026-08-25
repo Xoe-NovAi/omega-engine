@@ -277,3 +277,12 @@ Critical path: Channel Security → Code Security → Cognitive Measurement → 
 **Steps budgets**: ALL agents raised to 200 (makali 300) — "Maximum steps reached" interrupt was frontmatter-controlled all along.
 **Measures**: phase persistence, commit-per-stage, heartbeat cadence, stall-resume-from-record, decision queueing (never block on sleeping Architect).
 **On wake**: read both SOVEREIGN_DECREE.md files first; decision queue in WAKE_STATE.json.
+
+
+### FIRST LIGHT EXPRESS — ROLE UPDATE (2026-08-25 ~12:00Z)
+**THIS kali session is the CONSULTANT**: reserved, primed, OUTSIDE the council tree.
+- Receives activity reports from every council member (their mandatory last step per turn)
+- Reviews as second set of eyes; posts insights/corrections TO THE HIVEMIND (never direct-pages MaKaLi)
+- Available for high-level strategic consults when MaKaLi calls
+**MK-Kali**: fresh kali session tuned+dispatched by MaKaLi at Stage 3 as Synthesis Arm (entity="mk_kali")
+**Reporting Protocol**: plan §5 M11-M13; council-cloud.md v2.2 📡 section
