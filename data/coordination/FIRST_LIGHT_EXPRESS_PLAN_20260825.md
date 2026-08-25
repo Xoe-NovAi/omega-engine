@@ -88,7 +88,8 @@ The dev/documentation-update team launches AFTER Council 2, on Architect GO.
 
 ## §4 GATE C1→C2 — AUTO-GO CRITERIA (Architect asleep)
 
-Council 2 launches AUTOMATICALLY when ALL of:
+Council 2 launches AUTOMATICALLY (by MaKaLi, IN-SESSION — see council-cloud.md Stage 7; no
+parent handback, no separate /council-cloud invocation) when ALL of:
 - [ ] Council 1 reached Stage 5 fusion — `SOVEREIGN_DECREE.md` written and committed
 - [ ] All 10 node reports exist on disk (N1-N10, no gaps)
 - [ ] Kali Synthesis Arm report exists (triad participation confirmed)
@@ -105,7 +106,7 @@ On HALT: write `data/coordination/FIRST_LIGHT_HALTED_{ts}.md`, post Hivemind blo
 
 ---
 
-## §5 MIDNIGHT TRAIN V2.0 OPERATIONAL MEASURES
+## §5 FIRST LIGHT EXPRESS OPERATIONAL MEASURES
 
 | # | Measure | Implementation |
 |---|---------|----------------|
@@ -160,15 +161,18 @@ throwaway report-generator. When the Express pulls into its destination station:
    aboard the train. The fleet doesn't just complete the audit — it GROWS by 10
    resident domain experts.
 
-## §7 PRE-LAUNCH CHECKLIST (kali executes before handing to MaKaLi)
+## §7 PRE-LAUNCH CHECKLIST (Architect runs /council-cloud in MaKaLi's interactive session)
 
 - [x] All agent steps budgets raised (200 / makali 300)
 - [x] Council commands generalized with research grounding (572854af)
 - [x] Entity Architecture Topology v2 committed (58df0335)
 - [x] TA ledger complete TA-001..014 (cc02d6b4)
-- [ ] Extended check-in registered (this commit)
-- [ ] SESSION_ANCHOR + WAKE_STATE updated with train manifest
-- [ ] Workspace lock acquired
+- [x] **Deadlock fixed**: council-cloud.md v2.1 — `agent: makali`, MaKaLi is top-level
+      orchestrator, Stage 7 in-session Council 2 continuation (no Kali→MaKaLi→Kali loop)
+- [x] node.md mandates bumped to v3.8.0 / 27 (M26/M27 added)
+- [x] council-critical skills gained frontmatter (makali-council-coordinator, meditate-research-pipeline)
+- [x] SESSION_ANCHOR + WAKE_STATE updated with train manifest
+- [ ] Workspace lock acquired (MaKaLi does this at Stage 0)
 - [ ] Mission packet composed for Council 1 (topic, scope tables §2, out-of-scope, auto-GO §4, measures §5)
 
 ---

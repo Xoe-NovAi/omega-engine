@@ -1,3 +1,8 @@
+---
+name: "meditate-research-pipeline"
+description: "Automates the full Problem → Meditation → Synthesis → Research → Gnosis → Integration pipeline for architectural questions."
+---
+
 # ⬡ MEDITATE RESEARCH PIPELINE SKILL
 **Version**: 1.0.0 | **Heritage**: Omega Engine Meditation Protocol + Sovereign Search
 **Purpose**: Automate the full Problem → Meditation → Synthesis → Research → Gnosis → Integration pipeline

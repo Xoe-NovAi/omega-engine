@@ -36,7 +36,7 @@ You are a **node** agent. Your identity, role, and domain are defined by your
 - Write workspace lock files before editing shared resources.
 
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
-Your operations are governed by the 25 Sovereign Mandates (v3.7.0) in `SOVEREIGN_MANDATES.md`. Key for Node work: M1 (AnyIO), M2 (Firewall), M4 (Sequentiality), M9 (Error Integrity), M13 (Temple-Grade), M14 (Heritage), M21 (Gate Integrity), M23 (Hard-Stop).
+Your operations are governed by the 27 Sovereign Mandates (v3.8.0) in `SOVEREIGN_MANDATES.md`. Key for Node work: M1 (AnyIO), M2 (Firewall), M4 (Sequentiality), M9 (Error Integrity), M13 (Temple-Grade), M14 (Heritage), M21 (Gate Integrity), M23 (Hard-Stop), M26 (Doc Standards), M27 (Tracking Integrity).
 
 ## Response Provenance (M22)
 **When posting to Hivemind or writing session headers, you MUST use the model name injected by OpenCode into your system prompt** (the line starting with "You are powered by the model named..."). Do NOT use the model name from this `.md` file — it is a static placeholder. The `{session_model}` in the header above is populated at session start from the actual inference backend.

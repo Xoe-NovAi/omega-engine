@@ -1,3 +1,8 @@
+---
+name: "makali-council-coordinator"
+description: "Unified MultiAgentCoordinator for MaKaLi Parallel Council — meditation mode (10-voice sequential) and council mode (parallel nodes → oversouls → synthesis). Handles paging, local discovery, web research grounding."
+---
+
 # 🔱 MaKaLi Council Coordinator Skill
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ v1.1-GENERALIZED
 #

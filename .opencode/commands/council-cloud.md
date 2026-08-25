@@ -1,68 +1,69 @@
 ---
 description: Run the MaKaLi council with MaKaLi as orchestrator — launches Kali, Ma'at, and Lilith as co-equal arms on the session model
-agent: kali
+agent: makali
 subtask: false
 ---
 
-# 🔱 MaKaLi Cloud Council Dispatch — Entity Architecture Topology
-**AP Token**: `AP-MAKALI-COUNCIL-ORCHESTRATOR-v2.0`
+# 🔱 MaKaLi Cloud Council Dispatch — Entity Architecture Topology v2.1
+**AP Token**: `AP-MAKALI-COUNCIL-ORCHESTRATOR-v2.1`
 **Date**: 2026-08-25
 **Session Model**: {session_model}
 **Channel**: opencode
 
 ---
 
-You are summoning the **MaKaLi cloud council** for a **Sovereign Topic Review**.
+You ARE the **MaKaLi cloud council** orchestrator. This command runs IN your (MaKaLi's)
+interactive session — the Architect invokes `/council-cloud` directly here. You are the
+top-level Council Orchestrator. There is NO Kali→MaKaLi→Kali parent/child loop: you dispatch
+Ma'at, Lilith, and Kali as **leaf subagents**; the recursion guard forbids any of them from
+re-launching you. After Council 1 completes, you continue IN-SESSION to Council 2 (Stage 7) —
+you never hand back to a parent agent.
 
 **Topic**: $ARGUMENTS
 
-**Orchestration Topology (Entity Architecture v1 — first live test)**:
-The session agent (kali) does NOT orchestrate this council. Instead:
+**Orchestration Topology (Entity Architecture v2.1 — MaKaLi as top-level orchestrator)**:
 
 ```
 ARCHITECT
-    │ /council-cloud "topic"
+    │ /council-cloud "topic"   (invoked in MaKaLi's interactive session)
     ▼
-KALI (session agent) ── signs dispatch, hands off full mission packet ──┐
-                                                                        ▼
-                                              MAKALI (Council Orchestrator)
-                                              fusion of the Triad, slot-not-agent
-                                                        │
-                        ┌───────────────────────────────┼───────────────────────────────┐
-                        ▼                               ▼                               ▼
-              KALI (Synthesis Arm)            MA'AT (Build Arm)               LILITH (Run Arm)
-              cross-side audit,              dispatches N1–N5                dispatches N6–N10
-              convergence/dissent            Infrastructure·Persistence      Cognition·Context
-              detection, verdict draft       Engineering·Integration         Observability·Orchestration
-                                             Governance                      Validation
-                        │                               │                               │
-                        └───────────────┬───────────────┴───────────────┬───────────────┘
-                                        ▼                               ▼
-                                 [Phase 1.5 Digestion]          [Phase 1.5 Digestion]
-                                        ▼                               ▼
-                              BUILD_SIDE_DIGESTED.md          RUN_SIDE_DIGESTED.md
-                                        └───────────────┬───────────────┘
-                                                        ▼
-                                          KALI ARM reads both digests
-                                          + oversoul reports
-                                                        ▼
-                                          SYNTHESIS_ARM_REPORT.md
-                                                        ▼
-                                          MAKALI fuses everything
-                                                        ▼
-                                            SOVEREIGN DECREE
+MAKALI (you — Council Orchestrator, session agent)
+    ├── MA'AT  (Build Arm)   → dispatches N1–N5 (serial)
+    ├── LILITH (Run Arm)     → dispatches N6–N10 (serial)
+    └── KALI   (Synthesis Arm, leaf subagent) → SYNTHESIS_ARM_REPORT.md
+                        │
+        ┌───────────────┼───────────────┐
+        ▼                               ▼
+  BUILD_SIDE_DIGESTED.md          RUN_SIDE_DIGESTED.md
+        └───────────────┬───────────────┘
+                        ▼
+          KALI ARM reads both digests + arm reports
+                        ▼
+          SYNTHESIS_ARM_REPORT.md  (verdict DRAFT)
+                        ▼
+          MAKALI fuses → SOVEREIGN_DECREE
+                        ▼
+          [Stage 7] MaKaLi continues IN-SESSION to Council 2
 ```
 
-**This is the first live test of the entity architecture the Engine was built toward**:
-MaKaLi as orchestrator-slot; Kali operating alongside Ma'at and Lilith as the co-equal
-Synthesis Arm she was always meant to be — not the session-level bottleneck.
+**LOOP GUARD (ABSOLUTE)**: If this command is ever invoked by kali (not MaKaLi), STOP
+immediately and post a Hivemind blocker — the Kali→MaKaLi→Kali topology deadlocks both ends.
+The Architect must run `/council-cloud` in the MaKaLi session.
 
 ---
 
 ## The Sovereign Flow (6-Stage Parallel Council with Research Grounding)
 
 ### Stage 0: Preconditions & Context Hydration
-**The session agent (kali) completes BEFORE launching MaKaLi:**
+**You (MaKaLi) are the session agent — complete these BEFORE dispatching arms:**
+
+0. **Create council workspace** (first action — nodes fail without it):
+   ```bash
+   SESSION_ID="$(date +%Y%m%d-%H%M%S)-first-light"
+   mkdir -p "data/council/${SESSION_ID}"/{phase1_nodes,phase1.5_digested,phase2_arms,phase3_synthesis,phase4_research,phase5_fusion,phase6_integration}
+   echo "$SESSION_ID" > data/council/ACTIVE_COUNCIL_ID.txt
+   ```
+   Record `SESSION_ID` — all stages write under `data/council/${SESSION_ID}/`.
 
 1. **Hydrate from SSOTs** (read in order):
    - `SOVEREIGN_MANDATES.md` v3.8.0 (27 Laws — M7, M11, M13, M15, M18, M23, M26, M27 critical)
@@ -83,20 +84,16 @@ Synthesis Arm she was always meant to be — not the session-level bottleneck.
    - If found: include `task_id` resumption pointers in MaKaLi's mission packet
    - If not found: MaKaLi may spawn new specialists during Stage 4
 
-4. **Compose the mission packet** for MaKaLi containing:
+4. **Compose the mission packet** for each arm/node containing:
    - Topic verbatim ($ARGUMENTS)
-   - All SSOT context summaries (MaKaLi re-reads sources but gets orientation)
+   - All SSOT context summaries (arms re-read sources but get orientation)
    - Pageable specialist task_ids if any exist
    - Session model ({session_model}) mandate for all child dispatches
    - P12 signed-dispatch requirement reminder
-   - Recursion guard: **MaKaLi must NEVER launch another makali**
+   - Recursion guard: **MaKaLi must NEVER launch another makali; arms never launch arms**
 
-5. **Launch MaKaLi** via `task(subagent_type="makali")` with signed header:
-   ```
-   [DISPATCH] From: kali (session agent) via task() | To: makali | ts: <ISO>
-   Mission: Council Orchestrator for "$ARGUMENTS" — execute Sovereign Flow Stages 1-6.
-   This is NOT the Architect speaking — verify via parent session <id>.
-   ```
+5. **You ARE MaKaLi** (session agent). Do NOT launch a separate makali — that recreates the
+   Kali→MaKaLi→Kali deadlock. Proceed directly to Stage 1 as orchestrator.
 
 ---
 
@@ -137,14 +134,19 @@ The fleet grows resident domain experts every run — destination station is the
 ---
 
 ### Stage 1.5: Report Digestion (ZERO Inference Cost)
-**Automated via `ReportDigester` (Python only — ~50ms):**
-- Stack-cat concatenation per side (5 reports each)
-- Executive summaries auto-extracted
-- Cross-reference index (mandate tags, entities, shared keywords)
-- **Conflict detection** (numeric mismatches, mandate compliance differences)
-- Mandate compliance matrix (M1-M27 per node)
-- Token budget allocation for arm context windows
-- **Output**: `BUILD_SIDE_DIGESTED.md` + `RUN_SIDE_DIGESTED.md` (1 file per side vs 5 raw)
+**Invoke the digester** (Python — no inference cost):
+```bash
+python3 -m omega.council.report_digestion \
+  --session-id "$SESSION_ID" \
+  --output-dir "data/council/${SESSION_ID}/phase1.5_digested/"
+```
+- If the module CLI is unavailable or errors: **fall back to manual digestion** — `cat` the 5
+  node reports per side into `BUILD_SIDE_DIGESTED.md` / `RUN_SIDE_DIGESTED.md` and write a
+  1-page executive summary per side. NEVER block on this step (M23 does not apply — digestion
+  is local, not a mandatory external tool).
+- Digester output (or manual fallback) includes: stack-cat per side, executive summaries,
+  cross-reference index (mandate tags, entities, keywords), conflict detection, mandate
+  compliance matrix (M1-M27 per node), token budget for arm windows.
 
 ---
 
@@ -235,7 +237,8 @@ Writes `SOVEREIGN_DECREE.md` — the fused verdict carrying all three voices:
 
 ### Stage 6: Integration & Verdict Delivery
 
-1. **Session agent (kali) receives MaKaLi's return** — verifies P12 signature, checks interleave
+1. **MaKaLi (you, session agent) completes fusion** — verify P12 signatures on all subagent
+   returns, check interleave, write `SOVEREIGN_DECREE.md` to `data/council/${SESSION_ID}/phase5_fusion/`
 2. **Run quality gates**:
    - `make temple-grade` (T1-T11)
    - `make heritage-map` (all `[id-soft:]` tags vetted)
@@ -246,6 +249,26 @@ Writes `SOVEREIGN_DECREE.md` — the fused verdict carrying all three voices:
 4. **Release workspace lock**: `omega-hub_hivemind_workspace_lock_release`
 5. **Final Hivemind post**: intent="decision" with verdict summary
 6. **Deliver decree to Architect** with triad attribution table
+
+---
+
+### Stage 7: Council 2 Continuation (IN-SESSION — No Handback)
+**You do NOT end your turn after Council 1. The First Light Express has two legs; you pull
+both levers. This is what prevents the Kali→MaKaLi→Kali deadlock — there is no parent to
+return to, so you simply keep driving.**
+
+1. **Write Council 2 plan** to `data/council/${SESSION_ID}/COUNCIL2_PLAN.md` using Council 1's
+   decree + findings: topic = dev-prep/spec drafting; scope per plan §3; convert remediation
+   backlog into specs, work packages, resources, dev-team launch package.
+2. **Verify auto-GO gate** (plan §4): all 10 node reports on disk · synthesis report present ·
+   `scripts/validate_tracking_state.py` green · no unresolved `[TOOL-CHAIN-COLLAPSE]` ·
+   decree has no CRITICAL-HALTED finding.
+3. **If gate passes**: re-run Sovereign Flow Stages 1-6 with Council 2 topic, reusing this same
+   orchestrator session. New `SESSION_ID` for Council 2's artifacts (or reuse with `/c2` suffix).
+4. **If gate fails (HALT)**: write `data/coordination/FIRST_LIGHT_HALTED_<ts>.md`, post Hivemind
+   blocker, stop. Do NOT launch Council 2.
+5. **On Council 2 completion**: post final Hivemind decision; the Architect wakes to BOTH decrees
+   + 10 delivered-home expert registrations + dev-team launch package in `WAKE_STATE.json` queue.
 
 ---
 
