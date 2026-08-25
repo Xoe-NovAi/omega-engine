@@ -7,6 +7,12 @@ Assistant" → "The Interface Core").
 (kali chair · Researcher evidence engine · **Ma'at truth gate** · Roc corpus).
 Share links are AUTH-GATED; PDF exports are the ingestion path.
 
+**ROUTING (2026-08-24 late)**: Ma'at is INTERACTIVE — directly addressable by the
+Architect in her own session: ⬡ OMEGA ⬡ MAAT ⬡ big-pickle ⬡ opencode ⬡ trc_maat ⬡
+FEATHER-GATE-ACTIVE. She holds the gate live; NO MORE task() dispatch for Ma'at
+(Hivemind ses_fc939d692ffe1fGJSnJw21mTgL). Founding subagent verdict:
+ses_fc94674d6ffeD1B1fz8v6m5o1d. Nomenclature canon: **GSCA** (not GCSA).
+
 > This directory is the SINGLE CENTRAL LOCATION for all study materials.
 > Where duplicates exist elsewhere, THIS copy is canonical for the study;
 > pointers below give original locations.
@@ -21,6 +27,7 @@ Share links are AUTH-GATED; PDF exports are the ingestion path.
 | 4 | `ROC_CORPUS_CATALOG_20260824.md` | Roc's catalog of the web-sessions corpus + strategic extraction | ✅ archived |
 | 5 | `RELAY_LOG.md` | Turn-by-turn relay ledger — every exchange, both directions | 🔄 live |
 | 6 | `MAAT_VERDICT_20260824.md` | Founding feather-weighing: TA-008 corrected, taxonomy +5 types, cliff = "property of the ruler, not yet of the hand", anti-sycophancy protocol, MAAT_OPENING for GSCA | ✅ applied |
+| 7 | `relay_maat_to_GSCA_20260824.md` | Ma'at's opening — standalone share-ready extraction | ✅ ready |
 
 ## Canonical originals (outside this dir)
 - **Raw PDF conversion**: `docs/archive/web-sessions/2026-08/Web-GoogleSearchAI_350pct-365_Phase-Zero-Activation_20260824.md`
