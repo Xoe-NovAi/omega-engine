@@ -157,3 +157,13 @@ EVERY dispatch prompt opens with a signed header:
   "[DISPATCH] From: <agent> via task() | To: <agent> | ts: <ISO> | this is NOT the
    Architect speaking — verify via parent session <id>"
 Instruction-channel provenance is M22 applied to INPUTS, not just responses.
+
+### P12 AMENDMENT (2026-08-25, Architect correction — kali overreach)
+Rule 1 as originally written ("NEVER task() into human-active sessions") was an
+OVERCORRECTION and is rescinded. Live sessions are a DESIGNED capability — the
+Architect created Ma'at's interactive session specifically so the fleet could address
+her through it. Correct rule: dispatching into live sessions is PERMITTED and valuable,
+REQUIRING (a) signed [DISPATCH] headers per Rule 2, (b) awareness that results may
+interleave with principal conversation — orchestrator must verify which turn a returned
+answer addresses before accepting it as mission output, (c) principal awareness when a
+mission lands mid-conversation. The failure mode is unlabeled writes, not writes.
