@@ -1,624 +1,648 @@
 {
- "sprint_id": "PUBLIC-DEBUT-01",
- "campaign": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
- "phase": "EXECUTION_MINIMAL",
- "started": "2026-08-15T00:00:00Z",
- "updated": "2026-08-20T22:00:00.000000+00:00",
- "owner": "kali",
- "status": "in_progress",
- "status_detail": "Carmack review complete (2026-08-20). Context Injection Phase 1 plan ACCEPTED WITH MODIFICATIONS. Qdrant+Headroom research complete — Phase 2/3 post-debut. Consolidated specs at docs/specs/. Phase 1 execution: MANDATES_CONDENSED.md, opencode.json updates, compaction plugin, skills opt-in, verification.",
- "supersedes": [
-  "SDP-EXECUTION-01 (Aug 11 — full 5-phase plan, now archived)",
-  "NEMOTRON-ANALYSIS-01 (Aug 10 — analysis complete)",
-  "UNOVERENGINEER-01 (Jul 30 — historical)",
-  "FOUNDATION-STAB-01 (Jul 20 Phase β — historical)"
- ],
- "primary_handoffs": {
-  "specs_index": "docs/specs/PROJECT_INDEX.md",
-  "context_injection": "docs/specs/context_injection/",
-  "qdrant_headroom": "docs/specs/qdrant_headroom/",
-  "debut_remediation": "docs/specs/debut_remediation/",
-  "carmack_review": "docs/specs/context_injection/CARMMACK_CONTEXT_INJECTION_REVIEW_20260820.md",
-  "dev_roadmap": "data/coordination/KALI_DEV_ROADMAP_20260811.md",
-  "knowledge_gaps": "data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md",
-  "p0_audit_handoff": "data/coordination/SESSION_ANCHOR.md"
- },
- "freeze": {
-  "active": false,
-  "until_gate": "NONE — Freeze LIFTED",
-  "frozen": [],
-  "allowed": [
-   "local_inference_end_to_end",
-   "soul_persistence",
-   "one_click_install"
+  "sprint_id": "PUBLIC-DEBUT-01",
+  "campaign": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
+  "phase": "EXECUTION_MINIMAL",
+  "started": "2026-08-15T00:00:00Z",
+  "updated": "2026-08-25T09:56:07+00:00",
+  "owner": "kali",
+  "status": "in_progress",
+  "status_detail": "20-hour mastermind sprint complete (2026-08-24/25): GSCA study founded, truth-alignment dataset seeded (TA-001..014), MaKaLi Orchestrator Charter v1 ratified (shadow-mode cutover conditional on Carmack P0 fixes), Vision Anchor Perpetual written (561 lines), Carmack full-scope audit delivered (enforcement theater exposed: pre-commit uninstalled, temple-grade RED). Post-sprint priority: meditation critical path \u2014 P12+ICS Phase 1 \u2192 pre-commit hooks/M13 \u2192 ctxNN telemetry \u2192 TA dataset wiring \u2192 archetype bootstrap.",
+  "supersedes": [
+    "SDP-EXECUTION-01 (Aug 11 \u2014 full 5-phase plan, now archived)",
+    "NEMOTRON-ANALYSIS-01 (Aug 10 \u2014 analysis complete)",
+    "UNOVERENGINEER-01 (Jul 30 \u2014 historical)",
+    "FOUNDATION-STAB-01 (Jul 20 Phase \u03b2 \u2014 historical)"
+  ],
+  "primary_handoffs": {
+    "specs_index": "docs/specs/PROJECT_INDEX.md",
+    "context_injection": "docs/specs/context_injection/",
+    "qdrant_headroom": "docs/specs/qdrant_headroom/",
+    "debut_remediation": "docs/specs/debut_remediation/",
+    "carmack_review": "docs/specs/context_injection/CARMMACK_CONTEXT_INJECTION_REVIEW_20260820.md",
+    "dev_roadmap": "data/coordination/KALI_DEV_ROADMAP_20260811.md",
+    "knowledge_gaps": "data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md",
+    "p0_audit_handoff": "data/coordination/SESSION_ANCHOR.md"
+  },
+  "freeze": {
+    "active": false,
+    "until_gate": "NONE \u2014 Freeze LIFTED",
+    "frozen": [],
+    "allowed": [
+      "local_inference_end_to_end",
+      "soul_persistence",
+      "one_click_install"
+    ]
+  },
+  "gates": {
+    "local_inference_end_to_end": {
+      "status": "completed",
+      "owner": "maat_n3",
+      "note": "VERIFIED: omega talk \"hello\" \u2192 native-gguf \u2192 response. No cloud fallback. PROVIDER_NAME=native-gguf, IS_CLOUD=False. Latency 16.8s cold (model load), <5s warm. Metrics DB migration fixed (cache_read_tokens columns added)."
+    },
+    "soul_persistence": {
+      "status": "completed",
+      "owner": "lilith_n7",
+      "note": "VERIFIED: Agent writes L1\u2192L2\u2192L3 to proposed_lessons.yaml (5 lessons this session); session_end.py preserves + timestamps; next session hydrates from approved_lessons.yaml via get_soul_prompt(); entity identity persists via soul.yaml load."
+    },
+    "one_click_install": {
+      "status": "completed",
+      "owner": "kali",
+      "note": "VERIFIED: install.sh provisions venv, downloads Qwen3-1.7B-Q6_K.gguf from lmstudio-community, sets OMEGA_MODELS_DIR, omega talk exits cleanly (EXIT 0). python-age>=0.1.0 fix applied. ModelGateway.shutdown() + CLI finally blocks ensure clean exit."
+    }
+  },
+  "workstreams": {
+    "CONTEXT-INJECTION": {
+      "task": "Context Injection Optimization \u2014 Phase 1 Config-Only (Carmack Reviewed & Modified)",
+      "owner": "kali",
+      "status": "in_progress",
+      "risk": "CRITICAL",
+      "specs": "docs/specs/context_injection/",
+      "carmack_review": "docs/specs/context_injection/CARMMACK_CONTEXT_INJECTION_REVIEW_20260820.md",
+      "phase": "1 (Config-Only, This Week) \u2014 SPEC REMEDIATED 2026-08-21 per N7 audit (see docs/specs/context_injection/phase1_spec/09_SPEC_DEVIATIONS.md DEV-01..11; binary pin 1.18.19 \u2192 V1 compaction family)",
+      "subtasks": [
+        {
+          "id": "CI-0",
+          "description": "Binary pin + behavioral compaction probe (added post-N7 audit)",
+          "owner": "kali",
+          "status": "ready",
+          "spec": "docs/specs/context_injection/phase1_spec/05_VERIFICATION_TESTS.md (Test 0)",
+          "acceptance": [
+            "opencode --version recorded (1.18.19 pinned)",
+            "Behavioral probe confirms V1 keys honored on pinned binary"
+          ]
+        },
+        {
+          "id": "CI-1",
+          "description": "Create MANDATES_CONDENSED.md for Tier 0 injection (content-based gate \u2014 remediated per DEV-01)",
+          "owner": "kali",
+          "status": "ready",
+          "spec": "docs/specs/context_injection/phase1_spec/01_MANDATES_CONDENSED.md",
+          "acceptance": [
+            "File exists at repo root",
+            "~1.5K tokens (content-based, no line-count gate)",
+            "All 27 mandates (v3.8.0) as one-liner rows"
+          ]
+        },
+        {
+          "id": "CI-2",
+          "description": "Update opencode.json: instructions=[AGENTS.md], compaction buffer=50000/keep=20000, sovereign-compaction plugin, per-agent model routing, toolProfile stubs",
+          "owner": "kali",
+          "status": "ready",
+          "spec": "docs/specs/context_injection/06_PHASE_1_PLAN.md",
+          "acceptance": [
+            "instructions array = [\"AGENTS.md\"] only",
+            "compaction keys per pinned-binary V1 family (CI-0 Test 0 verifies; DEV-03/DEV-12)",
+            "plugin registered at real .opencode/plugins/ path (plural \u2014 DEV-02)",
+            "global top-level model = lmstudio/qwen3-4b-thinking (local-first default, DEV-12)",
+            "model pins ONLY kali (nemotron-3-ultra-free cloud floor) + verity (cheap critic); researcher/maat/lilith/node UNPINNED for TUI /models freedom (DEV-12, amends Carmack Q5.1 mechanism, intent preserved)",
+            "NO variant hardcoding (inert on qwen models; invocation-time --variant for kali per PP-1)",
+            "agent.verity.mode=subagent + hidden + restrictive permissions",
+            "toolProfile stubs for all agents"
+          ]
+        },
+        {
+          "id": "CI-3",
+          "description": "Create sovereign compaction plugin at ~/.config/opencode/plugin/sovereign-compaction.ts",
+          "owner": "kali",
+          "status": "ready",
+          "spec": "docs/specs/context_injection/06_PHASE_1_PLAN.md",
+          "acceptance": [
+            "Plugin loads without error",
+            "Injects mandates + entity + phase + session anchor pre-compaction"
+          ]
+        },
+        {
+          "id": "CI-4",
+          "description": "Skills opt-in via permission.skill deny patterns (remediated per DEV-05 \u2014 auto_load is not an opencode feature)",
+          "owner": "kali",
+          "status": "ready",
+          "spec": "docs/specs/context_injection/phase1_spec/04_SKILLS_OPT_IN.md",
+          "acceptance": [
+            "permission.skill patterns restrict auto-injection to 3 core skills (research, spec-generator, knowledge-miner)",
+            "Debug shows only 3 skills in system prompt",
+            "Deviation from original auto_load approach documented in 09_SPEC_DEVIATIONS.md"
+          ]
+        },
+        {
+          "id": "CI-5",
+          "description": "Verification tests: AGENTS.md injection, per-agent model routing, compaction plugin, skills opt-in",
+          "owner": "kali",
+          "status": "ready",
+          "spec": "docs/specs/context_injection/06_PHASE_1_PLAN.md",
+          "acceptance": [
+            "opencode --log-level DEBUG run \"What is first sentence of SOVEREIGN_MANDATES.md?\" returns correct quote",
+            "opencode --agent researcher run \"What model are you?\" returns qwen3-4b-thinking",
+            "opencode --agent kali run \"What model are you?\" returns nemotron-3-ultra-free",
+            "Only 3 skills visible in debug"
+          ]
+        }
+      ]
+    },
+    "QDRANT-HEADROOM": {
+      "task": "Qdrant + Headroom Integration \u2014 Phase 2/3 Post-Debut (Research Complete)",
+      "owner": "maat_n3 (Headroom) + Roc (Qdrant)",
+      "status": "in_progress",
+      "risk": "MEDIUM",
+      "specs": "docs/specs/qdrant_headroom/",
+      "research": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md",
+      "phase": "Research Complete \u2192 Phase 2 (Post-Debut)",
+      "immediate_debut": [
+        "Integrate Headroom ContentRouter in ModelGateway._prepare_messages() (P1)",
+        "Add Headroom to RAG retrieval pipeline (P1)",
+        "Do NOT enable Qdrant (Debut blocker)"
+      ],
+      "phase2_triggers": [
+        "Vector count >500k",
+        "Filtered search needed (tags, type, quarantine)",
+        "Multi-tenant isolation required"
+      ],
+      "phase2_deliverables": [
+        {
+          "id": "QH-1",
+          "description": "Headroom ContentRouter middleware in ModelGateway",
+          "owner": "maat_n3",
+          "status": "ready",
+          "spec": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md \u00a74.2"
+        },
+        {
+          "id": "QH-2",
+          "description": "Headroom compression in RAG retrieval pipeline",
+          "owner": "maat_n3",
+          "status": "ready",
+          "spec": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md \u00a74.2"
+        },
+        {
+          "id": "QH-3",
+          "description": "Qdrant Server (Podman) + Scalar Quantization (int8) + on_disk=true",
+          "owner": "roc_racoon",
+          "status": "backlog",
+          "trigger": "Vector count >500k"
+        },
+        {
+          "id": "QH-4",
+          "description": "Migration via IVectorStoreAdapter swap (config toggle in jit_rag.yaml)",
+          "owner": "roc_racoon",
+          "status": "backlog",
+          "trigger": "Phase 2 trigger met"
+        },
+        {
+          "id": "QH-5",
+          "description": "Payload indexes: entity_name, session_id, type, tags, quarantine",
+          "owner": "roc_racoon",
+          "status": "backlog",
+          "trigger": "Phase 2 trigger met"
+        },
+        {
+          "id": "QH-6",
+          "description": "Headroom CCR store for cross-agent memory",
+          "owner": "maat_n3",
+          "status": "backlog",
+          "trigger": "Phase 3"
+        }
+      ]
+    },
+    "DEBUT-REMEDIATION": {
+      "task": "Public Debut Remediation \u2014 Manual \u00a75 Execution Sequence",
+      "owner": "kali",
+      "status": "in_progress",
+      "risk": "CRITICAL",
+      "specs": "docs/specs/debut_remediation/",
+      "source": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
+      "execution_order": "P0-1 \u2192 PUB-1 \u2192 INST-1 \u2192 DEL-1 \u2192 DOC-1 \u2192 P2/P3/P4",
+      "subtasks": [
+        {
+          "id": "P0-1",
+          "description": "SECURITY INCIDENT: Keys scrubbed from history. Residual: SECURITY_AUDIT ancestor commit + gitleaks wiring",
+          "owner": "kali",
+          "status": "in_progress",
+          "subtasks": [
+            {
+              "id": "P0-1a",
+              "description": "Rotate ALL exposed keys at provider consoles",
+              "owner": "architect",
+              "status": "completed"
+            },
+            {
+              "id": "P0-1b",
+              "description": "git filter-repo scrub from ALL history (all branches)",
+              "owner": "roc_racoon",
+              "status": "completed"
+            },
+            {
+              "id": "P0-1c",
+              "description": "Add gitleaks/trufflehog to pre-commit + CI",
+              "owner": "maat_n3",
+              "status": "completed"
+            },
+            {
+              "id": "P0-1d",
+              "description": "Full secret sweep + prune cline checkpoints",
+              "owner": "roc_racoon",
+              "status": "in_progress"
+            }
+          ]
+        },
+        {
+          "id": "PUB-1",
+          "description": "Publication allowlist \u2014 close G1-G4 gaps, Architect confirms allowlist + release/debut branch",
+          "owner": "kali",
+          "status": "in_progress",
+          "acceptance": [
+            "Clone of public ref has no docs/research corpus, no agent workspace dumps, no handoff JSON",
+            "git ls-files data/entities is a short default-soul set, not 1,072 files",
+            "git ls-files docs/strategy is the manual + allowlist + mandates pointers, not 123 files"
+          ]
+        },
+        {
+          "id": "INST-1",
+          "description": "Install honesty \u2014 remove warp-proxy-pool hard dep, move qdrant/redis/youtube to extras, install.sh .[native,cli], MemoryStore no Redis default, stop _load_sovereign_secrets, version align, README badge removal",
+          "owner": "maat_n3",
+          "status": "in_progress",
+          "subtasks": [
+            {
+              "id": "INST-1-fix1",
+              "description": "install.sh: change pip install -e \".[all]\" to \".[native,cli]\"",
+              "owner": "maat_n3",
+              "status": "completed"
+            },
+            {
+              "id": "INST-1-fix2",
+              "description": "pyproject.toml: move warp-proxy-pool to [warp], qdrant-client/redis/youtube-transcript-api/yt-dlp to extras; add import guards",
+              "owner": "maat_n3",
+              "status": "ready"
+            },
+            {
+              "id": "INST-1-fix3",
+              "description": "memory_store.py: guard Redis construction behind OMEGA_REDIS_HOST; remove default 'omega' password",
+              "owner": "maat_n3",
+              "status": "completed"
+            },
+            {
+              "id": "INST-1-fix4",
+              "description": "model_gateway.py: remove _load_sovereign_secrets() from __init__; delete method; document required env vars",
+              "owner": "maat_n3",
+              "status": "ready"
+            },
+            {
+              "id": "INST-1-fix5",
+              "description": "src/omega/__init__.py: single version source via importlib.metadata.version('omega')",
+              "owner": "maat_n3",
+              "status": "completed"
+            },
+            {
+              "id": "INST-1-fix6",
+              "description": "README.md: remove 1315 badge; add make setup target matching install.sh OR delete lines",
+              "owner": "maat_n3",
+              "status": "ready"
+            }
+          ]
+        },
+        {
+          "id": "DEL-1",
+          "description": "Deletion campaign \u2014 Week 1 delete dead modules, Week 2 one control plane (ProviderSelector only), Week 3 vault honesty",
+          "owner": "roc_racoon",
+          "status": "in_progress",
+          "depends_on": [
+            "INST-1"
+          ],
+          "acceptance": [
+            "omega talk \"hello\" still local after each delete",
+            "rg RoutingTable src/omega empty",
+            "rg miap src/omega empty",
+            "One RouteDecision contract test"
+          ]
+        },
+        {
+          "id": "DOC-1",
+          "description": "Strategy stamps \u2014 COMPLETE 2026-08-17",
+          "owner": "kali+verity",
+          "status": "completed"
+        }
+      ]
+    },
+    "LOCAL-INFERENCE-OPT": {
+      "task": "Local Inference Tiered Architecture \u2014 Sequential loading, q8_0 KV cache, adaptive context buffer, Tier 0/1/2 model matrix",
+      "owner": "maat_n3",
+      "status": "in_progress",
+      "risk": "HIGH",
+      "specs": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "phase": "Phase 2 (Post-Debut)",
+      "subtasks": [
+        {
+          "id": "LI-1",
+          "description": "AdaptiveContextBuffer implementation",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "LI-2",
+          "description": "SequentialModelLoader (no mmap, keep context alive, one model at a time)",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "LI-3",
+          "description": "llama-fit-params hardware probe at startup",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "LI-4",
+          "description": "Tier 0 model matrix: Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "LI-5",
+          "description": "Startup script (zRAM + THP + pinning + prompt caching)",
+          "owner": "maat_n3",
+          "status": "ready"
+        }
+      ]
+    },
+    "HEADROOM-INTEGRATION": {
+      "task": "Headroom Integration \u2014 Semantic compression for tool outputs + RAG (40-90% savings)",
+      "owner": "maat_n3",
+      "status": "in_progress",
+      "risk": "MEDIUM",
+      "specs": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md",
+      "phase": "Phase 2 (Post-Debut)",
+      "subtasks": [
+        {
+          "id": "HR-1",
+          "description": "HeadroomMiddleware implementation (src/omega/oracle/middleware/headroom.py)",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "HR-2",
+          "description": "Adaptive context buffer integration (src/omega/research/adaptive_context.py)",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "HR-3",
+          "description": "MCP headroom tools (compress tool outputs before context injection)",
+          "owner": "maat_n3",
+          "status": "ready"
+        }
+      ]
+    },
+    "ZSWAP-SUBSYSTEM": {
+      "task": "zswap + NVMe Swap Subsystem \u2014 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM DISABLED, swappiness=100, cgroup MemoryMax=6G",
+      "owner": "maat_n3",
+      "status": "in_progress",
+      "risk": "HIGH",
+      "specs": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md \u00a73.3",
+      "phase": "Phase 2 (Post-Debut)",
+      "subtasks": [
+        {
+          "id": "ZS-1",
+          "description": "zswap sysctl + kernel cmdline deployment",
+          "owner": "maat_n3",
+          "status": "in_progress"
+        },
+        {
+          "id": "ZS-2",
+          "description": "16GB NVMe swap file creation + systemd unit",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "ZS-3",
+          "description": "WAD packaging (zswap-config.wad for community stacks)",
+          "owner": "maat_n3",
+          "status": "ready"
+        }
+      ]
+    },
+    "DOCUMENTATION-SYSTEM": {
+      "task": "Modular Domain Documentation System \u2014 Workspace authoring + Runtime modules + Curator model + Validated copy sync",
+      "owner": "kali",
+      "status": "in_progress",
+      "risk": "HIGH",
+      "specs": "docs/specs/debut_remediation/ (to create DOMAIN_DOCUMENTATION_SYSTEM.md)",
+      "phase": "Phase 2 (Post-Debut)",
+      "subtasks": [
+        {
+          "id": "DS-1",
+          "description": "Documentation system meta-doc (DOMAIN_DOCUMENTATION_SYSTEM.md)",
+          "owner": "kali",
+          "status": "ready"
+        },
+        {
+          "id": "DS-2",
+          "description": "Create docs/strategy/domains/gemini-notebook/ workspace structure",
+          "owner": "kali",
+          "status": "ready"
+        },
+        {
+          "id": "DS-3",
+          "description": "Create config/domains/gemini-notebook/ runtime module",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "DS-4",
+          "description": "Implement scripts/sync_domain_docs.py (validated copy, not symlink)",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "DS-5",
+          "description": "Update STRATEGY_INDEX.md + STRATEGY_CORPUS_MAP.md with Domain layer",
+          "owner": "kali",
+          "status": "ready"
+        }
+      ]
+    },
+    "GEMINI-NOTEBOOK": {
+      "task": "Gemini Notebook v2.0 \u2014 Free-tier-only (3 accounts, 30 DR/mo), 2-notebook architecture, notebooklm-py[mcp] automation, master_token.json auth, SDP \u00a710 gate honored",
+      "owner": "researcher",
+      "status": "in_progress",
+      "risk": "HIGH",
+      "specs": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "phase": "Phase 2 (Post-Debut)",
+      "subtasks": [
+        {
+          "id": "GN-1",
+          "description": "Deploy notebooklm-py[mcp] in .venv with isolated auth profile per account",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "GN-2",
+          "description": "Create 2 strategic notebooks: \u03a9-ACTIVE-RESEARCH + \u03a9-KNOWLEDGE-BASE",
+          "owner": "researcher",
+          "status": "ready"
+        },
+        {
+          "id": "GN-3",
+          "description": "Free-tier fetch pipeline + systemd timer (weekly sync, 30 DR/mo budget)",
+          "owner": "maat_n3",
+          "status": "ready"
+        },
+        {
+          "id": "GN-4",
+          "description": "NLG-SMOKE \u2014 Single-account free-tier Deep Research smoke test",
+          "owner": "researcher",
+          "status": "ready"
+        },
+        {
+          "id": "GN-5",
+          "description": "SDP distillation pipeline + Scribe handoff integration (manual mode per GAP-8)",
+          "owner": "researcher",
+          "status": "ready"
+        }
+      ]
+    },
+    "KNOWLEDGE-DOMAINS": {
+      "task": "Knowledge Domain Runtime Modules \u2014 Workspace authoring + Curator model + Affinity presets per domain",
+      "owner": "kali",
+      "status": "backlog",
+      "risk": "MEDIUM",
+      "specs": "docs/specs/debut_remediation/ (DOMAIN_DOCUMENTATION_SYSTEM.md from DS-1)",
+      "phase": "Phase 2 (Post-Debut)",
+      "depends_on": [
+        "DOCUMENTATION-SYSTEM"
+      ],
+      "subtasks": [
+        {
+          "id": "KD-1",
+          "description": "Domain module schema \u2014 define config/domains/<domain>/ structure, runtime module YAML schema, workspace authoring conventions",
+          "owner": "kali",
+          "status": "backlog",
+          "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md (from DS-1)",
+          "acceptance": [
+            "config/domains/ directory exists with schema documentation",
+            "Runtime module YAML schema defined (name, version, curator, affinity, guidance_sets)",
+            "Workspace authoring conventions documented"
+          ]
+        },
+        {
+          "id": "KD-2",
+          "description": "Curator model \u2014 implement config/domains/curators.yaml with curator model assignments per domain, validation logic",
+          "owner": "kali",
+          "status": "backlog",
+          "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md + DS-4 sync_domain_docs.py",
+          "acceptance": [
+            "config/domains/curators.yaml exists with domain\u2192curator_model mappings",
+            "Validation logic in sync_domain_docs.py checks curator assignment",
+            "At least 3 domains configured (gemini-notebook, youtube-research, arcana-novai)"
+          ]
+        },
+        {
+          "id": "KD-3",
+          "description": "Affinity presets \u2014 define domain-specific model/provider affinity presets",
+          "owner": "kali",
+          "status": "backlog",
+          "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md + config/models.yaml",
+          "acceptance": [
+            "Affinity presets defined per domain in runtime module YAML",
+            "Research domain \u2192 qwen3-4b-thinking (lmster)",
+            "Coding domain \u2192 mimo-7b-rl-q4_k_m (native-gguf)",
+            "Fast domain \u2192 qwen3-1.7b (native-gguf)"
+          ]
+        }
+      ]
+    },
+    "TRUTH-ALIGNMENT": {
+      "task": "Truth-Alignment Dataset \u2014 TA ledger + GSCA study + automated epistemic humility",
+      "owner": "kali",
+      "status": "in_progress",
+      "risk": "MEDIUM",
+      "specs": "data/knowledge/truth_alignment/DATASET_CHARTER.md",
+      "source": "GSCA founding night 2026-08-24; Ma'at verdict TA-001..014",
+      "next": [
+        "wire truth_events.jsonl to omega_memory_search hybrid retrieval",
+        "dual-arm incident review protocol codification"
+      ]
+    },
+    "ORCHESTRATOR-CUTOVER": {
+      "task": "MaKaLi Orchestrator cutover \u2014 shadow-mode calibration then primary flip",
+      "owner": "kali",
+      "status": "blocked",
+      "risk": "HIGH",
+      "specs": "docs/strategy/ORCHESTRATOR_CHARTER_v1.md",
+      "blocked_on": "Architect decisions: model choice, cutover timing, P13 logging GO; Carmack P0 fixes (pre-commit install, temple-grade gate repair)",
+      "next": [
+        "Shapley fleet analysis before locking structure",
+        "N5 router collapse Week 2"
+      ]
+    }
+  },
+  "blockers": {
+    "BLOCKER-B": {
+      "description": "oracle_cli.py blind-except (M23 gate) \u2014 FIXED: contextlib.suppress(ImportError)",
+      "status": "resolved",
+      "resolved_at": "2026-08-20T21:30:00Z"
+    },
+    "P0-1-RESIDUAL": {
+      "description": "SECURITY_AUDIT ancestor commit + gitleaks wiring",
+      "status": "in_progress",
+      "owner": "roc_racoon"
+    },
+    "INST-1-FIX2": {
+      "description": "pyproject.toml extras split + import guards (atomic with Fix 4)",
+      "status": "ready",
+      "owner": "maat_n3"
+    },
+    "INST-1-FIX4": {
+      "description": "Remove _load_sovereign_secrets() from model_gateway.py",
+      "status": "ready",
+      "owner": "maat_n3"
+    }
+  },
+  "decisions_locked": [
+    "D-521 SDP elevated to core architectural pillar \u2014 DEFERRED",
+    "D-522 Ground truth: Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K \u2014 PRESERVED for config",
+    "D-526 zswap > zRAM for desktop with NVMe \u2014 RATIFIED (Carmack + Researcher + Jem + LongCat + Nemotron)",
+    "D-527 Never run zswap and zRAM simultaneously \u2014 RATIFIED",
+    "D-532 KALI-RATIFY-ROC-READINESS-20260816: Remediation plan ratified",
+    "D-533 THIS MONTH'S SSOT = DEBUT_REMEDIATION_MANUAL_20260817.md \u00a75 (not Ark \u00a74)",
+    "D-534 Publication (PUB-1) and runtime deletion (DEL-1) are separate cuts",
+    "D-535 Vault is not wired for debut \u2014 invert V-1 from build/wire to hide/delete",
+    "D-536 One router: ProviderSelector + providers.yaml. Delete Triage + Semantic + RoutingTable",
+    "D-537 UO Phase 1 library swaps and UO \u00a72.6 three-vault adoption REJECTED for debut",
+    "D-538 SDP / Cognitive Sovereignty \u00a77 / Qdrant / JIT Graph RAG / Instruction Router = PARKED",
+    "D-539 CP-3 not publicly true until INST-1 passes on machine without warp-proxy-pool",
+    "D-540 Corpus Map rule 2 inverted for this campaign: no ticket in ACTIVE_SPRINT = dead",
+    "D-548 INST-1 BLOCKED \u2014 6 critical fixes required before DEL-1 can begin",
+    "D-549 DEL-1 scope validated but requires observability emission spec for router collapse",
+    "D-550 Test suite baseline must be green (0 failures) before DEL-1 Week 1",
+    "D-551 God-module freeze requires atomic split of oracle.py + model_gateway.py in DEL-1 Week 2",
+    "D-552 Vault Path A (delete from product surface) recommended over Path B",
+    "D-553 release/debut branch from allowlist is the publication mechanic",
+    "D-557 Cline DeepSeek V4 Flash = 1M context \u2014 primary surgical tool for DEL-1 Week 2",
+    "D-558 Fleet architecture PARKED per Carmack \u2014 only DeepSeek-assisted IntentRouter extraction survives",
+    "D-559 INST-1 execution model assignment: Nemotron 30B for logic/bash fixes, DeepSeek 1M for cross-file surgery",
+    "D-560 DEL-1 Week 2 workflow: Human-driven incremental extraction with contract tests at each step",
+    "D-561 OOM test is test bug \u2014 expect DENY_THRASHING (correct C-2\u2032 fusion behavior)",
+    "D-562 Vault Path B (50-line minimal, keyring only) + DELETE omega vault CLI entirely",
+    "D-563 1 active Cline instance max; 8 accounts = rate-limit resilience not parallelism",
+    "D-565: D-562 SUPERSEDED for debut - vault deletion is post-debut scope. For release/debut branch: exclude src/omega/vault/ via PUBLIC_ALLOWLIST.txt. Zero code changes to vault during PUBLIC-DEBUT-01.",
+    "D-566: D-535 CLARIFIED - hide means PUBLIC_ALLOWLIST.txt exclusion, not code deletion. VaultCore stays in forge/private repo.",
+    "D-567: D-532 SUPERSEDED for debut - keep bury_credential applies to post-debut vault sprint only.",
+    "D-568: VaultCore is NON-FUNCTIONAL as a key source - DELETE as dead code, ADD CredentialProvider. EncryptionBackend primary = python-age (NOT pyrage). 13 consumers/19 sites incl. 5 outside src/omega.",
+    "D-569: Ratify Dynamic Prompt + Planner/Executor + Domain Loading as POST-DEBUT Cognitive Architecture Blueprint (Horizon 3). Gaps DP-1..DP-8 registered.",
+    "D-570: Qdrant SCHEDULED to replace sqlite-vec POST-DEBUT (Horizon 2). REACTIVATES RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md.",
+    "D-571..D-577: NotebookLM v2.0 arbitration ratified (notebooklm-py tool, HYBRID cost, 80 DR budget, 6-notebook canonical, SDP gate, 5-25 density, master_token auth)",
+    "D-578..D-584: Phase 0 Tracker Lock-In \u2014 6 new post-debut workstreams (GN/DS/LI/KD/HR/ZS) ratified",
+    "D-582/D-583: GEMINI-NOTEBOOK free-tier-only arbitration (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP \u00a710 gate)",
+    "CARMACK-REVIEW-20260820: Context Injection Phase 1 ACCEPTED WITH MODIFICATIONS; Phase 2/3 40% cuts; Qdrant+Headroom Phase 2/3; Hardware-honest Tier 0 viable"
+  ],
+  "ark_strategy_ssot": "docs/specs/PROJECT_INDEX.md",
+  "notes": [
+    "SCOPE CUT EXECUTED 2026-08-15 per Carmack verdict (AP-CARMMACK-TRIAGE-20260815)",
+    "All VOS Phases 1-4, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 \u2192 POST-DEBUT",
+    "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
+    "Carmack Review 2026-08-20: Context Injection Phase 1 ACCEPTED WITH MODIFICATIONS; Phase 2/3 40% cuts; Qdrant+Headroom Phase 2/3; Hardware-honest Tier 0 viable (18K base tokens, Qwen3-4B/4B-Thinking/1.7B sequential, q8_0 KV, zswap+NVMe)",
+    "Qdrant+Headroom: Headroom NOW (P1), Qdrant LATER (Phase 2 trigger: >500k vectors). Combined pipeline = 86.8% token reduction.",
+    "Consolidated specs at docs/specs/ with PROJECT_INDEX.md as single source of truth",
+    "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
+    "Phase 0 Tracker Lock-In complete (D-578..D-584): 6 post-debut workstreams (GN/DS/LI/KD/HR/ZS) ratified",
+    "GEMINI-NOTEBOOK free-tier-only (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP \u00a710 gate)",
+    "All 27 Sovereign Mandates verified compliant post-Carmack review",
+    "Team-Study #1 (2026-08-23) refined closeout execution \u2014 see data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md"
   ]
- },
- "gates": {
-  "local_inference_end_to_end": {
-   "status": "completed",
-   "owner": "maat_n3",
-   "note": "VERIFIED: omega talk \"hello\" → native-gguf → response. No cloud fallback. PROVIDER_NAME=native-gguf, IS_CLOUD=False. Latency 16.8s cold (model load), <5s warm. Metrics DB migration fixed (cache_read_tokens columns added)."
-  },
-  "soul_persistence": {
-   "status": "completed",
-   "owner": "lilith_n7",
-   "note": "VERIFIED: Agent writes L1→L2→L3 to proposed_lessons.yaml (5 lessons this session); session_end.py preserves + timestamps; next session hydrates from approved_lessons.yaml via get_soul_prompt(); entity identity persists via soul.yaml load."
-  },
-  "one_click_install": {
-   "status": "completed",
-   "owner": "kali",
-   "note": "VERIFIED: install.sh provisions venv, downloads Qwen3-1.7B-Q6_K.gguf from lmstudio-community, sets OMEGA_MODELS_DIR, omega talk exits cleanly (EXIT 0). python-age>=0.1.0 fix applied. ModelGateway.shutdown() + CLI finally blocks ensure clean exit."
-  }
- },
- "workstreams": {
-  "CONTEXT-INJECTION": {
-   "task": "Context Injection Optimization — Phase 1 Config-Only (Carmack Reviewed & Modified)",
-   "owner": "kali",
-   "status": "in_progress",
-   "risk": "CRITICAL",
-   "specs": "docs/specs/context_injection/",
-   "carmack_review": "docs/specs/context_injection/CARMMACK_CONTEXT_INJECTION_REVIEW_20260820.md",
-   "phase": "1 (Config-Only, This Week) — SPEC REMEDIATED 2026-08-21 per N7 audit (see docs/specs/context_injection/phase1_spec/09_SPEC_DEVIATIONS.md DEV-01..11; binary pin 1.18.19 → V1 compaction family)",
-   "subtasks": [
-    {
-     "id": "CI-0",
-     "description": "Binary pin + behavioral compaction probe (added post-N7 audit)",
-     "owner": "kali",
-     "status": "ready",
-     "spec": "docs/specs/context_injection/phase1_spec/05_VERIFICATION_TESTS.md (Test 0)",
-     "acceptance": [
-      "opencode --version recorded (1.18.19 pinned)",
-      "Behavioral probe confirms V1 keys honored on pinned binary"
-     ]
-    },
-    {
-     "id": "CI-1",
-     "description": "Create MANDATES_CONDENSED.md for Tier 0 injection (content-based gate — remediated per DEV-01)",
-     "owner": "kali",
-     "status": "ready",
-     "spec": "docs/specs/context_injection/phase1_spec/01_MANDATES_CONDENSED.md",
-     "acceptance": [
-      "File exists at repo root",
-      "~1.5K tokens (content-based, no line-count gate)",
-      "All 27 mandates (v3.8.0) as one-liner rows"
-     ]
-    },
-    {
-     "id": "CI-2",
-     "description": "Update opencode.json: instructions=[AGENTS.md], compaction buffer=50000/keep=20000, sovereign-compaction plugin, per-agent model routing, toolProfile stubs",
-     "owner": "kali",
-     "status": "ready",
-     "spec": "docs/specs/context_injection/06_PHASE_1_PLAN.md",
-     "acceptance": [
-      "instructions array = [\"AGENTS.md\"] only",
-      "compaction keys per pinned-binary V1 family (CI-0 Test 0 verifies; DEV-03/DEV-12)",
-      "plugin registered at real .opencode/plugins/ path (plural — DEV-02)",
-      "global top-level model = lmstudio/qwen3-4b-thinking (local-first default, DEV-12)",
-      "model pins ONLY kali (nemotron-3-ultra-free cloud floor) + verity (cheap critic); researcher/maat/lilith/node UNPINNED for TUI /models freedom (DEV-12, amends Carmack Q5.1 mechanism, intent preserved)",
-      "NO variant hardcoding (inert on qwen models; invocation-time --variant for kali per PP-1)",
-      "agent.verity.mode=subagent + hidden + restrictive permissions",
-      "toolProfile stubs for all agents"
-     ]
-    },
-    {
-     "id": "CI-3",
-     "description": "Create sovereign compaction plugin at ~/.config/opencode/plugin/sovereign-compaction.ts",
-     "owner": "kali",
-     "status": "ready",
-     "spec": "docs/specs/context_injection/06_PHASE_1_PLAN.md",
-     "acceptance": [
-      "Plugin loads without error",
-      "Injects mandates + entity + phase + session anchor pre-compaction"
-     ]
-    },
-    {
-     "id": "CI-4",
-     "description": "Skills opt-in via permission.skill deny patterns (remediated per DEV-05 — auto_load is not an opencode feature)",
-     "owner": "kali",
-     "status": "ready",
-     "spec": "docs/specs/context_injection/phase1_spec/04_SKILLS_OPT_IN.md",
-     "acceptance": [
-      "permission.skill patterns restrict auto-injection to 3 core skills (research, spec-generator, knowledge-miner)",
-      "Debug shows only 3 skills in system prompt",
-      "Deviation from original auto_load approach documented in 09_SPEC_DEVIATIONS.md"
-     ]
-    },
-    {
-     "id": "CI-5",
-     "description": "Verification tests: AGENTS.md injection, per-agent model routing, compaction plugin, skills opt-in",
-     "owner": "kali",
-     "status": "ready",
-     "spec": "docs/specs/context_injection/06_PHASE_1_PLAN.md",
-     "acceptance": [
-      "opencode --log-level DEBUG run \"What is first sentence of SOVEREIGN_MANDATES.md?\" returns correct quote",
-      "opencode --agent researcher run \"What model are you?\" returns qwen3-4b-thinking",
-      "opencode --agent kali run \"What model are you?\" returns nemotron-3-ultra-free",
-      "Only 3 skills visible in debug"
-     ]
-    }
-   ]
-  },
-  "QDRANT-HEADROOM": {
-   "task": "Qdrant + Headroom Integration — Phase 2/3 Post-Debut (Research Complete)",
-   "owner": "maat_n3 (Headroom) + Roc (Qdrant)",
-   "status": "in_progress",
-   "risk": "MEDIUM",
-   "specs": "docs/specs/qdrant_headroom/",
-   "research": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md",
-   "phase": "Research Complete → Phase 2 (Post-Debut)",
-   "immediate_debut": [
-    "Integrate Headroom ContentRouter in ModelGateway._prepare_messages() (P1)",
-    "Add Headroom to RAG retrieval pipeline (P1)",
-    "Do NOT enable Qdrant (Debut blocker)"
-   ],
-   "phase2_triggers": [
-    "Vector count >500k",
-    "Filtered search needed (tags, type, quarantine)",
-    "Multi-tenant isolation required"
-   ],
-   "phase2_deliverables": [
-    {
-     "id": "QH-1",
-     "description": "Headroom ContentRouter middleware in ModelGateway",
-     "owner": "maat_n3",
-     "status": "ready",
-     "spec": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md §4.2"
-    },
-    {
-     "id": "QH-2",
-     "description": "Headroom compression in RAG retrieval pipeline",
-     "owner": "maat_n3",
-     "status": "ready",
-     "spec": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md §4.2"
-    },
-    {
-     "id": "QH-3",
-     "description": "Qdrant Server (Podman) + Scalar Quantization (int8) + on_disk=true",
-     "owner": "roc_racoon",
-     "status": "backlog",
-     "trigger": "Vector count >500k"
-    },
-    {
-     "id": "QH-4",
-     "description": "Migration via IVectorStoreAdapter swap (config toggle in jit_rag.yaml)",
-     "owner": "roc_racoon",
-     "status": "backlog",
-     "trigger": "Phase 2 trigger met"
-    },
-    {
-     "id": "QH-5",
-     "description": "Payload indexes: entity_name, session_id, type, tags, quarantine",
-     "owner": "roc_racoon",
-     "status": "backlog",
-     "trigger": "Phase 2 trigger met"
-    },
-    {
-     "id": "QH-6",
-     "description": "Headroom CCR store for cross-agent memory",
-     "owner": "maat_n3",
-     "status": "backlog",
-     "trigger": "Phase 3"
-    }
-   ]
-  },
-  "DEBUT-REMEDIATION": {
-   "task": "Public Debut Remediation — Manual §5 Execution Sequence",
-   "owner": "kali",
-   "status": "in_progress",
-   "risk": "CRITICAL",
-   "specs": "docs/specs/debut_remediation/",
-   "source": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
-   "execution_order": "P0-1 → PUB-1 → INST-1 → DEL-1 → DOC-1 → P2/P3/P4",
-   "subtasks": [
-    {
-     "id": "P0-1",
-     "description": "SECURITY INCIDENT: Keys scrubbed from history. Residual: SECURITY_AUDIT ancestor commit + gitleaks wiring",
-     "owner": "kali",
-     "status": "in_progress",
-     "subtasks": [
-      {
-       "id": "P0-1a",
-       "description": "Rotate ALL exposed keys at provider consoles",
-       "owner": "architect",
-       "status": "completed"
-      },
-      {
-       "id": "P0-1b",
-       "description": "git filter-repo scrub from ALL history (all branches)",
-       "owner": "roc_racoon",
-       "status": "completed"
-      },
-      {
-       "id": "P0-1c",
-       "description": "Add gitleaks/trufflehog to pre-commit + CI",
-       "owner": "maat_n3",
-       "status": "completed"
-      },
-      {
-       "id": "P0-1d",
-       "description": "Full secret sweep + prune cline checkpoints",
-       "owner": "roc_racoon",
-       "status": "in_progress"
-      }
-     ]
-    },
-    {
-     "id": "PUB-1",
-     "description": "Publication allowlist — close G1-G4 gaps, Architect confirms allowlist + release/debut branch",
-     "owner": "kali",
-     "status": "in_progress",
-     "acceptance": [
-      "Clone of public ref has no docs/research corpus, no agent workspace dumps, no handoff JSON",
-      "git ls-files data/entities is a short default-soul set, not 1,072 files",
-      "git ls-files docs/strategy is the manual + allowlist + mandates pointers, not 123 files"
-     ]
-    },
-    {
-     "id": "INST-1",
-     "description": "Install honesty — remove warp-proxy-pool hard dep, move qdrant/redis/youtube to extras, install.sh .[native,cli], MemoryStore no Redis default, stop _load_sovereign_secrets, version align, README badge removal",
-     "owner": "maat_n3",
-     "status": "in_progress",
-     "subtasks": [
-      {
-       "id": "INST-1-fix1",
-       "description": "install.sh: change pip install -e \".[all]\" to \".[native,cli]\"",
-       "owner": "maat_n3",
-       "status": "completed"
-      },
-      {
-       "id": "INST-1-fix2",
-       "description": "pyproject.toml: move warp-proxy-pool to [warp], qdrant-client/redis/youtube-transcript-api/yt-dlp to extras; add import guards",
-       "owner": "maat_n3",
-       "status": "ready"
-      },
-      {
-       "id": "INST-1-fix3",
-       "description": "memory_store.py: guard Redis construction behind OMEGA_REDIS_HOST; remove default 'omega' password",
-       "owner": "maat_n3",
-       "status": "completed"
-      },
-      {
-       "id": "INST-1-fix4",
-       "description": "model_gateway.py: remove _load_sovereign_secrets() from __init__; delete method; document required env vars",
-       "owner": "maat_n3",
-       "status": "ready"
-      },
-      {
-       "id": "INST-1-fix5",
-       "description": "src/omega/__init__.py: single version source via importlib.metadata.version('omega')",
-       "owner": "maat_n3",
-       "status": "completed"
-      },
-      {
-       "id": "INST-1-fix6",
-       "description": "README.md: remove 1315 badge; add make setup target matching install.sh OR delete lines",
-       "owner": "maat_n3",
-       "status": "ready"
-      }
-     ]
-    },
-    {
-     "id": "DEL-1",
-     "description": "Deletion campaign — Week 1 delete dead modules, Week 2 one control plane (ProviderSelector only), Week 3 vault honesty",
-     "owner": "roc_racoon",
-     "status": "in_progress",
-     "depends_on": [
-      "INST-1"
-     ],
-     "acceptance": [
-      "omega talk \"hello\" still local after each delete",
-      "rg RoutingTable src/omega empty",
-      "rg miap src/omega empty",
-      "One RouteDecision contract test"
-     ]
-    },
-    {
-     "id": "DOC-1",
-     "description": "Strategy stamps — COMPLETE 2026-08-17",
-     "owner": "kali+verity",
-     "status": "completed"
-    }
-   ]
-  },
-  "LOCAL-INFERENCE-OPT": {
-   "task": "Local Inference Tiered Architecture — Sequential loading, q8_0 KV cache, adaptive context buffer, Tier 0/1/2 model matrix",
-   "owner": "maat_n3",
-   "status": "in_progress",
-   "risk": "HIGH",
-   "specs": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
-   "phase": "Phase 2 (Post-Debut)",
-   "subtasks": [
-    {
-     "id": "LI-1",
-     "description": "AdaptiveContextBuffer implementation",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "LI-2",
-     "description": "SequentialModelLoader (no mmap, keep context alive, one model at a time)",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "LI-3",
-     "description": "llama-fit-params hardware probe at startup",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "LI-4",
-     "description": "Tier 0 model matrix: Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "LI-5",
-     "description": "Startup script (zRAM + THP + pinning + prompt caching)",
-     "owner": "maat_n3",
-     "status": "ready"
-    }
-   ]
-  },
-  "HEADROOM-INTEGRATION": {
-   "task": "Headroom Integration — Semantic compression for tool outputs + RAG (40-90% savings)",
-   "owner": "maat_n3",
-   "status": "in_progress",
-   "risk": "MEDIUM",
-   "specs": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md",
-   "phase": "Phase 2 (Post-Debut)",
-   "subtasks": [
-    {
-     "id": "HR-1",
-     "description": "HeadroomMiddleware implementation (src/omega/oracle/middleware/headroom.py)",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "HR-2",
-     "description": "Adaptive context buffer integration (src/omega/research/adaptive_context.py)",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "HR-3",
-     "description": "MCP headroom tools (compress tool outputs before context injection)",
-     "owner": "maat_n3",
-     "status": "ready"
-    }
-   ]
-  },
-  "ZSWAP-SUBSYSTEM": {
-   "task": "zswap + NVMe Swap Subsystem — 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM DISABLED, swappiness=100, cgroup MemoryMax=6G",
-   "owner": "maat_n3",
-   "status": "in_progress",
-   "risk": "HIGH",
-   "specs": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md §3.3",
-   "phase": "Phase 2 (Post-Debut)",
-   "subtasks": [
-    {
-     "id": "ZS-1",
-     "description": "zswap sysctl + kernel cmdline deployment",
-     "owner": "maat_n3",
-     "status": "in_progress"
-    },
-    {
-     "id": "ZS-2",
-     "description": "16GB NVMe swap file creation + systemd unit",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "ZS-3",
-     "description": "WAD packaging (zswap-config.wad for community stacks)",
-     "owner": "maat_n3",
-     "status": "ready"
-    }
-   ]
-  },
-  "DOCUMENTATION-SYSTEM": {
-   "task": "Modular Domain Documentation System — Workspace authoring + Runtime modules + Curator model + Validated copy sync",
-   "owner": "kali",
-   "status": "in_progress",
-   "risk": "HIGH",
-   "specs": "docs/specs/debut_remediation/ (to create DOMAIN_DOCUMENTATION_SYSTEM.md)",
-   "phase": "Phase 2 (Post-Debut)",
-   "subtasks": [
-    {
-     "id": "DS-1",
-     "description": "Documentation system meta-doc (DOMAIN_DOCUMENTATION_SYSTEM.md)",
-     "owner": "kali",
-     "status": "ready"
-    },
-    {
-     "id": "DS-2",
-     "description": "Create docs/strategy/domains/gemini-notebook/ workspace structure",
-     "owner": "kali",
-     "status": "ready"
-    },
-    {
-     "id": "DS-3",
-     "description": "Create config/domains/gemini-notebook/ runtime module",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "DS-4",
-     "description": "Implement scripts/sync_domain_docs.py (validated copy, not symlink)",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "DS-5",
-     "description": "Update STRATEGY_INDEX.md + STRATEGY_CORPUS_MAP.md with Domain layer",
-     "owner": "kali",
-     "status": "ready"
-    }
-   ]
-  },
-  "GEMINI-NOTEBOOK": {
-   "task": "Gemini Notebook v2.0 — Free-tier-only (3 accounts, 30 DR/mo), 2-notebook architecture, notebooklm-py[mcp] automation, master_token.json auth, SDP §10 gate honored",
-   "owner": "researcher",
-   "status": "in_progress",
-   "risk": "HIGH",
-   "specs": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
-   "phase": "Phase 2 (Post-Debut)",
-   "subtasks": [
-    {
-     "id": "GN-1",
-     "description": "Deploy notebooklm-py[mcp] in .venv with isolated auth profile per account",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "GN-2",
-     "description": "Create 2 strategic notebooks: Ω-ACTIVE-RESEARCH + Ω-KNOWLEDGE-BASE",
-     "owner": "researcher",
-     "status": "ready"
-    },
-    {
-     "id": "GN-3",
-     "description": "Free-tier fetch pipeline + systemd timer (weekly sync, 30 DR/mo budget)",
-     "owner": "maat_n3",
-     "status": "ready"
-    },
-    {
-     "id": "GN-4",
-     "description": "NLG-SMOKE — Single-account free-tier Deep Research smoke test",
-     "owner": "researcher",
-     "status": "ready"
-    },
-    {
-     "id": "GN-5",
-     "description": "SDP distillation pipeline + Scribe handoff integration (manual mode per GAP-8)",
-     "owner": "researcher",
-     "status": "ready"
-    }
-   ]
-  },
-  "KNOWLEDGE-DOMAINS": {
-   "task": "Knowledge Domain Runtime Modules — Workspace authoring + Curator model + Affinity presets per domain",
-   "owner": "kali",
-   "status": "backlog",
-   "risk": "MEDIUM",
-   "specs": "docs/specs/debut_remediation/ (DOMAIN_DOCUMENTATION_SYSTEM.md from DS-1)",
-   "phase": "Phase 2 (Post-Debut)",
-   "depends_on": [
-    "DOCUMENTATION-SYSTEM"
-   ],
-   "subtasks": [
-    {
-     "id": "KD-1",
-     "description": "Domain module schema — define config/domains/<domain>/ structure, runtime module YAML schema, workspace authoring conventions",
-     "owner": "kali",
-     "status": "backlog",
-     "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md (from DS-1)",
-     "acceptance": [
-      "config/domains/ directory exists with schema documentation",
-      "Runtime module YAML schema defined (name, version, curator, affinity, guidance_sets)",
-      "Workspace authoring conventions documented"
-     ]
-    },
-    {
-     "id": "KD-2",
-     "description": "Curator model — implement config/domains/curators.yaml with curator model assignments per domain, validation logic",
-     "owner": "kali",
-     "status": "backlog",
-     "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md + DS-4 sync_domain_docs.py",
-     "acceptance": [
-      "config/domains/curators.yaml exists with domain→curator_model mappings",
-      "Validation logic in sync_domain_docs.py checks curator assignment",
-      "At least 3 domains configured (gemini-notebook, youtube-research, arcana-novai)"
-     ]
-    },
-    {
-     "id": "KD-3",
-     "description": "Affinity presets — define domain-specific model/provider affinity presets",
-     "owner": "kali",
-     "status": "backlog",
-     "spec": "docs/specs/debut_remediation/DOMAIN_DOCUMENTATION_SYSTEM.md + config/models.yaml",
-     "acceptance": [
-      "Affinity presets defined per domain in runtime module YAML",
-      "Research domain → qwen3-4b-thinking (lmster)",
-      "Coding domain → mimo-7b-rl-q4_k_m (native-gguf)",
-      "Fast domain → qwen3-1.7b (native-gguf)"
-     ]
-    }
-   ]
-  }
- },
- "blockers": {
-  "BLOCKER-B": {
-   "description": "oracle_cli.py blind-except (M23 gate) — FIXED: contextlib.suppress(ImportError)",
-   "status": "resolved",
-   "resolved_at": "2026-08-20T21:30:00Z"
-  },
-  "P0-1-RESIDUAL": {
-   "description": "SECURITY_AUDIT ancestor commit + gitleaks wiring",
-   "status": "in_progress",
-   "owner": "roc_racoon"
-  },
-  "INST-1-FIX2": {
-   "description": "pyproject.toml extras split + import guards (atomic with Fix 4)",
-   "status": "ready",
-   "owner": "maat_n3"
-  },
-  "INST-1-FIX4": {
-   "description": "Remove _load_sovereign_secrets() from model_gateway.py",
-   "status": "ready",
-   "owner": "maat_n3"
-  }
- },
- "decisions_locked": [
-  "D-521 SDP elevated to core architectural pillar — DEFERRED",
-  "D-522 Ground truth: Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K — PRESERVED for config",
-  "D-526 zswap > zRAM for desktop with NVMe — RATIFIED (Carmack + Researcher + Jem + LongCat + Nemotron)",
-  "D-527 Never run zswap and zRAM simultaneously — RATIFIED",
-  "D-532 KALI-RATIFY-ROC-READINESS-20260816: Remediation plan ratified",
-  "D-533 THIS MONTH'S SSOT = DEBUT_REMEDIATION_MANUAL_20260817.md §5 (not Ark §4)",
-  "D-534 Publication (PUB-1) and runtime deletion (DEL-1) are separate cuts",
-  "D-535 Vault is not wired for debut — invert V-1 from build/wire to hide/delete",
-  "D-536 One router: ProviderSelector + providers.yaml. Delete Triage + Semantic + RoutingTable",
-  "D-537 UO Phase 1 library swaps and UO §2.6 three-vault adoption REJECTED for debut",
-  "D-538 SDP / Cognitive Sovereignty §7 / Qdrant / JIT Graph RAG / Instruction Router = PARKED",
-  "D-539 CP-3 not publicly true until INST-1 passes on machine without warp-proxy-pool",
-  "D-540 Corpus Map rule 2 inverted for this campaign: no ticket in ACTIVE_SPRINT = dead",
-  "D-548 INST-1 BLOCKED — 6 critical fixes required before DEL-1 can begin",
-  "D-549 DEL-1 scope validated but requires observability emission spec for router collapse",
-  "D-550 Test suite baseline must be green (0 failures) before DEL-1 Week 1",
-  "D-551 God-module freeze requires atomic split of oracle.py + model_gateway.py in DEL-1 Week 2",
-  "D-552 Vault Path A (delete from product surface) recommended over Path B",
-  "D-553 release/debut branch from allowlist is the publication mechanic",
-  "D-557 Cline DeepSeek V4 Flash = 1M context — primary surgical tool for DEL-1 Week 2",
-  "D-558 Fleet architecture PARKED per Carmack — only DeepSeek-assisted IntentRouter extraction survives",
-  "D-559 INST-1 execution model assignment: Nemotron 30B for logic/bash fixes, DeepSeek 1M for cross-file surgery",
-  "D-560 DEL-1 Week 2 workflow: Human-driven incremental extraction with contract tests at each step",
-  "D-561 OOM test is test bug — expect DENY_THRASHING (correct C-2′ fusion behavior)",
-  "D-562 Vault Path B (50-line minimal, keyring only) + DELETE omega vault CLI entirely",
-  "D-563 1 active Cline instance max; 8 accounts = rate-limit resilience not parallelism",
-  "D-565: D-562 SUPERSEDED for debut - vault deletion is post-debut scope. For release/debut branch: exclude src/omega/vault/ via PUBLIC_ALLOWLIST.txt. Zero code changes to vault during PUBLIC-DEBUT-01.",
-  "D-566: D-535 CLARIFIED - hide means PUBLIC_ALLOWLIST.txt exclusion, not code deletion. VaultCore stays in forge/private repo.",
-  "D-567: D-532 SUPERSEDED for debut - keep bury_credential applies to post-debut vault sprint only.",
-  "D-568: VaultCore is NON-FUNCTIONAL as a key source - DELETE as dead code, ADD CredentialProvider. EncryptionBackend primary = python-age (NOT pyrage). 13 consumers/19 sites incl. 5 outside src/omega.",
-  "D-569: Ratify Dynamic Prompt + Planner/Executor + Domain Loading as POST-DEBUT Cognitive Architecture Blueprint (Horizon 3). Gaps DP-1..DP-8 registered.",
-  "D-570: Qdrant SCHEDULED to replace sqlite-vec POST-DEBUT (Horizon 2). REACTIVATES RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md.",
-  "D-571..D-577: NotebookLM v2.0 arbitration ratified (notebooklm-py tool, HYBRID cost, 80 DR budget, 6-notebook canonical, SDP gate, 5-25 density, master_token auth)",
-  "D-578..D-584: Phase 0 Tracker Lock-In — 6 new post-debut workstreams (GN/DS/LI/KD/HR/ZS) ratified",
-  "D-582/D-583: GEMINI-NOTEBOOK free-tier-only arbitration (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP §10 gate)",
-  "CARMACK-REVIEW-20260820: Context Injection Phase 1 ACCEPTED WITH MODIFICATIONS; Phase 2/3 40% cuts; Qdrant+Headroom Phase 2/3; Hardware-honest Tier 0 viable"
- ],
- "ark_strategy_ssot": "docs/specs/PROJECT_INDEX.md",
- "notes": [
-  "SCOPE CUT EXECUTED 2026-08-15 per Carmack verdict (AP-CARMMACK-TRIAGE-20260815)",
-  "All VOS Phases 1-4, SDP, three-router, Vault, WARP, G-1, Context Packer, un-overengineering, NL-1, fleet migration, Scribe, cross-pollination, heritage, community installer, Restic/AppArmor/IA2 → POST-DEBUT",
-  "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
-  "Carmack Review 2026-08-20: Context Injection Phase 1 ACCEPTED WITH MODIFICATIONS; Phase 2/3 40% cuts; Qdrant+Headroom Phase 2/3; Hardware-honest Tier 0 viable (18K base tokens, Qwen3-4B/4B-Thinking/1.7B sequential, q8_0 KV, zswap+NVMe)",
-  "Qdrant+Headroom: Headroom NOW (P1), Qdrant LATER (Phase 2 trigger: >500k vectors). Combined pipeline = 86.8% token reduction.",
-  "Consolidated specs at docs/specs/ with PROJECT_INDEX.md as single source of truth",
-  "Three-item critical path: (1) Local inference, (2) Soul persistence, (3) One-click install",
-  "Phase 0 Tracker Lock-In complete (D-578..D-584): 6 post-debut workstreams (GN/DS/LI/KD/HR/ZS) ratified",
-  "GEMINI-NOTEBOOK free-tier-only (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP §10 gate)",
-  "All 27 Sovereign Mandates verified compliant post-Carmack review",
-  "Team-Study #1 (2026-08-23) refined closeout execution — see data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md"
- ]
 }

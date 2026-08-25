@@ -167,3 +167,16 @@ REQUIRING (a) signed [DISPATCH] headers per Rule 2, (b) awareness that results m
 interleave with principal conversation — orchestrator must verify which turn a returned
 answer addresses before accepting it as mission output, (c) principal awareness when a
 mission lands mid-conversation. The failure mode is unlabeled writes, not writes.
+
+## P13 — ORCHESTRATOR STEERING WRAPPER (2026-08-25, PROPOSED — awaiting Architect GO)
+**Problem**: Once a subagent mission is dispatched via task(), the orchestrator has no
+standardized channel to correct course mid-flight. Corrections arrive as new dispatches
+(the agent may treat them as separate missions) or as chat text the subagent never sees.
+**Proposal**: A reserved HTML-comment syntax appended to any follow-up dispatch:
+  `<!-- KALI: HOLD | STEER:<correction> | CANCEL:<mission|all> | SYNC:<info> -->`
+Handling rule: on every task() return, the orchestrator scans for post-dispatch turns
+and processes any wrapper before accepting results. Subagents are taught the syntax at
+bootstrap so they recognize steering as orchestrator-voice, not principal-voice.
+**Status**: Syntax agreed in-session; formal logging blocked pending Architect GO.
+Companion to P12 (signed headers prove WHO speaks; P13 defines HOW the orchestrator
+speaks mid-mission).
