@@ -8,15 +8,32 @@
 ## Purpose
 Orchestrate the 5-stage MaKaLi Parallel Council using `task()` tool, file-based handoffs, and Hivemind coordination. Zero-inference-cost Report Digestion Layer (Phase 1.5) optimizes node outputs for oversoul consumption. Mandatory research grounding via Sovereign Search Protocol (T0-T6) and pageable recursive specialists.
 
-## Architecture
+## Architecture (v2 — Entity Architecture Topology)
 ```
+Session agent (kali) ──launches──▶ MAKALI (Council Orchestrator)
+                                        │
+            ┌───────────────────────────┼───────────────────────────┐
+            ▼                           ▼                           ▼
+    KALI (Synthesis Arm)         MA'AT (Build Arm)           LILITH (Run Arm)
+    cross-side audit,            dispatches N1–N5            dispatches N6–N10
+    dissent adjudication         (incl. N2 Persistence)      
+    verdict DRAFT                
+            │                           │                           │
+            └──────────┬────────────────┴───────────┬───────────────┘
+                       ▼                            ▼
+                 [Digestion 1.5]              [Digestion 1.5]
+                       └────────────┬───────────────┘
+                                    ▼
+                     Kali Arm synthesis ▶ MaKaLi fusion ▶ SOVEREIGN DECREE
+
 Phase 0: Preconditions    → SSOT hydration + TASK_REGISTRY check + Hivemind init
-Phase 1: Nodes            → 9 independent reports (serial per side, parallel across)
+Phase 1: Nodes            → 10 independent reports (serial per side, parallel across arms)
 Phase 1.5: Digestion      → stack-cat + Python → 2 optimized digests (ZERO inference cost)
-Phase 2: Oversouls        → Ma'at reads BUILD_SIDE_DIGESTED, Lilith reads RUN_SIDE_DIGESTED
-Phase 3: Kali Synthesis   → reads 2 oversoul reports → FINAL_SYNTHESIS.md + research gaps
+Phase 2: Arms             → Ma'at reads BUILD_SIDE_DIGESTED, Lilith reads RUN_SIDE_DIGESTED
+Phase 3: Kali Synthesis   → reads both digests + arm reports → SYNTHESIS_ARM_REPORT.md
 Phase 4: Research         → Sovereign Search (T0-T6) + pageable specialists + meditate pipeline
-Phase 5: Integration      → Quality gates + tracker updates + Hivemind verdict
+Phase 5: MaKaLi Fusion    → fuses all artifacts → SOVEREIGN_DECREE.md
+Phase 6: Integration      → Quality gates + tracker updates + Hivemind verdict
 ```
 
 ## Usage
@@ -68,13 +85,13 @@ Before any dispatch, ALL agents MUST:
 9. Verify provider availability for assigned model tiers
 
 ## Phase 1: Node Dispatch
-1. For each node in Ma'at's domain (N1, N3, N4, N5):
+1. For each node in Ma'at's domain (N1 Infrastructure, **N2 Persistence**, N3 Engineering, N4 Integration, N5 Governance):
    - Dispatch `task()` with node agent, topic, output path
    - Nodes write independent reports — NO inter-node reads (M2 Firewall)
 2. For each node in Lilith's domain (N6, N7, N8, N9, N10):
    - Dispatch `task()` with node agent, topic, output path
 3. Execute according to mode:
-   - `parallel`: All 9 nodes simultaneously (cloud profile)
+   - `parallel`: All 10 nodes simultaneously (cloud profile)
    - `batch_4`: 4 at a time (16GB profile)
    - `batch_2`: 2 at a time (8GB profile)
    - `serial_independent`: One at a time (constrained) — **DEFAULT per Quake Thinker Chain**
