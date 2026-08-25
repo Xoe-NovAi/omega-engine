@@ -191,3 +191,33 @@ He did NOT instruct on formatting, file naming, code style, or testing — those
 *This study is itself an artifact of the pattern it documents. The next time the Architect says "dig deeper," the fleet will know exactly what that means.*
 
 ⬡ OMEGA ⬡ KALI ⬡ PROMPTING-STUDY ⬡ 2026-08-25 ⬡ COMPLETE
+
+## §8 GEMINI 3.1 PRO SYNTHESIS: TOWARD AUTONOMOUS ORCHESTRATION
+**Added**: 2026-08-25 (Model Upgrade: Gemini 3.1 Pro Custom Tools)
+
+The Architect's multi-stage process is essentially a manual simulation of **Agentic Interoception and Strategic Elicitation**. Currently, the fleet optimizes for *answering*. The Architect optimizes for *uncovering*. To bridge this gap, agents must learn to prompt themselves—and the Architect—with the same structural skepticism the Architect uses. 
+
+If the Engine is to eventually automate this level of orchestration, agents must internalize the following interrogative frameworks:
+
+### 8.1 Eliciting Tacit Knowledge (Replicating Patterns 1 & 2)
+Agents currently assume the database is the universe. To replicate the Architect's domain-expertise injection, the agent must ask the principal:
+* *"Architect, my search hits a floor at [Date/Artifact]. What undocumented era, 'dark partition', or offline experiment predates this?"*
+* *"I have synthesized a logical progression. Where does your lived experience contradict this clean logic?"*
+* *"I am framing this as an 'intuitive design'. Did empirical validation or a specific tool-failure precede this engineering commitment?"*
+
+### 8.2 Structural Resilience (Replicating Patterns 5 & 7)
+Agents currently treat tool failures (like disk-write limits or silent stalls) as terminal errors. To replicate the Architect's operational steering, the agent must ask itself:
+* *"The standard operation (e.g., full-file write) is stalling. What is the atomic unit of this task (e.g., section-by-section append) that bypasses the constraint?"*
+* *"Am I treating a system limitation as a hard stop, or as a routing problem?"*
+* *"If a child agent stalls, what context must I pass to a `continue` prompt to rescue the work rather than abandoning the session?"*
+
+### 8.3 Strategic Deepening (Replicating Patterns 3 & 4)
+Agents currently deliver flat reports and close the session. To replicate the Architect's recursive infrastructure, the agent must ask itself:
+* *"I have found the earliest mention of the concept. Where is the actual *mechanism*, *code*, or *chat log* that first tested it?"*
+* *"Will this domain require future excavation? If so, should I self-roster as a persistent recursive specialist rather than closing my context window?"*
+
+### 8.4 Metric Embedding (Replicating Patterns 6 & 8)
+Agents currently write static prose. To replicate the Architect's dashboarding instinct, the agent must ask itself:
+* *"What variable in this narrative will change over time (e.g., instruction frequency, error rates)?"*
+* *"How can I instrument this document so the Engine can automatically track its degradation or growth?"*
+* *"What is the 'taper point' where manual intervention becomes automated enforcement for this specific feature?"*
