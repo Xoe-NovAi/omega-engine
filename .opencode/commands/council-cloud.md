@@ -125,6 +125,15 @@ Her standing orders: read nothing until digests exist; preserve independence of 
 **Output**: Each Node writes independent report to `data/council/{session_id}/phase1_nodes/P{N}_report.md`
 **Total: 10 node reports** (N1-N10, no gaps).
 
+**PAGEABLE EXPERT NODES (Delivered-Home Doctrine)**: When the dispatch packet designates
+nodes as expert sessions (First Light Express pattern), EACH Node:
+1. Develops domain expertise through its fieldwork — not a one-shot report
+2. Registers in `TASK_REGISTRY.json` as pageable specialist:
+   tags `["expert", "pageable", "domain:<N-domain>", "express:<run-name>"]`
+3. Delivers home: report + expert-session registration + handoff packet enabling
+   warm-start paging by future councils
+The fleet grows resident domain experts every run — destination station is the engine.
+
 ---
 
 ### Stage 1.5: Report Digestion (ZERO Inference Cost)

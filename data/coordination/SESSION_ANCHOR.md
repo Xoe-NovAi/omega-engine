@@ -270,8 +270,8 @@ Critical path: Channel Security → Code Security → Cognitive Measurement → 
 10. Legacy GitHub repo mining (P0 — needs public/download)
 
 
-## 🌙 MIDNIGHT TRAIN V2.0 MANIFEST (2026-08-25 ~10:30Z)
-**Plan SSOT**: `data/coordination/MIDNIGHT_TRAIN_V2_PLAN_20260825.md`
+## 🌅 FIRST LIGHT EXPRESS MANIFEST (2026-08-25, departs ~07:00)
+**Plan SSOT**: `data/coordination/FIRST_LIGHT_EXPRESS_PLAN_20260825.md`
 **Sequence**: Council 1 (team-infra audit, S1-S8 surfaces, recon only) → auto-GO gate §4 → Council 2 (dev-prep/spec drafting) → wake queue.
 **Topology**: Entity Architecture v2 — MaKaLi orchestrator → Ma'at/Lilith/Kali arms → 10 nodes + specialists (~22-28 sessions).
 **Steps budgets**: ALL agents raised to 200 (makali 300) — "Maximum steps reached" interrupt was frontmatter-controlled all along.

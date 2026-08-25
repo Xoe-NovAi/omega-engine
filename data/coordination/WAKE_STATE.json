@@ -54,15 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-25T10:47:40Z",
-  "midnight_train_v2": {
-    "plan": "data/coordination/MIDNIGHT_TRAIN_V2_PLAN_20260825.md",
-    "status": "AWAITING_DEPARTURE",
-    "council_1": "Team-Infrastructure Audit (recon/research/strategy/reporting ONLY \u2014 surfaces S1-S8)",
-    "gate": "auto-GO criteria in plan \u00a74; HALT conditions defined",
-    "council_2": "Dev-Prep & Spec Drafting (specs, work packages, dev-team launch package)",
-    "post_train": "Architect reviews both decrees; dev team launches on explicit GO"
-  },
+  "updated": "2026-08-25T11:02:58Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -76,5 +68,14 @@
       "item": "Council 2 decree review + dev team launch GO",
       "priority": "P0 \u2014 on wake"
     }
-  ]
+  ],
+  "first_light_express": {
+    "plan": "data/coordination/FIRST_LIGHT_EXPRESS_PLAN_20260825.md",
+    "status": "AWAITING_DEPARTURE",
+    "council_1": "Team-Infrastructure Audit (recon/research/strategy/reporting ONLY \u2014 surfaces S1-S8)",
+    "gate": "auto-GO criteria in plan \u00a74; HALT conditions defined",
+    "council_2": "Dev-Prep & Spec Drafting (specs, work packages, dev-team launch package)",
+    "post_train": "Architect reviews both decrees; dev team launches on explicit GO",
+    "delivered_home_doctrine": "10 nodes launch as pageable expert sessions; deliver reports + registrations home"
+  }
 }
