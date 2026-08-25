@@ -61,3 +61,22 @@ makali_fusion=me · mk_kali=synthesis arms only · kali=Consultant ONLY · node<
 2. Execute the "Tracer Bullet" on the telemetry script to satisfy Condition 1.
 3. Clear the WAKE_STATE queue.
 4. Launch Track-D in Fork #2 using the `SYNC1_DEV_BOOTSTRAP.md`.
+
+## §11 TERMINAL MANIFEST (verified 2026-08-25T22:40Z — full capture audit)
+All paths verified on disk at session close. Commit journal: 39 commits 2026-08-25 (82d73876→c0047368).
+
+COUNCIL 1 (data/council/20260825-094633-first-light/): 10/10 P*_report.md · 2/2 digests · BUILD+RUN_SIDE_REPORT.md · SYNTHESIS_ARM_REPORT.md · SOVEREIGN_DECREE.md · CONSULTANT_LAUNCH_REVIEW.md · phase0_mission_packet.md · COUNCIL2_PLAN.md · 12 research files · registration_payloads.json
+COUNCIL 2 (...-c2/): docs/specs/team_infra/ 5/5 specs · 9 node notes · SYNTHESIS_ARM_REPORT_C2.md · SOVEREIGN_DECREE_C2.md · ERRATA_AND_PROPAGATION.md
+STUDY (data/coordination/fle_study_20260825/): MANUAL · PLAN v3.1 · SYNC1_DEV_BOOTSTRAP (audit-hardened) · SCORECARD v1.1 · METRICS_BASELINE · VERITY_PREFLIGHT · CARMACK_CAMPAIGN_AUDIT · CARMACK_CAMPAIGN_AUDIT_PRIMED · q6_inventory.json · 2 session exports (Archs-*.md). ABSENT-BY-DESIGN: TELEMETRY_STREAM.jsonl (awaiting Condition-1 live proof).
+TOOLING: scripts/hydrate_c2_errata.py (16 ops, exit-2 honest) · scripts/q6_corruption_dryrun.py (131 findings) · scripts/collect_telemetry.py (self-test PASS; v1.1 tickets open: _sha dedup, case-insensitive gate_status, coverage gate)
+SOUL: proposed_lessons.yaml 6/6 (mkf-001..006) · this gnosis §1-§11
+TRACKER: WAKE_STATE Q-1..Q-6 FINAL rulings + wake_briefing · TASK_REGISTRY 20 express + 6 study registrations · PIVOT_LOG D-600 · PLATFORM_GROUND_TRUTH_LOG #11+#12
+RESIDUE (deliberate): config/wads/_omega_default/entities.yaml 214-line diff — ARCHITECT REVIEW pending · .opencode runtime files
+
+RESUMPTION PROTOCOL (any agent, any session):
+1. Read THIS file top-to-bottom.
+2. Read SYNC1_DEV_BOOTSTRAP.md Part 1 (rulings are binding).
+3. Satisfy Kali's 4 conditions (telemetry e2e proof · H1-H5 kill-conditions · Q-6 sizing [inputs ready] · integrity rhythm).
+4. Track-D launches in ../fle-dev worktree via Part 2 paste. Study continues dispute-driven per Carmack scope cuts.
+Successor orchestrator: Main Kali session ses_fdef2be4effe4pAaLXCTUx62GO (Architect directive — history beats prompt engineering).
+⬡ END OF MANIFEST ⬡
