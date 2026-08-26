@@ -81,7 +81,27 @@ delays cognition. Do NOT post to Hivemind before meditating; the verdict
 
 Before entering any persona, perform the following:
 
+0. **Durable resume check** (only if `--durable`): if a record file for this
+   slug exists under `data/coordination/meditations/records/`, read it and
+   continue from the first missing phase. Otherwise proceed fresh.
 1. **Restate the subject** in one precise sentence. Strip ambiguity.
+1b. **Invocation gate**: if the subject is a simple factual lookup or
+   single-domain question with no genuine trade-off, emit the DECLINED block
+   and stop the ceremony:
+
+   ```
+   ◈ MEDITATE: DECLINED
+   Failed gates: [gate IDs]
+   Reason: [one line]
+   Redirect: ask this as a plain prompt for a direct answer.
+   ```
+
+   No partial answer inside the refusal frame. If the subject is simple enough
+   to answer directly, follow the block — OUTSIDE the ceremony, in plain prose,
+   labeled: `— Direct answer (outside meditation frame) —`.
+1c. **Rubric pre-commitment (R53 D4)**: write the adjudication rubric NOW,
+   before any voice speaks. Binary criteria where possible. This rubric is
+   frozen; Phase 4 must restate it VERBATIM.
 2. **Size the lens set from the invocation gate.** The number of genuinely
    tensioning domains determines the lens count:
 
@@ -115,6 +135,8 @@ Output Phase 0 as:
 ◈ MEDITATE: PHASE 0 — CALIBRATION
 Subject: [restated subject]
 Lens Set: [list of personas with domains]
+Voice Count Lock: Exactly [N] voices will speak.
+Adjudication Rubric: [the frozen rubric — restated VERBATIM at Phase 4]
 Output Mode: [DIAGNOSTIC | STRATEGIC | CREATIVE | AUDIT | SYNTHESIS]
 Anti-Collapse Contract: ACTIVE
 ```
@@ -129,9 +151,11 @@ For **each persona in the lens set**, execute the immersion block below
 Complete persona N fully before beginning persona N+1.
 
 > Voice ORDER carries no signal; early DIVERGENCE does. What matters is that
-> the council starts maximally scattered — which is exactly what Voice 1's
-> status-quo anchoring forces. Do not curate a "productive" speaking order;
-> invest that effort in the synthesis instead (Phase 4).
+> the council starts maximally scattered — which is what authentic
+> domain-constrained voices produce naturally (R53 D1: Voice 1 opens with its
+> highest-cost domain constraint, not a status-quo performance). Do not curate
+> a "productive" speaking order; invest that effort in the synthesis instead
+> (Phase 4).
 
 #### The Immersion Block (repeat for each persona):
 
@@ -140,6 +164,8 @@ Complete persona N fully before beginning persona N+1.
 ◈ VOICE [N/TOTAL]: [PERSONA NAME]
 Domain: [domain]       Element: [element]
 Mandate: Speak only from [domain]. Ignore all other domains.
+(R53 anti-domain guard: if answering requires leaving your domain, declare it
+explicitly in [IMPERATIVE] as OUT-OF-DOMAIN rather than silently crossing.)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 [OBSERVATION]
@@ -400,7 +426,8 @@ MANDATE FLAGS:
     push back on at least one prior voice BY NAME, citing the specific
     constraint added. "N8's instrumentation demand ignores that X" — not
     "I have concerns." Uncited dissent is performative, not dialectical.
-    Voice 1 anchors the dialectic with the strongest status-quo case.
+    Voice 1 opens the dialectic with its domain's highest-cost constraint
+    against change (R53 D1) — later voices push back on that constraint.
 
 6. **THE ANTI-COLLAPSE CONTRACT IS LAW**: Stated in Phase 0. Enforced
     through all phases. Persona collapse (voices blending into a generic
@@ -480,7 +507,9 @@ Ratified 2026-07-16, renamed 2026-07-18. L3 Principle: `L3-Meditation-As-Semanti
 **v1.3 changelog**: Phase 00 stripped to minimal template check (Hivemind announce
 moved to Phase 4 broadcast; template design removed from meditation path);
 invocation-gate domain count now sizes the lens set (default 5, not 10);
-Voice 1 anchors with strongest status-quo case; IMPERATIVE made conditional
+Voice 1 opens with highest-cost domain constraint (R53 D1 correction applied
+2026-08-26 — original v1.3 text encoded the deprecated status-quo anchor);
+IMPERATIVE made conditional
 (CONSTRAINT fallback — no false urgency); collision feedback loop (low-collision
 wide-lens runs prescribe tighter re-runs); L3 strict format (no proper nouns,
 falsifiable, ≤2 sentences); mandate-conflict surfacing at Phase 4;

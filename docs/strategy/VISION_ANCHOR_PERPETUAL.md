@@ -4,8 +4,9 @@
 
 **Status**: LIVING DOCUMENT — structured for continuous expansion as new strata are mined
 **Authority**: This document supersedes all prior vision statements. Every agent reads this first. Every decision references this.
-**Last Updated**: 2026-08-25T07:15:00Z
+**Last Updated**: 2026-08-26T12:10:00Z (relocated to core docs per Architect directive)
 **Updated By**: Roc (recursive specialist session) under Kali (chair) three-stage orchestration
+**Home**: `docs/strategy/VISION_ANCHOR_PERPETUAL.md` — CORE TEAM DOCUMENT (relocated 2026-08-26 from `data/entities/roc_racoon/workspace/`; evidence strata remain in Roc's workspace per §12 file index)
 
 ---
 

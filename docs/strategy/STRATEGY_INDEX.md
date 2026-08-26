@@ -153,7 +153,7 @@ grep -rl "your-term" docs/archive/strategy/2026-07-21/ docs/archive/strategy/202
 | `data/coordination/SESSION_ANCHOR.md` | Session recovery |
 | `data/coordination/HMC_COLLABORATION_HUB.md` | Team sync + `NEXT_ACTION` (Tier-2) |
 | `data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md` | Research jobs (Phase D-2 input) |
-| `data/coordination/THE_VISION_CANONICAL_DRAFT_20260823.md` | **Canonical vision spine** — Era 0→6 excavation (Roc, 645 lines) |
+| **`docs/strategy/VISION_ANCHOR_PERPETUAL.md`** | **CANONICAL VISION SSOT** (relocated to core docs 2026-08-26) — supersedes VISION_ANCHOR.md (08-14) + THE_VISION_CANONICAL_DRAFT_20260823.md |
 | `data/coordination/ARCHITECT_OVERSIGHT_PATTERNS_20260823.md` | Human oversight patterns P1–P7 + Methodology M1–M6 |
 | `data/coordination/THE_FORGE_CHRONICLE_CHARTER_20260823.md` | Book project charter (sanitation law applies) |
 | `data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md` | Team-Synthesis Study #1 rulings (input to D-593…D-601) |

@@ -8,6 +8,14 @@ llm_metadata:
 
 # 🔱 How to Use the /meditate Command
 
+> ⛔ **SUPERSEDED (2026-08-26) — replaced by the three-document set**:
+> - Invocation: `docs/how-to/meditate-invocation-guide.md`
+> - Contracts: `docs/reference/meditate-system-reference.md`
+> - Maintenance: `docs/strategy/meditate-maintainer-guide.md`
+>
+> Retained for historical Acceptance Criteria that the corpus references. Do not
+> cite as current authority.
+
 > **⚠️ ADVISORY (2026-08-26) — KNOWN-STALE SECTIONS PENDING PHASE B**
 > R53 (`docs/research/R53_meditate_granite_foundation_20260826.md`) refuted the Voice-1
 > status-quo rule on corpus evidence (3/3 runs produced manufactured knockdowns nothing

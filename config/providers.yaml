@@ -113,6 +113,8 @@ inference:
     # M22 repair 2026-08-22: endpoint per CLINE_PROVIDER_ACTIVATION_AUDIT_20260822.md
     # (openai_compat.py:94 URL math -> https://api.cline.bot/api/v1/chat/completions).
     base_url: https://api.cline.bot/api
+    # Credential via env var (resolved by _create_openrouter env: support).
+    api_key: env:CLINE_API_KEY
     is_cloud: true
   - provider: anthropic
     priority: 8

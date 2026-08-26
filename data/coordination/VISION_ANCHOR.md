@@ -1,6 +1,11 @@
 # 🌌 Omega Engine — Vision Anchor
 ## The Single Source of Truth for What Is True Right Now
 
+> ⛔ **SUPERSEDED 2026-08-26** — The canonical vision document is now
+> **`docs/strategy/VISION_ANCHOR_PERPETUAL.md`** (Vision Anchor Perpetual, relocated to core
+> docs per Architect directive). This file is retained as historical record only. Do not cite
+> as current vision authority.
+
 **AP Token**: `AP-VISION-ANCHOR-20260814`  
 **Status**: CANONICAL — Updated by Architect at every major decision point  
 **Last Updated**: 2026-08-15T05:40:00Z  
