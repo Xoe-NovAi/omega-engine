@@ -3,7 +3,7 @@
   "campaign": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
   "phase": "EXECUTION_MINIMAL",
   "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-26T00:43:40Z",
+  "updated": "2026-08-26T00:44:54Z",
   "owner": "kali",
   "status": "in_progress",
   "status_detail": "20-hour mastermind sprint complete (2026-08-24/25): GSCA study founded, truth-alignment dataset seeded (TA-001..014), MaKaLi Orchestrator Charter v1 ratified (shadow-mode cutover conditional on Carmack P0 fixes), Vision Anchor Perpetual written (561 lines), Carmack full-scope audit delivered (enforcement theater exposed: pre-commit uninstalled, temple-grade RED). Post-sprint priority: meditation critical path \u2014 P12+ICS Phase 1 \u2192 pre-commit hooks/M13 \u2192 ctxNN telemetry \u2192 TA dataset wiring \u2192 archetype bootstrap.",
@@ -363,7 +363,7 @@
     "HEADROOM-INTEGRATION": {
       "task": "Headroom Integration \u2014 Semantic compression for tool outputs + RAG (40-90% savings)",
       "owner": "maat_n3",
-      "status": "partial",
+      "status": "in_progress",
       "risk": "MEDIUM",
       "specs": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md",
       "phase": "Phase 2 (Post-Debut)",
@@ -461,7 +461,7 @@
     "GEMINI-NOTEBOOK": {
       "task": "Gemini Notebook v2.0 \u2014 Free-tier-only (3 accounts, 30 DR/mo), 2-notebook architecture, notebooklm-py[mcp] automation, master_token.json auth, SDP \u00a710 gate honored",
       "owner": "researcher",
-      "status": "partial",
+      "status": "blocked",
       "risk": "HIGH",
       "specs": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "phase": "Phase 2 (Post-Debut)",
