@@ -1,0 +1,6 @@
+{"ts": "2026-08-26T19:53:05.205028+00:00", "model": "z-ai/glm-5.2:free", "label": "glm52", "http_status": 401, "success": false, "latency_ms": 597, "error": "User not found."}
+{"ts": "2026-08-26T19:53:05.709054+00:00", "model": "minimax/minimax-m3:free", "label": "minimax_m3", "http_status": 401, "success": false, "latency_ms": 401, "error": "User not found."}
+{"ts": "2026-08-26T19:53:06.324543+00:00", "model": "nvidia/nemotron-3-ultra-free", "label": "nemotron_ctrl", "http_status": 401, "success": false, "latency_ms": 515, "error": "User not found."}
+{"ts": "2026-08-26T19:54:47.020426+00:00", "model": "z-ai/glm-5.2:free", "label": "glm52", "http_status": 401, "success": false, "latency_ms": 369, "error": "User not found."}
+{"ts": "2026-08-26T19:54:47.535641+00:00", "model": "minimax/minimax-m3:free", "label": "minimax_m3", "http_status": 401, "success": false, "latency_ms": 416, "error": "User not found."}
+{"ts": "2026-08-26T19:54:48.248795+00:00", "model": "nvidia/nemotron-3-ultra-free", "label": "nemotron_ctrl", "http_status": 401, "success": false, "latency_ms": 614, "error": "User not found."}

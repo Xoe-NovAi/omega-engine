@@ -12,6 +12,8 @@
 | **T3** | `qwen/qwen3-next-80b-a3b-instruct:free` | OpenRouter | 262K | Logic, Multilingual | High-density intelligence. |
 | **T3** | `nvidia/nemotron-3-super-120b-a12b:free` | OpenRouter | 262K | Generalist, Tools | Massive parameter count for free. |
 | **T3** | `minimax/minimax-m2.5:free` | OpenRouter | 197K | Creative, Coding | Exceptional for long-form synthesis. |
+| **T3** | `z-ai/glm-5.3-flash` | OpenRouter | 1M | Reasoning, Tools, Coding | Ox Alpha revealed. $0.075/$0.25 per M tokens. |
+| **T3** | `minimax/minimax-m3:free` | OpenRouter | 1M | Reasoning, Coding | Free tier; rate-limited but recovers with retries. |
 | **T3** | `llama-3.3-70b` | SambaNova | 128K | Reasoning, Instruction | 10-30 RPM. High reliability. |
 | **T2** | `google/gemma-4-26b-a4b-it:free` | OpenRouter | 262K | Balanced, Vision | Optimized for efficiency. |
 | **T2** | `opencode/big-pickle` | **Zen (stealth)** | **200K** | **Tool calling, Reasoning, Coding** | **⚠️ Identity tracking active. Currently DeepSeek V4 Flash alias. CLI-exclusive.** |

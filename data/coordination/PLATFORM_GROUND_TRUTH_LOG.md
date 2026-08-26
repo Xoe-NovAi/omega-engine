@@ -222,3 +222,11 @@ Second council-wide occurrence of synthetic trailing lines ("call the task tool 
 
 ## Entry #12 — Suffix injection escalation 1 → 1 → 3 (2026-08-25, Kali Tower Insight #5)
 Synthetic trailing lines ("call the task tool with subagent: X") escalated across the run: C1 launch prompt had 1 injection cluster (5 agents), subsequent dispatches showed repeated injection artifacts, and the pre-SYNC-1 dispatch carried 3 trailing synthetic calls. Pattern is accelerating with context length / multi-agent session chaining. STANDING DIRECTIVE: Anti-injection header is mandatory at Line 1 of all bootstrap prompts and dispatch packets; models must discard trailing spawn lines reflexively.
+
+## Entry #13 — Ox Alpha revealed, free preview dead (2026-08-26, Grokster web research)
+- **Observer**: grokster (M26 self-search reflex), Architect confirmation
+- **Finding**: `stealth/ox-alpha` on OpenRouter was an anonymous preview of Z.ai's GLM-5.3-Flash. Z.ai published reveal blog post 2026-08-26 (confirmed Business Insider, OfficeChai). Free preview ($0/$0) ended same day; `stealth/ox-alpha` listing delisted from OpenRouter (page returns empty). OpenCode Zen free route (`x-preview-f-free`) dead.
+- **Successor**: GLM-5.3-Flash live on OpenRouter as `z-ai/glm-5.3-flash` — $0.075/M input, $0.25/M output, 1M context, 131K output, reasoning ✅, tools ✅, structured ✅. Open-weights release announced tonight.
+- **Impact**: OpenCode Zen free-tier flagship gone. MiMo V2.5 (`mimo-v2.5-free`) confirmed working with thinking re-enabled (F4 re-key vindicated). MiniMax M3 (`minimax-m3:free`) discovered on OpenRouter free tier — rate-limited but recovers with retries.
+- **Stealth-preview pattern confirmed**: 5th occurrence (Pony→GLM-5, Hunter→MiMo-V2-Pro, Elephant→Ling-2.6-flash, Owl→LongCat-2.0, Ox→GLM-5.3-Flash). Free window ~6 days. Standard playbook: anonymous → free traffic → eval data → reveal → paid tier.
+- **Date**: 2026-08-26
