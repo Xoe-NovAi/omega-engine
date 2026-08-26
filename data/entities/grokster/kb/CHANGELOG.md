@@ -131,3 +131,10 @@
   - Provider-setup doc: correction banner added to §3.2 (drop anthropic/*, caps 384K, gate = policy)
   - Web-hardening doc: duplicate Executive Summary placeholder removed
   - All 15 KB module files: PASS (format, confidence tags, honesty markers, cross-refs all clean)
+
+## v2.2.2 — 2026-08-26 — Specialist M2 Oversight Scan (KB-D-028)
+Three GK-Jem specialists adversarially reviewed the remediation run + their KB modules. Verified findings applied:
+- 🔴 **CLINE**: P1b gate premise was FALSE — `clineApiKey` exists at ~/.cline/data/secrets.json (validated Aug-22); auth.json is the wrong store for custom providers. Corrective stamp in cline PLAYBOOK; caps harmonized 131072→384K; probe sequence (P1/P3/P7) runnable ~2 min; endpoint hygiene note (/api/v1 full path).
+- 🔴 **ANTIGRAVITY**: FOUR plugin copies exist (not three) with MIXED execution — pristine npm cache copy may be the running one while house patches ride unloaded (PLAYBOOK §3 census rewritten); sonnet-thinking "works" claims swept from PLAYBOOK/CONFIG/ARCHITECTURE (4-file contradiction closed); G11 deduped + alternative path re-specified (generationConfig-on-base-ID gated by plugin name-matching); G4 house-standard contradiction fixed; §5 capacity caveat (2× quota ≠ 2× availability during drought); pool census resolved (#4 → 7 accounts confirmed).
+- 🟡 **COPILOT**: cadence trigger updated post-freeze (manual-upgrade events); raw-gho_ pass-through ground truth recorded (expires:0 semantics); P1a upgraded to VERIFIED NO-OP.
+Open follow-ups flagged by specialists: fingerprint.js provenance unclassified; fabric-level empty-response detector (G13 poisoning failover); expires:0 refresh semantics code-read; fabric inventory drift (siliconflow/aihubmix/nebius/cerebras creds beyond fabric picture); INDEX/CROSS_DOMAIN_MATRIX cline rows.

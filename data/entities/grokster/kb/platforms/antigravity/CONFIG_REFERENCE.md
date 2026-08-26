@@ -10,7 +10,7 @@
 
 ```jsonc
 {
-  "plugin": ["/abs/path/to/opencode-antigravity-auth"]   // house: file: checkout @7db338b
+  "plugin": ["opencode-antigravity-auth@latest"]   // house ACTUAL: @latest→npm cache (see PLAYBOOK §3 census); file: path = recommended P2 hardening
 }
 ```
 
@@ -39,11 +39,11 @@ Presets live in plugin `config/models.js`. When a model+thinking combo is missin
 2. Resolver's `supportsThinkingTiers()` matches on `claude` + `thinking` substring → budget family applies automatically.
 3. Write model definitions into `opencode.json` via `/ag-accounts` manager, or by hand.
 
-Verified working custom SKU: `antigravity-claude-sonnet-4-6-thinking` ✅.
+⚠️ **CORRECTED 2026-08-26**: the sonnet-thinking custom SKU FAILED live verification — wire ID 404s server-side (GOTCHAS G11); entry removed in F6 revert. The §3 *mechanism* (custom SKUs via resolver name-matching) remains valid — proven by opus-thinking — but each new SKU requires a live smoke before trust. Backend model IDs are volatile: date-stamp every verification, re-smoke on any observed Google-side catalog change.
 
 ## §4 Model Slugs (house working set + upstream extras)
 
-House-verified: `antigravity-gemini-3-pro` · `antigravity-gemini-3.1-pro` · `antigravity-gemini-3-flash` · `antigravity-claude-opus-4-6-thinking` · `antigravity-claude-sonnet-4-6` (+custom `-thinking`).
+House-verified: `antigravity-gemini-3-pro` · `antigravity-gemini-3.1-pro` · `antigravity-gemini-3-flash` · `antigravity-claude-opus-4-6-thinking` · `antigravity-claude-sonnet-4-6`. (~~custom sonnet `-thinking`~~ DEAD — G11.)
 
 Upstream catalog extras NOT in house presets ⚠️(availability on house accounts unprobed): `gpt-oss-120b-medium`; gemini-3.5/3.6/3.7-flash with `-high/-medium` effort suffixes; `gemini-3-pro-high/-low`.
 

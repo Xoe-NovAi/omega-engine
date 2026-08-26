@@ -93,7 +93,7 @@ Key env vars: `CLINE_API_KEY`, `CLINE_DATA_DIR`, `CLINE_HUB_ADDRESS`, `CLINE_SES
     // Do NOT ship anthropic/* (documented but not actually served — see GOTCHAS).
     "cline-pass/deepseek-v4-flash": {
       "name": "DeepSeek V4 Flash (ClinePass)",
-      "limit": { "context": 1048576, "output": 131072 }   // output cap UNVERIFIED — P3
+      "limit": { "context": 1048576, "output": 393216 }   // 384K output — house-validated (harmonized 2026-08-26; was 131072 UNVERIFIED)
     }
   }
 }

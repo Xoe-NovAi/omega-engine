@@ -35,7 +35,7 @@ Step 2 — Token Exchange  ← THE CRITICAL GATE
       User-Agent: GitHubCopilotChat/<ver>
   → { token: "tid=...;exp=...;sku=...;proxy-ep=proxy.individual.githubcopilot.com;...",
       expires_at, refresh_in, endpoints: { api } }
-  ghu_ accepted reliably; gho_ acceptance varies by issuing app (#20759: OpenCode app → 404)
+  ghu_ accepted reliably; gho_ acceptance varies by issuing app (#20759: OpenCode app → 404 ON EXCHANGE ATTEMPT — but house ground truth 2026-08-26: the builtin flow stores the raw gho_ token with expires:0 and OpenCode PASSES IT THROUGH unchanged for individual plans (default endpoint, no identity headers), bypassing exchange entirely per PR #20758 behavior)
   SDK-documented supported refresh types: gho_, ghu_, github_pat_ (github_pat_ for SDK flows;
   ghp_ classic PATs NOT supported)
 

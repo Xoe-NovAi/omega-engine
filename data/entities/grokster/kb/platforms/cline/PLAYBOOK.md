@@ -64,3 +64,10 @@ always-on rule files (no frontmatter) inside `.clinerules/`.
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
+
+## ⚠️ M2 CORRECTIVE STAMP (2026-08-26 — remediation-run oversight scan)
+
+- **Key EXISTS**: `~/.cline/data/secrets.json` holds `clineApiKey` (`sk_5…`, 67 chars, mode 600, since Jun-2) — auth-validated by the Aug-22 probe (400-not-401). The 2026-08-26 P1b gate premise ("no key exists") was FALSE: auth.json is the WRONG store for custom openai-compatible providers (they interpolate `{env:CLINE_API_KEY}` from `.env`; only plugin-backed builtins appear in auth.json).
+- **Legitimate provisioning path**: app.cline.bot → Settings → API Keys (free account). ClinePass subscription = account-level entitlement on the SAME key, not a new credential.
+- **Runnable NOW, ~2 min total**: extract key → `.env` → P1 gate curl → P3 authenticated `/models` (doubles as entitlement discovery pre-ClinePass GO/NO-GO) → P7 namespace confirm.
+- **Endpoint hygiene**: always full `https://api.cline.bot/api/v1` (shorthand `/v1` 404s). Fabric-side: config/providers.yaml cline entry still lacks api_key wiring — same extraction fixes both surfaces.

@@ -33,7 +33,7 @@
 | Model catalog drift | Quarterly or on "model not supported" error | — |
 | Copilot CLI version/flags | Before each CLI probe session | — |
 | Ban-risk landscape scan (proxy projects' issues, GitHub enforcement reports) | Quarterly | — |
-| OpenCode builtin provider changes (transform.ts copilot handling, slot semantics) | On each OpenCode self-update (binary autoupdate ACTIVE — see opencode KB GOTCHAS G31) | — |
+| OpenCode builtin provider changes (transform.ts copilot handling, slot semantics) | On each MANUAL upgrade event (autoupdate DISABLED 2026-08-26, binary pinned 1.18.23 — see opencode KB GOTCHAS G31/F0 freeze). Side-effect: probe results are now version-stable and reproducible | — |
 
 ## §4 Unresolved Questions (no probe assigned yet)
 

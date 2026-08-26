@@ -10,7 +10,7 @@
 ## §1 OpenCode Builtin Provider — Zero-Config NO-OP Posture
 
 - Builtin providers: `github-copilot` + `github-copilot-enterprise` (the ONLY 2 isolation slots).
-- Credential already present at `~/.local/share/opencode/auth.json` → **P1a remediation = NO-OP. Zero config needed.**
+- Credential already present at `~/.local/share/opencode/auth.json` → **P1a = VERIFIED NO-OP 2026-08-26** (credential confirmed present; raw-gho_ pass-through mode — see ARCHITECTURE §2). Zero config needed.
 - Auth path: `opencode` TUI → `/connect` → GitHub Copilot → device flow. Officially sanctioned by GitHub (changelog 2026-01-16). Paid plans only for explicit model selection (Free = auto-model-only dead end, #34644).
 - OpenCode's `transform.ts` applies special handling for "codex context limits" on the Copilot provider — house V2 recon note; do not strip when editing transforms.
 

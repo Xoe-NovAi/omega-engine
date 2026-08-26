@@ -29,7 +29,7 @@ The terms (antigravity.google/terms §6) name third-party-client access as breac
 ## §3 Plugin Wiring (Current House Setup)
 
 - ⚠️ **CORRECTED 2026-08-26 (remediation-run disk audit)**: house configs reference the plugin as **`opencode-antigravity-auth@latest`** (project + subdir arrays), which resolves to the npm install at `~/.config/opencode/node_modules/` — v1.6.0, verified **byte-identical** to the local git checkout @7db338b (`diff -rq dist` = 0 differences). Earlier KB text claimed direct `file:` wiring — that was wrong; the checkout functions as a pinned source-of-truth mirror, not the load path.
-- Per #30631, `@latest` pins to whatever npm snapshot was current at install time (Jul-21) and does NOT float — combined with upstream archive (G1), the effective plugin is frozen at 1.6.0 == 7db338b. Any future change requires explicit reinstall.
+- Per #30631, `@latest` pins to whatever npm snapshot was current at install time (Jul-21) and does NOT float. **Load-path census (specialist M2, 2026-08-26): FOUR copies exist** — repo checkout @7db338b, global `~/.config/opencode/node_modules/`, project `.opencode/node_modules/` (all three patched, mutually identical), and the pristine npm cache `~/.cache/opencode/packages/` (19 dist diffs). opencode.log shows MIXED execution: stack traces originate from the CACHE copy — i.e., the pristine unpatched npm build may be the one actually running, while house patches ride in copies that may not load. Behavioral conclusions must cite which copy executed (log line/version banner); the D-1 patch enforcement (e.g., round-robin removal) is NOT guaranteed on the executing path.
 - Hash-pin or absolute path remains the recommended hardening (P2 follow-up): swap `@latest` → `file:` path to make the load path literally the checkout.
 - Accounts file: `~/.config/opencode/antigravity-accounts.json` (v3 schema, 7 accounts). Treat as credential vault — scopes include master `cloud-platform`. Plugin settings live in `~/.config/opencode/antigravity.json` (incl. `keep_thinking`, default false).
 
@@ -42,7 +42,7 @@ Working set (verified through plugin + provenance audits):
 | `antigravity-gemini-3-pro` / `-3.1-pro` / `-3-flash` | Antigravity quota pool |
 | `antigravity-claude-opus-4-6-thinking` | Preset; thinking via budget family |
 | `antigravity-claude-sonnet-4-6` | Base preset |
-| `antigravity-claude-sonnet-4-6-thinking` | **Custom SKU** — omitted from presets (upstream issue #495) but works; resolver matches `claude`+`thinking` |
+| ~~`antigravity-claude-sonnet-4-6-thinking`~~ | ❌ **DEAD wire ID** — 404s at gateway across accounts (verified 2026-08-26, GOTCHAS G11); removed from configs in F6 revert |
 
 Selection discipline:
 - Thinking SKUs use **flat `thinkingBudget` keys** in variant config (plugin request.js reads them flat — nested schemas silently drop, see GOTCHAS G5).

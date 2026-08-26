@@ -104,11 +104,11 @@ File: `~/.config/opencode/antigravity-accounts.json`, schema v3:
 }
 ```
 
-❓ House file (~8KB) not yet diffed against this schema — RESEARCH_TARGETS #4.
+House file (8.3KB, 7 accounts, all enabled) matches v3 schema shape — confirmed 2026-08-26 (was ❓, now resolved).
 
 Selection strategies (`antigravity.json` → `account_selection_strategy`): `sticky` (default; prompt-cache preservation) / `round-robin` / `hybrid` (health score + token bucket + LRU). Per-model-family rotation cursors. Short 429s (≤5s retryDelay) retried same-account; longer → rotate with exponential backoff. Parallel-process collision fix: `pid_offset_enabled: true`.
 
-**Dual quota pools per account**: Gemini requests use the Antigravity pool first; when ALL accounts' Antigravity quotas exhaust, fall back to the Gemini-CLI pool (same account, model names auto-transformed e.g. `gemini-3-flash` → `gemini-3-flash-preview`). ≈2× effective Gemini quota.
+**Dual quota pools per account**: Gemini requests use the Antigravity pool first; when ALL accounts' Antigravity quotas exhaust, fall back to the Gemini-CLI pool (same account, model names auto-transformed e.g. `gemini-3-flash` → `gemini-3-flash-preview`). ⚠️ Capacity caveat (specialist M2): "≈2× quota" ≠ 2× availability — during a drought (2026-08-26 observed: ALL accounts ~0% with 100–160h resets) effective Gemini capacity is ZERO for days regardless of pool count; fallback is also conditional on per-account projectId + cloudaicompanion API (G7, unprobed); and both pools sit behind the same hidden throttle (G3) — not independent capacity.
 
 ## §6 Two-Layer Rate Limiting
 
@@ -122,7 +122,7 @@ Official docs add: limits correlate with *agent work done*, not request count �
 ## §7 Plugin Internal Pipeline (@7db338b, house source-verified)
 
 ```
-OpenCode request (model: antigravity-claude-sonnet-4-6-thinking)
+OpenCode request (example model: antigravity-claude-opus-4-6-thinking — NOTE: sonnet-thinking variant of this example is DEAD, G11)
   → transform/model-resolver.js   strips `antigravity-` prefix;
       supportsThinkingTiers() matches claude+thinking;
       applies budget family {low:8192, medium:16384, high:32768}
