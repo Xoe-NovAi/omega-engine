@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T04:17:55Z",
+  "updated": "2026-08-26T04:29:36Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -165,7 +165,7 @@
     ],
     "root_lesson": "Commands are prompts not papers \u2014 Sonnet 4.6 derailed into doc-critique because meta-commentary invites analysis instead of execution.",
     "sonnet_mission": {
-      "task": "Write the DEFINITIVE GUIDE teaching our models exactly how to enhance or completely rewrite the /meditate command \u2014 strategic insights and design guidance grounded in R53 sources and real-world data. NOT implementation.",
+      "task": "Write a TUTORIAL FOR THE TEAM on how to enhance or re-write the MEDITATION MANUAL (docs/how-to/use-meditate.md \u2014 the document detailing best practices, science, and strategies for the meditation system and the /meditate command). ALTERNATIVE FRAMING the Architect flagged as possibly more profitable: produce a guide for SPLITTING into separate artifacts \u2014 (a) a pure USER MANUAL covering actual command usage, and (b) a TECHNICAL GUIDE covering template crafting and system internals. Sonnet should assess both framings and recommend. NOT implementation of the command itself.",
       "primary_input": "docs/research/R53_meditate_granite_foundation_20260826.md (a0a43c82) \u2014 THE evidence base: verdict table on all 9 hypotheses, corpus ground truth from 16 records, token constraints, 12 evidence-traced build directives, 10-location manual-sync checklist",
       "supporting_inputs": [
         "docs/how-to/use-meditate.md v2.3 \u2014 current manual being enhanced (359 lines)",
@@ -181,7 +181,8 @@
           "D11: resume branch (loss-acceptance vs sanctioned conditional read)",
           "BROADCAST/MANDATE CONFLICT CHECK retention (recommend keep + exercise in first recorded run)"
         ]
-      }
+      },
+      "scope_correction": "2026-08-26 Architect correction pre-compact: original phrasing said \"teach models to enhance/re-write the /meditate command\" \u2014 MISPOKEN. The guide teaches MANUAL maintenance/enhancement (or the user-manual + technical-guide split). The command build (Phase B) remains gated behind the guide + D10/D11 rulings."
     }
   }
 }
