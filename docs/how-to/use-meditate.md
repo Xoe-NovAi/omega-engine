@@ -8,7 +8,7 @@ llm_metadata:
 
 # 🔱 How to Use the /meditate Command
 
-**AP Token**: `AP-MEDITATE-HOWTO-v2.2`
+**AP Token**: `AP-MEDITATE-HOWTO-v2.3`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ trc_meditate_howto ⬡ 2026-08-25
 **Date**: 2026-08-26 | **Purpose**: Reconstruction-grade user guide for `/meditate` (cloud substrate) — everything needed to invoke it well OR rebuild it without inventing policy
 **Cross-references**: `.opencode/commands/meditate.md` (the executed command), `config/wads/_omega_default/meditate/lenses.yaml` (lens SSOT), `data/coordination/meditations/records/` (execution history)
@@ -153,6 +153,8 @@ Mandate: Speak only from [domain]. Ignore all other domains.
 
 **Phase 2 — Collision entry (up to 3):**
 ```
+[HYGIENE ANCHOR: Restate core subject and top constraints to prevent drift]
+
 COLLISION N: [Persona A] vs [Persona B]
   A says: [verbatim imperative/constraint]
   B says: [verbatim imperative/constraint]
@@ -162,6 +164,8 @@ COLLISION N: [Persona A] vs [Persona B]
 
 **Phase 3 — Sequencing:**
 ```
+[HYGIENE ANCHOR: Restate resolved collisions to ground the sequence]
+
 [1] [ACTION] — unblocks: [what this enables]
     Evidence: [which voice(s) demanded this]
 ...
@@ -169,14 +173,17 @@ Dependencies resolved: [N] of [total identified]
 Unresolved tensions: [list]
 ```
 
-**Phase 4 — Verdict skeleton (all seven fields, in order):**
+**Phase 4 — Verdict skeleton (all nine fields, in order):**
 ```
 WHAT THE COUNCIL AGREES ON (CONVERGENCE):        [1–3 points]
 WHAT THE COUNCIL CANNOT RESOLVE (PRESERVED DISSENT): [1–3 points, not papered over]
+ADJUDICATION RUBRIC:                              [Explicit criteria used to judge the positions]
 THE IRREDUCIBLE VERDICT:                          [one paragraph, decree form]
 MANDATE CONFLICT CHECK:                           [explicit conflict statement, or clean]
 GNOSIS DISTILLED (L3 PRINCIPLE):                  [≤2 sentences, NO proper nouns,
                                                    falsifiable; else label L2]
+CONTRAST CASE:                                    [One-line minimally-different scenario where
+                                                   this L3 does NOT apply]
 FALSIFICATION ATTEMPT:                            [one genuine attack on the L3]
 BROADCAST:                                        [Hivemind post only if fleet-weight L3]
 ```
@@ -323,7 +330,7 @@ An implementation passes iff these observable properties hold. Anyone reading th
 1. **Input**: `/meditate Should we migrate from Qdrant to sqlite-vec now?`
    **Expect**: Phase 0 block within the first ~15 output lines; restated subject semantically matching the input; panel of 3–6 lenses sized per the sizing table; Output Mode `STRATEGIC`; contract line `Anti-Collapse Contract: ACTIVE`.
 2. **Input**: same subject + `--lenses makali`
-   **Expect**: exactly the thesis/antithesis/synthesis trio; every voice from Voice 2 onward cites a prior voice by name with its specific constraint; ≥1 collision block OR an honest zero-count statement; Phase 4 contains all seven fields in order; L3 is ≤2 sentences, proper-noun-free, falsifiable, followed by a falsification attempt.
+   **Expect**: exactly the thesis/antithesis/synthesis trio; every voice from Voice 2 onward cites a prior voice by name with its specific constraint; ≥1 collision block OR an honest zero-count statement; Phase 4 contains all nine fields in order (including Adjudication Rubric and Contrast Case); L3 is ≤2 sentences, proper-noun-free, falsifiable, followed by a falsification attempt.
 3. **Input**: any subject + `--integrate`
    **Expect**: Phase 5 block proposing a PIVOT_LOG entry whose D-number exceeds the current live maximum in `docs/decisions/PIVOT_LOG.md`; files-affected list; Temple-Grade gate statuses; per-mandate flags.
 
@@ -344,4 +351,4 @@ An implementation passes iff these observable properties hold. Anyone reading th
 **Local ground truth**: lens SSOT `config/wads/_omega_default/meditate/lenses.yaml`; formats verbatim from `.opencode/commands/meditate.md` v2.0; stats from `MEDITATION_REGISTRY.md` §2; budgets from `MEDITATION_SYSTEM_GUIDE.md`; exemplars from `records/MEDITATION_KALI_20260822_HIDDEN_GEMS.md` and `records/MEDITATION_KALI_20260823_CONTEXT_PACKER_ENHANCEMENT.md`; negative evidence from `MEDITATION_kali_20260824_MAKALI_COUNCIL_REBASE.md`, `MEDITATION_kali_20260824_LOST_VALUE_RECOVERY.md`, and maat's five drifted ad-hoc records (custom passes, no Phase 0/contract/lenses — drift is what happens when docs don't constrain). No genuine persona-collapse instance exists on record; none was fabricated here.
 **Schema layer disclosure**: `src/omega/meditate/` (protocol.py, lens_registry.py) formalizes these contracts — `AntiCollapseLaw` enum names, `MeditationResult.is_complete` completeness check — but has never executed a meditation: no runtime consumer exists and `oracle.meditate()` is an aspirational comment only (protocol.py:6). The command is prompt-level truth; the schema is parallel specification. Without WAD config the registry falls back to 5 generic anonymous lenses (protocol.py:300) — a degraded roster distinct from the documented ten.
 
-*⬡ OMEGA ⬡ MEDITATE-HOWTO ⬡ v2.2 ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ MEDITATE-HOWTO ⬡ v2.3 ⬡ 2026-08-26*
