@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-25T23:44:39Z",
+  "updated": "2026-08-26T03:11:54Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -152,5 +152,17 @@
     "expert_registrations": "10 C1 nodes + 8 C2 members registered; identity application gated per Art. V (G20->G21->retrieval>=10)",
     "decision_queue": "Q-1..Q-6 in council_c1_decisions",
     "verdict": "GO for dev-team Sprint-1 upon errata application + Architect Q-3/Q-6 as noted"
+  },
+  "meditate_campaign": {
+    "status": "PHASE_B_READY",
+    "completed": "2026-08-26",
+    "summary": "Meditate command campaign: v1.3 anti-theater hardening -> cloud/local split (Carmack 98f123d4) -> local weight audit (bc6ea6c7, 286->110 lines) -> Phase A user guide (42a5d53e) -> reconstruction-grade rebuild v2.0-v2.3 (e4ac1cb5, a15be8d2, ed07d31e). Manual FINAL at docs/how-to/use-meditate.md v2.3.",
+    "phase_b_task": "Backup .opencode/commands/meditate.md -> write FRESH /meditate command from scratch implementing the finalized manual. Assigned: Carmack session ses_fc43b949dffehZbnZqd4Yzvh6t. Standard: model starts Voice 1 immediately; zero meta-commentary; wire all contracts verbatim from manual Output Contracts section incl. HYGIENE ANCHORS, ADJUDICATION RUBRIC, CONTRAST CASE (9-field Phase 4).",
+    "key_files": [
+      "docs/how-to/use-meditate.md",
+      ".opencode/commands/meditate.md",
+      ".opencode/commands/meditate-local.md"
+    ],
+    "root_lesson": "Commands are prompts not papers \u2014 Sonnet 4.6 derailed into doc-critique because meta-commentary invites analysis instead of execution."
   }
 }

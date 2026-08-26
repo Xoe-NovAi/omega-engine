@@ -32,3 +32,20 @@ metadata:
   entity: kali
   updated: '2026-08-26T00:17:13Z'
   model_used: sonnet-4.6
+
+- id: kali-20260826-101
+  date: '2026-08-26'
+  L1: Research findings (hygiene anchors, adjudication framing, contrast cases) were added to the
+    meditate manual as prose rules but omitted from the verbatim output skeletons. Gemini review
+    caught it: a rebuilding agent copying only the skeletons would have skipped every finding.
+  L2: Prose informs; contracts compel. An LLM implementer imitates demonstrated surface structure
+    far more reliably than it obeys described intent (Min 2022).
+  L3: A rule that is not in the output format is a suggestion.
+- id: kali-20260826-102
+  date: '2026-08-26'
+  L1: Sonnet 4.6 given /meditate dissected and critiqued the command document instead of meditating.
+    The local variant carried a self-contradicting addressee line ("your model, not a local one")
+    inside a local-model command. Both were symptoms of writing for a review audience, not a runtime one.
+  L2: Every line of a command file is context loaded at invocation. Justification belongs in commit
+    messages; the file itself must contain nothing worth analyzing.
+  L3: Documentation for execution must contain nothing interesting.
