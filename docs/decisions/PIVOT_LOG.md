@@ -419,6 +419,21 @@ This drove the 92% vs 84% vs 72% compliance contradictions in OMEGA_ENGINE.md �
 **D-C (F2 adjudicator)** — PENDING refined recommendation: Architect disclosed full model inventory (Antigravity: Sonnet 4.6/Opus 4.6/Gemini 3.1 Pro in-CLI automated; Claude.ai: Sonnet 5 + Haiku 4.5 ×8 accounts, human-in-loop batching). Tiered structure under construction — see KALI response this date.
 **D-601** — D-C DECREE GRANTED (dual-review amended): Cross-model adjudication authorized through window close (~Aug 28). TIER 1: dual review = Gemini 3.1 Pro + Sonnet 4.6 (both via Antigravity, 8-account pool). TIER 2: Sonnet 5 via Claude.ai daily-batched (human upload per CLAUDE_PACK_TEMPLATE). TIER 3: Opus 4.6 break-glass. M7 waiver time-boxed to window; T0 provenance on all verdicts. OPERATIONAL DOCTRINE attached: model-window economics (see docs/strategy/MODEL_WINDOW_ECONOMICS_20260823.md) — ascending-window review ordering, priming ceilings (≤150K for 200K-window targets), cheap-prime/expensive-cognate technique codified. Companion methodology: docs/strategy/COGNITIVE_ROUTING_PLAYBOOK.md (priming maneuver + dual-review dialectic).
 
+## D-603 (2026-08-26) — Meditation Live-Surface Correction + Documentation Authority Map (kali, delegated)
+
+**Context**: R53 granite foundation (a0a43c82) closed 9 design hypotheses on corpus+literature evidence. Deep review exposed that the refuted Voice-1 status-quo rule remained EXECUTING in `.opencode/commands/meditate.md` while documentation alone was corrected.
+
+**Decision**:
+1. R53 directives D1 (Voice-1 authentic constraint), D2 (comparative delta merged into dissent), D8 (count-first collision semantics) applied to the LIVE command ahead of Phase B (`10755f4c`) — execution surface may not run corpus-proven-wrong rules while fixes are documented-but-pending.
+2. Documentation consolidation (`6fe30368`): ranked Authority Map established in `docs/strategy/MEDITATE_DOCUMENTATION_STRATEGY.md` §12 (R53 evidence > strategy process > manual > command > registries > frozen history). Regression guard: meditation-rule citations must trace to R53 or strategy doc.
+3. Briefing-consumption protocol adopted after double-missed Grokster briefings: senders register kali-addressed artifacts in WAKE_STATE.json `inbox`; kali checks inbox every hydration (M15).
+
+**Evidence**: R53 §1 verdict table; hidden-gems five-voice meditation Top-5 (rank #1 "blocks on nothing"); Opus meditate-archs run (256d62f6) demonstrating collision-phase value via unresolved Ma'at-vs-Kali voice conflict.
+
+**Not decided here**: D10 DECLINED form · D11 resume semantics · anti-domain enforcement · three-doc prototype ratification — remain gated on Architect.
+
+---
+
 ## D-602 (2026-08-24) — TORCH-FREE REPO DECLARATION (Architect)
 The Omega Engine is a TORCH-FREE repo: `torch`, `transformers`, `sklearn` must not be
 imported at any module level in src/. VIOLATION FOUND: `src/omega_youtube_research/

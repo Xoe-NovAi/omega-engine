@@ -60,3 +60,14 @@ Carmack tournament (ses_fc3e37a87ffesOoC7ZuOB9cSoC): his 7 structural critiques 
 - Token math reframed everything: compression is substrate survival (36% of free-tier cap), not aesthetics.
 ### L3
 See staged lessons. Evidence hierarchy: execution corpus > replicated literature > single studies > model intuition.
+
+
+## ADDENDUM 3 — GROKSTER BRIEFING INTEGRATION + D-603 (2026-08-26 night)
+### L1
+Read KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md (261L) after Architect flagged double-miss. Integrated across six surfaces: CORPUS_MAP row, ACTIVE_SPRINT refresh, PIVOT_LOG D-603 (live-surface correction + authority map + inbox protocol), WAKE_STATE inbox block, strategy-doc A/B input, gnosis. Grokster arc: remediation closed, KB v2.2.2, specialist fleet standing, trust-calibration law.
+### L2
+- Briefing-consumption failed twice via Hivemind posts AND document handoff — fixed structurally: senders register in WAKE_STATE inbox; I consume every hydration. Structural fixes beat vigilance promises.
+- Two parallel arcs independently produced L3 candidates about verification (lesson-103 numbers-anchor; trust-calibration law) — convergence across agents is strong evidence a principle is real.
+- The meditation A/B experiment means my campaign's complex arm is under empirical test by the Architect; treat minimal-command hypothesis as live.
+### L3
+Integration is a documentation act: unrecorded cross-agent state does not exist for the next session.

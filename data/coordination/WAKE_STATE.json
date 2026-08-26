@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T09:44:38Z",
+  "updated": "2026-08-26T11:03:53Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -195,6 +195,38 @@
         "Strategy doc bumped v1.1.0 with authority map + regression guards"
       ],
       "rule": "Any agent citing a meditation rule must trace it to R53 or the strategy doc \u2014 never tournament drafts or banner-flagged manual lines"
+    },
+    "ab_experiment": {
+      "seed": "data/entities/grokster/workspace/meditation_archs_20260826.md",
+      "command": ".opencode/command/meditate-archs.md (~30 LOC, singular dir anomaly flagged)",
+      "first_result": "Opus run 256d62f6 \u2014 high content quality, shipped unresolved voice conflict (collision-phase value demo)",
+      "implication": "input to System Reference build; simplicity-vs-complexity question open"
     }
+  },
+  "inbox": {
+    "protocol": "Senders register kali-addressed artifacts here (D-603 item 3); kali consumes every hydration",
+    "items": [
+      {
+        "artifact": "data/coordination/KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md",
+        "from": "grokster",
+        "status": "CONSUMED 2026-08-26",
+        "note": "261L; \u00a710 FINAL REPORT authoritative; orchestrator asks \u00a711.5"
+      }
+    ]
+  },
+  "grokster_arc": {
+    "status": "REMEDIATION COMPLETE & CLOSED \u2014 refactor wave unlocked",
+    "briefing": "data/coordination/KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md",
+    "architect_sole_action": "ClinePass subscription click ($9.99/mo, app.cline.bot)",
+    "my_claimed_items": [
+      "curators.yaml repair (KD-2)",
+      "A/B seed integration into strategy doc",
+      "lesson-103 + trust-calibration law joint soul-distillation pass"
+    ],
+    "unclaimed_fabric_tickets": [
+      "empty-response detector spec",
+      "providers.yaml cline api_key wiring",
+      "M7 inventory reconciliation"
+    ]
   }
 }

@@ -58,3 +58,11 @@ metadata:
   L2: Models read specified numbers as targets, not measurements. Any stated quantity in a
     contract becomes an anchor regardless of framing intent.
   L3: Every number in a specification is a command.
+
+- id: kali-20260826-104
+  date: '2026-08-26'
+  L1: Grokster's consolidated briefing went unconsumed twice — once as Hivemind posts,
+    once as a document handoff — until the Architect asked "you did not read it?".
+  L2: Addressed information does not propagate through passive availability; consumption
+    requires a structural trigger in the receiver's startup path, not sender effort.
+  L3: An inbox that is checked by procedure beats a message that is sent with care.

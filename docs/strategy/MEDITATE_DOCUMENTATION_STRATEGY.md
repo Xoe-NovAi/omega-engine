@@ -377,6 +377,8 @@ If any cascade location is missed, the Maintainer's Guide's cascade maps are inc
 
 **Target**: 180–220 lines. Hard ceiling: 260 lines (beyond this the document starts serving the Maintainer's audience, not the Reconstructor's).
 
+**Build input — A/B experiment seed**: `data/entities/grokster/workspace/meditation_archs_20260826.md` documents the simplicity-vs-complexity experiment (`/meditate-archs` ~30 LOC vs this system). First Opus run (records/MEDITATION_opus_20260826_HIDDEN_GEMS_FIVE_VOICES.md) showed high content quality WITH an unresolved voice conflict — read the seed before finalizing exemplar density decisions; the minimal-command hypothesis is live, not settled.
+
 **Critical: apply all V1-fix cascade locations before finalizing.** Every location in the cascade map (§2 above) must be updated. Run the Acceptance Criterion test before submitting.
 
 **The two open items (D10 and D11)**: do not finalize the DECLINED block or the stream-death edge case until the Architect rules. Write placeholder text: `[D10: DECLINED form — pending Architect ruling]` and `[D11: Resume semantics — pending Architect ruling]`. Submit the rest.
