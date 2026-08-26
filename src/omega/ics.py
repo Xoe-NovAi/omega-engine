@@ -194,7 +194,7 @@ class ICSContext:
         trace = self.trace_id or _generate_trace()
         phase = self.phase or _detect_phase()
 
-        # Build header from segments (F1 fix: robust node insertion, sanitized)
+        # Build header from parts (F1 fix: robust node insertion, sanitized)
         entity_upper = self.entity.upper()
         segments = [
             "OMEGA",
