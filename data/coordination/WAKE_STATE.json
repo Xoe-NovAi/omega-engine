@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T12:05:43Z",
+  "updated": "2026-08-26T21:05:33Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -271,5 +271,37 @@
       "promotion_manifest": "APPROVED + EXECUTED: kali 8, grokster 8 lessons promoted to soul.yaml",
       "meditation_protocol_law": "Architect directive: meditations output to chat for ingestion; NEVER launch directly into dev/action"
     }
+  },
+  "pre_compaction_lockin_20260826": {
+    "architect_decisions": {
+      "opencode_binary": "KEEP 1.18.23 and revalidate (no downgrade)",
+      "headroom": "IMPLEMENT LOCAL-FIRST headroom compression \u2014 override cloud default, use local models for compression. This is a novel community contribution: local semantic compression that works with local LLMs."
+    },
+    "blockers_resolved": {
+      "nvme_space": "RESOLVED \u2014 omega_library now 20GB free, 16GB swap fits",
+      "opencode_version": "DECIDED \u2014 keep 1.18.23, revalidate compaction probe",
+      "headroom_m7": "DECIDED \u2014 implement local-first override (Task 0 in build-packet)"
+    },
+    "research_coverage": "ALL 12 GAPS CLOSED \u2014 8 persistent expert sessions registered for wave 2 paging",
+    "expert_sessions": {
+      "R01_carmack_token_economics": "ses_fc07ce00bffeeUVDTOMjWWCAU8",
+      "R02_ci_injection_spec": "ses_fc0335de9ffegYf88MEunkBHof",
+      "R03_zswap_system_recon": "ses_fc03337c3ffewlIl3RbrLDhznl",
+      "R04R09R12_systems_web": "ses_fc02d0ae3ffegM0BKWV8KQFuAq",
+      "R05_headroom_heritage": "ses_fc0331204ffeVes3nvKIYOX4jY",
+      "R06R11_curator_corpus": "ses_fc02ce92bffes8IRAatNLFUXaX",
+      "R07_antidomains_audit": "ses_fc02cd428ffezaOBlWucaBzajs",
+      "R08_ci_failure_evidence": "ses_fc02cbcfcffedlzXRvzcLXY2jv"
+    },
+    "critical_findings": [
+      "Anti-domain guard costs 36 tokens (not 15) \u2014 SR \u00a78 needs fix",
+      "D4 rubric compliance 0/17 (0%) \u2014 enforcement mechanism needed",
+      "12 of 13 affinity presets missing",
+      "CI Ph1 validated against 8 real failures (5 directly targeted)",
+      "llama-fit-params confirmed exists (tools/fit-params/)",
+      "headroom-ai real (67.7k stars), savings grounded (Carmack-discounted)",
+      "headroom M7 violation: defaults to cloud model, local = 0% savings"
+    ],
+    "wave2_readiness": "READY \u2014 pending compaction. Two Architect decisions recorded. All research closed. Expert sessions persistent."
   }
 }
