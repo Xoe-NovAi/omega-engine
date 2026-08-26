@@ -29,8 +29,9 @@ The terms (antigravity.google/terms §6) name third-party-client access as breac
 ## §3 Plugin Wiring (Current House Setup)
 
 - ⚠️ **CORRECTED 2026-08-26 (remediation-run disk audit)**: house configs reference the plugin as **`opencode-antigravity-auth@latest`** (project + subdir arrays), which resolves to the npm install at `~/.config/opencode/node_modules/` — v1.6.0, verified **byte-identical** to the local git checkout @7db338b (`diff -rq dist` = 0 differences). Earlier KB text claimed direct `file:` wiring — that was wrong; the checkout functions as a pinned source-of-truth mirror, not the load path.
-- Per #30631, `@latest` pins to whatever npm snapshot was current at install time (Jul-21) and does NOT float. **Load-path census (specialist M2, 2026-08-26): FOUR copies exist** — repo checkout @7db338b, global `~/.config/opencode/node_modules/`, project `.opencode/node_modules/` (all three patched, mutually identical), and the pristine npm cache `~/.cache/opencode/packages/` (19 dist diffs). opencode.log shows MIXED execution: stack traces originate from the CACHE copy — i.e., the pristine unpatched npm build may be the one actually running, while house patches ride in copies that may not load. Behavioral conclusions must cite which copy executed (log line/version banner); the D-1 patch enforcement (e.g., round-robin removal) is NOT guaranteed on the executing path.
-- Hash-pin or absolute path remains the recommended hardening (P2 follow-up): swap `@latest` → `file:` path to make the load path literally the checkout.
+- **RESOLVED 2026-08-26 (Architect order)**: both configs switched from `@latest` to `file:///…/omega-engine/opencode-antigravity-auth` — the house-patched checkout @7db338b is now the SINGLE canonical load path (smoke-verified: opus-thinking routes through it). Stale copies removed (project + global node_modules); remaining cache copies under `~/.cache/opencode/packages/` are opencode-managed and inert under file: spec. The multi-copy drift problem is closed; any plugin change = a git commit in the checkout.
+
+Hash-pin or absolute path remains the recommended hardening (P2 follow-up): swap `@latest` → `file:` path to make the load path literally the checkout.
 - Accounts file: `~/.config/opencode/antigravity-accounts.json` (v3 schema, 7 accounts). Treat as credential vault — scopes include master `cloud-platform`. Plugin settings live in `~/.config/opencode/antigravity.json` (incl. `keep_thinking`, default false).
 
 ## §4 Model Selection & Thinking SKUs
@@ -40,7 +41,7 @@ Working set (verified through plugin + provenance audits):
 | Model slug | Notes |
 |---|---|
 | `antigravity-gemini-3-pro` / `-3.1-pro` / `-3-flash` | Antigravity quota pool |
-| `antigravity-claude-opus-4-6-thinking` | Preset; thinking via budget family |
+| `antigravity-claude-opus-4-6-thinking` | **FULL LADDER** (2026-08-26): minimal=4096 · low=8192 · medium=16384 · high=24576 · max=32768 — all tiers smoke-verified live; Sonnet 4.6 base + Opus confirmed working through OpenCode (Architect, 2026-08-26) |
 | `antigravity-claude-sonnet-4-6` | Base preset |
 | ~~`antigravity-claude-sonnet-4-6-thinking`~~ | ❌ **DEAD wire ID** — 404s at gateway across accounts (verified 2026-08-26, GOTCHAS G11); removed from configs in F6 revert |
 

@@ -24,7 +24,7 @@
 
 ## G4. @latest stale-pin trap — 🟡 HOUSE-VERIFIED
 **Trap**: `"plugin": ["opencode-antigravity-auth@latest"]` pins to a STALE npm snapshot, not float (#30631). Combined with G1, the npm artifact is doubly dead.
-**Defense**: explicit version tag, or `file:` path to pinned checkout (RECOMMENDED hardening — P2 follow-up). House currently runs @latest→npm (see PLAYBOOK §3 correction); never treat @latest as float.
+**Defense**: `file:` path to pinned checkout — **house standard since 2026-08-26** (both configs migrated; single canonical load path). Never @latest.
 
 ## G5. Nested-schema silent-drop trap — 🟡 HOUSE-VERIFIED
 **Trap**: Variant config keys must be FLAT (`variantConfig?.thinkingBudget`, request.js :591/:669). Nested-schema variants drop their thinking values silently — model runs without requested thinking, no error anywhere.

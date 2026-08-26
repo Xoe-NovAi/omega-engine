@@ -10,7 +10,7 @@
 
 ```jsonc
 {
-  "plugin": ["opencode-antigravity-auth@latest"]   // house ACTUAL: @latest→npm cache (see PLAYBOOK §3 census); file: path = recommended P2 hardening
+  "plugin": ["file:///abs/path/to/opencode-antigravity-auth"]   // house standard since 2026-08-26: file: → patched checkout @7db338b (single load path)
 }
 ```
 
