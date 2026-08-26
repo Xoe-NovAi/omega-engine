@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T03:11:54Z",
+  "updated": "2026-08-26T04:17:55Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -154,7 +154,7 @@
     "verdict": "GO for dev-team Sprint-1 upon errata application + Architect Q-3/Q-6 as noted"
   },
   "meditate_campaign": {
-    "status": "PHASE_B_READY",
+    "status": "SONNET_GUIDE_PHASE",
     "completed": "2026-08-26",
     "summary": "Meditate command campaign: v1.3 anti-theater hardening -> cloud/local split (Carmack 98f123d4) -> local weight audit (bc6ea6c7, 286->110 lines) -> Phase A user guide (42a5d53e) -> reconstruction-grade rebuild v2.0-v2.3 (e4ac1cb5, a15be8d2, ed07d31e). Manual FINAL at docs/how-to/use-meditate.md v2.3.",
     "phase_b_task": "Backup .opencode/commands/meditate.md -> write FRESH /meditate command from scratch implementing the finalized manual. Assigned: Carmack session ses_fc43b949dffehZbnZqd4Yzvh6t. Standard: model starts Voice 1 immediately; zero meta-commentary; wire all contracts verbatim from manual Output Contracts section incl. HYGIENE ANCHORS, ADJUDICATION RUBRIC, CONTRAST CASE (9-field Phase 4).",
@@ -163,6 +163,25 @@
       ".opencode/commands/meditate.md",
       ".opencode/commands/meditate-local.md"
     ],
-    "root_lesson": "Commands are prompts not papers \u2014 Sonnet 4.6 derailed into doc-critique because meta-commentary invites analysis instead of execution."
+    "root_lesson": "Commands are prompts not papers \u2014 Sonnet 4.6 derailed into doc-critique because meta-commentary invites analysis instead of execution.",
+    "sonnet_mission": {
+      "task": "Write the DEFINITIVE GUIDE teaching our models exactly how to enhance or completely rewrite the /meditate command \u2014 strategic insights and design guidance grounded in R53 sources and real-world data. NOT implementation.",
+      "primary_input": "docs/research/R53_meditate_granite_foundation_20260826.md (a0a43c82) \u2014 THE evidence base: verdict table on all 9 hypotheses, corpus ground truth from 16 records, token constraints, 12 evidence-traced build directives, 10-location manual-sync checklist",
+      "supporting_inputs": [
+        "docs/how-to/use-meditate.md v2.3 \u2014 current manual being enhanced (359 lines)",
+        "data/coordination/meditate_tournament_20260826/ \u2014 EXPERT_A_grokster_296L.md, EXPERT_B_doom_guy_248L.md, CARMACK_SYNTHESIS.md (merge recipe inside)",
+        ".opencode/commands/meditate.md \u2014 live v2.0 (498L bloated, replacement target)",
+        "config/wads/_omega_default/meditate/lenses.yaml \u2014 lens SSOT"
+      ],
+      "context_saving_notes": {
+        "sonnet_prior_review_status": "Sonnet 4.6 previously reviewed the manual (5 problems + 4 insights). R53 closed all 9 hypotheses: her Voice-1 critique CONFIRMED by corpus; bracket-copy fear REFUTED but filled-demo recommendation stands via syntactic priming; predicted-tensions idea needs falsifiable-hypothesis reframing (confirmation bias measured). Do not re-litigate \u2014 R53 section 1 verdict table is authoritative.",
+        "hard_constraints": "<=320 lines hard ceiling (16K free-tier cap); zero downstream parsers so contracts evolve freely; manual-sync checklist must land in same commit as any contract change",
+        "open_rulings": [
+          "D10: DECLINED answer form (redirect-only vs redirect+labeled answer)",
+          "D11: resume branch (loss-acceptance vs sanctioned conditional read)",
+          "BROADCAST/MANDATE CONFLICT CHECK retention (recommend keep + exercise in first recorded run)"
+        ]
+      }
+    }
   }
 }

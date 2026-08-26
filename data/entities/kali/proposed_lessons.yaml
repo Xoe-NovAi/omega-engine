@@ -49,3 +49,12 @@ metadata:
   L2: Every line of a command file is context loaded at invocation. Justification belongs in commit
     messages; the file itself must contain nothing worth analyzing.
   L3: Documentation for execution must contain nothing interesting.
+
+- id: kali-20260826-103
+  date: '2026-08-26'
+  L1: Collision counts clustered at the instructed quota ("three highest-tension") across
+    panel sizes — 10-voice panels reported exactly 3 like 3-voice panels. Discovered only
+    when Roc counted the actual corpus.
+  L2: Models read specified numbers as targets, not measurements. Any stated quantity in a
+    contract becomes an anchor regardless of framing intent.
+  L3: Every number in a specification is a command.

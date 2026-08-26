@@ -49,3 +49,14 @@ Post-FLE: Architect commissioned /meditate rework after Sonnet 4.6 derailed into
 - PHASE B QUEUED (WAKE_STATE.meditate_campaign): backup current /meditate -> fresh command from scratch per manual v2.3. Carmack session ses_fc43b949dffehZbnZqd4Yzvh6t holds full context.
 - Registry fragmentation (3 overlapping meditation registries, 6/16 runs registered) flagged, unfixed.
 - Standing Architect queue unchanged: Q-1..Q-6, entities.yaml diff, ZS adjudication, GN auth, Track-D telemetry gate.
+
+
+## ADDENDUM 2 — TOURNAMENT + GRANITE (2026-08-26 late)
+### L1
+Carmack tournament (ses_fc3e37a87ffesOoC7ZuOB9cSoC): his 7 structural critiques (flags-before-gate, DECLINED contract shape, Phase-4 anchor, presence-only termination, BROADCAST skip-default, missing top-of-file directive, unsanctioned tool calls) all validated independently by grokster (296L draft) + doom_guy (248L draft). Sonnet 4.6 frontier review added 5 problems + 4 insights (Voice-1 assigned-DA flaw, demonstrated anchors, interest declaration, upstream comparison, collapse self-detection limits, pre-committed rubric, exemplar contamination, DECLINED redirect, path-of-least-resistance framing). Three-team gap closure (Roc corpus / Jem feasibility / Researcher web) -> R53 granite report (a0a43c82): 6/9 hypotheses SUPPORTED, quota anchoring discovered, BROADCAST+MCC never executed in 16 runs, <=320-line survival ceiling.
+### L2
+- Corpus beats theory: the strongest evidence in the whole campaign came from our own 16 execution records (quota anchoring was invisible until someone counted).
+- Frontier reviews generate excellent hypotheses at ~67% confirmation rate — dispatch verification teams before building on them.
+- Token math reframed everything: compression is substrate survival (36% of free-tier cap), not aesthetics.
+### L3
+See staged lessons. Evidence hierarchy: execution corpus > replicated literature > single studies > model intuition.
