@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T04:29:36Z",
+  "updated": "2026-08-26T09:44:38Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -183,6 +183,18 @@
         ]
       },
       "scope_correction": "2026-08-26 Architect correction pre-compact: original phrasing said \"teach models to enhance/re-write the /meditate command\" \u2014 MISPOKEN. The guide teaches MANUAL maintenance/enhancement (or the user-manual + technical-guide split). The command build (Phase B) remains gated behind the guide + D10/D11 rulings."
+    },
+    "consolidation": {
+      "date": "2026-08-26",
+      "authority_map": "docs/strategy/MEDITATE_DOCUMENTATION_STRATEGY.md section 12 (ranked artifact registry)",
+      "actions": [
+        "MEDITATION_REGISTRY.md rebuilt v1.1.0: duplicate sections merged, all 16 records registered, anomaly annotations added",
+        "use-meditate.md: advisory banner added listing 4 stale Voice-1-rule locations + D10/D11 pending lines",
+        "meditate_tournament_20260826/README.md: drafts marked historical, superseded V1 rule flagged",
+        "meditate-local.md:72 heading contradiction fixed",
+        "Strategy doc bumped v1.1.0 with authority map + regression guards"
+      ],
+      "rule": "Any agent citing a meditation rule must trace it to R53 or the strategy doc \u2014 never tournament drafts or banner-flagged manual lines"
     }
   }
 }

@@ -8,6 +8,17 @@ llm_metadata:
 
 # 🔱 How to Use the /meditate Command
 
+> **⚠️ ADVISORY (2026-08-26) — KNOWN-STALE SECTIONS PENDING PHASE B**
+> R53 (`docs/research/R53_meditate_granite_foundation_20260826.md`) refuted the Voice-1
+> status-quo rule on corpus evidence (3/3 runs produced manufactured knockdowns nothing
+> consumes). The following locations still carry the DEPRECATED rule — do not learn
+> behavior from them until Phase B lands:
+> **:147–150** (Phase 1 dissent slot) · **:211** (Invariant 3) · **:223** (worked-example
+> parenthetical) · **:290** (Edge Cases 2-entry `--lenses` row).
+> Correct rule (R53 D1): Voice 1 emits its highest-cost domain constraint against change.
+> Also pending Architect rulings: D10 (DECLINED answer form, :288) and D11 (resume
+> semantics, :293–294 + :317). Everything else in this document is current.
+
 **AP Token**: `AP-MEDITATE-HOWTO-v2.3`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ trc_meditate_howto ⬡ 2026-08-25
 **Date**: 2026-08-26 | **Purpose**: Reconstruction-grade user guide for `/meditate` (cloud substrate) — everything needed to invoke it well OR rebuild it without inventing policy

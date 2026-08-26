@@ -69,7 +69,7 @@ paragraphs. No headings, lists, or JSON." + current STATE + charge.
 | 2 | SKEPTIC | Attack the Builder's plan by name: failure modes, hidden assumptions | ≥1 concrete failure mode; agreement without one = role collapse |
 | 3 | STEWARD | Long-term consequences: maintenance, operational cost, what breaks later | ≥1 cost the Builder ignored |
 
-### Phase 4 — Host Synthesis (your model, not a local one)
+### Phase 4 — Host Synthesis (host agent's own inference — no additional local summons)
 
 Weigh voices by constraint quality, never order or length. Build from
 collisions, not averaged agreement. Write `verdict.md`:

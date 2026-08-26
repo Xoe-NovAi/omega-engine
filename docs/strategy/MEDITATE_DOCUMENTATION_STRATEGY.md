@@ -447,5 +447,28 @@ Two items in the command specification are still open. Both affect the System Re
 
 ---
 
+## §12 ARTIFACT REGISTRY — AUTHORITY MAP (consolidated 2026-08-26)
+
+Single declaration of which artifact governs what. On conflict, the higher-ranked source wins.
+
+| Rank | Artifact | Status | Governs |
+|---|---|---|---|
+| 1 | `docs/research/R53_meditate_granite_foundation_20260826.md` | **FROZEN — evidence SSOT** | All design verdicts; the 12 directives; corpus findings |
+| 2 | This document | **LIVE — process SSOT** | Documentation architecture; cascade maps; maintenance protocol; agent briefs |
+| 3 | `docs/how-to/use-meditate.md` v2.3 | **LIVE w/ ADVISORY BANNER** | Command usage + reference. Four locations carry the deprecated Voice-1 rule (banner lists exact lines) pending Phase B |
+| 4 | `.opencode/commands/meditate.md` v2.0 (498L) | **LIVE — replacement target** | Executed command behavior until Phase B lands |
+| 5 | `.opencode/commands/meditate-local.md` v1.1.0 | **LIVE — corrected** | Local trio command (:72 heading contradiction fixed 2026-08-26) |
+| 6 | `data/coordination/meditations/MEDITATION_REGISTRY.md` v1.1.0 | **LIVE — consolidated** | Execution index; all 16 records registered; anomaly annotations |
+| 7 | `data/coordination/meditations/MEDITATION_TEMPLATE_REGISTRY.md` | LIVE (roc_racoon) | Template definitions SSOT |
+| 8 | `data/coordination/meditations/MEDITATION_SYSTEM_GUIDE.md` | LIVE w/ known-stale claim | Autonomous/agentic meditation subsystem. ⚠️ Its Six-Pass budget claim (8K) is STALE — template frontmatter (`token_budget: 4000`) is executable truth (disclosed in use-meditate.md:307) |
+| 9 | `data/coordination/meditate_tournament_20260826/` (+ README) | **FROZEN — historical inputs** | Tournament drafts carry superseded V1 rule; shape references only |
+| 10 | `records/*.md` (16 files) | FROZEN — execution truth | Primary evidence; registry indexes them |
+
+**Out of scope but related** (autonomous-meditation lineage — separate subsystem, do not consolidate into this campaign): `docs/protocol/MEDITATION_PROTOCOL.md`, `docs/protocol/AUTONOMOUS_MEDITATION_PROTOCOL.md`, `docs/guides/AUTONOMOUS_MEDITATION*.md`, `docs/adr/ADR-001_AUTONOMOUS_MEDITATION_PIPELINE.md`.
+
+**Regression guards active**: manual advisory banner · tournament README · registry anomaly section. Any agent citing a meditation rule MUST trace it to R53 or this document — never to a tournament draft or a banner-flagged manual line.
+
+---
+
 *Evidence base: R53 Granite Foundation (a0a43c82) · 16-record corpus (2,377 lines total) · Expert A grokster 296L · Expert B doom_guy 251L · CARMACK_SYNTHESIS · Manual v2.3 (359L) · Deep review of plan flaws and gaps.*
-*⬡ OMEGA ⬡ MEDITATE-DOC-STRATEGY ⬡ v1.0.0 ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ MEDITATE-DOC-STRATEGY ⬡ v1.1.0 ⬡ 2026-08-26*
