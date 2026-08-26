@@ -65,3 +65,6 @@ Upstream catalog extras NOT in house presets ⚠️(availability on house accoun
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
+
+## §7 Format Note — Flat vs Nested (upstream docs divergence)
+Upstream MODEL-VARIANTS.md documents Claude variants as NESTED `{"thinkingConfig": {"thinkingBudget": N}}`; installed source (`extractVariantThinkingConfig`, request.js) normalizes BOTH nested and FLAT `{"thinkingBudget": N}` forms. House standard = **FLAT** (production-verified via opus-thinking block). Custom budgets officially sanctioned — docs example ships a 5-tier spread (4096/8192/16384/24576/32768); variant names are free-form labels. A no-variant call = dynamic budget (model decides).

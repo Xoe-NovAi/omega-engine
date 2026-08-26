@@ -129,98 +129,40 @@
     },
     "opencode": {
       "models": {
-        "mimo-v2.5": {
-          "name": "OpenCode Zen MiMo v2.5 (Free)",
-          "limit": {
-            "context": 200000,
-            "output": 16384
-          },
-          "variants": {
-            "low": {
-              "reasoning": {
-                "effort": "low"
-              }
-            },
-            "medium": {
-              "reasoning": {
-                "effort": "medium"
-              }
-            },
-            "high": {
-              "reasoning": {
-                "effort": "high"
-              }
-            }
-          }
-        },
         "nemotron-3-ultra-free": {
-          "name": "OpenCode Zen Nemotron 3 Ultra (Free)",
+          "name": "OpenCode Zen Nemotron 3 Ultra",
           "limit": {
             "context": 1000000,
             "output": 128000
           },
           "variants": {
             "low": {
-              "reasoning": {
-                "effort": "low"
-              }
+              "reasoningEffort": "low"
             },
             "medium": {
-              "reasoning": {
-                "effort": "medium"
-              }
+              "reasoningEffort": "medium"
             },
             "high": {
-              "reasoning": {
-                "effort": "high"
-              }
+              "reasoningEffort": "high"
             }
           }
         },
-        "deepseek-v4-flash-free": {
-          "name": "OpenCode Zen DeepSeek V4 Flash (Free)",
+        "mimo-v2.5-free": {
+          "name": "OpenCode Zen MiMo v2.5",
           "limit": {
-            "context": 163840,
-            "output": 8192
+            "context": 200000,
+            "output": 32000
           },
           "variants": {
             "low": {
-              "reasoning": {
-                "effort": "low"
-              }
+              "reasoningEffort": "low"
             },
             "medium": {
-              "reasoning": {
-                "effort": "medium"
-              }
+              "reasoningEffort": "medium"
             },
             "high": {
-              "reasoning": {
-                "effort": "high"
-              }
-            },
-            "max": {
-              "reasoning": {
-                "effort": "max"
-              }
+              "reasoningEffort": "high"
             }
-          }
-        }
-      }
-    },
-    "openrouter": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "OpenRouter (Free)",
-      "options": {
-        "baseURL": "https://openrouter.ai/api/v1"
-      },
-      "models": {
-        "llama-3.3-70b-free": {
-          "id": "meta-llama/llama-3.3-70b-instruct:free",
-          "name": "OpenRouter Llama 3.3 70B (Free)",
-          "limit": {
-            "context": 131072,
-            "output": 8192
           }
         }
       }
@@ -229,21 +171,21 @@
   "agent": {
     "makali": {
       "mode": "primary",
-      "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
+      "description": "MaKaLi Apex Mind \u2014 Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
       "instructions": [
         ".opencode/agents/plan.md"
       ]
     },
     "jem": {
       "mode": "all",
-      "description": "Research Orchestrator — 3-tier pipeline with inline KBs (Discovery/Synthesis/Verification), self-dispatch pattern",
+      "description": "Research Orchestrator \u2014 3-tier pipeline with inline KBs (Discovery/Synthesis/Verification), self-dispatch pattern",
       "instructions": [
         ".opencode/agents/jem.md"
       ]
     },
     "doom_guy": {
       "mode": "all",
-      "description": "Sovereign id Software Architect — WAD translation & performance",
+      "description": "Sovereign id Software Architect \u2014 WAD translation & performance",
       "instructions": [
         ".opencode/agents/doom_guy.md",
         "CREDITS.md"
@@ -251,56 +193,56 @@
     },
     "roc_racoon": {
       "mode": "all",
-      "description": "Sovereign Miner — Legacy archaeology & pattern extraction",
+      "description": "Sovereign Miner \u2014 Legacy archaeology & pattern extraction",
       "instructions": [
         ".opencode/agents/roc_racoon.md"
       ]
     },
     "researcher": {
       "mode": "all",
-      "description": "Sovereign Master Researcher — Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
+      "description": "Sovereign Master Researcher \u2014 Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
       "instructions": [
         ".opencode/agents/researcher.md"
       ]
     },
     "kali": {
       "mode": "all",
-      "description": "Grand Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift",
+      "description": "Grand Oversight \u2014 Sees all, delegates to Ma'at/Lilith, destroys drift",
       "instructions": [
         ".opencode/agents/kali.md"
       ]
     },
     "maat": {
       "mode": "all",
-      "description": "Build Oversoul — Governs N1-N5 (build side), delegates to node",
+      "description": "Build Oversoul \u2014 Governs N1-N5 (build side), delegates to node",
       "instructions": [
         ".opencode/agents/maat.md"
       ]
     },
     "lilith": {
       "mode": "all",
-      "description": "Runtime Oversoul — Governs N6-N10 (run side), delegates to node",
+      "description": "Runtime Oversoul \u2014 Governs N6-N10 (run side), delegates to node",
       "instructions": [
         ".opencode/agents/lilith.md"
       ]
     },
     "verity": {
       "mode": "subagent",
-      "description": "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
+      "description": "Sovereign Verity \u2014 Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
       "instructions": [
         ".opencode/agents/verity.md"
       ]
     },
     "node": {
       "mode": "all",
-      "description": "Slot-based domain agent — parameterized by --slot NX for any Node domain",
+      "description": "Slot-based domain agent \u2014 parameterized by --slot NX for any Node domain",
       "instructions": [
         ".opencode/agents/node.md"
       ]
     },
     "john_carmack": {
       "mode": "all",
-      "description": "Ultimate Technical Consultant — id Software heritage, systems architecture, sovereign engineering",
+      "description": "Ultimate Technical Consultant \u2014 id Software heritage, systems architecture, sovereign engineering",
       "instructions": [
         ".opencode/agents/john_carmack.md",
         "CREDITS.md"
@@ -308,7 +250,7 @@
     },
     "grok_cli": {
       "mode": "all",
-      "description": "Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
+      "description": "Bridge to xAI Grok CLI \u2014 spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
       "instructions": [
         ".opencode/agents/grok_cli.md"
       ],

@@ -54,3 +54,21 @@
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
+
+## G11. Sonnet-thinking backend-ID DEAD — 🔴 VERIFIED-BLOCKED (live probe 2026-08-26)
+**Trap**: `claude-sonnet-4-6-thinking` wire ID returns **404 NOT_FOUND at the gateway** — confirmed live across multiple pool accounts (debug-log evidence, remediation run F7). Issue #1942 (Feb 2026) was never fixed server-side. Official antigravity.google/docs listing "Claude Sonnet 4.6 (thinking)" describes an IDE UI MODE — the backend serves only `claude-sonnet-4-6` (base verified working) and `claude-opus-4-6-thinking`. Custom SKU configs for sonnet-thinking are dead on arrival; plugin swallows the 404s during account rotation and returns an EMPTY response.
+**Defense**: do NOT define antigravity-claude-sonnet-4-6-thinking SKUs. For Sonnet thinking needs: probe base-model + providerOptions thinkingConfig (untested path), use opus-thinking, or wait for backend fix. Related: some pool accounts return 403 "#3501 valid license" for Claude entirely — account provisioning varies.
+**Trap**: `antigravity-claude-sonnet-4-6-thinking` may 404 at the gateway (backend ID mismatch reported Feb 2026, oh-my-openagent #1942). Official antigravity.google/docs lists "Claude Sonnet 4.6 (thinking)" ✅, but active fork (dragon-Elec) quota-row mapping has NO sonnet-thinking entry — conflicting signals on whether the backend exposes the thinking ID or folds thinking into the base Sonnet row.
+**Defense**: live smoke before relying on the SKU; if 404 persists, fall back to base `antigravity-claude-sonnet-4-6` + agent-level thinking config, or keep Opus for thinking workloads.
+
+## G12. Server-side thinking-budget cap (Claude) — 🟡 HIGH CONFIDENCE (community)
+**Trap**: Requested `thinkingBudget` may be aspirational — community documentation (Mar 2026, agentpedia) reports Antigravity caps ACTUAL Claude thinking at ~1,024 tokens regardless of declared budget (cost control; Google unacknowledged). Verified for Opus in AG IDE v1.20.5; plugin/gateway path + Sonnet UNVERIFIED.
+**Defense**: don't assume declared budget = delivered depth; compare output quality vs Gemini 3.x for deep-reasoning tasks; measure `usageMetadata` thinking tokens in responses when precision matters. Declared budgets still correct for config (they're what the API contract asks for).
+
+## G13. Silent-empty total-failure mode — 🔴 VERIFIED (live probe 2026-08-26)
+**Trap**: When ALL accounts fail for a family (404/403/429 rotation exhausted), the plugin returns an **EMPTY response with no error surfaced** to OpenCode — looks identical to a model that simply said nothing. Debug log showed full rotation then quiet surrender.
+**Defense**: never diagnose empty responses from output alone — enable `"debug": true` in antigravity.json temporarily and read `~/.config/opencode/antigravity-logs/` (NOTE: debug logs contain FULL prompts incl. system souls — disable after use). Cross-check quota via check-quota.mjs but remember G3: quota API can lie while generation is throttled.
+
+## G14. License-provisioning variance across pool accounts — 🟡 VERIFIED (2026-08-26)
+**Trap**: Pool accounts are NOT uniformly provisioned. Some return 403 PERMISSION_DENIED "#3501 You do not have a valid license of this product" for Claude models regardless of quota. A healthy-looking pool may have only partial Claude capability.
+**Defense**: per-account capability probe before relying on pool-wide Claude capacity; treat fetchAvailableModels as necessary-but-insufficient (see G3).

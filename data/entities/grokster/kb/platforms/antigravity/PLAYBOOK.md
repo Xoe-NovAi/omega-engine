@@ -28,10 +28,10 @@ The terms (antigravity.google/terms §6) name third-party-client access as breac
 
 ## §3 Plugin Wiring (Current House Setup)
 
-- Local git checkout `opencode-antigravity-auth` @ **commit 7db338b**, wired as `file:` dependency into OpenCode; installed copy at `~/.config/opencode/node_modules/opencode-antigravity-auth`.
-- **Upstream NoeFabris repo is ARCHIVED (read-only) since ~2026-06-25.** The checkout is now the de-facto fork: every upstream drift (new model slugs, quota-API changes, header changes) = house patch obligation. See GOTCHAS G1.
-- Hash-pin, never `@latest` — the tag resolves to a stale npm snapshot, not float (house finding #30631).
-- Accounts file: `~/.config/opencode/antigravity-accounts.json` (v3 schema). Treat as credential vault — scopes include master `cloud-platform`. Plugin settings live in `~/.config/opencode/antigravity.json`.
+- ⚠️ **CORRECTED 2026-08-26 (remediation-run disk audit)**: house configs reference the plugin as **`opencode-antigravity-auth@latest`** (project + subdir arrays), which resolves to the npm install at `~/.config/opencode/node_modules/` — v1.6.0, verified **byte-identical** to the local git checkout @7db338b (`diff -rq dist` = 0 differences). Earlier KB text claimed direct `file:` wiring — that was wrong; the checkout functions as a pinned source-of-truth mirror, not the load path.
+- Per #30631, `@latest` pins to whatever npm snapshot was current at install time (Jul-21) and does NOT float — combined with upstream archive (G1), the effective plugin is frozen at 1.6.0 == 7db338b. Any future change requires explicit reinstall.
+- Hash-pin or absolute path remains the recommended hardening (P2 follow-up): swap `@latest` → `file:` path to make the load path literally the checkout.
+- Accounts file: `~/.config/opencode/antigravity-accounts.json` (v3 schema, 7 accounts). Treat as credential vault — scopes include master `cloud-platform`. Plugin settings live in `~/.config/opencode/antigravity.json` (incl. `keep_thinking`, default false).
 
 ## §4 Model Selection & Thinking SKUs
 
