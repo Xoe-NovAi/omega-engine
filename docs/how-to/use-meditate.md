@@ -8,9 +8,9 @@ llm_metadata:
 
 # 🔱 How to Use the /meditate Command
 
-**AP Token**: `AP-MEDITATE-HOWTO-v2.0`
+**AP Token**: `AP-MEDITATE-HOWTO-v2.1`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ trc_meditate_howto ⬡ 2026-08-25
-**Date**: 2026-08-25 | **Purpose**: Reconstruction-grade user guide for `/meditate` (cloud substrate) — everything needed to invoke it well OR rebuild it without inventing policy
+**Date**: 2026-08-26 | **Purpose**: Reconstruction-grade user guide for `/meditate` (cloud substrate) — everything needed to invoke it well OR rebuild it without inventing policy
 **Cross-references**: `.opencode/commands/meditate.md` (the executed command), `config/wads/_omega_default/meditate/lenses.yaml` (lens SSOT), `data/coordination/meditations/records/` (execution history)
 
 ## What You Get
@@ -70,7 +70,11 @@ Everything an implementer or auditor needs. Nothing here is philosophy; every it
 
 ## The Lens Roster
 
-SSOT: `config/wads/_omega_default/meditate/lenses.yaml`. Ten default lenses:
+> **[VERIFY] ZERO-TRUST DOCTRINE ACTIVE**
+> Static lists rot. Before reconstructing this command, verify the SSOT:
+> `cat config/wads/_omega_default/meditate/lenses.yaml`
+
+SSOT: `config/wads/_omega_default/meditate/lenses.yaml`. Cached representation of the ten default lenses:
 
 | id | Domain (speaks ONLY from this) | Element | Mandate lens | Archetype | Dissent style |
 |---|---|---|---|---|---|
@@ -100,7 +104,7 @@ Custom personas not in the roster: derive domain from known mastery area, mandat
 | 4–5 | 4–6 | Tensioning lenses + strongest adjacent lens |
 | 6+ or full-spectrum subject | 7–10 | Broad set justified |
 
-Default when unspecified: **the 5 most relevant lenses**, never all 10. Rationale (measured, Self-MoA arXiv:2502.00674): beyond five voices, additional weak perspectives add *correlated* noise, not diversity — resampling one strong perspective beats padding the panel. Running 10 voices on a 3-domain question produces 7 performances, not 7 perspectives. A custom `--lenses` set overrides this table.
+Default when unspecified: **the 5 most relevant lenses**, rarely all 10 (reserved for truly full-spectrum subjects). Rationale (measured, Self-MoA arXiv:2502.00674): beyond five voices, additional weak perspectives add *correlated* noise, not diversity — resampling one strong perspective beats padding the panel. Running 10 voices on a 3-domain question produces 7 performances, not 7 perspectives. A custom `--lenses` set overrides this table.
 
 ## Output Contracts
 
@@ -274,7 +278,7 @@ From `MEDITATION_REGISTRY.md` §2 (6 registered runs; registry lags disk — 16 
 | Wall duration | ~15 min (DIAGNOSTIC, small panel) to ~45 min (10-node strategic) |
 | L3 yield | 1 per run wherever recorded |
 
-Token budgets for formal templates (`MEDITATION_SYSTEM_GUIDE.md` §Token Budgets, enforced by `make doc-token-check`): Six-Pass 8K target / 16K hard · Crucible v1 3K / 6K · Crucible v2 6K / 12K. **Known discrepancy, documented not reconciled**: the Six-Pass guide-table budget says 8K target, but the template file's own frontmatter declares `token_budget: 4000`. Trust the template frontmatter when executing that template; reconcile upstream before citing either as canonical.
+Token budgets for formal templates (`MEDITATION_SYSTEM_GUIDE.md` §Token Budgets, enforced by `make doc-token-check`): Six-Pass 8K target / 16K hard · Crucible v1 3K / 6K · Crucible v2 6K / 12K. **Known discrepancy resolved per Zero-Trust (Code is Truth)**: the Six-Pass guide-table budget says 8K target, but the template file's own frontmatter declares `token_budget: 4000`. The template frontmatter is the executable truth; the system guide is a stale claim.
 
 ## Flag Mechanics Reference
 
@@ -310,4 +314,4 @@ An implementation passes iff these observable properties hold. Anyone reading th
 **Exemplars & format adherence**: demonstrations control output format more stably than verbal instructions; 1-shot ≈ +17% F1, peak ~3 shots (Min et al., EMNLP 2022); directives+demos jointly optimize imitation and sustained adherence ([arXiv:2511.13972](https://arxiv.org/abs/2511.13972)); negative exemplars work when labeled and paired with corrections ([CICL, arXiv:2401.17390](https://arxiv.org/abs/2401.17390)) — kept to one compact pair per the pink-elephant problem; described-only formats yield 35–60% non-adherence even on frontier models (IFEval/IFBench), hence verbatim skeletons + instantiating exemplar (dual encoding).
 **Local ground truth**: lens SSOT `config/wads/_omega_default/meditate/lenses.yaml`; formats verbatim from `.opencode/commands/meditate.md` v2.0; stats from `MEDITATION_REGISTRY.md` §2; budgets from `MEDITATION_SYSTEM_GUIDE.md`; exemplars from `records/MEDITATION_KALI_20260822_HIDDEN_GEMS.md` and `records/MEDITATION_KALI_20260823_CONTEXT_PACKER_ENHANCEMENT.md`; negative evidence from `MEDITATION_kali_20260824_MAKALI_COUNCIL_REBASE.md`, `MEDITATION_kali_20260824_LOST_VALUE_RECOVERY.md`, and maat's five drifted ad-hoc records (custom passes, no Phase 0/contract/lenses — drift is what happens when docs don't constrain). No genuine persona-collapse instance exists on record; none was fabricated here.
 
-*⬡ OMEGA ⬡ MEDITATE-HOWTO ⬡ v2.0 ⬡ 2026-08-25*
+*⬡ OMEGA ⬡ MEDITATE-HOWTO ⬡ v2.1 ⬡ 2026-08-26*
