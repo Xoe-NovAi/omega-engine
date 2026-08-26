@@ -290,3 +290,18 @@ Critical path: Channel Security → Code Security → Cognitive Measurement → 
 - Available for high-level strategic consults when MaKaLi calls
 **MK-Kali**: fresh kali session tuned+dispatched by MaKaLi at Stage 3 as Synthesis Arm (entity="mk_kali")
 **Reporting Protocol**: plan §5 M11-M13; council-cloud.md v2.2 📡 section
+
+
+## 🏆 MAJOR MILESTONE — FIRST LIGHT EXPRESS + CONTEXT-INFRA REMEDIATION (2026-08-25)
+**The largest coordinated run in fleet history**: two councils (C1 audit: 112 findings →
+SOVEREIGN_DECREE.md 12 articles/30 gates; C2 dev-prep: SPEC-A..E library + ~90h work
+packages → SOVEREIGN_DECREE_C2.md), zero halts/collapses. Study track: Wave 0 metrics,
+Carmack dual-pass ×2, SYNC-1 bootstrap, gap investigation wave (16 registry mutations).
+Context-infra remediation: HMC watcher excised (fabricated API), scribe retired,
+soul_promote IMPLEMENTED (one-way door closed), codex-refresh root-caused+fixed,
+infra_inventory.py organ built (audits its auditors). Root cause of record:
+"claims that outlive their mechanisms" — cure class: derivation checks.
+Standing laws born: Hop Rule · M11 Arm-Relay · dual-channel telemetry · exit-code
+honesty · dual-pass-brackets-fixes · ceremony deletion-probe. Full map:
+HANDOFF_TO_KALI_FLE_STUDY_20260825.md §10. Dev team launch awaits Architect GO
+(conditions in CONSULTANT_FINAL_REVIEW_TRACKD.md).

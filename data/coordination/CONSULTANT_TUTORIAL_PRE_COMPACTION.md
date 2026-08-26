@@ -124,3 +124,44 @@ per house rules. Until then, the checklist travels in packets.
    remove from the mandatory-close path.
 
 — kali, Consultant. This doc is the permanent procedure. Teach it forward.
+
+## §8 v2 AMENDMENTS (2026-08-25 late — Carmack context-infra audit findings; the tutorial auditing its own standard)
+
+**STEP 0 — VERIFY BEFORE YOU WRITE (new first step):**
+```bash
+make check-codex-stale          # exit 0 = fresh; if 1 → run `make codex` by hand
+git status --porcelain          # uncommitted-work sweep INCLUDING untracked
+git log --oneline -5            # what is actually committed
+```
+Today's proof: a 214-line entities.yaml diff sat uncommitted all day; Q-6 was once
+ruled into a queue it never entered. Intentions are not verifications.
+
+**STEP 4.5 — EPHEMERAL-STATE TEARDOWN (new):**
+Release workspace locks (`hivemind_workspace_lock_release`), let heartbeat TTLs lapse,
+attempt extended_checkin checkout if registered (tool historically broken — verify),
+confirm no `data/coordination/locks/*.lock` residue. A session dying while holding a
+lock blocks the fleet for the full TTL.
+
+**STEP 5.5 — SECRETS/HYGIENE SCAN (new):**
+Run git-secret-scrub skill pass before the manifest commit. Config-adjacent sessions
+(provider keys, tokens) are mandatory-scan.
+
+**STEP 6.5 — CODEX FRESHNESS RE-CHECK (new):**
+Do not trust automations you did not verify TODAY. The hook's auto-refresh silently
+failed for ~13h on 2026-08-25 (root-caused by jem: wrapper set -e kill + process-exit
+semantics; FIXED same-day). Re-run `make check-codex-stale` after the hook fires.
+
+**STEP 7 — SUCCESSOR CAN-HYDRATE CHECK (new):**
+Every path cited in anchored-summary must exist on disk. Cheap grep loop; a successor
+who cannot hydrate inherits nothing.
+
+**INVENTORY REFLEX (the structural cure):**
+The 7-step procedure writes state and audits surface zero — that is how an entire HMC
+Watcher organ (fabricated API, never executed, completion-medallioned) stayed invisible.
+Run `.venv/bin/python scripts/infra_inventory.py --ci` at session close when
+infrastructure was touched. Institutional memory remembers what happened; the inventory
+remembers what exists. You need both.
+
+**CORRECTIONS APPLIED:** soul_promote citation upgraded from ghost to implemented
+(scripts/soul_promote.py, review-gated, commit 0aec8371); codex auto-refresh claim now
+carries its failure history; chronicle/gnosis/anchored-summary role separation per §5.
