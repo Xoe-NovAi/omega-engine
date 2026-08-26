@@ -5,7 +5,7 @@ subtask: false
 ---
 
 # ⬡ MEDITATE — Single-Inference Persona Prism
-**Protocol**: `Meditate-v1.1` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
+**Protocol**: `Meditate-v1.3` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
 **Mechanism**: Single-inference, multi-persona semantic prism
 **RAM cost**: ONE model load — no serial swap, no MC/HMC overhead
 
@@ -29,9 +29,9 @@ cognition: the semantic prism applied to $ARGUMENTS.
 - You are in a constrained environment (local inference, 14Gi RAM ceiling)
 - You want emergent sequencing — where the synthesis produces priorities
   that were not explicit in the raw context
-- **NEW**: You need to execute a formal **Agentic Meditation Template** (e.g., Soul Evolution, Legacy Mining Synthesis) from the `MEDITATION_REGISTRY.md`.
+- You need to execute a formal **Agentic Meditation Template** (e.g., Soul Evolution, Legacy Mining Synthesis) from the `MEDITATION_REGISTRY.md`.
 
-**Invocation gate (v1.2 — anti-theater):** Reach for `/meditate` only when
+**Invocation gate (anti-theater):** Reach for `/meditate` only when
 at least TWO hold: (a) ≥3 domains genuinely tension against each other,
 (b) the decision is irreversible or expensive to reverse, (c) no single
 domain owns the answer. Simple lookups, single-domain questions, and
@@ -45,37 +45,55 @@ ceremony, not cognition.
 
 ---
 
+## ⬡ FLAGS
+
+| Flag | Effect |
+|---|---|
+| `--lenses <set>` | Custom lens set (`makali`, comma-separated node names, or custom personas) |
+| `--mode <MODE>` | Output mode override (DIAGNOSTIC, STRATEGIC, CREATIVE, AUDIT, SYNTHESIS) |
+| `--integrate` | Run Phase 5 Integration Gate after synthesis |
+| `--durable` | Opt-in phase persistence to disk (trades single-pass purity for crash resilience — see Execution Rule 7) |
+| `--record` | Write final output to `data/coordination/meditations/records/` after completion |
+| `--template <name>` | Execute a formal template from `data/coordination/meditations/templates/` |
+| `--brief` | Depth-budget mode: 3 lines per voice (for small local models / tight output limits) |
+
+---
+
 ## ⬡ THE MEDITATE FRAMEWORK — STEP BY STEP
 
 You are the **Meditation Host** (Kali, Grand Oversoul). Your task is to
 conduct a Low Level Oikos Council on the subject: **$ARGUMENTS**
 
-### ◈ PHASE 00 — TEMPLATE SELECTION & REGISTRY (NEW)
+### ◈ PHASE 00 — TEMPLATE CHECK (minimal)
 
-Before executing the standard protocol, the agent MUST determine if a formal meditation template is required:
+If `$ARGUMENTS` contains `--template <name>`: load it from
+`data/coordination/meditations/templates/` and follow its passes (which
+override Phases 0–5 below). Otherwise proceed directly to Phase 0.
 
-1. **Check the Registry**: Read `data/coordination/meditations/MEDITATION_REGISTRY.md` to see if an existing template matches the user's request (e.g., `sovereign-crucible` for soul evolution).
-2. **Select or Design**: 
-   - If a template exists, load it from `data/coordination/meditations/templates/`.
-   - If no template exists for this specific cognitive task, **design a new one** following the `MEDITATION_SYSTEM_GUIDE.md` standards (must have LLM-friendly frontmatter, defined passes, output format, and failure modes).
-   - Record any newly designed template in the `MEDITATION_REGISTRY.md` before execution.
-3. **Announce Intent**: Post to Hivemind with `intent="meta"` announcing the template selection/creation.
-4. **Execute**: Run the meditation strictly according to the selected template's passes (which may override the default Phase 0-5 below).
-5. **Record**: Write the full output to `data/coordination/meditations/records/MEDITATION_{AGENT}_{DATE}_{TEMPLATE_NAME}.md`.
-6. **Log Execution**: Update the `MEDITATION_REGISTRY.md` execution history with token counts, L3 yield, and time metrics.
-
-*If the user's request is a general query without a specific structural need, proceed with the Default Protocol below.*
+Do NOT design new templates mid-meditation. Template design is a separate
+task using `MEDITATION_SYSTEM_GUIDE.md` standards — never a pre-step that
+delays cognition. Do NOT post to Hivemind before meditating; the verdict
+(Phase 4) is what merits broadcast, not the intent.
 
 ---
 
-### ◈ PHASE 0 — CALIBRATION (Default Protocol)
+### ◈ PHASE 0 — CALIBRATION
 
 Before entering any persona, perform the following:
 
 1. **Restate the subject** in one precise sentence. Strip ambiguity.
-2. **Identify the lens set** for this meditation. Default is the 10 Nodes.
-   Custom sets may be requested in $ARGUMENTS (e.g., "use N1, N3, N10 only"
-   or "use the MaKaLi Triad" or "use: Architect, Skeptic, Pragmatist").
+2. **Size the lens set from the invocation gate.** The number of genuinely
+   tensioning domains determines the lens count:
+
+   | Tensioning domains | Lens count | Composition |
+   |---|---|---|
+   | 3 | 3–4 | The 3 tensioning lenses + optionally 1 devil's advocate |
+   | 4–5 | 4–6 | Tensioning lenses + strongest adjacent lens |
+   | 6+ or full-spectrum subject | 7–10 | Broad set justified |
+
+   Default when unspecified: **the 5 most relevant Nodes**, NOT all 10.
+   Running 10 voices on a 3-domain question produces 7 performances, not
+   7 perspectives. A custom set in $ARGUMENTS overrides this table.
 3. **Identify the output mode**:
    - `DIAGNOSTIC` — What is broken / what is the risk?
    - `STRATEGIC` — What should we build / decide?
@@ -103,7 +121,7 @@ Anti-Collapse Contract: ACTIVE
 
 ### ◈ PHASE 1 — SEQUENTIAL PERSONA IMMERSION
 
-For **each persona in the lens set**, execute the full immersion block below
+For **each persona in the lens set**, execute the immersion block below
 **one at a time**, in sequence. Do not batch. Do not summarize ahead.
 
 Complete persona N fully before beginning persona N+1.
@@ -125,16 +143,30 @@ What does [persona] see in the subject that others would miss?
 What physical, architectural, or domain-specific limit applies here?
 (The thing this persona would refuse to ignore.)
 
-[IMPERATIVE]
-What must happen — from this domain's perspective — before anything else?
+[IMPERATIVE — or CONSTRAINT]
+What must happen — or must NOT happen — from this domain's perspective?
 (One clear directive. Uncompromising.)
+(If no imperative exists from this domain, state the domain's
+highest-priority constraint instead. Do not manufacture false urgency.)
 
 [DISSENT / CHALLENGE]
-What would [persona] push back on from the previous voice(s)?
-(If this is Voice 1: what would [persona] push back on from conventional wisdom?)
-(No agreement without adding a new constraint. Silence is not permitted.)
+Voice 1: State the STRONGEST CASE FOR THE STATUS QUO — the best argument
+for doing nothing / keeping things as they are. Later voices need
+something concrete to attack; performative contrarianism against vague
+"conventional wisdom" is theater, not dialectic.
+Voice 2+: Push back on a prior voice BY NAME, citing the specific
+constraint added. "N8's instrumentation demand ignores that X."
+No agreement without adding a new constraint. Silence is not permitted.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+#### Brief Mode (--brief)
+
+When `--brief` is set, each voice outputs exactly three lines:
+`OBSERVATION:` (one sentence) · `IMPERATIVE/CONSTRAINT:` (one sentence) ·
+`DISSENT:` (one sentence, cited per the rules above). Use this on small
+local models or when output limits would truncate a full run. A truncated
+full meditation is worth less than a complete brief one.
 
 **The Default Omega Node Lens Set** (used when no custom set is specified):
 
@@ -161,7 +193,7 @@ technical Node framework. Other WADs may omit node entirely.
 > N9=Orchestration, N10=Validation.
 > The Arcana-Nova IWAD maps these to Node entities; other WADs
 > may use different mappings or omit nodes entirely.
-> 
+>
 > **Archetype Mapping** (mythic/functional identity — not part of the lens identity):
 > Infrastructure=Architect→Creator, Persistence=Strategist→Metis,
 > Engineering=Forge-Worker, Integration=Messenger→Bridge-Builder,
@@ -202,8 +234,8 @@ Output as:
 ◈ MEDITATE: PHASE 2 — CROSS-DOMAIN COLLISION
 
 COLLISION 1: [Persona A] vs [Persona B]
-  A says: [A's imperative, verbatim]
-  B says: [B's imperative, verbatim]
+  A says: [A's imperative/constraint, verbatim]
+  B says: [B's imperative/constraint, verbatim]
   Tension: [Why these cannot both be true simultaneously]
   Resolution Path: [The smallest change that satisfies both]
 
@@ -213,8 +245,12 @@ COLLISION 3: [same format]
 ```
 
 If fewer than 3 genuine collisions exist, state how many exist and why.
-Do not manufacture false conflict. Absence of collision is itself a signal
-(it means the subject is well-understood or the lens set is too narrow).
+Do not manufacture false conflict. Absence of collision is itself a signal.
+
+**Feedback loop**: If fewer than 3 genuine collisions emerged from a lens
+set of 6+, the lens set was too broad — recommend a targeted re-run with
+the 3–4 lenses that produced the actual tension. Wide-lens, low-collision
+runs are ceremony wearing the costume of dialectic.
 
 ---
 
@@ -269,14 +305,30 @@ THE IRREDUCIBLE VERDICT:
 [One paragraph. The sovereign truth. What must be done, in what order,
 and why. Written as a decree, not a suggestion.]
 
-GNOSIS DISTILLED (L3 PRINCIPLE):
-[One universal principle that this meditation revealed — something that
-would be true beyond this specific situation. Format: L3-[Name]: [Essence]]
+MANDATE CONFLICT CHECK:
+[If the verdict contradicts SOVEREIGN_MANDATES.md or any active decree,
+state the conflict EXPLICITLY here. The meditation may be revealing that
+standing law needs amendment — but surfacing a law-conflict and silently
+deciding against the law are different acts. Only the Architect amends law.]
 
-FALSIFICATION ATTEMPT (v1.2):
+GNOSIS DISTILLED (L3 PRINCIPLE):
+[One universal principle this meditation revealed. STRICT FORMAT:
+- Expressible WITHOUT naming any domain, technology, product, or proper noun
+- Falsifiable (something could prove it wrong)
+- Stated in ≤2 sentences
+If the principle only holds in the context of this specific decision,
+it is an L2 insight — label it L2 and move on. An L3 that requires
+its original context to make sense is not universal.]
+
+FALSIFICATION ATTEMPT:
 [One genuine attempt to break the L3 above: name a counterexample or
 edge case where the principle fails. If it survives, state why. An
 L3 that has never survived an attack is a slogan, not a principle.]
+
+BROADCAST:
+[If a genuine L3 emerged AND the verdict carries fleet-relevant weight:
+post the verdict to Hivemind with intent="decision". Otherwise skip —
+most meditations are for the host's cognition, not the fleet's feed.]
 ```
 
 ---
@@ -323,9 +375,10 @@ MANDATE FLAGS:
 2. **NO PREMATURE SYNTHESIS**: Do not begin Phase 2 until all N voices have
    spoken. Do not begin Phase 3 until Phase 2 is complete. The sequence is sacred.
 
-3. **NO HEDGING IN IMPERATIVES**: Each voice's `[IMPERATIVE]` must be a
-   direct command. "We should consider..." is forbidden.
-   "Do X before Y." is the required form.
+3. **NO FALSE URGENCY**: Each voice's `[IMPERATIVE]` must be a direct command
+   OR an explicitly-labeled `[CONSTRAINT]`. "We should consider..." is forbidden.
+   Manufacturing an imperative where a domain has only a constraint is
+   fabrication, not rigor.
 
 4. **NO DOMAIN BLEEDING**: Each voice speaks only from its domain.
    N1 Infrastructure does not talk about soul evolution. N7 Context does not talk
@@ -335,27 +388,34 @@ MANDATE FLAGS:
     push back on at least one prior voice BY NAME, citing the specific
     constraint added. "N8's instrumentation demand ignores that X" — not
     "I have concerns." Uncited dissent is performative, not dialectical.
+    Voice 1 anchors the dialectic with the strongest status-quo case.
 
 6. **THE ANTI-COLLAPSE CONTRACT IS LAW**: Stated in Phase 0. Enforced
     through all phases. Persona collapse (voices blending into a generic
     assistant) terminates the meditation and requires restart from Phase 0.
 
-7. **PHASE PERSISTENCE (v1.1 — stream-death insurance)**: Append each
-    completed phase to `data/coordination/meditations/records/MEDITATION_{AGENT}_{DATE}_{SLUG}.md`
-    as it finishes (incremental appends, ≤80 lines per write — never one
-    large dump). Provider streams die silently mid-generation; a meditation
-    lost at Phase 3 of 5 must not take Phases 0–2 with it. On resume,
-    read the record file and continue from the last complete phase.
+7. **PHASE PERSISTENCE IS OPT-IN (`--durable`)**: Default is pure single-pass
+   cognition — no file writes mid-meditation. With `--durable`, append each
+   completed phase to `data/coordination/meditations/records/MEDITATION_{AGENT}_{DATE}_{SLUG}.md`
+   as it finishes (≤80 lines per write). Reserve `--durable` for long or
+   expensive meditations: a lost zero-RAM meditation costs one cheap re-run,
+   and the insurance premium (tool-call overhead, broken forward-pass purity)
+   usually exceeds the loss. Choose deliberately.
+
+8. **RECORD ONLY WHAT EARNED IT (`--record`)**: Final outputs are written to
+   `data/coordination/meditations/records/` only when `--record` is passed.
+   Automatic recording of every meditation is observability theater — most
+   meditations are cognition consumed at the moment of synthesis, not artifacts.
 
 ---
 
 ## ⬡ USAGE EXAMPLES
 
 ```bash
-# Full Omega Node meditation on a strategic question
+# Targeted meditation — gate-sized lens set (default behavior)
 /meditate Should we migrate from Qdrant to sqlite-vec now?
 
-# MaKaLi Triad only — fast dialectical synthesis
+# MaKaLi Triad — fast dialectical synthesis
 /meditate What is the right execution order for Tier 0? --lenses makali
 
 # Custom engineering personas on a technical decision
@@ -373,11 +433,14 @@ MANDATE FLAGS:
 # Creative mode — what could exist?
 /meditate The future of the soul evolution system --mode CREATIVE
 
-# Execute a formal meditation template from the registry
-/meditate Evolve my soul using the sovereign-crucible-v2 template
+# Small local model / tight output budget
+/meditate Provider failover ordering --lenses makali --brief
 
-# Design and run a new meditation template
-/meditate Design a new meditation template for architectural debt analysis, record it, and run it
+# Long-running strategic meditation with crash insurance
+/meditate Full architecture review pre-debut --durable --record
+
+# Execute a formal meditation template from the registry
+/meditate Evolve my soul --template sovereign-crucible-v2
 ```
 
 ---
@@ -386,7 +449,7 @@ MANDATE FLAGS:
 
 ```
 MC (Mastermind Council)                  Meditate
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /council-cloud   → subagents launched    /meditate      → single inference
 /council-local   → local models swapped  (this command) → attention modulation
 /council-fast    → qwen3-1.7b x N        No RAM penalty. No model swap.
@@ -407,6 +470,15 @@ multiple sessions, models, and agent buses. See Strike 11.5.
 Integrated into Strike 11.5 (Council Dispatcher) as `oracle.meditate()`.
 Ratified 2026-07-16, renamed 2026-07-18. L3 Principle: `L3-Meditation-As-Semantic-Prism`.
 
+**v1.3 changelog**: Phase 00 stripped to minimal template check (Hivemind announce
+moved to Phase 4 broadcast; template design removed from meditation path);
+invocation-gate domain count now sizes the lens set (default 5, not 10);
+Voice 1 anchors with strongest status-quo case; IMPERATIVE made conditional
+(CONSTRAINT fallback — no false urgency); collision feedback loop (low-collision
+wide-lens runs prescribe tighter re-runs); L3 strict format (no proper nouns,
+falsifiable, ≤2 sentences); mandate-conflict surfacing at Phase 4;
+`--durable`/`--record`/`--brief` flags; version drift fixed.
+
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.2 ⬡ oracle.meditate() ⬡ trc_meditate_protocol ⬡ 2026-08-22*
+*⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.3 ⬡ oracle.meditate() ⬡ trc_meditate_protocol ⬡ 2026-08-26*
