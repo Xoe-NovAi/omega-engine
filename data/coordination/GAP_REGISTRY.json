@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-19T18:45:00Z",
+  "updated": "2026-08-26T00:10:26Z",
   "purpose": "Authoritative registry of ALL research gap IDs. Prevents gap-number reuse across plans (root cause of the 2026-08-14 R13-R38 collision). Any new research plan MUST register its gaps here with a UNIQUE prefix.",
   "rules": [
     "Gap IDs R1-R38 are OWNED by RESEARCH_PLAN_PHASE1_4_20260813.md (authoritative).",
@@ -103,9 +103,9 @@
     },
     "R14b": {
       "topic": "Nemotron fallback chain",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "RESOLVED 2026-08-25: M25 streaming implemented (openai_compat.py:136-163), fallback_chain wired (model_gateway.py:528), antigravity tuned for Nemotron gaps. RESIDUAL GHOST: fallback_resolver config block providers.yaml:21-63 has ZERO src consumers \u2014 UO-6 cut-or-wire candidate. Evidence: data/coordination/gap_investigation_20260825/roc/GAP_INVESTIGATION_REPORT_20260825.md"
     },
     "R16": {
       "topic": "pydantic v2",
@@ -207,7 +207,7 @@
       "topic": "Plugin scope reduction",
       "status": "outstanding",
       "plan": "phase1_4",
-      "report": null
+      "report": "CONSENSUS FOUND 2026-08-25: minimal core (loop+state+tool registry) + MCP surface; three documented monolith regrets validate our architecture. Design input recorded."
     },
     "R32": {
       "topic": "In-session gauge source",
@@ -225,31 +225,31 @@
       "topic": "Provider band adjustments",
       "status": "outstanding",
       "plan": "phase1_4",
-      "report": null
+      "report": "UPDATED 2026-08-25: Google killed static quota tables (live dashboard only) \u2014 bands must be MEASURED from telemetry, never hardcoded. LOAD-BEARING finding; hardcoded-band approaches are obsolete."
     },
     "R35": {
       "topic": "Model degradation",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "phase1_4",
-      "report": null
+      "report": "METHODOLOGY RESOLVED 2026-08-25 (web-sourced): silent provider swaps systemic (arXiv 2608.11803: 2/9 providers flag changes); detection standard = behavioral fingerprinting (~86% power) + canary-hash tripwire + served-model logging. IMPLEMENTATION TICKET OPEN: provider drift canary extending M22 provenance with served_model_id. Evidence: data/coordination/gap_investigation_20260825/researcher/RESEARCHER_GAP_REPORT_20260825.md"
     },
     "R36": {
       "topic": "Baseline calibration",
-      "status": "outstanding",
+      "status": "partial",
       "plan": "phase1_4",
-      "report": null
+      "report": "SPLIT 2026-08-25: methodology research CLOSED (Miller error bars, evalci, n>=30 floor, Procedure-Aware Evaluation 27-78% corrupt successes); implementation ticket OPEN: golden-set calibration harness (>=30 frozen prompts per oracle path, paired-difference reporting). Serves FLE study M1/M2 metrics directly."
     },
     "R37": {
       "topic": "Identity fluidity (E-0)",
-      "status": "outstanding",
+      "status": "blocked",
       "plan": "phase1_4",
-      "report": null
+      "report": "BLOCKED-EXTERNAL 2026-08-25: SPEC_IDENTITY_FLUIDITY_v1.md awaiting Architect review + Kali ratification; 9 prototypes exist in grokster/workspace/prototypes/, zero engine wiring. One ratification from implementation-ready."
     },
     "R38": {
       "topic": "NotebookLM integration",
       "status": "outstanding",
       "plan": "phase1_4",
-      "report": null
+      "report": "UPDATED 2026-08-25: R52c SUPERSEDED by NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md v2.1 per D-583 (2-notebook, quota corrected 10 DR/mo NOT 30 \u2014 product renamed Gemini Notebook Jul 16 2026). notebooklm-py 0.8.1 installed. Missing: master_token.json auth capture (Architect browser), systemd service, opencode.json wiring."
     },
     "R39": {
       "topic": "Fleet Health Dashboard (SUPPLEMENTARY, Phase2-plan topic)",
@@ -365,7 +365,7 @@
       "topic": "Context Window Registry \u2014 single source for all model context windows",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
-      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "report": "UPDATED 2026-08-25 CRITICAL FRESHNESS: Qwen3-2507=262K native; Nemotron3-Ultra=262K native (1M=extended+warning); Gemma4-31B=256K; Gemini output default 8K trap. 12+ hardcoded window sites catalogued across src/ by jem. Registry needed as single source.",
       "owner": "maat",
       "phase": "P0"
     },
@@ -373,7 +373,7 @@
       "topic": "Planner/Executor Model Router \u2014 routes by role + context window need",
       "status": "outstanding",
       "plan": "cognitive_arch_20260819",
-      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "report": "DESIGN FILLED 2026-08-25: 2026 consensus = static tier map v1, learned router only at volume, cascade-with-verifier for quality floors. Ready for spec drafting.",
       "owner": "maat",
       "phase": "P2"
     },
@@ -420,9 +420,9 @@
     },
     "GN-1": {
       "topic": "notebooklm-py[mcp] deployment with isolated auth profiles",
-      "status": "outstanding",
+      "status": "partial",
       "plan": "gemini_notebook_20260820",
-      "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "report": "SPLIT 2026-08-25: library install DONE (notebooklm-py 0.8.1 = latest upstream, 18.9k stars); AUTH OUTSTANDING (master_token.json capture needs Architect browser sign-in). GN-2..5 blocked via this dependency chain.",
       "owner": "maat_n3"
     },
     "GN-2": {
@@ -504,9 +504,9 @@
     },
     "LI-3": {
       "topic": "llama-fit-params hardware probe at startup",
-      "status": "outstanding",
+      "status": "partial",
       "plan": "local_inference_opt_20260820",
-      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "report": "UPDATED 2026-08-25: hardware fit-probe EXISTS at providers.py:692-755 (detect_hardware_profile); only CLI exposure missing. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
       "owner": "maat_n3"
     },
     "LI-4": {
@@ -518,9 +518,9 @@
     },
     "LI-5": {
       "topic": "Startup script (zRAM + THP + pinning + prompt caching)",
-      "status": "outstanding",
+      "status": "blocked",
       "plan": "local_inference_opt_20260820",
-      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "report": "BLOCKED-BY-ZS 2026-08-25: tune_ryzen.sh self-declared DEPRECATED; building replacement before ZS adjudication (zswap-vs-zRAM D-584 vs Carmack-H-1 schism) would encode the losing memory architecture. Sequence after Architect ruling.",
       "owner": "maat_n3"
     },
     "KD-1": {
@@ -546,30 +546,30 @@
     },
     "HR-1": {
       "topic": "HeadroomMiddleware implementation (src/omega/oracle/middleware/headroom.py)",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "headroom_integration_20260820",
-      "report": "data/coordination/HEADROOM_RESEARCH_20260820.md",
+      "report": "RESOLVED 2026-08-25: HeadroomMiddleware shipped 811f813f (2026-07-05), wired oracle.py:163/189/897 + context_builder.py:504. Registry row was born-stale (written 6 weeks AFTER fill). Evidence: data/coordination/gap_investigation_20260825/roc/GAP_INVESTIGATION_REPORT_20260825.md",
       "owner": "maat_n3"
     },
     "HR-2": {
       "topic": "Adaptive context buffer integration (src/omega/research/adaptive_context.py)",
-      "status": "outstanding",
+      "status": "superseded",
       "plan": "headroom_integration_20260820",
-      "report": "data/coordination/HEADROOM_RESEARCH_20260820.md",
+      "report": "SUPERSEDED 2026-08-25: adaptive_context.py never existed (phantom path); functionality subsumed by HeadroomMiddleware. Duplicate of LI-1 concern. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
       "owner": "maat_n3"
     },
     "HR-3": {
       "topic": "MCP headroom tools (compress tool outputs before context injection)",
-      "status": "outstanding",
+      "status": "resolved",
       "plan": "headroom_integration_20260820",
-      "report": "data/coordination/HEADROOM_RESEARCH_20260820.md",
+      "report": "RESOLVED 2026-08-25: MCP headroom_retrieve live at hub_tools/tools.py:153-168. Metrics debt remains (tokens_saved hardcoded 0). Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
       "owner": "maat_n3"
     },
     "ZS-1": {
       "topic": "zswap sysctl + kernel cmdline deployment (max_pool_percent=25, lzo_rle, zsmalloc, zswap.enabled=1)",
-      "status": "outstanding",
+      "status": "blocked",
       "plan": "zswap_subsystem_20260820",
-      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "report": "ADJUDICATION-REQUIRED 2026-08-25: TRIPLE CONTRADICTION \u2014 locked decisions (D-526/527/581/584) say zswap+NVMe/zRAM-disabled; live machine has zswap OFF + zRAM ACTIVE 8G zstd (matches Carmack H-1 review instead). Same-day decision schism D-584 vs H-1 is load-bearing for community installer defaults. Architect sudo ruling required BEFORE deployment or ZS-3 WAD packaging.",
       "owner": "maat_n3"
     },
     "ZS-2": {
