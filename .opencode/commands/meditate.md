@@ -157,12 +157,13 @@ What must happen — or must NOT happen — from this domain's perspective?
 highest-priority constraint instead. Do not manufacture false urgency.)
 
 [DISSENT / CHALLENGE]
-Voice 1: State the STRONGEST CASE FOR THE STATUS QUO — the best argument
-for doing nothing / keeping things as they are. Later voices need
-something concrete to attack; performative contrarianism against vague
-"conventional wisdom" is theater, not dialectic.
+Voice 1: State the HIGHEST-COST CONSTRAINT your domain sees against making
+this change — a concrete, domain-grounded cost if the change proceeds.
+NOT "conventional wisdom says." Later voices attack this constraint;
+manufactured positions get ignored (R53 D1, corpus-verified).
 Voice 2+: Push back on a prior voice BY NAME, citing the specific
-constraint added. "N8's instrumentation demand ignores that X."
+constraint added AND stating what your domain sees that it cannot.
+"N8's instrumentation demand ignores that X."
 No agreement without adding a new constraint. Silence is not permitted.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -223,9 +224,11 @@ technical Node framework. Other WADs may omit node entirely.
 
 ### ◈ PHASE 2 — CROSS-DOMAIN COLLISION
 
-After all N voices have spoken, surface the **three highest-tension conflicts**
-in the council. These are the points where two voices directly contradict each
-other's imperative. Tension = insight.
+After all N voices have spoken, list ALL genuine cross-domain conflicts —
+every point where two voices directly contradict each other's imperative —
+then surface the highest-tension ones for resolution below. Do not target
+any count; the number emerges from the subject (R53 D8: instructed counts
+become anchors). Tension = insight.
 
 Output as:
 
