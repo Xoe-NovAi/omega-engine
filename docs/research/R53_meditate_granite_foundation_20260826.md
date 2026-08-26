@@ -59,7 +59,15 @@ Longest run (10 voices, 529 lines): format fidelity identical at Voice 1 and Voi
 | Tournament drafts | 248–296 | ~3,200–3,500 |
 | Final target w/ all additions | ~285–295 | ~3,400–3,600 (~22% of cap — safe) |
 
-**Hard ceiling: ≤320 lines / ~16KB.** Above ~500 lines the command alone breaks free-tier substrates (the exact G-1 failure mode). All seven proposed additions combined cost only ~15 net lines and ~150–250 tokens/run — well inside budget.
+> ⚠️ **QUALIFIER (2026-08-26 — Carmack §6 audit)**: The "16K free-tier input cap" above is
+> **Gemma 4 31B / Google free-tier specific** (G-1 failure mode, D-377). It is NOT a universal
+> constraint. Current workhorse (Antigravity / Laguna S 2.1) has substantially higher context.
+> The 320-line ceiling derived from this number has been **re-ratified as 350 lines** per
+> Carmack recommendation (4,600 tokens ≈ 28.8% of actual workhorse cap; SR access confirmed
+> available mid-run per Architect Q1 ruling 2026-08-26). R53 frozen — this note is the
+> correction; do not edit surrounding text.
+
+**Hard ceiling: ≤320 lines / ~16KB** *(re-ratified as 350 — see qualifier above)*. Above ~500 lines the command alone breaks free-tier substrates (the exact G-1 failure mode). All seven proposed additions combined cost only ~15 net lines and ~150–250 tokens/run — well inside budget.
 
 ### 3.2 Separator audit (correction)
 Each voice block carries **3** ━ separator lines (not 2): top, mid, bottom. Each 50-char U+2501 run tokenizes poorly (~8–16 tokens/line). 10-voice run = **240–480 tokens of separators**. Verdict: cut mid-bar (adds nothing over top bar), keep top+bottom — saves ~80–160 tok/run while preserving checkable phase boundaries.

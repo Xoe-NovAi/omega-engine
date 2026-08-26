@@ -130,7 +130,7 @@ the SR test becomes a new cascade-map entry here — that is the gap-closure loo
 7. All four cascade maps still accurate?
 8. Corpus tiers current?
 9. `use-meditate.md` banner still points here?
-10. Line counts within ceilings (IG ≤80 · SR ≤260 · this guide ≤200)?
+10. Line counts within ceilings (IG ≤80 · SR ≤260 · this guide ≤200 · command ≤350)?
 
 ## §10 Ownership
 

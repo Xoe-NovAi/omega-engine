@@ -35,6 +35,22 @@ index table row when status changes.
 
 ## Full Entries (current campaign)
 
+
+## D-604 — Command ceiling re-ratified: 320 → 350 lines
+
+**Date**: 2026-08-26
+**Authority**: Architect ruling (Q1 + ceiling re-ratification + R53 fix, 2026-08-26)
+**Decisions**:
+- Q1 RESOLVED: meditation host CAN consult System Reference mid-run → 350-line stretch is viable
+- Command ceiling RE-RATIFIED as **350 lines** (was 320, derived from Gemma 4 31B / Google
+  free-tier 16K input cap — a provider-specific limit not a universal constraint)
+- 350 lines / ~4,600 tokens ≈ 28.8% of actual Laguna S 2.1 / Antigravity workhorse cap
+- R53 lines 58+62 corrected with inline qualifier note (frozen doc — note only, text preserved)
+- SR §11, Maintainer's Guide §9.10 updated to 350 ceiling
+- **Scope**: applies to `.opencode/commands/meditate.md` only; all other command ceilings unchanged
+**Evidence**: `data/coordination/research_wave2/R01_carmack_token_economics.md` §6 (Carmack audit)
+
+
 ## D-532: Mandate Compliance Measured Mechanically, Not Hand-Written (2026-08-16)
 
 **Decision**: Mandate compliance percentages MUST be derived from a mechanical check (`make check-mandate-compliance`), never hand-written. The compliance denominator is fixed at 27 (M1-M27, v3.8.0).

@@ -180,8 +180,10 @@ is honest uncertainty. This applies to every voice including synthesis-adjacent 
 3. Phase 4 verdict contains verbatim rubric restatement and tension accounting.
 4. Output matches §2 skeleton shapes; all §9 invariants hold; all §10 cases handled.
 
-**Command constraints**: hard ceiling 320 lines (live v2.0 measured ~5.8K tokens ≈ 36% of the 16K
-free-tier cap — bloat is a sovereignty cost); separators minimal (§3); zero parser surface (§9.8).
+**Command constraints**: hard ceiling **350 lines** (re-ratified 2026-08-26; original 320 was
+derived from Gemma 4 31B / Google free-tier 16K input cap — a provider-specific limit, not
+universal; Architect Q1 confirmed mid-run SR access; Carmack audit recommends 350 lines /
+~4,600 tokens ≈ 28.8% of actual workhorse cap); separators minimal (§3); zero parser surface (§9.8).
 
 *End — v1.0.0. Reconstructors: if you needed a rule not stated here, that is a gap — report it to
 the Maintainer's Guide owner for a new cascade-map entry.*
