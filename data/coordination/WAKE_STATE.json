@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T11:39:02Z",
+  "updated": "2026-08-26T11:58:09Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -241,5 +241,34 @@
     "promotion_manifest": "APPROVED + EXECUTED: kali 8, grokster 8 lessons promoted to soul.yaml",
     "meditation_protocol_law": "Architect directive: meditations output to chat for ingestion; NEVER launch directly into dev/action"
   },
-  "backup_gap": "restic timer NOT ENABLED (C-3 residual) \u2014 config+engine mutations incoming during sprint; Architect should enable or accept risk"
+  "backup_gap": "restic timer NOT ENABLED (C-3 residual) \u2014 config+engine mutations incoming during sprint; Architect should enable or accept risk",
+  "sprint_directives_20260826": {
+    "sprint_order": "CONFIRMED: refactor wave first, then Manual Phase B (\u00a79 order GN\u2192DS\u2192LI\u2192KD\u2192HR\u2192ZS)",
+    "zs_hold": "RELEASED \u2014 zswap subsystem build authorized",
+    "queue_write": "APPROVED \u2014 populate immediate_execution_queue in ACTIVE_SPRINT",
+    "execution_gate": "DO NOT EXECUTE until core-docs reorganization complete (Architect directive)",
+    "doc_reorg_directive": {
+      "task": "Core strategy documentation reorganization \u2014 basic order assured BEFORE any execution",
+      "first_action": "Relocate VISION_ANCHOR_PERPETUAL_20260825.md from data/entities/roc_racoon/workspace/ to core team docs (docs/strategy/ or data/coordination/) \u2014 it is CANONICAL ('supersedes all prior vision statements') and belongs to the team, not one entity",
+      "audit_scope": "Verify authority chain across: VISION_ANCHOR.md (2026-08-14), THE_VISION_CANONICAL_DRAFT_20260823.md, VISION_ANCHOR_PERPETUAL (2026-08-25) \u2014 establish single canonical pointer, stamp superseded docs, check STRATEGY_CORPUS_MAP rows reference the right files",
+      "companion_corpus": "VISION_SCOPE_SYNTHESIS / PARTITION_EXPANSION_C1+C2 / DEEP_DIVE_CHILD_* / CORRECTIONS_BRIEF also in roc workspace \u2014 assess which are core vs entity-owned evidence"
+    },
+    "scope_review_gaps": [
+      "ACTIVE_SPRINT immediate_execution_queue EMPTY (0 steps) \u2014 repopulate at dispatch",
+      "GN workstream blocked on researcher auth capture (master_token.json)",
+      "ZS was blocked \u2014 NOW RELEASED per Architect",
+      "Backup timer never enabled (C-3 residual) \u2014 open risk into every wave",
+      "Fabric tickets unclaimed: empty-response detector, cline api_key wiring, M7 inventory reconciliation"
+    ],
+    "rulings_confirmed": {
+      "clinepass": "NO-GO (Architect declined subscription)",
+      "anti_domains": "Option A \u2014 wire into command (~15 tok/voice) at Phase B",
+      "three_doc_architecture": "APPROVED as Omega documentation prototype",
+      "fleet_pattern_g5": "APPROVED \u2014 specialist sessions ingested into TASK_REGISTRY",
+      "d10_declined_form": "RESOLVED by delegated judgment: ceremony-only block (gates+reason), answer outside frame as labeled prose",
+      "d11_resume": "RESOLVED by delegated judgment: Option B sanctioned conditional read at Phase 0",
+      "promotion_manifest": "APPROVED + EXECUTED: kali 8, grokster 8 lessons promoted to soul.yaml",
+      "meditation_protocol_law": "Architect directive: meditations output to chat for ingestion; NEVER launch directly into dev/action"
+    }
+  }
 }
