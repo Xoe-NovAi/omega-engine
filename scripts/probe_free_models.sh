@@ -8,20 +8,47 @@ set -euo pipefail
 
 LOG_DIR="${HOME}/Documents/Xoe-NovAi/omega-engine/data/metrics"
 LOG_FILE="${LOG_DIR}/free_model_probes.jsonl"
-OPENROUTER_KEY="${OPENROUTER_API_KEY:-}"
-
-# Read key from auth.json if not in env
-if [[ -z "$OPENROUTER_KEY" ]]; then
-    AUTH_FILE="${HOME}/.local/share/opencode/auth.json"
-    if [[ -f "$AUTH_FILE" ]]; then
-        OPENROUTER_KEY=$(python3 -c "
-import json, sys
-with open('$AUTH_FILE') as f:
+# Get OpenRouter API key - try sources in order of preference
+get_openrouter_key() {
+    # 1. Try Cline secrets first (verified working for inference)
+    if [[ -f "${HOME}/.cline/data/secrets.json" ]]; then
+        local key=$(python3 -c "
+import json
+with open('${HOME}/.cline/data/secrets.json') as f:
+    d = json.load(f)
+print(d.get('openRouterApiKey', ''))
+" 2>/dev/null)
+        if [[ -n "$key" && "$key" != "None" ]]; then
+            echo "$key"
+            return
+        fi
+    fi
+    
+    # 2. Try environment variable
+    if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
+        echo "${OPENROUTER_API_KEY}"
+        return
+    fi
+    
+    # 3. Try auth.json
+    if [[ -f "${HOME}/.local/share/opencode/auth.json" ]]; then
+        local key=$(python3 -c "
+import json
+with open('${HOME}/.local/share/opencode/auth.json') as f:
     d = json.load(f)
 print(d.get('openrouter', {}).get('apiKey', ''))
-" 2>/dev/null || echo "")
+" 2>/dev/null)
+        if [[ -n "$key" && "$key" != "None" ]]; then
+            echo "$key"
+            return
+        fi
     fi
-fi
+    
+    # Return empty if none found
+    echo ""
+}
+
+OPENROUTER_KEY=$(get_openrouter_key)
 
 mkdir -p "$LOG_DIR"
 
@@ -39,6 +66,8 @@ probe_model() {
             -X POST "https://openrouter.ai/api/v1/chat/completions" \
             -H "Authorization: Bearer $OPENROUTER_KEY" \
             -H "Content-Type: application/json" \
+            -H "HTTP-Referer: https://xoe-nov.ai" \
+            -H "X-Title: Omega Engine" \
             -d "{
                 \"model\": \"$model_id\",
                 \"messages\": [{\"role\": \"user\", \"content\": \"Reply with exactly: PING_OK\"}],
@@ -55,10 +84,6 @@ probe_model() {
     
     local end_ms=$(date +%s%3N)
     local latency_ms=$((end_ms - start_ms))
-    
-    # Extract rate-limit headers from response (if available)
-    local rate_limit_remaining=""
-    local rate_limit_limit=""
     
     # Parse JSON body for error message
     local error_msg=""
@@ -104,7 +129,7 @@ probe_model "z-ai/glm-5.2:free" "glm52"
 probe_model "minimax/minimax-m3:free" "minimax_m3"
 
 # Probe 3: Nemotron 3 Ultra free (control — known stable)
-probe_model "nvidia/nemotron-3-ultra-free" "nemotron_ctrl"
+probe_model "nvidia/nemotron-3-ultra-550b-a55b:free" "nemotron_ctrl"
 
 echo ""
 echo "Log: $LOG_FILE ($(wc -l < "$LOG_FILE") entries)"
