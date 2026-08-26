@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T21:05:33Z",
+  "updated": "2026-08-26T22:21:26Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -303,5 +303,50 @@
       "headroom M7 violation: defaults to cloud model, local = 0% savings"
     ],
     "wave2_readiness": "READY \u2014 pending compaction. Two Architect decisions recorded. All research closed. Expert sessions persistent."
+  },
+  "pre_wave_maintenance_20260826": {
+    "status": "COMPLETE",
+    "fixes_applied": [
+      "SR \u00a78 anti-domain token count corrected 15\u219236 (R07 empirical)",
+      "R02 CI spec: Architect decision recorded (keep 1.18.23, revalidate)",
+      "or-key.md gitignored (stray OpenRouter secret secured)",
+      "Research squad state committed (TASK_REGISTRY, jem lessons, grokster session_gnosis)",
+      "Config normalization (entities.yaml domain reorder)",
+      "Probe artifacts committed"
+    ],
+    "commit": "f1617c28",
+    "tracking_state": "VALID (ACTIVE_SPRINT.json + GAP_REGISTRY.json parse OK)",
+    "git_status": "clean except gitignored or-key.md",
+    "ready_for_compaction": true
+  },
+  "wave2_execution_plan": {
+    "status": "COMPLETE",
+    "plan_path": "data/coordination/WAVE2_EXECUTION_PLAN.md",
+    "playbook_path": "docs/strategy/EXECUTION_PLAYBOOK.md",
+    "tracks": [
+      "A: Command Compression",
+      "B: CI Ph1",
+      "C: DS/KD",
+      "D: ZSWAP",
+      "E: Headroom Local-First",
+      "F: LI/HR"
+    ],
+    "quality_gates": [
+      "G1: Empty Corpus Seed",
+      "G2: Headroom Local Proof",
+      "G3: llama-fit-params Verification",
+      "G4: Command Compression Quality"
+    ],
+    "expert_sessions": {
+      "R01": "ses_fc07ce00bffeeUVDTOMjWWCAU8",
+      "R02": "ses_fc0335de9ffegYf88MEunkBHof",
+      "R03": "ses_fc03337c3ffewlIl3RbrLDhznl",
+      "R04": "ses_fc02d0ae3ffegM0BKWV8KQFuAq",
+      "R05": "ses_fc0331204ffeVes3nvKIYOX4jY",
+      "R06": "ses_fc02ce92bffes8IRAatNLFUXaX",
+      "R07": "ses_fc02cd428ffezaOBlWucaBzajs",
+      "R08": "ses_fc02cbcfcffedlzXRvzcLXY2jv"
+    },
+    "execution_order": "Phase 0 (ZSWAP, Architect) \u2192 Phase 1 (A) + Phase 2 (B) parallel \u2192 Phase 3 (E Task 0) \u2192 Phase 4 (C) + Phase 3 (E 1-6) parallel \u2192 Phase 5 (F)"
   }
 }

@@ -1,5 +1,4 @@
 
-!data/coordination/*.md
 # AP: AP-GITIGNORE-v1.0.0
 # Ad-hoc Test Scripts (not part of test suite)
 # Archives (historical, not part of active codebase)
@@ -107,6 +106,8 @@ data/archive/
 data/audit/
 data/benchmarks/
 data/coordination/*
+!data/coordination/*.md
+!data/coordination/WAVE2_EXECUTION_PLAN.md
 data/coordination/**/*_ACK_*.md
 data/coordination/**/*_LIVE_FEED.md
 data/coordination/**/*_WORKSPACE_LOCK_*.md
