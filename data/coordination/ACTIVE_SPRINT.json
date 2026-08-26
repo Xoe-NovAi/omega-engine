@@ -3,7 +3,7 @@
   "campaign": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
   "phase": "EXECUTION_MINIMAL",
   "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-25T09:56:07+00:00",
+  "updated": "2026-08-26T00:43:40Z",
   "owner": "kali",
   "status": "in_progress",
   "status_detail": "20-hour mastermind sprint complete (2026-08-24/25): GSCA study founded, truth-alignment dataset seeded (TA-001..014), MaKaLi Orchestrator Charter v1 ratified (shadow-mode cutover conditional on Carmack P0 fixes), Vision Anchor Perpetual written (561 lines), Carmack full-scope audit delivered (enforcement theater exposed: pre-commit uninstalled, temple-grade RED). Post-sprint priority: meditation critical path \u2014 P12+ICS Phase 1 \u2192 pre-commit hooks/M13 \u2192 ctxNN telemetry \u2192 TA dataset wiring \u2192 archetype bootstrap.",
@@ -363,7 +363,7 @@
     "HEADROOM-INTEGRATION": {
       "task": "Headroom Integration \u2014 Semantic compression for tool outputs + RAG (40-90% savings)",
       "owner": "maat_n3",
-      "status": "in_progress",
+      "status": "partial",
       "risk": "MEDIUM",
       "specs": "docs/specs/qdrant_headroom/QDRANT_HEADROOM_INTEGRATION_RESEARCH_20260820.md",
       "phase": "Phase 2 (Post-Debut)",
@@ -386,12 +386,13 @@
           "owner": "maat_n3",
           "status": "ready"
         }
-      ]
+      ],
+      "note": "HR-1/HR-3 RESOLVED (middleware shipped 811f813f, wired oracle.py:163/189/897; MCP tool live). Remaining: tokens_saved metric debt. HR-2 superseded (phantom path)."
     },
     "ZSWAP-SUBSYSTEM": {
       "task": "zswap + NVMe Swap Subsystem \u2014 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM DISABLED, swappiness=100, cgroup MemoryMax=6G",
       "owner": "maat_n3",
-      "status": "in_progress",
+      "status": "blocked",
       "risk": "HIGH",
       "specs": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md \u00a73.3",
       "phase": "Phase 2 (Post-Debut)",
@@ -414,7 +415,8 @@
           "owner": "maat_n3",
           "status": "ready"
         }
-      ]
+      ],
+      "note": "ADJUDICATION REQUIRED: D-584 (zswap+NVMe) vs Carmack-H-1 (zRAM-only); live machine currently matches H-1. Architect ruling gates LI-5/ZS-2/ZS-3."
     },
     "DOCUMENTATION-SYSTEM": {
       "task": "Modular Domain Documentation System \u2014 Workspace authoring + Runtime modules + Curator model + Validated copy sync",
@@ -459,7 +461,7 @@
     "GEMINI-NOTEBOOK": {
       "task": "Gemini Notebook v2.0 \u2014 Free-tier-only (3 accounts, 30 DR/mo), 2-notebook architecture, notebooklm-py[mcp] automation, master_token.json auth, SDP \u00a710 gate honored",
       "owner": "researcher",
-      "status": "in_progress",
+      "status": "partial",
       "risk": "HIGH",
       "specs": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
       "phase": "Phase 2 (Post-Debut)",
@@ -494,7 +496,8 @@
           "owner": "researcher",
           "status": "ready"
         }
-      ]
+      ],
+      "note": "notebooklm-py 0.8.1 installed; auth capture (master_token.json) needs Architect browser. QUOTA CORRECTED: Gemini Notebook renamed Jul 16 2026; free Deep Research = 10/mo NOT 30."
     },
     "KNOWLEDGE-DOMAINS": {
       "task": "Knowledge Domain Runtime Modules \u2014 Workspace authoring + Curator model + Affinity presets per domain",
@@ -644,5 +647,17 @@
     "GEMINI-NOTEBOOK free-tier-only (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP \u00a710 gate)",
     "All 27 Sovereign Mandates verified compliant post-Carmack review",
     "Team-Study #1 (2026-08-23) refined closeout execution \u2014 see data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md"
-  ]
+  ],
+  "fle_campaign": {
+    "status": "COMPLETE",
+    "completed": "2026-08-25",
+    "summary": "Two councils ratified (SOVEREIGN_DECREE.md + SOVEREIGN_DECREE_C2.md), zero halts/collapses. Study track + context-infra remediation + gap wave integrated. SSOT: HANDOFF_TO_KALI_FLE_STUDY_20260825.md",
+    "standing_laws": [
+      "Hop Rule",
+      "M11 Arm-Relay",
+      "dual-channel telemetry",
+      "exit-code honesty",
+      "Zero-Trust Documentation Doctrine"
+    ]
+  }
 }
