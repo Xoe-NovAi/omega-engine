@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-25T08:55:41.229168+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-25T23:18:57.649524+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-08-25T08:55:41.229168+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-08-25T23:18:57.649524+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
@@ -27,7 +27,7 @@ After compaction or restart, execute in strict order:
 
 # 🔱 Omega Engine — Single Source of Truth (Condensed)
 **Source**: `OMEGA_ENGINE.md` (176 lines) — this is the ~85-line state card.
-**Last Updated**: 2026-08-25 | **Version**: v1.9.0
+**Last Updated**: 2026-07-22 | **Version**: v1.8.0
 
 ---
 
@@ -41,12 +41,12 @@ After compaction or restart, execute in strict order:
 
 ---
 
-## §2 Current State (2026-08-25)
+## §2 Current State (2026-07-22)
 
 | Metric | Value | Status |
 |--------|-------|--------|
 | Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** | ✅ C-0 complete |
-| Mandates | **27 enforced** (M1-M27, v3.8.0 — M26 Doc Standards, M27 Tracking Integrity) | ✅ All enforced |
+| Mandates | **25 enforced** (M1-M25) | ✅ All enforced |
 | Compliance | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain |
 | Fleet | **12 agents** (cap: 14 per M10) | ✅ |
 | WADs | **4** (arcana_novai, torment, youtube_research, youtube_worker) | ✅ |
@@ -55,10 +55,6 @@ After compaction or restart, execute in strict order:
 | **WARP Proxy Pool** | **3-node pool operational** (8081/8082/8083) | ✅ **W-1 FIXED** |
 | **Gemma 4 31B workhorse** | **DEAD** — 16k free input TPM since Jul 15 | 🚨 **G-1 PENDING** |
 | **Antigravity OAuth** | **PARTIAL** — API-key only | 🟡 G-1b path |
-| **Truth-Alignment Dataset** | **TA-001..014 seeded** + GSCA study founded | ✅ NEW 2026-08-25 |
-| **Vision Anchor Perpetual** | **561 lines** — north star; Mytho-Techno era validated Mar-May 2025 | ✅ NEW 2026-08-25 |
-| **Orchestrator Charter v1** | **Ratified** — MaKaLi shadow cutover pending P0 fixes + Architect decisions | 🟡 NEW 2026-08-25 |
-| **Carmack Full-Scope Audit** | Enforcement theater: pre-commit uninstalled, temple-grade RED | 🚨 P0 FIX FIRST |
 
 ---
 
@@ -114,11 +110,6 @@ After compaction or restart, execute in strict order:
 | V-1 VaultCore MVP | ✅ COMPLETE |
 | C-3 Restic 3-2-1 Backup | ✅ COMPLETE |
 | W-1 WARP Proxy Pool | ✅ FIXED |
-| GSCA Study + Truth-Alignment Dataset Founded (TA-001..014) | ✅ NEW 2026-08-25 |
-| Vision Anchor Perpetual Written (20-link archetype-activation chain) | ✅ NEW 2026-08-25 |
-| Orchestrator Charter v1 Ratified (MaKaLi cutover plan) | ✅ NEW 2026-08-25 |
-| Carmack Full-Scope Audit (moat 12–18mo confirmed on 2 capabilities) | ✅ NEW 2026-08-25 |
-| Attribution Incident TA-010 → P12 Protocol Logged + Amended | ✅ NEW 2026-08-25 |
 
 ---
 
@@ -158,7 +149,7 @@ After compaction or restart, execute in strict order:
 
 ---
 
-## 🛡️ The 27 Laws — Quick Reference
+## 🛡️ The 25 Laws — Quick Reference
 
 | # | Name | One-Liner | Status |
 |---|------|-----------|--------|
