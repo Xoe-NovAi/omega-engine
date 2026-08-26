@@ -29,10 +29,11 @@
 
 ## §4 Multi-Account Posture
 
-- House holds ~8 GitHub accounts; OpenCode exposes exactly **2 builtin isolation slots**: `github-copilot` + `github-copilot-enterprise`.
-- Slot 1 = primary individual account (official flow). Slot 2 = enterprise slot — **likely accepts a plain github.com individual token** (pi implementation falls back to `api.individual.githubcopilot.com` without a domain) — UNVERIFIED until probe L4-a completes. Do not build dependencies on slot 2 before L4-a.
-- N>2 accounts → proxy-per-account fan-out (§1), gated on an explicit Architect trade-off decision (ban-risk acceptance).
-- Plan health-check: decode exchanged token's `sku=` field programmatically — no UI scraping needed.
+- House holds ~8 GitHub accounts. **SLOT-PREMISE CAVEAT (binary-verified 2026-08-26, 1.18.23)**: the "2 builtin slots" premise is under audit — `copilot-enterprise` appears **0 times** in the pinned binary; enterprise is a mode of the single `github-copilot` provider (`enterpriseUrl` credential field), not a separately compiled provider. Whether a second auth slot exists at runtime is exactly what probe L4-a (runbook in RESEARCH_TARGETS) now tests.
+- Slot 1 = primary individual account (official flow). Slot 2 = enterprise key — **UNVERIFIED until L4-a; original design likely dead per binary evidence.** Do not build dependencies on slot 2 before L4-a.
+- **Third multi-account pattern discovered 2026-08-26**: in-process account ROTATION via plugin — `@geeder/opencode-copilot-multi-auth` v0.4.0 is cached at `~/.cache/opencode/packages/` but **DORMANT** (not referenced in any live config `plugin` list). It rotates multiple GitHub accounts behind the single `github-copilot` provider ID with cooldowns, usage counts, unsupported-model tracking, and 429/403-aware failover (keytar-backed secret storage). Evaluation required before any activation: it is third-party code handling credentials, and rotation patterns may look abusive to GitHub's risk systems (same ban-risk class as proxies — Architect sign-off required).
+- N>2 accounts → rotation plugin (evaluate first) or proxy-per-account fan-out, both gated on an explicit Architect trade-off decision (ban-risk acceptance).
+- Plan health-check: decode exchanged token's `sku=` field programmatically — no UI scraping needed. **Builtin-path note**: since the builtin never exchanges (ARCHITECTURE §5a), sku-decode requires a one-off manual exchange call, not passive observation.
 
 ## §5 What This Platform Is NOT Used For
 

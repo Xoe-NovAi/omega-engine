@@ -18,6 +18,7 @@ External scripts / OpenCode / CI ─────────┘   (OpenAI Chat C
 - Model id namespace: `provider/model-name` (OpenRouter convention). Bare ids → HTTP 400 "invalid model format". VERIFIED (house probe #1).
 - Tier namespaces: free/promo ids (`deepseek/deepseek-v4-flash`, `minimax/minimax-m2.5`) vs paid **`cline-pass/*`** (hyphenated — CORRECTED 2026-08-26; old KB said `clinepass/`). Usage-billing ids use plain `provider/model`.
 - Optional headers: `HTTP-Referer`, `X-Title`, `X-Task-ID` (extension-internal task id — possible gate input, UNVERIFIED).
+- **No public model-listing endpoint** (VERIFIED 2026-08-26): all `/models` path variants → 404. Catalog is private to product clients; discover ids via error-differentiation probes (GOTCHAS G13).
 
 ## §2 Auth Chain
 
@@ -43,7 +44,7 @@ House policy: extract static key to `.env` (`CLINE_API_KEY=…`); never point to
 | ClinePass | $9.99/mo | ✅ explicitly sanctioned for external automation | 3 windows: 5h rolling + weekly + monthly; magnitudes undisclosed |
 | Usage-billing | pay-as-you-go credits | ✅ implied by API-first design | credit balance; HTTP 402 when empty |
 
-Gate enforcement observed: HTTP 403 `"deepseek/deepseek-v4-flash is only available via Cline product surfaces"` (house live probe 2026-08-22). Gate mechanism (token type vs client identity vs headers) UNRESOLVED — probes P4/P5.
+Gate enforcement observed (live re-verified 2026-08-26): HTTP 403 `"deepseek/deepseek-v4-flash is only available via Cline product surfaces"` (house probes Aug-22 AND Aug-26). **Gate taxonomy is PER-ID, not blanket** (same key, same minute): client-gated ids (403 product-surface) vs credit-metered free-tagged ids (`insufficient_credits` — API-reachable with balance) vs plan-entitled ids (`ENTITLEMENT_ERROR` — unlocks on subscription, same key). Gate mechanism details remain partially UNRESOLVED (P4/P5); the paid gate is empirically pure entitlement.
 
 ## §4 Runtime Topology (CLI)
 

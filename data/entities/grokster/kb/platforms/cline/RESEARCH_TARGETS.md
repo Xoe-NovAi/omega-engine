@@ -20,18 +20,20 @@ curl -s -X POST https://api.cline.bot/api/v1/chat/completions \
 
 ## Probe queue (P1–P10, carried from deep-mine §J)
 
-| # | Probe | Resolves |
-|---|---|---|
-| P1 | Gate re-check on `deepseek/deepseek-v4-flash` (protocol above) | Whether Aug-22 gate still stands |
-| P2 | Same call with `minimax/minimax-m2.5` | Docs contradiction: getting-started shows free-model curl vs free-models page prohibition |
-| P3 | Authenticated `GET /api/v1/models` listing | Real catalog + capability flags (`supportsReasoning`/`supportsImages`) + enforced context/output caps; whether anthropic/* is actually served |
-| P4 | Repeat P1 using WorkOS accessToken from providers.json | Whether gate keys on token type vs client identity |
-| P5 | Header matrix on free model (± X-Task-ID / HTTP-Referer / User-Agent) | What the gate inspects — DIAGNOSTIC ONLY; any bypass found must NOT be used (ToS §2.2(11)) |
-| P6 | `cline --thinking xhigh "ping"` with CLINE_DEBUG=1 → grep `~/.cline/data/logs/cline.log` request body | Wire param for reasoning effort at gateway |
-| P7 | Grep P3 listing for `cline-pass/` vs `clinepass/` | Namespace truth before any config write |
-| P8 | Large-context smoke on `cline-pass/deepseek-v4-flash` (or read caps from P3) | Whether D-557's 1M figure carries to paid variant |
-| P9 | `cline version` | Exact CLI stamp (house refs stuck at 3.0.52/3.0.56 era) |
-| P10 | Manual app.cline.bot dashboard subscription check | Concrete ClinePass allowance magnitudes |
+**STATUS UPDATE 2026-08-26 (jem M3 — key extracted to `.env`, probes executed live):**
+
+| # | Probe | Status | Finding |
+|---|---|---|---|
+| P1 | Gate re-check `deepseek/deepseek-v4-flash` | ✅ **RESOLVED 2026-08-26** | HTTP **403 stands**: *"only available via Cline product surfaces. If you are using an old version of Cline, please update to the latest version"* — note NEW version-hint suffix (feeds P5 hypothesis: gate may inspect client-version signals). |
+| P2 | Free-model raw-API test (`minimax/minimax-m2.5`) | ✅ **RESOLVED 2026-08-26** | **NOT client-gated — credit-metered**: `insufficient_credits`, balance $0.01. The free-models page's blanket "not supported through the API" OVERGENERALIZES: per-id behavior varies (see GOTCHAS G15). Docs contradiction resolved: getting-started's curl example is plausible for non-gated ids. |
+| P3 | Authenticated `/models` listing | ✅ **RESOLVED-NEGATIVE 2026-08-26** | **No public model-listing endpoint exists**: `/api/v1/models`, `/v1/models`, `/api/models`, `/api/v1/model` all → 404 `{"error":"Not Found","success":false}`. Docs' "model catalog" (supportsReasoning/supportsImages flags) is served to product clients via a private route only. Caps/entitlement discovery must use error-differentiation probes instead. |
+| P7 | Namespace truth | ✅ **RESOLVED 2026-08-26** | **`cline-pass/` CONFIRMED LIVE**: POST with `cline-pass/deepseek-v4-flash` → clean `ENTITLEMENT_ERROR: "the user is not subscribed to required model plan"` (namespace valid, entitlement missing). Non-hyphenated `clinepass/…` → anomalous `"empty response content"` (see GOTCHAS G14). |
+| P8 | 1M-context on cline-pass variant | ⏸ BLOCKED on ClinePass GO | Entitlement required before smoke possible. |
+| P9 | `cline version` stamp | ⬜ open | |
+| P10 | Dashboard quota magnitudes | ⏸ BLOCKED on ClinePass GO | |
+| P4/P5/P6 | Gate mechanism / header matrix / wire-param capture | ⬜ open (lower priority — P1+P7 already establish gate is id-and-plan-keyed for practical purposes; P1's version-hint message keeps client-signal hypothesis alive) | |
+
+**POSTURE CONSEQUENCE (M3)**: paid gate = **pure entitlement keyed to the SAME static key** — subscribing to ClinePass unlocks `cline-pass/*` through the already-extracted key and already-drafted OpenCode block with ZERO further config change. GO/NO-GO is now fully informed: the only remaining unknown post-subscribe is quota magnitude (P10) and context caps (P8).
 
 ## Additional open items (beyond deep-mine)
 

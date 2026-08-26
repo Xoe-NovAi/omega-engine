@@ -78,9 +78,23 @@ Three compounding failure modes when a raw credential hits model APIs directly (
 3. Missing/mismatched identity headers → 400 "model not supported" even with valid bearer.
 Fix pattern (PR #20758): detect `ghu_` at runtime → exchange → use `endpoints.api` → inject VS Code headers. For `gho_` tokens: pass through unchanged, default endpoint, no identity headers.
 
+## §5a BUILTIN-PATH GROUND TRUTH (binary-verified 2026-08-26, OpenCode 1.18.23) — READ BEFORE ANY DIRECT-API WORK
+
+Forensic extraction from the pinned binary (`strings ~/.opencode/bin/opencode`) **overturns two assumptions** in §2/§5 for the builtin provider path:
+
+1. **NO token exchange exists in the binary.** `copilot_internal` appears **0 times**; `proxy-ep` appears **0 times**. The builtin auth loader does:
+   ```js
+   Authorization: `Bearer ${W.refresh}`   // raw stored gho_ device-flow token, sent directly
+   ```
+   The raw long-lived OAuth user token IS accepted as Bearer by the Copilot API on the sanctioned OpenCode surface. The §2 exchange gate applies to **third-party/direct-API integrations**, NOT the builtin path.
+2. **`expires: 0` in auth.json is INERT for github-copilot.** The loader never reads `expires`, never schedules refresh, never exchanges. House credential (`refresh == access`, same gho_, `expires: 0`) works precisely because the field is unused. Verdict for M2 question #6b: **0 does NOT mean always-refresh-per-request; it means never-refresh-because-the-field-is-unread.** Zero latency/rate-limit exposure on `/copilot_internal/v2/token` — that endpoint is simply never called.
+3. Additional binary facts: default fallback base URL is legacy `https://api.githubcopilot.com` (not api.individual) when no enterpriseUrl set; request headers are OpenCode-native identity (`User-Agent: opencode/<ver>`, `x-initiator: agent|user`, `Openai-Intent: conversation-edits`, `Copilot-Vision-Request: true` when vision) — **no VS Code impersonation**, consistent with sanctioned status; `_noop` placeholder-tool injection for GHE compatibility is built in; enterprise deployment-type prompt (github.com | enterprise + URL validation) is built into `auth login` methods.
+
+**Tension flag [MEDIUM confidence reconciliation]**: #20759-era evidence (Apr 2026) reported raw-token rejection; the binary (1.18.23) and house operation show pass-through working. Most likely GitHub's server accepts long-lived OAuth tokens on the officially supported surface while exchange remains for other clients/endpoints. Do not generalize either direction without L4-e probe data.
+
 ## §6 Enterprise/GHE Topology
 
-- Enterprise slot in OpenCode is domain-parameterized, not plan-locked: implementations fall back to `https://api.individual.githubcopilot.com` when no enterprise domain set → plain github.com accounts plausibly work in the slot [STRONG secondhand — PROBE L4-a].
+- Enterprise slot in OpenCode is domain-parameterized, not plan-locked: third-party implementations fall back to `https://api.individual.githubcopilot.com` when no enterprise domain set; **the OpenCode binary itself falls back to legacy `https://api.githubcopilot.com`** (binary-verified 2026-08-26) → plain github.com accounts plausibly work in an enterprise context [STRONG secondhand — PROBE L4-a].
 - GHE device flow initially failed with OpenCode's client ID (app not installed on GHE instances); Copilot CLI's and VS Code GitHub App IDs both work on ghe.com (#3936). Later releases: OpenCode app began working EU-region; `/connect` gained deployment-type selection.
 - EMU users authenticate identically to github.com users; enterprise policies (IP allowlists, SSO, model/MCP policy) enforced server-side.
 

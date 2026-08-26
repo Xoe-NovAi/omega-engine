@@ -28,10 +28,11 @@ The terms (antigravity.google/terms §6) name third-party-client access as breac
 
 ## §3 Plugin Wiring (Current House Setup)
 
-- ⚠️ **CORRECTED 2026-08-26 (remediation-run disk audit)**: house configs reference the plugin as **`opencode-antigravity-auth@latest`** (project + subdir arrays), which resolves to the npm install at `~/.config/opencode/node_modules/` — v1.6.0, verified **byte-identical** to the local git checkout @7db338b (`diff -rq dist` = 0 differences). Earlier KB text claimed direct `file:` wiring — that was wrong; the checkout functions as a pinned source-of-truth mirror, not the load path.
+- 📜 *(HISTORICAL — superseded by next bullet)* Mid-day 2026-08-26 disk audit found configs on `@latest` → npm install, byte-identical to checkout @7db338b; earlier KB `file:` claim was wrong at that time.
 - **RESOLVED 2026-08-26 (Architect order)**: both configs switched from `@latest` to `file:///…/omega-engine/opencode-antigravity-auth` — the house-patched checkout @7db338b is now the SINGLE canonical load path (smoke-verified: opus-thinking routes through it). Stale copies removed (project + global node_modules); remaining cache copies under `~/.cache/opencode/packages/` are opencode-managed and inert under file: spec. The multi-copy drift problem is closed; any plugin change = a git commit in the checkout.
 
-Hash-pin or absolute path remains the recommended hardening (P2 follow-up): swap `@latest` → `file:` path to make the load path literally the checkout.
+**Executing-copy verification (grokster M3, 2026-08-26)**: no direct runtime stack-trace names the checkout, so verification is by **elimination + smoke**: (a) project `.opencode/node_modules/opencode-antigravity-auth` and global `~/.config/opencode/node_modules/opencode-antigravity-auth` were `rm -rf`'d at 09:36:56Z BEFORE the post-switch smokes; (b) both `~/.cache/opencode/packages/opencode-antigravity-auth*` dirs have mtimes of Jul 06/Jul 21 — zero files written during smoke window (verified via `find -newermt`); (c) smokes at 09:36–09:37Z (`FILESPEC-OK`, `OPUS-MEDIUM-OK`, `OPUS-HIGH-OK`) streamed successfully through `modelID=antigravity-claude-opus-4-6-thinking`. With every alternative copy gone/inert, the checkout @7db338b is the only possible executing source. Re-verify after any OpenCode upgrade that changes plugin resolution.
+
 - Accounts file: `~/.config/opencode/antigravity-accounts.json` (v3 schema, 7 accounts). Treat as credential vault — scopes include master `cloud-platform`. Plugin settings live in `~/.config/opencode/antigravity.json` (incl. `keep_thinking`, default false).
 
 ## §4 Model Selection & Thinking SKUs
@@ -47,12 +48,12 @@ Working set (verified through plugin + provenance audits):
 
 Selection discipline:
 - Thinking SKUs use **flat `thinkingBudget` keys** in variant config (plugin request.js reads them flat — nested schemas silently drop, see GOTCHAS G5).
-- Budget family is fixed: low=8192 / medium=16384 / high=32768. Pick the tier, don't hand-tune values.
+- Opus ladder (2026-08-26, all tiers smoke-verified live): minimal=4096 · low=8192 · medium=16384 · high=24576 · max=32768. Pick the tier, don't hand-tune values. Legacy 3-tier family {low:8192, medium:16384, high:32768} remains the resolver's built-in default for SKUs without explicit variants.
 - Upstream catalog also serves `gpt-oss-120b-medium` and gemini-3.5/3.6/3.7-flash effort slugs that house presets don't expose — candidates for future custom SKUs if a probe confirms availability on house accounts (RESEARCH_TARGETS #6).
 
 ## §5 Escalation & Review Triggers
 
-Re-verify this playbook when ANY of: new ban wave reported (watch CLIProxyAPI issues/discussions), plugin runtime error after OpenCode upgrade, quota-API schema change observed in probe logs, or Architect orders pool restructuring.
+Re-verify this playbook when ANY of: new ban wave reported (watch CLIProxyAPI issues/discussions), plugin runtime error after OpenCode upgrade, quota-API schema change observed in probe logs, **backend model-ID volatility** (any observed Google-side catalog change → re-smoke every house SKU; wire IDs rot independently of plugin pinning — sonnet-thinking worked Feb 2026, 404 by Aug 2026), or Architect orders pool restructuring.
 
 ---
 

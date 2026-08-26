@@ -89,12 +89,13 @@ Key env vars: `CLINE_API_KEY`, `CLINE_DATA_DIR`, `CLINE_HUB_ADDRESS`, `CLINE_SES
     "apiKey": "{env:CLINE_API_KEY}"
   },
   "models": {
-    // ONLY ship models verified against live /api/v1/models (probe P3).
-    // Do NOT ship anthropic/* (documented but not actually served — see GOTCHAS).
+    // ONLY ship models verified against live probes (error-differentiation; no public
+    // /models endpoint exists — GOTCHAS G13). Do NOT ship anthropic/* (GOTCHAS G4).
     "cline-pass/deepseek-v4-flash": {
       "name": "DeepSeek V4 Flash (ClinePass)",
-      "limit": { "context": 1048576, "output": 393216 }   // 384K output — house-validated (harmonized 2026-08-26; was 131072 UNVERIFIED)
+      "limit": { "context": 1048576, "output": 393216 }   // 1M/384K per house-validated table; Cline-side enforcement = probe P8
     }
+  }
   }
 }
 ```

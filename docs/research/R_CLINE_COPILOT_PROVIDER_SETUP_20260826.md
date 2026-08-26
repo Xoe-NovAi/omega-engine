@@ -195,6 +195,14 @@ clean names guaranteed by upstream catalog. ✅
 > 2. **deepseek output cap corrected**: validated table says **1M ctx / 384K output**, not the 131072 estimate below.
 > 3. **Free-tier gate is OFFICIAL POLICY** (free-models page + ToS) — deepseek-v4-flash free id stays blocked; the sanctioned direct-API path is ClinePass `cline-pass/deepseek-v4-flash` ($9.99/mo, hyphenated namespace).
 > The block below is preserved as originally researched; apply corrections before any paste.
+>
+> ✅ **LIVE-VERIFIED 2026-08-26 EVENING (jem M3 probes — key extracted to `.env`, curl against gateway):**
+> - **P1**: free id `deepseek/deepseek-v4-flash` → HTTP 403 stands (gate re-confirmed; response now adds "update to the latest version" hint).
+> - **P7**: `cline-pass/deepseek-v4-flash` → clean `ENTITLEMENT_ERROR: "the user is not subscribed to required model plan"` — **hyphenated namespace CONFIRMED LIVE; paid gate = pure entitlement on the SAME static key** (no new key needed post-subscribe).
+> - **P2**: `minimax/minimax-m2.5` → `insufficient_credits` (balance $0.01) — some free-tagged ids are credit-metered, NOT client-gated; gate taxonomy is per-id (see KB GOTCHAS G15).
+> - **P3**: NO public `/models` endpoint exists (all path variants 404) — caps must come from P8 smoke or dashboard, never a listing call.
+> - **Key provisioning resolved**: static key existed all along at `~/.cline/data/secrets.json` (`clineApiKey`, auth-validated); now in project `.env` as `CLINE_API_KEY` (gitignored). The earlier "no key in auth.json" gate reason was a category error — env-based custom providers never appear in auth.json.
+> - **Paste recipe when ClinePass GO lands**: use ONLY the `cline-pass/deepseek-v4-flash` entry (drop the free-id entry AND the anthropic entry AND the reasoningEffort variants until probe P6 validates wire behavior); caps per banner point 2 (1M ctx / 384K output) pending P8 confirmation.
 
 ```jsonc
 // ADD to project opencode.json → "provider" (merge-safe: "cline" id unused in TUI configs)

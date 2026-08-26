@@ -53,7 +53,6 @@
 
 ---
 
-*⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
 
 ## G11. Sonnet-thinking backend-ID DEAD — 🔴 VERIFIED-BLOCKED (live probe 2026-08-26)
 **Trap**: `claude-sonnet-4-6-thinking` wire ID returns **404 NOT_FOUND at the gateway** — confirmed live across multiple pool accounts (debug-log evidence, remediation run F7). Issue #1942 (Feb 2026) was never fixed server-side. Official antigravity.google/docs listing "Claude Sonnet 4.6 (thinking)" describes an IDE UI MODE — the backend serves only `claude-sonnet-4-6` (base verified working) and `claude-opus-4-6-thinking`. Custom SKU configs for sonnet-thinking are dead on arrival; plugin swallows the 404s during account rotation and returns an EMPTY response.
@@ -69,3 +68,7 @@
 ## G14. License-provisioning variance across pool accounts — 🟡 VERIFIED (2026-08-26)
 **Trap**: Pool accounts are NOT uniformly provisioned. Some return 403 PERMISSION_DENIED "#3501 You do not have a valid license of this product" for Claude models regardless of quota. A healthy-looking pool may have only partial Claude capability.
 **Defense**: per-account capability probe before relying on pool-wide Claude capacity; treat fetchAvailableModels as necessary-but-insufficient (see G3).
+
+---
+
+*⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*

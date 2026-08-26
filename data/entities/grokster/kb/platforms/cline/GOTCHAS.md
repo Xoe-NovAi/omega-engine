@@ -10,8 +10,8 @@
 ## G1. Free-model gate trap — "it'll work from raw API eventually"
 
 - **Trap**: treating the HTTP 403 on free models as a transient bug to wait out.
-- **Evidence**: VERIFIED. House live probe 2026-08-22 (`403 …only available via Cline product surfaces`) + official docs: *"Free model usage is not supported through the Cline API"* + ToS §2.2(10)/(11).
-- **Defense**: gate is policy. Route around it: ClinePass for paid direct-API, CLI wrapper for $0. Never spoof.
+- **Evidence**: VERIFIED ×2. House live probes 2026-08-22 AND 2026-08-26 (`403 …only available via Cline product surfaces`) + official docs: *"Free model usage is not supported through the Cline API"* + ToS §2.2(10)/(11). The Aug-26 response adds a version-hint suffix ("update to the latest version") — gate may inspect client-version signals, but bypass remains forbidden.
+- **Defense**: gate is policy. Route around it: ClinePass for paid direct-API (entitlement unlocks the SAME key server-side), CLI wrapper for $0. Never spoof.
 
 ## G2. Header-spoofing ToS hazard
 
@@ -78,6 +78,24 @@
 - **Trap**: citing "MiMo V2.5 = 512K context" as validated.
 - **Evidence**: UNVERIFIED — no primary source captured in deep-mine.
 - **Defense**: do not cite until probed; treat as folklore.
+
+## G13. No public /models endpoint exists
+
+- **Trap**: assuming `GET /api/v1/models` works because docs reference a "model catalog" with capability flags.
+- **Evidence**: VERIFIED 2026-08-26 — `/api/v1/models`, `/v1/models`, `/api/models`, `/api/v1/model` all return 404 `{"error":"Not Found","success":false}` with a valid Bearer key. Catalog is served privately to product clients.
+- **Defense**: discover models/caps via error-differentiation POSTs (see RESEARCH_TARGETS P-probes) or the app.cline.bot dashboard; never promise a live listing in tooling.
+
+## G14. Invalid namespace doesn't fail cleanly
+
+- **Trap**: expecting a typo'd model id (`clinepass/…` without hyphen) to return 404 model-not-found.
+- **Evidence**: VERIFIED 2026-08-26 — non-hyphenated id returned anomalous `"empty response content"` / `success:false` instead of a diagnostic error. Silent-failure shape.
+- **Defense**: treat `"empty response content"` as "check your model id first"; always copy ids verbatim from official ClinePass table (CONFIG_REFERENCE/ARCHITECTURE).
+
+## G15. Free-models page overgeneralizes — per-id behavior varies
+
+- **Trap**: applying the blanket rule "free models are blocked via API" to ALL free-tagged ids.
+- **Evidence**: VERIFIED 2026-08-26 — same key, same minute: `deepseek/deepseek-v4-flash` → 403 product-surface gate, but `minimax/minimax-m2.5` → `insufficient_credits` (balance $0.01) i.e. **credit-metered and API-reachable**. Gate taxonomy is per-id: client-gated vs credit-metered vs plan-entitled (`cline-pass/*`). Promotions rotate, so an id's class can change over time.
+- **Defense**: probe each id before relying on it; read the error class (`ENTITLEMENT_ERROR` vs `insufficient_credits` vs 403 product-surface) as the authoritative tier signal.
 
 ---
 

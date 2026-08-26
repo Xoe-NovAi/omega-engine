@@ -29,7 +29,7 @@ The plugin reads variant config at **flat keys** (`variantConfig?.thinkingBudget
 | `thinkingLevel` | Gemini 3 models | low / medium / high |
 | reasoningEffort (Zen-style) | ❌ n/a here | Antigravity path does not consume Zen-style effort keys |
 
-Budget family (model-resolver.js): `{low: 8192, medium: 16384, high: 32768}`. Constraint from gateway: `maxOutputTokens > thinkingBudget` always.
+Budget family (model-resolver.js built-in default): `{low: 8192, medium: 16384, high: 32768}`. House opus-thinking overrides with the full 5-tier ladder (minimal=4096/low=8192/medium=16384/high=24576/max=32768 — all smoke-verified live 2026-08-26). Custom budgets officially sanctioned (CONFIG §7). Constraint from gateway: `maxOutputTokens > thinkingBudget` always.
 
 ## §3 Custom SKU Pattern
 
@@ -52,7 +52,7 @@ Upstream catalog extras NOT in house presets ⚠️(availability on house accoun
 | File | Role |
 |---|---|
 | `~/.config/opencode/antigravity-accounts.json` | Pool: v3 schema — accounts[] (`email`, `refreshToken`, `projectId?`, `enabled?`), `activeIndex`, `activeIndexByFamily{claude,gemini}`. CREDENTIAL VAULT (master cloud-platform scope). |
-| `~/.config/opencode/antigravity.json` | Plugin settings: `account_selection_strategy` (sticky/round-robin/hybrid), `pid_offset_enabled` |
+| `~/.config/opencode/antigravity.json` | Plugin settings: `account_selection_strategy` (house-patched schema: **sticky/hybrid only** — round-robin REMOVED per D-1 directive 2026-06-29, anti-bot rationale; house sets `sticky` explicitly), `pid_offset_enabled`, `keep_thinking` (default false, deferred), `debug` (default false; see GOTCHAS G13 caution) |
 | `~/.local/share/opencode/auth.json` | OpenCode auth store — needs google stub for plugin loader to fire |
 | `zen_accounts_state.json` | Separate account-state file (house-known; role vs accounts.json not fully mapped ❓) |
 
@@ -64,7 +64,10 @@ Upstream catalog extras NOT in house presets ⚠️(availability on house accoun
 
 ---
 
-*⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
 
 ## §7 Format Note — Flat vs Nested (upstream docs divergence)
 Upstream MODEL-VARIANTS.md documents Claude variants as NESTED `{"thinkingConfig": {"thinkingBudget": N}}`; installed source (`extractVariantThinkingConfig`, request.js) normalizes BOTH nested and FLAT `{"thinkingBudget": N}` forms. House standard = **FLAT** (production-verified via opus-thinking block). Custom budgets officially sanctioned — docs example ships a 5-tier spread (4096/8192/16384/24576/32768); variant names are free-form labels. A no-variant call = dynamic budget (model decides).
+
+---
+
+*⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*

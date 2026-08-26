@@ -106,7 +106,7 @@ File: `~/.config/opencode/antigravity-accounts.json`, schema v3:
 
 House file (8.3KB, 7 accounts, all enabled) matches v3 schema shape — confirmed 2026-08-26 (was ❓, now resolved).
 
-Selection strategies (`antigravity.json` → `account_selection_strategy`): `sticky` (default; prompt-cache preservation) / `round-robin` / `hybrid` (health score + token bucket + LRU). Per-model-family rotation cursors. Short 429s (≤5s retryDelay) retried same-account; longer → rotate with exponential backoff. Parallel-process collision fix: `pid_offset_enabled: true`.
+Selection strategies (`antigravity.json` → `account_selection_strategy`): house-patched schema offers **`sticky` (default) / `hybrid`** only — `round-robin` REMOVED per D-1 directive (2026-06-29; rapid switching triggers anti-bot detection). Per-model-family rotation cursors. Short 429s (≤5s retryDelay) retried same-account; longer → rotate with exponential backoff. Parallel-process collision fix: `pid_offset_enabled: true`.
 
 **Dual quota pools per account**: Gemini requests use the Antigravity pool first; when ALL accounts' Antigravity quotas exhaust, fall back to the Gemini-CLI pool (same account, model names auto-transformed e.g. `gemini-3-flash` → `gemini-3-flash-preview`). ⚠️ Capacity caveat (specialist M2): "≈2× quota" ≠ 2× availability — during a drought (2026-08-26 observed: ALL accounts ~0% with 100–160h resets) effective Gemini capacity is ZERO for days regardless of pool count; fallback is also conditional on per-account projectId + cloudaicompanion API (G7, unprobed); and both pools sit behind the same hidden throttle (G3) — not independent capacity.
 
@@ -132,6 +132,15 @@ OpenCode request (example model: antigravity-claude-opus-4-6-thinking — NOTE: 
 Preset catalog: config/models.js
 ```
 
+## §8 Copy-Provenance Note — fingerprint.js divergence RESOLVED BENIGN (2026-08-26)
+
+The former npm-cache copy's `fingerprint.js` differed from the checkout by 26 diff lines (4622 vs 4617 bytes, both built Jul 21). Full content diff classified: **pure refactor, ZERO behavioral difference**.
+- Cache: inline ternary `platform === "win32" ? "WINDOWS" : "MACOS"` duplicated at two sites.
+- Checkout: hoisted `PLATFORM_CHOICES = ["darwin", "win32"]` const + extracted `platformToDisplayName()` helper used at both sites.
+- Identical platform choice set, identical win32→WINDOWS / else→MACOS mapping, no changes to header construction, ordering, or values. Verdict: build/source-state nondeterminism between the npm tarball packaging and the git commit (timestamps 14:59 vs 16:02 same day) — not a functional fork.
+- Moot operationally since the file:-switch (M3): cache copies are inert; checkout is the single canonical source (PLAYBOOK §3).
+
 ---
+
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*

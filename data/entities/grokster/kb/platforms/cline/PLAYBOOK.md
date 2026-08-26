@@ -13,6 +13,7 @@
   - Caps: 1M context / 384K output — VERIFIED as DeepSeek-native figures (cline/cline discussion #10387); Cline-side enforced cap UNVERIFIED (probe P3/P8).
   - **Gate status CORRECTED 2026-08-26 (supersedes "fluid/pending")**: free-model gating is **OFFICIAL DOCUMENTED POLICY**, not a transient anomaly. docs.cline.bot/getting-started/free-models: *"Free model usage is not supported through the Cline API. Free models are only available in the Cline IDE Extension and CLI."* Backed by ToS §2.2(10)/(11) anti-circumvention. Empirically confirmed by Aug-22 live probe (HTTP 403). **Never wait for the gate to lift; never spoof around it.**
   - **D-557 restoration path (NEW)**: `cline-pass/deepseek-v4-flash` exists on ClinePass ($9.99/mo) and external API use is explicitly sanctioned with official curl examples. Reference pricing $0.44/$1.32 per 1M peak, $0.22/$0.66 off-peak. Whether the 1M-context figure carries to the cline-pass variant is UNVERIFIED (probe P8).
+  - **LIVE-CONFIRMED 2026-08-26 (jem M3 probes)**: paid gate = **pure entitlement keyed to the SAME static key** — `cline-pass/deepseek-v4-flash` returns clean `ENTITLEMENT_ERROR: not subscribed to required model plan` from raw curl. Subscribing to ClinePass unlocks the existing key + drafted OpenCode block with ZERO config change. Free-id gate re-confirmed standing (403) for deepseek id; but free-tagged ids are NOT uniformly gated — minimax-m2.5 is credit-metered and API-reachable (GOTCHAS G15).
 - **D-563** — **1 active Cline instance max**; the ~8-account pool exists for rate-limit resilience, NOT parallelism. ToS §2.2(4) additionally forbids buying/selling/transferring API keys without written consent — every pool key must be tied to a legitimately-held account. VERIFIED (ruling) / REPORTED (ToS reading).
 - **Model pairing** — DeepSeek V4 Flash (1M/384K) + MiMo V2.5 (512K claimed). ⚠️ MiMo 512K cap UNVERIFIED — never cite without probe. CLI version reference updated from 3.0.52 to ≥3.0.56-era stores (probe P9 pending for exact stamp).
 
@@ -21,9 +22,10 @@
 | Need | Path | Status |
 |---|---|---|
 | Free experimentation | Cline CLI/extension, FREE-tagged models | ✅ sanctioned; training-exposed (ToS §3.2) |
-| D-557 workhorse via direct API | ClinePass sub → OpenCode provider block (`cline-pass/*`) | ✅ sanctioned; requires $9.99/mo decision from Architect |
+| D-557 workhorse via direct API | ClinePass sub → OpenCode provider block (`cline-pass/*`) | ✅ sanctioned; requires $9.99/mo decision from Architect; **key already extracted, block already drafted — subscription alone activates** |
 | D-557 workhorse at $0 | `cline` CLI wrapper (agent-loop latency, deep-fallback only) | ✅ sanctioned product surface |
-| Raw free-model calls from scripts | NONE — gated by policy | ❌ do not attempt |
+| Raw calls to client-gated ids (e.g. `deepseek/deepseek-v4-flash`) | NONE — 403 by policy (re-verified 2026-08-26) | ❌ do not attempt |
+| Raw calls to credit-metered free-tagged ids (e.g. `minimax/minimax-m2.5`) | Possible with credit balance — per-id, rotates | 🟡 viable but trivial balance; M7 local-first applies |
 | Header-spoofing the client identity | NONE | ❌ PERMANENTLY REJECTED (fragile + ToS breach + M23/M8) |
 
 ## §3 Headless Operation (from cli-reference, VERIFIED against docs)
@@ -66,6 +68,7 @@ always-on rule files (no frontmatter) inside `.clinerules/`.
 *⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
 
 ## ⚠️ M2 CORRECTIVE STAMP (2026-08-26 — remediation-run oversight scan)
+**→ EXECUTED same day (jem M3): key extracted to `.env`, P1/P2/P3/P7 run live. Results: gate 403 stands for deepseek free id; `cline-pass/` namespace CONFIRMED via clean ENTITLEMENT_ERROR; paid gate = pure entitlement on SAME key; minimax-m2.5 credit-metered not gated; NO public /models endpoint. Full status in RESEARCH_TARGETS.md + GOTCHAS G13–G15.**
 
 - **Key EXISTS**: `~/.cline/data/secrets.json` holds `clineApiKey` (`sk_5…`, 67 chars, mode 600, since Jun-2) — auth-validated by the Aug-22 probe (400-not-401). The 2026-08-26 P1b gate premise ("no key exists") was FALSE: auth.json is the WRONG store for custom openai-compatible providers (they interpolate `{env:CLINE_API_KEY}` from `.env`; only plugin-backed builtins appear in auth.json).
 - **Legitimate provisioning path**: app.cline.bot → Settings → API Keys (free account). ClinePass subscription = account-level entitlement on the SAME key, not a new credential.
