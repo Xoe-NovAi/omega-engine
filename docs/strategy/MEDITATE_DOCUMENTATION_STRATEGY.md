@@ -439,8 +439,13 @@ Two items in the command specification are still open. Both affect the System Re
 
 ## §11 THE SEQUENCING — WRITE IN THIS ORDER
 
-1. **Architect resolves D10 and D11** (otherwise System Reference has two stubs)
-2. **Architect resolves anti-domain enforcement** (Option A/B/C from §6) — this determines the System Reference's anti-domain section
+> **✅ RESOLVED 2026-08-26 (Architect rulings + delegated judgments)**: D10 = ceremony-only DECLINED block,
+> answer outside frame as labeled prose · D11 = Option B sanctioned conditional read · anti-domains = Option A
+> (wire into command) · three-doc architecture APPROVED as Omega documentation prototype. Steps 1–2 below are
+> satisfied; production may begin at step 3.
+
+1. ~~**Architect resolves D10 and D11**~~ ✅
+2. ~~**Architect resolves anti-domain enforcement**~~ ✅ Option A
 3. **Maintainer's Guide is drafted first** — it contains the cascade maps that the System Reference author needs. Writing it first forces the cascade-thinking discipline before touching the primary documents.
 4. **System Reference is drafted second** — with cascade maps in hand, every update location is known before writing begins. The V1 exemplar is rebuilt per §4; the anti-domain section reflects the Architect's ruling; D10/D11 stubs are placed.
 5. **Invocation Guide is drafted last** — it draws from the System Reference for precision and from the corpus for its "what you'll see" excerpt. It is the simplest document but depends on the others being stable.

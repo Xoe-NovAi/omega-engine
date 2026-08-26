@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T11:03:53Z",
+  "updated": "2026-08-26T11:39:02Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -62,11 +62,13 @@
     },
     {
       "item": "Council 1 decree review",
-      "priority": "P0 \u2014 on wake"
+      "priority": "P0 \u2014 on wake",
+      "disposition": "ZOMBIE \u2014 superseded by ratified MaKaLi charter (ACTIVE_SPRINT status_detail); kill pending Architect sight"
     },
     {
       "item": "Council 2 decree review + dev team launch GO",
-      "priority": "P0 \u2014 on wake"
+      "priority": "P0 \u2014 on wake",
+      "disposition": "ZOMBIE \u2014 superseded by ratified MaKaLi charter (ACTIVE_SPRINT status_detail); kill pending Architect sight"
     },
     {
       "item": "soul_promote review-gate: grokster has 8 staged meditation lessons awaiting promotion (python scripts/soul_promote.py grokster --all --apply --confirm)",
@@ -228,5 +230,16 @@
       "providers.yaml cline api_key wiring",
       "M7 inventory reconciliation"
     ]
-  }
+  },
+  "rulings_20260826": {
+    "clinepass": "NO-GO (Architect declined subscription)",
+    "anti_domains": "Option A \u2014 wire into command (~15 tok/voice) at Phase B",
+    "three_doc_architecture": "APPROVED as Omega documentation prototype",
+    "fleet_pattern_g5": "APPROVED \u2014 specialist sessions ingested into TASK_REGISTRY",
+    "d10_declined_form": "RESOLVED by delegated judgment: ceremony-only block (gates+reason), answer outside frame as labeled prose",
+    "d11_resume": "RESOLVED by delegated judgment: Option B sanctioned conditional read at Phase 0",
+    "promotion_manifest": "APPROVED + EXECUTED: kali 8, grokster 8 lessons promoted to soul.yaml",
+    "meditation_protocol_law": "Architect directive: meditations output to chat for ingestion; NEVER launch directly into dev/action"
+  },
+  "backup_gap": "restic timer NOT ENABLED (C-3 residual) \u2014 config+engine mutations incoming during sprint; Architect should enable or accept risk"
 }

@@ -399,28 +399,3 @@ lessons:
     promoted_date: '2026-08-26'
     promoted_from: proposed_lessons.yaml
     tier: L3
-
-  - category: general
-    id: kali-20260826-101
-    principle: A rule that is not in the output format is a suggestion.
-    promoted_date: '2026-08-26'
-    promoted_from: proposed_lessons.yaml
-    tier: L3
-  - category: general
-    id: kali-20260826-102
-    principle: Documentation written for execution must contain nothing interesting.
-    promoted_date: '2026-08-26'
-    promoted_from: proposed_lessons.yaml
-    tier: L3
-  - category: general
-    id: kali-20260826-103
-    principle: Every number in a specification is a command.
-    promoted_date: '2026-08-26'
-    promoted_from: proposed_lessons.yaml
-    tier: L3
-  - category: general
-    id: kali-20260826-104
-    principle: An inbox that is checked by procedure beats a message that is sent with care.
-    promoted_date: '2026-08-26'
-    promoted_from: proposed_lessons.yaml
-    tier: L3

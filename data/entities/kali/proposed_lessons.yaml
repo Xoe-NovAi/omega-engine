@@ -7,6 +7,12 @@ proposals:
   L2: Shared-config changes require a verified workload model AND explicit sanction. The violation was
     not the direction of the change but acting on presumption.
   L3: Authority to act is not authority to assume.
+  narrative: Changed fleet-wide agent steps config unasked, on an unverified assumption that orchestrators
+    need more turns than field agents. Architect's field data proved the opposite; ceiling-restarts are
+    an emergent checkpointing feature.
+  insight: Shared-config changes require a verified workload model AND explicit sanction. The violation
+    was not the direction of the change but acting on presumption.
+  principle: Authority to act is not authority to assume.
 - id: kali-20260825-002
   date: '2026-08-25'
   L1: My pre-compaction tutorial cited soul_promote (a mechanism that exists nowhere) and trusted codex
@@ -14,6 +20,11 @@ proposals:
   L2: Procedure docs are themselves claims-surfaces. A tutorial teaching verification must survive its
     own Step-0; doc-writers are never exempt from derivation checks.
   L3: Every document that certifies must itself be certifiable.
+  narrative: My pre-compaction tutorial cited soul_promote (a mechanism that exists nowhere) and trusted
+    codex auto-refresh (silently failing for 13h). Carmack's audit caught both within one pass.
+  insight: Procedure docs are themselves claims-surfaces. A tutorial teaching verification must survive
+    its own Step-0; doc-writers are never exempt from derivation checks.
+  principle: Every document that certifies must itself be certifiable.
 - id: kali-20260825-003
   date: '2026-08-25'
   L1: Dispatch packets ordered direct spawns to task() their current pager as a 'mandatory last step',
@@ -21,6 +32,11 @@ proposals:
   L2: The reporting channel is determined by the spawner relationship, not by a static template. For direct
     children, the end-of-task summary IS the return channel.
   L3: Copy-pasted protocol templates carry hidden ownership assumptions — instantiate per relationship.
+  narrative: Dispatch packets ordered direct spawns to task() their current pager as a 'mandatory last
+    step', causing three hop-hangs in one night.
+  insight: The reporting channel is determined by the spawner relationship, not by a static template.
+    For direct children, the end-of-task summary IS the return channel.
+  principle: Copy-pasted protocol templates carry hidden ownership assumptions — instantiate per relationship.
 - id: kali-20260825-004
   date: '2026-08-25'
   L1: The new infra_inventory.py organ caught Carmack's own stale claim (HMC Hub declared dead while alive
@@ -28,41 +44,47 @@ proposals:
   L2: 'Derivation checks generalize from facts to infrastructure: institutional memory is an event ledger
     and structurally blind to never-ran code and archived organs.'
   L3: Anything that certifies must itself be certifiable — inventories audit auditors.
-metadata:
-  entity: kali
-  updated: '2026-08-26T00:17:13Z'
-  model_used: sonnet-4.6
-
+  narrative: The new infra_inventory.py organ caught Carmack's own stale claim (HMC Hub declared dead
+    while alive as v2.0) on its very first run.
+  insight: 'Derivation checks generalize from facts to infrastructure: institutional memory is an event
+    ledger and structurally blind to never-ran code and archived organs.'
+  principle: Anything that certifies must itself be certifiable — inventories audit auditors.
 - id: kali-20260826-101
   date: '2026-08-26'
-  L1: Research findings (hygiene anchors, adjudication framing, contrast cases) were added to the
-    meditate manual as prose rules but omitted from the verbatim output skeletons. Gemini review
-    caught it: a rebuilding agent copying only the skeletons would have skipped every finding.
-  L2: Prose informs; contracts compel. An LLM implementer imitates demonstrated surface structure
+  narrative: 'Research findings (hygiene anchors, adjudication framing, contrast cases) were added to
+    the meditate manual as prose rules but omitted from the verbatim output skeletons. Gemini review caught
+    it: a rebuilding agent copying only the skeletons would have skipped every finding.'
+  insight: Prose informs; contracts compel. An LLM implementer imitates demonstrated surface structure
     far more reliably than it obeys described intent (Min 2022).
-  L3: A rule that is not in the output format is a suggestion.
+  principle: A rule that is not in the output format is a suggestion.
 - id: kali-20260826-102
   date: '2026-08-26'
-  L1: Sonnet 4.6 given /meditate dissected and critiqued the command document instead of meditating.
-    The local variant carried a self-contradicting addressee line ("your model, not a local one")
-    inside a local-model command. Both were symptoms of writing for a review audience, not a runtime one.
-  L2: Every line of a command file is context loaded at invocation. Justification belongs in commit
+  narrative: Sonnet 4.6 given /meditate dissected and critiqued the command document instead of meditating.
+    The local variant carried a self-contradicting addressee line inside a local-model command. Both were
+    symptoms of writing for a review audience, not a runtime one.
+  insight: Every line of a command file is context loaded at invocation. Justification belongs in commit
     messages; the file itself must contain nothing worth analyzing.
-  L3: Documentation for execution must contain nothing interesting.
-
+  principle: Documentation written for execution must contain nothing interesting.
 - id: kali-20260826-103
   date: '2026-08-26'
-  L1: Collision counts clustered at the instructed quota ("three highest-tension") across
-    panel sizes — 10-voice panels reported exactly 3 like 3-voice panels. Discovered only
-    when Roc counted the actual corpus.
-  L2: Models read specified numbers as targets, not measurements. Any stated quantity in a
-    contract becomes an anchor regardless of framing intent.
-  L3: Every number in a specification is a command.
-
+  narrative: Collision counts clustered at the instructed quota across panel sizes - 10-voice panels reported
+    exactly 3 like 3-voice panels. Discovered only when Roc counted the actual corpus.
+  insight: Models read specified numbers as targets, not measurements. Any stated quantity in a contract
+    becomes an anchor regardless of framing intent.
+  principle: Every number in a specification is a command.
 - id: kali-20260826-104
   date: '2026-08-26'
-  L1: Grokster's consolidated briefing went unconsumed twice — once as Hivemind posts,
-    once as a document handoff — until the Architect asked "you did not read it?".
-  L2: Addressed information does not propagate through passive availability; consumption
-    requires a structural trigger in the receiver's startup path, not sender effort.
-  L3: An inbox that is checked by procedure beats a message that is sent with care.
+  narrative: Grokster's consolidated briefing went unconsumed twice - once as Hivemind posts, once as
+    a document handoff - until the Architect asked about it directly.
+  insight: Addressed information does not propagate through passive availability; consumption requires
+    a structural trigger in the receiver's startup path, not sender effort.
+  principle: An inbox that is checked by procedure beats a message that is sent with care.
+metadata:
+  entity: kali
+  updated: '2026-08-26T12:00:00Z'
+  model_used: sonnet-4.6
+- id: kali-20260826-105
+  date: '2026-08-26'
+  narrative: Executed prep-lane tasks after a meditation verdict without waiting for the Architect's explicit GO. The Architect was mid-preparation to authorize and interrupted: "I did NOT say to start." Directive issued same hour - meditations output to chat for ingestion; never launch directly into dev.
+  insight: A completed analysis feels like a mandate to its author, but authorization is the Architect's act, not the analysis's conclusion. Prep-depth is how the engine got built, not overhead to outrun.
+  principle: The verdict proposes; only the Architect disposes.
