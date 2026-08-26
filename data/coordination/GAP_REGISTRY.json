@@ -241,9 +241,9 @@
     },
     "R37": {
       "topic": "Identity fluidity (E-0)",
-      "status": "blocked",
+      "status": "outstanding",
       "plan": "phase1_4",
-      "report": "BLOCKED-EXTERNAL 2026-08-25: SPEC_IDENTITY_FLUIDITY_v1.md awaiting Architect review + Kali ratification; 9 prototypes exist in grokster/workspace/prototypes/, zero engine wiring. One ratification from implementation-ready."
+      "report": "[BLOCKED-EXTERNAL \u2014 see note] BLOCKED-EXTERNAL 2026-08-25: SPEC_IDENTITY_FLUIDITY_v1.md awaiting Architect review + Kali ratification; 9 prototypes exist in grokster/workspace/prototypes/, zero engine wiring. One ratification from implementation-ready."
     },
     "R38": {
       "topic": "NotebookLM integration",
@@ -518,9 +518,9 @@
     },
     "LI-5": {
       "topic": "Startup script (zRAM + THP + pinning + prompt caching)",
-      "status": "blocked",
+      "status": "outstanding",
       "plan": "local_inference_opt_20260820",
-      "report": "BLOCKED-BY-ZS 2026-08-25: tune_ryzen.sh self-declared DEPRECATED; building replacement before ZS adjudication (zswap-vs-zRAM D-584 vs Carmack-H-1 schism) would encode the losing memory architecture. Sequence after Architect ruling.",
+      "report": "[BLOCKED-EXTERNAL \u2014 see note] BLOCKED-BY-ZS 2026-08-25: tune_ryzen.sh self-declared DEPRECATED; building replacement before ZS adjudication (zswap-vs-zRAM D-584 vs Carmack-H-1 schism) would encode the losing memory architecture. Sequence after Architect ruling.",
       "owner": "maat_n3"
     },
     "KD-1": {
@@ -553,9 +553,9 @@
     },
     "HR-2": {
       "topic": "Adaptive context buffer integration (src/omega/research/adaptive_context.py)",
-      "status": "superseded",
+      "status": "resolved",
       "plan": "headroom_integration_20260820",
-      "report": "SUPERSEDED 2026-08-25: adaptive_context.py never existed (phantom path); functionality subsumed by HeadroomMiddleware. Duplicate of LI-1 concern. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
+      "report": "[SUPERSEDED-BY-MIDDLEWARE \u2014 see note] SUPERSEDED 2026-08-25: adaptive_context.py never existed (phantom path); functionality subsumed by HeadroomMiddleware. Duplicate of LI-1 concern. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
       "owner": "maat_n3"
     },
     "HR-3": {
@@ -567,9 +567,9 @@
     },
     "ZS-1": {
       "topic": "zswap sysctl + kernel cmdline deployment (max_pool_percent=25, lzo_rle, zsmalloc, zswap.enabled=1)",
-      "status": "blocked",
+      "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
-      "report": "ADJUDICATION-REQUIRED 2026-08-25: TRIPLE CONTRADICTION \u2014 locked decisions (D-526/527/581/584) say zswap+NVMe/zRAM-disabled; live machine has zswap OFF + zRAM ACTIVE 8G zstd (matches Carmack H-1 review instead). Same-day decision schism D-584 vs H-1 is load-bearing for community installer defaults. Architect sudo ruling required BEFORE deployment or ZS-3 WAD packaging.",
+      "report": "[BLOCKED-EXTERNAL \u2014 see note] ADJUDICATION-REQUIRED 2026-08-25: TRIPLE CONTRADICTION \u2014 locked decisions (D-526/527/581/584) say zswap+NVMe/zRAM-disabled; live machine has zswap OFF + zRAM ACTIVE 8G zstd (matches Carmack H-1 review instead). Same-day decision schism D-584 vs H-1 is load-bearing for community installer defaults. Architect sudo ruling required BEFORE deployment or ZS-3 WAD packaging.",
       "owner": "maat_n3"
     },
     "ZS-2": {
