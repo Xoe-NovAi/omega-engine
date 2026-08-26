@@ -5,9 +5,9 @@ subtask: false
 ---
 
 # ⬡ MEDITATE — Single-Inference Persona Prism
-**Protocol**: `Meditate-v1.3` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
+**Protocol**: `Meditate-v2.0` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
 **Mechanism**: Single-inference, multi-persona semantic prism
-**RAM cost**: ONE model load — no serial swap, no MC/HMC overhead
+**Cost**: one inference — no subagent launches, no coordination overhead
 
 ---
 
@@ -18,15 +18,14 @@ iterative persona-donning protocol that forces a single LLM inference to
 fracture its attention across multiple distinct perspectives **sequentially**,
 building an internal dialectic in a single forward pass.
 
-Unlike `/council-cloud` (MC — Mastermind Council: multiple subagent launches in same session) or `/council-local`
-(local model swaps), `/meditate` loads **zero additional agents**. It is pure
-cognition: the semantic prism applied to $ARGUMENTS.
+Unlike the council commands (`/council-cloud`, `/council-local`, `/council-fast` —
+multiple agent launches with coordination overhead), `/meditate` loads **zero
+additional agents**. It is pure cognition: the semantic prism applied to $ARGUMENTS.
 
 **When to use:**
-- You need mastermind-grade multi-perspective analysis without RAM overhead
+- You need mastermind-grade multi-perspective analysis without agent-launch overhead
 - The task benefits from genuine internal conflict (not averaged output)
 - You want the Omega Node lenses, the MaKaLi Triad, a specific Omegamind's cognitive lens, or a custom lens set applied
-- You are in a constrained environment (local inference, 14Gi RAM ceiling)
 - You want emergent sequencing — where the synthesis produces priorities
   that were not explicit in the raw context
 - You need to execute a formal **Agentic Meditation Template** (e.g., Soul Evolution, Legacy Mining Synthesis) from the `MEDITATION_REGISTRY.md`.
@@ -41,7 +40,9 @@ ceremony, not cognition.
 **When NOT to use:**
 - The task requires external tool calls from each persona (use `/council-cloud`)
 - You need actual file writes from distinct agents (use `/kali-dispatch`)
-- You want maximum parallelism and have RAM headroom (use `/council-fast`)
+- You want maximum parallelism across distinct agents (use `/council-fast`)
+- You are running on a local substrate (use `/meditate-local` — a different
+  architecture purpose-built for it, not this command truncated)
 
 ---
 
@@ -55,7 +56,6 @@ ceremony, not cognition.
 | `--durable` | Opt-in phase persistence to disk (trades single-pass purity for crash resilience — see Execution Rule 7) |
 | `--record` | Write final output to `data/coordination/meditations/records/` after completion |
 | `--template <name>` | Execute a formal template from `data/coordination/meditations/templates/` |
-| `--brief` | Depth-budget mode: 3 lines per voice (for small local models / tight output limits) |
 
 ---
 
@@ -93,7 +93,9 @@ Before entering any persona, perform the following:
 
    Default when unspecified: **the 5 most relevant Nodes**, NOT all 10.
    Running 10 voices on a 3-domain question produces 7 performances, not
-   7 perspectives. A custom set in $ARGUMENTS overrides this table.
+   7 perspectives. Beyond five voices, additional weak perspectives add
+   correlated noise, not diversity — a resampled strong perspective beats
+   panel padding. A custom set in $ARGUMENTS overrides this table.
 3. **Identify the output mode**:
    - `DIAGNOSTIC` — What is broken / what is the risk?
    - `STRATEGIC` — What should we build / decide?
@@ -125,6 +127,11 @@ For **each persona in the lens set**, execute the immersion block below
 **one at a time**, in sequence. Do not batch. Do not summarize ahead.
 
 Complete persona N fully before beginning persona N+1.
+
+> Voice ORDER carries no signal; early DIVERGENCE does. What matters is that
+> the council starts maximally scattered — which is exactly what Voice 1's
+> status-quo anchoring forces. Do not curate a "productive" speaking order;
+> invest that effort in the synthesis instead (Phase 4).
 
 #### The Immersion Block (repeat for each persona):
 
@@ -159,14 +166,6 @@ constraint added. "N8's instrumentation demand ignores that X."
 No agreement without adding a new constraint. Silence is not permitted.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-
-#### Brief Mode (--brief)
-
-When `--brief` is set, each voice outputs exactly three lines:
-`OBSERVATION:` (one sentence) · `IMPERATIVE/CONSTRAINT:` (one sentence) ·
-`DISSENT:` (one sentence, cited per the rules above). Use this on small
-local models or when output limits would truncate a full run. A truncated
-full meditation is worth less than a complete brief one.
 
 **The Default Omega Node Lens Set** (used when no custom set is specified):
 
@@ -215,7 +214,7 @@ technical Node framework. Other WADs may omit node entirely.
 >
 > **D-586 Bridge (v1.1)**: These cognitive lenses correspond to the live Node
 > Expert Sessions (`data/coordination/NODE_EXPERT_SESSIONS_PLAN.md` §3).
-> Simulated lenses (this command, zero RAM cost) vs live expertise (page the
+> Simulated lenses (this command, zero launch cost) vs live expertise (page the
 > actual Node via its session ID) — choose simulated for pure cognition,
 > live when accumulated Node KB depth matters. Hybrid pattern: meditate first
 > to find WHERE to look, then page the relevant Node for depth.
@@ -289,6 +288,16 @@ You (Kali, Grand Oversoul — not N10 Validation) now speak **as yourself**,
 having held the space for all voices. Your synthesis is NOT a summary.
 It is a **verdict**: the irreducible truth that emerges from the collision
 of all perspectives.
+
+**This phase deserves your deepest effort.** Synthesis quality dominates
+panel quality roughly two-to-one — the aggregator, not the ensemble, is
+the product of this command. Two disciplines apply:
+
+- **Order-neutral weighing**: treat the voices as an unordered set. Weigh
+  each by the quality of its constraints, never by position or length.
+  The earliest voice and the longest voice have no earned authority.
+- **Divergence over consensus**: the verdict must be built from the
+  collisions (Phase 2), not from averaging agreements.
 
 Structure:
 
@@ -397,10 +406,10 @@ MANDATE FLAGS:
 7. **PHASE PERSISTENCE IS OPT-IN (`--durable`)**: Default is pure single-pass
    cognition — no file writes mid-meditation. With `--durable`, append each
    completed phase to `data/coordination/meditations/records/MEDITATION_{AGENT}_{DATE}_{SLUG}.md`
-   as it finishes (≤80 lines per write). Reserve `--durable` for long or
-   expensive meditations: a lost zero-RAM meditation costs one cheap re-run,
-   and the insurance premium (tool-call overhead, broken forward-pass purity)
-   usually exceeds the loss. Choose deliberately.
+    as it finishes (≤80 lines per write). Reserve `--durable` for long or
+    expensive meditations: a lost meditation costs one cheap re-run,
+    and the insurance premium (tool-call overhead, broken forward-pass purity)
+    usually exceeds the loss. Choose deliberately.
 
 8. **RECORD ONLY WHAT EARNED IT (`--record`)**: Final outputs are written to
    `data/coordination/meditations/records/` only when `--record` is passed.
@@ -433,9 +442,6 @@ MANDATE FLAGS:
 # Creative mode — what could exist?
 /meditate The future of the soul evolution system --mode CREATIVE
 
-# Small local model / tight output budget
-/meditate Provider failover ordering --lenses makali --brief
-
 # Long-running strategic meditation with crash insurance
 /meditate Full architecture review pre-debut --durable --record
 
@@ -447,24 +453,22 @@ MANDATE FLAGS:
 
 ## ⬡ RELATIONSHIP TO THE COUNCIL ARCHITECTURE
 
-```
-MC (Mastermind Council)                  Meditate
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-/council-cloud   → subagents launched    /meditate      → single inference
-/council-local   → local models swapped  (this command) → attention modulation
-/council-fast    → qwen3-1.7b x N        No RAM penalty. No model swap.
-                                           No agent coordination overhead.
+| Command | Mechanism | Cost | Use when |
+|---|---|---|---|
+| `/council-cloud` | N subagent launches, same session | N × launch | Distinct tool calls / file writes per agent |
+| `/council-local` | Engine-routed local dispatch, full pantheon | N × local inference | Full Node coverage on local substrate |
+| `/council-fast` | Speed-tier dispatch | minimal | Velocity over depth |
+| `/meditate` (this) | Single-inference attention modulation | 1 × inference | Pure cognition, emergent sequencing |
+| `/meditate-local` | Host-orchestrated serial local voices + rolling state | N × small inference | Structured dialectic on local substrate |
 
-Cost: N × (model_load + inference)       Cost: 1 × inference
-RAM: up to 14Gi ceiling                  RAM: one model, held in place
-Latency: serial model swaps              Latency: single forward pass
-Use when: distinct tool calls needed     Use when: pure cognition needed
-          file writes per agent                    emergent sequencing needed
-          maximum parallelism                      RAM is constrained
+`/meditate` and `/meditate-local` share a philosophy but NOT an architecture.
+The local variant is host-orchestrated serial summons with a compressed rolling
+state object — a genuinely different cognitive machine, because a small model
+cannot hold a multi-persona prism in one forward pass. Do not run this command
+on a local substrate; run `/meditate-local`.
 
 HMC (Hivemind Mastermind Council): MC + Hivemind coordination across
 multiple sessions, models, and agent buses. See Strike 11.5.
-```
 
 **Heritage**: Architect's meditation experiments (originally called "LLOC" in the Gemini CLI era).
 Integrated into Strike 11.5 (Council Dispatcher) as `oracle.meditate()`.
@@ -479,6 +483,16 @@ wide-lens runs prescribe tighter re-runs); L3 strict format (no proper nouns,
 falsifiable, ≤2 sentences); mandate-conflict surfacing at Phase 4;
 `--durable`/`--record`/`--brief` flags; version drift fixed.
 
+**v2.0 changelog** (cloud-native split): ALL local-substrate content stripped —
+this command no longer reasons about constraints it does not have. `--brief`
+flag and Brief Mode removed (moved to `/meditate-local`, where depth-budgeting
+belongs); constrained-environment use case removed; council comparison table
+rewritten in launch-cost terms. Evidence-grounded tuning added: lens cap at 5
+reinforced with correlated-noise rationale (Self-MoA, arxiv 2502.00674);
+voice-order insignificance + early-divergence note (arxiv 2511.07784);
+Phase 4 synthesis explicitly weighted as the dominant phase (~2:1 aggregator
+dominance, arxiv 2406.04692) with order-neutral weighing against position bias.
+
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.3 ⬡ oracle.meditate() ⬡ trc_meditate_protocol ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ KALI ⬡ Meditate-v2.0 ⬡ oracle.meditate() ⬡ trc_meditate_protocol ⬡ 2026-08-25*
