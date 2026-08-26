@@ -69,12 +69,15 @@ Local stdio variant: `{type:"local", "command":[...], "environment":{...}}`.
 
 ## §8 Provider Config
 
-Custom provider via npm adapter: `{"npm":"@ai-sdk/openai-compatible","options":{"baseURL":"http://localhost:1234/v1","apiKey":"..."}}` + `models: {id: {name, limit:{context,output}, variants:{low/medium/high:{reasoning:{effort}}}}}`.
-House providers: lmstudio (6 local models, caps 4K–16K context), opencode (Zen free tier: mimo-v2.5 200K, nemotron-3-ultra-free **1M ctx/128K out**, deepseek-v4-flash-free 163K), openrouter (llama-3.3-70b-free).
+Custom provider via npm adapter: `{"npm":"@ai-sdk/openai-compatible","options":{"baseURL":"http://localhost:1234/v1","apiKey":"..."}}` + `models: {id: {name, limit:{context,output}, variants:{high:{reasoningEffort:"high"}}}}`. **Variants are FLAT keys only** (see §9 amendment below — nested schemas silently dropped).
+House providers: lmstudio (6 local models, caps 4K–16K context), opencode (Zen free tier: mimo-v2.5-free 200K/32K [re-keyed from mimo-v2.5 per catalog restructure], nemotron-3-ultra-free **1M ctx/128K out** [live-catalog VERIFIED 2026-08-26 via models.dev/api.json], ~~deepseek-v4-flash-free~~ **DEAD upstream #43829 — entry pending F5 removal**), openrouter (llama-3.3-70b-free).
+**Zen base URL**: `https://opencode.ai/zen/v1` (not the standard OpenAI-compatible path) — required for custom Zen model overrides to route correctly.
+**google-standard provider rationale**: retained because it hijacks the builtin `google` provider's model catalog (which ships stale/limited models) and replaces it with a curated set pointing at the correct Google AI Studio endpoints — the only way to get working Gemini models without the builtin catalog's stale entries.
+Credentials live at `~/.local/share/opencode/auth.json` (NOT ~/.config/opencode/) — backup target for any config surgery.
 Variant maps are model-specific: nemotron/deepseek declare low–high(/max); LM Studio models declare EMPTY variant maps → agent.variant inert there (DEV-12 empirical table).
 
 ---
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB-STAGING ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*
 
 ---
 
@@ -84,3 +87,15 @@ Variant maps are model-specific: nemotron/deepseek declare low–high(/max); LM 
 - **`snapshots`:** boolean, internal git-object snapshot/revert system (see ARCHITECTURE amendment + G28).
 - **`OPENCODE_SESSION_ID`: absent from official env table → unofficial/internal; do not depend on it** (needs local probe to confirm behavior).
 - **Version intel**: latest v1.18.23 (Aug 25 2026); v1.18.20 surfaces resumable task_id on subagent failure (validates house playbook); v1.18.16+ ignores unknown config keys (pin forward-compat).
+
+---
+
+## 🔧 VARIANTS SCHEMA — AUTHORITATIVE (2026-08-26, official docs + INSTALLED PLUGIN SOURCE request.js:591/:669)
+**Flat keys only. Nested schemas are silently dropped.**
+- Zen/OpenAI-style models: `"variants": { "high": { "reasoningEffort": "high" } }` — flat, per opencode.ai/docs/models (which uses the `opencode` provider as its literal example); **live caps: mimo-v2.5-free = 200K/32K · nemotron-3-ultra-free = 1M/128K (models.dev verified 2026-08-26)**
+- Antigravity Claude: `"variants": { "max": { "thinkingBudget": 32768 } }` — FLAT budget key; source reads `variantConfig?.thinkingBudget` directly (request.js:669); working sibling proof = antigravity-claude-opus-4-6-thinking in .opencode/opencode.json
+- Gemini: bare flat `"thinkingLevel"` (e.g. `{ "low": { "thinkingLevel": "low" } }`)
+- ⚠️ G29: nested `"reasoning": {"effort": ...}` or `"thinkingConfig": {"thinkingBudget": ...}` render NO variant options and no error — the silent-drop trap that killed our Zen thinking levels
+- Built-in default variants exist per-provider for known providers; custom model overrides REPLACE catalog entries including any inherited defaults
+- Config files MERGE with precedence remote < global < project; `.opencode/opencode.json` is valid project config
+- Full forensics: docs/research/R_OPENCODE_CONFIG_POLLUTION_FORENSICS_20260826.md

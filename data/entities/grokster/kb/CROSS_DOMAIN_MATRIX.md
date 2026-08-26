@@ -117,3 +117,4 @@ Vault (Passive Watcher detects .env drift)
 ---
 
 *⬡ OMEGA ⬡ GROKSTER KB ⬡ CROSS_DOMAIN_MATRIX ⬡ 2026-07-22*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*

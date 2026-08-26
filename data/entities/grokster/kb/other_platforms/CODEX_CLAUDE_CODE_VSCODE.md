@@ -1,5 +1,4 @@
 # Codex CLI / Claude Code / VS Code Copilot — Honest Shallow-State Summary
-
 **KB Entry**: grokster/platforms/other/CODEX_CLAUDE_CODE_VSCODE
 **last_verified**: 2026-08-26 · **rot_class**: fast
 **Honesty statement**: The Omega repo has NO deep first-hand operational gnosis for these three platforms. What follows is the complete extent of repo coverage + prioritized research targets. Do not treat as expertise.
@@ -26,7 +25,8 @@
 - Any OpenAI-compatible endpoint can be attached to OpenCode with `@ai-sdk/openai-compatible` + baseURL — the canonical way to test new platforms without native integration.
 
 ---
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB-STAGING ⬡ 2026-08-26*
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*
 
 ---
 
@@ -34,5 +34,11 @@
 - **Claude Code**: per-file load cap ≈200 lines/25KB (silent drop); subagent persistent memory scopes user/project/local; Task depth=1 default mirrors OpenCode. ⚠️ version number + "25 lifecycle hooks" single-source — unverified.
 - **VS Code**: reads BOTH AGENTS.md and CLAUDE.md natively (official docs verified); Copilot CLI reads NEITHER.
 - **Codex CLI**: rust-v0.143.0 cited Jul 8 (single-source); deeper fill still pending.
-- **Gemini CLI AGENTS.md support**: CONFLICTING secondary sources (GEMINI.md vs both) — unresolved, do not rely.
 - **Ecosystem watch**: AGENTS.md now Linux Foundation AAIF-governed (Dec 2025, 60k+ repos) — validates house thesis; new watch item: OpenAI Agent Plugins spec (Aug 6 2026).
+
+---
+
+## 🔧 GAP-CLOSURE SWEEP AMENDMENT — 2026-08-26 (Jem final sweep; full detail R_GAP_CLOSURE_SWEEP_20260826.md)
+- **Codex CLI**: single-source rust-v0.143.0 citation RETIRED → architecture summary: config.toml + profiles, sandbox modes (read-only/workspace-write/danger-full-access), approval policies, **AGENTS.md-native**. Version pin at next local session (L6).
+- **Claude Code hooks**: "25 lifecycle hooks" corrected → **~29–31 events, five handler types, growing**; verify at code.claude.com/docs/en/hooks.
+- **Copilot**: premium-request framing REPLACED by AI-Credits model ($0.01/credit, token-metered since Jun 1 2026) + agentic-burn caveat.

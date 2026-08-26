@@ -42,4 +42,4 @@
 3. Global plugin dir is singular (`~/.config/opencode/plugin/`) by design — sovereign-compaction.ts target path is CORRECT as-singular; only project-level paths needed plural repair.
 
 ---
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB-STAGING ⬡ 2026-08-26*

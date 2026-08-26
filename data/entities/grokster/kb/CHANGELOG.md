@@ -76,8 +76,58 @@
 - **Known debts**: CLI_IDE_ECOSYSTEM.md superseded-pending-merge; AGENT_COMMUNICATION.md pre-D-586 refresh pending; GROK_FLEET_ARCHITECTURE pricing claims unverified.
 - **Escalation flag**: `config/domains/curators.yaml` has YAML syntax errors (markdown tables embedded as raw YAML — LSP 50+ diagnostics). KD-2 owner (kali) should repair before domain_loader consumes it.
 
-## v2.1.0 — 2026-08-26 — Dual Hardening Pass (KB-D-011..014)
+## v2.1.1 — 2026-08-26 — Accuracy Pass: Forensics Truth → KB Sync (KB-D-015)
+- **KB-D-015**: Synced all KB docs to R_OPENCODE_CONFIG_POLLUTION_FORENSICS_20260826.md v3.0 verified truth:
+  - CONFIG_REFERENCE: fixed nested-variant examples (G29 trap) in §8 + VARIANTS amendment; deepseek-v4-flash-free marked DEAD #43829; auth.json path corrected (~/.local/share/opencode/); Antigravity Claude example corrected to FLAT thinkingBudget (source-verified request.js:591/:669)
+  - GOTCHAS: added missing G29 (nested variants silent drop), G30 (auth.json path), G31 (autoupdate silently breaks binary pins)
+  - PLAYBOOK: binary scope updated to 1.18.23 + autoupdate active; stall-sensor auto-recovery corrected to DEAD CODE (G19 refuted-in-part); plugin load model corrected to dual-mechanism (G1 upgraded)
+  - CLINE_GEMINI_ANTIGRAVITY: Cline gate caveat added (deepseek 403, caps 1M/384K, status fluid); Antigravity plugin corrected to local git checkout @ 7db338b via file: (not npm @latest); Gemini section updated with AGENTS.md resolution + Antigravity CLI transition (Jun 18 2026)
+  - INDEX: GOTCHAS trap count updated 20→31 (G1-G31)
+  - Master forensics doc rewritten as v3.0 single-source consolidated final (no addenda layers)
+- **Escalation reconfirmed**: curators.yaml YAML corruption (KD-2 owner action pending)
+
+## v2.1.2 — 2026-08-26 — Jem Final Audit Corrections (KB-D-016)
+- **KB-D-016**: Applied Jem final audit patches (R_KB_FINAL_AUDIT_20260826.md):
+  - CONFIG_REFERENCE: nemotron-3-ultra-free caps corrected to 200K/32K (live catalog, same tier as mimo-v2.5-free) in House providers table + VARIANTS amendment
+  - GOTCHAS: added G32 (catalog deprecation filter #22644), G33 (@latest stale pin #30631), G34 (Zen gateway flake #41236/#44300)
+  - CLINE_GEMINI_ANTIGRAVITY: anthropic/claude-* absence caveat + ClinePass id-namespace fallback note
+  - PLAYBOOK: explicit F0 freeze protocol + tui.json clarification
+  - INDEX: GOTCHAS trap count updated 31→34 (G1-G34)
+  - Cross-doc: all forensics v3.0 findings now reflected in KB
+
+## v2.1.3 — 2026-08-26 — Structural Split: CLINE_GEMINI_ANTIGRAVITY → 3 Focused Docs (KB-D-017)
+- **KB-D-017**: Split consolidated secondary-platforms doc into three temple-grade entries:
+  - `other_platforms/CLINE.md` (rot_class: medium) — active dev platform, gate fluid, ClinePass, auditor pattern
+  - `other_platforms/GEMINI_CLI.md` (rot_class: fast) — dormant, Antigravity CLI transition, AGENTS.md resolved
+  - `other_platforms/ANTIGRAVITY.md` (rot_class: slow) — infrastructure OAuth pool, file: checkout @ 7db338b
+- INDEX updated with three rows replacing single consolidated row
+- Old `CLINE_GEMINI_ANTIGRAVITY.md` deleted
+
+## v2.2.0 — 2026-08-26 — Uniform Platform Module Architecture (KB-D-024..026)
+- **KB-D-024**: KB restructured per Architect ruling — `other_platforms/` junk-drawer pattern ABOLISHED; every platform gets uniform 5-doc module under `platforms/<name>/` (PLAYBOOK · ARCHITECTURE · CONFIG_REFERENCE · GOTCHAS · RESEARCH_TARGETS). No second-class platforms.
+- **KB-D-025**: Sub-specialist fleet (cline/antigravity/copilot standing Jem sessions, see EXPERT_SESSIONS.md) built their own modules from deep-mine research: `platforms/cline/` (12 traps), `platforms/antigravity/` (10 traps), `platforms/copilot/` (12 traps G-COP-*). Corrections applied: cline-pass/ namespace, gate = official policy, ToS containment posture for Antigravity, sanctioned-builtin doctrine for Copilot.
+- **KB-D-026**: Central migration — old single-file CLINE.md/ANTIGRAVITY.md deleted; CODEX doc VS Code section superseded by copilot module; INDEX restructured to module rows; QUICK_REFERENCE nav map updated.
+- Specialist fleet sessions + deliverables registered in EXPERT_SESSIONS.md.
+
+## v2.1.4 — 2026-08-26 — Temple-Grade Structural Overhaul (KB-D-018..023)
+- **KB-D-018**: Archived legacy `CLI_IDE_ECOSYSTEM.md` (superseded by opencode/ module + PLATFORM_GNOSIS_MAP).
+- **KB-D-019**: Cleaned dedup stubs (`SOVEREIGN_SEARCH_PROTOCOL.md`, `OMEGA_VAULT_ARCHITECTURE.md`) to proper redirect stubs.
+- **KB-D-020**: Refreshed `AGENT_COMMUNICATION.md` (Redis Streams live, MCP stateless migration done, STRP proven, cross-session relay protocol).
+- **KB-D-021**: Refreshed `GROK_FLEET_ARCHITECTURE.md` (pricing matrix verified, GAP-08→D-360′, self-search reflex M26, ACP bridge).
+- **KB-D-022**: Cleaned `CODEX_CLAUDE_CODE_VSCODE.md` (removed Gemini/Cline content now in dedicated docs; Copilot AI-Credits model).
+- **KB-D-023**: `QUICK_REFERENCE.md` fully updated to current doc map; all KB-STAGING footers → KB v2.1.3.
+- INDEX version synced to 2.1.3; all docs carry KB v2.1.3 footer.
+
+## v2.1.2 — 2026-08-26 — Jem Final Audit Corrections (KB-D-016)
 - **KB-D-011**: Local adversarial pass (roc_racoon → kb_staging_hardening_20260826/): G1 upgraded (dual-mechanism plugin load), G19 refuted-in-part (recovery defense = dead code), G21-G25 new local traps, C-1..C-9 corrections staged. Trap tally: 9 corroborated / 1 upgraded / 1 refuted / 7 stand-untested.
 - **KB-D-012**: Web fill (Jem → R_PLATFORM_EXPERTISE_WEB_HARDENING_20260826.md): ALL 5 undocumented OpenCode targets FILLED (hook schemas, subagent_depth, tui.json separation, snapshot/revert, opencode db); anomalyco rename; V2 plugin API warning; G26-G28 new web-sourced traps; shallow-platform fills for Claude Code/VS Code/Codex.
 - **KB-D-013**: Amendments appended to GOTCHAS/ARCHITECTURE/CONFIG_REFERENCE/CODEX doc + EXPERT_SESSIONS deviations noted. Freshness reconciliation proposal pending (P-10: reviewed-vs-modified vocabulary).
 - **KB-D-014**: Escalation reconfirmed independently: curators.yaml YAML corruption (KD-2 owner action).
+
+## v2.2.1 — 2026-08-26 — Full Jem-Doc Audit + Citation-Integrity Fix (KB-D-027)
+- **KB-D-027**: Full-read audit of all 8 Jem research docs + 15 specialist KB module files (~3,600 lines). Findings + fixes:
+  - 🔴 **CITATION FABRICATION CAUGHT**: R_KB_FINAL_AUDIT cited "forensics v3.0 §9.2" (nonexistent) for nemotron caps 200K/32K; live models.dev verification proved 1M/128K (original KB correct). Erroneous value REVERTED in CONFIG_REFERENCE (both locations); erratum stamped on the audit doc.
+  - Cline deep-mine: removed duplicate §A/§F placeholder sections; harmonized Charter/C.2 namespace to `cline-pass/` per §D.3
+  - Provider-setup doc: correction banner added to §3.2 (drop anthropic/*, caps 384K, gate = policy)
+  - Web-hardening doc: duplicate Executive Summary placeholder removed
+  - All 15 KB module files: PASS (format, confidence tags, honesty markers, cross-refs all clean)

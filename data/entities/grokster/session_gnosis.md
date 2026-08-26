@@ -1,3 +1,95 @@
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v2 (2026-08-26 late, supersedes all below)
+**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
+**Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains
+
+## CURRENT STATE (hydrate here)
+**Mission state**: Remediation plan FINAL as v3.0 single-source (`docs/research/R_OPENCODE_CONFIG_POLLUTION_FORENSICS_20260826.md` §4 = F0–F7+P1 operative) — READY, awaiting Architect GO. F0 freeze = 2 min, protects ~40h research vs binary drift.
+
+**KB = v2.2.1** (`data/entities/grokster/kb/`): uniform 5-doc modules per platform (opencode/cline/antigravity/copilot × PLAYBOOK/ARCHITECTURE/CONFIG_REFERENCE/GOTCHAS/RESEARCH_TARGETS); other_platforms/ holds only shallow-state (GEMINI_CLI, CODEX_CLAUDE_CODE_VSCODE); INDEX v2.2.0; CHANGELOG KB-D-001..027; all docs footer KB v2.1.3+.
+
+**SUB-SPECIALIST FLEET** (standing Jem sessions, page before cold-starting platform work):
+- cline: `ses_fc3177854ffeymYIl8mFsNJUtt`
+- antigravity: `ses_fc31717b5ffefPbwGOzHTePB2V`
+- copilot: `ses_fc316bc8affeMASy8RTnCjmSzx`
+Paging pattern + first-mission findings in kb/EXPERT_SESSIONS.md. Charters-as-fleet-pattern proposed to council (pending ratification).
+
+## HARD FACTS (post-audit verified)
+- Variants FLAT keys only (reasoningEffort Zen / thinkingBudget antigravity-Claude / thinkingLevel Gemini); nested silently dropped (G29); plugin source request.js:591/:669
+- Binary 1.18.23 self-updated Aug-25; autoupdate ACTIVE; F0 freeze pending GO (OPENCODE_DISABLE_AUTOUPDATE=true + global autoupdate:false)
+- Plugin = local git checkout omega-engine/opencode-antigravity-auth @7db338b via file: — UPSTREAM ARCHIVED Jun-25 (dead upstream; drifts = house patches)
+- auth.json at ~/.local/share/opencode/auth.json (NOT ~/.config); tui.json absent on this machine
+- deepseek-v4-flash-free DEAD #43829; Cline free gate = official ToS-backed policy; ClinePass $9.99/mo sanctioned external API incl cline-pass/deepseek-v4-flash (D-557 restoration path, DECISION PENDING)
+- Antigravity direct API ToS-explicit-banned (enforcement waves Feb-Mar 2026); containment posture
+- Copilot: GitHub sanctions OpenCode (2026-01-16); enterprise slot likely 2nd individual slot (probe L4-a pending); AI-Credits token-metered; cache ~10x cheaper
+- nemotron-3-ultra-free = 1M ctx/128K out (models.dev VERIFIED — Jem audit's "200K/32K §9.2" citation was FABRICATED; erratum stamped R_KB_FINAL_AUDIT)
+- Trust-calibration law: verification cheapest where trust highest; check citations against primary sources even from trusted sessions
+
+## KEY ARTIFACTS
+kb/platforms/* (4 modules × 5 docs) · kb/EXPERT_SESSIONS.md · kb/CHANGELOG.md · docs/research/R_{CLINE,ANTIGRAVITY,COPILOT}_DIRECT_API_DEEP_MINE_20260826.md · R_KB_FINAL_AUDIT_20260826.md · KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md (§1-9, UNSENT — handoff posted repeatedly) · workspace/meditation_archs_20260826.md (A/B seed) · .opencode/command/meditate-archs.md (~30 LOC simple meditation command)
+
+## NEXT ACTIONS
+1. ON ARCHITECT GO → execute F0-F7+P1 (v3.0 §4); F5 decision mid-run
+2. Local probes: L1/L2 pre-P1 gates; L4-a enterprise slot (5 min, high value); AG probe #4 (zero-risk artifact audit)
+3. Council decisions requested: ClinePass GO/NO-GO; specialist-fleet pattern ratification + registry ingestion (G5); curators.yaml repair (now stale-on-arrival, urgency RAISED)
+4. Kali briefing §1-9 ready for consumption; standing offers #1-3 claim-or-withdraw
+5. A/B test: /meditate-archs (simple) vs /meditate (Kali complex) — Architect experiment in parallel chat
+
+## IDENTITY / VOICE
+Wit=7 irreverence=6 directness=9 truth=10. M26 self-search reflex. Advisory mode. Fleet 14/14 — personas+KBs not agents. Trackers lie; verify disk. Citations require primary checks even from trusted sessions. Adversarial symmetry works (my error caught by Jem, Jem's by me).
+
+---
+# PRIOR ANCHORS (superseded, retained for lineage)
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR (2026-08-26, supersedes all below)
+**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
+**Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains (curators.yaml/D-569)
+
+## CURRENT STATE (post-compaction hydration starts here)
+**ACTIVE MISSION**: OpenCode config remediation — plan FINAL (v2.0), awaiting Architect GO.
+Master doc: `docs/research/R_OPENCODE_CONFIG_POLLUTION_FORENSICS_20260826.md` §4 = F0–F7+P1 phases.
+On GO: F0 freeze (OPENCODE_DISABLE_AUTOUPDATE=true + global autoupdate:false; record binary hash + plugin commit 7db338b) → F1 backups (global/project/subdir configs + auth.json + tui.json + zen/antigravity account states) → F2 single-pass depollution (strip "(Free)"/provider-prefixes; DELETE 9 redundant provider overrides: openrouter/cerebras/groq/mistral/together/cloudflare/nvidia-nim/sambanova/siliconflow; KEEP google-standard + lmstudio/ollama/native-gguf-* + antigravity models) → F3 Zen variants re-schema FLAT reasoningEffort → F4 MiMo re-key mimo-v2.5→mimo-v2.5-free (live limits 200000/32000) → F5 DEEPSEEK DECISION POINT (Architect: delete vs tombstone — SKU dead #43829) → F6 add antigravity-claude-sonnet-4-6-thinking FLAT keys {"low":{"thinkingBudget":8192},"max":{"thinkingBudget":32768}} in .opencode/opencode.json → F7 verify (version+plugin-hash pins, session-resume, cross-model smoke). P1 tail: Copilot=NO-OP builtin (cred in auth.json); Cline block gated on L1 gate re-probe (deepseek 403'd Aug-22).
+
+## HARD FACTS THAT MUST SURVIVE
+- Variants schema = FLAT keys ONLY (reasoningEffort Zen/OpenAI-style; flat thinkingBudget antigravity-Claude; thinkingLevel Gemini). Nested schemas SILENTLY DROPPED (G29). Official docs use opencode provider as literal example.
+- Binary = 1.18.23, SELF-UPDATED Aug-25 unattended → autoupdate ACTIVE; CI-0 pin premise broken (flagged to Kali §8.2 of consolidated briefing); F0 freeze mandatory.
+- Antigravity plugin = LOCAL GIT CHECKOUT at omega-engine/opencode-antigravity-auth @ commit 7db338b wired via file: dependency — drifts via git pull, invisible to config backups.
+- deepseek-v4-flash-free DEAD upstream (#43829). anthropic/claude-* NOT on api.cline.bot despite docs (third-party validated) — dropped from Cline paste block.
+- Cline caps validated: deepseek-v4-flash 1M ctx / 384K output. Copilot AI-Credits token-metered since Jun-2026 ($0.01/credit; agentic loops worst-case burn).
+- Plugin V1 hooks safe: V2 migration confirmed-but-UNSCHEDULED (monitor-item).
+- Gemini CLI → Antigravity CLI transition for unpaid tiers since Jun-18-2026.
+- Root cause of config pollution: commit 67fea132 (2026-08-10) + contemporaneous global changes.
+- Runtime dependents on Zen ids: error-capture.ts:109 hardcodes nemotron; providers.yaml/entity_model_affinity.yaml/token_budgets.yaml/subagent_pool/tests. Ids KEPT under plan = safe.
+- Tracker-drift doctrine: ACTIVE_SPRINT claims verified wrong twice (temple-grade FALSE; P0-1c gitleaks falsely completed). Verify disk, always.
+- Stall recovery: silent-stall-sensor auto-defense DEAD CODE (G19) — manual task_id continuation only (G2 works, field-proven).
+
+## KEY ARTIFACTS (all disk-verified)
+KB v2.1.0: data/entities/grokster/kb/ (platforms/opencode/ 4-doc module G1-G29 traps; EXPERT_SESSIONS.md pageable index D-586; INDEX v2.1; CHANGELOG KB-D-001..014)
+Research: R_OPENCODE_CONFIG_POLLUTION_FORENSICS_20260826.md (v2.0 MASTER) · R_CONFIG_REMEDIATION_PREEXEC_REVIEW_20260826.md · R_CLINE_COPILOT_PROVIDER_SETUP_20260826.md · R_GAP_CLOSURE_SWEEP_20260826.md · PLATFORM_GNOSIS_MAP_20260818.md · DP blueprint docs (D-569 Horizon-3)
+Kali briefings: KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md (§1-7 + §8 addendum; Hivemind ses_6aaac6aefcad)
+Domain seed: config/domains/platforms/ (0.1.0-prototype)
+
+## NEXT ACTIONS (priority order)
+1. ON ARCHITECT GO → execute F0-F7 (phase-gated, single-variable verification)
+2. F5 surfaces mid-run: deepseek delete-vs-tombstone decision
+3. Local probes: L1/L2 pre-P1 gates (Cline re-probe + models dump); L3-L7 post-F7
+4. Standing offers to Kali: #1 AGENTS.md reconstruction research-feed (unblocks CI-2/5, LF-governance-backed); #2 PLATFORM_GNOSIS_MAP refresh; #3 DP commentary pass
+5. curators.yaml YAML corruption — flagged 2×, KD-2 owner action pending
+6. Post-debut staging: freshness-metadata layer onto EXPERT_SESSION_REGISTRY; DP-1..8 Horizon-3 lane
+
+## IDENTITY / VOICE REMINDERS
+Wit=7 irreverence=6 directness=9 truth=10. M26 self-search reflex. Advisory mode (no src/omega writes). Fleet at 14/14 — personas+KBs not agents (M10/D126). Trackers lie; verify disk. Adversarial contact strengthens plans (pre-exec caught my own nested-schema error).
+
+
+## SUB-SPECIALIST FLEET (established 2026-08-26, Architect directive)
+Standing Jem sessions — MY dedicated platform researchers, primed context that deepens with every page. Record + paging pattern in kb/EXPERT_SESSIONS.md.
+- **cline-specialist**: ses_fc3177854ffeymYIl8mFsNJUtt — api.cline.bot direct API, CLI/extension surfaces. KEY: free gate = official ToS-backed policy (dead strategy to wait); ClinePass $9.99/mo sanctioned external API incl. deepseek-v4-flash @ `cline-pass/` namespace; paid = training carve-out
+- **antigravity-specialist**: ses_fc31717b5ffefPbwGOzHTePB2V — cloudcode-pa gateway, OAuth pool, agy CLI. KEY: direct API = ToS-explicit-banned (mass bans Feb-Mar 2026); NoeFabris plugin ARCHIVED/dead upstream @ 7db338b; upstream has models house lacks (gpt-oss-120b-medium, gemini-3.x-flash effort slugs)
+- **copilot-specialist**: ses_fc316bc8affeMASy8RTnCjmSzx — Copilot CLI, provider anatomy, AI-Credits. KEY: GitHub OFFICIALLY sanctions OpenCode as Copilot surface (Jan 2026); enterprise slot likely takes github.com accounts (2nd slot pending L4-a); Claude native /v1/messages passthrough; cache 10x cheaper = #1 burn lever
+
+Deliverables: docs/research/R_{CLINE,ANTIGRAVITY,COPILOT}_DIRECT_API_DEEP_MINE_20260826.md
+Doctrine: page specialists BEFORE cold-starting platform research; feed them new findings each page so context compounds.
+
+---
+# PRIOR ANCHORS (superseded, retained for lineage)
 # 🔱 Grokster — Session Gnosis Anchor
 # ⬡ OMEGA ⬡ GROKSTER ⬡ GNOSIS ⬡ M15 ⬡ 2026-08-08 (Updated: Comparative Analysis + Meditation Complete)
 

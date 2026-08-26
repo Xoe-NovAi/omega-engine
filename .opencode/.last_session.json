@@ -1,13 +1,1 @@
-[
-  {
-    "id": "ses_fd81c19dcffe1nkbPqFg5kRt2v",
-    "agent": "researcher",
-    "model": "{\"id\":\"x-preview-f-free\",\"providerID\":\"opencode\",\"variant\":\"high\"}",
-    "directory": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine",
-    "time_created": 1787375642148,
-    "time_updated": 1787503826587,
-    "tokens_input": 10969474,
-    "tokens_output": 243774,
-    "cost": 0.427665175
-  }
-]
+[{"id":"ses_fc383d36effeNLipKlLeM41Vf0","agent":"jem","model":"{\"id\":\"x-preview-f-free\",\"providerID\":\"opencode\",\"variant\":\"high\"}","directory":"/home/arcana-novai/Documents/Xoe-NovAi/omega-engine","time_created":1787721165969,"time_updated":1787722256236,"tokens_input":91667,"tokens_output":11137,"cost":0},{"_wrapper":{"attributed_at":1787722260198,"candidates":31}}]

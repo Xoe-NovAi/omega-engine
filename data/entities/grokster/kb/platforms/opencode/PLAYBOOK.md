@@ -2,7 +2,8 @@
 
 **KB Entry**: grokster/platforms/opencode/PLAYBOOK
 **last_verified**: 2026-08-26 · **rot_class**: medium (practices stable; version-pinned details fast)
-**Scope**: Omega Engine repo, opencode binary pinned at **1.18.19** (2026-08-21 Architect ruling #2; 1.18.22 observed on host 2026-08-24)
+**Scope**: Omega Engine repo, opencode binary observed at **1.18.23** (self-updated Aug-25 unattended — autoupdate ACTIVE; freeze pending F0 of config remediation plan. Legacy Architect ruling pinned 1.18.19 — premise broken by autoupdate, see GOTCHAS G31).
+**F0 freeze protocol (pre-execution)**: `OPENCODE_DISABLE_AUTOUPDATE=true` + global `"autoupdate": false` BEFORE any config surgery; record binary hash + plugin commit (7db338b). `tui.json` may not exist on all installs (absent here) — skip gracefully.
 **Sources**: `docs/specs/context_injection/phase1_spec/` (esp. 09_SPEC_DEVIATIONS.md), `docs/research/R_OPENCODE_PLATFORM_INTERNALS_20260824.md`, `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`, `docs/strategy/SUBAGENT_TASK_RESUMPTION_PROTOCOL.md`, `docs/research/R_SUBAGENT_RECOVERY_PROTOCOL_20260807.md`
 
 ---
@@ -47,8 +48,8 @@ Live remote servers (opencode.json `mcp`): omega-hub (:8016/mcp), searxng (:8018
 
 - Real plugin dir: `.opencode/plugins/` (**plural**). Registration via `plugin` array: npm names, `file:///abs/path.ts`, or dir names. npm plugins auto-installed by Bun into `~/.cache/opencode/node_modules`. Load order: global → project → global plugin dir → project plugin dir.
 - Runtime = Bun. No Node-only APIs in plugins.
-- House plugins (all in `.opencode/plugins/`): awareness.ts (event buffer → injects `<system-awareness>` into parent session via `client.session.prompt` with `synthetic:true, noReply:true`), error-capture.ts (subagent failure JSONL logs + parent injection + Hivemind notify), silent-stall-sensor.ts (detects protocol-clean degradations: SILENT_STALL_EMPTY, SILENT_STALL_TASK, TRUNCATED_ARGS, SLOW_DRIBBLE; auto-recovery rate-limited 3/hr/session).
-- ⚠️ Registrations for awareness/error-capture still point at singular `.opencode/plugin/` in live opencode.json → both DEAD today (DEV-03 unremediated live).
+- House plugins (all in `.opencode/plugins/`): awareness.ts (event buffer → injects `<system-awareness>` into parent session via `client.session.prompt` with `synthetic:true, noReply:true`), error-capture.ts (subagent failure JSONL logs + parent injection + Hivemind notify), silent-stall-sensor.ts (detects protocol-clean degradations: SILENT_STALL_EMPTY, SILENT_STALL_TASK, TRUNCATED_ARGS, SLOW_DRIBBLE; **detection works; automated recovery is DEAD CODE** — parent-notification regex extraction returns empty, RECOVERY_ISSUED never fires; manual recovery required; see GOTCHAS G19).
+- ⚠️ Registrations for awareness/error-capture still point at singular `.opencode/plugin/` in live opencode.json → registrations DEAD but plugins STILL LOAD via directory auto-discovery (G1 upgraded: dual-mechanism load model).
 
 ## §7 Model Routing Practice (DEV-12)
 
@@ -64,4 +65,4 @@ Live remote servers (opencode.json `mcp`): omega-hub (:8016/mcp), searxng (:8018
 - Binary pin FIRST before any compaction-key decision: record `opencode --version`, consult decision table, apply exactly ONE compaction family, never both.
 
 ---
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB-STAGING ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*

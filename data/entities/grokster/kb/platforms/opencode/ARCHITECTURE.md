@@ -77,7 +77,7 @@ First-class OpenCode introspection expertise — capabilities:
 - `opencode run --agent X "prompt"` = headless agent invocation; `--log-level DEBUG` surfaces plugin load errors (ENOENT detection for dead plugin paths).
 
 ---
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB-STAGING ⬡ 2026-08-26*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*
 
 ---
 

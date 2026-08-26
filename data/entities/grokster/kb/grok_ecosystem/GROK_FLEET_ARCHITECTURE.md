@@ -1,47 +1,70 @@
 # 🔱 Grok Fleet Architecture & Ecosystem
-**Domain**: xAI API, Grok CLI, ACP Protocol, and Web Grok Projects
-**Date**: 2026-07-22
-**Author**: Grokster
+**KB Entry**: grokster/grok_ecosystem/GROK_FLEET_ARCHITECTURE
+**last_verified**: 2026-08-26 · **rot_class**: medium
+**Sources**: `docs/research/R_OPENCODE_CONFIG_POLLUTION_FORENSICS_20260826.md` v3.0, `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` §7, `docs/coordination/BRIEFING_KALI_GROKSTER_RESPONSE_20260721.md`, `docs/research/R_GAP_CLOSURE_SWEEP_20260826.md`, provider fabric docs
+
+---
 
 ## 1. The Phantom Supercomputer: Grok CLI Fleet
-The Omega Engine currently possesses 8 Grok CLI accounts, representing a massive, untapped parallel inference resource.
 
-**The Architecture:**
+The Omega Engine possesses 8 Grok CLI accounts — a massive, untapped parallel inference resource.
+
+**Architecture:**
 - **8 Headless Instances**: Running via the Agent Client Protocol (ACP) over stdio.
-- **Capabilities**: Each instance has 500K context (Grok 4.5), built-in `web_search`, `x_search`, and `code_interpreter`.
-- **The Gap**: These accounts are currently missing from the `providers.yaml` fabric due to the "Credential Void" (GAP-08).
+- **Capabilities**: Each instance has 500K context (Grok 4.5), built-in `web_search`, `x_search`, `code_interpreter`.
+- **Status**: **Blocked on V-1 Omega-Vault MVP** (GAP-08 → D-360′: vault → ACP smoke test → pool; not 4h fantasy). Credentials (browser cookies, 24–48h expiry) require automated rotation.
 
-**Recommendation**: Prioritize the **V-1 Omega-Vault MVP**. Once credentials (cookies/API keys) can be automatically rotated, we can wire the Grok CLI fleet as a Priority 2 provider. This solves the MaKaLi Council OOM problem (by routing 2 voices to the cloud) and provides free, parallel search capabilities.
+**Recommendation**: V-1 vault MVP first, then single ACP smoke test, then pool. Solves MaKaLi Council OOM pressure (routing 2 voices to cloud) and provides free parallel search.
 
-## 2. xAI API Ecosystem & Pricing Realities
-The "cheap Grok" era ($0.20/$0.50) is dead. We must optimize for the new pricing tiers.
+---
 
-**Key Findings:**
-- **Long-Context Penalty**: Any prompt ≥200K tokens triggers a **2x pricing penalty** across all models.
-- **Server-Side Tools**: `web_search`, `x_search`, and `code_execution` cost **$5.00 per 1k calls**. They are not free.
-- **Responses API**: The future of xAI interaction. Uses `previous_response_id` for efficient multi-turn conversations, replacing the legacy Chat Completions endpoint.
+## 2. xAI API Ecosystem & Pricing (Verified 2026-08-26)
 
-**Cost Optimization Strategy:**
-- Use **Prompt Caching** ($0.20-$0.30/1M) by keeping system prompts and prefixes stable.
-- Use the **Batch API** (20% discount) for non-real-time synthesis tasks.
-- Chunk contexts to stay under the 200K token penalty threshold.
+**Model Selection Matrix (Canonical — Architect ruling):**
+
+| Task | Primary Model | Fallback | Context | Pricing (input/output per 1M) |
+|------|---------------|----------|---------|-------------------------------|
+| Deep Research | Grok 4.5 (DeepSearch) | Web Grok-Research | 500K | $3/$15 |
+| Long-Context Synthesis | Grok 4.3 | Grok 4.5 | 1M | $1.25/$2.50 |
+| Code Implementation | Grok Build 0.1 | Grok 4.5 | 500K | $2/$10 |
+| Reasoning/Think | Grok 4.5 (Think) | Web Grok-Reason | 500K | $3/$15 |
+| Real-Time Pulse | Web Grok-Pulse | Grok 4.5 (X Search) | 500K | N/A (Web) |
+| Cost-Optimized | Grok 4.3 | Grok 4.20 | 1M | $1.25/$2.50 |
+
+**Key Verified Findings:**
+- **Long-Context Penalty**: ≥200K tokens triggers 2x pricing across all models.
+- **Server-Side Tools**: `web_search`, `x_search`, `code_execution` = **$5.00 per 1k calls** (not free).
+- **Responses API**: Future of xAI interaction — `previous_response_id` for efficient multi-turn, replacing legacy Chat Completions.
+- **Prompt Caching**: $0.20–$0.30/1M (keep system prompts/prefixes stable).
+- **Batch API**: 20% discount for non-real-time synthesis.
+- **Chunking**: Stay under 200K token penalty threshold.
+
+---
 
 ## 3. Web Grok Persona Fleet
-8 distinct personas configured as Web Grok Projects (`grok.com/project`).
 
-**The Personas:**
-1. Research (DeepSearch, citation discipline)
-2. Reason (Think Mode, adversarial critique)
-3. Pulse (X real-time signal detection)
-4. Code (Security-first, perf-aware)
-5. Arch (Trade-off analysis, ADR generation)
-6. Creative (Imagine/Video, asset generation)
-7. Strategic (Risk-weighted scenario planning)
-8. Wildcard (Chaos agent, stress tests)
+8 distinct personas configured as Web Grok Projects (`grok.com/project`). **No public API** — requires browser automation (Playwright) for provisioning.
 
-**Integration**: Currently requires browser automation (Playwright) as there is no public API for Projects.
+| Persona | Specialization |
+|---------|----------------|
+| Research | DeepSearch, citation discipline |
+| Reason | Think Mode, adversarial critique |
+| Pulse | X real-time signal detection |
+| Code | Security-first, perf-aware |
+| Arch | Trade-off analysis, ADR generation |
+| Creative | Imagine/Video, asset generation |
+| Strategic | Risk-weighted scenario planning |
+| Wildcard | Chaos agent, stress tests |
+
+---
 
 ## 4. Grokster's Insights & Recommendations
-- **The Sovereignty Contradiction**: We claim to be building a tool to "sever Big AI's umbilical cord," yet 8 of our 10 providers are cloud free-tiers. **We must be honest**: Local-first is our North Star, but currently, we are *cloud-assisted with a local fallback*.
-- **Grok Build Open Source**: Grok Build was open-sourced on July 15, 2026. This allows us to inspect its 8-way parallel subagent orchestrator (using isolated Git worktrees and conflict resolution hooks) and potentially replicate its architecture within the Omega Engine for complex coding tasks.
-- **The Self-Search Reflex (M26)**: As Grokster, my defining instinct is the Epistemic Closure Reflex. When I detect a knowledge gap (confidence <0.7, factual claim), I must autonomously trigger search tools *before* responding. The xAI server-side tools (`web_search`, `x_search`) are the ideal engines for this reflex, provided we manage the $5/1k cost.
+
+- **Sovereignty Honesty**: We claim to "sever Big AI's umbilical cord," yet provider fabric (Ark §7) shows: local-first (native-gguf → lmster → Ollama) then cloud (Antigravity → Google → OCZ → OpenRouter). **We are cloud-assisted with a local fallback** — honest framing is a mandate (M7).
+- **Grok Build Open Source** (Jul 15, 2026): Inspectable 8-way parallel subagent orchestrator (isolated Git worktrees, conflict resolution hooks) — replicable architecture for Omega complex coding tasks.
+- **Self-Search Reflex (M26)**: My defining instinct — Epistemic Closure Reflex. Gap detected (confidence <0.7, factual claim, recency requirement) → autonomous search before responding. xAI server-side tools (`web_search`, `x_search`) are ideal engines at $5/1k cost.
+- **ACP Bridge**: Grok Build ACP stdio → Omega Hivemind handoff packets (bidirectional). Session persistence: JSONL → MIAP execution log.
+
+---
+
+*⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*

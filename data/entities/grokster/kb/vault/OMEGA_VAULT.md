@@ -197,3 +197,4 @@ async def test_fleet_rotation_under_load():
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ VAULT ⬡ V-1-MVP ⬡ 2026-07-22*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*

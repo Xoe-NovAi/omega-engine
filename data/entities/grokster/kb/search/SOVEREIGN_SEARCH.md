@@ -107,3 +107,4 @@ websearch (T1) → SearXNG (T2) → Brave (T2.5) → Semantic Scholar (T3) → F
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ SEARCH ⬡ 2026-07-22*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KB v2.1.3 ⬡ 2026-08-26*
