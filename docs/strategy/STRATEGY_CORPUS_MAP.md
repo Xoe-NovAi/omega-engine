@@ -25,6 +25,7 @@
 ## §0 DOC-1 Override Table (2026-08-17 — disposition flips)
 
 | Item | Old disposition | New disposition (DOC-1) |
+| **2026-08-25 First Light Express + Study + Remediation** | Two-council run (112-finding audit → decree; dev-prep → SPEC-A..E + launch package), context-infra remediation (HMC excision, soul_promote, codex fix, infra_inventory organ), gap wave (16 mutations). SSOT: HANDOFF_TO_KALI_FLE_STUDY_20260825.md §10 file map; artifacts: data/council/20260825-094633-first-light*/, fle_study_20260825/, gap_investigation_20260825/. Standing laws: Hop Rule, M11 Arm-Relay, dual-channel telemetry, exit-code honesty. | 63+ commits c7d65cd3..69ded52b | kali/MaKaLi/fleet |
 |------|-----------------|--------------------------|
 | G-1 (Gemma workhorse) | ACTIVE P0 | **PARKED** — post-debut; manual §0 |
 | W-1 (WARP pool) | ACTIVE P0 | **PARKED** — post-debut; manual §0 |
