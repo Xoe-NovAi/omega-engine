@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # probe_free_models.sh — Periodic availability probe for free OpenRouter models
 # Usage: run via cron every 30 min; logs to data/metrics/free_model_probes.jsonl
-# Probes: GLM-5.2 (free), MiniMax M3 (free), MiMo V2.5 (OpenCode Zen)
+# Probes: GLM-5.2 (free), MiniMax M2.7 (free), MiniMax M3 (free), Gemma 4 31B (free), Gemma 4 26A4B (free), MiMo V2.5 (OpenCode Zen)
 # Outputs: JSONL with timestamp, model, success, latency_ms, http_status, rate_limit headers
 
 set -euo pipefail
@@ -125,10 +125,19 @@ echo "=== Free Model Probe $(date -u '+%Y-%m-%d %H:%M:%S UTC') ==="
 # Probe 1: GLM-5.2 free
 probe_model "z-ai/glm-5.2:free" "glm52"
 
-# Probe 2: MiniMax M3 free
+# Probe 2: MiniMax M2.7 free
+probe_model "minimax/minimax-m2.7:free" "minimax_m27"
+
+# Probe 3: MiniMax M3 free
 probe_model "minimax/minimax-m3:free" "minimax_m3"
 
-# Probe 3: Nemotron 3 Ultra free (control — known stable)
+# Probe 4: Gemma 4 31B free
+probe_model "google/gemma-4-31b-it:free" "gemma4_31b"
+
+# Probe 5: Gemma 4 26A4B free
+probe_model "google/gemma-4-26b-a4b-it:free" "gemma4_26a4b"
+
+# Probe 6: Nemotron 3 Ultra free (control — known stable)
 probe_model "nvidia/nemotron-3-ultra-550b-a55b:free" "nemotron_ctrl"
 
 echo ""
