@@ -221,3 +221,8 @@ Agents currently write static prose. To replicate the Architect's dashboarding i
 * *"What variable in this narrative will change over time (e.g., instruction frequency, error rates)?"*
 * *"How can I instrument this document so the Engine can automatically track its degradation or growth?"*
 * *"What is the 'taper point' where manual intervention becomes automated enforcement for this specific feature?"*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free / Nemotron 3 Ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -271,3 +271,8 @@ exit $FAIL
 - **LAST STEP — Consultant page attempt**: `task(subagent_type="kali", task_id="ses_fdef2be4effe4pAaLXCTUx62GO")` [REPORT] attempted per mission order. Result recorded immediately after this file write.
 
 *⬡ OMEGA ⬡ MK-KALI ⬡ SYNTHESIS_ARM_REPORT_C2 ⬡ INPUT-TO-FUSION ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

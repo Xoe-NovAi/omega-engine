@@ -46,3 +46,8 @@
 
 ---
 *⬡ OMEGA ⬡ RESEARCHER ⬡ INDUSTRY-COUNTERFACTUAL v1.0 ⬡ HYPOTHESIS: CONFIRMED-DIRECTIONAL, MOAT HALF-SPENT ON 3 OF 4 UNIQUE LAYERS ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -559,3 +559,8 @@ Frequency
 ---
 
 *End of Section 12 — verified on disk*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: AMBIGUOUS | multi-model session; candidates: gemma-4-31b-it, minimax-m3-free, deepseek-v4-flash-free, gemini-3.5-flash
+actual_models(Tier0): gemma-4-31b-it, minimax-m3-free, deepseek-v4-flash-free, gemini-3.5-flash, mimo-v2.5-free, big-pickle
+-->
+

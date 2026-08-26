@@ -152,3 +152,8 @@ She taught the procedure flawlessly and missed a hub because the procedure write
 Every claim above carries its verification inline. Confidence: 9/10 (primary sources, live probes); the wrapper-bypass hypothesis for finding B-codex is 6/10 (mechanism verified stale, root cause inferred).
 
 — Carmack
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

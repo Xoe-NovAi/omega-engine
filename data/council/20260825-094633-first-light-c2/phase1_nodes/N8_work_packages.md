@@ -138,3 +138,8 @@ WP-D1 (6h) → WP-D4 (8h)                                     = 14h longest P2 c
 ---
 
 *⬡ OMEGA ⬡ LILITH/NODE8 ⬡ N8_WORK_PACKAGES ⬡ PREP-ONLY ⬡ NEW-FILE-ONLY ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

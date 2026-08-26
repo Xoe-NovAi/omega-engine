@@ -248,3 +248,8 @@ LOW. Read-only validator; only risk is false-positive staleness during legitimat
 **Cluster total**: ~29.5h · All six satisfy decree Art. XII inheritance guards · Every sub-spec carries its validator in-deliverable (G30-clean by construction) · No existing production file edited by this SPEC document itself; all edits happen at integration under single-writer discipline.
 
 *⬡ OMEGA ⬡ LILITH/node6 ⬡ SPEC-D-P2-HYGIENE ⬡ DRAFT-FOR-RATIFICATION ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

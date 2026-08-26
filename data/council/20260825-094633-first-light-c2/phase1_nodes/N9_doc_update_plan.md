@@ -180,3 +180,8 @@ SPINE-9: All MaKaLi Stage-6 single-writer tracker acts (PIVOT_LOG #D-entry, PGTL
 - Known nuance carried forward honestly: M8 false-positive is a COMMENT line at `src/omega/ics.py:197` ("from segments"), not an import (SPEC-A correction of mission phrasing).
 
 *⬡ OMEGA ⬡ LILITH/node9 ⬡ N9_DOC_UPDATE_PLAN ⬡ PREP-ONLY ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

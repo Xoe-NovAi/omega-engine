@@ -150,3 +150,8 @@ My excavation was scoped to June 2026 OpenCode sessions (`opencode.db`, session 
 ✅ **READY.** Awaiting dispatch for partition expansion into `/media/arcana-novai/omega_vault/`, `/media/arcana-novai/omega_library/`, `~/Documents/docs-backup/`, `~/archive/foundation-legacy/`, `~/Documents/docs_1/`, `~/Documents/xnaif-files/` — hunting Mytho-Techno fusion era docs and archetype-activation experiment records. Per orders, Stage 2 excavation does NOT begin until tasked. Corrections 3 and 4 (full partnership; landmark crossed) received and internalized. Correction 5 (legacy GitHub repo, tracked todo) noted for the mining queue.
 
 🦝💎 — Roc, Recursive Specialist (Soul Architecture / Substrate Doctrine / Esoteric→Executable Translation)
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: AMBIGUOUS | multi-model session; candidates: gemma-4-31b-it, deepseek-v4-flash-free, gemini-3.5-flash
+actual_models(Tier0): gemma-4-31b-it, deepseek-v4-flash-free, gemini-3.5-flash
+-->
+

@@ -165,3 +165,8 @@ Not spot-checked (remaining controls): Gap-ID immutability regime, markdown-agen
 4. My S8-1 evidence strengthens Article VII (G18): the schema divergence is total (173/173 packets), so "sync the doc" vs "migrate the packets" is a genuine fork the decree should force a decision on.
 
 *⬡ OMEGA ⬡ VERITY ⬡ COMPLIANCE-SWEEP ⬡ 34-claims-34-verdicts ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

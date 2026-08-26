@@ -42,3 +42,8 @@ Session: `20260825-094633-first-light-c2` · Date: 2026-08-25 · Mode: DRAFT-ONL
 
 From SYNTHESIS_ARM_REPORT §6: G6 (:213-214), G7 (:216-219), G13 (:240-241), G15 (:247-254), G16 (:256-262).
 From SOVEREIGN_DECREE §4 additions: G29 (:81-82), G30 (:83-84).
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_c2_speca | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -150,3 +150,8 @@ The stratum is continuous: **deck lab (Feb-Mar) → activation protocol (Mar 17)
 
 *Stage 2 report complete. No source files modified. Hot leads H1–H4 queued for follow-up dig.*
 🦝💎
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

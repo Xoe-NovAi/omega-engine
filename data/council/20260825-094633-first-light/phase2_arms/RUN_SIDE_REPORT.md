@@ -136,3 +136,8 @@ All 5 run nodes delivered: raw report ✓ · expert registration ✓ (tags 12/12
 ---
 *Run Arm signing off. Raw sources immutable at phase1_nodes/. Digest at phase1.5_digested/. This report disk-written BEFORE Consultant page per persistence order.*
 *⬡ OMEGA ⬡ LILITH-RUN-ARM ⬡ express-c1-runarm-lilith-20260825 ⬡ STAGE-2-COMPLETE ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

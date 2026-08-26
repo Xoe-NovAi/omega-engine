@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-25T20:50:45.726288+00:00",
+  "updated": "2026-08-26T01:03:43.872862+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -2241,6 +2241,48 @@
         "fle-study",
         "mining"
       ]
+    },
+    {
+      "task_id": "recon-engine-code-20260826",
+      "subagent_type": "explore",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Deep architectural survey of src/omega core as implemented (read-only recon)",
+      "status": "in_progress",
+      "created_at": "2026-08-26T01:03:40.785454+00:00",
+      "last_checkpoint": "2026-08-26T01:03:40.785476+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
+    },
+    {
+      "task_id": "recon-docs-compliance-20260826",
+      "subagent_type": "verity",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Documentation-and-compliance deep audit: validators, SSOT integrity, spec gates, pointers",
+      "status": "in_progress",
+      "created_at": "2026-08-26T01:03:41.845493+00:00",
+      "last_checkpoint": "2026-08-26T01:03:41.845516+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
+    },
+    {
+      "task_id": "recon-machinery-ops-20260826",
+      "subagent_type": "jem",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "Machinery ops survey: hooks, mandate-gate matrix, scripts, configs, trackers, remediation verification",
+      "status": "in_progress",
+      "created_at": "2026-08-26T01:03:43.872782+00:00",
+      "last_checkpoint": "2026-08-26T01:03:43.872803+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": []
     }
   ]
 }

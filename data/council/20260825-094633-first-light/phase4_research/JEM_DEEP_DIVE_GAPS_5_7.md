@@ -136,3 +136,8 @@ wc -l -c data/coordination/TASK_REGISTRY.json                        # → 2035 
 Plus live MCP calls: `task_registry_query(tags=["express:first-light"])` → count 0 (repro); `grep` tool on data/coordination → "No files found" (repro).
 
 *⬡ OMEGA ⬡ JEM ⬡ JEM_DEEP_DIVE_GAPS_5_7 ⬡ recon-only-complete ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

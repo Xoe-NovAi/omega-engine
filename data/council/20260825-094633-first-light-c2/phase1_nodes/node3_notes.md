@@ -38,3 +38,8 @@ Session: 20260825-094633-first-light-c2 · Date: 2026-08-25 · domain=specc
 - **Naming-collision check result**: no existing file collides with `docs/specs/team_infra/SPEC_C_P1_SECURITY_POSTURE_RECORDS.md` (ls verified: only SPEC_A/SPEC_B/SPEC-D/SPEC-E present). HOWEVER `N8_work_packages.md` spec-inputs list expects `SPEC-C-p1-security-posture.md` — pointer drift for integration to reconcile (NOT me; bright line). Logged in spec §naming.
 - Sibling specs use mixed naming conventions (underscores vs hyphens); I followed my mission's exact assigned path.
 - Did NOT read phase4_research files (out of scope for these two work items; decree + synthesis + node reports sufficient).
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_c2_specc | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -1115,3 +1115,8 @@ No CRITICAL-HALTED. No TOOL-CHAIN-COLLAPSE (one MCP grep false-negative worked a
 - LSP/YAML diagnostics on write-back: lines 374-377 carry a final lesson as a BARE top-level mapping (`- narrative:` seq-item glued after the closed list) instead of a proper `- id:/tier:/...` list item inside the session block. Any `yaml.safe_load` of the file raises — meaning the soul-distillation staging file for the Run Arm's own entity cannot be machine-ingested until repaired. Corroborates lilith-20260821-002 (soul loop operationally open) with a NEW concrete failure instance: not just approval-flip missing — the staging file itself is unparseable.
 - Also observed: `config/omega.yaml:73` duplicate map key (Map keys must be unique) — pre-existing, out of council scope, logged for S7 follow-up.
 - **Acceptance criteria**: `python3 -c "import yaml;yaml.safe_load(open('data/entities/lilith/proposed_lessons.yaml'))" && echo OK` → OK after restructuring lines 374-377 into a proper list item with id/tier/category fields.
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

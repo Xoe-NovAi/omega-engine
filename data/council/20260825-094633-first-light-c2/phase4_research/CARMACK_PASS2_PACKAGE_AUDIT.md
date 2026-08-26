@@ -101,3 +101,8 @@ One commit closes F-1/F-4/F-5 (errata + ruling propagation + N8 §3 supersession
 **Confidence**: 9/10 — every finding reproduced against primary artifacts this session; no interpretation-chain findings above 6/10 were included.
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ CARMACK_PASS2_PACKAGE_AUDIT ⬡ RECON-ONLY ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

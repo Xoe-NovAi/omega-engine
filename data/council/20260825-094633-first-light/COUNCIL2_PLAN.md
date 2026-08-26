@@ -41,3 +41,8 @@ Validator-in-same-deliverable · pair-bind review rule · severity-by-impact · 
 - S5: MaKaLi fuses → SOVEREIGN_DECREE_C2.md + dev-team launch package
 - S6: gates (tracking validator + new-spec validator-first checks; temple-grade/test recorded as documented exceptions per C1 baseline) → WAKE_STATE final briefing → lock cycle
 - S7: Express terminus — Architect wakes to both decrees + spec library + launch package + Q1-Q5 queue
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

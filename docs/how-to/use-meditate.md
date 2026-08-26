@@ -352,3 +352,8 @@ An implementation passes iff these observable properties hold. Anyone reading th
 **Schema layer disclosure**: `src/omega/meditate/` (protocol.py, lens_registry.py) formalizes these contracts — `AntiCollapseLaw` enum names, `MeditationResult.is_complete` completeness check — but has never executed a meditation: no runtime consumer exists and `oracle.meditate()` is an aspirational comment only (protocol.py:6). The command is prompt-level truth; the schema is parallel specification. Without WAD config the registry falls back to 5 generic anonymous lenses (protocol.py:300) — a degraded roster distinct from the documented ten.
 
 *⬡ OMEGA ⬡ MEDITATE-HOWTO ⬡ v2.3 ⬡ 2026-08-26*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_meditate_howto | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

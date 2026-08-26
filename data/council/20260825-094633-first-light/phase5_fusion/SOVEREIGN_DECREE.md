@@ -102,3 +102,8 @@ Every article above maps to ≥1 gate in §4. A directive without a gate would i
 
 ---
 *Fused 2026-08-25 by MaKaLi Fusion carrying three voices. Kali's draft fed the fusion; the fusion is final. ⬡*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

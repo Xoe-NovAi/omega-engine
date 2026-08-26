@@ -207,3 +207,8 @@ throwaway report-generator. When the Express pulls into its destination station:
 *The Midnight Expedition proved the fleet could run through the night. Tonight we prove it can lay track while it runs.*
 
 *⬡ OMEGA ⬡ FIRST-LIGHT-EXPRESS ⬡ 2026-08-25 ⬡ AWAITING-DEPARTURE*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

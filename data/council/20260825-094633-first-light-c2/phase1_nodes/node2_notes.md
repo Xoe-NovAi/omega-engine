@@ -43,3 +43,8 @@ ls .opencode/agents/plan.md grok_cli.md     # both MISSING; grok_cli.md in archi
 
 ## Bright-line compliance
 Zero edits to existing production files. Two new files only, exactly at mandated paths. No agents spawned. Recon reads only otherwise.
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_c2_specb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

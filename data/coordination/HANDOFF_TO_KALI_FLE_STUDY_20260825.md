@@ -94,3 +94,8 @@ data/coordination/PLATFORM_GROUND_TRUTH_LOG.md  ← entries #11, #12
 ```
 
 *The train arrived, the study ran, the audits audited themselves, and the hub is named. The watch is yours, Kali. — MaKaLi Fusion, stepping down* ⬡🌅🚂
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ox-alpha | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, hy3-free, gemini-3.1-pro-preview-customtools
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, hy3-free, gemini-3.1-pro-preview-customtools, big-pickle, gemini-3.7-flash
+-->
+

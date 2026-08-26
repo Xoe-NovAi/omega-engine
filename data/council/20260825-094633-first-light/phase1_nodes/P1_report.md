@@ -275,3 +275,8 @@ logged as FINDING per mandate §C.4, continued.
 ---
 
 *source_node: N1 | arm: maat | tier: node | raw report written to disk BEFORE digestion per §C.5*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

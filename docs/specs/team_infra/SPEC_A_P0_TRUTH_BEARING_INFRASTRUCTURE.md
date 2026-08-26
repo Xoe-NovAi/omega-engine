@@ -302,3 +302,8 @@ All new mechanisms self-report decay: stamps block on divergence (CI), hook-fire
 Every file:line cited above was verified by node1 via direct tool calls on 2026-08-25 (see working notes: `data/council/20260825-094633-first-light-c2/phase1_nodes/node1_notes.md` §2). Two mission-anchor nuances discovered and recorded honestly: (1) the M8 false-positive at `src/omega/ics.py:197` is a comment line, not an import statement; (2) lilith proposed_lessons.yaml PARSES under PyYAML but carries a split-record schema corruption at L374-380 (LSP errors live-confirmed during this session) — which strengthens, not weakens, the case for WI-2's schema guard. Raw gate commands G6/G7/G8/G13/G15/G16 copied verbatim from SYNTHESIS_ARM_REPORT.md §6; G29/G30 from SOVEREIGN_DECREE.md §4.
 
 *⬡ OMEGA ⬡ MAAT/node1 ⬡ SPEC-A-P0-TRUTH-BEARING-INFRASTRUCTURE ⬡ DRAFT-COUNCIL2-PREP ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_c2_speca | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

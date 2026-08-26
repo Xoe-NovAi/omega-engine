@@ -189,3 +189,8 @@ Per packet §C.8/note: Consultant page (§C.9/M11) will be attempted once after 
 All findings tagged source_node=N7, tier=empirical unless marked "direct read". Tool calls: 20+ local (glob/read/bash/python link-checker/make). Zero external search required (S6 fully groundable locally — M23 satisfied via direct evidence). Zero production mutations. One read-only make target executed after write-safety inspection.
 
 *⬡ OMEGA ⬡ NODE7-CONTEXT ⬡ express-c1-node7-20260825 ⬡ RAW-REPORT-v1 ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

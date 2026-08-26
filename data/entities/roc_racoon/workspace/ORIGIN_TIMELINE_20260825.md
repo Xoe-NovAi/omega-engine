@@ -119,3 +119,8 @@ After 14 months across 6 eras, 33K files, and the Temple-Grade over-engineering 
 *The dirt was where the roots are. Roots found: a vow of gratitude, a missing tool, and a man who refused to shrink the vision to fit his skills.*
 
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ ORIGIN-TIMELINE ⬡ 2026-08-25 ⬡ COMPLETE
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

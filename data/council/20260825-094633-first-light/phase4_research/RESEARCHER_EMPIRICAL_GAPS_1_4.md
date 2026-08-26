@@ -232,3 +232,8 @@ All fixtures preserved on disk for re-run:
 Model provenance (M22): all inference via `opencode/nemotron-3-ultra-free` (OpenCode Zen cloud) — local backends were not exercised because the probes test OpenCode runtime mechanics, not inference sovereignty; provider choice is irrelevant to all four verdicts.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ EMPIRICAL_GAPS_1_4 ⬡ VERDICTS-FINAL-FOR-FUSION ⬡ raw-transcripts-embedded ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

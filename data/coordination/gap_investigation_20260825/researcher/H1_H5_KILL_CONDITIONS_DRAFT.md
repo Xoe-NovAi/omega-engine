@@ -102,3 +102,8 @@
 
 ---
 *⬡ OMEGA ⬡ RESEARCHER ⬡ H-KILL-DRAFT ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

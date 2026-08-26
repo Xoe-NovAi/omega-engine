@@ -228,3 +228,8 @@ Self-verification (Decree §6): every directive herein maps to a gate — G25 (e
 | Working notes | `data/council/20260825-094633-first-light-c2/phase1_nodes/N7_notes.md` |
 
 *⬡ OMEGA ⬡ LILITH/NODE7 ⬡ SPEC-E v1.0 ⬡ PREP-ONLY ⬡ validator-first ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

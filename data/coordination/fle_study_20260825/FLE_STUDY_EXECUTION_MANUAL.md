@@ -79,3 +79,8 @@ The dev team is not done until these three artifacts are committed to the engine
 3.  **`proposed_lessons.yaml` (L1→L2→L3)**: The sociological and prompt-engineering lessons (especially regarding the identity corruption and the Hop Rule) must be distilled and injected into the `makali_fusion` and `kali` souls.
 
 *The engine is a mirror. This study is how we polish the glass.* ⬡
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: gemini-3.1-pro | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, hy3-free
+actual_models(Tier0): x-preview-f-free, hy3-free
+-->
+

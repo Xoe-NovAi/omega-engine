@@ -186,3 +186,8 @@ built-in defaults (`*.env` read=**ask**, `doom_loop`=ask, `external_directory *`
 - Production mutations: NONE (writes confined to `data/council/20260825-094633-first-light/phase1_nodes/` + `/tmp/opencode/n6/`)
 
 *source_node: N6 · tier: S3-technical-mechanics · raw report written to disk BEFORE digestion per §C.5*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

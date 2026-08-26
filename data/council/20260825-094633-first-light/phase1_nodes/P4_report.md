@@ -292,3 +292,8 @@ Pattern: skill health correlates strongly with recency — everything authored a
 
 ---
 *⬡ OMEGA ⬡ NODE4 ⬡ N4-INTEGRATION ⬡ S5-SKILLS ⬡ FIRST-LIGHT-C1 ⬡ RAW-REPORT-v1 + F20-STAMP*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

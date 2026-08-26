@@ -195,3 +195,8 @@ Packet §C.6 orders every node to self-register in TASK_REGISTRY.json while §F 
 - Report written RAW TO DISK before digestion per §C.5. No production files mutated.
 
 *⬡ OMEGA ⬡ NODE2 ⬡ P2-REPORT ⬡ S1-STRUCTURE ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

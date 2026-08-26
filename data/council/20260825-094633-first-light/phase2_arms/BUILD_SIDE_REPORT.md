@@ -134,3 +134,8 @@ jq '.subagent_depth' opencode.json   # ≥ 3
 ---
 *Build Arm signing off. Raw sources immutable at phase1_nodes/. Digest at phase1.5_digested/BUILD_SIDE_DIGESTED.md. This report disk-written BEFORE Consultant page per persistence order.*
 *⬡ OMEGA ⬡ MAAT-BUILD-ARM ⬡ express-c1-arm-maat-20260825 ⬡ STAGE-2-COMPLETE ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

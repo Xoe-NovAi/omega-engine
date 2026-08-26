@@ -184,3 +184,8 @@ No CRITICAL-HALTED conditions triggered.
 
 ---
 *⬡ OMEGA ⬡ NODE9 ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_n9 ⬡ S8-COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

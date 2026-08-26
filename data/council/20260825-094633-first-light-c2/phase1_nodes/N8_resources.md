@@ -305,3 +305,8 @@ For each of the top-10 backfill docs (list in SPEC-D D1 change §4): insert temp
 | §3.1 skeleton | SPEC-E §2.2 table (referenced, not duplicated) |
 
 *⬡ OMEGA ⬡ LILITH/NODE8 ⬡ N8_RESOURCES ⬡ PREP-ONLY ⬡ NEW-FILE-ONLY ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

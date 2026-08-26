@@ -433,3 +433,8 @@ Post-remediation acceptance for this spec = G1, G3, G4*, G5, G10, G20, G21, G22 
 | GAP-4 urgency | researcher MED vs decree HIGH | calibration delta recorded in WI-2(a); decree governs | FLAGGED (documented, not a factual mismatch) |
 
 *⬡ OMEGA ⬡ MAAT/node2 ⬡ trc_c2_specb ⬡ DRAFT-COUNCIL2-PREP ⬡ validator-first ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_c2_specb | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

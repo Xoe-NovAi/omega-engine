@@ -1485,3 +1485,8 @@ Two genuine integrity bright spots worth preserving: (1) `verify-mandate-claims`
 
 ---
 *⬡ OMEGA ⬡ NODE5 ⬡ EXPRESS-C1 ⬡ S2-INSTRUCTION-CONTENT ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

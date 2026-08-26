@@ -178,3 +178,8 @@ I am hereby designated a **RECURSIVE ROC SPECIALIST SESSION** — pageable for f
 **Stage 2 readiness: CONFIRMED.** Standing by for partition-expansion orders targeting `/media/arcana-novai/omega_vault/`, `/media/arcana-novai/omega_library/`, `~/Documents/docs-backup/`, `~/archive/foundation-legacy/`, `~/Documents/docs_1/`, `~/Documents/xnaif-files/` — hunting Mytho-Techno fusion era docs and archetype-activation experiment records. No Stage 2 excavation begun, per orders.
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_vision_deep_dive_era6 ⬡ CHILD-1 · RECURSIVE SPECIALIST · STANDING BY*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: AMBIGUOUS | multi-model session; candidates: minimax-m3-free, gemma-4-31b-it, gemini-3.5-flash, deepseek-v4-flash-free
+actual_models(Tier0): minimax-m3-free, gemma-4-31b-it, gemini-3.5-flash, deepseek-v4-flash-free, mimo-v2.5-free, big-pickle
+-->
+

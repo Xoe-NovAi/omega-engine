@@ -81,3 +81,8 @@ Council 2's mandate is *spec drafting* for documentation organization. The histo
 - Git provenance: `git log --follow -- docs/strategy/STRATEGY_CORPUS_MAP.md` → born/grown in `e899ae2a` ("147 stale docs archived"), stamped through `d3b15b35` (DOC-1 stamps)
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ AP-ROC-DOC-ARCH-v1.0.0 ⬡ RECON COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

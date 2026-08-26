@@ -40,3 +40,8 @@ While Track-D executes in `feat/sprint-1-execution`, Track-S will run the follow
    `opencode-sessions-explorer-list-tool-failures`
 3. **Fuse & Report:**
    Compile M1, M2, and M3 into `FLE_METRICS_BASELINE.md`.
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

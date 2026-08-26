@@ -126,3 +126,8 @@ Six lessons staged to `data/entities/makali_fusion/proposed_lessons.yaml` (mkf-2
 - [ ] Paste Part 2 bootstrap prompt
 - [ ] Confirm first [TELEMETRY] block arrives with hydration exit-code recorded
 - [ ] Study Track continues in fork#1 (Phases 2-4) — no coordination needed until SYNC-2
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ox-alpha | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, gemini-3.1-pro-preview-customtools, gemini-3.7-flash, hy3-free
+actual_models(Tier0): x-preview-f-free, gemini-3.1-pro-preview-customtools, gemini-3.7-flash, hy3-free
+-->
+

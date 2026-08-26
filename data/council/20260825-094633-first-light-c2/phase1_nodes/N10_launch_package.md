@@ -152,3 +152,8 @@ Order honors: Art. X tier order (P0→P1), N9 SPINE constraints, N8 §3 sequenci
 | Runtime baseline | Decree §4: "make test = FAIL (3 failures; M8-red = false positive per G29 analysis)" — quoted, not re-derived |
 
 *⬡ OMEGA ⬡ LILITH/node10 ⬡ N10_LAUNCH_PACKAGE ⬡ PREP-ONLY ⬡ NEW-FILE-ONLY ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -252,3 +252,8 @@ Verified 2026-08-25: `ls docs/specs/team_infra/` shows SPEC_A/SPEC_B/SPEC-D/SPEC
 
 ---
 *⬡ OMEGA ⬡ MAAT/node3 ⬡ trc_c2_specc ⬡ DRAFT-COUNCIL2-PREP ⬡ validator-first ⬡ 2026-08-25*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_c2_specc | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

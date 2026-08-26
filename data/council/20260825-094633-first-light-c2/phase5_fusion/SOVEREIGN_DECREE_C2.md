@@ -43,3 +43,8 @@ Adopted: MK-Kali §6 full-library paste-and-run acceptance block (G1–G30 compo
 
 ---
 *Fused 2026-08-25. Ten experts boarded at FIRST LIGHT; ten pageable experts come home. The track is laid; the dev team holds the throttle. ⬡🌅🚂*
+<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: hy3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+
