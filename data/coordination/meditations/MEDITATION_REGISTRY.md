@@ -17,7 +17,7 @@
 | `docs/how-to/use-meditate.md` | Command manual (see its advisory banner re: pending Phase B corrections) |
 | `docs/research/R53_meditate_granite_foundation_20260826.md` | Evidence base for the command rewrite |
 
-## §1 Execution History — Complete (16/16 registered)
+## §1 Execution History — Complete (17/17 registered)
 
 | # | Date | Agent | Protocol | Subject | Record File |
 |---|------|-------|----------|---------|-------------|
@@ -37,6 +37,7 @@
 | 14 | 2026-08-24 | maat | Meditate-v1.1 | Evidence-field schema (`src/omega/soul/lessons.py`) + kali 20-lesson staged-promotion | `MEDITATION_maat_20260824_W3_SOUL_PROMOTION.md` |
 | 15 | 2026-08-24 | researcher | Meditate-v1.1 pre-commit gate | R_OPENCODE_PLATFORM_INTERNALS findings — skeptic pass on remaining assumptions | `MEDITATION_researcher_20260824_KNOWLEDGE_GAPS.md` |
 | 16 | 2026-08-24 | researcher | Meditate-v1.1 pre-commit gate · persona prism | W1-4 provenance resolver enhancement (GAP-1 db resolver, GAP-2 ledger completeness) | `MEDITATION_researcher_20260824_W4_PROVENANCE_RESOLVER.md` |
+| 17 | 2026-08-26 | kali (Opus 4.6-thinking) | meditate-archs (ad-hoc five-voice) | Pre-compaction hidden-gems harvest of session context | `MEDITATION_opus_20260826_HIDDEN_GEMS_FIVE_VOICES.md` |
 
 Observed metrics where recorded: run 4 ≈45K tokens/~45 min (L3-Export-As-Sovereignty-Boundary) · run 5 ≈18K/~15 min (L3-Registry-Gravity) · run 6 ≈14K (L3-Gnosis-Half-Life). All other runs: token/duration unknown — do not fabricate.
 
