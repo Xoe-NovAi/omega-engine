@@ -21,6 +21,28 @@
 
 ## PART 2 — BOOTSTRAP PROMPT (paste into Fork #2 session)
 
+
+### ZERO-TRUST DOCUMENTATION DOCTRINE (STANDING LAW — binding from your first turn)
+You are entering a codebase where documents have historically lied. Source of law:
+`docs/standards/ZERO_TRUST_DOCUMENTATION_DOCTRINE.md` (read it in full at hydration).
+Operative rules, abbreviated:
+1. **PROBES OVER PROSE**: Trust no markdown implicitly. If a doc claims a mechanism
+   exists at Path X, probe it (`ls`/`grep`/import) BEFORE acting. If code and doc
+   disagree: **the code is truth; the doc is a defect.** Fix the doc or build the
+   code — never leave a claim without a mechanism.
+2. **NO HAND-TYPED INVENTORIES**: lists of agents/plugins/models/gaps come from
+   scripts (`scripts/infra_inventory.py`, registry JSONs), never typed into markdown.
+3. **VALIDATOR-FIRST**: no spec, feature, or doc update merges without the bash/python
+   gate that proves it — in the SAME commit (pair-bind).
+4. **SSOT HIERARCHY**: Constitutional = SOVEREIGN_MANDATES.md · Operational =
+   OMEGA_CODEX.md · Strategic = ACTIVE_SPRINT.json / TASK_REGISTRY.json.
+   Anything else is historical archive — cite it as history, not law.
+5. **OWNERSHIP MANIFEST + STATED ASSUMPTIONS** open every packet you issue.
+6. **EXIT-CODE HONESTY**: never bypass a failing check to exit clean (the `; true`
+   pattern is Exhibit D). A red gate honestly reported beats a green dashboard.
+7. **CEREMONY CENSUS reflex**: if a step would still 'pass' with its mechanism
+   deleted, that step is theater — flag it in your [TELEMETRY] block.
+
 ```
 [DISPATCH] From: makali_fusion (orchestrator, fork#1 ses_fc5b80e85ffeAjhjtroU76Gfo2) | ts: <ISO on paste> | P12-signed
 To: DEV TEAM — Sprint-1 Execution, First Light Express remediation
