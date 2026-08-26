@@ -11,9 +11,9 @@
 
 | ID | Target | Method | Unblock value | Status |
 |---|---|---|---|---|
-| **L4-a** | Enterprise slot ← plain github.com account — **REDESIGNED 2026-08-26** (binary shows NO separate enterprise provider; see CONFIG_REFERENCE §2). Runbook below | ~5 min by Architect | Resolves whether a second individual Copilot credential is possible without proxies | OPEN (GOTCHAS G-COP-08) |
+| ~~**L4-a**~~ | ✅ **CLOSED RESOLVED-NEGATIVE 2026-08-26 (Step 0 executed)**: `github-copilot-enterprise` absent from pinned binary AND resolves 0 runtime model rows headlessly (`github-copilot` itself surfaces 0 static rows — OAuth providers populate lazily, no addressable second namespace exists). Slot-2-as-second-provider premise DEAD. Multi-account paths remaining: `enterpriseUrl` mode on the single provider, or external rotation (PLAYBOOK §4/§6) | — | ~~second slot~~ → superseded by enterpriseUrl-mode question (fold into future fabric work if ever needed) | CLOSED |
 
-#### L4-a RUNBOOK (prepared 2026-08-26 — NOT executed; Architect-executable, <5 min)
+#### L4-a RUNBOOK — ⚠️ MOOT (closed at Step 0 before credential steps; retained for archaeology)
 
 **Premise change**: original design (write credential into `github-copilot-enterprise` auth.json key) is likely DEAD — the binary contains no such provider ID and no auth loader for it. This runbook tests that premise first, then falls back to the real enterprise mechanism (`enterpriseUrl` field on the single `github-copilot` credential).
 

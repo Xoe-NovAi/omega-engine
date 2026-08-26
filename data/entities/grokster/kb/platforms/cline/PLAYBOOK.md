@@ -74,3 +74,6 @@ always-on rule files (no frontmatter) inside `.clinerules/`.
 - **Legitimate provisioning path**: app.cline.bot → Settings → API Keys (free account). ClinePass subscription = account-level entitlement on the SAME key, not a new credential.
 - **Runnable NOW, ~2 min total**: extract key → `.env` → P1 gate curl → P3 authenticated `/models` (doubles as entitlement discovery pre-ClinePass GO/NO-GO) → P7 namespace confirm.
 - **Endpoint hygiene**: always full `https://api.cline.bot/api/v1` (shorthand `/v1` 404s). Fabric-side: config/providers.yaml cline entry still lacks api_key wiring — same extraction fixes both surfaces.
+
+## 🎯 DECISION CLOSED (2026-08-26): ClinePass = GO (recommended, execution pending payment)
+Rationale: sanctioned entitlement path (ToS-clean); paid gate verified as PURE ENTITLEMENT on the already-extracted static key (P7 error-differentiation); zero config delta post-subscribe (key in .env, paste recipe pre-staged in R_CLINE_COPILOT_PROVIDER_SETUP §3.2); $9.99/mo restores D-557 workhorse class (cline-pass/deepseek-v4-flash, 1M/384K). Only Architect-executable step: subscribe at app.cline.bot → Settings. Post-subscribe unknowns (P8 cap enforcement, P10 quota magnitudes) become first-day probes.

@@ -43,3 +43,6 @@
 
 ---
 *⬡ OMEGA ⬡ GROKSTER ⬡ KB v2.1.3 ⬡ 2026-08-26*
+
+## §6 Rotation Plugin Verdict (2026-08-26 — decision closed)
+`@geeder/opencode-copilot-multi-auth` v0.4.0 security scan: **CLEAN** (own code touches only ghe.com + proxy-ep-derived copilot-api hosts; zero telemetry patterns; sole dep = official SDK; keytar/OS-keychain storage). Deleted from package cache anyway — dormant copies invite drift, and N>2 fan-out stays gated on V-1 vault era under house doctrine. Reinstall if ever needed: `bun add @geeder/opencode-copilot-multi-auth` (recorded here as the only trace).
