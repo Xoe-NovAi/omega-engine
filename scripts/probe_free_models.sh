@@ -10,7 +10,16 @@ LOG_DIR="${HOME}/Documents/Xoe-NovAi/omega-engine/data/metrics"
 LOG_FILE="${LOG_DIR}/free_model_probes.jsonl"
 # Get OpenRouter API key - try sources in order of preference
 get_openrouter_key() {
-    # 1. Try Cline secrets first (verified working for inference)
+    # 1. Try or-key.md first (user-provided key)
+    if [[ -f "${HOME}/Documents/Xoe-NovAi/omega-engine/or-key.md" ]]; then
+        local key=$(cat "${HOME}/Documents/Xoe-NovAi/omega-engine/or-key.md" 2>/dev/null)
+        if [[ -n "$key" && "$key" != "None" ]]; then
+            echo "$key"
+            return
+        fi
+    fi
+    
+    # 2. Try Cline secrets first (verified working for inference)
     if [[ -f "${HOME}/.cline/data/secrets.json" ]]; then
         local key=$(python3 -c "
 import json
@@ -24,13 +33,13 @@ print(d.get('openRouterApiKey', ''))
         fi
     fi
     
-    # 2. Try environment variable
+    # 3. Try environment variable
     if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
         echo "${OPENROUTER_API_KEY}"
         return
     fi
     
-    # 3. Try auth.json
+    # 4. Try auth.json
     if [[ -f "${HOME}/.local/share/opencode/auth.json" ]]; then
         local key=$(python3 -c "
 import json

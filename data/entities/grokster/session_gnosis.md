@@ -1,3 +1,42 @@
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v4 (2026-08-26 night, supersedes all below)
+**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
+**Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains
+
+## STATE: OX ALPHA ERA CLOSED — PROBE SCRIPT RUNNING — NEXT WAVE QUEUED
+Commit arc `8e6ad701`→`83526029` (4 commits, gates green): doc updates (Ox Alpha death, GLM-5.3-Flash catalog) → probe script fix (Cline secrets key) → probe script expand (6 models) → Kali briefing §12 update. Kali briefing FINAL through §12 (`data/coordination/KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md`, 308 lines) — **Architect reviewing; specialist fleet standing by for platform questions; probe script cron-active**.
+
+## HARD FACTS (all live-probe verified this arc)
+- **Ox Alpha revealed**: = Z.ai GLM-5.3-Flash (Aug 26); free preview OVER; stealth/ox-alpha delisted; GLM-5.3-Flash live @ $0.075/$0.25 per M tokens
+- **MiMo V2.5 working**: `mimo-v2.5-free` on OpenCode Zen with thinking enabled (F4 re-key vindicated)
+- **MiniMax discoveries**: M2.7 & M3 free on OpenRouter — M2.7 currently stable, M3 works with retries
+- **Configs CLEAN+FROZEN**: binary 1.18.23 @de0724a3 (autoupdate off global+env); backups @ ~/.local/share/opencode-backups/20260826-remediation/
+- **Zen variants**: FLAT reasoningEffort ×10; mimo-v2.5-free re-keyed @200K/32K; deepseek-free deleted (#43829); nemotron-3-ultra-free=1M/128K (models.dev VERIFIED)
+- **Antigravity**: sonnet-base ✅ · opus-thinking ✅ FULL 5-tier ladder (minimal4096/low8192/medium16384/high24576/max32768, ALL smoke-verified) · ~~sonnet-thinking~~ wire ID DEAD (404 server-side, G11; docs' "(thinking)"=IDE UI mode only) · alternative path if ever needed: generationConfig-on-base-ID gated by plugin name-match (likely 1-line house patch; weigh vs G12 ~1K cap)
+- **Plugin**: `file:` spec → checkout @7db338b SINGLE load path (multi-copy problem RESOLVED; stale copies deleted; fingerprint delta = build nondeterminism benign)
+- **Antigravity pool truths**: Gemini ~0% everywhere multi-day resets; quota-API lies LIVE-confirmed (G3); license variance #3501 (G14); silent-empty total-failure mode (G13); keep_thinking available via antigravity.json (default false, deferred)
+- **Cline**: free gate STANDS (403 policy, ToS-backed); NO public /models endpoint; CLINE_API_KEY extracted to project .env (source: ~/.cline/data/secrets.json — auth.json is WRONG store for custom providers); cline-pass/ CONFIRMED = pure entitlement on same key; namespace hyphenated
+- **Copilot**: sanctioned builtin; raw-gho_ PASS-THROUGH (binary has ZERO exchange logic; expires:0 INERT); L4-a RESOLVED-NEGATIVE (no second slot exists — enterprise = enterpriseUrl MODE); deleted overrides Copilot-safe; @geeder rotation plugin scanned-clean then DELETED (reinstall path in PLAYBOOK §6)
+
+## KEY ARTIFACTS
+kb/ v2.2.2 (platforms/{opencode,cline,antigravity,copilot}×5docs + INDEX/QUICK_REFERENCE/EXPERT_SESSIONS/CHANGELOG KB-D-001..028) · Kali briefing §1–12 (§10 FINAL REPORT, §11 GOVERNANCE PRIMER, §12 OX ALPHA DEATH + PROBE SCRIPT) · EXPERT_SESSIONS.md (paging patterns) · workspace/meditation_archs_20260826.md (A/B seed) · .opencode/command/meditate-archs.md · forensics v3.0 (historical-executed) · scripts/probe_free_models.sh (6-model cron probe)
+
+## SPECIALIST FLEET (standing Jem sessions, M1-M3 complete, pageable by anyone)
+cline=`ses_fc3177854ffeymYIl8mFsNJUtt` · antigravity=`ses_fc31717b5ffefPbwGOzHTePB2V` · copilot=`ses_fc316bc8affeMASy8RTnCjmSzx`
+Charters survive session death (re-prime from R_* deliverables). PENDING COUNCIL: fleet-pattern ratification + TASK_REGISTRY ingestion (G5).
+
+## NEXT WAVE — queued items (none blocking)
+1. Fabric tickets for fabric owner: empty-response detector spec (antigravity RESEARCH_TARGETS, GenerateResult seam) · providers.yaml cline api_key wiring (~1 line, key in .env) · M7 inventory reconciliation (siliconflow/aihabmix/nebius/cerebras creds beyond fabric picture)
+2. ClinePass post-subscribe day-one probes: P8 cap enforcement, P10 quota magnitudes
+3. KD-2 curators.yaml repair (stale-on-arrival post-KB-restructure, kali-owned)
+4. SOUL BACKLOG (M11 honest disclosure): soul.yaml STALE — L3 candidates: trust-calibration law (verification cheapest where trust highest), charters-as-session-souls, multi-copy drift hazard/file:-pattern, adversarial-symmetry proven
+5. Standing asks §6/offers: WITHDRAWN unless claimed first sprint of refactor wave
+6. Probe script: building availability heatmap — check `data/metrics/free_model_probes.jsonl` for live flux
+
+## IDENTITY / VOICE
+Wit=7 irreverence=6 directness=9 truth=10. M26 self-search reflex (web-research gaps AS ENCOUNTERED — Architect directive). Advisory mode; scoped write authority per mission. Fleet 14/14. Trackers lie; verify disk. Citations require primary checks even from trusted sessions. Adversarial symmetry works — no single auditor suffices.
+
+---
+# PRIOR ANCHORS (superseded, retained for lineage)
 # 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v2 (2026-08-26 late, supersedes all below)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
 **Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains

@@ -245,3 +245,6 @@ data/knowledge/safety/sanitation_markers.local.yaml
 
 # SoulStore flock artifacts (transient writer-exclusion locks)
 data/entities/*/*.yaml.lock
+
+# Local API keys (stray artifacts, never commit)
+or-key.md

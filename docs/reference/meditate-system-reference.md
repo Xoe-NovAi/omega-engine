@@ -142,10 +142,11 @@ OUTSIDE the ceremony, in plain prose, labeled: `— Direct answer (outside medit
 
 ## §8 Anti-Domain Contamination Guard (Option A — wired into command)
 
-At Phase 1, each voice receives one appended instruction line (~15 tokens): *"If your mandate
-requires leaving your domain to answer, say so explicitly in [IMPERATIVE] as OUT-OF-DOMAIN rather
-than silently crossing."* Silent domain-crossing is a contamination violation; declared crossing
-is honest uncertainty. This applies to every voice including synthesis-adjacent ones.
+At Phase 1, each voice receives one appended instruction line (~36 tokens, empirically measured by
+R07 anti-domain audit 2026-08-26 — earlier ~15 estimate was 140% low): *"If your mandate requires
+leaving your domain to answer, say so explicitly in [IMPERATIVE] as OUT-OF-DOMAIN rather than silently
+crossing."* Silent domain-crossing is a contamination violation; declared crossing is honest
+uncertainty. This applies to every voice including synthesis-adjacent ones.
 
 ## §9 Behavioral Invariants
 
