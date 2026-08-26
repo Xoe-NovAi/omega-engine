@@ -3,7 +3,7 @@
   "campaign": "docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md",
   "phase": "EXECUTION_MINIMAL",
   "started": "2026-08-15T00:00:00Z",
-  "updated": "2026-08-26T12:11:44Z",
+  "updated": "2026-08-26T12:34:03Z",
   "owner": "kali",
   "status": "in_progress",
   "status_detail": "Two parallel arcs CLOSED 2026-08-26, refactor wave UNLOCKED. (A) Grokster platform-remediation arc complete (cdfc5798\u2192c7592e4a): config clean+frozen, KB v2.2.2, specialist fleet standing, ClinePass GO recommended \u2014 sole action = Architect subscription click. Briefing: data/coordination/KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md (261L, \u00a710 FINAL REPORT authoritative). (B) Meditation documentation campaign: R53 granite (a0a43c82) closed 9 hypotheses; strategy doc v1.1.0 (a7df6d67) defines three-doc architecture w/ \u00a712 authority map; consolidation pass (6fe30368) rebuilt registry 17/17 + contamination banners; live command corrected per R53 D1/D2/D8 (10755f4c); Opus meditate-archs run registered (256d62f6). NEXT WAVE gates: Architect rulings D10/D11/anti-domains + three-doc prototype ratification + ClinePass click + fleet-pattern/G5 ratification. Then: three-doc production (Maintainer Guide first) + Engine refactor + fabric tickets (empty-response detector, cline api_key wiring, M7 reconciliation).",
@@ -647,7 +647,8 @@
     "GEMINI-NOTEBOOK free-tier-only (3 accounts, 30 DR/mo, 2-NB, notebooklm-py[mcp], master_token.json, SDP \u00a710 gate)",
     "All 27 Sovereign Mandates verified compliant post-Carmack review",
     "Team-Study #1 (2026-08-23) refined closeout execution \u2014 see data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md",
-    "2026-08-26: FULL DEV SPRINT GO received from Architect. Reorg gate lifted. Queue repopulated per confirmed order (refactor wave first, Phase B next). ZS released; GN remains auth-blocked (researcher); CI Ph1 + DS/KD full workstreams queued for next wave after this sprint closes."
+    "2026-08-26: FULL DEV SPRINT GO received from Architect. Reorg gate lifted. Queue repopulated per confirmed order (refactor wave first, Phase B next). ZS released; GN remains auth-blocked (researcher); CI Ph1 + DS/KD full workstreams queued for next wave after this sprint closes.",
+    "2026-08-26: DEV SPRINT WAVE 1 CLOSED (4dac5962). Residual: command compression 501-><=320 lines deferred (surgical D4/D10/D11/anti-domain wiring applied; SR is rebuild target). GN auth-blocked; CI Ph1 + DS/KD full workstreams = next wave."
   ],
   "fle_campaign": {
     "status": "COMPLETE",
@@ -672,31 +673,31 @@
     {
       "step": 2,
       "action": "Three-doc meditation production: Maintainer's Guide \u2192 System Reference \u2192 Invocation Guide (per MEDITATE_DOCUMENTATION_STRATEGY.md \u00a711 write order), then doc-llm-validate + ceiling checks",
-      "status": "in_progress",
+      "status": "completed",
       "owner": "kali"
     },
     {
       "step": 3,
       "action": "Fabric ticket FT-1: empty-response detector spec (providers returning empty on stream failure)",
-      "status": "ready",
+      "status": "completed",
       "owner": "delegated"
     },
     {
       "step": 4,
       "action": "Fabric ticket FT-2: providers.yaml cline api_key wiring (~1 line)",
-      "status": "ready",
+      "status": "completed",
       "owner": "delegated"
     },
     {
       "step": 5,
       "action": "Fabric ticket FT-3: M7 local-first inventory reconciliation (config vs code provider registry)",
-      "status": "ready",
+      "status": "completed",
       "owner": "delegated"
     },
     {
       "step": 6,
-      "action": "Close-out: validate all deliverables, update TASK_REGISTRY/CORPUS_MAP, soul distillation, final report",
-      "status": "backlog",
+      "action": "Close-out: validate all deliverables, update TASK_REGISTRY/CORPUS_MAP, soul distillation, final report \u2014 DONE 2026-08-26 commit 4dac5962",
+      "status": "completed",
       "owner": "kali"
     }
   ]
