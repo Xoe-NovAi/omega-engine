@@ -184,3 +184,13 @@
 claimed_model: GNOSIS | verdict: UNANCHORED | session refs not found in DB
 actual_models(Tier0): n/a
 -->
+
+---
+
+## Session Update — 2026-08-26 (ses_fe8cf0b39ffeL3L8eaMEj3CW9H)
+**Anchor refreshed** (prior anchor: 2026-08-08).
+- **Identity**: Cross-Platform Expertise Specialist (expanded from Grok-only per Architect directive 2026-08-18). Curator of `platforms` + `grok_ecosystem` domains per curators.yaml/D-569.
+- **This arc**: platform gnosis map → entity-specialization architecture (M10/D126: KBs not agents) → DP blueprint (D-569 Horizon 3) → debut ground-truth sweeps → Kali briefings + cross-session relay (protocol proven HOP1-3).
+- **KB state**: v2.0.0 — opencode/ module live (G1-G20 traps), other_platforms/, EXPERT_SESSIONS.md pageable index, dedup stubs, INDEX rebuilt. Debts logged in CHANGELOG.
+- **L3 candidates**: L3-MCPAsUniversalCoordinationBus · L3-PlatformPrimitivesDictateFleetTopology · L3-TrackersLieVerifyDisk (ground-truth doctrine).
+- **Next**: offers #1-3 to Kali standing; Codex/Claude Code research-first lists await dispatch.

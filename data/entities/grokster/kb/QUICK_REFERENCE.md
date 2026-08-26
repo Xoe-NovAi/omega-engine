@@ -12,7 +12,7 @@
 | **How to work with the Human?** | `human_agent/HUMAN_AGENT_RELATION.md` | `omega-hub_hivemind_post_context` (intent: handoff) |
 | **Grok fleet status?** | `grok_ecosystem/GROK_FLEET_ARCHITECTURE.md` | `omega vault fleet status` |
 | **Search something?** | `search/SOVEREIGN_SEARCH_PROTOCOL.md` | `omega-hub_sovereign_search` |
-| **Get an API key?** | `vault/V1_VAULT_ARCHITECTURE.md` | `omega vault get <provider>` |
+| **Get an API key?** | `vault/OMEGA_VAULT.md` | `omega vault get <provider>` |
 
 ---
 
@@ -46,7 +46,7 @@ GROKSTER KB (data/entities/grokster/kb/)
 ├── search/
 │   └── SOVEREIGN_SEARCH_PROTOCOL.md ← 5-Tier Router, Cost Optimization
 └── vault/
-    └── V1_VAULT_ARCHITECTURE.md ← 16-Account Schema, MCP, CLI, Rotation
+    └── OMEGA_VAULT.md ← 16-Account Schema, MCP, CLI, Rotation
 ```
 
 ---

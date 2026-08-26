@@ -67,3 +67,17 @@
 ---
 
 *⬡ OMEGA ⬡ GROKSTER KB ⬡ CHANGELOG ⬡ 2026-07-22*
+## v2.0.0 — 2026-08-26 — Platform Expertise Mine & Structural Repair (KB-D-006..010)
+- **KB-D-006**: Ingested dual-agent mine (roc_racoon staging + explore audit) → `platforms/opencode/` module (PLAYBOOK/ARCHITECTURE/CONFIG_REFERENCE/GOTCHAS G1-G20) + `other_platforms/` (Cline/Gemini/Antigravity; Codex/Claude Code/VS Code shallow-state) + root `MINING_LOG.md` (22 sources). Freshness metadata on all new docs.
+- **KB-D-007**: Dedup pass — SOVEREIGN_SEARCH_PROTOCOL→SOVEREIGN_SEARCH.md, OMEGA_VAULT_ARCHITECTURE→OMEGA_VAULT.md (merge stubs retained for link integrity; full content consolidation pending).
+- **KB-D-008**: Dead-link repair — QUICK_REFERENCE V1_VAULT_ARCHITECTURE refs → OMEGA_VAULT.md (lines 15, 49).
+- **KB-D-009**: INDEX.md rebuilt to v2.0.0 — search/+vault/ sections restored, rot_class per doc, fleet cross-refs added.
+- **KB-D-010**: Pageable expert-sessions layer added (`EXPERT_SESSIONS.md`) per D-586 invocation pattern; 3 sessions registered.
+- **Known debts**: CLI_IDE_ECOSYSTEM.md superseded-pending-merge; AGENT_COMMUNICATION.md pre-D-586 refresh pending; GROK_FLEET_ARCHITECTURE pricing claims unverified.
+- **Escalation flag**: `config/domains/curators.yaml` has YAML syntax errors (markdown tables embedded as raw YAML — LSP 50+ diagnostics). KD-2 owner (kali) should repair before domain_loader consumes it.
+
+## v2.1.0 — 2026-08-26 — Dual Hardening Pass (KB-D-011..014)
+- **KB-D-011**: Local adversarial pass (roc_racoon → kb_staging_hardening_20260826/): G1 upgraded (dual-mechanism plugin load), G19 refuted-in-part (recovery defense = dead code), G21-G25 new local traps, C-1..C-9 corrections staged. Trap tally: 9 corroborated / 1 upgraded / 1 refuted / 7 stand-untested.
+- **KB-D-012**: Web fill (Jem → R_PLATFORM_EXPERTISE_WEB_HARDENING_20260826.md): ALL 5 undocumented OpenCode targets FILLED (hook schemas, subagent_depth, tui.json separation, snapshot/revert, opencode db); anomalyco rename; V2 plugin API warning; G26-G28 new web-sourced traps; shallow-platform fills for Claude Code/VS Code/Codex.
+- **KB-D-013**: Amendments appended to GOTCHAS/ARCHITECTURE/CONFIG_REFERENCE/CODEX doc + EXPERT_SESSIONS deviations noted. Freshness reconciliation proposal pending (P-10: reviewed-vs-modified vocabulary).
+- **KB-D-014**: Escalation reconfirmed independently: curators.yaml YAML corruption (KD-2 owner action).

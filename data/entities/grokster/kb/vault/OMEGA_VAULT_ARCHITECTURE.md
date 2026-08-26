@@ -25,3 +25,6 @@ The fleet configuration (`fleet_config.yaml`) defines two primary provider pools
 - **Cookie Rotation is the Bottleneck**: The Web Grok accounts require browser automation (e.g., Playwright) to log in, extract new cookies, and update the vault before the 24-48h expiry. This rotation job must be triggered by a Vault Watcher 6 hours before expiry.
 - **XDG Compliance**: It is critical that the Vault adheres to XDG Base Directory specifications (`~/.config/omega/`, `~/.local/share/omega/`) to ensure portability and avoid polluting the user's home directory.
 - **Chaos Testing**: The Vault must survive concurrent access from 8+ parallel subagents. Temple-Grade CI must include chaos tests for concurrent writes and corruption recovery.
+
+
+> ⚠️ **STATUS: MERGED 2026-08-26** — Content consolidated into `vault/OMEGA_VAULT.md`. This file retained for reference integrity; treat survivor as canonical. Per KB ADR-002 dedup pass (KB-D-006).

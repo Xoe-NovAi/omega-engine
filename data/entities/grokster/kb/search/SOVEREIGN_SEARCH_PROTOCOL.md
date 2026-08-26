@@ -40,3 +40,6 @@ The Omega Engine utilizes a cost-aware, failure-resilient 5-tier search routing 
 - **The Search Router Logic**: The engine must intelligently classify query intent to route to the correct tier. For example, "latest news" goes to T1, "research paper" goes to T3, and "verify independent source" goes to T2.5 (Brave).
 - **The Cost Trap**: Relying solely on Exa or Firecrawl for all queries will drain budgets rapidly. The T2.5 Serper+Jina combo is the ultimate budget hack for high-volume tasks.
 - **Academic Zero-Cost Backbone**: Semantic Scholar combined with arXiv provides a world-class academic research graph for exactly $0. This should be the default for any deep research tasks assigned to `@jem` or `@researcher`.
+
+
+> ⚠️ **STATUS: MERGED 2026-08-26** — Content consolidated into `search/SOVEREIGN_SEARCH.md`. This file retained for reference integrity; treat survivor as canonical. Per KB ADR-002 dedup pass (KB-D-006).
