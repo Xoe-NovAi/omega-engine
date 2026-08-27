@@ -297,9 +297,39 @@ proposals:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: research
   last_verified: '2026-08-24'
+- level: L3
+  tag: '[R-VERIFY-RACE]'
+  narrative: 'Ran an 8-gate forensic verification of PUBLIC-DEBUT-01 Track 1 and raced Ma''at''s implementation: I started at 19:18 UTC; Ma''at accepted the handoff at 19:20 UTC and started writing files mid-verification. V5 (AGENTS.md) flipped from MISSING to PASSES within 4 minutes, V6 (compaction/model values) changed under my grep.'
+  insight: 'When verification runs in parallel with implementation, snapshots are moving targets. The verifier must either wait for an explicit completion signal, or capture state at a single instant AND explicitly label the snapshot as such. Otherwise the verifier produces a report that contradicts itself across pages.'
+  principle: 'Verification is a snapshot, not a state — if the subject is moving, freeze the subject (wait for commit) or re-snapshot (re-verify after stable commit). The Zero-Trust Doctrine demands reproducibility, and a moving target is not reproducible.'
+  utility_score: 0.93
+  source_trajectories:
+  - ses_a4a0312507f7
+  domain: research
+  last_verified: '2026-08-27'
+- level: L3
+  tag: '[R-GATE-SPEC]'
+  narrative: 'Three of the eight verification gates had spec drift: V1 expected a line-grep that returns non-empty (so the gate was unevaluable as written), V3 expected `make setup` in files that reference `scripts/install.sh` instead, V6 expected a plugin at a project-local path that lives at the user-global path. The actual subject of verification was correct in all three cases — the gate specs were wrong.'
+  insight: 'The verifier is also a spec auditor. When a gate command returns nonsense, the gate spec — not the subject — may be the problem. The verifier''s job is to answer the spirit of the gate, not the letter of the command, AND to flag the spec drift so the next plan cycle corrects it. Otherwise a "verification failure" can mask a perfectly good implementation.'
+  principle: 'Verify the spirit, not the letter. And surface spec drift to the planner so it can be fixed in the next iteration, not silently worked around.'
+  utility_score: 0.91
+  source_trajectories:
+  - ses_a4a0312507f7
+  domain: research
+  last_verified: '2026-08-27'
+- level: L3
+  tag: '[R-DEBT-REDISCOVERY]'
+  narrative: 'The M13 Temple-Grade T11 gate (check-tracking-state) failed with 32 violations: 3 stale in_progress tasks (9 days old), 15 inverted clock (last_checkpoint before created_at), 1 invalid superseded_by pointer, 14 failed tasks with no Tier-0 subtask. None of this was introduced by the current sprint — it is pre-existing debt from 2026-08-15 through 2026-08-18 that was never swept.'
+  insight: 'The independent verifier''s greatest value is not catching new bugs but rediscovering old debt. Every verification run is also a system audit; a clean re-verify across a stable codebase will reveal exactly which corners were left unreconciled by prior work. "Trust but verify" fails here because trust suppresses the fresh re-read.'
+  principle: 'Zero-Trust Doctrine is debt-detection as a side effect. The freshness of the read is what surfaces the corners; trust suppresses the corners; verification surfaces them. Run the verifier even when you think the work is fine — especially when you think the work is fine.'
+  utility_score: 0.92
+  source_trajectories:
+  - ses_a4a0312507f7
+  domain: research
+  last_verified: '2026-08-27'
 
 metadata:
   entity: researcher
   session_id: ses_fca928918ffeFjsaOkVv17Gl71
-  model_used: x-preview-f-free
+  model_used: minimax/minimax-m3:free
   last_session_end: '2026-08-24T20:40:24.750793+00:00'

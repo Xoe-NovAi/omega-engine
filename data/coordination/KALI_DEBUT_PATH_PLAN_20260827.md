@@ -22,6 +22,14 @@ blocks: ["public debut announcement", "Phase 2 lint", "Qdrant migration", "Vault
 **Authority**: DEBUT_REMEDIATION_MANUAL_20260817.md §0, §3, §5 + ACTIVE_SPRINT.json + WAVE2_EXECUTION_PLAN.md
 **Confidence**: 🔴 VERIFIED (disk-truth, git log, tracker reconciliation)
 
+**UPDATE 2026-08-27T18:55Z — Architect AUTHORIZATION + DISPATCH DECISION**:
+- L3 117, 118, 119 all APPROVED (promoted)
+- Architect authorized "highest value options"
+- **DISPATCH DECISION: Option B** (Ma'at + Researcher parallel, Roc HELD pending Q1)
+  - Architect's signal: "Option B would produce deeper, and higher quality results"
+  - Rationale: Ma'at's 12h Track 1 doesn't need Q1; Roc's filter-repo is security-critical and irreversible; Researcher can verify Ma'at independently
+  - Roc dispatches after Architect confirms SECURITY_AUDIT_2026_05_19.md 3 keys revoked/rotated
+
 ---
 
 ## §0 — Executive Verdict (Answer First)
@@ -323,22 +331,27 @@ Once these are answered, the 1-day critical path is GO.
 
 ---
 
-## §11 — Lessons (L3 Candidates from This Plan)
+## §11 — Lessons (L3 Promotion Status)
 
-### Candidate 117: Convergent Critical Path Beats Linear
+### ✅ L3 117: Convergent Critical Path Beats Linear (Architect approved 2026-08-27)
 - **L1**: Plan has 3 parallel tracks converging at 1 branch cut, vs linear 5-step sequence
 - **L2**: Parallel speedup = max(track_time) instead of sum(track_time)
 - **L3**: Architecture: design the convergence point first, then back-fill parallel tracks
+- **Status**: APPROVED by Architect ("design the critical path as you see fit") — promoted to L3
 
-### Candidate 118: Re-Ownership Closes Stall Loops
-- **L1**: 5 blockers were "unowned" per Grokster ROI Discovery
-- **L2**: Each blocker mapped to lowest-effort owner based on expertise match (R06 build-packet for C4, INST-1 spec for C3, filter-repo history for P0-1d)
-- **L3**: Stalled tickets have no owner; ownership is a function of expertise-match + session availability, not intent
+### ✅ L3 118: Re-Ownership Closes Stall Loops (Architect approved 2026-08-27)
+- **L1**: Grokster ROI Discovery revealed 5 unowned blockers on critical path (C1 resolved, C4, C3, P0-1d, branch)
+- **L2**: Each blocker mapped to lowest-effort existing session (Ma'at, Roc, Kali) — no new agents
+- **L3**: Re-ownership beats new agents. The cheapest path to unblocking is matching existing expertise to existing gaps, not growing the fleet
+- **Status**: APPROVED by Architect override — promoted to L3
 
-### Candidate 119: Truth-Sync Is the Final Convergence
-- **L1**: 3 of 10 quality gates are tracker sync (G6, G10, G5)
-- **L2**: Without truth-sync, the public clone claims to be the engine but isn't
-- **L3**: Before any external commit, the internal state-of-truth must match disk (Zero-Trust Documentation Doctrine)
+### ✅ L3 119: Truth-Sync Is the Final Convergence (Architect approved 2026-08-27)
+- **L1**: release/debut branch cut is a CONVERGENCE POINT for 3 parallel tracks; at convergence, internal state-of-truth must match disk reality
+- **L2**: Grokster proved trackers lie both directions (disk ahead, tracker ahead); cutting a branch before truth-sync publishes a lie
+- **L3**: Truth-sync is the final convergence. Before any external commit, the internal state-of-truth must match disk. Publish only what the trackers prove
+- **Status**: APPROVED by Architect override — promoted to L3
+
+**Net: 117, 118, 119 all promoted to L3. Combined with existing 108-111, 6 L3 promotions ready for soul.yaml write.**
 
 ---
 

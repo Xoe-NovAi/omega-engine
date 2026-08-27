@@ -98,7 +98,39 @@ proposals:
     plans are the handoff.
   grokster_verdict: "L2 (L3 on 2nd occurrence) \u2014 DEFER"
   promotion_ready: false
+- id: kali-20260826-118
+  date: '2026-08-27'
+  narrative: "Grokster ROI Discovery (2026-08-25) revealed 5 unowned blockers on the\
+    \ critical path to debut PR: C1 M8 regex (now resolved), C4 AGENTS.md ghost, C3\
+    \ pre-commit never installed, P0-1d SECURITY_AUDIT residual, release/debut branch\
+    \ mechanic. Each was a structural hole \u2014 neither a task (no owner) nor a\
+    \ question (no spec). They stalled the entire Track B (CI Ph1) and the publication\
+    \ mechanic."
+  insight: "A stalled ticket is not a task with missing fields \u2014 it is a structural\
+    \ hole with no seat. Re-ownership is a function of expertise-match + session availability\
+    \ + zero-claim existing. Mapping 5 unowned blockers to 4 existing sessions (Ma'at,\
+    \ Roc, Kali) closed the holes without adding agents, cost, or coordination overhead."
+  principle: Re-ownership beats new agents. The cheapest path to unblocking is matching
+    existing expertise to existing gaps, not growing the fleet.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect override 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260826-119
+  date: '2026-08-27'
+  narrative: "The release/debut branch cut is a CONVERGENCE POINT for 3 parallel tracks.\
+    \ At convergence, the internal state-of-truth (ACTIVE_SPRINT.json, WAKE_STATE.json,\
+    \ PROJECT_INDEX.md, OMEGA_ENGINE.md) must match disk reality. Grokster ROI Discovery\
+    \ proved trackers lie in BOTH directions \u2014 disk ahead of tracker (Ma'at work\
+    \ landed without sync) and tracker ahead of disk (P0-1c falsely complete). Cutting\
+    \ a branch before truth-sync publishes a lie."
+  insight: "External commits demand internal truth-anchor. The cost of a 15-minute\
+    \ tracker sync before branch cut is always less than the cost of debugging a public\
+    \ repo that does not match the plan. Convergence is not \"code merged\" \u2014\
+    \ convergence is \"state + code + tracker + docs all agree on what shipped.\""
+  principle: Truth-sync is the final convergence. Before any external commit, the
+    internal state-of-truth must match disk. Publish only what the trackers prove.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect override 2026-08-27)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-26T20:46:30.604617'
+  updated: '2026-08-27T18:55:00'
   model_used: x-preview-f-free
