@@ -40,7 +40,30 @@ repos:
         additional_dependencies: [types-requests, types-PyYAML, types-cryptography]
         args: ["--ignore-missing-imports", "--no-strict-optional"]
 
-  # Security - detect secrets
+  # Security - detect secrets (C3-P0-1c — gitleaks is the canonical gate)
+  # [INST-1-C3] gitleaks + trufflehog wired to pre-commit AND CI
+  # Per DEBUT_REMEDIATION_MANUAL §5 P0-1c: planted sk-/csk-/AIza fixture must fail.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        # Enforce on all files (including staged for commit)
+        # allow_staged: false is the default; commits with secrets are blocked.
+        args: ['--redact', '--verbose']
+        stages: [pre-commit, pre-push]
+
+  # Trufflehog (deep secret scanner — verifies gitleaks did not miss entropy)
+  # [INST-1-C3] Backup layer; if gitleaks is bypassed, trufflehog catches entropy.
+  - repo: https://github.com/trufflesecurity/trufflehog
+    rev: v3.97.1
+    hooks:
+      - id: trufflehog
+        # Filesystem mode — scans staged files; much faster than git history scan.
+        args: ['filesystem', '--no-update-check', '--fail', '--only-verified']
+        pass_filenames: false
+        stages: [pre-commit]
+
+  # Legacy detect-secrets (kept for backwards compatibility — not the gate)
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
@@ -84,6 +107,17 @@ repos:
         language: python
         types: [python, yaml, toml, json]
         pass_filenames: true
+
+      # [INST-1-C3] Local C3 secret scanner (gitleaks mirror, no network)
+      # Catches sk-, csk-, AIza, ghp_, xai-, age-secret-key patterns.
+      # This is the FALLBACK if gitleaks/trufflehog cannot be installed.
+      - id: omega-c3-secret-scan
+        name: C3 Secret Scan (sk/csk/AIza/ghp/xai)
+        entry: python scripts/ci_secret_scan.py
+        language: python
+        types_or: [python, yaml, toml, json, shell, markdown]
+        pass_filenames: true
+        stages: [pre-commit]
 
       # Fast mandate compliance checks (per Carmack Verdict — moved from runtime Vetter to CI)
       - id: omega-check-m1-anyio
