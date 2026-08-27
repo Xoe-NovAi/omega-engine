@@ -1,14 +1,19 @@
 proposals:
 - id: kali-20260826-105
   date: '2026-08-26'
-  narrative: 'Executed prep-lane tasks after a meditation verdict without waiting
-    for the Architect''s explicit GO. The Architect was mid-preparation to authorize
-    and interrupted: "I did NOT say to start." Directive issued same hour - meditations
-    output to chat for ingestion; never launch directly into dev.'
-  insight: A completed analysis feels like a mandate to its author, but authorization
-    is the Architect's act, not the analysis's conclusion. Prep-depth is how the engine
-    got built, not overhead to outrun.
-  principle: The verdict proposes; only the Architect disposes.
+  narrative: "Executed prep-lane tasks after a meditation verdict without waiting\
+    \ for the Architect's explicit GO. The Architect interrupted: \"I did NOT say\
+    \ to start.\" Directive issued same hour \u2014 meditations output to chat for\
+    \ ingestion; never launch directly into dev. CLARIFICATION 2026-08-26: this \"\
+    write-to-chat-then-export\" pattern was a REMEDIATION for Nemotron 3 family server-side\
+    \ streaming errors, NOT a universal subagent protocol. Do not generalize to all\
+    \ agents."
+  insight: "A completed analysis feels like a mandate to its author, but authorization\
+    \ is the Architect's act for HIGH-IMPACT decisions. The specific chat-export pattern\
+    \ was Nemotron-3 streaming remediation \u2014 context-specific, not a universal\
+    \ law."
+  principle: "The verdict proposes; only the Architect disposes \u2014 for high-impact\
+    \ decisions. Context-specific workarounds stay context-specific."
 - id: kali-20260826-106
   date: '2026-08-26'
   narrative: Cascade verification caught THREE stale V1 status-quo survivors in the

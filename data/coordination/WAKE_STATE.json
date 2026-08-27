@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T22:42:33Z",
+  "updated": "2026-08-26T23:30:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -302,7 +302,7 @@
       "headroom-ai real (67.7k stars), savings grounded (Carmack-discounted)",
       "headroom M7 violation: defaults to cloud model, local = 0% savings"
     ],
-    "wave2_readiness": "READY \u2014 pending compaction. Two Architect decisions recorded. All research closed. Expert sessions persistent."
+    "wave2_readiness": "READY \u2014 Track B unblocked on C1 (resolved), remains blocked on C3 (pre-commit) + C4 (AGENTS.md). Track D/F unblocked (ZS resolved)."
   },
   "pre_wave_maintenance_20260826": {
     "status": "COMPLETE",
@@ -396,10 +396,10 @@
       "G8": "Grokster kb/ tree \u2192 PUB-1 exclusion check"
     },
     "blocking_initial_pr_nobody_owns": [
-      "C1 M8 regex fix (unowned, 10 min, infinite gate)",
-      "AGENTS.md reconstruction ownership (WP-E exists, no GO, no owner)",
-      "P0-1c falsity remediation (tracker says completed, nobody owns correcting)",
-      "ZS adjudication (HOLISTIC plan contradicts itself: System 3 zRAM vs System 6 zswap)",
+      "C1 M8 regex fix (RESOLVED \u2014 commit f5a1c075, ics.py:197 reads 'parts')",
+      "AGENTS.md reconstruction ownership (WP-E exists, no GO, no owner \u2192 Ma'at proposed)",
+      "P0-1c falsity remediation (tracker says completed, nobody owns correcting \u2192 Ma'at proposed)",
+      "ZS adjudication (RESOLVED \u2014 zswap + NVMe ratified, HOLISTIC line 150 purged, CARMCK_REVIEW stamped)",
       "release/debut branch mechanic (D-553 names strategy, no work package owns executing)"
     ],
     "impact_on_wave2": {
@@ -408,5 +408,19 @@
       "track_c_ds_kd": "KD-1 pre-answered by engineering/ module; KD-3 affinity presets need Carmack matrix values not mimo",
       "track_f_li_hr": "ZS adjudication needed (zswap+NVMe vs zRAM-only) \u2014 Architect ruling required"
     }
-  }
+  },
+  "zs_adjudication_resolved_20260826": {
+    "decision": "zswap + NVMe swap file, zRAM DISABLED (D-526/D-581/D-584 + ADR-2026-08-10-001)",
+    "canonical_statement": "Per D-526/D-581/D-584 + ADR-2026-08-10-001: Omega Engine uses zswap + NVMe swap file with zRAM DISABLED. Never run both (D-527 LOCKED). Any doc stating \"zRAM not zswap\" is superseded.",
+    "purge_executed": true,
+    "purge_actions": [
+      "HOLISTIC_ARCHITECTURE_PLAN_20260820.md line 150 stamped SUPERSEDED (Option A)",
+      "CARMCK_REVIEW_HEADROOM_20260820.md: file header + 2 inline SUPERSEDED stamps",
+      "ZSWAP_DECISION_FINAL_CLARITY.md written (R03) + status EXECUTED"
+    ],
+    "regression_guard_recommended": "Verity grep test: \"zRAM (not zswap)\" in data/coordination/*.md \u2192 fail if found (ignore SUPERSEDED-marked lines)",
+    "track_d_f_status": "UNBLOCKED \u2014 Phase 0 (ZSWAP) can proceed",
+    "track_f_status": "UNBLOCKED \u2014 NVMe swap config aligns with zswap decision"
+  },
+  "meditation_protocol_law_corrected": "2026-08-26 Architect clarification: \"write-to-chat-then-export\" was Nemotron 3 family streaming-error remediation, NOT a universal subagent protocol. Do not generalize."
 }
