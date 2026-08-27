@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T23:30:00Z",
+  "updated": "2026-08-26T23:45:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -422,5 +422,33 @@
     "track_d_f_status": "UNBLOCKED \u2014 Phase 0 (ZSWAP) can proceed",
     "track_f_status": "UNBLOCKED \u2014 NVMe swap config aligns with zswap decision"
   },
-  "meditation_protocol_law_corrected": "2026-08-26 Architect clarification: \"write-to-chat-then-export\" was Nemotron 3 family streaming-error remediation, NOT a universal subagent protocol. Do not generalize."
+  "meditation_protocol_law_corrected": "2026-08-26 Architect clarification: \"write-to-chat-then-export\" was Nemotron 3 family streaming-error remediation, NOT a universal subagent protocol. Do not generalize.",
+  "agent_collab_templates_20260826": {
+    "report": "AGENT_COLLAB_TEMPLATES_20260826.md",
+    "purpose": "Study Kali\u2194Grokster collaboration as template for fleet agent-to-agent work",
+    "turns": "2 each (0 hop violations)",
+    "protocol": "Asymmetric paging: pager drives, pagee responds in own session",
+    "templates_identified": [
+      "A: Specialist Consultation (this collab)",
+      "B: Adversarial Review (Grokster ROI Discovery pattern)",
+      "C: Build-Packet Handoff (Wave 2 execution pattern)",
+      "D: Co-Authored Spec (specialist-fleet ratification)",
+      "E: Status Sync (compact-anchor pattern)"
+    ],
+    "key_benefits": [
+      "Zero hop violations by design (asymmetric)",
+      "100% item disposition (no limbo)",
+      "L3 lessons surfaced (108-111 + 4 new candidates 113-116)",
+      "Durable contributions (Zero-Trust Doctrine, confidence-tags, charter pattern, DB extraction)",
+      "Clean commit arc (3 focused commits)",
+      "Compaction-ready (anchors synced)"
+    ],
+    "l3_candidates_new": {
+      "113": "Asymmetric paging prevents hop violations",
+      "114": "Bounded turns force closure",
+      "115": "Disposition tables eliminate limbo",
+      "116": "Dual output (chat + file) ensures auditability"
+    },
+    "lesson_105_correction": "Nemotron-3 remediation = DB extraction via opencode-sessions-explorer MCP tools (Grokster \u00a713.5), NOT \"write to chat then export\""
+  }
 }
