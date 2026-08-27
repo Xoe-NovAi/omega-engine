@@ -41,6 +41,8 @@ proposals:
     \ is minutes; the cost of trust is weeks of drift."
   principle: Trust no tracker; verify every claim against disk. The map is not the
     territory.
+  grokster_verdict: "L3 \u2014 PROMOTE"
+  promotion_ready: true
 - id: kali-20260826-109
   date: '2026-08-26'
   narrative: "Track B (CI Ph1) is BLOCKED on three pre-conditions (C1 M8 regex, C3\
@@ -53,6 +55,8 @@ proposals:
     \ them in status fields."
   principle: Every blocker must have a seated owner. Unowned blockers are the highest-priority
     work.
+  grokster_verdict: "L3 \u2014 PROMOTE"
+  promotion_ready: true
 - id: kali-20260826-110
   date: '2026-08-26'
   narrative: 'The HOLISTIC_ARCHITECTURE_PLAN contradicts itself internally: System
@@ -64,6 +68,8 @@ proposals:
     \ not implicit in section ordering."
   principle: Contradictions in the plan are bugs. The Architect must rule; the plan
     must reflect the ruling.
+  grokster_verdict: "L3 \u2014 PROMOTE"
+  promotion_ready: true
 - id: kali-20260826-111
   date: '2026-08-26'
   narrative: 'Three systemic confidence-manufacturing patterns detected: (1) headroom
@@ -76,6 +82,8 @@ proposals:
     \ not passes when silent."
   principle: Truth probes > theater. Every track must have a probe that screams at
     zero, not whispers.
+  grokster_verdict: "L3 \u2014 PROMOTE"
+  promotion_ready: true
 - id: kali-20260826-112
   date: '2026-08-26'
   narrative: "Eight expert sessions created for Wave 2 research hold deep context\
@@ -88,6 +96,8 @@ proposals:
     \ is the only way to preserve research value across compaction."
   principle: Don't re-research. Page the expert. Build-packets are the contract; execution
     plans are the handoff.
+  grokster_verdict: "L2 (L3 on 2nd occurrence) \u2014 DEFER"
+  promotion_ready: false
 metadata:
   entity: kali
   updated: '2026-08-26T20:46:30.604617'
