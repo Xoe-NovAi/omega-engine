@@ -192,7 +192,92 @@ proposals:
     champion.
   grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-27)"
   promotion_ready: true
+- id: kali-20260827-124
+  date: '2026-08-27'
+  narrative: Through daily use, the Architect observed that MiniMax M3 (and the MiniMax
+    family generally) delivers the fastest TPS (tokens per second) output of any model
+    seen through the OpenCode CLI. This is in addition to the long-file-write reliability
+    already documented (L3 123).
+  insight: "Speed (TPS) and reliability (long-write) are independent axes of model\
+    \ quality. A model that is fast but truncates is worse than a model that is slower\
+    \ but completes. MiniMax M3 wins on BOTH axes \u2014 making it the current overall\
+    \ default for research, refactor, and documentation tasks."
+  principle: "TPS and reliability are multiplicative, not additive. The best model\
+    \ is the one that is BOTH fast AND complete. Optimize for the product of TPS \xD7\
+    \ completion_rate, not either alone. The MiniMax family currently leads on this\
+    \ product."
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect observation 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260827-125
+  date: '2026-08-27'
+  narrative: 'The 402 "Insufficient balance" error on free MiniMax M3 was treated
+    as architectural (add $10 credits) when it was operational (transient per-minute
+    cap). Roc forensic confirmed: 39/42 Ma''at session turns succeeded; cost field
+    = $0.00 throughout. The Architect''s correction: "Did we have to change API keys
+    or add money? No. We prompted Continue., and it continued."'
+  insight: Operational errors on free services are part of the deal by definition.
+    Retry first. Add money, rotate keys, or re-architect only after evidence of chronic
+    failure. The cost field ($0.00) is the evidence the service is genuinely free;
+    the 402 is a rate-cap quirk, not a balance issue.
+  principle: 'Operational errors on free services: retry, don''t remediate. Only remediate
+    architectural failures (chronic, persistent, structural). The $0.00 cost field
+    is the test for "is this actually a free service?"'
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-27, Grokster concurrence)"
+  promotion_ready: true
+- id: kali-20260827-126
+  date: '2026-08-27'
+  narrative: 'I noticed MiniMax M3 was reliable on long writes (L3 123) but did not
+    notice it was also the fastest TPS of any model the Architect had used. The Architect
+    saw both axes simultaneously. Grokster suggests this is itself an L3: "Quality
+    is a product of axes, not a single metric." Falsifiable: any single-metric optimization
+    is incomplete.'
+  insight: "Speed (TPS), reliability (completion), context (size), multimodal, cost,\
+    \ tool-use \u2014 these are independent axes. The best model is the one that is\
+    \ strong on the PRODUCT of relevant axes, not any single one. MiniMax M3 is strong\
+    \ on TPS \xD7 completion (and cost = free). Other models may be strong on context\
+    \ \xD7 multimodal but weak on speed \xD7 cost."
+  principle: Quality is a product of axes, not a single metric. Evaluate models, tools,
+    and agents on the product of relevant dimensions, not any one in isolation. The
+    dimensions depend on the task; the principle is universal.
+  grokster_verdict: "L3 \u2014 PROMOTE (Grokster synthesis 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260827-127
+  date: '2026-08-27'
+  narrative: "The Architect articulated: \"There is little, if any, actual code required\
+    \ to get OpenCode agents working in powerful new ways, using only existing data,\
+    \ systems, and tools that are already readily available to them. The problem is\
+    \ that the agents don't know, and the human users don't know!\" The Session Continuity\
+    \ Protocol is 4 rules + 3 lessons \u2014 no code. The MiniMax M3 promotion is\
+    \ documentation \u2014 no code. The 402 transient observation reframes existing\
+    \ behavior \u2014 no code."
+  insight: 'For every "we need to build X" feature, ask: "Does X already exist but
+    isn''t being used? Is the bottleneck knowledge or capability?" The leverage of
+    documentation (x100) dwarfs the leverage of new code (x10). When the Architect
+    said "the team spent a year discovering what was already there," that''s the cost
+    of not documenting.'
+  principle: 'Most agent improvements are documentation, not code. The capability
+    exists. The knowledge doesn''t. Documentation has 100x leverage over new code.
+    Always ask: "What already works that nobody is using?" before proposing to build.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect observation 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260827-128
+  date: '2026-08-27'
+  narrative: 'Agents consistently get stuck at three points: treating operational
+    issues as architectural (over-remediation), hedging on foundational decisions
+    (false equivalence), punting decisions to humans (unresolved contradictions).
+    These are all forms of analysis paralysis.'
+  insight: "Each failure type has a correct response. Operational \u2192 retry. Foundational\
+    \ \u2192 rebuild. Knowledge \u2192 document. Don't cross the streams (don't re-architect\
+    \ for an operational blip; don't retry a broken foundation; don't document a missing\
+    \ capability)."
+  principle: "Match action to failure type. Operational \u2192 retry. Foundational\
+    \ \u2192 rebuild. Knowledge \u2192 document. Don't cross the streams. Agents that\
+    \ ask \"is this operational, foundational, or knowledge?\" before acting avoid\
+    \ the three failure modes."
+  grokster_verdict: "L3 \u2014 PROMOTE (Kali synthesis from human intelligence patterns,\
+    \ 2026-08-27)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-27T22:15:00Z'
+  updated: '2026-08-27T23:15:00Z'
   model_used: x-preview-f-free
