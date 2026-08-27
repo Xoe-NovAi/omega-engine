@@ -130,7 +130,69 @@ proposals:
     internal state-of-truth must match disk. Publish only what the trackers prove.
   grokster_verdict: "L3 \u2014 PROMOTE (Architect override 2026-08-27)"
   promotion_ready: true
+- id: kali-20260827-120
+  date: '2026-08-27'
+  narrative: Today, 8 vault research sessions delivered ~1.6M input tokens of work.
+    The task() tool results said "Task cancelled" for 7 of them. I almost re-dispatched
+    8 fresh sessions, discarding all the work. The user intervened. Querying the opencode
+    DB revealed all 8 sessions still existed, resumable via their task_ids.
+  insight: "The task_id returned by task() IS the session_id. It persists in the OpenCode\
+    \ SQLite database for the life of the database. A \"Task cancelled\" or \"Subagent\
+    \ failed\" tool result is a UI artifact \u2014 the underlying session is not destroyed\
+    \ unless explicitly purged. The opencode-sessions-explorer-list-sessions MCP tool\
+    \ is the canonical recovery path."
+  principle: A session that exists can be resumed. Always. The task_id is the handle.
+    The DB is the ground truth. "Cancelled" is a display state, not a destruction
+    event. Agents that dispatch subagents MUST capture task_ids at dispatch time,
+    maintain a session registry, and consult the DB before any "continue" action.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260827-121
+  date: '2026-08-27'
+  narrative: The team has repeatedly relaunched subagents instead of resuming them.
+    The pattern is so common it has been called out in multiple post-mortems. The
+    default reaction to "session appears stuck" has been "launch fresh."
+  insight: "The cost asymmetry is enormous. Resuming a session costs ~1 message and\
+    \ 0 lost context. Relaunching costs N messages, full re-research time, and 100%\
+    \ context loss. The expected value calculation always favors resume \u2014 UNLESS\
+    \ the user explicitly says \"start over.\""
+  principle: 'The default for "continue" is RESUME, not RESTART. The burden of proof
+    is on the restarter: they must show that the existing session is genuinely unsalvageable,
+    not just that it "looks stuck." This is a fleet-wide standing law.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260827-122
+  date: '2026-08-27'
+  narrative: Today's 8-dispatch happened in a single parallel batch. The tool results
+    came back in a block. I focused on the bodies (which said "cancelled") and lost
+    the IDs (which were per-result).
+  insight: "M27 (Tracking Integrity) requires every operation to have a verifiable\
+    \ state. Parallel dispatch makes this harder because the result block is dense.\
+    \ The pattern must be: dispatch \u2192 IMMEDIATELY write IDs to session gnosis\
+    \ BEFORE doing anything else. Even before reading the response body."
+  principle: Session ID capture is a M27 hard requirement, not a "nice to have." The
+    capture must happen BEFORE response processing, not after. Agents that dispatch
+    in parallel must use the "capture-then-process" pattern.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-27)"
+  promotion_ready: true
+- id: kali-20260827-123
+  date: '2026-08-27'
+  narrative: Today's 8-file vault research burst demonstrated that MiniMax M3 writes
+    long files (1,000+ lines) with 100% success, while Nemotron 3 Ultra fails on the
+    same workload due to streaming timeouts. The probe data confirms MiniMax M3 has
+    87% free tier availability vs Nemotron 3 Ultra's 72%.
+  insight: "Not all \"capable\" models are equally capable at long outputs. The bottleneck\
+    \ is not intelligence \u2014 it's streaming reliability on sustained output. Nemotron\
+    \ 3 Ultra's thinkingLevel: \"MINIMAL\" causes reasoning tokens to interleave with\
+    \ output, triggering server-side timeouts. MiniMax M3 uses a different generation\
+    \ strategy that avoids this."
+  principle: Long-file-write capability is a model-specific trait, not a general capability.
+    Route by output length, not by general model tier. For any task producing > 300
+    lines, consult a "long-write-tested" model registry. MiniMax M3 is the current
+    champion.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-27)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-27T18:55:00'
+  updated: '2026-08-27T22:15:00Z'
   model_used: x-preview-f-free
