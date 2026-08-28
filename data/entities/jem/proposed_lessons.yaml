@@ -218,8 +218,99 @@ proposals:
   principle: Discourse terminates on truth rather than exhaustion only when the end-condition
     precedes the argument and settlements are diffed against original wording, never
     paraphrased.
+- id: TS2-001
+  node: TEAMSYNTH-STUDY2
+  date: '2026-08-28'
+  level: L3
+  tags:
+  - TS2
+  - REVIEW-ONLY
+  - DEBUT
+  narrative: 'Reviewed the pre-debut corpus (34 research files, 17 code artifacts) for
+    the Strategic Review Framework. Found the corpus is bimodal: 15 high-signal numbered
+    specs (50-136 LOC each, every claim has file:line, every gap has effort estimate)
+    versus 32 R_* flood files (median 1,000 LOC, variable quality across 3 tiers). The
+    tier-1 synthesis files (R_D568_GAP_FILL, R_CARMACK_ARTIFACT_AUDIT, R_ROC_LOCAL_MINING_ROUND4)
+    explicitly adjudicate prior-round contradictions with weighted decision matrices;
+    tier-2 files defer to post-debut; tier-3 files are surveys that other files build
+    on. The 17 code artifacts are spread across 4 disk states (2 in-repo, 4 in /tmp,
+    6 spec-only, 4 audit-round never-reviewed) and 2 of the 4 P0 bugs documented by
+    Carmack are already patched in the live file (mtime predates the audit publication)
+    but the audit''s verdict is stale on arrival. Three known contradictions (CRYPTO
+    vs D-568, DEEP_CODE vs MGMT, AGENT vs DEEP_CODE) are adjudicated in tier-1 files
+    but the source files lack DEPRECATED banners.'
+  insight: 'Volume is not quality and naming consistency is not content consistency.
+    Two production populations with superficially identical naming will be mis-prioritized
+    by ~5x if a new agent treats them as one corpus. Tier-2 surveys are a cost-of-knowledge
+    that tier-1 synthesis amortizes; the moment tier-1 lands, the surveys must be marked
+    DEPRECATED with a banner, not left in place to compete for attention. Audits that
+    find P0 bugs must include a live-state-verified-at timestamp; otherwise they
+    describe yesterday''s state and tomorrow''s team will fix bugs that are already
+    fixed.'
+  principle: 'A corpus that hides its tier-2 work under the same naming as its tier-1
+    work is a soft-failure of the research discipline itself: rigor = adjudication,
+    not length. Mark superseded sources with a 3-line DEPRECATED banner the moment
+    the synthesis lands; never let the survey compete with the answer.'
+- id: TS2-002
+  node: TEAMSYNTH-STUDY2
+  date: '2026-08-28'
+  level: L3
+  tags:
+  - TS2
+  - REGRESSION-RISK
+  - DEBUT
+  narrative: 'The 17-artifact integration has 2 true P0 blockers (apply_public_allowlist.sh
+    regex bug + Explicit Exclusions parser missing, both would `git rm --cached` the
+    `tests/` directory and the `_omega_default` soul.yaml on the first run) and 3
+    B-needs-fix items (g13 Hivemind double-alert via hash() instead of hashlib.sha256,
+    probe_free_models.sh missing balance check, cline_prune.sh namespace drift). The
+    4 Cline artifacts in /tmp/cline_deeper/ have zero M27 tracking entries and will
+    be `git clean`-ed; they are either post-debut-only or must be copied to scripts/.
+    The 4 audit_round5/ scripts (m3_benchmark.py, run_exp4_5.py) have no M27 tracking
+    and have never been reviewed. A new agent onboarding to the corpus needs 10 files
+    (~6,000 LOC, ~6 hours of reading) before they can act on the integration.'
+  insight: 'A 17-artifact batch with 0 TASK_REGISTRY entries is 17 ghosts. The 5-minute
+    M27 fix is higher leverage than any 5-hour P0 fix because it makes the rest of
+    the work auditable. The cascade structure (apply script + 2 CI workflows +
+    setup script) means any one of 4 interdependent files failing blocks the entire
+    debut cut; the team must triage interdependency first and Bucket A by track (Track
+    2: debut operation, vs Track 1: engine substrate) before they triage by quality
+    tier.'
+  principle: 'Interdependency graph before quality tier: a Bucket A artifact in a
+    critical-path cascade is 10x more debut-critical than a Bucket C artifact in
+    isolation. Always register artifacts in M27 the same session they are produced;
+    the dispatch''s "I shipped N artifacts" claim is unverifiable without it.'
+- id: TS2-003
+  node: TEAMSYNTH-STUDY2
+  date: '2026-08-28'
+  level: L3
+  tags:
+  - TS2
+  - POPULATION-THEORY
+  - REVIEW
+  narrative: 'Across 5 specialists producing 5 rounds of vault research, each specialist
+    independently re-experienced the 5-round cascade: Antigravity (R1 1,200 lines,
+    R5 551 lines), Cline (R1 47K, R5 28K), Copilot (R1 62K, R5 32K). Each R1 is a
+    survey; each R5 is the answer. The 3 file sets duplicate ~50% of content; R_VAULT_CRYPTO
+    and R_VAULT_D568 are directly contradictory (1,280 LOC of opposing verdicts);
+    R_D568_GAP_FILL (1,682 LOC) is the only adjudication. Three of the same anti-patterns
+    recur in every specialist''s output: the round-N survey that should have been
+    marked DEPRECATED, the buried adjudication that no one finds without reading
+    the appendix, and the M27 tracking void that lets shipped artifacts become ghosts.'
+  insight: 'When 5 specialists independently produce the same anti-patterns, the
+    anti-pattern is a system property, not a specialist failure. Steering prompts
+    must encode the anti-patterns (DEPRECATED banners, interdependency triage, M27
+    same-session registration) because specialists under dispatch pressure will reproduce
+    the patterns they were not warned against. The framework''s bucket triage is
+    necessary but not sufficient; without the interdependency + track-distinction
+    overlays, the triage produces the wrong priority order.'
+  principle: 'A pattern that recurs across 3+ independent producers is a system
+    property: encode it in the steering prompt, do not assume the next producer will
+    discover it. Limit specialist dispatches to 3 rounds max; round 3 must be the
+    final round or the cascade is incomplete by design.'
 metadata:
   entity: jem
-  session_id: ses_fc316bc8affeMASy8RTnCjmSzx
-  model_used: x-preview-f-free
-  last_session_end: '2026-08-26T10:45:39.263438+00:00'
+  session_id: ses_fc02cd428ffezaOBlWucaBzajs
+  model_used: hy3-free
+  last_session_end: '2026-08-27T03:55:14.698344+00:00'
+  new_session_end: '2026-08-28T02:00:00.000000+00:00'

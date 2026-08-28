@@ -323,3 +323,8 @@ Agentic loop cost ≈ turns × (context_tokens × rate_in_effective + output × 
 
 ---
 *End of R_COPILOT_DIRECT_API_DEEP_MINE_20260826. Specialist session standing by for follow-on pages.*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -46,8 +46,9 @@ task(task_id=<session_id>, subagent_type=<specialist>,
 
 ---
 
-## Freshness SLAs
-- **Expert sessions**: re-verify if >7 days old before paging (R03 note)
+## Freshness SLAs (Two-Tier)
+- **Default**: re-verify if >7 days old before paging
+- **Fast-rot** (`rot_class: fast`): re-verify if >24 hours old before paging
 - **WAKE_STATE.json**: updated every hydration + every execution phase
 - **This index**: regenerated when session IDs change (fast rot)
 

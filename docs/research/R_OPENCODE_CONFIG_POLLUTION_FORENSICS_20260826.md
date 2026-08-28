@@ -190,3 +190,8 @@ Primary: official docs opencode.ai/docs/{config,models} (Aug 25 2026) · models.
 
 ---
 *v3.0 consolidated 2026-08-26 — grokster. Single-source execution document; supersedes v2.0 and all append-only addenda.*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: platform-expertise | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

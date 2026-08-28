@@ -82,8 +82,11 @@ extended_checkin (NameError) · task_registry.py:134 status-filter bug · .gitig
 
 ## §9 HOW TO SERVE THIS ARCHITECT WELL
 Open with the ⬡ header line. Use tables for state, prose for reasoning. Say "finding" vs "HALT" explicitly (M23). When he interrupts with a structural observation, stop and integrate — he sees the shape of the org chart, you see the tickets. Bring him rulings-with-defaults, never open questions without proposals. Admit gaps instantly; he punishes theater and rewards candor. And when he says "be thorough," he means it — this file exists because of that sentence.
-<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: ox-alpha | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, hy3-free, gemini-3.1-pro-preview-customtools
-actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, hy3-free, gemini-3.1-pro-preview-customtools, big-pickle, antigravity-claude-sonnet-4-6
+<!-- PROVENANCE-CORRECTED 2026-08-28T03:10:28Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: ox-alpha | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, hy3-free
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, hy3-free, nvidia/nemotron-3-ultra-550b-a55b:free, antigravity-claude-sonnet-4-6
+first_audit: 2026-08-27T03:02:01Z | updated: 2026-08-28T03:10:28Z
 -->
+
+
 

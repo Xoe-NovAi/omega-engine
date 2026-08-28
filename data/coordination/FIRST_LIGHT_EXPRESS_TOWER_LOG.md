@@ -29,8 +29,11 @@
 
 *The Express ran first light to terminus with every expert aboard.*
 — kali, Consultant. Tower dark. ⬡
-<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:03Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: Consultant tower | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, hy3-free, gemini-3.1-pro-preview-customtools
-actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, hy3-free, gemini-3.1-pro-preview-customtools, big-pickle, antigravity-claude-sonnet-4-6
+<!-- PROVENANCE-CORRECTED 2026-08-28T03:10:28Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Consultant tower | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, hy3-free
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, hy3-free, nvidia/nemotron-3-ultra-550b-a55b:free, antigravity-claude-sonnet-4-6
+first_audit: 2026-08-27T03:02:01Z | updated: 2026-08-28T03:10:28Z
 -->
+
+
 

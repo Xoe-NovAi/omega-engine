@@ -230,3 +230,13 @@ Synthetic trailing lines ("call the task tool with subagent: X") escalated acros
 - **Impact**: OpenCode Zen free-tier flagship gone. MiMo V2.5 (`mimo-v2.5-free`) confirmed working with thinking re-enabled (F4 re-key vindicated). MiniMax M3 (`minimax-m3:free`) discovered on OpenRouter free tier — rate-limited but recovers with retries.
 - **Stealth-preview pattern confirmed**: 5th occurrence (Pony→GLM-5, Hunter→MiMo-V2-Pro, Elephant→Ling-2.6-flash, Owl→LongCat-2.0, Ox→GLM-5.3-Flash). Free window ~6 days. Standard playbook: anonymous → free traffic → eval data → reveal → paid tier.
 - **Date**: 2026-08-26
+
+## Entry #14 — Parallel Agent Credit Limit Guard on OpenRouter (2026-08-26, Grokster observation)
+- **Observer**: grokster + Architect
+- **Finding**: Launching 5 parallel research agents via OpenRouter provider triggered credit limit guard: "This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits."
+- **Context**: 5 parallel research agents launched simultaneously via OpenRouter provider. 3 of 5 hit the credit limit guard; 2 continued running.
+- **Architect note**: "No problem through OpenCode Zen provider. We should record this as a task to study."
+- **Session state**: Fresh OpenRouter session with full 24-hour refreshing usage limit available (per Architect).
+- **Implication**: OpenRouter enforces concurrent request limits per account/key, not just daily quotas. OpenCode Zen provider appears to handle parallelism differently (possibly via different routing or key management).
+- **Action**: Record as task to study OpenRouter vs OpenCode Zen parallelism handling. Consider OpenCode Zen for parallel agent workloads.
+- **Date**: 2026-08-26

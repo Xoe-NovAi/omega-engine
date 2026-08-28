@@ -540,3 +540,8 @@ Per M11 (Soul Integrity), this verification session produced the following L3 ca
 *⬡ OMEGA ⬡ RESEARCHER ⬡ minimax-m3-free ⬡ opencode ⬡ trc_debut_verify ⬡ 2026-08-27*
 
 **verdict**: DEFERRED | **confidence**: 🔴 VERIFIED (disk-truth captured; gates evaluated; deviations documented) | **rot_class**: ephemeral (this report ages quickly — re-verify after Ma'at commits)
+<!-- PROVENANCE-CORRECTED 2026-08-28T03:10:28Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-m3-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

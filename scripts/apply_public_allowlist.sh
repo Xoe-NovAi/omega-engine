@@ -1,0 +1,344 @@
+#!/usr/bin/env bash
+# scripts/apply_public_allowlist.sh
+# 🔱 Apply PUBLIC_ALLOWLIST.txt to the current branch.
+# v4 — round-4 fixes for 10 bugs total:
+#   Round-3 (8 bugs): inline comments, fence detection, default entity, dirty-check,
+#                     no-pathspec, force-with-lease, self-exemption, backtick corruption
+#   Round-4 (2 NEW bugs, Carmack's audit):
+#     VULN #2: Explicit Exclusions section never parsed → default demo entity gets cut
+#     VULN #6: Single-char '.' or '**' pattern silently allows everything
+#
+# See data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §2
+# See data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §1
+#
+# USAGE:
+#   scripts/apply_public_allowlist.sh              # DRY-RUN (default)
+#   scripts/apply_public_allowlist.sh --confirm    # Actually git rm --cached
+#   scripts/apply_public_allowlist.sh --summary    # Show counts only
+#   scripts/apply_public_allowlist.sh --strict     # Refuse to run if any allowlist pattern is malformed
+#   scripts/apply_public_allowlist.sh --allowlist PATH
+#
+# M23: Two-pass design. First pass is always read-only. --confirm is required
+#      to make changes. The allowlist is the sovereignty boundary; boundary
+#      changes must go through a human.
+# M8: No external calls. No network. No telemetry. Pure git + awk + grep.
+# M26: Compact output suitable for both human and LLM consumption.
+
+set -euo pipefail
+
+ALLOWLIST_FILE="${ALLOWLIST_FILE:-docs/strategy/PUBLIC_ALLOWLIST.txt}"
+CONFIRM=0
+SUMMARY_ONLY=0
+STRICT=0
+# Allow env var to override default (in addition to --allowlist arg)
+ALLOWLIST_PATH="${ALLOWLIST_PATH:-$ALLOWLIST_FILE}"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --confirm) CONFIRM=1; shift ;;
+    --summary) SUMMARY_ONLY=1; shift ;;
+    --strict) STRICT=1; shift ;;
+    --allowlist) ALLOWLIST_PATH="$2"; shift 2 ;;
+    -h|--help)
+      grep -E '^#' "$0" | sed -E 's/^# ?//'
+      exit 0
+      ;;
+    *)
+      echo "Unknown arg: $1" >&2
+      echo "Run with --help for usage." >&2
+      exit 1
+      ;;
+  esac
+done
+
+# === SAFETY: refuse to run outside a git repo ===
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "FATAL: not inside a git repository" >&2
+  exit 3
+fi
+
+# === SAFETY (BUG #4 round-3 fix): catch untracked files too ===
+if [[ "$CONFIRM" -eq 1 ]]; then
+  DIRTY=$(git status --porcelain | grep -v '^??' || true)
+  UNTRACKED=$(git status --porcelain | grep -c '^??' || true)
+  if [[ -n "$DIRTY" ]]; then
+    echo "FATAL: --confirm requires a clean working tree (no modified tracked files)." >&2
+    echo "       Modified/staged tracked files:" >&2
+    echo "$DIRTY" | sed 's/^/         /' >&2
+    echo "       Commit or stash first, or run without --confirm for a dry-run." >&2
+    echo "       (Untracked files: $UNTRACKED — these are OK.)" >&2
+    exit 4
+  fi
+fi
+
+# === VALIDATE allowlist file exists ===
+if [[ ! -f "$ALLOWLIST_PATH" ]]; then
+  echo "FATAL: allowlist file not found: $ALLOWLIST_PATH" >&2
+  exit 2
+fi
+
+# === PARSE the ALLOW section ===
+# v3 fix (BUG #1, #2 round-3): strip inline comments AND handle language-tagged fences.
+# v4 fix (VULN #6 round-4): detect ".*" silent-allow-all patterns.
+mapfile -t ALLOW_PATTERNS < <(awk '
+  BEGIN { in_allow=0 }
+  /^## ✅ ALLOW/ { in_allow=1; next }
+  /^## 🚫 FORGE/ { in_allow=0; next }
+  in_allow && /^[ \t]*[^# \t]/ {
+    # v3 BUG #1 fix: strip trailing inline comments (anything from " # " to EOL)
+    sub(/[ \t]+#.*$/, "")
+    gsub(/^[ \t]+|[ \t]+$/, "")
+    # v3 BUG #2 fix: handle both bare fences and language-tagged fences
+    if ($0 ~ /^```/) next
+    if ($0 == "") next
+    # v4 VULN #6 fix: detect silent-allow-all patterns
+    #   A pattern that is just "." (matches any single char at start)
+    #   or just "**" / ".*" (matches anything) is a typo or accident.
+    #   Also catch ".**" (matches any dotfile).
+    #   Reject these in --strict mode; warn otherwise.
+    if ($0 == "." || $0 == "*" || $0 == "**" || $0 == ".*" || $0 == ".**" || $0 == ".*/**" || $0 ~ /^\.[\*\?]+$/ || $0 ~ /^\*+$/) {
+      print "WARN_VULN6:" $0 > "/dev/stderr"
+      next
+    }
+    print
+  }
+' "$ALLOWLIST_PATH" 2>&1 1>&2)
+
+# Capture the VULN #6 warnings separately
+WARN_VULN6=$(awk '
+  /^## ✅ ALLOW/ { in_allow=1; next }
+  /^## 🚫 FORGE/ { in_allow=0; next }
+  in_allow && /^[ \t]*[^# \t]/ {
+    sub(/[ \t]+#.*$/, "")
+    gsub(/^[ \t]+|[ \t]+$/, "")
+    if ($0 == "```" || $0 == "" || $0 ~ /^```/) next
+    if ($0 == "." || $0 == "*" || $0 == "**" || $0 == ".*" || $0 == ".**" || $0 == ".*/**" || $0 ~ /^\.[\*\?]+$/ || $0 ~ /^\*+$/) {
+      print $0
+    }
+  }
+' "$ALLOWLIST_PATH")
+
+if [[ -n "$WARN_VULN6" ]]; then
+  echo "WARN: VULN #6 — silent-allow-all patterns detected in ALLOW section:" >&2
+  while IFS= read -r p; do
+    echo "         $p" >&2
+  done <<< "$WARN_VULN6"
+  echo "       These patterns would silently match ALL paths. Skipped." >&2
+  if [[ "$STRICT" -eq 1 ]]; then
+    echo "FATAL: --strict refuses to continue. Fix or remove these patterns." >&2
+    exit 2
+  fi
+fi
+
+if [[ ${#ALLOW_PATTERNS[@]} -eq 0 ]]; then
+  echo "FATAL: allowlist parses to zero patterns. Check the file format." >&2
+  if [[ "$STRICT" -eq 1 ]]; then exit 2; fi
+fi
+
+# === PARSE the Explicit Exclusions section (v4 VULN #2 fix) ===
+# The "## ⚠️ Explicit Exclusions" section contains human-readable notes
+# like "- `data/entities/_omega_default/soul.yaml` — KEEP (needed for demo)".
+# These are paths that should NOT be cut, even if they're in a FORGE directory.
+# Format in the file: `- <code-span>path</code-span> — reason`
+# Extract the path from each line (between backticks) and add to KEPT_EXTRA.
+mapfile -t KEEP_EXTRA < <(awk '
+  BEGIN { in_excl=0 }
+  /^## ⚠️ Explicit Exclusions/ { in_excl=1; next }
+  /^## / { in_excl=0; next }
+  in_excl && /^[[:space:]]*-[[:space:]]*`/ {
+    # Extract path between first pair of backticks
+    line = $0
+    sub(/^[^`]*`/, "", line)
+    sub(/`.*$/, "", line)
+    gsub(/^[ \t]+|[ \t]+$/, "", line)
+    if (line != "") print line
+  }
+' "$ALLOWLIST_PATH")
+
+# === STRICT MODE: validate every pattern is a plausible path/glob ===
+if [[ "$STRICT" -eq 1 ]]; then
+  BAD=0
+  for p in "${ALLOW_PATTERNS[@]}"; do
+    if [[ "$p" =~ [\`\(\)\{\}\|\+\$\^\<\>\\] ]]; then
+      echo "WARN: pattern uses regex metacharacter (unusual for path glob): $p" >&2
+      BAD=$((BAD+1))
+    fi
+    # v4 VULN #6 also: in strict mode, reject any pattern that would match every path
+    if [[ "$p" == "*" || "$p" == "**" || "$p" == "." || "$p" == ".*" ]]; then
+      echo "FATAL: VULN #6 — pattern '$p' is silent-allow-all in strict mode" >&2
+      BAD=$((BAD+1))
+    fi
+  done
+  if [[ "$BAD" -gt 0 ]]; then
+    echo "FATAL: $BAD allowlist pattern(s) failed strict validation" >&2
+    exit 2
+  fi
+fi
+
+# === BUILD a single anchored regex from the patterns ===
+# v4 fix: do NOT escape [ ] or ^ — bash regex needs them unescaped:
+#   - [ and ] for character classes (e.g. [^/] from `*` glob translation)
+#   - ^ is special only at the start of a regex; we prepend our own ^
+#     so any ^ in the middle of the pattern is a literal anyway.
+REGEX_PARTS=()
+for p in "${ALLOW_PATTERNS[@]}"; do
+  regex_part=$(printf '%s' "$p" | awk '
+    {
+      gsub(/\*\*/, "\x01")
+      gsub(/\*/, "[^/]*")
+      gsub(/\?/, "[^/]")
+      gsub(/\x01/, ".*")
+      gsub(/[(){}+.|$\\]/, "\\\\&")
+      print "^" $0
+    }
+  ')
+  REGEX_PARTS+=("$regex_part")
+done
+
+# === EXCEPTIONS (v3 BUG #7 round-3 fix) ===
+EXCEPTIONS=(
+  ".gitignore"
+  "docs/strategy/PUBLIC_ALLOWLIST.txt"
+  ".github/CODEOWNERS"
+  ".github/dependabot.yml"
+  ".github/workflows/allowlist-check.yml"
+  ".github/workflows/allowlist-lint.yml"
+  "LICENSE"
+  "README.md"
+  "CONTRIBUTING.md"
+  "AGENTS.md"
+  "SOVEREIGN_MANDATES.md"
+  "MANDATES_CONDENSED.md"
+  "pyproject.toml"
+  "Makefile"
+  "scripts/apply_public_allowlist.sh"
+  "scripts/setup_2remote_debut.sh"
+  "scripts/install.sh"
+  "$ALLOWLIST_PATH"
+)
+
+is_exception() {
+  local f="$1"
+  for ex in "${EXCEPTIONS[@]}"; do
+    if [[ "$f" == "$ex" ]]; then return 0; fi
+  done
+  return 1
+}
+
+is_in_keep_extra() {
+  local f="$1"
+  for k in "${KEEP_EXTRA[@]:-}"; do
+    if [[ -z "$k" ]]; then continue; fi
+    # Translate the exclusion glob to a regex (same as ALLOW patterns)
+    local kregex
+    kregex=$(printf '%s' "$k" | awk '
+      {
+        gsub(/\*\*/, "\x01")
+        gsub(/\*/, "[^/]*")
+        gsub(/\?/, "[^/]")
+        gsub(/\x01/, ".*")
+        gsub(/[(){}+.|$\\]/, "\\\\&")
+        print "^" $0
+      }
+    ')
+    if [[ "$f" =~ $kregex ]]; then return 0; fi
+  done
+  return 1
+}
+
+matches_allowlist() {
+  local f="$1"
+  for part in "${REGEX_PARTS[@]}"; do
+    if [[ "$f" =~ $part ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# === WALK tracked files ===
+REMOVED=()
+KEPT=()
+
+while IFS= read -r f; do
+  # Priority: exception > explicit exclusion > allowlist match > remove
+  if is_exception "$f"; then
+    KEPT+=("$f")
+  elif [[ ${#KEEP_EXTRA[@]} -gt 0 ]] && is_in_keep_extra "$f"; then
+    KEPT+=("$f")
+  elif matches_allowlist "$f"; then
+    KEPT+=("$f")
+  else
+    REMOVED+=("$f")
+  fi
+done < <(git ls-files)
+
+# === OUTPUT ===
+KEPT_COUNT=${#KEPT[@]}
+REMOVED_COUNT=${#REMOVED[@]}
+
+if [[ "$SUMMARY_ONLY" -eq 1 ]]; then
+  echo "Kept:    $KEPT_COUNT"
+  echo "Removed: $REMOVED_COUNT"
+  echo "Total:   $((KEPT_COUNT + REMOVED_COUNT))"
+  if [[ -n "$WARN_VULN6" ]]; then
+    echo "WARN: VULN #6 patterns skipped (see warnings above)"
+  fi
+  if [[ ${#KEEP_EXTRA[@]} -gt 0 ]]; then
+    echo "Explicit exclusions applied: ${#KEEP_EXTRA[@]}"
+  fi
+  exit 0
+fi
+
+echo "=== Allowlist Apply Report (v4) ==="
+echo "Allowlist file:        $ALLOWLIST_PATH"
+echo "ALLOW patterns found:  ${#ALLOW_PATTERNS[@]}"
+echo "Explicit exclusions:   ${#KEEP_EXTRA[@]}"
+echo "Files kept:            $KEPT_COUNT"
+echo "Files removed:         $REMOVED_COUNT"
+echo "Total tracked:         $((KEPT_COUNT + REMOVED_COUNT))"
+if [[ -n "$WARN_VULN6" ]]; then
+  echo "WARN: VULN #6 patterns skipped: $WARN_VULN6"
+fi
+echo
+
+if [[ "$REMOVED_COUNT" -eq 0 ]]; then
+  echo "OK All tracked files match PUBLIC_ALLOWLIST.txt — no action needed."
+  exit 0
+fi
+
+# v3 BUG #8 round-3 fix: use single quotes (no backtick command substitution)
+echo 'Files that would be removed (would be `git rm --cached` with --confirm):'
+echo "---"
+for f in "${REMOVED[@]}"; do echo "  $f"; done
+echo "---"
+echo
+
+if [[ "$CONFIRM" -eq 1 ]]; then
+  echo "Applying (--confirm mode)..."
+  for f in "${REMOVED[@]}"; do
+    if [[ ! -f "$f" ]]; then
+      echo "WARN: skip $f (not in working tree)" >&2
+      continue
+    fi
+    git rm --cached "$f" >/dev/null 2>&1 || {
+      echo "WARN: git rm failed for $f" >&2
+    }
+  done
+  echo
+  echo "OK $REMOVED_COUNT file(s) staged for removal."
+  echo
+  echo "NEXT STEPS (manual, per M23 human-in-the-loop):"
+  echo "  1. git status                 # verify the staged removals"
+  echo "  2. git diff --cached --stat   # confirm what is being removed"
+  echo "  3. git commit -m 'Apply PUBLIC_ALLOWLIST.txt for debut cut'"
+  echo "  4. scripts/setup_2remote_debut.sh cut   # push to public remote"
+  exit 0
+else
+  echo "DRY-RUN: no changes made. Pass --confirm to actually git rm --cached."
+  echo
+  echo "M23 REMINDER: Review the list above. The allowlist is the sovereignty"
+  echo "              boundary. Confirming removes files from the index only;"
+  echo "              they remain in the working tree and in unaltered commits."
+  exit 0
+fi

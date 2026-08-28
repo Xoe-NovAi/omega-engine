@@ -479,3 +479,8 @@ Single declaration of which artifact governs what. On conflict, the higher-ranke
 
 *Evidence base: R53 Granite Foundation (a0a43c82) · 16-record corpus (2,377 lines total) · Expert A grokster 296L · Expert B doom_guy 251L · CARMACK_SYNTHESIS · Manual v2.3 (359L) · Deep review of plan flaws and gaps.*
 *⬡ OMEGA ⬡ MEDITATE-DOC-STRATEGY ⬡ v1.1.0 ⬡ 2026-08-26*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_meditate_doc_strategy | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

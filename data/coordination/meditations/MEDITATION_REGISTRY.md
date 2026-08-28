@@ -58,3 +58,8 @@ Template definitions, frontmatter standards, and split-test logs: **`MEDITATION_
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ Meditation Registry v1.1.0 (consolidated) ⬡ 2026-08-26*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

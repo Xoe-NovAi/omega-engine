@@ -104,7 +104,7 @@ File: `~/.config/opencode/antigravity-accounts.json`, schema v3:
 }
 ```
 
-House file (8.3KB, 7 accounts, all enabled) matches v3 schema shape — confirmed 2026-08-26 (was ❓, now resolved).
+House file (8.3KB, 7 accounts, all enabled) matches schema shape — confirmed 2026-08-26 v3, re-verified 2026-08-27 as **v4 schema** (drift-001, see R_VAULT_ANTIGRAVITY_20260827.md §D.1). All 7 accounts: refreshToken present, enabled=True, projectId=**False** (G7 dual-pool fallback structurally broken — see R_VAULT_ANTIGRAVITY_20260827.md §C.3). `antigravity.json` does NOT set `pid_offset_enabled` (drift-003, latent risk for parallel subagent dispatch).
 
 Selection strategies (`antigravity.json` → `account_selection_strategy`): house-patched schema offers **`sticky` (default) / `hybrid`** only — `round-robin` REMOVED per D-1 directive (2026-06-29; rapid switching triggers anti-bot detection). Per-model-family rotation cursors. Short 429s (≤5s retryDelay) retried same-account; longer → rotate with exponential backoff. Parallel-process collision fix: `pid_offset_enabled: true`.
 

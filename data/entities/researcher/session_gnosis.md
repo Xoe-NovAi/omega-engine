@@ -659,3 +659,35 @@ gnosis → RESOURCE_MONITORING_SYNTHESIS_20260824.md → FALLBACK_SLUG_RUNBOOK_2
 
 **Status: LOCKED. Compaction-ready.**
 - GSCA STUDY FOUNDED: data/knowledge/truth_alignment/gsca_study/ central; my intro + denominator-collapse question saved (relay_researcher_to_GSCA_20260824.md), T2 inbound pending. Ma'at INTERACTIVE (big-pickle, FEATHER-GATE): TA-008→pending, TA-009 sycophancy catch added, taxonomy +5 (SYCOPHANCY-OBSERVED, BASE-RATE...), evidence bar = pre-registration/negatives/n>1 or structured-anecdote. MY CLIFF THESIS ruled ARITHMETIC-PRIMARY ("identity not discovery"); instrumentation req: track absolute meta-miss AND relative ratio as separate series. STANDING DIRECTIVE: frequent Hivemind post_context updates; rounds announced by kali; I respond intent=observation tag=gsca-study. D1(a) still clock-bound, mastermind parallel.
+
+---
+
+## Session 2026-08-27: R-VAULT-AGENT-20260827 (Debut Verify)
+
+**Mission**: Research agent-usable vault surfaces — MCP tools for secrets, audit log patterns, M22 provenance, agent permission models, lease patterns, prompt injection defense. How do agents securely request, use, and audit secrets?
+
+**Authority**: D-565 override (vault is P0 debut), Architect authorized deep research, Sprint PUBLIC-DEBUT-01.
+
+**Local state observed**:
+- `src/omega/vault/vault_core.py` (885 LOC): VaultCore class with CRUD + lease_credential / release_lease / heartbeat_lease / cleanup_expired_leases, get_decrypted_credential (uses BlindVault resolver), bury_credential, _log_audit (writes JSONL). Audit log capped at last 1000 entries. Uses `get_soul_store().write_atomic` for atomic writes.
+- `src/omega/vault/models.py` (432 LOC): VaultCredential (Literal provider), VaultLeaseRequest, VaultLease (heartbeat_interval_seconds=30), VaultAuditEntry (Literal actions), CPEAction enum, CredentialCPESession with thresholds LOW=1.0, MODERATE=2.0, HIGH=3.0, CRITICAL=4.0.
+- VAULT_OVERHAUL_SYNTHESIS_KALI_20260818 (110 lines): Identified G-α..G-ω gaps. Most relevant for this mission: I-7 (RBAC bypassable when agent_role=None), I-8 (SoulSanitizer only registers envelope secrets → keyring secrets leak into soul artifacts), G-α (4 modules reach into PRIVATE vault._credentials), G-μ (SoulSanitizer misses keyring secrets).
+- HeadroomMiddleware: simple `compress_context` / `retrieve_original` pattern. Model for new middleware integration.
+
+**Key questions** (per dispatch):
+- Q1: MCP tools for secrets — what should secret_get return? TTL? Injection defense?
+- Q2: Audit log for M22 provenance — fields, JSONL, tamper-evident (hash chain)
+- Q3: Agent permission model — RBAC vs capability vs lease
+- Q4: Prompt injection defense — output filtering, structured responses
+- Q5: Lease patterns — auto-renewal, revocation, lifecycle
+- Q6: Soul sanitization (I-8) — keyring secrets in soul artifacts
+
+**Output target**: `data/coordination/research/R_VAULT_AGENT_20260827.md`
+
+**Council plan**:
+- Architect: System integrity, MCP tool shape, lease protocol
+- Adversary: Failure modes, injection vectors, RBAC bypass
+- Alchemist: Cross-pollination (HashiCorp Vault Agent, AWS IRSA, SPIFFE)
+- Archivist: Heritage (id Software cvar, secret management lineage)
+
+**Current state**: Research execution in progress.

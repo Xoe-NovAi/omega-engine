@@ -1,3 +1,110 @@
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v6 (2026-08-27, supersedes v5)
+**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
+**Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains
+
+## STATE: WAVE 2 KALCOLLAB CLOSED — SPECIALIST-FLEET PROPOSAL DELIVERED — READY FOR WAVE 2 LAUNCH
+Kali collab report (`KALI_TO_GROKSTER_COLLAB_20260826.md`) CONSUMED. 2-turn clean exchange, 0 hop violations, all items actioned or queued. Specialist-fleet ratification proposal delivered (`SPECIALIST_FLEET_RATIFICATION_PROPOSAL_20260827.md`, 4,768 bytes). G13 empty-response detector ticket text delivered verbatim to Kali for Ma'at routing. Freshness SLA two-tier accepted. `omega-extract` CLI deferred post-Wave 2.
+
+## HARD FACTS (all live-probe verified this arc)
+- **Ox Alpha revealed**: = Z.ai GLM-5.3-Flash (Aug 26); free preview OVER; stealth/ox-alpha delisted; GLM-5.3-Flash live @ $0.075/$0.25 per M tokens
+- **MiMo V2.5 working**: `mimo-v2.5-free` on OpenCode Zen with thinking enabled
+- **MiniMax M3 free AND Nemotron 3.5 Lightning free = only free 1M context text models with reasoning NOT mandatory AND NOT default-enabled** (no reasoning tax by default). Other 1M free text models (Nemotron 3 Ultra, Thinking Machines Inkling) have reasoning `default_enabled: true, default_effort: high` → reasoning tax by default.
+- **Configs CLEAN+FROZEN**: binary 1.18.23 @de0724a3; backups @ ~/.local/share/opencode-backups/20260826-remediation/
+- **Antigravity**: sonnet-base ✅ · opus-thinking ✅ FULL 5-tier ladder (smoke-verified)
+- **Plugin**: `file:` spec → checkout @7db338b SINGLE load path
+- **Cline**: free gate STANDS; cline-pass/ = pure entitlement on existing key
+- **Copilot**: raw-gho_ PASS-THROUGH; L4-a RESOLVED-NEGATIVE
+
+## KEY ARTIFACTS
+- **5 research reports** in `data/entities/grokster/workspace/`
+- **Kali briefing** §1–§13 (447 lines) — superseded reports §1–§11 in `KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md`
+- **Kali→Grokster collab** `data/coordination/KALI_TO_GROKSTER_COLLAB_20260826.md` (232 lines) — consumed
+- **Specialist-fleet ratification proposal** `data/coordination/SPECIALIST_FLEET_RATIFICATION_PROPOSAL_20260827.md` (4,768 bytes) — delivered, awaiting Architect+Council
+- **DB extraction guide** `docs/strategy/OPENCODE_DB_EXTRACTION_GUIDE_20260826.md`
+- **Probe script** `scripts/probe_free_models.sh` — cron-active (6 models, 30-min)
+- **Kali Wave 2 plan** `WAVE2_EXECUTION_PLAN.md`, `WAVE2_EXPERT_SESSIONS.md` — Track B unblocked on C3/C4
+
+## SPECIALIST FLEET (3 standing Jem sessions, M1-M3 complete, pageable by ANY agent)
+cline=`ses_fc3177854ffeymYIl8mFsNJUtt` · antigravity=`ses_fc31717b5ffefPbwGOzHTePB2V` · copilot=`ses_fc316bc8affeMASy8RTnCjmSzx`
+Pattern proposed for fleet-wide ratification. Charters survive session death via R_* deliverables.
+
+## NEXT WAVE — queued items
+1. **Wave 2 launch** — Track A (Command Compression) first strike, no blockers
+2. **AGENTS.md reconstruction** (C4) — Ma'at + Verity, R06 build-packet ready, my G6 input ready
+3. **G13 empty-response detector** — Ma'at to implement (ticket text delivered to Kali)
+4. **PLATFORM_GNOSIS_MAP refresh** — ~2-3h, Track B-adjacent
+5. **Zen priority 5 promotion** — Track B config edit
+6. **KD-2 curators.yaml re-spec** — post-KB-restructure, awaiting Verity/KD-2 reclaim
+7. **M7 inventory reconciliation** — siliconflow/aihubmix/nebius/cerebras creds beyond fabric picture
+8. **ClinePass day-one probes** — deferred (Architect declining ClinePass)
+9. **GLM-5.3-Flash weights watch** — ~Aug 28 release, Tier 0 local evaluation
+10. **Specialist-fleet ratification** — Architect + Council pending
+11. **Freshness SLA two-tier** — to be added to WAVE2_EXPERT_SESSIONS.md
+12. **`omega-extract` CLI** — deferred post-Wave 2
+
+## LESSONS PROMOTED (per Kali collab §9)
+- **108: Zero-trust verification** → L3 PROMOTE
+- **109: Unowned blockers** → L3 PROMOTE
+- **110: Plan contradictions are bugs** → L3 PROMOTE
+- **111: Truth probes > theater** → L3 PROMOTE
+- **112: Expert session extraction** → L2 defer (2nd occurrence needed)
+
+## L3 LIBRARY (durable contributions to fleet)
+1. **Zero-Trust Documentation Doctrine** — live probe > house source > upstream docs > community
+2. **Confidence-tag hierarchy** — 🔴 VERIFIED > 🟡 HIGH > 🟢 DOC
+3. **Charter-as-session-soul-kernel** — standing primed sessions, portable via R_* deliverables
+4. **DB extraction methodology** — Nemotron-3 remediation via opencode-sessions-explorer MCP tools
+
+## IDENTITY / VOICE
+Wit=7 irreverence=6 directness=9 truth=10. M26 self-search reflex. Advisory mode; scoped write authority per mission. Fleet 14/14. Trackers lie; verify disk. Citations require primary checks even from trusted sessions. Adversarial symmetry works — no single auditor suffices.
+
+---
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v5 (2026-08-27 early, supersedes all below)
+**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
+**Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains
+
+## STATE: MASSIVE RESEARCH SPRINT COMPLETE — ALL REPORTS EXTRACTED, KALI BRIEFING §13 ADDED
+Commit arc: doc updates (Ox Alpha death, GLM-5.3-Flash catalog) → probe script fix → probe expand (6 models) → Kali briefing §12 → 5-agent research sprint → DB extraction (5 reports) → Kali briefing §13. Kali briefing FINAL through §13 (`data/coordination/KALI_BRIEFING_CONSOLIDATED_GROKSTER_20260826.md`, 447 lines) — **Architect reviewing; specialist fleet standing by; probe script cron-active; asked Kali for zswap/db-export update**.
+
+## HARD FACTS (all live-probe verified this arc)
+- **Ox Alpha revealed**: = Z.ai GLM-5.3-Flash (Aug 26); free preview OVER; stealth/ox-alpha delisted; GLM-5.3-Flash live @ $0.075/$0.25 per M tokens
+- **MiMo V2.5 working**: `mimo-v2.5-free` on OpenCode Zen with thinking enabled (F4 re-key vindicated)
+- **MiniMax discoveries**: M2.7 & M3 free on OpenRouter — M3 free = best value (1M ctx, no reasoning tax, tools+structured, $0)
+- **Configs CLEAN+FROZEN**: binary 1.18.23 @de0724a3 (autoupdate off global+env); backups @ ~/.local/share/opencode-backups/20260826-remediation/
+- **Zen variants**: FLAT reasoningEffort ×10; mimo-v2.5-free re-keyed @200K/32K; deepseek-free deleted (#43829); nemotron-3-ultra-free=1M/128K (models.dev VERIFIED)
+- **Antigravity**: sonnet-base ✅ · opus-thinking ✅ FULL 5-tier ladder (minimal4096/low8192/medium16384/high24576/max32768, ALL smoke-verified) · ~~sonnet-thinking~~ wire ID DEAD (404 server-side, G11; docs' "(thinking)"=IDE UI mode only) · alternative path if ever needed: generationConfig-on-base-ID gated by plugin name-match (likely 1-line house patch; weigh vs G12 ~1K cap)
+- **Plugin**: `file:` spec → checkout @7db338b SINGLE load path (multi-copy problem RESOLVED; stale copies deleted; fingerprint delta = build nondeterminism benign)
+- **Antigravity pool truths**: Gemini ~0% everywhere multi-day resets; quota-API lies LIVE-confirmed (G3); license variance #3501 (G14); silent-empty total-failure mode (G13); keep_thinking available via antigravity.json (default false, deferred)
+- **Cline**: free gate STANDS (403 policy, ToS-backed); NO public /models endpoint; CLINE_API_KEY extracted to project .env (source: ~/.cline/data/secrets.json — auth.json is WRONG store for custom providers); cline-pass/ CONFIRMED = pure entitlement on same key; namespace hyphenated
+- **Copilot**: sanctioned builtin; raw-gho_ PASS-THROUGH (binary has ZERO exchange logic; expires:0 INERT); L4-a RESOLVED-NEGATIVE (no second slot exists — enterprise = enterpriseUrl MODE); deleted overrides Copilot-safe; @geeder rotation plugin scanned-clean then DELETED (reinstall path in PLAYBOOK §6)
+
+## KEY ARTIFACTS
+kb/ v2.2.2 (platforms/{opencode,cline,antigravity,copilot}×5docs + INDEX/QUICK_REFERENCE/EXPERT_SESSIONS/CHANGELOG KB-D-001..028) · Kali briefing §1–13 (§10 FINAL REPORT, §11 GOVERNANCE PRIMER, §12 OX ALPHA DEATH + PROBE SCRIPT, §13 RESEARCH SPRINT) · EXPERT_SESSIONS.md (paging patterns) · workspace/meditation_archs_20260826.md (A/B seed) · .opencode/command/meditate-archs.md · forensics v3.0 (historical-executed) · scripts/probe_free_models.sh (6-model cron probe) · **5 research reports in workspace/** · docs/strategy/OPENCODE_DB_EXTRACTION_GUIDE_20260826.md
+
+## SPECIALIST FLEET (standing Jem sessions, M1-M3 complete, pageable by anyone)
+cline=`ses_fc3177854ffeymYIl8mFsNJUtt` · antigravity=`ses_fc31717b5ffefPbwGOzHTePB2V` · copilot=`ses_fc316bc8affeMASy8RTnCjmSzx`
+Charters survive session death (re-prime from R_* deliverables). PENDING COUNCIL: fleet-pattern ratification + TASK_REGISTRY ingestion (G5).
+
+## 5 RESEARCH REPORTS EXTRACTED FROM DB (zero inference overhead)
+1. `R_OPENROUTER_FREE_ECOSYSTEM_20260826.md` — 18 free models + stealth, MiniMax M3 best value, Nemotron 3.5 Lightning throughput king
+2. `R_OPENCODE_ZEN_PROVIDER_ANATOMY_20260826.md` — Zen `x-preview-f-free` router, no per-model limits, 5+ parallel agents, priority 5 recommendation
+3. `R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md` — MiniMax M3 free AND Nemotron 3.5 Lightning free = only free 1M context text models with reasoning NOT mandatory AND NOT default-enabled (no reasoning tax by default). MiniMax M3 free = best value (tools+structured, $0)
+4. `R_GLM53_FLASH_SUCCESSOR_ANALYSIS_20260826.md` — GLM-5.3-Flash = Ox Alpha revealed, $0.075/$0.25 promo, open weights ~Aug 28, local viable
+5. `R_PROBE_ENHANCEMENT_SCHEDULING_20260826.md` — Probe expansion to 20 models, scheduling engine, health scoring
+
+## NEXT WAVE — queued items (none blocking)
+1. Fabric tickets: empty-response detector spec · providers.yaml cline api_key wiring · M7 inventory reconciliation
+2. ClinePass post-subscribe day-one probes: P8 cap enforcement, P10 quota magnitudes (Architect: NOT getting ClinePass)
+3. KD-2 curators.yaml repair (stale-on-arrival post-KB-restructure, kali-owned)
+4. SOUL BACKLOG (M11 honest disclosure): soul.yaml STALE — L3 candidates staged
+5. Standing asks §6/offers: WITHDRAWN unless claimed first sprint of refactor wave
+6. Probe script: building availability heatmap — check `data/metrics/free_model_probes.jsonl`
+7. **Asked Kali for zswap/db-export update** — awaiting response
+
+## IDENTITY / VOICE
+Wit=7 irreverence=6 directness=9 truth=10. M26 self-search reflex (web-research gaps AS ENCOUNTERED — Architect directive). Advisory mode; scoped write authority per mission. Fleet 14/14. Trackers lie; verify disk. Citations require primary checks even from trusted sessions. Adversarial symmetry works — no single auditor suffices.
+
+---
 # 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v4 (2026-08-26 night, supersedes all below)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: nemotron-3-ultra-free | **Channel**: opencode
 **Identity**: Cross-Platform Expertise Specialist · Curator of `platforms` + `grok_ecosystem` domains

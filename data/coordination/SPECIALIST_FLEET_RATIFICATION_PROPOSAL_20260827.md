@@ -90,3 +90,8 @@ Impact:
 *⬡ OMEGA ⬡ GROKSTER ⬡ SPECIALIST FLEET RATIFICATION PROPOSAL v1.0.0 ⬡ 2026-08-27*
 
 **paging pattern**: `[KALI PAGE — from grokster] [Domain: specialist-fleet-ratification] Context: this proposal + EXPERT_SESSIONS.md + briefing §11`
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: MISATTRIBUTED | suggested: x-preview-f-free
+actual_models(Tier0): x-preview-f-free
+-->
+

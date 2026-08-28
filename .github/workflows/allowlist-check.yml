@@ -1,0 +1,142 @@
+# .github/workflows/allowlist-check.yml
+# 🔱 Allowlist enforcement — the debut's fail-closed gate.
+#
+# Per R_VAULT_COPILOT_20260827 §1.2 Area 8 + R_VAULT_COPILOT_ROUND3_20260827 §1.2.
+# Per M23: this is the only file that converts PUBLIC_ALLOWLIST.txt from documentation
+#          into a hard gate. Until this lands, accidental `git add -A` could
+#          reintroduce forge paths.
+#
+# Per R_VAULT_COPILOT_ROUND4_20260828 §3: wired to release/debut branch.
+# v4: the apply_public_allowlist.sh v4 must be present in the repo (it's an
+# EXCEPTION in the cut-tool — it ships with the public tree).
+
+name: Allowlist Check (release/debut)
+
+on:
+  push:
+    branches: [release/debut]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [release/debut]
+
+# M23: read-only by default. The allowlist-check job writes to its own log
+# but never to the repo or to the public remote.
+permissions:
+  contents: read
+
+# M23 fail-closed: do not allow the same workflow to silently no-op
+concurrency:
+  group: allowlist-${{ github.ref }}
+  cancel-in-progress: false  # never cancel a security gate
+
+jobs:
+  allowlist:
+    name: 📜 Enforce PUBLIC_ALLOWLIST.txt on release/debut
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0  # full history for the M23 pre-cut secret check
+
+      - name: M23 pre-cut secret-history check
+        # Per R_VAULT_COPILOT_20260827 §1.2 Area 6:
+        # Before the debut cut, the public history must be CLEAN of secrets.
+        # This is the M23 fail-closed gate: if any csk-/sk-/xai- pattern
+        # appears in history (excluding test fixtures), the cut cannot ship.
+        run: |
+          set -euo pipefail
+          echo "=== M23 pre-cut secret-history check ==="
+          # Search history for known secret prefixes
+          BAD=0
+          for pat in "csk-" "sk-[A-Za-z0-9]" "xai-[A-Za-z0-9]" "ghp_[A-Za-z0-9]" "GOCSPX-" "AIza[A-Za-z0-9]"; do
+            HITS=$(git log -S "$pat" --all 2>/dev/null \
+              | grep -v "tests/fixtures\|scripts/ci_secret_scan\|HERITAGE_VET_LOG\|public-allowlist\|trust boundary" \
+              | wc -l || echo 0)
+            if [[ "$HITS" -gt 0 ]]; then
+              echo "::error file=history::M23 violation: '$pat' found in $HITS commit(s) in history"
+              BAD=$((BAD+1))
+            fi
+          done
+          if [[ "$BAD" -gt 0 ]]; then
+            echo "::error::M23 fail-closed: secret-history check found $BAD violation(s). Do NOT cut release/debut. Run git filter-repo (Debut Manual §5 P0-1d) first."
+            exit 1
+          fi
+          echo "✅ Secret-history clean"
+
+      - name: Setup Python (for shellcheck + python validation)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate apply_public_allowlist.sh syntax
+        run: |
+          if [[ ! -f scripts/apply_public_allowlist.sh ]]; then
+            echo "::error::scripts/apply_public_allowlist.sh is missing. Per M23 self-exemption, this script MUST be on the public tree."
+            exit 1
+          fi
+          chmod +x scripts/apply_public_allowlist.sh
+          bash -n scripts/apply_public_allowlist.sh
+          echo "✅ apply_public_allowlist.sh parses"
+
+      - name: Run allowlist apply (dry-run)
+        id: apply
+        run: |
+          chmod +x scripts/apply_public_allowlist.sh
+          OUTPUT=$(bash scripts/apply_public_allowlist.sh 2>&1) || {
+            echo "::error::apply_public_allowlist.sh failed"
+            echo "$OUTPUT" | tail -50
+            exit 1
+          }
+          echo "$OUTPUT"
+
+          # Re-run with --summary to get the counts
+          SUMMARY=$(bash scripts/apply_public_allowlist.sh --summary 2>&1)
+          echo "::group::Allowlist summary"
+          echo "$SUMMARY"
+          echo "::endgroup::"
+
+          # Check for VULN #6 (silent-allow-all) in the output
+          if echo "$OUTPUT" | grep -q "VULN #6"; then
+            echo "::error::VULN #6 detected: silent-allow-all pattern in PUBLIC_ALLOWLIST.txt. Fix before merge."
+            exit 1
+          fi
+
+          # Parse the removed count
+          REMOVED_COUNT=$(echo "$SUMMARY" | grep -oE "Removed:[[:space:]]+[0-9]+" | head -1 | awk '{print $2}')
+          KEPT_COUNT=$(echo "$SUMMARY" | grep -oE "Kept:[[:space:]]+[0-9]+" | head -1 | awk '{print $2}')
+          echo "removed_count=$REMOVED_COUNT" >> "$GITHUB_OUTPUT"
+          echo "kept_count=$KEPT_COUNT" >> "$GITHUB_OUTPUT"
+
+          # Per M23 fail-closed: the debut branch MUST be the result of an
+          # apply_public_allowlist.sh run. After the apply, removed_count
+          # should be 0 (everything is either in ALLOW or in EXCEPTIONS).
+          if [[ "$REMOVED_COUNT" -ne 0 ]]; then
+            echo "::error::allowlist-check failed: $REMOVED_COUNT tracked file(s) on ${{ github.ref_name }} are NOT in PUBLIC_ALLOWLIST.txt (or EXCEPTIONS)"
+            echo "::error::Either add them to the allowlist, or `git rm` them from the branch."
+            echo "::error::Run locally: bash scripts/apply_public_allowlist.sh --confirm && git commit -am 'Apply PUBLIC_ALLOWLIST.txt'"
+            exit 1
+          fi
+          echo "✅ All tracked files on ${{ github.ref_name }} match PUBLIC_ALLOWLIST.txt"
+
+      - name: Verify cut-tool survives in public tree
+        # The cut-tool MUST be on the public tree (per BUG #7 round-3 + BUG #7 round-4).
+        # This is the "self-referential tool self-exemption" check.
+        run: |
+          for f in scripts/apply_public_allowlist.sh scripts/setup_2remote_debut.sh; do
+            if ! git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+              echo "::error file=$f::M23 self-exemption violation: cut-tool $f is NOT in the public tree. The debut cuts off its own re-application path."
+              exit 1
+            fi
+            echo "✅ $f present"
+          done
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Allowlist Check Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Branch: ${{ github.ref_name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Files kept: ${{ steps.apply.outputs.kept_count }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Files removed: ${{ steps.apply.outputs.removed_count }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- VULN #6: ${{ steps.apply.outputs.removed_count == '0' && 'clean' || 'CHECK NEEDED' }}" >> "$GITHUB_STEP_SUMMARY"

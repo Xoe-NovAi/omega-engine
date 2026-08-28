@@ -57,3 +57,8 @@ from the first missing phase. Without it, re-run from scratch.
 - Past runs → `data/coordination/meditations/MEDITATION_REGISTRY.md`
 
 *End — v1.0.0.*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

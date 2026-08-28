@@ -200,3 +200,8 @@ All other findings are minor staleness or documentation completeness items that 
 
 ---
 *⬡ OMEGA ⬡ JEM ⬡ KB-FINAL-AUDIT ⬡ CONDITIONAL-PASS ⬡ 2026-08-26*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

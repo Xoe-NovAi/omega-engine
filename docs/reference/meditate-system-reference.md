@@ -188,3 +188,8 @@ universal; Architect Q1 confirmed mid-run SR access; Carmack audit recommends 35
 
 *End — v1.0.0. Reconstructors: if you needed a rule not stated here, that is a gap — report it to
 the Maintainer's Guide owner for a new cascade-map entry.*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

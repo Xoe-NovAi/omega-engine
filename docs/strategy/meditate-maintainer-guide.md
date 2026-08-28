@@ -141,3 +141,8 @@ the SR test becomes a new cascade-map entry here — that is the gap-closure loo
 | Maintainer's Guide (this file) | Kali | Cascade maps peer-reviewed by cascade identifier |
 
 *End — v1.0.0, produced from MEDITATE_DOCUMENTATION_STRATEGY.md §7/§8 during the 2026-08-26 dev sprint.*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

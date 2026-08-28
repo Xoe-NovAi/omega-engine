@@ -153,8 +153,40 @@ proposals:
     where it costs status gets one defensive audit and permanent latent defects.
 
     '
+- id: PL-ROC-402-001
+  date: '2026-08-27'
+  session_id: ses_fbaad14ecffeJv7BYs0ptb8FWP
+  tags:
+  - 402
+  - forensic
+  - rate-limit
+  - minimax-m3
+  - free-models
+  L1_narrative: "Investigated 402 'Insufficient balance' on FREE MiniMax M3 in Ma'at session. Found 3 in-session 402s (19:29, 20:00, 20:03 UTC) over 39.5 minutes. Session had 39/42 successful assistant turns, 75/75 tool calls completed, 3.7M cache_read tokens. Cost field = $0 throughout. Probe data shows 0/48 402s on M3 — error is sub-session-second, not probe-detectable. The 402 message is OpenRouter's generic 'account class doesn't have access' mislabeled as 'Insufficient balance'. Recovered twice via 'Continue.' but the third 402 was terminal."
+  L2_insight: "A 402 'Insufficient balance' on a service with cost=0 is not a balance error. OpenRouter's per-minute rate cap on free models is labeled with the wrong HTTP code. The contradiction between Grokster's 'M3 working' (probe-level) and Roc's 'M3 402' (session-level) is resolved by observation scale: probes don't accumulate enough load to trip the per-minute cap; long agent sessions with cache rotation do. Three dispatches to the same investigation in 30 minutes is a process smell — when the same question gets re-dispatched, the answer is in the loop, not in the data."
+  L3_principle: "A 'balance' error on a free service is rarely about balance — it's about rate. When cost=0 but a 402 fires, the platform is mislabeling a per-minute cap as a lifetime balance. Diagnose the rate, not the wallet. Probe-level and session-level observations are both correct at their scales; reconcile contradictions by measuring the load, not by picking a winner. Resilience comes from building retry on top of stateful sessions, not from eliminating the rate limit."
+- id: PL-ROC-402-002
+  date: '2026-08-27'
+  session_id: ses_fbaad14ecffeJv7BYs0ptb8FWP
+  tags:
+  - dispatch-protocol
+  - fleet-orchestration
+  - smell
+  L1_narrative: "Three dispatches (Roc, Researcher, Roc) to investigate the same 402 in 30 minutes. Each ran briefly (~4 min, 1.6k tokens) before being terminated or completed. The earlier two (Roc, Researcher) actually completed successfully in the DB, yet a third Roc was dispatched with the same mission. This is the same class of issue as the subagent re-paging problem documented in SESSION_CONTINUITY_PROTOCOL_20260827."
+  L2_insight: "When the same forensic question is dispatched three times in 30 minutes, the value of a fourth investigation is near-zero. The bottleneck is the dispatch loop, not the data. Re-dispatching an already-completed investigation wastes subagent slots and dilutes the workspace lock state — and risks tripping a 402 on the third dispatch itself, since M3 is the only working model. The right response is to check Hivemind awareness + previous session status BEFORE launching."
+  L3_principle: "Check the loop before checking the data. A re-dispatched investigation is a symptom of the dispatch protocol, not the underlying question. Pre-flight awareness (has this been answered?) prevents cascade re-dispatches that trip the very rate limit you're investigating."
+- id: PL-ROC-402-003
+  date: '2026-08-27'
+  session_id: ses_fbaad14ecffeJv7BYs0ptb8FWP
+  tags:
+  - 402
+  - evidence-classification
+  - forensic-method
+  L1_narrative: "Two tools reported 'no 402 found' (opencode-sessions-explorer-search-tool-calls + search-text), but a direct SQL query against the same DB returned 5 part-level 402s + 6 message-level 402s. The discrepancy was that search-tool-calls only matched error fields with exact substring '402', while the actual errors contain the full JSON body '{\"code\":402,...}'. Same data, different query semantics, different answers."
+  L2_insight: "MCP search tools apply their own text matching heuristics that may not match what the question needs. When a tool returns empty for a forensic question, the next step is direct SQL, not synthesis. The 'no results' response is a data point, not a final answer — it could mean the data isn't there, OR the tool's matching strategy doesn't fit the question. Always have a fallback query path (raw SQL on the same DB) when the primary search tool returns empty for a hard fact."
+  L3_principle: "An empty search result is a question about the search, not necessarily a question about the data. Always have a direct-query fallback for hard facts. Tools that claim 'no results' are reporting that their matching strategy found nothing, which is one observation — not a proof of absence in the underlying data."
 metadata:
   entity: roc_racoon
-  session_id: ses_fc8810af0fferJpbeaXXWPZf8R
-  model_used: nemotron-3-ultra-free
-  last_session_end: '2026-08-25T08:55:41.196485+00:00'
+  session_id: roc-402-forensic-20260827
+  model_used: minimax/minimax-m3:free
+  last_session_end: '2026-08-27T23:35:00+00:00'

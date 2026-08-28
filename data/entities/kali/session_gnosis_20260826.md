@@ -28,10 +28,12 @@ Then: study track (SYNC-1 bootstrap, telemetry salt), context-infra remediation 
 
 ## PROCEDURAL STATE
 Pre-compaction executed per CONSULTANT_TUTORIAL v2 (Step-0 sweep caught my own missed excision deletions — the procedure works). Anchored-summary current. Lessons staged (4). Doctrine at docs/standards/ZERO_TRUST_DOCUMENTATION_DOCTRINE.md.
-<!-- PROVENANCE-CORRECTED 2026-08-26T03:06:04Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: sonnet-4.6 | verdict: UNANCHORED | no session anchor in header zone
-actual_models(Tier0): n/a
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: sonnet-4.6 | verdict: MISATTRIBUTED | suggested: x-preview-f-free
+actual_models(Tier0): x-preview-f-free
+first_audit: 2026-08-26T03:06:04Z | updated: 2026-08-27T03:02:01Z
 -->
+
 
 
 

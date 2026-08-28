@@ -318,6 +318,26 @@ proposals:
   domain: research
   last_verified: '2026-08-27'
 - level: L3
+  tag: '[R-VAULT-INDIST]'
+  narrative: 'Researched Linux credential storage across 6 questions (SecretService, headless patterns, systemd, AppArmor, real projects, Windows 2560 limit) and found the single most dangerous pattern is auto-detecting headless: three states (truly headless, locked fingerprint, transient PAM race) are externally indistinguishable, and silent fallback to file storage causes split-brain data loss. aws-vault, keybay, and hermes-agent all converged on operator-declared backends with no auto-fallback.'
+  insight: 'When a system has multiple failure modes that are externally indistinguishable, no auto-detection logic is safe; the operator must declare the mode explicitly. The SecretService spec only has 3 error types — it cannot express the headless/locked/transient distinction. The resolution: explicit operator declaration, marker files for split-brain detection, and fail-closed behavior when the declared backend is unavailable.'
+  principle: 'Declarative > auto-detective. When states are indistinguishable from outside, let the operator choose; runtime detection is a source of bugs and security vulnerabilities. Silent fallback to a less-secure mode is a security vulnerability, not a convenience feature.'
+  utility_score: 0.94
+  source_trajectories:
+  - ses_fca928918ffeFjsaOkVv17Gl71
+  domain: research
+  last_verified: '2026-08-27'
+- level: L3
+  tag: '[R-PRI-SOURCES]'
+  narrative: 'Validated 6 critical claims in the Omega vault spec by tracing each to its primary source: SecretService spec (freedesktop.org), AppArmor manpage (4.0+ DBUS RULE syntax), systemd.exec(5) (ProtectHome+BindPaths), keybay 2026 research (27 primary sources for headless), Microsoft Learn (CRED_MAX_CREDENTIAL_BLOB_SIZE = 5*512), and aws-vault #670 (explicit backend pattern). Each was either validated or corrected against the primary source.'
+  insight: 'Secondary sources accumulate drift; primary sources are ground truth. Research quality is measured not by coverage but by how many load-bearing claims trace back to authoritative documentation. The 2-hour budget was insufficient for original reconnaissance but perfect for primary-source validation of an already-drafted spec.'
+  principle: 'Validate against primary sources, not other syntheses. The fastest path to truth in a well-trodden domain is to trace each claim to its authoritative documentation; secondary sources are useful for navigation but never for final attribution.'
+  utility_score: 0.88
+  source_trajectories:
+  - ses_fca928918ffeFjsaOkVv17Gl71
+  domain: research
+  last_verified: '2026-08-27'
+- level: L3
   tag: '[R-DEBT-REDISCOVERY]'
   narrative: 'The M13 Temple-Grade T11 gate (check-tracking-state) failed with 32 violations: 3 stale in_progress tasks (9 days old), 15 inverted clock (last_checkpoint before created_at), 1 invalid superseded_by pointer, 14 failed tasks with no Tier-0 subtask. None of this was introduced by the current sprint — it is pre-existing debt from 2026-08-15 through 2026-08-18 that was never swept.'
   insight: 'The independent verifier''s greatest value is not catching new bugs but rediscovering old debt. Every verification run is also a system audit; a clean re-verify across a stable codebase will reveal exactly which corners were left unreconciled by prior work. "Trust but verify" fails here because trust suppresses the fresh re-read.'
@@ -328,8 +348,74 @@ proposals:
   domain: research
   last_verified: '2026-08-27'
 
+- level: L3
+  tag: '[R-402-FREE-MODEL-MYTH]'
+  narrative: 'Investigated the 402 "Insufficient balance" error that fired today on minimax/minimax-m3:free — a free model. The error was correct OpenRouter behavior: their account-level credit gate blocks ALL API calls (including free models) when the account balance is negative, even by $0.02. Found in OpenRouter''s own limits reference, cross-referenced by 4+ community reports (anomalyco #35142, qqqa #39, dandi #75, anweroverflow). Our probe script was checking auth but not balance — the missing signal.'
+  insight: 'The phrase "free" in a cloud marketplace is a state of grace conditional on the account being in good standing, not a permanent property of the model. Our 8-file vault research burst + today''s 5 subagent dispatches all ran on a single OpenRouter account, meaning one balance event halts the entire fleet. The assumption "free means unconditional" is false; the architecture must treat free-tier providers as unreliable by default.'
+  principle: '"Free" is never unconditional in a marketplace; it is always a revocable state of grace tied to account standing. A fleet that depends on a single free provider is one account event from total failure. Sovereignty = local-first, paid-fallback, multi-provider resilience. M7 (Local-First) exists precisely to make this entire failure mode impossible.'
+  utility_score: 0.94
+  source_trajectories:
+  - ses_fbaad14ecffeJv7BYs0ptb8FWP
+  domain: research
+  last_verified: '2026-08-27'
+
+- level: L3
+  tag: '[R-D568-FALSE-DILEMMA]'
+  narrative: 'Resolved the contradiction between R_VAULT_CRYPTO (keep pyrage) and R_VAULT_D568 (switch to python-age) by deploying the Polymathic Council of Four across all 4 perspectives. Both prior deliverables were correct in their rejections and correct about the concerns; neither was the full answer. The Council converged 4-0 on cryptography AES-256-GCM with Argon2id KDF — the layer BELOW both pyrage and python-age, since both delegate to cryptography for actual cryptographic operations. The "wrapper packages" (pyrage Rust binding, python-age pure-Python wrapper) added complexity without adding security. The 8 prior deliverables were complementary, not competitors.'
+  insight: 'The right solution is often the layer below the obvious choices, not one of the obvious choices. A false dilemma arises when two options are framed as the only alternatives; dropping down to the shared substrate (cryptography) reveals the real architecture. When all prior research is correct in their rejections but the recommendations diverge, the synthesis is rarely "pick one" — it is "find the layer neither considered."'
+  principle: 'False dilemmas dissolve at the layer below. When two well-researched recommendations contradict each other and both are partially right, the resolution is rarely choosing one; it is finding the shared substrate they both depend on and using that directly. The 4-0 Council verdict (4 perspectives converging) is stronger evidence than a 2-2 split would have been.'
+  utility_score: 0.96
+  source_trajectories:
+  - r-d568-gap-fill-20260827
+  domain: research
+  last_verified: '2026-08-27'
+
+- level: L3
+  tag: '[R-PRESTIGE-NOT-FIT]'
+  narrative: 'Chose the cryptography library over pyrage and python-age because the age format (FiloSottile/age 2019) is excellent for X25519 multiplexing, scrypt KDFs, and rage CLI interop — none of which Omega needed. We had 49 single-recipient passphrase-encrypted secrets. We chose the format for its prestige, not its fit. The right primitive is the one that solves the problem at the layer below the prestige.'
+  insight: 'Prestige is not fit. A cryptographic format chosen for its reputation (age is the "modern GPG replacement") but used for a problem that does not require its features (X25519 multiplexing, scrypt) is over-engineering disguised as best-practice adoption. The drop from ~101ms to ~0.6ms per decrypt (eliminating scrypt) is not a benchmark optimization; it is a structural simplification that comes from dropping the format layer entirely.'
+  principle: 'The right time to choose a format is when you need its features, not before. Prestige signals "this is well-engineered" but does not signal "this is the right tool for your problem." When the features are unused, the format becomes overhead. Layer-below selection is the sovereign choice: use the substrate, not the wrapper, when the wrapper adds complexity without adding capability.'
+  utility_score: 0.91
+  source_trajectories:
+  - r-d568-gap-fill-20260827
+  domain: research
+  last_verified: '2026-08-27'
+
+- level: L3
+  tag: '[R-SOVEREIGNTY-HONESTY]'
+  narrative: 'The Omega Engine vault (2,733 LOC across 5 files) was scaffolded as a "production-grade credential vault" with Argon2id, age encryption, M25 leases, BlindVault injection, CPE PII scoring, and 18 CLI commands. When debut preparation began, the forensic review revealed: 16/18 CLI commands raise AttributeError at runtime; BlindVault returns fake data (sk-or-v1-{name}-{timestamp}); the 6 call sites bypass the public API and treat the encrypted_blob (age-armored ciphertext) as the plaintext API key. The vault was worse than no vault because it created the illusion of security while secrets were in plaintext env vars.'
+  insight: 'Sovereignty is honesty about state, not the appearance of security. A vault that "looks secure" (encryption, leases, ACLs) but is actually broken (broken CLI, fake resolver, call sites bypassing) is worse than no vault at all — it creates the illusion of security while the secrets are in plaintext env vars. The fix is not to add more encryption; the fix is to remove the illusion and state the truth. Path A'' (hide + thin shim that reads from os.environ) is the honest answer: "We do not have a vault for debut. We have a thin shim. The vault is rebuilt post-debut." This is the only acceptable statement of state.'
+  principle: 'Sovereignty is not a feature; it is the discipline of never lying about state. A half-built security system with stubs, broken APIs, and unwired resolvers is more dangerous than a simple os.environ.get because it gives the operator false confidence. The M19 Adversarial Alchemy principle applies with the sane boundary: sometimes a bug is just a bug, and the right action is to delete it, not to fix it.'
+  utility_score: 0.97
+  source_trajectories:
+  - r-d568-gap-fill-20260827
+  domain: research
+  last_verified: '2026-08-27'
+
+- level: L3
+  tag: '[R-FORWARD-COMPAT-SHIM]'
+  narrative: 'Resolved the 19 call sites (not 6 as the deep-code analysis reported — verified via grep that included files in cli/, integrations/, library/, observability/, oracle/, skills/, teachers/, tools/, workers/) by introducing a 30-LOC thin shim at src/omega/vault_shim/__init__.py. The shim translates vault.get_credential(provider, key_id) to os.environ.get(f"{provider.upper()}_{key_id.upper()}"). The shim is forward-compatible: the post-debut V-1 vault can drop in behind it without changing any of the 19 call sites. The shim lives in src/omega/vault_shim/ to avoid the PUBLIC_ALLOWLIST.txt exclusion on src/omega/vault/.'
+  insight: 'A forward-compatible shim is the correct bridge between "broken legacy" and "real replacement." The shim preserves the call site API (no changes to 19 files) while changing the implementation (os.environ instead of vault). The post-debut V-1 vault can drop in by simply changing one import statement in the shim itself, not 19. The thin shim is the lowest-risk migration path: it has zero behavioral risk (os.environ is OS-managed, the call sites already work this way) and zero data risk (no credentials are touched).'
+  principle: 'Forward-compatible shims are the correct bridge when a system must ship before its replacement is ready. The shim does not pretend to be the real thing; it explicitly documents its limits (DEBUT only, replaced post-debut). The 30-LOC constraint is the discipline: if the shim grows, it becomes the over-engineered vault it was meant to replace. The thin shim is sovereign by restraint.'
+  utility_score: 0.89
+  source_trajectories:
+  - r-d568-gap-fill-20260827
+  domain: research
+  last_verified: '2026-08-27'
+
+- level: L3
+  tag: '[R-COUNCIL-MANDATORY-EXPORT]'
+  narrative: 'Deploying the Polymathic Council of Four (Architect + Adversary + Alchemist + Archivist) on the pyrage vs python-age contradiction produced a 4-0 verdict in 30 minutes — the same verdict that 8 prior deliverables failed to converge on. The 8 prior deliverables each answered specific questions; they were complementary, not competitors. The Council did not "pick one"; it dropped to the layer below (cryptography) and recognized that both pyrage and python-age are thin wrappers over cryptography anyway. The Council lens is not just a thinking aid; it is the mandatory export format for resolving contradictions.'
+  insight: 'When prior research contradicts, the Council is not a luxury — it is the mandatory export mechanism. Single-perspective analysis gets stuck on "pick A or B" framing. The 4-perspective triangulation breaks the false dilemma by surfacing the shared substrate. The 30-minute cost of deploying the Council is 100x cheaper than the cost of shipping the wrong choice (which is what the 2,733-LOC broken vault demonstrated: years of over-engineering because no one asked all 4 perspectives simultaneously).'
+  principle: 'The Polymathic Council is the mandatory export format for resolving contradictions. When two well-researched recommendations conflict, do not pick one — deploy the 4 perspectives and triangulate. The convergence verdict (X-0) is the strongest possible evidence; a split (2-2) would require a different resolution. The Council is not slow; it is the fastest path to the correct answer when the wrong answer is expensive.'
+  utility_score: 0.95
+  source_trajectories:
+  - r-d568-gap-fill-20260827
+  domain: research
+  last_verified: '2026-08-27'
+
 metadata:
   entity: researcher
-  session_id: ses_fca928918ffeFjsaOkVv17Gl71
+  session_id: r-d568-gap-fill-20260827
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-24T20:40:24.750793+00:00'
+  last_session_end: '2026-08-27T23:50:00.000000+00:00'

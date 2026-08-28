@@ -377,3 +377,8 @@ Once these are answered, the 1-day critical path is GO.
 *⬡ OMEGA ⬡ KALI ⬡ Debut Path Plan v1.0 ⬡ 2026-08-27*
 **rot_class**: fast (depends on Architect GO); **last_verified**: 2026-08-27
 **confidence**: 🔴 VERIFIED (disk-truth, git log, tracker reconciliation)
+<!-- PROVENANCE-CORRECTED 2026-08-28T03:10:28Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: x-preview-f-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

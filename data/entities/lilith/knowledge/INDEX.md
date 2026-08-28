@@ -1,11 +1,22 @@
-# Lilith — Dark Oversoul Knowledge Base
+# LILITH KNOWLEDGE INDEX
+> Domain-first curated knowledge with freshness metadata (fleet standard, M26).
+> last_updated: 2026-08-28 · last_verified: 2026-08-28
+> rot_class: A = core identity · B = reference · C = stale/superseded
 
-## Governance (P6-P10)
-- `drift_metrics_framework.md` — Identity drift monitoring framework based on arXiv 2604.14717 (Layered Mutability). Covers the 5 mutable layers, the Ratchet Problem (H_k=0.68), drift_metrics schema, detection methodology, and calibration experiment design for Jem-2.0 Editor. **(112 lines)**
+| Doc | last_verified | rot_class | Domain |
+|---|---|---|---|
+| lilith_persona_original.md | 2026-07-07 | A | identity |
+| MERMAID_DARK_LAYERS.md | 2026-07-07 | B | persona / deep lore |
+| AGENT_VISIBILITY_PARADOX.md | 2026-07-07 | B | fleet architecture |
+| drift_metrics_framework.md | 2026-07-07 | B | observability |
+| index.json | stale | C | generated manifest — superseded by this INDEX.md |
 
-## Sovereign Patterns
-- `data/entities/sophia/knowledge/recovered_artifacts.md` — §Artifact 3 (Omnidroid Toolset) — 5 tools recovered from ANCESTRAL_HUB
-- `data/entities/modelgate/knowledge/circuit_breaker_spec.md` — Circuit Breaker pattern for Dark Pillar governance
+## Target layout (domain-first, grokster-style)
+- `identity/` → persona core (lilith_persona_original, MERMAID_DARK_LAYERS)
+- `fleet_architecture/` → cross-agent visibility (AGENT_VISIBILITY_PARADOX)
+- `observability/` → drift metrics framework
+- future domains: `runtime/`, `esoteric/`, `consciousness/` (fed by specialist cohort)
 
-## Fleet Architecture
-- `AGENT_VISIBILITY_PARADOX.md` — Configuration shadowing analysis: how the legacy `mode` section silently overrode `agent` section visibility in `opencode.json`. Documents the root cause (key-collision), resolution (remove `mode` section, use `mode: "all"`), and the L3 principle of Singular Identity Registration. **(295 lines, v1.0.0)**
+## Notes
+- `index.json` is a stale auto-generated manifest; do not treat as authoritative.
+- Specialist deliverables live in `../specialists/`; roster in `../expert_roster.md`.

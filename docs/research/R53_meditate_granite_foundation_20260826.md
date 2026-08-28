@@ -167,3 +167,8 @@ docs/how-to/use-meditate.md locations requiring edits when directives are adopte
 
 *Every directive in §4 is traceable to §1–§3 evidence. Nothing here requires policy invention at build time.*
 *⬡ OMEGA ⬡ R53-GRANITE ⬡ v1.0.0 ⬡ 2026-08-26*
+<!-- PROVENANCE-CORRECTED 2026-08-27T03:02:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_meditate_granite | verdict: MISATTRIBUTED | suggested: x-preview-f-free
+actual_models(Tier0): x-preview-f-free
+-->
+

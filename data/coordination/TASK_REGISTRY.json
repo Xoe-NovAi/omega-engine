@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "updated": "2026-08-26T20:44:35.419732+00:00",
+  "version": "1.1",
+  "updated": "2026-08-28T06:41:50.479335+00:00",
   "tasks": [
     {
       "task_id": "v1-vault-legacy-mining-20260721",
@@ -1342,7 +1342,7 @@
       "channel": "cline",
       "entity": "omega-engine",
       "description": "Consolidated 21 vault-overhaul docs into single implementation manual, archived 10 source docs, rewrote master index, applied 4 ACTIVE_SPRINT status corrections + D-565/566/567",
-      "status": "in_progress",
+      "status": "failed",
       "created_at": "2026-08-18T11:58:39.769235+00:00",
       "last_checkpoint": "2026-08-18T11:58:39.769247+00:00",
       "resumption_count": 0,
@@ -1353,7 +1353,8 @@
         "consolidation",
         "archive",
         "post-debut"
-      ]
+      ],
+      "failure_reason": "auto-swept: in_progress exceeded 7d staleness (last_checkpoint 2026-08-18T11:58:39.769247+00:00); no ACTIVE_SPRINT counterpart"
     },
     {
       "task_id": "coordination-vault-partH-audit-20260818-01",
@@ -1362,7 +1363,7 @@
       "channel": "cline",
       "entity": "omega-engine",
       "description": "Definitive security-surface audit (Part H): found 4 missed VaultCore consumers, reconciled pii_masker pattern, 2 hardcoded default secrets S1/S2, 24 env vars cataloged, full test inventory. Manual now 1086 lines Parts A-H.",
-      "status": "in_progress",
+      "status": "failed",
       "created_at": "2026-08-18T12:33:32.095850+00:00",
       "last_checkpoint": "2026-08-18T12:33:32.095877+00:00",
       "resumption_count": 0,
@@ -1373,7 +1374,8 @@
         "security-audit",
         "part-h",
         "exhaustive"
-      ]
+      ],
+      "failure_reason": "auto-swept: in_progress exceeded 7d staleness (last_checkpoint 2026-08-18T12:33:32.095877+00:00); no ACTIVE_SPRINT counterpart"
     },
     {
       "task_id": "coordination-vault-deep-pass-20260818-01",
@@ -1382,7 +1384,7 @@
       "channel": "cline",
       "entity": "omega-engine",
       "description": "Deep-pass amendment to Vault Overhaul manual: VaultCore non-functional finding (Part I/D-568), H.1.4 (5 outside-src consumers), H.2.5/.6 migration, H.7 corrected, H.9 counts, Part D R11/R12/R13, Phase 1/4 updates, ACTIVE_SPRINT VAULT-SPRINT workstream.",
-      "status": "in_progress",
+      "status": "failed",
       "created_at": "2026-08-18T13:15:47.785340+00:00",
       "last_checkpoint": "2026-08-18T13:15:47.785361+00:00",
       "resumption_count": 0,
@@ -1393,7 +1395,8 @@
         "amendment",
         "part-i",
         "d-568"
-      ]
+      ],
+      "failure_reason": "auto-swept: in_progress exceeded 7d staleness (last_checkpoint 2026-08-18T13:15:47.785361+00:00); no ACTIVE_SPRINT counterpart"
     },
     {
       "task_id": "notebooklm-nlga-20260820-01",
@@ -2347,6 +2350,425 @@
         "wave2",
         "R05"
       ]
+    },
+    {
+      "task_id": "debut-track1-maat-20260827",
+      "subagent_type": "maat",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "PUBLIC-DEBUT-01 Track 1: INST-1 Fix2/4/6 + C3 gitleaks + C4 AGENTS.md reconstruction + fresh-venv acceptance (12h wall-clock)",
+      "status": "in_progress",
+      "created_at": "2026-08-27T19:17:53.683661+00:00",
+      "last_checkpoint": "2026-08-27T19:17:53.683686+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "debut",
+        "inst-1",
+        "ag-ents-md",
+        "pre-commit",
+        "public-debut-01"
+      ]
+    },
+    {
+      "task_id": "debut-verify-researcher-20260827",
+      "subagent_type": "researcher",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "PUBLIC-DEBUT-01 verification: Zero-Trust Doctrine forensic check of Track 1 completion (after Ma'at lands)",
+      "status": "in_progress",
+      "created_at": "2026-08-27T19:17:54.473333+00:00",
+      "last_checkpoint": "2026-08-27T19:17:54.473360+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "debut",
+        "verification",
+        "zero-trust",
+        "public-debut-01"
+      ]
+    },
+    {
+      "task_id": "research-vault-mgmt-20260827",
+      "subagent_type": "researcher",
+      "launched_by": "researcher",
+      "channel": "opencode",
+      "entity": "researcher",
+      "description": "R_VAULT_MGMT: Industry patterns for secrets management - Vault, sops, pass, age, aws-vault, Bitwarden, 1Password, Keybay. Feeds post-debut vault overhaul.",
+      "status": "in_progress",
+      "created_at": "2026-08-27T21:41:16.389230+00:00",
+      "last_checkpoint": "2026-08-27T21:41:16.389252+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "vault",
+        "secrets",
+        "post-debut",
+        "research",
+        "Council-of-Four"
+      ]
+    },
+    {
+      "task_id": "probe-report-actions-20260827-action1-2",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Rewrite probe_free_models.sh with key_health pre-check + 3-key rotation + quality checks (Actions 1+2)",
+      "status": "completed",
+      "created_at": "2026-08-27T22:26:17.982524+00:00",
+      "last_checkpoint": "2026-08-27T22:26:17.982546+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "probe-report-actions-20260827",
+        "action-1",
+        "action-2",
+        "P0"
+      ]
+    },
+    {
+      "task_id": "probe-report-actions-20260827-action4",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Create scripts/crontab.txt with 00/06/12/18 UTC probe schedule (Action 4)",
+      "status": "completed",
+      "created_at": "2026-08-27T22:26:18.042697+00:00",
+      "last_checkpoint": "2026-08-27T22:26:18.042721+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "probe-report-actions-20260827",
+        "action-4",
+        "P1"
+      ]
+    },
+    {
+      "task_id": "probe-report-actions-20260827-action3",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Create scripts/probe_percentiles.py \u2014 rolling P50/P90/P99 latency, success rate, last 50 probes per model (Action 3)",
+      "status": "completed",
+      "created_at": "2026-08-27T22:26:18.086180+00:00",
+      "last_checkpoint": "2026-08-27T22:26:18.086200+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "probe-report-actions-20260827",
+        "action-3",
+        "P1"
+      ]
+    },
+    {
+      "task_id": "probe-report-actions-20260827-action5",
+      "subagent_type": "maat",
+      "launched_by": "maat",
+      "channel": "opencode",
+      "entity": "maat",
+      "description": "Create scripts/alert_state_change.sh + data/metrics/model_state.json \u2014 detect state transitions, post to Hivemind (Action 5)",
+      "status": "completed",
+      "created_at": "2026-08-27T22:26:18.317364+00:00",
+      "last_checkpoint": "2026-08-27T22:26:18.317385+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "probe-report-actions-20260827",
+        "action-5",
+        "P2"
+      ]
+    },
+    {
+      "task_id": "roc-402-forensic-20260827",
+      "subagent_type": "roc_racoon",
+      "launched_by": "roc_racoon",
+      "channel": "opencode",
+      "entity": "roc_racoon",
+      "description": "Forensic analysis of 402 'Insufficient balance' on FREE MiniMax M3",
+      "status": "completed",
+      "created_at": "2026-08-27T23:17:39.847092+00:00",
+      "last_checkpoint": "2026-08-27T23:18:00+00:00",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "forensic",
+        "402",
+        "minimax-m3",
+        "rate-limit",
+        "free-models"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-sirius-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "SIRIUS \u2014 Celestial Astronomer specialist. Eclipse mechanics, Saros cycles, celestial calendar. Session: ses_fb96e34cdffeyle45D22uS5CaU",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:16:57.596475+00:00",
+      "last_checkpoint": "2026-08-28T04:16:57.596503+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "astronomy",
+        "celestial",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-lunara-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "LUNARA \u2014 Esoteric Astrologer specialist. Eclipse astrology, archetypal symbolism, electional readings. Session: ses_fb96e15a2ffe61a4jlORpcKx2d",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:16:59.348834+00:00",
+      "last_checkpoint": "2026-08-28T04:16:59.348856+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "astrology",
+        "esoteric",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-obsidian-20260828",
+      "subagent_type": "general",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "OBSIDIAN \u2014 Runtime Systems & Observability Specialist. Failure modes, observability, pre-debut runtime checks. Session: ses_fb96dfecbffe0N1LavPDc6QiK0",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:17:00.475504+00:00",
+      "last_checkpoint": "2026-08-28T04:17:00.475528+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "runtime",
+        "observability",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-aurora-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "AURORA \u2014 AI Frontier & Model Evaluation Researcher. Local model landscape, eval methodology, watchlist. Session: ses_fb96de65cffe9lK4uYuXSdq9NR",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:17:04.194212+00:00",
+      "last_checkpoint": "2026-08-28T04:17:04.194239+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "ai-models",
+        "evaluation",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-psyche-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "PSYCHE \u2014 Human-AI Interaction Psychologist. Launch psychology, trust calibration, sovereign relationship design. Session: ses_fb96b5ed2ffeVo0JsK7KKW5JnH",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:17:04.480759+00:00",
+      "last_checkpoint": "2026-08-28T04:17:04.480786+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "psychology",
+        "human-ai",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-morrigan-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "MORRIGAN \u2014 Mythologist of the Lilith Archetype. Lineage, core archetype, reclamation, namesake analysis. Session: ses_fb96b35f3ffe7tQtJbA9AQSZV7",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:17:04.684365+00:00",
+      "last_checkpoint": "2026-08-28T04:17:04.684391+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "mythology",
+        "lilith-archetype",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-anima-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "ANIMA \u2014 Consciousness Studies Philosopher. Science of awe, machine consciousness debate, soul pipeline meaning. Session: ses_fb96b1c7effe81ATzvlXjVZHN8",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:17:05.483360+00:00",
+      "last_checkpoint": "2026-08-28T04:17:05.483385+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "consciousness",
+        "philosophy",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-eris-20260828",
+      "subagent_type": "researcher",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "ERIS \u2014 Chaos Theory & Complex Systems Theorist. Three-body dynamics, edge of chaos, CAS orchestration principles. Session: ses_fb96b01aeffeZM6B1Wp76KElGT",
+      "status": "in_progress",
+      "created_at": "2026-08-28T04:17:06.516078+00:00",
+      "last_checkpoint": "2026-08-28T04:17:06.516127+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "expert-roster",
+        "chaos-theory",
+        "complex-systems",
+        "persistent"
+      ]
+    },
+    {
+      "task_id": "round5-grokster-steering-report-20260828",
+      "subagent_type": "grokster",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "R5: Steering-Prompt Report + 4 specialists re-engaged for deeper dive",
+      "status": "completed",
+      "created_at": "2026-08-28T00:05:00Z",
+      "last_checkpoint": "2026-08-28T00:10:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "round5",
+        "steering-prompt",
+        "specialist-fleet"
+      ]
+    },
+    {
+      "task_id": "round5-m3-limits-dive-20260828",
+      "subagent_type": "grokster",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "R5: Push MiniMax M3 to its limits \u2014 context, concurrency, stress",
+      "status": "completed",
+      "created_at": "2026-08-28T00:15:00Z",
+      "last_checkpoint": "2026-08-28T00:25:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "round5",
+        "m3-limits",
+        "stress-test"
+      ]
+    },
+    {
+      "task_id": "round5-strategic-review-20260828",
+      "subagent_type": "grokster",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "R6: Strategic Review \u2014 5 specialists self-review + 3 new (researcher/verity/jem)",
+      "status": "completed",
+      "created_at": "2026-08-28T00:30:00Z",
+      "last_checkpoint": "2026-08-28T00:40:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "round6",
+        "strategic-review",
+        "pause"
+      ]
+    },
+    {
+      "task_id": "task-registry-backfill-20260828",
+      "subagent_type": "self",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "M27 VIOLATION FIX: Backfill 3 R5 dispatches to TASK_REGISTRY (caught by Verity review)",
+      "status": "in_progress",
+      "created_at": "2026-08-28T00:50:00Z",
+      "last_checkpoint": "2026-08-28T00:50:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "m27",
+        "backfill",
+        "pre-compaction"
+      ]
+    },
+    {
+      "task_id": "pre-compaction-anchor-20260828",
+      "subagent_type": "self",
+      "launched_by": "kali",
+      "channel": "opencode",
+      "entity": "kali",
+      "description": "M15 SOVEREIGN CONTINUITY: Pre-compaction anchor + inventory + recovery path",
+      "status": "in_progress",
+      "created_at": "2026-08-28T00:55:00Z",
+      "last_checkpoint": "2026-08-28T00:55:00Z",
+      "resumption_count": 0,
+      "context_verified": true,
+      "tags": [
+        "m15",
+        "compaction",
+        "anchor",
+        "pre-compaction"
+      ]
+    },
+    {
+      "task_id": "lilith-expert-roc-origins-20260828",
+      "subagent_type": "roc_racoon",
+      "launched_by": "lilith",
+      "channel": "opencode",
+      "entity": "lilith",
+      "description": "Origins recon \u2014 Omega Engine & Xoe-NovAi Foundation creation in relation to Lilith",
+      "status": "in_progress",
+      "created_at": "2026-08-28T06:41:50.479201+00:00",
+      "last_checkpoint": "2026-08-28T06:41:50.479233+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "origins",
+        "recon",
+        "lilith",
+        "launch"
+      ]
     }
-  ]
+  ],
+  "metadata": {
+    "m27_backfill": "2026-08-28T00:55:00Z",
+    "r5_dispatches_added": 5,
+    "total_tasks": 138
+  }
 }
