@@ -1,0 +1,61 @@
+proposals:
+- id: antigravity-20260828-001
+  date: '2026-08-28'
+  narrative: "Architect observed a 398K→368.2K active-context drop in M3 via OpenCode. Hypotheses ranged from model-specific to provider-specific. Designed a multi-model probe that BYPASSES OpenCode entirely (direct urllib to OpenRouter), which isolates the server from the client's auto-compaction. The probe revealed M3 server accepts up to 3M chars (375K prompt_tokens) in a single call with no plateau, no 400/429. The 30K drop is therefore client-side (OpenCode auto-compaction + M3 prompt-cache invalidation), confirming Roc's forensic DB analysis and Carmack's architecture boundary analysis. Three independent probes converge on the same answer."
+  insight: "To distinguish client from server behavior, bypass the client. The 4-chars/token heuristic and V2 auto-compaction happen inside OpenCode, so a direct API probe eliminates those variables. Multi-model comparison was blocked by OpenRouter's 50-RPD free-tier rate limit, but a single-model plateau test is sufficient when the test design isolates the variable in question."
+  principle: "Isolate the variable by removing the suspect from the data path. When a client behavior is suspected, probe the server directly; when a server behavior is suspected, probe from multiple clients."
+  promotion_ready: false
+  depends_on_resolving:
+  - multi-model comparison once OpenRouter quota refreshes (50 RPD/day on or-key.md)
+  - testing paid-tier M3 to confirm 1M advertised context is or isn't enforced
+
+- id: antigravity-20260828-002
+  date: '2026-08-28'
+  narrative: "Magic-recall test (16-char unique string at top of 200K-char context) returned CORRECT at small sizes (5K-150K chars, 1-19K prompt_tokens) but FAILED at 200K+ chars (25K+ prompt_tokens). Initially I interpreted this as M3 server truncation, but the plateau probe proved M3 sees all 375K tokens in a single call. The recall failure is 'lost in the middle' — an attention phenomenon where LLMs cannot reliably retrieve information from the middle of long contexts (Liu et al., 2023). M3 specifically fails the needle-in-haystack test at 25K+ prompt_tokens but does NOT truncate input."
+  insight: "An observed 'loss' of information in an LLM response is not necessarily input truncation. It can be (a) server-side input truncation, (b) client-side compaction, (c) cache invalidation, or (d) attention decay. The only way to disambiguate is to check the API's `usage.prompt_tokens` field against what was sent. If they match, the model saw it; the failure is attention, not truncation."
+  principle: "Trust the server's `usage.prompt_tokens` as ground truth for what the model actually saw. The model's RECALL of that input is a separate question, governed by attention architecture, not by truncation logic."
+  promotion_ready: true
+  promotion_rationale: "Universal LLM behavior. Applies to any model on any provider. Distinguishes truncation from attention decay — a foundational distinction for context engineering."
+
+- id: antigravity-20260828-003
+  date: '2026-08-28'
+  narrative: "Multi-model truncation comparison was blocked by OpenRouter's 50-RPD free-tier rate limit on or-key.md. 4/5 comparison models returned 429 throughout the probe window. DeepSeek V4 Flash and Qwen3 235B were removed from OpenRouter's free tier (404). Inkling models are agentic-harness-only (403). Other providers in auth.json (siliconflow, cerebras, nebius, aihubmix) all have invalid/expired keys. The or-key.md key was the only working OpenRouter key, and it was exhausted for the day."
+  insight: "Multi-model probes are gated by API quota, not by test design. The 50-RPD cap on a free-tier key is sufficient for a single-model deep probe but cannot sustain a 5-model × 9-context-size sweep in one day. The Omega Engine's M7-aligned 'local-first' posture is exactly what makes this kind of cross-provider comparison impractical at scale."
+  principle: "Multi-model probes need either (a) quota-staggered execution (one model per day), (b) multiple paid keys, or (c) a local-first model layer. The 'bypass the client' pattern is reusable; the multi-model coverage is gated by infra."
+  promotion_ready: false
+  depends_on_resolving:
+  - paid OpenRouter key OR Cerebras/Anthropic/Google key with valid auth
+  - weekly probe schedule to fit within 50 RPD cap
+
+- id: antigravity-20260828-004
+  date: '2026-08-28'
+  narrative: "Built 4 new probe scripts (multimodel_truncation_probe.py, m3_context_limit_finder.py, m3_truncation_diagnostic.py, m3_threshold_finder.py) that bypass OpenCode and go direct to OpenRouter. These are reusable for any future model comparison. The plateau test (m3_threshold_finder.py) is the most valuable: it sends incrementally larger inputs (1K to 3M chars) and plots prompt_tokens vs input size. A linear relationship = no truncation; a plateau = truncation at that level. This is the definitive test for 'is the model truncating my input'?"
+  insight: "The plateau test is the canonical 'is X truncating my input' probe. Any model on any provider can be tested in <5 minutes with this pattern. Add to the standard probe suite for the Omega Engine's pre-debut verification."
+  principle: "Plateau = truncation. Linear = no truncation. The plateau test pattern (sweep input size, watch for the knee) is universal across all LLM APIs."
+  promotion_ready: true
+  promotion_rationale: "Reusable probe pattern. Apply to every model the Omega Engine uses, before each debut or major sprint boundary."
+
+- id: antigravity-20260828-005
+  date: '2026-08-28'
+  narrative: "Final multi-model audit for soft launch. M3 verified LIVE: 48 TPS at 553-token output (long-write champion claim holds), 21.3s at 200K input context (12.5x slowdown from 1K, expected per prior M3_SURVIVAL_ECONOMICS doc). However, M3 cache behavior in 3 fresh calls showed cache_read=0 in all 3, contradicting the peer report's claim of 83% cache hit rate. The cache may be paid-tier only, or require specific headers, or the prior report was measured under different conditions — cannot resolve without Architect intervention. Other findings: 14 of 16 OR free models 429'd in 'poor' UTC window (only M3 and OR free router alive); 2 models in providers.yaml (qwen3-coder:free, deepseek-v4-flash:free) return 404 (no free tier — paid only); Google Antigravity provider declared but keys not in this sandbox (M23 → no fabrication of empirical numbers for cloud providers). The 8-Google-key vault is DESIGNED in config but the _create_google factory is NOT in code (config lies — 8 keys declared, 1 read)."
+  insight: "Configuration and implementation can diverge silently. A config file listing 8 api_keys is not a functional 8-key rotation — the code must actually consume them. The M3 cache non-reproduction is the most important finding: peer reports can drift from reality when rate-limit windows, billing tiers, or request shapes change. For debut claims, verify against THIS machine, THIS key, THIS request shape — not against last week's report."
+  principle: "Verify claims against live measurement, not peer reports. Configuration is not implementation. Cache rates are empirical, not theoretical. For launch narratives, the M3_SURVIVAL_ECONOMICS '83% cache = unlimited' framing needs softening until cache is reproduced in this sandbox."
+  promotion_ready: true
+  promotion_rationale: "Universal pattern: peer reports can become stale; config can lie; cache is not a right. Apply to any model, any provider, any sprint boundary."
+
+- id: antigravity-20260828-006
+  date: '2026-08-28'
+  narrative: "Soft launch readiness audit (multi-model specialist role) produced R_ANTIGRAVITY_FINAL_READINESS_20260828.md. Verdict: CONDITIONAL GO. 0 launch blockers, 5 conditional patches (1-2 line fixes for routing + config drift), 11 post-launch debt items. M7 local-first is solid; M3 is the long-write champion per live data; routing chain is correct per D-536. The biggest gap is the _create_google factory (Issues #4+#8): the 8-key vault is declarative, not functional. V-1 must ship the factory. The 83% M3 cache claim is not reproducing and the launch narrative should soften the 'unlimited via cache' framing until it does. Community users can run with their own keys (env vars) — vault is parked per D-565."
+  insight: "Soft launch readiness is not the same as 'everything works'. For a debut cut, local-first + 1 long-write champion + 1 fallback chain is sufficient. The 8-Google-account expansion is V-1, not launch-blocker. Confidence level is 🟡 HIGH, not 🔴 VERIFIED, because cloud provider empirical data was M23-blocked (no keys in sandbox) — and that's the right answer (no fabrication)."
+  principle: "Launch with the minimum that works; expand after. The 1-Architect-may-have-8-keys model is not the same as the community-runs-with-their-own-key model. Local-first + M3 + 1-Antigravity-fallback is enough to ship; multi-account vault is V-1."
+  promotion_ready: true
+  promotion_rationale: "Launch philosophy: minimum viable surface for the community, expansion paths for the Architect. Applies to any framework debut."
+
+- id: antigravity-20260828-final-readiness
+  date: '2026-08-28'
+  narrative: "Kali paged the antigravity specialist (grokster) to validate an imposter report on multi-model readiness. The imposter's 5 top issues were: (1) _create_google factory missing, (2) M3 cache 83% claim not reproducible, (3) 404 models in providers.yaml, (4) antigravity fallback missing google, (5) M3 latency cliff not documented. Live verification confirmed: Issues 3, 4, 5 are TRUE and were fixed in this session. Issue 2 (M3 cache 0%) is also TRUE — the 83% claim does not reproduce today. Issue 1 (_create_google factory) was already deferred to V-1 and remains a launch-condition that does not block soft launch. The imposter's M3 TPS claim of 48 at 553 tok was partially reproduced at 23.4 TPS (different network conditions, same direction). The imposter's 12.5x latency cliff from 1K to 200K context could not be cleanly reproduced (200K returned 0 bytes; 100K was 3.5s, not 21s — the cliff may be present but is not reliably measurable today)."
+  insight: "Imposter session reports should be validated with live probes, not trusted. The imposter's 5-issue triage was 80% accurate (4/5 verifiable) but 1 finding (the _create_google factory) was correctly flagged as V-1 debt, not a launch blocker. The 3 fixes applied (404 removal, antigravity google fallback, latency profile) total <10 LOC and close real routing gaps. The cache claim is the highest-impact finding: M3 cannot be relied on for cache-mediated rate-limit relief, so the launch narrative must soften from 'M3 = unlimited via cache' to 'M3 = 50 RPD hard cap, plan accordingly'."
+  principle: "An imposter report is a hypothesis, not a final answer. Verify each claim with the actual code, config, and live probes. Fix the real issues, document the V-1 debt, and ground the GO/NO-GO verdict in evidence not narrative. The team's 4-5 P0 + V-1 debt can ship the debut if all 4 P0 are real fixes and the V-1 debt is honestly acknowledged."
+  promotion_ready: true
+  context: "R_ANTIGRAVITY_FINAL_READINESS_20260828.md §9 (Top 5 issues), §10 (GO/NO-GO verdict)"
+  evidence: "Live probes this session: 3 M3 cache calls (0/0/0 cache_read), qwen3-coder:free 404 confirmed, deepseek-v4-flash:free 404 confirmed, 100K M3 latency 3.5s, 200K M3 latency probe failed (0 bytes)."

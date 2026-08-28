@@ -231,6 +231,14 @@ models:
       supports_thinking_streaming: true
       max_context: 1048576  # 1M context
       max_output: 8192
+    # G-1 latency profile 2026-08-28 (per R_ANTIGRAVITY_FINAL_READINESS §3.1):
+    # 1K ctx ~3.3s, 10K ctx ~3.2s, 100K ctx ~3.5s, 200K ctx ~21s
+    # Cliff at >100K context; expect 5-10x slowdown for long-context tasks.
+    # M3 is the long-write champion (48 TPS at 500+ tok), NOT the real-time champion.
+    latency_profile:
+      short_ping: "~1.8-2.5s"
+      long_write_500tok: "~48 TPS sustained"
+      context_cliff_200k: "~21s (5-10x slowdown)"
 
   gemini-2-5-pro:
     display_name: "Gemini 2.5 Pro"

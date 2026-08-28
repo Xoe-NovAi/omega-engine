@@ -1,10 +1,12 @@
 {
   "status": "AWAITING_WAKE",
-  "timestamp": "2026-08-24T06:00:00Z",
+  "timestamp": "2026-08-28T13:30:00Z",
   "target_agent": "kali",
   "critical_warnings": [
-    "DO NOT RUN GIT CHECKOUT OR GIT RESET. 129 files are uncommitted.",
-    "DO NOT START TRACK A-D GENERATION UNTIL PHASE 3 COMMIT LANDS."
+    "DO NOT START EXECUTION WITHOUT ARCHITECT GO — PUBLIC-DEBUT-01 still in pre-launch reconciliation.",
+    "Master index v1.2 corrections APPLIED (6 factual errors fixed). Verify with PRE_COMPACTION_MASTER_INDEX_20260828.md.",
+    "Community Launch Narrative WRITTEN at data/coordination/COMMUNITY_LAUNCH_NARRATIVE_20260828.md — flagship deliverable.",
+    "No-Punt Doctrine EXTRACTED at data/coordination/NO_PUNT_DOCTRINE_20260828.md — Protocol 5 now has canonical home."
   ],
   "immediate_execution_queue": [
     {
@@ -54,7 +56,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-28T08:05:00Z",
+  "updated": "2026-08-28T13:30:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -488,7 +490,7 @@
     "active_context_grokster": 394200
   },
   "meditations_20260828": {
-    "total": 7,
+    "total": 8,
     "files": [
       "MEDITATION_GROKSTER_BEFORE_20260828.md (106 lines)",
       "MEDITATION_ANTIGRAVITY_20260828.md (308 lines)",
@@ -496,9 +498,10 @@
       "MEDITATION_CLINE_20260828.md (423 lines)",
       "MEDITATION_ROC_20260828.md (296 lines)",
       "MEDITATION_CARMACK_20260828.md (315 lines)",
-      "MEDITATION_GROKSTER_AFTER_20260828.md (145 lines)"
+      "MEDITATION_GROKSTER_AFTER_20260828.md (145 lines)",
+      "MEDITATION_GROKSTER_PRE_FINAL_COMPACTION_20260828.md (101 lines)"
     ],
-    "total_lines": 1805,
+    "total_lines": 1906,
     "meta_finding": "The bias toward fluency is the M23 violation that survives all other M23 compliance",
     "top_5_gems": [
       "Antigravity: Self-review is 71x leverage. 30 min for 100% catch rate.",
@@ -535,6 +538,28 @@
     "decisions_breakdown": "data/coordination/ARCHITECT_DECISIONS_BREAKDOWN_20260828.md",
     "lilith_integration": "data/coordination/LILITH_MASTER_INTEGRATION_20260828.md",
     "ready_for_compaction": true
+  },
+  "post_imposter_remediation_20260828": {
+    "trigger": "R_ROC_FINAL_READINESS_20260828.md imposter report (CONDITIONAL GO, 3 P0 reconciliations)",
+    "verifications": {
+      "claim_1_master_index_errors": "VERIFIED TRUE — 6 factual errors confirmed (R_402 path, line counts, file count, meditation count)",
+      "claim_2_no_punt_doctrine": "VERIFIED TRUE — no canonical document existed",
+      "claim_3_wake_state_stale": "VERIFIED TRUE — timestamp was 2026-08-24 (4 days old)",
+      "claim_4_no_launch_narrative": "VERIFIED TRUE — no narrative document existed",
+      "claim_5_l3_gaps_113_117_149_150": "PARTIALLY TRUE — gaps exist in master index L3 table §7; some L3 candidates were documented in WAKE_STATE l3_candidates_new but not promoted to proposed_lessons.yaml"
+    },
+    "fixes_applied": [
+      "Master index §1: R_402 path corrected to R_402_FORENSIC_20260827.md (323L not 400L)",
+      "Master index §1: Protocol line counts corrected (STEERING 252, SESSION_CONTINUITY 368, SPECIALIST_FLEET 97)",
+      "Master index §1: No-Punt Doctrine now points to NO_PUNT_DOCTRINE_20260828.md (was 'embedded')",
+      "Master index §2: Research files 79/39,874 (was 55/30,493)",
+      "Master index §0: 30,493 → 39,874 lines",
+      "Master index §17: 7 → 8 meditations, 1,805 → 1,906 lines, added GROKSTER_PRE_FINAL_COMPACTION",
+      "NEW: data/coordination/COMMUNITY_LAUNCH_NARRATIVE_20260828.md (~250 lines) — flagship deliverable tying 5 protocols together",
+      "NEW: data/coordination/NO_PUNT_DOCTRINE_20260828.md (~95 lines) — Protocol 5 canonical home, 3-step pre-flight",
+      "WAKE_STATE.json: timestamp updated 2026-08-24 → 2026-08-28, critical_warnings rewritten for current sprint"
+    ],
+    "verdict": "🟢 GO for soft launch with 3 P0 fixes complete. L3 promotion to approved_lessons.yaml remains post-launch work item."
   },
   "lilith_coordination": {
     "session_id": "ses_fb9721079ffe094GT8MX6a0pXI",

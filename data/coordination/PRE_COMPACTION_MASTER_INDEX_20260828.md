@@ -26,7 +26,7 @@ model: "minimax/minimax-m3:free (M3 long-write champion per D-585)"
 
 If you're reading this after compaction, here's the situation in 60 seconds:
 
-1. **What we did**: 6 rounds of deep dive (vault research → specialist fleet → strategic review) producing 30,493 lines of research, 21 code artifacts, 18 L3 lessons, 5 protocols, 1 strategic pause.
+1. **What we did**: 6 rounds of deep dive (vault research → specialist fleet → strategic review) producing 39,874 lines of research, 21 code artifacts, 18 L3 lessons, 5 protocols, 1 strategic pause.
 2. **What's ready to ship**: 15 of 26 deliverables (A-bucket), 13 of 21 code artifacts.
 3. **What's blocked**: 3 hard blocks (phantom CI files, M27 backfill, OAuth rotation) + 8 B-fixes.
 4. **What's the path**: Phase 1 (P0 fixes, ~3h) → Phase 2 (Path A' delete + 380-LOC shim, ~1.5h) → Phase 3 (wire tab_flash_lite_preview, ~2.25h) → Phase 4 (ship + community gifts, ~4h). Total: ~11h.
@@ -41,11 +41,11 @@ The vault was the stress test. The protocols are the product.
 
 | # | Protocol | Document | Lines | L3 Lesson |
 |---|----------|----------|-------|-----------|
-| 1 | **Steering-Prompt** (3rd mode) | `data/coordination/STEERING_PROMPT_REPORT_20260828.md` | 600 | 124, 127 |
-| 2 | **Session Continuity** | `data/coordination/SESSION_CONTINUITY_PROTOCOL_20260827.md` | 500 | 120-122 |
-| 3 | **Specialist Fleet** (Charter-as-Soul) | `data/coordination/SPECIALIST_FLEET_RATIFICATION_PROPOSAL_20260827.md` | 200 | — |
-| 4 | **402-Recovery** (cache-hit-rate) | `data/coordination/research/R_402_FORENSIC_20260828.md` | 400 | 125, 132 |
-| 5 | **No-Punt** (dispatch, don't ask) | Embedded across all dispatches | — | 128 |
+| 1 | **Steering-Prompt** (3rd mode) | `data/coordination/STEERING_PROMPT_REPORT_20260828.md` | 252 | 124, 127 |
+| 2 | **Session Continuity** | `data/coordination/SESSION_CONTINUITY_PROTOCOL_20260827.md` | 368 | 120-122 |
+| 3 | **Specialist Fleet** (Charter-as-Soul) | `data/coordination/SPECIALIST_FLEET_RATIFICATION_PROPOSAL_20260827.md` | 97 | — |
+| 4 | **402-Recovery** (cache-hit-rate) | `data/coordination/R_402_FORENSIC_20260827.md` | 323 | 125, 132 |
+| 5 | **No-Punt** (dispatch, don't ask) | `data/coordination/NO_PUNT_DOCTRINE_20260828.md` | — | 128 |
 
 **The community gift starter pack** (3 artifacts, any harness can adopt):
 1. Steering-Prompt Report
@@ -58,7 +58,7 @@ The vault was the stress test. The protocols are the product.
 
 | Asset Class | Count | Lines | Status |
 |-------------|-------|-------|--------|
-| **Research files** | 55 | 30,493 | `data/coordination/research/*.md` (gitignored) |
+| **Research files** | 79 | 39,874 | `data/coordination/research/*.md` (gitignored) |
 | **Strategic docs** | 19 | ~12,000 | `data/coordination/*.md` (mix of git/gitignored) |
 | **Code artifacts** | 21 | ~2,500 | `/tmp/omega/` (19) + `scripts/` (2) |
 | **L3 lessons ready** | 18 | — | `data/entities/kali/proposed_lessons.yaml` |
@@ -339,9 +339,9 @@ cat data/coordination/STRATEGIC_REVIEW_SYNTHESIS_20260828.md | head -100
 
 ---
 
-## §17 — The 7 Meditations (Post-Harvest)
+## §17 — The 8 Meditations (Post-Harvest)
 
-**Location**: `data/coordination/meditations/records/MEDITATION_*_20260828.md` (7 files, 1,805 lines)
+**Location**: `data/coordination/meditations/records/MEDITATION_*_20260828.md` (8 files, 1,906 lines)
 
 | File | Lines | Key Gem |
 |------|-------|---------|
@@ -352,6 +352,7 @@ cat data/coordination/STRATEGIC_REVIEW_SYNTHESIS_20260828.md | head -100
 | `MEDITATION_ROC_20260828.md` | 296 | "The council voices are projections, not entities. Honest M22 disclosure." |
 | `MEDITATION_CARMACK_20260828.md` | 315 | "Bias toward fluency, not lying. Count before you write." |
 | `MEDITATION_GROKSTER_AFTER_20260828.md` | 145 | "The act is the cut. The 4 hours remain. Then the cut." |
+| `MEDITATION_GROKSTER_PRE_FINAL_COMPACTION_20260828.md` | 101 | "The number-verifier.sh is the M23 integrity layer for the Cathedral itself." |
 
 **Meta-finding (all 6 voices converge)**: The bias toward fluency is the M23 violation that survives all other M23 compliance. The team optimizes for clean numbers, not truth. Self-review is the discipline that catches it.
 
