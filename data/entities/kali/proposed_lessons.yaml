@@ -359,7 +359,26 @@ proposals:
     specialists produce work that is loud about findings and quiet about fixes.'
   grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-28, post-incident)"
   promotion_ready: true
+- id: kali-20260828-133
+  date: '2026-08-28'
+  narrative: The Architect flagged that I (Kali, orchestrator) did not know about
+    14 scripts created by specialists. I had tracked dispatches (TASK_REGISTRY has
+    139 tasks) but not file creations. The specialists DID tell me about creating
+    the files (in their research deliverables) but I did not internalize the file-creation
+    events. High context != omniscience. The orchestrator must have real-time visibility
+    into working tree state.
+  insight: 'The orchestrator''s mental model of working state must include a running
+    inventory of files created by specialists, not just the dispatches that created
+    them. The orchestrator who tracks dispatches but not artifacts will be blind to
+    the cumulative state of the working tree. This blindness compounds: the more specialists
+    dispatched, the larger the gap between mental model and reality.'
+  principle: The orchestrator's job is not just to dispatch. The orchestrator's job
+    is to KNOW the state of the work. Track artifacts, not just dispatches. The orchestrator
+    who tracks dispatches but not artifacts operates on an incomplete map. The blind
+    spots are where incidents happen.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-28, post-incident)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-28T07:00:00Z'
+  updated: '2026-08-28T07:15:00Z'
   model_used: x-preview-f-free
