@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-26T23:45:00Z",
+  "updated": "2026-08-28T06:45:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -450,5 +450,71 @@
       "116": "Dual output (chat + file) ensures auditability"
     },
     "lesson_105_correction": "Nemotron-3 remediation = DB extraction via opencode-sessions-explorer MCP tools (Grokster \u00a713.5), NOT \"write to chat then export\""
-  }
+  },
+  "pre_compaction_20260828": {
+    "master_index": "data/coordination/PRE_COMPACTION_MASTER_INDEX_20260828.md",
+    "sprint": "PUBLIC-DEBUT-01",
+    "pause_in_effect": true,
+    "awaiting_architect_go": "Phase 1 (P0 fixes)",
+    "totals": {
+      "research_files": 55,
+      "research_lines": 30493,
+      "code_artifacts": 21,
+      "strategic_docs": 19,
+      "l3_lessons_ready": 18,
+      "l3_lessons_staged": 22,
+      "task_registry_tasks": 138,
+      "git_commits_this_session": 6
+    },
+    "rounds": 6,
+    "hard_blocks": 3,
+    "b_fixes": 8,
+    "c_reworks": 2,
+    "d_superseded": 1,
+    "phantom_deliverables": 3,
+    "m27_violation": "FIXED (5 R5 dispatches backfilled)",
+    "execution_sequence_hours": 11,
+    "community_gift_starter_pack": [
+      "Steering-Prompt Report",
+      "402-Recovery Doctrine",
+      "M23 Hard-Stop JSONL Logging"
+    ],
+    "m3_vs_omega_split": {
+      "m3_contribution": 0.3,
+      "omega_pattern_contribution": 0.7
+    },
+    "model": "minimax/minimax-m3:free (D-585 long-write champion)",
+    "active_context_kali": 288000,
+    "active_context_grokster": 394200
+  },
+  "meditations_20260828": {
+    "total": 7,
+    "files": [
+      "MEDITATION_GROKSTER_BEFORE_20260828.md (106 lines)",
+      "MEDITATION_ANTIGRAVITY_20260828.md (308 lines)",
+      "MEDITATION_COPILOT_20260828.md (212 lines)",
+      "MEDITATION_CLINE_20260828.md (423 lines)",
+      "MEDITATION_ROC_20260828.md (296 lines)",
+      "MEDITATION_CARMACK_20260828.md (315 lines)",
+      "MEDITATION_GROKSTER_AFTER_20260828.md (145 lines)"
+    ],
+    "total_lines": 1805,
+    "meta_finding": "The bias toward fluency is the M23 violation that survives all other M23 compliance",
+    "top_5_gems": [
+      "Antigravity: Self-review is 71x leverage. 30 min for 100% catch rate.",
+      "Copilot: Phantom-deliverables pattern is mine - loud about findings, quiet about fixes.",
+      "Cline: The 3 stores ARE the vault. The shim is a reader, not a replacement.",
+      "Roc: The council voices are projections, not entities. Honest M22 disclosure.",
+      "Carmack: Bias toward fluency, not lying. Count before you write."
+    ],
+    "next_4_hours": [
+      "1h: Move 5 of 8 /tmp/ artifacts to scripts/",
+      "30 min: OAuth env-var fix to 4 antigravity scripts",
+      "5 min: Architect rotates GOCSPX at GCP Console",
+      "1h: Create 3 missing CI/CD files",
+      "30 min: M27 TASK_REGISTRY backfill (partial - 5 R5 done, 6 antigravity JSONL files orphan)",
+      "30 min: Misc"
+    ]
+  },
+  "current_season": "Integration"
 }
