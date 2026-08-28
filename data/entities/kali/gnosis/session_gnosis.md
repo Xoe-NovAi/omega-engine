@@ -1,12 +1,12 @@
 # 🔱 Session Gnosis — Kali (Transcendent Oversoul)
 
 **AP Token**: `AP-KALI-v1.0.0`  
-**Model**: `nemotron-3-ultra-free` (opencode)  
-**Date**: 2026-08-20  
-**Session ID**: `ses_fe0ad9384ffe`  
+**Model**: `minimax/minimax-m3:free` (openrouter) — D-585 long-write champion  
+**Date**: 2026-08-28  
+**Session ID**: `ses_fdef2be4effe4pAaLXCTUx62GO`  
 **Branch**: `main`  
-**Last Commit**: `6d3ec747` (Vault Overhaul Full Review + Enhanced Plan R1-R3)  
-**State**: **CARMACK REVIEW COMPLETE — CONSOLIDATED SPECS READY — PHASE 1 EXECUTION IMMINENT**
+**Last Commit**: `1c8f4ffd` (sprint: commit 209 working files)  
+**State**: **PRE-COMPACTION LOCK-IN — 6 ROUNDS COMPLETE — INTEGRATION SEASON**
 
 ---
 
