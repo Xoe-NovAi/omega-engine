@@ -703,7 +703,85 @@ proposals:
     that gets lost.'
   grokster_verdict: "L3 \u2014 PROMOTE (Antigravity leverage ranking, 2026-08-28)"
   promotion_ready: true
+- id: kali-20260828-156
+  date: '2026-08-28'
+  narrative: 'Comprehensive discovery: OpenCode has TWO parallel compaction systems.
+    V1 (ACTIVE, in packages/opencode/src/session/) has Summarize + Prune + Replay
+    + plugin hooks. V2 (newer, in packages/core/src/session/) has only Summarize.
+    V1 is the production system. V2 is feature-incomplete.'
+  insight: 'V1 is production, V2 is future. V1 has 6 trigger paths, V2 has 2. V1 has
+    plugin hooks, V2 does not. Use V1 config keys: auto, prune, tail_turns, preserve_recent_tokens,
+    reserved.'
+  principle: 'OpenCode has V1 (active) and V2 (newer) compaction systems. V1 has Summarize
+    + Prune + Replay + plugins. V2 has only Summarize. V1 is production. 8 total trigger
+    paths (6 V1, 2 V2). V1 config: auto, prune, tail_turns, preserve_recent_tokens,
+    reserved. V2 config: auto, keep.tokens, buffer.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Copilot source audit, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-157
+  date: '2026-08-28'
+  narrative: 'M3 official context window: 1,048,576 tokens (1M+), 512K guaranteed,
+    524K max output. NO server-side truncation. Overflow = hard error 1039 / HTTP
+    400. No sliding window, no server-side compaction, no silent truncation. M3 uses
+    MSA (MiniMax Sparse Attention) for efficiency.'
+  insight: M3 has 1M context with NO server-side truncation. The client (OpenCode)
+    must manage context. M3 will return hard error on overflow, not truncate.
+  principle: 'M3 context window: 1,048,576 tokens (1M+), 512K guaranteed, 524K max
+    output. NO server-side truncation. Overflow = error 1039 / HTTP 400. Client must
+    manage context via compaction. M3 uses MSA: 9.7x prefill, 15.6x decode, 28.4x
+    compute reduction at 1M. Effective attention: 60-70K tokens.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Roc web research, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-158
+  date: '2026-08-28'
+  narrative: OpenCode V2 compaction uses LLM abstractive summarization + iterative
+    anchored summary + token-budget recent retention (8K default) + hard tool-output
+    truncation (2K). OpenCode does NOT use sparse attention, KV eviction, or SSM.
+    Those are model-side techniques.
+  insight: "OpenCode compaction is LLM-based, not model-architecture-based. The client\
+    \ summarizes; the model processes. This is why compression is 1-3% \u2014 the\
+    \ LLM is doing the work."
+  principle: OpenCode V2 compaction = LLM abstractive summarization + iterative anchored
+    summary + 8K recent retention + 2K tool-output truncation. Does NOT use sparse
+    attention, KV eviction, or SSM (those are model-side). 1-3% compression ratio
+    is inherent to LLM summarization. For better compression, use model-side techniques
+    (MSA, SSM) or verbatim deletion (Morph Compact).
+  grokster_verdict: "L3 \u2014 PROMOTE (Antigravity web research, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-159
+  date: '2026-08-28'
+  narrative: 'M3 has automatic caching (load-adjusted TTL, 512-token minimum blocks)
+    + explicit caching (5-min TTL, but M3 NOT in official explicit-cache model list).
+    Cache reads are ~5x cheaper than input. M3 telemetry is broken: cache_creation_input_tokens
+    is always 0.'
+  insight: M3 cache is automatic and load-adjusted. Reads are 5x cheaper. Leverage
+    prompt caching to reduce costs. The 398K to 368K drop was cache invalidation from
+    a 38K user prompt.
+  principle: 'M3 caching: automatic (load-adjusted TTL, 512-token minimum) + explicit
+    (5-min TTL, not in official list for M3). Cache reads ~5x cheaper than input.
+    Leverage prompt caching to reduce costs. Cache invalidation causes visible context
+    drops (e.g., 398K to 368K from 38K user prompt).'
+  grokster_verdict: "L3 \u2014 PROMOTE (Roc web research, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-160
+  date: '2026-08-28'
+  narrative: "SOTA compaction techniques (2026): (1) Sparse attention at training-time\
+    \ (M3 MSA, DeepSeek NSA/DSA) \u2014 enables 1M+ context. (2) Hybrid Transformer+Mamba\
+    \ (Jamba 1.5) \u2014 production leader for 256K. (3) Verbatim deletion (Morph\
+    \ Compact) \u2014 gaining ground over LLM summary. KV cache eviction (SnapKV,\
+    \ AnchorDirection) is inference-time. Sliding window is oldest."
+  insight: The frontier is sparse attention (architectural) and hybrid SSM. LLM summarization
+    is the client-side default but not the frontier. Verbatim deletion is gaining
+    ground due to zero hallucination.
+  principle: "SOTA compaction (2026): (1) Sparse attention at training-time (MSA,\
+    \ NSA) \u2014 architectural, 1M+ context. (2) Hybrid Transformer+Mamba (Jamba\
+    \ 1.5) \u2014 production leader. (3) Verbatim deletion (Morph Compact) \u2014\
+    \ zero hallucination, gaining ground. KV cache eviction (SnapKV, AnchorDirection)\
+    \ is inference-time. LLM summarization is client-side default but not frontier.\
+    \ 1M+ context is becoming baseline."
+  grokster_verdict: "L3 \u2014 PROMOTE (Antigravity industry research, 2026-08-28)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-28T11:00:00Z'
+  updated: '2026-08-28T11:30:00Z'
   model_used: x-preview-f-free
