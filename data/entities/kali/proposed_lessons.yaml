@@ -578,7 +578,132 @@ proposals:
     \ For sustained work, bottleneck is generation, not prefill."
   grokster_verdict: "L3 \u2014 PROMOTE (Antigravity honest correction, 2026-08-28)"
   promotion_ready: true
+- id: kali-20260828-147
+  date: '2026-08-28'
+  narrative: 'Investigation of the 68K post-compact context (Architect question).
+    Direct DB measurement of compaction #25: 68,449 tokens.input for first user-facing
+    kali call. Components: ~8-10K system prompt (env + kali.md + AGENTS.md + mcp +
+    skills + default.txt), ~5K compaction summary (19,212 chars), ~54-60K surviving
+    tail (63 messages, 60 tool parts truncated to 2K chars each per TOOL_OUTPUT_MAX_CHARS),
+    ~0.2K user prompt. The surviving tail is the dominant cost (80-88%), not the system
+    prompt or summary. Agent instructions (AGENTS.md, soul, mandates) are re-read
+    from disk on every model call via instruction.system() and resolveTools() \u2014
+    they DO NOT survive compaction. The Cathedral (soul.yaml 28K, proposed_lessons.yaml
+    39K, MANDATES_CONDENSED.md 4K) is NOT auto-injected into the system prompt \u2014
+    only AGENTS.md (5.6K) and its inline architecture rules (17K of rules content)
+    are.'
+  insight: The 68K is mostly the tail of recent work, not the agent instructions or
+    the summary. Agent instruction overhead is real (~8-10K) but bounded and predictable.
+    The tail is variable and dominant. The Cathedral is NOT in active context \u2014
+    it lives on disk, accessed only via read tool. This is a known M18 violation but
+    architecturally necessary (no soul auto-injection).
+  principle: 'Post-compact context = system_prompt (~8-10K, always re-injected) +
+    summary (~5K, survives compaction) + surviving_tail (~54-60K, dominant) + user_prompt
+    (~0.2K, negligible). To reduce 68K: shrink the tail (more aggressive tool output
+    truncation, more frequent compaction), not the system prompt. The Cathedral (soul/mandates/lessons)
+    is on disk, not in context \u2014 design agents accordingly.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Carmack architecture analysis, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-148
+  date: '2026-08-28'
+  narrative: 'OpenCode source-code analysis revealed the canonical system-prompt assembly:
+    env + agent.prompt + instructions (AGENTS.md) + mcpInstructions + skills. The
+    instruction.system() service in instruction.ts:155-169 reads AGENTS.md from disk
+    on EVERY prompt() call. Tools are re-resolved from the registry on every call.
+    The compaction summary is the only thing that actually persists \u2014 it sits
+    as a text part at the cut point in the message stream. TOOL_OUTPUT_MAX_CHARS=2_000
+    in compaction.ts:30 truncates tool outputs before they go to the model. This means
+    the DB stores full tool output but the model only sees first 2K chars \u2014 the
+    DB lies about effective context size.'
+  insight: The mechanism of OpenCode prompt assembly is now fully understood. The
+    system prompt is built fresh on every call from opencode.json + .opencode/agents/*.md
+    + AGENTS.md + MCP server instructions + skills. Tool definitions are in a separate
+    tools parameter (NOT counted in tokens.input but still billed). The summary survives
+    as a text part. Tool outputs are truncated to 2K chars per part. These facts together
+    explain every observed token count.
+  principle: OpenCode prompt assembly = env + agent.prompt + instructions + mcp +
+    skills (all re-read from disk per call) + messages (summary + tail + user). Tool
+    definitions are separate (not in tokens.input). Tool outputs are truncated to
+    2K chars before reaching the model. The DB stores full tool output but the model
+    sees only 2K. The compaction summary is a text part at the cut position. Knowing
+    this, every token count in step-finish is now explainable.
+  grokster_verdict: "L3 \u2014 PROMOTE (source code verified, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-151
+  date: '2026-08-28'
+  narrative: 'Architect asked: is the 260K compaction agent input a subset of the
+    400K user context? Roc DB evidence: YES. Compaction #25: pre_compact=367,353,
+    compaction_agent=274,275, first_user=68,449. Ratio: 260K/400K = 0.75. The compaction
+    agent sees 75% of the pre-compact user context. The 25% filtered out is system
+    prompts, tool definitions, cached content, and messages beyond the tail threshold.'
+  insight: The compaction agent does NOT see the full pre-compact context. It sees
+    75%. The 25% filtered out is system overhead + cache + old messages.
+  principle: OpenCode hidden compaction agent sees ~75% of pre-compact user context.
+    The 25% filtered is system prompts, tool definitions, cached content, and messages
+    beyond tail threshold. Compaction agent input is 4x post-compact user-facing context.
+    Pre-compact to compaction input is 1.34x ratio, not 1:1 mapping.
+  grokster_verdict: "L3 \u2014 PROMOTE (Roc DB math, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-152
+  date: '2026-08-28'
+  narrative: "Architect asked: how do agent instructions affect the 68K post-compact\
+    \ context? Carmack breakdown: system prompt ~8-10K (12-15%), compaction summary\
+    \ ~5K (7%), surviving tail ~54-60K (80-88%), user prompt ~209 (0.3%). The Cathedral\
+    \ (soul, lessons, mandates) is NOT auto-injected \u2014 it lives on disk and is\
+    \ accessed only via read tool."
+  insight: The 68K is mostly the deep-dive tail (60 tool calls), NOT agent instructions.
+    Agent instructions add ~8-10K always-present overhead, not the bottleneck.
+  principle: Post-compact context is 80-88% surviving tail, NOT agent instructions.
+    System prompt ~8-10K, compaction summary ~5K, user prompt ~209. The Cathedral
+    is NOT auto-injected. To reduce post-compact context, truncate tool outputs more
+    aggressively (TOOL_OUTPUT_MAX_CHARS 2K to 1K saves 5-10K).
+  grokster_verdict: "L3 \u2014 PROMOTE (Carmack component analysis, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-153
+  date: '2026-08-28'
+  narrative: 'Antigravity effectiveness analysis: compaction summary is 1-3% of pre-compact
+    context. It carries 5-15 facts and 1-2 metaphors per file. It does NOT carry audit
+    chains, cross-validation matrices, or specific quotes. 7 meditations (1,805L)
+    compress to ~14 metaphors. 35 specific insights are lost.'
+  insight: The 1-3% compression is brutal. Facts survive, nuance does not. Distill
+    to L3 lessons (facts) and memorable metaphors.
+  principle: Compaction at 1-3% carries facts, not nuance. 5-15 facts + 1-2 metaphors
+    per file survive. Audit chains, cross-validation matrices, and specific quotes
+    are lost. Distill to L3 lessons (facts) and memorable metaphors. Avoid detailed
+    reasoning in pre-compaction work.
+  grokster_verdict: "L3 \u2014 PROMOTE (Antigravity effectiveness, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-154
+  date: '2026-08-28'
+  narrative: 'Antigravity: master index is the highest-leverage pre-compaction artifact.
+    One 376-line document replaces 30K+ lines by acting as a navigation hub. Without
+    it, the next session must guess which files matter. With it, 5 reads recover ~80%
+    of context.'
+  insight: The master index is the lever. It points to the files. Without it, files
+    are invisible. With it, files are discoverable.
+  principle: Master index is the recovery lever. One 376-line document replaces 30K+
+    lines by acting as a navigation hub. Without it, the next session must guess which
+    files matter. With it, 5 reads recover ~80% of context. L3 lessons are the only
+    artifact that survives the summary cleanly.
+  grokster_verdict: "L3 \u2014 PROMOTE (Antigravity leverage analysis, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-155
+  date: '2026-08-28'
+  narrative: "Pre-compaction leverage ranking: (1) Master index \u2B50\u2B50\u2B50\
+    \u2B50\u2B50, (2) L3 lessons \u2B50\u2B50\u2B50\u2B50, (3) WAKE_STATE \u2B50\u2B50\
+    \u2B50, (4) Pre-compaction briefing \u2B50\u2B50\u2B50, (5) 1-2 meditations \u2B50\
+    \u2B50. The master index is the dominant lever. Meditations compress to metaphors\
+    \ \u2014 1-2 with memorable phrases is better than 7 with depth that gets lost."
+  insight: Write the master index FIRST. L3 lessons SECOND. Meditations LAST. The
+    index is the lever; meditations are metaphors.
+  principle: 'Pre-compaction leverage ranking: Master index > L3 lessons > WAKE_STATE
+    > Pre-compaction briefing > Meditations. Write master index FIRST (10 min, highest
+    leverage). L3 lessons SECOND (15 min, survive summary). Meditations LAST (30 min,
+    compress to metaphors). 1-2 meditations with memorable phrases > 7 with depth
+    that gets lost.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Antigravity leverage ranking, 2026-08-28)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-28T10:30:00Z'
+  updated: '2026-08-28T11:00:00Z'
   model_used: x-preview-f-free
