@@ -528,7 +528,57 @@ proposals:
     not for reliable attention.
   grokster_verdict: "L3 \u2014 PROMOTE (direct API probe verified, 2026-08-28)"
   promotion_ready: true
+- id: kali-20260828-144
+  date: '2026-08-28'
+  narrative: 'Architect observed: after /compact, TUI shows 260K active context, then
+    after first response shows 68K. Roc investigation: the 260K is the tokens.input
+    of a HIDDEN agent=compaction subagent that OpenCode spawns to generate the summary.
+    It is a real API call, not a display artifact. TUI shows the most recent step-finish.tokens.input.
+    The compaction agent call lands before the user-facing call, so TUI briefly shows
+    the compaction agent number, then updates to the real one.'
+  insight: 'The 260K is a real measurement (compaction agent input), not a display
+    bug. The Cathedral survives because the actual post-compact context IS 68K. The
+    fix is presentation: filter or label compaction agents.'
+  principle: Post-compact 260K to 68K is NOT a display artifact. The 260K is the tokens.input
+    of a hidden agent=compaction subagent. TUI shows compaction agent number first,
+    then updates to real user-facing context. The data is in the DB; filtering or
+    labeling is a presentation decision.
+  grokster_verdict: "L3 \u2014 PROMOTE (Roc DB mining, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-145
+  date: '2026-08-28'
+  narrative: 'Architect asked: what is going on with M3 25K attention span? Is it
+    MoE flash attention? Carmack investigation: M3 IS MoE (128 routed experts top-4,
+    428B total / 23B active) with MiniMax Sparse Attention (MSA), NOT Flash Attention.
+    MSA selects k=16 KV blocks x Bk=128 = 2,048 tokens per query (hard floor). The
+    25K is the empirical knee where Index Branch top-16 selection begins to systematically
+    miss mid-context content.'
+  insight: 'M3 uses MSA, not Flash Attention. The 25K is architectural, not a bug.
+    YES, exploitable as a feature: design meditation as 25K frames (system anchor
+    0-2K + working memory 2K-22K + active focus 22K-25K local block always attended).'
+  principle: M3 uses MiniMax Sparse Attention (MSA), NOT Flash Attention. MSA selects
+    k=16 KV blocks x Bk=128 = 2,048 tokens per query (hard floor). 25K is the empirical
+    knee where Index Branch lottery widens. Design meditation as 25K frames. Place
+    critical info in last 2K (local block). Re-state critical state at each step.
+  grokster_verdict: "L3 \u2014 PROMOTE (Carmack paper read, 2026-08-28)"
+  promotion_ready: true
+- id: kali-20260828-146
+  date: '2026-08-28'
+  narrative: 'Architect challenged: how is 167K chars/s throughput possible at 3M
+    char input? Antigravity honest correction: the 167K is prefill bandwidth (input
+    pipeline speed), NOT generation throughput. Replication: 3M char prefill = 151K
+    chars/s, output generation = 1.0 tok/s. The 630x scaling was an artifact of measuring
+    the wrong denominator.'
+  insight: Prefill is fast (~150K chars/s), generation is slow (~1 tok/s at 3M input).
+    M3 can accept huge inputs quickly but generates slowly. The 1M advertised context
+    is real for input acceptance.
+  principle: "M3 prefill bandwidth (~150K chars/s) is fast and scales with input size.\
+    \ M3 generation throughput (~1 tok/s at 3M input) is slow and does NOT scale.\
+    \ The 167K chars/s claim was misleading \u2014 it was prefill, not generation.\
+    \ For sustained work, bottleneck is generation, not prefill."
+  grokster_verdict: "L3 \u2014 PROMOTE (Antigravity honest correction, 2026-08-28)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-28T09:45:00Z'
+  updated: '2026-08-28T10:30:00Z'
   model_used: x-preview-f-free
