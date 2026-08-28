@@ -392,12 +392,12 @@ gate-secrets:
 	done; \
 	PEM_R='-----BEGIN[ A-Z]*PRIVATE KEY-----'; \
 	PEM_FILES=$$(git log -G "$$PEM_R" --branches --tags --name-only --format= | sort -u); \
-	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^$$' | wc -l); \
+	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^$$' | wc -l); \
 	PEM_N=$$(echo "$$PEM_FILES" | grep -c .); \
 	if [ "$$PEM_BAD" -eq 0 ]; then \
-		echo "  git log -G PEM -> $$PEM_N file(s), all baselined template FPs (P0-5 fix 2026-08-28: docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md + docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md; regex self-avoiding so gate source never self-matches)"; \
+		echo "  git log -G PEM -> $$PEM_N file(s), all baselined template FPs (P0-5 fix 2026-08-28: docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md + docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md + docs/research/R_VAULT_SCHEMA_V2.md; regex self-avoiding so gate source never self-matches)"; \
 	else \
-		echo "  git log -G PEM -> OFFENDING FILES:"; echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$'; FAIL=1; \
+		echo "  git log -G PEM -> OFFENDING FILES:"; echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$'; FAIL=1; \
 	fi; \
 	if command -v gitleaks >/dev/null 2>&1; then \
 		echo '=== gitleaks durable refs (--branches --tags) ==='; \
