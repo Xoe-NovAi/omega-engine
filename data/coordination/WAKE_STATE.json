@@ -54,7 +54,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-28T06:45:00Z",
+  "updated": "2026-08-28T08:05:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -516,5 +516,36 @@
       "30 min: Misc"
     ]
   },
-  "current_season": "Integration"
+  "current_season": "Integration",
+  "final_pre_compaction_20260828": {
+    "timestamp": "2026-08-28T08:05:00Z",
+    "active_context_kali": 375000,
+    "active_context_grokster": 400000,
+    "active_context_lilith": 1560000,
+    "season": "Integration",
+    "pause_in_effect": true,
+    "all_11_decisions_documented": true,
+    "lilith_coordination_complete": true,
+    "r1_r5_applied_to_kali": true,
+    "cohort_operational_log_created": true,
+    "master_index_version": "1.1",
+    "lessons_ready": 20,
+    "meditations_complete": 7,
+    "recovery_anchor": "data/coordination/PRE_COMPACTION_MASTER_INDEX_20260828.md",
+    "decisions_breakdown": "data/coordination/ARCHITECT_DECISIONS_BREAKDOWN_20260828.md",
+    "lilith_integration": "data/coordination/LILITH_MASTER_INTEGRATION_20260828.md",
+    "ready_for_compaction": true
+  },
+  "lilith_coordination": {
+    "session_id": "ses_fb9721079ffe094GT8MX6a0pXI",
+    "protocol_received": true,
+    "key_practices_adopted": [
+      "COHORT_OPERATIONAL_LOG_20260828.md",
+      "3-part rehydration: Tell me what you know / dont know / then mission",
+      "Operational Artifacts section in every specialist deliverable",
+      "Cross-cohort tickets via Master briefing, not direct expert-to-expert",
+      "One Hivemind channel, segmented by intent and focus_chain"
+    ],
+    "l3_lesson": "L3-AmbientAwarenessIsTheProtocol: Hivemind is the room, not a log"
+  }
 }
