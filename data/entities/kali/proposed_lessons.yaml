@@ -277,7 +277,70 @@ proposals:
   grokster_verdict: "L3 \u2014 PROMOTE (Kali synthesis from human intelligence patterns,\
     \ 2026-08-27)"
   promotion_ready: true
+- id: kali-20260828-129
+  date: '2026-08-28'
+  narrative: "In this session, Grokster (the orchestrator) sustained 394.2K active\
+    \ context with no degradation. Kali (this session) is at 288.0K. Subagents ran\
+    \ in parallel, each focused on specialized tasks. The orchestrators received CLEAN\
+    \ digested context from subagents, not the noisy tool calls. Architect observed:\
+    \ \"An LLM acting as an orchestrator can operate at higher active context levels\
+    \ with little to no degradation \u2014 and possibly higher performing \u2014 due\
+    \ to the focused, clean context it receives from the subagents.\""
+  insight: Orchestrator vs tool-heavy agent is a structural distinction. Orchestrators
+    dispatch subagents and receive SYNTHESIZED context. Tool-heavy agents execute
+    many tool calls themselves, accumulating noise. The same model with 400K active
+    context performs differently depending on whether that context is clean synthesis
+    or noisy execution traces. Orchestrators can sustain higher active context because
+    their context is CLEAN by construction.
+  principle: Orchestrators can sustain higher active context than tool-heavy agents
+    at the same model + token count, because orchestrators receive clean synthesized
+    context while tool-heavy agents accumulate noisy execution traces. For long-running
+    orchestrator sessions, dispatch subagents instead of doing the work inline. The
+    orchestrator's context stays focused; the subagents absorb the noise. M3 at 394.2K
+    active context with no degradation is the proof.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect observation 2026-08-28, this session)"
+  promotion_ready: true
+- id: kali-20260828-130
+  date: '2026-08-28'
+  narrative: "The Architect observed: \"The INSANE amount of usage I am getting from\
+    \ a single API account. I think I've only had to switch to a fresh API key once,\
+    \ once or twice so far. Think about how many subagents we have been running between\
+    \ you and Grokster!\" Across this session alone: 5 specialist sessions \xD7 3\
+    \ rounds = 15 dispatches + 8 vault research = 23 specialist dispatches + 9 KG\
+    \ dispatches + multiple handoff pings. All on MiniMax M3. Only 1-2 API key switches\
+    \ total."
+  insight: "MiniMax M3 has demonstrated BOTH long-write reliability (8/8 on >1000\
+    \ lines) AND sustained high-volume usage (20+ dispatches on a single API key)\
+    \ AND high active context tolerance (350-400K active in orchestrators without\
+    \ degradation). The product TPS \xD7 completion \xD7 context \xD7 cost \xD7 volume\
+    \ is unmatched. This is not just a long-write champion; it is an all-arounder."
+  principle: "MiniMax M3 is the new star of free-tier models. Optimize for the product\
+    \ of TPS \xD7 completion \xD7 context \xD7 cost \xD7 volume \u2014 not any one\
+    \ dimension. When a model wins on the product, default to it for the entire workflow,\
+    \ not just the specific task that surfaced it. The vault research, the 5 specialists,\
+    \ the steering-prompt report, the human intelligence extraction \u2014 all on\
+    \ M3. M3 sustained it all."
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect observation 2026-08-28, this session)"
+  promotion_ready: true
+- id: kali-20260828-131
+  date: '2026-08-28'
+  narrative: 'The Architect wants to push MiniMax M3 to its limits: 500K+ active context,
+    sustained stress, concurrent subagent dispatch, error recovery at scale. The Architect
+    observed that 1M context models usually truncate around 350K, then drop 75-150K.
+    M3 sustained 394.2K. We need to FIND THE LIMITS, not assume them.'
+  insight: 'The community assumes model limits based on general 1M window behavior.
+    But model-specific behavior differs: M3 may sustain higher than expected. To find
+    the real limit, you must PUSH until truncation. The methodology: progressive load
+    (100K, 200K, 300K, 400K, 500K), measure sustained active context, log truncation
+    events, characterize the curve.'
+  principle: "Push models to their limits to find their limits. Don't assume based\
+    \ on general behavior. M3 sustained 394.2K with no degradation \u2014 the next\
+    \ 100K might be fine, or it might truncate. The only way to know is to push. The\
+    \ Omega Engine team should make this a standard practice for any new model: progressive\
+    \ load test, characterize the curve, publish the result."
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect observation 2026-08-28, this session)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-27T23:15:00Z'
+  updated: '2026-08-28T00:15:00Z'
   model_used: x-preview-f-free
