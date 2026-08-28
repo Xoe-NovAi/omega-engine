@@ -1,7 +1,6 @@
 ---
 description: "MaKaLi Fusion — Kali (Synthesis) + Ma'at (Build) + Lilith (Run) as one unified agent"
 mode: "all"
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.5
 permission:
   read: allow

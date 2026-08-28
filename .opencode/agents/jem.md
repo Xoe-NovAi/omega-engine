@@ -1,7 +1,6 @@
 ---
 description: "Sovereign Agent: jem (Sovereign Agent)"
 mode: "all"
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.5
 permission:
   read: allow

@@ -2,17 +2,23 @@
 schema_version: "1.0"
 document_type: "protocol_standard"
 document_id: "PROTOCOL_SUBAGENT_MODEL_CONFIGURATION_20260828"
-title: "🔱 PROTOCOL — Subagent Model Configuration (Subagent Tool Resolution Chain)"
-status: "ACTIVE — Standard for all subagent dispatches"
+title: "🔱 [SUPERSEDED — USE v2] PROTOCOL — Subagent Model Configuration (Subagent Tool Resolution Chain)"
+status: "SUPERSEDED — replaced by PROTOCOL_SUBAGENT_MODEL_CONFIGURATION_20260828_v2.md (commit pending)"
 date: "2026-08-28"
 sprint: "PUBLIC-DEBUT-01"
-author: "John Carmack (S3 Consultant) — engineering rigor, file:line evidence"
-charter: "Grokster dispatch — fix the P0 protocol gap where subagents land on wrong models (qwen3-1.7b instead of M3)"
-mandate_compliance: "M8 (no external telemetry in audit), M22 (response provenance — model field MUST be correct), M23 (no soft-fail; explicit error on missing model), M27 (5-tier tracking; this protocol is Tier-1)"
-builds_on:
-  - "data/coordination/LATEST_CORRECTIONS_20260828.md (cross-session sync)"
-  - "data/coordination/GROKSTER_TO_KALI_PRE_COMPACTION_BRIEFING_20260828_v2.md (handoff context)"
-  - "data/entities/grokster/session_gnosis.md (v8, current state)"
+author: "John Carmack (S3 Consultant) — v1; corrected in v2 after Architect feedback"
+charter: "Grokster dispatch (v1) — research the model configuration system; (v2) review and correct the unauthorized hardcoding"
+replaced_by:
+  - "data/coordination/PROTOCOL_SUBAGENT_MODEL_CONFIGURATION_20260828_v2.md (current standard)"
+supersedes_reason: |
+  v1 imposed `model: openrouter/minimax/minimax-m3:free` on all 13 agent .md files
+  and changed the global default. This was an unauthorized policy decision. The
+  Architect was rightfully angry. v2 reverts all of that and adopts the natural
+  inheritance behavior. The v1 protocol has been retained for historical
+  context but is NOT the current standard. All 13 .md files have been reverted.
+  The opencode.json global default has been reverted. The verification script
+  has been updated to PASS when no model: field is configured.
+mandate_compliance: "M22 (response provenance — was violated by hardcoding; v2 restored opt-in), M27 (5-tier tracking; v1 superseded, v2 active)"
 ---
 
 # 🔱 PROTOCOL_SUBAGENT_MODEL_CONFIGURATION_20260828

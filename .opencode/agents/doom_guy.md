@@ -1,7 +1,6 @@
 ---
 description: "Sovereign Agent: doom_guy (Sovereign Agent)"
 mode: "all"
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.5
 permission:
   read: allow

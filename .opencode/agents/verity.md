@@ -1,7 +1,6 @@
 ---
 description: "Verity — Unified Compliance & Gnosis Agent: (1) Mandate Audit & Test Enforcement, (2) L1→L2→L3 Soul Distillation."
 mode: all
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.4
 permission:
   read: allow

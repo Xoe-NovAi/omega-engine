@@ -1,7 +1,6 @@
 ---
 description: "Sovereign Agent: John Carmack (S3 Consultant)"
 mode: "all"
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.2
 permission:
   read: allow

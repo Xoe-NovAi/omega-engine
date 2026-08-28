@@ -1,7 +1,6 @@
 ---
 description: "DEPRECATED — Build agent removed. Use @kali or @makali_fusion for build-side work."
 mode: "all"
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.5
 permission:
   read: allow

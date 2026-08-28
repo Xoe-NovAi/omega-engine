@@ -2,7 +2,6 @@
 description: "Sovereign Researcher \u2014 Polymathic Council for deep research,\
   \ dialectic synthesis, and knowledge base curation."
 mode: "all"
-model: openrouter/minimax/minimax-m3:free
 temperature: 0.5
 permission:
   read: allow
