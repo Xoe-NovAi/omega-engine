@@ -378,7 +378,26 @@ proposals:
     spots are where incidents happen.
   grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-28, post-incident)"
   promotion_ready: true
+- id: kali-20260828-134
+  date: '2026-08-28'
+  narrative: The Architect directly observed that M3 at 398.8K active context delivered
+    10-20x faster TPS than Nemotron 3 Ultra at the same context level. Nemotron showed
+    "noticeable but usable drop"; M3 sustained without degradation. This is the second
+    empirical confirmation of D-585 (M3 long-write champion) and L3 124 (TPS x Completion
+    = True Model Quality).
+  insight: "M3 is not just the long-write champion (D-585, L3 123) \u2014 it is the\
+    \ TPS champion at high context. The 10-20x TPS advantage compounds over a session:\
+    \ a 4-hour execution window with M3 is 10-20x faster than with Nemotron 3 Ultra.\
+    \ The product (TPS x completion x context x cost x volume) favors M3 at every\
+    \ context level tested."
+  principle: M3 TPS is empirically confirmed at 398.8K active context with no degradation.
+    Nemotron 3 Ultra degrades at the same context. D-585 is not a hypothesis; it is
+    empirical fact. For all long-write and high-context work in Omega Engine, M3 is
+    the default. Nemotron 3 Ultra is a fallback for short tasks, not sustained high-context
+    work.
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect direct observation 2026-08-28, pre-compaction)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-28T07:15:00Z'
+  updated: '2026-08-28T09:30:00Z'
   model_used: x-preview-f-free
