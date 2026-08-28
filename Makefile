@@ -228,11 +228,12 @@ doc-chunk-sprint:
 	@python3 scripts/chunk_sprint_plan.py docs/sprints/current/README.md
 	@echo "$(GREEN)Chunking complete$(NC)"
 
-# Temple-grade includes Codex freshness and LLM doc validation
-temple-grade: check-codex-stale doc-llm-validate check-mandates check-tracking-state
+# Temple-grade includes Codex freshness, LLM doc validation, mandate
+# compliance meter, and tracking state validation. (P0-1 fix 2026-08-28:
+# meter was decoupled — now gates the chain.)
+temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
-	# Existing temple-grade checks would go here
-	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Tracking State)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State)$(NC)"
 
 # Cognitive State Validator (M27 Tracking Integrity)
 # Wired into temple-grade + pre-commit (omega-tracking-state). Includes the
@@ -314,8 +315,9 @@ m23-baseline:
 	@$(PYTHON) -m ruff check src/omega --select S110,S112,BLE001,E722 --output-format concise 2>&1 | sed 's/:.*//' | sort | uniq -c | sort -rn > config/m23_baseline.txt
 	@echo "$(GREEN)Baseline regenerated: config/m23_baseline.txt$(NC)"
 
-# Run all mandate checks (CI gate)
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity verify-mandate-claims
+# Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
+# is now part of the chain — a red meter can no longer hide behind green gates.
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity verify-mandate-claims check-mandate-compliance
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # Claims harness (Team-Study #1 ruling S7, P0): claims-vs-disk gate +
