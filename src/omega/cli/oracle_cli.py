@@ -23,6 +23,61 @@ with suppress(ImportError):
     from dotenv import load_dotenv
     load_dotenv()
 
+# [P0-2026-08-28 grokster] Sovereign vault → os.environ injection
+# The encrypted vault at data/vault/keys.json.enc (Argon2id + age) is the SSOT
+# for API keys. At CLI edge, we decrypt and inject into os.environ so
+# providers.yaml env: prefix references resolve. This is the ONLY place
+# vault decryption happens in-process; runtime uses env: lookups.
+# Per KALI_TO_GROKSTER_VAULT_20260828.md §2 and STRATEGIC_REVIEW_SYNTHESIS
+# §CRYPTO (D-568 Council 4-0: cryptography AES-256-GCM direct).
+def _inject_vault_to_env() -> int:
+    """Decrypt data/vault/keys.json.enc and inject into os.environ.
+
+    Returns the number of keys injected. Silent no-op if vault not present
+    or master key unavailable (graceful degradation per M23).
+    """
+    import os as _os
+    from pathlib import Path as _Path
+    vault_path = _Path(__file__).resolve().parents[2] / "data" / "vault" / "keys.json.enc"
+    if not vault_path.exists():
+        return 0
+    # Master key: OS keyring first, then fallback file
+    master_key = None
+    try:
+        import keyring as _kr
+        master_key = _kr.get_password("omega-engine", "vault-master")
+    except Exception:
+        pass
+    if not master_key:
+        mk_file = _Path.home() / ".config" / "omega" / "vault_master.key"
+        if mk_file.exists():
+            try:
+                master_key = mk_file.read_text().strip()
+            except Exception:
+                pass
+    if not master_key:
+        return 0
+    # Decrypt using VaultCrypto (Argon2id + age)
+    try:
+        from omega.vault.crypto import VaultCrypto
+        crypto = VaultCrypto(master_key)
+        encrypted = vault_path.read_text().strip()
+        decrypted = crypto.decrypt(encrypted)
+        import json as _json
+        secrets = _json.loads(decrypted)
+        for k, v in secrets.items():
+            # Don't overwrite if already set in .env (env takes precedence)
+            if k not in _os.environ:
+                _os.environ[k] = v
+        return len(secrets)
+    except Exception as e:
+        logger.debug(f"Vault injection skipped: {e}")
+        return 0
+
+_vault_count = _inject_vault_to_env()
+if _vault_count > 0:
+    logger.info(f"Sovereign vault: injected {_vault_count} keys into os.environ")
+
 try:
     import typer
     from rich.console import Console
