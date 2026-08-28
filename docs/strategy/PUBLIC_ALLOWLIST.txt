@@ -48,6 +48,7 @@ pyproject.toml
 ## 🚫 FORGE — NOT on Public Surface
 
 ```
+src/omega/vault/             # D-565: Vault excluded from debut (no code changes)
 docs/research/
 docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above

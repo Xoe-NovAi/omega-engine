@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 # scripts/apply_public_allowlist.sh
 # 🔱 Apply PUBLIC_ALLOWLIST.txt to the current branch.
-# v4 — round-4 fixes for 10 bugs total:
+# v5 — D-565 enforcement: FORGE section now parsed as cut list
 #   Round-3 (8 bugs): inline comments, fence detection, default entity, dirty-check,
 #                     no-pathspec, force-with-lease, self-exemption, backtick corruption
-#   Round-4 (2 NEW bugs, Carmack's audit):
+#   Round-4 (2 bugs, Carmack's audit):
 #     VULN #2: Explicit Exclusions section never parsed → default demo entity gets cut
 #     VULN #6: Single-char '.' or '**' pattern silently allows everything
+#   Round-5 (1 bug, Ma'at's audit, 2026-08-28):
+#     D-565 GAP: FORGE section was purely documentary — vault files shipped in
+#                public release because broad `src/omega/` allow matched them.
+#                Now: FORGE section parsed as cut list, checked before ALLOW match.
 #
 # See data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §2
 # See data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §1
+# See data/coordination/KALI_TO_MAAT_D565_ENFORCEMENT_20260828.md
 #
 # USAGE:
 #   scripts/apply_public_allowlist.sh              # DRY-RUN (default)
@@ -32,6 +37,8 @@ SUMMARY_ONLY=0
 STRICT=0
 # Allow env var to override default (in addition to --allowlist arg)
 ALLOWLIST_PATH="${ALLOWLIST_PATH:-$ALLOWLIST_FILE}"
+# Initialize FORGE_PATTERNS early so length checks are safe
+FORGE_PATTERNS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -102,7 +109,7 @@ mapfile -t ALLOW_PATTERNS < <(awk '
     }
     print
   }
-' "$ALLOWLIST_PATH" 2>&1 1>&2)
+' "$ALLOWLIST_PATH")
 
 # Capture the VULN #6 warnings separately
 WARN_VULN6=$(awk '
@@ -195,6 +202,30 @@ for p in "${ALLOW_PATTERNS[@]}"; do
   REGEX_PARTS+=("$regex_part")
 done
 
+# === PARSE the FORGE section (D-565 enforcement — v5 fix) ===
+# The "## 🚫 FORGE" section lists paths that must be CUT from the public
+# release, even if they fall under a broad ALLOW pattern. This closes the
+# D-565 enforcement gap: previously the FORGE section was purely documentary
+# and the script only cut files NOT matching any ALLOW pattern.
+#
+# Matching semantics: a file matches a FORGE pattern if it equals the pattern
+# exactly OR starts with the pattern followed by '/'. This handles directory
+# exclusions correctly: "src/omega/vault/" matches "src/omega/vault/crypto.py"
+# but does NOT match "src/omega/vault_other/foo.py".
+mapfile -t FORGE_PATTERNS < <(awk '
+  BEGIN { in_forge=0 }
+  /^## 🚫 FORGE/ { in_forge=1; next }
+  /^## / { in_forge=0; next }
+  in_forge && /^[ \t]*[^# \t]/ {
+    # Strip trailing inline comments
+    sub(/[ \t]+#.*$/, "")
+    gsub(/^[ \t]+|[ \t]+$/, "")
+    if ($0 ~ /^```/) next
+    if ($0 == "") next
+    print
+  }
+' "$ALLOWLIST_PATH")
+
 # === EXCEPTIONS (v3 BUG #7 round-3 fix) ===
 EXCEPTIONS=(
   ".gitignore"
@@ -256,16 +287,34 @@ matches_allowlist() {
   return 1
 }
 
+# === FORGE match (D-565 enforcement) ===
+# A file is FORGE if it equals a FORGE pattern exactly OR starts with
+# a FORGE pattern followed by '/'. Directory patterns end with '/'.
+is_forge() {
+  local f="$1"
+  for forge in "${FORGE_PATTERNS[@]:-}"; do
+    if [[ -z "$forge" ]]; then continue; fi
+    # Exact match OR prefix match (directory containment)
+    if [[ "$f" == "$forge" || "$f" == "$forge"* ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 # === WALK tracked files ===
 REMOVED=()
 KEPT=()
 
 while IFS= read -r f; do
-  # Priority: exception > explicit exclusion > allowlist match > remove
+  # Priority: exception > explicit exclusion (keep) > FORGE (cut) > allowlist (keep) > remove
   if is_exception "$f"; then
     KEPT+=("$f")
   elif [[ ${#KEEP_EXTRA[@]} -gt 0 ]] && is_in_keep_extra "$f"; then
     KEPT+=("$f")
+  elif [[ ${#FORGE_PATTERNS[@]} -gt 0 ]] && is_forge "$f"; then
+    # D-565: FORGE patterns cut files even if they match a broad ALLOW pattern
+    REMOVED+=("$f")
   elif matches_allowlist "$f"; then
     KEPT+=("$f")
   else
@@ -287,12 +336,16 @@ if [[ "$SUMMARY_ONLY" -eq 1 ]]; then
   if [[ ${#KEEP_EXTRA[@]} -gt 0 ]]; then
     echo "Explicit exclusions applied: ${#KEEP_EXTRA[@]}"
   fi
+  if [[ ${#FORGE_PATTERNS[@]} -gt 0 ]]; then
+    echo "FORGE patterns applied:     ${#FORGE_PATTERNS[@]}"
+  fi
   exit 0
 fi
 
-echo "=== Allowlist Apply Report (v4) ==="
+echo "=== Allowlist Apply Report (v5 — D-565 enforcement) ==="
 echo "Allowlist file:        $ALLOWLIST_PATH"
 echo "ALLOW patterns found:  ${#ALLOW_PATTERNS[@]}"
+echo "FORGE patterns found:  ${#FORGE_PATTERNS[@]}"
 echo "Explicit exclusions:   ${#KEEP_EXTRA[@]}"
 echo "Files kept:            $KEPT_COUNT"
 echo "Files removed:         $REMOVED_COUNT"
