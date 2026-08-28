@@ -221,7 +221,13 @@ class Oracle:
         # [M12] Compaction Harvester - automated compaction monitoring and metrics
         self.compaction_harvester = CompactionHarvester()
 
-        # [D187] Semantic Router - embedding-based entity routing
+        # [D187] Semantic Router - embedding-based entity routing.
+        # NOTE: This is NOT a provider router. D-536 ("one router only: ProviderSelector")
+        # refers to the *provider* routing layer (in provider_selector.py). The
+        # SemanticRouter and TriageRouter below are entity/model routers, intentionally
+        # coexisting with ProviderSelector. They select WHICH ENTITY to dispatch and
+        # WHICH MODEL to use; ProviderSelector selects WHICH PROVIDER to call.
+        # [M23-audit 2026-08-28: documented to address imposter auditor's confusion]
         self.semantic_router = SemanticRouter(
             registry=self.registry,
             embedding_manager=self.memory_store.embedding_manager,
@@ -229,6 +235,8 @@ class Oracle:
 
         # Load WADs
         self.wad_loader = WADLoader(self.registry)
+        # TriageRouter — entity/model selection (NOT a provider router; see D-187
+        # comment above). Coexists with ProviderSelector by design.
         self.triage_router = TriageRouter()
 
         # Load valid agents from AGENTS.md for mention validation

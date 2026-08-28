@@ -1,11 +1,17 @@
 """
-VaultCore Crypto — Argon2id Key Derivation + age Encryption
+VaultCore Crypto — age (scrypt-based) Passphrase Encryption
 AP: AP-VAULT-CRYPTO-v2.0.0
-⬡ OMEGA ⬡ P3 ⬡ vault_crypto ⬡ ARGON2ID-AGE
+⬡ OMEGA ⬡ P3 ⬡ vault_crypto ⬡ AGE-PASSPHRASE
 
 Implements R_VAULT_SCHEMA_V2.md encryption architecture:
-- Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes)
-- age encryption via pyrage.passphrase (scrypt-based)
+- age passphrase encryption (scrypt-based) via pyrage.passphrase
+- master_key is used directly as the age passphrase; age handles
+  scrypt salt derivation internally
+- [M23-audit 2026-08-28 corrected]: Argon2id is NOT used for the
+  encryption key derivation. The PasswordHasher instance is created
+  for future migration to Argon2id-derived keys (see _derive_key
+  method below, which is currently unused). The current architecture
+  is age-with-scrypt; rotation to age-with-Argon2id is a V-1 task.
 """
 
 import logging
@@ -33,11 +39,17 @@ class VaultCryptoError(Exception):
 
 class VaultCrypto:
     """
-    Vault encryption using Argon2id + age (pyrage.passphrase).
+    Vault encryption using age (pyrage.passphrase).
 
     Key Derivation:
-    Master Password → Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes) → 32-byte key
-    → age passphrase encryption (scrypt) → age-armored ciphertext
+    Master Password → age passphrase encryption (scrypt internally) → age-armored ciphertext
+
+    [M23-audit 2026-08-28] Argon2id-based derivation (_derive_key) is a
+    V-1 migration target. Current code uses master_key directly as the
+    age passphrase; age handles scrypt salt derivation internally. This
+    is cryptographically sound (age's scrypt is OWASP-recommended for
+    passphrase-based encryption) but is not the Argon2id-based KDF
+    originally documented in R_VAULT_SCHEMA_V2.md.
     """
 
     def __init__(self, master_key: str):

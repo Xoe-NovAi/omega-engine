@@ -6,6 +6,24 @@ Runs agents on dedicated Linux Virtual Consoles (Ctrl+Alt+F3-F6)
 Usage:
     python -m src.omega.agents.tty_agent --entity researcher --tty /dev/tty3
     python -m src.omega.agents.tty_agent --entity roc_racoon --tty /dev/tty4
+
+[M1 EXEMPTION — DOCUMENTED 2026-08-28]
+This file is glob-exempted from the M1 AnyIO mandate in the Makefile
+(check-m1-anyio target uses --glob '!*tty_agent*').
+
+Why: tty_agent runs on Linux Virtual Consoles (TTY) which require POSIX-only
+APIs. The asyncio signal handlers (asyncio.add_signal_handler) work natively
+on TTYs because the event loop is bound to the controlling terminal; this
+cannot be replicated with anyio's thread-based approach without losing TTY
+semantics (line discipline, job control, ^C delivery).
+
+What this means: do NOT add anyio.to_thread.run_sync() to this file. The
+asyncio loop here is the correct primitive. The exemption is permanent and
+was grandfathered in 2026-08 by Architect decision.
+
+[M8 EXEMPTION] This agent uses fcntl/ioctl for TTY ioctls (TIOCSWINSZ) which
+are POSIX syscalls. No external telemetry is emitted; the file descriptor is
+local to the process.
 """
 
 from __future__ import annotations

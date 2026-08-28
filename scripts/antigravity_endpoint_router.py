@@ -39,7 +39,22 @@ from typing import Optional, Dict, List, Tuple
 
 # === OAUTH + ENDPOINTS (from plugin source constants.ts) ===
 OAUTH_CLIENT_ID = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com"
-OAUTH_CLIENT_SECRET = "GOCSPX-***REDACTED-ROTATED***"
+# M23 round-5 fix: was hardcoded GOCSPX-... — moved to env var to remove
+# from version control. The hardcoded value is in git history; the
+# corresponding GCP OAuth client secret MUST be rotated at console.cloud.google.com
+# (APIs & Services > Credentials > 1071006060591-... > Regenerate Secret).
+# Track rotation in data/coordination/secret_rotation_log.yaml.
+try:
+    OAUTH_CLIENT_SECRET = os.environ["ANTIGRAVITY_CLIENT_SECRET"]
+except KeyError:
+    print(
+        "FATAL: ANTIGRAVITY_CLIENT_SECRET env var is not set.\n"
+        "       Export it before running: export ANTIGRAVITY_CLIENT_SECRET='GOCSPX-...'\n"
+        "       To rotate: GCP Console > APIs & Services > Credentials > Regenerate Secret.\n"
+        "       See data/coordination/secret_rotation_log.yaml for the rotation record.",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Antigravity/1.18.3 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36"
 
 # Endpoint fallback order (prod -> daily -> autopush) per plugin constants.ts
