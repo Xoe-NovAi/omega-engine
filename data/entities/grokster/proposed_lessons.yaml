@@ -1196,3 +1196,22 @@ metadata:
   evidence: "2026-08-28: (a) DeepSeek V4 Flash research → used 'researcher' (success — but should have been resumed Antigravity session, not new launch). (b) GPT 5.3 research → used 'researcher' again (failed 520). (c) Model comparison → used 'general' (failed rate limit, cancelled by Architect). (d) Cline architecture → used 'general' (cancelled), then resumed john_carmack session (success, 575 lines committed 17fc59e9). The pattern: 'general' dispatches consistently underperform specialist dispatches. Specialist sessions carry prior context (charters, prior dispatches, accumulated knowledge) that 'general' sessions lack. The dispatch cost asymmetry: specialist resume ≈ 1 message vs general launch ≈ N messages to re-establish context."
   source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
   timestamp: "2026-08-28T20:10:00Z"
+- id: L3-ExpertSessionsNeedBriefingPacketsNotJustCharters
+  principle: "Expert sessions are not stateless function calls. The current 'primed fleet' pattern (cline, antigravity, copilot, Roc, Carmack) gives each specialist a charter but not a briefing for the specific task. The result: when I dispatched 'GLM 5.3 Flash research' to a fresh Researcher session, it had no idea that 'GPT 5.3' from the Architect meant GLM 5.3 Flash (Z.ai) — it researched GPT-5.3-Codex instead. The fix is a per-dispatch BRIEFING PACKET that contains: (1) the exact task, (2) prior work summary with file:line refs, (3) known corrections (what was wrong before, so the expert doesn't repeat it), (4) specific questions, (5) expected output format. The packet is written to a standardized location (data/coordination/dispatches/<dispatch_id>.yaml) and read by the expert FIRST. The deeper insight: expert sessions accumulate value through DISPATCHES, not just SESSIONS. A specialist's continuity anchor should be updated on every dispatch completion, not every session. The 'charter-as-soul-kernel' pattern (v6 gnosis) is necessary but insufficient — it provides identity, not mission-aligned context."
+  context: "2026-08-28: I dispatched 'GPT 5.3 research' to a fresh Researcher session. The Architect clarified: 'GLM 5.3 Flash (Z.ai)'. The Researcher researched GPT-5.3-Codex (wrong model) because it had no briefing packet with the correction. The researcher's session_gnosis (data/entities/researcher/session_gnosis.md) still has the GPT-5.3-Codex findings — it doesn't know about the GLM 5.3 Flash correction. The antigravity and copilot session_gnoses haven't been updated since 10:31 UTC and are missing all of today's corrections: Ox Alpha = GLM 5.3 Flash, DeepSeek V4 Flash free removed, Cline-to-OpenCode 3 YAML edits, vault+Gemini integration, etc. The dispatch guardrail (scripts/dispatch_guard.py) warns on specialist routing violations but doesn't include the corrections. A briefing-packet system would have stated: 'The Architect's reference to GPT 5.3 means GLM 5.3 Flash (Z.ai). See R_RESEARCHER_GLM53_FLASH_CLINE_20260828.md. The prior R_RESEARCHER_GPT53_CLINE_20260828.md is superseded.'"
+  mandates:
+  - M11
+  - M15
+  - M23
+  - M27
+  confidence: 0.95
+  tags:
+  - expert-sessions
+  - briefing-packets
+  - continuity
+  - micro-workspaces
+  - dispatch-protocol
+  - institutional-memory
+  evidence: "2026-08-28: (a) Researcher's session_gnosis (data/entities/researcher/session_gnosis.md, 778 lines, last modified 16:49 UTC) still references GPT-5.3-Codex as authoritative — it doesn't know about the GLM 5.3 Flash correction. (b) Antigravity/copilot/cline session_gnoses (data/entities/{antigravity,copilot,cline}/session_gnosis.md) haven't been updated since 10:31 UTC and are missing all of today's corrections. (c) My own v7 gnosis (data/entities/grokster/session_gnosis.md, 274 lines) was just refreshed to include today's work — but that's ME, not the other specialists. (d) The 'primed fleet' pattern (v6) was sufficient when specialists were called for the SAME missions repeatedly. When the mission changes (vault → GLM 5.3 Flash → Cline architecture), the charter is no longer enough — the specialist needs a briefing packet."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-28T20:25:00Z"
