@@ -1,6 +1,0 @@
-# Sprint Plan Index: Doc Sanity & Un-overengineering
-- Sprint Goal: Sanitize docs (UO-4), then un-overengineer (UO-6)
-- Controlling Plan: data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md
-- Active Sprint: data/coordination/ACTIVE_SPRINT.json
-- Research: docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md
-- Full Plan: docs/sprints/current/llms-full.txt

@@ -1,5 +1,0 @@
-# 🔱 Omega Engine — Requirements (CI Reproducibility)
-# AP: AP-REQUIREMENTS-v1.0.0
-# This file is kept for CI reproducibility. pyproject.toml is the source of truth for packaging.
-# Run: pip install -r requirements.txt
--e .

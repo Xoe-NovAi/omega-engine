@@ -1,7 +1,0 @@
-# data/entities/maat/knowledge/INDEX.yaml
-# Entity knowledge discovery index
-# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
-
-entity: ma'at
-updated: '2026-06-03T11:20:50.393353'
-topics: []
