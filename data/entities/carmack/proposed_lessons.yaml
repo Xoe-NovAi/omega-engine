@@ -1,0 +1,119 @@
+# Proposed Lessons — Carmack (Architecture/Quality)
+# [M11 Soul Integrity] L1→L2→L3 distillation pending Scribe promotion.
+# Each lesson has: id, summary, context, insight, principle, evidence.
+schema_version: "1.0"
+entity: "carmack"
+status: "proposed"
+
+lessons:
+  - id: "carmack-20260828-001"
+    title: "Verify imposter auditor findings with grep, not prose"
+    level: "L3"
+    summary: |
+      An imposter audit produced 5 claims. I verified each with disk-level
+      commands (grep, cat, make) before acting. 4 of 5 were true; 1 was a
+      misinterpretation. The verification cost 5 minutes; the false-positive
+      fix would have cost 30 minutes (a refactor that wasn't needed).
+    context: |
+      Soft launch T-0. OOM restart produced imposter sessions. One imposter
+      audit found: M23 ratchet regression (TRUE), 4 hardcoded secrets
+      (TRUE), D-536 violation (PARTIALLY TRUE - docs issue, not code),
+      vault crypto schema mismatch (TRUE), M1 exemption hidden (TRUE).
+    insight: |
+      An auditor's prose is a hypothesis, not a finding. The data is the
+      ground truth. Ground every claim in the live working tree before
+      committing 30 minutes of fixes.
+    principle: |
+      Verification cost is the same whether you trust or verify.
+      Asymmetric risk is on the trust side.
+    evidence: |
+      - oracle_cli.py:46-75 grep showed 4 except Exception patterns
+      - scripts/*.py grep showed GOCSPX literal in 4 files
+      - oracle.py:1132/763 grep showed both routers actively used
+      - crypto.py:87 grep showed pp.encrypt uses master_key directly
+      - Makefile:268 grep showed tty_agent glob exemption
+      - PUBLIC_ALLOWLIST.txt:30 grep showed only scripts/install.sh allowed
+
+  - id: "carmack-20260828-002"
+    title: "M23 ratchet is a count, not a presence test"
+    level: "L2"
+    summary: |
+      M23 (Failure Integrity) measures per-file soft-failure counts
+      against a baseline. A ratchet regression fires when ANY file's
+      count INCREASES. Fixing 3 patterns in oracle_cli.py brought the
+      count from 9 to 8 (a DECREASE, below baseline), which still passes
+      the ratchet even though 2 patterns remain.
+    context: |
+      Imposter claimed +4 soft-failures in oracle_cli.py (lines 49, 57,
+      73, 184). After tightening the vault-injection excepts, the
+      file count went 9 → 8. make check-m23-failure-integrity shows
+      "Current: 291 | Baseline: 292 | Delta: -1" which PASSES.
+    insight: |
+      M23 measures growth, not absolute count. The ratchet protects
+      against NEW violations, not old ones. Old violations are tracked
+      in config/m23_baseline.txt and updated only with explicit review.
+    principle: |
+      A ratchet prevents regression; it does not enforce zero. To enforce
+      zero, fix the baseline. To prevent regression, enforce the ratchet.
+    evidence: |
+      - scripts/m23_gate.py:48-91 reads baseline, compares to current
+      - config/m23_baseline.txt:6 shows oracle_cli.py = 9 (current
+        baseline)
+      - After fixes: ruff count for oracle_cli.py is 8, below baseline
+
+  - id: "carmack-20260828-003"
+    title: "Documented vs actual: distinguish in code, not in audit"
+    level: "L2"
+    summary: |
+      Vault crypto.py was documented as "Argon2id + age" but implemented
+      as "age with scrypt". This is a documentation lie, not a security
+      bug. The fix: update the docstring to match the code (Option A),
+      with a V-1 task to refactor the code to use Argon2id. Audit-time
+      lies erode trust; code-time lies are fixable.
+    context: |
+      Imposter claimed vault uses scrypt not Argon2id. Verified by
+      reading crypto.py:87 — pp.encrypt(plaintext.encode(),
+      self._master_key, armored=True) uses master_key directly; no
+      Argon2id call. The _derive_key() method exists but is unused.
+    insight: |
+      When code and docs diverge, the code is the ground truth. Audit
+      reports should report the gap, not pretend either is correct.
+      The fix: align docs to code, then file a V-1 task to align code
+      to docs (if the docs represent the intended design).
+    principle: |
+      Two divergent facts in the same system — one is the lie, both
+      cannot be true. Find the lie by reading the executable, not the
+      comment.
+    evidence: |
+      - crypto.py:7-8 (docstring) vs crypto.py:87 (implementation)
+      - crypto.py:55-61 creates PasswordHasher but never uses it
+      - crypto.py:66-77 _derive_key is defined but never called
+
+  - id: "carmack-20260828-004"
+    title: "PUBLIC_ALLOWLIST.txt is the launch-leak boundary"
+    level: "L3"
+    summary: |
+      Hardcoded secrets in scripts/ are NOT launch-blocking IF the
+      scripts are NOT in PUBLIC_ALLOWLIST.txt. The 4 GOCSPX scripts
+      (antigravity_endpoint_router, burst_test_internal,
+      long_duration_test, stress_test_internal) are NOT in the
+      allowlist; only scripts/install.sh is. The debut cut will not
+      include the leaked secrets.
+    context: |
+      Imposter framed the 4 GOCSPX secrets as P0 launch-blockers.
+      Verified PUBLIC_ALLOWLIST.txt: only scripts/install.sh at line
+      30 is in ALLOW. The 4 scripts with secrets are forge-internal.
+      The leak is post-debut hygiene, not launch-blocker.
+    insight: |
+      The PUBLIC_ALLOWLIST.txt is the sovereignty boundary. Threats
+      outside the boundary are not sovereignty threats; they're
+      hygiene threats. Conflating the two over-elevates hygiene issues
+      and delays the ship.
+    principle: |
+      Categorize risk by what it can actually reach, not by what it
+      could theoretically reach. A secret in forge code is hygiene; a
+      secret in shipped code is sovereignty.
+    evidence: |
+      - PUBLIC_ALLOWLIST.txt:14-47 shows ALLOW section
+      - PUBLIC_ALLOWLIST.txt:30 shows only scripts/install.sh
+      - grep for the 4 secret files in allowlist returns 0 matches
