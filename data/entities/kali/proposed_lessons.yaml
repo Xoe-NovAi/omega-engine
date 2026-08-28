@@ -340,7 +340,26 @@ proposals:
     \ load test, characterize the curve, publish the result."
   grokster_verdict: "L3 \u2014 PROMOTE (Architect observation 2026-08-28, this session)"
   promotion_ready: true
+- id: kali-20260828-132
+  date: '2026-08-28'
+  narrative: During 6 rounds of deep dive, specialists created 14 scripts in scripts/
+    without M13 Temple-Grade gate. 2 are high-risk (hardcoded OAuth CLIENT_SECRET,
+    4 P0 bugs in allowlist cut-tool). The bulk-commit pattern obscured individual
+    accountability. No pre-commit hook enforced scripts/ review. Specialists produced
+    work that bypassed the review pipeline.
+  insight: 'Specialists creating operational code without an M13 gate is the same
+    class of bug as specialists writing code in markdown without extracting it. Both
+    are: specialist produces work that bypasses the review pipeline. The fix is the
+    same shape: enforce the pipeline. Operational code = pre-commit hook + architect
+    approval. Research code = extraction pipeline + review.'
+  principle: 'Specialist file creation in operational locations (scripts/) requires
+    an M13 Temple-Grade gate. The gate has three parts: (1) pre-commit hook enforcing
+    make temple-grade, (2) hardcoded-secret scanner, (3) specialist charter amendment
+    requiring explicit architect approval for operational code. Without the gate,
+    specialists produce work that is loud about findings and quiet about fixes.'
+  grokster_verdict: "L3 \u2014 PROMOTE (Architect directive 2026-08-28, post-incident)"
+  promotion_ready: true
 metadata:
   entity: kali
-  updated: '2026-08-28T00:15:00Z'
+  updated: '2026-08-28T07:00:00Z'
   model_used: x-preview-f-free
