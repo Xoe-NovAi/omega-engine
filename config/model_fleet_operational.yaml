@@ -1,0 +1,410 @@
+schema_version: "1.0"
+document_type: "operational_config"
+document_id: "MODEL_FLEET_OPERATIONAL-20260828"
+title: "Omega Engine — Model Fleet Operational Configuration"
+status: "ACTIVE — RUNTIME CONFIG"
+date: "2026-08-28"
+sprint: "PUBLIC-DEBUT-01"
+owner: "Grokster"
+
+fleet_overview:
+  description: "Operational model fleet for Omega Engine alpha launch and post-launch operations. Maps logical roles to concrete model endpoints with health checks, fallbacks, and cost controls."
+  philosophy: "Local-first (M7), cloud fallback only, sovereign entity ownership."
+
+fleet_topology:
+  tier_0_local_sovereign:
+    description: "Primary - Local inference only, no cloud dependency"
+    providers:
+      - name: "ollama"
+        port: 11434
+        models: ["qwen2.5:0.5b", "nomic-embed-text:v1.5"]
+      - name: "native-gguf-extractor"
+        port: 1234
+        model: "Qwen3-1.7B-Q6_K.gguf"
+      - name: "native-gguf-reasoner"
+        port: 1235
+        model: "Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+      - name: "lmstudio"
+        port: 1234
+        models: ["Qwen3-1.7B-Q6_K.gguf", "Qwen3-4B-Thinking-2507-Q4_K_M.gguf"]
+  
+  tier_1_cloud_workhorse:
+    description: "OpenCode native models - primary workhorse"
+    providers:
+      - name: "m3_primary"
+        provider: "openrouter"
+        model_id: "minimax/minimax-m3:free"
+        count: 1
+      - name: "deepseek_v4_flash"
+        provider: "openrouter"
+        model_id: "deepseek/deepseek-v4-flash-0731"
+        count: 3
+      - name: "longcat_3_0"
+        provider: "openrouter"
+        model_id: "longcat/longcat-3.0-1m"
+        count: 3
+      - name: "laguna_s_2_1"
+        provider: "openrouter"
+        model_id: "poolside/laguna-s-2.1"
+        count: 1
+  
+  tier_2_specialized_cloud:
+    description: "OpenCode Zen models - specialized roles"
+    zen_free:
+      provider: "opencode-zen"
+      models:
+        - "mimo-v2.5-free"
+        - "nemotron-3-ultra-free"
+        - "hy3-free"
+        - "ling-3.0-flash-fin-free"
+        - "muse-spark-1.2-contributor-free"
+        - "deepseek-v4-flash-free"
+        - "nemotron-3.5-lightning-free"
+        - "x-preview-f-free"
+    zen_paid:
+      provider: "opencode-zen"
+      models:
+        - "gpt-5.6-sol"
+        - "claude-sonnet-4"
+        - "gemini-3-pro"
+  
+  tier_3_premium_cloud:
+    description: "Premium paid models on-demand"
+    providers:
+      - name: "glm_5_3_flash"
+        provider: "z.ai"
+        model_id: "glm-5.3-flash"
+      - name: "deepseek_v4_flash_paid"
+        provider: "openrouter"
+        model_id: "deepseek/deepseek-v4-flash-0731"
+
+tier_0_local_sovereign_details:
+  ollama:
+    enabled: true
+    endpoint: "http://127.0.0.1:11434/v1"
+    models:
+      - id: "qwen2.5:0.5b"
+        role: "fast_local"
+        context: 32768
+        max_output: 4096
+        use_case: "Quick local inference, embeddings"
+      - id: "nomic-embed-text:v1.5"
+        role: "embedding"
+        context: 8192
+        use_case: "Local embeddings (768-dim)"
+    health_check: "/api/tags"
+    timeout: 30
+    max_concurrent: 2
+
+  native_gguf_extractor:
+    enabled: true
+    endpoint: "http://127.0.0.1:1234/v1"
+    model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"
+    models:
+      - id: "qwen3-1.7b-extractor"
+        role: "extraction"
+        context: 4096
+        max_output: 2048
+        use_case: "Entity extraction, summarization, classification"
+    health_check: "/v1/models"
+    timeout: 60
+    max_concurrent: 1
+
+  native_gguf_reasoner:
+    enabled: true
+    endpoint: "http://127.0.0.1:1235/v1"
+    model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+    models:
+      - id: "qwen3-4b-thinking"
+        role: "reasoning"
+        context: 32768
+        max_output: 8192
+        use_case: "Chain-of-thought, multi-step reasoning"
+    health_check: "/v1/models"
+    timeout: 120
+    max_concurrent: 1
+
+  lmstudio:
+    enabled: true
+    endpoint: "http://localhost:1234/v1"
+    models:
+      - id: "qwen3-1.7b-q6_k"
+        role: "local_fallback"
+        context: 4096
+      - id: "qwen3-4b-thinking"
+        role: "reasoning_fallback"
+        context: 32768
+    health_check: "/v1/models"
+    timeout: 60
+    max_concurrent: 1
+
+tier_1_cloud_workhorse_details:
+  m3_primary:
+    provider: "openrouter"
+    model_id: "minimax/minimax-m3:free"
+    role: "primary_workhorse"
+    context: 1000000
+    max_output: 8192
+    cost_per_1m: 0.00
+    rpm_limit: 20
+    tpm_limit: 100000
+    use_cases:
+      - "General reasoning"
+      - "Code generation"
+      - "Analysis & synthesis"
+      - "Subagent dispatch (default)"
+    health_check: "models endpoint"
+    timeout: 120
+    retry_policy:
+      max_retries: 3
+      backoff: "exponential"
+      base_delay: 2
+
+  deepseek_v4_flash:
+    provider: "openrouter"
+    model_id: "deepseek/deepseek-v4-flash-0731"
+    role: "bulk_coding"
+    count: 3
+    context: 1000000
+    max_output: 8192
+    cost_per_1m_input: 0.014
+    cost_per_1m_output: 0.028
+    rpm_limit: 50
+    tpm_limit: 200000
+    use_cases:
+      - "Bulk code generation"
+      - "Refactoring"
+      - "Test generation"
+    health_check: "models endpoint"
+    timeout: 180
+
+  longcat_3_0:
+    provider: "openrouter"
+    model_id: "longcat/longcat-3.0-1m"
+    role: "long_context"
+    count: 3
+    context: 1000000
+    max_output: 8192
+    cost_per_1m_input: 0.15
+    cost_per_1m_output: 0.60
+    rpm_limit: 30
+    tpm_limit: 150000
+    use_cases:
+      - "Full codebase analysis"
+      - "Large document synthesis"
+      - "Cross-file refactoring"
+    health_check: "models endpoint"
+    timeout: 300
+
+  laguna_s_2_1:
+    provider: "openrouter"
+    model_id: "poolside/laguna-s-2.1"
+    role: "specialized_coding"
+    count: 1
+    context: 1000000
+    max_output: 8192
+    cost_per_1m_input: 0.20
+    cost_per_1m_output: 0.80
+    rpm_limit: 20
+    tpm_limit: 100000
+    use_cases:
+      - "Specialized code tasks"
+      - "Poolside-optimized workflows"
+    health_check: "models endpoint"
+    timeout: 180
+
+tier_2_specialized_cloud_details:
+  zen_free:
+    provider: "opencode-zen"
+    models:
+      - id: "mimo-v2.5-free"
+        role: "fast_cheap"
+        context: 32768
+        rpm_limit: 100
+      - id: "nemotron-3-ultra-free"
+        role: "reasoning"
+        context: 131072
+        rpm_limit: 30
+      - id: "hy3-free"
+        role: "chinese_code"
+        context: 32768
+        rpm_limit: 50
+      - id: "ling-3.0-flash-fin-free"
+        role: "finance"
+        context: 32768
+        rpm_limit: 50
+      - id: "muse-spark-1.2-contributor-free"
+        role: "creative"
+        context: 32768
+        rpm_limit: 50
+      - id: "deepseek-v4-flash-free"
+        role: "coding"
+        context: 1000000
+        rpm_limit: 50
+      - id: "nemotron-3.5-lightning-free"
+        role: "fast_reasoning"
+        context: 32768
+        rpm_limit: 50
+      - id: "x-preview-f-free"
+        role: "experimental"
+        context: 32768
+        rpm_limit: 20
+
+  zen_paid:
+    provider: "opencode-zen"
+    models:
+      - id: "gpt-5.6-sol"
+        role: "premium_reasoning"
+        context: 200000
+        cost_per_1m_input: 5.00
+        cost_per_1m_output: 15.00
+      - id: "claude-sonnet-4"
+        role: "premium_coding"
+        context: 200000
+        cost_per_1m_input: 3.00
+        cost_per_1m_output: 15.00
+      - id: "gemini-3-pro"
+        role: "premium_long_context"
+        context: 2000000
+        cost_per_1m_input: 1.25
+        cost_per_1m_output: 5.00
+
+tier_3_premium_cloud_details:
+  glm_5_3_flash:
+    provider: "z.ai"
+    model_id: "glm-5.3-flash"
+    role: "premium_1m_context"
+    cost_per_1m_input: 0.075
+    cost_per_1m_output: 0.25
+    promo_until: "2026-09-09"
+
+  deepseek_v4_flash_paid:
+    provider: "openrouter"
+    model_id: "deepseek/deepseek-v4-flash-0731"
+    role: "high_volume_coding"
+    cost_per_1m_input: 0.014
+    cost_per_1m_output: 0.028
+
+role_resolution:
+  primary: "m3_primary"
+  subagent: "inherit"
+  extraction: "native_gguf_extractor"
+  reasoning: "native_gguf_reasoner"
+  bulk_coding: "deepseek_v4_flash"
+  long_context: "longcat_3_0"
+  specialized_coding: "laguna_s_2_1"
+  fast_cheap: "zen_free.mimo-v2.5-free"
+  reasoning_cloud: "zen_free.nemotron-3-ultra-free"
+  chinese_code: "zen_free.hy3-free"
+  finance: "zen_free.ling-3.0-flash-fin-free"
+  creative: "zen_free.muse-spark-1.2-contributor-free"
+  premium_reasoning: "zen_paid.gpt-5.6-sol"
+  premium_coding: "zen_paid.claude-sonnet-4"
+  fallback_chain:
+    - "native_gguf_extractor"
+    - "ollama"
+    - "m3_primary"
+    - "zen_free.mimo-v2.5-free"
+
+health_checks:
+  interval_seconds: 60
+  timeout_seconds: 10
+  failure_threshold: 3
+  recovery_threshold: 2
+  endpoints:
+    - name: "ollama"
+      url: "http://127.0.0.1:11434/api/tags"
+      expected_status: 200
+    - name: "native_gguf_extractor"
+      url: "http://127.0.0.1:1234/v1/models"
+      expected_status: 200
+    - name: "native_gguf_reasoner"
+      url: "http://127.0.0.1:1235/v1/models"
+      expected_status: 200
+    - name: "lmstudio"
+      url: "http://localhost:1234/v1/models"
+      expected_status: 200
+    - name: "openrouter"
+      url: "https://openrouter.ai/api/v1/models"
+      expected_status: 200
+    - name: "opencode_zen"
+      url: "https://api.opencode.ai/v1/models"
+      expected_status: 200
+
+budgets:
+  daily_usd_limit: 50.00
+  monthly_usd_limit: 1000.00
+  per_model_daily:
+    m3_primary: 0.00
+    deepseek_v4_flash: 15.00
+    longcat_3_0: 15.00
+    laguna_s_2_1: 5.00
+    zen_paid: 20.00
+  alerts:
+    - threshold: 0.8
+      action: "warn"
+    - threshold: 0.95
+      action: "pause_paid_tiers"
+    - threshold: 1.0
+      action: "pause_all_cloud"
+
+entity_assignments:
+  kali:
+    primary: "m3_primary"
+    extraction: "native_gguf_extractor"
+    reasoning: "native_gguf_reasoner"
+    fallback: "zen_free.mimo-v2.5-free"
+  grokster:
+    primary: "m3_primary"
+    extraction: "native_gguf_extractor"
+    reasoning: "native_gguf_reasoner"
+    bulk_coding: "deepseek_v4_flash"
+    long_context: "longcat_3_0"
+    fallback: "zen_free.mimo-v2.5-free"
+  researcher:
+    primary: "m3_primary"
+    long_context: "longcat_3_0"
+    reasoning: "native_gguf_reasoner"
+    fallback: "zen_free.nemotron-3-ultra-free"
+  roc_racoon:
+    primary: "m3_primary"
+    extraction: "native_gguf_extractor"
+    fallback: "zen_free.mimo-v2.5-free"
+  john_carmack:
+    primary: "m3_primary"
+    reasoning: "native_gguf_reasoner"
+    premium: "zen_paid.gpt-5.6-sol"
+    fallback: "zen_free.nemotron-3-ultra-free"
+  maat:
+    primary: "m3_primary"
+    bulk_coding: "deepseek_v4_flash"
+    fallback: "zen_free.mimo-v2.5-free"
+  lilith:
+    primary: "m3_primary"
+    reasoning: "native_gguf_reasoner"
+    fallback: "zen_free.nemotron-3-ultra-free"
+  grok_cli:
+    primary: "m3_primary"
+    fallback: "zen_free.mimo-v2.5-free"
+  default:
+    primary: "m3_primary"
+    fallback: "zen_free.mimo-v2.5-free"
+
+deployment_checklist:
+  - "All 4 local providers healthy (verified)"
+  - "Ollama models pulled (qwen2.5:0.5b, nomic-embed-text:v1.5)"
+  - "llama-cpp servers running on 1234 & 1235"
+  - "OpenCode config updated with all providers"
+  - "OpenRouter API key in .env (M3 + DeepSeek + LongCat + Laguna)"
+  - "OpenCode Zen API key in .env (8 free + 9 paid models)"
+  - "Health check script deployed (scripts/health_check_fleet.py)"
+  - "Cost monitoring dashboard configured"
+  - "Alerting webhook configured (Slack/Discord)"
+  - "Entity assignments documented and communicated"
+
+metadata:
+  ap_token: "AP-MODEL-FLEET-OPS-20260828-v1.0.0"
+  omega_sigil: "OMEGA"
+  entity: "GROKSTER"
+  trace: "trc_model_fleet"
+  status: "ACTIVE"
