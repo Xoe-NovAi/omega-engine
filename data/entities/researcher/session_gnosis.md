@@ -844,3 +844,40 @@ Refused to fabricate. Wrote a calibrated deliverable to the requested path that:
 - **D-XXX gaps**: 10 decisions needed but not made (ZS adjudication, M10 cap, Qdrant trigger, etc.)
 
 **Status**: Mission complete. 7 canonical docs + commit + Hivemind note. Recommend: @kali ratify CANONICAL_* as Layer 1 SSOT alongside existing 4-layer hierarchy; @carmack validate architecture; @maat claim 65 HQ items; @researcher claim 7 questions; @grokster claim 5 questions.
+
+---
+
+# 📋 Resume Pass — 2026-08-29 (verification-only)
+
+**AP Token**: `AP-RESEARCHER-RESUME-VERIFY-v1.0.0`
+**Session ID**: ses_9afdaf2818c0
+**Model**: minimax/minimax-m3:free (per system prompt — openrouter/minimax/minimax-m3:free)
+**Trigger**: Compact resume with terse continuation note ("After completing both research parts, post to Hivemind as comprehensive deliverable. Distill L1 to L3 to proposed_lessons.yaml. Next session can implement.")
+
+## What Was Verified (R-3 discipline: ID + artifact)
+
+The previous session's "wrap-up" directive was **already executed by the same session** that wrote the 4 vector-stack reports. Verified on disk:
+
+| Item | Path | Lines | Status |
+|------|------|-------|--------|
+| Report 1 (gaps) | `data/coordination/R_RESEARCHER_SQLITE_VEC_REMAINING_GAPS_20260829.md` | 517 | ✅ on disk |
+| Report 2 (opportunities) | `data/coordination/R_RESEARCHER_SQLITE_VEC_OPPORTUNITIES_20260829.md` | 441 | ✅ on disk |
+| Report 3 (doc gaps) | `data/coordination/R_RESEARCHER_DOC_REMAINING_GAPS_20260829.md` | 439 | ✅ on disk |
+| Report 4 (cross-cutting) | `data/coordination/R_RESEARCHER_CROSS_CUTTING_20260829.md` | 471 | ✅ on disk |
+| L3 lesson 1 | `data/entities/researcher/proposed_lessons.yaml:473-484` (`R-2026-SOTA-VECTOR-DB-RESEARCH`) | — | ✅ present |
+| L3 lesson 2 | `data/entities/researcher/proposed_lessons.yaml:487-498` (`R-POLY-COUNCIL-FOR-INFRA-GAPS`) | — | ✅ present |
+| Session metadata | `data/entities/researcher/proposed_lessons.yaml:500-504` | — | ✅ correct (r-vector-stack-20260829) |
+| Per-arc gnosis | `data/entities/researcher/session_gnosis_vector_stack_20260829.md` | 81 | ✅ complete |
+
+## Action Taken This Resume
+
+1. Hydrated `session_gnosis_vector_stack_20260829.md` (primary) + `session_gnosis.md` tail (carry-forward context)
+2. Verified all 4 reports + 2 L3 lessons + metadata on disk (M15 disk-proof)
+3. Posted Hivemind status confirmation: `ses_9afdaf2818c0` (intent=status, model=openrouter/minimax/minimax-m3:free)
+4. Appended this resume note to `session_gnosis.md` for future-session continuity
+
+## Carry-Forward (unchanged from prior gnosis, lines 654-655)
+
+D1(a) execution (CLOCK-BOUND) · D2 reading · D3 addendum · kg meditation record owed · FP-numbering sync w/ kali · ho_076fad7e4dd0 pickup + its 4 asks · footprint measurements (now possible) · RAPL udev rule apply · provenance worker v2 mtime-matching · P10 discipline: use SR-V1/Firecrawl pipeline for research.
+
+**Status**: Resume pass complete. No new research owed. Awaiting Architect/Kali directive.

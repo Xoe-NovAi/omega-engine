@@ -469,8 +469,36 @@ proposals:
   domain: methodology
   last_verified: '2026-08-29'
 
+- level: L3
+  tag: '[R-2026-SOTA-VECTOR-DB-RESEARCH]'
+  narrative: 'Conducted 4 deep-research reports (40 items total) on post-launch sqlite-vec + doc optimization for the Omega Engine. 2026 SOTA confirmed via 3 parallel-search dispatches + 2 follow-up searches: (1) Distributed SQLite: LiteFS is in maintenance mode (mid-2024 Fly announcement); rqlite and dqlite are the 2026 active options; Turso/libSQL for managed. (2) Binary quantization: 32-40x speedup, 32x memory reduction, requires oversampling + float rescoring; works only when embeddings are zero-centered (true for nomic-embed, gemma-embed). (3) Vector inversion: OWASP LLM08:2025 catalogued; Vec2Text (2023) and ACM CCS 2026 black-box inversion via diffusion models are real; defenses are SQLCipher + Ball-DP. (4) RAG: hybrid+rerank is the 2026 production pattern; RAGAS 0.4.3 is the eval standard; GraphRAG is the graph-augmented extension. (5) Docs: Material for MkDocs is in maintenance mode (2026), Zensical is the successor. (6) Embedding versioning: Levelop 2026-07-26 is the canonical reference; PSI > 0.2 = investigate.'
+  insight: 'For any 2026 vector-store research mission, the 5-tuple (binary-quant, adaptive-ef, vector-versioning, RAGAS, threat-model) is the mandatory minimum. Anything less and the report is incomplete. The biggest unrealized win is NOT hardware (GPU, distributed) but ALGORITHM (binary quant = 32x; adaptive ef = 2-5x; vector versioning = safe upgrades). Premature optimization toward hardware is a 2024 trap. The single most important defense against 2026 attacks is vector versioning (knows what model wrote what) + encryption at rest (SQLCipher); both are 1-2 weeks of work.'
+  principle: 'When researching optimization for a vector store stack in 2026, the 4-perspective triangulation (Architect = structure, Adversary = failure modes, Alchemist = cross-pollination, Archivist = 2026 SOTA) must always include the Archivist reading 2026-dated sources. A 2024 reference is suspicious for vector stores because the field moves 2x/year. Specifically validate: (1) is the distributed-SQLite project still maintained? (2) does the doc tool have a 2026 successor? (3) are the cited attacks still considered state-of-the-art? (4) is the eval framework the 2026 standard? Any "yes" to a 2024-only answer is a yellow flag; either validate the SOTA survived or pivot to the 2026 alternative.'
+  utility_score: 0.94
+  source_trajectories:
+  - r-sqlite-vec-remaining-gaps-20260829
+  - r-sqlite-vec-opportunities-20260829
+  - r-doc-remaining-gaps-20260829
+  - r-cross-cutting-20260829
+  domain: research_methodology
+  last_verified: '2026-08-29'
+
+- level: L3
+  tag: '[R-POLY-COUNCIL-FOR-INFRA-GAPS]'
+  narrative: 'Applied the Polymathic Council of Four to 10 remaining sqlite-vec gaps, 10 optimization opportunities, 10 doc gaps, and 10 cross-cutting improvements. Architect lens: surfaced "operational vs architectural" distinction (the 9-gap fix was architectural; the 10 remaining are operational). Adversary lens: identified the 4 P0s (R3 embedding failover, R4 vector drift, R8 backup, R9 encryption) as existential. Alchemist lens: discovered the MRL pipeline is half-built (write-only fallback; no read path). Archivist lens: validated 2026 SOTA — SQLCipher, Litestream, Circuit Breaker, RAGAS, OWASP LLM08, Levelop vector-versioning. The 4-perspective triangulation produced a single 39-item prioritized backlog (8 P0, 14 P1, 12 P2, 5 P3) with ~5-6 months estimated effort.'
+  insight: 'The Council of Four converges on a 4-tier priority (P0/P1/P2/P3) automatically when given well-defined items. The Adversary lens is the one that surfaces the P0 — without it, the report would be 30 items of equal weight. The Archivist lens is the one that prevents recommending a sunset tool (LiteFS, Material for MkDocs) — without it, the report would cite 2024 patterns that are no longer current. The Architect lens prevents premature abstraction (CC-1 VectorStoreBackend is P1, not P0, because sqlite-vec is the only backend in production). The Alchemist lens finds the unstated cross-pollination (MRL was a write-only trap; the 7 collections enable the multi-modal use case in OPP-O8 for free).'
+  principle: 'For any infrastructure-gap analysis (database, queue, cache, network, observability), deploy the Polymathic Council of Four with explicit per-lens questions: Architect ("is this structural or operational?"), Adversary ("is this existential or quality-of-life?"), Alchemist ("what unstated pattern is this a symptom of?"), Archivist ("is the cited 2026 SOTA still maintained?"). The 4 explicit questions prevent the lenses from blending into a single mush. The output is a prioritized backlog with effort estimates, not a flat list of 40 items. The 4-priority breakdown (P0/P1/P2/P3) should map to sprint timelines: P0 = current sprint, P1 = next sprint, P2 = next quarter, P3 = post-launch. A "flat 40 items" report is the failure mode.'
+  utility_score: 0.93
+  source_trajectories:
+  - r-sqlite-vec-remaining-gaps-20260829
+  - r-sqlite-vec-opportunities-20260829
+  - r-doc-remaining-gaps-20260829
+  - r-cross-cutting-20260829
+  domain: methodology
+  last_verified: '2026-08-29'
+
 metadata:
   entity: researcher
-  session_id: r-strategy-corpus-20260829
+  session_id: r-vector-stack-20260829
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-29T03:45:00.000000+00:00'
+  last_session_end: '2026-08-29T04:30:00.000000+00:00'

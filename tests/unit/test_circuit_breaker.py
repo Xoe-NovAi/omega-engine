@@ -46,15 +46,37 @@ async def test_healthy_provider_succeeds():
 
 @pytest.mark.asyncio
 async def test_falls_through_to_second_provider():
+    """When p1 fails in this embed() call, p2 is tried and succeeds.
+
+    The breaker opens after threshold failures across multiple embed()
+    calls, not within a single one. So this test verifies the
+    fail-fast-within-call semantics; the cross-call behavior is covered
+    by test_breaker_opens_after_threshold.
+    """
     p1 = MockProvider("broken", fail_n=99)
     p2 = MockProvider("ok", fail_n=0)
     cb = EmbeddingCircuitBreaker([p1, p2])
     vec = await cb.embed("test")
     assert len(vec) == 768
-    # p1 should be tried until breaker opens (FAILURE_THRESHOLD times)
-    assert p1.call_count >= FAILURE_THRESHOLD
-    # p2 should be tried at least once
-    assert p2.call_count >= 1
+    # p1 was tried at least once (failed)
+    assert p1.call_count == 1
+    # p2 was tried at least once (succeeded)
+    assert p2.call_count == 1
+    # p1's breaker has 1 failure recorded
+    p1_breaker = cb._breakers[p1]
+    assert p1_breaker.health.fail_count == 1
+
+    # After 3 more embed() calls (all failing p1), breaker should open.
+    for _ in range(FAILURE_THRESHOLD - 1):
+        await cb.embed("x")
+    p1_breaker = cb._breakers[p1]
+    assert p1_breaker.health.state == "open"
+    # p1 should NOT be called again now (fail-fast)
+    call_count_before = p1.call_count
+    await cb.embed("y")
+    assert p1.call_count == call_count_before  # skipped, breaker open
+    # p2 should be tried as fallback
+    assert p2.call_count > 1
 
 
 @pytest.mark.asyncio

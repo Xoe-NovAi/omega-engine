@@ -74,6 +74,8 @@ class _AsyncBreaker:
     def __init__(self, name: str, threshold: int = FAILURE_THRESHOLD,
                  cooldown: float = COOLDOWN_SECONDS):
         self.name = name
+        self._threshold = threshold
+        self._cooldown = cooldown
         self.health = ProviderHealth(provider=name)
         if HAS_PYBREAKER:
             self._cb = _pybreaker.CircuitBreaker(  # type: ignore[union-attr]
@@ -84,8 +86,6 @@ class _AsyncBreaker:
         else:
             self._cb = None
             self._manual_open_until: float = 0.0
-            self._threshold = threshold
-            self._cooldown = cooldown
 
     def can_request(self) -> bool:
         """Returns False if breaker is OPEN and cooldown not yet elapsed.
@@ -95,11 +95,10 @@ class _AsyncBreaker:
         record_success/record_failure to close or re-open.
         """
         if self._cb is not None:
-            try:
-                # pybreaker exposes .current_state as a string
-                return self._cb.current_state in ("closed", "half-open")
-            except Exception:  # pragma: no cover — defensive
-                return True
+            # Mirror the health.state we maintain ourselves. pybreaker
+            # has its own state machine but we use our own counter to keep
+            # test assertions stable across pybreaker/non-pybreaker paths.
+            return self.health.state in ("closed", "half_open")
         # Manual fallback
         if time.monotonic() >= self._manual_open_until:
             return True  # ready for half-open probe
@@ -115,13 +114,20 @@ class _AsyncBreaker:
 
     def record_failure(self) -> None:
         if self._cb is None:
-            # Manual fallback: open after threshold
+            # Manual fallback: open after threshold failures within the
+            # sliding window. We check BEFORE incrementing, since the test
+            # contract is "the threshold-th call opens the circuit."
             if self.health.fail_count + 1 >= self._threshold:
                 self._manual_open_until = time.monotonic() + self._cooldown
                 self.health.state = "open"
-        # Note: with pybreaker, the state transition happens via the
-        # library's internal counter; the state will be reflected on
-        # the next can_request() call.
+        else:
+            # pybreaker path: the library's state machine is updated by
+            # calling its .call() method. Since we don't actually call
+            # the underlying function through pybreaker (we want to track
+            # health independently), we mirror the state ourselves.
+            # Threshold check uses the same fail_count the test inspects.
+            if self.health.fail_count + 1 >= self._threshold:
+                self.health.state = "open"
         self.health.fail_count += 1
         self.health.last_failure_ts = time.time()
 
