@@ -189,8 +189,16 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         self._legacy_vec_table = "omega_memory_vec"
         self._legacy_vec_created = False
 
-        # GAP-006: rowid -> collection mapping for O(1) delete
-        self._rowid_to_collection: Dict[int, str] = {}
+        # GAP-006: rowid -> collections mapping for O(1) delete (F-04)
+        # A rowid can live in multiple collections (primary + MRL variants).
+        # Track all of them so delete removes from every collection.
+        # Initialize on first upsert to avoid heavy import at module load.
+        if not hasattr(self, "_rowid_to_collections"):
+            from collections import defaultdict
+            self._rowid_to_collections: Dict[int, set] = defaultdict(set)
+        # Backward-compat shim: the old _rowid_to_collection dict.
+        if not hasattr(self, "_rowid_to_collection"):
+            self._rowid_to_collection: Dict[int, str] = {}
 
         # Periodic checkpoint task
         self._checkpoint_task = None
@@ -580,15 +588,23 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         if collection not in self._collections:
             raise ValueError(f"Unknown collection: {collection}")
 
-        # Validate all vectors have same dimension
-        first_vec = items[0].get("vector", [])
-        if first_vec:
-            await self._ensure_collection_vec_table(collection, len(first_vec))
-            expected_dim = self._collections[collection]["dimension"]
-            for i, item in enumerate(items):
-                vec = item.get("vector", [])
-                if vec and len(vec) != expected_dim:
-                    raise ValueError(f"Item {i}: vector dimension {len(vec)} != collection dim {expected_dim}")
+        # Validate all vectors have the same dimension (F-05).
+        # All items in a batch must share the collection's expected dimension;
+        # mixed-dim batches are rejected with a clear index-aware error.
+        expected_dim = self._collections[collection]["dimension"]
+        for i, item in enumerate(items):
+            vec = item.get("vector", [])
+            if not vec:
+                continue
+            if len(vec) != expected_dim:
+                raise ValueError(
+                    f"batch_upsert rejected: item[{i}] vector dim {len(vec)} "
+                    f"!= collection '{collection}' dim {expected_dim}. "
+                    f"All items in a batch must share the same dimension."
+                )
+        # If any item has a vector, ensure the vec0 table exists.
+        if any(item.get("vector") for item in items):
+            await self._ensure_collection_vec_table(collection, expected_dim)
 
         # Batch serialize all vectors (float32 for primary)
         vectors = [item.get("vector", []) for item in items]
@@ -609,7 +625,10 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                     scales.append(1.0)
 
         # GAP-002: Generate MRL variants for fallback collections (only for canonical 768-dim)
+        # Use the first item with a vector as the reference for MRL generation.
+        # All items in the batch must share the same MRL structure (F-05).
         mrl_variants = {}
+        first_vec = next((item.get("vector") for item in items if item.get("vector")), [])
         if len(first_vec) == CANONICAL_DIMENSION:
             mrl_variants = self.generate_mrl_variants(first_vec)
 
@@ -715,6 +734,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
 
                         # GAP-006: Record rowid -> collection mapping for O(1) delete
                         for i in range(len(items)):
+                            self._rowid_to_collections[rowids[i]].add(collection)
+                            # Backward-compat: last-write wins for single-collection lookups
                             self._rowid_to_collection[rowids[i]] = collection
 
                         # GAP-005: Batch insert into spatial R-tree
@@ -751,8 +772,11 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                                             """,
                                             mrl_vec_data,
                                         )
-                                    # Record mapping for MRL collections too
+                                    # Record mapping for MRL collections too (F-04)
+                                    # Add to the set so delete targets all collections.
                                     for i in range(len(items)):
+                                        self._rowid_to_collections[rowids[i]].add(mrl_collection)
+                                        # Last MRL write wins for the single-collection shim.
                                         self._rowid_to_collection[rowids[i]] = mrl_collection
 
                         conn.commit()
@@ -956,12 +980,17 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                         rowid = row[0]
                         conn.execute("DELETE FROM omega_memory_data WHERE id = ?", (rowid,))
                         conn.execute("DELETE FROM omega_memory_fts WHERE rowid = ?", (rowid,))
-                        # GAP-006: O(1) delete using rowid -> collection mapping
-                        target_collection = self._rowid_to_collection.get(rowid)
-                        if target_collection:
-                            conn.execute(f"DELETE FROM {target_collection} WHERE rowid = ?", (rowid,))
-                            del self._rowid_to_collection[rowid]
-                        else:
+                        # GAP-006: O(1) delete using rowid -> collections mapping (F-04)
+                        # Delete from ALL collections the rowid lives in (primary + MRL).
+                        rowid_collections = self._rowid_to_collections.pop(rowid, set())
+                        if not rowid_collections:
+                            # Backward-compat: check the old single-collection map.
+                            target = self._rowid_to_collection.pop(rowid, None)
+                            if target:
+                                rowid_collections = {target}
+                        for coll in rowid_collections:
+                            conn.execute(f"DELETE FROM {coll} WHERE rowid = ?", (rowid,))
+                        if not rowid_collections:
                             # Fallback: collection not in mapping (legacy data) — scan created tables
                             for collection_name in self._vec_tables_created:
                                 conn.execute(f"DELETE FROM {collection_name} WHERE rowid = ?", (rowid,))
