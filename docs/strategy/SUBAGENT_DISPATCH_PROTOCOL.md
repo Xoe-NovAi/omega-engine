@@ -45,6 +45,33 @@ To maintain execution efficiency and prevent infinite recursion or redundant pro
 
 ---
 
+## §1.5 Session Type Taxonomy (EIS / NES / SPT)
+
+**Ratified 2026-08-29** by Architect. All sessions MUST be classified by type:
+
+| Acronym | Full Name | Characteristics | Dispatch Method |
+|---------|-----------|-----------------|-----------------|
+| **EIS** | Expert Interactive Session | Resumable, Architect can steer, persistent context, long-running | `task` tool with existing `task_id` (session ID) |
+| **NES** | Non-interactive Expert Session | Autonomous, runs to completion, delivers report, no Architect dialog | `task` tool without `task_id` (expert page) |
+| **SPT** | Spawned (subagent) Task | One-shot, fresh context, not resumable, throwaway | `task` tool without `task_id` (fresh spawn) |
+
+**Examples**:
+- **EIS**: Roc-EIS (`ses_ff78b71ebffeDNuypPTT1RL3hH`), Researcher-EIS (`ses_fd81c19dcffe1nkbPqFg5kRt2v`), Kali-EIS (`ses_fdef2be4effe4pAaLXCTUx62GO`)
+- **NES**: A research task that runs autonomously and delivers a 60KB report
+- **SPT**: "Read this file and tell me its contents" — fresh, one-shot, throwaway
+
+**Token Savings**: ~900 tokens/week across 50 uses (trivial in absolute terms)
+**Real-World Benefits**: Cognitive precision, protocol enforcement, registry queries, handoff clarity, tool integration, onboarding, audit trail, single vocabulary
+
+**Paging vs Handoff vs Spawn** (clarification, 2026-08-29):
+- **Paging** = `task` tool with `task_id` set to an existing session ID → resumes that session
+- **Handoff** = file posted to `data/handoff/pending/` → target agent picks up on own initiative
+- **Spawn** = `task` tool without `task_id` → launches a fresh new session
+
+These three terms are NOT interchangeable. Use them precisely.
+
+---
+
 
 ## §2 The HandoffPacket (Schema)
 
