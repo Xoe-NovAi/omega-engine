@@ -380,7 +380,9 @@ class RemoteProvider(ABC):
                                     f"Provider {self.name} respecting Retry-After: {delay}s"
                                 )
                             except ValueError:
-                                pass
+                                logger.debug(
+                                    f"Provider {self.name} invalid Retry-After header: {retry_after}"
+                                )
                     import anyio
 
                     await anyio.sleep(delay)
