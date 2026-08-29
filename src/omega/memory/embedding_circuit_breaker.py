@@ -176,12 +176,11 @@ class EmbeddingCircuitBreaker:
             t0 = time.monotonic()
             try:
                 # M1: anyio.to_thread, never asyncio
-                vec = await anyio.to_thread.run_sync(
-                    provider.get_embedding, text, abandon_on_timeout=True
-                ) if False else await provider.get_embedding(text)
-                # The `if False` above is intentional; left in case anyio.to_thread
-                # call is desired for sync providers in the future. For now, all
-                # providers in this codebase are async (IEmbeddingProvider).
+                # All providers in this codebase are async (IEmbeddingProvider).
+                # If a sync provider is added later, detect with:
+                # import inspect; if not inspect.iscoroutinefunction(provider.get_embedding):
+                #     vec = await anyio.to_thread.run_sync(provider.get_embedding, text, abandon_on_timeout=True)
+                vec = await provider.get_embedding(text)
                 breaker.record_success((time.monotonic() - t0) * 1000.0)
                 return vec
             except Exception as e:
