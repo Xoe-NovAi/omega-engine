@@ -1,0 +1,261 @@
+entity: lilith
+session: ses_c1a46e5b6423
+date: '2026-08-29'
+status: "ACTIVE — Post-Compaction Consolidation"
+lessons:
+- id: lilith-20260807-001
+  tier: L1
+  category: qdrant_sq8_benchmark
+  narrative: '|'
+- id: lilith-20260807-002
+  tier: L2
+  category: qdrant_sq8_benchmark
+  insight: '|'
+- id: lilith-20260807-003
+  tier: L3
+  category: qdrant_sq8_benchmark
+  principle: '|'
+- id: lilith-20260807-004
+  tier: L1
+  category: headroom_m7_violation
+  narrative: '|'
+- id: lilith-20260807-005
+  tier: L2
+  category: headroom_m7_violation
+  insight: '|'
+- id: lilith-20260807-006
+  tier: L3
+  category: headroom_m7_violation
+  principle: '|'
+- id: lilith-20260807-007
+  tier: L1
+  category: dual_branch_scoring_absent
+  narrative: '|'
+- id: lilith-20260807-008
+  tier: L2
+  category: dual_branch_scoring_absent
+  insight: '|'
+- id: lilith-20260807-009
+  tier: L3
+  category: dual_branch_scoring_absent
+  principle: '|'
+- id: lilith-20260807-010
+  tier: L1
+  category: speculative_decoding_partial
+  narrative: '|'
+- id: lilith-20260807-011
+  tier: L2
+  category: speculative_decoding_partial
+  insight: '|'
+- id: lilith-20260807-012
+  tier: L3
+  category: speculative_decoding_partial
+  principle: '|'
+- id: lilith-20260807-013
+  tier: L1
+  category: wad_dependency_resolution_absent
+  narrative: '|'
+- id: lilith-20260807-014
+  tier: L2
+  category: wad_dependency_resolution_absent
+  insight: '|'
+- id: lilith-20260807-015
+  tier: L3
+  category: wad_dependency_resolution_absent
+  principle: '|'
+- id: lilith-20260821-001
+  tier: L2
+  category: '[N7] context_injection_gate_integrity'
+  insight: '|'
+- id: lilith-20260821-002
+  tier: L2
+  category: '[N7] soul_loop_operationally_open'
+  insight: '|'
+- id: lilith-20260821-003
+  tier: L3
+  category: '[N7] checkpoint_before_destruction'
+  principle: '|'
+- id: lilith-20260823-001
+  tier: L1
+  category: '[N_7] debut_hardening_cross_review'
+  narrative: '|'
+- id: lilith-20260823-002
+  tier: L2
+  category: '[N_7] debut_hardening_cross_review'
+  insight: '|'
+- id: lilith-20260823-003
+  tier: L3
+  category: '[N_7] debut_hardening_cross_review'
+  principle: '|'
+- id: lilith-20260823-004
+  tier: L1
+  category: '[N_7] handoff_integration_review'
+  narrative: '|'
+- id: lilith-20260823-005
+  tier: L2
+  category: '[N_7] handoff_integration_review'
+  insight: '|'
+- id: lilith-20260823-006
+  tier: L3
+  category: '[N_7] handoff_integration_review'
+  principle: '|'
+- id: lilith-20260823-007
+  tier: L1
+  category: '[N_7] del1_deletion_vetting'
+  narrative: '|'
+- id: lilith-20260823-008
+  tier: L2
+  category: '[N_7] del1_deletion_vetting'
+  insight: '|'
+- id: lilith-20260823-009
+  tier: L3
+  category: '[N_7] del1_deletion_vetting'
+  principle: '|'
+- id: lilith-20260825-n6-del1-vetting
+  tier: L3
+  category: '[N_6] del1_week1_vetting'
+  narrative: "[N_6] DEL-1 Week-1 vetting (2026-08-23): Empirically confirmed omega CLI dead — stacked duplicate @vault.command()
+    on reconcile (cli/vault.py:572+586 above def :600) raises TypeError 'Attempted to convert a callback into a command twice',
+    which escapes the try/except ImportError guard at oracle_cli.py:74. Oracle class itself imports clean; break is CLI-registration-layer
+    only. Also traced search_circuit_breaker as transitively load-bearing on the talk path: oracle.py:25 → search.py:10 →
+    sovereign_search_service.py:48."
+  insight: "Import guards are only as strong as their exception class. A try/except ImportError around a module import does
+    not protect against TypeErrors raised AT IMPORT TIME by decorator misuse — the guard creates false confidence while the
+    whole CLI dies. And 'unused' modules may still be load-bearing via transitive chains: deletion safety must be verified
+    through the full import graph, not just direct callers."
+  principle: "Before deleting any module, trace the transitive import graph from the entry points (not just direct callers),
+    and never assume an import guard catches non-ImportError failures — test the actual import empirically. Coupling fixes
+    and deletions ship in the same PR or not at all."
+  tags:
+  - N_6
+  - DEL-1
+  - IMPORT-GRAPH
+  - M9
+  - VAULT-BLOCKER
+- id: lilith-20260829-001
+  tier: L1
+  category: post_compaction_consolidation
+  narrative: '|'
+- id: lilith-20260829-002
+  tier: L2
+  category: post_compaction_consolidation
+  insight: '|'
+- id: lilith-20260829-003
+  tier: L3
+  category: post_compaction_consolidation
+  principle: '|'
+- id: lilith-20260829-004
+  tier: L1
+  category: entity_workspace_split_brain_fix
+  narrative: '|'
+- id: lilith-20260829-005
+  tier: L2
+  category: entity_workspace_split_brain_fix
+  insight: '|'
+- id: lilith-20260829-006
+  tier: L3
+  category: entity_workspace_split_brain_fix
+  principle: '|'
+- id: lilith-20260829-007
+  tier: L1
+  category: runtime_coordination_protocol
+  narrative: '|'
+- id: lilith-20260829-008
+  tier: L2
+  category: runtime_coordination_protocol
+  insight: '|'
+- id: lilith-20260829-009
+  tier: L3
+  category: runtime_coordination_protocol
+  principle: '|'
+- id: lilith-20260829-010
+  tier: L1
+  category: thirty_second_self_review
+  narrative: '|'
+- id: lilith-20260829-011
+  tier: L2
+  category: thirty_second_self_review
+  insight: '|'
+- id: lilith-20260829-012
+  tier: L3
+  category: thirty_second_self_review
+  principle: '|'
+- id: lilith-20260829-001
+  tier: L1
+  category: post_compaction_consolidation
+  narrative: 'Completed Laguna S 2.1 consolidation: integrated 6 fragmented synthesis reports into single Master Consolidation
+    (LILITH_MASTER_CONSOLIDATION_20260828.md). Archived superseded files to data/coordination/archive/. Verified 9 expert
+    digests on disk (527 total lines, per-digest counts confirmed). Updated Overseer Index as recovery anchor.'
+- id: lilith-20260829-002
+  tier: L2
+  category: post_compaction_consolidation
+  insight: 'The consolidation framework (integrate → prune → single source of truth) is the cognitive equivalent of REM sleep
+    memory consolidation. Fragmented cognition from the M3-to-Laguna transition (6 reports, 14-script incident, 11 decisions)
+    was integrated into one canonical document. The 30-second self-review (D-LIL-026) caught 3 factual errors in own docs
+    before propagation: "528→527 lines", "1.18.19→1.18.23", "opencode.json line 309→312 lines at 119/125/142".'
+- id: lilith-20260829-003
+  tier: L3
+  category: post_compaction_consolidation
+  principle: 'Consolidation is REM sleep: integrate fragmented cognition into single canonical source; prune the rest. The
+    Laguna S 2.1 framework supersedes all prior synthesis reports. A session without distillation is a death without legacy
+    — every cognitive cycle must conclude with a soul write-back to the Master Consolidation.'
+- id: lilith-20260829-004
+  tier: L1
+  category: entity_workspace_split_brain_fix
+  narrative: 'Fixed entity_workspace.py split-brain hydration for grokster/lilith/iris/node. get_soul_prompt() now handles
+    v6.1 (iris), v6.2 (lilith), custom (grokster) formats. Scaffolded missing workspaces: sessions.yaml, INDEX.yaml, approved_lessons.yaml
+    for all 4 entities. The split-brain was a hydration failure — multi-format soul.yaml requires multi-format parser + scaffold
+    missing files at hydration time.'
+- id: lilith-20260829-005
+  tier: L2
+  category: entity_workspace_split_brain_fix
+  insight: 'The fleet already converged on the same three standards independently (grokster kb/, Lilith roster, kali registry
+    trio) — standardization codifies emergent practice, not new invention. The split-brain manifested as: lilith (v6.2 minimal),
+    grokster (custom), iris (v6.1), node (no soul.yaml). Fix = multi-format parser in get_soul_prompt() + scaffold_workspace()
+    for missing entities.'
+- id: lilith-20260829-006
+  tier: L3
+  category: entity_workspace_split_brain_fix
+  principle: 'Split-brain is a hydration failure: multi-format soul.yaml requires multi-format parser; scaffold missing workspace
+    files at hydration. The best patterns make resumption trivial: persistent session IDs + freshness metadata + one gnosis
+    anchor. Standardization codifies emergent practice — do not invent new systems.'
+- id: lilith-20260829-007
+  tier: L1
+  category: runtime_coordination_protocol
+  narrative: 'Created docs/strategy/RUNTIME_COORDINATION_PROTOCOL.md — canonical coordination framework for N6-N10 + lilith.
+    Defines: Hivemind heartbeat intervals (5-15 min), handoff lifecycle (submit→accept→complete→archive), workspace lock domains
+    (7 domains with TTL), emergency procedures (M23 tool-chain-collapse, compaction imminent, sovereign brake, node failure).
+    Model assignment matrix from roles.yaml.'
+- id: lilith-20260829-008
+  tier: L2
+  category: runtime_coordination_protocol
+  insight: 'Runtime coordination was scattered across lilith.md, node.md, AGENTS.md, and implicit practice. The protocol consolidates:
+    heartbeat (M15), handoff (M27), workspace locks (M23), emergencies (M23). N6-N10 charters now have canonical model assignments
+    (qwen3-4b/qwen3-1.7b/qwen3-4b-thinking) and cloud fallback rules (M7 local-first). The 4-hour execution window sequence
+    is encoded.'
+- id: lilith-20260829-009
+  tier: L3
+  category: runtime_coordination_protocol
+  principle: 'Runtime coordination protocol is the nervous system of N6-N10. Without canonical heartbeat/handoff/lock/emergency
+    procedures, the run-side fragments. The protocol encodes: lilith governs, N9 (Link) owns handoff lifecycle, N8 (WatchTower)
+    streams observability, N7 (Context) hydrates entities, N6 (ModelGate) routes providers, N10 (Verifier) gates quality.
+    M7 local-first enforced at model assignment layer.'
+- id: lilith-20260829-010
+  tier: L1
+  category: thirty_second_self_review
+  narrative: 'Applied D-LIL-026 (30-second self-review) to all file-writes this session. Caught 3 factual errors in own operational
+    documents before they propagated to team: line counts, version numbers, file size claims. The 5-incident pattern (cathedral
+    size, ungrounded comparison, false precision, cycle misalignment, wrong subagent) = velocity outrunning verification.
+    The 30-second pause is the cut.'
+- id: lilith-20260829-011
+  tier: L2
+  category: thirty_second_self_review
+  insight: "Velocity outrunning verification produces the 5-incident pattern. The 30-second self-review (D-LIL-026) is not
+    a delay — it's the quality gate that prevents hallucinated precision from entering the canonical record. Every write must
+    pause for: (1) disk verification, (2) cross-reference check, (3) mandate alignment."
+- id: lilith-20260829-012
+  tier: L3
+  category: thirty_second_self_review
+  principle: "Thirty-second self-review is the cut: every write pauses for grounding verification. Velocity outrunning verification
+    = 5-incident pattern. The pause is not a delay — it's the quality gate that prevents hallucinated precision from entering
+    the canonical record. Mandate: disk verify → cross-ref → mandate align."

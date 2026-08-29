@@ -1,0 +1,172 @@
+{
+  "session_id": "ses_research_phase1_lilith_20260807",
+  "entity": "lilith",
+  "model": "laguna-s-2.1-free",
+  "timestamp": "2026-08-07T14:38:11.002460+00:00",
+  "hardware": "AMD Ryzen 7 5700U + Vega 8, 12GB RAM",
+  "benchmarks": {
+    "M2": {
+      "name": "Qdrant SQ8 + Scalar Quantization",
+      "status": "PASS",
+      "details": {
+        "vectors_tested": 500,
+        "dimensions": 768,
+        "recall_no_quantization": 1.0,
+        "recall_with_sq8": 1.0,
+        "recall_target": ">= 0.95",
+        "recall_meets_target": true,
+        "fp16_memory_bytes_per_vec": 1536,
+        "int8_memory_bytes_per_vec": 768,
+        "memory_reduction_pct": 50.0,
+        "memory_target": "<= 50%",
+        "memory_meets_target": true,
+        "quantization_config": "ScalarType.INT8, always_ram=True",
+        "distance_metric": "COSINE",
+        "existing_collection": "omega_memory (57 points, 768-dim, SQ8 active)"
+      },
+      "timestamp": "2026-08-07T14:38:23.409692+00:00"
+    },
+    "I5": {
+      "name": "Headroom Middleware Token Savings",
+      "status": "PARTIAL",
+      "details": {
+        "prompts_tested": 100,
+        "total_original_tokens": 1877,
+        "total_compressed_tokens": 6549,
+        "total_tokens_saved": -4672,
+        "overall_savings_pct": -248.91,
+        "target_savings_pct": ">= 15%",
+        "meets_target": false,
+        "successful_compressions": 0,
+        "failed_compressions": 0,
+        "avg_tokens_saved_per_prompt": 0,
+        "avg_savings_pct_per_prompt": 0,
+        "headroom_version": "0.29.0",
+        "middleware_path": "src/omega/oracle/middleware/headroom.py",
+        "integration_points": "oracle.py:157,180,771 + context_builder.py:464",
+        "finding": "HeadroomMiddleware exists and is integrated (headroom-ai 0.29.0). However, headroom.compress() defaults to model=claude-sonnet-4-5-20250929 (cloud model \u2014 M7 violation). Local-only operation (SmartCrusher with EstimatingTokenCounter) returns passthrough (no compression). The middleware does NOT configure headroom for local-only operation. Token savings target (>=15%) cannot be achieved locally \u2014 compression requires cloud model access. Middleware has pass-through fallback when headroom-ai not installed, but headroom IS installed \u2014 it just cannot compress without network access to the default cloud model.",
+        "m7_compliance": "VIOLATION \u2014 defaults to cloud model (claude-sonnet-4-5-20250929)",
+        "local_compression_test": {
+          "smartcrusher_lossless_only_false": "passthrough (0% savings)",
+          "smartcrusher_with_query_bias": "passthrough (0% savings)",
+          "compress_optimize_false": "no compression (returns original)",
+          "compress_default_model": "claude-sonnet-4-5-20250929 (cloud \u2014 M7 violation)"
+        },
+        "token_counter_note": "headroom.count_tokens_text() requires a TokenCounter protocol implementation. EstimatingTokenCounter available locally but SmartCrusher still returns passthrough."
+      },
+      "timestamp": "2026-08-07T14:38:23.537467+00:00"
+    },
+    "M1": {
+      "name": "Dual-Branch Memory Scoring",
+      "status": "NOT_IMPLEMENTED",
+      "details": {
+        "scoring_py_exists": false,
+        "scoring_py_path": "src/omega/memory/scoring.py",
+        "claimed_equation": "novelty \u00d7 retention \u00d7 momentum \u00d7 coherence \u00d7 decay",
+        "equation_components_found": {
+          "novelty": false,
+          "retention": true,
+          "momentum": true,
+          "coherence": false,
+          "decay": true
+        },
+        "all_components_present": false,
+        "actual_implementation": {
+          "file": "src/omega/memory/recall.py",
+          "formula": "decayed_score = base_quality * (1 + age_days)**(-decay_alpha)",
+          "quality_signals": [
+            "message_length",
+            "technical_content",
+            "questions",
+            "recency_bias"
+          ],
+          "has_power_law_decay": true,
+          "has_base_quality": true,
+          "has_decay_alpha": true,
+          "has_content_scoring": true
+        },
+        "consolidation_agent": {
+          "exists": true,
+          "file": "src/omega/memory/block_tools.py:440",
+          "has_hdbscan": false
+        },
+        "validation_result": "NOT_IMPLEMENTED",
+        "finding": "The claimed dual-branch scoring equation (novelty\u00d7retention\u00d7momentum\u00d7coherence\u00d7decay) is NOT implemented. The actual scoring uses power-law decay: decayed_score = base_quality * (1 + age_days)**(-decay_alpha), where base_quality is scored from message length, technical content, questions, and recency bias. The dual-branch equation remains ASPIRATIONAL per R_WEB_CHATBOT_RESEARCH_PRIORITIES_20260807.md (M1: \ud83d\udd34 ASPIRATIONAL)."
+      },
+      "timestamp": "2026-08-07T14:38:23.577234+00:00"
+    },
+    "I2": {
+      "name": "Speculative Decoding Draft Pairing",
+      "status": "PARTIAL",
+      "details": {
+        "spec_decode_config": {
+          "draft_model": "qwen3-1.7b",
+          "draft_type": "ngram",
+          "mtp_draft_model": null,
+          "target_acceptance_rate": 0.6,
+          "min_draft_tokens": 1,
+          "max_draft_tokens": 5,
+          "acceptance_threshold": 0.4
+        },
+        "model_gateway_exposes_config": true,
+        "capability_matrix_mtp_drafters": "None (all models have mtp_drafter=None)",
+        "tracking_test": {
+          "attempts_recorded": 4,
+          "accepted": 3,
+          "measured_acceptance_rate": 0.7329,
+          "suggested_spec_length": 3
+        },
+        "estimated_token_savings_pct": 66.7,
+        "savings_methodology": "With ngram draft (max_draft=5, target_acceptance=0.6): ~66.7% fewer target-model forward passes for ~200-token responses. Draft generation is ngram-based (zero VRAM), target verification uses local model.",
+        "integration_status": "Config exposed via ModelGateway.spec_decode_config (line 504). Ngram draft type active. MTP drafter not populated in capability matrix.",
+        "local_first_compliant": true,
+        "note": "Full draft-verify loop not wired in inference path. Config exists but requires llama-server --spec-type integration for end-to-end token savings."
+      },
+      "timestamp": "2026-08-07T14:38:24.313382+00:00"
+    },
+    "A1": {
+      "name": "WAD Pack Dependency Resolution",
+      "status": "NOT_IMPLEMENTED",
+      "details": {
+        "default_manifest_dependencies": [],
+        "default_manifest_type": "iwad",
+        "wad_loader_has_dependency_resolution": false,
+        "wad_loader_has_circular_detection": false,
+        "circular_dep_test": {
+          "wad_a_depends_on": [
+            "wad_b"
+          ],
+          "wad_b_depends_on": [
+            "wad_a"
+          ],
+          "load_result": "loaded (no circular detection \u2014 dependencies field parsed but not processed)",
+          "circular_detected": false
+        },
+        "linear_dep_test": {
+          "chain": "wad_c \u2192 wad_d \u2192 wad_e",
+          "load_result": "loaded (dependencies not resolved \u2014 field ignored)"
+        },
+        "finding": "WADLoader parses the 'dependencies' field in manifest V2 but does NOT process or resolve dependencies. No circular dependency detection exists. The dependencies field is stored in the manifest but ignored during loading. This is a GAP \u2014 dependency resolution must be implemented for WAD pack mechanics to work correctly.",
+        "manifest_v2_fields": [
+          "name",
+          "version",
+          "requires_engine",
+          "author",
+          "description",
+          "type",
+          "mode",
+          "license",
+          "startup",
+          "entities",
+          "voices",
+          "vr_scenes",
+          "dependencies"
+        ],
+        "path_traversal_guard": "Present (line 158-161)",
+        "file_size_guard": "Present (S1.5a, MAX_YAML_SIZE_BYTES=1MB)",
+        "schema_validation": "Present (V1 core + V2 optional field types, extra=forbid)"
+      },
+      "timestamp": "2026-08-07T14:38:24.416836+00:00"
+    }
+  }
+}

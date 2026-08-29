@@ -382,28 +382,44 @@ class EntityWorkspaceManager:
     async def get_soul_prompt(name: str, mission: Optional[str] = None) -> str:
         """Load an entity's split soul files and format as a Situated Identity prompt.
 
-        Implements the Situated Identity Framework with v6.1 Soul Architecture:
-        - soul.yaml: User-owned Constitution (identity, traits, directives)
+        Implements the Situated Identity Framework with multi-version Soul Architecture:
+        - soul.yaml: User-owned Constitution (identity, traits, directives) — supports v6.1, v6.2, and custom formats
         - approved_lessons.yaml: User-owned vetted wisdom (injected into identity)
         - sessions.yaml: Agent-owned session anchors (continuity context)
         - proposed_lessons.yaml: TAINTED — NEVER injected into identity prompt
+
+        Handles split-brain hydration for entities with different soul formats:
+        - v6.1 (iris, scaffolded): entity, identity, directives, team blocks
+        - v6.2 (lilith): minimal entity block only
+        - custom (grokster): traits, fleet, integration, campaign, mandates, boundaries, heartbeat, lessons
         """
         safe_name = name.lower().replace(" ", "_").replace("'", "")
         entity_dir = _get_entities_data_dir() / safe_name
         soul_file = entity_dir / "soul.yaml"
 
         if not soul_file.exists():
+            # Scaffold workspace if missing (fixes split-brain for node entity)
+            logger.info(f"Soul file missing for {name}, scaffolding workspace...")
+            EntityWorkspaceManager.scaffold_workspace(name)
             return (
                 f"You are {name}, an expert assistant. Mission: {mission or 'General Assistance'}."
             )
 
-        # Load Constitution (soul.yaml)
+        # Load Constitution (soul.yaml) — multi-format support
         soul_data = (
             await anyio.to_thread.run_sync(lambda: yaml.safe_load(soul_file.read_text()))
             if soul_file.exists()
             else {}
         )
+
+        # Extract entity info from multiple possible formats
         entity = soul_data.get("entity", {}) if soul_data else {}
+        # v6.2 format: entity at root level
+        if not entity and soul_data:
+            entity = {k: v for k, v in soul_data.items() if k in ["name", "archetype", "hierarchy_level", "sovereignty_level", "element", "domain", "soul_version", "last_updated", "recon_directive", "wisdom_text_moved_to_archive", "version", "metadata"]}
+        # grokster format: entity at root level with different keys
+        if not entity and soul_data:
+            entity = {k: v for k, v in soul_data.items() if k in ["name", "archetype", "ap_token", "channel", "hmc_role", "created", "version"]}
 
         # Load Vetted Wisdom (approved_lessons.yaml) — User-approved, safe for identity
         approved_file = entity_dir / "approved_lessons.yaml"
@@ -427,13 +443,18 @@ class EntityWorkspaceManager:
         # proposed_lessons contain unvetted agent-generated insights
         # They may be read for reporting purposes but NOT for identity construction
 
-        # Validate soul using R-10 schema
+        # Validate soul using R-10 schema (non-blocking)
         validator = SoulValidator(_get_entities_data_dir())
         is_valid, data = await anyio.to_thread.run_sync(validator.validate, name)
         if not is_valid:
             logger.warning(f"Soul validation failed for {name}. Using fallback soul.")
 
-        archetype = entity.get("archetype", "Expert")
+        # Extract archetype from multiple possible locations
+        archetype = (
+            entity.get("archetype")
+            or soul_data.get("archetype")
+            or "Expert"
+        )
         wardrobe = entity.get("soul_wardrobe", [])
 
         # -------------------------------------------------------------------------
@@ -444,6 +465,26 @@ class EntityWorkspaceManager:
         )
         if wardrobe:
             soul_section += f"\n- Identity Anchors: {', '.join(wardrobe)}"
+
+        # Add entity-specific directives if present (v6.1 format)
+        directives = soul_data.get("directives", [])
+        if directives:
+            soul_section += "\n- Directives:"
+            for d in directives[:5]:  # Limit to 5 for prompt size
+                if isinstance(d, dict):
+                    soul_section += f"\n  * {d.get('title', 'Directive')}: {d.get('rule', d.get('rationale', ''))[:150]}"
+
+        # Add grokster-specific traits if present
+        traits = soul_data.get("traits", {})
+        if traits:
+            voice = traits.get("voice", {})
+            if voice:
+                soul_section += f"\n- Voice: wit={voice.get('wit_level', '?')}, directness={voice.get('directness', '?')}, truth_telling={voice.get('truth_telling', '?')}"
+
+        # Add grokster-specific mandates if present
+        mandates_owned = soul_data.get("mandates", {}).get("primary", [])
+        if mandates_owned:
+            soul_section += f"\n- Primary Mandates: {', '.join(mandates_owned[:5])}"
 
         # Sovereign Firewall (Mandates)
         mandates_path = BASE_DIR / "SOVEREIGN_MANDATES.md"
@@ -469,6 +510,15 @@ class EntityWorkspaceManager:
                         for l in approved_lessons
                     ]
                 )
+            )
+
+        # Also inject L3 lessons from soul.yaml (grokster format)
+        lessons = soul_data.get("lessons", [])
+        l3_lessons = [l for l in lessons if isinstance(l, dict) and l.get("tier") == "L3"]
+        if l3_lessons:
+            gnosis.append(
+                "🔱 L3 LESSONS (from soul.yaml):\n"
+                + "\n".join([f"- {l.get('id', 'L3')}: {l.get('principle', '')[:200]}" for l in l3_lessons[:3]])
             )
 
         # Session Continuity Anchors
@@ -530,7 +580,7 @@ class EntityWorkspaceManager:
         return prompt
 
     @staticmethod
-    async def update_soul(name: str, updates: Dict[str, Any], token: str = None) -> None:
+    async def update_soul(name: str, updates: Dict[str, Any], token: Optional[str] = None) -> None:
         """Update an entity's soul.yaml file atomically and thread-safely.
 
         Uses the Sovereign Write Guard to prevent unauthorized modifications.
