@@ -1647,8 +1647,9 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                 await anyio.sleep_forever()
 
         # Store the task (not a group) so stop can cancel it.
-        import asyncio as _asyncio
-        self._checkpoint_task = _asyncio.ensure_future(_host_task_group())
+        # F-06 fix: use anyio task spawning (M1 compliance)
+        import anyio
+        self._checkpoint_task = anyio.start_soon(_host_task_group)
         # Give the spawned task a moment to enter the task group and set the scope.
         await anyio.sleep(0.05)
         logger.info("Started periodic WAL checkpoint task (interval=%ds)", interval_seconds)

@@ -1,0 +1,75 @@
+# .gitleaksignore — audited baseline 2026-08-22 (Kali ratification ho_e53ab57ea212 Q2)
+# NOTE: fingerprints MUST be bare (trailing comments break gitleaks 8.21.2 parsing —
+#       verified empirically). WHY rationale lives on the # line above each entry.
+# Remove an entry only by fixing the underlying file, then deleting pair.
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+df3ed78bc61002714e4c47d3f7167f058c76b9bc:context_packs/sovereign-audit/core_engine.md:generic-api-key:12284
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+df3ed78bc61002714e4c47d3f7167f058c76b9bc:context_packs/sovereign-audit/core_engine.md:generic-api-key:16334
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+df3ed78bc61002714e4c47d3f7167f058c76b9bc:context_packs/sovereign-audit/general.md:generic-api-key:8686
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+73705823e904fbb2dba00c4fe9d7f14878613320:context_packs/sovereign-audit/strategy.xml:generic-api-key:25040
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+929f73dc2a3dccb80fe1051cc9e65c8f540c2232:data/entities/grokster/soul.yaml:generic-api-key:8
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+68a92cc2da0eb7b8b9626c4b0caf34651298153a:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:2
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+68a92cc2da0eb7b8b9626c4b0caf34651298153a:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:98
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+cde304bf20838876254d2adb8c696b97db12ac14:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:98
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+b093ac904ba8b16093fa5a2403477cf3bdc7cf36:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:47
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+5782a349ca4ec6095c192560e42e86bf5f0dff79:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:635
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+68a92cc2da0eb7b8b9626c4b0caf34651298153a:data/handoff/archive/sessions/session-ses_144d.md:generic-api-key:2676
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+2bf16c7ea8bf9afe8d9aafa6443580e290056535:data/realms/fleet/state.yaml:generic-api-key:3
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+2bf16c7ea8bf9afe8d9aafa6443580e290056535:data/realms/heritage/state.yaml:generic-api-key:3
+# WHY: AP Token header is internal identifier, not a real API key (false positive)
+e1abdc53963ed7a70a653dace23fbd7a71e50484:docs/strategy/teacher_pipeline/NEMOTON_TEACHER_PIPELINE_SPEC.md:generic-api-key:2
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+2bf16c7ea8bf9afe8d9aafa6443580e290056535:data/realms/omegaverse/state.yaml:generic-api-key:3
+# WHY: template/example PEM block in documentation
+b093ac904ba8b16093fa5a2403477cf3bdc7cf36:docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:private-key:146
+# WHY: doc curl example, literal placeholder not a credential
+0d988f2f3699785aedcad25bd3610a7618411743:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+# WHY: doc curl example, literal placeholder not a credential
+0d988f2f3699785aedcad25bd3610a7618411743:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+a221ec59ef03b0b10217418a386a67d2c37e71e0:docs/research/GOOGLE_GEMMA_MODEL_REFERENCE.md:generic-api-key:132
+# WHY: template/example PEM block in documentation
+218452622b31beafb3fda4c047463175741173e4:docs/research/R_VAULT_SCHEMA_V2.md:private-key:211
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+b0b85fe5626a71f1e36eb1c4e6d5daeeaf8434a0:docs/specs/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+1bdb11e169a95465331d0d6d1019d3d9d3eabc01:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+53cb4cf173901817a127d9c3971169fb58df7e11:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+3cc9dc32502f07b6e5b4a4c24e7cb091870c59ac:docs/strategy/teacher_pipeline/NEMOTON_TEACHER_PIPELINE_SPEC.md:generic-api-key:2
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+a221ec59ef03b0b10217418a386a67d2c37e71e0:mcp/archives/omega-hivemind_superseded_by_hub_20260519/server.py:generic-api-key:3
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+82ef0f5b3df17085d66acc3da477149559006b31:mcp_servers/archives/omega-hivemind_superseded_by_hub_20260519/server.py:generic-api-key:3
+# WHY: illustrative key-shaped string in historical doc/archive, verified inert
+ca666b067617abb892472ce7c33936ca16ea7419:session-ses_144d.md:generic-api-key:2676
+# WHY: test fixture / inline dummy string, never a real secret
+ca666b067617abb892472ce7c33936ca16ea7419:src/omega/astrology.py:generic-api-key:1
+# WHY: test fixture / inline dummy string, never a real secret
+ca666b067617abb892472ce7c33936ca16ea7419:src/omega/oracle/skeptical_verifier.py:generic-api-key:1
+# WHY: test fixture / inline dummy string, never a real secret
+fd5dc1771805226a0a9897196494da4bfa03bcfa:src/omega/oracle/soul_validator.py:generic-api-key:1
+# WHY: test fixture / inline dummy string, never a real secret
+5782a349ca4ec6095c192560e42e86bf5f0dff79:tests/test_pii_masker.py:generic-api-key:61
+# WHY: test fixture / inline dummy string, never a real secret
+73705823e904fbb2dba00c4fe9d7f14878613320:tests/test_sandbox.py:generic-api-key:274
+
+# WHY: fake illustrative GOCSPX example in refactoring manual documentation (P0-3 fix doc), verified inert
+0c6fea4a8834df3148e0367b9cb30921690d6bac:data/coordination/CLINE_REFACTORING_MANUAL_20260828.md:generic-api-key:61
+# WHY: token in wake state JSON, verified inert (operational artifact)
+7393ad53f79a2751f17d7a4b0489a8cd4f47a38c:data/coordination/WAKE_STATE.json:generic-api-key:287
+# WHY: AP token in soul backup file (excluded from release per D-565), verified inert
+2e4ea0fce4b3f694b3e3a6ac6b2720cf25b3642b:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
