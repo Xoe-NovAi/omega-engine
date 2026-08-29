@@ -8,11 +8,37 @@ Correct sqlite3.connect API — uri=True for readonly, timeout=30 for rw; NO fla
 Gate criterion fix — connection-setup PRAGMAs only in sqlite_policy.py; allow operational PRAGMAs (A13).
 """
 
+import logging
+import os
 import sqlite3
 import threading
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Literal, Optional
+
+logger = logging.getLogger(__name__)
+
+# ── SQLCipher integration (AP-SQLCIPHER-ENCRYPTION-v1.0.0) ────────────────
+# 2026 SOTA: sqlcipher3 (coleifer) is the maintained binding. pysqlcipher3
+# (rigglemania) is archived 2023-01 — DO NOT USE. SQLCipher 4.x defaults:
+# AES-256, PBKDF2-HMAC-SHA512, 256,000 KDF iterations.
+#
+# Activation is signal-driven: set OMEGA_SQLCIPHER_KEY (env), install a
+# key in the OS keyring (service="omega-engine-sqlcipher"), or write a
+# 0600-perm key file. If none of those resolve, the import falls back to
+# plaintext sqlite3 — UNLESS the operator also sets OMEGA_SQLCIPHER_REQUIRED=1,
+# in which case we hard-stop (M23) instead of silent-failing.
+try:
+    import sqlcipher3 as _sqlcipher  # type: ignore[import-untyped]
+    HAS_SQLCIPHER = True
+except ImportError:
+    _sqlcipher = None  # type: ignore[assignment]
+    HAS_SQLCIPHER = False
+    logger.info(
+        "sqlcipher3 not installed; using stdlib sqlite3 (encryption disabled)"
+    )
+
+_SQLCIPHER_REQUIRED = os.environ.get("OMEGA_SQLCIPHER_REQUIRED", "0") == "1"
 
 
 Profile = Literal["memory", "search", "metrics", "reader"]
@@ -95,10 +121,65 @@ def get_sqlite_connection(
 
     Raises:
         sqlite3.Error: If connection fails
+        RuntimeError: If SQLCipher is required but unavailable (M23)
     """
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    if readonly:
+    # ── Decide connection flavor: sqlcipher3 vs stdlib sqlite3 ─────────
+    use_sqlcipher = False
+    if HAS_SQLCIPHER:
+        try:
+            # Lazy import to avoid circular: key_manager may import sqlite.
+            from omega.memory.key_manager import KeyManager
+            km = KeyManager()
+            # Probe all three sources WITHOUT failing on absence — if
+            # none resolve, fall through to stdlib (unless REQUIRED=1).
+            try:
+                _resolved_key = km.get_key()
+                use_sqlcipher = True
+            except Exception:
+                # No key resolvable. If REQUIRED=1, re-raise; else plaintext.
+                if _SQLCIPHER_REQUIRED:
+                    raise RuntimeError(
+                        "OMEGA_SQLCIPHER_REQUIRED=1 but no key resolvable "
+                        "from keyring/env/file. See KeyManager docs."
+                    )
+        except RuntimeError:
+            raise  # M23 hard-stop
+        except ImportError:
+            # KeyManager not on path yet (rare) — try without key
+            pass
+
+    if _SQLCIPHER_REQUIRED and not use_sqlcipher:
+        raise RuntimeError(
+            "OMEGA_SQLCIPHER_REQUIRED=1 but sqlcipher3 is not installed. "
+            "Install: pip install sqlcipher3 (requires libsqlcipher-dev)."
+        )
+
+    # ── Open connection (with optional SQLCipher) ─────────────────────
+    if use_sqlcipher and _sqlcipher is not None:
+        # sqlcipher3.connect has the same signature as sqlite3.connect.
+        # It will accept our stdlib `check_same_thread` keyword and
+        # `timeout`. We must set PRAGMA key BEFORE any other PRAGMA.
+        # Re-resolve the key (cheap — cached by callers if needed).
+        from omega.memory.key_manager import KeyManager
+        cipher_key = KeyManager().get_key()
+        # sqlcipher3.connect returns a sqlite3.Connection subclass, so
+        # the rest of the code (PRAGMA stack, row_factory) works
+        # unchanged. This is the right approximation — leverage, don't
+        # fork. [heritage: zetetic-2026]
+        conn = _sqlcipher.connect(
+            str(path), timeout=timeout, check_same_thread=False
+        )
+        # PRAGMA key MUST be the first statement. SQLCipher refuses to
+        # read the page header until this is set. We pass via parameter
+        # binding (NOT f-string) to avoid any logging of the key.
+        conn.execute("PRAGMA key = ?", (cipher_key,))
+        # 256K iterations is the SQLCipher 4 default; explicit for clarity.
+        conn.execute("PRAGMA cipher_kdf_iter = 256000")
+        # Defensive: invalidate the local reference ASAP.
+        del cipher_key
+    elif readonly:
         # Read-only via URI (portable stdlib pattern) — A12
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=timeout)
     else:

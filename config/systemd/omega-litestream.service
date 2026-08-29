@@ -1,0 +1,70 @@
+# 🔱 Omega Engine — Litestream Continuous WAL Replication
+# ⬡ OMEGA ⬡ native-litestream ⬡ backup ⬡ SIDE
+#
+# Sidecar process that streams omega_memory.db WAL pages to S3-compatible
+# object storage (AWS S3, MinIO, Cloudflare R2, Backblaze B2). Sub-second
+# RPO at negligible CPU/memory cost.
+#
+# Litestream is the 2026 actively-maintained standard (litestream.io).
+# LiteFS is in maintenance mode (Fly.io 2024) — do NOT migrate to LiteFS.
+#
+# CRITICAL: Do NOT set `retention:` in litestream.yml. v0.5.x silently
+# accepts but ignores the field (tvcam 2026-05). Use the S3 bucket
+# lifecycle policy instead — see config/litestream-lifecycle.json.
+#
+# Install: scripts/setup_litestream.sh copies this file to
+#   /etc/systemd/system/litestream.service
+# Verify:  sudo systemctl status litestream
+#          litestream snapshots -config /etc/litestream.yml
+# Test restore: sudo scripts/restore_litestream.sh /tmp/test.db
+
+[Unit]
+Description=Omega Engine — Litestream WAL Replication (SQLite → S3)
+Documentation=https://litestream.io/reference/config
+After=network-online.target
+Wants=network-online.target
+# Litestream is purely additive; the engine does not need to wait for it.
+
+[Service]
+Type=simple
+User=omega
+Group=omega
+
+# Config + env. EnvironmentFile=- is non-fatal if missing.
+EnvironmentFile=-/etc/litestream.env
+ExecStart=/usr/local/bin/litestream replicate -config /etc/litestream.yml
+
+# Restart policy: replication is critical — restart aggressively.
+Restart=always
+RestartSec=5s
+StartLimitIntervalSec=60
+StartLimitBurst=10
+
+# Logging to journald (loginctl / journalctl -u litestream)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=litestream
+
+# OOM hardening (Carmack 2026-08-15): the sidecar is small, but cap it
+# so it cannot fight the engine for memory under pressure.
+MemoryMax=256M
+MemoryHigh=128M
+OOMScoreAdjust=200
+Delegate=yes
+MemoryAccounting=yes
+
+# Security: minimize blast radius.
+ProtectSystem=full
+# Litestream needs read+write to the DB and read to the config.
+ReadWritePaths=/var/lib/omega /var/log/omega
+ReadOnlyPaths=/etc/litestream.yml /etc/litestream.env
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+# Performance: tell kernel this is latency-sensitive background work.
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+CPUSchedulingPolicy=idle
+
+[Install]
+WantedBy=multi-user.target
