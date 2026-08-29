@@ -312,9 +312,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         self._write_conn = conn
         return conn
 
-    def _get_read_conn(self) -> sqlite3.Connection:
-        """Get a read connection from the pool."""
-        # For now, create on demand. In production, pre-populate pool.
+    def _open_read_conn(self) -> sqlite3.Connection:
+        """Open a single read connection with sqlite-vec loaded."""
         conn = get_sqlite_connection(self.db_path, profile="memory")
         try:
             import sqlite_vec
@@ -326,13 +325,39 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             raise
         return conn
 
-    def _return_read_conn(self, conn: sqlite3.Connection) -> None:
-        """Return a read connection to the pool (or close if pool full)."""
-        # For simplicity, close for now. In production, implement proper pool.
+    def _get_read_conn(self) -> sqlite3.Connection:
+        """Get a read connection from the pool (round-robin).
+
+        Pre-populates the pool on first call; reopens broken connections
+        on health-check failure. (F-03)
+        """
+        import threading
+        if not hasattr(self, '_read_pool_lock_threading'):
+            self._read_pool_lock_threading = threading.Lock()
+        with self._read_pool_lock_threading:
+            if not self._read_connections:
+                self._read_connections = [
+                    self._open_read_conn() for _ in range(self._read_pool_size)
+                ]
+            idx = self._read_pool_index
+            self._read_pool_index = (self._read_pool_index + 1) % len(self._read_connections)
+            conn = self._read_connections[idx]
+        # Health check: if conn is broken, reopen
         try:
-            conn.close()
-        except Exception:
-            pass
+            conn.execute("SELECT 1")
+        except sqlite3.Error:
+            logger.warning("Read conn %d broken, reopening", idx)
+            try:
+                conn.close()
+            except Exception:
+                pass
+            conn = self._open_read_conn()
+            self._read_connections[idx] = conn
+        return conn
+
+    def _return_read_conn(self, conn: sqlite3.Connection) -> None:
+        """No-op for round-robin pool; close is in close()."""
+        pass
 
     async def _ensure_initialized(self) -> None:
         """Initialize FTS5, metadata tables, spatial R-tree, and all vec0 collections."""
