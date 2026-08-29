@@ -4,7 +4,7 @@ document_type: "agent_landing"
 document_id: "AGENTS-MD-ROOT"
 title: "Omega Engine — Agent Landing File"
 status: "ACTIVE"
-date: "2026-08-27"
+date: "2026-08-28"
 sprint: "PUBLIC-DEBUT-01"
 supersedes: "old AGENTS.md fragments (consolidated into this thin file + .opencode/rules/)"
 ---
@@ -43,6 +43,9 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 4. **Sovereign Search (M23)** → `.opencode/rules/04-sovereign-search.md`
    Local cache → local FTS → web search → web fetch → [TOOL-CHAIN-COLLAPSE].
 
+5. **Spatial Integrity (M28)** → `.opencode/rules/05-spatial-integrity.md`
+   R-tree + vec0 dual-index for VR navigation (Option B). Spatial coordinates computed once, joined everywhere.
+
 ## The 5 Critical Mandates (Tier-0 injection)
 
 These are injected pre-compaction so the law survives context loss:
@@ -66,6 +69,13 @@ These are injected pre-compaction so the law survives context loss:
 | **D-553** | release/debut branch from PUBLIC_ALLOWLIST.txt |
 | **D-565** | Vault excluded from debut (no code changes) |
 | **D-567** | bury_credential applies to post-debut only |
+| **D-578** | GEMINI-NOTEBOOK workstream (GN) — free-tier research pipeline |
+| **D-579** | DOCUMENTATION-SYSTEM workstream (DS) — modular domain docs |
+| **D-580** | LOCAL-INFERENCE-OPT workstream (LI) — sequential loading, adaptive context |
+| **D-581** | KNOWLEDGE-DOMAINS workstream (KD) — runtime modules + curator model |
+| **D-582** | HEADROOM-INTEGRATION workstream (HR) — semantic compression for tools/RAG |
+| **D-583** | ZSWAP-SUBSYSTEM workstream (ZS) — 16GB NVMe swap, zswap enabled |
+| **D-584** | Post-debut execution order: GN → DS → LI → KD → HR → ZS |
 
 Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 9 Decisions".
 
@@ -111,10 +121,11 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 2. **Mandates** — Law wins, sprint SSOT wins second.
 3. **Hop** — one level deep, direct execution first.
 4. **Search** — local first, web second, [TOOL-CHAIN-COLLAPSE] on total failure.
+5. **Spatial** — R-tree + vec0 dual-index for VR navigation (Option B).
 
 ---
 
 For full details, see `.opencode/rules/` (4 architecture rules + 1 reference doc)
 and `SOVEREIGN_MANDATES.md` (the 27 laws). Everything else is pointers.
 
-*⬡ OMEGA ⬡ KALI ⬡ AGENTS-MD-ROOT-v1.0.0 ⬡ 2026-08-27 ⬡ PUBLIC-DEBUT-01*
+*⬡ OMEGA ⬡ KALI ⬡ AGENTS-MD-ROOT-v1.0.0 ⬡ 2026-08-28 ⬡ PUBLIC-DEBUT-01*
