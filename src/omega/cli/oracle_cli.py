@@ -23,6 +23,9 @@ with suppress(ImportError):
     from dotenv import load_dotenv
     load_dotenv()
 
+# Logger must be defined BEFORE _inject_vault_to_env() which uses it at module load time
+logger = logging.getLogger(__name__)
+
 # [P0-2026-08-28 grokster] Sovereign vault → os.environ injection
 # The encrypted vault at data/vault/keys.json.enc (Argon2id + age) is the SSOT
 # for API keys. At CLI edge, we decrypt and inject into os.environ so
@@ -97,13 +100,11 @@ except ImportError:
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity, Orchestrator, ModelGateway
 from omega.errors import (
     OmegaError,
-    OmegaError,
 )
 from omega.request_queue import RequestQueue
 from omega.oracle.feed_utils import load_demand_signals, transition_demand, summarize_feed
 from omega.ics import render as ics_render  # [id-soft: vet-071] netchan header
 
-logger = logging.getLogger(__name__)
 console = Console()
 app = typer.Typer(help="🔱 Omega Engine CLI")
 
