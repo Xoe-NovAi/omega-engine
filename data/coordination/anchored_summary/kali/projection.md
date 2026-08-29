@@ -1,16 +1,22 @@
 ## Objective
-- **POST-COMPACTION v1.3.0 & GEMINI FLEET SPEC COMMITTED**. Google API Key 2/8 active (Medium Thinking). Gemini Multi-Account Worker Spec v1.0.0 pushed (`1dd56cf5`). Zero-Write Database-Native Cognition canonized (`243be66d`). Omegamind Cognitive Architecture Manual live (`83b292b2`). Work on main at `1dd56cf5`.
+- **PRE-COMPACTION MASTER LOCK-IN (v1.4.0)**. Landmark cognitive session complete. Key 2/8 active (Medium Thinking). All 6 canonical breakthroughs committed & pushed to main (`2fa96e89`). All gates pass (`M1 AnyIO`, `M23 Failure Integrity`, `Gitleaks 0`). Awaiting compaction with 100% state preserved.
 
 ## Important Details
 - **Active Model**: `google/gemini-3.7-flash` (Key 2/8, Medium Thinking)
-- **Main branch**: `1dd56cf5` (latest: Gemini Multi-Account Worker Spec v1.0.0)
-- **Live Proof**: Key 1 ran 231.9k context on High Thinking across 5 canonical breakthroughs before clean 24h rotation.
-- **8x Fleet Capacity**: 120 RPM concurrency / 12,000 RPD daily capacity / 360,000 requests/mo ($0.00 cost).
-- **New Specs**:
-  - `docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md` (Background Worker Fabric)
-  - `docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md` (CQRS Event Sourcing for AI)
-  - `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (Master Manual)
-- **Sprint**: `SEARCH-ECOSYSTEM-01` active (`data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md`).
+- **Main branch HEAD**: `2fa96e89` (all work pushed to origin/main)
+- **The 6 Canonical Breakthroughs Codified This Session**:
+  1. `docs/strategy/KEY_ROTATION_CACHE_AND_SOVEREIGN_POLICY_20260829.md` (KV-Cache Physics & Session Pinning)
+  2. `docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md` (8-Account Worker Fleet)
+  3. `docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md` (CQRS Event Sourcing for AI)
+  4. `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (10,000-Hour Master Manual)
+  5. `data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md` (4-Week Search Hardening Sprint)
+  6. `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL_20260829.md` & `COMPACTION_WATCHER_PROTOCOL_20260829.md`
+- **Cache Policy Confirmed**: Pinned Sequential Exhaustion for Interactive Chats (98% KV-Cache Hits) + Sharded Dedicated Accounts for Background Workers.
+- **Search Bandwidth**: 28,000+ free searches/mo + Crawl4AI T3 Primary + SearXNG.
+- **Next Moves Post-Compaction**:
+  1. Activate Jem-EIS for Week 1 of `SEARCH-ECOSYSTEM-01` (SearXNG health & MultiKey Exa).
+  2. Deploy `scripts/mine_historical_ore.py` in `/dev/shm` tmpfs over 20GB SQLite DB.
+  3. Finalize debut public release checklist.
 
 ## Work State
 ### Completed
