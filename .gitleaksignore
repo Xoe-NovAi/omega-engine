@@ -73,3 +73,4 @@ fd5dc1771805226a0a9897196494da4bfa03bcfa:src/omega/oracle/soul_validator.py:gene
 7393ad53f79a2751f17d7a4b0489a8cd4f47a38c:data/coordination/WAKE_STATE.json:generic-api-key:287
 # WHY: AP token in soul backup file (excluded from release per D-565), verified inert
 2e4ea0fce4b3f694b3e3a6ac6b2720cf25b3642b:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
+36508d92e04afdddf9ff0ef2c10e262d740ece30:data/coordination/WAKE_STATE.json:generic-api-key:289
