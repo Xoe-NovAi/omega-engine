@@ -1,0 +1,36 @@
+# Litestream v0.5.x configuration for omega_memory.db
+# AP: AP-LITESTREAM-BACKUP-v1.0.0
+#
+# Docs: https://litestream.io/reference/config
+#
+# CRITICAL (tvcam 2026-05): Do NOT set `retention:` on 0.5.x — silently
+# accepted but ignored. Use the S3 bucket lifecycle policy instead
+# (see config/litestream-lifecycle.json).
+#
+# REQUIRED environment variables (do NOT hardcode in this file):
+#   LITESTREAM_BUCKET         — S3 bucket name (e.g. my-omega-backups)
+#   LITESTREAM_ACCESS_KEY_ID  — S3 access key
+#   LITESTREAM_SECRET_ACCESS_KEY — S3 secret key
+# OPTIONAL:
+#   LITESTREAM_ENDPOINT       — S3-compatible endpoint (e.g. MinIO http://localhost:9000)
+#   OMEGA_MEMORY_DB           — path to omega_memory.db (default below)
+
+dbs:
+  - path: ${OMEGA_MEMORY_DB:-/var/lib/omega/omega_memory.db}
+    replicas:
+      # Primary: S3 (works with AWS S3, MinIO, Cloudflare R2, Backblaze B2)
+      - url: s3://${LITESTREAM_BUCKET}/omega-backups
+        access-key-id: ${LITESTREAM_ACCESS_KEY_ID}
+        secret-access-key: ${LITESTREAM_SECRET_ACCESS_KEY}
+        # Uncomment for S3-compatible (MinIO / R2 / B2):
+        # endpoint: ${LITESTREAM_ENDPOINT}
+        # force-path-style: true
+        # region: us-east-1
+        # Sync interval (default 1s = sub-second RPO)
+        sync-interval: 1s
+
+# Global metrics endpoint for Prometheus scraping (optional)
+# metrics-addr: :9090
+
+# Global region (uncomment if all replicas share the same region)
+# region: us-east-1
