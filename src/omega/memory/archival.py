@@ -334,6 +334,30 @@ class ArchivalTools:
     def __init__(self, archival: ArchivalMemory, embedding_provider=None):
         self.archival = archival
         self.embedding_provider = embedding_provider
+        # F-02: Wire EmbeddingCircuitBreaker into the embed path.
+        # Wraps the provider with circuit-breaker protection so a failing
+        # provider doesn't cascade into a full outage.
+        if embedding_provider is not None:
+            try:
+                from .embedding_circuit_breaker import EmbeddingCircuitBreaker
+                self._breaker = EmbeddingCircuitBreaker(
+                    providers=[embedding_provider],
+                    threshold=5,
+                    cooldown=30.0,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to init EmbeddingCircuitBreaker: {e}")
+                self._breaker = None
+        else:
+            self._breaker = None
+
+    async def _embed_with_breaker(self, text: str) -> Optional[List[float]]:
+        """Embed text via the circuit breaker (F-02)."""
+        if self._breaker is not None:
+            return await self._breaker.embed(text)
+        if self.embedding_provider is not None:
+            return await self.embedding_provider.embed(text)
+        return None
 
     async def archival_memory_insert(
         self,
@@ -356,11 +380,11 @@ class ArchivalTools:
         meta["inserted_by"] = requester_entity
         meta["inserted_at"] = datetime.now(timezone.utc).isoformat()
 
-        # Generate embedding if provider available
+        # Generate embedding if provider available (F-02: via circuit breaker)
         vector = None
         if self.embedding_provider:
             try:
-                vector = await self.embedding_provider.embed(content)
+                vector = await self._embed_with_breaker(content)
             except Exception as e:
                 logger.warning(f"Failed to generate embedding for archival insert: {e}")
 
