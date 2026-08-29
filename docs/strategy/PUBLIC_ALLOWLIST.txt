@@ -25,14 +25,25 @@ config/models.yaml
 config/providers.yaml
 config/omega.yaml
 config/wads/_omega_default/
+config/model_fleet_operational.yaml
+config/litestream.yml
+config/systemd/
 
 # Install + docs
 scripts/install.sh
+scripts/serve_native_gguf.sh
+scripts/benchmark_sqlite_vec.py
+scripts/setup_litestream.sh
+scripts/restore_litestream.sh
+scripts/verify_litestream.sh
+scripts/migrate_to_sqlcipher.py
+scripts/godot_spatial_bridge.py
 README.md
 LICENSE
 CONTRIBUTING.md
 docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
 docs/strategy/PUBLIC_ALLOWLIST.txt
+docs/strategy/INGESTION_PIPELINE_SPEC.md
 SOVEREIGN_MANDATES.md
 AGENTS.md
 .gitignore
@@ -43,6 +54,38 @@ AGENTS.md
 # Build
 Makefile
 pyproject.toml
+
+# Research & Coordination (Aug 28-29 debut prep — public community gifts)
+data/coordination/CANONICAL_KNOWLEDGE_BASE_20260828.md
+data/coordination/RESEARCH_DECISION_MAP_20260828.md
+data/coordination/HONEST_STATE_20260829.md
+data/coordination/DISK_CLEANING_FINDINGS_20260829.md
+data/coordination/CARMACK_CODE_REVIEW_20260829.md
+data/coordination/GROKSTER_TO_KALI_HANDOFF_20260829.md
+data/coordination/JEM_SQLITE_VEC_RECALL_HARDENING_20260829.md
+data/coordination/CARMACK_*_SPEC_20260829.md
+data/coordination/ROC_*_20260829.md
+data/coordination/MAAT_*_20260829.md
+data/coordination/R_RESEARCHER_*_20260829.md
+data/coordination/AGENT_REGISTRY_20260828.md
+data/coordination/CLINE_DEEP_DIVE_INFRA_HANDOFF_20260828.md
+data/coordination/CLINE_REFACTORING_MANUAL_20260828.md
+data/coordination/COORDINATION_CORPUS_INDEX.md
+data/coordination/DEFINITIVE_SYNTHESIS_LILITH_FOR_KALI_20260828.md
+data/coordination/GROKSTER_TO_KALI_HANDOFF_20260828.md
+data/coordination/JEM_RESEARCH_SYNTHESIS_20260828.md
+data/coordination/LILITH_TO_KALI_FINAL_BRIEFING_20260828.md
+data/coordination/LILITH_TO_KALI_POST_COMPACTION_BRIEFING_20260828.md
+data/coordination/MASTER_BRIEFING_LILITH_FOR_KALI_20260828.md
+data/coordination/MASTER_CORPUS_INDEX_20260828.md
+data/coordination/RESEARCH_CORPUS_INDEX.md
+data/coordination/ROC_DOC_ALIGNMENT_AUDIT_20260828.md
+data/coordination/R_RESEARCHER_2026_REFACTOR_PATTERNS_20260828.md
+data/coordination/R_RESEARCHER_DOC_HARDENING_20260828.md
+data/coordination/R_RESEARCHER_SPATIAL_VECTORS_VR_20260828.md
+data/coordination/R_RESEARCHER_SQLITE_VEC_GAPS_20260828.md
+data/coordination/SESSION_ANCHOR.md
+data/coordination/anchored_summary/kali/projection.md
 ```
 
 ## 🚫 FORGE — NOT on Public Surface
@@ -53,7 +96,6 @@ docs/research/
 docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above
 data/entities/                # EXCEPT one default soul (e.g. _omega_default)
-data/coordination/
 data/handoff/
 data/autonomous/
 data/training/
