@@ -56,13 +56,25 @@ start_server() {
     # Use the venv python
     source .venv/bin/activate
     
+    # RAM-optimized settings per model
+    local n_ctx=2048
+    local n_batch=256
+    local use_mlock="True"
+    
+    # Reasoner (4B Thinking) needs more context, disable mlock to save RAM
+    if [[ "$name" == "reasoner" ]]; then
+        n_ctx=4096
+        use_mlock="False"
+    fi
+    
     nohup python3 -m llama_cpp.server \
         --model "$model" \
         --host 127.0.0.1 \
         --port "$port" \
-        --n_ctx 4096 \
+        --n_ctx "$n_ctx" \
         --n_threads 4 \
-        --n_batch 512 \
+        --n_batch "$n_batch" \
+        --use_mlock "$use_mlock" \
         --verbose false \
         > "$log_file" 2>&1 &
     

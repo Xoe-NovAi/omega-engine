@@ -185,10 +185,10 @@ class ProviderConfig:
     base_url: Optional[str] = None
     description: str = ""
     # Retry & resilience
-    max_retries: int = 3
+    max_retries: int = 5
     timeout_seconds: float = 120.0
-    backoff_base: float = 0.5
-    backoff_max: float = 8.0
+    backoff_base: float = 5.0
+    backoff_max: float = 30.0
     # Budget
     daily_token_budget: Optional[int] = None
     # Provider-specific extra config
@@ -364,12 +364,23 @@ class RemoteProvider(ABC):
                     f"failed: {e}"
                 )
 
-                # Exponential backoff
+                # Exponential backoff with Retry-After header support
                 if attempt < self.config.max_retries - 1:
                     delay = min(
                         self.config.backoff_base * (2**attempt),
                         self.config.backoff_max,
                     )
+                    # Respect Retry-After header if present (e.g., OpenRouter returns 60s for MiniMax)
+                    if isinstance(e, httpx.HTTPStatusError) and e.response is not None:
+                        retry_after = e.response.headers.get("Retry-After")
+                        if retry_after:
+                            try:
+                                delay = min(float(retry_after), self.config.backoff_max)
+                                logger.info(
+                                    f"Provider {self.name} respecting Retry-After: {delay}s"
+                                )
+                            except ValueError:
+                                pass
                     import anyio
 
                     await anyio.sleep(delay)
