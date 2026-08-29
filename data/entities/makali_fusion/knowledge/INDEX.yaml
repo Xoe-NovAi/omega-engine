@@ -1,0 +1,7 @@
+# data/entities/makali_fusion/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: makali_fusion
+updated: '2026-08-29T00:19:16.932173'
+topics: []

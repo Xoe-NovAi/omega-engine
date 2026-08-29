@@ -1,0 +1,7 @@
+# data/entities/kali/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: kali
+updated: '2026-08-29T00:25:58.601938'
+topics: []
