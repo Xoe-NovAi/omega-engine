@@ -56,7 +56,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-29T12:50:00Z",
+  "updated": "2026-08-29T16:15:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -645,5 +645,104 @@
     "main_branch": "f79cb9d0",
     "release_debut": "f79cb9d0",
     "disk": "2.6G free (98% used)"
+  },
+  "compaction_prep_final_20260829": {
+    "timestamp": "2026-08-29T13:15:00Z",
+    "status": "READY_FOR_COMPACTION",
+    "all_gates_pass": true,
+    "all_files_ready": true,
+    "emergent_tech_protocol": "CREATED (docs/strategy/EMERGENT_TECHNOLOGY_PROTOCOL_20260829.md)",
+    "emergent_tech_registry": "CREATED (data/coordination/EMERGENT_TECH_REGISTRY_20260829.md)",
+    "e_001_projection_md": "REGISTERED",
+    "recovery_files": [
+      "PRE_COMPACTION_MASTER_INDEX_20260828.md",
+      "HONEST_STATE_20260829.md",
+      "GROKSTER_TO_KALI_HANDOFF_20260829.md",
+      "CARMACK_CODE_REVIEW_20260829.md",
+      "EMERGENT_TECHNOLOGY_PROTOCOL_20260829.md",
+      "EMERGENT_TECH_REGISTRY_20260829.md",
+      "DISK_CLEANING_FINDINGS_20260829.md",
+      "WAKE_STATE.json",
+      "anchored_summary/kali/projection.md"
+    ],
+    "main_branch": "2a2b0e01",
+    "servers_running": true,
+    "ram_optimized": true,
+    "disk": "2.6G free (98% used)"
+  },
+  "post_compaction_v1_1_20260829": {
+    "timestamp": "2026-08-29T13:27:00Z",
+    "status": "POST_COMPACTION_V1_1_0",
+    "main_branch": "8f572624",
+    "new_emergent_techs": [
+      "E-001 projection.md (RATIFIED)",
+      "E-002 Forensics Protocol (RATIFIED)",
+      "E-003 Compaction Watcher (RATIFIED)"
+    ],
+    "new_documents": [
+      "docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL_20260829.md (14KB)",
+      "docs/strategy/COMPACTION_WATCHER_PROTOCOL_20260829.md (10KB)",
+      "data/coordination/COMPACTION_HISTORY_20260829.md (12KB)",
+      "data/coordination/anchored_summary/kali/archive/projection_pre_compaction_20260829.md (5.7KB)"
+    ],
+    "projection_md_version": "v1.1.0 (post-compaction)",
+    "archived_versions": [
+      "v1.0.0 (pre-compaction) in archive/"
+    ],
+    "key_insight": "/compact and projection.md are COMPLEMENTARY, not redundant",
+    "compaction_watcher_status": "DESIGNED, implementation pending Carmack"
+  },
+  "search_ecosystem_01_sprint_20260829": {
+    "timestamp": "2026-08-29T15:30:00Z",
+    "status": "SPRINT_CHARTERED_PLANNING_COMPLETE",
+    "sprint": "SEARCH-ECOSYSTEM-01",
+    "sprint_lead": "Jem (Search Systems Specialist EIS)",
+    "quality_auditor": "Researcher (EIS)",
+    "sprint_director": "Kali (EIS)",
+    "duration": "4 weeks",
+    "success_criteria": [
+      "Pipeline success rate > 99.5%",
+      "Cache hit rate > 60%",
+      "Avg latency (T0 hit) < 50ms",
+      "Quality probe pass rate > 90%",
+      "Zero manual Firecrawl enables",
+      "Exa quota usage < 50% of 8,000/mo",
+      "\u2265 3 scholarly sources integrated"
+    ],
+    "key_decisions": [
+      "Jem as Search Systems Specialist (ratified)",
+      "Crawl4AI as T3 PRIMARY (ratified)",
+      "Tavily/Jina wire if free tier (ratified)",
+      "Exa Cloud first, then personal x8 (ratified)",
+      "First-page satisfaction as north star metric (ratified)",
+      "EIS/NES/SPT taxonomy ratified",
+      "Pipeline degradation P10 investigation authorized"
+    ],
+    "research_budget": {
+      "exa": "8,000 searches/mo (8 accounts x 1,000)",
+      "firecrawl": "4,000 credits/mo (8 accounts x 500)",
+      "parallel_search": "unlimited (rate limited)",
+      "searxng": "unlimited (self-hosted)",
+      "total_capacity": "~28,000+ searches/mo + unlimited"
+    },
+    "main_branch": "bd619b18",
+    "open_pages": [
+      "Grokster-MSI dispatch pending"
+    ]
+  },
+  "landmark_master_manual_20260829": {
+    "timestamp": "2026-08-29T16:15:00Z",
+    "status": "CANONICAL_DOCTRINE_COMMITTED",
+    "manual_path": "docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md",
+    "commit": "83b292b2",
+    "active_model": "google/gemini-3.7-flash",
+    "distilled_gnosis": [
+      "10,000-Hour Genesis & Sovereign Manifesto",
+      "5 Pillars: Soul Integrity, Multi-Model Symphony, Infinite Search Matrix, Spatial Memory, Session Taxonomy",
+      "Prospective-Retrospective Fusion (projection.md + /compact) defeating the 17% retention loss",
+      "The Great Transmutation Pipeline for 20GB+ SQLite & Multi-Account ore",
+      "Intent-Based Search Routing (SSP-V3) with Crawl4AI T3 Primary",
+      "6-Month Frontier Evolutionary Horizon"
+    ]
   }
 }

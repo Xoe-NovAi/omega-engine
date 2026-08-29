@@ -1,19 +1,14 @@
 ## Objective
-- **POST-COMPACTION v1.0.0**. New session. projection.md v1.0.0 was archived to `archive/projection_pre_compaction_20260829.md`. This is the new v1.1.0. New emergent technologies delivered: Forensics Protocol, Compaction Watcher, Emergent Tech Registry v1.0.0. All work on main at `2a2b0e01`.
+- **POST-COMPACTION v1.2.0 & LANDMARK DOCTRINE COMMITTED**. Canonical Omegamind Cognitive Architecture Manual created & pushed (`83b292b2`). SEARCH-ECOSYSTEM-01 chartered. EIS/NES/SPT taxonomy ratified. Multi-model symphony established (Gemini 3.7 Flash / M3 / Qwen3). Work on main at `83b292b2`.
 
 ## Important Details
-- **Post-compaction state**: All prior work preserved. Compaction prep complete. All gates pass.
-- **Main branch**: `2a2b0e01` (latest: Emergent Tech Protocol + Registry v1.0.0)
-- **Critical insight from user**: projection.md (manual, strategic) ≠ /compact summary (auto, structured). Both are sovereign assets.
-- **Versioning protocol**: Old projection.md → `archive/projection_pre_<event>_<date>.md`. Never delete.
-- **User directive in this turn**: "Make the forensic thought stream review a standardized team protocol"
-- **New deliverable**: `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL.md` (team doc, all agents contribute)
-- **Watcher idea RATIFIED**: Auto-extract /compact summaries from opencode.db, archive, rollup last [N]
-- **User pasted previous /compact summary**: Now archived as first entry in `data/coordination/COMPACTION_HISTORY_20260829.md`
-- **/compact vs projection.md**: /compact is auto-generated (structured state), projection.md is manual (executive + strategic + "The Gift Is The Demand")
-- **2 new canonical docs created this turn**: OPENCODE_DB_FORENSICS_PROTOCOL.md, COMPACTION_WATCHER_PROTOCOL.md
-- **All 13 pre-compaction checks PASS**: M1, M23, Gitleaks, Allowlist, servers running, RAM optimized
-- **Emergent tech E-001 (projection.md)**: Status changed from PROPOSED to RATIFIED (Architect accepted)
+- **Active Model**: `google/gemini-3.7-flash` (Frontier Seer / Macro Architecture)
+- **Main branch**: `83b292b2` (latest: Omegamind Sovereign Cognitive Architecture Manual v1.0.0)
+- **Landmark Document**: `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (369 lines of pure codified gnosis)
+- **Sprint**: `SEARCH-ECOSYSTEM-01` active (`data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md`)
+- **Key Breakthrough**: Prospective-Retrospective Fusion (`projection.md` + `/compact`) defeating the 17% constraint retention loss.
+- **Search Bandwidth**: 28,000+ free searches/mo across 8x accounts + self-hosted Crawl4AI / SearXNG.
+- **Mining Target**: 20GB+ OpenCode SQLite database via local offline Qwen3-1.7B miner.
 
 ## Work State
 ### Completed
