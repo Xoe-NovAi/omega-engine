@@ -1,14 +1,16 @@
 ## Objective
-- **POST-COMPACTION v1.2.0 & LANDMARK DOCTRINE COMMITTED**. Canonical Omegamind Cognitive Architecture Manual created & pushed (`83b292b2`). SEARCH-ECOSYSTEM-01 chartered. EIS/NES/SPT taxonomy ratified. Multi-model symphony established (Gemini 3.7 Flash / M3 / Qwen3). Work on main at `83b292b2`.
+- **POST-COMPACTION v1.3.0 & GEMINI FLEET SPEC COMMITTED**. Google API Key 2/8 active (Medium Thinking). Gemini Multi-Account Worker Spec v1.0.0 pushed (`1dd56cf5`). Zero-Write Database-Native Cognition canonized (`243be66d`). Omegamind Cognitive Architecture Manual live (`83b292b2`). Work on main at `1dd56cf5`.
 
 ## Important Details
-- **Active Model**: `google/gemini-3.7-flash` (Frontier Seer / Macro Architecture)
-- **Main branch**: `83b292b2` (latest: Omegamind Sovereign Cognitive Architecture Manual v1.0.0)
-- **Landmark Document**: `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (369 lines of pure codified gnosis)
-- **Sprint**: `SEARCH-ECOSYSTEM-01` active (`data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md`)
-- **Key Breakthrough**: Prospective-Retrospective Fusion (`projection.md` + `/compact`) defeating the 17% constraint retention loss.
-- **Search Bandwidth**: 28,000+ free searches/mo across 8x accounts + self-hosted Crawl4AI / SearXNG.
-- **Mining Target**: 20GB+ OpenCode SQLite database via local offline Qwen3-1.7B miner.
+- **Active Model**: `google/gemini-3.7-flash` (Key 2/8, Medium Thinking)
+- **Main branch**: `1dd56cf5` (latest: Gemini Multi-Account Worker Spec v1.0.0)
+- **Live Proof**: Key 1 ran 231.9k context on High Thinking across 5 canonical breakthroughs before clean 24h rotation.
+- **8x Fleet Capacity**: 120 RPM concurrency / 12,000 RPD daily capacity / 360,000 requests/mo ($0.00 cost).
+- **New Specs**:
+  - `docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md` (Background Worker Fabric)
+  - `docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md` (CQRS Event Sourcing for AI)
+  - `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (Master Manual)
+- **Sprint**: `SEARCH-ECOSYSTEM-01` active (`data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md`).
 
 ## Work State
 ### Completed
