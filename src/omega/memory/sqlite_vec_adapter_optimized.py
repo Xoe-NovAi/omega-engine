@@ -1592,17 +1592,51 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                 # Keep alive until cancelled
                 await anyio.Event().wait()
         
-        # Spawn the task group runner as a background task
-        self._checkpoint_task = anyio.create_task_group()
-        await self._checkpoint_task.__aenter__()
-        self._checkpoint_task.start_soon(_run_checkpoint_task_group)
+    async def start_periodic_checkpoint(self, interval_seconds: int = 300) -> None:
+        if hasattr(self, "_checkpoint_task") and self._checkpoint_task:
+            logger.warning("Periodic checkpoint task already running")
+            return
+
+        self._checkpoint_cancel_scope = None
+
+        async def _checkpoint_loop() -> None:
+            while True:
+                await anyio.sleep(interval_seconds)
+                try:
+                    success = await self.checkpoint_wal("RESTART")
+                    if not success:
+                        logger.warning("Periodic RESTART checkpoint blocked by active readers")
+                except Exception as e:
+                    logger.error("Periodic checkpoint task error: %s", e)
+
+        # Spawn a background task that hosts its own task group (F-07, F-09).
+        # The group is entered in the spawned task's scope, not the caller's.
+        async def _host_task_group() -> None:
+            async with anyio.create_task_group() as tg:
+                self._checkpoint_cancel_scope = tg.cancel_scope
+                tg.start_soon(_checkpoint_loop)
+                await anyio.sleep_forever()
+
+        # Store the task (not a group) so stop can cancel it.
+        import asyncio as _asyncio
+        self._checkpoint_task = _asyncio.ensure_future(_host_task_group())
+        # Give the spawned task a moment to enter the task group and set the scope.
+        await anyio.sleep(0.05)
         logger.info("Started periodic WAL checkpoint task (interval=%ds)", interval_seconds)
 
     async def stop_periodic_checkpoint(self) -> None:
         if hasattr(self, "_checkpoint_task") and self._checkpoint_task:
-            self._checkpoint_task.cancel_scope.cancel()
-            await self._checkpoint_task.__aexit__(None, None, None)
+            # Cancel via the stored cancel scope (set by the spawned task).
+            scope = getattr(self, "_checkpoint_cancel_scope", None)
+            if scope is not None:
+                scope.cancel()
+            # Await the task to let the group exit cleanly.
+            try:
+                await self._checkpoint_task
+            except Exception:
+                pass
             self._checkpoint_task = None
+            self._checkpoint_cancel_scope = None
             logger.info("Stopped periodic WAL checkpoint task")
 
     def _get_test_conn(self) -> sqlite3.Connection:
@@ -1619,9 +1653,10 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             except (sqlite3.Error, OSError) as e:
                 logger.warning("Error closing write connection: %s", e)
             self._write_conn = None
+        # Close read pool connections via thread (F-01).
         for conn in self._read_connections:
             try:
-                conn.close()
+                await anyio.to_thread.run_sync(conn.close)
             except Exception:
                 pass
         self._read_connections.clear()
