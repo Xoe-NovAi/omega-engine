@@ -13,7 +13,7 @@ Provides REST and WebSocket endpoints for Godot 4 to query spatial memories:
 [id-soft: quake-1996] PVS (Potentially Visible Set) — Sector-based visibility
 """
 
-import asyncio
+import anyio
 import json
 import logging
 import os
@@ -235,7 +235,7 @@ async def spatial_navigate(
                 row = cursor.fetchone()
                 return row
 
-            row = await asyncio.to_thread(_get_coords)
+            row = await anyio.to_thread.run_sync(_get_coords)
             if not row:
                 raise HTTPException(status_code=404, detail=f"Node {start_rowid} not found")
             start_pos = (row[0], row[1], row[2])
