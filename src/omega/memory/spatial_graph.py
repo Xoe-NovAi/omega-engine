@@ -431,13 +431,31 @@ class SpatialKnowledgeGraph:
         return result
 
     async def _find_target_nodes(self, entity_name: str, query: str) -> List[Dict[str, Any]]:
-        """Find target nodes matching query using hybrid search."""
-        # Use adapter's hybrid search
-        try:
-            # This would need an embedding - for now return empty
-            # Full implementation: embed query, hybrid search, return top candidates
+        """Find target nodes matching query using hybrid search (FTS + spatial)."""
+        if not self._adapter:
             return []
-        except Exception:
+        try:
+            # Use FTS-only hybrid search (no embedding needed).
+            # This finds content matches; spatial VR navigation uses these as goal candidates.
+            results = await self._adapter.hybrid_search(
+                query=query,
+                entity_name=entity_name,
+                limit=10,
+            )
+            return [
+                {
+                    "rowid": r.get("id") or r.get("rowid"),
+                    "uuid": r.get("uuid"),
+                    "content": r.get("content", "")[:200],
+                    "score": r.get("score", 0.0),
+                    "metadata": r.get("metadata", {}),
+                }
+                for r in results
+                if (r.get("id") or r.get("rowid"))
+            ]
+        except Exception as e:
+            logger.warning("_find_target_nodes failed for entity=%s query=%s: %s",
+                           entity_name, query, e)
             return []
 
     async def _astar_path(self, start: int, goal: int, max_steps: int) -> List[int]:
