@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # **Qdrant for Omega Engine Memory**
 
 [https://gemini.google.com/app/82b458aed9fbfc28](https://gemini.google.com/app/82b458aed9fbfc28)

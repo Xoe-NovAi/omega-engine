@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROK CLI BRIEFING — Carnak Strip-the-Engine Review
 **AP Token**: `AP-GROK-CLI-BRIEFING-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ trc_carnak_briefing ⬡ GROK-FLEET

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Hivemind Redis Tests (M21 Contract Tests)
 # AP: AP-TEST-HIVEMIND-REDIS-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ test_hivemind_redis ⬡ P1-3

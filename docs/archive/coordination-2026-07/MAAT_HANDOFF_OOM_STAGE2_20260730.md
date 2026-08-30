@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MA'AT: PHASE 1 STAGE 2 — OOM Refactoring Handoff
 
 **Date**: 2026-07-30  

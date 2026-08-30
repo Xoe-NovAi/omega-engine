@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Research Priority List: New Strategies & Technologies from Web Chatbot Docs
 
 **AP Token**: `AP-WEB-CHATBOT-RESEARCH-v1.0.0`

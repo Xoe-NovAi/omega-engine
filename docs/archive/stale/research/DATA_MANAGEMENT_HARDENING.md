@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Data Management Hardening for Research & Discovery
 
 **Discovery ID**: D-02  

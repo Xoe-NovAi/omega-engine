@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_RESEARCHER_MANDATORY_WEB_20260713.md
 **AP Token**: `AP-RESEARCHER-MANDATORY-WEB-20260713`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_mandatory_web ⬡ RESEARCH

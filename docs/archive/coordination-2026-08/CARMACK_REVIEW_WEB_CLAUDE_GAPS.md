@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CARMACK REVIEW: Web Claude Audit Remediation
 **Date**: 2026-08-09
 **Status**: Mid-Execution (GAP-0 and GAP-3 Secured, GAP-1 In Progress)

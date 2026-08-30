@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Decision Workspace Tools — Consolidated Implementation Specification
 ## Canonical T0+T1 Specification (Cross-Validated: Grok CLI + Web Claude)
 

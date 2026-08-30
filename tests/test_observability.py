@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Omega Observability."""
 
 from omega.observability import ObservabilityEngine, new_trace_id

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract tests for CASManager.
 M21: Gate Integrity — All core API boundaries must have contract tests.
 """

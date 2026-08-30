@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: "R-ID-SOFTWARE-MINING-MASTER-PLAN"
 title: "id Software Engine Architectural Mining — 4-Week Deep Study & Extraction Plan"
 status: "🎯 PHASE 0 PLANNING COMPLETE — Ready for execution"

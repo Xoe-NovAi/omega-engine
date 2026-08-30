@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Unit tests for Litestream config and operational scripts.
 
 AP: AP-LITESTREAM-BACKUP-v1.0.0

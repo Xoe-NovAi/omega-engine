@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity CLI — Strategic Utilization Plan for Omega Engine
 
 **AP Token**: `AP-ANTIGRAVITY-STRATEGY-v2.0.0`

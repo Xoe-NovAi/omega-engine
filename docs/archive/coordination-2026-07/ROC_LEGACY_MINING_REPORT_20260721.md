@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC RACCOON — Legacy Mining & Cloud Strategy Report
 **AP Token**: `AP-ROC-LEGACY-MINING-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_legacy_mining ⬡ ACTIVE

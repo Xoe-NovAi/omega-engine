@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Search Dossier: Firecrawl (Structured Extraction)
 **Version**: 1.0.0
 **Classification**: Sovereign Extraction Layer

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """CLI import-smoke gate [N1/dc-cli-dead 2026-08-24].
 
 The omega CLI was DEAD on main: a stacked click decorator raised TypeError

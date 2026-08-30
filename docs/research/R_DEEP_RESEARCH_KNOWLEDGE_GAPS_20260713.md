@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep Research: Knowledge Gap Closure — 4 Sovereign Gaps
 **AP Token**: `AP-DEEP-RESEARCH-GAPS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_deep_research ⬡ GAP-CLOSURE

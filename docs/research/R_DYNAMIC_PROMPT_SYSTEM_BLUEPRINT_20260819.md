@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Dynamic Prompt + Planner/Executor + Domain Loading System Blueprint
 ## Synthesis for Omega Engine (Local-First, 16GB RAM, CPU-only, Ryzen 5700U)
 

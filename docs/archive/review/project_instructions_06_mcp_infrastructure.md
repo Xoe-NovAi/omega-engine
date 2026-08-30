@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Project Instructions — Omega MCP Hub & Integration
 
 **Account**: `lilithasterion@gmail.com`

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 title: "R-TEST_HARNESS_HARDENING — Sovereign Test Harness Hardening Plan"
 date: 2026-06-29
 author: Researcher (Sovereign Master Researcher)

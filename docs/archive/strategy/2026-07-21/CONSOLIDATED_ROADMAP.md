@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Consolidated Roadmap (v1.2.1 Target)
 **AP Token**: `AP-ROADMAP-v1.2.1`
 **Last Updated**: 2026-07-13

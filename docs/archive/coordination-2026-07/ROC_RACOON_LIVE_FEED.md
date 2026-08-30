@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 roc_racoon — Live Feed
 **Session**: 2026-07-22 | **Model**: nemotron-3-ultra-free | **Channel**: opencode
 

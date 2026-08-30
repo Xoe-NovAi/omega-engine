@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 0:00They could turn off your AI tomorrow.
 0:033 secondsLet's get into it. The biggest AI companies in the world are changing the rules. Open AI, Anthropic, and others are increasing prices, tightening
 0:1212 secondslimits, and deciding what you can access and how much you can use. Today, we're putting these systems side by side and

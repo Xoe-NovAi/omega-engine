@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Body-Level Error Guards (BLEG) — IW-3.
 
 [IW-3] Body-Level Error Guards inspect HTTP 200 OK bodies for error

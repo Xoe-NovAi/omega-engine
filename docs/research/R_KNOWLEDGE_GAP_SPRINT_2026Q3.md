@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Knowledge Gap & Research Sprint Recon (2026 Q3)
 **AP Token**: `AP-RESEARCHER-GAPRECON-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE

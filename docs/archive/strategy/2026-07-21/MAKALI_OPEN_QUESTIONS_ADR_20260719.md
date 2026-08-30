@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Parallel Council — Open Questions ADR
 **Version**: 1.0.0  
 **Status**: RATIFIED — Architectural Verdicts by John Carmack (S3 Consultant)  

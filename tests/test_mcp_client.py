@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from mcp_servers.omega_hub.mcp_client import SovereignMCPClient, MCPToolResult

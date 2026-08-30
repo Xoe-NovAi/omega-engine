@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Contract Tests for Ω-Research Sandbox Runtime (M21 Gate Integrity)
 ⬡ OMEGA ⬡ MA'AT ⬡ P3/P10 ⬡ TEST-SANDBOX

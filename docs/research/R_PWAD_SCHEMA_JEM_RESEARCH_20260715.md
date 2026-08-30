@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM Research Report: PWAD Schema & Dimension Registry — 2026 State-of-the-Art
 **AP Token**: `AP-JEM-PWAD-SCHEMA-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_pwad_schema ⬡ ACTIVE

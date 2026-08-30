@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 WARP Proxy Pool — Knowledge Base
 # ⬡ OMEGA ⬡ WARP-KB ⬡ v4.0.0 ⬡ 2026-07-23
 # All lessons learned from multi-instance WARP deployment

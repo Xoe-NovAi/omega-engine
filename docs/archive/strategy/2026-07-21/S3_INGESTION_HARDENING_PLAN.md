@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 S3 Ingestion Hardening Execution Plan (HARDENED v1.2)
 **AP Token**: `AP-S3-INGESTION-HARDENING-v1.2.0`
 **Status**: ACTIVE / IMPLEMENTATION-READY

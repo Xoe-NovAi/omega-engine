@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🏛️ Temple-Grade Compliance Final Report (RQ-09)
 **Document ID**: R_TEMPLE_GRADE_COMPLIANCE_FINAL
 **Status**: FINAL

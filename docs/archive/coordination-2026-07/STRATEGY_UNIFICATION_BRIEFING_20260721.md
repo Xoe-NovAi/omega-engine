@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 STRATEGY UNIFICATION BRIEFING — Fleet-Wide
 **AP Token**: `AP-STRATEGY-UNIFY-BRIEF-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_briefing ⬡ FLEET-WIDE

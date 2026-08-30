@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Production-Grade Research Queue: Complete Design
 **AP Token**: `AP-RESEARCH-QUEUE-DESIGN-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_research_queue ⬡ 2026-07-21

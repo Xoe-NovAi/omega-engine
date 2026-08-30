@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Context Pack Creation Guide — Web Claude / Claude.ai Projects
 
 **AP Token**: `AP-CTX-PACK-GUIDE-v1.0.0`

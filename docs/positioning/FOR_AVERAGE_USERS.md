@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Welcome to Omega Stack: Your Personal AI, Your Own Rules
 
 Imagine having a team of the world's most brilliant assistants—writers, researchers, coders, and strategists—all living right on your computer. They are available 24/7, they never charge you a monthly fee, and most importantly, **they never tell anyone what you're talking about.**

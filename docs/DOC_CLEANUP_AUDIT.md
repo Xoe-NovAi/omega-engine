@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Documentation Cleanup Audit & Remediation Plan
 
 **AP Token**: `AP-DOC-CLEANUP-AUDIT-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Claude Project Custom Instructions — XML Templates (WEB-2)
 **AP Token**: `AP-CLAUDE-PROJECT-INSTRUCTIONS-v1.0.0`
 ⬡ OMEGA ⬡ LILITH ⬡ trc_claude_project_instructions ⬡ WEB-2

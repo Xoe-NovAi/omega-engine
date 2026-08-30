@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CARMACK RESEARCH REPORT: Knowledge Gaps Deep Dive
 **AP Token**: `AP-CARMACK-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_carmack_research ⬡ S3_CONSULTANT

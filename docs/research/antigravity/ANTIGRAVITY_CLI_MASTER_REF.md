@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity CLI — Master Technical Reference
 
 **AP Token**: `AP-ANTIGRAVITY-MASTER-v2.0.0`

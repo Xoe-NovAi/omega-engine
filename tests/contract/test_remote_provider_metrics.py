@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests — §3.1 Concurrent RemoteProvider.generate() Metrics Recording.
 
 [P2-1] Verifies the P0 §3.1 fix: `_record_perf` async bridge is fully async

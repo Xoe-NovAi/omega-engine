@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Carmack Review — ProviderClassification SSOT Consolidation (Quick Fixes)
 **AP Token:** `AP-CARMACK-REVIEW-20260809-v1.0.0`
 ⬡ OMEGA ⬡ CLINE ⬡ CLINE-CLI ⬡ trc_quick_fixes ⬡ ACTIVE

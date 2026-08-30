@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SPEC-D — P2 Hygiene Cluster (Version Stamps · Command Fossils · Skill Stubs · Strategy Orphans · Handoff TTL · WAKE_STATE Freshness)
 
 **AP Token**: `AP-SPEC-D-P2-HYGIENE-v1.0.0`

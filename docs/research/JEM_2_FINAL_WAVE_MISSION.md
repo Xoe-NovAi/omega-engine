@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem-2.0 Final Wave Mission Brief
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ final-wave ⬡ trc_final_wave ⬡ PHASE-I
 

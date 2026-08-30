@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "3.0"
 document_type: "research_guide_manual"
 document_id: "r-guard-distill-research-guide-20260722"

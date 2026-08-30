@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline → Grok CLI — Full Session Handoff Briefing
 **AP Token**: `AP-CLINE-TO-GROK-HANDOFF-20260730-v1.0.0`
 ⬡ OMEGA ⬡ DEEPSEEK ⬡ CLINE ⬡ GROK_CLI ⬡ HANDOFF ⬡ 2026-07-30

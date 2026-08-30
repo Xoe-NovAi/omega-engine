@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_GREEK_HYBRID_PIPELINE: Ancient Greek Linguistic Sieve & Synthesis
 
 **Status**: RECOVERED (Legacy Excavation)

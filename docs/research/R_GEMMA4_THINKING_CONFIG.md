@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemma 4 Thinking Config — Research Deliverable
 
 **AP Token**: `AP-R_GEMMA4_THINKING_CONFIG-v1.0.0`  

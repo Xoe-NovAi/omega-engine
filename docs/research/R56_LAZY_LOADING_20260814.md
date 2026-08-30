@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R56: Lazy Loading
 
 **AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.2.0`

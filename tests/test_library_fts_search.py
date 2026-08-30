@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ P4 ⬡ LIBRARY-FTS ⬡ MCP-TOOL-LAYER ⬡ TESTS
 """Tests for the library_fts_search MCP tool.
 

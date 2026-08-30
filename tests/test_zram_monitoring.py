@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-OBS1-ZRAM-TEST-v1.0.0
 # 🔱 Tests for zRAM Monitoring
 # ⬡ OMEGA ⬡ MONITORING ⬡ tests/test_zram_monitoring.py

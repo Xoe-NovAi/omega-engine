@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem Gap-Filling Report — QW-4 & QW-8 Knowledge Acquisition
 **AP Token**: `AP-JEM-GAP-FILLING-20260810-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ longcat-2.0-free ⬡ opencode ⬡ trc_gap_filling ⬡ COMPLETE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Verification Suite: Advanced Skeptical Verification
 # ⬡ OMEGA ⬡ VERITY ⬡ gemma-4-31b-it ⬡ opencode ⬡ test_skeptical_nli ⬡ QUALITY-GATE
 

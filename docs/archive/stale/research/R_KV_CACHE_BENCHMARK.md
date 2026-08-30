@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R##: KV-Cache Quantization Benchmark — Zen 2 L3 Cache Impact
 **AP**: `AP-RESEARCH-EXP004-v1.0.0`
 **Status**: EXECUTING | **Date**: 2026-05-14

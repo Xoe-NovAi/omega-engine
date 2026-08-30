@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Carmack Review — Provider SSOT Restoration + Lint Gate Activation
 **Date:** 2026-08-09  
 **Author:** cline/omega-engine  

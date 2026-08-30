@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — YouTube Research Systems Enhancement Plan
 **AP Token**: `AP-YOUTUBE-RESEARCH-ENHANCEMENT-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_youtube_enhancement ⬡ SOVEREIGN-SYNTHESIS

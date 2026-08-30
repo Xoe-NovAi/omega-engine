@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 **OMEGA ENGINE**  
 **Unified Implementation Manual v3.1**  
 **Document Status:** Approved for Engineering Execution  

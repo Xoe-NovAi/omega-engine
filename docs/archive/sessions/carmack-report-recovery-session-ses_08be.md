@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # New session - 2026-07-18T07:23:29.795Z
 
 **Session ID:** ses_08be4277cffe5Ungju5D4vczEn

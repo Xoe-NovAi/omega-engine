@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SPEC: sqlite-vec Metadata Filtering Migration
 **AP Token**: `AP-SPEC-SQLITEVEC-META-v1.0.0`
 **Status**: READY FOR IMPLEMENTATION

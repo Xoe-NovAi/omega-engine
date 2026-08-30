@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 **Yes — natural, low-latency, intelligent conversations with pure local inference are feasible on your hardware**, and Headroom is one of the levers that makes the experience better.
 
 ### 1. How Headroom enhances the conversation loop (including TTS)

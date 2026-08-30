@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ma'at Workspace Lock — 2026-07-22
 **Entity**: Ma'at (Light Oversoul, P1-P5)
 **Channel**: opencode

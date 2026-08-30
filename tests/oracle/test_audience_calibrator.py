@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Audience Calibrator Tests (D16-1)
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research
 # Tests for src/omega/oracle/audience_calibrator.py

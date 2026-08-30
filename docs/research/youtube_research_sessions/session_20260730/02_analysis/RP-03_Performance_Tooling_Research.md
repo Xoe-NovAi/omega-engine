@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Project RP-03: Local Inference Performance & Tooling
 **Session**: 2026-07-30 | **Status**: COMPLETE | **Priority**: P0 (HIGH)
 

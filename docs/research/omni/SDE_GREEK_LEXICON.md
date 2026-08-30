@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SDE: Semantic Density Effect & Greek Lexical Anchors
 
 **Part of the OmniHub Research Hub**

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Claude Project Setup Plan — 8 Web Claude Accounts (Fable 5 Sprint)
 **AP Token**: `AP-CLAUDE-PROJECT-PLAN-v1.0.0`
 **Date**: 2026-07-11

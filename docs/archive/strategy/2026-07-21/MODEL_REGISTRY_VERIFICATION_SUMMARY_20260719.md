@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Model Registry Verification Summary
 **Status**: ✅ COMPLETE — All 8 validation gates pass
 **Date**: 2026-07-19

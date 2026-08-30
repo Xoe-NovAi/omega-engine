@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_BUILD_VS_BUY_COMMUNITY_LIBS — Canonical Decision Matrix
 **AP Token**: `AP-BUILD-VS-BUY-v1.0.0`
 ⬡ OMEGA ⬡ DEEPSEEK ⬡ CLINE ⬡ BUILD-VS-BUY ⬡ 2026-07-30

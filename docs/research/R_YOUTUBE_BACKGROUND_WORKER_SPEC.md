@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — YouTube Background Worker Specification
 # AP: AP-YOUTUBE-WORKER-SPEC-v1.0.0
 # ⬡ OMEGA ⬡ RESEARCH ⬡ youtube_worker ⬡ SPEC

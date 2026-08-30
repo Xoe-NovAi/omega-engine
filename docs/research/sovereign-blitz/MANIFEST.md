@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Blitz Manifest — ElevenLabs Hackathon
 **Project**: Sovereign Voice Console
 **Status**: PRE-FLIGHT

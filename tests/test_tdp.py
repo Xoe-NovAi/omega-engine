@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import pytest
 from omega.oracle.security import tdp_wrap, TaintedData, TDPGate
 

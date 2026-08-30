@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Document: Comprehensive System Audit & Structural Analysis
 **AP Token**: `AP-RESEARCH-AUDIT-20260608-v1.0.0`  
 **Status**: COMPLETED  

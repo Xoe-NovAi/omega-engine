@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # STRATEGIC FOLLOW-UP PROMPT FOR CLAUDE.AI
 ## Hardened Hybrid Benchmark Audit — Research-Enhanced Deep Dive
 

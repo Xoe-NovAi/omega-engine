@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔧 Nemotron 3 Ultra Streaming Failure Fix
 **Date**: 2026-07-30
 **Status**: ACTIVE — Plugin fix deployed and verified

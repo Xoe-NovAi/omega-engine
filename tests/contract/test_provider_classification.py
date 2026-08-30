@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Invariant test: no provider has split classification across call sites.
 
 [M22 SSOT] Every cloud-classification call site must delegate to

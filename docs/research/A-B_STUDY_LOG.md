@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — A/B Research Quality Study Log
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_research ⬡ A-B-LOG
 

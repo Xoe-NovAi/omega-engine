@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Contract Tests: OOMProtector Three-Signal Fusion
 # AP: AP-RESOURCE-GUARD-TEST-v1.0.0
 # [C-2′] Contract tests that verify the OOMProtector integration with ResourceGuard.

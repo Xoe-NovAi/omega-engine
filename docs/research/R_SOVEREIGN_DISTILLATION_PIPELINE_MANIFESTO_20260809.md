@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 The Sovereign Distillation Pipeline (SDP) Manifesto
 ## Intelligence as a Composite Material
 

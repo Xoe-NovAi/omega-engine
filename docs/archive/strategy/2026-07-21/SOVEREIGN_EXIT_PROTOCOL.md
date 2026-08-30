@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Exit Protocol — Agent Departure & Knowledge Transfer
 **Version**: 1.1.0
 **Status**: HARDENED — pilot executed by Roc Racoon (2026-07-18), 8 hardening items incorporated

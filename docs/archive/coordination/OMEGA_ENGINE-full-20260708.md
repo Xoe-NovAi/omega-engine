@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Engine — Single Source of Truth
 # ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
 # AP-OMEGA-SST-v2.3.0

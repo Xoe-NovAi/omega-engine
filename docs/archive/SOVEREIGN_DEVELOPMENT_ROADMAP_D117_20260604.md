@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Engine — Sovereign Development Roadmap
 # PIVOT: D117 | Date: 2026-06-04
 # Status: ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Critical Knowledge Gaps — Deep Dive Research Campaign
 **AP Token**: `AP-CRITICAL-GAPS-CAMPAIGN-v1.0.0`  
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_critical_gaps ⬡ 2026-07-21

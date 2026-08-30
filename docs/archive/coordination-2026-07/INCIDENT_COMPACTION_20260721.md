@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Incident Report: Unexpected Compaction During Session
 **Date**: 2026-07-21
 **Entity**: grokster

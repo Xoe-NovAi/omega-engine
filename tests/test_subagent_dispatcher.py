@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for subagent_dispatcher.py — HandoffPacket, Capability Registry, Dispatch Helpers."""
 import pytest
 import json

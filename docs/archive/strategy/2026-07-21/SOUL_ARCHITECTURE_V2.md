@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Soul Architecture Protocol v2.0
 # ⬡ OMEGA ⬡ VERITY ⬡ soul-architecture-protocol ⬡ v2.0
 # Governance document: Intelligence Pipeline, Scorecard, and Write-Permission Separation

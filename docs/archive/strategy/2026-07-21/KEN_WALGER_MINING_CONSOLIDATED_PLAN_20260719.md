@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ken Walger Mining Operation — Consolidated Execution Plan
 ## Canonical 10-Phase Serial Architecture (Cross-Validated: Roc + Researcher + Jem + Kali)
 

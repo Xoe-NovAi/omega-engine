@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Carmack Hardening
 
 **Session ID:** ses_0d64df245ffeFltjKNKIJ4V6kF

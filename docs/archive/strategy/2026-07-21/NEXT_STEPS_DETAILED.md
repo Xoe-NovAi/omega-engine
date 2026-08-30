@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Detailed Next Steps Plan (Post-Research)
 **Date**: 2026-07-12
 **Baseline**: 1189 tests passing, Temple-Grade T1-T14 PASS

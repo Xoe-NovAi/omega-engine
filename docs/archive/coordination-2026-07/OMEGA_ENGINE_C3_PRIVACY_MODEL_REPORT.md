@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE - C-3 PRIVACY MODEL RECOMMENDATION REPORT
 **For Ma'at (Light Oversoul) - P1 Governance Pillar**
 

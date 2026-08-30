@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Documentation Next Steps (Superseded)
 **AP Token**: `AP-DOC-NEXT-STEPS-v1.0.1`
 ⬡ OMEGA ⬡ KALI ⬡ gemini-3.1-pro ⬡ opencode ⬡ trc_doc_sprint ⬡ DEPRECATED

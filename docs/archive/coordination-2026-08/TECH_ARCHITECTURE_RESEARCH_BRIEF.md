@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Technology Architecture Research Brief — External Delivery
 **AP Token**: `AP-TECH-BRIEF-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_tech_research_brief ⬡ 2026-08-08

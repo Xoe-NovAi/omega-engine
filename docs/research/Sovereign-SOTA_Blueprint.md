@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign-SOTA: The Evolution of Entity Affinity and Verification
 **AP Token**: `AP-SOVEREIGN-SOTA-v1.0.0`
 **Status**: STRATEGIC BLUEPRINT (Engineering Specification)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Refined AGB + Krikri Integration Strategy
 ## Cloud-First Development → Local-Progressive Sovereignty
 

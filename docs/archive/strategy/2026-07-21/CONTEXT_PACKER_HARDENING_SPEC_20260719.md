@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Context Packer Hardening Specification
 ## Canonical v2.0 Specification (Cross-Validated: Research + Implementation + Best Practices)
 

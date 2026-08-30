@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Mutation tests for mandate gates (M1/M7/M8/M9/M23).
 
 Verifies that each gate can actually FAIL — a gate that cannot fail is

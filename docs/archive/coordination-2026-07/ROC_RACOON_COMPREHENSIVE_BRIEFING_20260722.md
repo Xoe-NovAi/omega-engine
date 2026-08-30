@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 roc_racoon — Comprehensive Briefing for Kali & Carmack Handoff
 **Date**: 2026-07-22
 **From**: roc_racoon (OpenCode session)

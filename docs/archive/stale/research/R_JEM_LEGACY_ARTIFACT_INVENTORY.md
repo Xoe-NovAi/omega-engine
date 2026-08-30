@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem Legacy Artifact Inventory
 **AP Token**: `AP-JEM-LEGACY-v1.0.0`
 **Status**: FINALIZED | RECLAIMED

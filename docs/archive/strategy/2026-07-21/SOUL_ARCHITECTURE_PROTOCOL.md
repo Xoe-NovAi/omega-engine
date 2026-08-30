@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Soul Architecture Protocol v1.0 (SUPERSEDED)
 # ⬡ OMEGA ⬡ VERITY ⬡ soul-architecture-protocol ⬡ v1.0
 # Governance document: Write-permission separation for soul.yaml

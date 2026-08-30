@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Test fixture: Clean engine file - NO WAD-specific imports or references
 # This file should pass firewall checks
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem-2.0 Session Transition Report
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ transition ⬡ trc_transition ⬡ PHASE-E
 

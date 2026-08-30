@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests — P2-5 Path Traversal Sanitization.
 
 Verifies entity_name/session_id can never escape the memory data dir via

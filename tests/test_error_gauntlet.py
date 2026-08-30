@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Error Gauntlet — Integration tests that provoke every error path.
 
 Each scenario provokes a specific error condition and verifies:

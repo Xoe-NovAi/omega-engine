@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_PST_MEMORY_FRAGMENT_TAXONOMY.md
 **AP Token**: `AP-PST-MEMORY-FRAGMENTS-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE

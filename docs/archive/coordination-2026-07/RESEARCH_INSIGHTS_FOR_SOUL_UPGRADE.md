@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # L1→L2→L3 Insights from Researcher's Deep Research Report
 # For potential integration into proposed_lessons.yaml
 

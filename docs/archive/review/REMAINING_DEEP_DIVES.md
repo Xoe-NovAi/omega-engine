@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Account 1 Remaining Deep Dives — Prompt Reference
 
 **AP Token**: `AP-REMAINING-DIVES-v1.0.0`

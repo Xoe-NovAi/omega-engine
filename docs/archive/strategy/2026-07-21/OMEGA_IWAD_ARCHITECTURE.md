@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega IWAD Architecture Strategy
 # AP-OMEGA-IWAD-ARCHITECTURE-v2.0.0
 # ⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_iwad_strategy ⬡ PHASE-I

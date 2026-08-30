@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FOUNDATION STABILIZATION CAMPAIGN
 ## Dark-Layer Audit → Multi-Domain Sprint Plan to Get Omega Back on the Rails
 

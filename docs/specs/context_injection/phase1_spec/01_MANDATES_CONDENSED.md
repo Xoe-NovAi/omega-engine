@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SOVEREIGN MANDATES — CONDENSED (Tier 0 Injection)
 
 **36 lines | 27 mandate rows | ~1.5K tokens | Repo root: `MANDATES_CONDENSED.md`**  

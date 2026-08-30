@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Complete Knowledge Gap Closure Report
 **AP Token**: `AP-KNOWLEDGE-GAP-CLOSURE-COMPLETE-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ RESEARCH ⬡ 2026-07-25

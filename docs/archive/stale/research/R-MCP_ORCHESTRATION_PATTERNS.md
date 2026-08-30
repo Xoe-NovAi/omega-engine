@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Orchestration Patterns Research
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemini-2.0-pro ⬡ cli ⬡ trc_mcp ⬡ R-MCP-PATTERNS
 

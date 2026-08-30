@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Web Claude Fleet Review Master Coordination
 
 **AP Token**: `AP-FLEET-REVIEW-v1.0.0`

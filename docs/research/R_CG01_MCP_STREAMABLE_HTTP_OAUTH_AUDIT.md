@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_CG01: MCP Streamable HTTP + OAuth 2.1 PKCE Implementation Audit
 **AP Token**: `AP-R_CG01-MCP-AUDIT-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_mcp_audit ⬡ ACTIVE

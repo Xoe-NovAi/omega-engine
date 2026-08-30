@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LongCat 2.0 — Deepening Review & Refined Project Plan
 ## Correcting, Validating, and Extending the Nemotron 3 Ultra Review
 

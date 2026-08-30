@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_CONVERSATIONAL_SUBAGENTS_STUDY — Multi-Turn Agent Conversations via the Task Tool
 
 **AP Token**: `AP-R-CONV-SUBAGENT-v1.0.0`

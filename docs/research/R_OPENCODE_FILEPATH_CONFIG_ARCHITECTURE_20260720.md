@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode `{file:path}` Variable Substitution — Deep Research & Omega Engine Application
 **⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode**
 **Date**: 2026-07-20

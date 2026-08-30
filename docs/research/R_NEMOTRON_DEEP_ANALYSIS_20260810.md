@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Nemotron 3 Ultra & Super — Deep Analysis
 ## OpenCode-Zen vs OpenRouter Provider Comparison
 

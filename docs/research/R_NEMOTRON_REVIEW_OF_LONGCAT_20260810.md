@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Nemotron 3 Ultra — Review of LongCat Deep Analysis
 ## Validation, Corrections & Additional Insights
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Identity Monitoring Framework: Hysteresis Calibration
 **AP Token**: `AP-IDENTITY-MONITOR-v1.0.0`
 **Status**: FINALIZED

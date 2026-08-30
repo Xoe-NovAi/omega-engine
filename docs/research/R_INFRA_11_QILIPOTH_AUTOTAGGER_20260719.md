@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R-INFRA-11: Qliphoth Auto-Tagger — Watchdog → Failure Taxonomy → Companion Reflection
 **AP Token**: `AP-INFRA-11-QILIPOTH-AUTOTAGGER-v1.0.0`
 ⬡ OMEGA ⬡ PARANOID ⬡ o1 ⬡ opencode ⬡ trc_infra_11_qliphoth ⬡ 2026-07-19

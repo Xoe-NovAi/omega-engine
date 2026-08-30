@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Carmack Domain Questions — Targeted Review Requests
 
 **Status**: FOR CARMACK REVIEW  

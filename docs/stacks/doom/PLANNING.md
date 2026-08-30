@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DOOM Universe Stack — Planning & Design
 
 **Part of the Omega Engine Stack Release Roadmap (2026-2028)**

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Documentation Hardening — Nemotron 3 Super Review & Hardened Execution Plan
 **AP Token**: `AP-DOC-NEXT-STEPS-HARDENED-v1.0.0`
 ⬡ OMEGA ⬡ NEMOTRON-3-SUPER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_doc_super ⬡ ACTIVE

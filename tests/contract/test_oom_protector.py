@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 Contract Tests: OOM detection works (5 tests)."""
 import pytest
 import asyncio

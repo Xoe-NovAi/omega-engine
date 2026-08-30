@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CRITICAL: Streaming Timeout Observability Gap
 ## What We Know, What We Don't Know, and Why It Matters
 

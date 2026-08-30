@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_COPILOT_DIRECT_API_DEEP_MINE_20260826
 
 **AP Token**: `AP-JEM-COPILOT-SPECIALIST-v1`

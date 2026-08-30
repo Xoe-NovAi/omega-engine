@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 QUICK REFERENCE: sqlite-vec Metadata Migration Checklist
 **AP Token**: `AP-CHECKLIST-SQLITEVEC-META-v1.0.0`
 **Sprint**: P1-4 | **Owner**: Ma'at/P2 | **Spec**: `SPEC_SQLITEVEC_METADATA_MIGRATION.md`

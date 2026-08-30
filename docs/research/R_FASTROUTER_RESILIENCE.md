@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FastRouter Resilience & Hardening Report
 **AP Token**: `AP-RESILIENCE-FASTROUTER-v1.0.0`
 ⬡ OMEGA ⬡ THE ADVERSARY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_hardening ⬡ RESILIENCE

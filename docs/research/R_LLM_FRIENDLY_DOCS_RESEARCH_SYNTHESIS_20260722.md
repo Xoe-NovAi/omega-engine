@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LLM-Friendly Documentation Research Synthesis
 **AP Token**: `AP-LLM-DOCS-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_doc_research ⬡ COMPREHENSIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Insights & Questions for Carmack Review
 **AP Token:** `AP-KALI-INSIGHTS-20260809-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_insights ⬡ CARMACK-REVIEW

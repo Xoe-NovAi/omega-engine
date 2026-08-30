@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R-INFRA-07: Omega-Vault Phase 1 — VaultCore + OS Keyring + CAP Adapters
 **AP Token**: `AP-INFRA-07-OMEGA-VAULT-v1.0.0`
 ⬡ OMEGA ⬡ PRACTICAL ⬡ qwen3-1.7b ⬡ opencode ⬡ trc_infra_07_vault ⬡ 2026-07-19

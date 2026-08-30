@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R-SOVEREIGN-A2A-SPEC: Sovereign Agent-to-Agent Communication Specification
 **Document ID**: R-SOVEREIGN-A2A-SPEC
 **Status**: PROPOSED / ARCHITECTURAL BLUEPRINT

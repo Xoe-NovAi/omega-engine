@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KNOWLEDGE GAP CLOSURE REPORT (KGC-001)
 **Document ID**: `docs/research/KGC_DEEP_RESEARCH_REPORT.md`
 **Status**: COMPLETED

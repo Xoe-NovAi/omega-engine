@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Industry Patterns — Strategic Research (Researcher)
 
 **Source**: `data/coordination/RESEARCH_RESEARCHER_STRATEGIC.md`  

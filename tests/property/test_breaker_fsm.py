@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Hypothesis property-based tests for AsyncCircuitBreaker (C-11).
 
 [PHASE-C-HARDENING] Two layers:

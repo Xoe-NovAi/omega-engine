@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Operation Eidolon Certification Report
 # ⬡ OMEGA ⬡ VERITY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_certification ⬡ OPERATION-EIDOLON
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — WARP Proxy Pool Validation Strategy
 ⬡ OMEGA ⬡ RESEARCHER ⬡ validation ⬡ netns ⬡ trc_core ⬡ VALIDATION-SPEC
 

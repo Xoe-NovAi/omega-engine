@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """MCP Transport: OAuth 2.1 + PKCE auth flows."""
 import pytest
 import asyncio

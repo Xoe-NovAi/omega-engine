@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Job Spec: GAP-007 — Heritage Vetting for Promoted L3 Principles
 **AP Token**: `AP-GAP007-HERITAGE-VET-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ trc_gap007_heritage ⬡ 2026-07-22

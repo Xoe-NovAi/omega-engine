@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_SOVEREIGN_SYNTHESIS: Transition to Sovereign Integration
 **AP Token**: `AP-SOVEREIGN-SYNTHESIS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_sovereign_synthesis ⬡ INTEGRATION-PHASE

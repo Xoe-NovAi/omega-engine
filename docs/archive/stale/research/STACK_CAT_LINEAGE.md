@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Aggregation Lineage: The Evolution of How Omega Sees Itself
 
 **Discovery ID**: D-01  

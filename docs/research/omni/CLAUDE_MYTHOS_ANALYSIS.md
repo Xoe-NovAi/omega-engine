@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Claude Mythos: Archetypal Coordinator Analysis
 
 **Part of the OmniHub Research Hub**

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚠️ SUPERSEDED — See R_EMBEDDING_ADAPTERS_DEEPENED.md
 
 # 🔱 R-EMBEDDING-ADAPTERS: Provider-Agnostic Embedding Layer

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Agent & Soul File Hardening Report
 **AP Token**: `AP-AGENT-SOUL-HARDENING-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_agent_soul_hardening ⬡ RESEARCH

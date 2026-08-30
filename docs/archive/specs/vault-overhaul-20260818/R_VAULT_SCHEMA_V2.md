@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VaultCore Schema v2 — FleetOrchestrator Credential Architecture
 **AP Token**: `AP-VAULT-SCHEMA-v2.0.0`
 **Status**: DESIGN — Ready for Implementation

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Parallel Council — Knowledge Gaps Analysis
 **Date**: 2026-07-19  
 **Context**: Post-ratification research for D-301 MaKaLi Parallel Council Architecture  

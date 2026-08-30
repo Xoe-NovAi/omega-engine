@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Epoch II Legacy Mining Report
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_legacy_mining ⬡ EPOCH-II
 **AP Token**: `AP-ROC-RACOON-EPOCH2-MINING-20260712`

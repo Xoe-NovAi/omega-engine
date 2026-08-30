@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ◈ MEDITATE: PHASE 0 — CALIBRATION
 Subject: Deep-dive prompt generation for Roc Racoon's legacy mining of 4/5 critical gaps, and blueprinting the empowerment of the Mastermind Council entities.
 Lens Set: Carmack, Jem, Roc, Ma'at, Lilith, Verity, Kali

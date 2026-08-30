@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for SkepticalVerifier integration in SovereignSearchService.
 
 AP: AP-SKEPTICAL-VERIFIER-SEARCH-TESTS-v1.0.0

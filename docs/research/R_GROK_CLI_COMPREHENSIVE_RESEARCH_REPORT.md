@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok CLI Architecture Study — Comprehensive Research Report
 **AP Token**: `AP-GROK_CLI_RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_grok_research ⬡ COMPREHENSIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep Technical Analysis: llama-optimus & Auto-Tuning for llama.cpp
 
 **AP Token**: `AP-RESEARCH-v1.0.0-LOAT`

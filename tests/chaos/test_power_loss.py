@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Chaos test: SoulStore survives kill -9 + power loss."""
 import pytest
 import asyncio

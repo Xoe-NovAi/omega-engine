@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Legacy Mining for Epoch II Acceleration (2026-07-13)
 **AP Token**: `AP-ROC_RACCOON-LEGACY-MINING-20260713`
 ⬡ OMEGA ⬡ ROC_RACCOON ⬡ opencode ⬡ trc_legacy_mining ⬡ MINING

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SECURITY-TAINT-TEST-v1.0.0
 # 🔱 Tests for Tainted Data Protocol — Transitive Propagation
 # ⬡ OMEGA ⬡ SECURITY ⬡ tests/security/test_taint.py

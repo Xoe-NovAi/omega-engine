@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Phase C — Dreaming Cycle (C.2.1–C.2.4)."""
 
 import pytest

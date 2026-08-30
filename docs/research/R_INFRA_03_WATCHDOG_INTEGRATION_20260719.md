@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R-INFRA-03: Subagent Watchdog Integration — Failure Observability
 **AP Token**: `AP-INFRA-03-WATCHDOG-INTEGRATION-v1.0.0`
 ⬡ OMEGA ⬡ PARANOID ⬡ o1 ⬡ opencode ⬡ trc_infra_03_watchdog ⬡ 2026-07-19

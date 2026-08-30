@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Chaos test: SoulStore lockfile under contention."""
 import pytest
 import asyncio

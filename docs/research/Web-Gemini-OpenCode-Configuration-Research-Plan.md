@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Architectural Verification and Technical Integration Report for OpenCode CLI Configurations
 
 ## Plugin Interception Scope and Namespace Isolation

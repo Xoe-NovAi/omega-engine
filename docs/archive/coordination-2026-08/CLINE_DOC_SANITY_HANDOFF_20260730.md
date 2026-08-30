@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Cline Handoff — Documentation Sanity & Archival (1M Context)
 
 **AP Token**: `AP-CLINE-DOC-SANITY-20260730-v1.0.0`  

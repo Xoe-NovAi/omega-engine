@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests — SoulStore (C-1') Atomic File Writer
 AP: AP-SOULSTORE-CONTRACT-v1.0.0
 

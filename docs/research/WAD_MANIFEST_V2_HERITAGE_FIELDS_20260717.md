@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # WadManifest V2 — Heritage Fields (2026-07-17)
 
 **Handoff**: `ho_881bae336522` (Kali → grok-cli)  

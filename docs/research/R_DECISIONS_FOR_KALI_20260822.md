@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Open Decisions for Kali — Build Observability, Security Sequencing, Platform
 **AP: AP-DECISIONS-KALI-20260822**
 ⬡ OMEGA ⬡ CLINE ⬡ kali ⬡ consultation ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-22

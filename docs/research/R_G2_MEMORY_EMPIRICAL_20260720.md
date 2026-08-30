@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 G2: llama-cpp-python Memory Footprint (Zen 2) — Domain Research Report
 
 **AP Token**: `AP-G2-MEMORY-EMPIRICAL-v1.0.0`

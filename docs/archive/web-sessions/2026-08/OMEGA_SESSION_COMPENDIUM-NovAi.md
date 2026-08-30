@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Engine — Full Session Research & Strategy Compendium
 
 **Scope**: Everything covered across this session — provider fabric audit, hardware optimization, WAD/IWAD architecture, MaKaLi governance, the 42 Ideals design (now paused), and review of two external documents (a Grok pressure-test doc, another session's Temple Hardening outline).

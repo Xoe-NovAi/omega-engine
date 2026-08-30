@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Critical Sprint Knowledge Gaps — Agent Support Hardening
 **AP Token**: `AP-CRITICAL-SPRINT-KG-AGENT-SUPPORT-v1.0.0`  
 ⬡ OMEGA ⬡ GROK_CLI ⬡ RESEARCH ⬡ SPRINT ⬡ 2026-07-25

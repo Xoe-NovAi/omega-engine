@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Xoe-NovAi Foundation — Sovereign Dev System & Strategic Plan
 
 **AP Token**: `AP-XOE-NOVAI-FOUNDATION-v1.0.0`

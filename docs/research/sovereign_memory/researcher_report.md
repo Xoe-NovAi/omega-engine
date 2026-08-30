@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_research ⬡ RESEARCH-MODE
 
 ## 🔱 Research Brief: Next-Generation AI Memory Architecture

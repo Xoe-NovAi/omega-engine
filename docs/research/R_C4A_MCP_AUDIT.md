@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MCP Migration Audit — C-4a (Updated 2026-07-23)
 **AP Token**: `AP-MCP-AUDIT-v2.0.0`
 **Date**: 2026-07-23 (updated with correct 2026-07-28 spec details)

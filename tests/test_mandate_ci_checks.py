@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 Contract tests for Makefile-based mandate checks.
 **AP Token**: `AP-KALI-TEST-MANDATE-CI-20260730`
 

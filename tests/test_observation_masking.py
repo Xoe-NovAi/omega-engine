@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import pytest
 import asyncio
 from src.omega.oracle.context_builder import ContextBuilder, Message, ObservationMaskingStrategy

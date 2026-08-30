@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_CROSS_SESSION_MESSAGING — Inter-Session Prompt Injection in OpenCode
 
 **AP Token**: `AP-R-CROSS-SESSION-v1.0.0`

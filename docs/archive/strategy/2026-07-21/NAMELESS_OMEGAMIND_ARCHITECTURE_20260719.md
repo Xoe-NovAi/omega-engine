@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Nameless One Omegamind — Tripartite Cognitive Architecture
 **AP Token**: `AP-NAMELESS-OMEGAMIND-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_nameless_omegamind ⬡ 2026-07-19

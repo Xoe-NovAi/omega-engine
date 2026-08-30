@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 title: Firecrawl Credit Protocol & Caching Strategy
 ap_token: AP-FIRECRAWL-CREDITS-v1.0.0
 date: 2026-06-11

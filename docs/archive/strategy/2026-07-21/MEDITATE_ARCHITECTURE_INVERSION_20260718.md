@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MEDITATE — Architecture Inversion Report
 **AP Token**: `AP-MEDITATE-ARCH-INVERSION-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.0 ⬡ oracle.meditate() ⬡ trc_meditate_architecture_inversion ⬡ SOVEREIGN-DECREE

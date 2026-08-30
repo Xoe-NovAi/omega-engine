@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ARCHITECTURAL AUDIT: MEM PALACE PROJECT
 **Auditor**: John Carmack, Sovereign S3 Consultant  
 **Target**: Mem Palace (https://github.com/mempalace/mempalace)  

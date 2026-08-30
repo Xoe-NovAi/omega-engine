@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Engine - Changelog
 
 ## 2026-07-25 - Process Reform and Sprint Prep Complete

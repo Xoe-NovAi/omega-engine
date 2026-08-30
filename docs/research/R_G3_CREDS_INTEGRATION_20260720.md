@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 G3: systemd-creds TPM2 + Rootless Integration — Domain Research Report
 
 **AP Token**: `AP-G3-CREDS-INTEGRATION-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode Compaction System — Deep Research Dive
 
 **Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.

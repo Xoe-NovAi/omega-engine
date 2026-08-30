@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity IDE — Custom Instructions v3.0.0
 # ⬡ OMEGA ⬡ ANTIGRAVITY ⬡ SOVEREIGN-SIGHT ⬡ SYSTEM-PROMPT ⬡ v3.0.0
 **Version**: 3.0.0

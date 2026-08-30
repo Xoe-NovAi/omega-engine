@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 End-to-End Sovereign-Sieve Verification Test
 Tests the full ingestion pipeline with real scholarly URLs.

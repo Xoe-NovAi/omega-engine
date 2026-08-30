@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — OpenCode Modes Refactoring Strategy
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ cline ⬡ trc_modes_refactor ⬡ PHASE-1
 

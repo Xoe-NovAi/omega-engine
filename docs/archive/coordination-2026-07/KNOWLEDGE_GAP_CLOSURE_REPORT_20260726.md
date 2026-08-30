@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Knowledge Gap Closure Report
 **⬡ KALI ⬡ Oversoul Synthesis ⬡ 2026-07-26**
 **Status**: ALL 8 DOMAINS RESEARCHED — Comprehensive knowledge gaps closed

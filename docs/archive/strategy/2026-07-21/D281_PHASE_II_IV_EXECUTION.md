@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 D-281 Substrate Repair: Phase II-IV Execution Plan
 **Date**: 2026-07-16
 **Status**: Phase II–IV COMPLETE (2026-07-17, Grok CLI) — D-281 substrate path closed

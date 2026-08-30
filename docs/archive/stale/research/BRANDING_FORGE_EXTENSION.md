@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — XOE File Extension Branding Analysis
 
 **AP Token**: `AP-BRANDING-FORGE-v1.0.0`

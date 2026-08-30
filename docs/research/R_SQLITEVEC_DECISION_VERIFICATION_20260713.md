@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_SQLITEVEC_DECISION_VERIFICATION_20260713.md
 
 **AP Token**: `AP-RESEARCHER-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok CLI Codebase Strategy Review — Structural Findings (F-01..11)
 **AP Token**: `AP-GAP-F-CODEBASE-v1.0.0`
 ⬡ OMEGA ⬡ GROK_CLI ⬡ Consulting Cloud Mind ⬡ opencode ⬡ trc_gap_f ⬡ ADVISORY

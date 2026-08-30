@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Implementation Blueprint: Lattice Dispatch
 
 **Goal**: Implement dynamic multi-agent topology (Linear Chaining vs. Triad Spawning) to handle varying cognitive complexities.

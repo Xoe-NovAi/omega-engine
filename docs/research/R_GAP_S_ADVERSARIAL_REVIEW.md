@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster Adversarial Review — Strategic Gaps (GAP-S-01..05)
 **AP Token**: `AP-GAP-S-ADVERSARIAL-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gap_s ⬡ ADVERSARIAL

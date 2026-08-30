@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Kali Review - .clinerules Long-File Write Protocol Remediation
 
 **Date:** 2026-08-09

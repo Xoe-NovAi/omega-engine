@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: "R-XXX"
 title: "Research Title"
 status: "🔲 Not Started" # 🔲 Not Started | 🔄 In Progress | ✅ Complete | ⚠️ Blocked

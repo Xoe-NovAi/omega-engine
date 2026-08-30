@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Verification Tests — Phase 1 Acceptance Criteria
 
 **Authority**: ACTIVE_SPRINT.json subtasks CI-1..CI-5 · **REMEDIATED 2026-08-21** (Architect rulings Q1/Q2/Q4; audit `09_SPEC_DEVIATIONS.md`)  

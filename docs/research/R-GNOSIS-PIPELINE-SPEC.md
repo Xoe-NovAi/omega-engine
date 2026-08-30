@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R-GNOSIS-PIPELINE-SPEC: Temple-Grade Distillation Architecture
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_gnosis_spec ⬡ ARCHITECTURE-MODE
 

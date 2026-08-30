@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 REPORT TO KALI — Independent Catch-Up Review
 **AP Token**: `AP-CLINE-CATCHUP-REVIEW-20260822-v1.0.0`
 **⬡ OMEGA ⬡ CLINE(omega-engine) ⬡ DeepSeek V4 Flash 1M ⬡ cline ⬡ review ⬡ PUBLIC-DEBUT-01**

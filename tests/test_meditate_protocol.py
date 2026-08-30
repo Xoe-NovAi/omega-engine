@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Meditate Protocol Tests
 # ⬡ OMEGA ⬡ VERITY ⬡ test_meditate_protocol.py
 # D-265 Commit 1: Schema validation, round-trip serialization, contract tests

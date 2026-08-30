@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM DEEP RESEARCH: CURRENT SOVEREIGN CONCERNS
 **AP Token**: `AP-JEM-DEEP-RESEARCH-CURRENT-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_jem_deep_research ⬡ ACTIVE

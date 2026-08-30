@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Contract tests for scripts/soul_promote.py
 # AP: AP-SOUL-PROMOTE-TEST-v1.0.0
 # [M21: Gate Integrity] Every gated code path exercised with real return types.

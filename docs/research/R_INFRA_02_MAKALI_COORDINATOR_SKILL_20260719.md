@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R-INFRA-02: MaKaLi Coordinator Skill — Parallel Council Executor
 **AP Token**: `AP-INFRA-02-MAKALI-COORDINATOR-v1.0.0`
 ⬡ OMEGA ⬡ PRACTICAL ⬡ qwen3-1.7b ⬡ opencode ⬡ trc_infra_02_makali_coordinator ⬡ 2026-07-19

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Sovereign Permission Fix
 # ⬡ OMEGA ⬡ MAAT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ PERMISSIONS-FIX
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC SYNTHESIS REPORT: THE GREAT COMPRESSION
 **Date**: 2026-07-16
 **Status**: HMC INITIALIZED — 3 Sovereign Minds Online

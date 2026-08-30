@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests for C-10.5 Provider Fallback Chain — M7 Local-First Compliance.
 
 [M21: Gate Integrity] Tests verify fallback behavior, M22 provenance, and streaming chunk timeout handling.

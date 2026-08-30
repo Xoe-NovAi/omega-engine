@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Contract Tests — S3 OpenRouter Provider Hardening (B1/B2/B5/B6)
 # AP: AP-REMOTE-PROVIDER-S3-TESTS-v1.0.0
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode ⬡ trc_S3_S4 ⬡ M21-CONTRACT-TESTS

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TEST-COMPACTION-CAPTURE-v1.0.0
 # Tests for CompactionCaptureService — Snapshot-Before-Compaction Sidecar
 #

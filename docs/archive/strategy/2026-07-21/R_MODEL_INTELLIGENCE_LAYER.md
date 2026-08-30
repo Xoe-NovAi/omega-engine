@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Model Intelligence Layer — Architectural Specification
 # ⬡ OMEGA ⬡ KALI ⬡ gemini-3.5-flash ⬡ SPECIFICATION ⬡ R-MODEL-INT
 **AP Token**: `AP-MODEL-INT-v1.0.0`

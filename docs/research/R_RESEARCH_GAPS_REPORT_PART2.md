@@ -1,4 +1,7 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 
 ## GAP-01: Sovereign AI Guardianship for Vulnerable Users (P0)
 

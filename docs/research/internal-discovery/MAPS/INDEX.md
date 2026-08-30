@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Graph Maps Index
 
 This directory stores relationship maps and diagrams that visualize the connections between research documents, discoveries, and tools.

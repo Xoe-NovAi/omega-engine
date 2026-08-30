@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Mail Strategy Dossier (2026)
 **Date**: 2026-07-10
 **Status**: RESEARCH COMPLETE / READY FOR IMPLEMENTATION

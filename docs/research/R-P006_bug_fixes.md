@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Bug Fix Registry (R-P006)
 **AP Token**: `AP-BUGFIX-REGISTRY-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_builder ⬡ PHASE-0

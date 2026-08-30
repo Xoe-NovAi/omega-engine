@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ MA'AT ⬡ BIG-PICKLE ⬡ TDP-INTEGRATION ⬡ PHASE-II
 """Integration tests for the Tainted Data Protocol (TDP) decorator on MCP tools.
 

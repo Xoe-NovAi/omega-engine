@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session Gnosis — YouTube Research Session 2026-07-30
 **AP Token**: `AP-YOUTUBE-SESSION-20260730-v1.0.0`
 **Date**: 2026-07-30

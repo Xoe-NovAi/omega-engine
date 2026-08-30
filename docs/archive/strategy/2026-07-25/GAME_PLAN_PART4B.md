@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE — PHASE C HARDENING GAME PLAN
 **AP Token**: `AP Token**: `AP-GAME-PLAN-v1.0.0`  
 **Date**: 2026-07-21  

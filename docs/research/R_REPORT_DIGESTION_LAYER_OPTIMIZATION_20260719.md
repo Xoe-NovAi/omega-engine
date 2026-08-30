@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Report Digestion Layer — Research & Optimization
 **AP Token**: `AP-REPORT-DIGESTION-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_report_digestion_research ⬡ IN PROGRESS

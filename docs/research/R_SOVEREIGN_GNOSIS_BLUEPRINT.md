@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Gnosis Blueprint — High-Level Architecture
 
 **⬡ OMEGA ⬡ RESEARCHER ⬡ trc_architecture ⬡ SOVEREIGN-GNOSIS**

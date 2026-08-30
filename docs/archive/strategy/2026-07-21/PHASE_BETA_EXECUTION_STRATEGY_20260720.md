@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Phase Β Execution Strategy — Foundation Stabilization Campaign
 **AP Token**: `AP-PHASE-BETA-EXEC-v1.0.0`  
 **Campaign**: `FOUNDATION_STABILIZATION_CAMPAIGN_20260720.md`  

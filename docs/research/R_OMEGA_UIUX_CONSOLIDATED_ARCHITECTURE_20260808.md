@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Consolidated UI/UX Architecture & Terminal Orchestration
 ## High-Performance, High-Density Interface for Sovereign AI
 

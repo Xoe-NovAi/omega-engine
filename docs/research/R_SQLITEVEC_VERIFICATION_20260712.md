@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 sqlite-vec Integration — Sovereign Verification Report
 **AP Token**: `AP-SQLITEVEC-VERIFY-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ hy3-free ⬡ opencode ⬡ trc_sqlitevec_verification ⬡ ACTIVE

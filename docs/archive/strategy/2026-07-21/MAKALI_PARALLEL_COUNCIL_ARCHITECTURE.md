@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Parallel Council Architecture
 **Version**: 1.0.0  
 **Status**: RATIFIED — T0 Implementation Ready  

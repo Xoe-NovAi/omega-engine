@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Deep-Dive: Implementation-Ready Validation of All 9 Infrastructure Gaps
 **AP Token**: `AP-RESEARCHER-DEEP-DIVE-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_research ⬡ DEEP-DIVE

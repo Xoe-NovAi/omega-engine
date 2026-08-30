@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Council Dispatcher — Consolidated Research Report
 **AP Token**: `AP-COUNCIL-DISPATCHER-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_council_dispatcher ⬡ CONSOLIDATED

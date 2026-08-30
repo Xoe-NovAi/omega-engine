@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TEST-SOUL-EDIT-HISTORY-v1.0.0
 # 🔱 Tests for SoulEditHistory — Immutable Audit Trail
 # ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash ⬡ opencode ⬡ TEST-SOUL-EDIT-HISTORY

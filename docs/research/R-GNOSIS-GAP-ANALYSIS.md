@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R-GNOSIS-GAP-ANALYSIS: Forensic Audit of Distillation Pipelines
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_gnosis_gap ⬡ RESEARCH-MODE
 

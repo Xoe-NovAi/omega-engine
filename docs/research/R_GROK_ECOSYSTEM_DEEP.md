@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Grok Ecosystem Deep Research
 ## Models, Pricing, ACP Protocol, Web Grok, Fleet Deployment Architecture
 **⬡ GROKSTER ⬡ R33 ⬡ 2026-07-21 ⬡ P0 ⬡ COMPLETE**

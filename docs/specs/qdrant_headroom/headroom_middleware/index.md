@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Headroom Middleware Implementation Spec
 
 **AP Token**: `AP-MAAT-HR-MIDDLEWARE-SPEC-v1.0.0`  

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Hardening Roadmap — Omega Engine 2026 Q3
 **AP Token**: `AP-SOVEREIGN-HARDENING-ROADMAP-v1.3.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE

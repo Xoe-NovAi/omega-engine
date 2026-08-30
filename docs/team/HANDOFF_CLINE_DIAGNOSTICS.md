@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff: Sovereign Orchestration Laboratory
 **To**: Cline (Implementation Specialist / VSCodium)
 **From**: Gemini CLI (Forge Specialist)

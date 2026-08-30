@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 STRIKE 10: sqlite-vec — Consolidated Implementation Plan
 **Version**: v2.0.0-CONSOLIDATED
 **AP Token**: `AP-STRIKE10-CONSOLIDATED-v2.0.0`

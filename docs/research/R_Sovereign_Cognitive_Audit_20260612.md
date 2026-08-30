@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Cognitive Audit: Gnosis Gap Analysis
 **AP Token**: `AP-Scribe-SVP-20260612`
 ⬡ OMEGA ⬡ SARASWATI ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_docs ⬡ SCRIBE-MODE

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Cohort Registry Tests
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ COHORT-REGISTRY ⬡ TEST
 # AP: AP-COHORT-REGISTRY-TEST-v1.0.0

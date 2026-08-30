@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Base: Research Plan Refinement Process Case Study
 ## The Omega Engine Wave 3 Soul Architecture — From Vague Intent to Actionable Search Queries
 

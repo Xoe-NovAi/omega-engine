@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """SomaticState Round-Trip Verification.
 AP: AP-SOMATIC-ROUNDTRIP-v1.0.0
 

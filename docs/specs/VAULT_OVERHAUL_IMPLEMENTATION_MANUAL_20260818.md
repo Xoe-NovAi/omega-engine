@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Vault Overhaul: Consolidated Implementation Manual
 **AP Token**: `AP-VAULT-IMPLEMENTATION-MANUAL-20260818-v2.0.0` (v2.0.0 = deep-pass 2026-08-18: Parts I added, H.1.4/H.2.5/.6, G1-G15 gap closures)
 **Status**: 🔒 **POST-DEBUT — DO NOT IMPLEMENT DURING PUBLIC-DEBUT-01** (DOC-1 stamp)

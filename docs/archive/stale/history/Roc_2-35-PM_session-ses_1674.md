@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # New personal projects and lab experiments
 
 **Session ID:** ses_16740883bffez29Ql0aYXT1xPH

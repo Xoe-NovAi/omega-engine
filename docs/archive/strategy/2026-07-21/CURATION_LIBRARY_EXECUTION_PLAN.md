@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Curation & Library Security Execution Plan
 ## Sprint H2-N: 4-Phase Implementation Blueprint
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 class TestHardware:
     def test_imports(self):
         from omega.hardware import detect_hardware, HardwareProfile

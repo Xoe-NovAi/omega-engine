@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R53 — Meditate Command Granite Foundation
 **AP Token**: AP-R53-GRANITE-v1.0.0
 ⬡ OMEGA ⬡ KALI ⬡ trc_meditate_granite ⬡ 2026-08-26

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — MASTER DOCUMENT SSoT
 # Single Source of Truth: Document Index & Persistence Plan
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ SSoT-MASTER ⬡ June 2026

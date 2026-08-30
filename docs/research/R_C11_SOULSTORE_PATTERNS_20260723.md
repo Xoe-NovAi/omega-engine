@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 C-11 Property Test Patterns — Domain 2: SoulStore & Single-Writer Actor Model
 **AP Token**: `AP-C11-SOULSTORE-PATTERNS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_c11_soulstore ⬡ 2026-07-23

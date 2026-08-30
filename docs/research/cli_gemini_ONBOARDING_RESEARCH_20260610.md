@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI Onboarding & Initial Research Summary — 2026-06-10
 # ⬡ OMEGA ⬡ CLI_GEMINI ⬡ gemini-2.0-flash ⬡ docs/research ⬡ trc_gemini_onboarding
 

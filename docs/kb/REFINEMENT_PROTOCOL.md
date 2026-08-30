@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Refinement Protocol (Active)
 
 **Canonical Sources**: `RESEARCH_PLAN_REFINEMENT_PROCESS_CASE_STUDY.md`, `STUDY_ITERATIVE_HUMAN_AI_OVERSIGHT.md`, `SYNTHESIS_FRAMEWORK_REFINEMENT_CASE_STUDIES.md`

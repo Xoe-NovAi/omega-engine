@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_CG04: Agent-Safe Credential Vault — BlindVault / Bury / Credential-Bridge Evaluation
 **AP Token**: `AP-R_CG04-VAULT-EVAL-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_vault_eval ⬡ ACTIVE

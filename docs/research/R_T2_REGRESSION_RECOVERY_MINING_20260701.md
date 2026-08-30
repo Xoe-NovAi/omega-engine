@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Mining Report: T2 Regression Recovery
 **AP Token**: `AP-MINING-T2-v1.0.0`
 **Target**: `xna-omega-legacy` & `omega-stack-legacy`

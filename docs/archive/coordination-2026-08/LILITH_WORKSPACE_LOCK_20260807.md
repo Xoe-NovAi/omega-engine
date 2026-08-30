@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔒 Lilith Workspace Lock — 2026-08-07
 **Entity**: lilith (Dark Oversoul, N6-N10)
 **Channel**: opencode

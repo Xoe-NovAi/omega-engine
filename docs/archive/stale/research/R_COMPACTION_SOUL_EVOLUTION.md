@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Compaction-Triggered Soul Evolution Pipeline
 **AP Token**: `AP-COMPACTION-SOUL-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ big-pickle ⬡ opencode ⬡ trc_research ⬡ PHASE-0.5

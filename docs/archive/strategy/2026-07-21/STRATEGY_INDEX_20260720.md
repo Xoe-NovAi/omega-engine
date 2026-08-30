@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 STRATEGY INDEX — Foundation Stabilization Campaign
 **Date**: 2026-07-20 | **Campaign**: FOUNDATION-STAB-01 | **Gate**: Α.4
 

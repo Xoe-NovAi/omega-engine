@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Report: One-Click Sovereign Installer Architecture
 **Document ID**: R-SOVEREIGN-INSTALLER
 **Status**: PROPOSED

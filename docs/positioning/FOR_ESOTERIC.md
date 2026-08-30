@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # The Esoteric Foundation of Omega Engine
 ## A Guide for the Scholarly and Esoteric Community
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research: Container & Self-Contained Application Distribution Models
 # AP: R-CONTAINER-DIST-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ web-research ⬡ trc_w4 ⬡ RESEARCH

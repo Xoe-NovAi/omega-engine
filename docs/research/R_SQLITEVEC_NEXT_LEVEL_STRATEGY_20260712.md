@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 sqlite-vec Next-Level Strategy — Synthesis of Researcher + Jem
 **AP Token**: `AP-KALI-SQLITEVEC-NEXTLEVEL-20260712`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_sqlitevec_synthesis ⬡ ACTIVE

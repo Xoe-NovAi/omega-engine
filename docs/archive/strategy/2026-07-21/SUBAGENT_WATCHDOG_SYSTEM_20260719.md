@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Subagent Watchdog System — Failure Observability for Agent Orchestration
 **AP Token**: `AP-WATCHDOG-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_watchdog ⬡ 2026-07-19

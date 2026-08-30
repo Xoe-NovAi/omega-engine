@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TEST-PROVIDER-REGISTRY-CONFIG-20260809
 # 🔱 ProviderRegistry Config Loading Test
 # Verifies ProviderRegistry correctly loads providers from config/providers.yaml

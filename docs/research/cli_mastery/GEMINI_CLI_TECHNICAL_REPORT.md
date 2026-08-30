@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI Technical Report
 **Status**: Sovereign Verified
 **Source**: Research Fleet ses_1caa3134bffeEVK0RqcfgKxJ4d

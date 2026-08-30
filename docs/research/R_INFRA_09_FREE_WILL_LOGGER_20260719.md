@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R-INFRA-09: Free-Will Choice Dataset — Mandate Compliance as Training Data
 **AP Token**: `AP-INFRA-09-FREE-WILL-v1.0.0`
 ⬡ OMEGA ⬡ PARANOID ⬡ o1 ⬡ opencode ⬡ trc_infra_09_free_will ⬡ 2026-07-19

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Gap Resolution Report — Unified Knowledge Fabric
 **AP Token**: `AP-GAP-RESOLUTION-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_gap_resolution ⬡ RESOLVED
