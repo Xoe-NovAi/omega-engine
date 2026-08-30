@@ -44,6 +44,20 @@ repos:
         additional_dependencies: [types-requests, types-PyYAML, types-cryptography]
         args: ["--ignore-missing-imports", "--no-strict-optional"]
 
+  # M37 Heritage — REUSE v3.3 SPDX compliance
+  # Per RESEARCHER_GAP_FILL_PHASE_2_20260830.md MED-3 pattern.
+  # https://reuse.software/spec-3.3/ — every file MUST have SPDX headers.
+  # reuse-lint-file: faster per-file check on staged files
+  # reuse: whole-project lint (slower, runs in CI)
+  - repo: https://codeberg.org/fsfe/reuse-tool
+    rev: v6.2.0
+    hooks:
+      - id: reuse
+        args: ["lint"]
+        stages: [pre-push]  # Full project lint on push (slower)
+      - id: reuse-lint-file
+        stages: [pre-commit]  # Per-file lint on commit (fast)
+
   # Security - detect secrets (C3-P0-1c — gitleaks is the canonical gate)
   # [INST-1-C3] gitleaks + trufflehog wired to pre-commit AND CI
   # Per DEBUT_REMEDIATION_MANUAL §5 P0-1c: planted sk-/csk-/AIza fixture must fail.

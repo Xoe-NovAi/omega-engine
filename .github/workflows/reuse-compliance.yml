@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# M37 Heritage — REUSE v3.3 Compliance Gate
+# Verifies all source files have proper SPDX-FileCopyrightText and
+# SPDX-License-Identifier headers per the REUSE specification.
+# https://reuse.software/spec-3.3/
+
+name: REUSE Compliance (M37)
+
+on:
+  push:
+    branches: [ "main", "release/initial-v1", "release/debut" ]
+  pull_request:
+    branches: [ "main", "release/initial-v1", "release/debut" ]
+
+jobs:
+  reuse-lint:
+    name: REUSE v3.3 Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install REUSE tool
+      run: |
+        python -m pip install --upgrade pip
+        pip install reuse==6.2.0
+
+    - name: Download license texts
+      run: |
+        # Ensure all license files referenced by SPDX-License-Identifier are present
+        reuse download --all
+
+    - name: Run REUSE lint
+      run: |
+        # Verify REUSE v3.3 compliance — fails the build if any file
+        # is missing SPDX-FileCopyrightText or SPDX-License-Identifier.
+        reuse --version
+        reuse lint
