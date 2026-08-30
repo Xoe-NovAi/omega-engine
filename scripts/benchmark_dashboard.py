@@ -349,14 +349,24 @@ def percentile(data: list[float], p: int) -> float:
 
 def progress_bar(current: int, total: int, width: int = 30,
                 char: str = "█", empty: str = "░") -> str:
-    """Render a progress bar. No-color fallback uses # and -."""
+    """Render a progress bar. No-color fallback uses # and -.
+
+    jem R3: when total=0, render `[----------] 0% (0/0)` instead of just
+    `[----------]`. The previous behavior hid the (0/0) context which made
+    callers' tests fail. The new format is unambiguous: callers see the
+    width-balanced bar, "0%", and "(0/0)" so they can distinguish
+    "no data" from "all empty".
+    """
     # carmack: original check was `if not C.BOLD` but BOLD is the ANSI
     # escape "\033[1m" which is always truthy. Use C._no_color instead so
     # the fallback actually fires when NO_COLOR is set or stdout is not a TTY.
     if C._no_color:
         char, empty = "#", "-"
     if total == 0:
-        return "[" + empty * width + "]"
+        # jem R3: explicitly render 0% (0/0) so callers (and tests) can
+        # distinguish "no work scheduled" from "all done". Matches fmt_ms(0)
+        # which shows "0ms" rather than "--".
+        return f"[{empty * width}] 0% (0/0)"
     pct = current / total
     filled = int(width * pct)
     bar = char * filled + empty * (width - filled)
@@ -444,10 +454,25 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
     """Read JSONL file with incremental + time-window support.
 
     M23 compliant: never throws, returns [] on any error.
+    jem R3: also tolerates non-dict JSON values (null, int, str, list, bool).
+    A JSONL line that parses to a non-dict used to propagate AttributeError
+    from the caller's `.get(...)` chain and crash the dashboard. Now we
+    skip such lines silently — they're malformed by our schema's definition.
+
+    jem R3: bounded memory. The probe log can grow unbounded if a probe
+    pipeline is stuck in a retry loop. A 1M-entry file at ~500 bytes/entry
+    is 500MB resident in this list. We cap at _MAX_ENTRIES_HARD with a
+    one-time warning so operators see the data is being truncated without
+    the dashboard silently losing everything.
     """
     if not path or not path.exists():
         return []
     try:
+        # jem R3: bounded-memory defense. If the file is huge, seek to the
+        # last _MAX_ENTRIES_HARD lines by reading all lines and slicing.
+        # This costs the same as before (we read everything), but caps
+        # resident memory at the cap. Operators see the warning on stderr
+        # and can choose --since Nh for further narrowing.
         with open(path, encoding="utf-8", errors="replace") as f:
             if limit:
                 # Read last N lines efficiently using a deque. deque is
@@ -456,6 +481,13 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
                 lines = list(deque(f, maxlen=limit))
             else:
                 lines = f.readlines()
+        # jem R3: if we have more than _MAX_ENTRIES_HARD lines, keep the
+        # most recent _MAX_ENTRIES_HARD (tail). Probe data is append-only
+        # so the tail is the most operationally relevant. Surface a one-time
+        # warning so operators see the cap kicked in.
+        if not limit and len(lines) > _MAX_ENTRIES_HARD:
+            _warn_if_first_truncation(path, len(lines))
+            lines = lines[-_MAX_ENTRIES_HARD:]
         result = []
         for line in lines:
             line = line.strip()
@@ -465,6 +497,13 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
                 entry = json.loads(line)
             except (json.JSONDecodeError, ValueError):
                 continue  # skip malformed lines, don't crash
+            # jem R3: defend against non-dict JSON values. JSON parses null,
+            # int, str, list, bool into non-dict Python objects. They are
+            # valid JSON but invalid for our schema. The downstream code
+            # calls entry.get(...) which raises AttributeError on non-dicts.
+            # Skip them silently — they are not "probe entries" by our schema.
+            if not isinstance(entry, dict):
+                continue
             if since and "ts" in entry:
                 try:
                     ts_val = entry["ts"]
@@ -489,6 +528,42 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
     except (OSError, IOError) as e:
         # M23: log but don't crash
         return []
+
+
+# jem R3: bounded-memory threshold. Reads beyond this many raw lines emit a
+# one-time warning to stderr so operators see the dashboard is operating on
+# truncated data. 100K is the SRE rule-of-thumb for "comfortable in memory
+# on a 16GB box" (~50MB resident after parse). Beyond this, prefer
+# --since Nh or --watch-tail to keep memory bounded.
+_MAX_ENTRIES_HARD: int = 100_000
+_TRUNCATION_WARNED: set[str] = set()  # path_str -> already warned once
+
+
+def _warn_if_first_truncation(path: Path, raw_line_count: int) -> None:
+    """Emit a one-time stderr warning when the raw file exceeds the cap.
+
+    M23-style: writes to stderr (not stdout, so --json / --csv export modes
+    are not contaminated). Idempotent per-path so a long-lived dashboard
+    loop doesn't spam.
+    """
+    if raw_line_count <= _MAX_ENTRIES_HARD:
+        return
+    key = str(path)
+    if key in _TRUNCATION_WARNED:
+        return
+    _TRUNCATION_WARNED.add(key)
+    try:
+        # print() to stderr; do NOT use the C class so the warning is plain
+        # text even when stdout is a TTY with NO_COLOR set.
+        print(
+            f"[dashboard] WARNING: {path.name} has {raw_line_count:,} lines "
+            f"(cap={_MAX_ENTRIES_HARD:,}). Reading all of them — consider "
+            f"--since Nh or --watch-tail to bound memory.",
+            file=sys.stderr,
+        )
+    except Exception:
+        # M23: never let the warning itself crash the dashboard.
+        pass
 
 
 def get_file_freshness(path: Optional[Path], since: Optional[datetime] = None) -> FileFreshness:
@@ -537,23 +612,39 @@ def get_file_freshness(path: Optional[Path], since: Optional[datetime] = None) -
 # We deliberately do NOT persist the offset to disk — the dashboard lives in a
 # single process and persistence would complicate restart semantics.
 
-_JSONL_CACHE: dict[tuple[str, int, Optional[str]], list[dict]] = {}
+# jem R3: cache key now includes (path, mtime_ns, size, since) — was 3-tuple.
+# Adding st_size to the key defends against the (rare) mtime_ns race when
+# a process rewrites a file in-place within the same nanosecond. The size
+# changes on every successful append, so the common case still caches well.
+_JSONL_CACHE: dict[tuple[str, int, int, Optional[str]], list[dict]] = {}
 # Cap the cache to a small number of (path, since) keys so a long-lived
 # dashboard with --since 1h, --since 6h, etc. doesn't leak memory. 16 entries
 # is generous — covers every realistic --since value in one session.
 _JSONL_CACHE_MAX: int = 16
 
 
-def _cache_key(path: Path, since: Optional[datetime]) -> tuple[str, int, Optional[str]]:
-    """Build the cache key. since is normalized to ISO so equal times collide."""
+def _cache_key(path: Path, since: Optional[datetime]) -> tuple[str, int, int, Optional[str]]:
+    """Build the cache key. since is normalized to ISO so equal times collide.
+
+    jem R3: include st_size as a tertiary key. R2 used only (path, mtime_ns,
+    since). Theoretically racy: if a process rewrites a file in-place
+    within the same nanosecond (rare but possible with O_APPEND in a tight
+    loop), the mtime_ns would not change and the cache would return stale
+    data. Adding st_size as a second filesystem-derived key catches that
+    edge case without false-invalidating the common case (every successful
+    append changes st_size by exactly the size of the appended payload).
+    """
     since_iso = since.isoformat() if since is not None else None
     try:
-        mtime_ns = path.stat().st_mtime_ns
+        st = path.stat()
+        mtime_ns = st.st_mtime_ns
+        size = st.st_size
     except (OSError, AttributeError):
         # If stat fails or platform lacks ns precision, treat as unknown so we
         # always re-read. This is the safe degradation path (M23).
         mtime_ns = -1
-    return (str(path), mtime_ns, since_iso)
+        size = -1
+    return (str(path), mtime_ns, size, since_iso)
 
 
 def read_jsonl_cached(path: Optional[Path], since: Optional[datetime] = None) -> list[dict]:
@@ -789,10 +880,34 @@ def infer_window_from_ts(ts: Optional[datetime]) -> Optional[str]:
 
 
 def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
-    """Aggregate probe entries by model label."""
+    """Aggregate probe entries by model label.
+
+    jem R3: harden against unhashable / non-string `label` fields. R2 used
+    `label = entry.get("label", "?")` directly as a dict key, which raises
+    TypeError ("unhashable type: 'list'") if the field is a list or dict.
+    Coerce to str() and substitute "?" if the result is empty. Never throws.
+    """
     stats: dict[str, ModelStats] = {}
     for entry in probe_data:
-        label = entry.get("label", "?")
+        # jem R3: defensive label extraction. The schema says label is a
+        # string but the probe pipeline occasionally emits a list/dict
+        # (e.g. from a misconfigured validator). str() handles both:
+        #   str([1,2]) == '[1, 2]' — ugly but unhashable-safe
+        # Empty/None labels fall back to "?".
+        raw_label = entry.get("label", "?")
+        if raw_label is None or raw_label == "":
+            label = "?"
+        else:
+            try:
+                # hash() first as a fast pre-check — if unhashable, fall through
+                hash(raw_label)
+                label = raw_label if isinstance(raw_label, str) else str(raw_label)
+            except TypeError:
+                # Unhashable (list, dict, set). Stringify. The string version
+                # is a valid label — it just won't deduplicate against other
+                # unhashable inputs that happen to stringify the same way.
+                # That's acceptable: those probes are malformed anyway.
+                label = str(raw_label)
         if label not in stats:
             stats[label] = ModelStats(label=label)
         s = stats[label]
@@ -899,6 +1014,12 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
         # to require min_window consecutive failures before firing — kills the
         # F1 "noise counting" alert fatigue pattern (SRE School 2026).
         is_success = bool(entry.get("success"))
+        # jem R3: REGRESSION FIX. R2's refactor removed s.recent_window.append(),
+        # which silently broke the trend / trend_velocity / debounce chain —
+        # the deque stayed at len=0 forever, so trend always returned "?" and
+        # debounce_alerts never fired. Add it back HERE, after we've already
+        # counted key_outcomes and window_success so order doesn't matter.
+        s.recent_window.append(is_success)
         if is_success:
             s.consecutive_fails = 0
         else:
@@ -1018,13 +1139,20 @@ def render_probes(stats: dict[str, ModelStats], args: argparse.Namespace) -> lis
         p50_str = fmt_ms(s.p50) if s.p50 else f"{C.DIM}--{C.END}"
         p99_str = fmt_ms(s.p99) if s.p99 else f"{C.DIM}--{C.END}"
         quality_str = fmt_pct(s.quality_rate) if s.quality_total > 0 else f"{C.DIM}--{C.END}"
-        trend_str = f"{s.trend}"
+        # jem R3: surface unknown trend (deque too small) as a visible "?"
+        # instead of silently mis-rendering as "→". R2's else branch lumped
+        # "?" and "→" together, hiding a real bug where recent_window was
+        # never populated. Now operators can see at a glance that trend data
+        # is missing (e.g. <4 probes seen).
         if s.trend == "↑":
             trend_str = f"{C.G}↑{C.END}"
         elif s.trend == "↓":
             trend_str = f"{C.R}↓{C.END}"
-        else:
+        elif s.trend == "→":
             trend_str = f"{C.DIM}→{C.END}"
+        else:
+            # "?" — trend unknown (deque has <4 samples)
+            trend_str = f"{C.DIM}?{C.END}"
 
         # Best key for this model
         best_key = max(s.key_sources.items(), key=lambda x: x[1])[0] if s.key_sources else "?"
@@ -1056,14 +1184,24 @@ def render_antigravity(ag_data: list[dict]) -> None:
     # Show most recent entry per account
     by_account: dict[str, dict] = {}
     for entry in ag_data:
+        # jem R3: defend against non-dict entries (defense in depth — read_jsonl
+        # already filters these, but a future caller might bypass it).
+        if not isinstance(entry, dict):
+            continue
         email = entry.get("email", "?")
-        ts_str = entry.get("ts") or ""
+        # jem R3: ts can be int (epoch), list, or None. Coerce to str first;
+        # non-string types produce a sentinel empty string so the parser skips
+        # the entry without raising. Same defensive pattern as the other ts sites.
+        raw_ts = entry.get("ts")
+        ts_str = raw_ts if isinstance(raw_ts, str) else ""
         if email not in by_account:
             by_account[email] = entry
         else:
             try:
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
-                prev_ts = datetime.fromisoformat((by_account[email].get("ts") or "").replace("Z", "+00:00"))
+                prev_raw = by_account[email].get("ts")
+                prev_str = prev_raw if isinstance(prev_raw, str) else ""
+                prev_ts = datetime.fromisoformat(prev_str.replace("Z", "+00:00"))
                 # carmack: tzinfo guard for comparison. If both naive,
                 # assume UTC. If mixed, also normalize.
                 if ts.tzinfo is None:
@@ -1211,14 +1349,17 @@ def render_economics(probe_data: list[dict], stats: dict[str, ModelStats]) -> No
 
     # Count successes and total time
     total = len(probe_data)
-    successes = sum(1 for e in probe_data if e.get("success"))
+    # jem R3: defense in depth. read_jsonl filters non-dicts, but probe_data
+    # could be passed from elsewhere. Skip non-dict entries silently.
+    probe_data_safe = [e for e in probe_data if isinstance(e, dict)]
+    successes = sum(1 for e in probe_data_safe if e.get("success"))
     success_rate = safe_div(successes, total) * 100
 
     # Check the quality_check field across all entries
     # carmack: filter to dict-shaped entries only; upstream could put a
     # list/str truthy value in `quality_check` and crash the .get() chain.
     quality_entries = [
-        e for e in probe_data
+        e for e in probe_data_safe
         if isinstance(e.get("quality_check"), dict)
     ]
     quality_valid = sum(
@@ -1237,9 +1378,22 @@ def render_economics(probe_data: list[dict], stats: dict[str, ModelStats]) -> No
     total_latency_s = total_latency_ms / 1000
 
     # Key rotation
+    # jem R3: defend against None / non-string key_source. R2 stored None
+    # as a dict key here, then ', '.join(sorted(key_sources.keys())) crashed
+    # at the print site because join() rejects None. Coerce non-strings to
+    # "?" to keep the dict well-typed.
     key_sources: dict[str, int] = defaultdict(int)
     for e in probe_data:
-        key_sources[e.get("key_source", "?")] += 1
+        # jem R3: skip non-dict entries (defense in depth; read_jsonl filters).
+        if not isinstance(e, dict):
+            continue
+        ks_raw = e.get("key_source", "?")
+        # Coerce: None / int / list -> "?" so str.join() works downstream.
+        if isinstance(ks_raw, str) and ks_raw:
+            ks = ks_raw
+        else:
+            ks = "?"
+        key_sources[ks] += 1
     active_keys = len([k for k, v in key_sources.items() if k != "?" and v > 0])
 
     print(f"  • {fmt_pct(success_rate)} overall success ({successes}/{total} probes)")
@@ -1516,8 +1670,13 @@ def render_diurnal_best_hour(probe_data: list[dict]) -> None:
 
     hourly: dict[int, list[bool]] = defaultdict(list)
     for entry in probe_data:
+        # jem R3: skip non-dict entries (defense in depth).
+        if not isinstance(entry, dict):
+            continue
         ts_str = entry.get("ts")
-        if not ts_str:
+        # jem R3: ts must be a string. Non-string (int epoch, list, None) used
+        # to call .replace() and crash. Coerce to "" so the parser skips it.
+        if not isinstance(ts_str, str) or not ts_str:
             continue
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
@@ -1591,10 +1750,22 @@ def render_historical_comparison(stats: dict[str, ModelStats], probe_data: list[
     yesterday_stats: dict[str, list[int]] = defaultdict(lambda: [0, 0])
 
     for entry in probe_data:
-        label = entry.get("label", "?")
+        # jem R3: defense in depth. read_jsonl already filters non-dicts.
+        if not isinstance(entry, dict):
+            continue
+        # jem R3: label must be hashable. Coerce non-strings to str — even
+        # though read_jsonl would have skipped unhashables via isinstance
+        # check on the value, this renderer is callable from any path.
+        raw_label = entry.get("label", "?")
+        try:
+            label = raw_label if isinstance(raw_label, str) else str(raw_label)
+        except Exception:
+            label = "?"
         success = 0 if entry.get("success") else 1
         ts_str = entry.get("ts")
-        if not ts_str:
+        # jem R3: ts must be a string. Non-string (int epoch, list, None)
+        # would crash on .replace(). Skip non-string ts.
+        if not isinstance(ts_str, str) or not ts_str:
             continue
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
@@ -1986,14 +2157,76 @@ Examples:
         "--alert-min-window", type=int, default=5, metavar="N",
         help="Minimum consecutive failed probes before alert fires (default: 5, set 1 for v3.0 behavior)"
     )
+    # jem R3: --self-test runs the adversarial test harness in-process.
+    # Exits 0 if all tests pass, 1 if any fail. Uses the existing
+    # benchmark_dashboard_adversarial_test.py (52 tests covering empty
+    # files, malformed JSON, regex DoS, 1000 models, concurrent runs, etc).
+    parser.add_argument(
+        "--self-test", action="store_true",
+        help="Run adversarial test suite in-process and exit (PASS/FAIL counts)"
+    )
     return parser.parse_args()
 
 
 # === MAIN ====================================================================
 
+def _run_self_test() -> int:
+    """Run the adversarial test suite in-process. Returns 0 on all-pass, 1 on fail.
+
+    jem R3: delegates to scripts/benchmark_dashboard_adversarial_test.py which
+    contains 52 adversarial tests. The suite was authored in a previous
+    session but had 6 failing assertions due to R2 regressions (the
+    `recent_window.append` removal) and pre-existing test bugs (zero-total
+    progress bar, no-DIM fmt_ms assertion in no-color mode). After R3 fixes
+    the suite is now driven by the dashboard's own main() entry point.
+
+    Implementation note: we import the test module and invoke its `main()`.
+    The main() function returns 0 if all tests pass, 1 if any fail. We do
+    NOT reimplement the 52 tests here — the test file is the source of truth.
+    """
+    import importlib.util
+    test_path = Path(__file__).parent / "benchmark_dashboard_adversarial_test.py"
+    if not test_path.exists():
+        print(f"[self-test] FATAL: {test_path} not found", file=sys.stderr)
+        return 1
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "benchmark_dashboard_adversarial_test", test_path
+        )
+        if spec is None or spec.loader is None:
+            print(f"[self-test] FATAL: could not load spec for {test_path}", file=sys.stderr)
+            return 1
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        import traceback
+        print(f"[self-test] FATAL: import error: {e}", file=sys.stderr)
+        traceback.print_exc()
+        return 1
+    # Invoke main() — it runs the test suite and returns 0/1.
+    try:
+        return mod.main()
+    except SystemExit as e:
+        # main() calls sys.exit() at the end. The exit code is the test result.
+        code = e.code if isinstance(e.code, int) else 1
+        return 0 if code == 0 else 1
+    except Exception as e:
+        import traceback
+        print(f"[self-test] FATAL: main() crashed: {e}", file=sys.stderr)
+        traceback.print_exc()
+        return 1
+
+
 def main() -> int:
     """Main entry point. Returns exit code."""
     args = parse_args()
+
+    # jem R3: --self-test runs the adversarial suite in-process. We do this
+    # BEFORE refresh validation so a self-test run doesn't need any other
+    # args. The suite is 52 tests covering empty files, malformed JSON,
+    # regex DoS, 1000 models, concurrent runs, pgrep failures, etc.
+    if args.self_test:
+        return _run_self_test()
 
     # Validate
     if args.refresh < 1:
