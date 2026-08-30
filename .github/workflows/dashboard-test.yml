@@ -1,0 +1,81 @@
+---
+# 🔱 Omega Engine — Dashboard CI Pipeline
+# ⬡ OMEGA ⬡ MAAT ⬡ github-actions ⬡ trc_ci ⬡ ROUND-4
+#
+# Verifies scripts/benchmark_dashboard.py ship-readiness:
+#   - --once renders OK (smoke test for renderer)
+#   - --self-test passes (53 adversarial tests)
+#   - pytest tests/unit/test_benchmark_dashboard.py passes (129 unit tests)
+#   - --json / --csv emit valid output
+#   - Determinism: schema stable across two runs
+#
+# Per M13 Temple-Grade: this gate MUST pass before any release of the dashboard.
+# Total runtime budget: <30s.
+name: Dashboard Test
+
+on:
+  push:
+    branches: ["main", "develop", "release/debut"]
+  pull_request:
+    branches: ["main", "release/debut"]
+  workflow_dispatch:
+
+env:
+  NO_COLOR: "1"  # Disable ANSI for deterministic test output
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  dashboard-test:
+    name: "🧪 Dashboard Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 2  # Hard cap; budget is <30s.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: pyproject.toml
+
+      - name: Install minimal dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install pytest
+
+      - name: "Smoke: --once render"
+        run: |
+          python3 scripts/benchmark_dashboard.py --once --no-clear 2>&1 | head -10
+
+      - name: "Adversarial: --self-test (53 tests)"
+        run: |
+          python3 scripts/benchmark_dashboard.py --self-test
+
+      - name: "Unit: pytest (129 tests)"
+        run: |
+          cd "$(git rev-parse --show-toplevel)"
+          python3 -m pytest tests/unit/test_benchmark_dashboard.py -v --tb=short -p no:cacheprovider --confcutdir=tests/unit
+
+      - name: "Export: --json valid JSON"
+        run: |
+          python3 scripts/benchmark_dashboard.py --json > /tmp/dash.json
+          python3 -c 'import json,sys; d=json.load(open("/tmp/dash.json")); req=["version","timestamp","freshness","models","filters"]; miss=[k for k in req if k not in d]; assert not miss, f"missing keys: {miss}"; print("JSON export OK keys=", sorted(d.keys()))'
+
+      - name: "Export: --csv valid CSV"
+        run: |
+          python3 scripts/benchmark_dashboard.py --csv > /tmp/dash.csv
+          python3 -c 'import csv,sys; r=csv.reader(open("/tmp/dash.csv")); h=next(r); exp=["model","success","fail","total","rate","p50_ms","p99_ms","outlier_pct","quality_rate","valid","invalid_json","no_completion","empty_content","trend","trend_velocity","last_seen"]; assert h==exp, f"mismatch: {h}"; print("CSV export OK cols=", len(h))'
+
+      - name: "Determinism: --json schema stable across two runs"
+        run: |
+          # D-Maat-R4-3: Two fields are intentionally time-dependent and MUST vary:
+          #   1. state["timestamp"]  (= rendered_at)
+          #   2. freshness[*]["age_seconds"]  (= how old each file is right now)
+          # What we verify is that the *shape* and *semantic payload* are stable:
+          # top-level keys, per-source freshness structure, and model dicts do
+          # not drift between runs. (See BENCHMARK_DASHBOARD.md §Determinism.)
+          python3 scripts/benchmark_dashboard.py --json > /tmp/run1.json
+          python3 scripts/benchmark_dashboard.py --json > /tmp/run2.json
+          python3 scripts/check_dashboard_determinism.py /tmp/run1.json /tmp/run2.json
