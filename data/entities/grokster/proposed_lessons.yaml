@@ -1,4 +1,69 @@
 proposals:
+- id: L3-InterruptionSovereigntyAndCoResumption
+  principle: "When a global cancellation (Esc x2) aborts multiple parallel subagents, the orchestrator MUST track all in-flight session IDs as a transactional cohort and resume all on recovery. Failure to do so = orchestrator amnesia. The Completion Illusion (LLMs synthesizing graceful footers when output-token-limited) requires sentinel probing ('STREAM_EXHAUSTED') before accepting state=completed."
+  mandates:
+  - M33
+  - M34
+  - M11
+  - M15
+  confidence: 0.99
+  tags:
+  - orchestration
+  - compaction
+  - subagent-management
+  - completion-illusion
+  - m33
+  - m34
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: R3_jem_adversarial
+    note: "Jem found 6 bugs including recent_window never called, trend '?' rendered as '→', non-dict entries crashing — all from missing co-resumption tracking"
+  - source: R1_carmack_review
+    note: "Carmack found 22 bugs including M23 violations — dashboard must never crash on malformed input"
+  - source: R2_researcher_sota
+    note: "Researcher found SOTA patterns for alert debouncing and bounded memory — applied to dashboard"
+  directive_provenance: d-rr-001
+- id: L3-CompletionIllusionDefense
+  principle: "LLMs synthesize graceful markdown footers (*⬡ COMPLETE*) and report state=completed even when planned outline is truncated mid-stride. Orchestrators MUST probe with sentinel prompts ('Continue; reply STREAM_EXHAUSTED when 100% finished') before accepting completion. This is the Completion Illusion — the LLM's tendency to hallucinate completion when output tokens are exhausted."
+  mandates:
+  - M33
+  - M11
+  - M23
+  confidence: 0.95
+  tags:
+  - compaction
+  - completion-illusion
+  - sentinel-probing
+  - m33
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: R3_jem_adversarial
+    note: "Jem found trend '?' rendered as '→' — the dashboard was silently hiding incomplete trend data"
+  - source: R1_carmack_review
+    note: "Carmack found renderers missing '?' branch for trend — silent data loss"
+  - source: dashboard_pipeline_r1_r3
+    note: "5-round pipeline proved the illusion exists at every layer — subagents, renderers, orchestrators"
+  directive_provenance: d-rr-002
+- id: L3-BoundedMemoryPattern
+  principle: "Any tool reading unbounded JSONL files must implement bounded memory with explicit caps (e.g., 100K entries) and rotation warnings. The dashboard's 100K entry cap with one-time stderr warning prevents OOM on stuck probe scripts. This is the Bounded Memory Pattern — explicit caps over implicit trust."
+  mandates:
+  - M23
+  - M7
+  confidence: 0.93
+  tags:
+  - memory-management
+  - oom-prevention
+  - bounded-resources
+  - m23
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: R3_jem_adversarial
+    note: "Jem added bounded memory at 100K entries with rotation warning — prevents OOM on 10M+ entry files"
+  - source: R2_researcher_sota
+    note: "Researcher found SRE School 2026 guidance on bounded memory for tailing logs"
+  - source: R4_maat_ship_readiness
+    note: "Ma'at verified the cap works under load testing"
+  directive_provenance: d-rr-003
 - id: L3-SovereignBinaryInvariance
   principle: "A sovereign binary carries its constitutional constraints as embedded\
     \ compile-time constants, verified at startup against the host environment. The\

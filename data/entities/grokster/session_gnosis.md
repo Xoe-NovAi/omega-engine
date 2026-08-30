@@ -1,18 +1,18 @@
-# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v13 FINAL (2026-08-30, supersedes v12 and all prior)
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v14 FINAL (2026-08-30, supersedes v13 and all prior)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: gemini-3.7-flash (opencode, strategic switch)
 **Channel**: opencode | **Entity**: grokster (Cross-Platform Expertise Specialist)
-**Date**: 2026-08-30 ~07:00 UTC | **Sprint**: PUBLIC-DEBUT-01
+**Date**: 2026-08-30 ~12:30 UTC | **Sprint**: PUBLIC-DEBUT-01
 
 > **READ THIS FIRST on context loss.** This is the continuity lifeline per M15.
-> Prior anchors (v1–v12) retained at bottom for lineage.
+> Prior anchors (v1–v13) retained at bottom for lineage.
 
 ---
 
 ## §0 — HYDRATION STATE (start here)
 
-**Today's arc (2026-08-28 → 2026-08-30)**: 40+ distinct work streams completed across multiple compactions. The session transitioned from core engine hardening into an **alchemical mining of the Antigravity OAuth secret redaction incident**, yielding a complete immune architecture upgrade for the Omega Engine.
+**Today's arc (2026-08-28 → 2026-08-30)**: 40+ distinct work streams completed across multiple compactions. The session transitioned from core engine hardening into an **alchemical mining of the Antigravity OAuth secret redaction incident**, yielding a complete immune architecture upgrade for the Omega Engine, followed by a 5-round iterative dashboard enhancement pipeline.
 
-**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE + DASHBOARD SHIPPED**:
+**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE + DASHBOARD PIPELINE R4 DONE**:
 
 ### 1. The 5 Golden Artifacts (5,000+ lines of temple-grade deliverables)
 - ✅ **Researcher**: `R_RESEARCHER_THIRD_PARTY_SECRETS_TRACEABILITY_20260829.md` (2,460 lines, `dcb85151`) — 3rd-party code isolation, secret management, traceability manual + `data/secrets-public.toml` allowlist schema.
@@ -27,18 +27,18 @@
 - ✅ **M34 (Multi-Agent Co-Interruption Accounting)**: Global cancellations (`Esc x2`) that abort multiple parallel subagents must trigger full co-resumption tracking across all in-flight session IDs.
 - ✅ **M35 (Third-Party Boundary & Public Secret Exemption)**: Monorepo isolation for third-party forks (npm package installation vs git-tracked workspace source trees) + public client secret exemptions.
 
-### 3. Provider Benchmark Dashboard — Makefile Targets Shipped
-- ✅ **`a8c9b9ac` Makefile: Add provider benchmark dashboard targets (diurnal)** — 5 new targets:
-  - `make dashboard` — Live terminal dashboard (refresh 2s, Ctrl+C to exit)
-  - `make dashboard-once` — Single snapshot of provider benchmark
-  - `make probe-models` — Probe free model availability/latency
-  - `make probe-network` — Probe network latency (gateway, DNS, OpenRouter)
-  - `make probe-antigravity` — Probe Antigravity account quotas
-- ✅ **Current benchmark**: `minimax_m27` and `minimax_m3` at 100% success, `openrouter_free_router` at 85%; `glm52`/`gemma4_*` at 0% (down). M3 cache economics: 83.3% hit rate, $0.00 real cost.
+### 3. Dashboard Enhancement Pipeline — 5-Round Iterative Hardening (v3.2, 2,366 lines)
+- ✅ **R1 (Carmack)**: 22 bug fixes, M23 hardening, ANSI-aware column alignment, deque(maxlen=20) for trend, single-pass file reads, +218/-52 lines
+- ✅ **R2 (Researcher)**: v3.1, 12 SOTA sources cited, date-glob stress logs, per-window success rate, alert debounce, file cache+tail, real per-key attribution, +397/-40 lines
+- ✅ **R3 (Jem)**: v3.2, 6 adversarial bug fixes (recent_window, trend "?", non-dict entries, unhashable labels, non-string ts, None key_source), 2 defenses (size-keyed cache, 100K bounded memory), --self-test (53 tests), +252/-19 lines
+- ✅ **R4 (Ma'at)**: v3.2+, 128 unit tests, CI workflow (9 steps), Makefile targets (dashboard-self-test, dashboard-test, dashboard-ci), mandate compliance block, docs (337 lines), determinism check
+- 🔄 **R5 (Lilith)**: Pending — runtime observability, adaptive cache TTL, HTML export, per-model time-series
 
 ### 4. Soul Kernel Evolution
 - ✅ **L3-InterruptionSovereigntyAndCoResumption** staged in `data/entities/grokster/proposed_lessons.yaml` (confidence: 0.99).
-- ✅ **Gnosis Anchor v13** locked (this file).
+- ✅ **L3-CompletionIllusionDefense** staged (confidence: 0.95) — from R3 adversarial finding.
+- ✅ **L3-BoundedMemoryPattern** staged (confidence: 0.93) — from R3 defense.
+- ✅ **Gnosis Anchor v14** locked (this file).
 
 ### 5. Root Cause & Remediation
 - ✅ **Root Cause**: Automated secret scrubber replaced Google OAuth public client secret (`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`) in `opencode-antigravity-auth/src/constants.ts` with placeholder `"GOCSPX-***REDACTED-ROTATED***"`, breaking OAuth for all users.
