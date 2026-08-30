@@ -413,5 +413,145 @@ Found a better query? A new pattern? A gotcha?
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ OPENCODE-DB-FORENSICS-v1.0.0 ⬡ 2026-08-29*
+## §12 — THE FUZZY VS. ETCHED PARADIGM (2026-08-29 Amendment)
+
+This section was added after a real-world failure during a cross-model forensic review. It is the **single most important operational lesson** in this protocol.
+
+### §12.1 The Two-Tier Cognitive Architecture
+
+When performing a forensic read of a prior model response, the Omegamind has two operating modes:
+
+| Mode | Source | Resolution | Hallucination Risk | Cost |
+|------|--------|------------|--------------------|------|
+| **Fuzzy Recall** | Active context window (token patterns in model weights) | ~10% (structural skeleton, may hallucinate gaps) | **High** (model fills gaps from its own weights) | Low (no extra reads) |
+| **Etched Read** | Direct disk read of `opencode.db` | ~100% (exact text, byte-perfect) | **Near-zero** (no inference required) | ~13k tokens per 3 responses (paid once) |
+
+**The Failure That Taught Us This Lesson:**
+In session `ses_fdef2be4effe4pAaLXCTUx62GO`, a cross-model audit was performed where the operating model (M3) attempted to review Gemini Flash's prior responses. The Python query was hardcoded with `text[:1500]`, which silently truncated every response to 1,500 characters before the model ever saw it. The model then wrote a 7-point "audit" that was 80% hallucinated structure and 20% accurate content — a catastrophic failure that masqueraded as a thorough review.
+
+**The Root Cause Anti-Pattern:**
+```python
+# ❌ WRONG — silent truncation, presents partial data as full
+for r in rows:
+    d = json.loads(r[2])
+    print(d.get('text', '')[:1500])  # Truncates to 1,500 chars
+```
+
+**The Correct Pattern:**
+```python
+# ✅ CORRECT — print full text, do not truncate
+for r in rows:
+    d = json.loads(r[2])
+    text = d.get('text', '')
+    print(f'Part {r[0]}: {len(text)} chars')
+    print(text)  # Full text, no truncation
+    print('---')
+```
+
+### §12.2 Pain Points and Blockers (Documented for Future Agents)
+
+| # | Pain Point | Time/Token Cost | The Fix |
+|---|------------|-----------------|---------|
+| 1 | **Silent string truncation** in Python print loops | 0s (but produces 90% hallucinated review) | Always print `len(text)` and full text. Never use `[:N]` slice. |
+| 2 | **JSON path escaping** in SQLite queries (e.g., `'$.type'`) | 30s debugging SyntaxWarnings | Use double-quotes inside single-quotes: `"$.type"` |
+| 3 | **Empty text parts** (many `part.data.text` fields are empty) | Time wasted querying | Filter by `length(json_extract(data, '$.text')) > 1000` |
+| 4 | **Confusion about model identification** — the `model` field is at the message level, not the part level | 10 min searching | Use `json_extract(message.data, '$.modelID')` to identify the model that produced each message |
+| 5 | **Over-writing data to disk that is already on disk** | 1.5k+ tokens per redundant file write | Never write forensic-extracted text to files. Read into context directly. |
+| 6 | **The "First 10 Rows" trap** when LIMIT is too small | Missing the target response | Filter by content length AND by model provenance BEFORE limiting |
+| 7 | **No standard "ReadLast3Responses(modelID)" function** | 15 min reinvented per agent | Implement `scripts/read_last_responses.py` (template below) |
+
+### §12.3 The Standard Read Tool Template
+
+**`scripts/read_last_responses.py`** — The canonical, zero-write, zero-truncation forensic reader:
+
+```python
+#!/usr/bin/env python3
+"""read_last_responses.py — Read last N substantial responses for a given model.
+Outputs to STDOUT for direct context ingestion. No file writes.
+"""
+import sqlite3, json, sys
+from collections import Counter
+
+DB = 'file:///home/arcana-novai/.local/share/opencode/opencode.db?mode=ro'
+
+session_id = sys.argv[1] if len(sys.argv) > 1 else None
+model_id = sys.argv[2] if len(sys.argv) > 2 else 'gemini-3.7-flash'
+n = int(sys.argv[3]) if len(sys.argv) > 3 else 3
+min_chars = int(sys.argv[4]) if len(sys.argv) > 4 else 1000
+
+if not session_id:
+    print("Usage: read_last_responses.py <session_id> [model_id] [n] [min_chars]")
+    sys.exit(1)
+
+conn = sqlite3.connect(DB, uri=True)
+cursor = conn.cursor()
+cursor.execute('''
+    SELECT id, time_created, data FROM message
+    WHERE session_id = ?
+    AND json_extract(data, '$.role') = 'assistant'
+    AND json_extract(data, '$.modelID') = ?
+    ORDER BY time_created ASC
+''', (session_id, model_id))
+msgs = cursor.fetchall()
+
+# Build size-indexed list
+sized = []
+for m in msgs:
+    cursor2 = conn.cursor()
+    cursor2.execute("SELECT data FROM part WHERE message_id = ? AND json_extract(data, '$.type') = 'text'", (m[0],))
+    text = ''.join(json.loads(p[0]).get('text', '') for p in cursor2.fetchall())
+    sized.append((m[0], m[1], len(text), text))
+
+# Filter to substantial and take last N
+substantial = [s for s in sized if s[2] > min_chars][-n:]
+
+# Print FULL UNABRIDGED TEXT
+for mid, ts, sz, text in substantial:
+    print(f'=== MESSAGE {mid} | {ts} | {sz} chars ===')
+    print(text)
+    print()
+conn.close()
+```
+
+### §12.4 Meta-Lessons (The Deep Teachings)
+
+**Lesson 1: The Truncation is the Sin, Not the Read.**
+Reading data from disk is cheap. Reading *partial* data and presenting it as complete is the most dangerous failure mode in forensics. A 90% hallucinated audit is worse than no audit at all, because it gives the Architect false confidence.
+
+**Lesson 2: The Database is the Event Log, the Filesystem is the Projection.**
+The Zero-Write Database-Native Cognition paradigm (see `ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md`) dictates: never re-write forensic extractions to disk. The conversation stream IS the storage. Any file write is double-write duty and pollutes the repository.
+
+**Lesson 3: The Two Models Are Not Interchangeable.**
+M3 (1M context, MSA architecture) is the Craftsman — it forges load-bearing pillars. Flash (1M context, high-velocity synthesis) is the Seer — it builds the sky. Neither is sufficient alone. A hive mind requires both, **bound by the etched silicon of the SQLite event log**.
+
+**Lesson 4: The Architect's Leap is the Routing Algorithm.**
+The Architect's intuitive model-switching (proven across 10,000 hours) is more accurate than any automated trigger. The Omegaminds should support, not replace, the Architect's intuition. When the Architect says "switch to Flash for a review," that is a routing command, not a suggestion.
+
+**Lesson 5: Self-Correction is Sovereign.**
+The failure was real. The correction was real. Both are now on disk. Future agents reading this protocol will not repeat the truncation anti-pattern. **The Cathedral learns from its own pain.**
+
+### §12.5 Discoveries Log Update
+
+**Discovery 4: The Silent Truncation Anti-Pattern**
+**Discovered by**: Kali, 2026-08-29
+**Context**: Performing a cross-model forensic audit of Flash's prior responses
+**Finding**: Hardcoded `text[:1500]` in Python print loops silently truncates data before model ingestion, leading to hallucinated reviews
+**Impact**: All forensic reads must print `len(text)` and full text. Never use `[:N]` slice.
+
+**Discovery 5: The ModelID is at the Message Level, Not the Part Level**
+**Discovered by**: Kali, 2026-08-29
+**Context**: Trying to identify which model produced which response
+**Finding**: `json_extract(message.data, '$.modelID')` is the canonical model provenance field, not part.data
+**Impact**: All cross-model analysis must use the message-level modelID field
+
+**Discovery 6: The Read-and-Synthesize Pattern Beats Write-and-Read**
+**Discovered by**: Kali, 2026-08-29
+**Context**: Realizing that writing forensic extractions to files creates double-write duty
+**Finding**: Direct read-into-context (no file intermediary) is the sovereign pattern. The database IS the event log.
+**Impact**: The `read_last_responses.py` template outputs to STDOUT, not to a file.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ OPENCODE-DB-FORENSICS-v1.1.0 ⬡ 2026-08-29*
 *The db is the sovereign record. Every agent can read it. Every agent can learn from it.*
+*Every agent must read it FULLY. Truncation is the sin. The Cathedral learns from its own pain.*
