@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_26928b1860fc",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "N1.1 Pattern Mining \u2014 Extract firewall patterns from xna-omega-legacy/ and omega-stack-legacy/ for FirewallChecker, MemoryFirewallAuditor, MandateAuditor scaffolds\n\n**Scope**: \n- Search both legacy repos for: engine-stack boundary enforcement, WAD-content isolation, mandate compliance checking, audit patterns\n- Focus on: import validation, config validation, runtime boundary checks, static analysis patterns\n- Output: \u22653 reusable patterns cataloged in `data/coordination/ROC_PATTERN_MINING.md` with file:line references\n\n**Context**: Phase 1 MaKaLi 50% complete (C1 + SymbolicMetadata done). Need patterns for 3 scaffolds:\n1. FirewallChecker \u2014 scans src/omega/ for WAD-specific imports/references\n2. MemoryFirewallAuditor \u2014 validates metadata treated as opaque (M2)\n3. MandateAuditor \u2014 checks M1-M23 compliance in CI\n\n**Pass/Fail**: \u22653 patterns with file:line refs, categorized by scaffold target",
+  "context": "Phase 1 MaKaLi execution. C1 fix (type_v: 2) and SymbolicMetadata (TypedDict sub-schema) both recovered from OpenCode revert. Ready for Pattern Mining \u2192 3 scaffolds \u2192 4 contract tests \u2192 gate \u2192 handoff Ma'at/Verity.",
+  "priority": 1,
+  "status": "stale",
+  "submitted_at": "2026-07-11T17:36:04.930553+00:00",
+  "reaped_at": "2026-07-12T17:36:22.281208+00:00",
+  "ttl_expired": true
+}

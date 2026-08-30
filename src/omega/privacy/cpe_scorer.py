@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 CPE Scorer — Cumulative PII Exposure Scoring
 AP: AP-CPE-SCORER-v1.0.0

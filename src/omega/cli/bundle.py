@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Sovereign Export Bundle — `.omega` Entity Portability
 # AP: AP-BUNDLE-v1.0.0
 #

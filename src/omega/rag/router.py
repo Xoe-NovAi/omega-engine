@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Tiny-Critic RAG Router
 # AP: AP-RAG-ROUTER-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ rag.router ⬡ S3

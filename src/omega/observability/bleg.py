@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Body-Level Error Guards (BLEG)
 # AP: AP-BLEG-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ bleg ⬡ OBSERVABILITY

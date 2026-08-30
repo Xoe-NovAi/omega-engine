@@ -588,7 +588,9 @@ The synthesis layer costs ~1-2% of Opus regeneration and **eliminates execution-
 
 *⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ SUBAGENT-DISPATCH ⬡ v3.0.0*
 
-<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: deepseek-v4-flash | verdict: UNANCHORED | no session anchor in header zone
-actual_models(Tier0): n/a
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: deepseek-v4-flash | verdict: VERIFIED
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, hy3-free, deepseek-v4-flash-free, nvidia/nemotron-3-ultra-550b-a55b:free
+first_audit: 2026-08-23T20:39:41Z | updated: 2026-08-30T03:06:41Z
 -->
+

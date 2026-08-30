@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SOUL-EDIT-HISTORY-v1.0.0
 # 🔱 Omega Engine — Soul Edit History (Immutable Audit Trail)
 # ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash ⬡ opencode ⬡ SOUL-EDIT-HISTORY

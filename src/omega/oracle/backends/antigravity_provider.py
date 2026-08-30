@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Antigravity Provider — Sovereign Cloud Backend (S7.5)
 # AP: AP-ANTIGRAVITY-PROVIDER-v1.0.0
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ antigravity ⬡ trc_core ⬡ PROVIDER-FABRIC

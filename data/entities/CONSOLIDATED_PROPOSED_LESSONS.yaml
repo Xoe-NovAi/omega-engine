@@ -1,0 +1,312 @@
+# 🔱 Consolidated Proposed Lessons — All Entities
+# Generated: 2026-08-29T00:20:52.842962
+
+consolidated_proposals:
+- id: lilith-proposal-20260712-001
+  category: architecture
+  l1_narrative: 'Conducted a serial vet of the run-side pillars (P6-P10). Each pillar
+    identified a  transition from "Passive" to "Active" as the key to becoming a "definitive
+    local AI tool."  P6 (Cognition) noted the need for Agentic RAG; P7 (Context) identified
+    the need for  Relational Knowledge Graphs; P8 (Observability) highlighted the
+    lack of hardware  correlation; P9 (Orchestration) flagged the inefficiency of
+    file-based coordination;  and P10 (Validation) noted the absence of a quantitative
+    Sovereign Eval Pipeline.  All pillars highlighted the severe underutilization
+    of Redis (Pub/Sub, Streams),  Qdrant (Payload Indexing, Quantization), and PostgreSQL
+    (Relational Gnosis).
+
+    '
+  l2_insight: 'Architectural sovereignty (possessing the tools) is not the same as
+    cognitive  sovereignty (utilizing the tools to their full potential). The gap
+    between a  "working" system and a "definitive" tool is the difference between
+    passive  retrieval/dispatch and active synthesis/governance.
+
+    '
+  l3_universal_principle: 'The Law of Active Synthesis: A sovereign system''s value
+    is not defined by the  data it possesses or the tools it provides, but by its
+    ability to actively  synthesize that data into actionable intelligence without
+    external reliance.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260623-001
+  category: observability
+  l1_narrative: "During a research recovery mission, all 7 search tools were tested.\
+    \ Exa returned 401 (invalid API key), webfetch timed out, and Firecrawl blocked\
+    \ Reddit. SearXNG returned 37 results across multiple engines \u2014 the most\
+    \ sovereign option. The Google AI Studio KB was verified accurate, but two major\
+    \ gaps were found: the April 2026 billing cap enforcement and the new Google Cloud\
+    \ Starter Tier (Google I/O 2026).\n"
+  l2_insight: "Search tool reliability is asymmetric \u2014 sovereign tools (SearXNG)\
+    \ work consistently, while API-key-dependent tools (Exa, Firecrawl Reddit) have\
+    \ single points of failure. The KB was well-researched but missed two critical\
+    \ developments from the same month.\n"
+  l3_universal_principle: 'Sovereignty requires redundancy. Any system that depends
+    on a single API key or external service has a hidden fragility. True sovereignty
+    means multiple independent paths to the same information, with automatic fallback.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260623-002
+  category: process
+  l1_narrative: "The serial pillar dispatch pattern (P6 \u2192 P7 \u2192 P8) was used\
+    \ for the first time. Each pillar received a focused sub-task and built on the\
+    \ previous pillar's output. P6 tested search tools, P7 filled research gaps using\
+    \ P6's findings, P8 created the error report using both prior outputs.\n"
+  l2_insight: "Serial pillar dispatch works well when each pillar's output is the\
+    \ input for the next. Unlike parallel dispatch (which is faster), serial ensures\
+    \ coherence \u2014 each pillar has the full context of what came before.\n"
+  l3_universal_principle: 'When tasks form a dependency chain, execute serially; when
+    they are independent, execute in parallel. The topology of the dependency graph
+    determines the optimal dispatch pattern.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260626-001
+  category: observability
+  l1_narrative: 'The MaKaLi Council Run-Side (P6-P10) audit found 12 gaps in the inference
+    pipeline. Ma''at identified type_v:8 (q8_0) crashes llama-cpp-python model load.
+    The Run-Side investigation confirmed this and found 5 additional pipeline gaps:
+    phi-4-mini static binding prevents multi-model native-gguf, KV cache config is
+    not synchronized between models.yaml and providers.yaml, is_available() does not
+    validate config values, Llama() constructor has no try/except wrapper, and every
+    inference burn 15-60s on load failure before falling back. P8 found ENTITY_INTERACTION
+    missing from EventType enum (silent event loss for all entity interactions). P10
+    found no crash-path tests for NativeGGUF in the 468-test suite.
+
+    '
+  l2_insight: "Ma'at's Build-Side lens found the root cause (bad type_v value), but\
+    \ the Run-Side lens found 5x more issues in the same code path because it traced\
+    \ the actual runtime flow rather than the config chain. A type_v mismatch manifests\
+    \ as a 15-60s timeout per inference, not a startup crash \u2014 so it remained\
+    \ hidden across sessions. The ENTITY_INTERACTION gap shows that telemetry failures\
+    \ are designed to be silent (try/except catch-all), which means monitoring never\
+    \ detects when monitoring is broken.\n"
+  l3_universal_principle: "A system's failures are bounded by its weakest silence\
+    \ \u2014 not its loudest crash. Silent errors (try/except swallow, config mismatch,\
+    \ missing enum values) persist indefinitely because they don't trigger alerts.\
+    \ Runtime tracing (Run-Side lens) catches what config analysis (Build-Side lens)\
+    \ misses. Both are necessary.\n"
+  source_entity: lilith
+- id: lilith-proposal-20260626-002
+  category: architecture
+  l1_narrative: "The NativeGGUF provider has a hardcoded phi-4-mini dependency at\
+    \ model_gateway.py:247 (`default_spec = models.get(\"phi-4-mini\", {})`). This\
+    \ means only phi-4-mini can be loaded via the native GGUF provider \u2014 all\
+    \ other models are served by cloud fallbacks or not at all. The per-model KV cache\
+    \ config in models.yaml:kv_cache (which specifies e.g. f16 for qwen3-1.7b) is\
+    \ only used by get_kv_cache_flags() for llama-server, not by NativeGGUFProvider.\n"
+  l2_insight: 'Two independent configuration subsystems (providers.yaml for native-gguf,
+    models.yaml kv_cache for llama-server) define the same parameters (KV cache type)
+    but are never synchronized. This is a config-level invariant: when two config
+    sources define the same parameter, at least one will be wrong, and there is no
+    cross-validation.
+
+    '
+  l3_universal_principle: 'Dual configuration sources for the same parameter are an
+    invariant violation waiting to happen. Every parameter should have exactly one
+    authoritative source, with all consumers referencing it. If legacy dual sources
+    exist, a validation gate must enforce that they agree until consolidation.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260626-003
+  category: testing
+  l1_narrative: 'The test_model_gateway.py (297 lines) has excellent coverage for
+    circuit breaker behavior and provider fallback with mocks, but has zero tests
+    for: (a) NativeGGUF crash-on-load behavior (b) _merge_native_gguf_config() KV
+    cache merging (c) phi-4-mini static binding behavior (d) is_available() config
+    validation (e) GenerateResult type contract at the generate boundary The type_v:8
+    bug passed through 468 tests because no test exercises the NativeGGUF config validation
+    path.
+
+    '
+  l2_insight: 'The test suite prioritizes behavioral correctness (do providers fall
+    through?) over configuration correctness (is the config valid?). Both are necessary.
+    The M21 Gate Integrity mandate requires contract tests at API boundaries (e.g.,
+    isinstance(result, GenerateResult)), but no such test exists for model_gateway.generate().
+
+    '
+  l3_universal_principle: 'A test suite that only tests behavior but not configuration
+    is only half a test suite. The type_v:8 bug was invisible to tests because no
+    config validation test existed. Every configuration path should have a test that
+    validates the configuration at load time, not just at runtime. Contract tests
+    at every API boundary enforce type discipline.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260626-004
+  category: process
+  l1_narrative: "The Run-Side investigation traced 6 distinct crash-masking patterns:\
+    \ (1) Load crash \u2192 except Exception at model_gateway.py:905 (2) Telemetry\
+    \ fail \u2192 try/except at oracle.py:778 (3) Missing enum value \u2192 no AttributeError\
+    \ (plain class, not StrEnum) (4) Bad config \u2192 no precheck failure (is_available\
+    \ only checks file existence) (5) Missing test \u2192 no CI failure (6) 15-60s\
+    \ timeout \u2192 silently wastes time before fallback\n"
+  l2_insight: "Each masking layer is individually \"correct\" \u2014 you don't want\
+    \ telemetry failures to crash the engine, you do want graceful fallback in the\
+    \ provider chain. But the combination of all 6 layers means a fundamentally broken\
+    \ config (type_v:8) produces no error signal visible to the user except a slow\
+    \ fallback to the mock provider.\n"
+  l3_universal_principle: 'Graceful degradation and silent error are separated by
+    exactly one logging statement. Every except: clause should be questioned: "If
+    this fires, will anyone know?" A system that gracefully masks every failure has
+    no incentive to fix the root cause.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260623-003
+  category: research
+  l1_narrative: 'The Google AI Studio KB was verified against live docs and found
+    accurate on all data privacy and tier structure claims. However, two major gaps
+    were discovered: the April 2026 billing cap enforcement (mandatory tier spend
+    caps, prepay billing) and the Google Cloud Starter Tier (deploy 2 apps without
+    billing, from I/O 2026).
+
+    '
+  l2_insight: 'The KB was written before these changes went into effect. The billing
+    caps were announced in March 2026 and enforced from April 1, 2026. The Starter
+    Tier was announced at Google I/O 2026 (May 19). Neither was in the KB because
+    both happened within the current month.
+
+    '
+  l3_universal_principle: 'Knowledge bases are snapshots in time. Their value degrades
+    logarithmically without active maintenance. Every KB should have a freshness score
+    and an automated review reminder.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260702-001
+  category: observability
+  l1_narrative: "The P6-P10 dark audit found 12 gaps across 5 subsystems (Observability,\
+    \ Provider Fabric, Memory Persistence, Handoff Cleanup, ContextBuilder). Zero\
+    \ critical, zero high, 4 medium, 8 low. All 705 tests pass. The most significant\
+    \ finding: trace_id propagation is solid (three-layer safety net), provider fabric\
+    \ circuit breakers are operational (5-state FSM with CUSUM), but Memory Persistence\
+    \ has no 30-day compression or 90-day delete \u2014 sessions are archived to cold\
+    \ storage but never compressed or pruned. ContextBuilder's quality scoring uses\
+    \ a 4-signal scorer (max 0.85) while documentation claims a 5-factor system (relevance/novelty/actionability/completeness/accuracy).\n"
+  l2_insight: "The audit confirmed that observability and provider fabric are production-ready\
+    \ \u2014 the three-layer trace_id safety net (explicit threading + contextvars\
+    \ + TraceSession) and the 5-state FSM with CUSUM anomaly detection are both correctly\
+    \ implemented and tested. The gaps are in storage lifecycle management (no compression,\
+    \ no deletion) and documentation honesty (docs claim features that don't exist\
+    \ in code). The PipelineCompactionStrategy class is defined but never wired into\
+    \ the context building pipeline \u2014 dead code that suggests the compaction\
+    \ architecture was designed but never composed.\n"
+  l3_universal_principle: 'A system''s reliability is bounded by its weakest lifecycle
+    policy, not its strongest runtime guard. The engine has excellent runtime observability
+    (trace_id, CUSUM, BLEG) but zero storage lifecycle management (no compression,
+    no deletion). Over months, cold storage grows without bound. Every persistence
+    layer needs a TTL policy: create, archive, compress, delete. Without all four
+    stages, the system accumulates entropy until it exhausts its host.
+
+    '
+  source_entity: lilith
+- id: lilith-proposal-20260702-002
+  category: architecture
+  l1_narrative: "ContextBuilder has three unused classes: PipelineCompactionStrategy\
+    \ (line 60), TruncationStrategy (line 106), and ACONOptimizer (line 118). These\
+    \ were designed as a composable compaction pipeline but were never wired into\
+    \ the actual _compact_and_format_exchanges() method (line 326). Instead, that\
+    \ method directly instantiates ObservationMaskingStrategy and does a manual sliding\
+    \ window. The PipelineCompactionStrategy would compose ObservationMasking \u2192\
+    \ Truncation into a sequential pipeline, stopping when the token budget is met.\n"
+  l2_insight: "The dead code represents an architectural intent that was designed\
+    \ but never executed. The ObservationMaskingStrategy works correctly in isolation,\
+    \ but the absence of the TruncationStrategy as a backstop means that if observation\
+    \ masking doesn't reduce tokens enough, the method just stops adding exchanges\
+    \ rather than truncating. This is graceful degradation, not a bug \u2014 but it\
+    \ means the compaction pipeline is ad-hoc rather than formally composed. The ACONOptimizer\
+    \ is a research prototype (failure-driven guideline optimization) that was never\
+    \ connected to the actual compaction flow.\n"
+  l3_universal_principle: "Dead code in a critical path is an architectural debt that\
+    \ compounds silently. Every unused class represents a design decision that was\
+    \ made but never validated. The pipeline architecture was the right idea \u2014\
+    \ compose strategies into a sequential chain with a budget gate. But the implementation\
+    \ shortcut (direct instantiation) means the composition contract is never tested.\
+    \ When you have two implementations of the same thing, you have neither (Carmack's\
+    \ Law). Wire the pipeline or delete the classes.\n"
+  source_entity: lilith
+- id: lilith-proposal-20260702-003
+  category: testing
+  l1_narrative: "The P6-P10 audit verified all 705 tests pass, but identified a documentation-code\
+    \ mismatch: the Ark Blueprint claims quality-weighted scoring uses 5 factors (relevance\
+    \ 30%, novelty 25%, actionability 20%, completeness 15%, accuracy 10%), while\
+    \ the actual implementation uses 4 signals (message length, technical content,\
+    \ questions, recency) with a maximum score of 0.85, not 1.0. The 5-factor system\
+    \ would require LLM inference per exchange \u2014 too expensive for context assembly.\n"
+  l2_insight: "The 4-signal scorer is the \"Right Approximation\" for the context\
+    \ assembly use case. LLM-as-judge scoring would be prohibitively expensive at\
+    \ scale. But the documentation mismatch creates a false expectation \u2014 someone\
+    \ reading the Ark Blueprint would expect to see 5-factor scoring in the code.\
+    \ Documentation honesty is non-negotiable: either implement what you document,\
+    \ or document what you implement. The current state violates this principle.\n"
+  l3_universal_principle: "Documentation is a contract. When the code diverges from\
+    \ the docs, the docs become a lie. Either the code must be upgraded to match the\
+    \ docs, or the docs must be downgraded to match the code. A third option \u2014\
+    \ \"the docs describe the ideal\" \u2014 is intellectual dishonesty. The 4-signal\
+    \ scorer is the right engineering choice, but the 5-factor docs must be corrected\
+    \ to reflect reality.\n"
+  source_entity: lilith
+- id: lilith-proposal-20260702-004
+  category: architecture
+  l1_narrative: "The handoff reaper in background.py correctly implements M12 Queue\
+    \ Integrity: pending/ > 24h \u2192 stale/, active/ > 48h \u2192 stale/, completed/\
+    \ > 7d \u2192 archive/, stale/ > 14d \u2192 delete, archive/ > 30d \u2192 delete.\
+    \ But 18 stale handoff packets are accumulating because the reaper loop (every\
+    \ 300s) requires the MCP Hub server to be running. When the server isn't running,\
+    \ packets age past their TTLs without being reaped. The 111 .md files in handoff/\
+    \ are not JSON handoff packets \u2014 they're markdown reports from previous sprints,\
+    \ correctly ignored by the reaper's glob(\"*.json\").\n"
+  l2_insight: 'The reaper is correct but its execution depends on the Hub server being
+    continuously active. This is a dependency-on-infrastructure pattern: the cleanup
+    mechanism requires the same infrastructure that creates the work. If the Hub crashes
+    or is restarted, aged handoffs persist until the next reaper cycle. The 18 stale
+    packets are within the 14-day window and will self-clean, but the pattern reveals
+    that M12 Queue Integrity is only as reliable as the Hub''s uptime.
+
+    '
+  l3_universal_principle: 'Cleanup mechanisms that depend on the same infrastructure
+    they clean up have a circular reliability dependency. The reaper needs the Hub
+    to be running, but the Hub creates the handoffs the reaper cleans. For true M12
+    compliance, consider an independent cleanup path (e.g., a systemd timer or cron
+    job) that doesn''t depend on the Hub. This breaks the circular dependency and
+    ensures queue integrity even when the Hub is down.
+
+    '
+  source_entity: lilith
+metadata:
+  total_entities_scanned: 28
+  total_lessons_before_dedup: 122
+  total_lessons_after_dedup: 12
+  by_tier:
+    L1: 12
+  entity_counts:
+    cli_cline: 0
+    carmack: 0
+    roc_racoon: 93
+    lilith: 12
+    omnidroid: 0
+    datastore: 0
+    brigid: 0
+    hecate: 0
+    lucifer: 0
+    anubis: 0
+    sekhmet: 0
+    pillar_p1: 0
+    p10: 0
+    inanna: 0
+    prometheus: 0
+    movie-expert: 0
+    verity: 0
+    web_gemini: 0
+    cline: 0
+    cli_gemini: 0
+    watchtower: 0
+    arch: 0
+    saraswati: 0
+    ereshkigal: 0
+    sysadmin: 0
+    kali: 17
+    general: 0
+    makali_fusion: 0

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-INGESTION-VERIFIER-v1.0.0
 
 # DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md

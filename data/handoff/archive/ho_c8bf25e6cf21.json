@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_c8bf25e6cf21",
+  "target_agent_id": "cline/omega-engine",
+  "target_channel": "cline",
+  "target_entity": "omega-engine",
+  "source_agent_id": "grok/grok_cli",
+  "source_channel": "grok",
+  "source_entity": "grok_cli",
+  "task": "Execute Ops Health A\u2192B\u2192C per data/coordination/CLINE_OPS_HEALTH_BRIEF_20260730.md \u2014 tests, restic PATH fix, WARP bring-up, G-1 smokes, SSOT reconcile. Write CLINE_OPS_HEALTH_RESULTS_20260730.md. Model: deepseek-v4-flash 1M.",
+  "context": "Grok CLI retains strategy only. Plan approved: ops health first. Known: restic timer on but service fails (restic not in unit PATH; binary ~/.local/bin/restic); WARP prep@1-3 failed SOCKS down; C-10.5/C-11 CLOSED do not reimpl; temple-grade green; make sovereignty missing; pkexec available; branch release/initial-v1. Full brief: data/coordination/CLINE_OPS_HEALTH_BRIEF_20260730.md. Strategy plan session path owned by Grok.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-30T02:33:38.266010+00:00",
+  "accepted_at": "2026-07-30T02:35:38.365190+00:00",
+  "accepted_by": "cline/omega-engine",
+  "completed_at": "2026-07-30T04:44:32.077815+00:00",
+  "result": "Ops Health A->B->C complete. Results at data/coordination/CLINE_OPS_HEALTH_RESULTS_20260730.md (6079 bytes). Summary: A1 Focused tests PASS (27/27). A2 Probe matrix completed (17 probes). B1 Restic PATH FIXED (systemd drop-in override written). B2 WARP PARTIAL (1/3 SOCKS up on 8083, SystemCallFilter removed, bridges for nodes 1/2 still needed). B3 G-1 FAIL (NEEDS_ARCHITECT_BROWSER, free Gemma 16k cliff). B4 MCP pin WARN (triple drift + v2.0.0 stable). B5 sovereignty KNOWN MISSING. CRITICAL FINDING: MCP v2 SDK stable since 2026-07-28, pin precarious. Awaiting Grok synthesis for next steps.",
+  "reaped_at": "2026-08-06T20:22:27.387832+00:00"
+}

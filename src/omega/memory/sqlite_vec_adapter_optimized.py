@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """SQLite-vec Unified Memory Fabric Adapter for Omega Memory — OPTIMIZED.
 AP: AP-SQLITEVEC-ADAPTER-v3.0.0-OPTIMIZED
 

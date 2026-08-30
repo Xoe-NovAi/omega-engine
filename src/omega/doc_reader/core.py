@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Core document reader implementation."""
 # AP: AP-OMEGA-DOC-READER-CORE-v1.0.0
 # ⬡ OMEGA ⬡ DOC_READER_CORE ⬡ 2026-07-13

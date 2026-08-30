@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Search Service — Core implementation of the SSP-V2 4-Tier Search Protocol.
 # Heritage: inspired by BSP culling (id Software 1993) — REJECTED per vet-028
 AP: AP-SOVEREIGN-SEARCH-SERVICE-v3.0.0

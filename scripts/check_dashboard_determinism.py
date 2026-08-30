@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Determinism check for benchmark_dashboard --json output.
 
 AP: AP-DASHBOARD-SHIP-R4-v1.0.0

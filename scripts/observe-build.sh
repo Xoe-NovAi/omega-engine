@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Build Observability Harness v1.1.0
 # AP: AP-BUILD-OBS-v1.1.0
 # ⬡ OMEGA ⬡ P8-OBSERVABILITY ⬡ install ⬡ PUBLIC-DEBUT-01

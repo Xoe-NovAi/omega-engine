@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — YouTube Background Worker
 # AP: AP-YOUTUBE-WORKER-v1.1.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ sovereign ⬡ youtube_worker ⬡ WORKER

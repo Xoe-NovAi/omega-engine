@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-A2A-BRIDGE-v1.0.0
 # [heritage: a2a-standard 2025] A2A Protocol — agent-to-agent communication (Agent Card, task delegation)
 """

@@ -1,0 +1,7 @@
+# data/entities/john_carmack/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: john carmack
+updated: '2026-07-11T11:23:45.072053'
+topics: []

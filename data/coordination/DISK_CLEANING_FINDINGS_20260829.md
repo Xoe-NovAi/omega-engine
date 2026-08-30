@@ -166,3 +166,8 @@ If context is lost, the critical info is:
 
 *⬡ OMEGA ⬡ KALI ⬡ DISK-CLEANING-DEFERRED ⬡ 2026-08-29*
 *Standard cleaning done (1.2G+ freed). Risky operations awaiting authorization.*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

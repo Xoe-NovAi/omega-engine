@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SEMANTIC-ROUTER-v1.0.0
 # 🔱 Semantic Router — Embedding-Based Entity Routing
 # ⬡ OMEGA ⬡ ORACLE ⬡ semantic_router.py

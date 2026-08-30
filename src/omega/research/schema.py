@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research Schema — Research Proposal & Lifecycle Definitions
 ⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ SCHEMA

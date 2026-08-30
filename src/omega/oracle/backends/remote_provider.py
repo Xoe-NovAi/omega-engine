@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Remote Provider — Scalable Cloud Backend Abstraction
 # AP: AP-REMOTE-PROVIDER-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ opus-4.6 ⬡ antigravity ⬡ trc_core ⬡ PROVIDER-FABRIC

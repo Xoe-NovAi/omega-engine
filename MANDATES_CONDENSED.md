@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Sovereign Mandates — Condensed (v3.8.0)
 
 > Tier-0 injection artifact. One-line-per-mandate distillation of

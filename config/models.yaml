@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Model configurations with context budgets
 # [N3] Paths use env:OMEGA_MODELS_DIR prefix. In CI/test without the var,
 # resolve_path() returns the relative path — still ends with .gguf for assertions.

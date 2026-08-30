@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ MAAT ⬡ VAULT_CLI ⬡ v2.0.0 ⬡ 2026-07-25
 """
 CLI commands for VaultCore operations.

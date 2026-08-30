@@ -1,0 +1,10 @@
+# ⬡ John Carmack .plan File — 1996-10-14
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19961014.txt
+#
+I haven't been able to work on QuakeWorld for a week, and am unlikely to for a couple more days.
+
+I've been working with the utilities and editor most of the time, but there has been a lot of other stuff going on lately that has kept me from being very productive. 

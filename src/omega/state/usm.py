@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Unified State Manager (USM) — Coordinates CAS and state indexing.
 AP: AP-USM-MANAGER-v1.0.0
 """

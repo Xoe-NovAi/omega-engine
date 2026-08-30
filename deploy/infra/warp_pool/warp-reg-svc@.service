@@ -1,0 +1,31 @@
+[Unit]
+Description=Transient WARP Registration Daemon for Instance %i
+Documentation=file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md
+DefaultDependencies=no
+After=network.target
+
+[Service]
+Type=exec
+# Runs on HOST — dedicated daemon for registration only
+ExecStart=/usr/bin/warp-svc
+Environment=LOGS_DIRECTORY=/var/log/cloudflare-warp
+Restart=no
+TimeoutStartSec=30
+TimeoutStopSec=10
+
+# Capabilities for WireGuard interface creation
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN
+RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
+NoNewPrivileges=true
+
+# Security hardening
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

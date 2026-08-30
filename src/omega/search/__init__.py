@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # [heritage: sqlite-vec 2024] Search Package — Persistence, metrics, and traceability for all search operations
 """
 Omega Search Package

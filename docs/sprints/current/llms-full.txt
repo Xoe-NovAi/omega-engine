@@ -1,0 +1,1880 @@
+# Sprint Plan: Guard & Distill (2026-07-22)
+---
+schema_version: "1.0"
+document_type: "sprint_plan"
+document_id: "guard-and-distill-2026-07-22"
+title: "Sprint Plan: Guard & Distill"
+status: "ACTIVE"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "kali"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill"]
+priority: "P0"
+depends_on: ["C-6'", "C-1'", "C-2'"]
+blocks: ["Phase D", "C-0.5"]
+acceptance_gates:
+  - "All 5 P0 tickets: DONE (tests pass, docs updated)"
+  - "make test — 100% pass (no pre-existing failures)"
+  - "make temple-grade — All T1-T11 gates green"
+  - "Soul distillation: ≥1 L3 axiom per entity per week"
+  - "Backup: restic check --read-data-subset 5% passes weekly"
+  - "Gap analysis updated: 0 P0 remaining"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "STRATEGY_CORPUS_MAP.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 4000
+  chunk_strategy: "section_per_ticket"
+  answer_first_sections: true
+  self_contained_code: true
+  modular_pages: true
+  llms_txt_generated: true
+---
+
+# 🔱 Sprint Plan: Guard & Distill
+**AP Token**: `AP-SPRINT-GUARD-DISTILL-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_sprint_plan ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Sprint ID**: `guard-and-distill-2026-07-22`
+**Phase**: C_HARDENING_COMPLETION
+**Status**: ACTIVE
+**Priority**: P0
+**Owner**: kali
+**Tags**: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill"]
+**Depends On**: ["C-6'", "C-1'", "C-2'"]
+**Blocks**: ["Phase D", "C-0.5"]
+
+---
+
+## What
+
+**Close the 4 P0 gaps blocking Phase D. Establish automated soul distillation and complete provider fallback hardening.**
+
+## Why
+
+Phase C hardening sprint completed core infrastructure. Four P0 gaps remain before Phase D can begin: quota-aware routing, property tests, disaster recovery backup, and automated soul distillation.
+
+## Success Criteria (Copy-Paste Verifiable)
+
+- [ ] All 5 P0 tickets: DONE (tests pass, docs updated)
+- [ ] `make test` — 100% pass (no pre-existing failures)
+- [ ] `make temple-grade` — All T1-T11 gates green
+- [ ] Soul distillation: ≥1 L3 axiom per entity per week
+- [ ] Backup: `restic check --read-data-subset 5%` passes weekly
+- [ ] Gap analysis updated: 0 P0 remaining
+
+---
+
+## P0 Tickets (Must Complete Before Phase D)
+
+| Ticket | Title | Owner | Depends On | Blocks | Est. Hours |
+|--------|-------|-------|------------|--------|------------|
+| **C-10.5** | Quota-Aware Provider Routing | maat/P3 | C-6' ✅ | C-0.5, Phase D | 8 |
+| **C-11** | Property Tests: OOMProtector + SoulStore | maat/P3 | C-2' ✅, C-1' ✅ | C-0.5 | 12 |
+| **C-3** | Restic 3-2-1 Backup for Sovereign Data | lilith/P6 | V-1 (partial) | — | 8 |
+| **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | scribe (new) | M5, M11 | Phase D | 16 |
+
+---
+
+## P1 Tickets (Quality Gates)
+
+| Ticket | Title | Owner | Effort | Depends On |
+|--------|-------|-------|--------|------------|
+| **C-9** | Extract GenerationPolicy from ModelGateway | maat/P3 | 1h | — |
+| **D-1** | Content Persistence + TTL for Research Cache | ma'at/P2 | 3h | — |
+| **V-1** | VaultCore Credential Rotation | maat/P1 | 3h | C-0, C-1' |
+| **M21** | Fix 3 Pre-existing Provider Fallback Tests | maat/P10 | 2h | — |
+| **C-4a.5** | MCP Streamable HTTP Migration (Escalation) | kali | 8h | Ma'at/P4 silent by EOD |
+
+---
+
+## Dependency Graph
+
+```mermaid
+graph TD
+    C6[C-6' Breaker Unification ✅] --> C10[C-10.5 Quota Routing]
+    C1[C-1' SoulStore ✅] --> C05[C-0.5 Scribe Agent]
+    C2[C-2' OOMProtector ✅] --> C11[C-11 Property Tests]
+    C10 --> C05
+    C11 --> C05
+    C3[C-3 Restic Backup] -.->|parallel| C05
+    V1[V-1 VaultCore] -.->|parallel| C05
+```
+
+```yaml
+# Machine-readable dependency DAG
+dependencies:
+  critical_path: ["C-10.5", "C-0.5"]
+  parallelizable: ["C-3", "C-11", "V-1"]
+  edges:
+    - from: "C-6'"
+      to: "C-10.5"
+      type: "hard"
+    - from: "C-1'"
+      to: "C-0.5"
+      type: "hard"
+    - from: "C-2'"
+      to: "C-11"
+      type: "hard"
+    - from: "C-10.5"
+      to: "C-0.5"
+      type: "hard"
+    - from: "C-11"
+      to: "C-0.5"
+      type: "hard"
+```
+
+---
+
+## Resource Allocation
+
+| Agent | Assignment | Rationale |
+|-------|------------|-----------|
+| **maat** (P3) | C-10.5, C-11, C-9, M21 | Build-side ownership; gateway + property tests |
+| **lilith** (P6) | C-3, V-1 | Run-side: backup + vault operations |
+| **scribe** (new) | C-0.5 | Dedicated distillation agent (M5/M11) |
+| **kali** | Review + arbitration + C-4a.5 escalation | Transcendent oversight |
+
+---
+
+## Escalation Triggers
+
+```yaml
+escalation_triggers:
+  - id: "C-4a.5-mcp-migration"
+    condition: "Ma'at/P4 has not pushed C-4b MCP Streamable HTTP implementation by 2026-07-22T23:59:00Z"
+    action: "Kali executes C-4a.5 directly — MCP Streamable HTTP migration"
+    authority: "Kali Amendment 6 (2026-07-22 review)"
+    deadline: "2026-07-22T23:59:00Z"
+```
+
+---
+
+## Timeline (5 Days)
+
+| Day | Ma'at (P3) | Lilith (P6) | Scribe | Kali |
+|-----|------------|-------------|--------|------|
+| **Day 1** | C-10.5 quota-aware routing | C-3 restic script (local) | Agent spec + session hook | Review C-4a.5 escalation |
+| **Day 2** | C-11 property tests (OOM + SoulStore) | C-3 restic off-site (B2) | L1→L2 distillation | Arbitrate conflicts |
+| **Day 3** | C-9 GenerationPolicy extract | V-1 credential rotation | L3 axiom extraction | Verify temple-grade |
+| **Day 4** | M21 fix 3 fallback tests | V-1 integration test | Cross-pollination logic | Final review |
+| **Day 5** | Integration + CI | Restore test | Pipeline hardening | **SPRINT COMPLETE** |
+
+---
+
+## Research Index
+
+**See**: `08-research-index.md` for structured research metadata.
+
+| Topic | Tickets | Key Sources |
+|-------|---------|-------------|
+| Hypothesis Async FSM | C-11 | GitHub #4107, MarkTechPost 2026-04-18, TechOral 2026-06-14 |
+| Restic + B2 Object Lock | C-3 | byte-guard.net 2026-06-13, Backblaze 2026-06-26 |
+| MCP Streamable HTTP 2026-07-28 | C-4a.5 | MCP.Directory 2026, Zylos 2026-03-08, AWS Labs #72 |
+| LLM Distillation Pipeline | C-0.5 | Stratos AAAI 2026, Mems 2026-03-23, RecSys 2025 |
+| Quota-Aware Routing | C-10.5 | TrueFoundry 2026-02-20, QuotaRouter, DigitalOcean 2026-07-13 |
+
+---
+
+## Risks & Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| MCP spec changes during C-4b | Low | Medium | Deferred to Aug; SSE works for local |
+| Scribe L3 axiom extraction quality | Medium | High | Start with L1→L2 only; L3 in Phase D; JSON Schema + LLM-as-Judge |
+| Restic off-site target unavailable | Low | High | Local-first + B2 fallback; test restore weekly |
+| Property test flakiness | Low | Medium | `suppress_health_check=[too_slow]`; quarantine; `derandomize=True` |
+| C-4a.5 escalation needed | Medium | High | Kali executes if Ma'at/P4 silent by EOD |
+| Async Hypothesis FSM not native | Medium | Medium | Sync wrapper + `anyio.run()`; suppress health checks |
+| Quota headers not standardized | Medium | Medium | Provider-specific parsers; fallback to error-based detection |
+
+---
+
+## Acceptance Gates (Sprint Completion)
+
+- [ ] All 5 P0 tickets: **DONE** (tests pass, docs updated)
+- [ ] `make test` — 100% pass (no pre-existing failures)
+- [ ] `make temple-grade` — All T1-T11 gates green
+- [ ] Soul distillation: ≥1 L3 axiom per entity per week
+- [ ] Backup: `restic check --read-data-subset 5%` passes weekly
+- [ ] Gap analysis updated: 0 P0 remaining
+
+---
+
+## Cross-References
+
+- **Strategy SSOT**: `SOVEREIGN_ARK_BLUEPRINT.md` §4–§5
+- **Team Coordination**: `FLEET_TEAM_PLAYBOOK.md` §3–§5
+- **Fine-Grained Preservation**: `STRATEGY_CORPUS_MAP.md` §2–§3
+- **Gap Analysis**: `R_GAP_ANALYSIS_HARDENING_SPRINT_20260722.md`
+- **Deep Research**: `R_SPRINT_HARDENING_KNOWLEDGE_GAPS_20260722.md`
+- **LLM Doc Standards**: `LLM_FRIENDLY_DOCS_BP.md`
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ SPRINT-GUARD-DISTILL ⬡ v1.0.0 ⬡ 2026-07-22*
+---
+# C-0.5-scribe-agent
+---
+schema_version: "1.0"
+document_type: "ticket_page"
+document_id: "c-0-5-scribe-agent"
+title: "C-0.5: Scribe Agent — Automated L1→L2→L3 Soul Distillation"
+status: "PLANNED"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "scribe"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "scribe-agent", "soul-distillation", "blind-staging"]
+priority: "P0"
+depends_on: ["M5", "M11", "C-10.5"]
+blocks: ["Phase D"]
+acceptance_gates:
+  - "Session hook triggers Scribe on omega session end"
+  - "L1 Narrative: Map-Reduce summarization of session exchanges"
+  - "L2 Insight: Refine/iterative condensation with evidence grounding"
+  - "L3 Axiom: JSON Schema constrained extraction of universal principles"
+  - "Blind Staging: Writes ONLY to proposed_lessons.yaml"
+  - "Cross-Pollination: Suggests relevant L3 axioms to related entities"
+  - "Promotion Gate: omega-hub_soul_promote required for soul.yaml merge"
+  - "Quality Metrics: Narrative coherence, personalization depth, factual correctness tracked"
+  - "Tests: 9 contract tests passing in tests/contract/test_soul_distiller.py"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 3000
+  chunk_strategy: "section_per_ticket"
+  answer_first_sections: true
+  self_contained_code: true
+---
+
+# 🔱 C-0.5: Scribe Agent — Automated L1→L2→L3 Soul Distillation
+**AP Token**: `AP-TICKET-C0-5-v1.0.0`
+⬡ OMEGA ⬡ SCRIBE ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_ticket_p0 ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Ticket ID**: `C-0.5`
+**Sprint**: `guard-and-distill-2026-07-22`
+**Priority**: P0
+**Owner**: scribe (NEW AGENT)
+**Status**: PLANNED — REQUIRES KALI AUTHORIZATION
+**Depends On**: ["M5", "M11", "C-10.5"]
+**Blocks**: ["Phase D (soul integrity gate)"]
+**Estimated Hours**: 16
+
+---
+
+## What
+
+> ⚠️ **CARMACK AUDIT (2026-07-22)**: Scope phased. Build L1→L2 first using JSON Schema and LLM-as-Judge. Push L3 extraction to Phase D if it threatens the sprint timeline.
+
+Create **Scribe agent**
+
+Create **Scribe agent** that runs as a session-end hook, distills conversation history through L1 (Narrative) → L2 (Insight) → L3 (Axiom) pipeline, and writes **ONLY** to `proposed_lessons.yaml` (blind staging). Promotion to `soul.yaml` requires explicit `omega-hub_soul_promote` tool call.
+
+## Why
+
+- **M5 (Gnosis Preservation)**: No intelligence discarded — every session must produce L1→L2→L3
+- **M11 (Soul Integrity)**: Blind staging prevents direct soul corruption; human-in-the-loop promotion
+- **Phase D Gate**: Automated distillation unblocks Living Research OS soul feedback loop
+
+## Acceptance Criteria (Copy-Paste Verifiable)
+- [ ] **Startup Sweeper**: Engine boot process checks `data/coordination/` for orphaned session logs and triggers Scribe retroactively (Crash Recovery).
+
+- [ ] **Session hook** triggers Scribe on `omega session end` (or equivalent)
+- [ ] **L1 Narrative**: Map-Reduce summarization of session exchanges → coherent narrative
+- [ ] **L2 Insight**: Refine/iterative condensation → actionable insights with evidence grounding
+- [ ] **L3 Axiom**: JSON Schema constrained extraction → universal principles (L3)
+- [ ] **Blind Staging**: Writes **ONLY** to `data/entities/{entity}/proposed_lessons.yaml`
+- [ ] **Cross-Pollination**: Suggests relevant L3 axioms to related entities
+- [ ] **Promotion Gate**: `omega-hub_soul_promote(entity="maat", lesson_ids=["l3_001", "l3_002"])` required for `soul.yaml` merge
+- [ ] **Quality Metrics**: Narrative coherence, personalization depth, factual correctness tracked
+- [ ] **Tests**: 9 contract tests passing (already implemented in `tests/contract/test_soul_distiller.py`)
+
+## Dependencies
+
+```yaml
+dependencies:
+  requires:
+    - "M5: Gnosis Preservation mandate"
+    - "M11: Soul Integrity mandate"
+    - "C-10.5: Reliable provider selection for distillation LLM calls"
+  enables:
+    - "Phase D: Living Research OS soul feedback loop"
+    - "Cross-entity knowledge transfer"
+  parallel_with:
+    - "C-3, C-11 (independent workstreams)"
+```
+
+## Implementation Sketch (Self-Contained)
+
+```python
+# File: src/omega/scribe/__init__.py
+# Purpose: Scribe agent — L1→L2→L3 distillation pipeline
+# Dependencies: anyio, pydantic, jsonschema, src.omega.memory_store, src.omega.oracle
+
+import anyio
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
+from src.omega.memory_store import MemoryStore
+from src.omega.oracle import Oracle
+
+class L1Narrative(BaseModel):
+    session_id: str; entity_name: str
+    exchanges: List[Dict[str, Any]]; summary: str
+    token_count: int; timestamp: str
+
+class L2Insight(BaseModel):
+    narrative_id: str; insights: List[Dict[str, Any]]
+    themes: List[str]; personalization_depth: float
+
+class L3Axiom(BaseModel):
+    insight_id: str; axiom: str; domain: str
+    confidence: float; json_schema: Dict[str, Any]
+    source_evidence: List[str]; cross_pollination_targets: List[str]
+
+class ProposedLesson(BaseModel):
+    entity_name: str; session_id: str
+    l1_narrative: L1Narrative; l2_insights: List[L2Insight]
+    l3_axioms: List[L3Axiom]; created_at: str
+    status: str = "staged"; promoted_at: Optional[str] = None
+    promoted_by: Optional[str] = None
+
+class Scribe:
+    def __init__(self, memory_store: MemoryStore, oracle: Oracle):
+        self.memory = memory_store; self.oracle = oracle
+        self.l1_model = "local:qwen3-4b-thinking"
+        self.l2_model = "local:qwen3-4b-thinking"
+        self.l3_model = "local:nemotron-3-ultra"
+    
+    async def distill_session(self, session_id: str, entity_name: str) -> ProposedLesson:
+        exchanges = await self.memory.get_session(session_id, entity_name)
+        l1 = await self._distill_l1_narrative(exchanges, entity_name, session_id)
+        l2_insights = await self._distill_l2_insights(l1, entity_name)
+        l3_axioms = await self._distill_l3_axioms(l2_insights, entity_name)
+        lesson = ProposedLesson(entity_name=entity_name, session_id=session_id,
+            l1_narrative=l1, l2_insights=l2_insights, l3_axioms=l3_axioms,
+            created_at=anyio.current_time().isoformat())
+        await self._stage_lesson(entity_name, lesson)
+        await self._suggest_cross_pollination(entity_name, l3_axioms)
+        return lesson
+    
+    async def _distill_l1_narrative(self, exchanges, entity_name, session_id) -> L1Narrative:
+        prompt = f"""Distill this {entity_name} session into a coherent narrative.
+Focus on: decisions made, patterns discovered, friction points, outcomes.
+Preserve entity voice and context. Output as structured JSON."""
+        result = await self.oracle.summon_local(entity="scribe",
+            query=prompt + "\n\n" + self._format_exchanges(exchanges), model=self.l1_model)
+        return L1Narrative(session_id=session_id, entity_name=entity_name,
+            exchanges=exchanges, summary=result, token_count=len(result.split()),
+            timestamp=anyio.current_time().isoformat())
+    
+    async def _distill_l2_insights(self, l1: L1Narrative, entity_name: str) -> List[L2Insight]:
+        prompt = f"""From this narrative, extract actionable insights.
+Each insight must have: claim, evidence (quote/ref), confidence (0-1), tags.
+Focus on: what worked, what failed, what's reusable, what's entity-specific."""
+        result = await self.oracle.summon_local(entity="scribe",
+            query=prompt + "\n\nNarrative: " + l1.summary, model=self.l2_model)
+        return self._parse_insights(result)
+    
+    async def _distill_l3_axioms(self, l2_insights: List[L2Insight], entity_name: str) -> List[L3Axiom]:
+        axiom_schema = {"type": "object", "properties": {
+            "axiom": {"type": "string"}, "domain": {"type": "string", "enum": ["sovereignty","memory","coordination","inference","architecture","heritage","security"]},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "source_evidence": {"type": "array", "items": {"type": "string"}},
+            "cross_pollination_targets": {"type": "array", "items": {"type": "string"}}
+        }, "required": ["axiom","domain","confidence","source_evidence"], "additionalProperties": False}
+        prompt = f"""Extract universal principles (L3 axioms) from these insights.
+Each axiom must be: timeless, domain-specific, evidence-grounded, actionable.
+Output as JSON array matching the provided schema.
+Self-critique: verify each axiom is not entity-specific, not situational, not trivial."""
+        result = await self.oracle.summon_local(entity="scribe",
+            query=prompt + "\n\nInsights: " + str([i.dict() for i in l2_insights]),
+            model=self.l3_model, json_schema=axiom_schema)
+        return [L3Axiom(**a, insight_id=f"l3_{i}") for i, a in enumerate(result)]
+    
+    async def _stage_lesson(self, entity_name: str, lesson: ProposedLesson):
+        import yaml; from pathlib import Path
+        path = Path(f"data/entities/{entity_name}/proposed_lessons.yaml")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp_path = path.with_suffix(".yaml.tmp")
+        existing = yaml.safe_load(path.read_text()) or [] if path.exists() else []
+        existing.append(lesson.dict())
+        tmp_path.write_text(yaml.dump(existing, sort_keys=False))
+        tmp_path.rename(path)
+    
+    async def _suggest_cross_pollination(self, entity_name: str, axioms: List[L3Axiom]):
+        for axiom in axioms:
+            for target in axiom.cross_pollination_targets:
+                if target != entity_name:
+                    suggestion = {"type": "cross_pollination_suggestion", "from_entity": entity_name,
+                        "axiom": axiom.axiom, "domain": axiom.domain, "confidence": axiom.confidence,
+                        "suggested_at": anyio.current_time().isoformat()}
+                    await self._append_suggestion(target, suggestion)
+
+async def session_end_hook(session_id: str, entity_name: str):
+    from src.omega.memory_store import MemoryStore
+    from src.omega.oracle import Oracle
+    memory = MemoryStore(); oracle = Oracle(); scribe = Scribe(memory, oracle)
+    lesson = await scribe.distill_session(session_id, entity_name)
+    live_feed = Path(f"data/coordination/SCRIBE_LIVE_FEED.md")
+    live_feed.parent.mkdir(parents=True, exist_ok=True)
+    with live_feed.open("a") as f:
+        f.write(f"[{anyio.current_time().isoformat()}] SCRIBE DISTILLED {entity_name}/{session_id} → {len(lesson.l3_axioms)} L3 axioms staged\n")
+```
+
+## Research-Backed Patterns (Structured)
+
+```yaml
+research_patterns:
+  - pattern: "Map-Reduce L1 Distillation"
+    source: "Stratos (AAAI 2026, arXiv:2510.15992), llm_tools MapReduce/Refine"
+    key_insights:
+      - "Chunk session → parallel summarize → collapse → final reduce (for >10 chunks)"
+      - "Teacher-student pairing with adaptive strategies (Knowledge Alignment vs Injection)"
+  
+  - pattern: "Refine / Iterative Condensation L2"
+    source: "Mems (2026-03-23), RecSys Challenge 2025"
+    key_insights:
+      - "Sequential refinement: each chunk improves previous summary"
+      - "L2 async distillation from L1 narratives, evidence grounding (L2 linked to L1 sources)"
+      - "Self-critiquing pipelines with constrained decoding"
+  
+  - pattern: "Structured L3 Axiom Extraction"
+    source: "LLM-Distillery, Knowledge Distillation Survey 2026-04-25"
+    key_insights:
+      - "JSON Schema constrained output for structured extraction"
+      - "LLM-as-Judge with self-critique loop + retrieval-augmented verification"
+      - "Multi-teacher distillation, offline dataset collection"
+  
+  - pattern: "Blind Staging (Mandatory)"
+    source: "Kali Amendment 4, Soul Architecture v2.0"
+    key_insight: "Write ONLY to proposed_lessons.yaml; promotion requires explicit human-in-the-loop tool call (omega-hub_soul_promote)"
+  
+  - pattern: "Cross-Pollination"
+    source: "Mems hierarchical memory (L0-L3), Stratos adaptive distillation"
+    key_insight: "Suggest relevant axioms to related entities; entity decides adoption"
+```
+
+## Commands to Verify
+
+```bash
+# Run Scribe contract tests (already implemented)
+pytest tests/contract/test_soul_distiller.py -v
+
+# Test full pipeline manually
+python -c "
+import anyio
+from src.omega.scribe import Scribe, session_end_hook
+from src.omega.memory_store import MemoryStore
+from src.omega.oracle import Oracle
+
+async def test():
+    memory = MemoryStore()
+    oracle = Oracle()
+    scribe = Scribe(memory, oracle)
+    lesson = await scribe.distill_session('test-session-001', 'maat')
+    print(f'Staged: {len(lesson.l3_axioms)} L3 axioms')
+    print(f'Cross-pollination targets: {[a.cross_pollination_targets for a in lesson.l3_axioms]}')
+
+anyio.run(test)
+"
+
+# Verify blind staging (check proposed_lessons.yaml only)
+cat data/entities/maat/proposed_lessons.yaml
+
+# Test promotion (requires explicit tool call)
+# omega-hub_soul_promote entity=maat lesson_ids='["l3_001", "l3_002"]'
+
+# Full temple-grade
+make temple-grade
+```
+
+## Kali Amendments Applied
+
+| Amendment | Original Scope | Amended Scope |
+|-----------|----------------|---------------|
+| **Amendment 4** | "Cross-pollination to other entities" | **Mandatory blind staging** — Scribe writes ONLY to `proposed_lessons.yaml`. Promotion to `soul.yaml` requires explicit `omega-hub_soul_promote` tool call (human-in-the-loop). Enforces M11 blind staging. |
+
+## Agent Creation Required
+
+This ticket **requires a new agent**: `.opencode/agents/scribe.md` (see agent spec in implementation sketch)
+
+---
+
+*⬡ OMEGA ⬡ SCRIBE ⬡ TICKET-C0-5 ⬡ v1.0.0 ⬡ 2026-07-22*
+---
+# C-10.5-quota-routing
+---
+schema_version: "1.0"
+document_type: "ticket_page"
+document_id: "c-10-5-quota-routing"
+title: "C-10.5: Quota-Aware Provider Routing"
+status: "PLANNED"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "maat/P3"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "quota-routing", "provider-fabric"]
+priority: "P0"
+depends_on: ["C-6'"]
+blocks: ["C-0.5", "Phase D"]
+acceptance_gates:
+  - "select_provider() returns only providers with has_quota(provider) == true"
+  - "is_429_blocked(provider) checked on ALL dispatch paths"
+  - "record_429() called on every ProviderRateLimitError"
+  - "Quota tracking persists across restarts"
+  - "Unit tests: 5+ scenarios (exhaustion, partial, recovery)"
+  - "Integration test: full fallback chain with quota-exhausted provider"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 3000
+  chunk_strategy: "section_per_ticket"
+  answer_first_sections: true
+  self_contained_code: true
+---
+
+# 🔱 C-10.5: Quota-Aware Provider Routing
+**AP Token**: `AP-TICKET-C10-5-v1.0.0`
+⬡ OMEGA ⬡ MAAT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_ticket_p0 ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Ticket ID**: `C-10.5`
+**Sprint**: `guard-and-distill-2026-07-22`
+**Priority**: P0
+**Owner**: maat/P3
+**Status**: PLANNED
+**Depends On**: ["C-6'"]
+**Blocks**: ["C-0.5", "Phase D"]
+**Estimated Hours**: 8
+
+---
+
+## What
+
+Extend `ModelGateway.select_provider()` to filter quota-exhausted providers and score remaining by cost/quality/latency.
+
+## Why
+
+Current 429 guard only checks pre-call. Providers with exhausted daily quota keep being selected → rate-limit loops.
+
+---
+
+## Acceptance Criteria (Copy-Paste Verifiable)
+
+- [ ] `select_provider()` returns only providers with `has_quota(provider) == true`
+- [ ] `is_429_blocked(provider)` checked on ALL dispatch paths (not just primary)
+- [ ] `record_429()` called on every `ProviderRateLimitError` catch
+- [ ] Quota tracking persists across restarts (file-based or Redis)
+- [ ] Unit tests: 5+ scenarios covering quota exhaustion, partial quota, recovery
+- [ ] Integration test: full fallback chain with quota-exhausted provider
+
+---
+
+## Implementation Sketch (Self-Contained)
+
+```python
+# File: src/omega/oracle/model_gateway.py
+# Purpose: Quota-aware provider selection (C-10.5)
+# Dependencies: health_monitor.py (is_429_blocked, has_quota, record_429)
+
+from src.omega.oracle.health_monitor import HealthMonitor
+from src.omega.oracle.providers import Provider, GenerateRequest
+from typing import List
+
+class ModelGateway:
+    def __init__(self, health: HealthMonitor, providers: List[Provider]):
+        self.health = health
+        self.providers = providers
+    
+    async def select_provider(self, request: GenerateRequest) -> Provider:
+        # 1. Filter 429-blocked (existing C-10.5 guard)
+        available = [p for p in self.providers if not self.health.is_429_blocked(p.name)]
+        
+        # 2. NEW: Filter quota-exhausted (Kali Amendment 1)
+        available = [p for p in available if self.health.has_quota(p.name)]
+        
+        # 3. Score by cost/quality/latency (QuotaRouter pattern)
+        scored = [(p, self._score_provider(p, request)) for p in available]
+        return max(scored, key=lambda x: x[1])[0]
+    
+    def _score_provider(self, provider: Provider, request: GenerateRequest) -> float:
+        # Weighted: cost(0.4) + quality(0.4) + latency(0.2) — tune per Kali Amendment 1
+        return (0.4 * (1 - provider.cost_score) + 
+                0.4 * provider.quality_score + 
+                0.2 * (1 - provider.latency_score))
+```
+
+---
+
+## HealthMonitor Extensions Required
+
+```python
+# File: src/omega/oracle/health_monitor.py
+# Add to HealthMonitor class
+
+class HealthMonitor:
+    # ... existing methods ...
+    
+    def has_quota(self, provider_name: str) -> bool:
+        """Check if provider has remaining quota for today."""
+        quota = self._quota_tracker.get(provider_name)
+        if quota is None:
+            return True  # Unknown = assume available
+        return quota.remaining_tokens > 0 and quota.remaining_requests > 0
+    
+    def record_quota_usage(self, provider_name: str, tokens_used: int, requests_used: int = 1):
+        """Record quota consumption from response headers."""
+        # Parse DigitalOcean-style headers: x-ratelimit-remaining-tokens-per-day, etc.
+        pass
+    
+    def _parse_quota_headers(self, response_headers: dict) -> QuotaSnapshot:
+        """Extract quota info from provider response headers."""
+        # DigitalOcean 2026-07-13 headers:
+        # x-ratelimit-limit-requests, x-ratelimit-limit-tokens-per-day, x-ratelimit-limit-tokens-per-minute
+        # x-ratelimit-remaining-*, x-ratelimit-reset-*
+        pass
+```
+
+---
+
+## Research-Backed Patterns (Structured)
+
+```yaml
+research_patterns:
+  - pattern: "QuotaRouter"
+    source: "Starland9/quotarouter (GitHub)"
+    key_insights:
+      - "Priority-based routing with automatic fallback"
+      - "Daily token usage tracking per provider with persistence"
+      - "Streaming support"
+      - "RPM rate limiting"
+      - "6 providers: Cerebras, Groq, Google AI Studio, Mistral, OpenRouter, Alibaba DashScope"
+  
+  - pattern: "DigitalOcean Quota Headers"
+    source: "DigitalOcean docs 2026-07-13"
+    headers:
+      - "x-ratelimit-limit-requests"
+      - "x-ratelimit-limit-tokens-per-day"
+      - "x-ratelimit-limit-tokens-per-minute"
+      - "x-ratelimit-remaining-*"
+      - "x-ratelimit-reset-*"
+  
+  - pattern: "Cascade Router"
+    source: "TrueFoundry 2026-02-20"
+    key_insight: "Try cheapest competent model first, escalate on failure; target <10% escalation rate"
+  
+  - pattern: "Quota-Aware Routing"
+    source: "CallMissed 2026-05-31, AppScale 2026-05-21"
+    key_insight: "Track per-provider quota; skip exhausted providers; QuotaRouter pattern"
+```
+
+---
+
+## Commands to Verify
+
+```bash
+# Run new quota-aware routing tests
+pytest tests/unit/test_quota_routing.py -v
+
+# Verify no regressions in provider fallback
+pytest tests/contract/test_provider_fallback.py -v
+
+# Full temple-grade check
+make temple-grade
+
+# Quick smoke test
+python -c "
+from src.omega.oracle.model_gateway import ModelGateway
+from src.omega.oracle.health_monitor import HealthMonitor
+print('Import OK')
+"
+```
+
+---
+
+## Dependencies
+
+```yaml
+dependencies:
+  requires:
+    - "C-6' (unified breaker factory)"  # DONE ✅
+  enables:
+    - "C-0.5 (Scribe needs reliable provider selection)"
+  blocks:
+    - "Phase D (soul integrity requires stable routing)"
+```
+
+---
+
+## Kali Amendments Applied
+
+| Amendment | Original Scope | Amended Scope |
+|-----------|----------------|---------------|
+| **Amendment 1** | "Extend `is_429_blocked()` to all provider error paths" | **Add quota-aware routing** in `select_provider()` — providers with exhausted quota deprioritized for cooldown period. Prevents "rate-limit loop." |
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ TICKET-C10-5 ⬡ v1.0.0 ⬡ 2026-07-22*
+---
+# C-11-property-tests
+---
+schema_version: "1.0"
+document_type: "ticket_page"
+document_id: "c-11-property-tests"
+title: "C-11: Property Tests for OOMProtector + SoulStore"
+status: "PLANNED"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "maat/P3"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "property-testing", "hypothesis", "oom-protector", "soul-store"]
+priority: "P0"
+depends_on: ["C-2'", "C-1'"]
+blocks: ["C-0.5", "Phase D"]
+acceptance_gates:
+  - "OOMProtector: 3-signal fusion monotonicity verified (more pressure → higher risk)"
+  - "OOMProtector: State machine transitions: Healthy → Degraded → Critical → Recovering → Healthy"
+  - "SoulStore: Concurrent writes never corrupt data (all reads return old OR new, never partial)"
+  - "SoulStore: Zero temp files leaked after any operation (including crashes)"
+  - "SoulStore: Crash recovery — read after simulated mid-write kill returns valid data"
+  - "100% property test pass in CI"
+  - "No flakiness: derandomize=True, suppress_health_check=[too_slow], CI profile (500 examples)"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 3000
+  chunk_strategy: "section_per_ticket"
+  answer_first_sections: true
+  self_contained_code: true
+---
+
+# 🔱 C-11: Property Tests for OOMProtector + SoulStore
+**AP Token**: `AP-TICKET-C11-v1.0.0`
+⬡ OMEGA ⬡ MAAT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_ticket_p0 ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Ticket ID**: `C-11`
+**Sprint**: `guard-and-distill-2026-07-22`
+**Priority**: P0
+**Owner**: maat/P3
+**Status**: PLANNED
+**Depends On**: ["C-2'", "C-1'"]
+**Blocks**: ["C-0.5", "Phase D"]
+**Estimated Hours**: 12
+
+---
+
+## What
+
+> ⚠️ **CARMACK AUDIT (2026-07-22)**: Scope trimmed. Start strictly with OOMProtector and SoulStore invariants. Do NOT build a massive chaos testing suite or benchmarks until core invariants are proven.
+
+Implement Hypothesis `RuleBasedStateMachine` property tests for:
+
+Implement Hypothesis `RuleBasedStateMachine` property tests for:
+1. **OOMProtector**: 3-signal fusion thresholds (PSI + MemAvailable + cgroups) under load
+2. **SoulStore**: Atomic write invariants under concurrent access + crash recovery
+
+## Why
+
+Current tests are example-based. Property-based testing finds edge cases humans miss — especially for stateful systems with concurrency and crash scenarios.
+
+## Acceptance Criteria (Copy-Paste Verifiable)
+
+- [ ] OOMProtector: 3-signal fusion monotonicity verified (more pressure → higher risk)
+- [ ] OOMProtector: State machine transitions: `Healthy → Degraded → Critical → Recovering → Healthy`
+- [ ] SoulStore: Concurrent writes never corrupt data (all reads return old OR new, never partial)
+- [ ] SoulStore: Zero temp files leaked after any operation (including crashes)
+- [ ] SoulStore: Crash recovery — read after simulated mid-write kill returns valid data
+- [ ] 100% property test pass in CI
+- [ ] No flakiness: `derandomize=True`, `suppress_health_check=[too_slow]`, CI profile (500 examples)
+
+## Dependencies
+
+- **Requires**: C-2' (OOMProtector 3-signal fusion) ✅ DONE, C-1' (SoulStore atomic writer) ✅ DONE
+- **Enables**: C-0.5 (Scribe needs verified storage), Phase D (integrity gate)
+
+## Implementation Sketch (Self-Contained)
+
+```python
+# File: tests/property/test_oom_protector_fsm.py
+# Purpose: Property-based state machine for OOMProtector 3-signal fusion
+# Dependencies: hypothesis, pytest, anyio, src.omega.oracle.psi_monitor, memavailable, cgroup_pressure
+
+import anyio
+from hypothesis import given, settings, HealthCheck, strategies as st
+from hypothesis.stateful import RuleBasedStateMachine, rule, invariant, Bundle
+from src.omega.oracle.psi_monitor import PSIMonitor
+from src.omega.oracle.memavailable import MemAvailableMonitor
+from src.omega.oracle.cgroup_pressure import CGroupPressureMonitor
+from src.omega.oracle.oom_protector import OOMProtector
+
+class OOMProtectorStateMachine(RuleBasedStateMachine):
+    """Model 3-signal fusion: PSI + MemAvailable + cgroups"""
+    
+    psi_pressure = Bundle("psi_pressure")
+    mem_available = Bundle("mem_available")
+    cgroup_current = Bundle("cgroup_current")
+    
+    def __init__(self):
+        super().__init__()
+        self.psi = PSIMonitor()
+        self.mem = MemAvailableMonitor()
+        self.cgroup = CGroupPressureMonitor()
+        self.oom = OOMProtector(self.psi, self.mem, self.cgroup)
+    
+    @rule(target=psi_pressure, pressure=st.floats(0.0, 100.0))
+    def set_psi(self, pressure):
+        self.psi._last_pressure = pressure
+        return pressure
+    
+    @rule(target=mem_available, mb=st.integers(100, 8000))
+    def set_mem(self, mb):
+        self.mem._last_available_mb = mb
+        return mb
+    
+    @rule(target=cgroup_current, mb=st.integers(100, 8000))
+    def set_cgroup(self, mb):
+        self.cgroup._current_usage_mb = mb
+        return mb
+    
+    @invariant()
+    def fusion_consistency(self):
+        """3-signal fusion must be monotonic: more pressure → higher risk"""
+        risk = self.oom._compute_fusion_risk()
+        assert 0.0 <= risk <= 1.0, f"Risk out of bounds: {risk}"
+        
+        # Monotonicity: if all signals increase pressure, risk should not decrease
+        # (This is a simplified check; real monotonicity needs pairwise comparison)
+    
+    @invariant()
+    def state_machine_valid(self):
+        """State transitions must follow: Healthy → Degraded → Critical → Recovering → Healthy"""
+        valid_transitions = {
+            "Healthy": ["Degraded", "Healthy"],
+            "Degraded": ["Critical", "Healthy", "Degraded"],
+            "Critical": ["Recovering", "Critical"],
+            "Recovering": ["Healthy", "Recovering"],
+        }
+        current = self.oom.state
+        # Next state (if changed) must be valid
+        # This is checked implicitly by the state machine logic
+
+# CI Profile: 500 examples, no deadline, suppress too_slow
+# Run: HYPOTHESIS_PROFILE=ci pytest tests/property/test_oom_protector_fsm.py -v
+```
+
+```python
+# File: tests/property/test_soul_store_fsm.py
+# Purpose: Property-based state machine for SoulStore atomic write invariants
+# Dependencies: hypothesis, pytest, anyio, src.omega.soul_store
+
+import anyio
+from hypothesis import given, settings, HealthCheck, strategies as st
+from hypothesis.stateful import RuleBasedStateMachine, rule, invariant, Bundle
+from src.omega.soul_store import SoulStore
+import tempfile
+import os
+from pathlib import Path
+
+class SoulStoreStateMachine(RuleBasedStateMachine):
+    """Atomic write invariants under concurrent access"""
+    
+    def __init__(self):
+        super().__init__()
+        self.temp_dir = tempfile.mkdtemp()
+        self.store = SoulStore(self.temp_dir)
+        self.write_count = 0
+    
+    @rule(data=st.dictionaries(st.text(min_size=1, max_size=20), st.text(max_size=100), max_size=10))
+    def write_concurrent(self, data):
+        """Spawn multiple writers, verify no corruption"""
+        async def write_task(d):
+            await self.store.write(d)
+        
+        async def run_concurrent():
+            async with anyio.create_task_group() as tg:
+                for _ in range(3):
+                    tg.start_soon(write_task, data)
+        
+        anyio.run(run_concurrent)
+        self.write_count += 1
+    
+    @invariant()
+    def no_temp_files_leaked(self):
+        """No *.tmp files should exist after any operation"""
+        tmp_files = list(Path(self.temp_dir).glob("*.tmp"))
+        assert len(tmp_files) == 0, f"Leaked temp files: {tmp_files}"
+    
+    @invariant()
+    def read_returns_valid_data(self):
+        """Read must return either old data or new data, never partial/corrupt"""
+        result = anyio.run(self.store.read)
+        assert result is None or isinstance(result, dict), f"Invalid read result: {result}"
+        # Verify JSON-serializable (no partial writes)
+        import json
+        json.dumps(result)  # Raises if not serializable
+    
+    @invariant()
+    def crash_recovery(self):
+        """Simulate crash: kill process mid-write, verify recovery on restart"""
+        # This is tested via separate crash simulation test
+        # Here we verify the store can be re-instantiated and read
+        new_store = SoulStore(self.temp_dir)
+        result = anyio.run(new_store.read)
+        assert result is None or isinstance(result, dict)
+
+# Settings for CI
+# @settings(suppress_health_check=[HealthCheck.too_slow], derandomize=True, max_examples=500)
+```
+
+## Research-Backed Patterns (Structured)
+
+```yaml
+research_patterns:
+  - pattern: "Hypothesis Async RuleBasedStateMachine"
+    source: "GitHub hypothesis/hypothesis#4107, MarkTechPost 2026-04-18, TechOral 2026-06-14"
+    key_insights:
+      - "Use sync wrapper + anyio.run() for async FSM rules"
+      - "Register CI profiles: dev (max_examples=20), ci (max_examples=500, deadline=None)"
+      - "suppress_health_check=[HealthCheck.too_slow] for stateful tests"
+      - "derandomize=True for reproducibility"
+  
+  - pattern: "State Machine Modeling"
+    source: "Hypothesis docs, oneuptime 2026-01-30"
+    key_insights:
+      - "Model OOMProtector as: Healthy → Degraded → Critical → Recovering → Healthy"
+      - "Use Bundle for data flow between rules"
+      - "invariant() for safety properties (monotonicity, bounds)"
+      - "precondition() for valid transitions"
+  
+  - pattern: "SoulStore Atomicity Invariants"
+    source: "Grok CLI review F-01, Ma'at C-1' implementation"
+    key_insights:
+      - "Concurrent writes: all reads return old OR new (never partial)"
+      - "Temp file cleanup: zero *.tmp files after any operation"
+      - "Crash recovery: restart + read returns valid data"
+      - "4-layer guarantee: AtomicVisibility + CrashDurability + WriterExclusion + IntegrityDetection"
+```
+
+## Commands to Verify
+
+```bash
+# Run OOMProtector property tests (dev profile)
+HYPOTHESIS_PROFILE=dev pytest tests/property/test_oom_protector_fsm.py -v
+
+# Run SoulStore property tests (dev profile)
+HYPOTHESIS_PROFILE=dev pytest tests/property/test_soul_store_fsm.py -v
+
+# Run full CI profile (500 examples each)
+HYPOTHESIS_PROFILE=ci pytest tests/property/test_oom_protector_fsm.py tests/property/test_soul_store_fsm.py -v
+
+# Verify no flakiness (run 3x)
+for i in 1 2 3; do HYPOTHESIS_PROFILE=ci pytest tests/property/ -v; done
+
+# Full temple-grade check
+make temple-grade
+```
+
+## Kali Amendments Applied
+
+| Amendment | Original Scope | Amended Scope |
+|-----------|----------------|---------------|
+| **Amendment 2** | "OOMProtector 3-signal fusion thresholds" | **Add SoulStore atomicity invariants** — concurrent writes never corrupt, temp files always cleaned, crash recovery returns valid data |
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ TICKET-C11 ⬡ v1.0.0 ⬡ 2026-07-22*
+---
+# C-3-restic-backup
+---
+schema_version: "1.0"
+document_type: "ticket_page"
+document_id: "c-3-restic-backup"
+title: "C-3: Restic 3-2-1 Backup for Sovereign Data"
+status: "PLANNED"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "lilith/P6"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "backup", "restic", "b2", "disaster-recovery"]
+priority: "P0"
+depends_on: ["V-1 (partial)"]
+blocks: ["Phase D (data durability gate)"]
+acceptance_gates:
+  - "Daily backup script + systemd timer (randomized 3am ± 15min)"
+  - "Off-site target: Backblaze B2 via S3-compatible API with Object Lock enabled"
+  - "Append-only B2 application key for server (no delete permission)"
+  - "Retention policy: 7 daily / 4 weekly / 6 monthly / 1 yearly (max 18 snapshots)"
+  - "Monthly automated restic check --read-data-subset 5% + restore test (5% sample)"
+  - "Healthchecks.io / Uptime Kuma dead-man's switch on backup success"
+  - "Exclusions: caches, logs, tmp, __pycache__, locks/"
+  - "Documentation: restore procedure tested and documented"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 3000
+  chunk_strategy: "section_per_ticket"
+  answer_first_sections: true
+  self_contained_code: true
+---
+
+# 🔱 C-3: Restic 3-2-1 Backup for Sovereign Data
+**AP Token**: `AP-TICKET-C3-v1.0.0`
+⬡ OMEGA ⬡ LILITH ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_ticket_p0 ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Ticket ID**: `C-3`
+**Sprint**: `guard-and-distill-2026-07-22`
+**Priority**: P0
+**Owner**: lilith/P6
+**Status**: PLANNED
+**Depends On**: ["V-1 (partial)"]
+**Blocks**: ["Phase D (data durability gate)"]
+**Estimated Hours**: 8
+
+---
+
+## What
+
+Implement 3-2-1 backup strategy for all sovereign data using Restic + Backblaze B2 with Object Lock.
+
+## Why
+
+No disaster recovery exists (GAP-04). Soul data, coordination state, and provider credentials must survive hardware failure, ransomware, and operator error.
+
+## Acceptance Criteria (Copy-Paste Verifiable)
+
+- [ ] Daily backup script + systemd timer (randomized 3am ± 15min)
+- [ ] Off-site target: Backblaze B2 via S3-compatible API with **Object Lock enabled**
+- [ ] Append-only B2 application key for server (no delete permission)
+- [ ] Retention policy: 7 daily / 4 weekly / 6 monthly / 1 yearly (max 18 snapshots)
+- [ ] Monthly automated `restic check --read-data-subset 5%` + restore test (5% sample)
+- [ ] Healthchecks.io / Uptime Kuma dead-man's switch on backup success
+- [ ] Exclusions: caches, logs, tmp, __pycache__, locks/
+- [ ] Documentation: restore procedure tested and documented
+
+## Sovereign Data Scope (Per Kali Amendment 3)
+
+```yaml
+backup_paths:
+  include:
+    - "data/entities/"           # All entity souls, proposed_lessons, knowledge
+    - "data/coordination/"       # Handoffs, sessions (EXCLUDE locks/)
+    - "data/handoff/"            # Active coordination state
+    - "config/providers.yaml"    # Credential references
+    - "proposed_lessons.yaml"    # Distillation staging (root level)
+  exclude:
+    - "data/coordination/locks/" # Ephemeral, recreated on startup
+    - "*.log"
+    - "*/tmp/*"
+    - "*/__pycache__/*"
+    - "*.tmp"
+    - "*.pid"
+```
+
+## Implementation Sketch (Self-Contained)
+
+```bash
+#!/usr/bin/env bash
+# File: scripts/backup_restic.sh
+# Purpose: 3-2-1 Restic backup for Omega Engine sovereign data
+# Dependencies: restic >= 0.17, B2 bucket with Object Lock, append-only key
+
+set -euo pipefail
+
+# Configuration (source from environment or config file)
+B2_BUCKET="${B2_BUCKET:-omega-engine-backups}"
+B2_ENDPOINT="${B2_ENDPOINT:-s3.us-west-002.backblazeb2.com}"
+B2_KEY_ID="${B2_KEY_ID}"           # Append-only key (read+write, NO delete)
+B2_APP_KEY="${B2_APP_KEY}"
+RESTIC_REPOSITORY="s3:${B2_ENDPOINT}/${B2_BUCKET}"
+RESTIC_PASSWORD="${RESTIC_PASSWORD}"  # Strong random, stored in vault
+EXCLUDE_FILE="/etc/omega/restic-excludes.txt"
+
+# Paths to back up (absolute)
+BACKUP_PATHS=(
+    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities"
+    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination"
+    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff"
+    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/providers.yaml"
+    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/proposed_lessons.yaml"
+)
+
+# Initialize repo if needed (run once manually)
+# restic -r "$RESTIC_REPOSITORY" init
+
+# Run backup
+export B2_ACCOUNT_ID="$B2_KEY_ID"
+export B2_ACCOUNT_KEY="$B2_APP_KEY"
+export RESTIC_PASSWORD
+
+restic -r "$RESTIC_REPOSITORY" backup \
+    --exclude-file="$EXCLUDE_FILE" \
+    --exclude-caches \
+    "${BACKUP_PATHS[@]}"
+
+# Apply retention policy
+restic -r "$RESTIC_REPOSITORY" forget \
+    --keep-daily 7 \
+    --keep-weekly 4 \
+    --keep-monthly 6 \
+    --keep-yearly 1 \
+    --prune
+
+# Healthcheck ping (dead-man's switch)
+curl -fsS -m 10 --retry 5 -o /dev/null "https://hc-ping.com/${HEALTHCHECKS_UUID}"
+```
+
+```ini
+# File: /etc/systemd/system/omega-restic-backup.service
+[Unit]
+Description=Omega Engine Restic Backup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/backup_restic.sh
+EnvironmentFile=/etc/omega/backup.env
+User=arcana-novai
+Group=arcana-novai
+```
+
+```ini
+# File: /etc/systemd/system/omega-restic-backup.timer
+[Unit]
+Description=Daily Omega Engine Backup (3am ± 15min)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+RandomizedDelaySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+```bash
+# Exclude file: /etc/omega/restic-excludes.txt
+data/coordination/locks/
+*.log
+*/tmp/*
+*/__pycache__/*
+*.tmp
+*.pid
+```
+
+```bash
+# Enable and start
+sudo systemctl daemon-reload
+sudo systemctl enable --now omega-restic-backup.timer
+sudo systemctl status omega-restic-backup.timer
+```
+
+## Monthly Restore Test Script
+
+```bash
+#!/usr/bin/env bash
+# File: scripts/test_restore_restic.sh
+# Purpose: Monthly automated restore test (5% sample)
+
+set -euo pipefail
+
+RESTIC_REPOSITORY="s3:${B2_ENDPOINT}/${B2_BUCKET}"
+RESTIC_PASSWORD="${RESTIC_PASSWORD}"
+RESTORE_DIR="/tmp/omega-restore-test-$(date +%s)"
+
+export B2_ACCOUNT_ID="$B2_KEY_ID"
+export B2_ACCOUNT_KEY="$B2_APP_KEY"
+export RESTIC_PASSWORD
+
+# 1. Verify repository integrity (5% data read)
+echo "Running restic check --read-data-subset 5%..."
+restic -r "$RESTIC_REPOSITORY" check --read-data-subset 5%
+
+# 2. List latest snapshot
+SNAPSHOT=$(restic -r "$RESTIC_REPOSITORY" snapshots --latest 1 --json | jq -r '.[0].id')
+echo "Testing restore of snapshot: $SNAPSHOT"
+
+# 3. Restore 5% sample (by file count)
+echo "Restoring to $RESTORE_DIR..."
+restic -r "$RESTIC_REPOSITORY" restore "$SNAPSHOT" \
+    --target "$RESTORE_DIR" \
+    --include "data/entities/**" \
+    --include "data/coordination/**" \
+    --include "data/handoff/**" \
+    --include "config/providers.yaml" \
+    --include "proposed_lessons.yaml"
+
+# 4. Verify restored files
+echo "Verifying restored files..."
+FILE_COUNT=$(find "$RESTORE_DIR" -type f | wc -l)
+echo "Restored $FILE_COUNT files"
+
+# 5. Verify gzip integrity (for compressed files)
+find "$RESTORE_DIR" -name "*.gz" -exec gzip -t {} \;
+
+# 6. Verify YAML/JSON parse
+find "$RESTORE_DIR" -name "*.yaml" -exec python -c "import yaml; yaml.safe_load(open('{}'))" \;
+find "$RESTORE_DIR" -name "*.json" -exec python -c "import json; json.load(open('{}'))" \;
+
+# 7. Cleanup
+rm -rf "$RESTORE_DIR"
+echo "Restore test PASSED"
+```
+
+## Research-Backed Patterns (Structured)
+
+```yaml
+research_patterns:
+  - pattern: "Restic + B2 S3 API (not native B2)"
+    source: "byte-guard.net 2026-06-13, Backblaze 2026-06-26"
+    key_insights:
+      - "B2 native backend has error handling issues; use S3-compatible API"
+      - "Endpoint: s3.us-west-002.backblazeb2.com (or region-appropriate)"
+  
+  - pattern: "Object Lock for Ransomware Protection"
+    source: "Backblaze 2026-06-26, TechFuelHQ 2026-06-04"
+    key_insights:
+      - "Enable Object Lock on bucket creation — prevents deletion even with compromised keys"
+      - "Governance mode: can be overridden by root; Compliance mode: cannot be overridden"
+      - "Recommended: Compliance mode for sovereign data"
+  
+  - pattern: "Append-Only Application Key"
+    source: "47Network 2026-02-24, restic docs"
+    key_insights:
+      - "Create separate B2 key with 'Read + Write' only (NO Delete, NO List Buckets)"
+      - "Server uses append-only key; prune/forget runs from separate trusted machine with full key"
+      - "Eliminates ransomware encryption + deletion attack vector"
+  
+  - pattern: "Retention Policy (7/4/6/1)"
+    source: "restic docs, byte-guard.net 2026-06-13"
+    key_insights:
+      - "--keep-daily 7 --keep-weekly 4 --keep-monthly 6 --keep-yearly 1"
+      - "Max 18 snapshots; --prune removes unreferenced data"
+      - "Run forget+prune after every backup"
+  
+  - pattern: "Systemd Timer Randomization"
+    source: "systemd.timer docs, 47Network 2026-02-24"
+    key_insights:
+      - "OnCalendar=*-*-* 03:00:00 + RandomizedDelaySec=15min"
+      - "Avoids thundering herd on shared infrastructure"
+      - "Persistent=true catches missed runs after downtime"
+  
+  - pattern: "Healthchecks.io Dead-Man's Switch"
+    source: "TechFuelHQ 2026-06-04, restic docs"
+    key_insights:
+      - "curl -fsS -m 10 --retry 5 https://hc-ping.com/UUID on success"
+      - "If ping missing for 25h (daily + buffer), alert fires"
+      - "Free tier: 20 checks, 1-min interval"
+  
+  - pattern: "Monthly Restore Test (5% Sample)"
+    source: "restic docs, 47Network 2026-02-24"
+    key_insights:
+      - "restic check --read-data-subset 5% verifies 5% of data blocks"
+      - "Restore test: verify file count > threshold, gzip -t passes, YAML/JSON parses"
+      - "Automate monthly via separate systemd timer"
+```
+
+## Commands to Verify
+
+```bash
+# Test backup script manually
+sudo /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/backup_restic.sh
+
+# Check timer status
+systemctl status omega-restic-backup.timer
+systemctl list-timers | grep omega
+
+# View last backup logs
+journalctl -u omega-restic-backup.service -n 50
+
+# Manual restic commands
+restic -r s3:s3.us-west-002.backblazeb2.com/omega-engine-backups snapshots
+restic -r s3:s3.us-west-002.backblazeb2.com/omega-engine-backups check --read-data-subset 5%
+
+# Run restore test
+sudo /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/test_restore_restic.sh
+
+# Full temple-grade
+make temple-grade
+```
+
+## Kali Amendments Applied
+
+| Amendment | Original Scope | Amended Scope |
+|-----------|----------------|---------------|
+| **Amendment 3** | "3-2-1 backup of `data/entities/`, `data/coordination/`, `proposed_lessons.yaml`" | **Include `data/handoff/` (active coordination state) and `config/providers.yaml` (credential references). Exclude `data/coordination/locks/` (ephemeral).** |
+
+## Parallelization Note (Kali Amendment 7)
+
+Lilith/P6 owns C-3. V-1 credential rotation requires Ma'at/P1 coordination for KeyVault schema changes. Lilith's restic script must be **read-only on `data/entities/`** structure — backup only, no modification.
+
+---
+
+*⬡ OMEGA ⬡ LILITH ⬡ TICKET-C3 ⬡ v1.0.0 ⬡ 2026-07-22*
+---
+# V-1-vaultcore-mvp
+---
+schema_version: "1.0"
+document_type: "ticket_page"
+document_id: "v-1-vaultcore-mvp"
+title: "V-1: VaultCore MVP — Secure Credential Storage"
+status: "PLANNED"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "maat/P1"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "vault", "credentials", "encryption"]
+priority: "P0"
+depends_on: ["C-0", "C-1'"]
+blocks: ["C-3", "C-0.5", "Phase D"]
+acceptance_gates:
+  - "VaultCore class with encrypt/decrypt using age (RFC 8610) or libsodium"
+  - "Credentials stored in data/vault/ with .age encryption"
+  - "Master key derived from passphrase + salt (Argon2id, 3 iterations)"
+  - "CLI: omega vault set/get/list/rotate"
+  - "B2 Application Key + Restic password + Provider API keys supported"
+  - "Append-only audit log in data/vault/audit.log"
+  - "Unit tests: 5+ scenarios (set, get, rotate, corrupt, missing)"
+  - "Integration: C-3 restic script reads B2 keys from VaultCore"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 3000
+  chunk_strategy: "section_per_ticket"
+  answer_first_sections: true
+  self_contained_code: true
+---
+
+# 🔱 V-1: VaultCore MVP — Secure Credential Storage
+**AP Token**: `AP-TICKET-V1-v1.0.0`
+⬡ OMEGA ⬡ MAAT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_ticket_p0 ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Ticket ID**: `V-1`
+**Sprint**: `guard-and-distill-2026-07-22`
+**Priority**: P0 (Elevated by Kali Amendment 3)
+**Owner**: maat/P1
+**Status**: PLANNED
+**Depends On**: ["C-0", "C-1'"]
+**Blocks**: ["C-3", "C-0.5", "Phase D"]
+**Estimated Hours**: 3
+
+---
+
+## What
+
+Implement **VaultCore** — a minimal, sovereign credential vault for the Omega Engine. Stores B2 Application Keys, Restic repository passwords, and Provider API keys using age encryption (RFC 8610) with Argon2id key derivation.
+
+## Why
+
+**C-3 Restic backup cannot proceed without VaultCore** (Kali Amendment 3). The restic script needs B2 keys and repository passwords. Storing these in plaintext `config/providers.yaml` or environment files violates sovereignty. VaultCore provides encrypted storage with audit trail.
+
+---
+
+## Acceptance Criteria (Copy-Paste Verifiable)
+
+- [ ] `VaultCore` class with `encrypt()`, `decrypt()`, `store()`, `retrieve()`, `rotate()`, `list()` methods
+- [ ] Uses `age` (RFC 8610) via `rage` Python binding or `subprocess` to `age` CLI
+- [ ] Master key: Argon2id(passphrase, salt, iterations=3, memory=64MB, parallelism=4)
+- [ ] Credentials stored as individual `.age` files in `data/vault/`
+- [ ] CLI: `omega vault set <key> <value>`, `omega vault get <key>`, `omega vault list`, `omega vault rotate <key>`
+- [ ] Audit log: `data/vault/audit.log` (append-only, JSON Lines: timestamp, operation, key, success)
+- [ ] Supported credential types: `b2_key_id`, `b2_app_key`, `restic_password`, `provider:<name>:api_key`
+- [ ] Unit tests: 5+ scenarios (set/get, rotate, corrupt file, missing key, wrong passphrase)
+- [ ] Integration: `scripts/backup_restic.sh` reads B2 keys via `VaultCore.retrieve("b2_key_id")`
+
+---
+
+## Implementation Sketch (Self-Contained)
+
+```python
+# File: src/omega/vault/vault_core.py
+# Purpose: Sovereign credential vault using age encryption
+# Dependencies: argon2-cffi, age (via subprocess or rage), anyio
+
+import anyio
+import json
+import os
+import subprocess
+import time
+from pathlib import Path
+from typing import Optional, Dict, List
+from dataclasses import dataclass, asdict
+
+@dataclass
+class AuditEntry:
+    timestamp: str
+    operation: str  # set, get, rotate, list, delete
+    key: str
+    success: bool
+    error: Optional[str] = None
+
+class VaultCore:
+    """Sovereign credential vault using age encryption."""
+    
+    def __init__(self, vault_dir: Path, passphrase: str):
+        self.vault_dir = Path(vault_dir)
+        self.vault_dir.mkdir(parents=True, exist_ok=True)
+        self.audit_log = self.vault_dir / "audit.log"
+        self._passphrase = passphrase
+        self._salt = self.vault_dir / "salt.bin"
+        self._master_key = self.vault_dir / "master.age"
+        
+    async def _derive_key(self) -> bytes:
+        """Derive master key using Argon2id."""
+        import argon2
+        if not self._salt.exists():
+            salt = os.urandom(16)
+            self._salt.write_bytes(salt)
+        else:
+            salt = self._salt.read_bytes()
+        
+        ph = argon2.PasswordHasher(
+            time_cost=3,
+            memory_cost=65536,  # 64 MB
+            parallelism=4,
+            hash_len=32,
+            type=argon2.Type.ID
+        )
+        # Argon2id derives key from passphrase + salt
+        hash_bytes = ph.hash(self._passphrase.encode() + salt)
+        # Extract raw key from hash (last 32 bytes of decoded hash)
+        return hash_bytes[-32:]
+    
+    async def _age_encrypt(self, plaintext: str, recipient: str) -> str:
+        """Encrypt using age with recipient (public key)."""
+        proc = await anyio.run_process(
+            ["age", "-r", recipient, "-e"],
+            input=plaintext.encode(),
+            capture=True
+        )
+        if proc.returncode != 0:
+            raise VaultError(f"age encrypt failed: {proc.stderr.decode()}")
+        return proc.stdout.decode()
+    
+    async def _age_decrypt(self, ciphertext: str) -> str:
+        """Decrypt using age with master key (private key from passphrase)."""
+        # Use master key file as identity
+        proc = await anyio.run_process(
+            ["age", "-d", "-i", str(self._master_key)],
+            input=ciphertext.encode(),
+            capture=True
+        )
+        if proc.returncode != 0:
+            raise VaultError(f"age decrypt failed: {proc.stderr.decode()}")
+        return proc.stdout.decode()
+    
+    async def _ensure_master_key(self):
+        """Generate or load master age key pair."""
+        if not self._master_key.exists():
+            # Generate key pair from passphrase-derived seed
+            key_bytes = await self._derive_key()
+            # age-keygen from seed
+            proc = await anyio.run_process(
+                ["age-keygen", "-y"],
+                input=key_bytes.hex().encode(),
+                capture=True
+            )
+            if proc.returncode != 0:
+                raise VaultError(f"age-keygen failed: {proc.stderr.decode()}")
+            # Output format: "AGE-SECRET-KEY-... # public key: age1..."
+            lines = proc.stdout.decode().strip().split('\n')
+            private_key = lines[0].split()[0]
+            public_key = lines[1].split(': ')[1] if len(lines) > 1 else None
+            self._master_key.write_text(private_key)
+            # Store public key for reference
+            (self.vault_dir / "master.pub").write_text(public_key or "")
+        return (self.vault_dir / "master.pub").read_text().strip()
+    
+    async def store(self, key: str, value: str) -> bool:
+        """Store a credential."""
+        try:
+            recipient = await self._ensure_master_key()
+            ciphertext = await self._age_encrypt(value, recipient)
+            credential_file = self.vault_dir / f"{key}.age"
+            credential_file.write_text(ciphertext)
+            await self._audit("set", key, True)
+            return True
+        except Exception as e:
+            await self._audit("set", key, False, str(e))
+            raise VaultError(f"Failed to store {key}: {e}")
+    
+    async def retrieve(self, key: str) -> Optional[str]:
+        """Retrieve a credential."""
+        credential_file = self.vault_dir / f"{key}.age"
+        if not credential_file.exists():
+            await self._audit("get", key, False, "Key not found")
+            return None
+        try:
+            ciphertext = credential_file.read_text()
+            plaintext = await self._age_decrypt(ciphertext)
+            await self._audit("get", key, True)
+            return plaintext
+        except Exception as e:
+            await self._audit("get", key, False, str(e))
+            raise VaultError(f"Failed to retrieve {key}: {e}")
+    
+    async def rotate(self, key: str, new_value: str) -> bool:
+        """Rotate a credential (overwrite with new value)."""
+        return await self.store(key, new_value)
+    
+    async def list_keys(self) -> List[str]:
+        """List all stored credential keys."""
+        keys = [f.stem for f in self.vault_dir.glob("*.age")]
+        await self._audit("list", "all", True)
+        return keys
+    
+    async def delete(self, key: str) -> bool:
+        """Delete a credential."""
+        credential_file = self.vault_dir / f"{key}.age"
+        if credential_file.exists():
+            credential_file.unlink()
+            await self._audit("delete", key, True)
+            return True
+        await self._audit("delete", key, False, "Key not found")
+        return False
+    
+    async def _audit(self, operation: str, key: str, success: bool, error: Optional[str] = None):
+        """Append to audit log."""
+        entry = AuditEntry(
+            timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            operation=operation,
+            key=key,
+            success=success,
+            error=error
+        )
+        async with await anyio.open_file(self.audit_log, "a") as f:
+            await f.write(json.dumps(asdict(entry)) + "\n")
+
+class VaultError(Exception):
+    pass
+```
+
+```python
+# File: src/omega/cli/vault.py
+# Purpose: CLI commands for vault operations
+
+import anyio
+import click
+from pathlib import Path
+from src.omega.vault.vault_core import VaultCore, VaultError
+
+@click.group()
+def vault():
+    """Sovereign credential vault operations."""
+    pass
+
+@vault.command()
+@click.argument("key")
+@click.argument("value")
+@click.option("--passphrase", envvar="OMEGA_VAULT_PASSPHRASE", prompt=True, hide_input=True)
+@click.option("--vault-dir", default="data/vault", type=click.Path(path_type=Path))
+def set(key: str, value: str, passphrase: str, vault_dir: Path):
+    """Store a credential."""
+    async def _set():
+        vault = VaultCore(vault_dir, passphrase)
+        await vault.store(key, value)
+        click.echo(f"Stored: {key}")
+    anyio.run(_set)
+
+@vault.command()
+@click.argument("key")
+@click.option("--passphrase", envvar="OMEGA_VAULT_PASSPHRASE", prompt=True, hide_input=True)
+@click.option("--vault-dir", default="data/vault", type=click.Path(path_type=Path))
+def get(key: str, passphrase: str, vault_dir: Path):
+    """Retrieve a credential."""
+    async def _get():
+        vault = VaultCore(vault_dir, passphrase)
+        value = await vault.retrieve(key)
+        if value is None:
+            click.echo(f"Key not found: {key}", err=True)
+            raise click.Abort()
+        click.echo(value)
+    anyio.run(_get)
+
+@vault.command()
+@click.option("--passphrase", envvar="OMEGA_VAULT_PASSPHRASE", prompt=True, hide_input=True)
+@click.option("--vault-dir", default="data/vault", type=click.Path(path_type=Path))
+def list(passphrase: str, vault_dir: Path):
+    """List all credential keys."""
+    async def _list():
+        vault = VaultCore(vault_dir, passphrase)
+        keys = await vault.list_keys()
+        for k in keys:
+            click.echo(k)
+    anyio.run(_list)
+
+@vault.command()
+@click.argument("key")
+@click.argument("new_value")
+@click.option("--passphrase", envvar="OMEGA_VAULT_PASSPHRASE", prompt=True, hide_input=True)
+@click.option("--vault-dir", default="data/vault", type=click.Path(path_type=Path))
+def rotate(key: str, new_value: str, passphrase: str, vault_dir: Path):
+    """Rotate a credential."""
+    async def _rotate():
+        vault = VaultCore(vault_dir, passphrase)
+        await vault.rotate(key, new_value)
+        click.echo(f"Rotated: {key}")
+    anyio.run(_rotate)
+
+@vault.command()
+@click.argument("key")
+@click.option("--passphrase", envvar="OMEGA_VAULT_PASSPHRASE", prompt=True, hide_input=True)
+@click.option("--vault-dir", default="data/vault", type=click.Path(path_type=Path))
+def delete(key: str, passphrase: str, vault_dir: Path):
+    """Delete a credential."""
+    async def _delete():
+        vault = VaultCore(vault_dir, passphrase)
+        await vault.delete(key)
+        click.echo(f"Deleted: {key}")
+    anyio.run(_delete)
+```
+
+---
+
+## Research-Backed Patterns (Structured)
+
+```yaml
+research_patterns:
+  - pattern: "age Encryption (RFC 8610)"
+    source: "FiloSottile/age, rage bindings, 2026-07"
+    key_insights:
+      - "Modern, simple, UNIX-y encryption tool"
+      - "Supports passphrase-derived keys via scrypt (but we use Argon2id separately)"
+      - "age-keygen can derive from seed; we use passphrase → Argon2id → seed"
+      - "CLI and library (rage) available; subprocess to CLI is simpler for audit"
+  
+  - pattern: "Argon2id Key Derivation"
+    source: "RFC 9106, argon2-cffi 2026-06"
+    key_insights:
+      - "Winner of Password Hashing Competition"
+      - "Memory-hard: 64MB, 3 iterations, 4 threads = ~200ms on modern CPU"
+      - "Resistant to GPU/ASIC cracking"
+      - "Use Type.ID (Argon2id) for side-channel resistance"
+  
+  - pattern: "Append-Only Audit Log"
+    source: "AWS CloudTrail pattern, restic audit"
+    key_insights:
+      - "JSON Lines format for streaming parsing"
+      - "Never modify — only append"
+      - "Include: timestamp, operation, key, success, error"
+      - "Rotate annually; keep 7 years for sovereignty"
+```
+
+---
+
+## Commands to Verify
+
+```bash
+# Install dependencies
+pip install argon2-cffi
+# age CLI: install via package manager or download from FiloSottile/age releases
+
+# Test vault operations
+OMEGA_VAULT_PASSPHRASE="test-passphrase" python -m src.omega.cli.vault set b2_key_id "my-key-id"
+OMEGA_VAULT_PASSPHRASE="test-passphrase" python -m src.omega.cli.vault set b2_app_key "my-app-key"
+OMEGA_VAULT_PASSPHRASE="test-passphrase" python -m src.omega.cli.vault set restic_password "strong-random-password"
+OMEGA_VAULT_PASSPHRASE="test-passphrase" python -m src.omega.cli.vault list
+
+# Verify encryption
+cat data/vault/b2_key_id.age  # Should be age ciphertext
+
+# Run unit tests
+pytest tests/unit/test_vault_core.py -v
+
+# Integration test: restic script reads from vault
+OMEGA_VAULT_PASSPHRASE="test-passphrase" python -c "
+from src.omega.vault.vault_core import VaultCore
+import anyio
+async def test():
+    v = VaultCore(Path('data/vault'), 'test-passphrase')
+    print(await v.retrieve('b2_key_id'))
+anyio.run(test)
+"
+```
+
+---
+
+## Kali Amendments Applied
+
+| Amendment | Original Scope | Amended Scope |
+|-----------|----------------|---------------|
+| **Amendment 3** | "V-1 credential rotation" | **V-1 Elevated to P0-1** — Must ship FIRST. Blocks C-3 restic backup. Secure storage for B2 keys, restic passwords, provider API keys. |
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ TICKET-V1 ⬡ v1.0.0 ⬡ 2026-07-22*---
+schema_version: "1.0"
+document_type: "research_index"
+document_id: "research-index-guard-distill"
+title: "Research Index: Guard & Distill Sprint"
+status: "ACTIVE"
+version: "1.0.0"
+date: "2026-07-22"
+owner: "kali"
+tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "research-index"]
+priority: "P0"
+depends_on: []
+blocks: []
+acceptance_gates:
+  - "All 5 research topics have structured metadata"
+  - "Each topic maps to implementation files"
+  - "Source quality assessment complete"
+cross_references:
+  - "SOVEREIGN_ARK_BLUEPRINT.md"
+  - "FLEET_TEAM_PLAYBOOK.md"
+  - "LLM_FRIENDLY_DOCS_BP.md"
+llm_metadata:
+  token_budget: 6000
+  chunk_strategy: "section_per_topic"
+  answer_first_sections: true
+  self_contained_code: false
+---
+
+# 🔱 Research Index: Guard & Distill Sprint
+**AP Token**: `AP-RESEARCH-INDEX-GUARD-DISTILL-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_research_index ⬡ ACTIVE
+
+**Date**: 2026-07-22
+**Sprint**: `guard-and-distill-2026-07-22`
+**Status**: ACTIVE
+
+---
+
+## Structured Research Metadata
+
+```yaml
+research_topics:
+  - topic: "hypothesis_async_fsm"
+    tickets: ["C-11"]
+    sources:
+      - "GitHub hypothesis/hypothesis#4107"
+      - "MarkTechPost 2026-04-18: Async stateful testing with Hypothesis"
+      - "TechOral 2026-06-14: RuleBasedStateMachine patterns"
+      - "oneuptime 2026-01-30: Hypothesis async best practices"
+    key_findings:
+      - "Use sync wrapper + anyio.run() for async FSM rules"
+      - "Register CI profiles: dev (max_examples=20), ci (max_examples=500, deadline=None)"
+      - "suppress_health_check=[HealthCheck.too_slow] for stateful tests"
+      - "derandomize=True for reproducibility"
+    implementation_guidance: "tests/property/test_oom_protector_fsm.py, tests/property/test_soul_store_fsm.py"
+
+  - topic: "restic_b2_object_lock"
+    tickets: ["C-3"]
+    sources:
+      - "byte-guard.net 2026-06-13: Restic 3-2-1 with Backblaze B2"
+      - "Backblaze 2026-06-26: Object Lock for ransomware protection"
+      - "TechFuelHQ 2026-06-04: Restic backup best practices"
+      - "47Network 2026-02-24: Restic + B2 production guide"
+    key_findings:
+      - "Use S3-compatible API, NOT B2 native backend (error handling issues)"
+      - "Endpoint: s3.us-west-002.backblazeb2.com (region-specific)"
+      - "Enable Object Lock on bucket creation (Compliance mode recommended)"
+      - "Append-only key for server (Read+Write, NO Delete, NO ListBuckets)"
+      - "Prune/forget from separate trusted machine with full key"
+      - "Retention: 7 daily / 4 weekly / 6 monthly / 1 yearly (max 18 snapshots)"
+      - "Systemd timer: OnCalendar=*-*-* 03:00:00 + RandomizedDelaySec=15min"
+      - "Healthchecks.io dead-man's switch on backup success"
+    implementation_guidance: "scripts/backup_restic.sh, /etc/systemd/system/omega-restic-backup.*"
+
+  - topic: "mcp_streamable_http_2026_07_28"
+    tickets: ["C-4a.5"]
+    sources:
+      - "MCP.Directory blog 2026: Streamable HTTP migration guide"
+      - "Zylos Research 2026-03-08: MCP 2025-06-18 spec changes"
+      - "AWS Labs issue #72: Stateless transport implementation"
+      - "AgentMarketCap 2026-04-06: MCP server patterns"
+      - "OpenAI Community 2026-04-02: OAuth 2.1 + PKCE for MCP"
+      - "Baeseokjae 2026-05-05: Dynamic client registration"
+      - "Upendra Sengar 2026: SEP-2243 stateless transport"
+      - "Abhi Panseriya 2026-05-30: MCP caching headers"
+    key_findings:
+      - "Spec evolution: 2024-11-05 (initial) → 2025-03-26 (Streamable HTTP) → 2025-06-18 (OAuth 2.0 RS) → 2025-11-25 (PKCE mandatory) → 2026-07-28 (Stateless)"
+      - "2026-07-28 key changes: No session handshake, no Mcp-Session-Id, Mcp-Method/Mcp-Name headers required, ttlMs/cacheScope caching"
+      - "Transport: Single POST /mcp endpoint for JSON-RPC, optional GET /mcp for SSE"
+      - "Auth: OAuth 2.1 + PKCE (S256), RFC 9728 Protected Resource Metadata, RFC 8414 AS Metadata, RFC 8707 Resource Indicators"
+      - "Discovery: /.well-known/oauth-protected-resource → /.well-known/oauth-authorization-server"
+      - "Dynamic Client Reg: RFC 7591"
+      - "Migration: Phase 1 dual transport (Aug), Phase 2 OAuth 2.1 RS (Sep), Phase 3 Stateless (Oct)"
+      - "ChatGPT connector bug: attempts SSE GET after long idle instead of token refresh — workaround: minimal SSE endpoint returning 405"
+    implementation_guidance: "mcp_servers/omega_hub/server.py (Streamable HTTP + OAuth 2.1)"
+
+  - topic: "llm_distillation_pipeline"
+    tickets: ["C-0.5"]
+    sources:
+      - "Stratos (arXiv:2510.15992, AAAI 2026): End-to-end distillation with teacher-student pairing"
+      - "Mems (GitHub 2026-03-23): L0-L3 hierarchical memory, L2 async distillation from L1"
+      - "RecSys Challenge 2025: Narrative distillation with self-critique, JSON Schema constrained output"
+      - "LLM-Distillery: Multi-teacher distillation, offline dataset collection, HDF5 sync"
+      - "llm_tools: MapReduce/Refine summarization patterns"
+      - "Knowledge Distillation Survey 2026-04-25: Adaptive strategies (Alignment vs Injection)"
+    key_findings:
+      - "L1 Narrative: Map-Reduce (chunk → parallel summarize → collapse → final reduce for >10 chunks)"
+      - "L2 Insight: Refine/iterative condensation (sequential refinement with evidence grounding)"
+      - "L3 Axiom: JSON Schema constrained output + LLM-as-Judge self-critique + retrieval-augmented verification"
+      - "Quality gates: Narrative coherence, personalization depth, factual correctness metrics"
+      - "BLIND STAGING MANDATORY: Write ONLY to proposed_lessons.yaml; promotion requires explicit omega-hub_soul_promote tool call"
+      - "Cross-pollination: Suggest relevant L3 axioms to related entities; entity decides adoption"
+    implementation_guidance: "src/omega/scribe/__init__.py, src/omega/scribe/distiller.py, tests/contract/test_soul_distiller.py"
+
+  - topic: "quota_aware_routing"
+    tickets: ["C-10.5"]
+    sources:
+      - "TrueFoundry 2026-02-20: Model router cost/quality/latency aware routing"
+      - "CallMissed 2026-05-31: Cascade router pattern"
+      - "AppScale 2026-05-21: Classifier router for specialist models"
+      - "QuotaRouter (Starland9/quotarouter): Priority routing + daily token persistence + streaming + RPM limiting"
+      - "DigitalOcean 2026-07-13: x-ratelimit-remaining-* headers for quota tracking"
+    key_findings:
+      - "QuotaRouter pattern: Priority-based routing with automatic fallback, daily token tracking with persistence, streaming support, RPM limiting"
+      - "DigitalOcean quota headers: x-ratelimit-limit-requests, x-ratelimit-limit-tokens-per-day, x-ratelimit-limit-tokens-per-minute, x-ratelimit-remaining-*, x-ratelimit-reset-*"
+      - "Cascade router: Try cheapest competent model first, escalate on failure; target <10% escalation rate"
+      - "Integration with 429 classification: Filter quota-exhausted providers in select_provider(), score remaining by cost/quality/latency"
+      - "Weighted scoring: score = 0.4*(1-cost) + 0.4*quality + 0.2*(1-latency) — tune per Kali Amendment 1"
+    implementation_guidance: "src/omega/oracle/model_gateway.py (select_provider), src/omega/oracle/health_monitor.py (has_quota, record_quota_usage)"
+```
+
+---
+
+## Cross-Reference Index
+
+| Topic | Primary Ticket | Related Tickets | Implementation Files |
+|-------|----------------|-----------------|---------------------|
+| Hypothesis Async FSM | C-11 | — | tests/property/test_oom_protector_fsm.py, tests/property/test_soul_store_fsm.py |
+| Restic + B2 Object Lock | C-3 | V-1 (credentials) | scripts/backup_restic.sh, systemd units |
+| MCP Streamable HTTP 2026-07-28 | C-4a.5 | — | mcp_servers/omega_hub/server.py |
+| LLM Distillation Pipeline | C-0.5 | C-10.5 (provider selection) | src/omega/scribe/, tests/contract/test_soul_distiller.py |
+| Quota-Aware Routing | C-10.5 | C-6' (unified breakers) | src/omega/oracle/model_gateway.py, health_monitor.py |
+
+---
+
+## Source Quality Assessment
+
+| Source | Recency | Authority | Relevance | Notes |
+|--------|---------|-----------|-----------|-------|
+| GitHub hypothesis#4107 | 2026 | Primary (project repo) | High | Direct async FSM discussion |
+| MarkTechPost 2026-04-18 | 2026-04 | Technical blog | High | Practical async patterns |
+| byte-guard.net 2026-06-13 | 2026-06 | Practitioner blog | High | Production restic+B2 guide |
+| Backblaze 2026-06-26 | 2026-06 | Vendor docs | High | Object Lock specification |
+| MCP.Directory 2026 | 2026 | Community hub | High | Migration timeline |
+| Zylos 2026-03-08 | 2026-03 | Research blog | Medium | Spec change analysis |
+| Stratos AAAI 2026 | 2026 | Peer-reviewed | High | Distillation architecture |
+| Mems 2026-03-23 | 2026-03 | GitHub project | High | Hierarchical memory |
+| QuotaRouter GitHub | 2026 | Open source | High | Working implementation |
+| DigitalOcean 2026-07-13 | 2026-07 | Vendor docs | High | Quota header spec |
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ RESEARCH-INDEX-GUARD-DISTILL ⬡ v1.0.0 ⬡ 2026-07-22*

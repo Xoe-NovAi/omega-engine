@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Engine Universal Document Reader.
 
 A sovereign, local-first document reader supporting multiple formats:

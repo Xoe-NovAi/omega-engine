@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # scripts/apply_public_allowlist.sh
 # 🔱 Apply PUBLIC_ALLOWLIST.txt to the current branch.
 # v5 — D-565 enforcement: FORGE section now parsed as cut list

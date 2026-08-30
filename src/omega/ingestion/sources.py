@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-INGESTION-SOURCES-v1.0.0
 """
 Sovereign Source Loaders — Loading primary material for ingestion.

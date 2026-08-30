@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Backends — Provider Implementation Registry
 # [id-soft: vet-044] 4-Path VFS — provider chain is a search path

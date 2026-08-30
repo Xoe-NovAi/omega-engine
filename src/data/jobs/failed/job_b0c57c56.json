@@ -1,0 +1,11 @@
+{
+  "query": "MCP streamable HTTP transport migration SSE oauth 2026 specification",
+  "status": "failed",
+  "recon_summary": "\u26a0\ufe0f no inference backend is running for model 'gemini-2.0-flash'.\n\nTo use the Omega Engine, please:\n1. Start a local inference backend (llama-cpp-python, LM Studio, or Ollama), OR\n2. Configure cloud credentials (Google AI Studio, OpenRouter, GitHub Copilot), OR\n3. Check logs for provider errors: omega-hub is attempting to fallback through the provider fabric.\n\nSystem prompt: You are a reconnaissance agent. Provide a high-level synthesis of the query, identifying key entitie...\nUser query: Query: MCP streamable HTTP transport migration SSE oauth 2026 specification\n\nInitial Search Context:...",
+  "subtopics": [],
+  "sources": [],
+  "validation_notes": [],
+  "extracted_content": [],
+  "final_synthesis": "Error: [OmegaError] Decomposition failed: Expecting value: line 1 column 1 (char 0)",
+  "created_at": "2026-07-22T10:20:17.035230+00:00"
+}

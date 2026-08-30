@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Engine Teacher Modules — DPO Pair Generation and Model Distillation.
 
 AP: AP-TEACHERS-v1.0.0

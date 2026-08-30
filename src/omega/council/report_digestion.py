@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Report Digestion Layer
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #

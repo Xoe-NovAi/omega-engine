@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tainted Data Protocol (TDP) — Sovereign Security Layer.
 AP: AP-TDP-v1.0.0
 """

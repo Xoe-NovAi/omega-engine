@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SECURITY-v1.0.0
 # 🔱 Omega Engine — Security Package
 # ⬡ OMEGA ⬡ SECURITY ⬡ v1.0.0 ⬡ 2026-08-07

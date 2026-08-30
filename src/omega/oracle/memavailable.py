@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 MemAvailable Reader
 Reads kernel's authoritative available memory estimate from /proc/meminfo

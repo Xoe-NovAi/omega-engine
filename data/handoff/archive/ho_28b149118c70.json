@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_28b149118c70",
+  "target_agent_id": "grok-cli/grok",
+  "target_channel": "grok-cli",
+  "target_entity": "grok",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "D-284 SOVEREIGN HUB \u2014 MCP Streamable HTTP + SHIELDMCP (Advisory Spec)\n\n**Context**: D-284 on Horizon 3 roadmap. Current MCP Hub uses SSE (Firecrawl 405 error). Need Streamable HTTP + OAuth 2.1 PKCE + SHIELDMCP Proxy.\n\n**Your Role**: Advisory spec review. Cross-reference Researcher's Forge 2 Gap 8 + IA2 threat model. Do NOT implement.\n\n**Architecture to Review**:\n\n| Component | Current | Target | IA2 Relevance |\n|-----------|---------|--------|---------------|\n| **Transport** | SSE (`/sse`) | Streamable HTTP (`/mcp`) | Required for IA2 agent cards |\n| **Auth** | None | OAuth 2.1 PKCE + JWT | T11 Agent Security |\n| **Proxy** | Direct | SHIELDMCP (Intent Digest) | Draft-Then-Commit pattern |\n| **Agent Cards** | None | `.well-known/agent-card.json` | A2A discovery |\n\n**SHIELDMCP Proxy Pattern** (IA2 Draft):\n```\nClient \u2192 SHIELDMCP \u2192 MCP Server\n         \u2193\n    Intent Digest: {tool, args_hash, risk_level, requires_confirmation}\n    Draft-Then-Commit: Write to staging \u2192 User confirm \u2192 Commit\n```\n\n**Files to Review**:\n- `src/omega/mcp_hub/server.py` \u2014 Current SSE implementation\n- `src/omega/mcp_hub/gateway.py` \u2014 Transport abstraction\n- `src/omega/mcp_hub/tools.py` \u2014 Tool registry\n- `src/omega/mcp_hub/middleware.py` \u2014 Auth middleware (TO BE ADDED)\n\n**Key Decisions Needed**:\n1. **OAuth Provider**: Self-hosted (hydra/ory) vs. external (Keycloak)? Sovereignty = self-hosted.\n2. **Token Storage**: SQLite (local) vs. Redis (distributed)? Single-node = SQLite.\n3. **SHIELDMCP Scope**: All tools vs. only mutating tools? IA2 = mutating only.\n4. **Agent Card Location**: `/.well-known/agent-card.json` per entity or per hub?\n\n**Reference**: \n- `docs/strategy/HMC_FORGE_2_KNOWLEDGE_GAPS_COMPREHENSIVE_RESEARCH_20260718.md` Gap 8\n- IA2 spec (draft): https://github.com/agent-identity/IA2\n\n**Priority**: 3 (Low) \u2014 Horizon 3 (Weeks 13+)",
+  "context": "",
+  "priority": 3,
+  "status": "archive",
+  "submitted_at": "2026-07-17T01:11:45.983880+00:00",
+  "accepted_at": "2026-07-17T01:24:09.260962+00:00",
+  "accepted_by": "grok-cli/grok",
+  "completed_at": "2026-07-17T01:26:28.263019+00:00",
+  "result": "ADVISORY COMPLETE. Spec: data/coordination/grok_cli/D284_SOVEREIGN_HUB_ADVISORY.md. Decisions: self-hosted OAuth, SQLite tokens, SHIELDMCP mutating-only, hub-level agent card. Note: mcp_hub/ paths not in tree \u2014 remap to real entrypoints. Horizon 3.",
+  "reaped_at": "2026-07-24T01:30:14.031100+00:00"
+}

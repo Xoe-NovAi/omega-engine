@@ -1,0 +1,21 @@
+# ⬡ John Carmack .plan File — 1997-08-23
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970823.txt
+#
+* cluster code
+
+- boxcontents?
++ dump rgb lightmaps for software?
++ alias model aspect ratios different in software and gl?
+
+share data between cmodel and ref
+triangulate mightsee on vis?
+malloc all cmodel arrays?
+DONT_PRECACHE flag for player weapons?
+make an ERR_DISCONNECT that doesn't print ERROR: ?
+don't load entire map twice in cmodel and ref!
+show clusterviscount for bsp time optimizations?
+server/client communication for skin overrides

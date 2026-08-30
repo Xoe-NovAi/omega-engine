@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Omega Engine — TTY Agent Base Class
 Runs agents on dedicated Linux Virtual Consoles (Ctrl+Alt+F3-F6)

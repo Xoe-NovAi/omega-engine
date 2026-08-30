@@ -1,0 +1,108 @@
+# 🔱 Omega SearXNG — Sovereign Search Layer
+# AP: AP-SEARXNG-QUADLET-v1.0.0
+#
+# Deploy: cp this file to ~/.config/containers/systemd/omega-searxng.container
+#          systemctl --user daemon-reload
+#          systemctl --user enable omega-searxng.service
+#          systemctl --user start omega-searxng.service
+#
+# Hardware: AMD Ryzen 7 5700U (Zen 2, 8C/16T) | ~14Gi usable RAM
+# Port: 8017 (avoids: 8080/Iris, 5432/Postgres, 6379/Redis, 6333/Qdrant, 8088/Caddy)
+# Image: GHCR mirror (DockerHub rate-limits unauthenticated pulls)
+#
+# EXPECTED WARNINGS (non-fatal, safe to ignore):
+# - "Expected 'searxng:searxng' Got 'arcana-novai:arcana-novai'" — UserNS=keep-id maps container UID 1000 to host UID 1000
+# - "ahmia: can't register engine" / "torch: can't register engine" — Tor-based engines disabled in settings.yml (no Tor daemon)
+# - "X-Forwarded-For nor X-Real-IP header is set" — pasta network namespace doesn't inject proxy headers
+# All above are cosmetic; search functionality is unaffected.
+
+[Unit]
+Description=Omega SearXNG — Sovereign Metasearch Engine
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+UserNS=keep-id
+User=1000
+Image=ghcr.io/searxng/searxng:latest
+ContainerName=omega-searxng
+AutoUpdate=registry
+
+PublishPort=127.0.0.1:8017:8080
+
+# Configuration — settings.yml, limiter.toml
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/
+
+# Data — favicon cache, SQLite DB
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/data:/var/cache/searxng/
+
+# Environment — SEARXNG_SECRET must be in %E expansion (from .env or systemd env)
+Environment=SEARXNG_SECRET=%E
+Environment=SEARXNG_BASE_URL=http://localhost:8017
+Environment=SEARXNG_PORT=8080
+Environment=SEARXNG_HOST=0.0.0.0
+Environment=FORCE_OWNERSHIP=true
+
+# Security hardening — Ryzen 5700U: 512M sufficient for SearXNG
+PodmanArgs=--memory=512m
+PodmanArgs=--memory-reservation=256m
+PodmanArgs=--cpus=1.0
+PodmanArgs=--pids-limit=64
+PodmanArgs=--read-only
+PodmanArgs=--security-opt=no-new-privileges
+PodmanArgs=--cap-drop=ALL
+PodmanArgs=--tmpfs=/tmp:rw,size=64m
+PodmanArgs=--tmpfs=/var/tmp:rw,size=32m
+
+# Use per-container storage.conf to isolate graphroot on tmpfs-backed /run/user/1000
+# Avoids fuse-overlayfs remount-private permission denied on omega_library partition
+# NOTE: Must be in [Service] section to affect podman process, not container
+
+# Health check — Granian WSGI server responds on :8080
+HealthCmd=curl -sf http://localhost:8080/healthz || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthOnFailure=restart
+
+[Service]
+# Use per-container storage.conf to isolate graphroot on tmpfs-backed /run/user/1000
+# Avoids fuse-overlayfs remount-private permission denied on omega_library partition
+Environment=CONTAINERS_STORAGE_CONF=%h/.config/containers/storage-searxng.conf
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=90s
+
+[Install]
+WantedBy=multi-user.target
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🔱 GAP 7 — Caddy Reverse Proxy (X-Forwarded-For Injection)
+# [heritage: odysseus-2025] Header injection for sovereign proxying
+#
+# Pasta networking (rootless Podman) does NOT inject X-Forwarded-For, so
+# SearXNG sees all requests originating from the gateway IP → bot detection
+# triggers and search results degrade. Deploy Caddy on the same Podman network
+# as SearXNG to inject the real client IP header before proxying.
+#
+# Caddyfile (omega-searxng-caddy):
+# ─────────────────────────────────────────────────────────────────────────────
+# # Caddyfile for SearXNG reverse proxy
+# # Heritage: [heritage: odysseus-2025]
+# :8080 {
+#     reverse_proxy localhost:8081 {
+#         header_up X-Forwarded-For {remote_host}
+#     }
+# }
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Deploy:
+#   podman run -d --name omega-caddy --network omega-searxng-net \
+#     -v ./Caddyfile:/etc/caddy/Caddyfile:ro -p 127.0.0.1:8017:80 caddy:alpine
+#
+# Then enable forwarded-for in SearXNG settings.yml:
+#   server:
+#     use_forwarded_for: true
+#
+# NOTE: This is documentation/config only — no engine code change required.
+# ═══════════════════════════════════════════════════════════════════════════

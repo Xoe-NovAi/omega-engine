@@ -1,0 +1,8 @@
+# ⬡ John Carmack .plan File — 1996-10-16
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19961016.txt
+#
+The latest windows drivers from rendition fix the lousy GUI performance I had been complaining about to several people. While it may not be state-of-the-art 2d acceleration, it doesn't get in your way anymore. I do not consider windows performance to be a negative for rendition anymore.

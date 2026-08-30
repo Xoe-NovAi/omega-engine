@@ -1,0 +1,27 @@
+# ⬡ John Carmack .plan File — 1996-02-20
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960220.txt
+#
+*	rewrote sound packet communication
+*	fixed multiple pains from a single shotgun
+*	qcc -copy option for sounds and models
+*	fixed up pak file support
+*	removed .rc files
+*	screen size over status bar
+
++ monsters need to be pushed into teleporters
++ blue frag pieces
++ NaN impact time is a crasher
++ looking down on weapon bounces away from bottom
++ timing preventing attacks at startup
+
+fix hardwired vid_uopdate
+remove redundant death sounds
+teleport warp
+torches
+cpuid?
+monsterblock entity
+multiple sky textures in a level

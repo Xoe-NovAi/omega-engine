@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-WORLD-STATE-v1.0.0
 # 🔱 World State Manager — VR Omegaverse State Engine

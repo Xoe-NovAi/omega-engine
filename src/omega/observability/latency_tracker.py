@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-LATENCY-TRACKER-v1.0.0
 """
 Sovereign Latency Tracker — Time-series monitoring for provider performance.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Soul Lessons Schema — Evidence-Bearing Lesson Models (W1-3)
 # AP: AP-SOUL-LESSONS-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ N3 ⬡ soul_lessons ⬡ EVIDENCE-FIELD

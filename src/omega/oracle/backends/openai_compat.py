@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 OpenAI-Compatible Provider — Universal Cloud Backend
 # AP: AP-OPENAI-COMPAT-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ opus-4.6 ⬡ antigravity ⬡ trc_core ⬡ OPENAI-COMPAT

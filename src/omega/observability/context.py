@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Contextvars-based trace_id propagation for AnyIO
 # AP: AP-TRACE-ID-FIX-v1.0.0
 #

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-DEGRAD-MGR-v1.0.0
 # AP: AP-DEGRAD-MGR-v1.0.0
 # 🔱 Graceful Degradation Manager — Fallback Chains for Stressed Systems

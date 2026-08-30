@@ -1,0 +1,81 @@
+#!/bin/bash
+# 🔱 Omega Engine — Pre-commit Hook (D208 Enhanced)
+# Carmack's Directive: "Don't use AI where a shell script works."
+# Guards code↔docs drift: if src/omega/ changed, docs/ must too.
+# Guards heritage tags: new [id-soft:] tags must have vet records.
+# Escape hatch: git commit --no-verify
+
+set -e
+
+# ── Code↔Docs Drift Guard ──────────────────────────────────────────────
+changed_src=$(git diff --cached --name-only -- 'src/omega/' | wc -l)
+changed_docs=$(git diff --cached --name-only -- 'docs/' | wc -l)
+
+if [ "$changed_src" -gt 0 ] && [ "$changed_docs" -eq 0 ]; then
+    echo "⚠️  src/omega/ changed but docs/ did not."
+    echo "   Use --no-verify to bypass this check."
+    exit 1
+fi
+
+# ── Heritage Tag Guard (D208) ──────────────────────────────────────────
+# Extract the game-year from any NEW [id-soft:] tags in staged src files.
+# A tag is "new" if it appears in an added (+) diff line. Already-vetted
+# game-years (present in HERITAGE_VET_LOG.md) pass; truly unknown ones block.
+# Only valid game-year tokens (e.g. doom-1993) are considered — template
+# placeholders like GAME-YEAR in docstrings are ignored.
+# NOTE: extraction uses grep -oE + POSIX [:space:] (NOT \s) to stay robust
+# against multi-byte UTF-8 content (e.g. em-dash —) in comment lines.
+new_tags=$(git diff --cached -- 'src/omega/**/*.py' \
+    | grep -oE '^\+.*\[id-soft:[[:space:]]*[a-z0-9]+-[0-9]{4}' \
+    | grep -oE '[a-z0-9]+-[0-9]{4}' \
+    | sort -u)
+
+if [ -n "$new_tags" ]; then
+    echo "🏛️  Heritage Tag Guard: Checking new [id-soft:] tags..."
+
+    # Check if vet log exists
+    VET_LOG="data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"
+    if [ ! -f "$VET_LOG" ]; then
+        echo "  ❌ HERITAGE_VET_LOG.md not found at $VET_LOG"
+        echo "  Run 'make heritage-vet-create' first."
+        exit 1
+    fi
+
+    # For each new tag game-year, check if it has a vet record
+    missing_vet=0
+    while IFS= read -r game; do
+        [ -z "$game" ] && continue
+        if ! grep -q "$game" "$VET_LOG"; then
+            echo "  ❌ New tag '[id-soft: $game]' has no vet record in $VET_LOG"
+            missing_vet=1
+        fi
+    done <<< "$new_tags"
+
+    if [ "$missing_vet" -eq 1 ]; then
+        echo ""
+        echo "  🛑 Commit blocked: New heritage tags require vet records."
+        echo "  Run 'make heritage-vet' to see full validation."
+        echo "  Use 'git commit --no-verify' to bypass (NOT RECOMMENDED)."
+        exit 1
+    fi
+
+    echo "  ✅ All new heritage tags have vet records."
+fi
+
+# ── Mandate Gates (M1/M7/M8/M9/M23) ──────────────────────────────────
+# Runs the same gates as `make check-mandates` on every commit.
+# M23 uses AST-based Ruff ratchet (scripts/m23_gate.py).
+echo "🔍 Running mandate gates..."
+cd "$(git rev-parse --show-toplevel)"
+
+# Use the project venv python so ruff is available
+VENV_PYTHON=".venv/bin/python"
+if [ ! -x "$VENV_PYTHON" ]; then
+    echo "⚠️  Venv python not found at $VENV_PYTHON, falling back to python3"
+    VENV_PYTHON="python3"
+fi
+
+# M23 — Failure integrity (AST-based, ratchet)
+"$VENV_PYTHON" scripts/m23_gate.py || exit 1
+
+echo "✅ Pre-commit checks passed."

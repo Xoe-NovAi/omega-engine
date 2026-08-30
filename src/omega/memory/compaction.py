@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-CORE-v1.0.0
 # 🔱 CompactionManager — Context Window Compaction Trigger
 # ⬡ OMEGA ⬡ MEMORY ⬡ compaction.py

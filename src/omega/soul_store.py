@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 SoulStore — Atomic File Writer for Soul Data
 # AP: AP-SOULSTORE-v1.0.0
 # ⬡ OMEGA ⬡ P3 ⬡ soul_store ⬡ ATOMIC-WRITE

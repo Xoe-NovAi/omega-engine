@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 MandateAuditor — M1-M23 Compliance Verification
 # ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
 # AP: AP-MANDATE-AUDITOR-v1.0.0

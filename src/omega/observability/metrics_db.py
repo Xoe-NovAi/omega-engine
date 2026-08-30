@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """SQLite WAL-Mode Metrics Store for profiling baselines and regression detection.
 AP: AP-METRICS-DB-v1.0.0
 """

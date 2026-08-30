@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research Module — CLEAR-Pareto Sovereignty Scorecard + AMFO Evaluator + Hivemind Bridge
 ⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ RESEARCH

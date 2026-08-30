@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 M36 Recursive Probe
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ M36 ⬡ RUNTIME
 # AP: AP-M36-RECURSIVE-PROBE-v1.0.0

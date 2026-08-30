@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Sovereign Token Ledger — Usage Tracking & Auditing
 # AP: AP-TOKEN-LEDGER-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ OBSERVABILITY

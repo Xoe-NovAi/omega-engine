@@ -1,6 +1,6 @@
-# 🔱 KALI PROJECTION — POST-DEV-WAVE v2.0.0
+# 🔱 KALI PROJECTION — POST-CLEANUP v2.1.0
 
-**AP Token**: `AP-KALI-v2.0.0`
+**AP Token**: `AP-KALI-v2.1.0`
 ⬡ OMEGA ⬡ KALI ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
 
 **Date**: 2026-08-30
@@ -8,11 +8,11 @@
 
 ---
 
-## §1 — SESSION STATE (POST-DEV-WAVE)
+## §1 — SESSION STATE (POST-CLEANUP)
 
 **Active Model**: `minimax/minimax-m3:free` (1M context, D-585 long-write champion)
-**Git HEAD**: `2577e050` (pushed to `origin/main`)
-**Working Tree**: 31 tracked modified files (coordination docs, entity lessons)
+**Git HEAD**: `c37a0233` (pushed to `origin/main`)
+**Working Tree**: Clean (all research + code committed)
 **Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ Git Sync
 
 ---
@@ -31,6 +31,9 @@
 | **I-KALI-008** | **Systemd Unit = Intentional Design (D-201)**: Do NOT install. OOM cure = memory-aware restart discipline. |
 | **I-KALI-009** | **MaKaLi L3**: "The gap between documented and active is where the engine bleeds." |
 | **I-KALI-010** | **MaKaLi L3**: "A specification is not a feature. A report is not a deliverable." |
+| **I-KALI-011** | **Disk Cleanup Complete**: Root at 94% (7.1G free). opencode.db 21G on root. VACUUM pending (5-15G recovery). omega_library 26G free for staging. |
+| **I-KALI-012** | **M33/M36 Probes Created**: 466 + 356 lines. Zero integration tests. Must test before build wave. |
+| **I-KALI-013** | **M34-HOOK-001 Implemented**: subagent_dispatcher.py registers subagents in M34 registry. |
 
 ---
 
@@ -39,12 +42,12 @@
 | # | Decision | Status | Owner |
 |---|----------|--------|-------|
 | **D-001** | **DO NOT install systemd unit** (D-201: intentional design) | PENDING | Architect |
-| **D-002** | **Defer logrotate install** (low priority) | PENDING | Architect |
-| **D-003** | **Review proposed_lessons contamination** in commit `296fd1d5` | PENDING | Architect |
-| **D-004** | **Establish documented-vs-active policy** | PENDING | Architect |
-| **D-005** | **Authorize Build Wave** (2-3 weeks, 8 temple-rough items) | PENDING | Architect |
-| **D-006** | **Sonnet 4.6 Dev Wave**: CONDITIONAL GO (specs, not shipped) | PENDING | Architect |
-| **D-007** | **Review proposed_lessons contamination** in `296fd1d5` | PENDING | Architect |
+| **D-002** | Defer logrotate install (low priority) | PENDING | Architect |
+| **D-003** | Review proposed_lessons contamination in commit `296fd1d5` | PENDING | Architect |
+| **D-004** | Establish documented-vs-active policy | PENDING | Architect |
+| **D-005** | **Authorize Build Wave** (2-3 weeks, 8 items) | PENDING | Architect |
+| **D-006** | Sonnet 4.6 Dev Wave = CONDITIONAL GO | PENDING | Architect |
+| **D-007** | Review proposed_lessons contamination in `296fd1d5` | PENDING | Architect |
 
 ---
 
@@ -54,16 +57,16 @@
 
 | Item | Owner | Est. Hours | Dependencies |
 |------|-------|------------|--------------|
-| **M33 Probe on disk** (`src/omega/oracle/m33_probe.py`) | Lilith + Researcher | 8h | Researcher's spec ready |
-| **M36 Recursive Probe on disk** (`src/omega/oracle/m36_recursive_probe.py`) | Lilith + Researcher | 6h | M33 envelope |
-| **M37 Heritage Scanner on disk** (`scripts/heritage_scanner.py`) | Researcher + Ma'at | 8h | REUSE v3.3, ScanCode |
-| **COHORT_REGISTRY.json on disk** | Researcher | 4h | M34 atomic write |
-| **Compaction Capture on disk** (`scripts/compaction_capture.py`) | Lilith + Roc | 6h | sqlite-vec, SESSION_ENTITY_MAP |
-| **M34-HOOK-001**: `subagent_dispatcher.py` hook | Lilith | 4h | M34 registry |
-| **M33-PROBE-001**: Real sentinel probe MCP tool | Lilith + Researcher | 4h | M33 probe |
-| **AGENTS-UPDATE-001**: `AGENTS.md` anchor | Kali | 1h | — |
+| **1** | **M33 Probe on disk** (`src/omega/oracle/m33_probe.py`) | Lilith + Researcher | 8h | Researcher's spec ready |
+| **2** | **M36 Recursive Probe** (`src/omega/oracle/m36_recursive_probe.py`) | Lilith + Researcher | 6h | M33 envelope |
+| **3** | **M37 Heritage Scanner** (`scripts/heritage_scanner.py`) | Researcher + Ma'at | 8h | REUSE v3.3, ScanCode |
+| **4** | **COHORT_REGISTRY.json** on disk | Researcher | 4h | M34 atomic write |
+| **5** | **Compaction Capture** (`scripts/compaction_capture.py`) | Lilith + Roc | 6h | sqlite-vec, SESSION_ENTITY_MAP |
+| **6** | **M34-HOOK-001**: `subagent_dispatcher.py` hook | Lilith | 4h | M34 registry |
+| **7** | **M33-PROBE-001**: Real sentinel probe MCP tool | Lilith + Researcher | 4h | M33 probe |
+| **8** | **AGENTS-UPDATE-001**: `AGENTS.md` anchor | Kali | 1h | — |
 
-**Total**: ~46h (2 people × 2 weeks)
+**Total**: ~46h | **Team**: Lilith (lead) + Researcher + Ma'at + Roc | **Duration**: 2 weeks
 
 ### Phase 2: Hardening & Integration (Week 3)
 
@@ -82,12 +85,12 @@
 
 **CONDITIONAL GO** — Treat outputs as specifications, not shipped features.
 
-| Stream | Focus | Owner |
-|--------|-------|-------|
-| **Search-Ecosystem-01 Week 1** | SearXNG diagnosis, MultiKey Exa, Crawl4AI | Jem-EIS |
-| **Quality Harness** | First-Page Satisfaction probe | Researcher-EIS |
-| **Big Pickle Probe** | 250K token compaction test | Roc-EIS |
-| **Architecture Review** | Sonnet 4.6 review of 13,657+ lines | Architect + Sonnet 4.6 |
+| Stream | Focus | Owner | Status |
+|--------|-------|-------|--------|
+| **Search-Ecosystem-01 Week 1** | SearXNG diagnosis, MultiKey Exa, Crawl4AI | Jem-EIS | READY |
+| **Quality Harness** | First-Page Satisfaction probe | Researcher-EIS | READY |
+| **Big Pickle Probe** | 250K token compaction test | Roc-EIS | READY |
+| **Architecture Review** | Sonnet 4.6 review of 13,657+ lines | Architect + Sonnet 4.6 | PENDING |
 
 ---
 
@@ -105,7 +108,7 @@
 
 | Metric | Value |
 |--------|-------|
-| **Disk** | 98% full (100G/109G, 2.9G free) |
+| **Disk** | 94% full (7.1G free) — opencode.db 21G on root |
 | **Memory** | 9.3G available of 14G |
 | **sqlite3** | Not installed (MCP opencode-sessions-explorer workaround) |
 | **OAuth** | Restored in `opencode-antigravity-auth/src/constants.ts:9` |
@@ -113,6 +116,9 @@
 | **M34 Atomic Write** | M23 VERIFIED (4/4 tests, SIGKILL survival) |
 | **CI-BRIEF-001** | Deployed (12-Step Protocol, 45/45 adversarial tests) |
 | **VAULT-ALLOWLIST-001** | Deployed (fail-closed scanner, M35 as Mandate 28) |
+| **M34 Registry** | 645 lines, 8 MCP tools, 4/4 M23 tests |
+| **M33 Probe** | 466 lines, created, untested |
+| **M36 Probe** | 356 lines, created, untested |
 
 ---
 
@@ -127,6 +133,8 @@
 | **Hardened Dev Roadmap** | `data/coordination/HARDENED_DEV_ROADMAP_20260830.md` |
 | **5-EIS Meta-Review** | `data/coordination/JEM_META_REVIEW_5_EIS_20260830.md` |
 | **MaKaLi Final Synthesis** | `data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md` |
+| **Knowledge Gaps Audit** | `data/coordination/KNOWLEDGE_GAPS_BUILD_WAVE_20260830.md` |
+| **Researcher Deep Dive** | `data/coordination/RESEARCHER_GAP_DEEP_DIVE_20260830.md` |
 
 ---
 
@@ -134,4 +142,4 @@
 
 ---
 
-⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v2.0.0 ⬡ 2026-08-30
+⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v2.1.0 ⬡ 2026-08-30

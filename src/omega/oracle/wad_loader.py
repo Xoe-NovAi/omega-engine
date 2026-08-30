@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 WAD Loader — Universal Runtime Container Loader
 # AP: AP-WAD-LOADER-v1.1.0

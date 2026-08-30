@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Iterative RAG (complex path)
 # AP: AP-RAG-ITERATIVE-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ rag.iterative_rag ⬡ S3

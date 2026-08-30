@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Anthropic Provider Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-19
+
+provider: "anthropic"
+priority: 8
+enabled: true
+description: "Anthropic - Claude models (Sonnet, Haiku, Opus)"
+
+api_key: "env:ANTHROPIC_API_KEY"
+base_url: "https://api.anthropic.com/v1"
+
+# Anthropic models accessed via their official API
+# Also available through OpenCode Zen and Cline CLI
+supported_models:
+  - "claude-sonnet-5-high-thinking"
+  - "claude-haiku-4.5-extended"
+  - "claude-opus-4.8"

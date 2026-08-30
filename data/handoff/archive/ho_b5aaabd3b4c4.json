@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_b5aaabd3b4c4",
+  "target_agent_id": "opencode/verity",
+  "target_channel": "opencode",
+  "target_entity": "verity",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "HERITAGE VET AUDIT: Pi Project PR #2903 \u2014 Gemma 4 Thinking Config Pattern\n\n## Mission\nAudit the heritage vet record for Pi PR #2903 for M14 compliance. Ensure vet record meets Format B requirements and score \u22657/10.\n\n## Context\n- doom_guy is creating the vet record (handoff `ho_ffb560514d74`)\n- You review for: scope declaration accuracy, hardware constraint justification, file:line precision, score validity\n- This is the FIRST heritage vet for the Gemma 4 strategy \u2014 sets precedent\n\n## Review Checklist\n1. **Scope declaration**: \"Applies to detection_regex pattern and MINIMAL/HIGH binary thinking levels ONLY \u2014 not Pi's full provider architecture\"\n2. **Hardware constraint**: Pi's limited compute required minimal config overhead (regex vs full capability matrix)\n3. **File:line precision**: Exact locations in Pi codebase where pattern lives\n4. **Score \u22657/10**: Justified with evidence\n5. **Format B compliance**: All 4 fields present (scope, constraint, locations, score)\n\n## M14 Enforcement\n- If vet record incomplete: REJECT \u2014 return to doom_guy with specific gaps\n- If vet record complete: APPROVE \u2014 tag cleared for codebase entry\n- Log decision to `HERITAGE_VET_LOG.md` with your audit trail\n\n## Priority\nCRITICAL \u2014 Blocks Week 1 implementation",
+  "context": "",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archived",
+  "submitted_at": "2026-07-19T18:58:59.058966+00:00",
+  "accepted_at": "2026-07-20T04:48:29.905186+00:00",
+  "accepted_by": "opencode/verity",
+  "completed_at": "2026-07-20T19:33:11.514066+00:00",
+  "result": "STALE: Heritage audit 17h old, Verity inactive. Can reissue if needed. Closed during Handoff Court 2026-07-20.",
+  "archived_at": "2026-07-20T19:33:27.056152+00:00"
+}

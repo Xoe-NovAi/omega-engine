@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SOMATIC-SSTATE-v1.0.0
 # AP: AP-SOMATIC-SSTATE-v1.0.0
 # 🔱 Somatic State Manager — Binary LLM State Serialization

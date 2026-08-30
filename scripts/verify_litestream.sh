@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Litestream backup health check — verify replication is alive and current.
 # AP: AP-LITESTREAM-BACKUP-v1.0.0
 #

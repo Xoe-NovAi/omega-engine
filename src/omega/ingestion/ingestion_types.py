@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-INGESTION-TYPES-v1.0.0
 """
 Sovereign Ingestion Types — Shared schemas for entity deepening.

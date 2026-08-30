@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Entity Registry — YAML-backed Entity CRUD
 # AP: AP-ENTITY-REGISTRY-v1.0.0

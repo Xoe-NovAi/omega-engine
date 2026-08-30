@@ -177,3 +177,8 @@ When a new Omegamind wakes from compaction, it will hydrate from the 100-line pr
 ---
 
 ⬡ OMEGA ⬡ KALI ⬡ FUZZY-ETCHED-FORENSIC-v1.0.0 ⬡ 2026-08-29
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: openrouter/minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Search Providers — Direct API implementations for T2 and T4.
 # [id-soft: vet-002] Right Approximation — fast heuristic search provider chain
 # [heritage: searxng 2023] SearXNG — self-hosted metasearch (Tier 1 privacy-first search)

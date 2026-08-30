@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Capability Matrix Loader — Gemma 4 Week 1 Step 2
 # ⬡ OMEGA ⬡ N6 ⬡ trc_capability_matrix ⬡ v0.1.0 ⬡ 2026-07-19
 #

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 FirewallChecker — Engine↔WAD Boundary Scanner
 # ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
 # AP: AP-FIREWALL-CHECKER-v1.0.0

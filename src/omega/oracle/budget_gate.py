@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Sovereign Budget Gate — Cloud Expenditure Control
 # AP: AP-BUDGET-GATE-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ SOVEREIGNTY-GUARD

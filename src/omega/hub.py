@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Hub — Hardware stats bridge for degradation management.
 
 Provides get_hardware_stats() used by Oracle.talk() for graceful

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — One-Click Install (CP-3)
 # AP: AP-INSTALL-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ install ⬡ opencode ⬡ PUBLIC-DEBUT-01

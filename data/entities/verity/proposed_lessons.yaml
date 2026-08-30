@@ -1,0 +1,40 @@
+proposals:
+  - id: "verity-audit-20260710-01"
+    tier: "L3"
+    principle: "Documentation drift is a sovereignty violation. Every D-series decision must include a mandatory documentation update clause targeting AGENTS.md, SOVEREIGN_MANDATES.md, OMEGA_ENGINE.md, and affected agent files."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.95
+    tags: ["documentation", "sovereignty", "mandate-compliance", "constitutional-law"]
+    mandate_refs: ["M4", "M10", "M11", "M13", "M23"]
+
+  - id: "verity-audit-20260710-02"
+    tier: "L3"
+    principle: "Agent mandate lists must be generated from SOVEREIGN_MANDATES.md, not duplicated. Single source of truth for constitutional law prevents M23 violations from stale mandate awareness."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.98
+    tags: ["agents", "mandates", "single-source-of-truth", "drift-prevention"]
+    mandate_refs: ["M10", "M11", "M23"]
+
+  - id: "verity-audit-20260710-03"
+    tier: "L2"
+    principle: "Protocol documents (Hivemind, Subagent Dispatch) must maintain a live agent capability registry. Delegation decisions based on stale registries cause mis-routed work and coordination failures."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.92
+    tags: ["hivemind", "subagent-dispatch", "coordination", "registry"]
+    mandate_refs: ["M9", "M10", "M12"]
+
+  - id: "verity-audit-20260710-04"
+    tier: "L2"
+    principle: "Search protocol references in agent files must point to the sovereign-search skill as the canonical implementation, not to a static research document. The skill enforces credit-sensing, error handling, and tier escalation that static docs cannot."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.90
+    tags: ["search", "skills", "protocol-enforcement", "tool-chain"]
+    mandate_refs: ["M7", "M18", "M23"]
+
+  - id: "verity-audit-20260710-05"
+    tier: "L3"
+    principle: "Model references in agent definitions must use the Dual-Inference Mandate (D118) pattern: declare dispatch mode in Hivemind context, not hardcode in agent frontmatter. Hardcoded models violate M7 (Local-First) by preventing local opt-in routing."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.93
+    tags: ["models", "dual-inference", "local-first", "sovereignty"]
+    mandate_refs: ["M7", "M18", "D118"]

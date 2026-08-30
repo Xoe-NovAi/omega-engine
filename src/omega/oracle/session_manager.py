@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-ORACLE-RESTORE-v2.3.0
 """Session Manager — Entity-scoped rolling sessions with daily counter.

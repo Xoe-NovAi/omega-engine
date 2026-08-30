@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Automated Model Research & Update Worker
 # AP: AP-MODEL-UPDATER-v1.0.0

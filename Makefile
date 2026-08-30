@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Omega Engine Test Suite Makefile — Carmack Mode v2
 # First public release — this IS the legacy.
 

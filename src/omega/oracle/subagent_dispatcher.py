@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Subagent Dispatch Protocol
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ SUBAGENT-DISPATCH
@@ -379,6 +383,60 @@ def build_dispatch_prompt(packet: HandoffPacket) -> str:
     )
 
     return "\n".join(lines)
+
+
+# ── M34 Registration Convenience Function ──────────────────────────────────
+# Called by dispatch_guard.py Step 6b for explicit registration outside
+# the normal dispatch() flow (e.g., pre-dispatch verification).
+
+def m34_register_subagent(
+    session_id: str,
+    target_agent: str,
+    task_description: str,
+    task_type: str = "unknown",
+    expected_output: str = "",
+    parent_session_id: Optional[str] = None,
+    priority: str = "P2",
+    write_tool_required: bool = False,
+    cross_validator_agent: Optional[str] = None,
+) -> bool:
+    """Register a subagent in the M34 ACTIVE_SUBAGENTS.json registry.
+
+    This is the explicit registration entry point called by dispatch_guard.py
+    Step 6b. It wraps the M34Registry.register() call with graceful degradation.
+
+    Returns True if registration succeeded, False otherwise (never raises).
+    """
+    registry = _get_m34_registry()
+    if registry is None:
+        logger.debug("M34 registry unavailable — skipping explicit registration")
+        return False
+    try:
+        from omega.oracle.m34_registry import ActiveSubagent, SessionStatus
+        entry = ActiveSubagent(
+            session_id=session_id,
+            parent_session_id=parent_session_id,
+            parent_task_id=None,
+            subagent_type="EIS",
+            agent=target_agent,
+            model="unknown",
+            channel="opencode",
+            entity=target_agent,
+            task_brief=task_description[:200],
+            dispatch_packet_id=None,
+            task_type=task_type,
+            expected_deliverable=expected_output,
+            write_tool_required=write_tool_required,
+            status=SessionStatus.ALIVE,
+            cross_validator_agent=cross_validator_agent,
+        )
+        registry.register(entry)
+        logger.info("M34-EXPLICIT: Registered subagent %s (session=%s)",
+                    target_agent, session_id)
+        return True
+    except (OSError, FileNotFoundError, ValueError, TypeError) as exc:
+        logger.warning("M34-EXPLICIT: Registration failed: %s", exc)
+        return False
 
 
 def dispatch(packet: HandoffPacket) -> str:

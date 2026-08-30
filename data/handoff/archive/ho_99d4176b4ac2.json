@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_99d4176b4ac2",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Research and recommend architecture for entity-scoped session anchors and automatic archival system.\n\nQuestions to answer:\n1. Should each entity have their own unique session anchor file (e.g., data/entities/{entity}/workspace/SESSION_ANCHOR.md) instead of a single global SESSION_ANCHOR.md?\n2. Should there be an automatic archival system that preserves historic session data (append-only, time-series, with pruning policies)?\n3. What are the tradeoffs: single global vs per-entity anchors? Manual vs automatic archival?\n4. How does this interact with M15 Sovereign Continuity, MIAP multi-instance protocol, and Hivemind awareness?\n5. Provide concrete file structure, schema, and implementation recommendations.\n\nContext: We just migrated from .opencode/anchored-summary.md to data/coordination/SESSION_ANCHOR.md (global, symlinked). The MIAP protocol (src/omega/coordination/miap.py) already has session-scoped directories under sessions/<uuid>/. The Hivemind tracks per-entity awareness. Current SOVEREIGN_CONTINUITY_STRATEGY.md describes 4-tier redundancy but uses global anchor.\n\nDeliverable: Research report with architecture decision, file structure, and migration path.",
+  "context": "",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archived",
+  "submitted_at": "2026-07-20T02:52:14.297135+00:00",
+  "accepted_at": "2026-07-20T07:03:00.027915+00:00",
+  "accepted_by": "opencode/researcher",
+  "completed_at": "2026-07-20T19:33:09.446711+00:00",
+  "result": "STALE: Session anchors already exist (SESSION_ANCHOR.md real content). Task no longer needed. Closed during Handoff Court 2026-07-20.",
+  "archived_at": "2026-07-20T19:33:27.055333+00:00"
+}

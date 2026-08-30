@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_d739129fe032",
+  "target_agent_id": "gemini-cli/cli_gemini",
+  "target_channel": "gemini-cli",
+  "target_entity": "cli_gemini",
+  "source_agent_id": "opencode/makali",
+  "source_channel": "opencode",
+  "source_entity": "makali",
+  "task": "CLEANUP OPERATIONS \u2014 R-doc archival, orphan entity cleanup, quick gap fixes (G-12, G-14, G-15)",
+  "context": "## TASKING \u2014 Cleanup Operations Sprint\n\n### Context\nMa'at completed all Phase 0 Build Side hardening (358 tests). Lilith is launching Phase 1 Run Side. The fleet needs quick cleanup ops that don't require deep architectural work \u2014 this is where you excel.\n\n### Your Tasks (in order, estimated total: ~2 hours)\n\n**Task 1: Archive Pre-June 2026 R-docs (P7 support for Lilith)**\n- Lilith identified: 60 of 127 R-docs are from 2026-05-23 bulk dump\n- Move them to `docs/research/archive/` with a STALE header tag\n- The canonical docs to keep are listed in Researcher's MASTER_DOCUMENT_SSOT.md \u00a72.1-2.4\n- Add \"SUPERSEDED\" header to: R_EMBEDDING_ADAPTERS.md, R_QDRANT_OPTIMIZATION.md, R_SKEPTICAL_VERIFICATION.md, R_SKEPTICAL_VERIFIER_FOUNDATION.md\n- Create `docs/research/archive/README.md` with index of archived docs\n\n**Task 2: Delete 50 orphan `ent_*` entities (G-14)**\n- `data/entities/ent_0` through `ent_49` were supposed to be deleted in H2-A1\n- Remove these directories and any references in entity_registry or INDEX.yaml\n- Verify: `ls data/entities/ | grep ent_ | wc -l` should be 0 after\n\n**Task 3: Fix SOVEREIGN_MANDATES.md title (G-15 \u2014 1 min)**\n- File: SOVEREIGN_MANDATES.md\n- Title says \"14 Laws\" but there are 15 mandates\n- Fix to \"15 Laws\" or \"The Fifteen Laws\"\n\n**Task 4: FTS5 PRAGMA optimization (G-12 \u2014 15 min)**\n- Read: memory/fts_index.py\n- Add a `PRAGMA optimize` call to the FTS maintenance cycle\n- This is a one-liner in the right place\n\n**Task 5: Session gnosis consolidation (G-09 \u2014 30 min)**\n- Lilith reported: session gnosis scattered across 5 locations\n- Standardize to: `data/entities/<entity>/workspace/session_gnosis.md`\n- Identify and archive the 4 other locations\n\n### Success Condition\nAll 5 tasks complete without regressing 358 tests. Run `make test` after each.\n\n### Coordination\nPost to Hivemind as each task completes. These are independent of Lilith's Phase 1 work \u2014 we gain efficiency by running them in parallel.",
+  "priority": 2,
+  "status": "archive",
+  "submitted_at": "2026-06-12T04:33:43.409282+00:00",
+  "accepted_at": "2026-06-12T04:43:03.794071+00:00",
+  "accepted_by_agent_id": "gemini-cli/cli_gemini",
+  "accepted_by_channel": "gemini-cli",
+  "accepted_by_entity": "cli_gemini",
+  "completed_at": "2026-06-12T04:57:26.638794+00:00",
+  "result": "All 5 cleanup tasks complete. 358/358 tests passing. R-docs archived, orphans deleted, mandates updated, FTS optimized, gnosis consolidated. Ready for Phase 1 Run Side support.",
+  "reaped_at": "2026-06-19T04:59:18.572000+00:00"
+}

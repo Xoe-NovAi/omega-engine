@@ -1,0 +1,84 @@
+# .github/dependabot.yml
+# 🔱 Dependabot — version + security updates for the Omega Engine.
+# Per R_VAULT_COPILOT_DEEPER_20260827 §3.9 + R_VAULT_COPILOT_ROUND5_20260828 §5.
+# Per github.blog 2026-07-23: version updates have 3-day cooldown; security
+# updates have NO cooldown (immediate patch adoption).
+# M23: Dependabot PRs are NEVER auto-merged. Always human review.
+# M8: No external calls beyond Dependabot's own (which is required infra).
+
+version: 2
+
+updates:
+  # === GitHub Actions ecosystem ===
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "06:00"
+      timezone: "UTC"
+    cooldown:
+      default-days: 3
+      semver-major-days: 14
+      semver-minor-days: 3
+      semver-patch-days: 1
+    open-pull-requests-limit: 5
+    groups:
+      actions-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      actions-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+    commit-message:
+      prefix: "ci"
+      prefix-development: "ci(dev)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "ci"
+
+  # === Python ecosystem (pip + pyproject.toml) ===
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "06:00"
+      timezone: "UTC"
+    cooldown:
+      default-days: 3
+      semver-major-days: 14
+      semver-minor-days: 3
+      semver-patch-days: 1
+    open-pull-requests-limit: 10
+    groups:
+      pip-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+      pip-major:
+        update-types:
+          - "major"
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore(dev)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+    # Per D-568 + M1: anyio is the only allowed async; cryptography is
+    # pinned for portability. Do not let Dependabot push versions we
+    # haven't tested.
+    ignore:
+      - dependency-name: "anyio"
+      - dependency-name: "cryptography"
+
+# Security updates: always enabled at the repo or org level
+# (Settings > Code security and analysis). This dependabot.yml only
+# controls version updates. Security updates bypass cooldown.

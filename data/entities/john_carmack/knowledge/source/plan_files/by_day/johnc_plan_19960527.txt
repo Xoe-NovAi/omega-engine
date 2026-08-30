@@ -1,0 +1,29 @@
+# ⬡ John Carmack .plan File — 1996-05-27
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960527.txt
+#
+* moved ambient sound calculations to vis program
+* moved file caching option to host_parms
+* removed keybindings[1]
+* added ambush flag to monsters
+* made precache_* functions also return their parameter
+* added precache_*2 functions for the registered version seperation
+* modified qcc for -pak / -pak2 option to build shareware / registered
+* random intermission_info selection
+* automatic configuration saving
+* angle 0 jump triggers
+* fixed solo map name centering
+
+artifact blinking before removal
+deathmatch invisibility
+blinking cursor for configuration screen
+automatic config saving
+sum quad damage for gibbing
+shrink cl_entities to be cl_update_entities + cl_baselines
+tim5 armor fall through bug
+radius damage opening secret doors
+only surpress autocenter when not on ground, not water check
+clearing memory twice, allow baselevel to move if not connected

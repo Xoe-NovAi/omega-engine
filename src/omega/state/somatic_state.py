@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """SomaticState Manager — Binary LLM state serialization via llama.cpp ctypes + CAS.
 AP: AP-USM-SOMATIC-v1.0.0
 M20: SomaticState Serialization

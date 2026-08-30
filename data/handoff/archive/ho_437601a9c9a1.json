@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_437601a9c9a1",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Continue PUBLIC-DEBUT-01 three-item critical path: CP-1 (local inference end-to-end), CP-2 (soul persistence), CP-3 (one-click install). All other work deferred to post-debut per Carmack verdict.",
+  "context": "SCOPE CUT EXECUTED 2026-08-15 per Carmack verdict (AP-CARMMACK-TRIAGE-20260815). Three-item critical path only:\n- CP-1: omega talk \"hello\" \u2192 native-gguf \u2192 response (no cloud fallback)\n- CP-2: Session end \u2192 proposed_lessons.yaml \u2192 next session loads it\n- CP-3: curl ... | bash \u2192 working council in <5 min\n\nALL OTHER WORK DEFERRED TO POST-DEBUT: VOS Phases 1-4, SDP Architecture, V-1 Vault wiring, WARP pool, G-1 workhorse, Context Packer F2-F9, three-router consolidation, fleet soul migration, Scribe automation, cross-pollination, heritage sweep, community installer, NL-1, Restic/AppArmor/IA2.\n\nKNOWLEDGE COMPLETE (no further research needed):\n- All 13 gaps resolved (local + web research)\n- Authoritative model windows established (Table 3.1)\n- Sonnet/Opus 4.6 = 1M official (200K = UI bug #24208)\n- V-1 Vault BUILT (2,039 LOC) \u2014 wiring deferred\n- VOS Phase 0 complete\n\nPARALLEL: PR-A (Public Surface Honesty) \u2014 AWAITING ARCHITECT CONFIRMATION\n\nACTIVE_SPRINT.json updated to PUBLIC-DEBUT-01 with single CRITICAL-PATH workstream (CP-1, CP-2, CP-3).\nHMC Hub NEXT_ACTION updated to reflect three-item critical path only.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-15T13:31:11.507502+00:00",
+  "accepted_at": "2026-08-15T13:44:56.687496+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-08-15T19:28:32.443636+00:00",
+  "result": "CP-1 COMPLETED: native-gguf inference verified (PROVIDER_NAME=native-gguf, IS_CLOUD=False). Metrics DB v3 migration fixed. Carmack review: NO-GO on monitoring stack, 20-line native-gguf cleanup fix identified. All trackers updated. Next: CP-2 (Soul Persistence) + CP-3 (One-Click Install) + Carmack 20-line fix.",
+  "reaped_at": "2026-08-22T19:29:32.474690+00:00"
+}

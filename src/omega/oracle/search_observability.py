@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Search Observability — Structured Logging, Tracing, and Metrics for Search Pipeline.
 AP: AP-SEARCH-OBSERVABILITY-v1.0.0
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_search_obs ⬡ ACTIVE

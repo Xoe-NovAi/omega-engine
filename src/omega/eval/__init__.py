@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Sovereign Eval Package
 # AP: AP-EVAL-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ eval ⬡ S2

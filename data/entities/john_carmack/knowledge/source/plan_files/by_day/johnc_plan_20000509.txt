@@ -1,0 +1,8 @@
+# ⬡ John Carmack .plan File — 2000-05-09
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_20000509.txt
+#
+And the Q1 utilities are now also available under the GPL in source/q1tools_gpl.tgz.

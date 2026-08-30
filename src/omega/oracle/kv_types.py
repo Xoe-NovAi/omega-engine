@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Canonical ggml KV-cache type mapping (B3 single-source fix).
 
 Every module that needs to translate a string KV-cache type (e.g. ``"q8_0"``,

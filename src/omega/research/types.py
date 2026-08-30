@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research Shared Types — Breaks circular imports between sandbox and budget_guard
 ⬡ OMEGA ⬡ MA'AT ⬡ N2/N3 ⬡ TYPES

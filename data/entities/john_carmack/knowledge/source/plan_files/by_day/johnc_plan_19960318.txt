@@ -1,0 +1,22 @@
+# ⬡ John Carmack .plan File — 1996-03-18
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960318.txt
+#
+* fuxed button triggered delays
+* added classname to light error message
+* demon more damage
+* sounder objects
+* light_switchable
+
++ grenade proximity explosions
++ fix jumping off edges
++ wizard fast shots
++ target lights for controling them
++ plat hit on head bug
++ ambient light
+
+spiral the view when gibbed
+level based gravity

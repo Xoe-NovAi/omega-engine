@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Lens Registry (WAD-Backed)
 # ⬡ OMEGA ⬡ MEDITATE ⬡ LENS_REGISTRY ⬡ M2-COMPLIANT
 #
