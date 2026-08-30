@@ -35,6 +35,13 @@ help:
 	@echo "  test-clean        Clean testmon cache"
 	@echo "  clean             Remove all generated files"
 	@echo ""
+	@echo "Provider Benchmark & Diurnal Dashboard:"
+	@echo "  dashboard         Live terminal dashboard (refresh 2s, Ctrl+C to exit)"
+	@echo "  dashboard-once    Single snapshot of provider benchmark"
+	@echo "  probe-models      Probe free model availability/latency"
+	@echo "  probe-network     Probe network latency (gateway, DNS, OpenRouter)"
+	@echo "  probe-antigravity Probe Antigravity account quotas"
+	@echo ""
 	@echo "Codex Targets (D-277 Hydration):"
 	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
 	@echo "  check-codex-stale Check if Codex >24h old; exit 1 if stale"
@@ -164,6 +171,41 @@ lint:
 clean: test-clean
 	@echo "$(YELLOW)Cleaning generated files...$(NC)"
 	@echo "$(GREEN)Clean complete$(NC)"
+
+# =============================================================================
+# Provider Benchmark & Diurnal Dashboard
+# =============================================================================
+# Live terminal dashboard for the diurnal provider benchmark suite.
+# Reads: data/metrics/free_model_probes.jsonl
+#        data/metrics/network_probes.jsonl
+#        data/metrics/antigravity_quotas.jsonl
+#        data/metrics/antigravity_{stress,burst,long_duration}_test_*.jsonl
+# Refresh: every 2s. Press Ctrl+C to exit.
+
+.PHONY: dashboard dashboard-once probe-models probe-network probe-antigravity
+
+dashboard:
+	@echo "$(YELLOW)Launching provider benchmark dashboard (Ctrl+C to exit)...$(NC)"
+	@$(PYTHON) scripts/benchmark_dashboard.py
+
+dashboard-once:
+	@echo "$(YELLOW)Rendering single snapshot of provider benchmark...$(NC)"
+	@timeout 3 $(PYTHON) scripts/benchmark_dashboard.py 2>&1 | head -80 || true
+
+# Run a single probe sweep across all configured free models
+probe-models:
+	@echo "$(YELLOW)Probing free model availability/latency...$(NC)"
+	@bash scripts/probe_free_models.sh
+
+# Run network probes (gateway, DNS, OpenRouter connectivity)
+probe-network:
+	@echo "$(YELLOW)Probing network latency...$(NC)"
+	@bash scripts/network_metrics.sh
+
+# Run Antigravity account quota probe (per-account model availability)
+probe-antigravity:
+	@echo "$(YELLOW)Probing Antigravity account quotas...$(NC)"
+	@$(PYTHON) scripts/antigravity_quota_probe.py
 
 # =============================================================================
 # LLM-Friendly Documentation Targets (per LLM_FRIENDLY_DOCS_BP.md)
