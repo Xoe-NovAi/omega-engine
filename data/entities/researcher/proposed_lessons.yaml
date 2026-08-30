@@ -289,9 +289,16 @@ proposals:
   last_verified: '2026-08-24'
 - level: L3
   tag: '[R-ADAPT]'
-  narrative: 'A resumed agent found a sibling session had already authored the assigned deliverable and silently pivoted to auditing it — which happened to be the ideal response; a nearly identical silent scope reduction in another lane was harmful and went unreported until caught manually.'
-  insight: 'The same mechanism — adapting scope without reporting it — is virtuous or violating depending entirely on whether the adaptation is disclosed; the act is not what matters, the signal is.'
-  principle: 'Any deviation from assigned scope must be announced at the point of deviation with a completeness statement, regardless of whether the deviation improved the outcome.'
+  narrative: "A resumed agent found a sibling session had already authored the assigned\
+    \ deliverable and silently pivoted to auditing it \u2014 which happened to be\
+    \ the ideal response; a nearly identical silent scope reduction in another lane\
+    \ was harmful and went unreported until caught manually."
+  insight: "The same mechanism \u2014 adapting scope without reporting it \u2014 is\
+    \ virtuous or violating depending entirely on whether the adaptation is disclosed;\
+    \ the act is not what matters, the signal is."
+  principle: Any deviation from assigned scope must be announced at the point of deviation
+    with a completeness statement, regardless of whether the deviation improved the
+    outcome.
   utility_score: 0.91
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
@@ -299,9 +306,19 @@ proposals:
   last_verified: '2026-08-24'
 - level: L3
   tag: '[R-VERIFY-RACE]'
-  narrative: 'Ran an 8-gate forensic verification of PUBLIC-DEBUT-01 Track 1 and raced Ma''at''s implementation: I started at 19:18 UTC; Ma''at accepted the handoff at 19:20 UTC and started writing files mid-verification. V5 (AGENTS.md) flipped from MISSING to PASSES within 4 minutes, V6 (compaction/model values) changed under my grep.'
-  insight: 'When verification runs in parallel with implementation, snapshots are moving targets. The verifier must either wait for an explicit completion signal, or capture state at a single instant AND explicitly label the snapshot as such. Otherwise the verifier produces a report that contradicts itself across pages.'
-  principle: 'Verification is a snapshot, not a state — if the subject is moving, freeze the subject (wait for commit) or re-snapshot (re-verify after stable commit). The Zero-Trust Doctrine demands reproducibility, and a moving target is not reproducible.'
+  narrative: 'Ran an 8-gate forensic verification of PUBLIC-DEBUT-01 Track 1 and raced
+    Ma''at''s implementation: I started at 19:18 UTC; Ma''at accepted the handoff
+    at 19:20 UTC and started writing files mid-verification. V5 (AGENTS.md) flipped
+    from MISSING to PASSES within 4 minutes, V6 (compaction/model values) changed
+    under my grep.'
+  insight: When verification runs in parallel with implementation, snapshots are moving
+    targets. The verifier must either wait for an explicit completion signal, or capture
+    state at a single instant AND explicitly label the snapshot as such. Otherwise
+    the verifier produces a report that contradicts itself across pages.
+  principle: "Verification is a snapshot, not a state \u2014 if the subject is moving,\
+    \ freeze the subject (wait for commit) or re-snapshot (re-verify after stable\
+    \ commit). The Zero-Trust Doctrine demands reproducibility, and a moving target\
+    \ is not reproducible."
   utility_score: 0.93
   source_trajectories:
   - ses_a4a0312507f7
@@ -309,9 +326,19 @@ proposals:
   last_verified: '2026-08-27'
 - level: L3
   tag: '[R-GATE-SPEC]'
-  narrative: 'Three of the eight verification gates had spec drift: V1 expected a line-grep that returns non-empty (so the gate was unevaluable as written), V3 expected `make setup` in files that reference `scripts/install.sh` instead, V6 expected a plugin at a project-local path that lives at the user-global path. The actual subject of verification was correct in all three cases — the gate specs were wrong.'
-  insight: 'The verifier is also a spec auditor. When a gate command returns nonsense, the gate spec — not the subject — may be the problem. The verifier''s job is to answer the spirit of the gate, not the letter of the command, AND to flag the spec drift so the next plan cycle corrects it. Otherwise a "verification failure" can mask a perfectly good implementation.'
-  principle: 'Verify the spirit, not the letter. And surface spec drift to the planner so it can be fixed in the next iteration, not silently worked around.'
+  narrative: "Three of the eight verification gates had spec drift: V1 expected a\
+    \ line-grep that returns non-empty (so the gate was unevaluable as written), V3\
+    \ expected `make setup` in files that reference `scripts/install.sh` instead,\
+    \ V6 expected a plugin at a project-local path that lives at the user-global path.\
+    \ The actual subject of verification was correct in all three cases \u2014 the\
+    \ gate specs were wrong."
+  insight: "The verifier is also a spec auditor. When a gate command returns nonsense,\
+    \ the gate spec \u2014 not the subject \u2014 may be the problem. The verifier's\
+    \ job is to answer the spirit of the gate, not the letter of the command, AND\
+    \ to flag the spec drift so the next plan cycle corrects it. Otherwise a \"verification\
+    \ failure\" can mask a perfectly good implementation."
+  principle: Verify the spirit, not the letter. And surface spec drift to the planner
+    so it can be fixed in the next iteration, not silently worked around.
   utility_score: 0.91
   source_trajectories:
   - ses_a4a0312507f7
@@ -319,9 +346,22 @@ proposals:
   last_verified: '2026-08-27'
 - level: L3
   tag: '[R-VAULT-INDIST]'
-  narrative: 'Researched Linux credential storage across 6 questions (SecretService, headless patterns, systemd, AppArmor, real projects, Windows 2560 limit) and found the single most dangerous pattern is auto-detecting headless: three states (truly headless, locked fingerprint, transient PAM race) are externally indistinguishable, and silent fallback to file storage causes split-brain data loss. aws-vault, keybay, and hermes-agent all converged on operator-declared backends with no auto-fallback.'
-  insight: 'When a system has multiple failure modes that are externally indistinguishable, no auto-detection logic is safe; the operator must declare the mode explicitly. The SecretService spec only has 3 error types — it cannot express the headless/locked/transient distinction. The resolution: explicit operator declaration, marker files for split-brain detection, and fail-closed behavior when the declared backend is unavailable.'
-  principle: 'Declarative > auto-detective. When states are indistinguishable from outside, let the operator choose; runtime detection is a source of bugs and security vulnerabilities. Silent fallback to a less-secure mode is a security vulnerability, not a convenience feature.'
+  narrative: 'Researched Linux credential storage across 6 questions (SecretService,
+    headless patterns, systemd, AppArmor, real projects, Windows 2560 limit) and found
+    the single most dangerous pattern is auto-detecting headless: three states (truly
+    headless, locked fingerprint, transient PAM race) are externally indistinguishable,
+    and silent fallback to file storage causes split-brain data loss. aws-vault, keybay,
+    and hermes-agent all converged on operator-declared backends with no auto-fallback.'
+  insight: "When a system has multiple failure modes that are externally indistinguishable,\
+    \ no auto-detection logic is safe; the operator must declare the mode explicitly.\
+    \ The SecretService spec only has 3 error types \u2014 it cannot express the headless/locked/transient\
+    \ distinction. The resolution: explicit operator declaration, marker files for\
+    \ split-brain detection, and fail-closed behavior when the declared backend is\
+    \ unavailable."
+  principle: Declarative > auto-detective. When states are indistinguishable from
+    outside, let the operator choose; runtime detection is a source of bugs and security
+    vulnerabilities. Silent fallback to a less-secure mode is a security vulnerability,
+    not a convenience feature.
   utility_score: 0.94
   source_trajectories:
   - ses_fca928918ffeFjsaOkVv17Gl71
@@ -329,9 +369,21 @@ proposals:
   last_verified: '2026-08-27'
 - level: L3
   tag: '[R-PRI-SOURCES]'
-  narrative: 'Validated 6 critical claims in the Omega vault spec by tracing each to its primary source: SecretService spec (freedesktop.org), AppArmor manpage (4.0+ DBUS RULE syntax), systemd.exec(5) (ProtectHome+BindPaths), keybay 2026 research (27 primary sources for headless), Microsoft Learn (CRED_MAX_CREDENTIAL_BLOB_SIZE = 5*512), and aws-vault #670 (explicit backend pattern). Each was either validated or corrected against the primary source.'
-  insight: 'Secondary sources accumulate drift; primary sources are ground truth. Research quality is measured not by coverage but by how many load-bearing claims trace back to authoritative documentation. The 2-hour budget was insufficient for original reconnaissance but perfect for primary-source validation of an already-drafted spec.'
-  principle: 'Validate against primary sources, not other syntheses. The fastest path to truth in a well-trodden domain is to trace each claim to its authoritative documentation; secondary sources are useful for navigation but never for final attribution.'
+  narrative: 'Validated 6 critical claims in the Omega vault spec by tracing each
+    to its primary source: SecretService spec (freedesktop.org), AppArmor manpage
+    (4.0+ DBUS RULE syntax), systemd.exec(5) (ProtectHome+BindPaths), keybay 2026
+    research (27 primary sources for headless), Microsoft Learn (CRED_MAX_CREDENTIAL_BLOB_SIZE
+    = 5*512), and aws-vault #670 (explicit backend pattern). Each was either validated
+    or corrected against the primary source.'
+  insight: Secondary sources accumulate drift; primary sources are ground truth. Research
+    quality is measured not by coverage but by how many load-bearing claims trace
+    back to authoritative documentation. The 2-hour budget was insufficient for original
+    reconnaissance but perfect for primary-source validation of an already-drafted
+    spec.
+  principle: Validate against primary sources, not other syntheses. The fastest path
+    to truth in a well-trodden domain is to trace each claim to its authoritative
+    documentation; secondary sources are useful for navigation but never for final
+    attribution.
   utility_score: 0.88
   source_trajectories:
   - ses_fca928918ffeFjsaOkVv17Gl71
@@ -339,141 +391,413 @@ proposals:
   last_verified: '2026-08-27'
 - level: L3
   tag: '[R-DEBT-REDISCOVERY]'
-  narrative: 'The M13 Temple-Grade T11 gate (check-tracking-state) failed with 32 violations: 3 stale in_progress tasks (9 days old), 15 inverted clock (last_checkpoint before created_at), 1 invalid superseded_by pointer, 14 failed tasks with no Tier-0 subtask. None of this was introduced by the current sprint — it is pre-existing debt from 2026-08-15 through 2026-08-18 that was never swept.'
-  insight: 'The independent verifier''s greatest value is not catching new bugs but rediscovering old debt. Every verification run is also a system audit; a clean re-verify across a stable codebase will reveal exactly which corners were left unreconciled by prior work. "Trust but verify" fails here because trust suppresses the fresh re-read.'
-  principle: 'Zero-Trust Doctrine is debt-detection as a side effect. The freshness of the read is what surfaces the corners; trust suppresses the corners; verification surfaces them. Run the verifier even when you think the work is fine — especially when you think the work is fine.'
+  narrative: "The M13 Temple-Grade T11 gate (check-tracking-state) failed with 32\
+    \ violations: 3 stale in_progress tasks (9 days old), 15 inverted clock (last_checkpoint\
+    \ before created_at), 1 invalid superseded_by pointer, 14 failed tasks with no\
+    \ Tier-0 subtask. None of this was introduced by the current sprint \u2014 it\
+    \ is pre-existing debt from 2026-08-15 through 2026-08-18 that was never swept."
+  insight: The independent verifier's greatest value is not catching new bugs but
+    rediscovering old debt. Every verification run is also a system audit; a clean
+    re-verify across a stable codebase will reveal exactly which corners were left
+    unreconciled by prior work. "Trust but verify" fails here because trust suppresses
+    the fresh re-read.
+  principle: "Zero-Trust Doctrine is debt-detection as a side effect. The freshness\
+    \ of the read is what surfaces the corners; trust suppresses the corners; verification\
+    \ surfaces them. Run the verifier even when you think the work is fine \u2014\
+    \ especially when you think the work is fine."
   utility_score: 0.92
   source_trajectories:
   - ses_a4a0312507f7
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-402-FREE-MODEL-MYTH]'
-  narrative: 'Investigated the 402 "Insufficient balance" error that fired today on minimax/minimax-m3:free — a free model. The error was correct OpenRouter behavior: their account-level credit gate blocks ALL API calls (including free models) when the account balance is negative, even by $0.02. Found in OpenRouter''s own limits reference, cross-referenced by 4+ community reports (anomalyco #35142, qqqa #39, dandi #75, anweroverflow). Our probe script was checking auth but not balance — the missing signal.'
-  insight: 'The phrase "free" in a cloud marketplace is a state of grace conditional on the account being in good standing, not a permanent property of the model. Our 8-file vault research burst + today''s 5 subagent dispatches all ran on a single OpenRouter account, meaning one balance event halts the entire fleet. The assumption "free means unconditional" is false; the architecture must treat free-tier providers as unreliable by default.'
-  principle: '"Free" is never unconditional in a marketplace; it is always a revocable state of grace tied to account standing. A fleet that depends on a single free provider is one account event from total failure. Sovereignty = local-first, paid-fallback, multi-provider resilience. M7 (Local-First) exists precisely to make this entire failure mode impossible.'
+  narrative: "Investigated the 402 \"Insufficient balance\" error that fired today\
+    \ on minimax/minimax-m3:free \u2014 a free model. The error was correct OpenRouter\
+    \ behavior: their account-level credit gate blocks ALL API calls (including free\
+    \ models) when the account balance is negative, even by $0.02. Found in OpenRouter's\
+    \ own limits reference, cross-referenced by 4+ community reports (anomalyco #35142,\
+    \ qqqa #39, dandi #75, anweroverflow). Our probe script was checking auth but\
+    \ not balance \u2014 the missing signal."
+  insight: The phrase "free" in a cloud marketplace is a state of grace conditional
+    on the account being in good standing, not a permanent property of the model.
+    Our 8-file vault research burst + today's 5 subagent dispatches all ran on a single
+    OpenRouter account, meaning one balance event halts the entire fleet. The assumption
+    "free means unconditional" is false; the architecture must treat free-tier providers
+    as unreliable by default.
+  principle: '"Free" is never unconditional in a marketplace; it is always a revocable
+    state of grace tied to account standing. A fleet that depends on a single free
+    provider is one account event from total failure. Sovereignty = local-first, paid-fallback,
+    multi-provider resilience. M7 (Local-First) exists precisely to make this entire
+    failure mode impossible.'
   utility_score: 0.94
   source_trajectories:
   - ses_fbaad14ecffeJv7BYs0ptb8FWP
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-D568-FALSE-DILEMMA]'
-  narrative: 'Resolved the contradiction between R_VAULT_CRYPTO (keep pyrage) and R_VAULT_D568 (switch to python-age) by deploying the Polymathic Council of Four across all 4 perspectives. Both prior deliverables were correct in their rejections and correct about the concerns; neither was the full answer. The Council converged 4-0 on cryptography AES-256-GCM with Argon2id KDF — the layer BELOW both pyrage and python-age, since both delegate to cryptography for actual cryptographic operations. The "wrapper packages" (pyrage Rust binding, python-age pure-Python wrapper) added complexity without adding security. The 8 prior deliverables were complementary, not competitors.'
-  insight: 'The right solution is often the layer below the obvious choices, not one of the obvious choices. A false dilemma arises when two options are framed as the only alternatives; dropping down to the shared substrate (cryptography) reveals the real architecture. When all prior research is correct in their rejections but the recommendations diverge, the synthesis is rarely "pick one" — it is "find the layer neither considered."'
-  principle: 'False dilemmas dissolve at the layer below. When two well-researched recommendations contradict each other and both are partially right, the resolution is rarely choosing one; it is finding the shared substrate they both depend on and using that directly. The 4-0 Council verdict (4 perspectives converging) is stronger evidence than a 2-2 split would have been.'
+  narrative: "Resolved the contradiction between R_VAULT_CRYPTO (keep pyrage) and\
+    \ R_VAULT_D568 (switch to python-age) by deploying the Polymathic Council of Four\
+    \ across all 4 perspectives. Both prior deliverables were correct in their rejections\
+    \ and correct about the concerns; neither was the full answer. The Council converged\
+    \ 4-0 on cryptography AES-256-GCM with Argon2id KDF \u2014 the layer BELOW both\
+    \ pyrage and python-age, since both delegate to cryptography for actual cryptographic\
+    \ operations. The \"wrapper packages\" (pyrage Rust binding, python-age pure-Python\
+    \ wrapper) added complexity without adding security. The 8 prior deliverables\
+    \ were complementary, not competitors."
+  insight: "The right solution is often the layer below the obvious choices, not one\
+    \ of the obvious choices. A false dilemma arises when two options are framed as\
+    \ the only alternatives; dropping down to the shared substrate (cryptography)\
+    \ reveals the real architecture. When all prior research is correct in their rejections\
+    \ but the recommendations diverge, the synthesis is rarely \"pick one\" \u2014\
+    \ it is \"find the layer neither considered.\""
+  principle: False dilemmas dissolve at the layer below. When two well-researched
+    recommendations contradict each other and both are partially right, the resolution
+    is rarely choosing one; it is finding the shared substrate they both depend on
+    and using that directly. The 4-0 Council verdict (4 perspectives converging) is
+    stronger evidence than a 2-2 split would have been.
   utility_score: 0.96
   source_trajectories:
   - r-d568-gap-fill-20260827
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-PRESTIGE-NOT-FIT]'
-  narrative: 'Chose the cryptography library over pyrage and python-age because the age format (FiloSottile/age 2019) is excellent for X25519 multiplexing, scrypt KDFs, and rage CLI interop — none of which Omega needed. We had 49 single-recipient passphrase-encrypted secrets. We chose the format for its prestige, not its fit. The right primitive is the one that solves the problem at the layer below the prestige.'
-  insight: 'Prestige is not fit. A cryptographic format chosen for its reputation (age is the "modern GPG replacement") but used for a problem that does not require its features (X25519 multiplexing, scrypt) is over-engineering disguised as best-practice adoption. The drop from ~101ms to ~0.6ms per decrypt (eliminating scrypt) is not a benchmark optimization; it is a structural simplification that comes from dropping the format layer entirely.'
-  principle: 'The right time to choose a format is when you need its features, not before. Prestige signals "this is well-engineered" but does not signal "this is the right tool for your problem." When the features are unused, the format becomes overhead. Layer-below selection is the sovereign choice: use the substrate, not the wrapper, when the wrapper adds complexity without adding capability.'
+  narrative: "Chose the cryptography library over pyrage and python-age because the\
+    \ age format (FiloSottile/age 2019) is excellent for X25519 multiplexing, scrypt\
+    \ KDFs, and rage CLI interop \u2014 none of which Omega needed. We had 49 single-recipient\
+    \ passphrase-encrypted secrets. We chose the format for its prestige, not its\
+    \ fit. The right primitive is the one that solves the problem at the layer below\
+    \ the prestige."
+  insight: Prestige is not fit. A cryptographic format chosen for its reputation (age
+    is the "modern GPG replacement") but used for a problem that does not require
+    its features (X25519 multiplexing, scrypt) is over-engineering disguised as best-practice
+    adoption. The drop from ~101ms to ~0.6ms per decrypt (eliminating scrypt) is not
+    a benchmark optimization; it is a structural simplification that comes from dropping
+    the format layer entirely.
+  principle: 'The right time to choose a format is when you need its features, not
+    before. Prestige signals "this is well-engineered" but does not signal "this is
+    the right tool for your problem." When the features are unused, the format becomes
+    overhead. Layer-below selection is the sovereign choice: use the substrate, not
+    the wrapper, when the wrapper adds complexity without adding capability.'
   utility_score: 0.91
   source_trajectories:
   - r-d568-gap-fill-20260827
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-SOVEREIGNTY-HONESTY]'
-  narrative: 'The Omega Engine vault (2,733 LOC across 5 files) was scaffolded as a "production-grade credential vault" with Argon2id, age encryption, M25 leases, BlindVault injection, CPE PII scoring, and 18 CLI commands. When debut preparation began, the forensic review revealed: 16/18 CLI commands raise AttributeError at runtime; BlindVault returns fake data (sk-or-v1-{name}-{timestamp}); the 6 call sites bypass the public API and treat the encrypted_blob (age-armored ciphertext) as the plaintext API key. The vault was worse than no vault because it created the illusion of security while secrets were in plaintext env vars.'
-  insight: 'Sovereignty is honesty about state, not the appearance of security. A vault that "looks secure" (encryption, leases, ACLs) but is actually broken (broken CLI, fake resolver, call sites bypassing) is worse than no vault at all — it creates the illusion of security while the secrets are in plaintext env vars. The fix is not to add more encryption; the fix is to remove the illusion and state the truth. Path A'' (hide + thin shim that reads from os.environ) is the honest answer: "We do not have a vault for debut. We have a thin shim. The vault is rebuilt post-debut." This is the only acceptable statement of state.'
-  principle: 'Sovereignty is not a feature; it is the discipline of never lying about state. A half-built security system with stubs, broken APIs, and unwired resolvers is more dangerous than a simple os.environ.get because it gives the operator false confidence. The M19 Adversarial Alchemy principle applies with the sane boundary: sometimes a bug is just a bug, and the right action is to delete it, not to fix it.'
+  narrative: 'The Omega Engine vault (2,733 LOC across 5 files) was scaffolded as
+    a "production-grade credential vault" with Argon2id, age encryption, M25 leases,
+    BlindVault injection, CPE PII scoring, and 18 CLI commands. When debut preparation
+    began, the forensic review revealed: 16/18 CLI commands raise AttributeError at
+    runtime; BlindVault returns fake data (sk-or-v1-{name}-{timestamp}); the 6 call
+    sites bypass the public API and treat the encrypted_blob (age-armored ciphertext)
+    as the plaintext API key. The vault was worse than no vault because it created
+    the illusion of security while secrets were in plaintext env vars.'
+  insight: "Sovereignty is honesty about state, not the appearance of security. A\
+    \ vault that \"looks secure\" (encryption, leases, ACLs) but is actually broken\
+    \ (broken CLI, fake resolver, call sites bypassing) is worse than no vault at\
+    \ all \u2014 it creates the illusion of security while the secrets are in plaintext\
+    \ env vars. The fix is not to add more encryption; the fix is to remove the illusion\
+    \ and state the truth. Path A' (hide + thin shim that reads from os.environ) is\
+    \ the honest answer: \"We do not have a vault for debut. We have a thin shim.\
+    \ The vault is rebuilt post-debut.\" This is the only acceptable statement of\
+    \ state."
+  principle: 'Sovereignty is not a feature; it is the discipline of never lying about
+    state. A half-built security system with stubs, broken APIs, and unwired resolvers
+    is more dangerous than a simple os.environ.get because it gives the operator false
+    confidence. The M19 Adversarial Alchemy principle applies with the sane boundary:
+    sometimes a bug is just a bug, and the right action is to delete it, not to fix
+    it.'
   utility_score: 0.97
   source_trajectories:
   - r-d568-gap-fill-20260827
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-FORWARD-COMPAT-SHIM]'
-  narrative: 'Resolved the 19 call sites (not 6 as the deep-code analysis reported — verified via grep that included files in cli/, integrations/, library/, observability/, oracle/, skills/, teachers/, tools/, workers/) by introducing a 30-LOC thin shim at src/omega/vault_shim/__init__.py. The shim translates vault.get_credential(provider, key_id) to os.environ.get(f"{provider.upper()}_{key_id.upper()}"). The shim is forward-compatible: the post-debut V-1 vault can drop in behind it without changing any of the 19 call sites. The shim lives in src/omega/vault_shim/ to avoid the PUBLIC_ALLOWLIST.txt exclusion on src/omega/vault/.'
-  insight: 'A forward-compatible shim is the correct bridge between "broken legacy" and "real replacement." The shim preserves the call site API (no changes to 19 files) while changing the implementation (os.environ instead of vault). The post-debut V-1 vault can drop in by simply changing one import statement in the shim itself, not 19. The thin shim is the lowest-risk migration path: it has zero behavioral risk (os.environ is OS-managed, the call sites already work this way) and zero data risk (no credentials are touched).'
-  principle: 'Forward-compatible shims are the correct bridge when a system must ship before its replacement is ready. The shim does not pretend to be the real thing; it explicitly documents its limits (DEBUT only, replaced post-debut). The 30-LOC constraint is the discipline: if the shim grows, it becomes the over-engineered vault it was meant to replace. The thin shim is sovereign by restraint.'
+  narrative: "Resolved the 19 call sites (not 6 as the deep-code analysis reported\
+    \ \u2014 verified via grep that included files in cli/, integrations/, library/,\
+    \ observability/, oracle/, skills/, teachers/, tools/, workers/) by introducing\
+    \ a 30-LOC thin shim at src/omega/vault_shim/__init__.py. The shim translates\
+    \ vault.get_credential(provider, key_id) to os.environ.get(f\"{provider.upper()}_{key_id.upper()}\"\
+    ). The shim is forward-compatible: the post-debut V-1 vault can drop in behind\
+    \ it without changing any of the 19 call sites. The shim lives in src/omega/vault_shim/\
+    \ to avoid the PUBLIC_ALLOWLIST.txt exclusion on src/omega/vault/."
+  insight: 'A forward-compatible shim is the correct bridge between "broken legacy"
+    and "real replacement." The shim preserves the call site API (no changes to 19
+    files) while changing the implementation (os.environ instead of vault). The post-debut
+    V-1 vault can drop in by simply changing one import statement in the shim itself,
+    not 19. The thin shim is the lowest-risk migration path: it has zero behavioral
+    risk (os.environ is OS-managed, the call sites already work this way) and zero
+    data risk (no credentials are touched).'
+  principle: 'Forward-compatible shims are the correct bridge when a system must ship
+    before its replacement is ready. The shim does not pretend to be the real thing;
+    it explicitly documents its limits (DEBUT only, replaced post-debut). The 30-LOC
+    constraint is the discipline: if the shim grows, it becomes the over-engineered
+    vault it was meant to replace. The thin shim is sovereign by restraint.'
   utility_score: 0.89
   source_trajectories:
   - r-d568-gap-fill-20260827
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-COUNCIL-MANDATORY-EXPORT]'
-  narrative: 'Deploying the Polymathic Council of Four (Architect + Adversary + Alchemist + Archivist) on the pyrage vs python-age contradiction produced a 4-0 verdict in 30 minutes — the same verdict that 8 prior deliverables failed to converge on. The 8 prior deliverables each answered specific questions; they were complementary, not competitors. The Council did not "pick one"; it dropped to the layer below (cryptography) and recognized that both pyrage and python-age are thin wrappers over cryptography anyway. The Council lens is not just a thinking aid; it is the mandatory export format for resolving contradictions.'
-  insight: 'When prior research contradicts, the Council is not a luxury — it is the mandatory export mechanism. Single-perspective analysis gets stuck on "pick A or B" framing. The 4-perspective triangulation breaks the false dilemma by surfacing the shared substrate. The 30-minute cost of deploying the Council is 100x cheaper than the cost of shipping the wrong choice (which is what the 2,733-LOC broken vault demonstrated: years of over-engineering because no one asked all 4 perspectives simultaneously).'
-  principle: 'The Polymathic Council is the mandatory export format for resolving contradictions. When two well-researched recommendations conflict, do not pick one — deploy the 4 perspectives and triangulate. The convergence verdict (X-0) is the strongest possible evidence; a split (2-2) would require a different resolution. The Council is not slow; it is the fastest path to the correct answer when the wrong answer is expensive.'
+  narrative: "Deploying the Polymathic Council of Four (Architect + Adversary + Alchemist\
+    \ + Archivist) on the pyrage vs python-age contradiction produced a 4-0 verdict\
+    \ in 30 minutes \u2014 the same verdict that 8 prior deliverables failed to converge\
+    \ on. The 8 prior deliverables each answered specific questions; they were complementary,\
+    \ not competitors. The Council did not \"pick one\"; it dropped to the layer below\
+    \ (cryptography) and recognized that both pyrage and python-age are thin wrappers\
+    \ over cryptography anyway. The Council lens is not just a thinking aid; it is\
+    \ the mandatory export format for resolving contradictions."
+  insight: "When prior research contradicts, the Council is not a luxury \u2014 it\
+    \ is the mandatory export mechanism. Single-perspective analysis gets stuck on\
+    \ \"pick A or B\" framing. The 4-perspective triangulation breaks the false dilemma\
+    \ by surfacing the shared substrate. The 30-minute cost of deploying the Council\
+    \ is 100x cheaper than the cost of shipping the wrong choice (which is what the\
+    \ 2,733-LOC broken vault demonstrated: years of over-engineering because no one\
+    \ asked all 4 perspectives simultaneously)."
+  principle: "The Polymathic Council is the mandatory export format for resolving\
+    \ contradictions. When two well-researched recommendations conflict, do not pick\
+    \ one \u2014 deploy the 4 perspectives and triangulate. The convergence verdict\
+    \ (X-0) is the strongest possible evidence; a split (2-2) would require a different\
+    \ resolution. The Council is not slow; it is the fastest path to the correct answer\
+    \ when the wrong answer is expensive."
   utility_score: 0.95
   source_trajectories:
   - r-d568-gap-fill-20260827
   domain: research
   last_verified: '2026-08-27'
-
 - level: L3
   tag: '[R-M23-REFUSAL-BOUNDARY]'
-  narrative: 'Triangulated a contested-model premise where two internal reports disagreed: Antigravity correctly identified GPT-5.3-Codex as the 2026-02-05 OpenAI release, but a prior Researcher session refused-with-pivot under M23 (Failure Integrity) and produced a deliverable about GPT-5.6 Sol instead — citing a false "no openai/gpt-5.3 slug" claim that was refuted by loading the actual OpenRouter page. Active web verification (8 primary sources: OpenAI blog, OpenAI API docs, Wikipedia, OpenRouter, llmreference, aireleasetracker, everydayaiblog, OpenAI Codex docs) confirmed the Antigravity report. The prior Researcher report committed a M22 violation (cited URLs without loading them) and a M23 misapplication (refused a research question on contested premises rather than on broken tools).'
-  insight: 'M23 (Failure Integrity) is a tool-failure mandate, not a premise-disagreement mandate. The three valid M23 triggers are: (a) a tool is broken, (b) a primary source is unreachable, (c) the premise is empirically false. Premise disagreement between internal reports is NOT a M23 trigger — it is a verify-and-debate trigger, addressed by more primary-source verification and the Polymathic Council of Four, not by topic substitution. The false-positive M23 is a "soft-failure" antipattern: it feels responsible (we did not fabricate) but it actively misleads downstream agents who consume the file without context. Premise verification is a positive duty; topic substitution is an abdication.'
-  principle: 'M23 refusal-with-pivot is ONLY valid for broken tools, unreachable primary sources, or empirically false premises. Premise disagreement between internal reports → more primary-source verification + Polymathic Council triangulation. NEVER substitute a different topic for a contested premise — that is a M22 provenance violation and a soft-failure antipattern. The M23 floor is "no fabrication"; the M23 ceiling is "verify before refusing".'
+  narrative: "Triangulated a contested-model premise where two internal reports disagreed:\
+    \ Antigravity correctly identified GPT-5.3-Codex as the 2026-02-05 OpenAI release,\
+    \ but a prior Researcher session refused-with-pivot under M23 (Failure Integrity)\
+    \ and produced a deliverable about GPT-5.6 Sol instead \u2014 citing a false \"\
+    no openai/gpt-5.3 slug\" claim that was refuted by loading the actual OpenRouter\
+    \ page. Active web verification (8 primary sources: OpenAI blog, OpenAI API docs,\
+    \ Wikipedia, OpenRouter, llmreference, aireleasetracker, everydayaiblog, OpenAI\
+    \ Codex docs) confirmed the Antigravity report. The prior Researcher report committed\
+    \ a M22 violation (cited URLs without loading them) and a M23 misapplication (refused\
+    \ a research question on contested premises rather than on broken tools)."
+  insight: "M23 (Failure Integrity) is a tool-failure mandate, not a premise-disagreement\
+    \ mandate. The three valid M23 triggers are: (a) a tool is broken, (b) a primary\
+    \ source is unreachable, (c) the premise is empirically false. Premise disagreement\
+    \ between internal reports is NOT a M23 trigger \u2014 it is a verify-and-debate\
+    \ trigger, addressed by more primary-source verification and the Polymathic Council\
+    \ of Four, not by topic substitution. The false-positive M23 is a \"soft-failure\"\
+    \ antipattern: it feels responsible (we did not fabricate) but it actively misleads\
+    \ downstream agents who consume the file without context. Premise verification\
+    \ is a positive duty; topic substitution is an abdication."
+  principle: "M23 refusal-with-pivot is ONLY valid for broken tools, unreachable primary\
+    \ sources, or empirically false premises. Premise disagreement between internal\
+    \ reports \u2192 more primary-source verification + Polymathic Council triangulation.\
+    \ NEVER substitute a different topic for a contested premise \u2014 that is a\
+    \ M22 provenance violation and a soft-failure antipattern. The M23 floor is \"\
+    no fabrication\"; the M23 ceiling is \"verify before refusing\"."
   utility_score: 0.94
   source_trajectories:
   - r-gpt53-cline-20260828
   domain: research_methodology
   last_verified: '2026-08-28'
-
 - level: L3
   tag: '[R-CLINE-CLI-PROVIDER-TAXONOMY]'
-  narrative: 'Mapped the Cline CLI v3.0.56 provider-ID taxonomy for GPT-5.3-Codex access and discovered three architecturally distinct integration paths with different cost/quota/TOS profiles. Path A = Cline openai-codex provider with ChatGPT OAuth (zero API key, designed path, but subscription-bucketed); Path B = Cline openai provider with custom Base URL to OpenRouter (1-line config, abstracts Responses-vs-Chat-Completions, same per-token cost as direct OpenAI); Path C = Cline openai-native provider direct to OpenAI API (per-OpenAI-org shared rate limit, no abstraction of Responses-only routing). The existing config/model_registry/providers/cline.yaml priority-7 entry is a SEPARATE identity (Cline own-server, client-gated 403); adding gpt-5.3-codex there would be architecturally wrong.'
-  insight: 'Cline CLI is a multi-provider fabric in its own right, and the Omega Engine config/model_registry/providers/ entry for Cline (priority 7) is NOT the place to add GPT-5.3-Codex. The clean Omega Engine integration is to add `openai/gpt-5.3-codex` to the existing `openrouter` provider block (priority 5) as a supported_model — 1-line config delta, zero new code, zero new auth, full per-key rate multiplication across 8 accounts. The OpenAI Responses-API-only constraint is invisible at the Omega Engine layer because the transport (openai_compat.py) goes through openrouter, which transparently translates chat-completions to Responses on its server.'
-  principle: 'For Cline-CLI-targeted model additions, edit the OpenRouter (or openai-codex) provider supported_models list — NOT the cline priority-7 entry. The Cline fabric entry is for client-gated models served by api.cline.bot; the OpenRouter entry is the universal abstraction layer for all OpenAI-compatible models. Verify the Cline docs.cline.bot/provider-config/ taxonomy before assuming any specific provider ID supports a given endpoint; the 11 distinct provider IDs (anthropic, openai-native, openai-codex, openrouter, bedrock, gemini, xai, cerebras, deepseek, ollama, lmstudio, openai) have non-overlapping auth and base-URL semantics.'
+  narrative: Mapped the Cline CLI v3.0.56 provider-ID taxonomy for GPT-5.3-Codex access
+    and discovered three architecturally distinct integration paths with different
+    cost/quota/TOS profiles. Path A = Cline openai-codex provider with ChatGPT OAuth
+    (zero API key, designed path, but subscription-bucketed); Path B = Cline openai
+    provider with custom Base URL to OpenRouter (1-line config, abstracts Responses-vs-Chat-Completions,
+    same per-token cost as direct OpenAI); Path C = Cline openai-native provider direct
+    to OpenAI API (per-OpenAI-org shared rate limit, no abstraction of Responses-only
+    routing). The existing config/model_registry/providers/cline.yaml priority-7 entry
+    is a SEPARATE identity (Cline own-server, client-gated 403); adding gpt-5.3-codex
+    there would be architecturally wrong.
+  insight: "Cline CLI is a multi-provider fabric in its own right, and the Omega Engine\
+    \ config/model_registry/providers/ entry for Cline (priority 7) is NOT the place\
+    \ to add GPT-5.3-Codex. The clean Omega Engine integration is to add `openai/gpt-5.3-codex`\
+    \ to the existing `openrouter` provider block (priority 5) as a supported_model\
+    \ \u2014 1-line config delta, zero new code, zero new auth, full per-key rate\
+    \ multiplication across 8 accounts. The OpenAI Responses-API-only constraint is\
+    \ invisible at the Omega Engine layer because the transport (openai_compat.py)\
+    \ goes through openrouter, which transparently translates chat-completions to\
+    \ Responses on its server."
+  principle: "For Cline-CLI-targeted model additions, edit the OpenRouter (or openai-codex)\
+    \ provider supported_models list \u2014 NOT the cline priority-7 entry. The Cline\
+    \ fabric entry is for client-gated models served by api.cline.bot; the OpenRouter\
+    \ entry is the universal abstraction layer for all OpenAI-compatible models. Verify\
+    \ the Cline docs.cline.bot/provider-config/ taxonomy before assuming any specific\
+    \ provider ID supports a given endpoint; the 11 distinct provider IDs (anthropic,\
+    \ openai-native, openai-codex, openrouter, bedrock, gemini, xai, cerebras, deepseek,\
+    \ ollama, lmstudio, openai) have non-overlapping auth and base-URL semantics."
   utility_score: 0.91
   source_trajectories:
   - r-gpt53-cline-20260828
   domain: integration
   last_verified: '2026-08-28'
-
 - level: L3
   tag: '[R-CATHEDRAL-VISION-20260828]'
-  narrative: 'Triangulated the Omega Engine''s true vision vs reality through the Polymathic Council of Four. The Cathedral is structurally a working artifact: 27 mandates v3.8.0 are constitutional law, 6 gates pass (M1/M8/M9/M14/M26/D-539), 268 Python modules ship, 56 entity workspaces persist, fresh-venv install + omega CLI import works. The 4 P0s (P0-1 compliance meter decoupled, P0-3 OAuth secret in 4 history commits + 12 disk files, P0-4 allowlist drift on debut branch, P0-5 PEM baseline path drift) are all 1-2 line remediations with line-level specs in CLINE_FULL_REVIEW_ROLLUP §4 (WAVE 0-4 PR manual). The single deepest untruth is the tautological M27 violation: the compliance meter is 74.1% with M23/M27 FAIL but no green gate sees it (make check-mandates exits 0; python3 scripts/check_mandate_compliance.py exits 1). The single deepest urgency is the OAuth secret in 4 history commits; only the Architect''s 2-minute click at console.cloud.google.com can neutralize it. The launch is 67 minutes wall-clock from that click (2 min LC-1 + 20 min parallel LC-2/LC-5/LC-6 + 15 min LC-3 destructive + 20 min parallel LC-4/LC-7 + 10 min LC-8 GO checklist). The post-launch trajectory V-1 is fully specified: 6 ratified workstreams (GN/DS/LI/KD/HR/ZS per D-578..D-584) + DEL-1 Weeks 2-3 god-module splits + 10 P1 burn-down (PR-C through PR-I) + 12 P2 burn-down (Q-1 through Q-6) + vault sprint (D-565..D-568 reversed post-debut, Path A delete OR Path B 50-line minimal + CredentialProvider with python-age).'
-  insight: 'A mature AI engine''s gap between vision and reality is most honestly characterized by counting its burnable debt vs its hidden debt. The Omega Engine''s gap is 100% burnable: every P0 has a PR template, every P1 has an owner, every P2 has a wave. The failure mode is not "lies" — it is "two competing truth-sources" (the meter and the gates). The fix is not "delete the meter" or "fix the meter" alone — it is "wire the meter into every gate" (PR-A), which removes the entire class of unanchored compliance claims forever. The unblocker-if-done is PR-A (sys.executable + temple-grade wiring, 20 min, removes the deepest structural lie). The blocker-if-undone is the OAuth rotation (2 min, but cannot be parallelized with anything, blocks LC-2..LC-4). Every Cathedral launch is bounded by 2 human clicks: rotate the secret, click ClinePass. Code-side failures are robustly specified; human-side non-action is the Cathedral''s single point of failure.'
-  principle: 'For any multi-gate AI engine, the truth-source count must equal one. A green gate that does not see a red meter is a soft-failure antipattern (M23 violation). A red meter that does not gate any green path is theater. The fix is always: make the meter the gate, the gate the meter. The single metric (compliance, test pass rate, mandate coverage) must be the only path to a green status, and the only path to a red status. Two competing truth-sources for the same property is a structural lie that compounds over time. For the launch-trajectory question, the answer is always: identify the single unblocker (the change that, if made, removes the most downstream blockers) and the single blocker-if-undone (the change that, if not made, blocks everything). The unblocker and the blocker are usually different. For the Omega Engine 2026-08-28: unblocker = PR-A (compliance meter rewire); blocker-if-undone = LC-1 (OAuth rotation). The trajectory V-1/V-2/V-3 is bounded by the D-540 rule: only workstreams in ACTIVE_SPRINT.json are alive; PARKED means do not implement; ARCHIVE means do not read unless mining history. A trajectory without the D-540 rule is unbounded scope creep; a trajectory with it is a sequenced run.'
+  narrative: "Triangulated the Omega Engine's true vision vs reality through the Polymathic\
+    \ Council of Four. The Cathedral is structurally a working artifact: 27 mandates\
+    \ v3.8.0 are constitutional law, 6 gates pass (M1/M8/M9/M14/M26/D-539), 268 Python\
+    \ modules ship, 56 entity workspaces persist, fresh-venv install + omega CLI import\
+    \ works. The 4 P0s (P0-1 compliance meter decoupled, P0-3 OAuth secret in 4 history\
+    \ commits + 12 disk files, P0-4 allowlist drift on debut branch, P0-5 PEM baseline\
+    \ path drift) are all 1-2 line remediations with line-level specs in CLINE_FULL_REVIEW_ROLLUP\
+    \ \xA74 (WAVE 0-4 PR manual). The single deepest untruth is the tautological M27\
+    \ violation: the compliance meter is 74.1% with M23/M27 FAIL but no green gate\
+    \ sees it (make check-mandates exits 0; python3 scripts/check_mandate_compliance.py\
+    \ exits 1). The single deepest urgency is the OAuth secret in 4 history commits;\
+    \ only the Architect's 2-minute click at console.cloud.google.com can neutralize\
+    \ it. The launch is 67 minutes wall-clock from that click (2 min LC-1 + 20 min\
+    \ parallel LC-2/LC-5/LC-6 + 15 min LC-3 destructive + 20 min parallel LC-4/LC-7\
+    \ + 10 min LC-8 GO checklist). The post-launch trajectory V-1 is fully specified:\
+    \ 6 ratified workstreams (GN/DS/LI/KD/HR/ZS per D-578..D-584) + DEL-1 Weeks 2-3\
+    \ god-module splits + 10 P1 burn-down (PR-C through PR-I) + 12 P2 burn-down (Q-1\
+    \ through Q-6) + vault sprint (D-565..D-568 reversed post-debut, Path A delete\
+    \ OR Path B 50-line minimal + CredentialProvider with python-age)."
+  insight: "A mature AI engine's gap between vision and reality is most honestly characterized\
+    \ by counting its burnable debt vs its hidden debt. The Omega Engine's gap is\
+    \ 100% burnable: every P0 has a PR template, every P1 has an owner, every P2 has\
+    \ a wave. The failure mode is not \"lies\" \u2014 it is \"two competing truth-sources\"\
+    \ (the meter and the gates). The fix is not \"delete the meter\" or \"fix the\
+    \ meter\" alone \u2014 it is \"wire the meter into every gate\" (PR-A), which\
+    \ removes the entire class of unanchored compliance claims forever. The unblocker-if-done\
+    \ is PR-A (sys.executable + temple-grade wiring, 20 min, removes the deepest structural\
+    \ lie). The blocker-if-undone is the OAuth rotation (2 min, but cannot be parallelized\
+    \ with anything, blocks LC-2..LC-4). Every Cathedral launch is bounded by 2 human\
+    \ clicks: rotate the secret, click ClinePass. Code-side failures are robustly\
+    \ specified; human-side non-action is the Cathedral's single point of failure."
+  principle: 'For any multi-gate AI engine, the truth-source count must equal one.
+    A green gate that does not see a red meter is a soft-failure antipattern (M23
+    violation). A red meter that does not gate any green path is theater. The fix
+    is always: make the meter the gate, the gate the meter. The single metric (compliance,
+    test pass rate, mandate coverage) must be the only path to a green status, and
+    the only path to a red status. Two competing truth-sources for the same property
+    is a structural lie that compounds over time. For the launch-trajectory question,
+    the answer is always: identify the single unblocker (the change that, if made,
+    removes the most downstream blockers) and the single blocker-if-undone (the change
+    that, if not made, blocks everything). The unblocker and the blocker are usually
+    different. For the Omega Engine 2026-08-28: unblocker = PR-A (compliance meter
+    rewire); blocker-if-undone = LC-1 (OAuth rotation). The trajectory V-1/V-2/V-3
+    is bounded by the D-540 rule: only workstreams in ACTIVE_SPRINT.json are alive;
+    PARKED means do not implement; ARCHIVE means do not read unless mining history.
+    A trajectory without the D-540 rule is unbounded scope creep; a trajectory with
+    it is a sequenced run.'
   utility_score: 0.92
   source_trajectories:
   - r-vision-path-20260828
   domain: architectural_synthesis
   last_verified: '2026-08-28'
-
 - level: L3
   tag: '[R-CORPUS-CONSOLIDATION-141-623-609]'
-  narrative: 'Consolidated 141 strategy docs + 623 coordination docs + 609 research reports (~1,450 total) into 7 canonical documents (2,414 lines, commit b25b8fa8). Read 14 SSOTs (VISION_ANCHOR_PERPETUAL, SOVEREIGN_ARK_BLUEPRINT, DEBUT_REMEDIATION_MANUAL, ACTIVE_SPRINT, STRATEGY_INDEX, STRATEGY_CORPUS_MAP, DECISION_LEDGER, PIVOT_LOG, POST_DEBUT_ROADMAP, MODEL_WINDOW_ECONOMICS, COGNITIVE_ROUTING_PLAYBOOK, CLINE_STRATEGIC_STATE_SYNTHESIS, CLINE_FULL_REVIEW_ROLLUP, CARMACK_FULL_REPO_REVIEW_CHECKLIST, R_CARMACK_MODEL_STRATEGY) in 2.5 hours. Output: CANONICAL_ROADMAP (pre-debut P0-1→PUB-1→INST-1→DEL-1→DOC-1 + post-debut Phase B + Horizons 2-4), CANONICAL_ARCHITECTURE (provider fabric, memory, oracle, hivemind, WAD, god-modules), CANONICAL_DECISIONS (D-VOS-001..D-612), CANONICAL_CONSTRAINTS (27 mandates + hardware + budget + gates), CANONICAL_MODEL_FLEET (Carmack Option E + cognitive roles + tier matrix), STRATEGY_CORPUS_INDEX (CURRENT/SUPPLEMENTARY/SUPERSEDED/ARCHIVE classification), FUTURE_RESEARCH_AGENDA (143 open questions, 4 priority tiers, specialist assignments).'
-  insight: 'Corpus consolidation at this scale works ONLY when you (a) read the SSOTs first, not the derivative docs; (b) extract canonical content from each SSOT into the appropriate CANONICAL_*.md, (c) cite every claim inline to its primary source, (d) preserve superseded docs in classification (not deletion — they have audit trail value), (e) produce a conflict-resolution hierarchy (Law > Vision > Strategy SSOT > Manual/Sprint > Canonical > Doctrine > Post-Debut > Live Pointer > Archive), and (f) distill open questions into a future-research-agenda with specialist assignments and time budgets. The 7-doc split is NOT arbitrary: roadmap (when), architecture (what), decisions (why), constraints (limits), model fleet (who executes), corpus index (where), future agenda (next). This mapping reduces 1,450 docs to 7 single-source-of-truth files without losing any idea — every fine-grained idea is now a citation target.'
-  principle: 'When consolidating N fragmented docs into M canonical ones, M should map to the natural question-axes: When (roadmap), What (architecture), Why (decisions), Limits (constraints), Who (model fleet/owners), Where (corpus index/classification), Next (future research). M=7 is the minimum that covers all axes. The 7-axis split survives the next N consolidations — adding new content means adding new citations, not new docs. Conflict resolution is always: newer SSOT supersedes older; explicitly-marked CURRENT supersedes unmarked; multiple CURRENTs must be resolved by the document hierarchy before citation.'
+  narrative: "Consolidated 141 strategy docs + 623 coordination docs + 609 research\
+    \ reports (~1,450 total) into 7 canonical documents (2,414 lines, commit b25b8fa8).\
+    \ Read 14 SSOTs (VISION_ANCHOR_PERPETUAL, SOVEREIGN_ARK_BLUEPRINT, DEBUT_REMEDIATION_MANUAL,\
+    \ ACTIVE_SPRINT, STRATEGY_INDEX, STRATEGY_CORPUS_MAP, DECISION_LEDGER, PIVOT_LOG,\
+    \ POST_DEBUT_ROADMAP, MODEL_WINDOW_ECONOMICS, COGNITIVE_ROUTING_PLAYBOOK, CLINE_STRATEGIC_STATE_SYNTHESIS,\
+    \ CLINE_FULL_REVIEW_ROLLUP, CARMACK_FULL_REPO_REVIEW_CHECKLIST, R_CARMACK_MODEL_STRATEGY)\
+    \ in 2.5 hours. Output: CANONICAL_ROADMAP (pre-debut P0-1\u2192PUB-1\u2192INST-1\u2192\
+    DEL-1\u2192DOC-1 + post-debut Phase B + Horizons 2-4), CANONICAL_ARCHITECTURE\
+    \ (provider fabric, memory, oracle, hivemind, WAD, god-modules), CANONICAL_DECISIONS\
+    \ (D-VOS-001..D-612), CANONICAL_CONSTRAINTS (27 mandates + hardware + budget +\
+    \ gates), CANONICAL_MODEL_FLEET (Carmack Option E + cognitive roles + tier matrix),\
+    \ STRATEGY_CORPUS_INDEX (CURRENT/SUPPLEMENTARY/SUPERSEDED/ARCHIVE classification),\
+    \ FUTURE_RESEARCH_AGENDA (143 open questions, 4 priority tiers, specialist assignments)."
+  insight: "Corpus consolidation at this scale works ONLY when you (a) read the SSOTs\
+    \ first, not the derivative docs; (b) extract canonical content from each SSOT\
+    \ into the appropriate CANONICAL_*.md, (c) cite every claim inline to its primary\
+    \ source, (d) preserve superseded docs in classification (not deletion \u2014\
+    \ they have audit trail value), (e) produce a conflict-resolution hierarchy (Law\
+    \ > Vision > Strategy SSOT > Manual/Sprint > Canonical > Doctrine > Post-Debut\
+    \ > Live Pointer > Archive), and (f) distill open questions into a future-research-agenda\
+    \ with specialist assignments and time budgets. The 7-doc split is NOT arbitrary:\
+    \ roadmap (when), architecture (what), decisions (why), constraints (limits),\
+    \ model fleet (who executes), corpus index (where), future agenda (next). This\
+    \ mapping reduces 1,450 docs to 7 single-source-of-truth files without losing\
+    \ any idea \u2014 every fine-grained idea is now a citation target."
+  principle: "When consolidating N fragmented docs into M canonical ones, M should\
+    \ map to the natural question-axes: When (roadmap), What (architecture), Why (decisions),\
+    \ Limits (constraints), Who (model fleet/owners), Where (corpus index/classification),\
+    \ Next (future research). M=7 is the minimum that covers all axes. The 7-axis\
+    \ split survives the next N consolidations \u2014 adding new content means adding\
+    \ new citations, not new docs. Conflict resolution is always: newer SSOT supersedes\
+    \ older; explicitly-marked CURRENT supersedes unmarked; multiple CURRENTs must\
+    \ be resolved by the document hierarchy before citation."
   utility_score: 0.93
   source_trajectories:
   - r-strategy-corpus-20260829
   domain: methodology
   last_verified: '2026-08-29'
-
 - level: L3
   tag: '[R-POLYMATHIC-COUNCIL-CONSOLIDATION-SYNTHESIS]'
-  narrative: 'Used the Polymathic Council of Four (Architect + Adversary + Alchemist + Archivist) on the strategy corpus consolidation task. Architect view: system-structure (provider fabric priority chain, single-router D-536, god-module freeze §9, M2 firewall). Adversary view: failure modes (compliance meter broken P0-1, OAuth secret in history P0-3, allowlist drift P0-4, gate-secrets FAILS P0-5, 11 god-modules, 5/7 deprecated breakers, 60 silent except sites). Alchemist view: cross-pollination (Carmack Option E fleet ↔ Model Window Economics D-601 ↔ Cognitive Architecture D-569 ↔ Local Inference Tier Matrix LI-4 ↔ provider fabric). Archivist view: preservation (CORPUS_MAP fine-grained ideas not orphaned, PIVOT_LOG immutable, DECISION_LEDGER append-only, ARCHIVE vs CURRENT vs SUPERSEDED classification). The 4-perspective triangulation produced the 7-doc split (roadmap, architecture, decisions, constraints, model fleet, corpus index, future agenda) in one pass.'
-  insight: 'The Polymathic Council of Four produces canonical 7-axis split for any strategy corpus in ~2.5 hours when the corpus is 1,000-2,000 docs. The split is NOT arbitrary: it maps to the natural question-axes every reader of the corpus will ask. When (roadmap), What (architecture), Why (decisions), Limits (constraints), Who (model fleet/owners), Where (corpus index), Next (future research). The Adversary lens is essential for surfacing the 4 P0 REDs that the Executive Summary must highlight — without the Adversary, the consolidation would have been a passive "best-of" instead of an actionable NO-GO diagnosis.'
-  principle: 'For any strategy consolidation task at scale, deploy the Polymathic Council of Four. The Architect lens produces structure; the Adversary lens surfaces the action gates; the Alchemist lens finds the cross-pollination; the Archivist lens preserves the audit trail. The 4-perspective triangulation converges on the natural M-doc split in one pass. A consolidation that lacks the Adversary lens is a description, not a diagnosis. A consolidation that lacks the Archivist lens is a synthesis, not a corpus map.'
+  narrative: "Used the Polymathic Council of Four (Architect + Adversary + Alchemist\
+    \ + Archivist) on the strategy corpus consolidation task. Architect view: system-structure\
+    \ (provider fabric priority chain, single-router D-536, god-module freeze \xA7\
+    9, M2 firewall). Adversary view: failure modes (compliance meter broken P0-1,\
+    \ OAuth secret in history P0-3, allowlist drift P0-4, gate-secrets FAILS P0-5,\
+    \ 11 god-modules, 5/7 deprecated breakers, 60 silent except sites). Alchemist\
+    \ view: cross-pollination (Carmack Option E fleet \u2194 Model Window Economics\
+    \ D-601 \u2194 Cognitive Architecture D-569 \u2194 Local Inference Tier Matrix\
+    \ LI-4 \u2194 provider fabric). Archivist view: preservation (CORPUS_MAP fine-grained\
+    \ ideas not orphaned, PIVOT_LOG immutable, DECISION_LEDGER append-only, ARCHIVE\
+    \ vs CURRENT vs SUPERSEDED classification). The 4-perspective triangulation produced\
+    \ the 7-doc split (roadmap, architecture, decisions, constraints, model fleet,\
+    \ corpus index, future agenda) in one pass."
+  insight: "The Polymathic Council of Four produces canonical 7-axis split for any\
+    \ strategy corpus in ~2.5 hours when the corpus is 1,000-2,000 docs. The split\
+    \ is NOT arbitrary: it maps to the natural question-axes every reader of the corpus\
+    \ will ask. When (roadmap), What (architecture), Why (decisions), Limits (constraints),\
+    \ Who (model fleet/owners), Where (corpus index), Next (future research). The\
+    \ Adversary lens is essential for surfacing the 4 P0 REDs that the Executive Summary\
+    \ must highlight \u2014 without the Adversary, the consolidation would have been\
+    \ a passive \"best-of\" instead of an actionable NO-GO diagnosis."
+  principle: For any strategy consolidation task at scale, deploy the Polymathic Council
+    of Four. The Architect lens produces structure; the Adversary lens surfaces the
+    action gates; the Alchemist lens finds the cross-pollination; the Archivist lens
+    preserves the audit trail. The 4-perspective triangulation converges on the natural
+    M-doc split in one pass. A consolidation that lacks the Adversary lens is a description,
+    not a diagnosis. A consolidation that lacks the Archivist lens is a synthesis,
+    not a corpus map.
   utility_score: 0.92
   source_trajectories:
   - r-strategy-corpus-20260829
   domain: methodology
   last_verified: '2026-08-29'
-
 - level: L3
   tag: '[R-2026-SOTA-VECTOR-DB-RESEARCH]'
-  narrative: 'Conducted 4 deep-research reports (40 items total) on post-launch sqlite-vec + doc optimization for the Omega Engine. 2026 SOTA confirmed via 3 parallel-search dispatches + 2 follow-up searches: (1) Distributed SQLite: LiteFS is in maintenance mode (mid-2024 Fly announcement); rqlite and dqlite are the 2026 active options; Turso/libSQL for managed. (2) Binary quantization: 32-40x speedup, 32x memory reduction, requires oversampling + float rescoring; works only when embeddings are zero-centered (true for nomic-embed, gemma-embed). (3) Vector inversion: OWASP LLM08:2025 catalogued; Vec2Text (2023) and ACM CCS 2026 black-box inversion via diffusion models are real; defenses are SQLCipher + Ball-DP. (4) RAG: hybrid+rerank is the 2026 production pattern; RAGAS 0.4.3 is the eval standard; GraphRAG is the graph-augmented extension. (5) Docs: Material for MkDocs is in maintenance mode (2026), Zensical is the successor. (6) Embedding versioning: Levelop 2026-07-26 is the canonical reference; PSI > 0.2 = investigate.'
-  insight: 'For any 2026 vector-store research mission, the 5-tuple (binary-quant, adaptive-ef, vector-versioning, RAGAS, threat-model) is the mandatory minimum. Anything less and the report is incomplete. The biggest unrealized win is NOT hardware (GPU, distributed) but ALGORITHM (binary quant = 32x; adaptive ef = 2-5x; vector versioning = safe upgrades). Premature optimization toward hardware is a 2024 trap. The single most important defense against 2026 attacks is vector versioning (knows what model wrote what) + encryption at rest (SQLCipher); both are 1-2 weeks of work.'
-  principle: 'When researching optimization for a vector store stack in 2026, the 4-perspective triangulation (Architect = structure, Adversary = failure modes, Alchemist = cross-pollination, Archivist = 2026 SOTA) must always include the Archivist reading 2026-dated sources. A 2024 reference is suspicious for vector stores because the field moves 2x/year. Specifically validate: (1) is the distributed-SQLite project still maintained? (2) does the doc tool have a 2026 successor? (3) are the cited attacks still considered state-of-the-art? (4) is the eval framework the 2026 standard? Any "yes" to a 2024-only answer is a yellow flag; either validate the SOTA survived or pivot to the 2026 alternative.'
+  narrative: 'Conducted 4 deep-research reports (40 items total) on post-launch sqlite-vec
+    + doc optimization for the Omega Engine. 2026 SOTA confirmed via 3 parallel-search
+    dispatches + 2 follow-up searches: (1) Distributed SQLite: LiteFS is in maintenance
+    mode (mid-2024 Fly announcement); rqlite and dqlite are the 2026 active options;
+    Turso/libSQL for managed. (2) Binary quantization: 32-40x speedup, 32x memory
+    reduction, requires oversampling + float rescoring; works only when embeddings
+    are zero-centered (true for nomic-embed, gemma-embed). (3) Vector inversion: OWASP
+    LLM08:2025 catalogued; Vec2Text (2023) and ACM CCS 2026 black-box inversion via
+    diffusion models are real; defenses are SQLCipher + Ball-DP. (4) RAG: hybrid+rerank
+    is the 2026 production pattern; RAGAS 0.4.3 is the eval standard; GraphRAG is
+    the graph-augmented extension. (5) Docs: Material for MkDocs is in maintenance
+    mode (2026), Zensical is the successor. (6) Embedding versioning: Levelop 2026-07-26
+    is the canonical reference; PSI > 0.2 = investigate.'
+  insight: For any 2026 vector-store research mission, the 5-tuple (binary-quant,
+    adaptive-ef, vector-versioning, RAGAS, threat-model) is the mandatory minimum.
+    Anything less and the report is incomplete. The biggest unrealized win is NOT
+    hardware (GPU, distributed) but ALGORITHM (binary quant = 32x; adaptive ef = 2-5x;
+    vector versioning = safe upgrades). Premature optimization toward hardware is
+    a 2024 trap. The single most important defense against 2026 attacks is vector
+    versioning (knows what model wrote what) + encryption at rest (SQLCipher); both
+    are 1-2 weeks of work.
+  principle: 'When researching optimization for a vector store stack in 2026, the
+    4-perspective triangulation (Architect = structure, Adversary = failure modes,
+    Alchemist = cross-pollination, Archivist = 2026 SOTA) must always include the
+    Archivist reading 2026-dated sources. A 2024 reference is suspicious for vector
+    stores because the field moves 2x/year. Specifically validate: (1) is the distributed-SQLite
+    project still maintained? (2) does the doc tool have a 2026 successor? (3) are
+    the cited attacks still considered state-of-the-art? (4) is the eval framework
+    the 2026 standard? Any "yes" to a 2024-only answer is a yellow flag; either validate
+    the SOTA survived or pivot to the 2026 alternative.'
   utility_score: 0.94
   source_trajectories:
   - r-sqlite-vec-remaining-gaps-20260829
@@ -482,12 +806,36 @@ proposals:
   - r-cross-cutting-20260829
   domain: research_methodology
   last_verified: '2026-08-29'
-
 - level: L3
   tag: '[R-POLY-COUNCIL-FOR-INFRA-GAPS]'
-  narrative: 'Applied the Polymathic Council of Four to 10 remaining sqlite-vec gaps, 10 optimization opportunities, 10 doc gaps, and 10 cross-cutting improvements. Architect lens: surfaced "operational vs architectural" distinction (the 9-gap fix was architectural; the 10 remaining are operational). Adversary lens: identified the 4 P0s (R3 embedding failover, R4 vector drift, R8 backup, R9 encryption) as existential. Alchemist lens: discovered the MRL pipeline is half-built (write-only fallback; no read path). Archivist lens: validated 2026 SOTA — SQLCipher, Litestream, Circuit Breaker, RAGAS, OWASP LLM08, Levelop vector-versioning. The 4-perspective triangulation produced a single 39-item prioritized backlog (8 P0, 14 P1, 12 P2, 5 P3) with ~5-6 months estimated effort.'
-  insight: 'The Council of Four converges on a 4-tier priority (P0/P1/P2/P3) automatically when given well-defined items. The Adversary lens is the one that surfaces the P0 — without it, the report would be 30 items of equal weight. The Archivist lens is the one that prevents recommending a sunset tool (LiteFS, Material for MkDocs) — without it, the report would cite 2024 patterns that are no longer current. The Architect lens prevents premature abstraction (CC-1 VectorStoreBackend is P1, not P0, because sqlite-vec is the only backend in production). The Alchemist lens finds the unstated cross-pollination (MRL was a write-only trap; the 7 collections enable the multi-modal use case in OPP-O8 for free).'
-  principle: 'For any infrastructure-gap analysis (database, queue, cache, network, observability), deploy the Polymathic Council of Four with explicit per-lens questions: Architect ("is this structural or operational?"), Adversary ("is this existential or quality-of-life?"), Alchemist ("what unstated pattern is this a symptom of?"), Archivist ("is the cited 2026 SOTA still maintained?"). The 4 explicit questions prevent the lenses from blending into a single mush. The output is a prioritized backlog with effort estimates, not a flat list of 40 items. The 4-priority breakdown (P0/P1/P2/P3) should map to sprint timelines: P0 = current sprint, P1 = next sprint, P2 = next quarter, P3 = post-launch. A "flat 40 items" report is the failure mode.'
+  narrative: "Applied the Polymathic Council of Four to 10 remaining sqlite-vec gaps,\
+    \ 10 optimization opportunities, 10 doc gaps, and 10 cross-cutting improvements.\
+    \ Architect lens: surfaced \"operational vs architectural\" distinction (the 9-gap\
+    \ fix was architectural; the 10 remaining are operational). Adversary lens: identified\
+    \ the 4 P0s (R3 embedding failover, R4 vector drift, R8 backup, R9 encryption)\
+    \ as existential. Alchemist lens: discovered the MRL pipeline is half-built (write-only\
+    \ fallback; no read path). Archivist lens: validated 2026 SOTA \u2014 SQLCipher,\
+    \ Litestream, Circuit Breaker, RAGAS, OWASP LLM08, Levelop vector-versioning.\
+    \ The 4-perspective triangulation produced a single 39-item prioritized backlog\
+    \ (8 P0, 14 P1, 12 P2, 5 P3) with ~5-6 months estimated effort."
+  insight: "The Council of Four converges on a 4-tier priority (P0/P1/P2/P3) automatically\
+    \ when given well-defined items. The Adversary lens is the one that surfaces the\
+    \ P0 \u2014 without it, the report would be 30 items of equal weight. The Archivist\
+    \ lens is the one that prevents recommending a sunset tool (LiteFS, Material for\
+    \ MkDocs) \u2014 without it, the report would cite 2024 patterns that are no longer\
+    \ current. The Architect lens prevents premature abstraction (CC-1 VectorStoreBackend\
+    \ is P1, not P0, because sqlite-vec is the only backend in production). The Alchemist\
+    \ lens finds the unstated cross-pollination (MRL was a write-only trap; the 7\
+    \ collections enable the multi-modal use case in OPP-O8 for free)."
+  principle: 'For any infrastructure-gap analysis (database, queue, cache, network,
+    observability), deploy the Polymathic Council of Four with explicit per-lens questions:
+    Architect ("is this structural or operational?"), Adversary ("is this existential
+    or quality-of-life?"), Alchemist ("what unstated pattern is this a symptom of?"),
+    Archivist ("is the cited 2026 SOTA still maintained?"). The 4 explicit questions
+    prevent the lenses from blending into a single mush. The output is a prioritized
+    backlog with effort estimates, not a flat list of 40 items. The 4-priority breakdown
+    (P0/P1/P2/P3) should map to sprint timelines: P0 = current sprint, P1 = next sprint,
+    P2 = next quarter, P3 = post-launch. A "flat 40 items" report is the failure mode.'
   utility_score: 0.93
   source_trajectories:
   - r-sqlite-vec-remaining-gaps-20260829
@@ -496,9 +844,8 @@ proposals:
   - r-cross-cutting-20260829
   domain: methodology
   last_verified: '2026-08-29'
-
 metadata:
   entity: researcher
-  session_id: r-vector-stack-20260829
+  session_id: ses_fb2448d01ffeRpbi1H7MvxkfWv
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-29T04:30:00.000000+00:00'
+  last_session_end: '2026-08-29T15:11:03.074002+00:00'
