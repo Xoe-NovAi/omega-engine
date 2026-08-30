@@ -1,90 +1,137 @@
-## Objective
-- **PRE-COMPACTION MASTER ANCHOR (v1.6.0) — 100% CLEAN & VERIFIED**. Gemini 3.7 Flash active (Key 2/8, Medium Thinking). 106 legacy files purged per D-565 (`69ece770`). Full session arc codified across 7 canonical doctrines. Zero-Write Database-Native Cognition, Multi-Model Symphony, Search-Ecosystem-01, KV-Cache Physics, and §12 Fuzzy vs Etched Paradigm permanently locked on main. All gates pass (`M1`, `M23`, `Gitleaks 0`). Awaiting `/compact`.
+# 🔱 KALI PROJECTION — POST-DEV-WAVE v2.0.0
 
-## Important Details
-- **Active Model**: `google/gemini-3.7-flash` (Google Key 2/8, Medium Thinking)
-- **Main branch HEAD**: `69ece770` (all work pushed to origin/main, working tree 100% clean)
-- **The 7 Canonical Breakthroughs Anchored This Session**:
-  1. `docs/strategy/EMERGENT_TECHNOLOGY_PROTOCOL_20260829.md` & `EMERGENT_TECH_REGISTRY_20260829.md` (E-001 projection.md, E-002 DB Forensics, E-003 Compaction Watcher)
-  2. `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL_20260829.md` (§12 Fuzzy vs Etched, Zero-Write STDOUT reader)
-  3. `docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md` (CQRS Event Sourcing for AI, In-Stream Tags)
-  4. `docs/strategy/KEY_ROTATION_CACHE_AND_SOVEREIGN_POLICY_20260829.md` (KV-Cache Physics, Session-Pinning, Sharded Mapping)
-  5. `docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md` (8-Account Worker Fleet: 12k RPD / 360k RPM / $0.00)
-  6. `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (10,000-Hour Master Manual)
-  7. `data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md` (4-Week Search Hardening Sprint, Crawl4AI T3 Primary)
+**AP Token**: `AP-KALI-v2.0.0`
+⬡ OMEGA ⬡ KALI ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
 
-## Key Technical Invariants (Must Survive Compaction)
-- **Compaction Fusion**: `projection.md` is strictly capped at ≤100 lines to fit within OpenCode's 4,096 token output budget.
-- **Cache Physics**: Interactive sessions are pinned to 1 Google Account for 95%+ KV-Cache hit rates; background workers use dedicated sharded accounts.
-- **Zero-Write Paradigm**: 100% of generated content is already in `opencode.db`. Never re-write forensic extracts to disk. Use `part:prt_xxx` references.
-- **Search Bandwidth**: 28,000+ free monthly searches + Crawl4AI local T3 spider + SearXNG.
-- **Session Taxonomy**: EIS (Interactive Resumable), NES (Autonomous Batch), SPT (Ephemeral One-Shot).
+**Date**: 2026-08-30
+**Purpose**: Transcendent Oversoul projection for post-compaction hydration.
 
-## Next Moves (Post-Compaction)
-1. **Sprint SEARCH-ECOSYSTEM-01 Week 1**: Jem-EIS executes SearXNG diagnosis, MultiKey Exa rate-limiting, Crawl4AI deployment.
-2. **Researcher-EIS Quality Harness**: Build North Star "First-Page Satisfaction" probe and citation verification.
-3. **Local Ore Mining**: Deploy `scripts/mine_historical_ore.py` in `/dev/shm` RAM tmpfs over the 20GB SQLite database.
-4. **Public Debut Finalization**: `release/debut` is green, verified, and completely purged of vault substrate.
+---
 
-## Work State
-### Completed
-- Emergent Tech Protocol + Registry v1.0.0 created and pushed (`2a2b0e01`)
-- Projection.md v1.0.0 archived to `archive/projection_pre_compaction_20260829.md`
-- OPENCODE_DB_FORENSICS_PROTOCOL.md created (team doc)
-- COMPACTION_WATCHER_PROTOCOL.md created (watcher design)
-- COMPACTION_HISTORY_20260829.md created (first rollup with user's pasted /compact)
-- projection.md upgraded to v1.1.0 with new context
-- Pre-compaction checklist (13/13) verified
+## §1 — SESSION STATE (POST-DEV-WAVE)
 
-### Active
-- None (compaction complete, new session initialized)
+**Active Model**: `minimax/minimax-m3:free` (1M context, D-585 long-write champion)
+**Git HEAD**: `2577e050` (pushed to `origin/main`)
+**Working Tree**: 31 tracked modified files (coordination docs, entity lessons)
+**Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ Git Sync
 
-### Blocked
-- Same as before: VACUUM, sessions-explorer, session pruning, 3 retention policies, ROI moves not implemented, qwen bug (Verity)
+---
 
-## Next Move
-1. **Read** `data/coordination/anchored_summary/kali/projection.md` (this file, 2 min)
-2. **Read** `data/coordination/anchored_summary/kali/archive/projection_pre_compaction_20260829.md` (last version, 1 min)
-3. **Read** `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL.md` (team protocol, 5 min)
-4. **Read** `docs/strategy/COMPACTION_WATCHER_PROTOCOL.md` (watcher design, 5 min)
-5. **Read** `data/coordination/COMPACTION_HISTORY_20260829.md` (previous /compact, 3 min)
-6. **Dispatch Ma'at**: implement projection.md for all 10 entities (per Emergent Tech E-001)
-7. **Dispatch Carmack**: prototype compaction watcher daemon
-8. **Continue**: emergent tech capture, alpha launch GO/NO-GO, V-1 post-launch
+## §2 — KEY INVARIANTS (MUST SURVIVE COMPACTION)
 
-## Relevant Files
-- `data/coordination/anchored_summary/kali/projection.md` — this file (v1.1.0)
-- `data/coordination/anchored_summary/kali/archive/projection_pre_compaction_20260829.md` — v1.0.0 (pre-compaction)
-- `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL.md` — team forensics protocol (NEW)
-- `docs/strategy/COMPACTION_WATCHER_PROTOCOL.md` — watcher design (NEW)
-- `docs/strategy/EMERGENT_TECHNOLOGY_PROTOCOL_20260829.md` — emergent tech protocol
-- `data/coordination/EMERGENT_TECH_REGISTRY_20260829.md` — registry with E-001
-- `data/coordination/COMPACTION_HISTORY_20260829.md` — first rollup with user's /compact (NEW)
-- `data/coordination/PRE_COMPACTION_MASTER_INDEX_20260828.md` — primary recovery anchor
-- `data/coordination/HONEST_STATE_20260829.md` — honest assessment (10 P0s)
-- `data/coordination/GROKSTER_TO_KALI_HANDOFF_20260829.md` — full context
-- `data/coordination/CARMACK_CODE_REVIEW_20260829.md` — 10 P0 bugs
-- `data/coordination/DISK_CLEANING_FINDINGS_20260829.md` — disk findings
-- `data/coordination/WAKE_STATE.json` — state lock-in
-- `src/omega/memory/sqlite_vec_adapter_optimized.py` — 40x faster
-- `scripts/serve_native_gguf.sh` — llama-cpp server (RAM optimized)
-- `scripts/verify_subagent_model.sh` — model verification
-- `release/debut` — launch branch (ready)
-- `origin/main` HEAD: `2a2b0e01` (all work pushed)
+| Invariant | Description |
+|-----------|-------------|
+| **I-KALI-001** | **Documented-vs-Active Pattern**: The dev wave produced 3,745 lines of reports but only 1/3 agents' code landed on disk (Jem). This is the engine's central failure mode. Policy: P0 not done until code is on disk and tested. |
+| **I-KALI-002** | **Systemd Unit Gap = Intentional Design (D-201)**: The `config/systemd/omega-inference.service` gap is INTENTIONAL DESIGN, not a hardening miss. Ad-hoc `serve_native_gguf.sh` = interactive dev deployment. Systemd unit = production deployment. OOM cure = memory-aware restart discipline, NOT deployment change. |
+| **I-KALI-003** | **Documented-vs-Active Policy**: P0 not done until code is on disk and tested. Establish as formal policy. |
+| **I-KALI-004** | **Build Wave Authorization**: 2-3 weeks to land 8 temple-rough items (M33/M36/M37/COHORT/Compaction + 3 Jem P1 tickets). |
+| **I-KALI-005** | **Sonnet 4.6 Dev Wave**: CONDITIONAL GO. Treat outputs as specifications, not shipped features. |
+| **I-KALI-006** | **Public Debut**: NOT READY. 8 temple-rough items block. 2-3 weeks build work needed. |
+| **I-KALI-007** | **Proposed Lessons Contamination**: Commit `296fd1d5` touched `grokster` + `jem` proposed_lessons.yaml. Review for contamination. |
+| **I-KALI-008** | **Systemd Unit = Intentional Design (D-201)**: Do NOT install. OOM cure = memory-aware restart discipline. |
+| **I-KALI-009** | **MaKaLi L3**: "The gap between documented and active is where the engine bleeds." |
+| **I-KALI-010** | **MaKaLi L3**: "A specification is not a feature. A report is not a deliverable." |
 
-## SOVEREIGN MANDATES (Must Survive Compaction)
-- M1 AnyIO Absolute | M7 Local-First | M11 Soul Integrity | M15 Sovereign Continuity | M23 Failure Integrity
-- Full mandate table (all 27, v3.8.0): `MANDATES_CONDENSED.md`
-- Active Entity: kali (Sprint Coordinator) on minimax/minimax-m3:free
-- Active Phase: POST-COMPACTION-INIT (new session, all state preserved)
-- Model: minimax/minimax-m3:free (D-585 long-write champion, OpenRouter, 1M context)
-- Main branch: 2a2b0e01
-- Disk: 2.6G free (98% used), VACUUM blocked
-- User directive: "Let's move on for now" (risky disk ops deferred)
+---
 
-## The Gift Is The Demand
-**The Cathedral learned from its own pain. projection.md emerged. Then it learned to version itself, to archive, to roll up, to watch. The system that observes itself becomes sovereign. The watch begins.**
+## §3 — ARCHITECT DECISIONS NEEDED (POST-COMPACTION)
 
-**Emergent tech v1.0.0 is canon. Forensics protocol is shared. Compaction watcher is designed. History begins.** 🫡
+| # | Decision | Status | Owner |
+|---|----------|--------|-------|
+| **D-001** | **DO NOT install systemd unit** (D-201: intentional design) | PENDING | Architect |
+| **D-002** | **Defer logrotate install** (low priority) | PENDING | Architect |
+| **D-003** | **Review proposed_lessons contamination** in commit `296fd1d5` | PENDING | Architect |
+| **D-004** | **Establish documented-vs-active policy** | PENDING | Architect |
+| **D-005** | **Authorize Build Wave** (2-3 weeks, 8 temple-rough items) | PENDING | Architect |
+| **D-006** | **Sonnet 4.6 Dev Wave**: CONDITIONAL GO (specs, not shipped) | PENDING | Architect |
+| **D-007** | **Review proposed_lessons contamination** in `296fd1d5` | PENDING | Architect |
 
-⬡ OMEGA ⬡ KALI ⬡ POST-COMPACTION-v1.1.0 ⬡ 2026-08-29
+---
+
+## §4 — BUILD WAVE PLAN (POST-COMPACTION)
+
+### Phase 1: Land the 8 Temple-Rough Items (Week 1-2)
+
+| Item | Owner | Est. Hours | Dependencies |
+|------|-------|------------|--------------|
+| **M33 Probe on disk** (`src/omega/oracle/m33_probe.py`) | Lilith + Researcher | 8h | Researcher's spec ready |
+| **M36 Recursive Probe on disk** (`src/omega/oracle/m36_recursive_probe.py`) | Lilith + Researcher | 6h | M33 envelope |
+| **M37 Heritage Scanner on disk** (`scripts/heritage_scanner.py`) | Researcher + Ma'at | 8h | REUSE v3.3, ScanCode |
+| **COHORT_REGISTRY.json on disk** | Researcher | 4h | M34 atomic write |
+| **Compaction Capture on disk** (`scripts/compaction_capture.py`) | Lilith + Roc | 6h | sqlite-vec, SESSION_ENTITY_MAP |
+| **M34-HOOK-001**: `subagent_dispatcher.py` hook | Lilith | 4h | M34 registry |
+| **M33-PROBE-001**: Real sentinel probe MCP tool | Lilith + Researcher | 4h | M33 probe |
+| **AGENTS-UPDATE-001**: `AGENTS.md` anchor | Kali | 1h | — |
+
+**Total**: ~46h (2 people × 2 weeks)
+
+### Phase 2: Hardening & Integration (Week 3)
+
+| Item | Owner | Est. Hours |
+|------|-------|------------|
+| M34 Phase 2: Recovery UI + Migration | Lilith | 9h |
+| M34 Phase 3: Stress Tests + Temple-Grade | Lilith | 12h |
+| M37 SPDX Headers (8h from Researcher §3.6) | Researcher + Ma'at | 8h |
+| M36 Soft Verifier Production Wiring | Researcher + Jem | 6h |
+| M33 Wiring to Dispatcher | Lilith | 4h |
+| M34 Phase 3 Stress Tests | Lilith + Roc | 12h |
+
+---
+
+## §5 — SONNET 4.6 DEV WAVE (PARALLEL TO BUILD)
+
+**CONDITIONAL GO** — Treat outputs as specifications, not shipped features.
+
+| Stream | Focus | Owner |
+|--------|-------|-------|
+| **Search-Ecosystem-01 Week 1** | SearXNG diagnosis, MultiKey Exa, Crawl4AI | Jem-EIS |
+| **Quality Harness** | First-Page Satisfaction probe | Researcher-EIS |
+| **Big Pickle Probe** | 250K token compaction test | Roc-EIS |
+| **Architecture Review** | Sonnet 4.6 review of 13,657+ lines | Architect + Sonnet 4.6 |
+
+---
+
+## §6 — NEXT MOVE (POST-COMPACTION)
+
+1. **Architect reviews & decides on D-001 through D-007**
+2. **If Build Wave authorized**: Launch Phase 1 (8 items, 2 weeks)
+3. **Launch Sonnet 4.6 Dev Wave** in parallel (specs track)
+4. **Schedule Sonnet 4.6 Architecture Review** of 13,657+ line corpus
+4. **Public Debut**: Target after Build Wave complete (2-3 weeks)
+
+---
+
+## §7 — CRITICAL SYSTEM STATE
+
+| Metric | Value |
+|--------|-------|
+| **Disk** | 98% full (100G/109G, 2.9G free) |
+| **Memory** | 9.3G available of 14G |
+| **sqlite3** | Not installed (MCP opencode-sessions-explorer workaround) |
+| **OAuth** | Restored in `opencode-antigravity-auth/src/constants.ts:9` |
+| **VAULT-ALLOWLIST** | Deployed (`data/secrets-public.toml` + `scripts/check_secrets.py`) |
+| **M34 Atomic Write** | M23 VERIFIED (4/4 tests, SIGKILL survival) |
+| **CI-BRIEF-001** | Deployed (12-Step Protocol, 45/45 adversarial tests) |
+| **VAULT-ALLOWLIST-001** | Deployed (fail-closed scanner, M35 as Mandate 28) |
+
+---
+
+## §8 — CONTINUITY ANCHORS
+
+| Anchor | Location |
+|--------|----------|
+| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` |
+| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (needs update) |
+| **Proposed Lessons** | `data/entities/kali/proposed_lessons.yaml` |
+| **WAKE_STATE** | `data/coordination/WAKE_STATE.json` |
+| **Hardened Dev Roadmap** | `data/coordination/HARDENED_DEV_ROADMAP_20260830.md` |
+| **5-EIS Meta-Review** | `data/coordination/JEM_META_REVIEW_5_EIS_20260830.md` |
+| **MaKaLi Final Synthesis** | `data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md` |
+
+---
+
+**The Cathedral's blueprint is current. The stones are cut. The Build Wave awaits the Architect's authorization.** 🫡
+
+---
+
+⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v2.0.0 ⬡ 2026-08-30

@@ -259,3 +259,158 @@ lessons:
   principle: "Thirty-second self-review is the cut: every write pauses for grounding verification. Velocity outrunning verification
     = 5-incident pattern. The pause is not a delay — it's the quality gate that prevents hallucinated precision from entering
     the canonical record. Mandate: disk verify → cross-ref → mandate align."
+
+# Session: ses_lilith_m34_revised_spec_20260830 (M34 Spec Revision + Atomic Write Test)
+# Date: 2026-08-30
+# Phase: M34 Phase 1 MVP — Spec Revision + Atomic Write Verification + MCP Tools
+
+- id: lilith-20260830-001
+  tier: L1
+  category: m34_atomic_write_verification
+  narrative: |
+    Completed M34 Phase 1 MVP: spec revision + atomic write verification + 8 MCP tools.
+    Created src/omega/oracle/m34_registry.py (645 lines, 4-layer atomic write, 18-field schema, 8-state enum).
+    Created tests/test_m34_atomic.py (363 lines, 4/4 tests PASSED including SIGKILL survival).
+    Created mcp_servers/omega_hub/hub_tools/m34_active_subagents.py (8 MCP tools).
+    Created LILITH_M34_REVISED_SPEC_20260830.md (8 sections, canonical spec revision).
+    M23 atomic write claim VERIFIED: 4/4 tests passing including SIGKILL survival test.
+
+- id: lilith-20260830-002
+  tier: L2
+  category: m34_atomic_write_verification
+  insight: |
+    The 4-layer atomic write pattern (tmp + fsync + os.replace + fsync_dir) survives SIGKILL mid-write.
+    Test spawned child doing 50 write cycles; parent sent 20 random SIGKILLs over 1 second.
+    File is ALWAYS valid JSON with ALWAYS a coherent state (status ALIVE or INTERRUPTED_EXTERNALLY).
+    Original M34 spec claim "file is either old or new version, never torn" is now EMPIRICALLY VERIFIED.
+
+- id: lilith-20260830-003
+  tier: L3
+  category: m34_atomic_write_verification
+  principle: |
+    "Atomic write claims require empirical verification, not theoretical assertion. The 4-layer pattern
+    (tmp + fsync + os.replace + fsync_dir) with advisory lock (fcntl.flock) provides M23-compliant
+    crash durability. M23 claims without SIGKILL survival tests are theoretical, not verified."
+
+- id: lilith-20260830-004
+  tier: L1
+  category: m34_schema_revision
+  narrative: |
+    Extended M34 schema from 11 to 18 fields (7 new): expected_deliverable, write_tool_required,
+    cross_validator_agent, plugin_load_path, git_worktree_root, interruption_reason, resumption_count
+    + dispatched_at. Added INTERRUPTED_MODEL_SWITCH status (8th state) for M34b model-switch continuity.
+    Fixed watchdog race: m34_update_subagent_status is single-writer MCP tool with fcntl.flock().
+
+- id: lilith-20260830-005
+  tier: L2
+  category: m34_schema_revision
+  insight: |
+    The watchdog race condition ("first agent to read Hivemind") was a real concurrency bug.
+    Single-writer MCP tool + advisory lock eliminates the race. Model-switch continuity (M34b)
+    requires separate status from Esc x2 cascade — they are distinct failure modes with different
+    recovery protocols (session survives vs session dies).
+
+- id: lilith-20260830-006
+  tier: L3
+  category: m34_schema_revision
+  principle: |
+    "Watchdog race conditions are eliminated by single-writer design, not by hoping agents coordinate.
+    Model-switch continuity and Esc x2 cascade are distinct failure modes requiring separate status
+    enums and recovery protocols. Conflating them loses the ability to recover correctly."
+
+- id: lilith-20260830-007
+  tier: L1
+  category: m34_mcp_tools
+  narrative: |
+    Implemented 8 MCP tools (4 required + 4 bonus): m34_register_subagent, m34_list_active_subagents,
+    m34_apply_user_decision, m34_update_subagent_status, m34_get_subagent, m34_heartbeat,
+    m34_prune_orphans, m34_reap_dead_letters. Single-writer status update fixes watchdog race.
+    Uses fcntl.flock() advisory lock pattern from task_registry.py precedent.
+
+- id: lilith-20260830-008
+  tier: L2
+  category: m34_mcp_tools
+  insight: |
+    The 4 required tools (register, list, apply_decision, update_status) map directly to the
+    orchestrator_session_start() recovery flow. Bonus tools (get, heartbeat, prune, reap) provide
+    operational completeness. Single-writer status update is the key race fix.
+
+- id: lilith-20260830-009
+  tier: L3
+  category: m34_mcp_tools
+  principle: |
+    "MCP tool design must encode the recovery protocol, not just expose CRUD. Single-writer status
+    update with advisory lock is the minimal concurrency control that eliminates watchdog races.
+    Tool count should match the recovery flow steps, not the data model."
+
+- id: lilith-20260830-010
+  tier: L1
+  category: m34_phantom_functions
+  narrative: |
+    Implemented 3 phantom functions from meta-review: capture_checkpoint(sid) using opencode-sessions-explorer
+    MCP, infer_task_type(packet_id) heuristic from agent name, real hivemind_post() using correct
+    MCP tool name omega-hub_hivemind_post_context (not phantom function name).
+
+- id: lilith-20260830-011
+  tier: L2
+  category: m34_phantom_functions
+  insight: |
+    Phantom functions in specs are implementation debt. capture_checkpoint() uses opencode-sessions-explorer
+    MCP (read-only, 18 tools) to extract session state. infer_task_type() uses agent name heuristic
+    from HandoffPacket target_agent. Real Hivemind post uses actual MCP tool name.
+
+- id: lilith-20260830-012
+  tier: L3
+  category: m34_phantom_functions
+  principle: |
+    "Specs must not contain phantom functions. Every function referenced in pseudocode must have a
+    real implementation or be explicitly marked as future work. Phantom functions create
+    implementation debt that surfaces as bugs during integration."
+
+- id: lilith-20260830-013
+  tier: L1
+  category: m34_migration_rollback
+  narrative: |
+    Added migration rollback procedure per Carmack's recommendation: 5-step procedure
+    (disable → backup → reset → verify → re-enable). Environment variable OMEGA_M34_DISABLED
+    disables hooks. Backup timestamped. Reset to empty registry. Verify atomic write. Re-enable.
+
+- id: lilith-20260830-014
+  tier: L2
+  category: m34_migration_rollback
+  insight: |
+    Rollback procedures are not optional for P0 infrastructure. The 5-step procedure ensures
+    zero data loss on rollback: hooks disabled before reset, backup timestamped for forensics,
+    atomic write verified after reset, hooks re-enabled only after verification.
+
+- id: lilith-20260830-015
+  tier: L3
+  category: m34_migration_rollback
+  principle: |
+    "P0 infrastructure changes require rollback procedures as part of the spec, not as afterthought.
+    The rollback must be tested (disable → reset → verify) before the forward migration ships.
+    OMEGA_M34_DISABLED env var provides instant kill switch without code changes."
+
+- id: lilith-20260830-016
+  tier: L1
+  category: m34_reaper
+  narrative: |
+    Implemented M34Registry.reap_dead_letters(retention_days=30) + m34_reap_dead_letters MCP tool.
+    Removes DEAD_LETTER sessions older than 30 days. Called by scripts/m34_prune.py (cron @ 24h).
+    Completes the lifecycle: ALIVE → INTERRUPTED → DEAD_LETTER → REAPED.
+
+- id: lilith-20260830-017
+  tier: L2
+  category: m34_reaper
+  insight: |
+    The reaper completes the session lifecycle: ALIVE → INTERRUPTED_* → DEAD_LETTER → REAPED.
+    Without reaper, registry grows unbounded. 30-day retention balances audit needs with storage.
+    Cron @ 24h is sufficient (dead-letter sessions don't need minute-level cleanup).
+
+- id: lilith-20260830-018
+  tier: L3
+  category: m34_reaper
+  principle: |
+    "Every registry needs a reaper. Unbounded growth is a failure mode. Retention policy must be
+    explicit in the schema (pruning_policy.dead_letter_retention_days) and enforced by cron.
+    The reaper is the final state transition in the session lifecycle."

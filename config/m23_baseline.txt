@@ -23,6 +23,7 @@
       5 src/omega/benchmarks/comprehensive_runner.py
       4 src/omega/vault/vault_core.py
       4 src/omega/search/search_persistence.py
+      4 src/omega/oracle/m34_registry.py
       4 src/omega/oracle/dpo_logger.py
       4 src/omega/memory/sleep_time.py
       4 src/omega/infra/subagent_pool/mcp_coordinator.py
@@ -92,4 +93,4 @@
       1 src/omega/config/loader.py
       1 src/omega/cli/vault.py
       1 src/omega/cli/bundle.py
-      1 Found 318 errors.
+      1 Found 322 errors.

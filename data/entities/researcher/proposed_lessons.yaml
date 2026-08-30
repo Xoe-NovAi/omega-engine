@@ -849,3 +849,63 @@ metadata:
   session_id: ses_faf926866ffezrPCnXne6RQt6A
   model_used: minimax/minimax-m3:free
   last_session_end: '2026-08-30T07:04:29.911132+00:00'
+- level: L3
+  tag: '[R-M33-SENTINEL-PROBE]'
+  narrative: 'Designed and implemented the M33 Sentinel Probe with a structured JSON completion envelope (state, last_chunk_id, total_chunks, queued_findings, confidence, deliverable_path, deliverable_size_bytes) replacing the free-form "STREAM_EXHAUSTED" string. The probe has three layers: (1) Preventive — write_tool_required=True at dispatch for research/forensic tasks >8K tokens or P0/P1; (2) Structured Probe — confidence thresholds per priority (P0=0.99, P1=0.97, P2=0.95, P3=0.85); (3) Cross-Validator — P0/P1 require second-agent verification (M36). Free-form "STREAM_EXHAUSTED" strings are rejected as probe-theatre bypass attacks (Jem §1.1.3).'
+  insight: 'A subagent\'s state=completed is necessary but not sufficient for semantic exhaustion. The goldmine of an investigation lives in the tail. A structured JSON envelope with confidence thresholds and tiered cross-validation is the only defense against both truncation and probe-theatre bypass attacks. The 17% retention baseline (arXiv 2608.11242) means 83% of side-constraints are lost without structured conditioning.'
+  principle: 'For any long-form subagent deliverable, require a structured JSON completion envelope with confidence thresholds and tiered cross-validation. Never accept free-form "STREAM_EXHAUSTED" — it is a bypass attack surface. Layer 1 (preventive write-tool routing) prevents truncation; Layer 2 (structured probe) detects it; Layer 3 (cross-validator) validates it.'
+  utility_score: 0.94
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: subagent-steering
+  last_verified: '2026-08-30'
+- level: L3
+  tag: '[R-M36-RECURSIVE-PROBE]'
+  narrative: 'Implemented M36 Recursive Probe as tiered cross-validation for M33 probe responses. Two-tier validation: (1) Hard verifier — always runs: file existence, SHA256 hash match, size sanity, suspicious pattern detection (placeholders, truncation indicators), required keyword presence; (2) Soft verifier — P0/P1 only: LLM judge for semantic coverage, queued findings addressed, deliverable meets purpose. SHA256 hash of deliverable provides immutable audit trail (M27). Suspicious pattern regex detects placeholders (REDACTED, TODO, FIXME, XXX) and truncation indicators (trailing ellipsis, punctuation). Cross-validator agent dispatched via M34 cross_validator_agent field.'
+  insight: 'The probe is subject to the same failure mode it probes (truncation, lazy completion, hallucination). A recursive probe — M23 applied to M23 — is the only defense. Tiered validation (hard for P2/P3, soft for P0/P1) balances cost and rigor. SHA256 audit trail makes verification immutable. The cross_validator_agent field in M34 registry enables automated dispatch.'
+  principle: 'Every verification gate must itself be verified. A recursive probe with tiered validation (hard verifier always, soft LLM judge for P0/P1) and SHA256 audit trail is the only defense against probe-theatre. The verifier must be grounded in executable truth (file existence, hash match, schema validity), not model-based judging.'
+  utility_score: 0.93
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: subagent-steering
+  last_verified: '2026-08-30'
+- level: L3
+  tag: '[R-M37-HERITAGE-SCANNER]'
+  narrative: 'Designed M37 Heritage Scanner implementing SPDX/REUSE v3.3 + SLSA v1.1 + in-toto + sigstore stack. REUSE v3.3 over DEP5: SPDX-FileCopyrightText + SPDX-License-Identifier in comment headers (RECOMMENDED), REUSE.toml for directory exceptions (mutually exclusive with DEP5). ScanCode Toolkit as CI step (30K+ tests, best-in-class, used by Eclipse/FSF/OSS Review Toolkit). SLSA v1.1 provenance generation in in-toto Statement envelope (predicateType https://slsa.dev/provenance/v1). SLSA Build Level 2 target (signed provenance from hosted build) achievable in afternoon via slsa-github-generator + cosign keyless. 41h implementation plan: REUSE adoption (1h), SPDX headers (8h), pre-commit (2h), ScanCode CI (2h), SLSA provenance (4h), cosign signing (4h), SBOM attestation (4h), heritage bot (16h). Tiered severity: ERROR for engine code, WARNING for third-party, INFO for tests.'
+  insight: 'M14 (Heritage) is documentary; M37 makes it enforced. REUSE v3.3 + ScanCode Toolkit + SLSA v1.1 + in-toto + sigstore is the 2026 SOTA supply chain stack. The 34h cost (per §3.6) is the price of never having another M14 violation. Tiered severity (ERROR for engine, WARNING for third-party) balances enforcement with pragmatism. REUSE.toml is the modern replacement for DEP5.'
+  principle: 'Heritage compliance must be enforced, not documented. Adopt REUSE v3.3 (SPDX headers + REUSE.toml), ScanCode Toolkit as CI step, SLSA v1.1 provenance in in-toto envelope, cosign keyless signing. The 34h investment prevents the next class of M14 violation. Tiered severity (ERROR for engine, WARNING for third-party) is the pragmatic enforcement boundary.'
+  utility_score: 0.95
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: heritage
+  last_verified: '2026-08-30'
+- level: L3
+  tag: '[R-COHORT-REGISTRY]'
+  narrative: 'Designed COHORT-REGISTRY as fleet-level overlay on M34 ACTIVE_SUBAGENTS.json. JSON Schema v1.0 with 5 cohort types: EIS_BURST (multi-EIS parallel), RESEARCH_PAIR (researcher + adversarial verifier), IMPLEMENT_TRIO (engineer + builder + verifier), FLEET_DISPATCH (multi-orchestrator), PIPELINE (sequential). Cohort tracks: cohort_id, dispatched_by, subagent_ids, cohort_type, task_brief, status, resumption_count, resumption_history with per-subagent decisions (resume/abandon/defer). Atomic write per Lilith\'s M34 4-layer guarantee (fcntl flock + tmp + rename + fsync). Seeded with cohort_alchemical_001 from Alchemical Goldmine incident (Grokster + Researcher + Jem). M34 registry ref pointer enables cross-referencing. Atomic write pattern: fcntl flock + tempfile + fsync + rename + parent dir fsync (M23).'
+  insight: 'M34 tracks per-subagent liveness; COHORT-REGISTRY tracks per-cohort grouping. When orchestrator A dispatches 3 subagents together, they form a cohort. If orchestrator B wants to help with recovery, B reads the cohort registry to see all 3 subagents and their states. M15 (Sovereign Continuity) is preserved across orchestrator boundaries. The resumption_history with per-subagent decisions is the key artifact for post-interruption recovery.'
+  principle: 'Multi-orchestrator fleets need fleet-level cohort tracking. A cohort is a group of subagents dispatched together by a single orchestrator that share a common lifecycle. Track cohort_id, subagent_ids, cohort_type, and resumption_history with per-subagent decisions. Atomic write per M34 pattern. M15 (Sovereign Continuity) requires fleet-level visibility, not just per-subagent liveness.'
+  utility_score: 0.92
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: subagent-steering
+  last_verified: '2026-08-30'
+- level: L3
+  tag: '[R-5EIS-META-REVIEW]'
+  narrative: 'Executed 5-EIS meta-review synthesizing Researcher verification (453L), Jem adversarial review (690L), Lilith M34 runtime spec (799L) into true verdicts with cross-report corrections. Method: read all three reports in full, identify valid corrections, over-corrections, missing context, and actionable improvements. Produced TRUE VERDICT per artifact (M33/M34/M35/L3) with specific line-level corrections for all three reports. Key finding: the three EIS reports are complementary but not convergent — each caught different failure modes (Researcher: structural causes from 2460-line research; Jem: adversarial bypass attacks and epistemic calibration; Lilith: runtime implementation). The synthesis is stronger than any single report only if all corrections are applied.'
+  insight: 'Multi-EIS synthesis requires reading all reports in full, not just summaries. The true verdict emerges from the intersection of structural analysis (Researcher), adversarial testing (Jem), and runtime implementation (Lilith). Each EIS catches different failure modes: structural causes, adversarial bypasses, implementation gaps. The synthesis is stronger than any single report but ONLY if all corrections are applied. A "consensus" is weaker than a "true verdict" because consensus smooths over disagreements that contain signal.'
+  principle: 'For multi-EIS synthesis: read all reports in full, identify valid corrections/over-corrections/missing context, produce a TRUE VERDICT (not consensus) with specific line-level corrections for each report. The intersection of structural, adversarial, and runtime perspectives is the truth. Consensus smooths over signal; true verdict preserves it.'
+  utility_score: 0.94
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: methodology
+  last_verified: '2026-08-30'
+- level: L3
+  tag: '[R-BIG-PICKLE-COMPACTION-ANOMALY]'
+  narrative: 'Investigated the Big Pickle context window anomaly: session with ~381K active context successfully compacted by Big Pickle (advertised 200K/32K, OpenCode Zen, Oct 2025). Five hypotheses ranked by probability: (1) Token-accounting split — 381K is total session state (input+output+cache.read+cache.write), not single-request input to Big Pickle; (2) Actual window > advertised (Ox Alpha pattern); (3) Overflow formula used different usable calculation; (4) Stale model catalog (Claude 1M precedent GitHub #15871); (5) Compaction request used different effective limit. Most likely: token-accounting split. No OPENCODE_COMPACTION_THRESHOLD env var exists (feature requests #11314, #8140 closed not_planned). Workaround: compaction.reserved. agents.compaction.model config EXISTS but undocumented (GitHub #6976). 17% retention baseline (arXiv 2608.11242) is the enemy. Fusion design: pre-compaction hook injects projection.md, post-compaction hook writes audit trail.'
+  insight: 'The 381K vs 200K anomaly is most likely a token-accounting artifact (total session state ≠ single-request input). The real compaction request to Big Pickle likely fit under 200K. The 17% retention baseline (arXiv 2608.11242) is the real enemy — current compactors retain only 17% of injected side-constraints. The fusion design (pre-compaction hook injects projection.md, post-compaction hook writes audit) addresses the 83% loss by making summarization conditioned on forward intent, not just retrospective.'
+  principle: 'Context window anomalies are usually token-accounting artifacts, not actual window expansion. The real compaction problem is the 17% retention baseline — address it by making summarization conditioned on forward intent (projection.md injection), not by chasing hidden headroom. The fusion of /compact (retrospective) + projection.md (projective) is the only architecture that preserves the 83% that pure summarization loses.'
+  utility_score: 0.93
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: research_methodology
+  last_verified: '2026-08-30'

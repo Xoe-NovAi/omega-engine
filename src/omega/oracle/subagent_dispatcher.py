@@ -23,6 +23,21 @@ from typing import Any, Dict, List, Literal, Optional
 
 logger = logging.getLogger(__name__)
 
+# ── M34 Registry hook (M34-HOOK-001) ─────────────────────────────────────
+# Lazy import to avoid circular deps; loaded once per process.
+_m34_registry = None
+
+def _get_m34_registry():
+    """Lazily initialise M34Registry singleton."""
+    global _m34_registry
+    if _m34_registry is None:
+        try:
+            from omega.oracle.m34_registry import M34Registry
+            _m34_registry = M34Registry()
+        except (ImportError, OSError, ValueError):
+            logger.debug("M34 registry unavailable — skipping registration")
+    return _m34_registry
+
 # ── Handoff sub-types ────────────────────────────────────────────────────
 
 PacketType = Literal["request", "response", "delegation", "notification", "broadcast"]
@@ -390,4 +405,31 @@ def dispatch(packet: HandoffPacket) -> str:
         prompt = dispatch(packet)
         # Then use the Task tool with prompt
     """
+    # ── M34-HOOK-001: Register subagent in M34 registry ──────────────
+    registry = _get_m34_registry()
+    if registry is not None:
+        try:
+            from omega.oracle.m34_registry import ActiveSubagent, SessionStatus
+            entry = ActiveSubagent(
+                session_id=packet.packet_id,
+                parent_session_id=None,
+                parent_task_id=None,
+                subagent_type="EIS",
+                agent=packet.target_agent,
+                model="unknown",
+                channel="opencode",
+                entity=packet.target_agent,
+                task_brief=packet.task_description[:200],
+                dispatch_packet_id=packet.packet_id,
+                task_type=packet.task_type,
+                expected_deliverable=packet.expected_output,
+                write_tool_required=False,
+                status=SessionStatus.ALIVE,
+            )
+            registry.register(entry)
+            logger.info("M34-HOOK-001: Registered subagent %s for packet %s",
+                        packet.target_agent, packet.packet_id)
+        except (OSError, FileNotFoundError, ValueError, TypeError) as exc:
+            logger.warning("M34-HOOK-001: Registration failed: %s", exc)
+
     return build_dispatch_prompt(packet)
