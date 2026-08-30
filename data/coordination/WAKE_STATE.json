@@ -56,7 +56,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-29T22:30:00Z",
+  "updated": "2026-08-30T04:00:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -789,5 +789,42 @@
       "M23_Failure_Integrity": "PASS (0 violations)",
       "Gitleaks": "PASS (0 leaks)"
     }
+  },
+  "hardened_dev_roadmap_20260830": {
+    "timestamp": "2026-08-30T04:00:00Z",
+    "status": "ROADMAP_RATIFIED_POST_3EIS_META_REVIEW",
+    "active_model": "nemotron-3-ultra-free",
+    "git_head": "589205ad",
+    "mandate_decisions": {
+      "M33": "CONDITIONAL_GO_3_LAYER_FIX",
+      "M34a": "CONDITIONAL_GO_LILITH_SPEC_PLUS_5_CORRECTIONS",
+      "M34b": "NEW_MANDATE_REQUIRED_MODEL_SWITCH_CONTINUITY",
+      "M35": "CONDITIONAL_GO_5_MANDATORY_AMENDMENTS",
+      "L3": "REVISE_BEFORE_CANONIZATION_SPLIT_0_80_0_85"
+    },
+    "sprint_tickets": {
+      "CI-BRIEF-001": "P0_MAAT",
+      "VAULT-ALLOWLIST-001": "P0_CARMACK",
+      "ORCH-RESUME-001": "P0_LILITH",
+      "PKG-CLEANUP-001": "P1_GROKSTER",
+      "DOC-CANON-001": "P1_GROKSTER_SCRIBE",
+      "M36-PROBE-001": "P1_RESEARCHER",
+      "COHORT-REGISTRY-001": "P1_RESEARCHER",
+      "M37-HERITAGE-001": "P1_RESEARCHER_CARMACK",
+      "JEM-12STEP-HARDENING": "P1_JEM"
+    },
+    "phase_budget": {
+      "phase_1_hours": 49,
+      "phase_2_hours": 35,
+      "phase_3_hours": 25,
+      "total_hours": 109
+    },
+    "blockers": [
+      "Redacted OAuth secret in opencode-antigravity-auth/src/constants.ts:9 (TODAY)",
+      "M34b spec missing (Phase 2)",
+      "Atomic write M23 test (Phase 1)",
+      "Watchdog single-writer (Phase 1)"
+    ],
+    "sonnet_46_package_ready": true
   }
 }
