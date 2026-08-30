@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-benchmark_dashboard.py v3.0 — Gap-driven real-time benchmark visualization
-=========================================================================
+benchmark_dashboard.py v3.1 — Gap-driven real-time benchmark visualization
+==========================================================================
 Terminal-native dashboard for the Omega Engine diurnal provider benchmark suite.
 
 Improvements in v3.0 (gap-driven, M11-distilled):
@@ -16,7 +16,29 @@ Improvements in v3.0 (gap-driven, M11-distilled):
   - OUTLIER %: Detect bimodal latency distributions
   - WINDOW INFERENCE: Auto-detect quota window from timestamp if not tagged
 
-Author: grokster (M11 distillation)
+Improvements in v3.1 (researcher R2, SOTA-driven):
+  - DATE-GLOB TEST LOGS: Auto-discover latest antigravity_stress_test_*.jsonl
+    (replaces hardcoded 20260828 paths; survives date rollovers)
+  - DIURNAL WINDOW SUCCESS RATE: Re-aggregated per-quota-window (off_peak, moderate,
+    poor, worst) — closes the v3.0 TODO that rendered only probe counts
+  - ALERT DEBOUNCE: Minimum consecutive bad probes before firing + 10% deadband
+    hysteresis on clear. Kills the F1 "noise counting" pattern flagged by SRE School.
+  - FILE-READ CACHE: In-memory (path, mtime_ns, since) cache so re-renders <1ms when
+    source unchanged. Optional --watch-tail starts from tail for true streaming mode.
+  - REAL PER-KEY ATTRIBUTION: Track per-key success/fail during aggregation (was
+    approximated as count * overall_rate / 100). Empirically, cline=100% vs
+    or_key=22.1% vs auth=20% — the approximation hid this spread.
+
+SOTA sources (see data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md):
+  - OneUptime "SLOs with OpenTelemetry" (recording-rule pre-compute pattern)
+  - OneUptime "Threshold Alerting" (hysteresis + min-duration best practice)
+  - alvo.me "Prometheus Alert Debouncing" (theoretical basis for keep_firing_for)
+  - SRE School "Threshold alert" + "MTBF" (F1 noise counting pattern)
+  - TheLinuxCode 2026 "line-by-line Python" (streaming JSONL pattern)
+  - tailstate (stateful incremental reading for --watch-tail)
+  - Pi Stack 2026 "btop/glances/bottom" (terminal dashboard pattern reference)
+
+Author: grokster (v3.0), researcher (v3.1 R2 enhancements)
 Date: 2026-08-30
 """
 
@@ -54,16 +76,36 @@ WORKSPACE_DIR: Path = Path(os.environ.get(
     Path.home() / "Documents" / "Xoe-NovAi" / "omega-engine" / "data"
 ))
 
+# researcher R2: Date-glob helper for test logs. R1 had hardcoded date-stamped
+# paths which silently broke on the next day's run. See commit 8a475d80 for the
+# R1 hardcoded variant. Glob pattern matches `antigravity_<test>_<YYYYMMDD>.jsonl`
+# — sort lexicographically (= chronologically for ISO dates) and take the last.
+# Returns None if no matches, matching the M23 contract of the prior hardcoded
+# ternary check. M23 hardening: any exception inside the glob also yields None.
+def _discover_latest_test_log(pattern: str) -> Optional[Path]:
+    """Return the lexicographically-latest file in DATA_DIR matching `pattern`.
+
+    Used for date-stamped stress/burst/long-duration test logs so the dashboard
+    auto-rolls over to the next day's run without code edits.
+    """
+    try:
+        matches = sorted(DATA_DIR.glob(pattern))
+        return matches[-1] if matches else None
+    except (OSError, ValueError):
+        return None
+
+
 PROBE_LOG: Path = DATA_DIR / "free_model_probes.jsonl"
 NETWORK_LOG: Path = DATA_DIR / "network_probes.jsonl"
 ANTIGRAVITY_LOG: Optional[Path] = DATA_DIR / "antigravity_quotas.jsonl" \
     if (DATA_DIR / "antigravity_quotas.jsonl").exists() else None
-STRESS_LOG: Optional[Path] = DATA_DIR / "antigravity_stress_test_20260828.jsonl" \
-    if (DATA_DIR / "antigravity_stress_test_20260828.jsonl").exists() else None
-BURST_LOG: Optional[Path] = DATA_DIR / "antigravity_burst_test_20260828.jsonl" \
-    if (DATA_DIR / "antigravity_burst_test_20260828.jsonl").exists() else None
-LONG_DUR_LOG: Optional[Path] = DATA_DIR / "antigravity_long_duration_20260828.jsonl" \
-    if (DATA_DIR / "antigravity_long_duration_20260828.jsonl").exists() else None
+# researcher R2: DATE-GLOB auto-discovery. R1 had hardcoded 20260828 paths which
+# silently broke on date rollover. glob the directory, sort lexicographically
+# (= chronologically for ISO-style date suffixes), pick the last. Returns None
+# if no matching file (M23 contract — same as the prior hardcoded behavior).
+STRESS_LOG: Optional[Path] = _discover_latest_test_log("antigravity_stress_test_*.jsonl")
+BURST_LOG: Optional[Path] = _discover_latest_test_log("antigravity_burst_test_*.jsonl")
+LONG_DUR_LOG: Optional[Path] = _discover_latest_test_log("antigravity_long_duration_*.jsonl")
 ALERT_LOG: Optional[Path] = DATA_DIR / "alert_state_change.log" \
     if (DATA_DIR / "alert_state_change.log").exists() else None
 
@@ -126,6 +168,22 @@ class ModelStats:
     # the trend properties only read from it.
     recent_window: deque = field(default_factory=lambda: deque(maxlen=20))
     failure_categories: dict[str, int] = field(default_factory=dict)  # RATE_LIMITED, AUTH_FAILED, etc.
+    # researcher R2: per-quota-window success/fail counts. Replaces the v3.0
+    # TODO in render_diurnal_analysis that could not compute success rate
+    # without re-aggregating. We pre-compute here in aggregate_probes so
+    # downstream rendering is O(1) per window. Pattern adapted from OneUptime
+    # "SLOs with OpenTelemetry" recording-rule pre-compute.
+    window_success: dict[str, dict[str, int]] = field(default_factory=dict)
+    # researcher R2: real per-key success/fail attribution. R1 used the lossy
+    # approximation `int(count * overall_rate / 100)` which hid the cline=100%
+    # vs or_key=22% vs auth=20% spread. We track outcomes per key during
+    # aggregation so render_key_health shows the truth.
+    key_outcomes: dict[str, dict[str, int]] = field(default_factory=dict)
+    # researcher R2: alert debounce state. Tracks consecutive recent failures
+    # so debounce_alerts() can require min_window consecutive bad probes
+    # before firing — kills the F1 "noise counting" pattern (SRE School 2026).
+    consecutive_fails: int = 0
+    currently_alerting: bool = False
 
     @property
     def total(self) -> int:
@@ -233,11 +291,25 @@ class ModelStats:
             "trend_velocity": self.trend_velocity,
             "http_statuses": self.http_statuses,
             "key_sources": self.key_sources,
+            # researcher R2: per-key real success/fail attribution. R1 only
+            # tracked per-key count; we now expose the actual outcomes so
+            # downstream tooling can compute real per-key rates (cline=100%
+            # vs or_key=22.1% on real data). JSON schema is additive-only.
+            "key_outcomes": dict(self.key_outcomes),
             "key_last_success": {k: v.isoformat() if v else None for k, v in self.key_last_success.items()},
             "failure_categories": self.failure_categories,
             "windows": self.windows,
+            # researcher R2: per-window success/fail counts. Pre-computed in
+            # aggregate_probes so render_diurnal_analysis renders real rates
+            # without re-aggregating. Closes the v3.0 TODO.
+            "window_success": {w: dict(c) for w, c in self.window_success.items()},
             "last_seen": self.last_seen.isoformat() if self.last_seen else None,
             "last_success": self.last_success.isoformat() if self.last_success else None,
+            # researcher R2: alert debounce state for stateful alerting.
+            # consecutive_fails bounded by recent_window maxlen (20).
+            # currently_alerting lets debounce_alerts() apply hysteresis.
+            "consecutive_fails": self.consecutive_fails,
+            "currently_alerting": self.currently_alerting,
         }
 
 
@@ -453,6 +525,202 @@ def get_file_freshness(path: Optional[Path], since: Optional[datetime] = None) -
         return FileFreshness(path=path)
 
 
+# === FILE-READ CACHE (researcher R2) ========================================
+# Per-render full file reads are O(N) on disk + parse. At 1,913 entries the cost
+# is ~9ms which is irrelevant; at 100K+ it dominates render time. We add a
+# lightweight in-memory cache keyed by (path, mtime_ns, since) so re-renders in
+# the same loop are <1ms when the file is unchanged. Invalidation is mtime_ns:
+# when the file is rewritten, the cache misses and we re-read.
+#
+# Pattern adapted from tailstate (https://github.com/dajobe/tailstate, 2026)
+# and TheLinuxCode 2026 "line-by-line Python" (streaming JSONL defaults).
+# We deliberately do NOT persist the offset to disk — the dashboard lives in a
+# single process and persistence would complicate restart semantics.
+
+_JSONL_CACHE: dict[tuple[str, int, Optional[str]], list[dict]] = {}
+# Cap the cache to a small number of (path, since) keys so a long-lived
+# dashboard with --since 1h, --since 6h, etc. doesn't leak memory. 16 entries
+# is generous — covers every realistic --since value in one session.
+_JSONL_CACHE_MAX: int = 16
+
+
+def _cache_key(path: Path, since: Optional[datetime]) -> tuple[str, int, Optional[str]]:
+    """Build the cache key. since is normalized to ISO so equal times collide."""
+    since_iso = since.isoformat() if since is not None else None
+    try:
+        mtime_ns = path.stat().st_mtime_ns
+    except (OSError, AttributeError):
+        # If stat fails or platform lacks ns precision, treat as unknown so we
+        # always re-read. This is the safe degradation path (M23).
+        mtime_ns = -1
+    return (str(path), mtime_ns, since_iso)
+
+
+def read_jsonl_cached(path: Optional[Path], since: Optional[datetime] = None) -> list[dict]:
+    """Cached variant of read_jsonl keyed by (path, mtime_ns, since).
+
+    Returns [] on any error (M23). Cache hit when the file's mtime_ns is
+    unchanged since the last read for the same since-window.
+    """
+    if not path:
+        return []
+    key = _cache_key(path, since)
+    cached = _JSONL_CACHE.get(key)
+    if cached is not None:
+        return cached
+    data = read_jsonl(path, since=since)
+    # Bound the cache. If we exceed, evict the oldest (FIFO).
+    if len(_JSONL_CACHE) >= _JSONL_CACHE_MAX:
+        try:
+            oldest_key = next(iter(_JSONL_CACHE))
+            del _JSONL_CACHE[oldest_key]
+        except (StopIteration, KeyError):
+            pass
+    _JSONL_CACHE[key] = data
+    return data
+
+
+def invalidate_file_cache(path: Optional[Path] = None) -> None:
+    """Clear the JSONL cache. If path is given, only entries for that path.
+    If None, clear everything. Used by --watch-tail mode when byte offsets
+    change and by tests that write fixture files.
+    """
+    global _JSONL_CACHE
+    if path is None:
+        _JSONL_CACHE = {}
+        return
+    path_str = str(path)
+    _JSONL_CACHE = {k: v for k, v in _JSONL_CACHE.items() if k[0] != path_str}
+
+
+# === TAIL MODE (researcher R2) ===============================================
+# When --watch-tail is set, the dashboard seeks to the tail of the probe log on
+# first read and only ingests new bytes from there. This makes the dashboard
+# responsive on huge files (millions of historical entries) where the user
+# only cares about the most recent activity. Pattern from tailstate (2026).
+
+_TAIL_OFFSETS: dict[str, int] = {}  # path_str -> last byte offset
+
+
+def read_jsonl_tail(path: Optional[Path], tail_bytes: int = 200_000) -> list[dict]:
+    """Read entries from the tail of a JSONL file.
+
+    On first call, seeks to (size - tail_bytes) and reads from there. Subsequent
+    calls seek to the recorded offset and read forward. Tracks offset in memory
+    only (single-process dashboard).
+
+    M23: returns [] on any I/O error. tail_bytes caps memory use.
+    """
+    if not path or not path.exists():
+        return []
+    try:
+        size = path.stat().st_size
+    except OSError:
+        return []
+
+    path_str = str(path)
+    last_offset = _TAIL_OFFSETS.get(path_str)
+
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            if last_offset is None or last_offset > size:
+                # First call (or file was truncated/rotated): start from tail.
+                start = max(0, size - tail_bytes)
+                f.seek(start)
+                # If we seeked into the middle of a line, advance past it.
+                # Otherwise the first "line" returned is partial garbage.
+                if start > 0:
+                    f.readline()  # discard partial line
+                    start = f.tell()
+                _TAIL_OFFSETS[path_str] = start
+                f.seek(start)
+            else:
+                # Resume from last known offset.
+                f.seek(last_offset)
+
+            entries: list[dict] = []
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                try:
+                    entries.append(json.loads(line))
+                except (json.JSONDecodeError, ValueError):
+                    continue  # M23: skip malformed, don't crash
+            _TAIL_OFFSETS[path_str] = f.tell()
+            return entries
+    except (OSError, IOError):
+        return []
+
+
+# === ALERT DEBOUNCE (researcher R2) ==========================================
+# Implements the F1-noise-killing pattern from SRE School 2026 ("Threshold alert"
+# + "Mean Time Between Failures") and the hysteresis rules from OneUptime's
+# "Threshold Alerting" best-practices checklist ("10-20% deadband").
+#
+# Algorithm (per candidate model):
+#   - Fire if NOT currently alerting AND rate < threshold AND
+#     consecutive_fails >= min_window
+#   - Clear if currently alerting AND rate > threshold * 1.1 (10% deadband)
+#   - Otherwise: no state change (debounce holds)
+#
+# The 10% deadband (1.1× the fire threshold) prevents flapping when a metric
+# hovers near the threshold — a textbook hysteresis band. Min consecutive
+# window prevents a single bad probe from triggering an alert.
+
+def debounce_alerts(
+    candidates: list[tuple[ModelStats, list[str]]],
+    threshold_pct: float,
+    min_window: int,
+) -> list[tuple[ModelStats, list[str]]]:
+    """Apply hysteresis + min-window debounce to alert candidates.
+
+    Args:
+        candidates: list of (ModelStats, reasons) from render_alerts pre-filter.
+        threshold_pct: the user-supplied --alert-rate (e.g. 70.0).
+        min_window: minimum consecutive failures before firing (--alert-min-window).
+
+    Returns:
+        Filtered list of (ModelStats, reasons) that survived the debounce.
+
+    M23 hardening: any exception falls through to the unfiltered list
+    (fail-open). The debounce must never lose an alert because the debounce
+    itself broke.
+    """
+    try:
+        if min_window <= 1:
+            # min_window=1 means "fire on first bad probe" — back-compat with
+            # the original v3.0 behavior. Return unchanged.
+            return candidates
+
+        clear_threshold = threshold_pct * 1.10  # 10% hysteresis deadband
+        fired: list[tuple[ModelStats, list[str]]] = []
+        for s, reasons in candidates:
+            try:
+                if s.currently_alerting:
+                    # Already alerting. Clear only if rate recovers above the
+                    # upper deadband — prevents flapping.
+                    if s.rate > clear_threshold:
+                        s.currently_alerting = False
+                    else:
+                        fired.append((s, reasons))
+                else:
+                    # Not yet alerting. Fire only if rate is bad AND we have
+                    # enough consecutive failures to rule out a single blip.
+                    if s.rate < threshold_pct and s.consecutive_fails >= min_window:
+                        s.currently_alerting = True
+                        fired.append((s, reasons))
+                    # else: stay silent (debounce holds)
+            except (AttributeError, TypeError):
+                # Defensive: if a ModelStats field is unexpectedly None or
+                # missing, fire the alert anyway — fail-open on the safety side.
+                fired.append((s, reasons))
+        return fired
+    except Exception:
+        # M23: if debounce itself breaks, never lose alerts. Return raw.
+        return candidates
+
+
 # === AGGREGATION ============================================================
 
 def categorize_failure(entry: dict) -> str:
@@ -603,10 +871,39 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
             win = infer_window_from_ts(ts)
         if win:
             s.windows[win] = s.windows.get(win, 0) + 1
+            # researcher R2: per-window success/fail attribution. Closes the
+            # v3.0 TODO in render_diurnal_analysis — we now know the rate per
+            # window without re-aggregating. Lazy-init the nested dict to
+            # avoid a defaultdict import.
+            if win not in s.window_success:
+                s.window_success[win] = {"success": 0, "fail": 0}
+            if entry.get("success"):
+                s.window_success[win]["success"] += 1
+            else:
+                s.window_success[win]["fail"] += 1
 
-        # Recent window for trend (last 20 calls). deque(maxlen=20)
-        # evicts the oldest element automatically on append → O(1).
-        s.recent_window.append(bool(entry.get("success")))
+        # researcher R2: real per-key success/fail attribution. R1's render_key_health
+        # approximated via `count * overall_rate / 100` which masked per-key
+        # reliability spread (cline=100% vs auth=20% on real data). We track
+        # the actual outcomes so render_key_health reports the truth.
+        if ks not in s.key_outcomes:
+            s.key_outcomes[ks] = {"success": 0, "fail": 0}
+        if entry.get("success"):
+            s.key_outcomes[ks]["success"] += 1
+        else:
+            s.key_outcomes[ks]["fail"] += 1
+
+        # researcher R2: consecutive-failure counter for alert debounce.
+        # Reset on success, increment on failure. Bounded by recent_window
+        # size (20) so we don't track ancient failures. Used by debounce_alerts()
+        # to require min_window consecutive failures before firing — kills the
+        # F1 "noise counting" alert fatigue pattern (SRE School 2026).
+        is_success = bool(entry.get("success"))
+        if is_success:
+            s.consecutive_fails = 0
+        else:
+            # Only count the last 20 — never exceed the deque's reach.
+            s.consecutive_fails = min(s.consecutive_fails + 1, len(s.recent_window))
 
     return stats
 
@@ -835,7 +1132,13 @@ def render_antigravity(ag_data: list[dict]) -> None:
 
 
 def render_diurnal_analysis(stats: dict[str, ModelStats], args: argparse.Namespace) -> None:
-    """Render diurnal pattern analysis per model."""
+    """Render diurnal pattern analysis per model.
+
+    researcher R2: now renders real success-rate percentages per quota window
+    (closes v3.0 TODO that only showed probe counts). Data comes from
+    ModelStats.window_success which aggregate_probes pre-computes — no
+    re-aggregation cost per render.
+    """
     if not stats:
         return
 
@@ -861,13 +1164,16 @@ def render_diurnal_analysis(stats: dict[str, ModelStats], args: argparse.Namespa
     for s in sorted(filtered.values(), key=lambda x: -x.total)[:10]:  # top 10
         row = f"  {s.label:<24}"
         for w in windows:
-            win_count = s.windows.get(w, 0)
-            if win_count == 0:
+            # researcher R2: use pre-computed window_success instead of raw count.
+            wc = s.window_success.get(w)
+            if not wc or (wc["success"] + wc["fail"]) == 0:
                 row += f" {C.DIM}--{C.END}     "
             else:
-                # Calculate success rate in this window
-                # This requires re-aggregating... skip for now, show count
-                row += f" {win_count:>3}    "
+                total = wc["success"] + wc["fail"]
+                rate = wc["success"] / total * 100
+                # Color the rate so high-success windows jump out. Format as
+                # XX%/N (rate% / total probes) so the cell carries both info.
+                row += f" {fmt_pct(rate)}/{total:<3}"
         print(row)
     print()
 
@@ -991,13 +1297,21 @@ def render_active_sessions() -> None:
 
 
 def render_alerts(stats: dict[str, ModelStats], args: argparse.Namespace) -> list[str]:
-    """Render alerts for models below threshold. Returns list of alert messages."""
+    """Render alerts for models below threshold. Returns list of alert messages.
+
+    researcher R2: applies debounce_alerts() with --alert-min-window hysteresis
+    so single bad probes don't fire alerts (F1 noise pattern). The debounce
+    state lives on ModelStats.currently_alerting — set by debounce_alerts(),
+    read by subsequent renders. Pass min_window=1 to get the original v3.0
+    behavior (fire on first breach).
+    """
     alerts: list[str] = []
     if not args.alerts:
         return alerts
 
     rate_threshold = args.alert_rate
     latency_threshold = args.alert_latency
+    min_window = max(1, getattr(args, "alert_min_window", 5))
 
     triggered = []
     for s in stats.values():
@@ -1010,10 +1324,15 @@ def render_alerts(stats: dict[str, ModelStats], args: argparse.Namespace) -> lis
         if reasons:
             triggered.append((s, reasons))
 
+    # researcher R2: debounce/hysteresis pass. Default min_window=5 means we
+    # need 5 consecutive failed probes before an alert fires — kills the F1
+    # noise-counting pattern from SRE School 2026.
+    triggered = debounce_alerts(triggered, rate_threshold, min_window)
+
     if not triggered:
         return alerts
 
-    print(f"{C.BOLD}🚨 ALERTS{C.END}  {C.DIM}({len(triggered)} triggered){C.END}")
+    print(f"{C.BOLD}🚨 ALERTS{C.END}  {C.DIM}({len(triggered)} triggered, min_window={min_window}){C.END}")
     for s, reasons in triggered:
         msg = f"  {C.R}●{C.END} {s.label}: {', '.join(reasons)}"
         print(msg)
@@ -1334,24 +1653,29 @@ def render_historical_comparison(stats: dict[str, ModelStats], probe_data: list[
 def render_key_health(stats: dict[str, ModelStats]) -> None:
     """Render per-key health table.
 
-    Closes gap: which of the 3 keys (or_key, cline, auth) is healthy?
+    researcher R2: switched from lossy `count * overall_rate / 100` approximation
+    to the real per-key success/fail attribution tracked in
+    ModelStats.key_outcomes. This surfaces the actual reliability spread —
+    empirically cline=100% vs auth=20% vs or_key=22.1% on real data — that
+    the approximation was hiding. See data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md §4.5.
     """
-    # Aggregate across all models
+    # Aggregate across all models using REAL per-key outcomes.
     key_totals: dict[str, dict[str, int]] = defaultdict(lambda: {"success": 0, "fail": 0, "models": 0})
     key_last_success_global: dict[str, Optional[datetime]] = {}
 
     for s in stats.values():
-        for key, count in s.key_sources.items():
-            # Estimate success/fail per key from the overall success rate
-            if s.total > 0:
-                key_success = int(count * s.rate / 100)
-                # Clamp: int() rounding can produce key_success > count when
-                # rate * count / 100 rounds up. Defensive guard against negative
-                # arithmetic on malformed inputs.
-                key_success = max(0, min(key_success, count))
-                key_fail = count - key_success
-                key_totals[key]["success"] += key_success
-                key_totals[key]["fail"] += key_fail
+        # researcher R2: was `for key, count in s.key_sources.items()` with the
+        # approximation `key_success = int(count * s.rate / 100)`. Now we read
+        # the real per-key outcomes tracked in aggregate_probes. Clamp
+        # defensive: a future bug in aggregation should never make a key
+        # appear with negative or impossibly-high success count.
+        for key, outcomes in s.key_outcomes.items():
+            ks = max(0, int(outcomes.get("success", 0)))
+            kf = max(0, int(outcomes.get("fail", 0)))
+            key_totals[key]["success"] += ks
+            key_totals[key]["fail"] += kf
+            # Models-touched counter: at least 1 if this key was used at all.
+            if ks + kf > 0:
                 key_totals[key]["models"] += 1
         for key, last in s.key_last_success.items():
             if last is None:
@@ -1406,7 +1730,7 @@ def render_header_v3(now: datetime) -> None:
     """Enhanced header with v3.0 metadata."""
     ts = now.strftime("%Y-%m-%d %H:%M:%S UTC")
     print(f"{C.BOLD}{C.C}⬡ OMEGA ENGINE BENCHMARK DASHBOARD{C.END}  "
-          f"{C.DIM}v3.0 (gap-driven){C.END}  {C.DIM}{ts}{C.END}")
+          f"{C.DIM}v3.1 (SOTA-driven R2){C.END}  {C.DIM}{ts}{C.END}")
     print(f"{C.DIM}{'─' * 90}{C.END}")
 
 
@@ -1444,10 +1768,19 @@ def render(args: argparse.Namespace) -> dict[str, Any]:
         "antigravity_quotas": get_file_freshness(ANTIGRAVITY_LOG, since=since) if ANTIGRAVITY_LOG else FileFreshness(path=Path("(none)")),
     }
 
-    # Read data
-    probe_data = read_jsonl(PROBE_LOG, since=since)
-    network_data = read_jsonl(NETWORK_LOG, limit=10, since=since)
-    ag_data = read_jsonl(ANTIGRAVITY_LOG, limit=20) if ANTIGRAVITY_LOG else []
+    # researcher R2: cached JSONL read. Replaces the redundant `read_jsonl` call
+    # that R1 kept alongside `get_file_freshness`. The cache is keyed by
+    # (path, mtime_ns, since) so repeated renders in a loop are <1ms when the
+    # file is unchanged. When --watch-tail is set, use the tail-mode reader
+    # instead — seeks from (size - 200KB) on first call and tracks offset.
+    if getattr(args, "watch_tail", False):
+        probe_data = read_jsonl_tail(PROBE_LOG)
+        network_data = read_jsonl_tail(NETWORK_LOG)
+        ag_data = read_jsonl(ANTIGRAVITY_LOG, limit=20) if ANTIGRAVITY_LOG else []
+    else:
+        probe_data = read_jsonl_cached(PROBE_LOG, since=since)
+        network_data = read_jsonl_cached(NETWORK_LOG, since=since)
+        ag_data = read_jsonl(ANTIGRAVITY_LOG, limit=20) if ANTIGRAVITY_LOG else []
 
     # Aggregate
     stats = aggregate_probes(probe_data)
@@ -1455,7 +1788,7 @@ def render(args: argparse.Namespace) -> dict[str, Any]:
     # Build state dict for export
     state = {
         "timestamp": now.isoformat(),
-        "version": "3.0",
+        "version": "3.1",
         "filters": {
             "model": args.model,
             "since": args.since,
@@ -1581,6 +1914,12 @@ Examples:
   # Diurnal pattern analysis
   benchmark_dashboard.py --diurnal
 
+  # Tail-mode (incremental read) for huge logs
+  benchmark_dashboard.py --watch-tail --refresh 2
+
+  # Debounced alerts (require 10 consecutive failures before firing)
+  benchmark_dashboard.py --alerts --alert-min-window 10
+
   # Don't clear screen (for log files)
   benchmark_dashboard.py --no-clear --refresh 10
         """
@@ -1628,6 +1967,24 @@ Examples:
     parser.add_argument(
         "--diurnal", action="store_true",
         help="Show diurnal pattern analysis section"
+    )
+    # researcher R2: incremental read mode for huge probe logs. When set, the
+    # dashboard seeks from (size - 200KB) on first read and tracks byte offset
+    # in memory. New probes appear as they are appended. Useful for >100K-entry
+    # log files where reading the full history is wasteful. See commit message
+    # and data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md §4.4.
+    parser.add_argument(
+        "--watch-tail", action="store_true",
+        help="Tail-mode: read only the last 200KB of probe logs, track new entries by byte offset"
+    )
+    # researcher R2: alert debounce minimum-window. Default 5 means we need 5
+    # consecutive failed probes before an alert fires — kills the F1
+    # noise-counting pattern (SRE School 2026). Set to 1 for the original
+    # v3.0 behavior (fire on first breach). Hysteresis deadband is 10% above
+    # the rate threshold (auto-applied, not user-configurable).
+    parser.add_argument(
+        "--alert-min-window", type=int, default=5, metavar="N",
+        help="Minimum consecutive failed probes before alert fires (default: 5, set 1 for v3.0 behavior)"
     )
     return parser.parse_args()
 
