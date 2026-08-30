@@ -323,6 +323,25 @@ temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-co
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
 
+# M37 Heritage — REUSE v3.3 SPDX compliance gate
+# Verifies every file has SPDX-FileCopyrightText and SPDX-License-Identifier
+# per the REUSE specification v3.3. Wired into CI (.github/workflows/reuse-compliance.yml)
+# and pre-commit (.pre-commit-config.yaml: reuse-lint-file on pre-commit, reuse on pre-push).
+# Per RESEARCHER_GAP_FILL_PHASE_2_20260830.md MED-3.
+REUSE := .venv/bin/reuse
+
+check-reuse:
+	@echo "$(YELLOW)Checking REUSE v3.3 compliance (M37 Heritage)...$(NC)"
+	@$(REUSE) --version
+	@$(REUSE) lint
+	@echo "$(GREEN)M37 passed: REUSE v3.3 compliant (all files have SPDX headers)$(NC)"
+
+# Download license texts to LICENSES/ directory (run once after clone)
+reuse-download:
+	@echo "$(YELLOW)Downloading license texts...$(NC)"
+	@$(REUSE) download --all
+	@echo "$(GREEN)License texts downloaded to LICENSES/$(NC)"
+
 # Cognitive State Validator (M27 Tracking Integrity)
 # Wired into temple-grade + pre-commit (omega-tracking-state). Includes the
 # M1 staleness rule (in_progress > 7d = error) and M3 warn-only schema checks.
