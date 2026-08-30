@@ -1,22 +1,30 @@
 ## Objective
-- **PRE-COMPACTION MASTER LOCK-IN (v1.4.0)**. Landmark cognitive session complete. Key 2/8 active (Medium Thinking). All 6 canonical breakthroughs committed & pushed to main (`2fa96e89`). All gates pass (`M1 AnyIO`, `M23 Failure Integrity`, `Gitleaks 0`). Awaiting compaction with 100% state preserved.
+- **PRE-COMPACTION MASTER ANCHOR (v1.5.0) — THE COMPLETE SYNTHESIS**. Gemini 3.7 Flash active (Key 2/8, Medium Thinking). Full session arc codified across 7 canonical doctrines, committed to main at `0fdd9a87`. Zero-Write Database-Native Cognition, Multi-Model Symphony, Search-Ecosystem-01, KV-Cache Physics, and §12 Fuzzy vs Etched Paradigm all permanently anchored. All gates pass (`M1`, `M23`, `Gitleaks 0`). Awaiting `/compact`.
 
 ## Important Details
-- **Active Model**: `google/gemini-3.7-flash` (Key 2/8, Medium Thinking)
-- **Main branch HEAD**: `2fa96e89` (all work pushed to origin/main)
-- **The 6 Canonical Breakthroughs Codified This Session**:
-  1. `docs/strategy/KEY_ROTATION_CACHE_AND_SOVEREIGN_POLICY_20260829.md` (KV-Cache Physics & Session Pinning)
-  2. `docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md` (8-Account Worker Fleet)
-  3. `docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md` (CQRS Event Sourcing for AI)
-  4. `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (10,000-Hour Master Manual)
-  5. `data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md` (4-Week Search Hardening Sprint)
-  6. `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL_20260829.md` & `COMPACTION_WATCHER_PROTOCOL_20260829.md`
-- **Cache Policy Confirmed**: Pinned Sequential Exhaustion for Interactive Chats (98% KV-Cache Hits) + Sharded Dedicated Accounts for Background Workers.
-- **Search Bandwidth**: 28,000+ free searches/mo + Crawl4AI T3 Primary + SearXNG.
-- **Next Moves Post-Compaction**:
-  1. Activate Jem-EIS for Week 1 of `SEARCH-ECOSYSTEM-01` (SearXNG health & MultiKey Exa).
-  2. Deploy `scripts/mine_historical_ore.py` in `/dev/shm` tmpfs over 20GB SQLite DB.
-  3. Finalize debut public release checklist.
+- **Active Model**: `google/gemini-3.7-flash` (Google Key 2/8, Medium Thinking)
+- **Main branch HEAD**: `0fdd9a87` (all work pushed to origin/main)
+- **The 7 Canonical Breakthroughs Anchored This Session**:
+  1. `docs/strategy/EMERGENT_TECHNOLOGY_PROTOCOL_20260829.md` & `EMERGENT_TECH_REGISTRY_20260829.md` (E-001 projection.md, E-002 DB Forensics, E-003 Compaction Watcher)
+  2. `docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL_20260829.md` (§12 Fuzzy vs Etched, Zero-Write STDOUT reader)
+  3. `docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md` (CQRS Event Sourcing for AI, In-Stream Tags)
+  4. `docs/strategy/KEY_ROTATION_CACHE_AND_SOVEREIGN_POLICY_20260829.md` (KV-Cache Physics, Session-Pinning, Sharded Mapping)
+  5. `docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md` (8-Account Worker Fleet: 12k RPD / 360k RPM / $0.00)
+  6. `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` (10,000-Hour Master Manual)
+  7. `data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md` (4-Week Search Hardening Sprint, Crawl4AI T3 Primary)
+
+## Key Technical Invariants (Must Survive Compaction)
+- **Compaction Fusion**: `projection.md` is strictly capped at ≤100 lines to fit within OpenCode's 4,096 token output budget.
+- **Cache Physics**: Interactive sessions are pinned to 1 Google Account for 95%+ KV-Cache hit rates; background workers use dedicated sharded accounts.
+- **Zero-Write Paradigm**: 100% of generated content is already in `opencode.db`. Never re-write forensic extracts to disk. Use `part:prt_xxx` references.
+- **Search Bandwidth**: 28,000+ free monthly searches + Crawl4AI local T3 spider + SearXNG.
+- **Session Taxonomy**: EIS (Interactive Resumable), NES (Autonomous Batch), SPT (Ephemeral One-Shot).
+
+## Next Moves (Post-Compaction)
+1. **Sprint SEARCH-ECOSYSTEM-01 Week 1**: Jem-EIS executes SearXNG diagnosis, MultiKey Exa rate-limiting, Crawl4AI deployment.
+2. **Researcher-EIS Quality Harness**: Build North Star "First-Page Satisfaction" probe and citation verification.
+3. **Local Ore Mining**: Deploy `scripts/mine_historical_ore.py` in `/dev/shm` RAM tmpfs over the 20GB SQLite database.
+4. **Public Debut Finalization**: `release/debut` is green, verified, and completely purged of vault substrate.
 
 ## Work State
 ### Completed

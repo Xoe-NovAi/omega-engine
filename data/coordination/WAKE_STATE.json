@@ -56,7 +56,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-29T16:15:00Z",
+  "updated": "2026-08-29T22:15:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -743,6 +743,37 @@
       "The Great Transmutation Pipeline for 20GB+ SQLite & Multi-Account ore",
       "Intent-Based Search Routing (SSP-V3) with Crawl4AI T3 Primary",
       "6-Month Frontier Evolutionary Horizon"
+    ]
+  },
+  "grand_synthesis_pre_compaction_v1_5": {
+    "timestamp": "2026-08-29T22:15:00Z",
+    "status": "PRE_COMPACTION_SYNTHESIS_COMPLETE",
+    "active_model": "google/gemini-3.7-flash",
+    "google_account": "Key 2/8 (Medium Thinking)",
+    "git_head": "0fdd9a87",
+    "projection_anchor": "data/coordination/anchored_summary/kali/projection.md (v1.5.0)",
+    "canonical_documents": [
+      "docs/strategy/EMERGENT_TECHNOLOGY_PROTOCOL_20260829.md",
+      "data/coordination/EMERGENT_TECH_REGISTRY_20260829.md",
+      "docs/strategy/OPENCODE_DB_FORENSICS_PROTOCOL_20260829.md",
+      "docs/strategy/COMPACTION_WATCHER_PROTOCOL_20260829.md",
+      "docs/strategy/ZERO_WRITE_DATABASE_NATIVE_COGNITION_20260829.md",
+      "docs/strategy/KEY_ROTATION_CACHE_AND_SOVEREIGN_POLICY_20260829.md",
+      "docs/strategy/GEMINI_MULTI_ACCOUNT_WORKER_SPEC_20260829.md",
+      "docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md",
+      "data/coordination/SEARCH_ECOSYSTEM_01_SPRINT_20260829.md"
+    ],
+    "ratified_taxonomies": {
+      "EIS": "Expert Interactive Session (Master Resumable)",
+      "NES": "Non-interactive Expert Session (Autonomous Batch)",
+      "SPT": "Spawned Task (Ephemeral One-Shot)"
+    },
+    "core_breakthroughs": [
+      "Prospective-Retrospective Compaction Fusion (defeats 17% constraint loss)",
+      "CQRS Database-Native Cognition (100% of data is already on disk in SQLite)",
+      "KV-Cache Session Pinning (95%+ cache hits) + Sharded Background Worker Accounts",
+      "Infinite Search Matrix (28,000+ free monthly searches + Crawl4AI T3 Primary)",
+      "Fuzzy vs Etched Cognitive Architecture (Two-Tier Multi-Model Review)"
     ]
   }
 }
