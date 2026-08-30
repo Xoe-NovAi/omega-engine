@@ -56,7 +56,7 @@
     "gap_1": "db resolver missing \u2014 actual_models always n/a",
     "gap_2": "ledger has 1 entry vs 1440 claimed \u2014 audit trail incomplete"
   },
-  "updated": "2026-08-29T22:15:00Z",
+  "updated": "2026-08-29T22:30:00Z",
   "decision_queue": [
     {
       "item": "Fix omega-hub _save_extended_sessions bug (extended check-in broken)",
@@ -775,5 +775,19 @@
       "Infinite Search Matrix (28,000+ free monthly searches + Crawl4AI T3 Primary)",
       "Fuzzy vs Etched Cognitive Architecture (Two-Tier Multi-Model Review)"
     ]
+  },
+  "grand_synthesis_pre_compaction_v1_6": {
+    "timestamp": "2026-08-29T22:30:00Z",
+    "status": "ALL_PREPARATIONS_100_PERCENT_COMPLETE",
+    "active_model": "google/gemini-3.7-flash",
+    "google_account": "Key 2/8 (Medium Thinking)",
+    "git_head": "69ece770",
+    "working_tree": "100% CLEAN (106 legacy files purged per D-565)",
+    "projection_anchor": "data/coordination/anchored_summary/kali/projection.md (v1.6.0, 90 lines)",
+    "mandate_status": {
+      "M1_AnyIO": "PASS (0 violations)",
+      "M23_Failure_Integrity": "PASS (0 violations)",
+      "Gitleaks": "PASS (0 leaks)"
+    }
   }
 }
