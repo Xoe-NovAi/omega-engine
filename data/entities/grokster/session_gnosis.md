@@ -1,10 +1,10 @@
-# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v12 FINAL (2026-08-30, supersedes v11 and all prior)
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v13 FINAL (2026-08-30, supersedes v12 and all prior)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: gemini-3.7-flash (opencode, strategic switch)
 **Channel**: opencode | **Entity**: grokster (Cross-Platform Expertise Specialist)
-**Date**: 2026-08-30 ~04:20 UTC | **Sprint**: PUBLIC-DEBUT-01
+**Date**: 2026-08-30 ~07:00 UTC | **Sprint**: PUBLIC-DEBUT-01
 
 > **READ THIS FIRST on context loss.** This is the continuity lifeline per M15.
-> Prior anchors (v1–v11) retained at bottom for lineage.
+> Prior anchors (v1–v12) retained at bottom for lineage.
 
 ---
 
@@ -12,7 +12,7 @@
 
 **Today's arc (2026-08-28 → 2026-08-30)**: 40+ distinct work streams completed across multiple compactions. The session transitioned from core engine hardening into an **alchemical mining of the Antigravity OAuth secret redaction incident**, yielding a complete immune architecture upgrade for the Omega Engine.
 
-**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE**:
+**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE + DASHBOARD SHIPPED**:
 
 ### 1. The 5 Golden Artifacts (5,000+ lines of temple-grade deliverables)
 - ✅ **Researcher**: `R_RESEARCHER_THIRD_PARTY_SECRETS_TRACEABILITY_20260829.md` (2,460 lines, `dcb85151`) — 3rd-party code isolation, secret management, traceability manual + `data/secrets-public.toml` allowlist schema.
@@ -25,13 +25,22 @@
 ### 2. The Three New Sovereign Mandates (M33-M35) — Proposed for Ratification
 - ✅ **M33 (Anti-Truncation Stream Gate)**: Subagents generating heavy reports must be probed with sentinel prompts (`"STREAM_EXHAUSTED"`) to prevent the LLM "Completion Illusion" from truncating unwritten findings.
 - ✅ **M34 (Multi-Agent Co-Interruption Accounting)**: Global cancellations (`Esc x2`) that abort multiple parallel subagents must trigger full co-resumption tracking across all in-flight session IDs.
-- ✅ **M35 (Third-Party Boundary & Public Secret Exemption)**: Monorepo isolation for third-party forks (npm package installation vs git-tracked workspace source trees) + public client secret exemptions via `data/secrets-public.toml`.
+- ✅ **M35 (Third-Party Boundary & Public Secret Exemption)**: Monorepo isolation for third-party forks (npm package installation vs git-tracked workspace source trees) + public client secret exemptions.
 
-### 3. Soul Kernel Evolution
+### 3. Provider Benchmark Dashboard — Makefile Targets Shipped
+- ✅ **`a8c9b9ac` Makefile: Add provider benchmark dashboard targets (diurnal)** — 5 new targets:
+  - `make dashboard` — Live terminal dashboard (refresh 2s, Ctrl+C to exit)
+  - `make dashboard-once` — Single snapshot of provider benchmark
+  - `make probe-models` — Probe free model availability/latency
+  - `make probe-network` — Probe network latency (gateway, DNS, OpenRouter)
+  - `make probe-antigravity` — Probe Antigravity account quotas
+- ✅ **Current benchmark**: `minimax_m27` and `minimax_m3` at 100% success, `openrouter_free_router` at 85%; `glm52`/`gemma4_*` at 0% (down). M3 cache economics: 83.3% hit rate, $0.00 real cost.
+
+### 4. Soul Kernel Evolution
 - ✅ **L3-InterruptionSovereigntyAndCoResumption** staged in `data/entities/grokster/proposed_lessons.yaml` (confidence: 0.99).
-- ✅ **Gnosis Anchor v12** locked (this file).
+- ✅ **Gnosis Anchor v13** locked (this file).
 
-### 4. Root Cause & Remediation
+### 5. Root Cause & Remediation
 - ✅ **Root Cause**: Automated secret scrubber replaced Google OAuth public client secret (`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`) in `opencode-antigravity-auth/src/constants.ts` with placeholder `"GOCSPX-***REDACTED-ROTATED***"`, breaking OAuth for all users.
 - ✅ **Remediation**: Purge `opencode-antigravity-auth/` workspace tree; install cleanly via npm; add public client secret to `data/secrets-public.toml` allowlist.
 
@@ -85,8 +94,8 @@
 ## §0.4 — KEY FILES (for rehydration)
 
 ### Specs & Research (20+ reports, 16,000+ lines)
-- `data/coordination/R_RESEARCHER_THIRD_PARTY_SECRETS_TRACEABILITY_20260829.md` (2,460L) — **LATEST**
-- `data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md` (1,613L) — **LATEST**
+- `data/coordination/R_RESEARCHER_THIRD_PARTY_SECRETS_TRACEABILITY_20260829.md` (2,460L)
+- `data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md` (1,613L)
 - `data/coordination/GROKSTER_META_FORENSIC_ANALYSIS_20260829.md` (626L)
 - `data/coordination/R_RESEARCHER_DB_VS_MD_FORENSICS_20260830.md` (250L)
 - `data/coordination/BRIEFING_ALCHEMICAL_PIVOT_OAUTH_INCIDENT_20260830.md` (125L)
@@ -94,42 +103,41 @@
 - `data/coordination/R_RESEARCHER_GOLDEN_SET_RAGAS_768DIM_20260829.md` (1,316L)
 - `data/coordination/JEM_SQLITE_VEC_RECALL_HARDENING_20260829.md` (1,181L)
 - `data/coordination/R_RESEARCHER_SQLITE_VEC_HARDENING_20260829.md` (1,326L)
-- `data/coordination/R_RESEARCHER_GOLDEN_SET_RAGAS_768DIM_20260829.md` (1,316L)
-- `data/coordination/R_RESEARCHER_SQLITE_VEC_HARDENING_20260829.md` (1,326L)
 - `data/coordination/R_RESEARCHER_BINARY_QUANTIZATION_20260829.md` (717L)
 - `data/coordination/R_RESEARCHER_RAG_RERANKING_20260829.md` (839L)
 - `data/coordination/R_RESEARCHER_OTEL_VECTOR_20260829.md` (675L)
 - `data/coordination/R_RESEARCHER_RAGAS_20260829.md` (752L)
-- `data/coordination/R_RESEARCHER_DOC_HARDENING_20260829.md` (20KB)
-- `data/coordination/R_RESEARCHER_SPATIAL_VECTORS_VR_20260829.md` (15KB)
-- `data/coordination/R_RESEARCHER_SQLITE_VEC_GAPS_20260828.md` (23KB)
-- `data/coordination/CARMACK_*_SPEC_20260829.md` (4 specs, ~1,400L)
-- `data/coordination/MAAT_*_20260829.md` (5 reports, 3,552L)
-- `data/coordination/ROC_*_20260829.md` (5 reports, 1,554L)
-- `data/coordination/CLINE_*_20260828.md` (2 docs, ~1,500L)
+- `data/coordination/CARMACK_*_SPEC_20260829.md` (4 specs)
+- `data/coordination/MAAT_*_20260829.md` (5 reports)
+- `data/coordination/ROC_*_20260829.md` (5 reports)
+- `data/coordination/CLINE_*_20260828.md` (2 docs)
 - `data/coordination/GROKSTER_TO_KALI_HANDOFF_20260828.md` (320L)
-- `data/coordination/ROC_DOC_ALIGNMENT_AUDIT_20260828.md` (25.8KB)
-- `data/coordination/RESEARCHER_VISION_PATH_FORWARD_20260828.md` (411L)
+- `data/coordination/CLINE_FULL_REVIEW_ROLLUP_20260828.md` (306L)
 
 ### Code (Temple-Grade P0s)
-- `src/omega/memory/sqlite_vec_adapter_optimized.py` (877L) — Optimized adapter
-- `src/omega/memory/spatial_graph.py` (250L) — Spatial graph
+- `src/omega/memory/sqlite_vec_adapter_optimized.py` (877L)
+- `src/omega/memory/spatial_graph.py` (250L)
 - `src/omega/memory/embedding_circuit_breaker.py` (207L) — P0-1
 - `src/omega/memory/vector_versioning.py` (269L) — P0-2
 - `src/omega/memory/key_manager.py` (123L) — P0-4
-- `src/omega/infra/sqlite_policy.py` (modified) — SQLCipher at canonical choke point
-- `config/litestream.yml` (36L) + `config/systemd/omega-litestream.service` (70L) — P0-3
+- `src/omega/infra/sqlite_policy.py` (modified) — SQLCipher
+- `config/litestream.yml` + `config/systemd/omega-litestream.service` — P0-3
 - `scripts/serve_native_gguf.sh` — Llama-cpp server launcher
 - `scripts/godot_spatial_bridge.py` — Godot VR bridge
 - `scripts/benchmark_sqlite_vec.py` — Benchmark suite
-- `scripts/setup_litestream.sh` + `restore_litestream.sh` + `verify_litestream.sh` — P0-3
-- `scripts/migrate_to_sqlcipher.py` (288L) — P0-4 migration
+- `scripts/benchmark_dashboard.py` — **Provider benchmark dashboard (live)**
+- `scripts/dispatch_guard.py` — Pre-dispatch guardrail
+
+### Makefile Targets (NEW in v13)
+- `make dashboard` — Live provider benchmark dashboard
+- `make dashboard-once` — Single snapshot
+- `make probe-models` / `make probe-network` / `make probe-antigravity`
 
 ### Tests (31/31 passing)
-- `tests/unit/test_circuit_breaker.py` (213L, 6 tests) — P0-1
-- `tests/unit/test_vector_versioning.py` (137L, 7 tests) — P0-2
-- `tests/unit/test_key_manager.py` (151L, 6 tests) — P0-4
-- `tests/unit/test_litestream_config.py` (145L, 12 tests) — P0-3
+- `tests/unit/test_circuit_breaker.py` (6 tests) — P0-1
+- `tests/unit/test_vector_versioning.py` (7 tests) — P0-2
+- `tests/unit/test_key_manager.py` (6 tests) — P0-4
+- `tests/unit/test_litestream_config.py` (12 tests) — P0-3
 
 ### Documentation
 - `OMEGA_ENGINE.md` — v3.8.0, 27 mandates
@@ -141,93 +149,104 @@
 
 ---
 
-## §0.5 — COMMITS THIS CAMPAIGN (chronological)
+## §0.5 — COMMITS THIS CAMPAIGN (chronological, latest first)
 
 ```
+a8c9b9ac Makefile: Add provider benchmark dashboard targets (diurnal)
+c0cfb597 docs(meta-review): Jem EIS 3-report synthesis and adversarial cross-validation
+dd6c3786 docs(forensic): Jem EIS adversarial review of Grokster's M33-M35 + L3
+1e614946 gnosis-v12: FINAL COMPACTION ANCHOR — Alchemical Goldmine complete
 ea552545 docs(sprint): Kali Briefing on the Alchemical Goldmine campaign
 598df5d9 docs(research): DB vs MD Forensics Efficiency Study
-bceff2b1 gnosis-v11: Alchemical Pivot briefing + L3-InterruptionSovereignty + M33-M35
+bceff2b1 gnosis-v11: Alchemical Pivot briefing + L3-InterruptionSovereignty
 7b6081ed docs(forensic): Jem's complete counter-forensic report (1,613 lines)
-c6680bf3 docs(meta-forensic): Complete analysis of OAuth incident + subagent orchestration
+c6680bf3 docs(meta-forensic): Complete analysis of OAuth incident
 dcb85151 docs(research): Third-party code + secrets + traceability (2,460 lines)
+d46a8fbb handoff(kali): Final pre-compaction report
+7a184b06 docs(manual+review): Top 5 ROI implementation manual + code review
+f700df76 gnosis-v10: PRE-COMPACTION ANCHOR
+b0209f91 docs(research): Golden set + RAGAS + 768-dim model selection
+4e2ffa55 docs(research): Deep hardening research — Jem + Researcher
 1b32de41 feat(temple-grade): Complete P0-1..4 with 31/31 tests passing
-f5d5ab27 feat(temple-grade): P0-1..4 hardening — circuit breaker, vector versioning, Litestream, SQLCipher
-6bbad62f docs(temple-grade): Deep research by Researcher, Roc, Ma'at — 14 reports
-53643b5e docs(research): Deep research on remaining gaps & opportunities
+f5d5ab27 feat(temple-grade): P0-1..4 hardening
+6bbad62f docs(temple-grade): Deep research by Researcher, Roc, Ma'at
+53643b5e docs(research): Deep research on remaining gaps
 7efa46dc docs(coordination): Add missing research + handoff + refactoring docs
-29eceab6 feat(alpha): Complete sqlite-vec optimization + spatial VR + doc hardening
-1ef724df feat(infra): Complete llama-cpp server + sqlite-vec optimization + ingestion spec + model fleet
+29eceab6 feat(alpha): Complete sqlite-vec optimization + spatial VR
+1ef724df feat(infra): Complete llama-cpp server + sqlite-vec + ingestion + fleet
 ```
 
-**14 new commits this campaign**.
+**22+ new commits this campaign**.
 
 ---
 
 ## §0.6 — MISTAKES I MADE (for M11 distillation)
 
-1. **Spawned new sessions on transient 402 errors** — Architect corrected me. Should have resumed with "Continue."
+1. **Spawned new sessions on transient 402 errors** — Architect corrected. Should have resumed with "Continue."
 2. **Dumbed down prompts because of 402 error** — Got called out. The work is the work.
 3. **3 turns chasing display artifacts (qwen3-1.7b)** — Should have checked `task.ts:202` first.
 4. **Missed the Cline rollup deliverable** — Read handoff but not the rollup.
-5. **Made untested code change to task.ts** — Committed to sub-repo that isn't built from local source.
-6. **Forgot Jem when interrupted** — `Esc x2` killed both Researcher and Jem; I only resumed Researcher.
-7. **Assumed completion on graceful footer** — Researcher wrote 21KB to chat instead of file; Jem had 1,017 lines + footer but was mid-stream.
+5. **Made untested code change to task.ts** — Committed to sub-repo not built from local source.
+6. **Forgot Jem when interrupted** — `Esc x2` killed both Researcher and Jem; only resumed Researcher.
+7. **Assumed completion on graceful footer** — Researcher wrote 21KB to chat; Jem had 1,017 lines + footer but was mid-stream.
 8. **Didn't verify file existence after subagent completion** — Assumed `state=completed` meant deliverable written.
-9. **Spawned new Researcher instead of resuming** — When model switched, I should have used "Continue" on existing session.
-10. **Didn't track parallel subagent cohort** — No `ACTIVE_SUBAGENTS.json` tracking for co-resumption.
+9. **Spawned new Researcher instead of resuming** — When model switched, should have used "Continue."
+10. **Didn't track parallel subagent cohort** — No `ACTIVE_SUBAGENTS.json` for co-resumption.
 
 ---
 
 ## §1 — RECOVERY INSTRUCTIONS (post-compaction)
 
-1. **READ THIS FILE FIRST** (v12 supersedes v11)
+1. **READ THIS FILE FIRST** (v13 supersedes v12)
 2. Read `data/coordination/KALI_BRIEFING_ALCHEMICAL_GOLDMINE_20260830.md` — The 5-ticket execution roadmap
 3. Read `data/coordination/BRIEFING_ALCHEMICAL_PIVOT_OAUTH_INCIDENT_20260830.md` — The Architect's philosophy
 4. Read `data/coordination/R_RESEARCHER_DB_VS_MD_FORENSICS_20260830.md` — The Cognitive Routing Rule
 5. Read `data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md` — The 7-Signal Probe Diagnostic
 6. **FIRST ACTION**: Execute Kali's P0 tickets — `CI-BRIEF-001`, `VAULT-ALLOWLIST-001`, `ORCH-RESUME-001`
-7. Resume from §0.1 (Critical Session Identifiers)
+7. **RUN** `make dashboard` to view the live provider benchmark
+8. Resume from §0.1 (Critical Session Identifiers)
 
 ---
 
-*⬡ OMEGA ⬡ GROKSTER ⬡ GNOSIS ANCHOR v12 FINAL ⬡ 2026-08-30 ~04:20 UTC ⬡ ses_fe8cf0b39ffeL3L8eaMEj3CW9H ⬡ PRE-COMPACTION-READY*
+*⬡ OMEGA ⬡ GROKSTER ⬡ GNOSIS ANCHOR v13 FINAL ⬡ 2026-08-30 ~07:00 UTC ⬡ ses_fe8cf0b39ffeL3L8eaMEj3CW9H ⬡ PRE-COMPACTION-READY*
 
-**The Alchemical Goldmine is mined. The 5 artifacts are committed. The 3 mandates are proposed. The 5 tickets are mapped. The Cathedral's immune system is upgraded. Ready for compaction.**
+**The Alchemical Goldmine is mined. The 5 artifacts are committed. The 3 mandates are proposed. The 5 tickets are mapped. The dashboard is shipped. The Cathedral's immune system is upgraded. Ready for compaction.**
 
 ---
 
 # PRIOR ANCHORS (superseded, retained for lineage)
 
-## v11 (2026-08-30)
+## v12 (2026-08-30)
 - Alchemical Pivot briefing + L3-InterruptionSovereignty + M33-M35 mandates
 - Session gnosis updated to v11 on Gemini 3.7 Flash
+- 14 commits this campaign
 
-## v10 (2026-08-29)
-- 30+ accomplishments, 18 research reports (16,000+ lines), 9 commits
+## v11 (2026-08-30)
+- 30+ accomplishments, 18 research reports (16,000+ lines)
 - 768-dim winner is Qwen3-Embedding-0.6B
 - Temple-grade P0s complete (31/31 tests)
-- Next: implement Top 5 ROI moves
 
-## v9 (2026-08-29)
+## v10 (2026-08-29)
 - 11 work streams completed
 - Subagent model inheritance still NOT working (parked as V-1)
 
+## v9 (2026-08-29)
+- Subagent model inheritance investigation
+- Vault migration COMPLETE
+
 ## v8 (2026-08-28)
 - Full 11-workstream arc, corrected recursion findings
-- MISSING: the subagent model bug is STILL UNRESOLVED
+- Subagent model bug STILL UNRESOLVED
 
 ## v7 (2026-08-28)
 - Vault, Gemini, Cline architecture, 8-account fleet, 2 L3 axioms
-- MISSING: Gemini CLI era origins, recursive sovereignty, corrected recursion
 
 ## v6 (2026-08-27)
 - WAVE 2 KALCOLLAB CLOSED
 - Ox Alpha = Z.ai GLM-5.3-Flash
-- Specialist Fleet: cline, antigravity, copilot, Roc, Carmack
 
 ## v5 (2026-08-27 early)
-- Massive research sprint complete
-- 5 research reports
+- Massive research sprint complete, 5 research reports
 
 ## v4 (2026-08-26 night)
 - Ox Alpha era closed
@@ -236,8 +255,7 @@ f5d5ab27 feat(temple-grade): P0-1..4 hardening — circuit breaker, vector versi
 - Remediation plan FINAL v3.0
 
 ## v1 (2026-08-08)
-- Comparative analysis + meditation complete
-- 8 L3 principles staged
+- Comparative analysis + meditation complete, 8 L3 principles staged
 - `data/coordination/R_RESEARCHER_SQLITE_VEC_HARDENING_20260829.md` (1,326L)
 - `data/coordination/R_RESEARCHER_BINARY_QUANTIZATION_20260829.md` (717L)
 - `data/coordination/R_RESEARCHER_RAG_RERANKING_20260829.md` (839L)
