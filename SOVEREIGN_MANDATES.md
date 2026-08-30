@@ -237,6 +237,39 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
   - CI gate: `make temple-grade` + `make test` include `check-tracking-state`
   - Relational integrity: any R-ID referenced in `ACTIVE_SPRINT.json` MUST exist in `GAP_REGISTRY.json`
 
+### 28. Third-Party Boundary & Public Secret Exemption (M35 — NEW — 2026-08-30)
+- **Mandate**: All third-party code MUST be managed via a controlled boundary; public OAuth client secrets (per RFC 6749 §2.1, RFC 8252 §8) MUST be catalogued in `data/secrets-public.toml` with primary-source verification.
+- **Constraint**:
+  1. **SPDX/REUSE Enforcement**: All third-party code MUST carry `SPDX-License-Identifier` in file header OR entry in `.reuse/dep5` (or `REUSE.toml` per REUSE Specification v3.3, 2024-11-14).
+  2. **Immediate Remediation**: Any placeholder like `***REDACTED-ROTATED***` MUST be restored from git HEAD immediately, verified as public per RFC 8252, and added to `data/secrets-public.toml`.
+  3. **Allowlist Recovery Procedure**: `data/secrets-public.toml` MUST be committed to git, reviewed on every PR, versioned. The `scripts/check_secrets.py` scanner MUST fail-closed if the allowlist is missing/unparseable.
+  4. **Primary-Source Citation**: Every `[[secret]]` entry MUST cite a primary source URL (vendor's official docs, vendor's published source on GitHub). The scanner requires `primary_source_url` and `verified_by` fields.
+  5. **Coordination Historical Record Exception**: Documents under `data/coordination/**`, `data/entities/*/proposed_lessons.yaml`, etc. MAY reference public secrets as part of historical record, tagged with `#[historical-record]`. This exception is the scanner's recognition of forensic/incident documentation.
+  6. **M14 Cross-Reference**: M35 is a NARROW exception to M14 for public client secrets only. All other third-party code MUST comply with M14 (including SPDX headers). Pinned submodules allowed with heritage tag.
+  7. **Heritage Submodule Exception**: Pinned submodules (git submodule with SHA) are allowed with a heritage tag. Runtime-loaded local plugins require a discovery sweep.
+  8. **Fail-Closed Enforcement**: `scripts/check_secrets.py` MUST exit 1 if:
+     - `data/secrets-public.toml` is missing or unparseable
+     - A `[[secret]]` entry is missing `client_secret`, `primary_source_url`, or `verified_by`
+     - A secret pattern (GOCSPX-, AKIA, ghp_, sk-, etc.) is found in tracked files without an allowlist match
+- **Pattern**:
+  - `python3 scripts/check_secrets.py` (full scan)
+  - `python3 scripts/check_secrets.py --staged` (pre-commit)
+  - `python3 scripts/check_secrets.py --allowlist-lint` (validate TOML only)
+  - `python3 scripts/check_secrets.py --json` (CI output)
+  - Pre-commit hook: `python3 scripts/check_secrets.py --staged`
+- **RFC References**:
+  - RFC 6749 §2.1 (Client Types: confidential vs public)
+  - RFC 6749 §2.3.1 (Client Password Authentication — public clients)
+  - RFC 8252 §8.4-§8.5 (Native Apps — public client classification, secrets not confidential)
+  - REUSE Specification v3.3, 2024-11-14 (https://reuse.software/spec-3.3)
+  - SPDX 2.3 (https://spdx.org/specifications)
+- **Reason**: OAuth public client secrets (GOCSPX-, native app client_secrets) are PUBLIC BY DESIGN per RFC 8252. Secret scanners that treat them as confidential break OAuth for all users. The threat model of a leaked public client_secret is QUOTA THEFT, not data breach. Per Jem forensic §1.3.5: the redaction tool had no concept of "public client secret" nuance and broke Antigravity OAuth for all engine users.
+- **Enforcement**:
+  - Pre-commit hook: `python3 scripts/check_secrets.py --staged`
+  - CI gate: `.github/workflows/secrets.yml` runs on every push/PR
+  - Allowlist file is tracked in git; changes require PR review
+- **Origin**: Alchemical Pivot Incident (2026-08-30, `BRIEFING_ALCHEMICAL_PIVOT_OAUTH_INCIDENT_20260830.md`). 5-EIS meta-review approved by Researcher, Jem, Lilith, Sophia, and Roc. Blocker remediation: VAULT-ALLOWLIST-001 (P0).
+
 ---
 
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**
