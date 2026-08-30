@@ -17,7 +17,7 @@ make dashboard-once
 # Run the in-process adversarial suite (53 tests)
 make dashboard-self-test
 
-# Run the pytest unit tests (129 tests)
+# Run the pytest unit tests (128 tests)
 make dashboard-test
 
 # Combined CI gate (--self-test + pytest + smoke render)
@@ -249,7 +249,7 @@ per-mandate attestation. Summary:
 
 ### Quick (local, <5s)
 ```bash
-make dashboard-test        # 129 pytest unit tests
+make dashboard-test        # 128 pytest unit tests
 make dashboard-self-test   # 53 in-process adversarial tests
 make dashboard-ci          # both + --once smoke render
 ```
@@ -258,7 +258,7 @@ make dashboard-ci          # both + --once smoke render
 The `.github/workflows/dashboard-test.yml` workflow runs:
 1. `python3 scripts/benchmark_dashboard.py --once --no-clear`
 2. `python3 scripts/benchmark_dashboard.py --self-test` (must show TOTAL: 53 PASS: 53)
-3. `pytest tests/unit/test_benchmark_dashboard.py -v` (must show 129 passed)
+3. `pytest tests/unit/test_benchmark_dashboard.py -v` (must show 128 passed)
 4. JSON schema smoke (top-level keys: version/timestamp/freshness/models/filters)
 5. CSV header check (16 columns, exact match)
 6. Determinism check (`scripts/check_dashboard_determinism.py`)
@@ -272,7 +272,7 @@ The `.github/workflows/dashboard-test.yml` workflow runs:
 | R1 (carmack) | 22 bug fixes: ANSI alignment, deque(maxlen=20), M23 hardening | `8a475d80` |
 | R2 (researcher) | v3.1: date-glob, per-window success, alert debounce, file cache, real per-key | `0b864abe` |
 | R3 (jem) | v3.2: 6 adversarial bug fixes, 2 defenses (size cache + bounded memory), --self-test | `2577e050` |
-| R4 (maat) | v3.2-ship: 129 unit tests, CI gate, Makefile polish, mandate block, this doc | (this round) |
+| R4 (maat) | v3.2-ship: 128 unit tests, CI gate, Makefile polish, mandate block, this doc | (this round) |
 | R5 (lilith, deferred) | Runtime hardening + observability | TBD |
 
 ---
@@ -311,7 +311,7 @@ The `.github/workflows/dashboard-test.yml` workflow runs:
 2. Update `ModelStats` dataclass if new fields are added; also update
    `to_dict()` (JSON/CSV export).
 3. The `--json` schema is additive-only — never remove or rename fields.
-4. Re-run `make dashboard-test` to verify all 129 tests still pass.
+4. Re-run `make dashboard-test` to verify all 128 tests still pass.
 5. Re-run `make dashboard-ci` to verify the smoke render still works.
 
 ### Performance

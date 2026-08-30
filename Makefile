@@ -42,7 +42,7 @@ help:
 	@echo "  dashboard             Live terminal dashboard (refresh 2s, Ctrl+C to exit)"
 	@echo "  dashboard-once        Single snapshot of provider benchmark"
 	@echo "  dashboard-self-test   Run 53 adversarial in-process tests (--self-test)"
-	@echo "  dashboard-test        Run 129 pytest unit tests (test_benchmark_dashboard.py)"
+	@echo "  dashboard-test        Run 128 pytest unit tests (test_benchmark_dashboard.py)"
 	@echo "  dashboard-ci          Run --once + --self-test + pytest (for CI gate)"
 	@echo "  probe-models          Probe free model availability/latency"
 	@echo "  probe-network         Probe network latency (gateway, DNS, OpenRouter)"
@@ -218,10 +218,10 @@ dashboard-self-test:
 	@echo "$(YELLOW)Running benchmark_dashboard adversarial tests (53 cases)...$(NC)"
 	@$(PYTHON) scripts/benchmark_dashboard.py --self-test
 
-# R4 (maat): Run the pytest unit test suite (129 tests in <5s).
+# R4 (maat): Run the pytest unit test suite (128 tests in <5s).
 # Style mirrors tests/unit/test_circuit_breaker.py — pytest, no extra deps.
 dashboard-test:
-	@echo "$(YELLOW)Running benchmark_dashboard pytest suite (129 tests)...$(NC)"
+	@echo "$(YELLOW)Running benchmark_dashboard pytest suite (128 tests)...$(NC)"
 	@cd "$(CURDIR)" && $(PYTEST) tests/unit/test_benchmark_dashboard.py -v --tb=short -p no:cacheprovider --confcutdir=tests/unit
 
 # R4 (maat): Aggregate CI target. Runs --once (smoke), --self-test (53 tests),

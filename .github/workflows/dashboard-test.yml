@@ -5,7 +5,7 @@
 # Verifies scripts/benchmark_dashboard.py ship-readiness:
 #   - --once renders OK (smoke test for renderer)
 #   - --self-test passes (53 adversarial tests)
-#   - pytest tests/unit/test_benchmark_dashboard.py passes (129 unit tests)
+#   - pytest tests/unit/test_benchmark_dashboard.py passes (128 unit tests)
 #   - --json / --csv emit valid output
 #   - Determinism: schema stable across two runs
 #
@@ -53,7 +53,7 @@ jobs:
         run: |
           python3 scripts/benchmark_dashboard.py --self-test
 
-      - name: "Unit: pytest (129 tests)"
+      - name: "Unit: pytest (128 tests)"
         run: |
           cd "$(git rev-parse --show-toplevel)"
           python3 -m pytest tests/unit/test_benchmark_dashboard.py -v --tb=short -p no:cacheprovider --confcutdir=tests/unit
