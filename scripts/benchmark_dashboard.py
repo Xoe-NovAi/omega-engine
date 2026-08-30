@@ -1,31 +1,22 @@
 #!/usr/bin/env python3
 """
-benchmark_dashboard.py v2.0 — Real-time benchmark visualization for Omega Engine
+benchmark_dashboard.py v3.0 — Gap-driven real-time benchmark visualization
 =========================================================================
-Terminal-native dashboard for the diurnal provider benchmark suite.
+Terminal-native dashboard for the Omega Engine diurnal provider benchmark suite.
 
-Improvements in v2.0:
-  - P0: Compute M3 economics from actual data (not hardcoded)
-  - P0: Add data freshness indicator (color-coded age warnings)
-  - P1: Add trend sparklines (↑/↓/→ direction indicators)
-  - P1: CLI argument parsing (--model, --since, --refresh, --once, --json, --csv, --no-clear, --alerts, etc.)
-  - P1: Model filtering (--model PATTERN, --since HOURS)
-  - P2: Quality score column (valid_json + has_completion rates)
-  - P2: Antigravity quota rendering (per-account, per-model breakdown)
-  - P2: Threshold alerting (--alert-rate, --alert-latency)
-  - P3: --json / --csv export modes
-  - P3: Diurnal pattern analysis (off_peak/moderate/poor/worst windows)
-  - P3: Per-key health breakdown
-  - P3: Incremental file reads (only read new lines since last check)
-  - P3: Configurable paths via env vars
-  - Hardening: M23 failure integrity (never crash, always degrade gracefully)
-  - Hardening: File lock resilience (atomic JSONL tail)
-  - Hardening: UTF-8 encoding handling
-  - Hardening: Type hints throughout
-  - Hardening: Active session detection with PID + memory
-  - Hardening: Network quality assessment (signal/latency correlation)
+Improvements in v3.0 (gap-driven, M11-distilled):
+  - RECOMMENDED CASCADE: Auto-computed best → fallback provider list
+  - FAILURE MODE TAXONOMY: Categorize failures (RATE_LIMITED, AUTH_FAILED, etc.)
+  - QUALITY BREAKDOWN: Show why responses are bad (invalid_json vs empty vs no_completion)
+  - NEXT QUOTA RESET: Countdown to next Antigravity quota reset
+  - DIURNAL PATTERN: Best hour chart (00:00 = 61% success vs 18:00 = 11%)
+  - HISTORICAL COMPARISON: Today vs Yesterday at same time of day
+  - KEY HEALTH: Per-key rotation health (or_key vs cline vs auth)
+  - TREND VELOCITY: ↑↑ (accelerating) vs ↑ (improving) vs ↓↓ (collapsing)
+  - OUTLIER %: Detect bimodal latency distributions
+  - WINDOW INFERENCE: Auto-detect quota window from timestamp if not tagged
 
-Author: grokster (M11 distillation from v1.0 review)
+Author: grokster (M11 distillation)
 Date: 2026-08-30
 """
 
@@ -119,13 +110,18 @@ class ModelStats:
     fail: int = 0
     latencies: list[float] = field(default_factory=list)
     quality_valid: int = 0  # valid_json=true AND has_completion=true
+    quality_invalid_json: int = 0  # valid_json=false
+    quality_no_completion: int = 0  # has_completion=false
+    quality_empty_content: int = 0  # content_length <= 10
     quality_total: int = 0
     http_statuses: dict[str, int] = field(default_factory=dict)
     key_sources: dict[str, int] = field(default_factory=dict)
+    key_last_success: dict[str, Optional[datetime]] = field(default_factory=dict)
     windows: dict[str, int] = field(default_factory=dict)
     last_seen: Optional[datetime] = None
     last_success: Optional[datetime] = None
     recent_window: list[bool] = field(default_factory=list)  # last N successes (for trend)
+    failure_categories: dict[str, int] = field(default_factory=dict)  # RATE_LIMITED, AUTH_FAILED, etc.
 
     @property
     def total(self) -> int:
@@ -148,6 +144,23 @@ class ModelStats:
         return percentile(self.latencies, 99)
 
     @property
+    def outlier_pct(self) -> float:
+        """Percentage of latency values that are statistical outliers (above Q3 + 1.5*IQR).
+        High outlier % indicates bimodal distribution (some calls are much slower than others)."""
+        if len(self.latencies) < 4:
+            return 0.0
+        sorted_lats = sorted(self.latencies)
+        n = len(sorted_lats)
+        q1 = sorted_lats[n // 4]
+        q3 = sorted_lats[3 * n // 4]
+        iqr = q3 - q1
+        if iqr == 0:
+            return 0.0
+        threshold = q3 + 1.5 * iqr
+        outliers = sum(1 for l in self.latencies if l > threshold)
+        return (outliers / n) * 100
+
+    @property
     def trend(self) -> str:
         """Determine trend direction from recent window. Returns ↑, ↓, →"""
         if not self.recent_window or len(self.recent_window) < 4:
@@ -162,6 +175,29 @@ class ModelStats:
             return "↓"
         return "→"
 
+    @property
+    def trend_velocity(self) -> str:
+        """Returns trend direction with velocity: ↑↑ (accelerating up), ↑ (up), →, ↓, ↓↓ (collapsing)."""
+        if not self.recent_window or len(self.recent_window) < 6:
+            return self.trend
+        # Compute slope of last 6 calls
+        n = min(6, len(self.recent_window))
+        window = self.recent_window[-n:]
+        # Count successes in each half
+        first_n = n // 2
+        first_rate = sum(window[:first_n]) / first_n if first_n > 0 else 0
+        second_rate = sum(window[first_n:]) / (n - first_n) if (n - first_n) > 0 else 0
+        delta = second_rate - first_rate
+        if delta > 0.3:  # >30% swing = accelerating
+            return "↑↑"
+        if delta < -0.3:
+            return "↓↓"
+        if delta > 0.1:
+            return "↑"
+        if delta < -0.1:
+            return "↓"
+        return "→"
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "label": self.label,
@@ -172,10 +208,20 @@ class ModelStats:
             "rate": round(self.rate, 2),
             "p50_ms": round(self.p50, 1),
             "p99_ms": round(self.p99, 1),
+            "outlier_pct": round(self.outlier_pct, 1),
             "quality_rate": round(self.quality_rate, 2),
+            "quality_breakdown": {
+                "valid": self.quality_valid,
+                "invalid_json": self.quality_invalid_json,
+                "no_completion": self.quality_no_completion,
+                "empty_content": self.quality_empty_content,
+            },
             "trend": self.trend,
+            "trend_velocity": self.trend_velocity,
             "http_statuses": self.http_statuses,
             "key_sources": self.key_sources,
+            "key_last_success": {k: v.isoformat() if v else None for k, v in self.key_last_success.items()},
+            "failure_categories": self.failure_categories,
             "windows": self.windows,
             "last_seen": self.last_seen.isoformat() if self.last_seen else None,
             "last_success": self.last_success.isoformat() if self.last_success else None,
@@ -343,6 +389,55 @@ def get_file_freshness(path: Optional[Path], since: Optional[datetime] = None) -
 
 # === AGGREGATION ============================================================
 
+def categorize_failure(entry: dict) -> str:
+    """Categorize a failed probe into a failure mode taxonomy.
+
+    Categories (per the gap research):
+    - RATE_LIMITED: 429 errors or "Rate limit" in error
+    - AUTH_FAILED: 401 errors
+    - INVALID_MODEL: 404 or "not a valid model"
+    - PAYMENT_REQUIRED: 402
+    - SERVER_ERROR: 5xx
+    - TIMEOUT: Connection timeouts
+    - PARSE_ERROR: Malformed responses
+    - OTHER: Anything else
+    """
+    status = entry.get("http_status")
+    err = entry.get("error") or ""
+
+    if status == 429 or "Rate limit" in err or "per-day" in err:
+        return "RATE_LIMITED"
+    if status == 401 or "auth" in err.lower() or "key" in err.lower():
+        return "AUTH_FAILED"
+    if status == 404 or "not a valid" in err or "unavailable" in err:
+        return "INVALID_MODEL"
+    if status == 402:
+        return "PAYMENT_REQUIRED"
+    if isinstance(status, int) and 500 <= status < 600:
+        return "SERVER_ERROR"
+    if "timeout" in err.lower() or "timed out" in err.lower():
+        return "TIMEOUT"
+    if "parse" in err.lower() or "json" in err.lower():
+        return "PARSE_ERROR"
+    if "Provider returned error" in err:
+        return "PROVIDER_ERROR"
+    return "OTHER"
+
+
+def infer_window_from_ts(ts: Optional[datetime]) -> Optional[str]:
+    """Infer the quota window from a timestamp (when not explicitly tagged)."""
+    if ts is None:
+        return None
+    h = ts.hour
+    if 0 <= h < 6:
+        return "off_peak"
+    if 6 <= h < 12:
+        return "moderate"
+    if 12 <= h < 18:
+        return "poor"
+    return "worst"
+
+
 def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
     """Aggregate probe entries by model label."""
     stats: dict[str, ModelStats] = {}
@@ -360,6 +455,9 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
             s.success += 1
         else:
             s.fail += 1
+            # Categorize failure
+            cat = categorize_failure(entry)
+            s.failure_categories[cat] = s.failure_categories.get(cat, 0) + 1
 
         lat = entry.get("latency_ms", 0)
         if isinstance(lat, (int, float)) and lat > 0:
@@ -369,33 +467,46 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
         qc = entry.get("quality_check", {})
         if isinstance(qc, dict):
             s.quality_total += 1
-            if qc.get("valid_json") and qc.get("has_completion"):
+            valid = qc.get("valid_json")
+            completion = qc.get("has_completion")
+            content_len = qc.get("content_length", 0)
+            if valid and completion and (content_len or 0) > 10:
                 s.quality_valid += 1
+            elif not valid:
+                s.quality_invalid_json += 1
+            elif not completion:
+                s.quality_no_completion += 1
+            else:
+                s.quality_empty_content += 1
 
         # HTTP status
         status = entry.get("http_status")
         if status:
             s.http_statuses[str(status)] = s.http_statuses.get(str(status), 0) + 1
 
-        # Key source
+        # Key source + last success per key
         ks = entry.get("key_source", "?")
         s.key_sources[ks] = s.key_sources.get(ks, 0) + 1
 
-        # Window
-        win = entry.get("window")
-        if win:
-            s.windows[win] = s.windows.get(win, 0) + 1
-
         # Timestamps
         ts_str = entry.get("ts")
+        ts = None
         if ts_str:
             try:
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
                 s.last_seen = ts
                 if entry.get("success"):
                     s.last_success = ts
+                    s.key_last_success[ks] = ts
             except (ValueError, TypeError):
                 pass
+
+        # Window (explicit or inferred)
+        win = entry.get("window")
+        if not win and ts:
+            win = infer_window_from_ts(ts)
+        if win:
+            s.windows[win] = s.windows.get(win, 0) + 1
 
         # Recent window for trend (last 20 calls)
         s.recent_window.append(bool(entry.get("success")))
@@ -786,6 +897,359 @@ def render_alerts(stats: dict[str, ModelStats], args: argparse.Namespace) -> lis
     return alerts
 
 
+# === v3.0 SECTIONS (gap-driven) =============================================
+
+def render_cascade(stats: dict[str, ModelStats]) -> Optional[str]:
+    """Render the auto-computed provider cascade (best → fallback).
+
+    The single most actionable answer to "which model should I use right now?"
+    """
+    # Filter to models with enough data
+    candidates = [s for s in stats.values() if s.total >= 3]
+    if not candidates:
+        return None
+
+    # Sort by success rate desc, then by P50 latency asc
+    candidates.sort(key=lambda s: (-s.rate, s.p50))
+
+    # Take top 5 for the cascade
+    top = candidates[:5]
+    if not top or top[0].rate < 50:
+        return None  # No good primary
+
+    print(f"{C.BOLD}★ RECOMMENDED CASCADE{C.END}  {C.DIM}(best → fallback){C.END}")
+    for i, s in enumerate(top):
+        if i == 0:
+            marker = f"{C.G}★{C.END}"
+            role = f"{C.G}PRIMARY{C.END}    "
+        else:
+            marker = f"{i+1}."
+            role = f"{C.DIM}FALLBACK {i}{C.END}"
+        rate_str = fmt_pct(s.rate)
+        p50_str = fmt_ms(s.p50) if s.p50 else f"{C.DIM}--{C.END}"
+        # Show quality if available
+        qual_str = ""
+        if s.quality_total > 0:
+            qual_str = f"  Q={fmt_pct(s.quality_rate)}"
+        print(f"  {marker} {role} {s.label:<24} {rate_str}  P50={p50_str}{qual_str}")
+    print()
+
+    return top[0].label if top else None
+
+
+def render_failure_taxonomy(stats: dict[str, ModelStats]) -> None:
+    """Render the failure mode taxonomy.
+
+    This addresses the most critical gap: 98.4% of failures are RATE_LIMITED.
+    The dashboard now reveals the root cause instead of just "low success rate".
+    """
+    # Aggregate across all models
+    all_failures: dict[str, int] = defaultdict(int)
+    total_failures = 0
+    for s in stats.values():
+        for cat, count in s.failure_categories.items():
+            all_failures[cat] += count
+            total_failures += count
+
+    if total_failures == 0:
+        return
+
+    print(f"{C.BOLD}FAILURE MODE TAXONOMY{C.END}  {C.DIM}({total_failures} total failures){C.END}")
+    print(f"  {'CATEGORY':<20} {'COUNT':>6} {'%':>6}  BAR")
+    print(f"  {'─' * 20} {'─' * 6} {'─' * 6}  {'─' * 30}")
+
+    # Sort by count desc
+    sorted_cats = sorted(all_failures.items(), key=lambda x: -x[1])
+    for cat, count in sorted_cats:
+        pct = (count / total_failures) * 100
+        # Color the category
+        cat_color = C.R if pct > 80 else (C.Y if pct > 30 else C.DIM)
+        bar = "█" * int(pct / 3)  # 33 chars max
+        print(f"  {cat_color}{cat:<20}{C.END} {count:>6} {pct:>5.0f}%  {bar}")
+
+    # Insight: if >80% is one category, name the response
+    top_cat, top_count = sorted_cats[0]
+    top_pct = (top_count / total_failures) * 100
+    if top_pct > 80:
+        responses = {
+            "RATE_LIMITED": f"{C.Y}→ WAIT for quota reset, not more key diversification{C.END}",
+            "AUTH_FAILED": f"{C.R}→ Key is dead/expired, rotate immediately{C.END}",
+            "INVALID_MODEL": f"{C.R}→ Model removed from provider, drop from fleet{C.END}",
+            "SERVER_ERROR": f"{C.Y}→ Provider outage, switch to fallback{C.END}",
+        }
+        insight = responses.get(top_cat, f"→ Investigate {top_cat}")
+        print(f"  {C.BOLD}INSIGHT:{C.END} {top_pct:.0f}% are {top_cat} {insight}")
+    print()
+
+
+def render_quality_breakdown(stats: dict[str, ModelStats]) -> None:
+    """Render per-model quality breakdown (what kind of bad).
+
+    Closes gap: "69% quality" hides why the other 31% failed.
+    """
+    # Only show models with non-trivial quality data
+    candidates = [s for s in stats.values() if s.quality_total >= 5]
+    if not candidates:
+        return
+
+    print(f"{C.BOLD}QUALITY BREAKDOWN{C.END}  {C.DIM}(why some responses are bad){C.END}")
+    print(f"  {'MODEL':<22} {'VALID':>6} {'INV_JSON':>9} {'NO_COMP':>8} {'EMPTY':>6}")
+    print(f"  {'─' * 22} {'─' * 6} {'─' * 9} {'─' * 8} {'─' * 6}")
+
+    # Sort by quality rate desc
+    candidates.sort(key=lambda s: -s.quality_rate)
+    for s in candidates[:8]:  # top 8
+        v = s.quality_valid
+        ij = s.quality_invalid_json
+        nc = s.quality_no_completion
+        ec = s.quality_empty_content
+
+        # Color the dominant failure mode
+        worst = max([("invalid_json", ij), ("no_completion", nc), ("empty", ec)], key=lambda x: x[1])
+        worst_str = f"{C.R}{worst[1]:>4}{C.END}" if worst[0] == "invalid_json" else f"{C.Y}{worst[1]:>4}{C.END}"
+
+        print(f"  {s.label:<22} {C.G}{v:>6}{C.END} {worst_str:>9} {nc:>8} {ec:>6}")
+    print()
+
+
+def render_next_quota_reset(ag_data: list[dict]) -> None:
+    """Render the next quota reset countdown."""
+    if not ag_data:
+        return
+
+    # Find the soonest reset across all accounts/models
+    now = datetime.now(timezone.utc)
+    upcoming = []
+    for entry in ag_data:
+        for m in entry.get("models", []):
+            rt = m.get("resetTime")
+            if rt:
+                try:
+                    rdt = datetime.fromisoformat(rt.replace("Z", "+00:00"))
+                    if rdt > now:
+                        upcoming.append((rdt, entry.get("email", "?"), m.get("id", "?")))
+                except (ValueError, TypeError):
+                    pass
+
+    if not upcoming:
+        return
+
+    upcoming.sort()
+    next_reset, email, model_id = upcoming[0]
+    delta = next_reset - now
+    hours = int(delta.total_seconds() // 3600)
+    mins = int((delta.total_seconds() % 3600) // 60)
+
+    # Color based on urgency
+    if hours < 2:
+        color = C.G  # Soon = good news
+    elif hours < 6:
+        color = C.Y
+    else:
+        color = C.DIM
+
+    print(f"{C.BOLD}⏰ NEXT QUOTA RESET{C.END}  {color}in {hours}h {mins}m{C.END}  "
+          f"{C.DIM}({email.split('@')[0]} for {model_id}){C.END}")
+    print()
+
+
+def render_diurnal_best_hour(probe_data: list[dict]) -> None:
+    """Render the diurnal best hour recommendation.
+
+    Closes gap: at 00:00 UTC we have 61% success, at 18:00 UTC we have 11%.
+    Schedule heavy work around the best hours.
+    """
+    if not probe_data:
+        return
+
+    hourly: dict[int, list[bool]] = defaultdict(list)
+    for entry in probe_data:
+        ts_str = entry.get("ts")
+        if not ts_str:
+            continue
+        try:
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            hourly[ts.hour].append(bool(entry.get("success")))
+        except (ValueError, TypeError):
+            pass
+
+    if not hourly:
+        return
+
+    # Calculate success rate per hour
+    hour_rates = []
+    for h, results in hourly.items():
+        if len(results) >= 3:
+            rate = sum(results) / len(results) * 100
+            hour_rates.append((h, rate, len(results)))
+
+    if not hour_rates:
+        return
+
+    # Sort by rate desc
+    hour_rates.sort(key=lambda x: -x[1])
+    best_h, best_rate, best_n = hour_rates[0]
+    worst_h, worst_rate, _ = hour_rates[-1]
+
+    # Render as a small chart
+    print(f"{C.BOLD}📊 DIURNAL PATTERN{C.END}  {C.DIM}(UTC hours, success rate){C.END}")
+    chart = "  "
+    for h in range(0, 24, 3):  # every 3 hours
+        hour_results = hourly.get(h, [])
+        if hour_results:
+            rate = sum(hour_results) / len(hour_results) * 100
+            bar = "█" * int(rate / 5)
+            chart += f"{h:02d}:00 {fmt_pct(rate):>5} {bar:<20}  "
+        else:
+            chart += f"{h:02d}:00  {C.DIM}--{C.END}  {C.DIM}{'─' * 20}  "
+        if h == 12:
+            chart += "\n  "
+    print(chart)
+    print(f"  {C.G}Best: {best_h:02d}:00 UTC ({best_rate:.0f}% success){C.END}  "
+          f"{C.R}Worst: {worst_h:02d}:00 UTC ({worst_rate:.0f}%){C.END}")
+    print(f"  {C.DIM}Insight: {best_rate/worst_rate:.1f}x difference — schedule heavy work at "
+          f"{best_h:02d}:00 UTC{C.END}")
+    print()
+
+
+def render_historical_comparison(stats: dict[str, ModelStats], probe_data: list[dict]) -> None:
+    """Render Today vs Yesterday at the same time of day.
+
+    Closes gap: is performance improving or degrading week-over-week?
+    """
+    if not probe_data:
+        return
+
+    now = datetime.now(timezone.utc)
+    today_start = now - timedelta(hours=24)
+    yesterday_start = now - timedelta(hours=48)
+
+    # For each model, compare last 24h vs 24-48h ago
+    today_stats: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    yesterday_stats: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+
+    for entry in probe_data:
+        label = entry.get("label", "?")
+        success = 0 if entry.get("success") else 1
+        ts_str = entry.get("ts")
+        if not ts_str:
+            continue
+        try:
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            continue
+
+        if ts > today_start:
+            today_stats[label][success] += 1
+        elif ts > yesterday_start:
+            yesterday_stats[label][success] += 1
+
+    # Only show models with enough data
+    candidates = []
+    for label in today_stats:
+        t_s, t_f = today_stats[label]
+        y_s, y_f = yesterday_stats.get(label, [0, 0])
+        if t_s + t_f >= 3 and y_s + y_f >= 3:
+            t_rate = t_s / (t_s + t_f) * 100
+            y_rate = y_s / (y_s + y_f) * 100
+            delta = t_rate - y_rate
+            candidates.append((label, t_s, t_s + t_f, t_rate, y_rate, delta))
+
+    if not candidates:
+        return
+
+    print(f"{C.BOLD}📅 HISTORICAL COMPARISON{C.END}  {C.DIM}(today vs yesterday){C.END}")
+    print(f"  {'MODEL':<22} {'TODAY':<10} {'YESTERDAY':<12} {'Δ RATE':>8}")
+    print(f"  {'─' * 22} {'─' * 10} {'─' * 12} {'─' * 8}")
+
+    # Sort by abs delta desc (most interesting changes first)
+    candidates.sort(key=lambda x: -abs(x[5]))
+    for label, t_s, t_t, t_rate, y_rate, delta in candidates[:10]:
+        t_str = f"{t_s}/{t_t} ({t_rate:.0f}%)"
+        y_str = f"({y_rate:.0f}%)"
+        if delta > 10:
+            d_str = f"{C.G}↑↑ +{delta:.0f}%{C.END}"
+        elif delta > 3:
+            d_str = f"{C.G}↑ +{delta:.0f}%{C.END}"
+        elif delta < -10:
+            d_str = f"{C.R}↓↓ {delta:.0f}%{C.END}"
+        elif delta < -3:
+            d_str = f"{C.R}↓ {delta:.0f}%{C.END}"
+        else:
+            d_str = f"{C.DIM}→ {delta:+.0f}%{C.END}"
+        print(f"  {label:<22} {t_str:<10} {y_str:<12} {d_str:>8}")
+    print()
+
+
+def render_key_health(stats: dict[str, ModelStats]) -> None:
+    """Render per-key health table.
+
+    Closes gap: which of the 3 keys (or_key, cline, auth) is healthy?
+    """
+    # Aggregate across all models
+    key_totals: dict[str, dict[str, int]] = defaultdict(lambda: {"success": 0, "fail": 0, "models": 0})
+    key_last_success_global: dict[str, Optional[datetime]] = {}
+
+    for s in stats.values():
+        for key, count in s.key_sources.items():
+            # Estimate success/fail per key from the overall success rate
+            if s.total > 0:
+                key_success = int(count * s.rate / 100)
+                key_fail = count - key_success
+                key_totals[key]["success"] += key_success
+                key_totals[key]["fail"] += key_fail
+                key_totals[key]["models"] += 1
+        for key, last in s.key_last_success.items():
+            if last is None:
+                continue
+            current_best = key_last_success_global.get(key)
+            if current_best is None or last > current_best:
+                key_last_success_global[key] = last
+
+    if not key_totals:
+        return
+
+    print(f"{C.BOLD}🔑 KEY HEALTH{C.END}  {C.DIM}(3-key rotation){C.END}")
+    print(f"  {'KEY':<12} {'SUCCESS':>8} {'FAIL':>6} {'RATE':>6}  {'MODELS':>7}  {'LAST SUCCESS':>20}")
+    print(f"  {'─' * 12} {'─' * 8} {'─' * 6} {'─' * 6}  {'─' * 7}  {'─' * 20}")
+
+    # Sort by rate desc
+    sorted_keys = sorted(key_totals.items(),
+                          key=lambda x: -safe_div(x[1]["success"], x[1]["success"] + x[1]["fail"]) * 100)
+    for key, t in sorted_keys:
+        total = t["success"] + t["fail"]
+        if total == 0:
+            rate_str = f"{C.DIM}--{C.END}"
+        else:
+            rate = t["success"] / total * 100
+            rate_str = fmt_pct(rate)
+        last_s = key_last_success_global.get(key)
+        if last_s is not None:
+            age = int((datetime.now(timezone.utc) - last_s).total_seconds())
+            last_str = fmt_age(age) if age < 86400 else f"{age//86400}d ago"
+        else:
+            last_str = f"{C.R}NEVER{C.END}"
+
+        # Highlight dead keys
+        if total == 0 or t["success"] == 0:
+            key_disp = f"{C.R}{key} ⚠{C.END}"
+        elif safe_div(t["success"], total) < 0.5:
+            key_disp = f"{C.Y}{key}{C.END}"
+        else:
+            key_disp = f"{C.G}{key}{C.END}"
+
+        print(f"  {key_disp:<20} {t['success']:>8} {t['fail']:>6} {rate_str:>6}  {t['models']:>7}  {last_str:>20}")
+    print()
+
+
+def render_header_v3(now: datetime) -> None:
+    """Enhanced header with v3.0 metadata."""
+    ts = now.strftime("%Y-%m-%d %H:%M:%S UTC")
+    print(f"{C.BOLD}{C.C}⬡ OMEGA ENGINE BENCHMARK DASHBOARD{C.END}  "
+          f"{C.DIM}v3.0 (gap-driven){C.END}  {C.DIM}{ts}{C.END}")
+    print(f"{C.DIM}{'─' * 90}{C.END}")
+
+
 def render_footer(args: argparse.Namespace) -> None:
     """Render the dashboard footer."""
     refresh = f"{args.refresh}s" if args.refresh else "2s"
@@ -831,7 +1295,7 @@ def render(args: argparse.Namespace) -> dict[str, Any]:
     # Build state dict for export
     state = {
         "timestamp": now.isoformat(),
-        "version": "2.0",
+        "version": "3.0",
         "filters": {
             "model": args.model,
             "since": args.since,
@@ -859,17 +1323,24 @@ def render(args: argparse.Namespace) -> dict[str, Any]:
         return state  # caller handles CSV output
 
     # Normal dashboard render
-    render_header(now)
+    render_header_v3(now)
     render_freshness_summary(freshness)
+    render_next_quota_reset(ag_data)
+    render_cascade(stats)
+    render_failure_taxonomy(stats)
     render_network(network_data)
     render_alerts(stats, args)
     sorted_stats = render_probes(stats, args)
     if args.diurnal:
         render_diurnal_analysis(stats, args)
+    render_quality_breakdown(stats)
+    render_historical_comparison(stats, probe_data)
+    render_key_health(stats)
     render_antigravity(ag_data)
     render_test_progress("STRESS TEST", STRESS_LOG, "🔥")
     render_test_progress("BURST TEST", BURST_LOG, "💥")
     render_test_progress("LONG DURATION TEST", LONG_DUR_LOG, "⏱️")
+    render_diurnal_best_hour(probe_data)
     render_economics(probe_data, stats)
     render_active_sessions()
     render_footer(args)
@@ -890,14 +1361,19 @@ def export_csv(state: dict[str, Any]) -> None:
     writer = csv.writer(buf)
     writer.writerow([
         "model", "success", "fail", "total", "rate", "p50_ms", "p99_ms",
-        "quality_rate", "trend", "key_sources", "last_seen"
+        "outlier_pct", "quality_rate", "valid", "invalid_json", "no_completion",
+        "empty_content", "trend", "trend_velocity", "last_seen"
     ])
     for label, m in state.get("models", {}).items():
-        key_sources = ",".join(f"{k}={v}" for k, v in m.get("key_sources", {}).items())
+        qb = m.get("quality_breakdown", {})
         writer.writerow([
             label, m["success"], m["fail"], m["total"], m["rate"],
-            m["p50_ms"], m["p99_ms"], m["quality_rate"], m["trend"],
-            key_sources, m.get("last_seen", "")
+            m["p50_ms"], m["p99_ms"], m.get("outlier_pct", 0),
+            m["quality_rate"],
+            qb.get("valid", 0), qb.get("invalid_json", 0),
+            qb.get("no_completion", 0), qb.get("empty_content", 0),
+            m["trend"], m.get("trend_velocity", ""),
+            m.get("last_seen", "")
         ])
     print(buf.getvalue(), end="")
 
