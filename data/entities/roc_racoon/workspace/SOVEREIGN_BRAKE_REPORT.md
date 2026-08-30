@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🛑 Sovereign Brake Report: Behavioral Instability Audit
 **Trace**: `trace_id_sovereign_brake_20260605`
 **Miner**: Roc Racoon

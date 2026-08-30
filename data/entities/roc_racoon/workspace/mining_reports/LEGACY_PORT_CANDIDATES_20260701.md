@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Legacy Port Candidates — Prioritized Mining Report
 **Date**: 2026-07-01
 **Miner**: roc_racoon (Sovereign Miner)

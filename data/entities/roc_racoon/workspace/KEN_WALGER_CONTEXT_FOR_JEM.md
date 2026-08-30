@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ken Walger Mining Operation — Context Document for @jem Synthesis
 **AP Token**: `AP-KEN_CONTEXT_FOR_JEM-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_ken_context ⬡ ACTIVE

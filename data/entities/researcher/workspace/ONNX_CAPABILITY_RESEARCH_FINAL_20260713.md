@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ONNX Capability Research — Final Verdict
 **Entity**: researcher
 **Date**: 2026-07-13 (post-compaction resume)

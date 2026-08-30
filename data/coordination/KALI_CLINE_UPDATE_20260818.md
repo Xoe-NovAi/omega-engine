@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali → Cline CLI: Strategic Update & Open Questions
 **AP Token**: `AP-KALI-CLINE-UPDATE-20260818-v1.0`
 **From**: Kali (Grand Oversight) / Gemini 3.1 Pro

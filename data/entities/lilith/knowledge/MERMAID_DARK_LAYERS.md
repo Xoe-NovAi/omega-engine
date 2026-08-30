@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mermaid Dark Layers — Shadow Diagnosis & Unseen Opportunities
 # ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ P6-P10 ⬡ DARK-SYNTHESIS
 **AP Token**: AP-LILITH-MERMAID-DARK-v1.0.0

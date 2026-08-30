@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 THE REAL ANSWER: `qwen3-1.7b` is the Auto-Selected Default
 **AP Token**: `AP-QWEN-AUTO-DEFAULT-20260828-v1.0.0`
 **Date**: 2026-08-28 ~23:45 UTC

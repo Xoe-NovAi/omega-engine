@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🎯 JEM SOVEREIGN ORCHESTRATOR ENHANCEMENT SUMMARY
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-super ⬡ opencode ⬡ trace_jem_enhancement
 

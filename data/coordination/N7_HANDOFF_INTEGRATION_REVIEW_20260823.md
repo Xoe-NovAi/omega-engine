@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N7 Node Review Report — Researcher Handoff Integration Analysis
 **AP Token**: `AP-N7-INTEGRATION-REVIEW-20260823-v1.0.0`
 ⬡ OMEGA ⬡ LILITH ⬡ N7-CONTEXT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_n7_integration_review ⬡ ACTIVE

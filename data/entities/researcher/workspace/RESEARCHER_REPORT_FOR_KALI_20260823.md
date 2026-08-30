@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RESEARCHER REPORT FOR KALI — Reciprocal Session Report
 **AP Token**: `AP-RESEARCHER-REPORT-KALI-20260823-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_researcher_reciprocal ⬡ ACTIVE

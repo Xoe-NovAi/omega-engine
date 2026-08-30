@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM — Ken Walger Mining Operation: Verified Synthesis
 
 **AP Token**: `AP-JEM-KEN-MINING-v1.0.0`

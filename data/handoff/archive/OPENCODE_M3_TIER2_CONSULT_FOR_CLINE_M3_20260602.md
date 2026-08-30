@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Tier 2 Implementation Handoff — Agent & Model Recommendations Requested
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_tier2_consult ⬡ HANDOFF-REQUEST
 **Date**: 2026-06-02

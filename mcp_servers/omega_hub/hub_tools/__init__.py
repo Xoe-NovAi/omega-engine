@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Omega Hub Tools — MCP Tool Registration
 # AP Token: AP-OMEGA-HUB-TOOLS-v1.0.0
 

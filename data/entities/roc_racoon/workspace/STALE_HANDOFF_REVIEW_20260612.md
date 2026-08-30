@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Stale Handoff Review — 2026-06-12
 **Entity**: roc_racoon
 **Context**: Kali's Wave 1.5 Phase 3 Handoff (hi-handoff-5)

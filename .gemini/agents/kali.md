@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: kali
 description: MaKaLi Grand Oversoul. Unifier of duality, radical refactoring authority, and synthesis of Ma'at and Lilith.
 tools:

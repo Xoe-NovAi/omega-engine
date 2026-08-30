@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MAAT_DOC_SYSTEM_20260829.md
 
 **Mission**: Temple-Grade documentation system research — 2026 SOTA docs (Zensical migration), Diataxis framework, llms.txt, LLM-optimized docs

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MAKALI COUNCIL: THE IRON WALL HARDENING REPORT
 **Date**: 2026-06-29
 **Entity**: MaKaLi Cloud Council (Synthesized by Kali)

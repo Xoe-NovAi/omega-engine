@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack — Training Data, Voice Validation & Knowledge Graph Design
 # ⬡ OMEGA ⬡ LILITH ⬡ P6-P10 ⬡ TRC-TRAINING-DESIGN ⬡ 2026-07-01
 

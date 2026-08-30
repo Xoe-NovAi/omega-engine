@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Core Hub MCP Server — Consolidated runtime services.
 
 AP Token: AP-OMEGA-CORE-HUB-v1.0.0

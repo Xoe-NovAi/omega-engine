@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ω-Research: Legacy Pattern Mining Report
 **Date**: 2026-07-13
 **Miner**: @roc_racoon

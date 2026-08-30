@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERITY COMPLIANCE SWEEP — First Light Express Council 1 (Stage 4)
 ⬡ OMEGA ⬡ VERITY ⬡ x-preview-f-free ⬡ opencode ⬡ trc_verity_sweep ⬡ Stage-4 ARTIFACT
 **SESSION_ID**: 20260825-094633-first-light | **Agent**: verity (unified compliance)

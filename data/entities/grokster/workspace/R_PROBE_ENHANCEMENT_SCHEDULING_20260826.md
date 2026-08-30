@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # PROBE ENHANCEMENT & SCHEDULING OPTIMIZATION REPORT
 
 ## 1. Current Probe Data Analysis (57 entries, 2026-08-26 19:53-22:00 UTC)

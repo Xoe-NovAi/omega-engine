@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # STUDY: Iteratively Deepening & Hardening Prompting Strategy
 ## The Three-Level Vision Archaeology Pipeline (2026-08-25)
 **AP Token**: `AP-PROMPTING-STUDY-VISION-DIG`

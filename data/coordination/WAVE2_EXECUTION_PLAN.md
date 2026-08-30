@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Wave 2 Execution Plan
 **Created**: 2026-08-26 (pre-compaction)
 **Author**: kali (Sprint Coordinator)

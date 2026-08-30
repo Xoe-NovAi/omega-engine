@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📦 FIRST LIGHT EXPRESS — COUNCIL 1 MISSION PACKET (SSOT)
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ hy3-free ⬡ opencode ⬡ trc_first_light_c1 ⬡ Stage-0 ARTIFACT
 **SESSION_ID**: `20260825-094633-first-light`

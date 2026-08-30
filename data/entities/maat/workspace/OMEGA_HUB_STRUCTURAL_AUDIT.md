@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Hub Structural Audit — Ma'at (P1-P5 Governance)
 # ⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ trc_maat ⬡ OMEGA-HUB-HARDENING
 

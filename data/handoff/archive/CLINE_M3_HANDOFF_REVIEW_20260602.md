@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff Quality Review — OpenCode Dev Session + Doom Guy Sessions
 # ⬡ OMEGA ⬡ SOPHIA ⬡ Cline/MiniMax-M3 (1M) ⬡ handoff_review ⬡ REVIEW
 # AP: AP-HANDOFF-REVIEW-v1.0.0

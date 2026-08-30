@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 HANDOFF: RESEARCHER — M2 FIREWALL MIGRATION PHASES B-E + P3 LAUNCH
 **AP Token**: `AP-RES-M2-MIGRATION-20260718-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_handoff_res ⬡ ACTIVE

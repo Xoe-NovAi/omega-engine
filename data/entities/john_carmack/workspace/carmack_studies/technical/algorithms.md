@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 id Software Algorithms & Omega Adaptations
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ ALGORITHMS ⬡ 2026-07-01
 

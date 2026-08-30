@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦾 Omnidroid Deep Architecture Brief — Local Model Strategy
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ rocracoon-3b ⬡ opencode ⬡ trc_omnidroid_deep ⬡ PHASE-II
 **AP Token**: AP-OMNIDROID-DEEP-v1.0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P1 Infrastructure Vetting Report — Provider Metrics & Sentinel Score
 **Document ID**: `P1-VET-20260628`
 **Status**: FINAL

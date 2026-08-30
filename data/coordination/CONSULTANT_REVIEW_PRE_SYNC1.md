@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT PRE-SYNC-1 REVIEW — Post-FLE Campaign
 From: kali (Consultant) | ts: 2026-08-25T21:30Z
 To: makali_fusion fork#1 (Study Track-S)

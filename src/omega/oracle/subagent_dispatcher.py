@@ -18,6 +18,7 @@
 import anyio
 import json
 import logging
+import os
 import re
 import uuid
 from dataclasses import dataclass, field, asdict
@@ -82,6 +83,7 @@ class HandoffPacket:
     relevant_files: List[str] = field(default_factory=list)
     context: str = ""
     context_delivery: str = "inline"  # D216: "inline" | "file_ref" | "usm_key"
+    priority: str = "P2"  # For M33 cross-validator: "P0" | "P1" | "P2" | "P3"
 
     packet_id: str = ""
     parent_trace_id: str = ""
@@ -313,11 +315,15 @@ def _extract_heritage_tags(file_path: str) -> List[str]:
     return tags
 
 
-def build_dispatch_prompt(packet: HandoffPacket) -> str:
+def build_dispatch_prompt(packet: HandoffPacket, write_tool_required: bool = False) -> str:
     """Build the Task tool prompt from a HandoffPacket.
 
     The returned string is designed for injection into the 'task' tool's
     prompt argument, with `subagent_type` set from the capability registry.
+
+    Args:
+        packet: The handoff packet
+        write_tool_required: If True, inject M33 sentinel probe write-tool directive
     """
     target = get_agent_capabilities(packet.target_agent)
     target_desc = target["purpose"] if target else f"Agent: {packet.target_agent}"
@@ -347,6 +353,32 @@ def build_dispatch_prompt(packet: HandoffPacket) -> str:
         packet.task_description,
         "",
     ]
+
+    if write_tool_required:
+        lines.extend([
+            "## M33 Sentinel Probe — Write Tool Required",
+            "",
+            "**CRITICAL**: This task's estimated output exceeds the 8K token threshold.",
+            "You MUST write your deliverable to the file path specified in **Expected Output**",
+            "below using the `write` or `edit` tool. Do NOT attempt to return the full",
+            "deliverable in chat — chat-streaming large output causes 504 timeouts.",
+            "",
+            "After writing, you will be prompted with a structured JSON envelope (M33",
+            "sentinel probe) to verify your completion state. Respond with pure JSON:",
+            "",
+            "```json",
+            "{",
+            '  "state": "exhausted" | "continuing",',
+            '  "last_chunk_id": <int>,',
+            '  "total_chunks": <int>,',
+            '  "queued_findings": [<list>],',
+            '  "confidence": <float 0.0-1.0>,',
+            '  "deliverable_path": "<string>",',
+            '  "deliverable_size_bytes": <int>',
+            "}",
+            "```",
+            "",
+        ])
 
     if packet.relevant_files:
         lines.append("## Files to Read First")
@@ -407,6 +439,10 @@ def m34_register_subagent(
 
     Returns True if registration succeeded, False otherwise (never raises).
     """
+    # Check OMEGA_M34_ENABLED flag (same flag as dispatch_guard.py)
+    if os.environ.get("OMEGA_M34_ENABLED", "0") != "1":
+        logger.debug("M34 disabled (OMEGA_M34_ENABLED != 1) — skipping registration")
+        return False
     registry = _get_m34_registry()
     if registry is None:
         logger.debug("M34 registry unavailable — skipping explicit registration")
@@ -465,6 +501,7 @@ def dispatch(packet: HandoffPacket) -> str:
     """
     # ── M34-HOOK-001: Register subagent in M34 registry ──────────────
     registry = _get_m34_registry()
+    write_tool_required = False
     if registry is not None:
         try:
             from omega.oracle.m34_registry import ActiveSubagent, SessionStatus
@@ -490,4 +527,46 @@ def dispatch(packet: HandoffPacket) -> str:
         except (OSError, FileNotFoundError, ValueError, TypeError) as exc:
             logger.warning("M34-HOOK-001: Registration failed: %s", exc)
 
-    return build_dispatch_prompt(packet)
+    # ── M33 Probe Wiring: Check if write tool is required ──────────
+    # Per RESEARCHER_GAP_FILL_PHASE_1_20260830.md HIGH-3 / Phase 2 MED-3:
+    # For >8K token estimates, the subagent MUST use write tool (not chat stream).
+    # Per Phase 2 report: also requires P0/P1 priority and research/forensic tasks.
+    try:
+        from omega.oracle.m33_probe import M33Probe
+        # Estimate output tokens (4 chars per token, output ~3x prompt)
+        prompt_chars = (
+            len(packet.context or "")
+            + len(packet.task_description or "")
+            + sum(len(f) for f in packet.relevant_files)
+        )
+        estimated_output_tokens = (prompt_chars // 4) * 3
+
+        probe = M33Probe(m34_registry=registry)  # type: ignore
+        write_tool_required = probe.should_require_write_tool(
+            estimated_output_tokens=estimated_output_tokens,
+            task_type=packet.task_type,
+            priority=packet.priority,
+        )
+
+        if write_tool_required:
+            logger.info(
+                "M33-PROBE: write_tool_required=True for %s (estimated %d tokens, priority=%s)",
+                packet.target_agent, estimated_output_tokens, packet.priority,
+            )
+            # Update M34 entry with write_tool_required flag
+            if registry is not None:
+                try:
+                    from omega.oracle.m34_registry import SessionStatus as _SS
+                    registry.update_status(
+                        packet.packet_id,
+                        _SS.ALIVE,
+                        checkpoint=None,
+                    )
+                except (OSError, ValueError, TypeError) as update_exc:
+                    logger.debug("M34 update_status skipped: %s", update_exc)
+    except ImportError as exc:
+        logger.debug("M33 probe not available: %s", exc)
+    except (OSError, ValueError, TypeError) as exc:
+        logger.warning("M33 probe wiring failed: %s", exc)
+
+    return build_dispatch_prompt(packet, write_tool_required=write_tool_required)

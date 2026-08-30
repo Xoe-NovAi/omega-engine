@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM CONSOLIDATION PLAN: SOVEREIGN SYNTHESIZER
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_jem_consolidate ⬡ PRE-COMPACTION-SAVE
 

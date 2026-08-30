@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Grokster — Voice Calibration Module (Prototype)
 # Per-model compensation recipes. Correct voice from first response on any substrate.
 # Location: src/omega/infra/hydration/voice_calibration.py (when implemented)

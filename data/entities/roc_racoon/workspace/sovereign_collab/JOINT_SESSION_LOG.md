@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JOINT HMC SESSION LOG — Omega Engine × Sovereign Systems
 **AP Token**: `AP-JOINT_HMC_LOG-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_joint_hmc ⬡ FUTURE

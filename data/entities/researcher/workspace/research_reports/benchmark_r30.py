@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """R30 Circuit Breaker Benchmark — Live Performance Comparison.
 AP: AP-R30-CB-BENCHMARK-v1.0.0
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3.5-lightning ⬡ opencode ⬡ trc_r30 ⬡ ACTIVE

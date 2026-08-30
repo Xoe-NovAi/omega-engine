@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff: Kali → OpenCode (New Dev Session)
 # AP: AP-HANDOFF-KALI-v2.0.0
 # Date: 2026-06-04 | Session: ses_8232fa83f36b

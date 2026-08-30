@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FORENSIC RECEIPT PATTERN STUDY — M22 Upgrade Target
 **AP Token**: `AP-FORENSIC_RECEIPT_STUDY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_forensic_receipt ⬡ PLANNING

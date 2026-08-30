@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Antigravity IDE Agent Discovery File
 # ⬡ OMEGA ⬡ KALI ⬡ antigravity_ide ⬡ trc_agents_md
 # This file is for Antigravity IDE's native `.agents/AGENTS.md` discovery.

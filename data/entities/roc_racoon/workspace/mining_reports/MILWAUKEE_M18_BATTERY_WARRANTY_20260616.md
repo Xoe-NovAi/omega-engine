@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Milwaukee M18 REDLITHIUM XC6.0 Battery — Warranty Registration Mining Report
 **⬡ OMEGA ⬡ roc_racoon ⬡ deepseek-v4-flash ⬡ opencode ⬡ WARRANTY-MINING ⬡ COMPLETE**
 **Date**: 2026-06-16

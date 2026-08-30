@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mining Report: LM Studio Model Configs
 **Date**: 2026-07-11
 **Asset**: #12 — LM Studio Model Configs

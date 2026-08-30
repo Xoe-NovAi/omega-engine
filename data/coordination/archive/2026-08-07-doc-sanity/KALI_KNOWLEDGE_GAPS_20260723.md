@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KNOWLEDGE GAP ANALYSIS — 3 Decisions Requiring Deep Research
 **AP Token**: `AP-KALI-GAPS-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ GAP-ANALYSIS ⬡ 2026-07-23

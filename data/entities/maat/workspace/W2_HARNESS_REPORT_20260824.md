@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # W2 Harness Report — verify-mandate-claims (W1-2)
 **Agent**: maat · **Date**: 2026-08-24 · **Sprint**: WAVE-1-DOCTRINE-WIRING
 **Ruling basis**: S7 (BUILD as P0) · S5/F2 (warn-only, explicit evidence day one)

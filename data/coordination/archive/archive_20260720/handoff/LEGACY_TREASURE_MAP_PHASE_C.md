@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LEGACY TREASURE MAP: PHASE C COGNITIVE SUBSTRATE
 **AP**: AP-LEGACY-TREASURE-MAP-PHASE-C-v1.0.0
 **Status**: 🔱 MINED | **Sovereignty**: Ultra Grade (v7.5.0)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Complete DATA/ Inventory
 **Generated**: 2026-06-06
 **Total Size**: 754M | **Total Files**: 16,346

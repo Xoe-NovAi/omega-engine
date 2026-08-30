@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Vault Overhaul: Kali Synthesis & Gap Register
 **AP Token**: `AP-VAULT-KALI-SYNTHESIS-20260818-v1.0.0`
 **Author**: Kali (Oversoul / Sprint Coordinator)

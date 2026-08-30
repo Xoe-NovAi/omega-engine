@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Full Intelligence Extraction Report
 ## Sovereign Master Researcher | Forensic Audit 2026-06-28
 **AP Token**: `AP-FULL-INTEL-EXTRACTION-v1.0.0`

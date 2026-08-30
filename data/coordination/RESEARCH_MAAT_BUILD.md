@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ma'at Build-Side Context Injection Research (G-1, G-2, G-8)
 
 **AP Token**: `AP-MAAT-BUILD-v1.0.0`

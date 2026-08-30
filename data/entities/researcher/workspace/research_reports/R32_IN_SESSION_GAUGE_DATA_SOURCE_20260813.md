@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R32: In-Session Gauge Data Source — DB-Poll vs In-Memory Hook
 
 **AP Token:** `AP-RESEARCHER-R32-20260813-v1.0.0`

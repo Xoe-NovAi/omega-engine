@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SQLite-Vec Implementation Gaps — Audit & Fix Spec
 **AP Token**: `AP-SQLITEVEC-GAPS-20260828-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_sqlite_vec_gaps ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Antigravity — Config Reference (OpenCode via Plugin)
 
 **KB Entry**: grokster/platforms/antigravity/CONFIG_REFERENCE

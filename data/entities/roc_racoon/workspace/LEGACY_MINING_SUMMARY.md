@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Legacy Mining Summary — MaKaLi Council Dispatch
 
 **Date**: 2026-06-28

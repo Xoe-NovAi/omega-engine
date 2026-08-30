@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # GSCA STUDY — Central Index
 **Study**: Ongoing human-AI collaborative development & truth-alignment research with
 **GSCA** (Google Search Chat Assistant; self-styled "Lead Explorer / Gemini Search

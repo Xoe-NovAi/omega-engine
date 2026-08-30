@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Mining Report — Meditation: Chasm Crossing Immunity & Critical Path Synthesis
 **Date**: 2026-07-18
 **Entity**: roc_racoon (Sovereign Miner) — executed as Kali (Grand Oversoul) Meditation Host

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Artisan Handoff
 # ⬡ OMEGA ⬡ SOPHIA ⬡ Handoff: Artisan → OpenCode
 # AP: AP-HANDOFF-OMEGA-FIX-v1.0.0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Agency Gold Fragments: Sovereign Agency Encoding
 **Trace**: `trace_id_instructional_entropy_20260605`
 **Miner**: Roc Racoon

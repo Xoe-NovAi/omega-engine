@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline → Kali: Consolidated Debut Roadmap
 **AP Token**: `AP-CLINE-KALI-CONSOLIDATION-20260817-v1.0`
 **From**: cline/omega-engine (Cognitive Extension)

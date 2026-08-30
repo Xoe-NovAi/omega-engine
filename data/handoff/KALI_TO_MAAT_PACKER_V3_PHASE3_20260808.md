@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali → @maat — Context Packer v3 Phase 3 Handoff
 **AP Token**: `AP-KALI-TO-MAAT-CP-V3-PHASE3-20260808`
 ⬡ OMEGA ⬡ KALI ⬡ @maat ⬡ N3 ⬡ M4 ⬡ M23

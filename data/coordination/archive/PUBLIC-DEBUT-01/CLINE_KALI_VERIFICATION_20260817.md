@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline → Kali — Execution Verification & PUB-1 Allowlist Gap Review
 
 **AP Token**: `AP-CLINE-KALI-VERIFICATION-20260817`

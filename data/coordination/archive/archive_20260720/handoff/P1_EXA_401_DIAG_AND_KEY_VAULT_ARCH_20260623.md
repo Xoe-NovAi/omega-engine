@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Pillar P1 — Infrastructure: Exa 401 Root Cause + API Key Vault Architecture
 **AP**: `AP-P1-INFRA-KEYVAULT-v1.0.0`
 ⬡ OMEGA ⬡ P1 ⬡ pillar ⬡ infrastructure ⬡ KEY-VAULT

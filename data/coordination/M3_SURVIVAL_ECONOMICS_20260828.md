@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # M3 Survival Economics — How We Run 5,000+ Calls and Don't Melt
 
 **Date**: 2026-08-28  

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔄 WORKFLOW PATTERNS: THE COGNITIVE TRANSMISSION
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-KNOWLEDGE
 

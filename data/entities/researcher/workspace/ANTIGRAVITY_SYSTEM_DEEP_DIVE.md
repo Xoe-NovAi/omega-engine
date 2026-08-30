@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Antigravity System — Comprehensive Deep Dive Research Report
 
 **AP Token**: `AP-RESEARCH-ANTIGRAVITY-v1.0.0`

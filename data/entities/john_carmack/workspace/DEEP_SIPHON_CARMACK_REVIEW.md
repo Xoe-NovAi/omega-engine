@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack — Deep-Siphon Structural Integrity Audit
 # AP Token: AP-DEEP-SIPHON-CARMACK-v1.0
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ AUDIT

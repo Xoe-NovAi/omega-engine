@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI BRIEFING — CONSOLIDATED GROKSTER REPORT (Supersedes All Prior Briefings)
 **AP Token**: `AP-KALI-BRIEFING-GROKSTER-CONSOLIDATED-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_consolidated ⬡ HANDOFF

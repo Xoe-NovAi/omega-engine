@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ANTIGRAVITY CLI HANDOFF: PHASE C — The Cognitive Substrate
 **Version**: 1.2.0 (Post-Audit Model Corrections)
 **Status**: AUTHORITATIVE / CORRECTED

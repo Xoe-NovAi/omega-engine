@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DOOM GUY TIER 2 — Circuit Breaker Consolidation
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ doom_guy.md ⬡ Gemma 4 31B ⬡ SPRINT-DOOM
 # Date: 2026-06-02 | Synthesized by Opus 4.6 from 3-model audit chain

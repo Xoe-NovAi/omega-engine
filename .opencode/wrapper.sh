@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Session End Wrapper (C-0.5)
 # AP Token: AP-C05-WRAPPER-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ wrapper ⬡ opencode ⬡ trc_c05_hook ⬡ ACTIVE

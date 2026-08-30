@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Heritage Mining Log: id Software Raw Engineering Hacks
 **Date**: 2026-06-11
 **Miner**: roc_racoon

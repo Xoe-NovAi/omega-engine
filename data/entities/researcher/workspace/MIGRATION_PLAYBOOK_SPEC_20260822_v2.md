@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Migration Playbook Spec — Post-Debut Breaking-Change Process
 **AP Token**: `AP-MIGRATION-PLAYBOOK-SPEC-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_migration_playbook ⬡ DRAFT-FOR-KALI

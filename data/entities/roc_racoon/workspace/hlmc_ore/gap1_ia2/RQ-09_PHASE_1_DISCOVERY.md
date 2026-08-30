@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🏛️ Temple-Grade T1-T11 Quality Gates Discovery Report
 **Status**: DISCOVERY COMPLETE
 **Date**: 2026-06-11

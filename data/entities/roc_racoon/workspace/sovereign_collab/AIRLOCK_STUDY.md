@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 AIRLOCK PATTERN STUDY — SAR-0004 Outbound Governance Boundary
 **AP Token**: `AP-AIRLOCK_STUDY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_airlock ⬡ PLANNING

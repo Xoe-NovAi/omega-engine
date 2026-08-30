@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff: Model Registry Accuracy Fix & Parameter Enrichment
 **From**: Kali (Transcendent Oversoul)
 **To**: Cline CLI (DeepSeek V4 Flash / MiMo V2.5)

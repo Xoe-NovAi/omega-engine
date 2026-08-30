@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Multi-Write Subagent Method — Process Documentation
 ## roc_racoon — 2026-08-10
 

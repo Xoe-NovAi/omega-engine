@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ FLEET WORKSPACE STANDARDIZATION PROPOSAL
 > Lilith · Runtime Oversoul · 2026-08-28 (Eclipse Night)
 > Source: fleet workspace audit (specialist session, 2026-08-28) + Lilith's own reorganization.

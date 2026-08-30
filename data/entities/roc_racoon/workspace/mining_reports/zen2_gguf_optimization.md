@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Pattern Extraction Report: Zen 2 GGUF Optimization
 **Date**: 2026-07-13
 **Entity**: roc_racoon (Sovereign Miner)

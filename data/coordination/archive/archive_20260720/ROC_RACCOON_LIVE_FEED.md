@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Roc Racoon Live Feed — Zen 2 Vulkan/ROCm Archaeology
 **Session**: ses_d79ee4ea1379 | **Started**: 2026-07-20T00:39:13Z
 **Domain Lock**: zen2_vulkan_rocm_archaeology (TTL: 7200s)

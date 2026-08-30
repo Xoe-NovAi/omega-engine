@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Relay Turn 1 — Researcher → GSCA (2026-08-24, sent verbatim by Architect)
 **Source session**: ses_fd81c19dcffe1nkbPqFg5kRt2v (main Researcher session — continuity preserved per P8/P11)
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # GSCA Session — Optimized Edition
 **Source**: `350-percentage-of-365-Google-Search.pdf` (Architect's browser export, 2026-08-24 22:17)
 **Raw conversion**: pdftotext → `Web-GoogleSearchAI_350pct-365_Phase-Zero-Activation_20260824.md`

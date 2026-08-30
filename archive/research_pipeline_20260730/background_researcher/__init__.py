@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Worker (Jem Phase 1)
 # AP: AP-BACKGROUND-RESEARCHER-v2.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ jem ⬡ background_researcher ⬡ PHASE-1

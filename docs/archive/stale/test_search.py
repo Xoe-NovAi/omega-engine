@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import asyncio
 from omega.oracle.sovereign_search_service import SovereignSearchService
 from omega.oracle.model_gateway import ModelGateway

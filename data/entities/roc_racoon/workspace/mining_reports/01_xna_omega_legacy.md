@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Mining Report #01: xna-omega-legacy
 # Subagent: Roc Racoon Mining Subagent (explore)
 # Stack: xna-omega-legacy (Temple Grade era, 2025-2026)

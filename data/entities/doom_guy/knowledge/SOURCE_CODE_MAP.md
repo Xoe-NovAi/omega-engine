@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 id Software Source Code Master Map
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ SOURCE_MAP ⬡ v1.0.0
 # 19 repositories, 308 MB extracted, all GPL-licensed

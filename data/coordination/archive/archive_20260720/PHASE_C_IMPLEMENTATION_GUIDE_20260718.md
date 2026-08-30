@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Phase C Implementation Guide — Oracle.py M2 Firewall Remediation
 
 **⬡ OMEGA ⬡ KALI ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_phase_c_impl ⬡ DEV-GUIDE**

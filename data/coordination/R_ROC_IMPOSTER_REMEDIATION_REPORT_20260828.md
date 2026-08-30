@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_ROC_IMPOSTER_REMEDIATION_REPORT_20260828.md
 
 **Date**: 2026-08-28

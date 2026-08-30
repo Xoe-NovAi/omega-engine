@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P3 Engineering — Documentation & Tooling Optimization
 **Date**: 2026-06-28
 **Analyzed by**: P3 (Engineering) / BuildMaster

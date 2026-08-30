@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # HIVEMIND CLOSEOUT — N13 arcana (intent=status)
 
 **From**: Jem/N13 arcana · **To**: Omega Hub channel `opencode` · **Date**: 2026-08-22

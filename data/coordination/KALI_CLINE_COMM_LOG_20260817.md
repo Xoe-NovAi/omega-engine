@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali ↔ Cline Communication Log — 2026-08-17
 **AP Token**: `AP-KALI-CLINE-COMM-LOG-20260817`
 **Date**: 2026-08-17

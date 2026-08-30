@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 MINING REPORT: Github Idea Intake — 2026-06-13 (CORRECTED 2026-06-14)
 
 ## ⚠️ Correction Notice

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SDP Systems Sweep Report
 ## The Integration Map for the Sovereign Distillation Pipeline
 

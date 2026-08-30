@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Orchestration Data Lifecycle Optimization — P9 Pillar
 **⬡ OMEGA ⬡ P9 (Orchestration) ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_p9_opt_run ⬡ DISCOVERY**
 

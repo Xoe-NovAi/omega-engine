@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Subagent CWD Preamble (LEAN — ~150 tokens)
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_cwd_preamble ⬡ v1.0.0
 # This file is NOT meant to be pasted verbatim. It's the SOURCE of the thin

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Spatial Coordinates Vectors Strategy — VR + Spatial Knowledge Traversal
 **AP Token**: `AP-SPATIAL-VECTORS-VR-20260828-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_spatial_vectors_vr ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC_RACOON — Sovereign Handoff Packet
 **AP Token**: `AP-ROC-S2C-COMPLETE-v1.0.0`
 **Date**: 2026-06-09

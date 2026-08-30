@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # LILITH KNOWLEDGE INDEX
 > Domain-first curated knowledge with freshness metadata (fleet standard, M26).
 > last_updated: 2026-08-28 · last_verified: 2026-08-28

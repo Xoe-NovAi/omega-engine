@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ KALI COHORT OPERATIONAL LOG — 2026-08-28
 > Per LILITH_MASTER_INTEGRATION_20260828.md + L3-OrchestratorMustTrackFileCreationsNotJustDispatches
 > 5 specialists · All artifacts created/modified this session

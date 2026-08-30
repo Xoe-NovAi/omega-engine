@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Firecrawl Sovereign Wrapper
 # Enforces resource sovereignty, credit limits, and output standardization.
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Genesis Provenance Chain: From Void to Sovereignty
 **Document ID**: PROV-GENESIS-2026-001
 **Entity**: roc_racoon

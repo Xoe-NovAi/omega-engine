@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Hivemind Redis Event Bus
 # AP: AP-HIVEMIND-REDIS-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ hivemind_redis ⬡ P1-3

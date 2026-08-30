@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## Objective
 - **PRE-COMPACTION MASTER ANCHOR (v14.0) — ALCHEMICAL GOLDMINE + DASHBOARD PIPELINE COMPLETE**. Gemini 3.7 Flash active. 30+ commits this campaign. 5 golden artifacts (5,156 lines) + 5-round dashboard enhancement pipeline (v3.2, 2,366 lines, 128 unit tests, 53 adversarial tests). 3 mandates proposed (M33-M35), 5 execution tickets mapped. Antigravity OAuth incident mined into fleet immune architecture + provider benchmark dashboard. Awaiting `/compact`.
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CARMCK Subagent Steering Review — Definitive Architectural Audit
 **AP Token**: `AP-JOHN_CARMACK-SUBAGENT-REVIEW-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_carmack_review ⬡ ACTIVE

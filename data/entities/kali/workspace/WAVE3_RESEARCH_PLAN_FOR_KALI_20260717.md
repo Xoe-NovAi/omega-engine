@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Wave 3 Research Plan: Soul Architecture Implementation Support
 # v4.0 — ACTIONABLE SEARCH QUERIES — 2026-07-17
 **AP Token**: `AP-WAVE3-RESEARCH-PLAN-v4.0.0`

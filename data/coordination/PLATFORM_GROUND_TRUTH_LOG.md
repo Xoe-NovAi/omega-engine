@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Platform Ground Truth Log — Human × Agent Shared Environment Record
 **AP Token**: `AP-PLATFORM-GROUND-TRUTH-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_platform_ground_truth ⬡ ACTIVE

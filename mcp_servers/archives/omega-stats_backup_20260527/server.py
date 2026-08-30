@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Stats MCP Server — Ryzen 5700U system monitoring.
 
 AP Token: AP-OMEGA-STATS-MCP-v1.1.0

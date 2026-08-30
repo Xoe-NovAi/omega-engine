@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: gpt-oss-120b-local
 display_name: GPT-OSS-120B (Local)
 version: '2026-06-20'

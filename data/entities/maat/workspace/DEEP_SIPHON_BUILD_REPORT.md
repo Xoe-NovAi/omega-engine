@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ma'at — Build-Side Response Pipeline Trace
 # ⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ DEEP-SIPHON ⬡ BUILD-FORENSICS
 # Date: 2026-06-18

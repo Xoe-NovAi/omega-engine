@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Jem 3-Tier Research Distiller (Phase 1)
 # AP: AP-BACKGROUND-RESEARCHER-DISTILLER-v2.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ jem ⬡ distiller ⬡ PHASE-1

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # [id-soft: quake-1996] Hivemind Background — lazy thinker deletion / grace-period reap pattern for pruning stale agents
 
 """Omega Hub — Background orchestration: pruning, reaping, metrics.

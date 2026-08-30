@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
 
 ## N3 INST-1 Fresh-Venv Acceptance Run (2026-08-24)
 

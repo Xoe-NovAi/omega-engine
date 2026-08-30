@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # STAGE 1 DELIVERABLES — Persisted 2026-08-25 (MAAT-IR-7)
 **Original delivery**: conversation + Hivemind, ses_fc939d692ffe1fGJSnJw21mTgL, 03:11:19–36Z
 **Status**: submitted for kali review or discard. Nothing appended to truth_events.jsonl by maat.

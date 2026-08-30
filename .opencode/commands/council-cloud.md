@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Run the MaKaLi council with MaKaLi as orchestrator — launches Kali, Ma'at, and Lilith as co-equal arms on the session model
 agent: makali
 subtask: false

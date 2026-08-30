@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SESSION REPORT — 2026-08-22
 ## Stall-Echo Mechanism Discovery, Root Cause Localization, Mitigation Architecture & Strategic State
 

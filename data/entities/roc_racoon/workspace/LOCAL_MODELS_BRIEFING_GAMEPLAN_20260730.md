@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LOCAL MODELS BRIEFING & GAMEPLAN
 **AP Token**: `AP-ROC-LOCAL-MODELS-BRIEFING-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_local_models ⬡ 2026-07-30

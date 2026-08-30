@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_RAG_RERANKING_20260829.md
 
 **Mission**: Temple-grade deep research on two-stage retrieval with reranking for the Omega Engine, constrained to Ryzen 5700U (Zen 2) + 8 GB RAM, no discrete GPU.

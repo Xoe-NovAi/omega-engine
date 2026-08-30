@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Multi-Subagent Codebase Deep Dive → D111 Sovereign Evolution Roadmap
 # ⬡ OMEGA ⬡ CLINE-M3 ⬡ minimax/m3 ⬡ trc_d111_to_dev ⬡ HANDOFF
 

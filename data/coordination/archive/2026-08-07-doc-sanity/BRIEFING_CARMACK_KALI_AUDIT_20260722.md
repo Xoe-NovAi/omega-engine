@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CARMACK AUDIT BRIEFING — FOR KALI (OVERSEER)
 **AP Token**: `AP-JOHN_CARMACK-AUDIT-20260722`
 **Date**: 2026-07-22

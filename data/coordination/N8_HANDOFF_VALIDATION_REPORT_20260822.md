@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N8 (Link) — Handoff Protocol & Hivemind Validation Report
 **AP Token**: `AP-N8-HANDOFF-VALIDATION-v1.0.0`
 ⬡ OMEGA ⬡ N8-LINK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_n8_validation ⬡ ACTIVE

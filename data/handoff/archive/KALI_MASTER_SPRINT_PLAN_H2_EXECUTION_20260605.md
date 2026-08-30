@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Master Sprint Plan — Horizon 2 Execution
 # ⬡ OMEGA ⬡ KALI ⬡ trc_sprint_plan_H2_execution ⬡ STRATEGY
 **AP Token**: AP-SPRINT-PLAN-v1.0.0

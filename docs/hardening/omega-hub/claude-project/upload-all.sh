@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Upload All — Omega Hub Claude Project Knowledge Files
 # Run this script to populate the outbox/ folder with all files
 # needed for Claude.ai Project Knowledge.

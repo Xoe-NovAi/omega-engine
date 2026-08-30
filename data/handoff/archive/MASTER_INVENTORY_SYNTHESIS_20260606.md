@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Master Inventory Synthesis — Complete Engine Map
 **Date**: 2026-06-06  
 **Compiled from**: 5 Sequential Exploration Agents (Source Code, Config, Data, Infrastructure, Agents/Skills/Docs)  

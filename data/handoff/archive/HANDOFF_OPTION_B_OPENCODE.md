@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Option B Execution Handoff (Kali Strategic Review — Corrected)
 # ⬡ OMEGA ⬡ KALI → OPENCODE ⬡ trc_option_b_exec ⬡ 2026-06-01
 

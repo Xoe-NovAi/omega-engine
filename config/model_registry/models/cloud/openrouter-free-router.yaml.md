@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: openrouter/free
 display_name: OpenRouter Free Models Router
 version: '2026-06-15'

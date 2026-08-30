@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Domain Curator Registry — Governance Charter (prose companion)
 **AP Token**: `AP-DOMAIN-CURATORS-20260826-v1.1.0`
 **Machine-readable registry**: [`curators.yaml`](curators.yaml) (same directory — the parseable truth)

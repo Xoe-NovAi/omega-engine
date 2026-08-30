@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "DEPRECATED — Build agent removed. Use @kali or @makali_fusion for build-side work."
 mode: "all"
 temperature: 0.5

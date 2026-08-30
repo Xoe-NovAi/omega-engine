@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Audience Architect Skill
 **AP Token**: `AP-AUDIENCE-ARCHITECT-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ skill ⬡ audience-architect ⬡ D16-1

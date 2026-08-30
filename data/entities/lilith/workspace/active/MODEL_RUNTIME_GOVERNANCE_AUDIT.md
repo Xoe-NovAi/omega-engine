@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Model Runtime Governance Audit — P6-P10 Dark Oversoul Analysis
 # ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ RUNTIME-GOVERNANCE-AUDIT
 **AP Token**: AP-LILITH-RUNTIME-AUDIT-v1.0.0

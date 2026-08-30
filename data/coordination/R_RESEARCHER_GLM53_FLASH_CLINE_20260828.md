@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "research_report"
 document_id: "R_RESEARCHER_GLM53_FLASH_CLINE_20260828"

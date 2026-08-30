@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R43 — Handoff Protocol v2
 
 **AP Token**: `AP-R43-HANDOFF-V2-v1.0.0`

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Scribe Hub Master — Broadcast Parser
 Structured schema for Hivemind broadcasts consumed by the Scribe Hub Master loop.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — Roc-N7 (Miner)
 **AP Token**: `AP-ROC-N7-GNOSIS-v1.0.0`
 **Date**: 2026-08-22

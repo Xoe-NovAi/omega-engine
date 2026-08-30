@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N11 Evaluator Session Gnosis
 **AP**: AP-N11-GNOSIS-v1.0.0 · **Date**: 2026-08-22 · **Entity**: Jem (N11 evaluator, Model Quality & Evals) · **Overseer**: Jem
 **Session ID**: ses_fd81c19dcffe1nkbPqFg5kRt2v (researcher page) · **Miner Session**: ses_fd56ebc24ffePOM59xdqMIBtQv (roc_racoon)

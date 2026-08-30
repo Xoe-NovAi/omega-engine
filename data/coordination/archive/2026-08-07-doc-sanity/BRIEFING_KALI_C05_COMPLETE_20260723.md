@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BRIEFING FOR KALI — Session Summary & Forward Plan
 **AP Token**: `AP-KALI_BRIEFING_20260723-v1.0.0`
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ opencode ⬡ trc_kali_briefing ⬡ 2026-07-23

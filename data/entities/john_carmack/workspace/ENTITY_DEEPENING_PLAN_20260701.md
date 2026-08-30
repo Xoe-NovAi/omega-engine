@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack Entity — Deepening Plan
 # ⬡ OMEGA ⬡ john_carmack ⬡ deepseek-v4-flash ⬡ S3-DEEPEN ⬡ 2026-07-01
 

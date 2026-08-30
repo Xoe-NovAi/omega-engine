@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Carmack Audit: What Was Overlooked
 
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ ARCHITECTURAL-AUDIT ⬡ 2026-06-23

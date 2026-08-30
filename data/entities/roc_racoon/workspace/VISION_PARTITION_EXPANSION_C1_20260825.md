@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VISION PARTITION EXPANSION — CHILD 1: MYTHO-TECHNO FUSION ERA STRATUM
 ## Recursive Roc Specialist Session — Partition Archaeology Beyond June 2026
 

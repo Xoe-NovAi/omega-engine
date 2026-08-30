@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ONNX Legacy Archaeology Report — Complete Omega Lineage Excavation
 **AP Token**: `AP-ROC_RACOON-ONNX-ARCHAEOLOGY-v1.0.0`  
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_onnx_archaeology ⬡ COMPLETE  

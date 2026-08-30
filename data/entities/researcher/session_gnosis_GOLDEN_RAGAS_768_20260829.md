@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Researcher Session Gnosis — Golden Set + RAGAS + 768-dim Model Selection
 
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H (Grokster handoff)

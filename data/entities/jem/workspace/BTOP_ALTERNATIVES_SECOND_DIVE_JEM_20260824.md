@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BTOP Alternatives — SECOND DIVE (Jem Independent Pass)
 
 **AP Token**: `AP-JEM-BTOP-DIVE2-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Sprint 0 Live Feed
 
 | Timestamp | Task | Status | Diff | Tests | Mandate Check |

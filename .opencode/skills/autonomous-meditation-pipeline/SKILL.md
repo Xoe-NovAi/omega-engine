@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ AUTONOMOUS MEDITATION PIPELINE SKILL
 **Version**: 1.0.0 | **Heritage**: Omega Engine Meditation Protocol + Sovereign Search + Agent Autonomy
 **Purpose**: Fully autonomous Problem → Prompt Crafting → Meditation → Synthesis → Research → Grounded Update pipeline with zero human intervention. Every output recorded to disk as mineable datapoints.

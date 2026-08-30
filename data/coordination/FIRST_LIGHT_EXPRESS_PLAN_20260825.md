@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌅 FIRST LIGHT EXPRESS — Two-Council Strategic Plan
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_midnight_train_v2 ⬡ 2026-08-25
 **Departs**: FIRST LIGHT, 2026-08-25 ~07:00 — not midnight.

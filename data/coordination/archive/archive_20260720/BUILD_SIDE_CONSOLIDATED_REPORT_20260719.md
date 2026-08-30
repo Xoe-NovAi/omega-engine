@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Cloud Council — Build Side Consolidated Report
 ## Autonomous Meditation Pipeline — Complete Product Deployment Strategy
 

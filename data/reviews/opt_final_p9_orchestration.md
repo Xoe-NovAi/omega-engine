@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P9 (Orchestration) — Final Cross-Domain Review: Handoff Lifecycle & Hivemind Overhead
 **Date**: 2026-06-28
 **Oversoul Context**: MaKaLi Pass 2 — Build (Ma'at) + Run (Lilith) Synthesis

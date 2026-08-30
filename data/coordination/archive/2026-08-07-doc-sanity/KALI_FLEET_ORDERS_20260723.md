@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI FLEET ORDERS — 2026-07-23
 **AP Token**: `AP-KALI-FLEET-ORDERS-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ FLEET-ORDERS ⬡ 2026-07-23

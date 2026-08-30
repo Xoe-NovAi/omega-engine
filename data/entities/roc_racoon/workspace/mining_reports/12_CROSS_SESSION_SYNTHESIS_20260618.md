@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cross-Session Synthesis — Roc Racoon Reconciles with MaKaLi
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ DEEPSEEK_V4_FLASH ⬡ OPENCODE ⬡ trc_cross_session_synthesis
 # AP Token: AP-CROSS-SESSION-SYNTHESIS-v1.0

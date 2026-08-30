@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN COMPACTION ARCHITECTURE — The Big Pickle Anomaly, OpenCode Internals, and the Hybrid Fusion
 **AP Token**: `AP-RESEARCHER-COMPACTION-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ openrouter/minimax/minimax-m3:free ⬡ opencode ⬡ trc_compaction_architecture ⬡ STRATEGIC-EVIDENCE

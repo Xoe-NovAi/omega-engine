@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Archaeology Report: Documentation & State-Tracking Patterns
 **Date**: 2026-07-01
 **Entity**: roc_racoon (Sovereign Miner)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ROC_MIGRATION_PATHS_20260829.md — 6 Migration Paths
 
 **Entity**: Roc Racoon (Sovereign Miner)

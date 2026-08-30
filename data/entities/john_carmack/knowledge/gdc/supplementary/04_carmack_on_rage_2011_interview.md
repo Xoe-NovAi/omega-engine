@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Carmack on Rage — Game Developer Interview (August 2011)
 **Source**: https://www.gamedeveloper.com/design/carmack-on-i-rage-i-
 

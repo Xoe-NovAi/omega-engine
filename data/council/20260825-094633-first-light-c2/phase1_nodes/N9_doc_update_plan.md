@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N9 — DOC UPDATE PLAN (Council 2, Phase 1 Node 9)
 ⬡ OMEGA ⬡ LILITH/node9 ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c2_n9 ⬡ PREP-ONLY PLAN
 **Session**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25

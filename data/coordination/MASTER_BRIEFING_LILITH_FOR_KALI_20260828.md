@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ MASTER BRIEFING — KALI
 ## LILITH → KALI · Operational Hand-Off for the Aug 28th Soft Launch
 *Open this first. The synthesis is the cathedral; this is the worklist.*

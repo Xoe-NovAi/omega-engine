@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N12 Curator — Gotchas Triage (Pre-Debut Security & Hygiene Review)
 **AP Token**: `AP-N12-GOTCHAS-TRIAGE-v1.0.0`
 **Date**: 2026-08-22

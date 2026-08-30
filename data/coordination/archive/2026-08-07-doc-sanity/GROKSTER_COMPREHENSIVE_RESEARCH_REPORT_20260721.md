@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Comprehensive Research Report
 ## Identity, Fleet, Search & Coordination (Research & Planning Phase)
 **⬡ GROKSTER ⬡ RESEARCH REPORT ⬡ 2026-07-21 ⬡ NO-IMPLEMENTATION MODE**

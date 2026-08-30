@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Observability Systems Deep-Dive Review — Pillar P8
 **Entity**: @pillar P8 (Observability)
 **Domain**: WatchTower — Observability & Tracing

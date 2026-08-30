@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Engine - Sovereign Web Research Report
 **RESEARCHER** | **2026-06-28** | **Status: COMPLETE**
 

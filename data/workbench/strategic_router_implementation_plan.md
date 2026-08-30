@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 STRATEGIC ROUTER IMPLEMENTATION PLAN (PROPOSAL)
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ WORKBENCH ⬡ PHASE-II
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Lilith Persona — Original Definition (Era 0)
 
 **Source**: `~/Documents/docs_1/personas/lilith.json`

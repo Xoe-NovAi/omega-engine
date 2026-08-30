@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ARCHITECT OVERSIGHT PATTERNS — Human Intelligence Codification
 **AP Token**: `AP-KALI-OVERSIGHT-PATTERNS-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_oversight_codification ⬡ ACTIVE

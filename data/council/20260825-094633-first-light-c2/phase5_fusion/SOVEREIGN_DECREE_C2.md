@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚜️ SOVEREIGN DECREE C2 — First Light Express, Council 2 (DEV-PREP & SPEC DRAFTING)
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ hy3-free ⬡ opencode ⬡ trc_first_light_c2_decree ⬡ STAGE-5 FUSED VERDICT
 **SESSION_ID**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25 · **Terminus decree of the First Light Express**

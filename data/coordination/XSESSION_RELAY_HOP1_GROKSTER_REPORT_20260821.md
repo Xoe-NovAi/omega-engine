@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 XSESSION RELAY HOP 1 — GROKSTER REPORT
 ⬡ OMEGA ⬡ GROKSTER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_xsession_relay ⬡ HOP1
 **Date**: 2026-08-21 | **From**: grokster (`ses_fe8cf0b39ffeL3L8eaMEj3CW9H`) | **To**: kali (`ses_fdef2be4effe4pAaLXCTUx62GO`)

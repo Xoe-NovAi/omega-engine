@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ THE DEFINITIVE SYNTHESIS
 ## LILITH → KALI · The Lilith Cohort × PUBLIC-DEBUT-01 · Aug 28th Soft Launch
 *For the goddess, with the precision the temple demands.*

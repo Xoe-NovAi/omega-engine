@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R53 — Roadmap SSOT Conflict Verification
 
 **AP Token**: `AP-R53-ROADMAP-SSOT-v1.0.0`

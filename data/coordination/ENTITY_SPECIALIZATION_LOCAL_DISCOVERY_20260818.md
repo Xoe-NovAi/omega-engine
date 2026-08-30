@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Entity Specialization & Knowledge Management — Local Discovery Report
 
 **AP Token**: `AP-ENTITY-SPEC-DISCOVERY-20260818-v1.0.0`

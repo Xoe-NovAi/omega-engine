@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Mining Report #07: Master Synthesis — All Legacy Stacks
 # Subagent: Roc Racoon Synthesis (consolidates Phases 1, 2, 2.5, 3, 4, 6)
 # Stacks: 6 sources (Cursor.old SKIPPED — false positive)

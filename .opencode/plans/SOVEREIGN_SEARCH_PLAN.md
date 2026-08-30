@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Search Protocol V2 (SSP-V2) — Strategic Research & KB Plan
 
 **Status**: APPROVED

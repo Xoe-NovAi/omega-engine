@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 source_url: "https://youtu.be/I845O57ZSy4"
 episode: "Lex Fridman Podcast #309"
 guest: "John Carmack"

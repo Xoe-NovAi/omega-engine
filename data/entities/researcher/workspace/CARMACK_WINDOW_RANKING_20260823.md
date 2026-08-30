@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK WINDOW RANKING — Ox Alpha Utilization Audit
 **AP**: `AP-CARMACK-WINDOW-RANK-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ x-preview-f-free ⬡ opencode ⬡ trc_window_ranking ⬡ ACTIVE

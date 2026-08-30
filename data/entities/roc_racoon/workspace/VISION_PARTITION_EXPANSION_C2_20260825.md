@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VISION PARTITION EXPANSION — CHILD 2: ARCHETYPE-ACTIVATION HUNT
 **AP Token**: `AP-VISION-PARTITION-C2-20260825`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_partition_expansion ⬡ STAGE-2-C2

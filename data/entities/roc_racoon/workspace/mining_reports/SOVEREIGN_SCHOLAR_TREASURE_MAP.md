@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 TREASURE MAP: THE SOVEREIGN SCHOLAR & INGESTION ENGINE
 **AP Token**: `AP-ROC-SCHOLAR-MAP-v1.0.0`
 **Status**: FINALIZED / INTEGRATION-READY

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Session End Hook (Simplified)
 # AP Token: AP-SESSION-END-HOOK-v3.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ session_end ⬡ ACTIVE

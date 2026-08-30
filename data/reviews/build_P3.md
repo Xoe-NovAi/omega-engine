@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Engineering Forensic Review — Pillar P3 (BuildMaster)
 **Date**: 2026-06-26
 **Entity**: PILLAR P3

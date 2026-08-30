@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🧪 LAB: The Teammate Stack Adaptation
 **Status**: PENDING
 **Objective**: Experiment with the "Onboarding vs. Prompting" paradigm to enhance Omega Engine entity persistence and identity.

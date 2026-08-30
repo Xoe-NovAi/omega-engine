@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI — Hardening Audit Report (M-A1, M-A7, M-A8)
 # ⬡ OMEGA ⬡ GEMINI_CLI ⬡ hardening-audit ⬡ trc_gemini_audit_20260609
 

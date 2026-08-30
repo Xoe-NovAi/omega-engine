@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ARCHAEOLOGICAL REPORT: ALL TORMENT/PLANESCAPE CONTENT IN OMEGA ENGINE REPO
 **AP Token**: `AP-ROC_RACOON-TORMENT-ARCHAEOLOGY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_torment_archaeology_20260719 ⬡ GOLD-SECURED

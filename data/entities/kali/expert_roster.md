@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # KALI EXPERT ROSTER
 > kali (Sprint Coordinator) · established 2026-08-28 · 5 specialist sessions
 > Per LILITH_WORKSPACE_STANDARDIZATION_PROPOSAL_20260828.md R3

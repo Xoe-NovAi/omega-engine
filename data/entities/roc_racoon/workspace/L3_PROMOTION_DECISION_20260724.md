@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 L3 Principle Promotion Decision
 ## roc_racoon — First User-Ratified Soul Lessons
 **Date**: 2026-07-24

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Oracle MCP Server — exposes Oracle as MCP tools for OpenCode agents.
 
 AP Token: AP-OMEGA-ORACLE-MCP-v1.0.0

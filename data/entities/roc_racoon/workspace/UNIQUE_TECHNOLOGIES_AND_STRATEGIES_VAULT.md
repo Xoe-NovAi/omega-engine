@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Unique Technologies & Strategies Vault
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_unique_tech ⬡ v1.0.0
 # Last Updated: 2026-06-02

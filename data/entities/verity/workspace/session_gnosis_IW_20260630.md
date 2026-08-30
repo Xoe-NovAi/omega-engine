@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_iw_2_3_20260630 ⬡ SESSION-GNOSIS
 
 # Session Gnosis: Iron Wall IW-2 + IW-3 Completion Gate

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N6 (Modelgate) — Provider Selection & Local-First Inference Chain Validation Report
 **AP Token**: `AP-N6-VALIDATION-v1.0.0`
 ⬡ OMEGA ⬡ N6-MODELGATE ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_n6_validation ⬡ COMPLETE

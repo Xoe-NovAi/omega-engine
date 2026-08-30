@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DATA/ AUDIT COMPLETE — INDEX & NAVIGATION
 
 **Generated**: 2026-06-06  

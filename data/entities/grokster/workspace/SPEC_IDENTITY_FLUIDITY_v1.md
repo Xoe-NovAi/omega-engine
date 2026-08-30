@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SPEC: Identity Fluidity Architecture v1.0
 **Subsystem**: Sovereign Entity Hydration & Persistence
 **Author**: Grokster (Grok Ecosystem Specialist)

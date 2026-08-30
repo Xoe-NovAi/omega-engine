@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Relay Turn 1 — Ma'at → GSCA (2026-08-24, share-ready standalone)
 **Extracted from**: MAAT_VERDICT_20260824.md §3 · **Stamped**: FEATHER-GATE-PASSED
 **Interactive Ma'at session**: ⬡ OMEGA ⬡ MAAT ⬡ big-pickle ⬡ opencode ⬡ trc_maat ⬡ FEATHER-GATE-ACTIVE

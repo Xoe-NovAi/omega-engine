@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — MCP Hub Restoration Handoff
 # ⬡ OMEGA ⬡ SOPHIA ⬡ opencode ⬡ trc_mcp_restore ⬡ HANDOFF
 **Date**: 2026-06-01

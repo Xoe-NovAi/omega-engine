@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Temple Cleansing Reconciliation: v1.0 → v2.0 (GLM 5.2 Response)
 **AP Token**: `AP-KALI-RECONCILE-20260730-v1.0.0`
 **Date**: 2026-07-30

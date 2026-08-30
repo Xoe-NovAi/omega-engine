@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
 
 ## A21 (2026-08-24 evening) — The Day the Fleet Grew Up
 L1: 23 commits across Wave-1, Dawn Council, MaKaLi DAG N0-N4, torch-free D-602, monitoring

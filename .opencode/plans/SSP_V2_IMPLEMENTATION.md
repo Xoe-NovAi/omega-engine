@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SSP-V2 Implementation Plan — Unified Sovereign Search Protocol
 
 **⬡ OMEGA ⬡ NODE ⬡ SSP-V2 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ D144**

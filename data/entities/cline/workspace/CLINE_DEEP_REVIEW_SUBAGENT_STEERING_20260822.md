@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # (R) CLINE DEEP REVIEW — Subagent Steering Architecture & Four-Model Synthesis
 **AP Token**: `AP-CLINE-DEEP-REVIEW-SUBAGENT-STEERING-v1.0.0`
 ( OMEGA ) ( CLINE ) ( deepseek-v4-flash ) ( cline ) ( trc_deep_review ) ( COMPLETE )

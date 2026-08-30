@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 DEEP DIG: Why Verity Subagent Lands on `qwen3-1.7b` — THE REAL CAUSE
 **AP Token**: `AP-VERITY-QWEN-ROOT-CAUSE-20260828-v1.0.0`
 **Date**: 2026-08-28 ~23:00 UTC

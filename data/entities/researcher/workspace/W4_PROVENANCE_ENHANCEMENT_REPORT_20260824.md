@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # W4 Provenance Enhancement Report — W1-4 (WAVE-1-DOCTRINE-WIRING)
 **Agent**: researcher | **Date**: 2026-08-24 | **Task**: GAP-1 db resolver + GAP-2 ledger completeness in `scripts/correct_ics_provenance.py`
 **Doctrine**: R_MESSAGE_PROVENANCE_HIERARCHY_20260823 (T0 truth-anchor) · NEMOTRON_VALUE_ADJUDICATION §8

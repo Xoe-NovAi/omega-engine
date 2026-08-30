@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Synthesis Update: First Breath, World State, and Carmack Patterns
 **Entity**: @jem
 **Date**: 2026-06-12

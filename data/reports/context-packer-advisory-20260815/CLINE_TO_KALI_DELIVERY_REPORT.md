@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Packer Advisory Review — Delivery Report to Kali
 
 **AP Token**: `AP-CONTEXT-PACKER-ADVISORY-REVIEW-v1.0.0`

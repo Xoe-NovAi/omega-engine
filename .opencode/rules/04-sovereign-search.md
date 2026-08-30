@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 rule_id: "RULE-SOVEREIGN-SEARCH"
 authority: "M23 Failure Integrity + M1 AnyIO + sovereign-search skill"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Local Empirical Investigation — Context Injection Measurement
 
 **AP Token**: `AP-EXPLORE-LOCAL-v1.0.0`  

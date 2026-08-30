@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 INDUSTRY COUNTERFACTUAL — "If Shipped April 2025, How Far Ahead?"
 **AP Token**: `AP-RESEARCHER-COUNTERFACTUAL-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_industry_counterfactual ⬡ STRATEGIC-EVIDENCE

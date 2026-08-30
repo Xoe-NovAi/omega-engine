@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## [2026-06-09 11:51] RESEARCH: Sovereign Landscape Analysis
 - **Goal**: Identify similar projects to Omega Hub.
 - **Findings**: No existing project synthesizes Local-First, Zero Telemetry, Structured Hierarchy, and Formal Governance into a single "Sovereign Engine."

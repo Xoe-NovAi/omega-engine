@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "independent_verification"
 document_id: "R-RESEARCHER-INDEPENDENT-VERIFICATION-20260828"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff: Cline-M3 → Kali (Sovereign Execution)
 # Date: 2026-06-04 | PIVOT: D117 | AP: AP-SST-v1.4.0
 

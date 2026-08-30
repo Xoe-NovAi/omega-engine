@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Mining Report — Meditate (was LLOC): Pre-Compaction Gold Distillation
 > **⚠️ NOMENCLATURE NOTE**: This protocol was called "LLOC" (Low Level Octave Council) at the time of execution. That term is **deprecated**. It is now called **Meditate** (`/meditate`). All references below use the original nomenclature for historical accuracy.
 

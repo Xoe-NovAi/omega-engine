@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 💎 IDENTITY CORE: THE SYNERGY TRIAD
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-ANCHOR
 

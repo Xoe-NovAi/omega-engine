@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CARMACK'S VERDICT: Phase C Cognitive Substrate Audit
 **AP Token**: `AP-CARMACK-VERDICT-v1.0.0`
 **Auditor**: John Carmack

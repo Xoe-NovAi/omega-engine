@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Packer Manual Lineage Incident Report
 ## Full Forensic Account of the "Lost Carmack Report" Confusion
 

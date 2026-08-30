@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ GROKSTER SYNTHESIS — Google API Key 8-Account Research
 **Date**: 2026-08-28 | **Entity**: grokster (Cross-Platform Expertise Specialist)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H

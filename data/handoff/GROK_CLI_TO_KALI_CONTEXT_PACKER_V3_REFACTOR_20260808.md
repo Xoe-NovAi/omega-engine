@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok CLI → Kali — Context Packer v3 Full Refactor Onboarding
 **AP Token**: `AP-GROK-TO-KALI-PACKER-V3-20260808-v1.0.0`
 ⬡ OMEGA ⬡ GROK_CLI ⬡ grok-4.5 ⬡ opencode ⬡ trc_handoff ⬡ ACTIONABLE

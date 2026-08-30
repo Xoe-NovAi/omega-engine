@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LEGACY MINING REPORT — Mytho-Technological Nomenclature Evidence
 **AP Token**: `AP-ROC_RACOON-mining-mytho-techno-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ {session_model} ⬡ opencode ⬡ trc_mining ⬡ COMPLETE

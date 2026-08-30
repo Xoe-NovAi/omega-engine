@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 NotebookLM Deep Research Report
 ## Capabilities, Limits, and Strategic Codebase Analysis Framework for Omega Engine
 

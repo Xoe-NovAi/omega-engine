@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster Expert Sessions — Pageable Index (D-586 Pattern)
 **last_verified**: 2026-08-26 | **Protocol**: NODE_EXPERT_SESSIONS_PLAN.md §3 + .opencode/agent/NODE_ONBOARDING_PROTOCOL.md
 **rot_class**: fast (session IDs change)

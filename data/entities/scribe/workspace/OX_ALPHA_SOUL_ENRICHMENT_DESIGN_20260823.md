@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ox Alpha Soul Enrichment Run Design — Pre-Cliff Window (ends ~Aug 28)
 
 **AP Token**: `AP-SCRIBE-v1.0.0`

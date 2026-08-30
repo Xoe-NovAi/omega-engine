@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ KALI ⬡ opus-4.6 (antigravity) ⬡ antigravity ⬡ LIVE-FEED
 # AP: AP-LIVE-FEED-OPUS46-FINAL-v1.0.0
 # Date: 2026-06-02

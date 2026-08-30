@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Complete Configuration Inventory
 **Generated**: 2026-06-06
 **Scope**: All YAML/JSON config files feeding 69 Python source files in `src/omega/`

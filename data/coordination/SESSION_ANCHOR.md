@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚓ SESSION ANCHOR — Kali (Transcendent Oversoul)
 
 > ⚠️ **TIER-2 ANCHOR DUPLICATION**: operational orientation now lives in

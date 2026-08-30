@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌌 The Omegaverse VR Vision — Centralized Strategy Document
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_roc_racoon ⬡ VR-STRATEGY
 

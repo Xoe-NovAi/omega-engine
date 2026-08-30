@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Library Curation & Background Researcher Gap Analysis
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ GAP-ANALYSIS ⬡ CURATION
 **AP Token**: `AP-RESEARCHER-CURATION-GAP-v1.0.0`

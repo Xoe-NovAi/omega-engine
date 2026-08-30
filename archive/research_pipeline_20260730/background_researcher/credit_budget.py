@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — API Credit Budget Tracker
 # AP: AP-BACKGROUND-RESEARCHER-BUDGET-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ sovereign ⬡ budget ⬡ WORKER

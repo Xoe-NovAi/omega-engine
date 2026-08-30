@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R55 — YouTube Research Deep Dive
 
 **AP Token**: `AP-R55-YOUTUBE-DEEP-DIVE-v1.0.0`

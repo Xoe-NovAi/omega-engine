@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep Review — Phase 1: Code Architecture & Engine Core
 **Date**: 2026-06-05
 **Author**: Cline (MiniMax-M3, Sovereign Execution Session)

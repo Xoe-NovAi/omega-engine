@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Onboarding Briefing — Gemma 4 31B Strategy Hardening
 **AP Token**: `AP-KALI-ONBOARD-GEMMA4-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_kali_briefing ⬡ 2026-07-19

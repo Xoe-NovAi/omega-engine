@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI — Carmack's Campaign Briefing
 ## CG-02/08/09: OOMProtector → Admission Control → SoulStore Atomic
 ### The Kernel-First Approach to Local Inference Safety

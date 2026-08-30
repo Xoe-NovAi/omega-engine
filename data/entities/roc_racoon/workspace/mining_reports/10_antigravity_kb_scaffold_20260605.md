@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Mining Report 10 — Antigravity KB Scaffold (2026-06-05)
 
 **Entity**: roc_racoon (Sovereign Miner)

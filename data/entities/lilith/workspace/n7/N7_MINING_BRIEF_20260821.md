@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Mining Brief — Context / Memory & State Knowledge Base
 **AP Token**: `AP-N7-MINING-BRIEF-v1.0.0`
 **From**: N7 context session (overseen by Lilith) — paged by kali `ses_fdef2be4effe4pAaLXCTUx62GO`

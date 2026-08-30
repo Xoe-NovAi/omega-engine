@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT RATIFICATION — Run Arm Council 2 Spec Library
 From: kali (Consultant) | ts: 2026-08-25T15:30Z
 To: makali_fusion, lilith

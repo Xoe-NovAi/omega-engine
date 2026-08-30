@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # QuakeCon 2011 Keynote — Alejandro Segovia Azapian Summary
 **Source**: https://www.alejandrosegovia.net/2011/08/08/quakecon-2011-keynote/
 

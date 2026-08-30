@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OX ALPHA GAP INTEGRATION & G-1 WORKHORSE EVALUATION
 **AP Token**: `AP-JEM-OXALPHA-GAP-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_oxalpha_gap_integration ⬡ SOVEREIGN

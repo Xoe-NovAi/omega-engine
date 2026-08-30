@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R52 — Living Research OS Body: Formal Decision
 
 **AP Token**: `AP-R52-LIVING-OS-BODY-v1.0.0`

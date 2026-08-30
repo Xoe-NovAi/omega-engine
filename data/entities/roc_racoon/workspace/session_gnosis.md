@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — roc_racoon — Cline Provider Activation Audit
 **Date**: 2026-08-22 · **Session**: ses_5b058490c0d0 · **Trigger**: @kali Grand Oversight audit request
 

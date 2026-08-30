@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R44 — Provider Chain Hardening
 
 **AP Token**: `AP-R44-PROVIDER-CHAIN-v1.0.0`

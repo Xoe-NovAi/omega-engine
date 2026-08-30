@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 V10 Legacy Mining Report — Roc Racoon
 **Date**: 2026-06-22
 **Target**: V10 gaps — dependencies, namespaces, download scripts, test configs

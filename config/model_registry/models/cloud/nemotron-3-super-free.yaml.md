@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: nvidia/nemotron-3-super-120b-a12b:free
 display_name: Nemotron 3 Super 120B (Free)
 version: '2026-05-17'

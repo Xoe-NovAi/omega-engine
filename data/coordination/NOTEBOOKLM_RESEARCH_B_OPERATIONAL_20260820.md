@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # NOTEBOOKLM RESEARCH — SUBAGENT B (NLG-B) · OPERATIONAL GAPS
 **Closing**: GAP-10 (session persistence), GAP-7 (token density), GAP-9 (Pro vs free cost-benefit)
 **Date**: 2026-08-20

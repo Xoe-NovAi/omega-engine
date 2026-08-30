@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R7: MCP Tool Patterns in THIS Codebase — Greenfield Implementation
 
 **AP Token:** `AP-RESEARCHER-R7-20260813-v1.0.0`

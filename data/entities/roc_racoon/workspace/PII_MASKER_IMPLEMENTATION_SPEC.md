@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PII Observation Masking — Implementation Specification
 ## Gap 1: P0 CRITICAL — Sovereign Data Leak Prevention
 

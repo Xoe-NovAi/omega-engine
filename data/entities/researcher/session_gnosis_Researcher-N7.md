@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — Researcher / N7 Web Research Arc
 
 **Date**: 2026-08-21 · **Status**: DORMANT · **Session model**: x-preview-f-free

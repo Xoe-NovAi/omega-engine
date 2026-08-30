@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Systems Deep-Dive Review — Pillar P7
 **Entity**: @pillar P7 (Context)
 **Domain**: Memory and Soul Evolution

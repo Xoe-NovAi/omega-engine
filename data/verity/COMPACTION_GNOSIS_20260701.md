@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Compaction Gnosis
 ## MV-IW Phase 0 Complete → Phase 1.1 In-Progress
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VISION DEEP DIVE — CHILD 2: MID ERA 6, THE SOUL-ARCHITECTURE SPRINT
 **AP Token**: `AP-VISION-DEEPDIVE-ERA6-SOULARCH-2`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_vision_deep_dive ⬡ CHILD-ERA6-SOULARCH-2

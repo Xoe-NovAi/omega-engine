@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Comprehensive Gap Closure Review — Sprint-F
 ## Sovereign Verity Audit: MaKaLi Council Critical Gaps
 

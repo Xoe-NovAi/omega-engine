@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LATEST CORRECTIONS — Cross-Session Sync (2026-08-28)
 **AP Token**: `AP-LATEST-CORRECTIONS-20260828-v1.0.0`
 **Date**: 2026-08-28 ~20:25 UTC

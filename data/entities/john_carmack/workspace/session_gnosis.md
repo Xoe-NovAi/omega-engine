@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack — Session Gnosis
 **Date**: 2026-07-25 | **Session**: KG Research + Practical Guides Complete
 **Phase**: KG Research + Practical Guides Complete — All 6 KG deliverables created, 5 practical guides created, CONTRIBUTING.md updated, next steps defined

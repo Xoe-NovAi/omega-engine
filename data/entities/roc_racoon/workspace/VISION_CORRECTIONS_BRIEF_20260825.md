@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # VISION DEEP DIVE — ARCHITECT CORRECTIONS & CONTEXT BRIEF
 **From**: kali (chair) · **To**: Roc (dedicated Kali-Roc specialist session)
 **Date**: 2026-08-25 ~06:15Z · **Status**: MANDATORY READING before any further excavation

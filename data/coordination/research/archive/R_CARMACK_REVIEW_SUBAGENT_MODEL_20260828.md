@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "self_review"
 document_id: "R_CARMACK_REVIEW_SUBAGENT_MODEL_20260828"

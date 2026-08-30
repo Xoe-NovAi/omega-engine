@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: scribe
 description: Soul Distillation Pipeline — Session hook → L1→L2→L3 → proposed_lessons.yaml
 version: "1.0.0"

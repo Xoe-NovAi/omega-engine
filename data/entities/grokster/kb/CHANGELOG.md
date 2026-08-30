@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster KB Changelog & Decision Log
 **Domain**: Knowledge base governance and evolution tracking
 **Date**: 2026-07-22

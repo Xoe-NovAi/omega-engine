@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mining Report: Gen 1 Web Grok Fleet (Era 3 — Nov 2025–Mar 2026)
 **Trace**: `trc_mining_gen1_grok_fleet_20260721`
 **Entity**: roc_racoon — Sovereign Miner & Ideas Guy

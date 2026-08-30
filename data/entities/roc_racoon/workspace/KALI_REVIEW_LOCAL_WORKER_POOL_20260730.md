@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Review: Local Worker Pool & Local Models Fix — Briefing & Gameplan
 **AP Token**: `AP-KALI-LOCAL-WORKER-REVIEW-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_review ⬡ KALI-BRIEFING

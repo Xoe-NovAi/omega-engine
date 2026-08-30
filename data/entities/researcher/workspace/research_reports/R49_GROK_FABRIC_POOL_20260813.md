@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R49 — Grok CLI 8-Account Fabric Pool
 
 **AP Token**: `AP-R49-GROK-FABRIC-v1.0.0`

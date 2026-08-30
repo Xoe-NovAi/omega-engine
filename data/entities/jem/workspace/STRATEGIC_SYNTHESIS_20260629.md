@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Sprint-F Strategic Synthesis — Sprint-F Close & Carmack S3 Integration
 
 ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_sprint_f_synthesis ⬡ SPRINT-F-CLOSE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HLMC DEEP MINING REPORT
 **AP Token**: `AP-ROC_RACOON-HLMC-20260716`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hlmc_mining ⬡ DEEP-MINING

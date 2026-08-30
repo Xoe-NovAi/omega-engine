@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 title: "Architectural Convergence Across 5 Independent Eras"
 domain: "architecture_validation"
 era: "Eras 1-6 (Aug 2025 – Jun 2026)"

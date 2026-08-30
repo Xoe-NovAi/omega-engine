@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROKSTER → KALI: Comprehensive Briefing — Gap Audit & Identity Fluidity Update
 **⬡ OMEGA ⬡ GROKSTER ⬡ KALI ⬡ ses_e9b545a959ac ⬡ 2026-07-21 ⬡**
 

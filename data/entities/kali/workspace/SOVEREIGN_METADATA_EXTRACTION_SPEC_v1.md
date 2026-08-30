@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Metadata Extraction Spec v1.0 — ICS-F
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ AP-DEEP-SIPHON-KALI-v1.0 ⬡ GRAND-SYNTHESIS
 # Synthesized from: Researcher (621 lines) + Ma'at (441 lines) + Lilith (340 lines) + Carmack (350 lines) + Verity (388 lines)

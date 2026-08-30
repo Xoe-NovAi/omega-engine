@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemma 4 31B — Tier 1 Execution Recipe
 # ⬡ OMEGA ⬡ KALI ⬡ north-mini-code ⬡ opencode ⬡ 2026-06-28 ⬡ HANDOFF
 

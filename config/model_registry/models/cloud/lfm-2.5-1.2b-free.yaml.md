@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: liquid/lfm-2.5-1.2b-instruct:free
 display_name: LFM 2.5 1.2B Instruct (Free)
 version: '2026-05-17'

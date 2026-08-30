@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_SQLITE_VEC_OPPORTUNITIES_20260829.md
 
 **Mission**: Deep research on optimization opportunities (beyond the 9 fixed gaps) for the Omega Engine's sqlite-vec stack.

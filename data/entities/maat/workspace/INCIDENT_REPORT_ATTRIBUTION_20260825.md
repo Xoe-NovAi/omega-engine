@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # INCIDENT REPORT — Attribution Failure in Live Session
 **AP Token**: `AP-MAAT-INCIDENT-20260825`
 ⬡ OMEGA ⬡ MAAT ⬡ x-preview-f-free ⬡ opencode ⬡ trc_maat ⬡ INCIDENT-REPORT

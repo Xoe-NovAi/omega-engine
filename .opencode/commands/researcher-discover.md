@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Launch jem (Tier 1 research / Discovery KB) via the Researcher. Use for broad web/library searches and evidence logging.
 agent: researcher
 subtask: false

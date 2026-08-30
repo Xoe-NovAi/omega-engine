@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FORENSIC PATTERNS — Incident-Derived Procedures (Living Document)
 **AP Token**: `AP-SAFETY-FORENSIC-PATTERNS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_forensic_patterns ⬡ ACTIVE

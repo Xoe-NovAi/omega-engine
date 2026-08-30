@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 [2026-07-08 19:28:47] STRATEGY-FINAL: Posted HIVEMIND_ROC_RACOON_STRATEGY_FINAL_20260708.md. Ready for Execution.
 [2026-07-17 14:30:00] MEDITATE-MC-MINING-COMPLETE: Archaeological synthesis of Meditate/MC (then called LLOC/HLOC) from Gemini CLI (March 2026 SESS-20) to OpenCode port complete. Key findings:
 - Original Meditate (then LLOC): "Octa-Facet Strategic Audit" (March 9, 2026) — 8 facets sequentially reviewing Foundation v4.1 in single inference

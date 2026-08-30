@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Data Models
 # AP: AP-BACKGROUND-RESEARCHER-MODELS-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ sovereign ⬡ models ⬡ WORKER

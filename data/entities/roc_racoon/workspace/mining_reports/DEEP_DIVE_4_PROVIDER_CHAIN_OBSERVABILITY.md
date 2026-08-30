@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DEEP DIVE 4: PROVIDER CHAIN & OBSERVABILITY
 ## ⬡ The Sovereign Inference Fabric and Telemetry Infrastructure ⬡
 

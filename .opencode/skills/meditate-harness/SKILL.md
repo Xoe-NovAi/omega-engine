@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ Meditate Harness Skill
 **AP Token**: `AP-MEDITATE-HARNESS-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ skill ⬡ meditate-harness ⬡ Meditate-v1.0

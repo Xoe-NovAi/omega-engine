@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK FULL REPO REVIEW CHECKLIST — 2026-08-28
 **AP**: AP-JOHN_CARMACK-v1.0.0 · **For**: Cline CLI × 8 DeepSeek-1M accounts (parallel) · **Branch under review**: `release/debut` (572 files, 4,561 removed) · **Time budget**: 30 min total
 **Prior audit anchor**: `docs/strategy/CARMACK_FULL_SCOPE_AUDIT_20260825.md` — this checklist operationalizes the P0–P5 items into mechanical checks. Items flagged **(re-verify)** were audit findings whose remediation is unconfirmed.

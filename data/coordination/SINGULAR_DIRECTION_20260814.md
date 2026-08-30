@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SINGULAR DIRECTION — Post-Reconciliation Briefing (2026-08-14)
 
 **AP Token:** `AP-SINGULAR-DIRECTION-20260814-v1.0.0`

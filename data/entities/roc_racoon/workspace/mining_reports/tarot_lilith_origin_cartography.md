@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 COMPLETE TAROT/LILITH ORIGIN CARTOGRAPHY
 ## The Full Map: From First Card → Omega Engine
 

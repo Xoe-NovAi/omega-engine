@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon Treasure Map - 2026-06-09
 
 **Generated using new Hybrid Search and Stable Embeddings.**

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MAAT_CICD_PIPELINE_20260829.md
 
 **Mission**: Temple-Grade CI/CD pipeline research — GitHub Actions matrix strategy, pre-commit, branch protection, deployment gates

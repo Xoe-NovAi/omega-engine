@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # NODE GAP LOCAL DISCOVERY — Internal Evidence for N11+ Proposal
 **AP Token**: `AP-ROC_RACOON-v1.0.0`
 **Date**: 2026-08-22

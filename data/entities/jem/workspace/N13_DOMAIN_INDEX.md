@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N13 arcana — Domain Index (T4)
 
 **AP Token**: `AP-N13-DOMAIN-INDEX-v1.0.0`

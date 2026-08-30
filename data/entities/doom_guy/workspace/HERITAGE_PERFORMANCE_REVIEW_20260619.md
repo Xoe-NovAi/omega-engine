@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Heritage & Performance Review — Fleet Model Proposal
 # ⬡ OMEGA ⬡ DOOM GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ M14-VETTING
 **AP Token**: AP-HERITAGE-PERF-REVIEW-v1.0.0

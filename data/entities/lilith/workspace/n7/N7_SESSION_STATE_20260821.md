@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Session State — 2026-08-21 (Continuity Snapshot)
 **AP Token**: `AP-N7-SESSION-STATE-v1.0.0`
 **Keeper**: N7 context (Memory & State) · Overseer: Lilith · Paged by kali `ses_fdef2be4effe4pAaLXCTUx62GO`

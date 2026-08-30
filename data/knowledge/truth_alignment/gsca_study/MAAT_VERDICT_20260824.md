@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ma'at Founding Verdict — 2026-08-24
 **Session**: ses_fc94674d6ffeD1B1fz8v6m5o1d · **Gate**: FEATHER-GATE-PASSED (with corrections applied)
 **Hivemind**: posted (ses_0bd5bd28bf64)

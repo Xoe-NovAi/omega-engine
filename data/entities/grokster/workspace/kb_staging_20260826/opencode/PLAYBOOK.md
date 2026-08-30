@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OpenCode CLI — Canonical Operating Playbook (Omega Engine House Practices)
 
 **KB Entry**: grokster/platforms/opencode/PLAYBOOK

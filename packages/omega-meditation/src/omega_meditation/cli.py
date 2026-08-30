@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 ⬡ OMEGA MEDITATION — CLI Entry Point
 Standalone package: `pip install omega-meditation`

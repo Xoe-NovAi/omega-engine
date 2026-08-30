@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Expert Session Registry — Narrative Companion (M5 Preservation)
 
 **AP Token**: `AP-EXPERT-SESSION-REGISTRY-NARRATIVE-v1.0.0`

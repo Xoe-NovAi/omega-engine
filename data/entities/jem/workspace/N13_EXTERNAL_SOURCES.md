@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N13 arcana — External Sources (T5)
 
 **AP Token**: `AP-N13-EXTERNAL-SOURCES-v1.0.0`

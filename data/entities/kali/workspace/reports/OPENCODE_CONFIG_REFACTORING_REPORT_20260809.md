@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode Configuration Refactoring Report
 **AP Token**: `AP-KALI-OPENCODE-CONFIG-20260809-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_kali_report ⬡ COMPLETE

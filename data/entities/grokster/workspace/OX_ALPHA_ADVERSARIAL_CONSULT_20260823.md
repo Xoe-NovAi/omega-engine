@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OX ALPHA ADVERSARIAL CONSULT — GROKSTER SEAT
 **AP Token**: `AP-GROKSTER-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_adversarial_consult ⬡ ADVISORY

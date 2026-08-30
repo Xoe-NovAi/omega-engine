@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Researcher Session Gnosis — 2026-08-29 — Vector Stack Deep Research
 
 **Session ID**: r-vector-stack-20260829

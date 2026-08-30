@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 JEM DEEP DIVE — GAP-5 / GAP-6 / GAP-7 (Stage 4, First Light Express Council 1)
 ⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_gap57 ⬡ Stage-4 ARTIFACT
 **SESSION_ID**: 20260825-094633-first-light | **Task**: research-gap5-7-jem-20260825-01 (registered in TASK_REGISTRY)

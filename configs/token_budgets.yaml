@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Token Budget Configuration for LLM-Friendly Documents
 # Used by validate_llm_docs.py and sprint-plan-llm Makefile target
 

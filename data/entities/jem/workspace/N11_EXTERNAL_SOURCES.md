@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N11 External Sources — Offline Expertise Queue
 **AP**: AP-N11-EXTERNAL-SOURCES-v1.0.0 · **last_verified: 2026-08-22** · **Curator**: Jem (N11 evaluator)
 **Purpose**: Prioritized ingestion queue for future background curation worker. Each entry: title, source, priority, rationale, target format. Worker pulls, ingests, indexes into sovereign library.

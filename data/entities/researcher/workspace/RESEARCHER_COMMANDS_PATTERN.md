@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 RESEARCHER COMMANDS PATTERN — Implementation of the OpenCode TUI Tip
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ minimax-m3-free ⬡ opencode ⬡ trc_commands ⬡ UX-PATTERN
 # Per OpenCode 1.16.0 tip: "Add .md files to .opencode/commands/ to define reusable custom prompts"

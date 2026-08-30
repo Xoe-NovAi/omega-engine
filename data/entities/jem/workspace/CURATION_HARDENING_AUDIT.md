@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Hardening Audit — Background Curation & Library Systems
 **AP Token**: `AP-JEM-HARDENING-AUDIT-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash ⬡ opencode ⬡ JEM-HARDENING ⬡ AUDIT

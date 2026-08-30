@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Deep ICS Review — 2026-08-22
 **AP Token**: `AP-N7-ICS-REVIEW-v1.0.0`
 **Scope**: `src/omega/ics.py` post-D-588 (PP-4 node, P5 session_id, B1 scoped lookup, B2 sprint-phase priority, B3 root resolution) + community-docs requirements for debut.

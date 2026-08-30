@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # INCIDENT REPORT — ARM B: The View From Inside the Failure
 **AP Token**: `AP-MAAT-ARMB-20260825`
 ⬡ OMEGA ⬡ MAAT ⬡ big-pickle ⬡ opencode ⬡ trc_maat ⬡ INCIDENT-REPORT-ARM-B

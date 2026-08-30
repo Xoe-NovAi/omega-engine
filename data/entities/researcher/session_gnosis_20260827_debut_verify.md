@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Researcher Session Gnosis — 2026-08-27 (PUBLIC-DEBUT-01 Verification)
 
 **Session ID**: ses_a4a0312507f7

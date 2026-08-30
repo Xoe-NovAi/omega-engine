@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: ta-vocab-overlap-001
 title: "Vocabulary Overlap Template — Source vs. Agent Prompt"
 generated_at: "2026-07-01T15:30:00Z"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Knowledge Gap Synthesis — Deep Discovery Report
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ trc_gap_synthesis ⬡ PHASE-II
 

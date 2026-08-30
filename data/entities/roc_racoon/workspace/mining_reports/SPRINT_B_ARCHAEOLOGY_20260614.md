@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE — Sprint B Archaeology: Jem Consolidation Analysis
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash ⬡ SPRINT-B-ARCHAEOLOGY ⬡ 2026-06-14
 

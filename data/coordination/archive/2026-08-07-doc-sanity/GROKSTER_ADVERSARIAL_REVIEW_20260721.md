@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROKSTER — Strategic Adversarial Review
 **AP Token**: `AP-GROKSTER-ADVERSARIAL-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_adversarial_review ⬡ ADVERSARY

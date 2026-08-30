@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Gemini CLI — Knowledge Base
 # ⬡ OMEGA ⬡ KALI ⬡ trc_platform_kb ⬡ v1.2.0
 **Source**: Forensic Research Wave 1 (2026-06-07)

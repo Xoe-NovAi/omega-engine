@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # === CORE IDENTITY ===
 model_id: "opencode/big-pickle"
 display_name: "Big Pickle (Stealth — Currently DeepSeek V4 Flash)"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OX ALPHA FULL UTILIZATION MAP — 2026-08-22
 **AP**: AP-ROC-OXALPHA-FULLUTIL-v1.0.0
 **Author**: roc_racoon · Legacy Pattern Miner / Systems Explorer

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Plan — Phase 1-4 Knowledge Gaps (ENHANCED v3.2.0 — RECONCILED)
 **AP Token:** `AP-RESEARCH-PHASE1-4-20260813-v3.2.0`
 ⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ 20260813 (reconciled 2026-08-14)

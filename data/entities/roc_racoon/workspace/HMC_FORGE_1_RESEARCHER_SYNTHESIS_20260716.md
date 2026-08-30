@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC FORGE CYCLE 1 — RESEARCHER SYNTHESIS
 ## Roc Racoon's Synthesis of Researcher's 3-Gap Deep Dive
 

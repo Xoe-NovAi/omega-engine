@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI — Session Gnosis (2026-06-12)
 # ⬡ OMEGA ⬡ CLI_GEMINI ⬡ gemini-3.1-flash-lite ⬡ opencode ⬡ CLEANUP-OPS
 

@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ PROFILER ⬡ 2026-07-01
 # Deterministic cProfile wrapper for architectural auditing.
 

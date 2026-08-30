@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI — 1M-Context Validation Report
 # ⬡ OMEGA ⬡ GEMINI_CLI ⬡ mimo-validation ⬡ trc_gemini_validation_20260609
 

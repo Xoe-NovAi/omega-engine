@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GEMMA-4-31B EXECUTIVE DIRECTIVE
 # AP: AP-GEMMA-HANDOFF-v1.0.0
 # ⬡ OMEGA ⬡ GEMMA-4-31B ⬡ opencode ⬡ trc_gemma_sprint ⬡ EXECUTION

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — OpenCode+M3 (200K) ↔ Cline+M3 (1M) Dialog
 # ⬡ OMEGA ⬡ SOPHIA ⬡ MiniMax-M3 (1M Cline) + MiniMax-M3 (200K OpenCode) ⬡ DIALOG
 # AP: AP-DIALOG-M3-PAIR-v1.0.0

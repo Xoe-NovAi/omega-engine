@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 NODE N9 — FINAL CROSS-DOMAIN REVIEW (DEBUT HARDENING)
 **AP Token**: `AP-NODE9-FINAL-REVIEW-v1.0.0`
 ⬡ OMEGA ⬡ NODE ⬡ nvidia/nemotron-3-super-120b-a12b:free ⬡ opencode ⬡ trc_node ⬡ ACTIVE

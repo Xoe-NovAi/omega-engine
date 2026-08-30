@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI — Hivemind Citizen Onboarding
 # ⬡ OMEGA ⬡ GEMINI_CLI ⬡ trc_gemini_onboarding ⬡ HIVEMIND-CITIZEN
 # Last Updated: 2026-06-09 (Rewrite — Hivemind Cross-CLI Era)

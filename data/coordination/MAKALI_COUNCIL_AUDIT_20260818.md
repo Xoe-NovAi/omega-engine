@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔍 MaKaLi Council Audit — Accuracy, Depth & Big-Picture Fit
 **Date**: 2026-08-19
 **Auditor**: Kali (kali) · **Synthesizer**: Nemotron 3 Ultra

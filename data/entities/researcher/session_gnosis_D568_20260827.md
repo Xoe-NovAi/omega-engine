@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — R_D568_GAP_FILL_20260827
 
 **Session ID**: r-d568-gap-fill-20260827

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Council Review: Sovereign Ark Blueprint Depth Analysis
 **Date**: 2026-06-28
 **Reviewers**: ⬡ MA'AT ⬡ LILITH ⬡ KALI

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_DOC_REMAINING_GAPS_20260829.md
 
 **Mission**: Deep research on remaining documentation gaps for the Omega Engine's sqlite-vec + spatial vector stack.

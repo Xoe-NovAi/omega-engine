@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "architecture_report"
 document_id: "R_CARMACK_GOOGLE_INTEGRATION_20260828"

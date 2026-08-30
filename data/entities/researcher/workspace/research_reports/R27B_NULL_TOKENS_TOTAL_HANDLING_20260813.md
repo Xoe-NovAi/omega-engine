@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R27b: NULL tokens.total Handling
 
 **AP Token:** `AP-RESEARCHER-R27B-20260813-v1.0.0`

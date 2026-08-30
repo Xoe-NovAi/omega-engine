@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff Packet — Grok CLI Review
 ## Purpose: Grok CLI to review the Omega Engine initial PR plan and add insights/expertise
 

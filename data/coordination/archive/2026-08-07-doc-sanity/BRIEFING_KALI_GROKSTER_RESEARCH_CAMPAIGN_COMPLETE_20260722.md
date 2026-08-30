@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROKSTER → KALI: Research Campaign Complete — Comprehensive Session Briefing
 # ⬡ OMEGA ⬡ GROKSTER ⬡ KALI ⬡ HANDOFF ⬡ R33/R34/R35 ⬡ 2026-07-22
 

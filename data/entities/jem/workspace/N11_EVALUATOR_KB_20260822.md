@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N11 Evaluator Knowledge Base — Model Quality & Evals
 **AP**: AP-N11-MINING-v1.0.0 · **last_verified: 2026-08-22**
 **Curator**: Jem (N11) · **Miner**: roc_racoon (read-only mining per `data/entities/jem/workspace/N11_MINING_BRIEF_20260822.md`)

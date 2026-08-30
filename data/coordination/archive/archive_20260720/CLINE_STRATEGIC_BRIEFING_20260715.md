@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline CLI — Strategic Briefing for Kali
 **AP Token**: `AP-CLINE-STRATEGIC-BRIEFING-v1.0.0`
 ⬡ OMEGA ⬡ CLINE ⬡ cline/omega-engine ⬡ trc_strategic_briefing ⬡ HANDOFF

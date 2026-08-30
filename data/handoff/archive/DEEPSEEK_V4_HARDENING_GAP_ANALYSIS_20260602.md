@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — DeepSeek V4 Forensic Hardening Gap Analysis
 # AP: AP-OMEGA-ARTISAN-v2.1.0
 # Date: 2026-06-02 | Model: DeepSeek V4 Flash

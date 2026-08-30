@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R51 — Dimension / Free-Will / Phase Γ Hub Split Mapping
 
 **AP Token**: `AP-R51-DIMENSION-FREEWILL-v1.0.0`

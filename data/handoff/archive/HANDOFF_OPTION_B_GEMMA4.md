@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Option B Execution (Gemma 4 31B)
 # ⬡ OMEGA ⬡ GEMMA4 ⬡ trc_option_b_gem4 ⬡ 2026-06-01
 

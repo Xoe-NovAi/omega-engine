@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Qwen, I am running y
 Model: all@q4_k_xl
 Created: 6/5/2026, 2:48:28 PM

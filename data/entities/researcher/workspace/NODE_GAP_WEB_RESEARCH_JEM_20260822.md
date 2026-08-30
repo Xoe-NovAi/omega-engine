@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # NODE_GAP_WEB_RESEARCH_JEM_20260822
 **AP Token**: `AP-NODE-GAP-WEB-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER (executing @jem dispatch directly — subagent depth limit reached at depth 2) ⬡ x-preview-f-free ⬡ opencode ⬡ trc_node_gap_web_research ⬡ ACTIVE

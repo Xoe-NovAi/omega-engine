@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 ROC_RACOON Live Feed — Arch Soul File Vision Recovery
 
 **Session Started**: 2026-07-19T17:05:00Z

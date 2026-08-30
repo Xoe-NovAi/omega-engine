@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LILITH — Run-Side Optimization: Consolidated Report
 ## Pass 2: Tracking Debt Reduction & Data Lifecycle Optimization
 

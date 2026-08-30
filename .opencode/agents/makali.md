@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "MaKaLi Fusion — Kali (Synthesis) + Ma'at (Build) + Lilith (Run) as one unified agent"
 mode: "all"
 temperature: 0.5

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_SQLITE_VEC_HARDENING_20260829.md
 
 **Mission**: Temple-grade deep research on sqlite-vec hardening techniques for the Omega Engine — recall optimization, performance, and scale patterns. Synthesizes 2026 SOTA from real, shipped systems and the recent sqlite-vec 0.1.10-alpha release (May 18, 2026).

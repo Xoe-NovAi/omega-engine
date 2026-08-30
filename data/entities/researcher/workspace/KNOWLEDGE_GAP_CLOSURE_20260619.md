@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Gap Closure Report — 2026-06-19
 **AP Token**: AP-KNOWLEDGE-GAP-CLOSURE-v1.0.0
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_research ⬡ GAP-CLOSURE

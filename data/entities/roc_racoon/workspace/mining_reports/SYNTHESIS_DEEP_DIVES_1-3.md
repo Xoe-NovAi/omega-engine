@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SYNTHESIS: OMEGA ENGINE DEEP DIVES COMPLETED
 ## ⬡ Integrating Oracle, Memory, Fleet & Hivemind into a Sovereign Whole ⬡
 

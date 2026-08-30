@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## C3 — COMPLETE — 2026-06-02T15:00Z
 **File(s)**: `docs/decisions/PIVOT_LOG.md`
 **Diff stat**: +46 -1

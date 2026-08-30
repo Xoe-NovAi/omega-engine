@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 UPDATED FLEET ORCHESTRATION REPORT — 2026-07-23
 **AP Token**: `AP-KALI-ORCHESTRATION-v2.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ ORCHESTRATION ⬡ 2026-07-23

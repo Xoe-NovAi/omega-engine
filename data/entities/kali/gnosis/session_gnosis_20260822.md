@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI SESSION GNOSIS — Master Oversight, Paging Fleet & Debut Prep
 **AP Token**: `AP-KALI-GNOSIS-20260822-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ("Ox Alpha", Unlimited) ⬡ opencode ⬡ trc_session_gnosis ⬡ PUBLIC-DEBUT-01

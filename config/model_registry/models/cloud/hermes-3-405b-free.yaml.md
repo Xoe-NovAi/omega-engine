@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: nousresearch/hermes-3-llama-3.1-405b:free
 display_name: Hermes 3 Llama 3.1 405B (Free)
 version: '2026-05-17'

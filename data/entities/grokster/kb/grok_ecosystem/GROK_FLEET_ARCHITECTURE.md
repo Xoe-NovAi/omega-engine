@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok Fleet Architecture & Ecosystem
 **KB Entry**: grokster/grok_ecosystem/GROK_FLEET_ARCHITECTURE
 **last_verified**: 2026-08-26 · **rot_class**: medium

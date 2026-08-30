@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ MEDITATE PIPELINE SKILL
 **Version**: 1.0.0 | **Heritage**: Omega Engine Meditation Protocol (2026-07-18)
 **Purpose**: Automate the full Problem → Meditation → Synthesis → Research → Gnosis → Integration pipeline

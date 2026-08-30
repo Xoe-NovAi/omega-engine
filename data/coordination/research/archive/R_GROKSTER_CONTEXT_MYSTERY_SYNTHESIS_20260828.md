@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ GROKSTER SYNTHESIS — The Context Accounting Mystery SOLVED
 **Date**: 2026-08-28 ~12:35 UTC | **From**: grokster (Cross-Session Coordinator)
 **Inputs**: 3 expert reports (Researcher, Roc, Lilith) | **Missing**: Carmack (402 Insufficient Balance)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N8 — RESOURCES INVENTORY: Templates · Checklists · Skeletons for Council 2 Dev Team
 ⬡ OMEGA ⬡ LILITH/node8 ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c2_res ⬡ COUNCIL-2 PREP ARTIFACT
 **Session**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25

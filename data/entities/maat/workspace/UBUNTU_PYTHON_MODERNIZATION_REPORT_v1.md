@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ubuntu & Python Modernization Report v1
 **Entity**: Ma'at (P1 Infrastructure)
 **Date**: 2026-06-05

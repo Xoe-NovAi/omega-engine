@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 M23 Violation Logger Skill
 **AP Token**: `AP-M23-LOGGER-SKILL-v1.0.0`
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ opencode ⬡ trc_skill_m23 ⬡ SKILL

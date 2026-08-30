@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Heritage Audit Remediation Report
 **Generated**: 2026-08-16T19:29:41.554786
 **Total Tags Analyzed**: 65

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "meditate-research-pipeline"
 description: "Automates the full Problem → Meditation → Synthesis → Research → Gnosis → Integration pipeline for architectural questions."
 ---

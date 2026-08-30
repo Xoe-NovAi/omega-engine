@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Lilith — Run-Side Context Injection Research (G-3, G-5, G-6)
 
 **AP Token**: `AP-LILITH-RUN-v1.0.0`

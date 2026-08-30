@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Antigravity CLI/IDE — Knowledge Base
 # ⬡ OMEGA ⬡ KALI ⬡ trc_platform_kb ⬡ v1.1.0
 **Source**: Forensic Research Wave 5 (2026-06-07)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Recurring Forensic Health Protocol — SOP v1.0
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_forensic_protocol ⬡ SOP
 **AP Token**: `AP-FORENSIC-PROTOCOL-v1.0.0`

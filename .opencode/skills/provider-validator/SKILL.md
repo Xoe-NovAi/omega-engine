@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "provider-validator"
 description: "Cross-references config/providers.yaml against live API connectivity and validates curl requests for each provider."
 ---

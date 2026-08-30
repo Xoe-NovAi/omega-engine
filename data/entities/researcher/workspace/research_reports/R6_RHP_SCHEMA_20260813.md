@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R6: RHP (Recovery Halt Point) Schema — YAML Structure, resume_pointer Format, Corruption Handling
 
 **AP Token:** `AP-RESEARCHER-R6-20260813-v1.0.0`

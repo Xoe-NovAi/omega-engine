@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R47 — Container Hardening
 
 **AP Token**: `AP-R47-CONTAINER-HARDENING-v1.0.0`

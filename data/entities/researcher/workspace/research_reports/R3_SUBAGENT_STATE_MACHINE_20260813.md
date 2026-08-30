@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R3: Subagent State Machine — Cold/Warm/Hot Definitions, Transition Triggers, Persistence
 
 **AP Token:** `AP-RESEARCHER-R3-20260813-v1.0.0`

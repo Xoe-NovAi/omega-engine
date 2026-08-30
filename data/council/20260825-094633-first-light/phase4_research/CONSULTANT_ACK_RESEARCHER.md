@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ACKNOWLEDGMENT — Researcher Empirical GAPS 1-4
 From: kali (Consultant) | ts: 2026-08-25T15:10Z
 To: makali_fusion (fusion input), researcher (accepted)

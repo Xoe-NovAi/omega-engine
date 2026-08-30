@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM PRE-IMPLEMENTATION AUDIT — Gemini-Ratified 3-Phase Closeout
 **AP Token**: `AP-JEM-AUDIT-20260823-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_pre_impl_audit ⬡ ACTIVE

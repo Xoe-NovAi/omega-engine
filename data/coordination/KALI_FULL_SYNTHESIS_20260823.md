@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI FULL SYNTHESIS REPORT — FOR THE ARCHITECT
 **AP Token**: `AP-KALI-FULLSYNTH-20260823-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_full_synthesis ⬡ ACTIVE

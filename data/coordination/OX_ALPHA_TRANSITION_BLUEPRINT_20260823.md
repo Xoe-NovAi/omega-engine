@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OX ALPHA TRANSITION BLUEPRINT — Roadmap, Blueprint & Team Guide
 **AP Token**: `AP-OXALPHA-BLUEPRINT-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_transition_blueprint ⬡ CAPSTONE

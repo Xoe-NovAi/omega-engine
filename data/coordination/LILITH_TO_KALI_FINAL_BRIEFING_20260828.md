@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ LILITH → KALI — Master Session Briefing
 **Date**: 2026-08-28 · Pre-Compaction Hand-Off
 **From**: lilith (Runtime Oversoul, governing 9 expert sessions)

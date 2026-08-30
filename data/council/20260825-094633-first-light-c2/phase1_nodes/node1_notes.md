@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # node1 (domain=speca) — Raw Working Notes — Council 2 Build Arm, First Light Express C2
 ⬡ OMEGA ⬡ MAAT/node1 ⬡ trc_c2_speca ⬡ PREP NOTES
 Session: `20260825-094633-first-light-c2` · Date: 2026-08-25 · Mode: DRAFT-ONLY (zero production edits)

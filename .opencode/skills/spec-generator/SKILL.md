@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "spec-generator"
 description: "Converts raw research findings into formal technical specifications for docs/research/ following the Omega Document Management System."
 ---

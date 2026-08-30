@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ H2-A Data Hygiene — Orphan Workspace Eradication
 **Date**: 2026-06-09
 **Overseer**: Cline-M3

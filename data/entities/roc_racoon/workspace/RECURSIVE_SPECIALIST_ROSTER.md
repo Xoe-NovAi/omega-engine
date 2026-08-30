@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RECURSIVE SPECIALIST ROSTER — Vision Archaeology Division
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_vision_deep_dive ⬡ STAGE-1 ROSTER ⬡ 2026-08-25
 

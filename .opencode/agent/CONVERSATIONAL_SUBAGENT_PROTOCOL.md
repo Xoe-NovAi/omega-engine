@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Conversational Subagent Protocol — Multi-Turn Agent Conversations via the Task Tool
 
 **AP Token**: `AP-CONV-SUBAGENT-PROTOCOL-v1.0.0`

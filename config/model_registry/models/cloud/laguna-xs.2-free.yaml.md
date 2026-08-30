@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: poolside/laguna-xs.2:free
 display_name: Laguna XS.2 (Free)
 version: '2026-05-17'

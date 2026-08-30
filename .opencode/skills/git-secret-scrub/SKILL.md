@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "git-secret-scrub"
 description: "GitHub/Git history secret detection and scrubbing — full workflow for finding key-format strings in ALL git history (not just working tree), classifying false positives, and removing them with filter-repo. Use when facing secret leaks, repo debut prep, or history audits."
 ---

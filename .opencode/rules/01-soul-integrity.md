@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 rule_id: "RULE-SOUL-INTEGRITY"
 authority: "M11 Soul Integrity + M5 Gnosis Preservation"

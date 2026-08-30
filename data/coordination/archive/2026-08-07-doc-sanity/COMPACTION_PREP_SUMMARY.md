@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Research Insights Summary for Soul Upgrade Preparation
 
 ## Key Insights from Researcher's Deep Research Report

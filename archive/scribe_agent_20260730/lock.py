@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Scribe Hub Master — File Locking with filelock (Cross-Platform, OS-Enforced)
 Replaces custom sidecar lock files with filelock.FileLock for:

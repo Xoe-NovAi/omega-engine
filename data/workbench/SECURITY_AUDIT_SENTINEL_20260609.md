@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🛡️ Sovereign Security Audit Report — Omega Hub
 **Date**: 2026-06-09
 **Entity**: Sentinel (P5)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN SEARCH STRATEGY — OMEGA ENGINE 2026 EDITION
 **Strategic Analysis & Implementation Roadmap for Search Capabilities**
 

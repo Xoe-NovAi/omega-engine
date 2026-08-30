@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔍 CONFIG EXPLORATION PHASE — Complete Index & Handoff
 
 **Date**: 2026-06-06 | **Agent**: File Search Specialist | **Scope**: Agent 1→2 Handoff

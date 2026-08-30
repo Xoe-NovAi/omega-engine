@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## Objective
 - **ALPHA LAUNCH READY.** All 10 P0s fixed (F-01..F-10). All gates pass. RAM optimized. Retry logic global. Circuit breaker wired. Servers running. Work on main.
 

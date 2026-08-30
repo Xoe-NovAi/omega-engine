@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Kali Briefing — Local Worker Pool: Phase 1-2 Complete
 **AP Token**: `AP-KALI-BRIEFING-LOCAL-WORKER-POOL-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ trc_kali_briefing ⬡ 2026-07-30

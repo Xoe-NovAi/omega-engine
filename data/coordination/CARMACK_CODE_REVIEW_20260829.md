@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK_CODE_REVIEW_20260829.md
 
 **Mission**: Temple-grade code review of the Top 5 ROI moves implementation — sub-optimal wiring, hidden traps, sub-optimal wiring, correctness bugs, security gaps, and mandate violations in the sqlite-vec + spatial + circuit-breaker stack.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Human-Agent Communication & Co-Creation
 **Domain**: The relational dynamics between the Architect (Human) and the Fleet (Agents)
 **Date**: 2026-07-22

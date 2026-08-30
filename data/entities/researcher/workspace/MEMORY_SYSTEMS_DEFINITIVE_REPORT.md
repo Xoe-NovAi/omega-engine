@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Memory Systems Definitive Report — @researcher
 ## Incorporating: Jem + Previous Researcher + Carmack + LongCat + Nemotron 3 Ultra
 

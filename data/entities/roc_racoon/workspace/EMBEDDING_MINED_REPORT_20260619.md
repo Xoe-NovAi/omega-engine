@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Embedding Pipeline Mining Report — potion-mxbai-micro, MiniLM ONNX, MemoryStore Integration, Dolphin GGUF
 
 **AP Token**: `AP-EMBEDDING-MINE-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster KB — Quick Reference Card
 **Primary Entry Point** | **Keep This Open** | **v2.1.3** | **2026-08-26**
 

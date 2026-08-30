@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Model Availability Error Forensics — 2026-08-22
 **AP Token**: `AP-MODEL-AVAIL-FORENSICS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_model_avail_forensics ⬡ COMPLETE

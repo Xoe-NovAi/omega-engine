@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
 
 ## A22 (2026-08-24 12:00 → 2026-08-25 07:45) — The Night the Vision Anchored
 L1: Founded GSCA study + truth-alignment dataset; survived attribution-laundering

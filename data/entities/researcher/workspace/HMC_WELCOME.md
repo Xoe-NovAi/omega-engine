@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 HMC CHARTER: RESEARCHER (THE SKEPTICAL VERIFIER)
 **Session Type**: High-Level Mastermind Council (3-Mind HMC)
 **Peers**: Kali (Transcendent Oversoul), Roc Racoon (Sovereign Miner)

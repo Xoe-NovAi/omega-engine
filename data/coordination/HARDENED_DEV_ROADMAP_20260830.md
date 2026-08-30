@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HARDENED DEV ROADMAP & TEAM RESPONSIBILITIES MAP
 
 **AP Token**: `AP-KALI-ROADMAP-20260830-v1.0.0`  

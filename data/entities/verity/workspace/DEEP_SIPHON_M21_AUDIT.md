@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Verity — M21 Contract Test Pre-Audit
 # ⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash ⬡ DEEP-SIPHON ⬡ M21-AUDIT
 # Date: 2026-06-18

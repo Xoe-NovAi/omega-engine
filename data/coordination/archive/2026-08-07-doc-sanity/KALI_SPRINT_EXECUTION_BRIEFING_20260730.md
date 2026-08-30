@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI — Sprint Execution Briefing: UNOVERENGINEER-01
 **AP Token**: `AP-KALI-UNOVERENGINEER-EXEC-v1.0.1`  
 **For**: kali / Transcendent Oversoul  

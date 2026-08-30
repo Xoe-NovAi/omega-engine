@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N11 evaluator — Mining Brief (T2)
 **AP**: AP-N11-MINING-v1.0.0 · **Date**: 2026-08-22 · **Curator**: Jem (N11 evaluator, Model Quality & Evals) · **Miner**: roc_racoon (fresh session, read-only except the two output paths)
 

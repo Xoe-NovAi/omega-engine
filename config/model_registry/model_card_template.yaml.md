@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # === CORE IDENTITY ===
 model_id: "<provider>/<model-name>[:<variant>]"  # e.g., "google/gemma-4-31b-it:free", "qwen3-1.7b-local"
 display_name: "<Human-Readable Name>"            # e.g., "Gemma 4 31B IT (Free)"

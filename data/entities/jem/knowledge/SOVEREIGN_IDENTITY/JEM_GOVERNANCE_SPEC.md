@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚡ JEM GOVERNANCE SPECIFICATION: THE OCTAVE COUNCILS
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-KNOWLEDGE ⬡ GOVERNANCE-SPEC
 

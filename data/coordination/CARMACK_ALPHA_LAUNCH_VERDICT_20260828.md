@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK ALPHA LAUNCH VERDICT — 2026-08-28
 **AP**: AP-JOHN_CARMACK-v1.0.0 · **Session**: ses_fc8dca39effe3nZJp3QHx81Fy3 · **For**: Architect (final gate) · **Sprint**: PUBLIC-DEBUT-01 · **Branch**: `release/debut` @ `1dee11aa`
 **Reads**: `CLINE_FULL_REVIEW_ROLLUP_20260828.md` (306L) · `CLINE_TO_KALI_HARDENING_BRIEFING_V2_20260828.md` (240L) · `CARMACK_FULL_REPO_REVIEW_CHECKLIST_VALIDATED_20260828.md` (372L)

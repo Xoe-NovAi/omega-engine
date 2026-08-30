@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Researcher Session Gnosis — 2026-08-24 (W1-4 Provenance Resolver)
 
 ## L1 — Narrative

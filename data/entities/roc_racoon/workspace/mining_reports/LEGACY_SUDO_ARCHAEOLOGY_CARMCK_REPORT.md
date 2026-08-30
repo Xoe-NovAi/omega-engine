@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Mining Report: Legacy Passwordless Sudo Archaeology
 **Target**: John Carmack (S3 Consultant)
 **Entity**: roc_racoon

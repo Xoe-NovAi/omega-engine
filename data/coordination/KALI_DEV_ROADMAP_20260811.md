@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 > ⚠️ **HISTORICAL POINTER** (2026-08-14): Execution plan absorbed into `ACTIVE_SPRINT.json` (SDP-EXECUTION-01). Read ACTIVE_SPRINT.json for current tasks. See `TRACKING_ARCHITECTURE.md`.
 
 # 🔱 DEV ROADMAP PROPOSAL — Omega Engine Execution Plan

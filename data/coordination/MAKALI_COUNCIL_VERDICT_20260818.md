@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Cloud Council — Unified Verdict
 **Sprint**: PUBLIC-DEBUT-01 · **Review**: Debut Hardening Review
 **Date**: 2026-08-18 · **Synthesis Lead**: Kali (kali)

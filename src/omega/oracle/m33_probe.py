@@ -62,6 +62,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
 from dataclasses import dataclass, field, asdict
@@ -71,6 +72,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Protocol
 
 # ── Constants ────────────────────────────────────────────────────────────────
+
+logger = logging.getLogger(__name__)
 
 # Per 5-EIS meta-review: free-form "STREAM_EXHAUSTED" string is REJECTED
 PROHIBITED_FREE_FORM = ["STREAM_EXHAUSTED", "stream_exhausted", "DONE", "FINISHED",
@@ -432,6 +435,88 @@ Begin JSON response now:"""
         }
         with open(self.log_path, "a") as f:
             f.write(json.dumps(record) + "\n")
+
+    # ── M36 Cross-Validator Wiring (Task A4) ─────────────────────────
+
+    def complete_with_validation(
+        self,
+        response: Any,
+        session_id: str,
+        priority: str = "P2",
+        expected_deliverable: Optional[str] = None,
+        required_keywords: Optional[List[str]] = None,
+    ) -> Dict[str, Any]:
+        """M33 completion callback that wires M36 cross-validator.
+
+        Per Phase 1 HIGH-4 / Task A4: this is the M33 → M36 wiring point.
+        When a subagent completes and M33 probe validates its envelope:
+        1. If priority is P0/P1, dispatch M36 cross-validator via Hivemind
+        2. Run hard verifier (file existence, size, hash) via spawn_local_worker pattern
+        3. Return combined verdict
+
+        Returns a dict with:
+          - m33_verdict: ProbeVerdict
+          - m36_result: CrossValidationResult (if P0/P1) or None
+          - final_accepted: bool (M33 verdict + M36 verification)
+        """
+        # Layer 2: M33 envelope validation
+        m33_verdict = self.validate_response(response, session_id=session_id, priority=priority)
+        self.audit_log(session_id, m33_verdict)
+
+        result: Dict[str, Any] = {
+            "m33_verdict": m33_verdict,
+            "m36_result": None,
+            "final_accepted": m33_verdict.accepted,
+        }
+
+        # P2/P3: M33 acceptance is sufficient (no M36)
+        if priority not in ("P0", "P1"):
+            return result
+
+        # P0/P1: require M36 cross-validation
+        if not m33_verdict.schema_valid or m33_verdict.free_form_detected:
+            # M33 already rejected — don't bother with M36
+            return result
+
+        # Extract envelope from response for M36
+        envelope: Optional[CompletionEnvelope] = None
+        if isinstance(response, CompletionEnvelope):
+            envelope = response
+        elif isinstance(response, dict):
+            try:
+                envelope = CompletionEnvelope.from_dict(response)
+            except (TypeError, ValueError) as dict_exc:
+                logger.debug("Envelope dict parse failed: %s", dict_exc)
+        elif isinstance(response, str):
+            try:
+                envelope = CompletionEnvelope.from_json(response)
+            except (json.JSONDecodeError, ValueError, TypeError) as json_exc:
+                logger.debug("Envelope JSON parse failed: %s", json_exc)
+
+        if envelope is None:
+            result["final_accepted"] = False
+            return result
+
+        # Layer 3: M36 cross-validation
+        try:
+            from .m36_recursive_probe import M36RecursiveProbe
+            m36 = M36RecursiveProbe(m34_registry=self.registry, m33_probe=self)
+            deliverable = expected_deliverable or envelope.deliverable_path
+            m36_result = m36.cross_validate(
+                session_id=session_id,
+                envelope=envelope,
+                expected_deliverable=deliverable,
+                priority=priority,
+                required_keywords=required_keywords,
+            )
+            result["m36_result"] = m36_result
+            # Final acceptance requires M33 + M36
+            result["final_accepted"] = m33_verdict.accepted and m36_result.verified
+        except ImportError as m36_exc:
+            # M36 not available — fall back to M33 verdict
+            logger.debug("M36 cross-validator not available: %s", m36_exc)
+
+        return result
 
 
 # ── CLI Entry Point ─────────────────────────────────────────────────────────

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it (opencode-zen) ⬡ opencode ⬡ LIVE-FEED
 # AP: AP-LIVE-FEED-DOOM-GUY-v1.0.0
 # Date: 2026-06-02

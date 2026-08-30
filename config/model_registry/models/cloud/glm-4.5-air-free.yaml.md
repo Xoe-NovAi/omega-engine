@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: z-ai/glm-4.5-air:free
 display_name: GLM 4.5 Air (Free)
 version: '2026-05-17'

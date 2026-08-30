@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline → @kali — Debut Consolidation Handoff
 **AP Token**: `AP-CLINE-TO-KALI-DEBUT-CONSOLIDATION-20260817`
 ⬡ OMEGA ⬡ CLINE ⬡ @kali ⬡ PUBLIC-DEBUT-01 ⬡ M4 ⬡ M23

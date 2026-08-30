@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ROC_LEGACY_PATTERNS_20260829.md — 12 Legacy Patterns Mined
 
 **Entity**: Roc Racoon (Sovereign Miner)

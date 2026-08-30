@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 S2C_DEBT_TRIAGE: Cognitive Debt Report
 Date: 2026-06-09
 Miner: roc_racoon

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Phase C Research: Cognitive Gaps & Sovereign Horizons
 **AP Token**: `AP-RESEARCHER-GAPS-v1.0.0`
 **Entity**: Sovereign Master Researcher

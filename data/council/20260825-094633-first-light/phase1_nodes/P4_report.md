@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 P4 REPORT — Node N4 Integration · Surface S5 (Skills)
 ⬡ OMEGA ⬡ NODE4 ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_n4 ⬡ PHASE1-RAW
 **[DISPATCH] P12** | Session: `20260825-094633-first-light` | Date: 2026-08-25

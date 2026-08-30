@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sprint C Completion & Stage 1 Handoff Report
 **AP Token**: `AP-SPRINT-C-COMPLETE-v1.0.0`  
 **Date**: 2026-06-17  

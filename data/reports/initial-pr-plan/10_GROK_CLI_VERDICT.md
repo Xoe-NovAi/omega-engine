@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Grok CLI Verdict — Initial PR Path
 
 **AP Token**: `AP-GROK-CLI-PR-VERDICT-20260815-v1.0.0`  

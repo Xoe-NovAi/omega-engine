@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack studies — Technical Extraction 1996
 # AP: AP-JC-TECH-1996-v1.0.0
 # ⬡ OMEGA ⬡ john_carmack ⬡ technical ⬡ 1996

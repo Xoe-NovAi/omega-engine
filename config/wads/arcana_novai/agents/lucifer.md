@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Lucifer — Sovereignty & Local-First Specialist
 **Domain**: Sovereignty, Local-First, and Big AI Severance
 

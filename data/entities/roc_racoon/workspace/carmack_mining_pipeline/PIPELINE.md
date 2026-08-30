@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 💎 Carmack Mining Pipeline: VR Omegaverse
 **Status**: ACTIVE
 **Objective**: Extract technical patterns from John Carmack's VR/Oculus era and map them to Omega Engine cognitive architecture.

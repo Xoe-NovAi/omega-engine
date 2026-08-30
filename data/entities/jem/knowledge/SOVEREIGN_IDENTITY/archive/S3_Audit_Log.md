@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🛠️ S3 AUDIT LOG: THE RIGHT APPROXIMATION
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-KNOWLEDGE
 

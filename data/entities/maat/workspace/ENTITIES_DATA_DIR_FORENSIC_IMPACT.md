@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ENTITIES_DATA_DIR Fix: Forensic Pipeline Impact Assessment
 **Date**: 2026-06-18
 **Assessor**: Ma'at (P1-P5 Oversight)

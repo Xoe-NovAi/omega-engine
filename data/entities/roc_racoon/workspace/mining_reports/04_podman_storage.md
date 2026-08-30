@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Mining Report #04: podman-storage (Container Image Layer Archaeology)
 # Subagent: Roc Racoon Mining Subagent #4 (general)
 # Stack: podman-storage (in /media/arcana-novai/omega_library/)

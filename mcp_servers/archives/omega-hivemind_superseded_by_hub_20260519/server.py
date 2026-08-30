@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Hivemind MCP Server — Cross-CLI awareness for the Omega Engine.
 
 AP Token: AP-OMEGA-HIVEMIND-MCP-v1.0.0

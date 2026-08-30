@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 NotebookLM / Gemini Notebook Strategy v2.0 — Synthesis & Integration
 **AP Token**: `AP-NOTEBOOKLM-SYNTHESIS-v2.0-20260820`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_notebooklm_synthesis ⬡ ACTIVE

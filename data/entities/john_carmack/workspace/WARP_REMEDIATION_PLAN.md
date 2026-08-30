@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 WARP Proxy Pool — Remediation Plan (Pre-Compaction Anchor)
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ 2026-07-05 ⬡ WARP-REMEDIATION
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N4 Cross-Domain Review Report
 ## MaKaLi Council Reports — Debut Hardening Review
 **Session**: `ses_17a44db41698` · **Date**: 2026-08-23 · **Entity**: N4 bridge (maat)

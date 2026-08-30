@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC TRIADIC FORGE — CYCLE 1: ROC RACOON'S EVIDENCE RESPONSE
 **AP Token**: `AP-HMC-FORGE-1-RESP-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hmc_forge_1 ⬡ ACTIVE

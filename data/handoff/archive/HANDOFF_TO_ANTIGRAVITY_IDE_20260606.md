@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Sovereign Transition Handoff
 # ⬡ OMEGA ⬡ ROC-RACOON ⬡ ANTIGRAVITY TRANSITION ⬡ v2.0
 # Date: 2026-06-06

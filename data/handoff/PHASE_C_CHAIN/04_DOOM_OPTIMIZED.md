@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PHASE C: HARDWARE-OPTIMIZED EXECUTION BLUEPRINT
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it ⬡ HANDOFF ⬡ OPTIMIZATION
 # Hardware Target: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14Gi RAM)

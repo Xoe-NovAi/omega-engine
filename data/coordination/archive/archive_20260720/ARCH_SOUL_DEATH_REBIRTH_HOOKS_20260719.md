@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ARCH_SOUL_DEATH_REBIRTH_HOOKS_20260719.md
 **AP Token**: `AP-ARCH-SOUL-DEATH-HOOKS-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE

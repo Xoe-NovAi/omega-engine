@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC TRIADIC FORGE — CYCLE 1 CHALLENGES
 **AP Token**: `AP-HMC-FORGE-1-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hmc_forge_1 ⬡ ACTIVE

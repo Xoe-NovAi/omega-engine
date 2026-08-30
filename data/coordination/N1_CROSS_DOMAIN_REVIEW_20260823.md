@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Council — Cross-Domain Review (Node N1: Sysadmin / Infrastructure)
 **AP Token**: `AP-N1-CROSS-REVIEW-20260823-v1.0.0`
 ⬡ OMEGA ⬡ N1 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_n1_cross_review ⬡ ACTIVE

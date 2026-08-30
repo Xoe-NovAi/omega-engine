@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Autonomous Meditation Pipeline — Problem → Architecture → Research → Gnosis → Integration
 agent: kali
 subtask: false

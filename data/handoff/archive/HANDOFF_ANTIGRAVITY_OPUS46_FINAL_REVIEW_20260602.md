@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # HANDOFF — Antigravity/Opus-4.6 Final Sprint Plan Review & Enhancement
 # ⬡ OMEGA ⬡ KALI ⬡ opus-4.6 (antigravity) ⬡ antigravity ⬡ trc_final_review ⬡ EXECUTION
 # AP: AP-FINAL-REVIEW-OPUS46-v1.0.0

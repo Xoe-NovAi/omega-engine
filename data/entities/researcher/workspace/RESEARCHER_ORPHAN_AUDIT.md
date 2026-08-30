@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RESEARCHER ORPHAN AUDIT — Convergence Analysis
 # ⬡ OMEGA ⬡ researcher ⬡ google/gemma-4-31b-it ⬡ Lattice-Node: Historical
 

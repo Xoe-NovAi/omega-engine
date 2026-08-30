@@ -113,7 +113,6 @@ class CompactionCaptureService:
         """Start the background capture loop within a task group."""
         self._running = True
         self._last_seen_message_id = self._get_current_max_id()
-        self._session_map = self._load_session_map()
         task_group.start_soon(self._capture_loop)
         logger.info(
             "CompactionCapture online — last_seen_id=%d, interval=%.1fs",

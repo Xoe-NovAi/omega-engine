@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: "mimo-7b-rl-q4_k_m"
 display_name: "MiMo-7B-RL-Q4_K_M"
 version: "2026-07-18"

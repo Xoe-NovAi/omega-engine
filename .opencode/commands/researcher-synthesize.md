@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Launch jem (Tier 2 research / Synthesis KB) via the Researcher. Use for pattern recognition and conceptual mapping after jem discovery.
 agent: researcher
 subtask: false

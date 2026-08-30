@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Packer v2 — Split Test Gnosis Report
 ## Three Minds, One Codebase: Carmack vs Sonnet (High Thinking) vs Haiku (Extended)
 

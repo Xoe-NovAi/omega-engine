@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Rehearsal Migration & Learning Capture Plan (v5)
 **AP Token**: `AP-REHEARSAL-LEARNING-v5.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_rehearsal_learning ⬡ ACTIVE

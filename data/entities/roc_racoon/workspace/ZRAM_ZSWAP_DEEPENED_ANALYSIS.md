@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # zRAM & zSwap Deepened Analysis — LongCat 2.0
 ## roc_racoon synthesis of all materials + 2026 kernel research
 

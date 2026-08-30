@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Meditation Record — /meditate-archs Genesis Session
 **Date**: 2026-08-26 · **Agent**: grokster (nemotron-3-ultra-free) · **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
 **Purpose**: Seed artifact for the Architect's A/B test: SIMPLE meditation prompt (this document) vs COMPLEX /meditate command (~350 LOC, Kali parallel workstream). Command distilled from this exchange lives at `.opencode/command/meditate-archs.md`.

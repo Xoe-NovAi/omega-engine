@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ox Alpha (GLM-5.3) Implementation Gaps — Complete Findings
 
 **AP Token**: `AP-RESEARCHER-OXALPHA-GAPS-v1.0.0`

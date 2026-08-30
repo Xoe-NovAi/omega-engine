@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # �� 🔱 Session Gnosis — John Carmack + LongCat 2.0
 
 **AP Token**: `AP-SESSION-GNOSIS-20260811-v1.0.0`

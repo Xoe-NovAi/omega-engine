@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N4 Node Review Report
 ## Researcher Handoff Integration Analysis — Dev Roadmap Alignment
 **Session**: `ses_4331b4d6f6af` · **Date**: 2026-08-23 · **Entity**: N4 bridge (maat)

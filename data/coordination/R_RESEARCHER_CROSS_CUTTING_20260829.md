@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_CROSS_CUTTING_20260829.md
 
 **Mission**: Deep research on cross-cutting opportunities that span the entire vector store stack — abstractions, observability, security, and quality.

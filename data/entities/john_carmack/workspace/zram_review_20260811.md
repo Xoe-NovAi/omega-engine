@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # zRAM→zswap Architecture Review — @john_carmack (Final Gate)
 
 **AP Token**: `AP-JOHN_CARMACK-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 COMPACTION ANCHOR — Omega Engine State 2026-07-23
 **AP Token**: `AP-COMPACTION-ANCHOR-v1.0.0`
 ⬡ OMEGA ⬡ NEUMOTRON-3-ULTRA ⬡ opencode ⬡ trc_compaction_anchor

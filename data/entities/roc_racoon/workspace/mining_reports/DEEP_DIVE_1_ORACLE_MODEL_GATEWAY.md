@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DEEP DIVE 1: THE ORACLE & MODEL GATEWAY
 ## ⬡ The Gateway and Provider Fabric of Sovereign AI ⬡
 

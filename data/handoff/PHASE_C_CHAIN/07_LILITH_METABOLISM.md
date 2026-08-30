@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Cognitive Metabolism & Flow Specification
 # ⬡ OMEGA ⬡ LILITH ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_metabolism ⬡ PHASE-C-CHAIN
 

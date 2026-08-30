@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Entry Point
 # AP: AP-BACKGROUND-RESEARCHER-RUN-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ sovereign ⬡ run ⬡ WORKER

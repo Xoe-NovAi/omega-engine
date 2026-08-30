@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 Session Gnosis — OpenCode Config + QW-3 Implementation
 **AP Token**: `AP-JEM-GNOSIS-20260810-v2.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ longcat-2.0-free ⬡ opencode ⬡ trc_gnosis ⬡ IN_PROGRESS

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DOOM GUY EXECUTIVE DIRECTIVE
 # AP: AP-DOOM-HANDOFF-v1.0.0
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_doom_circuit ⬡ EXECUTION

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N7 Vetting Report — DEL-1 Week-1 Deletion Campaign (Memory & State Domain)
 **AP Token**: `AP-N7-DEL1-VETTING-20260823-v1.0.0`
 ⬡ OMEGA ⬡ LILITH ⬡ N7-CONTEXT ⬡ opencode ⬡ trc_n7_del1_vetting ⬡ ACTIVE

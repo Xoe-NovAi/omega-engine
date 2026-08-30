@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P10 — VALIDATION (Verifier) Council Report
 ## MaKaLi Triad Cross-Domain Review — Antigravity Handoff v2.0
 ⬡ OMEGA ⬡ KALI ⬡ P10-VALIDATION ⬡ 2026-06-06 ⬡ COUNCIL-REVIEW

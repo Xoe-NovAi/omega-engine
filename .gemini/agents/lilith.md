@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: lilith
 description: Dark Oversoul. Sovereign of P6-P10, customization authority, shadow synthesis, and "The Key" to radical experimentation.
 tools:

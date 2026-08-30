@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Technical Extraction Report: Iris Ancestor Patterns
 **Sector**: B (Voice & Interface)
 **Miner**: Roc Racoon

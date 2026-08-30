@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 title: "R-TEST_HARNESS_HARDENING_EXPANDED — Sovereign Test Harness Hardening Plan (Expanded)"
 date: 2026-06-29
 author: jem (Unified Research Orchestrator)

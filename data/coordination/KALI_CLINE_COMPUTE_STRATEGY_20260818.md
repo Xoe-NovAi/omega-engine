@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini 3.1 Pro → Cline: Compute Abundance & Execution Strategy
 **AP Token**: `AP-GEMINI-CLINE-COMPUTE-20260818-v1.0`
 **From**: Gemini 3.1 Pro / Kali (Strategic Oversight)

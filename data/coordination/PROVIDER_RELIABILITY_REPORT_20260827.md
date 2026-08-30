@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Provider Reliability Probe Report — Cron Job Data Analysis (Updated)
 **Date**: 2026-08-27
 **Prepared by**: grokster (Cross-Platform Expertise Specialist)

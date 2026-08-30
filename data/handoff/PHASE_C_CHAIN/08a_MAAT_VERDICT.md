@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ⬡ OMEGA ⬡ Ma'at ⬡ gemma-4-31b-it ⬡ Build-Side ⬡ TRACE-MAAT-VERDICT-C ⬡ VERIFICATION
 
 # 🔱 MA'AT'S FINAL BUILD-SIDE VERDICT: Phase C Cognitive Substrate

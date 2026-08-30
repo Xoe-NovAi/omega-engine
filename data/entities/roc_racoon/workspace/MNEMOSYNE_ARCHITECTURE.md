@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MNEMOSYNE ARCHITECTURE — 3-Pillar → 3-Tier Memory Design
 **AP Token**: `AP-MNEMOSYNE-ARCH-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_hmc_forge_2 ⬡ DESIGN

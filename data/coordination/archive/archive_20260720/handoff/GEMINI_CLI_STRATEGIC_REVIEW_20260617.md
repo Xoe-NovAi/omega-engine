@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity IDE Handoff — Gemini CLI Strategic Codebase Review
 **Engine**: Omega Engine v2.4.0
 **Date**: 2026-06-17

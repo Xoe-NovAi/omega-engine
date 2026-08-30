@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA_VAULT_ARCHITECTURE — MERGED
 **Status**: Content consolidated into `vault/OMEGA_VAULT.md` (canonical).
 **Date**: 2026-08-26 · Per KB ADR-002 dedup pass (KB-D-006).

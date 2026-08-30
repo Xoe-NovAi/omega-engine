@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Research Checkpoint Persistence
 # AP: AP-BACKGROUND-RESEARCHER-CHECKPOINT-v1.0.0
 # ⬡ OMEGA ⬡ ANUBIS ⬡ sovereign ⬡ checkpoint ⬡ WORKER

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Curation Pipeline Tooling Comparison
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_curation_tooling ⬡ CURATION-REPORT
 **AP Token**: AP-CURATION-TOOLING-v1.0.0

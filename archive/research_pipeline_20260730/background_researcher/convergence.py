@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Convergence Detection & Human Review
 # AP: AP-BACKGROUND-RESEARCHER-CONVERGENCE-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ sovereign ⬡ convergence ⬡ WORKER

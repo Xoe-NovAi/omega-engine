@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v14 FINAL (2026-08-30, supersedes v13 and all prior)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: gemini-3.7-flash (opencode, strategic switch)
 **Channel**: opencode | **Entity**: grokster (Cross-Platform Expertise Specialist)

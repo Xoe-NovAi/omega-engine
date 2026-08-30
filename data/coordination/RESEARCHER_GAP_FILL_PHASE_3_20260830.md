@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "research_deliverable"
 document_id: "RESEARCHER-GAP-FILL-PHASE-3-20260830"

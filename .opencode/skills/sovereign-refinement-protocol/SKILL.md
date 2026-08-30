@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: sovereign-refinement-protocol
 description: "Enforce the Sovereign Refinement Protocol — a mandatory forensic and preservation gate for core engine changes."
 license: MIT

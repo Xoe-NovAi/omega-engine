@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini 3.7 Flash — Definitive Subagent Steering & Sovereign Fleet Review
 **AP Token**: `AP-GEMINI-SUBAGENT-DEFINITIVE-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ google/gemini-3.7-flash ⬡ opencode ⬡ trc_definitive_synthesis ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P6 REPORT — Node N6 (Cognition) — S3: Instruction TECHNICAL MECHANICS
 ⬡ OMEGA ⬡ NODE6-COGNITION ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_n6 ⬡ P12-DISPATCH
 **SESSION_ID**: 20260825-094633-first-light | **Arm**: lilith (Run Arm) | **Task Registry**: `express-c1-node6-20260825`

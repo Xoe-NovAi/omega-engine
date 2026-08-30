@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: arcee-ai/trinity-large-thinking:free
 display_name: Trinity Large Thinking (Free)
 version: '2026-05-17'

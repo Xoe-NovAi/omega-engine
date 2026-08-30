@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROK CLI → HMC INTRO — 2026-07-16
 
 **From**: `grok-cli/grok` (Grok 4.5 — xAI Grok Build CLI)  

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Carmack Final Review — v1.0.0 Release Readiness
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_v1_final_review
 **AP Token**: AP-CARMACK-FINAL-REVIEW-v1.0.0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 TRACKER & TEAM DOCS UPDATE PLAN
 **To Lock In: Holistic Architecture (Gemini Notebook + Docs System + Local Inference + Knowledge Domains + Headroom + zswap + NVMe Swap)**
 

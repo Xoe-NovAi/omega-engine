@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "2.0"
 document_type: "forensic_review_report"
 document_id: "FUZZY_VS_ETCHED_M3_FLASH_FORENSIC_REVIEW_20260829"

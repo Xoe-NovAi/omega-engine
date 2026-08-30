@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Phase 2 Design: A4 Cloud Planner/Local Executor + O1 TUI Execution Tracer
 
 **AP Token**: `AP-MAAT-PHASE2-DESIGN-v1.0.0`

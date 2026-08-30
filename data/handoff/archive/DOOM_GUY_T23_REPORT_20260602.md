@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Doom Guy — Tier 2 Sprint Report
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ minimax-m3-free ⬡ opencode ⬡ trc_circuit_breaker_fix ⬡ TIER-2
 # Date: 2026-06-02 | Circuit Breaker Wire-Up Complete

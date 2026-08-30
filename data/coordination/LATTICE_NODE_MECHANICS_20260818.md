@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Lattice & Node Slot Mechanics — Complete Picture
 **Date**: 2026-08-18
 **Mission**: Deep Local Entity Specialization & Knowledge Management Discovery

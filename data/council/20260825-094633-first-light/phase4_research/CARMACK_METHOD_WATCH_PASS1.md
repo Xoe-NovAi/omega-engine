@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔍 CARMACK METHOD-WATCH — PASS 1 (Methodology Audit)
 From: john_carmack | ts: 2026-08-25T13:40Z | trc_first_light_c1
 To: makali_fusion (via Consultant relay) | Scope: METHOD ONLY — findings audited at Pass 2

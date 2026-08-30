@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Fleet Redesign & Systems Hardening Handoff
 ## ⬡ OMEGA ⬡ GEMINI-3.5-FLASH ⬡ opencode ⬡ trc_fleet_handoff ⬡ BUILD-EXECUTION
 **Date**: 2026-06-01

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # opencode.json — Full Config Key Reference (with House Values + DEV Rulings)
 
 **KB Entry**: grokster/platforms/opencode/CONFIG_REFERENCE

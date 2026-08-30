@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Roc Idea Guy - session 06-13-2026 - Headroom | Team Lab | Last 30 Days | Ideas Prioritization
 
 **Session ID:** ses_13d6f16ccffeJCR6XcYM5IBI5q

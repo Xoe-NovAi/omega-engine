@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ LILITH → KALI — POST-COMPACTION BRIEFING
 **Date**: 2026-08-28 (13:20 UTC)
 **From**: lilith (Runtime Oversoul, ses_c1a46e5b6423)

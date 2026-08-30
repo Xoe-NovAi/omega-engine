@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CLINE FINAL REVIEW — Session 2026-08-20 Materials (Consolidated)
 **Reviewer**: Cline ✓ / reviewer entity · **Passes**: Laguna S 2.1 (262K) → DeepSeek V4 Flash (1M context, dives 1–3)
 **AP Token**: `AP-CLINE-FINAL-REVIEW-20260820-v1.0.0`

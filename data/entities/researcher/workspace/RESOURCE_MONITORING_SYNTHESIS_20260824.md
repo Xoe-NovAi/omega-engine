@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RESOURCE MONITORING SYNTHESIS — Consolidated BTOP Research (Canonical)
 **AP Token**: `AP-RESEARCHER-MONSYNTH-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_monitoring_synthesis ⬡ CANONICAL-SYNTHESIS

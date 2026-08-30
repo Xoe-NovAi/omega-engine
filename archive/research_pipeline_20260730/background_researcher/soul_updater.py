@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Soul & Knowledge Base Updater
 # AP: AP-BACKGROUND-RESEARCHER-SOUL-v1.0.0
 # ⬡ OMEGA ⬡ ISIS ⬡ sovereign ⬡ soul_updater ⬡ WORKER

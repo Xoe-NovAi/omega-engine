@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — Jem/N13 arcana (Genesis + Mining + Audit + Deep Dig + Web/Curation)
 
 **AP Token**: `AP-N13-GNOSIS-v1.0.0`

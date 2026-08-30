@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 FINAL DEEP DIG: Why `qwen3-1.7b` Keeps Appearing
 **AP Token**: `AP-QWEN-FINAL-DIG-20260828-v1.0.0`
 **Date**: 2026-08-28 ~23:30 UTC

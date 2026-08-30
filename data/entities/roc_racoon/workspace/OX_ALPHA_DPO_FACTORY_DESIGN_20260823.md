@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ox Alpha DPO Pair Factory — Design Spec
 **AP Token**: `AP-ROC_RACOON-OX_ALPHA_DPO_FACTORY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_dpo_factory_design ⬡ ANALYSIS

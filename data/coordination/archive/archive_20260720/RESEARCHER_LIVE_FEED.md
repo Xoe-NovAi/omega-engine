@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Researcher Live Feed — Campaign Day 3-4
 **Session**: `ses_90271c2840aa` | **Started**: 2026-07-20T02:58:53Z
 **Campaign**: Research Campaign Manual v1.0.0 — Day 3-4 (9 P0/P1 gaps)

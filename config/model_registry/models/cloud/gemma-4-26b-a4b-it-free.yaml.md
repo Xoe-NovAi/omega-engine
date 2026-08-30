@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: google/gemma-4-26b-a4b-it:free
 display_name: Gemma 4 26B A4B IT (Free)
 version: '2026-05-17'

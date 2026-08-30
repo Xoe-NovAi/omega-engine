@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff Packet — Grok CLI Review (DETAILED)
 ## Omega Engine Initial PR Path Forward
 ### Full Report with All Decisions, Open Questions, and Proposed Path

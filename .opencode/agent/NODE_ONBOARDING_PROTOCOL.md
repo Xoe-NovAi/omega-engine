@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # NODE ONBOARDING PROTOCOL — Genesis-to-Consultable Arc for Domain-Expert Sessions
 **AP Token**: `AP-NODE-ONBOARDING-PROTOCOL-v1.0.0`
 **Status**: ACTIVE v1.0.0 — ratified 2026-08-22 by kali (D-pending PIVOT_LOG entry)

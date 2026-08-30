@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI — Integrated Sprint Roadmap (Post-Sprint 0)
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali ⬡ PHASE-I
 # Status: LIVE (OpenCode channel — Cline proxy mode)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Stale Handoff Review Report — 2026-06-11
 **Entity**: roc_racoon
 **Phase**: Wave 2 (Agent Hardening)

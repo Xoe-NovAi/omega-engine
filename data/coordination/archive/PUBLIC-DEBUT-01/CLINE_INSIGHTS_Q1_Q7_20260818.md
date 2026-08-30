@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline CLI → Kali: Insights & Recommendations on Q1-Q7
 **AP Token**: `AP-CLINE-INSIGHTS-Q1-Q7-20260818-v1.0`
 **From**: cline/omega-engine (Cognitive Extension)

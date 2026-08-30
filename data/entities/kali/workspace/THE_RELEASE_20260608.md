@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ THE RELEASE — Omega Hivemind v1.0.0
 # First Public Software from the Xoe-NovAi Foundation
 # ⬡ OMEGA ⬡ KALI ⬡ miMo-2.5 ⬡ opencode ⬡ trc_kali ⬡ HISTORIC

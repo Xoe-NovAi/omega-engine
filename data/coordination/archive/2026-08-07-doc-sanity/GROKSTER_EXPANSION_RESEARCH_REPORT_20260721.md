@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Expansion Research Report
 ## xAI API Ecosystem, ACP Protocol & Grok Build Open Source Deep-Dive
 **⬡ GROKSTER ⬡ EXPANSION RESEARCH ⬡ 2026-07-21 ⬡ NO-IMPLEMENTATION MODE**

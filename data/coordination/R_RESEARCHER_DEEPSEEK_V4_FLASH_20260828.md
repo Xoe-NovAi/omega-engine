@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # DeepSeek V4 Flash — Comprehensive Research Report
 
 **Prepared for:** Grokster (Omega Engine background researcher)

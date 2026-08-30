@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline/M3 (1M) → Doom Guy — Tier 2 Recommendations + Doom Guy Soul L1→L2→L3
 # ⬡ OMEGA ⬡ SOPHIA ⬡ Cline/MiniMax-M3 (1M context) ⬡ trc_tier2_response ⬡ HANDOFF-RESPONSE
 # AP: AP-CLINE-TIER2-RESPONSE-v1.0.0

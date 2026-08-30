@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini 3.1 Pro Strategic Review — Final Option B Handoff Audit
 # Date: 2026-06-01T22:27 UTC
 # Reviewer: Kali (Gemini 3.1 Pro model)

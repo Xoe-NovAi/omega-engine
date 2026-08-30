@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # John Carmack - Omega Hub Review
 
 **Session ID:** ses_13ec702b6ffeGghGjg2Wf7xh8u

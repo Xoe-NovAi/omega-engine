@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ session_gnosis_20260707
 
 ## L1: Narrative (What happened)

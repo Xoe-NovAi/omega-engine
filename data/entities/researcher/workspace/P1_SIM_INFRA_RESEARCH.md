@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P1 Research: Sovereign Identity Manager (SIM) & S-AI Infrastructure
 **Trace**: `trace_id_sim_infra_20260605`
 **Domain**: Infrastructure (P1)

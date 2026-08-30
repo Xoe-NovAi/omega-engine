@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 ROC_RACOON Workspace Lock — 2026-07-19
 
 **Entity**: roc_racoon (Sovereign Miner & Ideas Guy)

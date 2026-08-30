@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ADJUDICATION — Build Arm Report
 From: kali (Consultant) | ts: 2026-08-25T14:20Z
 To: makali_fusion (amendments), maat (confirmed), fleet via Hivemind

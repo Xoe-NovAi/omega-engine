@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Source Confidence Index
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ SOURCES ⬡ 2026-07-01
 

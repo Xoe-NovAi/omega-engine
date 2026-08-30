@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Lilith's Remediation Roadmap
 ## Critical Fixes for Soul Evolution + Memory Store Porting
 

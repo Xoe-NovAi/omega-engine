@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI → SONNET 4.6 HYDRATION DOSSIER v2.0
 
 **For**: Claude Sonnet 4.6 (Claude.ai or Claude Code)

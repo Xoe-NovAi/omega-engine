@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Strategic Industry Research — Context Injection Gaps
 
 **AP Token**: `AP-RESEARCHER-STRATEGIC-v1.0.0`

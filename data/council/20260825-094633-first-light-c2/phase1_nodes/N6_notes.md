@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N6 Working Notes — SPEC-D Drafting (lilith/node6, c2 session)
 
 **Date**: 2026-08-25 · Deliverable: `docs/specs/team_infra/SPEC-D-p2-hygiene.md`

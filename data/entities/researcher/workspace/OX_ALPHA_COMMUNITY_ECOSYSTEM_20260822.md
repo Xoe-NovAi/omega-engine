@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ox Alpha Community Ecosystem & Vision Capabilities Research
 **AP Token**: `AP-RESEARCHER-OXALPHA-VISION-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_oxalpha_vision ⬡ ACTIVE

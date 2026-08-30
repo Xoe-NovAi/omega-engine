@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 COUNCIL 2 PLAN — DEV-PREP & SPEC DRAFTING
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ hy3-free ⬡ opencode ⬡ trc_first_light_c2_plan ⬡ STAGE-7 ARTIFACT
 **Parent run**: First Light Express · **C1 SESSION_ID**: `20260825-094633-first-light`

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Core Loop
 # AP: AP-BACKGROUND-RESEARCHER-LOOP-v2.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ sovereign ⬡ loop ⬡ WORKER

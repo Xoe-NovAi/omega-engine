@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 rule_id: "RULE-MANDATE-HIERARCHY"
 authority: "M1 AnyIO + M2 Engine-Stack Firewall + M13 Temple-Grade + M27 Tracking Integrity"

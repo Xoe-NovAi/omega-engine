@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Cline / Gemini CLI / Antigravity — Durable Expertise Extract
 
 **KB Entry**: grokster/platforms/other/CLINE_GEMINI_ANTIGRAVITY

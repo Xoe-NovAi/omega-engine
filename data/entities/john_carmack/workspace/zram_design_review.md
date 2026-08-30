@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # zRAM Design Review — @john_carmack
 ## Review of Jem + Researcher + roc_racoon synthesis
 

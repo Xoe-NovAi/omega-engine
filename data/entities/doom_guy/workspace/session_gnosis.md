@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session Gnosis — doom_guy
 **Session**: 2026-07-10/11 — Heritage Tags + Model Provenance + httpx2 Research
 **Trace**: trc_heritage_tags_provenance → trc_httpx2_research

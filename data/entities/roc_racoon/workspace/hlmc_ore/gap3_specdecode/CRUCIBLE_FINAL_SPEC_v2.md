@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 The Sovereign Crucible — Final Spec v2.0
 # AP: AP-CRUCIBLE-FINAL-v2.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ minimax-m3-free ⬡ opencode ⬡ trc_crucible_finale ⬡ PRODUCTION-READY

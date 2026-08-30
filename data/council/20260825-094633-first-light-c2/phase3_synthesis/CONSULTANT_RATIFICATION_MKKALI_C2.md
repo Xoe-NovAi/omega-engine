@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT RATIFICATION — MK-Kali C2 Synthesis
 From: kali (Consultant) | ts: 2026-08-25T15:55Z
 To: makali_fusion (fusion input), mk_kali (ratified)

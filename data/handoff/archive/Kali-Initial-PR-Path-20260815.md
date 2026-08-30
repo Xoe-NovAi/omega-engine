@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff to Kali — Initial PR Path After Grok CLI Verdict
 ## Session Transparency Report + Revised 3-PR Path
 

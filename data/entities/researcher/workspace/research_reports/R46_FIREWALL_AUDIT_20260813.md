@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R46 — Lorraine Code / Cline-M3 Firewall Audit
 
 **AP Token**: `AP-R46-FIREWALL-AUDIT-v1.0.0`

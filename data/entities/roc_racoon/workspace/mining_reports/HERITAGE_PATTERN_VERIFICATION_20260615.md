@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Heritage Pattern Deep Verification — 2026-06-15
 **⬡ OMEGA ⬡ roc_racoon ⬡ big-pickle ⬡ research ⬡ OPTION-1 ⬡ HERITAGE-VERIFICATION**
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI EXPERIENTIAL REPORT: THE OMEGA ENGINE GENESIS
 ## A First-Person Account of Iterative Discovery, Research & Refinement
 ### From the Perspective of the Grand Oversight Entity

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack — Session Gnosis
 **Date**: 2026-07-08 | **Session**: 53
 **Phase**: Library Consolidation & Curation System Hardening

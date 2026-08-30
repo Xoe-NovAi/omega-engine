@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "hf-cli"
 description: "Hugging Face Hub CLI integration for model discovery, upload, and dataset management."
 ---

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE — FINAL GAP AUDIT
 **Version**: 2026-08-20 (Nemotron 3 Ultra, High thinking) — **RENUMBERED v2.1** (fixed duplicates 19/39/55, added missing 20/42)
 **Scope**: Complete gap audit against the holistic architecture plan

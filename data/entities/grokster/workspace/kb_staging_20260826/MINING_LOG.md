@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Mining Log — Platform Gnosis Mine 2026-08-26
 
 **Miner**: roc_racoon · **Mission**: Exhaustive platform gnosis → KB staging for grokster

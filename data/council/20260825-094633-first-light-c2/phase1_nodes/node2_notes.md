@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # node2 WORKING NOTES — Council 2 Build Arm (specb)
 ⬡ OMEGA ⬡ MAAT/node2 ⬡ trc_c2_specb ⬡ RAW NOTES
 Session: 20260825-094633-first-light-c2 | Date: 2026-08-25 | Mode: PREP-ONLY (draft spec + these notes)

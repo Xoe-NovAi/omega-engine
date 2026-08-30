@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Codex CLI / Claude Code / VS Code Copilot — Honest Shallow-State Summary
 **KB Entry**: grokster/platforms/other/CODEX_CLAUDE_CODE_VSCODE
 **last_verified**: 2026-08-26 · **rot_class**: fast

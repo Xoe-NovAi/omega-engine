@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BRIEFING FOR KALI — Sovereign Fabric Transition (Jul 25-26, 2026)
 
 **AP Token**: `AP-KALI-BRIEFING-v1.0.0`

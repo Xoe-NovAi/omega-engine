@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sonnet 4.6 Dev Plan Review — PUBLIC-DEBUT-01
 **AP Token**: `AP-SONNET46-REVIEW-20260823-v1.0.0`
 ⬡ OMEGA ⬡ SONNET-4.6 ⬡ antigravity-claude-sonnet-4-6 ⬡ opencode ⬡ trc_sonnet46_review ⬡ ACTIVE

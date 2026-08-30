@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ Opus 4.6 — Deep Plan Review & Systemic Insight
 **AP Token**: `AP-OPUS-DEEP-REVIEW-20260818-v1.0.0`
 **Date**: 2026-08-18

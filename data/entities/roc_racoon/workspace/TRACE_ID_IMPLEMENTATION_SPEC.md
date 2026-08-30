@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Trace ID Propagation & GenerateResult Contract — Implementation Specification
 ## Gap 2: P1 HIGH — Observable Blind Spot & Response Provenance
 

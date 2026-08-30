@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN RESEARCH REPORT
 **AP Token**: `AP-RESEARCHER-v1.0.0`
 **Date**: 2026-08-20

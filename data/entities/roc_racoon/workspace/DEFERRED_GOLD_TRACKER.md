@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Deferred Gold Tracker
 
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_deferred_gold ⬡ v1.4.0

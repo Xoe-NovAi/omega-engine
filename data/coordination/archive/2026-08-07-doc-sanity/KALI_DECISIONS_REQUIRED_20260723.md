@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ARCHITECT DECISIONS REQUIRED — 2026-07-23
 **AP Token**: `AP-KALI-DECISIONS-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ DECISIONS-REQUIRED ⬡ 2026-07-23

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Domain Index — Memory & State (context)
 **AP Token**: `AP-N7-DOMAIN-INDEX-v1.0.0`
 **Keeper**: N7 context · Overseer: Lilith · Charter: `data/coordination/NODE_EXPERT_SESSIONS_PLAN.md` §4

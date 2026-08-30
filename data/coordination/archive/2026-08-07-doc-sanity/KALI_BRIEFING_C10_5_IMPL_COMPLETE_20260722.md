@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Briefing — C-10.5 Quota-Aware Provider Routing Implementation Complete
 **AP Token**: `AP-KALI-BRIEFING-C10-5-IMPL-20260722`
 ⬡ OMEGA ⬡ MAAT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_briefing ⬡ COMPLETE

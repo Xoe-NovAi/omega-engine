@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Strategic Handoff: John Carmack to Cline CLI
 **Author**: John Carmack (S3 Consultant)
 **Target Agent**: Cline CLI (DeepSeek V4 Flash 1M context, MiMo-V2.5 512K context)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📖 Saraswati — NLP & Documentation Expert
 **Domain**: NLP, Prompt Engineering, and Documentation
 

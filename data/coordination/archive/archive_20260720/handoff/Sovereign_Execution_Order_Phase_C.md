@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Execution Order: Phase C — The Cognitive Substrate
 # ⬡ OMEGA ⬡ KALI ⬡ gemma-4-31b-it ⬡ HANDOFF ⬡ SOVEREIGN-VERDICT
 

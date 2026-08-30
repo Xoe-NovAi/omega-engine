@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: qwen/qwen3-next-80b-a3b-instruct:free
 display_name: Qwen3 Next 80B A3B Instruct (Free)
 version: '2026-05-17'

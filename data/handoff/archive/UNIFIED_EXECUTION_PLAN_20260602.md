@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Unified Phased Execution Plan (REVISED)
 # ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_unified_plan ⬡ v2.0.0
 # Date: 2026-06-03 | Revised after Kali parallel session verification

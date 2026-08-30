@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Cross-Pollination Protocol
 # ⬡ OMEGA ⬡ P9:LINK ⬡ deepseek-v4-flash ⬡ opencode ⬡ CROSS-POLLINATION
 **AP Token**: `AP-CROSS-POLLINATION-v1.0.0`

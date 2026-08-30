@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # COLLABORATION LOG — OX ALPHA RESEARCH 2026-08-22
 **AP Token**: AP-RESEARCHER-OXALPHA-v1.0.0
 **Date**: 2026-08-22

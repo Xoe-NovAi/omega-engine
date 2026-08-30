@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Hivemind Session - Kali - 06-08-2026
 
 **Session ID:** ses_157fd715fffe1mj6co8hcytbqE

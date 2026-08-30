@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for credit_budget.py — API Credit Budget Tracker."""
 import pytest
 import json

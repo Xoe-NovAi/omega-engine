@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_OTEL_VECTOR_20260829.md
 
 **Mission**: Temple-grade deep research on distributed tracing for the Omega Engine's vector operations using OpenTelemetry.

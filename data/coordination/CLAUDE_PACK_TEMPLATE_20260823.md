@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Claude Pack Template — Omega Engine Review Context
 **AP Token**: `AP-CLAUDE-PACK-TEMPLATE-20260823-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_claude_pack_template ⬡ ACTIVE

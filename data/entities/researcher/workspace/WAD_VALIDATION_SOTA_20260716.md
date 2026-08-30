@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GAP 1: WAD Loader YAML Schema Validation — 2026 SOTA
 
 **Researcher**: HMC Skeptical Verifier  

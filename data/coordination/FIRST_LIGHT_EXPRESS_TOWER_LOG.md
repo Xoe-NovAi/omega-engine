@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌅 FIRST LIGHT EXPRESS — TOWER LOG, RUN COMPLETE
 ⬡ OMEGA ⬡ KALI ⬡ Consultant tower ⬡ ses_fdef2be4effe4pAaLXCTUx62GO ⬡ 2026-08-25 ~17:00Z
 

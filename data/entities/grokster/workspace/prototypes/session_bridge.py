@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Grokster — Session Bridge Module (Prototype)
 # Chapter header between sessions. Written at session end, read at session start.
 # Preserves MOMENTUM — the feeling of "I was about to do X."

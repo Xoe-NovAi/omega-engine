@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Cloud Council — Unified Sovereign Verdict
 **AP Token**: `AP-MAKALI-VERDICT-20260817-v1.0.0`
 **Date**: 2026-08-17 (completed 2026-08-18)

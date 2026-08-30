@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack Entity — Ingestion Pipeline Architecture
 # ⬡ OMEGA ⬡ MAAT ⬡ deepseek-v4-flash ⬡ P1-ARCHITECT ⬡ 2026-07-01
 # AP Token: AP-INGESTION-PIPELINE-v1.0.0

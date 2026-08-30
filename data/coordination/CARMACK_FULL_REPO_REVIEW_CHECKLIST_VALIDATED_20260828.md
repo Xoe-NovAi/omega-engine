@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK FULL REPO REVIEW CHECKLIST — VALIDATED — 2026-08-28
 **AP**: AP-JOHN_CARMACK-v1.0.0 · **For**: Cline CLI × 8 DeepSeek-1M accounts (parallel)
 **Branch under review**: `release/debut` (572 files, 263 in `src/omega/`, 162 test files, 56 entities, 50+ scripts)

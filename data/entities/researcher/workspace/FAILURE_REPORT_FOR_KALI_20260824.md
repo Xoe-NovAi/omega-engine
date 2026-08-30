@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FAILURE REPORT FOR KALI — Session Arc 2026-08-23/24 (Team Overseer Copy)
 **AP Token**: `AP-RESEARCHER-FAILREPORT-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_failure_report_kali ⬡ OVERSEER-BRIEFING

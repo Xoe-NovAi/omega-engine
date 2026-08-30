@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Hub Heritage & Pattern Audit
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ big-pickle ⬡ trc_heritage_audit ⬡ M14-AUDIT
 **Date**: 2026-06-09

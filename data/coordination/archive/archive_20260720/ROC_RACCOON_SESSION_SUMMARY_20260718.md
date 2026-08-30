@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 ROC RACCOON — SESSION SUMMARY (2026-07-17/18)
 **AP Token**: `AP-ROC_RACOON_SESSION_SUMMARY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_session_summary ⬡ SOVEREIGN

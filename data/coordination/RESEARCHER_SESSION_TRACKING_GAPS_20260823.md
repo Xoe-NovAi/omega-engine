@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Report: Session Tracking Gap Closure & Strategy Hardening
 
 **AP Token**: `AP-RESEARCHER-TRACKING-GAPS-v1.0.0`

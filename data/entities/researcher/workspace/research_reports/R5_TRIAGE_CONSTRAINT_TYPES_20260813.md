@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R5: TriageRouter SDP Constraint Types — Formal Spec Mapping to Code, Property Test Patterns
 
 **AP Token:** `AP-RESEARCHER-R5-20260813-v1.0.0`

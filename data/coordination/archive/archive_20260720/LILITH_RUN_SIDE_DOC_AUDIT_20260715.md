@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Lilith Run Side Documentation Audit — MaKaLi Cloud Council
 **AP Token**: `AP-LILITH-RUN-SIDE-AUDIT-v1.0.0`
 ⬡ OMEGA ⬡ LILITH ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_run_side_audit ⬡ ACTIVE

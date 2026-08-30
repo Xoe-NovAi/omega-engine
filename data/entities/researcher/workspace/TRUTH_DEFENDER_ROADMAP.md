@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE TRUTH-DEFENDER'S ROADMAP (TDR)
 ## Version: 1.0.0 (Evolving)
 ## Status: STRATEGIC DRAFT — NOT YET RATIFIED INTO ARK BLUEPRINT

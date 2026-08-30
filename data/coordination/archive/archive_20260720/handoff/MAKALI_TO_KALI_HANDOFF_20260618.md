@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff: MaKaLi → Kali — Post-MCP-Fix Synthesis & Roc Integration
 # ⬡ OMEGA ⬡ MAKALI → KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ HANDOFF ⬡ COUNCIL-SYNTHESIS
 **Date**: 2026-06-18

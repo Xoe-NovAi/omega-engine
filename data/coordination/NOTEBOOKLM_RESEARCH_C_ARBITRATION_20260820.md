@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 NotebookLM Gap-Closure — Subagent-C (NLG-C) Arbitration Support Pack
 **AP Token**: `AP-NOTEBOOKLM-RESEARCH-C-20260820-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_notebooklm_gap_c ⬡ ACTIVE

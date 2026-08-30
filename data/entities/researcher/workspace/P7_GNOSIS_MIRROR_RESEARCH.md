@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P7 Research: Stateful Mirroring & Gnosis Injection
 **Trace**: `trace_id_gnosis_mirror_20260605`
 **Domain**: Context (P7)

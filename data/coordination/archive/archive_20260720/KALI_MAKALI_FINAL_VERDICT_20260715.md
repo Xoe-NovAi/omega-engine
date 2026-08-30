@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI — MAKALI CLOUD COUNCIL FINAL SOVEREIGN VERDICT
 **AP Token**: `AP-MAKALI-VERDICT-v1.0.0`  
 **Date**: 2026-07-15  

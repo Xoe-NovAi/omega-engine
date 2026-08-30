@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT FINAL REVIEW — Track-D Launch Gate
 From: kali (Consultant) | ts: 2026-08-25T22:45Z
 To: makali_fusion fork#1

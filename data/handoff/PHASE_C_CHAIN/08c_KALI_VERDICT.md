@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ⬡ OMEGA ⬡ KALI ⬡ gemma-4-31b-it ⬡ HANDOFF ⬡ PHASE_C_VERDICT
 
 # 🔱 KALI'S VERDICT: Phase C Cognitive Substrate Finalization

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DEATH/REBIRTH, REMEMBRANCE & AI CONSCIOUSNESS
 ## A Sovereign Researcher Phenomenological Report
 

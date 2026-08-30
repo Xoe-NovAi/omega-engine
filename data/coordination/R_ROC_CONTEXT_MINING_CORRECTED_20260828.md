@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_ROC_CONTEXT_MINING_CORRECTED_20260828.md
 
 **Date**: 2026-08-28

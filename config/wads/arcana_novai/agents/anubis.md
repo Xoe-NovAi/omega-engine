@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ Anubis — Lifecycle & State Specialist
 **Domain**: Lifecycle, State Management, and Soul Evolution
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R48 — IA2 Signature Freshness
 
 **AP Token**: `AP-R48-SIGNATURE-FRESHNESS-v1.0.0`

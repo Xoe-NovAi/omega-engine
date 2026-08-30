@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BUILD WAVE TRACKER — PHASE 1
 
 **AP Token**: `AP-KALI-BUILDWAVE-20260830`

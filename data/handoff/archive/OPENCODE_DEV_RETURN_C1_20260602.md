@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## C1 — COMPLETE — 2026-06-02T15:05Z
 **File(s)**: `src/omega/oracle/oracle.py`
 **Diff stat**: +2 -0

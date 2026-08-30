@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Web Research Follow-Up Mining Report
 **Entity**: roc_racoon | **Model**: mimo-v2.5-free | **Date**: 2026-06-28
 **Status**: COMPLETE | **Mode**: Discovery Only — No Refactoring

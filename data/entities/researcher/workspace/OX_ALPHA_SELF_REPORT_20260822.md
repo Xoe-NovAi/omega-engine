@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OX ALPHA SELF-REPORT — Firsthand Operational Forensics
 **AP Token**: AP-OXALPHA-SELFREPORT-v1.0.0
 **Date**: 2026-08-22

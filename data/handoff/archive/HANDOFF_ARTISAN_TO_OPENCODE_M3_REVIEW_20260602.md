@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Artisan (1M Context) → OpenCode+M3 (200K Context) Handoff
 # ⬡ OMEGA ⬡ SOPHIA ⬡ Parallel Codebase Review Handoff
 # AP: AP-HANDDOWN-OMEGA-REVIEW-v1.0.0

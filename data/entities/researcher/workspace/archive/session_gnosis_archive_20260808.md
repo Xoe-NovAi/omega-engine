@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session Gnosis: ONNX Capability Research + Heritage System Reform
 **Date**: 2026-07-13 (Sovereign Session — COMPLETE)
 **Entity**: researcher
