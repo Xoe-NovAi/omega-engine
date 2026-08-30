@@ -846,6 +846,6 @@ proposals:
   last_verified: '2026-08-29'
 metadata:
   entity: researcher
-  session_id: ses_fb2448d01ffeRpbi1H7MvxkfWv
+  session_id: ses_faf926866ffezrPCnXne6RQt6A
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-29T15:11:03.074002+00:00'
+  last_session_end: '2026-08-30T07:04:29.911132+00:00'

@@ -1,0 +1,54 @@
+# 🔱 Omega Engine — Local Inference Service (Native GGUF)
+# ⬡ OMEGA ⬡ native-gguf ⬡ inference ⬡ WORKER
+#
+# Runs the Omega Engine's local-first inference backend as a managed systemd
+# service. Applies Carmack's OOM hardening (2026-08-15):
+#   - MemoryMax=8G: Hard limit. systemd-oomd kills THIS cgroup (not the
+#     terminal scope) if inference exceeds 8 GB.
+#   - Delegate=yes: Ensures the multiprocessing worker child stays in THIS
+#     cgroup. Without Delegate=yes, the worker process can escape the cgroup
+#     and accumulate memory outside the limit (OOM root cause).
+#   - OOMScoreAdjust=300: Under system pressure, kill inference FIRST
+#     (before API gateway, before background research).
+#
+# For interactive development (omega talk from terminal), wrap the session:
+#   systemd-run --scope --property=MemoryMax=8G --property=Delegate=yes \
+#     --property=OOMScoreAdjust=300 bash -c 'source .venv/bin/activate && omega talk "hello"'
+
+[Unit]
+Description=Omega Local Inference — Native GGUF Provider (Managed Worker)
+Documentation=https://github.com/Xoe-NovAi/omega-engine
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 -m omega.oracle.local_worker_pool
+WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
+Environment=PYTHONPATH=%h/Documents/Xoe-NovAi/omega-engine/src
+EnvironmentFile=%h/Documents/Xoe-NovAi/omega-engine/.env
+Environment=OMEGA_ENV=production
+# Aggressive malloc trimming — return freed pages to OS immediately
+Environment=MALLOC_MMAP_THRESHOLD_=65536
+Environment=MALLOC_ARENA_MAX=2
+
+# ── Carmack OOM Hardening (2026-08-15) ──
+MemoryMax=8G
+MemoryHigh=6G
+MemoryMin=1G
+OOMScoreAdjust=300
+Delegate=yes
+MemoryAccounting=yes
+
+# Restart on failure (crash-loop breaker)
+Restart=on-failure
+RestartSec=10s
+
+# Security hardening
+ProtectSystem=full
+ReadWritePaths=%h/Documents/Xoe-NovAi/omega-engine/data %h/Documents/Xoe-NovAi/omega-engine/config
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

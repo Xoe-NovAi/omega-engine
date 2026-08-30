@@ -5,6 +5,9 @@
 PYTHON := .venv/bin/python
 PYTEST := .venv/bin/python -m pytest
 
+# Use bash so targets can rely on [[ ]] / bash-isms (e.g. local inference lifecycle)
+SHELL := /bin/bash
+
 # Colors for output
 GREEN := \033[0;32m
 YELLOW := \033[1;33m
@@ -41,6 +44,20 @@ help:
 	@echo "  probe-models      Probe free model availability/latency"
 	@echo "  probe-network     Probe network latency (gateway, DNS, OpenRouter)"
 	@echo "  probe-antigravity Probe Antigravity account quotas"
+	@echo ""
+	@echo "Local Inference (native-gguf / llama-cpp):"
+	@echo "  infer-start       Start native-gguf servers (extractor:1234, reasoner:1235)"
+	@echo "  infer-stop        Stop native-gguf servers and unload models from RAM"
+	@echo "  infer-restart     Stop then start native-gguf servers"
+	@echo "  infer-status      Show native-gguf server state, PIDs, health, memory"
+	@echo "  infer-memory      Report RAM/swap footprint of loaded models"
+	@echo "  infer-stop-all    Full unload: native-gguf + ollama + lingering llama procs"
+	@echo "  infer-models      List available GGUF models in the models directory"
+	@echo "  infer-talk        Smoke-test the running native-gguf server (MSG=...)"
+	@echo "  infer-logs        Tail live server logs (LOG=extractor|reasoner)"
+	@echo "  infer-events      Show lifecycle events from events.jsonl (N=last N)"
+	@echo "  infer-health      Detailed health: status + memory + log tail"
+	@echo "  infer-debug       Full debug dump: status + memory + events + logs"
 	@echo ""
 	@echo "Codex Targets (D-277 Hydration):"
 	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
@@ -415,6 +432,153 @@ observe:
 .PHONY: install-guarded
 install-guarded:
 	@STAMP=$$(date +%Y%m%d-%H%M%S); bash scripts/observe-build.sh install-$$STAMP bash scripts/install.sh
+
+# =============================================================================
+# Local Inference Lifecycle (native-gguf / llama-cpp)
+# =============================================================================
+# Lifecycle + observability for the local GGUF inference servers
+# (extractor:1234, reasoner:1235) managed by scripts/serve_native_gguf.sh.
+# These commands let you start, stop, inspect, and DEBUG the local inference
+# engines, and — critically — UNLOAD the models from RAM when not needed.
+#
+# All lifecycle logic lives in scripts/serve_native_gguf.sh (single source of
+# truth). Logs + pid files + lifecycle events live in data/logs/native-gguf/
+# (persistent, M8-compliant local observability — never external telemetry).
+#
+# Observability targets:
+#   infer-logs    — tail live server logs (LOG=extractor|reasoner, default both)
+#   infer-events  — show recent lifecycle events from events.jsonl
+#   infer-health  — detailed health: status + memory + recent log tail
+#   infer-debug   — full debug dump: status + memory + events + log tail
+#
+# See SOVEREIGN_MANDATES.md §M8 (zero telemetry: local observability in data/
+# is acceptable; external telemetry is not).
+
+INFER_LOG_DIR := data/logs/native-gguf
+INFER_MODELS_DIR := $(or $(OMEGA_MODELS_DIR),/media/arcana-novai/omega_library/models/gguf)
+
+.PHONY: infer-start infer-stop infer-restart infer-status infer-memory infer-stop-all infer-models infer-talk infer-logs infer-events infer-health infer-debug
+
+# Start both native-gguf servers (extractor:1234, reasoner:1235)
+infer-start:
+	@bash scripts/serve_native_gguf.sh start
+
+# Stop native-gguf servers and unload models from RAM (graceful then force).
+infer-stop:
+	@bash scripts/serve_native_gguf.sh stop
+
+# Stop then start native-gguf servers
+infer-restart:
+	@bash scripts/serve_native_gguf.sh restart
+
+# Show native-gguf server state: PIDs, health, and memory footprint
+infer-status:
+	@bash scripts/serve_native_gguf.sh status
+
+# Report RAM/swap footprint of loaded models (per running llama server)
+infer-memory:
+	@echo "$(YELLOW)Loaded model memory footprint:$(NC)"
+	@found=0; \
+	for pid in $$(pgrep -f "python3 -m llama_cpp.server" || true); do \
+		[[ -r "/proc/$$pid/status" ]] || continue; \
+		model=$$(tr '\0' ' ' < /proc/$$pid/cmdline 2>/dev/null | sed -n 's/.*--model \([^ ]*\.gguf\).*/\1/p'); \
+		[[ -n "$$model" ]] || continue; \
+		found=1; \
+		rss_kb=$$(awk '/VmRSS/{print $$2}' /proc/$$pid/status 2>/dev/null); \
+		swap_kb=$$(awk '/VmSwap/{print $$2}' /proc/$$pid/status 2>/dev/null); \
+		rss_mb=$$(( $${rss_kb:-0} / 1024 )); \
+		swap_mb=$$(( $${swap_kb:-0} / 1024 )); \
+		printf "  PID %-8s RSS %6s MB  Swap %7s MB  %s\n" "$$pid" "$$rss_mb" "$$swap_mb" "$${model:-?}"; \
+	done; \
+	if [[ $$found -eq 0 ]]; then echo "  (no llama_cpp.server processes running)"; fi
+
+# Full unload: stop native-gguf servers + ollama + any lingering llama processes
+infer-stop-all:
+	@echo "$(YELLOW)Full local-inference shutdown...$(NC)"
+	@$(MAKE) --no-print-directory infer-stop
+	@if pgrep -x ollama >/dev/null 2>&1; then \
+		echo "  stopping ollama (PID $$(pgrep -x ollama))"; \
+		kill $$(pgrep -x ollama) 2>/dev/null || true; sleep 1; \
+		kill -9 $$(pgrep -x ollama) 2>/dev/null || true; \
+	else echo "  ollama not running"; fi
+	@ling=""; \
+	for port in 1234 1235; do \
+		pids=$$(ss -ltnp 2>/dev/null | awk -v p=":$$port " '$$0 ~ p {match($$0, /pid=[0-9]+/); if (RSTART) print substr($$0, RSTART+4, RLENGTH-4)}' | sort -u); \
+		for pid in $$pids; do ling="$$ling $$pid"; done; \
+	done; \
+	if [[ -n "$$ling" ]]; then \
+		echo "  killing lingering llama_cpp.server on ports 1234/1235:$$ling"; \
+		kill $$ling 2>/dev/null || true; sleep 1; kill -9 $$ling 2>/dev/null || true; \
+	else echo "  no lingering llama_cpp.server processes"; fi
+	@echo "$(GREEN)All local inference engines stopped; models unloaded from RAM.$(NC)"
+
+# List available GGUF models in the models directory
+infer-models:
+	@echo "$(YELLOW)Available GGUF models in $(INFER_MODELS_DIR):$(NC)"
+	@if [[ -d "$(INFER_MODELS_DIR)" ]]; then \
+		ls -1 "$(INFER_MODELS_DIR)"/*.gguf 2>/dev/null | sed 's#.*/##' || echo "  (no .gguf files found)"; \
+	else \
+		echo "  (models dir not found: $(INFER_MODELS_DIR))"; \
+	fi
+
+# Smoke-test the running native-gguf server. Usage: make infer-talk MSG="hello"
+infer-talk:
+	@if [[ -z "$(MSG)" ]]; then echo "usage: make infer-talk MSG='your question'"; exit 1; fi
+	@echo "$(YELLOW)Querying native-gguf (reasoner:1235)...$(NC)"
+	@curl -s --max-time 120 http://127.0.0.1:1235/v1/chat/completions \
+		-H "Content-Type: application/json" \
+		-d "{\"messages\":[{\"role\":\"user\",\"content\":\"$(MSG)\"}],\"max_tokens\":64}" \
+		| .venv/bin/python -c "import sys,json; d=json.load(sys.stdin); print(d['choices'][0]['message']['content'])" 2>/dev/null \
+		|| echo "$(RED)infer-talk failed — is the reasoner server running? (make infer-status)$(NC)"
+
+# ── Observability ───────────────────────────────────────────────────────────
+# Tail live server logs. Usage: make infer-logs LOG=extractor (default: both)
+infer-logs:
+	@if [[ -n "$(LOG)" ]]; then \
+		echo "$(YELLOW)Tailing $(LOG).log (Ctrl+C to exit)...$(NC)"; \
+		tail -f "$(INFER_LOG_DIR)/$(LOG).log"; \
+	else \
+		echo "$(YELLOW)Tailing extractor.log + reasoner.log (Ctrl+C to exit)...$(NC)"; \
+		tail -f "$(INFER_LOG_DIR)/extractor.log" "$(INFER_LOG_DIR)/reasoner.log"; \
+	fi
+
+# Show recent lifecycle events from events.jsonl (N=last N, default 20)
+infer-events:
+	@echo "$(YELLOW)Recent native-gguf lifecycle events:$(NC)"
+	@if [[ -f "$(INFER_LOG_DIR)/events.jsonl" ]]; then \
+		tail -n $(or $(N),20) "$(INFER_LOG_DIR)/events.jsonl" | \
+		.venv/bin/python -c "import sys,json;[print(f\"  {json.loads(l)['ts']}  {json.loads(l)['event']:<16} {json.loads(l)['server']:<10} {json.loads(l).get('detail','')}\") for l in sys.stdin if l.strip()]" 2>/dev/null \
+		|| tail -n $(or $(N),20) "$(INFER_LOG_DIR)/events.jsonl"; \
+	else echo "  (no events yet — run make infer-start)"; fi
+
+# Detailed health: status + memory + recent log tail
+infer-health:
+	@echo "$(YELLOW)════════ Native-GGUF Health ════════$(NC)"
+	@bash scripts/serve_native_gguf.sh status
+	@echo ""
+	@$(MAKE) --no-print-directory infer-memory
+	@echo ""
+	@echo "$(YELLOW)Recent log activity:$(NC)"
+	@for name in extractor reasoner; do \
+		if [[ -f "$(INFER_LOG_DIR)/$$name.log" ]]; then \
+			echo "  --- $$name.log (last 5 lines) ---"; \
+			tail -n 5 "$(INFER_LOG_DIR)/$$name.log" | sed 's/^/    /'; \
+		fi; \
+	done
+
+# Full debug dump: status + memory + events + log tail
+infer-debug:
+	@echo "$(YELLOW)════════ Native-GGUF Debug Dump ════════$(NC)"
+	@$(MAKE) --no-print-directory infer-health
+	@echo ""
+	@echo "$(YELLOW)Lifecycle events:$(NC)"
+	@$(MAKE) --no-print-directory infer-events N=30
+	@echo ""
+	@echo "$(YELLOW)Log directory contents:$(NC)"
+	@ls -la "$(INFER_LOG_DIR)" 2>/dev/null | sed 's/^/  /' || echo "  (no log dir yet)"
+	@echo ""
+	@echo "$(YELLOW)System memory:$(NC)"
+	@free -m | sed 's/^/  /'
 
 # === SECRET GATES (D-K6, kali ruling 2026-08-22) ===
 # gitleaks scan runs when the binary is on PATH, against DURABLE refs only

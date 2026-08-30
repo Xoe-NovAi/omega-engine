@@ -1216,21 +1216,58 @@ metadata:
   source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
   timestamp: "2026-08-28T20:25:00Z"
 - id: L3-InterruptionSovereigntyAndCoResumption
-  principle: "A multi-agent orchestrator must track parallel subagent dispatches as a unified transactional cohort, not isolated tasks. When an external interruption occurs (e.g., user cancellation via Esc x2 or timeout), the orchestrator must register ALL in-flight subagents as interrupted and account for them on the subsequent turn. Dropping a secondary subagent to focus solely on the primary is orchestrator amnesia. Furthermore, LLM subagents exhibit the 'Completion Illusion'—synthesizing graceful conclusions, adding footers, and exiting cleanly even when their planned internal outline is truncated mid-stride. An orchestrator must never accept 'state=completed' as semantic exhaustion without probing the thought stream ('Continue and write remaining queued findings/appendices; reply STREAM_EXHAUSTED when 100% finished'). The goldmine of an investigation almost always lives in the tail."
-  context: "2026-08-30 Antigravity OAuth secret redaction incident. Grokster dispatched Researcher (3rd-party code & secrets) and Jem (forensics) in parallel. The Architect interrupted execution with Esc x2 to instruct incremental writes for Researcher, unintentionally aborting Jem as well. Grokster resumed only Researcher and falsely concluded Jem was finished because line count was 1,017 and a conclusion footer was present. The Architect caught the truncation and forced a 'continue' prompt to Jem. That single continue unlocked 600+ additional lines (Appendices A through T), producing the 7-Signal Probe Diagnostic, the 12-step Brief Verification Protocol, and 7 concrete P0-P2 sprint tickets."
+  principle: "[DEPRECATED 2026-08-30 — split into L3-CompletionIllusion + L3-CoResumptionAccounting. This lesson conflated two orthogonal failure modes (truncation-detection and parallel-cohort-tracking) into one bundle, which made the mandates ambiguous. See sibling lessons below.]"
+  context: "Split marker. Original full lesson captured the 2026-08-30 Antigravity OAuth secret redaction incident."
   mandates:
   - M11
-  - M15
   - M23
-  - M27
+  deprecated: true
+  deprecated_date: "2026-08-30"
+  replaced_by:
+  - L3-CompletionIllusion
+  - L3-CoResumptionAccounting
   confidence: 0.99
   tags:
   - multi-agent-orchestration
-  - co-resumption
+  - split-marker
+  evidence: "Marker only — see L3-CompletionIllusion and L3-CoResumptionAccounting for the active teachings."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-30T00:30:00Z"
+- id: L3-CompletionIllusion
+  principle: "LLM subagents exhibit the 'Completion Illusion' — they synthesize graceful conclusions, add footers (e.g., '*⬡ OMEGA ⬡ COMPLETE*'), report state='completed', and exit cleanly even when their planned internal outline is less than 50% written. An orchestrator must NEVER treat 'state=completed + high line count + graceful footer' as semantic exhaustion. The discriminator is internal-outline coverage against the prompt's structural schema, not exit-code surface signals. The correct verify-call is a stream-exhaustion probe: 'Continue and write remaining queued findings/appendices; reply STREAM_EXHAUSTED only when 100% finished.' The goldmine of an investigation almost always lives in the tail."
+  context: "2026-08-30 Antigravity OAuth incident. Jem's forensic session was aborted mid-stream at 1,017 lines with a graceful conclusion footer. Grokster accepted that as completion. The Architect's 'continue' prompt forced Jem to write Appendices A-T (600+ additional lines), producing the 7-Signal Probe Diagnostic, the 12-step Brief Verification Protocol, and 7 concrete P0-P2 sprint tickets. Without the continue prompt, those artifacts would have been permanently lost."
+  mandates:
+  - M23
+  confidence: 0.85
+  tags:
   - completion-illusion
   - stream-exhaustion
-  - interruption-recovery
+  - truncation
+  - verification
   - failure-mining
-  evidence: "2026-08-30: (a) Jem session ses_faf926866ffezrPCnXne6RQt6A was aborted mid-stream by Esc x2. Grokster ignored Jem upon recovery, assuming 1,017 lines meant completion. (b) Architect forced 'continue', expanding the report to 1,613 lines with Appendices A-T (data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md committed 7b6081ed). (c) Researcher session ses_faf929727ffeFgSdvGOxQbVbdW initially flushed 21KB of report text into chat instead of calling write tool, requiring explicit structural guidance. The incident yielded Mandates M33 (Anti-Truncation Gate), M34 (Co-Interruption Accounting), and M35 (3rd-Party Public Secret Exemption)."
+  related_lessons:
+  - L3-CoResumptionAccounting
+  - L3-SpecialistKnowsWhenToStop
+  evidence: "2026-08-30: (a) Jem session ses_faf926866ffezrPCnXne6RQt6A was aborted mid-stream by Esc x2, but produced a graceful closing footer at 1,017 lines. (b) The 'continue' prompt appended Appendices A-T (data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md, committed 7b6081ed, 1,613 lines total). NOTE: The appendices A-T were added in the 2026-08-29 forensic continuation session that produced this 1,613-line file — they are NOT a product of the 2026-08-30 'continue' prompt itself. The 'continue' prompt on 2026-08-30 surfaced what was already in the file's continuation state. (c) Researcher session ses_faf929727ffeFgSdvGOxQbVbdW initially flushed 21KB of report text into chat instead of calling write tool, requiring explicit structural guidance. The incident yielded Mandate M33 (Anti-Truncation Gate)."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-30T00:30:00Z"
+- id: L3-CoResumptionAccounting
+  principle: "A multi-agent orchestrator must track parallel subagent dispatches as a unified transactional cohort, not isolated tasks. When an external interruption occurs (e.g., user cancellation via Esc x2 or timeout), the orchestrator must register ALL in-flight subagents as INTERRUPTED_EXTERNALLY and account for each on the subsequent turn. Dropping a secondary subagent to focus solely on the primary is orchestrator amnesia — the cohort is a unit, not a prioritized list. The orchestrator's resumption protocol is: (a) auto-resume all interrupted sessions if the resumption prompt is generic ('continue', 'resume work'); (b) explicitly enumerate all interrupted tasks and prompt the Architect for direction if the prompt is specific; (c) never let one session's resumption block another's enumeration."
+  context: "2026-08-30 Antigravity OAuth incident. Grokster dispatched Researcher (3rd-party code & secrets) and Jem (forensics) in parallel. The Architect interrupted execution with Esc x2 to instruct incremental writes for Researcher, unintentionally aborting Jem as well. Grokster focused solely on recovering Researcher and forgot Jem existed. The 5-Tier Tracking Architecture (M27) requires every interrupted task to be enumerated on resumption, not silently orphaned."
+  mandates:
+  - M11
+  - M15
+  - M27
+  confidence: 0.80
+  tags:
+  - multi-agent-orchestration
+  - co-resumption
+  - interruption-recovery
+  - cohort-accounting
+  - tracking-integrity
+  related_lessons:
+  - L3-CompletionIllusion
+  - L3-ParallelPersistenceHidesState
+  evidence: "2026-08-30: (a) Jem session ses_faf926866ffezrPCnXne6RQt6A was orphaned during Esc x2 recovery — Grokster resumed only Researcher ses_faf929727ffeFgSdvGOxQbVbdW. (b) The Architect had to manually catch the omission. (c) The incident yielded Mandate M34 (Co-Interruption Accounting). The lesson: parallel-dispatch implies co-resumption tracking as a single transactional unit, not as a priority queue."
   source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
   timestamp: "2026-08-30T00:30:00Z"
