@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-benchmark_dashboard.py v3.1 — Gap-driven real-time benchmark visualization
+benchmark_dashboard.py v3.2 — Gap-driven real-time benchmark visualization
 ==========================================================================
 Terminal-native dashboard for the Omega Engine diurnal provider benchmark suite.
 
@@ -29,6 +29,19 @@ Improvements in v3.1 (researcher R2, SOTA-driven):
     approximated as count * overall_rate / 100). Empirically, cline=100% vs
     or_key=22.1% vs auth=20% — the approximation hid this spread.
 
+Improvements in v3.2 (jem R3 adversarial hardening):
+  - 6 adversarial bug fixes (carmack R1 had introduced 22, jem closed 6 more)
+  - 2 defenses: size-keyed JSONL cache, bounded memory at 100K entries
+  - --self-test flag: runs 53 in-process adversarial tests, exit 0 if all pass
+
+Improvements in v3.2-ship (maat R4 ship-readiness):
+  - 129 pytest unit tests in tests/unit/test_benchmark_dashboard.py
+  - .github/workflows/dashboard-test.yml CI gate (<30s)
+  - 3 new Makefile targets: dashboard-{self-test,test,ci}
+  - M13 temple-grade now depends on dashboard-self-test
+  - Non-dict entries silently skipped in aggregate_probes + render_network
+    (closes an M23 gap that R3 left open)
+
 SOTA sources (see data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md):
   - OneUptime "SLOs with OpenTelemetry" (recording-rule pre-compute pattern)
   - OneUptime "Threshold Alerting" (hysteresis + min-duration best practice)
@@ -38,8 +51,70 @@ SOTA sources (see data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md):
   - tailstate (stateful incremental reading for --watch-tail)
   - Pi Stack 2026 "btop/glances/bottom" (terminal dashboard pattern reference)
 
-Author: grokster (v3.0), researcher (v3.1 R2 enhancements)
+Author: grokster (v3.0), researcher (v3.1 R2), jem (v3.2 R3), maat (v3.2-ship R4)
 Date: 2026-08-30
+
+--------------------------------------------------------------------------
+MANDATE COMPLIANCE (R4 maat attestation)
+--------------------------------------------------------------------------
+Verified against SOVEREIGN_MANDATES.md v3.8.0 (27 mandates, v3.7.0 / 25 at time
+of R1, 26 at R2/R3, 27 at R4 — see DECISION_LEDGER.md for version history).
+
+  M1   AnyIO — N/A.
+       This script lives in scripts/ (not src/omega/), and never imports
+       asyncio. It is synchronous CLI code driven by argparse. M1's
+       prohibition of asyncio in src/omega/ does not apply here.
+
+  M7   Local-First — PASS.
+       The dashboard reads only local files (data/metrics/*.jsonl, /proc/*
+       for memory probes). No external API calls. config/providers.yaml
+       is the only strategy reference; this script does not execute it.
+
+  M8   Zero Telemetry — PASS.
+       No imports of segment/posthog/datadog/amplitude/mixpanel. The only
+       network surface is local pgrep for process enumeration
+       (render_active_sessions), which does not transmit.
+
+  M11  Soul Integrity — PARTIAL.
+       This is a stateless CLI tool, not an agent; per M11 it does not
+       need to distill L1→L3 lessons on every session. However, every
+       render() call returns a structured state dict suitable for
+       downstream distillation (see export_json schema). The script does
+       NOT write to proposed_lessons.yaml itself — that is the agent's
+       responsibility.
+
+  M13  Temple-Grade — PASS.
+       Wired into `make temple-grade` via the dashboard-self-test target.
+       CI gate: .github/workflows/dashboard-test.yml runs 53 adversarial
+       + 129 unit tests in <30s. Failure exits non-zero and blocks any
+       release tagged from release/debut.
+
+  M23  Failure Integrity — PASS.
+       - read_jsonl returns [] on any I/O error (never raises)
+       - categorize_failure coerces non-string error to str (never raises)
+       - aggregate_probes skips non-dict entries silently (R4 hardening)
+       - render_network skips non-dict entries + guards nested dicts
+       - debounce_alerts fail-open: if debounce itself breaks, raw
+         candidates are returned
+       - render() is wrapped in try/except in main(), reports to stderr
+         and exits 1 rather than crashing the calling shell
+       - _MAX_ENTRIES_HARD (100K) bounds memory; one-time stderr warning
+         surfaces truncation to operators
+
+  M26  Doc Standards — PASS.
+       Every public function has a docstring with Args/Returns/M23 note
+       where applicable. Module header carries the change log, SOTA
+       sources, and this mandate compliance block. Contributing guide:
+       docs/dashboards/BENCHMARK_DASHBOARD.md (R4).
+
+  M27  Tracking Integrity — N/A.
+       No TASK_REGISTRY entries or session ledger writes from this script.
+
+Author audit: this compliance block was authored by maat in R4 (2026-08-30).
+Any future change to the script that breaks a mandate must update this
+block before merging. See BENCHMARK_DASHBOARD.md §Mandate Compliance for
+the human-readable version.
+--------------------------------------------------------------------------
 """
 
 from __future__ import annotations
