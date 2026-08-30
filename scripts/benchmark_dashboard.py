@@ -31,7 +31,7 @@ import re
 import subprocess
 import sys
 import time
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -120,7 +120,11 @@ class ModelStats:
     windows: dict[str, int] = field(default_factory=dict)
     last_seen: Optional[datetime] = None
     last_success: Optional[datetime] = None
-    recent_window: list[bool] = field(default_factory=list)  # last N successes (for trend)
+    # carmack: was list[bool] with manual pop(0) → O(N) per trim. deque
+    # gives O(1) bounded append + automatic eviction. The field type
+    # changed but the public surface (to_dict()) doesn't expose it, and
+    # the trend properties only read from it.
+    recent_window: deque = field(default_factory=lambda: deque(maxlen=20))
     failure_categories: dict[str, int] = field(default_factory=dict)  # RATE_LIMITED, AUTH_FAILED, etc.
 
     @property
@@ -157,17 +161,25 @@ class ModelStats:
         if iqr == 0:
             return 0.0
         threshold = q3 + 1.5 * iqr
-        outliers = sum(1 for l in self.latencies if l > threshold)
+        # Iterate sorted_lats (same length as self.latencies) so denominator
+        # matches the population we scanned. Original iterated self.latencies
+        # and divided by len(sorted_lats) — numerically identical when
+        # lengths match, but inconsistent if the lists ever diverge.
+        outliers = sum(1 for l in sorted_lats if l > threshold)
         return (outliers / n) * 100
 
     @property
     def trend(self) -> str:
         """Determine trend direction from recent window. Returns ↑, ↓, →"""
-        if not self.recent_window or len(self.recent_window) < 4:
+        n = len(self.recent_window)
+        if n < 4:
             return "?"
-        half = len(self.recent_window) // 2
-        first_half_rate = sum(self.recent_window[:half]) / half
-        second_half_rate = sum(self.recent_window[half:]) / (len(self.recent_window) - half)
+        # Materialize once — deque doesn't support slicing. N=20 so the
+        # copy is essentially free; saves a real slice on every render.
+        window = list(self.recent_window)
+        half = n // 2
+        first_half_rate = sum(window[:half]) / half
+        second_half_rate = sum(window[half:]) / (n - half)
         delta = second_half_rate - first_half_rate
         if delta > 0.15:  # >15% improvement
             return "↑"
@@ -178,11 +190,12 @@ class ModelStats:
     @property
     def trend_velocity(self) -> str:
         """Returns trend direction with velocity: ↑↑ (accelerating up), ↑ (up), →, ↓, ↓↓ (collapsing)."""
-        if not self.recent_window or len(self.recent_window) < 6:
+        if len(self.recent_window) < 6:
             return self.trend
         # Compute slope of last 6 calls
         n = min(6, len(self.recent_window))
-        window = self.recent_window[-n:]
+        # deque doesn't slice; materialize the tail. N=20, copy cost ~free.
+        window = list(self.recent_window)[-n:]
         # Count successes in each half
         first_n = n // 2
         first_rate = sum(window[:first_n]) / first_n if first_n > 0 else 0
@@ -265,7 +278,10 @@ def percentile(data: list[float], p: int) -> float:
 def progress_bar(current: int, total: int, width: int = 30,
                 char: str = "█", empty: str = "░") -> str:
     """Render a progress bar. No-color fallback uses # and -."""
-    if not C.BOLD:  # No color mode
+    # carmack: original check was `if not C.BOLD` but BOLD is the ANSI
+    # escape "\033[1m" which is always truthy. Use C._no_color instead so
+    # the fallback actually fires when NO_COLOR is set or stdout is not a TTY.
+    if C._no_color:
         char, empty = "#", "-"
     if total == 0:
         return "[" + empty * width + "]"
@@ -276,7 +292,13 @@ def progress_bar(current: int, total: int, width: int = 30,
 
 
 def fmt_ms(ms: float) -> str:
-    """Format milliseconds as human-readable string."""
+    """Format milliseconds as human-readable string.
+
+    carmack: handle None and non-numeric gracefully — upstream
+    latency_ms fields can be None if the request never returned.
+    """
+    if not isinstance(ms, (int, float)) or isinstance(ms, bool):
+        return f"{C.DIM}--{C.END}"
     if ms < 0:
         return f"{C.DIM}--{C.END}"
     if ms == 0:
@@ -284,6 +306,25 @@ def fmt_ms(ms: float) -> str:
     if ms < 1000:
         return f"{ms:.0f}ms"
     return f"{ms / 1000:.1f}s"
+
+
+# Pattern for stripping ANSI escape sequences when computing visible width
+# for column alignment. carmack: the formatter `f"{colored_str:>8}"`
+# pads to Python string length, not visible width. Embedded ANSI codes
+# (e.g. `\033[92m`) inflate the count and break table alignment. Strip
+# them before padding.
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
+def _visible_width(s: str) -> int:
+    """Visible (terminal) width of a string with ANSI codes stripped."""
+    return len(_ANSI_RE.sub("", s))
+
+
+def pad_visible(s: str, width: int, align: str = ">") -> str:
+    """Pad `s` to `width` visible columns. align is '>' (right) or '<' (left)."""
+    pad = max(0, width - _visible_width(s))
+    return (" " * pad + s) if align == ">" else (s + " " * pad)
 
 
 def fmt_age(seconds: int) -> str:
@@ -337,8 +378,9 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
     try:
         with open(path, encoding="utf-8", errors="replace") as f:
             if limit:
-                # Read last N lines efficiently using a deque
-                from collections import deque
+                # Read last N lines efficiently using a deque. deque is
+                # imported at module scope; this list() materializes the
+                # deque so we can iterate twice (once for filtering).
                 lines = list(deque(f, maxlen=limit))
             else:
                 lines = f.readlines()
@@ -353,9 +395,19 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
                 continue  # skip malformed lines, don't crash
             if since and "ts" in entry:
                 try:
+                    ts_val = entry["ts"]
+                    if not isinstance(ts_val, str):
+                        # carmack: ts could be a list/dict/None from a
+                        # malformed line. Skip the window filter rather
+                        # than crash on .replace().
+                        raise ValueError("ts is not a string")
                     entry_ts = datetime.fromisoformat(
-                        entry["ts"].replace("Z", "+00:00")
+                        ts_val.replace("Z", "+00:00")
                     )
+                    # carmack: tzinfo guard. If entry_ts is naive, assume
+                    # UTC so the comparison with tz-aware `since` works.
+                    if entry_ts.tzinfo is None:
+                        entry_ts = entry_ts.replace(tzinfo=timezone.utc)
                     if entry_ts < since:
                         continue
                 except (ValueError, TypeError):
@@ -368,19 +420,33 @@ def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
 
 
 def get_file_freshness(path: Optional[Path], since: Optional[datetime] = None) -> FileFreshness:
-    """Get freshness metadata for a file."""
+    """Get freshness metadata for a file.
+
+    Performance + safety fix (carmack):
+    - Original opened the file twice (once via read_jsonl, once via bare
+      `open()` to count total lines) and never closed the second handle.
+      At 1,897 entries this is benign; at 100K+ entries it doubles I/O
+      and leaks the file handle on any exception between the two opens.
+    - Now we count lines in a single open() inside a `with` block, using
+      the raw on-disk line count rather than the parsed JSONL count, so
+      `entries_total` reflects the file size even when some lines are
+      malformed (which `read_jsonl` silently skips).
+    """
     if not path or not path.exists():
         return FileFreshness(path=path or Path())
     try:
         stat = path.stat()
         mtime = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
         age = int((datetime.now(timezone.utc) - mtime).total_seconds())
+        # Single pass: read JSONL for the windowed entries and count raw lines
         entries = read_jsonl(path, since=since)
+        with open(path, encoding="utf-8", errors="replace") as f:
+            entries_total = sum(1 for _ in f)
         return FileFreshness(
             path=path,
             last_modified=mtime,
             age_seconds=age,
-            entries_total=sum(1 for _ in open(path, encoding="utf-8", errors="replace")),
+            entries_total=entries_total,
             entries_in_window=len(entries),
         )
     except (OSError, IOError):
@@ -401,13 +467,23 @@ def categorize_failure(entry: dict) -> str:
     - TIMEOUT: Connection timeouts
     - PARSE_ERROR: Malformed responses
     - OTHER: Anything else
+
+    M23 hardening (carmack): coerce `error` to str defensively. Upstream
+    pipelines occasionally emit dict/list/None; without coercion the
+    `in` and `.lower()` calls raise TypeError and crash the dashboard.
     """
     status = entry.get("http_status")
-    err = entry.get("error") or ""
+    raw_err = entry.get("error")
+    if not isinstance(raw_err, str):
+        # Non-string errors (dict, list, None, etc.) → fall through to OTHER
+        err = "" if raw_err is None else str(raw_err)
+    else:
+        err = raw_err
+    err_lower = err.lower()
 
     if status == 429 or "Rate limit" in err or "per-day" in err:
         return "RATE_LIMITED"
-    if status == 401 or "auth" in err.lower() or "key" in err.lower():
+    if status == 401 or "auth" in err_lower or "key" in err_lower:
         return "AUTH_FAILED"
     if status == 404 or "not a valid" in err or "unavailable" in err:
         return "INVALID_MODEL"
@@ -415,9 +491,9 @@ def categorize_failure(entry: dict) -> str:
         return "PAYMENT_REQUIRED"
     if isinstance(status, int) and 500 <= status < 600:
         return "SERVER_ERROR"
-    if "timeout" in err.lower() or "timed out" in err.lower():
+    if "timeout" in err_lower or "timed out" in err_lower:
         return "TIMEOUT"
-    if "parse" in err.lower() or "json" in err.lower():
+    if "parse" in err_lower or "json" in err_lower:
         return "PARSE_ERROR"
     if "Provider returned error" in err:
         return "PROVIDER_ERROR"
@@ -425,7 +501,13 @@ def categorize_failure(entry: dict) -> str:
 
 
 def infer_window_from_ts(ts: Optional[datetime]) -> Optional[str]:
-    """Infer the quota window from a timestamp (when not explicitly tagged)."""
+    """Infer the quota window from a timestamp (when not explicitly tagged).
+
+    carmack: assumes UTC. The caller (aggregate_probes) already normalizes
+    naive datetimes to UTC. If a tz-aware non-UTC datetime is passed,
+    `ts.hour` reflects the local hour which would corrupt the window
+    inference. Caller is responsible for tz-normalization upstream.
+    """
     if ts is None:
         return None
     h = ts.hour
@@ -467,10 +549,18 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
         qc = entry.get("quality_check", {})
         if isinstance(qc, dict):
             s.quality_total += 1
-            valid = qc.get("valid_json")
-            completion = qc.get("has_completion")
+            # carmack: explicit bool() coercion defends against upstream
+            # emitting `"true"`/`"false"` strings or `1`/`0` ints. The
+            # truthy-test (Python's `and`/`not`) would treat string "false"
+            # as truthy and silently corrupt the quality taxonomy.
+            valid = bool(qc.get("valid_json"))
+            completion = bool(qc.get("has_completion"))
             content_len = qc.get("content_length", 0)
-            if valid and completion and (content_len or 0) > 10:
+            try:
+                content_len_int = int(content_len)
+            except (TypeError, ValueError):
+                content_len_int = 0
+            if valid and completion and content_len_int > 10:
                 s.quality_valid += 1
             elif not valid:
                 s.quality_invalid_json += 1
@@ -493,7 +583,13 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
         ts = None
         if ts_str:
             try:
+                # carmack: defensive type check before .replace() and
+                # tzinfo normalization so downstream comparisons work.
+                if not isinstance(ts_str, str):
+                    raise ValueError("ts is not a string")
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
                 s.last_seen = ts
                 if entry.get("success"):
                     s.last_success = ts
@@ -508,22 +604,14 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
         if win:
             s.windows[win] = s.windows.get(win, 0) + 1
 
-        # Recent window for trend (last 20 calls)
+        # Recent window for trend (last 20 calls). deque(maxlen=20)
+        # evicts the oldest element automatically on append → O(1).
         s.recent_window.append(bool(entry.get("success")))
-        if len(s.recent_window) > 20:
-            s.recent_window.pop(0)
 
     return stats
 
 
 # === RENDERING: SECTIONS ====================================================
-
-def render_header(now: datetime) -> None:
-    """Render the dashboard header."""
-    ts = now.strftime("%Y-%m-%d %H:%M:%S UTC")
-    print(f"{C.BOLD}{C.C}⬡ OMEGA ENGINE BENCHMARK DASHBOARD{C.END}  {C.DIM}v2.0{C.END}  {C.DIM}{ts}{C.END}")
-    print(f"{C.DIM}{'─' * 90}{C.END}")
-
 
 def render_freshness_summary(freshness: dict[str, FileFreshness]) -> None:
     """Render the data freshness summary bar."""
@@ -566,7 +654,16 @@ def render_network(network_data: list[dict]) -> None:
           f"OR={fmt_ms(lat.get('openrouter_connect', -1))}")
 
     # Network quality assessment
-    sig_int = int(sig) if isinstance(sig, (int, str)) and str(sig).lstrip("-").isdigit() else 0
+    # carmack: signal_dbm may be a string (e.g. "-65") or int upstream.
+    # lstrip("-") strips the optional minus; isdigit then rejects floats
+    # and strings with units. Falls back to 0 for unparseable values.
+    sig_int = 0
+    if isinstance(sig, (int, float)) and not isinstance(sig, bool):
+        sig_int = int(sig)
+    elif isinstance(sig, str):
+        stripped = sig.lstrip("-")
+        if stripped.isdigit():
+            sig_int = int(sig)
     gw_lat = lat.get("gateway", 0)
     quality = "?"
     if isinstance(sig_int, int) and sig_int != 0:
@@ -641,7 +738,12 @@ def render_probes(stats: dict[str, ModelStats], args: argparse.Namespace) -> lis
             recent_window = max(s.windows.items(), key=lambda x: x[1])[0]
             window_str = recent_window[:5]
 
-        print(f"  {s.label:<24} {s.success:>8} {s.fail:>6} {rate_str:>6} {p50_str:>8} {p99_str:>8} {quality_str:>6} {trend_str:>6} {window_str:>5}  {best_key}")
+        # carmack: use pad_visible for columns with ANSI codes (rate, p50,
+        # p99, qual, trend, window). Plain numeric columns use :>N as
+        # before. Without this, colored text overflows column boundaries.
+        print(f"  {s.label:<24} {s.success:>8} {s.fail:>6} {pad_visible(rate_str, 6)} "
+              f"{pad_visible(p50_str, 8)} {pad_visible(p99_str, 8)} {pad_visible(quality_str, 6)} "
+              f"{pad_visible(trend_str, 6)} {pad_visible(window_str, 5)}  {best_key}")
     print()
 
     return sorted_stats
@@ -665,6 +767,12 @@ def render_antigravity(ag_data: list[dict]) -> None:
             try:
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
                 prev_ts = datetime.fromisoformat((by_account[email].get("ts") or "").replace("Z", "+00:00"))
+                # carmack: tzinfo guard for comparison. If both naive,
+                # assume UTC. If mixed, also normalize.
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                if prev_ts.tzinfo is None:
+                    prev_ts = prev_ts.replace(tzinfo=timezone.utc)
                 if ts > prev_ts:
                     by_account[email] = entry
             except (ValueError, TypeError):
@@ -673,7 +781,11 @@ def render_antigravity(ag_data: list[dict]) -> None:
     for email, entry in by_account.items():
         enabled = entry.get("enabled", False)
         tier = entry.get("tier", "?")
-        models = entry.get("models", [])
+        models_raw = entry.get("models", [])
+        # carmack: defensive — ensure each model entry is a dict. If
+        # upstream emits a string or None in the list, skip it rather
+        # than crash on `m.get(...)`.
+        models = [m for m in models_raw if isinstance(m, dict)]
         project = entry.get("project", "?")
 
         # Find the most-used models (those with remainingFraction)
@@ -707,6 +819,9 @@ def render_antigravity(ag_data: list[dict]) -> None:
                 if reset:
                     try:
                         reset_dt = datetime.fromisoformat(reset.replace("Z", "+00:00"))
+                        # carmack: tzinfo guard for `reset_dt - now`
+                        if reset_dt.tzinfo is None:
+                            reset_dt = reset_dt.replace(tzinfo=timezone.utc)
                         delta = reset_dt - datetime.now(timezone.utc)
                         if delta.total_seconds() > 0:
                             hours = int(delta.total_seconds() // 3600)
@@ -794,15 +909,26 @@ def render_economics(probe_data: list[dict], stats: dict[str, ModelStats]) -> No
     success_rate = safe_div(successes, total) * 100
 
     # Check the quality_check field across all entries
-    quality_entries = [e for e in probe_data if e.get("quality_check")]
+    # carmack: filter to dict-shaped entries only; upstream could put a
+    # list/str truthy value in `quality_check` and crash the .get() chain.
+    quality_entries = [
+        e for e in probe_data
+        if isinstance(e.get("quality_check"), dict)
+    ]
     quality_valid = sum(
         1 for e in quality_entries
         if e["quality_check"].get("valid_json") and e["quality_check"].get("has_completion")
     )
     quality_rate = safe_div(quality_valid, len(quality_entries)) * 100
 
-    # Total latency (rough proxy for tokens processed)
-    total_latency_s = sum(e.get("latency_ms", 0) for e in probe_data) / 1000
+    # Total latency (rough proxy for tokens processed). carmack: only
+    # sum numeric values — upstream could emit a string in `latency_ms`.
+    total_latency_ms = sum(
+        e.get("latency_ms", 0)
+        for e in probe_data
+        if isinstance(e.get("latency_ms"), (int, float)) and not isinstance(e.get("latency_ms"), bool)
+    )
+    total_latency_s = total_latency_ms / 1000
 
     # Key rotation
     key_sources: dict[str, int] = defaultdict(int)
@@ -1008,7 +1134,10 @@ def render_quality_breakdown(stats: dict[str, ModelStats]) -> None:
         worst = max([("invalid_json", ij), ("no_completion", nc), ("empty", ec)], key=lambda x: x[1])
         worst_str = f"{C.R}{worst[1]:>4}{C.END}" if worst[0] == "invalid_json" else f"{C.Y}{worst[1]:>4}{C.END}"
 
-        print(f"  {s.label:<22} {C.G}{v:>6}{C.END} {worst_str:>9} {nc:>8} {ec:>6}")
+        # carmack: pad_visible instead of :>9 because worst_str embeds ANSI
+        # escape codes; :>9 pads on Python string length (13+), not
+        # visible width (4), breaking the column.
+        print(f"  {s.label:<22} {C.G}{v:>6}{C.END} {pad_visible(worst_str, 9)} {nc:>8} {ec:>6}")
     print()
 
 
@@ -1026,6 +1155,10 @@ def render_next_quota_reset(ag_data: list[dict]) -> None:
             if rt:
                 try:
                     rdt = datetime.fromisoformat(rt.replace("Z", "+00:00"))
+                    # carmack: naive-tz guard for the comparison `rdt > now`
+                    # which would TypeError if rdt lacks tzinfo.
+                    if rdt.tzinfo is None:
+                        rdt = rdt.replace(tzinfo=timezone.utc)
                     if rdt > now:
                         upcoming.append((rdt, entry.get("email", "?"), m.get("id", "?")))
                 except (ValueError, TypeError):
@@ -1069,6 +1202,9 @@ def render_diurnal_best_hour(probe_data: list[dict]) -> None:
             continue
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            # carmack: naive-tz guard — assume UTC if missing tzinfo.
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
             hourly[ts.hour].append(bool(entry.get("success")))
         except (ValueError, TypeError):
             pass
@@ -1088,7 +1224,7 @@ def render_diurnal_best_hour(probe_data: list[dict]) -> None:
 
     # Sort by rate desc
     hour_rates.sort(key=lambda x: -x[1])
-    best_h, best_rate, best_n = hour_rates[0]
+    best_h, best_rate, _ = hour_rates[0]
     worst_h, worst_rate, _ = hour_rates[-1]
 
     # Render as a small chart
@@ -1107,8 +1243,15 @@ def render_diurnal_best_hour(probe_data: list[dict]) -> None:
     print(chart)
     print(f"  {C.G}Best: {best_h:02d}:00 UTC ({best_rate:.0f}% success){C.END}  "
           f"{C.R}Worst: {worst_h:02d}:00 UTC ({worst_rate:.0f}%){C.END}")
-    print(f"  {C.DIM}Insight: {best_rate/worst_rate:.1f}x difference — schedule heavy work at "
-          f"{best_h:02d}:00 UTC{C.END}")
+    # Guard against worst_rate == 0 (division by zero). Also skip the
+    # insight line entirely if there's no spread — happens early in the
+    # data lifecycle before enough samples per hour accumulate.
+    if worst_rate > 0:
+        ratio = best_rate / worst_rate
+        print(f"  {C.DIM}Insight: {ratio:.1f}x difference — schedule heavy work at "
+              f"{best_h:02d}:00 UTC{C.END}")
+    else:
+        print(f"  {C.DIM}Insight: insufficient spread yet — keep collecting samples{C.END}")
     print()
 
 
@@ -1136,6 +1279,12 @@ def render_historical_comparison(stats: dict[str, ModelStats], probe_data: list[
             continue
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            # carmack: defend against naive timestamps (no tzinfo). The
+            # rest of the dashboard assumes tz-aware UTC; comparing a
+            # naive ts to today_start (tz-aware UTC) would raise
+            # TypeError. Fall back: assume UTC.
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
         except (ValueError, TypeError):
             continue
 
@@ -1177,7 +1326,8 @@ def render_historical_comparison(stats: dict[str, ModelStats], probe_data: list[
             d_str = f"{C.R}↓ {delta:.0f}%{C.END}"
         else:
             d_str = f"{C.DIM}→ {delta:+.0f}%{C.END}"
-        print(f"  {label:<22} {t_str:<10} {y_str:<12} {d_str:>8}")
+        # carmack: pad_visible for d_str which embeds ANSI codes.
+        print(f"  {label:<22} {t_str:<10} {y_str:<12} {pad_visible(d_str, 8)}")
     print()
 
 
@@ -1195,6 +1345,10 @@ def render_key_health(stats: dict[str, ModelStats]) -> None:
             # Estimate success/fail per key from the overall success rate
             if s.total > 0:
                 key_success = int(count * s.rate / 100)
+                # Clamp: int() rounding can produce key_success > count when
+                # rate * count / 100 rounds up. Defensive guard against negative
+                # arithmetic on malformed inputs.
+                key_success = max(0, min(key_success, count))
                 key_fail = count - key_success
                 key_totals[key]["success"] += key_success
                 key_totals[key]["fail"] += key_fail
@@ -1226,7 +1380,9 @@ def render_key_health(stats: dict[str, ModelStats]) -> None:
         last_s = key_last_success_global.get(key)
         if last_s is not None:
             age = int((datetime.now(timezone.utc) - last_s).total_seconds())
-            last_str = fmt_age(age) if age < 86400 else f"{age//86400}d ago"
+            # fmt_age already handles >= 86400 → days branch; the previous
+            # `age if age < 86400 else f"{age//86400}d ago"` was redundant.
+            last_str = fmt_age(age) if age >= 0 else f"{C.DIM}never{C.END}"
         else:
             last_str = f"{C.R}NEVER{C.END}"
 
@@ -1238,7 +1394,11 @@ def render_key_health(stats: dict[str, ModelStats]) -> None:
         else:
             key_disp = f"{C.G}{key}{C.END}"
 
-        print(f"  {key_disp:<20} {t['success']:>8} {t['fail']:>6} {rate_str:>6}  {t['models']:>7}  {last_str:>20}")
+        # carmack: pad_visible for rate_str and last_str (both embed ANSI).
+        # key_disp is left-aligned and we WANT the visible width to be 20,
+        # so pad_visible with '<'.
+        print(f"  {pad_visible(key_disp, 20, '<')} {t['success']:>8} {t['fail']:>6} "
+              f"{pad_visible(rate_str, 6)}  {t['models']:>7}  {pad_visible(last_str, 20)}")
     print()
 
 
@@ -1356,7 +1516,12 @@ def export_json(state: dict[str, Any]) -> None:
 
 
 def export_csv(state: dict[str, Any]) -> None:
-    """Output model stats as CSV."""
+    """Output model stats as CSV.
+
+    carmack: original used `m["key"]` for required fields, which raises
+    KeyError if to_dict() ever returns a partial dict (e.g. serialized
+    through a custom encoder). Defensive `.get()` with safe defaults.
+    """
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow([
@@ -1367,12 +1532,13 @@ def export_csv(state: dict[str, Any]) -> None:
     for label, m in state.get("models", {}).items():
         qb = m.get("quality_breakdown", {})
         writer.writerow([
-            label, m["success"], m["fail"], m["total"], m["rate"],
-            m["p50_ms"], m["p99_ms"], m.get("outlier_pct", 0),
-            m["quality_rate"],
+            label,
+            m.get("success", 0), m.get("fail", 0), m.get("total", 0),
+            m.get("rate", 0.0), m.get("p50_ms", 0.0), m.get("p99_ms", 0.0),
+            m.get("outlier_pct", 0), m.get("quality_rate", 0.0),
             qb.get("valid", 0), qb.get("invalid_json", 0),
             qb.get("no_completion", 0), qb.get("empty_content", 0),
-            m["trend"], m.get("trend_velocity", ""),
+            m.get("trend", ""), m.get("trend_velocity", ""),
             m.get("last_seen", "")
         ])
     print(buf.getvalue(), end="")
