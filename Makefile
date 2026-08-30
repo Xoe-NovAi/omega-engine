@@ -39,11 +39,14 @@ help:
 	@echo "  clean             Remove all generated files"
 	@echo ""
 	@echo "Provider Benchmark & Diurnal Dashboard:"
-	@echo "  dashboard         Live terminal dashboard (refresh 2s, Ctrl+C to exit)"
-	@echo "  dashboard-once    Single snapshot of provider benchmark"
-	@echo "  probe-models      Probe free model availability/latency"
-	@echo "  probe-network     Probe network latency (gateway, DNS, OpenRouter)"
-	@echo "  probe-antigravity Probe Antigravity account quotas"
+	@echo "  dashboard             Live terminal dashboard (refresh 2s, Ctrl+C to exit)"
+	@echo "  dashboard-once        Single snapshot of provider benchmark"
+	@echo "  dashboard-self-test   Run 53 adversarial in-process tests (--self-test)"
+	@echo "  dashboard-test        Run 129 pytest unit tests (test_benchmark_dashboard.py)"
+	@echo "  dashboard-ci          Run --once + --self-test + pytest (for CI gate)"
+	@echo "  probe-models          Probe free model availability/latency"
+	@echo "  probe-network         Probe network latency (gateway, DNS, OpenRouter)"
+	@echo "  probe-antigravity     Probe Antigravity account quotas"
 	@echo ""
 	@echo "Local Inference (native-gguf / llama-cpp):"
 	@echo "  infer-start       Start native-gguf servers (extractor:1234, reasoner:1235)"
@@ -199,7 +202,7 @@ clean: test-clean
 #        data/metrics/antigravity_{stress,burst,long_duration}_test_*.jsonl
 # Refresh: every 2s. Press Ctrl+C to exit.
 
-.PHONY: dashboard dashboard-once probe-models probe-network probe-antigravity
+.PHONY: dashboard dashboard-once dashboard-self-test dashboard-test dashboard-ci probe-models probe-network probe-antigravity
 
 dashboard:
 	@echo "$(YELLOW)Launching provider benchmark dashboard (Ctrl+C to exit)...$(NC)"
@@ -208,6 +211,26 @@ dashboard:
 dashboard-once:
 	@echo "$(YELLOW)Rendering single snapshot of provider benchmark...$(NC)"
 	@timeout 3 $(PYTHON) scripts/benchmark_dashboard.py 2>&1 | head -80 || true
+
+# R4 (maat): Run the in-process adversarial suite (jem R3's 53 tests).
+# Used by CI gate; also useful as a local sanity check before publishing.
+dashboard-self-test:
+	@echo "$(YELLOW)Running benchmark_dashboard adversarial tests (53 cases)...$(NC)"
+	@$(PYTHON) scripts/benchmark_dashboard.py --self-test
+
+# R4 (maat): Run the pytest unit test suite (129 tests in <5s).
+# Style mirrors tests/unit/test_circuit_breaker.py — pytest, no extra deps.
+dashboard-test:
+	@echo "$(YELLOW)Running benchmark_dashboard pytest suite (129 tests)...$(NC)"
+	@cd "$(CURDIR)" && $(PYTEST) tests/unit/test_benchmark_dashboard.py -v --tb=short -p no:cacheprovider --confcutdir=tests/unit
+
+# R4 (maat): Aggregate CI target. Runs --once (smoke), --self-test (53 tests),
+# and pytest (129 tests) in sequence. Wired into the dashboard-test GitHub
+# Actions workflow. Exit non-zero if any step fails.
+dashboard-ci: dashboard-self-test dashboard-test
+	@echo "$(YELLOW)Rendering dashboard-once for smoke test...$(NC)"
+	@$(PYTHON) scripts/benchmark_dashboard.py --once --no-clear 2>&1 | head -10
+	@echo "$(GREEN)dashboard-ci: all checks passed$(NC)"
 
 # Run a single probe sweep across all configured free models
 probe-models:
@@ -290,9 +313,11 @@ doc-chunk-sprint:
 # Temple-grade includes Codex freshness, LLM doc validation, mandate
 # compliance meter, and tracking state validation. (P0-1 fix 2026-08-28:
 # meter was decoupled — now gates the chain.)
-temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state
+# R4 (maat): dashboard-self-test is now part of the chain — the dashboard
+# is M13 shippable only when its 53 adversarial tests pass.
+temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
-	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
 
 # Cognitive State Validator (M27 Tracking Integrity)
 # Wired into temple-grade + pre-commit (omega-tracking-state). Includes the
