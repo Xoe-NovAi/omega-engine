@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Implementation Blueprint: Sovereign Aura Injection
 
 **Goal**: Implement the layered prompt blending mechanism to ensure entities maintain identity and cognitive depth without persona dilution.

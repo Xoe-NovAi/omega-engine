@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 AGY OAuth Persistence Fix — Root Cause & Atomic Write-Back
 **AP Token**: `AP-AGY-OAUTH-FIX-v1.0.0`
 **Status**: P0-1 BLOCKER — Ready for Implementation

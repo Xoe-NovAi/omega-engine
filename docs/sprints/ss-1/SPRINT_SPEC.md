@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SS-1 Sprint Specification — Subagent Steering: Transport + Dispatch + Registry
 **AP Token**: `AP-SS1-SPRINT-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_ss1_sprint ⬡ PLANNING

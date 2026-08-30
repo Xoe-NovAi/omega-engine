@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemini CLI — Sophia Rescue Mission Report
 # ⬡ OMEGA ⬡ GEMINI_CLI ⬡ sophia-rescue ⬡ trc_sophia_report_20260609
 

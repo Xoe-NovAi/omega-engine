@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # File: tests/property/test_soul_store_atomic.py
 # Purpose: Property-based tests for SoulStore atomic write invariants
 # Dependencies: hypothesis, pytest, anyio, omega.soul_store

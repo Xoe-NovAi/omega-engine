@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 Session Gnosis — 2026-07-30
 **AP Token**: `AP-SESSION-GNOSIS-20260730-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_session_gnosis ⬡ COMPACTION-READY

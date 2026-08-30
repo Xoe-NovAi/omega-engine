@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine Research: R-45
 # OpenCode TUI & REPL Scroll Optimization
 **Date**: 2026-06-23

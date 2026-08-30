@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ JEM ⬡ gemma-4-31b-it ⬡ opencode ⬡ MEM-PALACE-INTEGRATION ⬡ SYNTHESIS
 
 ## 🔱 Sovereign Memory Integration Report: Mem Palace $\times$ Omega Engine

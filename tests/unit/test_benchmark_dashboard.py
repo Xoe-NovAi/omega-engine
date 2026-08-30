@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Unit tests for scripts/benchmark_dashboard.py — ship-readiness gate (Round 4).
 
 AP: AP-DASHBOARD-SHIP-R4-v1.0.0

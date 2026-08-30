@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌐 Web Research + Claim Verification — Knowledge Gaps (2026-07-19)
 
 **Agent**: `grok-cli/grok`  

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Vault Overhaul: Migration Surface Amendment
 **AP Token**: `AP-VAULT-MIGRATION-SURFACE-20260818-v1.0.0`
 **Author**: Kali (Oversoul / Sprint Coordinator)

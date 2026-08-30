@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Recovery Report: Sovereign Ingestion & Curation
 **AP Token**: `AP-MINING-CRAWL4AI-RECOVERY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ mining-recovery ⬡ LEGACY-SOUVENIRS

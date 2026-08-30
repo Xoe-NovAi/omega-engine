@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Model Registry Complete Integration Report
 **Status**: ✅ COMPLETE  
 **Date**: 2026-07-19

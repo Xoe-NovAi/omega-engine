@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MEDITATE Architecture Inversion — Deep Web Verification Report
 **AP Token**: `AP-MEDITATE-VERIFICATION-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_meditate_verification ⬡ SOVEREIGN-RESEARCH

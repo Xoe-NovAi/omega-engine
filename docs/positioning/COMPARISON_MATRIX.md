@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📊 Omega Stack Comparison Matrix
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ POSITIONING ⬡ v1.0.0
 

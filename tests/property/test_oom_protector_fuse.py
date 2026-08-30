@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # File: tests/property/test_oom_protector_fuse.py
 # Purpose: Property-based tests for OOMProtector._fuse_signals() (sync logic)
 # Dependencies: hypothesis, pytest, omega.oracle.oom_protector

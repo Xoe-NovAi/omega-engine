@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Temple Grade Quality Standard
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ TRC_STRATEGIC ⬡ PHASE-I
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Performance benchmark: Inference latency under 500ms p99."""
 import pytest
 import asyncio

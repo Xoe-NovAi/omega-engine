@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Session: Refinement Process Documentation Template
 ## For the Researcher Chat Session — Document Your Side of the Wave 3 Refinement
 

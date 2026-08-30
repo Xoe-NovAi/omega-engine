@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROK CLI — Full Codebase + Strategy Review
 **AP Token**: `AP-GROK-CLI-REVIEW-v1.0.0`  
 ⬡ OMEGA ⬡ GROK_CLI ⬡ Consulting Cloud Mind ⬡ opencode ⬡ trc_code_strategy_review ⬡ ADVISORY

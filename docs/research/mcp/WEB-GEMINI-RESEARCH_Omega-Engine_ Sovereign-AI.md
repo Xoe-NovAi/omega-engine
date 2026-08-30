@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # **Omega Engine: Sovereign Orchestration & Memory Fabric Deep Research**
 
 The architecture of local-first artificial intelligence has undergone a fundamental transformation leading into 2026\. This shift is characterized by the move away from centralized, cloud-monolithic models toward sovereign, orchestrated systems that prioritize local hardware optimization and data privacy. The Omega Engine Control Plane represents the pinnacle of this evolution, specifically designed to leverage the unique microarchitectural characteristics of the AMD Ryzen 7 5700U. By integrating low-level Linux primitives for process supervision, a multi-tiered memory fabric for state persistence, and adaptive orchestration topologies grounded in graph theory, the Omega Engine defines the frontier of autonomous, resilient AI operating environments.

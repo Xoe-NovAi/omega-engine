@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode Zen Rate Limit Bypass (oplire + WARP)
 ⬡ OMEGA ⬡ SOPHIA ⬡ oplire ⬡ opencode ⬡ trc_core ⬡ ZEN-BYPASS
 

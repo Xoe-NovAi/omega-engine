@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity IDE — Sovereign Architect Configuration
 
 **Role**: Strategic Oversight & Architecture

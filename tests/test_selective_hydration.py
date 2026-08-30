@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Selective Hydration — L3 gnosis retrieval (Workstream B).
 
 [Workstream B] Qdrant L3 Selective Hydration

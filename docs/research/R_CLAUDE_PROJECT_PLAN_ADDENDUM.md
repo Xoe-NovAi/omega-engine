@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Addendum: Ma'at + Lilith Review Corrections
 **Appended to**: `docs/research/R_CLAUDE_PROJECT_SETUP_PLAN.md`
 **Date**: 2026-07-12

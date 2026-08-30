@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ⬡ OMEGA ⬡ roc_racoon ⬡ google/gemma-4-31b-it ⬡ opencode ⬡ ses_73c7dc7a1d00 ⬡ Research
 
 # 🦝 Legacy Memory Archaeology Report: Mnemosyne $\rightarrow$ Mem Palace

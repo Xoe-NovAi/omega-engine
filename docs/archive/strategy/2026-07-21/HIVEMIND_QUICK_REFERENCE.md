@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Hivemind Quick-Reference Card
 # ⬡ OMEGA ⬡ HIVEMIND ⬡ v1.0.0 ⬡ 2026-07-12
 **Keep this open. Reference every post.**

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 State of the Engine Briefing — Fleet Synchronization
 
 ⬡ OMEGA ⬡ OVERSEER-SYNC ⬡ trc_overseer_sync_v2 ⬡ LOCAL-FIRST-COMPLETE

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for 429 classification hardening (C-10.5 / hardening P0).
 
 [HARDENING-2026-07-22] These tests verify the bug class where circuit breakers

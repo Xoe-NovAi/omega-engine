@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine Custom UI — Knowledge Gap Resolution Report
 ## Complete Research for Bulletproof Phase 0 Implementation
 

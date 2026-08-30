@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Knowledge Freshness Systems — Working Implementations (2025‑2026)
 
 **AP Token**: `AP-KF-SYSTEMS-v1.0.0`

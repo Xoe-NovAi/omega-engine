@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Coordination Consolidation Plan — 2026-07-30
 
 **AP Token**: `AP-COORDINATION-CONSOLIDATION-20260730-v2.0.0`

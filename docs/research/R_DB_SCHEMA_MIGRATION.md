@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GAP 4: Database Schema Migration for New Enrichment Fields
 **AP Token**: `AP-GAP4-DB-MIGRATION-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_gap4_db_migration ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🏛️ Temple-Grade Compliance Matrix (RQ-09 Phase 2)
 **Status**: VERIFICATION COMPLETE
 **Date**: 2026-06-11

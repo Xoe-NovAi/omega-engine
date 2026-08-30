@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P3 Deepened Analysis — LongCat 2.0
 
 **AP Token**: `AP-LONGCAT-P3-DEEPENED-v1.0.0`

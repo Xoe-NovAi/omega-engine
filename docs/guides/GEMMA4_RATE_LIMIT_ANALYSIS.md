@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Gemma 4 31B Rate Limit Deep Dive
 
 **AP Token**: `AP-GEMMA4-RATE-LIMIT-ANALYSIS-v1.0.0`  

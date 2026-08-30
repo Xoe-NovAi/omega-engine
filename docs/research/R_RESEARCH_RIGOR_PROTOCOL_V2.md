@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Research Rigor Protocol v2.0 (Sovereign-Ark Standard)
 **AP Token**: `AP-RESEARCH-RIGOR-v2.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_research_rigor ⬡ TEMPLE-GRADE

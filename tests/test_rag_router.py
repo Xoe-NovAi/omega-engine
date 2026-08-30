@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — RAG Router Tests (M21 Contract Tests)
 # AP: AP-TEST-RAG-ROUTER-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ test_rag_router ⬡ S3

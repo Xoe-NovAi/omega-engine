@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Sovereign Export Bundle (P0-4) — `.omega` entity portability.
 
 Tests cover:

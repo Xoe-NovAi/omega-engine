@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests — verify-mandate-claims harness (W1-2, Ruling S7).
 
 Each detector gets a true-positive fixture and a true-negative fixture.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ornith-1.0-9B — Comprehensive Technical Deep Dive
 
 **AP Token**: `AP-RESEARCH-ORNITH-9B-v1.0.0`

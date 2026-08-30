@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌌 Omegaverse — OpenCode Agent Instructions
 **AP Token**: `AP-OPENCODE-OMEGAVERSE-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_core ⬡ OMEGAVERSE-VISION

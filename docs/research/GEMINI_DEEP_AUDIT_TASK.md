@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ENHANCED TASK: Systemic Audit & Strategic Analysis of the Omega Engine
 
 **Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.

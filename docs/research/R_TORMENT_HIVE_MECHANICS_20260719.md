@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RESEARCH REPORT: CRANIUM RAT HIVE MECHANICS — PHASE 1
 **AP Token**: `AP-RESEARCHER-HIVE-MECHANICS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_research_torment_hive_001 ⬡ COMPLETE

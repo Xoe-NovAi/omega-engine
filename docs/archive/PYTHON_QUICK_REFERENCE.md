@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Quick Reference Guide
 
 **Date**: 2026-06-06 | **Total**: 69 files, 20,759 LOC

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Grok CLI — Decision Tools Implementation Review
 
 **AP Token**: `AP-GROK-CLI-DECISION-TOOLS-REVIEW-v1.0.0`  

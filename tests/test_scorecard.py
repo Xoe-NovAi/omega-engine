@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Contract Tests for Ω-Research Scorecard (M21 Gate Integrity)
 ⬡ OMEGA ⬡ VERITY ⬡ TEST

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_OPENROUTER_SOVEREIGN_USAGE
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ GEMINI-3.5-FLASH ⬡ trc_openrouter_usage ⬡ GNOSIS
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Pillar P8 — Observability (WatchTower) Strategy
 ## Autonomous Meditation Pipeline as Complete Product
 

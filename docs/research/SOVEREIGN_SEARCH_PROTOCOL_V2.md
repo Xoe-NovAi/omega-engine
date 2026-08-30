@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Search Protocol V2 (SSP-V2)
 **Version**: 2.1.0
 **Classification**: Engine-Level Search Standard

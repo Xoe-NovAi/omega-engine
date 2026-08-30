@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 WAD System Evolution — Deep Brainstorming & Architecture Discovery
 # ⬡ OMEGA ⬡ WAD-EVOLUTION ⬡ opencode ⬡ trc_wad_brainstorm
 **AP Token**: `AP-WAD-EVOLUTION-v1.0.0`

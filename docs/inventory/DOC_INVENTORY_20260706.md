@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Documentation Inventory — Baseline Assessment
 **AP Token**: `AP-DOC-INVENTORY-v1.0.0`
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ opencode ⬡ trc_doc_inventory ⬡ DOCUMENTATION-HARDENING

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Regression tests for SovereignSigner fail-closed secret handling.
 
 D-590: M8/M22 security fix — provenance stamps must never fall back to a

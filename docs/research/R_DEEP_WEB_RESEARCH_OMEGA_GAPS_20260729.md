@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Deep Web Research: Knowledge Gaps & Blockers
 **AP Token**: `AP-DEEP-RESEARCH-OMEGA-GAPS-20260729-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_deep_research ⬡ ACTIVE

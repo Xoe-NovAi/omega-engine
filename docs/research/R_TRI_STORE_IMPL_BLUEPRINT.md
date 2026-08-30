@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Tri-Store Implementation Blueprint
 **⬡ OMEGA ⬡ ARCHITECT ⬡ trc_impl_tri_store ⬡ BLUEPRINT**
 

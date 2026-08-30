@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Comprehensive Research Status Report to Kali
 **AP Token**: `AP-RESEARCH-STATUS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research_status ⬡ ACTIVE

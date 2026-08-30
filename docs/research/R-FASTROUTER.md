@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R-FASTROUTER: FastRouter LLM Gateway Analysis
 **AP Token**: `AP-R-FASTROUTER-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ RESEARCH

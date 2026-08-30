@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Implementation Blueprint: Sovereign Pulse
 
 **Goal**: Implement a concurrent state-locking mechanism for `session_gnosis.md` to enable safe multi-agent contributions.

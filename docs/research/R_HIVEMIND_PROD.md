@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Research: Hivemind Productionization
 **AP Token**: `AP-RESEARCH-HIVEMIND-PROD-v1.0.0`
 **Status**: PROPOSED / BLUEPRINT

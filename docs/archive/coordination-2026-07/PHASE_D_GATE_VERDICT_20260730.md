@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Phase D Gate Verdict — 2026-07-30
 
 **AP Token**: `AP-PHASE-D-GATE-VERDICT-20260730-v1.0.0`  

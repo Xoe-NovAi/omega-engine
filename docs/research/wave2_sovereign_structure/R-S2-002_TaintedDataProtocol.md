@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R-S2-002: Tainted Data Protocol (TDP) — Security Layer
 **AP Token**: `AP-S2-002-TDP-v1.0.0`
 **Status**: PROPOSED

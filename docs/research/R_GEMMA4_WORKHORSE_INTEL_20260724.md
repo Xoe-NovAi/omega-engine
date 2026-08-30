@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Deliverable: Gemma 4 Workhorse Restoration & Model Intelligence
 **AP Token**: `AP-R_GEMMA4_WORKHORSE-v1.1.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_gemma4_workhorse ⬡ 2026-07-24

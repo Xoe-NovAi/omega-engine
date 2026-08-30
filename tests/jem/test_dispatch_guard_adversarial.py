@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Adversarial test suite for dispatch_guard.py (JEM-12STEP-HARDENING)
 
 [AP-JEM-12STEP-HARDENING-v1.0.0] Master EIS Adversarial Test Cases

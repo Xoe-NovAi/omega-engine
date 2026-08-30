@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Collision Avoidance Report — P0-P2 Refactoring
 
 **AP Token**: `AP-COLLISION-AVOIDANCE-v1.0.0`

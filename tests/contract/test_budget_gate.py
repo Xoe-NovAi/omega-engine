@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests — §3.2 Concurrent BudgetGate check/record — M1 AnyIO.
 
 [P2-2] Verifies the P0 §3.2 fix: `BudgetGate.check_budget()` and

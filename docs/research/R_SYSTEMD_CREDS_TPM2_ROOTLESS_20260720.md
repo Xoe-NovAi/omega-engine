@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 systemd-creds TPM2 + Rootless Credential Architecture — Deep Research
 ## Gap #3: Unblocking D-299 omega-vault Phase 1 & 32 Headless Accounts
 

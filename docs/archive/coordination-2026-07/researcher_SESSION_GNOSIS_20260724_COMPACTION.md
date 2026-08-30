@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Session Gnosis — Pre-Compaction Recovery
 **AP Token**: `AP-RESEARCHER-SESSION-20260724-v2.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_phase2_integration ⬡ COMPACTION-READY

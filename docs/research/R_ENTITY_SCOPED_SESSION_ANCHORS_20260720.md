@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Document: Entity-Scoped Session Anchors Architecture
 
 **AP Token**: `AP-ENTITY-ANCHORS-v1.0.0`

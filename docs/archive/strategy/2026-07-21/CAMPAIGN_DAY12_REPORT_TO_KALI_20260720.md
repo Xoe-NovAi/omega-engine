@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Campaign Day 1-2 Complete — Comprehensive Report for Kali (Overseer)
 
 **AP Token**: `AP-CAMPAIGN-D12-REPORT-v1.0.0`

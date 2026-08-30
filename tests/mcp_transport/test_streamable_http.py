@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — M21 Contract Tests for Streamable HTTP Transport
 # AP: AP-M21-STREAMABLE-HTTP-v1.0.0
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_m21 ⬡ ACTIVE

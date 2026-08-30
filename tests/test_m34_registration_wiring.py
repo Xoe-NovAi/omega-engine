@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 M34 Registration Wiring Tests (Task A1)
 # ⬡ OMEGA ⬡ LILITH ⬡ M34 ⬡ REGISTRATION-TEST
 # AP: AP-M34-REGISTRATION-TEST-v1.0.0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Search Tool Failure Diagnosis — Sovereign Search Lock Deadlock
 **AP Token**: `AP-DIAG-SEARCH-LOCK-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_diag_search_lock ⬡ DIAGNOSIS

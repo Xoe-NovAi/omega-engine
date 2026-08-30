@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep Dive 6: Final Assurance Audit — Post-Remediation Sovereign Verification
 
 **Prompt for:** Account 1 — Core Architecture (`Arcana.NovAi@gmail.com`)

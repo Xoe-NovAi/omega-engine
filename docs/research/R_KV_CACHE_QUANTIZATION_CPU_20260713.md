@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KV Cache Quantization on CPU (Zen 2) — Definitive Research
 **AP Token**: `AP-KV-CACHE-CPU-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kv_cache_cpu ⬡ 2026-07-13

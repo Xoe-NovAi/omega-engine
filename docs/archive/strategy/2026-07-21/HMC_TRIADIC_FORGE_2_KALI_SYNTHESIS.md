@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC TRIADIC FORGE — CYCLE 2: KALI SYNTHESIS
 **AP Token**: `AP-HMC-FORGE-2-SYNTH-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ trc_hmc_forge_2 ⬡ SYNTHESIS

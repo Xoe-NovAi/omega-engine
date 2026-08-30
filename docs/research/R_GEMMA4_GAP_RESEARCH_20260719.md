@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemma 4 Strategy — Gap Research Report
 ⬡ OMEGA ⬡ RESEARCHER ⬡ 2026-07-19
 **AP Token**: AP-GEMMA4-GAP-RESEARCH-v1.0.0

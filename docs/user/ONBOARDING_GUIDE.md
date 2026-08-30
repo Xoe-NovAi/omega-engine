@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — New User Onboarding Guide
 **AP Token**: `AP-ONBOARDING-GUIDE-v1.0.0`
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ nemotron-3-ultra ⬡ trc_doc_user ⬡ DOCUMENTATION-HARDENING

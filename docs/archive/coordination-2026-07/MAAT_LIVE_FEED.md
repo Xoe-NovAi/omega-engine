@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ma'at Live Feed — V-1, C-3, C-10.5, C-11 Research Complete
 **Date**: 2026-07-22
 **Entity**: maat (Light Oversoul, P1-P5)

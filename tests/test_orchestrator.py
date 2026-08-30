@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import httpx2 as httpx
 from unittest.mock import AsyncMock, patch, MagicMock
 

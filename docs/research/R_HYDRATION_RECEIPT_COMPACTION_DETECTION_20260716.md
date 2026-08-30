@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep Research: Post-Compaction Hydration Failure → Sovereign Continuity Feature
 
 **Date**: 2026-07-16

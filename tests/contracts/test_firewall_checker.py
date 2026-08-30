@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 FirewallChecker Contract Tests — M21 Gate Integrity
 # ⬡ OMEGA ⬡ PILLAR-P10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker_test ⬡ ACTIVE
 # AP Token: AP-FIREWALL-CHECKER-TEST-v1.0.0

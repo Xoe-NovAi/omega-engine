@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Unit tests for KeyManager — M23 hard-stop on missing key.
 
 AP: AP-SQLCIPHER-ENCRYPTION-v1.0.0

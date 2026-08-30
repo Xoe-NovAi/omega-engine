@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Technical Research Report: Sovereign Infrastructure Hardening
 **AP Token**: `AP-RESEARCH-SVR-v1.0.0`
 **Date**: 2026-07-01

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Performance benchmark: RAM usage under concurrent inference."""
 import pytest
 import asyncio

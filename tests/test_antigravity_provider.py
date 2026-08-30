@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Contract Tests — S7.5 Antigravity Provider
 # AP: AP-ANTIGRAVITY-PROVIDER-TESTS-v1.0.0
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_S7_5 ⬡ M21-CONTRACT-TESTS

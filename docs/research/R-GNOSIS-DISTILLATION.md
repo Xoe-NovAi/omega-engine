@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Gnosis Distillation Protocol
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_gnosis_distill ⬡ RESEARCH-MODE
 

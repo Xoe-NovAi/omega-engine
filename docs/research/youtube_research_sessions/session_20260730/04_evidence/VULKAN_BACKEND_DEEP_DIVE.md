@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Vulkan Backend for llama.cpp — Deep Technical Analysis
 
 **AP Token**: `AP-RESEARCHER-VULKAN-20260730-v1.0`

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "build_wave_report"
 document_id: "MAAT-BUILD-WAVE-PHASE-1-20260830"
@@ -222,7 +226,7 @@ version = 1
 # Source code
 [[annotations]]
 path = "src/**/*.py"
-SPDX-FileCopyrightText = "2026 Arcana Novai"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
 SPDX-License-Identifier = "Apache-2.0"
 
 # Config, Scripts, Tests, OpenCode, GitHub, Gemini, Firecrawl, Data, Docs

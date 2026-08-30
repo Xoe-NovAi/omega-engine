@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali — Context Packer v3 Progress Report
 **AP Token**: `AP-KALI-CP-V3-PROGRESS-20260808`
 ⬡ OMEGA ⬡ KALI ⬡ cline ⬡ M21 ⬡ P0

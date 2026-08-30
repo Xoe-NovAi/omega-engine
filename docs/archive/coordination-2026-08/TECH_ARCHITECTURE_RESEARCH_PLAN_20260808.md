@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Technology Architecture Research Plan
 **AP Token**: `AP-TECH-ARCH-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_tech_arch_research_plan ⬡ 2026-08-08

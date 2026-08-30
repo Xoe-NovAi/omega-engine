@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """W1-4 unit tests for scripts/correct_ics_provenance.py.
 
 Fixture-based ONLY — never touches the live 17G opencode.db.

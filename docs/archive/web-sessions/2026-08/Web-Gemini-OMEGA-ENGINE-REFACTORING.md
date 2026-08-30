@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OMEGA ENGINE REFACTORING & TEMPLE HARDENING MANUAL (v3.1 / v1.9.0)
 
 **Document Status:** Authoritative Engineering Manual

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ AUTONOMOUS MEDITATION PIPELINE — User Guide
 **Version**: 1.0.0 | **Audience**: Omega Engine Users & Contributors
 **Purpose**: Complete guide to running the autonomous meditation pipeline

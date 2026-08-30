@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Engineering Specification: Sovereign Infrastructure Hardening (v1.0)
 **AP Token**: `AP-SPEC-SVR-v1.0.0`
 **Status**: READY FOR IMPLEMENTATION

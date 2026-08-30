@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Memory Spatial Indexing (The Tri-Store)
 **⬡ OMEGA ⬡ RESEARCHER ⬡ trc_memory_spatial ⬡ TRI-STORE**
 

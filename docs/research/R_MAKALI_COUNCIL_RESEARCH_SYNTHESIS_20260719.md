@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MaKaLi Parallel Council Architecture — Research Synthesis
 
 **Document ID**: R-MAKALI-RESEARCH-SYNTHESIS-v1.0

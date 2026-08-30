@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # EvolveR Closed‑Loop Experience Lifecycle — Deep Dive (ICML 2026)
 
 **AP Token**: `AP-EVOLVER-v1.0.0`

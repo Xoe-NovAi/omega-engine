@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Tests: CompactionManager — Context Window Compaction Trigger
 # ⬡ OMEGA ⬡ MEMORY ⬡ tests/test_compaction_manager.py
 

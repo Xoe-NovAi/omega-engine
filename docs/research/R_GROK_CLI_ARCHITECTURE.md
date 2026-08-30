@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok Build CLI — Complete Architecture Research
 ## Foundational Compass for Omega Engine TUI Implementation
 

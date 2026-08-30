@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Unified State Manager (USM) — Refactoring Implementation Guide
 **AP Token**: `AP-USM-REFACTOR-GUIDE-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-r1-qwen3-8b ⬡ opencode ⬡ trc_usm_refactor ⬡ IMPLEMENTATION

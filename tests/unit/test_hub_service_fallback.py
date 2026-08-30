@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Regression test for omega-hub state.py get_service fallback resolution.
 
 Validates that get_service correctly retrieves module-level eager services

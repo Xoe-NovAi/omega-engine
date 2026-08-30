@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HG-005: SomaticState Serialization Round-Trip — Research Report
 
 **AP Token**: `AP-CARMACK-HG005-v1.0.0`

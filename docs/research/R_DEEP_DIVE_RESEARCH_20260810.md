@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep-Dive Research Report
 ## QW-4/QW-8 Knowledge Domains — Complete Findings
 

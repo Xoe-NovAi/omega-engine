@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract tests: All providers MUST output canonical dimension (768)."""
 import pytest
 import subprocess

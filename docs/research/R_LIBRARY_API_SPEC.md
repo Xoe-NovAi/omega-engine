@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📚 TECHNICAL SPEC: LIBRARY API CLIENTS
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ trace_library_spec ⬡ IMPLEMENTATION
 

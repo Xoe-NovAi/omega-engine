@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Strategic Research Directive: The Sovereign Deep Dive
 **From**: Implementation Specialist (Gemini CLI)
 **To**: OpenCode Research Specialist (Gemma 4-31B)

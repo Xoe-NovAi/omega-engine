@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests — P2-6 FTS5 MATCH Syntax Injection Prevention.
 
 [P2-6 / §4 audit] FTS5 has its own query grammar (AND/OR/NOT/NEAR, "phrase",

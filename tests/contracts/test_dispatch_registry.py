@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ CONTRACTS ⬡ TEST_DISPATCH_REGISTRY
 # Contract tests for dispatch_registry — single source of truth for dispatch.yaml
 # FS-Β2 / A6-A7: Consolidated 3 loaders, fixed cwd-relative path bug

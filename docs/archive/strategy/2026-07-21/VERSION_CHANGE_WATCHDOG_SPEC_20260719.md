@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERSION CHANGE WATCHDOG SYSTEM — Specification & Implementation Plan
 
 **AP Token**: `AP-VERSION-WATCHDOG-SPEC-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_VAULT_UNIFIED_SYSTEM — Secure API Key Vault Knowledge Gap Analysis
 
 **AP Token**: `AP-VAULT-RESEARCH-v1.0.0`

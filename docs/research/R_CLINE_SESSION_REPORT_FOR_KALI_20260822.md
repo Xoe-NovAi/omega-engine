@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Cline Session Report — Handoff Execution + Install-Path Hardening + OOM RCA
 **AP: AP-CLINE-SESSREP-20260822**
 ⬡ OMEGA ⬡ CLINE ⬡ opencode ⬡ install ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-22

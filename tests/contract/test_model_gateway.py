@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 Contract Tests: GenerateResult type validation (3 tests)."""
 import pytest
 import asyncio

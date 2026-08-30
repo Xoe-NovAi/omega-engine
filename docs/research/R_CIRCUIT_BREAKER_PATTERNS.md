@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Circuit Breaker Patterns — Research Deliverable
 
 **AP Token**: `AP-R_CIRCUIT_BREAKER_PATTERNS-v1.0.0`  

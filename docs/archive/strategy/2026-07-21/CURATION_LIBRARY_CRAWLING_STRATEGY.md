@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Curation, Library, & Crawling Strategy Review
 ### *Sovereign Deep-Dive, Gap Analysis, & Implementation Specification (v2.5.0)*
 

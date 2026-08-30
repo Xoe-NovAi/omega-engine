@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Unified State Manager (USM) Architecture Spec
 # AP: AP-USM-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ trc_usm_spec ⬡ ARCHITECTURE

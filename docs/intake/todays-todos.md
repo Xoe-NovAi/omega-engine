@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 We need to work on some key things today.
 
 I just got an *8TB* external hardrive. I want to back my entire internal disk to it for safety, then use gparted to join my 3 partitions into one to alleviate the main partition free space shortage.

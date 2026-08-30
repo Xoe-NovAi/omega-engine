@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: "R-ID-SOFTWARE-EXTRACTION-MATRIX"
 title: "id Software Mining — Quick Reference Extraction Matrix & Dependency Graph"
 status: "✅ Complete"

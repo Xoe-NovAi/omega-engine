@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## 📋 EXECUTION PLAN: Malkuth Hardening & Pillar Gates
 
 ### I. COMPLETED WORK SUMMARY (Session 1: Hy3 + 11_Malkuth)

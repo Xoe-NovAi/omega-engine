@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: firecrawl
 description: |
   Firecrawl gives AI agents and apps fast, reliable web context with

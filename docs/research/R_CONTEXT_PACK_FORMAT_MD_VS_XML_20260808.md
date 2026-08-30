@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Pack Format: Markdown vs XML — Definitive Answer
 **AP Token**: `AP-CONTEXT-PACK-FORMAT-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE

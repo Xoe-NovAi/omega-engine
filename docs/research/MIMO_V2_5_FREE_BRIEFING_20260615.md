@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Briefing: MiMo-V2.5-Free for Omega Engine Provider Fabric
 ## ⬡ OMEGA ⬡ RESEARCHER ⬡ trc_model_evaluation ⬡ RESEARCH-DOC
 

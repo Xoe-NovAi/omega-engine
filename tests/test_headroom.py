@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for HeadroomMiddleware — Sovereign Semantic Compression.
 
 Tests validate integration contract with the headroom library.

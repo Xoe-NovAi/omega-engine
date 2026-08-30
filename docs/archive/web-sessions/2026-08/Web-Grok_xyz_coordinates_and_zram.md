@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 **Yes on TTS, yes on xyz coordinates, and zRAM changes the picture meaningfully.**
 
 Here’s a direct, practical answer for each part in the context of the Omega Engine on your 12 GB UMA Ryzen 7 5700U + Vega 8 system.

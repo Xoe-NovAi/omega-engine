@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Knowledge Domain Loading / Context Packing Systems
 ## SOTA Research — 2025-2026 Frontier
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ken Walger Mining Operation — Verified Execution Plan
 **AP Token**: `AP-KEN_MINING_EXEC-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_ken_mining_exec ⬡ VERIFIED

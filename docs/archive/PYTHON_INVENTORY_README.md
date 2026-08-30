@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Python Inventory Documentation
 
 This directory contains comprehensive documentation of the Omega Engine's Python codebase.

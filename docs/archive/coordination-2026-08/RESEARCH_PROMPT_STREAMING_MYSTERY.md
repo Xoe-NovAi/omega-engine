@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CRITICAL RESEARCH MISSION: OpenCode Streaming Timeout & Nemotron 3 Ultra Fix
 
 **AP Token**: `AP-RESEARCH-STREAMING-MYSTERY-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Context Packer v4 Implementation Manual
 ## Synthesized Specification: Sonnet Implementation Depth + Carmack First-Principles Audit + Verified 2026 Web Research
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-MEMORY-FIREWALL-AUDITOR-TEST-v1.0.0
 # 🔱 Contract Tests for MemoryFirewallAuditor (M21 Gate Integrity)
 

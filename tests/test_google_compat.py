@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 GoogleCompatProvider Tests — Gemma 4 Week 1 Step 2
 # ⬡ OMEGA ⬡ P10 ⬡ trc_test_google_compat ⬡ v0.1.0 ⬡ 2026-07-19
 

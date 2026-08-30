@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ElevenLabs Sovereign Console – Hackathon Blitz Full Plan
 
 **Prepared for:** Gemini CLI review

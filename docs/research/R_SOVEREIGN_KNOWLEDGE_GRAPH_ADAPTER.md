@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — R-SVR-GRAPH: Sovereign Knowledge Graph Adapter Spec
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ gemini-3.5-flash ⬡ opencode ⬡ trc_memory ⬡ R-SVR-GRAPH
 

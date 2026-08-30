@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Eval Pipeline Tests (M21 Contract Tests)
 # AP: AP-TEST-EVAL-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ test_eval ⬡ S2

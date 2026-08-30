@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ubuntu 25.10 Toolchain Verification — Phase 0 (P0) + Phase 1 (P1)
 
 **AP Token**: `AP-UBUNTU-2510-VERIF-v1.0.0`

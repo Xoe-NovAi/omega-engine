@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Vault System Overhaul Specification (Part 3)
 **AP Token**: `AP-VAULT-OVERHAUL-SPEC-20260818-v1.0.0`
 **Part**: 3 of 5 — Runtime Security (Sanitization, Zero-Knowledge, RBAC)

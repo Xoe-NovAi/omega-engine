@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import pytest
 import anyio
 from src.omega.oracle.world_state import WorldState, WorldLump, world_state

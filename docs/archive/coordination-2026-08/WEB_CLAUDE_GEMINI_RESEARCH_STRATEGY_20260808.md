@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Platform Strategy Report — Web Claude vs Web Gemini for Technical Research
 **AP Token**: `AP-PLATFORM-STRATEGY-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_platform_strategy ⬡ 2026-08-08

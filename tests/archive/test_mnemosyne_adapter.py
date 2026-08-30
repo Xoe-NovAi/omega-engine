@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — MnemosyneAdapter Tests
 # ⬡ OMEGA ⬡ TESTS ⬡ MNEMOSYNE ⬡ v1.0.0 ⬡ 2026-06-15
 

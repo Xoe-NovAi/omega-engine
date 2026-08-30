@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R-S2-001: IVectorStoreAdapter — Provider-Agnostic Vector Layer
 **AP Token**: `AP-S2-001-IVECTOR-v1.0.0`
 **Status**: PROPOSED

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MCP Migration Audit — Streamable HTTP & OAuth 2.1
 **AP Token**: `AP-C4A-MCP-AUDIT-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ opencode ⬡ trc_c4a ⬡ MCP-AUDIT

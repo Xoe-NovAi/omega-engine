@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Context Packer Architecture Review — John Carmack Assessment
 
 **AP Token**: `AP-CONTEXT-PACKER-ARCH-REVIEW-v1.0.0`

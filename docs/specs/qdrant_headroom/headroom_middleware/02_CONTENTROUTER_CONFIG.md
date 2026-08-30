@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ContentRouter Configuration — Omega-Specific
 
 **File**: `config/headroom.yaml` (primary) + `HeadroomMiddlewareConfig` (code)  

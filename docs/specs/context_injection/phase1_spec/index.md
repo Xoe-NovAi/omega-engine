@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Context Injection Phase 1 — Implementation Specification (File-Per-Section)
 
 **AP Token**: `AP-MAAT-CI-PHASE1-SPEC-FILES-v1.0.0`  

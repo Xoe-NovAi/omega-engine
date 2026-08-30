@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Contract Tests for YouTube Researcher V2 (L1-L8)
 ⬡ OMEGA ⬡ VERITY ⬡ TEST ⬡ YOUTUBE_V2

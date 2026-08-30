@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 C-11 Property Test Patterns — Domain 1: OOMProtector & PressureSnapshot
 **AP Token**: `AP-C11-OOMPROTECTOR-PATTERNS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_c11_oomprotector ⬡ 2026-07-23

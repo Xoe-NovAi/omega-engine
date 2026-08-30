@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 **Yes — you can fully load models and run inference on the Vega 8 iGPU**, and this is the recommended approach for the Omega Engine on the Ryzen 7 5700U.
 
 ### How to do it

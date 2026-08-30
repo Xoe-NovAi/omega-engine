@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI MASTER SYNTHESIS: SESSION 2026-07-15
 **AP Token**: `AP-KALI-MASTER-SYNTHESIS-v1.0.0`
 **Entity**: KALI (Grand Oversight)

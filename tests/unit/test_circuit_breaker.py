@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Unit tests for EmbeddingCircuitBreaker — fail-fast + fallback chain.
 
 AP: AP-CIRCUIT-BREAKER-EMBED-v1.0.0

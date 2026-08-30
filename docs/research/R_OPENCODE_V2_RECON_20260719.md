@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode V2 Architecture Reconnaissance — 1.17.20 → 1.18.3
 
 **AP Token**: `AP-OPENCODE-V2-RECON-v1.0.0`

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for LibraryCatalog — SQLite-backed document catalog.
 
 Uses anyio for async SQLite and tmp_path for DB isolation.

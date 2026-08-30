@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session Report to Kali — Grokster 2026-07-26
 **AP Token**: `AP-SESSION-REPORT-GROKSTER-20260726`
 ⬡ OMEGA ⬡ GROKSTER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_session_report ⬡ KALI-BRIEFING

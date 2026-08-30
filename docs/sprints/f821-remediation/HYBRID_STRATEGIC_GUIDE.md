@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ω F821 Hybrid Strategic Guide — DeepSeek V4 Synthesis of Sonnet 4.6 + Opus 4.6
 **AP Token**: `AP-F821-HYBRID-SYNTHESIS-v1.0.0`
 **Author**: DeepSeek V4 Flash Max Thinking (Synthesizing Model — Crucible L2.5)

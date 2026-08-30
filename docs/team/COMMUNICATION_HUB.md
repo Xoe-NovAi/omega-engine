@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Team Communication Hub
 **AP Token**: `AP-TEAM-HUB-v3.4.0`
 **Updated**: 2026-05-31 (PATH A COMPLETE: Memory bugs fixed, MCP server working, 276/276 tests passing.)

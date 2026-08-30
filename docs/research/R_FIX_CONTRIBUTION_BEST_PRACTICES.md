@@ -2,7 +2,11 @@
 **AP Token**: `AP-RESEARCH-GUIDE-FIX-CONTRIBUTIONS-v2.1.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_guide ⬡ 2026-07-25
 
-<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
 <!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
 
 **Origin**: AGY OAuth fix submission (PR #1, PR #2) → knowledge gaps identified

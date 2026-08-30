@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Logging, Error Handling & Observability Architecture
 # AP-OMEGA-LOGGING-ARCH-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ trc_core ⬡ LOGGING-ERROR-ARCHITECTURE

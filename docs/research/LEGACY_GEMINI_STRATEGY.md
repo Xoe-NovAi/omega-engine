@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Gemini CLI Strategy Recovery
 **AP Token**: `AP-LEGACY-GEMINI-v2.0.0`
 **Status**: RECOVERED & EXPANDED | **Source**: `omega-stack-legacy` / `xna-omega-legacy`

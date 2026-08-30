@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Phase C — Symmetry-Break Audit (C.3.1–C.3.4)."""
 
 import pytest

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Sovereign Search Architecture: 5-Tier Protocol Implementation
 # ⬡ OMEGA ⬡ GROKSTER ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_search_impl ⬡ R34-COMPLETE
 

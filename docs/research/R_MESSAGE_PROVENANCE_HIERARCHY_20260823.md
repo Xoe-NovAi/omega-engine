@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R: Message-Level Provenance Hierarchy — Ground Truth for Model Attribution
 **AP Token**: `AP-RESEARCHER-PROVENANCE-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_provenance_hierarchy ⬡ ACTIVE

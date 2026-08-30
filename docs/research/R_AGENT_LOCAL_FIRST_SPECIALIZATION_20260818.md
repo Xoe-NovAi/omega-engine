@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Local‑First Agent Specialization Patterns (2025‑2026)
 
 **AP Token**: `AP-LOCAL-SPEC-v1.0.0`

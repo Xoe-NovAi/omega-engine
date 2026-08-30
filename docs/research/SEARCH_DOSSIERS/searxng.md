@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Search Intelligence: SearXNG Technical Dossier
 **Status**: VERIFIED
 **Sovereignty Tier**: Tier 0 (Absolute - Self-Hostable)

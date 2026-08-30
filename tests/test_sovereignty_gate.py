@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 Contract tests for the Sovereignty Gate (P0-2).
 **AP Token**: `AP-KALI-TEST-GATE-20260712`
 [Gate Integrity] The gate's `check()` / `check_strict()` MUST return bool.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Test: M2 Engine-Stack Firewall — No WAD Content in Core
 # ⬡ OMEGA ⬡ PILLAR-P10 ⬡ tests/test_firewall_m2.py
 #

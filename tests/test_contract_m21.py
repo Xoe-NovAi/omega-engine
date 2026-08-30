@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 Gate Integrity: Contract Tests for Core API Boundaries.
 
 [M21: Gate Integrity Mandate] Every core API boundary returning a typed result

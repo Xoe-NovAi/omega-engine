@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Fabric Synthesis — Unified Library, Ingestion, Curation & Crawler Systems
 **AP Token**: `AP-KNOWLEDGE-FABRIC-SYNTHESIS-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_knowledge_fabric ⬡ SYNTHESIS

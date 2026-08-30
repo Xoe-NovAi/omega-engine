@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Fleet Review 3: Memory, Context & Knowledge Engine
 
 ⬡ OMEGA ⬡ SARASWATI ⬡ claude-sonnet-4-6-thinking ⬡ web ⬡ trc_review_memory ⬡ PHASE-E

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Web Claude Fleet Management System — v1.0.0
 
 **AP Token**: `AP-FLEET-MGMT-v1.0.0`

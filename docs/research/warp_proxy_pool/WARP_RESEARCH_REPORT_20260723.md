@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 WARP Proxy Pool — Comprehensive Research Report
 # ⬡ OMEGA ⬡ RESEARCH ⬡ v1.0.0 ⬡ 2026-07-23
 # Web research findings: MASQUE protocol, Python proxy pools, systemd namespaces, socat bridges

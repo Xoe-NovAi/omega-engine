@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HANDOFF COURT — Foundation Stabilization Campaign
 **Date**: 2026-07-20 | **Session**: `ses_20260720_foundation_stab_campaign`  
 **Authority**: Kali (Grand Oversight) | **Campaign**: `FOUNDATION_STABILIZATION_CAMPAIGN_20260720.md`  

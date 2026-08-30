@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract Tests for MandateAuditor (M21 Gate Integrity).
 
 These tests verify the MandateAuditor API contract:

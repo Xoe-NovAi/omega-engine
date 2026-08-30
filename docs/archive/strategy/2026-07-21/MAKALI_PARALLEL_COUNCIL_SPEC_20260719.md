@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MaKaLi Parallel Council Architecture — Full Implementation Specification
 
 **Document ID**: SPEC-MAKALI-COUNCIL-v1.0

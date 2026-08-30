@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_CG07: Sovereign Search Architecture — 5-Tier Protocol Implementation
 **AP Token**: `AP-R_CG07-SOVEREIGN-SEARCH-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_sovereign_search ⬡ ACTIVE

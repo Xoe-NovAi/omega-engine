@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega COO - Oversight of Project and Systems (fork #1)
 
 **Session ID:** ses_1cfd25266ffegpNlnc1JD3sRfj

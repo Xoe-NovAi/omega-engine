@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Subagent Fleet — Operational Lessons Compilation
 **AP Token**: `AP-SUBAGENT-LESSONS-v1.0.0`
 **Status**: CURATED | **Source**: 3+ Fleet Deployments (May 16, 2026)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher — Next-Step Strike Gap Research (2026-07-13)
 **AP Token**: `AP-RESEARCHER-NEXTSTEP-GAPS-20260713`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_nextstep_gaps ⬡ RESEARCH

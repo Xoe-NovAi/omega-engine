@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Test Model Registry — updated for schema 1.1.0
 ⬡ OMEGA ⬡ CLINE ⬡ MODEL-REGISTRY-TEST ⬡ 2026-07-19

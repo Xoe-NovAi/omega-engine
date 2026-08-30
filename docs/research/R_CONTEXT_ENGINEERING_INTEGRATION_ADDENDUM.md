@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Addendum: Final Gap Closure & Web Research Synthesis
 **Date**: 2026-07-11
 **Appended to**: `docs/research/R_CONTEXT_ENGINEERING_INTEGRATION.md`

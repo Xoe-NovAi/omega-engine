@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 WARP Proxy Pool Deployment Documentation
 # Systemd NetworkNamespacePath and PrivateMounts Implementation Guide
 # Multi-Instance WARP Deployment for Omega Engine

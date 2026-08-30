@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Gap G2.1 — Empirical RSS 7B Q4_K_M on Zen 2 Linux
 
 **AP Token**: `AP-G2.1-EMPIRICAL-RSS-v1.0.0`

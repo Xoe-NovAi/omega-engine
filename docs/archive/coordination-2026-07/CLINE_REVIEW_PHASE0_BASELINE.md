@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Phase 0 Baseline — Codebase Review
 **AP Token**: `AP-CLINE-REVIEW-v1.0.0`
 **Date**: 2026-07-26

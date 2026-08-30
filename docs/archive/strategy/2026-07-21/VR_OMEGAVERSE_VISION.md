@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌌 The VR Omegaverse Vision — Sovereign Spatial Synthesis
 **AP Token**: `AP-VR-SOW-SYNTH-v1.0.0`
 **Status**: STRATEGIC VISION ⬡ Sovereign Knowledge Keeper (Scribe)

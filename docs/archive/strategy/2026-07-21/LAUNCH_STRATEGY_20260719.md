@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Agent Launch Strategy
 **AP Token**: `AP-LAUNCH-STRATEGY-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_launch_strategy ⬡ 2026-07-19

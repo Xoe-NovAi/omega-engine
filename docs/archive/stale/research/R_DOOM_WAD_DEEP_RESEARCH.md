@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research: Doom IWAD/PWAD System — Deep Architecture Analysis
 # AP: R-DOOM-WAD-DEEP-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ web-research ⬡ trc_w1 ⬡ RESEARCH

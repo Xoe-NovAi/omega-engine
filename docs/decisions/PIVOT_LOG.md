@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 **Canonical Source**: [PIVOT_LOG_CANONICAL.md](PIVOT_LOG_CANONICAL.md) (ancient era, D#50+)
 **Archive**: [PIVOT_LOG_ARCHIVE_20260522_20260810.md](PIVOT_LOG_ARCHIVE_20260522_20260810.md) (D-300..D-520, frozen)
 **Query**: `omega context search "D-XXX"`

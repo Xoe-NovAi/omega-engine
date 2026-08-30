@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sonnet 4.6 — Final Code-Grounded Analysis & Recommendations
 **AP Token**: `AP-SONNET46-ANALYSIS-v1.1.0`
 **Date**: 2026-07-11

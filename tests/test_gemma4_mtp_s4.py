@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Contract Tests — S4 Gemma 4 MTP Speculative Decoding
 # AP: AP-GEMMA4-MTP-S4-TESTS-v1.0.0
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode ⬡ trc_S3_S4 ⬡ M21-CONTRACT-TESTS

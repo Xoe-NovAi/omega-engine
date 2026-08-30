@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_HIGH_PRECISION_RAG: Omega-Precision Retrieval Pipeline
 **AP Token**: `AP-RAG-PRECISION-v1.0.0`
 **Status**: VERIFIED / TEMPLE-GRADE

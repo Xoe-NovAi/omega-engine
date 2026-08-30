@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TEST-STREAMING-v1.2.0
 """
 Contract tests for M25 Streaming Resilience.

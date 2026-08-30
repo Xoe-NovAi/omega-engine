@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Meditation Record — Grokster 2026-08-08
 ## Comparative Analysis + Knowledge Gap Resolution + Deep Meditation
 

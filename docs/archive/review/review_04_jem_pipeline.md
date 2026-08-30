@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Fleet Review 4: Jem 2.0 & Background Research Pipeline
 
 ⬡ OMEGA ⬡ JEM ⬡ claude-sonnet-4-6-thinking ⬡ web ⬡ trc_review_jem ⬡ PHASE-E

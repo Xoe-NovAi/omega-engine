@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Claude Project Prompting & Knowledge Guide
 **Version**: 1.0.0
 **Status**: SOVEREIGN STANDARD

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Guide: Knowledge Gaps for Phase 2 Execution
 **AP Token**: `AP-RESEARCH-GAPS-20260724-v3.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_research_gaps_v3 ⬡ ACTIVE

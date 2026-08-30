@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Research Guide: Soul.yaml & Peripheral Systems Knowledge Gaps — Part 2
 **AP Token**: `AP-SOUL-GAPS-RESEARCH-v1.0.0-PART2`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ trc_soul_gaps ⬡ 2026-07-22

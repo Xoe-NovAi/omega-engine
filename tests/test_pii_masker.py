@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for PII Observation Masker (pii_masker.py).
 
 [Gateway Proxy Architecture]

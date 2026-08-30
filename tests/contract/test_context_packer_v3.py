@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 / M13 Contract Tests: Context Packer v3 — deterministic 5-step fail-closed API.
 
 AP Token: AP-PACKER-V3-CONTRACT-TESTS-20260808

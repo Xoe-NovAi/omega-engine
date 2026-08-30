@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📚 Jem 2.0 Custom Mode Specification
 **Note**: This mode is model-agnostic — it uses the currently selected OpenCode model. It does NOT pin a specific inference backend.
 

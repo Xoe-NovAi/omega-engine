@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — The Sovereign Ark & Omegaverse Grand Strategy
 # AP: AP-OMEGAVERSE-GRAND-STRATEGY-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ trc_grand_strategy ⬡ STRATEGY

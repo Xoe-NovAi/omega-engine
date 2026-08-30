@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity Provider — Usage & Integration Guide (S7.5)
 **AP Token**: `AP-ANTIGRAVITY-PROVIDER-USAGE-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_S7_5 ⬡ ACTIVE

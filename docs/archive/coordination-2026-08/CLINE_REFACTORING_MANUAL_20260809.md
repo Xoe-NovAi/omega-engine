@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline Refactoring Manual — Post Sovereign-Audit Remediation
 **AP Token:** `AP-CLINE-REFACTOR-20260809-v1.0.0`
 ⬡ OMEGA ⬡ CLINE ⬡ refactoring-manual ⬡ 2026-08-09

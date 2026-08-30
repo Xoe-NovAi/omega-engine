@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R-INFRA-04: Dynamic Fallback Provider — Inline Model-Aware Resolution
 **AP Token**: `AP-INFRA-04-DYNAMIC-FALLBACK-v1.0.0`
 ⬡ OMEGA ⬡ PRACTICAL ⬡ qwen3-1.7b ⬡ opencode ⬡ trc_infra_04_fallback ⬡ 2026-07-19

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SPEC-E — Root AGENTS.md Reconstruction from Citation-Web Expectations
 ⬡ OMEGA ⬡ LILITH/NODE7 ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c2 ⬡ SPEC-E DRAFT v1.0
 **Session**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25

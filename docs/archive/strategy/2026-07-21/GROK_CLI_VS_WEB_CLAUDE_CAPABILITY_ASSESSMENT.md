@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok CLI vs Web Claude — Capability Assessment & Collaboration Protocol
 
 **AP Token**: `AP-GROK-VS-CLAUDE-ASSESSMENT-v1.0.0`  

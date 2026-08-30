@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VaultCore Lease Protocol — Pattern Extract from AGY OAuth Fix
 **AP Token**: `AP-VAULTCORE-LEASE-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ TRACK-C ⬡ 2026-07-25

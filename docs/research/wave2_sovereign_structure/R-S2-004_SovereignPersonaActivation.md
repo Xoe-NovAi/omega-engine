@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R-S2-004: Sovereign Persona Activation — Soul-State Hydration
 **AP Token**: `AP-S2-004-PERSONA-v1.0.0`
 **Status**: PROPOSED

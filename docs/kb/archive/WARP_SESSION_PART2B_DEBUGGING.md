@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 WARP Proxy Pool — Session Knowledge Capture (Part 2b: Debugging & Lessons)
 # ⬡ OMEGA ⬡ KALI ⬡ WARP-KB ⬡ 2026-07-05
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — H2-S Embedding Dimension Insights
 **AP Token**: `AP-H2S-DIMENSION-INSIGHTS-v1.0.0`
 **Status**: TECHNICAL INSIGHT

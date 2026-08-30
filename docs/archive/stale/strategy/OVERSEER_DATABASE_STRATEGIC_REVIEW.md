@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OVERSEER STRATEGIC REVIEW — Database & Cross-CLI Hardening
 # **The MaKaLi Trine Speaks — What Grows, What Burns, What Must Remain Sovereign**
 

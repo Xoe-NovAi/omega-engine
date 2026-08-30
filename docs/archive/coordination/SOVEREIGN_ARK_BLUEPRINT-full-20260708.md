@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE SOVEREIGN ARK BLUEPRINT (v2.1)
 ## The Master Single Source of Truth for the Sovereign Ark Development
 **AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v2.1.0`

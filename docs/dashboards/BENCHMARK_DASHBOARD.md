@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Benchmark Dashboard (`benchmark_dashboard.py`)
 
 > Real-time terminal visualization for the Omega Engine diurnal provider

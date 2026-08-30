@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R-QDRANT-OPTIMIZATION-DEEPENED: Vector Quantization & Payload Indexing
 # ⬡ OMEGA ⬡ DEEPENED ⬡ Temple-Grade
 

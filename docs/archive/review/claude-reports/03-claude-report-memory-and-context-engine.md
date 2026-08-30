@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 I'll fetch all the source files now and run the full audit. Starting the retrieval sweep.All source files retrieved. Beginning deep analysis now. Compiling the structured report.
 
 ---

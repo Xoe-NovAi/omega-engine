@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R-INFRA-01: Nameless One Entity Birth Infrastructure
 **AP Token**: `AP-INFRA-01-NAMELESS-ONE-BIRTH`
 ⬡ OMEGA ⬡ GOOD ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_infra_01_nameless_one_birth ⬡ 2026-07-19

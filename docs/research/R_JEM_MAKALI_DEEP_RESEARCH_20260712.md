@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem Deep Research — MaKaLi Battle Plan Validation
 **Date**: 2026-07-12
 **Status**: COMPLETE

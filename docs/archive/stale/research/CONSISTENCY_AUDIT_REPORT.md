@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Consistency Audit Report: Implementation Blueprints & Agent Files
 
 **AP Token**: `AP-CONSISTENCY-AUDIT-v1.0.0`

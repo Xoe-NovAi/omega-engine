@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R-INFRA Master Index — 12 Infrastructure Hardening Research Documents
 **AP Token**: `AP-INFRA-MASTER-INDEX-20260719`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_infra_master ⬡ 2026-07-19

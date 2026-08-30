@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Next Steps Plan — Phase C Hardening Completion
 **AP Token**: `AP-NEXT-STEPS-v1.0.0`
 **Date**: 2026-07-22

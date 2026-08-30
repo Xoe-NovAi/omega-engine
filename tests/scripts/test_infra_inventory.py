@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Contract tests for scripts/infra_inventory.py (M21 Gate Integrity).
 
 All tests use tmp fixtures — no dependence on live repo state.

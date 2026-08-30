@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🏛️ ARCHIVED — STALE CONTENT (Superseded by Phase 2/Sovereign Roadmap)
 
 # 🔱 Phase C Deep Research — Comprehensive Analysis

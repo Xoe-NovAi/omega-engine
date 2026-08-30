@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Context Packer Platform-Specific Tuning Research
 ## Cross-Platform Context Export Optimization (Web Grok, Web Claude, Web Gemini, NotebookLM)
 

@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2026 Arcana Novai
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
 
 SPDX-License-Identifier: Apache-2.0
 -->

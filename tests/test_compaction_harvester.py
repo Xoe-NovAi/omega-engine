@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TEST-COMPACTION-HARVESTER-v1.0.0
 # 🔱 Tests for CompactionHarvester — Automated Compaction Monitoring
 # ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash ⬡ opencode ⬡ TEST-COMPACTION-HARVESTER

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Phase 1A Research Report: Google API (Gemini) Free-Tier Rotation Spec
 **AP Token**: `AP-PHASE1A-GOOGLE-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ gemini-3.1-pro-preview-customtools ⬡ opencode ⬡ trc_phase1a_google ⬡ ACTIVE

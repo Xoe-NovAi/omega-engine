@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 AxiomRegistry Contract Tests — M21 Gate Integrity
 # ⬡ OMEGA ⬡ MAAT ⬡ P1-P5 ⬡ opencode ⬡ trc_axiom_registry_test ⬡ ACTIVE
 # AP Token: AP-AXIOM-REGISTRY-TEST-v1.0.0

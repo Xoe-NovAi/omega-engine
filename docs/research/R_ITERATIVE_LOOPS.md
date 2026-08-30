@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Research: Iterative Research Loops
 **AP Token**: `AP-RESEARCH-ITERATIVE-LOOPS-v1.0.0`
 **Status**: PROPOSED / BLUEPRINT

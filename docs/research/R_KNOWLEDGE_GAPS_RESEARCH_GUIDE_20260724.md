@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Gaps Research Guide — Upstream Contribution & Community Best Practices
 **AP Token**: `AP-KG-UPSTREAM-CONTRIBUTION-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_knowledge_gaps ⬡ 2026-07-24

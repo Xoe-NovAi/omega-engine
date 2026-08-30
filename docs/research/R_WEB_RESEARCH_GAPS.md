@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌐 Web Research Brief — Open Knowledge Gaps for Omega Engine Phase C
 
 ## Executive Summary

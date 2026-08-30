@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Vault System Overhaul Specification
 **AP Token**: `AP-VAULT-OVERHAUL-SPEC-20260818-v1.0.0`
 **Status**: DEFINITIVE — Implementation Ready

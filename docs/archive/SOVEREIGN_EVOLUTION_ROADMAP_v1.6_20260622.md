@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 > **⚠️ SUPERSEDED BY SOVEREIGN ARK BLUEPRINT**
 > As of 2026-06-22, this roadmap has been elevated and superseded by `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`. 
 > The engine has transitioned from Horizon-based planning to Epoch-based execution (Epoch I: Compressed Core, Epoch II: Hivemind Awakens, Epoch III: Omegaverse).

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Unified Forensic Ledger (UFL) — IW-3.
 
 [IW-3] Unified Forensic Ledger provides append-only JSONL event store

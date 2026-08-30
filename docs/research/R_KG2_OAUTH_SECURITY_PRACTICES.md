@@ -2,7 +2,11 @@
 **AP Token**: `AP-KG2-OAUTH-SECURITY-PRACTICES-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_knowledge_gaps ⬡ 2026-07-25
 
-<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
 <!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
 
 ## Executive Summary

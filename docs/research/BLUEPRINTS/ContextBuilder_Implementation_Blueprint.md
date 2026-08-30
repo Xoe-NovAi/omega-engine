@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Implementation Blueprint: ContextBuilder Wiring
 
 **Goal**: Integrate `ContextBuilder` and `MemoryStore` into the `Oracle` to enable persistent multi-turn conversations.

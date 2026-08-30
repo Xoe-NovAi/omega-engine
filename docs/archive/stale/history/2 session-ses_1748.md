@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Roc Racoon
 
 **Session ID:** ses_1748fd797ffe1rJT1WBtmaOKhN

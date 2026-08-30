@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Session Gnosis — 2026-07-24
 **AP Token**: `AP-RESEARCHER-v1.0.0`
 **Session ID**: `ses_02518ce4e6fe`

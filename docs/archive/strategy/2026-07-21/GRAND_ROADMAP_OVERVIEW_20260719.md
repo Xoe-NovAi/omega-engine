@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Grand Roadmap Overview
 **AP Token**: `AP-GRAND-ROADMAP-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_grand_roadmap ⬡ 2026-07-19

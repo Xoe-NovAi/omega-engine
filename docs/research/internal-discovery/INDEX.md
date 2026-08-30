@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Xoe-NovAi Internal Discovery Project
 
 **Project Root**: `docs/research/internal-discovery/`  

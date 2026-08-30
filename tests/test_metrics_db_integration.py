@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Integration tests for MetricsDB wiring into ObservabilityEngine.
 AP: AP-METRICS-DB-INTEGRATION-TESTS-v1.0.0
 

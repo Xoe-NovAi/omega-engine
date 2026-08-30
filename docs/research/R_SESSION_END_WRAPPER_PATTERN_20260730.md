@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session End Wrapper Pattern — Community Research & Implementation
 **AP Token**: `AP-R_SESSION_END_WRAPPER_PATTERN_20260730-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_research ⬡ 2026-07-30

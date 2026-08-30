@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_CLINE_COPILOT_PROVIDER_SETUP_20260826
 ⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_provider_setup ⬡ CLINE+COPILOT→OPENCODE
 

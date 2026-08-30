@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🏛️ ARCHIVED — STALE CONTENT (2026-05-23 Bulk Dump)
 
 # 🔱 Session ID Architecture — ContextBuilder Integration Design

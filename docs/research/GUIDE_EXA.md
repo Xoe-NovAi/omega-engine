@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Exa Sovereign Master Guide: Neural Retrieval & Semantic Discovery
 
 ⬡ OMEGA ⬡ RESEARCHER ⬡ opencode ⬡ trc_research ⬡ EXA-GUIDE

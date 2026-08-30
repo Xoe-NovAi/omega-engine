@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 YouTube Researcher V2 — Research Synthesis & Sources
 **AP Token**: `AP-YOUTUBE-RESEARCH-SYNTHESIS-v2.0.0`
 **Date**: 2026-07-13

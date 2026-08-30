@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Vault Overhaul: Master Index
 **AP Token**: `AP-VAULT-OVERHAUL-MASTER-20260818-v2.1.0`
 **Status**: 🔒 **POST-DEBUT — DO NOT IMPLEMENT DURING PUBLIC-DEBUT-01** (DOC-1 stamp)

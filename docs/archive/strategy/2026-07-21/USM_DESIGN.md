@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Unified State Manager (USM) Design Specification
 **AP Token**: `AP-USM-DESIGN-v1.0.0`
 **Status**: PROPOSED

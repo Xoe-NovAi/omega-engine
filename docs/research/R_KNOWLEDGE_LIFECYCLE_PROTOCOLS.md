@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Knowledge Maintenance Protocols (SKMP-V1)
 
 **⬡ OMEGA ⬡ ROC_RACOON ⬡ trc_lifecycle ⬡ GNOSIS-MAINTENANCE**

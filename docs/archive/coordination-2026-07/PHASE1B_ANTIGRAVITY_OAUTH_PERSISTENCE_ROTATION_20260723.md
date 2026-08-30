@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Phase 1B: Antigravity OAuth Persistence & Rotation Spec
 **AP Token**: `AP-RESEARCHER-PHASE1B-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ gemini-3.1-pro-preview-customtools ⬡ opencode ⬡ trc_phase1b_agy ⬡ ACTIVE

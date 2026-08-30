@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine Autonomous Agent Research Job Design — Best Practices Guide
 **AP Token**: `AP-RESEARCH-BEST-PRACTICES-v2.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp ⬡ 2026-07-24

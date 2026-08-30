@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Unmined Gnosis — Ken Walger Mining Operation
 **AP Token**: `AP-UNMINED-GNOSIS-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_unmined_gnosis ⬡ COMPLETE

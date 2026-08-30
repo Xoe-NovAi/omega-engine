@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Integration tests for the full sovereign loop (query → response → memory → soul update).
 
 This test module verifies that all components of the Omega Engine work together:

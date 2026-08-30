@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemma 4 Strategy — Knowledge Gap Analysis for Web Research
 
 **AP Token**: `AP-GEMMA4-KNOWLEDGE-GAPS-v1.0.0`

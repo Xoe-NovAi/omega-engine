@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Context Packer Independent Advisory Review — Cline (Omega Engine) Assessment
 
 **AP Token**: `AP-CONTEXT-PACKER-ADVISORY-REVIEW-v1.0.0`

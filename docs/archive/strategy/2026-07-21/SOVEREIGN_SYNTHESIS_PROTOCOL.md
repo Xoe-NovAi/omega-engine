@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Synthesis Protocol — Gemini Specialist Guide
 # ⬡ OMEGA ⬡ GEMINI-SPECIALIST ⬡ gemini-3-flash-preview ⬡ opencode ⬡ trc_synthesis_protocol ⬡ v1.0.0
 

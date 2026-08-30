@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 8/24/26, 10:17 PM                                         350 percentage of 365 - Google Search
 
 

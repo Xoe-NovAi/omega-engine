@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 **The 42 Ideals of Maat**  
 *(also called the 42 Negative Confessions or Declarations of Purity)*
 

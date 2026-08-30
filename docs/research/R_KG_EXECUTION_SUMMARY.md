@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Gaps Research — Execution Summary
 **AP Token**: `AP-KG-EXECUTION-SUMMARY-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_kg_execution ⬡ 2026-07-25

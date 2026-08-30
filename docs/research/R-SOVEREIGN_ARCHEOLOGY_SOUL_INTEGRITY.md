@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Archeology Report: Soul Integrity & Cognitive Poisoning
 # ⬡ OMEGA ⬡ roc_racoon ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_soul_integrity ⬡ OPERATION-EIDOLON
 

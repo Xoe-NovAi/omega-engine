@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ICS-TESTS-v1.0.0
 # 🔱 Omega Engine — ICS Module Tests (G3 gap closed 2026-08-22)
 # ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_ics_tests ⬡ EXECUTION_MINIMAL
