@@ -886,9 +886,21 @@ def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
     `label = entry.get("label", "?")` directly as a dict key, which raises
     TypeError ("unhashable type: 'list'") if the field is a list or dict.
     Coerce to str() and substitute "?" if the result is empty. Never throws.
+
+    maat R4: harden against non-dict entries. jem R3's defenses assume every
+    item in probe_data is a dict (they protect label/coercion). When callers
+    pass raw data bypassing read_jsonl (e.g. in tests, or in a future caller
+    that ingests an upstream stream that has already filtered JSON), a None,
+    int, str, list, or bool crashes on `entry.get(...)`. Per M23 the function
+    contract is "never throws" — we skip non-dict entries silently here so the
+    aggregate call site (render() and tests) is fully M23-compliant.
     """
     stats: dict[str, ModelStats] = {}
     for entry in probe_data:
+        # maat R4: skip non-dict entries silently. read_jsonl already filters
+        # these but aggregate_probes is callable from any path — defense in depth.
+        if not isinstance(entry, dict):
+            continue
         # jem R3: defensive label extraction. The schema says label is a
         # string but the probe pipeline occasionally emits a list/dict
         # (e.g. from a misconfigured validator). str() handles both:
@@ -1046,18 +1058,33 @@ def render_freshness_summary(freshness: dict[str, FileFreshness]) -> None:
 
 
 def render_network(network_data: list[dict]) -> None:
-    """Render the network state section."""
+    """Render the network state section.
+
+    maat R4 (M23): defend against non-dict entries. read_jsonl filters
+    non-dicts but render_network is callable from any path — defense in
+    depth. Skip non-dict entries and pick the most-recent dict.
+    """
     print(f"{C.BOLD}NETWORK{C.END}")
-    if not network_data:
+    # maat R4: filter to dicts only. The "last" entry is then a dict, not a
+    # bare string/None/list. Crashes downstream on `.get(...)` are avoided.
+    safe = [e for e in network_data if isinstance(e, dict)]
+    if not safe:
         print(f"  {C.DIM}no data yet (cron not running){C.END}")
         print()
         return
 
-    n = network_data[-1]
+    n = safe[-1]
     net = n.get("network", {})
     lat = n.get("latency_ms", {})
     prov = n.get("provider_recent", {})
 
+    # Defensive: nested fields can be non-dicts if upstream is malformed.
+    if not isinstance(net, dict):
+        net = {}
+    if not isinstance(lat, dict):
+        lat = {}
+    if not isinstance(prov, dict):
+        prov = {}
     ssid = net.get("ssid", "?")
     bssid = net.get("bssid", "?")
     sig = net.get("signal_dbm", "?")
