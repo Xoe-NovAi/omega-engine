@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Kali Hivemind Wave 1.5 Implementation Review
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ mimo-v2.5-free ⬡ REVIEW ⬡ 2026-06-11
 

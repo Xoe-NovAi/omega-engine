@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JOHN CARMACK — BRUTAL ARCHITECTURE REVIEW + HEADROOM RESEARCH
 **AP Token**: `AP-JOHN_CARMACK-v1.0.0`  
 **Model**: nemotron-3-ultra-free (opencode)  

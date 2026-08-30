@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN COLLABORATION CREDITS & ATTRIBUTION
 **AP Token**: `AP-SOVEREIGN_CREDITS-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_credits ⬡ ACTIVE

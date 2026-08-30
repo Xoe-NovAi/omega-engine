@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 rule_id: "RULE-HOP-RULE"
 authority: "M10 Fleet Integrity + M15 Sovereign Continuity + FLE Council (2026-08-25)"

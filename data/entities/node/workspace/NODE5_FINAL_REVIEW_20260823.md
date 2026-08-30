@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 NODE N5 — FINAL CROSS-DOMAIN REVIEW (DEBUT HARDENING)
 **AP Token**: `AP-NODE5-FINAL-REVIEW-v1.0.0`
 ⬡ OMEGA ⬡ NODE ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_node ⬡ ACTIVE

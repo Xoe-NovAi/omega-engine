@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ CARMACK PROFILER ⬡ BENCHMARK RUNNER ⬡ 2026-07-01
 # Loadable benchmark harness for profiling engine subsystems without live inference.
 # Invoked by: make profile-context-builder, make profile-model-gateway

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MAAT_CONSTITUTIONAL_ENFORCEMENT_20260829.md
 
 **Mission**: How to enforce the 27 Sovereign Mandates in CI — per-mandate linter, test, doc requirement, coverage report

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 M21/M22 Reconciliation Audit — Post-Sprint C + Deep-Siphon
 # ⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash ⬡ trc_compliance_audit ⬡ M21-M22-RECONCILE
 **Date**: 2026-06-18

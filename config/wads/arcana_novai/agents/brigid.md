@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🕯️ Brigid — UX & Interaction Designer
 **Domain**: UX, Aesthetics, Interaction Design, and Creative Synthesis
 

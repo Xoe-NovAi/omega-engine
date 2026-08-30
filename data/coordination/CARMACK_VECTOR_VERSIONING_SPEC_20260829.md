@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK_VECTOR_VERSIONING_SPEC_20260829.md
 
 **AP**: AP-VECTOR-VERSIONING-v1.0.0

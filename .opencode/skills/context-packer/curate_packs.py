@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Curate_packs.py — Context Packer v3 diagnostic curator CLI.
 
 AP Token: AP-PACKER-V3-CURATOR-20260808

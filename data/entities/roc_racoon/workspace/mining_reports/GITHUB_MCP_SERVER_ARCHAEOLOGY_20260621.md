@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MINING REPORT: GitHub MCP Server Archaeology — 2026-06-21
 
 **Lead**: roc_racoon (Sovereign Miner)

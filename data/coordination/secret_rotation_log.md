@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Secret Rotation Log
 
 **AP Token**: AP-SECRET-ROTATION-LOG-20260828-v1.0.0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity API Verification Report — v1.0.0
 **AP Token**: `AP-ANTIGRAVITY-VERIFY-v1.0.0`
 **Entity**: `researcher`

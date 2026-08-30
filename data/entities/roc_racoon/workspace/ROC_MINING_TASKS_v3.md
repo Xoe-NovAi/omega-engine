@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 ROC MINING TASKS v3 — Active Backlog
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_mining_tasks ⬡ PHASE-II
 **Date**: 2026-06-05

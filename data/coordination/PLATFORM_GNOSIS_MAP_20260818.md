@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Platform Gnosis Map — Definitive Inventory of Local Knowledge on Development Platforms, CLIs, IDEs & Agent Platforms
 
 **AP Token**: `AP-PLATFORM-GNOSIS-MAP-20260818-v1.0.0`

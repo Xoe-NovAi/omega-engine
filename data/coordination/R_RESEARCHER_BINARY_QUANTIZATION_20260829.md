@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_BINARY_QUANTIZATION_20260829.md
 
 **Mission**: Temple-grade deep research on 1-bit binary vector quantization for the Omega Engine's sqlite-vec stack, constrained to Ryzen 5700U (Zen 2 / AVX2, no AVX-512) + 8 GB RAM.

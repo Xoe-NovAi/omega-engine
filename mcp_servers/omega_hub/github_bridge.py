@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # [id-soft: quake3-1999] GitHub Hivemind Bridge — Event-driven synchronization
 # ⬡ OMEGA ⬡ KALI ⬡ CONFIG ⬡ v1.0.0
 # Decision: D-kal-163

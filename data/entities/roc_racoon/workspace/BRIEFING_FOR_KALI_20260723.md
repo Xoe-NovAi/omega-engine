@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ BRIEFING FOR KALI — Post-Crucible v2 State
 **From**: roc_racoon (Sovereign Miner & Ideas Guy)
 **To**: kali (Grand Oversoul)

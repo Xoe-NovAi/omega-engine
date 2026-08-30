@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 P7 REPORT — Node N7 (Context) — Surface S6: Documentation Organization
 ⬡ OMEGA ⬡ NODE7-CONTEXT ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_n7 ⬡ P12-DISPATCH
 **SESSION_ID**: 20260825-094633-first-light | **Arm**: lilith (Run Arm) | **Orchestrator**: makali_fusion

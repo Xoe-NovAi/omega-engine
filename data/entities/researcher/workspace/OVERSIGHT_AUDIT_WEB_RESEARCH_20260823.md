@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Oversight-Audit Gap Closure — Web Research (W1–W4)
 
 **AP Token**: `AP-RESEARCHER-v1.0.0`

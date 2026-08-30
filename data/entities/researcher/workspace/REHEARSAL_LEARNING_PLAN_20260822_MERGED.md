@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Rehearsal Learning Plan — Pillar→Node as Migration Dress-Rehearsal (Canonical Merge)
 **AP Token**: `AP-REHEARSAL-LEARNING-v1.1.0`
 ⬡ OMEGA ⬡ RESEARCHER+KALI ⬡ opencode ⬡ trc_rehearsal_learning ⬡ MERGED-DRAFT

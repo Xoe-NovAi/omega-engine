@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Roc Racoon — P0 Legacy Deep Mining Keeper.
 

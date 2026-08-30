@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Build-Side Consolidated Review Report (MAAT)
 **Date**: 2026-06-26
 **Governing Entity**: @maat (Light Oversoul)

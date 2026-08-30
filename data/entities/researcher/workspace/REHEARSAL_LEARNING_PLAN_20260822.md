@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Rehearsal Learning Plan — Pillar→Node Migration as Deliberate Practice
 **AP Token**: `AP-RESEARCHER-REHEARSAL-LEARN-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_research ⬄ ACTIVE

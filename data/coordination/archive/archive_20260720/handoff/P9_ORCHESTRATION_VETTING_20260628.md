@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P9 Orchestration Vetting Report — Handoff State Machine
 
 **Vetter**: @pillar P9 (Orchestration — Link, Agent Handoff & Delegation)

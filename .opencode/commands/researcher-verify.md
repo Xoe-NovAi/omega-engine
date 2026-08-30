@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Launch jem (Tier 3 research / Verification KB) via the Researcher. Use for fact-checking, gnosis distillation, and L3 universal principle extraction.
 agent: researcher
 subtask: false

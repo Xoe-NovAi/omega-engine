@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "model_identification_research"
 document_id: "researcher-laguna-s21-20260828"

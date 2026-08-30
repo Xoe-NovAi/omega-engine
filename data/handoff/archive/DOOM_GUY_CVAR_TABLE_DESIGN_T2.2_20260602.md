@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 cvar_table Design — T2.2 Handoff for Cline/M3 Review
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_cvar_design ⬡ T2.2
 # For: Cline/M3 (1M context) — review, validate, approve for BuildMaster impl

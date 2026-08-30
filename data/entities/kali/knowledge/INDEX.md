@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # KALI KNOWLEDGE INDEX
 > kali (Sprint Coordinator) · last_verified 2026-08-28 · rot_class: medium
 > Per LILITH_WORKSPACE_STANDARDIZATION_PROPOSAL_20260828.md R2

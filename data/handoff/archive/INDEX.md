@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Handoff Archive
 # ⬡ OMEGA ⬡ KALI ⬡ DEEPSEEK-V4-FLASH ⬡ OPENCODE ⬡ HANDOFF-ARCHIVE
 **Status**: ARCHIVED — Pending Roc Racoon Mining for Multi-Agent Strategy Analysis

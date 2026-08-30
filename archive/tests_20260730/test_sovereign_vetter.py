@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """M21 Contract tests for the Sovereign Vetter (P0-3).
 **AP Token**: `AP-KALI-TEST-VETTER-20260712`
 [Gate Integrity] Every public API boundary must have a contract test that

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PHASE C: COGNITIVE SUBSTRATE EXECUTION PLAN
 **AP Token**: `AP-JEM-PLAN-PHASE-C-v1.0.0`
 **Orchestrator**: jem

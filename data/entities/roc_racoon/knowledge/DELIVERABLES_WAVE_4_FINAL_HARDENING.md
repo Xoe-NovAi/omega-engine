@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN PROCUREMENT: WAVE 4 (THE FINAL HARDENING)
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ EXTRACTION ⬡ 2026-06-04
 

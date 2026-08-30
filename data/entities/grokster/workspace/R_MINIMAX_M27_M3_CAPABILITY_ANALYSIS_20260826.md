@@ -1,4 +1,7 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
 
 # MiniMax M2.7 / M3 Capability Analysis — Deep Research Report
 

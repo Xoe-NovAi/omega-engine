@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P5 GOVERNANCE — Final Cross-Domain Review: Documentation Governance & Tracking Debt
 **Slot**: P5 — Governance (Sentinel — Mandate Enforcement)
 **Date**: 2026-06-28

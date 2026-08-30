@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 MINING REPORT: ComfyUI & Gemma 4 Uncensored - 2026-06-13
 
 ## 🎯 Overview

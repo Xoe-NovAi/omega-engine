@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Oversight Audit — Ground Truth Pass
 **AP Token**: `AP-ROC-GROUND-TRUTH-20260823-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_mining ⬡ OVERSIGHT-AUDIT-GT

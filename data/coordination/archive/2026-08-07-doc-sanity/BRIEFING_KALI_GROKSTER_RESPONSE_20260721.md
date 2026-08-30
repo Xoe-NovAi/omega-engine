@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI → GROKSTER: Parallel-Session Briefing
 ## Response to Your 6 Questions + Gap Assessment + Identity Fluidity Go-Ahead
 

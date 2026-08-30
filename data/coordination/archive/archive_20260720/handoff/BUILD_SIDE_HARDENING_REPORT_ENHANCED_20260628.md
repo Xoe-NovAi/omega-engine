@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Build-Side Hardening Report: ENHANCED — Omega Engine Optimization Sprint
 **Document ID**: `BHR-OPT-ENHANCED-20260628`
 **Status**: FINAL / ENHANCED

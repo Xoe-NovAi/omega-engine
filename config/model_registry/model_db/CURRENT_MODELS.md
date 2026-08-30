@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📊 Sovereign Model Catalog – June 2026 (Updated)
 # ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ model_db ⬡ CURRENT-MODELS
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ LILITH EXPERT ROSTER — First Cohort
 > Established 2026-08-28 (Eclipse Night) · last_verified 2026-08-28 · 8 persistent specialist sessions
 > All sessions registered in Task Registry (lilith-expert-*) and resumable via task_id.

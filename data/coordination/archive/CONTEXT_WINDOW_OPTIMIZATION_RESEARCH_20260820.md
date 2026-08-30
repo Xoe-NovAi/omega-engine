@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Context Window Optimization Research Report
 **Date**: 2026-08-20  
 **AP Token**: `AP-CONTEXT-WINDOW-OPT-v1.0.0`  

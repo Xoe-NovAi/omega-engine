@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VISION SCOPE SYNTHESIS — The Full Expanse of the Architect's Vision
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_vision_deep_dive ⬡ LEVEL-3 SYNTHESIS ⬡ 2026-08-25
 

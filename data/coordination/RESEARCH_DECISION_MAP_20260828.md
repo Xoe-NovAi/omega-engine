@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "research_decision_map"
 document_id: "research-decision-map-20260828"

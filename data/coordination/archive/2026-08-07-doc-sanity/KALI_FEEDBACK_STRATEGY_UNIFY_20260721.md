@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI FEEDBACK — Strategy Unify Verdict
 **AP Token**: `AP-KALI-FEEDBACK-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_feedback ⬡ VERDICT

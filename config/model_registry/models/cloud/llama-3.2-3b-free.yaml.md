@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: meta-llama/llama-3.2-3b-instruct:free
 display_name: Llama 3.2 3B Instruct (Free)
 version: '2026-05-17'

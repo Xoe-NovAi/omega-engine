@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N3 Vetting — Ma'at T1 Diff Plan (INST-1 fix2 completion)
 **AP Token**: AP-N3-T1-VET-v1.0.0
 ⬡ OMEGA ⬡ MAAT ⬡ [N3] ⬡ big-pickle ⬡ opencode ⬡ trc_n3_t1_vet ⬡ 2026-08-23

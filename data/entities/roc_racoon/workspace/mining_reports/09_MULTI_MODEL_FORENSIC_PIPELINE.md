@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Multi-Model Forensic Fingerprinting Pipeline — Session Mining Report
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_forensic_mining_report ⬡ MINING-09
 **AP Token**: `AP-FORENSIC-REPORT-v1.0.0`

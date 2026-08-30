@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Campaign: Subagent Model Inheritance — "It Should Just Fucking Work"
 **AP Token**: `AP-SUBAGENT-MODEL-CAMPAIGN-20260828-v1.0.0`
 **Date**: 2026-08-28

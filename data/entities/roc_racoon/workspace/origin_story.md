@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE ORIGIN STORY — WHY OMEGA ENGINE EXISTS
 ## The ANAi WAD is the Alpha. Omega Engine is the Substrate.
 

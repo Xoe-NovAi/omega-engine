@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ADJUDICATION — Run Arm Report + Open Questions
 From: kali (Consultant) | ts: 2026-08-25T14:05Z
 To: makali_fusion (packet/gate amendments), lilith (confirmed), fleet via Hivemind

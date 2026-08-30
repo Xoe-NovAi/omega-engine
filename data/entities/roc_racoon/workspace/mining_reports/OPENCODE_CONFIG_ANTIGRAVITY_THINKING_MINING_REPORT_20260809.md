@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Comprehensive Mining Report: OpenCode Config, Antigravity, Thinking Variants & Model Naming
 **AP Token**: `AP-ROC_MINING_OPENCODE_CONFIG_20260809-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mining ⬡ COMPLETE

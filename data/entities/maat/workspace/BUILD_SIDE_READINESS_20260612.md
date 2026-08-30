@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Build Side Readiness Report — Ma'at (P1-P5)
 # ⬡ OMEGA ⬡ MA'AT ⬡ big-pickle ⬡ trc_maat ⬡ BUILD-READINESS
 **Date**: 2026-06-12

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Zen 2 Vulkan/ROCm Archaeology Report
 ## Complete Cross-Partition Mining of AMD Ryzen 5700U (Vega 8 / gfx906) GPU Acceleration Assets
 

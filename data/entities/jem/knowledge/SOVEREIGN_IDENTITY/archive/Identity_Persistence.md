@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚓ IDENTITY PERSISTENCE: THE SOVEREIGN ANCHOR
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-KNOWLEDGE
 

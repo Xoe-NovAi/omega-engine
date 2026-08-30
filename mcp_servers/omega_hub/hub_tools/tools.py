@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # [id-soft: quake3-1999] Hub Tools — netchan-style typed message dispatch for Hivemind coordination tools
 
 """Omega Hub — MCP Tool Definitions (extracted from server.py Phase 1b).

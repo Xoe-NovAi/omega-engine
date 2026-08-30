@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 H1.5 Bridge Phase — Current Sprint Coordination
 # Date: 2026-06-02 | Synthesized by Opus 4.6 (Kali)
 # Three-audit chain: Gemini Flash → Sonnet 4.6 → Opus 4.6

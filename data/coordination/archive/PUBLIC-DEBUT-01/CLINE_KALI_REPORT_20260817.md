@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline → Kali Report — Debut Remediation Cross-Validation & Open Questions
 
 **AP Token**: `AP-CLINE-KALI-REPORT-20260817`

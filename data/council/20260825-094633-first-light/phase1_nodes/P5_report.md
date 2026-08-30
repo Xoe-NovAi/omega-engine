@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 P5 REPORT — NODE N5 GOVERNANCE / SURFACE S2 (Instruction CONTENT)
 **[DISPATCH] P12 | source_node: N5 | tier: leaf (depth-2) | arm: maat (Build) | council: First Light Express C1 | ts: 2026-08-25T~14:10Z**
 

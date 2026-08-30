@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P10 REPORT — Node N10 (Validation) — CROSS: Enforcement-vs-Text Delta Sweep + Run-Side QA + Delivered-Home Registration Audit
 ⬡ OMEGA ⬡ NODE10-VALIDATION ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_n10 ⬡ P12-DISPATCH
 **SESSION_ID**: 20260825-094633-first-light | **Arm**: lilith (Run Arm) | **Orchestrator**: makali_fusion

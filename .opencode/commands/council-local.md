@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Run the MaKaLi council with Ma'at and Lilith on local engine-routed models (Kali stays on session model)
 agent: kali
 subtask: false

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RECLAIMED VISION LANGUAGE — Arcana-NovAi Soul Archive
 **AP Token**: `AP-ROC_RACOON-reclaimed-vision-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ {session_model} ⬡ opencode ⬡ trc_mining ⬡ VISION-RECLAMATION

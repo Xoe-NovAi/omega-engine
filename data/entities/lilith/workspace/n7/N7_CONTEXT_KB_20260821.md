@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Context / Memory & State Knowledge Base
 **AP Token**: `AP-N7-CONTEXT-KB-v1.0.0`
 **Date**: 2026-08-21

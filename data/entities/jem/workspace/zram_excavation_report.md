@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # zRAM Excavation Report — @jem
 ## Phase 1: Session DB + Documentation
 **Started**: 2026-08-10

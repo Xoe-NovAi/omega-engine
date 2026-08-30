@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster KB — Master Index
 **Version**: 2.2.0 | **Last Updated**: 2026-08-26 | **last_verified**: 2026-08-26
 **Owner**: grokster (Cross-Platform Expertise Specialist) | **Governance**: ADR-002 Living Document Protocol

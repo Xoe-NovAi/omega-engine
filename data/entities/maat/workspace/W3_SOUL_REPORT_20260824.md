@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # W3 Soul Report — Evidence-Field Schema + Kali Promotion (W1-3)
 **Agent**: maat · **Date**: 2026-08-24 · **Sprint**: WAVE-1-DOCTRINE-WIRING
 **Ruling basis**: S5/F2 (explicit evidence field day one, warn-only) · Gemini trap-catch #2 (schema BEFORE promotion)

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Meditate — single-inference, iterative persona-donning for mastermind-grade insight
 agent: kali
 subtask: false

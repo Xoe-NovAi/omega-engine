@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_RAGAS_20260829.md
 
 **Mission**: Temple-grade deep research on automated RAG quality evaluation for the Omega Engine.

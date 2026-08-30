@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N12 External Sources — Offline-Expertise Queue
 
 **AP Token**: `AP-N12-EXTERNAL-SOURCES-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem Verification Report: Sovereign Mirroring Identity-Masking
 **Date**: 2026-06-05
 **Agent**: Jem Verification (L3)

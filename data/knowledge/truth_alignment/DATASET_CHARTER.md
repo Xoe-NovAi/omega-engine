@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Truth-Alignment Dataset — Omega Engine
 **Created**: 2026-08-24 · **Owner**: kali (orchestration) · **Status**: ACTIVE CAPTURE
 **Provenance**: Converged from GSCA mastermind night (27% Cliff session) + same-day

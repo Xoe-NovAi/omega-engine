@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Configurability & Dynamic Systems — Deep Mining Report
 **AP Token**: `AP-LEGACY-CONFIGURABILITY-v1.0.0`  
 **Date**: 2026-07-15  

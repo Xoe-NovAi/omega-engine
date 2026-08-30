@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI — Meditate Review Report: `/meditate` Command & `meditate-harness` Skill
 **AP Token**: `AP-KALI-MEDITATE-REVIEW-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_meditate_review ⬡ MEDITATION-FINDINGS

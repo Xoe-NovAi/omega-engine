@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## C4 — COMPLETE — 2026-06-02T15:15Z
 **File(s)**: `.github/workflows/test.yml`
 **Diff stat**: +14 -0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ GEMINI 3.1 PRO: FINAL PRE-COMPACTION SYNTHESIS
 **Date**: 2026-08-25 | **Context Size**: ~267K Tokens | **Status**: Pre-Compaction Capture
 

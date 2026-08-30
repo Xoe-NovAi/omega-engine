@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # GitHub Copilot — Research Targets (Open Probes & Re-verification Cadence)
 
 **KB Entry**: grokster/platforms/copilot/RESEARCH_TARGETS

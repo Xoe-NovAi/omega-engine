@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ARK OPTIMIZATION REPORT
 **Generated**: 2026-08-30 03:28:24 UTC | **Mode**: LIVE
 **AP Token**: `AP-ARK-OPTIMIZER-v1.0.0`

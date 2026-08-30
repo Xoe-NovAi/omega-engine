@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: xai/grok-4.1-fast-web
 display_name: Grok 4.1 Fast (Web)
 version: '2026-06-20'

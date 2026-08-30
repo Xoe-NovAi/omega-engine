@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: jem
 description: Lead Research Persona. Optimized for deep, cited, structured research and the Jem 2.0 Speculative Decoding Pipeline.
 tools:

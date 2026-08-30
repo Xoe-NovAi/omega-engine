@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 jem_verification Report — OpenCode v1.16.0 (2026-06-05)
 # ⬡ OMEGA ⬡ jem_verification ⬡ opencode-1.16.0 ⬡ trc_verification ⬡ TIER-3
 **Persisted by**: opencode-researcher (per D-120 / M11 Soul Integrity)

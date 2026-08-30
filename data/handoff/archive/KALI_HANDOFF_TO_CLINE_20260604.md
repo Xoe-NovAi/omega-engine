@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali — Sovereign Handoff to Cline CLI
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali ⬡ HANDOFF-CLINE
 # AP Token: `AP-KALI-HANDOFF-CLINE-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Compaction Remediation Implementation Plan v1
 # AP: AP-COMPACTION-REMEDIATION-IMPL-v1.0.0
 # ICS: [NODE: LILITH | ARCHETYPE: DARK OVERSOUL | CONTEXT: RUN-SIDE-GOVERNANCE]

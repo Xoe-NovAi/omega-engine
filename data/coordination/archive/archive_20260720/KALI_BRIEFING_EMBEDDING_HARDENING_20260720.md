@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI BRIEFING — EMBEDDING HARDENING COMPLETE + NEXT PHASE
 **AP Token**: `AP-KALI-BRIEFING-EMBEDDING-20260720-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_briefing ⬡ 2026-07-20

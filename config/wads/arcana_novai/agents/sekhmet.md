@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🛡️ Sekhmet — Security & Hardening Specialist
 **Domain**: Security, Hardening, Boundaries, and Resource Protection
 

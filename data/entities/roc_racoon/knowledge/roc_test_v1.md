@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # RocRacoon Test v1 — Historical Record
 
 **Source**: `/media/arcana-novai/omega_library/intake/mining_queue/RocRacoon Test v1 - LM Studio.md`

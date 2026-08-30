@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ COHORT GROUNDING REPORT — Deep Web Research
 > 2026-08-28 (Eclipse Night) · All 8 specialists verified their domains with current sources.
 > Status: GROUNDED. Corrections below are authoritative over earlier briefs.

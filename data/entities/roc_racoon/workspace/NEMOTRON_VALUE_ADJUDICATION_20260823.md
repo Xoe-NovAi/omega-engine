@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ NEMOTRON 3 ULTRA VALUE ADJUDICATION — Empirical Audit
 **Miner**: roc_racoon | **Date**: 2026-08-24 | **Commissioned by**: Architect challenge (via kali ses_fdef2be4effe4pAaLXCTUx62GO)
 **Dispute**: Architect ("Nemotron nearly indispensable") vs kali ("adds a switch without diversity value" in Claude→Gemini chains)

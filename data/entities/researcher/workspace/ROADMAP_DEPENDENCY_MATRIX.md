@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROADMAP DEPENDENCY MATRIX — Sovereign Recon Phase
 # ⬡ OMEGA ⬡ researcher ⬡ google/gemma-4-31b-it ⬡ Lattice-Node: Technical
 

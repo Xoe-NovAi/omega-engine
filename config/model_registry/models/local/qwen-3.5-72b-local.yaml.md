@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: qwen-3.5-72b-local
 display_name: Qwen 3.5 72B (Local)
 version: '2026-06-15'

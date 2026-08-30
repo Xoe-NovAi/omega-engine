@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OX ALPHA: FINAL PRE-COMPACTION INSIGHTS
 **Date**: 2026-08-25 ~07:50Z · **Model**: x-preview-f-free · **Context**: ~270K tokens
 

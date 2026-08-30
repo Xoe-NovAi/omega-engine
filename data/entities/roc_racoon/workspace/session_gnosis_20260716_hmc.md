@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC_RACOON — SESSION GNOSIS (HMC Forge Cycle 1)
 **Date**: 2026-07-16 | **Trace**: trc_hmc_forge_1
 **Session**: 59 | **Context**: HMC Triadic Forge — First Response to Researcher's Challenges

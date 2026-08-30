@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 D-283 MNEMOSYNE IMPLEMENTATION RESEARCH — 2026 SOTA
 **AP Token**: `AP-D283-MNEMOSYNE-IMPL-v1.0.0`  
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_d283_impl_research ⬡ ACTIVE  

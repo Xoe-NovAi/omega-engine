@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HANDOFF: Kali → Grok CLI — Decision Workspace Full Review
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ HANDOFF ⬡ DECISION-WORKSPACE
 

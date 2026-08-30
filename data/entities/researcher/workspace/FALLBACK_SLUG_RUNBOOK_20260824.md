@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FALLBACK SLUG RUNBOOK — Fleet Substrate Continuity (D1-b)
 **AP Token**: `AP-RESEARCHER-FALLBACK-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_fallback_runbook ⬡ ARCHITECT-DECISION-READY

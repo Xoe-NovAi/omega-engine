@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 NotebookLM Gap Audit — Critical Findings
 **AP Token**: `AP-NOTEBOOKLM-GAP-AUDIT-20260820-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_notebooklm_gap_audit ⬡ ACTIVE

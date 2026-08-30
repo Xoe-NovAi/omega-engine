@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — MCP Client Setup Guide
 
 **AP Token**: `AP-MCP-CLIENT-SETUP-v1.0.0`

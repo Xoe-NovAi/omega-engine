@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Meditate Local — host-orchestrated local dialectic (fixed Builder/Skeptic/Steward trio, rolling state, host synthesis)
 agent: kali
 subtask: false

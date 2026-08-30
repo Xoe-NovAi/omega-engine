@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE DEFINITIVE EXCAVATION — LILITH TAROT TO OMEGA ENGINE
 ## Complete Architectural Lineage from Alpha Document to Sovereign Runtime
 

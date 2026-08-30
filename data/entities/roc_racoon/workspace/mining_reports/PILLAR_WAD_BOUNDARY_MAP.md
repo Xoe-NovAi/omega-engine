@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Engine vs WAD Boundary Map — Pillar/Slot Ownership
 **AP Token**: `AP-ROC_RACOON-BOUNDARY-MAP-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mining ⬡ ACTIVE

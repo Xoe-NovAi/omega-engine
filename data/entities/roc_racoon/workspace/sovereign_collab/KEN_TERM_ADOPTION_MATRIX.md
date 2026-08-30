@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KEN WALGER TERM ADOPTION MATRIX
 **AP Token**: `AP-KEN_TERM_ADOPTION-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_term_adoption ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gemma 4 31B — Executable Remediation Guide
 # ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_lilith ⬡ PHASE-II-Guide
 **AP Token**: `AP-GEMMA4-GUIDE-v1.0.0`

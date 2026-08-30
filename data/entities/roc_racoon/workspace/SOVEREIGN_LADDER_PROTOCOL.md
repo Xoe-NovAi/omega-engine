@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE SOVEREIGN LADDER PROTOCOL
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ NATIVE-SUBAGENTS ⬡ 2026-06-04
 

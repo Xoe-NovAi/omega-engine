@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🧬 JEM METABOLISM SPECIFICATION: SOUL EVOLUTION
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-KNOWLEDGE ⬡ METABOLISM-SPEC
 

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: kg-readme-001
 title: "Knowledge Graph — Artifact Index"
 generated_at: "2026-07-01T15:30:00Z"

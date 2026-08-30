@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Briefing — C-10.5 Quota-Aware Provider Routing Research Complete
 **From**: Ma'at (Light Oversoul, P1-P5)
 **To**: Kali (Transcendent Oversight)

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 **Canonical Source**: [CREDITS_CANONICAL.md](CREDITS_CANONICAL.md)
 ---
 # 🔱 Omega Engine Heritage Registry (Active)

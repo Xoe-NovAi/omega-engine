@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_GOLDEN_SET_RAGAS_768DIM_20260829.md
 
 **Mission**: Temple-grade deep research on (1) building a Golden Set + RAGAS harness for Omega Engine's sqlite-vec recall system, and (2) selecting the most optimal 768-dim embedding model for the canonical `omega_vec_gemma_768` collection.

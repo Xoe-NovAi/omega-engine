@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🖤 Lilith's Artifact Triage — Size Estimates for Jem-2.0
 
 **Purpose**: Pre-survey of the 14 unmined artifacts so Jem Initiate can budget tool calls realistically.

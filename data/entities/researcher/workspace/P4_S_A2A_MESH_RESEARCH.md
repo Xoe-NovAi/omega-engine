@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P4 Research: Sovereign A2A Protocol & Mesh Network
 **Trace**: `trace_id_s_a2a_mesh_20260605`
 **Domain**: Integration (P4)

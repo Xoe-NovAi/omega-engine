@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Third-Party Code, Secret Leakage & Change Traceability — Full Research Report
 
 **AP Token**: `AP-RESEARCHER-3P-SECRETS-TRACEABILITY-v1.0.0`

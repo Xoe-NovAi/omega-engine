@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "Sovereign Researcher \u2014 Polymathic Council for deep research,\
   \ dialectic synthesis, and knowledge base curation."
 mode: "all"

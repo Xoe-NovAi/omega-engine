@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK PASS-2 PACKAGE AUDIT — Council 2 Launch Package (FINDINGS-AS-PACKAGED)
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/x-preview-f-free ⬡ trc_c2_pass2_audit ⬡ RECON-ONLY
 **Session**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25 · **Dispatch**: MaKaLi Fusion P12-signed, Pass 2 of 2

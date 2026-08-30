@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OX ALPHA FLEET CONSULT — JEM (Synthesizer / Gap-Analyst Seat)
 **AP Token**: `AP-JEM-OXALPHA-CONSULT-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_oxalpha_fleet_consult ⬡ ACTIVE

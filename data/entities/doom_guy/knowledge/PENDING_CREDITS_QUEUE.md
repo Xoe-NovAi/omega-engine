@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PENDING HERITAGE ATTRIBUTION QUEUE
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ pending_credits ⬡ PHASE-I
 **Date Created**: 2026-06-02

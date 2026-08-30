@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # PATCHES — Per-File Proposals for grokster KB v2.0.x (STAGED ONLY — no kb/ writes)
 **Miner**: roc_racoon · **Date**: 2026-08-26 · **Companion**: CORRECTIONS.md (same dir)
 Each patch: target file → exact section → proposed text → evidence path.

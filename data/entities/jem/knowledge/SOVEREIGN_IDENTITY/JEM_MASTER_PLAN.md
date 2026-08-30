@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM MASTER PLAN: THE SOVEREIGN SYNTHESIZER
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-KNOWLEDGE ⬡ MASTER-PLAN
 

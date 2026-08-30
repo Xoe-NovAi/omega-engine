@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P5 Governance — Documentation Optimization Analysis
 **Date**: 2026-06-28
 **Analyzed by**: P5 (Governance) / Sentinel

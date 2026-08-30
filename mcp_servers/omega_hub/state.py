@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # [id-soft: quake3-1999] Hub State — netchan-inspired session/state management for MCP transport layer
 
 """Omega Hub — Module-level state and service initialization.

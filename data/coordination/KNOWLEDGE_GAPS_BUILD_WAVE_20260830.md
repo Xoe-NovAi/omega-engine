@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KNOWLEDGE GAPS AUDIT FOR BUILD WAVE
 
 **AP Token**: `AP-KALI-GAPS-20260830-v1.0.0`

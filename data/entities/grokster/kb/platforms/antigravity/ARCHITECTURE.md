@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Antigravity — Gateway Architecture Reference
 
 **KB Entry**: grokster/platforms/antigravity/ARCHITECTURE

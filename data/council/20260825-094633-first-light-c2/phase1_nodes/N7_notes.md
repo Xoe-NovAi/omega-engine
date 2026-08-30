@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Working Notes — SPEC-E Evidence Pass (lilith/node7)
 **Session**: 20260825-094633-first-light-c2 · **Date**: 2026-08-25 · **Mode**: PREP-ONLY, new files only
 **Mission**: Draft SPEC-E per SOVEREIGN_DECREE Art. VI + WAKE_STATE Q-4 (default-GO on silence).

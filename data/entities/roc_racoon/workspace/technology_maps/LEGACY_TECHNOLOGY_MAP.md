@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Stack Technology Map — Where Everything Lives
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_tech_map ⬡ v1.0.0
 # Last Updated: 2026-06-02

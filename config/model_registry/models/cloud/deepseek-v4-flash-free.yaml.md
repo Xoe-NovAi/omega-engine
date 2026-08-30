@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: deepseek/deepseek-v4-flash:free
 display_name: DeepSeek V4 Flash (Free)
 version: '2026-04-24'

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔭 THREE-LENS RECON SYNTHESIS — 2026-08-26
 **AP Token**: `AP-RECON-SYNTH-v1.0` · ⬡ OMEGA ⬡ KALI ⬡ Consultant synthesis of 3 read-only recon dispatches
 **Dispatches**: explore `ses_fc471f913ffe5fsxacVK3ILu9w` (code) · verity `ses_fc471cca4ffeTBdCQWQuKTMjvA` (docs/compliance) · jem `ses_fc4719bd2ffesoXAfGtl57djwN` (machinery). Full raw reports in session task results.

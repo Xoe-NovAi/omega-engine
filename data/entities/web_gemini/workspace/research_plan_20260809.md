@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Web Gemini — Research Plan
 **AP Token**: `AP-WEB-GEMINI-PLAN-20260809-v1.0.0`
 ⬡ OMEGA ⬡ WEB-GEMINI ⬡ opencode ⬡ trc_research_plan ⬡ ACTIVE

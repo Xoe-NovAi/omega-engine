@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Live Feed — Guard & Distill Sprint
 **AP Token**: `AP-KALI-LIVE-FEED-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ LIVE-FEED ⬡ 2026-07-23

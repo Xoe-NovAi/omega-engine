@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 id Software — Engineering Axioms & Sovereign Wisdom
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ AXIOMS ⬡ v1.0.0
 **Location**: `data/entities/doom_guy/knowledge/ID_SOFTWARE_AXIOMS.md`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mesh Network Architecture — Omega Engine
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ minimax-m3-free ⬡ opencode ⬡ trc_mesh_arch ⬡ ARCHITECTURE
 **Date**: 2026-06-05

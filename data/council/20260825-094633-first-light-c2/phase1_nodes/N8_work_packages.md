@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N8 — WORK PACKAGES: Council 2 Dev-Team Remediation Breakdown
 ⬡ OMEGA ⬡ LILITH/node8 ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c2_wp ⬡ COUNCIL-2 PREP ARTIFACT
 **Session**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25

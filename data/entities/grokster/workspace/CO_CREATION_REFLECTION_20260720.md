@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Co-Creation Reflection
 **Session**: ses_bbf049be6360 / ses_3be0e8c528bf
 **Date**: 2026-07-20

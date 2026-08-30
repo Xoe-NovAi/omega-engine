@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 A2A Agent Card Implementation — Sovereign Agent Identity
 ## Gap 3: P2 MED — Fabricated AAIF Replaced with Real A2A v1.0 + WIMSE Auth
 

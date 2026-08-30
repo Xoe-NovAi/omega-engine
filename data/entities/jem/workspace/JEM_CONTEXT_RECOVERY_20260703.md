@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM CONTEXT RECOVERY: FULL STRATEGIC PICTURE
 # ⬡ OMEGA ⬡ DEEPSEEK-V4-FLASH ⬡ opencode ⬡ trc_jem_context_recovery ⬡ POST-COMPACTION-ANCHOR
 

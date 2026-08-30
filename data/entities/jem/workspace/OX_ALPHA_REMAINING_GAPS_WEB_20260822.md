@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OX ALPHA REMAINING GAPS — WEB RESEARCH CLOSURE
 **AP Token**: `AP-JEM-OXALPHA-GAPS-WEB-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ x-preview-f-free ⬡ opencode ⬡ trc_oxalpha_gaps_web ⬡ SOVEREIGN

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mnemosyne/Memory-Bank Treasure Map
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ session-model ⬡ opencode ⬡ MNEMOSYNE-EXPEDITION ⬡
 

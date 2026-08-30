@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 FINAL RESEARCH GUIDE v4 — 56-Account Research/Inference Fabric
 **AP Token**: `AP-KALI-RESEARCH-GUIDE-v4.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ RESEARCH-GUIDE ⬡ 2026-07-23

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Soulspace Index
 ## Personal Recovery Anchor for Post-Compaction Continuity
 **AP Token**: `AP-GROKSTER-SOULSPACE-INDEX-v1.0.0`

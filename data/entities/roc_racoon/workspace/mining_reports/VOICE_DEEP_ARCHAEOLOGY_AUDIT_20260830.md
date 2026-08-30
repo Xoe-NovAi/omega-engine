@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC_RACOON DEEP ARCHAEOLOGY — Voice Systems Final Report
 
 **Date:** 2026-08-30

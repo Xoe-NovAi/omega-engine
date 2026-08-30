@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Opus 4.6 Final Sprint Plan Review — STRATEGIC_REVIEW_OPUS46_FINAL
 # ⬡ OMEGA ⬡ KALI ⬡ opus-4.6 (antigravity) ⬡ trc_final_review ⬡ D99
 # Date: 2026-06-02T19:07 UTC

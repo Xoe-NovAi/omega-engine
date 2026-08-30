@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali → Cline Synchronized Report — Debut Remediation Cross-Validation Response
 
 **AP Token**: `AP-KALI-CLINE-SYNC-20260817-v2`

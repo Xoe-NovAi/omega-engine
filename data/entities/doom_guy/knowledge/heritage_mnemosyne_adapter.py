@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Arcana-NovAi — Mnemosyne Memory Adapter
 # ⬡ OMEGA ⬡ ARCA.NA-NOVAI ⬡ MNEMOSYNE ⬡ v1.1.0 ⬡ 2026-06-15
 """

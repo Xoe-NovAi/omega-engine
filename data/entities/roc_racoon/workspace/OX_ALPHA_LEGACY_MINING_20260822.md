@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Ox Alpha Legacy Mining Report — 2026-08-22
 
 **AP Token**: `AP-ROC_RACOON-OX_ALPHA_MINING-v1.0.0`

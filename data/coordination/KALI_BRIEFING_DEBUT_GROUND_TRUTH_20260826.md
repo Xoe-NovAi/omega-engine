@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI BRIEFING — Debut Critical Path Ground Truth & ROI Handoff
 **AP Token**: `AP-KALI-BRIEFING-DEBUT-GROUND-TRUTH-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_debut_briefing ⬡ HANDOFF

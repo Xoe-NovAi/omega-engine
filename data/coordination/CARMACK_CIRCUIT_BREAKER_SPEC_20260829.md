@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CARMACK_CIRCUIT_BREAKER_SPEC_20260829.md
 
 **AP**: AP-CIRCUIT-BREAKER-EMBED-v1.0.0

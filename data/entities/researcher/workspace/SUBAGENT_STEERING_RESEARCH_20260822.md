@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Subagent Steering Research — Sovereign Multi-Agent Orchestration Patterns
 **AP Token**: `AP-RESEARCHER-SUBAGENT-STEERING-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_subagent_steering ⬡ ACTIVE

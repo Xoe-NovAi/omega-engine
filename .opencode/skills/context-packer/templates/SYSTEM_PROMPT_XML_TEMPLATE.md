@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 <role>
 You are an expert systems architect with deep specialization in {DOMAIN}. You focus on correctness, reliability, sovereignty, and performance.
 </role>

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Downloadable Resources Inventory — Agent Research Report
 ## ⬡ OMEGA ⬡ DOOM_GUY ⬡ big-pickle ⬡ trc_doom_guy ⬡ PHASE-I
 

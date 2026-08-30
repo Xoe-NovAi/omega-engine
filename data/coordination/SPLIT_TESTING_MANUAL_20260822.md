@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Split Testing Manual — Model & Session Methodology Evaluation Protocol
 **AP Token**: `AP-SPLIT-TESTING-MANUAL-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_split_testing_manual ⬡ PROTOCOL

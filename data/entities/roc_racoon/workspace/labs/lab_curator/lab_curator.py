@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Lab Curator Worker (Prototype)
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ gemma-4-31b-it ⬡ WORKER ⬡ LAB-CURATOR
 

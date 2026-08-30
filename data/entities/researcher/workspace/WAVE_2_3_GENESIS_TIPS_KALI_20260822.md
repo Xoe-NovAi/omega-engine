@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # KALI GENESIS TIPS — Wave 2 (Jem-N11) + Wave 3 (Jem-N13)
 
 **AP Token**: `AP-KALI-GENESIS-TIPS-20260822-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Node Gap Synthesis — Researcher Deep-Dive (RECOVERED)
 **AP Token**: `AP-NODE-GAP-SYNTHESIS-v1.0.0`
 **Date**: 2026-08-22

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "2.0"
 document_type: "cline_review_rollup"
 document_id: "cline-full-review-rollup-20260828"

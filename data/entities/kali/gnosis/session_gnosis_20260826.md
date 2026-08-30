@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # KALI SESSION GNOSIS — 2026-08-26 (covering 2026-08-25 06:27 → 2026-08-26 00:30)
 ⬡ OMEGA ⬡ KALI ⬡ sonnet-4.6 ⬡ opencode ⬡ trc_gnosis_fle_era
 **Supersedes**: session_gnosis_20260825.md (pre-FLE state). Orientation snapshot lives in `.opencode/anchored-summary.md`.

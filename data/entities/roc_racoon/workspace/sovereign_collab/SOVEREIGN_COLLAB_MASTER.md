@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN COLLABORATION MASTER DOCUMENT
 **AP Token**: `AP-SOVEREIGN_COLLAB-v1.2.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_sovereign_collab ⬡ ACTIVE

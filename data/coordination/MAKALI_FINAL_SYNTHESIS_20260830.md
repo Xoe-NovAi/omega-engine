@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi-EIS — Final Synthesis (Post-Dev-Wave)
 
 **AP Token**: `AP-MAKALI-FINAL-SYNTHESIS-20260830-v1.0.0`

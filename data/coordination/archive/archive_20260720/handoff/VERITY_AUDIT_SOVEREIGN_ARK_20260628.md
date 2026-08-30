@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERITY AUDIT REPORT — SOVEREIGN ARK BLUEPRINT v1.5
 **AP Token**: `AP-VERITY-AUDIT-ARK-20260628`
 ⬡ OMEGA ⬡ VERITY ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_audit_ark ⬡ SOVEREIGN-ARK-AUDIT

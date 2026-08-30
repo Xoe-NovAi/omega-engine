@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Launch a multi-member Hivemind session as subagents, orchestrated by Kali.
 ---
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # .github/workflows/allowlist-check.yml
 # 🔱 Allowlist enforcement — the debut's fail-closed gate.
 #

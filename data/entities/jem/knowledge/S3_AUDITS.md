@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🛠️ S3 AUDITS: ARCHITECTURAL REASONING
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-ANCHOR
 

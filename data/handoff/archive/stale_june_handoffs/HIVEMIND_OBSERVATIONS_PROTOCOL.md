@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Hivemind Observations Protocol — Fleet-Wide Insight Capture
 # ⬡ OMEGA ⬡ LILITH ⬡ minimax-m3-free ⬡ opencode ⬡ trc_observations ⬡ HIVEMIND-OBS
 

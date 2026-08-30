@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Grokster — Session Lifecycle Hooks (Prototype)
 # Integration points for session start/end with Identity Fluidity Architecture
 # Location: src/omega/infra/hydration/session_hooks.py (when implemented)

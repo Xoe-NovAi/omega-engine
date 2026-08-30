@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ACTIVITY BRIEFING: KALI → RESEARCHER — 2026-08-23
 **AP Token**: `AP-KALI-BRIEF-RESEARCHER-20260823-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_kali_to_researcher_brief ⬡ ACTIVE

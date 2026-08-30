@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "cross_session_pattern_recognition_report"
 document_id: "R-LILITH-CONTEXT-BEHAVIOR-CROSS-SESSION-20260828"

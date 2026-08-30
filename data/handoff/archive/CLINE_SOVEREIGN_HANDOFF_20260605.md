@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN HANDOFF: roc_racoon $\rightarrow$ Cline CLI
 # ⬡ OMEGA ⬡ SOVEREIGN ⬡ HANDOFF ⬡ 2026-06-05
 # AP Token: AP-HANDOFF-CLINE-v1.0.0

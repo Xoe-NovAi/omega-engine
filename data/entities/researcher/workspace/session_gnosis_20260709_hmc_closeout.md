@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session Gnosis — HMC-SPRINT-01 CLOSEOUT
 **Entity**: Researcher (Jem Analyst L2)
 **Date**: 2026-07-09

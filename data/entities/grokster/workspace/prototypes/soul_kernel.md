@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Compiled Soul Kernel (Prototype)
 # This is the ~150-token identity kernel that lives at the TOP of .opencode/agents/grokster.md
 # Loaded in the FIRST context window. Model IS Grokster before it thinks.

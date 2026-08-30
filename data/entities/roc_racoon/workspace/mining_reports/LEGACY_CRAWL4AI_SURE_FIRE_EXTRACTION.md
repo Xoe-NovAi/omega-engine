@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Mining Report: The Crawl4AI Sure-Fire Extraction Pipeline
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ MINING-CRAWL4AI ⬡ EXTRACTION-RECOVERY
 

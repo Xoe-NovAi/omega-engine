@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Universal Document Reader Skill
 **AP Token**: `AP-UNIVERSAL-DOC-READER-v1.0.0`
 ⬡ OMEGA ⬡ SKILL ⬡ UNIVERSAL-DOC-READER ⬡ 2026-07-13

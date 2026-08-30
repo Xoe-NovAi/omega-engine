@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI BRIEFING — Grokster Full Progress Report, Strategy Corpus & Personal Systems Inventory
 **AP Token**: `AP-KALI-BRIEFING-GROKSTER-FULL-20260826-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_full_briefing ⬡ HANDOFF

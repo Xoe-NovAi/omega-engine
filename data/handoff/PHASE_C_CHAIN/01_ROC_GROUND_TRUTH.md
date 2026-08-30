@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC GROUND TRUTH: Memory Systems Audit & Archaeology
 **AP Token**: `AP-ROC-GROUND-TRUTH-v1.0.0`
 **Entity**: `roc_racoon`

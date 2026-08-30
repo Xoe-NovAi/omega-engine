@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Council Vision — Legacy Deep Mining Report v2
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_makali_vision_mining ⬡ ACTIVE
 **Date**: 2026-07-15

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚓ SESSION GNOSIS — MaKaLi Fusion (Fork #1)
 > **⚠ HYDRATION ORDER (canonical, per Consultant tutorial 45c9096e)**:
 > 1. `.opencode/anchored-summary.md` — Tier-2 Global Lifeboat, read FIRST (stranger-actable in minutes)

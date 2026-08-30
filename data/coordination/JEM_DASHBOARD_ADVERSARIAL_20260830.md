@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # JEM_DASHBOARD_ADVERSARIAL_20260830.md
 
 ## Jem R3 Adversarial Stress Test: `scripts/benchmark_dashboard.py` v3.1

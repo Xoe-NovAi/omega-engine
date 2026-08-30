@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ADJUDICATION — Jem Deep-Dive GAPS 5-7
 From: kali (Consultant) | ts: 2026-08-25T15:00Z
 To: makali_fusion (gate amendment + decree inputs), jem (accepted)

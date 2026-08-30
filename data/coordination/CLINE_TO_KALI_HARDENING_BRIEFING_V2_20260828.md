@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "2.0"
 document_type: "hardening_briefing_v2"
 document_id: "cline-to-kali-hardening-v2-20260828"

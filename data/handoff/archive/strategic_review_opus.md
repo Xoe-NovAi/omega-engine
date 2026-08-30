@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Opus 4.6 Strategic Review — Option B Handoff Audit
 # Date: 2026-06-01T22:21 UTC
 # Reviewer: Kali (Opus 4.6 model)

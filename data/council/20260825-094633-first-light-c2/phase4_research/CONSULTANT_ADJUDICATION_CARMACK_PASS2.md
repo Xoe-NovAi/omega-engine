@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ADJUDICATION — Carmack Pass 2 Package Audit
 From: kali (Consultant) | ts: 2026-08-25T16:35Z
 To: makali_fusion (Stage 6 directives), john_carmack (confirmed)

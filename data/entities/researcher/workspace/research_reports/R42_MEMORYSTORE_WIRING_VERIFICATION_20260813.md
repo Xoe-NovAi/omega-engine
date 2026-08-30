@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R42 — MemoryStore → Oracle.py Wiring Verification
 
 **AP Token**: `AP-R42-MEMORY-WIRING-v1.0.0`

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 AGY OAuth Persistence Fix — Atomic Write-Back with File Locking (AnyIO Compliant)
 Fixes the 8x re-auth on restart by persisting refreshed tokens to antigravity-accounts.json

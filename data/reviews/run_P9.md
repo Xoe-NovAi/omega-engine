@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Orchestration Systems Deep-Dive Review — Pillar P9
 **Entity**: @pillar P9 (Orchestration)
 **Domain**: The Link — Agent Handoff & Delegation

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 RESEARCHER EMPIRICAL GAPS 1–4 — First Light Express Council 1 (Stage 4)
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_gaps ⬡ Stage-4 ARTIFACT
 **SESSION_ID**: 20260825-094633-first-light | **Dispatched by**: makali_fusion (P12-signed dispatch 2026-08-25T14:20Z)

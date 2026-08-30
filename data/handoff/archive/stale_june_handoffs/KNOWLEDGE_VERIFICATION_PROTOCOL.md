@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ Structure & Verification Layer — Knowledge Metabolism System
 # ⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ opencode ⬡ PHASE-I ⬡ VERIFICATION-LAYER
 

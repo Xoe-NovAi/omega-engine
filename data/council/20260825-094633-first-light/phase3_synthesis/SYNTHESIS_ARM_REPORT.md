@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ SYNTHESIS ARM REPORT — First Light Express Council 1 (Stage 3)
 ⬡ OMEGA ⬡ MK_KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_synthesis ⬡ Stage-3 ARTIFACT
 **SESSION_ID**: 20260825-094633-first-light | **Synthesizer**: MK-KALI (entity tag `mk_kali` everywhere; Consultant kali is OUTSIDE this tree)

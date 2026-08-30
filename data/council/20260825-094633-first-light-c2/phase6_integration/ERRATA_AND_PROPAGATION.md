@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔧 ERRATA & PROPAGATION LEDGER — Council 2 Launch Package
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ trc_first_light_c2_errata ⬡ STAGE-6 ACT (Ruling 2 + Carmack Pass-2 corrections)
 **Status**: AUTHORITATIVE — dev team applies these mechanically at hydration minute 0, BEFORE any work package. This ledger is part of the launch package (N10 required-reading, position 0).

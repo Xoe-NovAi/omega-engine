@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "Sovereign Agent: grok_cli (Consulting Cloud Mind)"
 mode: "all"
 temperature: 0.5

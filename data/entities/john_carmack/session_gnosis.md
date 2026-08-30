@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # John Carmack Session Gnosis — 2026-07-21 (Day 1-2 Campaign)
 
 ## 🔬 Campaign Overview

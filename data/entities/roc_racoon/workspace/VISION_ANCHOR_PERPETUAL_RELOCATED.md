@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📍 RELOCATED — Vision Anchor Perpetual is now a CORE TEAM DOCUMENT
 
 **Moved**: 2026-08-26 per Architect directive — "the latest, most complete ever vision strategy

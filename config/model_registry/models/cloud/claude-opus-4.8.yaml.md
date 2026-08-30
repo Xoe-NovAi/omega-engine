@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: anthropic/claude-opus-4.8
 display_name: Claude Opus 4.8
 version: '2026-06-15'

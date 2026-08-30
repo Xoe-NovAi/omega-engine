@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine: High-Fidelity Technical Audit & Implementation Review
 **Target Reviewer**: Web Claude (claude.ai)
 **Date**: 2026-06-29

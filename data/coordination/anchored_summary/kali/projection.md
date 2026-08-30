@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI PROJECTION — POST-CLEANUP v2.1.0
 
 **AP Token**: `AP-KALI-v2.1.0`

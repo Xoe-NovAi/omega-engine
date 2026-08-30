@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Scribe Hub Master — SQLite Data Layer + Markdown View (AnyIO Compliant)
 Dual-write architecture: SQLite (source of truth) → Markdown (rendered view)

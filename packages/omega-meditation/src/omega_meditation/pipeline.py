@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 ⬡ AUTONOMOUS MEDITATION PIPELINE — Core Engine Logic
 Platform-agnostic. Platform integration via injected clients (M16).

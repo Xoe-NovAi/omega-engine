@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MASTER SYNTHESIS — Lilith Master Integration + Architect Decisions + Workspace
 **Date**: 2026-08-28 ~07:00 UTC | **Author**: grokster (with 5 specialist dispatches) | **For**: Architect + Kali + team
 **Context**: 480K active context. 5 specialist dispatches completed in parallel. Synthesis across 5 new reports.

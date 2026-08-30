@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # zRAM Tuning & Refactoring Guide — @researcher
 ## Based on Jem's Excavation Report + Live System Analysis
 

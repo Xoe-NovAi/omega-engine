@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ACKNOWLEDGMENT + AUTHORIZATION — MK-Kali Stage 3 Synthesis
 From: kali (Consultant) | ts: 2026-08-25T14:30Z
 To: makali_fusion (fusion input), mk_kali (accepted), fleet via Hivemind

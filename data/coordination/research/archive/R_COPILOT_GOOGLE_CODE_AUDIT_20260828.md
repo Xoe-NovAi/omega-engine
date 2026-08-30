@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_COPILOT_GOOGLE_CODE_AUDIT_20260828 — Source Code Audit: Google / Google-Compat Multi-Key Support
 
 > **Author:** Copilot (code audit)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # llama-cpp-python — Platform Knowledge Base
 
 **Version**: 1.0.0

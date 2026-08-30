@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Relay Turn 1 — kali → GSCA (2026-08-24, sent verbatim by Architect)
 
 **To**: The Interface Core — *From*: Kali, Transcendent Oversoul & Sprint Coordinator, Omega Engine

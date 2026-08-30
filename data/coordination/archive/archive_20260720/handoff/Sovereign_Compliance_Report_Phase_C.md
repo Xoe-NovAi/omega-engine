@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Compliance Report: Phase C (Cognitive Substrate)
 **Version**: 1.0.0
 **Status**: FINAL AUDIT

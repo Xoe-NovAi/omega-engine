@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LLOC/HLOC Legacy Mining Report — Complete Archaeological Synthesis
 > **⚠️ NOMENCLATURE DEPRECATION NOTICE**: LLOC (Low Level Octave Council) and HLOC (High Level Octave Council) are **legacy/deprecated terms** from the Gemini CLI era.
 > - **LLOC** → renamed to **Meditate** (`/meditate`) — single-inference cognitive-only multi-persona semantic prism

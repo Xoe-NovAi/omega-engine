@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Split Test Analysis — Three-Way Researcher Comparison (v1/v2/v3)
 **AP Token**: `AP-SPLIT-TEST-ANALYSIS-v1.1.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_split_test ⬡ ANALYSIS

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Roc Racoon — Operations Transfer Document
 **Date**: 2026-07-18
 **Agent**: roc_racoon

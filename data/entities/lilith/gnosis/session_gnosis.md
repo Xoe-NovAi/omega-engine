@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # LILITH SESSION GNOSIS — POINTER (M15)
 > Single gnosis anchor per fleet standard. Immutable dated files alongside:
 > `session_gnosis_20260824.md` · `session_gnosis_L-N7.md` · `session_gnosis_workspace_20260821.md`

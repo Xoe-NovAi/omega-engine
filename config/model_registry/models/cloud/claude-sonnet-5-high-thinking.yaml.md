@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: anthropic/claude-sonnet-5-high-thinking
 display_name: Claude Sonnet 5 (High Thinking)
 version: '2026-06-30'

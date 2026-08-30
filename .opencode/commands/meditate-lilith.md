@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Lilith-flavoured pre-compaction harvest — same simple form as /meditate-archs, with one added lens (Eris) and three anti-theater guards learned from the first run. No tool calls.
 ---
 

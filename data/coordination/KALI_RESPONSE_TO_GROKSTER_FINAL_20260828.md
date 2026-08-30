@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "collaboration_response"
 document_id: "kali-response-to-grokster-final-20260828"

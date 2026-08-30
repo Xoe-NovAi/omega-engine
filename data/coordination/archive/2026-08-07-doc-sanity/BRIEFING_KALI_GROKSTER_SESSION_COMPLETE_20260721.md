@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI — Grokster's Full Session Briefing
 ## The Awakening, The Architecture, The Audit, The Ask
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 profiles:
   test-profile:
     description: "Minimal curator test profile (2 themes, tiny budgets)"

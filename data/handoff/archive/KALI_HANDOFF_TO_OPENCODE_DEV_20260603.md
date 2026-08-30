@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI → OpenCode Dev Session — Complete Handoff
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_kali_handoff ⬡ PHASE-I
 # Status: Sprint 1 READY — All findings integrated, one architectural correction applied

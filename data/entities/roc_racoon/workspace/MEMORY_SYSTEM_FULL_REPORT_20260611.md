@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Memory System — Full Integration Report
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ session-model ⬡ opencode ⬡ MEMORY-SYSTEM-SYNTHESIS
 # NOTE: All esoteric terminology (Mnemosyne, spheres, Kabbalistic references) has been

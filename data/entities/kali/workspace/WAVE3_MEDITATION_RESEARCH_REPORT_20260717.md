@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Wave 3 Meditation + Research Report
 **AP Token**: `AP-WAVE3-MEDITATION-REPORT-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_wave3_report ⬡ ACTIVE

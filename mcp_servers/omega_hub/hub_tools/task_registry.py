@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Task Registry MCP Tools — Implementation
 # AP Token: AP-TASK-REGISTRY-MCP-v1.0.0
 # Location: mcp_servers/omega_hub/tools/task_registry.py

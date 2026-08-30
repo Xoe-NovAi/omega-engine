@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LILITH M34 Runtime Implementation Spec
 **AP Token**: `AP-LILITH-M34-RUNTIME-SPEC-v1.0.0`
 **Date**: 2026-08-30

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "2.0"
 document_type: "sprint_coordinator_briefing"
 document_id: "kali-briefing-alchemical-goldmine-20260830"

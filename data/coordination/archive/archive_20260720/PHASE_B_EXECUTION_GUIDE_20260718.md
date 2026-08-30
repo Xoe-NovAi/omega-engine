@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PHASE B EXECUTION GUIDE — M2 FIREWALL MIGRATION
 ## For Researcher — Handoff `ho_2a9b2e84debd`
 

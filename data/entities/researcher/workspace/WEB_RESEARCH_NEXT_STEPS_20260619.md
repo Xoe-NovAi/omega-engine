@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Web Research: Next Steps Knowledge Gaps
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ WEB_RESEARCH ⬡ KNOWLEDGE_GAP_CLOSURE
 

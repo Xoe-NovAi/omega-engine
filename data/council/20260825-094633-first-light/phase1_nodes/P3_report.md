@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P3 REPORT — NODE N3 ENGINEERING · Surface S4: `.opencode/commands/*.md`
 **[DISPATCH] P12** | source_node: node3 | source_arm: maat | tier: leaf-recon | ts: 2026-08-25T14:2xZ
 **Session**: 20260825-094633-first-light | **Task Registry**: `express-c1-node3-20260825` (registered)

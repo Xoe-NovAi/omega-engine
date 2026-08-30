@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R40 — Subagent Pair-Execution Chains
 
 **AP Token**: `AP-R40-PAIR-EXEC-v1.0.0`

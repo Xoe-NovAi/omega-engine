@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine Initial PR Plan — What Is Actually Wired to Code
 ## Complete Reference: Every File with Code References
 

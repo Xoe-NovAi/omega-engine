@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sprint Dispatch Map — Dev Wave 2026-08-26
 **AP Token**: `AP-SPRINT-DISPATCH-20260826-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ trc_sprint_dispatch ⬡ ACTIVE

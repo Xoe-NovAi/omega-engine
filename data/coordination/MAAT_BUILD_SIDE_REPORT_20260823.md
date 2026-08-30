@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Council — Build Side Report (Ma'at / N1-N5)
 **AP Token**: `AP-MAAT-BUILD-REPORT-20260823-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_maat_build_report ⬡ ACTIVE

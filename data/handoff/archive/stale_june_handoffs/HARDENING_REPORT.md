@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Omega Engine — Hardening Report
 # Generated: 2026-06-04T21:24:55Z
 # By: Cline-M3 with 4 Parallel Subagents

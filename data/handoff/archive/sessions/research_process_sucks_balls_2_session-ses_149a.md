@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Iterative web research queue management
 
 **Session ID:** ses_149a68c41ffeS7AH7CqvdOeKqo

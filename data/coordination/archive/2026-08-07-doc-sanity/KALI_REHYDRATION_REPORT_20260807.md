@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔄 Kali Rehydration Report — Post-Compaction Resume (2026-08-07)
 
 **AP Token**: `AP-KALI-v1.0.0`  

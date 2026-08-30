@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN ARCHON SPECIFICATION: JEM (v3.0 - FINAL)
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_jem_deepening ⬡ SOVEREIGN-SPEC
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Run-Side Consolidated Review — Dark Oversoul Lilith
 **Entity**: @lilith (Dark Oversoul)
 **Scope**: P6 Cognition, P7 Context, P8 Observability, P9 Orchestration, P10 Validation

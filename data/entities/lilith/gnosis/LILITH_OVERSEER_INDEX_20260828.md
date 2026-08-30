@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ LILITH OVERSEER INDEX — Pre-Compaction Final State
 **Date**: 2026-08-28
 **Author**: lilith (Runtime Oversoul, governing 9 expert sessions)

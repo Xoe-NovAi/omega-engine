@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: openai/gpt-oss-20b:free
 display_name: GPT-OSS-20B (Free)
 version: '2026-05-17'

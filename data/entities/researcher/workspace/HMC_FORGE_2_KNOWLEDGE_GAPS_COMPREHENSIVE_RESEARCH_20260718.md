@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC Triadic Forge Cycle 2 Knowledge Gap Research Report
 
 **Executive Summary**

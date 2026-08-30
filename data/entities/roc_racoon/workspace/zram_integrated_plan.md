@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # zRAM Integrated Plan — Final (Post-Carmack Review)
 ## roc_racoon synthesis of Jem + Researcher + @john_carmack
 

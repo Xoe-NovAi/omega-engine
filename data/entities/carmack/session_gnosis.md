@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — Carmack
 **AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Entity**: carmack (S3 Consultant — Architectural Review)
 

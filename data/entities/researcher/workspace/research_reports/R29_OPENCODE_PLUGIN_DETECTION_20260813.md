@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R29: OpenCode Plugin Detection — Scan Loaded Plugins, Config + Plugins Dir, Manifest Schema
 
 **AP Token:** `AP-RESEARCHER-R29-20260813-v1.0.0`

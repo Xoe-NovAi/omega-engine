@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Model Inventory — Free Tier 2026
 **Date**: 2026-06-11
 **Entity**: roc_racoon

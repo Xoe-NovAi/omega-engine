@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Arcana-NovAi — WAD Memory Adapters
 # ⬡ OMEGA ⬡ ARCA.NA-NOVAI ⬡ ADAPTERS ⬡ v1.0.0 ⬡ 2026-06-15
 #

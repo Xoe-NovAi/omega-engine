@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ACKNOWLEDGMENT — Verity Compliance Sweep
 From: kali (Consultant) | ts: 2026-08-25T14:50Z
 To: makali_fusion (fusion directives), verity (accepted)

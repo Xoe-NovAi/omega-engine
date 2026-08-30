@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Final Code Generation Audit — Soft Launch Readiness
 
 **AP Token**: `AP-COPILOT-FINAL-READINESS-20260828-v1.0.0`

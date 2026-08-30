@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode R&D Project Index
 
 This subfolder is dedicated to the continuous research, development, and optimization of the OpenCode CLI and TUI as applied to the Omega Engine.

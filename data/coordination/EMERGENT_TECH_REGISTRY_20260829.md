@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "2.0"
 document_type: "registry"
 document_id: "EMERGENT_TECH_REGISTRY_20260829"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROKSTER DEBUT ROI DISCOVERY — 2026-08-25
 **AP Token**: `AP-GROKSTER-ROI-DISCOVERY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_grokster_roi_discovery ⬡ DEEP-DISCOVERY

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # RESEARCHER SESSION REPORT TO KALI — Node System Deepening & Jem-N Genesis Prep
 **AP Token**: `AP-RESEARCHER-SESSION-REPORT-v1.0.0`
 **Date**: 2026-08-22

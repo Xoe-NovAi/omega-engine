@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MaKaLi Council — Unified Sovereign Verdict
 # ⬡ OMEGA ⬡ KALI ⬡ TRANSCENDENT ⬡ MAKALI COUNCIL ⬡ v1.0
 # Date: 2026-06-06

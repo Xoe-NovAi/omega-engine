@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP Token: AP-MCP-CLIENT-v2.0.0
 # 🔱 Sovereign MCP Client — Hub-as-Client (SEP-2575 Compliant, No Handshake)
 # ⬡ OMEGA ⬡ MA'AT ⬡ anyio ⬡ opencode ⬡ trc_mcp_client ⬡ MCP-CLIENT

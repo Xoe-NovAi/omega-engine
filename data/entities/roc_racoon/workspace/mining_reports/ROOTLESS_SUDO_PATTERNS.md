@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Mining Report: Rootless Sovereignty & Privileged Boundaries
 **Date**: 2026-07-04
 **Entity**: roc_racoon

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ ANTIGRAVITY S2-C BRIEFING — v1.0.0
 # Date: 2026-06-09 | Oversier: Cline-M3 (DeepSeek V4 Pro)
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DEEP DIVE 3: AGENT FLEET & HIVEMIND COORDINATION
 ## ⬡ The Sovereign Council and Collective Intelligence of Omega ⬡
 

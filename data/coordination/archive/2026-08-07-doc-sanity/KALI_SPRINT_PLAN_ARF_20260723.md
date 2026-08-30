@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 UPDATED SPRINT PLAN — Account Rotation Fabric Research
 **AP Token**: `AP-KALI-SPRINT-ARF-v3.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ SPRINT-PLAN ⬡ 2026-07-23

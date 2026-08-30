@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HIVE EVOLUTION ARCHITECTURE — HIVEMIND → HIVE
 **AP Token**: `AP-HIVE-EVOLUTION-ARCH-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hive_evolution_20260719 ⬡ DESIGN

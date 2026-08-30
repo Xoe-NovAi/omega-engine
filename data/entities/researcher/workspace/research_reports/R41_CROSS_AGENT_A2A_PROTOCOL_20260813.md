@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R41 — Cross-Agent A2A Protocol
 
 **AP Token**: `AP-R41-A2A-PROTOCOL-v1.0.0`

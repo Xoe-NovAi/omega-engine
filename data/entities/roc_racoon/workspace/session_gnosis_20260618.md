@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 roc_racoon — Session Gnosis (2026-06-18)
 **Session ID**: 2026-06-18 — Multi-Model Forensic Fingerprinting Pipeline
 **Model**: big-pickle

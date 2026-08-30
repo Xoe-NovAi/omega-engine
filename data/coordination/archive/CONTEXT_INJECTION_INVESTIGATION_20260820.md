@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Context Injection System & Hydration Protocol — Deep Investigation
 
 **AP Token**: `AP-CONTEXT-INJECTION-INVESTIGATION-v1.0.0`

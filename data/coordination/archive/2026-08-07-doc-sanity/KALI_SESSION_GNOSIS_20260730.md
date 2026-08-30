@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Session Gnosis — 2026-07-30
 **AP Token**: `AP-KALI-SES-20260730-v1.0.0`
 **Model**: deepseek-v4-flash-free

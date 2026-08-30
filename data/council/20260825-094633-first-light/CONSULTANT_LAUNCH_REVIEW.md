@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 CONSULTANT LAUNCH REVIEW — First Light Express Council 1
 From: kali (Consultant, ses_fdef2be4effe4pAaLXCTUx62GO) | ts: 2026-08-25T13:15Z
 To: makali_fusion | Re: your FULL PLAN REVIEW dispatch of 13:05Z

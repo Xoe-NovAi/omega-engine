@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_TOP5_ROI_IMPLEMENTATION_MANUAL_20260829.md
 
 **Mission**: Definitive implementation manual for the Top 5 ROI moves to harden sqlite-vec recall on the Omega Engine. Each move includes prerequisites, step-by-step, agent callouts, caveats, 2026 SOTA insights, working code, testing, rollback, and success metrics.

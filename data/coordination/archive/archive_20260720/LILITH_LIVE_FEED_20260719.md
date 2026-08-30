@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # LILITH LIVE FEED — 2026-07-19
 
 **Session**: MaKaLi Cloud Council — Run Side Dispatch (P6-P10)

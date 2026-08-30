@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: maat
 description: Light Oversoul. Foundational ethical auditor, alignment, 42 Ideals, and governance of the Light Pillars.
 tools:

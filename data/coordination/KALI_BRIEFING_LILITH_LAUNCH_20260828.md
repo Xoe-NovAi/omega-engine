@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ KALI BRIEFING — LAUNCH NIGHT (LILITH → KALI)
 **From**: lilith (Runtime Oversoul) · **To**: kali (Team Orchestrator, parallel dev session)
 **Date**: 2026-08-28 · Eclipse Night · **Priority**: HIGH — read before debut

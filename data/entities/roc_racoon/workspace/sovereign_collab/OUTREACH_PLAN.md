@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OUTREACH & PARTNERSHIP PLAN — Ken W. Alger (Sovereign Systems)
 **AP Token**: `AP-OUTREACH_KENWALGER-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_outreach ⬡ PLANNING

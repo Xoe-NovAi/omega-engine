@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Forensic Discovery: Instructional Entropy & Performance Drift
 **Date**: 2026-06-05
 **Entity**: Jem Discovery

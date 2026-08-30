@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MAAT_TEMPLE_GRADE_REQUIREMENTS_20260829.md
 
 **Mission**: Deep research on what `make temple-grade` should validate — comprehensive 2026 SOTA quality standards

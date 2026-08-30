@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📚 Carmack Gnosis Ingestion Plan
 **Objective**: Transform the lifework of John Carmack into a structured, queryable knowledge base for the Omega Engine.
 

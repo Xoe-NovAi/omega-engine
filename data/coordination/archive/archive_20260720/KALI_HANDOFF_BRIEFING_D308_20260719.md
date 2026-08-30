@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Handoff Briefing — Ubuntu 25.10 Toolchain Verification (D-308)
 **AP Token**: `AP-KALI-HANDOFF-D308-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_kali_handoff ⬡ 2026-07-19

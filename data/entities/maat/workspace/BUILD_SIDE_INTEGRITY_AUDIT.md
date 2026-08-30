@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Build Side Integrity Audit — Ma'at P1-P5 Analysis
 # ⬡ OMEGA ⬡ MAAT ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_build_side_audit
 **AP Token**: `AP-MAAT-BUILD-AUDIT-v1.0.0`

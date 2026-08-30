@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: ta-readme-001
 title: "Text Analytics — Artifact Index"
 generated_at: "2026-07-01T15:30:00Z"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Ubuntu 25.10 Toolchain Research Execution Plan
 **AP Token**: `AP-RESEARCH-PLAN-UBUNTU-2510-v1.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_research_plan ⬡ 2026-07-19

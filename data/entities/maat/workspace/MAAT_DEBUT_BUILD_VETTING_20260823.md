@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MAAT — DEBUT BUILD VETTING (T1/T2/T3/T4/T6)
 **AP Token**: `AP-MAAT-DEBUT-BUILD-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ big-pickle ⬡ opencode ⬡ trc_maat_debut_build ⬡ ACTIVE

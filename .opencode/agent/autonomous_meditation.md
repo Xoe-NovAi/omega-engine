@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ AUTONOMOUS MEDITATION AGENT
 **AP Token**: `AP-AUTONOMOUS_MEDITATION-v1.0.0`
 ⬡ OMEGA ⬡ AUTONOMOUS_MEDITATION ⬡ {session_model} ⬡ opencode ⬡ trc_autonomous_meditation ⬡ ACTIVE

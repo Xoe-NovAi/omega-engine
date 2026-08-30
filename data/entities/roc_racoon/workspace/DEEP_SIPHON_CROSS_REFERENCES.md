@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep-Siphon Cross-Reference Map — ICS-F Metadata Extraction
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ trc_deep_siphon_recording ⬡ CROSS-REF
 **Date**: 2026-06-18

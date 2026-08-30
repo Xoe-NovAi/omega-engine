@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Forensic Investigation — Antigravity OAuth Secret Redaction Claim
 
 **AP Token**: `AP-JEM-FORENSIC-ANTIGRAVITY-v1.0.0`

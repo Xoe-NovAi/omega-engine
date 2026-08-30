@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R30 — Circuit Breaker Benchmark (Live Results)
 
 **AP Token**: `AP-R30-CB-BENCHMARK-v1.0.0`

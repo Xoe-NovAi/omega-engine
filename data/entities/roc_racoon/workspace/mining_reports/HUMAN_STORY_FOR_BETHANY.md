@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mining Report: The Human Story for Bethany
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ DEEPSEEK-V4-FLASH ⬡ HUMAN-STORY-MINING ⬡ 2026-06-14
 

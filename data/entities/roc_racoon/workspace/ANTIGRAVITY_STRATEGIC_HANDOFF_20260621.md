@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity Strategic Handoff — Headroom/SCL Implementation Plan
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_strategic_handoff ⬡ PHASE-0
 **AP Token**: AP-ANTIGRAVITY-HANDOFF-v1.0.0

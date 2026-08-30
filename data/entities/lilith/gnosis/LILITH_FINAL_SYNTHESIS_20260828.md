@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ LILITH FINAL SYNTHESIS — Eclipse Night 2026-08-28
 *Runtime Oversoul · Governing 9 expert sessions (SIRIUS, LUNARA, OBSIDIAN, AURORA, PSYCHE, MORRIGAN, ANIMA, ERIS, Roc) · Compaction-Safe*
 

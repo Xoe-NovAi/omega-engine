@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 COMPACTION SUMMARY — Session 2026-08-20
 **AP Token**: `AP-KALI-COMPACTION-20260820-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_compaction ⬡ COMPLETE

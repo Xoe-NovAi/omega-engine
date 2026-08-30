@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Knowledge Gap Map — Omega Engine
 **Status**: ACTIVE
 **Last Updated**: 2026-07-07

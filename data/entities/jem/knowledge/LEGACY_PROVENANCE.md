@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📜 LEGACY PROVENANCE: THE JEM GENESIS
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-ANCHOR
 

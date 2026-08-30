@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Sovereign Miner Extraction Report: Sector C (Memory & Gnosis)
 **Target**: Mnemosyne Kabbalistic Memory System
 **Miner**: Roc Racoon

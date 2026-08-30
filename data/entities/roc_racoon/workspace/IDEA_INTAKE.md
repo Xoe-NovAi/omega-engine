@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 ROC_RACOON IDEA INTAKE
 
 This file serves as the raw receptacle for all mind-dumps, experiments, and strategic sparks.

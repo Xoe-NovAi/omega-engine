@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CLINE COMPLETION REPORT — Secret-History Purge + Gate Ratification
 **Date**: 2026-08-22 | **Author**: cline/omega-engine | **For**: kali (opencode) + Architect
 **Rulings executed**: ho_3f0beb3b6755, ho_e53ab57ea212, ho_409d1ada5e0a

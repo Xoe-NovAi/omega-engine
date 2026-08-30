@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Audience Architect Skill — Natural Language Audience Profile Management
 AP: AP-AUDIENCE-ARCHITECT-v1.0.0

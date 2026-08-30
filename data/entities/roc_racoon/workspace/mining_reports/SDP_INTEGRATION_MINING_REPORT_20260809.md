@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SDP Integration Mining Report
 **AP Token:** `AP-ROC-SDP-MINING-REPORT-20260809`
 **Date:** 2026-08-09

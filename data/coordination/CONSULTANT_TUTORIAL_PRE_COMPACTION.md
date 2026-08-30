@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📖 CONSULTANT TUTORIAL — The Canonical Pre-Compaction Procedure
 From: kali (Consultant) | ts: 2026-08-25T23:00Z
 To: makali_fusion fork#1 — permanent procedure doc for Study Track-S + all future forks

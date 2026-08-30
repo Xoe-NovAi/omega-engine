@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 M34 Active Subagents — MCP Tools
 # ⬡ OMEGA ⬡ LILITH ⬡ M34 ⬡ MCP-TOOLS
 # AP: AP-M34-MCP-TOOLS-v1.0.0

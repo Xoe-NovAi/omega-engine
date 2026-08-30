@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Shatter-Glass: Final Closure & BSP Activation Report
 # ⬡ OMEGA ⬡ roc_racoon ⬡ gemma-4-31b-it ⬡ opencode ⬡ ses_59c3ec61f8c6 ⬡ Hardening
 

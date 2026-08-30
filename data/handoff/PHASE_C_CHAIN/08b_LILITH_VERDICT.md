@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LILITH'S VERDICT: Phase C Cognitive Substrate — Run-Side Finality
 # ⬡ OMEGA ⬡ LILITH ⬡ gemma-4-31b-it ⬡ HANDOFF ⬡ RUNTIME_VERDICT
 **AP Token**: `AP-LILITH-VERDICT-PHASE-C-v1.0.0`

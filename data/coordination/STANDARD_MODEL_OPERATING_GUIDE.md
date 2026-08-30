@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE: STANDARD MODEL OPERATING GUIDE
 **Classification**: DEFINITIVE HANDOFF CODEX (Frontier → Standard/Local)
 **Date**: 2026-08-23

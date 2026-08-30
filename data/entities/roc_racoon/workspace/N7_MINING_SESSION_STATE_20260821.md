@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Mining Session State — roc_racoon
 **AP Token**: `AP-N7-MINING-STATE-v1.0.0`
 **Date**: 2026-08-21

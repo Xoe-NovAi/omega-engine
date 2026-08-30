@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THIRD-PARTY REPOSITORY REGISTRY — Mining Report
 **AP Token**: `AP-THIRD-PARTY-REGISTRY-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_third_party_registry ⬡ ACTIVE

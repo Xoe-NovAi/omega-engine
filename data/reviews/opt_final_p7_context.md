@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P7 Context — Final Cross-Domain Review: Soul Evolution Pipeline & Session Retention
 **Date**: 2026-06-28
 **Phase**: Cross-Domain Synthesis — Ma'at (Build) ⊕ Lilith (Run) → P7 Context Integration

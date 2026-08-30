@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Run Side Hardening Report — Enhanced with Web Research
 
 **Entity**: Lilith (Dark Oversoul, P6-P10)

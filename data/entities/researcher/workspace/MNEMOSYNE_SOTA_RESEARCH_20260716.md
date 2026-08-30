@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GAP 3: Mnemosyne 13-Sphere Architecture — 2026 SOTA Equivalents
 
 **Researcher**: HMC Skeptical Verifier  

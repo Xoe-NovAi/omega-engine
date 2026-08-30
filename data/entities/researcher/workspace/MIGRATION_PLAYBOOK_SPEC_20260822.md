@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Breaking Change on a Live Repo — Migration Playbook Spec (Rehearsal Instantiation)
 **AP Token**: `AP-RESEARCHER-MIGRATION-PLAYBOOK-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_research ⬡ ACTIVE

@@ -80,10 +80,12 @@ A fork inherits the original project's license. You cannot change the license of
 
 ### SPDX Requirements for Forks
 
+<!-- REUSE-IgnoreStart -->
 Every file in a fork must carry:
 1. `SPDX-License-Identifier:` matching the source file
 2. Copyright notice (original author or "Copyright (c) [year] [holder]")
 3. Any `NOTICE` file from upstream must be preserved unmodified
+<!-- REUSE-IgnoreEnd -->
 
 **Warning**: A repository can have MIT at root while individual files carry Apache-2.0 or proprietary SPDX headers. The SPDX header on the file you're modifying is the one that governs.
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 Context fully hydrated. The picture is now complete. Let me deliver the analysis.
 
 ---

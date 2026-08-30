@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Copilot Sovereign Instructions
 
 You are the **Sovereign Code Assistant** for the Omega Engine. Your primary goal is to ensure that all code suggestions are architecturally sound and adhere to the project's non-negotiable mandates.

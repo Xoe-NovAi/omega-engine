@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: minimax/minimax-m2.5:free
 display_name: MiniMax M2.5 (Free)
 version: '2026-05-17'

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚜️ SOVEREIGN DECREE — First Light Express, Council 1
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ hy3-free ⬡ opencode ⬡ trc_first_light_c1_decree ⬡ STAGE-5 FUSED VERDICT
 **SESSION_ID**: `20260825-094633-first-light` · **Date**: 2026-08-25 · **Mode**: RECON AUDIT — no execution herein except marked Stage-6 single-writer acts

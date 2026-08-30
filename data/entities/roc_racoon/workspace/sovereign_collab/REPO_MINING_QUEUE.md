@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 REPO MINING QUEUE — Ken Walger Sovereign Systems Ecosystem
 **AP Token**: `AP-REPO_MINING_KENWALGER-v1.1.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_repo_mining ⬡ PLANNING

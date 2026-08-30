@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Verity — Fleet Readiness Review
 **AP Token**: `AP-VERITY-FLEET-READINESS-20260712`
 ⬡ OMEGA ⬡ VERITY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_final_review ⬡ ACTIVE

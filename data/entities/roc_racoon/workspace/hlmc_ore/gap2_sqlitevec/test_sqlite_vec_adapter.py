@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — SQLiteVecAdapter M21 Contract Tests
 # ⬡ OMEGA ⬡ MEMORY ⬡ TESTS ⬡ v1.0.0 ⬡ 2026-07-13
 

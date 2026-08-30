@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 ROC_DOC_ARCHAEOLOGY — Doc-Organization Evolution Era 0→6
 **AP Token**: `AP-ROC-DOC-ARCH-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c1 ⬡ Stage-4 SPECIALIST

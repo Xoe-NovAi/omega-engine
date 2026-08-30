@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P2 Persistence — Entity Workspace & Soul Tracking Optimization
 **Date**: 2026-06-28
 **Analyzed by**: P2 (Persistence) / DataStore

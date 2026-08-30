@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 XDIST-ASYNC DEADLOCK — Comprehensive Deep-Dive Report
 
 **⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_xdist_deadlock ⬡ 2026-06-29**

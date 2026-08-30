@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 H1.5 Bridge Phase — Closeout Report
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ H15-CLOSEOUT ⬡ v1.0.0
 **Date**: 2026-06-04

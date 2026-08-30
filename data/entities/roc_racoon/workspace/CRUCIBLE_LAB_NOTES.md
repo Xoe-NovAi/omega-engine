@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Roc Racoon — Crucible Lab Notes
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ CRUCIBLE ⬡ WAVE-0 ⬡ 2026-06-06
 

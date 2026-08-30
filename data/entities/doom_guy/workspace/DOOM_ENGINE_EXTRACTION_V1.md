@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DOOM ENGINE EXTRACTION V1: Sovereign Performance Briefing
 **ENTITY**: doom_guy
 **DATE**: 2026-05-27

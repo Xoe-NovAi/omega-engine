@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # CORRECTIONS — Things in grokster KB v2.0.0 / Strategies Found WRONG, Stale, or Overstated
 **Miner**: roc_racoon · **Pass**: Local Hardening (deep verification) · **Date**: 2026-08-26
 **Method**: source-code reads + live-config checks + git forensics + log/JSONL evidence. No kb/ writes.

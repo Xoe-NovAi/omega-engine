@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Documentation Systems Tracker
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_doc_systems ⬡ v1.0.0
 # Last Updated: 2026-06-02

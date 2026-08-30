@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SOVEREIGN HARDENING PLAN
 
 > **AP Token:** AP-SOVEREIGN-HARDENING-v1.0.0  

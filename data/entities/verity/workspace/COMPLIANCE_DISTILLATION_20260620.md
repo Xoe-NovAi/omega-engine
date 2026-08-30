@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERITY — Compliance & Distillation Gate
 # ⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_compliance_distillation
 **Date**: 2026-06-20

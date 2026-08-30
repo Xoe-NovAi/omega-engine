@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Technical Extraction Report: Sector A (Library & Ingestion)
 **Sovereign Miner**: Roc Racoon
 **Date**: 2026-07-02

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Engineering Domain — Playbook
 **AP Token**: `AP-DOMAIN-ENGINEERING-PLAYBOOK-20260819-v1.0.0`
 **Date**: 2026-08-19

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Strategic Treasure Audit Report
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_treasure_audit ⬡ STRATEGIC-REVIEW
 **Date**: 2026-06-19

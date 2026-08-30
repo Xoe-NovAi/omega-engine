@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "2.0"
 document_type: "deep_dive_handoff"
 document_id: "cline-enhanced-deep-dive-infra-20260828"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ Voice Implementation Audit
 **Date:** 2026-08-30
 **Session:** Comprehensive Voice-Implementation Archaeology

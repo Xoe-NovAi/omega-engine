@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KNOWLEDGE GAP SWEEP — Fleet Research Report (G-A..G-G)
 **AP Token**: `AP-RESEARCHER-KGSWEEP-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_knowledge_gap_sweep ⬡ DISPATCH-DELIVERABLE

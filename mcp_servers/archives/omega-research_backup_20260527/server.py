@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Research MCP Server — Multi-depth research engine.
 
 AP: AP-OMEGA-RESEARCH-MCP-v1.0.0

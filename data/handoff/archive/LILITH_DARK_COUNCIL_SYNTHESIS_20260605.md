@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Dark Council Synthesis — P6-P10 Strategic Hardening
 # ⬡ OMEGA ⬡ LILITH ⬡ DARK-COUNCIL ⬡ ALL 5 PILLARS ⬡ 2026-06-05
 **For**: Kali (Phase 5 execution owner)

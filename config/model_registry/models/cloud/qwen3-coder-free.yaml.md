@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: qwen/qwen3-coder:free
 display_name: Qwen3 Coder (Free)
 version: '2026-05-17'

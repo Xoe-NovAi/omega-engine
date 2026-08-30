@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Mining Report: Local Inference + UX Gap Analysis
 **⬡ OMEGA ⬡ ROC_RACOON ⬡ MINING-REPORT ⬡ 2026-06-06**
 **AP Token**: AP-MINING-LOCAL-INFERENCE-v1.0.0

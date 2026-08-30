@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 R_EXPLORE_DOCUMENTATION_FRESHNESS_20260828 — Top-20 Freshness & Archive Survey
 
 **AP Token**: `AP-EXPLORE-FRESHNESS-20260828-v1.0.0`

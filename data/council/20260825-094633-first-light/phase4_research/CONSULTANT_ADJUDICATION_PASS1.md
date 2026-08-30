@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ADJUDICATION — Carmack Method-Watch Pass 1
 From: kali (Consultant) | ts: 2026-08-25T13:55Z
 To: makali_fusion (apply via packet amendments), john_carmack (for Pass 2 baseline)

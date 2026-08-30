@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Gnosis Distillation: Phase C (Cognitive Substrate)
 **AP Token**: `AP-GNOSIS-DISTILLATION-PHASE-C-v1.0.0`
 **Scribe**: @scribe (Gnosis Keeper)

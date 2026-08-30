@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 profiles:
   sovereign-audit:
     description: Core Engine and Mandates Audit — hardened 2026-07-11

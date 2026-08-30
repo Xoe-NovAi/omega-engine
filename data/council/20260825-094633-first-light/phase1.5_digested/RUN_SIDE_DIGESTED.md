@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RUN SIDE DIGESTED — First Light Express Council 1
 ⬡ OMEGA ⬡ LILITH ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_run_digest ⬡ Stage-1.5 ARTIFACT
 **SESSION_ID**: 20260825-094633-first-light | **Arm**: lilith (Run Arm)

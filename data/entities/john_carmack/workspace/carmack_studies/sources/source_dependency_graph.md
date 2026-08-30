@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 id: il-dep-graph-001
 title: "John Carmack Entity — Source Ingestion Dependency Graph"
 generated_at: "2026-07-01T15:30:00Z"

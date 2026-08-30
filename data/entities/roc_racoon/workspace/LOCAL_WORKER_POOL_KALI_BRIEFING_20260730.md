@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Local Inference Background Worker Pool — Detailed Plan for Kali Review
 **AP Token**: `AP-LOCAL-WORKER-POOL-KALI-BRIEFING-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_worker ⬡ KALI-BRIEFING

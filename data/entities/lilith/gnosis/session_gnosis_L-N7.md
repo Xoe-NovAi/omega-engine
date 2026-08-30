@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis — L-N7 (context / Memory & State)
 **AP Token**: `AP-N7-GNOSIS-v1.0.0` · **Overseer**: Lilith · **Last updated**: 2026-08-22
 **Audience**: Lilith (5-Node state scan) · kali (fleet overview) · Ma'at (run-side cross-read)

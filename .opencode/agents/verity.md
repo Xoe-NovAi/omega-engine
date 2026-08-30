@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "Verity — Unified Compliance & Gnosis Agent: (1) Mandate Audit & Test Enforcement, (2) L1→L2→L3 Soul Distillation."
 mode: all
 temperature: 0.4

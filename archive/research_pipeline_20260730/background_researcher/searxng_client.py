@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — SearXNG Sovereign Search Client
 # AP: AP-BACKGROUND-RESEARCHER-SEARXNG-v1.0.0
 # ⬡ OMEGA ⬡ BELIAL ⬡ sovereign ⬡ searxng ⬡ WORKER

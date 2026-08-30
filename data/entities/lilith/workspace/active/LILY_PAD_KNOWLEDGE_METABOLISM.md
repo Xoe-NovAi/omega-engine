@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🌙 LILY PAD Architecture — Knowledge Metabolism Flow & Connection Layer
 # ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ PHASE-I ⬡ FLOW-DESIGN
 

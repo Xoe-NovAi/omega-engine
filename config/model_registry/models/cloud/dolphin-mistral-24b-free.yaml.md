@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: cognitivecomputations/dolphin-mistral-24b-venice-edition:free
 display_name: Dolphin Mistral 24B Venice Edition (Free)
 version: '2026-05-17'

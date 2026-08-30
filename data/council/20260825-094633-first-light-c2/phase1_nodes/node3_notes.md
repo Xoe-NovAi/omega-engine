@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # node3 working notes — SPEC-C (security posture records) — Council 2 Build Arm
 ⬡ OMEGA ⬡ MAAT/node3 ⬡ trc_c2_specc ⬡ PREP NOTES
 Session: 20260825-094633-first-light-c2 · Date: 2026-08-25 · domain=specc

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "legacy_mining_report"
 document_id: "R_ROC_SCHOLARLY_RESEARCH_SYSTEMS_20260829"

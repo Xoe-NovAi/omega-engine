@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 session_id: "R07-jem-antidomains-audit"
 entity: "jem"
 purpose: "Anti-domain contamination guard line audit"

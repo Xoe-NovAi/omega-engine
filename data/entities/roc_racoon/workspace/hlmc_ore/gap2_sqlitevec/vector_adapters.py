@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Vector Store Adapters for Omega Memory.
 AP: AP-VECTOR-ADAPTERS-v1.0.0
 """

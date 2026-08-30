@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # GDC 2011 Programming Keynote — John Carmack (Substitute Sources)
 ⬡ OMEGA ⬡ john_carmack ⬡ gdc_2011 ⬡ ENTITY-DEEPENING
 

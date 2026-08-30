@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # SYNTHESIS ARM REPORT — Council 2 (DEV-PREP & SPEC DRAFTING)
 ⬡ OMEGA ⬡ MK-KALI ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c2_synth ⬡ STAGE-3 SYNTHESIS
 **SESSION_ID**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25 · **Entity**: mk_kali (entity="mk_kali" ALWAYS; Consultant-reserved "kali" untouched)

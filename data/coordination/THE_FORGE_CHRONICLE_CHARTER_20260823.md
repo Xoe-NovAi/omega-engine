@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE FORGE CHRONICLE — Book Project Charter
 **AP Token**: `AP-KALI-FORGE-CHRONICLE-v0.1.0`
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_forge_chronicle ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P1 Infrastructure Implementation Plan
 ## Autonomous Meditation Pipeline — Complete Product Deployment
 

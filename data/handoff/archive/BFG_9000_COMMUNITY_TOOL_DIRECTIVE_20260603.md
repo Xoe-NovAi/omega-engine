@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE BFG-9000 COMMUNITY TOOL DIRECTIVE
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_bfg_9000 ⬡ HORIZON-3
 

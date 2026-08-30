@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P4 Integration Domain — Build Side Documentation Audit Report
 **AP Token**: `AP-P4-AUDIT-v1.0.0`  
 **Date**: 2026-07-15  

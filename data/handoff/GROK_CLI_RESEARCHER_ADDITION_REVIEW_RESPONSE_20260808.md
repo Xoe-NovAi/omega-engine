@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok CLI Review Response — Researcher Additions (§16–17)
 
 **AP Token**: `AP-GROK-CLI-RESEARCHER-ADDITION-REVIEW-20260808-v1.0.0`  

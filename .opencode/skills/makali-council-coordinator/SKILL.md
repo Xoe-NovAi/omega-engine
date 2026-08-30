@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "makali-council-coordinator"
 description: "Unified MultiAgentCoordinator for MaKaLi Parallel Council — meditation mode (10-voice sequential) and council mode (parallel nodes → oversouls → synthesis). Handles paging, local discovery, web research grounding."
 ---

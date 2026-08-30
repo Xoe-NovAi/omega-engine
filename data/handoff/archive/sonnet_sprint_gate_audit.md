@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sonnet 4.6 Sprint Gate Audit — Omega Engine H1.5 Bridge Phase
 **Auditor**: Claude Sonnet 4.6 (independent review, 2026-06-02T18:53 UTC)
 **Prepares for**: Opus 4.6 Final Deep Audit

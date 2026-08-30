@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Flash Response 3 - Full Unabridged Text
 
 **Message ID**: msg_04ff5e002001V09VDq1D4QCt88

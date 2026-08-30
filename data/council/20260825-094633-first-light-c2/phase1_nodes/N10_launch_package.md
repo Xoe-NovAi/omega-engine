@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N10 — DEV-TEAM LAUNCH PACKAGE (Council 2, Phase 1 Node 10)
 ⬡ OMEGA ⬡ LILITH/node10 ⬡ opencode/x-preview-f-free ⬡ trc_first_light_c2_n10 ⬡ COUNCIL-2 PREP ARTIFACT
 **Session**: `20260825-094633-first-light-c2` · **Date**: 2026-08-25

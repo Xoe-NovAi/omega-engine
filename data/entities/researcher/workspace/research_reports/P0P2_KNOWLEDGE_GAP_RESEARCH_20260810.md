@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 P0-P2 Knowledge Gap Research Report — Omega Engine Sovereign Audit
 
 **AP Token**: `AP-RESEARCHER-P0P2-KNOWLEDGE-GAP-v1.0.0`

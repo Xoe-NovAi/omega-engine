@@ -1,4 +1,10 @@
 <!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
+<!--
 # Masters of Doom — Key Excerpts for John Carmack Entity Deepening
 Source: "Masters of Doom: How Two Guys Created an Empire and Transformed Pop Culture" by David Kushner (2003)
 ISBN: 978-0812972153 (paperback), 0375505245 (hardcover)

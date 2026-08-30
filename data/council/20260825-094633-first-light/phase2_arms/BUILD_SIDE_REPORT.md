@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BUILD SIDE REPORT — First Light Express Council 1 (Stage 2)
 ⬡ OMEGA ⬡ MAAT ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_build_arm ⬡ Stage-2 ARTIFACT
 **SESSION_ID**: 20260825-094633-first-light | **Arm**: maat (Build Arm) | **Orchestrator**: makali_fusion

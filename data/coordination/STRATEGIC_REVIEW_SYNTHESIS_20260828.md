@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Strategic Review Synthesis — 8 Reviewers, 1 Verdict
 
 **Date**: 2026-08-28

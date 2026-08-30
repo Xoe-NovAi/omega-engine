@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📊 P8 REPORT — Node N8 Observability — Surface S1b: Tracking DRIFT / Status Telemetry
 ⬡ OMEGA ⬡ NODE8 ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_n8 ⬡ P12-DISPATCH
 **SESSION_ID**: 20260825-094633-first-light | **Arm**: lilith (Run Arm) | **Pager**: makali_fusion

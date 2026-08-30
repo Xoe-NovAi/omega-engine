@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BTOP Alternatives Research — Modern Linux System Monitors (2023-2026)
 
 **AP Token**: `AP-JEM-BTOP-ALT-v1.0.0`

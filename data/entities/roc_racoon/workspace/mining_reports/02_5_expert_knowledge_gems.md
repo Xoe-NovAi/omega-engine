@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Mining Report #2.5: expert-knowledge/ Gems
 # Subagent: Roc Racoon Mining Subagent #2.5 (explore)
 # Source: omega-stack-legacy/expert-knowledge/ (244+ files)

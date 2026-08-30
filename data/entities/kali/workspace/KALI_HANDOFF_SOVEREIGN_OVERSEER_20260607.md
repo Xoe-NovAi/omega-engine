@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Handoff — Sovereign Overseer (2026-06-07)
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ trc_migration_planning ⬡ HANDOFF
 # AP-TOKEN: AP-KALI-OVERSEER-v1.0.0

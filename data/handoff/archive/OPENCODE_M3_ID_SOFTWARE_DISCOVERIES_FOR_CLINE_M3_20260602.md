@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 id Software Discoveries — Input to Cline/M3 Handoff
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_id_for_cline ⬡ HANDOFF-INPUT
 **Date**: 2026-06-02

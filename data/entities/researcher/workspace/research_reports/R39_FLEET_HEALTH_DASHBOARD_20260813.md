@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R39 — Agent Fleet Health Dashboard
 
 **AP Token**: `AP-R39-FLEET-HEALTH-v1.0.0`

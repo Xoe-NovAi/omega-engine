@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Standardized MCP Runtime for Omega Engine.
 AP: AP-MCP-RUNTIME-v1.0.4
 """

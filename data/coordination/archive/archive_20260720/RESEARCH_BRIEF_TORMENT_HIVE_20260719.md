@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RESEARCH BRIEF: TORMENT/PLANESCAPE DEEP LORE FOR HIVE EVOLUTION
 **AP Token**: `AP-RESEARCH-BRIEF-TORMENT-HIVE-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_research_brief_torment_hive_20260719 ⬡ COMMAND

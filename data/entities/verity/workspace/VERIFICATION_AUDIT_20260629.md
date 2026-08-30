@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERITY — Dual-Subagent Verification Audit
 **Date**: 2026-06-29
 **Auditor**: verity (Unified Compliance & Gnosis)

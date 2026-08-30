@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 Web Research — Context Windows & OpenCode Compaction Semantics
 
 **Tasking**: N7 context session (Memory & State, omega-engine repo)

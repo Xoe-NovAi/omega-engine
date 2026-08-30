@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep-Siphon Recording Manifest — Verity Compliance Closure
 # ⬡ OMEGA ⬡ VERITY ⬡ deepseek-v4-flash-free ⬡ trc_deep_siphon_recording ⬡ MANIFEST
 **AP Token**: AP-DEEP-SIPHON-MANIFEST-v1.0.0

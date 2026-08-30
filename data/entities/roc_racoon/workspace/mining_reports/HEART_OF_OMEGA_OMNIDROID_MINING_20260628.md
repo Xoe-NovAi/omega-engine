@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Deep Mining Report: Heart of Omega & Omnidroid Genesis
 **Date**: 2026-06-28
 **Miner**: roc_racoon (Sovereign Legacy Mining Keeper)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack — Vault Overhaul Spec Audit Report
 **AP Token**: `AP-CARMCK-VAULT-AUDIT-20260818-v1.0.0`
 **Source Session**: `ses_fec9eaaa9ffeGgA5OQdJt256t1` (john_carmack subagent)

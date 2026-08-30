@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📖 FLE CHRONICLE & OPERATOR'S MANUAL — Required Reading §0
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ ox-alpha ⬡ opencode ⬡ trc_fle_chronicle
 **Purpose**: You are a fresh session with zero context. This file is the letter your predecessor wrote to you. Read it BEFORE session_gnosis_20260825_fle.md (which is state; this is understanding). Companion: `Archs-*.md` exports in fle_study dir are the raw primary transcripts if you need ground truth.

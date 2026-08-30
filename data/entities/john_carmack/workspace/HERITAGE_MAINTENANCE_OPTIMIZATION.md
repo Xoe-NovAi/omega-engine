@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Heritage Maintenance Optimization Review
 **Entity**: JOHN_CARMACK
 **Date**: 2026-07-13

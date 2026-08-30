@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DEV SPRINT 0 — Implementation Manual
 # ⬡ OMEGA ⬡ SOPHIA ⬡ plan.md (Architect) ⬡ Gemma 4 31B ⬡ SPRINT-0
 # Date: 2026-06-02 | Synthesized by Opus 4.6 from 3-model audit chain

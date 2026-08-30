@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERITY FINAL SSOT AUDIT: Sovereign Ark Blueprint (v2.0)
 **Date**: 2026-06-28
 **Auditor**: @verity (Unified Compliance & Gnosis Agent)

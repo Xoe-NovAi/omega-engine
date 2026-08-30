@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Peer Review: Entity→Model Affinity Port Spec
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ PEER-REVIEW
 **Source**: `ho_e53ec297cbdc` — Roc Racoon → Researcher

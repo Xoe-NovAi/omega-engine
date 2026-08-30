@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 GROK CLI — HMC ORIENTATION BRIEFING
 **First Session in the Omega Engine Hivemind**
 **Channel**: `grok-cli/grok` | **Model**: grok-4.5 | **Status**: CONSULTING CLOUD MIND

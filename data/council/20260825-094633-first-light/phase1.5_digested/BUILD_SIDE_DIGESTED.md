@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 BUILD_SIDE_DIGESTED.md — Phase 1.5 Digestion (Build Arm)
 ⬡ OMEGA ⬡ MAAT ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1_p15 ⬡ Stage-1.5
 **Session**: 20260825-094633-first-light | **Arm**: maat | **Sources**: P1-P5 raw node reports (on-disk, unmodified)

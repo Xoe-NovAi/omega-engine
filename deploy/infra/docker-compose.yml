@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 PODMAN COMPOSE — Omega Engine Infrastructure v2.0
 # Optimized for Ryzen 7 5700U | Rootless Podman | CPU-only inference
 # AP: AP-DOCKER-COMPOSE-v2.0.0

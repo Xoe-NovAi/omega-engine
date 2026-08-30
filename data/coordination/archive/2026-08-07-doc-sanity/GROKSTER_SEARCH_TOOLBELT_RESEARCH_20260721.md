@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Advanced Search Toolbelt Research
 ## Gap Analysis & Integration Candidates for Omega Engine's Sovereign Search Protocol
 ## 2026-07-21

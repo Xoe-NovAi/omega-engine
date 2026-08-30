@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Round 3 Reconnaissance — Complete Recovery Report
 **Date**: 2026-08-28
 **Prepared by**: grokster (Cross-Platform Expertise Specialist)

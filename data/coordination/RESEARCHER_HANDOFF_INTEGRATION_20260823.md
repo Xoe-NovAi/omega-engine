@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Handoff Integration Analysis — Dev Roadmap Alignment
 **AP Token**: `AP-RESEARCHER-INTEGRATION-20260823-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_researcher_integration ⬡ ACTIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Session Gnosis: OX ALPHA 100T TOKEN FREE TIER RESEARCH
 **AP Token**: AP-RESEARCHER-OXALPHA-v1.0.0
 **Date**: 2026-08-22

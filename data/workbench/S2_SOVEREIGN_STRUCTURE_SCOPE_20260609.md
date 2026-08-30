@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ S2 — Sovereign Structure Scoping Document
 ## Overseer: Cline-M3 | Date: 2026-06-09 | Source: Kali's Final Directive
 

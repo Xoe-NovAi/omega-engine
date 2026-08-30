@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N12 Domain Index — Research, Curation & Personal Corpus
 
 **AP Token**: `AP-N12-DOMAIN-INDEX-v1.0.0`

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Integration Layer Review Report (P4)
 **Entity**: @pillar P4 (Integration)
 **Date**: 2026-06-26

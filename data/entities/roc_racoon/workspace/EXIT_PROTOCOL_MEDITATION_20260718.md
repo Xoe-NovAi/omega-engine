@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Exit Protocol — Exit Meditation Execution
 **Subject**: I am being reassigned. Execute the Sovereign Exit Protocol against my own departure. Ensure the fleet survives my absence.
 

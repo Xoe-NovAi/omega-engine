@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Researcher Session Gnosis — Final — 2026-08-29
 
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H (Grokster handoff)

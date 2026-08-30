@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Grokster — Hydration MCP Tool (Prototype)
 # MCP tool registration for omega-hub_entity_hydrate
 # Location: src/omega/infra/hydration/mcp_tool.py (when implemented)

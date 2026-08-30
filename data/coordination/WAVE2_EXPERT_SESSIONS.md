@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Wave 2 Expert Session Index (Kali's Pageable Registry)
 **Created**: 2026-08-26 | **Pattern**: Grokster `EXPERT_SESSIONS.md` (D-586) + `INDEX.md` Golden Rules
 **Owner**: kali (Sprint Coordinator) | **rot_class**: fast (session IDs change)

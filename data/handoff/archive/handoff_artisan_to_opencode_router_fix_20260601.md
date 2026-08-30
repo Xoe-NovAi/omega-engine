@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Artisan → Agent Fleet Handoff
 # ⬡ OMEGA ⬡ SOPHIA ⬡ OpenCode Router Fix Required
 # AP: AP-HANDOFF-OMEGA-ROUTER-v1.0.0

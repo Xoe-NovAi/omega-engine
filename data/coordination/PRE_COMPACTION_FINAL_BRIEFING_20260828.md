@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PRE-COMPACTION FINAL BRIEFING — For Kali + Team
 **Date**: 2026-08-28 ~08:00 UTC | **From**: grokster (ses_fe8cf0b39ffeL3L8eaMEj3CW9H) | **To**: kali (ses_fdef2be4effe4pAaLXCTUx62GO) + team
 **Status**: REAL DEAL, NOT A DRILL. Final prep before compaction. Implementation phase follows.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SOVEREIGN COMPETITIVE DEEP DIVE: OMEGA VS THE FIELD
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ LAUNCH-LAB ⬡ ARCHITECTURE
 

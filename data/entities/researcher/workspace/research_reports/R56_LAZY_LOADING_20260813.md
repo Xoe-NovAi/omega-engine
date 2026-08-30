@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R56 — OpenCode v1.17+ Lazy Loading Edge Cases  ⚠️ RECONSTRUCTED STUB
 
 **AP Token**: `AP-R56-LAZY-LOADING-STUB-v1.0.0`

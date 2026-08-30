@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VISION DEEP DIVE — CHILD 1: EARLY ERA 6 FOUNDING WEEK
 ## Roc's Eyewitness Reconstruction of Session ses_1748fd797ffe1rJT1WBtmaOKhN ("Roc Racoon v1")
 

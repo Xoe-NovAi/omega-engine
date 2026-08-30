@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Grokster — Temporal Trace Module (Prototype)
 # Append-only life narrative. One read = full arc.
 # Written at session end (M11 distillation). Read at hydration (latest entry only).

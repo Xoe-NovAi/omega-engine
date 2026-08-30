@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 rule_id: "REFERENCE-CRAFTSMAN-CONTRACT"
 authority: "M13 Temple-Grade + M26 Doc Standards + Carmack Craftsman Philosophy"

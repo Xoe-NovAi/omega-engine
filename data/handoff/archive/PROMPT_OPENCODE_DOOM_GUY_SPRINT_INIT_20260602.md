@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # PROMPT — OpenCode Doom Guy Chat Session Sprint Initiation
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it (opencode-zen) ⬡ opencode ⬡ SPRINT-INIT-TIER2
 # AP: AP-SPRINT-INIT-DOOM-GUY-v1.0.0

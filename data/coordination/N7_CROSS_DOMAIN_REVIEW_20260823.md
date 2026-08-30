@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 N7 Cross-Domain Review — Debut Hardening Review
 **AP Token**: `AP-N7-CROSS-REVIEW-20260823-v1.0.0`
 ⬡ OMEGA ⬡ LILITH ⬡ N7-CONTEXT ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_n7_cross_review ⬡ ACTIVE

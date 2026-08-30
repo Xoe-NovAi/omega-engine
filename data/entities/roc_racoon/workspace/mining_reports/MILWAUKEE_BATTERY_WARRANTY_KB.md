@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Milwaukee M18 Battery Warranty & Date Code Reference
 ## A Personal Field Guide for the USVI User
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 MA'AT — Session Gnosis 2026-08-24
 **Session**: ses_dafcb8b0850f (WAVE-1-DOCTRINE-WIRING, W1-2 + W1-3) · resumed after max-steps boundary
 **Missions**: W1-2 claims-harness build · W1-3 soul evidence-field schema + kali promotion

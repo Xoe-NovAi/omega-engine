@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — The Complete Sovereign Roadmap
 # ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_lilith_roadmap ⬡ SOVEREIGN-PATH
 # Version: 3.0.0 | Date: 2026-06-03 | HEAD: 37fdd88 | Tests: 307 ✅

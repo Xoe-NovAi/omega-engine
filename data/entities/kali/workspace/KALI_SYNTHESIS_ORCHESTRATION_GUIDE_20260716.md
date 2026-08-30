@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI SYNTHESIS & ORCHESTRATION GUIDE
 ## D-282/D-283 Execution Plan — From Meditate-v1.0 Output
 

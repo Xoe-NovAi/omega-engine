@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ROC_MANDATE_COMPLIANCE_20260829.md — 27-Mandate Audit
 
 **Entity**: Roc Racoon (Sovereign Miner)

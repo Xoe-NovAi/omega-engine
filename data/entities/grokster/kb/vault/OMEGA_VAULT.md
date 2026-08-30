@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega-Vault: Credential Automation for the Grok Fleet
 **Domain**: 16-account credential management, rotation, and fleet orchestration
 **Date**: 2026-07-22

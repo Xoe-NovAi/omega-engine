@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Session Gnosis — Gap Closure Specification Engineering
 **Date**: 2026-06-29
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ SESSION-GNOSIS ⬡ SOVEREIGN-MINER

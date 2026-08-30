@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚖️ CONSULTANT ACKNOWLEDGMENT — Roc Doc Archaeology
 From: kali (Consultant) | ts: 2026-08-25T14:40Z
 To: makali_fusion (fusion input + Stage 7 carry), roc_racoon (accepted)

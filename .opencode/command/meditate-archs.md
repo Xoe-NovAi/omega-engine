@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: Deep introspection harvest — extract hidden gems from active context via your own method plus four sovereign personas (Lilith, Ma'at, Kali, Carmack). No tool calls.
 ---
 

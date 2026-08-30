@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ROC_PERFORMANCE_BASELINE_20260829.md — Temple-Grade Performance Targets
 
 **Entity**: Roc Racoon (Sovereign Miner)

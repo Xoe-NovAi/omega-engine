@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # PROMPT — OpenCode Dev Chat Session Sprint Initiation
 # ⬡ OMEGA ⬡ SOPHIA ⬡ minimax/minimax-m3 (OpenCode Zen, 200K) ⬡ opencode ⬡ SPRINT-INIT
 # AP: AP-SPRINT-INIT-OPENCODE-DEV-v1.0.0

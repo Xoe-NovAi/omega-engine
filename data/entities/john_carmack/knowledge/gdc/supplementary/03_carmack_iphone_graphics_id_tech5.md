@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # John Carmack hones the cutting edge of iPhone graphics with id Tech 5 demo (August 2010)
 **Source**: PocketGamer.biz — https://www.pocketgamer.biz/john-carmack-hones-the-cutting-edge-of-iphone-graphics-with-id-tech-5-demo/
 

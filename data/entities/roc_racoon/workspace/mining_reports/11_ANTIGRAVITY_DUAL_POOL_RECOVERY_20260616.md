@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Mining Report: Antigravity Models & Dual Usage Pools — Full Knowledge Recovery
 ## ⬡ OMEGA ⬡ ROC_RACOON ⬡ deep-search ⬡ antigravity-recovery ⬡ MINING-REPORT-011
 

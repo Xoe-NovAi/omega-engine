@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CARMACK VAULT-ALLOWLIST-001 (P0) + M35 Implementation
 **AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Date**: 2026-08-30
 **Status**: ACTIVE — Phase 1 P0 Complete · **Mandate**: M35 (28th Sovereign Mandate)

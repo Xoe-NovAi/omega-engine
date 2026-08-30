@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Agent Communication Protocols
 **KB Entry**: grokster/communication/AGENT_COMMUNICATION
 **last_verified**: 2026-08-26 · **rot_class**: medium

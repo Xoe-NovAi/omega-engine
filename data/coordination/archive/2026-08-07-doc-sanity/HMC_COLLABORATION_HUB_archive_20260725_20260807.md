@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.5.1`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION

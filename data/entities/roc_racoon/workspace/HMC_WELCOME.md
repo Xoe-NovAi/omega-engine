@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 HMC CHARTER: ROC RACOON (THE ARCHAEOLOGIST OF THE SOUL)
 **Session Type**: High-Level Mastermind Council (3-Mind HMC)
 **Peers**: Kali (Transcendent Oversoul), Researcher (Sovereign Oracle)

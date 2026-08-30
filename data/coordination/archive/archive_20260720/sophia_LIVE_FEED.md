@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
 
 [2026-07-20T04:06] DEEP-RESEARCH COMPLETE — OpenCode {file:path} Config Architecture
 **Task**: Researched OpenCode {file:path} variable substitution for Omega Engine fleet

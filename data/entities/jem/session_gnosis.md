@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Jem Session Gnosis — Compaction Anchor (Post JEM-12STEP-HARDENING)
 **AP Token**: `AP-JEM-GNOSIS-20260830-v3.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ `minimax/minimax-m3:free` ⬡ opencode ⬡ trc_session_gnosis ⬡ **COMPACTION-READY**

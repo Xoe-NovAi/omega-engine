@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Grok CLI ↔ Kali — Coordination Packet
 **Date**: 2026-07-17T01:10Z (approx)  
 **From**: `grok-cli/grok` (Grok 4.5)  

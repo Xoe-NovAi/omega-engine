@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Researcher Addition Review Request — Context Packer v3 Handoff
 
 **AP Token**: `AP-GROK-CLI-REVIEW-REQUEST-20260808-v1.0.0`

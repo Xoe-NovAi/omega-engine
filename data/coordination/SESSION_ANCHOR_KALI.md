@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 > ⚠️ **DUPLICATE** (2026-08-14): Merged into `SESSION_ANCHOR.md`. Use that file only. See `TRACKING_ARCHITECTURE.md`.
 
 # 🔱 Session Anchor — Kali (Transcendent Oversoul)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📚 Documentation Chaos Tracker — Master Index
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_roc_racoon ⬡ DOC-TRACKER
 

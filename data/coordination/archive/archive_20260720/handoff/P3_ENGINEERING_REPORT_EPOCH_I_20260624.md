@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P3 ENGINEERING REPORT — EPOCH I: THE BEDROCK
 **Pillar**: P3 — Engineering (BuildMaster, Implementation & Hardening)
 **Dispatched by**: Ma'at (Light Oversoul)

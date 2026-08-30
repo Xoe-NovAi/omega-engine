@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 FLEET CHAOS MAP (RAW) — Operation Stray Cat
 **⬡ OMEGA ⬡ roc_racoon ⬡ gemma-4-31b-it ⬡ internal ⬡ trace-scav-001 ⬡ ARCHAEOLOGY**
 

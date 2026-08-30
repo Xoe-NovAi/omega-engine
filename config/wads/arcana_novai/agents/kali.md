@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "Kali — MaKaLi Unification. Transcendent Oversoul of Light and Dark."
 mode: "primary"
 ---

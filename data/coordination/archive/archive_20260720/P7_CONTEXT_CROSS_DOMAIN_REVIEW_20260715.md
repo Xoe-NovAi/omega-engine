@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P7 Context Cross-Domain Review — MaKaLi Cloud Council
 **Oversoul**: P7 Context (Memory & Soul Evolution)
 **Date**: 2026-07-15

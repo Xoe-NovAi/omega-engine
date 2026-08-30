@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "deep_discovery_report"
 document_id: "R_ROC_OPENCODE_COMPACTION_DEEP_DIVE_20260829"

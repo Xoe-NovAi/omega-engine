@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ SOVEREIGN DEBT SYNTHESIS — Full Remediation Queue
 # Date: 2026-06-09 | Author: Antigravity IDE | Sprint: S2-C
 # Source: ANTIGRAVITY_S2C_BRIEFING_20260609.md + Kali Gap Synthesis + Roc S2-D

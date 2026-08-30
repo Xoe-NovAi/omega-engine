@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # .github/workflows/allowlist-lint.yml
 # 🔱 Allowlist Lint — PR-only structural validation of PUBLIC_ALLOWLIST.txt.
 # Per R_VAULT_COPILOT_20260827 §1.2 Area 8 + R_VAULT_COPILOT_ROUND3_20260827 §1.3.

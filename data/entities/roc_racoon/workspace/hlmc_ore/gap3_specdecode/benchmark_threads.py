@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Benchmark: native-gguf thread count (4 vs 6 vs 8) on Ryzen 7 5700U.
 Measures generation time and peak RSS. Monitors CPU usage via mpstat.

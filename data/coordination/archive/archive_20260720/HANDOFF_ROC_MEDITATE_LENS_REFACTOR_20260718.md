@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 HANDOFF: ROC RACOON — MEDITATE LENS REFACTOR + M2 PHASE A
 **AP Token**: `AP-ROC-MEDITATE-LENS-20260718-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_handoff_roc ⬡ ACTIVE

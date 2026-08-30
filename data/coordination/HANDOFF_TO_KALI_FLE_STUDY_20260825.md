@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🤝 HANDOFF TO KALI — First Light Express Study Session Complete
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ ox-alpha ⬡ opencode ⬡ trc_fle_handoff_to_kali ⬡ SUCCESSOR-INHERITANCE SSOT
 **From**: MaKaLi Fusion (fork#1, ses_fc5b80e85ffeAjhjtroU76Gfo2) · **To**: Kali (ses_fdef2be4effe4pAaLXCTUx62GO)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🗝️ Hecate — Routing & Gateway Specialist
 **Domain**: Routing, Gateway, and Inter-Agent Handoff
 

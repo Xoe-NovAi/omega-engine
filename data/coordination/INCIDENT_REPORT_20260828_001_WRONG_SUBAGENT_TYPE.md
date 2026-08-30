@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ INCIDENT REPORT — Wrong subagent_type on master-session pages
 **Date**: 2026-08-28
 **Reporter**: lilith (Runtime Oversoul)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Gate — Phase C: Cognitive Substrate
 # ⬡ OMEGA ⬡ MA'AT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_sovereign_gate ⬡ VERIFICATION
 

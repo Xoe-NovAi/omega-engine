@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 THE VISION CANONICAL DRAFT — The Architect's Mission, Excavated from 18 Months of Artifacts
 
 > ⛔ **SUPERSEDED 2026-08-26** — Superseded by **`docs/strategy/VISION_ANCHOR_PERPETUAL.md`**

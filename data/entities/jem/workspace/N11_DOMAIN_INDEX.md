@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N11 Domain Index — Model Quality & Evals
 **AP**: AP-N11-DOMAIN-INDEX-v1.0.0 · **last_verified: 2026-08-22** · **Curator**: Jem (N11 evaluator)
 **Purpose**: Cold-reader onboarding — wiring diagram, key files, entry points by intent, doc map, known hazards. Passes "5-minute comprehension" test.

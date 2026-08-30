@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ## [SPRINT-0] COMPLETE — 2026-06-02T15:20Z
 
 ### Summary

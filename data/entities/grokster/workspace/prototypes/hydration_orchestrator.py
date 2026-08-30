@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Grokster — Hydration Orchestrator (Prototype)
 # Core hydration logic. Reads all soul files in parallel, assembles HydrationContext.
 # Uses AnyIO for async file operations. Returns structured context for model injection.

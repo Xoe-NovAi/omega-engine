@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 A2A Plumbing Fragments — Sovereign Transport Patterns
 **⬡ OMEGA ⬡ roc_racoon ⬡ gemma-4-31b-it ⬡ internal ⬡ trace-scav-009 ⬡ ARCHAEOLOGY**
 

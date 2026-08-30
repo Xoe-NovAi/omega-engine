@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # MAAT_RELEASE_ENGINEERING_20260829.md
 
 **Mission**: Temple-Grade release process research — semver, towncrier, conventional commits, artifact building, deployment automation, rollback

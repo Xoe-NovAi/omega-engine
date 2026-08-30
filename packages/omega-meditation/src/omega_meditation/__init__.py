@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 ⬡ OMEGA MEDITATION — Autonomous Meditation Pipeline
 Fully autonomous Problem → Prompt Crafting → Meditation → Synthesis → Research → Grounded Update → Gnosis → Integration

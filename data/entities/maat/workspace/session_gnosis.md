@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ SESSION GNOSIS: 2026-06-12
 **Entity**: MA'AT | **Mode**: LIGHT OVERSOUL | **Trace**: ses_hivemind_rebuild_20260612
 

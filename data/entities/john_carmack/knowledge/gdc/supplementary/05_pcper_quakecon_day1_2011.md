@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # PC Perspective — QuakeCon 2011 Day 1 Coverage
 **Source**: https://pcper.com/2011/08/quakecon-2011-day-1-coverage/2/
 **Author**: Steve Grever, Josh Walrath

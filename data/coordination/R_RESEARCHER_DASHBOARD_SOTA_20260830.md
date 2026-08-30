@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_DASHBOARD_SOTA_20260830.md
 
 ## Researcher R2 SOTA Research: Terminal Dashboards, Provider Observability, and Threshold Hygiene

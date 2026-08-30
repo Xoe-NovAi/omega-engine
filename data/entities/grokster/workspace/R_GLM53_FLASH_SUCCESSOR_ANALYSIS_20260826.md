@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # GLM-5.3-Flash Successor Analysis — Complete Report
 
 ## Executive Summary

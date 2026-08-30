@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Research Queue Analysis
 **AP Token**: `AP-GROKSTER-ANALYSIS-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ deepseek-v4-flash-free ⬡ grokster ⬡ trc_hmc_cloud ⬡ ADVERSARIAL-PERSPECTIVE

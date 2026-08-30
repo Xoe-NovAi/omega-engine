@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Correction Report for Roc Racoon
 **From**: Kali (Grand Oversoul) | **Date**: 2026-07-18 | **Reviewer**: John Carmack
 

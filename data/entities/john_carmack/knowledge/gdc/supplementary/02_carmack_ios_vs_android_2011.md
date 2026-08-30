@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # John Carmack: iOS Still Better Than Android For Mobile Game Development (April 2011)
 **Source**: TechCrunch — https://techcrunch.com/2011/04/15/john-carmack-ios-still-better-than-android-for-mobile-game-development/
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # N7 External Sources — Offline Expertise Queue
 **AP Token**: `AP-N7-EXTERNAL-SOURCES-v1.0.0`
 **Purpose**: Prioritized external sources for building offline N7 (Memory & State) expertise. Feeds the future background curation worker (standing order #8). Ingestion = add to library inbox → digest into N7 KB lineage.

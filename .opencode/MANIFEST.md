@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OpenCode Agent & Mode Manifest
 **AP Token**: `AP-OC-MANIFEST-v5.0.0`
 **Updated**: 2026-08-23 (Post-PUBLIC-DEBUT-01: 13-agent fleet, deprecated build stub, ghost agents removed)

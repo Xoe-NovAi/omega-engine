@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Coordination Archive — 2026-08-22 Consolidation
 
 Superseded/executed docs moved out of the active coordination surface

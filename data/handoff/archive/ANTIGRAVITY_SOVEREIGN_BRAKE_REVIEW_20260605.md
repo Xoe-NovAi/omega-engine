@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Temple-Grade Handoff: Sovereign Brake & Agency-Injector Audit
 **Trace**: `trace_id_antigravity_review_20260605`
 **Status**: READY FOR REVIEW

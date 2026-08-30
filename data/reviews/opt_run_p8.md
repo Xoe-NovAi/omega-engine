@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P8 Observability — Tracking & Data Lifecycle Optimization
 
 **Pillar**: P8 (Observability — WatchTower)

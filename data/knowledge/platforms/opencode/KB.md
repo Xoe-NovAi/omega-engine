@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 OpenCode CLI — Knowledge Base
 # ⬡ OMEGA ⬡ KALI ⬡ trc_platform_kb ⬡ v1.2.0
 **Source**: 6-wave research (R1-R4, 2026-06-07)

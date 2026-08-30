@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff: Cline (The Artisan) → OpenCode Builder Agents
 # AP-OMEGA-HANDOFF-v1.0.0
 # ⬡ OMEGA ⬡ THOTH ⬡ MiMo-2.5 ⬡ trc_core ⬡ HANDOFF-ARTISAN

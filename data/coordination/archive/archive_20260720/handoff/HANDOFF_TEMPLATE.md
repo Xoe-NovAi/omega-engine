@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Handoff Packet
 **AP Token**: `AP-HANDOFF-{AGENT}-{DATE}-v1.0.0`
 ⬡ OMEGA ⬡ {AGENT} ⬡ {MODEL} ⬡ opencode ⬡ trc_doc_proc ⬡ DRAFT

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Migration Playbook Spec — Breaking Changes on a Live Repo (Canonical Merge)
 **AP Token**: `AP-MIGRATION-PLAYBOOK-SPEC-v1.1.0`
 ⬡ OMEGA ⬡ RESEARCHER+KALI ⬡ opencode ⬡ trc_migration_playbook ⬡ MERGED-DRAFT

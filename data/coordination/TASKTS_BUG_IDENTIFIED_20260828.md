@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 THE ACTUAL ROOT CAUSE: Bug in `task.ts:158` — Session Created Without Model
 **AP Token**: `AP-QWEN-TASKTS-BUG-20260828-v1.0.0`
 **Date**: 2026-08-28 ~23:55 UTC

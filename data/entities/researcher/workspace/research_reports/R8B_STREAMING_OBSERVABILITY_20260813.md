@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap R8b: OBS-1 Re-scoped — Streaming Observability Implementation
 
 **AP Token:** `AP-RESEARCHER-R8B-20260813-v1.0.0`

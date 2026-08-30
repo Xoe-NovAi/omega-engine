@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_RESEARCHER_SQLITE_VEC_REMAINING_GAPS_20260829.md
 
 **Mission**: Deep research on remaining gaps (beyond the 9 already fixed) in the Omega Engine sqlite-vec setup.

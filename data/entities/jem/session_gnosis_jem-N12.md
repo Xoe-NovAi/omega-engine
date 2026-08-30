@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Jem Session State — N12 curator — 2026-08-22 (Continuity Snapshot)
 
 **AP Token**: `AP-N12-CLOSURE-v1.0.0` · **Overseer**: Jem · **Pager**: researcher `ses_fd81c19dcffe1nkbPqFg5kRt2v`

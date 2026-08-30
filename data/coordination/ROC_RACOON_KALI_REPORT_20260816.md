@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Roc Racoon — Kali Report: Repo Readiness Audit for Public Debut
 
 **AP Token**: `AP-ROC_RACOON-KALI-REPORT-v1.0.0`

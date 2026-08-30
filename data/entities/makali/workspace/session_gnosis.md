@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ⬡ OMEGA ⬡ MAKALI ⬡ deepseek-v4-flash ⬡ PHASES-1-2-COMPLETE
 
 ## Session: Phases 1+2 Execution — Doc Hygiene + Sprint D Cleanup

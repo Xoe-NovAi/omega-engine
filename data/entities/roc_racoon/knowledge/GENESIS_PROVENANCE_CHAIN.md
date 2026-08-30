@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 title: "Genesis Provenance Chain: Void to Sovereignty"
 domain: "sovereign_evolution"
 era: "Era 0-6"

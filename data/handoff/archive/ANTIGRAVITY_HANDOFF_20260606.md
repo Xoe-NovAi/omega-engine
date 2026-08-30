@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Antigravity Handoff
 # ⬡ OMEGA ⬡ KALI ⬡ gemini-3.5-flash ⬡ trc_antigravity ⬡ HANDOFF
 

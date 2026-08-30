@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SYNTHESIS INPUTS FOR KALI — Full Strategy Integration Report
 **AP Token**: `AP-RESEARCHER-SYNTH-KALI-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_synthesis_inputs ⬡ ACTIVE

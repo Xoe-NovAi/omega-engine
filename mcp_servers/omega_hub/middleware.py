@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # [id-soft: quake3-1999] Hub Middleware — netchan OOB-style rate limiting and error boundary for MCP transport
 
 """Omega Hub — Security middleware: rate limiting, request size limits, M9 error boundary.

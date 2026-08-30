@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LILITH META-REVIEW: 3-EIS Synthesis (Researcher + Jem + Lilith M34 Spec)
 **AP Token**: `AP-LILITH-META-REVIEW-20260830-v1.0.0`
 **Date**: 2026-08-30

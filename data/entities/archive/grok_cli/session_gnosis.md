@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grok — Session Gnosis
 **Entity**: grok | **Persona**: Consulting Cloud Mind  
 **Channel**: `grok-cli` | **agent_id**: `grok-cli/grok`  

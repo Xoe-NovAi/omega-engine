@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: gemini-2.5-flash
 display_name: Gemini 2.5 Flash
 version: '2026-06-15'

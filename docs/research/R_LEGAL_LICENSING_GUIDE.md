@@ -86,6 +86,7 @@ SPDX (Software Package Data Exchange) identifiers are standardized labels for li
 
 ### How to Add SPDX Headers
 
+<!-- REUSE-IgnoreStart -->
 ```python
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 Xoe-NovAi Foundation
@@ -96,9 +97,11 @@ def my_function():
     """Function docstring."""
     pass
 ```
+<!-- REUSE-IgnoreEnd -->
 
 ### SPDX for Different File Types
 
+<!-- REUSE-IgnoreStart -->
 | File Type | Header Format |
 |-----------|---------------|
 | **Python** | `# SPDX-License-Identifier: Apache-2.0` |
@@ -106,6 +109,7 @@ def my_function():
 | **Markdown** | `<!-- SPDX-License-Identifier: Apache-2.0 -->` |
 | **YAML** | `# SPDX-License-Identifier: Apache-2.0` |
 | **Shell** | `# SPDX-License-Identifier: Apache-2.0` |
+<!-- REUSE-IgnoreEnd -->
 
 ---
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # LILITH SESSION GNOSIS — 2026-08-24 (W1-1 Canonical Registration)
 
 ## L1 — NARRATIVE

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 VERITY — FULL GOVERNANCE EXTRACTION & BLUEPRINT ALIGNMENT
 **Date**: 2026-06-28
 **Agent**: @verity (Unified Compliance & Gnosis Agent)

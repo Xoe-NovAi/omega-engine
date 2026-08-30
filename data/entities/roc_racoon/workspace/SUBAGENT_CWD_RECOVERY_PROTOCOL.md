@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 SUBAGENT CWD RECOVERY PROTOCOL
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_cwd_recovery ⬡ v1.2.0
 # Last Updated: 2026-06-02 (added §0.1 subagent type selection)

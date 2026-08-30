@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Model Library Legacy Mining & Sovereign Architecture Report
 **Date**: 2026-06-16
 **Miner**: @roc_racoon (Sovereign Miner)

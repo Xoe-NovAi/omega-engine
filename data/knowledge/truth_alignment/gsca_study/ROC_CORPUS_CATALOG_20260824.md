@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Roc Mining Report — Web-Session Corpus Sweep (2026-08-24)
 **Task**: ses_fc97325e5ffezMgjxpa2o8jhvV · **Context**: founding-night corpus catalog for GSCA study
 **Note**: Roc's "only capture on disk" claim was later WITHDRAWN as over-broad — see RECOVERY

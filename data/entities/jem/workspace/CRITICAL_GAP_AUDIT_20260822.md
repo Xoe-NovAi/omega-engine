@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 CRITICAL GAP AUDIT — Pre-SS-1 Sprint
 **AP Token**: `AP-JEM-CRITICAL-GAP-AUDIT-v1.0.0`
 **Date**: 2026-08-22

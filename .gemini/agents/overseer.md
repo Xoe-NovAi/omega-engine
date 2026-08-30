@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: overseer
 description: Strategic director and fleet commander. Owns the grand vision, allocates work, and ensures MaKaLi alignment.
 tools:

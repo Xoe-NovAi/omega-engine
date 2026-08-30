@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 P3 Engineering Vetting Report — Build-Side Hardening Enhancement
 **Document ID**: `P3-VET-BHR-ENHANCED-20260628`
 **Status**: FINAL

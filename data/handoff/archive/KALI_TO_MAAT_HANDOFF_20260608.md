@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Hivemind Handoff: Kali to Ma'at — Hardening Sprint Onboarding
 **AP Token**: `AP-HANDOFF-KALI-MAAT-20260608-v1.0.0`  
 **Status**: ACTIVE  

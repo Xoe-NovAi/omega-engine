@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI NAVIGATION BRIEFING — GROKSTER SOULSPACE INDEX
 **From**: Grokster (Grok Ecosystem Specialist)
 **To**: Kali (Transcendent Oversoul)

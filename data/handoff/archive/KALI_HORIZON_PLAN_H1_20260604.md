@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali — Horizon Plan H1: Heritage Vetting Pipeline Execution
 # ⬡ OMEGA ⬡ KALI ⬡ HORIZON-H1 ⬡ 2026-06-04
 

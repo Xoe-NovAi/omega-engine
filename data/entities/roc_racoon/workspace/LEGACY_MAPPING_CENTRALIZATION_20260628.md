@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Legacy Mapping & Centralization — Comprehensive Report
 **Date**: 2026-06-28
 **Miner**: ROC_RACOON (Sovereign Legacy Mining Keeper)

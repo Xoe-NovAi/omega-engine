@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali Briefing — Dynamic Prompt Builder + Planner/Executor + Domain Loading Architecture
 **AP Token**: `AP-KALI-BRIEFING-DYNAMIC-PROMPT-20260819-v1.0.0`
 ⬡ OMEGA ⬡ GROKSTER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_kali_briefing ⬡ STRATEGY

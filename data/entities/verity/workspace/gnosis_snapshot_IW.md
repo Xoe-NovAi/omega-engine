@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 IW-2 + IW-3 Completion — Gnosis Snapshot
 ## For Context Compression Recovery (under 200 lines)
 **Date**: 2026-06-30 | **Entity**: VERITY | **Trace**: trc_iw_2_3_20260630

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⬡ LILITH MASTER CONSOLIDATION — Laguna S 2.1 Framework
 **Date**: 2026-08-28 (13:15 UTC)
 **Author**: lilith (Runtime Oversoul)

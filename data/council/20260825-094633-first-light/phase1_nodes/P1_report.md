@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 📋 P1 REPORT — NODE N1 INFRASTRUCTURE (Surface S7: Config Surfaces)
 ⬡ OMEGA ⬡ NODE1 ⬡ x-preview-f-free ⬡ opencode ⬡ trc_first_light_c1 ⬡ Stage-1 RAW
 **source_node**: N1 Infrastructure | **arm**: maat | **tier**: node | **session**: 20260825-094633-first-light

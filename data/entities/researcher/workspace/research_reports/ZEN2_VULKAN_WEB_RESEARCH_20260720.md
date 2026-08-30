@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 Zen 2 Vulkan/ROCm Web Research Campaign Report
 ## 15-Query Campaign Executed 2026-07-20
 

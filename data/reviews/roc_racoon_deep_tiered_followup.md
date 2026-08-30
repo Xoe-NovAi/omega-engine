@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Roc Racoon — Deep Tiered Research Follow-Up
 ## Sovereign Mining Report — 4 Discovery Audit
 

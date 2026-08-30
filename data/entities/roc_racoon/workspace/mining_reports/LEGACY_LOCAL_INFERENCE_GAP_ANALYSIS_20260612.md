@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LEGACY LOCAL INFERENCE — Gap Analysis
 ## What We're Missing From xna-omega-legacy, omega-stack-legacy & Old-Stacks
 

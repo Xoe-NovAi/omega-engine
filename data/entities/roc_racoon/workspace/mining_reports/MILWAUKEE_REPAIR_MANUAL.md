@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔋 Milwaukee M18 Battery Repair Field Manual
 **Status**: Sovereign Knowledge Asset
 **Entity**: Roc Racoon

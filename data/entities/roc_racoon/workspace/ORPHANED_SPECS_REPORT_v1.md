@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 ORPHANED SPECS REPORT v1 — Approved but Never Built
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_orphaned_specs ⬡ PHASE-II
 **Date**: 2026-06-05

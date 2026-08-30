@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Antigravity IDE — Session Gnosis
 # ⬡ OMEGA ⬡ ANTIGRAVITY ⬡ SESSION-GNOSIS ⬡ M15-ANCHOR
 

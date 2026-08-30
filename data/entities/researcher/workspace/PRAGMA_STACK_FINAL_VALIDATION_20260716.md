@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PRAGMA STACK FINAL VALIDATION — D-282 Critical Path
 **AP Token**: `AP-PRAGMA-VALIDATION-v1.0.0`  
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_pragma_validation ⬡ ACTIVE  

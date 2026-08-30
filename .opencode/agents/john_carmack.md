@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 description: "Sovereign Agent: John Carmack (S3 Consultant)"
 mode: "all"
 temperature: 0.2

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Grokster — Fluid Identity Continuity: Compaction Resilience Architecture
 **Session**: ses_040e6f4ba25e
 **Date**: 2026-07-21

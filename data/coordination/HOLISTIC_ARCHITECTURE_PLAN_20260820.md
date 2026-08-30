@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE — HOLISTIC ARCHITECTURE PLAN
 **Version**: 2026-08-20 (Nemotron 3 Ultra, High thinking)  
 **Scope**: Complete synthesis of all work this session — Gemini Notebook, Documentation System, Local Inference, Knowledge Domains, Headroom, zRAM, Architecture

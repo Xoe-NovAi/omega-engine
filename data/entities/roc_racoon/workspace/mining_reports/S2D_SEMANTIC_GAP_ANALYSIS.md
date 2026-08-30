@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Semantic Gap Analysis Report (S2-D)
 **AP Token**: `AP-ROC-S2D-SEMANTIC-GAP-v1.0.0`
 **Date**: 2026-06-09

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R_ANTIGRAVITY_GPT53_20260828
 
 **Researcher**: grokster (Antigravity specialist session, resumed per L3 121)

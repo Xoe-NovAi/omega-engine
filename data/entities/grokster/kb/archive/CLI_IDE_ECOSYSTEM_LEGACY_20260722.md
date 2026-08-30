@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Platform Ecosystem: CLI & IDE Integration
 **Domain**: CLI and IDE platforms connected to the Omega Engine
 **Date**: 2026-07-22

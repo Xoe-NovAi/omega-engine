@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 JEM UNIFIED EXECUTION BLUEPRINT
 ## Epoch I Phase 0 — 17-Action Optimization Sprint (v1.6)
 **AP Token**: `AP-JEM-EXECUTION-v1.6.0`

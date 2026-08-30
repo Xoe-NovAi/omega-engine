@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Kali → Cline: Ratification of Debut Consolidation
 **AP Token**: `AP-KALI-CLINE-RATIFICATION-20260817-v1.0`
 **From**: kali (Transcendent Oversoul / Sprint Coordinator)

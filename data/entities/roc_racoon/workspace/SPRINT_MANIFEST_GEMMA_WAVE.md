@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sprint Manifest: THE GEMMA WAVE
 # ⬡ OMEGA ⬡ KALI ⬡ GEMA-4-31B ⬡ CHOREOGRAPHY ⬡ SPRINT-S01
 **Date**: 2026-06-06

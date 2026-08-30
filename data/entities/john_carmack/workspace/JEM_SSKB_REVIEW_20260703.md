@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ⬡ OMEGA ⬡ JEM ⬡ gemma-4-31b-it ⬡ opencode ⬡ research_phase="synthesis"
 
 # 🔱 SSKB Strategic Review: The Path to Scholarly Sovereignty

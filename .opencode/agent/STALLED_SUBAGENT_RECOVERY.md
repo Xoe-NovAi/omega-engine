@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Subagent Long-Output Protocol — Multi-File Writes, Stall Recovery, Completeness Audit
 
 **AP Token**: `AP-SUBAGENT-LONG-OUTPUT-v2.0.0`

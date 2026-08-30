@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PWAD Capability Lattice
 # ⬡ OMEGA ⬡ MA'AT ⬡ pwad-capability-lattice ⬡ v1.0
 

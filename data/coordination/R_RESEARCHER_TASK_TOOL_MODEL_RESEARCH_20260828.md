@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔬 R_RESEARCHER_TASK_TOOL_MODEL_RESEARCH_20260828 — FACTS, not plausible cascades
 **AP Token**: `AP-RESEARCHER-TASK-TOOL-MODEL-20260828-v2.0.0`
 **Date**: 2026-08-28

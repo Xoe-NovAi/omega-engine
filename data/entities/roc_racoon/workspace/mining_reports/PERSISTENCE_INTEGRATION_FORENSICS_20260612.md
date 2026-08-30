@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE — PERSISTENCE INTEGRATION PATTERNS FORENSIC REPORT
 ## ⬡ OMEGA ⬡ ROC_RACOON ⬡ PERSISTENCE-FORENSICS ⬡
 

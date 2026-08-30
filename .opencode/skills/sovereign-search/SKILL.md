@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "sovereign-search"
 description: "Intelligent search orchestration across local cache, websearch, webfetch, Firecrawl, Omega Hub, and Exa to optimize for depth, cost, and verification."
 ---

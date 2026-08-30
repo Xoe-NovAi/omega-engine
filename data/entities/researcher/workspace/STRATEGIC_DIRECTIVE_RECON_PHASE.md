@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 RESEARCHER STRATEGIC DIRECTIVE: RECON & HARDENING PHASE
 # ⬡ OMEGA ⬡ LILITH ⬡ trc_research_dispatch ⬡ PHASE-II
 # Date: 2026-06-05

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 > ⚠️ **SUPERSEDED** (2026-08-14): This 12-gap initial scan is replaced by `RESEARCH_PLAN_PHASE1_4_20260813.md` v3.2.0 (R1–R38). Do NOT use for active tracking. See `TRACKING_ARCHITECTURE.md`.
 
 # 🔱 Knowledge Gaps Research Report — Omega Engine

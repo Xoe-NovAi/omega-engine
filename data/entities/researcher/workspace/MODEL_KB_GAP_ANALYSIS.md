@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Model Knowledge Base Gap Analysis — Researcher Synthesis Report
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gap_analysis ⬡ RESEARCH-MODE
 **AP Token**: `AP-RESEARCHER-GAP-ANALYSIS-v1.0.0`

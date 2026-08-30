@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Metrics
 # AP: AP-JEM-METRICS-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ metrics ⬡ PHASE-2

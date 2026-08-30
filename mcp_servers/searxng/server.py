@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 🔱 SearXNG MCP Server — Streamable HTTP Transport
 AP: AP-SEARXNG-MCP-STREAMABLE-v1.1.0

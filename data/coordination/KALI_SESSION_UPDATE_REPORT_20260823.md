@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI SESSION UPDATE REPORT — 2026-08-23
 **AP Token**: `AP-KALI-UPDATE-20260823-TRACKING-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ x-preview-f-free ⬡ opencode ⬡ trc_session_update_report ⬡ ACTIVE

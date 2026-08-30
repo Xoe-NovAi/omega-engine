@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # .github/dependabot.yml
 # 🔱 Dependabot — version + security updates for the Omega Engine.
 # Per R_VAULT_COPILOT_DEEPER_20260827 §3.9 + R_VAULT_COPILOT_ROUND5_20260828 §5.

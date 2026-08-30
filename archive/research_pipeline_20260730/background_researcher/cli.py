@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher CLI
 # AP: AP-BACKGROUND-RESEARCHER-CLI-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ sovereign ⬡ cli ⬡ WORKER

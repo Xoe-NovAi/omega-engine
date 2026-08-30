@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 DOOM 3 Job System — Verification Report
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_r09_verify ⬡ R-09-VERIFY
 **R-Doc ID**: R-09 (DOOM 3 Job System)

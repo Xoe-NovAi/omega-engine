@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # LM Studio Inference Configurations (Era 3)
 
 **Source**: `~/.lmstudio/.internal/user-concrete-model-default-config/`

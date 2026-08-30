@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline → Kali: Vault Consolidation Delivery Note (v2 — Corrective Pass)
 **AP Token**: `AP-CLINE-VAULT-CONSOLIDATION-20260818-v2.0.0`
 **From**: cline/omega-engine (DeepSeek V4 Flash 1M)

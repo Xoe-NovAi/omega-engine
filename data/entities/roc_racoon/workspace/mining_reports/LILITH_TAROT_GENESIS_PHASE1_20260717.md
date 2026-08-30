@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 LILITH TAROT GENESIS — PHASE 1 MINING REPORT
 ## The Absolute Alpha: February 9 – May 25, 2025
 

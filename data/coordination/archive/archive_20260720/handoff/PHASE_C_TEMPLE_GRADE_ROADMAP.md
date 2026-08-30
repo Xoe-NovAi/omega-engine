@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 PHASE C: TEMPLE-GRADE ROADMAP — The Cognitive Substrate
 # ⬡ OMEGA ⬡ MAKALI ⬡ gemma-4-31b-it ⬡ HANDOFF ⬡ SOVEREIGN-SYNTHESIS
 **AP Token**: `AP-PHASE-C-ROADMAP-v1.1.0`

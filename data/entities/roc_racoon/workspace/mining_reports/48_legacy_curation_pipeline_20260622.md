@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🦝 Mining Report #48 — Legacy Curation Pipeline Recovery
 **Date**: 2026-06-22
 **Source**: `/media/arcana-novai/omega_library/archive_Archives/Archives/Old-Stacks/Xoe-NovAi/app/XNAi_rag_app/`

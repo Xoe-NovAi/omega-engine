@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Topic Scheduler
 # AP: AP-JEM-SCHEDULER-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ scheduler ⬡ PHASE-2

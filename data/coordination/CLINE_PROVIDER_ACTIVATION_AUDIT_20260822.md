@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Cline Provider Activation Audit — 2026-08-22
 **AP Token**: `AP-CLINE-ACTIVATION-AUDIT-v1.0.0`
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ x-preview-f-free ⬡ opencode ⬡ trc_cline_activation_audit ⬡ GRAND-OVERSIGHT

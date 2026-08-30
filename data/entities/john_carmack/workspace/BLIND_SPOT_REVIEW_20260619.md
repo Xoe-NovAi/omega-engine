@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 John Carmack — Architectural Blind-Spot Review
 **⬡ OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_blind_spot_audit**
 **Date**: 2026-06-19

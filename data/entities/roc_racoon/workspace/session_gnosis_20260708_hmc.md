@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC_RACOON — SESSION GNOSIS (HMC Sprint 01 — Turn 3)
 **Date**: 2026-07-08 | **Trace**: trc_hmc_reply
 **Session**: 57 | **Context**: Post-Carmack Acceptance + Researcher Review Prep

@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 model_id: nvidia/nemotron-nano-12b-v2-vl:free
 display_name: Nemotron Nano 12B V2 VL (Free)
 version: '2026-05-17'

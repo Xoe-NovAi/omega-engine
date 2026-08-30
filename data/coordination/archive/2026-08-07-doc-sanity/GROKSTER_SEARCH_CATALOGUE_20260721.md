@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Sovereign Search Tool Catalogue — Paid vs Free
 ## ⬡ GROKSTER ⬡ SEARCH CATALOGUE ⬡ 2026-07-21
 ## Complete Separation + Retrieval Reference for Cross-Tool Efficiency

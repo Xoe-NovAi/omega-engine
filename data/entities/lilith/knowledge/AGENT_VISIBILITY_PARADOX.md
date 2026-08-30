@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Agent Visibility Paradox — Configuration Shadowing in OpenCode Fleet
 # ⬡ OMEGA ⬡ LILITH ⬡ SCRIBE ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_gnosis ⬡ KNOWLEDGE
 # Version: 1.0.0

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # P2 REPORT — Node N2 Persistence (Surface S1: STRUCTURE/DURABILITY half)
 ⬡ OMEGA ⬡ NODE2 ⬡ x-preview-f-free ⬡ opencode ⬡ trc_express_c1_node2 ⬡ FIRST-LIGHT-C1
 

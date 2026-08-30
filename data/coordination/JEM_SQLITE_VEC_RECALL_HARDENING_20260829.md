@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # JEM_SQLITE_VEC_RECALL_HARDENING_20260829.md
 
 **Mission**: Deep adversarial research on dramatically increasing recall in sqlite-vec (0.1.9) and identifying other high-ROI benefits from hardening — constrained to Ryzen 5700U (Zen 2, no AVX-512) + 8 GB RAM.

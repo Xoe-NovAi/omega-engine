@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Background Researcher Review Queue
 # AP: AP-JEM-REVIEW-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ review_queue ⬡ PHASE-2

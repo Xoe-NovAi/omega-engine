@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: "knowledge-miner"
 description: "Automated grep → read → summarize loop for extracting patterns and specs from legacy repos and API documentation."
 ---

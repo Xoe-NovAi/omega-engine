@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 KALI ONBOARDING — Strategy Unify Review Request
 **AP Token**: `AP-KALI-ONBOARD-v1.0.0`  
 ⬡ OMEGA ⬡ GROK_CLI → KALI ⬡ opencode ⬡ trc_onboarding ⬡ REVIEW-REQUEST

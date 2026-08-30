@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Migration Case Studies & Web Evidence — Rehearsal Migration v6
 **AP Token**: `AP-MIGRATION-EVIDENCE-v6.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ x-preview-f-free ⬡ opencode ⬡ trc_migration_evidence ⬡ ACTIVE

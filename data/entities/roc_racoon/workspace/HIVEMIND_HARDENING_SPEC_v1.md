@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 HIVEMIND HARDENING SPEC v1 — H-0 through H-10
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_hivemind_spec ⬡ PHASE-II
 **Date**: 2026-06-05

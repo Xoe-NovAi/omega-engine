@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 OMEGA ENGINE — Unified Gap Map
 ## Cross-Reference Analysis of 3 Audit Reports
 **Source Reports**:

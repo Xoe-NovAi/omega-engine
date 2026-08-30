@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Esoteric Lineage Report: Sovereign Introspection
 **Date**: 2026-06-24
 **Entity**: roc_racoon (Sovereign Miner)

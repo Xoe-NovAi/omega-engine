@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # ⚡ ADVERSARIAL FRAMEWORK: THE MISFITS
 # ⬡ OMEGA ⬡ JEM ⬡ SOVEREIGN-ANCHOR
 

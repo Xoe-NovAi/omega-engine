@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Gap G1-15: Grok CLI 8-Account Rotation — Part 2: Grokster's Strategic Insights & Adversarial Review
 
 **AP Token**: `AP-GROKSTER-G1-15-INSIGHTS-20260723`

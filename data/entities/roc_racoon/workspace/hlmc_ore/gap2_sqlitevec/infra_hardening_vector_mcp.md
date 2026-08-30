@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Infrastructure Hardening & YouTube Research Sprint
 **AP Token**: `AP-INFRA-HARDENING-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_infra_hardening ⬡ ACTIVE

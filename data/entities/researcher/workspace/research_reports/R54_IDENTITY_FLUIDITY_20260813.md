@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # R54 — Identity Fluidity E-0…E-5 Path Mapping
 
 **AP Token**: `AP-R54-IDENTITY-FLUIDITY-v1.0.0`

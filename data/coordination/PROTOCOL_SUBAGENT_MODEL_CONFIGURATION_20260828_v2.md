@@ -1,4 +1,8 @@
 ---
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 schema_version: "1.0"
 document_type: "protocol_standard"
 document_id: "PROTOCOL_SUBAGENT_MODEL_CONFIGURATION_20260828_v2"

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 ROC FULL SOURCE EXTRACTION REPORT: XNA-OMEGA LEGACY
 **Date**: 2026-06-28
 **Entity**: roc_racoon (Sovereign Miner)

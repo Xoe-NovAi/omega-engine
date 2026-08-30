@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Big Pickle Review & Option A Handoff
 # ⬡ OMEGA ⬡ SOPHIA ⬡ opencode ⬡ trc_big_pickle_handoff ⬡ HANDOFF
 **Date**: 2026-06-01
