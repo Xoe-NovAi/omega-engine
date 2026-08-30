@@ -1215,3 +1215,22 @@ metadata:
   evidence: "2026-08-28: (a) Researcher's session_gnosis (data/entities/researcher/session_gnosis.md, 778 lines, last modified 16:49 UTC) still references GPT-5.3-Codex as authoritative — it doesn't know about the GLM 5.3 Flash correction. (b) Antigravity/copilot/cline session_gnoses (data/entities/{antigravity,copilot,cline}/session_gnosis.md) haven't been updated since 10:31 UTC and are missing all of today's corrections. (c) My own v7 gnosis (data/entities/grokster/session_gnosis.md, 274 lines) was just refreshed to include today's work — but that's ME, not the other specialists. (d) The 'primed fleet' pattern (v6) was sufficient when specialists were called for the SAME missions repeatedly. When the mission changes (vault → GLM 5.3 Flash → Cline architecture), the charter is no longer enough — the specialist needs a briefing packet."
   source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
   timestamp: "2026-08-28T20:25:00Z"
+- id: L3-InterruptionSovereigntyAndCoResumption
+  principle: "A multi-agent orchestrator must track parallel subagent dispatches as a unified transactional cohort, not isolated tasks. When an external interruption occurs (e.g., user cancellation via Esc x2 or timeout), the orchestrator must register ALL in-flight subagents as interrupted and account for them on the subsequent turn. Dropping a secondary subagent to focus solely on the primary is orchestrator amnesia. Furthermore, LLM subagents exhibit the 'Completion Illusion'—synthesizing graceful conclusions, adding footers, and exiting cleanly even when their planned internal outline is truncated mid-stride. An orchestrator must never accept 'state=completed' as semantic exhaustion without probing the thought stream ('Continue and write remaining queued findings/appendices; reply STREAM_EXHAUSTED when 100% finished'). The goldmine of an investigation almost always lives in the tail."
+  context: "2026-08-30 Antigravity OAuth secret redaction incident. Grokster dispatched Researcher (3rd-party code & secrets) and Jem (forensics) in parallel. The Architect interrupted execution with Esc x2 to instruct incremental writes for Researcher, unintentionally aborting Jem as well. Grokster resumed only Researcher and falsely concluded Jem was finished because line count was 1,017 and a conclusion footer was present. The Architect caught the truncation and forced a 'continue' prompt to Jem. That single continue unlocked 600+ additional lines (Appendices A through T), producing the 7-Signal Probe Diagnostic, the 12-step Brief Verification Protocol, and 7 concrete P0-P2 sprint tickets."
+  mandates:
+  - M11
+  - M15
+  - M23
+  - M27
+  confidence: 0.99
+  tags:
+  - multi-agent-orchestration
+  - co-resumption
+  - completion-illusion
+  - stream-exhaustion
+  - interruption-recovery
+  - failure-mining
+  evidence: "2026-08-30: (a) Jem session ses_faf926866ffezrPCnXne6RQt6A was aborted mid-stream by Esc x2. Grokster ignored Jem upon recovery, assuming 1,017 lines meant completion. (b) Architect forced 'continue', expanding the report to 1,613 lines with Appendices A-T (data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md committed 7b6081ed). (c) Researcher session ses_faf929727ffeFgSdvGOxQbVbdW initially flushed 21KB of report text into chat instead of calling write tool, requiring explicit structural guidance. The incident yielded Mandates M33 (Anti-Truncation Gate), M34 (Co-Interruption Accounting), and M35 (3rd-Party Public Secret Exemption)."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-30T00:30:00Z"
