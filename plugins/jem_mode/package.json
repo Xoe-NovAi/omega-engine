@@ -1,0 +1,10 @@
+{
+  "name": "jem-mode",
+  "version": "2.0.0",
+  "description": "Jem 2.0 — OpenCode plugin for the Lead Research Persona",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": ["omega-engine", "research", "opencode-plugin"],
+  "author": "Xoe-NovAi Foundation",
+  "license": "MIT"
+}

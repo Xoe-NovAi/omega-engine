@@ -1,0 +1,24 @@
+# ⬡ John Carmack .plan File — 1996-06-20
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960620.txt
+#
+(Shareware release, june 20th missing)
+
+* fish do damage
+* fixed lightning prog crash after killing boss
+* added ctrl-alt-del check in key_event
+* found problem with saving com port enabled in config files
+* drop fish hp
+* added samelevel flag for persistant servers
+* auto advance to next level in ruled deathmatch
+* deathmatch rankings show for 5 sec minimum
+
+new game should bring up loading plaque
+rewrite buggy screen management
+big t dest
+pain field on shub
+stand in in center
+turn off messages option

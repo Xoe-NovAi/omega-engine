@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SELECTIVE-HYDRATION-v1.0.0
 # 🔱 Selective Hydration — Qdrant-backed L3 Gnosis Retrieval
 # ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ trc_selective_hydration ⬡ WORKSTREAM-B

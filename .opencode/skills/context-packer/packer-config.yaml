@@ -1,0 +1,1025 @@
+profiles:
+  sovereign-audit:
+    description: Core Engine and Mandates Audit — hardened 2026-07-11
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - mandates
+      - engine_state
+    token_budget:
+      total: 320000
+      per_bundle: 60000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    # Account & provenance metadata (for forensic linking)
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-08-09"
+    include:
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - AGENTS.md
+    - src/omega/oracle/model_gateway.py
+    - src/omega/oracle/providers.py
+    - src/omega/oracle/provider_registry.py
+    - src/omega/oracle/oom_protector.py
+    - src/omega/oracle/admission_controller.py
+    - src/omega/oracle/health_monitor.py
+    - src/omega/oracle/resource_guard.py
+    - src/omega/memory_store.py
+    - src/omega/memory/sqlite_vec_adapter.py
+    - src/omega/memory/hybrid_search.py
+    - src/omega/memory/embeddings.py
+    - src/omega/memory/fts_index.py
+    - src/omega/memory/vector_adapters.py
+    - src/omega/memory/providers.py
+    - src/omega/observability/bleg.py
+    - src/omega/observability/context.py
+    - src/omega/observability/latency_tracker.py
+    - src/omega/observability/metrics_db.py
+    - src/omega/observability/sovereignty.py
+    - src/omega/mcp_runtime.py
+    - src/omega/hub.py
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/strategy/UNOVERENGINEERING_PLAN.md
+    - docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md
+    - docs/strategy/STRATEGY_CORPUS_MAP.md
+    - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+    - docs/strategy/HIVEMIND_PROTOCOL.md
+    - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+    - config/providers.yaml
+    - config/models.yaml
+    - scripts/m23_gate.py
+    - config/m23_baseline.txt
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      - OMEGA_ENGINE.md
+      - AGENTS.md
+      oracle_core:
+      - src/omega/oracle/model_gateway.py
+      - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_registry.py
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/backends/remote_provider.py
+      - src/omega/ingestion/pipeline.py
+      oracle_support:
+      - src/omega/oracle/resource_guard.py
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/admission_controller.py
+      memory:
+      - src/omega/memory_store.py
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/providers.py
+      observability:
+      - src/omega/observability/bleg.py
+      - src/omega/observability/context.py
+      - src/omega/observability/latency_tracker.py
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/observability/__init__.py
+      - src/omega/observability/otel_exporter.py
+      mcp_hub:
+      - src/omega/mcp_runtime.py
+      - src/omega/hub.py
+      strategy_core:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      - docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md
+      - docs/strategy/STRATEGY_CORPUS_MAP.md
+      - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      config:
+      - config/providers.yaml
+      - config/models.yaml
+      - config/m23_baseline.txt
+      gates:
+      - scripts/m23_gate.py
+      coordination:
+      - data/coordination/CARMACK_REVIEW_WEB_CLAUDE_GAPS.md
+      - data/coordination/SESSION_ANCHOR.md
+      - data/coordination/HMC_COLLABORATION_HUB.md
+      - docs/decisions/PIVOT_LOG.md
+      gnosis:
+      - data/entities/kali/proposed_lessons.yaml
+      - data/entities/kali/session_gnosis.md
+      - docs/research/R_UNOVERENGINEERING_REMAINING_GAPS_20260808.md
+  tech-architecture-research:
+    description: Technology Architecture Research — 8 decisions (breaker, Redis, MCP
+      SDK, httpx2, Pydantic YAML, memory, observability, retry)
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - brief
+      - ground_truth
+      - mandates
+    token_budget:
+      total: 320000
+      per_bundle: 60000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    include:
+    - docs/tech-architecture-research/RESEARCH_BRIEF.md
+    - docs/tech-architecture-research/GROUNDED_TRUTH.md
+    - docs/tech-architecture-research/DECISION_MATRIX_TEMPLATE.md
+    - docs/tech-architecture-research/PROJECT_KNOWLEDGE_INDEX.md
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/strategy/UNOVERENGINEERING_PLAN.md
+    - src/omega/oracle/health_monitor.py
+    - src/omega/oracle/search_circuit_breaker.py
+    - src/omega/research/sandbox.py
+    - src/omega/workers/youtube_worker.py
+    - src/omega/governance/budget_guard.py
+    - src/omega/ingestion/worker.py
+    - src/omega/memory/providers.py
+    - src/omega/memory_store.py
+    - mcp_servers/omega_hub/server.py
+    - mcp_servers/omega_hub/hub_tools/tools.py
+    - mcp_servers/omega_hub/hub_tools/task_registry.py
+    - mcp_servers/omega_hub/github_tools.py
+    - mcp_servers/omega_hub/mcp_client.py
+    - mcp_servers/omega_hub/middleware.py
+    - mcp_servers/firecrawl/server.py
+    - mcp_servers/searxng/server.py
+    - src/omega/library/extractor.py
+    - src/omega/library/discovery.py
+    - src/omega/teachers/nemotron_pipeline.py
+    - src/omega/workers/model_updater.py
+    - src/omega_youtube_research/sieve.py
+    - src/omega/workers/youtube_worker.py
+    - src/omega/memory/sqlite_vec_adapter.py
+    - src/omega/memory/vector_adapters.py
+    - src/omega/memory/embeddings.py
+    - src/omega/memory/hybrid_search.py
+    - src/omega/memory/fts_index.py
+    - src/omega/memory/providers.py
+    - src/omega/coordination/miap.py
+    - src/omega/memory/recall.py
+    - src/omega/observability/metrics_db.py
+    - src/omega/observability/token_ledger.py
+    - src/omega/observability/sovereignty.py
+    - src/omega/observability/observability_reader.py
+    - src/omega/observability/otel_exporter.py
+    - src/omega/observability/latency_tracker.py
+    - src/omega/monitoring/__init__.py
+    - src/omega/oracle/retry_policy.py
+    - src/omega/ingestion/extractors.py
+    - src/omega/oracle/model_gateway.py
+    - config/providers.yaml
+    - config/models.yaml
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/tech-architecture-research/*.xml
+    - context_packs/tech-architecture-research/00_PROJECT_MANIFEST.md
+    - context_packs/tech-architecture-research/CLAUDE_PROJECT_SYSTEM_PROMPT.md
+    - context_packs/tech-architecture-research/CHAT_INITIATION_PROMPT.md
+    - context_packs/tech-architecture-research/*.md.bak
+    themes:
+      brief:
+      - docs/tech-architecture-research/RESEARCH_BRIEF.md
+      - docs/tech-architecture-research/GROUNDED_TRUTH.md
+      - docs/tech-architecture-research/DECISION_MATRIX_TEMPLATE.md
+      - docs/tech-architecture-research/PROJECT_KNOWLEDGE_INDEX.md
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      - OMEGA_ENGINE.md
+      strategy:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      circuit_breaker:
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/search_circuit_breaker.py
+      - src/omega/research/sandbox.py
+      redis_sites:
+      - src/omega/workers/youtube_worker.py
+      - src/omega/governance/budget_guard.py
+      - src/omega/ingestion/worker.py
+      - src/omega/memory/providers.py
+      - mcp_servers/omega_hub/hivemind_redis.py
+      - src/omega/memory_store.py
+      mcp_sdk:
+      - mcp_servers/omega_hub/server.py
+      - mcp_servers/omega_hub/hub_tools/tools.py
+      - mcp_servers/omega_hub/hub_tools/task_registry.py
+      - mcp_servers/omega_hub/github_tools.py
+      - mcp_servers/omega_hub/mcp_client.py
+      - mcp_servers/omega_hub/middleware.py
+      - mcp_servers/firecrawl/server.py
+      - mcp_servers/searxng/server.py
+      httpx2:
+      - src/omega/library/extractor.py
+      - src/omega/library/discovery.py
+      - src/omega/teachers/nemotron_pipeline.py
+      - src/omega/workers/model_updater.py
+      - src/omega_youtube_research/sieve.py
+      - src/omega/workers/youtube_worker.py
+      memory:
+      - src/omega/memory_store.py
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/providers.py
+      - src/omega/coordination/miap.py
+      - src/omega/memory/recall.py
+      observability:
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/token_ledger.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/observability/observability_reader.py
+      - src/omega/observability/otel_exporter.py
+      - src/omega/observability/latency_tracker.py
+      - src/omega/monitoring/__init__.py
+      retry:
+      - src/omega/oracle/retry_policy.py
+      - src/omega/ingestion/extractors.py
+      - src/omega/oracle/model_gateway.py
+      config:
+      - config/providers.yaml
+      - config/models.yaml
+  provider-fabric-review:
+    description: Deep review of local inference (NativeGGUFProvider) + provider fabric
+      with cloud backends, routing, and streaming
+    tier: internal
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - mandates
+      - engine_state
+    token_budget:
+      total: 150000
+      per_bundle: 15000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    include:
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - ORACLE_STACK.md
+    - src/omega/oracle/model_gateway.py
+    - src/omega/oracle/providers.py
+    - src/omega/oracle/backends/__init__.py
+    - src/omega/oracle/backends/remote_provider.py
+    - src/omega/oracle/backends/openai_compat.py
+    - src/omega/oracle/backends/antigravity_provider.py
+    - src/omega/oracle/backends/google_compat.py
+    - src/omega/oracle/backends/mock.py
+    - src/omega/oracle/oom_protector.py
+    - src/omega/oracle/resource_guard.py
+    - src/omega/oracle/cpu_optimizer.py
+    - src/omega/oracle/admission_controller.py
+    - src/omega/oracle/stream_handler.py
+    - src/omega/oracle/health_monitor.py
+    - src/omega/oracle/provider_selector.py
+    - src/omega/oracle/cascade_router.py
+    - src/omega/oracle/retry_policy.py
+    - src/omega/oracle/rate_limiter.py
+    - src/omega/oracle/quota_tracker.py
+    - src/omega/oracle/token_estimator.py
+    - src/omega/oracle/local_worker_pool.py
+    - config/providers.yaml
+    - config/models.yaml
+    - config/model_registry/providers/native-gguf.yaml
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - tests/test_providers.py
+    - tests/test_model_gateway.py
+    - tests/test_e2e_inference_chain.py
+    - tests/test_antigravity_provider.py
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      - ORACLE_STACK.md
+      gateway:
+      - src/omega/oracle/model_gateway.py
+      native_inference:
+      - src/omega/oracle/providers.py
+      cloud_backends:
+      - src/omega/oracle/backends/__init__.py
+      - src/omega/oracle/backends/remote_provider.py
+      - src/omega/oracle/backends/openai_compat.py
+      - src/omega/oracle/backends/antigravity_provider.py
+      - src/omega/oracle/backends/google_compat.py
+      - src/omega/oracle/backends/mock.py
+      infrastructure:
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/resource_guard.py
+      - src/omega/oracle/cpu_optimizer.py
+      - src/omega/oracle/admission_controller.py
+      - src/omega/oracle/stream_handler.py
+      - src/omega/oracle/health_monitor.py
+      routing:
+      - src/omega/oracle/provider_selector.py
+      - src/omega/oracle/cascade_router.py
+      - src/omega/oracle/retry_policy.py
+      - src/omega/oracle/rate_limiter.py
+      - src/omega/oracle/quota_tracker.py
+      - src/omega/oracle/token_estimator.py
+      - src/omega/oracle/local_worker_pool.py
+      config:
+      - config/providers.yaml
+      - config/models.yaml
+      - config/model_registry/providers/native-gguf.yaml
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      tests:
+      - tests/test_providers.py
+      - tests/test_model_gateway.py
+      - tests/test_e2e_inference_chain.py
+      - tests/test_antigravity_provider.py
+  engineering-p3:
+    description: Full context for N3 Engineering Node
+    tier: internal
+    tokenizer_encoding: o200k_base
+    max_slots: 12
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    format: xml
+    bundle_ordering: litm-u-shaped
+    token_budget:
+      total: 1000000
+      per_bundle: 500000
+      reserved_output: 50000
+    include:
+    - src/omega/oracle/orchestrator.py
+    - src/omega/oracle/model_gateway.py
+    - tests/test_orchestrator.py
+    exclude:
+    - '**/__pycache__/**'
+    - 'docs/strategy/archive/**'
+    themes:
+      core_logic:
+      - src/omega/oracle/orchestrator.py
+      - src/omega/oracle/model_gateway.py
+      validation:
+      - tests/**
+      docs:
+      - docs/strategy/**
+  kali-oversight:
+    description: Grand Oversight context — mandates, fleet topology, decisions, agents
+    tier: internal
+    tokenizer_encoding: o200k_base
+    max_slots: 12
+    include:
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - AGENTS.md
+    - CREDITS.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/decisions/PIVOT_LOG.md
+    - .opencode/agents/**/*.md
+    - docs/strategy/HIVEMIND_PROTOCOL.md
+    - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    themes:
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      - OMEGA_ENGINE.md
+      fleet:
+      - AGENTS.md
+      - .opencode/agents/**/*.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/decisions/PIVOT_LOG.md
+      coordination:
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      heritage:
+      - CREDITS.md
+  youtube-research-primer:
+    description: YouTube Research Module context — spec, implementation, and integration
+      points
+    tier: internal
+    tokenizer_encoding: o200k_base
+    max_slots: 12
+    include:
+    - docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md
+    - src/omega_youtube_research/**/*.py
+    - config/youtube_research.yaml
+    - tests/test_youtube_research_module.py
+    - youtube-links-for-ingestion.txt
+    - src/omega/memory_store.py
+    - src/omega/memory/**/*.py
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    themes:
+      spec:
+      - docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md
+      implementation:
+      - src/omega_youtube_research/**/*.py
+      - config/youtube_research.yaml
+      tests:
+      - tests/test_youtube_research_module.py
+      ingestion_queue:
+      - youtube-links-for-ingestion.txt
+      memory_integration:
+      - src/omega/memory_store.py
+      - src/omega/memory/**/*.py
+  decision-tools-review:
+    description: Decision Tools implementation review — grounding, schema, CLI, MEDITATE
+      integration (NOT content decisions)
+    tier: internal
+    tokenizer_encoding: o200k_base
+    max_slots: 12
+    include:
+    - docs/strategy/GROUNDED_MEDITATE_DECISION_WORKSPACE_20260718.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/research/R_MEDITATE_ARCHITECTURE_INVERSION_VERIFICATION_20260718.md
+    - docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md
+    - docs/strategy/HMC_QUAD_FORGE_IMPLEMENTATION_MANUAL_20260718.md
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - data/handoff/KALI_TO_GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    themes:
+      grounding:
+      - docs/strategy/GROUNDED_MEDITATE_DECISION_WORKSPACE_20260718.md
+      - docs/research/R_MEDITATE_ARCHITECTURE_INVERSION_VERIFICATION_20260718.md
+      implementation:
+      - docs/strategy/HMC_QUAD_FORGE_IMPLEMENTATION_MANUAL_20260718.md
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      research:
+      - docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      handoff:
+      - data/handoff/KALI_TO_GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md
+  sprint-context:
+    description: Current sprint research, analysis, and implementation plan
+    tier: internal
+    tokenizer_encoding: o200k_base
+    max_slots: 12
+    include:
+    - docs/research/R_CONTEXT_ENGINEERING_INTEGRATION.md
+    - docs/research/R_CONTEXT_ENGINEERING_INTEGRATION_ADDENDUM.md
+    - docs/research/R_SONNET46_FINAL_ANALYSIS.md
+    - docs/research/R_IMPLEMENTATIONS_MANUAL.md
+    - docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - SOVEREIGN_MANDATES.md
+    exclude:
+    - '**/__pycache__/**'
+    themes:
+      analysis:
+      - docs/research/R_CONTEXT_ENGINEERING_INTEGRATION.md
+      - docs/research/R_CONTEXT_ENGINEERING_INTEGRATION_ADDENDUM.md
+      - docs/research/R_SONNET46_FINAL_ANALYSIS.md
+      - docs/research/R_IMPLEMENTATIONS_MANUAL.md
+      spec:
+      - docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+  context-packer-hardening-review:
+    description: Context Packer v2 hardening review — spec, implementation, gaps,
+      mandates, platform tuning
+    tier: internal
+    tokenizer_encoding: o200k_base
+    max_slots: 12
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - .opencode/skills/context-packer/packer.py
+    - src/omega/oracle/pii_masker.py
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      platform_tuning:
+      - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer.py
+      - src/omega/oracle/pii_masker.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+  web-claude-sonnet5:
+    description: Optimized for Claude Sonnet 5 / Opus 4.8 via Web Claude Projects
+    tier: internal
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - mandates
+      - engine_state
+    token_budget:
+      total: 150000
+      per_bundle: 15000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - .opencode/skills/context-packer/packer.py
+    - src/omega/oracle/pii_masker.py
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer.py
+      - src/omega/oracle/pii_masker.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+  web-grok-4.3:
+    description: Optimized for Grok 4.3 via Web Grok / SuperGrok
+    tier: internal
+    tokenizer_encoding: o200k_base
+    target_platform: web-grok
+    target_model: grok-4.3
+    max_slots: 20
+    format: xml-markdown-hybrid
+    bundle_ordering: priority-weighted
+    real_time_injection:
+      enabled: true
+      x_search_topics:
+      - context engineering
+      - prompt injection
+      - PII tokenization
+    grok_skills_export: true
+    connector_metadata: true
+    token_budget:
+      total: 200000
+      per_bundle: 15000
+      reserved_output: 50000
+    cost_tier: standard
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - .opencode/skills/context-packer/packer.py
+    - src/omega/oracle/pii_masker.py
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      platform_tuning:
+      - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer.py
+      - src/omega/oracle/pii_masker.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+  web-grok-4.1-fast:
+    description: Cost-optimized for high-volume review via Grok 4.1 Fast
+    tier: internal
+    tokenizer_encoding: o200k_base
+    target_platform: web-grok
+    target_model: grok-4.1-fast
+    max_slots: 20
+    format: xml-markdown-hybrid
+    bundle_ordering: priority-weighted
+    token_budget:
+      total: 500000
+      per_bundle: 25000
+      reserved_output: 100000
+    cost_tier: economy
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+  web-gemini-3-pro:
+    description: Optimized for Gemini 3 Pro via Google AI Studio
+    tier: internal
+    tokenizer_encoding: o200k_base
+    target_platform: web-gemini
+    target_model: gemini-3-pro
+    max_slots: 30
+    format: markdown-structured
+    bundle_ordering: relevance-descending
+    source_grounding: true
+    parallel_search_hints: true
+    code_execution_ready: true
+    workspace_export: true
+    token_budget:
+      total: 500000
+      per_bundle: 20000
+      reserved_output: 100000
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - .opencode/skills/context-packer/packer.py
+    - src/omega/oracle/pii_masker.py
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      platform_tuning:
+      - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer.py
+      - src/omega/oracle/pii_masker.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+  web-gemini-3.1-pro:
+    description: Ultra-long context for massive codebase analysis
+    tier: internal
+    tokenizer_encoding: o200k_base
+    target_platform: web-gemini
+    target_model: gemini-3.1-pro
+    max_slots: 100
+    format: markdown-structured
+    bundle_ordering: hierarchical
+    source_grounding: true
+    token_budget:
+      total: 2000000
+      per_bundle: 50000
+      reserved_output: 200000
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - .opencode/skills/context-packer/packer.py
+    - src/omega/oracle/pii_masker.py
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - src/omega/**/*.py
+    - config/**/*.yaml
+    - docs/**/*.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      platform_tuning:
+      - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer.py
+      - src/omega/oracle/pii_masker.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      full_codebase:
+      - src/omega/**/*.py
+      full_config:
+      - config/**/*.yaml
+      full_docs:
+      - docs/**/*.md
+  notebooklm-research:
+    description: Source-grounded export for NotebookLM research workflows
+    tier: internal
+    tokenizer_encoding: o200k_base
+    target_platform: notebooklm
+    target_model: gemini-backend
+    max_slots: 50
+    format: markdown-sources
+    bundle_ordering: thematic
+    source_export: true
+    audio_overview_ready: true
+    guided_prompts: true
+    citation_format: notebooklm
+    token_budget:
+      total: 200000
+      per_bundle: 10000
+      reserved_output: 50000
+    include:
+    - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+    - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+    - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+    - .opencode/skills/context-packer/packer.py
+    - .opencode/skills/context-packer/packer-config.yaml
+    - .opencode/skills/context-packer/packer.py
+    - src/omega/oracle/pii_masker.py
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      spec:
+      - docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md
+      gaps:
+      - docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md
+      platform_tuning:
+      - docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md
+      implementation:
+      - .opencode/skills/context-packer/packer.py
+      - .opencode/skills/context-packer/packer.py
+      - src/omega/oracle/pii_masker.py
+      config:
+      - .opencode/skills/context-packer/packer-config.yaml
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      engine_state:
+      - OMEGA_ENGINE.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+
+  hybrid-benchmark-strategy:
+    description: Hybrid Local/Cloud Benchmarking Strategy — Carmack-validated shed, routing table, Pareto frontiers
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 15
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - mandates
+      - strategy
+      - benchmark
+      - routing
+    token_budget:
+      total: 320000
+      per_bundle: 60000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-08-16"
+    include:
+    - SOVEREIGN_MANDATES.md
+    - OMEGA_ENGINE.md
+    - AGENTS.md
+    - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+    - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+    - docs/strategy/HIVEMIND_PROTOCOL.md
+    - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+    - config/routing_table.yaml
+    - config/cloud_pricing.yaml
+    - scripts/benchmark_hybrid.py
+    - src/omega/routing/table.py
+    - src/omega/benchmarks/schema.py
+    - docs/benchmarks/hybrid_week1.md
+    - src/omega/oracle/model_gateway.py
+    - src/omega/oracle/providers.py
+    - src/omega/oracle/provider_selector.py
+    - src/omega/oracle/cascade_router.py
+    - src/omega/oracle/health_monitor.py
+    - src/omega/oracle/resource_guard.py
+    - src/omega/oracle/oom_protector.py
+    - src/omega/oracle/admission_controller.py
+    - src/omega/memory/sqlite_vec_adapter.py
+    - src/omega/memory/vector_adapters.py
+    - src/omega/memory/hybrid_search.py
+    - src/omega/memory/embeddings.py
+    - src/omega/memory/fts_index.py
+    - src/omega/memory/providers.py
+    - src/omega/observability/metrics_db.py
+    - src/omega/observability/sovereignty.py
+    - src/omega/observability/token_ledger.py
+    - docs/strategy/RESEARCHER_JIT_RAG_CONFIG_DESIGN_20260816.md
+    - docs/strategy/ROC_JIT_RAG_LOCAL_DISCOVERY_20260816.md
+    - docs/strategy/RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md
+    - docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md
+    - docs/strategy/SONNET_STRATEGIC_REVIEW_20260816.md
+    - data/coordination/ROC_LEGACY_BENCHMARK_MINING_20260816.md
+    - docs/research/R_LOCAL_MODEL_BENCHMARKING_2026_BEST_PRACTICES.md
+    - docs/research/R_LOCAL_MODEL_BENCHMARKING_2026_BEST_PRACTICES.md
+    - docs/strategy/UNOVERENGINEERING_PLAN.md
+    - docs/decisions/PIVOT_LOG.md
+    - config/providers.yaml
+    - config/models.yaml
+    exclude:
+    - '**/__pycache__/**'
+    - '**/*.pyc'
+    - '**/*.log'
+    - '**/*.tmp'
+    - context_packs/**
+    themes:
+      mandates:
+      - SOVEREIGN_MANDATES.md
+      - OMEGA_ENGINE.md
+      - AGENTS.md
+      strategy_core:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      benchmark_infrastructure:
+      - config/routing_table.yaml
+      - config/cloud_pricing.yaml
+      - scripts/benchmark_hybrid.py
+      - src/omega/routing/table.py
+      - src/omega/benchmarks/schema.py
+      - docs/benchmarks/hybrid_week1.md
+      oracle_routing:
+      - src/omega/oracle/model_gateway.py
+      - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_selector.py
+      - src/omega/oracle/cascade_router.py
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/resource_guard.py
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/admission_controller.py
+      memory_layer:
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/providers.py
+      observability:
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/observability/token_ledger.py
+      jit_rag_research:
+      - docs/strategy/RESEARCHER_JIT_RAG_CONFIG_DESIGN_20260816.md
+      - docs/strategy/ROC_JIT_RAG_LOCAL_DISCOVERY_20260816.md
+      - docs/strategy/RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md
+      synthesis_validation:
+      - docs/strategy/L2_SYNTHESIS_VALIDATION_STUDY.md
+      - docs/strategy/SONNET_STRATEGIC_REVIEW_20260816.md
+      legacy_mining:
+      - data/coordination/ROC_LEGACY_BENCHMARK_MINING_20260816.md
+      benchmark_research:
+      - docs/research/R_LOCAL_MODEL_BENCHMARKING_2026_BEST_PRACTICES.md
+      roadmap:
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      decisions:
+      - docs/decisions/PIVOT_LOG.md
+      config:
+      - config/providers.yaml
+      - config/models.yaml

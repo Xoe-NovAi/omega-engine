@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-Sovereign-Hardening-v1.0.0
 # 🔱 Omega Engine — FailureModeRegistry (M17 Cognitive Integrity)
 # Generic failure mode detection with WAD-configurable naming.

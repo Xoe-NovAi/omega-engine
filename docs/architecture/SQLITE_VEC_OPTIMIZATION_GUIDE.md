@@ -204,3 +204,8 @@ health = await adapter.check_wal_health()
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ SQLITE-VEC-OPT-GUIDE ⬡ 2026-08-28*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_sqlite_vec_opt | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # scripts/setup_2remote_debut.sh
 # 🔱 2-remote (private forge + public debut) operational toolkit.
 # v2 — round-4 fixes per R_VAULT_COPILOT_ROUND3_20260827 §2 BUG #6:

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Omega Engine - Check Hardcoded Secrets Tool
 Detects hardcoded API keys, tokens, passwords, and other secrets in source code.

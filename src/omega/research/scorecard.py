@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research Scorecard — CLEAR-Pareto Sovereignty Scorecard + AMFO Evaluator
 ⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ SCORECARD

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — DPO Logging Infrastructure
 # AP: AP-DPO-LOGGER-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ dpo_logger ⬡ D16-2

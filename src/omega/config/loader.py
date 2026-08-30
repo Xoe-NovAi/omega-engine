@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Config Loader — Public/Private Config Split with Deep Merge
 AP: AP-CONFIG-LOADER-v1.0.0

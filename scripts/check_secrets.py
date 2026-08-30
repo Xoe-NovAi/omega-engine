@@ -1,19 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
 # SPDX-FileCopyrightText: 2026 John Carmack <john@omega-engine.ai>
-# SPDX-License-Identifier: Apache-2.0
-# 🔱 M35 Fail-Closed Secret Scanner
-# Scans tracked files for known secret patterns. Allows public secrets listed in
-# data/secrets-public.toml. Fails CI on:
-#   1. data/secrets-public.toml missing or unparseable
-#   2. Secret pattern found without allowlist entry
-#   3. Allowlist entry missing upstream_source, verified_by, or approved_by
 #
-# Usage:
-#   python3 scripts/check_secrets.py                  # scan all tracked files
-#   python3 scripts/check_secrets.py --staged         # scan staged changes only
-#   python3 scripts/check_secrets.py --path <dir>     # scan specific dir
-#   python3 scripts/check_secrets.py --json           # JSON output for CI
-#   python3 scripts/check_secrets.py --allowlist-lint # only lint the allowlist file
+# SPDX-License-Identifier: Apache-2.0
 
 import argparse
 import json

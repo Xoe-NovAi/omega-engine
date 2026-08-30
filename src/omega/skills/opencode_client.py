@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """OpenCode MCP Client Adapter — Uses SovereignMCPClient to call local omega-hub tools"""
 
 from typing import Optional

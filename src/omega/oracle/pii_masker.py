@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-PII-MASKER-v1.0.0
 """
 PII Observation Masker — Sovereign Data Leak Prevention.

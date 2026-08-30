@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Hybrid Search Engine
 # AP: AP-D283-MNEMOSYNE-v1.0.0
 # ⬡ OMEGA ⬡ MEMORY ⬡ hybrid_search.py

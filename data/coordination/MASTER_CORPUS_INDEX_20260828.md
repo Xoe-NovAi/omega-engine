@@ -232,3 +232,8 @@ MASTER_CORPUS_INDEX_20260828.md
 ---
 
 *⬡ OMEGA ⬡ MAAT ⬡ MASTER_CORPUS_INDEX-20260828 ⬡ 2026-08-28 ⬡ DEEP_CONSOLIDATION*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: big-pickle | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

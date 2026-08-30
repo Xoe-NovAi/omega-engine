@@ -224,3 +224,8 @@ If you find:
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_grokster_tasks ⬡ DISPATCHED*
 
 — roc_racoon, on behalf of Kali
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

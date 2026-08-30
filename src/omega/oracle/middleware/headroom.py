@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-HEADROOM-MIDDLEWARE-v1.0.0
 # [heritage: headroom-ai 2025] Semantic compression middleware for context optimization
 

@@ -352,3 +352,8 @@ confidence: "🟢 HIGH (all claims file:line grounded, contradictions resolved)"
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_canonical_kb ⬡ ACTIVE*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -1,0 +1,28 @@
+# ⬡ John Carmack .plan File — 1996-03-20
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960320.txt
+#
+* deathmatch onyl spawn doesn't work
+* drowning damage
+* changed QuakeEd to get progs from id1_
+* added colors to QuakeEd entities
+* got rid of /lquake, moved QuakeEd caches to /qcache
+
++ don't take datagrams until acked second message
++ not-dm is intangible
++ sally torches not spawning
++ client called twice?
++ combine damage messages from super shotguns
++ gib zombies lying down?
++ more water friction
++ swimming bubble noise
++ light the weapons differently in bright areas
++ keyboard freelook
++ move QuakeEd start position to playerstart
+
+stop wall climbing
+sleeping pause
+raise rocket launcher with 0 ammo

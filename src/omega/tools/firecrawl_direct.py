@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Direct Firecrawl API Tools — Bypass MCP for Reliability.
 AP: AP-FIRECRAWL-DIRECT-v1.0.0
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_firecrawl_direct ⬡ ACTIVE

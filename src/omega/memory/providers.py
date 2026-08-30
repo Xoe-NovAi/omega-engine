@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Storage Providers for Omega Memory.
 AP: AP-MEMORY-PROVIDERS-v1.0.0
 """

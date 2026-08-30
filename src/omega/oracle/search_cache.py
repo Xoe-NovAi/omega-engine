@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Search Cache — Local filesystem persistence for deep search results.
 AP: AP-SOVEREIGN-SEARCH-CACHE-v1.0.0
 ICS: [NODE: PERSISTENCE | ARCHETYPE: MNEMOSYNE | CONTEXT: SEARCH-HARDENING]

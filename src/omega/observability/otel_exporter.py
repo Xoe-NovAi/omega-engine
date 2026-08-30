@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """OTel GenAI Semantic Convention Exporter to SQLite WAL.
 AP: AP-OTEL-EXPORTER-v1.0.0
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ OTEL-EXPORTER

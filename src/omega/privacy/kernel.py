@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Privacy Kernel — Local Privacy Detection (Gemma 4 E2B / Qwen3-1.7B)
 AP: AP-PRIVACY-KERNEL-v1.0.0

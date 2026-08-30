@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Resource Guard — Concurrency Protection
 # AP: AP-RESOURCE-GUARD-v1.2.0

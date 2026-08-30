@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Observability — Deep Logging, Tracking & Dataset Collection
 # AP: AP-OBSERVABILITY-v2.0.0
 # [heritage: opentelemetry 2021] OpenTelemetry — GenAI semantic conventions for observability tracing

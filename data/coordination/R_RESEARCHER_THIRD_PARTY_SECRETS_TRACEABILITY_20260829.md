@@ -2459,3 +2459,8 @@ The 2026-08-29 incident is, in retrospect, an **avoidable lesson**. The auto-red
 — Researcher (Polymathic Council) via Grokster tasking
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_research ⬡ ACTIVE
 2026-08-29 — Final report delivered.
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

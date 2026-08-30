@@ -199,3 +199,8 @@ A protocol (`docs/strategy/COMPACTION_WATCHER_PROTOCOL_20260829.md`) for auto-ex
 
 *⬡ OMEGA ⬡ KALI ⬡ EMERGENT-TECH-REGISTRY-v1.0.0 ⬡ 2026-08-29*
 *E-001 (projection.md) is the first. Many will follow.*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: AMBIGUOUS | multi-model session; candidates: nemotron-3-ultra-free, mimo-v2.5-free, hy3-free, deepseek-v4-flash-free
+actual_models(Tier0): nemotron-3-ultra-free, mimo-v2.5-free, hy3-free, deepseek-v4-flash-free, nvidia/nemotron-3-ultra-550b-a55b:free, nvidia/nemotron-3-super-120b-a12b:free
+-->
+

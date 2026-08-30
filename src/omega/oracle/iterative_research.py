@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Iterative Research Loops — Cognitive retrieval with gap analysis.
 # Heritage: iterative cognitive loop (user-original design; Sovereign-Symmetry REJECTED per vet-019)
 AP: AP-ITERATIVE-RESEARCH-v1.0.0

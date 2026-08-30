@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research Hivemind Bridge — DyTopo Cross-Pollination for Research Agents
 ⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ HIVEMIND_BRIDGE

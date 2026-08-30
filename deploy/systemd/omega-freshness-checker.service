@@ -1,0 +1,46 @@
+# Omega Model Registry Freshness Checker - Systemd Units
+# 
+# Install:
+#   sudo cp omega-freshness-checker.service /etc/systemd/system/
+#   sudo cp omega-freshness-checker.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now omega-freshness-checker.timer
+#
+# Check status:
+#   systemctl status omega-freshness-checker.timer
+#   journalctl -u omega-freshness-checker.service -f
+
+[Unit]
+Description=Omega Model Registry Freshness Checker
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=arcana-novai
+WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+Environment=PATH=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONPATH=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src
+# AA_API_KEY should be set in /etc/environment or via systemd credential
+# Environment=AA_API_KEY=your_key_here
+ExecStart=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python -m src.omega.workers.freshness_checker --tier standard --notify
+# Log to journald
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=omega-freshness-checker
+
+# Resource limits
+MemoryMax=512M
+CPUQuota=50%
+TimeoutSec=300
+
+# Security
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data
+ReadWritePaths=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config
+
+[Install]
+WantedBy=multi-user.target

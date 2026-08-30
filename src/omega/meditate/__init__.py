@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Meditate Protocol
 # ⬡ OMEGA ⬡ MEDITATE ⬡ trc_meditate_protocol
 # Single-inference, multi-persona semantic prism

@@ -1,0 +1,17 @@
+# ⬡ John Carmack .plan File — 1999-08-01
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19990801.txt
+#
+* changed RF_PORTALSURFACE to an entity type
+* add sprite indexes in strip order
+* changed builtin models to refentity types
+* prevent respawn until resting on ground
+* fixed unecessary dlight shader checking
+* no splashe when lg hitting sky
+* removed cvar_restart on version change, caused problems with dedicated server startup
+* fixed stupid error that made skies double render
+* fixed stupid error that made skies draw an uneeded bakground pass
+* support add-mode multitexture for skies

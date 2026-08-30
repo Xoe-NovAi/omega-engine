@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Hardware Profile Detector
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #

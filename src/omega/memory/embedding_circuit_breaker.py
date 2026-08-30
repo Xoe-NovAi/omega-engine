@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Per-provider circuit breaker for embedding failover chain.
 
 AP: AP-CIRCUIT-BREAKER-EMBED-v1.0.0

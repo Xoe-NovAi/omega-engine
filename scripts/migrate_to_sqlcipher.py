@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """One-shot migration: plaintext omega_memory.db → SQLCipher-encrypted.
 AP: AP-SQLCIPHER-ENCRYPTION-v1.0.0
 

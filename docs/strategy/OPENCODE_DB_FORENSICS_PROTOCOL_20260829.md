@@ -555,3 +555,8 @@ The failure was real. The correction was real. Both are now on disk. Future agen
 *⬡ OMEGA ⬡ KALI ⬡ OPENCODE-DB-FORENSICS-v1.1.0 ⬡ 2026-08-29*
 *The db is the sovereign record. Every agent can read it. Every agent can learn from it.*
 *Every agent must read it FULLY. Truncation is the sin. The Cathedral learns from its own pain.*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

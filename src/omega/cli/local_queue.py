@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-LOCAL-QUEUE-CLI-v1.0.0
 # 🔱 Local Queue CLI — Fire-and-Forget Local Inference Management
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ trc_local_worker ⬡ CLI

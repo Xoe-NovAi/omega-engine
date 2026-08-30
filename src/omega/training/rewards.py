@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TRAINING-REWARDS-v1.0.0
 # 🔱 GRPO Reward Function — Local-Only Design
 # ⬡ OMEGA ⬡ TRAINING ⬡ rewards.py

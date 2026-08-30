@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Arcana Novai
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # 🔱 Omega Engine — Sovereign Mandates
 **Version**: 3.8.0
 **Status**: NON-NEGOTIABLE

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Config Package — Public/Private Config Loader
 AP: AP-CONFIG-PKG-v1.0.0

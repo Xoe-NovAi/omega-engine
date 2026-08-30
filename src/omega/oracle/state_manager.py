@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-STATE-MANAGER-v1.0.0
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md

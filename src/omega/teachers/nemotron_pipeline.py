@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Nemotron 3 Ultra Teacher Pipeline — DPO Pair Generation via Iterative Critique-Loop.
 
 AP: AP-NEMOTON-TEACHER-v1.0.0

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-MAAT-PHASE2-DESIGN-v1.0.0
 # 🔱 Cloud Planner / Local Executor — Hybrid Orchestrator
 #

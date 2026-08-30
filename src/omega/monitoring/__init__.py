@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ── Hardware Monitor ──
 # ⬡ OMEGA ⬡ Sovereign Hardware Telemetry
 # AP: AP-HARDWARE-MONITOR-v1.0.0

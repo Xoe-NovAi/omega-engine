@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Model Gateway — Local-First Inference Abstraction
 # AP: AP-MODEL-GATEWAY-v2.4.0

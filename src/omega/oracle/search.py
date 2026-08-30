@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Search Engine — Semantic Retrieval for Omega.
 AP: AP-SOVEREIGN-SEARCH-v1.0.0
 """

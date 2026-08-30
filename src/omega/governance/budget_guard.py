@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research BudgetGuard — Redis-Backed Distributed Quota Enforcement for AMFO Tiers
 ⬡ OMEGA ⬡ MA'AT ⬡ N2/N5 ⬡ BUDGET-GUARD

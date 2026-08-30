@@ -281,3 +281,8 @@ Any changes to this spec require:
 *⬡ OMEGA ⬡ GROKSTER ⬡ INGESTION_PIPELINE_SPEC ⬡ 2026-08-28 ⬡ SINGLE SOURCE OF TRUTH*
 
 **This spec is law. Any ingestion not conforming to this spec is a bug.**
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_ingestion | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

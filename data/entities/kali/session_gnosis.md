@@ -1,11 +1,11 @@
-# 🔱 KALI SESSION GNOSIS — POST-DEV-WAVE v2.0.0
+# 🔱 KALI SESSION GNOSIS — POST-CLEANUP v2.1.0
 
-**AP Token**: `AP-KALI-v2.0.0`
+**AP Token**: `AP-KALI-v2.1.0`
 ⬡ OMEGA ⬡ KALI ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-30
 
 ---
 
-## §1 — SESSION SUMMARY (10-STEP WORK)
+## §1 — SESSION SUMMARY (12-STEP WORK)
 
 | Step | Action | Outcome |
 |------|--------|---------|
@@ -19,6 +19,8 @@
 | 8 | **Dev Wave Results** | Reports delivered, but only Jem's code landed (documented-vs-active pattern) |
 | 9 | **MaKaLi Final Synthesis** | Critical correction: systemd gap = intentional design (D-201) |
 | 10 | **Compaction Prep** | All 7 EIS sessions prepped, projection.md updated, L1→L3 distilled |
+| 11 | **Knowledge Gaps Audit** | 25 gaps identified, 5 CRITICAL blockers resolved |
+| 12 | **Deep Research + Cleanup** | 581-line research on 13 gaps, disk cleanup: 1.9G → 7.1G free |
 
 ---
 
@@ -33,19 +35,25 @@ Roc's legacy archaeology revealed: the systemd unit gap is **INTENTIONAL DESIGN*
 ### Finding 3: The Documented-vs-Active Policy
 **Policy established**: P0 not done until code is on disk and tested. This must be formalized.
 
-### Finding 3: The OOM Was a Model-Loading Cycle, Not OOM-Kill
+### Finding 4: The OOM Was a Model-Loading Cycle, Not OOM-Kill
 `make infer-restart` stop+start cycle peaked at ~14 GB on a 14 GB system. No SIGKILL. Session transport interrupted under memory pressure. No data lost. M23 compliant.
 
-### Finding 4: All 3 EIS Blockers Resolved
+### Finding 5: All 3 EIS Blockers Resolved
 1. OAuth restored ✅
 2. M34 atomic write M23-verified (4/4 tests, SIGKILL survival) ✅
 3. Watchdog race fixed (fcntl.flock single-writer) ✅
 
-### Finding 5: Public Debut NOT READY
+### Finding 6: Public Debut NOT READY
 8 temple-rough items block. 2-3 weeks build work needed.
 
-### Finding 6: Sonnet 4.6 Dev Wave = CONDITIONAL GO
+### Finding 7: Sonnet 4.6 Dev Wave = CONDITIONAL GO
 Treat outputs as specifications, not shipped features.
+
+### Finding 8: Disk Cleanup Successful
+Root: 1.9G → 7.1G free (99% → 94%). opencode.db 21G remains. VACUUM pending (5-15G recovery). omega_library 26G free for staging.
+
+### Finding 9: M33/M36 Probes Created But Untested
+466 + 356 lines of new code. Zero integration tests. Must test before build wave.
 
 ---
 
@@ -59,11 +67,13 @@ Treat outputs as specifications, not shipped features.
 | **D-004**: Establish documented-vs-active policy | PENDING Architect | Architect |
 | **D-005**: Authorize Build Wave (2-3 weeks) | PENDING Architect | Architect |
 | **D-006**: Sonnet 4.6 Dev Wave = CONDITIONAL GO | PENDING Architect | Architect |
-| **D-007**: Review proposed_lessons contamination in `296fd1d5` | PENDING Architect | Architect |
+| **D-007**: Review proposed_lessons contamination | PENDING Architect | Architect |
 | Build Wave Phase 1 (8 items, 46h) | PENDING D-005 | Lilith/Researcher |
 | Build Wave Phase 2 (hardening) | PENDING Phase 1 | Lilith/Researcher |
 | Sonnet 4.6 Dev Wave launch | PENDING D-006 | Architect |
 | Public Debut | PENDING Build Wave | Architect |
+| M33/M36 integration tests | PENDING | Lilith/Researcher |
+| opencode.db VACUUM | PENDING | Build |
 
 ---
 
@@ -93,6 +103,7 @@ Treat outputs as specifications, not shipped features.
 | **L3-ReportIsNotDeliverable** | 0.99 | MaKaLi final L3 |
 | **L3-OOMIsModelLoadingCycle** | 0.95 | MaKaLi analysis + Consultant confirmation |
 | **L3-BuildWaveRequired** | 0.95 | 8 temple-rough items, 2-3 weeks |
+| **L3-DiskCleanupStrategy** | 0.90 | 5.2G recovered via cache cleanup + moves |
 
 ---
 
@@ -100,14 +111,15 @@ Treat outputs as specifications, not shipped features.
 
 | Anchor | Location |
 |--------|----------|
-| **Projection** | `data/coordination/anchored_summary/kali/projection.md` (v2.0.0) |
+| **Projection** | `data/coordination/anchored_summary/kali/projection.md` (v2.1.0) |
+| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (this file) |
 | **Proposed Lessons** | `data/entities/kali/proposed_lessons.yaml` |
 | **WAKE_STATE** | `data/coordination/WAKE_STATE.json` |
 | **Hardened Dev Roadmap** | `data/coordination/HARDENED_DEV_ROADMAP_20260830.md` |
 | **5-EIS Meta-Review** | `data/coordination/JEM_META_REVIEW_5_EIS_20260830.md` |
 | **MaKaLi Final Synthesis** | `data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md` |
-| **Hardened Dev Roadmap** | `data/coordination/HARDENED_DEV_ROADMAP_20260830.md` |
-| **All Dev Wave Reports** | `data/coordination/*_20260830.md` |
+| **Knowledge Gaps Audit** | `data/coordination/KNOWLEDGE_GAPS_BUILD_WAVE_20260830.md` |
+| **Researcher Deep Dive** | `data/coordination/RESEARCHER_GAP_DEEP_DIVE_20260830.md` |
 
 ---
 
@@ -149,4 +161,4 @@ Treat outputs as specifications, not shipped features.
 
 ---
 
-⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v2.0.0 ⬡ 2026-08-30
+⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v2.1.0 ⬡ 2026-08-30

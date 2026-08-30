@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Omega Engine — Embedding Strategy Configuration
+# ⬡ OMEGA ⬡ JEM ⬡ 2026-07-20
+# SOURCE OF TRUTH for all embedding dimensions, models, collections
+# Derived from: docs/strategy/EMBEDDING_HARDENING_STRATEGY_20260720.md
+
+version: "1.0.0"
+canonical_dimension: 768
+
+# Vec0 table lock — HARDCODED, prevents silent corruption
+vec0_lock:
+  enabled: true
+  dimension: 768
+  error_on_mismatch: true
+  message: |
+    Embedding dimension mismatch: provider={actual_dim}, canonical=768.
+    All providers MUST output 768-dim vectors. Use MRL truncation in provider.
+
+# Provider chain (quality-first order)
+providers:
+  - id: "gemma_primary"
+    class: "GemmaGGUFEmbeddingProvider"
+    model_path: "env:OMEGA_MODELS_DIR/embeddings/embeddinggemma-300m-Q6_K.gguf"
+    native_dim: 768
+    mrl_enabled: true
+    mrl_dimensions: [768, 512, 256, 128]
+    default_mrl: 768
+    collection: "omega_vec_gemma_768"
+    quantization: "int8_rescore"
+    oversample: 2
+    priority: 0
+    capabilities: ["multilingual", "code", "mrl", "qat"]
+    
+  - id: "nomic_fallback"
+    class: "NomicOllamaEmbeddingProvider"
+    base_url: "http://127.0.0.1:11434"
+    model: "nomic-embed-text:v1.5"
+    native_dim: 768
+    mrl_enabled: true
+    mrl_dimensions: [768, 512, 256, 128, 64]
+    default_mrl: 768
+    collection: "omega_vec_nomic_768"
+    quantization: "int8_rescore"
+    oversample: 2
+    priority: 1
+    capabilities: ["long_context_8k", "mrl", "binary_quant_ready"]
+    
+  - id: "minilm_speed"
+    class: "LocalGGUFEmbeddingProvider"
+    model_path: "env:OMEGA_MODELS_DIR/embeddings/all-MiniLM-L6-v2-Q4_K_M.gguf"
+    native_dim: 384
+    mrl_enabled: false
+    collection: "omega_vec_minilm_384"
+    quantization: "none"
+    priority: 4
+    capabilities: ["fast", "english_only"]
+    
+  - id: "static_zero_cost"
+    class: "StaticEmbeddingProvider"
+    model_name: "minishlab/potion-base-2M"
+    native_dim: 64
+    mrl_enabled: false
+    collection: "omega_vec_static_64"
+    priority: 5
+    capabilities: ["zero_cost", "no_dependencies"]
+
+# Collection definitions (maps to vec0 tables)
+collections:
+  omega_vec_gemma_768:
+    dimension: 768
+    metric: "cosine"
+    quantization: "int8_rescore"
+    hnsw_params:
+      m: 16
+      ef_construction: 200
+      ef_search: 64
+      
+  omega_vec_nomic_768:
+    dimension: 768
+    metric: "cosine"
+    quantization: "int8_rescore"
+    hnsw_params:
+      m: 16
+      ef_construction: 200
+      ef_search: 64
+      
+  omega_vec_nomic_512:
+    dimension: 512
+    metric: "cosine"
+    quantization: "int8_rescore"
+    hnsw_params:
+      m: 16
+      ef_construction: 200
+      ef_search: 64
+      
+  omega_vec_nomic_256:
+    dimension: 256
+    metric: "cosine"
+    quantization: "int8_rescore"
+    hnsw_params:
+      m: 16
+      ef_construction: 200
+      ef_search: 64
+      
+  omega_vec_minilm_384:
+    dimension: 384
+    metric: "cosine"
+    quantization: "none"
+    hnsw_params:
+      m: 16
+      ef_construction: 200
+      ef_search: 64
+      
+  omega_vec_static_64:
+    dimension: 64
+    metric: "cosine"
+    quantization: "none"
+
+# RRF Fusion (universal k=60)
+fusion:
+  method: "rrf"
+  k: 60
+  weights:
+    gemma_primary: 1.0
+    nomic_fallback: 0.8
+    nomic_512: 0.6
+    nomic_256: 0.4
+    minilm_speed: 0.3
+    static_zero_cost: 0.1
+  final_k: 10

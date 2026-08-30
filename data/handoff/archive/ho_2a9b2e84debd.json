@@ -1,0 +1,22 @@
+{
+  "packet_id": "ho_2a9b2e84debd",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "M2 FIREWALL MIGRATION PHASES B-E + PILLAR P3 LENS LAUNCH \u2014 Eliminate 186 M2 violations across 4 core modules by replacing hardcoded entity names with WAD-loadable ROLE constants. Simultaneously launch Pillar P3 (Engineering) as Lens 3 in Meditate framework \u2014 the first engine-native Omegamind lens.",
+  "context": "Detailed handoff guide written to data/coordination/HANDOFF_RESEARCHER_M2_MIGRATION_20260718.md. Key deliverables: M2 Phases B-E (subagent_dispatcher.py, oracle.py, ics.py, fleet_status_tui.py) \u2014 186 violations total. Parallel: Launch Pillar P3 as Lens 3 in Meditate framework (first Omegamind lens). Coordinate with Roc on lenses.yaml for Lens 3 spec. Pattern: ROLE constants + WAD YAML + config_resolver + entity_registry.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-07-17T16:50:47.704736+00:00",
+  "accepted_at": "2026-07-17T16:52:44.931412+00:00",
+  "accepted_by_agent_id": "opencode/researcher",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "researcher",
+  "reaped_at": "2026-07-19T16:53:46.488156+00:00",
+  "ttl_expired": true
+}

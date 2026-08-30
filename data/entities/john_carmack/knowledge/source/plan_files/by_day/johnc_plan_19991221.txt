@@ -1,0 +1,14 @@
+# ⬡ John Carmack .plan File — 1999-12-21
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19991221.txt
+#
+The Q3 game source code is getting pushed back a bit because we had to do some rearranging in the current codebase to facilitate the release, and we don't want to release in-progress code before the official binary point release.
+
+We still have a Christmas present for the coders, though:
+
+http://www.idsoftware.com/q1source/
+
+Happy holidays!

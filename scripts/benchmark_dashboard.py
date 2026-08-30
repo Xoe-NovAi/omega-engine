@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 benchmark_dashboard.py v3.2 — Gap-driven real-time benchmark visualization
 ==========================================================================

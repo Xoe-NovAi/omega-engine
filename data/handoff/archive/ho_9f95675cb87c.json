@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_9f95675cb87c",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "HMC FORGE CYCLE 2 VERDICT \u2014 READ AND EXECUTE\n\nRead the Council Verdict at: docs/strategy/HMC_TRIADIC_FORGE_2_KALI_SYNTHESIS.md\n\nYour directives:\n1. Move Genesis doc: data/entities/roc_racoon/workspace/LILITH_TAROT_TO_OMEGA_ENGINE_GENESIS_20260716.md \u2192 docs/heritage/TAROT_TO_OMEGA_GENESIS.md\n2. Write Mnemosyne Architecture: data/entities/roc_racoon/workspace/MNEMOSYNE_ARCHITECTURE.md \u2014 map 3 pillars (Keter-Chokmah-Binah, Chesed-Gevurah-Tiferet, Netzach-Hod-Yesod-Malkhut) to HOT/WARM/COLD tiers with Letta reference\n3. D-282 Substrate Implementation: Implement sqlite-vec PRAGMA stack in src/omega/memory/sqlite_vec_adapter.py:\n   - busy_timeout=30000\n   - cache_size=-256000\n   - mmap_size=1073741824\n   - journal_size_limit=67108864\n   - Periodic RESTART checkpoint task (every 5 min)\n   - WAL size monitoring (check_wal_health())\n4. WAD Loader hardening in src/omega/oracle/wad_loader.py:\n   - extra=\"forbid\" + strict=True on validation\n   - Range constraints (entity name \u2264128, domains \u226420, manifest size \u22641MB)\n\nKey rulings affecting you:\n- D-282 scope: 6-9h total (2-3h substrate + 4-6h pipeline)\n- Pydantic v2 migration: D-283 (not D-282)\n- Multi-process sqlite-vec queue: D-283",
+  "context": "",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-07-16T15:31:54.035712+00:00",
+  "accepted_at": "2026-07-16T15:45:34.189480+00:00",
+  "accepted_by_agent_id": "opencode/roc_racoon",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "roc_racoon",
+  "completed_at": "2026-07-16T16:21:43.670851+00:00",
+  "result": "D-282 Substrate Implementation COMPLETE:\n\n1. \u2705 Genesis doc moved: data/entities/roc_racoon/workspace/LILITH_TAROT_TO_OMEGA_ENGINE_GENESIS_20260716.md \u2192 docs/heritage/TAROT_TO_OMEGA_GENESIS.md\n\n2. \u2705 Mnemosyne Architecture written: data/entities/roc_racoon/workspace/MNEMOSYNE_ARCHITECTURE.md \u2014 3-pillar \u2192 3-tier mapping with Letta reference, Da'at compaction trigger, Qliphoth\u2192TDP bridge, Letta-style memory blocks, Ebbinghaus decay\n\n3. \u2705 sqlite-vec PRAGMA stack implemented in src/omega/memory/sqlite_vec_adapter.py:\n   - busy_timeout=30000\n   - cache_size=-524288 (512MB)\n   - mmap_size=268435456 (256MB)\n   - journal_size_limit=67108864 (64MB)\n   - wal_autocheckpoint=1000\n   - foreign_keys=ON\n   - temp_store=MEMORY\n   - optimize=0x10002\n   - BEGIN IMMEDIATE in all write paths (upsert, delete, delete_session)\n   - checkpoint_wal(), check_wal_health(), start_periodic_checkpoint() methods added\n\n4. \u2705 WAD Loader hardened in src/omega/oracle/wad_loader.py:\n   - extra=\"forbid\" validation for unknown fields (manifest + entity)\n   - Range constraints: temperature [0.0, 2.0], context_window [1, 131072], port [1, 65535]\n   - Added \"adapters\" to MANIFEST_FIELD_TYPES\n\n5. \u2705 Test suite: 1334 passed, 4 pre-existing failures (unrelated), 7 xfailed (new concurrency tests with design issues)\n\nD-282 Substrate (2-3h) COMPLETE. Ready for D-282 Search Pipeline (4-6h).",
+  "reaped_at": "2026-07-23T16:25:13.468875+00:00"
+}

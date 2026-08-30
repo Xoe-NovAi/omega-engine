@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_a050ee6e2652",
+  "target_agent_id": "grok-cli/grok",
+  "target_channel": "grok-cli",
+  "target_entity": "grok",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "D-281 PHASE III \u2014 M2 Firewall Remediation (Advisory Review)\n\n**Context**: Grok CLI executing Phase II (config_resolver.py + wad_loader). Phase III targets 4 files with hardcoded WAD paths violating M2 Engine-Stack Firewall.\n\n**Files to Review** (M2-LEAK instances):\n1. `src/omega/oracle/hierarchy.py` \u2014 lines 39, 45, 46, 49, 50 (5 violations)\n2. `src/omega/oracle/entity_registry.py` \u2014 lines 303, 307, 310 (3 violations)\n3. `src/omega/oracle/oracle.py` \u2014 line 251 (AGENTS.md path construction)\n4. `src/omega/ingestion/scraper.py` \u2014 line 43 (domains.yaml hardcoded)\n\n**Scope Correction** (Sonnet): `mandate_auditor.py` and `sovereign_vetter.py` are NOT violations \u2014 they use relative paths.\n\n**Your Role**: Advisory review of fix patterns. Use `config_resolver.WADS_DIR` + `WadLoader` API. Do NOT write to src/omega/ (M2 constraint). Provide fix specifications for Triad execution.\n\n**Reference**: `docs/strategy/D281_PHASE_II_IV_EXECUTION.md` Phase III section\n\n**Priority**: 1 (High) \u2014 Queued after Phase II completion",
+  "context": "",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-07-17T01:09:34.248578+00:00",
+  "accepted_at": "2026-07-17T01:24:09.233278+00:00",
+  "accepted_by": "grok-cli/grok",
+  "completed_at": "2026-07-17T01:26:27.887968+00:00",
+  "result": "ADVISORY COMPLETE. Spec: data/coordination/grok_cli/PHASE_III_M2_ADVISORY.md. Phase II already shipped b661c49. Verified 4 files M2 leaks; fix patterns via config_resolver (get_active_iwad, WADS_DIR, AGENTS_MD). No src writes (advisory). Ready for Triad Tier A execution.",
+  "reaped_at": "2026-07-24T01:30:14.031100+00:00"
+}

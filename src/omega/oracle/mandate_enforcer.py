@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-MANDATE-ENFORCER-v1.0.0
 """
 🔱 MANDATE ENFORCER

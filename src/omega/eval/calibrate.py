@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Judge Calibration (Isotonic Regression)
 # AP: AP-EVAL-CALIBRATE-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ eval.calibrate ⬡ S2

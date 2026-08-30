@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Coordination Package
 # ⬡ OMEGA ⬡ src/omega/coordination/__init__.py
 """Coordination primitives for multi-instance agent orchestration.

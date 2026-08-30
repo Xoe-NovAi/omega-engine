@@ -1,0 +1,17 @@
+# ⬡ John Carmack .plan File — 1997-08-17
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970817.txt
+#
+* demo angles
+* fixed initial lightmap cache value
+* disconnect now does an ERR_DROP to kill server as well
+* button_any support
+* bad fov problem
+
+aliaslist
+never nextserver on finale
+blaster autorepeat problem
+end cinematic loading flicker

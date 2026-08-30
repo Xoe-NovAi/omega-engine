@@ -1,0 +1,194 @@
+{
+  "model_id": "ox-alpha",
+  "provider_slug": "ox-alpha",
+  "display_name": "Ox Alpha (Stealth Preview)",
+  "priority": 4,
+  "api_base": "https://openrouter.ai/api/v1",
+  "alt_api_base": "https://tokenra.io/v1",
+  "auth": {
+    "type": "bearer",
+    "primary_env_var": "OPENROUTER_API_KEY",
+    "alt_env_var": "TOKENRA_API_KEY",
+    "header_name": "Authorization",
+    "header_format": "Bearer {key}"
+  },
+  "model_identifier": "stealth/ox-alpha",
+  "limits": {
+    "free_tier_tokens_daily": 100000000000000,
+    "free_tier_expires": "2026-08-26T23:59:59Z",
+    "context_window": 1048576,
+    "max_output_tokens": 131072,
+    "rate_limit_rpm": null,
+    "rate_limit_tpm": null,
+    "concurrent_requests": null
+  },
+  "capabilities": {
+    "chat": true,
+    "completion": true,
+    "streaming": true,
+    "reasoning": {
+      "supported": true,
+      "mandatory": true,
+      "effort_levels": ["max", "high", "low"],
+      "default_effort": "max"
+    },
+    "tools": true,
+    "tool_choice": true,
+    "structured_outputs": true,
+    "response_format": true,
+    "multimodal_input": {
+      "text": true,
+      "image": true,
+      "video": true,
+      "audio": false
+    },
+    "modalities": "text+image+video->text"
+  },
+  "parameters": {
+    "supported": [
+      "model",
+      "messages",
+      "reasoning_effort",
+      "max_tokens",
+      "temperature",
+      "top_p",
+      "top_k",
+      "tools",
+      "tool_choice",
+      "response_format",
+      "reasoning",
+      "include_reasoning"
+    ],
+    "defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "reasoning_effort": "max"
+    }
+  },
+  "performance": {
+    "throughput_tps": 22,
+    "latency_p50_ms": 5830,
+    "latency_agent_turn_p50_ms": 11600,
+    "uptime_3d": 0.9999,
+    "availability_3d": 0.9679,
+    "cache_hit_rate_3d": 0.67
+  },
+  "integration_notes": "Single Stealth provider on OpenRouter — no routing decision, no auto-failover. Direct Tokenra endpoint available as alternative. Mandatory reasoning adds latency. Preview pricing $0/$0 expires ~Aug 26. Post-preview pricing undisclosed.",
+  "omega_leverage": [
+    "distillation_target",
+    "synthetic_data_generation",
+    "rag_corpus_expansion",
+    "background_researcher_fuel",
+    "adversarial_testing",
+    "multimodal_eval",
+    "g1_workhorse_replacement"
+  ],
+  "risks": [
+    "single_provider_no_failover",
+    "no_sla_removable_without_notice",
+    "stealth_eula_training_license_irrevocable",
+    "personal_data_shared_with_provider",
+    "post_preview_pricing_undisclosed",
+    "mandatory_reasoning_cannot_disable",
+    "rate_limits_undefined_100t_marketing",
+    "anonymous_provider_identity_unconfirmed",
+    "stack_trace_leak_will_be_patched",
+    "compliance_risk_production_secrets"
+  ],
+  "g1_replacement_score": 8.5,
+  "g1_replacement_notes": "Strong candidate for post-Gemma 4 31B workhorse: 1M context, 131K output, tool calling, mandatory reasoning, free preview, agent-harness validated (Claude Code 9.3B tokens, Hermes 9B tokens). Caveats: temporary, compliance risk, single provider.",
+  "heritage_tags": [
+    {
+      "tag": "[heritage: zhipu-2026] GLM MoE Architecture",
+      "status": "leading_theory_forensics",
+      "confidence": 0.98,
+      "evidence": [
+        "Java stack trace: com.wd.paas.api.domain.v4.chat.ChatCompletionRequest",
+        "Error code 1214 match across z-ai/glm-5.3, glm-5.2, glm-5v-turbo",
+        "30/30 tokenizer probes match GLM-5.3 (+75 token wrapper)",
+        "Video encoder token-for-token match to GLM-5V-Turbo (4 videos)",
+        "Audio rejection matches GLM-5V behavior (vs MiMo v2.5 accepts audio)"
+      ],
+      "vet_required": true,
+      "vet_status": "pending"
+    }
+  ],
+  "provider_fabric_position": {
+    "chain": [
+      "native-gguf (0)",
+      "lmster (1)",
+      "Ollama (2)",
+      "antigravity (3)",
+      "ox-alpha (4) ← THIS ENTRY",
+      "google (5)",
+      "openrouter (6)",
+      "opencode-zen (7)"
+    ],
+    "routing_pattern": "cheap/open route (Ox Alpha) → internal eval gate → premium model on failure",
+    "fallback_chain": ["ox-alpha", "google", "openrouter-fusion", "opencode-zen"]
+  },
+  "distillation_pipeline": {
+    "enabled": true,
+    "priority": "high",
+    "target_model": "qwen3-1.7b-gguf",
+    "target_path": "~/omega_library/qwen3-1.7b-oxalpha-reasoning-q8_0.gguf",
+    "training_data_targets": {
+      "swe_bench_traces": 100000,
+      "deep_swe_traces": 50000,
+      "terminal_bench_traces": 50000,
+      "multi_file_refactors": 20000,
+      "video_code_reasoning": 10000,
+      "tool_call_trajectories": 100000
+    },
+    "lora_config": {
+      "r": 64,
+      "alpha": 128,
+      "dropout": 0.1,
+      "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+    },
+    "quantization": "Q8_0",
+    "validation": {
+      "local_eval_suite": true,
+      "no_cloud_dependency": true,
+      "benchmarks": ["humaneval", "mbpp", "swe_bench_lite"]
+    }
+  },
+  "compliance": {
+    "production_secrets_allowed": false,
+    "pii_allowed": false,
+    "regulated_data_allowed": false,
+    "sanitized_repos_allowed": true,
+    "open_source_work_allowed": true,
+    "eval_benchmarks_allowed": true,
+    "data_retention_policy": "provider_retains_for_training_per_stealth_eula",
+    "zero_data_retention_client_layer_only": true
+  },
+  "expiry_handling": {
+    "auto_disable_date": "2026-08-26T23:59:59Z",
+    "fallback_on_expiry": "google",
+    "distillation_deadline": "2026-08-25T23:59:59Z"
+  },
+  "monitoring": {
+    "track_latency": true,
+    "track_error_rate": true,
+    "track_token_usage": true,
+    "provenance_field": "provider_name",
+    "expected_provider_name": "stealth/ox-alpha"
+  },
+  "metadata": {
+    "research_date": "2026-08-22",
+    "researcher": "researcher (Jem Analyst L2)",
+    "model": "nemotron-3-ultra-free",
+    "session_token": "AP-RESEARCHER-OXALPHA-v1.0.0",
+    "sources": [
+      "openrouter.ai/stealth/ox-alpha",
+      "oxalpha.io/ox-alpha-api.html",
+      "explainx.ai/blog/openrouter-ox-alpha-stealth-model-august-2026",
+      "explainx.ai/blog/ox-alpha-what-we-know-mystery-ai-model-august-2026",
+      "glm5.app/blog/ox-alpha-openrouter",
+      "openrouter.ai/terms/stealth",
+      "hf models ls --search ox-alpha",
+      "hf models ls --search glm-5"
+    ]
+  }
+}

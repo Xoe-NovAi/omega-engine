@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_cf36d5a81857",
+  "target_agent_id": "opencode/jem",
+  "target_channel": "opencode",
+  "target_entity": "jem",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Produce comprehensive gap analysis report for Model Registry at docs/strategy/MODEL_REGISTRY_GAP_ANALYSIS_20260719.md. Review all 35 model cards, 9 providers, 9 research profiles, registry service, and integration points. Output prioritized task list for Cline CLI verification mission.",
+  "context": "Model Registry Phase 1 complete. 35 model cards created but with critical gaps: NO parameters field on any model, provider mappings need verification, capability scores need benchmark sources, context windows need verification. Jem to produce comprehensive gap analysis report at docs/strategy/MODEL_REGISTRY_GAP_ANALYSIS_20260719.md covering schema completeness, per-model gaps (35 rows), registry-level issues, service implementation gaps, integration gaps, testing gaps, and prioritized task list for Cline.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-07-18T10:19:07.248090+00:00",
+  "reaped_at": "2026-07-19T15:23:46.832518+00:00",
+  "ttl_expired": true
+}

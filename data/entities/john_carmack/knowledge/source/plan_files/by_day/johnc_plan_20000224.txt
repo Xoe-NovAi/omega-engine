@@ -1,0 +1,10 @@
+# ⬡ John Carmack .plan File — 2000-02-24
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_20000224.txt
+#
+Some people took it upon themselves to remotely wreck Slade's development system. That is no more defensible than breaking into Id and smashing something.
+
+The idea isn't to punish anyone, it is to have them comply with the license and continue to contribute. QuakeLives has quite a few happy users, and it is in everyone's best interest to have development continue. It just has to be by the rules.

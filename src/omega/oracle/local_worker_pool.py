@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-LOCAL-WORKER-POOL-v1.0.0
 # 🔱 Local Worker Pool — Fire-and-Forget Background Inference
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ trc_local_worker ⬡ PHASE-2

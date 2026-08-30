@@ -1,0 +1,17 @@
+# 🔱 Omega Engine — YouTube Background Worker Timer
+# ⬡ OMEGA ⬡ SOPHIA ⬡ autonomous ⬡ youtube_worker ⬡ TIMER
+#
+# Boot trigger for the YouTube worker daemon.
+# The daemon runs continuously after start; this timer only ensures
+# it launches on boot (with a 2-minute delay for Redis/SearXNG startup).
+
+[Unit]
+Description=Omega YouTube Worker — Boot Trigger
+Documentation=https://github.com/Xoe-NovAi/omega-engine
+
+[Timer]
+OnBootSec=2min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

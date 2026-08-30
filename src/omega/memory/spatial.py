@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-M3-SPATIAL-v1.0.0
 # 🔱 Spatial Memory — xyz Coordinates for Memory Blocks
 # ⬡ OMEGA ⬡ MEMORY ⬡ spatial.py

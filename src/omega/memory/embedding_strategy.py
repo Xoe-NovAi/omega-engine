@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Embedding Strategy Singleton — Single Source of Truth for all embedding config.
 AP: AP-EMBEDDING-STRATEGY-v1.0.0
 ⬡ OMEGA ⬡ JEM ⬡ FS-Β1 ⬡ 2026-07-20

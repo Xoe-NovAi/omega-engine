@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Omega Engine - Enforce VaultCore Usage Tool
 Ensures all API key access goes through VaultCore, not os.environ.get / os.getenv.

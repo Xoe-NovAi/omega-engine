@@ -1,0 +1,7 @@
+# data/entities/default/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: default
+updated: '2026-07-11T11:23:45.172097'
+topics: []

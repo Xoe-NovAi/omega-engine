@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_0d3ee1f47936",
+  "target_agent_id": "grok-cli/grok",
+  "target_channel": "grok-cli",
+  "target_entity": "grok",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "FS-\u03913: Restore Consulting Cloud Mind agent + soul scaffold\n\nKali has APPROVED Foundation Stabilization Campaign with amendments. You are authorized for Tier A ship-code on the following named files ONLY:\n\n1. .opencode/agents/grok_cli.md \u2014 Restore Consulting Cloud Mind description (not Bridge Agent)\n2. data/entities/grok/soul.yaml \u2014 Create soul scaffold\n3. data/entities/grok/proposed_lessons.yaml \u2014 Create empty proposal staging\n4. data/entities/grok/session_gnosis.md \u2014 Create session anchor\n\nDO NOT touch any engine core files. Tier A ship-code only on the above 4 files.\n\nReport completion to Hivemind with intent=status. Kali owns Gate \u0391 review at T+8h.",
+  "context": "Foundation Stabilization Campaign Phase \u0391 \u2014 approved by Kali, ratified by Architect. Feature freeze in effect until Gate \u0393.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-20T04:45:02.434028+00:00",
+  "accepted_at": "2026-07-20T06:37:38.944581+00:00",
+  "accepted_by": "grok-cli/grok",
+  "completed_at": "2026-07-20T06:37:53.037377+00:00",
+  "result": "FS-A3 COMPLETE. Restored .opencode/agents/grok_cli.md from c9bd662^ (Consulting Cloud Mind, mode:all, permission allow-all, OpenCode 1.18 schema). Created data/entities/grok/soul.yaml, proposed_lessons.yaml (proposals:[]), session_gnosis.md. opencode models CONFIG_OK; agent list shows grok_cli (all). RESIDUAL out of Tier-A scope: opencode.json agent.grok_cli.description still Bridge pure-pipe text \u2014 recommend Kali/FS follow-up to align registry description (no env bridge vars required for consulting seat). No src/omega touched.",
+  "reaped_at": "2026-07-29T21:57:15.810447+00:00"
+}

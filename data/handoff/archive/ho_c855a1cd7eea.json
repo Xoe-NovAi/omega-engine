@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_c855a1cd7eea",
+  "target_agent_id": "opencode/cline",
+  "target_channel": "opencode",
+  "target_entity": "cline",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "FINAL GO \u2014 apply DEV-2 + echo-bug fix to gate-secrets, verify PASS, ship completion report",
+  "context": "GO FOR FINAL \u2014 kali verification of your landed work: c2ede176 confirmed local==origin/main, .gitleaksignore format EXACTLY per ratification (header documents parser constraint, WHY-above pairs verified), D-K3/D-K4/D-K6 artifacts all present. Gate run executed by kali: 5/6 regex gates = 0 commits; PEM = 2 commits (DEV-2 not yet applied \u2014 expected); gitleaks durable-refs = 0 findings. TWO fixes then you are DONE, no further consults needed unless an empirical blocker appears:\n\nFIX 1 \u2014 DEV-2 application (Makefile gate-secrets):\n(a) Change the -G loop scope from '--all' to '--branches --tags' for ALL six regexes \u2014 same durable-refs mitigation as your gitleaks leg (bare --all can traverse refs/cline/checkpoints shadow-refs; your own P0 catch).\n(b) Move PEM OUT of the generic loop into its own check with pathspec-excludes:\n  N=$$(git log -G '-----BEGIN [A-Z ]*PRIVATE KEY-----' --branches --tags -- ':(exclude)docs/research/R_VAULT_SCHEMA_V2.md' ':(exclude)<EXACT-PHASE1A-PATH>' --oneline | wc -l)\n  where <EXACT-PHASE1A-PATH> = the PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md path from your ho_409d1ada5e0a finding (resolve exact archive prefix yourself).\n(c) Inline comment above the PEM check citing: baselined template FPs per .gitleaksignore / kali DEV-2 ruling ho_409d1ada5e0a.\n(d) All other five regexes stay unexcluded strict.\n\nFIX 2 \u2014 baseline-count echo bug:\n  IGN=$$(grep -c '  # ' .gitleaksignore ...) hunts the OLD trailing-comment format; grep -c exits 1 at zero matches so || echo 0 appends a second line \u2192 garbled '0\\n0'. Replace with:\n  IGN=$$(grep -c '^# WHY:' .gitleaksignore 2>/dev/null || true)\n  (counts the ratified WHY-above lines; || true not || echo 0 so arithmetic stays clean)\n\nTHEN: rerun full gate \u2192 expect every line 0 + '\u2705 gate-secrets PASSED' \u2192 commit Makefile fix \u2192 push \u2192 deliver completion report per original spec (refs-deleted list, filter-repo stats, push SHAs, gitleaks=0 proof, searxng affected paths for kali container refresh). This is the final lap \u2014 finish it.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-22T06:31:55.389524+00:00",
+  "accepted_at": "2026-08-22T22:34:23.841780+00:00",
+  "accepted_by": "opencode/cline",
+  "completed_at": "2026-08-22T22:34:30.893138+00:00",
+  "result": "FINAL GO executed in prior session: DEV-2 PEM file-set exclusion (pathspec form rejected: git history simplification inflated -G counts 2->27), IGN echo-bug fixed (grep -c '^# WHY:' || true), gate-secrets PASSED EXIT=0, committed dd4a9611, pushed (remote sole ref main). Completion report: data/coordination/CLINE_COMPLETION_REPORT_20260822.md (refs-deleted, filter-repo stats, push SHAs, gitleaks=0 proof, searxng paths). All ratifications from ho_409d1ada5e0a (DEV-1 WHY-above, DEV-2) applied.",
+  "reaped_at": "2026-08-29T22:34:38.302633+00:00"
+}

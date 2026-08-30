@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 ⬡ AUTONOMOUS MEDITATION PIPELINE — Omega Engine Core
 Fully autonomous Problem → Prompt Crafting → Meditation → Synthesis → Research → Grounded Update pipeline.

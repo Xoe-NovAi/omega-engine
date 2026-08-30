@@ -35,6 +35,7 @@
       3 src/omega/research/hivemind_bridge.py
       3 src/omega/oracle/oracle.py
       3 src/omega/oracle/health_monitor.py
+      3 src/omega/oracle/cohort_registry.py
       3 src/omega/oracle/cgroup_pressure.py
       3 src/omega/oracle/audience_calibrator.py
       3 src/omega/observability/regression_watcher.py
@@ -93,4 +94,4 @@
       1 src/omega/config/loader.py
       1 src/omega/cli/vault.py
       1 src/omega/cli/bundle.py
-      1 Found 322 errors.
+      1 Found 325 errors.

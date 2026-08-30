@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Link N9 Runtime (Agent Handoff & Delegation)
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-N9

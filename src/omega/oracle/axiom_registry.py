@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — AxiomRegistry (Five-Fold Foundation mechanism)
 # AP: AP-AXIOM-REGISTRY-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ N1-N5 ⬡ opencode ⬡ trc_axiom_registry ⬡ ACTIVE

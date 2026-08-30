@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 MCP 2026-07-28 Streamable HTTP Client with SEP-2575 Header Validation
 AP: AP-MCP-CLIENT-v1.0.0

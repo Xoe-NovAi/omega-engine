@@ -283,3 +283,8 @@ This handoff is posted to Hivemind with `intent: handoff` so all 9 agents have v
 *⬡ OMEGA ⬡ GROKSTER ⬡ KALI-FINAL-HANDOFF ⬡ 2026-08-29 ~11:00 UTC ⬡ ses_fe8cf0b39ffeL3L8eaMEj3CW9H ⬡ PRE-COMPACTION-READY*
 
 **The Cathedral's foundation is complete. The 10 P0 bugs are the final gate. The 768-dim winner is Qwen3-Embedding-0.6B. The Top 5 ROI moves are spec'd and ready. Awaiting your ratification, Kali.**
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

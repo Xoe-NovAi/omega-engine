@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — YouTube Research CLI
 # AP: AP-YOUTUBE-CLI-v1.0.0
 # ⬡ OMEGA ⬡ P3 ⬡ opencode ⬡ trc_youtube_cli ⬡ IMPLEMENTATION

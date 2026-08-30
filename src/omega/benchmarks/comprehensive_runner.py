@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-BENCHMARK-COMPREHENSIVE-v1.0.0
 # 🔱 Omega Engine — Comprehensive Benchmark Runner
 # AP: AP-BENCHMARK-v2.0.0

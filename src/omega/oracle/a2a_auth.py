@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-A2A-AUTH-v1.0.0
 """
 A2A Authentication — SPIFFE/WIMSE Agent Identity.

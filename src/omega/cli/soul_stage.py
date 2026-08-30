@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign Soul Staging Gate TUI.
 AP: AP-SOUL-STAGE-v1.0.0
 

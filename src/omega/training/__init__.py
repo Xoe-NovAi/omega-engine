@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TRAINING-v1.0.0
 # 🔱 Omega Engine — Training Package
 # ⬡ OMEGA ⬡ TRAINING ⬡ v1.0.0 ⬡ 2026-08-07

@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
+generated_at: '2026-08-24T17:12:24.527768'
+os_distro: ubuntu
+os_release: '25.10'
+kernel: 6.17.0-41-generic
+cpu:
+  vendor: amd
+  model: AMD Ryzen 7 5700U with Radeon Graphics
+  architecture: x86_64
+  physical_cores: 8
+  logical_threads: 16
+  l3_cache_kb: 8192
+  compute_cores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  io_threads:
+  - 7
+  recommended_threads: 7
+  numa_single_die: true
+  microarch: zen2
+memory:
+  total_mb: 14793
+  available_mb: 9745
+  uma_carveout_mb: 8192
+  uma_vram_mb: 512
+  uma_gtt_mb: 7936
+  swap_zram_mb: 16384
+  nvme_swap_mb: 32768
+gpu:
+  present: true
+  vendor: amd
+  name: integrated (Renoir)
+  vram_mb: 512
+  vulkan_supported: true
+provenance_note: 'Regenerated 2026-08-24 from scripts/detect_hardware_profile.py live
+  detection after FP-12 dispatch-premise incident. SUPERSEDES the 2026-08-10 ''TAGGED
+  FOR UPDATE'' stale state. SWAP TRUTH (live-verified by two independent Jem passes):
+  /dev/zram1 ACTIVE, zstd algorithm, 8G disksize -- the ''zswap enabled, zRAM DISABLED''
+  claim in ARK SS4/MEMORY_MANAGEMENT_KB is CONTRADICTED by live state; ZS workstream
+  disposition deferred to Architect.'

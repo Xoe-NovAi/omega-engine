@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Simple RAG (factual path)
 # AP: AP-RAG-SIMPLE-v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ rag.simple_rag ⬡ S3

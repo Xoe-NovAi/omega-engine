@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Omega Engine — Dispatch Guard v2.0 (CI-BRIEF-001)
 
 12-Step Brief Verification Protocol per Jem's forensic Appendix C + 5-EIS amendments:
@@ -472,6 +477,79 @@ def step6_write_tool_routing(estimated_tokens: int, result: GuardResult) -> None
         result.metadata["write_tool_required"] = False
 
 
+def step6b_m34_register_subagent(
+    subagent_type: str,
+    prompt: str,
+    entity: Optional[str],
+    result: GuardResult,
+    dispatch_id: Optional[str] = None,
+) -> None:
+    """Step 6b: M34 explicit registration — call m34_register_subagent().
+
+    Per RESEARCHER_GAP_FILL_PHASE_1_20260830.md HIGH-3: after M34-HOOK-001
+    detection, explicitly register the subagent in M34 registry for every
+    dispatch. This ensures the ACTIVE_SUBAGENTS.json is populated even when
+    the guard runs independently of dispatch().
+
+    Uses a synthetic session_id if dispatch_id is not provided.
+    """
+    if not is_m34_enabled():
+        result.add_pass("6b-m34-register-subagent")
+        result.metadata["m34_registered"] = False
+        return
+
+    # SPT (single-pass transient) does not require registration
+    if subagent_type in ("general", "spt"):
+        result.add_pass("6b-m34-register-subagent")
+        result.metadata["m34_registered"] = False
+        return
+
+    # Attempt explicit registration via m34_register_subagent()
+    try:
+        import uuid as _uuid
+        from omega.oracle.subagent_dispatcher import m34_register_subagent
+
+        session_id = dispatch_id or f"dsp_{_uuid.uuid4().hex[:12]}"
+        target_agent = entity or subagent_type
+        # Extract first 200 chars of prompt as task description
+        task_brief = prompt[:200]
+
+        registered = m34_register_subagent(
+            session_id=session_id,
+            target_agent=target_agent,
+            task_description=task_brief,
+            task_type="unknown",
+            expected_output="",
+            priority="P2",
+            write_tool_required=result.metadata.get("write_tool_required", False),
+        )
+
+        if registered:
+            result.add_pass("6b-m34-register-subagent")
+            result.metadata["m34_registered"] = True
+            result.metadata["m34_session_id"] = session_id
+        else:
+            result.add_warn(
+                "6b-m34-register-subagent",
+                f"M34 registration returned False for session {session_id}. "
+                f"Registry may be unavailable.",
+            )
+            result.metadata["m34_registered"] = False
+    except ImportError:
+        result.add_warn(
+            "6b-m34-register-subagent",
+            "m34_register_subagent() not importable — M34 registry module missing. "
+            "Ensure omega.oracle.subagent_dispatcher is importable.",
+        )
+        result.metadata["m34_registered"] = False
+    except Exception as exc:
+        result.add_warn(
+            "6b-m34-register-subagent",
+            f"M34 registration failed with exception: {exc}",
+        )
+        result.metadata["m34_registered"] = False
+
+
 def step7_cross_validator_escalation(priority: Optional[str], estimated_tokens: int, result: GuardResult) -> None:
     """Step 7: Cross-validator agent escalation for P0/P1.
 
@@ -853,6 +931,9 @@ def run_12_step_guard(args: argparse.Namespace) -> GuardResult:
 
     # Step 6: Write-tool routing (M33 preventive)
     step6_write_tool_routing(estimated_tokens, result)
+
+    # Step 6b: M34 explicit registration
+    step6b_m34_register_subagent(args.subagent_type, args.prompt, args.entity, result)
 
     # Step 7: Cross-validator escalation (M33 P0/P1)
     step7_cross_validator_escalation(args.priority, estimated_tokens, result)

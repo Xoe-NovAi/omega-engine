@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Regression Watcher — Automated Baseline Monitoring
 # AP: AP-REGRESSION-WATCHER-v1.0.0
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ trc_regression_watcher ⬡ OBSERVABILITY

@@ -1,0 +1,20 @@
+# ⬡ John Carmack .plan File — 1996-04-01
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960401.txt
+#
+* added $flags to models for client side stuff (rotations, trails)
+* allowed coop play
+* started using Host_Error for client errors
+* lint
+
++ animating textures
++ NULL connect
++ connect while in a game crashes
+
+different sfx cache size for client only?
+frame chnaging while paused?
+item targets
+respawn in coop

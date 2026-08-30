@@ -1,0 +1,26 @@
+# ⬡ John Carmack .plan File — 1997-08-31
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970831.txt
+#
+* fixed trigger_always
+* game dll by search path
+* cinematic NULL bug
+* help computer
+
++ get rid of datablocks?
++ dll init must clear the persistant data
+- savegame needs to save game.dll name
++ save directory?
++ put pcx_t into qfiles.h?
++ unify all hud work into g_hud.c
+
+set command with flags?
+should "path" be renamed to pathlist?
+trigger_allways should be fixed size
+gameversion
+somehow don't resend big deltas (scoreboard hud) until ack?
+client side feedback
+glgentextures

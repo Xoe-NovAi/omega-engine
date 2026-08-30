@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_f9fe7c59e7b1",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Sprint A \u2014 SPDX 3.1 Heritage Profile Spec: Formalize the Omega Engine heritage tracking as an SPDX 3.1 document.\n\n**What to do**:\n1. Create `docs/research/R_SPDX_HERITAGE_PROFILE.md` \u2014 a formal specification mapping Omega Engine heritage patterns to SPDX 3.1 relationship types\n2. For each legitimate [id-soft:] pattern (from HERITAGE_VET_LOG.md), document:\n   - Component name (omega pattern)\n   - relationshipType: DERIVED_FROM pointing to externalRef (id Software source)\n   - For user-original patterns: relationshipType: DESCRIBES with comment \"User-original IP\"\n3. Include the SPDX 3.1 SBOM structure for automated compliance queries\n4. Reference: SPDX 3.1 spec (ISO/IEC 5962:2021), Omega CREDITS.md heritage registry\n\n**Acceptance**: Document exists, covers all 21+ legitimate heritage patterns, machine-queryable format documented.",
+  "context": "",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-07-11T00:41:19.848293+00:00",
+  "accepted_at": "2026-07-11T00:43:34.471827+00:00",
+  "accepted_by_agent_id": "opencode/roc_racoon",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "roc_racoon",
+  "completed_at": "2026-07-11T00:50:56.712325+00:00",
+  "result": "SPDX 3.1 Heritage Profile spec COMPLETE. Created docs/research/R_SPDX_HERITAGE_PROFILE.md with: \u00a71 SPDX 3.1 model mapping (3 custom element types, 4 relationship types, externalRef format), \u00a72 Full heritage registry (21 LEGITIMATE patterns with JSON SPDX element definitions, 13 USER-ORIGINAL patterns with DESCRIBES, 6 REJECTED patterns with HAS_ASSESSED_RELATIONSHIP), \u00a73 SBOM structure with document header template, 5 source elements (Doom 1993, Quake 1996, Q3A 1999, Doom 3 2004, Doom 3 BFG 2012), 5 automated compliance queries (SPARQL-like), \u00a74 Integration with make heritage-spdx, make heritage-vet, CI pipeline, and generate_heritage_sbom.py script spec, \u00a75 Relationship graph summary, \u00a76 Maintenance procedures.",
+  "reaped_at": "2026-07-18T00:51:40.592982+00:00"
+}

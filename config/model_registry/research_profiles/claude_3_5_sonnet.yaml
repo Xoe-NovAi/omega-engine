@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Claude 3.5 Sonnet Research Profile
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+profile: "claude_3_5_sonnet"
+context_window: 200000
+reasoning_depth: "fast"
+tool_fidelity: "medium"
+guardrails:
+  - "Same as claude_4_sonnet plus context advantage"
+  - "Can hold more evidence; use for complex multi-source topics"
+failure_signature: "tool_drift"
+shadow_focus: "verify_tool_use"

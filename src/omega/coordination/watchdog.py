@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-WATCHDOG-v1.0.0
 """
 Subagent Watchdog — Failure Observability for Agent Orchestration.

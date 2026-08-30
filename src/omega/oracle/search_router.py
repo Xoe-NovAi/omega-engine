@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """SSP-V2 Search Router — Intent-based tier dispatch for sovereign search.
 # Heritage: inspired by BSP culling (id Software 1993) — REJECTED per vet-028
 AP: AP-SSP-V2-SEARCH-ROUTER-v1.0.0

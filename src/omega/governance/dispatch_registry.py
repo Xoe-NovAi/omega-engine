@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ GOVERNANCE ⬡ DISPATCH_REGISTRY
 # Single source for dispatch.yaml with mtime-aware cache.
 # Covers: oracle.py, subagent_dispatcher.py, ics.py, fleet_status_tui.py, mandate_auditor.py

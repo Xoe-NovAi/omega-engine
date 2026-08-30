@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Sovereign SQLite Policy — Profiled connection configuration.
 AP: AP-SQLITE-POLICY-v1.0.0
 ⬡ OMEGA ⬡ P2 ⬡ infra ⬡ sqlite_policy ⬡ FS-Β4

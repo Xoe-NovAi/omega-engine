@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-HEADROOM-PROTOCOL-v1.0.0
 # 🔱 Headroom Protocol — Sovereign Prompt Compression
 # ⚠️ DEPRECATED: This implementation uses binary zlib compression, which does NOT reduce LLM tokens.

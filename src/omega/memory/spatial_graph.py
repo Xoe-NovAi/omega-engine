@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Spatial Knowledge Graph for VR Navigation and Knowledge Traversal.
 AP: AP-SPATIAL-GRAPH-v1.0.0
 

@@ -296,3 +296,8 @@ The sprint is DONE when:
 *The Cathedral will research anything, any time, with zero manual intervention.*
 
 **Sprint charter ratified. Awaiting Jem EIS activation to begin Week 1.**
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

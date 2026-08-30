@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Local Inference Admission Control — C-10
 # AP: AP-ADMISSION-CONTROL-v1.0.0
 # [M7: Local-First] Ensures max 1 concurrent local inference instance

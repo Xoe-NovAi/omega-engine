@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Document format readers for UniversalDocReader."""
 # AP: AP-OMEGA-DOC-READER-READERS-v1.0.0
 # ⬡ OMEGA ⬡ DOC_READER_READERS ⬡ 2026-07-13

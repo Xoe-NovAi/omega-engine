@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-SECURITY-TAINT-v1.0.0
 # 🔱 Tainted Data Protocol — Transitive Propagation
 # ⬡ OMEGA ⬡ SECURITY ⬡ taint.py

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 MCP 2026-07-28 Compliance Package
 AP: AP-MCP-COMPLIANCE-v1.0.0

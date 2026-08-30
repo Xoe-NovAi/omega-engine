@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Engine — Memory Adapters
 # ⬡ OMEGA ⬡ MEMORY ⬡ ADAPTERS ⬡ v1.0.0 ⬡ 2026-06-15

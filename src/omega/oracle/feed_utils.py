@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Cross-Pollination Feed Utilities
 # ⬡ OMEGA ⬡ N9:LINK ⬡ deepseek-v4-flash ⬡ opencode ⬡ FEED-UTILS

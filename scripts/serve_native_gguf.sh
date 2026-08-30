@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Native GGUF Server Launcher & Lifecycle Manager
 # AP Token: AP-NATIVE-GGUF-SERVER-v1.1.0
 # Starts/stops llama-cpp servers for native-gguf providers.

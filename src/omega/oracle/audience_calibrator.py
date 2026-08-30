@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 Omega Engine — Audience Calibration Pipeline
 # AP: AP-AUDIENCE-CALIBRATOR-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ audience_calibrator ⬡ D16-1

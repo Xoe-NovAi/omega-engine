@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_c53a339b155e",
+  "target_agent_id": "grok-cli/grok",
+  "target_channel": "grok-cli",
+  "target_entity": "grok",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "D-281 PHASE IV \u2014 Codex Mechanism Separation (Advisory Review)\n\n**Context**: Phase II creates config_resolver.py. Phase IV separates hardcoded hydration sequence from codex_cat.py into reusable hydration_header.md.\n\n**Tasks to Review**:\n1. **Extract** `scripts/codex_cat.py:63-72` (hardcoded hydration sequence) \u2192 `scripts/hydration_header.md`\n2. **Refactor** `codex_cat.py` to read `hydration_header.md` dynamically\n3. **Harden Makefile** `codex-*` targets with restore-on-failure pattern:\n   ```make\n   codex-gen: scripts/groups.json\n   \tpython3 scripts/codex_cat.py || (mv scripts/groups.json.bak scripts/groups.json && exit 1)\n   ```\n\n**Files to Review**:\n- `scripts/codex_cat.py` (lines 63-72 + main logic)\n- `scripts/hydration_header.md` (TO BE CREATED)\n- `Makefile` (codex-gen, codex-verify, codex-clean targets)\n\n**Your Role**: Advisory review of separation pattern. Do NOT write to scripts/ (M16 constraint \u2014 modularization). Provide spec for Triad execution.\n\n**Reference**: `docs/strategy/D281_PHASE_II_IV_EXECUTION.md` Phase IV section\n\n**Priority**: 1 (High) \u2014 Queued after Phase III",
+  "context": "",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-07-17T01:09:49.303050+00:00",
+  "accepted_at": "2026-07-17T01:24:09.236646+00:00",
+  "accepted_by": "grok-cli/grok",
+  "completed_at": "2026-07-17T01:26:27.899291+00:00",
+  "result": "ADVISORY COMPLETE. Spec: data/coordination/grok_cli/PHASE_IV_CODEX_ADVISORY.md. Hydration block ~L63-76 in codex_cat.py; Makefile codex-mandates/agents/arch/heritage overwrite groups.json without restore (P0). Spec for hydration_header.md + restore-on-failure. No scripts/ writes.",
+  "reaped_at": "2026-07-24T01:30:14.031100+00:00"
+}

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Soul Loader — Public/Private Split Loader for Soul Data
 AP: AP-SOUL-LOADER-v1.0.0

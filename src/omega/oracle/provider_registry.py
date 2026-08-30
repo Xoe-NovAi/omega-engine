@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Single source of truth for provider capability metadata (M7/M22).
 
 Reads ``is_cloud`` from ``config/providers.yaml`` — the only authoritative

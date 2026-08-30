@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # 🔱 M33 Sentinel Probe
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ M33 ⬡ RUNTIME
 # AP: AP-M33-PROBE-v1.0.0

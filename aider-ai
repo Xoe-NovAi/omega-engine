@@ -1,0 +1,5 @@
+#!/bin/bash
+# Aider wrapper for Omega Engine project
+# Uses Python 3.12.11 built from source (bypasses Python 3.13 audioop incompatibility)
+
+exec /tmp/Python-3.12.11/python -m aider "$@"

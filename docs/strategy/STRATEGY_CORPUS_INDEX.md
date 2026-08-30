@@ -535,3 +535,8 @@
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ STRATEGY-CORPUS-INDEX ⬡ 2026-08-29*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: jem-2.0 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

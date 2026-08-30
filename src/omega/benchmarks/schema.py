@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # ⬡ OMEGA ⬡ BENCHMARK SCHEMA ⬡ v1.0
 # SQLite schema and helpers for benchmark_runs table.
 # Single source of truth for data model.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-D283-MNEMOSYNE-v1.0.0
 # 🔱 Memory Blocks — Letta-Style Typed Memory for Omega Engine
 # ⬡ OMEGA ⬡ MEMORY ⬡ blocks.py

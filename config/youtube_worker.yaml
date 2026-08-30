@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Omega Engine — YouTube Background Worker Configuration
+# AP: AP-YOUTUBE-WORKER-v1.0.0
+# ⬡ OMEGA ⬡ CONFIG ⬡ youtube_worker ⬡ WORKER
+#
+# Configuration for the autonomous YouTube ingestion and synthesis daemon.
+
+worker:
+  enabled: true
+  # Daemon mode settings
+  cycle_interval: 5.0          # Seconds between queue checks
+  cpu_ceiling: 85.0            # Throttle when CPU exceeds this %
+  max_cycles: 0                # 0 = unlimited
+  max_batch_size: 10           # Jobs per batch cycle
+  max_retries: 3               # Max retries per job before dropping
+
+# Redis connection
+redis:
+  url: "redis://localhost:6379/0"
+  queue_name: "youtube_queue"
+  delayed_queue: "youtube_queue_delayed"
+  result_ttl: 3600             # Seconds to keep job results
+
+# SearXNG for topic search
+searxng:
+  url: "http://localhost:8017"
+
+# Playlist expansion (via yt-dlp)
+playlist:
+  timeout: 120                 # Seconds for yt-dlp playlist extraction
+  max_videos: 500              # Safety cap per playlist
+
+# Topic search
+search:
+  max_results: 10              # Max videos per topic search
+  languages: ["en"]
+
+# Ingestion pipeline
+ingestion:
+  # Reuse existing omega_youtube_research module settings
+  chunk_max_chars: 6000
+  chunk_overlap: 200
+  sieve_aggressiveness: 3      # 1=gentle, 3=aggressive
+  use_local_signer: true       # HMAC-SHA256 local-first
+
+# Synthesis
+synthesis:
+  enabled: true
+  model: "qwen3-1.7b"          # Local model for synthesis
+  temperature: 0.3
+  max_tokens: 2048
+  # Auto-synthesize after N videos on the same topic
+  auto_synthesize_threshold: 5
+
+# Delivery
+delivery:
+  hivemind: true               # Post to HALL_OF_RECORDS
+  memory_store: true           # Update conversation memory
+  entity_knowledge: true       # Update entity soul/knowledge
+
+# Paths
+paths:
+  state_file: "data/workers/youtube_worker_state.json"
+  hivemind_records: "data/knowledge/HALL_OF_RECORDS/youtube-worker"
+  link_file: "youtube-links-for-ingestion.txt"
+
+# Monitoring
+monitoring:
+  log_interval: 60             # Seconds between status logs
+  metrics_retention_days: 30

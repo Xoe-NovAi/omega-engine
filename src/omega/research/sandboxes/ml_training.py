@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 ML Training Sandbox — First Ω-Research Sandbox Implementation
 ⬡ OMEGA ⬡ MA'AT ⬡ N6 ⬡ ML_TRAINING

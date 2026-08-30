@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Ω-Research Generic Sandbox Runtime — YAML-Driven, M2 Firewall-Compliant, AnyIO-Native
 ⬡ OMEGA ⬡ MA'AT ⬡ N3 ⬡ SANDBOX

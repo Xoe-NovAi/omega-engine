@@ -1,0 +1,493 @@
+{
+  "accounts": [
+    {
+      "id": "grok-cli-1",
+      "pool": "grok",
+      "model": "grok-3",
+      "context_window": 1000000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098093",
+      "last_used": "2026-07-19T18:20:34.098108",
+      "credentials_ref": "vault:grok/cli-1",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098103",
+      "updated_at": "2026-07-19T18:20:34.098104"
+    },
+    {
+      "id": "grok-cli-2",
+      "pool": "grok",
+      "model": "grok-2",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098112",
+      "last_used": "2026-07-19T18:20:34.098124",
+      "credentials_ref": "vault:grok/cli-2",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098121",
+      "updated_at": "2026-07-19T18:20:34.098122"
+    },
+    {
+      "id": "grok-cli-3",
+      "pool": "grok",
+      "model": "grok-1.5",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098127",
+      "last_used": "2026-07-19T18:20:34.098134",
+      "credentials_ref": "vault:grok/cli-3",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098131",
+      "updated_at": "2026-07-19T18:20:34.098131"
+    },
+    {
+      "id": "grok-cli-4",
+      "pool": "grok",
+      "model": "grok-3",
+      "context_window": 1000000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098136",
+      "last_used": "2026-07-19T18:20:34.098141",
+      "credentials_ref": "vault:grok/cli-4",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098139",
+      "updated_at": "2026-07-19T18:20:34.098139"
+    },
+    {
+      "id": "grok-cli-5",
+      "pool": "grok",
+      "model": "grok-2",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098143",
+      "last_used": "2026-07-19T18:20:34.098149",
+      "credentials_ref": "vault:grok/cli-5",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098146",
+      "updated_at": "2026-07-19T18:20:34.098147"
+    },
+    {
+      "id": "grok-cli-6",
+      "pool": "grok",
+      "model": "grok-1.5",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098150",
+      "last_used": "2026-07-19T18:20:34.098155",
+      "credentials_ref": "vault:grok/cli-6",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098153",
+      "updated_at": "2026-07-19T18:20:34.098154"
+    },
+    {
+      "id": "grok-cli-7",
+      "pool": "grok",
+      "model": "grok-3",
+      "context_window": 1000000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098157",
+      "last_used": "2026-07-19T18:20:34.098163",
+      "credentials_ref": "vault:grok/cli-7",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098160",
+      "updated_at": "2026-07-19T18:20:34.098161"
+    },
+    {
+      "id": "grok-cli-8",
+      "pool": "grok",
+      "model": "grok-2",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 100,
+      "rate_limit_reset": "2026-07-19T18:25:34.098164",
+      "last_used": "2026-07-19T18:20:34.098169",
+      "credentials_ref": "vault:grok/cli-8",
+      "capabilities": [
+        "web_search",
+        "reasoning",
+        "synthesis"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098167",
+      "updated_at": "2026-07-19T18:20:34.098168"
+    },
+    {
+      "id": "copilot-cli-1",
+      "pool": "copilot",
+      "model": "gpt-4o",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098173",
+      "last_used": "2026-07-19T18:20:34.098179",
+      "credentials_ref": "vault:copilot/cli-1",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098176",
+      "updated_at": "2026-07-19T18:20:34.098177"
+    },
+    {
+      "id": "copilot-cli-2",
+      "pool": "copilot",
+      "model": "gpt-4o-mini",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098182",
+      "last_used": "2026-07-19T18:20:34.098187",
+      "credentials_ref": "vault:copilot/cli-2",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098185",
+      "updated_at": "2026-07-19T18:20:34.098185"
+    },
+    {
+      "id": "copilot-cli-3",
+      "pool": "copilot",
+      "model": "o1",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098189",
+      "last_used": "2026-07-19T18:20:34.098199",
+      "credentials_ref": "vault:copilot/cli-3",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098196",
+      "updated_at": "2026-07-19T18:20:34.098197"
+    },
+    {
+      "id": "copilot-cli-4",
+      "pool": "copilot",
+      "model": "gpt-4o",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098201",
+      "last_used": "2026-07-19T18:20:34.098206",
+      "credentials_ref": "vault:copilot/cli-4",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098204",
+      "updated_at": "2026-07-19T18:20:34.098205"
+    },
+    {
+      "id": "copilot-cli-5",
+      "pool": "copilot",
+      "model": "gpt-4o-mini",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098208",
+      "last_used": "2026-07-19T18:20:34.098214",
+      "credentials_ref": "vault:copilot/cli-5",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098211",
+      "updated_at": "2026-07-19T18:20:34.098212"
+    },
+    {
+      "id": "copilot-cli-6",
+      "pool": "copilot",
+      "model": "o1",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098215",
+      "last_used": "2026-07-19T18:20:34.098221",
+      "credentials_ref": "vault:copilot/cli-6",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098218",
+      "updated_at": "2026-07-19T18:20:34.098219"
+    },
+    {
+      "id": "copilot-cli-7",
+      "pool": "copilot",
+      "model": "gpt-4o",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098222",
+      "last_used": "2026-07-19T18:20:34.098228",
+      "credentials_ref": "vault:copilot/cli-7",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098225",
+      "updated_at": "2026-07-19T18:20:34.098226"
+    },
+    {
+      "id": "copilot-cli-8",
+      "pool": "copilot",
+      "model": "gpt-4o-mini",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 50,
+      "rate_limit_reset": "2026-07-19T18:30:34.098229",
+      "last_used": "2026-07-19T18:20:34.098234",
+      "credentials_ref": "vault:copilot/cli-8",
+      "capabilities": [
+        "code_gen",
+        "reasoning",
+        "code_review"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098232",
+      "updated_at": "2026-07-19T18:20:34.098233"
+    },
+    {
+      "id": "cline-cli-1",
+      "pool": "cline",
+      "model": "deepseek-v4-flash",
+      "context_window": 1000000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098241",
+      "last_used": "2026-07-19T18:20:34.098246",
+      "credentials_ref": "vault:cline/cli-1",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098244",
+      "updated_at": "2026-07-19T18:20:34.098244"
+    },
+    {
+      "id": "cline-cli-2",
+      "pool": "cline",
+      "model": "mimo-v2.5",
+      "context_window": 512000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098249",
+      "last_used": "2026-07-19T18:20:34.098254",
+      "credentials_ref": "vault:cline/cli-2",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098252",
+      "updated_at": "2026-07-19T18:20:34.098252"
+    },
+    {
+      "id": "cline-cli-3",
+      "pool": "cline",
+      "model": "claude-3.5-sonnet",
+      "context_window": 200000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098256",
+      "last_used": "2026-07-19T18:20:34.098261",
+      "credentials_ref": "vault:cline/cli-3",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098259",
+      "updated_at": "2026-07-19T18:20:34.098259"
+    },
+    {
+      "id": "cline-cli-4",
+      "pool": "cline",
+      "model": "gpt-4o",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098263",
+      "last_used": "2026-07-19T18:20:34.098268",
+      "credentials_ref": "vault:cline/cli-4",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098266",
+      "updated_at": "2026-07-19T18:20:34.098266"
+    },
+    {
+      "id": "cline-cli-5",
+      "pool": "cline",
+      "model": "deepseek-v4-flash",
+      "context_window": 1000000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098270",
+      "last_used": "2026-07-19T18:20:34.098275",
+      "credentials_ref": "vault:cline/cli-5",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098273",
+      "updated_at": "2026-07-19T18:20:34.098273"
+    },
+    {
+      "id": "cline-cli-6",
+      "pool": "cline",
+      "model": "mimo-v2.5",
+      "context_window": 512000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098276",
+      "last_used": "2026-07-19T18:20:34.098282",
+      "credentials_ref": "vault:cline/cli-6",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098279",
+      "updated_at": "2026-07-19T18:20:34.098280"
+    },
+    {
+      "id": "cline-cli-7",
+      "pool": "cline",
+      "model": "claude-3.5-sonnet",
+      "context_window": 200000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098283",
+      "last_used": "2026-07-19T18:20:34.098289",
+      "credentials_ref": "vault:cline/cli-7",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098286",
+      "updated_at": "2026-07-19T18:20:34.098287"
+    },
+    {
+      "id": "cline-cli-8",
+      "pool": "cline",
+      "model": "gpt-4o",
+      "context_window": 128000,
+      "health": "healthy",
+      "rate_limit_remaining": 200,
+      "rate_limit_reset": "2026-07-19T18:23:34.098294",
+      "last_used": "2026-07-19T18:20:34.098299",
+      "credentials_ref": "vault:cline/cli-8",
+      "capabilities": [
+        "code_gen",
+        "large_refactor",
+        "reasoning",
+        "deep_research"
+      ],
+      "tmux_session": null,
+      "mcp_endpoint": null,
+      "created_at": "2026-07-19T18:20:34.098296",
+      "updated_at": "2026-07-19T18:20:34.098297"
+    }
+  ],
+  "updated_at": "2026-07-19T18:20:34.098559"
+}

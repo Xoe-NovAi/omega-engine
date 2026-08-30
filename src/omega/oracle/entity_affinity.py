@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-ENTITY-AFFINITY-v1.0.0
 # 🔱 Entity→Model Affinity Resolver — v1.0.0

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Entity Memory Store — Hot/Warm/Cold persistent memory for entities.
 AP: AP-MEMORY-STORE-v1.0.0
 # [heritage: rrf-algorithm 2009] Reciprocal Rank Fusion — FTS5 + vector score fusion

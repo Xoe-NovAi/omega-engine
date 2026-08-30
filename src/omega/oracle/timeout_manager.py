@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AP: AP-TIMEOUT-MGR-v1.0.0
 # AP: AP-TIMEOUT-MGR-v1.0.0
 # 🔱 Timeout Manager — 4-Layer Nested Cancellation Hierarchy

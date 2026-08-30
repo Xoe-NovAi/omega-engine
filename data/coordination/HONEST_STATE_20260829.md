@@ -184,3 +184,8 @@ If context is lost, the CRITICAL info is:
 
 *⬡ OMEGA ⬡ KALI ⬡ HONEST-STATE-COMPACTION ⬡ 2026-08-29*
 *Alpha launch NOT ready. 10 P0 bugs block. Temple-grade FAILS. Allowlist FAILS. Awaiting Architect decision.*
+<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

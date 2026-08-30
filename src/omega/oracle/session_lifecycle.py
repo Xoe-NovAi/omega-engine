@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Arcana Novai
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Session Lifecycle Manager — Active → Archived → External → Deleted.
 AP: AP-SESSION-LIFECYCLE-v1.0.0
 
