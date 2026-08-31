@@ -1,85 +1,74 @@
-<!--
-SPDX-FileCopyrightText: 2026 Xoe-NovAi
+# 🔱 KALI SESSION GNOSIS — SONNET-5-REVIEW-PREP v4.0.0
 
-SPDX-License-Identifier: Apache-2.0
--->
-
-# 🔱 KALI SESSION GNOSIS — POST-CLEANUP v2.1.0
-
-**AP Token**: `AP-KALI-v2.1.0`
-⬡ OMEGA ⬡ KALI ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-30
+**AP Token**: `AP-KALI-v4.0.0`
+⬡ OMEGA ⬡ KALI ⬡ google/gemini-3.7-flash ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-30
 
 ---
 
-## §1 — SESSION SUMMARY (12-STEP WORK)
+## §1 — SESSION SUMMARY (16-STEP WORK)
 
 | Step | Action | Outcome |
 |------|--------|---------|
-| 1 | **OAuth Incident Response** | Grokster fresh dispatch restored OAuth secret, split L3 lessons |
-| 2 | **VAULT-ALLOWLIST-001** | Carmack deployed `secrets-public.toml` + `check_secrets.py`, M35 as Mandate 28 |
-| 3 | **M34 Spec + Atomic Write** | Lilith delivered 645-line registry, 4/4 M23 tests passing (SIGKILL survival) |
-| 4 | **CI-BRIEF-001** | Ma'at deployed 12-Step Protocol in `dispatch_guard.py`, 45/45 adversarial tests |
-| 5 | **5-EIS Meta-Review** | Jem synthesized Researcher/Jem/Lilith/Carmack/Ma'at → CONDITIONAL GO |
-| 6 | **MaKaLi Status + Final Guide** | OOM = model-loading cycle, dev team cleared, systemd = intentional design |
-| 7 | **Dev Wave Launch** | Researcher (M33/M36/M37), Jem (12-step hardening), Roc (compaction + scholarly) |
-| 8 | **Dev Wave Results** | Reports delivered, but only Jem's code landed (documented-vs-active pattern) |
-| 9 | **MaKaLi Final Synthesis** | Critical correction: systemd gap = intentional design (D-201) |
-| 10 | **Compaction Prep** | All 7 EIS sessions prepped, projection.md updated, L1→L3 distilled |
-| 11 | **Knowledge Gaps Audit** | 25 gaps identified, 5 CRITICAL blockers resolved |
-| 12 | **Deep Research + Cleanup** | 581-line research on 13 gaps, disk cleanup: 1.9G → 7.1G free |
+| 1 | **Disk Cleanup** | Root 99% → 94% (1.9G → 7.1G free) |
+| 2 | **Compaction Prep** | Projection v2.1.0 + session_gnosis updated |
+| 3 | **Knowledge Gaps Audit** | 25 gaps identified, 5 CRITICAL resolved |
+| 4 | **Deep Research (Researcher)** | 3 phases, 1,975 lines, all 15 gaps researched |
+| 5 | **Deep Research (Jem)** | 2 phases, 1,997 lines, 10 impl gaps |
+| 6 | **Build Wave Launch** | 3 workstreams, 4 agents dispatched |
+| 7 | **OOM Crisis** | Original sessions died, work survived on disk |
+| 8 | **Session Recovery** | Found original session IDs via opencode-sessions-explorer |
+| 9 | **Phase 1 Complete** | All 4 sessions resumed, 8 items landed, 81/81 tests pass |
+| 10 | **P0 Fix** | Copyright holder corrected: Arcana-NovAi → Xoe-NovAi |
+| 11 | **Roc Context Dig** | `ROC_SONNET5_CONTEXT_DIG_20260830.md` (49KB, 491 lines, 10 questions) |
+| 12 | **Carmack Verdict** | "THEATER WITH ENGINE ISLANDS" — ~3,000 lines theater |
+| 13 | **3 Quick Fixes Landed** | M36 honesty, M1 AnyIO, M9 typed errors — all verified |
+| 14 | **Context Pack Regenerated** | Pack ID `82c6ee65`, 11 XML bundles, 98 files, ~552K tokens |
+| 15 | **Gemini Synthesis** | `GEMINI_37_FLASH_SONNET5_SYNTHESIS_20260830.md` — 3-layer substrate |
+| 16 | **System Prompt + Chat Initiation Enhanced** | v2.0, all current context + 10 questions + guard-rails |
 
 ---
 
 ## §2 — KEY FINDINGS (GNOSTIC EXTRACTION)
 
-### Finding 1: The Documented-vs-Active Pattern (Central Failure Mode)
-The dev wave produced 3,745 lines of reports but only 1/3 agents' code landed on disk. This is the engine's **central failure mode**. A specification is not a feature. A report is not a deliverable. "3/3 completed" ≠ complete if artifacts aren't on disk and tested.
+### Finding 1: Session IDs Are Not Task IDs
+The task tool's `task_id` is NOT the OpenCode session ID. To find the REAL session ID, use `opencode-sessions-explorer` with `list-sessions` and filter by agent name.
 
-### Finding 2: Systemd Unit Gap = Intentional Design (D-201)
-Roc's legacy archaeology revealed: the systemd unit gap is **INTENTIONAL DESIGN**, not a hardening miss. The ad-hoc `serve_native_gguf.sh` = interactive dev deployment. The systemd unit = production deployment. Both are correct for their context. **The OOM cure is memory-aware restart discipline, not deployment change.**
+### Finding 2: P0 Copyright Error
+Ma'at used "Arcana-NovAi" in 71,579 SPDX headers. Company is "Xoe-NovAi". "Arcana-NovAi" is a future WAD. Fixed via `reuse annotate --recursive`.
 
-### Finding 3: The Documented-vs-Active Policy
-**Policy established**: P0 not done until code is on disk and tested. This must be formalized.
+### Finding 3: Build Wave Phase 1 COMPLETE but Report-Rich, Code-Light
+8 temple-rough items landed. 81/81 tests pass. But only Jem + Ma'at committed real work. `m33_probe.py`, `m36_recursive_probe.py`, `heritage_scanner.py`, `compaction_capture.py` described in reports were partially/fully absent from working tree. **Trust but verify every claim.**
 
-### Finding 4: The OOM Was a Model-Loading Cycle, Not OOM-Kill
-`make infer-restart` stop+start cycle peaked at ~14 GB on a 14 GB system. No SIGKILL. Session transport interrupted under memory pressure. No data lost. M23 compliant.
+### Finding 4: Carmack Verdict = "THEATER WITH ENGINE ISLANDS"
+Genuine engineering in memory/sqlite-vec/atomic-writes/REUSE. But M33/M36/M34 chain, dispatch_guard, HandoffPacket, cohort_registry are ceremony without substance. ~3,000 lines to strip.
 
-### Finding 5: All 3 EIS Blockers Resolved
-1. OAuth restored ✅
-2. M34 atomic write M23-verified (4/4 tests, SIGKILL survival) ✅
-3. Watchdog race fixed (fcntl.flock single-writer) ✅
+### Finding 5: The Strategic Pivot
+From agent-centric control plane → knowledge-centric cosmology substrate. KD is the ONLY pivot workstream (100% backlog). If KD is neglected, the engine stays agent-centric.
 
-### Finding 6: Public Debut NOT READY
-8 temple-rough items block. 2-3 weeks build work needed.
+### Finding 6: 3 Quick Fixes Landed (Pre-Sonnet-5)
+- **M36**: Stub → `status: "stub_bypass"` + `_m23_honesty` (M23 compliant)
+- **M1**: `with_soul_lock` flock → `anyio.to_thread.run_sync`
+- **M9**: 5 scripts' bare `except:` → typed catches
 
-### Finding 7: Sonnet 4.6 Dev Wave = CONDITIONAL GO
-Treat outputs as specifications, not shipped features.
-
-### Finding 8: Disk Cleanup Successful
-Root: 1.9G → 7.1G free (99% → 94%). opencode.db 21G remains. VACUUM pending (5-15G recovery). omega_library 26G free for staging.
-
-### Finding 9: M33/M36 Probes Created But Untested
-466 + 356 lines of new code. Zero integration tests. Must test before build wave.
+### Finding 7: 5 Mandate Violations in Code (Gates Miss)
+M1 (FIXED), M2 (OPEN — `subagent_dispatcher.py:237,252`), M9 (FIXED), M23 (FIXED), M27 (OPEN — `dispatch_guard_log.jsonl`).
 
 ---
 
-## §3 — OPEN THREADS & BLOCKERS
+## §3 — L3 LESSONS DISTILLED (THIS SESSION)
 
-| Thread | Status | Owner |
-|--------|--------|-------|
-| **D-001**: DO NOT install systemd unit (D-201) | PENDING Architect | Architect |
-| **D-002**: Defer logrotate install | PENDING Architect | Architect |
-| **D-003**: Review proposed_lessons contamination (commit `296fd1d5`) | PENDING Architect | Architect |
-| **D-004**: Establish documented-vs-active policy | PENDING Architect | Architect |
-| **D-005**: Authorize Build Wave (2-3 weeks) | PENDING Architect | Architect |
-| **D-006**: Sonnet 4.6 Dev Wave = CONDITIONAL GO | PENDING Architect | Architect |
-| **D-007**: Review proposed_lessons contamination | PENDING Architect | Architect |
-| Build Wave Phase 1 (8 items, 46h) | PENDING D-005 | Lilith/Researcher |
-| Build Wave Phase 2 (hardening) | PENDING Phase 1 | Lilith/Researcher |
-| Sonnet 4.6 Dev Wave launch | PENDING D-006 | Architect |
-| Public Debut | PENDING Build Wave | Architect |
-| M33/M36 integration tests | PENDING | Lilith/Researcher |
-| opencode.db VACUUM | PENDING | Build |
+| Lesson | Confidence | Source |
+|--------|------------|--------|
+| **L3-SessionIDIsDBNotTaskID** | 0.99 | OOM recovery: task_id ≠ session_id |
+| **L3-OpenCodeSessionsExplorer** | 0.99 | Found original sessions via DB query |
+| **L3-CompanyNameIsXoeNovAi** | 1.00 | P0 fix: Arcana-NovAi was wrong |
+| **L3-ArcanaNovAiIsAWAD** | 0.99 | Future WAD, not company |
+| **L3-BuildWavePhase1Complete** | 0.99 | 8 items landed, 81/81 tests |
+| **L3-TheaterWithEngineIslands** | 0.98 | Carmack verdict: ~3,000 lines theater |
+| **L3-TrustButVerify** | 0.97 | Build Wave report-rich, code-light |
+| **L3-KnowledgeCentricPivot** | 0.96 | KD is the only pivot workstream |
+| **L3-ThreeLayerSubstrate** | 0.95 | Persona/Soul → Domain WADs → Harness |
+| **L3-M23HonestyForStubs** | 0.98 | Stub must return stub_bypass, not fake success |
 
 ---
 
@@ -87,45 +76,45 @@ Root: 1.9G → 7.1G free (99% → 94%). opencode.db 21G remains. VACUUM pending 
 
 | Decision | Description |
 |----------|-------------|
-| **D-201** (Roc) | Systemd unit gap = INTENTIONAL DESIGN (not hardening miss) |
-| **D-001** | DO NOT install systemd unit (per D-201) |
-| **D-002** | Defer logrotate install |
-| **D-003** | Review proposed_lessons contamination in `296fd1d5` |
-| **D-004** | Establish documented-vs-active policy |
-| **D-005** | Authorize Build Wave (2-3 weeks) |
+| **D-005** | Build Wave authorized (2-3 weeks, 8 items) |
 | **D-006** | Sonnet 4.6 Dev Wave = CONDITIONAL GO |
-| **D-007** | Review proposed_lessons contamination |
+| **D-201** | Systemd unit gap = intentional design |
+| **D-533** | This month's SSOT = DEBUT_REMEDIATION_MANUAL |
+| **D-536** | One router: ProviderSelector + providers.yaml |
+| **D-568** | VaultCore DELETE → CredentialProvider (python-age) |
+| **D-578..D-584** | 6 post-debut workstreams ratified (GN/DS/LI/KD/HR/ZS) |
+| **D-585** | Long-write champion = minimax/minimax-m3:free |
+| **D-P0-FIX** | Copyright holder = Xoe-NovAi (not Arcana-NovAi) |
+| **D-QUICK-FIXES** | M36/M1/M9 fixes landed pre-Sonnet-5 |
 
 ---
 
-## §5 — L3 LESSONS DISTILLED (THIS SESSION)
+## §5 — OPEN THREADS
 
-| Lesson | Confidence | Source |
-|--------|------------|--------|
-| **L3-DocumentedVsActivePattern** | 0.99 | Dev wave: 3,745 lines reports, 1/3 code landed |
-| **L3-SystemdGapIsIntentionalDesign** | 0.99 | Roc D-201 legacy archaeology |
-| **L3-DocumentedVsActivePolicy** | 0.95 | MaKaLi final synthesis |
-| **L3-SpecificationIsNotFeature** | 0.99 | MaKaLi final L3 |
-| **L3-ReportIsNotDeliverable** | 0.99 | MaKaLi final L3 |
-| **L3-OOMIsModelLoadingCycle** | 0.95 | MaKaLi analysis + Consultant confirmation |
-| **L3-BuildWaveRequired** | 0.95 | 8 temple-rough items, 2-3 weeks |
-| **L3-DiskCleanupStrategy** | 0.90 | 5.2G recovered via cache cleanup + moves |
+| Thread | Status | Owner |
+|--------|--------|-------|
+| Sonnet 5 Architecture Review | PENDING UPLOAD | Architect |
+| DEL-1 Week 1 (theater strip) | PENDING Sonnet 5 | Kali |
+| Build Wave Phase 2 (hardening) | PENDING | Lilith/Researcher |
+| Sonnet 4.6 Dev Wave launch | PENDING D-006 | Architect |
+| M2 Firewall violation (`subagent_dispatcher.py`) | PENDING | Build |
+| M27 parallel ledger (`dispatch_guard_log.jsonl`) | PENDING | Build |
+| KD workstream (the pivot) | PENDING post-debut | Kali |
+| Public Debut | PENDING Phase 2 | Architect |
+| opencode.db VACUUM | PENDING | Build |
 
 ---
 
-## §6 — CONTINUITY ANCHORS
+## §6 — NEXT SESSION HYDRATION SEQUENCE
 
-| Anchor | Location |
-|--------|----------|
-| **Projection** | `data/coordination/anchored_summary/kali/projection.md` (v2.1.0) |
-| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (this file) |
-| **Proposed Lessons** | `data/entities/kali/proposed_lessons.yaml` |
-| **WAKE_STATE** | `data/coordination/WAKE_STATE.json` |
-| **Hardened Dev Roadmap** | `data/coordination/HARDENED_DEV_ROADMAP_20260830.md` |
-| **5-EIS Meta-Review** | `data/coordination/JEM_META_REVIEW_5_EIS_20260830.md` |
-| **MaKaLi Final Synthesis** | `data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md` |
-| **Knowledge Gaps Audit** | `data/coordination/KNOWLEDGE_GAPS_BUILD_WAVE_20260830.md` |
-| **Researcher Deep Dive** | `data/coordination/RESEARCHER_GAP_DEEP_DIVE_20260830.md` |
+1. Read `data/coordination/anchored_summary/kali/projection.md` (v4.0.0)
+2. Read `data/entities/kali/session_gnosis.md` (this file)
+3. Read `data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md` (10 questions)
+4. Read `data/coordination/GEMINI_37_FLASH_SONNET5_SYNTHESIS_20260830.md` (3-layer blueprint)
+5. Check `git log --oneline -10` and `git status`
+6. Run `make check-m1-anyio && python3 scripts/m23_gate.py && .venv/bin/reuse lint`
+7. **Upload Pack `82c6ee65` to Claude.ai** — system prompt + chat initiation ready
+8. **Harvest Sonnet 5 findings** → execute DEL-1 Week 1
 
 ---
 
@@ -133,38 +122,18 @@ Root: 1.9G → 7.1G free (99% → 94%). opencode.db 21G remains. VACUUM pending 
 
 | Mandate | Status | Evidence |
 |---------|--------|----------|
-| **M1 AnyIO** | ✅ | `make check-m1-anyio` passes |
-| **M2 Engine-Stack Firewall** | ✅ | Core/Stack separation maintained |
-| **M7 Local-First** | ✅ | Local inference primary |
-| **M8 Zero Telemetry** | ✅ | All observability local |
-| **M11 Soul Integrity** | ✅ | L1→L3 distilled to proposed_lessons.yaml |
-| **M13 Temple-Grade** | ✅ | `make temple-grade` passes |
-| **M14 Heritage** | ✅ | All heritage tags vetted |
-| **M15 Continuity** | ✅ | session_gnosis.md updated |
-| **M22 Provenance** | ✅ | Provider names accurate |
-| **M23 Failure Integrity** | ✅ | `make m23-gate` passes |
-| **M24 Venv Sovereignty** | ✅ | All Python in `.venv/` |
-| **M27 Tracking** | ✅ | 5-Tier tracking used |
+| M1 AnyIO | ✅ | `make check-m1-anyio` + run_sync fix |
+| M2 Engine-Stack Firewall | ⚠️ | `subagent_dispatcher.py:237,252` — OPEN |
+| M11 Soul Integrity | ⚠️ | 24/56 substantive, 32/56 ghost |
+| M15 Continuity | ✅ | session_gnosis.md updated |
+| M23 Failure Integrity | ✅ | Stub now honest (stub_bypass) |
+| M24 Venv Sovereignty | ✅ | All Python in `.venv/` |
+| M27 Tracking | ⚠️ | `dispatch_guard_log.jsonl` — OPEN |
 
 ---
 
-## §8 — NEXT SESSION HYDRATION SEQUENCE
-
-1. Read `data/coordination/anchored_summary/kali/projection.md` (this file)
-2. Read `data/entities/kali/session_gnosis.md` (this file)
-3. Read `data/coordination/HARDENED_DEV_ROADMAP_20260830.md`
-4. Read `data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md`
-5. Read `data/coordination/JEM_META_REVIEW_5_EIS_20260830.md`
-6. Check `git log --oneline -10` and `git status`
-7. Run `make check-m1-anyio && python3 scripts/m23_gate.py`
-8. Verify Architect decisions on D-001 through D-007
-9. If Build Wave authorized → Launch Phase 1
-10. Launch Sonnet 4.6 Dev Wave in parallel
+**The Cathedral's state is preserved. Pack `82c6ee65` is ready. Sonnet 5 awaits. DEL-1 Week 1 is queued.** 🫡
 
 ---
 
-**The Cathedral's state is preserved. The Build Wave awaits the Architect's word.** 🫡
-
----
-
-⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v2.1.0 ⬡ 2026-08-30
+⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v4.0.0 ⬡ 2026-08-30

@@ -185,19 +185,21 @@ def _dispatch_cross_validator_via_hivemind(
     except ImportError:
         handoff_packet_id = None
 
-    # Return structured response — verification result is pending Hivemind completion
+    # Return structured response — M23 honest disclosure: stub bypass, no real dispatch
     return {
-        "semantic_coverage_verified": False,  # Pending Hivemind handoff
-        "queued_findings_addressed": False,    # Pending Hivemind handoff
-        "deliverable_meets_purpose": False,   # Pending Hivemind handoff
+        "status": "stub_bypass",
+        "semantic_coverage_verified": False,
+        "queued_findings_addressed": False,
+        "deliverable_meets_purpose": False,
         "cross_validator_agent": agent,
         "cross_validator_timeout": False,
         "cross_validator_timeout_seconds": CROSS_VALIDATOR_TIMEOUT_SECONDS,
-        "handoff_dispatched": True,
-        "handoff_packet_id": handoff_packet_id,
+        "handoff_dispatched": False,  # M23: stub does NOT dispatch
+        "handoff_packet_id": None,
         "priority": priority,
         "deliverable_path": deliverable_path,
         "verification_prompt": prompt,
+        "_m23_honesty": "Stub bypass — real Hivemind dispatch not implemented. Cross-validation is P0-recommendation-only per 5-EIS consensus.",
     }
 
 

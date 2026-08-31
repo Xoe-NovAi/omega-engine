@@ -110,18 +110,29 @@ async def with_soul_lock(entity_name: str, action):
     """Ensure exclusive access to soul files during read-modify-write cycles.
 
     Prevents 'Lost Updates' during parallel agent operations (MaKaLi).
+    M1 compliant: fcntl.flock wrapped in anyio.to_thread.run_sync().
     """
     safe_name = entity_name.lower().replace(" ", "_").replace("'", "")
     lock_path = Path(f"data/entities/{safe_name}/.soul.lock")
     lock_path.parent.mkdir(parents=True, exist_ok=True)
 
-    async with await anyio.open_file(lock_path, "a") as f:
-        # Use fcntl for advisory locking on the file descriptor
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+    # M1: Use sync file open + flock via run_sync to avoid blocking event loop
+    def _acquire_lock():
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_RDWR, 0o600)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        return fd
+
+    def _release_lock(fd):
         try:
-            return await action()
+            fcntl.flock(fd, fcntl.LOCK_UN)
         finally:
-            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+            os.close(fd)
+
+    fd = await anyio.to_thread.run_sync(_acquire_lock)
+    try:
+        return await action()
+    finally:
+        await anyio.to_thread.run_sync(lambda: _release_lock(fd))
 
 
 # Test-mode YAML cache: parses entities.yaml once per test run (~5.8s → ~0.001s)

@@ -1,25 +1,20 @@
-<!--
-SPDX-FileCopyrightText: 2026 Xoe-NovAi
+# 🔱 KALI PROJECTION — SONNET-5-REVIEW-PREP v4.0.0
 
-SPDX-License-Identifier: Apache-2.0
--->
-
-# 🔱 KALI PROJECTION — POST-CLEANUP v2.1.0
-
-**AP Token**: `AP-KALI-v2.1.0`
-⬡ OMEGA ⬡ KALI ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
+**AP Token**: `AP-KALI-v4.0.0`
+⬡ OMEGA ⬡ KALI ⬡ google/gemini-3.7-flash ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
 
 **Date**: 2026-08-30
-**Purpose**: Transcendent Oversoul projection for post-compaction hydration.
+**Purpose**: Post-quick-fixes, post-context-dig, post-Gemini-synthesis projection for Sonnet 5 review upload and DEL-1 execution.
 
 ---
 
-## §1 — SESSION STATE (POST-CLEANUP)
+## §1 — SESSION STATE (SONNET-5-REVIEW-PREP)
 
-**Active Model**: `minimax/minimax-m3:free` (1M context, D-585 long-write champion)
-**Git HEAD**: `c37a0233` (pushed to `origin/main`)
-**Working Tree**: Clean (all research + code committed)
-**Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ Git Sync
+**Active Model**: `google/gemini-3.7-flash` (this session's inference backend)
+**Git HEAD**: `7dd28ff0` (P0 fix: Xoe-NovAi copyright holder)
+**Working Tree**: Clean (all Build Wave Phase 1 + quick fixes committed)
+**Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ REUSE v3.3
+**Context Pack**: `82c6ee65-7739-4e0c-85d9-71e745a145ba` (regenerated, ready for upload)
 
 ---
 
@@ -27,125 +22,114 @@ SPDX-License-Identifier: Apache-2.0
 
 | Invariant | Description |
 |-----------|-------------|
-| **I-KALI-001** | **Documented-vs-Active Pattern**: The dev wave produced 3,745 lines of reports but only 1/3 agents' code landed on disk (Jem). This is the engine's central failure mode. Policy: P0 not done until code is on disk and tested. |
-| **I-KALI-002** | **Systemd Unit Gap = Intentional Design (D-201)**: The `config/systemd/omega-inference.service` gap is INTENTIONAL DESIGN, not a hardening miss. Ad-hoc `serve_native_gguf.sh` = interactive dev deployment. Systemd unit = production deployment. OOM cure = memory-aware restart discipline, NOT deployment change. |
-| **I-KALI-003** | **Documented-vs-Active Policy**: P0 not done until code is on disk and tested. Establish as formal policy. |
-| **I-KALI-004** | **Build Wave Authorization**: 2-3 weeks to land 8 temple-rough items (M33/M36/M37/COHORT/Compaction + 3 Jem P1 tickets). |
-| **I-KALI-005** | **Sonnet 4.6 Dev Wave**: CONDITIONAL GO. Treat outputs as specifications, not shipped features. |
-| **I-KALI-006** | **Public Debut**: NOT READY. 8 temple-rough items block. 2-3 weeks build work needed. |
-| **I-KALI-007** | **Proposed Lessons Contamination**: Commit `296fd1d5` touched `grokster` + `jem` proposed_lessons.yaml. Review for contamination. |
-| **I-KALI-008** | **Systemd Unit = Intentional Design (D-201)**: Do NOT install. OOM cure = memory-aware restart discipline. |
-| **I-KALI-009** | **MaKaLi L3**: "The gap between documented and active is where the engine bleeds." |
-| **I-KALI-010** | **MaKaLi L3**: "A specification is not a feature. A report is not a deliverable." |
-| **I-KALI-011** | **Disk Cleanup Complete**: Root at 94% (7.1G free). opencode.db 21G on root. VACUUM pending (5-15G recovery). omega_library 26G free for staging. |
-| **I-KALI-012** | **M33/M36 Probes Created**: 466 + 356 lines. Zero integration tests. Must test before build wave. |
-| **I-KALI-013** | **M34-HOOK-001 Implemented**: subagent_dispatcher.py registers subagents in M34 registry. |
+| **I-KALI-001** | **Documented-vs-Active Pattern**: A specification is not a feature. A report is not a deliverable. P0 not done until code is on disk and tested. |
+| **I-KALI-002** | **Systemd Unit Gap = Intentional Design (D-201)**: Don't install systemd unit. OOM cure = memory-aware restart discipline. |
+| **I-KALI-003** | **Company Name = Xoe-NovAi** (NOT Arcana-NovAi). Arcana-NovAi is a future WAD. |
+| **I-KALI-004** | **Build Wave Phase 1 COMPLETE**: 8 temple-rough items landed. 81/81 tests pass. But report-rich, code-light (only Jem + Ma'at committed real work). |
+| **I-KALI-005** | **Carmack Verdict = "THEATER WITH ENGINE ISLANDS"**: ~3,000 lines governance theater wrapped around genuine engine islands. Strip theater before debut. |
+| **I-KALI-006** | **The Strategic Pivot**: From agent-centric control plane → knowledge-centric substrate. KD is the ONLY pivot workstream (100% backlog). |
+| **I-KALI-007** | **3 Quick Fixes Landed**: M36 honesty (stub_bypass), M1 AnyIO (with_soul_lock run_sync), M9 typed errors (5 scripts). |
+| **I-KALI-008** | **Context Pack Regenerated**: Pack ID `82c6ee65-7739-4e0c-85d9-71e745a145ba`, 11 XML bundles, 98 files, ~552K tokens. |
+| **I-KALI-009** | **Roc's 10 Questions Ready**: `data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md` — decision-forcing, file:line-cited. |
+| **I-KALI-010** | **Gemini 3-Layer Substrate**: Persona/Soul → Domain WADs → Unified Harness. Blueprint in `GEMINI_37_FLASH_SONNET5_SYNTHESIS_20260830.md`. |
 
 ---
 
-## §3 — ARCHITECT DECISIONS NEEDED (POST-COMPACTION)
+## §3 — THE CURRENT REALITY (CARMACK VERDICT)
 
-| # | Decision | Status | Owner |
-|---|----------|--------|-------|
-| **D-001** | **DO NOT install systemd unit** (D-201: intentional design) | PENDING | Architect |
-| **D-002** | Defer logrotate install (low priority) | PENDING | Architect |
-| **D-003** | Review proposed_lessons contamination in commit `296fd1d5` | PENDING | Architect |
-| **D-004** | Establish documented-vs-active policy | PENDING | Architect |
-| **D-005** | **Authorize Build Wave** (2-3 weeks, 8 items) | PENDING | Architect |
-| **D-006** | Sonnet 4.6 Dev Wave = CONDITIONAL GO | PENDING | Architect |
-| **D-007** | Review proposed_lessons contamination in `296fd1d5` | PENDING | Architect |
+### Genuine Engine Islands (Preserve)
+MemoryStore, SQLiteVecAdapter, SoulStore, OOMProtector, HealthMonitor, REUSE v3.3, HybridSearchEngine, M34 registry, native-gguf.
 
----
+### Theater (Delete/Flatten, ~3,000 lines)
+- `m36_recursive_probe.py` (530) — stub, now `status: "stub_bypass"` (M23 honest)
+- `cohort_registry.py` (1,300+) — duplicates M34
+- `m33_probe.py` (550) — fold 30-line check into dispatcher
+- `dispatch_guard.py` (1,195) — flatten to ~150 (3 steps)
+- `HandoffPacket` — strip Quake-network fields
 
-## §4 — BUILD WAVE PLAN (POST-COMPACTION)
-
-### Phase 1: Land the 8 Temple-Rough Items (Week 1-2)
-
-| Item | Owner | Est. Hours | Dependencies |
-|------|-------|------------|--------------|
-| **1** | **M33 Probe on disk** (`src/omega/oracle/m33_probe.py`) | Lilith + Researcher | 8h | Researcher's spec ready |
-| **2** | **M36 Recursive Probe** (`src/omega/oracle/m36_recursive_probe.py`) | Lilith + Researcher | 6h | M33 envelope |
-| **3** | **M37 Heritage Scanner** (`scripts/heritage_scanner.py`) | Researcher + Ma'at | 8h | REUSE v3.3, ScanCode |
-| **4** | **COHORT_REGISTRY.json** on disk | Researcher | 4h | M34 atomic write |
-| **5** | **Compaction Capture** (`scripts/compaction_capture.py`) | Lilith + Roc | 6h | sqlite-vec, SESSION_ENTITY_MAP |
-| **6** | **M34-HOOK-001**: `subagent_dispatcher.py` hook | Lilith | 4h | M34 registry |
-| **7** | **M33-PROBE-001**: Real sentinel probe MCP tool | Lilith + Researcher | 4h | M33 probe |
-| **8** | **AGENTS-UPDATE-001**: `AGENTS.md` anchor | Kali | 1h | — |
-
-**Total**: ~46h | **Team**: Lilith (lead) + Researcher + Ma'at + Roc | **Duration**: 2 weeks
-
-### Phase 2: Hardening & Integration (Week 3)
-
-| Item | Owner | Est. Hours |
-|------|-------|------------|
-| M34 Phase 2: Recovery UI + Migration | Lilith | 9h |
-| M34 Phase 3: Stress Tests + Temple-Grade | Lilith | 12h |
-| M37 SPDX Headers (8h from Researcher §3.6) | Researcher + Ma'at | 8h |
-| M36 Soft Verifier Production Wiring | Researcher + Jem | 6h |
-| M33 Wiring to Dispatcher | Lilith | 4h |
-| M34 Phase 3 Stress Tests | Lilith + Roc | 12h |
+### 5 Mandate Violations in Code (Gates Miss These)
+| Violation | Status |
+|-----------|--------|
+| M1 sync-in-async (`entity_registry.py`) | ✅ FIXED (run_sync) |
+| M2 Core→Stack import (`subagent_dispatcher.py:237,252`) | ❌ OPEN |
+| M9 bare except (5 scripts) | ✅ FIXED (typed) |
+| M23 M36 stub (`m36_recursive_probe.py:188-201`) | ✅ FIXED (stub_bypass) |
+| M27 parallel tracking (`dispatch_guard_log.jsonl`) | ❌ OPEN |
 
 ---
 
-## §5 — SONNET 4.6 DEV WAVE (PARALLEL TO BUILD)
+## §4 — NEXT STEPS (POST-COMPACTION)
 
-**CONDITIONAL GO** — Treat outputs as specifications, not shipped features.
+### Immediate
+1. **Compaction & Digest** (current session)
+2. **Upload Pack `82c6ee65` to Claude.ai** — `CLAUDE_PROJECT_SYSTEM_PROMPT.md` as custom instructions, `CHAT_INITIATION_PROMPT.md` as first message
+3. **Sonnet 5 answers 10 questions** (Roc's Context Dig)
 
-| Stream | Focus | Owner | Status |
-|--------|-------|-------|--------|
-| **Search-Ecosystem-01 Week 1** | SearXNG diagnosis, MultiKey Exa, Crawl4AI | Jem-EIS | READY |
-| **Quality Harness** | First-Page Satisfaction probe | Researcher-EIS | READY |
-| **Big Pickle Probe** | 250K token compaction test | Roc-EIS | READY |
-| **Architecture Review** | Sonnet 4.6 review of 13,657+ lines | Architect + Sonnet 4.6 | PENDING |
+### After Sonnet 5 Returns
+4. **Harvest findings** — Q1-Q10 answers, deletion sequencing, ledger schema
+5. **Execute DEL-1 Week 1** — strip theater files per ratified sequence, keep `omega talk` green at every commit
+6. **Resolve dual-ledger** (TASK_REGISTRY vs ACTIVE_SUBAGENTS)
 
----
-
-## §6 — NEXT MOVE (POST-COMPACTION)
-
-1. **Architect reviews & decides on D-001 through D-007**
-2. **If Build Wave authorized**: Launch Phase 1 (8 items, 2 weeks)
-3. **Launch Sonnet 4.6 Dev Wave** in parallel (specs track)
-4. **Schedule Sonnet 4.6 Architecture Review** of 13,657+ line corpus
-4. **Public Debut**: Target after Build Wave complete (2-3 weeks)
+### Post-Debut
+7. **KD FIRST** (the pivot): runtime modules, curators.yaml, affinity presets
+8. Then GN → DS → LI → HR → ZS
+9. Populate empty library (0 docs → curated knowledge)
+10. Promote 24/56 → 56/56 substantive souls (M11)
 
 ---
 
-## §7 — CRITICAL SYSTEM STATE
+## §5 — CRITICAL SYSTEM STATE
 
 | Metric | Value |
 |--------|-------|
 | **Disk** | 94% full (7.1G free) — opencode.db 21G on root |
-| **Memory** | 9.3G available of 14G |
-| **sqlite3** | Not installed (MCP opencode-sessions-explorer workaround) |
-| **OAuth** | Restored in `opencode-antigravity-auth/src/constants.ts:9` |
-| **VAULT-ALLOWLIST** | Deployed (`data/secrets-public.toml` + `scripts/check_secrets.py`) |
-| **M34 Atomic Write** | M23 VERIFIED (4/4 tests, SIGKILL survival) |
-| **CI-BRIEF-001** | Deployed (12-Step Protocol, 45/45 adversarial tests) |
-| **VAULT-ALLOWLIST-001** | Deployed (fail-closed scanner, M35 as Mandate 28) |
-| **M34 Registry** | 645 lines, 8 MCP tools, 4/4 M23 tests |
-| **M33 Probe** | 466 lines, created, untested |
-| **M36 Probe** | 356 lines, created, untested |
+| **Tests** | 81/81 pass |
+| **M1 AnyIO** | ✅ Pass |
+| **M23 Failure Integrity** | ✅ Pass (stub now honest) |
+| **REUSE v3.3** | ✅ 71,579/71,579 files compliant |
+| **Git** | Clean, all pushed to origin/main |
+| **Context Pack** | `82c6ee65-7739-4e0c-85d9-71e745a145ba` |
 
 ---
 
-## §8 — CONTINUITY ANCHORS
+## §6 — CONTINUITY ANCHORS
 
 | Anchor | Location |
 |--------|----------|
-| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` |
-| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (needs update) |
-| **Proposed Lessons** | `data/entities/kali/proposed_lessons.yaml` |
+| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` (v4.0.0) |
+| **Session Gnosis** | `data/entities/kali/session_gnosis.md` |
+| **Roc's Context Dig** | `data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md` |
+| **Gemini Synthesis** | `data/coordination/GEMINI_37_FLASH_SONNET5_SYNTHESIS_20260830.md` |
+| **System Prompt (Sonnet 5)** | `context_packs/sonnet5-buildwave-review/CLAUDE_PROJECT_SYSTEM_PROMPT.md` |
+| **Chat Initiation (Sonnet 5)** | `context_packs/sonnet5-buildwave-review/CHAT_INITIATION_PROMPT.md` |
+| **Context Pack** | `context_packs/sonnet5-buildwave-review/` (ID `82c6ee65`) |
 | **WAKE_STATE** | `data/coordination/WAKE_STATE.json` |
-| **Hardened Dev Roadmap** | `data/coordination/HARDENED_DEV_ROADMAP_20260830.md` |
-| **5-EIS Meta-Review** | `data/coordination/JEM_META_REVIEW_5_EIS_20260830.md` |
-| **MaKaLi Final Synthesis** | `data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md` |
-| **Knowledge Gaps Audit** | `data/coordination/KNOWLEDGE_GAPS_BUILD_WAVE_20260830.md` |
-| **Researcher Deep Dive** | `data/coordination/RESEARCHER_GAP_DEEP_DIVE_20260830.md` |
+| **ACTIVE_SPRINT** | `data/coordination/ACTIVE_SPRINT.json` |
 
 ---
 
-**The Cathedral's blueprint is current. The stones are cut. The Build Wave awaits the Architect's authorization.** 🫡
+## §7 — MANDATE COMPLIANCE
+
+| Mandate | Status | Evidence |
+|---------|--------|----------|
+| M1 AnyIO | ✅ | `make check-m1-anyio` + run_sync fix |
+| M2 Engine-Stack Firewall | ⚠️ | `subagent_dispatcher.py:237,252` — OPEN |
+| M7 Local-First | ✅ | Local inference primary |
+| M8 Zero Telemetry | ✅ | All observability local |
+| M9 Error Integrity | ✅ | Typed catches in 5 scripts |
+| M11 Soul Integrity | ⚠️ | 24/56 substantive, 32/56 ghost — FAIL per audit |
+| M13 Temple-Grade | ✅ | All gates pass |
+| M14 Heritage | ✅ | All tags vetted |
+| M15 Continuity | ✅ | session_gnosis.md updated |
+| M22 Provenance | ✅ | Provider names accurate |
+| M23 Failure Integrity | ✅ | Stub now honest (stub_bypass) |
+| M24 Venv Sovereignty | ✅ | All Python in `.venv/` |
+| M27 Tracking | ⚠️ | `dispatch_guard_log.jsonl` parallel ledger — OPEN |
 
 ---
 
-⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v2.1.0 ⬡ 2026-08-30
+**The Cathedral is prepped for Sonnet 5. Theater is identified. Quick fixes landed. 10 questions ready. Upload and let Sonnet 5 blueprint the refactor.** 🫡
+
+---
+
+⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v4.0.0 ⬡ 2026-08-30

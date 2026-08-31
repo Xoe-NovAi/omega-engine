@@ -87,7 +87,7 @@ def run_benchmark():
             parsed = json.loads(clean_text)
             tc1_valid_json = True
             extraction_acc = 100 if parsed.get('agent') == 'maat' else 50
-        except:
+        except (json.JSONDecodeError, ValueError):  # M9: typed errors only
             extraction_acc = 0
             
         tc1_tps = res_tc1['usage']['completion_tokens'] / tc1_time if tc1_time > 0 else 0

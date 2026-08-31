@@ -112,8 +112,9 @@ def test_dispatch_returns_structured_json():
         priority="P0",
     )
 
-    # Verify all required fields
+    # Verify all required fields (M23 honest disclosure: stub bypass)
     required_fields = [
+        "status",
         "semantic_coverage_verified",
         "queued_findings_addressed",
         "deliverable_meets_purpose",
@@ -125,6 +126,7 @@ def test_dispatch_returns_structured_json():
         "priority",
         "deliverable_path",
         "verification_prompt",
+        "_m23_honesty",
     ]
     for field in required_fields:
         assert field in result, f"Missing field: {field}"
@@ -134,7 +136,10 @@ def test_dispatch_returns_structured_json():
     parsed = json.loads(json_str)
     assert parsed["cross_validator_agent"] == "jem"
     assert parsed["priority"] == "P0"
-    print("✓ Hivemind dispatch returns full structured JSON response")
+    assert parsed["status"] == "stub_bypass"
+    assert parsed["handoff_dispatched"] is False
+    assert parsed["handoff_packet_id"] is None
+    print("✓ Hivemind dispatch returns full structured JSON response (M23 honest stub)")
 
 
 # ── Test 4: P0/P1 escalation works ────────────────────────────────────────
@@ -155,8 +160,9 @@ def test_p0_escalation_uses_jem():
     )
     assert result["cross_validator_agent"] == "jem"
     assert result["priority"] == "P0"
-    assert result["handoff_dispatched"] is True
-    print("✓ P0 escalation uses jem")
+    assert result["handoff_dispatched"] is False  # M23: stub does NOT dispatch
+    assert result["status"] == "stub_bypass"
+    print("✓ P0 escalation uses jem (M23 honest stub)")
 
 
 def test_p1_escalation_uses_verity():
@@ -175,8 +181,9 @@ def test_p1_escalation_uses_verity():
     )
     assert result["cross_validator_agent"] == "verity"
     assert result["priority"] == "P1"
-    assert result["handoff_dispatched"] is True
-    print("✓ P1 escalation uses verity")
+    assert result["handoff_dispatched"] is False  # M23: stub does NOT dispatch
+    assert result["status"] == "stub_bypass"
+    print("✓ P1 escalation uses verity (M23 honest stub)")
 
 
 # ── Test 5: Verification prompt is well-formed ──────────────────────────
