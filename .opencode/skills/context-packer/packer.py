@@ -428,13 +428,18 @@ class EnhancedContextPacker:
         return await anyio.to_thread.run_sync(_hash)
     
     async def _estimate_token_count(self, path: LibPath, model: str = "cl100k_base", margin: float = 1.3) -> int:
-        """Estimate token count using shared TokenEstimator (v3 SSOT)."""
-        import sys
-        _engine_src = str(LibPath(__file__).resolve().parent.parent.parent.parent / "src")
-        if _engine_src not in sys.path:
-            sys.path.insert(0, _engine_src)
-        from omega.oracle.token_estimator import tokens_for_file_async
-        return await tokens_for_file_async(path, model=model, margin=margin)
+        """Estimate token count using local TokenEstimator (standalone, no engine deps)."""
+        import tiktoken
+        import anyio
+        
+        def _estimate():
+            enc = tiktoken.get_encoding(model)
+            with open(str(path), "r", encoding="utf-8", errors="replace") as f:
+                content = f.read()
+            raw = len(enc.encode(content))
+            return int(raw * margin)
+        
+        return await anyio.to_thread.run_sync(_estimate)
     
     async def _get_purpose(self, path: LibPath) -> str:
         ext = os.path.splitext(path)[1].lower()
@@ -647,9 +652,15 @@ class EnhancedContextPacker:
             _engine_src = str(LibPath(__file__).resolve().parent.parent.parent.parent / "src")
             if _engine_src not in _sys.path:
                 _sys.path.insert(0, _engine_src)
-            from omega.oracle.pii_masker import PIIMasker, PIIRedactionStyle
+            # Import pii_masker directly from file to avoid omega.oracle.__init__ chain
+            import importlib.util
+            _pii_path = LibPath(_engine_src) / "omega" / "oracle" / "pii_masker.py"
+            _spec = importlib.util.spec_from_file_location("pii_masker_local", _pii_path)
+            _pii_mod = importlib.util.module_from_spec(_spec)
+            _spec.loader.exec_module(_pii_mod)
+            PIIMasker = _pii_mod.PIIMasker
+            PIIRedactionStyle = _pii_mod.PIIRedactionStyle
             # TOKENIZE mode: replaces PII with reversible [EMAIL_1] placeholders.
-            # Use MASK_FULL (mask_full()) if you want non-reversible **** masking instead.
             _masker = PIIMasker(redaction_style=PIIRedactionStyle.TOKENIZE)
         except ImportError as e:
             # M23 Failure Integrity: do NOT silently continue. Halt pack generation.

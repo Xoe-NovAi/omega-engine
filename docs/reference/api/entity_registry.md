@@ -136,3 +136,27 @@ Entity flags are stored as a bitfield. The high bit (`0x80000000`) indicates a s
 
 ### 4. Lazy Deletion `[id-soft: doom-1993]`
 Removing an entity does not delete it immediately. It is tombstoned (`magic = ZONEID_TOMBSTONE`) and swept by `_reap_tombstoned()` after a `0.5s` grace period (`[id-soft: quake-1996]`), ensuring in-flight operations complete safely.
+
+---
+
+## Concurrency: `with_soul_lock` (M1 AnyIO Compliance)
+
+**File**: `src/omega/oracle/entity_registry.py`
+
+`with_soul_lock(entity_name, action)` ensures exclusive access to an entity's soul files during read-modify-write cycles, preventing "Lost Updates" during parallel agent operations (e.g., MaKaLi).
+
+### M1 Compliance (2026-08-30)
+
+The lock acquisition is **M1 AnyIO compliant**. It does NOT block the event loop:
+
+1. **`_acquire_lock()`** — runs in a worker thread via `anyio.to_thread.run_sync()`. Opens the lock file with `os.open(..., os.O_CREAT | os.O_RDWR, 0o600)` and acquires an advisory `fcntl.flock(LOCK_EX)`.
+2. **`action()`** — the user-supplied async action runs while the lock is held.
+3. **`_release_lock(fd)`** — runs in a worker thread via `anyio.to_thread.run_sync()`. Releases the lock with `fcntl.flock(LOCK_UN)` and closes the file descriptor.
+
+```python
+async with with_soul_lock("my_entity", action):
+    # exclusive access guaranteed
+    ...
+```
+
+> **Why `run_sync`?** `fcntl.flock` is a blocking syscall. Wrapping it in `anyio.to_thread.run_sync()` keeps it off the event loop, satisfying M1 (no blocking sync I/O in async context). The lock file is created with mode `0o600` for privacy.

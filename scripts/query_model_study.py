@@ -43,7 +43,7 @@ def model_details(name):
                 try:
                     val = json.loads(val)
                     val = ", ".join(val)
-                except:
+                except (json.JSONDecodeError, TypeError):  # M9: typed errors only
                     pass
             print(f"  {col}: {val}")
     else:
@@ -120,7 +120,7 @@ def best_for(task):
             if any(task.lower() in bf.lower() for bf in best_for):
                 print(f"  {row[0]} ({row[1]}/{row[2]})")
                 print(f"    Best for: {', '.join(best_for)}")
-        except:
+        except (json.JSONDecodeError, TypeError):  # M9: typed errors only
             pass
     conn.close()
 
@@ -146,7 +146,7 @@ def cognitive_mode(mode):
             if any(kw in caps for kw in keywords):
                 print(f"  {row[0]} ({row[1]}/{row[2]})")
                 print(f"    Capabilities: {', '.join(caps)}")
-        except:
+        except (json.JSONDecodeError, TypeError):  # M9: typed errors only
             pass
     conn.close()
 

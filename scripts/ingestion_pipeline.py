@@ -159,7 +159,7 @@ class IngestionPipeline:
             try:
                 dt = datetime.strptime(match.group(0), "%Y%m%d")
                 return dt.replace(tzinfo=timezone.utc).timestamp()
-            except:
+            except (ValueError, TypeError):  # M9: typed errors only
                 pass
         # Fallback to file mtime
         return path.stat().st_mtime

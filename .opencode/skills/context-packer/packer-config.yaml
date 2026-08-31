@@ -19,8 +19,8 @@ profiles:
       - mandates
       - engine_state
     token_budget:
-      total: 320000
-      per_bundle: 60000
+      total: 600000
+      per_bundle: 120000
       reserved_output: 50000
     multishot_examples: true
     xml_delimiters: spotlighting
@@ -146,8 +146,8 @@ profiles:
       - ground_truth
       - mandates
     token_budget:
-      total: 320000
-      per_bundle: 60000
+      total: 600000
+      per_bundle: 120000
       reserved_output: 50000
     multishot_examples: true
     xml_delimiters: spotlighting
@@ -637,7 +637,7 @@ profiles:
     tokenizer_encoding: o200k_base
     target_platform: web-grok
     target_model: grok-4.3
-    max_slots: 20
+    max_slots: 12
     format: xml-markdown-hybrid
     bundle_ordering: priority-weighted
     real_time_injection:
@@ -695,11 +695,11 @@ profiles:
     tokenizer_encoding: o200k_base
     target_platform: web-grok
     target_model: grok-4.1-fast
-    max_slots: 20
+    max_slots: 12
     format: xml-markdown-hybrid
     bundle_ordering: priority-weighted
     token_budget:
-      total: 500000
+      total: 600000
       per_bundle: 25000
       reserved_output: 100000
     cost_tier: economy
@@ -743,7 +743,7 @@ profiles:
     code_execution_ready: true
     workspace_export: true
     token_budget:
-      total: 500000
+      total: 600000
       per_bundle: 20000
       reserved_output: 100000
     include:
@@ -913,8 +913,8 @@ profiles:
       - benchmark
       - routing
     token_budget:
-      total: 320000
-      per_bundle: 60000
+      total: 600000
+      per_bundle: 120000
       reserved_output: 50000
     multishot_examples: true
     xml_delimiters: spotlighting
@@ -1027,3 +1027,226 @@ profiles:
       config:
       - config/providers.yaml
       - config/models.yaml
+
+  sonnet5-buildwave-review:
+    description: "Sonnet 5 Architecture Review — Build Wave Phase 1 Complete, Phase 2 Planning, Public Debut Readiness"
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+        - manifest
+        - mandates
+        - engine_state
+        - build_wave_phase1
+        - decisions
+    token_budget:
+      total: 600000
+      per_bundle: 120000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-08-30"
+    include:
+      # Mandates & Core Law
+      - SOVEREIGN_MANDATES.md
+      - MANDATES_CONDENSED.md
+      - OMEGA_ENGINE.md
+      - AGENTS.md
+      - CREDITS_CANONICAL.md
+      - ORACLE_STACK_CANONICAL.md
+      # Build Wave Phase 1 Reports
+      - data/coordination/LILITH_BUILD_WAVE_PHASE_1_20260830.md
+      - data/coordination/MAAT_BUILD_WAVE_PHASE_1_20260830.md
+      - data/coordination/ROC_BUILD_WAVE_PHASE_1_20260830.md
+      - data/coordination/RESEARCHER_BUILD_WAVE_PHASE_1_20260830.md
+      # Build Wave Tracker & Planning
+      - data/coordination/BUILD_WAVE_TRACKER.md
+      - data/coordination/HARDENED_DEV_ROADMAP_20260830.md
+      - data/coordination/WAKE_STATE.json
+      - data/coordination/SESSION_ANCHOR.md
+      # Knowledge Gaps & Research
+      - data/coordination/KNOWLEDGE_GAPS_BUILD_WAVE_20260830.md
+      - data/coordination/RESEARCHER_GAP_FILL_PHASE_1_20260830.md
+      - data/coordination/RESEARCHER_GAP_FILL_PHASE_2_20260830.md
+      - data/coordination/RESEARCHER_GAP_FILL_PHASE_3_20260830.md
+      - data/coordination/JEM_GAP_FILL_PHASE_1_20260830.md
+      - data/coordination/JEM_GAP_FILL_PHASE_2_20260830.md
+      - data/coordination/JEM_META_REVIEW_5_EIS_20260830.md
+      - data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md
+      # Decisions & Pivot Log
+      - docs/decisions/PIVOT_LOG_CANONICAL.md
+      - docs/strategy/SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md
+      - docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      # Core Engine Code (key files)
+      - src/omega/oracle/subagent_dispatcher.py
+      - src/omega/oracle/cohort_registry.py
+      - src/omega/oracle/m33_probe.py
+      - src/omega/oracle/m36_recursive_probe.py
+      - src/omega/oracle/model_gateway.py
+      - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_registry.py
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/admission_controller.py
+      - src/omega/oracle/resource_guard.py
+      - src/omega/memory_store.py
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/providers.py
+      - src/omega/observability/bleg.py
+      - src/omega/observability/context.py
+      - src/omega/observability/latency_tracker.py
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/mcp_runtime.py
+      - src/omega/hub.py
+      # Config
+      - config/providers.yaml
+      - config/models.yaml
+      - config/model_fleet_operational.yaml
+      - config/routing_table.yaml
+      # Gates & Scripts
+      - scripts/m23_gate.py
+      - scripts/dispatch_guard.py
+      - scripts/compaction_capture.py
+      - config/m23_baseline.txt
+      # Coordination & State
+      - data/coordination/HMC_COLLABORATION_HUB.md
+      - data/coordination/ACTIVE_SPRINT.json
+      - data/coordination/ACTIVE_SUBAGENTS.json
+      - data/coordination/anchored_summary/kali/projection.md
+      - data/entities/kali/session_gnosis.md
+      - data/entities/kali/proposed_lessons.yaml
+      - data/registry/cohort_registry_schema.json
+      - data/registry/COHORT_REGISTRY.json
+      # Tests (key)
+      - tests/test_a1_m34_registration.py
+      - tests/test_a2_m33_probe.py
+      - tests/test_a3_m33_integration.py
+      - tests/test_a4_m36_wiring.py
+      - tests/test_a5_m36_soft_verifier.py
+      - tests/test_cohort_registry.py
+      - tests/test_compaction_capture.py
+    exclude:
+      - '**/__pycache__/**'
+      - '**/*.pyc'
+      - '**/*.log'
+      - '**/*.tmp'
+      - context_packs/**
+      - data/coordination/*.jsonl
+      - data/coordination/*.bak
+    themes:
+      # Theme 1: Law & State (mandates + engine state) — 6 files
+      law_and_state:
+        - SOVEREIGN_MANDATES.md
+        - MANDATES_CONDENSED.md
+        - OMEGA_ENGINE.md
+        - AGENTS.md
+        - CREDITS_CANONICAL.md
+        - ORACLE_STACK_CANONICAL.md
+      # Theme 2: Build Wave (Phase 1 reports + planning) — 8 files
+      build_wave:
+        - data/coordination/LILITH_BUILD_WAVE_PHASE_1_20260830.md
+        - data/coordination/MAAT_BUILD_WAVE_PHASE_1_20260830.md
+        - data/coordination/ROC_BUILD_WAVE_PHASE_1_20260830.md
+        - data/coordination/RESEARCHER_BUILD_WAVE_PHASE_1_20260830.md
+        - data/coordination/BUILD_WAVE_TRACKER.md
+        - data/coordination/HARDENED_DEV_ROADMAP_20260830.md
+        - data/coordination/WAKE_STATE.json
+        - data/coordination/SESSION_ANCHOR.md
+      # Theme 3: Research & Gaps (knowledge gaps + gap fill reports) — 8 files
+      research_gaps:
+        - data/coordination/KNOWLEDGE_GAPS_BUILD_WAVE_20260830.md
+        - data/coordination/RESEARCHER_GAP_FILL_PHASE_1_20260830.md
+        - data/coordination/RESEARCHER_GAP_FILL_PHASE_2_20260830.md
+        - data/coordination/RESEARCHER_GAP_FILL_PHASE_3_20260830.md
+        - data/coordination/JEM_GAP_FILL_PHASE_1_20260830.md
+        - data/coordination/JEM_GAP_FILL_PHASE_2_20260830.md
+        - data/coordination/JEM_META_REVIEW_5_EIS_20260830.md
+        - data/coordination/MAKALI_FINAL_SYNTHESIS_20260830.md
+      # Theme 4: Decisions & Strategy (pivot log + blueprint + protocols) — 7 files
+      decisions:
+        - docs/decisions/PIVOT_LOG_CANONICAL.md
+        - docs/strategy/SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md
+        - docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+        - docs/strategy/UNOVERENGINEERING_PLAN.md
+        - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+        - docs/strategy/HIVEMIND_PROTOCOL.md
+        - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      # Theme 5: Oracle Core (M33/M36/M34 + gateway + providers) — 11 files
+      oracle_core:
+        - src/omega/oracle/subagent_dispatcher.py
+        - src/omega/oracle/cohort_registry.py
+        - src/omega/oracle/m33_probe.py
+        - src/omega/oracle/m36_recursive_probe.py
+        - src/omega/oracle/model_gateway.py
+        - src/omega/oracle/providers.py
+        - src/omega/oracle/provider_registry.py
+        - src/omega/oracle/health_monitor.py
+        - src/omega/oracle/oom_protector.py
+        - src/omega/oracle/admission_controller.py
+        - src/omega/oracle/resource_guard.py
+      # Theme 6: Memory & Vector Layer (sqlite-vec + FTS5 + hybrid search) — 7 files
+      memory_layer:
+        - src/omega/memory_store.py
+        - src/omega/memory/sqlite_vec_adapter.py
+        - src/omega/memory/hybrid_search.py
+        - src/omega/memory/embeddings.py
+        - src/omega/memory/fts_index.py
+        - src/omega/memory/vector_adapters.py
+        - src/omega/memory/providers.py
+      # Theme 7: Observability & MCP Hub — 7 files
+      observability:
+        - src/omega/observability/bleg.py
+        - src/omega/observability/context.py
+        - src/omega/observability/latency_tracker.py
+        - src/omega/observability/metrics_db.py
+        - src/omega/observability/sovereignty.py
+        - src/omega/mcp_runtime.py
+        - src/omega/hub.py
+      # Theme 8: Infrastructure (config + routing + fleet) — 4 files
+      infrastructure:
+        - config/providers.yaml
+        - config/models.yaml
+        - config/model_fleet_operational.yaml
+        - config/routing_table.yaml
+      # Theme 9: Gates & Scripts (M23 gate + dispatch guard + compaction) — 4 files
+      gates:
+        - scripts/m23_gate.py
+        - scripts/dispatch_guard.py
+        - scripts/compaction_capture.py
+        - config/m23_baseline.txt
+      # Theme 10: Coordination & State (hub + sprint + kali projection) — 6 files
+      coordination:
+        - data/coordination/HMC_COLLABORATION_HUB.md
+        - data/coordination/ACTIVE_SPRINT.json
+        - data/coordination/ACTIVE_SUBAGENTS.json
+        - data/coordination/anchored_summary/kali/projection.md
+        - data/entities/kali/session_gnosis.md
+        - data/entities/kali/proposed_lessons.yaml
+      # Theme 11: Registry & Tests (COHORT + M33/M36 tests) — 9 files
+      registry_and_tests:
+        - data/registry/cohort_registry_schema.json
+        - data/registry/COHORT_REGISTRY.json
+        - tests/test_a1_m34_registration.py
+        - tests/test_a2_m33_probe.py
+        - tests/test_a3_m33_integration.py
+        - tests/test_a4_m36_wiring.py
+        - tests/test_a5_m36_soft_verifier.py
+        - tests/test_cohort_registry.py
+        - tests/test_compaction_capture.py

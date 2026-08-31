@@ -46,7 +46,7 @@ def days_since(date_str: str) -> int:
     try:
         date = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
         return (datetime.now(timezone.utc) - date).days
-    except:
+    except (ValueError, TypeError):  # M9: typed errors only
         return 999
 
 

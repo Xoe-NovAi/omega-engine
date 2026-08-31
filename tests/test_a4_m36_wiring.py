@@ -83,6 +83,7 @@ def test_dispatch_cross_validator_returns_structured_json():
 
     # Must be a structured JSON-compatible response
     assert isinstance(result, dict)
+    assert "status" in result
     assert "semantic_coverage_verified" in result
     assert "queued_findings_addressed" in result
     assert "deliverable_meets_purpose" in result
@@ -90,10 +91,12 @@ def test_dispatch_cross_validator_returns_structured_json():
     assert "cross_validator_timeout" in result
     assert "handoff_dispatched" in result
     assert "priority" in result
+    assert "_m23_honesty" in result
     assert result["cross_validator_agent"] == "jem"
     assert result["priority"] == "P0"
-    assert result["handoff_dispatched"] is True
-    print("✓ Hivemind dispatch returns structured JSON response")
+    assert result["status"] == "stub_bypass"
+    assert result["handoff_dispatched"] is False  # M23: stub does NOT dispatch
+    print("✓ Hivemind dispatch returns structured JSON response (M23 honest stub)")
 
 
 def test_spawn_local_worker_hard_verify_existing_file():
