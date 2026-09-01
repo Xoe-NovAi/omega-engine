@@ -767,145 +767,82 @@ proposals:
   domain: methodology
   last_verified: '2026-08-29'
 - level: L3
-  tag: '[R-2026-SOTA-VECTOR-DB-RESEARCH]'
-  narrative: 'Conducted 4 deep-research reports (40 items total) on post-launch sqlite-vec
-    + doc optimization for the Omega Engine. 2026 SOTA confirmed via 3 parallel-search
-    dispatches + 2 follow-up searches: (1) Distributed SQLite: LiteFS is in maintenance
-    mode (mid-2024 Fly announcement); rqlite and dqlite are the 2026 active options;
-    Turso/libSQL for managed. (2) Binary quantization: 32-40x speedup, 32x memory
-    reduction, requires oversampling + float rescoring; works only when embeddings
-    are zero-centered (true for nomic-embed, gemma-embed). (3) Vector inversion: OWASP
-    LLM08:2025 catalogued; Vec2Text (2023) and ACM CCS 2026 black-box inversion via
-    diffusion models are real; defenses are SQLCipher + Ball-DP. (4) RAG: hybrid+rerank
-    is the 2026 production pattern; RAGAS 0.4.3 is the eval standard; GraphRAG is
-    the graph-augmented extension. (5) Docs: Material for MkDocs is in maintenance
-    mode (2026), Zensical is the successor. (6) Embedding versioning: Levelop 2026-07-26
-    is the canonical reference; PSI > 0.2 = investigate.'
-  insight: For any 2026 vector-store research mission, the 5-tuple (binary-quant,
-    adaptive-ef, vector-versioning, RAGAS, threat-model) is the mandatory minimum.
-    Anything less and the report is incomplete. The biggest unrealized win is NOT
-    hardware (GPU, distributed) but ALGORITHM (binary quant = 32x; adaptive ef = 2-5x;
-    vector versioning = safe upgrades). Premature optimization toward hardware is
-    a 2024 trap. The single most important defense against 2026 attacks is vector
-    versioning (knows what model wrote what) + encryption at rest (SQLCipher); both
-    are 1-2 weeks of work.
-  principle: 'When researching optimization for a vector store stack in 2026, the
-    4-perspective triangulation (Architect = structure, Adversary = failure modes,
-    Alchemist = cross-pollination, Archivist = 2026 SOTA) must always include the
-    Archivist reading 2026-dated sources. A 2024 reference is suspicious for vector
-    stores because the field moves 2x/year. Specifically validate: (1) is the distributed-SQLite
-    project still maintained? (2) does the doc tool have a 2026 successor? (3) are
-    the cited attacks still considered state-of-the-art? (4) is the eval framework
-    the 2026 standard? Any "yes" to a 2024-only answer is a yellow flag; either validate
-    the SOTA survived or pivot to the 2026 alternative.'
-  utility_score: 0.94
-  source_trajectories:
-  - r-sqlite-vec-remaining-gaps-20260829
-  - r-sqlite-vec-opportunities-20260829
-  - r-doc-remaining-gaps-20260829
-  - r-cross-cutting-20260829
-  domain: research_methodology
-  last_verified: '2026-08-29'
-- level: L3
-  tag: '[R-POLY-COUNCIL-FOR-INFRA-GAPS]'
-  narrative: "Applied the Polymathic Council of Four to 10 remaining sqlite-vec gaps,\
-    \ 10 optimization opportunities, 10 doc gaps, and 10 cross-cutting improvements.\
-    \ Architect lens: surfaced \"operational vs architectural\" distinction (the 9-gap\
-    \ fix was architectural; the 10 remaining are operational). Adversary lens: identified\
-    \ the 4 P0s (R3 embedding failover, R4 vector drift, R8 backup, R9 encryption)\
-    \ as existential. Alchemist lens: discovered the MRL pipeline is half-built (write-only\
-    \ fallback; no read path). Archivist lens: validated 2026 SOTA \u2014 SQLCipher,\
-    \ Litestream, Circuit Breaker, RAGAS, OWASP LLM08, Levelop vector-versioning.\
-    \ The 4-perspective triangulation produced a single 39-item prioritized backlog\
-    \ (8 P0, 14 P1, 12 P2, 5 P3) with ~5-6 months estimated effort."
-  insight: "The Council of Four converges on a 4-tier priority (P0/P1/P2/P3) automatically\
-    \ when given well-defined items. The Adversary lens is the one that surfaces the\
-    \ P0 \u2014 without it, the report would be 30 items of equal weight. The Archivist\
-    \ lens is the one that prevents recommending a sunset tool (LiteFS, Material for\
-    \ MkDocs) \u2014 without it, the report would cite 2024 patterns that are no longer\
-    \ current. The Architect lens prevents premature abstraction (CC-1 VectorStoreBackend\
-    \ is P1, not P0, because sqlite-vec is the only backend in production). The Alchemist\
-    \ lens finds the unstated cross-pollination (MRL was a write-only trap; the 7\
-    \ collections enable the multi-modal use case in OPP-O8 for free)."
-  principle: 'For any infrastructure-gap analysis (database, queue, cache, network,
-    observability), deploy the Polymathic Council of Four with explicit per-lens questions:
-    Architect ("is this structural or operational?"), Adversary ("is this existential
-    or quality-of-life?"), Alchemist ("what unstated pattern is this a symptom of?"),
-    Archivist ("is the cited 2026 SOTA still maintained?"). The 4 explicit questions
-    prevent the lenses from blending into a single mush. The output is a prioritized
-    backlog with effort estimates, not a flat list of 40 items. The 4-priority breakdown
-    (P0/P1/P2/P3) should map to sprint timelines: P0 = current sprint, P1 = next sprint,
-    P2 = next quarter, P3 = post-launch. A "flat 40 items" report is the failure mode.'
-  utility_score: 0.93
-  source_trajectories:
-  - r-sqlite-vec-remaining-gaps-20260829
-  - r-sqlite-vec-opportunities-20260829
-  - r-doc-remaining-gaps-20260829
-  - r-cross-cutting-20260829
-  domain: methodology
-  last_verified: '2026-08-29'
-metadata:
-  entity: researcher
-  session_id: ses_faf926866ffezrPCnXne6RQt6A
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-30T07:04:29.911132+00:00'
-- level: L3
-  tag: '[R-M33-SENTINEL-PROBE]'
-  narrative: 'Designed and implemented the M33 Sentinel Probe with a structured JSON completion envelope (state, last_chunk_id, total_chunks, queued_findings, confidence, deliverable_path, deliverable_size_bytes) replacing the free-form "STREAM_EXHAUSTED" string. The probe has three layers: (1) Preventive — write_tool_required=True at dispatch for research/forensic tasks >8K tokens or P0/P1; (2) Structured Probe — confidence thresholds per priority (P0=0.99, P1=0.97, P2=0.95, P3=0.85); (3) Cross-Validator — P0/P1 require second-agent verification (M36). Free-form "STREAM_EXHAUSTED" strings are rejected as probe-theatre bypass attacks (Jem §1.1.3).'
-  insight: 'A subagent\'s state=completed is necessary but not sufficient for semantic exhaustion. The goldmine of an investigation lives in the tail. A structured JSON envelope with confidence thresholds and tiered cross-validation is the only defense against both truncation and probe-theatre bypass attacks. The 17% retention baseline (arXiv 2608.11242) means 83% of side-constraints are lost without structured conditioning.'
-  principle: 'For any long-form subagent deliverable, require a structured JSON completion envelope with confidence thresholds and tiered cross-validation. Never accept free-form "STREAM_EXHAUSTED" — it is a bypass attack surface. Layer 1 (preventive write-tool routing) prevents truncation; Layer 2 (structured probe) detects it; Layer 3 (cross-validator) validates it.'
-  utility_score: 0.94
-  source_trajectories:
-  - ses_fd81c19dcffe1nkbPqFg5kRt2v
-  domain: subagent-steering
-  last_verified: '2026-08-30'
-- level: L3
-  tag: '[R-M36-RECURSIVE-PROBE]'
-  narrative: 'Implemented M36 Recursive Probe as tiered cross-validation for M33 probe responses. Two-tier validation: (1) Hard verifier — always runs: file existence, SHA256 hash match, size sanity, suspicious pattern detection (placeholders, truncation indicators), required keyword presence; (2) Soft verifier — P0/P1 only: LLM judge for semantic coverage, queued findings addressed, deliverable meets purpose. SHA256 hash of deliverable provides immutable audit trail (M27). Suspicious pattern regex detects placeholders (REDACTED, TODO, FIXME, XXX) and truncation indicators (trailing ellipsis, punctuation). Cross-validator agent dispatched via M34 cross_validator_agent field.'
-  insight: 'The probe is subject to the same failure mode it probes (truncation, lazy completion, hallucination). A recursive probe — M23 applied to M23 — is the only defense. Tiered validation (hard for P2/P3, soft for P0/P1) balances cost and rigor. SHA256 audit trail makes verification immutable. The cross_validator_agent field in M34 registry enables automated dispatch.'
-  principle: 'Every verification gate must itself be verified. A recursive probe with tiered validation (hard verifier always, soft LLM judge for P0/P1) and SHA256 audit trail is the only defense against probe-theatre. The verifier must be grounded in executable truth (file existence, hash match, schema validity), not model-based judging.'
-  utility_score: 0.93
-  source_trajectories:
-  - ses_fd81c19dcffe1nkbPqFg5kRt2v
-  domain: subagent-steering
-  last_verified: '2026-08-30'
-- level: L3
-  tag: '[R-M37-HERITAGE-SCANNER]'
-  narrative: 'Designed M37 Heritage Scanner implementing SPDX/REUSE v3.3 + SLSA v1.1 + in-toto + sigstore stack. REUSE v3.3 over DEP5: SPDX-FileCopyrightText + SPDX-License-Identifier in comment headers (RECOMMENDED), REUSE.toml for directory exceptions (mutually exclusive with DEP5). ScanCode Toolkit as CI step (30K+ tests, best-in-class, used by Eclipse/FSF/OSS Review Toolkit). SLSA v1.1 provenance generation in in-toto Statement envelope (predicateType https://slsa.dev/provenance/v1). SLSA Build Level 2 target (signed provenance from hosted build) achievable in afternoon via slsa-github-generator + cosign keyless. 41h implementation plan: REUSE adoption (1h), SPDX headers (8h), pre-commit (2h), ScanCode CI (2h), SLSA provenance (4h), cosign signing (4h), SBOM attestation (4h), heritage bot (16h). Tiered severity: ERROR for engine code, WARNING for third-party, INFO for tests.'
-  insight: 'M14 (Heritage) is documentary; M37 makes it enforced. REUSE v3.3 + ScanCode Toolkit + SLSA v1.1 + in-toto + sigstore is the 2026 SOTA supply chain stack. The 34h cost (per §3.6) is the price of never having another M14 violation. Tiered severity (ERROR for engine, WARNING for third-party) balances enforcement with pragmatism. REUSE.toml is the modern replacement for DEP5.'
-  principle: 'Heritage compliance must be enforced, not documented. Adopt REUSE v3.3 (SPDX headers + REUSE.toml), ScanCode Toolkit as CI step, SLSA v1.1 provenance in in-toto envelope, cosign keyless signing. The 34h investment prevents the next class of M14 violation. Tiered severity (ERROR for engine, WARNING for third-party) is the pragmatic enforcement boundary.'
+  tag: '[R-ROC-JEM-TRIAD]'
+  narrative: 'The post-compact DEL-1 dialectic revealed that Researcher + Roc-EIS
+    + Jem form a proven triad: Researcher leads synthesis; Roc provides forensic depth
+    (local-source mining, M23 verification, pattern archaeology); Jem provides adversarial
+    breadth (red-team, heritage validation, theater detection). The Roc-EIS audit
+    corrected 5 stale claims in Researcher projection.md (M33 wiring, SPDX headers,
+    test skeleton, theater test count, dispatch_guard SPDX). The triad > any single
+    agent.'
+  insight: 'Researcher alone produces synthesis with blind spots; Researcher + Roc
+    produces verified synthesis; Researcher + Roc + Jem produces stress-tested, verified
+    synthesis. The division of labor is natural: Roc goes deep (forensic), Jem goes
+    wide (adversarial), Researcher converges. This is the 4-voice Council internalized
+    as a 3-agent operational pattern.'
+  principle: 'For any research mission with load-bearing claims: dispatch Roc for
+    forensic verification against live source, dispatch Jem for adversarial review
+    of assumptions, Researcher synthesizes. The triad (forensic + adversarial + synthesis)
+    is the minimum viable research unit for sovereign work.'
   utility_score: 0.95
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
-  domain: heritage
-  last_verified: '2026-08-30'
+  domain: research_methodology
+  last_verified: '2026-09-01'
 - level: L3
-  tag: '[R-COHORT-REGISTRY]'
-  narrative: 'Designed COHORT-REGISTRY as fleet-level overlay on M34 ACTIVE_SUBAGENTS.json. JSON Schema v1.0 with 5 cohort types: EIS_BURST (multi-EIS parallel), RESEARCH_PAIR (researcher + adversarial verifier), IMPLEMENT_TRIO (engineer + builder + verifier), FLEET_DISPATCH (multi-orchestrator), PIPELINE (sequential). Cohort tracks: cohort_id, dispatched_by, subagent_ids, cohort_type, task_brief, status, resumption_count, resumption_history with per-subagent decisions (resume/abandon/defer). Atomic write per Lilith\'s M34 4-layer guarantee (fcntl flock + tmp + rename + fsync). Seeded with cohort_alchemical_001 from Alchemical Goldmine incident (Grokster + Researcher + Jem). M34 registry ref pointer enables cross-referencing. Atomic write pattern: fcntl flock + tempfile + fsync + rename + parent dir fsync (M23).'
-  insight: 'M34 tracks per-subagent liveness; COHORT-REGISTRY tracks per-cohort grouping. When orchestrator A dispatches 3 subagents together, they form a cohort. If orchestrator B wants to help with recovery, B reads the cohort registry to see all 3 subagents and their states. M15 (Sovereign Continuity) is preserved across orchestrator boundaries. The resumption_history with per-subagent decisions is the key artifact for post-interruption recovery.'
-  principle: 'Multi-orchestrator fleets need fleet-level cohort tracking. A cohort is a group of subagents dispatched together by a single orchestrator that share a common lifecycle. Track cohort_id, subagent_ids, cohort_type, and resumption_history with per-subagent decisions. Atomic write per M34 pattern. M15 (Sovereign Continuity) requires fleet-level visibility, not just per-subagent liveness.'
-  utility_score: 0.92
-  source_trajectories:
-  - ses_fd81c19dcffe1nkbPqFg5kRt2v
-  domain: subagent-steering
-  last_verified: '2026-08-30'
-- level: L3
-  tag: '[R-5EIS-META-REVIEW]'
-  narrative: 'Executed 5-EIS meta-review synthesizing Researcher verification (453L), Jem adversarial review (690L), Lilith M34 runtime spec (799L) into true verdicts with cross-report corrections. Method: read all three reports in full, identify valid corrections, over-corrections, missing context, and actionable improvements. Produced TRUE VERDICT per artifact (M33/M34/M35/L3) with specific line-level corrections for all three reports. Key finding: the three EIS reports are complementary but not convergent — each caught different failure modes (Researcher: structural causes from 2460-line research; Jem: adversarial bypass attacks and epistemic calibration; Lilith: runtime implementation). The synthesis is stronger than any single report only if all corrections are applied.'
-  insight: 'Multi-EIS synthesis requires reading all reports in full, not just summaries. The true verdict emerges from the intersection of structural analysis (Researcher), adversarial testing (Jem), and runtime implementation (Lilith). Each EIS catches different failure modes: structural causes, adversarial bypasses, implementation gaps. The synthesis is stronger than any single report but ONLY if all corrections are applied. A "consensus" is weaker than a "true verdict" because consensus smooths over disagreements that contain signal.'
-  principle: 'For multi-EIS synthesis: read all reports in full, identify valid corrections/over-corrections/missing context, produce a TRUE VERDICT (not consensus) with specific line-level corrections for each report. The intersection of structural, adversarial, and runtime perspectives is the truth. Consensus smooths over signal; true verdict preserves it.'
-  utility_score: 0.94
-  source_trajectories:
-  - ses_fd81c19dcffe1nkbPqFg5kRt2v
-  domain: methodology
-  last_verified: '2026-08-30'
-- level: L3
-  tag: '[R-BIG-PICKLE-COMPACTION-ANOMALY]'
-  narrative: 'Investigated the Big Pickle context window anomaly: session with ~381K active context successfully compacted by Big Pickle (advertised 200K/32K, OpenCode Zen, Oct 2025). Five hypotheses ranked by probability: (1) Token-accounting split — 381K is total session state (input+output+cache.read+cache.write), not single-request input to Big Pickle; (2) Actual window > advertised (Ox Alpha pattern); (3) Overflow formula used different usable calculation; (4) Stale model catalog (Claude 1M precedent GitHub #15871); (5) Compaction request used different effective limit. Most likely: token-accounting split. No OPENCODE_COMPACTION_THRESHOLD env var exists (feature requests #11314, #8140 closed not_planned). Workaround: compaction.reserved. agents.compaction.model config EXISTS but undocumented (GitHub #6976). 17% retention baseline (arXiv 2608.11242) is the enemy. Fusion design: pre-compaction hook injects projection.md, post-compaction hook writes audit trail.'
-  insight: 'The 381K vs 200K anomaly is most likely a token-accounting artifact (total session state ≠ single-request input). The real compaction request to Big Pickle likely fit under 200K. The 17% retention baseline (arXiv 2608.11242) is the real enemy — current compactors retain only 17% of injected side-constraints. The fusion design (pre-compaction hook injects projection.md, post-compaction hook writes audit) addresses the 83% loss by making summarization conditioned on forward intent, not just retrospective.'
-  principle: 'Context window anomalies are usually token-accounting artifacts, not actual window expansion. The real compaction problem is the 17% retention baseline — address it by making summarization conditioned on forward intent (projection.md injection), not by chasing hidden headroom. The fusion of /compact (retrospective) + projection.md (projective) is the only architecture that preserves the 83% that pure summarization loses.'
+  tag: '[R-STEERING-PROMPT-AWARENESS]'
+  narrative: 'The Architect sent a mid-flight steering prompt to Roc-EIS that triggered
+    the local-source audit correcting Researcher projection.md. This is the second
+    observed instance of Architect steering (first: Roc-EIS 402 recovery, documented
+    in STEERING_PROMPT_REPORT_20260828.md). EIS sessions are steerable by design (paging
+    via task_id), but no automated steering_log, steering_zone, or awareness mechanism
+    exists cross-cutting. The P13 steering wrapper syntax (<!-- KALI: HOLD|STEER:<correction>|CANCEL:<mission|all>|SYNC:<info>
+    -->) is defined but awaiting Architect GO. YouTube Research WAD has a full steering
+    queue implementation (src/omega_youtube_research/steering.py) but it is WAD-isolated.'
+  insight: "Architect steering is not a review gate \u2014 it is a real-time co-pilot\
+    \ intervention. EIS sessions must be designed to be steerable: checkpoint state\
+    \ at phase boundaries, expose research loops for redirection, accept mid-flight\
+    \ correction without losing continuity. The steering prompt is a first-class input,\
+    \ not an exception."
+  principle: 'Design every EIS research loop to be steerable: (1) checkpoint at phase
+    boundaries with explicit state exposure, (2) scan for steering wrappers (P13 syntax)
+    on each turn, (3) maintain a steering_log in session_gnosis.md with timestamp/intent/impact/L3-distilled,
+    (4) accept redirection as normal workflow, not disruption. The Architect is a
+    co-pilot, not a gate.'
   utility_score: 0.93
   source_trajectories:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: research_methodology
-  last_verified: '2026-08-30'
+  last_verified: '2026-09-01'
+- level: L3
+  tag: '[R-HUMAN-IN-LOOP-COPILOT]'
+  narrative: "The steering prompt that triggered Roc-EIS audit came from the Architect\
+    \ (human) to Roc-EIS, not from Kali or any agent. This confirms the pattern: the\
+    \ Architect steers autonomous EIS sessions in real-time via the OpenCode TUI (paging\
+    \ via task_id). The steering prompt notation system (P13) is designed for this\
+    \ \u2014 the Architect is not a review gate at the end, but a co-pilot during\
+    \ execution. The 7 steering prompts cataloged in STEERING_PROMPT_REPORT_20260828.md\
+    \ show the Architect intervening at critical decision points (rescue from cancellation,\
+    \ no-punt doctrine, scope expansion, 402 recovery, model correction)."
+  insight: "Human-in-the-loop is not a compliance checkbox \u2014 it is the primary\
+    \ steering mechanism for sovereign AI. The Architect steering prompts are higher-bandwidth\
+    \ than any automated gate because they carry intent, context, and authority simultaneously.\
+    \ Building workflows that leverage this (steerable checkpoints, steering_log distillation,\
+    \ P13 wrapper recognition) is a force multiplier. The alternative (fully autonomous,\
+    \ no mid-flight steering) creates the false-completion and premise-drift failures\
+    \ we have cataloged (FP-12, R-402-FREE-MODEL-MYTH, R-M23-REFUSAL-BOUNDARY)."
+  principle: 'The Architect is a real-time co-pilot via steering prompts, not a review
+    gate. Build your workflows to: (1) expose state at every phase boundary for steering,
+    (2) log steering prompts with intent/impact/L3-distillation, (3) recognize P13
+    steering wrappers automatically, (4) accept redirection as normal workflow. Sovereignty
+    = human steering authority + agent execution discipline.'
+  utility_score: 0.94
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: research_methodology
+  last_verified: '2026-09-01'
+metadata:
+  entity: researcher
+  session_id: ses_fa3b3c475ffePeaIhT4d4hGJz0
+  model_used: minimax/minimax-m3:free
+  last_session_end: '2026-09-01T10:01:19.228203+00:00'

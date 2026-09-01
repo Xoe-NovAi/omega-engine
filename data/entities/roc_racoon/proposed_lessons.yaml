@@ -330,33 +330,33 @@ proposals:
 - id: PL-ROC-402-007
   date: '2026-09-01'
   session_id: ses_20260901_roc_disk_maintenance
-  L1_narrative: "Main partition /dev/nvme0n1p2 (109G) hit 100% (129MB free). Ran 5-tier\
-    \ disk analysis (df -> home du -> .local/.cache/.config du -> system-level -> containers/snap).\
-    \ Executed approved safe clears: sessions-explorer cache (~778M), opencode cache\
-    \ (~193M), podman dangling images (~136M), apt clean via pkexec (~97M), systemd\
-    \ journal rotate+vacuum (3.6G). Critical discovery: journalctl --vacuum-time=2w\
-    \ and --vacuum-size=200M SILENTLY freed 0B without a prior rotate; pkexec journalctl\
-    \ --rotate then --vacuum-size=200M freed 3.6G. sudo fails in agent sessions ('a\
-    \ terminal is required to read the password'); pkexec works via polkit GUI. Final:\
-    \ 129MB -> 5.1GB free (96%). Created docs/kb/SYSTEM_MAINTENANCE_KB.md (kb-0005)\
-    \ and rebuilt docs/kb/INDEX.md from 5/20 to 20/20 entries (was a lint violation)."
-  L2_insight: "Destructive maintenance commands that operate on archived state silently\
-    \ no-op on active state: journal vacuum only touches archived journals, so an\
-    \ unrotated multi-GB active journal reports 'freed 0B' while doing nothing. The\
-    \ rotate-then-vacuum sequence is the universal fix. Separately, the KB index had\
-    \ drifted to 5/20 registered entries - exactly the 'drift back into the void'\
-    \ failure mode the user asked me to prevent; rebuilding it was as valuable as\
-    \ the new entry itself. And the partition is structurally undersized for the\
-    \ workload (27G opencode.db + 6G project + 3.5G snap + 2.3G containers), so maintenance\
-    \ is a recurring cadence, not a one-time fix."
-  L3_principle: "L3-RotateBeforeVacuum - Destructive maintenance commands that operate\
-    \ on archived state silently no-op on active state. Always force the state transition\
-    \ (rotate) before applying the cleanup (vacuum). A command that 'succeeds' while\
-    \ freeing 0B is a silent failure - verify the delta, not the exit code. L3-MaintenanceIsAKB\
-    \ - Operational knowledge decays at the speed of the next emergency unless captured\
-    \ as a living runbook; an unindexed KB entry is a tombstone."
+  L1_narrative: 'Main partition /dev/nvme0n1p2 (109G) hit 100% (129MB free). Ran 5-tier
+    disk analysis (df -> home du -> .local/.cache/.config du -> system-level -> containers/snap).
+    Executed approved safe clears: sessions-explorer cache (~778M), opencode cache
+    (~193M), podman dangling images (~136M), apt clean via pkexec (~97M), systemd
+    journal rotate+vacuum (3.6G). Critical discovery: journalctl --vacuum-time=2w
+    and --vacuum-size=200M SILENTLY freed 0B without a prior rotate; pkexec journalctl
+    --rotate then --vacuum-size=200M freed 3.6G. sudo fails in agent sessions (''a
+    terminal is required to read the password''); pkexec works via polkit GUI. Final:
+    129MB -> 5.1GB free (96%). Created docs/kb/SYSTEM_MAINTENANCE_KB.md (kb-0005)
+    and rebuilt docs/kb/INDEX.md from 5/20 to 20/20 entries (was a lint violation).'
+  L2_insight: 'Destructive maintenance commands that operate on archived state silently
+    no-op on active state: journal vacuum only touches archived journals, so an unrotated
+    multi-GB active journal reports ''freed 0B'' while doing nothing. The rotate-then-vacuum
+    sequence is the universal fix. Separately, the KB index had drifted to 5/20 registered
+    entries - exactly the ''drift back into the void'' failure mode the user asked
+    me to prevent; rebuilding it was as valuable as the new entry itself. And the
+    partition is structurally undersized for the workload (27G opencode.db + 6G project
+    + 3.5G snap + 2.3G containers), so maintenance is a recurring cadence, not a one-time
+    fix.'
+  L3_principle: L3-RotateBeforeVacuum - Destructive maintenance commands that operate
+    on archived state silently no-op on active state. Always force the state transition
+    (rotate) before applying the cleanup (vacuum). A command that 'succeeds' while
+    freeing 0B is a silent failure - verify the delta, not the exit code. L3-MaintenanceIsAKB
+    - Operational knowledge decays at the speed of the next emergency unless captured
+    as a living runbook; an unindexed KB entry is a tombstone.
 metadata:
   entity: roc_racoon
-  session_id: ses_20260901_roc_disk_maintenance
-  model_used: opencode/big-pickle
-  last_session_end: '2026-09-01T10:00:00+00:00'
+  session_id: ses_fa390f1f8ffeLDm4qJh5I0fif1
+  model_used: big-pickle
+  last_session_end: '2026-09-01T10:59:27.542852+00:00'
