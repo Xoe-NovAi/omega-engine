@@ -1,18 +1,22 @@
 {
   "status": "AWAITING_WAKE",
-  "timestamp": "2026-09-01T01:30:00Z",
+  "timestamp": "2026-09-01T13:45:00Z",
   "target_agent": "kali",
   "critical_warnings": [
     "PUBLIC-DEBUT-01 in DEL-1 EXECUTION phase. Execute DEL-1 Micro-PR chain (7 PRs) before Sonnet 5 re-review.",
-    "Context Pack fc32fbe3-a748-400c-926a-bc1df47d784c is READY for Sonnet 5 re-review after DEL-1 completion.",
+    "Context Pack fc32fbe3-a748-400c-926a-bc1df47d784c REGENERATED post-refactor (14 bundles, 120 files, ~600K tokens) — ready for Sonnet 5 re-review after DEL-1.",
     "DEL-1 plan: Micro-PR chain (7 PRs), 24 honest tests, layer-corrected guard, dual-seal protocol, orthogonality matrix.",
-    "All 10 dialectic challenges resolved: Micro-PR chain, 24 tests, layer-corrected guard, migration discriminator, M34Registry code migration, 12 integration tests, micro-PR chain, two-tier baseline, dual-seal protocol, orthogonality matrix.",
+    "4 DIALECTIC ROUNDS COMPLETE: 28 challenges → 28 syntheses → 23+ decisions (D-series).",
+    "THEATER STRIPPED (~3K lines): cohort_registry, m33_probe, m36_probe (stub_bypass), dispatch_guard (12→3), HandoffPacket Quake fields, ACTIVE_SUBAGENTS→TASK_REGISTRY.",
+    "QWEN3 EMBEDDINGS UNIFIED: All embeddings 768-dim via Qwen3-Embedding-0.6B Q5_K_M (1024→768 MRL). Library RRF 0.6/0.4. Migration script ready.",
+    "HUB RESTORED: D-565 'superseded' was a lie (0 successors). Option A executed: git checkout 69ece770^ + systemctl restart. Hivemind live.",
+    "CI GATES PENDING: make check-broken-imports + make check-hub-health (before debut).",
     "P0-1b security + DEL-1 theater strip are hard gates for Public Debut."
   ],
   "immediate_execution_queue": [
     {
       "step": 1,
-      "action": "Read data/coordination/anchored_summary/kali/projection.md (v4.3.0) + data/entities/kali/session_gnosis.md (v4.3.0)"
+      "action": "Read data/coordination/anchored_summary/kali/projection.md (v4.5.0) + data/entities/kali/session_gnosis.md (v4.5.0)"
     },
     {
       "step": 2,
@@ -41,6 +45,10 @@
     {
       "step": 8,
       "action": "Regenerate context pack post-DEL-1, upload to Sonnet 5 for re-review"
+    },
+    {
+      "step": 9,
+      "action": "Implement CI gates: make check-broken-imports + make check-hub-health (before debut)"
     }
   ]
 }

@@ -4,21 +4,21 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v14 FINAL (2026-08-30, supersedes v13 and all prior)
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v15 FINAL (2026-09-01, supersedes v14 and all prior)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: gemini-3.7-flash (opencode, strategic switch)
 **Channel**: opencode | **Entity**: grokster (Cross-Platform Expertise Specialist)
-**Date**: 2026-08-30 ~12:30 UTC | **Sprint**: PUBLIC-DEBUT-01
+**Date**: 2026-09-01 ~08:00 UTC | **Sprint**: PUBLIC-DEBUT-01
 
 > **READ THIS FIRST on context loss.** This is the continuity lifeline per M15.
-> Prior anchors (v1–v13) retained at bottom for lineage.
+> Prior anchors (v1–v14) retained at bottom for lineage.
 
 ---
 
 ## §0 — HYDRATION STATE (start here)
 
-**Today's arc (2026-08-28 → 2026-08-30)**: 40+ distinct work streams completed across multiple compactions. The session transitioned from core engine hardening into an **alchemical mining of the Antigravity OAuth secret redaction incident**, yielding a complete immune architecture upgrade for the Omega Engine, followed by a 5-round iterative dashboard enhancement pipeline.
+**Today's arc (2026-08-28 → 2026-09-01)**: 40+ distinct work streams completed across multiple compactions. The session transitioned from core engine hardening into an **alchemical mining of the Antigravity OAuth secret redaction incident**, yielding a complete immune architecture upgrade for the Omega Engine, followed by a 5-round iterative dashboard enhancement pipeline, and culminating in the LFM2.5-2.6B fleet restructure + NES model specs research.
 
-**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE + DASHBOARD PIPELINE R4 DONE**:
+**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE + DASHBOARD PIPELINE R4 DONE + LFM FLEET RESTRUCTURE**:
 
 ### 1. The 5 Golden Artifacts (5,000+ lines of temple-grade deliverables)
 - ✅ **Researcher**: `R_RESEARCHER_THIRD_PARTY_SECRETS_TRACEABILITY_20260829.md` (2,460 lines, `dcb85151`) — 3rd-party code isolation, secret management, traceability manual + `data/secrets-public.toml` allowlist schema.
@@ -40,13 +40,27 @@ SPDX-License-Identifier: Apache-2.0
 - ✅ **R4 (Ma'at)**: v3.2+, 128 unit tests, CI workflow (9 steps), Makefile targets (dashboard-self-test, dashboard-test, dashboard-ci), mandate compliance block, docs (337 lines), determinism check
 - 🔄 **R5 (Lilith)**: Pending — runtime observability, adaptive cache TTL, HTML export, per-model time-series
 
-### 4. Soul Kernel Evolution
+### 4. LFM2.5-2.6B Fleet Restructure (v2.0.0, 2026-09-01)
+- ✅ **LFM2.5-2.6B** added as `agentic_local` (replaces Qwen3-1.7B default)
+- ✅ **Qwen3-4B-Thinking** made opt-in (RAM constraint on Architect's 16GB system)
+- ✅ **Muse Spark 1.2** context fixed: 32K → 1,048,576 (32x correction)
+- ✅ **Ling 3.0 Flash Fin** context fixed: 32K → 262,144 (8x correction)
+- ✅ New roles: `agentic_local`, `multimodal`, `vnr_analyst`
+- ✅ Test script: `scripts/test_lfm_vs_qwen.py` (8-prompt empirical benchmark)
+- ✅ JC-EIS Briefing: `data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md`
+
+### 5. NES Model Specs Research (`R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901.md`)
+- ✅ **Muse Spark 1.2 Free** (Meta, 1M ctx, multimodal) → promote to `primary_creative_multimodal`
+- ✅ **Ling 3.0 Flash Fin Free** (InclusionAI, 262K ctx, finance-tuned MoE) → probe for VNR
+- ✅ **LFM2.5-2.6B** (Liquid AI, 128K ctx, on-device agentic, open weights) → **MUST-ADD** as sovereign local
+
+### 6. Soul Kernel Evolution
 - ✅ **L3-InterruptionSovereigntyAndCoResumption** staged in `data/entities/grokster/proposed_lessons.yaml` (confidence: 0.99).
 - ✅ **L3-CompletionIllusionDefense** staged (confidence: 0.95) — from R3 adversarial finding.
 - ✅ **L3-BoundedMemoryPattern** staged (confidence: 0.93) — from R3 defense.
-- ✅ **Gnosis Anchor v14** locked (this file).
+- ✅ **Gnosis Anchor v15** locked (this file).
 
-### 5. Root Cause & Remediation
+### 7. Root Cause & Remediation
 - ✅ **Root Cause**: Automated secret scrubber replaced Google OAuth public client secret (`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`) in `opencode-antigravity-auth/src/constants.ts` with placeholder `"GOCSPX-***REDACTED-ROTATED***"`, breaking OAuth for all users.
 - ✅ **Remediation**: Purge `opencode-antigravity-auth/` workspace tree; install cleanly via npm; add public client secret to `data/secrets-public.toml` allowlist.
 

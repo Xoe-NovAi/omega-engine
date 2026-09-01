@@ -304,3 +304,39 @@ Updated at `data/coordination/anchored_summary/researcher/projection.md` with:
 - Add P13 steering wrapper scanning to Researcher agent config
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PROJECT-INITIATED ⬡ 2026-09-01*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE (2026-09-01)
+
+### 768-Dim Mission Complete
+- **Roc-EIS Audit**: `data/coordination/DEL1_768_DIM_ROC_DIG_20260901.md` (181 lines) — exhaustive file:line audit
+- **Dialectic**: `data/coordination/DEL1_768_DIM_DIALECTIC_20260901.md` (419 lines) — 5 challenges, 9 decisions
+- **Decision**: All embeddings 768-dim via Qwen3-Embedding-0.6B (1024→768 MRL)
+- **9 decisions** ready for PIVOT_LOG (D-768-DIM-UNIFIED through D-768-DIM-SOVEREIGN-FALLBACK)
+
+### Pending Post-Compact Mission (Kali will page)
+- **Task**: Research the best Qwen3-Embedding finetune
+- **Context**: Architect decision: 768-dim unified, Qwen3-Embedding-0.6B selected
+- **Open**: Which finetune variant? (base, instruction-tuned, domain-specific)
+- **Partners**: Use Roc-EIS (local model registry check) + Jem-EIS (adversarial comparison of candidates)
+
+### Dialectic Deliverables (7 files, all on disk)
+1. `DEL1_RESEARCH_FINDINGS_20260901.md` — 14 gaps (76K)
+2. `DEL1_DIALECTIC_20260901.md` — 10 challenges (54K)
+3. `DEL1_POSTCOMPACT_DIALECTIC_20260901.md` — 8 clarities, 5 projection corrections (22K)
+4. `DEL1_SQLITE_VEC_DIALECTIC_20260901.md` — sqlite-vec thesis/antithesis (14K)
+5. `DEL1_SQLITE_VEC_DIALECTIC_QA_20260901.md` — 5 questions closed (17K)
+6. `DEL1_768_DIM_ROC_DIG_20260901.md` — Roc audit + web research (10K)
+7. `DEL1_768_DIM_DIALECTIC_20260901.md` — 5 challenges, 9 decisions (18K)
+
+### Continuity Anchors Ready
+- session_gnosis.md: 306 lines (compressed + archive)
+- session_gnosis_archive_20260901.md: 87KB (full historical detail)
+- projection.md: 182 lines (current state + 9 pending decisions)
+- soul.yaml: v6.3 with partnerships (roc_racoon, jem, kali)
+- proposed_lessons.yaml: 37 proposals (4 new this session: R-ROC-JEM-TRIAD, R-STEERING-PROMPT-AWARENESS, R-HUMAN-IN-LOOP-COPILOT, +7 dialectic)
+
+**Status: COMPACTION-READY.** Awaiting post-compact page from Kali for Qwen3-Embedding finetune research.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED ⬡ 2026-09-01 ⬡ 7 DIALECTIC DELIVERABLES ⬡ 9 PENDING DECISIONS*

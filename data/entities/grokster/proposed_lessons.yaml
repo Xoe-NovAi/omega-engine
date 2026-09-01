@@ -1,4 +1,68 @@
 proposals:
+- id: L3-LocalModelSovereigntyStack
+  principle: "The local inference stack is the sovereign substrate. On constrained hardware (16GB RAM), the model stack MUST be RAM-aware: always-on models (LFM2.5-2.6B, 2.5GB RSS) + opt-in heavy models (Qwen3-4B-Thinking, +3GB) = 5.5GB max. The default `start` loads only the agentic_local model; heavy reasoning is opt-in via explicit subcommand. This is the Sovereign Local Stack Pattern — RAM budgeting as a first-class architectural constraint."
+  mandates:
+  - M7
+  - M23
+  - M15
+  confidence: 0.97
+  tags:
+  - local-inference
+  - ram-budgeting
+  - sovereignty
+  - m7
+  - m23
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: architect_directive_20260901
+    note: "Architect: 'Let's do the test between LFM and Qwen-1.7B, but make sure we remove the hot loading of gemma-4B-thinking, that is just too much RAM at once for my system.'"
+  - source: lfm_fleet_restructure_v2
+    note: "LFM2.5-2.6B (2.5GB RSS) always-on + Qwen3-4B-Thinking (+3GB) opt-in = 5.5GB max in 16GB. Default `start` loads only LFM; `start-reasoner` opt-in for heavy reasoning."
+  - source: R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901
+    note: "LFM2.5-2.6B is open weights (lfm1.0), purpose-built for agentic tool use, <2.5GB memory, 113 tok/s on Ryzen AI Max+ 395."
+  directive_provenance: d-rr-004
+- id: L3-ConfigBugAsCapabilityDebt
+  principle: "Configuration bugs that silently limit capability are capability debt. The fleet config had Muse Spark 1.2 at 32K context (actual: 1M) and Ling 3.0 Flash Fin at 32K (actual: 262K) — 32x and 8x capability suppression. Fixing config bugs is a free capability upgrade. Audit configs for silent capability limits at every sprint boundary."
+  mandates:
+  - M23
+  - M7
+  - M27
+  confidence: 0.96
+  tags:
+  - config-audit
+  - capability-debt
+  - silent-limits
+  - m23
+  - m27
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: model_fleet_operational_v2
+    note: "Muse Spark 1.2 context: 32K → 1,048,576 (32x correction). Ling 3.0 Flash Fin: 32K → 262,144 (8x correction). Both were free capability upgrades."
+  - source: R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901
+    note: "Config bugs suppressed 32x and 8x context capacity. Fixed in v2.0.0 with single-line changes."
+  directive_provenance: d-rr-005
+- id: L3-ModelSelectionViaEmpiricalProbe
+  principle: "Model selection for sovereign roles MUST be validated by empirical probe, not benchmark tables. The LFM2.5-2.6B vs Qwen3-1.7B decision for agentic_local requires running `scripts/test_lfm_vs_qwen.py` on the target hardware (Ryzen 7 5700U). Benchmark tables (M5 Max, M5 Pro) do not translate to Ryzen 7 5700U. The test script measures tok/s, RSS, success rate, tool-call JSON validity, and instruction adherence on the ACTUAL deployment hardware."
+  mandates:
+  - M23
+  - M7
+  - M11
+  confidence: 0.95
+  tags:
+  - model-selection
+  - empirical-validation
+  - hardware-specific
+  - m23
+  - m7
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: test_lfm_vs_qwen_py
+    note: "8-prompt test suite (extraction, tool_use, reasoning, code, instruction_following, summarization, agentic_decision, math). Measures tok/s, RSS, success rate, tool-call JSON validity, instruction adherence."
+  - source: architect_directive_20260901
+    note: "Architect: 'Let's do the test between LFM and Qwen-1.7B' — empirical validation on target hardware, not benchmark extrapolation."
+  - source: R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901
+    note: "LFM2.5-2.6B leads at instruction following (80.1% Multi-IF) and tool use (77.8% ToolSandbox) on M5 Max; needs validation on Ryzen 7 5700U."
+  directive_provenance: d-rr-006
 - id: L3-InterruptionSovereigntyAndCoResumption
   principle: "When a global cancellation (Esc x2) aborts multiple parallel subagents, the orchestrator MUST track all in-flight session IDs as a transactional cohort and resume all on recovery. Failure to do so = orchestrator amnesia. The Completion Illusion (LLMs synthesizing graceful footers when output-token-limited) requires sentinel probing ('STREAM_EXHAUSTED') before accepting state=completed."
   mandates:

@@ -357,6 +357,6 @@ proposals:
     as a living runbook; an unindexed KB entry is a tombstone.
 metadata:
   entity: roc_racoon
-  session_id: ses_fa390f1f8ffeLDm4qJh5I0fif1
-  model_used: big-pickle
-  last_session_end: '2026-09-01T10:59:27.542852+00:00'
+  session_id: ses_fa34cd5c7ffe625JfKmREJQwyD
+  model_used: minimax/minimax-m3:free
+  last_session_end: '2026-09-01T12:54:58.420936+00:00'

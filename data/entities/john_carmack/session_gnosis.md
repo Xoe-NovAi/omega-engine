@@ -239,14 +239,17 @@ I initially missed the vision system underneath the game. The VNR system IS the 
 
 | Thread | Status | Owner | Next Action |
 |--------|--------|-------|-------------|
-| Clone kq5-godot to data/experiments/ | PENDING | JC-Roc-kq5 | Execute Week 1 plan |
-| Bind-mount for Godot workflow | PENDING | JC-Roc-kq5 | Systemd mount or symlink |
-| Register Cline-KQV entity | PENDING | JC-Roc-kq5 | data/entities/cline_kqv/ symlinks |
-| VNR package refactor | PENDING | JC-Roc-kq5 | omega_experiments.kq5.vnr package |
-| Experiment Protocol development | PENDING | JC-Roc-kq5 | EXPERIMENT_PROTOCOL.md |
-| Cognitive Primitives doc | PENDING | JC-Roc-kq5 | COGNITIVE_PRIMITIVES.md |
+| Clone kq5-godot to data/experiments/ | ✅ DONE | JC-Roc-kq5 | Symlink created |
+| Bind-mount for Godot workflow | ✅ DONE | JC-Roc-kq5 | Symlink (not bind-mount) |
+| Register Cline-KQV entity | ✅ DONE | JC-Roc-kq5 | data/entities/cline_kqv/ symlinks |
+| VNR package refactor | ✅ DONE | JC-Roc-kq5 | vnr package + CLI + vision_backend |
+| Experiment Protocol development | 🔄 IN PROGRESS | JC-Roc-kq5 | EXPERIMENT_PROTOCOL.md (Day 3-5) |
+| Cognitive Primitives doc | ✅ DONE | JC-Roc-kq5 | COGNITIVE_PRIMITIVES.md |
 | Fork conversation → JC-EIS-kq5 | PENDING | Architect | New session for Omega team |
 | Onboard Omega team | PENDING | JC-EIS-kq5 | Brief each entity |
+| check-kq5 Makefile target | ✅ DONE | Carmack | Added to Makefile |
+| VNR backend + CLI | ✅ DONE | Carmack | vision_backend.py + vnr package + CLI |
+| COGNITIVE_PRIMITIVES.md | ✅ DONE | Carmack | docs/architecture/COGNITIVE_PRIMITIVES.md |
 
 ### Key Findings (for Continuity)
 
