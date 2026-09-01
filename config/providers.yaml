@@ -147,7 +147,13 @@ inference:
       priority: 0
       enabled: true
       description: Local GGUF inference via llama.cpp (highest priority - local-first)
-      model_path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
+      # v2.0.0 (2026-09-01, Grokster): Default model is now LFM2.5-2.6B (1.67GB Q4_K_M).
+      # LFM2.5-2.6B is open weights (lfm1.0), purpose-built for agentic tool use,
+      # and uses <2.5GB RAM. It replaces the previous Qwen3-1.7B default.
+      # To use Qwen3-1.7B instead, set OMEGA_NATIVE_GGUF_MODEL=Qwen3-1.7B-Q6_K.gguf
+      # in your environment. See data/coordination/R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901.md
+      # for the full research justification.
+      model_path: env:OMEGA_NATIVE_GGUF_MODEL
       n_threads: 4
       max_concurrent: 1
       numa: disable
@@ -165,6 +171,8 @@ inference:
       - qwen2.5-0.5b-local
       - functiongemma-270m-local
       - embeddinggemma-300m-local
+      # v2.0.0: LFM2.5-2.6B is the new default model name
+      - lfm-2.5-2.6b-local
     lmster:
       priority: 1
       enabled: true

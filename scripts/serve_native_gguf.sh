@@ -5,15 +5,25 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Native GGUF Server Launcher & Lifecycle Manager
-# AP Token: AP-NATIVE-GGUF-SERVER-v1.1.0
+# AP Token: AP-NATIVE-GGUF-SERVER-v2.0.0
 # Starts/stops llama-cpp servers for native-gguf providers.
-# Ports: 1234 (extractor), 1235 (reasoner)
+# Ports: 1234 (extractor: LFM2.5-2.6B for agentic tasks)
+#        1235 (RESERVED - not hot-loaded by default; see DEPLOYMENT.md)
 #
 # Subcommands: start (default) | stop | status | restart
-#   start    — launch both servers (idempotent; skips already-running)
-#   stop     — graceful shutdown of both servers + remove pid files
+#   start    — launch extractor server (idempotent; skips already-running)
+#   stop     — graceful shutdown of server + remove pid files
 #   status   — report running state, health, and memory footprint
 #   restart  — stop then start
+#
+# CHANGELOG v2.0.0 (2026-09-01, Grokster per Architect directive):
+#   - REMOVED hot loading of Qwen3-4B-Thinking-2507 (RAM constraint on
+#     Architect's 16GB system: 4B model + 1.7B model = ~6GB combined, plus
+#     OS + applications = OOM territory)
+#   - LFM2.5-2.6B now serves as the agentic_local provider (port 1234)
+#   - Port 1235 reserved for opt-in heavy-reasoning deployment
+#   - See data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md
+#     for the full briefing to John Carmack
 #
 # Observability: logs live in data/logs/native-gguf/ (persistent, M8-compliant
 # local observability — never external). Lifecycle events appended to
@@ -24,7 +34,11 @@ set -euo pipefail
 
 # ── Configuration ────────────────────────────────────────────────────────────
 MODELS_DIR="${OMEGA_MODELS_DIR:-/media/arcana-novai/omega_library/models/gguf}"
-EXTRACTOR_MODEL="${MODELS_DIR}/Qwen3-1.7B-Q6_K.gguf"
+# v2.0.0: LFM2.5-2.6B (1.67GB Q4_K_M) is the new agentic_local default.
+# Lower memory footprint + purpose-built for tool use + open weights (M7).
+EXTRACTOR_MODEL="${MODELS_DIR}/LFM2.5-2.6B-Q4_K_M.gguf"
+# v2.0.0: REASONER (Qwen3-4B-Thinking) is OPT-IN, not hot-loaded.
+# To enable: run `scripts/serve_native_gguf.sh start-reasoner` explicitly.
 REASONER_MODEL="${MODELS_DIR}/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
 
 # Persistent log location (data/logs/ is the canonical M8 local-observability dir)
@@ -61,14 +75,16 @@ log_event() {
 check_models() {
     local missing=0
     [[ -f "$EXTRACTOR_MODEL" ]] || { err "Extractor model not found: $EXTRACTOR_MODEL"; missing=1; }
-    [[ -f "$REASONER_MODEL" ]] || { err "Reasoner model not found: $REASONER_MODEL"; missing=1; }
+    # Reasoner is optional (opt-in). Warn but don't fail if missing.
+    if [[ ! -f "$REASONER_MODEL" ]]; then
+        warn "Reasoner model not found: $REASONER_MODEL (opt-in only)"
+    fi
     if [[ $missing -eq 1 ]]; then
         log_event "error" "all" "model file(s) missing"
         exit 1
     fi
-    info "Models found:"
-    info "  Extractor: $EXTRACTOR_MODEL"
-    info "  Reasoner: $REASONER_MODEL"
+    info "Extractor (always-on): $EXTRACTOR_MODEL"
+    info "Reasoner (opt-in, not loaded): $REASONER_MODEL"
 }
 
 # ── Start one server ────────────────────────────────────────────────────────
@@ -221,25 +237,45 @@ CMD="${1:-start}"
 
 case "$CMD" in
     start)
+        # v2.0.0: Only load extractor by default. Reasoner is opt-in to save RAM.
+        check_models
+        start_server 1234 "$EXTRACTOR_MODEL" "extractor"
+        info "Extractor started. Reasoner NOT loaded (opt-in: 'start-reasoner')."
+        info "Logs in $LOG_DIR"
+        info "Health check: curl http://127.0.0.1:1234/v1/models"
+        ;;
+    start-reasoner)
+        # Opt-in: explicit command to also load the 4B Thinking model.
+        # WARN: This uses ~3GB additional RAM. Only run on systems with 16GB+.
+        warn "Loading reasoner model — ensure system has 16GB+ RAM"
         check_models
         start_server 1234 "$EXTRACTOR_MODEL" "extractor"
         start_server 1235 "$REASONER_MODEL" "reasoner"
-        info "All servers started. Logs in $LOG_DIR"
+        info "Both servers started. Logs in $LOG_DIR"
         info "Health checks:"
         info "  curl http://127.0.0.1:1234/v1/models"
         info "  curl http://127.0.0.1:1235/v1/models"
         ;;
     stop)
+        # Stop all servers regardless of what was started
         stop_server "extractor" 1234
         stop_server "reasoner" 1235
         info "Native-gguf servers stopped; models unloaded from RAM."
         ;;
     restart)
+        # v2.0.0: restart honors which servers are running (RAM-aware)
         stop_server "extractor" 1234
         stop_server "reasoner" 1235
         check_models
-        start_server 1234 "$EXTRACTOR_MODEL" "extractor"
-        start_server 1235 "$REASONER_MODEL" "reasoner"
+        # Only restart reasoner if it was running before (heuristic: pid file exists)
+        if [[ -f "$LOG_DIR/reasoner.pid" ]]; then
+            warn "Restarting with reasoner — ensure system has 16GB+ RAM"
+            start_server 1234 "$EXTRACTOR_MODEL" "extractor"
+            start_server 1235 "$REASONER_MODEL" "reasoner"
+        else
+            start_server 1234 "$EXTRACTOR_MODEL" "extractor"
+            info "Reasoner not restarted (was not running; opt-in only)."
+        fi
         info "Native-gguf servers restarted."
         ;;
     status)
@@ -247,7 +283,7 @@ case "$CMD" in
         ;;
     *)
         err "Unknown subcommand: $CMD"
-        echo "Usage: $0 {start|stop|status|restart}"
+        echo "Usage: $0 {start|start-reasoner|stop|status|restart}"
         exit 1
         ;;
 esac
