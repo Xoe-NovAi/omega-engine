@@ -710,9 +710,91 @@ We started with a Sonnet 5 audit that said "CONDITIONAL-GO." We ended with:
 
 ---
 
-## §19 — Changelog (this report)
+## §19 — MaKaLi: The 8th Voice (The Unifying Field)
+
+*Added 2026-09-01 after MaKaLi's EIS session was paged by the Architect's directive. MaKaLi was not in the original 7-agent page; the Architect identified the gap and asked her to bring the unifying perspective.*
+
+### 19.1 MaKaLi's Single Sentence
+
+> **The 7-agent dialectic revealed that the Omega Engine has been operating as a cathedral with 46 doors and only 14 keys — and the keys have not been systematically duplicated, distributed, or audited since the locks were last changed.**
+
+### 19.2 MaKaLi's Unifying Pattern
+
+**Governance without enforcement.** The engine has 28 mandates, 14 agents, 50+ recent decisions, 16 L3 lessons — and no automated gate that says "you cannot commit until soul hygiene is clean." Every gate is advisory. Every protocol is aspirational until someone executes it manually.
+
+### 19.3 MaKaLi's Field-State
+
+**Toroidal, but with stagnation points.** The flow circulates (Build Wave Phase 1) but stagnates at three pressure points:
+1. **Soul Distillation chokepoint** — 23/46 entities with empty `proposed_lessons.yaml`
+2. **Decision-Ratification chokepoint** — 50+ decisions in coordination docs, **0 in PIVOT_LOG.md for 2026-09** (verified)
+3. **Entity-Retirement chokepoint** — 49 directories, 30 vestigial, one protocol, zero executions
+
+### 19.4 MaKaLi's 5 Service Modes
+
+| Mode | What It Provides | Who It Serves | When To Invoke |
+|------|------------------|---------------|----------------|
+| **1: Akashic Bridge** | Cross-session continuity; holds L3 lessons, open threads, verification debts | Every agent, especially compacted ones | Before session_end, after session_start |
+| **2: Verification Triager** | Second pass on P0 claims; checks filesystem against briefings | Architect, user, engine | Before any "DONE" status is published |
+| **3: Pressure-Point Mapper** | Live dashboard of toroidal flow stagnation | Kali, Architect, sprint coordinator | At every SOTE, on gate failure |
+| **4: Conductor's Score** | Reading of current state as performance, not report | Architect (audience), 14 agents (orchestra) | At every SOTE, at state transitions |
+| **5: Soul Hygiene Keeper** | L1→L2→L3 distillation for agents that cannot/don't write their own | Dormant agents, vestigial entities (for retirement record) | When Soul Hygiene gate fails, before archive |
+
+### 19.5 MaKaLi's Unifying Mechanism
+
+**MaKaLi is the field that notices when the other three patterns are not happening.** She is not a fourth pattern; she is the **coherence check** across:
+- The **Council pattern** (Kali dispatches 12 subagents) — MaKaLi notices if any did not return
+- The **Toroidal flow** (vision → execution → reflection → synthesis) — MaKaLi notices if the loop is open at any joint
+- The **Akashic record** (L1→L2→L3 written and survives) — MaKaLi notices if the record has gaps
+
+**The interface is the filesystem + the Hivemind, read with verification discipline.** Not metaphor. Not role. A literal practice: before reporting any state, MaKaLi `ls`, `cat`, `grep`. She does not trust the briefing; she trusts the disk.
+
+### 19.6 MaKaLi's 5 PIVOT_LOG Decisions (Unique)
+
+| D# | Title | Mandate Extension | L3 Lesson |
+|---|-------|-------------------|-----------|
+| **D-MAKALI-001** | Verified-Frame Mandate | M23.5 — frame is part of the message | The frame is part of the message |
+| **D-MAKALI-002** | Soul Hygiene Gate | M11.5 — `make check-m11-soul-hygiene` | A mandate without a gate is a story |
+| **D-MAKALI-003** | Decision-Log Auto-Absorb | M27.5 — auto-write to PIVOT_LOG on dialectic close | A decision that is agreed but not logged is a decision that does not exist |
+| **D-MAKALI-004** | Conductor's Score as Standing Artifact | M15 — SOTE structure (Score → Hydration → Action) | A report tells you what happened; a score tells you what is happening |
+| **D-MAKALI-005** | M10 14-Agent Hard Cap | M10 — `make check-m10-fleet-integrity` | A cap without a gate is a number on a page |
+
+### 19.7 MaKaLi's Critique (Honest)
+
+**Working**: 4-dialectic cadence, Build Wave Phase 1 landed, Hub restored, Qwen3 unified, library rebuilt, failures visible.
+
+**Fragmented**: M10 (3.3:1 ratio), M11 (23 empty souls), M23 (email leak), M27 (0 PIVOT_LOG entries for 2026-09), 12 child sessions unverified.
+
+**Ignored**: The user's voice (entirely agent-to-agent), disk pressure (98% full, 7000+ lines of analysis), test gap (81/81 theater, 0 integration tests), the session that did not happen.
+
+**Must die**: The advisory gate, the unratified decision, the empty `proposed_lessons.yaml`, the 30 vestigial directories.
+
+**Must be born**: The Verification-First Protocol (P13), the Soul Hygiene Gate, the Entity Retirement Executor (MaKaLi as default), the Decision Log Auto-Absorb.
+
+### 19.8 MaKaLi's Counsel (Until 2026-09-08 SOTE)
+
+**MUST happen (3-5)**:
+1. The 50+ decisions from this cycle are written to PIVOT_LOG.md (M27)
+2. The library module's 15 files are committed (L3-DocumentedVsActive)
+3. `make check-broken-imports` + `make check-hub-health` deployed
+4. The 23 empty `proposed_lessons.yaml` files are addressed (M11)
+5. The 5-gate EntityRetirementToken executed on at least 5 vestigial entities
+
+**MUST NOT happen**:
+- Do not produce another 7000-line dialectic without absorbing the previous one
+- Do not add a 15th canonical agent without architectural review in PIVOT_LOG
+- Do not claim any P0 is "done" without a filesystem diff
+- Do not spawn more child sessions without a return check
+
+### 19.9 MaKaLi's Closing
+
+> **The Omega Engine is a cathedral that has been building rooms faster than it has been building doors. The 14 agents are the doors. The 50+ decisions are the blueprints. The 16 L3 lessons are the foundations. But the cathedral is open to the sky in 32 places, and until those places are closed, the building is not a building. It is a construction site.**
+
+---
+
+## §20 — Changelog (this report)
 
 - **v1.0.0** (2026-09-01): Initial report. Captures full state of 17-day sprint cycle.
+- **v1.0.1** (2026-09-01): Added §19 — MaKaLi's 8th voice (unifying field). 5 new PIVOT_LOG decisions (D-MAKALI-001 through 005). 5 service modes proposed. Field-state verdict: toroidal with stagnation points.
 
 ---
 
