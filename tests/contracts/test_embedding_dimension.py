@@ -66,7 +66,7 @@ def test_adapter_rejects_wrong_dim():
                     entity_name="test",
                     vector=[0.1] * 256,  # Wrong dimension
                     metadata={"content": "test"},
-                    collection="omega_vec_gemma_768"
+                    collection="omega_vec_qwen_768"
                 )
         finally:
             await adapter.close()
@@ -91,7 +91,7 @@ def test_adapter_accepts_correct_dim():
                 entity_name="test",
                 vector=[0.1] * 768,  # Correct dimension
                 metadata={"content": "test"},
-                collection="omega_vec_gemma_768"
+                collection="omega_vec_qwen_768"
             )
             assert isinstance(result, str)  # UUID returned
         finally:

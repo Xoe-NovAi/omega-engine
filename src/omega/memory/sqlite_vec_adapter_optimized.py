@@ -56,10 +56,18 @@ CANONICAL_DIMENSION = 768
 MRL_DIMENSIONS = [768, 512, 256, 128, 64]
 
 COLLECTIONS = {
-    "omega_vec_gemma_768": {
+    # [D-768-DIM-RENAME-GEMMA] Primary: Qwen3-Embedding-0.6B at 768-dim
+    "omega_vec_qwen_768": {
         "dimension": 768,
         "metric": "cosine",
         "quantization": "int8_rescore",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    # [D-768-DIM-UNIFIED] Library: Qwen3-Embedding-0.6B at 768-dim (unified)
+    "omega_vec_library_768": {
+        "dimension": 768,
+        "metric": "cosine",
+        "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
     "omega_vec_nomic_768": {
@@ -92,23 +100,19 @@ COLLECTIONS = {
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
-    "omega_vec_library_256": {
-        "dimension": 256,
-        "metric": "cosine",
-        "quantization": "none",
-        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
-    },
+    # [D-768-DIM-DELETE-LIBRARY-256] DELETED: dead code, replaced by library_768 above
 }
 
 # Per-collection RRF weights (configurable) — GAP-004
+# [D-768-DIM-LIBRARY-RRF] Library shifted from 0.8/0.2 → 0.6/0.4 for proper semantic weight
 COLLECTION_RRF_WEIGHTS = {
-    "omega_vec_gemma_768": {"fts": 0.5, "vec": 0.5},
+    "omega_vec_qwen_768": {"fts": 0.5, "vec": 0.5},
+    "omega_vec_library_768": {"fts": 0.6, "vec": 0.4},  # FTS-primary, more semantic weight
     "omega_vec_nomic_768": {"fts": 0.5, "vec": 0.5},
     "omega_vec_nomic_512": {"fts": 0.4, "vec": 0.6},   # MRL: trust vector more
     "omega_vec_nomic_256": {"fts": 0.3, "vec": 0.7},   # MRL: trust vector more
     "omega_vec_minilm_384": {"fts": 0.6, "vec": 0.4},  # Code: FTS more reliable
     "omega_vec_static_64": {"fts": 0.7, "vec": 0.3},   # Zero-cost: FTS primary
-    "omega_vec_library_256": {"fts": 0.8, "vec": 0.2}, # Feature-hash: FTS primary
 }
 
 DEFAULT_EMBEDDING_DIM = CANONICAL_DIMENSION
@@ -570,7 +574,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
     async def batch_upsert(
         self,
         items: List[Dict[str, Any]],
-        collection: str = "omega_vec_gemma_768",
+        collection: str = "omega_vec_qwen_768",
     ) -> List[str]:
         """Insert or update multiple vectors in a single transaction.
         
@@ -821,7 +825,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         vector: List[float],
         limit: int = 10,
         filter: Optional[Dict[str, Any]] = None,
-        collection: str = "omega_vec_gemma_768",
+        collection: str = "omega_vec_qwen_768",
     ) -> List[Tuple[float, Dict[str, Any]]]:
         """Optimized query with JOIN-based metadata fetch (eliminates N+1).
 
@@ -940,7 +944,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         vector: List[float],
         metadata: Dict[str, Any],
         id: Optional[str] = None,
-        collection: str = "omega_vec_gemma_768",
+        collection: str = "omega_vec_qwen_768",
     ) -> str:
         """Single upsert - delegates to batch_upsert for consistency."""
         result = await self.batch_upsert([{
@@ -956,7 +960,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
     # ========================================================================
 
     async def delete(
-        self, entity_name: str, ids: List[str], collection: str = "omega_vec_gemma_768"
+        self, entity_name: str, ids: List[str], collection: str = "omega_vec_qwen_768"
     ) -> bool:
         """Delete vectors by UUID with O(1) collection lookup (GAP-006)."""
         if not ids:
@@ -1010,7 +1014,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                 raise ProviderError("sqlite_vec", f"Delete failed: {e}", raw_error=e) from e
 
     async def delete_session(
-        self, entity_name: str, session_id: str, collection: str = "omega_vec_gemma_768"
+        self, entity_name: str, session_id: str, collection: str = "omega_vec_qwen_768"
     ) -> bool:
         """Delete all vectors for a session with O(1) collection lookup (GAP-006)."""
         if collection not in self._collections:
@@ -1121,7 +1125,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         limit: int = 20,
         fts_weight: Optional[float] = None,
         vec_weight: Optional[float] = None,
-        collection: str = "omega_vec_gemma_768",
+        collection: str = "omega_vec_qwen_768",
     ) -> List[Dict[str, Any]]:
         """Hybrid search with per-collection configurable RRF weights (GAP-004)."""
         await self._ensure_initialized()
@@ -1458,7 +1462,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         spatial_weight: float = 0.3,
         radius: float = 50.0,
         limit: int = 20,
-        collection: str = "omega_vec_gemma_768",
+        collection: str = "omega_vec_qwen_768",
     ) -> List[Dict[str, Any]]:
         """Hybrid semantic + spatial query for VR-aware retrieval.
 

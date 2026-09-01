@@ -20,19 +20,23 @@ vec0_lock:
     All providers MUST output 768-dim vectors. Use MRL truncation in provider.
 
 # Provider chain (quality-first order)
+# D-768-DIM-MODEL-SWAP: Qwen3-Embedding-0.6B replaces EmbeddingGemma-300M
+# D-768-DIM-UNIFIED: All embeddings 768-dim via MRL truncation from 1024 native
 providers:
-  - id: "gemma_primary"
-    class: "GemmaGGUFEmbeddingProvider"
-    model_path: "env:OMEGA_MODELS_DIR/embeddings/embeddinggemma-300m-Q6_K.gguf"
-    native_dim: 768
+  - id: "qwen3_primary"
+    class: "Qwen3GGUFEmbeddingProvider"
+    model_path: "env:OMEGA_MODELS_DIR/embeddings/qwen3-embedding-0.6b-Q5_K_M.gguf"
+    native_dim: 1024
     mrl_enabled: true
-    mrl_dimensions: [768, 512, 256, 128]
+    mrl_dimensions: [768, 512, 256, 128, 64]
     default_mrl: 768
-    collection: "omega_vec_gemma_768"
+    pooling: "last"
+    instruction_prefix: "Instruct: Retrieve relevant technical documentation\nQuery: "
+    collection: "omega_vec_qwen_768"
     quantization: "int8_rescore"
     oversample: 2
     priority: 0
-    capabilities: ["multilingual", "code", "mrl", "qat"]
+    capabilities: ["multilingual", "code", "mrl", "instruction_aware", "last_token_pooling"]
     
   - id: "nomic_fallback"
     class: "NomicOllamaEmbeddingProvider"
@@ -68,8 +72,10 @@ providers:
     capabilities: ["zero_cost", "no_dependencies"]
 
 # Collection definitions (maps to vec0 tables)
+# D-768-DIM-RENAME-GEMMA: gemma_768 → qwen_768
+# D-768-DIM-DELETE-LIBRARY-256: dead code removed
 collections:
-  omega_vec_gemma_768:
+  omega_vec_qwen_768:
     dimension: 768
     metric: "cosine"
     quantization: "int8_rescore"
@@ -77,6 +83,12 @@ collections:
       m: 16
       ef_construction: 200
       ef_search: 64
+
+  omega_vec_library_768:
+    dimension: 768
+    metric: "cosine"
+    quantization: "none"
+    rrf_weights: {"fts": 0.6, "vec": 0.4}  # D-768-DIM-LIBRARY-RRF: FTS-primary with proper semantic weight
       
   omega_vec_nomic_768:
     dimension: 768
@@ -120,11 +132,12 @@ collections:
     quantization: "none"
 
 # RRF Fusion (universal k=60)
+# D-768-DIM-RENAMED-WEIGHTS: qwen3_primary replaces gemma_primary
 fusion:
   method: "rrf"
   k: 60
   weights:
-    gemma_primary: 1.0
+    qwen3_primary: 1.0
     nomic_fallback: 0.8
     nomic_512: 0.6
     nomic_256: 0.4

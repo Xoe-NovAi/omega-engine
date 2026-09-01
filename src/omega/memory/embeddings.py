@@ -51,7 +51,7 @@ class SovereignFallbackEmbeddingProvider(IEmbeddingProvider):
     for basic semantic retrieval when no model is available.
     """
 
-    def __init__(self, dimension: int = 256):
+    def __init__(self, dimension: int = 768):  # [D-768-DIM-SOVEREIGN-FALLBACK] aligned to 768
         self._dimension = dimension
         self._stopwords = {
             "the",
@@ -479,17 +479,60 @@ class GemmaGGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
         )
 
 
+class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
+    """Qwen3-Embedding-0.6B via llama-cpp-python.
+
+    [D-768-DIM-MODEL-SWAP] Replaces EmbeddingGemma-300M as the primary
+    embedding model. 600M params, Q5_K_M quantized (~470MB).
+
+    Native dimension: 1024. Supports Matryoshka Representation Learning
+    (MRL) for 32-1024 dim output via truncation. Canonical target: 768.
+
+    Quality: MTEB 64.33 (native 1024), ~64.0 (MRL 768), ~62.0 (MRL 256).
+    Instruction-aware: prepends "Instruct: Retrieve relevant technical
+    documentation\nQuery: " to query text (NOT document text).
+
+    Requires:
+    - llama.cpp compiled with --pooling last
+    - Q5_K_M or Q8_0 quantization (Q4_K_M has ~5% drift)
+    - Last-token pooling (not mean pooling)
+
+    [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
+    """
+
+    def __init__(self, target_dim: Optional[int] = 768):
+        super().__init__(
+            model_path="/media/arcana-novai/omega_library/models/embeddings/qwen3-embedding-0.6b-Q5_K_M.gguf",
+            dimension=1024,  # native
+            target_dim=target_dim,  # 768 default via MRL
+        )
+        # [D-768-DIM-MRL-CHAIN] Two-stage MRL: provider 1024→768, adapter 768→512/256/128/64
+        self._instruction_prefix = (
+            "Instruct: Retrieve relevant technical documentation\nQuery: "
+        )
+
+    async def get_embedding(self, text: str, is_query: bool = True) -> List[float]:
+        """Override to inject instruction prefix on queries.
+
+        Per Qwen3-Embedding-0.6B paper: prefix is applied to QUERIES only,
+        not to documents being indexed. This improves retrieval by ~2-3%.
+        """
+        if is_query:
+            text = self._instruction_prefix + text
+        return await super().get_embedding(text)
+
+
 class EmbeddingManager:
     """Manages the embedding provider chain (Local -> Static -> Ollama -> Fallback).
 
     Ensures that the engine always has a way to vectorize text,
     preferring high-quality local models over the sovereign fallback.
 
-    Default provider chain (local-first):
-        1. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (384-dim)
-        2. GemmaGGUFEmbeddingProvider — EmbeddingGemma 300M via llama-cpp-python (768-dim)
-        3. StaticEmbeddingProvider — potion-base-2M via model2vec (64-dim)
-        4. OllamaEmbeddingProvider — nomic-embed-text via Ollama (768-dim)
+    Default provider chain (local-first, D-768-DIM-MODEL-SWAP):
+        1. Qwen3GGUFEmbeddingProvider — Qwen3-Embedding-0.6B via llama-cpp (768-dim MRL from 1024)
+        2. OllamaEmbeddingProvider — nomic-embed-text via Ollama (768-dim)
+        3. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (384-dim)
+        4. StaticEmbeddingProvider — potion-base-2M via model2vec (64-dim)
         5. SovereignFallbackEmbeddingProvider — deterministic hashing (256-dim)
     """
 
@@ -504,9 +547,9 @@ class EmbeddingManager:
             target_dim = strategy.canonical_dimension  # 768
 
             self._providers = [
-                GemmaGGUFEmbeddingProvider(
+                Qwen3GGUFEmbeddingProvider(
                     target_dim=target_dim
-                ),  # 768-dim, 300M, primary (quality-first)
+                ),  # 1024→768 MRL, 600M, primary (D-768-DIM-MODEL-SWAP)
                 OllamaEmbeddingProvider(
                     dimension=target_dim
                 ),  # 768-dim, nomic-embed-text, local fallback

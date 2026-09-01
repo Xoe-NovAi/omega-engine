@@ -387,7 +387,7 @@ class TestSQLiteVecDelete:
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_fts")
             assert cursor.fetchone()[0] == 0
             
-            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_gemma_768")
+            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_qwen_768")
             assert cursor.fetchone()[0] == 0
         
         await anyio.to_thread.run_sync(check_removed)

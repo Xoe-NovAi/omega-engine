@@ -23,13 +23,13 @@ logger = logging.getLogger(__name__)
 
 # Collections defined in sqlite_vec_adapter_optimized.py:54-97
 MRL_COLLECTIONS = [
-    "omega_vec_gemma_768",
+    "omega_vec_qwen_768",
     "omega_vec_nomic_768",
     "omega_vec_nomic_512",
     "omega_vec_nomic_256",
     "omega_vec_minilm_384",
     "omega_vec_static_64",
-    "omega_vec_library_256",
+    "omega_vec_library_768",
 ]
 
 # Drift thresholds — see CARMACK_VECTOR_VERSIONING_SPEC_20260829.md §L3
