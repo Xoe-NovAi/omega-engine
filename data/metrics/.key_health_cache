@@ -1,1 +1,1 @@
-ok:cline,auth (auth_only:or_key,cline,auth)
+ok:or_key,cline,auth
