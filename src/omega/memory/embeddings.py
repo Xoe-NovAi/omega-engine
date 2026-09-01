@@ -502,7 +502,7 @@ class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
 
     def __init__(self, target_dim: Optional[int] = 768):
         super().__init__(
-            model_path="/media/arcana-novai/omega_library/models/embeddings/qwen3-embedding-0.6b-Q5_K_M.gguf",
+            model_path="/media/arcana-novai/omega_library/models/embeddings/Qwen3-Embedding-0.6B-Q5_K_M.gguf",
             dimension=1024,  # native
             target_dim=target_dim,  # 768 default via MRL
         )
