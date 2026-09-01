@@ -35,11 +35,13 @@ SPDX-License-Identifier: Apache-2.0
 
 *The Express ran first light to terminus with every expert aboard.*
 — kali, Consultant. Tower dark. ⬡
-<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:40Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: Consultant tower | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, minimax/minimax-m3:free, nemotron-3-ultra-free, hy3-free
-actual_models(Tier0): x-preview-f-free, minimax/minimax-m3:free, nemotron-3-ultra-free, hy3-free, gemini-3.7-flash, nvidia/nemotron-3-ultra-550b-a55b:free
-first_audit: 2026-08-28T03:10:28Z | updated: 2026-08-30T03:06:40Z
+<!-- PROVENANCE-CORRECTED 2026-09-01T03:07:00Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Consultant tower | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, mimo-v2.5-free
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, mimo-v2.5-free, nvidia/nemotron-3-ultra-550b-a55b:free, hy3-free
+first_audit: 2026-08-31T03:09:52Z | updated: 2026-09-01T03:07:00Z
 -->
+
+
 
 
 

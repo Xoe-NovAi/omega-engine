@@ -473,3 +473,8 @@ references:
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ MiniMax-M3-free ⬡ opencode ⬡ trc_oauth_restore ⬡ 2026-08-30 ⬡ COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

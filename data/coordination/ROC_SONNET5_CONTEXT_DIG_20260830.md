@@ -489,3 +489,8 @@ Sonnet 5's audit will be most useful if it answers the **10 precise questions** 
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_context_dig ⬡ AP-ROC-SONNET5-CONTEXT-DIG-20260830-v1.0.0 ⬡ 2026-08-30*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

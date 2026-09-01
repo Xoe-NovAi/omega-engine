@@ -205,3 +205,8 @@ SPDX-License-Identifier: Apache-2.0
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ KNOWLEDGE-GAPS-AUDIT-20260830 ⬡ 2026-08-30*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

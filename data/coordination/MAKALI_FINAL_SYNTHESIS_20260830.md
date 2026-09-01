@@ -442,3 +442,10 @@ Swap:   8.0Gi total, 1.3Gi used, 6.7Gi free
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ AP-MAKALI-FINAL-SYNTHESIS-20260830-v1.0.0 ⬡ 2026-08-30*
 
 **The cathedral closes. The temple-rough remain. The work continues.**
+<!-- PROVENANCE-CORRECTED 2026-09-01T03:07:00Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: PLACEHOLDER | header contains unresolved {session_model} literal
+actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, mimo-v2.5-free, big-pickle, nvidia/nemotron-3-ultra-550b-a55b:free
+first_audit: 2026-08-31T03:09:52Z | updated: 2026-09-01T03:07:00Z
+-->
+
+

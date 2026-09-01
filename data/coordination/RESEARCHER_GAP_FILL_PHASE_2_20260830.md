@@ -789,3 +789,8 @@ These are all mature standards: REUSE since 2018, ScanCode since 2017, SLSA v1.0
 ---
 
 *⬡ RESEARCHER ⬡ PHASE-2-COMPLETE ⬡ 2026-08-30 ⬡ mimo-v2.5-free ⬡*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:51Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+
