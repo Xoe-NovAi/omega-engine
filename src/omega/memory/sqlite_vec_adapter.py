@@ -56,12 +56,22 @@ MRL_DIMENSIONS = [768, 512, 256, 128, 64]
 
 # Collection definitions — each gets its own vec0 table
 COLLECTIONS = {
-    # Primary: EmbeddingGemma 300M at canonical 768-dim
-    "omega_vec_gemma_768": {
+    # Primary: Qwen3-Embedding-0.6B at 768-dim (MRL from native 1024)
+    # [D-768-DIM-RENAME-GEMMA] Replaces EmbeddingGemma-300M
+    "omega_vec_qwen_768": {
         "dimension": 768,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    # Library: Qwen3-Embedding-0.6B at 768-dim (unified, FTS-primary)
+    # [D-768-DIM-UNIFIED] Library uses same model+dim as memory
+    "omega_vec_library_768": {
+        "dimension": 768,
+        "metric": "cosine",
+        "quantization": "none",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "rrf_weights": {"fts": 0.6, "vec": 0.4},  # [D-768-DIM-LIBRARY-RRF]
     },
     # Fallback: Nomic v1.5 at canonical 768-dim
     "omega_vec_nomic_768": {
@@ -97,13 +107,8 @@ COLLECTIONS = {
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
-    # Library feature-hashing: 256-dim (simple bag-of-words, not ML embeddings)
-    "omega_vec_library_256": {
-        "dimension": 256,
-        "metric": "cosine",
-        "quantization": "none",
-        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
-    },
+    # [D-768-DIM-DELETE-LIBRARY-256] DELETED: was dead code, library now uses
+    # 768-dim Qwen3 unified embeddings above
 }
 
 # Legacy default (for backward compat during migration)
@@ -298,7 +303,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             return
 
         # Create the vec0 table for this collection
-        # Collection names already include the prefix (e.g., "omega_vec_gemma_768")
+        # Collection names already include the prefix (e.g., "omega_vec_qwen_768")
         table_name = collection_name
 
         def _sync_create_vec():
@@ -368,14 +373,14 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         vector: List[float],
         metadata: Dict[str, Any],
         id: Optional[str] = None,
-        collection: str = "omega_vec_gemma_768",  # Default to primary canonical collection
+        collection: str = "omega_vec_qwen_768",  # Default to primary canonical collection
     ) -> str:
         """Insert or update a vector and its metadata in a specific collection.
 
         Canonical Architecture:
         - Each collection has its own vec0 table with declared dimension
         - Dimension mismatch raises RuntimeError (M23 Failure Integrity)
-        - Default collection: omega_vec_gemma_768 (canonical 768-dim)
+        - Default collection: omega_vec_qwen_768 (canonical 768-dim)
 
         Args:
             entity_name: Sovereign entity identifier (partition key)
@@ -449,7 +454,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
 
                         # 3. Insert into COLLECTION-SPECIFIC vec0 with explicit rowid
                         # Correction C3: entity_name is partition key
-                        # Collection names already include the prefix (e.g., "omega_vec_gemma_768")
+                        # Collection names already include the prefix (e.g., "omega_vec_qwen_768")
                         if vector and embedding_blob:
                             table_name = collection
                             conn.execute(
@@ -492,7 +497,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         vector: List[float],
         limit: int = 10,
         filter: Optional[Dict[str, Any]] = None,
-        collection: str = "omega_vec_gemma_768",  # Default to primary canonical collection
+        collection: str = "omega_vec_qwen_768",  # Default to primary canonical collection
     ) -> List[Tuple[float, Dict[str, Any]]]:
         """Query a specific vec0 collection for the most similar entries.
 
@@ -606,7 +611,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             raise ProviderError("sqlite_vec", f"SQLite-vec query failed: {e}", raw_error=e) from e
 
     async def delete(
-        self, entity_name: str, ids: List[str], collection: str = "omega_vec_gemma_768"
+        self, entity_name: str, ids: List[str], collection: str = "omega_vec_qwen_768"
     ) -> bool:
         """Delete specific vectors by UUID.
 
@@ -677,7 +682,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 ) from e
 
     async def delete_session(
-        self, entity_name: str, session_id: str, collection: str = "omega_vec_gemma_768"
+        self, entity_name: str, session_id: str, collection: str = "omega_vec_qwen_768"
     ) -> bool:
         """Delete all vectors associated with a specific session.
 

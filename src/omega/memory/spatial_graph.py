@@ -231,7 +231,7 @@ class SpatialKnowledgeGraph:
                 semantic_vector = None
                 try:
                     vec_cursor = conn.execute(
-                        "SELECT embedding FROM omega_vec_gemma_768 WHERE rowid = ?",
+                        "SELECT embedding FROM omega_vec_qwen_768 WHERE rowid = ?",
                         (rowid,)
                     )
                     vec_row = vec_cursor.fetchone()

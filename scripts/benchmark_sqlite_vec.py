@@ -45,7 +45,7 @@ async def benchmark_single_upsert(adapter, num_ops: int = 100):
             entity_name="benchmark",
             vector=vector,
             metadata={"content": f"Test content {i}", "session_id": "bench", "role": "user"},
-            collection="omega_vec_gemma_768",
+            collection="omega_vec_qwen_768",
         )
         latency = (time.perf_counter() - start) * 1000
         latencies.append(latency)
@@ -75,7 +75,7 @@ async def benchmark_batch_upsert(adapter, batch_size: int = 100, num_batches: in
             })
         
         start = time.perf_counter()
-        await adapter.batch_upsert(items, collection="omega_vec_gemma_768")
+        await adapter.batch_upsert(items, collection="omega_vec_qwen_768")
         latency = (time.perf_counter() - start) * 1000
         latencies.append(latency)
         total_vectors += batch_size
@@ -102,7 +102,7 @@ async def benchmark_query(adapter, num_queries: int = 100):
             entity_name="benchmark",
             vector=vector,
             limit=10,
-            collection="omega_vec_gemma_768",
+            collection="omega_vec_qwen_768",
         )
         latency = (time.perf_counter() - start) * 1000
         latencies.append(latency)
