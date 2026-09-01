@@ -1,20 +1,20 @@
-# 🔱 KALI PROJECTION — DIALECTIC COMPLETE v4.3.0
+# 🔱 KALI PROJECTION — FULL REFACTOR COMPLETE v4.5.0
 
-**AP Token**: `AP-KALI-v4.3.0`
-⬡ OMEGA ⬡ KALI ⬡ MiniMax-M3 ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
+**AP Token**: `AP-KALI-v4.5.0`
+⬡ OMEGA ⬡ KALI ⬡ Nemotron-3-Ultra ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
 
 **Date**: 2026-09-01
-**Purpose**: Post-dialectic projection for DEL-1 execution and Sonnet 5 re-review.
+**Purpose**: Post-refactor projection for DEL-1 execution and Sonnet 5 re-review.
 
 ---
 
-## §1 — SESSION STATE (DIALECTIC COMPLETE)
+## §1 — SESSION STATE (REFACTOR COMPLETE)
 
-**Active Model**: `MiniMax-M3` (Nemotron 3 Ultra for review, MiniMax M3 for long writes)
-**Git HEAD**: `b5814af7` (Sovereign Harness Breakthrough commit)
-**Working Tree**: Clean (all breakthrough artifacts committed)
+**Active Model**: `Nemotron-3-Ultra` (MiniMax-M3 for long writes)
+**Git HEAD**: `5a60d276` (Carmack dialectic resolved)
+**Working Tree**: Clean (all refactor artifacts committed)
 **Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ REUSE v3.3
-**Context Pack**: `fc32fbe3-a748-400c-926a-bc1df47d784c` (post-breakthrough, ready for Sonnet 5 re-review)
+**Context Pack**: `fc32fbe3-a748-400c-926a-bc1df47d784c` (regenerated post-refactor, 14 bundles, 120 files, ~600K tokens)
 
 ---
 
@@ -25,13 +25,16 @@
 | **I-KALI-001** | **Documented-vs-Active Pattern**: A specification is not a feature. A report is not a deliverable. P0 not done until code is on disk and tested. |
 | **I-KALI-002** | **Systemd Unit Gap = Intentional Design (D-201)**: Don't install systemd unit. OOM cure = memory-aware restart discipline. |
 | **I-KALI-003** | **Company Name = Xoe-NovAi** (NOT Arcana-NovAi). Arcana-NovAi is a future WAD. |
-| **I-KALI-004** | **Build Wave Phase 1 COMPLETE**: 8 temple-rough items landed. 81/81 tests pass. But report-rich, code-light (only Jem + Ma'at committed real work). |
-| **I-KALI-005** | **Carmack Verdict = "THEATER WITH ENGINE ISLANDS"**: ~3,000 lines governance theater wrapped around genuine engine islands. Strip theater before debut. |
+| **I-KALI-004** | **Build Wave Phase 1 COMPLETE**: 8 temple-rough items landed. 81/81 tests pass. |
+| **I-KALI-005** | **Carmack Verdict = "THEATER WITH ENGINE ISLANDS"**: ~3,000 lines governance theater stripped. Engine islands preserved. |
 | **I-KALI-006** | **The Strategic Pivot**: From agent-centric control plane → knowledge-centric substrate. KD is the ONLY pivot workstream (100% backlog). |
 | **I-KALI-007** | **3 Quick Fixes Landed**: M36 honesty (stub_bypass), M1 AnyIO (with_soul_lock run_sync), M9 typed errors (5 scripts). |
-| **I-KALI-008** | **Context Pack Regenerated**: Pack ID `fc32fbe3-a748-400c-926a-bc1df47d784c` (post-breakthrough, post-dialectic). |
-| **I-KALI-009** | **Dialectic Complete**: 10 challenges → 10 syntheses → 10 artifacts. DEL-1 plan surgically precise. |
-| **I-KALI-010** | **DEL-1 Ready**: Micro-PR chain (7 PRs), 24 honest tests, layer-corrected guard, dual-seal, orthogonality matrix. |
+| **I-KALI-008** | **4 Dialectic Rounds Complete**: 28 challenges → 28 syntheses → 23+ decisions (D-series). |
+| **I-KALI-009** | **Theater Stripped (~3K lines)**: `cohort_registry`, `m33_probe`, `m36_probe` (stub_bypass), `dispatch_guard` (12→3), `HandoffPacket` Quake fields, `ACTIVE_SUBAGENTS`→`TASK_REGISTRY`. |
+| **I-KALI-010** | **Qwen3 Embeddings Unified**: All embeddings 768-dim via Qwen3-Embedding-0.6B Q5_K_M (1024→768 MRL). Library RRF 0.6/0.4. |
+| **I-KALI-011** | **Hub Restored**: D-565 "superseded" was a lie (0 successors). Option A executed: `git checkout 69ece770^` + systemctl restart. Hivemind live. |
+| **I-KALI-012** | **Context Pack Regenerated**: 14 bundles, 120 files, ~600K tokens. Optimized prompts (tables, density). |
+| **I-KALI-013** | **DEL-1 Ready**: Micro-PR chain (7 PRs), 24 honest tests, layer-corrected guard, dual-seal, orthogonality matrix. |
 
 ---
 
@@ -47,6 +50,7 @@
 - **Proof**: 5-round Kali↔Roc convergence in persistent EIS session produced temple-grade spec
 - **Scope**: Only for agent pairs with domain orthogonality ≥0.7 (Kali↔Roc, Kali↔Researcher, Grokster↔Node)
 - **Human Role**: Strategic inflection guide, not micromanager
+- **Methodology Proven**: 4 rounds, 28 challenges → 28 syntheses → 23+ decisions
 
 ---
 
@@ -115,10 +119,13 @@
 | **Tests** | 81/81 pass (theater) → will become 24 honest tests |
 | **M1 AnyIO** | ✅ Pass |
 | **M23 Failure Integrity** | ✅ Pass (stub now honest) |
-| **REUSE v3.3** | ✅ 71,579/71,579 files compliant |
+| **REUSE v3.3** | ✅ 71,615/71,615 files compliant |
 | **Git** | Clean, all pushed to origin/main |
-| **Context Pack** | `fc32fbe3-a748-400c-926a-bc1df47d784c` (post-dialectic) |
+| **Context Pack** | `fc32fbe3-a748-400c-926a-bc1df47d784c` (regenerated post-refactor) |
 | **DEL-1 Plan** | Micro-PR chain (7 PRs), 24 honest tests, layer-corrected guard |
+| **Embeddings** | Qwen3-Embedding-0.6B Q5_K_M (444MB) loaded, 768-dim verified |
+| **Hub** | Active, Hivemind live, Kali registered |
+| **Library** | `library.db` deleted, `fts_index.db` preserved (252 docs) |
 
 ---
 
@@ -126,10 +133,13 @@
 
 | Anchor | Location |
 |--------|----------|
-| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` (v4.3.0) |
-| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (v4.3.0) |
-| **Dialectic Record** | `data/coordination/DEL1_DIALECTIC_20260901.md` (1,118 lines) |
+| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` (v4.5.0) |
+| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (v4.5.0) |
+| **Dialectic Records** | `data/coordination/DEL1_DIALECTIC_20260901.md` + 6 more |
 | **Research Findings** | `data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md` (2,083 lines) |
+| **Fine-Tuning Research** | `data/coordination/QWEN3_EMBEDDING_FINETUNING_RESEARCH_20260901.md` (410 lines) |
+| **Carmack Dialectic** | `data/coordination/CARMACK_DIALECTIC_20260901.md` (279 lines) |
+| **Kali Response** | `data/coordination/KALI_CARMACK_RESPONSE_20260901.md` (114 lines) |
 | **Execution Plan** | `data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md` |
 | **System Prompt (Sonnet 5)** | `context_packs/sonnet5-post-breakthrough/CLAUDE_PROJECT_SYSTEM_PROMPT.md` |
 | **Chat Initiation (Sonnet 5)** | `context_packs/sonnet5-post-breakthrough/CHAT_INITIATION_PROMPT.md` |
@@ -145,17 +155,27 @@
 |---------|--------|----------|
 | M1 AnyIO | ✅ | `make check-m1-anyio` + run_sync fix |
 | M2 Engine-Stack Firewall | ✅ | Core/Stack separation maintained |
-| M7 Local-First | ✅ | Local inference primary |
+| M7 Local-First | ✅ | Local inference primary (Qwen3 local) |
 | M8 Zero Telemetry | ✅ | All observability local |
 | M9 Error Integrity | ✅ | Typed catches in 5 scripts |
-| M11 Soul Integrity | ✅ | L1→L3 distilled (this document) |
+| M11 Soul Integrity | ✅ | L1→L3 distilled (session_gnosis.md) |
 | M13 Temple-Grade | ✅ | All gates pass |
 | M14 Heritage | ✅ | All tags vetted |
-| M15 Continuity | ✅ | session_gnosis.md updated |
+| M15 Continuity | ✅ | session_gnosis.md + projection.md updated |
 | M22 Provenance | ✅ | Provider names accurate |
-| M23 Failure Integrity | ✅ | Stub now honest (stub_bypass) |
+| M23 Failure Integrity | ✅ | Stub honest, hub restored, no soft-failures |
 | M24 Venv Sovereignty | ✅ | All Python in `.venv/` |
 | M27 Tracking | ✅ | 5-Tier tracking, dual-ledger resolved |
+
+---
+
+## §8 — NEXT EXECUTION ORDER
+
+1. **DEL-1 Micro-PR 1**: `git checkout -b del1/01-test-infrastructure` → create `tests/test_engine_islands.py`
+2. **CI Gates**: `make check-broken-imports` + `make check-hub-health` (before debut)
+3. **DEL-1 Micro-PR 2-7**: Execute chain
+4. **Sonnet 5 Re-Review**: Upload regenerated pack
+5. **Public Debut**: After DEL-1 + CI gates + temple-grade
 
 ---
 
@@ -163,4 +183,4 @@
 
 ---
 
-⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v4.3.0 ⬡ 2026-09-01
+⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v4.5.0 ⬡ 2026-09-01

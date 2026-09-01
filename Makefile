@@ -336,6 +336,26 @@ check-reuse:
 	@$(REUSE) lint
 	@echo "$(GREEN)M37 passed: REUSE v3.3 compliant (all files have SPDX headers)$(NC)"
 
+# Check kq5-godot experiment (VNR vision system integration)
+# Runs the experiment's make check (22 checks) and validates VNR integration
+check-kq5:
+	@echo "$(YELLOW)Checking kq5-godot experiment (VNR vision system)...$(NC)"
+	@if [ ! -L data/experiments/kq5-godot ]; then \
+		echo "$(RED)FAIL: kq5-godot symlink not found at data/experiments/kq5-godot$(NC)"; \
+		exit 1; \
+	fi
+	@if [ ! -d /media/arcana-novai/omega_library/games/kq5-godot ]; then \
+		echo "$(RED)FAIL: kq5-godot source not found at /media/arcana-novai/omega_library/games/kq5-godot$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(YELLOW)Running kq5-godot make check (22 checks)...$(NC)"
+	@cd data/experiments/kq5-godot && $(MAKE) check
+	@echo "$(YELLOW)Verifying VNR script...$(NC)"
+	@cd /media/arcana-novai/omega_library/games/kq5-godot && python3 scripts/vnr_render.py --help >/dev/null
+	@echo "$(YELLOW)Verifying VNR backend import...$(NC)"
+	@cd /media/arcana-novai/omega_library/games/kq5-godot && python3 -c "import sys; sys.path.insert(0, '.'); from vnr import VisionBackendVNR; print('VNR backend import OK')"
+	@echo "$(GREEN)kq5-godot check passed: experiment operational, VNR integrated$(NC)"
+
 # Download license texts to LICENSES/ directory (run once after clone)
 reuse-download:
 	@echo "$(YELLOW)Downloading license texts...$(NC)"
@@ -465,7 +485,7 @@ heritage-map:
 	@$(PYTHON) scripts/heritage_audit.py --output-report
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5
 
 # === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
 # Wrap ANY long/native build with telemetry + auto-postmortem.
