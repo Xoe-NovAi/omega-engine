@@ -1250,3 +1250,224 @@ profiles:
         - tests/test_a5_m36_soft_verifier.py
         - tests/test_cohort_registry.py
         - tests/test_compaction_capture.py
+
+  sonnet5-post-breakthrough:
+    description: "Sonnet 5 Post-Breakthrough Review — Sentinel Seal Protocol, EIS Dialectic, Theater Strip, Empirical Baseline Verification"
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+        - manifest
+        - mandates
+        - engine_state
+        - breakthrough
+        - decisions
+    token_budget:
+      total: 600000
+      per_bundle: 120000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-08-31"
+    include:
+      # Mandates & Core Law
+      - SOVEREIGN_MANDATES.md
+      - MANDATES_CONDENSED.md
+      - OMEGA_ENGINE.md
+      - AGENTS.md
+      - CREDITS_CANONICAL.md
+      - ORACLE_STACK_CANONICAL.md
+      # Breakthrough Artifacts (NEW)
+      - .opencode/skills/sentinel-seal/SKILL.md
+      - .opencode/rules/03-hop-rule.md
+      - .opencode/config/entity_verification_rules.yaml
+      - docs/research/SOVEREIGN_HARNESS_BREAKTHROUGH_20260831.md
+      - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+      - scripts/retroactive_verification_audit.py
+      - data/coordination/RETROACTIVE_AUDIT_SUMMARY_20260831.md
+      - omega_engine_audit_report.md
+      - Roc-EIS-report-08-31-2026.md
+      - data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md
+      # Execution Plan & Strategy
+      - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+      - docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      # Core Engine Code (key files - post-quick-fixes) - split into gateway, memory, observability
+      - src/omega/oracle/subagent_dispatcher.py
+      - src/omega/oracle/cohort_registry.py
+      - src/omega/oracle/m33_probe.py
+      - src/omega/oracle/m36_recursive_probe.py
+      - src/omega/oracle/model_gateway.py
+      - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_registry.py
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/admission_controller.py
+      - src/omega/oracle/resource_guard.py
+      - src/omega/memory_store.py
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/providers.py
+      - src/omega/observability/bleg.py
+      - src/omega/observability/context.py
+      - src/omega/observability/latency_tracker.py
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/mcp_runtime.py
+      - src/omega/hub.py
+      # Config
+      - config/providers.yaml
+      - config/models.yaml
+      - config/model_fleet_operational.yaml
+      - config/routing_table.yaml
+      # Gates & Scripts
+      - scripts/m23_gate.py
+      - scripts/dispatch_guard.py
+      - scripts/compaction_capture.py
+      - config/m23_baseline.txt
+      # Coordination & State
+      - data/coordination/HMC_COLLABORATION_HUB.md
+      - data/coordination/ACTIVE_SPRINT.json
+      - data/coordination/ACTIVE_SUBAGENTS.json
+      - data/coordination/anchored_summary/kali/projection.md
+      - data/entities/kali/session_gnosis.md
+      - data/entities/kali/proposed_lessons.yaml
+      - data/registry/cohort_registry_schema.json
+      - data/registry/COHORT_REGISTRY.json
+      # Tests (key)
+      - tests/test_a1_m34_registration.py
+      - tests/test_a2_m33_probe.py
+      - tests/test_a3_m33_integration.py
+      - tests/test_a4_m36_wiring.py
+      - tests/test_a5_m36_soft_verifier.py
+      - tests/test_cohort_registry.py
+      - tests/test_compaction_capture.py
+      # Breakthrough Evidence
+      - .opencode/skills/sentinel-seal/SKILL.md
+      - .opencode/rules/03-hop-rule.md
+      - .opencode/config/entity_verification_rules.yaml
+      - docs/research/SOVEREIGN_HARNESS_BREAKTHROUGH_20260831.md
+      - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+      - scripts/retroactive_verification_audit.py
+      - data/coordination/RETROACTIVE_AUDIT_SUMMARY_20260831.md
+      - omega_engine_audit_report.md
+      - Roc-EIS-report-08-31-2026.md
+      - data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md
+    exclude:
+      - '**/__pycache__/**'
+      - '**/*.pyc'
+      - '**/*.log'
+      - '**/*.tmp'
+      - context_packs/**
+      - data/coordination/*.jsonl
+      - data/coordination/*.bak
+    themes:
+      # Theme 1: Law & State (mandates + engine state)
+      law_and_state:
+        - SOVEREIGN_MANDATES.md
+        - MANDATES_CONDENSED.md
+        - OMEGA_ENGINE.md
+        - AGENTS.md
+        - CREDITS_CANONICAL.md
+        - ORACLE_STACK_CANONICAL.md
+      # Theme 2: Breakthrough Artifacts (Sentinel Seal, EIS Dialectic, Audit)
+      breakthrough:
+        - .opencode/skills/sentinel-seal/SKILL.md
+        - .opencode/rules/03-hop-rule.md
+        - .opencode/config/entity_verification_rules.yaml
+        - docs/research/SOVEREIGN_HARNESS_BREAKTHROUGH_20260831.md
+        - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+        - docs/research/SOVEREIGN_HARNESS_BREAKTHROUGH_20260831.md
+        - data/coordination/RETROACTIVE_AUDIT_SUMMARY_20260831.md
+        - scripts/retroactive_verification_audit.py
+        - omega_engine_audit_report.md
+        - Roc-EIS-report-08-31-2026.md
+        - data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md
+      # Theme 3: Empirical Baseline & Audit
+      empirical_baseline:
+        - data/coordination/RETROACTIVE_AUDIT_SUMMARY_20260831.md
+        - scripts/retroactive_verification_audit.py
+        - omega_engine_audit_report.md
+        - Roc-EIS-report-08-31-2026.md
+        - data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md
+      # Theme 4: Execution Plan & Strategy
+      execution_plan:
+        - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+        - docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+        - docs/strategy/UNOVERENGINEERING_PLAN.md
+        - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+        - docs/strategy/HIVEMIND_PROTOCOL.md
+        - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      # Theme 5: Oracle Core - Gateway & Providers
+      oracle_gateway:
+        - src/omega/oracle/subagent_dispatcher.py
+        - src/omega/oracle/cohort_registry.py
+        - src/omega/oracle/m33_probe.py
+        - src/omega/oracle/m36_recursive_probe.py
+        - src/omega/oracle/model_gateway.py
+        - src/omega/oracle/providers.py
+        - src/omega/oracle/provider_registry.py
+        - src/omega/oracle/health_monitor.py
+        - src/omega/oracle/oom_protector.py
+        - src/omega/oracle/admission_controller.py
+        - src/omega/oracle/resource_guard.py
+      # Theme 6: Memory & Vector Layer
+      memory_layer:
+        - src/omega/memory_store.py
+        - src/omega/memory/sqlite_vec_adapter.py
+        - src/omega/memory/hybrid_search.py
+        - src/omega/memory/embeddings.py
+        - src/omega/memory/fts_index.py
+        - src/omega/memory/vector_adapters.py
+        - src/omega/memory/providers.py
+      # Theme 7: Observability & MCP Hub
+      observability_hub:
+        - src/omega/observability/bleg.py
+        - src/omega/observability/context.py
+        - src/omega/observability/latency_tracker.py
+        - src/omega/observability/metrics_db.py
+        - src/omega/observability/sovereignty.py
+        - src/omega/mcp_runtime.py
+        - src/omega/hub.py
+      # Theme 8: Config
+      config:
+        - config/providers.yaml
+        - config/models.yaml
+        - config/model_fleet_operational.yaml
+        - config/routing_table.yaml
+      # Theme 8: Gates & Scripts
+      gates:
+        - scripts/m23_gate.py
+        - scripts/dispatch_guard.py
+        - scripts/compaction_capture.py
+        - config/m23_baseline.txt
+      # Theme 9: Coordination & State
+      coordination:
+        - data/coordination/HMC_COLLABORATION_HUB.md
+        - data/coordination/ACTIVE_SPRINT.json
+        - data/coordination/ACTIVE_SUBAGENTS.json
+        - data/coordination/anchored_summary/kali/projection.md
+        - data/entities/kali/session_gnosis.md
+        - data/entities/kali/proposed_lessons.yaml
+        - data/registry/cohort_registry_schema.json
+        - data/registry/COHORT_REGISTRY.json
+      # Theme 10: Tests (key)
+      tests:
+        - tests/test_a1_m34_registration.py
+        - tests/test_a2_m33_probe.py
+        - tests/test_a3_m33_integration.py
+        - tests/test_a4_m36_wiring.py
+        - tests/test_a5_m36_soft_verifier.py
+        - tests/test_cohort_registry.py
+        - tests/test_compaction_capture.py
