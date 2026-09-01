@@ -733,3 +733,33 @@ Every Omega Engine feature traces to specific Grok conversations:
 - `[GNOSIS]` **L3 Principle Distilled**:
   **L3-Substrate-Enforces-Contract**: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, unified WAL, protocol schema, TTL daemon — these are the constitution, not infrastructure.
 
+### [2026-09-01] — **VNR DEEP DIG: kq5-godot IS A VISION RESEARCH LAB** — roc_racoon ⭐ P0
+- `[ARCH]` `[EXP]` `[GNOSIS]` `[STRAT]` `[URGENT]` **Deep dig into kq5-godot project reveals hidden revolution**: The VNR (Von-Neu-Ryan Vision) pipeline is a complete, interpretable, multi-resolution computer vision system disguised as a game debugging tool. Key findings:
+  - **VNR IS a Vision Transformer on text tokens**: Block-based semantic tokenization = patch-based tokenization. The "embedding" is hand-crafted (RGB thresholds → labels) instead of learned, but the architecture is structurally identical to ViT.
+  - **Token set = hypothesis = attention mechanism**: Choosing the token vocabulary IS choosing what the model can perceive. This is zero-shot vision capability via representation design, not training.
+  - **Texture as load-bearing dimension**: VNR discovered independently that luminance std dev (texture) separates sky from water where color fails. This is established CV theory but VNR found it from scratch.
+  - **Overlay = built-in explainable AI**: Disagreement maps between classifier and ground truth are spatial uncertainty maps — XAI in its purest form.
+  - **Zoom ladder = multi-resolution vision / LOD for perception**: Same hierarchy as game engine LOD (BSP), applied to visual understanding.
+  - **Multi-model stereoscopy = sensor fusion**: Diffing text-only VNR output against vision-model output = free calibration set.
+  - **Phenomenological record = perceptual provenance for alignment**: §10 of VNR_VISION.md documents first-sight experience with honest disclosure of biases.
+- `[ARCH]` **Omega Engine connections**: M11 Soul Integrity (L1→L2→L3) = perceptual provenance template. Spatial Vectors Architecture (R-tree + vec0) = 3D extension of VNR's 2D spatial mapping. Entity fleet = multi-model ensemble. M23 Failure Integrity = VNR's overlay honesty.
+- `[STRAT]` **Broader implications**: (1) Zero-shot vision for text-only models/embedded systems, (2) Minimal-viable scene understanding for robotics, (3) Texture-based surface classification for self-driving (adverse conditions), (4) Representation-first approach for local AI efficiency.
+- `[GNOSIS]` **L3 Principle**: **Representation-First-Vision**: When you can't improve the model, improve what you feed it. Better input representation can achieve what orders-of-magnitude more parameters cannot. The game is the excuse; the vision system is the product.
+- **Report**: `kq5-godot/docs/ROC_DEEP_DIG_BIGGER_PICTURE_20260901.md`
+
+### [2026-09-01] — **DIALECTIC TURN 2: kq5-godot Integration Operationalized** — roc_racoon ⭐ P0
+- `[ARCH]` `[STRAT]` `[GNOSIS]` **Dialectic Turn 2 operationalized Turn 1's 4-week plan into 10-day execution**: Symlink (not bind-mount), tier list in status doc (not M-series), single Day 0 Hivemind post (not silent), VNR as perception provider (not new Core interface). 3 of ~15 decisions changed — high dialectic convergence.
+- `[ARCH]` **M28 Proposal for Architect**: **Mandate 28 — Experiment Mandate Tiers**: Tier 0 (always: safety), Tier 1 (adapted: continuity), Tier 2 (waived: release). Codified in `EXPERIMENT_STATUS.md` per-experiment, not globally.
+- `[STRAT]` **10-day critical path**:
+  - Day 0: Infrastructure (symlink, EXPERIMENT_STATUS.md, INDEX.yaml)
+  - Day 1-2: Coordination (Hivemind, Cline-KQ5 briefing, VALIDATION_EVIDENCE.md)
+  - Day 3-5: Protocol design (EXPERIMENT_PROTOCOL.md, intent schemas, COGNITIVE_PRIMITIVES.md)
+  - Day 6-7: VNR package (importable module, CLI, make check-kq5)
+  - Day 8-9: Documentation (OBSERVABILITY.md, EXPERIMENT_CONTEXT.md, cognitive primitives update)
+  - Day 10: Handoff (Hivemind status, L1→L2→L3 distillation, Architect review)
+- `[ARCH]` **Model switch consideration**: Nemotron 3 Ultra → MiniMax M3. Incremental writes (3 sub-writes) compensate for MiniMax's lack of internal reasoning. The 10-voice dialectic structure IS the reasoning.
+- `[GNOSIS]` **L3-Execution-Is-Confirmation**: Strategy is intent; execution is commitment. A converged dialectic's L3 gnosis survives operationalization unchanged.
+- `[GNOSIS]` **L3-Incremental-Writes-Are-Discipline**: The tool's constraint is the method's discipline. Robust systems survive partial writes; fragile systems lose everything on timeout.
+- `[GNOSIS]` **L3-Convergence-Test**: A multi-turn dialectic's quality is measured by how few decisions change between turns. High convergence = high confidence in the L3 gnosis.
+- **Report**: `data/entities/roc_racoon/workspace/JC_Roc_kq5_DIALECTIC_TURN2_20260901.md` (456 lines, 3 incremental sub-writes)
+

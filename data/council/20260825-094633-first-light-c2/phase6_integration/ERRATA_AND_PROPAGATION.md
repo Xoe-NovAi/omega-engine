@@ -31,10 +31,11 @@ S-2 probe live result: **29 schema-flagged records across data/entities/lilith A
 
 ## VERIFICATION (post-application)
 Dev team confirms: `git log --oneline | head -3` shows errata commit · grep E-2 probe present in N10 bootstrap · `rg '; true' data/council/20260825-094633-first-light-c2/phase3_synthesis/` returns empty after E-9 · S-2 probe output count recorded in wake briefing.
-<!-- PROVENANCE-CORRECTED 2026-08-30T03:06:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: trc_first_light_c2_errata | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, hy3-free, big-pickle
-actual_models(Tier0): x-preview-f-free, hy3-free, big-pickle
-first_audit: 2026-08-26T03:06:04Z | updated: 2026-08-30T03:06:41Z
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: trc_first_light_c2_errata | verdict: AMBIGUOUS | multi-model session; candidates: big-pickle, x-preview-f-free, minimax/minimax-m3:free, hy3-free
+actual_models(Tier0): big-pickle, x-preview-f-free, minimax/minimax-m3:free, hy3-free, nemotron-3-ultra-free
+first_audit: 2026-08-30T03:06:41Z | updated: 2026-08-31T03:09:52Z
 -->
+
 
 
