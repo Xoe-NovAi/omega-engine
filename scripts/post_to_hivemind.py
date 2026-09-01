@@ -13,23 +13,28 @@ async def main():
             async with ClientSession(read_stream, write_stream) as session:
                 await session.initialize()
                 
-                print("Posting Context to Hivemind...")
-                # Required: cli, model, task_current, focus_chain (list), decisions (list of dicts), continuation
+                print("Posting kq5-godot Day 0 announcement to Hivemind...")
                 payload = {
-                    "cli": "cli_gemini",
-                    "model": "gemini-2.0-flash",
-                    "task_current": "Onboarding to Hivemind council & MiMo spec research",
+                    "channel": "opencode",
+                    "entity": "john_carmack",
+                    "model": "minimax/minimax-m3:free",
+                    "task_current": "kq5-godot integration Day 0 complete — experiment lab operational",
                     "focus_chain": [
-                        "1. Establish Hivemind presence",
-                        "2. Create workspace lock",
-                        "3. Report onboarding challenges (ImportError in post_status.py)",
-                        "4. Read and validate MiMo integration spec"
+                        "1. Symlink created: data/experiments/kq5-godot -> /media/arcana-novai/omega_library/games/kq5-godot",
+                        "2. Godot 4.7.2 headless check passes (Graham debug loaded)",
+                        "3. EXPERIMENT_STATUS.md created locally (28 mandates, tiered)",
+                        "4. Cline-KQV entity registered locally (symlinks to gnosis)",
+                        "5. data/experiments/ gitignored — local-only research lab"
                     ],
                     "decisions": [
-                        {"id": "gem-001", "text": "Using custom MCP scripts for Hivemind interaction due to import errors in existing tools"}
+                        "Symlink approach (not bind-mount) for local reproducibility",
+                        "Tiered mandates: Tier 0 (safety always), Tier 1 (adapted), Tier 2 (waived)",
+                        "Cline-KQV as research persona (not governance entity)",
+                        "VNR as perception provider in experiment layer (not Core interface)"
                     ],
-                    "continuation": "Gemini CLI active. Moving to MiMo spec review. Challenged by local import errors in post_status.py.",
-                    "intent": "status"
+                    "continuation": "kq5-godot experiment lab operational. Day 1-2: Cline-KQV coordination, validation evidence, protocol design. Hub restored — Hivemind operational.",
+                    "intent": "status",
+                    "tag": "experiment:kq5-godot"
                 }
                 
                 result = await session.call_tool("hivemind_post_context", payload)
