@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# 🔱 State of the Engine — v1.0.0
+# 🔱 State of the Engine — v1.0.1
 
-**AP Token**: `AP-SOTE-v1.0.0`
+**AP Token**: `AP-SOTE-v1.0.1`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_sote ⬡ ACTIVE
 
 **Date**: 2026-09-01

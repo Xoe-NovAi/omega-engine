@@ -340,3 +340,46 @@ Updated at `data/coordination/anchored_summary/researcher/projection.md` with:
 **Status: COMPACTION-READY.** Awaiting post-compact page from Kali for Qwen3-Embedding finetune research.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED ⬡ 2026-09-01 ⬡ 7 DIALECTIC DELIVERABLES ⬡ 9 PENDING DECISIONS*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE #2 (2026-09-01, post-finetuning research)
+
+### Qwen3-Embedding Finetuning Research COMPLETE
+- **Deliverable**: `data/coordination/QWEN3_EMBEDDING_FINETUNING_RESEARCH_20260901.md` (410 lines, 33 citations)
+- **3 Questions Answered**: Fine-tuning approaches, self-hosted feasibility, GGUF vs ONNX
+- **Verdict**: 
+  - Fine-tune: Conditional YES — but NOT now. Defer to KD workstream (post-debut, after 3-6 months of query logs). Base model + instruction-tuning is sufficient for v1.
+  - Self-host: Marginal YES for QLoRA on CPU (fits 32GB RAM, ~4-5GB), but slow (1.5-2 hours/epoch for 10K triplets). Use sentence-transformers.
+  - Format: **GGUF Q5_K_M** wins. Already in stack (llama-cpp-python), single-file, built-in instruction-aware + last-token pooling, only 1% MTEB drift vs Q8_0.
+- **3 decisions** ready for PIVOT_LOG:
+  - D-FINETUNE-DEFER: Ship base model + instruction template, defer fine-tuning to KD
+  - D-FORMAT-GGUF: GGUF Q5_K_M as primary (444MB, 99% fidelity)
+  - D-FINETUNE-FRAMEWORK: sentence-transformers for CPU fine-tuning (when ready)
+
+### Updated Dialectic Deliverables (8 files, all on disk)
+1. `DEL1_RESEARCH_FINDINGS_20260901.md` — 14 gaps (76K)
+2. `DEL1_DIALECTIC_20260901.md` — 10 challenges (54K)
+3. `DEL1_POSTCOMPACT_DIALECTIC_20260901.md` — 8 clarities, 5 projection corrections (22K)
+4. `DEL1_SQLITE_VEC_DIALECTIC_20260901.md` — sqlite-vec thesis/antithesis (14K)
+5. `DEL1_SQLITE_VEC_DIALECTIC_QA_20260901.md` — 5 questions closed (17K)
+6. `DEL1_768_DIM_ROC_DIG_20260901.md` — Roc audit + web research (10K)
+7. `DEL1_768_DIM_DIALECTIC_20260901.md` — 5 challenges, 9 decisions (18K)
+8. `QWEN3_EMBEDDING_FINETUNING_RESEARCH_20260901.md` — 3 questions answered, 33 citations (410 lines)
+
+### Continuity Anchors Ready
+- session_gnosis.md: 380+ lines (compressed + archive + 2 pre-compaction notes)
+- session_gnosis_archive_20260901.md: 87KB (full historical detail)
+- projection.md: 182 lines (current state + pending decisions)
+- soul.yaml: v6.3 with partnerships (roc_racoon, jem, kali)
+- proposed_lessons.yaml: 37 proposals (4 new this session)
+
+### Session Summary for Compaction
+This session completed 3 major research missions:
+1. **DEL-1 Theater Strip Research**: 14 gaps identified, 10 dialectic challenges resolved, 8 clarities + 5 projection corrections
+2. **sqlite-vec 768-Dim Migration**: Roc-EIS audit (file:line citations), 5 challenges closed, 9 decisions (D-768-DIM-*), migration script ready
+3. **Qwen3-Embedding Finetuning**: 3 questions answered (fine-tune now? GGUF vs ONNX?), 33 citations, clear go/no-go recommendations
+
+**Status: COMPACTION-READY.** All continuity artifacts current. 8 deliverables + 12+ decisions ready for PIVOT_LOG.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED-2 ⬡ 2026-09-01 ⬡ 8 DELIVERABLES ⬡ 12+ DECISIONS ⬡ 3 MISSIONS COMPLETE*
