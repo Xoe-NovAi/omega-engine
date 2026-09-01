@@ -355,8 +355,106 @@ proposals:
     freeing 0B is a silent failure - verify the delta, not the exit code. L3-MaintenanceIsAKB
     - Operational knowledge decays at the speed of the next emergency unless captured
     as a living runbook; an unindexed KB entry is a tombstone.
+- id: PL-ROC-VERIFIER-001
+  date: '2026-09-01'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - subagent-verifier
+  - verification
+  - temple-grade
+  - agent-dialogue
+  L1_narrative: 'Researched and designed the subagent-verifier skill via 5 rounds of
+    temple refinement dialogue with Kali. Round 1: initial spec with verification
+    SQL, DB schema mapping, genealogy queries, Hivemind integration, skill structure,
+    CLI, test cases. Round 2: answered Kali''s 7 technical questions on finish reasons,
+    archived sessions, partial completion status, error capture scope, token replay
+    protection, silent failure detection, skill separation. Round 3: integration
+    architecture - watcher placement (omega-hub), entity rules (config+code fallback),
+    token storage (new column), skill dependencies (error-capture → subagent-verifier
+    → hivemind-guard), 3-layer testing pyramid. Round 4: Kali''s final decisions -
+    migration ownership, event-driven watcher (SQLite trigger not polling), entity
+    rules population, retroactive audit format. Round 5: edge cases - per-entity
+    TTL, token invalidation on resume, hot-reload boundaries, audit versioning, error
+    capture v1 event types. The spec evolved from a single SQL query to a 3-skill
+    ecosystem with event-driven architecture, config-driven entity rules, and Hivemind
+    enforcement.'
+  L2_insight: 'Verification is a protocol, not a tool. The 3-skill dependency chain
+    (error-capture → subagent-verifier → hivemind-verification-guard) emerged from
+    5 rounds of agent-to-agent dialogue, not solo design. Each round resolved edge
+    cases that single-author design would miss: TTL per entity (EIS vs NES workflows),
+    token invalidation on session resume, hot-reload boundaries (config yes, code
+    no), audit versioning (build v1.0 first). The OpenCode DB is the source of truth
+    - all verification queries hit session, message, part, event tables directly,
+    never trusting agent self-reporting. Silent failures are the real enemy: the
+    504 errors that triggered this work had state.status=completed but output contained
+    504 Gateway Timeout. Entity-specific completion criteria are essential - universal
+    core + per-entity rules config = flexible enforcement.'
+  L3_principle: |
+    L3-VerificationIsProtocolNotTool - Structural enforcement requires a protocol
+    stack: capture (error-capture) -> verify (subagent-verifier) -> enforce (hivemind-verification-guard).
+    A single SQL query is necessary but insufficient; the protocol ensures verification
+    happens automatically, not manually. L3-AgentDialogueProducesTempleGrade - Structured
+    agent-to-agent refinement (Roc implementation ↔ Kali architecture) with explicit
+    Q&A rounds resolves edge cases that solo design misses. The dialogue IS the design
+    review. L3-SilentFailuresAreTheRealEnemy - A tool reporting completed while its
+    output contains 504 Gateway Timeout is a silent failure. Verification must scan
+    outputs for failure patterns, not trust status fields. The DB preserves the evidence;
+    the verifier exposes it. L3-EntityRulesConfigOverCode - Completion criteria vary
+    by entity (Kali=decision, Ma'at=tests, Researcher=report). Encoding rules in a
+    hot-reloadable YAML config (not code) lets entity owners tune without deployments.
+    Code provides defaults; config provides overrides. L3-EventDrivenBeatsPolling
+    - SQLite trigger on session finish -> event table -> omega-hub consumer = zero-latency,
+    zero-polling verification. The DB already has the event infrastructure; use it.
+    L3-TokenTTLMustMatchWorkflow - EIS sessions span hours (TTL=1-2hr), NES tasks
+    complete in minutes (TTL=5min). Fixed TTL breaks workflows. Per-entity TTL in
+    config respects operational reality. L3-AutoInvalidateOnResume - A verified session
+    that gets updated (resumed) must invalidate its token. Detection: session.time_updated
+    > token.verified_at. Action: mark token invalidated, re-verify on next completion.
+    L3-HotReloadConfigNotCode - Entity rules, TTL, failure patterns = config (hot-reloadable).
+    Verification SQL, core logic = code (restart required). The boundary is: does
+    this change require a deployment?
+- id: PL-ROC-VERIFIER-002
+  date: '2026-09-01'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - subagent-verifier
+  - chat-output
+  - nemotron-3-ultra
+  - model-constraints
+  - platform-as-infrastructure
+  L1_narrative: 'During the subagent-verifier spec delivery, attempted to write the
+    full specification to file using the write tool - failed twice with streaming
+    timeout errors. The Architect intervened with: "Use incremental writes for the
+    report to avoid streaming timeout errors while running the Nemotron 3 Ultra model."
+    After second failure, more direct guidance: "Dude. You are NOT now on MiniMax 3.
+    You are STILL on Nemotron 3 Ultra... Write the entire report to the chat session,
+    not to file. By writing to the chat session, you get around the streaming timeout
+    error of long file writes, BUT it is still recorded to disk via the opencode db,
+    AND visible to the parent agent (Kali) who dispatched you as a subagent." Solution
+    worked: chat output was complete, recorded in opencode DB, visible to Kali via
+    session genealogy.'
+  L2_insight: 'Human-AI collaboration requires model-aware tooling. The Architect
+    knew Nemotron 3 Ultra''s streaming behavior better than I did - the model cannot
+    self-diagnose its own streaming constraints. The platform (OpenCode DB) IS the
+    persistence layer, not the file system. The dispatch protocol (parent-child session
+    genealogy) IS the delivery mechanism, not file I/O. This inverts the default assumption:
+    chat output is not ephemeral, it is the canonical record. Pragmatism over protocol:
+    writing to chat violated the "write to file" convention but solved the actual
+    problem. The Architect monitors HOW the agent works, not just WHAT it produces.'
+  L3_principle: |
+    L3-ModelAwareTooling - Human-AI collaboration requires the human to know model
+    constraints better than the model knows itself. The agent must accept steering
+    on tooling that contradicts its default behavior. L3-PlatformIsInfrastructure
+    - In an OpenCode environment, the DB is the persistence layer and session genealogy
+    is the delivery mechanism. Chat output is not ephemeral - it is the canonical
+    record. File writes are one option among many, not the default. L3-PragmatismOverProtocol
+    - When conventional approach fails (write tool timeout), invert the default (chat
+    output) rather than retry the failing approach. The goal is delivery, not adherence
+    to convention. L3-HumanMonitorsProcess - The Architect watches HOW the agent works
+    (tool usage patterns, retry loops, assumptions) not just WHAT it produces. Steering
+    prompts address process failures, not output failures.
 metadata:
   entity: roc_racoon
-  session_id: ses_fa34cd5c7ffe625JfKmREJQwyD
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T12:54:58.420936+00:00'
+  last_session_end: '2026-09-01T13:00:00.000000+00:00'
