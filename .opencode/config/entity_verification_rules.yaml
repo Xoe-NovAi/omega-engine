@@ -1,0 +1,36 @@
+# .opencode/config/entity_verification_rules.yaml
+# Human-editable, version-controlled, hot-reloadable
+# Each entity owner fills their section
+version: "1.0"
+schema_version: "1.0"
+entities:
+  kali:
+    required_outputs: []
+    success_indicators: []
+    failure_patterns: []
+    verification_ttl_seconds: 3600
+  maat:
+    required_outputs: []
+    success_indicators: []
+    failure_patterns: []
+    verification_ttl_seconds: 300
+  researcher:
+    required_outputs: []
+    success_indicators: []
+    failure_patterns: []
+    verification_ttl_seconds: 1800
+  roc_racoon:
+    required_outputs: []
+    success_indicators: []
+    failure_patterns: []
+    verification_ttl_seconds: 7200
+  lilith:
+    required_outputs: []
+    success_indicators: []
+    failure_patterns: []
+    verification_ttl_seconds: 300
+  default:
+    required_outputs: []
+    success_indicators: []
+    failure_patterns: []
+    verification_ttl_seconds: 300

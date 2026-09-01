@@ -62,16 +62,16 @@ Kali → Roc (or Kali → Researcher) → grep pattern in legacy
 Kali: rg "pattern" legacy/  (in Kali's own session)
 ```
 
-## Subagent Dispatch Protocol (M-3 Compliant)
+## Subagent Dispatch Protocol (M-3 Compliant + Sentinel Seal)
 
 When a single hop IS warranted:
 
 1. Read `data/coordination/HANDOFF_PACKET_SCHEMA.md` (or refer to the SUBAGENT_DISPATCH_PROTOCOL)
-2. Check Hivemind awareness (`hivemind_get_awareness()`) — verify target is available
-3. Post context to Hivemind with `intent: handoff`
-4. Write workspace lock: `data/coordination/{YOU}_WORKSPACE_LOCK_{YYYYMMDD}.md`
-5. Initialize live feed: `data/coordination/{YOU}_LIVE_FEED.md`
-6. Wait for ACK from target before proceeding
+2. **Sentinel Pre-Flight Envelope**: The dispatch prompt MUST include `DISPATCH_NONCE`, `PARENT_SESSION_ID`, and `EXPECTED_SESSION_ID`.
+3. **Identity Verification**: Subagent checks `current-session` before execution. If `my_session_id == PARENT_SESSION_ID` $\rightarrow$ ABORT immediately (self-hop protection).
+4. **Terminal Seal**: Subagent must terminate response with `### 🔱 OMEGA_SENTINEL_SEAL` (status, nonce, session_id).
+5. **Parent Verification**: Parent evaluates the seal in-memory before accepting output. Missing seal = FAIL (504/timeout caught deterministically).
+6. Post context to Hivemind with `intent: handoff`
 7. Update `TASK_REGISTRY.json` post-completion
 
 ## Re-ownership, Not New Agents
