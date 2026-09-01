@@ -239,9 +239,26 @@ proposals:
   - sidecar-pattern
   - sqlite-vec
   - entity-partition
-  L1_narrative: "Implemented Compaction Capture sidecar (scripts/compaction_capture.py) that polls OpenCode SQLite DB for parts with summary=true, routes summary text to active entity workspace, auto-digests into sqlite-vec with entity_name partition, and creates raw anchor + SCA metadata. The sidecar polls opencode.db every 5s in read-only mode, filters for assistant parts with summary=true, routes to entity workspace via SESSION_ENTITY_MAP.yaml, and upserts to sqlite-vec with entity_name partition. The implementation uses read-only SQLite connections for safety, tracks last_seen_message_id for monotonic idempotency, and includes CLI (--start/--scan/--status)."
-  L2_insight: "The CompactionHarvester already existed but only tracked metadata (counts, timing). The gap was capturing the actual summary TEXT content. The sidecar pattern (polling DB) is more reliable than plugin hooks because it works with both V1 and V2 OpenCode, requires no OpenCode modification, and uses the DB as source of truth. The entity-partitioned vector store (sqlite-vec) enables per-entity RAG retrieval of compaction summaries. The SESSION_ENTITY_MAP.yaml provides the session→entity routing that OpenCode doesn't natively provide."
-  L3_principle: "Sidecar polling beats plugin hooks for capture reliability — it works across V1/V2, requires no upstream changes, and uses the DB as the single source of truth. Entity-partitioned vector storage enables per-entity RAG on compaction history. The session→entity mapping is the missing link that OpenCode doesn't provide natively."
+  L1_narrative: Implemented Compaction Capture sidecar (scripts/compaction_capture.py)
+    that polls OpenCode SQLite DB for parts with summary=true, routes summary text
+    to active entity workspace, auto-digests into sqlite-vec with entity_name partition,
+    and creates raw anchor + SCA metadata. The sidecar polls opencode.db every 5s
+    in read-only mode, filters for assistant parts with summary=true, routes to entity
+    workspace via SESSION_ENTITY_MAP.yaml, and upserts to sqlite-vec with entity_name
+    partition. The implementation uses read-only SQLite connections for safety, tracks
+    last_seen_message_id for monotonic idempotency, and includes CLI (--start/--scan/--status).
+  L2_insight: "The CompactionHarvester already existed but only tracked metadata (counts,\
+    \ timing). The gap was capturing the actual summary TEXT content. The sidecar\
+    \ pattern (polling DB) is more reliable than plugin hooks because it works with\
+    \ both V1 and V2 OpenCode, requires no OpenCode modification, and uses the DB\
+    \ as source of truth. The entity-partitioned vector store (sqlite-vec) enables\
+    \ per-entity RAG retrieval of compaction summaries. The SESSION_ENTITY_MAP.yaml\
+    \ provides the session\u2192entity routing that OpenCode doesn't natively provide."
+  L3_principle: "Sidecar polling beats plugin hooks for capture reliability \u2014\
+    \ it works across V1/V2, requires no upstream changes, and uses the DB as the\
+    \ single source of truth. Entity-partitioned vector storage enables per-entity\
+    \ RAG on compaction history. The session\u2192entity mapping is the missing link\
+    \ that OpenCode doesn't provide natively."
 - id: PL-ROC-402-005
   date: '2026-08-30'
   session_id: ses_20260830_roc_master_eis
@@ -251,9 +268,30 @@ proposals:
   - multi-agent
   - citation-intelligence
   - sovereign-knowledge
-  L1_narrative: "Synthesized frontier scholarly research landscape (9 systems: Elicit, Consensus, Scite, GPT Researcher, STORM, Open Deep Research, Anthropic Multi-Agent, Perplexity Sonar, SciRAG) and identified 7 free academic APIs (OpenAlex 250M, arXiv 2M, Semantic Scholar 200M, CORE 200M, Crossref 130M, Unpaywall 30M, ORCID 17M). Omega has 6,258 lines of existing infrastructure (SovereignSearch, IterativeResearcher, SkepticalVerifier, APICreditBudget, BackgroundResearcher archived). Gap to frontier: 5-6 weeks via Phase A (Wire Existing), B (Multi-Agent Delegation), C (Citation Intelligence), D (Sovereign Knowledge), E (UX). Sovereign differentiators: SSKB CAS (WARC+IPFS), L1→L2→L3 Gnosis Loop, 5-Fold Council Convergence, Hivemind P2P, Free API Integration."
-  L2_insight: "The frontier research architecture converges on Plan→Search→Read→Reflect→Iterate→Synthesize with multi-agent supervisor pattern. Key 2026 insights: external structured storage (84% token reduction), CitationAgent post-processing (66% hallucinations are citation fabrication), section-aware decomposition, outline-guided synthesis. Omega's existing infrastructure (6,258 lines) + free APIs + sovereignty differentiators = achievable in 5-6 weeks. The SSKB CAS (WARC+IPFS+SHA-256) is the unique sovereignty differentiator — content survives URL death."
-  L3_principle: "Frontier research = multi-agent orchestration + citation intelligence + sovereign knowledge persistence. The convergence pattern is universal: supervisor + parallel sub-agents + CitationAgent post-processing + external structured storage. Omega's sovereignty (local-first, SSKB CAS, L1→L2→L3, 5-Fold Council, Hivemind, free APIs) is the unique differentiator — no frontier system has all of these."
+  L1_narrative: "Synthesized frontier scholarly research landscape (9 systems: Elicit,\
+    \ Consensus, Scite, GPT Researcher, STORM, Open Deep Research, Anthropic Multi-Agent,\
+    \ Perplexity Sonar, SciRAG) and identified 7 free academic APIs (OpenAlex 250M,\
+    \ arXiv 2M, Semantic Scholar 200M, CORE 200M, Crossref 130M, Unpaywall 30M, ORCID\
+    \ 17M). Omega has 6,258 lines of existing infrastructure (SovereignSearch, IterativeResearcher,\
+    \ SkepticalVerifier, APICreditBudget, BackgroundResearcher archived). Gap to frontier:\
+    \ 5-6 weeks via Phase A (Wire Existing), B (Multi-Agent Delegation), C (Citation\
+    \ Intelligence), D (Sovereign Knowledge), E (UX). Sovereign differentiators: SSKB\
+    \ CAS (WARC+IPFS), L1\u2192L2\u2192L3 Gnosis Loop, 5-Fold Council Convergence,\
+    \ Hivemind P2P, Free API Integration."
+  L2_insight: "The frontier research architecture converges on Plan\u2192Search\u2192\
+    Read\u2192Reflect\u2192Iterate\u2192Synthesize with multi-agent supervisor pattern.\
+    \ Key 2026 insights: external structured storage (84% token reduction), CitationAgent\
+    \ post-processing (66% hallucinations are citation fabrication), section-aware\
+    \ decomposition, outline-guided synthesis. Omega's existing infrastructure (6,258\
+    \ lines) + free APIs + sovereignty differentiators = achievable in 5-6 weeks.\
+    \ The SSKB CAS (WARC+IPFS+SHA-256) is the unique sovereignty differentiator \u2014\
+    \ content survives URL death."
+  L3_principle: "Frontier research = multi-agent orchestration + citation intelligence\
+    \ + sovereign knowledge persistence. The convergence pattern is universal: supervisor\
+    \ + parallel sub-agents + CitationAgent post-processing + external structured\
+    \ storage. Omega's sovereignty (local-first, SSKB CAS, L1\u2192L2\u2192L3, 5-Fold\
+    \ Council, Hivemind, free APIs) is the unique differentiator \u2014 no frontier\
+    \ system has all of these."
 - id: PL-ROC-402-006
   date: '2026-08-30'
   session_id: ses_20260830_roc_master_eis
@@ -263,11 +301,62 @@ proposals:
   - intentional-design
   - hardening-gap
   - deployment-stage-gate
-  L1_narrative: "Resolved MaKaLi's L3 question: WHY was omega-inference.service created but never installed? Forensic answer from LOGGING_ERROR_HANDLING_ARCHITECTURE.md §7 and gap_investigation_20260825: The systemd unit provides Carmack's OOM hardening (MemoryMax=8G, OOMScoreAdjust=300, Delegate=yes, Restart=on-failure) but is NOT installed because installation requires root (sudo cp + systemctl enable). The ad-hoc serve_native_gguf.sh script is the operational path for interactive development (no root, immediate availability). The hardening is for PRODUCTION workloads (70B+ models that may exceed 8GB), not current dev workloads (1.7B-4B models well within limits). The discrepancy is documented as 'Known Deployment Discrepancy (HARDENING GAP)' in LOGGING_ERROR_HANDLING_ARCHITECTURE.md §7 — intentional transparency, not a bug."
-  L2_insight: "The discrepancy between omega-inference.service (designed, OOM-hardened, NOT installed) and serve_native_gguf.sh (operational, no hardening, RUNNING) is a deliberate stage-gate between development velocity and production resilience. The systemd unit is a future-proofing artifact that activates when deployment graduates from interactive development to production workloads. The gap investigation report correctly identifies this as a deployment decision, not a missing implementation. Same pattern applies to: zswap-config.wad, notebooklm systemd service, NVMe swapfile, cgroup memory limits — all intentionally deferred pending production transition or external dependencies."
-  L3_principle: "A documented-but-not-active subsystem is not a bug — it is a deliberate stage-gate between development velocity and production resilience. The systemd unit is a future-proofing artifact that activates when deployment graduates from interactive development to production workloads. The gap investigation report correctly identifies this as a deployment decision, not a missing implementation. L3-SystemdHardeningGapIsIntentionalDesign."
+  L1_narrative: "Resolved MaKaLi's L3 question: WHY was omega-inference.service created\
+    \ but never installed? Forensic answer from LOGGING_ERROR_HANDLING_ARCHITECTURE.md\
+    \ \xA77 and gap_investigation_20260825: The systemd unit provides Carmack's OOM\
+    \ hardening (MemoryMax=8G, OOMScoreAdjust=300, Delegate=yes, Restart=on-failure)\
+    \ but is NOT installed because installation requires root (sudo cp + systemctl\
+    \ enable). The ad-hoc serve_native_gguf.sh script is the operational path for\
+    \ interactive development (no root, immediate availability). The hardening is\
+    \ for PRODUCTION workloads (70B+ models that may exceed 8GB), not current dev\
+    \ workloads (1.7B-4B models well within limits). The discrepancy is documented\
+    \ as 'Known Deployment Discrepancy (HARDENING GAP)' in LOGGING_ERROR_HANDLING_ARCHITECTURE.md\
+    \ \xA77 \u2014 intentional transparency, not a bug."
+  L2_insight: "The discrepancy between omega-inference.service (designed, OOM-hardened,\
+    \ NOT installed) and serve_native_gguf.sh (operational, no hardening, RUNNING)\
+    \ is a deliberate stage-gate between development velocity and production resilience.\
+    \ The systemd unit is a future-proofing artifact that activates when deployment\
+    \ graduates from interactive development to production workloads. The gap investigation\
+    \ report correctly identifies this as a deployment decision, not a missing implementation.\
+    \ Same pattern applies to: zswap-config.wad, notebooklm systemd service, NVMe\
+    \ swapfile, cgroup memory limits \u2014 all intentionally deferred pending production\
+    \ transition or external dependencies."
+  L3_principle: "A documented-but-not-active subsystem is not a bug \u2014 it is a\
+    \ deliberate stage-gate between development velocity and production resilience.\
+    \ The systemd unit is a future-proofing artifact that activates when deployment\
+    \ graduates from interactive development to production workloads. The gap investigation\
+    \ report correctly identifies this as a deployment decision, not a missing implementation.\
+    \ L3-SystemdHardeningGapIsIntentionalDesign."
+- id: PL-ROC-402-007
+  date: '2026-09-01'
+  session_id: ses_20260901_roc_disk_maintenance
+  L1_narrative: "Main partition /dev/nvme0n1p2 (109G) hit 100% (129MB free). Ran 5-tier\
+    \ disk analysis (df -> home du -> .local/.cache/.config du -> system-level -> containers/snap).\
+    \ Executed approved safe clears: sessions-explorer cache (~778M), opencode cache\
+    \ (~193M), podman dangling images (~136M), apt clean via pkexec (~97M), systemd\
+    \ journal rotate+vacuum (3.6G). Critical discovery: journalctl --vacuum-time=2w\
+    \ and --vacuum-size=200M SILENTLY freed 0B without a prior rotate; pkexec journalctl\
+    \ --rotate then --vacuum-size=200M freed 3.6G. sudo fails in agent sessions ('a\
+    \ terminal is required to read the password'); pkexec works via polkit GUI. Final:\
+    \ 129MB -> 5.1GB free (96%). Created docs/kb/SYSTEM_MAINTENANCE_KB.md (kb-0005)\
+    \ and rebuilt docs/kb/INDEX.md from 5/20 to 20/20 entries (was a lint violation)."
+  L2_insight: "Destructive maintenance commands that operate on archived state silently\
+    \ no-op on active state: journal vacuum only touches archived journals, so an\
+    \ unrotated multi-GB active journal reports 'freed 0B' while doing nothing. The\
+    \ rotate-then-vacuum sequence is the universal fix. Separately, the KB index had\
+    \ drifted to 5/20 registered entries - exactly the 'drift back into the void'\
+    \ failure mode the user asked me to prevent; rebuilding it was as valuable as\
+    \ the new entry itself. And the partition is structurally undersized for the\
+    \ workload (27G opencode.db + 6G project + 3.5G snap + 2.3G containers), so maintenance\
+    \ is a recurring cadence, not a one-time fix."
+  L3_principle: "L3-RotateBeforeVacuum - Destructive maintenance commands that operate\
+    \ on archived state silently no-op on active state. Always force the state transition\
+    \ (rotate) before applying the cleanup (vacuum). A command that 'succeeds' while\
+    \ freeing 0B is a silent failure - verify the delta, not the exit code. L3-MaintenanceIsAKB\
+    \ - Operational knowledge decays at the speed of the next emergency unless captured\
+    \ as a living runbook; an unindexed KB entry is a tombstone."
 metadata:
   entity: roc_racoon
-  session_id: ses_20260830_roc_master_eis
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-30T11:30:00.000000+00:00'
+  session_id: ses_20260901_roc_disk_maintenance
+  model_used: opencode/big-pickle
+  last_session_end: '2026-09-01T10:00:00+00:00'
