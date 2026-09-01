@@ -34,6 +34,8 @@ This index provides a structured map of the Omega Engine's knowledge base.
 ## 🔧 Operations & Infrastructure
 - [docs/archive/stale/operations/RESEARCH_QUEUE.md](../../docs/archive/stale/operations/RESEARCH_QUEUE.md) — Active research queue and guidance (archived).
 - [docs/research/R_PODMAN_SOVEREIGN_V2.md](../../docs/research/R_PODMAN_SOVEREIGN_V2.md) — Verified Podman keep-id protocol.
+- [docs/kb/SYSTEM_MAINTENANCE_KB.md](../../docs/kb/SYSTEM_MAINTENANCE_KB.md) — Routine system maintenance runbook (disk recovery, cache hygiene, journal management).
+- [docs/kb/MEMORY_MANAGEMENT_KB.md](../../docs/kb/MEMORY_MANAGEMENT_KB.md) — High-performance memory management (zswap, zRAM, cgroups).
 - [scripts/setup.sh](../../scripts/setup.sh) — Environment bootstrap script.
 
 ## 🔌 MCP & Client Integration

@@ -94,6 +94,7 @@ Page format in §3. N7 = fully developed reference expert.
 | Mandates | `SOVEREIGN_MANDATES.md` (27, mechanical compliance) |
 | Agent workflow | `AGENTS.md` |
 | Strategy maps | `STRATEGY_INDEX.md` → `STRATEGY_CORPUS_MAP.md` |
+| **Routine system maintenance KB** | `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005, maintainer: roc_racoon) — disk recovery, cache hygiene, journal management. **Read before any host maintenance.** |
 
 ### Protocols
 

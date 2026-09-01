@@ -103,4 +103,43 @@ Three parallel mandates resolved in single Master EIS synthesis session:
 
 ---
 
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_master_eis ⬡ COMPACTION-READY*
+## Session: Disk Emergency Recovery + System Maintenance KB Creation
+**Date**: 2026-09-01
+**Session ID**: ses_20260901_roc_disk_maintenance
+**Model**: opencode/big-pickle
+
+### L1: Narrative — What Happened
+
+1. **Disk emergency**: Main partition `/dev/nvme0n1p2` (109G) was at 100% — 103G used, 129MB free. Ran 5-tier disk analysis (df → home du → .local/.cache/.config du → system-level → containers/snap).
+
+2. **Safe clears executed** (user approved): Sessions Explorer search cache (~778M), OpenCode package cache (~193M), Podman dangling images (~136M), APT cache via pkexec (~97M), systemd journal rotate+vacuum (**3.6G** — the big win).
+
+3. **Critical lesson discovered**: `journalctl --vacuum-time=2w` and `--vacuum-size=200M` **silently freed 0B** when run without rotating first. The fix was `pkexec journalctl --rotate` THEN `--vacuum-size=200M` — freed 3.6G. Also: `sudo` fails in agent sessions ("a terminal is required"); `pkexec` works via polkit GUI.
+
+4. **Result**: 129MB → **5.1GB free** (96% used). ~5GB recovered.
+
+5. **KB created**: `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005) — routine system maintenance runbook capturing the workflow, safe-to-clear inventory, journal lesson, pkexec pattern, opencode.db exclusion rule, second-line targets, and maintenance cadence. Registered in `docs/kb/INDEX.md` (rebuilt from 5/20 → 20/20 entries — was a lint violation), `docs/INDEX.md` (Operations section), and `HMC_COLLABORATION_HUB.md` (document index).
+
+### L2: Insight — What This Means
+
+1. **The partition is structurally undersized for the workload.** 27G opencode.db + 6G project + 3.5G snap + 2.3G containers + AI tool caches = chronic pressure. Even after 5GB recovery, the box sits at 96%. This is a recurring maintenance burden, not a one-time fix.
+
+2. **Journal vacuum is a trap.** The "vacuum by time/size" commands are the documented way to reclaim journal space, but they silently no-op on active journals. Rotate-then-vacuum is the universal pattern. This belongs in a KB precisely because it's counterintuitive and cost us a debugging cycle.
+
+3. **Agent sessions need pkexec, not sudo.** Every future maintenance task in an agent session will hit the TTY wall. The KB now encodes this so the fleet doesn't rediscover it.
+
+4. **The KB index was drifting.** Only 5 of 20 entries were registered in INDEX.md — exactly the "drift back into the void" failure mode. Rebuilding it was as valuable as the new entry.
+
+### L3: Universal Principles
+
+> **L3-RotateBeforeVacuum** — Destructive maintenance commands that operate on *archived* state silently no-op on *active* state. Always force the state transition (rotate) before applying the cleanup (vacuum). A command that "succeeds" while freeing 0B is a silent failure — verify the delta, not the exit code.
+
+> **L3-MaintenanceIsAKB** — Operational knowledge decays at the speed of the next emergency unless captured as a living runbook. The 5GB recovery was valuable; the KB that prevents the next 100% emergency is worth more. Index registration is what keeps knowledge discoverable — an unindexed KB entry is a tombstone.
+
+### Hivemind Note
+
+- Hivemind MCP tools (`omega-hub_hivemind_*`) were NOT available in this session. Coordination files written directly (workspace lock + live feed). Flagged per M23 — no synthesis of a Hivemind post.
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_mining ⬡ DISK-RECOVERY-COMPLETE*

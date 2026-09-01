@@ -4,23 +4,34 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# Session Gnosis — roc_racoon — Cline Provider Activation Audit
-**Date**: 2026-08-22 · **Session**: ses_5b058490c0d0 · **Trigger**: @kali Grand Oversight audit request
+# Session Gnosis — roc_racoon — Disk Emergency Recovery + System Maintenance KB
+**Date**: 2026-09-01 · **Session**: ses_20260901_roc_disk_maintenance · **Model**: opencode/big-pickle
 
 ## What happened (L1)
-Read-only audit of whether the `cline` fabric entry (priority 7) can be activated.
-Determined transport (openai_compat reuse), located real credentials (NOT where HG-003 says),
-ran 2 live probes (400 → corrected → 403 client-gate), wrote deliverable report.
+Main partition at 100% (129MB free). Ran 5-tier disk analysis, executed approved safe clears,
+recovered ~5GB (129MB → 5.1GB free). Created `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005)
+and registered it in the KB index, docs index, and HMC hub.
 
 ## Key facts for hydration
-- `model_gateway.py:534` maps cline → `_create_openrouter`; line 364 silently defaults base_url to openrouter.ai when absent → latent M22 provenance bug (opencode-zen at :533 shares it).
-- Real Cline endpoint: `https://api.cline.bot/api/v1/chat/completions` (from `~/.cline/data/logs/cline.log`). With openai_compat.py:94 URL math, `base_url: https://api.cline.bot/api` works code-free.
-- Credentials: `~/.cline/data/secrets.json` (`clineApiKey`, static) + `~/.cline/data/settings/providers.json` (WorkOS OAuth, refresh token present). HG-003's path (~/.local/share/cline/credentials.json) DOES NOT EXIST — stale.
-- Probe: bare model ID → 400 (needs `modelType/model`); namespaced → **403 "only available via Cline product surfaces"** = free models are client-gated. Direct HTTP activation of deepseek-v4-flash/mimo-v2.5 impossible without impersonating official client (rejected).
-- VERDICT: BLOCKED as-configured. Path A (config-only, permitted model, ~30 min) vs Path B1 (CLI-wrapper RemoteProvider subclass, ~4-6h).
+- **Journal lesson**: `journalctl --vacuum-*` silently frees 0B on unrotated journals. ALWAYS
+  `pkexec journalctl --rotate` FIRST, then vacuum. This freed 3.6G (the big win).
+- **pkexec not sudo**: `sudo` fails in agent sessions ("a terminal is required"). Use `pkexec`
+  (polkit GUI prompt) for apt clean, journalctl, etc.
+- **Safe-to-clear inventory** (verified 2026-09-01): sessions-explorer cache ~778M
+  (`rm -rf ~/.local/share/opencode-sessions-explorer/*`), opencode cache ~193M
+  (`rm -rf ~/.cache/opencode/`), podman dangling `podman image prune -f` ~136M,
+  apt `pkexec apt clean` ~97M, journal rotate+vacuum ~3.6G.
+- **NEVER touch** `~/.local/share/opencode/opencode.db` (27G) without Architect approval —
+  it's the fleet memory. The sessions-explorer cache is the derived index and IS safe.
+- **Second-line targets** (need Architect go/no-go): snap copilot-cli 2.4G, snap chromium 847M,
+  ~/.copilot/pkg 1.4G, ~/.cline/data 1.0G, ~/.grok 634M, ~/.codex 371M, Flatpak SDK ~1.8G,
+  ~/.lmstudio/extensions 1.7G, ~/.antigravity 537M, ~/archive/foundation-legacy 861M,
+  ~/Downloads/thunderbird.tmp 705M.
+- **KB index was stale**: 5/20 entries registered. Rebuilt to 20/20 in `docs/kb/INDEX.md`.
 
 ## Continuation notes
-- Deliverable: `data/coordination/CLINE_PROVIDER_ACTIVATION_AUDIT_20260822.md`
-- If Architect approves Path B1: create `src/omega/oracle/backends/cline_cli.py` following orchestrator.py:527-529 subprocess pattern; add contract tests per M21.
-- Fix candidate filed implicitly: raise ConfigError on missing base_url in `_create_openrouter`.
-- Stall-echo observed mid-session (truncated own-draft message); handled per ORACLE_STACK.md advisory — treated as continuation, verified nothing against it.
+- Deliverable: `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005, maintainer: roc_racoon)
+- Registered in: `docs/kb/INDEX.md`, `docs/INDEX.md` (Operations section), `HMC_COLLABORATION_HUB.md`
+- Hivemind MCP tools NOT available this session — coordination files written directly.
+- Open thread: automated disk-pressure alerting (df -h threshold check) — see KB Evolution Notes.
+- Open thread: opencode.db SQLite VACUUM investigation — do NOT attempt without Architect approval.
