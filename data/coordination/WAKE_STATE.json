@@ -1,34 +1,46 @@
 {
   "status": "AWAITING_WAKE",
-  "timestamp": "2026-08-30T23:15:00Z",
+  "timestamp": "2026-09-01T01:30:00Z",
   "target_agent": "kali",
   "critical_warnings": [
-    "PUBLIC-DEBUT-01 in SONNET-5-REVIEW-PREP phase. Do NOT start DEL-1 theater strip until Sonnet 5 answers the 10 questions.",
-    "Context Pack ID 82c6ee65-7739-4e0c-85d9-71e745a145ba is READY for upload to Claude.ai. Use CLAUDE_PROJECT_SYSTEM_PROMPT.md (custom instructions) + CHAT_INITIATION_PROMPT.md (first message).",
-    "Carmack verdict: THEATER WITH ENGINE ISLANDS. ~3,000 lines governance theater to strip in DEL-1. Do not treat governance code as infrastructure.",
-    "3 quick fixes landed pre-Sonnet-5: M36 honesty (stub_bypass), M1 AnyIO (run_sync), M9 typed errors (5 scripts). Verify no regressions.",
-    "5 mandate violations in code that gates miss: M1 (FIXED), M2 (OPEN subagent_dispatcher.py:237,252), M9 (FIXED), M23 (FIXED), M27 (OPEN dispatch_guard_log.jsonl)."
+    "PUBLIC-DEBUT-01 in DEL-1 EXECUTION phase. Execute DEL-1 Micro-PR chain (7 PRs) before Sonnet 5 re-review.",
+    "Context Pack fc32fbe3-a748-400c-926a-bc1df47d784c is READY for Sonnet 5 re-review after DEL-1 completion.",
+    "DEL-1 plan: Micro-PR chain (7 PRs), 24 honest tests, layer-corrected guard, dual-seal protocol, orthogonality matrix.",
+    "All 10 dialectic challenges resolved: Micro-PR chain, 24 tests, layer-corrected guard, migration discriminator, M34Registry code migration, 12 integration tests, micro-PR chain, two-tier baseline, dual-seal protocol, orthogonality matrix.",
+    "P0-1b security + DEL-1 theater strip are hard gates for Public Debut."
   ],
   "immediate_execution_queue": [
     {
       "step": 1,
-      "action": "Read data/coordination/anchored_summary/kali/projection.md (v4.0.0) + data/entities/kali/session_gnosis.md (v4.0.0)"
+      "action": "Read data/coordination/anchored_summary/kali/projection.md (v4.3.0) + data/entities/kali/session_gnosis.md (v4.3.0)"
     },
     {
       "step": 2,
-      "action": "Upload context pack 82c6ee65 to Claude.ai Project (system prompt + chat initiation ready)"
+      "action": "Read data/coordination/DEL1_DIALECTIC_20260901.md (last 50 lines for synthesis)"
     },
     {
       "step": 3,
-      "action": "Harvest Sonnet 5 answers to Roc's 10 questions (ROC_SONNET5_CONTEXT_DIG_20260830.md)"
+      "action": "Execute DEL-1 Micro-PR 1: git checkout -b del1/01-test-infrastructure"
     },
     {
       "step": 4,
-      "action": "Execute DEL-1 Week 1 theater strip per ratified sequence, keep omega talk green at every commit"
+      "action": "Create tests/test_engine_islands.py (24 honest tests skeleton)"
     },
     {
       "step": 5,
-      "action": "Resolve M2 Firewall violation (subagent_dispatcher.py) + M27 parallel ledger (dispatch_guard_log.jsonl)"
+      "action": "Extract dispatch_guard.py secrets scan to scripts/security/scan_secrets.py"
+    },
+    {
+      "step": 6,
+      "action": "Audit HandoffPacket imports: grep -r 'HandoffPacket' --include='*.py' src/ scripts/"
+    },
+    {
+      "step": 7,
+      "action": "Execute DEL-1 Micro-PR chain sequentially with omega talk gates"
+    },
+    {
+      "step": 8,
+      "action": "Regenerate context pack post-DEL-1, upload to Sonnet 5 for re-review"
     }
   ]
 }
