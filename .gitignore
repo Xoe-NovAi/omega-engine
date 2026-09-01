@@ -24,6 +24,11 @@
 # ── Downloaded Models (large binaries, not source) ────────────────────
 # ── Environment & Secrets ────────────────────────────────────────────
 # ── Eradicated Directories (NEVER re-create, NEVER re-track) ────────
+# ── Experiment Labs (local research, not ready for distribution) ──
+# Per M28 (proposed): experiments are local-only research labs.
+# Symlinks to external storage (e.g., omega_library) are local artifacts.
+data/experiments/
+
 # ── External Projects (separate repos, not part of Omega Engine) ──
 # ── Generated Context Packs ──────────────────────────────────────────
 # ── Grok CLI Config ─────────────────────────────────────────────

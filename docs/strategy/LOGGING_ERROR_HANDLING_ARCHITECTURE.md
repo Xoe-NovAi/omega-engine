@@ -188,3 +188,8 @@ development.
 - `config/systemd/omega-inference.service` (production deployment, OOM-hardened)
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ AP-LOGGING-ERROR-ARCH-v1.0.0 ⬡ 2026-08-30*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+
