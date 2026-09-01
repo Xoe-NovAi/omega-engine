@@ -685,3 +685,8 @@ The CompactionHarvester (290 lines) was the 2026 Q2 effort that tracked metadata
 *⬡ RESEARCHER ⬡ ALL-3-PHASES-COMPLETE ⬡ 2026-08-30 ⬡ mimo-v2.5-free ⬡*
 
 *15 knowledge gaps researched. 3 phase reports written. ~87h implementation roadmap. Build wave unblocked.*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: mimo-v2.5-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

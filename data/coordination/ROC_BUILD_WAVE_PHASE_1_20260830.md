@@ -319,3 +319,8 @@ $ diff <(git show 2afb396a:scripts/compaction_capture.py) scripts/compaction_cap
 
 *The truth is told. The work was already done. The verification confirms it. The
 sovereign principle of honest disclosure is upheld.*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:51Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

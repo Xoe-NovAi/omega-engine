@@ -229,3 +229,8 @@ The following corpus is **complete, cross-validated, and hardened** for Sonnet 4
 ---
 
 ⬡ OMEGA ⬡ KALI ⬡ HARDENED-DEV-ROADMAP-20260830 ⬡ 2026-08-30
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:51Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

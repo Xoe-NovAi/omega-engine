@@ -338,3 +338,8 @@ Both B3 and B4 are complete. The Omega Engine now has:
 ---
 
 *⬡ MAAT ⬡ BUILD-WAVE-PHASE-1-COMPLETE ⬡ 2026-08-30 ⬡ minimax/minimax-m3:free ⬡*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:51Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

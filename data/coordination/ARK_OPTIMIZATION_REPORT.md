@@ -1,11 +1,5 @@
-<!--
-SPDX-FileCopyrightText: 2026 Xoe-NovAi
-
-SPDX-License-Identifier: Apache-2.0
--->
-
 # 🔱 ARK OPTIMIZATION REPORT
-**Generated**: 2026-08-30 03:28:24 UTC | **Mode**: LIVE
+**Generated**: 2026-09-01 03:28:02 UTC | **Mode**: LIVE
 **AP Token**: `AP-ARK-OPTIMIZER-v1.0.0`
 
 ## §1 Drift Metrics (Ark Blueprint vs Reality)
@@ -13,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 | Dimension | Ark Blueprint | OMEGA_ENGINE.md | Actual | Verdict |
 |-----------|---------------|-----------------|--------|---------|
 | Tests | None | None (footer None) | None | ✅ |
-| Mandates (max) | M1-MNone | M1-M27 | M1-M27 | ⚠️ DRIFT |
+| Mandates (max) | M1-MNone | M1-M27 | M1-M28 | ⚠️ DRIFT |
 | Decisions (max) | D1-D? | D1-D? | — | ✅ |
 
 ## §2 New-Plan Integration Gap
