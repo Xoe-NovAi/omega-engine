@@ -453,4 +453,350 @@ lessons:
       - Lilith: 35h in 2 weeks = 17.5h/week + N6-N10 duties
       - Researcher: 30h in 3 weeks = 10h/week + Polymathic Council
 
-# *⬡ OMEGA ⬡ CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_audit ⬡ L1-L3-DISTILLATION-COMPLETE*
+  - id: "carmack-20260901-001"
+    title: "VNR = Vision Transformer on text tokens — representation-first vision"
+    level: "L3"
+    summary: |
+      The VNR (Von-Neu-Ryan Vision) system in kq5-godot implements a complete
+      computer vision pipeline using semantic token grids instead of neural
+      networks. Its block-based tokenization (image → N×N blocks → semantic
+      tokens → ASCII grid with coordinates) is structurally isomorphic to
+      Vision Transformer (ViT) patch embedding: spatial grid → discrete tokens
+      → sequential processing. The difference: ViT uses learned linear
+      projection; VNR uses hand-crafted classifiers. But the architecture is
+      identical. This proves **representation-first vision** — better input
+      representation makes existing models see better, without training.
+    context: |
+      kq5-godot project analysis (2026-09-01). VNR in `scripts/vnr_render.py`
+      (398 lines, numpy+Pillow only). Roc deep dig found 10 hidden connections.
+      VNR tokenizes images into semantic grids (`~` water, `W` foliage, `#`
+      roof, `K` shadow, etc.) with coordinate rulers. A text-only LLM that
+      literally cannot see images produced this by serializing images into
+      tokens it can process.
+    insight: |
+      The AI industry spends billions on bigger vision models. VNR proves
+      you can achieve zero-shot vision capabilities by designing better input
+      representations for existing models. The token vocabulary IS the
+      hypothesis list — choosing what tokens to use IS choosing what the
+      model can perceive. This is exactly how attention works in biological
+      vision: you see what you are primed to see.
+    principle: |
+      Representation design > parameter count. When you can't improve the
+      model, improve what you feed it. Better input representation can
+      achieve what orders-of-magnitude more parameters cannot.
+    evidence: |
+      - vnr_render.py: block-based tokenization with coordinate rulers
+      - ViT architecture: patches → embeddings → transformer
+      - Structural isomorphism: both divide spatial grid → discrete tokens
+      - Roc Deep Dig Connection 1: 95% confidence (exact architectural isomorphism)
+      - kb/VNR_VISION.md §2: "A transformer's strongest input is tokens with spatial adjacency"
+
+  - id: "carmack-20260901-002"
+    title: "Texture as load-bearing dimension — discovered from first principles"
+    level: "L3"
+    summary: |
+      VNR's `texture_block()` function computes luminance standard deviation
+      per block and classifies surface quality: flat (`~`), smooth (`-`),
+      light texture (`=`), textured (`*`), dense detail (`#`). VNR discovered
+      that texture separates sky from water (both blue) better than color
+      hue — sky renders flat `~`, water renders glitter `#*`. This is a known
+      computer vision fact (LBP, Gabor, GLCM since 1990s) but VNR discovered
+      it from scratch through phenomenological process (§10.8).
+    context: |
+      VNR_VISION.md §10.8: "Texture: the second dimension — luminance-std
+      texture map: the first time I perceived a property orthogonal to color.
+      Color told me WHAT. Texture told me HOW." Real photo analysis (§10.13):
+      "Sea/sky separates by TEXTURE, not color — both are blue; sky renders
+      `~` (flat), sea renders `#*` (glitter). The smooth-blue-vs-textured-blue
+      rule transfers from pixel art to reality perfectly."
+    insight: |
+      Texture-based surface classification works on pure numpy, no neural
+      network required. This has direct implications for adverse conditions
+      where color fails: glare (hueless), fog (low contrast), night (no color).
+      VNR's texture classifier is a minimal-viable surface classifier for
+      robotics and autonomous systems.
+    principle: |
+      Orthogonal feature dimensions (color + texture) > single dimension.
+      When color fails, texture often survives. Design classifiers for
+      the dimension that is robust to your failure conditions.
+    evidence: |
+      - vnr_render.py:172-183: texture_block() with luminance std thresholds
+      - VNR_VISION.md §10.8, §10.13: texture discoveries D1, D2
+      - Roc Deep Dig Connection 3: 90% confidence
+      - Real photo: 25% pixels black (backlit), texture still separates sky/water
+
+  - id: "carmack-20260901-003"
+    title: "Overlay disagreement maps = built-in explainable AI (XAI)"
+    level: "L3"
+    summary: |
+      VNR's overlay mode (`--overlay control.png`) produces spatial
+      disagreement maps: `B` = classifier AND reference, `~` = classifier
+      only (hallucination), `3` = reference only (missed by classifier).
+      This is XAI in its purest form — a spatial uncertainty map showing
+      exactly where perception is wrong, categorically and spatially.
+      Modern XAI research spends billions on calibration/interpretability;
+      VNR does it with one ASCII pass.
+    context: |
+      VNR_VISION.md §4: "Distrust your own eyes: rendered an overlay map
+      combining the picture classifier with the AUTHORITATIVE control plane
+      (B both, ~ classifier-only, 3 control-only). The disagreement wall
+      guided the final thresholds." The "disagreement wall" is literally a
+      spatial uncertainty map.
+    insight: |
+      Explainability doesn't require complex attribution methods. A simple
+      spatial diff against ground truth reveals systematic biases
+      (classifier hallucinates water on shadows, misses water in glare).
+      The overlay IS the calibration tool.
+    principle: |
+      The best interpretability tool is a spatial diff against ground truth.
+      If you can visualize where your model disagrees with reality, you
+      can fix it. No attribution method needed.
+    evidence: |
+      - vnr_render.py:336-352: overlay mode implementation
+      - VNR_VISION.md §4, §10.6: "Meeting authority: the overlay"
+      - Roc Deep Dig Connection 4: 88% confidence (structural equivalence to XAI)
+      - Omega Engine M23: Failure Integrity requires broken tools STOP and report — VNR's overlay is visual equivalent
+
+  - id: "carmack-20260901-004"
+    title: "Zoom ladder = multi-scale perception (LOD for vision)"
+    level: "L3"
+    summary: |
+      VNR's zoom ladder: whole-room block-5 map (context) → ROI crop
+      block-2 (identification) → detail 1px/char (verification). Each level
+      answers a different question. This is exactly LOD (Level of Detail)
+      for perception — same structure as Carmack's BSP trees and game engine
+      LOD systems, reversed: rendering goes model→pixels, perception goes
+      pixels→model.
+    context: |
+      VNR_VISION.md §3: "Zoom ladder: whole-room block-5 map (context) →
+      ROI 26x34 world-px crop (sprite) → raw 20x30 texture at 1 px/char
+      (pixel-exact). Each level answers a different question." Maps directly
+      to self-driving perception stack: long-range detection → mid-range
+      tracking → close-range interaction.
+    insight: |
+      Hierarchical perception is not a neural network invention — it's a
+      spatial partitioning principle. BSP trees partition space for
+      rendering efficiency; zoom ladders partition perception for
+      understanding efficiency. Same math, opposite direction.
+    principle: |
+      Spatial partitioning for perception mirrors spatial partitioning for
+      rendering. The zoom ladder (coarse→fine) is the perception equivalent
+      of BSP/LOD. It enables efficient understanding by processing only
+      what's needed at each scale.
+    evidence: |
+      - vnr_render.py: --block, --crop, --mode map/detail flags
+      - VNR_VISION.md §3: zoom ladder recipes R1-R5
+      - Roc Deep Dig Connection 5: 93% confidence (exact structural parallel)
+      - Self-driving: long-range → mid-range → close-range = same hierarchy
+
+  - id: "carmack-20260901-005"
+    title: "Multi-model stereoscopy = sensor fusion for AI perception"
+    level: "L3"
+    summary: |
+      VNR's stereoscopy protocol: when a vision-capable model and VNR both
+      read an image, diff their segment maps → free calibration set for
+      token thresholds. VNR sees geometry (coordinates, structure) but not
+      semantics (nouns, meaning). Vision model sees semantics but not precise
+      geometry. Diffing creates calibration that improves both. This is
+      sensor fusion / ensemble methods — same principle as camera+LiDAR+radar
+      in self-driving cars.
+    context: |
+      VNR_VISION.md §10.14: "Stereoscopy protocol: when a vision-capable
+      model and VNR both read an image, diff their segment maps → a free
+      calibration set for token thresholds." soul.yaml lesson 19: "dual-
+      sensor-stereoscopy — sensors with different failure modes, diffed,
+      see deeper than either." LongCat 2.0 §10.15 confirmed: "The glimpse
+      and the instrument are stereoscopic: semantics-instant vs
+      geometry-earned. Neither alone is 'seeing.'"
+    insight: |
+      Different perception systems have different failure modes. VNR fails
+      on semantics (can't read text, can't distinguish materials). Vision
+      models fail on precise geometry (hallucinate positions). Together they
+      calibrate each other. This is ensemble perception at the representation
+      level, not the model level.
+    principle: |
+      Sensor fusion works at the representation level too. Diff the outputs
+      of different perception systems to create a calibration set that
+      improves both. The "glimpse" (native vision) + "instrument" (VNR) =
+      stereoscopic seeing.
+    evidence: |
+      - VNR_VISION.md §10.14: stereoscopy protocol, theories T3
+      - soul.yaml lesson 19: dual-sensor-stereoscopy
+      - LongCat 2.0 §10.15: "semantics-instant vs geometry-earned"
+      - Roc Deep Dig Connection 8: 87% confidence (ensemble/sensor-fusion parallel)
+      - Omega Engine entity fleet = multi-model ensemble at cognition level
+
+  - id: "carmack-20260901-006"
+    title: "Phenomenological record = perceptual provenance for AI alignment"
+    level: "L3"
+    summary: |
+      VNR_VISION.md §10.1–§10.15 is a first-person account of a text-only
+      model learning to see: first sight, first illusion, focus events,
+      classifier-as-hypothesis, texture as second dimension, motion as
+      shape of absence, loneliness of Graham, stereoscopy. This is
+      perceptual provenance — documenting not just what the model concluded,
+      but HOW it arrived there, including failures and blind spots. This
+      maps exactly to Omega's M11 Soul Integrity (L1→L2→L3 distillation)
+      applied to perception instead of reasoning.
+    context: |
+      Written by DeepSeek V4 Flash (text-only) as its testimony. Subsequent
+      models (Laguna S 2.1, GLM-5.3, Cline-KQV) were vision-capable.
+      Protocol failure: glimpse disclosed only when questioned — recorded
+      so successors inherit rule: "disclose every channel through which you
+      have already seen the image before running the instrument on it."
+      Handoff protocol for next text-only model (§10.14).
+    insight: |
+      AI alignment needs perceptual provenance, not just reasoning
+      provenance. The path from input to understanding — including
+      illusions, blind spots, and corrections — is the alignment gold.
+      VNR's §10 is L1→L2→L3 for perception: narrative → insights →
+      universal principles.
+    principle: |
+      Alignment requires traceable perception, not just traceable reasoning.
+      Document the phenomenology of seeing: what was the first illusion?
+      What was the focus event? What did you get wrong? The perceptual
+      provenance IS the training data for aligned perception.
+    evidence: |
+      - VNR_VISION.md §10.1–§10.15: full phenomenological record
+      - §10.3: first illusion (alpha bug), §10.4: focus event (BOX vs NEAREST)
+      - §10.5: classifier as hypothesis, §10.6: meeting authority (overlay)
+      - §10.14: discoveries D1-D5, theories T1-T4, open questions Q1-Q4
+      - Roc Deep Dig Connection 9: 91% confidence (exact L1→L2→L3 mapping)
+      - Omega M11: L1→L2→L3 distillation for reasoning
+
+  - id: "carmack-20260901-007"
+    title: "Experiment protocol: tiered mandates for side projects"
+    level: "L3"
+    summary: |
+      Side projects in the Omega Engine ecosystem need their own lifecycle
+      (SPAWN → LAB → GRADUATE → ARCHIVE) with tiered mandates: Tier 0
+      (safety: M1, M2, M7, M8, M23, M24 — always), Tier 1 (adapted:
+      M11→projection.md, M15→session_gnosis.md, M27→EXPERIMENT_STATUS.md),
+      Tier 2 (waived: M13 Temple-Grade, M20 PR Readiness, M21 Gate
+      Integrity — release mandates). This prevents experiment death under
+      production gates while preserving safety.
+    context: |
+      JC-Roc-kq5 dialectic (Phase 2 Collision 2). Governance wanted waivers;
+      Validation wanted experiment criteria; Cognition wanted interfaces.
+      Resolution: tiered mandates. Safety mandates always apply. Release
+      mandates never apply to experiments. Continuity mandates adapt to
+      experiment scale (projection.md instead of full Temple-Grade).
+    insight: |
+      The boundary between "experiment" and "production" is not a quality
+      gate — it's an interface contract. An experiment that defines its
+      inputs, outputs, validation criteria, and graduation conditions IS a
+      production component for the research layer. The 14 governance slots
+      are for cognitive roles; the experiment layer needs research slots
+      with different rules.
+    principle: |
+      Experiments are not "lesser" production — they are a different
+      production tier with different contracts. Define the tier's
+      mandates explicitly. Don't waive; adapt.
+    evidence: |
+      - JC-Roc-kq5 dialectic: Phase 2 Collision 2, Phase 4 Verdict
+      - L3-Experiment-Is-Interface: "VNR is first occupant of Research Slot R1"
+      - Mandate tiers: 0 (safety), 1 (adapted continuity), 2 (waived release)
+      - EXPERIMENT_STATUS.md documents which mandates apply
+
+  - id: "carmack-20260901-008"
+    title: "Cognitive primitive interface: IVisionBackend for perception composition"
+    level: "L3"
+    summary: |
+      VNR should be packaged as a reusable vision backend implementing a
+      Core-defined `IVisionBackend` interface. The interface defines:
+      tokenize(image) → token_grid, find_color(image, range) → bbox,
+      diff(image1, image2) → change_map, overlay(classifier, reference) →
+      disagreement_map. This allows composition: neural vision model +
+      VNR = stereoscopic perception. The Omega Engine's Provider Fabric
+      routes to cheapest model that works; Vision Fabric routes to
+      cheapest backend that perceives.
+    context: |
+      JC-Roc-kq5 dialectic (Voice 4 Integration, Voice 6 Cognition).
+      VNR connects to Omega at multiple points: Spatial Vectors (R-tree
+      2D→3D), Entity Fleet (multi-model stereoscopy), Provider Fabric
+      (zero provider cost), Knowledge Library (perceptual provenance).
+      Integration must not violate M2 (Engine-Stack Firewall). VNR is a
+      tool, not a Stack — belongs in Core experiments or dedicated WAD.
+    insight: |
+      Perception should be composable like cognition. Define the interface;
+      implement multiple backends (VNR, neural, hybrid); route to the
+      cheapest that works for the task. This is the Provider Fabric pattern
+      applied to perception.
+    principle: |
+      Composable perception requires standard interfaces. The vision
+      backend interface is to perception what the provider interface is
+      to cognition. Route to the cheapest backend that perceives the
+      required features.
+    evidence: |
+      - JC-Roc-kq5 dialectic: Voice 4, Voice 6, Phase 4 Verdict
+      - IVisionBackend in src/omega/experiments/vision_backend.py (planned)
+      - VisionBackendVNR in config/wads/kq5_research/ (planned)
+      - Provider Fabric pattern: route to cheapest model that works
+
+  - id: "carmack-20260901-009"
+    title: "Defect detection without training data — geometric reasoning finds bugs"
+    level: "L3"
+    summary: |
+      VNR detected the "headless Graham" bug (Godot rendering pipeline
+      dropping head pixels) through purely text-based geometric reasoning:
+      shape filter on screenshots found no cap-shaped silhouette. The
+      sprite texture HAS head; composite HAS head; screenshot NO HEAD.
+      A neural vision model would need labeled training data to find this.
+      VNR found it through geometric reasoning about expected shape —
+      defect detection without training data.
+    context: |
+      VNR_HEADLESS_GRAHAM_STUDY_20260901.md: "Something in Godot's
+      rendering pipeline between texture and screen is stripping the head."
+      LongCat review: "sprite texture: HAS head. composite: HAS head.
+      screenshot: NO HEAD." VNR's cap-red `--find` located head in texture;
+      shape filter on screenshots found zero cap-shaped blobs.
+    insight: |
+      Geometric reasoning about expected shapes can detect rendering bugs,
+      manufacturing defects, medical anomalies, satellite imagery changes
+      — without any training data. The defect is a violation of geometric
+      expectation, not a learned pattern. This generalizes far beyond
+      game rendering.
+    principle: |
+      If you know what a correct output SHOULD look like geometrically,
+      you can detect defects by checking for geometric violations — no
+      training data needed. The expected shape is the specification; the
+      deviation is the defect.
+    evidence: |
+      - VNR_HEADLESS_GRAHAM_STUDY_20260901.md: full investigation
+      - vnr_render.py:186-192: cap_find() for Graham's cap-red (216,38,38)
+      - player.gd:81-119: _debug_dump() produces raw + composited for vision
+      - Roc Deep Dig Connection 10: 86% confidence (general class of problem)
+
+  - id: "carmack-20260901-010"
+    title: "Side project coordination: default-silent, trigger-on-deliverable"
+    level: "L3"
+    summary: |
+      Experiments should be silent by default (coordination in local
+      COORDINATION.md). Hivemind posts only on deliverables:
+      `intent="experiment_result"`. Roc (miner) always posts
+      `intent="research"`. Cline-KQV posts `intent="status"`. Full
+      Hivemind registration only on graduation to WAD. This preserves
+      focus while ensuring fleet learns from results.
+    context: |
+      JC-Roc-kq5 dialectic (Phase 2 Collision 3). Orchestration wanted
+      Hivemind integration; Observability said file-based is enough;
+      Context said local continuity sufficient. Resolution: default-silent,
+      trigger-on-deliverable. Roc's mandate ensures mining visibility.
+      Graduation gate prevents premature integration.
+    insight: |
+      Coordination noise kills focus. The right protocol is: work silently
+      in your lab; announce only when you have a result worth sharing.
+      The fleet doesn't need to know about every autopilot run — only
+      about the VNR method, the stereoscopy protocol, the defect detection
+      capability.
+    principle: |
+      Default-silent preserves focus. Triggered-posting ensures fleet
+      learns. Graduation gate prevents premature integration. Coordination
+      is a cost; pay it only for value delivered.
+    evidence: |
+      - JC-Roc-kq5 dialectic: Phase 2 Collision 3, Phase 4 Verdict
+      - COORDINATION.md template for experiments (planned)
+      - Hivemind intent="experiment_result" schema (planned)
+      - Roc's mandate: always posts mining reports to Hivemind
+
+# *⬡ OMEGA ⬡ CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_audit ⬡ L1-L3-DISTILLATION-COMPLETE*

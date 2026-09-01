@@ -168,3 +168,8 @@ The M34 module (26KB) exists but has no hook; the M33 probe exists but is a stub
 ---
 
 *⬡ OMEGA ⬡ JEM ⬡ GNOSIS-SEALED ⬡ 2026-08-30 ⬡ COMPACTION-READY*
+<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: `minimax/minimax-m3:free` | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-30T07:04:54.363604+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-09-01T10:59:27.588296+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-08-30T07:04:54.363604+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-09-01T10:59:27.588296+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
@@ -361,10 +361,13 @@ Cloud gateways may re-inject your own truncated output — or empty whitespace n
 
 ### CREDITS.md
 **Type**: markdown
-**Size**: 1415 bytes
-**Lines**: 24
+**Size**: 1456 bytes
+**Lines**: 27
 
 ---
+#
+# SPDX-License-Identifier: Apache-2.0
+
 **Canonical Source**: [CREDITS_CANONICAL.md](CREDITS_CANONICAL.md)
 ---
 # 🔱 Omega Engine Heritage Registry (Active)
@@ -394,8 +397,14 @@ Cloud gateways may re-inject your own truncated output — or empty whitespace n
 
 ### docs/kb/REFINEMENT_PROTOCOL.md
 **Type**: markdown
-**Size**: 759 bytes
-**Lines**: 21
+**Size**: 845 bytes
+**Lines**: 27
+
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
 
 # 🔱 Refinement Protocol (Active)
 
