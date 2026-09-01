@@ -4,12 +4,22 @@
 
 schema_version: "1.0"
 document_type: "operational_config"
-document_id: "MODEL_FLEET_OPERATIONAL-20260828"
+document_id: "MODEL_FLEET_OPERATIONAL-20260901"
 title: "Omega Engine — Model Fleet Operational Configuration"
 status: "ACTIVE — RUNTIME CONFIG"
-date: "2026-08-28"
+date: "2026-09-01"
 sprint: "PUBLIC-DEBUT-01"
 owner: "Grokster"
+
+# CHANGELOG v2.0.0 (2026-09-01, Grokster per Architect directive):
+#   - LFM2.5-2.6B added as agentic_local in tier_0_local_sovereign
+#   - Qwen3-4B-Thinking-2507 removed from hot-load default (RAM constraint)
+#     — now opt-in via `start-reasoner` subcommand
+#   - Muse Spark 1.2 context fixed: 32K → 1,048,576 (32x correction)
+#   - Ling 3.0 Flash Fin context fixed: 32K → 262,144 (8x correction)
+#   - LFM2.5-2.6B context: 131,072 (128K)
+#   - See: data/coordination/R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901.md
+#          data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md
 
 fleet_overview:
   description: "Operational model fleet for Omega Engine alpha launch and post-launch operations. Maps logical roles to concrete model endpoints with health checks, fallbacks, and cost controls."
@@ -22,15 +32,30 @@ fleet_topology:
       - name: "ollama"
         port: 11434
         models: ["qwen2.5:0.5b", "nomic-embed-text:v1.5"]
-      - name: "native-gguf-extractor"
+      - name: "native-gguf-lfm"
+        # v2.0.0: LFM2.5-2.6B (1.67GB Q4_K_M) — primary agentic_local
+        # Purpose-built for tool use, open weights lfm1.0, <2.5GB memory
         port: 1234
+        model: "LFM2.5-2.6B-Q4_K_M.gguf"
+      - name: "native-gguf-qwen"
+        # v2.0.0: Qwen3-1.7B (1.67GB Q6_K) — extraction fallback
+        # Available as second instance on port 1236 if RAM allows
+        port: 1236
         model: "Qwen3-1.7B-Q6_K.gguf"
+        optional: true
+        condition: "16GB+ RAM available"
       - name: "native-gguf-reasoner"
+        # v2.0.0: Qwen3-4B-Thinking is OPT-IN (port 1235)
+        # Loaded only via `scripts/serve_native_gguf.sh start-reasoner`
+        # Architect system (16GB RAM) cannot run this with other models
         port: 1235
         model: "Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+        optional: true
+        opt_in: true
+        condition: "16GB+ RAM available, opt-in only"
       - name: "lmstudio"
         port: 1234
-        models: ["Qwen3-1.7B-Q6_K.gguf", "Qwen3-4B-Thinking-2507-Q4_K_M.gguf"]
+        models: ["Qwen3-1.7B-Q6_K.gguf"]
   
   tier_1_cloud_workhorse:
     description: "OpenCode native models - primary workhorse"
@@ -100,22 +125,68 @@ tier_0_local_sovereign_details:
     timeout: 30
     max_concurrent: 2
 
-  native_gguf_extractor:
+  native_gguf_lfm:
+    # v2.0.0: New primary agentic_local provider
     enabled: true
     endpoint: "http://127.0.0.1:1234/v1"
-    model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"
+    model_path: "/media/arcana-novai/omega_library/models/gguf/LFM2.5-2.6B-Q4_K_M.gguf"
     models:
-      - id: "qwen3-1.7b-extractor"
-        role: "extraction"
-        context: 4096
-        max_output: 2048
-        use_case: "Entity extraction, summarization, classification"
+      - id: "lfm-2.5-2.6b-local"
+        role: "agentic_local"
+        context: 131072
+        max_output: 8192
+        use_case: "Subagent dispatch, tool calling, instruction following. Open weights (lfm1.0 license), <2.5GB memory, M7 compliant."
     health_check: "/v1/models"
     timeout: 60
     max_concurrent: 1
+    notes: |
+      LFM2.5-2.6B (Liquid AI, 2026-08-04) is the highest-priority local model addition.
+      Replaces Qwen3-1.7B as default for native-gguf-extractor on port 1234.
+      Speed: 113 tok/s on Ryzen AI Max+ 395, ~30-50 tok/s on Ryzen 7 5700U.
+      Leads at instruction following (80.1% Multi-IF, 85.5% IFStruct).
+      Falls behind Qwen3-4B-Thinking on knowledge/coding — reasoner remains opt-in.
+
+  native_gguf_qwen:
+    # v2.0.0: Qwen3-1.7B available as second instance (port 1236) if RAM allows
+    enabled: true
+    endpoint: "http://127.0.0.1:1236/v1"
+    model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"
+    models:
+      - id: "qwen3-1.7b-local"
+        role: "extraction"
+        context: 4096
+        max_output: 2048
+        use_case: "Entity extraction, summarization, classification. Higher quality than LFM2.5-2.6B on these tasks per Qwen family strengths."
+    health_check: "/v1/models"
+    timeout: 60
+    max_concurrent: 1
+    optional: true
+    notes: |
+      Run on a separate port (1236) only if system has 16GB+ RAM.
+      The Architect's system runs LFM2.5-2.6B on port 1234 (default) and skips this
+      unless explicit test mode. Use scripts/test_lfm_vs_qwen.py to compare.
+
+  native_gguf_extractor:
+    enabled: true
+    endpoint: "http://127.0.0.1:1234/v1"
+    model_path: "/media/arcana-novai/omega_library/models/gguf/LFM2.5-2.6B-Q4_K_M.gguf"
+    models:
+      - id: "lfm-2.5-2.6b-local"
+        role: "extraction"
+        context: 131072
+        max_output: 8192
+        use_case: "Primary local extraction (was Qwen3-1.7B-Q6_K, replaced by LFM2.5-2.6B)"
+    health_check: "/v1/models"
+    timeout: 60
+    max_concurrent: 1
+    notes: |
+      v2.0.0: model_path changed to LFM2.5-2.6B-Q4_K_M.gguf.
+      To revert to Qwen3-1.7B: set OMEGA_NATIVE_GGUF_MODEL=Qwen3-1.7B-Q6_K.gguf
 
   native_gguf_reasoner:
-    enabled: true
+    # v2.0.0: OPT-IN only (Architect directive: 16GB RAM constraint)
+    enabled: false
+    opt_in: true
     endpoint: "http://127.0.0.1:1235/v1"
     model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
     models:
@@ -127,6 +198,11 @@ tier_0_local_sovereign_details:
     health_check: "/v1/models"
     timeout: 120
     max_concurrent: 1
+    notes: |
+      v2.0.0: NOT hot-loaded by default. Architect's 16GB system cannot run this
+      alongside LFM2.5-2.6B + OS + applications. To enable:
+        $ scripts/serve_native_gguf.sh start-reasoner
+      RAM cost: ~3GB additional when active.
 
   lmstudio:
     enabled: true
@@ -234,12 +310,18 @@ tier_2_specialized_cloud_details:
         context: 32768
         rpm_limit: 50
       - id: "ling-3.0-flash-fin-free"
-        role: "finance"
-        context: 32768
+        # v2.0.0 fix: actual context is 262K, not 32K (was 8x config bug)
+        role: "financial_analysis_and_pattern_recognition"
+        context: 262144
         rpm_limit: 50
       - id: "muse-spark-1.2-contributor-free"
-        role: "creative"
-        context: 32768
+        # v2.0.0 fix: actual context is 1M, not 32K (was 32x config bug)
+        # First Meta Superintelligence Labs model (April 2026, codename "Avocado")
+        # Multimodal: text+image+video+audio+PDF
+        role: "primary_creative_multimodal"
+        context: 1048576
+        max_output: 131072
+        modalities: ["text", "image", "video", "audio"]
         rpm_limit: 50
       - id: "deepseek-v4-flash-free"
         role: "coding"
@@ -292,20 +374,23 @@ tier_3_premium_cloud_details:
 role_resolution:
   primary: "m3_primary"
   subagent: "inherit"
-  extraction: "native_gguf_extractor"
-  reasoning: "native_gguf_reasoner"
+  extraction: "native_gguf_lfm"  # v2.0.0: was native_gguf_extractor (Qwen3-1.7B)
+  agentic_local: "native_gguf_lfm"  # v2.0.0: NEW role for LFM2.5-2.6B
+  reasoning: "native_gguf_reasoner"  # v2.0.0: opt-in only (RAM constraint)
   bulk_coding: "deepseek_v4_flash"
   long_context: "longcat_3_0"
   specialized_coding: "laguna_s_2_1"
   fast_cheap: "zen_free.mimo-v2.5-free"
   reasoning_cloud: "zen_free.nemotron-3-ultra-free"
   chinese_code: "zen_free.hy3-free"
-  finance: "zen_free.ling-3.0-flash-fin-free"
-  creative: "zen_free.muse-spark-1.2-contributor-free"
+  finance: "zen_free.ling-3.0-flash-fin-free"  # v2.0.0: now 262K context
+  creative: "zen_free.muse-spark-1.2-contributor-free"  # v2.0.0: now 1M context
+  multimodal: "zen_free.muse-spark-1.2-contributor-free"  # v2.0.0: NEW role
+  vnr_analyst: "zen_free.ling-3.0-flash-fin-free"  # v2.0.0: NEW role (probe)
   premium_reasoning: "zen_paid.gpt-5.6-sol"
   premium_coding: "zen_paid.claude-sonnet-4"
   fallback_chain:
-    - "native_gguf_extractor"
+    - "native_gguf_lfm"  # v2.0.0: LFM2.5-2.6B is now primary fallback
     - "ollama"
     - "m3_primary"
     - "zen_free.mimo-v2.5-free"
@@ -355,43 +440,54 @@ budgets:
 entity_assignments:
   kali:
     primary: "m3_primary"
-    extraction: "native_gguf_extractor"
-    reasoning: "native_gguf_reasoner"
+    extraction: "native_gguf_lfm"  # v2.0.0
+    reasoning: "native_gguf_reasoner"  # v2.0.0: opt-in only
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     fallback: "zen_free.mimo-v2.5-free"
   grokster:
     primary: "m3_primary"
-    extraction: "native_gguf_extractor"
-    reasoning: "native_gguf_reasoner"
+    extraction: "native_gguf_lfm"  # v2.0.0
+    reasoning: "native_gguf_reasoner"  # v2.0.0: opt-in only
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     bulk_coding: "deepseek_v4_flash"
     long_context: "longcat_3_0"
+    multimodal: "zen_free.muse-spark-1.2-contributor-free"  # v2.0.0: NEW
     fallback: "zen_free.mimo-v2.5-free"
   researcher:
     primary: "m3_primary"
     long_context: "longcat_3_0"
-    reasoning: "native_gguf_reasoner"
+    reasoning: "native_gguf_reasoner"  # v2.0.0: opt-in only
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
+    vnr_analyst: "zen_free.ling-3.0-flash-fin-free"  # v2.0.0: NEW
     fallback: "zen_free.nemotron-3-ultra-free"
   roc_racoon:
     primary: "m3_primary"
-    extraction: "native_gguf_extractor"
+    extraction: "native_gguf_lfm"  # v2.0.0
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     fallback: "zen_free.mimo-v2.5-free"
   john_carmack:
     primary: "m3_primary"
-    reasoning: "native_gguf_reasoner"
+    reasoning: "native_gguf_reasoner"  # v2.0.0: opt-in only
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     premium: "zen_paid.gpt-5.6-sol"
     fallback: "zen_free.nemotron-3-ultra-free"
   maat:
     primary: "m3_primary"
     bulk_coding: "deepseek_v4_flash"
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     fallback: "zen_free.mimo-v2.5-free"
   lilith:
     primary: "m3_primary"
-    reasoning: "native_gguf_reasoner"
+    reasoning: "native_gguf_reasoner"  # v2.0.0: opt-in only
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     fallback: "zen_free.nemotron-3-ultra-free"
   grok_cli:
     primary: "m3_primary"
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     fallback: "zen_free.mimo-v2.5-free"
   default:
     primary: "m3_primary"
+    agentic_local: "native_gguf_lfm"  # v2.0.0: NEW
     fallback: "zen_free.mimo-v2.5-free"
 
 deployment_checklist:
@@ -407,8 +503,17 @@ deployment_checklist:
   - "Entity assignments documented and communicated"
 
 metadata:
-  ap_token: "AP-MODEL-FLEET-OPS-20260828-v1.0.0"
+  ap_token: "AP-MODEL-FLEET-OPS-20260901-v2.0.0"
   omega_sigil: "OMEGA"
   entity: "GROKSTER"
-  trace: "trc_model_fleet"
+  trace: "trc_model_fleet_v2"
   status: "ACTIVE"
+  changelog: |
+    v2.0.0 (2026-09-01, Grokster):
+      - LFM2.5-2.6B added as agentic_local (replaces Qwen3-1.7B as default)
+      - Qwen3-4B-Thinking-2507 made opt-in (RAM constraint on Architect's 16GB system)
+      - Muse Spark 1.2 context: 32K → 1,048,576 (32x fix)
+      - Ling 3.0 Flash Fin context: 32K → 262,144 (8x fix)
+      - New roles: multimodal, vnr_analyst, agentic_local
+    v1.0.0 (2026-08-28, Grokster):
+      - Initial fleet config
