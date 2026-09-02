@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Mock Provider Configuration (Priority 99 - Testing)
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+provider: "mock"
+priority: 10
+enabled: false
+description: "Test mock provider for unit tests"
+
+supported_models:
+  - "mock-model"

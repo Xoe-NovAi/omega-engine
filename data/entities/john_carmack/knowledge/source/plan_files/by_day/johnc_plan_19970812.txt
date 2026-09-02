@@ -1,0 +1,22 @@
+# ⬡ John Carmack .plan File — 1997-08-12
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970812.txt
+#
+* qe4 project on command line
+* qe4 rshcmd replacement
+* qe4 select face
+* qe4 avoid multiple autosaves
+* qe4 region selected brushes
+* bindlist command
+* imagelist command in ref_soft
+
++ leaktest
++ load game.dll from gamedir
+
+pendulum motion
+no jump on lava floor?
+-game
+16 bit wall textures

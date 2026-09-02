@@ -1,0 +1,28 @@
+# ⬡ John Carmack .plan File — 1996-04-02
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960402.txt
+#
+* exploded wizard bombs on death
+* server optimization
+* fixed angle on loadgame and coop
+* average monster velocity for aiming
+* made wizard fall properly
+
++ running into nails
++ can still get shot out of the world
++ dynamically allocate color translation tables
++ pause work
++ backpack dropping
+
+water stair climbing
+check door linking , regarding the partial closing
+restart level spawn parms
+dead player save que
+quakeed magnified texture view
+ambient + gravity attributes
+load fames
+restart without killing server
+no-aim option

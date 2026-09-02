@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Default Research Profile
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+profile: "default"
+context_window: 32768
+reasoning_depth: "iterative"
+tool_fidelity: "medium"
+guardrails:
+  - "Force 3+ tool rounds before ANY synthesis"
+  - "Require explicit 'deepen' pass after first draft"
+  - "Write intermediate evidence to disk every 3 tool calls"
+failure_signature: "shallow"
+shadow_focus: "force_deepening"

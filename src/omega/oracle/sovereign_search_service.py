@@ -36,7 +36,20 @@ from datetime import datetime, timezone
 
 from omega.errors import OmegaError, ProviderRateLimitError, ProviderAuthError
 from omega.memory_store import get_memory_store, MemoryStore
-from omega.library.indexer import Indexer
+
+# Optional import — omega.library removed in D-565; stub for alpha
+try:
+    from omega.library.indexer import Indexer
+except ImportError:
+    class Indexer:
+        """Stub Indexer for alpha — omega.library is post-debut (D-565)."""
+        def __init__(self, *args, **kwargs):
+            pass
+        def index(self, *args, **kwargs):
+            return []
+        def search(self, *args, **kwargs):
+            return []
+
 from omega.oracle.search_providers import FirecrawlProvider, ExaProvider, SearXNGProvider
 from omega.oracle.search_router import (
     SearchRouter,

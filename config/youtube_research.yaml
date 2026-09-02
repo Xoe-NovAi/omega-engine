@@ -1,0 +1,191 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# YouTube Researcher Configuration
+# ⬡ OMEGA ⬡ RESEARCHER ⬡ CONFIG
+# AP Token: AP-YOUTUBE-CONFIG-v2.0.0
+
+# Three-tier extraction pipeline
+extraction:
+  # T1: Official/manual captions via youtube-transcript-api
+  tier1_enabled: true
+  tier1_languages: ["en"]
+  
+  # T2: yt-dlp + faster-whisper (int8) for auto-captions disabled / low TFS
+  tier2_enabled: true
+  tier2_model: "small"           # 244M, 466MB — sweet spot for CPU quality
+  tier2_device: "cpu"
+  tier2_compute_type: "int8"     # Best CPU memory/speed balance
+  tier2_cpu_threads: 8           # Match physical cores (5700U = 8C/16T)
+  tier2_beam_size: 5
+  tier2_vad_filter: true         # Silero VAD — skip silence, better accuracy
+  tier2_vad_min_silence_ms: 500
+  tier2_word_timestamps: true    # Enable temporal anchoring
+  
+  # T3: Firecrawl + comment sentiment for metadata enrichment
+  tier3_enabled: true
+  tier3_firecrawl_timeout: 30
+  
+  # Transcript Fidelity Score (TFS) thresholds
+  tfs_escalate_threshold: 0.7    # TFS < 0.7 → escalate T1→T2
+  tfs_quarantine_threshold: 0.5  # TFS < 0.5 → quarantine, alert Hivemind
+
+
+# Anti-bot infrastructure (Layer 2)
+proxy:
+  enabled: true
+  provider: "brightdata"         # or "iproyal", "oxylabs"
+  base_url: "brd-customer-X-zone-residential:PASS@host:port"
+  session_window_seconds: 480    # 8 min (80% of 10-min max)
+  rotation_on_ban: true
+
+rate_limiter:
+  base_rate: 1.0                 # tokens/sec (1 req/sec base)
+  max_tokens: 10                 # burst capacity
+  fail_window_seconds: 600       # 10 min rolling window
+  quarantine_threshold: 0.15     # 15% fail rate → quarantine
+  refill_on_200: 1.1             # 10% recovery on success
+  halve_on_429: true             # Halve refill rate on throttle
+
+
+# Semantic chunking (Layer 3)
+chunker:
+  boundary_model: "qwen2.5-0.5b"  # Local model for topic boundaries
+  cosine_threshold: 0.7           # Topic shift threshold
+  min_chunk_chars: 200
+  max_chunk_chars: 2000
+  min_chunk_duration_sec: 30
+  max_chunk_duration_sec: 300
+
+
+# CAS Deduplication (Layer 4)
+cas:
+  enabled: true
+  store_path: "data/youtube_cas"
+  
+  # Tier 1: Exact (SHA-256)
+  exact_enabled: true
+  
+  # Tier 2: Fuzzy (MinHash + LSH)
+  fuzzy_enabled: true
+  minhash_num_perm: 128
+  minhash_threshold: 0.85        # Jaccard similarity
+  lsh_threshold: 0.85
+  shingle_size: 3                # 3-grams
+  
+  # Tier 3: Semantic (embeddings)
+  semantic_enabled: true
+  semantic_threshold: 0.92       # Cosine similarity
+  embedding_model: "qwen3-embedding-0.6b"
+  embedding_dim: 768
+  
+  # Access boost (Arc Labs pattern)
+  access_boost_enabled: true
+  # boost = 1 + ln(1 + access_count)
+
+
+# Faithfulness Audit (Layer 6) — S2 Eval Integration
+faithfulness:
+  enabled: true
+  judge_model: "mistral-7b-q4_k_m"  # Local judge
+  nli_model: "deberta-v3-large-nli"  # For NLI+lex pattern
+  entailment_threshold: 0.85        # Score < 0.85 → flag for human review
+  
+  # AutoCal-R Calibration (CJE)
+  calibration_enabled: true
+  calibration_path: "data/calibration/judge_calibration.json"
+  oracle_label_fraction: 0.05       # 5% oracle labels
+  isotonic_regression: true
+  two_stage_fallback: true          # Auto mode selection
+
+
+# Freshness & Drift Detection (Layer 7)
+freshness:
+  enabled: true
+  
+  # Base-2 half-lives (Arc Labs) — days
+  half_lives:
+    fact: 180
+    preference: 90
+    event: 30
+    entity: 365
+    relation: 180
+    permanent: 999999
+  
+  # Domain → memory type mapping
+  domain_types:
+    ai_research: "fact"
+    philosophy: "entity"
+    tutorial: "fact"
+    news: "event"
+    opinion: "preference"
+    general: "fact"
+  
+  freshness_floor: 0.1
+  
+  # Drift detection
+  drift_detection_enabled: true
+  contradiction_threshold: 0.8
+  
+  # Retrievability flag (background worker)
+  retrievability_check_enabled: true
+  retrievability_conditions:
+    max_age_days: 365
+    max_last_accessed_days: 180
+    min_effective_freshness: 0.1
+    superseded_max_age_days: 365
+    require_active_relations: true
+
+
+# Relational Gnosis Graph (Layer 5)
+gnosis_graph:
+  enabled: true
+  store_path: "data/gnosis_graph"
+  
+  # Bi-temporal edges (Graphiti pattern)
+  bi_temporal_enabled: true
+  episode_provenance: true
+
+
+# Oracle Steering Queue (Layer 8)
+steering:
+  enabled: true
+  queue_path: "data/steering_queue"
+  human_review_threshold: "high"  # Priority >= HIGH triggers human review
+  default_node: "N6"
+  max_retries: 3
+
+
+# Somatic Checkpoints (Layer 9)
+somatic:
+  enabled: true
+  checkpoint_dir: "data/youtube_checkpoints"
+  save_every_segments: 50
+
+
+# Module integration (existing)
+sieve:
+  preserve_hesitations: true
+  remove_timestamps: true
+  remove_speaker_labels: true
+  url_replacement: "[URL]"
+  min_token_len: 3
+
+signer:
+  key_path: "config/keys/youtube_research.key"
+  key_id: "omega-youtube-research-key-2026"
+  algorithm: "HMAC-SHA256"
+  signer: "omega-youtube-research/v2.0"
+
+persistence:
+  atomic_writes: true
+  tmp_suffix: ".tmp"
+  db_path: "data/youtube_research/provenance.db"
+  chunk_size: 2000
+
+embedding:
+  qwen_model: "Qwen3-Embedding-0.6B"
+  mrl_dimension: 768
+  greek_bert_model: "ancient-greek-BERT"
+  greek_bert_dim: 768

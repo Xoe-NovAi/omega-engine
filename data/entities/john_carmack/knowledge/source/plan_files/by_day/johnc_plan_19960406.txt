@@ -1,0 +1,14 @@
+# ⬡ John Carmack .plan File — 1996-04-06
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960406.txt
+#
+use PVS to speed line of sight checks?  Is that any faster than doing
+	the line check, because it involves two point checks?
+swooping ai movement by checking distance to impact with forward trace?
+make minimum frame time a cvar, so you could clamp to 10fps
+runmove() builtin for progs?
+draw triggers debugging option (z buffer it)?
+look towards killer when dead

@@ -1,0 +1,17 @@
+# ⬡ OMEGA ⬡ MAAT ⬡ RESTIC_BACKUP_TIMER ⬡ v1.0.0 ⬡ 2026-07-22
+#
+# Systemd timer for daily restic backup
+# Runs daily at randomized time 3am ± 15min
+
+[Unit]
+Description=Daily Omega Engine Restic Backup Timer
+Requires=omega-restic-backup.service
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=15min
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

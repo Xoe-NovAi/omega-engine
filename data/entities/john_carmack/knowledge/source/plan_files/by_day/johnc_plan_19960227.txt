@@ -1,0 +1,16 @@
+# ⬡ John Carmack .plan File — 1996-02-27
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960227.txt
+#
+*	expand qbsp to 32 bit values for edges and faces. sigh.
+*	fixed key sticking problem
+
+seperate mouse sscaling values to allow negative up/down reversal
+frag bar shows first two digits, not last two when >= 100
+randomize head direction
+slime less damage
+drop to knees when crunched
+check deathmatch flags before precaching

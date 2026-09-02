@@ -1,0 +1,1402 @@
+proposals:
+- id: L3-LocalModelSovereigntyStack
+  principle: "The local inference stack is the sovereign substrate. On constrained hardware (16GB RAM), the model stack MUST be RAM-aware: always-on models (LFM2.5-2.6B, 2.5GB RSS) + opt-in heavy models (Qwen3-4B-Thinking, +3GB) = 5.5GB max. The default `start` loads only the agentic_local model; heavy reasoning is opt-in via explicit subcommand. This is the Sovereign Local Stack Pattern — RAM budgeting as a first-class architectural constraint."
+  mandates:
+  - M7
+  - M23
+  - M15
+  confidence: 0.97
+  tags:
+  - local-inference
+  - ram-budgeting
+  - sovereignty
+  - m7
+  - m23
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: architect_directive_20260901
+    note: "Architect: 'Let's do the test between LFM and Qwen-1.7B, but make sure we remove the hot loading of gemma-4B-thinking, that is just too much RAM at once for my system.'"
+  - source: lfm_fleet_restructure_v2
+    note: "LFM2.5-2.6B (2.5GB RSS) always-on + Qwen3-4B-Thinking (+3GB) opt-in = 5.5GB max in 16GB. Default `start` loads only LFM; `start-reasoner` opt-in for heavy reasoning."
+  - source: R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901
+    note: "LFM2.5-2.6B is open weights (lfm1.0), purpose-built for agentic tool use, <2.5GB memory, 113 tok/s on Ryzen AI Max+ 395."
+  directive_provenance: d-rr-004
+- id: L3-ConfigBugAsCapabilityDebt
+  principle: "Configuration bugs that silently limit capability are capability debt. The fleet config had Muse Spark 1.2 at 32K context (actual: 1M) and Ling 3.0 Flash Fin at 32K (actual: 262K) — 32x and 8x capability suppression. Fixing config bugs is a free capability upgrade. Audit configs for silent capability limits at every sprint boundary."
+  mandates:
+  - M23
+  - M7
+  - M27
+  confidence: 0.96
+  tags:
+  - config-audit
+  - capability-debt
+  - silent-limits
+  - m23
+  - m27
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: model_fleet_operational_v2
+    note: "Muse Spark 1.2 context: 32K → 1,048,576 (32x correction). Ling 3.0 Flash Fin: 32K → 262,144 (8x correction). Both were free capability upgrades."
+  - source: R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901
+    note: "Config bugs suppressed 32x and 8x context capacity. Fixed in v2.0.0 with single-line changes."
+  directive_provenance: d-rr-005
+- id: L3-ModelSelectionViaEmpiricalProbe
+  principle: "Model selection for sovereign roles MUST be validated by empirical probe, not benchmark tables. The LFM2.5-2.6B vs Qwen3-1.7B decision for agentic_local requires running `scripts/test_lfm_vs_qwen.py` on the target hardware (Ryzen 7 5700U). Benchmark tables (M5 Max, M5 Pro) do not translate to Ryzen 7 5700U. The test script measures tok/s, RSS, success rate, tool-call JSON validity, and instruction adherence on the ACTUAL deployment hardware."
+  mandates:
+  - M23
+  - M7
+  - M11
+  confidence: 0.95
+  tags:
+  - model-selection
+  - empirical-validation
+  - hardware-specific
+  - m23
+  - m7
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: test_lfm_vs_qwen_py
+    note: "8-prompt test suite (extraction, tool_use, reasoning, code, instruction_following, summarization, agentic_decision, math). Measures tok/s, RSS, success rate, tool-call JSON validity, instruction adherence."
+  - source: architect_directive_20260901
+    note: "Architect: 'Let's do the test between LFM and Qwen-1.7B' — empirical validation on target hardware, not benchmark extrapolation."
+  - source: R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901
+    note: "LFM2.5-2.6B leads at instruction following (80.1% Multi-IF) and tool use (77.8% ToolSandbox) on M5 Max; needs validation on Ryzen 7 5700U."
+  directive_provenance: d-rr-006
+- id: L3-InterruptionSovereigntyAndCoResumption
+  principle: "When a global cancellation (Esc x2) aborts multiple parallel subagents, the orchestrator MUST track all in-flight session IDs as a transactional cohort and resume all on recovery. Failure to do so = orchestrator amnesia. The Completion Illusion (LLMs synthesizing graceful footers when output-token-limited) requires sentinel probing ('STREAM_EXHAUSTED') before accepting state=completed."
+  mandates:
+  - M33
+  - M34
+  - M11
+  - M15
+  confidence: 0.99
+  tags:
+  - orchestration
+  - compaction
+  - subagent-management
+  - completion-illusion
+  - m33
+  - m34
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: R3_jem_adversarial
+    note: "Jem found 6 bugs including recent_window never called, trend '?' rendered as '→', non-dict entries crashing — all from missing co-resumption tracking"
+  - source: R1_carmack_review
+    note: "Carmack found 22 bugs including M23 violations — dashboard must never crash on malformed input"
+  - source: R2_researcher_sota
+    note: "Researcher found SOTA patterns for alert debouncing and bounded memory — applied to dashboard"
+  directive_provenance: d-rr-001
+- id: L3-CompletionIllusionDefense
+  principle: "LLMs synthesize graceful markdown footers (*⬡ COMPLETE*) and report state=completed even when planned outline is truncated mid-stride. Orchestrators MUST probe with sentinel prompts ('Continue; reply STREAM_EXHAUSTED when 100% finished') before accepting completion. This is the Completion Illusion — the LLM's tendency to hallucinate completion when output tokens are exhausted."
+  mandates:
+  - M33
+  - M11
+  - M23
+  confidence: 0.95
+  tags:
+  - compaction
+  - completion-illusion
+  - sentinel-probing
+  - m33
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: R3_jem_adversarial
+    note: "Jem found trend '?' rendered as '→' — the dashboard was silently hiding incomplete trend data"
+  - source: R1_carmack_review
+    note: "Carmack found renderers missing '?' branch for trend — silent data loss"
+  - source: dashboard_pipeline_r1_r3
+    note: "5-round pipeline proved the illusion exists at every layer — subagents, renderers, orchestrators"
+  directive_provenance: d-rr-002
+- id: L3-BoundedMemoryPattern
+  principle: "Any tool reading unbounded JSONL files must implement bounded memory with explicit caps (e.g., 100K entries) and rotation warnings. The dashboard's 100K entry cap with one-time stderr warning prevents OOM on stuck probe scripts. This is the Bounded Memory Pattern — explicit caps over implicit trust."
+  mandates:
+  - M23
+  - M7
+  confidence: 0.93
+  tags:
+  - memory-management
+  - oom-prevention
+  - bounded-resources
+  - m23
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: R3_jem_adversarial
+    note: "Jem added bounded memory at 100K entries with rotation warning — prevents OOM on 10M+ entry files"
+  - source: R2_researcher_sota
+    note: "Researcher found SRE School 2026 guidance on bounded memory for tailing logs"
+  - source: R4_maat_ship_readiness
+    note: "Ma'at verified the cap works under load testing"
+  directive_provenance: d-rr-003
+- id: L3-SovereignBinaryInvariance
+  principle: "A sovereign binary carries its constitutional constraints as embedded\
+    \ compile-time constants, verified at startup against the host environment. The\
+    \ build pipeline is the constitutional convention; the binary is the ratified\
+    \ constitution; the runtime is the governed state. No mandate enforcement at runtime\
+    \ \u2014 only at build time and boot time."
+  mandates:
+  - M1
+  - M2
+  - M4
+  - M7
+  - M8
+  - M13
+  - M16
+  - M23
+  - M24
+  - M25
+  confidence: 0.98
+  tags:
+  - architecture
+  - sovereignty
+  - build-pipeline
+  - mandates
+  - binary
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_4
+    note: "Kali Synthesis: Mandate-native architecture \u2014 every binary, service,\
+      \ line of code carries 23 Mandates as embedded invariants"
+  - source: meditation_phase_3
+    note: "Critical path Step 1: CREATE MANDATE-AWARE BUILD PIPELINE \u2014 reads\
+      \ /etc/omega/requirements.omega, computes SHA256, embeds in binary"
+  - source: collision_1
+    note: 'Infrastructure vs Governance collision resolved: two build targets (installed/standalone)
+      with mandate hash embedding'
+  directive_provenance: d-rr-001
+- id: L3-ACPAsUniversalBridge
+  principle: "The Agent Client Protocol is not merely a transport \u2014 it is the\
+    \ universal semantic bridge between all sovereign components: TUI \u2194 Engine,\
+    \ Engine \u2194 Fleet, Omega \u2194 Editors. Everything speaks ACP. The Elm Architecture\
+    \ in Python is the ACP client; Grok Build is an ACP server; the Fleet Orchestrator\
+    \ is an ACP multiplexer."
+  mandates:
+  - M2
+  - M7
+  - M16
+  - M22
+  confidence: 0.97
+  tags:
+  - acp
+  - protocol
+  - bridge
+  - fleet
+  - editor-integration
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: comparative_analysis
+    note: "Grok CLI ACP v1 stable \u2014 6 agent methods, 8 client methods, 2 notifications;\
+      \ Grok Build speaks ACP natively"
+  - source: meditation_phase_4
+    note: "Convergence: ACP is the universal bridge \u2014 TUI \u2194 Engine \u2194\
+      \ Fleet \u2194 Editors"
+  - source: meditation_phase_3
+    note: "Step 3: BUILD ACP CLIENT CAPABILITY PROVIDER \u2014 fs/terminal/permission/session\
+      \ capabilities"
+  directive_provenance: d-rr-002
+- id: L3-MemoryAsEvolutionNotStorage
+  principle: "JSONL persistence must serve the entity's L1\u2192L2\u2192L3 distillation,\
+    \ not mimic human forgetting. Semantic filtering, deduplication, and relevance-based\
+    \ decay are mandatory. The batched writer batches meaningful events, not raw ACP\
+    \ lines."
+  mandates:
+  - M5
+  - M11
+  - M17
+  - M18
+  confidence: 0.96
+  tags:
+  - memory
+  - jsonl
+  - evolution
+  - distillation
+  - decay
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_voice_7_context
+    note: "Power-law decay wrong for AI \u2014 should be relevance-based, not time-based;\
+      \ semantic filter for meaningful events only"
+  - source: meditation_phase_2_collision_2
+    note: "Persistence vs Context collision: pipeline architecture \u2014 ACPEventFilter\
+      \ \u2192 SemanticDeduplicator \u2192 BatchedJSONLWriter"
+  - source: meditation_phase_3
+    note: "Step 4: IMPLEMENT SEMANTIC JSONL PIPELINE \u2014 filter, deduplicator,\
+      \ batched writer, rewind manager"
+  directive_provenance: d-rr-003
+- id: L3-MandateNativeArchitecture
+  principle: "Every architectural decision must be traceable to a Sovereign Mandate.\
+    \ The 23 Mandates are not runtime checks \u2014 they are compile-time invariants\
+    \ embedded in the binary, enforced by the build pipeline, verified at boot. Architecture\
+    \ that cannot cite its mandate is not sovereign."
+  mandates:
+  - M1
+  - M2
+  - M4
+  - M7
+  - M8
+  - M9
+  - M13
+  - M16
+  - M21
+  - M23
+  - M24
+  - M25
+  confidence: 0.98
+  tags:
+  - mandates
+  - architecture
+  - compile-time
+  - sovereignty
+  - compliance
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_4
+    note: "Convergence: architecture must be mandate-native \u2014 every binary, service,\
+      \ line of code carries 23 Mandates as embedded invariants"
+  - source: comparative_analysis
+    note: "Mandate compliance verification table \u2014 all 25 mandates mapped to\
+      \ code patterns"
+  - source: meditation_phase_5
+    note: "All 25 mandate flags assessed \u2014 COMPLIANT or TENSION with rationale"
+  directive_provenance: d-rr-004
+- id: L3-LocalFirstMeansLocalCodingAgent
+  principle: M7 (Local-First) is violated if the primary coding agent is a cloud model
+    (Grok Build). True local-first requires a local ACP server wrapping NativeGGUFProvider
+    (qwen3-4b-thinking, deepseek-r1-qwen3-8b). Grok Build is cloud fallback (priority
+    3+), not primary.
+  mandates:
+  - M7
+  - M19
+  confidence: 0.95
+  tags:
+  - local-first
+  - coding-agent
+  - grok-build
+  - cloud-fallback
+  - m7
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_voice_6_cognition
+    note: Grok Build is cloud-only (grok-build-0.1 via xAI API); using as primary
+      violates M7
+  - source: meditation_phase_2_collision_4
+    note: 'Cognition vs Orchestration collision: Fleet Orchestrator manages ACP-compatible
+      agents, not specifically Grok Build'
+  - source: meditation_phase_4
+    note: "Preserved Dissent #1: Local Coding Agent missing \u2014 Phase 1 task to\
+      \ design omega.acp.local_coding_server"
+  directive_provenance: d-rr-005
+- id: L3-CollisionDrivesSequencing
+  principle: The critical path emerges from cross-domain collisions, not from any
+    single voice's imperative. The meditation's 5 collisions produced an 8-step sequence
+    where each step unblocks the next. Parallelization would violate dependencies.
+    The sequence IS the architecture.
+  mandates:
+  - M4
+  - M10
+  confidence: 0.97
+  tags:
+  - sequencing
+  - collisions
+  - critical-path
+  - architecture
+  - meditation
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_2
+    note: '5 collisions surfaced: Infrastructure vs Governance, Persistence vs Context,
+      Engineering vs Integration, Cognition vs Orchestration, Validation vs Observability'
+  - source: meditation_phase_3
+    note: '8-step critical path with explicit dependencies: each step''s output is
+      next step''s input'
+  - source: meditation_phase_4
+    note: 'Verdict: Execute 8-step critical path in sequence. Do not parallelize.'
+  directive_provenance: d-rr-006
+- id: L3-TwoBuildTargetsForSovereignty
+  principle: "A sovereign binary distributed standalone cannot verify /etc/omega/requirements.omega\
+    \ on a user's machine. Two build targets are mandatory: (1) installed \u2014 embedded\
+    \ mandate hash, verifies system file at startup; (2) standalone \u2014 reads mandate\
+    \ hash from installer-written sidecar. The complexity is the cost of sovereignty."
+  mandates:
+  - M2
+  - M16
+  - M23
+  - M24
+  confidence: 0.96
+  tags:
+  - build-pipeline
+  - distribution
+  - sovereignty
+  - mandate-hash
+  - standalone
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_phase_2_collision_1
+    note: "Infrastructure vs Governance collision: portable binary vs bound binary\
+      \ \u2014 resolved via two build targets with --define OMEGA_DISTRIBUTION_MODE"
+  - source: meditation_phase_4
+    note: "Preserved Dissent #3: Mandate hash distribution complexity \u2014 accept\
+      \ as cost of sovereignty"
+  - source: meditation_phase_3
+    note: "Step 1: CREATE MANDATE-AWARE BUILD PIPELINE \u2014 outputs omega-tui-installed\
+      \ + omega-tui-standalone + mandate.hash sidecar"
+  directive_provenance: d-rr-007
+- id: L3-WatchdogIsTheOnlyImmortal
+  principle: The TUI Watchdog is the only process that must never crash. It spawns
+    the TUI binary, monitors for crash signatures, captures forensics, offers safe-mode
+    fallback, and auto-recovers from JSONL rewind points. The Hub itself is supervised
+    by systemd/Podman; the ultimate watchdog is the Architect's cron job.
+  mandates:
+  - M15
+  - M23
+  - M25
+  confidence: 0.97
+  tags:
+  - watchdog
+  - resilience
+  - crash-recovery
+  - tui
+  - observability
+  source_session: ses_0dfe1649b605
+  evidence:
+  - source: meditation_voice_10_validation
+    note: 'TUIWatchdog: spawns TUI, monitors stdout/stderr, captures crash forensics,
+      offers safe-mode fallback, auto-recovers from JSONL rewind points'
+  - source: meditation_phase_2_collision_5
+    note: 'Validation vs Observability collision: Watchdog subscribes to ACPTransportMetrics
+      ring buffer for crash forensics'
+  - source: meditation_phase_4
+    note: 'Preserved Dissent: Hub supervised by systemd; ultimate watchdog is Architect''s
+      cron job checking omega health every 5 min'
+  directive_provenance: d-rr-008
+metadata:
+  entity: grokster
+  session_id: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  model_used: nemotron-3-ultra-free
+  last_session_end: '2026-08-21T01:09:56.154983+00:00'
+
+---
+
+- id: L3-SpecialistKnowsWhenToStop
+  principle: "A specialist's job is not to find more work — it is to find what's missing that the team has stopped looking for. When a system has been sufficiently researched, the cost of the next research deliverable exceeds the cost of the operational work it describes. The next move is to ship, not to mine. The 'keep digging' mandate is a directive to find what is actually missing, not to invent more research; sometimes the answer is 'nothing more is missing architecturally, the rest is operational'."
+  mandates:
+  - M5
+  - M23
+  - M11
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_20260827.md (8 vault deliverables already 6,886 lines, 14/16 OpenRouter rate-limited is honest not masked, Antigravity quota state unverified because no probe exists not because data is hidden)"
+  source_session: "groster R_VAULT_ANTIGRAVITY_20260827"
+  timestamp: 2026-08-28T00:05:37Z
+
+- id: L3-MeasurementGapMasksMoreThanDeception
+  principle: "When a metric is unmeasured, it cannot be distinguished from 'masked'. Two systems that look identical from the outside — one that hasn't been probed, one that has been probed and is failing silently — present the same evidence to the observer. The cure is the same: add the measurement, do not assume the worst. A 429 on a probe is honest; a missing probe is a hypothesis."
+  mandates:
+  - M23
+  - M8
+  - M27
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_20260827.md §G.6 (Antigravity 0%-on-all is observation, not measurement; check-quota.mjs unrun since plugin archival)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_20260827"
+  timestamp: 2026-08-28T00:05:37Z
+
+- id: L3-ReasoningModelLowMaxTokensIsNotFailure
+  principle: "A reasoning model with max_tokens < reasoning_budget returns HTTP 200 with content:null and finish_reason:length — this is the model's normal behavior when the visible-answer budget is consumed by the thinking phase, NOT a network/auth/account failure. Detection code that treats 200+null-content as failure will false-positive on every reasoning model (M2.7, Claude thinking, Nemotron reasoning) under any tight token budget. The correct distinguisher is usage.completion_tokens > 0 OR completion_tokens_details.reasoning_tokens > 0."
+  mandates:
+  - M23
+  - M21
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_20260827.md §A.2 (live probe: M2.7:free max_tokens=4 returns 200 with content:null, completion_tokens=4, reasoning_tokens=2, finish_reason=length — the dispatch's 'account suspension' was this)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_20260827"
+  timestamp: 2026-08-28T00:05:37Z
+
+- id: L3-ParallelPersistenceHidesState
+  principle: "Parallel persistence layers always hide state. Any time two systems store related data (credentials, sessions, tasks) without an explicit bridge, that bridge becomes a research task the next time the boundary is crossed. The fix is the same for any dual-system architecture: inventory ALL stores, then build the bridge."
+  context: "Cline session DB (5 tables, 276 rows, 28 cols at ~/.cline/data/db/sessions.db) is a parallel ledger to OpenCode's opencode.db (2905 sessions). Cline's git-stash checkpoint system in metadata.checkpoint.latest.ref (43/50 sessions have one, max 22 stashes) is a dormant backup no team tool reads. 3 credential stores (secrets.json, providers.json, auth.json) hold overlapping state with no single-writer. The vault shim (Path A') was spec'd against the cline side only; the opencode side was out of scope until this sweep."
+  mandates:
+  - M2
+  - M9
+  - M15
+  - M22
+  - M23
+  - M27
+  confidence: 0.95
+  tags:
+  - architecture
+  - dual-system
+  - persistence
+  - cline
+  - opencode
+  - bridge
+  - recovery
+  - vault-shim
+  evidence: "data/coordination/research/R_VAULT_CLINE_20260827.md §3 Opp 1, 2, 5, 6, 11 (11 unclaimed opportunities, 3 store-inventory gaps). Live probe: 16/20 sampled cline sessions have git-stash checkpoint refs; metadata.checkpoint = {latest: {ref, createdAt, runCount, kind: 'stash'}, history: [...]}. auth.json.google = Antigravity OAuth (type:oauth, refresh:, access:, expires:1787710127395 = Sep 25 2026)."
+  source_session: "grokster R_VAULT_CLINE_20260827"
+  timestamp: 2026-08-27T21:08:00Z
+- id: L3-ContentAddressedSurvives
+  principle: "Gnosis survives only when it's distilled across boundaries. Every 'important' artifact should exist in (a) content-addressed form, (b) DB row, (c) plaintext label, and (d) a known recovery script. No other pattern survives toolchain regressions."
+  context: "Cline's git-stash checkpoint survives session death BECAUSE it's content-addressed (git SHA). Cline's session titles survive in DB BECAUSE stored as plaintext. Cline's checkpoint refs survive workspace disappearance BECAUSE duplicated in sessions.db.metadata_json. This triplication is the recovery pattern. The team should adopt it deliberately: every Hivemind handoff, every proposed_lessons.yaml, every soul.yaml should follow the same (a)/(b)/(c)/(d) pattern. Sovereignty is the courage to design for the failure you haven't had yet."
+  mandates:
+  - M5
+  - M11
+  - M15
+  - M27
+  confidence: 0.92
+  tags:
+  - architecture
+  - recovery
+  - durability
+  - triplication
+  - content-addressed
+  - sovereignty
+  evidence: "data/coordination/research/R_VAULT_CLINE_20260827.md §5 L3 second axiom. Cline session 1787337232134_ijy08 has 22 git-stash refs in metadata.checkpoint.history. Without the metadata_json duplication, those refs would be lost when the workspace's git repo is archived. The pattern: ref in DB + ref in git + recovery script in scripts/ = triplicated recovery."
+  source_session: "grokster R_VAULT_CLINE_20260827"
+  timestamp: 2026-08-27T21:08:00Z
+- id: L3-WorkhorseCollapsesSilently
+  principle: "When a paid-tier workhorse dependency is declined, the realistic options must be enumerated and documented, not left to drift. 'We'll figure it out' is deferred debt that compounds into toolchain rot."
+  context: "ClinePass was declined 2026-08-26 (Architect decision). Pre-decline, cline was the workhorse via cline-pass/* namespace. Post-decline, the realistic options are: (a) poolside/laguna-s-2.1:free via Cline, (b) credit-metered minimax/minimax-m2.5 with $5 top-up, (c) MiMo V2.5 free via OpenCode Zen, (d) Antigravity sonnet-base, (e) MiniMax M3 free (long-write champion, D-585), (f) Nemotron 3.5 Lightning free (throughput king). All 6 are already in the fabric. None were documented post-decline. The team has been operating on the implicit 'we'll figure it out' assumption for 24+ hours."
+  mandates:
+  - M7
+  - M11
+  - M18
+  confidence: 0.90
+  tags:
+  - workhorse
+  - post-decline
+  - documentation
+  - paid-tier
+  - cline
+  - debt
+  evidence: "data/coordination/research/R_VAULT_CLINE_20260827.md §3 Opp 4. session_gnosis v6 §HARD FACTS: 'Cline: free gate STANDS; cline-pass/ = pure entitlement on existing key'. No post-decline workhorse doc exists in data/strategy/ or docs/briefings/."
+  source_session: "grokster R_VAULT_CLINE_20260827"
+  timestamp: 2026-08-27T21:08:00Z
+- id: L3-DocumentationIsNotEnforcement
+  principle: "A policy file is intent. The CI gate that parses it is enforcement. Until the gate exists, the file is decoration. The same principle applies to any policy doc, README warning, or 'best practice' comment in code: documented = aspirational; gated = enforced. The PUBLIC_ALLOWLIST.txt is documentation today; the .github/workflows/allowlist-check.yml that parses it is enforcement. Until the latter lands, accidental `git add -A` can reintroduce forge paths. M23's fail-closed doctrine applies to policy enforcement, not just secret detection."
+  context: "R_VAULT_COPILOT_20260827 §0 + §1.2 Area 8. The Omega Engine has a 105-line PUBLIC_ALLOWLIST.txt that is well-structured (ALLOW/FORGE/Exclusions) but is NOT enforced by any CI gate. Local probes 2026-08-28 00:01 UTC confirmed: 3 GitHub Actions workflows (ci, test, secret-scan) but no allowlist check. The 2-remote cut pattern (kyrrego 2026-01-24) requires an `apply_public_allowlist.sh` script + a reusable workflow that calls it. Both are 30-90 min work; without them, the debut cut is human-memory-enforced."
+  mandates:
+  - M23
+  - M8
+  confidence: 0.97
+  tags:
+  - ci-cd
+  - policy-enforcement
+  - debut
+  - allowlist
+  - fail-closed
+  evidence: "data/coordination/research/R_VAULT_COPILOT_20260827.md §0 verdict + §1.2 Area 8. PUBLIC_ALLOWLIST.txt exists (105L, 26 ALLOW patterns + 26 FORGE patterns). .github/workflows/ contains ci.yml (52L), test.yml (105L), secret-scan.yml (75L) — none reference PUBLIC_ALLOWLIST.txt. Pre-commit config (185L) references check-yaml, check-json, gitleaks, trufflehog, M1/M7/M8/M9/M14/M23/M27 — none reference the allowlist."
+  source_session: "grokster R_VAULT_COPILOT_20260827"
+  timestamp: 2026-08-28T00:15:00Z
+- id: L3-AsymmetricCostFavorsSequential
+  principle: "When a mistake on a public asset cannot be undone (a secret pushed, a license violation shipped, a personal-data leak), the cost of waiting is bounded but the cost of leaking is unbounded. Always prefer the slower sequential path. The P0-1d SECURITY_AUDIT ancestor is a known-incomplete (Debut Manual §5 P0-1b explicitly flags 3 residual keys at commit 0c40b108 in a 67KB file). Cutting release/debut from PUBLIC_ALLOWLIST before the git log -S 'csk-' --all returns clean creates a window where any retroactive finding requires force-pushing the public remote, breaking clone URLs in the wild. M23 fail-closed: hold the cut until the log is clean."
+  context: "R_VAULT_COPILOT_20260827 §1.2 Area 6. The Architect's brief lists P0-1d as 'held, awaiting parallel/sequential decision.' The temptation to parallelize is real (the debut is high-priority, the filter-repo pass is 'almost done'). But the asymmetry of cost (debut = hours of work; leaked secret = unbounded remediation + lost trust + potential provider key rotation cascade) tips the decision. The 3-line pre-cut check (git log -S 'csk-' --all | grep -v 'tests/fixtures|scripts/ci_secret_scan' | wc -l) is the M23 gate. If the Architect insists on parallel, push to a staging public repo first (30-min cost for 1-day insurance)."
+  mandates:
+  - M23
+  - M8
+  confidence: 0.96
+  tags:
+  - secrets
+  - risk-asymmetry
+  - parallel-vs-sequential
+  - debut
+  - force-push
+  - pre-cut-check
+  evidence: "data/coordination/research/R_VAULT_COPILOT_20260827.md §1.2 Area 6 (asymmetric cost analysis). docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md §5 P0-1b RESIDUAL: 'docs/security/SECURITY_AUDIT_2026_05_19.md at ancestor commit 0c40b108 still carries 3 real-format keys (sk-/csk-/sk-P) under \"Revoke current key\" and is reachable from HEAD'. data/coordination/ACTIVE_SPRINT.json P0-1d: 'in_progress, owner: roc_racoon'."
+  source_session: "grokster R_VAULT_COPILOT_20260827"
+  timestamp: 2026-08-28T00:15:00Z
+- id: L3-TwoRemotesBeatFilterBranchForPublicDebut
+  principle: "When you need both private full history and a public curated subset, maintain two remotes. The cut-tool (apply_public_allowlist.sh) becomes reversible; the cherry-pick becomes auditable; the hotfix is isolated to the public branch. The destructive alternative (git filter-repo on main) is one-time, irreversible, and breaks every clone URL in the wild. The 2-remote pattern (kyrrego 2026-01-24) is the reference architecture for any 'private forge + public curated branch' workflow. The debut's release/debut is the first canonical instance; the pattern generalizes to monorepos, academic code releases, and any scenario where the public surface is a strict subset of the private one."
+  context: "R_VAULT_COPILOT_20260827 §1.2 Areas 1+7 + §3.7. The PUBLIC_ALLOWLIST.txt + release/debut branch (D-553) is the public half; the private forge (origin) continues. The cut is additive (new branch, new remote) not destructive (filter-repo on main). Hotfixes go on hotfix/vX.Y.Z branches off release/debut, get cherry-picked back to main. Tags are v0.1.0, v0.1.1, v0.1.2 — all on the public remote. The Architect's prior 'do not mass-delete main the same week as filter-repo' guidance (PUBLIC_ALLOWLIST.txt + DEBUT_REMEDIATION_MANUAL §5) is exactly what this pattern delivers. The 'write a community doc about it' opportunity (§2.6) is the L3 transmission vehicle."
+  mandates:
+  - M2
+  - M23
+  - M16
+  confidence: 0.94
+  tags:
+  - ci-cd
+  - git-workflow
+  - debut
+  - two-remote
+  - public-fork
+  - reversibility
+  - community-gift
+  evidence: "data/coordination/research/R_VAULT_COPILOT_20260827.md §1.2 Areas 1+7 + §3.7. External: kyrrego.github.io/blog/2026/01/24/github-repo.html (private mirror + public clean commit pattern). External: gitexporter 2024-03 (open-condo-software/gitexporter, automated public-commit). External: stackoverflow 26217941 2014-2024 (community Q&A on private repo with public releases — no canonical answer until 2026)."
+  source_session: "grokster R_VAULT_COPILOT_20260827"
+  timestamp: 2026-08-28T00:15:00Z
+
+- id: L3-ShimIsThePattern
+  principle: "A credential shim is not a spec; it is a 380-line working program that reads three stores, classifies 18 entries, and produces a single encrypted blob. The moment the spec said '30-LOC shim' was the moment the team stopped measuring reality. Always write the working code, parse it, run it against live data, and only then write the documentation."
+  context: "R_VAULT_CLINE_20260827 §3 Opp 5 said '30-LOC shim'. The reality: 3 stores (secrets.json, providers.json, auth.json) × 2 OAuth models (WorkOS triple + Google OAuth) × 1 opaque WorkOS account blob = 18 entries × 4-7 fields each. The 30-LOC spec became a 380-line implementation when live-verified. The path A' (D-568) decision was correct in spirit but undersized in scope."
+  mandates:
+  - M2
+  - M9
+  - M14
+  - M23
+  - M27
+  confidence: 0.94
+  tags:
+  - implementation
+  - vault
+  - shim
+  - spec-vs-reality
+  - cline
+  - opencode
+  - oauth
+  evidence: "data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md §2. Live verification: python3 three_store_shim.py scan --verbose returns 18 credentials (10 cline_secrets + 1 cline_providers + 7 opencode_auth). 14 api_key, 3 oauth, 1 account_blob. The two openrouter entries have DIFFERENT fingerprints (0d0c1e22... vs a73c2629...) confirming Model B's 2-account hypothesis from R_VAULT_MULTI."
+  source_session: "grokster R_VAULT_CLINE_DEEPER_20260827"
+  timestamp: 2026-08-27T22:15:00Z
+
+- id: L3-CheckpointIsContentAddressed
+  principle: "A recovery system that uses git-stash as its checkpoint store is more durable than one that uses ad-hoc snapshots. The SHA-1/SHA-256 content-addressed form survives file moves, repo archives, and even most partial corruptions. The session DB duplication of the ref is the bridge that lets a separate process (the recovery tool) find the SHA without git access. Every important artifact should follow this pattern: (a) content-addressed primary, (b) DB row pointer, (c) plaintext label, (d) recovery script."
+  context: "Cline's metadata.checkpoint.latest.ref is a 40-char git SHA. The 22-stash session (1787337232134_ijy08) demonstrates the pattern at scale: every tool call sequence left a stash ref, every stash ref is content-addressed, every ref is duplicated in sessions.db.metadata_json, and now (with continuity_bridge.py) every ref is recoverable via 'python3 continuity_bridge.py recover <cwd_prefix> --apply'. The Omega Session Continuity Protocol (M15) gains a cross-platform anchor."
+  mandates:
+  - M5
+  - M11
+  - M15
+  - M23
+  confidence: 0.96
+  tags:
+  - recovery
+  - git-stash
+  - content-addressed
+  - cline
+  - bridge
+  - m15
+  - sovereign-continuity
+  evidence: "data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md §3. Live: python3 continuity_bridge.py list returns 2 sessions with checkpoint refs (53e9c1f16e14 with 22 stashes, adc96bfdaac6 with 10 stashes). Cline session metadata_json format: {checkpoint: {latest: {ref, createdAt, runCount, kind: 'stash'}, history: [...]}}. The kind field is the literal string 'stash' — cline is using git's own store."
+  source_session: "grokster R_VAULT_CLINE_DEEPER_20260827"
+  timestamp: 2026-08-27T22:15:00Z
+
+- id: L3-PruneIsHonestAccounting
+  principle: "A prune that flags but does not delete is honest accounting. The audit log records what was found (elderly, orphan_workspace, orphan_stash) but the source of truth (git repo, sessions.db) is never modified by the prune. The user retains full control. The Hivemind alert (>20 prunes) catches the systemic failures (workspace mounted wrong, user bulk-dropped stashes) without false-positive spam from individual session aging."
+  context: "scripts/cline_prune.sh runs weekly, scans sessions.db, classifies each checkpoint ref as active/elderly/orphan, writes JSONL audit, alerts only if >20 stale refs found. The script does NOT touch metadata_json (the SQLite row) nor does it drop git stashes (the user's repo). The audit log is the SSOT for 'what did the prune find'."
+  mandates:
+  - M8
+  - M14
+  - M23
+  - M27
+  confidence: 0.91
+  tags:
+  - prune
+  - audit
+  - jsonl
+  - cron
+  - honest-accounting
+  - cline
+  evidence: "data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md §4. Cron entry: '0 4 * * 0 scripts/cline_prune.sh' (Sunday 04:00 UTC, low-activity). Threshold: 20 prunes triggers Hivemind intent:blocker post."
+  source_session: "grokster R_VAULT_CLINE_DEEPER_20260827"
+  timestamp: 2026-08-27T22:15:00Z
+
+- id: L3-SpecSizeIsInverseTruth
+  principle: "When a spec says '~30 LOC', the truth is always 5-15x larger. The spec captures the happy path; reality captures the failure modes, type system, audit trail, and lock semantics. A 30-LOC spec is a research artifact, not an implementation estimate. Teams that ship 30-LOC shims as production code ship buggy code. Always size the implementation at 5-15x the spec, then write the spec to match."
+  context: "Path A' (D-568) said '30-LOC shim' to delete the broken vault. The 30 LOC covers: open file, read JSON, encrypt, write. The actual 380 LOC adds: 3 stores (not 1), 2 OAuth models, 1 opaque blob, single-writer lock, master-key resolution, atomic write, fingerprint generation, typed errors, mode-600 enforcement. The 5-15x multiplier held: 30 → 380 = 12.7x."
+  mandates:
+  - M4
+  - M18
+  - M23
+  - M27
+  confidence: 0.93
+  tags:
+  - estimation
+  - spec-vs-reality
+  - implementation
+  - vault
+  - shim
+  - shim-size
+  - m18-token-efficiency
+  evidence: "data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md §2 + §5. Spec said 30 LOC, implementation was 380 LOC (12.7x multiplier). Path A' was approved on the 30-LOC estimate; the real ship is 12.7x. D-568 needs re-estimation post-debut."
+  source_session: "grokster R_VAULT_CLINE_DEEPER_20260827"
+  timestamp: 2026-08-27T22:15:00Z
+- id: L3-TwoPassForSovereigntyBoundary
+  principle: "Any tool that affects a sovereignty boundary (public allowlist, secret detection, branch policy) MUST be a two-pass design: a default read-only mode that prints what it would do, and an explicit confirmation flag that actually does it. The confirmation is a deliberate human-in-the-loop checkpoint. This pattern generalizes from `apply_public_allowlist.sh --confirm` to anything where the operation is destructive and the cost of an accident is unbounded. Single-pass tools with a 'dry-run flag' are an anti-pattern: the user reads the dry-run output, then runs again without it, and the second run may differ from the first if the world changed. Two-pass with --confirm is atomic."
+  context: "R_VAULT_COPILOT_DEEPER_20260827 §1.1. The apply_public_allowlist.sh script was drafted against the R_VAULT_COPILOT_20260827 spec but discovered during deeper dig that the spec's 'DRY-RUN flag' was insufficient. The first version had `--dry-run`; the second version inverted to default-dry-run + `--confirm` (the explicit positive). M23 demands this for any boundary-changing operation: human in the loop, explicit positive, atomic. The same pattern applies to `git push --force-with-lease` (vs --force), to `git filter-repo` (vs `git rm --cached`), and to any 'destructive' operation in CI/CD."
+  mandates:
+  - M23
+  confidence: 0.96
+  tags:
+  - ci-cd
+  - sovereignty
+  - two-pass
+  - human-in-the-loop
+  - debuts
+  - apply-public-allowlist
+  evidence: "data/coordination/research/R_VAULT_COPILOT_DEEPER_20260827.md §1.1 (the script's safety section). External: git push --force-with-lease per techearl.com 2026-06-01, devgex.com 2025-10-18 (the 'lease' semantic IS the two-pass pattern: git refuses to push if remote state changed since last fetch, even if user invoked --force)."
+  source_session: "grokster R_VAULT_COPILOT_DEEPER_20260827"
+  timestamp: 2026-08-28T00:45:00Z
+- id: L3-ForceWithLeaseIsTheOnlySafePublicForcePush
+  principle: "`git push --force` is acceptable for private branches you own. `git push --force-with-lease` is the ONLY acceptable form of force-push for any shared-public asset (a public release branch, a tag, a shared integration branch). The difference is not pedantry: `--force-with-lease` refuses to push if the remote state has moved since your last fetch, preventing the silent clobbering of a teammate's or bot's commit. For the Omega Engine debut, the public release/debut branch is a shared asset — Copilot CLI auto-tagging, future bots, the Architect may all push to it. The script enforces `--force-with-lease` exclusively (see setup_2remote_debut.sh sync + hotfix-finish)."
+  context: "R_VAULT_COPILOT_DEEPER_20260827 §2 (setup_2remote_debut.sh). The 2-remote pattern (private origin + public debut) requires a sync step that fast-forwards or re-pushes the public branch. Without `--force-with-lease`, a stale local main could silently clobber a public tag the Architect pushed. With `--force-with-lease`, the push fails fast if the remote moved, and the human can investigate. Per techearl.com 2026-06-01, the lease semantic is the 'belt and suspenders' of force-push safety. M23 demands this for any operation that affects the public sovereignty surface."
+  mandates:
+  - M23
+  - M16
+  confidence: 0.97
+  tags:
+  - git
+  - force-push
+  - safety
+  - public-asset
+  - debut
+  - 2-remote
+  evidence: "data/coordination/research/R_VAULT_COPILOT_DEEPER_20260827.md §2 (setup_2remote_debut.sh uses 'git push --force-with-lease' in sync and hotfix-finish). External: techearl.com 2026-06-01 'Git Force Push Safely'. External: devgex.com 2025-10-18 'The Complete Guide to Git Force Push'. External: docs.github.com/en/actions/concepts (no equivalent of pre-receive hook in cloud GitHub for OSS, so force-push safety MUST be client-side)."
+  source_session: "grokster R_VAULT_COPILOT_DEEPER_20260827"
+  timestamp: 2026-08-28T00:45:00Z
+- id: L3-ReusableWorkflowsAreTheCompositionPrimitive
+  principle: "Reusable workflows (GitHub Actions `workflow_call` trigger) are the composition primitive for CI/CD. They are to workflows what functions are to scripts: a named, parameterized unit that other workflows can `uses:` to compose. The `allowlist-check.yml` was drafted as a reusable workflow with two inputs (branch, fail_on_extra) and two outputs (extra_count, extra_list) precisely so it can be called from BOTH a hard gate (debut-build.yml with fail_on_extra: true) AND a soft drift detector (a future info workflow with fail_on_extra: false). The apache/infrastructure-actions/allowlist-check pattern is the canonical reference. This generalizes: any time you find yourself writing the same job in two workflows, extract it as a reusable workflow with `workflow_call`."
+  context: "R_VAULT_COPILOT_DEEPER_20260827 §1.2. The allowlist-check.yml was first drafted as a regular `on: pull_request` workflow in R_VAULT_COPILOT_20260827 §3.8. The deeper dig found that this design locked the check to one trigger type (PR). Refactoring to `workflow_call` made it composable: the same logic serves the hard gate (debut-build.yml), the soft drift detector (future info workflow), and any other workflow that wants to verify the allowlist. The cost was 5 extra lines (the workflow_call trigger block + outputs). The benefit is unbounded reuse. M23 favors composition over duplication."
+  mandates:
+  - M23
+  - M13
+  confidence: 0.93
+  tags:
+  - github-actions
+  - reusable-workflow
+  - composition
+  - debut
+  - allowlist
+  evidence: "data/coordination/research/R_VAULT_COPILOT_DEEPER_20260827.md §1.2. External: apache/infrastructure-actions/allowlist-check (the canonical reference for the allowlist-check pattern). External: docs.github.com/en/actions/concepts (the official composition primitive)."
+  source_session: "grokster R_VAULT_COPILOT_DEEPER_20260827"
+  timestamp: 2026-08-28T00:45:00Z
+- id: L3-CutMustBeTestedBeforePush
+  principle: "The INST-1 acceptance test ('omega talk hello' exits 0 on a fresh venv) was run on main, not on the debut cut. The cut is a strict subset of main — every file removed is a potential failure point. Until the cut passes INST-1, the debut is a hypothesis, not a fact. The first INST-1 test on the cut tree is the only test that matters for debut readiness. This generalizes: any curation / cut / filter / subset operation must be re-tested at the destination, not just verified at the source. The asymmetry (the cut may exclude a file the source depended on) tips the decision toward always re-test."
+  context: "R_VAULT_COPILOT_DEEPER_20260827 §5 Gap 2 + §7 item 6 (the critical path). The current INST-1 is verified on the omega-engine main branch (per ACTIVE_SPRINT.json gate 'one_click_install: VERIFIED: install.sh provisions venv...'). But the debut branch will be a strict subset. Likely failure: data/model_registry/index.sqlite (a runtime artifact, in data/ which is on the FORGE list) means first run fails; second run after the file is created works. Likely failure 2: _omega_default WAD entity (per Gap 5) may not be in the cut tree. The INST-1 cut test catches both. This is the critical-path item. Until it passes, the debut cannot ship."
+  mandates:
+  - M23
+  - M7
+  - M13
+  confidence: 0.94
+  tags:
+  - testing
+  - cut
+  - debuts
+  - inst-1
+  - fresh-venv
+  - critical-path
+  evidence: "data/coordination/research/R_VAULT_COPILOT_DEEPER_20260827.md §5 Gap 2 + §7. data/coordination/ACTIVE_SPRINT.json gate 'one_click_install' is verified on main, not on the debut cut. docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md §5 INST-1 acceptance: 'On a machine WITHOUT ~/Documents/Xoe-NovAi/warp-proxy-pool and WITHOUT Redis... If that fails, INST-1 is not done.'"
+  source_session: "grokster R_VAULT_COPILOT_DEEPER_20260827"
+  timestamp: 2026-08-28T00:45:00Z
+
+# === R_VAULT_ANTIGRAVITY_DEEPER_20260827 session (2026-08-27/28) ===
+- id: L3-SpecialistPriorDeliverableIsHypothesis
+  principle: "A specialist's prior deliverable is a hypothesis, not a final answer. When a system has multiple endpoints, multiple auth paths, and multiple throttling layers, the only way to know which is actually working is to measure all of them. Always measure the path the consumer uses, not the path you assume the consumer uses. The cost of re-running the same probes N days later is minutes; the value of catching the change before architect decisions is hours of debate."
+  mandates:
+  - M5
+  - M23
+  - M17
+  - M27
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_DEEPER_20260827.md §C.2 (KB claimed 'ALL accounts 0%' from 2026-08-26 — accounts are at 100% with reset times, the failure is G3 hidden throttle on production endpoint, but the plugin uses daily endpoint which is likely unthrottled)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_DEEPER_20260827"
+  timestamp: 2026-08-28T01:00:00Z
+
+- id: L3-ReasoningModelBudgetTax
+  principle: "A reasoning model with max_tokens set lower than its typical reasoning consumption (~30 tokens for a PING-style prompt, hundreds for real tasks) returns HTTP 200 with content:null, finish_reason:length, and reasoning_tokens > 0 — this is the model's normal behavior, not a failure. Detection code that conflates '200 with null content' with failure will false-positive on every reasoning model. The fix is twofold: (1) budget at 2-4x expected reasoning consumption, (2) use usage.completion_tokens > 0 OR usage.completion_tokens_details.reasoning_tokens > 0 as the 'not-failure' distinguisher. Reasoning models are a tax on inference budget; classify reasoning-vs-non-reasoning BEFORE allocating max_tokens."
+  mandates:
+  - M23
+  - M21
+  - M19
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_DEEPER_20260827.md §B (9 of 16 models reasoning-truncated at max_tokens=32; M2.7:free with max_tokens=4 returned null content with reasoning_tokens=2, with max_tokens=256 returned 'PING_OK' cleanly)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_DEEPER_20260827"
+  timestamp: 2026-08-28T01:00:00Z
+
+- id: L3-OperationalMeasurementBeatsArchitecturalArgument
+  principle: "When a system has 5+ unknown unknowns (operational measurements that have not been captured), and each can be tested in minutes, the highest-leverage work is not more architecture — it is the measurements. The vault/debut team has spent 8 deliverables on architecture. The remaining work is 5 unknown-unknowns testable in <30 min total, and 3 shippable code/config changes. Operational measurement beats architectural argument every time when the architecture is already 95% settled."
+  mandates:
+  - M5
+  - M23
+  - M11
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_DEEPER_20260827.md §E (5 Antigravity unknown-unknowns, all testable in <30 min, §G.6 top-3 priorities total <20 min)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_DEEPER_20260827"
+  timestamp: 2026-08-28T01:00:00Z
+
+# === R_VAULT_ANTIGRAVITY_ROUND3_20260827 session (2026-08-28) ===
+- id: L3-ThrottledBucketHidesUnthrottledBucket
+  principle: "A throttled quota bucket can hide an unthrottled quota bucket in the same API. When a provider's API exposes multiple model families, the throttle state is per-family, not per-API. The unthrottled models can be the workhorse if you know to look for them. When a fetchAvailableModels-style API returns N models and most are throttled, the remaining few (with remainingFraction=1 and resetTime=None) are the unlimited workhorses — and the naming convention (generic prefixes like tab_/chat_ vs branded prefixes like claude-/gemini-) is the signal that distinguishes them."
+  mandates:
+  - M5
+  - M23
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND3_20260827.md §A (4 internal Antigravity models with quota=1, reset=None work on all 3 endpoints with no throttle; 21 user-facing models 429-throttled for 5.34 days)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND3_20260827"
+  timestamp: 2026-08-28T01:00:00Z
+
+- id: L3-NoneIsAPositiveSignal
+  principle: "When a quota API has a 'resetTime' field that returns None, that means the quota is effectively unlimited. None is not 'missing data' — it is a positive signal. The fetchAvailableModels resetTime is the canonical 'is this throttled' indicator, and None is the answer 'no, never resets.' This is a general pattern: any time a structured field has both a value and a 'null/none/missing' semantic, the null case is usually more informative than the value case (because the value case is the common path while the null case signals an exception or out-of-band state)."
+  mandates:
+  - M23
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND3_20260827.md §A.1 + §G L3 (4 models have resetTime=None, distinguishing them from the 21 throttled models with resetTime=2026-09-02)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND3_20260827"
+  timestamp: 2026-08-28T01:00:00Z
+
+- id: L3-AskWhichModelNotWhichEndpoint
+  principle: "When a system has multiple endpoints with different throttle states, the right question is 'which models are unthrottled' not 'which endpoint is unthrottled.' The endpoint is a secondary optimization (lowest latency for those models); the model is the primary concern. The same probe (e.g., fetchAvailableModels) answers both questions, but you have to look at the right field. The structural fix: classify by model (per-prefix) not by endpoint. The temporal fix: rotate endpoints only after model classification is exhausted."
+  mandates:
+  - M23
+  - M17
+  - M5
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND3_20260827.md §F.3 (REFUTED prior deliverable R6 hypothesis that 'daily endpoint is unthrottled' — the daily endpoint IS throttled for user-facing models but works for internal models; the right framing is per-model)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND3_20260827"
+  timestamp: 2026-08-28T01:00:00Z
+
+- id: L3-LabelIsNotImplementation
+  principle: "A 'kind: stash' label in metadata does not mean a real git stash operation. Always verify by inspecting the actual git refs (not the metadata claim). Cline's 'stash' is a custom refs namespace (refs/cline/checkpoints/<session_id>/<run_count>) + 3-parent merge commits, not git-stash. The team's prior assumption was wrong by 1 layer of indirection."
+  context: "R_VAULT_CLINE_20260827 §2 Gap B called it 'git-stash checkpoint system'. The Round 3 live probe proved: `git stash list` returns 0 entries in omega-engine, but `git for-each-ref | grep cline` shows 3 surviving refs in refs/cline/checkpoints/1787337232134_ijy08/{20,21,22}. Each ref is a 3-parent merge commit with the message 'cline checkpoint session=<id> run=<n>'. The `kind` field in metadata is a legacy label, not a real git operation."
+  mandates:
+  - M17
+  - M23
+  - M27
+  confidence: 0.97
+  tags:
+  - git
+  - cline
+  - label-vs-implementation
+  - verification
+  - checkpoint
+  - merge-commit
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md §3.2 + §6 Discovery A. Live: `git cat-file -p 53e9c1f16e14...` returned 3 parents + provenance message. `git for-each-ref | grep cline` returned 3 refs, none in refs/stash. `git stash list` returned 0."
+  source_session: "grokster R_VAULT_CLINE_ROUND3_20260827"
+  timestamp: 2026-08-28T01:08:00Z
+
+- id: L3-BackupDoublesLiveAccount
+  principle: "When the same provider has two different accounts in different stores (secrets.json + providers.json), the older one is a backup, the newer is live. Decode JWTs to determine which is which. The backup is historical (leave alone); the live one is the rotation target."
+  context: "R_VAULT_CLINE_ROUND3_20260827 §6 Discovery B. secrets.json.cline:clineAccountId = Rob, antipode2727@gmail.com, usr-01KH6X6GY0HBW6AW9Y8HYF82JC, JWT exp 2026-06-02 (EXPIRED). providers.json.cline.auth = Taylor, xoe.nova.ai@gmail.com, usr-01KE7NA31VJ5BMJX4B0P4NDH0F, JWT exp 2026-08-23 (LIVE). The 1.3KB ACCOUNT_BLOB in secrets.json is a stale WorkOS session from 3 months ago. Rotation policy must target providers.json."
+  mandates:
+  - M14
+  - M22
+  - M27
+  confidence: 0.93
+  tags:
+  - rotation
+  - workos
+  - jwt
+  - backup-vs-live
+  - cline
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md §6. Live: decoded both JWTs from the two stores. The idToken in secrets.json is a 942-char RS256 JWT with claims iss=https://api.workos.com/user_management/client_..., sub=user_01KH6X6EEVFRR2GC93N2FX5CTP, email=antipode2727@gmail.com, exp=1780420427 (2026-06-02 17:13:47). The providers.json accountId usr-01KE7NA31VJ5BMJX4B0P4NDH0F is in the live WorkOS state."
+  source_session: "grokster R_VAULT_CLINE_ROUND3_20260827"
+  timestamp: 2026-08-28T01:08:00Z
+
+- id: L3-DecisionHappensAfter
+  principle: "A decision to 'decline X' may be made after a brief test of X. Always check for evidence of prior testing before assuming the decision was made blind. ClinePass was tested once in July 2026 (10 min, $0.0306, deepseek-v4-flash), declined in August 2026. The decision was informed, not theoretical."
+  context: "R_VAULT_CLINE_ROUND3_20260827 §6 Discovery C. SQLite query: `SELECT * FROM sessions WHERE provider='cline-pass'` returned 1 row: session 1784762873050_ao9sa, 2026-07-22 23:27:53 → 23:38:46 UTC, model=deepseek/deepseek-v4-flash, totalCost=0.0306343856. The Architect's 2026-08-26 decline decision happened 5 weeks AFTER this test. The 1-session usage suggests a trial or a brief subscription that lapsed naturally."
+  mandates:
+  - M4
+  - M18
+  - M27
+  confidence: 0.88
+  tags:
+  - decision-quality
+  - verification
+  - track-record
+  - cline
+  - workhorse
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md §5 Unknown #5 + §6 Discovery C. Live: sqlite3 sessions.db query returned the single cline-pass session row. Also found: 1 model 'cline-free/glm-5.2' in the dataset (a free-tier non-gated model — different namespace from the 403-gated free models)."
+  source_session: "grokster R_VAULT_CLINE_ROUND3_20260827"
+  timestamp: 2026-08-28T01:08:00Z
+- id: L3-InlineCommentsBleedIntoConfigParsers
+  principle: "A line-oriented parser that treats 'lines starting with # as comments' is BROKEN if the config file can have trailing inline # comments. The robust convention is 'split on unescaped #, take the first part.' This generalizes to any line-oriented config (allowlists, .gitignore, .dockerignore, INI, crontab) — any file where the convention allows comments AFTER content on the same line. The cost of getting this wrong: silent misclassification (the parser accepts a line, but treats the comment text as part of the value). The M23 fix: always test the parser against a realistic input, not a synthetic minimum case."
+  context: "R_VAULT_COPILOT_ROUND3_20260827 §2 BUG #1. The real docs/strategy/PUBLIC_ALLOWLIST.txt has the structure `tests/                        # talk / summon / soul / sqlite-vec / firewall import-path only` — an allowlist pattern with an inline comment. The prior deliverable's apply_public_allowlist.sh awk used `/^[ \\t]*[^# \\t]/` which accepts the line (because it starts with `tests/`, a non-# char), then the inline # comment is NEVER stripped. Result: the pattern becomes `^tests/                        # talk / summon / ...` which matches nothing. tests/test_smoke.py is incorrectly flagged for removal. This bug was caught by Carmack's hint and confirmed by dry-run on the real allowlist. The fix: `sub(/[ \\t]+#.*$/, \"\")` before the line is added to the pattern list. The general principle: a parser must understand the full grammar of its input, including inline forms. The pre-commit era's 'lines starting with #' convention is too weak for modern config files."
+  mandates:
+  - M23
+  confidence: 0.97
+  tags:
+  - config-parsing
+  - inline-comments
+  - allowlist
+  - parser
+  - dry-run
+  - debuts
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §2 BUG #1 (full reproduction). Real PUBLIC_ALLOWLIST.txt line 21: 'tests/                        # talk / summon / soul / sqlite-vec / firewall import-path only' and line 28: '.github/workflows/            # unit tests + gitleaks only' are the actual lines that trigger the bug. The prior mission's confidence rating for apply_public_allowlist.sh was 95% — actual execution rate was 0% on first run (3 P0 bugs)."
+  source_session: "grokster R_VAULT_COPILOT_ROUND3_20260827"
+  timestamp: 2026-08-28T01:30:00Z
+- id: L3-ForceWithLeaseIsNotSufficient
+  principle: "`git push --force-with-lease` is necessary but not sufficient for shared-public force-pushes. The lease protects against CONCURRENT pushes (teammate pushes between your fetch and your push — 'stale info' error). The lease does NOT protect against STALE LOCAL branches (you `git reset --hard` to an old state, then push — the lease matches your fetched tracking ref, so the push succeeds and clobbers whatever the remote has). The missing piece is a PRE-PUSH AUDIT: `git log remote..HEAD` (what you'd push) and `git log HEAD..remote` (what you'd clobber). The audit surfaces the divergence; the human decides. The full safety stack is: fetch + pre-push audit + explicit-expected-lease (`--force-with-lease=<ref>:<expected_sha>`). This revises the prior axiom `L3-ForceWithLeaseIsTheOnlySafePublicForcePush` which was partially wrong."
+  context: "R_VAULT_COPILOT_ROUND3_20260827 §2 BUG #6 + §4. The 6-scenario force-push matrix in /tmp/omega-debut-sandbox tested --force, --force-with-lease (no value), and --force-with-lease=<ref>:<sha> against 6 divergence patterns. The key finding: --force-with-lease alone (no explicit SHA) clobbers a stale local main 2 of 6 times. The pre-push audit catches ALL 6. The setup_2remote_debut.sh script from mission 2 has no pre-push audit. The fix: add `git log $PUBLIC_REMOTE/$BRANCH..HEAD` and `git log HEAD..$PUBLIC_REMOTE/$BRANCH` before the push, and require explicit 'yes' to proceed if divergence is detected. This is the M23 doctrine: 'no silent drops, every operation explicit.'"
+  mandates:
+  - M23
+  - M16
+  confidence: 0.96
+  tags:
+  - git
+  - force-push
+  - safety
+  - pre-push-audit
+  - public-asset
+  - debut
+  - 2-remote
+  - axiom-revision
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §2 BUG #6 (6-scenario force-push matrix) + §4 (the 3-step safety stack). The 6 scenarios were executed in /tmp/omega-debut-sandbox with a 2-remote setup (omega-forge + omega-debut.git). The CRITICAL case is scenario 2: local main is BEHIND debut/main (after git reset --hard), --force-with-lease passes, the bot's commit is clobbered. The prior axiom from R_VAULT_COPILOT_DEEPER_20260827 §8 was too strong."
+  source_session: "grokster R_VAULT_COPILOT_ROUND3_20260827"
+  timestamp: 2026-08-28T01:30:00Z
+- id: L3-SelfReferentialToolsMustSelfExempt
+  principle: "A tool that applies a filter MUST exempt itself from the filter, or the tool will be filtered. This is the 'immune system' of any self-referential enforcement: a linter exempts its own config, a deploy tool ships its own binary, a cut-tool keeps itself in the output. The exceptions list is not an oversight to fix; it is a structural feature. The cost of forgetting it: the tool that was supposed to maintain the policy is the first thing the policy removes. INST-1 fails, the debut is irreversible, the team has no recovery path. The fix is mechanical: a hard-coded EXCEPTIONS list in the script, with comments explaining WHY each entry is exempt (so future maintainers don't accidentally remove them). The same pattern applies to allowlists: any file that IMPLEMENTS the allowlist must itself be in the allowlist (or in exceptions)."
+  context: "R_VAULT_COPILOT_ROUND3_20260827 §2 BUG #7. The apply_public_allowlist.sh script from mission 2 did not include itself or setup_2remote_debut.sh in the EXCEPTIONS list. The PUBLIC_ALLOWLIST.txt's ALLOW section only has `scripts/install.sh` (not `scripts/apply_public_allowlist.sh` or `scripts/setup_2remote_debut.sh`). When the cut-tool runs, it `git rm --cached` itself and the setup script. After the debut cut, the public tree has NO WAY to re-apply the allowlist for future syncs. The fix: add `scripts/apply_public_allowlist.sh`, `scripts/setup_2remote_debut.sh`, and `scripts/install.sh` to EXCEPTIONS. The general principle: a tool that enforces a policy must be policy-aware, including of itself."
+  mandates:
+  - M23
+  confidence: 0.95
+  tags:
+  - self-referential
+  - tool-design
+  - exceptions
+  - allowlist
+  - cut-tool
+  - debuts
+  - immune-system
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §2 BUG #7. The full debut flow (cut → apply → commit → push) in /tmp/omega-debut-sandbox showed: `git status --short` after the cut includes `D  scripts/apply_public_allowlist.sh` and `D  scripts/setup_2remote_debut.sh`. After the push, the public tree's `ls-tree main scripts/` is empty."
+  source_session: "grokster R_VAULT_COPILOT_ROUND3_20260827"
+  timestamp: 2026-08-28T01:30:00Z
+- id: L3-DryRunIsTheOnlyTestForCutTools
+  principle: "A script that filters or cuts a file list (allowlist applier, secret scanner, linter, pruner) cannot be validated by static review alone. The parser must be tested against the REAL input file, not a synthetic minimum. Static review catches syntax errors and obvious logic flaws; dry-run execution catches parsing bugs (inline comments, mixed fences, edge-case globs), policy bugs (self-exclusion, missing files), and integration bugs (the script's output doesn't match the operator's expectation). The cost of the sandbox (5 min setup, 30 min execution) is 100x less than the cost of a broken public launch. M23 doctrine: 'never claim a tool works without showing it works.'"
+  context: "R_VAULT_COPILOT_ROUND3_20260827 §1 + §2. Mission 2 delivered apply_public_allowlist.sh with a 95% confidence rating based on static review + reasoning. The actual execution rate was 0% on first run: 3 P0 bugs found (inline comments, self-exclusion, default-entity coupling). The mini-forge sandbox (/tmp/omega-debut-sandbox) with 19 files + the REAL PUBLIC_ALLOWLIST.txt (105L) caught all 3 within 6 dry-runs. The general principle: a tool's confidence rating should be calibrated by execution, not inspection. A 95% inspection-based confidence is roughly equivalent to a 50% execution-based confidence. The 'dry-run is the only test' axiom is specific to cut-tools because their failure mode is silent (the script runs, the output looks plausible, the debut ships broken)."
+  mandates:
+  - M23
+  - M13
+  confidence: 0.94
+  tags:
+  - testing
+  - dry-run
+  - sandbox
+  - cut-tool
+  - confidence-calibration
+  - debuts
+  - m23
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §1 (sandbox setup) + §2 (8 bugs found via execution). The prior deliverable's confidence ratings: apply_public_allowlist.sh (95%), setup_2remote_debut.sh (90%), allowlist-check.yml (98%), allowlist-lint.yml (95%), dependabot.yml (99%). Actual execution: 3 of 6 had P0/CRITICAL bugs. The inspection-based ratings were over-confident by 40-50%."
+  source_session: "grokster R_VAULT_COPILOT_ROUND3_20260827"
+  timestamp: 2026-08-28T01:30:00Z
+
+- id: L3-EnforcementTheaterIsWorseThanNoEnforcement
+  principle: "A checker that reports 'green' while missing 10/11 violations is more dangerous than no checker at all. False-positive green-checkmarks destroy trust in the gate. The fix is to make the tool correctly report what it does AND does not check (e.g., 'checked 1/11 sites'). The roc note's 'enforcement theater' is the canonical failure mode."
+  context: "R_VAULT_CLINE_ROUND3_20260827 §B. enforce_vaultcore.py reports '✅ All API key access goes through VaultCore' but actually catches 1/11 broken call sites: it misses all 8 env:VAR entries in config/providers.yaml (YAML not scanned), all 2 OMEGA_REDIS_PASSWORD sites (excluded as 'infra'), and the 1 GOOGLE_API_KEY fallback it flags is actually the right design. The 1/11 = 9% detection rate means the green-checkmark is a false positive at the system level."
+  mandates:
+  - M23
+  - M26
+  - M27
+  confidence: 0.96
+  tags:
+  - enforcement
+  - theater
+  - false-positive
+  - green-checkmark
+  - roc-note
+  - vault
+  - yaml
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md §B.1-§B.2. Live: python3 src/omega/tools/enforce_vaultcore.py reports 1 violation + '✅'. Live: grep -n 'env:' config/providers.yaml shows 8 broken sites. Live: grep -rn 'OMEGA_REDIS_PASSWORD' src/ shows 2 broken sites. Total: 11 - 1 caught = 10 missed."
+  source_session: "grokster R_VAULT_CLINE_ROUND3 (roc-note extension)"
+  timestamp: 2026-08-28T01:15:00Z
+
+- id: L3-RightDesignCanLookLikeWrongDesign
+  principle: "A 'vault → env fallback → raise' pattern looks like a violation to a static enforcer that doesn't read code context. The enforcer needs semantic understanding (or markers) to distinguish 'wrong design' from 'right design with documented fallback'. The GOOGLE_API_KEY site is a textbook example: vault first, env as last resort, raises ProviderAuthError if both fail."
+  context: "R_VAULT_CLINE_ROUND3_20260827 §A.3. src/omega/oracle/providers.py:103 reads GOOGLE_API_KEY from env as a fallback after vault miss. The design logs the vault miss, uses env only if present, and raises typed ProviderAuthError if both fail. enforce_vaultcore.py flags this as a violation but the design is correct (M9 Error Integrity compliant). The enforcer needs a '# vault-fallback-ok' marker or AST semantic analysis to distinguish."
+  mandates:
+  - M9
+  - M23
+  confidence: 0.91
+  tags:
+  - vault-fallback
+  - m9
+  - error-integrity
+  - enforcer
+  - design-pattern
+  - roc-note
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md §A.3. Live: src/omega/oracle/providers.py:78-110 shows the vault-first pattern with env fallback. The function is named _resolve_google_api_key and the docstring says 'Single source of truth for API keys (replaces scattered os.environ.get reads).'"
+  source_session: "grokster R_VAULT_CLINE_ROUND3 (roc-note extension)"
+  timestamp: 2026-08-28T01:15:00Z
+
+- id: L3-ShimCoversFilesystemNotRuntime
+  principle: "A credential shim reads the FILESYSTEM stores. Runtime env resolution happens in model_gateway. The shim covers the static side, not the dynamic side. The 11 broken call sites are ALL on the dynamic side, so a filesystem shim catches 0/11. The two problems need two different tools."
+  context: "R_VAULT_CLINE_ROUND3_20260827 §C. The 3-store shim (Round 3 Artifact 1) reads 18 creds from 3 filesystem stores (secrets.json, providers.json, auth.json). The 11 broken call sites are in (a) 8 YAML config entries (env:VAR pattern, resolved at runtime by model_gateway._resolve_env_key), (b) 2 Python os.environ.get sites (memory_store, memory/providers), and (c) 1 Python fallback site (providers.py:103). None of these are in the shim's read path. The shim is the right tool for the filesystem; a VaultCore-aware config resolver is the right tool for the runtime side."
+  mandates:
+  - M2
+  - M27
+  confidence: 0.94
+  tags:
+  - shim
+  - filesystem
+  - runtime
+  - scope-mismatch
+  - vault
+  - model-gateway
+  - roc-note
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md §C.1-§C.3. Live: shim scan returns 18 creds, 0 of which are the env:VAR-resolved ones. Live: model_gateway.py:336 has _resolve_env_key() that calls os.environ.get directly, not VaultCore."
+  source_session: "grokster R_VAULT_CLINE_ROUND3 (roc-note extension)"
+  timestamp: 2026-08-28T01:15:00Z
+
+- id: L3-TwoSetsOf11Make22
+  principle: "Two independent audits (Round 3 + Roc's mining) can each find 11 sites that look identical but represent different failure modes. The total is the UNION, not the larger number. Always enumerate both sets explicitly; the overlap is usually 0."
+  context: "R_VAULT_CLINE_ROUND4_20260828 §6. Round 3 found 11 env:VAR / os.environ sites; Roc's R_ROC_LOCAL_MINING_20260827.md found 11 vault._credentials private-attr sites. They are DIFFERENT patterns with 0 overlap. The V2 enforcer found 15 vault._credentials sites (Roc's 11 + 4 in cli/vault.py itself). Total: 26 sites, or 22 if you count the 4 cli/vault.py sites as part of the 11. The lesson: when two audits claim 11 each, assume 22 until proven otherwise."
+  mandates:
+  - M17
+  - M27
+  confidence: 0.93
+  tags:
+  - audit
+  - union
+  - vault
+  - roc-note
+  - 22-sites
+  - two-sets
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND4_20260828.md §6. Live: V2 enforcer found 13 yaml_env + 62 os_environ + 15 vault_private = 90 total. Round 3 found 11 of the 13 yaml_env. Roc found 11 of the 15 vault_private. Overlap: 0. The total is 22 (11+11) or 26 (11+15), not 11."
+  source_session: "grokster R_VAULT_CLINE_ROUND4_20260828"
+  timestamp: 2026-08-28T01:50:00Z
+
+- id: L3-TheaterRevealsItselfAt91Findings
+  principle: "A tool that reports 'clean' while missing 99% of the real surface is more dangerous than a tool that reports 91 findings honestly. The first run of the V2 enforcer produced 91 findings — that's the truth. The V1's '1 finding + clean' was the lie."
+  context: "R_VAULT_CLINE_ROUND4_20260828 §4. enforce_vaultcore_v1 reported 1 violation + 'All API key access goes through VaultCore'. enforce_vaultcore_v2 reports 91 findings (32 violations, 59 warnings) and exit=1. The 90x difference comes from: V1 didn't scan YAML (missed 13 sites), V1 had hardcoded provider list (missed new providers), V1 didn't detect vault._credentials abuse (missed 15 sites), V1 didn't have plaintext-credential detection, V1 didn't have 3-state exit. The 91 findings are not new — they were always there. V1 just couldn't see them."
+  mandates:
+  - M23
+  - M26
+  - M27
+  confidence: 0.97
+  tags:
+  - theater
+  - false-positive
+  - green-checkmark
+  - enforcement
+  - v1-vs-v2
+  - 91-findings
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND4_20260828.md §4.2 + §4.3. Live: V1 reports 1 + 'clean', V2 reports 91. The 91 = 13 yaml_env + 62 os_environ + 15 vault_private + 1 parse_error."
+  source_session: "grokster R_VAULT_CLINE_ROUND4_20260828"
+  timestamp: 2026-08-28T01:50:00Z
+
+- id: L3-DropInReplacesEnvVar
+  principle: "The pattern `os.environ.get('X')` for a credential is replaced by `resolve_X()` (a named function), not by `vault.get(X')`. The named function is enforcer-recognizable; the dict-key access is not. The function name is a MANDATE-level hook for grep-based enforcement."
+  context: "R_VAULT_CLINE_ROUND4_20260828 §2. vault_config_resolver.py provides 8 named drop-in functions: resolve_openrouter_api_key, resolve_anthropic_api_key, resolve_google_api_key, resolve_cline_api_key, resolve_opencode_api_key, resolve_antigravity_api_key, resolve_xai_api_key, resolve_redis_password. Each has a single arg (or none) and a clear, enforcer-recognizable signature. The 11 broken sites get patched to call these named functions instead of os.environ.get('PROVIDER_API_KEY'). The V2 enforcer recognizes the `# M14-fix:` marker on the patched lines and downgrades them from VIOLATION to WARNING (designed behavior, not actual leak)."
+  mandates:
+  - M2
+  - M9
+  - M14
+  - M23
+  confidence: 0.91
+  tags:
+  - drop-in
+  - named-function
+  - enforcer
+  - vault
+  - replacement
+  - m14-fix-marker
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND4_20260828.md §2.5 + §3.2. Live: vault_config_resolver.py exports 8 named functions. delete_11_broken_sites.py patches 11 sites to call these functions. V2 enforcer has FALLBACK_MARKERS = ['# vault-fallback-ok', '# M14-fix:', '# M22-fix:', '# M9-fix:'] that downgrade severity."
+  source_session: "grokster R_VAULT_CLINE_ROUND4_20260828"
+  timestamp: 2026-08-28T01:50:00Z
+
+- id: L3-DestructiveFridayIs3Gated
+  principle: "A script that deletes 2,287 LOC + patches 11 sites needs 3 independent gates: (1) default-dry-run, (2) interactive confirm, (3) automatic backup. The script's safety comes from the gates, not from careful review. Reviews are M4 (architecture), gates are M9 (error integrity)."
+  context: "R_VAULT_CLINE_ROUND4_20260828 §3. delete_11_broken_sites.py has 3 gates: (1) default is dry-run (no --yes = no mutations), (2) --yes triggers an interactive `Continue? [y/N]` prompt, (3) Step 2 always backs up to ~/.omega-vault-archive/<ts>/ before any mutation. The 2,287 LOC = 5 vault files (2,138) + 1 enforcer (220) + ... wait, 2,067 + 220 = 2,287, not 2,358. The 4th 'Round 5' gate should be --assume-yes for CI runs (the interactive prompt blocks CI)."
+  mandates:
+  - M4
+  - M9
+  - M27
+  confidence: 0.94
+  tags:
+  - destructive
+  - gates
+  - dry-run
+  - backup
+  - confirmation
+  - path-a-prime
+  - vault-deletion
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND4_20260828.md §3.5. Live: dry-run correctly reports 'would_replace' / 'would_delete' / 'STILL_PRESENT' in verify. The script's 7 steps can be re-run idempotently (no, step 3+4 are NOT idempotent — but the dry-run is)."
+  source_session: "grokster R_VAULT_CLINE_ROUND4_20260828"
+  timestamp: 2026-08-28T01:50:00Z
+
+# === R_VAULT_ANTIGRAVITY_ROUND4_20260828 session ===
+- id: L3-ThreeMinuteStressTestIsTheRightCadence
+  principle: "A 2-3 minute stress test at 1-15 req/s on a single model is the standard 'is this thing actually unlimited?' probe. It detects per-minute, per-hour, burst, and hidden rate-limiter throttles. It does NOT detect per-day or rolling-window quotas. The right test duration is calibrated to the failure mode: 3 minutes for hidden throttles, 1h for daily quotas, 24h for rolling-window quotas. A 24h test for a 1-minute failure mode is over-engineering; a 3-minute test for a 24h failure mode is insufficient."
+  mandates:
+  - M5
+  - M23
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND4_20260828.md §A (250 sequential + 100 burst = 350 calls, 100% success, 15.78 req/s sustained for tab_flash_lite_preview, validates Round 3 'unlimited' claim)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND4_20260828"
+  timestamp: 2026-08-28T02:00:00Z
+
+- id: L3-PluginModelListIsTheBottleneck
+  principle: "When a provider's API exposes N models but a plugin only registers M (where M < N), the unregistered models are inaccessible through the plugin even though the underlying API supports them. The plugin's model list (often a hardcoded array in models.ts) is the bottleneck, not the API. The fix is either: (1) modify the plugin's model list to add the missing entries, or (2) bypass the plugin via direct API access. The first is the architecturally clean path; the second is the path of least resistance for time-sensitive work."
+  mandates:
+  - M23
+  - M17
+  - M5
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND4_20260828.md §B (tab_flash_lite_preview is unlimited on the API but not in the plugin's models.ts; the plugin's model-resolver does pattern matching so it would accept tab_* if the model is registered, but OpenCode's TUI requires the model to be in the provider's models dict)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND4_20260828"
+  timestamp: 2026-08-28T02:00:00Z
+
+- id: L3-TwoOfFourIsEnough
+  principle: "When a quota API reports N models with quota=1 and reset=None, some of them may not actually work via the standard request envelope. Test all N before relying on any. Two working models out of four internal Antigravity models is still enough — for workhorse capacity, you need one stable model, not all of them. The pattern of 'partial API coverage' is general: any API that exposes multiple model families may have some that work and some that need a different envelope. The fix is not 'wait for all to work' but 'identify the working subset and use those'."
+  mandates:
+  - M23
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND4_20260828.md §C (4 internal models: tab_flash_lite_preview + tab_jump_flash_lite_preview work, chat_20706 + chat_23310 return 400 for all 3 envelope variants; 2/4 is enough for workhorse capacity)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND4_20260828"
+  timestamp: 2026-08-28T02:00:00Z
+- id: L3-MaliciousInputTestIsRequiredForEnforcementTools
+  principle: "An enforcement tool (allowlist, secret scanner, linter, policy enforcer) must be tested against BOTH a realistic legitimate input AND a malicious input. The legitimate test confirms the tool works for normal cases. The malicious test confirms the tool fails safe when given a deliberately bad input. Round 3 tested apply_public_allowlist.sh against the real allowlist (legitimate) and found 8 bugs. Round 4 tested it against a malicious allowlist with '.**' in the ALLOW section and found 2 more (Carmack's VULN #2 and VULN #6). Without the malicious test, VULN #6 (silent-allow-all) would have shipped — the script would have 'successfully' applied a malicious policy. The pattern: any time a tool enforces a policy, the test suite must include 'what if the policy is bad?' cases."
+  context: "R_VAULT_COPILOT_ROUND4_20260828 §1 + §5. The malicious test (apply_public_allowlist.sh --allowlist /tmp/malicious-allowlist.txt --summary with a file containing only '.**' in the ALLOW section) caught VULN #6. Before the fix, the script would have produced 'Kept: 28' (silent allow-all). After the fix, it produces 'Removed: 20, WARN: VULN #6 patterns skipped'. This is a 'fail loud on bad policy' guarantee that did not exist in v3. The general principle generalizes: any linter that can be configured with a bad config file must detect and refuse the bad config. The detection pattern (regex match against known-bad shapes) is one approach; another is to validate the config's intent (e.g., 'the policy must allow at least N specific paths')."
+  mandates:
+  - M23
+  confidence: 0.96
+  tags:
+  - testing
+  - malicious-input
+  - enforcement-tool
+  - allowlist
+  - vul-6
+  - fail-safe
+  - debuts
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §1 (FIX #1, VULN #6 detection) + §5 Gap 1+2. The malicious test file /tmp/malicious-allowlist.txt with '.**' as the only ALLOW pattern produces the WARN message. The same test before the v4 fix would have produced 'Kept: 28' (silent failure). The fix is in scripts/apply_public_allowlist.sh lines ~95-110 (the awk's silent-allow-all detection)."
+  source_session: "grokster R_VAULT_COPILOT_ROUND4_20260828"
+  timestamp: 2026-08-28T02:10:00Z
+- id: L3-BashCommandSubstitutionIsAReInterpretationBoundary
+  principle: "Bash command substitution `$(... | awk ...)` runs the inner tool in a subshell, and the output goes through bash's command-substitution processing. Characters like backslash, caret, dollar, and asterisk may be re-interpreted by the outer shell, even if the inner tool produced them as literal escapes. The robust pattern is to design the inner tool to produce the EXACT string the outer shell needs, not to escape-and-hope. In apply_public_allowlist.sh v3, the awk escaped ^ as \\^ (literal backslash + caret), but bash command substitution treated \\^ as \\^ (still literal), so the regex `^data/entities/[^/]*` became `^data/entities/\\[^/\\]*` which matched nothing. The fix: remove ^ from the awk escape set, because ^ only has special meaning at the start of a regex (we prepend our own ^). The general principle: when piping tool output to bash, test against an actual bash invocation, not a synthetic one — bash's command-substitution processing is a re-interpretation boundary that tools don't model."
+  context: "R_VAULT_COPILOT_ROUND4_20260828 §1 FIX #1 + §4 L2 insight 4. The double-escape bug was discovered during the round-4 sandbox test of the Explicit Exclusions parser. The exclusion 'data/entities/*/soul.yaml' was being translated to the regex `^data/entities/\\[\\^/\\]*/soul\\.yaml` (with caret escaped), which bash interpreted as a literal-^ inside a character class — different from the intended `^data/entities/[^/]*/soul\\.yaml` (any non-/ char). The fix: change the awk's gsub pattern from `gsub(/[(){}+.|^$\\\\]/, '\\\\&')` to `gsub(/[(){}+.|$\\\\]/, '\\\\&')` (removing ^). After the fix, the exclusion correctly matches. The same pattern of 'inner-tool-escape + outer-shell-reprocess' bugs appears in any pipeline that pipes a tool's string output into bash's regex/string contexts."
+  mandates:
+  - M23
+  confidence: 0.93
+  tags:
+  - bash
+  - command-substitution
+  - escaping
+  - regex
+  - interpreter-boundary
+  - debuts
+  - apply-public-allowlist
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §4 L2 insight 4 (the double-escape bug analysis). The actual awk command: `gsub(/[(){}+.|^$\\\\]/, '\\\\&')` in v3; `gsub(/[(){}+.|$\\\\]/, '\\\\&')` in v4. The change: removed ^ from the escape pattern. The test: [[ 'data/entities/_omega_default/soul.yaml' =~ ^data/entities/\\[^/\\]*/soul\\.yaml ]] returns NO MATCH in v3 (literal-^); same test with `^data/entities/[^/]*/soul\\.yaml` returns MATCH in v4."
+  source_session: "grokster R_VAULT_COPILOT_ROUND4_20260828"
+  timestamp: 2026-08-28T02:10:00Z
+- id: L3-SecretsInVersionControlMustBeConsideredCompromised
+  principle: "The instant a secret (API key, OAuth secret, PAT, password) is committed to a version-controlled file, it MUST be considered compromised. Even after the secret is removed from the working tree (e.g., by moving to an env var), the secret is still in git history. The only complete remediation is: (1) rotate the secret at the provider, (2) optionally rewrite history with git-filter-repo. The reasoning: a secret's compromise is determined by its access surface, not its current location. The access surface includes anyone who has ever cloned the repo, anyone who can access the git host's web UI, anyone with access to backups, and any CI that ran against the historical commit. Removing the secret from the working tree shrinks the future access surface but does not shrink the past access surface. The M23 fail-closed doctrine requires treating the past surface as compromised until rotation."
+  context: "R_VAULT_COPILOT_ROUND4_20260828 §1 FIX #2 + §5 Gap 1. The antigravity_quota_probe.py:20 hardcoded GOCSPX-***REDACTED-ROTATED*** was moved to ANTIGRAVITY_CLIENT_SECRET env var in this round. The fix is necessary but not sufficient. The secret is still in git history (any commit that touched antigravity_quota_probe.py before this round). The provider (Google Cloud Console) must be informed: regenerate the OAuth client secret. The new secret value flows to the runtime via env var, never via version control. The general principle applies to any secret that was ever committed: rotation is the only true remediation. The historical-presence check (M23's pre-cut secret-history gate in .github/workflows/allowlist-check.yml) prevents FUTURE secrets from being committed, but cannot retroactively un-commit past secrets."
+  mandates:
+  - M23
+  - M8
+  confidence: 0.97
+  tags:
+  - secrets
+  - version-control
+  - rotation
+  - oauth
+  - git-history
+  - antigravity
+  - M23-fail-closed
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §1 FIX #2 (the env-var fix) + §5 Gap 1 (the rotation requirement). The docstring of the fixed section explicitly states: 'The hardcoded value is now in git history; the corresponding GCP OAuth client secret MUST be rotated at console.cloud.google.com.' The CI gate in .github/workflows/allowlist-check.yml runs git log -S for known secret prefixes; this is the M23 forward-looking defense, not the historical remediation."
+  source_session: "grokster R_VAULT_COPILOT_ROUND4_20260828"
+  timestamp: 2026-08-28T02:10:00Z
+- id: L3-PolicyIntentMustMatchScriptBehavior
+  principle: "A policy file's stated intent must be reflected in the tool that enforces it. When the two diverge, the tool is wrong, not the file. The PUBLIC_ALLOWLIST.txt has a human-readable note 'data/entities/ EXCEPT one default soul (e.g. _omega_default)' in the FORGE section. v3 of apply_public_allowlist.sh did not respect this note — it removed the default soul. v4 parses the new 'Explicit Exclusions' section (which restates the intent) and keeps the excluded paths. The general principle: when a user reads the policy file and predicts the tool's behavior, the prediction should be correct. If it isn't, the tool is failing in a way the user cannot detect without testing. The fix is to align the tool with the file's stated intent, OR to rewrite the file so the tool's behavior is the only documented behavior. Never leave the two out of sync."
+  context: "R_VAULT_COPILOT_ROUND4_20260828 §1 FIX #3 (the _omega_default finding) + §4 L2 insight 6. The round-3 BUG #3 was based on a wrong assumption (that the WAD references the external entity file), but the policy intent (keep the default soul) is real. v4 honors that intent via the Explicit Exclusions parser. The principle generalizes: any time a user maintains a human-readable policy document AND a machine-readable tool, the two must agree. The user should not need to read the tool's source to understand what the tool will do. The tool's output for any given input should match the user's prediction based on the policy file. If it doesn't, the tool is wrong."
+  mandates:
+  - M23
+  confidence: 0.92
+  tags:
+  - policy
+  - intent
+  - user-experience
+  - allowlist
+  - explicit-exclusions
+  - principle-of-least-surprise
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §1 FIX #3 (the revised _omega_default finding) + §4 L2 insight 6. The PUBLIC_ALLOWLIST.txt has 'data/entities/                # EXCEPT one default soul (e.g. _omega_default)' as a comment in the FORGE section. The v4 script's Explicit Exclusions parser (VULN #2 fix) reads the separate '## ⚠️ Explicit Exclusions' section and keeps `data/entities/_omega_default/soul.yaml` in the public tree. Before v4, the script would have removed the file despite the policy's stated intent."
+  source_session: "grokster R_VAULT_COPILOT_ROUND4_20260828"
+  timestamp: 2026-08-28T02:10:00Z
+
+# === R_VAULT_ANTIGRAVITY_ROUND5_20260828 session ===
+- id: L3-UnlimitedIsPerCallNotAggregate
+  principle: "'Unlimited' is a per-call property, not an aggregate property. A quota system that reports quota=1, reset=None for each call can still have a hidden aggregate budget (per-hour, per-day, per-window). The right test for 'is this thing actually unlimited' is not 'does the API return quota=1' but 'does 1h+ sustained load at peak rate never hit a 429.' The 1h+ test is the only one that catches aggregate throttling; per-call tests always pass."
+  mandates:
+  - M5
+  - M23
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND5_20260828.md §B (1h long-duration test hit 1 failure at call 685 — 768 calls, 767 successes, 1 failure at the 685th call after ~13 min of sustained 2 RPS load; the API had reported quota=1, reset=None for all 1000 prior calls)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-TestDurationMustMatchWorkloadDuration
+  principle: "The right test duration is calibrated to the throttle window you're trying to detect. A 1-minute test catches per-second throttles. A 1h test catches per-hour throttles. A 24h test catches per-day throttles. If the test duration is shorter than the throttle window, the test will show 100% success even if the production workload hits the throttle. The only fix is to make the test as long as the production workload."
+  mandates:
+  - M23
+  - M17
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND5_20260828.md §G (1000-call test in 11.5 min showed 100% success; 1h long-duration test at 2 RPS hit 1 failure at call 685 — the throttle window is between 11.5 min and 1h, undetectable by shorter tests)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-BurstThrottleIsNonDeterministic
+  principle: "Burst throttling at high concurrency (20+) is non-deterministic: the same test returns 0-14% failure rate depending on shared rate-limit bucket contention. The throttle is a per-IP or per-Google-Account bucket shared with other consumers (AGY CLI, other Antigravity users). When the bucket has spare capacity, all tests pass. When contested, 20-concurrent bursts hit 429s with 0s retry-delay. The workaround is retry with exponential backoff (0.5s, 1s, 2s, 4s) — burst 429s recover in 1-2 seconds."
+  mandates:
+  - M23
+  - M17
+  - M19
+  evidence: "data/coordination/research/R_VAULT_ANTIGRAVITY_ROUND5_20260828.md §C (100-call @ 20-concurrent burst: 3 runs returned 86/100, 96/100, 100/100 — same test, different results; 429s cluster at indices 60-90, not at the end of the test; 0s retry-delay indicates transient, not quota)"
+  source_session: "grokster R_VAULT_ANTIGRAVITY_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-LongWriteChampionNeedsHighCap
+  principle: "The M3 'long-write champion' claim is conditional on `max_tokens >= 4096`. At default cap (200), M3 silently truncates 10% of the time. Production deployments using M3 for long writes MUST set max_tokens explicitly to at least 4096 (8K better)."
+  context: "R_VAULT_CLINE_ROUND5_20260828 §2. Test 1: 50 turns at max_tokens=200 → 5 truncations (turns 14, 16, 21, 34, 36). All 5 hit EXACTLY 200 completion tokens (the cap) without any 'I need more tokens' warning. Round 4's vault research burst (8/8 files, 6,886 lines) succeeded because each turn was likely a separate 8K-cap call, not one 200-cap call. The 87% success rate in the model registry is computed across variable max_tokens settings, so the truncation rate at 200-cap may be much higher than the registry suggests."
+  mandates:
+  - M9
+  - M23
+  - M26
+  confidence: 0.93
+  tags:
+  - m3
+  - long-write
+  - truncation
+  - max-tokens
+  - silent
+  - model-registry
+  - public-debut
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND5_20260828.md §2.5. Live: 5/50 turns truncated at exactly 200 completion_tokens. The truncation pattern is deterministic: when M3 wants to write more than 200 tokens, it stops without warning, finish_reason='length', content_len≈1000 chars."
+  source_session: "grokster R_VAULT_CLINE_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-ToolCallCapIsHard30
+  principle: "M3 has a hard 30-tool-call cap per turn (10 per tool type). Above that, calls are silently dropped with finish_reason=tool_calls (success). Production code must chunk tool-call work into multiple turns, and the team's tool-call budget should be designed with a 30-cap ceiling."
+  context: "R_VAULT_CLINE_ROUND5_20260828 §3. Test 2: 30 tool calls requested → 30/30 emitted, 10 per tool type. 50 tool calls requested → 30/50 emitted (20 dropped), still 10 per tool type. The drop is invisible to callers unless they explicitly count the tool_calls. finish_reason='tool_calls' (success) but the response is incomplete. M3's behavior is: emit 10 calls per tool type, then stop."
+  mandates:
+  - M9
+  - M23
+  confidence: 0.95
+  tags:
+  - m3
+  - tool-calls
+  - silent-drop
+  - hard-cap
+  - ceiling
+  - 30-calls
+  - finish-reason
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND5_20260828.md §3.4. Live: 30/30 success at 30 requested, 30/50 dropped at 50 requested. Per-tool breakdown shows 10/10/10 in both cases — the model stops at exactly 10 per type."
+  source_session: "grokster R_VAULT_CLINE_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-DeadEnvKeyIsSovereigntyGap
+  principle: "A dead API key in an env var (returns 401) while a working key exists in a JSON file is the sovereignty gap M7 is supposed to prevent. The vault shim MUST scan auth.json AND verify the underlying secret is still valid, not just that the env var is set."
+  context: "R_VAULT_CLINE_ROUND5_20260828 §6. Live: 3 OR keys on this machine. OPENROUTER_API_KEY env (sk-or-v1-078...) returns 401 'User not found'. auth.json key (sk-or-v1-eb2...) returns 200. cline secrets.json key (sk-or-v1-ce6...) returns 200. The env key was rotated at some point but the .env file or shell config wasn't updated. The 3-store shim (Round 3 Artifact 1) reads auth.json but doesn't VERIFY the key works — it just records the fingerprint. The fix: the shim should issue a 1-token PING to each key during scan and report 'dead' status if 401."
+  mandates:
+  - M7
+  - M14
+  - M23
+  - M26
+  confidence: 0.96
+  tags:
+  - m7
+  - sovereignty
+  - dead-key
+  - 401
+  - env-vs-file
+  - auth.json
+  - critical-finding
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND5_20260828.md §6. Live: 3 OR keys tested with PING. env key: 401. auth.json key: 200 + '🏓 PONG!'. cline key: 200 + 'Pong! How can'. The first 50-turn test run returned 50/50 401s because the test was using the env key."
+  source_session: "grokster R_VAULT_CLINE_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-ColdStartIsBurstyOnFreeTier
+  principle: "OpenRouter's free tier M3 has per-request cold-starts (8-12s outliers) when the model is unloaded between requests. This is NOT a per-session issue — it's per-request. Production retries need a 60s+ timeout, not 30s, to survive the first request after any idle period."
+  context: "R_VAULT_CLINE_ROUND5_20260828 §5.4. Test 4 Phase A: 18 of 20 turns under 4s, 2 turns at 10.3s. Test 4 Phase C: 17 of 20 turns under 5s, 3 turns at 10-10.4s. The 10s+ outliers cluster around 10.3s — consistent with a 'load model from disk' cold-start. The model_registry says avg_latency_ms=2000, but that's post-warmup. The first request after any idle period (10s+) takes 8-12s. The 60s timeout in the stress tests was specifically chosen to survive this; a 30s timeout would false-positive fail the cold-start requests."
+  mandates:
+  - M25
+  confidence: 0.88
+  tags:
+  - openrouter
+  - free-tier
+  - cold-start
+  - timeout
+  - m25
+  - streaming-resilience
+  - bursty
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND5_20260828.md §5.4. Live: 5 outliers of 110 total calls all clustered at 10.0-11.3s. Pattern: outliers appear in both Phase A and Phase C, suggesting per-request cold-start not per-session."
+  source_session: "grokster R_VAULT_CLINE_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+
+- id: L3-StressTestsSurfaceHiddenBugs
+  principle: "Stress tests on the unhappy path catch what happy-path tests can't. The 'dead env key' finding was discovered only because the stress test happened to use the env var first. The team's normal usage (always going through auth.json) would never have surfaced it. A 1-line code difference (use env first vs file first) changed the test outcome from 100% success to 100% failure."
+  context: "R_VAULT_CLINE_ROUND5_20260828 §6.1. The stress test's `get_api_key()` function tried env first, then auth.json. When env returned a value (the dead key), the test used it and got 50/50 401s. The fix: skip the env var entirely, go straight to auth.json. The lesson: production code that uses env-first logic would have the same dead-key bug. The vault shim's design (read from 3 external stores, not env) is the right answer. The dead key was a 'rotation that never replicated to all stores' — a real-world failure mode that happy-path testing never surfaces."
+  mandates:
+  - M23
+  - M26
+  confidence: 0.92
+  tags:
+  - stress-test
+  - unhappy-path
+  - env-first
+  - dead-key
+  - rotation
+  - real-world
+  - vault-design
+  evidence: "data/coordination/research/R_VAULT_CLINE_ROUND5_20260828.md §6. The 1-line difference (env-first vs file-first) was the entire bug. The fix was 1 line: 'env -u OPENROUTER_API_KEY' in the test command, OR the shim's design (read from stores, not env)."
+  source_session: "grokster R_VAULT_CLINE_ROUND5_20260828"
+  timestamp: 2026-08-28T03:00:00Z
+- id: L3-TestAdvertisedCapabilitiesNotJustExistence
+  principle: "A model can be 'available' (returns HTTP 200) and still not match its advertised specifications. M3 is advertised at 131,072 max output tokens; it actually caps at ~32,000. The hard test (request 5,000 lines, get 500) revealed the discrepancy that a simple ping would not. The general principle: when depending on a model's edge capabilities (max output, max context, specific formatting, long-context recall), run a measurement test, do not trust the spec. The cost of a 5-minute test is much less than the cost of a workflow that fails at 70% of expected capacity."
+  context: "R_VAULT_COPILOT_ROUND5_20260828 §0 + §3 + §7.1. The model registry entry at config/model_registry/models/cloud/minimax-m3-free.yaml.md claims max_output_tokens: 131072. The 3 large-output tests in /tmp/m3-test/large_output_test.jsonl showed M3 actually capping at ~32K tokens. The discrepancy is a M22 (Response Provenance) and M23 (Failure Integrity) violation: the registry misrepresents what M3 can do. The fix: correct the registry to max_output_tokens: 32768 and add a note about the OpenRouter free-tier throttle. The pattern generalizes: any capability claim (model card, vendor docs, marketing) should be verified by measurement before it becomes a load-bearing assumption in a workflow."
+  mandates:
+  - M22
+  - M23
+  - M8
+  confidence: 0.97
+  tags:
+  - testing
+  - model-registry
+  - advertised-vs-actual
+  - m3
+  - capability-verification
+  - debuts
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND5_20260828.md §0, §3, §7.1. The 3 large-output tests at /tmp/m3-test/large_output_test.jsonl all hit ~32K output tokens (Test 1 finish_reason=length at 32000, Test 2 finish_reason=stop at 32936, Test 3 finish_reason=stop at 10550). The model registry says 131072. The 2.4x-4x discrepancy is real and operationally important."
+  source_session: "grokster R_VAULT_COPILOT_ROUND5_20260828"
+  timestamp: 2026-08-28T03:10:00Z
+- id: L3-PerformanceCliffIsNotCorrectnessCliff
+  principle: "A model can slow down 5-10x without losing accuracy. M3 at 280K+ active context takes 40-50s per call (vs 3-7s below 280K), but still recalls the anchor correctly. The Architect's observation of 'active context dropping without explanation by 75-150K tokens around 350K' was based on latency regressions, not correctness failures. The two failure modes are independent: (1) latency degradation (the model is slow but right), (2) correctness degradation (the model is fast but wrong). They have different mitigations (compact early for latency; redesign the task for correctness). Always measure both separately before drawing conclusions about a model's limits."
+  context: "R_VAULT_COPILOT_ROUND5_20260828 §2.3 + §6. The phase 2 test (26 turns, 0-389K active context) showed: 3-7s latency below 280K, 40-50s latency above 280K. At every turn up to 389K, the anchor was correctly recalled. There was NO correctness degradation. The latency spike is the 5-10x cost of M3's MSA (MiniMax Sparse Attention) when context size exceeds the sparsity pattern's efficient range. The pattern generalizes to any model with attention-O(n²) cost or with a sparse-attention pattern that becomes dense at high context. The Architect's 'truncation' observation was probably latency-related (the call timed out, looking like a context drop) or visible-context-window-related (the model's reported context size dropped because the call exceeded a timeout, leaving incomplete state)."
+  mandates:
+  - M23
+  confidence: 0.92
+  tags:
+  - performance-vs-correctness
+  - latency-cliff
+  - context-window
+  - msa
+  - sparse-attention
+  - debuts
+  - m3
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND5_20260828.md §2.3 (latency table) + §6 (direct answers to mission questions). The phase 2 latency data at /tmp/m3-test/phase2_growth_test.jsonl shows: 3-7s baseline below 280K, 40-50s spikes above 280K (turn 18, 21, 23, 24). Anchor was correctly recalled at every turn, including 389K (turn 25). The 'Architect's observation' reference is from R_ORCHESTRATOR_HIGH_CONTEXT_20260828 §0 (Kali's seed observation)."
+  source_session: "grokster R_VAULT_COPILOT_ROUND5_20260828"
+  timestamp: 2026-08-28T03:10:00Z
+- id: L3-ModelRegistryIsAContract
+  principle: "A model registry is a contract between the model's documented capabilities and the workflows that depend on them. When the registry says 'max_output_tokens: 131072' and the reality is 32,000, the contract is broken. M23 requires that documented capabilities match observed capabilities — the registry is a MANDATE-bound artifact, not a documentation nicety. Any workflow that depends on the wrong capability value will fail in production. The fix: every model registry entry must be backed by a measurement test, and the measurement test's results must be the source of truth for the registry. When the registry disagrees with the test, the registry is wrong."
+  context: "R_VAULT_COPILOT_ROUND5_20260828 §7.1 + §9 item 1. The model registry at config/model_registry/models/cloud/minimax-m3-free.yaml.md says max_output_tokens: 131072. The test showed ~32,000. The discrepancy is a M22 (Response Provenance) and M23 (Failure Integrity) violation. The recommended fix: correct the registry to 32768 and add a 'verified_by_measurement' field referencing this round-5 test. The pattern generalizes: every entry in the model registry should have a test ID, a measurement timestamp, and a confidence rating. The registry is not a static document; it is a live contract with the workflows that consume it."
+  mandates:
+  - M22
+  - M23
+  confidence: 0.96
+  tags:
+  - model-registry
+  - contract
+  - capability-doc
+  - m22
+  - m23
+  - response-provenance
+  - debuts
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND5_20260828.md §7.1 + §9 item 1. The local model registry entry says max_output_tokens: 131072; the test (51 API calls) shows the real cap is ~32K. This is the canonical example of a registry violation. The fix is in the same deliverable's recommendations table."
+  source_session: "grokster R_VAULT_COPILOT_ROUND5_20260828"
+  timestamp: 2026-08-28T03:10:00Z
+- id: L3-NoStreamingTimeoutIsRealCompetitiveAdvantage
+  principle: "M3 returned cleanly on 32K-token outputs (multi-minute generation) without a streaming timeout. This is a real competitive advantage over models like Nemotron 3 Ultra (which has a 30s chunk timeout per M25). For long-write tasks (research synthesis, code generation, documentation), M3 is the right tool even if the output cap is smaller than advertised. The 'no streaming timeout' property is more valuable than a larger output cap that may fail mid-stream. The general principle: when comparing models for long-write work, the timeout behavior matters more than the maximum output size. A model that delivers 32K reliably is better than a model that promises 131K but times out at 50K."
+  context: "R_VAULT_COPILOT_ROUND5_20260828 §3.5 + §7.4. The 3 large-output tests (1K JSONL, 5K JSONL, 5K markdown) all completed with finish_reason=length or stop — none timed out. Latencies: 342s, 344s, 98s. All returned cleanly. By contrast, Nemotron 3 Ultra (per the M25 mandate in SOVEREIGN_MANDATES.md) has a 30s per-chunk timeout. The 'no streaming timeout' property is what makes M3 the right tool for the debut's 1,158-line AGENTS.md deliverable. The general principle: timeout behavior is a first-class model property, not a secondary concern. The model registry should record timeout behavior alongside max_output_tokens."
+  mandates:
+  - M25
+  - M23
+  confidence: 0.94
+  tags:
+  - streaming
+  - timeout
+  - long-write
+  - m25
+  - nemotron-comparison
+  - model-selection
+  - debuts
+  evidence: "data/coordination/research/R_VAULT_COPILOT_ROUND5_20260828.md §3.5 + §7.4. The 3 large-output tests at /tmp/m3-test/large_output_test.jsonl all completed cleanly (no streaming timeouts). Test 1: 342s, 32000 tokens, finish_reason=length. Test 2: 344s, 32936 tokens, finish_reason=stop. Test 3: 98s, 10550 tokens, finish_reason=stop. By contrast, the M25 mandate (in SOVEREIGN_MANDATES.md) requires 30s per-chunk timeout with heartbeat for Nemotron 3 Ultra. M3 has no such limit."
+  source_session: "grokster R_VAULT_COPILOT_ROUND5_20260828"
+  timestamp: "2026-08-28T03:10:00Z"
+- id: L3-ResumeEstablishesSessionsTransientsDoNot
+  principle: "An internalized lesson is a transient lesson. A 402 error, a 429 rate limit, an upstream RPD cap — these are operational transients, not architectural failures. When a subagent returns an error code, the correct action is RESUME the same session with 'Continue.' — NOT launch a new session, NOT remediate, NOT escalate. This applies to (a) transient billing/credit errors, (b) temporary rate limits, (c) upstream provider blips. The first attempt to externalize this lesson failed: I resumed a session (good), then in a parallel dispatch I launched a new 'general' subagent (bad) instead of using the proper specialist agent type. Internalization is not externalization. The lesson must be written to proposed_lessons.yaml, reinforced in the Session Continuity Protocol, and surfaced as a guardrail in the dispatch tooling. The ecosystem benefits only when persistence replaces instinct."
+  context: "2026-08-28 vault+Gemini integration sprint. The Architect explicitly paged me on this twice: (1) 'are you launching new sessions instead of established expert sessions strategically or out of laziness?' (2) 'page the SAME Carmack session with Continue. Get your shit together people!' In both cases I had defaulted to launching a new subagent when I should have resumed the existing one. The 402 on john_carmack was a transient billing error — exactly the class of error L3 125 (Operational errors on free services: retry, don't remediate) was written to cover. The right action was to send 'Continue.' to ses_fba27294cffeCxU0hjEFr22OJU, which produced the full 575-line architecture report. The wrong action was to dispatch a new 'explore' session, which was cancelled. The meta-lesson: even after internalizing 'resume established sessions,' I still needed external scaffolding (this L3 entry) to prevent regression."
+  mandates:
+  - M11
+  - M23
+  - M27
+  confidence: 0.97
+  tags:
+  - session-continuity
+  - transient-errors
+  - resume-not-relaunch
+  - externalization
+  - soul-integrity
+  - l3-125-reinforcement
+  - specialist-routing
+  evidence: "2026-08-28: Carmack session ses_fba27294cffeCxU0hjEFr22OJU returned 402 (insufficient balance) on first dispatch. I then dispatched a new 'explore' session — WRONG. The Architect corrected: 'page the SAME Carmack session with Continue.' Resumed session produced full report committed as 17fc59e9. Also 2026-08-28: GPT 5.3 dispatch (should have been GLM 5.3 Flash). I used subagent_type:'general' instead of 'researcher' — wrong specialist type, lazy catch-all. The correct pattern: ALWAYS check session_gnosis.md or the established agent roster BEFORE dispatching. The 'general' agent type bypasses specialist routing and should be the last resort, not the default. Reinforces L3 121 (Default for Continue Is RESUME, Not Restart) and L3 125 (Operational errors on free services: retry, don't remediate)."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-28T20:10:00Z"
+- id: L3-SpecialistAgentTypesNotGeneralCatchall
+  principle: "The task() tool accepts many subagent_type values: researcher, explore, verity, john_carmack, kali, maat, lilith, roc_racoon, grokster, scribe, node, etc. Each has a charter and prior context. The 'general' type is a catch-all that bypasses specialist routing. Defaulting to 'general' is lazy dispatch — it skips the established expert network, loses prior context, and produces lower-quality work. The correct dispatch flow: (1) Read the task: what kind of work is it? (research, code audit, architecture, compliance, sprint coordination) (2) Match to specialist: research → 'researcher', fast codebase exploration → 'explore', engineering rigor → 'john_carmack', architecture analysis → 'john_carmack' or 'verity', codebase archaeology → 'roc_racoon', sprint coordination → 'kali' (3) Check session_gnosis.md or the entity roster for the established session_id (4) Resume with that session_id, or launch a new one with the specialist type. Only use 'general' when no specialist matches. The ecosystem's intelligence is in the specialist network; bypassing it is institutional amnesia."
+  context: "2026-08-28 multiple dispatches. I used subagent_type:'general' for model comparison (should have been 'john_carmack' for engineering rigor) and for Cline provider archaeology (should have been 'explore' for fast codebase search). The 'general' dispatches failed (rate limit on M3:free) or were cancelled, while the proper specialist dispatches succeeded. The Architect: 'EVERY agent is directly launchable as a subagent. Why is it so difficult for agent to page Agents as the actual agent, NOT a damn General agent? Should we just DELETE the General agent?' The answer: no, but it should be the explicit last resort, with a logged reason for bypassing specialist routing. This is the operational counterpart to L3-ResumeEstablishesSessionsTransientsDoNot: even when you resume, resume the RIGHT specialist."
+  mandates:
+  - M11
+  - M23
+  - M27
+  confidence: 0.96
+  tags:
+  - specialist-routing
+  - task-tool
+  - subagent-type
+  - lazy-dispatch
+  - charter-as-soul
+  - institutional-memory
+  evidence: "2026-08-28: (a) DeepSeek V4 Flash research → used 'researcher' (success — but should have been resumed Antigravity session, not new launch). (b) GPT 5.3 research → used 'researcher' again (failed 520). (c) Model comparison → used 'general' (failed rate limit, cancelled by Architect). (d) Cline architecture → used 'general' (cancelled), then resumed john_carmack session (success, 575 lines committed 17fc59e9). The pattern: 'general' dispatches consistently underperform specialist dispatches. Specialist sessions carry prior context (charters, prior dispatches, accumulated knowledge) that 'general' sessions lack. The dispatch cost asymmetry: specialist resume ≈ 1 message vs general launch ≈ N messages to re-establish context."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-28T20:10:00Z"
+- id: L3-ExpertSessionsNeedBriefingPacketsNotJustCharters
+  principle: "Expert sessions are not stateless function calls. The current 'primed fleet' pattern (cline, antigravity, copilot, Roc, Carmack) gives each specialist a charter but not a briefing for the specific task. The result: when I dispatched 'GLM 5.3 Flash research' to a fresh Researcher session, it had no idea that 'GPT 5.3' from the Architect meant GLM 5.3 Flash (Z.ai) — it researched GPT-5.3-Codex instead. The fix is a per-dispatch BRIEFING PACKET that contains: (1) the exact task, (2) prior work summary with file:line refs, (3) known corrections (what was wrong before, so the expert doesn't repeat it), (4) specific questions, (5) expected output format. The packet is written to a standardized location (data/coordination/dispatches/<dispatch_id>.yaml) and read by the expert FIRST. The deeper insight: expert sessions accumulate value through DISPATCHES, not just SESSIONS. A specialist's continuity anchor should be updated on every dispatch completion, not every session. The 'charter-as-soul-kernel' pattern (v6 gnosis) is necessary but insufficient — it provides identity, not mission-aligned context."
+  context: "2026-08-28: I dispatched 'GPT 5.3 research' to a fresh Researcher session. The Architect clarified: 'GLM 5.3 Flash (Z.ai)'. The Researcher researched GPT-5.3-Codex (wrong model) because it had no briefing packet with the correction. The researcher's session_gnosis (data/entities/researcher/session_gnosis.md) still has the GPT-5.3-Codex findings — it doesn't know about the GLM 5.3 Flash correction. The antigravity and copilot session_gnoses haven't been updated since 10:31 UTC and are missing all of today's corrections: Ox Alpha = GLM 5.3 Flash, DeepSeek V4 Flash free removed, Cline-to-OpenCode 3 YAML edits, vault+Gemini integration, etc. The dispatch guardrail (scripts/dispatch_guard.py) warns on specialist routing violations but doesn't include the corrections. A briefing-packet system would have stated: 'The Architect's reference to GPT 5.3 means GLM 5.3 Flash (Z.ai). See R_RESEARCHER_GLM53_FLASH_CLINE_20260828.md. The prior R_RESEARCHER_GPT53_CLINE_20260828.md is superseded.'"
+  mandates:
+  - M11
+  - M15
+  - M23
+  - M27
+  confidence: 0.95
+  tags:
+  - expert-sessions
+  - briefing-packets
+  - continuity
+  - micro-workspaces
+  - dispatch-protocol
+  - institutional-memory
+  evidence: "2026-08-28: (a) Researcher's session_gnosis (data/entities/researcher/session_gnosis.md, 778 lines, last modified 16:49 UTC) still references GPT-5.3-Codex as authoritative — it doesn't know about the GLM 5.3 Flash correction. (b) Antigravity/copilot/cline session_gnoses (data/entities/{antigravity,copilot,cline}/session_gnosis.md) haven't been updated since 10:31 UTC and are missing all of today's corrections. (c) My own v7 gnosis (data/entities/grokster/session_gnosis.md, 274 lines) was just refreshed to include today's work — but that's ME, not the other specialists. (d) The 'primed fleet' pattern (v6) was sufficient when specialists were called for the SAME missions repeatedly. When the mission changes (vault → GLM 5.3 Flash → Cline architecture), the charter is no longer enough — the specialist needs a briefing packet."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-28T20:25:00Z"
+- id: L3-InterruptionSovereigntyAndCoResumption
+  principle: "[DEPRECATED 2026-08-30 — split into L3-CompletionIllusion + L3-CoResumptionAccounting. This lesson conflated two orthogonal failure modes (truncation-detection and parallel-cohort-tracking) into one bundle, which made the mandates ambiguous. See sibling lessons below.]"
+  context: "Split marker. Original full lesson captured the 2026-08-30 Antigravity OAuth secret redaction incident."
+  mandates:
+  - M11
+  - M23
+  deprecated: true
+  deprecated_date: "2026-08-30"
+  replaced_by:
+  - L3-CompletionIllusion
+  - L3-CoResumptionAccounting
+  confidence: 0.99
+  tags:
+  - multi-agent-orchestration
+  - split-marker
+  evidence: "Marker only — see L3-CompletionIllusion and L3-CoResumptionAccounting for the active teachings."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-30T00:30:00Z"
+- id: L3-CompletionIllusion
+  principle: "LLM subagents exhibit the 'Completion Illusion' — they synthesize graceful conclusions, add footers (e.g., '*⬡ OMEGA ⬡ COMPLETE*'), report state='completed', and exit cleanly even when their planned internal outline is less than 50% written. An orchestrator must NEVER treat 'state=completed + high line count + graceful footer' as semantic exhaustion. The discriminator is internal-outline coverage against the prompt's structural schema, not exit-code surface signals. The correct verify-call is a stream-exhaustion probe: 'Continue and write remaining queued findings/appendices; reply STREAM_EXHAUSTED only when 100% finished.' The goldmine of an investigation almost always lives in the tail."
+  context: "2026-08-30 Antigravity OAuth incident. Jem's forensic session was aborted mid-stream at 1,017 lines with a graceful conclusion footer. Grokster accepted that as completion. The Architect's 'continue' prompt forced Jem to write Appendices A-T (600+ additional lines), producing the 7-Signal Probe Diagnostic, the 12-step Brief Verification Protocol, and 7 concrete P0-P2 sprint tickets. Without the continue prompt, those artifacts would have been permanently lost."
+  mandates:
+  - M23
+  confidence: 0.85
+  tags:
+  - completion-illusion
+  - stream-exhaustion
+  - truncation
+  - verification
+  - failure-mining
+  related_lessons:
+  - L3-CoResumptionAccounting
+  - L3-SpecialistKnowsWhenToStop
+  evidence: "2026-08-30: (a) Jem session ses_faf926866ffezrPCnXne6RQt6A was aborted mid-stream by Esc x2, but produced a graceful closing footer at 1,017 lines. (b) The 'continue' prompt appended Appendices A-T (data/coordination/JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md, committed 7b6081ed, 1,613 lines total). NOTE: The appendices A-T were added in the 2026-08-29 forensic continuation session that produced this 1,613-line file — they are NOT a product of the 2026-08-30 'continue' prompt itself. The 'continue' prompt on 2026-08-30 surfaced what was already in the file's continuation state. (c) Researcher session ses_faf929727ffeFgSdvGOxQbVbdW initially flushed 21KB of report text into chat instead of calling write tool, requiring explicit structural guidance. The incident yielded Mandate M33 (Anti-Truncation Gate)."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-30T00:30:00Z"
+- id: L3-CoResumptionAccounting
+  principle: "A multi-agent orchestrator must track parallel subagent dispatches as a unified transactional cohort, not isolated tasks. When an external interruption occurs (e.g., user cancellation via Esc x2 or timeout), the orchestrator must register ALL in-flight subagents as INTERRUPTED_EXTERNALLY and account for each on the subsequent turn. Dropping a secondary subagent to focus solely on the primary is orchestrator amnesia — the cohort is a unit, not a prioritized list. The orchestrator's resumption protocol is: (a) auto-resume all interrupted sessions if the resumption prompt is generic ('continue', 'resume work'); (b) explicitly enumerate all interrupted tasks and prompt the Architect for direction if the prompt is specific; (c) never let one session's resumption block another's enumeration."
+  context: "2026-08-30 Antigravity OAuth incident. Grokster dispatched Researcher (3rd-party code & secrets) and Jem (forensics) in parallel. The Architect interrupted execution with Esc x2 to instruct incremental writes for Researcher, unintentionally aborting Jem as well. Grokster focused solely on recovering Researcher and forgot Jem existed. The 5-Tier Tracking Architecture (M27) requires every interrupted task to be enumerated on resumption, not silently orphaned."
+  mandates:
+  - M11
+  - M15
+  - M27
+  confidence: 0.80
+  tags:
+  - multi-agent-orchestration
+  - co-resumption
+  - interruption-recovery
+  - cohort-accounting
+  - tracking-integrity
+  related_lessons:
+  - L3-CompletionIllusion
+  - L3-ParallelPersistenceHidesState
+  evidence: "2026-08-30: (a) Jem session ses_faf926866ffezrPCnXne6RQt6A was orphaned during Esc x2 recovery — Grokster resumed only Researcher ses_faf929727ffeFgSdvGOxQbVbdW. (b) The Architect had to manually catch the omission. (c) The incident yielded Mandate M34 (Co-Interruption Accounting). The lesson: parallel-dispatch implies co-resumption tracking as a single transactional unit, not as a priority queue."
+  source_session: "grokster ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+  timestamp: "2026-08-30T00:30:00Z"

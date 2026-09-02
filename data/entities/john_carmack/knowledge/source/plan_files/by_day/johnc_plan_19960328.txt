@@ -1,0 +1,23 @@
+# ⬡ John Carmack .plan File — 1996-03-28
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960328.txt
+#
+* fixed efrag allocation on restart (really)
+* fixed static sprite placement
+* fixed light casting from torches
+* fixed spawning angles
+* fixed savegame and multi player baseline object startup
+* made QuakeEd go to info_playerstart at level load
+
++ fix damage trace through entities
++ keyboard freelook
+
+spinning gibs on floor
+very high framerates mess up
+extra back attack damage
+buffered IO problem on romero's machine
+stereo still isn't right
+partical puffs

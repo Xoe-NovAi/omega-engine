@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# ⬡ OMEGA ⬡ CLOUD PRICING ⬡ v1.0
+# Versioned pricing config. Updated manually when bills change.
+# Benchmark stores measured cost_usd per run; this config calculates estimates.
+
+version: 1
+updated: "2026-08-16"
+source: "Provider pricing pages (verified 2026-08-16)"
+
+# Pricing per 1M tokens (input / output)
+google:
+  gemini-1.5-pro:
+    input_usd_per_1m: 3.50
+    output_usd_per_1m: 10.50
+    free_tier_daily_tokens: 1000000
+    free_tier_rpm: 15
+  gemini-1.5-flash:
+    input_usd_per_1m: 0.075
+    output_usd_per_1m: 0.30
+    free_tier_daily_tokens: 1000000
+    free_tier_rpm: 15
+
+anthropic:
+  claude-opus-4:
+    input_usd_per_1m: 15.00
+    output_usd_per_1m: 75.00
+    rate_limit_rpm: 50
+  claude-sonnet-4:
+    input_usd_per_1m: 3.00
+    output_usd_per_1m: 15.00
+    rate_limit_rpm: 50
+
+openrouter:
+  # OpenRouter passes through provider pricing + markup
+  "google/gemini-1.5-pro":
+    input_usd_per_1m: 3.50
+    output_usd_per_1m: 10.50
+  "anthropic/claude-opus-4":
+    input_usd_per_1m: 15.00
+    output_usd_per_1m: 75.00
+  "meta-llama/llama-3.1-405b":
+    input_usd_per_1m: 2.70
+    output_usd_per_1m: 2.70
+  rate_limit_rpm: 60
+
+# Cost calculation helper (used by benchmark script)
+# cost_usd = (prompt_tokens / 1_000_000) * input_rate + (completion_tokens / 1_000_000) * output_rate
