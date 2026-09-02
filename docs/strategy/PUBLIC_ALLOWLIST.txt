@@ -48,6 +48,9 @@ SOVEREIGN_MANDATES.md
 AGENTS.md
 .gitignore
 
+# MCP servers (Hub, SearXNG, Firecrawl)
+mcp_servers/
+
 # CI
 .github/workflows/            # unit tests + gitleaks only
 
