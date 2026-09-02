@@ -1,7 +1,0 @@
-# data/entities/datastore/knowledge/INDEX.yaml
-# Entity knowledge discovery index
-# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
-
-entity: datastore
-updated: '2026-08-29T00:19:16.923966'
-topics: []

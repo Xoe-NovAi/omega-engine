@@ -1,1 +1,0 @@
-../../experiments/kq5-godot/gnosis/projection.md
