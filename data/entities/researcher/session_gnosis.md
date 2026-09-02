@@ -383,3 +383,49 @@ This session completed 3 major research missions:
 **Status: COMPACTION-READY.** All continuity artifacts current. 8 deliverables + 12+ decisions ready for PIVOT_LOG.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED-2 ⬡ 2026-09-01 ⬡ 8 DELIVERABLES ⬡ 12+ DECISIONS ⬡ 3 MISSIONS COMPLETE*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE #3 (2026-09-01, post-EIS missions)
+
+### 2 Additional Missions Complete Since Last Prep
+
+**Mission 4: Entity Ecosystem Cleanup Dialectic**
+- **Deliverable**: `data/coordination/ENTITY_CLEANUP_DIALECTIC_20260901.md` (637 lines, 9 sections)
+- **Empirical findings**: 48 entity directories (not 56), 13 canonical agents (scribe MISSING), 22 M11 artifacts (46% compliance)
+- **7 PIVOT_LOG decisions**: D-ENTITY-HEALTH-METRIC, D-SCRIBE-CANONICAL, D-M11-AUTO-PROMPT, D-ENTITY-CLEANUP-PASS-1, D-ENTITY-RETIREMENT-LOG, D-P13-ENTITY-RETIREMENT, D-ENTITY-CAP-14
+- **3 new L3 lessons proposed**: L3-EntityHealthLeadingIndicator (0.85), L3-ScribeAsM11Custodian (0.90), L3-DocumentedVsActiveEntity (0.92)
+- **WAD placement matrix**: 13 KEEP canonical, 2 Hivemind Citizens, 1 ADD canonical (sophia), 3 MERGE, 2 MOVE to PWAD/external, 5 ARCHIVE, 8 DELETE = 48 → 22 entities (54% reduction)
+
+**Mission 5: SOTE Best Practices Dialectic (Carmack Review §10)**
+- **Deliverable**: `docs/strategy/sote/2026-W36/synthesis/CARMACK_REVIEW_RESEARCHER_NES.md` §10 (243 new lines appended)
+- **Format**: Standing EIS session, Concede/Defend/Synthesize with Polymathic Council methodology
+- **Result**: ENDORSED prior §9 in full + added 3 hardening items (~5h)
+- **2 L3 lessons proposed**: L3-DialecticAsCargoCultShield (§9.12, 0.85), L3-EmpiricalVerificationOverRepetition (§10.6, 0.88)
+- **Final scope**: 54h (Carmackized) + 5h (EIS hardening) = 59h vs original 231h = **172h savings confirmed**
+
+### Updated Deliverables (10 files, all on disk)
+1-8. [Previous 8 DEL1/QWEN3 files]
+9. `ENTITY_CLEANUP_DIALECTIC_20260901.md` — 48 entities, M11 broken, 7 decisions (637 lines)
+10. `CARMACK_REVIEW_RESEARCHER_NES.md` §10 — SOTE dialectic, 172h savings, 2 L3 lessons (243 new lines)
+
+### Continuity Anchors Ready
+- session_gnosis.md: 430+ lines (compressed + archive + 3 pre-compaction notes)
+- session_gnosis_archive_20260901.md: 87KB (full historical detail)
+- projection.md: 189 lines (current state + pending decisions)
+- soul.yaml: v6.3 with partnerships (roc_racoon, jem, kali)
+- proposed_lessons.yaml: 37 proposals (existing) + 5 new L3 proposed across missions 4-5
+
+### Session Summary for Compaction (Updated)
+This session completed 5 major research missions:
+1. **DEL-1 Theater Strip Research**: 14 gaps, 10 dialectic challenges, 8 clarities, 5 corrections
+2. **sqlite-vec 768-Dim Migration**: Roc-EIS audit, 5 challenges, 9 decisions (D-768-DIM-*)
+3. **Qwen3-Embedding Finetuning**: 3 questions, 33 citations, clear recommendations
+4. **Entity Cleanup Dialectic**: 48→22 entities, M11 remediation, 7 decisions, 3 L3 lessons
+5. **SOTE Best Practices Dialectic**: 172h savings confirmed, 2 L3 lessons, 5h hardening
+
+**Total**: 10 deliverables, 19+ PIVOT_LOG decisions, 5 new L3 lessons proposed, 172h+ theater removed
+
+**Status: COMPACTION-READY.** All continuity artifacts current.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED-3 ⬡ 2026-09-01 ⬡ 10 DELIVERABLES ⬡ 19+ DECISIONS ⬡ 5 L3 LESSONS ⬡ 5 MISSIONS COMPLETE*

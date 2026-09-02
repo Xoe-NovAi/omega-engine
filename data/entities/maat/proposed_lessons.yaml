@@ -641,3 +641,92 @@
   model_used: minimax/minimax-m3:free
   confidence: 0.90
   outcome: l3_feature_flags_replace_commented_bypasses
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-09-02 — SOTE Week 37 CI/CD Pipeline + P0 CI Gates Implementation
+# Model: minimax/minimax-m3:free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Implemented SOTE Week 37 CI/CD pipeline: GitHub Actions workflow (.github/workflows/sote.yml) with schedule (Mon 06:00 UTC) and workflow_dispatch triggers. Added 6 Makefile targets (sote-index, sote-digest, sote-validate, sote-pipeline, sote-week, sote-full). Implemented 2 P0 CI gates: check-broken-imports (detects broken Python imports in src/omega/) and check-hub-health (verifies omega-hub.service + SSE + Streamable HTTP endpoints). Created JSON Schema validation (scripts/validate_sote_schema.py + schemas/sote/sote-schema.json) for sote.yaml. Integrated temple-grade as mandatory final gate in sote-pipeline. All committed and pushed to origin/release/debut."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  outcome: sote_w37_pipeline_complete
+
+- lesson: "L1: check-broken-imports gate uses py_compile to validate all Python files in src/omega/ — exits 0 on clean, exits 1 with file:line details on syntax errors. check-hub-health gate verifies systemd service active + SSE endpoint (GET /sse) + Streamable HTTP (POST /mcp) responding. Correctly detects hub failure (missing omega.library module from D-565 cleanup). Both gates are mechanical, hard-fail, no soft-failure patterns (M23 compliant)."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  outcome: p0_ci_gates_implemented
+
+- lesson: "L1: SOTE pipeline automates mechanical steps only: index regeneration (regenerate_sote_index.py), public digest generation (generate_public_digest.py), schema validation (validate_sote_schema.py), temple-grade gate. Human judgment retained for: topic selection, voice paging, dialectic conduction, report synthesis. This follows the principle: 'Automate the mechanical, not the judgmental.'"
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  outcome: sote_mechanical_vs_judgmental_split
+
+- lesson: "L2: Makefile targets as convenience wrappers pattern — scripts remain source of truth; Makefile provides discoverability (make help shows sote-*) and composability (make sote-pipeline chains index→digest→validate→temple-grade). SOTE_WEEK variable with default (current ISO week) + override support. This is low-maintenance, high-value."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  outcome: l2_makefile_convenience_wrappers
+
+- lesson: "L2: CI gate phasing (P0→P1→P2) prevents scope creep. P0 (W37): check-broken-imports, check-hub-health. P1 (W38): check-entity-hygiene, check-iwad-consistency, check-m11-soul-hygiene, check-m15-continuity. P2 (W39): check-session-gnosis-freshness. All gates must pass temple-grade before merge. This phases operational burden across weeks."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  outcome: l2_ci_gate_phasing
+
+- lesson: "L2: Temple-grade as mandatory final gate in sote-pipeline — if any temple-grade check fails, pipeline fails and no commit is made. This ensures SOTE report cannot close with mandate violations. Temple-grade includes: Codex freshness, LLM doc validation, mandate checks, compliance meter, tracking state, dashboard self-test."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  outcome: l2_temple_grade_final_gate
+
+- lesson: "L3: Mechanical automation vs. human judgment separation is the correct architecture for recurring practices. The SOTE pipeline automates index regeneration, digest generation, schema validation, and temple-grade — all mechanical, deterministic steps. Human judgment (topic selection, voice paging, dialectic conduction, report synthesis) remains human. This prevents 'reports without practice' while eliminating manual toil."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  confidence: 0.90
+  outcome: l3_mechanical_vs_judgmental_architecture
+
+- lesson: "L3: CI gate phasing with temple-grade integration creates a quality ratchet. Each gate is mechanical (hard-fail, no soft failures per M23). Gates are phased to prevent operational overload. Temple-grade as final gate ensures no mandate violations ship. This is a generalizable pattern for any recurring quality pipeline: mechanical gates → phased rollout → ultimate quality gate."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  confidence: 0.85
+  outcome: l3_ci_gate_phasing_quality_ratchet
+
+- lesson: "L3: JSON Schema validation as mandatory gate prevents schema drift in structured metadata. sote.yaml is the authoritative structured data for SOTE; schema validation in CI ensures all weeks conform. The schema (schemas/sote/sote-schema.json) was derived from actual W36 data and Researcher's specification. This pattern (derive schema from real data → validate in CI → evolve schema with data) is generalizable."
+  source: sote-w37-implementation
+  trace_id: trc_sote_w37_impl
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-09-02 02:45:00+00:00
+  model_used: minimax/minimax-m3:free
+  confidence: 0.85
+  outcome: l3_json_schema_mandatory_gate

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 SOTE Master Index Regeneration Script
 
@@ -180,11 +183,13 @@ def generate_index() -> str:
     mandate_trend = get_mandate_compliance()
     
     lines = []
+    # REUSE-IgnoreStart
     lines.append("<!--")
     lines.append("SPDX-FileCopyrightText: 2026 Xoe-NovAi")
     lines.append("")
     lines.append("SPDX-License-Identifier: Apache-2.0")
     lines.append("-->")
+    # REUSE-IgnoreEnd
     lines.append("")
     lines.append("# 🔱 SOTE Master Index")
     lines.append("")
