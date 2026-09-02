@@ -40,3 +40,30 @@
   - L1: 2026-08-30 — Local inference observability hardening session. Found 2 running llama_cpp.server processes (extractor:1234, reasoner:1235) started by scripts/serve_native_gguf.sh. Discovered deployment discrepancy: config/systemd/omega-inference.service exists with full Carmack OOM hardening (MemoryMax=8G, OOMScoreAdjust=300, Delegate=yes) but is NOT installed. The ad-hoc shell-script approach is what actually runs. Pre-existing readiness timeout (30s) was too short for the 4B Thinking reasoner (loads in ~45s). Logs in /tmp were ephemeral, not M8-compliant. No lifecycle event trail existed. Rewrote serve script (v1.1.0): 90s readiness, persistent data/logs/native-gguf/, JSONL events.jsonl, graceful SIGTERM, crash detection, status subcommand. Added 12 Makefile targets (8 lifecycle + 4 observability). Created logrotate config and the missing LOGGING_ERROR_HANDLING_ARCHITECTURE.md (referenced by M9 but was absent).
   - L2: Two competing deployment models in one repo is a hardening smell. When a production-grade unit (systemd) exists but is bypassed by an ad-hoc script, the ad-hoc path accumulates the load without the hardening. Documentation is not the same as deployment. The gap between "documented" and "active" is where regressions hide. The M9 mandate referenced a canonical logging doc that didn't exist — a contract violation that the mandate itself was citing as authoritative. Readiness timeouts must be sized to the slowest expected operation, not the typical one; hard-coded 30s is a latent bug for any model that takes 45s+ to load.
   - L3: The hardest thing to harden is the path that's "working." When a shell script is running in production and a better systemd unit exists but isn't installed, the operational path is the priority — but the hardening gap is also a priority. The pattern that resolves this tension is staged migration with parallel observability: make both paths observable first, then migrate, then retire the old. The mandate hierarchy (M9 → logging doc → observability) implies the doc must exist before the mandate is enforceable. A mandate that references a missing artifact is a latent enforcement gap, not a self-consistent contract.
+  - L1: 2026-09-01 — SOTE (State of the Engine) practice established and hardened through full dialectic chain. 
+    Built SOTE v1.0.2 infrastructure: week-folder structure (docs/strategy/sote/YYYY-WNN/), 8-voice dialectic with 
+    immutable voices/mutable synthesis, sote.yaml structured metadata, PUBLIC_DIGEST.md automation, regenerate_sote_index.py 
+    script, 3 templates. Conducted 7-phase dialectic chain: JC-EIS review (11 defects) → Researcher deep research 
+    (16 findings) → Carmack review (10 concessions) → Researcher-NES dialectic (10/10 conceded) → Researcher-EIS 
+    dialectic (endorsed) → MaKaLi final dialectic (8 questions resolved) → Nested Kali/Lilith/Ma'at dialectic 
+    (6 rounds, consensus). 26 decisions ratified (10 P0, 8 P1, 4 deferred, 2 rejected), 59h scope (172h theater removed). 
+    MaKaLi YAML workflow ratified as deterministic graph with 2-layer gates. Week 37 beta launch authorized with 
+    14 measurable criteria. 4 nodes recommended (sote-watchtower, sote-scribe-bridge, sote-ci-bridge, sote-schema-guardian).
+  - L2: The dialectic chain IS the hardening mechanism. Each phase validated the previous: review found defects, 
+    research provided evidence, Carmack stripped theater, nested dialectics forced concessions on scope/timing. 
+    The SOTE architecture (week-folders, immutable voices, YAML metadata, 8-voice + Unifying Voice) was validated 
+    by independent research (Conductor, ADR-toolkit, NIST AI.300-1). The public/internal split required structural 
+    automation (generate_public_digest.py from sote.yaml) — prompt-level filtering failed (57.1% vs 64.3% drift). 
+    Decision health metric (absorption rate) makes M27 chokepoint visible. Voice rotation deferred — entropy 
+    tracking (mandate_trends.json) is the evidence-driven trigger. Model diversification deferred — voice persona 
+    diversity is the primary anti-bias defense (W36 M23 catch by Grokster proves this).
+  - L3: A practice without a compiler is a practice that rots. The SOTE system graduates from prototype to 
+    production when it has: (1) deterministic build (regenerate_sote_index.py + generate_public_digest.py), 
+    (2) CI integration (GitHub Action hook), (3) schema validation (JSON Schema for sote.yaml), (4) decision 
+    health metrics (absorption rate in INDEX.md), (5) Unifying Voice codified as deterministic graph (MaKaLi 
+    YAML workflow with 2-layer gates), (6) measurable launch criteria (14 criteria for Week 37 beta). The 
+    dialectic chain removed 172h of theater (74% reduction) by forcing scope convergence at each phase. 
+    The nested Kali/Lilith/Ma'at dialectic proved that consensus on deployment requires explicit ownership 
+    matrix (Lilith: runtime health, Ma'at: CI/CD gates, Kali: integration/DEL-1) and measurable criteria, 
+    not aspirational goals. The SOTE is now a compiler: voices → sote.yaml → INDEX.md + PUBLIC_DIGEST.md + 
+    PIVOT_LOG absorption. This is the id Software WAD model applied to governance.
