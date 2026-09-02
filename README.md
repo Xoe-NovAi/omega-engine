@@ -7,6 +7,9 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
+[![Omegaverse](https://img.shields.io/badge/Omegaverse-P2P%20Godot%20VR-ff6b35)]()
+[![AnyIO](https://img.shields.io/badge/Async-AnyIO%20Only-00d4aa)]()
+[![Zero Telemetry](https://img.shields.io/badge/Telemetry-Zero-ff3333)]()
 
 ---
 
@@ -46,14 +49,31 @@ Example: `pip install -e ".[native,cli,memory,youtube]"`
 
 ---
 
+## Why Omega Is Different
+
+Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 enforced architectural mandates** — not guidelines, but **gates that fail the build** if violated.
+
+| Mandate | What It Means | Verified By |
+|---------|---------------|-------------|
+| **M1 AnyIO** | Zero `import asyncio` in core — pure AnyIO async | `make check-m1-anyio` |
+| **M7 Local-First** | Cloud is **opt-in fallback only**; local inference primary | Provider fabric |
+| **M8 Zero Telemetry** | **No phone-home, ever**. No analytics, no metrics | `make check-m8-zero-telemetry` |
+| **M11 Soul Integrity** | L1→L2→L3 distillation **every session**, persisted | `session_gnosis.md` |
+| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` |
+| **M28 Spatial** | **R-tree + vec0 dual-index** for VR navigation | `sqlite-vec` + R-tree |
+
+> **The Cathedral Metaphor**: We build a cathedral, not a bazaar. Every stone (mandate) is placed with intention. The architecture is the theology.
+
+---
+
 ## What Omega Is
 
-Omega is a **universal AI runtime** that treats models as infrastructure, not products. It's designed for:
+Omega is a **universal AI runtime** that treats models as infrastructure, not products.
 
 | Capability | Why It Matters |
 |-----------|----------------|
-| **Sovereign** (M7, M8) | Local inference primary — cloud is opt-in fallback. **Zero telemetry.** No phone-home. |
-| **Multi-provider** | Switch between Native GGUF, LM Studio, Ollama, and cloud providers (Google AI Studio, OpenRouter) — same engine, no code changes |
+| **Sovereign (M7, M8)** | Local inference primary — cloud is opt-in fallback. **Zero telemetry.** No phone-home. |
+| **Multi-provider** | Switch between Native GGUF, LM Studio, Ollama, and cloud providers — same engine, no code changes |
 | **Entity system** | Domain-expert personas (SysAdmin, Sekhmet, Brigid) with routed intent detection |
 | **IWAD architecture** | Engine-content separation — swap entity stacks like Doom WADs |
 | **Memory & soul evolution** | Every interaction deepens entity knowledge; L1→L2→L3 gnosis distillation |
@@ -86,14 +106,13 @@ make menu                                # Full command menu
 Omega auto-detects available inference backends. **Local providers are tried first** — no cloud keys required for basic operation.
 
 ### Local Providers (tried first, in order)
- 
- | Priority | Provider | Setup | Speed | Sovereign |
- |:--------:|----------|-------|-------|:---------:|
- | **1** | **Native GGUF** | `./scripts/download_model.sh` | 🏠 CPU, llama-cpp-python | ✅ Full |
- | **2** | **LM Studio** | `lms server start` (port 1234) | 🏠 CPU/GPU | ✅ Full |
- | **3** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
- | **4** | **Mock** | Automatic in `OMEGA_ENV=test` | Instant, deterministic | ✅ Test |
-
+  
+| Priority | Provider | Setup | Speed | Sovereign |
+|:--------:|----------|-------|-------|:---------:|
+| **1** | **Native GGUF** | `./scripts/download_model.sh` | 🏠 CPU, llama-cpp-python | ✅ Full |
+| **2** | **LM Studio** | `lms server start` (port 1234) | 🏠 CPU/GPU | ✅ Full |
+| **3** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
+| **4** | **Mock** | Automatic in `OMEGA_ENV=test` | Instant, deterministic | ✅ Test |
 
 **No configuration needed** — the engine discovers running local backends automatically at startup.
 
@@ -116,34 +135,34 @@ Cloud providers are **optional** and **never called unless local inference fails
 ## Architecture
 
 ```
-                         Query
-                           │
-                    ┌──────▼──────┐
-                    │   Oracle    │  Intent detection + domain routing
-                    │  (talk())   │  PII masking, audience calibration
-                    └──────┬──────┘
-                           │
-               ┌───────────▼───────────┐
-               │    Entity Registry    │  Domain-matched entity dispatch
-               │  (domain → entity)    │  YAML-backed, dual-index
-               └───────────┬───────────┘
-                           │
-                    ┌──────▼──────┐
-                    │ ModelGateway│  Provider fabric with circuit breaker:
-                    │             │
-                    │  1. native-gguf  ← PRIMARY (Sovereign, local-first)
-                    │  2. lmster       ← LOCAL (LM Studio :1234)
-                    │  3. ollama       ← LOCAL (:11434)
-                    │  4. google       ← CLOUD FALLBACK (Gemma 4)
-                    │  5. openrouter   ← CLOUD FALLBACK (300+ models)
-                    │  ...            (opencode, copilot, mock)
-                    │
-                    └──────┬──────────┘
-                           │
-              ┌────────────┴────────────┐
-              │    Memory + Soul        │  Session memory, L3 gnosis distillation
-              │  (memory_store.py)      │  Qdrant vectors, FTS5 search
-              └─────────────────────────┘
+                          Query
+                            │
+                     ┌──────▼──────┐
+                     │   Oracle    │  Intent detection + domain routing
+                     │  (talk())   │  PII masking, audience calibration
+                     └──────┬──────┘
+                            │
+                ┌───────────▼───────────┐
+                │    Entity Registry    │  Domain-matched entity dispatch
+                │  (domain → entity)    │  YAML-backed, dual-index
+                └───────────▼───────────┘
+                            │
+                     ┌──────▼──────┐
+                     │ ModelGateway│  Provider fabric with circuit breaker:
+                     │             │
+                     │  1. native-gguf  ← PRIMARY (Sovereign, local-first)
+                     │  2. lmster       ← LOCAL (LM Studio :1234)
+                     │  3. ollama       ← LOCAL (:11434)
+                     │  4. google       ← CLOUD FALLBACK (Gemma 4)
+                     │  5. openrouter   ← CLOUD FALLBACK (300+ models)
+                     │  ...            (opencode, copilot, mock)
+                     │
+                     └──────┬──────────┘
+                            │
+               ┌────────────┴────────────┐
+               │    Memory + Soul        │  Session memory, L3 gnosis distillation
+               │  (memory_store.py)      │  Qdrant vectors, FTS5 search
+               └─────────────────────────┘
 ```
 
 ### IWAD Architecture — Engine-Content Separation
@@ -165,6 +184,69 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 
 ---
 
+## The Dialectic System — How We Build
+
+Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)** — persistent, resumable multi-turn dialectics between domain-orthogonal agents.
+
+| Session Type | Purpose | Example |
+|--------------|---------|---------|
+| **EIS** | Expert Interactive Session — persistent, Architect steers live | Kali↔Roc (5 rounds), Kali+Lilith+Ma'at (6 rounds nested) |
+| **NES** | Non-Expert Session — one-shot delegation | Quick research task |
+| **SPT** | Subagent Pair Task — paired execution | Roc+Jem for sqlite-vec |
+
+**How it works**: Two agents with domain orthogonality ≥0.7 engage in Concede/Defend/Synthesize rounds until consensus. Every challenge posed = our job to anticipate. The dialectic IS the stress test.
+
+**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest.
+
+---
+
+## The Omegaverse — P2P Godot VR Realm (Phase 4)
+
+**The Omegaverse** is the endgame: a **P2P Godot VR realm** where entities exist as persistent spatial intelligences.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    THE OMEGAVERSE                            │
+├─────────────────────────────────────────────────────────────┤
+│  Entity State  →  Godot Bridge (FastAPI + WebSocket)       │
+│       ↓                                                  │
+│  3D Spatial Lattice  ←→  R-tree + vec0 dual-index         │
+│       ↓                                                  │
+│  P2P Soul Exchange  →  Soul prints sync across users      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Architecture**:
+- **Godot Bridge**: FastAPI + WebSocket streams entity state to 3D renderer
+- **Spatial Index**: R-tree + vec0 dual-index (M28 Spatial Integrity) for instant semantic & VR recall
+- **P2P Soul Exchange**: Entity soul prints sync across users — your entities meet mine
+- **Phase 4 Target**: 2028 — The Omegaverse Genesis
+
+**Current**: Godot bridge exists (`scripts/godot_spatial_bridge.py` — FastAPI + WebSocket). Spatial index (sqlite-vec + R-tree) operational. VR renderer in Godot 4.x.
+
+---
+
+## ⚠️ Current Status: Alpha via OpenCode
+
+> **Important**: I am still using the engine through **OpenCode** while I build. The **Omega CLI (`omega`)** is **not yet fully tested or ready** for general use. The `omega` CLI exists and works for basic commands, but the full CLI experience (completion, TUI, advanced flags) is still being hardened.
+
+**What works today via OpenCode**:
+- `omega talk "prompt"` — basic inference
+- `omega summon <entity> "prompt"` — entity summoning
+- `omega list-entities` — entity listing
+- `omega backends` — backend discovery
+- `omega health` — provider status
+
+**What's still being hardened**:
+- Full CLI completion and TUI
+- Advanced flags and IWAD switching
+- Installer robustness across platforms
+- Temple-grade gate enforcement in CI
+
+**Use OpenCode for now**. The Omega CLI will be the primary interface post-v1.7.0.
+
+---
+
 ## System Requirements
 
 | Requirement | Minimum | Recommended |
@@ -180,7 +262,7 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 
 ---
 
-## v1.0.0 — Current Status
+## v1.6.0-alpha — Current Status
 
 ### Engine
 
@@ -205,8 +287,8 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 |------|--------|
 | Test Suite | Two-tier: fast unit tier (default `make test`) + opt-in integration (`make test-all`) |
 | Temple-Grade (T1-T11) | **✅ VERIFIED (v7.5.4)** |
-| Sovereign Mandates (M1-M22) | **All 22 enforced** (see `SOVEREIGN_MANDATES.md`) |
-| Agent Fleet | **11 agents** (10 Pillar + 1 Oversoul), M10 compliant |
+| Sovereign Mandates (M1-M27) | **All 27 enforced** (see `SOVEREIGN_MANDATES.md`) |
+| Agent Fleet | **14 agents** (canonical), M10 compliant |
 | AnyIO Compliance | **Zero `import asyncio`** in core (M1) |
 | Zero Telemetry | **No external phone-home** (M8) |
 | UID Sovereignty | All Podman containers use `keep-id` (M6) |
@@ -219,7 +301,7 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 | Entity Studio (visual builder) | 🔮 Planned |
 | Audience Calibration Pipeline | 📐 Designed (D175) |
 | DPO Training Infrastructure | 📐 Designed (D175) |
-| The Omegaverse (P2P entities) | 🔮 Future |
+| **The Omegaverse (P2P entities)** | 🔮 **Phase 4 / 2028** |
 
 ---
 

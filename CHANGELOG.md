@@ -5,6 +5,57 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0] - 2026-09-02
+
+### 🎉 Public Debut Release
+
+This is the first public release of the Omega Engine under Apache 2.0.
+
+### Added
+- **Public Debut**: First publicly distributable release
+- **14-Agent Fleet**: Canonical agent orchestration layer (Kali, Ma'at, Lilith, MaKaLi, Doom Guy, Roc, Researcher, Jem, Carmack, Verity, Grokster, Node, Scribe, Build, Iris)
+- **Native GGUF Inference**: Direct llama.cpp integration, no daemon required
+- **SQLite-vec Memory**: Vector embeddings for semantic search
+- **Sovereign WAD Protocol**: Doom-inspired data lump system
+- **Hivemind P2P Coordination**: Agent-to-agent communication
+- **Document Reader**: Pluggable readers for DOCX, PDF, ODT, RTF, HTML, MD, TXT, JSON, YAML
+- **One-Click Installer**: `scripts/install.sh` for Linux, macOS, Windows
+- **PUBLIC_ALLOWLIST.txt**: Sovereign boundary between public and forge
+- **apply_public_allowlist.sh**: Automated allowlist enforcement (v5)
+- **SECURITY.md**: Vulnerability disclosure policy
+- **CODE_OF_CONDUCT.md**: Contributor Covenant v2.1
+- **ROADMAP.md**: Public roadmap for v1.7-v3.0
+- **ARCHITECTURE.md**: High-level system architecture
+- **FAQ.md**: Frequently asked questions
+- **Issue Templates**: Bug report and feature request templates
+- **PR Template**: Standardized pull request checklist
+- **Allowlist CI**: GitHub Actions gate on `release/debut` branch
+
+### Changed
+- **License**: Now Apache 2.0 (was internal)
+- **README**: Expanded with badges, quickstart, optional extras
+- **CONTRIBUTING.md**: Expanded to 365 lines with detailed guidelines
+- **.gitignore**: Strengthened to exclude forge paths from public tree
+- **CI/CD**: 8 GitHub Actions workflows (test, ci, allowlist, sote, dashboard, reuse, secret-scan, dependabot)
+
+### Security
+- **M23 Pre-Cut Secret Scan**: gitleaks audit before any public release
+- **REUSE v3.3 Compliance**: SPDX headers on all files
+- **Dependabot**: Weekly version + security updates
+- **Mandate Compliance**: 27 mandates (M1-M37) enforced via Makefile gates
+
+### Known Issues
+- **Test Suite**: `omega.library` import broken (D-565 cleanup) — P0 fix in v1.7.0
+- **CI**: `omega-hub` health check may fail on fresh clones — see `make check-hub-health`
+- **Heritage Registry**: Third-party repos excluded from public tree (forge-only)
+
+### Migration from v1.5.x
+- No breaking changes for existing forge users
+- Public tree is a strict subset of the forge tree
+- Use `scripts/apply_public_allowlist.sh --confirm` to maintain the boundary
+
+---
+
 ## [v1.5.0] - 2026-07-18
 ### Added
 - **Third-Party Repository Registry**: 18/19 repos cloned to `third-party/` — P0 (4/4), P1 (5/5), P2 (6/6) complete. P3 partial (1/4).
