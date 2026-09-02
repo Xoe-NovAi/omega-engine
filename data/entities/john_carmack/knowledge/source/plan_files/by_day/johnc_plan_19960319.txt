@@ -1,0 +1,36 @@
+# ⬡ John Carmack .plan File — 1996-03-19
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960319.txt
+#
+* switchable lights
+
++ changed light program to unique switchable styles
++ target usable monsters
++ toggleable doors
++ leaf lighting
++ F2 reload crashes
++ grenade radius
++ spikeshooter directions
++ sound cache shouldn't be cleared all the times
++ demon jumping
++ demon death frames
++ chain activators for monster deaths
++ crawl out of water
++ ambient from map
+
+autosavemap?
+different teleport flash
+linked doors still have problems
+work on swimming
+control triggers for player only, or with monsters
+better knight code
+turn off regular shooters when used?
+once trigger on door_start_up?
+ctrl-alt-delete reset?
+remove r_fullbright in deathmatch
+sound streaming
+fix "couldn't allocate Z buffer" error
+reduce sound latency

@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Token Budget Configuration for LLM-Friendly Documents
+# Used by validate_llm_docs.py and sprint-plan-llm Makefile target
+
+token_budgets:
+  sprint_plan:
+    target: 4000
+    soft_limit: 6400
+    hard_limit: 8000
+    description: "Sprint plan index page (frontmatter + TOC + P0 summary only)"
+  
+  ticket_page:
+    target: 3000
+    soft_limit: 4800
+    hard_limit: 6000
+    description: "Individual ticket page (answer-first + acceptance + code sketch)"
+  
+  research_index:
+    target: 4000
+    soft_limit: 6400
+    hard_limit: 8000
+    description: "Structured research citations (no inline narrative)"
+  
+  architecture_spec:
+    target: 8000
+    soft_limit: 12800
+    hard_limit: 16000
+    description: "Full architecture deep-dive (modular sections, llms-full.txt)"
+  
+  protocol_spec:
+    target: 5000
+    soft_limit: 8000
+    hard_limit: 10000
+    description: "Protocol/spec document (YAML frontmatter + Mermaid + examples)"
+  
+  reference_doc:
+    target: 4000
+    soft_limit: 6400
+    hard_limit: 8000
+    description: "General reference documentation"
+  
+  agent_skill_def:
+    target: 2000
+    soft_limit: 3200
+    hard_limit: 4000
+    description: "Agent/skill definition (YAML frontmatter + answer-first)"
+
+# Chunking strategies for vector storage
+chunk_strategies:
+  section_per_ticket:
+    max_chunk_tokens: 2000
+    overlap_tokens: 100
+    description: "Each ticket page = one chunk"
+  
+  section_per_component:
+    max_chunk_tokens: 1500
+    overlap_tokens: 100
+    description: "Each major component/section = one chunk"
+  
+  flat:
+    max_chunk_tokens: 3000
+    overlap_tokens: 200
+    description: "Flat chunking for smaller docs"
+  
+  section_per_topic:
+    max_chunk_tokens: 2500
+    overlap_tokens: 150
+    description: "Topic-based sections as chunks"
+
+# Model-specific token limits (for context window planning)
+model_context_windows:
+  nemotron-3-ultra-free: 128000
+  gpt-4: 128000
+  claude-3-opus: 200000
+  claude-3-sonnet: 200000
+  gemini-1.5-pro: 1000000
+  qwen3-4b-thinking: 32768
+  qwen3-1.7b: 32768
+  local-gguf-default: 8192
+
+# Recommended max tokens per document type per model
+max_doc_tokens_per_model:
+  nemotron-3-ultra-free:
+    sprint_plan: 4000
+    ticket_page: 3000
+    architecture_spec: 16000
+  local-gguf-default:
+    sprint_plan: 2000
+    ticket_page: 1500
+    architecture_spec: 4000

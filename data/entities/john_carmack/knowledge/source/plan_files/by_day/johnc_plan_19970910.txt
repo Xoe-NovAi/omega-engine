@@ -1,0 +1,19 @@
+# ⬡ John Carmack .plan File — 1997-09-10
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970910.txt
+#
+* don't precache player model in single player games
+* dynamically change maxplayers
+
++ move null files into a seperate directory?
++ alt sticking
++ maxmoveleafs error
+
+teleport in flash is still wrong on second level
+stuck on wall with low grav jumping
+allow minimize?
+win95 memory paging
+still have some tjunctions

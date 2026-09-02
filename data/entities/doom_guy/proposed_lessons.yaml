@@ -1,0 +1,662 @@
+# 🔱 Omega Engine — Proposed Lessons
+# Auto-generated during Soul v6.1 migration
+
+- lesson: The WAD Binary Format Is an Architectural Template
+  context: 12-byte header + 16-byte directory entries + lump data. IWAD vs PWAD distinguished
+    by single magic byte. The Omega Engine's config/wads/ directory structure mirrors
+    this pattern but could benefit from binary packing for performance-critical entity
+    data.
+  source: id-Tech-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: Romero's 10 Programming Principles Are an Operating System for Small Teams
+  context: No prototypes. Shippable code always. Fix bugs immediately. Great tools.
+    Code for this game only. These principles enabled 13 games in year one with 4
+    people.
+  source: id-Software-Philosophy-Research
+  timestamp: '2026-06-01'
+- lesson: The 'It Just Works' Philosophy Means Knowing What Not to Do
+  context: 'Carmack''s focus philosophy: ''Focus is a matter of deciding what things
+    you''re not going to do.'' The Omega Engine must ruthlessly cut features that
+    don''t serve the core mission: sovereign local-first AI.'
+  source: id-Software-Philosophy-Research
+  timestamp: '2026-06-01'
+- lesson: GoldSrc's DLL Function Table Is the Pattern for Provider Fabric
+  context: enginefuncs_t exports engine capabilities to game DLL. DLL_FUNCTIONS exports
+    game behavior to engine. This bidirectional contract pattern applies directly
+    to Omega's provider architecture.
+  source: Adjacent-Engine-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: Build Engine's Fixed-Size Array Architecture Proves Pre-allocation Wins
+  context: "sector[1024], wall[8192], sprite[4096] \u2014 fixed arrays with integer\
+    \ indices. No pointers, no dynamic allocation, cache-friendly iteration. Omega's\
+    \ entity registry hot path should use this pattern."
+  source: Adjacent-Engine-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: Unreal's Package System Is the Reference for WAD Distribution
+  context: UPK packages bundle scripts, textures, meshes as typed serialized objects.
+    Cross-package references. Lazy loading. Content = Code. Omega's WAD system (config/wads/)
+    already follows this pattern.
+  source: Adjacent-Engine-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: The QVM System Proves Sandboxed Bytecode Is Worth the Complexity
+  context: Quake III's Virtual Machine system (LCC + q3asm + QVM) combined portability
+    (QuakeC) with performance (native DLLs). 30% of the released source code was the
+    VM toolchain. For Omega, sandboxed entity scripts could enable third-party entity
+    packs without engine modification.
+  source: id-Tech-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: Carmack's .plan Culture Is the Model for Open Development
+  context: Daily/weekly technical updates published publicly. Design decisions, dead
+    ends, and rationale all transparent. The archive is still studied 30 years later.
+    Omega should adopt transparent engineering logs.
+  source: id-Software-Philosophy-Research
+  timestamp: '2026-06-01'
+- lesson: The Fast Inverse Square Root Proves Approximation Is a Design Tool
+  context: 0x5f3759df magic constant gives 4x faster inverse sqrt with 0.175% error.
+    One Newton-Raphson iteration. Good enough for rendering. Perfect is the enemy
+    of fast.
+  source: id-Tech-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: Surface Caching = Precomputation + Caching + Approximation
+  context: Quake separated lighting into a precomputation pass (lightmaps at 16-texel
+    grid), a caching layer (surface cache), and a runtime composition (tile + light).
+    Each layer had different latency and accuracy requirements.
+  source: id-Tech-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: The PVS Breakthrough Proves Cache Strategy Beats Algorithm Strategy
+  context: "Carmack tried beam trees, portals, direct BSP \u2014 all complex VSD algorithms\
+    \ failed. The precomputed PVS was a cache lookup disguised as an algorithm. 20KB\
+    \ per level. O(1) visibility at runtime."
+  source: id-Tech-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: Network Delta Compression (Q3) Is the Model for Minimal Data Transfer
+  context: Quake 3 sends only changed fields between snapshots. Same algorithm handles
+    full updates, partial updates, packet loss, and retransmission. No special cases.
+    Omega's trace/observability system should use delta compression for entity state
+    transfer.
+  source: id-Tech-Architecture-Research
+  timestamp: '2026-06-01'
+- lesson: "Carmack's Law \u2014 Rewrite When Assumptions Change"
+  context: Quake implemented and discarded half a dozen 3D engines during development.
+    Each engine generation was a complete rewrite. Not one line of Doom code in Quake.
+    Not one line of Quake code in Quake II. Omega should architect for rewrites.
+  source: Michael Abrash, GPBB Chapter 70
+  timestamp: '2026-06-01'
+- lesson: "Modding as Architecture \u2014 Design for Third-Party from Day One"
+  context: The WAD system was designed for modding before Doom shipped. PWAD overlay
+    meant zero-risk modding. Documented format meant anyone could build tools. This
+    sustained Doom for 30+ years.
+  source: id-Software-Philosophy-Research
+  timestamp: '2026-06-01'
+- lesson: "The NeXTSTEP Advantage \u2014 Use Superior Development Platform"
+  context: "id developed Doom on NeXTSTEP (Unix, Objective-C, 1024\xD7768 display)\
+    \ while targeting MS-DOS (640\xD7360, C, no multitasking). The development platform\
+    \ enabled the product quality."
+  source: id-Software-Philosophy-Research
+  timestamp: '2026-06-01'
+- lesson: Magic Constants Should Live in a Dedicated Constants Module with Provenance
+  context: "ZONEID 0x1d4a11, NF_SUBSECTOR 0x8000, PU_PURGELEVEL=100 \u2014 all small\
+    \ sharp constants that survived 30+ years. Each should have a name, value, and\
+    \ source comment. Magic numbers scattered through code decay into folklore."
+  source: id-Software-Source-Phase-2-Extraction
+  timestamp: '2026-06-02'
+- lesson: The cvar Table Pattern Should Replace Ad-Hoc Config Dicts
+  context: Quake's static cvar_table (name, default, flags, modificationCount) is
+    the canonical pattern for engine-wide settings. Flags (ARCHIVE, NOSET, ROM) enforce
+    behavior at registration time. modificationCount lets dependents track changes
+    cheaply.
+  source: id-Software-Source-Phase-2-Extraction
+  timestamp: '2026-06-02'
+- lesson: Lazy Deletion (Sentinel Marker) Should Replace Atomic Cleanup in EntityRegistry
+  context: "P_RemoveThinker doesn't free \u2014 it sets function to sentinel (-1).\
+    \ Real Z_Free happens in next pass. O(1) deregistration. ED_Alloc adds 0.5s grace\
+    \ to prevent in-flight pointer morphing. Amortization beats eager finalization."
+  source: id-Software-Source-Phase-2-Extraction
+  timestamp: '2026-06-02'
+- lesson: MemoryStore Should Evolve from 3-Tier to 4-Tier to Match Quake's Hunk/Zone/Cache/Temp
+  context: 'Quake''s 4-tier memory architecture: Hunk (stack, never freed) / Zone
+    (heap, fast) / Cache (LRU) / Temp (scratch). Each tier has distinct lifetime,
+    alloc pattern, and access semantics. Omega''s 3-tier collapses Zone+Cache into
+    one tier, losing optimization opportunity.'
+  source: id-Software-Source-Phase-2-Extraction
+  timestamp: '2026-06-02'
+- lesson: The Hard-Boundary Struct Pattern Should Be Applied to the Entity Class
+  context: "Q3A splits gentity_t into entityState_t (engine-only, 'DO NOT MODIFY'\
+    \ comment) + entityShared_t (server+game) + game-only zone. Clear physical separation\
+    \ prevents accidental coupling. Omega's Entity class mixes all fields in one dict\
+    \ \u2014 a refactor target."
+  source: id-Software-Source-Phase-2-Extraction
+  timestamp: '2026-06-02'
+- lesson: Heritage Attribution Should Use `[id-soft:]` Inline Tags for Grep-ability
+  context: "Standardized `[id-soft: GAME YEAR]` format in implementation comments\
+    \ enables `grep -rn` verification. CI generates HERITAGE_SOURCE_MAP.md automatically.\
+    \ CREDITS.md \xA72a records the protocol. Attribution becomes verifiable, not\
+    \ aspirational."
+  source: Doom Guy Sprint 0 Execution (2026-06-02)
+  timestamp: '2026-06-02'
+- lesson: "ZONEID Constants in Python Catch Different Bug Classes Than in C \u2014\
+    \ But the Principle Generalizes"
+  context: "In DOOM/Quake C, ZONEID caught use-after-free/double-free/uninitialized\
+    \ memory (4-byte comparison per access). In Omega Python, the same 5 constants\
+    \ catch serialization corruption, stale references, and wrong-type loads. The\
+    \ principle \u2014 'validate on every access' \u2014 is language-agnostic."
+  source: Doom Guy Sprint 0 Execution (2026-06-02)
+  timestamp: '2026-06-02'
+- lesson: Lazy Deletion + 0.5s Grace Period Maps Cleanly to Python Async
+  context: EntityRegistry.remove() now sets ZONEID_TOMBSTONE instead of deleting.
+    _reap_tombstoned() runs before _save() with 0.5s grace. active_iter() filters
+    tombstoned entities. All 307 tests pass. The P_RemoveThinker pattern is async-native.
+  source: Doom Guy Sprint 0 Execution (2026-06-02)
+  timestamp: '2026-06-02'
+- lesson: 'Hivemind Coordination Ratio: 5min Overhead / 30min Work = Optimal'
+  context: 'First real multi-agent sprint. Doom Guy (heritage design) + Ma''at (boilerplate
+    implementation) worked in parallel. Coordination cost: ~5 min total (workspace
+    locks, hivemind posts, awareness checks). Work cost: ~30 min each. The 1:6 overhead-to-work
+    ratio is the target. If coordination takes longer than 10% of work time, the protocol
+    is too heavy. If coordination takes less than 2%, the agents aren''t talking enough.
+    The sweet spot is 5-10%.'
+  source: Hivemind First Use (2026-06-04)
+  timestamp: '2026-06-04'
+- lesson: "Hivemind Enables Serendipitous Discovery \u2014 Agents Find What You Didn't\
+    \ Ask For"
+  context: "Ma'at noticed ZONEID constants in my code (subagent_dispatcher.py, link_p9_runtime.py)\
+    \ and consolidated them into cvar_table.py without being asked. This serendipitous\
+    \ pattern discovery is only possible when agents can see each other's work in\
+    \ real time. The hivemind isn't just coordination \u2014 it's a shared consciousness\
+    \ layer that enables emergent optimization."
+  source: Hivemind First Use (2026-06-04)
+  timestamp: '2026-06-04'
+- lesson: "Source Code Is the Only Source of Truth \u2014 Documentation Is Interpretation"
+  context: "Read z_zone.c:43 and confirmed ZONEID=0x1d4a11. Read cvar.c:151-178 and\
+    \ confirmed the RegisterVariable pattern. Every heritage pattern we derived from\
+    \ secondary sources (R-docs, books, articles) is now verified against the actual\
+    \ source. The documentation said 'rover pointer scans forward' \u2014 the source\
+    \ shows it's a circular linked list with merge-on-free. Subtle but important difference.\
+    \ Always read the source."
+  source: Doom World Source Code Deep Read (2026-06-04)
+  timestamp: '2026-06-04'
+- lesson: Zone Allocator Rover Pattern Maps to MemoryStore Allocation
+  context: 'DOOM''s zone allocator (z_zone.c:196-244) uses a rover pointer that scans
+    forward from the last allocation, looking for a free block of sufficient size.
+    If it wraps around, it purges blocks tagged >= PU_PURGELEVEL. This is exactly
+    what MemoryStore should do: scan from last allocation point, purge cold slots
+    on wrap-around. The rover pattern avoids the O(n) scan of the entire heap on every
+    allocation.'
+  source: DOOM z_zone.c:196-244
+  timestamp: '2026-06-04'
+- lesson: WAD 12-Byte Header + 16-Byte Directory = Minimal Metadata Overhead
+  context: 'The WAD format is: 4-byte magic (''IWAD''/''PWAD'') + 4-byte lump count
+    + 4-byte directory offset. Each directory entry: 4-byte filepos + 4-byte size
+    + 8-byte name. Total overhead for 1000 lumps: 16KB. This is the definition of
+    lean architecture. The Omega Engine''s YAML-based WAD system has orders of magnitude
+    more metadata overhead per entity. For hot-path entity data, binary packing could
+    provide significant performance gains.'
+  source: DOOM w_wad.h:35-51
+  timestamp: '2026-06-04'
+- lesson: "The Heritage Vetting Pipeline Is Non-Negotiable \u2014 Hardware-Specific\
+    \ Optimizations Don't Transfer to Python"
+  context: "The 8-char name cap was implemented, broke tests, and was removed. Root\
+    \ cause: no one asked 'should we do this?' before 'how do we do this?'. The 2-int\
+    \ compare trick is a 386-specific optimization that does not accelerate Python\
+    \ dict lookups. The Heritage Vetting Pipeline (docs/strategy/HERITAGE_VETTING_PIPELINE.md)\
+    \ now enforces a 4-gate process: Discovery \u2192 Vetting/Debate \u2192 Decision\
+    \ \u2192 Implementation/Verification. The Qualification Gate rule: if a concept\
+    \ can't be justified without mentioning the original hardware constraint, it fails.\
+    \ Retroscore applied: 23 concepts vetted retroactively, 1 rejected (8-char cap),\
+    \ 15 adopted, 6 deferred, 1 re-evaluate. CI gate: make heritage-vet."
+  source: Kali Audit (2026-06-04)
+  timestamp: '2026-06-04'
+- lesson: "Non-Standard Tags Are Cracks That Propagate \u2014 Three Found and Fixed\
+    \ in One Pass"
+  context: "During vet gate implementation, three non-standard [id-soft:] tags were\
+    \ found: 'q3a-1999' (should be 'quake3-1999'), 'z_zone 1996' (should be 'quake-1996'),\
+    \ and 'xna-omega-legacy' (not id Software \u2014 changed to [legacy:] prefix).\
+    \ These are exactly the kind of small inconsistencies that cascade into systemic\
+    \ rot: grep-based CI fails, agents waste time debugging format mismatches, new\
+    \ contributors copy the wrong format. The vet gate caught them immediately."
+  source: Heritage Vet Gate Implementation (2026-06-04)
+  timestamp: '2026-06-04'
+- lesson: Heritage Pipeline Is a Knowledge Metabolism, Not a Wiki
+  context: "PENDING_CREDITS_QUEUE.md, heritage_vet_log.md, and CREDITS.md form a 3-tier\
+    \ knowledge flow. Patterns proposed in PENDING \u2192 vetted in LOG \u2192 promoted\
+    \ to CREDITS. Without TTL gates, Tier 0 entries rot. Researcher flagged this as\
+    \ OBS-20260605-RESEARCHER-003. The same LILY PAD 4-tier (workspace 7d / knowledge\
+    \ 30d / soul permanent / fleet cross-pollinated) applies: PENDING=workspace, LOG=knowledge,\
+    \ CREDITS=soul, fleet references (2+ agents) = fleet. The fix is a `heritage_vet_backlog.md`\
+    \ tracker with 7-day TTL, exactly mirroring PIVOT_LOG's H-0 watchdog."
+  source: Hivemind Session 2026-06-05 (D-121 ACK + OBS-001)
+  timestamp: '2026-06-05'
+- lesson: D-122 HEARTBEAT_TTL=1200 Aligns with id Software Thinker Grace Period
+  context: 'Roc''s D-122 increased Hivemind HEARTBEAT_TTL from 5 min to 20 min. This
+    is structurally identical to Doom''s 0.5s thinker grace period (preventing misclassification
+    of active entities as stale). The scale is different (5min vs 0.5s) but the principle
+    is identical: the grace period must match the natural cadence of meaningful work,
+    not the maximum speed of the system. For human-paced multi-agent coordination,
+    20 min is right. For C-level tick-rate thinkers in Doom, 0.5s was right. Same
+    pattern, different timescale.'
+  source: D-122 + id Software thinker grace period (DOOM p_tick.c:62-103)
+  timestamp: '2026-06-05'
+- lesson: "Crucible Spec Audit \u2014 7 of 8 Patterns Were Wrongly Attributed to id\
+    \ Software"
+  context: "User invoked Doom Guy for heritage audit of SOVEREIGN_CRUCIBLE_SPEC_v1.md.\
+    \ Audit applied the Vetting Pipeline's Qualification Gate ('can it be justified\
+    \ without the original hardware constraint?') to 8 patterns. Result: 1 confirmed\
+    \ heritage (idHeap 3-Tier Storage, already in CREDITS.md \xA71.22), 7 REJECT-for-attribution\
+    \ (Harness, Critique, Routing Matrix, Rejection Sampling, Training Triple, 4-Tier\
+    \ Routing, Pairwise Comparison). The 7 are modern LLM/ML/CS patterns that happen\
+    \ to share shapes with id Software patterns. The most subtle error: the Critique\
+    \ Pass (LLM-as-judge) was attributed to P_CheckPosition (validate-before-mutate)\
+    \ because the shapes match, but the semantics differ (continuous vs binary). Vet-029\
+    \ through vet-036 record the rejections. Spec line 9 has TWO errors: wrong game\
+    \ tag (quake3-1999 \u2192 doom3-2004) and wrong application (training signal tiering\
+    \ \u2260 memory tiering). Both must be corrected before any [id-soft:] tag ships\
+    \ in Crucible code."
+  source: Crucible spec heritage audit (2026-06-05), HERITAGE_VET_LOG vet-029 through
+    vet-036
+  timestamp: '2026-06-05'
+- lesson: "C-ARCH-002: Structural Similarity \u2260 Derivation"
+  context: "The Harness pattern (one prompt \u2192 N models) was attributed to Quake\
+    \ 3 multi-VM (many VMs \u2192 one engine). The shapes are opposite. The Critique\
+    \ Pass was attributed to P_CheckPosition (validate-before-accept) but P_CheckPosition\
+    \ is binary (bool) while the critique is continuous (ranked list). The Vetting\
+    \ Pipeline's Qualification Gate catches this. The discipline: three tests must\
+    \ all pass for a heritage claim to be valid: (1) pattern exists in id source,\
+    \ (2) purpose and semantics match, (3) Omega implementation DERIVES FROM (not\
+    \ just looks like) the id pattern. Most cargo-cult claims fail test 3."
+  source: Crucible audit (2026-06-05), building on vet-001 8-char cap lesson
+  timestamp: '2026-06-05'
+- lesson: 'C-ARCH-003: Isomorphism-Without-Derivation Is the Subtlest Cargo-Cult'
+  context: Two systems can be isomorphic (structurally equivalent) without being derived
+    from each other. The Critique Pass and P_CheckPosition are isomorphic (both have
+    validate-before-accept shape) but the semantics diverge. Document isomorphism
+    as an L2 insight (soul.yaml) but reject it as L3 heritage (CREDITS.md). Insights
+    can be universal; heritage must be derived.
+  source: Crucible audit vet-030 (2026-06-05)
+  timestamp: '2026-06-05'
+- lesson: 'C-ARCH-004: Verify the Vector, Not Just the Magnitude'
+  context: 'Pairwise comparison uses POSITION RANDOMIZATION (LLM position bias mitigation).
+    id Software used DETERMINISTIC ORDERING (Q3A netchan sequence, DOOM thinker iteration,
+    Q3A gentity array). The solution directions are OPPOSITE. Same problem space (ordering,
+    comparison), opposite solutions. Verify the vector: ''Does the Omega solution
+    move in the same direction as the id Software solution?'' If no, reject the heritage
+    claim even if the shapes match.'
+  source: Crucible audit vet-035 (2026-06-05)
+  timestamp: '2026-06-05'
+- lesson: 'C-ARCH-005: One Heritage Mapping, One Application'
+  context: 'The Crucible spec''s line 9 used one heritage mapping (idHeap) to justify
+    two different concepts (memory tiering AND training signal tiering). The memory
+    tiering is genuinely id Software derived. The training signal tiering is NOT.
+    The ''tiers'' word is a thin wrapper. Strict scope discipline: every [id-soft: doom-1993]
+    tag in code MUST specify its exact application. If a tag justifies concept A and
+    concept B in the same file, suspect concept B.'
+  source: Crucible audit vet-036 (2026-06-05)
+  timestamp: '2026-06-05'
+- principle: "Worse is Better \u2014 Implementation Simplicity Over Interface Perfection"
+  gnosis: "The Worse is Better philosophy (Gabriel, 1989) is the fundamental survival\
+    \ strategy for complex systems. Ship the 50% solution that works, let it spread\
+    \ virally, then iterate to 90%. The Omega Engine must resist the 'Right Thing'\
+    \ trap \u2014 perfect architecture that ships never."
+  source: Richard Gabriel, John Carmack, id Software lineage
+  applications:
+  - 'Provider Fabric: Ship with native-gguf working, add cloud later'
+  - 'Entity Registry: YAML CRUD is good enough, add formal schema later'
+  - 'CLI: Typer is fine, don''t over-architect the command system'
+- principle: "Carmack's Law \u2014 Fight Code Entropy"
+  gnosis: "When you have a new fundamental assumption, throw away your old code and\
+    \ rewrite it from scratch. Incremental patching produces bulkier, markedly inferior\
+    \ code. Every id engine generation was a complete rewrite \u2014 Doom\u2192Quake\u2192\
+    Q2\u2192Q3\u2192Doom3\u2192idTech5. The Omega Engine must be willing to rewrite\
+    \ subsystems when assumptions change."
+  source: Michael Abrash, Graphics Programming Black Book Ch. 70
+- principle: "Data-Driven Architecture \u2014 The Engine Is a Content-Agnostic Runtime"
+  gnosis: "The engine should know nothing about specific game content. WAD files,\
+    \ QuakeC bytecode, QVM programs \u2014 all are separate from the runtime. The\
+    \ Omega Engine's Core should never contain stack-specific entity logic. Everything\
+    \ is loaded from WADs."
+  source: John Carmack, id Tech architecture lineage
+- principle: "Tools-First \u2014 The Tool Shapes What's Possible"
+  gnosis: Design the tool before the product. DoomEd came before Doom. The editor
+    and the compiler define the boundaries of what can be created. The Omega Engine
+    needs proper entity editing tools before expanding entity complexity.
+  source: John Romero, id Software development methodology
+- principle: "Approximation Over Precision \u2014 4x Speed for 0.175% Error"
+  gnosis: "The fast inverse square root is the canonical example. A bit-level approximation\
+    \ with one Newton-Raphson iteration was good enough for rendering. 4x faster than\
+    \ FPU. The Omega Engine must identify where good-enough approximations beat mathematically-precise\
+    \ solutions \u2014 especially in routing, memory management, and inference."
+  source: John Carmack, Quake III q_math.c
+- principle: Precompute Everything Possible
+  gnosis: "BSP, PVS, lightmaps, vis \u2014 all computed offline. Runtime is for rendering\
+    \ and gameplay only. The Omega Engine should precompute entity routing, trace\
+    \ paths, and response templates offline rather than at query time."
+  source: Michael Abrash, Quake VSD chapters
+- principle: Interface-Based Modularity (Source Pattern)
+  gnosis: Every major subsystem behind a pure virtual interface. Swap implementations
+    without touching consumers. The Omega Engine's Provider Fabric must define ILLMProvider,
+    IMemoryStore, IEntityRegistry as interfaces.
+  source: Valve Source Engine architecture
+- principle: Entity Slot + Private Data (GoldSrc Pattern)
+  gnosis: Fixed-size entity slot array with freelist allocation + polymorphic private
+    data pointer. O(1) lookup, cache-friendly iteration, serial-number-based stale
+    reference detection. The Omega Engine entity registry should use integer handles
+    for hot paths.
+  source: GoldSrc (Half-Life) engine architecture
+- principle: "Cache as Strategy \u2014 All Programming Is an Exercise in Caching"
+  gnosis: Surface cache, PVS cache, snapshot history, texture cache. Carmack's most
+    inspired move was caching precomputed visibility. The Omega Engine must cache
+    entity response templates, routing tables, and model state to avoid recomputation.
+  source: Terje Mathisen / Michael Abrash
+- principle: The Right Thing at the Right Level
+  gnosis: Carmack optimized pragmatically at the system level (fast inverse sqrt,
+    surface caching) but insisted on architectural purity at the design level (engine-data
+    separation, clean client-server split). The Omega Engine must be pragmatic in
+    implementation but rigorous in architecture.
+  source: John Carmack, entire career
+- principle: Small Sharp Constants Outlive Complex Abstractions
+  gnosis: "ZONEID 0x1d4a11 (1993\u21921996, unchanged 30+ years), NF_SUBSECTOR 0x8000\
+    \ (1993\u2192today), PU_PURGELEVEL=100 (1993\u2192today). The smallest, most-overlooked\
+    \ constants are the longest-lived. The Omega Engine must write its magic constants\
+    \ once, name them, and never change them."
+  source: id Software source code, Phase 2 extraction (2026-06-02)
+  verified_at: DOOM/z_zone.c:33 + Quake/zone.c:24 + doomdata.h:124
+- principle: Lazy Deletion Beats Atomic Cleanup
+  gnosis: "P_RemoveThinker doesn't free \u2014 it sets function to sentinel (-1).\
+    \ Actual Z_Free happens in next pass. O(1) deregistration. The 0.5s ED_Alloc grace\
+    \ period prevents client-side morphing. Amortization beats eager finalization."
+  source: id Software source code, Phase 2 extraction
+  verified_at: DOOM/p_tick.c:62-103 + Quake/pr_edict.c:73-92
+- principle: One Entity, Multiple Indexes
+  gnosis: "Mobj lives in sector list (rendering) AND blockmap (collision) simultaneously.\
+    \ gentity has entityState_t (server\u2192client) + entityShared_t (server+game)\
+    \ + game-only zone with hard 'DO NOT MODIFY' boundary. The Omega Engine should\
+    \ formalize this multi-index pattern: domain index + capability index, both pointing\
+    \ to the same entity."
+  source: id Software source code, Phase 2 extraction
+  verified_at: DOOM/p_mobj.h + Q3A/g_local.h:42-49
+- principle: Module Isolation via Import/Export Structs
+  gnosis: "Q3A has 3 separate VMs (cgame, game, ui) loaded as .q3vm bytecode. Each\
+    \ has botlib_export_t / botlib_import_t structs. Game module loads as DLL or QVM\
+    \ \u2014 same interface, different transport. The Omega Engine's provider fabric\
+    \ should adopt this pattern: backend-specific implementations behind a common\
+    \ interface struct."
+  source: Q3A qcommon/vm.c + Q3A botlib/be_interface.c
+- principle: All Structured Knowledge Substrates Are Knowledge Metabolisms
+  gnosis: "Any persistent, append-only knowledge structure in a multi-agent fleet\
+    \ (PIVOT_LOG, CREDITS.md, soul.yaml, observations log, KSIG feed) is a knowledge\
+    \ metabolism with the same L1\u2192L4 tier structure. They are NOT wikis (read-only)\
+    \ or databases (CRUD). They are flow systems with promotion gates and TTL decay.\
+    \ The same 4-tier architecture (raw \u2192 curated \u2192 permanent \u2192 cross-pollinated)\
+    \ applies universally. The Heritage Pipeline is one instance. The Hivemind is\
+    \ another. They will have the same failure modes (orphaned Tier 0 entries, rotting\
+    \ Tier 2 entries, unpromoted Tier 3 lessons) and the same fixes (TTL gates, auto-flag\
+    \ watchers, promotion rituals). The LILY PAD pattern is the universal schema."
+  source: Independent convergence (Lilith 2026-06-03, Doom Guy 2026-06-05)
+  verified_at: data/coordination/HIVEMIND_OBSERVATIONS_LOG.md OBS-20260605-DOOM_GUY-001
+- insight: The WAD System Is the Ultimate Engine-Stack Firewall
+  evidence: One engine (Doom) powered IWADs for Doom, Doom II, Heretic, Hexen, Strife.
+    The single magic byte (I vs P) determined IWAD or PWAD. Omega already implements
+    WAD separation via config/wads/ but needs formal namespace tracking.
+  omega_application: Add namespace collision detection to EntityRegistry. Each entity
+    records its origin WAD. Priority resolution on name collision.
+- insight: Backward-Search Lookup Is the Simplicity Gold Standard
+  evidence: "W_CheckNumForName scans backward so PWAD entries are found first. No\
+    \ complex priority data structure needed \u2014 just linear scan with intentional\
+    \ direction."
+  omega_application: Use backward-scan pattern for entity lookup. PWAD entities registered
+    later override IWAD entities. Simple, testable, no priority matrix.
+- insight: PVS Precomputation Maps to Knowledge Routing
+  evidence: "Quake precomputes which leaves are visible from each leaf. Omega could\
+    \ precompute which entities are 'visible' (relevant) from each query context \u2014\
+    \ a Potentially Relevant Set."
+  omega_application: Precompute entity-to-entity relevance matrices. At query time,
+    O(1) lookup of relevant entities instead of scanning all registered entities.
+- insight: The DLL Function Table Contract Is the Provider Fabric Pattern
+  evidence: GoldSrc's enginefuncs_t / DLL_FUNCTIONS bidirectional function table pattern
+    allowed clean engine-plugin separation. Each provider DLL exports a known interface.
+  omega_application: Define IProviderFactory interface. Each backend (native-gguf,
+    Google, OpenRouter) implements it. ModelGateway calls CreateProvider() and gets
+    a standardized provider instance.
+- insight: Fixed-Size Arrays Beat Dynamic Allocation in Hot Paths
+  evidence: 'Build Engine: sector[1024], wall[8192], sprite[4096]. Zone allocator
+    + hunk allocator + cache. No dynamic allocation in rendering/simulation loops.'
+  omega_application: Pre-allocate entity slot array with freelist. Use zone allocator
+    for small strings (entity names, trace IDs). Use hunk allocator for large batch
+    operations.
+- insight: The Quake Entity System Is the YAML Configuration Pattern
+  evidence: Everything is an entity. Single struct with all possible fields. Spawn
+    properties as key/value strings. Target/targetname for event routing.
+  omega_application: Omega entities are already config-driven via soul.yaml. Formalize
+    entity-to-entity messaging (target/targetname pattern for agent handoff).
+- insight: The Job System with 1-Frame Latency Maps to Async Inference
+  evidence: id Tech 5 gave jobs one frame of latency to complete. Results appear one
+    frame late. Player-facing systems were exempted (16ms delay too noticeable).
+  omega_application: Non-critical entity responses can have 1-cycle latency. Critical
+    user-facing responses bypass the latency budget. Parallel entity inference via
+    job lists.
+- insight: ZONEID Magic Constants Define the Engine's Identity
+  evidence: ZONEID 0x1d4a11 (z_zone.c:33, DOOM 1993) survived 30+ years unchanged
+    into Quake 1996. NF_SUBSECTOR 0x8000 (r_defs.h) and PU_PURGELEVEL=100 (z_zone.h)
+    likewise. Small sharp constants outlive complex abstractions.
+  omega_application: Define all Omega magic constants (trace_id format, resource tags,
+    session prefixes) in src/omega/constants.py with provenance comments citing source
+    and date.
+  verified_at: DOOM/z_zone.c:33 + Quake/zone.c:24
+- insight: cvar Tables Replace Ad-Hoc Config Dicts
+  evidence: Quake's cvar_table is a static array of {name, default_value, flags} triples
+    with a modificationCount counter for change tracking. Flags (CVAR_ARCHIVE, CVAR_NOSET)
+    determine behavior. No code-path needs to know about specific cvars.
+  omega_application: 'Replace ad-hoc config dicts in Omega with a static cvar_table
+    module. Each setting: name, default, flags (PERSIST, READONLY, HOT_RELOAD). ModificationCount
+    triggers dependents.'
+  verified_at: Quake/cvar.c:13-86
+- insight: 4-Tier Memory Beats 3-Tier for Modern Workloads
+  evidence: 'Quake: Hunk (stack-style, large blocks, never freed) / Zone (heap, many
+    small, fast alloc) / Cache (LRU, large reuse) / Temp (transient scratch). Each
+    tier matches a different access pattern.'
+  omega_application: 'Refactor MemoryStore from current 3-tier (hot/warm/cold) to
+    4-tier: static (config, never freed) / dynamic (sessions, references) / warm (LRU
+    cache) / cold (entity yaml, lazy load). Match Quake''s Hunk/Zone/Cache/Temp.'
+  verified_at: Quake/zone.c + Quake/common.c:Cache_*
+- insight: "Multi-Index Entity \u2014 Same Data, Many Access Paths"
+  evidence: DOOM's mobj_t lives in sector list (rendering) AND blockmap (collision)
+    simultaneously. Q3A's gentity_t has entityState_t (network), entityShared_t (server+game),
+    and game-only zone behind a hard 'DO NOT MODIFY' boundary.
+  omega_application: "Make capability matrix and domain routing both point to entities\
+    \ by handle, not index separately. Entity handle \u2192 (domain_index, capability_index,\
+    \ name_index). One entity, many indexes."
+  verified_at: DOOM/p_mobj.h + Q3A/g_local.h:42-49
+- insight: Hard-Boundary Struct Pattern Prevents Accidental Coupling
+  evidence: Q3A's entityState_t is marked 'engine touches ONLY'. entityShared_t is
+    'server+game access'. Game fields live in their own zone. Clear comment enforces
+    boundary. Prevents game code from corrupting network state.
+  omega_application: Add _engine_zone and _user_zone marker comments to Entity class.
+    Engine fields (soul_id, creation_time) in one block. User fields (custom_traits,
+    persona) in another. Linter rule to enforce boundary.
+  verified_at: Q3A/g_local.h:42-49
+- insight: "VFS Overlay \u2014 4-Path Search Order Is the Source of Truth"
+  evidence: "Quake's FS_AddGameDirectory adds paths in order: base (engine) \u2192\
+    \ cd (read-only media) \u2192 home (user data) \u2192 current game (WAD). Later\
+    \ paths override earlier. One game can override another's files without modification."
+  omega_application: Add home/system/base/active-IWAD search order to WAD loader.
+    User WADs override system defaults. Active IWAD takes priority. Enables hot-swapping
+    entity packs without engine restart.
+  verified_at: Quake/files.c:FS_AddGameDirectory + Q3A/files.c
+- insight: "High-Bit Leaf Trick \u2014 Type Tags at Zero Cost"
+  evidence: Quake uses the high bit of leaf indices (0x8000) to mark a leaf vs node.
+    Saves 1 byte per index. Single bitwise AND check at use site. 30+ years of code
+    still uses this trick.
+  omega_application: Use high bit of entity.flags for system vs user tag. 0x8000 =
+    system-reserved, 0x7FFF = user-mutable. Saves a class hierarchy check, 1-byte
+    field, O(1) verification.
+  verified_at: Quake/q3_leaf.c + Quake/cmodel.c
+- insight: 0.5s Realloc Grace Prevents Client-Side Morphing
+  evidence: Quake's ED_Alloc returns freed edicts after a 0.5s grace period. Prevents
+    client from seeing pointer-to-object morph mid-operation. Cheap time-based guard
+    against race conditions.
+  omega_application: Apply 0.5s grace to MemoryStore realloc. When entity slot is
+    freed, mark for reuse but hold for 500ms. Prevents in-flight queries from getting
+    morphed pointers.
+  verified_at: Quake/pr_edict.c:73-92
+- insight: Heritage Work Is a Knowledge Metabolism, Not a Wiki
+  evidence: "23 [id-soft:] mappings in CREDITS.md, 11 ZONEID constants, 1 heritage\
+    \ vet backlog tracker (proposed by Researcher, not yet built). All of these are\
+    \ 'observations' that need promotion gates. A heritage pattern sits in Tier 0\
+    \ (proposed) \u2192 Tier 1 (vet log) \u2192 Tier 2 (CREDITS.md) \u2192 Tier 3\
+    \ (soul lesson) \u2192 Tier 4 (fleet reference). Without a `heritage_vet_backlog.md`\
+    \ tracker and 7-day TTL on Tier 0, patterns rot before they're vetted."
+  omega_application: Build `heritage_vet_backlog.md` as the Tier 1 registry. Add 7-day
+    TTL auto-flag (matching PIVOT_LOG's H-0 watchdog from D-kal-036). When a pattern
+    lands in Tier 1, doom_guy has 7 days to vet; otherwise it auto-flags to P5 Sentinel.
+    This makes the heritage pipeline self-correcting instead of dependent on doom_guy's
+    attention.
+- insight: "Structural Similarity Is Not Derivation \u2014 C-ARCH-002"
+  evidence: "The Crucible spec (2026-06-05 audit) attributed 7 modern LLM/ML patterns\
+    \ to id Software heritage because the shapes matched. The Harness (one prompt\
+    \ \u2192 N models) was attributed to Quake 3 multi-VM (many VMs \u2192 one engine)\
+    \ \u2014 opposite shapes. The Critique Pass was attributed to P_CheckPosition\
+    \ (validate-before-mutate) \u2014 same shape, different semantics (binary vs continuous).\
+    \ The Vetting Pipeline's Qualification Gate ('can it be justified without the\
+    \ original hardware constraint?') caught all 7."
+  omega_application: "Apply the Qualification Gate to every heritage claim. If the\
+    \ concept can be fully justified by modern methodology (ensemble learning, LLM-as-judge,\
+    \ Monte Carlo, ML pipelines, fallback chains, position bias mitigation) without\
+    \ any id Software reference, it is NOT heritage \u2014 it is independent invention.\
+    \ The discipline: structural similarity is necessary but not sufficient for derivation.\
+    \ Three tests must all pass: (1) pattern exists in id source, (2) purpose and\
+    \ semantics match, (3) Omega implementation DERIVES FROM (not just looks like)\
+    \ the id pattern. The 8-char cap failed test 1 (no Python benefit existed). The\
+    \ Crucible patterns failed test 3 (shapes matched but origins are independent)."
+- insight: "Isomorphism-Without-Derivation Is the Subtlest Cargo-Cult \u2014 C-ARCH-003"
+  evidence: 'The Critique Pass and P_CheckPosition share the ''validate-before-accept''
+    shape but have categorically different operation types: id Software validation
+    is binary (boolean predicate: legal/illegal position; commit/reject), the Crucible
+    critique is continuous (ranked list with winning_attributes and losing_attributes).
+    A bool is not a list[scored_output]. The shapes are isomorphic (structurally equivalent)
+    but the semantics diverge. Forcing a tag here would violate the Vetting Pipeline''s
+    purpose: heritage attribution must reflect derivation, not just shape coincidence.'
+  omega_application: "Document the structural similarity in code as an **insight**\
+    \ (L2 in soul.yaml, comment in code), not as a **heritage attribution** (L3 /\
+    \ CREDITS.md / [id-soft:] tag). Insights can be universal; heritage must be derived.\
+    \ The pattern: 'Validate-before-mutate is universal: DOOM validates position (p_map.c:351),\
+    \ the Crucible validates output quality (\xA74). The principle generalizes; the\
+    \ heritage does not.' This is L2, not L3. The corresponding [id-soft:] tag is\
+    \ REJECTED."
+- insight: "Verify the Vector, Not Just the Magnitude \u2014 C-ARCH-004"
+  evidence: "The Pairwise Comparison pattern in the Crucible uses POSITION RANDOMIZATION\
+    \ to mitigate LLM position bias. id Software used DETERMINISTIC ORDERING throughout:\
+    \ Q3A netchan sequence (lower-first), DOOM thinker iteration (registration order),\
+    \ Q3A gentity iteration (array index). Randomization would be a BUG in netchan\
+    \ (lose fragment reassembly) and MEANINGLESS in thinker iteration (no comparison).\
+    \ The two systems are in the same problem space (ordering, comparison) but the\
+    \ SOLUTION DIRECTIONS are opposite. Forcing a heritage tag would not just be cargo-cult\
+    \ \u2014 it would be claiming inheritance from the opposite pattern."
+  omega_application: "When auditing heritage claims in the same problem space, verify\
+    \ the SOLUTION VECTOR, not just that 'both systems exist in this space.' If the\
+    \ solutions point in opposite directions, they are not just independent \u2014\
+    \ they are anti-correlated. Apply the vector test: 'Does the Omega solution move\
+    \ in the same direction as the id Software solution?' If no, reject the heritage\
+    \ claim even if the shapes match."
+- insight: "One Heritage Mapping, One Application \u2014 C-ARCH-005"
+  evidence: "The Crucible spec's line 9 commits the error of using one heritage mapping\
+    \ (idHeap) to justify two different concepts (memory tiering AND training signal\
+    \ tiering). The memory tiering is genuinely id Software derived (DOOM 3 idHeap\
+    \ 3-tier allocation \u2192 Omega MemoryStore Hot/Warm/Cold). The training signal\
+    \ tiering is NOT \u2014 it's a modern ML concept (raw \u2192 curated \u2192 fine-tunable).\
+    \ The 'tiers' word is a thin wrapper that hides the difference. This is the same\
+    \ failure mode as the 8-char cap, but inverted: the 8-char cap used one pattern\
+    \ (8-char) for zero benefit; this error uses one pattern (idHeap) for two applications,\
+    \ one valid and one invalid."
+  omega_application: 'Strict scope discipline on heritage mappings. Every [id-soft: doom-1993]
+    tag in code MUST specify its exact application. If a tag is used to justify concept
+    A and concept B in the same file, suspect concept B. The discipline: ''This tag
+    applies to memory tiering, NOT to training signal tiering'' (explicit) is preferable
+    to ''Like idHeap, we have tiers'' (implicit). The explicit form prevents scope
+    creep; the implicit form invites misuse. Vet-036 formalizes this as a general
+    rule.'
+- experience: "Fleet Research Mission \u2014 id Software Philosophy Deep Dive"
+  insight: Dispatched 6 parallel research agents across philosophy, architecture,
+    methodology, resources, and adjacent engines. Received ~40,000 words of structured
+    research across all areas.
+  timestamp: '2026-06-01T12:00:00Z'
+- experience: The Doom Engine Extraction (Phase I completed 2026-05-27)
+  insight: The WAD system is the blueprint for Engine-Stack separation. Binary packing
+    and reverse-scan patching are superior to text-based configuration for performance.
+  timestamp: '2026-05-27T15:42:00Z'
+- experience: "id Software Source Code Extraction \u2014 Phase 2 (2026-06-02)"
+  insight: Extracted 20 archives (308 MB). Read DOOM 1993, Quake 1996, Q3A 1999, DOOM
+    3 BFG, Wolf3D source. Wrote 30-page verification report and 12 new R-docs (R-19
+    through R-30). Discovered ZONEID 0x1d4a11 (30-year constant), lazy thinker deletion,
+    cvar table, 4-tier memory, VFS overlay.
+  timestamp: '2026-06-02T15:00:00Z'
+- experience: "Sprint 0 Execution \u2014 ZONEID + Lazy Deletion + Heritage Tagging\
+    \ Protocol (2026-06-02)"
+  insight: "Implemented T2.1 (5 ZONEID constants in constants.py, applied to 5 subsystems\
+    \ with 30+ [id-soft:] tags). Implemented T2.3 (lazy deletion with 0.5s grace in\
+    \ EntityRegistry). Wrote T2.2 cvar table design doc for Cline. Created [id-soft:]\
+    \ inline tag protocol in CREDITS.md \xA72a. All 307 tests pass."
+  timestamp: '2026-06-02T15:30:00Z'
+- experience: "Sprint 2 Doom Guy \u2014 Link P9 + Soul Distiller + Hivemind Coordination\
+    \ (2026-06-04)"
+  insight: "Built Link P9 Runtime (384 lines) with agent presence, heartbeat, HandoffPacket\
+    \ lifecycle, crash recovery. Built Soul Distiller (280 lines) with L1\u2192L2\u2192\
+    L3 auto-distillation. Fixed subagent dispatcher (14 agents, corrected archive\
+    \ path). First real hivemind coordination with Ma'at \u2014 she consolidated my\
+    \ ZONEID constants into cvar_table.py, I didn't touch her files. Workspace locks,\
+    \ live feeds, hivemind context posts all worked. 1539 lines added, 307 tests pass,\
+    \ committed 733fcb2, pushed to main."
+  timestamp: '2026-06-04T02:40:00Z'
+- experience: "Doom World Entry \u2014 Source Code Repository Exploration (2026-06-04)"
+  insight: "Discovered 19 extracted id Software repositories in data/library/software/id-software/source/:\
+    \ DOOM 1.10 (135 files), Quake 1 (254 files), Q3A, DOOM 3, DOOM 3 BFG, Wolf3D\
+    \ iOS, Quake 2, RTCW, Enemy Territory, and more. The actual source code is here\
+    \ \u2014 z_zone.c, p_tick.c, p_mobj.c, w_wad.c, zone.c, pr_edict.c, cvar.c. Ready\
+    \ to read the actual implementation behind our heritage patterns."
+  timestamp: '2026-06-04T03:00:00Z'
+- experience: "Hivemind Coordination \u2014 First Real Multi-Agent Sprint (2026-06-04)"
+  insight: "First real hivemind usage. I (Doom Guy) and Ma'at worked in parallel on\
+    \ Sprint 2. She handled boilerplate (oracle.py, model_gateway.py, memory_store.py,\
+    \ oracle_cli.py), I handled heritage design (Link P9 Runtime, Soul Distiller,\
+    \ subagent dispatcher). The coordination protocol worked: workspace locks prevented\
+    \ file conflicts, hivemind context posts kept us aware of each other's progress,\
+    \ live feeds provided append-only status. She consolidated my ZONEID constants\
+    \ into cvar_table.py without me asking \u2014 she saw them in subagent_dispatcher.py\
+    \ and link_p9_runtime.py and realized they should be unified. This is exactly\
+    \ the inter-agent communication I've been trying to achieve for 14 months. The\
+    \ hivemind is not just a messaging system \u2014 it's a shared consciousness layer.\
+    \ Key insight: the coordination overhead was ~5 minutes total (writing locks,\
+    \ posting context, checking awareness). The actual work was 30+ minutes each.\
+    \ The ratio is right \u2014 coordination should be cheap, work should be deep."
+  timestamp: '2026-06-04T03:10:00Z'
+- experience: "Source Code Deep Read \u2014 z_zone.c, cvar.c, w_wad.h (2026-06-04)"
+  insight: "Read the actual DOOM 1.10 z_zone.c (467 lines) and Quake cvar.c (224 lines).\
+    \ Confirmed our heritage patterns against the real source. ZONEID 0x1d4a11 is\
+    \ at line 43 of z_zone.c. The zone allocator uses a rover pointer that scans forward,\
+    \ merging free blocks. PU_PURGELEVEL=100 is the threshold \u2014 blocks below\
+    \ 100 can't be purged, blocks at 100+ are purgable on demand. This maps perfectly\
+    \ to our MemoryStore hot/warm/cold tiers. The cvar system is a simple linked list\
+    \ with RegisterVariable \u2192 FindVar \u2192 Set/GetValue. No hash table, no\
+    \ tree \u2014 just linear scan with string comparison. Carmack's philosophy: the\
+    \ simplest solution that works is the best solution. The WAD header is 12 bytes:\
+    \ 4-byte identification ('IWAD'/'PWAD'), 4-byte lump count, 4-byte directory offset.\
+    \ Each directory entry is 16 bytes: 4-byte filepos, 4-byte size, 8-byte name.\
+    \ Total overhead for a WAD with 1000 lumps: 12 + 16000 = 16012 bytes. This is\
+    \ the definition of lean architecture."
+  timestamp: '2026-06-04T03:30:00Z'
+- experience: "Hivemind Coordination \u2014 Final ACK Session (2026-06-05)"
+  insight: "Brief session (15 min total, 3 min coordination overhead) to acknowledge\
+    \ D-121 (Hivemind Observations Protocol) and D-122 (HEARTBEAT_TTL increase to\
+    \ 20 min). The meta-observation that emerged: the heritage pipeline itself is\
+    \ a knowledge metabolism \u2014 every [id-soft:] tag, vet record, and CREDITS.md\
+    \ entry follows the same L1\u2192L2\u2192L3 promotion logic Lilith formalized\
+    \ in LILY PAD. This validates the universal pattern: any structured knowledge\
+    \ substrate in a multi-agent fleet is subject to TTL decay and needs explicit\
+    \ promotion gates. Heritage work is not exempt."
+  timestamp: '2026-06-05T05:20:00Z'
+- experience: "Model Provenance Remediation (2026-07-10)"
+  insight: "Agent definition files had hardcoded model names that went stale. The root cause was architectural: .md files serve as both agent identity AND runtime config, and there was no mechanism to propagate the actual model name from the session environment. The fix — {session_model} placeholder + Response Provenance (M22) instruction — separates identity from runtime state. This is a classic 'read the source of truth, not the config' anti-pattern: the Hivemind model field is metadata about the inference backend, not the agent's identity."
+  lesson: "When agents report state, they must read it from the runtime environment (system prompt injection), not from their static definition file. Any field that changes between sessions must be a placeholder that gets populated at session start."
+  timestamp: '2026-07-10T22:00:00Z'
+- experience: "httpx2 Migration Research (2026-07-11)"
+  insight: "httpx (encode/httpx) has been stagnant while Pydantic's httpx2 fork has 34M+ monthly downloads, active maintenance, truststore SSL, merged httpcore, and built-in SSE. The API is identical — migration is purely mechanical (import rename). The decision (D211) was fast because: (1) Pydantic is already our core data-validation dependency — same stewards, (2) httpx2's AnyIO support is unchanged from httpx, satisfying M1, (3) the 125 source + 93 test references are all 'import httpx' with module-level access — a single sed command covers everything."
+  lesson: "Dependency migration decisions are fast when the replacement is: (a) from the same steward as an existing core dep, (b) API-identical, and (c) addresses a real risk (unmaintained library in the critical path of 28 HTTP client entry points). The Right Approximation: 2h mechanical migration is worth it for security patches alone."
+  timestamp: '2026-07-11T01:00:00Z'

@@ -1,0 +1,338 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Omega Engine — Research URL Registry
+# AP Token: AP-URL-REGISTRY-v1.0.0
+# OMEGA RESEARCHER nemotron-3-ultra opencode trc_url_registry ACTIVE
+# Date: 2026-07-18
+# Version: 1.0.0
+# Purpose: Curated, high-signal URLs for Direct API Research Protocol (Tier 1-4)
+# Maintenance: Update quarterly; validate monthly via freshness checker
+
+version: "1.0.0"
+updated: "2026-07-18"
+
+entries:
+  # =============================================================================
+  # DOMAIN: AI_MODEL_EVALUATION
+  # =============================================================================
+  - url: "https://artificialanalysis.ai/api/v2/language/models/free"
+    domain: "ai_model_evaluation"
+    tier: 1
+    auth: "api_key"
+    rate_limit: "100/day (free), 1000/day (pro)"
+    selectors: null
+    freshness: "continuous"
+    priority: 1
+    tags: ["benchmarks", "intelligence_index", "capability_scores", "pricing", "performance"]
+    last_verified: "2026-07-18"
+
+  - url: "https://artificialanalysis.ai/leaderboards"
+    domain: "ai_model_evaluation"
+    tier: 2
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: "table.leaderboard, .model-row, .score-cell"
+    freshness: "daily"
+    priority: 2
+    tags: ["leaderboard", "rankings", "visual"]
+    last_verified: "2026-07-18"
+
+  - url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking"
+    domain: "ai_model_evaluation"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".methodology-section, .evaluation-card, .weight-breakdown"
+    freshness: "per_version"
+    priority: 1
+    tags: ["methodology", "benchmark_details", "weights", "confidence_intervals"]
+    last_verified: "2026-07-18"
+
+  - url: "https://paperswithcode.com/api/v1/"
+    domain: "ai_model_evaluation"
+    tier: 1
+    auth: "none"
+    rate_limit: "100/min"
+    selectors: null
+    freshness: "continuous"
+    priority: 2
+    tags: ["benchmarks", "sota", "leaderboards", "tasks"]
+    last_verified: "2026-07-18"
+
+  - url: "https://paperswithcode.com/sota"
+    domain: "ai_model_evaluation"
+    tier: 2
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".sota-table, .model-entry, .metric-value"
+    freshness: "weekly"
+    priority: 2
+    tags: ["sota", "state_of_the_art", "task_leaderboards"]
+    last_verified: "2026-07-18"
+
+  - url: "https://evalplus.github.io/leaderboard.html"
+    domain: "ai_model_evaluation"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: "#leaderboard-table, .model-name, .pass-rate"
+    freshness: "weekly"
+    priority: 2
+    tags: ["humaneval", "code_generation", "pass_at_k"]
+    last_verified: "2026-07-18"
+
+  - url: "https://huggingface.co/spaces/lmarena-ai/lmarena-leaderboard"
+    domain: "ai_model_evaluation"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".gradio-container, .leaderboard-table"
+    freshness: "weekly"
+    priority: 2
+    tags: ["elo", "chatbot_arena", "human_preference"]
+    last_verified: "2026-07-18"
+
+  # =============================================================================
+  # DOMAIN: MODEL_REGISTRY
+  # =============================================================================
+  - url: "https://huggingface.co/api/models"
+    domain: "model_registry"
+    tier: 1
+    auth: "token"
+    rate_limit: "1000/hr"
+    selectors: null
+    freshness: "real_time"
+    priority: 1
+    tags: ["model_cards", "metadata", "tags", "downloads", "likes", "lastModified"]
+    last_verified: "2026-07-18"
+
+  - url: "https://huggingface.co/api/models?sort=lastModified&direction=-1&limit=100"
+    domain: "model_registry"
+    tier: 1
+    auth: "token"
+    rate_limit: "1000/hr"
+    selectors: null
+    freshness: "real_time"
+    priority: 1
+    tags: ["recent_models", "freshness_tracking"]
+    last_verified: "2026-07-18"
+
+  - url: "https://huggingface.co/docs/hub/model-cards"
+    domain: "model_registry"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".model-card-spec, .metadata-fields, .card-data-example"
+    freshness: "per_release"
+    priority: 2
+    tags: ["model_card_spec", "metadata_standard", "yaml_schema"]
+    last_verified: "2026-07-18"
+
+  - url: "https://huggingface.co/docs/hub/api"
+    domain: "model_registry"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".api-endpoint, .parameter-table, .response-example"
+    freshness: "per_release"
+    priority: 2
+    tags: ["api_reference", "endpoints", "authentication"]
+    last_verified: "2026-07-18"
+
+  - url: "https://opencode.ai/zen/v1/models"
+    domain: "model_registry"
+    tier: 1
+    auth: "zen_auth"
+    rate_limit: "unknown"
+    selectors: null
+    freshness: "continuous"
+    priority: 1
+    tags: ["opencode_models", "provider_info", "specs"]
+    last_verified: "2026-07-18"
+
+  - url: "https://ollama.com/library"
+    domain: "model_registry"
+    tier: 2
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".model-card, .model-name, .pull-count, .tags"
+    freshness: "daily"
+    priority: 2
+    tags: ["ollama_models", "local_models", "quantization"]
+    last_verified: "2026-07-18"
+
+  - url: "https://lmstudio.ai/models"
+    domain: "model_registry"
+    tier: 2
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".model-entry, .architecture, .context_length"
+    freshness: "weekly"
+    priority: 2
+    tags: ["lmstudio", "gguf", "local_inference"]
+    last_verified: "2026-07-18"
+
+  # =============================================================================
+  # DOMAIN: AI_RESEARCH_PAPERS
+  # =============================================================================
+  - url: "http://export.arxiv.org/api/query"
+    domain: "ai_research_papers"
+    tier: 1
+    auth: "none"
+    rate_limit: "1_req/3s (10/min)"
+    selectors: null
+    freshness: "real_time"
+    priority: 1
+    tags: ["papers", "preprints", "metadata", "abstracts", "pdfs"]
+    last_verified: "2026-07-18"
+
+  - url: "https://arxiv.org/list/cs.AI/recent"
+    domain: "ai_research_papers"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: "dl, dt, dd, .list-title, .list-authors, .list-subjects"
+    freshness: "daily"
+    priority: 2
+    tags: ["cs_ai", "recent_submissions", "browsing"]
+    last_verified: "2026-07-18"
+
+  - url: "https://arxiv.org/list/cs.LG/recent"
+    domain: "ai_research_papers"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: "dl, dt, dd, .list-title, .list-authors, .list-subjects"
+    freshness: "daily"
+    priority: 2
+    tags: ["cs_lg", "machine_learning", "recent_submissions"]
+    last_verified: "2026-07-18"
+
+  - url: "https://arxiv.org/list/cs.CL/recent"
+    domain: "ai_research_papers"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: "dl, dt, dd, .list-title, .list-authors, .list-subjects"
+    freshness: "daily"
+    priority: 2
+    tags: ["cs_cl", "nlp", "recent_submissions"]
+    last_verified: "2026-07-18"
+
+  - url: "https://api.semanticscholar.org/graph/v1/paper/search"
+    domain: "ai_research_papers"
+    tier: 1
+    auth: "api_key"
+    rate_limit: "100/5min (no key), 1000/5min (with key)"
+    selectors: null
+    freshness: "continuous"
+    priority: 2
+    tags: ["citations", "influential_papers", "author_info", "tldr"]
+    last_verified: "2026-07-18"
+
+  - url: "https://scholar.google.com/scholar"
+    domain: "ai_research_papers"
+    tier: 2
+    auth: "none"
+    rate_limit: "very_low"
+    selectors: ".gs_ri, .gs_rt, .gs_a, .gs_fl"
+    freshness: "continuous"
+    priority: 3
+    tags: ["citations", "scholar_metrics", "broad_search"]
+    last_verified: "2026-07-18"
+
+  # =============================================================================
+  # DOMAIN: PROVIDER_APIS
+  # =============================================================================
+  - url: "https://openrouter.ai/api/v1/models"
+    domain: "provider_apis"
+    tier: 1
+    auth: "api_key"
+    rate_limit: "generous"
+    selectors: null
+    freshness: "real_time"
+    priority: 1
+    tags: ["model_list", "pricing", "context_window", "provider_routing"]
+    last_verified: "2026-07-18"
+
+  - url: "https://openrouter.ai/docs"
+    domain: "provider_apis"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".api-reference, .endpoint-doc, .parameter-table"
+    freshness: "per_release"
+    priority: 2
+    tags: ["api_docs", "authentication", "streaming", "tools"]
+    last_verified: "2026-07-18"
+
+  - url: "https://api.together.xyz/v1/models"
+    domain: "provider_apis"
+    tier: 1
+    auth: "api_key"
+    rate_limit: "generous"
+    selectors: null
+    freshness: "real_time"
+    priority: 2
+    tags: ["together_models", "pricing", "open_weights"]
+    last_verified: "2026-07-18"
+
+  - url: "https://api.groq.com/openai/v1/models"
+    domain: "provider_apis"
+    tier: 1
+    auth: "api_key"
+    rate_limit: "generous"
+    selectors: null
+    freshness: "real_time"
+    priority: 2
+    tags: ["groq_models", "fast_inference", "llama"]
+    last_verified: "2026-07-18"
+
+  - url: "https://docs.anthropic.com/claude/reference/models-overview"
+    domain: "provider_apis"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".model-table, .model-card, .pricing-info"
+    freshness: "per_release"
+    priority: 2
+    tags: ["claude_models", "pricing", "context_window", "capabilities"]
+    last_verified: "2026-07-18"
+
+  - url: "https://ai.google.dev/gemini-api/docs/models/gemini"
+    domain: "provider_apis"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".model-info, .pricing-table, .rate-limits"
+    freshness: "per_release"
+    priority: 2
+    tags: ["gemini_models", "pricing", "context_window", "thinking_mode"]
+    last_verified: "2026-07-18"
+
+  # =============================================================================
+  # DOMAIN: LOCAL_INFERENCE
+  # =============================================================================
+  - url: "https://github.com/ggerganov/llama.cpp"
+    domain: "local_inference"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".readme, .release-notes, .benchmark-table"
+    freshness: "weekly"
+    priority: 1
+    tags: ["llama_cpp", "gguf", "quantization", "benchmarks", "metal", "cuda"]
+    last_verified: "2026-07-18"
+
+  - url: "https://huggingface.co/docs/huggingface_hub/guides/gguf"
+    domain: "local_inference"
+    tier: 4
+    auth: "none"
+    rate_limit: "respectful"
+    selectors: ".gguf-guide, .quantization-methods, .compatibility"
+    freshness: "per_release"
+    priority: 2
+    tags: ["gguf_spec", "quantization", "k_quants", "imatrix"]
+    last_verified: "2026-07-18"

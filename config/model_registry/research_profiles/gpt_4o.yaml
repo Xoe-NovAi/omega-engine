@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# GPT-4o Research Profile
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+profile: "gpt_4o"
+context_window: 128000
+reasoning_depth: "fast"
+tool_fidelity: "low"
+guardrails:
+  - "Verify every tool output against known facts"
+  - "Cross-reference with specific citations"
+  - "Do not assume tool results are accurate"
+failure_signature: "hallucination"
+shadow_focus: "verify_claims"

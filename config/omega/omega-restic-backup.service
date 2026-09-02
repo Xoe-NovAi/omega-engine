@@ -1,0 +1,35 @@
+# ⬡ OMEGA ⬡ MAAT ⬡ RESTIC_BACKUP_SERVICE ⬡ v1.0.0 ⬡ 2026-07-22
+#
+# Systemd service for daily restic backup
+# Runs at randomized time 3am ± 15min via timer
+
+[Unit]
+Description=Omega Engine Daily Restic Backup
+Documentation=https://github.com/Xoe-NovAi/omega-engine
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/backup_restic.sh
+
+[Service]
+Type=oneshot
+User=arcana-novai
+Group=arcana-novai
+WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+ExecStart=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/backup_restic.sh
+EnvironmentFile=-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.env.backup
+# Restrict capabilities for security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data
+ReadWritePaths=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs
+# Resource limits
+MemoryMax=2G
+CPUQuota=50%
+# Timeout
+TimeoutStartSec=3600
+TimeoutStopSec=300
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,60 @@
+# 🔱 Omega Engine — Log Rotation (Native GGUF + Engine Logs)
+# ⬡ OMEGA ⬡ logrotate ⬡ observability ⬡ HARDENING
+#
+# Prevents unbounded growth of local observability logs in data/logs/.
+# M8-compliant: rotation is local-only, never external.
+#
+# INSTALL (requires root):
+#   sudo cp config/logrotate/omega /etc/logrotate.d/omega
+#   sudo logrotate -d /etc/logrotate.d/omega   # dry-run verify
+#   sudo logrotate -f /etc/logrotate.d/omega   # force first rotation
+#
+# The systemd logrotate.timer runs daily; no cron needed.
+
+# ── Native GGUF inference servers (extractor:1234, reasoner:1235) ──────────
+# Logs + pid files + lifecycle events written by scripts/serve_native_gguf.sh
+# to data/logs/native-gguf/.
+/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/native-gguf/*.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    create 0644 arcana-novai arcana-novai
+}
+
+# ── Engine service logs (mcp_watchdog, omega-hub, token ledger) ────────────
+/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    create 0644 arcana-novai arcana-novai
+}
+
+/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/omega-hub.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    create 0644 arcana-novai arcana-novai
+}
+
+/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/token_ledger.jsonl {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    create 0644 arcana-novai arcana-novai
+}

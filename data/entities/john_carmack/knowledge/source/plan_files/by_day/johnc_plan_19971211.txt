@@ -1,0 +1,14 @@
+# ⬡ John Carmack .plan File — 1997-12-11
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19971211.txt
+#
+The Quake 2 public code release is up at:
+
+ftp://ftp.idsoftware.com/idstuff/quake2/source/q2source_12_11.zip
+
+This source code distribution is only for hard-core people that are going to spend a lot of time pouring over it. This is NOT a how-to-make-levels-for-q2 type dsitribution!
+
+This should keep a bunch of you busy for a while. :)

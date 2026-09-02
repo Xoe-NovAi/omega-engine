@@ -1,0 +1,113 @@
+# Project Gotchas — Engineering Domain
+
+## Platform-Specific Traps (rot_class: fast — review monthly)
+
+### 1. Pyproject.toml Dependency Hell
+**Trap**: `warp-proxy-pool`, `qdrant-client`, `redis`, `youtube-transcript-api`, `yt-dlp` in main deps break fresh installs.
+**Fix**: Move to extras (`[warp]`, `[qdrant]`, `[redis]`, `[youtube]`); add import guards in `memory/providers.py`, `youtube_worker.py`, `ingestion/worker.py`, `proxy_pool.py`.
+
+### 2. ModelGateway Secret Dumping
+**Trap**: `_load_sovereign_secrets()` dumps `.env` into `os.environ` at import time.
+**Fix**: Remove method; load env at CLI edge (`oracle_cli.py` `load_dotenv()`); document required env vars.
+
+### 3. Version Drift
+**Trap**: `src/omega/__init__.py` = "1.0.0" vs `pyproject.toml` = "1.2.0" vs README badge = "1.2.0".
+**Fix**: Single source via `importlib.metadata.version("omega")` with fallback.
+
+### 4. README Vanity Badge
+**Trap**: "1315 tests passing" badge + "1315-test suite" text.
+**Fix**: Remove badge; fix text; verify `make setup` target exists.
+
+### 5. Multiple Router Stack
+**Trap**: `SemanticRouter` + `TriageRouter` + `ProviderSelector` + `RoutingTable` + `RAGRouter` all on talk path.
+**Fix**: DEL-1 Week 2 — keep `ProviderSelector`, delete `TriageRouter` + `SemanticRouter` in same PR.
+
+### 6. Double-Gate Deadlock Risk
+**Trap**: `model_gateway.py` has `admission_ctrl.acquire()` + `resource_guard.lock()` — two semaphores.
+**Fix**: DEL-1 Week 2 merge → single `ResourceGuard.lock()` with fail-fast for local.
+
+### 7. Blind Except in oracle_cli.py
+**Trap**: `try/except Exception/pass` for dotenv = M9 violation + m23 gate failure.
+**Fix**: `contextlib.suppress(ImportError)` — do NOT bump `m23_baseline.txt`.
+
+### 8. Redis Default Password
+**Trap**: `MemoryStore` constructs `RedisStorageProvider(password="omega")` by default.
+**Fix**: Guard behind `OMEGA_REDIS_HOST` env var; no default password.
+
+### 9. Vault Sidecar Not Wired
+**Trap**: `VaultCore.bury_credential` exists but CLI calls missing `store_credential`; Gateway dumps `.env`.
+**Fix**: DEL-1 Week 3 — Architect chooses Path A (delete) or Path B (minimal 50-line).
+
+### 10. QdrantAdapter Dead Code
+**Trap**: `QdrantAdapter` in `vector_adapters.py` marked "DEPRECATED: heritage reference only" but still exported.
+**Fix**: DEL-1 Week 1 delete; post-debut revive at `src/omega/oracle/adapters/qdrant_adapter.py`.
+
+### 11. God-Module Growth
+**Trap**: `oracle.py` (1253 lines), `model_gateway.py` (1481 lines), `observability/__init__.py` (1583 lines), `hub_tools/tools.py` (3649 lines).
+**Fix**: Freeze file sizes; split only after talk path is thin.
+
+### 12. Test Vanity Counts
+**Trap**: Makefile/OMEGA_ENGINE claim "1315 passing" but 1 fail (m23 gate) + 40 skip + 8 xfail.
+**Fix**: C-0 honesty — real counts: passed / failed / skipped / errors.
+
+### 13. Secret Leaks in Git History
+**Trap**: 12+ real API keys in git history (Cerebras, SiliconFlow, OpenAI-style).
+**Fix**: P0-1 — `git filter-repo` scrub all branches; gitleaks in pre-commit + CI.
+
+### 14. Forge Files in Public Repo
+**Trap**: 4,506 tracked files including `docs/strategy/` (123 files), `data/entities/` (1072 files), `docs/research/`, `docs/archive/`.
+**Fix**: PUB-1 — `PUBLIC_ALLOWLIST.txt` + `release/debut` branch from allowlist.
+
+### 15. Soul Distillation Not Automated
+**Trap**: Agents write L1→L2→L3 to `proposed_lessons.yaml` but no nightly distillation pipeline.
+**Fix**: Post-debut EvolveR (Qwen3-1.7B local nightly) → Curator review → Domain principles.
+
+---
+
+## Mandate Compliance Gotchas
+
+| Mandate | Trap | Fix |
+|---------|------|-----|
+| **M1 AnyIO** | `asyncio.create_task()` in `omega_hub/server.py:371` | Use `anyio.create_task_group()` |
+| **M7 Local-First** | Provider fabric priority not enforced | `config/providers.yaml` local-first chain |
+| **M8 Zero Telemetry** | Prometheus metrics exported | Local-only via textfile collector |
+| **M9 Error Integrity** | Bare `except:` in 10+ files | Typed `except OmegaError:` + `trace_id` |
+| **M10 Fleet Integrity** | 26 agents → 14 cap | Consolidation complete; no new agents |
+| **M11 Soul Integrity** | `proposed_lessons.yaml` not written every session | Session end hook + agent compliance |
+| **M13 Temple-Grade** | `make temple-grade` fails (m23 gate) | Fix Blocker B first |
+| **M14 Heritage** | Unvetted `[id-soft:]` tags | `make heritage-map` + vet log |
+| **M22 Provenance** | `provider_name` from config not response | Capture at `GenerateResult.provider_name` |
+| **M23 Failure Integrity** | Soft-failures simulated | `[TOOL-CHAIN-COLLAPSE]` on mandatory tool failure |
+| **M24 Venv Sovereignty** | `--break-system-packages` used | Always `.venv/bin/pip` |
+| **M25 Streaming Resilience** | Chunk timeout = hard fail | 30s chunk timeout + heartbeat |
+| **M26 Doc Standards** | LLM-unfriendly docs | `make doc-llm-validate` |
+| **M27 Tracking Integrity** | Ad-hoc tracking files | 5-Tier architecture + `validate_tracking_state.py` |
+
+---
+
+## Hardware-Specific Gotchas (Ryzen 5700U, 16GB RAM)
+
+| Gotcha | Fix |
+|--------|-----|
+| **XMP/EXPO disabled** = 30-50% slower inference | Enable in BIOS |
+| **zRAM + zswap both active** = OOM | `M27: Never run zswap and zRAM simultaneously` |
+| **No `--no-mmap --mlock`** = swap thrashing | Always use for local inference |
+| **Default thread count** = suboptimal | Planner=7 threads, Executor=4 threads |
+| **KV cache not sized** = OOM on large context | Planner q8_0, Executor f16 |
+
+---
+
+## Post-Debut Gotchas (Horizon 2/3)
+
+| Gotcha | Mitigation |
+|--------|------------|
+| Qdrant migration data loss | `scripts/migrate_sqlite_vec_to_qdrant.py` + recall benchmark |
+| EvolveR principle quality | Utility scoring threshold (0.6) + curator review |
+| Domain module bloat | Rotation class + curator governance |
+| Curator bottleneck | SHARED_READ default; SHARED_WRITE only where needed |
+| A2A protocol fragmentation | Single protocol in `src/omega/a2a/` |
+| Agent capability registry missing | `config/agent_capabilities.yaml` + Hivemind sync |
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ hy3-free ⬡ opencode ⬡ trc_domain_engineering_gotchas ⬡ 2026-08-19*

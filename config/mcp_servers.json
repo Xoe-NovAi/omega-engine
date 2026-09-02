@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "omega-hub": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8016/mcp",
+      "note": "Canonical OpenCode + Grok CLI endpoint (dual SSE still at /sse)"
+    },
+    "searxng": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8018/mcp",
+      "note": "SearXNG MCP wrapper; web UI is :8017"
+    },
+    "firecrawl": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8015/sse",
+      "enabled": false,
+      "note": "SSE live; Grok CLI SSE client currently 405s — keep OpenCode SSE until Streamable HTTP migration"
+    }
+  }
+}

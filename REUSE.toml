@@ -1,0 +1,250 @@
+version = 1
+
+# ── Source code ─────────────────────────────────────────────────────────────
+[[annotations]]
+path = "src/**/*.py"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Config ─────────────────────────────────────────────────────────────────
+[[annotations]]
+path = "config/**/*.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "config/**/*.toml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "config/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Scripts ────────────────────────────────────────────────────────────────
+[[annotations]]
+path = "scripts/**/*.py"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "scripts/**/*.sh"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Tests ──────────────────────────────────────────────────────────────────
+[[annotations]]
+path = "tests/**/*.py"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── OpenCode ───────────────────────────────────────────────────────────────
+[[annotations]]
+path = ".opencode/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.py"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.ts"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.js"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.sh"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".opencode/**/*.yml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── GitHub ─────────────────────────────────────────────────────────────────
+[[annotations]]
+path = ".github/**/*.yml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".github/**/*.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".github/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Gemini ─────────────────────────────────────────────────────────────────
+[[annotations]]
+path = ".gemini/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".gemini/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Root files ─────────────────────────────────────────────────────────────
+[[annotations]]
+path = "Makefile"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "pyproject.toml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".pre-commit-config.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".gitignore"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".gitleaksignore"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".clinerules"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "AGENTS.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "SOVEREIGN_MANDATES.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "MANDATES_CONDENSED.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Docs ───────────────────────────────────────────────────────────────────
+[[annotations]]
+path = "docs/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "docs/**/*.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "docs/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Data coordination ──────────────────────────────────────────────────────
+[[annotations]]
+path = "data/coordination/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "data/coordination/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Data entities ──────────────────────────────────────────────────────────
+[[annotations]]
+path = "data/entities/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "data/entities/**/*.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "data/entities/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "data/autonomous/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "data/reports/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "data/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Firecrawl cache (local research cache) ────────────────────────────────
+[[annotations]]
+path = ".firecrawl/**/*.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".firecrawl/**/*.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Third-party dependencies (external, not our code) ─────────────────────
+# These directories contain external dependencies with their own licenses.
+# The actual licensing is documented in each dependency's own LICENSE file.
+# This annotation tells REUSE these directories are covered.
+[[annotations]]
+path = "third-party/**"
+SPDX-FileCopyrightText = "Various copyright holders"
+SPDX-License-Identifier = "MIT"
+
+# node_modules: npm/bun dependencies (external, MIT/BSD/Apache licensed)
+# These are managed by the package manager and have their own licenses.
+[[annotations]]
+path = "**/node_modules/**"
+SPDX-FileCopyrightText = "Various copyright holders"
+SPDX-License-Identifier = "MIT"
+
+# opencode: bundled opencode binary and its dependencies (external)
+[[annotations]]
+path = "opencode/**"
+SPDX-FileCopyrightText = "Various copyright holders"
+SPDX-License-Identifier = "MIT"

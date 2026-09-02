@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# xAI Provider Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-19
+
+provider: "xai"
+priority: 9
+enabled: true
+description: "xAI - Grok models"
+
+api_key: "env:XAI_API_KEY"
+base_url: "https://api.x.ai/v1"
+
+# xAI models accessed via their official API
+# Also available through OpenCode Zen
+supported_models:
+  - "grok-4.3-web"
+  - "grok-4.1-fast-web"

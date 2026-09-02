@@ -1,0 +1,112 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Engineering Domain — Affinity Presets
+**AP Token**: `AP-DOMAIN-ENGINEERING-AFFINITY-20260819-v1.0.0`
+**Date**: 2026-08-19
+**Status**: PROTOTYPE — Model routing rules for engineering domain
+**Curator**: maat
+**Governance**: SHARED_READ
+
+---
+
+## 🎯 MODEL ROUTING
+
+### Planner (Strong Reasoning, 32K Context)
+```yaml
+planner:
+  primary: "mimo-7b-rl-q4_k_m"      # 32K context, strong reasoning
+  fallback: "qwen3-4b-thinking"     # 32K context, thinking mode
+  cloud_escalation:
+    - "nemotron-3-ultra"            # 1M context, via OpenCode Zen
+    - "claude-sonnet-5"             # 1M context, via Antigravity
+    - "gemini-2.5-pro"              # 1M context, via Google
+```
+
+### Executor (Fast, JSON Schema, 8K Context)
+```yaml
+executor:
+  primary: "qwen3-1.7b"             # 8K context, fast, JSON schema
+  fallback: "qwen3-1.7b"            # Same model, different params
+  cloud_escalation:
+    - "nemotron-3-ultra"
+    - "claude-sonnet-5"
+    - "gemini-2.5-pro"
+```
+
+### Critic (Rubric Review, 8K Context)
+```yaml
+critic:
+  primary: "qwen3-1.7b"             # 8K context, rubric review
+  fallback: "qwen3-1.7b"
+  cloud_escalation:
+    - "nemotron-3-ultra"
+    - "claude-sonnet-5"
+```
+
+---
+
+## 💰 TOKEN BUDGETS
+
+```yaml
+token_budgets:
+  planner: 16000    # 16K for planning context
+  executor: 4000    # 4K for execution context
+  critic: 2000      # 2K for review context
+```
+
+---
+
+## 🪟 CONTEXT WINDOWS
+
+```yaml
+context_windows:
+  planner: 32768    # 32K for planner
+  executor: 8192    # 8K for executor
+  critic: 8192      # 8K for critic
+```
+
+---
+
+## 🏷️ DOMAIN-SPECIFIC ROUTING RULES
+
+### When to Use Planner Model
+- Sprint planning and task decomposition
+- Architecture decisions and trade-off analysis
+- Complex debugging requiring multi-step reasoning
+- Cross-domain integration planning
+
+### When to Use Executor Model
+- Code implementation from structured plan
+- Test writing and fixing
+- Configuration changes
+- Documentation updates
+
+### When to Use Critic Model
+- Code review with rubric
+- Security audit of changes
+- Mandate compliance verification
+- Test result analysis
+
+---
+
+## ☁️ CLOUD ESCALATION TRIGGERS
+
+| Trigger | Action |
+|---------|--------|
+| Local model OOM (OOMProtector) | Escalate to cloud with `cost_warning` |
+| Context exceeds local window | Escalate to cloud with larger context |
+| Local model quality below threshold | Escalate to cloud for specific task |
+| Concurrent local requests >1 slot | Queue or escalate (C-10 admission control) |
+
+---
+
+## 📜 PROVENANCE
+
+**Curator**: maat
+**Domain**: engineering
+**Governance**: SHARED_READ
+**Prototype**: v0.1.0
+
+*⬡ OMEGA ⬡ MAAT ⬡ hy3-free ⬡ opencode ⬡ trc_domain_engineering_affinity ⬡ 2026-08-19*

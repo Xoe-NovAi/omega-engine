@@ -1,0 +1,81 @@
+# ⬡ OMEGA ⬡ MAAT ⬡ RESTIC_EXCLUDE ⬡ v1.0.0 ⬡ 2026-07-22
+#
+# Restic exclude patterns for Omega Engine
+# Used by backup_restic.sh
+
+# Python cache and build artifacts
+**/__pycache__/**
+**/*.pyc
+**/*.pyo
+**/.pytest_cache/**
+**/.mypy_cache/**
+**/.ruff_cache/**
+**/.coverage
+**/htmlcov/**
+
+# Node.js
+**/node_modules/**
+**/package-lock.json
+**/yarn.lock
+
+# Git
+**/.git/**
+**/.gitignore
+
+# IDE/Editor
+**/.vscode/**
+**/.idea/**
+**/*.swp
+**/*.swo
+**/~*
+
+# OS
+**/.DS_Store
+**/Thumbs.db
+
+# Temporary files
+**/tmp/**
+**/temp/**
+**/*.tmp
+**/*.temp
+**/*.log
+**/logs/**
+
+# Lock files
+**/locks/**
+**/*.lock
+**/*.pid
+**/*.sock
+data/coordination/locks/**
+data/coordination/*.lock
+
+# Vault (encrypted credentials - don't back up the vault itself)
+data/vault/**
+!data/vault/audit.log
+
+# Build artifacts
+**/dist/**
+**/build/**
+**/*.egg-info/**
+**/.eggs/**
+
+# Virtual environments
+**/.venv/**
+**/venv/**
+**/env/**
+**/.env
+
+# Database files (SQLite - backed up separately via .backup)
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*.db-wal
+**/*.db-shm
+
+# Vector store (Qdrant - backed up separately via snapshots)
+data/qdrant/**
+
+# Large model files
+**/*.gguf
+**/*.bin
+**/*.safetensors

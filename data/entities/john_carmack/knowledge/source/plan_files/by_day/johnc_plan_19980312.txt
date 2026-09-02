@@ -1,0 +1,10 @@
+# ⬡ John Carmack .plan File — 1998-03-12
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19980312.txt
+#
+American McGee has been let go from Id.
+
+His past contributions include work in three of the all time great games (DOOM 2, Quake, Quake 2), but we were not seeing what we wanted.

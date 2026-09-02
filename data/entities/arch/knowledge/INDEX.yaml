@@ -1,0 +1,7 @@
+# data/entities/arch/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: arch
+updated: '2026-08-29T00:19:29.741561'
+topics: []
