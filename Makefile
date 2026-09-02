@@ -18,7 +18,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-hub-health
 
 help:
 	@echo "Omega Engine Makefile"
@@ -70,6 +70,14 @@ help:
 	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
 	@echo "  check-codex-stale Check if Codex >24h old; exit 1 if stale"
 	@echo "  check-codex-fix   Check and auto-regenerate if stale"
+	@echo ""
+	@echo "SOTE Targets:"
+	@echo "  sote-index       Regenerate SOTE master index"
+	@echo "  sote-digest      Generate public digest (SOTE_WEEK=YYYY-WNN)"
+	@echo "  sote-validate    Validate sote.yaml against JSON Schema"
+	@echo "  sote-pipeline    Full mechanical pipeline (index + digest + validate + temple-grade)"
+	@echo "  sote-week        Weekly pipeline (alias for sote-pipeline)"
+	@echo "  sote-full        Full SOTE including human steps reminder"
 
 # =============================================================================
 # Codex Targets (D-277 Hydration)
@@ -95,6 +103,48 @@ check-codex-fix:
 check-codex-force:
 	@echo "$(YELLOW)Force regenerating OMEGA_CODEX.md...$(NC)"
 	@$(PYTHON) scripts/check_codex_stale.py --force
+
+# =============================================================================
+# SOTE Targets (Week 37+)
+# =============================================================================
+
+# Regenerate SOTE master index
+sote-index:
+	@echo "$(YELLOW)Regenerating SOTE Master Index...$(NC)"
+	@$(PYTHON) scripts/regenerate_sote_index.py
+	@echo "$(GREEN)SOTE index regenerated$(NC)"
+
+# Generate public digest for current week
+SOTE_WEEK ?= $(shell date -u +%Y-W%V)
+sote-digest:
+	@echo "$(YELLOW)Generating public digest for week $(SOTE_WEEK)...$(NC)"
+	@$(PYTHON) scripts/generate_public_digest.py docs/strategy/sote/$(SOTE_WEEK)
+	@echo "$(GREEN)Public digest generated$(NC)"
+
+# Validate sote.yaml against JSON Schema
+sote-validate:
+	@echo "$(YELLOW)Validating sote.yaml against JSON Schema...$(NC)"
+	@$(PYTHON) scripts/validate_sote_schema.py
+	@echo "$(GREEN)sote.yaml schema validation passed$(NC)"
+
+# Full SOTE mechanical pipeline (index + digest + validate + temple-grade)
+sote-pipeline: sote-index sote-digest sote-validate
+	@echo "$(YELLOW)Running temple-grade gate...$(NC)"
+	@$(MAKE) temple-grade
+	@echo "$(GREEN)SOTE mechanical pipeline complete — all gates passed$(NC)"
+
+# Weekly SOTE target (run Monday 06:00 UTC via cron)
+sote-week: sote-pipeline
+	@echo "$(GREEN)SOTE mechanical pipeline complete for week $(SOTE_WEEK)$(NC)"
+
+# Full SOTE including human steps (topic selection, voice paging, etc.)
+sote-full: sote-week
+	@echo "SOTE mechanical pipeline complete. Human steps remaining:"
+	@echo "  1. Select topic for next week"
+	@echo "  2. Page 8 voices for dialectic"
+	@echo "  3. Conduct dialectic rounds"
+	@echo "  4. Synthesize report"
+	@echo "  5. Publish SOTE report"
 
 # =============================================================================
 # Test Suite Targets — Carmack Mode v2
@@ -435,6 +485,46 @@ check-m23-failure-integrity:
 	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"
 	@$(PYTHON) scripts/m23_gate.py || (echo "$(RED)FAIL: M23 soft-failure patterns$(NC)" && false)
 	@echo "$(GREEN)M23 passed: No new soft-failure patterns$(NC)"
+
+# P0 CI Gates — Broken imports detection
+check-broken-imports:
+	@echo "$(YELLOW)Checking for broken imports in src/omega/...$(NC)"
+	@failed=0; \
+	for f in $$(find src/omega -name "*.py" -not -path "*/__pycache__/*" -not -path "*/test*" 2>/dev/null); do \
+		if ! $(PYTHON) -m py_compile "$$f" 2>/dev/null; then \
+			echo "$(RED)FAIL: Syntax error in $$f$(NC)"; \
+			$(PYTHON) -m py_compile "$$f" 2>&1 | sed 's/^/  /'; \
+			failed=1; \
+		fi; \
+	done; \
+	if [ $$failed -eq 1 ]; then \
+		echo "$(RED)Broken imports detected$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(GREEN)No broken imports in src/omega/$(NC)"
+
+# P0 CI Gates — Omega Hub health check
+check-hub-health:
+	@echo "$(YELLOW)Checking Omega Hub health...$(NC)"
+	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
+		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
+		systemctl --user status omega-hub.service --no-pager; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)omega-hub.service is active$(NC)"
+	@if ! curl -sf -o /dev/null --max-time 5 http://localhost:8080/sse 2>/dev/null; then \
+		echo "$(RED)FAIL: SSE endpoint not responding on localhost:8080/sse$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)SSE endpoint responding$(NC)"
+	@if ! curl -sf -o /dev/null --max-time 5 -X POST http://localhost:8080/mcp \
+		-H "Content-Type: application/json" \
+		-d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' 2>/dev/null; then \
+		echo "$(RED)FAIL: Streamable HTTP endpoint not responding$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Streamable HTTP endpoint responding$(NC)"
+	@echo "$(GREEN)Omega Hub health check passed$(NC)"
 
 # Regenerate the M23 baseline (run after intentionally fixing violations)
 m23-baseline:

@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# SOTE Weekly Pipeline — Mechanical Automation Only
+# Automates: index regeneration, public digest generation, schema validation
+# Human judgment remains: topic selection, voice paging, dialectic conduction, report synthesis
+
+name: SOTE Weekly Pipeline
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Monday 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      week:
+        description: 'ISO week (YYYY-WNN)'
+        required: false
+        type: string
+      force:
+        description: 'Force regeneration even if no changes'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write  # Required for git push
+
+jobs:
+  sote-pipeline:
+    name: SOTE Mechanical Pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for git operations
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyyaml jsonschema
+      
+      - name: Determine SOTE week
+        id: week
+        run: |
+          if [ -n "${{ github.event.inputs.week }}" ]; then
+            echo "week=${{ github.event.inputs.week }}" >> $GITHUB_OUTPUT
+          else
+            # Calculate current ISO week
+            WEEK=$(date -u +'%Y-W%V')
+            echo "week=$WEEK" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Regenerate SOTE Index
+        run: |
+          echo "Regenerating SOTE index for week ${{ steps.week.outputs.week }}..."
+          python scripts/regenerate_sote_index.py
+      
+      - name: Generate Public Digest
+        run: |
+          echo "Generating public digest for week ${{ steps.week.outputs.week }}..."
+          python scripts/generate_public_digest.py docs/strategy/sote/${{ steps.week.outputs.week }}
+      
+      - name: Validate sote.yaml schema
+        run: |
+          echo "Validating sote.yaml against JSON Schema..."
+          python scripts/validate_sote_schema.py
+      
+      - name: Run temple-grade gate
+        run: |
+          echo "Running temple-grade gate..."
+          make temple-grade
+      
+      - name: Commit and push changes
+        if: github.event_name == 'schedule' || github.event.inputs.force == 'true'
+        run: |
+          git config user.name "omega-sote-bot"
+          git config user.email "sote@omega-engine.local"
+          
+          # Check if there are changes to commit
+          if git diff --quiet docs/strategy/sote/; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          git add docs/strategy/sote/
+          git commit -m "SOTE: Auto-regenerate index + digest for week ${{ steps.week.outputs.week }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
