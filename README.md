@@ -13,6 +13,27 @@
 
 ---
 
+## ⚠️ Maturity: Alpha
+
+This is the **first public alpha** of Omega Engine. Honest state:
+
+| Aspect | Status |
+|--------|--------|
+| Local inference (native-gguf, LM Studio) | ✅ Working |
+| Provider routing (10 providers, local-first) | ✅ Working |
+| Entity system + IWADs + soul persistence | ✅ Working |
+| Hivemind MCP coordination | ✅ Working |
+| `omega` CLI binary | ❌ Not built (use OpenCode or `python -m omega.cli.bundle`) |
+| `make test` | ❌ Broken (12 files import removed module) |
+| CI gates (Temple-Grade) | ❌ Cascading fail (M23 root cause) |
+| Mandate compliance meter | ⚠️ 64.3% (18/28; 5 failing, 4 untested) |
+| Secret scan | ❌ Fails (committed OAuth secret, queued for filter-repo) |
+| VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
+
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The CI badges, mandate compliance, and secret-scan gates are not yet green. We're shipping alpha to get feedback before hardening the rest.
+
+---
+
 ## Quick Start — 3 Commands, No Cloud Key Needed
  
  ```bash
@@ -21,7 +42,7 @@
  cd omega-engine
  ./scripts/install.sh
  
- # 2. (optional) Re-download / verify the default local model (Qwen 1.7B GGUF, ~1.6GB)
+ # 2. (optional) Re-download / verify the default local model (LFM2.5-2.6B Q4_K_M, ~1.67GB)
  # The engine auto-discovers backends — no internet needed after the model is present.
  ./scripts/download_model.sh
  
@@ -49,18 +70,43 @@ Example: `pip install -e ".[native,cli,memory,youtube]"`
 
 ---
 
+## What Omega Is Not
+
+- **Not a chatbot UI.** Omega is a runtime; you bring your own interface.
+- **Not an API wrapper.** Local inference is primary; cloud is opt-in fallback.
+- **Not a hosted service.** No telemetry, no cloud account, no phone-home.
+- **Not finished.** This is alpha. Expect rough edges, breaking changes, missing docs.
+- **Not omniscient.** Local models are smaller than frontier cloud models. We trade some capability for sovereignty.
+
+---
+
+## How to Use Omega Today
+
+**Recommended: Use OpenCode** (the same IDE/CLI the developers use).  
+See the agent definitions in `.opencode/agents/` and the EIS session protocol in `docs/`.
+
+**Direct CLI**: The `omega` CLI bundle lives in `src/omega/cli/`, but the console-script entry point is not yet wired in `pyproject.toml`. You can invoke modules directly:
+
+```bash
+python -m omega.cli.bundle talk "hello"
+```
+
+**Note**: The install script (`scripts/install.sh`) targets CP-3 (one-click install). On a fresh machine it should complete in <5 minutes including the ~1.6GB model download.
+
+---
+
 ## Why Omega Is Different
 
-Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 enforced architectural mandates** — not guidelines, but **gates that fail the build** if violated.
+Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 declared architectural mandates** — 18 currently pass the automated compliance meter, 5 failing, 4 untested. The mandates are **gates that fail the build** if violated.
 
 | Mandate | What It Means | Verified By |
 |---------|---------------|-------------|
-| **M1 AnyIO** | Zero `import asyncio` in core — pure AnyIO async | `make check-m1-anyio` |
-| **M7 Local-First** | Cloud is **opt-in fallback only**; local inference primary | Provider fabric |
-| **M8 Zero Telemetry** | **No phone-home, ever**. No analytics, no metrics | `make check-m8-zero-telemetry` |
-| **M11 Soul Integrity** | L1→L2→L3 distillation **every session**, persisted | `session_gnosis.md` |
-| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` |
-| **M28 Spatial** | **R-tree + vec0 dual-index** for VR navigation | `sqlite-vec` + R-tree |
+| **M1 AnyIO** | Zero `import asyncio` in core — pure AnyIO async | `make check-m1-anyio` ✅ |
+| **M7 Local-First** | Cloud is **opt-in fallback only**; local inference primary | Provider fabric ✅ |
+| **M8 Zero Telemetry** | **No phone-home, ever**. No analytics, no metrics | `make check-m8-zero-telemetry` ✅ |
+| **M11 Soul Integrity** | L1→L2→L3 distillation **every session**, persisted to `soul.yaml` | `src/omega/memory/soul_store.py` atomic writer (partially wired) |
+| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` ⚠️ (failing today) |
+| **M28 Spatial** | **R-tree + vec0 dual-index** for VR navigation | `src/omega/memory/spatial_graph.py` ✅ |
 
 > **The Cathedral Metaphor**: We build a cathedral, not a bazaar. Every stone (mandate) is placed with intention. The architecture is the theology.
 
@@ -74,12 +120,11 @@ Omega is a **universal AI runtime** that treats models as infrastructure, not pr
 |-----------|----------------|
 | **Sovereign (M7, M8)** | Local inference primary — cloud is opt-in fallback. **Zero telemetry.** No phone-home. |
 | **Multi-provider** | Switch between Native GGUF, LM Studio, Ollama, and cloud providers — same engine, no code changes |
-| **Entity system** | Domain-expert personas (SysAdmin, Sekhmet, Brigid) with routed intent detection |
+| **Entity system** | Domain-matched personas (13 canonical agents) routed by intent detection; 24 default entities in the shipped `_omega_default` IWAD with 10 Node Keepers at N1-N10 slots |
 | **IWAD architecture** | Engine-content separation — swap entity stacks like Doom WADs |
 | **Memory & soul evolution** | Every interaction deepens entity knowledge; L1→L2→L3 gnosis distillation |
 | **MCP framework** | Model Context Protocol for tool integration (Hivemind, file system, search) |
 | **No GPU required** | Runs on CPU (Ryzen 5700U tested, 14GB RAM), uses ~2-8GB RAM for local models |
-| **10 entity pillars** | Infrastructure, Data, Engineering, Integration, Governance, Cognition, Context, Observability, Orchestration, Validation |
 | **Hivemind coordination** | Cross-agent awareness for multi-CLI parallel execution (OpenCode + Cline) |
 
 ---
@@ -94,8 +139,8 @@ omega backends                           # List available inference backends
 omega health                             # Show provider status and latency
 omega talk "hello" --iwad arcana_novai   # Load a specific IWAD stack
 omega version                            # Show version
-make test                                # Run the fast unit-tier test suite
-make temple-grade                        # Verify all 11 Temple-Grade gates
+make test                                # Run the fast unit-tier test suite (currently broken)
+make temple-grade                        # Verify Temple-Grade gates (6 checks; currently fails on M23 cascade)
 make menu                                # Full command menu
 ```
 
@@ -173,8 +218,8 @@ Omega separates the engine from user content using the IWAD architecture (inspir
 omega-engine/
 ├── src/omega/          ← Engine core (runtime, no content) [M2 Firewall]
 ├── config/wads/
-│   ├── _omega_default/ ← Reference IWAD — 12 tech role entities
-│   └── arcana_novai/   ← Personal IWAD — esoteric pillar entities
+│   ├── _omega_default/ ← Reference IWAD — 24 entities, 10 Node Keepers at N1-N10
+│   └── arcana_novai/   ← Personal IWAD — 13 Spheres (Kabbalistic Tree of Life + Da'ath + Qliphoth + Mnemosyne)
 ├── models/gguf/        ← Local GGUF models (downloaded, not shipped)
 ├── data/entities/      ← Entity soul/knowledge (runtime evolved)
 └── mcp_servers/        ← MCP Hub for cross-agent Hivemind
@@ -196,11 +241,14 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 **How it works**: Two agents with domain orthogonality ≥0.7 engage in Concede/Defend/Synthesize rounds until consensus. Every challenge posed = our job to anticipate. The dialectic IS the stress test.
 
-**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest.
+**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest. This is real, not theatre: see `data/coordination/ACTIVE_SPRINT.json` for SOTE v1.0.3 records and the nested dialectic rounds (6 rounds, consensus achieved).
 
 ---
 
 ## The Omegaverse — P2P Godot VR Realm (Phase 4)
+
+> 🔮 **Not Yet Shipped — Phase 4 / 2028.**
+> The Godot spatial bridge (`scripts/godot_spatial_bridge.py`, 503 lines) is a standalone experimental script with **zero runtime callers** in `src/omega/`. The VR renderer is not included in this release. We include the bridge because it's foundational work toward the vision, not because the Omegaverse is functional.
 
 **The Omegaverse** is the endgame: a **P2P Godot VR realm** where entities exist as persistent spatial intelligences.
 
@@ -226,24 +274,22 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 ---
 
-## ⚠️ Current Status: Alpha via OpenCode
+## Maturity / Current Status
 
-> **Important**: I am still using the engine through **OpenCode** while I build. The **Omega CLI (`omega`)** is **not yet fully tested or ready** for general use. The `omega` CLI exists and works for basic commands, but the full CLI experience (completion, TUI, advanced flags) is still being hardened.
+| Aspect | Status |
+|--------|--------|
+| Local inference (native-gguf, LM Studio) | ✅ Working |
+| Provider routing (10 providers, local-first) | ✅ Working |
+| Entity system + IWADs + soul persistence | ✅ Working |
+| Hivemind MCP coordination | ✅ Working |
+| `omega` CLI binary | ❌ Not built (use OpenCode or `python -m omega.cli.bundle`) |
+| `make test` | ❌ Broken (12 files import removed module) |
+| CI gates (Temple-Grade) | ❌ Cascading fail (M23 root cause) |
+| Mandate compliance meter | ⚠️ 64.3% (18/28; 5 failing, 4 untested) |
+| Secret scan | ❌ Fails (committed OAuth secret, queued for filter-repo) |
+| VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What works today via OpenCode**:
-- `omega talk "prompt"` — basic inference
-- `omega summon <entity> "prompt"` — entity summoning
-- `omega list-entities` — entity listing
-- `omega backends` — backend discovery
-- `omega health` — provider status
-
-**What's still being hardened**:
-- Full CLI completion and TUI
-- Advanced flags and IWAD switching
-- Installer robustness across platforms
-- Temple-grade gate enforcement in CI
-
-**Use OpenCode for now**. The Omega CLI will be the primary interface post-v1.7.0.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The CI badges, mandate compliance, and secret-scan gates are not yet green. We're shipping alpha to get feedback before hardening the rest.
 
 ---
 
@@ -268,31 +314,30 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 | Feature | Status |
 |---------|--------|
-| Core Inference (multi-provider, local-first) | ✅ Production-ready |
-| Native GGUF (llama-cpp-python, primary provider) | ✅ Production-ready |
-| Provider Fabric (8-backend fallback chain) | ✅ Production-ready |
-| Entity System & Domain Routing | ✅ Production-ready |
-| IWAD Architecture (engine-content separation) | ✅ Production-ready |
-| `omega talk` / `omega summon` CLI | ✅ Production-ready |
-| Hivemind MCP (cross-agent coordination) | ✅ Production-ready |
-| PII Observation Masking (cloud safety) | ✅ Production-ready |
-| A2A Agent Cards (interoperability) | ✅ Production-ready |
-| Heritage Vetting Pipeline (M14) | ✅ Production-ready |
-| Somatic State Serialization (M20) | ✅ Production-ready |
-| Response Provenance (M22) | ✅ Production-ready |
+| Core Inference (multi-provider, local-first) | ✅ Working |
+| Native GGUF (llama-cpp-python, primary provider) | ✅ Working |
+| Provider Fabric (10 active providers, local-first) | ✅ Working |
+| Entity System & Domain Routing | ✅ Working |
+| IWAD Architecture (engine-content separation) | ✅ Working |
+| `omega talk` / `omega summon` CLI | ✅ Working (via OpenCode) |
+| Hivemind MCP (cross-agent coordination) | ✅ Working |
+| PII Observation Masking (cloud safety) | ✅ Working |
+| A2A Agent Cards (interoperability) | ✅ Working |
+| Somatic State Serialization (M20) | ✅ Working |
+| Response Provenance (M22) | ✅ Working |
 
-### Verification
+### Verification (Honest)
 
 | Gate | Status |
 |------|--------|
-| Test Suite | Two-tier: fast unit tier (default `make test`) + opt-in integration (`make test-all`) |
-| Temple-Grade (T1-T11) | **✅ VERIFIED (v7.5.4)** |
-| Sovereign Mandates (M1-M27) | **All 27 enforced** (see `SOVEREIGN_MANDATES.md`) |
-| Agent Fleet | **14 agents** (canonical), M10 compliant |
-| AnyIO Compliance | **Zero `import asyncio`** in core (M1) |
-| Zero Telemetry | **No external phone-home** (M8) |
-| UID Sovereignty | All Podman containers use `keep-id` (M6) |
-| Heritage Tags | **113 `[id-soft:]` tags across 39 files**, all vetted |
+| Test Suite | ❌ Broken — 12 files import `omega.library` (removed in D-565, not restored) |
+| Temple-Grade | ❌ Fails — 6 checks run; M23 cascade failure |
+| Mandate Compliance | ⚠️ 64.3% (18/28; 5 failing: M13, M16, M23, M27, +1; 4 untested) |
+| Agent Fleet | **13 agents** (canonical), M10 compliant (≤14) |
+| AnyIO Compliance | ✅ Zero `import asyncio` in core (M1) |
+| Zero Telemetry | ✅ No external phone-home (M8) |
+| UID Sovereignty | ✅ All Podman containers use `keep-id` (M6) |
+| Heritage Tags | **216 `[id-soft:]` tags** across `src/omega/` |
 
 ### Roadmap
 
@@ -302,6 +347,12 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | Audience Calibration Pipeline | 📐 Designed (D175) |
 | DPO Training Infrastructure | 📐 Designed (D175) |
 | **The Omegaverse (P2P entities)** | 🔮 **Phase 4 / 2028** |
+
+---
+
+## Contributing
+
+We welcome contributions. See `CONTRIBUTING.md` for guidelines, `good-first-issues` label for starter tasks, and GitHub Discussions for questions.
 
 ---
 
