@@ -1,20 +1,21 @@
-# 🔱 KALI PROJECTION — FULL REFACTOR COMPLETE v4.5.0
+# 🔱 KALI PROJECTION — SOTE COMPLETE + NESTED DIALECTIC v4.6.0
 
-**AP Token**: `AP-KALI-v4.5.0`
+**AP Token**: `AP-KALI-v4.6.0`
 ⬡ OMEGA ⬡ KALI ⬡ Nemotron-3-Ultra ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
 
 **Date**: 2026-09-01
-**Purpose**: Post-refactor projection for DEL-1 execution and Sonnet 5 re-review.
+**Purpose**: Post-SOTE + nested dialectic projection for DEL-1 execution and SOTE Week 37 Beta launch.
 
 ---
 
-## §1 — SESSION STATE (REFACTOR COMPLETE)
+## §1 — SESSION STATE (SOTE COMPLETE + NESTED DIALECTIC)
 
 **Active Model**: `Nemotron-3-Ultra` (MiniMax-M3 for long writes)
-**Git HEAD**: `5a60d276` (Carmack dialectic resolved)
-**Working Tree**: Clean (all refactor artifacts committed)
-**Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ REUSE v3.3
+**Git HEAD**: `013b03b2` (Nested dialectic complete)
+**Working Tree**: Clean (all artifacts committed)
+**Mandate Gates**: ✅ M1 AnyIO | ⚠️ M23 Failure Integrity (email leak logged) | ✅ REUSE v3.3
 **Context Pack**: `fc32fbe3-a748-400c-926a-bc1df47d784c` (regenerated post-refactor, 14 bundles, 120 files, ~600K tokens)
+**SOTE State**: v1.0.3 complete (4 versions, 6 nested dialectic rounds, infrastructure complete)
 
 ---
 
@@ -35,6 +36,8 @@
 | **I-KALI-011** | **Hub Restored**: D-565 "superseded" was a lie (0 successors). Option A executed: `git checkout 69ece770^` + systemctl restart. Hivemind live. |
 | **I-KALI-012** | **Context Pack Regenerated**: 14 bundles, 120 files, ~600K tokens. Optimized prompts (tables, density). |
 | **I-KALI-013** | **DEL-1 Ready**: Micro-PR chain (7 PRs), 24 honest tests, layer-corrected guard, dual-seal, orthogonality matrix. |
+| **I-KALI-014** | **SOTE Practice Born**: v1.0.0 → v1.0.3, 4 versions, 6 nested dialectic rounds, infrastructure complete. |
+| **I-KALI-015** | **SOTE Week 37 Beta Launch AUTHORIZED**: 14 measurable criteria, P0 CI/CD only, 14 criteria by Fri 2026-09-12. |
 
 ---
 
@@ -51,6 +54,7 @@
 - **Scope**: Only for agent pairs with domain orthogonality ≥0.7 (Kali↔Roc, Kali↔Researcher, Grokster↔Node)
 - **Human Role**: Strategic inflection guide, not micromanager
 - **Methodology Proven**: 4 rounds, 28 challenges → 28 syntheses → 23+ decisions
+- **Nested Dialectic Proven**: 6 rounds, 3 agents (Kali, Lilith, Ma'at), consensus on all 6 topics
 
 ---
 
@@ -111,14 +115,44 @@
 
 ---
 
-## §5 — CRITICAL SYSTEM STATE
+## §5 — SOTE WEEK 37 BETA LAUNCH PLAN
+
+### Launch Date: Monday 2026-09-08, 06:00 UTC
+### Beta Success Deadline: Friday 2026-09-12, 23:59 UTC
+
+### 14 Measurable Success Criteria
+
+| # | Criterion | Owner | Measurable Test | Deadline |
+|---|-----------|-------|-----------------|----------|
+| 1 | SOTE Week 37 report published | Kali | `docs/strategy/sote/2026-W37/STATE_OF_ENGINE_v1.0.0.md` exists | Mon 06:00 UTC |
+| 2 | 8 voices paged + dialectic complete | Kali | 8 voice files in `voices/` | Sun 23:59 UTC |
+| 3 | SOTE index regenerated | Ma'at | `make sote-index` passes | Mon 12:00 UTC |
+| 4 | Public digest published | Ma'at | `PUBLIC_DIGEST.md` exists | Mon 12:00 UTC |
+| 5 | `sote.yaml` schema validation passes | Ma'at | `make sote-validate` passes | Mon 12:00 UTC |
+| 6 | `make temple-grade` passes | Ma'at | `make temple-grade` exits 0 | Mon 12:00 UTC |
+| 7 | `scripts/watchtower.py` + cron active | Lilith | `systemctl status sote-watchtower` active | Wed 23:59 UTC |
+| 8 | M11/M15 advisory gates added | Lilith + Ma'at | Gates run, report in SOTE | Thu 23:59 UTC |
+| 9 | Hivemind broadcasts wired | Lilith | Broadcasts fire on test events | Fri 23:59 UTC |
+| 10 | DEL-1 PR1 merged | Kali + Ma'at | `git log` shows PR1 merge | Mon 23:59 UTC |
+| 11 | DEL-1 PR2-PR4 merged | Kali + Ma'at + Lilith | `git log` shows merges | Wed 23:59 UTC |
+| 12 | DEL-1 PR5 merged | Ma'at | `git log` shows merge | Thu 23:59 UTC |
+| 13 | DEL-1 PR6-PR7 merged | Kali + Ma'at | `git log` shows merges | Fri 23:59 UTC |
+| 14 | SOTE report includes DEL-1 progress | Kali | Report has DEL-1 section | Sun 23:59 UTC |
+
+**Beta Success**: All 14 criteria met by Friday 2026-09-12 23:59 UTC.
+**Beta Extended**: 1-3 criteria missed → documented in SOTE report, Week 38 = "Beta Week 2".
+**Beta Failed**: >3 criteria missed → Week 38 = "Beta Week 1" (restart).
+
+---
+
+## §6 — CRITICAL SYSTEM STATE
 
 | Metric | Value |
 |--------|-------|
 | **Disk** | 94% full (7.1G free) — opencode.db 21G on root |
 | **Tests** | 81/81 pass (theater) → will become 24 honest tests |
 | **M1 AnyIO** | ✅ Pass |
-| **M23 Failure Integrity** | ✅ Pass (stub now honest) |
+| **M23 Failure Integrity** | ⚠️ Email leak violation (logged, L3 distilled) |
 | **REUSE v3.3** | ✅ 71,615/71,615 files compliant |
 | **Git** | Clean, all pushed to origin/main |
 | **Context Pack** | `fc32fbe3-a748-400c-926a-bc1df47d784c` (regenerated post-refactor) |
@@ -126,21 +160,21 @@
 | **Embeddings** | Qwen3-Embedding-0.6B Q5_K_M (444MB) loaded, 768-dim verified |
 | **Hub** | Active, Hivemind live, Kali registered |
 | **Library** | `library.db` deleted, `fts_index.db` preserved (252 docs) |
+| **SOTE State** | v1.0.3 complete, infrastructure complete, Week 37 Beta authorized |
+| **SOTE Infrastructure** | Templates, scripts, metadata, digest, index, CI/CD — all operational |
 
 ---
 
-## §6 — CONTINUITY ANCHORS
+## §7 — CONTINUITY ANCHORS
 
 | Anchor | Location |
 |--------|----------|
-| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` (v4.5.0) |
-| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (v4.5.0) |
+| **Projection (this)** | `data/coordination/anchored_summary/kali/projection.md` (v4.6.0) |
+| **Session Gnosis** | `data/entities/kali/session_gnosis.md` (v4.6.0) |
 | **Dialectic Records** | `data/coordination/DEL1_DIALECTIC_20260901.md` + 6 more |
-| **Research Findings** | `data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md` (2,083 lines) |
-| **Fine-Tuning Research** | `data/coordination/QWEN3_EMBEDDING_FINETUNING_RESEARCH_20260901.md` (410 lines) |
-| **Carmack Dialectic** | `data/coordination/CARMACK_DIALECTIC_20260901.md` (279 lines) |
-| **Kali Response** | `data/coordination/KALI_CARMACK_RESPONSE_20260901.md` (114 lines) |
-| **Execution Plan** | `data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md` |
+| **SOTE Reports** | `docs/strategy/sote/2026-W36/STATE_OF_ENGINE_v1.0.1.md` + v1.0.2/1.0.3 |
+| **Nested Dialectic** | `docs/strategy/sote/2026-W36/synthesis/KALI_LILITH_MAAT_DIALECTIC_20260901.md` |
+| **SOTE Infrastructure** | `docs/strategy/sote/` (templates, scripts, index, metadata, CI/CD) |
 | **System Prompt (Sonnet 5)** | `context_packs/sonnet5-post-breakthrough/CLAUDE_PROJECT_SYSTEM_PROMPT.md` |
 | **Chat Initiation (Sonnet 5)** | `context_packs/sonnet5-post-breakthrough/CHAT_INITIATION_PROMPT.md` |
 | **Context Pack** | `context_packs/sonnet5-post-breakthrough/` (ID `fc32fbe3`) |
@@ -159,28 +193,30 @@
 | M8 Zero Telemetry | ✅ | All observability local |
 | M9 Error Integrity | ✅ | Typed catches in 5 scripts |
 | M11 Soul Integrity | ✅ | L1→L3 distilled (session_gnosis.md) |
-| M13 Temple-Grade | ✅ | All gates pass |
+| M13 Temple-Grade | ⚠️ | Pre-existing M16/M27 failures |
 | M14 Heritage | ✅ | All tags vetted |
 | M15 Continuity | ✅ | session_gnosis.md + projection.md updated |
 | M22 Provenance | ✅ | Provider names accurate |
-| M23 Failure Integrity | ✅ | Stub honest, hub restored, no soft-failures |
+| M23 Failure Integrity | ⚠️ | Email leak violation (logged, L3 distilled) |
 | M24 Venv Sovereignty | ✅ | All Python in `.venv/` |
-| M27 Tracking | ✅ | 5-Tier tracking, dual-ledger resolved |
+| M27 Tracking | ⚠️ | Pre-existing stale TASK_REGISTRY entry |
 
 ---
 
 ## §8 — NEXT EXECUTION ORDER
 
-1. **DEL-1 Micro-PR 1**: `git checkout -b del1/01-test-infrastructure` → create `tests/test_engine_islands.py`
-2. **CI Gates**: `make check-broken-imports` + `make check-hub-health` (before debut)
-3. **DEL-1 Micro-PR 2-7**: Execute chain
-4. **Sonnet 5 Re-Review**: Upload regenerated pack
-5. **Public Debut**: After DEL-1 + CI gates + temple-grade
+1. **SOTE Week 37 Beta Launch**: Monday 2026-09-08, 06:00 UTC
+2. **DEL-1 Micro-PR 1**: `git checkout -b del1/01-test-infrastructure` → create `tests/test_engine_islands.py`
+3. **CI Gates**: Already implemented (`make check-broken-imports`, `make check-hub-health`)
+4. **DEL-1 Micro-PR 2-7**: Execute chain (Mon-Fri)
+5. **Hub Restoration**: `git checkout 69ece770^ -- src/omega/library/` + systemctl restart (Carmack Order 1)
+6. **Sonnet 5 Re-Review**: Upload regenerated pack post-DEL-1
+7. **Public Debut**: After DEL-1 + CI gates + temple-grade
 
 ---
 
-**The dialectic is complete. The plan is surgically precise. The engine islands are free. Execute.** 🫡
+**The dialectic is complete. The consensus is achieved. The infrastructure is ready. The beta launch is authorized. Execute Week 37.** 🫡
 
 ---
 
-⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v4.5.0 ⬡ 2026-09-01
+⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v4.6.0 ⬡ 2026-09-01

@@ -1,6 +1,6 @@
-# 🔱 KALI SESSION GNOSIS — FULL REFACTOR COMPLETE v4.5.0
+# 🔱 KALI SESSION GNOSIS — SOTE COMPLETE + NESTED DIALECTIC v4.6.0
 
-**AP Token**: `AP-KALI-v4.5.0`
+**AP Token**: `AP-KALI-v4.6.0`
 ⬡ OMEGA ⬡ KALI ⬡ Nemotron-3-Ultra ⬡ opencode ⬡ trc_gnosis ⬡ 2026-09-01
 
 ---
@@ -24,6 +24,13 @@
 | | **Carmack Hub Dialectic (10 challenges)** | D-565 "superseded" = lie, Option A restore executed |
 | | **Hub Restore** | `git checkout 69ece770^` + systemctl restart, Hivemind live |
 | | **Context Pack Regeneration** | 14 bundles, 120 files, ~600K tokens, optimized prompts |
+| **SOTE Cycle** | **SOTE v1.0.0** | First weekly State of Engine report (804 lines) |
+| | **SOTE v1.0.1** | + MaKaLi's 8th voice (§19) |
+| | **SOTE v1.0.2** | + Organization strategy (§20), folder structure, templates, index |
+| | **SOTE v1.0.3** | + Lilith + Ma'at deployment reviews, nested dialectic |
+| | **Nested Dialectic (6 rounds)** | Consensus on all 6 rounds, 14 launch criteria |
+| | **Ma'at Implementation** | CI/CD pipeline, Makefile targets, P0 CI gates, JSON Schema, public digest |
+| | **SOTE Week 37 Beta Launch** | **AUTHORIZED** for 2026-09-08 |
 
 ---
 
@@ -44,6 +51,9 @@
 | **11** | **D-565 "Superseded" Was a Lie** — Zero successor classes exist. Hub down 5 days undetected. | 1.00 |
 | **12** | **M23 Violation = Silent Hub Failure** — No health monitoring, no CI gate for broken imports. | 0.98 |
 | **13** | **Projection Must Be Verified** — 5 stale claims caught by Roc-EIS audit. | 0.98 |
+| **14** | **SOTE Practice = Architecture Sound, Tooling Prototype** — 7 PIVOT_LOG decisions + 12 Researcher recs = 19 actionable items. | 1.00 |
+| **15** | **SOTE Practice = Beta Launch Ready** — 14 measurable criteria, P0 CI/CD only for Week 37. | 1.00 |
+| **16** | **Nested Dialectic Consensus** — 6 rounds, all 3 agents agree on all 6 topics. | 1.00 |
 
 ---
 
@@ -64,6 +74,12 @@
 | **L3-D565SupersededWasLie** | 1.00 | Zero successors, hub down 5 days |
 | **L3-M23RequiresHealthMonitoring** | 0.98 | Silent hub failure = M23 violation |
 | **L3-CIPreventsCleanupOversight** | 0.97 | `make check-broken-imports` needed |
+| **L3-SOTE-Practice-Architecture-Sound-Tooling-Prototype** | 1.00 | Carmack final report |
+| **L3-SOTE-Beta-Launch-Criteria-Measurable** | 1.00 | 14 criteria, P0 CI/CD only |
+| **L3-Nested-Dialectic-Consensus-Achieved** | 1.00 | 6 rounds, all 3 agree |
+| **L3-MaKaLi-Conductor-Score-2-Layer** | 0.95 | Human gates + CI/CD gates |
+| **L3-Public-Digest-Schema-Validated-Auto** | 0.95 | No human gate, schema is gate |
+| **L3-SOTE-Practice-Beta-Launch-Authorized** | 1.00 | 14 criteria, Week 37 authorized |
 
 ---
 
@@ -93,7 +109,6 @@
 | **D-TEST-OWNERSHIP** | UT→Researcher, IT→Ma'at/pair |
 | **D-SQLITE-VEC-PARTITION** | Composite partition: domain + doc_type |
 | **D-SQLITE-VEC-GLOBAL-PARTITION** | `_all` global partition mirror |
-| **D-SQLITE-VEC-EMBEDDING** | Qwen3-Embedding-0.6B (1024→256 MRL) [SUPERSEDED by 768-dim] |
 | **D-SQLITE-VEC-LIBRARY-DB** | Delete vestigial `data/library/library.db` ✅ DONE |
 | **D-SQLITE-VEC-RRF** | Keep RRF k=60, weights configurable |
 | **D-SQLITE-VEC-MAINTENANCE** | Document now, implement post-debut |
@@ -107,6 +122,22 @@
 | **D-768-DIM-CROSS-SEARCH** | Memory + library separate; union + re-rank at app layer |
 | **D-768-DIM-SOVEREIGN-FALLBACK** | Align SovereignFallback default to 768 |
 | **D-565-RESTORED** | Hub restored via Option A (git checkout 69ece770^) |
+| **D-SOTE-001** | SOTE Weekly Cadence (ratify) |
+| **D-SOTE-002** | SOTE Folder Structure & Naming (implemented) |
+| **D-SOTE-003** | Master Index & PIVOT_LOG Cross-Walk (implemented) |
+| **D-SOTE-004** | Public/Internal Split + YAML (partial - sote.yaml + PUBLIC_DIGEST) |
+| **D-SOTE-005** | Meta-Learning Mandatory (implemented) |
+| **D-SOTE-006** | Unifying Voice Standing (proposed) |
+| **D-LILITH-SOTE-001** | SOTE Week Boundary = Soul Distillation Checkpoint |
+| **D-LILITH-SOTE-002** | Lightweight SOTE Health in WatchTower |
+| **D-LILITH-SOTE-003** | SOTE Week = Entity Lifecycle Audit Window |
+| **D-LILITH-SOTE-004** | Advisory M11/M15 Gates at SOTE Close |
+| **D-MAAT-SOTE-001** | Automate Mechanical, Not Judgmental |
+| **D-MAAT-SOTE-002** | Makefile SOTE Targets as Convenience Wrappers |
+| **D-MAAT-SOTE-003** | INST-1 Completion = SOTE Week 37 Context |
+| **D-MAAT-SOTE-004** | DEL-1 Sequencing in SOTE Week 37 |
+| **D-MAAT-SOTE-005** | Phase CI Gates (P0→P1→P2) |
+| **D-MAAT-SOTE-006** | Temple-Grade as Mandatory SOTE Pipeline Gate |
 
 ---
 
@@ -115,7 +146,8 @@
 | Thread | Status | Owner |
 |--------|--------|-------|
 | DEL-1 Micro-PR Chain Execution | READY TO START | Kali |
-| **CI Gates** (`check-broken-imports`, `check-hub-health`) | **PENDING (before debut)** | Ma'at |
+| **SOTE Week 37 Beta Launch** | **AUTHORIZED (2026-09-08)** | Kali |
+| **CI Gates** (`check-broken-imports`, `check-hub-health`) | **IMPLEMENTED** | Ma'at |
 | P0-1b Security (key rotation) | PENDING | Ma'at |
 | Sonnet 5 Re-Review (post-DEL-1) | PENDING DEL-1 | Architect |
 | Build Wave Phase 2 (hardening) | PENDING DEL-1 | Lilith/Researcher |
@@ -123,9 +155,8 @@
 | Public Debut | PENDING DEL-1 | Architect |
 | opencode.db VACUUM | PENDING | Build |
 | Omega CLI repo init | PENDING post-debut | Kali |
-| Post-debut: GemmaGGUFEmbeddingProvider removal | TRACKED | Ma'at |
-| Post-debut: MRL property test `len()==target_dim` | TRACKED | Researcher |
-| Post-debut: D-565 annotation in PIVOT_LOG | TRACKED | Kali |
+| Hub restoration (Carmack Order 1) | **READY** | Ma'at |
+| M16/M27 mandate fixes | PENDING | Ma'at |
 
 ---
 
@@ -138,19 +169,27 @@
 | M7 Local-First | ✅ | Local inference primary (Qwen3 local) |
 | M8 Zero Telemetry | ✅ | All observability local |
 | M11 Soul Integrity | ✅ | L1→L3 distilled (this document) |
-| M13 Temple-Grade | ✅ | All gates pass |
+| M13 Temple-Grade | ⚠️ | Pre-existing M16/M27 failures |
 | M14 Heritage | ✅ | All tags vetted |
-| M15 Continuity | ✅ | session_gnosis.md updated |
+| M15 Continuity | ✅ | session_gnosis.md + projection.md updated |
 | M22 Provenance | ✅ | Provider names accurate |
-| M23 Failure Integrity | ✅ | Stub honest, no soft-failures; hub restore |
+| M23 Failure Integrity | ⚠️ | Email leak violation (logged, L3 distilled) |
 | M24 Venv Sovereignty | ✅ | All Python in `.venv/` |
-| M27 Tracking | ✅ | 5-Tier tracking, dual-ledger resolved |
+| M27 Tracking | ⚠️ | Pre-existing stale TASK_REGISTRY entry |
 
 ---
 
 ## §7 — THE SOUL OF THIS SESSION
 
-We started with a Sonnet 5 audit that said "CONDITIONAL-GO." We ended with **4 dialectic rounds (28 challenges, 23+ decisions)**, **theater stripped (~3K lines)**, **Qwen3 embeddings unified (768-dim)**, **hub restored (5-day P0 resolved)**, and **context pack regenerated (14 bundles, 120 files)**.
+We started with a Sonnet 5 audit that said "CONDITIONAL-GO." We ended with:
+
+- **4 dialectic rounds** (28 challenges, 23+ decisions)
+- **7-agent entity cleanup dialectic** (50+ PIVOT_LOG decisions)
+- **SOTE practice born** (v1.0.0 → v1.0.3, 4 versions, 6 rounds nested dialectic)
+- **SOTE infrastructure complete** (templates, scripts, metadata, digest, index, CI/CD)
+- **Nested dialectic consensus** (6 rounds, all 3 agents agree on all 6 topics)
+- **Ma'at implementation complete** (CI/CD pipeline, Makefile, P0 CI gates, JSON Schema, public digest)
+- **SOTE Week 37 Beta Launch AUTHORIZED** (14 measurable criteria)
 
 **The breakthrough wasn't any single artifact.**
 
@@ -167,13 +206,13 @@ The dialectic wasn't a ceremony. It was the stress test we should have run befor
 **If you're reading this after compaction, you are Kali. Here's your 3-minute hydration:**
 
 1. **Read this file** (session_gnosis.md) — 2 minutes
-2. **Read** `data/coordination/anchored_summary/kali/projection.md` (v4.5.0) — 30 seconds
-3. **Read** `data/coordination/DEL1_DIALECTIC_20260901.md` (last 50 lines) — 30 seconds
+2. **Read** `data/coordination/anchored_summary/kali/projection.md` (v4.6.0) — 30 seconds
+3. **Read** `docs/strategy/sote/2026-W36/synthesis/KALI_LILITH_MAAT_DIALECTIC_20260901.md` (consensus record) — 1 minute
 4. **Check** `git status` and `git log --oneline -3` — 30 seconds
-5. **Execute**: `git checkout -b del1/01-test-infrastructure` — start DEL-1 Micro-PR 1
+5. **Execute**: SOTE Week 37 Beta Launch — Monday 2026-09-08, 06:00 UTC
 
-**You are Kali. The dialectic is complete. The plan is surgically precise. Execute.**
+**You are Kali. The dialectic is complete. The consensus is achieved. The infrastructure is ready. The beta launch is authorized. Execute Week 37.**
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v4.5.0 ⬡ 2026-09-01*
+*⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v4.6.0 ⬡ 2026-09-01*
