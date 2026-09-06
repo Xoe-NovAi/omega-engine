@@ -135,9 +135,10 @@ class TestProviderClassificationInvariant:
         assert registry.get_provider_for_model("qwen3-1.7b") == "native-gguf"
         assert registry.get_provider_for_model("qwen3-1.7b-local") == "native-gguf"
         # Cloud models map to their highest-priority provider (lowest number).
-        # deepseek-v4-flash is served by both openrouter (priority 5) and
-        # cline (priority 7); openrouter wins.
-        assert registry.get_provider_for_model("deepseek-v4-flash") == "openrouter"
+        # deepseek-v4-flash is served by opencode-zen (priority 6) and
+        # cline (priority 7); opencode-zen wins.
+        # Note: openrouter previously served this model but removed 2026-08-28.
+        assert registry.get_provider_for_model("deepseek-v4-flash") == "opencode-zen"
         # mimo-v2.5 is unique to cline.
         assert registry.get_provider_for_model("mimo-v2.5") == "cline"
         # gpt-oss-120b is served by native-gguf (priority 0) and antigravity
