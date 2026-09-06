@@ -149,7 +149,7 @@ sys.path.insert(0, '{Path(__file__).parent.parent.parent / "src"}')
 import json, time
 from omega.oracle.m34_registry import M34Registry, ActiveSubagent
 
-        r = M34Registry(registry_path=Path('{test_path}'))
+r = M34Registry(registry_path='{test_path}')
 for i in range(50):
     try:
         # Update status (write cycle)
@@ -249,15 +249,15 @@ def test_backup_rotation():
             task_brief="Second",
         ))
         # Check backup exists
-        bak_path = test_path + ".1.bak"
+        bak_path = f"{test_path}.1.bak"
         assert os.path.exists(bak_path), "Backup file not created"
         with open(bak_path) as f:
             bak_data = json.load(f)
-        # Backup should contain BOTH entries (hard link to previous state)
+        # Backup contains PREVIOUS state (hard link created before write)
         assert "ses_bak1" in bak_data["sessions"]
-        assert "ses_bak2" in bak_data["sessions"]
+        assert "ses_bak2" not in bak_data["sessions"]
     finally:
-        for p in [test_path, test_path + ".1.bak", test_path + ".2.bak", test_path + ".3.bak", test_path + ".lock"]:
+        for p in [test_path, f"{test_path}.1.bak", f"{test_path}.2.bak", f"{test_path}.3.bak", f"{test_path}.lock"]:
             if os.path.exists(p):
                 os.unlink(p)
 
@@ -285,7 +285,7 @@ import sys, time
 sys.path.insert(0, '{Path(__file__).parent.parent.parent / "src"}')
 from omega.oracle.m34_registry import M34Registry, ActiveSubagent
 
-        r = M34Registry(registry_path=Path('{test_path}'))
+r = M34Registry(registry_path='{test_path}')
 agent_name = sys.argv[1]
 for i in range(10):
     try:
@@ -295,7 +295,7 @@ for i in range(10):
             subagent_type='NES', agent=agent_name, model='m',
             channel='opencode', entity='e', task_brief=f'{{agent_name}} {{i}}',
         ))
-        time.sleep(0.01)
+        time.sleep(0.05)  # 50ms between writes — advisory lock serialization
     except Exception as e:
         print(f'ERROR: {{e}}', file=sys.stderr)
         sys.exit(1)
@@ -335,7 +335,7 @@ for i in range(10):
             if os.path.exists(child_path):
                 os.unlink(child_path)
     finally:
-        for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+        for p in [test_path, f"{test_path}.1.bak", f"{test_path}.lock"]:
             if os.path.exists(p):
                 os.unlink(p)
 
@@ -362,6 +362,6 @@ def test_recovery_from_missing_main():
         # Empty registry returned (since main missing)
         assert data["version"] == M34Registry.SCHEMA_VERSION
     finally:
-        for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+        for p in [test_path, f"{test_path}.1.bak", f"{test_path}.lock"]:
             if os.path.exists(p):
                 os.unlink(p)

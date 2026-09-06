@@ -24,12 +24,22 @@ def test_all_collections_have_dimension():
 
 
 def test_no_1024_dim_references_in_memory():
-    """No dimension=1024 references in src/omega/memory/ (except comments)."""
+    """No dimension=1024 references in src/omega/memory/ (except comments).
+
+    [D-768-DIM-MRL-CHAIN] The Qwen3 provider declares its NATIVE dimension
+    (1024) with a `# native` marker and truncates via MRL to 768 (target_dim).
+    The runtime dimension property returns target_dim (768), enforced by
+    test_provider_chain_dims_match_strategy. This grep forbids 1024-dim
+    COLLECTION/config usage, not the MRL native declaration.
+    """
     result = subprocess.run(
         ["rg", "-n", "dimension=1024", "src/omega/memory"],
         capture_output=True, text=True
     )
-    lines = [l for l in result.stdout.splitlines() if not l.strip().startswith("#")]
+    lines = [
+        l for l in result.stdout.splitlines()
+        if not l.strip().startswith("#") and "# native" not in l
+    ]
     assert len(lines) == 0, f"Found 1024-dim references: {lines}"
 
 

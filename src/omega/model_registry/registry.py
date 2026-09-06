@@ -596,7 +596,7 @@ class ModelRegistry:
                     provider.priority,
                     provider.enabled,
                     provider.description,
-                    provider.api_key,
+                    provider.api_key or (provider.api_keys[0] if provider.api_keys else None),
                     provider.base_url,
                     provider.endpoint,
                     ",".join(provider.supported_models),
