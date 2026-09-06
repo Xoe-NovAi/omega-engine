@@ -1,12 +1,12 @@
-<!--
+---
 SPDX-FileCopyrightText: 2026 Xoe-NovAi
 
 SPDX-License-Identifier: Apache-2.0
--->
 
 model_id: minimax/minimax-m3:free
 display_name: MiniMax M3 (Free) — Long-Write Champion
 version: '2026-08-27'
+schema_version: '1.1.0'
 provider: openrouter
 platform: cloud
 tier: T2
@@ -54,3 +54,4 @@ probe_data:
   avg_latency_ms: 2000
 promoted_by: PIVOT_LOG D-585 (2026-08-27)
 promotion_evidence: data/coordination/MINIMAX_M3_LONG_WRITE_CHAMPION_20260827.md
+---
