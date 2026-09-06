@@ -8,7 +8,7 @@ Provider Configuration Data Classes
 """
 
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import List, Optional
 
 
 @dataclass
@@ -18,6 +18,7 @@ class ProviderConfig:
     enabled: bool = True
     description: str = ""
     api_key: Optional[str] = None
+    api_keys: Optional[List[str]] = None  # D205 8-account rotation (google)
     base_url: Optional[str] = None
     endpoint: Optional[str] = None
     model_dir: Optional[str] = None
