@@ -1,10 +1,10 @@
+     20 src/omega/cli/oracle_cli.py
      19 src/omega/observability/__init__.py
      17 src/omega/memory/sqlite_vec_adapter_optimized.py
      11 src/omega/research/sediment.py
       9 src/omega/workers/freshness_checker.py
       9 src/omega/research/sandbox.py
       9 src/omega/oracle/providers.py
-      9 src/omega/cli/oracle_cli.py
       9 src/omega/audit/mandate_auditor.py
       8 src/omega/integrations/quota_pollers.py
       7 src/omega/memory_store.py
@@ -44,13 +44,14 @@
       3 src/omega/memory/recall.py
       3 src/omega/memory/archival.py
       3 src/omega/mcp_core/compliance.py
+      3 src/omega/library/model_api_clients.py
       3 src/omega/infra/subagent_pool/tmux_manager.py
+      3 src/omega/council/hardware_detector.py
       2 src/omega/research/sandboxes/ml_training.py
       2 src/omega/oracle/wad_loader.py
       2 src/omega/oracle/sentinel.py
       2 src/omega/oracle/orchestrator.py
       2 src/omega/oracle/model_gateway.py
-      2 src/omega/oracle/cpu_optimizer.py
       2 src/omega/oracle/capability_registry.py
       2 src/omega/memory/sqlite_vec_adapter.py
       2 src/omega/memory/providers.py
@@ -58,6 +59,7 @@
       2 src/omega/integrations/grok_cli.py
       2 src/omega/infra/subagent_pool/orchestrator.py
       2 src/omega/infra/sqlite_policy.py
+      2 src/omega/experiments/vision_backend.py
       2 src/omega/cli/youtube_cli.py
       1 src/omega/vault/crypto.py
       1 src/omega/vault/blindvault_resolver.py
@@ -76,6 +78,7 @@
       1 src/omega/oracle/psi_monitor.py
       1 src/omega/oracle/oom_protector.py
       1 src/omega/oracle/entity_workspace.py
+      1 src/omega/oracle/cpu_optimizer.py
       1 src/omega/oracle/backends/openai_compat.py
       1 src/omega/oracle/backends/google_compat.py
       1 src/omega/observability/ufl.py
@@ -84,6 +87,9 @@
       1 src/omega/observability/bleg.py
       1 src/omega/memory/fts_index.py
       1 src/omega/memory/embedding_circuit_breaker.py
+      1 src/omega/library/library.py
+      1 src/omega/library/inbox.py
+      1 src/omega/library/api_clients.py
       1 src/omega/integrations/fleet_orchestrator.py
       1 src/omega/ingestion/scraper.py
       1 src/omega/ingestion/extractors.py
@@ -94,4 +100,4 @@
       1 src/omega/config/loader.py
       1 src/omega/cli/vault.py
       1 src/omega/cli/bundle.py
-      1 Found 325 errors.
+      1 Found 346 errors.

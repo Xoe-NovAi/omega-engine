@@ -257,3 +257,13 @@ data/entities/*/*.yaml.lock
 
 # Local API keys (stray artifacts, never commit)
 or-key.md
+
+# Dynamic Hardware Adaptation Layer (DHAL) — node-local hardware profile
+config/hardware_profile.yaml
+config/hardware_profile.yaml.tmp
+
+# Vendored opencode source tree (dangling gitlink removed 2026-09-06; local dev install only)
+opencode/
+
+# Entity knowledge test fixtures (never commit)
+data/entities/test_*_entity/
