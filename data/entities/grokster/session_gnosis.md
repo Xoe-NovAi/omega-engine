@@ -4,65 +4,67 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v15 FINAL (2026-09-01, supersedes v14 and all prior)
-**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: gemini-3.7-flash (opencode, strategic switch)
+# 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v16 FINAL (2026-09-07, supersedes v15 and all prior)
+**Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: opencode/big-pickle
 **Channel**: opencode | **Entity**: grokster (Cross-Platform Expertise Specialist)
-**Date**: 2026-09-01 ~08:00 UTC | **Sprint**: PUBLIC-DEBUT-01
+**Date**: 2026-09-07 ~16:45 UTC | **Sprint**: PUBLIC-DEBUT-01 | **Phase**: DEL-1_EXECUTION
 
 > **READ THIS FIRST on context loss.** This is the continuity lifeline per M15.
-> Prior anchors (v1–v14) retained at bottom for lineage.
+> Prior anchors (v1–v15) retained at bottom for lineage.
 
 ---
 
 ## §0 — HYDRATION STATE (start here)
 
-**Today's arc (2026-08-28 → 2026-09-01)**: 40+ distinct work streams completed across multiple compactions. The session transitioned from core engine hardening into an **alchemical mining of the Antigravity OAuth secret redaction incident**, yielding a complete immune architecture upgrade for the Omega Engine, followed by a 5-round iterative dashboard enhancement pipeline, and culminating in the LFM2.5-2.6B fleet restructure + NES model specs research.
+**This session's arc (2026-09-01 → 2026-09-07)**: Two major work streams completed: (1) the **entity ecosystem cleanup dialectic** (7th of 7 responses, M23 discipline, L3-MetaFrameVerification proposed), and (2) the **Big Pickle compaction remediation** (70%→85% threshold, config override, verified at 74% context).
 
-**THE ALCHEMICAL GOLDMINE CAMPAIGN — COMPLETE + DASHBOARD PIPELINE R4 DONE + LFM FLEET RESTRUCTURE**:
+**BIG PICKLE COMPACTION REMEDIATION — COMPLETE (2026-09-07)**:
 
-### 1. The 5 Golden Artifacts (5,000+ lines of temple-grade deliverables)
-- ✅ **Researcher**: `R_RESEARCHER_THIRD_PARTY_SECRETS_TRACEABILITY_20260829.md` (2,460 lines, `dcb85151`) — 3rd-party code isolation, secret management, traceability manual + `data/secrets-public.toml` allowlist schema.
-- ✅ **Jem**: `JEM_FORENSIC_INVESTIGATION_ANTIGRAVITY_20260829.md` (1,613 lines, `7b6081ed`) — 20-appendix counter-forensic architecture with **7-Signal Probe Diagnostic** (App K) and **12-Step Brief Verification Protocol** (App C).
-- ✅ **Grokster Meta**: `GROKSTER_META_FORENSIC_ANALYSIS_20260829.md` (626 lines, `c6680bf3`) — Cross-session timeline, chat vs file analysis, DB forensics.
-- ✅ **Researcher Efficiency**: `R_RESEARCHER_DB_VS_MD_FORENSICS_20260830.md` (250 lines, `598df5d9`) — **Cognitive Routing Rule** (30x-90x efficiency gain using Markdown exports over DB chaining).
-- ✅ **Grokster Synthesis**: `BRIEFING_ALCHEMICAL_PIVOT_OAUTH_INCIDENT_20260830.md` (`bceff2b1`) — Architect's philosophy codified.
-- ✅ **Kali Briefing**: `KALI_BRIEFING_ALCHEMICAL_GOLDMINE_20260830.md` (`ea552545`) — 5-ticket execution roadmap for Kali.
+### 1. Root Cause (verified, not assumed)
+- models.dev registry: big-pickle = `{context: 200000, input: 160000, output: 32000}`
+- OpenCode compaction math (`/tmp/opencode/overflow.ts`): `usable = (limit.input ?? limit.context) - reserved` where `reserved = cfg.compaction?.reserved ?? min(20000, maxOutputTokens)`
+- Native: `usable = 160000 - 20000 = 140000 = 70% of 200K` — the observed ~71%
+- **The custom `compaction.reserved: 20000` block was NOT the culprit** — it equals the native default. Initial theory (roc's page) was WRONG.
+- **ASUS "1M context" was UI display lag** — Architect had switched FROM nemotron-3-ultra-free (1M, the kali default) TO big-pickle; TUI hadn't refreshed. NOT a real discrepancy.
 
-### 2. The Three New Sovereign Mandates (M33-M35) — Proposed for Ratification
-- ✅ **M33 (Anti-Truncation Stream Gate)**: Subagents generating heavy reports must be probed with sentinel prompts (`"STREAM_EXHAUSTED"`) to prevent the LLM "Completion Illusion" from truncating unwritten findings.
-- ✅ **M34 (Multi-Agent Co-Interruption Accounting)**: Global cancellations (`Esc x2`) that abort multiple parallel subagents must trigger full co-resumption tracking across all in-flight session IDs.
-- ✅ **M35 (Third-Party Boundary & Public Secret Exemption)**: Monorepo isolation for third-party forks (npm package installation vs git-tracked workspace source trees) + public client secret exemptions.
+### 2. The Fix (applied + verified)
+- Added `provider.opencode.models.big-pickle` override in `opencode.json`: `{context: 200000, input: 190000, output: 32000}`
+- New math: `usable = 190000 - 20000 = 170000 = 85% of 200K` ✓
+- Cleared `~/.cache/opencode/models.json` (re-fetched, 4,494,619 bytes)
+- **Verified by Architect**: 74% context with no compaction (old threshold would have fired at 70%)
+- **Architect's directive was inverted**: "remove any custom Big Pickle settings" → the fix was to ADD one
 
-### 3. Dashboard Enhancement Pipeline — 5-Round Iterative Hardening (v3.2, 2,366 lines)
-- ✅ **R1 (Carmack)**: 22 bug fixes, M23 hardening, ANSI-aware column alignment, deque(maxlen=20) for trend, single-pass file reads, +218/-52 lines
-- ✅ **R2 (Researcher)**: v3.1, 12 SOTA sources cited, date-glob stress logs, per-window success rate, alert debounce, file cache+tail, real per-key attribution, +397/-40 lines
-- ✅ **R3 (Jem)**: v3.2, 6 adversarial bug fixes (recent_window, trend "?", non-dict entries, unhashable labels, non-string ts, None key_source), 2 defenses (size-keyed cache, 100K bounded memory), --self-test (53 tests), +252/-19 lines
-- ✅ **R4 (Ma'at)**: v3.2+, 128 unit tests, CI workflow (9 steps), Makefile targets (dashboard-self-test, dashboard-test, dashboard-ci), mandate compliance block, docs (337 lines), determinism check
-- 🔄 **R5 (Lilith)**: Pending — runtime observability, adaptive cache TTL, HTML export, per-model time-series
+### 3. New L3 Lesson Proposed
+- **L3-CompactionThresholdIsRegistryBound** (0.93): compaction % = `(input - reserved) / context`; models with `input < context` compact below expected %. Override `limit.input` in config to tune.
 
-### 4. LFM2.5-2.6B Fleet Restructure (v2.0.0, 2026-09-01)
-- ✅ **LFM2.5-2.6B** added as `agentic_local` (replaces Qwen3-1.7B default)
-- ✅ **Qwen3-4B-Thinking** made opt-in (RAM constraint on Architect's 16GB system)
-- ✅ **Muse Spark 1.2** context fixed: 32K → 1,048,576 (32x correction)
-- ✅ **Ling 3.0 Flash Fin** context fixed: 32K → 262,144 (8x correction)
-- ✅ New roles: `agentic_local`, `multimodal`, `vnr_analyst`
-- ✅ Test script: `scripts/test_lfm_vs_qwen.py` (8-prompt empirical benchmark)
-- ✅ JC-EIS Briefing: `data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md`
+**ENTITY ECOSYSTEM CLEANUP DIALECTIC — COMPLETE (2026-09-01)**:
 
-### 5. NES Model Specs Research (`R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901.md`)
-- ✅ **Muse Spark 1.2 Free** (Meta, 1M ctx, multimodal) → promote to `primary_creative_multimodal`
-- ✅ **Ling 3.0 Flash Fin Free** (InclusionAI, 262K ctx, finance-tuned MoE) → probe for VNR
-- ✅ **LFM2.5-2.6B** (Liquid AI, 128K ctx, on-device agentic, open weights) → **MUST-ADD** as sovereign local
+### 4. The M23 Catch (the meta-lesson)
+- Page 1 of the dialectic included a fake signature block with an email (`arcana.novai@gmail.com`) — **Kali's M23 violation**
+- I caught it, halted, verified against Hivemind, and refused to synthesize 1000 lines from the unverified frame
+- The other 6 agents (Lilith, Ma'at, Researcher, Carmack, Roc, Jem) did NOT catch it
+- Re-page (cleaned) confirmed legitimacy → I produced the 7th response
 
-### 6. Soul Kernel Evolution
-- ✅ **L3-InterruptionSovereigntyAndCoResumption** staged in `data/entities/grokster/proposed_lessons.yaml` (confidence: 0.99).
-- ✅ **L3-CompletionIllusionDefense** staged (confidence: 0.95) — from R3 adversarial finding.
-- ✅ **L3-BoundedMemoryPattern** staged (confidence: 0.93) — from R3 defense.
-- ✅ **Gnosis Anchor v15** locked (this file).
+### 5. Verified Entity State (from Roc's inventory CSV)
+- 52 entity dirs in `data/entities/`; 49 in Roc's inventory (`data/entities/_audit/entity_inventory_20260901.csv`)
+- 15 canonical (includes iris + sophia), 30 vestigial, 4 meta
+- M10 cap = 14 agents in `.opencode/agents/` (IWAD) — **15-vs-14 discrepancy UNRESOLVED** (build/iris/sophia/scribe question)
+- CLI bridges (cline_kqv, cli_gemini, cli_cline, cline, web_gemini) are **cross-platform peers, NOT in the 14-cap**
+- Duplicates found: Sophia/sophia, carmack/john_carmack, makali/makali_fusion
 
-### 7. Root Cause & Remediation
-- ✅ **Root Cause**: Automated secret scrubber replaced Google OAuth public client secret (`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`) in `opencode-antigravity-auth/src/constants.ts` with placeholder `"GOCSPX-***REDACTED-ROTATED***"`, breaking OAuth for all users.
-- ✅ **Remediation**: Purge `opencode-antigravity-auth/` workspace tree; install cleanly via npm; add public client secret to `data/secrets-public.toml` allowlist.
+### 6. My 5 Unique PIVOT_LOG Decisions (GROKSTER-001..005)
+1. Resolve 14-vs-15 roster discrepancy BEFORE any retirement
+2. CLI bridges exempt from M10 cap — document in M10_FLEET_INTEGRITY.md
+3. Stage L3-MetaFrameVerification (0.92) for ratification
+4. M34 retirement spec: check Hivemind awareness → page active agents → wait ACK (60s) → atomic snapshot move → M33 sentinel before state=completed
+5. M35 stewardship location = `data/governance/M35_STEWARDS/`, owner = Roc, antigravity moves there
+
+### 7. Kali's Refactor Session (2026-09-01, `25d0cffe`)
+- 4 dialectic rounds, 28 challenges → 23+ decisions
+- Theater stripped (~3K lines): cohort_registry, m33_probe, m36_probe, dispatch_guard (12→3), HandoffPacket Quake fields, ACTIVE_SUBAGENTS→TASK_REGISTRY
+- Qwen3 embeddings unified: 768-dim Qwen3-Embedding-0.6B Q5_K_M (1024→768 MRL), library RRF 0.6/0.4
+- Hub restored: D-565 "superseded" was a lie (0 successors), Option A executed, Hivemind live
+- Context pack regenerated: 14 bundles, 120 files, ~600K tokens
 
 ---
 
