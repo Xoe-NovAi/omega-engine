@@ -22,6 +22,7 @@ class HardwareProfile(Enum):
     """Auto-detected or manually specified hardware constraint profile."""
 
     CLOUD_EQUIVALENT = "cloud_equivalent"  # 32GB+ RAM, GPU available
+    LOCAL_32GB_DUAL = "local_32gb_dual"  # 32GB dual-channel, no discrete GPU
     LOCAL_16GB = "local_16gb"  # Default: 4B/8B/12B tiers
     LOCAL_8GB = "local_8gb"  # 2B/4B/8B tiers
     LOCAL_4GB = "local_4gb"  # Cloud-only or 1B/2B/4B
@@ -34,6 +35,7 @@ class ExecutionMode(Enum):
     SERIAL_INDEPENDENT = auto()  # One at a time, no context passing (constrained)
     BATCH_2 = auto()  # 2 at a time (for 8GB RAM)
     BATCH_4 = auto()  # 4 at a time (for 16GB RAM)
+    BATCH_8 = auto()  # 8 at a time (for 32GB dual-channel)
 
 
 class CouncilStage(Enum):
