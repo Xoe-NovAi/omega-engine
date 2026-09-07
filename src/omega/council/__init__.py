@@ -19,16 +19,15 @@ from .models import (
     ExecutionMode,
     StageResult,
     CouncilResult,
+    RetryPolicy,
+    FallbackChain,
+    CircuitBreakerState,
 )
 from .report_digestion import ReportDigester
 from .hardware_detector import detect_hardware_profile
 from .execution_mode import select_execution_mode
 from .failure_layer import (
-    CouncilFailure,
     CoordinatedRecovery,
-    RetryPolicy,
-    FallbackChain,
-    CircuitBreakerState,
 )
 
 __all__ = [
@@ -44,7 +43,6 @@ __all__ = [
     "ReportDigester",
     "detect_hardware_profile",
     "select_execution_mode",
-    "CouncilFailure",
     "CoordinatedRecovery",
     "RetryPolicy",
     "FallbackChain",
