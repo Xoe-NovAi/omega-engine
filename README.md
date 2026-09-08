@@ -23,7 +23,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
 | `make test` (unit tier) | ✅ Passing |
 | Core CI gates (M1, M7, M8, M9, M22, M23) | ✅ Passing |
 | Mandate compliance | 71.4% (20/28 passing, 3 failing, 4 untested) |
-| `omega` CLI binary | ⚠️ Use `python -m omega.cli.bundle` or OpenCode |
+| `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
 **What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 3 failing mandates (M13 timeout, M16 hardcoded path, M27 stale task) are pre-existing and not blocking alpha. We're shipping to get feedback before hardening the rest.
@@ -278,7 +278,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | `make test` (unit tier) | ✅ Passing |
 | Core CI gates (M1, M7, M8, M9, M22, M23) | ✅ Passing |
 | Mandate compliance | 71.4% (20/28 passing, 3 failing, 4 untested) |
-| `omega` CLI binary | ⚠️ Use `python -m omega.cli.bundle` or OpenCode |
+| `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
 **What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 3 failing mandates (M13 timeout, M16 hardcoded path, M27 stale task) are pre-existing and not blocking alpha. We're shipping to get feedback before hardening the rest.
