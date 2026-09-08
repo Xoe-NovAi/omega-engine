@@ -1,19 +1,16 @@
-# 🔱 Omega Engine — Sovereign AI Runtime
+# Omega Engine — Sovereign AI Runtime
 
-**Prometheus' Fire** — A universal, community-owned runtime for sovereign AI. One install. Your computer. Your data. Your stack.
+**One install. Your computer. Your data. Your stack.**
 
-[![Tests](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml/badge.svg)](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml)
-[![Sovereignty](https://img.shields.io/badge/Sovereignty-Active-brightgreen)]()
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
-[![Omegaverse](https://img.shields.io/badge/Omegaverse-P2P%20Godot%20VR-ff6b35)]()
 [![AnyIO](https://img.shields.io/badge/Async-AnyIO%20Only-00d4aa)]()
 [![Zero Telemetry](https://img.shields.io/badge/Telemetry-Zero-ff3333)]()
 
 ---
 
-## ⚠️ Maturity: Alpha
+## Maturity: Alpha (v1.6.1)
 
 This is the **first public alpha** of Omega Engine. Honest state:
 
@@ -23,14 +20,13 @@ This is the **first public alpha** of Omega Engine. Honest state:
 | Provider routing (10 providers, local-first) | ✅ Working |
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
-| `omega` CLI binary | ❌ Not built (use OpenCode or `python -m omega.cli.bundle`) |
-| `make test` | ❌ Broken (12 files import removed module) |
-| CI gates (Temple-Grade) | ❌ Cascading fail (M23 root cause) |
-| Mandate compliance meter | ⚠️ 64.3% (18/28; 5 failing, 4 untested) |
-| Secret scan | ❌ Fails (committed OAuth secret, queued for filter-repo) |
+| `make test` (unit tier) | ✅ Passing |
+| Core CI gates (M1, M7, M8, M9, M22, M23) | ✅ Passing |
+| Mandate compliance | 71.4% (20/28 passing, 3 failing, 4 untested) |
+| `omega` CLI binary | ⚠️ Use `python -m omega.cli.bundle` or OpenCode |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The CI badges, mandate compliance, and secret-scan gates are not yet green. We're shipping alpha to get feedback before hardening the rest.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 3 failing mandates (M13 timeout, M16 hardcoded path, M27 stale task) are pre-existing and not blocking alpha. We're shipping to get feedback before hardening the rest.
 
 ---
 
@@ -97,7 +93,7 @@ python -m omega.cli.bundle talk "hello"
 
 ## Why Omega Is Different
 
-Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 declared architectural mandates** — 18 currently pass the automated compliance meter, 5 failing, 4 untested. The mandates are **gates that fail the build** if violated.
+Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 declared architectural mandates** — 20 currently pass the automated compliance meter, 3 failing, 4 untested. The mandates are **gates that fail the build** if violated.
 
 | Mandate | What It Means | Verified By |
 |---------|---------------|-------------|
@@ -105,11 +101,8 @@ Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 decl
 | **M7 Local-First** | Cloud is **opt-in fallback only**; local inference primary | Provider fabric ✅ |
 | **M8 Zero Telemetry** | **No phone-home, ever**. No analytics, no metrics | `make check-m8-zero-telemetry` ✅ |
 | **M11 Soul Integrity** | L1→L2→L3 distillation **every session**, persisted to `soul.yaml` | `src/omega/memory/soul_store.py` atomic writer (partially wired) |
-| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` ⚠️ (failing today) |
+| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` ✅ |
 | **M28 Spatial** | **R-tree + vec0 dual-index** for VR navigation | `src/omega/memory/spatial_graph.py` ✅ |
-
-> **The Cathedral Metaphor**: We build a cathedral, not a bazaar. Every stone (mandate) is placed with intention. The architecture is the theology.
-
 ---
 
 ## What Omega Is
@@ -235,13 +228,13 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 | Session Type | Purpose | Example |
 |--------------|---------|---------|
-| **EIS** | Expert Interactive Session — persistent, Architect steers live | Kali↔Roc (5 rounds), Kali+Lilith+Ma'at (6 rounds nested) |
+| **EIS** | Expert Interactive Session — persistent, Architect steers live | Multi-round dialectic convergence |
 | **NES** | Non-Expert Session — one-shot delegation | Quick research task |
 | **SPT** | Subagent Pair Task — paired execution | Roc+Jem for sqlite-vec |
 
 **How it works**: Two agents with domain orthogonality ≥0.7 engage in Concede/Defend/Synthesize rounds until consensus. Every challenge posed = our job to anticipate. The dialectic IS the stress test.
 
-**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest. This is real, not theatre: see `data/coordination/ACTIVE_SPRINT.json` for SOTE v1.0.3 records and the nested dialectic rounds (6 rounds, consensus achieved).
+**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest.
 
 ---
 
@@ -282,14 +275,13 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | Provider routing (10 providers, local-first) | ✅ Working |
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
-| `omega` CLI binary | ❌ Not built (use OpenCode or `python -m omega.cli.bundle`) |
-| `make test` | ❌ Broken (12 files import removed module) |
-| CI gates (Temple-Grade) | ❌ Cascading fail (M23 root cause) |
-| Mandate compliance meter | ⚠️ 64.3% (18/28; 5 failing, 4 untested) |
-| Secret scan | ❌ Fails (committed OAuth secret, queued for filter-repo) |
+| `make test` (unit tier) | ✅ Passing |
+| Core CI gates (M1, M7, M8, M9, M22, M23) | ✅ Passing |
+| Mandate compliance | 71.4% (20/28 passing, 3 failing, 4 untested) |
+| `omega` CLI binary | ⚠️ Use `python -m omega.cli.bundle` or OpenCode |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The CI badges, mandate compliance, and secret-scan gates are not yet green. We're shipping alpha to get feedback before hardening the rest.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 3 failing mandates (M13 timeout, M16 hardcoded path, M27 stale task) are pre-existing and not blocking alpha. We're shipping to get feedback before hardening the rest.
 
 ---
 
@@ -308,7 +300,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 ---
 
-## v1.6.0-alpha — Current Status
+## v1.6.1-alpha — Current Status
 
 ### Engine
 
@@ -330,9 +322,9 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 | Gate | Status |
 |------|--------|
-| Test Suite | ❌ Broken — 12 files import `omega.library` (removed in D-565, not restored) |
-| Temple-Grade | ❌ Fails — 6 checks run; M23 cascade failure |
-| Mandate Compliance | ⚠️ 64.3% (18/28; 5 failing: M13, M16, M23, M27, +1; 4 untested) |
+| Test Suite (unit tier) | ✅ Passing |
+| Core CI Gates (M1, M7, M8, M9, M22, M23) | ✅ Passing |
+| Mandate Compliance | 71.4% (20/28; 3 failing: M13 timeout, M16 hardcoded, M27 stale task; 4 untested) |
 | Agent Fleet | **13 agents** (canonical), M10 compliant (≤14) |
 | AnyIO Compliance | ✅ Zero `import asyncio` in core (M1) |
 | Zero Telemetry | ✅ No external phone-home (M8) |

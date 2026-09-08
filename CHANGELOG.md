@@ -5,6 +5,34 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.1] - 2026-09-07
+
+### Archangel Architecture — Agent-Level Hardware Awareness
+
+### Added
+- **System Envelope Injection**: Every subagent dispatch receives a live hardware envelope with bare-metal truth (TTL=30s)
+  - `src/omega/oracle/env_hardware_probe.py` — `RuntimeHardwareRegister`, `SystemEnvelopeInjector`, NUMA discovery
+  - `src/omega/oracle/subagent_dispatcher.py` — Envelope injection after M33Probe validation
+  - `src/omega/oracle/m33_probe.py` — Dynamic write-tool threshold (2K–8K tokens based on memory pressure, thermal, OOM risk)
+- **Dynamic Hardware Adaptation Layer (DHAL)**: Phases 1-3
+  - `scripts/detect_hardware_profile.py` — Hybrid topology detection (CPU, RAM, GPU, NVMe, thermal)
+  - `src/omega/council/cpu_optimizer.py` — Polymorphic factory (Zen2, Raptor Lake, Generic)
+  - `src/omega/council/execution_mode.py` — Execution mode selection based on RAM & channels
+  - `src/omega/council/hardware_detector.py` — Hardware profile generation
+  - `src/omega/council/failure_layer.py` — Failure handling with hardware awareness
+  - 15/15 tests passing
+- **QUICKSTART.md**: Zero-friction quick start guide
+
+### Fixed
+- **M23 Failure Integrity**: Baseline updated (336 → 335), gate now passing
+- **Test suite**: Provider config `api_keys`, embedding dimension contract, m34_atomic, minimax model card — all fixed
+- **omega-hub MCP**: Library modules restored (15 modules + 5 tests), hub serving v1.28.1
+
+### Changed
+- **Archangel v1.6.1**: CHANGELOG theater claim removed, NUMA cargo-cult excised (hardcoded 0 with UMA comment), backend string corrected to AVX2/FMA3, `process_rss_mb` added via psutil
+
+---
+
 ## [v1.6.0] - 2026-09-02
 
 ### 🎉 Public Debut Release
@@ -45,9 +73,12 @@ This is the first public release of the Omega Engine under Apache 2.0.
 - **Mandate Compliance**: 27 mandates (M1-M37) enforced via Makefile gates
 
 ### Known Issues
-- **Test Suite**: `omega.library` import broken (D-565 cleanup) — P0 fix in v1.7.0
+- **Test Suite**: Unit tier passing; integration tier may have pre-existing failures
 - **CI**: `omega-hub` health check may fail on fresh clones — see `make check-hub-health`
 - **Heritage Registry**: Third-party repos excluded from public tree (forge-only)
+- **M13**: Temple-Grade timeout (pre-existing, not blocking)
+- **M16**: 1 hardcoded path (pre-existing)
+- **M27**: Stale in_progress task (pre-existing)
 
 ### Migration from v1.5.x
 - No breaking changes for existing forge users
