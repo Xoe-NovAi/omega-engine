@@ -269,10 +269,21 @@ Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`
 4. Fan profile = Performance (confirmed by user)
 
 ## Project harness (`omega-engine-alpha`)
-- `Makefile`: bench/bench-all/bench-compare, python-chatbot, python-serve, env-setup/env-apply/env-revert, create-coder
-- `scripts/bench.py`, `scripts/chatbot.py`, `scripts/serve.py`
+- `Makefile`: bench/bench-all/bench-compare, python-chatbot, python-serve, env-setup/env-apply/env-revert, create-coder, gnosis-lock, gnosis-stats
+- `scripts/bench.py`, `scripts/chatbot.py`, `scripts/serve.py`, `scripts/backup_harness.sh`
 - `.env.ollama`: env source of truth (documents the pin trap, OLLAMA_NUM_THREADS=8)
+- `.env.ollama.example` / `.env.docker.example`: redacted templates (versioned; real files stay untracked)
 - `docker-compose.yml`, `.env.docker`
+- Local git repo (main): tracks SSOT docs/scripts/gnosis-protocol; secrets & generated gnosis data ignored
+
+### OpenCode model configuration (Big Pickle — 1M window)
+`~/.config/opencode/opencode.json` → `provider.opencode.models["big-pickle"].limit`:
+- `context: 1000000`, `input: 950000`, `output: 64000`
+- Verified live 2026-09-09: OpenCode reads Big Pickle as a 1M-token model; routinely
+  runs past the old 200K auto-compact threshold (205.8K+ tokens, no compaction).
+- Instructions stack loaded per session (project config): `AGENTS.md`, `docs/HARDWARE.md`,
+  `docs/SYSTEM_GUIDE.md`, `docs/BENCHMARKS.md` ≈ 13.5K tokens before MCP tools.
+  HARDWARE.md loads from the PROJECT config only (de-duplicated 2026-09-09).
 
 ## Network / disk caveats
 - Slow/flaky link (~300KB/s–4MiB/s). `/tmp` is a 7.4GB tmpfs (cleared on reboot).

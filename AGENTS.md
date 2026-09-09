@@ -35,3 +35,7 @@ Use `make` targets (see `Makefile`):
 ## Game-research sibling
 Not this repo. Gaming/Ollama-Iris-Xe agent config and knowledge base live under
 `~/.config/opencode/agent/gaming-expert.md` and `~/GameResearch/` respectively.
+
+## OpenCode model config (Big Pickle)
+Live at ~/.config/opencode/opencode.json → `provider.opencode.models["big-pickle"].limit`
+= `{context: 1000000, input: 950000, output: 64000}` (verified 1M window; see HARDWARE.md).

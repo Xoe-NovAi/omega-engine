@@ -171,7 +171,7 @@ bash ~/Documents/Projects/omega-engine-alpha/scripts/compaction/pre_compaction_r
 
 ## 7. What gets captured (references)
 
-- `gnosis/SESSION_STATE_FORMAT.md` — artifact spec (8 files per session)
+- `gnosis/GNOSIS_LOCK_PROTOCOL.md` › Appendix A — artifact spec (8 files per session)
 - `gnosis/OPENCODE_HOOKS.md` — hook integration guide (notes the current
   "hooks unsupported in v1.18" limitation)
 - `gnosis/GNOSIS_LOCK_PROTOCOL.md` — full protocol spec

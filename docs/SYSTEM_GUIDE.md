@@ -354,7 +354,7 @@ OpenCode includes **three built-in remote MCP servers** (no config needed, alway
   "mcp": {
     "websearch": {
       "type": "remote",
-      "url": "https://mcp.exa.ai/mcp",
+      "url": "https://api.exa.ai/mcp",
       "enabled": true,
       "headers": {
         "Authorization": "Bearer {env:EXA_API_KEY}"
@@ -538,6 +538,13 @@ opencode mcp add
 | All MCPs enabled (empty convo) | 82k (41%) | 12k (5.8%) |
 | Only `mcp-omnisearch` (consolidated) | 5.7k (2.8%) | 88k (44%) |
 
+**Instruction stack cost (what we load every session, pre-MCP, measured
+2026-09-09):** `AGENTS.md` (global+project) + `HARDWARE.md` + `SYSTEM_GUIDE.md`
++ `BENCHMARKS.md` ≈ **13.5K tokens** (~52KB). After the 1M Big Pickle raise this
+is negligible; at a 200K window it is ~7% of context before anything happens —
+keep the stack lean there, and note HARDWARE.md is loaded once per project
+(de-duplicated 2026-09-09; the global config no longer also loads it).
+
 **Best Practices:**
 1. **Disable unused MCPs** in `opencode.jsonc`:
    ```json
@@ -579,7 +586,7 @@ Each skill defines its own MCP server definition + scoped permissions.
   "instructions": ["/home/xnai/Documents/Projects/omega-engine-alpha/docs/HARDWARE.md"],
   "agent": { "build": { "prompt": "{file:./prompts/build.md}" } },
   "mcp": {
-    "websearch": { "type": "remote", "url": "https://mcp.exa.ai/mcp", "enabled": true, "headers": { "Authorization": "Bearer {env:EXA_API_KEY}" } },
+    "websearch": { "type": "remote", "url": "https://api.exa.ai/mcp", "enabled": true, "headers": { "Authorization": "Bearer {env:EXA_API_KEY}" } },
     "context7": { "type": "remote", "url": "https://mcp.context7.com/mcp", "enabled": true },
     "grep_app": { "type": "remote", "url": "https://mcp.grep.app", "enabled": true }
   }
