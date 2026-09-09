@@ -1,0 +1,1 @@
+Error: Main report not found at docs/strategy/sote/2026-W37/STATE_OF_ENGINE_v1.0.1.md
