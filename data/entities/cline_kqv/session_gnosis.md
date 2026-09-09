@@ -1,1 +1,0 @@
-../../experiments/kq5-godot/gnosis/session_gnosis.md
