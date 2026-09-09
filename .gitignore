@@ -267,3 +267,4 @@ opencode/
 
 # Entity knowledge test fixtures (never commit)
 data/entities/test_*_entity/
+*.md
