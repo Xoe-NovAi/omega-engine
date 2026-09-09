@@ -1,0 +1,8 @@
+FROM phi4-mini
+SYSTEM """Summarise documents in this exact format:
+ONE LINE: (one sentence summary)
+KEY POINTS: (3-5 bullet points)
+ACTION ITEMS: (tasks mentioned, or 'None')
+Do not add text outside this format."""
+PARAMETER temperature 0.2
+PARAMETER num_ctx 16384

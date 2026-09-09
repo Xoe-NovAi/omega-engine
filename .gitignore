@@ -1,0 +1,21 @@
+# ── Secrets — never version these ─────────────────────────────────────────────
+.env.ollama
+.env.docker
+
+# ── Large/historical session exports (kept on disk, not versioned) ────────────
+session-*.md
+
+# ── Generated gnosis data (captured by the ritual; versioned via git_state) ──
+gnosis/sessions/
+gnosis/evolution/evolution_log.jsonl
+gnosis/evolution/evolution_index.json
+gnosis/evolution/evolution_*.json
+
+# ── Python/venv ───────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+
+# ── Editor/OS noise ───────────────────────────────────────────────────────────
+*.swp
+*~
+.DS_Store
