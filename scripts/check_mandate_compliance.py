@@ -252,14 +252,29 @@ def build_checks(mandates: list[tuple[str, str]]) -> list[CheckResult]:
         return (len(hits) > 0, f"{len(hits)} files with atomic write patterns")
     results.append(make_check("M12", m("M12"), "scan src/omega for atomic write patterns", m12_check))
 
-    # ── M13: Temple-Grade Compliance — make temple-grade passes ─────────────
-    # NOTE: not invoked recursively (temple-grade itself includes check-mandates
-    # which could include this script). Mechanical check = component gates.
+    # ── M13: Temple-Grade Compliance — component gates pass ──────────────────
+    # NOTE: Cannot run `make temple-grade` or `make check-mandates` directly
+    # (recursive via check-mandate-compliance). Run the component gates directly.
     def m13_check():
-        code, out = run(["make", "temple-grade"])
-        last = out.strip().splitlines()[-1][:120] if out.strip() else f"exit {code}"
-        return (code == 0, last)
-    results.append(make_check("M13", m("M13"), "make temple-grade (component gates)", m13_check))
+        component_gates = [
+            ["make", "check-codex-stale"],
+            ["make", "doc-llm-validate"],
+            ["make", "check-m1-anyio"],
+            ["make", "check-asyncio-import"],
+            ["make", "check-m9-error-integrity"],
+            ["make", "check-m8-zero-telemetry"],
+            ["make", "check-m7-local-first"],
+            ["make", "check-m23-failure-integrity"],
+            ["make", "check-tracking-state"],
+            ["make", "dashboard-self-test"],
+        ]
+        for gate in component_gates:
+            code, out = run(gate)
+            if code != 0:
+                last = out.strip().splitlines()[-1][:120] if out.strip() else f"exit {code}"
+                return (False, f"FAILED: {' '.join(gate)} — {last}")
+        return (True, "all component gates pass")
+    results.append(make_check("M13", m("M13"), "temple-grade component gates", m13_check))
 
     # ── M14: Heritage Vetting — every [id-soft:] tag has a vet record ───────
     def m14_check():
