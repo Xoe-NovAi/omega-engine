@@ -89,6 +89,45 @@ data/coordination/R_RESEARCHER_SPATIAL_VECTORS_VR_20260828.md
 data/coordination/R_RESEARCHER_SQLITE_VEC_GAPS_20260828.md
 data/coordination/SESSION_ANCHOR.md
 data/coordination/anchored_summary/kali/projection.md
+
+# P2P Omegaverse Documentation (2026-09-09)
+docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md
+docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md
+docs/tech-architecture-research/ASUS_SECUREBOOT_PROVISIONING_POSTMORTEM_20260907.md
+docs/architecture/Researcher-Archangel-Architecture-Spec.md
+docs/architecture/omega-hub-exposure.md
+src/omega/oracle/env_hardware_probe.py
+
+# SOTE Week 37 Report (2026-09-08)
+docs/strategy/sote/2026-W37/
+
+# Alpha Release Coordination (allowlisted for transparency)
+data/coordination/MAKALI_OVERSEER_BRIEFING_20260908.md
+data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+data/coordination/ALPHA_RELEASE_PLAN_20260907.md
+
+# Entity State (M11/M15 compliance)
+data/entities/makali/session_gnosis.md
+data/entities/makali/proposed_lessons.yaml
+data/entities/kali/session_gnosis.md
+data/entities/kali/proposed_lessons.yaml
+data/entities/researcher/session_gnosis.md
+data/entities/researcher/proposed_lessons.yaml
+data/entities/roc_racoon/session_gnosis.md
+data/entities/roc_racoon/proposed_lessons.yaml
+data/entities/john_carmack/session_gnosis.md
+data/entities/john_carmack/proposed_lessons.yaml
+data/entities/jem/session_gnosis_jem-N13.md
+
+# Session Anchors
+data/coordination/SESSION_ANCHOR.md
+data/coordination/anchored_summary/kali/projection.md
+
+# Strategy & Architecture
+docs/strategy/CANONICAL_DECISIONS.md
+docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+docs/architecture/ORACLE_DEEP_DIVE.md
+docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
 ```
 
 ## 🚫 FORGE — NOT on Public Surface
@@ -136,6 +175,14 @@ migrate_heritage.py
 ## ⚠️ Explicit Exclusions (do NOT delete, just keep off public)
 
 - `data/entities/*/soul.yaml` for the default demo entity — KEEP (needed for demo)
+- `data/entities/*/session_gnosis.md` — M11/M15 compliance (sovereign continuity)
+- `data/entities/*/proposed_lessons.yaml` — M11/M15 compliance (soul integrity)
+- `data/entities/jem/session_gnosis_jem-N13.md` — M11/M15 compliance (jem entity)
+- `docs/strategy/CANONICAL_DECISIONS.md` — canonical decisions registry
+- `docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md` — P2P onboarding guide
+- `docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md` — P2P federation playbook
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — subagent dispatch protocol
+- `docs/strategy/sote/2026-W37/` — SOTE Week 37 report
 - `config/model_registry/index.sqlite` — do NOT commit (runtime artifact)
 - `tests/tmp/` — runtime vault fixtures, FORGE only (G1)
 - `.firecrawl/` — scrape cache, FORGE only (G2)
@@ -150,56 +197,3 @@ migrate_heritage.py
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-17 ⬡ awaiting Architect confirmation*
-## 📦 PUBLIC ALLOWLIST ADDITIONS — 2026-09-09 (P2P Omegaverse & Alpha Release)
-
-### P2P Omegaverse Documentation
-```
-docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md
-docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md
-docs/tech-architecture-research/ASUS_SECUREBOOT_PROVISIONING_POSTMORTEM_20260907.md
-docs/architecture/Researcher-Archangel-Architecture-Spec.md
-docs/architecture/omega-hub-exposure.md
-src/omega/oracle/env_hardware_probe.py
-```
-
-### SOTE Week 37 Report
-```
-docs/strategy/sote/2026-W37/
-```
-
-### Alpha Release Coordination (allowlisted for transparency)
-```
-data/coordination/MAKALI_OVERSEER_BRIEFING_20260908.md
-data/coordination/ARCHANGEL_VET_REPORT_20260907.md
-data/coordination/ALPHA_RELEASE_PLAN_20260907.md
-```
-
-### Entity State (M11/M15 compliance)
-```
-data/entities/makali/session_gnosis.md
-data/entities/makali/proposed_lessons.yaml
-data/entities/kali/session_gnosis.md
-data/entities/kali/proposed_lessons.yaml
-data/entities/researcher/session_gnosis.md
-data/entities/researcher/proposed_lessons.yaml
-data/entities/roc_racoon/session_gnosis.md
-data/entities/roc_racoon/proposed_lessons.yaml
-data/entities/john_carmack/session_gnosis.md
-data/entities/john_carmack/proposed_lessons.yaml
-data/entities/jem/session_gnosis_jem-N13.md
-```
-
-### Session Anchors
-```
-data/coordination/SESSION_ANCHOR.md
-data/coordination/anchored_summary/kali/projection.md
-```
-
-### Strategy & Architecture
-```
-docs/strategy/CANONICAL_DECISIONS.md
-docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
-docs/architecture/ORACLE_DEEP_DIVE.md
-docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
-```
-
