@@ -843,6 +843,6 @@ proposals:
   last_verified: '2026-09-01'
 metadata:
   entity: researcher
-  session_id: ses_fa3b3c475ffePeaIhT4d4hGJz0
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T10:01:19.228203+00:00'
+  session_id: ses_f7abfc78dffeaey3kQ86KiQObR
+  model_used: nemotron-3-ultra-free
+  last_session_end: '2026-09-09T11:52:19.361975+00:00'

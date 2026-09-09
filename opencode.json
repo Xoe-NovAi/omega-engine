@@ -177,6 +177,14 @@
               "reasoningEffort": "high"
             }
           }
+        },
+        "big-pickle": {
+          "name": "Big Pickle",
+          "limit": {
+            "context": 200000,
+            "input": 190000,
+            "output": 32000
+          }
         }
       }
     }

@@ -61,6 +61,7 @@ for p in [_project_root, _mcp_servers_root]:
 
 import anyio
 from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, TextContent
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -119,7 +120,27 @@ logger = logging.getLogger("omega.hub")
 from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 
 
-mcp = FastMCP("Omega Core Hub", json_response=True)  # JSON-only responses for OpenCode/Cline compatibility
+# Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback with all ports
+_transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=[
+        "192.168.10.168", "192.168.10.168:*",
+        "127.0.0.1", "127.0.0.1:*",
+        "localhost", "localhost:*",
+        "[::1]", "[::1]:*",
+    ],
+    allowed_origins=[
+        "http://192.168.10.168:*",
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+    ],
+)
+
+mcp = FastMCP(
+    "Omega Core Hub",
+    json_response=True,  # JSON-only responses for OpenCode/Cline compatibility
+    transport_security=_transport_security,
+)
 
 # [P1a-2] State, service singletons, hivemind state, background tasks,
 # and helper functions are now in mcp_servers.omega_hub.state (extracted).

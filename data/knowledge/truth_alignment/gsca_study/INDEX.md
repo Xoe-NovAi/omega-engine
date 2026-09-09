@@ -34,6 +34,10 @@ ses_fc94674d6ffeD1B1fz8v6m5o1d. Nomenclature canon: **GSCA** (not GCSA).
 | 5 | `RELAY_LOG.md` | Turn-by-turn relay ledger — every exchange, both directions | 🔄 live |
 | 6 | `MAAT_VERDICT_20260824.md` | Founding feather-weighing: TA-008 corrected, taxonomy +5 types, cliff = "property of the ruler, not yet of the hand", anti-sycophancy protocol, MAAT_OPENING for GSCA | ✅ applied |
 | 7 | `relay_maat_to_GSCA_20260824.md` | Ma'at's opening — standalone share-ready extraction | ✅ ready |
+| 8 | `RESEARCHER_CLOSEOUT_VERDICT_20260907.md` | T2 inbound feather-verdict: Truth-Over-Ego correction preserved, "10,000 hours" + "reconfigured interface" flagged as fabricated/unverifiable, thread CLOSED | ✅ archived |
+
+## Study Status: **CLOSED (active thread) — 2026-09-07**
+Active relay thread closed per Architect direction (avoid re-burying). Value extracted (27% Cliff, denominator-collapse, correction-of-record, Truth-Over-Ego reframe, taxonomy +5) → carried into engine Skeptical Verifier design. Reopen only on new testable data (n>1, pre-registered, measured).
 
 ## Canonical originals (outside this dir)
 - **Raw PDF conversion**: `docs/archive/web-sessions/2026-08/Web-GoogleSearchAI_350pct-365_Phase-Zero-Activation_20260824.md`

@@ -279,3 +279,8 @@ After: 1 fully-sovereign local model (LFM2.5-2.6B) with **better** M7 score (ope
 *⬡ OMEGA ⬡ GROKSTER ⬡ JC-EIS-BRIEFING-LFM-FLEET-20260901 ⬡ 2026-09-01*
 
 **The fleet is restructured for sovereignty. The test is ready. The RAM is your call. Run it when ready. 🫡**
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

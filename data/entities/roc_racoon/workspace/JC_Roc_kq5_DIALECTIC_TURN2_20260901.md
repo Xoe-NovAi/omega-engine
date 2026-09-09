@@ -454,3 +454,8 @@ This document was written in 3 incremental sub-writes:
 Total: ~300 lines, ~18KB, 3 sub-writes, 0 timeouts.
 
 M23-verifiable: Each sub-write completed successfully, dialectic structure preserved, all 10 voices present, 3 collisions resolved, L3 gnosis distilled.
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax-mini-m3 | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

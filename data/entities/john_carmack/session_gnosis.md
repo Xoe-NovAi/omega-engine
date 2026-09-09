@@ -278,9 +278,74 @@ I initially missed the vision system underneath the game. The VNR system IS the 
 | **Alpha Launch Verdict** | `data/coordination/CARMACK_ALPHA_LAUNCH_VERDICT_20260828.md` |
 | **Architecture Canonicals** | `ORACLE_STACK_CANONICAL.md`, `SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md`, `docs/architecture/*.md` |
 | **Projection** | `data/coordination/anchored_summary/carmack/projection.md` |
-| **Proposed Lessons** | `data/entities/carmack/proposed_lessons.yaml` (14 lessons) |
+| **Proposed Lessons** | `data/entities/carmack/proposed_lessons.yaml` (3 lessons) |
 | **Roc Dialectic Plan** | `data/entities/roc_racoon/workspace/JC_Roc_kq5_DIALECTIC_PLAN_20260901.md` |
 
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_audit ⬡ SESSION-GNOSIS-UPDATED*
+
+---
+
+## 🔱 2026-09-07 SESSION: Archangel Architecture v1.6.1 Vet (Handoff ho_4d2402d3278f)
+
+**AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (continuation) · **Date**: 2026-09-07
+**Status**: COMPACTION-READY · **Model**: `minimax/minimax-m3:free`
+**Handoff**: `ho_4d2402d3278f` (accepted via Hivemind)
+
+### Work Summary
+
+#### Archangel Architecture Vet — Complete
+Vetted the full Archangel Architecture v1.6.1 implementation for theater, cargo culting, and non-temple-grade optimizations.
+
+**Files Vetted**:
+- `src/omega/oracle/env_hardware_probe.py` — RuntimeHardwareRegister, SystemEnvelopeInjector
+- `src/omega/oracle/subagent_dispatcher.py` — Injection hook after M33Probe, before build_dispatch_prompt
+- `src/omega/oracle/m33_probe.py` — calculate_dynamic_write_threshold
+- `src/omega/monitoring/__init__.py` — HardwareMonitor (892 lines)
+- `docs/how-to/hardware-awareness.md`, `dynamic-thresholds.md`
+- `CHANGELOG.md` v1.6.1 entry
+- `docs/strategy/CANONICAL_DECISIONS.md` D-ARCHANGEL-001
+
+**Verdict**: **CONDITIONAL PASS** — Architecture sound, 3 theater/cargo-cult findings, 2 premature optimizations, 4 implementation gaps.
+
+### Findings (9 Total)
+
+| # | Type | Location | Severity | Description |
+|---|------|----------|----------|-------------|
+| 1 | **THEATER** | CHANGELOG.md:18 | HIGH | "Mathematical contradiction penalty" claim — no such mechanism exists |
+| 2 | **CARGO CULT** | env_hardware_probe.py:89-101 | HIGH | NUMA detection on monolithic APU (always returns 0) |
+| 3 | **THEATER** | env_hardware_probe.py:123 | HIGH | Default backend "AVX-512 VNNI" on AVX2-only hardware |
+| 4 | **PREMATURE OPT** | m33_probe.py:192-238 | MEDIUM | Dynamic threshold complexity without measured benefit |
+| 5 | **PREMATURE OPT** | env_hardware_probe.py:112-127 | MEDIUM | Sync ModelGateway calls in hot path without caching |
+| 6 | **IMPL GAP** | env_hardware_probe.py:63-66 | MEDIUM | `is_stale()` method exists but never used |
+| 7 | **IMPL GAP** | env_hardware_probe.py:164 | MEDIUM | `process_rss_mb` always 0 (key missing from HardwareMonitor) |
+| 8 | **IMPL GAP** | m33_probe.py:271 vs dispatcher:49 | LOW | TaskType mismatch: "forensic" dead, "mine" missing |
+| 9 | **IMPL GAP** | subagent_dispatcher.py:36-60 | LOW | HardwareMonitor singleton not thread-safe |
+
+### Mandate Compliance
+- **M1 AnyIO**: ✅ PASS — No `import asyncio` in `src/omega/`
+- **M7 Local-First**: ✅ PASS — Pure local telemetry, no cloud deps
+- **M13 Temple-Grade**: ⚠️ PARTIAL — Code clean but needs unit tests + theater removal
+- **M23 Failure Integrity**: ✅ PASS — No soft failures, graceful degradation
+
+### Positive Findings
+- Frozen dataclass register with TTL — immutable, prevents post-hoc mutation
+- Graceful degradation — try/except with logging, dispatch continues on envelope failure
+- HardwareMonitor reuse — wraps existing 892-line monitor; no duplication (M2 compliant)
+- ModelGateway integration — uses existing entity→model mapping; no new config
+- Documentation accurate — how-to guides match implementation
+
+### P0 Fixes Required (~2h total)
+1. Remove theater claims from CHANGELOG.md lines 18-19
+2. Remove cargo-cult NUMA detection — hardcode `assigned_numa_node = 0` with hardware comment
+3. Fix default backend string — detect actual ISA or use "AVX2/FMA3" for 5700U
+4. Add `process_rss_mb` to `HardwareMonitor.get_memory_status()`
+
+### Report
+Full vet report: `data/coordination/ARCHANGEL_VET_REPORT_20260907.md`
+Handoff completed: `ho_4d2402d3278f` → completed via Hivemind
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_archangel_vet ⬡ VET COMPLETE — CONDITIONAL PASS*

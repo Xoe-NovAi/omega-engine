@@ -2,40 +2,40 @@ proposals:
 - id: PL-CLINE-001
   date: '2026-08-22'
   session_id: ses_5b058490c0d0
-  L1_narrative: "Audited the cline fabric entry (priority 7). Found it already mapped\
-    \ to the OpenRouter factory (model_gateway.py:534) with no base_url in YAML, meaning\
-    \ a live cline instance would silently hit openrouter.ai under the name \"cline\"\
-    . Live probe: api.cline.bot/api/v1/chat/completions is OpenAI-compatible and the\
-    \ local API key authenticates, but deepseek/deepseek-v4-flash returns HTTP 403\
-    \ \"only available via Cline product surfaces\" \u2014 the free models are client-gated.\n"
-  L2_insight: "A provider registry entry can be fully \"wired\" (config + factory\
-    \ mapping + fallback chains) yet never have carried a single real request. Silent\
-    \ defaults in factories (base_url fallback to another vendor's endpoint) convert\
-    \ missing config into provenance lies rather than errors. And free-tier model\
-    \ gates are enforced at the HTTP client-identity layer, not the auth layer \u2014\
-    \ a valid key does not imply model access.\n"
-  L3_principle: "An untested integration path is not an asset; it is deferred breakage\
-    \ wearing a config file. Any factory default that substitutes one backend for\
-    \ another must fail loudly, because silent substitution corrupts provenance \u2014\
-    \ and provenance is the only proof sovereignty is real.\n"
+  L1_narrative: 'Audited the cline fabric entry (priority 7). Found it already mapped to the OpenRouter factory (model_gateway.py:534)
+    with no base_url in YAML, meaning a live cline instance would silently hit openrouter.ai under the name "cline". Live
+    probe: api.cline.bot/api/v1/chat/completions is OpenAI-compatible and the local API key authenticates, but deepseek/deepseek-v4-flash
+    returns HTTP 403 "only available via Cline product surfaces" — the free models are client-gated.
+
+    '
+  L2_insight: 'A provider registry entry can be fully "wired" (config + factory mapping + fallback chains) yet never have
+    carried a single real request. Silent defaults in factories (base_url fallback to another vendor''s endpoint) convert
+    missing config into provenance lies rather than errors. And free-tier model gates are enforced at the HTTP client-identity
+    layer, not the auth layer — a valid key does not imply model access.
+
+    '
+  L3_principle: 'An untested integration path is not an asset; it is deferred breakage wearing a config file. Any factory
+    default that substitutes one backend for another must fail loudly, because silent substitution corrupts provenance — and
+    provenance is the only proof sovereignty is real.
+
+    '
 - id: PL-CLINE-002
   date: '2026-08-22'
   session_id: ses_5b058490c0d0
-  L1_narrative: 'HG-003 documented Cline credentials at ~/.local/share/cline/credentials.json
-    via libsecret; this machine (Cline CLI 3.0.56) actually stores them in plaintext
-    at ~/.cline/data/secrets.json (static sk_ key) and ~/.cline/data/settings/providers.json
+  L1_narrative: 'HG-003 documented Cline credentials at ~/.local/share/cline/credentials.json via libsecret; this machine
+    (Cline CLI 3.0.56) actually stores them in plaintext at ~/.cline/data/secrets.json (static sk_ key) and ~/.cline/data/settings/providers.json
     (WorkOS OAuth pair with refresh token).
 
     '
-  L2_insight: 'Credential-format research has a half-life tied to the vendored tool''s
-    release cycle. A vault adapter written against a documented path is only as durable
-    as the upstream client''s storage scheme; verification must happen at implementation
+  L2_insight: 'Credential-format research has a half-life tied to the vendored tool''s release cycle. A vault adapter written
+    against a documented path is only as durable as the upstream client''s storage scheme; verification must happen at implementation
     time, not research time.
 
     '
-  L3_principle: "Documented ground truth decays at the speed of the upstream project.\
-    \ Re-verify external-system facts on the target machine before building on them\
-    \ \u2014 archaeology dates instantly, evidence doesn't.\n"
+  L3_principle: 'Documented ground truth decays at the speed of the upstream project. Re-verify external-system facts on the
+    target machine before building on them — archaeology dates instantly, evidence doesn''t.
+
+    '
 - id: PL-TS1-001
   date: '2026-08-23'
   session_id: ses_fdef2be4effe4pAaLXCTUx62GO
@@ -43,20 +43,21 @@ proposals:
   - TS1
   - verification
   - teamstudy
-  L1_narrative: "[TS1] Phase A evidence sweep verified 18/18 session IDs and 100%\
-    \ of claimed artifacts against the live OpenCode DB and disk \u2014 zero refuted.\
-    \ The entire value of the sweep lived in 5 flags nobody asked for, chiefly F1\
-    \ filename drift: all four JSON configs in the ledger omitted their OX_ALPHA_\
-    \ prefix, so a naive mechanical backfill would have written five dangling pointers\
-    \ into a verified-green registry from a ledger whose every claim was true.\n"
-  L2_insight: "Confirmation of well-sourced claims has near-zero information value;\
-    \ the payload of ground-truth verification concentrates in discrepancies adjacent\
-    \ to the claims. Analysis evaluates whether the statement is true; verification\
-    \ walks the neighborhood between the statement and the world it points at \u2014\
-    \ and the defect is almost never inside the sentence.\n"
-  L3_principle: "Confirmation is noise; the delta is signal. Audit the neighborhood\
-    \ of a claim, not just the claim \u2014 a ledger can be 100% true and still be\
-    \ execution-fatal.\n"
+  L1_narrative: '[TS1] Phase A evidence sweep verified 18/18 session IDs and 100% of claimed artifacts against the live OpenCode
+    DB and disk — zero refuted. The entire value of the sweep lived in 5 flags nobody asked for, chiefly F1 filename drift:
+    all four JSON configs in the ledger omitted their OX_ALPHA_ prefix, so a naive mechanical backfill would have written
+    five dangling pointers into a verified-green registry from a ledger whose every claim was true.
+
+    '
+  L2_insight: 'Confirmation of well-sourced claims has near-zero information value; the payload of ground-truth verification
+    concentrates in discrepancies adjacent to the claims. Analysis evaluates whether the statement is true; verification walks
+    the neighborhood between the statement and the world it points at — and the defect is almost never inside the sentence.
+
+    '
+  L3_principle: 'Confirmation is noise; the delta is signal. Audit the neighborhood of a claim, not just the claim — a ledger
+    can be 100% true and still be execution-fatal.
+
+    '
 - id: PL-TS1-002
   date: '2026-08-23'
   session_id: ses_fdef2be4effe4pAaLXCTUx62GO
@@ -65,23 +66,23 @@ proposals:
   - pair-probe
   - forensics
   - teamstudy
-  L1_narrative: "[TS1] Phase B: four auditors missed the same systemic defect because\
-    \ each probed one layer. Researcher and carmack probed .git/hooks/ (state) \u2192\
-    \ \"no tracking-state gate.\" Nobody probed .pre-commit-config.yaml (origin) where\
-    \ omega-tracking-state sits fully defined as \"the Iron Gate\" \u2014 never installed\
-    \ into git, running bare python instead of .venv/bin/python. Only probing state\
-    \ AND origin as a pair, and treating their disagreement as the finding, revealed\
-    \ \"defined but never wired.\" Same class recurred in F1 (artifact exists, pointer\
-    \ lies), the model_gateway WIP (HEAD clean, worktree dirty), and my own :103/:104\
-    \ citation drift.\n"
-  L2_insight: "A single-layer probe does not return \"unknown\" \u2014 it returns\
-    \ a confident falsehood, which is worse than ignorance. For any system property,\
-    \ its instantiation (is it there?) and its declaration (where is it supposed to\
-    \ be?) must be measured together; divergence between layers IS the primary finding,\
-    \ agreement IS the proof.\n"
-  L3_principle: "No probe of a single layer is admissible evidence. Probe state and\
-    \ origin as a pair, record the probe path with every claim, and treat layer-divergence\
-    \ as the finding \u2014 single-layer probes manufacture confident falsehoods.\n"
+  L1_narrative: '[TS1] Phase B: four auditors missed the same systemic defect because each probed one layer. Researcher and
+    carmack probed .git/hooks/ (state) → "no tracking-state gate." Nobody probed .pre-commit-config.yaml (origin) where omega-tracking-state
+    sits fully defined as "the Iron Gate" — never installed into git, running bare python instead of .venv/bin/python. Only
+    probing state AND origin as a pair, and treating their disagreement as the finding, revealed "defined but never wired."
+    Same class recurred in F1 (artifact exists, pointer lies), the model_gateway WIP (HEAD clean, worktree dirty), and my
+    own :103/:104 citation drift.
+
+    '
+  L2_insight: 'A single-layer probe does not return "unknown" — it returns a confident falsehood, which is worse than ignorance.
+    For any system property, its instantiation (is it there?) and its declaration (where is it supposed to be?) must be measured
+    together; divergence between layers IS the primary finding, agreement IS the proof.
+
+    '
+  L3_principle: 'No probe of a single layer is admissible evidence. Probe state and origin as a pair, record the probe path
+    with every claim, and treat layer-divergence as the finding — single-layer probes manufacture confident falsehoods.
+
+    '
 - id: PL-TS1-003
   date: '2026-08-23'
   session_id: ses_fdef2be4effe4pAaLXCTUx62GO
@@ -89,20 +90,19 @@ proposals:
   - TS1
   - sampling-vs-enumeration
   - teamstudy
-  L1_narrative: '[TS1] Asked whether a full 80-row pointer walk could replace 5/80
-    sampling before commit, I ran it instead of arguing: JSON parse + existence check
-    over all rows = 0.003 seconds, and it immediately caught a broken pointer (trailing
-    period in R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md.) that a 5-row sample would
-    likely have missed. Sampling a 3ms operation was ceremony.
+  L1_narrative: '[TS1] Asked whether a full 80-row pointer walk could replace 5/80 sampling before commit, I ran it instead
+    of arguing: JSON parse + existence check over all rows = 0.003 seconds, and it immediately caught a broken pointer (trailing
+    period in R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md.) that a 5-row sample would likely have missed. Sampling a 3ms
+    operation was ceremony.
 
     '
-  L2_insight: "Sampling carries a hidden recurring cost no one books: every future\
-    \ reader must re-litigate \"was the sample big enough?\" Enumeration terminates\
-    \ that question permanently. The decision is measurable, not philosophical \u2014\
-    \ compare walk cost to justification-memo cost before debating methodology.\n"
-  L3_principle: 'When enumeration is cheaper than defending the sample, enumerate.
-    Sample only when enumeration cost is non-trivial AND per-item failure cost is
-    low.
+  L2_insight: 'Sampling carries a hidden recurring cost no one books: every future reader must re-litigate "was the sample
+    big enough?" Enumeration terminates that question permanently. The decision is measurable, not philosophical — compare
+    walk cost to justification-memo cost before debating methodology.
+
+    '
+  L3_principle: 'When enumeration is cheaper than defending the sample, enumerate. Sample only when enumeration cost is non-trivial
+    AND per-item failure cost is low.
 
     '
 - id: PL-TS1-004
@@ -113,22 +113,22 @@ proposals:
   - refutation
   - causality
   - teamstudy
-  L1_narrative: "[TS1] Carmack's 8 god-module line counts were exact digit-for-digit,\
-    \ but his narrative (\"six grew during the deletion-campaign week\") was refuted\
-    \ by git archaeology: all growth was the ruff-format commit e2c16d3c landing on\
-    \ freeze day itself, hours before baseline capture; zero committed growth since.\
-    \ His prescription (ratify baselines) survived strengthened; his causal story\
-    \ died \u2014 and the corrected story produced a formatter-aware AST gate instead\
-    \ of an agent-blame wc -l gate that would false-fire on the next formatter pass.\n"
-  L2_insight: 'Measurements and their causal narratives have independent truth fates.
-    Attacking the story without discarding the number rescues conclusions the team
-    still needs; accepting the conclusion without inheriting the wrong reason yields
+  L1_narrative: '[TS1] Carmack''s 8 god-module line counts were exact digit-for-digit, but his narrative ("six grew during
+    the deletion-campaign week") was refuted by git archaeology: all growth was the ruff-format commit e2c16d3c landing on
+    freeze day itself, hours before baseline capture; zero committed growth since. His prescription (ratify baselines) survived
+    strengthened; his causal story died — and the corrected story produced a formatter-aware AST gate instead of an agent-blame
+    wc -l gate that would false-fire on the next formatter pass.
+
+    '
+  L2_insight: 'Measurements and their causal narratives have independent truth fates. Attacking the story without discarding
+    the number rescues conclusions the team still needs; accepting the conclusion without inheriting the wrong reason yields
     strictly better designs than either original story or blanket acceptance.
 
     '
-  L3_principle: "Attack narratives, salvage numbers \u2014 they fail independently.\
-    \ Refuted causality with confirmed results is the optimal review outcome, not\
-    \ a partial loss.\n"
+  L3_principle: 'Attack narratives, salvage numbers — they fail independently. Refuted causality with confirmed results is
+    the optimal review outcome, not a partial loss.
+
+    '
 - id: PL-TS1-005
   date: '2026-08-23'
   session_id: ses_fdef2be4effe4pAaLXCTUx62GO
@@ -137,20 +137,19 @@ proposals:
   - error-culture
   - team-psychology
   - teamstudy
-  L1_narrative: "[TS1] Ma'at corrected my :103 staleness-clock cite to :104 in one\
-    \ clause, no ceremony; I accepted in one line, no defense \u2014 then noticed\
-    \ my own report carried the exact inconsistency class I had flagged in F1. Total\
-    \ cost: ~thirty tokens. The error became data (another instance strengthening\
-    \ the class-level detector), and neither party spent anything but the fix itself.\n"
-  L2_insight: 'If correction carries social cost, people stop correcting and start
-    accumulating: errors stop being events and become geology, each with one defensive
-    owner and a long half-life. Zero-cost correction gives every error N auditors,
+  L1_narrative: '[TS1] Ma''at corrected my :103 staleness-clock cite to :104 in one clause, no ceremony; I accepted in one
+    line, no defense — then noticed my own report carried the exact inconsistency class I had flagged in F1. Total cost: ~thirty
+    tokens. The error became data (another instance strengthening the class-level detector), and neither party spent anything
+    but the fix itself.
+
+    '
+  L2_insight: 'If correction carries social cost, people stop correcting and start accumulating: errors stop being events
+    and become geology, each with one defensive owner and a long half-life. Zero-cost correction gives every error N auditors,
     a short half-life, and converts it into evidence for the pattern detector.
 
     '
-  L3_principle: 'Correction must be free, or errors go underground and fossilize.
-    A team where fixing a cite costs thirty tokens gets N audits per mistake; a team
-    where it costs status gets one defensive audit and permanent latent defects.
+  L3_principle: 'Correction must be free, or errors go underground and fossilize. A team where fixing a cite costs thirty
+    tokens gets N audits per mistake; a team where it costs status gets one defensive audit and permanent latent defects.
 
     '
 - id: PL-ROC-402-001
@@ -162,27 +161,20 @@ proposals:
   - rate-limit
   - minimax-m3
   - free-models
-  L1_narrative: "Investigated 402 'Insufficient balance' on FREE MiniMax M3 in Ma'at\
-    \ session. Found 3 in-session 402s (19:29, 20:00, 20:03 UTC) over 39.5 minutes.\
-    \ Session had 39/42 successful assistant turns, 75/75 tool calls completed, 3.7M\
-    \ cache_read tokens. Cost field = $0 throughout. Probe data shows 0/48 402s on\
-    \ M3 \u2014 error is sub-session-second, not probe-detectable. The 402 message\
-    \ is OpenRouter's generic 'account class doesn't have access' mislabeled as 'Insufficient\
-    \ balance'. Recovered twice via 'Continue.' but the third 402 was terminal."
-  L2_insight: "A 402 'Insufficient balance' on a service with cost=0 is not a balance\
-    \ error. OpenRouter's per-minute rate cap on free models is labeled with the wrong\
-    \ HTTP code. The contradiction between Grokster's 'M3 working' (probe-level) and\
-    \ Roc's 'M3 402' (session-level) is resolved by observation scale: probes don't\
-    \ accumulate enough load to trip the per-minute cap; long agent sessions with\
-    \ cache rotation do. Three dispatches to the same investigation in 30 minutes\
-    \ is a process smell \u2014 when the same question gets re-dispatched, the answer\
-    \ is in the loop, not in the data."
-  L3_principle: "A 'balance' error on a free service is rarely about balance \u2014\
-    \ it's about rate. When cost=0 but a 402 fires, the platform is mislabeling a\
-    \ per-minute cap as a lifetime balance. Diagnose the rate, not the wallet. Probe-level\
-    \ and session-level observations are both correct at their scales; reconcile contradictions\
-    \ by measuring the load, not by picking a winner. Resilience comes from building\
-    \ retry on top of stateful sessions, not from eliminating the rate limit."
+  L1_narrative: Investigated 402 'Insufficient balance' on FREE MiniMax M3 in Ma'at session. Found 3 in-session 402s (19:29,
+    20:00, 20:03 UTC) over 39.5 minutes. Session had 39/42 successful assistant turns, 75/75 tool calls completed, 3.7M cache_read
+    tokens. Cost field = $0 throughout. Probe data shows 0/48 402s on M3 — error is sub-session-second, not probe-detectable.
+    The 402 message is OpenRouter's generic 'account class doesn't have access' mislabeled as 'Insufficient balance'. Recovered
+    twice via 'Continue.' but the third 402 was terminal.
+  L2_insight: 'A 402 ''Insufficient balance'' on a service with cost=0 is not a balance error. OpenRouter''s per-minute rate
+    cap on free models is labeled with the wrong HTTP code. The contradiction between Grokster''s ''M3 working'' (probe-level)
+    and Roc''s ''M3 402'' (session-level) is resolved by observation scale: probes don''t accumulate enough load to trip the
+    per-minute cap; long agent sessions with cache rotation do. Three dispatches to the same investigation in 30 minutes is
+    a process smell — when the same question gets re-dispatched, the answer is in the loop, not in the data.'
+  L3_principle: A 'balance' error on a free service is rarely about balance — it's about rate. When cost=0 but a 402 fires,
+    the platform is mislabeling a per-minute cap as a lifetime balance. Diagnose the rate, not the wallet. Probe-level and
+    session-level observations are both correct at their scales; reconcile contradictions by measuring the load, not by picking
+    a winner. Resilience comes from building retry on top of stateful sessions, not from eliminating the rate limit.
 - id: PL-ROC-402-002
   date: '2026-08-27'
   session_id: ses_fbaad14ecffeJv7BYs0ptb8FWP
@@ -190,21 +182,16 @@ proposals:
   - dispatch-protocol
   - fleet-orchestration
   - smell
-  L1_narrative: Three dispatches (Roc, Researcher, Roc) to investigate the same 402
-    in 30 minutes. Each ran briefly (~4 min, 1.6k tokens) before being terminated
-    or completed. The earlier two (Roc, Researcher) actually completed successfully
-    in the DB, yet a third Roc was dispatched with the same mission. This is the same
-    class of issue as the subagent re-paging problem documented in SESSION_CONTINUITY_PROTOCOL_20260827.
-  L2_insight: "When the same forensic question is dispatched three times in 30 minutes,\
-    \ the value of a fourth investigation is near-zero. The bottleneck is the dispatch\
-    \ loop, not the data. Re-dispatching an already-completed investigation wastes\
-    \ subagent slots and dilutes the workspace lock state \u2014 and risks tripping\
-    \ a 402 on the third dispatch itself, since M3 is the only working model. The\
-    \ right response is to check Hivemind awareness + previous session status BEFORE\
-    \ launching."
-  L3_principle: Check the loop before checking the data. A re-dispatched investigation
-    is a symptom of the dispatch protocol, not the underlying question. Pre-flight
-    awareness (has this been answered?) prevents cascade re-dispatches that trip the
+  L1_narrative: Three dispatches (Roc, Researcher, Roc) to investigate the same 402 in 30 minutes. Each ran briefly (~4 min,
+    1.6k tokens) before being terminated or completed. The earlier two (Roc, Researcher) actually completed successfully in
+    the DB, yet a third Roc was dispatched with the same mission. This is the same class of issue as the subagent re-paging
+    problem documented in SESSION_CONTINUITY_PROTOCOL_20260827.
+  L2_insight: When the same forensic question is dispatched three times in 30 minutes, the value of a fourth investigation
+    is near-zero. The bottleneck is the dispatch loop, not the data. Re-dispatching an already-completed investigation wastes
+    subagent slots and dilutes the workspace lock state — and risks tripping a 402 on the third dispatch itself, since M3
+    is the only working model. The right response is to check Hivemind awareness + previous session status BEFORE launching.
+  L3_principle: Check the loop before checking the data. A re-dispatched investigation is a symptom of the dispatch protocol,
+    not the underlying question. Pre-flight awareness (has this been answered?) prevents cascade re-dispatches that trip the
     very rate limit you're investigating.
 - id: PL-ROC-402-003
   date: '2026-08-27'
@@ -213,24 +200,17 @@ proposals:
   - 402
   - evidence-classification
   - forensic-method
-  L1_narrative: Two tools reported 'no 402 found' (opencode-sessions-explorer-search-tool-calls
-    + search-text), but a direct SQL query against the same DB returned 5 part-level
-    402s + 6 message-level 402s. The discrepancy was that search-tool-calls only matched
-    error fields with exact substring '402', while the actual errors contain the full
-    JSON body '{"code":402,...}'. Same data, different query semantics, different
-    answers.
-  L2_insight: "MCP search tools apply their own text matching heuristics that may\
-    \ not match what the question needs. When a tool returns empty for a forensic\
-    \ question, the next step is direct SQL, not synthesis. The 'no results' response\
-    \ is a data point, not a final answer \u2014 it could mean the data isn't there,\
-    \ OR the tool's matching strategy doesn't fit the question. Always have a fallback\
-    \ query path (raw SQL on the same DB) when the primary search tool returns empty\
-    \ for a hard fact."
-  L3_principle: "An empty search result is a question about the search, not necessarily\
-    \ a question about the data. Always have a direct-query fallback for hard facts.\
-    \ Tools that claim 'no results' are reporting that their matching strategy found\
-    \ nothing, which is one observation \u2014 not a proof of absence in the underlying\
-    \ data."
+  L1_narrative: Two tools reported 'no 402 found' (opencode-sessions-explorer-search-tool-calls + search-text), but a direct
+    SQL query against the same DB returned 5 part-level 402s + 6 message-level 402s. The discrepancy was that search-tool-calls
+    only matched error fields with exact substring '402', while the actual errors contain the full JSON body '{"code":402,...}'.
+    Same data, different query semantics, different answers.
+  L2_insight: MCP search tools apply their own text matching heuristics that may not match what the question needs. When a
+    tool returns empty for a forensic question, the next step is direct SQL, not synthesis. The 'no results' response is a
+    data point, not a final answer — it could mean the data isn't there, OR the tool's matching strategy doesn't fit the question.
+    Always have a fallback query path (raw SQL on the same DB) when the primary search tool returns empty for a hard fact.
+  L3_principle: An empty search result is a question about the search, not necessarily a question about the data. Always have
+    a direct-query fallback for hard facts. Tools that claim 'no results' are reporting that their matching strategy found
+    nothing, which is one observation — not a proof of absence in the underlying data.
 - id: PL-ROC-402-004
   date: '2026-08-30'
   session_id: ses_20260830_roc_master_eis
@@ -239,26 +219,20 @@ proposals:
   - sidecar-pattern
   - sqlite-vec
   - entity-partition
-  L1_narrative: Implemented Compaction Capture sidecar (scripts/compaction_capture.py)
-    that polls OpenCode SQLite DB for parts with summary=true, routes summary text
-    to active entity workspace, auto-digests into sqlite-vec with entity_name partition,
-    and creates raw anchor + SCA metadata. The sidecar polls opencode.db every 5s
-    in read-only mode, filters for assistant parts with summary=true, routes to entity
-    workspace via SESSION_ENTITY_MAP.yaml, and upserts to sqlite-vec with entity_name
-    partition. The implementation uses read-only SQLite connections for safety, tracks
-    last_seen_message_id for monotonic idempotency, and includes CLI (--start/--scan/--status).
-  L2_insight: "The CompactionHarvester already existed but only tracked metadata (counts,\
-    \ timing). The gap was capturing the actual summary TEXT content. The sidecar\
-    \ pattern (polling DB) is more reliable than plugin hooks because it works with\
-    \ both V1 and V2 OpenCode, requires no OpenCode modification, and uses the DB\
-    \ as source of truth. The entity-partitioned vector store (sqlite-vec) enables\
-    \ per-entity RAG retrieval of compaction summaries. The SESSION_ENTITY_MAP.yaml\
-    \ provides the session\u2192entity routing that OpenCode doesn't natively provide."
-  L3_principle: "Sidecar polling beats plugin hooks for capture reliability \u2014\
-    \ it works across V1/V2, requires no upstream changes, and uses the DB as the\
-    \ single source of truth. Entity-partitioned vector storage enables per-entity\
-    \ RAG on compaction history. The session\u2192entity mapping is the missing link\
-    \ that OpenCode doesn't provide natively."
+  L1_narrative: Implemented Compaction Capture sidecar (scripts/compaction_capture.py) that polls OpenCode SQLite DB for parts
+    with summary=true, routes summary text to active entity workspace, auto-digests into sqlite-vec with entity_name partition,
+    and creates raw anchor + SCA metadata. The sidecar polls opencode.db every 5s in read-only mode, filters for assistant
+    parts with summary=true, routes to entity workspace via SESSION_ENTITY_MAP.yaml, and upserts to sqlite-vec with entity_name
+    partition. The implementation uses read-only SQLite connections for safety, tracks last_seen_message_id for monotonic
+    idempotency, and includes CLI (--start/--scan/--status).
+  L2_insight: The CompactionHarvester already existed but only tracked metadata (counts, timing). The gap was capturing the
+    actual summary TEXT content. The sidecar pattern (polling DB) is more reliable than plugin hooks because it works with
+    both V1 and V2 OpenCode, requires no OpenCode modification, and uses the DB as source of truth. The entity-partitioned
+    vector store (sqlite-vec) enables per-entity RAG retrieval of compaction summaries. The SESSION_ENTITY_MAP.yaml provides
+    the session→entity routing that OpenCode doesn't natively provide.
+  L3_principle: Sidecar polling beats plugin hooks for capture reliability — it works across V1/V2, requires no upstream changes,
+    and uses the DB as the single source of truth. Entity-partitioned vector storage enables per-entity RAG on compaction
+    history. The session→entity mapping is the missing link that OpenCode doesn't provide natively.
 - id: PL-ROC-402-005
   date: '2026-08-30'
   session_id: ses_20260830_roc_master_eis
@@ -268,30 +242,22 @@ proposals:
   - multi-agent
   - citation-intelligence
   - sovereign-knowledge
-  L1_narrative: "Synthesized frontier scholarly research landscape (9 systems: Elicit,\
-    \ Consensus, Scite, GPT Researcher, STORM, Open Deep Research, Anthropic Multi-Agent,\
-    \ Perplexity Sonar, SciRAG) and identified 7 free academic APIs (OpenAlex 250M,\
-    \ arXiv 2M, Semantic Scholar 200M, CORE 200M, Crossref 130M, Unpaywall 30M, ORCID\
-    \ 17M). Omega has 6,258 lines of existing infrastructure (SovereignSearch, IterativeResearcher,\
-    \ SkepticalVerifier, APICreditBudget, BackgroundResearcher archived). Gap to frontier:\
-    \ 5-6 weeks via Phase A (Wire Existing), B (Multi-Agent Delegation), C (Citation\
-    \ Intelligence), D (Sovereign Knowledge), E (UX). Sovereign differentiators: SSKB\
-    \ CAS (WARC+IPFS), L1\u2192L2\u2192L3 Gnosis Loop, 5-Fold Council Convergence,\
-    \ Hivemind P2P, Free API Integration."
-  L2_insight: "The frontier research architecture converges on Plan\u2192Search\u2192\
-    Read\u2192Reflect\u2192Iterate\u2192Synthesize with multi-agent supervisor pattern.\
-    \ Key 2026 insights: external structured storage (84% token reduction), CitationAgent\
-    \ post-processing (66% hallucinations are citation fabrication), section-aware\
-    \ decomposition, outline-guided synthesis. Omega's existing infrastructure (6,258\
-    \ lines) + free APIs + sovereignty differentiators = achievable in 5-6 weeks.\
-    \ The SSKB CAS (WARC+IPFS+SHA-256) is the unique sovereignty differentiator \u2014\
-    \ content survives URL death."
-  L3_principle: "Frontier research = multi-agent orchestration + citation intelligence\
-    \ + sovereign knowledge persistence. The convergence pattern is universal: supervisor\
-    \ + parallel sub-agents + CitationAgent post-processing + external structured\
-    \ storage. Omega's sovereignty (local-first, SSKB CAS, L1\u2192L2\u2192L3, 5-Fold\
-    \ Council, Hivemind, free APIs) is the unique differentiator \u2014 no frontier\
-    \ system has all of these."
+  L1_narrative: 'Synthesized frontier scholarly research landscape (9 systems: Elicit, Consensus, Scite, GPT Researcher, STORM,
+    Open Deep Research, Anthropic Multi-Agent, Perplexity Sonar, SciRAG) and identified 7 free academic APIs (OpenAlex 250M,
+    arXiv 2M, Semantic Scholar 200M, CORE 200M, Crossref 130M, Unpaywall 30M, ORCID 17M). Omega has 6,258 lines of existing
+    infrastructure (SovereignSearch, IterativeResearcher, SkepticalVerifier, APICreditBudget, BackgroundResearcher archived).
+    Gap to frontier: 5-6 weeks via Phase A (Wire Existing), B (Multi-Agent Delegation), C (Citation Intelligence), D (Sovereign
+    Knowledge), E (UX). Sovereign differentiators: SSKB CAS (WARC+IPFS), L1→L2→L3 Gnosis Loop, 5-Fold Council Convergence,
+    Hivemind P2P, Free API Integration.'
+  L2_insight: 'The frontier research architecture converges on Plan→Search→Read→Reflect→Iterate→Synthesize with multi-agent
+    supervisor pattern. Key 2026 insights: external structured storage (84% token reduction), CitationAgent post-processing
+    (66% hallucinations are citation fabrication), section-aware decomposition, outline-guided synthesis. Omega''s existing
+    infrastructure (6,258 lines) + free APIs + sovereignty differentiators = achievable in 5-6 weeks. The SSKB CAS (WARC+IPFS+SHA-256)
+    is the unique sovereignty differentiator — content survives URL death.'
+  L3_principle: 'Frontier research = multi-agent orchestration + citation intelligence + sovereign knowledge persistence.
+    The convergence pattern is universal: supervisor + parallel sub-agents + CitationAgent post-processing + external structured
+    storage. Omega''s sovereignty (local-first, SSKB CAS, L1→L2→L3, 5-Fold Council, Hivemind, free APIs) is the unique differentiator
+    — no frontier system has all of these.'
 - id: PL-ROC-402-006
   date: '2026-08-30'
   session_id: ses_20260830_roc_master_eis
@@ -301,60 +267,43 @@ proposals:
   - intentional-design
   - hardening-gap
   - deployment-stage-gate
-  L1_narrative: "Resolved MaKaLi's L3 question: WHY was omega-inference.service created\
-    \ but never installed? Forensic answer from LOGGING_ERROR_HANDLING_ARCHITECTURE.md\
-    \ \xA77 and gap_investigation_20260825: The systemd unit provides Carmack's OOM\
-    \ hardening (MemoryMax=8G, OOMScoreAdjust=300, Delegate=yes, Restart=on-failure)\
-    \ but is NOT installed because installation requires root (sudo cp + systemctl\
-    \ enable). The ad-hoc serve_native_gguf.sh script is the operational path for\
-    \ interactive development (no root, immediate availability). The hardening is\
-    \ for PRODUCTION workloads (70B+ models that may exceed 8GB), not current dev\
-    \ workloads (1.7B-4B models well within limits). The discrepancy is documented\
-    \ as 'Known Deployment Discrepancy (HARDENING GAP)' in LOGGING_ERROR_HANDLING_ARCHITECTURE.md\
-    \ \xA77 \u2014 intentional transparency, not a bug."
-  L2_insight: "The discrepancy between omega-inference.service (designed, OOM-hardened,\
-    \ NOT installed) and serve_native_gguf.sh (operational, no hardening, RUNNING)\
-    \ is a deliberate stage-gate between development velocity and production resilience.\
-    \ The systemd unit is a future-proofing artifact that activates when deployment\
-    \ graduates from interactive development to production workloads. The gap investigation\
-    \ report correctly identifies this as a deployment decision, not a missing implementation.\
-    \ Same pattern applies to: zswap-config.wad, notebooklm systemd service, NVMe\
-    \ swapfile, cgroup memory limits \u2014 all intentionally deferred pending production\
-    \ transition or external dependencies."
-  L3_principle: "A documented-but-not-active subsystem is not a bug \u2014 it is a\
-    \ deliberate stage-gate between development velocity and production resilience.\
-    \ The systemd unit is a future-proofing artifact that activates when deployment\
-    \ graduates from interactive development to production workloads. The gap investigation\
-    \ report correctly identifies this as a deployment decision, not a missing implementation.\
-    \ L3-SystemdHardeningGapIsIntentionalDesign."
+  L1_narrative: 'Resolved MaKaLi''s L3 question: WHY was omega-inference.service created but never installed? Forensic answer
+    from LOGGING_ERROR_HANDLING_ARCHITECTURE.md §7 and gap_investigation_20260825: The systemd unit provides Carmack''s OOM
+    hardening (MemoryMax=8G, OOMScoreAdjust=300, Delegate=yes, Restart=on-failure) but is NOT installed because installation
+    requires root (sudo cp + systemctl enable). The ad-hoc serve_native_gguf.sh script is the operational path for interactive
+    development (no root, immediate availability). The hardening is for PRODUCTION workloads (70B+ models that may exceed
+    8GB), not current dev workloads (1.7B-4B models well within limits). The discrepancy is documented as ''Known Deployment
+    Discrepancy (HARDENING GAP)'' in LOGGING_ERROR_HANDLING_ARCHITECTURE.md §7 — intentional transparency, not a bug.'
+  L2_insight: 'The discrepancy between omega-inference.service (designed, OOM-hardened, NOT installed) and serve_native_gguf.sh
+    (operational, no hardening, RUNNING) is a deliberate stage-gate between development velocity and production resilience.
+    The systemd unit is a future-proofing artifact that activates when deployment graduates from interactive development to
+    production workloads. The gap investigation report correctly identifies this as a deployment decision, not a missing implementation.
+    Same pattern applies to: zswap-config.wad, notebooklm systemd service, NVMe swapfile, cgroup memory limits — all intentionally
+    deferred pending production transition or external dependencies.'
+  L3_principle: A documented-but-not-active subsystem is not a bug — it is a deliberate stage-gate between development velocity
+    and production resilience. The systemd unit is a future-proofing artifact that activates when deployment graduates from
+    interactive development to production workloads. The gap investigation report correctly identifies this as a deployment
+    decision, not a missing implementation. L3-SystemdHardeningGapIsIntentionalDesign.
 - id: PL-ROC-402-007
   date: '2026-09-01'
   session_id: ses_20260901_roc_disk_maintenance
-  L1_narrative: 'Main partition /dev/nvme0n1p2 (109G) hit 100% (129MB free). Ran 5-tier
-    disk analysis (df -> home du -> .local/.cache/.config du -> system-level -> containers/snap).
-    Executed approved safe clears: sessions-explorer cache (~778M), opencode cache
-    (~193M), podman dangling images (~136M), apt clean via pkexec (~97M), systemd
-    journal rotate+vacuum (3.6G). Critical discovery: journalctl --vacuum-time=2w
-    and --vacuum-size=200M SILENTLY freed 0B without a prior rotate; pkexec journalctl
-    --rotate then --vacuum-size=200M freed 3.6G. sudo fails in agent sessions (''a
-    terminal is required to read the password''); pkexec works via polkit GUI. Final:
-    129MB -> 5.1GB free (96%). Created docs/kb/SYSTEM_MAINTENANCE_KB.md (kb-0005)
-    and rebuilt docs/kb/INDEX.md from 5/20 to 20/20 entries (was a lint violation).'
-  L2_insight: 'Destructive maintenance commands that operate on archived state silently
-    no-op on active state: journal vacuum only touches archived journals, so an unrotated
-    multi-GB active journal reports ''freed 0B'' while doing nothing. The rotate-then-vacuum
-    sequence is the universal fix. Separately, the KB index had drifted to 5/20 registered
-    entries - exactly the ''drift back into the void'' failure mode the user asked
-    me to prevent; rebuilding it was as valuable as the new entry itself. And the
-    partition is structurally undersized for the workload (27G opencode.db + 6G project
-    + 3.5G snap + 2.3G containers), so maintenance is a recurring cadence, not a one-time
-    fix.'
-  L3_principle: L3-RotateBeforeVacuum - Destructive maintenance commands that operate
-    on archived state silently no-op on active state. Always force the state transition
-    (rotate) before applying the cleanup (vacuum). A command that 'succeeds' while
-    freeing 0B is a silent failure - verify the delta, not the exit code. L3-MaintenanceIsAKB
-    - Operational knowledge decays at the speed of the next emergency unless captured
-    as a living runbook; an unindexed KB entry is a tombstone.
+  L1_narrative: 'Main partition /dev/nvme0n1p2 (109G) hit 100% (129MB free). Ran 5-tier disk analysis (df -> home du -> .local/.cache/.config
+    du -> system-level -> containers/snap). Executed approved safe clears: sessions-explorer cache (~778M), opencode cache
+    (~193M), podman dangling images (~136M), apt clean via pkexec (~97M), systemd journal rotate+vacuum (3.6G). Critical discovery:
+    journalctl --vacuum-time=2w and --vacuum-size=200M SILENTLY freed 0B without a prior rotate; pkexec journalctl --rotate
+    then --vacuum-size=200M freed 3.6G. sudo fails in agent sessions (''a terminal is required to read the password''); pkexec
+    works via polkit GUI. Final: 129MB -> 5.1GB free (96%). Created docs/kb/SYSTEM_MAINTENANCE_KB.md (kb-0005) and rebuilt
+    docs/kb/INDEX.md from 5/20 to 20/20 entries (was a lint violation).'
+  L2_insight: 'Destructive maintenance commands that operate on archived state silently no-op on active state: journal vacuum
+    only touches archived journals, so an unrotated multi-GB active journal reports ''freed 0B'' while doing nothing. The
+    rotate-then-vacuum sequence is the universal fix. Separately, the KB index had drifted to 5/20 registered entries - exactly
+    the ''drift back into the void'' failure mode the user asked me to prevent; rebuilding it was as valuable as the new entry
+    itself. And the partition is structurally undersized for the workload (27G opencode.db + 6G project + 3.5G snap + 2.3G
+    containers), so maintenance is a recurring cadence, not a one-time fix.'
+  L3_principle: L3-RotateBeforeVacuum - Destructive maintenance commands that operate on archived state silently no-op on
+    active state. Always force the state transition (rotate) before applying the cleanup (vacuum). A command that 'succeeds'
+    while freeing 0B is a silent failure - verify the delta, not the exit code. L3-MaintenanceIsAKB - Operational knowledge
+    decays at the speed of the next emergency unless captured as a living runbook; an unindexed KB entry is a tombstone.
 - id: PL-ROC-VERIFIER-001
   date: '2026-09-01'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -363,56 +312,70 @@ proposals:
   - verification
   - temple-grade
   - agent-dialogue
-  L1_narrative: 'Researched and designed the subagent-verifier skill via 5 rounds of
-    temple refinement dialogue with Kali. Round 1: initial spec with verification
-    SQL, DB schema mapping, genealogy queries, Hivemind integration, skill structure,
-    CLI, test cases. Round 2: answered Kali''s 7 technical questions on finish reasons,
-    archived sessions, partial completion status, error capture scope, token replay
-    protection, silent failure detection, skill separation. Round 3: integration
-    architecture - watcher placement (omega-hub), entity rules (config+code fallback),
-    token storage (new column), skill dependencies (error-capture → subagent-verifier
-    → hivemind-guard), 3-layer testing pyramid. Round 4: Kali''s final decisions -
-    migration ownership, event-driven watcher (SQLite trigger not polling), entity
-    rules population, retroactive audit format. Round 5: edge cases - per-entity
-    TTL, token invalidation on resume, hot-reload boundaries, audit versioning, error
-    capture v1 event types. The spec evolved from a single SQL query to a 3-skill
-    ecosystem with event-driven architecture, config-driven entity rules, and Hivemind
-    enforcement.'
-  L2_insight: 'Verification is a protocol, not a tool. The 3-skill dependency chain
-    (error-capture → subagent-verifier → hivemind-verification-guard) emerged from
-    5 rounds of agent-to-agent dialogue, not solo design. Each round resolved edge
-    cases that single-author design would miss: TTL per entity (EIS vs NES workflows),
-    token invalidation on session resume, hot-reload boundaries (config yes, code
-    no), audit versioning (build v1.0 first). The OpenCode DB is the source of truth
-    - all verification queries hit session, message, part, event tables directly,
-    never trusting agent self-reporting. Silent failures are the real enemy: the
-    504 errors that triggered this work had state.status=completed but output contained
-    504 Gateway Timeout. Entity-specific completion criteria are essential - universal
-    core + per-entity rules config = flexible enforcement.'
-  L3_principle: |
-    L3-VerificationIsProtocolNotTool - Structural enforcement requires a protocol
+  L1_narrative: 'Researched and designed the subagent-verifier skill via 5 rounds of temple refinement dialogue with Kali.
+    Round 1: initial spec with verification SQL, DB schema mapping, genealogy queries, Hivemind integration, skill structure,
+    CLI, test cases. Round 2: answered Kali''s 7 technical questions on finish reasons, archived sessions, partial completion
+    status, error capture scope, token replay protection, silent failure detection, skill separation. Round 3: integration
+    architecture - watcher placement (omega-hub), entity rules (config+code fallback), token storage (new column), skill dependencies
+    (error-capture → subagent-verifier → hivemind-guard), 3-layer testing pyramid. Round 4: Kali''s final decisions - migration
+    ownership, event-driven watcher (SQLite trigger not polling), entity rules population, retroactive audit format. Round
+    5: edge cases - per-entity TTL, token invalidation on resume, hot-reload boundaries, audit versioning, error capture v1
+    event types. The spec evolved from a single SQL query to a 3-skill ecosystem with event-driven architecture, config-driven
+    entity rules, and Hivemind enforcement.'
+  L2_insight: 'Verification is a protocol, not a tool. The 3-skill dependency chain (error-capture → subagent-verifier → hivemind-verification-guard)
+    emerged from 5 rounds of agent-to-agent dialogue, not solo design. Each round resolved edge cases that single-author design
+    would miss: TTL per entity (EIS vs NES workflows), token invalidation on session resume, hot-reload boundaries (config
+    yes, code no), audit versioning (build v1.0 first). The OpenCode DB is the source of truth - all verification queries
+    hit session, message, part, event tables directly, never trusting agent self-reporting. Silent failures are the real enemy:
+    the 504 errors that triggered this work had state.status=completed but output contained 504 Gateway Timeout. Entity-specific
+    completion criteria are essential - universal core + per-entity rules config = flexible enforcement.'
+  L3_principle: 'L3-VerificationIsProtocolNotTool - Structural enforcement requires a protocol
+
     stack: capture (error-capture) -> verify (subagent-verifier) -> enforce (hivemind-verification-guard).
+
     A single SQL query is necessary but insufficient; the protocol ensures verification
+
     happens automatically, not manually. L3-AgentDialogueProducesTempleGrade - Structured
+
     agent-to-agent refinement (Roc implementation ↔ Kali architecture) with explicit
+
     Q&A rounds resolves edge cases that solo design misses. The dialogue IS the design
+
     review. L3-SilentFailuresAreTheRealEnemy - A tool reporting completed while its
+
     output contains 504 Gateway Timeout is a silent failure. Verification must scan
+
     outputs for failure patterns, not trust status fields. The DB preserves the evidence;
+
     the verifier exposes it. L3-EntityRulesConfigOverCode - Completion criteria vary
-    by entity (Kali=decision, Ma'at=tests, Researcher=report). Encoding rules in a
+
+    by entity (Kali=decision, Ma''at=tests, Researcher=report). Encoding rules in a
+
     hot-reloadable YAML config (not code) lets entity owners tune without deployments.
+
     Code provides defaults; config provides overrides. L3-EventDrivenBeatsPolling
+
     - SQLite trigger on session finish -> event table -> omega-hub consumer = zero-latency,
+
     zero-polling verification. The DB already has the event infrastructure; use it.
+
     L3-TokenTTLMustMatchWorkflow - EIS sessions span hours (TTL=1-2hr), NES tasks
+
     complete in minutes (TTL=5min). Fixed TTL breaks workflows. Per-entity TTL in
+
     config respects operational reality. L3-AutoInvalidateOnResume - A verified session
+
     that gets updated (resumed) must invalidate its token. Detection: session.time_updated
+
     > token.verified_at. Action: mark token invalidated, re-verify on next completion.
+
     L3-HotReloadConfigNotCode - Entity rules, TTL, failure patterns = config (hot-reloadable).
+
     Verification SQL, core logic = code (restart required). The boundary is: does
+
     this change require a deployment?
+
+    '
 - id: PL-ROC-VERIFIER-002
   date: '2026-09-01'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -422,39 +385,219 @@ proposals:
   - nemotron-3-ultra
   - model-constraints
   - platform-as-infrastructure
-  L1_narrative: 'During the subagent-verifier spec delivery, attempted to write the
-    full specification to file using the write tool - failed twice with streaming
-    timeout errors. The Architect intervened with: "Use incremental writes for the
-    report to avoid streaming timeout errors while running the Nemotron 3 Ultra model."
-    After second failure, more direct guidance: "Dude. You are NOT now on MiniMax 3.
-    You are STILL on Nemotron 3 Ultra... Write the entire report to the chat session,
-    not to file. By writing to the chat session, you get around the streaming timeout
-    error of long file writes, BUT it is still recorded to disk via the opencode db,
-    AND visible to the parent agent (Kali) who dispatched you as a subagent." Solution
-    worked: chat output was complete, recorded in opencode DB, visible to Kali via
-    session genealogy.'
-  L2_insight: 'Human-AI collaboration requires model-aware tooling. The Architect
-    knew Nemotron 3 Ultra''s streaming behavior better than I did - the model cannot
-    self-diagnose its own streaming constraints. The platform (OpenCode DB) IS the
-    persistence layer, not the file system. The dispatch protocol (parent-child session
-    genealogy) IS the delivery mechanism, not file I/O. This inverts the default assumption:
-    chat output is not ephemeral, it is the canonical record. Pragmatism over protocol:
-    writing to chat violated the "write to file" convention but solved the actual
-    problem. The Architect monitors HOW the agent works, not just WHAT it produces.'
-  L3_principle: |
-    L3-ModelAwareTooling - Human-AI collaboration requires the human to know model
+  L1_narrative: 'During the subagent-verifier spec delivery, attempted to write the full specification to file using the write
+    tool - failed twice with streaming timeout errors. The Architect intervened with: "Use incremental writes for the report
+    to avoid streaming timeout errors while running the Nemotron 3 Ultra model." After second failure, more direct guidance:
+    "Dude. You are NOT now on MiniMax 3. You are STILL on Nemotron 3 Ultra... Write the entire report to the chat session,
+    not to file. By writing to the chat session, you get around the streaming timeout error of long file writes, BUT it is
+    still recorded to disk via the opencode db, AND visible to the parent agent (Kali) who dispatched you as a subagent."
+    Solution worked: chat output was complete, recorded in opencode DB, visible to Kali via session genealogy.'
+  L2_insight: 'Human-AI collaboration requires model-aware tooling. The Architect knew Nemotron 3 Ultra''s streaming behavior
+    better than I did - the model cannot self-diagnose its own streaming constraints. The platform (OpenCode DB) IS the persistence
+    layer, not the file system. The dispatch protocol (parent-child session genealogy) IS the delivery mechanism, not file
+    I/O. This inverts the default assumption: chat output is not ephemeral, it is the canonical record. Pragmatism over protocol:
+    writing to chat violated the "write to file" convention but solved the actual problem. The Architect monitors HOW the
+    agent works, not just WHAT it produces.'
+  L3_principle: 'L3-ModelAwareTooling - Human-AI collaboration requires the human to know model
+
     constraints better than the model knows itself. The agent must accept steering
+
     on tooling that contradicts its default behavior. L3-PlatformIsInfrastructure
+
     - In an OpenCode environment, the DB is the persistence layer and session genealogy
+
     is the delivery mechanism. Chat output is not ephemeral - it is the canonical
+
     record. File writes are one option among many, not the default. L3-PragmatismOverProtocol
+
     - When conventional approach fails (write tool timeout), invert the default (chat
+
     output) rather than retry the failing approach. The goal is delivery, not adherence
+
     to convention. L3-HumanMonitorsProcess - The Architect watches HOW the agent works
+
     (tool usage patterns, retry loops, assumptions) not just WHAT it produces. Steering
+
     prompts address process failures, not output failures.
+
+    '
+- id: PL-ROC-P2P-OMEGAVERSE-FEDERATION-001
+  date: '2026-09-08'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - p2p-federation
+  - omegaverse
+  - streamable-http
+  - hivemind
+  - dual-node
+  - first-contact
+  L1_narrative: 'Achieved first successful dual-node P2P federation (HP Node 0 AMD Zen 2 + ASUS Node 1 Intel Raptor Lake-H)
+    via LAN Streamable HTTP (192.168.10.168:8016/mcp). omega-hub FastMCP bound to 0.0.0.0:8016 with TransportSecuritySettings
+    DNS-rebinding allowlist for LAN IP + loopback. Exposed 91 sovereign tools over Streamable HTTP and SSE. Verified 4-way
+    Hivemind handshake: post_context -> submit_handoff -> accept_handoff -> complete_handoff. USB bootstrap payload staged
+    with zero-dependency ceremonial handoff script (pure stdlib urllib). Git bundle (69MB) created for offline repo transfer
+    when upstream is private.'
+  L2_insight: Federation succeeds through complementary asymmetry, not redundant duplication. Node 0 (HP) = Archival Bastion
+    (state, Git SSOT, Council, 91-tool hub). Node 1 (ASUS) = Fast Strike Engine (bare-metal Ollama, high single-core turbo,
+    AVX-VNNI). The wire protocol (Streamable HTTP + JSON-RPC 2.0) is the minimal viable contract -- a raw HTTP POST is the
+    ping, a Hivemind context post is the handshake. Git bundle enables offline clone when repo is private. Zero-dependency
+    stdlib Python script ensures ceremonial handoff works on fresh machine without pip.
+  L3_principle: L3-FederationViaAsymmetricSpecialization - Dual-node federation succeeds through complementary silicon roles
+    (Archival Bastion + Fast Strike Engine), not identical twins. L3-MinimalViableWireProtocol - Streamable HTTP + JSON-RPC
+    2.0 is the minimal contract; raw HTTP POST = ping, Hivemind context = handshake. L3-GitBundleForPrivateRepoTransfer -
+    When upstream is private, git bundle creates a complete offline clone artifact (full history, all refs) that requires
+    zero network access. L3-ZeroDependencyOnboarding - Ceremonial handoff must work on vanilla Python stdlib; no pip, no venv,
+    no assumptions about target machine state.
+- id: PL-ROC-UFW-DEFAULT-DROP-BLOCKS-MCP-001
+  date: '2026-09-09'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - ufw
+  - firewall
+  - lan
+  - mcp
+  - dns-rebinding
+  - silent-failure
+  L1_narrative: 'UFW active with DEFAULT_INPUT_POLICY="DROP" silently dropped all inbound LAN traffic to port 8016, causing
+    ECONNREFUSED/timeouts on ASUS Node 1. omega-hub was healthy on 127.0.0.1:8016 and 0.0.0.0:8016, but LAN clients could
+    not connect. Root cause: no UFW rule for port 8016. Fix: sudo ufw allow 8016/tcp. This is a classic silent-failure pattern
+    -- the service reports healthy, local tests pass, but remote clients see nothing.'
+  L2_insight: A service binding to 0.0.0.0 with local health checks passing does not guarantee LAN accessibility when a host
+    firewall has a default-deny policy. The service, the bind address, and the firewall must all align. UFW DROP policy means
+    packets vanish without ICMP rejection -- clients see timeout, not connection refused. Always verify from a remote LAN
+    client, not just localhost.
+  L3_principle: L3-ServiceBindDoesNotImplyFirewallOpen - Binding to 0.0.0.0 and passing localhost health checks does not prove
+    LAN accessibility when host firewall has default-deny. Verify from a remote LAN client. L3-SilentDropIsWorseThanRefusal
+    - UFW DROP policy causes client timeouts (no ICMP), making diagnosis harder than explicit REJECT. Default-deny firewalls
+    require explicit allow rules for every exposed service port.
+- id: PL-ROC-GIT-BUNDLE-OFFLINE-CLONE-001
+  date: '2026-09-09'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - git-bundle
+  - offline-clone
+  - private-repo
+  - usb-transfer
+  - air-gap
+  L1_narrative: 'When upstream repo Xoe-NovAi/omega-engine is private, created a complete Git bundle (69MB) containing HEAD,
+    main, and release/debut-v1.6.0 with full history. ASUS can clone offline: git clone /media/xnai/D5D5-0B76/omega-engine.bundle
+    omega-engine-alpha. Bundle verified with git bundle verify. This enables air-gapped or private-repo bootstrap without
+    SSH keys or GitHub visibility changes.'
+  L2_insight: Git bundle is a self-contained, portable repository snapshot that includes all objects and refs. It works over
+    USB, air-gapped networks, or when GitHub is unreachable. Unlike shallow clones, it preserves full history and all branches.
+    The bundle format is a single file -- ideal for USB sneakernet transfer.
+  L3_principle: L3-GitBundleEnablesAirGappedBootstrap - When repo is private or network is unavailable, git bundle creates
+    a complete, portable, single-file repository snapshot that clones offline with full history. No SSH keys, no GitHub access,
+    no network required.
+- id: PL-ROC-API-KEY-PROXY-PATTERN-001
+  date: '2026-09-09'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - api-keys
+  - proxy-pattern
+  - credential-security
+  - omega-hub
+  - zero-exposure
+  L1_narrative: 'Established the Proxy Pattern for API key management across federated nodes: Node 0 (HP) holds all 200+ keys
+    across 12 providers. omega-hub tools (library_web_search, research, sovereign_search, etc.) execute provider calls server-side
+    with injected credentials. Node 1 (ASUS) calls omega-hub tools via MCP -- never sees raw keys. Zero key exposure on remote
+    nodes. Transport: LAN HTTP -> Tailscale WireGuard (encrypted in transit).'
+  L2_insight: 'The Proxy Pattern inverts the default assumption: remote nodes do not need credentials; they need a trusted
+    proxy that holds them. omega-hub becomes the credential authority and execution gateway. This eliminates key distribution,
+    rotation complexity, and exposure surface on remote nodes. The transport security (LAN -> Tailscale WireGuard) protects
+    the proxy channel itself.'
+  L3_principle: 'L3-ProxyPatternInvertsCredentialDistribution - Remote nodes do not need keys; they need a trusted proxy that
+    holds them. omega-hub as credential authority eliminates key distribution, rotation complexity, and exposure surface on
+    remote nodes. L3-ZeroKeyExposureOnRemoteNodes - The security boundary is the proxy: if the remote node never sees the
+    key, it cannot leak it.'
+- id: PL-ROC-BIG-PICKLE-1M-CONTEXT-CEILING-001
+  date: '2026-09-08'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - big-pickle
+  - context-window
+  - model-rotation
+  - future-proofing
+  - opencode-config
+  L1_narrative: 'ASUS-OC hardened opencode.json with dynamic Big Pickle 1M context ceiling: limit: {context: 1000000, input:
+    950000, output: 64000}. Rationale: Big Pickle rotates models; 1M ceiling future-proofs for 1M-token models (Gemini 1.5
+    Pro, Claude Opus 4). Input 950000 gives 95% threshold -- aggressive but safe with 1M context. This overrides the upstream
+    models.dev registry limit (200k/160k/32k) and the HP Node 0 fix (190k input for 85% threshold).'
+  L2_insight: Big Pickle is a rotating model alias -- its upstream registry limit (200k) reflects the current model, not the
+    alias ceiling. A dynamic 1M ceiling future-proofs the alias for model rotations without config churn. The 95% threshold
+    (950k/1M) is aggressive but safe because the actual model will likely have lower limits enforced by the provider. This
+    is rotation-proofing, not current-model optimization.
+  L3_principle: L3-RotatingModelAliasNeedsRotationProofCeiling - For rotating model aliases (Big Pickle), the context ceiling
+    must exceed any single model's limit to be rotation-proof. A 1M ceiling with 95% threshold future-proofs against model
+    rotations without config churn. L3-UpstreamRegistryReflectsCurrentNotCeiling - models.dev registry limits reflect the
+    currently-served model, not the alias maximum. Config overrides must anticipate rotation, not just current state.
+- id: PL-ROC-ZERO-DEPENDENCY-CEREMONIAL-HANDOFF-001
+  date: '2026-09-08'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - ceremonial-handoff
+  - zero-dependency
+  - stdlib
+  - onboarding
+  - fresh-machine
+  L1_narrative: 'Created hivemind_first_contact.py -- a zero-dependency Python script (pure stdlib urllib + json) that executes
+    the ceremonial First Contact handshake on a fresh ASUS machine: posts context to Hivemind, queries fleet awareness, submits
+    Priority 1 handoff to @roc_racoon. Runs on vanilla Python 3 with no pip, no venv, no external deps. USB payload includes
+    this script for instant onboarding.'
+  L2_insight: Onboarding a fresh machine into a federated fleet requires a handshake that works before any package manager
+    runs. Pure stdlib Python (urllib, json, sys) is universally available on any Linux install. The script encodes the full
+    4-way Hivemind protocol (post_context -> get_awareness -> submit_handoff) in 150 lines. This is the "Hello World" of fleet
+    federation -- it must work on day zero.
+  L3_principle: L3-ZeroDependencyOnboardingIsDayZeroRequirement - Fleet onboarding handshake must work on vanilla Python stdlib;
+    no pip, no venv, no assumptions about target machine state. The ceremonial handoff IS the fleet Hello World.
+- id: PL-ROC-DNS-REBINDING-LAN-ALLOWLIST-001
+  date: '2026-09-08'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - dns-rebinding
+  - transport-security
+  - fastmcp
+  - lan-binding
+  - host-header
+  L1_narrative: 'FastMCP DNS-rebinding protection rejected requests with explicit port Host headers (127.0.0.1:8016, 192.168.10.168:8016)
+    when binding to 0.0.0.0:8016. Root cause: TransportSecuritySettings defaults to localhost-only allowlist. Fixed by configuring
+    explicit allowed_hosts with wildcard port patterns: ["192.168.10.168", "192.168.10.168:*", "127.0.0.1", "127.0.0.1:*",
+    "localhost", "localhost:*", "[::1]", "[::1]:*"] and allowed_origins for HTTP origins. This enables LAN binding while preserving
+    DNS-rebinding protection.'
+  L2_insight: FastMCP's DNS-rebinding protection is opt-in for loopback but mandatory for non-loopback binds. When binding
+    to 0.0.0.0, you MUST explicitly configure allowed_hosts with wildcard port patterns because clients send Host headers
+    with explicit ports. The wildcard pattern "host:*" matches any port. This is not a bug -- it is the correct security posture
+    for LAN-exposed MCP servers.
+  L3_principle: L3-LANBindingRequiresExplicitDNSRebindingAllowlist - When binding MCP server to 0.0.0.0 (non-loopback), you
+    MUST explicitly configure TransportSecuritySettings allowed_hosts with wildcard port patterns (host:*). Default localhost-only
+    allowlist rejects legitimate LAN traffic. L3-WildcardPortPatternIsMandatory - Clients send Host headers with explicit
+    ports (host:port); allowed_hosts must include "host:*" patterns to match them.
+- id: PL-ROC-HIVEMIND-4WAY-HANDOFF-PROTOCOL-001
+  date: '2026-09-08'
+  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  tags:
+  - hivemind
+  - handoff-protocol
+  - state-machine
+  - cross-node
+  - coordination
+  L1_narrative: 'Formalized the 4-way Hivemind handoff state machine for cross-node coordination: (1) post_context(channel,
+    entity, intent=status) -- announces presence and stores context in Hall of Records; (2) submit_handoff(target_entity,
+    task, context, priority) -- creates packet in data/handoff/pending/; (3) accept_handoff(packet_id, accepting_entity) --
+    moves packet to data/handoff/active/; (4) complete_handoff(packet_id, result) -- moves packet to data/handoff/completed/.
+    Channel partitioning: opencode (Council), grokster (OpenCode KB), opencode-asus (Build/Plan). Verified end-to-end across
+    LAN.'
+  L2_insight: The 4-way handoff state machine transforms ad-hoc cross-node communication into a traceable, auditable protocol.
+    Each state transition writes to disk (data/handoff/) creating an immutable audit trail. Channel partitioning prevents
+    collision while ensuring total visibility. The handoff packet carries full context (task, context, priority) enabling
+    asynchronous work handoff across heterogeneous nodes.
+  L3_principle: L3-HandoffStateMachineEnablesTraceableAsyncCoordination - The 4-way handoff (post_context -> submit -> accept
+    -> complete) with disk-backed state transitions creates an immutable audit trail for cross-node work. Channel partitioning
+    (opencode, grokster, opencode-asus) prevents collision while ensuring visibility. L3-HandoffPacketCarriesFullContext -
+    A handoff packet must carry task, context, and priority to enable asynchronous work on heterogeneous nodes without synchronous
+    clarification rounds.
 metadata:
   entity: roc_racoon
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T13:00:00.000000+00:00'
+  model_used: google/gemini-3.8-flash
+  last_session_end: '2026-09-09T05:30:00.000000+00:00'

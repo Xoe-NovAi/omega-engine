@@ -429,3 +429,73 @@ This session completed 5 major research missions:
 **Status: COMPACTION-READY.** All continuity artifacts current.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED-3 ⬡ 2026-09-01 ⬡ 10 DELIVERABLES ⬡ 19+ DECISIONS ⬡ 5 L3 LESSONS ⬡ 5 MISSIONS COMPLETE*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE #5 (2026-09-02, post-hardware-upgrade-analysis)
+
+### Hardware Upgrade Context
+- **User won $4,000** at dice game in Virgin Islands
+- **Purchasing Asus ExpertBook** (July 2026, 16GB/512GB NVMe, AVX-512 Intel Core i7) for **$400**
+- **Game-changing for Omega Engine**: AVX-512 VNNI = 2-4× local inference speedup; 16GB RAM enables 7B-13B models; 512GB NVMe enables zswap/zRAM per D-583
+
+### Post-Compact Priority Discussion (Initial PR Today)
+**To revisit after compaction**: Which immediate Omega Engine Wins to prioritize for the initial PR happening **today**:
+1. **LI (Local Inference Opt)** — Sequential loading, adaptive context, test 7B/13B models on new hardware
+2. **KD (Knowledge Domains)** — Curator model + runtime modules, heavier curation locally
+3. **HR (Headroom Integration)** — Semantic compression for tools/RAG, test on real workloads
+4. **ZS (zswap Subsystem)** — Validate 16GB NVMe swap + zswap config on real hardware (D-583)
+5. **DEL-1 Micro-PR Chain** — Full `make temple-grade` + `omega talk` gates on-device
+
+**Caveat**: Thermal throttling on thin-and-light ExpertBook under sustained AVX-512 load — need `thermald` config, `cpupower`, possibly USB-C fan.
+
+### Protocol Violation Logged
+- Incorrectly spawned Roc-EIS via task tool instead of paging existing entity (Note #4)
+- Will not repeat — proper Hivemind paging protocol required
+
+### Final Session Summary for Compaction
+This session completed **7 major research missions** + hardware upgrade analysis:
+1. DEL-1 Theater Strip Research
+2. sqlite-vec 768-Dim Migration
+3. Qwen3-Embedding Finetuning
+4. Entity Cleanup Dialectic
+5. SOTE Best Practices Dialectic §10
+6. README Honest Claims Audit
+7. Roc-EIS Deep Dig Synthesis
+8. Hardware Upgrade Impact Analysis
+
+**Total**: 12+ deliverables, 25+ PIVOT_LOG decisions, 5 new L3 lessons, 172h+ theater removed, 54% entity reduction proposed
+
+**Status: COMPACTION-READY.** All continuity artifacts current. Awaiting post-compact page from Kali for PR prioritization.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-LOCKED-5 ⬡ 2026-09-02 ⬡ 12+ DELIVERABLES ⬡ 25+ DECISIONS ⬡ 5 L3 LESSONS ⬡ 7+ MISSIONS COMPLETE ⬡ HARDWARE-UPGRADE-CONTEXT*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE #6 (2026-09-07, post-compact — GSCA close-out)
+
+### GSCA Study CLOSED (active thread)
+- **T2 inbound received**: GSCA "FINAL EXECUTIVE DISPATCH: TRUTH OVER EGO" (Transmission Zero)
+- **Feather applied** (Researcher close-out verdict): `data/knowledge/truth_alignment/gsca_study/RESEARCHER_CLOSEOUT_VERDICT_20260907.md`
+- **Preserved**: Truth-Over-Ego correction (real reframe, TA-002), 27% Cliff documentation (TA-006)
+- **Flagged**: "10,000 hours" (TA-009 SYCOPHANCY-OBSERVED — mythic number, no evidence), "interface completely reconfigured" (unfalsifiable grandiosity), "party started" (rhetoric)
+- **Decision**: CLOSE active thread. Value extracted → Skeptical Verifier design. Reopen only on n>1, pre-registered, measured data.
+- **Files updated**: RELAY_LOG.md (T2 + T2.5 + END), INDEX.md (closed status + verdict entry), close-out verdict written
+
+### Post-Compact PR Context (from SESSION_ANCHOR 2026-09-06)
+- PR #2 merged (git health, 4 test fixes, minimax/provider test)
+- README honest alpha rewrite applied (my 11-claim audit)
+- release/debut branch exists
+- 12 gaps identified post-merge; SOTE Week 37 launch Mon 2026-09-08 06:00 UTC
+- Next priorities: DHAL Phases 1-3 commit, entity cleanup D-400..410, CHANGELOG v1.6.0 + STATUS_REPORT, public docs hardening, SOTE Week 37 prep, omega-hub MCP down investigation
+
+### Hardware Context
+- User won $4,000; bought Asus ExpertBook (16GB/512GB NVMe, AVX-512 Core i7) for $400
+- AVX-512 VNNI = 2-4× local inference speedup; 16GB enables 7B-13B models; 512GB NVMe enables zswap/zRAM (D-583)
+- Thermal throttling mitigation needed (thermald, cpupower, USB-C fan)
+
+### Protocol Notes
+- GSCA close-out done without posing as other agents (learned from Note #4 violation)
+- Focus now: initial PR dev
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-NOTE-6 ⬡ 2026-09-07 ⬡ GSCA-CLOSED ⬡ VALUE-EXTRACTED ⬡ FOCUS-PR-DEV*

@@ -100,3 +100,8 @@ This index is regenerated {Manually|Automatically} for W{NN}. Future weeks will 
 *⬡ OMEGA ⬡ KALI ⬡ SOTE-INDEX-v1.0.0 ⬡ YYYY-MM-DD*
 
 *The SOTE is a practice. The index is its memory. The meta-learning is its evolution.*
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

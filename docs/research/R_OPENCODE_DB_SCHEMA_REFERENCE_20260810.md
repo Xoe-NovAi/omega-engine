@@ -325,11 +325,12 @@ The database uses SQLite's JSON1 extension. All JSON queries use `json_extract()
 
 *⬡ OMEGA ⬡ REFERENCE ⬡ OPENCODE_DB ⬡ 2026-08-10*
 
-<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
 claimed_model: OPENCODE_DB | verdict: AMBIGUOUS | multi-model session; candidates: longcat-2.0-free, nemotron-3-ultra-free, laguna-s-2.1-free, minimax/minimax-m3:free
-actual_models(Tier0): longcat-2.0-free, nemotron-3-ultra-free, laguna-s-2.1-free, minimax/minimax-m3:free, nvidia/nemotron-3-super-120b-a12b:free, big-pickle
-first_audit: 2026-08-30T03:06:41Z | updated: 2026-08-31T03:09:52Z
+actual_models(Tier0): longcat-2.0-free, nemotron-3-ultra-free, laguna-s-2.1-free, minimax/minimax-m3:free, big-pickle, nvidia/nemotron-3-super-120b-a12b:free
+first_audit: 2026-08-31T03:09:52Z | updated: 2026-09-07T03:03:09Z
 -->
+
 
 
 

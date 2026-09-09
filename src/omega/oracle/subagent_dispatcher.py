@@ -26,6 +26,39 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
+# Archangel Architecture: Environmental State Register injection
+try:
+    from omega.oracle.env_hardware_probe import inject_system_envelope_sync
+except ImportError:
+    inject_system_envelope_sync = None  # type: ignore
+
+# HardwareMonitor & ModelGateway singletons for envelope injection
+_hw_monitor = None
+_model_gateway = None
+
+def _get_hw_monitor():
+    """Lazily initialise HardwareMonitor singleton."""
+    global _hw_monitor
+    if _hw_monitor is None:
+        try:
+            from omega.monitoring import HardwareMonitor
+            _hw_monitor = HardwareMonitor()
+        except (ImportError, OSError, ValueError):
+            logger.debug("HardwareMonitor unavailable — skipping envelope injection")
+    return _hw_monitor
+
+def _get_model_gateway():
+    """Lazily initialise ModelGateway singleton."""
+    global _model_gateway
+    if _model_gateway is None:
+        try:
+            from omega.oracle.model_gateway import ModelGateway
+            from omega.oracle.health_monitor import get_health_monitor
+            _model_gateway = ModelGateway(health_monitor=get_health_monitor())
+        except (ImportError, OSError, ValueError):
+            logger.debug("ModelGateway unavailable — skipping envelope injection")
+    return _model_gateway
+
 logger = logging.getLogger(__name__)
 
 # ── M34 Registry hook (M34-HOOK-001) ─────────────────────────────────────
@@ -568,5 +601,26 @@ def dispatch(packet: HandoffPacket) -> str:
         logger.debug("M33 probe not available: %s", exc)
     except (OSError, ValueError, TypeError) as exc:
         logger.warning("M33 probe wiring failed: %s", exc)
+
+    # ── Archangel Architecture: Environmental State Register Injection ─────
+    # Inject hardware register envelope after M33Probe validation, before prompt build
+    if inject_system_envelope_sync is not None:
+        hw_monitor = _get_hw_monitor()
+        model_gateway = _get_model_gateway()
+        if hw_monitor is not None and model_gateway is not None:
+            try:
+                packet = inject_system_envelope_sync(
+                    packet=packet,
+                    target_agent=packet.target_agent,
+                    hw_monitor=hw_monitor,
+                    model_gateway=model_gateway,
+                )
+                logger.debug("Archangel envelope injected for %s → %s",
+                           packet.source_agent, packet.target_agent)
+            except (OSError, ValueError, TypeError) as exc:
+                logger.warning("Archangel envelope injection failed: %s", exc)
+        else:
+            logger.debug("Archangel envelope skipped: hw_monitor=%s, model_gateway=%s",
+                       hw_monitor, model_gateway)
 
     return build_dispatch_prompt(packet, write_tool_required=write_tool_required)

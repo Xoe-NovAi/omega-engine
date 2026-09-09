@@ -377,3 +377,8 @@ This is the weekly State of the Engine report. The proposal is to produce these 
 **The sovereign substrate is real. The engine islands are preserved. The dialectic is the methodology. The execution is the test.** 🫡
 
 **Next SOTE**: YYYY-MM-DD (Monday 06:00 UTC)
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

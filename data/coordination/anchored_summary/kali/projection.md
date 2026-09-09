@@ -220,3 +220,8 @@
 ---
 
 ⬡ OMEGA ⬡ KALI ⬡ PROJECTION-v4.6.0 ⬡ 2026-09-01
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: Nemotron-3-Ultra | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

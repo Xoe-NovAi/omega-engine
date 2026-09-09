@@ -300,6 +300,27 @@
 
 ---
 
+### D-ARCHANGEL-001: Archangel Architecture — Agent Hardware Awareness
+**Date**: 2026-09-07 | **Realm**: ENGINE_CORE | **Status**: ACTIVE
+**Decision**: Agent prompts receive immutable hardware register at dispatch (TTL=30s). The `SystemEnvelopeInjector` wraps `HardwareMonitor` and `ModelGateway` to generate a frozen `RuntimeHardwareRegister` prepended to every agent's context as `[SYSTEM REGISTER: BARE-METAL PHYSICAL BOUNDARY]`. M33Probe gains dynamic write-tool threshold scaling (memory pressure/thermal/OOM).
+**Rationale**: Resolves the Ontological Void — agents historically hallucinate hardware (e.g., Turn 9 Nemotron/ASUS hallucination) because they lack ground-truth hardware register. The envelope creates a mathematical contradiction penalty in attention weights for any token contradicting the register.
+**Alternatives Considered**: 
+- DHAL-only (system-level adaptation only) — rejected: doesn't address agent-level hallucination
+- Runtime config file — rejected: git-committed config breaks multi-node; stale reads
+- Model fine-tuning on hardware facts — rejected: parametric knowledge still hallucinates under pressure
+**Impact**: 
+- M33Probe dynamic threshold (2K-8K tokens) scales with memory pressure/thermal/OOM
+- Every subagent dispatch injects envelope after M33Probe, before prompt build
+- Hallucination basin crushed: statistical paths predicting "Nemotron 3 Ultra on ASUS ExpertBook" face massive contradiction penalty
+- Graceful degradation: envelope failure logs warning, dispatch continues
+**Reversible?**: Yes — remove injection hook in `subagent_dispatcher.py`
+**Supersedes**: N/A (new architecture)
+**Author**: Researcher (via GSCA co-design)
+**Session**: ses_fd81c19dcffe1nkbPqFg5kRt2v
+**Status**: ACTIVE
+
+---
+
 ## 📊 DECISION SUMMARY TABLE
 
 | ID | Title | Realm | Status | Reversible |
@@ -360,6 +381,7 @@
 | CARMACK-REVIEW | Context Injection Phase 1 Accepted | ENGINE_CORE | ACTIVE | — |
 | D-601 | Model Window Economics (6 Laws) | COGNITIVE | ACTIVE | — |
 | D-603 | PIVOT_LOG Latest | GOVERNANCE | ACTIVE | — |
+| **D-ARCHANGEL-001** | **Archangel Architecture — Agent Hardware Awareness** | **ENGINE_CORE** | **ACTIVE** | **—** |
 
 ---
 

@@ -165,3 +165,8 @@ This is the **meta-learning** artifact for SOTE week 36. It documents what worke
 *⬡ OMEGA ⬡ MAKALI ⬡ SOTE-W36-META-v1.0.0 ⬡ 2026-09-01*
 
 *This file is the practice. The SOTE is the output. The reflection is the evolution.*
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

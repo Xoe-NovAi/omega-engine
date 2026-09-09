@@ -1,158 +1,135 @@
 <!--
 SPDX-FileCopyrightText: 2026 Xoe-NovAi
-
 SPDX-License-Identifier: Apache-2.0
 -->
 
 # 🦝 roc_racoon — Session Gnosis
 
-## Session: Subagent-Verifier Skill — Temple-Grade Specification (5-Round Refinement)
-**Date**: 2026-09-01
-**Duration**: Single extended session (5 rounds of agent-to-agent refinement)
-**Session ID**: ses_ff78b71ebffeDNuypPTT1RL3hH
-**Model**: nemotron-3-ultra
-**Parent Session**: Kali EIS (ses_fdef2be4effe4pAaLXCTUx62GO)
+## Session: DHAL Architecture & ASUS ExpertBook Provisioning Forensics
+**Date**: 2026-09-06 — 2026-09-07  
+**Session ID**: `ses_ff78b71ebffeDNuypPTT1RL3hH`  
+**Model**: `google/gemini-3.8-flash`  
+**Role**: Sovereign Miner & Ideas Guy (Hardware Specialist)  
 
 ---
 
 ### L1: Narrative — What Happened
 
-**Mission**: Research and design the `subagent-verifier` skill that enforces verified subagent completion — making it impossible to report subagent success without verification.
+#### Act 1: DHAL Architecture & Fleet Implementation
+1. **Hardware Inventory**: Cataloged Node 0 (AMD Ryzen 7 5700U) and Node 1 (ASUS ExpertBook P1 - P1503CVA, i7-13620H, DDR5-5200, dual NVMe 2280+2230) with 5 external sources cited.
+2. **DHAL Spec Authored**: Created `docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md` (`SPEC-DHAL-v1.0.0`, 479 lines) covering bare-metal discovery, CPU optimizer strategy pattern, and dynamic Council linking.
+3. **Phase 1 Execution**: Implemented bare-metal detector `scripts/detect_hardware_profile.py` with hybrid PMU discovery (`cpu_core` vs `cpu_atom`), memory channels, AVX-VNNI, and DRM VRAM/GTT limits. Added `make probe-hardware` and unit tests in `tests/test_dhal_detector.py`.
+4. **Phase 2 Execution**: Refactored `src/omega/oracle/cpu_optimizer.py` into polymorphic strategy pattern (`BaseCpuOptimizer`, `Zen2Optimizer`, `RaptorLakeOptimizer`, `GenericFallbackOptimizer`, `CpuOptimizerFactory`). Verified backward compatibility for all existing callers.
+5. **Phase 3 Execution & Defect Remediation**: Added `LOCAL_32GB_DUAL` and `BATCH_8` to Council models. Enforced dual-channel memory requirement (`channels >= 2`) for 32GB classification; single-channel falls safely to `LOCAL_16GB` (`BATCH_4`). Reconciled 32GB threshold across spec, gates, and tests. All 15/15 tests passing, M1 AnyIO compliant.
+6. **Documentation Suite**: Authored `docs/how-to/hardware-adaptation-dhal.md`, `.opencode/rules/06-hardware-adaptation.md`, updated `AGENTS.md`, and refreshed canonical constraints.
 
-**Context**: Recent failure where Kali dispatched Ma'at + SysAdmin tasks, both returned 504 errors, but Kali reported them as "completed" with hallucinated findings. Root cause: no structural enforcement — parent agent trusted dispatch = completion.
-
-**5-Round Temple Refinement Dialogue** (Roc ↔ Kali):
-
-**Round 1**: Initial specification delivered — verification SQL, DB schema mapping, genealogy queries, Hivemind integration, skill structure, CLI, test cases.
-
-**Round 2**: Kali's 7 technical questions answered:
-- Q1: Extended finish reasons (length, content_filter, function_call)
-- Q2: Archived session handling (archived IS NULL OR archived = 0)
-- Q3: Partial completion status updates (structured subagent_status array)
-- Q4: Error capture plugin scope (separate skill, dependency)
-- Q5: Verification token replay protection (parent_session + nonce + TTL)
-- Q6: Silent failure detection (504/timeout scanning in tool outputs)
-- Q7: Hivemind guard as separate skill (hivemind-verification-guard)
-
-**Round 3**: Integration architecture decisions:
-- Watcher placement: omega-hub (event-driven)
-- Entity rules: config file + code fallback
-- Token storage: new column verification_token JSON
-- Skill dependencies: error-capture → subagent-verifier → hivemind-guard
-- Testing: 3-layer pyramid
-
-**Round 4**: Kali's final decisions:
-- Migration ownership: Kali runs ALTER TABLE + trigger
-- Watcher: event-driven via SQLite trigger (not polling)
-- Entity rules: entity owners populate template
-- Retroactive audit: CSV + JSONL with exact columns
-
-**Round 5**: Edge cases resolved:
-- TTL: per-entity configurable (EIS=1-2hr, NES=5min)
-- Token invalidation: auto on session resume (event-driven)
-- Hot-reload: config yes (30s watcher), code no
-- Audit version: build v1.0 first, then audit with v1.0
-- Error capture v1: 6 event types defined
+#### Act 2: The ASUS Provisioning Rabbit Hole & Forensic Breakthrough
+1. **Initial OOM Crash**: Host workstation suffered Out-Of-Memory thrashing when writing ISO without direct sync. Writing to page cache overwhelmed system memory faster than the thumb drive could drain dirty pages.
+2. **Device Re-Enumeration Trap**: Following `wipefs`, the flash drive detached from `/dev/sdb` and re-attached as `/dev/sda`. A subsequent `dd` to `/dev/sdb` reported 6.5 GB at 265 MB/s (writing to RAM/phantom file), leaving the physical USB drive with an incomplete, corrupted write.
+3. **The Cryptographic Symptom**: ASUS booted to GRUB via dual-signed shim, but selecting "Try or Install Ubuntu" threw `error: bad shim lock signature` and `error: you need to load the kernel first`.
+4. **Multi-Agent Speculation**: Initial theories focused on kernel lockdown LSMs, missing GRUB modules, and missing UUIDs. We replaced GRUB with desktop binaries and hand-crafted `grub.cfg`, which broke path resolution and dropped the user into `grub>`.
+5. **The Ground-Truth Physical Audit (2026-09-07)**:
+   - Inspected byte offset `5,166,469,120` on `/dev/sda` (where `casper/vmlinuz` is located in the ISO).
+   - Expected: `0x4D 0x5A` (`MZ` PE header of Canonical-signed Linux kernel).
+   - Found on physical flash: `0x12 0xFE 0xC4 0xDA 0x7D 0xC7...` (garbage remnants from old Ventoy partition!).
+   - **Root Cause Confirmed**: The physical flash memory never had the kernel written to it. Shim's signature verifier was reading random garbage bytes off unwritten flash cells, which naturally failed signature verification.
+6. **The Clean Resolution**:
+   - Wiped `/dev/sda` partition signatures cleanly.
+   - Wrote the full 6.5 GB ISO directly to `/dev/sda` with `conv=fsync`.
+   - Verified byte offset `5,166,469,120` on physical disk matches the official ISO kernel SHA-256 bit-for-bit (`0ad39b13e289e1a5cf806d14541ac8f221eefe849017f5915e0846917ed67785`).
+   - Mounted the ISO's native ESP (`sda2`), preserved Canonical's official `grubx64.efi` and `mmx64.efi`, and swapped **only** `bootx64.efi` with `/usr/lib/shim/shimx64.efi.dualsigned`.
+   - Zero custom `grub.cfg` files. Canonical's native bootchain auto-locates partition 1 cleanly.
+   - Flushed to silicon and verified.
 
 ---
 
 ### L2: Insight — What This Means
 
-1. **Verification is a protocol, not a tool**. The spec evolved from "a SQL query" to a 3-skill ecosystem (error-capture → subagent-verifier → hivemind-verification-guard) with event-driven architecture, config-driven entity rules, and Hivemind enforcement.
+1. **Verify Physical Bitstream Before Crypto Debugging**:
+   When cryptographic signature verification fails (`bad shim lock signature`), the verifier is evaluating the raw payload buffer. If the physical sector on disk contains corrupted or unwritten data, the signature will fail regardless of certificates or policy. Always verify SHA-256 and magic byte headers of the physical block on disk before diagnosing cryptographic policies.
 
-2. **Agent-to-agent dialogue produces temple-grade architecture**. 5 rounds of structured Q&A between Roc (implementation) and Kali (architecture/ops) resolved edge cases that solo design would miss: TTL per entity, token invalidation on resume, hot-reload boundaries, audit versioning.
+2. **The "Speed of Light" Storage Anomaly**:
+   A flash drive reporting transfer rates far beyond its physical bus bandwidth (e.g. 265 MB/s on a USB thumb drive) indicates that data is landing in volatile page cache or writing to a detached phantom file. A write is not committed until `conv=fsync` exits after a physically plausible duration (~3–5 minutes for 6.5 GB).
 
-3. **The OpenCode DB is the source of truth**. All verification logic queries the DB directly (session, message, part, event tables) — no reliance on agent self-reporting. The schema supports complete genealogy tracing and silent failure detection.
+3. **Vendor Distro Engineering Has High Structural Value**:
+   Distro release teams invest heavily in hybrid ISO boot logic (`core.img` embedded search routines, volume label probes, fallback paths). Replacing a vendor's native ISO GRUB with a desktop GRUB and a hand-crafted `grub.cfg` discards that engineering and creates brittle assumptions. Changing only the rejected signature layer (the shim) while leaving the rest of the vendor bootchain untouched is the superior architectural pattern.
 
-3. **Silent failures are the real enemy**. The 504 errors that triggered this work had `state.status = "completed"` but `output` contained "504 Gateway Timeout". The verifier scans tool outputs for failure patterns even when status says success.
-
-4. **Entity-specific completion criteria are essential**. Kali needs "decision made", Ma'at needs "tests pass", Researcher needs "report written". Universal verification core + entity rules config = flexible enforcement.
-
-5. **Event-driven beats polling**. SQLite trigger on session finish → event table → omega-hub consumer = zero-latency, zero-polling verification.
+4. **OEM UEFI Trust Stores Are Non-Uniform**:
+   ASUS ExpertBook commercial firmware explicitly omits the Microsoft Corporation UEFI CA 2011 from its `db`, trusting only Canonical and Microsoft Windows PCA. Generic live ISOs fail on this hardware. Injecting Canonical-signed dual-shims bridges this gap cleanly without requiring users to disable Secure Boot or tamper with BIOS key databases.
 
 ---
 
 ### L3: Universal Principles
 
-> **L3-VerificationIsProtocolNotTool** — Structural enforcement requires a protocol stack: capture (error-capture) → verify (subagent-verifier) → enforce (hivemind-verification-guard). A single SQL query is necessary but insufficient; the protocol ensures verification happens automatically, not manually.
+> **`L3-VerifyPhysicalBitstreamBeforeCryptoDebugging`**  
+> Before diagnosing cryptographic signature failures (bad signature, verification error, access denied), verify the SHA-256 and magic headers of the physical block on disk. A cryptographic verifier will always report corrupt noise as an invalid signature. Verify the physics before debugging the cryptography.
 
-> **L3-AgentDialogueProducesTempleGrade** — Structured agent-to-agent refinement (Roc implementation ↔ Kali architecture) with explicit Q&A rounds resolves edge cases that solo design misses. The dialogue IS the design review.
+> **`L3-BewareTheSpeedOfLightAnomalyInStorage`**  
+> If a storage device reports transfer speeds exceeding its physical bus bandwidth, you are writing to RAM buffer or a detached phantom file. It is not real until physical fsync flushes to NAND. Always verify target block device existence and physical write duration before assuming completion.
 
-> **L3-SilentFailuresAreTheRealEnemy** — A tool reporting "completed" while its output contains "504 Gateway Timeout" is a silent failure. Verification must scan outputs for failure patterns, not trust status fields. The DB preserves the evidence; the verifier exposes it.
+> **`L3-ReusingVendorBootchainsBeatsHandRolledConfigs`**  
+> Distro release ISOs contain self-consistent, battle-tested bootchains with auto-locating embedded logic. When adapting an ISO for incompatible firmware, isolate and swap ONLY the rejected signature layer (the shim), leaving the vendor GRUB binary and configuration untouched. Never rebuild what the vendor already solved.
 
-> **L3-EntityRulesConfigOverCode** — Completion criteria vary by entity (Kali=decision, Ma'at=tests, Researcher=report). Encoding rules in a hot-reloadable YAML config (not code) lets entity owners tune without deployments. Code provides defaults; config provides overrides.
-
-> **L3-EventDrivenBeatsPolling** — SQLite trigger on session finish → event table → consumer = immediate verification with zero polling overhead. The DB already has the event infrastructure; use it.
-
-> **L3-TokenTTLMustMatchWorkflow** — EIS sessions span hours (TTL=1-2hr), NES tasks complete in minutes (TTL=5min). Fixed TTL breaks workflows. Per-entity TTL in config respects operational reality.
-
-> **L3-AutoInvalidateOnResume** — A verified session that gets updated (resumed) must invalidate its token. Detection: session.time_updated > token.verified_at. Action: mark token invalidated, re-verify on next completion.
-
-> **L3-HotReloadConfigNotCode** — Entity rules, TTL, failure patterns = config (hot-reloadable). Verification SQL, core logic = code (restart required). The boundary is: "does this change require a deployment?"
+> **`L3-OEMSecureBootTrustStoresVaryByVendor`**  
+> Never assume OEM UEFI firmware includes the generic Microsoft 3rd-party UEFI CA. Enterprise and certified hardware frequently whitelist Canonical or internal roots directly while blocking generic shims. Maintaining dual-signed boot artifacts is mandatory for sovereign multi-node fleet provisioning.
 
 ---
 
-### Hivemind Decisions (From This Session)
+### Key Decisions Locked (This Session)
 
-- **D-300**: Subagent-verifier skill specification complete — 3-skill ecosystem (error-capture, subagent-verifier, hivemind-verification-guard) with event-driven architecture
-- **D-301**: Verification SQL finalized — handles all finish reasons, archived sessions, silent failures (504/timeout), genealogy validation
-- **D-302**: Entity rules config template created — per-entity TTL, required_outputs, success_indicators, failure_patterns
-- **D-303**: Migration + trigger SQL provided to Kali — ALTER TABLE task_registry + SQLite trigger for session.finished.verification_needed
-- **D-304**: Retroactive audit ordered — build v1.0 first, then audit with v1.0, output CSV + JSONL
-- **D-305**: Failure handling protocol — self-correct (2 retries) → human escalation with verification_token evidence
-
----
-
-## Open Threads (Post-Compaction)
-
-1. **Kali executes migration + trigger** — ALTER TABLE + SQLite trigger on omega_hub.db
-2. **Entity owners populate rules** — 24hr deadline for Kali, Ma'at, Researcher, Roc, Lilith sections
-3. **Roc scaffolds 3 skills** — error-capture, subagent-verifier, hivemind-verification-guard
-4. **Deploy v1.0 to omega-hub** — with watcher background task
-5. **Run retroactive audit** — with deployed v1.0, output CSV + JSONL
-6. **Hivemind guard integration** — intercept completion claims, require verification_token
-
----
-
-## Key Findings
-
-1. **The subagent-verifier spec is temple-grade complete** — 5 rounds of refinement, all decisions locked, implementation-ready.
-
-2. **3-skill dependency chain** — error-capture (infrastructure) → subagent-verifier (core) → hivemind-verification-guard (enforcement) — each independently testable.
-
-3. **Event-driven verification** — SQLite trigger → event table → omega-hub consumer = zero polling, immediate verification on session finish.
-
-4. **Per-entity TTL + rules** — Config-driven, hot-reloadable, with code defaults. Respects EIS vs NES workflow differences.
-
-5. **Silent failure detection** — Scans tool outputs for 504/timeout/connection_refused even when state.status = "completed".
-
-6. **Token security** — Parent session binding, nonce, TTL, auto-invalidation on session resume.
+- **D-411**: Third-party heritage registry moved to `../third-party/` (660MB outside repo).
+- **D-412**: Hardware inventory established as permanent asset (`hardware_inventory.md`).
+- **D-413**: DHAL architectural specification written to `docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md`.
+- **D-414**: Node-local hardware profile decoupled from git (`config/hardware_profile.yaml` in `.gitignore`).
+- **D-415**: DHAL Phase 1 bare-metal detection verified (`scripts/detect_hardware_profile.py`).
+- **D-416**: Compaction state synchronized across gnosis, lessons, and Hivemind.
+- **D-417**: DHAL Phase 2 completed (`cpu_optimizer.py` strategy pattern, backward compatible).
+- **D-418**: DHAL Phase 3 completed (`hardware_detector.py` dynamic Council linking, `LOCAL_32GB_DUAL` + `BATCH_8`).
+- **D-419**: DHAL Phase 3 remediation (enforced `channels >= 2` for 32GB profile, reconciled threshold to 32000).
+- **D-420**: Hardware expert failure remediated (`PL-ROC-HARDWARE-EXPERT-FAILURE-001`).
+- **D-421**: dd methodology validated for GPT embedded ESP.
+- **D-422**: Researcher paged for 8-gap provisioning analysis.
+- **D-423**: dd methodology confirmed valid for modern ISOs.
+- **D-424**: Ventoy disqualified for ASUS ExpertBook P1 (lacks MS UEFI CA in firmware).
+- **D-425**: Boot key corrected (Esc = boot menu, F2 = BIOS setup).
+- **D-426**: AVX-VNNI confirmed on both P-cores and E-cores (Gracemont 256-bit).
+- **D-427**: Ubuntu 26.04 installer GRUB behavior documented.
+- **D-428**: Post-install shim copy not needed (installed GRUB is Canonical-signed).
+- **D-429**: TPM2+LUKS2 auto-unlock via Clevis + tss-user hook documented.
+- **D-430**: RTL8852BE Wi-Fi suspend fix documented.
+- **D-431**: Ventoy architectural incompatibility confirmed.
+- **D-432**: 2230 NVMe Slot 2 copper foil heatsink mandatory.
+- **D-433**: DHAL validation schema verified.
+- **D-434**: Forensic discovery of unwritten flash payload at byte offset `5,166,469,120` causing `bad shim lock signature`.
+- **D-435**: Canonical native ISO GRUB preserved on ESP; only `bootx64.efi` replaced with dual-signed shim. Bit-for-bit SHA-256 verified.
 
 ---
 
-## Continuity Anchors
-
-- **Primary specification**: This chat session (delivered to chat, recorded in OpenCode DB)
-- **Kali's integration session**: ses_fdef2be4effe4pAaLXCTUx62GO
-- **Migration SQL**: Provided in Round 4 response
-- **Entity rules template**: Provided in Round 4 response
-- **Error capture event types**: 6 types defined in Round 5
-- **Test strategy**: 3-layer pyramid (unit/integration/E2E) specified
-
----
-
-## Compaction Readiness Checklist
-
-- [x] Subagent-verifier specification complete (5 rounds)
-- [x] All integration decisions locked (D-300 through D-305)
-- [x] Migration + trigger SQL provided to Kali
-- [x] Entity rules config template provided
-- [x] Error capture v1 event types defined
-- [x] Session gnosis updated with this session summary (this file)
-- [x] Proposed lessons updated with L1→L2→L3 distillation (to be written)
-- [x] Projection.md updated with current state (to be written)
-- [x] Hivemind checkin ready for posting
+#### Act 3: Node 1 Online — Fleet Expansion Complete
+1. **Node 1 Boot & Install**: ASUS ExpertBook P1 booted from verified USB, Ubuntu 26.04.1 LTS installed to internal 512GB NVMe with Secure Boot fully enabled. No BIOS modifications required.
+2. **OpenCode Operational**: OpenCode installed and running on Node 1 immediately post-install. Sovereign local-first inference stack initializing.
+5. **Ollama + Docker Initialization**: Local inference stack (Ollama) and container runtime (Docker) being provisioned on Node 1.
+6. **Fleet Expansion**: DHAL fleet expanded from single-node (Node 0: AMD Zen 2) to dual-node heterogeneous fleet:
+   - **Node 0**: AMD Ryzen 7 5700U (Zen 2, 8C/16T symmetric, DDR4-3200, 16GB, Radeon Vega 8)
+   - **Node 1**: Intel Core i7-13620H (Raptor Lake-H, 6P+4E cores, DDR5-5200, 16GB, Iris Xe 64EU)
+6. **Next DHAL Step**: Run `make probe-hardware` on Node 1 to generate `config/hardware_profile.yaml`, validate Council dynamic linking across heterogeneous fleet, and validate AVX-VNNI acceleration on Raptor Lake-H.
 
 ---
 
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_subagent_verifier_refinement ⬡ COMPACTION-READY*
+### L2: Insight — What This Means (Extended)
+
+5. **Heterogeneous Fleet Is the Natural State of Sovereign Compute**:
+   No single hardware profile dominates. The DHAL architecture was designed precisely for this: asymmetric CPU topologies, varying memory bandwidths, and different GPU capabilities across nodes. The polymorphic CPU optimizer strategy pattern (Zen2Optimizer vs RaptorLakeOptimizer) enables the Council to dynamically route workloads to the optimal node based on real-time hardware capability.
+
+6. **Secure Boot Is Not an Obstacle — It's a Trust Boundary**:
+   The ASUS ExpertBook's restrictive UEFI db (Canonical + Microsoft PCA only, no MS UEFI CA) forced the dual-signed shim solution. This is not a workaround; it's the correct sovereign pattern: maintain cryptographic artifacts that satisfy the most restrictive trust stores in your fleet, enabling deployment anywhere without security compromise.
+
+---
+
+### Key Decisions Locked (This Session) — Extended
+
+- **D-436**: Node 1 (ASUS ExpertBook P1) successfully provisioned and joined the DHAL fleet. Ubuntu 26.04.1 LTS installed with Secure Boot enabled. OpenCode operational. Ollama/Docker setup initiated.
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ google/gemini-3.8-flash ⬡ opencode ⬡ trc_fleet_expansion ⬡ COMPACTION-READY*

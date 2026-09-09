@@ -207,8 +207,69 @@ proposals:
   next_action: "Hand off to Kali for review. The 5 deliverables are all mechanically\
     \ verifiable and the test suite is green. No spec rewrites needed \u2014 the specs\
     \ are correct; the gaps were integration artifacts.\n"
+- lesson_id: L-CARMACK-2026-0907-ARCHANGEL-VET
+  title: Archangel Architecture Vet — Theater, Cargo Cult, and Premature Optimization Detection
+  confidence: 9.0
+  category: architectural_audit
+  summary: 'Vetted Archangel Architecture v1.6.1 (agent hardware awareness via System Envelope Injection). Found 3 theater/cargo-cult patterns, 2 premature optimizations, 4 implementation gaps. Architecture correctly solves Ontological Void but requires P0 fixes for temple-grade.'
+  key_findings:
+    - 'THEATER: CHANGELOG claims "Mathematical contradiction penalty prevents hardware hallucinations" — no such mechanism exists. Envelope is plain text prepended to context; no attention-weight modification, no logit bias, no contradiction detection in inference pipeline.'
+    - 'CARGO CULT: NUMA detection on monolithic Ryzen 7 5700U (single-CCX, 8MB shared L3). Code assumes 2-NUMA topology, always returns 0. Pattern copied from multi-socket server code without hardware understanding.'
+    - 'THEATER: Default backend "AVX-512 VNNI" on AVX2-only hardware. Fallback used when ModelGateway fails, causing agents to receive envelope claiming capabilities the hardware physically cannot execute.'
+    - 'PREMATURE OPT: Dynamic write-tool threshold (2K-8K tokens) with 7 magic numbers (0.7, 0.5, 0.3, 0.25, 0.5, 0.75, 0.3) — no empirical basis cited, no telemetry logging threshold choice. On 5700U with 16GB+zswap, pressure rarely exceeds 0.3; base 8K is fine.'
+    - 'PREMATURE OPT: Sync ModelGateway calls in dispatch hot path without caching. Same agent dispatched multiple times = repeated config reads/health checks. Broad `except Exception` masks real errors.'
+    - 'IMPL GAP: `RuntimeHardwareRegister.is_stale()` method exists but never called. TTL=30s documented but not enforced; agents could reason with stale hardware data.'
+    - 'IMPL GAP: `process_rss_mb` always 0 in envelope — key missing from HardwareMonitor.get_memory_status(). Misleading "PROCESS WORKING SET (RSS): 0 MB".'
+    - 'IMPL GAP: TaskType mismatch — "forensic" in M33Probe but not in TaskType Literal (dead branch); "mine" in TaskType but not in M33Probe (missing branch).'
+    - 'IMPL GAP: HardwareMonitor singleton not thread-safe — global init without lock in concurrent dispatch scenarios.'
+  anti_patterns_avoided:
+    - Marketing language in CHANGELOG not backed by implementation ("hallucination basin crushed")
+    - Cargo-cult NUMA detection on monolithic APU
+    - Hardcoded hardware capability lies in fallback paths
+    - Premature optimization without measurement (dynamic threshold, hot-path caching)
+    - Silent TTL expiration without enforcement
+  research_sources:
+    - title: Archangel Architecture Vet Report
+      date: '2026-09-07'
+      url: data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+    - title: HardwareMonitor Implementation
+      date: '2026-09-07'
+      url: src/omega/monitoring/__init__.py
+    - title: Ryzen 7 5700U Topology (single-CCX)
+      date: '2026-09-07'
+      url: src/omega/monitoring/__init__.py:190-193
+  sovereign_mandates_engaged:
+    - M1 AnyIO
+    - M7 Local-First
+    - M13 Temple-Grade
+    - M23 Failure Integrity
+  architectural_decisions:
+    - id: D-CARMACK-ARCHANGEL-1
+      decision: Remove theater claims from CHANGELOG; replace with "Prompt-level hardware grounding via immutable system envelope"
+      rationale: Honest documentation prevents cargo-cult adoption of claimed mechanisms
+    - id: D-CARMACK-ARCHANGEL-2
+      decision: Remove NUMA detection; hardcode assigned_numa_node=0 with hardware comment
+      rationale: Ryzen 7 5700U is monolithic single-CCX; no NUMA topology exists
+    - id: D-CARMACK-ARCHANGEL-3
+      decision: Fix default backend string — detect actual ISA or use "AVX2/FMA3" for 5700U
+      rationale: Fallback must not hallucinate capabilities the hardware lacks
+    - id: D-CARMACK-ARCHANGEL-4
+      decision: Add process_rss_mb to HardwareMonitor.get_memory_status()
+      rationale: Envelope field currently always 0; misleading for agents
+    - id: D-CARMACK-ARCHANGEL-5
+      decision: Defer dynamic threshold complexity; add telemetry first, measure 30 days
+      rationale: Right Approximation — base 8K threshold works; complexity without evidence is waste
+    - id: D-CARMACK-ARCHANGEL-6
+      decision: Cache ModelGateway resolution per entity with TTL; move out of hot path
+      rationale: Same agent dispatched repeatedly = repeated I/O; cache with 60s TTL
+  files_delivered:
+    - data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+  estimated_implementation_effort_hours: 2
+  blockages: []
+  next_action: 'Apply 4 P0 fixes (CHANGELOG, NUMA, backend string, process_rss_mb) — ~2h total. Then re-vet for temple-grade.'
+
 metadata:
   entity: john_carmack
-  session_id: ses_fa2f60db7ffezy8EMncRRBufus
+  session_id: ses_fc8dca39effe3nZJp3QHx81Fy3
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T20:53:29.875684+00:00'
+  last_session_end: '2026-09-07T20:15:00.000000+00:00'
