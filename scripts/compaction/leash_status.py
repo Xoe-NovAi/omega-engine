@@ -71,16 +71,7 @@ def main() -> int:
             if hook not in src:
                 problems.append(f"PLUGIN REGRESSED — hook {hook} gone (1: degraded)")
         print(f"  source    : OK (export + hooks present)")
-        # Version marker for event-kind expectations
-        try:
-            _ = json.loads(
-                src[src.index("const STATE_DIR") : src.index("function ts()")]
-                .split(";")[0]
-                .replace("path.join(HOME, '.config/opencode', 'plugins', 'state')", "null")
-            )
-        except Exception:
-            pass
-        # Simplest check: did the source get the v2 event logging?
+        # Version marker: did the source get the v2 event logging?
         print(("  v2 logging: OK (session.compacting logged)" if "session.compacting" in src
                else "  v2 logging: MISSING — session.compacting not logged (1: degraded)"))
         if "session.compacting" not in src:
