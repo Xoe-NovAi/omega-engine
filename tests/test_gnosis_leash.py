@@ -47,7 +47,10 @@ class TestPluginContract(unittest.TestCase):
         evt = json.loads(lines[0])
         self.assertIn("ts", evt)
         self.assertIn("kind", evt)
-        self.assertIn(evt["kind"], {"session.created", "session.idle", "session.compacted"})
+        self.assertIn(
+            evt["kind"],
+            {"session.created", "session.idle", "session.compacted", "session.compacting"},
+        )
 
 
 if __name__ == "__main__":
