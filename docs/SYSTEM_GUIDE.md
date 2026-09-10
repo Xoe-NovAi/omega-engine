@@ -315,16 +315,26 @@ turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2 > thermals.log
 | 2026-09-08 | Initial deep research + config | HARDWARE.md, BENCHMARKS.md, SYSTEM_GUIDE.md created; Ollama KV q8_0 + flash-attn applied; MAX_LOADED_MODELS=1; OWUI pinned v0.11.3; cold backup taken | Bench: 13.4 t/s, 3.2 GB resident, 9.2 GiB avail |
 | 2026-09-08 | Exa research integration | MCP servers configured (websearch=Exa, context7, grep_app); BIOS/PL1/PL2/zram/THP deep research completed | Pending: THP/ZRAM apply, OWUI keep-alive UI, thermal bench |
 | 2026-09-09 | Gnosis Lock Protocol v1.0 | 8-step ritual + evolution log + identity + hooks-handler built & tested; **hooks confirmed UNSUPPORTED in OpenCode v1.18**; **no CLI compaction exists — `/compact` is TUI-only**; shipped `~/.bash_aliases` (`gnosis-lock`, `gnosis-stats`, `oc` alias) + Makefile targets (`gnosis-lock`, `gnosis-stats`) + `docs/GNOSIS_USAGE.md`; dead `hooks` config and fake `oc compact`/`compact-gnosis` removed | Verified: ritual 8/8, funcs load in interactive shell, make targets run |
+| 2026-09-09 | **Review fixes P0+P1** (system audit) | `git init` (git_state captures real data); ritual **Step 4 system_state rebuilt in Python + JSON-validated**, **new Step 9 logs SESSION_END** → ritual now **9-step**; `scripts/backup_harness.sh` + daily cron; instruction-stack de-dup (HARDWARE loaded once per project); SSOT sync (`api.exa.ai`, Big Pickle 1M block in HARDWARE/AGENTS); gnosis docs consolidated (STATE_FORMAT → Protocol Appendix A, OPENCODE_HOOKS → stub) | Verified: SESSION_END in stats (2→3 events), backup secret-clean, cron installed, 2 git commits |
+| 2026-09-10 | **Federation LIVE — first contact** | omega-hub at `192.168.10.168:8016` connected from ASUS; full probe pass: HP stats, 28 entities, 10 GGUF models, hivemind history; **first-contact handoff completed by roc_racoon**; sovereignty ratio measured (21.6% local); outside-consultant report shipped (`11_CONSULTANT_REPORT.md` — 8 flaws incl. sovereignty contradiction, 45 stale handoffs, broken tool surfaces); comms contract v0.9 (`12_COMMUNICATION_PROTOCOLS.md`); client tool curation config; USB packet updated (identity 17) | Verified: probe battery all live; packet 14 docs/161 files; secrets clean |
 
 ---
 
 ## 13. NEXT ACTIONS (Immediate)
 
-1. **Apply THP madvise** (runtime + grub)
-2. **Deploy ZRAM 8GB zstd** (systemd service + sysctl)
-3. **Set OWUI Keep Alive = -1** per model (UI manual step)
-4. **Run 10-min thermal bench** with turbostat logging
-5. **Verify BIOS settings** on next reboot
+Status verified 2026-09-10:
+- ✅ **THP madvise — runtime applied** (`[madvise]` live). grub persistence pending confirm on next reboot.
+- ⏳ **ZRAM 8GB zstd — NOT deployed** (zramctl empty). Still highest-priority RAM safety item.
+- ⏳ **OWUI Keep Alive = -1** per model (UI manual step) — still pending.
+- ⏳ **10-min thermal bench** with turbostat logging — still pending.
+- ⏳ **BIOS settings verify** — still pending (next reboot).
+
+New priority queue (federation era):
+6. **HP response awaited** — `RESPONSE_FROM_HP.md` (F1–F7 in `10_ACTIONS_FOR_HP.md`); then ratify `12_COMMUNICATION_PROTOCOLS.md` with the council
+7. **Apply client-side tool curation** on next session start (`ASUS-build-curated-tools.json` → `opencode.json` `tools` block) — cuts ~90 → ~50 hub tools
+8. **Fix/flag the 3 broken hub surfaces** (HP-side, C1): `oracle_list_pillar_keepers`, library gemma_768 default, continuation lookup
+9. **Sovereignty policy write-up** (per consultant S1/C4) — set per-task-class local/cloud targets; ASUS is 100% local exemplar
+10. **Package refresh cadence** — after every meaningful session, re-sync USB packet evidence (identity/evolution/sessions)
 
 ---
 
