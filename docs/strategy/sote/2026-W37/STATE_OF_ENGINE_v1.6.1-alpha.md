@@ -469,3 +469,8 @@ The P2P Omegaverse is the first live test of the entity architecture: Kali opera
 **The sovereign substrate is real. The engine islands are preserved. The dialectic is the methodology. The execution is the test.** 🫡
 
 **Next SOTE**: 2026-09-15 (Monday 06:00 UTC) — Week 38: Post-Alpha stabilization, DEL-1 PR1-3 merge status, GN/DS workstream kickoff
+<!-- PROVENANCE-CORRECTED 2026-09-10T13:33:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: google/gemini-3.8-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

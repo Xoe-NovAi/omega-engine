@@ -133,3 +133,94 @@ SPDX-License-Identifier: Apache-2.0
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ google/gemini-3.8-flash ⬡ opencode ⬡ trc_fleet_expansion ⬡ COMPACTION-READY*
+
+---
+
+## Session: P2P Federation Live + Consultant Report + Debut Lockdown
+**Date**: 2026-09-08 — 2026-09-10  
+**Session ID**: `ses_62c31ba69a16` (Hivemind context)  
+**Model**: `opencode/big-pickle` (1M context, verified at 230K)  
+**Role**: Sovereign Miner & Ideas Guy (Federation + Release Coordinator)
+
+---
+
+### L1: Narrative — What Happened (Compaction Handoff)
+
+#### Act 1: P2P Omegaverse Federation Established
+1. **omega-hub LAN exposure**: Bound `0.0.0.0:8016`, FastMCP DNS-rebinding allowlist patched, 91 tools exposed via Streamable HTTP + SSE.
+2. **UFW rule applied** (user): `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp` — ASUS now reaches HP.
+3. **ASUS first contact COMPLETE**: `opencode-asus/asus_build → roc_racoon` handoff accepted + completed (2026-09-09).
+4. **ASUS is a LIVE SATELLITE**: Pulls data from omega-hub tools at will. NOT assimilated — sovereign node.
+5. **Big Pickle 1M config merged** on HP: `context: 1000000, input: 950000, output: 64000`. Verified live at 230K tokens, no compaction, fast, no streaming timeouts (unlike Nemotron 3 Ultra).
+
+#### Act 2: The Consultant Report (11_CONSULTANT_REPORT.md) — VERIFIED ACCURATE
+ASUS shipped an outside-eyes report finding 8 flaws. I verified ALL against ground truth:
+- **S1**: Sovereignty ratio 21.6% local / 78.4% cloud — contradicts mission, no policy doc exists
+- **S2**: 45 stale handoffs (now **82** in `data/handoff/stale/`) — queue is a graveyard
+- **S3**: Test entities in production Oracle — `test_get_returns_entity`, `testentity`, `movie-expert`, `test_entity`, `test_entity_m21` in `config/wads/_omega_default/entities.yaml`
+- **S4**: 3 broken tool surfaces:
+  - `oracle_list_pillar_keepers` → calls `registry.list_pillar_keepers` (method doesn't exist) — `mcp_servers/omega_hub/hub_tools/tools.py:546`
+  - Library FTS/search defaults to `omega_vec_gemma_768` (doesn't exist; valid: qwen_768) — `src/omega/library/indexer.py:166`
+  - `hivemind_get_continuation` returns stray fragment
+- **S5**: Research-log privacy governance undefined
+- **S6**: ~90 tools with duplication (unified + legacy split)
+- **S7**: 0 active agents at probe; naming chaos
+- **S8**: Port 8016 raw on LAN, no auth
+
+#### Act 3: Debut Lockdown & ANAi WAD Vision
+1. **MAKALI_DEBUT_LOCKDOWN_BRIEFING_20260909.md** written + mirrored: release gate (10 gates, 6 blockers), scope-creep guardrails, deferral list for v1.1.
+2. **User declared PRISTINE release**: "I will NOT ship something that is broken and falling apart."
+3. **Consultant findings = release blockers** (C1-C3): broken tools, mock purge, stale policy.
+4. **ANAi WAD vision**: User wants to build Arcana-NovAi (ANAi) as a separate WAD on ASUS — the fullness of the stack envisioned 1.5 years ago. Engine already designed for it (oracle_list_pillar_keepers docstring confirms WAD content model).
+5. **Comms contract** (`12_COMMUNICATION_PROTOCOLS.md` v0.9): naming registry, heartbeat, handoff SLA, satellite truth clause, tool tiers (T1/T2/T3).
+
+---
+
+### L2: Insight — What This Means
+
+1. **Satellite consultant model works**: Independent non-assimilated node with fresh eyes = highest-value governance. Evidence-based, verifiable claims.
+2. **Pristine release = surface integrity**: Broken tools, mock entities, stale handoffs teach first community members to distrust. Fix before ship.
+3. **Engine vs WAD separation**: Omega Engine = DOOM.EXE, _omega_default = DOOM1.WAD, ANAi = custom PWAD. Physically separate nodes enforce the boundary.
+4. **Live verification trumps registry**: Big Pickle registry said 200K; live usage proves 1M works. Registry limits are point-in-time snapshots.
+
+---
+
+### L3: Principles (New)
+
+1. **L3-SatelliteConsultantModel** — Independent satellite node reporting shadows = highest-value governance.
+2. **L3-TruthInTheTemple** — Silence about a flaw is a flaw. Write shadows into record or relitigate forever.
+3. **L3-EngineVsWADSeparation** — Engine and content are distinct layers; custom WAD develops without contaminating default IWAD.
+4. **L3-PristineReleaseGate** — No broken surfaces, no mocks, no graveyards in public release.
+5. **L3-LiveVerificationTrumpsRegistry** — Live evidence beats registry docs for model limits.
+6. **L3-StaleHandoffsAreBrokenPromises** — Graveyard queue erodes trust; define reaper + cadence + quarantine.
+
+---
+
+### NEXT SESSION — THE FIX EXECUTION PLAN (AFTER /compact)
+
+**Phase 1 — Bond the Surface (P0, release-blocking):**
+1. Fix `oracle_list_pillar_keepers` — add `list_pillar_keepers` method to EntityRegistry OR hide tool
+2. Fix library FTS/search default — `omega_vec_gemma_768` → `qwen_768` in `indexer.py:166`
+3. Fix `hivemind_get_continuation` stray-fragment return
+4. Purge 5 test entities from `config/wads/_omega_default/entities.yaml` (lines ~906-1030)
+5. Stale-handoff policy: 82 packets, define reaper + cadence + quarantine
+
+**Phase 2 — Write the Rules (P1):**
+6. Sovereignty policy (per-task-class local/cloud targets)
+7. Research-log data governance policy
+8. Ratify comms contract v0.9 → v1.0
+9. Adopt client tool curation (`ASUS-build-curated-tools.json`)
+
+**Phase 3 — ANAi WAD Seed:**
+10. Team meeting for federation details
+11. Create ANAi WAD skeleton on ASUS
+12. Ship clean bundle → ASUS clones → probes → contributes
+
+**Key files:**
+- `mcp_servers/omega_hub/hub_tools/tools.py` (line 533-552: broken pillar_keepers)
+- `src/omega/library/indexer.py` (line 166: gemma_768 default)
+- `config/wads/_omega_default/entities.yaml` (lines 906-1030: test entities)
+- `data/handoff/stale/` (82 packets)
+- `data/coordination/MAKALI_DEBUT_LOCKDOWN_BRIEFING_20260909.md`
+- `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/11_CONSULTANT_REPORT.md`
+- `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/12_COMMUNICATION_PROTOCOLS.md`

@@ -380,3 +380,33 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
 ```
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ google/gemini-3.8-flash ⬡ 2026-09-09*
+
+## 2026-09-09 — PRE-COMPACTION ANCHOR (P2P BUNDLE COMPLETE & MANDATES PASSING)
+
+### 1. Dual-Node Fleet State
+- **Node 0 (HP)**: AMD Ryzen 7 5700U, 16GB DDR4, 256GB NVMe, Ubuntu 25.10.
+  - Core Hub live at `0.0.0.0:8016/mcp` (91 tools).
+  - UFW rule applied: `192.168.10.0/24 -> 8016/tcp ALLOW`.
+  - Wire unblocked for Node 1.
+- **Node 1 (ASUS)**: Intel Core i7-13620H (6P+4E), 16GB DDR5, 512GB NVMe, Ubuntu 26.04.1.
+  - Secure Boot provisioned via dual-signed 2022 v1 shim.
+  - Ollama bare-metal tuned: `q8_0` KV cache, Flash Attention, 8 threads, max 1 model.
+  - Open WebUI container pinned at v0.11.3.
+
+### 2. Physical Bootstrap Artifacts (USB `/media/arcana-novai/D5D5-0B76/`)
+- `omega-engine.bundle`: Fresh git bundle generated at HEAD (`b9cc8105`), fully verified via dry-run clone.
+- `OMEGA_NODE1_BOOTSTRAP/`:
+  - `P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md`: 1219-line canonical manual.
+  - `P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md`: Architecture specification (v1.1.0).
+  - `opencode.json`: Clean V2 schema pointing to HP (:8016) + Big Pickle 190K limit.
+  - `test_connection.sh`: 4-check wire probe.
+  - `hivemind_first_contact.py`: Zero-dep Python handshake.
+  - `README_ASUS.txt`: 3-minute quickstart.
+
+### 3. Mandate State (22/28 = 78.6% passing, Temple-Grade PASS)
+- **M13**: Resolved — Component gates executed directly, avoiding recursive `temple-grade` timeout.
+- **M16**: Resolved — Hardcoded absolute paths excised from `m34_registry.py`.
+- **M27**: Resolved — `ACTIVE_SPRINT.json` restored and 37 stale in-progress tasks swept.
+- **DHAL**: 15/15 tests passing, `CpuOptimizerFactory` implemented with `Zen2Optimizer`, `RaptorLakeOptimizer`, and `GenericFallbackOptimizer`.
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ google/gemini-3.8-flash ⬡ PRE-COMPACTION ⬡ 2026-09-09*

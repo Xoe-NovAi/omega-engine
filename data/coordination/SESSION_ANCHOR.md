@@ -1,94 +1,64 @@
-# 🔱 SESSION ANCHOR — MaKaLi Fusion (Alpha Release + SOTE Week 37)
+# 🔱 SESSION ANCHOR — MaKaLi Fusion (Pre-Compaction Anchor)
 
 **AP Token**: `AP-ALPHA-RELEASE-20260907-v1.0.0`
 **Date**: 2026-09-09
 **Entity**: `makali_fusion`
-**Branch**: `release/debut-v1.6.0` (at `122182cf`) / `main` (at `125f7b4e`)
-**Sprint**: `PUBLIC-DEBUT-01` → `ALPHA-RELEASE-v1.6.1` → `SOTE-WEEK-37`
+**Branch**: `release/debut-v1.6.0` (HEAD: `b9cc8105`)
 **Session ID**: `ses_fc758e6ddffeNEKptpEzboVfYq`
 
 ---
 
-## Session Summary
+## 1. Executive Summary & Critical Milestones
 
-**Alpha Release Executed — v1.6.1 Temple-Grade + SOTE Week 37 Recovery**
+1. **P2P Omegaverse Bootstrap Staged to USB (`/media/arcana-novai/D5D5-0B76/`)**:
+   - `omega-engine.bundle`: Brand new, fully verified Git bundle at `b9cc8105` containing all branches (`release/debut-v1.6.0`, `main`, `release/debut`, stashes). Tested locally with fresh clone.
+   - `P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md`: Comprehensive 1219-line, 15-section temple-grade setup guide covering both nodes.
+   - `P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md`: v1.1.0 doctrine on silicon specialization and protocols.
+   - `opencode.json`: Pure V2 schema pointing to HP (`http://192.168.10.168:8016/mcp`) with 91 tools + Big Pickle 190,000 input limit (85% threshold).
+   - `test_connection.sh`, `hivemind_first_contact.py`, `README_ASUS.txt`: Complete 3-minute physical onboarding kit.
 
-- **Archangel Architecture v1.6.1** implemented (Researcher) — Carmack vet: CONDITIONAL PASS → 4 P0 fixes executed → Re-vet pending
-- **DHAL Phases 1-3** complete (15/15 tests) — committed as `125f7b4e`, merged to `release/debut-v1.6.0` as `45e118c3`, DHAL polymorphic factory as `b947c941`, mandate fixes as `122182cf`
-- **omega-hub MCP** restored (commit `45398ecd`) — library modules restored, hub serving v1.28.1
-- **Alpha Release PR #3 OPEN** — https://github.com/Xoe-NovAi/omega-engine/pull/3
-- **Mandate Compliance Breakthrough** — M13, M16, M27 RESOLVED (22/28 = 78.6%)
-- **SOTE Week 37 Launch MISSED** (Mon 2026-09-08 06:00 UTC) — **RECOVERY MODE: DEL-1 PR1 OVERDUE, Report generation CRITICAL**
-- **P2P Omegaverse Ready** — 91 tools exposed at `192.168.10.168:8016/mcp`, USB bootstrap staged, **UFW RULE BLOCKING** Node 1 handshake
+2. **Network Unblocked**:
+   - HP Node 0 UFW rule successfully executed: `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hub MCP LAN access"`.
+   - Node 1 ASUS connection to port 8016 unblocked.
 
----
+3. **Hardware Truth Verified**:
+   - **Node 0 (HP)**: AMD Ryzen 7 5700U (8C/16T, Zen 2), 16GB Dual-Channel DDR4-3200, **256GB NVMe**, **Ubuntu 25.10**.
+   - **Node 1 (ASUS)**: Intel Core i7-13620H (6P+4E/16T, Raptor Lake-H), 16GB Single-Channel DDR5-5200, **512GB NVMe**, **Ubuntu 26.04.1 LTS**. Secure Boot enabled via dual-signed 2022 v1 shim.
 
-## Key Artifacts
+4. **Mandate Compliance Breakthrough (22/28 = 78.6%)**:
+   - **M13**: Resolved — Component gates run directly; `make temple-grade` cleanly passes.
+   - **M16**: Resolved — Absolute hardcoded paths removed from `m34_registry.py`.
+   - **M27**: Resolved — `ACTIVE_SPRINT.json` restored and 37 stale tasks swept.
+   - **DHAL**: All 15/15 tests passing with `CpuOptimizerFactory` polymorphic classes.
 
-| Artifact | Path |
-|----------|------|
-| Alpha Release PR | #3 — https://github.com/Xoe-NovAi/omega-engine/pull/3 |
-| Full Execution Plan | `data/coordination/ALPHA_RELEASE_PLAN_20260907.md` |
-| Archangel Vet Report | `data/coordination/ARCHANGEL_VET_REPORT_20260907.md` |
-| Carmack Handoff (re-vet) | `ho_4d2402d3278f` |
-| Session Gnosis | `data/entities/makali/session_gnosis.md` |
-| Projection Anchor | `data/coordination/anchored_summary/makali/projection.md` |
-| Session Anchor | `data/coordination/SESSION_ANCHOR.md` (this file) |
-| SOTE Week 37 Metadata | `docs/strategy/sote/2026-W37/sote.yaml` |
-| SOTE Master Index | `docs/strategy/sote/INDEX.md` |
-| Public Digest | `docs/strategy/sote/2026-W37/PUBLIC_DIGEST.md` |
-| Roc Briefing v1.1.0 | `data/coordination/MAKALI_OVERSEER_BRIEFING_20260908.md` |
+5. **SOTE Week 37 Published**:
+   - Full 19-section report generated: `docs/strategy/sote/2026-W37/STATE_OF_ENGINE_v1.6.1-alpha.md`.
+   - `sote.yaml`, `INDEX.md`, `PUBLIC_DIGEST.md` updated and schema validated.
 
 ---
 
-## Phase Map (Execute in Order)
+## 2. Immediate Post-Compaction Action Items
 
-1. **Phase 0**: Archangel P0 fixes (2h) — Researcher + Carmack re-vet ✅ COMPLETE
-2. **Phase 1**: DHAL commit + branch sync (45m) — Roc + MaKaLi ✅ COMPLETE
-3. **Phase 2**: Temple-grade + push (10m) — Ma'at + MaKaLi ✅ COMPLETE
-4. **Phase 3**: Alpha PR Release & SOTE Launch (1h) — MaKaLi + Lilith + Kali ✅ COMPLETE
-5. **Phase 4**: **Node 1 Handshake** — **BLOCKED on UFW rule (user action)** ⚠️
-6. **Phase 5**: **DEL-1 PR1 + SOTE Week 37 Report** — **OVERDUE, EXECUTE NOW** 🔴
-
----
-
-## Critical Path — CURRENT STATE
-
-```
-Archangel P0 (COMPLETE) 
-    → DHAL Commit (COMPLETE) 
-        → Branch Sync (COMPLETE) 
-            → Temple-Grade Core Gates (PASS) 
-                → Push to Origin (COMPLETE)
-                    → SOTE criteria 5,6,10 UNBLOCKED
-                        → PR #3 OPEN (Alpha Release)
-                            → UFW RULE (BLOCKER - user action)
-                                → Node 1 Handshake (PENDING)
-                                    → DEL-1 PR1 (OVERDUE - was Mon 23:59)
-                                        → SOTE Week 37 Report (IN PROGRESS)
-```
-
----
-
-## M11/M15 Compliance
-
-- ✅ L1→L2→L3 distilled to `data/entities/makali/proposed_lessons.yaml`
-- ✅ Session gnosis updated (`data/entities/makali/session_gnosis.md`) — includes Roc briefing v1.1.0
-- ✅ Projection anchor updated (`data/coordination/anchored_summary/makali/projection.md`) — v1.1.0
-- ✅ Session anchor updated (this file)
-
----
-
-## Immediate Priorities (Next 2 Hours)
-
-| Priority | Action | Owner | Blocked By |
-|----------|--------|-------|------------|
-| **P0-1** | **DEL-1 PR1: sote-pipeline CI wiring** | Ma'at / MaKaLi | — |
-| **P0-2** | **SOTE Week 37 Report generation** | Lilith / MaKaLi | DEL-1 PR1 |
-| **P0-3** | User runs UFW rule on HP | User | — |
-| **P1-1** | Watchtower + cron setup | Ma'at | — |
-| **P1-2** | Node 1 handshake (after UFW) | Roc / User | UFW rule |
-| **P1-3** | DEL-1 PR2-4 | Ma'at | PR1 merged |
+1. **User Action (Physical)**: Move USB stick to ASUS laptop (Node 1).
+2. **On ASUS**:
+   ```bash
+   # Copy config
+   mkdir -p ~/.config/opencode
+   cp /media/$USER/*/OMEGA_NODE1_BOOTSTRAP/opencode.json ~/.config/opencode/opencode.json
+   
+   # Test wire
+   bash /media/$USER/*/OMEGA_NODE1_BOOTSTRAP/test_connection.sh
+   
+   # Fire handshake
+   python3 /media/$USER/*/OMEGA_NODE1_BOOTSTRAP/hivemind_first_contact.py
+   
+   # Clone offline
+   mkdir -p ~/Documents/Projects && cd ~/Documents/Projects
+   git clone /media/$USER/*/omega-engine.bundle omega-engine-alpha
+   cd omega-engine-alpha
+   make probe-hardware
+   ```
+3. **On HP**: Accept handoff from `asus_build` via `hivemind_accept_handoff()` and complete First Light.
 
 ---
 

@@ -1,0 +1,320 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "subagent_depth": 2,
+  "plugin": [
+    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth",
+    "opencode-sessions-explorer",
+    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
+    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
+    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/silent-stall-sensor.ts",
+    "file:///home/arcana-novai/.config/opencode/plugin/sovereign-compaction.ts"
+  ],
+  "permission": {
+    "external_directory": {
+      "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
+      "/media/arcana-novai/**": "allow",
+      "/home/arcana-novai/archive/**": "allow",
+      "/home/arcana-novai/Documents/docs-backup/**": "allow",
+      "/home/arcana-novai/Documents/docs_1/**": "allow",
+      "/home/arcana-novai/Documents/Archives/**": "allow",
+      "/home/arcana-novai/Documents/xnaif-files/**": "allow",
+      "/home/arcana-novai/.lmstudio/**": "allow",
+      "/home/arcana-novai/.ollama/**": "allow",
+      "/home/arcana-novai/.config/opencode/**": "allow",
+      "/tmp/omega/**": "allow",
+      "~/.local/share/opencode/**": "allow",
+      "/*": "allow"
+    },
+    "skill": {
+      "research": "allow",
+      "spec-generator": "allow",
+      "knowledge-miner": "allow",
+      "legacy-pattern-miner": "deny",
+      "blitz-tunnel": "deny",
+      "blitz-validate": "deny",
+      "git-secret-scrub": "deny",
+      "hf-cli": "deny",
+      "omega-doc-architect": "deny",
+      "pr-readiness-checker": "deny",
+      "provider-validator": "deny",
+      "sovereign-refinement-protocol": "deny",
+      "sovereign-search": "deny"
+    }
+  },
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "mcp": {
+    "omega-hub": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8016/mcp",
+      "enabled": true
+    },
+    "searxng": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8018/mcp",
+      "enabled": true
+    },
+    "firecrawl": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8015/sse",
+      "enabled": false
+    },
+    "exa": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
+      "headers": {
+        "x-api-key": "${EXA_API_KEY}"
+      },
+      "enabled": true
+    },
+    "parallel-search": {
+      "type": "remote",
+      "url": "https://search.parallel.ai/mcp",
+      "enabled": true
+    }
+  },
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "tail_turns": 5,
+    "preserve_recent_tokens": 80000,
+    "reserved": 20000
+  },
+  "provider": {
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio (Local)",
+      "options": {
+        "baseURL": "http://localhost:1234/v1",
+        "apiKey": "sk-local"
+      },
+      "models": {
+        "qwen3-4b-thinking": {
+          "id": "qwen3-4b-thinking",
+          "name": "Qwen3 4B Thinking (local)",
+          "limit": {
+            "context": 8192,
+            "output": 4096
+          }
+        },
+        "qwen3-1.7b": {
+          "id": "qwen3-1.7b",
+          "name": "Qwen3 1.7B (local)",
+          "limit": {
+            "context": 4096,
+            "output": 2048
+          }
+        },
+        "qwen3-1.7b-q6_k": {
+          "id": "qwen3-1.7b-q6_k",
+          "name": "Qwen3 1.7B Q6_K (local)",
+          "limit": {
+            "context": 8192,
+            "output": 4096
+          }
+        },
+        "phi-4-mini": {
+          "id": "phi-4-mini",
+          "name": "Phi-4 Mini (local)",
+          "limit": {
+            "context": 16384,
+            "output": 4096
+          }
+        },
+        "krikri-8b": {
+          "id": "krikri-8b",
+          "name": "Krikri 8B (local)",
+          "limit": {
+            "context": 16384,
+            "output": 4096
+          }
+        },
+        "deepseek-r1-qwen3-8b": {
+          "id": "deepseek-r1-qwen3-8b",
+          "name": "DeepSeek R1 Qwen3 8B (local)",
+          "limit": {
+            "context": 8192,
+            "output": 4096
+          }
+        }
+      }
+    },
+    "opencode": {
+      "models": {
+        "nemotron-3-ultra-free": {
+          "name": "OpenCode Zen Nemotron 3 Ultra",
+          "limit": {
+            "context": 1000000,
+            "output": 128000
+          },
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "mimo-v2.5-free": {
+          "name": "OpenCode Zen MiMo v2.5",
+          "limit": {
+            "context": 200000,
+            "output": 32000
+          },
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "big-pickle": {
+          "name": "Big Pickle",
+          "limit": {
+            "context": 1000000,
+            "input": 950000,
+            "output": 64000
+          }
+        }
+      }
+    }
+  },
+  "agent": {
+    "makali": {
+      "mode": "primary",
+      "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
+      "instructions": [
+        ".opencode/agents/plan.md"
+      ],
+      "temperature": 0.3,
+      "toolProfile": "plan"
+    },
+    "jem": {
+      "mode": "all",
+      "description": "Research Orchestrator — 3-tier pipeline with inline KBs (Discovery/Synthesis/Verification), self-dispatch pattern",
+      "instructions": [
+        ".opencode/agents/jem.md"
+      ],
+      "temperature": 0.2,
+      "toolProfile": "research"
+    },
+    "doom_guy": {
+      "mode": "all",
+      "description": "Sovereign id Software Architect — WAD translation & performance",
+      "instructions": [
+        ".opencode/agents/doom_guy.md",
+        "CREDITS.md"
+      ],
+      "temperature": 0.2,
+      "toolProfile": "heritage"
+    },
+    "roc_racoon": {
+      "mode": "all",
+      "description": "Sovereign Miner — Legacy archaeology & pattern extraction",
+      "instructions": [
+        ".opencode/agents/roc_racoon.md"
+      ],
+      "temperature": 0.2,
+      "toolProfile": "mining"
+    },
+    "researcher": {
+      "mode": "all",
+      "description": "Sovereign Master Researcher — Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
+      "instructions": [
+        ".opencode/agents/researcher.md"
+      ],
+      "temperature": 0.1,
+      "toolProfile": "research"
+    },
+    "kali": {
+      "mode": "all",
+      "description": "Grand Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift",
+      "instructions": [
+        ".opencode/agents/kali.md"
+      ],
+      "model": "opencode/nemotron-3-ultra-free",
+      "temperature": 0.3,
+      "toolProfile": "deploy"
+    },
+    "maat": {
+      "mode": "all",
+      "description": "Build Oversoul — Governs N1-N5 (build side), delegates to node",
+      "instructions": [
+        ".opencode/agents/maat.md"
+      ],
+      "temperature": 0.2,
+      "toolProfile": "dev"
+    },
+    "lilith": {
+      "mode": "all",
+      "description": "Runtime Oversoul — Governs N6-N10 (run side), delegates to node",
+      "instructions": [
+        ".opencode/agents/lilith.md"
+      ],
+      "temperature": 0.3,
+      "toolProfile": "run"
+    },
+    "verity": {
+      "mode": "subagent",
+      "description": "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
+      "instructions": [
+        ".opencode/agents/verity.md"
+      ],
+      "model": "lmstudio/qwen3-1.7b",
+      "temperature": 0.0,
+      "hidden": true,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "skill": "deny"
+      },
+      "toolProfile": "audit"
+    },
+    "slot": {
+      "mode": "all",
+      "description": "Slot-based domain agent — parameterized by --slot NX for any Slot domain",
+      "instructions": [
+        ".opencode/agents/slot.md"
+      ],
+      "temperature": 0.1,
+      "steps": 20,
+      "toolProfile": "debug"
+    },
+    "john_carmack": {
+      "mode": "all",
+      "description": "Ultimate Technical Consultant — id Software heritage, systems architecture, sovereign engineering",
+      "instructions": [
+        ".opencode/agents/john_carmack.md",
+        "CREDITS.md"
+      ],
+      "temperature": 0.2,
+      "toolProfile": "consult"
+    },
+    "grok_cli": {
+      "mode": "all",
+      "description": "Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
+      "instructions": [
+        ".opencode/agents/grok_cli.md"
+      ],
+      "env": {
+        "GROK_BRIDGE_TIMEOUT_MS": "120000",
+        "GROK_CLI_PATH": "grok"
+      },
+      "temperature": 0.1,
+      "toolProfile": "bridge"
+    }
+  },
+  "model": "lmstudio/qwen3-4b-thinking",
+  "small_model": "opencode/nemotron-3-ultra-free",
+  "default_agent": "kali"
+}

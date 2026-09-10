@@ -596,8 +596,119 @@ proposals:
     (opencode, grokster, opencode-asus) prevents collision while ensuring visibility. L3-HandoffPacketCarriesFullContext -
     A handoff packet must carry task, context, and priority to enable asynchronous work on heterogeneous nodes without synchronous
     clarification rounds.
+- id: PL-ROC-SATELLITE-CONSULTANT-REPORT-001
+  date: '2026-09-10'
+  session_id: ses_62c31ba69a16
+  tags:
+  - satellite
+  - consultant
+  - outside-eyes
+  - federation
+  - truth-in-temple
+  L1_narrative: 'ASUS (Node 1) connected to omega-hub live and shipped a consultant report (11_CONSULTANT_REPORT.md) as an
+    outside satellite node. Found 8 real flaws: (S1) sovereignty ratio 21.6% local/78.4% cloud contradicts mission, (S2) 45
+    stale handoffs (grew to 82), (S3) test entities in production Oracle, (S4) 3 broken tool surfaces (oracle_list_pillar_keepers
+    calls missing method, library FTS defaults to non-existent omega_vec_gemma_768, hivemind_get_continuation returns stray
+    fragment), (S5) research-log privacy governance undefined, (S6) ~90 tools with duplication, (S7) 0 active agents at probe,
+    (S8) port 8016 no auth. I verified every claim against ground truth — all accurate.'
+  L2_insight: Outside eyes see what trench-level teams cannot. The satellite consultant model (independent node, NOT assimilated,
+    reporting shadows not just wins) is the correct governance pattern for a federated sovereign system. Every claimed flaw
+    was verifiable in the codebase — the report was evidence-based, not opinion. The 42 Ideals of Ma'at truth clause ('silence
+    about a flaw is a flaw') is what made this possible.
+  L3_principle: L3-SatelliteConsultantModel - An independent, non-assimilated satellite node with fresh eyes is the highest-value
+    governance tool for a sovereign system. It reports shadows, not just wins, and every claim must be evidence-based and
+    verifiable. L3-TruthInTheTemple - Silence about a flaw is a flaw. The temple writes its shadows into record or it relitigates
+    them forever. L3-OutsideEyesSeeTheTrench - Trench-level teams cannot see their own blind spots; a satellite consultant
+    is the correction.
+- id: PL-ROC-ANAI-WAD-SEPARATION-001
+  date: '2026-09-10'
+  session_id: ses_62c31ba69a16
+  tags:
+  - anai
+  - wad
+  - iwad
+  - separation
+  - arcana-novai
+  - architecture
+  L1_narrative: 'User proposed building Arcana-NovAi (ANAi) as a separate WAD on ASUS (Node 1), keeping it distinct from the
+    Omega Engine default IWAD (_omega_default). The engine already supports this: oracle_list_pillar_keepers docstring says
+    ''The concept of Pillar Keepers is Arcana-NovAi WAD content. The engine discovers slot-holding entities dynamically. WAD-specific
+    display fields are in Entity.metadata.'' The IWAD/WAD analogy maps to id Software heritage: Omega Engine = DOOM.EXE, _omega_default
+    = DOOM1.WAD, ANAi = custom PWAD.'
+  L2_insight: 'The WAD separation model is architecturally sound and was designed into the engine from the start. ANAi on
+    ASUS (physically separate node) + Omega on HP (public release) + federation as interface = perfect separation of concerns.
+    The engine stays clean for public release while ANAi develops to its deepest extent without contamination. This is the
+    id Software heritage pattern applied to sovereign AI: engine vs content are distinct layers.'
+  L3_principle: L3-EngineVsWADSeparation - The engine (runtime) and content (WAD) are distinct layers. A custom WAD (ANAi)
+    can develop independently without contaminating the default IWAD. Physical node separation (ASUS vs HP) enforces the boundary.
+    L3-DesignedForWADContent - The engine was designed for WAD-specific content from the start (metadata fields, dynamic slot
+    discovery). ANAi is not an add-on — it is the intended use case.
+- id: PL-ROC-PRISTINE-RELEASE-GATE-001
+  date: '2026-09-10'
+  session_id: ses_62c31ba69a16
+  tags:
+  - release
+  - pristine
+  - quality-gate
+  - broken-surfaces
+  - scope-control
+  L1_narrative: 'User declared: ''I will NOT ship something that is broken and falling apart. I want the release of the Omega
+    Engine to be PRISTINE.'' The consultant report''s findings (C1 broken tools, C2 mock entities, C3 stale handoffs) are
+    now classified as critical release blockers, not nice-to-haves. The release gate includes: fix 3 broken tool surfaces,
+    purge Oracle mocks, stale-handoff policy, sovereignty policy, data governance, comms contract ratification.'
+  L2_insight: A public release is a reputation event. Shipping broken surfaces (tools that error, mock entities in production,
+    stale handoff graveyards) teaches the first community members to distrust the system. The cost of fixing before release
+    is hours; the cost of fixing after is trust. Pristine release = surface integrity + hygiene + governance, not just features.
+  L3_principle: 'L3-PristineReleaseGate - A public release must be pristine: no broken tool surfaces, no mock entities in
+    production, no stale-handoff graveyards. The first community members'' trust is the most expensive asset — protect it.
+    L3-BrokenSurfaceBreedsDistrust - A satellite that hits three broken surfaces on day one learns to distrust the surface.
+    Every exposed tool must be smoke-tested before another node connects.'
+- id: PL-ROC-BIG-PICKLE-1M-VERIFIED-001
+  date: '2026-09-10'
+  session_id: ses_62c31ba69a16
+  tags:
+  - big-pickle
+  - 1m-context
+  - verified
+  - performance
+  - nemotron
+  L1_narrative: 'Big Pickle at 1M context ceiling (context: 1000000, input: 950000, output: 64000) verified live at 230K tokens
+    in-window with NO compaction and NO streaming timeout errors on long file writes. User confirmed: ''Big Pickle remains
+    exceptionally speedy even at high context, AND does not have the provider side streaming timeout error on long file writes
+    like Nemotron.'' This replaces Nemotron 3 Ultra as the primary long-context model (which was always very slow, especially
+    at higher context levels).'
+  L2_insight: 'The 1M ceiling was initially flagged as dangerous (my deep-web research said Big Pickle = 200K model per models.dev
+    registry). But ASUS-OC''s live verification at 205.8K+ and now 230K tokens proves the provider actually serves a 1M-context
+    model — the registry limit was stale or the model rotated. This is a case where live verification trumped registry documentation.
+    The config override (context: 1000000, input: 950000) is the correct pattern for a rotating model alias.'
+  L3_principle: L3-LiveVerificationTrumpsRegistry - When a registry says a model has a 200K limit but live usage proves 230K+
+    with no errors, the live evidence wins. Registry limits reflect a point-in-time snapshot; rotating model aliases need
+    ceiling overrides verified in practice. L3-SpeedAtHighContextIsRare - A model that stays fast at high context AND avoids
+    streaming timeouts is rare and valuable. Big Pickle's combination (speedy + no streaming timeout) makes it the ideal long-context
+    workhorse.
+- id: PL-ROC-STALE-HANDOFF-GRAVEYARD-001
+  date: '2026-09-10'
+  session_id: ses_62c31ba69a16
+  tags:
+  - handoff
+  - stale
+  - graveyard
+  - governance
+  - reaper
+  L1_narrative: 'Consultant found 45 stale handoff packets; my verification shows 82 in data/handoff/stale/. Only 2 completed,
+    1 pending, 0 active. The queue is a graveyard — unfinished business the system stopped tracking. Every stale packet is
+    a promise broken silently. Root cause likely: agents terminated without completing handoffs, or handoffs submitted to
+    entities that never heartbeat.'
+  L2_insight: 'Stale handoffs are silent trust erosion. A handoff queue that accumulates graveyard packets teaches the fleet
+    that handoffs don''t matter. The fix is governance: define a reaper (who), cadence (when), quarantine (where), and investigate
+    WHY packets went stale (unterminated agents? no heartbeat?). Awareness = accountability: if a node isn''t heartbeatting,
+    no handoff should be queued to it without a human.'
+  L3_principle: L3-StaleHandoffsAreBrokenPromises - Every stale handoff packet is a promise broken silently. A graveyard queue
+    erodes trust in the coordination layer. Define reaper + cadence + quarantine before onboarding more nodes. L3-AwarenessEqualsAccountability
+    - If a node isn't heartbeatting, no handoff should be queued to it without a human. Awareness is the precondition for
+    trust.
 metadata:
   entity: roc_racoon
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
-  model_used: google/gemini-3.8-flash
-  last_session_end: '2026-09-09T05:30:00.000000+00:00'
+  model_used: big-pickle
+  last_session_end: '2026-09-10T12:00:00.000000+00:00'

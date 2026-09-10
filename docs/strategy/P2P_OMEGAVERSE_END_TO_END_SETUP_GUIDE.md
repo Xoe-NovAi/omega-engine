@@ -1218,3 +1218,8 @@ This is the **critical test** — the user (Architect) will:
 - [ ] Hivemind handoff completes end-to-end
 
 ---
+<!-- PROVENANCE-CORRECTED 2026-09-10T13:33:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: google/gemini-3.8-flash | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+
