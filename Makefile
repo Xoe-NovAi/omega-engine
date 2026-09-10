@@ -477,7 +477,11 @@ env-all: ## Show all Ollama env variables with descriptions
 # ============================================================================
 # § DOCS
 # ============================================================================
-.PHONY: docs lint-async
+.PHONY: docs lint lint-async
+
+lint: ## ALL code-quality gates: anyio purity + bare-exception ban + torch ban
+	@echo "$(C_BOLD)$(C_CYAN)── Code-quality gates ──$(C_RESET)"
+	@python3 scripts/lint_checks.py
 
 docs: ## Validate docs integrity: README links + CODE_QUALITY async gate
 	@echo "$(C_BOLD)$(C_CYAN)── Docs integrity check ──$(C_RESET)"

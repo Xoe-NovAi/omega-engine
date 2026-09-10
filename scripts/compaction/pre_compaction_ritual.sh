@@ -16,8 +16,12 @@ GNSSIS_ROOT="${PROJECT_ROOT}/gnosis"
 SESSIONS_DIR="${GNSSIS_ROOT}/sessions"
 EVOLUTION_DIR="${GNSSIS_ROOT}/evolution"
 IDENTITY_DIR="${GNSSIS_ROOT}/identity"
-TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
-SESSION_ID="${1:-session-${TIMESTAMP}}"
+# File-safe session id uses dashes in the time section to avoid ':' in names;
+# metadata timestamps must be strict ISO-8601 (parseable) — see CODE_QUALITY §2.
+TIMESTAMP_ISO=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+FILE_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
+TIMESTAMP="${TIMESTAMP_ISO}"
+SESSION_ID="${1:-session-${FILE_TS}}"
 REASON="${2:-End of session}"
 
 # ─── Colors ───────────────────────────────────────────────────────────────────
