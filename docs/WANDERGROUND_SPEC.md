@@ -282,3 +282,95 @@ The WanderGround workspace is established at `~/WanderGround/`:
 
 
 
+
+---
+
+## 10. RESEARCH FINDINGS & DEFINITIVE CORRECTIONS (2026-09-10)
+
+> Ground truth updated from deep research on primary sources. Every entry below
+> is a **verified correction or decision**, not speculation.
+
+### 10.1 OpenCode hooks — CORRECTED (user + HP team were right)
+Prior record claimed "hooks UNSUPPORTED in OpenCode v1.18.30". That referred to a
+`hooks` config key (Claude-Code-style). The plugin system is the actual mechanism
+and it IS present on this box (verified in `@opencode-ai/plugin` + `@opencode-ai/sdk`
+type definitions, v1.18.30):
+- Hooks available: `experimental.session.compacting`, `experimental.compaction.autocontinue`,
+  `chat.message`, `chat.params`, `chat.headers`, `tool.execute.before/after`,
+  `shell.env`, `experimental.chat.system.transform`, `command.execute.before`, ...
+- Event surface: `session.created`, `session.idle`, `session.updated`, `session.deleted`,
+  `session.compacted`, `session.status`, the full `session.next.*` live stream, plus
+  `permission.*`, `message.*`, `tool.*`, `todo.updated`, `file.*`, `lsp.*`.
+- **`experimental.session.compacting`** fires before the LLM writes the continuation
+  summary — the natural home for Gnosis Lock / WanderGround context injection.
+- **Implementations shipped** (this box):
+  - `~/.config/opencode/plugins/gnosis-leash.js` — logs session.created/idle/compacted
+    to a gnosis timeline; injects WanderGround INDEX rules into compaction context and
+    the system prompt (`experimental.chat.system.transform`).
+  - Verified loads cleanly via `opencode serve` (no plugin errors).
+- HP team uses the same mechanism ("hooks on every open/close = plugin session events").
+
+### 10.2 Code-quality standard — absolute anyio full async wiring (user directive)
+Any new async Python code in this repo/Omega Engine MUST use **anyio** primitives only
+(no bare `asyncio`, no `trio`, no mixed event loops). Belt-and-braces definition and
+lint gate live in `docs/CODE_QUALITY.md`. This covers WanderGround python utilities,
+the curator pipeline, MemPalace-side tooling, and the omega-engine scripts.
+
+### 10.3 MemPalace v3.9.0 — revised backend decision (was: Chroma + ONNX MiniLM — now confirmed)
+- Installed into `~/WanderGround/.venv` as `mempalace 3.9.0` (provides CLI `mempalace`,
+  `mempalace-mcp`, hardened `mcp_light_server.py`).
+- **Backend: `sqlite_exact`** (bundled, pure-SQLite, exact NumPy, zero daemon) — verified
+  mining + search on this box. `rust_exact` is the scale-up path (same `.sqlite3` file,
+  -77% RSS @ 334k rows) when the corpus grows.
+- **Embedder: `minilm` (ChromaDB ONNXMiniLM_L6_V2)** — hermetic CPU ONNX, NOT openai-compat
+  (that path churned Ollama model-load per batch and caused the earlier runaway).
+- **Model cache pre-seeded** to `~/.cache/chroma/onnx_models/all-MiniLM-L6-v2/` with
+  SHA256-verified tarball (S3 source; flaky-link-safe via curl -C -).
+- **Mining hygiene (verified):** MemPalace SKIP_DIRS already excludes `.venv`, `node_modules`,
+  `.mempalace`, etc. Additional exclusions for this repo must live in `.gitignore`
+  (not `.mempalaceignore` — that file is not consulted): `spatial/webxr/vendor/`,
+  `site/`, `docs/`, `mempalace/`. Mine `mempalace.yaml` (wing `wanderground`, 7 rooms)
+  verified: 20 files → 62 drawers, all rooms, exit 0 in ~2s CPU.
+- **Watch-outs:** every CLI invocation should pass `</dev/null` (non-interactive EOF
+  safety) + a hard `timeout`; first-run LLM features (corpus-origin, entity detection)
+  default to Ollama `gemma4:e4b` and must be avoided (heuristics-only is the norm now).
+- **MCP wired**: `opencode.json` → `mempalace` stdio server (`mempalace-mcp --palace ...`).
+  Sessions can now `palace_query`/`palace_exec` on the WanderGround palace.
+
+### 10.4 OpenCode Zen model reality (2026-09-10, primary source: docs + zen endpoint)
+- Zen exposes exactly 70 curated models; model id format `opencode/<id>`.
+- **Free tiers COLLECT PROMPT DATA** (privacy page, official):
+  - `big-pickle` (free period: data may be used to improve the model)
+  - `mimo-v2.5-free`, `nemotron-3-ultra-free`, `nemotron-3.5-lightning-free`
+    (NVIDIA trial: no personal/confidential data, logged; trial use only)
+  - `muse-spark-1.3/1.2-contributor-free` (trains Meta models from your prompts)
+  - `ling-3.0-flash-fin-free`
+- **Paid = zero-retention providers** (exceptions: OpenAI/Anthropic 30-day retention).
+  e.g. `muse-spark-1.3` $1.25/$4.25 per 1M; `minimax-m3` $0.30/$1.20; `glm-5.3-flash` $0.15/$0.50.
+- **Privacy tier decision (WanderGround):** raw captures & private explorations NEVER go
+  through free data-collecting tiers. Deep synthesis on sensitive material uses paid
+  zero-retention models (Muse Spark 1.3 paid, MiniMax, GLM, Kimi) or local-only where
+  cheap enough. Free tiers remain fine for non-sensitive, innocuous synthesis.
+- Zen model endpoint returns only id/created/owned_by (no context windows published).
+
+### 10.5 sqlite-vec — corrected usage (definitive)
+- `vec0` defaults to **L2 distance**; create with `distance_metric=cosine` for cosine KNN
+  (bug: early table was created without it, and `ORDER BY distance LIMIT` is not the
+  KNN form). Correct query: `WHERE embedding MATCH ? AND k = ?`.
+- Shipped fix: `upgrade_sqlite_vec.py` now DROP+CREATE with `distance_metric=cosine`;
+  `wander-search.py` uses `k = ?` + honest cosine score from the portable JSON table.
+
+### 10.6 systemd linger — fixed (timers survive logout)
+- `sudo loginctl enable-linger xnai` → `Linger=yes`. `wander-curator.timer` and the
+  user service now survive logout/reboot (was: `Linger=no`, timers died on logout).
+
+### 10.7 Eyes-on-machine tooling (debugging discipline)
+- `~/.local/bin/ey` — 1s text snapshot (top CPU, memory, ollama, load) with `--diff`.
+- `~/.local/bin/withey <label> -- <cmd>` — pre/post snapshots around any command.
+  All risky runs now go through withey. Screenshots optional for human review only
+  (`sys-eyes` retains a GNOME-Wayland capture path).
+
+### 10.8 Pending research (next expedition)
+- Obsidian desktop install (AppImage/Flatpak) + vault pointer to `~/WanderGround`.
+- Godot 4 + SQLite GDExtension for the eventual 3D memory-palace client.
+- Headroom proxy: evaluate against Zen traffic once token spend matters (low priority).
