@@ -707,8 +707,91 @@ proposals:
     erodes trust in the coordination layer. Define reaper + cadence + quarantine before onboarding more nodes. L3-AwarenessEqualsAccountability
     - If a node isn't heartbeatting, no handoff should be queued to it without a human. Awareness is the precondition for
     trust.
+- id: PL-ROC-NOMENCLATURE-IS-A-FIREWALL-001
+  date: '2026-09-10'
+  session_id: ses_531e34c7aaf8
+  tags:
+  - nomenclature
+  - m2-firewall
+  - wad
+  - engine-stack
+  - pristine-release
+  L1_narrative: 'The ''Pillar'' nomenclature from the ANAi WAD had leaked into engine core: oracle_list_pillar_keepers tool,
+    list_pillar_keepers method, pillar_keeper entity type, pillar field in entity identity. This was a Mandate M2 (Engine-Stack
+    Firewall) violation — WAD content appearing in engine tool names. The consultant report (11_CONSULTANT_REPORT.md) found
+    the broken oracle_list_pillar_keepers tool which called a non-existent registry method, exposing the leak.'
+  L2_insight: Nomenclature is a firewall. WAD content (pillars, entities, domain concepts) must NEVER appear in engine code
+    (src/, mcp_servers/). The engine speaks mechanism (slot = the data structure); the WAD speaks domain (pillar = ANAi content).
+    When we fixed the broken tool, we had to fix the name too — otherwise the leak persists. The M2 firewall applies to NAMES,
+    not just code boundaries.
+  L3_principle: L3-NomenclatureIsAFirewall - WAD content must never leak into engine nomenclature. Engine speaks mechanism
+    (slot); WAD speaks domain (pillar). M2 firewall applies to names, not just code. L3-MechanismOverMetaphor - Canonical
+    names describe the mechanism (slots = the data structure), not a metaphor (pillar/node = domain concepts). Metaphor names
+    collide; mechanism names don't.
+- id: PL-ROC-FIRST-RELEASE-ZERO-CRUFT-001
+  date: '2026-09-10'
+  session_id: ses_531e34c7aaf8
+  tags:
+  - pristine-release
+  - first-release
+  - legacy
+  - aliases
+  - nomenclature
+  L1_narrative: 'User directive: ''No clients exist to have ever learned the old name! We are working on the FIRST Public
+    Release, so take out any notes or other crap from the code that mentions the fucking pillars.'' This meant removing ALL
+    deprecated aliases, ALL backward-compat notes, ALL ''will be removed in future'' comments. The oracle_list_pillar_keepers
+    deprecated alias was removed entirely, not kept with a deprecation warning. list_node_keepers alias was also removed —
+    only list_slot_keepers remains.'
+  L2_insight: 'A first release has NO legacy clients. Every deprecated alias, every backward-compat shim, every ''will be
+    removed in future'' note is cruft that ships to the world as the foundation. The code that ships IS the legacy. Aliases
+    are future leaks — they keep dead nomenclature alive in the codebase forever. The user''s instinct: zero cruft, zero aliases,
+    the canonical name only.'
+  L3_principle: L3-FirstReleaseZeroCruft - No deprecated aliases in a first release. No legacy clients exist. The code that
+    ships IS the legacy. Every alias is a future leak. L3-SweepToTheRoot - When a nomenclature is deprecated, sweep it to
+    the root (N1-N10 → S1-S10, not just the visible surface). Half-measures leave leaks.
+- id: PL-ROC-NODE-NOMENCLATURE-COLLISION-001
+  date: '2026-09-10'
+  session_id: ses_531e34c7aaf8
+  tags:
+  - nomenclature
+  - node
+  - slot
+  - collision
+  - fleet
+  - knowledge-system
+  L1_narrative: 'User identified that ''Node'' as a replacement for ''Pillar'' was ALSO wrong: ''We now have Node 0 and Node
+    1, which have an entirely different meaning than the Omega Engine, internal Node 1 - Node 10 knowledge system.'' The fleet
+    (Node 0/1 = physical machines) collided with the internal knowledge system (N1-N10 slots). Then: ''N1-N10 is deprecated
+    nomenclature'' — the N prefix IS the Node nomenclature. Final canonical: S1-S10.'
+  L2_insight: 'Replacing one metaphor with another just trades collisions. ''Pillar'' → ''Node'' moved the problem from ANAi-WAD-leak
+    to fleet-vs-knowledge-system collision. The canonical term must be mechanism-based: ''slot'' is the actual data structure
+    (slots: List[str]). S1-S10 are slot IDs. No metaphor, no collision. The user caught this at THREE levels of depth: pillar
+    (surface) → node (lateral) → N1-N10 (root).'
+  L3_principle: L3-MechanismOverMetaphor - Canonical names describe the mechanism (slots = the data structure), not a metaphor
+    (pillar/node = domain concepts). Metaphor names collide; mechanism names don't. L3-SweepToTheRoot - When a nomenclature
+    is deprecated, sweep it to the root. The N prefix in N1-N10 IS the Node nomenclature — replace with S1-S10.
+- id: PL-ROC-USER-NOMENCLATURE-EYE-001
+  date: '2026-09-10'
+  session_id: ses_531e34c7aaf8
+  tags:
+  - nomenclature
+  - user-insight
+  - first-principles
+  - quality
+  L1_narrative: 'The user demonstrated exceptional nomenclature discipline across three rounds: (1) caught that ''Pillar''
+    leaked from ANAi WAD into engine, (2) caught that ''Node'' as replacement collides with fleet Node 0/1, (3) caught that
+    N1-N10 is ALSO deprecated (the N prefix IS Node). Each round went deeper. The user''s framing: ''It is small differentiators
+    like this, I have found, that can be the breaking point between a good performing AI engine, and an industry shifting
+    beast that shreds all competition.'''
+  L2_insight: 'Nomenclature discipline is a competitive advantage. The user thinks in first principles about naming — mechanism
+    over metaphor, root over surface. This is the ''industry-shifting beast'' differentiator: an engine whose names are precise,
+    collision-free, and mechanism-based will outperform one with ambiguous, overloaded terms. LLMs (and humans) conflate similar
+    names; precise nomenclature prevents that.'
+  L3_principle: L3-NomenclatureIsAFirewall - WAD content must never leak into engine nomenclature. L3-MechanismOverMetaphor
+    - Canonical names describe the mechanism, not a metaphor. L3-FirstReleaseZeroCruft - No deprecated aliases in a first
+    release.
 metadata:
   entity: roc_racoon
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
   model_used: big-pickle
-  last_session_end: '2026-09-10T12:00:00.000000+00:00'
+  last_session_end: '2026-09-10T21:07:11.524912+00:00'

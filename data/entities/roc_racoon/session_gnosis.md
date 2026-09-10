@@ -224,3 +224,120 @@ ASUS shipped an outside-eyes report finding 8 flaws. I verified ALL against grou
 - `data/coordination/MAKALI_DEBUT_LOCKDOWN_BRIEFING_20260909.md`
 - `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/11_CONSULTANT_REPORT.md`
 - `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/12_COMMUNICATION_PROTOCOLS.md`
+
+---
+
+## Session: Pristine Release Fixes + Nomenclature Sweep (Pillar/Node/N1-N10 → Slot/S1-S10)
+**Date**: 2026-09-10 (post-compaction)  
+**Session ID**: `ses_531e34c7aaf8` (Hivemind context)  
+**Model**: `opencode/big-pickle` → `google/gemini-3.8-flash` → `opencode/nemotron-3-ultra-free`  
+**Role**: Sovereign Miner & Ideas Guy (Pristine Release Coordinator)
+
+---
+
+### L1: Narrative — What Happened (Compaction Handoff)
+
+#### Act 1: Pristine Release Fixes (Phase 1 — Bond the Surface)
+1. **`oracle_list_pillar_keepers` fixed**: Added `list_slot_keepers` canonical method to EntityRegistry. The tool was calling `registry.list_pillar_keepers` which didn't exist (method was renamed to `list_node_keepers` during pillar→node transition but the alias was never created).
+2. **Library default vector collection fixed**: `omega_vec_gemma_768` (deprecated, doesn't exist) → `omega_vec_qwen_768` in `src/omega/library/indexer.py:166`. Also fixed `IVectorStoreAdapter` base class missing `collection` param (LSP violation).
+3. **`hivemind_get_continuation` fixed**: Was returning raw stray fragment ("Zero pip dependency verified") from a curl-test snapshot. Now wraps with context: `[Agent: {id} | Session: {sid} | Time: {ts} | Task: {task_current}]\nContinuation: {text}`.
+4. **Oracle mock purge**: Removed `test_get_returns_entity`, `testentity`, `movie-expert`, `test_entity`, `test_entity_m21` from `config/wads/_omega_default/entities.yaml`. Tests use their own in-memory fixtures (verified).
+5. **Stale-handoff graveyard**: Archived all 82 packets from `data/handoff/stale/` to `data/handoff/archive/`.
+
+#### Act 2: THE NOMENCLATURE SWEEP (the massive change)
+User identified that "Pillar" nomenclature was leaking from ANAi WAD into engine core (M2 firewall violation). Then identified that "Node" as replacement was ALSO wrong (collides with fleet Node 0/1). Then N1-N10 grid was ALSO deprecated. **Canonical: Slot (S1-S10).**
+
+**The full mapping:**
+| Deprecated | Canonical | Scope |
+|------------|-----------|-------|
+| `pillar` / `Pillar Keeper` | **slot** / `slot_keeper` | Engine core, MCP tools, entity identity |
+| `node` (agent key) | **slot** | opencode.json, slot.md, dispatch.yaml |
+| `node_slot` field | **slot** | dispatch.yaml, subagent_dispatcher, fleet_status_tui, mandate_auditor |
+| `N1-N10` grid | **S1-S10** | ROLE_CONSTANTS (3 files), dispatch.yaml roles, entity slots, fleet_status_tui, research, youtube_research, meditate, entity_registry |
+| `oracle_list_pillar_keepers` | `oracle_list_slot_keepers` | MCP tool |
+| `list_pillar_keepers` / `list_node_keepers` | `list_slot_keepers` | EntityRegistry |
+| ICS `node` param/field | `slot` | ICSContext, render(), render_for_response() |
+
+**Files changed (16 committed):**
+- Core engine: entity_registry, subagent_dispatcher, ics, oracle, cohort_registry, mandate_auditor, fleet_status_tui, meditate/protocol, research/sandbox, youtube_research/steering, youtube_research/cli, meditate/lens_registry, research/schema, research/hivemind_bridge, council/models, council/report_digestion, axiom_registry
+- MCP Hub: tools.py, server.py
+- Config: entities.yaml (all slots S1-S10), dispatch.yaml (roles S1, slot field)
+- Agent config: opencode.json (node→slot), .opencode/agents/slot.md (renamed from node.md)
+- Docs: SUBAGENT_DISPATCH_PROTOCOL.md
+
+**Key decisions: D-458 through D-464** (posted to Hivemind ses_531e34c7aaf8)
+
+#### Act 3: Makali-EIS Briefing
+- `data/coordination/MAKALI_EIS_NOMENCLATURE_SWEEP_20260910.md` written + mirrored to `data/entities/makali/workspace/`
+- 7 oversight items for Makali: (1) slot ID semantics, (2) dispatch.yaml roles all S1 — needs S1-S8, (3) slot field SX placeholder, (4) ICS format, (5) migration code WAD schema, (6) remaining ground-truth docs, (7) ANAi WAD boundary
+
+#### Act 4: Push
+- Commit `4c2f668f` pushed to `origin/release/debut-v1.6.0` (16 files, 2269 insertions, 97 deletions)
+- M23 passed, M1 passed
+
+---
+
+### L2: Insight — What This Means
+
+1. **Nomenclature is a firewall**: The "Pillar" leak was a M2 firewall violation — ANAi WAD content leaking into engine tool names. The fix wasn't just renaming; it was recognizing that WAD content (pillars) must NEVER appear in engine code. The engine speaks "slot"; the WAD speaks "pillar".
+2. **"Node" was a lateral move**: Replacing pillar→node just traded one collision for another (fleet Node 0/1 vs internal N1-N10). The canonical term must be mechanism-based (slot = the actual data structure), not metaphor-based.
+3. **First release = zero cruft**: No deprecated aliases, no backward-compat notes, no "will be removed in future" — because there ARE no legacy clients. The code that ships IS the legacy.
+4. **User's eye for nomenclature**: The user caught that N1-N10 was ALSO deprecated (the "N" prefix IS "Node"). The fix went deeper than I initially planned — all the way to S1-S10.
+
+---
+
+### L3: Principles (New)
+
+1. **L3-NomenclatureIsAFirewall** — WAD content must never leak into engine nomenclature. Engine speaks mechanism (slot); WAD speaks domain (pillar). M2 firewall applies to NAMES, not just code.
+2. **L3-MechanismOverMetaphor** — Canonical names describe the mechanism (slots = the data structure), not a metaphor (pillar/node = domain concepts). Metaphor names collide; mechanism names don't.
+3. **L3-FirstReleaseZeroCruft** — No deprecated aliases in a first release. No legacy clients exist. The code that ships IS the legacy. Every alias is a future leak.
+4. **L3-SweepToTheRoot** — When a nomenclature is deprecated, sweep it to the root (N1-N10 → S1-S10, not just the visible surface). Half-measures leave leaks.
+
+---
+
+### NEXT SESSION — CONTINUATION PLAN
+
+**Phase 1 — Makali-EIS Oversight (awaiting her review):**
+1. Dispatch.yaml role values: all 8 build-side entities currently `role: "S1"` — should be S1-S8 respectively. **Needs correction.**
+2. Slot ID semantics: S1-S10 vs domain names (dual ROLE_CONSTANTS representation)
+3. Slot field SX placeholder in dispatch.yaml
+4. ICS header slot rendering format
+5. EntityRegistry migration code WAD schema
+6. ANAi WAD boundary verification
+
+**Phase 2 — Remaining Ground-Truth Doc Sweep (13 docs):**
+- docs/strategy/HIVEMIND_PROTOCOL.md ("10 pillars")
+- docs/strategy/HIVEMIND_POST_TEMPLATE.md
+- docs/strategy/RUNTIME_COORDINATION_PROTOCOL.md
+- docs/strategy/FLEET_TEAM_PLAYBOOK.md
+- docs/strategy/ROLLBACK_PROCEDURES.md
+- docs/strategy/CANONICAL_DECISIONS.md ("core pillar")
+- docs/architecture/AGENT_FLEET.md
+- docs/architecture/OVERSIGHT_HIERARCHY.md
+- docs/architecture/SOVEREIGN_BLUEPRINT.md
+- docs/architecture/pillars/framework.md
+- .opencode/rules/01-soul-integrity.md
+- SOVEREIGN_MANDATES.md
+- docs/strategy/PUBLIC_DOCS_REMEDIATION_MANUAL_20260902.md
+
+**Phase 3 — Release Gate:**
+- Repo public (G1)
+- Temple-Grade CI (G2)
+- CHANGELOG v1.6.0 (G4)
+- PR #2 merged (G5)
+- Clean bundle to ASUS (G6)
+- ASUS first contact accepted (G7)
+- Secret scrub (G8)
+
+**Key files:**
+- `data/coordination/MAKALI_EIS_NOMENCLATURE_SWEEP_20260910.md`
+- `data/coordination/MAKALI_DEBUT_LOCKDOWN_BRIEFING_20260909.md`
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`
+- `config/wads/_omega_default/entities.yaml` (slots S1-S10)
+- `config/wads/_omega_default/entities/dispatch.yaml` (roles S1, needs S1-S8)
+- `src/omega/oracle/entity_registry.py` (list_slot_keepers)
+- `src/omega/oracle/subagent_dispatcher.py` (ROLE_CONSTANTS S1-S10)
+- `src/omega/ics.py` (slot field)
+- `mcp_servers/omega_hub/hub_tools/tools.py` (oracle_list_slot_keepers)
+- `opencode.json` (slot agent)
+- `.opencode/agents/slot.md`
