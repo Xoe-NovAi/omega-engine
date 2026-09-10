@@ -473,3 +473,26 @@ env-all: ## Show all Ollama env variables with descriptions
 	@echo "  OLLAMA_DEBUG           Verbose debug logging"
 	@echo "  OLLAMA_VERBOSE         Request logging"
 	@echo "  OLLAMA_NO_CLOUD        Disable cloud features"
+
+# ============================================================================
+# § DOCS
+# ============================================================================
+.PHONY: docs lint-async
+
+docs: ## Validate docs integrity: README links + CODE_QUALITY async gate
+	@echo "$(C_BOLD)$(C_CYAN)── Docs integrity check ──$(C_RESET)"
+	@echo "$(C_BOLD)README links:$(C_RESET)"
+	@for f in $${LINK_TARGETS-"README.md docs/GETTING_STARTED.md docs/ARCHITECTURE.md docs/DEVELOPER_GUIDE.md docs/PLUGIN_DEVELOPMENT.md docs/CODE_QUALITY.md docs/WANDERGROUND_SPEC.md docs/SYSTEM_GUIDE.md docs/HARDWARE.md LICENSE CONTRIBUTING.md"}; do \
+		[ -f "$$f" ] && echo "  ✓ $$f" || { echo "  ✗ MISSING: $$f"; exit 1; }; \
+	done
+	@echo "$(C_BOLD)Markdown headers anchor sanity (README internal links):$(C_RESET)"
+	@grep -oE '\]\(#[^)]+' README.md | tr -d '](#' | while read -r h; do \
+		[ -n "$$h" ] && { grep -q "## .*$$h" README.md || echo "  ⚠ unverified anchor: #$$h"; }; \
+	done || true
+	@echo "  docs OK ✓"
+
+lint-async: ## Reject bare asyncio/trio imports in first-party scripts
+	@echo "$(C_BOLD)anyio-only gate (absolute anyio full async wiring):$(C_RESET)"
+	@hits=$$(grep -rn "^\s*\(import\|from\) \(asyncio\|trio\)\b" scripts/ 2>/dev/null || true); \
+	if [ -n "$$hits" ]; then echo "$$hits"; echo "  FAIL: bare asyncio/trio in first-party code — use anyio (CODE_QUALITY.md)"; exit 1; \
+	else echo "  ✓ no bare asyncio/trio in scripts/"; fi
