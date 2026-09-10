@@ -396,6 +396,9 @@ gnosis-stats: ## Show evolution-log stats + recent timeline: make gnosis-stats L
 	@echo ""
 	@python3 "$(GNOSIS_EVOLUTION)" timeline --limit $(or $(LIMIT),5)
 
+gnosis-leash-status: ## Watchdog: is the automated gnosis-leash plugin alive + clean?
+	@python3 scripts/compaction/leash_status.py
+
 # ============================================================================
 # § QUICK REFS
 # ============================================================================
