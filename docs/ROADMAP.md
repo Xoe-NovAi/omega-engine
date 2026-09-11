@@ -350,6 +350,15 @@ without trial by fire.
   `docs/models/nex-n2-5-pro.md` created; Nex-N2.5-Pro remains `candidate` until
   a controlled Omega A/B is complete.
 
+### P3.3b — OMER M1: Schema & Validation
+- Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
+  v1.0 (from `docs/OMER_FOUNDATION.md` §2.1); validation rules for evidence
+  labels, reproduction status, required sections; wire into `make lint`.
+- **Done when**: `make lint` validates all `docs/models/*.md` cards; Nex-N2.5-Pro
+  card passes; `omer` CLI skeleton with `validate` subcommand exists.
+- **Status**: **QUEUED** — Design complete in `docs/OMER_FOUNDATION.md` (555 lines);
+  first test case is `docs/models/nex-n2-5-pro.md`.
+
 ---
 
 ## Dream log (kind: dream — captured, unpromised)

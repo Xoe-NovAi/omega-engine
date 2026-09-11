@@ -1,3 +1,23 @@
+---
+card_version: "1.0"
+model_id: "nex-agi/nex-n2.5-pro:free"
+provider: "OpenRouter (Nex AGI)"
+research_status: "candidate"
+deployment: "hosted_trial"
+last_verified: "2026-09-11"
+confidence: "metadata:high,performance:low"
+license: "Apache-2.0"
+context_length: 262144
+modalities_in: ["text", "image"]
+modalities_out: ["text"]
+reproducibility:
+  seed: 42
+  config_hash: "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  environment:
+    openrouter_api_version: "2026-09-11"
+    model_endpoint: "nex-agi/nex-n2.5-pro:free"
+---
+
 # Nex AGI: Nex-N2.5-Pro (free)
 
 | Field | Value |
@@ -78,11 +98,11 @@ outcomes. Provider-reported Pro scores include:
 
 | Benchmark | Provider-reported score | Evidence |
 |---|---:|---|
-| Terminal-Bench 2.1 | 82.7 | Provider claim |
-| SWE-Bench Pro | 61.2 | Provider claim |
-| DeepSWE v1.1 | 55.8 | Provider claim |
-| Toolathlon Verified | 68.5 | Provider claim |
-| Job Bench | 41.4 | Provider claim |
+| Terminal-Bench 2.1 | 82.7 | **Provider claim** |
+| SWE-Bench Pro | 61.2 | **Provider claim** |
+| DeepSWE v1.1 | 55.8 | **Provider claim** |
+| Toolathlon Verified | 68.5 | **Provider claim** |
+| Job Bench | 41.4 | **Provider claim** |
 
 ### Visual feedback and computer use
 
@@ -91,12 +111,12 @@ computer and browser operation. Provider-reported multimodal scores include:
 
 | Benchmark | Provider-reported score | Evidence |
 |---|---:|---|
-| OSWorld-Verified | 82.2 | Provider claim |
-| OSWorld-2 | 56.4 | Provider claim |
-| WebArena-Verified | 67.6 | Provider claim |
-| OSWorld-G | 87.4 | Provider claim |
-| Vision2Web | 68.2 | Provider claim |
-| OmniDoc | 92.2 | Provider claim |
+| OSWorld-Verified | 82.2 | **Provider claim** |
+| OSWorld-2 | 56.4 | **Provider claim** |
+| WebArena-Verified | 67.6 | **Provider claim** |
+| OSWorld-G | 87.4 | **Provider claim** |
+| Vision2Web | 68.2 | **Provider claim** |
+| OmniDoc | 92.2 | **Provider claim** |
 
 ### Long-horizon agent work
 
@@ -141,7 +161,35 @@ No independent benchmark suite or Omega-local measurement was available at the
 time of this card. The next evidence step is a controlled A/B against the current
 OpenRouter model on the same repository, tool, long-context, and visual tasks.
 
-## Omega fit and verdict
+## Provider Claims
+
+| Benchmark | Provider-reported score | Evidence |
+|---|---:|---|
+| Terminal-Bench 2.1 | 82.7 | **Provider claim** |
+| SWE-Bench Pro | 61.2 | **Provider claim** |
+| DeepSWE v1.1 | 55.8 | **Provider claim** |
+| Toolathlon Verified | 68.5 | **Provider claim** |
+| Job Bench | 41.4 | **Provider claim** |
+
+### Visual feedback and computer use
+
+Nex-AGI emphasizes screenshots and environment state as a feedback loop for
+computer and browser operation. Provider-reported multimodal scores include:
+
+| Benchmark | Provider-reported score | Evidence |
+|---|---:|---|
+| OSWorld-Verified | 82.2 | **Provider claim** |
+| OSWorld-2 | 56.4 | **Provider claim** |
+| WebArena-Verified | 67.6 | **Provider claim** |
+| OSWorld-G | 87.4 | **Provider claim** |
+| Vision2Web | 68.2 | **Provider claim** |
+| OmniDoc | 92.2 | **Provider claim** |
+
+## Local Measurement
+
+*No local measurements available yet.* This model is deployed via OpenRouter hosted trial; Node 1 (CPU-only, 16 GB) cannot run the 397B parameter model locally.
+
+## Omega Verdict
 
 | Workload | Fit | Reason |
 |---|---|---|
@@ -152,8 +200,7 @@ OpenRouter model on the same repository, tool, long-context, and visual tasks.
 | Node 1 local inference | **No** | 397B/407 GB weights; CPU-only 16 GB host |
 | High-volume swarms | **No/conditional** | Free-route capacity and rate limits are unverified |
 
-**Verdict:** keep as a `candidate`; do not promote to `active` until the A/B
-validation below is complete.
+**Verdict:** keep as a `candidate`; do not promote to `active` until the A/B validation below is complete.
 
 ## Operating recipe
 

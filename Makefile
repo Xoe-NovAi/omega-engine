@@ -508,9 +508,11 @@ env-all: ## Show all Ollama env variables with descriptions
 # ============================================================================
 .PHONY: docs lint lint-async
 
-lint: ## ALL code-quality gates: anyio purity + bare-exception ban + torch ban
+lint: ## ALL code-quality gates: anyio purity + bare-exception ban + torch ban + model card validation
 	@echo "$(C_BOLD)$(C_CYAN)── Code-quality gates ──$(C_RESET)"
 	@python3 scripts/lint_checks.py
+	@echo "$(C_BOLD)$(C_CYAN)── Model card validation (OMER M1) ──$(C_RESET)"
+	@.venv/bin/python3 scripts/validate_model_cards.py docs/models
 
 docs: ## Validate docs integrity: README links + CODE_QUALITY async gate
 	@echo "$(C_BOLD)$(C_CYAN)── Docs integrity check ──$(C_RESET)"
