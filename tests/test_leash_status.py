@@ -52,6 +52,17 @@ class TestLeashStatus(unittest.TestCase):
         command_text = command.read_text()
         self.assertIn("gnosis-lock", command_text)
 
+    def test_plugin_has_narrative_fallback(self):
+        """readLatestNarrative must fall back to the most recent POPULATED
+        narrative. Regression: ritual runs right before /compact and stamps a
+        fresh TODO template as current_session; old code returned null and
+        skipped the previous session's human reflection (has_narrative: false)."""
+        self.assertTrue(PLUGIN.is_file())
+        src = PLUGIN.read_text()
+        self.assertIn("function isPopulatedNarrative", src)
+        self.assertIn("readdirSync(SESSIONS_DIR)", src)
+        self.assertIn("TODO: Fill in", src)
+
     def test_agent_awareness_surfaces_reference_runbook(self):
         """Global + project AGENTS.md, build prompt, and INDEX.md must point
         agents at the runbook so every session has operational awareness."""

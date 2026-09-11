@@ -79,6 +79,13 @@ def main() -> int:
                else "  v2 logging: MISSING — session.compacting not logged (1: degraded)"))
         if "session.compacting" not in src:
             problems.append("no session.compacting logging in source (1: degraded)")
+        # Hydration fallback: readLatestNarrative must fall back to the most
+        # recent POPULATED narrative when current_session is a fresh template.
+        if "function isPopulatedNarrative" not in src or "readdirSync(SESSIONS_DIR)" not in src:
+            problems.append("PLUGIN REGRESSED — no narrative fallback (hydrations fail when ritual runs pre-compact) (1: degraded)")
+        print(("  fallback  : OK (readLatestNarrative falls back to last populated narrative)"
+               if "function isPopulatedNarrative" in src and "readdirSync(SESSIONS_DIR)" in src
+               else "  fallback  : MISSING — narrative fallback absent (1: degraded)"))
 
     # 2–4. Timeline
     if not TIMELINE.is_file():
