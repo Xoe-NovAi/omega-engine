@@ -74,6 +74,8 @@ memory-claiming change gets benchmarked (`make bench`, `make bench-all`).
 
 - Every behavioral change lands in `docs/*.md` + `SYSTEM_GUIDE.md` session log.
 - Research claims get dated + cited in a "Research Findings" section.
+- Model research lives in `docs/models/`; use the registry contract and evidence
+  labels before promoting a model to an Omega workflow.
 - README links must resolve (run `make docs` to validate).
 - `CHANGELOG`-style entries live in the session log, not a separate file.
 

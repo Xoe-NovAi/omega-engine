@@ -271,7 +271,7 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - Project: `/home/xnai/Documents/Projects/omega-engine-alpha` (make-driven)
 - Docs: `docs/` — HARDWARE, SYSTEM_GUIDE, CODE_QUALITY, GNOSIS_USAGE,
   WANDERGROUND_SPEC, GETTING_STARTED, ARCHITECTURE, DEVELOPER_GUIDE,
-  PLUGIN_DEVELOPMENT, AGENT_RUNBOOK (this file)
+  PLUGIN_DEVELOPMENT, AGENT_RUNBOOK (this file), and `docs/models/` (model cards)
 - Evolution log: `scripts/compaction/evolution_log.py` (log/stats/timeline/export)
 - Sessions: `gnosis/sessions/` (manifest + git/system/config/mcp/narrative/evolution)
 - Identity: `gnosis/identity/identity.json`
@@ -330,6 +330,7 @@ Quick orientation (current phase = **P3 Synthesis + Federation Close-out**):
    - P3.1 Architecture synthesis (fold all P0-P2 decisions into docs, de-duplicate).
    - P3.2 Node 0 federation (Tailscale, C6 comms-contract, publish gate).
    - P3.3 Content runway (Obsidian, Godot/KQ5, Open WebUI, `make publish-bastion`).
+   - P3.3a Model research cards — registry live; Nex-N2.5-Pro is a candidate.
 
 Old open items folded into ROADMAP: sudo revert (standing infra — outside
 ROADMAP, see `~/.config/opencode/AGENTS.md`), content runway (P3.3).

@@ -340,6 +340,16 @@ without trial by fire.
   `make publish-bastion` design.
 - **Done when**: each has a ROADMAP entry + a first milestone.
 
+### P3.3a — Model research cards
+- Create a reusable `docs/models/` registry with evidence labels, lifecycle
+  states, and a minimum card contract; record the Nex-N2.5-Pro OpenRouter trial.
+- **Done when**: registry + first card are linked from the README, architecture,
+  runbook, and session log; provider claims are clearly separated from local or
+  independent evidence.
+- **Status**: ✅ **DONE (2026-09-11)** — `docs/models/README.md` and
+  `docs/models/nex-n2-5-pro.md` created; Nex-N2.5-Pro remains `candidate` until
+  a controlled Omega A/B is complete.
+
 ---
 
 ## Dream log (kind: dream — captured, unpromised)

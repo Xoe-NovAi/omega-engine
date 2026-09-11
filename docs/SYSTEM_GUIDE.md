@@ -289,6 +289,7 @@ turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2 > thermals.log
 | `docker-compose.yml` | OWUI stack (pinned v0.11.3) | 2026-09-08 |
 | `Makefile` | Harness targets | 2026-09-08 |
 | `docs/GNOSIS_USAGE.md` | Gnosis Lock usage (shell funcs + make) | 2026-09-09 |
+| `docs/models/` | Model research registry + model cards | 2026-09-11 |
 | `~/.bash_aliases` | Funcs: `gnosis-lock`, `gnosis-stats`; alias `oc` | 2026-09-09 |
 | `~/.config/opencode/opencode.jsonc` | OpenCode config (with MCP) | 2026-09-08 |
 | `~/.config/opencode/agent/gaming-expert.md` | Sibling agent (CPU fixed) | 2026-09-08 |
@@ -338,6 +339,7 @@ turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2 > thermals.log
 | 2026-09-11 | **❌ P2.5 agentmemory REJECTED** | Does NOT beat MemPalace on retrieval (95.2% vs 96.6% R@5 LongMemEval-S). MemPalace already integrated (62 drawers, 8 rooms, MCP verified). AgentMemory's viewer/4-tier lifecycle/multi-agent coordination are YAGNI for single-machine workflow. | Verdict: REJECTED; MemPalace remains primary |
 | 2026-09-11 | **✅ P2 complete** | All vanguard tools evaluated with documented verdicts: Headroom REJECTED, agentmemory REJECTED, Odysseus scheduled future, God's Eye View + Gods Eye toys. Phase table updated (P2 ✅ done). | ROADMAP phase table updated |
 | 2026-09-11 | **✅ P3.1 Architecture synthesis DONE** | `ARCHITECTURE.md` + `AGENT_RUNBOOK.md` updated: The Well + Ponytail + Well injection in gnosis-leash + Ponytail LIVE + The Well §5.2 spec + vanguard verdicts + priority stack → P3 active. De-duplication: no overlapping tiers (Well corrections + MemPalace knowledge + gnosis-lock packs = distinct layers). All docs cross-reference ROADMAP as canonical backlog. | 43/43 tests, lint+docs clean; commit `546dc03` |
+| 2026-09-11 | **✅ Model research registry + Nex-N2.5-Pro card** | Added `docs/models/README.md` (lifecycle, evidence labels, card contract, template) and `docs/models/nex-n2-5-pro.md` (metadata, strengths, quirks, provider-benchmark caveats, Omega verdict, OpenRouter recipe, validation plan). Linked from README, architecture, runbook, ROADMAP, and session log; `test_repo_hygiene` now requires the registry. | Registry/card docs pass link checks; Nex remains `candidate` pending local A/B |
 | 2026-09-11 | **🔄 P3.2 Node 0 federation ACTIVE (blocked)** | Tailscale not installed on either node; C6 comms-contract not ratified; key-management pattern + publish gate design incomplete. HP `omega-hub` reachable via LAN; Redis Pub/Sub designed but not live. | Next: Tailscale install + C6 ratification |
 
 ---

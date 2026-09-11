@@ -108,6 +108,18 @@ dossiers/ (matured) → [explicit user flag] → library_inbox_add_file
                                                   → omega_library on HP
 ```
 
+### Model research registry
+```
+web research → docs/models/<provider>-<model>.md
+             → evidence labels + Omega verdict
+             → local A/B (when applicable)
+             → ROADMAP decision
+```
+
+Model cards are decision records, not marketing summaries. Every card separates
+verified metadata, provider claims, independent reports, and local measurements;
+rejected cards remain available for future comparisons.
+
 ## 6. Security Boundaries
 
 - `omega-hub` binds LAN only; token auth recommended (ask #4/#C).
