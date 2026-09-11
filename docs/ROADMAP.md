@@ -35,10 +35,10 @@ Current state at a glance:
 
 | Phase | Name | State |
 |---|---|---|
-| P0 | Temple-grade pulse | queued |
-| P1 | **The Well** (corrections/tuning corpus) | queued |
-| P1.5 | Idea-flood management | queued (ROADMAP itself = part of it) |
-| P2 | The Vanguard studies | backlog |
+| P0 | Temple-grade pulse | ✅ done |
+| P1 | **The Well** (corrections/tuning corpus) | ✅ done |
+| P1.5 | Idea-flood management | ✅ done (ROADMAP itself = part of it) |
+| P2 | The Vanguard studies | **active** (P2.1 Headroom, P2.5 agentmemory; Odysseus scheduled future, God's Eye toys) |
 | P3 | Synthesis + federation close-out | backlog |
 
 ---
@@ -238,17 +238,17 @@ without trial by fire.
   (self-evolving memory, all-in-one UI, research UX) are exactly the areas we
   can grow; its weaknesses (no federation, no node-consciousness harness, no
   gnosis traces) are exactly our strengths.
-- **Study**: clone to real disk; sandbox install (Docker, port 7000) for the
-  *experience*; read the code for the *architecture*; deep-dive its memory/skills
-  self-evolution, Deep Research pipeline, Compare module, Cookbook scoring.
-- **The upload/beam-back experiment**: upload a persistent entity (the Build
-  agent persona) INTO Odysseus, let it operate/learn there, then **beam it
-  back** into the Omega Engine — the full loop is an experiment in itself.
-- **Credit & reforge**: everything we extract is reworked under our code
-  quality standards (anyio purity, no torch, no bare exceptions, no secrets),
-  and any adopted design carries attribution.
-- **Done when**: WanderGround dossier (code study) + experience notes (real
-  use) + ADRs on what to adapt; adopt/adapt/reject verdict per component.
+- **Status**: 📆 **SCHEDULED FOR A FUTURE DATE** (user, 2026-09-11) — too large
+  to tackle now. Revisit after P3 federation close-out. When active:
+  clone to real disk; sandbox install (Docker, port 7000) for the *experience*;
+  read the code for the *architecture*; deep-dive memory/skills self-evolution,
+  Deep Research pipeline, Compare module, Cookbook scoring; the
+  **upload/beam-back experiment** (persistent entity INTO Odysseus, operate,
+  learn, then beam back to Omega). Everything extracted is reworked under our
+  code quality standards with attribution.
+- **Done when** (when active): WanderGround dossier (code study) + experience
+  notes (real use) + ADRs on what to adapt; adopt/adapt/reject verdict per
+  component.
 
 ### P2.3 — God's Eye View (`bilawalsidhu/gods-eye-view`, MIT, ~8.3k★)
 - **What**: live open-source spy-satellite simulator in the browser — real
@@ -257,8 +257,8 @@ without trial by fire.
 - **Why**: the "nerdy dreams come true" entry — a superb playground for
   data-pipeline + spatial/3D rendering skills that could feed the WanderGround
   atlas and our own visual future.
-- **Done when**: runs locally on Node 1, a dossier maps its data-flow to our
-  atlas, adopt/adapt/reject verdict.
+- **Status**: 🎮 **TOY — WAITING** (user, 2026-09-11) — "just for me to play
+  with"; not on the work track. Remains in the dream log; revisit at leisure.
 
 ### P2.4 — Gods Eye (`bitan-del/gods-eye`, MIT)
 - **What**: multi-channel AI gateway with a unified brain — 25+ messaging
@@ -267,8 +267,9 @@ without trial by fire.
   LiteLLM, RouteLLM, Mem0, LlamaFirewall.
 - **Why**: the cross-channel-brain architecture is directly relevant to the
   federation vision — one sovereign brain across many surfaces.
-- **Done when**: sandbox runs, dossier on the channel/brain/memory design,
-  adopt/adapt/reject verdict (likely: adapt ideas into the federation era).
+- **Status**: 🎮 **TOY — WAITING** (user, 2026-09-11) — "just for me to play
+  with"; not on the work track. If the federation surface idea is ever wanted,
+  it becomes a ROADMAP item then.
 
 ### P2.5 — agentmemory evaluation (`rohitg00/agentmemory`, Apache-2.0, ~27.9k★)
 - **What**: auto-capture memory for coding agents (supports OpenCode), SQLite +
@@ -278,6 +279,7 @@ without trial by fire.
   have MemPalace; adopt only if it beats MemPalace meaningfully on a defined
   test.
 - **Done when**: side-by-side recall test vs MemPalace; verdict + rationale.
+- **Status**: queued (after P2.1 Headroom).
 
 ---
 
