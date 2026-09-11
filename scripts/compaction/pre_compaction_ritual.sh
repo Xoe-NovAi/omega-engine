@@ -5,7 +5,8 @@
 # Captures full session state, evolution delta, and gnosis before context compaction.
 # Run at end of every session, before /compact, or on shutdown.
 #
-# Usage: ./pre_compaction_ritual.sh [--session-id <id>] [--reason "..."]
+# Usage: ./pre_compaction_ritual.sh [--session-id <id>] [--reason "..."] [--entity <name>] [--channel <name>] [--phase <phase>]
+#   Entity attrs default to env (ENTITY, CHANNEL, PHASE) or sensible constants.
 # ==============================================================================
 
 set -euo pipefail
@@ -21,6 +22,13 @@ IDENTITY_DIR="${GNSSIS_ROOT}/identity"
 TIMESTAMP_ISO=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 FILE_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
 TIMESTAMP="${TIMESTAMP_ISO}"
+# Entity attribution: every artifact records WHO ran the lock. Defaults come
+# from env (ENTITY/CHANNEL/PHASE) so agents can set them per-run; a bare CLI
+# call still records a useful, queryable identity instead of 'unknown'.
+ENTITY="${ENTITY:-build}"
+CHANNEL="${CHANNEL:-cli}"
+PHASE="${PHASE:-unset}"
+
 SESSION_ID="${1:-session-${FILE_TS}}"
 REASON="${2:-End of session}"
 
@@ -48,6 +56,7 @@ echo
 log "Session ID: ${SESSION_ID}"
 log "Timestamp:  ${TIMESTAMP}"
 log "Reason:     ${REASON}"
+log "Entity:     ${ENTITY} (channel: ${CHANNEL}, phase: ${PHASE})"
 echo
 
 # ─── Step 1: Capture Git State ────────────────────────────────────────────────
@@ -57,6 +66,9 @@ GIT_STATE_FILE="${SESSIONS_DIR}/${SESSION_ID}_git_state.json"
   echo "{"
   echo "  \"timestamp\": \"${TIMESTAMP}\","
   echo "  \"session_id\": \"${SESSION_ID}\","
+  echo "  \"entity\": \"${ENTITY}\","
+  echo "  \"channel\": \"${CHANNEL}\","
+  echo "  \"phase\": \"${PHASE}\","
   echo "  \"git\": {"
   if git -C "${PROJECT_ROOT}" rev-parse --git-dir >/dev/null 2>&1; then
     echo "    \"repo\": \"omega-engine-alpha\","
@@ -178,7 +190,8 @@ NARRATIVE_FILE="${SESSIONS_DIR}/${SESSION_ID}_narrative.md"
   echo "**Timestamp:** ${TIMESTAMP}  "
   echo "**Reason:** ${REASON}  "
   echo "**Host:** $(hostname)  "
-  echo "**Agent:** Build (Omega Engine Alpha)  "
+  echo "**Agent:** ${ENTITY} (channel: ${CHANNEL})  "
+  echo "**Phase:** ${PHASE}  "
   echo
   echo "---"
   echo
@@ -219,6 +232,9 @@ EVOLUTION_FILE="${EVOLUTION_DIR}/evolution_${TIMESTAMP}.json"
   echo "{"
   echo "  \"timestamp\": \"${TIMESTAMP}\","
   echo "  \"session_id\": \"${SESSION_ID}\","
+  echo "  \"entity\": \"${ENTITY}\","
+  echo "  \"channel\": \"${CHANNEL}\","
+  echo "  \"phase\": \"${PHASE}\","
   echo "  \"previous_evolution\": \"${LATEST_EVOLUTION}\","
   echo "  \"delta\": {"
   echo "    \"files_changed\": $(git -C "${PROJECT_ROOT}" diff --name-only 2>/dev/null | wc -l),"
@@ -234,11 +250,82 @@ EVOLUTION_FILE="${EVOLUTION_DIR}/evolution_${TIMESTAMP}.json"
 } > "${EVOLUTION_FILE}"
 ok "Evolution delta saved to ${EVOLUTION_FILE}"
 
+# ─── Step 6b: Machine-generate narrative summary from captured state ──────────
+# CLI locks (make gnosis-lock) cannot run the interactive question tool, so the
+# narrative template ends up all-TODO. Reuse the captured git/evolution state to
+# auto-fill Session Summary + Code Changes so even a CLI lock is a useful
+# continuity record. Human-reflection fields (Decisions/Gnosis) stay TODO for
+# the skill run or the next session.
+log "Step 6.5: Auto-generating narrative summary from state..."
+python3 - "${NARRATIVE_FILE}" "${GIT_STATE_FILE}" "${EVOLUTION_FILE}" "${ENTITY}" "${CHANNEL}" "${PHASE}" "${SESSION_ID}" "${TIMESTAMP}" "${REASON}" <<'PYEOF'
+import json, sys
+
+narr_path, git_path, evo_path = sys.argv[1], sys.argv[2], sys.argv[3]
+entity, channel, phase = sys.argv[4], sys.argv[5], sys.argv[6]
+sid, ts, reason = sys.argv[7], sys.argv[8], sys.argv[9]
+
+def load(p, default):
+    try:
+        return json.load(open(p))
+    except Exception:
+        return default
+
+git = load(git_path, {})
+evo = load(evo_path, {})
+git_inner = git.get("git", {})
+delta = evo.get("delta", {})
+
+commits = git_inner.get("recent_commits", [])
+changes = git_inner.get("status", [])
+summary_lines = [
+    f"**Machine-generated continuity record** (entity {entity}, channel {channel}, phase {phase}).",
+    f"Reason: {reason}",
+    "",
+    f"Commit: `{git_inner.get('short_commit', 'unknown')}` on `{git_inner.get('branch', 'unknown')}`"
+    + (f" — {git_inner['commit']}" if git_inner.get("commit") else ""),
+]
+if delta:
+    summary_lines.append(
+        f"Delta: {delta.get('files_changed', 0)} files, "
+        f"+{delta.get('lines_added', 0)}/-{delta.get('lines_removed', 0)} lines, "
+        f"{delta.get('new_files', 0)} new files."
+    )
+code_lines = []
+if commits:
+    code_lines.append("Recent commits:")
+    for c in commits[:5]:
+        code_lines.append(f"- `{c}`")
+if changes:
+    code_lines.append("")
+    code_lines.append("Working-tree changes:")
+    for ch in changes:
+        code_lines.append(f"- {ch}")
+
+narr = open(narr_path).read()
+narr = narr.replace(
+    "TODO: Fill in manually or via LLM summary of conversation",
+    "\n".join(summary_lines),
+    1,
+)
+if code_lines:
+    # Replace the "- " under Code Changes with auto-captured entries.
+    narr = narr.replace("## Code Changes\n\n- ", "## Code Changes\n\n" + "\n".join(code_lines) + "\n", 1)
+open(narr_path, "w").write(narr)
+print(f"    narrative summary auto-filled ({len(summary_lines)+len(code_lines)} lines)")
+PYEOF
+ok "Narrative summary auto-generated"
+
 # ─── Step 7: Update Persistent Identity ───────────────────────────────────────
 log "Step 7/8: Updating persistent identity..."
 IDENTITY_FILE="${IDENTITY_DIR}/identity.json"
 CURRENT_SESSIONS=$(jq -r '.session_count // 0' "${IDENTITY_FILE}" 2>/dev/null || echo 0)
 NEW_SESSION_COUNT=$((CURRENT_SESSIONS + 1))
+# Per-entity continuity: update the entity's own entry (session_count,
+# last_session, last_phase) inside the global identity, preserving others.
+# Keeps the flat storage layout; entity views are queries, not folders.
+ENTITY_KEY=$(jq -r --arg e "${ENTITY}" '.entities[$e] // {}' "${IDENTITY_FILE}" 2>/dev/null || echo '{}')
+ENTITY_COUNT=$(jq -r '.session_count // 0' <<<"${ENTITY_KEY}" 2>/dev/null || echo 0)
+NEW_ENTITY_COUNT=$((ENTITY_COUNT + 1))
 {
   echo "{"
   echo "  \"entity\": \"Omega Engine Alpha Build Agent\","
@@ -246,6 +333,7 @@ NEW_SESSION_COUNT=$((CURRENT_SESSIONS + 1))
   echo "  \"last_updated\": \"${TIMESTAMP}\","
   echo "  \"session_count\": ${NEW_SESSION_COUNT},"
   echo "  \"current_session\": \"${SESSION_ID}\","
+  echo "  \"current_entity\": \"${ENTITY}\","
   echo "  \"current_machine\": \"ASUS ExpertBook P1503CVA (i7-13620H)\","
   echo "  \"federation_role\": \"Node 1 - Compute Vanguard\","
   echo "  \"partner_node\": \"HP Pavilion (Node 0 - Archival Bastion)\","
@@ -268,10 +356,17 @@ NEW_SESSION_COUNT=$((CURRENT_SESSIONS + 1))
   echo "    \"Tailscale mesh operational\","
   echo "    \"Secure key management pattern\","
   echo "    \"Agent team migration complete\""
-  echo "  ]"
+  echo "  ],"
+  echo "  \"entities\": {"
+  # Merge existing per-entity entries, updating THIS entity's record.
+  jq -r --arg e "${ENTITY}" --arg s "${SESSION_ID}" --arg p "${PHASE}" --argjson n "${NEW_ENTITY_COUNT}" '
+    .entities // {} | .[$e] = {session_count: $n, last_session: $s, last_phase: $p} |
+    to_entries | sort_by(.key) | map("    \"" + .key + "\": " + (.value | tostring)) | join(",\n")
+  ' "${IDENTITY_FILE}" 2>/dev/null || echo "    \"${ENTITY}\": {\"session_count\": ${NEW_ENTITY_COUNT}, \"last_session\": \"${SESSION_ID}\", \"last_phase\": \"${PHASE}\"}"
+  echo "  }"
   echo "}"
 } > "${IDENTITY_FILE}"
-ok "Identity updated: ${NEW_SESSION_COUNT} sessions logged"
+ok "Identity updated: ${NEW_SESSION_COUNT} sessions logged (entity ${ENTITY} → #${NEW_ENTITY_COUNT})"
 
 # ─── Step 8: Create Session Manifest ──────────────────────────────────────────
 log "Step 8/8: Creating session manifest..."
@@ -281,6 +376,9 @@ MANIFEST_FILE="${SESSIONS_DIR}/${SESSION_ID}_manifest.json"
   echo "  \"session_id\": \"${SESSION_ID}\","
   echo "  \"timestamp\": \"${TIMESTAMP}\","
   echo "  \"reason\": \"${REASON}\","
+  echo "  \"entity\": \"${ENTITY}\","
+  echo "  \"channel\": \"${CHANNEL}\","
+  echo "  \"phase\": \"${PHASE}\","
   echo "  \"artifacts\": {"
   echo "    \"git_state\": \"${GIT_STATE_FILE}\","
   echo "    \"opencode_config\": \"${CONFIG_FILE}\","
@@ -300,7 +398,7 @@ log "Logging SESSION_END evolution event..."
 EVOLUTION_SCRIPT="${PROJECT_ROOT}/scripts/compaction/evolution_log.py"
 if python3 "${EVOLUTION_SCRIPT}" log SESSION_END "${SESSION_ID}" \
     "Pre-compaction ritual: ${REASON}" \
-    --metadata "{\"manifest\": \"${MANIFEST_FILE}\", \"sessions\": ${NEW_SESSION_COUNT}}" \
+    --metadata "{\"manifest\": \"${MANIFEST_FILE}\", \"sessions\": ${NEW_SESSION_COUNT}, \"entity\": \"${ENTITY}\", \"channel\": \"${CHANNEL}\", \"phase\": \"${PHASE}\"}" \
     --tags ritual session-end >/dev/null 2>&1; then
   ok "Evolution event logged"
 else

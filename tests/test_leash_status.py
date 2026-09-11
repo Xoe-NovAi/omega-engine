@@ -63,6 +63,49 @@ class TestLeashStatus(unittest.TestCase):
         self.assertIn("readdirSync(SESSIONS_DIR)", src)
         self.assertIn("TODO: Fill in", src)
 
+    def test_plugin_loud_failure_markers(self):
+        """NO SILENT FAILURES: a compaction without a populated narrative must
+        (a) inject a visible INCIDENT block into the compaction context, and
+        (b) write a structured diagnostic to gnosis-errors.jsonl."""
+        self.assertTrue(PLUGIN.is_file())
+        src = PLUGIN.read_text()
+        self.assertIn("GNOSIS-LOCK INCIDENT: NO HUMAN NARRATIVE AVAILABLE", src)
+        self.assertIn("findLatestPopulatedNarrative", src)
+        self.assertIn("compaction_without_narrative", src)
+        # The event log must carry provenance so the watchdog can act on it.
+        self.assertIn("narrative_source", src)
+        self.assertIn("narrative_reason", src)
+
+    def test_watchdog_flags_last_compaction_without_narrative(self):
+        """The watchdog must turn the last compacting event's has_narrative:false
+        into a degraded (non-zero) exit — a compaction without human gnosis is an
+        incident, never 'healthy'."""
+        script = REPO / "scripts/compaction/leash_status.py"
+        r = subprocess.run(["python3", str(script)], capture_output=True, text=True, timeout=30)
+        src_check = PLUGIN.read_text()
+        event_lines = []
+        if TIMELINE.is_file():
+            for l in TIMELINE.read_text().splitlines():
+                if not l.strip():
+                    continue
+                try:
+                    e = json.loads(l)
+                except json.JSONDecodeError:
+                    continue
+                if e.get("kind") == "session.compacting":
+                    event_lines.append(e)
+        # The current box HAS a historical has_narrative:false event (the bug we
+        # caught). While it remains the LAST compacting event, watchdog must exit 1.
+        if event_lines and not event_lines[-1].get("has_narrative", False):
+            self.assertNotEqual(r.returncode, 0,
+                                "watchdog must be degraded while last compaction lacked narrative")
+            self.assertIn("NARRATIVE MISSING", r.stdout)
+        else:
+            # No historical incident: watchdog must be healthy AND source-marks ok.
+            if "GNOSIS-LOCK INCIDENT" in src_check:
+                self.assertEqual(r.returncode, 0,
+                                 "watchdog should be healthy when last compaction had narrative")
+
     def test_agent_awareness_surfaces_reference_runbook(self):
         """Global + project AGENTS.md, build prompt, and INDEX.md must point
         agents at the runbook so every session has operational awareness."""
@@ -88,6 +131,40 @@ class TestLeashStatus(unittest.TestCase):
         # INDEX.md injected into every session system prompt
         it = INDEX_MD.read_text()
         self.assertIn("AGENT_RUNBOOK", it, "INDEX.md must point at the runbook")
+
+
+class TestRitualEntityAttribution(unittest.TestCase):
+    """gnosis-lock records must carry entity/channel/phase so per-agent
+    continuity is a query over one flat store (not folders per agent)."""
+
+    RITUAL = REPO / "scripts/compaction/pre_compaction_ritual.sh"
+
+    def test_ritual_emits_entity_fields(self):
+        src = self.RITUAL.read_text()
+        for needle in [
+            'ENTITY="${ENTITY:-build}"',
+            'CHANNEL="${CHANNEL:-cli}"',
+            'PHASE="${PHASE:-unset}"',
+            '\\"entity\\": \\"${ENTITY}\\"',
+            '\\"channel\\": \\"${CHANNEL}\\"',
+            '\\"phase\\": \\"${PHASE}\\"',
+        ]:
+            self.assertIn(needle, src, f"ritual missing {needle!r}")
+
+    def test_ritual_has_machine_narrative_autofill(self):
+        """CLI locks cannot run the question tool; the ritual must still produce
+        a continuity record by auto-filling summary/code-changes from state."""
+        src = self.RITUAL.read_text()
+        self.assertIn("Machine-generated continuity record", src)
+        self.assertIn("Step 6.5", src)
+        self.assertIn("narrative summary auto-filled", src)
+
+    def test_ritual_has_per_entity_identity_map(self):
+        src = self.RITUAL.read_text()
+        # In shell echo "...", JSON quotes are escaped: \"current_entity\"
+        self.assertIn('\\"current_entity\\"', src)
+        self.assertIn('\\"entities\\": {', src)
+        self.assertIn("last_session", src)
 
 
 class TestRitualPluginCongruence(unittest.TestCase):

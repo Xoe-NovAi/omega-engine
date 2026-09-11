@@ -80,12 +80,23 @@ def main() -> int:
         if "session.compacting" not in src:
             problems.append("no session.compacting logging in source (1: degraded)")
         # Hydration fallback: readLatestNarrative must fall back to the most
-        # recent POPULATED narrative when current_session is a fresh template.
-        if "function isPopulatedNarrative" not in src or "readdirSync(SESSIONS_DIR)" not in src:
-            problems.append("PLUGIN REGRESSED — no narrative fallback (hydrations fail when ritual runs pre-compact) (1: degraded)")
-        print(("  fallback  : OK (readLatestNarrative falls back to last populated narrative)"
-               if "function isPopulatedNarrative" in src and "readdirSync(SESSIONS_DIR)" in src
-               else "  fallback  : MISSING — narrative fallback absent (1: degraded)"))
+        # recent POPULATED narrative when current_session is a fresh template,
+        # and a missing narrative must be a LOUD incident (never silent).
+        required_plugin_funcs = [
+            "function readLatestNarrative",
+            "function findLatestPopulatedNarrative",
+            "function isPopulatedNarrative",
+            "function currentSessionOf",
+            "GNOSIS-LOCK INCIDENT",
+        ]
+        missing_funcs = [f for f in required_plugin_funcs if f not in src]
+        if missing_funcs:
+            problems.append(
+                "PLUGIN REGRESSED — missing: " + ", ".join(missing_funcs) + " (1: degraded)"
+            )
+        print(("  fallback  : OK (narrative fallback + loud incident present)"
+               if not missing_funcs
+               else f"  fallback  : MISSING — {', '.join(missing_funcs)} (1: degraded)"))
 
     # 2–4. Timeline
     if not TIMELINE.is_file():
@@ -130,6 +141,27 @@ def main() -> int:
                     else:
                         notes.append(f"event kind '{missing}' absent from timeline (informational)")
                 print(f"  kinds     : {', '.join(sorted(kinds)) or '(none)'}")
+
+                # SEMANTIC CHECK: the LAST compaction must have injected a human
+                # narrative. A compaction without narrative is a first-class
+                # incident (the leash partially failed) — NEVER silent.
+                compacting_events = [e for e in parsed if e.get("kind") == "session.compacting"]
+                if compacting_events:
+                    last_c = compacting_events[-1]
+                    has_n = last_c.get("has_narrative", False)
+                    src_lbl = last_c.get("narrative_source", "unknown")
+                    reason = last_c.get("narrative_reason", "no reason recorded")
+                    if has_n:
+                        print(f"  narrative : OK — last compaction injected human narrative (source: {src_lbl})")
+                    else:
+                        problems.append(
+                            "NARRATIVE MISSING — last session.compacting had has_narrative:false "
+                            f"(source: {src_lbl}, reason: {reason}) (1: degraded)"
+                        )
+                        print(f"  narrative : ❌ FAIL — last compaction had NO human narrative (source: {src_lbl})")
+                        print(f"    reason  : {reason}")
+                else:
+                    notes.append("no session.compacting in timeline yet (informational)")
 
     # 5. Errors
     if ERRLOG.is_file():

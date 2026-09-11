@@ -380,11 +380,14 @@ bench-compare: ## Compare phi4-mini vs qwen2.5-coder vs deepseek-r1
 GNOSIS_RITUAL    := scripts/compaction/pre_compaction_ritual.sh
 GNOSIS_EVOLUTION := scripts/compaction/evolution_log.py
 
-gnosis-lock: ## Run pre-compaction ritual: make gnosis-lock REASON="why"
+gnosis-lock: ## Run pre-compaction ritual: make gnosis-lock REASON="why" [ENTITY=... CHANNEL=... PHASE=...]
 	@SESSION_ID="session-$$(date -u +%Y-%m-%dT%H-%M-%SZ)" ; \
 	REASON="$${REASON:-Manual gnosis lock before compact}" ; \
+	ENTITY="$${ENTITY:-build}" ; \
+	CHANNEL="$${CHANNEL:-cli}" ; \
+	PHASE="$${PHASE:-unset}" ; \
 	echo "$(C_CYAN)🔱 Locking gnosis: $$REASON$(C_RESET)" ; \
-	echo "$(C_DIM)   Session: $$SESSION_ID$(C_RESET)" ; \
+	echo "$(C_DIM)   Session: $$SESSION_ID | Entity: $$ENTITY | Phase: $$PHASE$(C_RESET)" ; \
 	echo "" ; \
 	bash "$(GNOSIS_RITUAL)" "$$SESSION_ID" "$$REASON" ; \
 	echo "" ; \

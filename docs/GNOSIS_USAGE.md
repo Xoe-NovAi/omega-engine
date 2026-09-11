@@ -51,7 +51,10 @@ Everything is written to `gnosis/sessions/`, `gnosis/evolution/`, and
     `question` tool, populates `narrative.md`, commits the session gnosis, and
     signals when it's safe to `/compact`.
   - **CLI Workflow**: Running `gnosis-lock` in terminal runs the capture script
-    directly (still 100% supported).
+    directly (still 100% supported). CLI locks record `entity`, `channel`,
+    `phase` (env `ENTITY`/`CHANNEL`/`PHASE`) and **auto-fill** the narrative's
+    Session Summary + Code Changes from captured git/evolution state (Step 6.5),
+    so even a CLI-only session is a continuity record.
 - Compaction itself can only be triggered from **inside** the TUI by typing
   `/compact` (or via auto-compaction when context fills).
 - **⚠️ `/gnosis-lock` vs "Prepare for compaction"**:

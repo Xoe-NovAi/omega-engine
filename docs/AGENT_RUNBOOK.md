@@ -64,6 +64,23 @@ When `/gnosis-lock` fires or the user asks to lock gnosis:
    `git -C ~/Documents/Projects/omega-engine-alpha commit -m "gnosis: session ${SESSION_ID} locked (${REASON})"`
 6. Confirm to the user: "🔱 Gnosis locked to disk. Ready to run /compact."
 
+### 1.5 Entity & phase attribution (who locked what)
+
+Every gnosis-lock record (manifest, narrative, git_state, evolution event)
+carries `entity`, `channel`, and `phase` fields. Pass them via env:
+
+```bash
+ENTITY=build CHANNEL=opencode PHASE=phase-3 make gnosis-lock REASON="..."
+```
+
+- `identity.json` keeps a per-entity map (`entities.<entity>.session_count`,
+  `last_session`, `last_phase`) so each agent's continuity is a query over one
+  flat store — no folder-per-agent needed.
+- CLI locks (`make gnosis-lock`) **auto-fill** the narrative's Session Summary +
+  Code Changes from captured git/evolution state (Step 6.5), so even a CLI-only
+  session is a useful continuity record. The human-reflection fields
+  (Decisions/Gnosis) remain TODO until the skill runs.
+
 ### 1.4 The "prepare for compaction" orchestration checklist
 
 When the user phrases it as a session-close instruction (NOT the bare command):
@@ -100,6 +117,25 @@ INDEX.md payload, skill+command registration.
 Because the narrative you write in Step 1.3 is **read by the plugin and injected
 into the compaction summary**. A populated narrative = your exact insight survives.
 An empty/template narrative = the model summarizes alone.
+
+### 2.4 NO SILENT FAILURES contract
+A compaction that runs with **no populated human narrative** is a first-class
+incident — it is never quietly ignored:
+
+- The plugin injects `⚠️ GNOSIS-LOCK INCIDENT: NO HUMAN NARRATIVE AVAILABLE`
+  into the compaction context, so the model cannot unknowingly produce a
+  lower-fidelity summary.
+- A structured diagnostic (`compaction_without_narrative`) is written to
+  `gnosis-errors.jsonl`.
+- The timeline event records `narrative_source` + `narrative_reason` (provenance).
+- `make gnosis-leash-status` **exits 1 (degraded)** while the last compacting
+  event has `has_narrative: false`, printing the reason. The leash returns to
+  healthy after the next compaction that injects a narrative.
+
+Fallback chain (in order): current session → most recent *populated* session on
+disk. This is why a second ritual mid-session cannot shadow a good narrative:
+the plugin deliberately ignores unedited `TODO: Fill in` templates in favor of
+the last real reflection.
 
 ---
 
