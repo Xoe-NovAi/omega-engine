@@ -317,11 +317,23 @@ without trial by fire.
   Well; de-duplicate memory/capture tiers; update `docs/ARCHITECTURE.md` and
   `docs/AGENT_RUNBOOK.md`.
 - **Done when**: one canonical architecture doc, no overlapping systems.
+- **Status**: ✅ **DONE (2026-09-11)** — `ARCHITECTURE.md` updated (The Well,
+  Ponytail, updated topology, Well injection in gnosis-leash, updated session
+  count); `AGENT_RUNBOOK.md` updated (gnosis-leash Well injection, Ponytail
+  LIVE, The Well §5.2, vanguard verdicts, priority stack → P3 active);
+  de-duplication: no overlapping memory/capture tiers (Well + MemPalace +
+  gnosis-lock are distinct layers with clear boundaries); all docs cross-
+  reference ROADMAP as canonical backlog. 43/43 tests green, lint+docs clean.
 
 ### P3.2 — Node 0 federation (HP Pavilion)
 - Tailscale mesh; comms-contract ratification (C6); key management pattern;
   publish gate (explicit-publish only); sovereignty ratio tracked.
 - **Done when**: packets flow Node 0 → Node 1 with the publish gate enforced.
+- **Status**: **ACTIVE (blocked on infra)** — Tailscale not installed on either
+  node; C6 comms-contract not ratified; no key-management pattern;
+  explicit-publish gate design incomplete. HP `omega-hub` (91 tools, :8016)
+  reachable via LAN; Redis Pub/Sub ephemeral heartbeats designed but not
+  live. C5 private-queries policy deferred to HP side.
 
 ### P3.3 — Content runway
 - Obsidian vault, Godot/KQ5 research, Open WebUI experimentation,
