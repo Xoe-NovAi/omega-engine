@@ -161,6 +161,12 @@ from "re-teach the agent every time" to "the agent already knows."
   system context for any Zen model (and, eventually, a fine-tune seed).
 - **Done when**: next-session system prompt demonstrably contains Well rules;
   compact summary preserves them.
+- **Status**: ✅ **DONE (2026-09-11)** — `gnosis-leash.js` updated:
+  `experimental.chat.system.transform` injects top-6 Well records (harness,
+  local_ai domains) at session start; `experimental.session.compacting`
+  injects top-8 (harness, local_ai) into the compaction summary. Both use
+  `readWellForInjection()` + `formatWellBlock()`. `well-export` = `make
+  well-export` renders `WISDOM.md` + JSONL bundle. 43/43 tests green.
 
 ### P1.4 — The Well evolution (supersession)
 - Corrections can be superseded by newer ones (same `domain`+`rule` family);
