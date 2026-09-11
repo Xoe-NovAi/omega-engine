@@ -15,9 +15,9 @@
 │                            registered entities)                    │
 │  Roles .................. orchestration, archival, compliance      │
 └──────────────▲──────────────────────┬──────────────────────────────┘
-               │  LAN :8016           │  USB packet ceremony (bundle),
-               │  Tailscale (P2)      │  Redis heartbeats (P3)
-┌──────────────┴──────────────────────▼──────────────────────────────┐
+             │  LAN :8016           │  USB packet ceremony (bundle),
+             │  Tailscale (P3.2)    │  Redis heartbeats (P3.2)
+┌─────────────┴──────────────────────▼──────────────────────────────┐
 │  NODE 1 — ASUS ExpertBook P1503CVA (EXPLORATION VANGUARD)          │
 │  CPU  Intel i7-13620H (6P+4E, DDR5 single-channel, no GPU)         │
 │  ──────────────────────────────────────────────────────────────     │
@@ -26,10 +26,13 @@
 │  Open WebUI ............. :3000 (Docker)                            │
 │  OpenCode ............... 1.18.30, Big Pickle 1M ctx (Zen)         │
 │  gnosis-leash plugin .... session.created/idle/compacted events     │
-│                            + compaction context injection          │
+│                            + compaction context injection           │
+│                            + The Well active rules injection        │
 │  WanderGround ........... sqlite-vec atlas, MemPalace, MkDocs,     │
 │                            Three.js/WebXR 3D, munin curator        │
 │  Gnosis Lock ............ 9-step ritual, evolution log, identity   │
+│  The Well ............... corrections/tips corpus (43 tests green) │
+│  Ponytail ............... lazy-senior-dev plugin (modes off/on)    │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -85,8 +88,9 @@ with pending/stale/active/completed queues in Hivemind.
 ### Capture (Node 1)
 ```
 wander "spark" → inbox/*.md → wander-curator (systemd) → knowledge_atlas.db
-                                                        → MemPalace palace
-                                                        → MkDocs docs/
+                                                         → MemPalace palace
+                                                         → MkDocs docs/
+                                                         → The Well (kind:dream)
 ```
 
 ### Continuity (both nodes)
@@ -94,14 +98,14 @@ wander "spark" → inbox/*.md → wander-curator (systemd) → knowledge_atlas.d
 session.created ─┐
 session.idle ────┼→ gnosis-leash plugin → gnosis-events.jsonl
 session.compacted┘
-/compact → experimental.session.compacting → inject WanderGround rules
+/compact → experimental.session.compacting → inject WanderGround rules + The Well rules + human narrative
 make gnosis-lock → evolution_log.jsonl + identity.json ++
 ```
 
 ### Federation (Node 1 → HP)
 ```
 dossiers/ (matured) → [explicit user flag] → library_inbox_add_file
-                                                → omega_library on HP
+                                                  → omega_library on HP
 ```
 
 ## 6. Security Boundaries
@@ -116,4 +120,4 @@ dossiers/ (matured) → [explicit user flag] → library_inbox_add_file
 - Systemd: `ollama.service` (system), `wander-curator.{service,timer}` (user, linger on).
 - Docker: `open-webui` (pinned v0.11.3), restart unless-stopped.
 - Backups: `scripts/backup_harness.sh` → cron 02:30, --usb optional.
-- Gnosis identity: `gnosis/identity/identity.json` (currently session 17).
+- Gnosis identity: `gnosis/identity/identity.json` (currently session 25).

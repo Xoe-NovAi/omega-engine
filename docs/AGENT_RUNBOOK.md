@@ -140,9 +140,9 @@ commit. Skipping any step breaks the whole. Discipline is enforced, not assumed
 ### 2.1 What it does (automatically, in the background)
 - `~/.config/opencode/plugins/gnosis-leash.js`
 - Wires: `session.created`, `session.idle`, `session.compacted` events → gnosis timeline
-- On `/compact`: injects WanderGround INDEX rules **+ your captured narrative** into
+- On `/compact`: injects WanderGround INDEX rules **+ The Well active rules (top-N by recency + domain)** **+ your captured narrative** into
   the compaction prompt via `experimental.session.compacting`
-- Appends WanderGround operating rules to every session system prompt via
+- Appends WanderGround operating rules + The Well active rules (top-N, harness/local_ai domains) to every session system prompt via
   `experimental.chat.system.transform`
 - Logs to `~/.config/opencode/plugins/state/gnosis-events.jsonl` (and errors to
   `gnosis-errors.jsonl`)
@@ -235,16 +235,34 @@ make -C ~/WanderGround 3d-serve          # offline Three.js constellation viewer
 
 Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 
-### 5.1 Ponytail (lazy senior dev — P0.4, partial)
+### 5.1 Ponytail (lazy senior dev — P0.4, **LIVE**)
 - Checkout: `~/Vanguard/ponytail` (registered as absolute-path plugin in
-  `~/.config/opencode/opencode.json`). Live after the next opencode launch.
+  `~/.config/opencode/opencode.json`). Live after the opencode restart.
 - The ruleset (inject-on-every-turn, modes `lite|full|ultra|off`) composes
   with the gnosis-leash system-transform: BOTH append to the system prompt,
   neither overwrites. `/ponytail off` silences it.
 - Commands: `/ponytail`, `/ponytail-review`, `/ponytail-audit`,
   `/ponytail-debt`, `/ponytail-gain`, `/ponytail-help`.
-- Watchdog note: confirm `make gnosis-leash-status` stays green with the
-  plugin active after restart.
+- Watchdog note: `make gnosis-leash-status` stays green with the
+  plugin active.
+
+### 5.2 The Well (corrections/tuning corpus — P1, **LIVE**)
+- Storage: `gnosis/well/well.jsonl` (append-only) + `gnosis/well/WISDOM.md` (human view).
+- Schema: `record_id`, `ts`, `kind` (correction|preference|tip|anti_pattern|insight|dream),
+  `source_pack`, `domain`, `trigger`, `rule`, `rationale`, `tags`, `status` (active|superseded),
+  `superseded_by`.
+- Lifecycle: `CAPTURED → ACTIVE → SUPERSEDED` (mirrors pack lifecycle).
+- **Writers**: Skill Step 4c (during `/gnosis-lock` reflection, agent extracts
+  corrections → `make well-add`), Prepare-for-compaction "Well sweep",
+  CLI `make well-add`.
+- **Readers**: gnosis-leash plugin injects top-6 (harness/local_ai) at session
+  start + top-8 at compaction; `make well-export` → `WISDOM.md` + JSONL bundle.
+- **Evolution**: `make well-supersede OLD=<id> NEW=<id>`; injection excludes
+  superseded; `kind:dream` captures idea sparks (excluded from injection).
+- CLI: `make well-add|well-list|well-stats|well-supersede|well-export`.
+- Tests: 7 `TestWellStorage` tests (JSONL validity, secret rejection,
+  supersession chain, index parity, UTF-8 integrity, stats accuracy, Make targets).
+- 43/43 total tests green, lint+docs clean.
 
 ---
 
@@ -291,21 +309,27 @@ Zen tiers. Prefer the same CODE_QUALITY §1–5 standards for new Python code.
 > **`docs/ROADMAP.md`** — the single source of truth. Any new idea/tool/quest
 > is recorded there with a status BEFORE implementation (standing rule).
 
-Quick orientation (current phase = P0 temple-grade pulse, then P1 The Well):
+Quick orientation (current phase = **P3 Synthesis + Federation Close-out**):
 
-1. **P0.1–P0.4** — mempalace smoke test, historical pack triage, watchdog green
-   on next compact, **Ponytail install** (`DietrichGebert/ponytail`, MIT).
-2. **P1 — The Well** — `gnosis/well/well.jsonl` + `WISDOM.md`; corrections/
-   tips/preferences corpus; writers (skill Step 4c + compaction sweep +
-   `make well-add`); readers (plugin inject at session start + compaction);
-   `make well-export` tuning bundle.
-3. **P1.5** — `docs/ROADMAP.md` backlog + dream-kind capture (this section
-   stays a pointer).
-4. **P2 — Vanguard studies** — Headroom (wrap + `learn` → Well), Odysseus
-   (upload/beam-back experiment), God's Eye View, Gods Eye, agentmemory eval;
-   each with a WanderGround dossier + adopt/adapt/reject verdict.
-5. **P3** — synthesis + Node 0 federation close-out.
+1. **P0.1–P0.4** — ✅ **DONE**: mempalace smoke test, historical pack triage,
+   watchdog green on next compact, **Ponytail install** (`DietrichGebert/ponytail`, MIT, LIVE).
+2. **P1 — The Well** — ✅ **DONE**: `gnosis/well/well.jsonl` + `WISDOM.md`;
+   writers (skill Step 4c + compaction sweep + `make well-add`); readers
+   (plugin inject at session start + compaction); `make well-export` bundle.
+3. **P1.5** — ✅ **DONE**: `docs/ROADMAP.md` backlog + `kind:dream` capture.
+4. **P2 — Vanguard studies** — ✅ **DONE** (all evaluated, documented):
+   - **Headroom**: REJECTED — well-built, but benefits don't apply to local
+     inference (zero token cost, 1M context, CPU-constrained pipeline).
+   - **Odysseus**: SCHEDULED FOR A FUTURE DATE (after P3) — too large for now.
+   - **God's Eye View + Gods Eye**: TOY — WAITING (user: "just for me to play
+     with"; not on the work track).
+   - **agentmemory**: REJECTED — does NOT beat MemPalace on retrieval
+     (95.2% vs 96.6% R@5 LongMemEval-S); MemPalace already integrated.
+   All verdicts documented in ROADMAP + WanderGround dossiers (to be created).
+5. **P3 — Synthesis + Federation Close-out** — **ACTIVE**:
+   - P3.1 Architecture synthesis (fold all P0-P2 decisions into docs, de-duplicate).
+   - P3.2 Node 0 federation (Tailscale, C6 comms-contract, publish gate).
+   - P3.3 Content runway (Obsidian, Godot/KQ5, Open WebUI, `make publish-bastion`).
 
-Old open items folded into ROADMAP: Mempalace re-verify (P0.1), Node 0
-federation (P3.2), sudo revert (standing infra — outside ROADMAP, see
-`~/.config/opencode/AGENTS.md`), content runway (P3.3).
+Old open items folded into ROADMAP: sudo revert (standing infra — outside
+ROADMAP, see `~/.config/opencode/AGENTS.md`), content runway (P3.3).
