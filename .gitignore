@@ -19,3 +19,5 @@ __pycache__/
 *.swp
 *~
 .DS_Store
+# ── Dynamic The Well corpus (kept on disk and USB, not versioned in git) ─────
+gnosis/well/

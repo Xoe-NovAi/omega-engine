@@ -24,6 +24,7 @@ Lifecycle: CAPTURED → ACTIVE → SUPERSEDED (mirrors pack lifecycle)
 from __future__ import annotations
 
 import json
+import os
 import uuid
 import re
 from dataclasses import dataclass, asdict
@@ -32,7 +33,8 @@ from pathlib import Path
 from typing import Optional, Literal
 import sys
 
-WELL_DIR = Path(__file__).resolve().parents[1] / "gnosis" / "well"
+_DEFAULT_WELL_DIR = Path(__file__).resolve().parents[1] / "gnosis" / "well"
+WELL_DIR = Path(os.environ.get("WELL_DIR_OVERRIDE", str(_DEFAULT_WELL_DIR)))
 WELL_JSONL = WELL_DIR / "well.jsonl"
 WELL_MD = WELL_DIR / "WISDOM.md"
 
