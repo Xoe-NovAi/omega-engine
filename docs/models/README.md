@@ -90,13 +90,26 @@ card_version: "1.0"
 model_id: "<provider>/<model>:<variant>"
 provider: "<provider>"
 research_status: "candidate"
-deployment: "hosted_trial / local / hybrid / not_deployed"
+deployment: "hosted_trial"             # hosted_trial | local | hybrid | not_deployed
 last_verified: "YYYY-MM-DD"
-confidence: "high / medium / low (qualify if split)"
+confidence: "metadata:high,performance:low"
 license: "<license>"
-context_length: <int>
-modalities_in: ["text", "image"]
+context_length: 8192
+modalities_in: ["text"]
 modalities_out: ["text"]
+# Optional for hosted_trial, required for local/hybrid:
+# local_hardware_profile:
+#   cpu: "i7-13620H"
+#   cpu_cores: 10
+#   cpu_threads: 16
+#   allowed_cpus: "0-11"
+#   threads: 8
+#   ram_gb: 16
+#   ram_type: "DDR5"
+#   kv_cache_type: "q8_0"
+#   flash_attention: true
+#   max_loaded_models: 1
+#   quantization: "Q4_K_M"
 ---
 
 # <Provider>: <Model> <Variant>
@@ -106,16 +119,35 @@ modalities_out: ["text"]
 | Research status | candidate |
 | Deployment | hosted trial / local / hybrid / not deployed |
 | Last verified | YYYY-MM-DD |
-| Confidence | high / medium / low |
+| Confidence | metadata:high,performance:low |
 | Card version | 1.0 |
 
 ## Identity and access
 ## Architecture and capabilities
 ## Strengths
 ## Quirks and risks
-## Evidence and benchmarks
-## Omega fit and verdict
+## Provider Claims
+| Benchmark | Score | Evidence |
+|---|---|---|
+| <benchmark> | <score> | **Provider claim** |
+
+## Local Measurement
+*No local measurements available yet.*
+
+## Omega Verdict
+**Verdict:** candidate
+
 ## Operating recipe
 ## Open questions / next validation
 ## Sources
+```
+
+## CLI Validation (OMER)
+
+Validate all cards using the OMER CLI:
+
+```bash
+./scripts/omer validate docs/models
+# or via make lint
+make lint
 ```

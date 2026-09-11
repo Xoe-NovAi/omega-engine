@@ -158,23 +158,91 @@ def extract_frontmatter(filepath: Path) -> tuple[dict, str]:
 def validate_evidence_labels(content: str, filepath: Path) -> list[str]:
     """Validate evidence labels in the markdown body match allowed labels."""
     errors = []
-    # Find all evidence label occurrences in tables
-    pattern = r"\| Evidence label \| \*\*(.+?)\*\* \|"
-    for match in re.finditer(pattern, content):
-        label = match.group(1).strip()
-        if label not in EVIDENCE_LABELS:
-            errors.append(f"{filepath}: Invalid evidence label '{label}' (line ~{content[:match.start()].count(chr(10))}). Valid: {sorted(EVIDENCE_LABELS)}")
+    # Match both key-value table rows and table column headers:
+    # 1. | Evidence label | **Label** |
+    # 2. | ... | ... | **Label** | (when header has Evidence)
+    lines = content.splitlines()
+    in_table = False
+    evidence_col_idx = -1
+
+    for line_idx, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if not stripped.startswith("|") or not stripped.endswith("|"):
+            in_table = False
+            evidence_col_idx = -1
+            continue
+
+        cols = [c.strip() for c in stripped.strip("|").split("|")]
+
+        # Check key-value table row
+        if len(cols) == 2 and cols[0].lower() in ("evidence", "evidence label"):
+            val = re.sub(r"^\*\*|\*\*$", "", cols[1]).strip()
+            if val and val not in EVIDENCE_LABELS:
+                errors.append(f"{filepath}:{line_idx}: Invalid evidence label '{val}'. Valid: {sorted(EVIDENCE_LABELS)}")
+            continue
+
+        # Check column header
+        if not in_table:
+            in_table = True
+            for idx, col in enumerate(cols):
+                if col.lower() in ("evidence", "evidence label"):
+                    evidence_col_idx = idx
+                    break
+            continue
+
+        # Skip separator line |---|---|
+        if re.match(r"^[\s\-:|]+$", stripped):
+            continue
+
+        # Data row under table with Evidence column
+        if evidence_col_idx >= 0 and evidence_col_idx < len(cols):
+            val = re.sub(r"^\*\*|\*\*$", "", cols[evidence_col_idx]).strip()
+            if val and val not in EVIDENCE_LABELS:
+                errors.append(f"{filepath}:{line_idx}: Invalid evidence label '{val}'. Valid: {sorted(EVIDENCE_LABELS)}")
+
     return errors
 
 
 def validate_reproduction_status(content: str, filepath: Path) -> list[str]:
     """Validate reproduction status in the markdown body matches allowed levels."""
     errors = []
-    pattern = r"\| Reproduction status \| \*\*(.+?)\*\* \|"
-    for match in re.finditer(pattern, content):
-        status = match.group(1).strip()
-        if status not in REPRODUCTION_STATUS:
-            errors.append(f"{filepath}: Invalid reproduction status '{status}' (line ~{content[:match.start()].count(chr(10))}). Valid: {sorted(REPRODUCTION_STATUS)}")
+    lines = content.splitlines()
+    in_table = False
+    status_col_idx = -1
+
+    for line_idx, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if not stripped.startswith("|") or not stripped.endswith("|"):
+            in_table = False
+            status_col_idx = -1
+            continue
+
+        cols = [c.strip() for c in stripped.strip("|").split("|")]
+
+        # Key-value row
+        if len(cols) == 2 and cols[0].lower() in ("reproduction status", "reproduction"):
+            val = re.sub(r"^\*\*|\*\*$", "", cols[1]).strip()
+            if val and val not in REPRODUCTION_STATUS:
+                errors.append(f"{filepath}:{line_idx}: Invalid reproduction status '{val}'. Valid: {sorted(REPRODUCTION_STATUS)}")
+            continue
+
+        # Header check
+        if not in_table:
+            in_table = True
+            for idx, col in enumerate(cols):
+                if col.lower() in ("reproduction status", "reproduction"):
+                    status_col_idx = idx
+                    break
+            continue
+
+        if re.match(r"^[\s\-:|]+$", stripped):
+            continue
+
+        if status_col_idx >= 0 and status_col_idx < len(cols):
+            val = re.sub(r"^\*\*|\*\*$", "", cols[status_col_idx]).strip()
+            if val and val not in REPRODUCTION_STATUS:
+                errors.append(f"{filepath}:{line_idx}: Invalid reproduction status '{val}'. Valid: {sorted(REPRODUCTION_STATUS)}")
+
     return errors
 
 

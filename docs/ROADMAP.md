@@ -356,8 +356,10 @@ without trial by fire.
   labels, reproduction status, required sections; wire into `make lint`.
 - **Done when**: `make lint` validates all `docs/models/*.md` cards; Nex-N2.5-Pro
   card passes; `omer` CLI skeleton with `validate` subcommand exists.
-- **Status**: **QUEUED** — Design complete in `docs/OMER_FOUNDATION.md` (555 lines);
-  first test case is `docs/models/nex-n2-5-pro.md`.
+- **Status**: ✅ **DONE (2026-09-11)** — `scripts/validate_model_cards.py` created
+  with Pydantic schema; evidence labels (5) + reproduction status (5-level)
+  validated; P-core trap guard prevents invalid CPU masks; wired into `make lint`;
+  Nex-N2.5-Pro card passes; CLI skeleton with `validate` subcommand works.
 
 ---
 
