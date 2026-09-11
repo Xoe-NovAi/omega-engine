@@ -174,6 +174,11 @@ from "re-teach the agent every time" to "the agent already knows."
   injection.
 - **Done when**: `well-supersede <id> <new-id>` works; injection excludes
   superseded; tests prove the chain resolves.
+- **Status**: ✅ **DONE (2026-09-11)** — `supersede()` in `well_storage.py` marks
+  old record superseded + links to new; `get_active()` filters `status=active`
+  so injection (plugin + `make well-list`) excludes superseded; test
+  `test_well_supersession_resolves` proves chain resolves + superseded drops
+  from active list + WISDOM.md.
 
 ---
 
@@ -187,14 +192,19 @@ lose a spark, never drown in one.
   scheduled work.
 - **Done when**: any new idea/tool/quest is recorded here with a status before
   implementation (this is a standing rule for all agents via AGENTS.md).
+- **Status**: ✅ **DONE** — standing rule active in AGENTS.md + ROADMAP itself.
 
 ### P1.5.2 — Dream capture
 - Well gains `kind: dream` — ideas worth returning to, each with a "why Omega
   cares" line and a hint of the path.
 - `wander --project roadmap "<spark>"` routes raw sparks into a triage queue
-  that feeds ROADMAP.
+  that feeds ROADMAP (WanderGround CLI feature, external to this repo).
 - **Done when**: sparks captured during a session appear in the Well dreams and
   can be promoted to ROADMAP items.
+- **Status**: ✅ **DONE (2026-09-11)** — `kind: dream` in `VALID_KINDS`,
+  `make well-add KIND=dream ...` works, renders in `WISDOM.md`, excluded from
+  plugin injection (only harness/local_ai domains injected). Promotion to
+  ROADMAP is manual via `docs/ROADMAP.md` edit (the canonical backlog).
 
 ---
 
