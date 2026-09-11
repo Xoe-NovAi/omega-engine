@@ -25,6 +25,7 @@ EXPECTED_DOCS = [
     "docs/HARDWARE.md",
     "docs/AGENT_RUNBOOK.md",
     "docs/GNOSIS_USAGE.md",
+    "docs/ROADMAP.md",
     "LICENSE",
 ]
 

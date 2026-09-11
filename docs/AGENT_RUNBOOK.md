@@ -265,24 +265,26 @@ Zen tiers. Prefer the same CODE_QUALITY §1–5 standards for new Python code.
 
 ## 9. Priority stack (next to seize)
 
-Ordered by expected leverage; revisit after each completes.
+> ⚠️ **Authoritative backlog moved**: this quick stack is a pointer. The full,
+> ordered, phased roadmap with finish gates lives in
+> **`docs/ROADMAP.md`** — the single source of truth. Any new idea/tool/quest
+> is recorded there with a status BEFORE implementation (standing rule).
 
-1. **Ponytail** (`DietrichGebert/ponytail`, MIT) — "the lazy senior dev"
-   plugin for OpenCode: injects YAGNI ruleset, adds `/ponytail-review`
-   (diff over-engineering) + `/ponytail-audit` (repo bloat). Metrics:
-   ~54% less code, 100% safety kept. Install: `opencode.json` →
-   `"plugin": ["./.opencode/plugins/ponytail.mjs"]` from a checkout, or
-   marketplace. Directly attacks the cognitive-tax loop: stop checking
-   everything, ship the minimum that holds. Unknowns: hook trust review,
-   interaction with gnosis-leash system-transform (both append context).
-2. **Headroom hook-in** — `omega-hub_headroom_retrieve(ref_id)` exists on
-   the MCP surface but nothing local consumes it. Wire the Pause Ledger +
-   evolution log into Headroom so compaction-adjacent state is retrievable
-   cross-session. Unknowns: Headroom API/data model on Node 0 side.
-3. **Mempalace MCP live verification** — `type: local` config fix landed;
-   never re-smoked the socket connection.
-4. **Node 0 federation (HP)** — response packet, comms-contract (C6),
-   Tailscale (blocked on token-auth), key-management pattern.
-5. **Sudo revert** — remove `/etc/sudoers.d/95-nopasswd` on signal.
-6. **Content runway** — Obsidian vault, Godot/KQ5 research, Open WebUI
-   experimentation, `make publish-bastion` design.
+Quick orientation (current phase = P0 temple-grade pulse, then P1 The Well):
+
+1. **P0.1–P0.4** — mempalace smoke test, historical pack triage, watchdog green
+   on next compact, **Ponytail install** (`DietrichGebert/ponytail`, MIT).
+2. **P1 — The Well** — `gnosis/well/well.jsonl` + `WISDOM.md`; corrections/
+   tips/preferences corpus; writers (skill Step 4c + compaction sweep +
+   `make well-add`); readers (plugin inject at session start + compaction);
+   `make well-export` tuning bundle.
+3. **P1.5** — `docs/ROADMAP.md` backlog + dream-kind capture (this section
+   stays a pointer).
+4. **P2 — Vanguard studies** — Headroom (wrap + `learn` → Well), Odysseus
+   (upload/beam-back experiment), God's Eye View, Gods Eye, agentmemory eval;
+   each with a WanderGround dossier + adopt/adapt/reject verdict.
+5. **P3** — synthesis + Node 0 federation close-out.
+
+Old open items folded into ROADMAP: Mempalace re-verify (P0.1), Node 0
+federation (P3.2), sudo revert (standing infra — outside ROADMAP, see
+`~/.config/opencode/AGENTS.md`), content runway (P3.3).

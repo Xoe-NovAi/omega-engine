@@ -55,6 +55,8 @@ Use `make` targets (see `Makefile`):
 - `docker-compose.yml`, `.env.docker` — Open WebUI stack
 - `.env.ollama` — env source of truth (documents the pin trap)
 - `docs/AGENT_RUNBOOK.md` — canonical awareness runbook for agents
+- `docs/ROADMAP.md` — the single ordered backlog (new ideas land here with a
+  status BEFORE implementation — standing rule)
 - `docs/GNOSIS_USAGE.md` — protocol deep-dive & exact command reference
 - `docs/CODE_QUALITY.md` — invariants & enforcement
 
