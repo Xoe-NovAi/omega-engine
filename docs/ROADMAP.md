@@ -38,8 +38,8 @@ Current state at a glance:
 | P0 | Temple-grade pulse | ✅ done |
 | P1 | **The Well** (corrections/tuning corpus) | ✅ done |
 | P1.5 | Idea-flood management | ✅ done (ROADMAP itself = part of it) |
-| P2 | The Vanguard studies | **active** (P2.1 Headroom, P2.5 agentmemory; Odysseus scheduled future, God's Eye toys) |
-| P3 | Synthesis + federation close-out | backlog |
+| P2 | The Vanguard studies | ✅ **done** (P2.1 Headroom rejected, P2.2 Odysseus scheduled future, P2.3-4 Gods Eyes toys, P2.5 agentmemory rejected) |
+| P3 | Synthesis + federation close-out | active |
 
 ---
 
@@ -293,7 +293,20 @@ without trial by fire.
   have MemPalace; adopt only if it beats MemPalace meaningfully on a defined
   test.
 - **Done when**: side-by-side recall test vs MemPalace; verdict + rationale.
-- **Status**: queued (after P2.1 Headroom).
+- **Status**: ❌ **REJECTED (2026-09-11)** — **Verdict: well-built, but does not
+  beat MemPalace on retrieval (core memory function).**
+  - MemPalace: 96.6% raw R@5 (LongMemEval-S), 98.4% hybrid+rerank; AgentMemory:
+    95.2% R@5 (same benchmark). MemPalace wins on the core metric.
+  - AgentMemory strengths (viewer, 4-tier lifecycle, multi-agent coordination,
+    22 OpenCode hooks) are orthogonal to retrieval quality and YAGNI for our
+    single-agent, single-machine workflow.
+  - MemPalace already integrated: 62 drawers, 8 rooms, MCP verified, mining
+    hygiene proven. Adding agentmemory duplicates the memory layer without
+    retrieval gain.
+  - **If we needed AgentMemory's unique features** (real-time viewer, session
+    replay, multi-agent coordination primitives), we would **adapt** by using
+    its OpenCode hook capture as a supplementary ingest pipeline into MemPalace,
+    not as a replacement. Not needed currently.
 
 ---
 
