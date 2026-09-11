@@ -406,6 +406,25 @@ gnosis-ledger: ## Pause Ledger — lifecycle state of every gnosis pack
 gnosis-leash-status: ## Watchdog: is the automated gnosis-leash plugin alive + clean?
 	@python3 scripts/compaction/leash_status.py
 
+# --- The Well (P1: corrections/tuning corpus) ---
+WELL_SCRIPT = scripts/well_storage.py
+
+well-add: ## Add a Well record: make well-add KIND=correction DOMAIN=harness TRIGGER="..." RULE="..." RATIONALE="..." [TAGS="..."] [PACK=...]
+	@python3 $(WELL_SCRIPT) add $(KIND) $(DOMAIN) "$(TRIGGER)" "$(RULE)" "$(RATIONALE)" $(if $(TAGS),--tags "$(TAGS)") $(if $(PACK),--pack "$(PACK)")
+
+well-list: ## List Well records: make well-list [KIND=...] [DOMAIN=...] [STATUS=active|all]
+	@python3 $(WELL_SCRIPT) list $(if $(KIND),--kind $(KIND)) $(if $(DOMAIN),--domain $(DOMAIN)) $(if $(STATUS),--status $(STATUS))
+
+well-stats: ## Show Well corpus stats (counts by kind/domain/status)
+	@python3 $(WELL_SCRIPT) stats
+
+well-supersede: ## Mark a record superseded: make well-supersede OLD=<uuid> NEW=<uuid>
+	@python3 $(WELL_SCRIPT) supersede $(OLD) $(NEW)
+
+well-export: ## Render WISDOM.md (human view) + JSONL bundle for tuning: make well-export
+	@python3 $(WELL_SCRIPT) render-md
+	@echo "JSONL at $(HOME)/Documents/Projects/omega-engine-alpha/gnosis/well/well.jsonl"
+
 # ============================================================================
 # § QUICK REFS
 # ============================================================================

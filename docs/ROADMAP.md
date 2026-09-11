@@ -130,6 +130,12 @@ from "re-teach the agent every time" to "the agent already knows."
 - **Done when**: `make well-stats` shows counts by kind/status; `make well-list`
   renders; schema versioned; tests cover the four invariants (jsonl valid,
   no secrets, index matches, supersession links resolve).
+- **Status**: ✅ **DONE (2026-09-11)** — `scripts/well_storage.py` implements
+  schema + validation + CRUD + render; `make well-add|well-list|well-stats|
+  well-supersede|well-export` targets wired; 7 `TestWellStorage` tests
+  enforce: valid JSONL, secret rejection, supersession chain resolves,
+  index/JSONL parity, UTF-8/line integrity, stats accuracy, Makefile targets.
+  43/43 total tests green, lint+docs clean.
 
 ### P1.2 — The Well writers
 - **Skill Step 4c**: during `/gnosis-lock` reflection, the agent extracts any
