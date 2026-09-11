@@ -227,6 +227,20 @@ without trial by fire.
   Well as `kind: correction` records (double-source).
 - **Done when**: quantified savings on a real session; corrections flow into
   the Well; dossier in WanderGround + adopt/adapt/reject verdict.
+- **Status**: ❌ **REJECTED (2026-09-11)** — **Verdict: well-built project, but
+  benefits do not apply to our CPU-only local inference setup.**
+  - Local Ollama = zero per-token cost (savings metric irrelevant)
+  - 1M context window = context pressure barely exists
+  - Prompt-cache busting penalty (39% more expensive on metered APIs,
+    documented by community A/B tests) doesn't apply to local inference, BUT:
+    - Python + ONNX runtime + 150M-param model load adds ~15-50ms latency/call
+      on our already CPU-constrained pipeline (14.4 t/s)
+    - Compression is designed for "too many tokens for the context window" —
+      our 1M window already solves that problem
+  - `headroom learn` is well-implemented (reads `opencode.db`, writes `AGENTS.md`),
+    but our Well + MemPalace already cover this space
+  - **Credit & documentation**: see WanderGround dossier `05_headroom/` (to be
+    created) for full technical notes; nothing adopted, no code changes.
 
 ### P2.2 — Odysseus (`odysseus-dev/odysseus`, AGPL-3.0, ~87k★, PewDiePie)
 - **What**: self-hosted AI workspace — chat, agents (built on **opencode +
