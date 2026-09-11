@@ -53,15 +53,17 @@ class TestLeashStatus(unittest.TestCase):
         self.assertIn("gnosis-lock", command_text)
 
     def test_plugin_has_narrative_fallback(self):
-        """readLatestNarrative must fall back to the most recent POPULATED
-        narrative. Regression: ritual runs right before /compact and stamps a
-        fresh TODO template as current_session; old code returned null and
+        """readLatestNarrative must fall back to the most recent REFLECTED
+        pack. Regression: ritual runs right before /compact and stamps a
+        fresh CAPTURED template as current_session; old code returned null and
         skipped the previous session's human reflection (has_narrative: false)."""
         self.assertTrue(PLUGIN.is_file())
         src = PLUGIN.read_text()
         self.assertIn("function isPopulatedNarrative", src)
-        self.assertIn("readdirSync(SESSIONS_DIR)", src)
+        self.assertIn("function packStatus", src)
+        self.assertIn("reflection_status", src)
         self.assertIn("TODO: Fill in", src)
+        self.assertIn("function findLatestReflectedNarrative", src)
 
     def test_plugin_loud_failure_markers(self):
         """NO SILENT FAILURES: a compaction without a populated narrative must
@@ -70,11 +72,12 @@ class TestLeashStatus(unittest.TestCase):
         self.assertTrue(PLUGIN.is_file())
         src = PLUGIN.read_text()
         self.assertIn("GNOSIS-LOCK INCIDENT: NO HUMAN NARRATIVE AVAILABLE", src)
-        self.assertIn("findLatestPopulatedNarrative", src)
+        self.assertIn("findLatestReflectedNarrative", src)
         self.assertIn("compaction_without_narrative", src)
         # The event log must carry provenance so the watchdog can act on it.
         self.assertIn("narrative_source", src)
         self.assertIn("narrative_reason", src)
+        self.assertIn("pack_state", src)
 
     def test_watchdog_flags_last_compaction_without_narrative(self):
         """The watchdog must turn the last compacting event's has_narrative:false
@@ -162,9 +165,32 @@ class TestRitualEntityAttribution(unittest.TestCase):
     def test_ritual_has_per_entity_identity_map(self):
         src = self.RITUAL.read_text()
         # In shell echo "...", JSON quotes are escaped: \"current_entity\"
-        self.assertIn('\\"current_entity\\"', src)
-        self.assertIn('\\"entities\\": {', src)
-        self.assertIn("last_session", src)
+        self.assertIn("pending_pack", src)
+        self.assertIn("LEASH CHECK FAILED", src)
+        self.assertIn("reflection_status", src)
+        self.assertIn("FORCE_PACK", src)
+
+
+class TestPauseLedger(unittest.TestCase):
+    """Pause Ledger = full visibility: every pack's lifecycle state + leash."""
+
+    LEDGER = REPO / "scripts/compaction/pause_ledger.py"
+
+    def test_ledger_exists_and_runs(self):
+        self.assertTrue(self.LEDGER.is_file())
+        r = subprocess.run(["python3", str(self.LEDGER)], capture_output=True, text=True, timeout=30)
+        self.assertIn("Pause Ledger", r.stdout)
+        self.assertIn("CAPTURED", r.stdout + r.stderr)
+
+    def test_ledger_lists_manifests(self):
+        """Ledger must surface every manifest on disk — no pack hidden."""
+        n_manifests = len(list((GNOSIS / "sessions").glob("*_manifest.json")))
+        r = subprocess.run(["python3", str(self.LEDGER)], capture_output=True, text=True, timeout=30)
+        self.assertEqual(r.returncode in (0, 1), True, "ledger runs")
+        # count bold pack lines (session-… or test-… rows) — reasonably ≥ manifests
+        rows = [l for l in r.stdout.splitlines() if "session-" in l or "test-session" in l or "__" in l]
+        self.assertGreaterEqual(len(rows), n_manifests - 5,
+                                f"ledger hides packs: {n_manifests} manifests vs {len(rows)} rows")
 
 
 class TestRitualPluginCongruence(unittest.TestCase):

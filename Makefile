@@ -379,6 +379,7 @@ bench-compare: ## Compare phi4-mini vs qwen2.5-coder vs deepseek-r1
 
 GNOSIS_RITUAL    := scripts/compaction/pre_compaction_ritual.sh
 GNOSIS_EVOLUTION := scripts/compaction/evolution_log.py
+GNOSIS_PAUSE_LEDGER := scripts/compaction/pause_ledger.py
 
 gnosis-lock: ## Run pre-compaction ritual: make gnosis-lock REASON="why" [ENTITY=... CHANNEL=... PHASE=...]
 	@SESSION_ID="session-$$(date -u +%Y-%m-%dT%H-%M-%SZ)" ; \
@@ -398,6 +399,9 @@ gnosis-stats: ## Show evolution-log stats + recent timeline: make gnosis-stats L
 	@python3 "$(GNOSIS_EVOLUTION)" stats
 	@echo ""
 	@python3 "$(GNOSIS_EVOLUTION)" timeline --limit $(or $(LIMIT),5)
+
+gnosis-ledger: ## Pause Ledger — lifecycle state of every gnosis pack
+	@python3 "$(GNOSIS_PAUSE_LEDGER)"
 
 gnosis-leash-status: ## Watchdog: is the automated gnosis-leash plugin alive + clean?
 	@python3 scripts/compaction/leash_status.py

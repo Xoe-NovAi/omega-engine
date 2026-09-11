@@ -35,6 +35,8 @@ INDEX_MD = HOME / "WanderGround/INDEX.md"
 SKILL_MD = HOME / ".config/opencode/skills/gnosis-lock/SKILL.md"
 COMMAND_MD = HOME / ".config/opencode/commands/gnosis-lock.md"
 RUNBOOK_MD = HOME / "Documents/Projects/omega-engine-alpha/docs/AGENT_RUNBOOK.md"
+IDENTITY_JSON = HOME / "Documents/Projects/omega-engine-alpha/gnosis/identity/identity.json"
+GNOSIS_SESSIONS = HOME / "Documents/Projects/omega-engine-alpha/gnosis/sessions"
 
 STALE_AFTER_SECONDS = 24 * 60 * 60  # no event for a day → suspicious
 
@@ -80,11 +82,11 @@ def main() -> int:
         if "session.compacting" not in src:
             problems.append("no session.compacting logging in source (1: degraded)")
         # Hydration fallback: readLatestNarrative must fall back to the most
-        # recent POPULATED narrative when current_session is a fresh template,
+        # recent REFLECTED pack when current_session is a fresh CAPTURED pack,
         # and a missing narrative must be a LOUD incident (never silent).
         required_plugin_funcs = [
-            "function readLatestNarrative",
-            "function findLatestPopulatedNarrative",
+            "function packStatus",
+            "function findLatestReflectedNarrative",
             "function isPopulatedNarrative",
             "function currentSessionOf",
             "GNOSIS-LOCK INCIDENT",
@@ -94,7 +96,7 @@ def main() -> int:
             problems.append(
                 "PLUGIN REGRESSED — missing: " + ", ".join(missing_funcs) + " (1: degraded)"
             )
-        print(("  fallback  : OK (narrative fallback + loud incident present)"
+        print(("  fallback  : OK (state machine + loud incident present)"
                if not missing_funcs
                else f"  fallback  : MISSING — {', '.join(missing_funcs)} (1: degraded)"))
 
@@ -205,6 +207,32 @@ def main() -> int:
             if needle not in runbook:
                 problems.append(f"RUNBOOK DEGRADED — missing section: {needle} (1: degraded)")
         print("  runbook   : AGENT_RUNBOOK.md OK")
+
+    # 9. Leash Check (state machine): pending_pack must be reflected, or the
+    #    ritual will refuse new packs. A taut leash is NOT a failure by itself
+    #    (capture→reflect is the normal flow) but must be surfaced loudly so
+    #    nobody compacts while a pack still hangs un-ingested.
+    if IDENTITY_JSON.is_file():
+        idn = json.loads(IDENTITY_JSON.read_text("utf-8"))
+        pending = idn.get("pending_pack", "")
+        current = idn.get("current_session", "")
+        pending_status = "captured"
+        if pending:
+            pm = GNOSIS_SESSIONS / f"{pending}_manifest.json"
+            if pm.is_file():
+                pending_status = json.loads(pm.read_text("utf-8")).get("reflection_status", "captured")
+        if pending and pending_status != "reflected":
+            problems.append(
+                f"LEASH TAUT — pending_pack {pending} is {pending_status}; "
+                f"reflect it (run /gnosis-lock) before the next ritual or compaction (1: degraded)"
+            )
+            print(f"  leash     : ❌ TAUT — pending_pack {pending} ({pending_status})")
+        elif pending:
+            print(f"  leash     : OK — pending_pack {pending} is REFLECTED")
+        else:
+            print(f"  leash     : OK — slack (no pending pack; current={current})")
+    else:
+        print("  leash     : unknown — identity.json missing")
 
     for n in notes:
         print(f"  note      : {n}")

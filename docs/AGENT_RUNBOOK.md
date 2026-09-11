@@ -81,6 +81,37 @@ ENTITY=build CHANNEL=opencode PHASE=phase-3 make gnosis-lock REASON="..."
   session is a useful continuity record. The human-reflection fields
   (Decisions/Gnosis) remain TODO until the skill runs.
 
+### 1.6 The Pack lifecycle (state machine — NO silent states)
+
+A gnosis-lock creates a **pack** (all artifacts + narrative + manifest) that
+moves through an explicit lifecycle. The blank `TODO` narrative is NOT garbage
+— it is a *signal* that the pack is captured but not yet ingested:
+
+```
+CAPTURED ──(skill answers reflection questions)──▶ REFLECTED ──(plugin injects)──▶ COMPACTED
+  (ritual ran,          every artifact + narrative   (the leash verifies it landed
+   TODO by intent)      written, manifest flipped)    in a /compact session)
+```
+
+- **`reflection_status`** in the manifest is the authoritative signal:
+  `captured` | `reflected`.
+- **`identity.pending_pack`** points at the current un-reflected pack — the
+  **leash**. While it is set and the pack is not reflected:
+  - the ritual **refuses** to create a new pack (`LEASH CHECK FAILED`),
+    unless `FORCE_PACK=1` explicitly acknowledges the override;
+  - the watchdog prints `LEASH TAUT` and exits degraded;
+  - the pause ledger shows the pack as `captured`.
+- Reflection (the skill) flips the manifest to `reflected`, stamps
+  `reflected_at`, and clears `pending_pack`. This is the ONLY valid path from
+  captured → reflected.
+- Visibility: `make gnosis-ledger` prints every pack's state, entity, phase,
+  and capture/reflect timestamps in chronological order — no questions, only
+  answers.
+
+> The original bug — a second gnosis-lock stamping a new CAPTURED template over
+> a populated narrative — is now impossible by default: the leash check blocks
+> the second lock before any capture happens.
+
 ### 1.4 The "prepare for compaction" orchestration checklist
 
 When the user phrases it as a session-close instruction (NOT the bare command):
@@ -229,3 +260,29 @@ Zen tiers. Prefer the same CODE_QUALITY §1–5 standards for new Python code.
 4. `docs/HARDWARE.md` — canonical hardware spec
 5. `docs/CODE_QUALITY.md` — invariants & how to enforce
 6. `docs/WANDERGROUND_SPEC.md` — exploration-node architecture & research corrections
+
+---
+
+## 9. Priority stack (next to seize)
+
+Ordered by expected leverage; revisit after each completes.
+
+1. **Ponytail** (`DietrichGebert/ponytail`, MIT) — "the lazy senior dev"
+   plugin for OpenCode: injects YAGNI ruleset, adds `/ponytail-review`
+   (diff over-engineering) + `/ponytail-audit` (repo bloat). Metrics:
+   ~54% less code, 100% safety kept. Install: `opencode.json` →
+   `"plugin": ["./.opencode/plugins/ponytail.mjs"]` from a checkout, or
+   marketplace. Directly attacks the cognitive-tax loop: stop checking
+   everything, ship the minimum that holds. Unknowns: hook trust review,
+   interaction with gnosis-leash system-transform (both append context).
+2. **Headroom hook-in** — `omega-hub_headroom_retrieve(ref_id)` exists on
+   the MCP surface but nothing local consumes it. Wire the Pause Ledger +
+   evolution log into Headroom so compaction-adjacent state is retrievable
+   cross-session. Unknowns: Headroom API/data model on Node 0 side.
+3. **Mempalace MCP live verification** — `type: local` config fix landed;
+   never re-smoked the socket connection.
+4. **Node 0 federation (HP)** — response packet, comms-contract (C6),
+   Tailscale (blocked on token-auth), key-management pattern.
+5. **Sudo revert** — remove `/etc/sudoers.d/95-nopasswd` on signal.
+6. **Content runway** — Obsidian vault, Godot/KQ5 research, Open WebUI
+   experimentation, `make publish-bastion` design.

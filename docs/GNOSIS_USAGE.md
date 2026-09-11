@@ -40,6 +40,30 @@ lost:
 Everything is written to `gnosis/sessions/`, `gnosis/evolution/`, and
 `gnosis/identity/` inside the project.
 
+## The Pack lifecycle (state machine)
+
+Each lock creates a **pack** that moves through an explicit lifecycle. The
+empty TODO narrative is a *signal* (pack captured, not ingested), never a bug:
+
+```
+CAPTURED ──▶ REFLECTED ──▶ COMPACTED
+```
+
+- **CAPTURED**: ritual ran. `manifest.reflection_status = "captured"`,
+  `identity.pending_pack = <session>`. The narrative is TODO **by intent**.
+- **REFLECTED**: the skill answered reflection questions, wrote the narrative,
+  flipped `reflection_status = "reflected"` + `reflected_at`, cleared
+  `pending_pack`.
+- **COMPACTED**: the plugin injected the narrative into a `/compact`.
+
+The **leash check** (ritual Step 0) refuses to create a new pack while
+`pending_pack` is un-reflected: `LEASH CHECK FAILED` + exit 1, unless
+`FORCE_PACK=1`. This makes the original "second lock shadows good narrative"
+bug impossible by default.
+
+Visibility: `make gnosis-ledger` prints every pack + state + timestamps.
+`make gnosis-leash-status` surfaces a taut leash as degraded.
+
 **Important**:
 - **OpenCode Plugin Hook & Leash**: The `gnosis-leash.js` plugin listens to
   `experimental.session.compacting`. When you run `/compact`, it automatically

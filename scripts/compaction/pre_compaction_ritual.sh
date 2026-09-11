@@ -31,6 +31,14 @@ PHASE="${PHASE:-unset}"
 
 SESSION_ID="${1:-session-${FILE_TS}}"
 REASON="${2:-End of session}"
+# --force (or FORCE_PACK=1) skips the leash check: create a new pack even while
+# an older one is still CAPTURED-but-not-REFLECTED. Default: refuse.
+FORCE_PACK="${FORCE_PACK:-0}"
+if [ "${1:-}" = "--force" ] || [ "${FORCE_PACK}" = "1" ]; then
+  FORCE_PACK="1"
+  SESSION_ID="${FILESTUB:-session-${FILE_TS}}"
+  REASON="${2:-End of session}"
+fi
 
 # ─── Colors ───────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -58,6 +66,39 @@ log "Timestamp:  ${TIMESTAMP}"
 log "Reason:     ${REASON}"
 log "Entity:     ${ENTITY} (channel: ${CHANNEL}, phase: ${PHASE})"
 echo
+
+# ─── Step 0: Leash Check — is the previous pack still on the leash? ───────────
+# The ritual must NEVER stack a second CAPTURED pack on top of an un-REFLECTED
+# one. If identity.pending_pack exists and is not REFLECTED, refuse loudly:
+# the blank TODO is a signal ("this pack is not ingested yet"), and creating
+# another one would leave two packs competing to be "the current" narrative.
+IDENTITY_FILE="${IDENTITY_DIR}/identity.json"
+if [ -f "${IDENTITY_FILE}" ]; then
+  PENDING_PACK=$(jq -r '.pending_pack // ""' "${IDENTITY_FILE}" 2>/dev/null || echo "")
+  if [ -n "${PENDING_PACK}" ]; then
+    PENDING_MANIFEST="${SESSIONS_DIR}/${PENDING_PACK}_manifest.json"
+    PENDING_REFLECTED=false
+    if [ -f "${PENDING_MANIFEST}" ]; then
+      PENDING_REFLECTED=$(jq -r '.reflection_status // "captured"' "${PENDING_MANIFEST}" 2>/dev/null || echo "captured")
+    fi
+    if [ "${PENDING_REFLECTED}" != "reflected" ]; then
+      if [ "${FORCE_PACK}" = "1" ]; then
+        warn "Leash check OVERRIDDEN (--force): pack ${PENDING_PACK} is STILL CAPTURED-not-REFLECTED."
+        warn "Creating ${SESSION_ID} anyway. Old pack is superseded but its narrative may be lost."
+      else
+        err "LEASH CHECK FAILED — you cannot drop a new pack while ${PENDING_PACK} is still on the leash."
+        err "That pack is CAPTURED but NOT REFLECTED (its narrative is still TODO)."
+        err "Run the gnosis-lock SKILL (answer the reflection questions) first, or:"
+        err "   FORCE_PACK=1 $0 \"${SESSION_ID}\" \"${REASON}\"   (acknowledge + override)"
+        exit 1
+      fi
+    else
+      ok "Leash check passed — previous pack ${PENDING_PACK} is REFLECTED."
+    fi
+  else
+    log "Leash check: no pending pack (first lock or previous already ingested)."
+  fi
+fi
 
 # ─── Step 1: Capture Git State ────────────────────────────────────────────────
 log "Step 1/8: Capturing Git state..."
@@ -315,58 +356,74 @@ print(f"    narrative summary auto-filled ({len(summary_lines)+len(code_lines)} 
 PYEOF
 ok "Narrative summary auto-generated"
 
-# ─── Step 7: Update Persistent Identity ───────────────────────────────────────
+# ─── Step 7: Update Persistent Identity (preserving evolution) ────────────────
 log "Step 7/8: Updating persistent identity..."
 IDENTITY_FILE="${IDENTITY_DIR}/identity.json"
-CURRENT_SESSIONS=$(jq -r '.session_count // 0' "${IDENTITY_FILE}" 2>/dev/null || echo 0)
-NEW_SESSION_COUNT=$((CURRENT_SESSIONS + 1))
-# Per-entity continuity: update the entity's own entry (session_count,
-# last_session, last_phase) inside the global identity, preserving others.
-# Keeps the flat storage layout; entity views are queries, not folders.
-ENTITY_KEY=$(jq -r --arg e "${ENTITY}" '.entities[$e] // {}' "${IDENTITY_FILE}" 2>/dev/null || echo '{}')
-ENTITY_COUNT=$(jq -r '.session_count // 0' <<<"${ENTITY_KEY}" 2>/dev/null || echo 0)
-NEW_ENTITY_COUNT=$((ENTITY_COUNT + 1))
-{
-  echo "{"
-  echo "  \"entity\": \"Omega Engine Alpha Build Agent\","
-  echo "  \"inception\": \"2026-09-08T00:00:00Z\","
-  echo "  \"last_updated\": \"${TIMESTAMP}\","
-  echo "  \"session_count\": ${NEW_SESSION_COUNT},"
-  echo "  \"current_session\": \"${SESSION_ID}\","
-  echo "  \"current_entity\": \"${ENTITY}\","
-  echo "  \"current_machine\": \"ASUS ExpertBook P1503CVA (i7-13620H)\","
-  echo "  \"federation_role\": \"Node 1 - Compute Vanguard\","
-  echo "  \"partner_node\": \"HP Pavilion (Node 0 - Archival Bastion)\","
-  echo "  \"core_principles\": ["
-  echo "    \"Measure, don't guess\","
-  echo "    \"Document the trap\","
-  echo "    \"Single-channel reality\","
-  echo "    \"Hybrid CPU respect\","
-  echo "    \"Living document\""
-  echo "  ],"
-  echo "  \"key_achievements\": ["
-  echo "    \"P-core pin trap documented (0.5 t/s disaster)\","
-  echo "    \"Ollama tuned: 13.4 t/s on phi4-mini\","
-  echo "    \"MAX_LOADED_MODELS=1 for 16GB single-channel\","
-  echo "    \"Dynamic Big Pickle: 1M context ceiling\","
-  echo "    \"P2P Omegaverse Federation architected\""
-  echo "  ],"
-  echo "  \"open_quests\": ["
-  echo "    \"HP Node 0 federation live\","
-  echo "    \"Tailscale mesh operational\","
-  echo "    \"Secure key management pattern\","
-  echo "    \"Agent team migration complete\""
-  echo "  ],"
-  echo "  \"entities\": {"
-  # Merge existing per-entity entries, updating THIS entity's record.
-  jq -r --arg e "${ENTITY}" --arg s "${SESSION_ID}" --arg p "${PHASE}" --argjson n "${NEW_ENTITY_COUNT}" '
-    .entities // {} | .[$e] = {session_count: $n, last_session: $s, last_phase: $p} |
-    to_entries | sort_by(.key) | map("    \"" + .key + "\": " + (.value | tostring)) | join(",\n")
-  ' "${IDENTITY_FILE}" 2>/dev/null || echo "    \"${ENTITY}\": {\"session_count\": ${NEW_ENTITY_COUNT}, \"last_session\": \"${SESSION_ID}\", \"last_phase\": \"${PHASE}\"}"
-  echo "  }"
-  echo "}"
-} > "${IDENTITY_FILE}"
-ok "Identity updated: ${NEW_SESSION_COUNT} sessions logged (entity ${ENTITY} → #${NEW_ENTITY_COUNT})"
+# Python mutator: preserve the "living document" (key_achievements/open_quests
+# must EVOLVE, never be reset to hardcoded lists), advance global + per-entity
+# counters, and stamp the new pending_pack. One function, no shell quoting.
+python3 - "${IDENTITY_FILE}" "${SESSION_ID}" "${ENTITY}" "${CHANNEL}" "${PHASE}" "${TIMESTAMP}" <<'PYEOF'
+import json, os, sys
+
+path, sid, entity, channel, phase, ts = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]
+
+def default_identity():
+    return {
+        "entity": "Omega Engine Alpha Build Agent",
+        "inception": "2026-09-08T00:00:00Z",
+        "last_updated": ts,
+        "session_count": 0,
+        "current_session": sid,
+        "pending_pack": sid,
+        "current_entity": entity,
+        "current_machine": "ASUS ExpertBook P1503CVA (i7-13620H)",
+        "federation_role": "Node 1 - Compute Vanguard",
+        "partner_node": "HP Pavilion (Node 0 - Archival Bastion)",
+        "core_principles": [
+            "Measure, don't guess", "Document the trap", "Single-channel reality",
+            "Hybrid CPU respect", "Living document",
+        ],
+        "key_achievements": [
+            "P-core pin trap documented (0.5 t/s disaster)",
+            "Ollama tuned: 13.4 t/s on phi4-mini",
+            "MAX_LOADED_MODELS=1 for 16GB single-channel",
+            "Dynamic Big Pickle: 1M context ceiling",
+            "P2P Omegaverse Federation architected",
+        ],
+        "open_quests": [
+            "HP Node 0 federation live", "Tailscale mesh operational",
+            "Secure key management pattern", "Agent team migration complete",
+        ],
+        "entities": {},
+    }
+
+def load():
+    try:
+        return json.load(open(path))
+    except Exception:
+        return default_identity()
+
+idn = load()
+# Preserve the living document fields; only extend, never reset.
+idn.setdefault("key_achievements", default_identity()["key_achievements"])
+idn.setdefault("open_quests", default_identity()["open_quests"])
+idn.setdefault("entities", {})
+idn["last_updated"] = ts
+idn["session_count"] = int(idn.get("session_count", 0)) + 1
+idn["current_session"] = sid
+idn["pending_pack"] = sid
+idn["current_entity"] = entity
+# Per-entity continuity map (query over one flat store).
+ent = idn["entities"].setdefault(entity, {})
+ent["session_count"] = int(ent.get("session_count", 0)) + 1
+ent["last_session"] = sid
+ent["last_phase"] = phase
+ent["last_channel"] = channel
+with open(path, "w") as f:
+    json.dump(idn, f, indent=2)
+print(f"    identity updated: global #{idn['session_count']}, entity {entity} #{ent['session_count']}")
+PYEOF
+ok "Identity updated to session #$(jq -r '.session_count' "${IDENTITY_FILE}")"
 
 # ─── Step 8: Create Session Manifest ──────────────────────────────────────────
 log "Step 8/8: Creating session manifest..."
@@ -379,6 +436,7 @@ MANIFEST_FILE="${SESSIONS_DIR}/${SESSION_ID}_manifest.json"
   echo "  \"entity\": \"${ENTITY}\","
   echo "  \"channel\": \"${CHANNEL}\","
   echo "  \"phase\": \"${PHASE}\","
+  echo "  \"reflection_status\": \"captured\","
   echo "  \"artifacts\": {"
   echo "    \"git_state\": \"${GIT_STATE_FILE}\","
   echo "    \"opencode_config\": \"${CONFIG_FILE}\","
@@ -388,7 +446,7 @@ MANIFEST_FILE="${SESSIONS_DIR}/${SESSION_ID}_manifest.json"
   echo "    \"evolution\": \"${EVOLUTION_FILE}\""
   echo "  },"
   echo "  \"identity_updated\": true,"
-  echo "  \"ready_for_compaction\": true"
+  echo "  \"ready_for_compaction\": false"
   echo "}"
 } > "${MANIFEST_FILE}"
 ok "Manifest saved to ${MANIFEST_FILE}"
@@ -398,7 +456,7 @@ log "Logging SESSION_END evolution event..."
 EVOLUTION_SCRIPT="${PROJECT_ROOT}/scripts/compaction/evolution_log.py"
 if python3 "${EVOLUTION_SCRIPT}" log SESSION_END "${SESSION_ID}" \
     "Pre-compaction ritual: ${REASON}" \
-    --metadata "{\"manifest\": \"${MANIFEST_FILE}\", \"sessions\": ${NEW_SESSION_COUNT}, \"entity\": \"${ENTITY}\", \"channel\": \"${CHANNEL}\", \"phase\": \"${PHASE}\"}" \
+    --metadata "{\"manifest\": \"${MANIFEST_FILE}\", \"sessions\": $(jq -r '.session_count' "${IDENTITY_FILE}" 2>/dev/null || echo 0), \"entity\": \"${ENTITY}\", \"channel\": \"${CHANNEL}\", \"phase\": \"${PHASE}\"}" \
     --tags ritual session-end >/dev/null 2>&1; then
   ok "Evolution event logged"
 else
@@ -411,7 +469,7 @@ echo "╔═══════════════════════�
 echo "║  ✅ PRE-COMPACTION RITUAL COMPLETE                                         ║"
 echo "║                                                                            ║"
 echo "║  Session ${SESSION_ID} fully captured.                                     ║"
-echo "║  All gnosis locked to disk. Identity evolved to session #${NEW_SESSION_COUNT}.      ║"
+echo "║  All gnosis locked to disk. Identity evolved to session #$(jq -r '.session_count' "${IDENTITY_FILE}" 2>/dev/null || echo 0).      ║"
 echo "║  Safe to run /compact or shutdown.                                         ║"
 echo "╚════════════════════════════════════════════════════════════════════════════╝"
 echo
