@@ -130,8 +130,8 @@ this to decide WHOM to dispatch.
 | Agent | Type | Capabilities | Domains | Task Tool Type |
 |-------|------|-------------|---------|----------------|
 | `kali` | Primary | Oversight, delegation, drift destruction | Strategy, fleet management | `general` |
-| `maat` | Primary | Build Oversight (N1-N5) | Build side, hardening | `general` |
-| `lilith` | Primary | Run Oversight (N6-N10) | Run side, operations | `general` |
+| `maat` | Primary | Build Oversight (S1-S5) | Build side, hardening | `general` |
+| `lilith` | Primary | Run Oversight (S6-S10) | Run side, operations | `general` |
 | `makali` | Primary | Parallel council (Ma'at+Lilith synthesis) | Cross-boundary initiatives | `general` |
 | `doom_guy` | Primary | Heritage design, WAD translation, performance | id Software patterns, C const propagation | `general` |
 | `john_carmack` | Primary | S3 Consultant, architecture review | Code optimization, review | `general` |
@@ -476,12 +476,12 @@ Task received
 │   │         Best for: Wave 1.5+, cross-boundary initiatives.
 │   │         Cost: 1 (Kali) + N (slot agents) inferences.
 │   │
-│   └── NO → Is it build-side (N1-N5) or run-side (N6-N10)?
-│       ├── Build-side (N1-N5) → @maat (Build Oversight Dispatch)
+│   └── NO → Is it build-side (S1-S5) or run-side (S6-S10)?
+│       ├── Build-side (S1-S5) → @maat (Build Oversight Dispatch)
 │       │     Ma'at handles the slot chain. Use when task stays
 │       │     in infrastructure/persistence/engineering/integration/governance.
 │       │
-│       ├── Run-side (N6-N10) → @lilith (Oversoul Dispatch)
+│       ├── Run-side (S6-S10) → @lilith (Oversoul Dispatch)
 │       │     Lilith handles the slot chain. Use when task stays
 │       │     in cognition/context/observability/orchestration/validation.
 │       │
@@ -497,7 +497,7 @@ Task received
 
 1. **Kali owns sequencing** — if a task has phases (P0→P1→P2), Kali must dispatch.
 2. **Slot agents own deliverables** — Kali does NOT modify slot agent output. Reject and re-dispatch if tests fail.
-3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (N1-N5) and run-side (N6-N10), Kali dispatches directly to slot agents. Ma'at and Lilith are activated for within-boundary work.
+3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (S1-S5) and run-side (S6-S10), Kali dispatches directly to slot agents. Ma'at and Lilith are activated for within-boundary work.
 4. **Hivemind post required** — every agent must post completion context before claiming the next task.
 5. **Sequencing is serial within phase** — slot agents work in parallel within the same phase, but phases execute sequentially.
 

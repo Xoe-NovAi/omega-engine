@@ -145,7 +145,7 @@
 
 ### D-521: SDP Elevated to Core Architectural Pillar — DEFERRED
 **Date**: 2026-08-17 | **Realm**: MEMORY | **Status**: DEFERRED
-**Decision**: Sovereign Distillation Pipeline elevated to core pillar but DEFERRED (post-debut).
+**Decision**: Sovereign Distillation Pipeline elevated to core slot but DEFERRED (post-debut).
 **Rationale**: SDP = Human Protocol (D-538) — `HUMAN PROTOCOL — DO NOT IMPLEMENT` until 10 manual executions.
 
 ### D-522: Ground Truth — Nemotron 3 Ultra = 1M, Laguna S 2.1 = 262K
@@ -268,7 +268,7 @@
 
 ### D-569: Ratify Dynamic Prompt + Planner/Executor + Domain Loading as POST-DEBUT Cognitive Architecture Blueprint (Horizon 3)
 **Date**: 2026-08-25 | **Realm**: COGNITIVE | **Status**: ACTIVE
-**Decision**: DP-1..DP-8 registered. Owners: Ma'at P0–P3/P7–P8/P10, Kali P4–P5, Verity P6, Researcher P9. Incremental on existing components (ContextBuilder, SelectiveHydration, HybridOrchestrator, ProviderSelector, Context Packer, SDP).
+**Decision**: DP-1..DP-8 registered. Owners: Ma'at S0–P3/P7–P8/P10, Kali S4–P5, Verity S6, Researcher S9. Incremental on existing components (ContextBuilder, SelectiveHydration, HybridOrchestrator, ProviderSelector, Context Packer, SDP).
 
 ### D-570: Qdrant SCHEDULED to Replace sqlite-vec POST-DEBUT (Horizon 2)
 **Date**: 2026-08-25 | **Realm**: MEMORY | **Status**: ACTIVE
