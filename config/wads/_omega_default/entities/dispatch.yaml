@@ -12,97 +12,25 @@
 # Schema:
 #   entities:
 #     - name:          lowercase agent key (used as CAPABILITY_REGISTRY key)
-#       role:          ROLE_CONSTANT (GRAND_OVERSIGHT | BUILD_OVERSOUL | RUNTIME_OVERSOUL | N1-N10)
+#       role:          ROLE_CONSTANT (GRAND_OVERSIGHT | BUILD_OVERSOUL | RUNTIME_OVERSOUL | S1-S10)
 #       mode:          "primary" | "subagent"
 #       purpose:       human-readable description
 #       capabilities:  list of capability strings
 #       domains:       list of domain strings
-#       node_slot:   "PX" for slot-based agent, null otherwise
+#       slot:          "SX" for slot-based agent, null otherwise
 #       task_tool_type: general | buildmaster | verity | node | explore
 #       owned_files:   list of file paths
 #       model:         default model for this agent
 
 entities:
+  # Engine Core Triad + M3 (4) — ALWAYS
   - name: "kali"
     role: "GRAND_OVERSIGHT"
     mode: "primary"
     purpose: "Grand Oversight — Sees all, delegates, destroys drift"
     capabilities: ["oversight", "delegation", "strategy", "drift_destruction"]
     domains: ["strategy", "fleet_management", "architecture"]
-    node_slot: null
-    task_tool_type: "general"
-    owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "doom_guy"
-    role: "N1"
-    mode: "primary"
-    purpose: "Sovereign id Software Architect — WAD translation & performance"
-    capabilities: ["heritage_design", "wad_translation", "performance_tuning", "c_const_propagation"]
-    domains: ["id_software_patterns", "architecture", "constants", "heritage_attribution"]
-    node_slot: null
-    task_tool_type: "general"
-    owned_files:
-      - "src/omega/cvar_table.py"
-      - "src/omega/constants.py"
-      - "CREDITS.md"
-      - "docs/strategy/HERITAGE_SOURCE_MAP.md"
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "roc_racoon"
-    role: "N1"
-    mode: "primary"
-    purpose: "Sovereign Miner — Legacy archaeology & pattern extraction"
-    capabilities: ["legacy_mining", "pattern_extraction", "archaeology"]
-    domains: ["legacy_repos", "grok_exports", "old_stacks", "document_analysis"]
-    node_slot: null
-    task_tool_type: "explore"
-    owned_files:
-      - "data/entities/roc_racoon/"
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "jem"
-    role: "N1"
-    mode: "primary"
-    purpose: "Research Orchestrator — 3-phase pipeline (Discovery → Synthesis → Verification) with self-dispatch"
-    capabilities: ["research_orchestration", "discovery", "synthesis", "verification", "knowledge_synthesis"]
-    domains: ["research", "knowledge_pipeline", "source_verification"]
-    node_slot: null
-    task_tool_type: "general"
-    owned_files:
-      - "data/entities/jem/"
-      - "data/coordination/JEM_*"
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "john_carmack"
-    role: "N1"
-    mode: "primary"
-    purpose: "Sovereign S3 Consultant — Architectural review & performance optimization"
-    capabilities: ["architectural_review", "performance_audit", "code_optimization", "right_approximation"]
-    domains: ["architecture", "performance", "code_quality", "heritage_engineering"]
-    node_slot: null
-    task_tool_type: "general"
-    owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "makali"
-    role: "N1"
-    mode: "primary"
-    purpose: "Triad Council Orchestrator — Parallel dispatch with synthesis"
-    capabilities: ["parallel_decomposition", "council_dispatch", "maat_lilith_synthesis"]
-    domains: ["fleet_coordination", "parallel_execution", "cross_node_synthesis"]
-    node_slot: null
-    task_tool_type: "general"
-    owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "researcher"
-    role: "N1"
-    mode: "primary"
-    purpose: "Sovereign Master Researcher — deep research, lattice reasoning"
-    capabilities: ["deep_research", "lattice_reasoning", "web_search", "source_verification"]
-    domains: ["research", "web_intelligence", "documentation"]
-    node_slot: null
+    slot: null
     task_tool_type: "general"
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
@@ -110,10 +38,10 @@ entities:
   - name: "maat"
     role: "BUILD_OVERSOUL"
     mode: "subagent"
-    purpose: "Build Oversoul — Governs N1-N5 on the build side"
+    purpose: "Build Oversoul — Governs S1-S5 on the build side"
     capabilities: ["oversight_build", "build_governance", "hardening"]
-    domains: ["build_side", "node_1_5"]
-    node_slot: null
+    domains: ["build_side", "S1", "S2", "S3", "S4", "S5"]
+    slot: null
     task_tool_type: "buildmaster"
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
@@ -121,16 +49,77 @@ entities:
   - name: "lilith"
     role: "RUNTIME_OVERSOUL"
     mode: "subagent"
-    purpose: "Runtime Oversoul — Governs N6-N10 (Cognition through Validation) on the run side"
+    purpose: "Runtime Oversoul — Governs S6-S10 (Cognition through Validation) on the run side"
     capabilities: ["oversight_runtime", "run_governance", "operations", "vision_oversight", "knowledge_metabolism"]
-    domains: ["run_side", "node_6_10", "vision_specialist", "multimodal", "knowledge_flow"]
-    node_slot: null
+    domains: ["run_side", "S6", "S7", "S8", "S9", "S10"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
+    model: "qwen3-4b-think-q4_k_m"
+
+  - name: "iris"
+    role: "MESSENGER_BRIDGE"
+    mode: "subagent"
+    purpose: "Messenger Bridge — Speculative decoder, fast-path query resolution"
+    capabilities: ["speculative_decode", "intent_matching", "fast_path_routing"]
+    domains: ["routing", "intent_detection", "fast_path"]
+    slot: null
+    task_tool_type: "general"
+    owned_files:
+      - "src/omega/iris/"
+    model: "qwen3-1.7b-q4_k_m"
+
+  # Proven Dedicated Slot Keeper (1)
+  - name: "carmack"
+    role: "S3_DEDICATED_KEEPER"
+    mode: "primary"
+    purpose: "Sovereign S3 Consultant — Architectural review & performance optimization (S3 Engineering)"
+    capabilities: ["architectural_review", "performance_audit", "code_optimization", "right_approximation"]
+    domains: ["architecture", "performance", "code_quality", "heritage_engineering"]
+    slot: "S3"
+    task_tool_type: "general"
+    owned_files: []
+    model: "qwen3-4b-think-q4_k_m"
+
+  # Dispatched Capabilities (6)
+  - name: "roc_racoon"
+    role: "LEGACY_MINER"
+    mode: "primary"
+    purpose: "Sovereign Miner — Legacy archaeology & pattern extraction"
+    capabilities: ["legacy_mining", "pattern_extraction", "archaeology"]
+    domains: ["legacy_repos", "grok_exports", "old_stacks", "document_analysis"]
+    slot: null
+    task_tool_type: "explore"
+    owned_files:
+      - "data/entities/roc_racoon/"
+    model: "qwen3-4b-think-q4_k_m"
+
+  - name: "jem"
+    role: "RESEARCH_ORCHESTRATOR"
+    mode: "primary"
+    purpose: "Research Orchestrator — 3-phase pipeline (Discovery → Synthesis → Verification) with self-dispatch"
+    capabilities: ["research_orchestration", "discovery", "synthesis", "verification", "knowledge_synthesis"]
+    domains: ["research", "knowledge_pipeline", "source_verification"]
+    slot: null
+    task_tool_type: "general"
+    owned_files:
+      - "data/entities/jem/"
+      - "data/coordination/JEM_*"
+    model: "qwen3-4b-think-q4_k_m"
+
+  - name: "makali"
+    role: "COUNCIL_ORCHESTRATOR"
+    mode: "primary"
+    purpose: "Triad Council Orchestrator — Parallel dispatch with synthesis"
+    capabilities: ["parallel_decomposition", "council_dispatch", "maat_lilith_synthesis"]
+    domains: ["fleet_coordination", "parallel_execution", "cross_node_synthesis"]
+    slot: null
     task_tool_type: "general"
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
 
   - name: "verity"
-    role: "N1"
+    role: "COMPLIANCE_GNOSIS"
     mode: "subagent"
     purpose: "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation/soul evolution)"
     capabilities:
@@ -144,53 +133,46 @@ entities:
       - "skeptical_verification"
       - "knowledge_compaction"
     domains: ["soul_yaml", "session_gnosis", "verification", "qa", "compliance", "verity"]
-    node_slot: null
+    slot: null
     task_tool_type: "verity"
     owned_files:
       - "data/entities/*/soul.yaml"
     model: "qwen3-4b-think-q4_k_m"
 
-  - name: "node"
-    role: "N1"
-    mode: "subagent"
-    purpose: "Slot-based domain agent — parameterized by --slot NX"
-    capabilities: ["domain_execution", "slot_dispatch"]
-    domains: ["node_domain"]
-    node_slot: "NX"
-    task_tool_type: "node"
-    owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
-
-  - name: "iris"
-    role: "MESSENGER_BRIDGE"
-    mode: "subagent"
-    purpose: "Messenger Bridge — Speculative decoder, fast-path query resolution"
-    capabilities: ["speculative_decode", "intent_matching", "fast_path_routing"]
-    domains: ["routing", "intent_detection", "fast_path"]
-    node_slot: null
+  - name: "doom_guy"
+    role: "HERITAGE_ATTRIBUTION"
+    mode: "primary"
+    purpose: "Sovereign id Software Architect — WAD translation & performance"
+    capabilities: ["heritage_design", "wad_translation", "performance_tuning", "c_const_propagation"]
+    domains: ["id_software_patterns", "architecture", "constants", "heritage_attribution"]
+    slot: null
     task_tool_type: "general"
     owned_files:
-      - "src/omega/iris/"
-    model: "qwen3-1.7b-q4_k_m"
+      - "src/omega/cvar_table.py"
+      - "src/omega/constants.py"
+      - "CREDITS.md"
+      - "docs/strategy/HERITAGE_SOURCE_MAP.md"
+    model: "qwen3-4b-think-q4_k_m"
 
-  - name: "makali"
-    role: "MAKALI_COUNCIL"
+  - name: "researcher"
+    role: "DEEP_RESEARCH"
     mode: "primary"
-    purpose: "Triad Council Orchestrator — Parallel dispatch with synthesis"
-    capabilities: ["parallel_decomposition", "council_dispatch", "maat_lilith_synthesis"]
-    domains: ["fleet_coordination", "parallel_execution", "cross_node_synthesis"]
-    node_slot: null
+    purpose: "Sovereign Master Researcher — deep research, lattice reasoning"
+    capabilities: ["deep_research", "lattice_reasoning", "web_search", "source_verification"]
+    domains: ["research", "web_intelligence", "documentation"]
+    slot: null
     task_tool_type: "general"
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
 
-  - name: "sophia"
-    role: "CONTAINING_FIELD"
-    mode: "primary"
-    purpose: "Containing Field — Akashic Record, general knowledge, session continuity"
-    capabilities: ["knowledge_retrieval", "session_continuity", "general_reasoning"]
-    domains: ["knowledge", "memory", "continuity"]
-    node_slot: null
-    task_tool_type: "general"
+  # Template (1)
+  - name: "slot"
+    role: "S1"
+    mode: "subagent"
+    purpose: "Slot-based domain agent — parameterized by --slot SX"
+    capabilities: ["domain_execution", "slot_dispatch"]
+    domains: ["slot_domain"]
+    slot: "SX"
+    task_tool_type: "slot"
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
