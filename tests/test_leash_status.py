@@ -41,6 +41,43 @@ class TestLeashStatus(unittest.TestCase):
         self.assertGreaterEqual(len(rules), 24, "INDEX.md too short to yield 24 rule lines")
         self.assertIn("local_ai", INDEX_MD.read_text(), "weighted matrix missing")
 
+    def test_native_skill_and_command_exist(self):
+        skill = Path.home() / ".config/opencode/skills/gnosis-lock/SKILL.md"
+        command = Path.home() / ".config/opencode/commands/gnosis-lock.md"
+        self.assertTrue(skill.is_file(), f"missing native skill: {skill}")
+        self.assertTrue(command.is_file(), f"missing native command: {command}")
+        skill_text = skill.read_text()
+        self.assertIn("name: gnosis-lock", skill_text)
+        self.assertIn("question", skill_text)
+        command_text = command.read_text()
+        self.assertIn("gnosis-lock", command_text)
+
+    def test_agent_awareness_surfaces_reference_runbook(self):
+        """Global + project AGENTS.md, build prompt, and INDEX.md must point
+        agents at the runbook so every session has operational awareness."""
+        runbook = REPO / "docs/AGENT_RUNBOOK.md"
+        self.assertTrue(runbook.is_file(), "runbook missing")
+        rb = runbook.read_text()
+        for needle in ["/gnosis-lock", "/compact", "gnosis-leash-status",
+                       "WanderGround", "prepare for compaction", "question"]:
+            self.assertIn(needle.lower(), rb.lower(), f"runbook missing: {needle}")
+
+        # Global AGENTS.md (every session)
+        g = Path.home() / ".config/opencode/AGENTS.md"
+        gt = g.read_text()
+        self.assertIn("AGENT_RUNBOOK", gt)
+        self.assertIn("gnosis-lock", gt)
+
+        # Project AGENTS.md
+        p = REPO / "AGENTS.md"
+        pt = p.read_text()
+        self.assertIn("gnosis-leash-status", pt)
+        self.assertIn("AGENT_RUNBOOK", pt)
+
+        # INDEX.md injected into every session system prompt
+        it = INDEX_MD.read_text()
+        self.assertIn("AGENT_RUNBOOK", it, "INDEX.md must point at the runbook")
+
 
 class TestRitualPluginCongruence(unittest.TestCase):
     """The two systems must tell the SAME story about the last session."""

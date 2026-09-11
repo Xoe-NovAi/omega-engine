@@ -32,6 +32,9 @@ STATE_DIR = HOME / ".config/opencode/plugins/state"
 TIMELINE = STATE_DIR / "gnosis-events.jsonl"
 ERRLOG = STATE_DIR / "gnosis-errors.jsonl"
 INDEX_MD = HOME / "WanderGround/INDEX.md"
+SKILL_MD = HOME / ".config/opencode/skills/gnosis-lock/SKILL.md"
+COMMAND_MD = HOME / ".config/opencode/commands/gnosis-lock.md"
+RUNBOOK_MD = HOME / "Documents/Projects/omega-engine-alpha/docs/AGENT_RUNBOOK.md"
 
 STALE_AFTER_SECONDS = 24 * 60 * 60  # no event for a day → suspicious
 
@@ -142,6 +145,27 @@ def main() -> int:
             problems.append("INDEX.md EMPTY — nothing to inject (1: degraded)")
         else:
             print(f"  injected  : INDEX.md OK ({n_rules} lines, first 24 injected)")
+
+    # 7. Native TUI Gnosis Lock (Skill & Command)
+    if not SKILL_MD.is_file():
+        problems.append(f"SKILL MISSING — {SKILL_MD} (1: degraded)")
+    else:
+        print("  skill     : gnosis-lock SKILL.md OK")
+
+    if not COMMAND_MD.is_file():
+        problems.append(f"COMMAND MISSING — {COMMAND_MD} (1: degraded)")
+    else:
+        print("  command   : gnosis-lock.md command OK")
+
+    # 8. Agent Runbook (agent awareness surface)
+    if not RUNBOOK_MD.is_file():
+        problems.append(f"RUNBOOK MISSING — {RUNBOOK_MD} (1: degraded)")
+    else:
+        runbook = RUNBOOK_MD.read_text("utf-8")
+        for needle in ["gnosis-lock", "/compact", "WanderGround", "CODE_QUALITY"]:
+            if needle not in runbook:
+                problems.append(f"RUNBOOK DEGRADED — missing section: {needle} (1: degraded)")
+        print("  runbook   : AGENT_RUNBOOK.md OK")
 
     for n in notes:
         print(f"  note      : {n}")

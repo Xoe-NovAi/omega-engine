@@ -89,6 +89,8 @@ python3 ~/hivemind_first_contact.py
 | **[CODE_QUALITY.md](docs/CODE_QUALITY.md)** | Devs | Absolute anyio async wiring, no torch, style |
 | **[SYSTEM_GUIDE.md](docs/SYSTEM_GUIDE.md)** | Operators | Live ops, session log, hardware tuning |
 | **[HARDWARE.md](docs/HARDWARE.md)** | Engineers | Pin-trap, BIOS, thermal, RAM, storage |
+| **[AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md)** | Agents | Node 1 ops awareness: gnosis-lock, /compact, quality gates |
+| **[GNOSIS_USAGE.md](docs/GNOSIS_USAGE.md)** | Operators | Gnosis Lock protocol deep-dive & exact commands |
 | **[SYSTEM_GUIDE.md#12-session-log](docs/SYSTEM_GUIDE.md#12-session-log)** | Historians | Append-only session log (2026-09-08 → present) |
 
 ---

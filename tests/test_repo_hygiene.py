@@ -23,6 +23,8 @@ EXPECTED_DOCS = [
     "docs/WANDERGROUND_SPEC.md",
     "docs/SYSTEM_GUIDE.md",
     "docs/HARDWARE.md",
+    "docs/AGENT_RUNBOOK.md",
+    "docs/GNOSIS_USAGE.md",
     "LICENSE",
 ]
 

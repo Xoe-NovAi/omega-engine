@@ -24,13 +24,39 @@ Use `make` targets (see `Makefile`):
 - `make python-chatbot`, `make python-serve` — interactive chat / HTTP serve
 - `make env-setup` / `make env-apply` / `make env-revert` — Ollama systemd override round-trip
 - `make create-coder MODEL=...` — build custom model from a Modelfile in `.modelfiles/`
+- `make lint` — code-quality gates (anyio purity, no bare exceptions, no torch)
+- `make test` — regression suite (`tests/`, 24+ tests)
+- `make docs` — validate docs integrity (README + doc links)
+- `make gnosis-lock REASON="..."` — pre-compaction ritual capture (CLI)
+- `make gnosis-stats` — evolution-log stats + timeline
+- `make gnosis-leash-status` — watchdog for the automated gnosis-leash plugin
+
+## Session-close & gnosis protocols (IMPORTANT — see docs/AGENT_RUNBOOK.md)
+- **`/gnosis-lock`** (TUI command + skill): capture + dynamic human reflection via
+  the native `question` tool + narrative commit. Does NOT do docs/lint/test.
+- **"Prepare for compaction"**: full orchestration — gnosis-lock + doc updates +
+  `make lint` + `make test` + commit.
+- **`/compact`**: standalone line ONLY, zero arguments — text after it turns into
+  a normal prompt (tested fact, differs from Gemini CLI).
+- **gnosis-leash.js plugin** (in ~/.config/opencode/plugins/): logs session events,
+  injects WanderGround INDEX + your narrative into compaction, appends operating
+  rules to every system prompt. Watch with `make gnosis-leash-status`.
+- **WanderGround** (`~/WanderGround/`): `wander` CLI capture, MemPalace MCP
+  (`mempalace`), knowledge atlas (sqlite-vec), curator timer, 3D viewer, MkDocs.
+- **Zen privacy**: free Zen models collect prompt data; private work uses paid
+  zero-retention models (docs/WANDERGROUND_SPEC.md §10.4).
 
 ## Structure
-- `Makefile` — main harness
+- `Makefile` — main harness (includes gnosis-lock, gnosis-stats, gnosis-leash-status)
 - `scripts/bench.py`, `scripts/chatbot.py`, `scripts/serve.py` — working Python entry points
+- `scripts/compaction/` — ritual + evolution log + leash_status watchdog
+- `tests/` — regression suite (repo hygiene, secrets, evolution log, gnosis-leash, leash-status)
 - `.modelfiles/` — Modelfile sources for custom models
 - `docker-compose.yml`, `.env.docker` — Open WebUI stack
 - `.env.ollama` — env source of truth (documents the pin trap)
+- `docs/AGENT_RUNBOOK.md` — canonical awareness runbook for agents
+- `docs/GNOSIS_USAGE.md` — protocol deep-dive & exact command reference
+- `docs/CODE_QUALITY.md` — invariants & enforcement
 
 ## Game-research sibling
 Not this repo. Gaming/Ollama-Iris-Xe agent config and knowledge base live under
