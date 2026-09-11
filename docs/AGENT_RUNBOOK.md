@@ -102,8 +102,10 @@ CAPTURED ──(skill answers reflection questions)──▶ REFLECTED ──(pl
   - the watchdog prints `LEASH TAUT` and exits degraded;
   - the pause ledger shows the pack as `captured`.
 - Reflection (the skill) flips the manifest to `reflected`, stamps
-  `reflected_at`, and clears `pending_pack`. This is the ONLY valid path from
-  captured → reflected.
+  `reflected_at`, sets `ready_for_compaction = true`, and clears
+  `pending_pack`. This is the ONLY valid path from captured → reflected.
+  **Readiness contract**: captured = not-ready, reflected = ready — a pack is
+  only `ready_for_compaction` once reflected (enforced by the congruence test).
 - Visibility: `make gnosis-ledger` prints every pack's state, entity, phase,
   and capture/reflect timestamps in chronological order — no questions, only
   answers.
@@ -116,12 +118,20 @@ CAPTURED ──(skill answers reflection questions)──▶ REFLECTED ──(pl
 
 When the user phrases it as a session-close instruction (NOT the bare command):
 
-- [ ] `/gnosis-lock` capture + reflection (see §1.3)
+- [ ] `/gnosis-lock` capture + reflection (see §1.3) — **run it even if a pack
+      was already captured earlier in the session**; each new round of work
+      deserves its own pack record
 - [ ] Update documentation: `docs/` + `README.md` + `SYSTEM_GUIDE.md` as relevant
+      — **docs are part of the artifact, not an afterthought; do them BEFORE
+      committing**
 - [ ] `make lint` green (anyio purity, no bare exceptions, no torch)
 - [ ] `make test` green (or `python3 -m unittest discover -s tests`)
 - [ ] Commit all work with descriptive message
 - [ ] Confirm: "🔱 Gnosis locked, docs updated, gates green. Safe to /compact."
+
+**The full loop, always.** Order: capture → reflect → docs → lint → test →
+commit. Skipping any step breaks the whole. Discipline is enforced, not assumed
+(by the checklist, the test suite, and the user).
 
 ---
 

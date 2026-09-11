@@ -50,10 +50,13 @@ CAPTURED ──▶ REFLECTED ──▶ COMPACTED
 ```
 
 - **CAPTURED**: ritual ran. `manifest.reflection_status = "captured"`,
-  `identity.pending_pack = <session>`. The narrative is TODO **by intent**.
+  `manifest.ready_for_compaction = false`, `identity.pending_pack = <session>`.
+  The narrative is TODO **by intent** — the pack is captured but NOT read to compact.
 - **REFLECTED**: the skill answered reflection questions, wrote the narrative,
-  flipped `reflection_status = "reflected"` + `reflected_at`, cleared
-  `pending_pack`.
+  flipped `reflection_status = "reflected"` + `reflected_at` +
+  `ready_for_compaction = true`, cleared `pending_pack`. **A pack is only
+  ready to compact once reflected** (readiness contract: captured = not-ready,
+  reflected = ready — enforced by the congruence test).
 - **COMPACTED**: the plugin injected the narrative into a `/compact`.
 
 The **leash check** (ritual Step 0) refuses to create a new pack while
