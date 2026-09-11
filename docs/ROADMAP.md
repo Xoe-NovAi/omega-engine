@@ -97,6 +97,16 @@ clean, explicit, watchable state before layering new toys on top.
   gnosis-leash system-transform (both append context — must not fight).
 - **Done when**: plugin loads, `/ponytail-help` responds, first `/ponytail-review`
   run on a real diff produces a delete-list, gnosis-leash watchdog still green.
+- **Status**: ⏳ **PARTIAL (2026-09-11)** — cloned to `~/Vanguard/ponytail@356918e`
+  (real disk); **hook-trust review PASSED** (the only two lifecycle hooks are
+  `experimental.chat.system.transform` → append-only ruleset injection honoring
+  `off` mode, and `command.execute.before` scoped to `/ponytail` mode writes;
+  `config` registers commands + skills dir; no destructive/system hooks);
+  registered in `opencode.json` (`plugin`: absolute-path `.mjs`); coexist
+  verified statically (both transforms append to `output.system`, neither
+  overwrites). **REMAINING (needs a session restart)**: live
+  `/ponytail-help` + first `/ponytail-review` on a real diff + confirm
+  watchdog still green with the plugin active.
 
 ---
 

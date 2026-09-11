@@ -235,6 +235,17 @@ make -C ~/WanderGround 3d-serve          # offline Three.js constellation viewer
 
 Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 
+### 5.1 Ponytail (lazy senior dev — P0.4, partial)
+- Checkout: `~/Vanguard/ponytail` (registered as absolute-path plugin in
+  `~/.config/opencode/opencode.json`). Live after the next opencode launch.
+- The ruleset (inject-on-every-turn, modes `lite|full|ultra|off`) composes
+  with the gnosis-leash system-transform: BOTH append to the system prompt,
+  neither overwrites. `/ponytail off` silences it.
+- Commands: `/ponytail`, `/ponytail-review`, `/ponytail-audit`,
+  `/ponytail-debt`, `/ponytail-gain`, `/ponytail-help`.
+- Watchdog note: confirm `make gnosis-leash-status` stays green with the
+  plugin active after restart.
+
 ---
 
 ## 6. Architecture cheat-sheet
