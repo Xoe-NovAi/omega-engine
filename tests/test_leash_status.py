@@ -264,5 +264,37 @@ class TestRitualPluginCongruence(unittest.TestCase):
                             f"last SESSION_END references missing manifest for {sid}")
 
 
+class TestLegacyPackMigration(unittest.TestCase):
+    """P0.2 — migrate_legacy_packs.py must make every state EXPLICIT and never
+    demote an already-explicit reflection_status."""
+
+    MIGRATE = REPO / "scripts/compaction/migrate_legacy_packs.py"
+
+    def test_migration_script_exists_and_runs_dry_run(self):
+        self.assertTrue(self.MIGRATE.is_file(), "missing migrate_legacy_packs.py")
+        r = subprocess.run(["python3", str(self.MIGRATE)], capture_output=True, text=True, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("DRY-RUN", r.stdout)
+
+    def test_no_manifest_has_implicit_state(self):
+        """Every manifest must carry an explicit reflection_status now."""
+        for mf in (GNOSIS / "sessions").glob("*_manifest.json"):
+            m = json.loads(mf.read_text("utf-8"))
+            self.assertIn("reflection_status", m,
+                          f"{mf.name} still lacks explicit reflection_status")
+            self.assertIn(m["reflection_status"], ("captured", "reflected", "superseded"))
+
+    def test_explicit_packs_never_demoted(self):
+        """Reflected packs must not be re-classified to captured by the migrator."""
+        r = subprocess.run(["python3", str(self.MIGRATE)], capture_output=True, text=True, timeout=30)
+        self.assertIn("already-triaged", r.stdout)
+        for mf in (GNOSIS / "sessions").glob("*_manifest.json"):
+            m = json.loads(mf.read_text("utf-8"))
+            if m.get("reflection_status") == "reflected":
+                self.assertTrue(m.get("reflected_at"), f"{mf.name} reflected without reflected_at")
+                self.assertNotIn("triage_script", m,
+                                 f"reflected pack {mf.name} wrongly touched by migration")
+
+
 if __name__ == "__main__":
     unittest.main()

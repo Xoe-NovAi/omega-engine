@@ -54,6 +54,11 @@ clean, explicit, watchable state before layering new toys on top.
   hardened against.
 - **Done when**: `palace_query` returns a live result through the MCP server;
   documented in ROADMAP + system guide; a watchdog note covers it.
+- **Status**: ✅ **DONE (2026-09-11)** — smoke test passed: `initialize` (MemPalace 3.9.0) →
+  `tools/list` (42 tools) → `mempalace_search` returned 20 real results from 62
+  drawers with full provenance. **Note**: the live tool is named `mempalace_search` —
+  `palace_query` is stale (was the pre-3.x name); the same tool covers status,
+  list, taxonomy, graph, diary, events, tasks, artifacts.
 
 ### P0.2 — Historical pack backlog triage
 - **Why**: the Pause Ledger shows 22 `CAPTURED` packs, most from before the
@@ -62,6 +67,15 @@ clean, explicit, watchable state before layering new toys on top.
 - **Done when**: every manifest in `gnosis/sessions/` has an explicit
   `reflection_status`; ledger rows all resolve; a migration script exists at
   `scripts/compaction/migrate_legacy_packs.py` (or the migration is recorded).
+- **Status**: ✅ **DONE (2026-09-11)** — `scripts/compaction/migrate_legacy_packs.py`
+  written + applied (`--apply`): 10 `superseded` (harness-test artifacts:
+  fake ids + ritual self-verification reasons), 12 honestly `captured` (real
+  un-ingested sessions with `triage_at` provenance), 3 already-explicit
+  (`reflected`) untouched — the migrator never demotes an explicit state.
+  `pause_ledger.py` learned to distinguish triaged captures (acknowledged) from
+  loose ends (degraded) → **PAUSE LEDGER CLEAN**. 3 new tests
+  (`TestLegacyPackMigration`): dry-run runs, no implicit states remain,
+  reflected packs never demoted. 36/36 green.
 
 ### P0.3 — Watchdog green on next successful compact
 - **Why**: the historical `has_narrative: false` compacting event keeps the

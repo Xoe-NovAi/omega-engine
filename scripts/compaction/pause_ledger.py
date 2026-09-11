@@ -59,6 +59,7 @@ def main() -> int:
                 "phase": m.get("phase", "unset"),
                 "captured": m.get("timestamp", "?"),
                 "reflected_at": m.get("reflected_at", ""),
+                "triaged": "triage_at" in m,
             }
         )
 
@@ -74,14 +75,27 @@ def main() -> int:
     print("-" * 130)
 
     # Lifecycle integrity checks
-    captured = [p for p in packs if p["status"] == "captured"]
-    if captured:
-        oldest = min(captured, key=lambda p: p["captured"])
+    # A CAPTURED pack is a problem ONLY if it is an implicit loose end. Legacy
+    # packs triaged by migrate_legacy_packs.py carry `triage_at` — an explicit,
+    # recorded decision to leave them captured (or superseded). Those resolve.
+    # Untriaged captured packs are genuine loose ends; the leash governs them.
+    loose_captured = [
+        p for p in packs
+        if p["status"] == "captured" and not p["triaged"]
+    ]
+    if loose_captured:
+        oldest = min(loose_captured, key=lambda p: p["captured"])
         problems.append(
-            f"{len(captured)} pack(s) still CAPTURED (not reflected) — oldest: "
+            f"{len(loose_captured)} untriaged pack(s) still CAPTURED — oldest: "
             f"{oldest['sid']} captured {oldest['captured']}. "
-            f"Run /gnosis-lock to reflect it, or its TODO is a true signal."
+            f"Run /gnosis-lock to reflect it, or triage it explicitly "
+            f"(migrate_legacy_packs.py for legacy, or set reflection_status)."
         )
+
+    triaged_captured = sum(1 for p in packs if p["status"] == "captured" and p["triaged"])
+    if triaged_captured:
+        print(f"note     : {triaged_captured} legacy pack(s) explicitly triaged as captured "
+              f"(triage_at set) — acknowledged, not loose ends.")
 
     # Leash check: pending_pack in identity must match a real, un-reflected pack
     identity = load_json(IDENTITY_FILE, {})
