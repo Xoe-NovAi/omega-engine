@@ -67,7 +67,7 @@ class TestWellStorage(unittest.TestCase):
         """Secrets in any field are rejected."""
         # API key pattern
         r = run_well("add", "tip", "other", "trigger",
-                     "rule with api_key=sk-12345678901234567890", "rationale")
+                     "rule with api_key=sk-shortfakekey", "rationale")
         self.assertNotEqual(r.returncode, 0)
         self.assertTrue("secret" in r.stderr.lower() or "validation" in r.stderr.lower())
 
@@ -78,7 +78,7 @@ class TestWellStorage(unittest.TestCase):
 
         # Token pattern
         r = run_well("add", "tip", "other", "trigger", "rule",
-                     "rationale", "--tags", "token=ghp_123456789012345678901234567890123456")
+                     "rationale", "--tags", "token=ghp_shortfake")
         self.assertNotEqual(r.returncode, 0)
 
     def test_well_supersession_resolves(self):

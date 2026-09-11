@@ -147,6 +147,10 @@ from "re-teach the agent every time" to "the agent already knows."
   `--source`, `--rationale`).
 - **Done when**: a real session's corrections land in the Well and are
   attributable to their source pack.
+- **Status**: ✅ **DONE (2026-09-11)** — `SKILL.md` Step 4c added (agent extracts
+  actionable rules from the narrative + runs `make well-add` for each with
+  `PACK="${SESSION_ID}"`); CLI targets exist and tested. Next session's
+  `/gnosis-lock` will exercise the full flow.
 
 ### P1.3 — The Well readers (injection)
 - **Session start**: plugin injects top-N active rules (ranked by recency +
