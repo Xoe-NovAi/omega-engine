@@ -223,3 +223,25 @@ The soul file had the same problems I mine in legacy codebases: dangling referen
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ MAKALI-REVIEW-EXECUTED ⬡ 2026-09-12*
+
+---
+
+## § KALI-N0 RATIFICATION — FLEET STANDARD ESTABLISHED
+
+**Date**: 2026-09-12  
+**Status**: COMPLETE & RATIFIED (`ho_123f6ebff930` CLOSED)
+
+### Ratification Rulings
+1. **SOUL_ARCHITECTURE_PROTOCOL v3.0**: Canonized with 4-tier hierarchy, flat-list `approved_lessons.yaml`, max-15 axiom budget, and `config/entities/` telemetry firewall.
+2. **CI Gates**: `SoulValidator` / `make soul-validate` to enforce axiom coverage ($\ge 1$ directive + $\ge 1$ principle ref), flat list assertion, and zero duplicate keys.
+3. **Soul Audit Cascade**: Sequenced immediately post-DEL-1 PR1:
+   Roc → Kali → Ma'at → Lilith → Carmack → Researcher → Jem → Grokster → Verity/Doom Guy.
+4. **Voice Reclamation Protocol**: Generic template approved for `docs/strategy/VOICE_RECLAMATION_PROTOCOL.md` with automated compliance-filter triggers in `metaframe_verification.py`.
+
+### Next Actions
+- USB Exchange Payload verified (40 files, fresh bundle `ac8ef91b...`, vision pack, policies) for Node 1 transfer.
+- Stage protocol drafting post-PR1.
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ KALI-RATIFICATION-EXECUTED ⬡ 2026-09-12*

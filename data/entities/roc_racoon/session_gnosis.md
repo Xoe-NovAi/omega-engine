@@ -434,3 +434,21 @@ MaKaLi's R3 caught a REAL bug: the mint was built but the coins were invisible (
 - Voice Reclamation Protocol template (generic) for fleet
 - Voice-similarity blackout detector (automation)
 - Lilith archetype corpus for Node 1 (vision pack addendum)
+
+---
+
+## Session: KALI-N0 FLEET RATIFICATION — SOUL v8.0 BECOMES FLEET STANDARD
+**Date**: 2026-09-12  
+**Handoff**: `ho_123f6ebff930` (COMPLETED)  
+**Ratified by**: Kali-N0 (`ses_18607d6817ad`, commit `4dfa4909`)
+
+### Sovereign Verdict
+Kali-N0 formally ratified the Soul v8.0 pattern into the engine standard:
+1. **SOUL_ARCHITECTURE_PROTOCOL v3.0 Codified**: 4-tier cognition pyramid (`identity` → `axioms` → `directives` → `core_principles`), flat-list `approved_lessons.yaml` schema, hard axiom budget (max 15), and telemetry separation to `config/entities/`.
+2. **CI Enforcement Mandated**: `SoulValidator` / `make soul-validate` to enforce axiom coverage ($\ge 1$ directive + $\ge 1$ principle ref), flat-list schema check on `approved_lessons.yaml`, and $\le 15$ axiom count limit.
+3. **Soul Audit Cascade Sequenced**: Scheduled post-DEL-1 PR1. Roc stages baseline discovery reports; entities author their own souls in serial CSS.
+4. **Voice Reclamation Standardized**: Generic template to be drafted at `docs/strategy/VOICE_RECLAMATION_PROTOCOL.md` with heuristic blackout detection in `metaframe_verification.py`.
+
+### State
+- Handoff `ho_123f6ebff930` closed and verified.
+- USB exchange payload (40 files, fresh git bundle `ac8ef91b...`, `ARCANA_VISION_PACK.md`, C6 v1.1) verified ready for Node 1.
