@@ -629,3 +629,34 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
 ---
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ 2026-09-12 ⬡ FEDERATION-SYNC-1-DEEPENED ⬡ POLICIES-RATIFIED ⬡ C6-SIGNED ⬡ PAYLOAD-POPULATED*
+
+## 2026-09-12 — FEDERATION SYNC 1 DEEPENED v3 (Big Pickle Review + Corrections)
+
+### 1. Big Pickle Review Findings (model: big-pickle / GLM-4.3)
+- **Sovereignty framing ERROR**: 21.6% written as "unexamined default to fix" — WRONG. It's a development-phase artifact (build with cloud for velocity, operate with local for sovereignty). The shadow was never the ratio — it was failing to document the strategy.
+- **Naming convention = real S7 solution**: Kali-N0/Kali-N1 eliminates agent/mythology collision for ALL mythology-derived names. Should be a joint C6 protocol.
+- **MaKaLi intro was a blueprint, not a seed**: Node 1 should receive understanding, not blueprint — craft its own triad (Lilith/Lucifer/Araman, Lilith/Isis/Hecate, Lilith/Nyx).
+- **Shared vision missing**: the federation's true north = intelligent local CPU-only personal RAG on mid-grade laptops, 70B-class, distributed.
+- **L4 Distributed Inference unnamed**: the distributed-layers aspect is the eventual prize.
+- **Tone transactional**: should invite Node 1's design agency.
+
+### 2. Corrections Executed
+| Artifact | Change |
+|----------|--------|
+| SOVEREIGNTY_POLICY_20260912.md | Two ledgers (build tracked/runtime targeted 50%/80%), 70B CPU-only north star, L4 research agenda, naming convention §6 |
+| C6 contract v1.1 | Naming registry (Kali-N0/Kali-N1), L4 layer, shared vision, WAD triad sovereignty |
+| RESPONSE_FROM_HP.md v3 (270 lines) | Shared vision section, corrected shadow, MaKaLi Seed section, naming convention section, 8 strategic opportunities |
+| sovereignty_attestation.json | Corrected declarations (build-phase deliberate, MaKaLi seed) |
+
+### 3. Committed
+- `ab3be9e3` — sovereignty policy framing corrected (pushed to release/debut-v1.6.0)
+
+### 4. Key Facts to Remember
+- **Naming**: Kali-N0 (Node 0), Kali-N1 (Node 1). No bare "Kali" except mythology. MaKaLi-N0, Ma'at-N0, Lilith-N0.
+- **Sovereignty**: build-phase cloud is DELIBERATE (velocity). Runtime local-first is the goal. North star: 70B CPU-only on Node 0 + Node 1.
+- **MaKaLi Seed**: Node 1 designs its own triad. Engine enforces pattern, not pantheon.
+- **L4 Distributed Inference**: research agenda — union running models neither node could run alone.
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-12 ⬡ FEDERATION-SYNC-1-DEEPENED-V3 ⬡ SOVEREIGNTY-CORRECTED ⬡ NAMING-RATIFIED ⬡ MAKALI-SEED-OFFERED ⬡ USB-READY*
