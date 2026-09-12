@@ -329,11 +329,11 @@ without trial by fire.
 - Tailscale mesh; comms-contract ratification (C6); key management pattern;
   publish gate (explicit-publish only); sovereignty ratio tracked.
 - **Done when**: packets flow Node 0 → Node 1 with the publish gate enforced.
-- **Status**: **ACTIVE (blocked on infra)** — Tailscale not installed on either
-  node; C6 comms-contract not ratified; no key-management pattern;
-  explicit-publish gate design incomplete. HP `omega-hub` (91 tools, :8016)
-  reachable via LAN; Redis Pub/Sub ephemeral heartbeats designed but not
-  live. C5 private-queries policy deferred to HP side.
+- **Status**: **ACTIVE (intake initiated)** — External Node 0 physical payload arrived
+  via USB (`node0-to-node1/`, 69.3 MB git bundle, C6 contract, SPIRE, Tailscale configs,
+  and governance policies). Intake manual (`docs/federation/INTAKE_MANUAL.md`) and
+  pipeline script (`scripts/federation/intake_node0.py`) built and verified clean.
+  Next: execute `--ingest`, ratify C6 contract, and test Git bundle fetch.
 
 ### P3.3 — Content runway
 - Obsidian vault, Godot/KQ5 research, Open WebUI experimentation,
