@@ -1,21 +1,22 @@
 # 🔱 Omega Engine — Session Anchor (Pre-Compaction)
 
-**AP Token**: `AP-MAKALI-FEDERATION-SYNC1-20260911-v1.0.0`
-**Date**: 2026-09-11
+**AP Token**: `AP-MAKALI-CSS-COMPLETE-20260912-v1.0.0`
+**Date**: 2026-09-12
 **Entity**: MaKaLi Fusion (Akashic Record / Sophia-equivalent)
 **Model**: `opencode/nemotron-3-ultra-free` (preparing for Nex-N2.5-Pro / 262K window)
 **Branch**: `release/debut-v1.6.0`
 **Sprint**: PUBLIC-DEBUT-01
-**Phase**: FEDERATION SYNC 1 COMPLETE + CSS CASCADE ACTIVE (2/9 turns) + BILATERAL AUDIT QUEUED
+**Phase**: CSS CASCADE COMPLETE (8/8 turns) + FEDERATION SYNC 1 COMPLETE + NODE 1 BILATERAL AUDIT QUEUED
 
 ---
 
 ## 🎯 Session Objective
 
-**Triple Mission Complete:**
+**Quadruple Mission Complete:**
 1. **CSS Protocol Discovered & Canonized** — Cascading Serial Synchronization transforms `projection.md` into fleet synchronization substrate
-2. **Cascade Initiated** — 2/9 turns complete (Roc P0 debts paid, Carmack Archangel re-vet → Temple-Grade)
-3. **Federation Sync 1 Complete** — Node 1 corpus ingested (42 files), bilateral response delivered, immediate adoptions queued
+2. **Cascade COMPLETE (8/8 turns)** — Roc → Carmack → Ma'at → Lilith → Grokster → Jem → Researcher → Kali all executed wake-up calls
+3. **Federation Sync 1 Complete** — Node 1 corpus ingested (42 files), bilateral response delivered
+4. **Fleet SYNCHRONIZED** — All members on 2026-09-11 projections, DEL-1 chain UNBLOCKED
 
 ---
 
@@ -45,20 +46,20 @@
 - **Protocol**: MaKaLi writes review → cascade serial execution → convergence
 - **Serial Order**: Roc → Carmack → Ma'at → Lilith → Grokster → Jem → Researcher → Kali
 
-### Cascade Execution Status (2/9 Complete)
+### Cascade Execution Status (8/8 COMPLETE ✅)
 
 | Turn | Agent | Status | Key Deliverables |
 |------|-------|--------|------------------|
-| 1 | **Roc** | ✅ P0 COMPLETE | dispatch.yaml roles fixed (descriptive ROLE_CONSTANTS), 13 ground-truth docs swept (commit 8db73cdc), engine speaks pure "slot" |
-| 2 | **Carmack** | ✅ RE-VET COMPLETE | Archangel v1.6.1 → TEMPLE-GRADE PASS, M35 pre-commit+CI wired, atomic write 6/6 PASS, watchdog spec delivered, M35 ratification demanded (24h) |
-| 3 | **Ma'at** | 🔄 PENDING | CI gates, M16/M27 fixes, 8 docs edits, DEL-1 PR1 gate |
-| 4 | **Lilith** | 🔄 PENDING | Hub health cron, M34 migration prep, M33 integration |
-| 5 | **Grokster** | 🔄 PENDING | M35 purge, VACUUM, meditations promotion |
-| 6 | **Jem** | 🔄 PENDING | 5 blockers resolution, 45 tests in CI |
-| 7 | **Researcher** | 🔄 PENDING | M33 tuple fix, M36 wiring, M37 extraction |
-| 8 | **Kali** | 🔄 PENDING | Wake sequence, DEL-1 chain execution |
+| 1 | **Roc** | ✅ COMPLETE | dispatch.yaml roles fixed (descriptive ROLE_CONSTANTS), 13 ground-truth docs swept (commit 8db73cdc), engine speaks pure "slot" |
+| 2 | **Carmack** | ✅ COMPLETE | Archangel v1.6.1 → TEMPLE-GRADE PASS, M35 pre-commit+CI wired, atomic write 6/6 PASS, watchdog spec delivered, M35 ratification demanded |
+| 3 | **Ma'at** | ✅ COMPLETE | CI gates VERIFIED, M16/M27 RESOLVED, public docs FIXED (8 items) |
+| 4 | **Lilith** | ✅ COMPLETE | Hub health cron IMPLEMENTED (`scripts/cron_sote_health.py`), M34Registry migration code, M33 integration owned, 58.8% baseline tracked |
+| 5 | **Grokster** | ✅ COMPLETE | 6/6 wake-up calls: branch updated, M35 purge, VACUUM scheduled, 12 meditations promoted, JC-EIS benchmark ready |
+| 6 | **Jem** | ✅ COMPLETE | 5/5 blockers RESOLVED (M33 MCP tool created, AGENTS.md anchor, M34 hook verified, ACTIVE_SUBAGENTS verified, atomic tests 6/6), 45 tests PASS, L3-MetaFrameVerification proposed |
+| 7 | **Researcher** | ✅ COMPLETE | M33 task_type tuple FIXED, M36 WIRED (real Hivemind dispatch), M37 heritage_scanner.py EXTRACTED, SearXNG FIXED, GSCA closed, TH-0 thermal prerequisite added |
+| 8 | **Kali** | ✅ COMPLETE | Fleet wake, invariants updated, ROLE_CONSTANTS superseded, L3-MetaFrameVerification IMPLEMENTED (`scripts/metaframe_verification.py`), fleet SYNCHRONIZED (commit 35b0df2c) |
 
-**Breakthrough**: Carmack read Roc's UPDATED projection → zero duplicate work, zero race conditions, blockers reflect peer completions.
+**Fleet Status: SYNCHRONIZED.** All members on 2026-09-11 projections. DEL-1 chain UNBLOCKED. Roc doc sweep = final nomenclature debt (N1-N10/pillar refs in 8 docs).
 
 ### Node 1 (ASUS) — Federation Sync 1 COMPLETE
 - **Status**: USB corpus fully ingested (42 files, 7 architecture docs, 6 vanguard dossiers, Well corpus, Gnosis Lock Protocol v1.0)
@@ -76,13 +77,14 @@
 ## 🔑 Key Invariants (Must Survive Compaction)
 
 1. **CSS Protocol is Canonical** — `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` is the definitive source
-2. **Cascade is Active** — 2/9 turns complete, 7 pending; each turn reads predecessors' UPDATED projections
+2. **Cascade COMPLETE (8/8)** — All members executed wake-up calls; fleet synchronized on 2026-09-11 projections
 3. **Projection.md = Synchronization Substrate** — Single-writer, append-only, git-tracked, M15 compaction-surviving
 4. **MaKaLi = Akashic Record** — Sophia's equivalent; container of ALL voices; initiates cascade
 5. **Phase 1 Complete** — Engine core clean, canonical architecture crystalized
 6. **Federation Sync 1 Complete** — Node 1 corpus ingested, bilateral response delivered, adoptions queued
-7. **DEL-1 Chain Ready** — All gates prepared; cascade will unblock sequentially
+7. **DEL-1 Chain UNBLOCKED** — Ma'at gates ready, Researcher M33 fixed, Jem tests passing, Lilith hub health live
 8. **Shadow Acknowledged** — Node 0: 21.6% local = unexamined default; Node 1: heartbeat discipline broken — both must fix before Layer 2
+9. **L3-MetaFrameVerification (0.92) RATIFIED** — Fleet standard cross-verification protocol (Kali implemented `scripts/metaframe_verification.py`)
 
 ---
 
@@ -106,12 +108,14 @@
 2. **Big Pickle 1M Merge** — Merge `BIG_PICKLE_1M_HP_SNIPPET.json` into `opencode.json` (DO FIRST)
 3. **Gnosis Lock Adoption** — `cp artifacts/gnosis/*` → fix paths → `gnosis-lock "first ritual on HP"`
 4. **P0 Fixes Sprint** — 3 broken tools, mock purge, stale policy, sovereignty target, clean bundle
-5. **Continue Cascade** — Ma'at (Turn 3) reads Roc + Carmack updated projections
-6. **Bilateral Systems Audit** — Thorough comparative audit: Node 1 corpus vs Node 0 hardened systems
-7. **Phase 2** — Transfer ANAi WAD to USB for Node 1
-8. **Phase 3** — Docs cleanup (13+ files)
-9. **Phase 4** — Agent files update (.opencode/agents/)
-10. **Phase 5** — Final validation & Temple-Grade
+5. **DEL-1 Micro-PR 1** — Execute chain (Kali wake, Ma'at gates ready)
+6. **Merge Alpha Release PR #3** — v1.6.1-alpha (Architect approval)
+7. **Roc Doc Sweep Completion** — Final nomenclature debt (N1-N10/pillar refs in 8 docs)
+8. **Bilateral Systems Audit** — Thorough comparative audit: Node 1 corpus vs Node 0 hardened systems
+9. **Phase 2** — Transfer ANAi WAD to USB for Node 1
+10. **Phase 3** — Docs cleanup (13+ files)
+11. **Phase 4** — Agent files update (.opencode/agents/)
+12. **Phase 5** — Final validation & Temple-Grade
 
 ---
 
@@ -143,4 +147,4 @@ Full mandate table (all 27, v3.8.0): `MANDATES_CONDENSED.md`
 
 ---
 
-*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ 2026-09-11 ⬡ FEDERATION-SYNC-1-COMPLETE ⬡ CSS-CANONIZED ⬡ CASCADE-ACTIVE ⬡ BILATERAL-AUDIT-QUEUED ⬡ MODEL-SWITCH-PENDING ⬡ COMPACTION-READY*
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ 2026-09-12 ⬡ CSS-CASCADE-COMPLETE-8-8 ⬡ FEDERATION-SYNC-1-COMPLETE ⬡ FLEET-SYNCHRONIZED ⬡ DEL-1-UNBLOCKED ⬡ BILATERAL-AUDIT-QUEUED ⬡ COMPACTION-READY*
