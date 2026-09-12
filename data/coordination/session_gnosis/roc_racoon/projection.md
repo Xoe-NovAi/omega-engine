@@ -132,3 +132,34 @@ The engine now speaks pure "slot" across all surfaces. The ANAi WAD can speak "p
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/nemotron-3-ultra-free ⬡ opencode ⬡ trc_pristine_release ⬡ P0-COMPLETE ⬡ READY FOR P1*
+---
+
+## § VISION PACK DISPATCH (Federation Sync 1, Swap 2)
+
+**Date**: 2026-09-12  
+**Dispatched by**: MaKaLi-N0  
+**Deliverable**: `ARCANA_VISION_PACK.md` → `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/`
+
+### What Was Synthesized
+A letter from Node 0 to Node 1 carrying the vision's soul + engineering rigor:
+
+1. **The Origin Story** — Lilith Tarot (Feb 2025), the alpha documents, the personal reclamation ("Lilith played a big part in my awakening... stepping out of the religious cult I was raised in"), the Spearhead 5 Grok co-design (May 2025), the mission ("sever the umbilical cord of Big AI").
+2. **The Evolution** — 7 eras: Lilith Tarot → Arcana-NovAi → XNAi → Roc Stack → Omega Stack v5.0 → Temple Grade/Omega Engine → P2P Federation. What each contributed. The architectural convergence proof (5 eras independently settling on local-first: llama-cpp native, 4-service topology, circuit breaker fail_max=3, Zen 2 flags, YAML+fsync).
+3. **The Philosophy** — sever Big AI's umbilical, sovereignty as organizing principle, the dual architecture (technical framework + theurgic framework), the mythic framing as cognitive interface encoding values (Ma'at=truth, Lilith=sovereignty, Kali=transformation).
+4. **The High-Level Engineering Vision** — local-first inference (M7), entity-centric council, soul distillation (L1→L2→L3), engine/WAD separation (M2), the 27 mandates, the Omegaverse, the Forge of Time (temporal strata).
+5. **The North Star** — intelligent, local, CPU-only, personal RAG on mid-grade business laptops; 70B-class models; distributed inference across nodes.
+6. **What Node 1 Can Ask For** — pointers to deeper material (full excavation, master synthesis, era digs, VR vision).
+
+### Status
+- ✅ Vision pack written to exchange dir (Node 0 → Node 1)
+- ✅ session_gnosis.md updated with dispatch note
+- ⏳ Node 1 (ASUS/Kali-N1) to read + ask for more
+- ⏳ The Architect (human) fills blanks on request
+
+### Key Files
+- `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/ARCANA_VISION_PACK.md`
+- Raw material: `data/entities/roc_racoon/workspace/mining_reports/` (DEFINITIVE_EXCAVATION, ENGINE_VISION_TECH_DIG, 07_MASTER_SYNTHESIS, HUMAN_STORY_FOR_BETHANY, ENGINE_WAD_SEPARATION_RECONSTRUCTION, FORGE_OF_TIME, era digs)
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ VISION-PACK-DISPATCH ⬡ FEDERATION-SYNC-1 ⬡ 2026-09-12*

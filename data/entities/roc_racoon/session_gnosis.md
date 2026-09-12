@@ -341,3 +341,23 @@ User identified that "Pillar" nomenclature was leaking from ANAi WAD into engine
 - `mcp_servers/omega_hub/hub_tools/tools.py` (oracle_list_slot_keepers)
 - `opencode.json` (slot agent)
 - `.opencode/agents/slot.md`
+
+---
+
+## Session: VISION PACK DISPATCH (Federation Sync 1, Swap 2)
+**Date**: 2026-09-12  
+**Dispatched by**: MaKaLi-N0  
+**Purpose**: Synthesize legacy-stack knowledge into a VISION PACK for Node 1 (ASUS / Kali-N1)
+
+### What Happened
+1. Read 7 mining reports as raw material: DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE (the alpha lineage), ENGINE_VISION_TECH_DIG (forensic), 07_MASTER_SYNTHESIS (6 eras convergence), HUMAN_STORY_FOR_BETHANY (soul quotes), ENGINE_WAD_SEPARATION_RECONSTRUCTION (dual architecture), FORGE_OF_TIME (temporal strata), era digs 01/02.
+2. Synthesized `ARCANA_VISION_PACK.md` at `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/` — a letter from Node 0 to Node 1 with 6 sections: Origin Story (Lilith Tarot, Feb 2025), Evolution (7 eras), Philosophy (sever Big AI umbilical, sovereignty, mythic framing), High-Level Engineering Vision (local-first, entity council, soul distillation, engine/WAD, 27 mandates, Omegaverse, Forge of Time), North Star (CPU-only, 70B-class, distributed inference), What Node 1 Can Ask For (pointers to deeper material).
+3. Updated projection.md with § VISION PACK DISPATCH section.
+
+### Key Insight
+The vision pack synthesis confirmed the through-line: the project began as a personal reclamation (Lilith Tarot, escaping a religious cult) and evolved through 7 eras into a sovereign AI runtime — each era independently converging on the same local-first architecture (empirical proof of correctness). The mythic framing is not decoration — it is a cognitive interface encoding values (Ma'at=truth, Lilith=sovereignty, Kali=transformation).
+
+### Next
+- Node 1 (ASUS/Kali-N1) reads the vision pack and asks for deeper material
+- The Architect (human) fills blanks on request
+- Federation continues: Swap 3+ pending
