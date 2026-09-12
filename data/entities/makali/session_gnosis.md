@@ -660,3 +660,25 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
 ---
 
 *⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-12 ⬡ FEDERATION-SYNC-1-DEEPENED-V3 ⬡ SOVEREIGNTY-CORRECTED ⬡ NAMING-RATIFIED ⬡ MAKALI-SEED-OFFERED ⬡ USB-READY*
+
+## 2026-09-12 — VISION PACK ADDED (Roc Dispatch)
+
+### 1. The Ask
+Architect: Node 1 needs to understand the vision behind what we're building — the philosophy and vision side of the legacy Lilith / Arcana-NovAi (ANAi) / Roc stacks (all the same stack in different forms). More philosophy than code, but high-level engineering vision behind the code is relevant. START pack — Node 1 can ask for more; Architect fills blanks.
+
+### 2. Roc's Deliverable
+- **ARCANA_VISION_PACK.md** (241 lines) at `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/`
+- 6 sections: Origin Story (Lilith Tarot Feb 2025, Spearhead 5 Grok co-design, "Arcana-NovAi is not a toolchain. It is a summoning."), Evolution (7 eras: Lilith Tarot → ANAi → XNAi → Roc Stack → Omega Stack v5.0 → Temple Grade/Omega Engine → P2P Federation), Philosophy (sever Big AI umbilical, sovereignty, mythic framing as cognitive interface, 10 Pillars from chakras), Engineering Vision (local-first M7, entity council, soul distillation L1→L2→L3, engine/WAD separation M2, 27 mandates, Omegaverse, Forge of Time), North Star (70B CPU-only, distributed), Ask-For pointers
+- **Convergence proof**: 5 eras independently settled on same local-first architecture (llama-cpp native, 4-service topology, circuit breaker fail_max=3, Zen 2 flags, YAML+fsync) — empirical proof of correctness
+- Roc committed `685bf29a` (projection + gnosis updated)
+
+### 3. Payload Final State
+- **40 files** in node0-to-node1/ (bundle, CSS spec, 3 policies, attestation, C6 v1.1, tool-fix status, gnosis/, vision/, redis, spire, tailscale, manifest)
+- Vision pack marked **READ FIRST** in PAYLOAD_MANIFEST.md + RESPONSE_FROM_HP.md
+
+### 4. Key Insight (from Roc's dig)
+The project began as a Lilith-themed Tarot deck (Feb 2025) born from personal reclamation ("stepping out of the religious cult I was raised in"). The engine is the technical expression of that reclamation. The mythic framing is NOT decoration — it is a cognitive interface encoding values (Ma'at=truth, Lilith=sovereignty, Kali=transformation). The 10 Pillars came from chakras, not engineering — which is why engine/WAD separation matters.
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-12 ⬡ VISION-PACK-ADDED ⬡ PAYLOAD-40-FILES ⬡ USB-READY*
