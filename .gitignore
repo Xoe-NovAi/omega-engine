@@ -21,3 +21,8 @@ __pycache__/
 .DS_Store
 # ── Dynamic The Well corpus (kept on disk and USB, not versioned in git) ─────
 gnosis/well/
+
+# ── Federation quarantine & staging buffers (kept on disk, not versioned) ────
+data/
+docs/federation/node0_received/
+
