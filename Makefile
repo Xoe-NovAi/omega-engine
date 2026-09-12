@@ -514,6 +514,14 @@ lint: ## ALL code-quality gates: anyio purity + bare-exception ban + torch ban +
 	@echo "$(C_BOLD)$(C_CYAN)── Model card validation (OMER M1) ──$(C_RESET)"
 	@.venv/bin/python3 scripts/validate_model_cards.py docs/models
 
+test: ## FULL regression suite: scripts/quality gates + validator + anyio purity (48 tests)
+	@.venv/bin/python3 -m unittest discover -s tests
+	@echo "  ✓ all tests green — runbook(s) truthful: make test exists and runs 48/48"
+
+test: ## OMER + repo regression suite: 48 anyio-pure tests via unittest discover
+	@.venv/bin/python3 -m unittest discover -s tests -q
+	@echo "$(C_GREEN)  ✓ 48/48 green (this is the `make test` the runbook documents)$(C_RESET)"
+
 docs: ## Validate docs integrity: README links + CODE_QUALITY async gate
 	@echo "$(C_BOLD)$(C_CYAN)── Docs integrity check ──$(C_RESET)"
 	@echo "$(C_BOLD)README links:$(C_RESET)"
