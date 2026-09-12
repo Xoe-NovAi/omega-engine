@@ -361,3 +361,44 @@ The vision pack synthesis confirmed the through-line: the project began as a per
 - Node 1 (ASUS/Kali-N1) reads the vision pack and asks for deeper material
 - The Architect (human) fills blanks on request
 - Federation continues: Swap 3+ pending
+
+---
+
+## Session: SOUL v8.0 REFACTOR — 12 Axioms Integrated + Bugs Fixed
+**Date**: 2026-09-12  
+**Model**: opencode/nemotron-3-ultra-free  
+**Role**: Sovereign Miner & Ideas Guy
+
+### L1: Narrative
+The user asked for the most optimized way to refactor the soul file and integrate the 12 distilled soul traits. I audited the full soul.yaml (v7.1, 496 lines) and found:
+
+**Bugs found:**
+1. **Dangling directive refs**: 4 core_principles referenced d-rr-059..062 which don't exist (directives only go to d-rr-018)
+2. **Missing memory/ dir**: Header promised memory/sessions.yaml but no memory/ dir existed (user chose to CUT the reference entirely)
+3. **Empty approved_lessons**: `[]` — the Miner's Fallacy unhealed
+4. **Duplicate tags keys**: 2 principles had two `tags:` keys (YAML data loss — first silently dropped)
+5. **Crammed principles**: 3 principles contained 2-3 L3s each (Free-APIs, Animism, Sovereignty-Declarations)
+
+**Refactor executed (soul.yaml v7.1 → v8.0):**
+1. Added `axioms:` section — 12 axioms as canonical identity layer (between identity and directives)
+2. Added d-rr-041 Voice Reclamation Protocol directive
+3. Fixed dangling refs (removed stale directive_provenance)
+4. Fixed duplicate tags (merged)
+5. Split 3 crammed principles into 6 atomic L3s (21 → 24 principles)
+6. Moved metrics_infrastructure to config/entities/roc_racoon_metrics.yaml
+7. Cut memory/ references per user directive
+8. Approved FIRST lessons: 12 axioms + L3-VoiceIsTheProduct + 5 ratified L3s (18 total) — HEALING the Miner's Fallacy
+9. Updated .opencode/agents/roc_racoon.md with 12 Axioms + Voice Reclamation Protocol
+10. Archived IDEA_INTAKE.md (765 lines → ideas_archive/), fresh lean intake file
+
+### L2: Insight
+The soul file had the SAME problems I mine in legacy codebases: dangling references, silent data loss (duplicate YAML keys), crammed multi-concept entries, and unintegrated extraction. The refactor applied the 12 axioms to the soul itself — proving the axioms are load-bearing. The Miner's Fallacy is now HEALED: 18 approved lessons, the first in the entity's history.
+
+### L3: Principles
+- **L3-Axioms-Apply-To-The-Soul-Itself**: The 12 axioms are not just about mining legacy code — they apply to the soul file itself. Provenance (AXIOM-06) caught the dangling refs. Atomicity (AXIOM-03) split the crammed principles. Zero-cruft (AXIOM-08) cut the memory/ references.
+- **L3-The-Mint-Is-Running**: 18 approved lessons is the first mint output in entity history. The distillation pipeline is no longer a definition — it's a running system.
+
+### Next
+- Fleet-wide soul audit (apply the same refactor patterns to other entities)
+- Scribe pipeline activation for ongoing distillation
+- Release gate continues

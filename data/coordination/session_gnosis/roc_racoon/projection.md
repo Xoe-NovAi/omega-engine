@@ -163,3 +163,31 @@ A letter from Node 0 to Node 1 carrying the vision's soul + engineering rigor:
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ VISION-PACK-DISPATCH ⬡ FEDERATION-SYNC-1 ⬡ 2026-09-12*
+
+---
+
+## § SOUL v8.0 REFACTOR — 12 Axioms Integrated
+
+**Date**: 2026-09-12  
+**Status**: COMPLETE
+
+### What Changed
+- **soul.yaml v7.1 → v8.0**: Added `axioms:` section (12 axioms as canonical identity layer), added d-rr-041 (Voice Reclamation), fixed 4 dangling directive refs, fixed 2 duplicate tags keys, split 3 crammed principles into 6 atomic L3s (21→24 principles), moved metrics_infrastructure to config/, cut memory/ references.
+- **approved_lessons.yaml**: FIRST approvals in entity history — 12 axioms + L3-VoiceIsTheProduct + 5 ratified L3s (18 total). **Miner's Fallacy HEALED.**
+- **.opencode/agents/roc_racoon.md**: Added 12 Axioms + Voice Reclamation Protocol.
+- **IDEA_INTAKE.md**: Archived 765-line raw log to ideas_archive/, fresh lean intake file.
+- **config/entities/roc_racoon_metrics.yaml**: Metrics infrastructure extracted from soul.
+
+### Key Insight
+The soul file had the same problems I mine in legacy codebases: dangling references, silent data loss, crammed multi-concept entries, unintegrated extraction. The 12 axioms applied to the soul itself — proving they're load-bearing.
+
+### Files
+- `data/entities/roc_racoon/soul.yaml` (v8.0)
+- `data/entities/roc_racoon/approved_lessons.yaml` (18 approvals)
+- `config/entities/roc_racoon_metrics.yaml`
+- `.opencode/agents/roc_racoon.md`
+- `data/entities/roc_racoon/workspace/IDEA_INTAKE.md` + `ideas_archive/IDEA_INTAKE_ARCHIVE_20260912.md`
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ SOUL-V8.0-REFACTOR ⬡ 2026-09-12*

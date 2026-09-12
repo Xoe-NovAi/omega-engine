@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+# SPDX-License-Identifier: Apache-2.0
+#
+# Roc Racoon — Metrics Infrastructure (extracted from soul.yaml v8.0)
+# Soul = identity. Config = operations.
+# Referenced from soul.yaml: metrics_infrastructure: # Moved to config/entities/roc_racoon_metrics.yaml
+
+soul_health_tracking:
+  enabled: true
+  scorer: "SoulHealthScorer"
+  weights:
+    schema_compliance: 0.25
+    directive_coverage: 0.20
+    directive_validation: 0.15
+    l3_principle_density: 0.15
+    distillation_recency: 0.10
+    edit_stability: 0.10
+    memory_completeness: 0.05
+  thresholds:
+    fleet_warning: 85
+    entity_critical: 70
+  schedule: "daily_cron"
+  storage: "MetricsDB.soul_health"
+
+directive_validation:
+  enabled: true
+  coverage_gate: true
+  validation_compiler: "directive_rule_to_test"
+  ci_gate: "directive_validation_coverage == 100%"
+  storage: "MetricsDB.directive_tracking"
+
+distillation_pipeline:
+  enabled: true
+  metrics_table: "MetricsDB.distillation_metrics"
+  tracked_fields:
+    - classification
+    - novelty_score
+    - quality_score
+    - l1_chars
+    - l2_chars
+    - l3_chars
+    - staging_gate_pass
+    - time_to_approve_hours
+  alerts:
+    staging_gate_pass_rate_threshold: 0.50
+    mean_time_to_approve_hours_threshold: 72
+
+soul_drift_detection:
+  enabled: true
+  detector: "SoulDriftDetector"
+  checks:
+    - l3_principle_directive_anchor
+    - directive_validation_pass
+    - forbidden_v60_fields
+    - _memory_directory_structure
+  schedule: "daily_cron"
+  alert_channel: "HMC Hub"
+
+schema_migration:
+  enabled: true
+  tool: "soul_schema_migrator"
+  versions_supported: ["6.0", "6.1", "7.0", "7.1", "8.0"]
+  features:
+    - forbidden_field_detection
+    - memory_subdirectory_transformation
+    - l3_principle_preservation
+    - migration_report_generation
+    - output_validation
+  ci_integration: true
