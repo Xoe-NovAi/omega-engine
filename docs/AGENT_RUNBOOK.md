@@ -264,6 +264,27 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
   supersession chain, index parity, UTF-8 integrity, stats accuracy, Make targets).
 - 43/43 total tests green, lint+docs clean.
 
+### 5.3 OMER — Model Card Registry (P3.3a/b, **LIVE**)
+- **What**: git-native model evaluation registry. A card is a **decision record**
+  (verdict + promotion checklist), not a marketing summary.
+- **Docs**: registry contract → `docs/models/README.md`; full design +
+  M1–M6 milestones → `docs/OMER_FOUNDATION.md`.
+- **Cards**: `docs/models/<provider>-<model>-<variant>.md` with required YAML
+  frontmatter (v1.0) + `## Provider Claims`, `## Local Measurement`,
+  `## Omega Verdict` sections.
+- **When to create a card**: any model researched/trialled/deployed/rejected.
+  New models are `candidate` until a real Omega task validates them.
+- **Evidence labels (enforced, exact)**: `Provider claim`, `Community benchmark`,
+  `Independent eval`, `Reproduced`, `Local measurement`.
+- **Reproduction status (enforced, exact)**: `Indicative` → `Reported` →
+  `Controlled` → `Verified` → `Independent`. Provider claims default to
+  `Indicative`; only `Controlled`+ local measurements promote a card.
+- **Validation**: `./scripts/omer validate docs/models` (wired into `make lint`).
+  Validator is `scripts/validate_model_cards.py` (Pydantic v1.0 schema); hard
+  P-core-trap guard rejects `allowed_cpus: 0,2,4,6,8,10`.
+- **Rule**: never present provider benchmarks as independent validation; keep
+  rejected/retired cards for future comparisons.
+
 ---
 
 ## 6. Architecture cheat-sheet

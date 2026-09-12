@@ -540,13 +540,24 @@ Adapted from [MLPerf Participation Rules](https://mlcommons.org/en/policies/) + 
 
 ## 13. Next Step
 
-**Implement M1 (Schema & Validation)** in `scripts/validate_model_cards.py`:
+**➡ M2 (Measurement CLI)** — build the local measurement path so cards
+can rise past `Indicative`:
 
-1. Define Pydantic models for frontmatter (v1.0)
-2. Implement validation rules (evidence labels, reproduction status, required sections)
-3. Wire into `make lint`
-4. Test against existing `docs/models/nex-n2-5-pro.md` and `docs/models/README.md`
-5. Add `omer` CLI skeleton with `validate` subcommand
+1. Define `omer measure` skeleton: hardware capture (P-core+HT mask `0-11`,
+   KV cache type, RAM, quantization, threads via `ollama ps`/`/api/ps`),
+   dated append to a card's `## Local Measurement` section.
+2. Implement `scripts/measure_model.py` with anyio-pure + hard timeout
+   (`</dev/null`), recording `tokens/sec`, P95 latency, seed, config_hash
+   (mirror `scripts/bench.py` but write into the card).
+3. Add `## Local Measurement` evidence labels + promotion rule: only
+   `Controlled`+ local measurements promote a card past `candidate`.
+4. Wire `omer measure` into `make lint`.
+
+**M1 (Schema & Validation) is ✅ DONE (2026-09-11)** — `scripts/validate_model_cards.py`
+(Pydantic v1.0 schema) is live; validates `docs/models/*.md` cards inside
+`make lint`; evidence labels (5) + reproduction status (5-level) enforced; the
+P-core trap guard rejects `allowed_cpus: 0,2,4,6,8,10`; Nex-N2.5-Pro card passes
+(commit `85cde0f`). OMER design complete in this file (555 lines).
 
 The Nex-N2.5-Pro card is the first real test case. All research is complete; the design is ready for implementation.
 
