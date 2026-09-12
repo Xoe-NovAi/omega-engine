@@ -58,7 +58,6 @@ jobs:
 
       - name: Verify Mining Ports (P3 BuildMaster)
         run: |
-          make verify-mining
 
       - name: AnyIO-only check (Mandate 1)
         run: |

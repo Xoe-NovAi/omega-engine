@@ -1,0 +1,242 @@
+{
+  "model": "stealth/ox-alpha",
+  "provider": "openrouter",
+  "alias": "Ox Alpha (GLM-5.3 stealth preview)",
+  "research_date": "2026-08-22",
+  "researcher": "Sovereign Researcher L2",
+  "session_model": "nemotron-3-ultra-free",
+
+  "rate_limits": {
+    "openrouter_free_tier": {
+      "rpm": 20,
+      "rpd_no_credits": 50,
+      "rpd_with_10usd_credits": 1000,
+      "tpm": null,
+      "concurrent_requests": null,
+      "burst_allowance": null,
+      "governance": "global_per_account",
+      "multiple_keys_help": false,
+      "source": "OpenRouter Zendesk, ModelHubby (2026-07-17), CostBench (2026-07-30)"
+    },
+    "opencode_go": {
+      "rpm": null,
+      "rpd": null,
+      "description": "Unlimited requests per 5-hour window for limited time (6 days from 2026-08-21)",
+      "caveat": "One user reported rate-limited on first prompt",
+      "source": "OpenCode X posts (2026-08-20, 2026-08-21), OfficeChai"
+    },
+    "zai_direct_alibaba_cloud": {
+      "rpm": 200,
+      "tpm": 3000000,
+      "concurrency": "model_specific_with_peak_offpeak_multipliers",
+      "region": "international_singapore",
+      "source": "Alibaba Cloud Model Studio (2026-08-19)"
+    },
+    "zai_direct_coding_plan": {
+      "concurrency_default": 1,
+      "window": "5_hour_and_weekly_with_peak_offpeak_quotas",
+      "source": "api-evangelist/zhipu-ai rate-limits.yml"
+    }
+  },
+
+  "recommended_semaphore_config": {
+    "primary_openrouter_oxalpha": {
+      "max_concurrent": 5,
+      "token_bucket_rpm": 20,
+      "token_bucket_refill_interval_seconds": 60,
+      "retry_policy": {
+        "max_retries": 5,
+        "base_delay_seconds": 2,
+        "max_delay_seconds": 60,
+        "honor_retry_after_header": true,
+        "exponential_backoff": true,
+        "jitter": true
+      },
+      "circuit_breaker": {
+        "failure_threshold": 5,
+        "recovery_timeout_seconds": 60,
+        "half_open_requests": 2
+      }
+    },
+    "fallback_zai_direct": {
+      "max_concurrent": 20,
+      "token_bucket_rpm": 200,
+      "token_bucket_tpm": 3000000,
+      "token_bucket_refill_interval_seconds": 60,
+      "retry_policy": {
+        "max_retries": 3,
+        "base_delay_seconds": 1,
+        "max_delay_seconds": 30,
+        "honor_retry_after_header": true,
+        "exponential_backoff": true
+      }
+    }
+  },
+
+  "batch_api": {
+    "supported": true,
+    "endpoint": "https://openrouter.ai/api/beta/batches",
+    "method": "POST",
+    "completion_window_hours": 24,
+    "discount_percent": 50,
+    "max_batch_size": null,
+    "multimodal_supported": false,
+    "supported_shapes": [
+      "/v1/chat/completions",
+      "/v1/responses",
+      "/v1/messages",
+      "/v1/embeddings"
+    ],
+    "model_level": "batch_level_applies_to_all_requests",
+    "zai_batch_supported": false,
+    "zai_batch_source": "Alibaba Cloud Model Studio: 'Batch Inference: Unsupported'"
+  },
+
+  "context_window": {
+    "claimed_tokens": 1048576,
+    "max_output_tokens": 131072,
+    "safe_context_for_distillation": 200000,
+    "max_recommended_context": 300000,
+    "effective_context_band": "200K-400K (inferred from non-Gemini frontier models)",
+    "attention_mechanism": "DSA (DeepSeek Sparse Attention)",
+    "degradation_profile": {
+      "single_needle_1m": "unknown_no_public_benchmark",
+      "multi_needle_8_1m": "unknown_no_public_benchmark",
+      "ruler_256k": "unknown_no_public_benchmark",
+      "positional_bias_drop_30_70_percent": "5-15_points",
+      "attention_sink_collapse": "mitigated_by_DSA",
+      "mla_distortion": "present_deepseek_architecture"
+    },
+    "rag_recommended_above_tokens": 300000,
+    "source": "Digital Applied Long-Context Retrieval 2026 (2026-04-24), GLM-5 architecture docs"
+  },
+
+  "authentication": {
+    "zai_international": {
+      "signup_url": "https://z.ai/chat",
+      "key_generation": "Profile menu → API Keys → Create new API key",
+      "endpoint": "https://api.z.ai/api/paas/v4",
+      "protocol": "OpenAI-compatible",
+      "key_format": "Bearer <key>",
+      "regions": {
+        "international": "z.ai",
+        "mainland_china": "bigmodel.cn (separate billing, separate keys)"
+      }
+    },
+    "openrouter": {
+      "model_id": "stealth/ox-alpha",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "key": "Standard OpenRouter API key"
+    },
+    "error_codes": {
+      "401_1000": "Auth failed - wrong key, revoked, or whitespace",
+      "401_1003": "Token expired - generate fresh key",
+      "429_1113": "Insufficient balance - recharge account",
+      "429_1302": "Rate limit reached - add retries with exponential backoff",
+      "400_1211": "Unknown model - check model ID spelling"
+    }
+  },
+
+  "model_specs": {
+    "total_parameters": 744000000000,
+    "active_parameters": 40000000000,
+    "architecture": "Mixture of Experts (MoE)",
+    "expert_count": 256,
+    "experts_per_token": 8,
+    "shared_experts": 1,
+    "routing": "top-8 gating + shared expert",
+    "attention": "DSA (DeepSeek Sparse Attention)",
+    "training_tokens": 28500000000000,
+    "precision_native": "FP8",
+    "quantization_verified": "Q4_K_M (11 shards, ~426 GB)",
+    "reasoning": "always_enabled_in_glm53",
+    "reasoning_effort_options": ["low", "high", "max"],
+    "reasoning_effort_default": "max",
+    "thinking_disabled_supported": false,
+    "source": "DeepWiki, Modular, Digital Applied, GitHub zai-org/GLM-5, EdikSimonian/glm5-runpod"
+  },
+
+  "streaming_and_tools": {
+    "ox_alpha_openrouter_stats": {
+      "tool_call_error_rate_percent": 4.45,
+      "tool_call_error_rate_window": "3_day_average",
+      "throughput_tokens_per_second": 50,
+      "p50_ttft_seconds": 2.02,
+      "structured_output": "json_via_response_format_no_schema_enforcement",
+      "function_calling": "supported_via_tools_and_tool_choice",
+      "source": "explainx.ai (2026-08-21) from OpenRouter dashboard"
+    },
+    "zai_glm5_provider_support": {
+      "function_calling": "13_of_13_providers",
+      "json_mode": "12_of_13_providers_siliconflow_exception",
+      "streaming": "all_providers_openai_compatible_sse",
+      "source": "DeepInfra GLM-5 benchmarks (2025-10-28)"
+    },
+    "deployment_requirements": {
+      "vllm": {
+        "tool_call_parser": "glm47",
+        "reasoning_parser": "glm45",
+        "enable_auto_tool_choice": true,
+        "speculative_decoding": "mtp"
+      },
+      "sglang": {
+        "tool_call_parser": "glm47",
+        "reasoning_parser": "glm45",
+        "enable_auto_tool_choice": true
+      }
+    },
+    "glm53_migration_note": "thinking.type: 'disabled' no longer supported; must use reasoning_effort: low|high|max"
+  },
+
+  "pricing": {
+    "ox_alpha_openrouter_preview": {
+      "input_per_1m": 0,
+      "output_per_1m": 0,
+      "duration": "approximately_1_week_from_2026-08-20",
+      "caveat": "Free preview can end without notice; no pricing commitment"
+    },
+    "zai_direct_glm53": {
+      "input_per_1m_usd": 1.40,
+      "output_per_1m_usd": 4.40,
+      "source": "Techmeme (2026-08-19), Apidog (2026-08-16)"
+    },
+    "openrouter_glm5_providers": {
+      "gmcloud": {"input": 0.60, "output": 1.92, "cache_read": 0.12},
+      "deepinfra": {"input": 0.60, "output": 2.08, "cache_read": null},
+      "streamlake": {"input": 0.60, "output": 1.92, "cache_read": 0.12},
+      "openrouter": {"input": 0.60, "output": 1.92, "cache_read": null}
+    },
+    "zai_coding_plan": {
+      "free": {"quarterly": 0, "models": "flash_only"},
+      "lite": {"quarterly": 30, "monthly_equiv": 10},
+      "pro": {"quarterly": 90, "monthly_equiv": 30, "allowance_multiplier": 6},
+      "max": {"quarterly": 240, "monthly_equiv": 80, "allowance_multiplier": 14}
+    },
+    "openrouter_platform_fee_percent": 5.5,
+    "auto_billing_traps": [
+      "OpenRouter: negative balance blocks ALL models including free",
+      "Z.AI: 429/1113 = hard stop for insufficient balance",
+      "Stealth models: preview can end without notice"
+    ]
+  },
+
+  "implementation_priority": {
+    "immediate": [
+      "Configure AnyIO semaphore at 5 concurrent / 20 RPM for OpenRouter Ox Alpha",
+      "Implement exponential backoff with Retry-After header honor",
+      "Add circuit breaker with 5 failure threshold"
+    ],
+    "short_term": [
+      "Build batch distillation pipeline using /api/beta/batches (50% savings)",
+      "Implement context chunking at 200K with RAG fallback above 300K",
+      "Set up Z.AI Lite account ($30/quarter) as paid fallback"
+    ],
+    "monitoring": [
+      "Track X-RateLimit-* headers on 429 responses",
+      "Monitor tool call error rate (target <2%)",
+      "Log TTFT and throughput per request",
+      "Alert on 429 rate >5% of requests",
+      "Watch for Ox Alpha preview end (~2026-08-27)"
+    ]
+  }
+}

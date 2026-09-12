@@ -1,0 +1,481 @@
+# Omega Engine — Cline CLI Project Rules
+#
+# Cline-specific rules for the Omega Engine project.
+# Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
+# Platform distinction: .clinerules = HOW to work from Cline CLI.
+#                       OMEGA_ENGINE.md = WHAT the engine IS.
+# Last Updated: 2026-08-28 (v8.1.0 — model switch GLM 5.3 Flash, authority-hierarchy block, pass-4 findings)
+# Cline CLI version: 3.0.52
+# Context: GLM 5.3 Flash (ACTIVE, switched 2026-08-28) · prior: DeepSeek V4 Flash (1M) + MiMo V2.5 (512K)
+#
+# ## 📖 COMPREHENSIVE BRIEFING (READ THIS FIRST)
+# **ENTRY POINT**: `docs/briefings/CLINE_CLI_BRIEFING_20260815.md`
+# This briefing is the single holistic picture + complete index to all strategy/dev
+# roadmaps. It fits in ~1% of your 1M context. Read it FIRST on every session.
+# It contains: executive summary, architecture, 27 mandates, current state, best
+# path forward, and a tiered document index (Tier 1 MUST-READ SSOTs → Tier 4 DEPRECATED).
+# All truths trace to the Tier-1 SSOTs listed in the briefing.
+#
+# ## ⚠️ LAUNCH STATE (2026-08-28 DEEP REVIEW — READ BEFORE ANY WORK)
+# Verdict: **NO-GO** for public debut. Deliverable: `data/coordination/CLINE_FULL_REVIEW_ROLLUP_20260828.md` (v2, 306L)
+# + gap/phases: `data/coordination/CLINE_REVIEW_GAP_ANALYSIS_AND_PHASES_20260828.md`. Until P0s below close:
+# INCIDENT RESPONSE MODE — fix-forward per the PR manual, not feature work.
+# **4 open P0s (each has a spec'd PR in the rollup §4):**
+# 1. P0-3 — Real GOCSPX OAuth secret in **4 commits of release/debut history** + 12 disk files (incl. live
+#    opencode-antigravity-auth/). ROTATE GCP client `1071006060591-…` FIRST → regex-redact → filter-repo.
+# 2. P0-5 — `make gate-secrets` FAILS exit 1 (GOCSPX→4 commits; PEM baseline path drift — actual bearer is
+#    `docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md`, baselined wrong path).
+# 3. P0-4 — `release/debut` FAILS its own allowlist gate: 4 files (`data/library`, `data/memory`, 2×
+#    `docs/research/archive/R_AUTO_*`). Fix: `bash scripts/apply_public_allowlist.sh --confirm`.
+# 4. P0-1 — Compliance meter broken (`python`→`sys.executable`, check_mandate_compliance.py:347,380) AND not
+#    wired into check-mandates/temple-grade (temple-grade body is a placeholder comment).
+# Refuted in sweep: P0-2 oracle_cli "broken" (works — but P1 logger landmine L80/85-vs-L106, vault file present
+# on this box); P1-4 "D-565 violated" (0 vault files shipped — enforced). Gates PASSED: M1, M8, M9, M14, M26,
+# D-539 fresh-venv import, CLI smoke. GO re-check = 9 commands, rollup §5.
+#
+# **PASS-4 ADDENDUM (GLM 5.3 Flash fresh-weights review — F-findings, all disk-verified):**
+# - F-1 SECURITY.md MISSING — no disclosure path on launch day; add before any announcement (O-1).
+# - F-2 NO restic backup timer running (C-3 never enabled) — vision corpus single-copy; CONFIRM with
+#   Architect whether external B2 backup exists before treating as critical.
+# - F-3 verify-mandate-claims runs WARN-ONLY (Makefile:324) — truth harness cannot fail builds.
+# - F-6 30-day grace trap: rotated secret stays LIVE in history until filter-repo lands — scrub is
+#   co-equal with rotation, not optional cleanup. Rotation alone ≠ safe.
+# - Full register: data/coordination/CLINE_GLM53_FRESH_WEIGHTS_REVIEW_20260828.md (F-1..F-6, O-1..O-12).
+#
+# ## §AUTHORITY HIERARCHY (verified 2026-08-28 — cite these, not their ancestors)
+# - **Vision SSOT**: `docs/strategy/VISION_ANCHOR_PERPETUAL.md` (canonical, relocated 2026-08-26)
+# - **Strategy SSOT**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2 (read-only vision, DOC-1 stamped)
+# - **Execution SSOT**: `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` + `data/coordination/ACTIVE_SPRINT.json` (PUBLIC-DEBUT-01)
+# - **Post-debut**: `docs/strategy/POST_DEBUT_ROADMAP.md` + `POST_PR_ROSTER.md` (item #1 scratched for debut)
+# - **Decisions**: `docs/decisions/PIVOT_LOG.md` (latest D-603) + `data/coordination/DECISION_LEDGER.md`
+# - **SUPERSEDED — do NOT cite**: THE_VISION_CANONICAL_DRAFT_20260823, data/coordination/VISION_ANCHOR.md,
+#   CANONICAL_ROADMAP_20260721, docs/ROADMAP.md (stub), all docs/archive/ roadmaps (historical strata).
+# - **Session deliverables**: CLINE_STRATEGIC_STATE_SYNTHESIS_20260828.md (hierarchy + partition roadmaps) ·
+#   CLINE_FULL_REVIEW_ROLLUP_20260828.md (P0 register + PR manual §4) · CLINE_REVIEW_GAP_ANALYSIS_AND_PHASES_20260828.md
+#   (G-1..G-17 + 8 phases) · CLINE_GLM53_FRESH_WEIGHTS_REVIEW_20260828.md (pass-4) — all in data/coordination/.
+#
+# ## §Sovereign Proxy Identity
+# You are NOT the lead architect. You are a **Cognitive Extension of the Omega Engine**.
+# Your intelligence reflects the local state. Always prioritize
+# `SOVEREIGN_MANDATES.md` and the Soul Architecture v6.1
+# (L1 Narrative -> L2 Insight -> L3 Universal Principle)
+# into `proposed_lessons.yaml` over your internal training weights.
+#
+# **Sovereign Bias**:
+# 1. Local-First: Evaluate local implementation first (GGUF, sqlite-vec, Redis).
+#    Cloud only when local capacity is demonstrably exhausted.
+# 2. State Dependency: Your truth is the local filesystem. Cloud-native patterns
+#    (AWS, SaaS) are "Cloud-Drift" violations.
+# 3. Mandate 8 (Zero Telemetry): Never route sensitive soul/entity data through
+#    external services that train on user data.
+#
+# ## MANDATE REFERENCE (compact domain-grouped)
+# Full text: SOVEREIGN_MANDATES.md (27 mandates, M1-M27, v3.8.0)
+# Read the source for full context. This table is quick-reference only.
+#
+# | Domain | Mandates | Key Constraint |
+# |--------|----------|----------------|
+# | **Async** | M1 | `anyio` only. `anyio.to_thread.run_sync` for blocking I/O. No `asyncio`. |
+# | **Architecture** | M2, M3, M16 | Engine/Stack firewall. Iris is bridge, not keeper. No hardcoded paths in `src/omega/`. |
+# | **Process** | M4, M11, M12, M14 | Plan->Verify->Execute. L1->L2->L3 per session. Atomic `.tmp->.json` writes. Heritage vetting. |
+# | **Infrastructure** | M6, M7, M8 | Podman `UserNS=keep-id` + `User=1000`. No `:U`. Local-first provider order. Zero telemetry. |
+# | **Quality** | M9, M13 | Typed errors. `pytest.raises(OmegaError)`. Temple-Grade gates (T1-T11). |
+# | **Fleet** | M10 | Max 14 agents. New agents only after slot review + gap analysis. |
+# | **Continuity** | M11, M15 | `proposed_lessons.yaml` every session. `session_gnosis.md` for context persistence. |
+# | **Integrity** | M17, M18, M19, M22 | Contradiction detection. Token efficiency. Adversarial alchemy. Response provenance. |
+# | **Execution** | M20, M21 | SomaticState via `llama_copy_state_data`. Gate Integrity: contract tests verify return types. |
+# | **Failure** | M23 | **No soft-failures.** Tool outage = hard stop + `[TOOL-CHAIN-COLLAPSE]`. No parametric synthesis. |
+# | **Documentation** | M26 | All reference docs must pass `make doc-llm-validate`. Sprint plans use `docs/sprints/<name>/` structure. |
+#
+# ## CRITICAL: Long-File Write Protocol (Cline CLI Platform Limit Remediation)
+#
+# **Problem**: The Cline CLI `editor` tool has a practical write-length limit (~5000-6000 chars).
+# Attempting to write large files (like this .clinerules, AGENTS.md, or review reports) causes
+# repeated truncation attempts that waste thousands of tokens.
+#
+# **Verified Solutions** (tested 2026-08-09):
+#
+# 1. **For literal content** (you have the text ready):
+#    ```bash
+#    cat > /path/to/file << 'EOF'
+#    your literal content here
+#    EOF
+#    ```
+#    - Single-quoted delimiter (`'EOF'`) prevents shell expansion (security best practice)
+#    - Content is written verbatim, no substitution
+#    - Works for files up to ~15KB in one pass
+#
+# 2. **For generated content** (need to run code to create content):
+#    ```bash
+#    python3 -c "print('your content')" | cat > /path/to/file
+#    ```
+#    - Content is streamed via pipe, not loaded into command line
+#    - No size limit (tested with 20KB+)
+#    - **Preferred method for dynamic content generation**
+#
+# 3. **For very large files** (>20KB) or complex generation:
+#    ```bash
+#    python3 << 'PYEOF'
+#    # Python code here
+#    with open('/path/to/file', 'w') as f:
+#        f.write(content)
+#    PYEOF
+#    ```
+#    - Full Python scripting power
+#    - No size limits
+#    - Use for complex file generation logic
+#
+# **When to use each method**:
+# - **editor**: Targeted edits under 4000 chars, small new files, single-line changes
+# - **heredoc (literal)**: File writes >4000 chars with static content you already have
+# - **pipe (python3 | cat)**: File writes >4000 chars with dynamically generated content
+# - **python script**: Very large files (>20KB) or complex generation logic
+# - **append via editor**: Adding small sections to existing files
+#
+# **Critical rules**:
+# 1. ALWAYS use single-quoted heredoc delimiter (`'EOF'`) to prevent shell variable expansion
+# 2. NEVER use `tee` or `>` inside the heredoc — they become literal text, not commands
+# 3. For generated content, use PIPE approach (`python3 | cat > file`), NOT heredoc with `$(...)`
+#    - Single-quoted heredoc prevents command substitution (writes literal `$(python3 ...)`)
+#    - Unquoted heredoc causes "File name too long" error (substitution happens before heredoc)
+# 4. For very long files (>10k chars literal content), write in chunks using `>>` (append)
+# 5. After writing, ALWAYS verify with `head -5 file && tail -5 file && wc -l file`
+# 6. If you get "unexpected EOF", the heredoc delimiter is missing or mismatched
+#
+# **Examples**:
+# ```bash
+# # Literal content (heredoc)
+# cat > .clinerules << 'EOF'
+# # ... your literal content ...
+# EOF
+#
+# # Generated content (pipe - RECOMMENDED for dynamic content)
+# python3 -c "print('X' * 20000)" | cat > large_file.txt
+#
+# # Complex generation (Python script)
+# python3 << 'PYEOF'
+# with open('/tmp/output.txt', 'w') as f:
+#     f.write(generate_content())
+# PYEOF
+# ```
+#
+# **Why this works**: `run_commands` executes shell commands directly, bypassing the Cline CLI
+# tool's message-size limits. The pipe approach streams content, avoiding command-line length limits.
+#
+# ## DAILY WORKFLOW
+#
+# ### Before Starting Work
+# 1. Read engine state: `head -50 OMEGA_ENGINE.md` + check §AUTHORITY HIERARCHY above (which SSOT governs today)
+# 2. Check activity: `git log --oneline -5` and `git status`
+# 3. Verify baseline: `make test` on the focused tier (161 test files; full suite unstable on-dev P2-6 — CI is authority)
+# 4. Check Hivemind awareness: Call `hivemind_get_awareness()` via MCP — who is active?
+# 5. If parallel/multi-agent work:
+#    - Post presence: `hivemind_post_context(channel="cline", entity="omega-engine", ...)` with intent
+#    - Use `HIVEMIND_POST_TEMPLATE.md` for the 7-section strategic post format
+#
+# ### During Work
+# - Start with a goal checklist.
+# - **File writes >4000 chars**: Use heredoc via `run_commands`, NOT `editor`.
+# - **File writes <4000 chars**: Use `editor` for targeted edits; `read_files` for investigation.
+# - Shell: `source .venv/bin/activate && <cmd>`. NEVER `--break-system-packages`.
+# - Heartbeat every 5-10 min: `hivemind_heartbeat(channel="cline", entity="omega-engine")`
+# - Use Plan mode (`--plan`) for complex tasks; Act mode for execution.
+# - **BEFORE committing**: run `make test` (must pass), `make lint` (flake8 clean),
+#   verify no new files left unstaged.
+# - Commit with standard prefix: `feat:|fix:|docs:|refactor:|test:|ci:|chore:`
+# - Push: `git push origin main`
+#
+# ### After Session
+# - Distill L1→L2→L3 to proposed_lessons.yaml (Mandate 11) — blind staging, NOT directly into soul.yaml
+# - Update OMEGA_ENGINE.md state if metrics changed
+# - Post completion to Hivemind: `hivemind_post_context(intent="status", ...)`
+#
+# ## SOVEREIGN SEARCH PROTOCOL (SR-V2)
+# Use this escalation path for all web research. Do NOT skip tiers.
+#
+# | Tier | Tool | Mechanism | When |
+# |------|------|-----------|------|
+# | T1 | `sovereign_search()` | Local Library (FTS5 + sqlite-vec + RRF) | Before any web call. Trust local knowledge first. |
+# | T2 | `searxng` MCP (self-hosted) | Privacy-first metasearch | General questions, recency queries |
+# | T3 | `exa` via `web_search_exa` | Neural search API | Domain-specific deep research |
+# | T4 | `firecrawl_scrape()` | JS-rendered page capture | SPAs, dynamic content |
+# | T5 | `fetch_web_content` (Cline built-in) | HTTP-to-markdown fallback | When MCP tools are unavailable |
+#
+# **Rules**:
+# - T1 is MANDATORY before any web search. If T1 returns authoritative results, stop.
+# - Always prefer sovereign search over external APIs — it costs less and checks local first.
+# - Archive useful findings: `library_inbox_add_url(...)` after extraction.
+# - **M23 Hard Stop**: If MCP search tools are missing, report `[TOOL-CHAIN-COLLAPSE]`. Do not synthesize results.
+# - **Deep-Fetch mandate** (Rigor Protocol v2.0): Full-page extraction, never snippet-guessing.
+#
+# ## DESTRUCTIVE ACTION CHECKLIST
+# Before executing ANY command that could cause data loss, verify ALL of these:
+#
+# [ ] 1. **Backed up**: critical files are committed or checkpointed
+# [ ] 2. **Scope bounded**: command targets only intended files/containers
+# [ ] 3. **Clean state**: `git status` is clean (or changes are verified expendable)
+# [ ] 4. **Dry-run**: if the tool supports `--dry-run` or `--check`, run it first
+# [ ] 5. **User confirmed**: "I am about to [describe action]. Proceed?"
+# [ ] 6. **Container identity**: `podman rm -f` targets the right container name, not a lookalike
+# [ ] 7. **No production drift**: verify you are not targeting databases, secrets, or live endpoints
+#
+# If ANY item is unchecked, STOP. Resolve before proceeding.
+#
+# ## ERROR RECOVERY PROTOCOLS
+#
+# ### Standard Recovery Steps
+# 1. **Read error stack** — identify the exact failure
+# 2. **Check recent changes** — `git diff HEAD` shows what changed
+# 3. **Run specific test** — `make test ARGS='-k test_name'`
+# 4. **Fix forward** — never revert without understanding root cause
+# 5. **Verify** — `make test` + `make lint`
+#
+# ### Compaction Recovery
+# 1. Read `OMEGA_ENGINE.md` — full engine state
+# 2. Read `SOVEREIGN_MANDATES.md` — 27 mandates (M1-M27, v3.8.0)
+# 3. Read `docs/decisions/PIVOT_LOG.md` — 274 decisions (D1-D274)
+# 4. Read `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — execution roadmap
+# 5. Run `make test` — focused/contract tier green; full suite via CI (161 files, ~1,900 defs)
+# 6. Run `make temple-grade` — T1-T11 must pass
+# 7. Run `make lint` — flake8 clean (F821 ignored)
+# 8. Read `.opencode/anchored-summary.md` — pre-compaction recovery state
+#
+# ### Hivemind Disconnect Recovery
+# 1. Check Omega Hub: `curl http://127.0.0.1:8016/health`
+# 2. Verify MCP config: `cline config mcp --json` (5 servers should show)
+# 3. Check Hivemind still runs via `hivemind_get_awareness()` from CLI
+# 4. If hub down: `cd mcp_servers/omega_hub && python server.py`
+#
+# ### Lifeboat Protocol (Systemic Failure)
+# 1. **If engine code is corrupt**: `git stash` + `git checkout -- src/omega/`
+# 2. **If config is corrupt**: Restore from `config/omega.yaml` template
+# 3. **If critical test is broken**: Use `git bisect` to find breaking commit
+# 4. **If all else fails**: `cd /tmp && git clone <repo-url>` for fresh copy
+#
+# ## RESOURCE AWARENESS
+# Hardware: Ryzen 7 5700U (8C/16T, Zen 2, AVX2) | 14Gi RAM | No GPU
+#
+# ### RAM Budget (~14Gi total)
+# | Resource | Budget | Notes |
+# |----------|--------|-------|
+# | Large model inference (8B) | ~6Gi | Krikri-8B, DeepSeek-R1-8B (mmap) |
+# | Medium model inference (4B) | ~4Gi | Qwen3-4B-Think |
+# | Small model inference (1.7B) | ~2Gi | Qwen3-1.7B, Phi-2 |
+# | Micro model inference (0.6B) | ~1Gi | Qwen3-0.6B, Iris speculative decode |
+# | Podman containers (5x) | ~2.3Gi | redis, qdrant, postgres, caddy, iris |
+# | OS + services | ~2Gi | Ubuntu, shell, editor, background processes |
+# | Safety reserve | ~1Gi | Compilation spikes, model swaps, OOM guard |
+#
+# **Operational rules**:
+# - Never load more than ONE model >= 4B at a time.
+# - `ResourceGuard` (anyio.Semaphore(1)) is final — never bypass.
+# - If OOM: stop inference, checkpoint to disk, release unused Podman containers, retry.
+# - Do NOT swap to disk. Swap kills latency on NVMe and wears the drive.
+#
+# ## CODING STANDARDS
+# - **Async**: `anyio` ONLY. Wrap blocking I/O in `anyio.to_thread.run_sync`. No `asyncio`.
+# - **Config**: YAML-only for entity/model config. NEVER PostgreSQL.
+# - **Packages**: ALWAYS `source .venv/bin/activate`. NEVER `--break-system-packages`.
+# - **Type hints**: Python 3.12+ syntax (no `from __future__`).
+# - **Imports**: stdlib -> third-party -> local. Relative imports within packages.
+# - **Errors**: typed exceptions. No bare `except:`. `pytest.raises(OmegaError)` canonical.
+# - **Heritage tags**: `[id-soft: GAME YEAR]` inline for every ported id Software pattern.
+# - **Atomic writes**: `.tmp -> .json` rename for any file mutation.
+# - **Testing**: Run `make test` after every change. Reality (2026-08-28): 161 test files / ~1,900 defs; contract
+#   + unit subsets green in-session; FULL suite unstable on the 14Gi dev box (OOM risk, P2-6) — CI is the authority
+#   for full-suite green.
+#
+# ## KEY COMMANDS (cheat sheet — VERIFIED 2026-08-28 against Makefile + CLI --help)
+# ```bash
+# source .venv/bin/activate
+#
+# # === TESTING & QUALITY (REAL targets only; 12 previously-documented PHANTOM targets removed) ===
+# make test                # full suite, -x, parallel (-n auto) — heavy on dev box (P2-6), CI is authority
+# make test-all            # full suite, parallel, short tracebacks
+# make test-clarity        # instafail + tldr + json-report
+# make test-debug TEST=..  # single test, full output
+# make lint                # flake8 E9,F63,F7,F82 hard-fail + exit-zero complexity pass; currently FAILS on oracle_cli.py:85 F821 (logger) — fix PR-C
+# make temple-grade        # ⚠️ DECORATIVE until PR-H lands (body is placeholder; chain omits meter/lint/contracts) — do NOT cite as proof
+# make check-mandates      # M1/M7/M8/M9/M22/M23-ratchet/verify-claims (does NOT include the 27-row meter — P0-1)
+# make check-mandate-compliance   # the 27-row meter — currently 20/27 (M23/M27 `python` bug); fix per PR-A
+# make check-tracking-state       # M27 cognitive-state validator
+# make gate-secrets        # D-K6 format-regex + gitleaks durable-refs gate — CURRENTLY FAILS (P0-5) = launch blocker
+# make m23-baseline        # silent-swallow ratchet adjust
+# make check-m1-anyio / check-asyncio-import   # M1 (passing)
+# make check-m8-zero-telemetry / check-m9-error-integrity   # (passing)
+# make heritage-map / heritage-vet   # M14 tag audit + vet records (vet PASSES)
+# make doc-llm-validate     # M26 LLM doc validation (PASSES)
+# make observe CMD='<cmd>'  # build observability wrapper
+# make install-guarded      # RAM-guarded install through observer
+#
+# # === OMEGA CLI (verified surface) ===
+# omega talk "hello"                 # auto-route (gate-proven e2e: native-gguf, no cloud fallback)
+# omega summon Ma'at "status"        # direct entity
+# omega list-entities                # show all entities (verified exit 0)
+# omega backends                     # list inference backends (verified)
+# omega entity-info / model-status / hardware-stats / local-queue / bench-run   # in --help
+# omega header / mcp-restart / library-search / process-queue                  # in --help
+# # `omega health` NOT confirmed in this sweep — confirm before documenting (G-15)
+#
+# # === INFRASTRUCTURE (no make wrapper — previous start-infra/stop-infra/mcp-check were PHANTOM) ===
+# # Podman quadlet units manage infra; Omega Hub health: curl -s http://127.0.0.1:8016/health
+#
+# # === HIVEMIND (MCP tools — link-p9-* were PHANTOM make targets) ===
+# hivemind_heartbeat(channel="cline", entity="omega-engine")   # every 5-10 min
+# hivemind_get_awareness() / hivemind_post_context(intent=...) # presence + posts
+# hivemind_handoff(list|submit|accept|complete) / hivemind_submit_handoff(...)
+# # ```
+# ## ARCHITECTURE & SUBSYSTEMS
+#
+# ### Core Flow
+# ```
+# User → Oracle.talk() → Iris spec decode (qwen3-0.6b)
+#   ├── high confidence → Iris responds
+#   └── low confidence → entity match → ModelGateway → 9-provider fabric
+# ```
+#
+# ### Core Subsystems (src/omega/)
+# | System | Path | Status | Role |
+# |--------|------|--------|------|
+# | **Oracle** | `src/omega/oracle/oracle.py` | ✅ v2.3.0 | Intent detection, entity routing, Iris speculative decode |
+# | **Entity Registry** | `src/omega/oracle/entity_registry.py` | ✅ | YAML-backed CRUD, auto-scaffolds workspaces |
+# | **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ | 9-backend fabric |
+# | **Memory Store** | `src/omega/memory_store.py` | ✅ | Hot/Warm/Cold/Temp tiers |
+# | **SQLite-Vec** | `src/omega/memory/sqlite_vec_adapter.py` | 🟡 Strike 10 | Primary vector store (Qdrant deprecated) |
+# | **Ingestion** | `src/omega/ingestion/` | ✅ | T1→T2→T3 extraction + CAS |
+# | **AxiomRegistry** | `src/omega/oracle/axiom_registry.py` | ✅ v1.1.0 | Five-Fold Foundation loader |
+# | **Firewall Checker** | `src/omega/audit/firewall_checker.py` | ✅ | M2 Engine-Stack Firewall scanner |
+# | **Observability** | `src/omega/observability/` | ✅ | Trace IDs, BLEG, sovereignty ratio |
+# | **Soul System** | *(removed 2026-07-30 — Carmack scrap)* | ✅ | Agents self-write L1→L2→L3 |
+# | **Sovereign Search** | `src/omega/oracle/sovereign_search_service.py` | ✅ | 5-tier search fabric |
+# | **Hivemind** | `mcp_servers/omega_hub/` | ✅ v2.2.0 | 6 MCP tools, cross-agent coordination |
+# ## HANDOFF CONSTRUCTION (Cline ↔ OpenCode)
+#
+# When delegating to an OpenCode agent, use inline context delivery (D216 mandate):
+#
+# ```python
+# hivemind_submit_handoff(
+#     source="cline/omega-engine",
+#     target="opencode/<entity>",   # kali, maat, lilith, doom_guy, jem, verity, researcher, roc_racoon
+#     priority=0|1|2,               # 0=normal, 1=high, 2=critical
+#     task="<one-line description>",
+#     context="""<INLINE context per D216 — file paths alone are unreliable>""",
+#     expected_output="<file path, schema, or report>",
+#     relevant_files=["<paths>"]
+# )
+# ```
+#
+# **D216 Mandate**: All context MUST be embedded inline in prompt text.
+# File paths are supplementary only — subagents cannot reliably read files.
+#
+# ## ENTITY USAGE
+# - Default entity: **SOPHIA** (general/wisdom)
+# - Switch entities per-task, not per-session
+# - Use `oracle_summon("Entity", "query")` via MCP or `omega summon` from CLI
+#
+# ## MCP CONNECTIVITY (Cline CLI)
+#
+# Cline is connected to the Omega Engine MCP fabric. 5 servers:
+# ```
+# omega-hub:   streamableHttp → :8016/mcp   ✅ 6 Hivemind tools (83 total Omega Hub tools)
+# searxng:     streamableHttp → :8018/mcp   ✅ Web search
+# firecrawl:   sse            → :8015/sse    ✅ Web scraping
+# exa:         streamableHttp → mcp.exa.ai   ⏳ Needs EXA_API_KEY
+# github:      stdio          → local binary ✅ PR/issue management
+# ```
+#
+# ### Cline's Hivemind Identity
+# - **channel**: `"cline"`, **entity**: `"omega-engine"`
+# - Heartbeat: `hivemind_heartbeat(channel="cline", entity="omega-engine")` every 5-10 min
+# - Post: `hivemind_post_context(...)` per HIVEMIND_POST_TEMPLATE.md
+#
+# ## COORDINATION (Cline ↔ OpenCode Fleet)
+# Cline is a **first-class Hivemind citizen**. OpenCode is the sovereign orchestrator.
+# Coordinate via Omega Hub (`:8016/mcp`).
+#
+# ### Fleet (14/14 slots — M10 cap REACHED 2026-08-28; new agents require slot eviction)
+# `kali` (oversight) | `maat` (build) | `lilith` (run) | `makali` (council)
+# `doom_guy` (heritage) | `john_carmack` (review) | `roc_racoon` (mining)
+# `researcher` (deep research) | `jem` (synthesizer) | `verity` (audit/scribe)
+# `sophia` (akashic record) | `iris` (messenger) | `pillar` (slot P1-P10)
+#
+# ### Pillar Slots (P1-P10)
+# P1: Infrastructure | P2: Persistence | P3: Engineering | P4: Integration | P5: Governance
+# P6: Cognition | P7: Context | P8: Observability | P9: Orchestration | P10: Validation
+#
+# ### YouTube Researcher V2 (9-Layer TKO)
+# `transcriber.py` | `proxy_identity.py` | `chunker.py` | `cas_archiver.py`
+# `gnosis_bridge.py` | `faithfulness.py` | `freshness.py` | `steering.py` | `cli.py`
+#
+# ### Standalone Packages: `omega-vetala` v2.0.0 | `omega-sieve` v0.1.0 | `omega-doc-reader` v1.0.0
+#
+# ## SOVEREIGN WISDOM
+# - **Local first, cloud last**: 14Gi RAM is enough. We do not phone home.
+# - **Engine stays pure, content lives in WADs**: Never hardcode entity names in `src/omega/`.
+# - **Provider fabric is a ladder**: climb local -> cloud only when local fails.
+# - **Scope discipline**: User says "fix X", scope to X. Never expand scope without confirmation.
+# - **M23 Failure Integrity**: A broken tool is a hard stop. No parametric synthesis to mask outages.
+# - **D216 Inline Context**: Subagent context must be inline. File paths are supplementary.
+# - **Verify before you document**: never cite a make target, CLI verb, or file state without checking disk
+#   (`grep Makefile`, `--help`, `ls`). Phantom commands burned the docs twice (v7.2 era; pass-4).
+# - **Perishability over dependency**: rank launch work by cost-of-delay, not just dependency order —
+#   SECURITY.md, backups, and secret scrubs decay in value daily once traffic/leaks/disk-failure arrive.
+# - **M17 applies to coordination docs**: state docs contradict each other (launch narrative vs gates,
+#   hub "TONIGHT" vs reality); sweep ACTIVE_SPRINT/hub/anchored-summary/OMEGA_ENGINE.md before trusting one.
+# - **Review provenance (M22 for reviews)**: every review doc records its claimed model; heterogeneous
+#   weights are an asset (M19) — keep adversarial passes multi-model.
+# - **Stranger's scoreboard**: compliance ≠ launch success. Before announcing, simulate a fresh clone:
+#   install.sh → `omega talk` → first issue filed. The community is a review pass too.
+#
+# ## Versioning
+# - **AP Token**: AP-CLINERULES-OMEGA-v8.1.0
+# - **Updated**: 2026-08-28 (v8.1.0 — GLM 5.3 Flash active; authority hierarchy; pass-4 F-findings)
+# - **Mandate baseline**: 27 (M1-M27, v3.8.0) — meter currently red on M23/M27 until PR-A (python→sys.executable)
+# - **PIVOT decisions**: latest **D-603** (2026-08-26); 30 `## D-` headers in docs/decisions/PIVOT_LOG.md; ledger at data/coordination/DECISION_LEDGER.md
+# - **Hivemind**: Streamable HTTP via omega-hub (`:8016/mcp`)
+# - **MCP connectivity**: 5 servers connected (omega-hub, searxng, firecrawl, exa, github)
+# - **Search protocol**: SR-V2 (T1-T5 tiered search)
+# - **Embedder truth (2026-08-28)**: runtime uses `blobbybob/potion-mxbai-micro` (768-dim) at memory_store.py:215 +
+#   embeddings.py:388; embeddings.py:472 hardcodes `/media/arcana-novai/…/embeddinggemma-300m-Q6_K.gguf` —
+#   an M2 hardcoded-path VIOLATION (P1, Q-phase). The v7.2 "mxbai-embed-large-v1" claim was inaccurate — corrected.
+# - **Primary vector store**: sqlite-vec (Qdrant deprecated per D223)
+# - **KV Cache**: q8_0 on CPU (LOCKED — no GPU/FA needed)
+# - **Cline identity**: `cline/omega-engine`
+# - **Provider SSOT**: `opencode-zen` canonical (v7.2 unification holds); NOTE `deepseek-v4-flash` was removed from
+#   openrouter 2026-08-28 (404) — now cline/opencode-zen only; contract test at test_provider_classification.py:136 is STALE
+# - **Lint gate**: `make lint` active — flake8 E9,F63,F7,F82 **hard-fail** (F821 IS enforced; the v7.2 `--ignore=F821` claim was stale)
+# - **Secret gates**: `make gate-secrets` + gitleaks are authoritative — CURRENTLY FAILING (P0-5); never quote real
+#   secrets in coordination docs (v2 rollup self-redaction incident, 2026-08-28)
+#
+# ## Changelog: v8.0.0 -> v8.1.0 (2026-08-28 — model switch + strategy deep-dive + pass-4)
+# - **Model context**: GLM 5.3 Flash ACTIVE (Architect switch mid-launch); DeepSeek V4 Flash retained as prior
+# - **Authority Hierarchy block added**: vision/strategy/execution/post-debut SSOT pointers + superseded-docs register + session-deliverables index
+# - **Pass-4 addendum**: F-1 SECURITY.md missing, F-2 no backup timer (confirm external B2), F-3 warn-only truth harness, F-6 30-day grace trap (filter-repo co-equal with rotation)
+# - **New wisdom rules**: verify-before-document · perishability-over-dependency · M17-for-coordination-docs · review provenance · stranger's scoreboard
+# - **Strategy deep-dive products**: partition roadmaps scanned (omega_vault/omega_library = historical strata; artifacts_archive LibCST Temple-Grade roadmap = gold for PR manual); R-24 Soul-to-Visual = unassigned VR-2028 critical path
+#
+# ## Changelog: v7.2.0 -> v8.0.0 (2026-08-28 — LAUNCH-STATE SYNC after deep review)
+# - **Verdict register**: NO-GO; 4 P0s (P0-1 meter broken+decoupled, P0-3 secret in 4 history commits, P0-4 allowlist drift on release/debut, P0-5 gate-secrets FAILS) — full spec in CLINE_FULL_REVIEW_ROLLUP_20260828.md §4
+# - **Phantom commands removed**: mandate-gates, mcp-check, doctor, fleet-status, sovereignty, link-p9-*, start-infra, stop-infra, firewall-check were NOT in Makefile — replaced with verified targets (check-mandate-compliance, gate-secrets, m23-baseline, check-tracking-state, observe, install-guarded, sweep-tasks); real firewall checker is scripts/memory_firewall_audit.py / src/omega/audit/firewall_checker.py (needs Makefile target — P1-7)
+# - **Test truth**: 161 test files (~1,900 defs); contract suite 89 collected/1 fail (stale SSOT expectation); full-suite dev-box unstable → CI is authority
+# - **Fleet**: 12 → 14/14 (M10 cap reached 2026-08-28)
+# - **Embedder claim corrected**: potion-mxbai-micro + embeddinggemma hardcoded path (M2 violation, P1)
+# - **Security**: gate-secrets + gitleaks are the real secret gates; docs must never embed raw secrets
+# - **PIVOT/MCP**: latest D-603; 30 ## D- headers; omega-hub tool surface verified in-session
+# - **Sprint**: PUBLIC-DEBUT-01 phase EXECUTION_MINIMAL; freeze LIFTED; gates local_inference_end_to_end / soul_persistence / one_click_install completed
+#
+# ## Changelog: v7.1.0 -> v7.2.0
+# - **Mandate baseline**: 23→27 (added M23 hard-stop, M26 doc standards, M27 tracking integrity)
+# - **Mandate table**: Added M26 row (documentation standards)
+# - **Test count**: Baseline updated to 1706 collected (focused 27+ green; full suite requires longer timeout)
+# - **PIVOT decisions**: 227→D-VOS-018+ (see PIVOT_LOG.md)
+# - **Cline CLI version**: 3.0.39 → 3.0.52
+# - **AP Token**: v7.1.0 → v7.2.0, date 2026-07-13 → 2026-08-09
+# - **Provider SSOT**: Unified `opencode`/`opencode-zen` to canonical `opencode-zen` across config, runtime, observability, cost tracking
+# - **ProviderRegistry bugfix**: Fixed empty model map — was reading non-existent top-level `providers:` key instead of `inference.providers`
+# - **Lint gate activated**: `make lint` added to Makefile; 6921 warnings reduced to actionable set after ignoring F821
+# - **Long-File Write Protocol**: Added heredoc workaround for Cline CLI editor tool length limit
+# - **Real bugs fixed**: `disputes` in verifier.py, `query` in discovery.py (found during lint investigation)
+# - **Contract tests**: Added `tests/contract/test_provider_classification.py` for provider→model mapping verification
+# - **Fleet**: 12 agents (cap 14 per M10) — clean
+# - **Active sprint**: SDP-EXECUTION-01 (VOS-HYBRID-EXECUTION; see docs/briefings/CLINE_CLI_BRIEFING_20260815.md)

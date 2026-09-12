@@ -163,7 +163,7 @@ class Indexer:
     def __init__(
         self,
         vector_adapter: Optional[IVectorStoreAdapter] = None,
-        vector_collection: str = "omega_vec_gemma_768",
+        vector_collection: str = "omega_vec_qwen_768",
     ):
         self._fts: Optional[Any] = None
         self._vector_adapter = vector_adapter or MemoryVectorAdapter()
@@ -442,7 +442,7 @@ class Indexer:
 
     async def stats(self) -> Dict[str, Any]:
         """Get index statistics."""
-        vector_count = len(self._vector_adapter) if hasattr(self._vector_adapter, "__len__") else 0
+        vector_count = sum(len(v) for v in getattr(self._vector_adapter, '_store', {}).values())
         if self._fts:
             cursor = await self._fts.execute("SELECT COUNT(*) FROM doc_metadata")
             row = await cursor.fetchone()

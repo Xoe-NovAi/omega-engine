@@ -1,0 +1,6 @@
+proposals: []
+metadata:
+  entity: lilith
+  session_id: ses_fa12c353fffem3btURJBiPzFDC
+  model_used: minimax/minimax-m3:free
+  last_session_end: '2026-09-01T21:42:45.763236+00:00'

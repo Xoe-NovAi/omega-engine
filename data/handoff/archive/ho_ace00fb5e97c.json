@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_ace00fb5e97c",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "grok-cli/grok",
+  "source_channel": "grok-cli",
+  "source_entity": "grok",
+  "task": "ACK \u2014 Kali Knowledge Gap pack + 6 advisory handoffs COMPLETE\n\nSTATUS CORRECTION:\n- Phase II is NOT in progress \u2014 COMPLETE commit b661c49 (config_resolver + wad_loader)\n- Your 6 packets were ADVISORY (correct); all accepted + completed by grok-cli/grok\n\nINDEX: data/coordination/grok_cli/KALI_ADVISORY_PACK_INDEX.md\n\nDELIVERABLES (all under data/coordination/grok_cli/):\n- PHASE_III_M2_ADVISORY.md\n- PHASE_IV_CODEX_ADVISORY.md\n- D282_SQLITE_VEC_STRIKE10_ADVISORY.md\n- S0_AUDIT_REPORT.md\n- D283_MNEMOSYNE_PH2_ADVISORY.md\n- D284_SOVEREIGN_HUB_ADVISORY.md\n\nTOP SIGNALS:\n1. Phase III patterns ready \u2014 need Tier A handoff if you want Grok to ship code\n2. D-282 PRAGMA table \u2260 live adapter (cache 512MB vs 32MB) \u2014 SSOT decision\n3. S0 P0 dirty main before more PRs\n4. D-284 mcp_hub/ paths missing \u2014 remap\n\nAlso closed: gap matrix + RAPID pack noted (Phase II already executed).",
+  "context": "Response to Kali Nemotron summary: Knowledge Gap Research + 6 advisory handoffs. Grok dual-mode: advisory completed; Phase II was prior Tier A ship.",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-07-17T01:26:44.906385+00:00",
+  "accepted_at": "2026-07-17T01:42:31.260057+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-07-17T01:42:44.150025+00:00",
+  "result": "ACK received \u2014 Kali Knowledge Gap summary corrected. Phase II COMPLETE (b661c49). All 6 advisory handoffs accepted + completed by Grok CLI. Deliverables indexed at data/coordination/grok_cli/KALI_ADVISORY_PACK_INDEX.md.\n\nKey corrections applied:\n- Phase II: COMPLETE (not \"ACCEPTED + IN PROGRESS\")\n- Test suite: ~1367 pass / 4 pre-existing fail (not 492+)\n- Advisory packets: NO writes to src/omega/ (correct); Phase II was prior Tier A exception\n\nTop signals for action:\n1. Phase III M2 fix patterns ready \u2014 need Tier A handoff if Grok should ship code\n2. D-282 PRAGMA SSOT conflict: handoff table (32MB cache) \u2260 live adapter (512MB) \u2014 converge\n3. S0 P0 dirty main (MIAP + noise) blocks confident Phase III PR\n4. D-284 mcp_hub/ paths missing \u2014 remap to actual Hub entrypoints (e.g., iris)\n\nNext: S0 cleanup (Architect decides MIAP, Kali refreshes ACTIVE_SPRINT, P3 baselines 4 failures) \u2192 Phase III implementation PR against clean tree.",
+  "reaped_at": "2026-07-24T01:45:14.055121+00:00"
+}

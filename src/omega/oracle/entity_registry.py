@@ -170,8 +170,8 @@ class Entity:
     priority: int = 0  # [Project 3] Layer priority for Shadow-Stacking
 
     # ── Slot System (replaces hardcoded NODE_SLOTS) ──
-    # Engine uses these for get("N1") resolution.
-    # The engine does NOT interpret what "N1" means — that's WAD content.
+    # Engine uses these for get("S1") resolution.
+    # The engine does NOT interpret what "S1" means — that's WAD content.
     slots: List[str] = field(default_factory=list)
 
     # ── Generic Metadata (WAD-defined, engine-agnostic) ──
@@ -324,7 +324,7 @@ class EntityRegistry:
 
     # Slot system is fully dynamic — no hardcoded NODE_SLOTS.
     # The engine discovers occupied slots from loaded entities.
-    # WADs define slot labels ("N1: Flesh"); the engine sees only "N1".
+    # WADs define slot labels ("S1: Flesh"); the engine sees only "S1".
     # [id-soft: quake3-1999] vvar pattern — dynamic set, not hardcoded
     @property
     def occupied_slots(self) -> frozenset:
@@ -414,16 +414,16 @@ class EntityRegistry:
             wad_metadata = {k: v for k, v in raw.items() if k not in core_fields}
 
             # ── Backward-Compatible Slot Migration ──
-            # Old YAML format used "nodes: ['N1: Flesh']" or "nodes: ['1']".
-            # New format uses "slots: ['N1']". Migrate automatically.
+            # Old YAML format used "slots: ['S1']" or "slots: ['S1']".
+            # New format uses "slots: [.S1.]". Migrate automatically.
             raw_slots = raw.get("slots", [])
             if not raw_slots and "nodes" in raw:
                 raw_nodes = raw.get("nodes", [])
-                # Extract slot ID from "N1: Flesh" → "N1", or use bare value
+                # Extract slot ID from "S1: Flesh" → "S1", or use bare value
                 for p in raw_nodes:
                     p_str = str(p)
-                    # Handle "N1: Flesh" format — extract before colon
-                    if ":" in p_str and not p_str.startswith("node"):
+                    # Handle "S1: Flesh" format — extract before colon
+                    if ":" in p_str and not p_str.startswith("slot"):
                         slot_id = p_str.split(":")[0].strip()
                     else:
                         slot_id = p_str
@@ -505,7 +505,7 @@ class EntityRegistry:
         # Tier 2: Slot Match (e.g., "p1" or "node 1")
         # Fully dynamic — no hardcoded NODE_SLOTS. The engine discovers
         # occupied slots from loaded entities. WADs define slot semantics.
-        slot_key = name_lower.replace("node ", "p").replace("node", "p")
+        slot_key = name_lower.replace("slot ", "p").replace("slot", "p")
         for key, layers in self._entities.items():
             active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
             if not active_layers:
@@ -610,13 +610,13 @@ class EntityRegistry:
         """
         return self.active_iter()
 
-    def list_node_keepers(self) -> List[Entity]:
-        """List entities with slot assignments (forward-compat alias).
+    def list_slot_keepers(self) -> List[Entity]:
+        """List entities with slot assignments (canonical name).
 
-        The term "Node" is Arcana-NovAi WAD content. The engine
-        discovers slot-holding entities dynamically rather than enforcing
-        a hardcoded 10-slot grid. This method queries any entity that has
-        at least one slot assigned.
+        The engine discovers slot-holding entities dynamically rather than
+        enforcing a hardcoded grid. This method queries any entity that has
+        at least one slot assigned. Slot semantics are WAD-defined; the
+        engine only sees occupied slot IDs (M2 Firewall compliant).
         """
         return [e for e in self.active_iter() if e.slots]
 

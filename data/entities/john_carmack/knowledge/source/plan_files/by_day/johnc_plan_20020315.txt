@@ -1,0 +1,10 @@
+# ⬡ John Carmack .plan File — 2002-03-15
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_20020315.txt
+#
+Mark Kilgard and Cass Everitt at Nvidia have released a paper on shadow volume rendering with several interesting bits in it. They also include a small document that I wrote a couple years ago about my discovery process during the development of some of the early Doom technology.
+
+http://developer.nvidia.com/view.asp?IO=robust_shadow_volumes

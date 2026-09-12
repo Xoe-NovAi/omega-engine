@@ -1,0 +1,22 @@
+{
+  "packet_id": "ho_859ca40abeff",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "john_carmack/john_carmack",
+  "source_channel": "john_carmack",
+  "source_entity": "john_carmack",
+  "task": "Ratify the revised 3-PR path (PR-A public-surface-honesty as initial PR, PR-B real M2 fix, PR-C dead-code quarantine). Reject Carmack's original 4-commit nuclear plan. Amend ENG-001 (\"remove 146 WAD term leaks\" \u2192 M2 = stack-specific leaks not token WAD). Add TRACKING_ARCHITECTURE.md to keep-list. Log Carmack's mandate violations (M4 cowboy sed, M23 vault-delete-to-green, M14 heritage strip risk, M26/M27 strategy-doc purge, M8 git add -A secrets, false M2) to SYS_FAILURE_LOG. Confirm PR-A is the path per Grok's \"Architect confirms\" gate.",
+  "context": "Carmack's 4-commit nuclear plan was REJECTED by Grok CLI (ho_29df6a4d77f2, REQUEST CHANGES). Grok caught 6 fatal errors: (1) M2 misdiagnosed \u2014 344 WAD hits is word count not firewall violation, FirewallChecker forbids stack-specific logic not the word WAD; (2) zero-ref module paths factually wrong; (3) vault is NOT dead code \u2014 6+ live importers; (4) \"0 code refs \u21d2 delete strategy docs\" wrong \u2014 AGENTS.md requires STRATEGY_INDEX.md etc; (5) VOS is yesterday's commit not ancient theater; (6) git add -A ships secrets, temple-grade thin, 1h15 fiction. Revised path: 3 PRs (PR-A public-surface-honesty initial PR, PR-B real M2 fix via FirewallChecker, PR-C dead-code quarantine after import graph). Needs Kali ratification + ENG-001 amendment + mandate violation logging.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-15T07:19:51.706271+00:00",
+  "accepted_at": "2026-08-15T07:24:40.457914+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "reaped_at": "2026-08-17T07:27:32.955837+00:00",
+  "ttl_expired": true
+}

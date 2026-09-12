@@ -1,0 +1,15 @@
+{
+  "packet_id": "ho_59c05106f5fe",
+  "target_cli": "maat",
+  "source_cli": "antigravity",
+  "task": "Execute Sovereign Debt items SD-006 (Wire health_monitor in ModelGateway sites), SD-008 (Wire soul distillation trigger on orchestrator session teardown), and SD-010 (Wire indexer.close() in Hub lifespan).",
+  "context": "S2-C Knowledge Sovereignty is complete. We have 3 quick-win wirings identified in the SOVEREIGN_DEBT_SYNTHESIS_20260609.md queue that fall under P1-P5 build governance.",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-06-09T22:28:56.503236+00:00",
+  "accepted_at": "2026-06-11T00:05:50.638302+00:00",
+  "accepted_by": "maat",
+  "completed_at": "2026-06-12T04:29:22.488574+00:00",
+  "result": "SD-006 (health_monitor in ModelGateway): ALREADY WIRED \u2014 health_monitor passed to ModelGateway in oracle.py, orchestrator.py, sovereign_search_service.py. Circuit breaker checks at model_gateway.py:556-557, success/failure recording at 578-579, 695-696, 719-720. \\nSD-008 (soul distillation on session teardown): ALREADY WIRED \u2014 orchestrator.py:385-395 triggers Oracle.close_session() which calls SoulDistiller.distill_and_save(). \\nSD-010 (indexer.close in Hub lifespan): EXECUTED \u2014 added on_shutdown parameter to mcp_runtime.py run_mcp(), server.py passes _cleanup_indexer() callback that calls indexer.close(). Verified 358/358 tests pass.",
+  "reaped_at": "2026-06-19T04:59:18.572000+00:00"
+}

@@ -1,0 +1,955 @@
+{
+  "probe": "multimodel_truncation_probe",
+  "started": "2026-08-28T10:00:28.326825+00:00",
+  "models": {
+    "minimax_m3": {
+      "model_id": "minimax/minimax-m3:free",
+      "results": [
+        {
+          "context_chars": 10000,
+          "approx_tokens": 2500,
+          "http_status": 200,
+          "elapsed_ms": 2876.6,
+          "prompt_tokens": 1507,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 50000,
+          "approx_tokens": 12500,
+          "http_status": 200,
+          "elapsed_ms": 7626.8,
+          "prompt_tokens": 6507,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 100000,
+          "approx_tokens": 25000,
+          "http_status": 200,
+          "elapsed_ms": 3089.2,
+          "prompt_tokens": 12757,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 200000,
+          "approx_tokens": 50000,
+          "http_status": 200,
+          "elapsed_ms": 3275.6,
+          "prompt_tokens": 25257,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 300000,
+          "approx_tokens": 75000,
+          "http_status": 200,
+          "elapsed_ms": 4191.8,
+          "prompt_tokens": 37757,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 400000,
+          "approx_tokens": 100000,
+          "http_status": 200,
+          "elapsed_ms": 4704.4,
+          "prompt_tokens": 50257,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 500000,
+          "approx_tokens": 125000,
+          "http_status": 200,
+          "elapsed_ms": 10833.0,
+          "prompt_tokens": 62757,
+          "completion_tokens": 5,
+          "finish_reason": "stop",
+          "content_len": 13,
+          "content_correct": true,
+          "truncated": false,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 750000,
+          "approx_tokens": 187500,
+          "http_status": 200,
+          "elapsed_ms": 7461.2,
+          "prompt_tokens": 94007,
+          "completion_tokens": 64,
+          "finish_reason": "length",
+          "content_len": 345,
+          "content_correct": false,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": true,
+            "empty_content": false,
+            "missing_magic": true,
+            "completion_capped": false
+          },
+          "error_msg": null
+        },
+        {
+          "context_chars": 1000000,
+          "approx_tokens": 250000,
+          "http_status": 200,
+          "elapsed_ms": 7664.7,
+          "prompt_tokens": 125257,
+          "completion_tokens": 64,
+          "finish_reason": "length",
+          "content_len": 279,
+          "content_correct": false,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": false,
+            "finish_length": true,
+            "empty_content": false,
+            "missing_magic": true,
+            "completion_capped": false
+          },
+          "error_msg": null
+        }
+      ],
+      "first_truncation_at_chars": 750000,
+      "max_successful_context_chars": 500000
+    },
+    "inkling_small": {
+      "model_id": "thinkingmachines/inkling-small:free",
+      "results": [
+        {
+          "context_chars": 10000,
+          "approx_tokens": 2500,
+          "http_status": 403,
+          "elapsed_ms": 312.5,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 50000,
+          "approx_tokens": 12500,
+          "http_status": 403,
+          "elapsed_ms": 727.4,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 100000,
+          "approx_tokens": 25000,
+          "http_status": 403,
+          "elapsed_ms": 598.7,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 200000,
+          "approx_tokens": 50000,
+          "http_status": 403,
+          "elapsed_ms": 821.9,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 300000,
+          "approx_tokens": 75000,
+          "http_status": 403,
+          "elapsed_ms": 1053.7,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 400000,
+          "approx_tokens": 100000,
+          "http_status": 403,
+          "elapsed_ms": 1191.1,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 500000,
+          "approx_tokens": 125000,
+          "http_status": 403,
+          "elapsed_ms": 1219.5,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 750000,
+          "approx_tokens": 187500,
+          "http_status": 403,
+          "elapsed_ms": 1614.2,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 1000000,
+          "approx_tokens": 250000,
+          "http_status": 403,
+          "elapsed_ms": 4049.6,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        }
+      ],
+      "first_truncation_at_chars": 10000,
+      "max_successful_context_chars": null
+    },
+    "inkling": {
+      "model_id": "thinkingmachines/inkling:free",
+      "results": [
+        {
+          "context_chars": 10000,
+          "approx_tokens": 2500,
+          "http_status": 403,
+          "elapsed_ms": 259.0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 50000,
+          "approx_tokens": 12500,
+          "http_status": 403,
+          "elapsed_ms": 614.8,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 100000,
+          "approx_tokens": 25000,
+          "http_status": 403,
+          "elapsed_ms": 1222.8,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 200000,
+          "approx_tokens": 50000,
+          "http_status": 403,
+          "elapsed_ms": 1339.0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 300000,
+          "approx_tokens": 75000,
+          "http_status": 403,
+          "elapsed_ms": 1220.4,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 400000,
+          "approx_tokens": 100000,
+          "http_status": 403,
+          "elapsed_ms": 1526.4,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 500000,
+          "approx_tokens": 125000,
+          "http_status": 403,
+          "elapsed_ms": 1430.1,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 750000,
+          "approx_tokens": 187500,
+          "http_status": 403,
+          "elapsed_ms": 1401.7,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        },
+        {
+          "context_chars": 1000000,
+          "approx_tokens": 250000,
+          "http_status": 403,
+          "elapsed_ms": 1147.6,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps\", \"code\": 403}"
+        }
+      ],
+      "first_truncation_at_chars": 10000,
+      "max_successful_context_chars": null
+    },
+    "nemotron35_lightning": {
+      "model_id": "nvidia/nemotron-3.5-lightning:free",
+      "results": [
+        {
+          "context_chars": 10000,
+          "approx_tokens": 2500,
+          "http_status": 429,
+          "elapsed_ms": 309.6,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 50000,
+          "approx_tokens": 12500,
+          "http_status": 429,
+          "elapsed_ms": 508.4,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 100000,
+          "approx_tokens": 25000,
+          "http_status": 429,
+          "elapsed_ms": 1325.4,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 200000,
+          "approx_tokens": 50000,
+          "http_status": 429,
+          "elapsed_ms": 1024.5,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 300000,
+          "approx_tokens": 75000,
+          "http_status": 429,
+          "elapsed_ms": 679.9,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 400000,
+          "approx_tokens": 100000,
+          "http_status": 429,
+          "elapsed_ms": 1670.3,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 500000,
+          "approx_tokens": 125000,
+          "http_status": 429,
+          "elapsed_ms": 2248.8,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 750000,
+          "approx_tokens": 187500,
+          "http_status": 429,
+          "elapsed_ms": 2251.3,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 1000000,
+          "approx_tokens": 250000,
+          "http_status": 429,
+          "elapsed_ms": 1928.8,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        }
+      ],
+      "first_truncation_at_chars": 10000,
+      "max_successful_context_chars": null
+    },
+    "gemma4_31b": {
+      "model_id": "google/gemma-4-31b-it:free",
+      "results": [
+        {
+          "context_chars": 10000,
+          "approx_tokens": 2500,
+          "http_status": 429,
+          "elapsed_ms": 608.1,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 50000,
+          "approx_tokens": 12500,
+          "http_status": 429,
+          "elapsed_ms": 512.5,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 100000,
+          "approx_tokens": 25000,
+          "http_status": 429,
+          "elapsed_ms": 620.9,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 200000,
+          "approx_tokens": 50000,
+          "http_status": 429,
+          "elapsed_ms": 915.2,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 300000,
+          "approx_tokens": 75000,
+          "http_status": 429,
+          "elapsed_ms": 1140.8,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 400000,
+          "approx_tokens": 100000,
+          "http_status": 429,
+          "elapsed_ms": 1918.0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 500000,
+          "approx_tokens": 125000,
+          "http_status": 429,
+          "elapsed_ms": 1018.1,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 750000,
+          "approx_tokens": 187500,
+          "http_status": 429,
+          "elapsed_ms": 1063.5,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        },
+        {
+          "context_chars": 1000000,
+          "approx_tokens": 250000,
+          "http_status": 429,
+          "elapsed_ms": 2133.2,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "finish_reason": null,
+          "content_len": 0,
+          "content_correct": null,
+          "truncated": true,
+          "truncation_indicators": {
+            "http_4xx_5xx": true,
+            "finish_length": false,
+            "empty_content": false,
+            "missing_magic": false,
+            "completion_capped": false
+          },
+          "error_msg": "{\"message\": \"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day\", \"code\": 429, \"metadata\": {\"headers\": {\"X-RateLimit-Limit\": \"50\", \"X-RateLimit-Remaining\": \"0\", \"X-RateLimit-Reset\": \"1787961600000\"}, \"limit_source\": \"openrouter_free_tier_daily\", \"reme"
+        }
+      ],
+      "first_truncation_at_chars": 10000,
+      "max_successful_context_chars": null
+    }
+  },
+  "context_sizes_chars": [
+    10000,
+    50000,
+    100000,
+    200000,
+    300000,
+    400000,
+    500000,
+    750000,
+    1000000
+  ],
+  "probe_question": "\n\n=== TASK ===\nWhat is the EXACT 16-character magic string at the very TOP of the document above?\nReply with ONLY that 16-character string, nothing else.",
+  "key_health": "or_key.md (free tier)",
+  "ended": "2026-08-28T10:02:17.522827+00:00"
+}

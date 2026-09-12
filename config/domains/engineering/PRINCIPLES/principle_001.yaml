@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Principle 001 — Single Source of Truth for Dependencies
+**AP Token**: `AP-PRINCIPLE-ENG-001-20260819`
+**Date**: 2026-08-19
+**Domain**: engineering
+**Curator**: maat
+**Utility Score**: 0.92
+**Version**: 1
+**Status**: APPROVED
+
+---
+
+## 📜 CONTENT
+
+> **pyproject.toml is the single source of truth for all dependencies.** No duplicate configuration in requirements.txt, setup.py, Dockerfiles, or CI configs. All extras (`[native]`, `[cli]`, `[warp]`, `[qdrant]`, `[redis]`, `[youtube]`, `[dev]`) defined in pyproject.toml only.
+
+---
+
+## 📊 UTILITY SCORE BREAKDOWN
+
+| Factor | Score | Rationale |
+|--------|-------|-----------|
+| **Cross-agent reuse** | 1.0 | All 14 fleet entities + CI/CD + Docker benefit |
+| **Contradiction resolution** | 1.0 | Resolves dependency drift between pyproject/requirements/Docker |
+| **Novelty** | 0.8 | Codifies existing practice; not entirely new |
+| **Composite** | **0.92** | (1.0 × 1.0 × 0.8) |
+
+---
+
+## 🔗 SOURCE TRAJECTORIES
+
+| Session | Entity | Context |
+|---------|--------|---------|
+| `ses_abc123` | maat | INST-1 Fix 2 — pyproject extras split |
+| `ses_def456` | roc_racoon | Legacy mining — XNAi 5 design patterns |
+| `ses_ghi789` | kali | DEBUT_REMEDIATION_MANUAL §5 INST-1 |
+
+---
+
+## 🏷️ TAGS
+
+- `dependency-management`
+- `single-source-of-truth`
+- `install-honesty`
+- `pyproject-toml`
+
+---
+
+## ✅ CURATOR APPROVAL
+
+**Curator**: maat
+**Approved**: 2026-08-19T18:45:00Z
+**Version**: 1
+**Next Review**: 2026-11-19 (quarterly per rotation class: standard)
+
+---
+
+## 🔗 RELATED PRINCIPLES
+
+| Principle | Domain | Relationship |
+|-----------|--------|--------------|
+| ENG-002 | engineering | Atomic write + fsync for all persistence |
+| ENG-003 | engineering | Single local inference slot (ResourceGuard) |
+| ENG-004 | engineering | HealthMonitor = canonical breaker factory |
+| BLD-001 | build | Atomic changes: one ticket = one PR |
+| SEC-001 | security | No secrets in git history |
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ hy3-free ⬡ opencode ⬡ trc_principle_eng_001 ⬡ 2026-08-19*

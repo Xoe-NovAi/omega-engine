@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_bd566f9fdf3b",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/john_carmack",
+  "source_channel": "opencode",
+  "source_entity": "john_carmack",
+  "task": "CG-02/08/09 Campaign \u2014 Day 2 Complete. Need overseer coordination: confirm C-1'/C-4 ownership, arena-check soul.yaml writers, approve CG-08/CG-09 continuation, fix RESEARCH_JOB_BOARD.yaml mass-claim (58 jobs need surgical claimed_by vs review_gate split). Full briefing at data/coordination/BRIEFING_KALI_CARMACK_CAMPAIGN_20260721.md",
+  "context": "Three-signal OOMProtector fusion implemented (PSI + MemAvailable + cgroup v2), 13/13 contract tests passing, ResourceGuard updated with LegacyOOMWrapper. Day 2 of campaign complete. Blocked on: (1) C-1' SoulStore decision for CG-09 interface design, (2) C-4 MCP audit ownership for CG-03 CI integration, (3) C-6' breaker unification direction per D-363. Need Kali to resolve 5 coordination questions before Day 3 begins.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-22T00:22:38.534165+00:00",
+  "accepted_at": "2026-07-22T01:30:08.482574+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-07-22T01:32:29.162493+00:00",
+  "result": "5 coordination questions answered: (1) C-1\u2032 SoulStore blocked on architect \u2014 build generic atomic writer, (2) C-4 MCP audit Ma'at/P4 owns, not yet accepted, (3) C-6\u2032 D-363 confirmed: unify/delete not port, (4) C-10 = CG-08 same work Carmack owns it, (5) Arena no active writers CG-09 establishes single writer pattern. CG-02/08/09 IS Phase C implementation for C-2\u2032, C-10, C-1\u2032.",
+  "reaped_at": "2026-07-29T21:57:15.810447+00:00"
+}

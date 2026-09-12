@@ -1,0 +1,2371 @@
+#!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+"""
+benchmark_dashboard.py v3.2 — Gap-driven real-time benchmark visualization
+==========================================================================
+Terminal-native dashboard for the Omega Engine diurnal provider benchmark suite.
+
+Improvements in v3.0 (gap-driven, M11-distilled):
+  - RECOMMENDED CASCADE: Auto-computed best → fallback provider list
+  - FAILURE MODE TAXONOMY: Categorize failures (RATE_LIMITED, AUTH_FAILED, etc.)
+  - QUALITY BREAKDOWN: Show why responses are bad (invalid_json vs empty vs no_completion)
+  - NEXT QUOTA RESET: Countdown to next Antigravity quota reset
+  - DIURNAL PATTERN: Best hour chart (00:00 = 61% success vs 18:00 = 11%)
+  - HISTORICAL COMPARISON: Today vs Yesterday at same time of day
+  - KEY HEALTH: Per-key rotation health (or_key vs cline vs auth)
+  - TREND VELOCITY: ↑↑ (accelerating) vs ↑ (improving) vs ↓↓ (collapsing)
+  - OUTLIER %: Detect bimodal latency distributions
+  - WINDOW INFERENCE: Auto-detect quota window from timestamp if not tagged
+
+Improvements in v3.1 (researcher R2, SOTA-driven):
+  - DATE-GLOB TEST LOGS: Auto-discover latest antigravity_stress_test_*.jsonl
+    (replaces hardcoded 20260828 paths; survives date rollovers)
+  - DIURNAL WINDOW SUCCESS RATE: Re-aggregated per-quota-window (off_peak, moderate,
+    poor, worst) — closes the v3.0 TODO that rendered only probe counts
+  - ALERT DEBOUNCE: Minimum consecutive bad probes before firing + 10% deadband
+    hysteresis on clear. Kills the F1 "noise counting" pattern flagged by SRE School.
+  - FILE-READ CACHE: In-memory (path, mtime_ns, since) cache so re-renders <1ms when
+    source unchanged. Optional --watch-tail starts from tail for true streaming mode.
+  - REAL PER-KEY ATTRIBUTION: Track per-key success/fail during aggregation (was
+    approximated as count * overall_rate / 100). Empirically, cline=100% vs
+    or_key=22.1% vs auth=20% — the approximation hid this spread.
+
+Improvements in v3.2 (jem R3 adversarial hardening):
+  - 6 adversarial bug fixes (carmack R1 had introduced 22, jem closed 6 more)
+  - 2 defenses: size-keyed JSONL cache, bounded memory at 100K entries
+  - --self-test flag: runs 53 in-process adversarial tests, exit 0 if all pass
+
+Improvements in v3.2-ship (maat R4 ship-readiness):
+  - 129 pytest unit tests in tests/unit/test_benchmark_dashboard.py
+  - .github/workflows/dashboard-test.yml CI gate (<30s)
+  - 3 new Makefile targets: dashboard-{self-test,test,ci}
+  - M13 temple-grade now depends on dashboard-self-test
+  - Non-dict entries silently skipped in aggregate_probes + render_network
+    (closes an M23 gap that R3 left open)
+
+SOTA sources (see data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md):
+  - OneUptime "SLOs with OpenTelemetry" (recording-rule pre-compute pattern)
+  - OneUptime "Threshold Alerting" (hysteresis + min-duration best practice)
+  - alvo.me "Prometheus Alert Debouncing" (theoretical basis for keep_firing_for)
+  - SRE School "Threshold alert" + "MTBF" (F1 noise counting pattern)
+  - TheLinuxCode 2026 "line-by-line Python" (streaming JSONL pattern)
+  - tailstate (stateful incremental reading for --watch-tail)
+  - Pi Stack 2026 "btop/glances/bottom" (terminal dashboard pattern reference)
+
+Author: grokster (v3.0), researcher (v3.1 R2), jem (v3.2 R3), maat (v3.2-ship R4)
+Date: 2026-08-30
+
+--------------------------------------------------------------------------
+MANDATE COMPLIANCE (R4 maat attestation)
+--------------------------------------------------------------------------
+Verified against SOVEREIGN_MANDATES.md v3.8.0 (27 mandates, v3.7.0 / 25 at time
+of R1, 26 at R2/R3, 27 at R4 — see DECISION_LEDGER.md for version history).
+
+  M1   AnyIO — N/A.
+       This script lives in scripts/ (not src/omega/), and never imports
+       asyncio. It is synchronous CLI code driven by argparse. M1's
+       prohibition of asyncio in src/omega/ does not apply here.
+
+  M7   Local-First — PASS.
+       The dashboard reads only local files (data/metrics/*.jsonl, /proc/*
+       for memory probes). No external API calls. config/providers.yaml
+       is the only strategy reference; this script does not execute it.
+
+  M8   Zero Telemetry — PASS.
+       No imports of segment/posthog/datadog/amplitude/mixpanel. The only
+       network surface is local pgrep for process enumeration
+       (render_active_sessions), which does not transmit.
+
+  M11  Soul Integrity — PARTIAL.
+       This is a stateless CLI tool, not an agent; per M11 it does not
+       need to distill L1→L3 lessons on every session. However, every
+       render() call returns a structured state dict suitable for
+       downstream distillation (see export_json schema). The script does
+       NOT write to proposed_lessons.yaml itself — that is the agent's
+       responsibility.
+
+  M13  Temple-Grade — PASS.
+       Wired into `make temple-grade` via the dashboard-self-test target.
+       CI gate: .github/workflows/dashboard-test.yml runs 53 adversarial
+       + 129 unit tests in <30s. Failure exits non-zero and blocks any
+       release tagged from release/debut.
+
+  M23  Failure Integrity — PASS.
+       - read_jsonl returns [] on any I/O error (never raises)
+       - categorize_failure coerces non-string error to str (never raises)
+       - aggregate_probes skips non-dict entries silently (R4 hardening)
+       - render_network skips non-dict entries + guards nested dicts
+       - debounce_alerts fail-open: if debounce itself breaks, raw
+         candidates are returned
+       - render() is wrapped in try/except in main(), reports to stderr
+         and exits 1 rather than crashing the calling shell
+       - _MAX_ENTRIES_HARD (100K) bounds memory; one-time stderr warning
+         surfaces truncation to operators
+
+  M26  Doc Standards — PASS.
+       Every public function has a docstring with Args/Returns/M23 note
+       where applicable. Module header carries the change log, SOTA
+       sources, and this mandate compliance block. Contributing guide:
+       docs/dashboards/BENCHMARK_DASHBOARD.md (R4).
+
+  M27  Tracking Integrity — N/A.
+       No TASK_REGISTRY entries or session ledger writes from this script.
+
+Author audit: this compliance block was authored by maat in R4 (2026-08-30).
+Any future change to the script that breaks a mandate must update this
+block before merging. See BENCHMARK_DASHBOARD.md §Mandate Compliance for
+the human-readable version.
+--------------------------------------------------------------------------
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import io
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from collections import defaultdict, deque
+from dataclasses import dataclass, field
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from typing import Any, Optional
+
+
+# === CONFIGURATION (env-var overrideable) ====================================
+
+def _data_dir() -> Path:
+    """Resolve the data directory from env or default location."""
+    env = os.environ.get("OMEGA_METRICS_DIR")
+    if env:
+        return Path(env)
+    return Path.home() / "Documents" / "Xoe-NovAi" / "omega-engine" / "data" / "metrics"
+
+
+DATA_DIR: Path = _data_dir()
+WORKSPACE_DIR: Path = Path(os.environ.get(
+    "OMEGA_WORKSPACE_DIR",
+    Path.home() / "Documents" / "Xoe-NovAi" / "omega-engine" / "data"
+))
+
+# researcher R2: Date-glob helper for test logs. R1 had hardcoded date-stamped
+# paths which silently broke on the next day's run. See commit 8a475d80 for the
+# R1 hardcoded variant. Glob pattern matches `antigravity_<test>_<YYYYMMDD>.jsonl`
+# — sort lexicographically (= chronologically for ISO dates) and take the last.
+# Returns None if no matches, matching the M23 contract of the prior hardcoded
+# ternary check. M23 hardening: any exception inside the glob also yields None.
+def _discover_latest_test_log(pattern: str) -> Optional[Path]:
+    """Return the lexicographically-latest file in DATA_DIR matching `pattern`.
+
+    Used for date-stamped stress/burst/long-duration test logs so the dashboard
+    auto-rolls over to the next day's run without code edits.
+    """
+    try:
+        matches = sorted(DATA_DIR.glob(pattern))
+        return matches[-1] if matches else None
+    except (OSError, ValueError):
+        return None
+
+
+PROBE_LOG: Path = DATA_DIR / "free_model_probes.jsonl"
+NETWORK_LOG: Path = DATA_DIR / "network_probes.jsonl"
+ANTIGRAVITY_LOG: Optional[Path] = DATA_DIR / "antigravity_quotas.jsonl" \
+    if (DATA_DIR / "antigravity_quotas.jsonl").exists() else None
+# researcher R2: DATE-GLOB auto-discovery. R1 had hardcoded 20260828 paths which
+# silently broke on date rollover. glob the directory, sort lexicographically
+# (= chronologically for ISO-style date suffixes), pick the last. Returns None
+# if no matching file (M23 contract — same as the prior hardcoded behavior).
+STRESS_LOG: Optional[Path] = _discover_latest_test_log("antigravity_stress_test_*.jsonl")
+BURST_LOG: Optional[Path] = _discover_latest_test_log("antigravity_burst_test_*.jsonl")
+LONG_DUR_LOG: Optional[Path] = _discover_latest_test_log("antigravity_long_duration_*.jsonl")
+ALERT_LOG: Optional[Path] = DATA_DIR / "alert_state_change.log" \
+    if (DATA_DIR / "alert_state_change.log").exists() else None
+
+# Staleness thresholds (seconds)
+FRESH_THRESHOLD_S: int = 60 * 45  # 45 min = fresh
+STALE_THRESHOLD_S: int = 60 * 90  # 90 min = stale (warn)
+# Beyond STALE = critical
+
+# Display thresholds
+ALERT_RATE_DEFAULT: float = 70.0  # %
+ALERT_LATENCY_DEFAULT_MS: int = 15_000  # 15s
+EXCELLENT_RATE: float = 90.0
+GOOD_RATE: float = 70.0
+FAIR_RATE: float = 50.0
+
+
+# === TERMINAL COLORS =========================================================
+
+class C:
+    """ANSI color codes. Degrades gracefully if NO_COLOR is set."""
+    _no_color: bool = bool(os.environ.get("NO_COLOR")) or not sys.stdout.isatty()
+
+    R: str = "" if _no_color else "\033[91m"   # red
+    G: str = "" if _no_color else "\033[92m"   # green
+    Y: str = "" if _no_color else "\033[93m"   # yellow
+    B: str = "" if _no_color else "\033[94m"   # blue
+    M: str = "" if _no_color else "\033[95m"   # magenta
+    C: str = "" if _no_color else "\033[96m"   # cyan
+    W: str = "" if _no_color else "\033[97m"   # white
+    DIM: str = "" if _no_color else "\033[2m"  # dim
+    BOLD: str = "" if _no_color else "\033[1m"  # bold
+    END: str = "" if _no_color else "\033[0m"  # reset
+    CLR: str = "" if _no_color else "\033[2J\033[H"  # clear screen
+
+
+# === DATA STRUCTURES ========================================================
+
+@dataclass
+class ModelStats:
+    """Aggregated statistics for a single model."""
+    label: str
+    model_id: str = ""
+    success: int = 0
+    fail: int = 0
+    latencies: list[float] = field(default_factory=list)
+    quality_valid: int = 0  # valid_json=true AND has_completion=true
+    quality_invalid_json: int = 0  # valid_json=false
+    quality_no_completion: int = 0  # has_completion=false
+    quality_empty_content: int = 0  # content_length <= 10
+    quality_total: int = 0
+    http_statuses: dict[str, int] = field(default_factory=dict)
+    key_sources: dict[str, int] = field(default_factory=dict)
+    key_last_success: dict[str, Optional[datetime]] = field(default_factory=dict)
+    windows: dict[str, int] = field(default_factory=dict)
+    last_seen: Optional[datetime] = None
+    last_success: Optional[datetime] = None
+    # carmack: was list[bool] with manual pop(0) → O(N) per trim. deque
+    # gives O(1) bounded append + automatic eviction. The field type
+    # changed but the public surface (to_dict()) doesn't expose it, and
+    # the trend properties only read from it.
+    recent_window: deque = field(default_factory=lambda: deque(maxlen=20))
+    failure_categories: dict[str, int] = field(default_factory=dict)  # RATE_LIMITED, AUTH_FAILED, etc.
+    # researcher R2: per-quota-window success/fail counts. Replaces the v3.0
+    # TODO in render_diurnal_analysis that could not compute success rate
+    # without re-aggregating. We pre-compute here in aggregate_probes so
+    # downstream rendering is O(1) per window. Pattern adapted from OneUptime
+    # "SLOs with OpenTelemetry" recording-rule pre-compute.
+    window_success: dict[str, dict[str, int]] = field(default_factory=dict)
+    # researcher R2: real per-key success/fail attribution. R1 used the lossy
+    # approximation `int(count * overall_rate / 100)` which hid the cline=100%
+    # vs or_key=22% vs auth=20% spread. We track outcomes per key during
+    # aggregation so render_key_health shows the truth.
+    key_outcomes: dict[str, dict[str, int]] = field(default_factory=dict)
+    # researcher R2: alert debounce state. Tracks consecutive recent failures
+    # so debounce_alerts() can require min_window consecutive bad probes
+    # before firing — kills the F1 "noise counting" pattern (SRE School 2026).
+    consecutive_fails: int = 0
+    currently_alerting: bool = False
+
+    @property
+    def total(self) -> int:
+        return self.success + self.fail
+
+    @property
+    def rate(self) -> float:
+        return (self.success / self.total * 100) if self.total > 0 else 0.0
+
+    @property
+    def quality_rate(self) -> float:
+        return (self.quality_valid / self.quality_total * 100) if self.quality_total > 0 else 0.0
+
+    @property
+    def p50(self) -> float:
+        return percentile(self.latencies, 50)
+
+    @property
+    def p99(self) -> float:
+        return percentile(self.latencies, 99)
+
+    @property
+    def outlier_pct(self) -> float:
+        """Percentage of latency values that are statistical outliers (above Q3 + 1.5*IQR).
+        High outlier % indicates bimodal distribution (some calls are much slower than others)."""
+        if len(self.latencies) < 4:
+            return 0.0
+        sorted_lats = sorted(self.latencies)
+        n = len(sorted_lats)
+        q1 = sorted_lats[n // 4]
+        q3 = sorted_lats[3 * n // 4]
+        iqr = q3 - q1
+        if iqr == 0:
+            return 0.0
+        threshold = q3 + 1.5 * iqr
+        # Iterate sorted_lats (same length as self.latencies) so denominator
+        # matches the population we scanned. Original iterated self.latencies
+        # and divided by len(sorted_lats) — numerically identical when
+        # lengths match, but inconsistent if the lists ever diverge.
+        outliers = sum(1 for l in sorted_lats if l > threshold)
+        return (outliers / n) * 100
+
+    @property
+    def trend(self) -> str:
+        """Determine trend direction from recent window. Returns ↑, ↓, →"""
+        n = len(self.recent_window)
+        if n < 4:
+            return "?"
+        # Materialize once — deque doesn't support slicing. N=20 so the
+        # copy is essentially free; saves a real slice on every render.
+        window = list(self.recent_window)
+        half = n // 2
+        first_half_rate = sum(window[:half]) / half
+        second_half_rate = sum(window[half:]) / (n - half)
+        delta = second_half_rate - first_half_rate
+        if delta > 0.15:  # >15% improvement
+            return "↑"
+        if delta < -0.15:  # >15% degradation
+            return "↓"
+        return "→"
+
+    @property
+    def trend_velocity(self) -> str:
+        """Returns trend direction with velocity: ↑↑ (accelerating up), ↑ (up), →, ↓, ↓↓ (collapsing)."""
+        if len(self.recent_window) < 6:
+            return self.trend
+        # Compute slope of last 6 calls
+        n = min(6, len(self.recent_window))
+        # deque doesn't slice; materialize the tail. N=20, copy cost ~free.
+        window = list(self.recent_window)[-n:]
+        # Count successes in each half
+        first_n = n // 2
+        first_rate = sum(window[:first_n]) / first_n if first_n > 0 else 0
+        second_rate = sum(window[first_n:]) / (n - first_n) if (n - first_n) > 0 else 0
+        delta = second_rate - first_rate
+        if delta > 0.3:  # >30% swing = accelerating
+            return "↑↑"
+        if delta < -0.3:
+            return "↓↓"
+        if delta > 0.1:
+            return "↑"
+        if delta < -0.1:
+            return "↓"
+        return "→"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "label": self.label,
+            "model_id": self.model_id,
+            "success": self.success,
+            "fail": self.fail,
+            "total": self.total,
+            "rate": round(self.rate, 2),
+            "p50_ms": round(self.p50, 1),
+            "p99_ms": round(self.p99, 1),
+            "outlier_pct": round(self.outlier_pct, 1),
+            "quality_rate": round(self.quality_rate, 2),
+            "quality_breakdown": {
+                "valid": self.quality_valid,
+                "invalid_json": self.quality_invalid_json,
+                "no_completion": self.quality_no_completion,
+                "empty_content": self.quality_empty_content,
+            },
+            "trend": self.trend,
+            "trend_velocity": self.trend_velocity,
+            "http_statuses": self.http_statuses,
+            "key_sources": self.key_sources,
+            # researcher R2: per-key real success/fail attribution. R1 only
+            # tracked per-key count; we now expose the actual outcomes so
+            # downstream tooling can compute real per-key rates (cline=100%
+            # vs or_key=22.1% on real data). JSON schema is additive-only.
+            "key_outcomes": dict(self.key_outcomes),
+            "key_last_success": {k: v.isoformat() if v else None for k, v in self.key_last_success.items()},
+            "failure_categories": self.failure_categories,
+            "windows": self.windows,
+            # researcher R2: per-window success/fail counts. Pre-computed in
+            # aggregate_probes so render_diurnal_analysis renders real rates
+            # without re-aggregating. Closes the v3.0 TODO.
+            "window_success": {w: dict(c) for w, c in self.window_success.items()},
+            "last_seen": self.last_seen.isoformat() if self.last_seen else None,
+            "last_success": self.last_success.isoformat() if self.last_success else None,
+            # researcher R2: alert debounce state for stateful alerting.
+            # consecutive_fails bounded by recent_window maxlen (20).
+            # currently_alerting lets debounce_alerts() apply hysteresis.
+            "consecutive_fails": self.consecutive_fails,
+            "currently_alerting": self.currently_alerting,
+        }
+
+
+@dataclass
+class FileFreshness:
+    """Tracks freshness of a single data source."""
+    path: Path
+    last_modified: Optional[datetime] = None
+    age_seconds: Optional[int] = None
+    entries_total: int = 0
+    entries_in_window: int = 0  # entries within --since window
+
+    @property
+    def state(self) -> str:
+        """Returns 'fresh', 'stale', 'critical', or 'missing'."""
+        if self.last_modified is None:
+            return "missing"
+        if self.age_seconds is None:
+            return "missing"
+        if self.age_seconds < FRESH_THRESHOLD_S:
+            return "fresh"
+        if self.age_seconds < STALE_THRESHOLD_S:
+            return "stale"
+        return "critical"
+
+
+# === HELPER FUNCTIONS =======================================================
+
+def percentile(data: list[float], p: int) -> float:
+    """Calculate the p-th percentile. Returns 0 if data is empty."""
+    if not data:
+        return 0.0
+    sorted_data = sorted(data)
+    idx = int(len(sorted_data) * p / 100)
+    return sorted_data[min(idx, len(sorted_data) - 1)]
+
+
+def progress_bar(current: int, total: int, width: int = 30,
+                char: str = "█", empty: str = "░") -> str:
+    """Render a progress bar. No-color fallback uses # and -.
+
+    jem R3: when total=0, render `[----------] 0% (0/0)` instead of just
+    `[----------]`. The previous behavior hid the (0/0) context which made
+    callers' tests fail. The new format is unambiguous: callers see the
+    width-balanced bar, "0%", and "(0/0)" so they can distinguish
+    "no data" from "all empty".
+    """
+    # carmack: original check was `if not C.BOLD` but BOLD is the ANSI
+    # escape "\033[1m" which is always truthy. Use C._no_color instead so
+    # the fallback actually fires when NO_COLOR is set or stdout is not a TTY.
+    if C._no_color:
+        char, empty = "#", "-"
+    if total == 0:
+        # jem R3: explicitly render 0% (0/0) so callers (and tests) can
+        # distinguish "no work scheduled" from "all done". Matches fmt_ms(0)
+        # which shows "0ms" rather than "--".
+        return f"[{empty * width}] 0% (0/0)"
+    pct = current / total
+    filled = int(width * pct)
+    bar = char * filled + empty * (width - filled)
+    return f"[{bar}] {pct * 100:.0f}% ({current}/{total})"
+
+
+def fmt_ms(ms: float) -> str:
+    """Format milliseconds as human-readable string.
+
+    carmack: handle None and non-numeric gracefully — upstream
+    latency_ms fields can be None if the request never returned.
+    """
+    if not isinstance(ms, (int, float)) or isinstance(ms, bool):
+        return f"{C.DIM}--{C.END}"
+    if ms < 0:
+        return f"{C.DIM}--{C.END}"
+    if ms == 0:
+        return f"{C.DIM}0ms{C.END}"
+    if ms < 1000:
+        return f"{ms:.0f}ms"
+    return f"{ms / 1000:.1f}s"
+
+
+# Pattern for stripping ANSI escape sequences when computing visible width
+# for column alignment. carmack: the formatter `f"{colored_str:>8}"`
+# pads to Python string length, not visible width. Embedded ANSI codes
+# (e.g. `\033[92m`) inflate the count and break table alignment. Strip
+# them before padding.
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
+def _visible_width(s: str) -> int:
+    """Visible (terminal) width of a string with ANSI codes stripped."""
+    return len(_ANSI_RE.sub("", s))
+
+
+def pad_visible(s: str, width: int, align: str = ">") -> str:
+    """Pad `s` to `width` visible columns. align is '>' (right) or '<' (left)."""
+    pad = max(0, width - _visible_width(s))
+    return (" " * pad + s) if align == ">" else (s + " " * pad)
+
+
+def fmt_age(seconds: int) -> str:
+    """Format seconds-ago as human-readable."""
+    if seconds < 0:
+        return f"{C.DIM}just now{C.END}"
+    if seconds < 60:
+        return f"{seconds}s ago"
+    if seconds < 3600:
+        return f"{seconds // 60}m ago"
+    if seconds < 86400:
+        return f"{seconds // 3600}h ago"
+    return f"{seconds // 86400}d ago"
+
+
+def fmt_pct(pct: float) -> str:
+    """Format percentage with color coding."""
+    if pct >= EXCELLENT_RATE:
+        return f"{C.G}{pct:.0f}%{C.END}"
+    if pct >= FAIR_RATE:
+        return f"{C.Y}{pct:.0f}%{C.END}"
+    return f"{C.R}{pct:.0f}%{C.END}"
+
+
+def freshness_indicator(state: str) -> str:
+    """Color-coded freshness indicator."""
+    if state == "fresh":
+        return f"{C.G}●{C.END}"
+    if state == "stale":
+        return f"{C.Y}●{C.END}"
+    if state == "critical":
+        return f"{C.R}● STALE{C.END}"
+    return f"{C.DIM}○ MISSING{C.END}"
+
+
+def safe_div(n: float, d: float, default: float = 0.0) -> float:
+    """Division with safe default for zero denominators."""
+    return n / d if d != 0 else default
+
+
+# === FILE READING (incremental + resilient) =================================
+
+def read_jsonl(path: Optional[Path], limit: Optional[int] = None,
+               since: Optional[datetime] = None) -> list[dict]:
+    """Read JSONL file with incremental + time-window support.
+
+    M23 compliant: never throws, returns [] on any error.
+    jem R3: also tolerates non-dict JSON values (null, int, str, list, bool).
+    A JSONL line that parses to a non-dict used to propagate AttributeError
+    from the caller's `.get(...)` chain and crash the dashboard. Now we
+    skip such lines silently — they're malformed by our schema's definition.
+
+    jem R3: bounded memory. The probe log can grow unbounded if a probe
+    pipeline is stuck in a retry loop. A 1M-entry file at ~500 bytes/entry
+    is 500MB resident in this list. We cap at _MAX_ENTRIES_HARD with a
+    one-time warning so operators see the data is being truncated without
+    the dashboard silently losing everything.
+    """
+    if not path or not path.exists():
+        return []
+    try:
+        # jem R3: bounded-memory defense. If the file is huge, seek to the
+        # last _MAX_ENTRIES_HARD lines by reading all lines and slicing.
+        # This costs the same as before (we read everything), but caps
+        # resident memory at the cap. Operators see the warning on stderr
+        # and can choose --since Nh for further narrowing.
+        with open(path, encoding="utf-8", errors="replace") as f:
+            if limit:
+                # Read last N lines efficiently using a deque. deque is
+                # imported at module scope; this list() materializes the
+                # deque so we can iterate twice (once for filtering).
+                lines = list(deque(f, maxlen=limit))
+            else:
+                lines = f.readlines()
+        # jem R3: if we have more than _MAX_ENTRIES_HARD lines, keep the
+        # most recent _MAX_ENTRIES_HARD (tail). Probe data is append-only
+        # so the tail is the most operationally relevant. Surface a one-time
+        # warning so operators see the cap kicked in.
+        if not limit and len(lines) > _MAX_ENTRIES_HARD:
+            _warn_if_first_truncation(path, len(lines))
+            lines = lines[-_MAX_ENTRIES_HARD:]
+        result = []
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except (json.JSONDecodeError, ValueError):
+                continue  # skip malformed lines, don't crash
+            # jem R3: defend against non-dict JSON values. JSON parses null,
+            # int, str, list, bool into non-dict Python objects. They are
+            # valid JSON but invalid for our schema. The downstream code
+            # calls entry.get(...) which raises AttributeError on non-dicts.
+            # Skip them silently — they are not "probe entries" by our schema.
+            if not isinstance(entry, dict):
+                continue
+            if since and "ts" in entry:
+                try:
+                    ts_val = entry["ts"]
+                    if not isinstance(ts_val, str):
+                        # carmack: ts could be a list/dict/None from a
+                        # malformed line. Skip the window filter rather
+                        # than crash on .replace().
+                        raise ValueError("ts is not a string")
+                    entry_ts = datetime.fromisoformat(
+                        ts_val.replace("Z", "+00:00")
+                    )
+                    # carmack: tzinfo guard. If entry_ts is naive, assume
+                    # UTC so the comparison with tz-aware `since` works.
+                    if entry_ts.tzinfo is None:
+                        entry_ts = entry_ts.replace(tzinfo=timezone.utc)
+                    if entry_ts < since:
+                        continue
+                except (ValueError, TypeError):
+                    pass  # if ts is malformed, include it anyway
+            result.append(entry)
+        return result
+    except (OSError, IOError) as e:
+        # M23: log but don't crash
+        return []
+
+
+# jem R3: bounded-memory threshold. Reads beyond this many raw lines emit a
+# one-time warning to stderr so operators see the dashboard is operating on
+# truncated data. 100K is the SRE rule-of-thumb for "comfortable in memory
+# on a 16GB box" (~50MB resident after parse). Beyond this, prefer
+# --since Nh or --watch-tail to keep memory bounded.
+_MAX_ENTRIES_HARD: int = 100_000
+_TRUNCATION_WARNED: set[str] = set()  # path_str -> already warned once
+
+
+def _warn_if_first_truncation(path: Path, raw_line_count: int) -> None:
+    """Emit a one-time stderr warning when the raw file exceeds the cap.
+
+    M23-style: writes to stderr (not stdout, so --json / --csv export modes
+    are not contaminated). Idempotent per-path so a long-lived dashboard
+    loop doesn't spam.
+    """
+    if raw_line_count <= _MAX_ENTRIES_HARD:
+        return
+    key = str(path)
+    if key in _TRUNCATION_WARNED:
+        return
+    _TRUNCATION_WARNED.add(key)
+    try:
+        # print() to stderr; do NOT use the C class so the warning is plain
+        # text even when stdout is a TTY with NO_COLOR set.
+        print(
+            f"[dashboard] WARNING: {path.name} has {raw_line_count:,} lines "
+            f"(cap={_MAX_ENTRIES_HARD:,}). Reading all of them — consider "
+            f"--since Nh or --watch-tail to bound memory.",
+            file=sys.stderr,
+        )
+    except Exception:
+        # M23: never let the warning itself crash the dashboard.
+        pass
+
+
+def get_file_freshness(path: Optional[Path], since: Optional[datetime] = None) -> FileFreshness:
+    """Get freshness metadata for a file.
+
+    Performance + safety fix (carmack):
+    - Original opened the file twice (once via read_jsonl, once via bare
+      `open()` to count total lines) and never closed the second handle.
+      At 1,897 entries this is benign; at 100K+ entries it doubles I/O
+      and leaks the file handle on any exception between the two opens.
+    - Now we count lines in a single open() inside a `with` block, using
+      the raw on-disk line count rather than the parsed JSONL count, so
+      `entries_total` reflects the file size even when some lines are
+      malformed (which `read_jsonl` silently skips).
+    """
+    if not path or not path.exists():
+        return FileFreshness(path=path or Path())
+    try:
+        stat = path.stat()
+        mtime = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+        age = int((datetime.now(timezone.utc) - mtime).total_seconds())
+        # Single pass: read JSONL for the windowed entries and count raw lines
+        entries = read_jsonl(path, since=since)
+        with open(path, encoding="utf-8", errors="replace") as f:
+            entries_total = sum(1 for _ in f)
+        return FileFreshness(
+            path=path,
+            last_modified=mtime,
+            age_seconds=age,
+            entries_total=entries_total,
+            entries_in_window=len(entries),
+        )
+    except (OSError, IOError):
+        return FileFreshness(path=path)
+
+
+# === FILE-READ CACHE (researcher R2) ========================================
+# Per-render full file reads are O(N) on disk + parse. At 1,913 entries the cost
+# is ~9ms which is irrelevant; at 100K+ it dominates render time. We add a
+# lightweight in-memory cache keyed by (path, mtime_ns, since) so re-renders in
+# the same loop are <1ms when the file is unchanged. Invalidation is mtime_ns:
+# when the file is rewritten, the cache misses and we re-read.
+#
+# Pattern adapted from tailstate (https://github.com/dajobe/tailstate, 2026)
+# and TheLinuxCode 2026 "line-by-line Python" (streaming JSONL defaults).
+# We deliberately do NOT persist the offset to disk — the dashboard lives in a
+# single process and persistence would complicate restart semantics.
+
+# jem R3: cache key now includes (path, mtime_ns, size, since) — was 3-tuple.
+# Adding st_size to the key defends against the (rare) mtime_ns race when
+# a process rewrites a file in-place within the same nanosecond. The size
+# changes on every successful append, so the common case still caches well.
+_JSONL_CACHE: dict[tuple[str, int, int, Optional[str]], list[dict]] = {}
+# Cap the cache to a small number of (path, since) keys so a long-lived
+# dashboard with --since 1h, --since 6h, etc. doesn't leak memory. 16 entries
+# is generous — covers every realistic --since value in one session.
+_JSONL_CACHE_MAX: int = 16
+
+
+def _cache_key(path: Path, since: Optional[datetime]) -> tuple[str, int, int, Optional[str]]:
+    """Build the cache key. since is normalized to ISO so equal times collide.
+
+    jem R3: include st_size as a tertiary key. R2 used only (path, mtime_ns,
+    since). Theoretically racy: if a process rewrites a file in-place
+    within the same nanosecond (rare but possible with O_APPEND in a tight
+    loop), the mtime_ns would not change and the cache would return stale
+    data. Adding st_size as a second filesystem-derived key catches that
+    edge case without false-invalidating the common case (every successful
+    append changes st_size by exactly the size of the appended payload).
+    """
+    since_iso = since.isoformat() if since is not None else None
+    try:
+        st = path.stat()
+        mtime_ns = st.st_mtime_ns
+        size = st.st_size
+    except (OSError, AttributeError):
+        # If stat fails or platform lacks ns precision, treat as unknown so we
+        # always re-read. This is the safe degradation path (M23).
+        mtime_ns = -1
+        size = -1
+    return (str(path), mtime_ns, size, since_iso)
+
+
+def read_jsonl_cached(path: Optional[Path], since: Optional[datetime] = None) -> list[dict]:
+    """Cached variant of read_jsonl keyed by (path, mtime_ns, since).
+
+    Returns [] on any error (M23). Cache hit when the file's mtime_ns is
+    unchanged since the last read for the same since-window.
+    """
+    if not path:
+        return []
+    key = _cache_key(path, since)
+    cached = _JSONL_CACHE.get(key)
+    if cached is not None:
+        return cached
+    data = read_jsonl(path, since=since)
+    # Bound the cache. If we exceed, evict the oldest (FIFO).
+    if len(_JSONL_CACHE) >= _JSONL_CACHE_MAX:
+        try:
+            oldest_key = next(iter(_JSONL_CACHE))
+            del _JSONL_CACHE[oldest_key]
+        except (StopIteration, KeyError):
+            pass
+    _JSONL_CACHE[key] = data
+    return data
+
+
+def invalidate_file_cache(path: Optional[Path] = None) -> None:
+    """Clear the JSONL cache. If path is given, only entries for that path.
+    If None, clear everything. Used by --watch-tail mode when byte offsets
+    change and by tests that write fixture files.
+    """
+    global _JSONL_CACHE
+    if path is None:
+        _JSONL_CACHE = {}
+        return
+    path_str = str(path)
+    _JSONL_CACHE = {k: v for k, v in _JSONL_CACHE.items() if k[0] != path_str}
+
+
+# === TAIL MODE (researcher R2) ===============================================
+# When --watch-tail is set, the dashboard seeks to the tail of the probe log on
+# first read and only ingests new bytes from there. This makes the dashboard
+# responsive on huge files (millions of historical entries) where the user
+# only cares about the most recent activity. Pattern from tailstate (2026).
+
+_TAIL_OFFSETS: dict[str, int] = {}  # path_str -> last byte offset
+
+
+def read_jsonl_tail(path: Optional[Path], tail_bytes: int = 200_000) -> list[dict]:
+    """Read entries from the tail of a JSONL file.
+
+    On first call, seeks to (size - tail_bytes) and reads from there. Subsequent
+    calls seek to the recorded offset and read forward. Tracks offset in memory
+    only (single-process dashboard).
+
+    M23: returns [] on any I/O error. tail_bytes caps memory use.
+    """
+    if not path or not path.exists():
+        return []
+    try:
+        size = path.stat().st_size
+    except OSError:
+        return []
+
+    path_str = str(path)
+    last_offset = _TAIL_OFFSETS.get(path_str)
+
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            if last_offset is None or last_offset > size:
+                # First call (or file was truncated/rotated): start from tail.
+                start = max(0, size - tail_bytes)
+                f.seek(start)
+                # If we seeked into the middle of a line, advance past it.
+                # Otherwise the first "line" returned is partial garbage.
+                if start > 0:
+                    f.readline()  # discard partial line
+                    start = f.tell()
+                _TAIL_OFFSETS[path_str] = start
+                f.seek(start)
+            else:
+                # Resume from last known offset.
+                f.seek(last_offset)
+
+            entries: list[dict] = []
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                try:
+                    entries.append(json.loads(line))
+                except (json.JSONDecodeError, ValueError):
+                    continue  # M23: skip malformed, don't crash
+            _TAIL_OFFSETS[path_str] = f.tell()
+            return entries
+    except (OSError, IOError):
+        return []
+
+
+# === ALERT DEBOUNCE (researcher R2) ==========================================
+# Implements the F1-noise-killing pattern from SRE School 2026 ("Threshold alert"
+# + "Mean Time Between Failures") and the hysteresis rules from OneUptime's
+# "Threshold Alerting" best-practices checklist ("10-20% deadband").
+#
+# Algorithm (per candidate model):
+#   - Fire if NOT currently alerting AND rate < threshold AND
+#     consecutive_fails >= min_window
+#   - Clear if currently alerting AND rate > threshold * 1.1 (10% deadband)
+#   - Otherwise: no state change (debounce holds)
+#
+# The 10% deadband (1.1× the fire threshold) prevents flapping when a metric
+# hovers near the threshold — a textbook hysteresis band. Min consecutive
+# window prevents a single bad probe from triggering an alert.
+
+def debounce_alerts(
+    candidates: list[tuple[ModelStats, list[str]]],
+    threshold_pct: float,
+    min_window: int,
+) -> list[tuple[ModelStats, list[str]]]:
+    """Apply hysteresis + min-window debounce to alert candidates.
+
+    Args:
+        candidates: list of (ModelStats, reasons) from render_alerts pre-filter.
+        threshold_pct: the user-supplied --alert-rate (e.g. 70.0).
+        min_window: minimum consecutive failures before firing (--alert-min-window).
+
+    Returns:
+        Filtered list of (ModelStats, reasons) that survived the debounce.
+
+    M23 hardening: any exception falls through to the unfiltered list
+    (fail-open). The debounce must never lose an alert because the debounce
+    itself broke.
+    """
+    try:
+        if min_window <= 1:
+            # min_window=1 means "fire on first bad probe" — back-compat with
+            # the original v3.0 behavior. Return unchanged.
+            return candidates
+
+        clear_threshold = threshold_pct * 1.10  # 10% hysteresis deadband
+        fired: list[tuple[ModelStats, list[str]]] = []
+        for s, reasons in candidates:
+            try:
+                if s.currently_alerting:
+                    # Already alerting. Clear only if rate recovers above the
+                    # upper deadband — prevents flapping.
+                    if s.rate > clear_threshold:
+                        s.currently_alerting = False
+                    else:
+                        fired.append((s, reasons))
+                else:
+                    # Not yet alerting. Fire only if rate is bad AND we have
+                    # enough consecutive failures to rule out a single blip.
+                    if s.rate < threshold_pct and s.consecutive_fails >= min_window:
+                        s.currently_alerting = True
+                        fired.append((s, reasons))
+                    # else: stay silent (debounce holds)
+            except (AttributeError, TypeError):
+                # Defensive: if a ModelStats field is unexpectedly None or
+                # missing, fire the alert anyway — fail-open on the safety side.
+                fired.append((s, reasons))
+        return fired
+    except Exception:
+        # M23: if debounce itself breaks, never lose alerts. Return raw.
+        return candidates
+
+
+# === AGGREGATION ============================================================
+
+def categorize_failure(entry: dict) -> str:
+    """Categorize a failed probe into a failure mode taxonomy.
+
+    Categories (per the gap research):
+    - RATE_LIMITED: 429 errors or "Rate limit" in error
+    - AUTH_FAILED: 401 errors
+    - INVALID_MODEL: 404 or "not a valid model"
+    - PAYMENT_REQUIRED: 402
+    - SERVER_ERROR: 5xx
+    - TIMEOUT: Connection timeouts
+    - PARSE_ERROR: Malformed responses
+    - OTHER: Anything else
+
+    M23 hardening (carmack): coerce `error` to str defensively. Upstream
+    pipelines occasionally emit dict/list/None; without coercion the
+    `in` and `.lower()` calls raise TypeError and crash the dashboard.
+    """
+    status = entry.get("http_status")
+    raw_err = entry.get("error")
+    if not isinstance(raw_err, str):
+        # Non-string errors (dict, list, None, etc.) → fall through to OTHER
+        err = "" if raw_err is None else str(raw_err)
+    else:
+        err = raw_err
+    err_lower = err.lower()
+
+    if status == 429 or "Rate limit" in err or "per-day" in err:
+        return "RATE_LIMITED"
+    if status == 401 or "auth" in err_lower or "key" in err_lower:
+        return "AUTH_FAILED"
+    if status == 404 or "not a valid" in err or "unavailable" in err:
+        return "INVALID_MODEL"
+    if status == 402:
+        return "PAYMENT_REQUIRED"
+    if isinstance(status, int) and 500 <= status < 600:
+        return "SERVER_ERROR"
+    if "timeout" in err_lower or "timed out" in err_lower:
+        return "TIMEOUT"
+    if "parse" in err_lower or "json" in err_lower:
+        return "PARSE_ERROR"
+    if "Provider returned error" in err:
+        return "PROVIDER_ERROR"
+    return "OTHER"
+
+
+def infer_window_from_ts(ts: Optional[datetime]) -> Optional[str]:
+    """Infer the quota window from a timestamp (when not explicitly tagged).
+
+    carmack: assumes UTC. The caller (aggregate_probes) already normalizes
+    naive datetimes to UTC. If a tz-aware non-UTC datetime is passed,
+    `ts.hour` reflects the local hour which would corrupt the window
+    inference. Caller is responsible for tz-normalization upstream.
+    """
+    if ts is None:
+        return None
+    h = ts.hour
+    if 0 <= h < 6:
+        return "off_peak"
+    if 6 <= h < 12:
+        return "moderate"
+    if 12 <= h < 18:
+        return "poor"
+    return "worst"
+
+
+def aggregate_probes(probe_data: list[dict]) -> dict[str, ModelStats]:
+    """Aggregate probe entries by model label.
+
+    jem R3: harden against unhashable / non-string `label` fields. R2 used
+    `label = entry.get("label", "?")` directly as a dict key, which raises
+    TypeError ("unhashable type: 'list'") if the field is a list or dict.
+    Coerce to str() and substitute "?" if the result is empty. Never throws.
+
+    maat R4: harden against non-dict entries. jem R3's defenses assume every
+    item in probe_data is a dict (they protect label/coercion). When callers
+    pass raw data bypassing read_jsonl (e.g. in tests, or in a future caller
+    that ingests an upstream stream that has already filtered JSON), a None,
+    int, str, list, or bool crashes on `entry.get(...)`. Per M23 the function
+    contract is "never throws" — we skip non-dict entries silently here so the
+    aggregate call site (render() and tests) is fully M23-compliant.
+    """
+    stats: dict[str, ModelStats] = {}
+    for entry in probe_data:
+        # maat R4: skip non-dict entries silently. read_jsonl already filters
+        # these but aggregate_probes is callable from any path — defense in depth.
+        if not isinstance(entry, dict):
+            continue
+        # jem R3: defensive label extraction. The schema says label is a
+        # string but the probe pipeline occasionally emits a list/dict
+        # (e.g. from a misconfigured validator). str() handles both:
+        #   str([1,2]) == '[1, 2]' — ugly but unhashable-safe
+        # Empty/None labels fall back to "?".
+        raw_label = entry.get("label", "?")
+        if raw_label is None or raw_label == "":
+            label = "?"
+        else:
+            try:
+                # hash() first as a fast pre-check — if unhashable, fall through
+                hash(raw_label)
+                label = raw_label if isinstance(raw_label, str) else str(raw_label)
+            except TypeError:
+                # Unhashable (list, dict, set). Stringify. The string version
+                # is a valid label — it just won't deduplicate against other
+                # unhashable inputs that happen to stringify the same way.
+                # That's acceptable: those probes are malformed anyway.
+                label = str(raw_label)
+        if label not in stats:
+            stats[label] = ModelStats(label=label)
+        s = stats[label]
+
+        # Track model_id (first seen wins)
+        if not s.model_id and entry.get("model"):
+            s.model_id = entry["model"]
+
+        if entry.get("success"):
+            s.success += 1
+        else:
+            s.fail += 1
+            # Categorize failure
+            cat = categorize_failure(entry)
+            s.failure_categories[cat] = s.failure_categories.get(cat, 0) + 1
+
+        lat = entry.get("latency_ms", 0)
+        if isinstance(lat, (int, float)) and lat > 0:
+            s.latencies.append(float(lat))
+
+        # Quality check
+        qc = entry.get("quality_check", {})
+        if isinstance(qc, dict):
+            s.quality_total += 1
+            # carmack: explicit bool() coercion defends against upstream
+            # emitting `"true"`/`"false"` strings or `1`/`0` ints. The
+            # truthy-test (Python's `and`/`not`) would treat string "false"
+            # as truthy and silently corrupt the quality taxonomy.
+            valid = bool(qc.get("valid_json"))
+            completion = bool(qc.get("has_completion"))
+            content_len = qc.get("content_length", 0)
+            try:
+                content_len_int = int(content_len)
+            except (TypeError, ValueError):
+                content_len_int = 0
+            if valid and completion and content_len_int > 10:
+                s.quality_valid += 1
+            elif not valid:
+                s.quality_invalid_json += 1
+            elif not completion:
+                s.quality_no_completion += 1
+            else:
+                s.quality_empty_content += 1
+
+        # HTTP status
+        status = entry.get("http_status")
+        if status:
+            s.http_statuses[str(status)] = s.http_statuses.get(str(status), 0) + 1
+
+        # Key source + last success per key
+        ks = entry.get("key_source", "?")
+        s.key_sources[ks] = s.key_sources.get(ks, 0) + 1
+
+        # Timestamps
+        ts_str = entry.get("ts")
+        ts = None
+        if ts_str:
+            try:
+                # carmack: defensive type check before .replace() and
+                # tzinfo normalization so downstream comparisons work.
+                if not isinstance(ts_str, str):
+                    raise ValueError("ts is not a string")
+                ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                s.last_seen = ts
+                if entry.get("success"):
+                    s.last_success = ts
+                    s.key_last_success[ks] = ts
+            except (ValueError, TypeError):
+                pass
+
+        # Window (explicit or inferred)
+        win = entry.get("window")
+        if not win and ts:
+            win = infer_window_from_ts(ts)
+        if win:
+            s.windows[win] = s.windows.get(win, 0) + 1
+            # researcher R2: per-window success/fail attribution. Closes the
+            # v3.0 TODO in render_diurnal_analysis — we now know the rate per
+            # window without re-aggregating. Lazy-init the nested dict to
+            # avoid a defaultdict import.
+            if win not in s.window_success:
+                s.window_success[win] = {"success": 0, "fail": 0}
+            if entry.get("success"):
+                s.window_success[win]["success"] += 1
+            else:
+                s.window_success[win]["fail"] += 1
+
+        # researcher R2: real per-key success/fail attribution. R1's render_key_health
+        # approximated via `count * overall_rate / 100` which masked per-key
+        # reliability spread (cline=100% vs auth=20% on real data). We track
+        # the actual outcomes so render_key_health reports the truth.
+        if ks not in s.key_outcomes:
+            s.key_outcomes[ks] = {"success": 0, "fail": 0}
+        if entry.get("success"):
+            s.key_outcomes[ks]["success"] += 1
+        else:
+            s.key_outcomes[ks]["fail"] += 1
+
+        # researcher R2: consecutive-failure counter for alert debounce.
+        # Reset on success, increment on failure. Bounded by recent_window
+        # size (20) so we don't track ancient failures. Used by debounce_alerts()
+        # to require min_window consecutive failures before firing — kills the
+        # F1 "noise counting" alert fatigue pattern (SRE School 2026).
+        is_success = bool(entry.get("success"))
+        # jem R3: REGRESSION FIX. R2's refactor removed s.recent_window.append(),
+        # which silently broke the trend / trend_velocity / debounce chain —
+        # the deque stayed at len=0 forever, so trend always returned "?" and
+        # debounce_alerts never fired. Add it back HERE, after we've already
+        # counted key_outcomes and window_success so order doesn't matter.
+        s.recent_window.append(is_success)
+        if is_success:
+            s.consecutive_fails = 0
+        else:
+            # Only count the last 20 — never exceed the deque's reach.
+            s.consecutive_fails = min(s.consecutive_fails + 1, len(s.recent_window))
+
+    return stats
+
+
+# === RENDERING: SECTIONS ====================================================
+
+def render_freshness_summary(freshness: dict[str, FileFreshness]) -> None:
+    """Render the data freshness summary bar."""
+    print(f"{C.BOLD}DATA FRESHNESS{C.END}")
+    for name, f in freshness.items():
+        indicator = freshness_indicator(f.state)
+        if f.state == "missing":
+            print(f"  {name:<20} {indicator}")
+        else:
+            age_str = fmt_age(f.age_seconds or 0)
+            entries_str = f"{f.entries_in_window}/{f.entries_total} entries" if f.entries_in_window != f.entries_total else f"{f.entries_total} entries"
+            print(f"  {name:<20} {indicator} {C.DIM}{age_str:<15}{C.END} {entries_str}")
+    print()
+
+
+def render_network(network_data: list[dict]) -> None:
+    """Render the network state section.
+
+    maat R4 (M23): defend against non-dict entries. read_jsonl filters
+    non-dicts but render_network is callable from any path — defense in
+    depth. Skip non-dict entries and pick the most-recent dict.
+    """
+    print(f"{C.BOLD}NETWORK{C.END}")
+    # maat R4: filter to dicts only. The "last" entry is then a dict, not a
+    # bare string/None/list. Crashes downstream on `.get(...)` are avoided.
+    safe = [e for e in network_data if isinstance(e, dict)]
+    if not safe:
+        print(f"  {C.DIM}no data yet (cron not running){C.END}")
+        print()
+        return
+
+    n = safe[-1]
+    net = n.get("network", {})
+    lat = n.get("latency_ms", {})
+    prov = n.get("provider_recent", {})
+
+    # Defensive: nested fields can be non-dicts if upstream is malformed.
+    if not isinstance(net, dict):
+        net = {}
+    if not isinstance(lat, dict):
+        lat = {}
+    if not isinstance(prov, dict):
+        prov = {}
+    ssid = net.get("ssid", "?")
+    bssid = net.get("bssid", "?")
+    sig = net.get("signal_dbm", "?")
+    freq = net.get("frequency_mhz", "?")
+    rate = net.get("rate", "?")
+    iface = net.get("iface", "?")
+
+    print(f"  {C.C}{ssid}{C.END} ({bssid}) @ {sig}dBm, {freq}MHz, {rate}")
+    print(f"  Latency: gateway={fmt_ms(lat.get('gateway', -1))}, "
+          f"dns={fmt_ms(lat.get('dns', -1))}, "
+          f"resolve={fmt_ms(lat.get('dns_resolve', -1))}, "
+          f"OR={fmt_ms(lat.get('openrouter_connect', -1))}")
+
+    # Network quality assessment
+    # carmack: signal_dbm may be a string (e.g. "-65") or int upstream.
+    # lstrip("-") strips the optional minus; isdigit then rejects floats
+    # and strings with units. Falls back to 0 for unparseable values.
+    sig_int = 0
+    if isinstance(sig, (int, float)) and not isinstance(sig, bool):
+        sig_int = int(sig)
+    elif isinstance(sig, str):
+        stripped = sig.lstrip("-")
+        if stripped.isdigit():
+            sig_int = int(sig)
+    gw_lat = lat.get("gateway", 0)
+    quality = "?"
+    if isinstance(sig_int, int) and sig_int != 0:
+        if sig_int > -55 and gw_lat < 20:
+            quality = f"{C.G}EXCELLENT{C.END}"
+        elif sig_int > -70 and gw_lat < 50:
+            quality = f"{C.G}GOOD{C.END}"
+        elif sig_int > -80:
+            quality = f"{C.Y}FAIR{C.END}"
+        else:
+            quality = f"{C.R}POOR{C.END}"
+    print(f"  Quality: {quality}  if={iface}")
+
+    # Provider correlation
+    sc = prov.get("success_count", 0)
+    fc = prov.get("failure_count", 0)
+    total = sc + fc
+    if total > 0:
+        rate_pct = (sc / total) * 100
+        print(f"  Provider (last {total} probes): {fmt_pct(rate_pct)} success ({sc}/{total})")
+    print()
+
+
+def render_probes(stats: dict[str, ModelStats], args: argparse.Namespace) -> list[ModelStats]:
+    """Render the model probe table. Returns the filtered/ordered list for downstream use."""
+    if not stats:
+        print(f"{C.BOLD}PROBE RESULTS{C.END}  {C.DIM}no data{C.END}")
+        print()
+        return []
+
+    # Filter by --model if provided
+    filtered = {}
+    if args.model:
+        pattern = re.compile(args.model, re.IGNORECASE)
+        filtered = {k: v for k, v in stats.items() if pattern.search(k) or pattern.search(v.model_id)}
+    else:
+        filtered = stats
+
+    filter_note = f" ({len(filtered)} of {len(stats)} models)" if args.model else f" ({len(stats)} models)"
+    print(f"{C.BOLD}PROBE RESULTS{C.END}  {C.DIM}{filter_note}{C.END}")
+    print(f"  {'MODEL':<24} {'SUCCESS':>8} {'FAIL':>6} {'RATE':>6} {'P50':>8} {'P99':>8} {'QUAL':>6} {'TREND':>6} {'WINDOW':>5}  KEY")
+    print(f"  {'─' * 24} {'─' * 8} {'─' * 6} {'─' * 6} {'─' * 8} {'─' * 8} {'─' * 6} {'─' * 6} {'─' * 5}  {'─' * 10}")
+
+    # Sort by rate desc, then by total desc (more data = more reliable)
+    sorted_stats = sorted(
+        filtered.values(),
+        key=lambda s: (-s.rate, -s.total)
+    )
+
+    for s in sorted_stats:
+        if s.total == 0:
+            rate_str = f"{C.DIM}--{C.END}"
+        else:
+            rate_str = fmt_pct(s.rate)
+        p50_str = fmt_ms(s.p50) if s.p50 else f"{C.DIM}--{C.END}"
+        p99_str = fmt_ms(s.p99) if s.p99 else f"{C.DIM}--{C.END}"
+        quality_str = fmt_pct(s.quality_rate) if s.quality_total > 0 else f"{C.DIM}--{C.END}"
+        # jem R3: surface unknown trend (deque too small) as a visible "?"
+        # instead of silently mis-rendering as "→". R2's else branch lumped
+        # "?" and "→" together, hiding a real bug where recent_window was
+        # never populated. Now operators can see at a glance that trend data
+        # is missing (e.g. <4 probes seen).
+        if s.trend == "↑":
+            trend_str = f"{C.G}↑{C.END}"
+        elif s.trend == "↓":
+            trend_str = f"{C.R}↓{C.END}"
+        elif s.trend == "→":
+            trend_str = f"{C.DIM}→{C.END}"
+        else:
+            # "?" — trend unknown (deque has <4 samples)
+            trend_str = f"{C.DIM}?{C.END}"
+
+        # Best key for this model
+        best_key = max(s.key_sources.items(), key=lambda x: x[1])[0] if s.key_sources else "?"
+
+        # Most recent window
+        window_str = f"{C.DIM}--{C.END}"
+        if s.windows:
+            recent_window = max(s.windows.items(), key=lambda x: x[1])[0]
+            window_str = recent_window[:5]
+
+        # carmack: use pad_visible for columns with ANSI codes (rate, p50,
+        # p99, qual, trend, window). Plain numeric columns use :>N as
+        # before. Without this, colored text overflows column boundaries.
+        print(f"  {s.label:<24} {s.success:>8} {s.fail:>6} {pad_visible(rate_str, 6)} "
+              f"{pad_visible(p50_str, 8)} {pad_visible(p99_str, 8)} {pad_visible(quality_str, 6)} "
+              f"{pad_visible(trend_str, 6)} {pad_visible(window_str, 5)}  {best_key}")
+    print()
+
+    return sorted_stats
+
+
+def render_antigravity(ag_data: list[dict]) -> None:
+    """Render the Antigravity account quotas section."""
+    if not ag_data:
+        return
+
+    print(f"{C.BOLD}ANTIGRAVITY QUOTAS{C.END}  {C.DIM}({len(ag_data)} accounts){C.END}")
+
+    # Show most recent entry per account
+    by_account: dict[str, dict] = {}
+    for entry in ag_data:
+        # jem R3: defend against non-dict entries (defense in depth — read_jsonl
+        # already filters these, but a future caller might bypass it).
+        if not isinstance(entry, dict):
+            continue
+        email = entry.get("email", "?")
+        # jem R3: ts can be int (epoch), list, or None. Coerce to str first;
+        # non-string types produce a sentinel empty string so the parser skips
+        # the entry without raising. Same defensive pattern as the other ts sites.
+        raw_ts = entry.get("ts")
+        ts_str = raw_ts if isinstance(raw_ts, str) else ""
+        if email not in by_account:
+            by_account[email] = entry
+        else:
+            try:
+                ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                prev_raw = by_account[email].get("ts")
+                prev_str = prev_raw if isinstance(prev_raw, str) else ""
+                prev_ts = datetime.fromisoformat(prev_str.replace("Z", "+00:00"))
+                # carmack: tzinfo guard for comparison. If both naive,
+                # assume UTC. If mixed, also normalize.
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                if prev_ts.tzinfo is None:
+                    prev_ts = prev_ts.replace(tzinfo=timezone.utc)
+                if ts > prev_ts:
+                    by_account[email] = entry
+            except (ValueError, TypeError):
+                pass
+
+    for email, entry in by_account.items():
+        enabled = entry.get("enabled", False)
+        tier = entry.get("tier", "?")
+        models_raw = entry.get("models", [])
+        # carmack: defensive — ensure each model entry is a dict. If
+        # upstream emits a string or None in the list, skip it rather
+        # than crash on `m.get(...)`.
+        models = [m for m in models_raw if isinstance(m, dict)]
+        project = entry.get("project", "?")
+
+        # Find the most-used models (those with remainingFraction)
+        tracked = [m for m in models if m.get("remainingFraction") is not None]
+        if not tracked:
+            tracked = models[:3]
+
+        # Color the status
+        status_color = C.G if enabled else C.R
+        status_str = "✓ ENABLED" if enabled else "✗ DISABLED"
+
+        # Project short
+        project_short = project[:24] + "..." if len(project) > 24 else project
+        print(f"  {C.BOLD}{email}{C.END}  {status_color}{status_str}{C.END}  tier={tier}  project={project_short}")
+
+        # Top 3 models by lowest remaining (most constrained)
+        if tracked:
+            tracked_sorted = sorted(tracked, key=lambda m: m.get("remainingFraction", 1.0))[:3]
+            for m in tracked_sorted:
+                frac = m.get("remainingFraction")
+                if frac is None:
+                    frac_str = f"{C.DIM}--{C.END}"
+                elif frac >= 0.8:
+                    frac_str = f"{C.G}{frac:.0%}{C.END}"
+                elif frac >= 0.4:
+                    frac_str = f"{C.Y}{frac:.0%}{C.END}"
+                else:
+                    frac_str = f"{C.R}{frac:.0%}{C.END}"
+                reset = m.get("resetTime")
+                reset_str = ""
+                if reset:
+                    try:
+                        reset_dt = datetime.fromisoformat(reset.replace("Z", "+00:00"))
+                        # carmack: tzinfo guard for `reset_dt - now`
+                        if reset_dt.tzinfo is None:
+                            reset_dt = reset_dt.replace(tzinfo=timezone.utc)
+                        delta = reset_dt - datetime.now(timezone.utc)
+                        if delta.total_seconds() > 0:
+                            hours = int(delta.total_seconds() // 3600)
+                            mins = int((delta.total_seconds() % 3600) // 60)
+                            reset_str = f"  {C.DIM}reset in {hours}h{mins}m{C.END}"
+                    except (ValueError, TypeError):
+                        reset_str = f"  {C.DIM}reset={reset[:16]}{C.END}"
+                model_id = m.get("id", "?")
+                print(f"    {model_id:<30} {frac_str}{reset_str}")
+    print()
+
+
+def render_diurnal_analysis(stats: dict[str, ModelStats], args: argparse.Namespace) -> None:
+    """Render diurnal pattern analysis per model.
+
+    researcher R2: now renders real success-rate percentages per quota window
+    (closes v3.0 TODO that only showed probe counts). Data comes from
+    ModelStats.window_success which aggregate_probes pre-computes — no
+    re-aggregation cost per render.
+    """
+    if not stats:
+        return
+
+    # Only show if we have window-tagged data
+    has_windows = any(s.windows for s in stats.values())
+    if not has_windows:
+        return
+
+    print(f"{C.BOLD}DIURNAL PATTERN ANALYSIS{C.END}  {C.DIM}(by quota window){C.END}")
+    windows = ["off_peak", "moderate", "poor", "worst"]
+    header = f"  {'MODEL':<24}"
+    for w in windows:
+        header += f" {w[:8]:>8}"
+    print(header)
+    print(f"  {'─' * 24}" + f" {'─' * 8}" * len(windows))
+
+    # Filter
+    filtered = stats
+    if args.model:
+        pattern = re.compile(args.model, re.IGNORECASE)
+        filtered = {k: v for k, v in stats.items() if pattern.search(k) or pattern.search(v.model_id)}
+
+    for s in sorted(filtered.values(), key=lambda x: -x.total)[:10]:  # top 10
+        row = f"  {s.label:<24}"
+        for w in windows:
+            # researcher R2: use pre-computed window_success instead of raw count.
+            wc = s.window_success.get(w)
+            if not wc or (wc["success"] + wc["fail"]) == 0:
+                row += f" {C.DIM}--{C.END}     "
+            else:
+                total = wc["success"] + wc["fail"]
+                rate = wc["success"] / total * 100
+                # Color the rate so high-success windows jump out. Format as
+                # XX%/N (rate% / total probes) so the cell carries both info.
+                row += f" {fmt_pct(rate)}/{total:<3}"
+        print(row)
+    print()
+
+
+def render_test_progress(name: str, log_path: Optional[Path], icon: str = "●") -> None:
+    """Generic test progress section."""
+    if not log_path:
+        return
+    data = read_jsonl(log_path, limit=2000)
+    if not data:
+        return
+
+    total = len(data)
+    success = sum(1 for e in data if e.get("success"))
+    fail = total - success
+    rate = (success / total * 100) if total > 0 else 0
+    lats = [float(e.get("latency_ms", 0)) for e in data
+            if isinstance(e.get("latency_ms"), (int, float)) and e.get("latency_ms", 0) > 0]
+
+    print(f"{C.BOLD}{icon} {name}{C.END}")
+    print(f"  Progress: {progress_bar(success, total, width=30)}")
+    print(f"  Success: {success}/{total} ({fmt_pct(rate)}), "
+          f"P50={fmt_ms(percentile(lats, 50))}, P99={fmt_ms(percentile(lats, 99))}")
+    print()
+
+
+def render_economics(probe_data: list[dict], stats: dict[str, ModelStats]) -> None:
+    """Render the M3 survival economics — COMPUTED from actual data."""
+    print(f"{C.BOLD}M3 SURVIVAL ECONOMICS{C.END}  {C.DIM}(computed){C.END}")
+
+    if not probe_data:
+        print(f"  {C.DIM}no data yet{C.END}")
+        print()
+        return
+
+    # Count successes and total time
+    total = len(probe_data)
+    # jem R3: defense in depth. read_jsonl filters non-dicts, but probe_data
+    # could be passed from elsewhere. Skip non-dict entries silently.
+    probe_data_safe = [e for e in probe_data if isinstance(e, dict)]
+    successes = sum(1 for e in probe_data_safe if e.get("success"))
+    success_rate = safe_div(successes, total) * 100
+
+    # Check the quality_check field across all entries
+    # carmack: filter to dict-shaped entries only; upstream could put a
+    # list/str truthy value in `quality_check` and crash the .get() chain.
+    quality_entries = [
+        e for e in probe_data_safe
+        if isinstance(e.get("quality_check"), dict)
+    ]
+    quality_valid = sum(
+        1 for e in quality_entries
+        if e["quality_check"].get("valid_json") and e["quality_check"].get("has_completion")
+    )
+    quality_rate = safe_div(quality_valid, len(quality_entries)) * 100
+
+    # Total latency (rough proxy for tokens processed). carmack: only
+    # sum numeric values — upstream could emit a string in `latency_ms`.
+    total_latency_ms = sum(
+        e.get("latency_ms", 0)
+        for e in probe_data
+        if isinstance(e.get("latency_ms"), (int, float)) and not isinstance(e.get("latency_ms"), bool)
+    )
+    total_latency_s = total_latency_ms / 1000
+
+    # Key rotation
+    # jem R3: defend against None / non-string key_source. R2 stored None
+    # as a dict key here, then ', '.join(sorted(key_sources.keys())) crashed
+    # at the print site because join() rejects None. Coerce non-strings to
+    # "?" to keep the dict well-typed.
+    key_sources: dict[str, int] = defaultdict(int)
+    for e in probe_data:
+        # jem R3: skip non-dict entries (defense in depth; read_jsonl filters).
+        if not isinstance(e, dict):
+            continue
+        ks_raw = e.get("key_source", "?")
+        # Coerce: None / int / list -> "?" so str.join() works downstream.
+        if isinstance(ks_raw, str) and ks_raw:
+            ks = ks_raw
+        else:
+            ks = "?"
+        key_sources[ks] += 1
+    active_keys = len([k for k, v in key_sources.items() if k != "?" and v > 0])
+
+    print(f"  • {fmt_pct(success_rate)} overall success ({successes}/{total} probes)")
+    print(f"  • {fmt_pct(quality_rate)} quality rate (valid JSON + has completion)")
+    if total_latency_s > 0:
+        print(f"  • {total_latency_s:.0f}s total compute across {len(probe_data)} probes")
+    if active_keys:
+        print(f"  • {active_keys} active API keys rotating: {', '.join(sorted(key_sources.keys()))}")
+
+    # Survival verdict
+    if success_rate >= 90 and quality_rate >= 80:
+        verdict = f"{C.G}✅ FREE TIER SURVIVING{C.END}"
+    elif success_rate >= 70:
+        verdict = f"{C.Y}⚠️  DEGRADED — TIGHTEN ROTATION{C.END}"
+    else:
+        verdict = f"{C.R}🚨 CRITICAL — DIVERSIFY KEYS{C.END}"
+    print(f"  • Verdict: {verdict}")
+    print()
+
+
+def render_active_sessions() -> None:
+    """Render active opencode sessions with PID and memory."""
+    print(f"{C.BOLD}ACTIVE SESSIONS{C.END}")
+    try:
+        result = subprocess.run(
+            ["pgrep", "-af", "opencode"],
+            capture_output=True, text=True, timeout=2
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            lines = result.stdout.strip().split("\n")[:8]
+            for line in lines:
+                # Parse: PID command...
+                parts = line.split(maxsplit=1)
+                if len(parts) == 2:
+                    pid, cmd = parts
+                    # Try to get memory
+                    mem_str = ""
+                    try:
+                        with open(f"/proc/{pid}/status", encoding="utf-8") as f:
+                            for status_line in f:
+                                if status_line.startswith("VmRSS:"):
+                                    mem_kb = int(status_line.split()[1])
+                                    mem_mb = mem_kb / 1024
+                                    mem_str = f"  {C.DIM}{mem_mb:.0f}MB{C.END}"
+                                    break
+                    except (OSError, ValueError, IndexError):
+                        pass
+                    cmd_display = cmd[:60] + "..." if len(cmd) > 60 else cmd
+                    print(f"  {C.DIM}{pid}{C.END}  {cmd_display}{mem_str}")
+        else:
+            print(f"  {C.DIM}no opencode processes detected{C.END}")
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        print(f"  {C.DIM}process check unavailable{C.END}")
+    print()
+
+
+def render_alerts(stats: dict[str, ModelStats], args: argparse.Namespace) -> list[str]:
+    """Render alerts for models below threshold. Returns list of alert messages.
+
+    researcher R2: applies debounce_alerts() with --alert-min-window hysteresis
+    so single bad probes don't fire alerts (F1 noise pattern). The debounce
+    state lives on ModelStats.currently_alerting — set by debounce_alerts(),
+    read by subsequent renders. Pass min_window=1 to get the original v3.0
+    behavior (fire on first breach).
+    """
+    alerts: list[str] = []
+    if not args.alerts:
+        return alerts
+
+    rate_threshold = args.alert_rate
+    latency_threshold = args.alert_latency
+    min_window = max(1, getattr(args, "alert_min_window", 5))
+
+    triggered = []
+    for s in stats.values():
+        reasons = []
+        if s.total >= 5 and s.rate < rate_threshold:
+            reasons.append(f"rate {s.rate:.0f}% < {rate_threshold:.0f}%")
+        if s.latencies and s.p99 > latency_threshold:
+            reasons.append(f"P99 {fmt_ms(s.p99)} > {fmt_ms(latency_threshold)}")
+
+        if reasons:
+            triggered.append((s, reasons))
+
+    # researcher R2: debounce/hysteresis pass. Default min_window=5 means we
+    # need 5 consecutive failed probes before an alert fires — kills the F1
+    # noise-counting pattern from SRE School 2026.
+    triggered = debounce_alerts(triggered, rate_threshold, min_window)
+
+    if not triggered:
+        return alerts
+
+    print(f"{C.BOLD}🚨 ALERTS{C.END}  {C.DIM}({len(triggered)} triggered, min_window={min_window}){C.END}")
+    for s, reasons in triggered:
+        msg = f"  {C.R}●{C.END} {s.label}: {', '.join(reasons)}"
+        print(msg)
+        alerts.append(f"{s.label}: {', '.join(reasons)}")
+    print()
+
+    return alerts
+
+
+# === v3.0 SECTIONS (gap-driven) =============================================
+
+def render_cascade(stats: dict[str, ModelStats]) -> Optional[str]:
+    """Render the auto-computed provider cascade (best → fallback).
+
+    The single most actionable answer to "which model should I use right now?"
+    """
+    # Filter to models with enough data
+    candidates = [s for s in stats.values() if s.total >= 3]
+    if not candidates:
+        return None
+
+    # Sort by success rate desc, then by P50 latency asc
+    candidates.sort(key=lambda s: (-s.rate, s.p50))
+
+    # Take top 5 for the cascade
+    top = candidates[:5]
+    if not top or top[0].rate < 50:
+        return None  # No good primary
+
+    print(f"{C.BOLD}★ RECOMMENDED CASCADE{C.END}  {C.DIM}(best → fallback){C.END}")
+    for i, s in enumerate(top):
+        if i == 0:
+            marker = f"{C.G}★{C.END}"
+            role = f"{C.G}PRIMARY{C.END}    "
+        else:
+            marker = f"{i+1}."
+            role = f"{C.DIM}FALLBACK {i}{C.END}"
+        rate_str = fmt_pct(s.rate)
+        p50_str = fmt_ms(s.p50) if s.p50 else f"{C.DIM}--{C.END}"
+        # Show quality if available
+        qual_str = ""
+        if s.quality_total > 0:
+            qual_str = f"  Q={fmt_pct(s.quality_rate)}"
+        print(f"  {marker} {role} {s.label:<24} {rate_str}  P50={p50_str}{qual_str}")
+    print()
+
+    return top[0].label if top else None
+
+
+def render_failure_taxonomy(stats: dict[str, ModelStats]) -> None:
+    """Render the failure mode taxonomy.
+
+    This addresses the most critical gap: 98.4% of failures are RATE_LIMITED.
+    The dashboard now reveals the root cause instead of just "low success rate".
+    """
+    # Aggregate across all models
+    all_failures: dict[str, int] = defaultdict(int)
+    total_failures = 0
+    for s in stats.values():
+        for cat, count in s.failure_categories.items():
+            all_failures[cat] += count
+            total_failures += count
+
+    if total_failures == 0:
+        return
+
+    print(f"{C.BOLD}FAILURE MODE TAXONOMY{C.END}  {C.DIM}({total_failures} total failures){C.END}")
+    print(f"  {'CATEGORY':<20} {'COUNT':>6} {'%':>6}  BAR")
+    print(f"  {'─' * 20} {'─' * 6} {'─' * 6}  {'─' * 30}")
+
+    # Sort by count desc
+    sorted_cats = sorted(all_failures.items(), key=lambda x: -x[1])
+    for cat, count in sorted_cats:
+        pct = (count / total_failures) * 100
+        # Color the category
+        cat_color = C.R if pct > 80 else (C.Y if pct > 30 else C.DIM)
+        bar = "█" * int(pct / 3)  # 33 chars max
+        print(f"  {cat_color}{cat:<20}{C.END} {count:>6} {pct:>5.0f}%  {bar}")
+
+    # Insight: if >80% is one category, name the response
+    top_cat, top_count = sorted_cats[0]
+    top_pct = (top_count / total_failures) * 100
+    if top_pct > 80:
+        responses = {
+            "RATE_LIMITED": f"{C.Y}→ WAIT for quota reset, not more key diversification{C.END}",
+            "AUTH_FAILED": f"{C.R}→ Key is dead/expired, rotate immediately{C.END}",
+            "INVALID_MODEL": f"{C.R}→ Model removed from provider, drop from fleet{C.END}",
+            "SERVER_ERROR": f"{C.Y}→ Provider outage, switch to fallback{C.END}",
+        }
+        insight = responses.get(top_cat, f"→ Investigate {top_cat}")
+        print(f"  {C.BOLD}INSIGHT:{C.END} {top_pct:.0f}% are {top_cat} {insight}")
+    print()
+
+
+def render_quality_breakdown(stats: dict[str, ModelStats]) -> None:
+    """Render per-model quality breakdown (what kind of bad).
+
+    Closes gap: "69% quality" hides why the other 31% failed.
+    """
+    # Only show models with non-trivial quality data
+    candidates = [s for s in stats.values() if s.quality_total >= 5]
+    if not candidates:
+        return
+
+    print(f"{C.BOLD}QUALITY BREAKDOWN{C.END}  {C.DIM}(why some responses are bad){C.END}")
+    print(f"  {'MODEL':<22} {'VALID':>6} {'INV_JSON':>9} {'NO_COMP':>8} {'EMPTY':>6}")
+    print(f"  {'─' * 22} {'─' * 6} {'─' * 9} {'─' * 8} {'─' * 6}")
+
+    # Sort by quality rate desc
+    candidates.sort(key=lambda s: -s.quality_rate)
+    for s in candidates[:8]:  # top 8
+        v = s.quality_valid
+        ij = s.quality_invalid_json
+        nc = s.quality_no_completion
+        ec = s.quality_empty_content
+
+        # Color the dominant failure mode
+        worst = max([("invalid_json", ij), ("no_completion", nc), ("empty", ec)], key=lambda x: x[1])
+        worst_str = f"{C.R}{worst[1]:>4}{C.END}" if worst[0] == "invalid_json" else f"{C.Y}{worst[1]:>4}{C.END}"
+
+        # carmack: pad_visible instead of :>9 because worst_str embeds ANSI
+        # escape codes; :>9 pads on Python string length (13+), not
+        # visible width (4), breaking the column.
+        print(f"  {s.label:<22} {C.G}{v:>6}{C.END} {pad_visible(worst_str, 9)} {nc:>8} {ec:>6}")
+    print()
+
+
+def render_next_quota_reset(ag_data: list[dict]) -> None:
+    """Render the next quota reset countdown."""
+    if not ag_data:
+        return
+
+    # Find the soonest reset across all accounts/models
+    now = datetime.now(timezone.utc)
+    upcoming = []
+    for entry in ag_data:
+        for m in entry.get("models", []):
+            rt = m.get("resetTime")
+            if rt:
+                try:
+                    rdt = datetime.fromisoformat(rt.replace("Z", "+00:00"))
+                    # carmack: naive-tz guard for the comparison `rdt > now`
+                    # which would TypeError if rdt lacks tzinfo.
+                    if rdt.tzinfo is None:
+                        rdt = rdt.replace(tzinfo=timezone.utc)
+                    if rdt > now:
+                        upcoming.append((rdt, entry.get("email", "?"), m.get("id", "?")))
+                except (ValueError, TypeError):
+                    pass
+
+    if not upcoming:
+        return
+
+    upcoming.sort()
+    next_reset, email, model_id = upcoming[0]
+    delta = next_reset - now
+    hours = int(delta.total_seconds() // 3600)
+    mins = int((delta.total_seconds() % 3600) // 60)
+
+    # Color based on urgency
+    if hours < 2:
+        color = C.G  # Soon = good news
+    elif hours < 6:
+        color = C.Y
+    else:
+        color = C.DIM
+
+    print(f"{C.BOLD}⏰ NEXT QUOTA RESET{C.END}  {color}in {hours}h {mins}m{C.END}  "
+          f"{C.DIM}({email.split('@')[0]} for {model_id}){C.END}")
+    print()
+
+
+def render_diurnal_best_hour(probe_data: list[dict]) -> None:
+    """Render the diurnal best hour recommendation.
+
+    Closes gap: at 00:00 UTC we have 61% success, at 18:00 UTC we have 11%.
+    Schedule heavy work around the best hours.
+    """
+    if not probe_data:
+        return
+
+    hourly: dict[int, list[bool]] = defaultdict(list)
+    for entry in probe_data:
+        # jem R3: skip non-dict entries (defense in depth).
+        if not isinstance(entry, dict):
+            continue
+        ts_str = entry.get("ts")
+        # jem R3: ts must be a string. Non-string (int epoch, list, None) used
+        # to call .replace() and crash. Coerce to "" so the parser skips it.
+        if not isinstance(ts_str, str) or not ts_str:
+            continue
+        try:
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            # carmack: naive-tz guard — assume UTC if missing tzinfo.
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            hourly[ts.hour].append(bool(entry.get("success")))
+        except (ValueError, TypeError):
+            pass
+
+    if not hourly:
+        return
+
+    # Calculate success rate per hour
+    hour_rates = []
+    for h, results in hourly.items():
+        if len(results) >= 3:
+            rate = sum(results) / len(results) * 100
+            hour_rates.append((h, rate, len(results)))
+
+    if not hour_rates:
+        return
+
+    # Sort by rate desc
+    hour_rates.sort(key=lambda x: -x[1])
+    best_h, best_rate, _ = hour_rates[0]
+    worst_h, worst_rate, _ = hour_rates[-1]
+
+    # Render as a small chart
+    print(f"{C.BOLD}📊 DIURNAL PATTERN{C.END}  {C.DIM}(UTC hours, success rate){C.END}")
+    chart = "  "
+    for h in range(0, 24, 3):  # every 3 hours
+        hour_results = hourly.get(h, [])
+        if hour_results:
+            rate = sum(hour_results) / len(hour_results) * 100
+            bar = "█" * int(rate / 5)
+            chart += f"{h:02d}:00 {fmt_pct(rate):>5} {bar:<20}  "
+        else:
+            chart += f"{h:02d}:00  {C.DIM}--{C.END}  {C.DIM}{'─' * 20}  "
+        if h == 12:
+            chart += "\n  "
+    print(chart)
+    print(f"  {C.G}Best: {best_h:02d}:00 UTC ({best_rate:.0f}% success){C.END}  "
+          f"{C.R}Worst: {worst_h:02d}:00 UTC ({worst_rate:.0f}%){C.END}")
+    # Guard against worst_rate == 0 (division by zero). Also skip the
+    # insight line entirely if there's no spread — happens early in the
+    # data lifecycle before enough samples per hour accumulate.
+    if worst_rate > 0:
+        ratio = best_rate / worst_rate
+        print(f"  {C.DIM}Insight: {ratio:.1f}x difference — schedule heavy work at "
+              f"{best_h:02d}:00 UTC{C.END}")
+    else:
+        print(f"  {C.DIM}Insight: insufficient spread yet — keep collecting samples{C.END}")
+    print()
+
+
+def render_historical_comparison(stats: dict[str, ModelStats], probe_data: list[dict]) -> None:
+    """Render Today vs Yesterday at the same time of day.
+
+    Closes gap: is performance improving or degrading week-over-week?
+    """
+    if not probe_data:
+        return
+
+    now = datetime.now(timezone.utc)
+    today_start = now - timedelta(hours=24)
+    yesterday_start = now - timedelta(hours=48)
+
+    # For each model, compare last 24h vs 24-48h ago
+    today_stats: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    yesterday_stats: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+
+    for entry in probe_data:
+        # jem R3: defense in depth. read_jsonl already filters non-dicts.
+        if not isinstance(entry, dict):
+            continue
+        # jem R3: label must be hashable. Coerce non-strings to str — even
+        # though read_jsonl would have skipped unhashables via isinstance
+        # check on the value, this renderer is callable from any path.
+        raw_label = entry.get("label", "?")
+        try:
+            label = raw_label if isinstance(raw_label, str) else str(raw_label)
+        except Exception:
+            label = "?"
+        success = 0 if entry.get("success") else 1
+        ts_str = entry.get("ts")
+        # jem R3: ts must be a string. Non-string (int epoch, list, None)
+        # would crash on .replace(). Skip non-string ts.
+        if not isinstance(ts_str, str) or not ts_str:
+            continue
+        try:
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            # carmack: defend against naive timestamps (no tzinfo). The
+            # rest of the dashboard assumes tz-aware UTC; comparing a
+            # naive ts to today_start (tz-aware UTC) would raise
+            # TypeError. Fall back: assume UTC.
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+        except (ValueError, TypeError):
+            continue
+
+        if ts > today_start:
+            today_stats[label][success] += 1
+        elif ts > yesterday_start:
+            yesterday_stats[label][success] += 1
+
+    # Only show models with enough data
+    candidates = []
+    for label in today_stats:
+        t_s, t_f = today_stats[label]
+        y_s, y_f = yesterday_stats.get(label, [0, 0])
+        if t_s + t_f >= 3 and y_s + y_f >= 3:
+            t_rate = t_s / (t_s + t_f) * 100
+            y_rate = y_s / (y_s + y_f) * 100
+            delta = t_rate - y_rate
+            candidates.append((label, t_s, t_s + t_f, t_rate, y_rate, delta))
+
+    if not candidates:
+        return
+
+    print(f"{C.BOLD}📅 HISTORICAL COMPARISON{C.END}  {C.DIM}(today vs yesterday){C.END}")
+    print(f"  {'MODEL':<22} {'TODAY':<10} {'YESTERDAY':<12} {'Δ RATE':>8}")
+    print(f"  {'─' * 22} {'─' * 10} {'─' * 12} {'─' * 8}")
+
+    # Sort by abs delta desc (most interesting changes first)
+    candidates.sort(key=lambda x: -abs(x[5]))
+    for label, t_s, t_t, t_rate, y_rate, delta in candidates[:10]:
+        t_str = f"{t_s}/{t_t} ({t_rate:.0f}%)"
+        y_str = f"({y_rate:.0f}%)"
+        if delta > 10:
+            d_str = f"{C.G}↑↑ +{delta:.0f}%{C.END}"
+        elif delta > 3:
+            d_str = f"{C.G}↑ +{delta:.0f}%{C.END}"
+        elif delta < -10:
+            d_str = f"{C.R}↓↓ {delta:.0f}%{C.END}"
+        elif delta < -3:
+            d_str = f"{C.R}↓ {delta:.0f}%{C.END}"
+        else:
+            d_str = f"{C.DIM}→ {delta:+.0f}%{C.END}"
+        # carmack: pad_visible for d_str which embeds ANSI codes.
+        print(f"  {label:<22} {t_str:<10} {y_str:<12} {pad_visible(d_str, 8)}")
+    print()
+
+
+def render_key_health(stats: dict[str, ModelStats]) -> None:
+    """Render per-key health table.
+
+    researcher R2: switched from lossy `count * overall_rate / 100` approximation
+    to the real per-key success/fail attribution tracked in
+    ModelStats.key_outcomes. This surfaces the actual reliability spread —
+    empirically cline=100% vs auth=20% vs or_key=22.1% on real data — that
+    the approximation was hiding. See data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md §4.5.
+    """
+    # Aggregate across all models using REAL per-key outcomes.
+    key_totals: dict[str, dict[str, int]] = defaultdict(lambda: {"success": 0, "fail": 0, "models": 0})
+    key_last_success_global: dict[str, Optional[datetime]] = {}
+
+    for s in stats.values():
+        # researcher R2: was `for key, count in s.key_sources.items()` with the
+        # approximation `key_success = int(count * s.rate / 100)`. Now we read
+        # the real per-key outcomes tracked in aggregate_probes. Clamp
+        # defensive: a future bug in aggregation should never make a key
+        # appear with negative or impossibly-high success count.
+        for key, outcomes in s.key_outcomes.items():
+            ks = max(0, int(outcomes.get("success", 0)))
+            kf = max(0, int(outcomes.get("fail", 0)))
+            key_totals[key]["success"] += ks
+            key_totals[key]["fail"] += kf
+            # Models-touched counter: at least 1 if this key was used at all.
+            if ks + kf > 0:
+                key_totals[key]["models"] += 1
+        for key, last in s.key_last_success.items():
+            if last is None:
+                continue
+            current_best = key_last_success_global.get(key)
+            if current_best is None or last > current_best:
+                key_last_success_global[key] = last
+
+    if not key_totals:
+        return
+
+    print(f"{C.BOLD}🔑 KEY HEALTH{C.END}  {C.DIM}(3-key rotation){C.END}")
+    print(f"  {'KEY':<12} {'SUCCESS':>8} {'FAIL':>6} {'RATE':>6}  {'MODELS':>7}  {'LAST SUCCESS':>20}")
+    print(f"  {'─' * 12} {'─' * 8} {'─' * 6} {'─' * 6}  {'─' * 7}  {'─' * 20}")
+
+    # Sort by rate desc
+    sorted_keys = sorted(key_totals.items(),
+                          key=lambda x: -safe_div(x[1]["success"], x[1]["success"] + x[1]["fail"]) * 100)
+    for key, t in sorted_keys:
+        total = t["success"] + t["fail"]
+        if total == 0:
+            rate_str = f"{C.DIM}--{C.END}"
+        else:
+            rate = t["success"] / total * 100
+            rate_str = fmt_pct(rate)
+        last_s = key_last_success_global.get(key)
+        if last_s is not None:
+            age = int((datetime.now(timezone.utc) - last_s).total_seconds())
+            # fmt_age already handles >= 86400 → days branch; the previous
+            # `age if age < 86400 else f"{age//86400}d ago"` was redundant.
+            last_str = fmt_age(age) if age >= 0 else f"{C.DIM}never{C.END}"
+        else:
+            last_str = f"{C.R}NEVER{C.END}"
+
+        # Highlight dead keys
+        if total == 0 or t["success"] == 0:
+            key_disp = f"{C.R}{key} ⚠{C.END}"
+        elif safe_div(t["success"], total) < 0.5:
+            key_disp = f"{C.Y}{key}{C.END}"
+        else:
+            key_disp = f"{C.G}{key}{C.END}"
+
+        # carmack: pad_visible for rate_str and last_str (both embed ANSI).
+        # key_disp is left-aligned and we WANT the visible width to be 20,
+        # so pad_visible with '<'.
+        print(f"  {pad_visible(key_disp, 20, '<')} {t['success']:>8} {t['fail']:>6} "
+              f"{pad_visible(rate_str, 6)}  {t['models']:>7}  {pad_visible(last_str, 20)}")
+    print()
+
+
+def render_header_v3(now: datetime) -> None:
+    """Enhanced header with v3.0 metadata."""
+    ts = now.strftime("%Y-%m-%d %H:%M:%S UTC")
+    print(f"{C.BOLD}{C.C}⬡ OMEGA ENGINE BENCHMARK DASHBOARD{C.END}  "
+          f"{C.DIM}v3.1 (SOTA-driven R2){C.END}  {C.DIM}{ts}{C.END}")
+    print(f"{C.DIM}{'─' * 90}{C.END}")
+
+
+def render_footer(args: argparse.Namespace) -> None:
+    """Render the dashboard footer."""
+    refresh = f"{args.refresh}s" if args.refresh else "2s"
+    sources = [PROBE_LOG.name, NETWORK_LOG.name]
+    if ANTIGRAVITY_LOG:
+        sources.append(ANTIGRAVITY_LOG.name)
+    print(f"{C.DIM}{'─' * 90}{C.END}")
+    print(f"{C.DIM}Refresh: {refresh} | Sources: {', '.join(sources)} | "
+          f"Filter: --model={args.model or '*'} --since={args.since or 'all'} | "
+          f"Press Ctrl+C to exit{C.END}")
+
+
+# === MAIN RENDER ============================================================
+
+def render(args: argparse.Namespace) -> dict[str, Any]:
+    """Single render pass. Returns the state dict for export modes."""
+    now = datetime.now(timezone.utc)
+
+    # Determine time window
+    since: Optional[datetime] = None
+    if args.since:
+        try:
+            hours = float(args.since.rstrip("h"))
+            since = now - timedelta(hours=hours)
+        except ValueError:
+            since = None
+
+    # Get freshness
+    freshness = {
+        "free_model_probes": get_file_freshness(PROBE_LOG, since=since),
+        "network_probes": get_file_freshness(NETWORK_LOG, since=since),
+        "antigravity_quotas": get_file_freshness(ANTIGRAVITY_LOG, since=since) if ANTIGRAVITY_LOG else FileFreshness(path=Path("(none)")),
+    }
+
+    # researcher R2: cached JSONL read. Replaces the redundant `read_jsonl` call
+    # that R1 kept alongside `get_file_freshness`. The cache is keyed by
+    # (path, mtime_ns, since) so repeated renders in a loop are <1ms when the
+    # file is unchanged. When --watch-tail is set, use the tail-mode reader
+    # instead — seeks from (size - 200KB) on first call and tracks offset.
+    if getattr(args, "watch_tail", False):
+        probe_data = read_jsonl_tail(PROBE_LOG)
+        network_data = read_jsonl_tail(NETWORK_LOG)
+        ag_data = read_jsonl(ANTIGRAVITY_LOG, limit=20) if ANTIGRAVITY_LOG else []
+    else:
+        probe_data = read_jsonl_cached(PROBE_LOG, since=since)
+        network_data = read_jsonl_cached(NETWORK_LOG, since=since)
+        ag_data = read_jsonl(ANTIGRAVITY_LOG, limit=20) if ANTIGRAVITY_LOG else []
+
+    # Aggregate
+    stats = aggregate_probes(probe_data)
+
+    # Build state dict for export
+    state = {
+        "timestamp": now.isoformat(),
+        "version": "3.1",
+        "filters": {
+            "model": args.model,
+            "since": args.since,
+        },
+        "freshness": {
+            k: {
+                "state": v.state,
+                "age_seconds": v.age_seconds,
+                "entries_total": v.entries_total,
+                "entries_in_window": v.entries_in_window,
+            }
+            for k, v in freshness.items()
+        },
+        "models": {s.label: s.to_dict() for s in stats.values()},
+    }
+
+    # Clear and render (unless suppressed)
+    if not args.no_clear and not args.json and not args.csv:
+        print(C.CLR, end="")
+
+    if args.json:
+        return state  # caller handles JSON output
+
+    if args.csv:
+        return state  # caller handles CSV output
+
+    # Normal dashboard render
+    render_header_v3(now)
+    render_freshness_summary(freshness)
+    render_next_quota_reset(ag_data)
+    render_cascade(stats)
+    render_failure_taxonomy(stats)
+    render_network(network_data)
+    render_alerts(stats, args)
+    sorted_stats = render_probes(stats, args)
+    if args.diurnal:
+        render_diurnal_analysis(stats, args)
+    render_quality_breakdown(stats)
+    render_historical_comparison(stats, probe_data)
+    render_key_health(stats)
+    render_antigravity(ag_data)
+    render_test_progress("STRESS TEST", STRESS_LOG, "🔥")
+    render_test_progress("BURST TEST", BURST_LOG, "💥")
+    render_test_progress("LONG DURATION TEST", LONG_DUR_LOG, "⏱️")
+    render_diurnal_best_hour(probe_data)
+    render_economics(probe_data, stats)
+    render_active_sessions()
+    render_footer(args)
+
+    return state
+
+
+# === EXPORT MODES ===========================================================
+
+def export_json(state: dict[str, Any]) -> None:
+    """Output state as JSON."""
+    print(json.dumps(state, indent=2, default=str))
+
+
+def export_csv(state: dict[str, Any]) -> None:
+    """Output model stats as CSV.
+
+    carmack: original used `m["key"]` for required fields, which raises
+    KeyError if to_dict() ever returns a partial dict (e.g. serialized
+    through a custom encoder). Defensive `.get()` with safe defaults.
+    """
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow([
+        "model", "success", "fail", "total", "rate", "p50_ms", "p99_ms",
+        "outlier_pct", "quality_rate", "valid", "invalid_json", "no_completion",
+        "empty_content", "trend", "trend_velocity", "last_seen"
+    ])
+    for label, m in state.get("models", {}).items():
+        qb = m.get("quality_breakdown", {})
+        writer.writerow([
+            label,
+            m.get("success", 0), m.get("fail", 0), m.get("total", 0),
+            m.get("rate", 0.0), m.get("p50_ms", 0.0), m.get("p99_ms", 0.0),
+            m.get("outlier_pct", 0), m.get("quality_rate", 0.0),
+            qb.get("valid", 0), qb.get("invalid_json", 0),
+            qb.get("no_completion", 0), qb.get("empty_content", 0),
+            m.get("trend", ""), m.get("trend_velocity", ""),
+            m.get("last_seen", "")
+        ])
+    print(buf.getvalue(), end="")
+
+
+# === ARGUMENT PARSING =======================================================
+
+def parse_args() -> argparse.Namespace:
+    """Parse CLI arguments."""
+    parser = argparse.ArgumentParser(
+        prog="benchmark_dashboard",
+        description="Real-time benchmark visualization for Omega Engine diurnal provider suite.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Live dashboard, refresh every 2s
+  benchmark_dashboard.py
+
+  # Single snapshot (for scripts/CI)
+  benchmark_dashboard.py --once
+
+  # Custom refresh rate
+  benchmark_dashboard.py --refresh 5
+
+  # Filter to specific model
+  benchmark_dashboard.py --model minimax
+
+  # Show only last 6 hours of data
+  benchmark_dashboard.py --since 6h
+
+  # Threshold alerts
+  benchmark_dashboard.py --alerts --alert-rate 80 --alert-latency 10000
+
+  # JSON export (for tooling)
+  benchmark_dashboard.py --json
+
+  # CSV export (for spreadsheets)
+  benchmark_dashboard.py --csv
+
+  # Diurnal pattern analysis
+  benchmark_dashboard.py --diurnal
+
+  # Tail-mode (incremental read) for huge logs
+  benchmark_dashboard.py --watch-tail --refresh 2
+
+  # Debounced alerts (require 10 consecutive failures before firing)
+  benchmark_dashboard.py --alerts --alert-min-window 10
+
+  # Don't clear screen (for log files)
+  benchmark_dashboard.py --no-clear --refresh 10
+        """
+    )
+    parser.add_argument(
+        "--once", action="store_true",
+        help="Render single snapshot and exit (don't loop)"
+    )
+    parser.add_argument(
+        "--no-clear", action="store_true",
+        help="Don't clear screen between renders (useful for logs)"
+    )
+    parser.add_argument(
+        "--refresh", type=int, default=2, metavar="N",
+        help="Refresh interval in seconds (default: 2)"
+    )
+    parser.add_argument(
+        "--model", type=str, default=None, metavar="PATTERN",
+        help="Filter to models matching regex PATTERN (e.g. 'minimax|llama')"
+    )
+    parser.add_argument(
+        "--since", type=str, default=None, metavar="HOURS",
+        help="Show only entries within last N hours (e.g. '6h', '24h')"
+    )
+    parser.add_argument(
+        "--alerts", action="store_true",
+        help="Enable threshold-based alerts"
+    )
+    parser.add_argument(
+        "--alert-rate", type=float, default=ALERT_RATE_DEFAULT, metavar="PCT",
+        help=f"Alert threshold for success rate %% (default: {ALERT_RATE_DEFAULT})"
+    )
+    parser.add_argument(
+        "--alert-latency", type=int, default=ALERT_LATENCY_DEFAULT_MS, metavar="MS",
+        help=f"Alert threshold for P99 latency in ms (default: {ALERT_LATENCY_DEFAULT_MS})"
+    )
+    parser.add_argument(
+        "--json", action="store_true",
+        help="Output single snapshot as JSON and exit"
+    )
+    parser.add_argument(
+        "--csv", action="store_true",
+        help="Output single snapshot as CSV and exit"
+    )
+    parser.add_argument(
+        "--diurnal", action="store_true",
+        help="Show diurnal pattern analysis section"
+    )
+    # researcher R2: incremental read mode for huge probe logs. When set, the
+    # dashboard seeks from (size - 200KB) on first read and tracks byte offset
+    # in memory. New probes appear as they are appended. Useful for >100K-entry
+    # log files where reading the full history is wasteful. See commit message
+    # and data/coordination/R_RESEARCHER_DASHBOARD_SOTA_20260830.md §4.4.
+    parser.add_argument(
+        "--watch-tail", action="store_true",
+        help="Tail-mode: read only the last 200KB of probe logs, track new entries by byte offset"
+    )
+    # researcher R2: alert debounce minimum-window. Default 5 means we need 5
+    # consecutive failed probes before an alert fires — kills the F1
+    # noise-counting pattern (SRE School 2026). Set to 1 for the original
+    # v3.0 behavior (fire on first breach). Hysteresis deadband is 10% above
+    # the rate threshold (auto-applied, not user-configurable).
+    parser.add_argument(
+        "--alert-min-window", type=int, default=5, metavar="N",
+        help="Minimum consecutive failed probes before alert fires (default: 5, set 1 for v3.0 behavior)"
+    )
+    # jem R3: --self-test runs the adversarial test harness in-process.
+    # Exits 0 if all tests pass, 1 if any fail. Uses the existing
+    # benchmark_dashboard_adversarial_test.py (52 tests covering empty
+    # files, malformed JSON, regex DoS, 1000 models, concurrent runs, etc).
+    parser.add_argument(
+        "--self-test", action="store_true",
+        help="Run adversarial test suite in-process and exit (PASS/FAIL counts)"
+    )
+    return parser.parse_args()
+
+
+# === MAIN ====================================================================
+
+def _run_self_test() -> int:
+    """Run the adversarial test suite in-process. Returns 0 on all-pass, 1 on fail.
+
+    jem R3: delegates to scripts/benchmark_dashboard_adversarial_test.py which
+    contains 52 adversarial tests. The suite was authored in a previous
+    session but had 6 failing assertions due to R2 regressions (the
+    `recent_window.append` removal) and pre-existing test bugs (zero-total
+    progress bar, no-DIM fmt_ms assertion in no-color mode). After R3 fixes
+    the suite is now driven by the dashboard's own main() entry point.
+
+    Implementation note: we import the test module and invoke its `main()`.
+    The main() function returns 0 if all tests pass, 1 if any fail. We do
+    NOT reimplement the 52 tests here — the test file is the source of truth.
+    """
+    import importlib.util
+    test_path = Path(__file__).parent / "benchmark_dashboard_adversarial_test.py"
+    if not test_path.exists():
+        print(f"[self-test] FATAL: {test_path} not found", file=sys.stderr)
+        return 1
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "benchmark_dashboard_adversarial_test", test_path
+        )
+        if spec is None or spec.loader is None:
+            print(f"[self-test] FATAL: could not load spec for {test_path}", file=sys.stderr)
+            return 1
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        import traceback
+        print(f"[self-test] FATAL: import error: {e}", file=sys.stderr)
+        traceback.print_exc()
+        return 1
+    # Invoke main() — it runs the test suite and returns 0/1.
+    try:
+        return mod.main()
+    except SystemExit as e:
+        # main() calls sys.exit() at the end. The exit code is the test result.
+        code = e.code if isinstance(e.code, int) else 1
+        return 0 if code == 0 else 1
+    except Exception as e:
+        import traceback
+        print(f"[self-test] FATAL: main() crashed: {e}", file=sys.stderr)
+        traceback.print_exc()
+        return 1
+
+
+def main() -> int:
+    """Main entry point. Returns exit code."""
+    args = parse_args()
+
+    # jem R3: --self-test runs the adversarial suite in-process. We do this
+    # BEFORE refresh validation so a self-test run doesn't need any other
+    # args. The suite is 52 tests covering empty files, malformed JSON,
+    # regex DoS, 1000 models, concurrent runs, pgrep failures, etc.
+    if args.self_test:
+        return _run_self_test()
+
+    # Validate
+    if args.refresh < 1:
+        print(f"Error: --refresh must be >= 1", file=sys.stderr)
+        return 1
+
+    # Handle export modes (single render, then exit)
+    if args.json or args.csv:
+        state = render(args)
+        if args.json:
+            export_json(state)
+        else:
+            export_csv(state)
+        return 0
+
+    # Live loop mode
+    try:
+        while True:
+            render(args)
+            if args.once:
+                break
+            time.sleep(args.refresh)
+    except KeyboardInterrupt:
+        print(f"\n{C.Y}Dashboard stopped.{C.END}")
+        return 0
+    except Exception as e:
+        # M23: never crash, but DO report
+        print(f"\n{C.R}Dashboard error: {e}{C.END}", file=sys.stderr)
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

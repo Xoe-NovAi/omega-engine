@@ -130,7 +130,7 @@ class ReportDigester:
         Sources:
         1. Mandate tags [M1]-[M23]
         2. Source file paths (src/omega/...)
-        3. Entity references (N1-N10)
+        3. Entity references (S1-S10)
         """
         cross_ref: Dict[str, List[str]] = {}
 

@@ -38,7 +38,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
  cd omega-engine
  ./scripts/install.sh
  
- # 2. (optional) Re-download / verify the default local model (LFM2.5-2.6B Q4_K_M, ~1.67GB)
+ # 2. (optional) Re-download / verify the default local model (Qwen3-1.7B-Q6_K, ~1.6GB)
  # The engine auto-discovers backends — no internet needed after the model is present.
  ./scripts/download_model.sh
  

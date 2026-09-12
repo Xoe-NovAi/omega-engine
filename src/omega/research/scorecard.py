@@ -4,7 +4,7 @@
 
 """
 Ω-Research Scorecard — CLEAR-Pareto Sovereignty Scorecard + AMFO Evaluator
-⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ SCORECARD
+⬡ OMEGA ⬡ LILITH ⬡ S6-S10 ⬡ SCORECARD
 
 Mandate Compliance:
 - M1 AnyIO: All async via AnyIO

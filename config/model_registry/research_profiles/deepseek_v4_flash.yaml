@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# DeepSeek V4 Flash Research Profile
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+profile: "deepseek_v4_flash"
+context_window: 1048576
+reasoning_depth: "deep"
+tool_fidelity: "high"
+guardrails:
+  - "Set explicit scope boundaries upfront"
+  - "Require file references for all claims"
+  - "Time-box reviews to prevent over-analysis"
+failure_signature: "over_analysis"
+shadow_focus: "force_persistence"

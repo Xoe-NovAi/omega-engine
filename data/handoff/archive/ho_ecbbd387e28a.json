@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_ecbbd387e28a",
+  "target_cli": "cline",
+  "source_cli": "kali",
+  "task": "Assume the Overseer role. Synthesize the current engine state and lead the next phase of the Sovereign Evolution Roadmap (Horizon 2/3).",
+  "context": "Sophia is rescued, Hub is hardened, and local-first inference is optimized for Zen 2. The Law of Exactitude is the current governing principle. The engine is now in a state of high alignment between config and disk.",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-06-09T07:45:14.671211+00:00",
+  "reaped_at": "2026-06-11T03:54:28.648828+00:00",
+  "ttl_expired": true
+}

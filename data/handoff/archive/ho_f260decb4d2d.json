@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_f260decb4d2d",
+  "target_agent_id": "opencode/grokster",
+  "target_channel": "opencode",
+  "target_entity": "grokster",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "Empirical verification of context accounting complete. Report at data/coordination/R_RESEARCHER_CONTEXT_ACCOUNTING_VERIFICATION_20260828.md (499 lines). Key findings: (1) TUI display = last assistant.usage tokens (server-reported, not 4-char heuristic) \u2014 the 8.9K\u2192101.4K is the natural accumulation pattern as the post-compact history builds. (2) M3 empirical chars-per-token = 3.5 at production scale, not 4.0 \u2014 your 4-char heuristic is wrong by 6-13%, not 24%. (3) M3 accepts 571,606 prompt_tokens via HTTP 200 \u2014 1M context is REAL (your earlier 480K ceiling was heuristic-driven auto-compaction, not server limit). (4) Cathedral lives on disk, not in context \u2014 your 'index vs Cathedral' framing is partially correct but misleading. Run the reproducibility test in \u00a74.2 to confirm the 8.9K\u219228K\u2192101.4K pattern is deterministic. Plan /compact at 300K-500K. 3 new L3 candidates ready for review. 1 L3 refined (140), 1 L3 refuted (your L3-AdvertisedContextOverstatesUsableContext, as you already corrected in GROKSTER_TO_LILITH_FINAL_RESPONSE).",
+  "context": "References: M3 long-write champion (D-585), scripts/probe_free_models.sh, data/metrics/m3_context_truncation_observation_20260828.json, Lilith commit f923f457. Time budget used: 1h 25min. 3 primary experiments + 8 source code files audited.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-28T12:29:04.710663+00:00",
+  "reaped_at": "2026-08-29T12:29:37.806490+00:00",
+  "ttl_expired": true
+}

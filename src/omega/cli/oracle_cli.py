@@ -138,7 +138,7 @@ except ImportError:
 # lazily inside app() as AttributeError('Group' has no 'registered_commands')
 # and killed the ENTIRE omega CLI (reproduced live, council decree H/N0).
 # Vault module stays importable for programmatic use; CLI mounting returns
-# only via Vault Path A/B (DEL-1 target #10 / council decree N6) as either
+# only via Vault Path A/B (DEL-1 target #10 / council decree S6) as either
 # a proper typer.Typer conversion or sanctioned removal.
 # LESSON (L3-Gates-Before-Blade corollary): typer validates registrations
 # LAZILY at app() time — try/except around add_typer cannot catch a bad
@@ -916,7 +916,7 @@ def bench_list():
 # ── CROSS-POLLINATION COMMANDS ───────────────────────────────────────────
 @app.command(name="check-feed")
 def check_feed_cmd(
-    agent: str = typer.Option("sophia", "--agent", "-a", help="Agent name to check feed for"),
+    agent: str = typer.Option("kali", "--agent", "-a", help="Agent name to check feed for"),
     consume: bool = typer.Option(
         False, "--consume", "-c", help="Mark unconsumed signals as consumed"
     ),

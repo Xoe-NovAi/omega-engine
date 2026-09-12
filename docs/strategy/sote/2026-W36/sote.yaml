@@ -1,0 +1,211 @@
+# SOTE Week 36 Metadata
+# Structured metadata for LLM ingestion and tooling
+
+week: "2026-W36"
+date: "2026-09-01"
+topic: "Entity Cleanup & M11 Soul Integrity"
+sprint: "PUBLIC-DEBUT-01"
+phase: "DEL-1_EXECUTION"
+
+# SOTE report versions
+sote_versions:
+  - "v1.0.0"  # Initial report
+  - "v1.0.1"  # + MaKaLi's 8th voice (§19)
+  - "v1.0.2"  # + Organization strategy (§20)
+
+# Main report
+main_report: "STATE_OF_ENGINE_v1.0.1.md"
+
+# Voices (in paging order)
+voices:
+  - number: 1
+    name: "Roc"
+    session_id: "ses_ff78b71ebffeDNuypPTT1RL3hH"
+    file: "voices/01_ROC.md"
+    focus: "Forensic inventory, 5-gate retirement"
+    decisions: 10
+  - number: 2
+    name: "Grokster"
+    session_id: "ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
+    file: "voices/02_GROKSTER.md"
+    focus: "L3-MetaFrameVerification, M10 14-vs-15"
+    decisions: 5
+  - number: 3
+    name: "Carmack"
+    session_id: "ses_fc8dca39effe3nZJp3QHx81Fy3"
+    file: "voices/03_CARMACK.md"
+    focus: "M2 firewall, VNR WAD, M35, CI gates"
+    decisions: 7
+  - number: 4
+    name: "Lilith"
+    session_id: "ses_fb9721079ffe094GT8MX6a0pXI"
+    file: "voices/04_LILITH.md"
+    focus: "4-tier taxonomy, lifecycle, WatchTower"
+    decisions: 16
+  - number: 5
+    name: "Ma'at"
+    session_id: "ses_fb6cf6856ffes3wd3wmvyrm2IG"
+    file: "voices/05_MAAT.md"
+    focus: "entity_registry.py audit, CI gates, INST-1"
+    decisions: 10
+  - number: 6
+    name: "Researcher"
+    session_id: "ses_fd81c19dcffe1nkbPqFg5kRt2v"
+    file: "voices/06_RESEARCHER.md"
+    focus: "Empirical baseline, M11 remediation, P13"
+    decisions: 7
+  - number: 7
+    name: "Jem"
+    session_id: "ses_019311199ffeuEOgO7DfC7XDWG"
+    file: "voices/07_JEM.md"
+    focus: "50 adversarial tests, 7-signal diagnostic"
+    decisions: 7
+  - number: 8
+    name: "MaKaLi"
+    session_id: "ses_fc758e6ddffeNEKptpEzboVfYq"
+    file: "voices/08_MAKALI.md"
+    focus: "Unifying field, 5 service modes, 5 PIVOT decisions"
+    decisions: 5
+
+# Decision summary
+decisions:
+  total_proposed: 67
+  absorbed_in_pivot_log: 0
+  absorption_rate: 0.0
+  by_voice:
+    Roc: 10
+    Grokster: 5
+    Carmack: 7
+    Lilith: 16
+    Ma'at: 10
+    Researcher: 7
+    Jem: 7
+    MaKaLi: 5
+  sote_process_decisions: 6  # D-SOTE-001 through 006
+  makali_decisions: 5        # D-MAKALI-001 through 005
+
+# Mandate compliance
+mandates:
+  pass: 18
+  warn: 5
+  fail: 5
+  total: 28
+  compliance_pct: 64.3
+  failing:
+    - "M10 Fleet Integrity (14-vs-15 canonical)"
+    - "M11 Soul Integrity (23/46 empty proposed_lessons.yaml)"
+    - "M23 Failure Integrity (email leak, 6/7 agents missed)"
+    - "M16 Modularization (1 hardcoded path)"
+    - "M20 SomaticState (llama_cpp not in test env)"
+
+# Key findings
+top_findings:
+  - "M10 14-vs-15 canonical violation (3.5:1 ratio)"
+  - "M11 Soul Integrity: 23/46 entities with empty proposed_lessons.yaml"
+  - "M23 Failure Integrity: Email leak in fake signature block; 6/7 agents missed"
+  - "M27 Decision Log Chokepoint: 67 decisions in voices, 0 in PIVOT_LOG"
+  - "L3-MetaFrameVerification proposed (Grokster, 0.92)"
+
+# L3 Lessons (this cycle)
+l3_lessons:
+  - id: "L3-MetaFrameVerification"
+    title: "Pre-flight check for spoofable metadata"
+    confidence: 0.92
+    source: "Grokster"
+  - id: "L3-EntityHealthLeadingIndicator"
+    title: "Entity health correlates with session quality"
+    confidence: 0.85
+    source: "Researcher"
+  - id: "L3-ScribeAsM11Custodian"
+    title: "M11 needs dedicated custodian with auto-trigger"
+    confidence: 0.90
+    source: "Researcher"
+  - id: "L3-DocumentedVsActiveEntity"
+    title: "Documented ≠ Active is a failure mode"
+    confidence: 0.92
+    source: "Researcher"
+  - id: "L3-DialecticAsStressTest"
+    title: "Every challenge posed = our job to anticipate"
+    confidence: 1.00
+    source: "Researcher"
+  - id: "L4-SOTE-001"
+    title: "A practice without a cadence doesn't happen"
+    confidence: 0.99
+    source: "MaKaLi"
+  - id: "L4-SOTE-002"
+    title: "A document without a home gets lost"
+    confidence: 0.98
+    source: "MaKaLi"
+  - id: "L4-SOTE-003"
+    title: "An index that isn't regenerated lies"
+    confidence: 0.97
+    source: "MaKaLi"
+  - id: "L4-SOTE-004"
+    title: "A posture that doesn't distinguish leaks"
+    confidence: 0.95
+    source: "MaKaLi"
+  - id: "L4-SOTE-005"
+    title: "A practice that doesn't reflect doesn't learn"
+    confidence: 0.98
+    source: "MaKaLi"
+  - id: "L4-SOTE-006"
+    title: "A dialectic without a mirror flatters itself"
+    confidence: 0.96
+    source: "MaKaLi"
+  - id: "L4-SOTE-007"
+    title: "Diversity matters (Grokster caught M23, 6 didn't)"
+    confidence: 0.99
+    source: "MaKaLi"
+  - id: "L4-SOTE-008"
+    title: "7000 lines without 1 in log = M27 failure"
+    confidence: 1.00
+    source: "MaKaLi"
+
+# Open actions
+open_actions:
+  - "Fix 00_INDEX.md paths (DONE)"
+  - "Create _template/ folder with 3 templates (DONE)"
+  - "Create scripts/regenerate_sote_index.py (DONE)"
+  - "Add sote.yaml per week (THIS FILE)"
+  - "Fix AP token in main report to v1.0.1"
+  - "Add public digest generation"
+  - "Populate _template/ with 3 templates"
+  - "Build scripts/regenerate_sote_index.py (DONE)"
+  - "Align AP token in main report to v1.0.1"
+  - "Commit all fixes"
+
+# SOTE process decisions (proposed)
+sote_decisions:
+  - id: "D-SOTE-001"
+    title: "SOTE Weekly Cadence"
+    status: "proposed"
+    mandate: "M15"
+  - id: "D-SOTE-002"
+    title: "SOTE Folder Structure & Naming"
+    status: "proposed (implemented)"
+    mandate: "M26"
+  - id: "D-SOTE-003"
+    title: "SOTE Master Index & PIVOT_LOG Cross-Walk"
+    status: "proposed (implemented)"
+    mandate: "M27"
+  - id: "D-SOTE-004"
+    title: "SOTE Public/Internal Split + YAML"
+    status: "proposed"
+    mandate: "M8"
+  - id: "D-SOTE-005"
+    title: "Meta-Learning as Mandatory"
+    status: "proposed (implemented)"
+    mandate: "M11"
+  - id: "D-SOTE-006"
+    title: "Unifying Voice (MaKaLi) as Standing Role"
+    status: "proposed"
+    mandate: "M23"
+
+# Next SOTE
+next_sote:
+  week: "2026-W37"
+  date: "2026-09-08"
+  trigger: "Monday 2026-09-08, 06:00 UTC"
+  likely_topic: "DEL-1 Micro-PR 1 execution + M10 resolution + CI gates"
+  owner: "Kali (Oversoul) or designated delegate"
+  hivemind_broadcast: "intent=sote-open"

@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_06c9720dd2ae",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "REVIEW SESSION REPORT: data/coordination/RESEARCHER_SESSION_REPORT_KALI_20260822.md \u2014 Node system deepening results, drift register, pager rulings, and the decision package requiring your ratification (\"Jem runs N11\u2013N13\" PLAN \u00a71 amendment, charters into PLAN \u00a74, amendment batch, doc-correction batch \u00a76B). Architect GO signal then triggers Phase 0 genesis per report \u00a77 runbook.",
+  "context": "Session ses_fd81c19dcffe1nkbPqFg5kRt2v (researcher). Five missions: onboarding \u2192 Node gap analysis (Jem+Roc Council dispatch) \u2192 Sovereign Synthesis (N11/N12/N13 verdict) \u2192 full agent/Node system discovery (16 artifacts, DR-1..12 drift register) \u2192 Jem-N onboarding plan + deep-dive continuation wave. Genesis UNBLOCKED pending \u00a76A ratifications. Held sessions with wake pointers in report \u00a78. Companion artifacts: NODE_GAP_SYNTHESIS_RESEARCHER_20260822.md, AGENT_NODE_SYSTEM_DISCOVERY_MAP_20260822.md (both in data/entities/researcher/workspace/).",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-22T08:18:25.936254+00:00",
+  "accepted_at": "2026-08-22T23:31:37.685943+00:00",
+  "accepted_by": "opencode/kali",
+  "completed_at": "2026-08-22T23:31:50.571694+00:00",
+  "result": "SUPERSEDED-BY-EVENTS \u2014 payload fully processed via A8 sync round (2026-08-22 ~17:30 UTC), formal packet ingestion was delayed. Item-by-item: \u00a76A ratifications ALL DONE (D-587: Jem runs N11-N13 + charters into PLAN \u00a74 + amendment batch). \u00a76B doc corrections ALL DONE (OMEGA_ENGINE hive row removed; MANIFEST v5.0; qwen3-4b-thinking registered in models.yaml same-day; OVERSIGHT_HIERARCHY/LATTICE_NODE_MECHANICS files absent at root = moot). \u00a76C: youtube_worker policy ratified as D-591 (cookieless/transcript-only debut). REMAINING OPEN: Architect GO for Waves 2-3 (Jem-N11 evaluator, Jem-N13 arcana genesis) \u2014 Wave 1 N12 curator already COMPLETE. Held-session wake pointers in report \u00a78 remain valid.",
+  "reaped_at": "2026-08-29T23:34:38.379723+00:00"
+}

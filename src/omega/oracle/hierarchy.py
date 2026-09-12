@@ -70,7 +70,7 @@ class SovereignHierarchy:
         """Get the numeric rank of an entity (0=Root, 3=Keeper) by traversing the hierarchy.yaml.
 
         Ranks:
-            0: The Field (e.g., Sophia)
+            0: The Field (Containing Awareness)
             1: Unification (e.g., Root Entity)
             2: Oversouls / Special Keepers
             3: Nodes
@@ -135,7 +135,7 @@ class SovereignHierarchy:
 
         Rules:
             - Max Depth is 3.
-            - Sophia (Rank 0) has full depth.
+            - Field (Rank 0) has full depth.
             - Ma'at (Rank 1) has depth 2.
             - Oversouls (Rank 2) have depth 1.
             - Keepers (Rank 3) have depth 0 (no subagents).

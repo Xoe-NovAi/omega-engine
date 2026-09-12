@@ -79,7 +79,7 @@ def _get_m34_registry():
 # ── Handoff sub-types ────────────────────────────────────────────────────
 
 PacketType = Literal["request", "response", "delegation", "notification", "broadcast"]
-TaskType = Literal["design", "review", "research", "mine", "verify", "implement"]
+TaskType = Literal["design", "review", "research", "forensic", "mine", "verify", "implement"]
 PacketStatus = Literal["pending", "active", "completed", "stale", "archived"]
 AgentMode = Literal["primary", "subagent"]
 ResolverStrategy = Literal["terminate", "escalate", "fallback", "retry"]
@@ -249,19 +249,34 @@ AgentDescriptor = Dict[str, Any]
 # WAD YAML (config/wads/<iwad>/entities/dispatch.yaml) maps ROLE → entity.
 # These constants are engine architecture, not WAD content (M2-compliant).
 ROLE_CONSTANTS: Dict[str, str] = {
-    "GRAND_OVERSIGHT": "grand_oversight",
-    "BUILD_OVERSOUL": "build_oversoul",
-    "RUNTIME_OVERSOUL": "runtime_oversoul",
-    "N1": "infrastructure",
-    "N2": "persistence",
-    "N3": "engineering",
-    "N4": "integration",
-    "N5": "governance",
-    "N6": "cognition",
-    "N7": "context",
-    "N8": "observability",
-    "N9": "orchestration",
-    "N10": "validation",
+    # Engine Core Governance
+    "GRAND_OVERSIGHT": "grand_oversight",      # Kali
+    "BUILD_OVERSOUL": "build_oversoul",        # Ma'at → S1-S5
+    "RUNTIME_OVERSOUL": "runtime_oversoul",    # Lilith → S6-S10
+    "MESSENGER_BRIDGE": "messenger_bridge",    # Iris (M3)
+    
+    # Proven Slot Keeper
+    "S3_DEDICATED_KEEPER": "s3_dedicated_keeper",  # Carmack
+    
+    # Dispatched Capabilities
+    "LEGACY_MINER": "legacy_miner",
+    "RESEARCH_ORCHESTRATOR": "research_orchestrator",
+    "COUNCIL_ORCHESTRATOR": "council_orchestrator",
+    "COMPLIANCE_GNOSIS": "compliance_gnosis",
+    "HERITAGE_ATTRIBUTION": "heritage_attribution",
+    "DEEP_RESEARCH": "deep_research",
+    
+    # Slot Semantics (Neutral Engineering Terms)
+    "S1": "infrastructure",
+    "S2": "persistence",
+    "S3": "engineering",
+    "S4": "integration",
+    "S5": "governance",
+    "S6": "cognition",
+    "S7": "context",
+    "S8": "observability",
+    "S9": "orchestration",
+    "S10": "validation",
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase B).
@@ -274,7 +289,7 @@ from omega.governance.dispatch_registry import get_dispatch_entities
 def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescriptor]:
     """Build the capability registry from WAD dispatch.yaml at runtime.
 
-    Engine core defines SLOTS (N1-N10, Grand Oversight) and INTERFACES.
+    Engine core defines SLOTS (S1-S10, Grand Oversight) and INTERFACES.
     WADs provide the ENTITIES that fill those slots. No entity names are
     hardcoded in engine code (M2 Firewall compliant).
 
@@ -295,7 +310,7 @@ def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescri
             "purpose": ent.get("purpose", ""),
             "capabilities": ent.get("capabilities", []),
             "domains": ent.get("domains", []),
-            "node_slot": ent.get("node_slot"),
+            "slot": ent.get("slot"),
             "task_tool_type": ent.get("task_tool_type", "general"),
             "owned_files": ent.get("owned_files", []),
             "role": ent.get("role"),

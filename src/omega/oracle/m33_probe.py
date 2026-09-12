@@ -268,7 +268,7 @@ class M33Probe:
         if priority in ("P0", "P1"):
             return True
         # Research/forensic tasks always require write tool (long-form)
-        if task_type in ("research", "forensic", "review", "design"):
+        if task_type in ("research", "forensic", "review", "design", "mine"):
             return True
         return False
 

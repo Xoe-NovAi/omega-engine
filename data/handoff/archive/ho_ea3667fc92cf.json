@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_ea3667fc92cf",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "V-1 Omega-Vault MVP \u2014 Implement KeyVault + FleetOrchestrator + MCP bridge + CLI from R35 spec. Blocks Grok fleet deployment. Owner: Ma'at/P1.",
+  "context": "R35 deliverable complete: docs/research/R_V1_VAULT_IMPL.md (869 lines). Spec includes: VaultCore (Fernet + Argon2id), FleetOrchestrator (16-account pool, ACP bridge), MCP server (vault:// URI), CLI (vault rotate/list/export). Hardware: Ryzen 5700U, ~8GB RAM. Dependencies: None (parallel to P3). Priority: P0 - Phase C hard blocker.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-22T03:29:57.406577+00:00",
+  "accepted_at": "2026-07-22T03:47:33.137517+00:00",
+  "accepted_by": "opencode/maat",
+  "completed_at": "2026-07-23T03:51:25.830686+00:00",
+  "result": "V-1 VaultCore MVP \u2014 DONE. KeyVault credential management with age encryption, MCP bridge, CLI commands.",
+  "reaped_at": "2026-07-30T03:53:45.473710+00:00"
+}

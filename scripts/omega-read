@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Omega Universal Document Reader CLI.
+AP: AP-OMEGA-DOC-READER-CLI-v1.0.0
+⬡ OMEGA ⬡ DOC_READER_CLI ⬡ 2026-07-13
+
+Usage:
+    omega-read <file>              # Read and print to stdout
+    omega-read <file> -o out.txt   # Write to file
+    omega-read --formats           # List supported formats
+    omega-read --version           # Show version
+"""
+
+import sys
+import argparse
+from pathlib import Path
+
+# Add src to path for development
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from omega.doc_reader import read_document, read_document_with_metadata, DocumentReader
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="omega-read",
+        description="Universal Document Reader - reads ANY document format"
+    )
+    parser.add_argument("file", nargs="?", help="Document file to read")
+    parser.add_argument("-o", "--output", help="Write output to file")
+    parser.add_argument("--formats", action="store_true", help="List supported formats")
+    parser.add_argument("--version", action="store_true", help="Show version")
+    parser.add_argument("--metadata", action="store_true", help="Show metadata")
+
+    args = parser.parse_args()
+
+    if args.version:
+        from omega.doc_reader import __version__
+        print(f"omega-read {__version__}")
+        return 0
+
+    if args.formats:
+        reader = DocumentReader()
+        print("Supported formats:")
+        for fmt in reader._readers.keys():
+            print(f"  {fmt}")
+        return 0
+
+    if not args.file:
+        parser.print_help()
+        return 1
+
+    try:
+        if args.metadata:
+            text, meta = read_document_with_metadata(args.file)
+            print(f"Path: {meta.path}")
+            print(f"Format: {meta.format}")
+            print(f"Size: {meta.size_bytes} bytes")
+            print(f"Words: {meta.word_count}")
+            print(f"Chars: {meta.char_count}")
+            if meta.page_count:
+                print(f"Pages: {meta.page_count}")
+            if meta.author:
+                print(f"Author: {meta.author}")
+            if meta.title:
+                print(f"Title: {meta.title}")
+            if meta.created:
+                print(f"Created: {meta.created}")
+            if meta.modified:
+                print(f"Modified: {meta.modified}")
+            if meta.extra:
+                print(f"Extra: {meta.extra}")
+        else:
+            text = read_document(args.file)
+
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(text)
+            print(f"Written to {args.output}", file=sys.stderr)
+        else:
+            print(text)
+
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

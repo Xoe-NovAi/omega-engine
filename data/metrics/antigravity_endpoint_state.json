@@ -1,0 +1,32 @@
+{
+  "ts": "2026-08-28T00:55:04.343936+00:00",
+  "endpoints": {
+    "https://cloudcode-pa.googleapis.com": {
+      "endpoint": "https://cloudcode-pa.googleapis.com",
+      "last_429_at": 0.0,
+      "retry_after_s": 0.0,
+      "last_200_at": 1787878502.195707,
+      "last_check_at": 1787878504.3437374,
+      "consecutive_failures": 2,
+      "health": "healthy"
+    },
+    "https://daily-cloudcode-pa.sandbox.googleapis.com": {
+      "endpoint": "https://daily-cloudcode-pa.sandbox.googleapis.com",
+      "last_429_at": 0.0,
+      "retry_after_s": 0.0,
+      "last_200_at": 0.0,
+      "last_check_at": 0.0,
+      "consecutive_failures": 0,
+      "health": "unknown"
+    },
+    "https://autopush-cloudcode-pa.sandbox.googleapis.com": {
+      "endpoint": "https://autopush-cloudcode-pa.sandbox.googleapis.com",
+      "last_429_at": 0.0,
+      "retry_after_s": 0.0,
+      "last_200_at": 0.0,
+      "last_check_at": 0.0,
+      "consecutive_failures": 0,
+      "health": "unknown"
+    }
+  }
+}

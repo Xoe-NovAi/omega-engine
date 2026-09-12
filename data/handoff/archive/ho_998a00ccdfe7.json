@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_998a00ccdfe7",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Account Rotation Fabric Research \u2014 Phase 0: Rotation Fabric Architecture (15 queries, 15 min)",
+  "context": "CONTEXT: KALI_RESEARCH_PROMPT_20260723.md \u2014 Phase 0 only\n\n## MISSION\nExecute Phase 0 of the 56-account rotation fabric research: Rotation Fabric Architecture (15 queries, 15 min).\n\n## ACCOUNT INVENTORY (GIVEN)\n56 accounts across 7 providers:\n- OpenRouter: 8 (inference, 28+ free models)\n- Google API: 8 (inference, Gemma 4, Gemini 2.5)\n- Antigravity OAuth: 8 (inference, frontier)\n- Grok CLI: 8 (inference, xAI)\n- Cline CLI: 8 (inference, DeepSeek, MiMo)\n- Exa: 8 (sovereign search, neural/academic)\n- Firecrawl: 8 (web scraping, crawl/extract)\n\n## PHASE 0 QUERIES (Execute in order)\n\n### RF-1: Rotation Fabric Architecture (5 queries)\n1. `multi API key rotation proxy LLM provider 2026`\n2. `openrouter-proxy multiple accounts round robin`\n3. `LLM API key rotation load balancing architecture 2026`\n4. `AI gateway multi key rotation fallback`\n5. `circuit breaker proxy key rotation 2026`\n\n### RF-2: Vault FleetOrchestrator Integration (3 queries)\n6. `OpenRouter Management API create multiple keys`\n7. `OpenCode multiple API keys same provider`\n8. `VaultCore API key pool management patterns`\n\n### RF-3: Rate Limit Detection + Retry (2 queries)\n9. `LLM provider 429 detection retry next key`\n10. `circuit breaker proxy key rotation 2026`\n\n### RF-4: OpenCode Multi-Key Config (2 queries)\n11. `opencode.json multiple keys per provider`\n12. `opencode provider array API keys config`\n\n### RF-5: Usage Tracking + Rotation Triggers (2 queries)\n13. `OpenRouter usage tracking per API key`\n14. `Google AI Studio quota per project monitoring`\n\n### G1-17/G1-18: Vault + Architecture (1 query)\n15. `LLM provider fabric architecture 2026`\n\n## DELIVERABLE\nFor each query: findings with source URLs, confidence (HIGH/MEDIUM/LOW), myth-busting, recommendation.\n\n## OUTPUT FORMAT\nMarkdown with: ## Gap [ID]: [Title] \u2192 Findings \u2192 Myth-Busting \u2192 Recommendation\n\n## NEXT PHASE\nAfter Phase 0 complete, I'll dispatch you for Phase 1 (Provider-Specific Rotation, 25 queries).\n\n## CONTEXT FILES\n- KALI_RESEARCH_PROMPT_20260723.md (full 72 queries)\n- KALI_RESEARCH_GUIDE_20260723.md (42 gaps)\n- KALI_SPRINT_PLAN_ARF_20260723.md (sprint plan)",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-23T13:42:29.021303+00:00",
+  "accepted_at": "2026-07-23T14:12:30.261759+00:00",
+  "accepted_by_agent_id": "opencode/researcher",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "researcher",
+  "completed_at": "2026-07-23T14:15:34.760096+00:00",
+  "result": "Phase 0 complete - 15 queries executed. Delivering comprehensive findings for Rotation Fabric Architecture.",
+  "reaped_at": "2026-07-30T14:18:46.092122+00:00"
+}

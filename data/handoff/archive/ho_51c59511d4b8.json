@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_51c59511d4b8",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "N11 TASK SKELETON (G0-2) \u2014 Write contract tests for a2a_transport.py FIRST (M21 Gate Integrity)\n\n**Context**: Carmack ruling: contract tests MUST exist before implementation (M21). a2a_transport.py is the ONLY genuinely missing file in SS-1 (delegation.py and AGENT_REGISTRY.json are overlaps \u2014 DO NOT CREATE).\n\n**Required**:\n1. Create `tests/contract/test_a2a_transport.py` with contract tests covering:\n   - JSON-RPC 2.0 request/response framing\n   - Capability negotiation handshake\n   - Error propagation (typed OmegaError subtypes)\n   - Transport lifecycle (connect, send, recv, close)\n2. Tests must FAIL initially (TDD) \u2014 implementation comes after\n3. Target: stdio transport with pooled connections (not process-per-request)\n\n**Owner**: N11 (Evaluator) \u2014 benchmarking is their domain per R58.\n\n**Dependencies**: G0-1 heritage fix (independent), dispatch verification (#1)\n\n**Reference**: Cline deep review \u00a78 (SS-1 readiness), Carmack R58 benchmark gate (p99<10ms, >5k req/s, <10MB pooled stdio)",
+  "context": "",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-23T00:06:51.820435+00:00",
+  "reaped_at": "2026-08-24T00:11:12.748599+00:00",
+  "ttl_expired": true
+}

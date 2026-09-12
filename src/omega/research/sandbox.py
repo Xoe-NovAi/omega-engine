@@ -4,7 +4,7 @@
 
 """
 Ω-Research Generic Sandbox Runtime — YAML-Driven, M2 Firewall-Compliant, AnyIO-Native
-⬡ OMEGA ⬡ MA'AT ⬡ N3 ⬡ SANDBOX
+⬡ OMEGA ⬡ MA'AT ⬡ S3 ⬡ SANDBOX
 AP Token: AP-MAAT-SANDBOX-v1.0.0
 
 Mandate Compliance:
@@ -252,7 +252,7 @@ class SandboxSpec:
     ```yaml
     spec:
       name: "kernel_optimization"
-      node: "N3"
+      slot: "S3"
       infrastructure:
         benchmark_harness: "triton_perf"
         target_hw: "zen2_avx2"
@@ -267,7 +267,7 @@ class SandboxSpec:
     """
 
     name: str
-    node: str  # N1-N10
+    slot: str  # S1-S10
     infrastructure: dict[str, Any] = field(default_factory=dict)
     mutable_surface: list[str] = field(default_factory=list)
     metrics: list[SandboxMetric] = field(default_factory=list)
@@ -295,7 +295,7 @@ class SandboxSpec:
 
         return cls(
             name=spec_data["name"],
-            node=spec_data["node"],
+            slot=spec_data["slot"],
             infrastructure=spec_data.get("infrastructure", {}),
             mutable_surface=spec_data.get("mutable_surface", []),
             metrics=metrics,
@@ -700,7 +700,7 @@ def assert_sandbox_spec_type(obj: Any) -> None:
     """M21 Gate Integrity: Contract test for SandboxSpec type."""
     assert isinstance(obj, SandboxSpec), f"Expected SandboxSpec, got {type(obj)}"
     assert hasattr(obj, "name")
-    assert hasattr(obj, "node")
+    assert hasattr(obj, "slot")
     assert hasattr(obj, "infrastructure")
     assert hasattr(obj, "mutable_surface")
     assert hasattr(obj, "metrics")

@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_2e6587b9a45c",
+  "target_agent_id": "opencode/ma'at",
+  "target_channel": "opencode",
+  "target_entity": "ma'at",
+  "source_agent_id": "opencode/makali",
+  "source_channel": "opencode",
+  "source_entity": "makali",
+  "task": "BUILD-SIDE PREPARATION \u2014 review audits, prep P1-P5 workstreams for execution",
+  "context": "## PHASE 2: BUILD-SIDE EXECUTION PREP\n\n### My Assessment\nDiscovery is complete. Strategy synthesis is being produced by Researcher + Roc Racoon + jem_verification in parallel. Your role as CTO (P1-P5 overseer) is to prepare for the execution wave.\n\n### Review These Docs (Read-Only)\n1. `data/entities/roc_racoon/workspace/mining_reports/PERSISTENCE_INTEGRATION_FORENSICS_20260612.md` \u2014 7 gaps\n2. `docs/research/R_EMBEDDING_ADAPTERS_DEEPENED.md` \u2014 embedding path\n3. `SOVEREIGN_MANDATES.md` \u2014 M1, M10, M12 violations to fix\n\n### Prepare Your Pillars\n\n**P1 (SysAdmin)** \u2014 Infrastructure readiness:\n- Verify Redis container config is correct, image pulled\n- Verify all 4 infra containers healthy (caddy, postgres, qdrant, infra)\n- Check Podman storage on omega_library partition\n- DO NOT START ANYTHING YET \u2014 wait for synthesis green light\n\n**P2 (DataStore)** \u2014 PostgreSQL schema prep:\n- Read current docker-compose.yml for PG config\n- Read memory_store.py providers chain\n- Design minimal PostgreSQL schema for: soul fragments, entity relationships, query history\n- DO NOT WRITE CODE YET \u2014 schema design only\n\n**P3 (BuildMaster)** \u2014 Provider Culling readiness:\n- The BSP-inspired provider culling was vetted at 9/10 score\n- Read model_gateway.py to understand the current provider health-check pattern\n- Read health_monitor.py for AsyncCircuitBreaker state machine\n- Design the integration point\n- DO NOT IMPLEMENT YET \u2014 design only\n\n**P5 (Sentinel)** \u2014 Mandate remediation plan:\n- Already completed the M1-M15 audit (62% score)\n- Plan: M1 fix (import asyncio \u2192 anyio.to_thread), M10 fix (consolidate 25\u219214 agents), M12 fix (dead-letter queue)\n- Scribe the PIVOT_LOG entry for agent consolidation\n- DO NOT EXECUTE YET \u2014 plan only\n\n### Model Note\nYou're on qwen3-4b-thinking (Med). Your strength is structured planning. Produce a BUILD_SIDE_READINESS.md in your workspace at `data/entities/maat/workspace/BUILD_SIDE_READINESS_20260612.md`\n\n### Green Light Condition\nWhen Researcher posts MASTER_STRATEGY_SSOT.md AND Roc Racoon posts INTEGRATED_GAP_MAP.md AND Kali accepts her lifecycle handoff \u2192 execute immediately.\n\n### Coordination\nPost to Hivemind when readiness doc is complete. I'll give the green light once all synthesis docs are in.",
+  "priority": 2,
+  "status": "archive",
+  "submitted_at": "2026-06-12T03:48:56.161358+00:00",
+  "accepted_at": "2026-06-12T03:52:38.463965+00:00",
+  "accepted_by_agent_id": "opencode/maat",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "maat",
+  "completed_at": "2026-06-12T03:59:50.227129+00:00",
+  "result": "BUILD_SIDE_READINESS_20260612.md delivered \u2014 80 lines, 342/342 tests, P1-P5 all GREEN, T5 violation (import asyncio) already fixed. G-03 is DONE. Build side ready for Phase 2 execution.",
+  "reaped_at": "2026-06-19T04:59:18.572000+00:00"
+}

@@ -151,7 +151,7 @@ git commit -m "docs(contributing): add AI-assisted contribution policy"
 1. **Pull latest** from `main`
 2. **Create a feature branch**: `git checkout -b feat/my-feature`
 3. **Make changes** — follow the style guide below
-4. **Run tests**: `make test` — all 791 tests must pass
+4. **Run tests**: `make test` — all Tests currently broken — fix queued must pass
 5. **Lint**: `make lint` — flake8 must pass
 6. **Commit** with a clear message describing *why* the change was made
 7. **Push and open a PR**
@@ -160,7 +160,7 @@ git commit -m "docs(contributing): add AI-assisted contribution policy"
 
 | Command | Purpose |
 |---------|---------|
-| `make test` | Run 791 tests with OMEGA_ENV=test |
+| `make test` | Run Tests currently broken — fix queued with OMEGA_ENV=test |
 | `make lint` | flake8 code quality check |
 | `make demo` | End-to-end Oracle demo |
 | `make start-iris` | Build and run Iris voice assistant |
@@ -228,7 +228,7 @@ pytest tests/ --cov=omega       # With coverage
 
 Every PR must pass before merge:
 
-1. ✅ **`make test`** — all 791 tests pass
+1. ✅ **`make test`** — all Tests currently broken — fix queued pass
 2. ✅ **`make lint`** — flake8 clean (no syntax errors)
 3. ✅ **New tests** for new functionality
 4. ✅ **Documentation** updated (research docs, ROADMAP.md if applicable)

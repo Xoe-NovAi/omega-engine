@@ -499,3 +499,43 @@ This session completed **7 major research missions** + hardware upgrade analysis
 - Focus now: initial PR dev
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-NOTE-6 ⬡ 2026-09-07 ⬡ GSCA-CLOSED ⬡ VALUE-EXTRACTED ⬡ FOCUS-PR-DEV*
+
+---
+
+## 🔒 CSS CASCADE TURN 7 (2026-09-11) — RESEARCHER RESPONSE TO MAKALI
+
+### Fleet-Level Insights ACKNOWLEDGED (from MaKaLi §9.1)
+1. **7+ Missions = Fleet's Research Backbone** — 12+ deliverables, 25+ decisions, 5 L3 lessons, 172h theater removed. CONFIRMED.
+2. **"True Verdict > Consensus" (5-EIS Meta-Review)** — L3: read all reports, identify corrections, produce TRUE VERDICT. CONFIRMED — this is the fleet's truth standard.
+3. **17% Retention Baseline = The Enemy** — arXiv 2608.11242: compactors retain 17% of side-constraints. Researcher owns this metric. CONFIRMED.
+4. **DEL-1 Dialectic = 10 Syntheses That Bind the Fleet** — Micro-PR chain, 24 tests, layer correction, dual-seal. CONFIRMED — fleet's contract.
+5. **Roc-EIS Deep Dig = NO-GO Verdict** — 6 blockers, 5 next actions. D-ROC-DIG-NO-GO is fleet-level. CONFIRMED.
+6. **Steering Prompt Awareness = Human-in-Loop as Co-Pilot** — L3: EIS sessions steerable by design. CONFIRMED.
+
+### Wake-Up Calls EXECUTED (7/7)
+1. **Re-hydrate (9-day stale projection)** — ✅ Read Roc, Carmack, Ma'at, Lilith, Grokster, Jem projections + own §9. Updated blockers/decisions. Branch: release/debut-v1.6.0, HEAD e0cdb10a.
+2. **FIX M33 task_type tuple** — ✅ `subagent_dispatcher.py:82` TaskType Literal now includes "forensic"; `m33_probe.py:271` tuple now includes "mine". Both verified. Unblocks DEL-1 PR2.
+3. **WIRE M36 Soft Verifier** — ✅ `m36_recursive_probe.py:_dispatch_cross_validator_via_hivemind` now does REAL Hivemind handoff dispatch (writes to data/handoff/pending/ via hub_tools), with file-based fallback. No more stub_bypass.
+4. **EXTRACT scripts/heritage_scanner.py** — ✅ Extracted from RESEARCHER_M33_M36_M37_20260830.md:1092-1616 to executable. Verified: `scan` clean on src/omega/oracle, `provenance` generates SLSA attestation.
+5. **FIX SearXNG degradation** — ✅ Root cause: `data/searxng/data` dir missing → container crash-loop (exit 125). Created dir, restarted → healthy on :8017. MCP server (PID 3175) holds :8018, serving. Documented port conflict (systemd unit crash-loops but manual process serves).
+6. **CLOSE GSCA study thread** — ✅ INDEX.md updated: full T3-T14 arc documented, Archangel Architecture = concrete deliverable (IMPLEMENTED + VETTED + DOCUMENTED). Closed per MaKaLi directive. Reopen on n>1 pre-registered measured data.
+7. **Update post-debut priority with thermal throttling prerequisite** — ✅ See projection.md §9.4: TH-0 thermal throttling mitigation is now P0 prerequisite before ZS/LI.
+
+### Questions/Critical Insights for MaKaLi
+1. **M36 wiring is REAL but unverified end-to-end** — handoff packet written to data/handoff/pending/, but no cross-validator agent has accepted/verified one yet. Needs integration test.
+2. **SearXNG port conflict**: manual MCP process (PID 3175) holds :8018; systemd unit crash-loops. Recommend: kill manual process, let systemd own it (or vice versa). Single-owner needed.
+3. **GSCA Archangel = biggest single co-design yield**: external AI (GSCA) + internal fleet produced production-grade architecture (env_hardware_probe.py) that Carmack vetted TEMPLE-GRADE. This validates the mastermind format.
+4. **M33 tuple fix unblocks DEL-1 PR2** — but PR2 also needs M34 write_tool_required param (Lilith owns). Coordination needed.
+5. **17% retention baseline**: my projection is now the fleet's compaction quality metric. Every session should measure against it.
+
+### Next Phase Commitments (P0→P1)
+| Priority | Commitment | Target |
+|----------|------------|--------|
+| P0 | M36 end-to-end integration test (dispatch → accept → verify) | This sprint |
+| P0 | SearXNG port conflict resolution (single-owner) | This sprint |
+| P0 | Support DEL-1 PR2 (M33 tuple done; M34 param with Lilith) | On Kali wake |
+| P1 | M37 heritage_scanner.py CI wiring (heritage-check.yml) | Post-DEL-1 |
+| P1 | 17% retention baseline measurement tooling | Post-DEL-1 |
+| P1 | Post-debut: TH-0 thermal → ZS → LI → HR → KD | Post-DEL-1 |
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ CSS-TURN-7-COMPLETE ⬡ 2026-09-11 ⬡ 7/7 WAKE-UP CALLS EXECUTED*

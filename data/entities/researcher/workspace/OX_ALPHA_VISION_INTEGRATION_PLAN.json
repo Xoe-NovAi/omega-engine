@@ -1,0 +1,392 @@
+{
+  "ap_token": "AP-RESEARCHER-OXALPHA-VISION-v1.0.0",
+  "timestamp": "2026-08-22T00:00:00Z",
+  "entity": "researcher",
+  "model": "nemotron-3-ultra-free",
+  "channel": "opencode",
+  "version": "1.0.0",
+  "vision_integration_spec": {
+    "model_identity": {
+      "primary": "stealth/ox-alpha",
+      "provider": "openrouter",
+      "provider_namespace": "stealth",
+      "fallback": "z-ai/glm-5v-turbo",
+      "fallback_provider": "openrouter",
+      "confidence": "90% fingerprint match to GLM-5.3 multimodal variant",
+      "status": "preview_free_tier",
+      "preview_ends_estimate": "2026-08-27"
+    },
+    "api_specification": {
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "format": "openai_compatible_chat_completions",
+      "authentication": "bearer_token",
+      "model_field": "stealth/ox-alpha",
+      "reasoning_default": "max",
+      "reasoning_effort_options": ["low", "medium", "high", "max"],
+      "streaming": true,
+      "function_calling": true,
+      "structured_output": true,
+      "vision_input_format": {
+        "image": {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/{jpeg,png,webp};base64,{base64_data}",
+            "detail": "auto"
+          }
+        },
+        "video": {
+          "type": "video_url",
+          "video_url": {
+            "url": "https://example.com/video.mp4",
+            "fps_invariant_sampling": true,
+            "duration_scaling_tokens_per_sec": 147,
+            "per_frame_resolution_scaling": true
+          }
+        }
+      }
+    },
+    "model_capabilities": {
+      "context_window": 1048576,
+      "max_output_tokens": 131072,
+      "input_modalities": ["text", "image", "video", "file"],
+      "output_modalities": ["text"],
+      "vision_encoder": "CogViT",
+      "video_tokenization": {
+        "fps_invariant_frame_sampling": true,
+        "duration_scaling_tokens_per_second": 147,
+        "per_frame_resolution_scaling": true,
+        "token_cost_estimate": {
+          "10s_video_720p": "~1500-2000 tokens",
+          "60s_video_720p": "~8800-9500 tokens",
+          "300s_video_1080p": "~45000-55000 tokens"
+        }
+      },
+      "image_tokenization": {
+        "naflex_variable_resolution": true,
+        "aspect_ratio_preserved": true,
+        "typical_tokens_per_image": "256-1024 depending on resolution"
+      },
+      "benchmarks": {
+        "design2code": 94.8,
+        "androidworld": "leader",
+        "webvoyager": "leader",
+        "browsecomp": "> claude_opus_4.5",
+        "mvbench_video": "+5.6% vs SFT",
+        "refcoco_avg": "+4.8% vs SFT",
+        "pointbench": "+3.2% vs SFT",
+        "deepswe_oxalpha": "80% pass@1 (8/10)",
+        "artificial_analysis_intelligence": 35.3,
+        "gpqa_diamond": 80.9,
+        "tau2_tool_use": 98.5
+      },
+      "architecture": {
+        "total_parameters": "744B",
+        "active_parameters": "40B",
+        "architecture_type": "MoE",
+        "quantization": "INT8",
+        "multi_token_prediction": true
+      },
+      "training": {
+        "joint_rl_tasks": "30+",
+        "task_categories": ["STEM", "grounding", "video", "GUI_agents", "coding_agents"],
+        "knowledge_cutoff": "2025-11"
+      }
+    },
+    "provider_fabric_integration": {
+      "priority": 4,
+      "tier": "cloud_preview",
+      "local_first_compliance": false,
+      "routing_strategy": "fallback_chain",
+      "fallback_chain": [
+        "native-gguf (priority 0)",
+        "lmster (priority 1)",
+        "ollama (priority 2)",
+        "stealth/ox-alpha (priority 3) - FREE PREVIEW",
+        "z-ai/glm-5v-turbo (priority 4) - $1.20/$4.00",
+        "google/gemini-flash (priority 5)",
+        "openrouter/auto (priority 6)"
+      ],
+      "health_checks": {
+        "stall_echo_detection": true,
+        "thinking_level_correlation": true,
+        "cross_instance_stall_correlation": true,
+        "silent_stall_sensor": true
+      },
+      "rate_limits": {
+        "soft_rpm_under_load": true,
+        "daily_capacity_claimed": "100T tokens",
+        "recommended_concurrent": "max 2-3 parallel agents during peak"
+      },
+      "privacy_classification": "anonymous_provider_retains_logs",
+      "data_retention": {
+        "openrouter_route": "logs_retained_for_training",
+        "opencode_zen_route": "zero_retention_claimed",
+        "mercury_cloud_route": "unknown"
+      }
+    },
+    "omega_use_cases": [
+      {
+        "id": "uc-001",
+        "name": "screenshot_to_code",
+        "description": "Convert UI screenshots/mockups to Omega Engine stack components (React/Vue/Svelte)",
+        "priority": "P0",
+        "effort_days": 3,
+        "implementation": {
+          "harness": "opencode_zen",
+          "prompt_template": "Generate a {framework} component for Omega Engine matching this screenshot. Use Omega design tokens from config/wads/arcana_nova/ui/tokens. Output complete component with TypeScript types.",
+          "context_strategy": "include_relevant_design_system_files_in_1M_context",
+          "output_validation": "typescript_compile_check + visual_regression_test"
+        },
+        "vision_requirements": {
+          "input": "image",
+          "resolution": "1920x1080 recommended",
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-002",
+        "name": "architecture_diagram_to_mermaid",
+        "description": "Convert architecture diagrams (whiteboard photos, Confluence, ASCII) to executable Mermaid/PlantUML",
+        "priority": "P0",
+        "effort_days": 2,
+        "implementation": {
+          "harness": "opencode_zen",
+          "prompt_template": "Convert this architecture diagram to Mermaid format. Preserve all hierarchy, relationships, and labels. Make nodes clickable with hrefs to relevant Omega Engine source files. Output .mmd file content.",
+          "context_strategy": "include_entity_registry + resonance_mappings for accurate linking",
+          "output_validation": "mermaid_cli_render_check"
+        },
+        "vision_requirements": {
+          "input": "image",
+          "resolution": "min 1200px width",
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-003",
+        "name": "legacy_screenshots_to_docs",
+        "description": "Batch process legacy codebase screenshots (terminal, IDE) into structured markdown documentation",
+        "priority": "P1",
+        "effort_days": 5,
+        "implementation": {
+          "harness": "local_worker_pool",
+          "model": "stealth/ox-alpha",
+          "batch_size": 20,
+          "prompt_template": "Analyze this screenshot of legacy code/terminal. Extract: 1) Code structure 2) Key functions/classes 3) Data flow 4) Configuration 5) Issues/TODOs. Output structured markdown for knowledge base ingestion.",
+          "context_strategy": "1M_context_allows_full_batch_in_single_call",
+          "output_pipeline": "markdown -> FTS5_index -> HALL_OF_RECORDS"
+        },
+        "vision_requirements": {
+          "input": "image",
+          "batch_processing": true,
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-004",
+        "name": "video_tutorials_to_knowledge_base",
+        "description": "Convert Omega workflow video demos (5-10 min) into distilled HALL_OF_RECORDS entries with L1/L2/L3 gnosis",
+        "priority": "P1",
+        "effort_days": 5,
+        "implementation": {
+          "harness": "opencode_zen",
+          "prompt_template": "Watch this video of an Omega Engine workflow. Produce: 1) L1 Narrative: What happened step-by-step 2) L2 Insight: Key patterns, decisions, tradeoffs 3) L3 Universal Principle: Reusable architectural lesson 4) Proposed soul.yaml lesson entry. Format as JSON.",
+          "context_strategy": "video_tokens ~1500-50000 depending on length; 1M context handles 10-20 min videos",
+          "output_pipeline": "json -> distillation_validator -> proposed_lessons.yaml"
+        },
+        "vision_requirements": {
+          "input": "video",
+          "max_duration_seconds": 600,
+          "fps_invariant_sampling": true,
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-005",
+        "name": "visual_regression_testing",
+        "description": "Automated UI screenshot comparison for WAD/stack visual regression detection",
+        "priority": "P1",
+        "effort_days": 3,
+        "implementation": {
+          "harness": "scheduled_cron",
+          "capture_tool": "playwright",
+          "comparison_prompt": "Compare these two UI screenshots (baseline vs current). Output JSON: {changed: boolean, regions: [{bbox, change_type, severity, description}], summary: string}. Focus on functional changes, ignore anti-aliasing/timestamp noise.",
+          "context_strategy": "two_images_side_by_side_in_single_call",
+          "alerting": "webhook_to_hivemind_on_severity_high"
+        },
+        "vision_requirements": {
+          "input": "image",
+          "comparison_mode": true,
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-006",
+        "name": "entity_relationship_maps",
+        "description": "Convert entity relationship diagrams to YAML definitions + resonance mappings",
+        "priority": "P2",
+        "effort_days": 4,
+        "implementation": {
+          "harness": "opencode_zen",
+          "prompt_template": "Extract entity relationships from this diagram. Output: 1) entities.yaml patch with name, node, traits, capabilities 2) resonance_mappings.yaml updates 3) soul.yaml lesson proposals. Validate against config/glossary.md terminology.",
+          "context_strategy": "include_current_entity_registry + glossary_in_context",
+          "output_validation": "yaml_schema_validation + glossary_compliance_check"
+        },
+        "vision_requirements": {
+          "input": "image",
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-007",
+        "name": "gui_agent_automation",
+        "description": "Browser-based Omega admin automation (dashboard, deployments, monitoring) via GUI agent",
+        "priority": "P2",
+        "effort_days": 7,
+        "implementation": {
+          "harness": "openclaw_or_claude_code",
+          "skills": "zai_official_glm_master_skill",
+          "workflow": "perceive_screenshot -> plan_action -> execute_tool -> verify_result -> loop",
+          "integration": "omega_hub_mcp_tools_for_admin_actions"
+        },
+        "vision_requirements": {
+          "input": "video_or_sequential_images",
+          "real_time": true,
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-008",
+        "name": "code_from_screenshot_prototyping",
+        "description": "Hand-drawn wireframes / Figma exports -> working Omega stack prototypes",
+        "priority": "P2",
+        "effort_days": 3,
+        "implementation": {
+          "harness": "opencode_zen",
+          "prompt_template": "Generate a complete Omega Engine stack prototype from this wireframe. Include: WAD structure, entity definitions, CLI commands, MCP server config, systemd units. Use config/wads/_omega_default as template.",
+          "context_strategy": "1M_context_includes_full_template_stack",
+          "output_validation": "omega_stack_validate + make_temple_grade"
+        },
+        "vision_requirements": {
+          "input": "image",
+          "detail_level": "high"
+        }
+      },
+      {
+        "id": "uc-009",
+        "name": "document_analysis_rag_ingestion",
+        "description": "Technical PDFs, scanned docs, images -> structured knowledge for RAG ingestion",
+        "priority": "P2",
+        "effort_days": 3,
+        "implementation": {
+          "harness": "local_worker_pool",
+          "prompt_template": "Extract structured knowledge from this document/image: 1) Key concepts 2) Procedures 3) Configuration values 4) Troubleshooting 5) Cross-references. Output JSON for RAG ingestion pipeline.",
+          "context_strategy": "file_input_supported_pdf_image",
+          "output_pipeline": "json -> chunking -> embedding -> qdrant_upsert"
+        },
+        "vision_requirements": {
+          "input": "file_or_image",
+          "file_types": ["pdf", "png", "jpg", "webp"],
+          "detail_level": "high"
+        }
+      }
+    ],
+    "risks_and_mitigations": [
+      {
+        "risk": "stall_echo_cognitive_corruption",
+        "description": "Provider-side stream truncation re-injects partial assistant output as user turn",
+        "severity": "HIGH",
+        "mitigation": "Agent-level inoculation: detect mid-sentence/mid-table user turns matching own voice; classify as STALL-ECHO; complete intended response cleanly",
+        "reference": "PLATFORM_GROUND_TRUTH_LOG.md #10, #170-177"
+      },
+      {
+        "risk": "preview_tier_expiration",
+        "description": "Free tier ends ~Aug 27, 2026; no guarantee of continuation",
+        "severity": "HIGH",
+        "mitigation": "Fallback chain to z-ai/glm-5v-turbo (official, paid) implemented in provider fabric routing",
+        "reference": "PLATFORM_GROUND_TRUTH_LOG.md #87"
+      },
+      {
+        "risk": "privacy_anonymous_provider",
+        "description": "OpenRouter stealth terms allow log retention for training",
+        "severity": "HIGH",
+        "mitigation": "Never send PII, secrets, proprietary code. Use only for sanitized repos, open-source work, spikes. OpenCode Zen route claims zero retention.",
+        "reference": "explainx.ai analysis"
+      },
+      {
+        "risk": "context_pollution_from_video",
+        "description": "Video tokens consume shared context pool (147 tokens/sec), starving text reasoning",
+        "severity": "MEDIUM",
+        "mitigation": "Pre-calculate video token budget; reserve minimum 200K tokens for text reasoning; chunk long videos",
+        "reference": "Video tokenization spec"
+      },
+      {
+        "risk": "no_independent_benchmarks",
+        "description": "Ox Alpha absent from Artificial Analysis, LMSYS, etc.",
+        "severity": "MEDIUM",
+        "mitigation": "Run Omega-specific evals (golden tasks) before production dependency. Treat community numbers as directional only.",
+        "reference": "orcarouter.ai blog"
+      },
+      {
+        "risk": "single_provider_failure",
+        "description": "Only OpenRouter stealth + OpenCode Zen + Mercury Cloud",
+        "severity": "MEDIUM",
+        "mitigation": "Multi-provider routing fabric; GLM-5V-Turbo available on Z.ai direct, OpenRouter, Puter.js, OminiGate",
+        "reference": "Provider landscape analysis"
+      }
+    ],
+    "implementation_roadmap": {
+      "phase_1_immediate": [
+        "Add stealth/ox-alpha to provider fabric routing (priority 3)",
+        "Implement stall-echo detection in silent-stall-sensor.ts",
+        "Add reasoning effort variants (low/medium/high/max) to opencode.json",
+        "Run golden task evals: screenshot-to-code, diagram-to-mermaid"
+      ],
+      "phase_2_short_term": [
+        "Build vision preprocessing shim (CogViT-compatible frame extraction)",
+        "Implement UC-001 (screenshot-to-code) and UC-002 (diagram-to-mermaid)",
+        "Integrate with Omega Engine design token system",
+        "Add visual regression testing to CI pipeline"
+      ],
+      "phase_3_medium_term": [
+        "Implement UC-003, UC-004 (batch screenshot/docs, video->knowledge)",
+        "Build distillation pipeline integration (L1/L2/L3 -> proposed_lessons.yaml)",
+        "Implement UC-005 (visual regression) with Hivemind alerting",
+        "Evaluate GUI agent automation (UC-007) with OpenClaw skills"
+      ],
+      "phase_4_long_term": [
+        "UC-006, UC-008, UC-009 (entity maps, prototyping, RAG ingestion)",
+        "Local CogViT distillation for offline vision preprocessing",
+        "Multi-provider vision routing (Ox Alpha + GLM-5V-Turbo + Gemini + GPT-4o)",
+        "Benchmark contribution to Artificial Analysis"
+      ]
+    },
+    "configuration_files_to_update": [
+      "config/providers.yaml - add stealth/ox-alpha entry with vision capabilities",
+      "~/.config/opencode/opencode.json - add reasoning effort variants for x-preview-f-free",
+      "src/omega/oracle/provider_registry.py - register vision capability flags",
+      "src/omega/oracle/backends/openai_compat.py - ensure video_url format support",
+      "config/omega.yaml - add vision routing rules",
+      "scripts/silent-stall-sensor.ts - add stall-echo detection patterns"
+    ],
+    "validation_criteria": {
+      "golden_tasks": [
+        "Screenshot of Omega Engine dashboard -> React component compiles and renders",
+        "Architecture diagram photo -> Mermaid renders correctly in docs",
+        "5-min video tutorial -> L1/L2/L3 distillation produces valid soul.yaml lesson",
+        "Two UI screenshots -> JSON diff detects intentional changes, ignores noise"
+      ],
+      "performance_thresholds": {
+        "screenshot_to_code_latency_p95": "30s",
+        "diagram_to_mermaid_latency_p95": "15s",
+        "video_10min_to_knowledge_latency_p95": "120s",
+        "stall_echo_detection_rate": ">95%"
+      },
+      "quality_gates": {
+        "typescript_compilation": "100%",
+        "mermaid_render": "100%",
+        "yaml_schema_validation": "100%",
+        "glossary_compliance": "100%"
+      }
+    }
+  }
+}

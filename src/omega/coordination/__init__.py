@@ -7,7 +7,7 @@
 """Coordination primitives for multi-instance agent orchestration.
 
 MIAP (Multi-Instance Agent Protocol) retired 2026-08-24 (DEL-1 4b,
-MaKaLi council N4) — zero importers verified across src/tests/scripts.
+MaKaLi council S4) — zero importers verified across src/tests/scripts.
 Live coordination runs through the omega-hub MCP Hivemind (file-based
-handoffs, locks, awareness) per the N4 decree.
+handoffs, locks, awareness) per the S4 decree.
 """

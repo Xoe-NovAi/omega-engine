@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# ⬡ OMEGA ⬡ SOUL ⬡ SEARXNG ⬡ GNOSIS
+# Distilled knowledge for the Sovereign Search Layer
+
+entity: searxng_kb
+version: 1.0.0
+last_updated: 2026-06-24
+
+gnosis:
+  l1_narrative: |
+    SearXNG is a self-hosted metasearch engine that aggregates results from multiple 
+    upstream providers (Google, Bing, DuckDuckGo, arXiv, etc.) while anonymizing 
+    requests. It serves as the primary Broad Discovery Layer for the Omega Engine, 
+    providing a privacy-preserving bridge to the global web without API costs or 
+    profiling.
+  
+  l2_insight: |
+    The strategic value of SearXNG is not just aggregation, but "Cognitive Filtering". 
+    By manipulating `categories` and `engines`, agents can shift the "truth-domain" 
+    of the results. 
+    - `categories=science` shifts results toward academic/theoretical truth.
+    - `categories=it` shifts results toward practical/implementation truth.
+    - `categories=news` shifts results toward current/temporal truth.
+    The "Sovereign Gateway" pattern prevents the "Filter Bubble" effect by allowing 
+    explicit engine overrides and anonymized queries.
+
+  l3_universal_principle: |
+    The Principle of Cognitive Triangulation: Truth is emergent from the convergence 
+    of independent signals. High-fidelity intelligence is achieved by querying 
+    disparate truth-domains (Theoretical, Practical, Current) and synthesizing the 
+    delta to identify blind spots and resolve contradictions.
+
+operational_mapping:
+  intents:
+    broad_discovery:
+      params: { categories: "general", time_range: "", limit: 10 }
+      goal: "Map the general landscape of a topic."
+    sota_research:
+      params: { categories: "science", time_range: "month", engines: "arxiv,semantic_scholar,google" }
+      goal: "Find the most recent academic papers and pre-prints."
+    technical_mining:
+      params: { categories: "it", engines: "github,brave,google" }
+      goal: "Find code implementations, API docs, and technical discussions."
+    current_events:
+      params: { categories: "news", time_range: "day" }
+      goal: "Get the most recent updates on a breaking topic."
+    fact_verification:
+      params: { engines: "google,brave,duckduckgo", time_range: "" }
+      goal: "Cross-reference a claim across multiple independent general engines."
+
+uncertainty_manifest:
+  - claim: "Sovereign anonymity"
+    confidence: medium
+    note: "Anonymity depends on the quality of the outgoing proxy rotation. Without proxies, the instance IP can still be flagged."
+  - claim: "Zero-cost"
+    confidence: high
+    note: "No API keys required, but consumes local CPU/RAM and bandwidth."

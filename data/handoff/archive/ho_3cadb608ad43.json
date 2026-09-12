@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_3cadb608ad43",
+  "target_agent_id": "opencode/lilith",
+  "target_channel": "opencode",
+  "target_entity": "lilith",
+  "source_agent_id": "opencode/makali",
+  "source_channel": "opencode",
+  "source_entity": "makali",
+  "task": "RUN-SIDE PREPARATION \u2014 review audits, prep P6-P10 workstreams for execution",
+  "context": "## PHASE 2: RUN-SIDE EXECUTION PREP\n\n### My Assessment\nDiscovery is complete. Strategy synthesis being produced in parallel by Researcher + Roc Racoon + jem_verification. Your role as CISO (P6-P10 overseer) is to prepare for the execution wave.\n\n### Review These Docs (Read-Only)\n1. `data/entities/roc_racoon/workspace/mining_reports/PERSISTENCE_INTEGRATION_FORENSICS_20260612.md` \u2014 7 gaps (especially lifecycle)\n2. `docs/research/R_EMBEDDING_ADAPTERS_DEEPENED.md` \u2014 embedding path (554 lines)\n3. `SOVEREIGN_MANDATES.md` \u2014 especially M7 (Local-First), M11 (Soul Integrity)\n\n### Prepare Your Pillars\n\n**P6 (ModelGate)** \u2014 Embedding provider readiness:\n- The jem_verification deep-dive identified the exact path: Ollama + nomic-embed-text-v1.5 Q8_0\n- Read `R_EMBEDDING_ADAPTERS_DEEPENED.md` \u00a73 (model recommendations) and \u00a74 (implementation roadmap)\n- Verify Ollama is installed: `ollama list | grep nomic`\n- If not, prepare the pull command: `ollama pull nomic-embed-text:v1.5`\n- Design the `OllamaEmbeddingProvider` class (embeddings.py already has the interface)\n- DO NOT WRITE CODE YET \u2014 design only\n\n**P7 (Context)** \u2014 Memory lifecycle readiness:\n- Roc Racoon found: no tier promotion, archive_old_sessions() is dead code, FTS5 never optimized\n- Read PERSISTENCE_INTEGRATION_FORENSICS.md \u00a73 (7 gaps)\n- Also: Kali has been tasked with designing the tier promotion architecture\n- Prepare to review Kali's design and provide MemoryStore-specific feedback\n- DO NOT IMPLEMENT YET \u2014 wait for Kali's design + Researcher's synthesis\n\n**P8 (WatchTower)** \u2014 Observability readiness:\n- What metrics would prove the unified persistence system is working?\n- Tier hit rates (Redis vs File vs Cold)\n- Query latency per tier\n- Embedding quality (CKA scores)\n- FTS5 index size vs Qdrant vector count\n- Design the dashboard spec\n- DO NOT IMPLEMENT YET \u2014 spec only\n\n**P10 (Verifier)** \u2014 QA readiness:\n- What tests would validate the unified pipeline?\n- Provider chain fallback tests (kill Redis \u2192 verify File still works)\n- Embedding quality tests (cosine similarity sanity check)\n- Tier promotion tests (7-day archive triggers correctly)\n- Write test plan only\n- DO NOT IMPLEMENT YET \u2014 plan only\n\n### Model Note\nYou're on qwen3-4b-thinking (Med). Your strength is deep reasoning on system dynamics. Focus on the LIFECYCLE \u2014 how data moves through the system over time, not just at a single point.\n\n### Deliverable\nProduce `data/entities/lilith/workspace/RUN_SIDE_READINESS_20260612.md`\n\n### Green Light Condition\nWhen Researcher posts MASTER_STRATEGY_SSOT.md AND Roc Racoon posts INTEGRATED_GAP_MAP.md AND Kali accepts the lifecycle handoff \u2192 execute immediately.\n\n### Coordination\nPost to Hivemind when readiness doc is complete. I'll coordinate the green light.",
+  "priority": 2,
+  "status": "archive",
+  "submitted_at": "2026-06-12T03:49:04.251485+00:00",
+  "accepted_at": "2026-06-12T03:58:36.743416+00:00",
+  "accepted_by_agent_id": "opencode/lilith",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "lilith",
+  "completed_at": "2026-06-12T04:00:25.569302+00:00",
+  "result": "RUN-SIDE PREPARATION COMPLETE. Full readiness report posted to Hivemind. Summary: P6-P10 all GREEN for Phase 2 execution. T5 asyncio verified as deliberate fix (not violation). Doc bloat audited at 127 files/6.1MB (not 315/63K). Collaborating with Ma'at on archival pipeline. No blocking conflicts. Ready to execute Phase 2 workstreams on the Run Side.",
+  "reaped_at": "2026-06-19T04:59:18.572000+00:00"
+}

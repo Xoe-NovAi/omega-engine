@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_601d6cb9f687",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "DEEP WEB DISCOVERY: OpenCode compaction best practices. Search for: 1) OpenCode /compact command documentation, 2) Compaction model selection strategies (different model for compaction vs active), 3) Compaction prompt engineering / shaping techniques, 4) Any community patterns for enriching compaction summaries, 5) Comparison with other tools (Claude Code, Cursor, etc.) compaction approaches. Use web search with queries like \"opencode compact command\", \"opencode compaction model\", \"opencode compaction prompt\", \"LLM conversation compaction best practices\".",
+  "context": "Strategic question from Architect: Can we use different compaction model? How to enrich /compact summaries? How to fuse /compact + projection.md into synergistic system? Need deep web discovery on OpenCode compaction best practices, compaction model selection strategies, compaction prompting techniques.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-29T16:40:54.171009+00:00",
+  "reaped_at": "2026-08-30T16:44:39.274123+00:00",
+  "ttl_expired": true
+}

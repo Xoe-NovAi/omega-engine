@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # 🔱 MandateAuditor — M1-M23 Compliance Verification
-# ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
+# ⬡ OMEGA ⬡ NODE-S10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
 # AP: AP-MANDATE-AUDITOR-v1.0.0
 """Sovereign Mandate Auditor — Core Engine Module.
 
@@ -88,7 +88,7 @@ class MandateAuditor:
         )
 
     def check_m3_iris_constant(self) -> None:
-        """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Node slot (N1-N10)."""
+        """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Slot (S1-S10)."""
         from omega.ics import ROLE_CONSTANTS
         import yaml
 
@@ -149,10 +149,10 @@ class MandateAuditor:
             role = ent.get("role")
             if role == ROLE_CONSTANTS["MESSENGER_BRIDGE"]:
                 # This is the Iris entity - check if it has a Node slot
-                node_slot = ent.get("node_slot")
-                if node_slot is not None and str(node_slot).startswith("N"):
+                slot = ent.get("slot")
+                if slot is not None and str(slot).startswith("S"):
                     iris_in_node = True
-                    violations.append(f"WAD entity '{ent.get('name')}' has Node slot: {node_slot}")
+                    violations.append(f"WAD entity '{ent.get('name')}' has Slot: {slot}")
 
         self._check(
             "M3",

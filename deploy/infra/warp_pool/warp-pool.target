@@ -1,0 +1,9 @@
+[Unit]
+Description=Omega Engine Cloudflare WARP Namespace Pool Coordinator
+After=network.target
+Wants=warp-ns-prep@1.service warp-reg@1.service warp-node@1.service socat-bridge@1.service \
+      warp-ns-prep@2.service warp-reg@2.service warp-node@2.service socat-bridge@2.service \
+      warp-ns-prep@3.service warp-reg@3.service warp-node@3.service socat-bridge@3.service
+
+[Install]
+WantedBy=multi-user.target

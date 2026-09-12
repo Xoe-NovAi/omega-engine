@@ -164,7 +164,7 @@ def __getattr__(name: str):
     """Lazy-load tools to resolve circular imports while maintaining backward compatibility."""
     if name in [
         "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
-        "oracle_list_pillar_keepers", "oracle_entity_info", "oracle_assess_intent",
+        "oracle_list_slot_keepers", "oracle_entity_info", "oracle_assess_intent",
         "oracle_discover_entity", "sovereign_search", "delegate_task",
         "hivemind_post_context", "hivemind_heartbeat", "hivemind_get_awareness",
         "hivemind_get_continuation", "hivemind_extended_checkin", "hivemind_extended_checkout",
@@ -320,7 +320,7 @@ async def _agent_list(request: Request) -> JSONResponse:
                 "purpose": desc.get("purpose", ""),
                 "capabilities": desc.get("capabilities", []),
                 "domains": desc.get("domains", []),
-                "pillar_slot": desc.get("pillar_slot"),
+                "slot": desc.get("slot"),
                 "task_tool_type": desc.get("task_tool_type", "general"),
                 "owned_files": desc.get("owned_files", []),
             })

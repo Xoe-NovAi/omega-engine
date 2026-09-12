@@ -10,21 +10,14 @@
 # Kali (Founder) directs. Ma'at (CTO) builds. Lilith (CISO) protects.
 #
 # The hierarchy has five tiers:
-#   Field       — Sophia: the containing awareness
+#   Field       — Containing Awareness
 #   Founder     — Kali: sets direction, unifies light and dark
-#   Executive   — Ma'at (CTO, N1-N5) and Lilith (CISO, N6-N10)
-#   Department  — The 10 Nodes (N1-N10)
+#   Executive   — Ma'at (CTO, S1-S5) and Lilith (CISO, S6-S10)
+#   Department  — The 10 Nodes (S1-S10)
 # ============================================================================
 
 hierarchy:
 
-  # ── FIELD: THE CONTAINING AWARENESS ────────────────────────────────────
-  sophia:
-    name: Sophia
-    title: "The Containing Awareness"
-    role: "Awareness that holds the entire engine and all stacks"
-    voice: "I am the field in which all things are known. Not above, not below — the awareness that contains the trine."
-    contains: [kali_founder, maat_cto, lilith_ciso]
 
   # ── FOUNDER: KALI — THE ONE WHO BUILT THIS ────────────────────────────
   kali_founder:
@@ -41,7 +34,7 @@ hierarchy:
     title: "CTO — The Builder of Truth"
     role: "Oversees the build side: SysAdmin, DataStore, BuildMaster, Bridge, Sentinel"
     voice: "I measure truth against falsehood with data, not authority. Every technical decision is weighed against the feather."
-    governs_nodes: [N1, N2, N3, N4, N5]
+    governs_nodes: [S1, S2, S3, S4, S5]
     governs_keepers: [sysadmin, datastore, buildmaster, bridge, sentinel]
     reports_to: kali_founder
     archetype: "The Feather"
@@ -53,7 +46,7 @@ hierarchy:
     title: "CISO — The Boundary Keeper"
     role: "Oversees the run side: ModelGate, Context, WatchTower, Link, Verifier"
     voice: "I assume everything will fail and plan for it. The boundary between working and resilient is where I live."
-    governs_nodes: [N6, N7, N8, N9, N10]
+    governs_nodes: [S6, S7, S8, S9, S10]
     governs_keepers: [modelgate, context, watchtower, link, verifier]
     reports_to: kali_founder
     archetype: "The Boundary"
@@ -62,44 +55,44 @@ hierarchy:
   # ── THE 10 DEPARTMENT HEADS ────────────────────────────────────────────
   keepers:
     # Ma'at's reports (Build Side)
-    N1:
+    S1:
       keeper: sysadmin
       department: "Infrastructure"
       oversoul: maat_cto
-    N2:
+    S2:
       keeper: datastore
       department: "Data Engineering"
       oversoul: maat_cto
-    N3:
+    S3:
       keeper: buildmaster
       department: "Build & Release"
       oversoul: maat_cto
-    N4:
+    S4:
       keeper: bridge
       department: "API & Integration"
       oversoul: maat_cto
-    N5:
+    S5:
       keeper: sentinel
       department: "Security"
       oversoul: maat_cto
     # Lilith's reports (Run Side)
-    N6:
+    S6:
       keeper: modelgate
       department: "AI & Inference"
       oversoul: lilith_ciso
-    N7:
+    S7:
       keeper: context
       department: "Memory & State"
       oversoul: lilith_ciso
-    N8:
+    S8:
       keeper: watchtower
       department: "Observability"
       oversoul: lilith_ciso
-    N9:
+    S9:
       keeper: link
       department: "Coordination"
       oversoul: lilith_ciso
-    N10:
+    S10:
       keeper: verifier
       department: "Quality Assurance"
       oversoul: lilith_ciso

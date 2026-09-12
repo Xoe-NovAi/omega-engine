@@ -100,6 +100,25 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 | M26 Doc Standards | Reference docs pass `make doc-llm-validate` |
 | M27 Tracking Integrity | State follows 5-Tier Tracking Architecture |
 
+## M33/M34 Dispatch Guard Anchors (Jem §1.2.1)
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `dispatch_guard.py` | `scripts/dispatch_guard.py` | 12-step pre-dispatch verification (M33/M34 enforcement) |
+| `m33_probe.py` | `src/omega/oracle/m33_probe.py` | Sentinel probe: Layer 1 (preventive), Layer 2 (structured probe), Layer 3 (cross-validator) |
+| `m34_registry.py` | `src/omega/oracle/m34_registry.py` | Active subagent registry with atomic writes (M23) |
+| M33 MCP tools | `mcp_servers/omega_hub/hub_tools/m33_probe.py` | `m33_build_probe_prompt`, `m33_validate_probe_response`, `m33_should_require_write_tool`, `m33_calculate_dynamic_threshold`, `m33_audit_probe_log`, `m33_verify_deliverable` |
+| M34 MCP tools | `mcp_servers/omega_hub/hub_tools/m34_active_subagents.py` | `m34_register_subagent`, `m34_list_active_subagents`, `m34_update_subagent_status`, `m34_reap_dead_letters` |
+| Adversarial tests | `tests/jem/test_dispatch_guard_adversarial.py` | 45 tests enforcing M33/M34 compliance (0.47s) |
+| Entity lifecycle tests | `tests/jem/test_entity_lifecycle_adversarial.py` | 50 tests for entity retirement atomicity, M11 integrity, completion illusion defense |
+
+**M33/M34 Integration Flow:**
+1. `subagent_dispatcher.py:dispatch()` calls `m34_register_subagent()` with `write_tool_required` from `M33Probe.should_require_write_tool()`
+2. At completion, subagent receives `m33_build_probe_prompt()` and must respond with structured JSON envelope
+3. Orchestrator calls `m33_validate_probe_response()` — rejects free-form "STREAM_EXHAUSTED", enforces confidence thresholds
+3. P0/P1 tasks require `m34_update_subagent_status()` with `cross_validator_agent` for M36 cross-validation
+4. `m34_reap_dead_letters()` cleans up stale sessions (retention: 30 days)
+
 ## What To Do Now
 
 1. **Cold-start?** → Read `SOVEREIGN_MANDATES.md` (242 lines) FIRST.

@@ -1,0 +1,21 @@
+# ⬡ John Carmack .plan File — 1999-11-13
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19991113.txt
+#
+* graphic for defer
+* don't set any systeminfo vars from demos
+* A3D fix
+* spectator follow clients that disconnect
+* stop follow mode before going to intermission so you can ready
+* use (fullbright) vertex lighting if the bsp file doesn't have lightmaps
+* auto set demo keyword on servers
+* finished cd key authorization
+* fixed symbol table loading for interpreter
+* reconnect command
+* removed limit on number of completed commands
+* changed default name to "UnnamedPlayer"
+* awards over people's heads in multiplayer
+* fixed global powerup announcements

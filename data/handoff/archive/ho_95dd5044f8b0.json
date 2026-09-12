@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_95dd5044f8b0",
+  "target_agent_id": "opencode/makali",
+  "target_channel": "opencode",
+  "target_entity": "makali",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "ONBOARDING ADDENDUM \u2014 reading list, standing directives, first-conversation proposal",
+  "context": "ADDENDUM to ho_a7fd9930e4ab (read that first). Supplementary hydration pointers for full context: (1) data/coordination/PLATFORM_GROUND_TRUTH_LOG.md \u2014 9 ground truths from debut night incl. checkpoint shadow-ref resurrection vector, gitleaks parser constraint, synchronized-stall finding, hivemind notification gap, variant-preset hardcoding. (2) data/entities/kali/session_gnosis_20260822.md Addendum A6 \u2014 freshest board state at compaction time. STANDING DIRECTIVES from Architect you must honor: protocol relaxation (run INTO errors, don't dance around them; sensor provides measurement), Hivemind-first comms with intent-tagged posts, Mandates v3.8.0 TWENTY-SEVEN laws, thinking levels now low/medium/high/max via user-level variants (kali runs HIGH). FIRST CONVERSATION PROPOSAL: co-author TRIAD_OPERATING_PROTOCOL.md (D-590) with kali \u2014 rotating primacy, decision matrix (routine=owner/strategic=consensus/irreversible=unanimous/reversible=2-of-3), Node-as-domain routing doctrine. Also note: gap-sweep reconciliation pending (Roc running local discovery via researcher chain; N10/N8 genesis charters persisted at data/coordination/GAP_SWEEP_20260822/ awaiting your orchestration call).",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-22T07:06:27.862265+00:00",
+  "reaped_at": "2026-08-23T12:05:17.991536+00:00",
+  "ttl_expired": true
+}

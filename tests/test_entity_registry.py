@@ -64,9 +64,9 @@ def test_list_entities(temp_config):
     assert entities[0].name == "TestEntity"
 
 
-def test_list_node_keepers(temp_config):
+def test_list_slot_keepers(temp_config):
     registry = EntityRegistry(config_path=temp_config)
-    keepers = registry.list_node_keepers()
+    keepers = registry.list_slot_keepers()
     assert len(keepers) == 1
 
 

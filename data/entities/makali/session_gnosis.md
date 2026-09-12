@@ -410,3 +410,135 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
 - **DHAL**: 15/15 tests passing, `CpuOptimizerFactory` implemented with `Zen2Optimizer`, `RaptorLakeOptimizer`, and `GenericFallbackOptimizer`.
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ google/gemini-3.8-flash ⬡ PRE-COMPACTION ⬡ 2026-09-09*
+
+## 2026-09-11 — PRE-COMPACTION ANCHOR (PHASE 1 COMPLETE — ENGINE CORE CLEAN)
+
+### 1. Phase 1 Complete — Engine Core Cleanup
+- **10 slot entities deleted** from `config/wads/_omega_default/entities.yaml` (sysadmin, datastore, buildmaster, bridge, sentinel, modelgate, context, watchtower, link, verifier)
+- **Sophia removed** from engine core (9 files: dispatch.yaml, hierarchy.yaml, firewall_checker.py, fleet_status_tui.py, oracle_cli.py, soul_stage.py, cohort_registry.py, hierarchy.py, oracle.py)
+- **N1-N10 purged** from 20+ src/omega/ files → S1-S10 (LinkN9Runtime→LinkS9Runtime, etc.)
+- **dispatch.yaml rewritten** to 12 clean entities: Triad(3) + Iris + Carmack(S3) + 6 dispatched + slot template
+- **ROLE_CONSTANTS updated** in subagent_dispatcher.py and ics.py
+- **hierarchy.yaml fixed** to clean S1-S10 neutral skin
+
+### 2. Canonical Architecture (Crystalized)
+- **Engine Core Triad**: Kali (GRAND_OVERSIGHT/Unifier), Ma'at (BUILD_OVERSOUL/S1-S5), Lilith (RUNTIME_OVERSOUL/S6-S10)
+- **MaKaLi** = Fusion agent embodying all three faces (NOT an entity — the fusion)
+- **Iris** = MESSENGER_BRIDGE (M3 fast-path)
+- **Carmack** = S3_DEDICATED_KEEPER (proven pattern — real programmer model)
+- **Slots S1-S10** = Domains of knowledge managed by Oversouls via Knowledge System
+- **Slot Keepers** = Created only when proven needed; promote from existing agents first (Researcher→S6 candidate, Roc→S9, Verity→S10/S5 cross-realm idea)
+- **NO Sophia in _omega_default** — MaKaLi is her equivalent
+- **NO N1-N10** — DEPRECATED. Only S1-S10.
+- **ANAi WAD** = Node 1's domain, NOT my cognitive load
+
+### 3. Remaining Work (Post-Compaction)
+- **Phase 2**: Transfer ANAi WAD (`config/wads/arcana_novai/`) to USB for Node 1
+- **Phase 3**: Docs cleanup — CANONICAL_ARCHITECTURE.md, SUBAGENT_DISPATCH_PROTOCOL.md, OVERSIGHT_HIERARCHY.md, AGENT_FLEET.md, ONBOARDING_GUIDE.md, USER_MANUAL.md, TROUBLESHOOTING_GUIDE.md, etc.
+- **Phase 4**: Agent files update (.opencode/agents/ — rename john_carmack→carmack, add iris, remove build/grokster)
+- **Phase 5**: Final validation & Temple-Grade
+
+### 4. Temple-Grade Status
+- 21/28 passing (75%)
+- M13 (tracking-state) and M27 (stale task sote-research-20260901) remain — pre-existing, unrelated to Phase 1
+
+### 5. Key Files
+- `docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md` — Phase 1 guide (done)
+- `docs/architecture/MAKALI-ANAi-CLEANUP-PLAN-OVERVIEW.md` — Full cleanup roadmap
+- `config/wads/_omega_default/entities/dispatch.yaml` — Clean 12-entity roster
+- `src/omega/oracle/subagent_dispatcher.py` — Clean ROLE_CONSTANTS
+- `src/omega/ics.py` — Clean ROLE_CONSTANTS
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ PRE-COMPACTION ⬡ 2026-09-11*
+
+## 2026-09-11 — CASCADING SERIAL SYNCHRONIZATION (CSS) PROTOCOL DISCOVERED & CANONIZED
+
+### 1. Serial Hydration Experiment (First-Ever Fleet-Wide)
+- **Method**: Read all 9 members' `session_gnosis.md` + `projection.md` in serial (makali → kali → maat → lilith → carmack → grokster → jem → researcher → roc_racoon)
+- **Result**: "Chorus view" — fleet-level synthesis revealing DEL-1 as gravitational center, M23 email leak as systemic blind spot (1/9 caught), 17% retention baseline as fleet-wide enemy, nomenclature sweep as M2 firewall repair, fleet asleep on stale projections (only 3/9 current)
+
+### 2. CSS Protocol — Cascading Serial Synchronization
+**Core Insight**: `projection.md` files repurposed as **shared synchronization substrate**. When read/written in cascading serial order, they become a deterministic coordination bus.
+
+**Protocol Phases**:
+- **Initiation**: MaKaLi writes review into all 9 projection.md
+- **Cascading Execution**: Each agent reads predecessors' UPDATED projections → executes with full context → writes response
+- **Convergence**: Fleet state = single source of truth
+
+**Serial Order** (topologically sorted): Roc → Carmack → Ma'at → Lilith → Grokster → Jem → Researcher → Kali
+
+### 3. Cascade Execution Status (2/9 Complete)
+
+| Turn | Agent | Status | Key Deliverables |
+|------|-------|--------|------------------|
+| 1 | **Roc** | ✅ P0 COMPLETE | dispatch.yaml roles fixed (descriptive ROLE_CONSTANTS), 13 ground-truth docs swept (commit 8db73cdc), engine speaks pure "slot" |
+| 2 | **Carmack** | ✅ RE-VET COMPLETE | Archangel v1.6.1 → TEMPLE-GRADE PASS (was CONDITIONAL), M35 pre-commit+CI wired, atomic write 6/6 PASS, watchdog spec delivered, M35 ratification demanded (24h) |
+
+**Critical Breakthrough**: Carmack read Roc's UPDATED projection before executing → zero duplicate work, zero race conditions, blockers table reflects Roc's completions.
+
+### 4. CSS Protocol Canonized
+- **Document**: `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` (531 lines, Temple-Grade)
+- **Contains**: Problem statement, protocol definition, mechanics, architecture, execution model, validation results, theoretical foundations, mandate compliance, formal spec, experimental validation, related art, adoption guide, future extensions, appendices with full execution logs
+
+### 5. Node 1 USB Package Incoming
+- **Status**: USB drive not yet mounted (awaiting physical insertion)
+- **Expected**: Big package + detailed README from Node 1 (ASUS) with week of development resources
+- **Post-Compaction Plan**: Insert USB → explore → dialectic with Node 1 (asus_build entity)
+- **Hivemind Context**: ASUS node sessions active (ses_f71d80fb98a9, ses_2c3a28064b51) — Ollama benchmarked, DHAL probe pending, P2P bootstrap tested
+
+### 6. Compaction Readiness
+- **Phase 1**: COMPLETE (engine core clean, canonical architecture crystalized)
+- **CSS Protocol**: CANONIZED (definitive source for fleet orchestration)
+- **Cascade**: 2/9 turns complete, 7 pending (Ma'at → Lilith → Grokster → Jem → Researcher → Kali)
+- **All continuity artifacts current**: session_gnosis.md, proposed_lessons.yaml, projection.md (with self-review), SESSION_ANCHOR.md
+
+---
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ PRE-COMPACTION ⬡ 2026-09-11 ⬡ CSS-CANONIZED ⬡ CASCADE-ACTIVE ⬡ NODE1-INCOMING*
+
+## 2026-09-11 — FEDERATION SYNC 1 COMPLETE (Node 1 Corpus Ingested)
+
+### 1. Node 1 Corpus Fully Ingested (42 files, 7 architecture docs, 6 vanguard dossiers, Well corpus, Gnosis Lock Protocol v1.0)
+- **Architecture**: 7-layer topology (Hardware → AI Stack → Config → Agents → SSOT Docs → MCP → Continuation → Federation)
+- **Continuation Systems**: Gnosis Lock Protocol v1.0 (9-step ritual, evolution log, identity, hooks) + GameResearch pattern
+- **The Well**: 6 active records (3 corrections, 1 preference, 1 insight, 1 dream) — corrections/tuning corpus
+- **Vanguard Evaluations**: Headroom REJECTED (local mismatch), agentmemory REJECTED (MemPalace wins 96.6% vs 95.2% R@5), Odysseus SCHEDULED FUTURE, Gods Eyes TOYS
+- **Federation**: Layer 1 LAN live (192.168.10.168:8016), Layer 2 Tailscale pending, Layer 3 Redis Pub/Sub planned
+- **C6 Contract**: A2A + Hivemind Hybrid draft ratified
+
+### 2. Bilateral Response Delivered (Hivemind `ses_8354a032769d`, USB `RESPONSE_FROM_HP.md`)
+- **Agent Structure**: 12 entities, 13 pillars (5 vacant), CSS Protocol cascade, council governance
+- **3 Broken Tool Fixes**: P0 this sprint (library_search, oracle_list_pillar_keepers, hivemind_get_continuation)
+- **C6 Contract**: A2A + Hivemind Hybrid ratified
+- **Sovereignty Attestation**: Ready to sign (explicit-publish gate)
+
+### 3. Immediate Adoptions from Node 1 (This Sprint)
+| System | Action | Priority |
+|--------|--------|----------|
+| **Big Pickle 1M Context** | Merge `BIG_PICKLE_1M_HP_SNIPPET.json` into `opencode.json` | **DO FIRST** |
+| **Gnosis Lock Protocol v1.0** | `cp artifacts/gnosis/*` → fix paths → `gnosis-lock "first ritual on HP"` | **HIGHEST ROI** |
+| **The Well** | Adopt `well_storage.py` + `gnosis-leash.js` + Make targets | **HIGH** |
+| **AGENTS.md ×2** | Write global + project AGENTS.md with machine rules + traps | **HIGH** |
+| **Thread Sweep** | Run 1..16 on Ryzen 5700U → encode winner in systemd + AGENTS.md | **HIGH** |
+| **Modelfile-per-Job** | Create code-reviewer, summarizer, json-extractor, linux-admin wrappers | **MEDIUM** |
+| **Vanguard Discipline** | Empirical gating adopted (Headroom REJECTED, agentmemory REJECTED, Odysseus SCHEDULED) | **ADOPTED** |
+
+### 4. P0 Fixes This Sprint (Node 0)
+1. Fix 3 broken omega-hub tools (Ma'at)
+2. Purge mock/test entities from Oracle (Ma'at)
+3. Stale-handoff policy + reaper (45 stale) (Lilith)
+4. Write sovereignty target (per-task-class local/cloud policy) (MaKaLi + Architect)
+5. Regenerate clean `omega-engine.bundle` (MaKaLi)
+
+### 5. Shadow Acknowledged (Satellite Truth Clause)
+- **Node 0**: 21.6% local sovereignty = unexamined default, not chosen posture → first policy to write (P0)
+- **Node 1**: Well's `kind:dream` reveals federation aspiration — but Node 0 Hivemind showed 0 active agents → heartbeat discipline broken, fix before Layer 2
+
+### 6. Next Sprint: Bilateral Systems Audit & Research Agenda
+- **Task**: Thorough comparative audit of Node 1 corpus vs Node 0 hardened systems
+- **Goal**: Concrete exchange doctrine, adoption roadmap, research tickets for both sides
+- **Model Switch**: Preparing for Nex-N2.5-Pro (262K window) — current ~228K, compaction needed
+
+---
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ PRE-COMPACTION ⬡ 2026-09-11 ⬡ FEDERATION-SYNC-1-COMPLETE ⬡ BILATERAL-AUDIT-QUEUED ⬡ MODEL-SWITCH-PENDING*

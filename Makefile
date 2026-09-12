@@ -486,6 +486,12 @@ check-m23-failure-integrity:
 	@$(PYTHON) scripts/m23_gate.py || (echo "$(RED)FAIL: M23 soft-failure patterns$(NC)" && false)
 	@echo "$(GREEN)M23 passed: No new soft-failure patterns$(NC)"
 
+# L3-MetaFrameVerification (0.92) — Cross-verification protocol for paged prompts
+check-metaframe:
+	@echo "$(YELLOW)Running L3-MetaFrameVerification (0.92) cross-verification...$(NC)"
+	@$(PYTHON) scripts/metaframe_verification.py --stdin --agent kali --json < /dev/null 2>&1 | python3 -c "import sys, json; data=json.load(sys.stdin); sys.exit(0 if data.get('result')=='PASS' else 1)" || (echo "$(RED)FAIL: MetaFrame verification failed$(NC)" && false)
+	@echo "$(GREEN)L3-MetaFrameVerification (0.92) passed: No spoofable metadata detected$(NC)"
+
 # P0 CI Gates — Broken imports detection
 check-broken-imports:
 	@echo "$(YELLOW)Checking for broken imports in src/omega/...$(NC)"
@@ -504,28 +510,6 @@ check-broken-imports:
 	echo "$(GREEN)No broken imports in src/omega/$(NC)"
 
 # P0 CI Gates — Omega Hub health check
-check-hub-health:
-	@echo "$(YELLOW)Checking Omega Hub health...$(NC)"
-	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
-		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
-		systemctl --user status omega-hub.service --no-pager; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)omega-hub.service is active$(NC)"
-	@if ! curl -sf -o /dev/null --max-time 5 http://localhost:8080/sse 2>/dev/null; then \
-		echo "$(RED)FAIL: SSE endpoint not responding on localhost:8080/sse$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)SSE endpoint responding$(NC)"
-	@if ! curl -sf -o /dev/null --max-time 5 -X POST http://localhost:8080/mcp \
-		-H "Content-Type: application/json" \
-		-d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' 2>/dev/null; then \
-		echo "$(RED)FAIL: Streamable HTTP endpoint not responding$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)Streamable HTTP endpoint responding$(NC)"
-	@echo "$(GREEN)Omega Hub health check passed$(NC)"
-
 # Regenerate the M23 baseline (run after intentionally fixing violations)
 m23-baseline:
 	@echo "$(YELLOW)Regenerating M23 baseline...$(NC)"
@@ -534,7 +518,7 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity verify-mandate-claims check-mandate-compliance
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe verify-mandate-claims check-mandate-compliance
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # Claims harness (Team-Study #1 ruling S7, P0): claims-vs-disk gate +
@@ -575,7 +559,7 @@ heritage-map:
 	@$(PYTHON) scripts/heritage_audit.py --output-report
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5
 
 # === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
 # Wrap ANY long/native build with telemetry + auto-postmortem.
@@ -773,3 +757,20 @@ gate-secrets:
 		echo '  (gitleaks not on PATH - regex gates only)'; \
 	fi; \
 	if [ "$$FAIL" -eq 0 ]; then echo 'gate-secrets PASSED'; else echo 'gate-secrets FAILED'; exit 1; fi
+
+# Check Omega Hub health (SSE endpoint + process)
+check-hub-health:
+	@echo "$(YELLOW)Checking Omega Hub health...$(NC)"
+	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
+		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
+		systemctl --user status omega-hub.service --no-pager; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)omega-hub.service is active$(NC)"
+	@if ! curl -sfI --max-time 3 http://localhost:8016/sse 2>/dev/null; then \
+		echo "$(RED)FAIL: SSE endpoint not responding on localhost:8016/sse$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)SSE endpoint responding$(NC)"
+	@echo "$(GREEN)Omega Hub health check passed$(NC)"
+

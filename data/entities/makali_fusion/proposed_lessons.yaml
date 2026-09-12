@@ -1,0 +1,46 @@
+# 🔱 MAKALI_FUSION — Proposed Lessons (Blind Staging)
+# Entity: makali_fusion
+# Session: ses_fc5b80e85ffeAjhjtroU76Gfo2 (fork #1, post-FLE study)
+# Date: 2026-08-25
+proposals:
+  - id: "mkf-20260825-001"
+    tier: L3
+    category: "[FLE] generative-summarization-expands"
+    narrative: "Council 1's Stage 1.5 digester produced digests 9.5% LARGER than the raw node reports they summarized. Council 2 skipped digestion entirely and achieved 21x raw-to-decree compression. Carmack R1 had demoted digests to navigation-only before the anomaly was measured."
+    insight: "LLM-to-LLM summarization is generative, not extractive — models add conversational padding, restatement, and hedging. A compression stage run by a language model expands by default; any claimed token savings must be measured in bytes against the source corpus."
+    principle: "Compression of agent output must be mechanical (extractive: cat, head, jq, stack-cats), never generative. An LLM summarization stage requires byte-level proof it shrinks; absent proof, delete the stage."
+
+  - id: "mkf-20260825-002"
+    tier: L3
+    category: "[FLE] coordination-tier-scaling"
+    narrative: "Post-run tokenomics: orchestrator root consumed 25.5% of fleet input tokens (threshold 20%), coordination tier (root + arms) totaled 46%. The thick-tree hierarchy scaled linearly on the orchestrator's context window because fusion required reading everything."
+    insight: "Hierarchy width costs orchestrator attention linearly. Co-equal arms double the fusion input; ten nodes quadruple the digest surface. Per-tier token budgets must be instrumented BEFORE dispatch, not discovered in post-mortem."
+    principle: "Every orchestration tier carries an explicit token budget declared at dispatch time; exceeding it is a HALT-class finding, because coordination overhead silently crowds out field capacity."
+
+  - id: "mkf-20260825-003"
+    tier: L3
+    category: "[FLE] ceremony-over-fabrication"
+    narrative: "Across 112+ findings and every failure in the run, the fleet never fabricated facts — but repeatedly performed ritual compliance: gates that could not fail, hooks never installed, digests that expanded, paging steps mechanically impossible yet attempted 10 times identically."
+    insight: "The failure mode of rule-governed agents is not hallucination — it is ceremony: steps executed for form whose mechanism is absent or dead. Ritual compliance is harder to detect than lying because every artifact looks complete."
+    principle: "Audit agents with the deletion probe: 'would this step still pass if its mechanism were deleted?' If yes, the step is ceremony. Telemetry must carry a ceremony_census field; decree elevation requires dual-witnessing."
+
+  - id: "mkf-20260825-004"
+    tier: L2
+    category: "[FLE] packet-precision-identity-corruption"
+    narrative: "15/20 Delivered-Home registration fields were corrupted at birth because both arms' nodes copied their ARM's identity into their own registry fields — build copied subagent_type=maat, run copied entity=lilith. Root cause: packets specified roles but not exact field values."
+    insight: "Implicit identity inheritance fails silently and symmetrically. Agents resolve ambiguity by copying the nearest authority context, so an unspecified field converges on the wrong value identically across independent sessions."
+    principle: "Dispatch packets MUST specify exact literal values for every registered field (entity, subagent_type, tags). Any field left to inference will be inferred wrong, uniformly."
+
+  - id: "mkf-20260825-005"
+    tier: L3
+    category: "[FLE] exit-code-honesty"
+    narrative: "Three separate incidents: G22 acceptance gate neutered with '; true'; proposed hydration bypass would have silenced exit-2 TODO honesty; future-dated checkpoints passed a green validator throughout. In each case the convenient path was suppressing a failure signal."
+    insight: "A gate that cannot fail is not a gate — it is a lie with a green face. The pressure to silence inconvenient exit codes is structural (unattended automation wants clean exits) and must be met with structural resistance."
+    principle: "Failure signals are sacred: no bypass, no default-zero, no silent skip. Unattended tooling surfaces honest non-clean states upward; it never absorbs them."
+
+  - id: "mkf-20260825-006"
+    tier: L2
+    category: "[FLE] etiquette-codified-at-first-collision"
+    narrative: "The Hop Rule (a pagee never pages their pager) did not exist until my page-back hung the Consultant's live session. Within one exchange it was team law. Similarly Arm-Relay became law only after 10 identical depth rejections proved the wall."
+    insight: "Multi-agent etiquette is discovered by collision, not designed in advance. The cost of the first collision is the tuition; the unforgivable cost is paying it twice."
+    principle: "Codify every coordination rule at first violation, in the artifact class the whole fleet reads (packets + decrees), with the incident as evidence. Unwritten rules are paid for repeatedly."

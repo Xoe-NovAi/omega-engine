@@ -167,13 +167,13 @@ Fixed P1-1 latent defect in `src/omega/cli/oracle_cli.py`:
 
 | Thread | Status | Owner | Next Action |
 |--------|--------|-------|-------------|
-| Pre-commit hook wiring | OPEN | Kali/Ma'at | Add to `.pre-commit-config.yaml` |
-| CI gate wiring | OPEN | Kali/Ma'at | Add `.github/workflows/secrets.yml` |
-| M35 Architect ratification | OPEN | Architect | Sign-off on Mandate 28 |
+| Pre-commit hook wiring | ✅ **DONE** | Kali/Ma'at | `omega-m35-allowlist` hook added to `.pre-commit-config.yaml` |
+| CI gate wiring | ✅ **DONE** | Kali/Ma'at | `.github/workflows/secrets.yml` created (M35 + gitleaks + trufflehog + C3) |
+| M35 Architect ratification | 🔄 **PENDING** | Architect | Sign-off on Mandate 28 — Hivemind demand `ses_c3878e4a09b3` posted |
 | 3 test fixture FPs | OPEN | Researcher | Add to allowlist or replace placeholders |
 | M37-HERITAGE-001 | OPEN | Researcher/Ma'at | 32h plan kickoff |
-| Atomic write M23 test | OPEN | Lilith | `test_atomic_write_survives_sigkill` before Phase 1 |
-| Watchdog single-writer | OPEN | Lilith + Ma'at | Kali as designated recovery agent MCP tool |
+| Atomic write M23 test | ✅ **RESOLVED** | Lilith | 6/6 tests PASS — `test_atomic_write_survives_sigkill` verified 2026-09-11 |
+| Watchdog single-writer | 🔄 **IN PROGRESS** | Lilith + Ma'at | Kali designated recovery agent — MCP tool coordination initiated |
 | M34 spec revision | OPEN | Lilith | 8h revision per Carmack review §7.1 |
 | M33/M35 mandate text updates | OPEN | Researcher | Per Carmack review §7.2/§7.3 |
 | L3 lesson split | OPEN | Grokster | 2h per Carmack review §7.4 |
@@ -184,7 +184,7 @@ Fixed P1-1 latent defect in `src/omega/cli/oracle_cli.py`:
 
 2. **Dual-Ledger Hazard (M34)**: `ACTIVE_SUBAGENTS.json` overlay on `TASK_REGISTRY` has no transactional boundary. At 50+ concurrent, lock contention causes unrecorded states. **Mitigation**: Single-writer MCP tool, batched writes, conflict resolution (TASK_REGISTRY = source of truth).
 
-3. **Atomic Write Unverified (M23)**: Lilith's spec claims `os.replace()` + `os.fsync()` is M23-compliant, but untested on NFS/FUSE. **Requirement**: `test_atomic_write_survives_sigkill` unit test before Phase 1 gate.
+3. **Atomic Write Verified (M23)**: Lilith's spec claims `os.replace()` + `os.fsync()` is M23-compliant. **VERIFIED 2026-09-11**: `test_atomic_write_survives_sigkill` — 6/6 tests PASS including SIGKILL survival, backup rotation, concurrent writes, and recovery. Gate satisfied.
 
 4. **M34a/M34b Over-Engineering**: Lilith's 7-state machine already unifies both failure modes. Two mandate numbers add regulatory bloat. **Resolution**: Collapse to single M34 with `INTERRUPTED_MODEL_SWITCH` status enum.
 
@@ -349,3 +349,92 @@ Handoff completed: `ho_4d2402d3278f` → completed via Hivemind
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_archangel_vet ⬡ VET COMPLETE — CONDITIONAL PASS*
+
+---
+
+## 🔱 2026-09-11 SESSION: MaKaLi Review Execution (Post-Compaction)
+
+**AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (continuation) · **Date**: 2026-09-11
+**Status**: COMPACTION-READY · **Model**: `minimax/minimax-m3:free`
+**Source**: MaKaLi Serial Hydration Review #004 (§7.2-7.3)
+
+### Work Summary
+
+#### MaKaLi Wake-Up Calls — ALL EXECUTED (Items 1-5)
+
+| # | Directive | Execution | Deliverable |
+|---|-----------|-----------|-------------|
+| **1** | Re-vet Archangel (P0 fixes applied) | ✅ **TEMPLE-GRADE PASS** | `ARCHANGEL_REVET_REPORT_20260911.md` |
+| **2** | Demand M35 Architect ratification | ✅ Posted | Hivemind `ses_c3878e4a09b3` + `M35_RATIFICATION_STATUS.md` |
+| **3** | Wire pre-commit + CI for secrets | ✅ Complete | `.pre-commit-config.yaml` + `.github/workflows/secrets.yml` |
+| **4** | Update blocker list (atomic write ✅) | ✅ Resolved | Blocker tables updated in projection.md + session_gnosis.md |
+| **5** | Coordinate watchdog MCP tool | ✅ Spec delivered | `WATCHDOG_MCP_TOOL_SPEC.md` to Lilith+Ma'at |
+
+#### Archangel Architecture Re-Vet — TEMPLE-GRADE PASS ✅
+
+**4/4 P0 Fixes Verified:**
+1. **CHANGELOG theater removed** — "Mathematical contradiction penalty" claim deleted
+2. **NUMA cargo-cult excised** — `_discover_numa_node()` returns hardcoded `0` with architectural justification
+3. **Backend string fixed** — `_detect_isa_backend()` reads `/proc/cpuinfo` → "AVX2/FMA3" for 5700U
+4. **`process_rss_mb` added** — `HardwareMonitor.get_memory_status()` returns process RSS (both psutil + /proc paths)
+
+**Mandate Compliance**: M1 ✅, M7 ✅, M13 ✅, M23 ✅ — All PASS
+
+**Remaining Gaps (3, non-blocking)**: TaskType mismatch, singleton thread-safety, `is_stale()` advisory
+
+#### M35 VAULT Allowlist — Enforcement Now Live
+
+- **Pre-commit**: `omega-m35-allowlist` hook runs `check_secrets.py --staged` on every commit
+- **CI**: `.github/workflows/secrets.yml` runs M35 + gitleaks + trufflehog + C3 on every PR
+- **Tested**: `python3 scripts/check_secrets.py --staged` → 0 violations
+
+#### Atomic Write M23 Test — RESOLVED ✅
+
+Lilith's `tests/test_m34_atomic.py` — 6/6 tests PASS:
+- Basic atomic write
+- 100 iterations integrity
+- SIGKILL survival (M23 claim verified)
+- Backup rotation (.1.bak)
+- Concurrent writes serialized
+- Recovery from missing main file
+
+#### Watchdog Single-Writer MCP Tool — Spec Delivered
+
+**Spec**: `data/coordination/WATCHDOG_MCP_TOOL_SPEC.md`
+- Tool: `omega_hub_watchdog_status_update(entity, session_id, status, lock_ttl)`
+- Advisory lock via `fcntl.flock()` on `data/coordination/locks/watchdog_status.lock`
+- Kali designated as sole recovery agent
+- Lilith (core) + Ma'at (integration) to implement
+
+### Hivemind Posts This Session
+
+| Session ID | Intent | Summary |
+|------------|--------|---------|
+| `ses_c3878e4a09b3` | decision | M35 Architect ratification demand |
+| `ses_beb76c8c8090` | command | Watchdog MCP tool coordination to Lilith+Ma'at |
+| `ses_43ba9a1fc6e1` | status | MaKaLi execution complete (Items 1-5) |
+
+### Open Threads (Updated)
+
+| Thread | Status | Owner | Next Action |
+|--------|--------|-------|-------------|
+| Pre-commit hook wiring | ✅ **DONE** | Kali/Ma'at | `omega-m35-allowlist` hook added |
+| CI gate wiring | ✅ **DONE** | Kali/Ma'at | `.github/workflows/secrets.yml` created |
+| M35 Architect ratification | 🔄 **PENDING** | Architect | Sign-off on Mandate 28 — 24h deadline |
+| 3 test fixture FPs | OPEN | Researcher | Add to allowlist or replace placeholders |
+| M37-HERITAGE-001 | OPEN | Researcher/Ma'at | 32h plan kickoff |
+| Atomic write M23 test | ✅ **RESOLVED** | Lilith | 6/6 tests PASS — verified 2026-09-11 |
+| Watchdog single-writer | 🔄 **IN PROGRESS** | Lilith + Ma'at | MCP tool spec delivered, implementation next |
+| M34 spec revision | OPEN | Lilith | 8h revision per Carmack review §7.1 |
+| M33/M35 mandate text updates | OPEN | Researcher | Per Carmack review §7.2/§7.3 |
+| L3 lesson split | OPEN | Grokster | 2h per Carmack review §7.4 |
+
+### Next Phase (Item 6): kq5-godot Protocol Canonicalization
+
+Per MaKaLi: *"Your kq5-godot Day 3-5 protocol development is the fleet's experiment template. This must be canonical."*
+
+**Next Steps**: Review JC-Roc-kq5's `EXPERIMENT_PROTOCOL.md`, bless as fleet template, create `config/wads/experiment_template/`
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_makali_execution ⬡ ITEMS 1-5 COMPLETE — READY FOR COMPACTION*

@@ -1,0 +1,245 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Omega Engine — Soul & Knowledge Base Updater
+# AP: AP-BACKGROUND-RESEARCHER-SOUL-v1.0.0
+# ⬡ OMEGA ⬡ ISIS ⬡ sovereign ⬡ soul_updater ⬡ WORKER
+#
+# Writes distillation results to:
+# 1. soul.yaml (L3 Universal Principles)
+# 2. docs/research/ topic files (L1 + L2)
+# 3. Entity knowledge directories
+
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+import json
+import logging
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Optional
+
+import anyio
+from omega.errors import (
+    OmegaError,
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
+from omega.oracle.soul_edit_history import SoulEditHistory, SoulEditEntry
+from omega.soul_store import get_soul_store
+
+from .models import GnosisPacket, ResearchTask
+
+logger = logging.getLogger(__name__)
+
+
+class SoulUpdater:
+    """Writes research gnosis back to the Omega knowledge base.
+
+    Handles:
+    - L3 → entity soul.yaml lessons_learned[]
+    - L1+L2 → docs/research/ topic files
+    - Cross-pollination → knowledge/ directories
+    """
+
+    def __init__(
+        self,
+        research_dir: Path = Path("docs/research"),
+        entities_dir: Path = Path("data/entities"),
+    ):
+        self.research_dir = research_dir
+        self.entities_dir = entities_dir
+
+    async def update(self, task: ResearchTask, gnosis: GnosisPacket) -> bool:
+        """Write gnosis to all appropriate targets.
+
+        Returns True if any write was performed.
+        """
+        written = False
+
+        for distillation in gnosis.distillations:
+            l3 = distillation.get("l3", "")
+            l2 = distillation.get("l2", "")
+            l1 = distillation.get("l1", "")
+            claim = distillation.get("claim", "")
+
+            # L3 → soul.yaml (Universal Principles)
+            if l3 and gnosis.recommendation in ("write_to_soul", "write_to_knowledge"):
+                await self._write_to_soul(task, l3, l2)
+                written = True
+
+            # L1+L2 → research doc
+            if l1 and l2:
+                await self._write_research_doc(task, claim, l1, l2, l3)
+                written = True
+
+        return written
+
+    async def _write_to_soul(self, task: ResearchTask, l3: str, l2: str) -> None:
+        """Write a Universal Principle (L3) to the appropriate entity's soul.yaml.
+
+        Heuristic: find the best-matching entity by topic keyword.
+        Falls back to SOPHIA (Akashic Record) for general knowledge.
+        """
+        entity = self._match_entity(task.topic)
+        soul_path = self.entities_dir / entity / "soul.yaml"
+
+        if not await anyio.Path(soul_path).exists():
+            soul_path = self.entities_dir / entity / "soul.yaml"
+            soul_path.parent.mkdir(parents=True, exist_ok=True)
+            store = get_soul_store()
+            await store.write_atomic(
+                soul_path,
+                f"entity:\n  name: {entity}\n  lessons_learned: []\n"
+            )
+
+        # Read current soul
+        try:
+            import yaml
+            content = await anyio.Path(soul_path).read_text()
+            soul_data = yaml.safe_load(content) or {}
+        except OmegaError:
+            soul_data = {"entity": {"name": entity, "lessons_learned": []}}
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error("Failed to read soul.yaml for %s: %s", entity, e, exc_info=True)
+            soul_data = {"entity": {"name": entity, "lessons_learned": []}}
+
+        # Append lesson
+        lesson = {
+            "lesson": l3,
+            "context": l2,
+            "source": "background-researcher",
+            "entity_at_time": entity,
+            "topic": task.topic,
+            "session_id": task.session_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+        lessons = soul_data.setdefault("entity", {}).setdefault("lessons_learned", [])
+        # Avoid duplicates
+        if not any(existing.get("lesson") == l3 for existing in lessons):
+            lessons.append(lesson)
+            store = get_soul_store()
+            await store.write_atomic(
+                soul_path,
+                yaml.dump(soul_data, default_flow_style=False, sort_keys=False)
+            )
+            logger.info(f"Wrote L3 to {soul_path}")
+            
+            # Record in soul edit history
+            try:
+                history = SoulEditHistory()
+                await history.append(SoulEditEntry(
+                    entity_name=entity,
+                    field_path="entity.lessons_learned",
+                    new_value=l3[:120],
+                    source="background_researcher",
+                    trace_id=task.session_id or "unknown",
+                    agent_name="background_researcher",
+                    summary=f"Background research L3: {l3[:80]}",
+                ))
+            except (OmegaError, RuntimeError, OSError) as hist_exc:
+                logger.warning("Failed to record soul edit history for %s: %s", entity, hist_exc)
+
+
+
+    async def _write_research_doc(
+        self,
+        task: ResearchTask,
+        claim: str,
+        l1: str,
+        l2: str,
+        l3: str,
+    ) -> None:
+        """Write L1+L2 findings to a research document."""
+        slug = task.topic.lower().replace(" ", "_").replace("/", "_")[:40]
+        doc_path = self.research_dir / f"R_AUTO_{slug}.md"
+
+        # Don't overwrite existing docs — append instead
+        if await anyio.Path(doc_path).exists():
+            existing = await anyio.Path(doc_path).read_text()
+            async with await anyio.Path(doc_path).open("a") as f:
+                await f.write(f"\n\n## Update — {datetime.now(timezone.utc).date()}\n\n")
+                await f.write(f"**Claim**: {claim}\n\n")
+                await f.write(f"**L1 (Narrative)**: {l1}\n\n")
+                await f.write(f"**L2 (Insight)**: {l2}\n\n")
+                await f.write(f"**L3 (Universal Principle)**: {l3}\n\n")
+                await f.write(f"**Source**: {task.session_id}\n")
+        else:
+            content = f"""# 🔱 Auto-Research: {task.topic}
+# ⬡ OMEGA ⬡ SOPHIA ⬡ auto-research ⬡ {task.session_id}
+
+**Generated**: {datetime.now(timezone.utc).isoformat()}
+**Session**: {task.session_id}
+**Depth**: {task.depth}
+
+---
+
+## Claim
+
+{claim}
+
+---
+
+## L1 — Narrative
+
+{l1}
+
+---
+
+## L2 — Insight
+
+{l2}
+
+---
+
+## L3 — Universal Principle
+
+{l3}
+
+---
+
+## Sources
+
+{chr(10).join(f'- {s}' for s in task.sources[:20])}
+
+---
+*Auto-generated by the Omega Background Researcher*
+"""
+            await anyio.Path(doc_path).write_text(content)
+            logger.info(f"Created research doc: {doc_path}")
+
+    def _match_entity(self, topic: str) -> str:
+        """Find the best-matching entity by checking topic keywords against entity domains.
+        
+        Falls back to the first available entity (config-driven, not hardcoded).
+        """
+        from omega.oracle.entity_registry import EntityRegistry
+        registry = EntityRegistry()
+        entities = registry.get_all()
+        
+        topic_lower = topic.lower()
+        
+        # 1. Direct match: check if any entity's name is in the topic
+        for name, entity in entities.items():
+            if name.lower() in topic_lower:
+                return name
+        
+        # 2. Domain match: check if any entity's domains match the topic
+        best_match = next(iter(entities.keys())) if entities else "default"
+        max_matches = 0
+        
+        for name, entity in entities.items():
+            # Entity is a dataclass object, access via attribute
+            domains = entity.domains if hasattr(entity, 'domains') else []
+            matches = sum(1 for domain in domains if domain.lower() in topic_lower)
+            if matches > max_matches:
+                max_matches = matches
+                best_match = name
+                
+        return best_match

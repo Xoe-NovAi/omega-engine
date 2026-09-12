@@ -1,0 +1,31 @@
+# ⬡ John Carmack .plan File — 1997-11-02
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19971102.txt
+#
+* fixed pitch clamping
+* Com_PageInMemory
+* fixed menu cursor time
+* net connect when playing bug
+* custom skins
+* fixed server update without game update bug
+
++ bump version numbers
++ don't go to half console until connected
++ delay before firing bfg
++ stairup allows wall climbing now
++ previous frame issues
++ don't copy all of frame.packetentities
+
+no server pause in dm
+normalize skin texture coords for software
+splashing sound when swimming in water
+ipx
+software underwater surfaces
+nopredict option at server
+scroll inventory
+smooth step up
+remove rand1k
+fire func_explosive targets when starting in deathmatch

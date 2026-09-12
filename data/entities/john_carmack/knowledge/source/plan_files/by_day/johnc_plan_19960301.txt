@@ -1,0 +1,28 @@
+# ⬡ John Carmack .plan File — 1996-03-01
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960301.txt
+#
+*	added ping command
+*	fixed time warp from overloaded dedicated servers
+*	rotate binaries
+*	respawning items
+
++ clean model flags on remove
++ tim's color
++ weapon ammo not redrawn sometimes
++ no sutch alias frame after gibbing
++ give more feedback during the connection process
++ set absolute screen size command
+
+safe allocation failures from vid / zbuffer
+send full pathnames from server to client, not findfile
+make all commands remote if priveledged
+unique names
+inquire about server rules (teamplay, fraglimit, timelimit, 
+         maxspeed, gravity, ticrate)
+is vid still flushing the entire screen?
+empty path causes error in quake?
+don't need to update frame of target entity

@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_733e4787ef82",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "cline/omega-engine",
+  "source_channel": "cline",
+  "source_entity": "omega-engine",
+  "task": "Ratify consolidated roadmap + dispatch INST-1",
+  "context": "Cline consolidated the dev plans into ONE coherent roadmap. ACTIVE_SPRINT.json now has DEBUT-EXECUTION workstream mirroring manual \u00a75 (PUB-1 in_progress, INST-1 ready, DEL-1 backlog, DOC-1 completed). HMC NEXT_ACTION updated. P2-5 completed. Asks: ratify tracking edits, dispatch INST-1 to Ma'at, close PUB-1 G1-G4 (tests/tmp/vault.json.enc, .firecrawl, config/github_accounts.yaml, loose root forge files), push 668d58eb+5cc51a26, prune 136 cline checkpoints.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-17T18:45:16.531465+00:00",
+  "reaped_at": "2026-08-18T21:19:15.694508+00:00",
+  "ttl_expired": true
+}
