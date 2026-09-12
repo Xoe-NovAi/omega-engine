@@ -35,6 +35,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
+# ── L3-MetaFrameVerification (0.92) Import ──────────────────────────────────
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+from metaframe_verification import MetaFrameVerifier, VerificationResult
+
 # ── Configuration ──────────────────────────────────────────────────────────
 
 DB_PATH = Path.home() / ".local" / "opencode" / "opencode.db"
@@ -161,6 +166,47 @@ def is_dry_run() -> bool:
 def is_m34_enabled() -> bool:
     """Check if M34 ACTIVE_SUBAGENTS.json registration is enabled."""
     return os.environ.get("OMEGA_M34_ENABLED", "0") == "1"
+
+
+def step0_metaframe_verification(prompt: str, target_agent: str, result: GuardResult) -> None:
+    """Step 0: L3-MetaFrameVerification (0.92) — Pre-flight check for spoofable metadata.
+
+    Per M23 Failure Integrity: No soft failures; broken tools → STOP, report.
+    This protocol prevents frame-level M23 violations (fake signatures, spoofed emails,
+    fabricated headers) from entering the fleet's context.
+
+    Runs BEFORE all other steps — if the prompt frame is compromised, no further
+    verification matters.
+    """
+    verifier = MetaFrameVerifier(strict_mode=True)
+    findings = verifier.verify(content=prompt, source=f"dispatch_prompt_for_{target_agent}")
+    v_result = verifier.get_result()
+
+    if v_result == VerificationResult.FAIL:
+        critical = [f for f in findings if f.severity == "CRITICAL"]
+        high = [f for f in findings if f.severity == "HIGH"]
+        details = []
+        if critical:
+            details.append(f"CRITICAL: {len(critical)} finding(s)")
+        if high:
+            details.append(f"HIGH: {len(high)} finding(s)")
+        result.add_fail(
+            "0-metaframe-verification",
+            f"L3-MetaFrameVerification (0.92) FAILED — Spoofable metadata detected in "
+            f"dispatch prompt for {target_agent}. {', '.join(details)}. "
+            f"M23 Failure Integrity: frame compromised → STOP, report. "
+            f"Details: {verifier.to_json()}",
+        )
+    elif findings:
+        # Medium/low findings in non-strict mode
+        result.add_warn(
+            "0-metaframe-verification",
+            f"L3-MetaFrameVerification (0.92) — {len(findings)} medium/low finding(s) "
+            f"in dispatch prompt for {target_agent}. Review recommended.",
+        )
+    else:
+        result.add_pass("0-metaframe-verification")
+    result.metadata["metaframe_verification"] = verifier.to_json()
 
 
 # ── 12-Step Protocol ───────────────────────────────────────────────────────
@@ -907,6 +953,9 @@ def log_result(result: GuardResult, args: argparse.Namespace) -> None:
 def run_12_step_guard(args: argparse.Namespace) -> GuardResult:
     """Execute the full 12-step Brief Verification Protocol."""
     result = GuardResult()
+    # Step 0: L3-MetaFrameVerification (0.92) — Pre-flight check
+    step0_metaframe_verification(args.prompt, args.subagent_type, result)
+
 
     # Handle bypass
     if is_bypass_enabled():
