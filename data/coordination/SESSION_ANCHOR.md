@@ -109,8 +109,9 @@
 | **CSS Protocol Spec** | `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` | ✅ Canonical (531 lines, Temple-Grade) |
 | **All 9 Reviews** | `data/coordination/anchored_summary/*/projection.md` | ✅ Injected (Roc + Carmack + Ma'at + Lilith + Grokster + Jem + Researcher + Kali replied) |
 | **Session Anchor** | `data/coordination/SESSION_ANCHOR.md` | ✅ This file |
-| **Federation Response** | `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/RESPONSE_FROM_HP.md` | ✅ Written v3 (270 lines) |
-| **Vision Pack** | `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/ARCANA_VISION_PACK.md` | ✅ Delivered (241 lines) |
+| **Federation Response** | `/media/arcana-novai/D3E6-A900/ASUS_TO_HP_OC_TEAM/RESPONSE_FROM_HP.md` | ✅ Written v3 (270 lines) |
+| **Vision Pack** | `/media/arcana-novai/D3E6-A900/omega-exchange/node0-to-node1/vision/ARCANA_VISION_PACK.md` | ✅ Delivered (241 lines) |
+| **Node 1 Payload (Swap 3)** | `/media/arcana-novai/D3E6-A900/omega-exchange/node1-to-node0/` | ✅ INGESTED (22 artifacts, 10 federation specs, Lilith-N1 genesis, ANAi WAD spec) |
 
 ---
 
@@ -124,10 +125,13 @@
 6. **Merge Alpha Release PR #3** — v1.6.1-alpha (Architect approval)
 7. **Roc Doc Sweep Completion** — Final nomenclature debt (N1-N10/pillar refs in 8 docs)
 8. **Bilateral Systems Audit** — Thorough comparative audit: Node 1 corpus vs Node 0 hardened systems
-9. **Phase 2** — Transfer ANAi WAD to USB for Node 1
-10. **Phase 3** — Docs cleanup (13+ files)
-11. **Phase 4** — Agent files update (.opencode/agents/)
-12. **Phase 5** — Final validation & Temple-Grade
+9. **Node 1 Payload Ratification** — Review & ratify: Capability Firewall, Namespace Collision Strategy, L2 Acceptance, Agent Divergence Spec, Topology Models
+10. **Well Axiom Extraction** — Extract Node 1 sovereignty axioms into local Well (`make well-add KIND=insight ...`)
+11. **L2 Tailscale Join** — Mint auth key on Node 0, execute `tailscale up` on Node 1 (Node 1 daemon ready)
+12. **Phase 2** — Transfer ANAi WAD (`config/wads/arcana_novai/`) to USB for Node 1
+13. **Phase 3** — Docs cleanup (13+ files)
+14. **Phase 4** — Agent files update (.opencode/agents/)
+15. **Phase 5** — Final validation & Temple-Grade
 
 ---
 

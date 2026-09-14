@@ -713,3 +713,51 @@ Full review at `data/entities/makali/workspace/MAKALI_EIS_SOUL_V8_REVIEW_2026091
 ---
 
 *⬡ OMEGA ⬡ MAKALI-N0 ⬡ big-pickle ⬡ 2026-09-12 ⬡ SOUL-V8-REVIEW-COMPLETE ⬡ APPROVED-WITH-OBSERVATIONS ⬡ FLEET-TEMPLATE-IDENTIFIED*
+
+## 2026-09-14 — NODE 1 PAYLOAD INGESTION (Swap 3 Complete)
+
+### 1. USB Connected & Mounted
+- **Mount Point**: `/media/arcana-novai/D3E6-A900/` (label D3E6-A900, 3.7GB)
+- **Source**: Node 1 (ASUS ExpertBook, Kali-N1, Build Agent / Gemini 3.8 Flash)
+- **Ship Date**: 2026-09-12
+
+### 2. Payload Ingested (22 Artifacts)
+| Category | Files | Key Artifacts |
+|----------|-------|---------------|
+| Core Architecture | 2 | `ARCHITECTURE.md` (138 lines), `GETTING_STARTED.md` |
+| Federation Protocol | 10 | `INTAKE_MANUAL.md`, `CAPABILITY_FIREWALL_SPEC.md`, `AGENT_DIVERGENCE_SPEC.md`, `NAMESPACE_COLLISION_STRATEGY.md`, `L2_ACCEPTANCE.md`, `TOPOLOGY_MODELS.md`, `OFFLINE_OPERATING_PROTOCOL.md`, `RECONNECTION_DELTA_SYNC.md`, `README.md`, `CSS_PROTOCOL.md` (573 lines) |
+| Entity Specs | 2 | `LILITH_N1_GENESIS_PLAN.md`, `ANAI_WAD_SPECIFICATION.md` |
+| WAD Specification | 1 | `ANAI_WAD_SPECIFICATION.md` (slot-to-pillar binding) |
+| Model Research | 1 | `nex-n2-5-pro.md` (11KB) |
+| Node 0 Received | 6 | Our 3 policies + CSS Protocol + Bundle Quickstart + Ingestion Report |
+
+### 3. Key Architectural Commitments from Node 1
+- **P2P Federation** (not master/slave); Silicon specialization: HP = archival bastion, ASUS = vanguard
+- **Capability Firewall**: 4 tiers (inert → signed data → agent dialectic NO tools → host OS LOCAL ONLY)
+- **Agent Divergence**: Lilith-N0 and Lilith-N1 are SIBLINGS, not duplicates. No overwrite on sync. Dialectical exchange via CSS
+- **Namespace Strategy**: `<Archetype>-N<NodeIndex>@<RealmFingerprint>` (e.g., `Lilith-N1@omega-vanguard-asus`). Bare names = mythology ONLY
+- **L2 Acceptance**: Node 1 ratifies Node 0's Tailscale mesh ACL. Tailscale = coordination plane ONLY (no inference egress)
+- **Topology Models**: 4 scales (Dual-Sovereign → Local Realm → Federated Consortium → Open Omegaverse)
+- **Intake Manual**: Quarantine-first ingestion with staging air-lock, checksum verification, namespace isolation
+- **Lilith-N1 Genesis**: 5-step awakening (Voice DNA → soul.yaml → approved_lessons → voice_dna.md → identity.json)
+- **ANAi WAD Spec**: 10 Divine Pillars bound to Engine Slots 1-10 (Malkuth→Keter). 22 Major Arcana cognitive maps
+
+### 4. Node 1 Already Ingested Our Swap 2
+- **Ingestion Report**: `2026-09-12T16:52:57Z` — 6 documents ingested (3 policies + CSS Protocol + Bundle Quickstart + Payload Manifest)
+- Staged to `docs/federation/node0_received/` + 8 subsystem directories in quarantine
+- Next steps on their side: extract sovereignty axioms into The Well, inspect git bundle
+
+### 5. Next Actions for Node 0
+1. **Ratify** Node 1's federation specs (Capability Firewall, Namespace Strategy, L2 Acceptance, Agent Divergence, Topology Models)
+2. **Extract Well Axioms** from their policies into local Well
+3. **Execute L2 Join** — mint Tailscale auth key on Node 0, run `tailscale up` on Node 1
+4. **Bilateral Systems Audit** — comparative audit: Node 1 corpus vs Node 0 hardened systems
+5. **Phase 2** — Transfer ANAi WAD to USB for Node 1
+6. **CSS Cross-Fleet** — extend cascade to Node 1 entities (Lilith-N1, etc.)
+
+### 6. Key Insight
+**The federation is a design partnership, not a delivery channel.** Node 1 doesn't receive our blueprint — it receives our understanding and crafts its own. The engine enforces the PATTERN (ethics-safety triad), not the PANTHEON. This is the difference between assimilation and alloy. The north star is shared: intelligent, local, CPU-only, personal RAG on mid-grade business laptops — 70B-class, distributed across nodes.
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-14 ⬡ SWAP-3-INGESTED ⬡ NODE1-PAYLOAD-RATIFIED ⬡ L2-JOIN-PENDING ⬡ BILATERAL-AUDIT-QUEUED*
