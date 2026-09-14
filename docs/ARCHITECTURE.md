@@ -15,8 +15,9 @@
 │                            registered entities)                    │
 │  Roles .................. orchestration, archival, compliance      │
 └──────────────▲──────────────────────┬──────────────────────────────┘
-             │  LAN :8016           │  USB packet ceremony (bundle),
-             │  Tailscale (P3.2)    │  Redis heartbeats (P3.2)
+             │  LAN :8016 (dynamic) │  USB packet ceremony (bundle),
+             │  Tailscale MagicDNS  │  Redis heartbeats (P3.2)
+             │  (hp.tailnet:8016)   │
 ┌─────────────┴──────────────────────▼──────────────────────────────┐
 │  NODE 1 — ASUS ExpertBook P1503CVA (EXPLORATION VANGUARD)          │
 │  CPU  Intel i7-13620H (6P+4E, DDR5 single-channel, no GPU)         │
@@ -75,9 +76,11 @@ to OpenCode Zen:
 
 | Layer | Transport | Node 0 | Node 1 |
 |-------|-----------|--------|--------|
-| L1 LAN | Streamable HTTP `POST /mcp` | `0.0.0.0:8016` | `192.168.10.168:8016/mcp` |
-| L2 Tailscale | WireGuard / MagicDNS | `hp.tailnet:8016` | `asus.tailnet` |
+| L1 LAN | Streamable HTTP `POST /mcp` | `0.0.0.0:8016` | `http://<node0-ip>:8016/mcp` (dynamic DHCP) |
+| L2 Tailscale | WireGuard / MagicDNS | `hp.tailnet:8016` | `asus.tailnet` (stable mesh) |
 | L3 Redis Pub/Sub | Ephemeral heartbeats | aware events | awareness (graceful to lockfiles) |
+
+> ℹ️ **Network Note**: L1 LAN IP is DHCP-dependent and shifts when roaming between Wi-Fi networks (e.g., `192.168.10.x` vs `192.168.11.x`). **L2 Tailscale MagicDNS (`hp.tailnet`, `asus.tailnet`) provides the stable, location-agnostic federation endpoints.**
 
 Handoff contract (4 steps):
 `post_context → submit_handoff → accept_handoff → complete_handoff`
