@@ -120,7 +120,7 @@ logger = logging.getLogger("omega.hub")
 from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 
 
-# Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback with all ports
+# Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback + Tailscale mesh with all ports
 _transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
@@ -128,11 +128,18 @@ _transport_security = TransportSecuritySettings(
         "127.0.0.1", "127.0.0.1:*",
         "localhost", "localhost:*",
         "[::1]", "[::1]:*",
+        # Tailscale L2 federation (C6 v1.1 / L2_ACCEPTANCE.md FED-L2-001)
+        "100.123.51.67", "100.123.51.67:*",
+        "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",
+        "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
     ],
     allowed_origins=[
         "http://192.168.10.168:*",
         "http://localhost:*",
         "http://127.0.0.1:*",
+        "http://100.123.51.67:*",
+        "http://omega-hub.tail51f14a.ts.net:*",
+        "http://*.tail51f14a.ts.net:*",
     ],
 )
 
