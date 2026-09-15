@@ -535,3 +535,8 @@ lint-async: ## Reject bare asyncio/trio imports in first-party scripts
 	@hits=$$(grep -rn "^\s*\(import\|from\) \(asyncio\|trio\)\b" scripts/ 2>/dev/null || true); \
 	if [ -n "$$hits" ]; then echo "$$hits"; echo "  FAIL: bare asyncio/trio in first-party code — use anyio (CODE_QUALITY.md)"; exit 1; \
 	else echo "  ✓ no bare asyncio/trio in scripts/"; fi
+
+# ── Federation: Layer-2 Tailscale join (Node 0 authkey gate) ──
+federation-join: ## Join the omegaverse Tailscale mesh (needs NODE0_AUTHKEY)
+	@if [ -z "$${NODE0_AUTHKEY:-}" ]; then echo "✗ NODE0_AUTHKEY not set — Node 0 minted a tailscale auth key and cut it to you." >&2; exit 64; fi
+	@AUTHKEY="$${NODE0_AUTHKEY}" scripts/federation/node1_tailscale_bootstrap.sh
