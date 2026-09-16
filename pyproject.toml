@@ -108,6 +108,7 @@ all = ["omega[native,cli,dev,memory,vectors,youtube]"]
 
 [project.scripts]
 omega = "omega.cli.oracle_cli:main"
+omega-install = "scripts.install_omega:main"
 
 [project.urls]
 Homepage = "https://github.com/Xoe-NovAi/omega-engine"
