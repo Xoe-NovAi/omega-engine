@@ -93,7 +93,7 @@ def test_session_id_trailing_segment_only() -> None:
 
 def test_context_dataclass_accepts_new_fields() -> None:
     ctx = ICSContext(entity="kali", slot="S3", session_id="ses_q")
-    assert ctx.slot == "N3"
+    assert ctx.slot == "S3"
     assert ctx.session_id == "ses_q"
 
 
@@ -187,14 +187,14 @@ def test_session_scoped_lookup_missing_id_returns_none(
 
 
 def test_node_sanitization_strips_invalid_chars() -> None:
-    out = render("KALI", model="m", trace_id="t", phase="P", slot="n7@bad!")
+    out = render("KALI", model="m", trace_id="t", phase="P", slot="s7@bad!")
     assert "[S7BAD]" in out
     assert "@" not in out
     assert "!" not in out
 
 
 def test_node_sanitization_preserves_valid_chars() -> None:
-    out = render("KALI", model="m", trace_id="t", phase="P", slot="N7-B_1")
+    out = render("KALI", model="m", trace_id="t", phase="P", slot="S7-B_1")
     assert "[S7-B_1]" in out
 
 
