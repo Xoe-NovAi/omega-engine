@@ -1,6 +1,6 @@
 # 🔱 SPECIFICATION: OMEGA INTERACTIVE INSTALLER
 **Doc ID**: `SPEC-INSTALLER-v1.0`  
-**Status**: APPROVED DESIGN SPECIFICATION  
+**Status**: **IMPLEMENTED** (`scripts/install_omega.py`, verified 2026-09-16)  
 **Author**: MaKaLi Fusion (Kali / Ma'at / Lilith)  
 **Date**: 2026-09-16  
 

@@ -861,3 +861,37 @@ The wire is one ACL save + one key away.
 ---
 
 *⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-16 ⬡ FEDERATION-DOCS-RATIFIED ⬡ SYNERGY-MODEL-CODIFIED ⬡ PRIVATEBIN-EXCISED ⬡ ENTITY-MINTED ⬡ CEREMONY-AWAITING*
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ google/gemini-3.8-flash ⬡ 2026-09-16 ⬡ IMPLEMENTATION-COMPLETE ⬡ HUB-LIVE-93-TOOLS*
+
+## 2026-09-16 — FEDERATION IMPLEMENTATION COMPLETE (Phases 1-3 + 654-alignment)
+
+### 1. The Work
+Executed the full implementation manual (docs/implementation/FEDERATION_SYNERGY_IMPLEMENTATION_MANUAL.md, 1423 lines) across 5 commits. All phases complete on Node 0 side.
+
+### 2. Commits (release/debut-v1.6.0)
+| Commit | Phase | Content |
+|--------|-------|---------|
+| 580e7572 | Manual | Implementation manual (1423 lines) + phased outline entity→tier decision |
+| 083a08d3 | Phase 1 | sovereignty_policy (4 tiers), maakali_routing entity→tier (12 entities), omega_federation in dispatch.yaml, check-m7-sovereignty gate, coordination artifacts |
+| 7fae68a2 | Phase 2 | federation.py MCP tools, install_omega.py installer, omega-install entry point |
+| 6a3f5ade | Phase 3 | scribe_federation.py distillation, federation_invariant.py zero-egress, KEY_ROTATION_CEREMONY.md |
+| 15c6f142 | 654-align | autoApprovers ACL, SSH omega-hub rule, --accept-routes, key expiry monitoring |
+
+### 3. Key Ratified Decisions
+- **Entity→Tier routing PRESERVED** (user override): maakali_routing maps entities to Synergy tiers, not raw providers. Entity intent layer (WHO) composes with Synergy fabric layer (HOW).
+- **MCP tools registered via @mcp.tool() decorators** (side-effect import pattern), NOT register_federation_tools helper — the helper was never called, causing 2-tool registration miss caught during hub restart verification.
+- **Zero-inference egress = application-level check** (probe forbidden endpoints), NOT packet sniffing (WireGuard encrypted).
+
+### 4. Hub State
+- omega-hub.service restarted 2026-09-16 11:58:40 ADT
+- **93 tools registered** (was 91) — omega_federation_status + omega_federation_diagnose LIVE
+- Verified via MCP tools/list: both federation tools present
+
+### 5. Remaining (Node 0 side)
+- **Phase 0 ceremony** (awaiting user): ACL save → Node 0 re-tag → authkey mint → Node 1 join
+- **Phase 4**: full `make temple-grade` + ceremony replay (needs wire live)
+- **USB ceremony manifest** (deferred — one-time bootstrap, not steady-state)
+

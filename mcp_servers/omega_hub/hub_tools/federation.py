@@ -24,6 +24,9 @@ from typing import Any
 import anyio
 from mcp.server.fastmcp import Context
 
+# ── mcp instance (circular import — resolves because mcp is created before this import) ──
+from mcp_servers.omega_hub.server import mcp
+
 logger = logging.getLogger(__name__)
 
 # ── Internal helpers ────────────────────────────────────────────────
@@ -124,6 +127,7 @@ async def _verify_zero_inference_egress() -> bool:
 # ── Public MCP tools ────────────────────────────────────────────────
 
 
+@mcp.tool()
 async def omega_federation_status(ctx: Context | None = None) -> dict[str, Any]:
     """Return comprehensive mesh status snapshot.
 
@@ -151,6 +155,7 @@ async def omega_federation_status(ctx: Context | None = None) -> dict[str, Any]:
     }
 
 
+@mcp.tool()
 async def omega_federation_diagnose(
     target_peer: str | None = None,
     ctx: Context | None = None,
@@ -230,12 +235,3 @@ async def omega_federation_diagnose(
         "WARN" if any(c["status"] == "WARN" for c in checks) else "FAIL")
     return {"overall": overall, "checks": checks,
             "timestamp": datetime.now(timezone.utc).isoformat()}
-
-
-# ── Registration helper ─────────────────────────────────────────────
-
-
-def register_federation_tools(mcp: Any) -> None:
-    """Register federation tools onto the main omega-hub FastMCP instance."""
-    mcp.tool()(omega_federation_status)
-    mcp.tool()(omega_federation_diagnose)
