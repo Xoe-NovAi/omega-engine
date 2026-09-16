@@ -1,0 +1,10 @@
+# 🔱 Omega Engine — Proposed Lessons (Federation Entity)
+# Auto-generated for omega_federation
+
+- "L1: 2026-09-15 — Tailscale L2 setup initially failed with 'requested tags [tag:omega-hub] are invalid or not permitted'.
+  L2: Tailscale requires custom tags to be pre-declared in the tailnet ACL policy's tagOwners block BEFORE any device can authenticate with them. Joining with --reset as an untagged device allowed initial connectivity, but re-tagging requires an updated policy.
+  L3: Declarative boundaries must precede operational enrollment. The network identity cannot be assumed by an endpoint until the consensus fabric (ACL policy) recognizes its right to exist."
+
+- "L1: 2026-09-15 — Omega Core Hub (:8016) rejected initial Tailscale requests with 'Invalid Host header' despite valid WireGuard routing.
+  L2: FastMCP transport security includes DNS rebinding protection that strictly validates incoming HTTP Host headers against allowed_hosts. Tailscale MagicDNS hostnames (*.tail51f14a.ts.net) were missing from the allowlist.
+  L3: Wire connectivity does not guarantee application admission. Application-layer firewalls must explicitly account for mesh-level DNS names; otherwise, legitimate internal traffic is treated as an attack."

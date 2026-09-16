@@ -96,6 +96,8 @@
 8. **Shadow Acknowledged** — Node 0: 21.6% local = development-phase artifact (build with cloud for velocity, operate with local for sovereignty); Node 1: heartbeat discipline broken — both must fix before Layer 2
 9. **L3-MetaFrameVerification (0.92) RATIFIED** — Fleet standard cross-verification protocol (Kali implemented `scripts/metaframe_verification.py`)
 10. **Roc Soul v8.0 = Fleet Template** — 12 axioms, 15 max budget, flat-list approved lessons, voice reclamation protocol, Soul Audit Cascade post-DEL-1 PR1
+11. **The Synergy Model RATIFIED** — Sovereignty is Policy Enforcement. Cloud for high-context reasoning/synthesis; local for embeddings/privacy/background loops. PrivateBin excised. Tailscale native L2 WireGuard mesh is the primary federation wire.
+12. **Federation Entity Minted** — `omega_federation` (`data/entities/federation/soul.yaml`) governs the mesh as a constitutional living entity.
 
 ---
 
