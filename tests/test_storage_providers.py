@@ -137,6 +137,9 @@ class TestRedisStorageProvider:
 class TestMemoryStoreFallbackChain:
     @pytest.mark.anyio
     async def test_fallback_flow(self, temp_data_dir):
+        # Redis is an optional extra (INST-1 fix2); the fallback chain test
+        # exercises Redis → File → InMemory, so skip when redis is absent.
+        pytest.importorskip("redis", reason="redis not installed (optional [memory] extra)")
         # Setup providers:
         # 1. Redis (fails health check)
         redis_provider = RedisStorageProvider(host="10.255.255.1")

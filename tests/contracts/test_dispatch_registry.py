@@ -111,8 +111,9 @@ class TestDispatchRegistry:
         invalidate_cache()
         entities = get_dispatch_entities()
         roles = {e["role"] for e in entities}
-        # All entity roles should be valid ROLE_CONSTANTS values
-        valid_roles = set(ROLE_CONSTANTS.values())
+        # dispatch.yaml roles are ROLE_CONSTANT KEYS (uppercase, e.g.
+        # "GRAND_OVERSIGHT") — ics.py resolves them via ROLE_CONSTANTS.get().
+        valid_roles = set(ROLE_CONSTANTS)
         for role in roles:
             assert role in valid_roles, f"Entity role '{role}' not in ROLE_CONSTANTS"
 

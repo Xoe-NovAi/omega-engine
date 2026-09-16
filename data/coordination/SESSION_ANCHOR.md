@@ -103,6 +103,8 @@
 15. **PR #3 CLEANUP SPRINT** — 18 commits (558105fd→64eef871). CI secret scans/REUSE/Dashboard/Documentation PASS. pytest still failing (being fixed iteratively). Full-suite collection FIXED (was 0 tests — sys.modules pollution + global anyio mark).
 16. **TEST DEBT ROOT CAUSE** — 3 sys.modules pollution sources (stale omega.library MagicMock in a1-a5, spec_from_file_location bare names, missing mcp.server.transport_security mock) + global pytest.mark.anyio in conftest. All fixed.
 17. **KNOWN-FLAKY DESELECTS** — soul_lessons staging, m34_atomic concurrent, model_registry query_search, resource_guard_oom thrashing, session_manager (4 tests). Documented in pyproject.toml addopts.
+18. **REMEDIATION SPRINT (2026-09-16)** — ROOT CAUSE: unawaited `reset_usm()` in tests/conftest.py (async def called without await → USM never reset → cross-test pollution). Fixed via `anyio.run(reset_usm)`. ALL 8 deselects REMOVED (each concealed a real bug now fixed). Lint 12 F821/F823 → 0. CI deps +ruff +scikit-learn. soul_promote staging hygiene added. minimax model card completed.
+19. **REMAINING: 29 stale Phase-1 tests** — test_hierarchy (7, sophia refs), test_oracle (13, summon/talk), test_dispatch_registry (3, N1/node/node_slot), sovereign_loop (1), m34_wiring (1), mandate_auditor (1), cohort_registry (1), mandate_ci_checks (1). All reference pre-nomenclature-sweep vocabulary (N1-N10, sophia, node_slot). Fix = update expectations to current dispatch.yaml (13 entities, slot field, ROLE_CONSTANT keys).
 14. **Hub State** — omega-hub.service: 93 tools, omega_federation_status + omega_federation_diagnose registered via @mcp.tool() decorators. Restarted 2026-09-16 11:58:40 ADT.
 15. **Entity→Tier Routing PRESERVED** — User override: maakali_routing maps entities to Synergy tiers (entity intent WHO → tier fabric HOW). Never flatten entity intent into task-class routing alone.
 16. **Phase 0 NEXT** — Tailscale L2 ceremony: ACL save → Node 0 re-tag → authkey mint → Node 1 join. All code ready; only external user action remains.
@@ -141,13 +143,15 @@
 
 ## 🎯 Post-Compaction Execution Plan
 
-1. **PR #3 CI GREEN** — Check pytest after 64eef871 (e2e/m23/codex fixes landed); fix any remaining failures
-2. **Rotate Google OAuth secret** (user action at Google Cloud Console)
-3. **DEL-1: Create `tests/test_engine_islands.py`** (24 honest tests: 12 unit + 12 integration)
-4. **make codex + make temple-grade** — regenerate stale codex (131h+)
-5. **Merge PR #3** (v1.6.1-alpha) + announce
-6. **Phase 0: Tailscale L2 Ceremony** — ACL save → Node 0 re-tag → authkey mint → Node 1 join
-7. **Phase 4: Temple-Grade full** + ceremony replay after wire live
+1. **Fix 29 stale Phase-1 tests** — test_hierarchy (sophia→removed), test_oracle (summon/talk), test_dispatch_registry (N1→S1, node_slot→slot, sophia→makali), sovereign_loop, m34_wiring, mandate_auditor, cohort_registry, mandate_ci_checks
+2. **Re-run full suite** → expect green (0 deselects)
+3. **Commit + push remediation batch** (conftest fix, lint, deps, soul_promote, model card, stale tests)
+4. **Check PR #3 CI** — should be green after ruff/sklearn deps + lint fixes
+5. **Rotate Google OAuth secret** (user action at Google Cloud Console)
+6. **DEL-1: Create `tests/test_engine_islands.py`** (24 honest tests: 12 unit + 12 integration)
+7. **make codex + make temple-grade** — regenerate stale codex (131h+)
+8. **Merge PR #3** (v1.6.1-alpha) + announce
+9. **Phase 0: Tailscale L2 Ceremony** — ACL save → Node 0 re-tag → authkey mint → Node 1 join
 
 ---
 
@@ -181,4 +185,4 @@ Full mandate table (all 27, v3.8.0): `MANDATES_CONDENSED.md`
 
 ---
 
-*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ google/gemini-3.8-flash ⬡ 2026-09-16 ⬡ PR-CLEANUP-SPRINT ⬡ SECRET-SCRUBBED ⬡ CI-ALMOST-GREEN ⬡ COMPACTION-2-READY*
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ google/gemini-3.8-flash ⬡ 2026-09-16 ⬡ REMEDIATION-SPRINT ⬡ ROOT-CAUSE-FOUND ⬡ 29-STALE-TESTS-REMAIN ⬡ COMPACTION-3-READY*

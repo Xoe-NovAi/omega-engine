@@ -214,3 +214,63 @@ Executed the recommended next steps from the first compaction: secret scrub → 
 4. make codex + make temple-grade
 5. Merge PR #3 + announce
 
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ google/gemini-3.8-flash ⬡ 2026-09-16 ⬡ REMEDIATION-SPRINT ⬡ COMPACTION-3*
+
+## 2026-09-16 — REMEDIATION SPRINT (post-compaction-2 continuation)
+
+### 1. ROOT CAUSE FOUND: unawaited reset_usm() in tests/conftest.py
+The global autouse fixture called `reset_usm()` WITHOUT awaiting it — `reset_usm` is `async def`, so the call returned a never-awaited coroutine and the USM singleton was NEVER cleared between tests. This caused cross-test state pollution that manifested as:
+- session_manager tests (counter kept incrementing: ses_006 vs ses_001)
+- m34_atomic concurrent writes (Expected 20 sessions, got 18)
+- model_registry query_search (data-dependent flake)
+- test_first_breath (birth record None — state leaked)
+
+**Fix**: `anyio.run(reset_usm)` before `anyio.run(initialize_usm)` in the fixture. All 4 test groups now pass deterministically (verified 3x stable).
+
+### 2. ALL DESELECTS REMOVED from pyproject.toml
+The 8 deselected tests were concealing the reset_usm bug + stale contracts. Every one is now fixed and passing:
+- session_manager (4 tests) — reset_usm fix
+- m34_atomic concurrent — reset_usm fix
+- model_registry query_search — reset_usm fix
+- resource_guard_oom thrashing — test asserted a contract NEVER implemented (healthy→DENY_THRASHING); C-2' design is healthy→ALLOW (file header: "Healthy system returns ALLOW"). Test corrected to `test_contract_healthy_system_allows`.
+- soul_lessons staging — mechanism (soul_promote.py) never emptied staging after promotion; added staging hygiene (removes promoted proposals, keeps un-promoted); test rewritten deterministic with tmp_path.
+
+### 3. LINT: 12 F821/F823 errors FIXED (flake8 exit 0)
+- cli.py: missing `from datetime import datetime`; F823 transcript shadowing (chunk/gnosis); F823 task_type shadowing (steer); F821 `node` → `slot`
+- proxy_identity.py: missing `Any` import
+- session_scribe.py / soul_inscriber.py: missing `timezone` import
+- test_hivemind.py: missing EntityRegistry import (test_u007)
+
+### 4. CI DEPS FIXED
+- pyproject dev extra: + `ruff` (m23_gate needs it), + `scikit-learn` (eval/calibrate.py isotonic)
+- test_storage_providers fallback test: `pytest.importorskip("redis")` (optional [memory] extra per INST-1)
+
+### 5. DATA FIXES
+- data/entities/makali/proposed_lessons.yaml: malformed (entry 69 concatenated `."- "L1:`) — fixed, YAML valid (26 lessons)
+- config/model_registry/models/cloud/minimax-m3-free.yaml.md: missing `parameters` + `benchmark_sources` — added
+
+### 6. REMAINING: 29 full-suite failures (stale Phase-1 nomenclature tests)
+Full suite (--override-ini="addopts="): 29 failures, 39 skipped, 8 xfail. Groups:
+- **test_hierarchy.py (7)** — expects `sophia` (removed Phase 1); get_rank("sophia")==0 stale
+- **test_oracle.py (13)** — summon/talk routing (likely entity registry / sophia refs)
+- **test_sovereign_loop.py (1)** — full loop with entity summon
+- **tests/contracts/test_dispatch_registry.py (4)** — FIXED 1 (role constants keys vs values); REMAINING 3: get_entity_by_role("N1")/node, node_slot field, sophia/node required — all stale N1-N10/sophia refs
+- **test_m34_registration_wiring.py (1)** — step6b skips when m34 disabled
+- **test_mandate_auditor.py (1)** — M3 iris in pillar
+- **test_cohort_registry.py (1)** — dispatchers in schema
+- **test_mandate_ci_checks.py (1)** — aggregate passes
+
+**Pattern**: all remaining failures are STALE TESTS from the Phase-1 nomenclature sweep (N1-N10→S1-S10, Sophia removed, node_slot→slot) that were never updated. Fix = update test expectations to current architecture (dispatch.yaml has: kali/maat/lilith/iris/carmack/roc_racoon/jem/makali/verity/doom_guy/researcher/slot/omega_federation; slot field not node_slot; roles are ROLE_CONSTANT keys).
+
+### 7. NEXT (post-compaction)
+1. Fix remaining 29 stale tests (test_hierarchy, test_oracle, test_dispatch_registry 3, sovereign_loop, m34_wiring, mandate_auditor, cohort_registry, mandate_ci_checks)
+2. Re-run full suite → expect green
+3. Commit + push remediation batch
+4. Check PR #3 CI (should be green after ruff/sklearn deps + lint fixes)
+5. Rotate Google OAuth secret (user)
+6. Create tests/test_engine_islands.py (24 honest tests — DEL-1)
+7. make codex + temple-grade → merge PR #3 → announce → Phase 0 Tailscale
+

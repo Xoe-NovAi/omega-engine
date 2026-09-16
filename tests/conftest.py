@@ -130,9 +130,12 @@ def _set_test_env(tmp_path, monkeypatch, request, anyio_backend):
     reset_provider_registry()
     reset_resource_guard()
     world_state.reset()
-    from omega.state import reset_usm, initialize_usm
-    reset_usm()
     import anyio
+    from omega.state import reset_usm, initialize_usm
+    # reset_usm is async — it MUST be awaited via anyio.run, or the USM
+    # singleton is never cleared and state leaks between tests (e.g. the
+    # session counter in session_manager tests kept incrementing).
+    anyio.run(reset_usm)
     anyio.run(initialize_usm)
     
     def teardown():

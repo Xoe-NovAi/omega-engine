@@ -374,7 +374,7 @@ async def test_u006_entity_context_nonexistent(entity_context_env):
 @pytest.mark.asyncio
 async def test_u007_entity_context_empty_knowledge_workspace(entity_context_env, monkeypatch):
     """U-007: hivemind_get_entity_context — entity with empty knowledge/workspace dirs."""
-    from omega.oracle.entity_registry import Entity
+    from omega.oracle.entity_registry import Entity, EntityRegistry
     low_power = Entity(
         name="newentity",
         domains=["new"],

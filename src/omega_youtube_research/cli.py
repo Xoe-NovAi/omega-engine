@@ -18,6 +18,7 @@ Commands:
 import typer
 import asyncio
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -144,12 +145,13 @@ def chunk(
     """L3: Semantic chunking with temporal anchors."""
     
     async def run():
-        if not transcript:
-            transcript = typer.prompt("Enter transcript")
-        
+        text = transcript
+        if not text:
+            text = typer.prompt("Enter transcript")
+
         # Parse into segments (simplified)
-        segments = [{"text": transcript, "start": 0.0, "end": 3600.0}]
-        
+        segments = [{"text": text, "start": 0.0, "end": 3600.0}]
+
         chunks = await semantic_chunk(
             transcript_segments=segments,
             boundary_model=boundary_model,
@@ -180,20 +182,20 @@ def steer(
     
     async def run():
         task_priority = TaskPriority[priority.upper()]
-        task_type = SteeringTaskType(task_type)
-        
+        task_type_enum = SteeringTaskType(task_type)
+
         task_id = await inject_steering(
             prompt=prompt,
             slot=slot,
             priority=task_priority,
-            task_type=task_type,
+            task_type=task_type_enum,
         )
-        
+
         typer.echo(f"✅ Injected steering task: {task_id}")
         typer.echo(f"   Prompt: {prompt}")
-        typer.echo(f"   Node: {node}")
+        typer.echo(f"   Slot: {slot}")
         typer.echo(f"   Priority: {priority}")
-        typer.echo(f"   Type: {task_type}")
+        typer.echo(f"   Type: {task_type_enum.value}")
     
     asyncio.run(run())
 
@@ -284,11 +286,12 @@ def gnosis(
     """L5: Emit Gnosis Graph edges from video chunks."""
     
     async def run():
-        if not transcript:
-            transcript = typer.prompt("Enter transcript")
-        
+        text = transcript
+        if not text:
+            text = typer.prompt("Enter transcript")
+
         # Chunk first
-        segments = [{"text": transcript, "start": 0.0, "end": 3600.0}]
+        segments = [{"text": text, "start": 0.0, "end": 3600.0}]
         chunks = await semantic_chunk(segments)
         for chunk in chunks:
             chunk.source_video_id = video_id
