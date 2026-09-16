@@ -98,8 +98,11 @@ from omega.oracle.resource_guard import reset_resource_guard
 
 logger = logging.getLogger(__name__)
 
-# Ensure AnyIO handles async fixtures in conftest
-pytestmark = pytest.mark.anyio
+# NOTE: No global pytestmark = pytest.mark.anyio here. A global anyio mark
+# forces EVERY test (including sync `def test_` functions) to run inside an
+# async event loop — which breaks any sync code that calls anyio.run()
+# internally ("Already running asyncio in this thread"). Tests that need
+# async use explicit @pytest.mark.anyio (469 marks across 63 files).
 
 # Fix AnyIO backend to asyncio only (removes [asyncio] suffix from test names)
 @ pytest.fixture
@@ -108,7 +111,7 @@ def anyio_backend():
 
 
 @ pytest.fixture(autouse=True)
-async def _set_test_env(tmp_path, monkeypatch, request, anyio_backend):
+def _set_test_env(tmp_path, monkeypatch, request, anyio_backend):
     """Ensure OMEGA_ENV=test and isolated temp data dir for all tests.
     
     OMEGA_DATA_DIR is set to an autouse temp directory to prevent entity workspace
@@ -127,9 +130,10 @@ async def _set_test_env(tmp_path, monkeypatch, request, anyio_backend):
     reset_provider_registry()
     reset_resource_guard()
     world_state.reset()
-    from omega.state import reset_usm
-    await reset_usm()
-    await initialize_usm()
+    from omega.state import reset_usm, initialize_usm
+    reset_usm()
+    import anyio
+    anyio.run(initialize_usm)
     
     def teardown():
         reset_memory_store()

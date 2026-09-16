@@ -90,8 +90,8 @@ def test_dispatch_cross_validator_returns_structured_json():
     assert "_m23_honesty" in result
     assert result["cross_validator_agent"] == "jem"
     assert result["priority"] == "P0"
-    assert result["status"] == "stub_bypass"
-    assert result["handoff_dispatched"] is False  # M23: stub does NOT dispatch
+    assert result["status"] == "dispatched"
+    assert result["handoff_dispatched"] is True  # real dispatch (stub removed)
     print("✓ Hivemind dispatch returns structured JSON response (M23 honest stub)")
 
 

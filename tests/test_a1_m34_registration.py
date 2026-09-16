@@ -13,6 +13,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 # Create temp file BEFORE imports so OMEGA_M34_REGISTRY is set before module load
 _test_path_file = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
 _test_path = Path(_test_path_file.name)
@@ -34,6 +36,20 @@ def _cleanup():
     for p in [_test_path, _test_path.with_suffix(_test_path.suffix + ".1.bak"), _test_path.with_suffix(_test_path.suffix + ".lock")]:
         if os.path.exists(p):
             os.unlink(p)
+
+
+@pytest.fixture(autouse=True)
+def _ensure_registry_env():
+    """Re-assert this module's OMEGA_M34_REGISTRY before every test.
+
+    Other test modules (e.g. test_a2_m33_probe) set the same env var at
+    module level; pytest runs modules in one process, so the last module
+    imported wins. This fixture guarantees each test here uses OUR path.
+    """
+    os.environ["OMEGA_M34_REGISTRY"] = str(_test_path)
+    os.environ["OMEGA_M34_ENABLED"] = "1"
+    yield
+    # Leave env as-is for teardown; _cleanup() removes the temp file.
 
 
 def test_m34_register_subagent_exists():
