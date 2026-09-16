@@ -32,12 +32,33 @@ re-join (e.g., after OS reinstall or key revocation):
 2. **Transfer to Node 1** (secure channel — SSH, MagicDNS, or physical)
 3. **Node 1**:
    ```bash
-   sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:asus
+   sudo tailscale up --authkey=... --hostname=kali-n1 --accept-routes --advertise-tags=tag:asus
    ```
 
 ---
 
-## 3. Tailnet Lock
+## 3. Key Expiry for Tagged Devices (CRITICAL — Researcher §7.3)
+
+**Finding**: By default, key expiry is **DISABLED** for devices that authenticate via tagged authkeys. This means tagged devices can persist indefinitely even after the authkey expires.
+
+**Monitor**:
+```bash
+tailscale status --json | python3 -c "
+import sys, json
+s = json.load(sys.stdin)
+self = s.get('Self', {})
+expiry = self.get('KeyExpiry', 'never')
+print(f'Node key expiry: {expiry}')
+if expiry == 'never' or expiry is False:
+    print('⚠ Key expiry disabled — consider enabling in admin console')
+"
+```
+
+**Recommendation**: After Node 1 joins successfully, consider enabling key expiry in the Tailscale admin console for tagged devices. This ensures compromised keys auto-revoke.
+
+---
+
+## 4. Tailnet Lock
 
 **Keep DISABLED** (per Researcher-EIS findings). Tailnet Lock adds
 signing ceremony overhead without meaningful benefit for a 2-node mesh.

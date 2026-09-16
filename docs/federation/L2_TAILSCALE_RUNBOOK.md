@@ -35,19 +35,21 @@ Before nodes can claim their tags or communicate with least privilege, the polic
   "acls": [
     // Node 1 (ASUS Vanguard) communicates with Node 0 Core Hub (:8016) and local Ollama (:11434)
     {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016", "tag:omega-hub:11434"]},
-    
+
     // Node 0 can reach Node 1 MCP (:8016) and SSH (:22)
     {"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016", "tag:asus:22"]},
-    
+
     // Bidirectional ICMP heartbeats and wire pings
     {"action": "accept", "src": ["tag:asus", "tag:omega-hub"], "dst": ["tag:asus:*", "tag:omega-hub:*"], "proto": "icmp"}
-    
-    // If Node 1 runs its own omega-hub, allow bidirectional MCP:
-    {"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016"]}
   ],
   "ssh": [
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
-  ]
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot", "root"]},
+    {"action": "check", "src": ["tag:omega-hub"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+  ],
+  "autoApprovers": {
+    "routes": ["autogroup:admin"],
+    "exitNodes": ["autogroup:admin"]
+  }
 }
 ```
 
@@ -92,6 +94,7 @@ sudo tailscale up \
   --authkey="tskey-auth-YOUR_COPIED_KEY_HERE" \
   --hostname=kali-n1 \
   --operator=xnai \
+  --accept-routes \
   --advertise-tags=tag:asus
 ```
 
