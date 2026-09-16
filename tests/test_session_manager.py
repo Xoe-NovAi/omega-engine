@@ -171,12 +171,17 @@ class TestEnvironment:
     """Test environment-specific behavior."""
 
     def test_omega_env_test_skips_mkdir(self, tmp_path, monkeypatch):
-        """When OMEGA_ENV=test, session_dir is not auto-created."""
+        """session_dir is created even under OMEGA_ENV=test.
+
+        The dir is resolved lazily from OMEGA_DATA_DIR (isolated tmp_path in
+        tests), so creating it is safe and required — lock/.active files are
+        written there and a fresh checkout has no data/sessions/.
+        """
         monkeypatch.setenv("OMEGA_ENV", "test")
-        test_dir = tmp_path / "no_auto_create" / "sessions"
+        test_dir = tmp_path / "auto_create" / "sessions"
         SessionManager(session_dir=test_dir)
-        # Directory should NOT exist
-        assert not test_dir.exists()
+        # Directory SHOULD exist (lazy resolution + always-create)
+        assert test_dir.exists()
 
     def test_omega_env_production_creates_dir(self, tmp_path, monkeypatch):
         """When OMEGA_ENV is not test, session_dir is created."""
