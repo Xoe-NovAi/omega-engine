@@ -84,7 +84,7 @@ class PersonaSpec:
     anti_domains: List[str] = field(default_factory=list)
     """Domains this voice must NOT speak about."""
 
-    node: Optional[str] = None
+    slot: Optional[str] = None
     """Omega slot (S1-S10), if applicable."""
 
     element: Optional[str] = None

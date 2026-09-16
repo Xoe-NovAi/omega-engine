@@ -59,7 +59,7 @@ def test_sandbox_spec_from_yaml():
     yaml_content = """
 spec:
   name: "test_sandbox"
-  node: "N3"
+  slot: "S3"
   infrastructure:
     benchmark_harness: "test"
     target_hw: "zen2"
@@ -75,7 +75,7 @@ spec:
 
     assert_sandbox_spec_type(spec)
     assert spec.name == "test_sandbox"
-    assert spec.node == "N3"
+    assert spec.slot == "S3"
     assert spec.infrastructure["benchmark_harness"] == "test"
     assert len(spec.metrics) == 2
     assert spec.metrics[0].name == "latency_ms"
@@ -89,7 +89,7 @@ def test_sandbox_spec_validate_write_allowed():
     yaml_content = """
 spec:
   name: "test"
-  node: "N3"
+  slot: "S3"
   mutable_surface:
     - "config/wads/omega_research/workspaces"
 """
@@ -103,7 +103,7 @@ def test_sandbox_spec_validate_write_forbidden_core():
     yaml_content = """
 spec:
   name: "test"
-  node: "N3"
+  slot: "S3"
   mutable_surface:
     - "config/wads/omega_research/workspaces/*"
 """
@@ -124,7 +124,7 @@ def test_sandbox_spec_validate_write_forbidden_outside_workspace():
     yaml_content = """
 spec:
   name: "test"
-  node: "N3"
+  slot: "S3"
   mutable_surface:
     - "config/wads/omega_research/workspaces/*"
 """
@@ -457,7 +457,7 @@ def test_assert_sandbox_spec_type():
     yaml_content = """
 spec:
   name: "test"
-  node: "N3"
+  slot: "S3"
 """
     spec = SandboxSpec.from_yaml(yaml_content)
 
