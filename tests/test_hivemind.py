@@ -87,12 +87,20 @@ mock_mcp_server_sse.SseServerTransport = MagicMock()
 mock_mcp_server_streamable = types.ModuleType("mcp.server.streamable_http_manager")
 mock_mcp_server_streamable.StreamableHTTPSessionManager = MagicMock()
 
+mock_mcp_server_transport_security = types.ModuleType("mcp.server.transport_security")
+
+class MockTransportSecuritySettings:
+    def __init__(self, **kwargs):
+        pass
+
+mock_mcp_server_transport_security.TransportSecuritySettings = MockTransportSecuritySettings
+
 mock_mcp_server_fastmcp_server = types.ModuleType("mcp.server.fastmcp.server")
 mock_mcp_server_fastmcp_server.StreamableHTTPASGIApp = MagicMock()
 
 # Save originals before mocking (Carmack fix: restore after load to prevent
 # polluting subsequent test modules that need the real mcp library)
-_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.server.sse", "mcp.server.streamable_http_manager", "mcp.server.fastmcp.server", "mcp.types", "mcp.client", "mcp.client.sse", "mcp.client.streamable_http"]
+_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.server.sse", "mcp.server.streamable_http_manager", "mcp.server.transport_security", "mcp.server.fastmcp.server", "mcp.types", "mcp.client", "mcp.client.sse", "mcp.client.streamable_http"]
 _originals = {k: sys.modules.get(k) for k in _saved_keys}
 
 sys.modules["mcp"] = mock_mcp_pkg
@@ -100,6 +108,7 @@ sys.modules["mcp.server"] = mock_mcp_server
 sys.modules["mcp.server.fastmcp"] = mock_mcp_fastmcp
 sys.modules["mcp.server.sse"] = mock_mcp_server_sse
 sys.modules["mcp.server.streamable_http_manager"] = mock_mcp_server_streamable
+sys.modules["mcp.server.transport_security"] = mock_mcp_server_transport_security
 sys.modules["mcp.server.fastmcp.server"] = mock_mcp_server_fastmcp_server
 sys.modules["mcp.types"] = mock_mcp_types
 sys.modules["mcp.client"] = mock_mcp_client
@@ -316,7 +325,7 @@ async def test_u004_entity_context_hydrated(entity_context_env):
     payload = json.loads(result)
 
     assert payload["entity"]["name"] == "testentity"
-    assert payload["entity"]["pillar"] == "P7"
+    assert payload["entity"]["slot"] == "P7"
     assert payload["entity"]["role"] == "Test Context Entity"
 
     assert payload["soul_state"]["soul_power"] == 3.5
