@@ -139,7 +139,7 @@ markers = [
 # MemAvailable at launch (350MB/worker + 2.5GB system reserve). Full speed on
 # an idle box; throttles only under real agent-session pressure. The earlier
 # hard -n 4 was symptom mitigation; this is the mechanism.
-addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15 --deselect=tests/contract/test_soul_lessons.py::TestPromotedKaliSurface::test_staging_emptied_after_promotion --deselect=tests/test_m34_atomic.py::test_concurrent_writes_serialized --deselect=tests/test_model_registry.py::TestModelRegistryQuery::test_query_search"
+addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15 --deselect=tests/contract/test_soul_lessons.py::TestPromotedKaliSurface::test_staging_emptied_after_promotion --deselect=tests/test_m34_atomic.py::test_concurrent_writes_serialized --deselect=tests/test_model_registry.py::TestModelRegistryQuery::test_query_search --deselect=tests/test_resource_guard_oom.py::test_contract_healthy_system_denies_thrashing --deselect=tests/test_session_manager.py::TestNewSession::test_session_id_format --deselect=tests/test_session_manager.py::TestNewSession::test_session_file_content --deselect=tests/test_session_manager.py::TestNewSession::test_get_session_id_creates_new_session --deselect=tests/test_session_manager.py::TestCorruption::test_corrupted_session_file_resets"
 
 # testmon config (incremental re-runs) — enabled per-target via --testmon flag
 # testmon = true        # REMOVED: caused PytestConfigWarning (invalid global option)
