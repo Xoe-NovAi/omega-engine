@@ -14,17 +14,23 @@ This module delegates all proxy pool orchestration to the standalone
 from __future__ import annotations
 
 from typing import Optional
-import warp_proxy_pool
+
+try:
+    import warp_proxy_pool
+except ImportError:  # pragma: no cover — optional [warp] extra
+    warp_proxy_pool = None  # type: ignore[assignment]
 
 # Export the class for the Oracle's type checking and attachment
-EphemeralWarpPool = warp_proxy_pool.EphemeralWarpPool
+EphemeralWarpPool = getattr(warp_proxy_pool, "EphemeralWarpPool", None) if warp_proxy_pool else None
 
 # ── Configuration ──────────────────────────────────────────────────────────────
 SOCKS5_TEMPLATE = "socks5h://127.0.0.1:{port}"
 
 
-def get_pool() -> warp_proxy_pool.EphemeralWarpPool:
+def get_pool():
     """Return the global singleton pool instance from the sovereign package."""
+    if warp_proxy_pool is None:
+        raise ImportError("warp-proxy-pool not installed (optional [warp] extra)")
     return warp_proxy_pool.get_pool()
 
 
