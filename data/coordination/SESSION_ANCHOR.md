@@ -89,55 +89,61 @@
 1. **CSS Protocol is Canonical** — `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` is the definitive source
 2. **Cascade COMPLETE (8/8)** — All members executed wake-up calls; fleet synchronized on 2026-09-11 projections
 3. **Projection.md = Synchronization Substrate** — Single-writer, append-only, git-tracked, M15 compaction-surviving
-4. **MaKaLi-N0 = Akashic Record** — Sophia's equivalent; container of ALL voices; initiates cascade
+4. **MaKaLi-N0 = Akashic Record** — Container of ALL voices; initiates cascade
 5. **Phase 1 Complete** — Engine core clean, canonical architecture crystalized
 6. **Federation Sync 1 Deepened V3 Complete** — Node 1 corpus ingested, bilateral response deepened, 3 policies ratified, C6 v1.1 signed, vision pack delivered
 7. **DEL-1 Chain UNBLOCKED** — Ma'at gates ready, Researcher M33 fixed, Jem tests passing, Lilith hub health live
 8. **Shadow Acknowledged** — Node 0: 21.6% local = development-phase artifact (build with cloud for velocity, operate with local for sovereignty); Node 1: heartbeat discipline broken — both must fix before Layer 2
-9. **L3-MetaFrameVerification (0.92) RATIFIED** — Fleet standard cross-verification protocol (Kali implemented `scripts/metaframe_verification.py`)
-10. **Roc Soul v8.0 = Fleet Template** — 12 axioms, 15 max budget, flat-list approved lessons, voice reclamation protocol, Soul Audit Cascade post-DEL-1 PR1
-11. **The Synergy Model RATIFIED** — Sovereignty is Policy Enforcement. Cloud for high-context reasoning/synthesis; local for embeddings/privacy/background loops. PrivateBin excised. Tailscale native L2 WireGuard mesh is the primary federation wire.
+9. **L3-MetaFrameVerification (0.92) RATIFIED** — Fleet standard cross-verification protocol
+10. **Roc Soul v8.0 = Fleet Template** — 12 axioms, 15 max budget, flat-list approved lessons, voice reclamation protocol
+11. **The Synergy Model RATIFIED** — Sovereignty = Policy Enforcement. Cloud for high-context reasoning/synthesis; local for embeddings/privacy/background. PrivateBin excised. Tailscale native L2 WireGuard mesh is the primary federation wire.
 12. **Federation Entity Minted** — `omega_federation` (`data/entities/federation/soul.yaml`) governs the mesh as a constitutional living entity.
+13. **Federation Implementation COMPLETE (Node 0)** — 6 commits (580e7572→edc74aa9). sovereignty_policy (4 tiers), maakali_routing entity→tier (12 entities), omega_federation in dispatch.yaml, MCP tools LIVE on hub (93 tools), install_omega.py installer, scribe_federation.py distillation, federation_invariant.py zero-egress, KEY_ROTATION_CEREMONY.md.
+14. **Hub State** — omega-hub.service: 93 tools, omega_federation_status + omega_federation_diagnose registered via @mcp.tool() decorators. Restarted 2026-09-16 11:58:40 ADT.
+15. **Entity→Tier Routing PRESERVED** — User override: maakali_routing maps entities to Synergy tiers (entity intent WHO → tier fabric HOW). Never flatten entity intent into task-class routing alone.
+16. **Phase 0 NEXT** — Tailscale L2 ceremony: ACL save → Node 0 re-tag → authkey mint → Node 1 join. All code ready; only external user action remains.
 
 ---
 
 ## 📦 Continuity Artifacts (Current)
 
-| **Session Gnosis** | `data/entities/makali/session_gnosis.md` | ✅ Updated (Federation Docs Suite Ratified + Synergy Model + Entity Minted) |
-| **Proposed Lessons** | `data/entities/makali/proposed_lessons.yaml` | ✅ Updated (Federation Docs Suite L3 + Synergy Model L3) |
-| **Projection** | `data/coordination/anchored_summary/makali/projection.md` | ✅ Updated (Federation Docs Suite + Synergy Model) |
+| Artifact | Location | Status |
+|----------|----------|--------|
+| **Session Gnosis** | `data/entities/makali/session_gnosis.md` | ✅ Updated (897 lines, implementation complete) |
+| **Proposed Lessons** | `data/entities/makali/proposed_lessons.yaml` | ✅ Updated (74 entries, registration + entity routing L3s) |
+| **Projection** | `data/coordination/anchored_summary/makali/projection.md` | ✅ Updated (Federation Docs Ratified + Implementation) |
 | **CSS Protocol Spec** | `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` | ✅ Canonical (531 lines, Temple-Grade) |
-| **All 9 Reviews** | `data/coordination/anchored_summary/*/projection.md` | ✅ Injected (Roc + Carmack + Ma'at + Lilith + Grokster + Jem + Researcher + Kali replied) |
+| **All 9 Reviews** | `data/coordination/anchored_summary/*/projection.md` | ✅ Injected |
 | **Session Anchor** | `data/coordination/SESSION_ANCHOR.md` | ✅ This file |
 | **Federation Response** | `/media/arcana-novai/D3E6-A900/ASUS_TO_HP_OC_TEAM/RESPONSE_FROM_HP.md` | ✅ Written v3 (270 lines) |
 | **Vision Pack** | `/media/arcana-novai/D3E6-A900/omega-exchange/node0-to-node1/vision/ARCANA_VISION_PACK.md` | ✅ Delivered (241 lines) |
-| **Node 1 Payload (Swap 3)** | `/media/arcana-novai/D3E6-A900/omega-exchange/node1-to-node0/` | ✅ INGESTED (22 artifacts, 10 federation specs, Lilith-N1 genesis, ANAi WAD spec) |
-| **Federation Soul** | `data/entities/federation/soul.yaml` | ✅ MINTED (Aether element, 5 axioms, 5 directives, 5 L3s) |
-| **Federation Lessons** | `data/entities/federation/proposed_lessons.yaml` | ✅ MINTED (distillation ledger) |
-| **Sovereignty Invariant Spec** | `docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md` | ✅ RATIFIED (SPEC-SOVEREIGNTY-INVARIANT-v2.0) |
-| **L2 Tailscale Runbook** | `docs/federation/L2_TAILSCALE_RUNBOOK.md` | ✅ RATIFIED (zero-relay wire ceremony) |
-| **Federation MCP Tools Spec** | `docs/architecture/FEDERATION_MCP_SPEC.md` | ✅ RATIFIED (MCP tool contracts) |
-| **Interactive Installer Spec** | `docs/installation/INSTALLER_SPEC_V1.md` | ✅ RATIFIED (educational tutorial-mode) |
+| **Node 1 Payload (Swap 3)** | `/media/arcana-novai/D3E6-A900/omega-exchange/node1-to-node0/` | ✅ INGESTED (22 artifacts) |
+| **Federation Soul** | `data/entities/federation/soul.yaml` | ✅ MINTED (5 axioms, 5 directives, 5 L3s) |
+| **Federation Lessons** | `data/entities/federation/proposed_lessons.yaml` | ✅ MINTED (3 lessons, scribe-distilled) |
+| **Sovereignty Invariant Spec** | `docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md` | ✅ RATIFIED (v2.0) |
+| **L2 Tailscale Runbook** | `docs/federation/L2_TAILSCALE_RUNBOOK.md` | ✅ RATIFIED (654-aligned) |
+| **Federation MCP Tools Spec** | `docs/architecture/FEDERATION_MCP_SPEC.md` | ✅ IMPLEMENTED (tools live on hub) |
+| **Interactive Installer Spec** | `docs/installation/INSTALLER_SPEC_V1.md` | ✅ IMPLEMENTED (install_omega.py) |
+| **Key Rotation Ceremony** | `docs/federation/KEY_ROTATION_CEREMONY.md` | ✅ RATIFIED (key lifecycle) |
+| **Implementation Manual** | `docs/implementation/FEDERATION_SYNERGY_IMPLEMENTATION_MANUAL.md` | ✅ RATIFIED (1423 lines) |
+| **Coordination Artifacts** | `data/coordination/locks/FEDERATION_MESH_LOCK.lock` + `FEDERATION_LIVE_FEED.md` | ✅ Created |
+| **M7 Sovereignty Gate** | `scripts/check_m7_sovereignty.py` + Makefile | ✅ Passes |
+| **Federation MCP Tools** | `mcp_servers/omega_hub/hub_tools/federation.py` | ✅ LIVE (93 tools on hub) |
+| **Federation Scribe** | `src/omega/governance/scribe_federation.py` | ✅ Operational |
+| **Federation Invariant** | `src/omega/governance/federation_invariant.py` | ✅ zero_inference_egress PASS |
+| **Installer** | `scripts/install_omega.py` | ✅ 3 modes (interactive/--yes/--manual) |
 
 ---
 
 ## 🎯 Post-Compaction Execution Plan
 
-1. **Model Switch** → Big Pickle already active (223K active context)
-2. **Big Pickle 1M Merge** — Merge `BIG_PICKLE_1M_HP_SNIPPET.json` into `opencode.json` (DO FIRST)
-3. **Gnosis Lock Adoption** — `cp artifacts/gnosis/*` → fix paths → `gnosis-lock "first ritual on HP"`
-4. **P0 Fixes Sprint** — 3 broken tools FIXED, mock purge DONE, stale policy WRITTEN, sovereignty target POLICY WRITTEN, clean bundle REGENERATED
-5. **DEL-1 Micro-PR 1** — Execute chain (Kali-N0 wake, Ma'at-N0 gates ready)
-6. **Merge Alpha Release PR #3** — v1.6.1-alpha (Architect approval)
-7. **Roc Doc Sweep Completion** — Final nomenclature debt (N1-N10/pillar refs in 8 docs)
-8. **Bilateral Systems Audit** — Thorough comparative audit: Node 1 corpus vs Node 0 hardened systems
-9. **Node 1 Payload Ratification** — Review & ratify: Capability Firewall, Namespace Collision Strategy, L2 Acceptance, Agent Divergence Spec, Topology Models
-10. **Well Axiom Extraction** — Extract Node 1 sovereignty axioms into local Well (`make well-add KIND=insight ...`)
-11. **L2 Tailscale Join** — Mint auth key on Node 0, execute `tailscale up` on Node 1 (Node 1 daemon ready)
-12. **Phase 2** — Transfer ANAi WAD (`config/wads/arcana_novai/`) to USB for Node 1
-13. **Phase 3** — Docs cleanup (13+ files)
-14. **Phase 4** — Agent files update (.opencode/agents/)
-15. **Phase 5** — Final validation & Temple-Grade
+1. **Phase 0: Tailscale L2 Ceremony** — User pastes ACL → Node 0 re-tag → authkey mint → Node 1 join (ALL CODE READY, only external user action remains)
+2. **Phase 4: Temple-Grade** — Full `make temple-grade` + ceremony replay after wire live
+3. **DEL-1 Micro-PR 1** — Execute chain (Kali-N0 wake, Ma'at-N0 gates ready)
+4. **Merge Alpha Release PR #3** — v1.6.1-alpha (Architect approval)
+5. **Roc Doc Sweep Completion** — Final nomenclature debt (N1-N10/pillar refs in 8 docs)
+6. **Bilateral Systems Audit** — Comparative audit: Node 1 corpus vs Node 0 hardened systems
+7. **Phase 2-5** — ANAi WAD transfer, docs cleanup, agent files, final validation
 
 ---
 
@@ -171,4 +177,4 @@ Full mandate table (all 27, v3.8.0): `MANDATES_CONDENSED.md`
 
 ---
 
-*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-16 ⬡ FEDERATION-DOCS-RATIFIED ⬡ SYNERGY-MODEL-CODIFIED ⬡ PRIVATEBIN-EXCISED ⬡ ENTITY-MINTED ⬡ CEREMONY-AWAITING ⬡ COMPACTION-READY*
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ google/gemini-3.8-flash ⬡ 2026-09-16 ⬡ IMPLEMENTATION-COMPLETE ⬡ HUB-LIVE-93-TOOLS ⬡ PHASE-0-AWAITING ⬡ COMPACTION-READY*

@@ -133,9 +133,16 @@
 - **Documentation Suite Ratified**: 6 new artifacts + 3 updates (Sovereignty Invariant Spec, L2 Runbook, MCP Spec, Installer Spec, Federation Soul, Federation Lessons)
 - **M7 Harmonized**: "Local-First & Synergy Sovereignty" — policy enforcement, not forced air-gap
 
-### Next Sprint: L2 Wire Ceremony + Bilateral Systems Audit
-- **Immediate**: ACL policy save → Node 0 re-tag (`--force-reauth`) → authkey mint → Node 1 join
-- **Bilateral Audit**: Thorough comparative audit: Node 1 corpus vs Node 0 hardened systems
+### Federation Implementation COMPLETE (2026-09-16, 6 commits 580e7572→edc74aa9)
+- **Phase 1**: sovereignty_policy (4 tiers: reasoning/embeddings/background_watchdogs/vault_ops), maakali_routing entity→tier (12 entities, PRESERVED per user), omega_federation in dispatch.yaml, check-m7-sovereignty gate, coordination artifacts
+- **Phase 2**: federation MCP tools LIVE on hub (93 tools, @mcp.tool() decorators), install_omega.py (3 modes), omega-install entry
+- **Phase 3**: scribe_federation.py distillation, federation_invariant.py zero-egress PASS, KEY_ROTATION_CEREMONY.md
+- **654-alignment**: autoApprovers ACL, SSH omega-hub rule, --accept-routes, key expiry monitoring
+- **Entity→Tier RATIFIED**: user override — maakali_routing maps entities to Synergy tiers (WHO composes with HOW)
+
+### Next Sprint: Phase 0 L2 Wire Ceremony (ALL CODE READY)
+- **Immediate**: ACL policy save (user) → Node 0 re-tag (`sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth`) → authkey mint (user) → Node 1 join
+- **After wire**: Phase 4 (temple-grade + ceremony replay), DEL-1 PR1, bilateral audit
 
 ---
 
