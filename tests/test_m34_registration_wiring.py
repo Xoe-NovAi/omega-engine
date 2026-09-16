@@ -92,7 +92,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -124,7 +124,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -157,7 +157,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -183,7 +183,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -228,7 +228,7 @@ class TestDispatchGuardStep6b:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -272,7 +272,7 @@ class TestDispatchGuardStep6b:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -312,7 +312,7 @@ class TestDispatchIntegration:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -373,7 +373,7 @@ class TestEndToEndDispatchGuard:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 

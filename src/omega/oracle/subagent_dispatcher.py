@@ -66,8 +66,21 @@ logger = logging.getLogger(__name__)
 _m34_registry = None
 
 def _get_m34_registry():
-    """Lazily initialise M34Registry singleton."""
+    """Lazily initialise M34Registry singleton.
+
+    When OMEGA_M34_REGISTRY is set, a fresh registry is created per call
+    so tests/deployments that change the env var between calls get the
+    intended path (no stale singleton).
+    """
     global _m34_registry
+    env_path = os.environ.get("OMEGA_M34_REGISTRY")
+    if env_path:
+        try:
+            from omega.oracle.m34_registry import M34Registry
+            return M34Registry(registry_path=Path(env_path))
+        except (ImportError, OSError, ValueError):
+            logger.debug("M34 registry unavailable — skipping registration")
+            return None
     if _m34_registry is None:
         try:
             from omega.oracle.m34_registry import M34Registry

@@ -64,7 +64,7 @@ def test_persona_spec_full():
     p = PersonaSpec(
         name="Sekhmet",
         domain="Infrastructure",
-        node="N1",
+        slot="S1",
         element="Earth 🜃",
         mandate_lens="Speak as the body.",
         anti_domains=["soul evolution", "governance"],
@@ -82,7 +82,7 @@ def test_persona_spec_round_trip():
     original = PersonaSpec(
         name="Prometheus",
         domain="Engineering",
-        node="N3",
+        slot="S3",
         mandate_lens="Speak as the forge. What is cracked?",
         anti_domains=["soul evolution", "memory systems"],
     )

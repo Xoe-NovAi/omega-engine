@@ -476,7 +476,7 @@ def test_assert_sandbox_runtime_type():
         async def _run_experiment(self, proposal, budget_token):
             pass
 
-    spec = SandboxSpec(name="test", node="N3")
+    spec = SandboxSpec(name="test", slot="S3")
     guard = BudgetGuard(enable_redis=False)
     runtime = MockRuntime(spec, guard)
 
@@ -527,7 +527,7 @@ async def test_ml_training_sandbox_creation():
     from src.omega.research.sandboxes.ml_training import MLTrainingSandbox
     from omega.research.sandbox import SandboxRuntime
 
-    spec = SandboxSpec(name="ml_training", node="N6")
+    spec = SandboxSpec(name="ml_training", slot="S6")
     guard = BudgetGuard(enable_redis=False)
 
     sandbox = MLTrainingSandbox(spec, guard)
