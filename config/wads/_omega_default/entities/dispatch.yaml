@@ -176,3 +176,21 @@ entities:
     task_tool_type: "slot"
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
+
+  # Federation Meta-Entity (1)
+  - name: "omega_federation"
+    role: "FEDERATION_MESH"
+    mode: "subagent"
+    purpose: "Sovereign Mesh — The wire that binds without binding. Awareness without inference."
+    capabilities:
+      - "mesh_monitoring"
+      - "invariant_audit"
+      - "disruption_distillation"
+      - "wire_diagnostics"
+    domains: ["federation", "mesh", "tailscale", "p2p"]
+    slot: null
+    task_tool_type: "general"
+    owned_files:
+      - "data/entities/federation/"
+      - "data/coordination/FEDERATION_LIVE_FEED.md"
+    model: "qwen3-1.7b-q4_k_m"

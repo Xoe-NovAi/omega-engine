@@ -18,7 +18,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-hub-health
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-hub-health soul-validate
 
 help:
 	@echo "Omega Engine Makefile"
@@ -373,6 +373,14 @@ temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-co
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
 
+# SOUL_ARCHITECTURE_PROTOCOL v3.0 — Soul v8.0 CI gate (ratified by Kali-N0, ho_123f6ebff930)
+# Enforces: axiom coverage (>=1 directive + >=1 principle ref), flat-list approved_lessons.yaml
+# (R3 hydration contract), <=15 axiom ceiling, duplicate-key rejection.
+soul-validate:
+	@echo "$(YELLOW)Running Soul Architecture Validator (SOUL_ARCHITECTURE_PROTOCOL v3.0)...$(NC)"
+	@$(PYTHON) scripts/validate_soul_architecture.py || (echo "$(RED)FAIL: Soul architecture violations found$(NC)" && false)
+	@echo "$(GREEN)Soul architecture compliant: axioms covered, flat-list approved lessons, no duplicate keys$(NC)"
+
 # M37 Heritage — REUSE v3.3 SPDX compliance gate
 # Verifies every file has SPDX-FileCopyrightText and SPDX-License-Identifier
 # per the REUSE specification v3.3. Wired into CI (.github/workflows/reuse-compliance.yml)
@@ -480,6 +488,12 @@ check-m7-local-first:
 	@echo "$(GREEN)M7 passed: Local-first strategy configured$(NC)"
 	@echo "$(YELLOW)Checking M22 SSOT: is_cloud only in fallback_chain...$(NC)"
 	@$(PYTHON) scripts/check_m22_ssot.py
+
+# Check M7: Sovereignty policy (Synergy Model) — entity->tier mapping
+check-m7-sovereignty:
+	@echo "$(YELLOW)Checking M7 (sovereignty_policy + entity->tier mapping)...$(NC)"
+	@$(PYTHON) scripts/check_m7_sovereignty.py || (echo "$(RED)FAIL: sovereignty_policy not configured$(NC)" && false)
+	@echo "$(GREEN)M7 passed: sovereignty_policy + entity->tier mapping OK$(NC)"
 
 check-m23-failure-integrity:
 	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"

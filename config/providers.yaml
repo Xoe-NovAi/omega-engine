@@ -7,18 +7,83 @@ generated_at: '2026-08-07'
 source: config/model_registry
 strategy: local_first
 
-# [C-5] MaKaLi Routing — Kali local, Ma'at+Lilith cloud
-# Spec: docs/strategy/IMPLEMENTATION_MANUAL_C0_C2.md §C-5
+# ── Sovereignty Policy (Synergy Model) ─────────────────────────────
+# Spec: docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md
+# Ratified: 2026-09-16 — Sovereignty is Policy Enforcement, not isolation.
+sovereignty_policy:
+  mode: synergy  # "synergy" | "local_first" | "cloud_first"
+
+  tiers:
+    reasoning:
+      primary: opencode-zen
+      fallback: [openrouter, anthropic, native-gguf]
+      allowed_data_classification: [PUBLIC, INTERNAL]
+      description: "High-order synthesis, architecture, dialectics — frontier cloud"
+
+    embeddings:
+      primary: native-local
+      model: bge-m3-q8
+      fallback: [ollama-local]
+      allowed_data_classification: [PUBLIC, INTERNAL, PRIVATE, SOVEREIGN]
+      description: "Vector embeddings — local, zero egress"
+
+    background_watchdogs:
+      primary: ollama-local
+      model: qwen2.5-coder:7b
+      fallback: [native-gguf]
+      allowed_data_classification: [PUBLIC, INTERNAL, PRIVATE]
+      description: "Heartbeats, health checks, background loops — local"
+
+    vault_ops:
+      primary: native-local
+      model: qwen3-1.7b
+      fallback: []
+      allowed_data_classification: [PRIVATE, SOVEREIGN]
+      description: "Credential routing, PII sanitization — local ONLY, no fallback"
+
+# ── Entity Intent Layer (maakali_routing) ──────────────────────────
+# Maps entities to Synergy tiers. The tier determines the provider
+# fabric via sovereignty_policy.tiers. Entity-specific provider
+# overrides remain possible via provider_override (rare, explicit).
+# Ratified: 2026-09-16 — entity-based routing PRESERVED (sometimes
+# the appropriate agent IS a specific entity).
 maakali_routing:
   kali:
-    prefer: native-gguf    # Local first for Kali (synthesis voice)
-    fallback: antigravity
+    tier: reasoning            # Synthesis, architecture → cloud frontier
+    fallback_tier: local       # Degrade to local if cloud unavailable
   maat:
-    prefer: antigravity    # Cloud for Ma'at (build side)
-    fallback: google
+    tier: reasoning            # Build governance, code review → cloud frontier
+    fallback_tier: local
   lilith:
-    prefer: antigravity    # Cloud for Lilith (run side)
-    fallback: google
+    tier: background_watchdogs # Runtime metabolism, heartbeats → local
+    fallback_tier: reasoning   # Escalate to cloud if local overwhelmed
+  carmack:
+    tier: reasoning
+    fallback_tier: local
+  researcher:
+    tier: reasoning
+    fallback_tier: local
+  roc_racoon:
+    tier: background_watchdogs
+    fallback_tier: reasoning
+  jem:
+    tier: reasoning
+    fallback_tier: local
+  grokster:
+    tier: reasoning
+    fallback_tier: local
+  verity:
+    tier: reasoning
+    fallback_tier: local
+  scribe:
+    tier: background_watchdogs
+    fallback_tier: local
+  slot:
+    tier: background_watchdogs
+    fallback_tier: local
+  doom_guy:
+    tier: reasoning
+    fallback_tier: local
 
 # Dynamic Fallback Resolver Configuration
 # Replaces hardcoded fallback_provider with model-aware resolution

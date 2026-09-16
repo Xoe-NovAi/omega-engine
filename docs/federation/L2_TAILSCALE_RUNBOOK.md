@@ -128,7 +128,7 @@ curl -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp \
 | Symptom | Root Cause | Remediation |
 |---------|------------|-------------|
 | `requested tags are invalid or not permitted` | Stage 1 ACL was not saved or missing `tagOwners` | Save the ACL policy in the admin console before running `tailscale up`. |
-| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.tail51f14a.ts.net:*`). Restart hub service if needed: `systemctl --user restart omega-hub`. |
+| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.tail51f14a.ts.net:*`). Restart hub service if needed: `systemctl --user restart omega-hub.service` (Podman Quadlet) or `podman container restart omega-hub` (direct). |
 | High ping latency (>50ms over LAN) | Connection falling back to DERP relay | Run `tailscale netcheck` on both machines to verify UDP port 41641 is unblocked. |
 
 *⬡ OMEGA ⬡ RUNBOOK-L2-TAILSCALE-v2.0 ⬡ 2026-09-16*
