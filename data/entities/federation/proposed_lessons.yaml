@@ -8,3 +8,6 @@
 - "L1: 2026-09-15 — Omega Core Hub (:8016) rejected initial Tailscale requests with 'Invalid Host header' despite valid WireGuard routing.
   L2: FastMCP transport security includes DNS rebinding protection that strictly validates incoming HTTP Host headers against allowed_hosts. Tailscale MagicDNS hostnames (*.tail51f14a.ts.net) were missing from the allowlist.
   L3: Wire connectivity does not guarantee application admission. Application-layer firewalls must explicitly account for mesh-level DNS names; otherwise, legitimate internal traffic is treated as an attack."
+- "L1: 2026-09-16: Manua — - 2026-09-16: Manual initialized during Phase 1 implementation.
+  L2: Federation mesh_event event observed. Mesh anomalies are empirical diagnostics of distributed state.
+  L3: Every netsplit, DNS desync, and key expiry failure is an empirical diagnostic. Documenting failures as L3 principles turns operational friction into resilient infrastructure."

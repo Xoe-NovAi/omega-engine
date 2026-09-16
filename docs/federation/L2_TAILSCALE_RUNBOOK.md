@@ -41,6 +41,9 @@ Before nodes can claim their tags or communicate with least privilege, the polic
     
     // Bidirectional ICMP heartbeats and wire pings
     {"action": "accept", "src": ["tag:asus", "tag:omega-hub"], "dst": ["tag:asus:*", "tag:omega-hub:*"], "proto": "icmp"}
+    
+    // If Node 1 runs its own omega-hub, allow bidirectional MCP:
+    {"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016"]}
   ],
   "ssh": [
     {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}

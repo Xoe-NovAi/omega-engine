@@ -16,12 +16,15 @@ Mandates:
 from __future__ import annotations
 
 import json
+import logging
 import subprocess
 from datetime import datetime, timezone
 from typing import Any
 
 import anyio
 from mcp.server.fastmcp import Context
+
+logger = logging.getLogger(__name__)
 
 # ── Internal helpers ────────────────────────────────────────────────
 
@@ -111,7 +114,8 @@ async def _verify_zero_inference_egress() -> bool:
             )
             # 404/405 = endpoint does not exist = PASS
             return result.stdout.strip() in ("404", "405")
-        except Exception:
+        except Exception as exc:  # noqa: BLE001 — probe failure is logged, not fatal
+            logger.warning("egress probe failed: %s", exc)
             return False
 
     return await anyio.to_thread.run_sync(_check)
@@ -180,7 +184,8 @@ async def omega_federation_diagnose(
                                    capture_output=True, text=True, timeout=10, check=False)
                 return {"status": "PASS" if r.returncode == 0 else "FAIL",
                         "detail": (r.stdout or r.stderr).strip()[:200]}
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — ping failure logged
+                logger.warning("ping %s failed: %s", h, e)
                 return {"status": "FAIL", "detail": str(e)}
 
         result = await anyio.to_thread.run_sync(_ping)
@@ -197,7 +202,8 @@ async def omega_federation_diagnose(
             code = r.stdout.strip()
             return {"status": "PASS" if code in ("200", "404") else "WARN",
                     "detail": f"HTTP {code} on :8016/mcp"}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — probe failure logged
+            logger.warning("MCP probe failed for %s: %s", host, e)
             return {"status": "FAIL", "detail": str(e)}
 
     for host in targets:
