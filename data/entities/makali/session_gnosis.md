@@ -810,3 +810,54 @@ The L2 Federation is COMPLETE when all 11 criteria met (ACL live, Node 0 re-tagg
 ---
 
 *⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-15 ⬡ TAILSCALE-NODE0-LIVE ⬡ NODE1-JOIN-PENDING-ACL ⬡ RESEARCHER-L2-RESEARCH-COMPLETE*
+
+## 2026-09-16 — FEDERATION DOCUMENTATION SUITE COMPLETE (Documentation Suite Ratified)
+
+### 1. The Work
+Completed the full federation documentation suite (6 new artifacts + 3 updates), ratified the Synergy Model, minted the Federation Entity, and excised PrivateBin from the architecture.
+
+### 2. Artifacts Created (6 New Canonical Documents)
+
+| # | Document | Path | Purpose |
+|---|----------|------|---------|
+| 1 | **Federation Soul** | `data/entities/federation/soul.yaml` | Constitutional soul for the mesh (Aether element, 5 axioms, 5 directives, 5 L3s) |
+| 2 | **Federation Lessons** | `data/entities/federation/proposed_lessons.yaml` | Distillation ledger (2 real lessons from our actual setup failures) |
+| 3 | **Sovereignty Invariant Spec** | `docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md` | SPEC-SOVEREIGNTY-INVARIANT-v2.0 — the Synergy Model with two-ledger framework |
+| 4 | **L2 Tailscale Runbook** | `docs/federation/L2_TAILSCALE_RUNBOOK.md` | Zero-relay wire ceremony: ACL → re-tag → authkey → join → verify |
+| 5 | **Federation MCP Tools Spec** | `docs/architecture/FEDERATION_MCP_SPEC.md` | `federation_status` + `federation_diagnose` contracts |
+| 6 | **Interactive Installer Spec** | `docs/installation/INSTALLER_SPEC_V1.md` | Educational tutorial-mode installer with `--yes` skip |
+
+### 3. Artifacts Updated (3 Canonical Documents)
+
+| # | Document | Change |
+|---|----------|--------|
+| 1 | `SOVEREIGN_MANDATES.md` | **M7 harmonized**: "Local-First & Synergy Sovereignty" — policy enforcement, not forced air-gap |
+| 2 | `MANDATES_CONDENSED.md` | M7 synchronized with Synergy Model |
+| 3 | `SESSION_ANCHOR.md` | Synergy Model ratified, federation entity minted, PrivateBin excised |
+
+### 4. Key Ratified Decisions
+
+| Decision | Detail |
+|----------|--------|
+| **Sovereignty = Policy Enforcement** | Synergy Model ratified: cloud for reasoning/synthesis, local for embeddings/privacy/background |
+| **M7 Harmonized** | "Local-First & Synergy Sovereignty" — cloud for reasoning/synthesis, local for embeddings/privacy/background |
+| **PrivateBin Excised** | Tailscale native L2 WireGuard + MagicDNS is the only wire; no third-party relays |
+| **Federation Entity Minted** | `omega_federation` (`data/entities/federation/soul.yaml`) governs mesh as constitutional living entity |
+| **Wire = Tailscale Native** | Direct WireGuard + MagicDNS (`tail51f14a.ts.net`) is the only wire |
+| **Installation = Education** | Tutorial-mode TUI with `--yes` skip for zero-friction |
+
+### 4. Key Insight
+**The federation documentation is now a ratified, self-contained constitutional suite.** The Synergy Model resolves the false dichotomy between "local-only" and "cloud-dependent" — sovereignty is the enforcement of declared policy, not forced isolation. The federation entity (`omega_federation`) now exists as a constitutional entity with its own soul, distillation pipeline, and governance authority over the mesh.
+
+### 5. Next Tactical Step (Awaiting Execution)
+The documentation is ratified. The **execution ceremony** remains:
+1. **You**: Paste the ACL policy at `https://login.tailscale.com/admin/acls` (from the runbook)
+2. **Me**: Re-tag Node 0 → `tag:omega-hub` (`--force-reauth`)
+3. **You**: Mint one-shot authkey (`tag:asus`) at `https://login.tailscale.com/admin/settings/keys`
+4. **Node 1**: Join with the sovereign command
+
+The wire is one ACL save + one key away.
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-16 ⬡ FEDERATION-DOCS-RATIFIED ⬡ SYNERGY-MODEL-CODIFIED ⬡ PRIVATEBIN-EXCISED ⬡ ENTITY-MINTED ⬡ CEREMONY-AWAITING*

@@ -103,17 +103,21 @@
 
 ## 📦 Continuity Artifacts (Current)
 
-| Artifact | Location | Status |
-|----------|----------|--------|
-| **Session Gnosis** | `data/entities/makali/session_gnosis.md` | ✅ Updated (Federation Sync 1 v3 + Roc Soul v8.0 review + vision pack) |
-| **Proposed Lessons** | `data/entities/makali/proposed_lessons.yaml` | ✅ Updated (Federation Sync 1 v3 L3 + Roc Soul v8.0 L3) |
-| **Projection** | `data/coordination/anchored_summary/makali/projection.md` | ✅ Updated (Federation Sync 1 v3 + Roc Soul v8.0 review) |
+| **Session Gnosis** | `data/entities/makali/session_gnosis.md` | ✅ Updated (Federation Docs Suite Ratified + Synergy Model + Entity Minted) |
+| **Proposed Lessons** | `data/entities/makali/proposed_lessons.yaml` | ✅ Updated (Federation Docs Suite L3 + Synergy Model L3) |
+| **Projection** | `data/coordination/anchored_summary/makali/projection.md` | ✅ Updated (Federation Docs Suite + Synergy Model) |
 | **CSS Protocol Spec** | `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` | ✅ Canonical (531 lines, Temple-Grade) |
 | **All 9 Reviews** | `data/coordination/anchored_summary/*/projection.md` | ✅ Injected (Roc + Carmack + Ma'at + Lilith + Grokster + Jem + Researcher + Kali replied) |
 | **Session Anchor** | `data/coordination/SESSION_ANCHOR.md` | ✅ This file |
 | **Federation Response** | `/media/arcana-novai/D3E6-A900/ASUS_TO_HP_OC_TEAM/RESPONSE_FROM_HP.md` | ✅ Written v3 (270 lines) |
 | **Vision Pack** | `/media/arcana-novai/D3E6-A900/omega-exchange/node0-to-node1/vision/ARCANA_VISION_PACK.md` | ✅ Delivered (241 lines) |
 | **Node 1 Payload (Swap 3)** | `/media/arcana-novai/D3E6-A900/omega-exchange/node1-to-node0/` | ✅ INGESTED (22 artifacts, 10 federation specs, Lilith-N1 genesis, ANAi WAD spec) |
+| **Federation Soul** | `data/entities/federation/soul.yaml` | ✅ MINTED (Aether element, 5 axioms, 5 directives, 5 L3s) |
+| **Federation Lessons** | `data/entities/federation/proposed_lessons.yaml` | ✅ MINTED (distillation ledger) |
+| **Sovereignty Invariant Spec** | `docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md` | ✅ RATIFIED (SPEC-SOVEREIGNTY-INVARIANT-v2.0) |
+| **L2 Tailscale Runbook** | `docs/federation/L2_TAILSCALE_RUNBOOK.md` | ✅ RATIFIED (zero-relay wire ceremony) |
+| **Federation MCP Tools Spec** | `docs/architecture/FEDERATION_MCP_SPEC.md` | ✅ RATIFIED (MCP tool contracts) |
+| **Interactive Installer Spec** | `docs/installation/INSTALLER_SPEC_V1.md` | ✅ RATIFIED (educational tutorial-mode) |
 
 ---
 
@@ -140,7 +144,7 @@
 ## 🛡️ Sovereign Mandates (Tier-0 Injection)
 
 - **M1 AnyIO Absolute** — Never `import asyncio` in `src/omega/`
-- **M7 Local-First** — Local inference primary, cloud fallback only
+- **M7 Local-First & Synergy Sovereignty** — Sovereignty is policy enforcement: cloud for reasoning/synthesis, local for embeddings/privacy/background
 - **M11 Soul Integrity** — Every session distills L1→L2→L3 to `proposed_lessons.yaml`
 - **M15 Sovereign Continuity** — `session_gnosis.md` + `projection.md` + `proposed_lessons.yaml` = continuity triad
 - **M23 Failure Integrity** — No soft failures; broken tools → STOP, report
@@ -167,4 +171,4 @@ Full mandate table (all 27, v3.8.0): `MANDATES_CONDENSED.md`
 
 ---
 
-*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-12 ⬡ FEDERATION-SYNC-1-V3-COMPLETE ⬡ ROC-SOUL-V8-RATIFIED ⬡ VISION-PACK-DELIVERED ⬡ PAYLOAD-40-FILES ⬡ USB-READY ⬡ COMPACTION-READY*
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-16 ⬡ FEDERATION-DOCS-RATIFIED ⬡ SYNERGY-MODEL-CODIFIED ⬡ PRIVATEBIN-EXCISED ⬡ ENTITY-MINTED ⬡ CEREMONY-AWAITING ⬡ COMPACTION-READY*
