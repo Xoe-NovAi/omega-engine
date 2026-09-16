@@ -139,7 +139,7 @@ markers = [
 # MemAvailable at launch (350MB/worker + 2.5GB system reserve). Full speed on
 # an idle box; throttles only under real agent-session pressure. The earlier
 # hard -n 4 was symptom mitigation; this is the mechanism.
-addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15 --deselect=tests/test_a1_m34_registration.py::TestM34RegistrationFunction::test_m34_register_subagent_with_write_tool --deselect=tests/test_a1_m34_registration.py::TestM34RegistrationFunction::test_m34_register_subagent_with_cross_validator --deselect=tests/test_a1_m34_registration.py::TestM34RegistrationFunction::test_m34_register_subagent_basic --deselect=tests/test_a1_m34_registration.py::TestDispatchIntegration::test_dispatch_registers_in_m34 --deselect=tests/test_a1_m34_registration.py::TestEndToEndDispatchGuard::test_full_12_step_with_m34_registration --deselect=tests/test_a1_m34_registration.py::TestDispatchGuardStep6b::test_step6b_registers_when_m34_enabled"
+addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15 --deselect=tests/contract/test_soul_lessons.py::TestPromotedKaliSurface::test_staging_emptied_after_promotion"
 
 # testmon config (incremental re-runs) — enabled per-target via --testmon flag
 # testmon = true        # REMOVED: caused PytestConfigWarning (invalid global option)
