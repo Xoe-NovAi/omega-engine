@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
 title = "Omega Engine gitleaks config"
 
 # Allowlist for known false positives and public-by-design secrets.

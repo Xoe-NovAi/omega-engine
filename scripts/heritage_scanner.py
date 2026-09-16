@@ -67,12 +67,15 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 # ── Constants ────────────────────────────────────────────────────────────────
 
 # Per REUSE v3.3 spec
+# REUSE-IgnoreStart — the regex below contains a literal SPDX-License-Identifier
+# string that REUSE would otherwise misparse as a license expression.
 SPDX_HEADER_PATTERN = re.compile(
     r"SPDX-FileCopyrightText:\s*(?P<copyright>.+?)\n"
     r".*?"  # Any intermediate lines
     r"SPDX-License-Identifier:\s*(?P<license>[A-Za-z0-9\-\.\+ ]+)",
     re.MULTILINE | re.DOTALL
 )
+# REUSE-IgnoreEnd
 
 # Per REUSE v3.3: Commentable file extensions (per the spec)
 COMMENTABLE_EXTENSIONS = {

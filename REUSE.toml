@@ -248,3 +248,31 @@ SPDX-License-Identifier = "MIT"
 path = "opencode/**"
 SPDX-FileCopyrightText = "Various copyright holders"
 SPDX-License-Identifier = "MIT"
+
+# ── Runtime/operational data (machine-generated, not authored source) ──────
+# M37 heritage applies to authored source; runtime state is excluded.
+[[annotations]]
+path = "data/handoff/archive/**"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "src/data/jobs/running/**"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".gitleaks.toml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Audit artifacts & reference configs ────────────────────────────────────
+[[annotations]]
+path = "data/entities/_audit/*.csv"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "docs/tech-architecture-research/grub.cfg"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"

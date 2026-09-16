@@ -49,7 +49,7 @@ jobs:
 
       - name: Verify imports
         run: |
-          python3 -c "import anyio; print(f'AnyIO {anyio.__version__}')"
+          python3 -c "import importlib.metadata; print(f'AnyIO {importlib.metadata.version(\"anyio\")}')"
           python3 -c "from omega.oracle.model_gateway import ModelGateway; print('ModelGateway OK')"
 
       - name: Run tests
