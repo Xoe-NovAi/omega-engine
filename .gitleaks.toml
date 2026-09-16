@@ -1,0 +1,16 @@
+title = "Omega Engine gitleaks config"
+
+# Allowlist for known false positives and public-by-design secrets.
+# AP tokens are internal artifact tokens (AP-<ENTITY>-<TOPIC>-<DATE>-v1.0.0),
+# not credentials. GOCSPX-K58FWR... is a PUBLIC OAuth client secret
+# (RFC 8252 native-app pattern) allowlisted in data/secrets-public.toml.
+[allowlist]
+description = "Omega Engine known-safe patterns"
+regexes = [
+    '''AP-[A-Z0-9]+-[A-Z0-9-]+-[0-9]{8}-v[0-9]+\.[0-9]+\.[0-9]+''',  # internal artifact tokens
+    '''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''',                      # public client secret (RFC 8252)
+    '''GOCSPX-\*\*\*REDACTED-ROTATED\*\*\*''',                      # redaction placeholder
+    '''GOCSPX-NEW_VALUE''',                                         # doc placeholder
+    '''GOCSPX-ATTACKER-XXX''',                                      # adversarial test placeholder
+    '''GOCSPX-NEW''',                                               # rotation log placeholder
+]
