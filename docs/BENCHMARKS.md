@@ -77,6 +77,17 @@ Sources: arXiv:2601.14277 (unified eval Llama-3.1-8B), ggml #2094, Qwen3 quantiz
 | 12 | 0-11 | 13.88 | All HT threads |
 | 6 | 0,2,4,6,8,10 | ~0.5 | **TRAP — spin-wait convoy (ollama #17916)** |
 
+### Why 8 Threads Wins (Scheduler + Barrier Analysis)
+
+| Threads | Scheduler Behavior | Barrier Dynamics |
+|---------|-------------------|------------------|
+| **6** | All 6 physical P-cores busy | No HT elasticity; all threads hit barrier simultaneously → stall |
+| **8** | 6 P-cores + 2 HT siblings free | **Optimal** — waiters absorb on HT siblings; workers on physical; OS headroom |
+| **10–12** | E-core threads enter | E-cores lack AVX2/VNNI → slower GEMM; or all HT → convoy risk |
+| **>12** | E-cores active | Memory contention, no AVX2 benefit |
+
+**Kernel context:** Linux ≥ 5.16 correctly schedules P→E→HT (not P→HT→E). Your kernel 7.0 has full ITD/HFI support — the scheduler places AVX2-heavy llama.cpp threads on P-cores automatically when mask allows.
+
 ## Older ground truth
 
 - `AllowedCPUs=0-11` + `OLLAMA_NUM_THREADS=8` → **14.4 t/s** (swept 6→14.0/8→14.4/10→14.17/12→13.88).

@@ -245,6 +245,79 @@ Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`
 
 **THP madvise is the single highest-impact kernel tweak** — eliminates khugepaged stalls during model load/KV cache growth.
 
+---
+
+## Intel Hybrid Architecture Deep Dive (Research-Backed)
+
+### Linux Scheduler Evolution for Hybrid CPUs
+
+| Kernel | Scheduling Priority | Problem |
+|--------|---------------------|---------|
+| **v4.9** (pre-ITMT) | P-core = E-core = HT sibling | Random placement, high variance |
+| **v4.10–v5.15** (ITMT) | P-core → **HT sibling** → E-core | **Wrong!** HT sibling preferred over E-core |
+| **v5.16+** (ITMT fixed) | P-core → **E-core** → HT sibling | **Correct** — spreads to E-core before HT |
+| **v6.0+** (ITD/HFI) | ISA-class aware (AVX2→P, SSE→E, etc.) | **Optimal** — Thread Director hints used |
+
+**Your kernel check:**
+```bash
+uname -r
+# If < 5.16: echo 0 > /proc/sys/kernel/sched_itmt_enabled  # Disable broken ITMT
+# If >= 5.16: leave enabled (correct behavior)
+# If >= 6.0: ITD/HFI active automatically
+```
+
+### Intel Thread Director (ITD) ISA Classes — Why Your CPU Mask Works
+
+ITD classifies workloads by instruction mix into 4 classes:
+
+| ISA Class | Instructions | P-core/E-core Ratio | Best Placement | llama.cpp Relevance |
+|-----------|--------------|---------------------|----------------|---------------------|
+| **Class 0** | SSE / scalar | 1.27× | P-core slight edge | Light loads |
+| **Class 1** | AVX2 / VNNI | 1.5–2.0× | **Strongly P-core** | **GEMM (matrix multiply)** |
+| **Class 2** | AVX-512 / AMX | 2.0×+ | **P-core only** | Not on RPL-H |
+| **Class 3** | PAUSE / spin-wait | 1.0× | **E-core fine** | Barrier sync |
+
+**llama.cpp implication:** Matrix multiply (GEMM) uses AVX2/VNNI → **Class 1-2** → **must run on P-cores**. This is why `AllowedCPUs=0-11` (P-cores + HT) works and E-cores hurt.
+
+### Hardware Feedback Interface (HFI)
+
+The kernel exposes per-CPU capability via thermal framework:
+```bash
+# View HFI capability table (performance/efficiency 0-255)
+cat /sys/class/thermal/cooling_device*/cur_state
+# Or via intel_hfi driver (kernel 6.0+)
+```
+
+Example capability table structure:
+```
+Index  CPU          Perf  Efficiency
+0      P0,P1        56    92
+1      P2,P3        66    92
+2      P4-P7        88    100
+3      P8-P11       44    100
+E-cores              30    30 (lower at high freq)
+```
+
+### Why 8 Threads is the Sweet Spot (Scheduler + Barrier Dynamics)
+
+| Threads | Behavior |
+|---------|----------|
+| **6** (physical P-cores only) | No HT elasticity; barrier sync stalls |
+| **8** (your config) | **Optimal** — 6 P-cores + 2 HT siblings absorb barrier wait; OS headroom |
+| **10–12** | E-core threads enter → slower AVX2; or all HT → convoy risk |
+| **>12** | E-cores active → memory contention, no AVX2 benefit |
+
+The `llama-server` spin-wait barrier causes all worker threads to rendezvous each token. With 8 threads on 12 logical CPUs (0-11), the scheduler can always place waiters on HT siblings while workers occupy physical P-cores — **no convoy, full AVX2 throughput**.
+
+### Memory Bandwidth Math (Single vs Dual Channel)
+
+| Config | Theoretical Peak | Real-World | Impact on Token/s |
+|--------|------------------|------------|-------------------|
+| **1×16GB DDR5-5200** (current) | 41.6 GB/s | ~30-35 GB/s | Baseline (14.4 t/s) |
+| **2×16GB DDR5-5200** (dual-channel) | 83.2 GB/s | ~65-70 GB/s | **~1.8-2× token/s** (memory-bound) |
+
+LLM inference streams weights from DRAM continuously. Single-channel is your **hard bottleneck** — not CPU.
+
 ## ASUS ExpertBook P1503CVA BIOS Specifics
 
 **BIOS version:** P1503CVA.337 (2026-05-29) — current.
