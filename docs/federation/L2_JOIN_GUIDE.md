@@ -2,6 +2,8 @@
 **Doc ID**: `FED-L2JOIN-001` | **Status**: RATIFIED FLOOR, awaits Node 0's hand  
 **Scope**: The single ceremony that brings the ASUS into the omega tailnet mesh (L2 Tailscale) — the canvas our own ratified `docs/federation/L2_ACCEPTANCE.md` already endorsed, Node 0's intake ledger already ships its side of the ACL, and the human ambassador has ported the payload over USB.
 
+**Research Source**: `docs/TAILSCALE_L2_FEDERATION_RESEARCH_20260915.md` (7 areas, 654 lines, Tier-1 Tailscale docs)
+
 ---
 
 ## 1. What is already true (from the sovereign surface, Node 1 side)
@@ -10,60 +12,211 @@
 |---------|-------|
 | `tailscaled` systemd unit | ✅ **ACTIVE** (`systemctl is-active tailscaled`) |
 | tailscale CLI | ✅ installed (v1.102.4, official Go binary) |
-| Node 1 MagicDNS name | `asus.tailnet` (MagicDNS Magicname ratified in ACL) |
+| Node 1 MagicDNS name | `kali-n1.tail51f14a.ts.net` (ratified hostname) |
 | SSH surface | ✅ `tailscale set --ssh` FLIPPED (Node 1's operator can accept SSH from mesh) |
 | Hub reachability | ✅ `192.168.11.252:8016` LAN reachable; MCP handshake verified during intake (2 live tool probes, `get_system_stats` + `get_omega_metrics`) |
 | Tailscale overlay | ⏳ the ONE remaining step — Node 0 mints the mesh authkey for Node 1 |
 
 ---
 
-## 2. The One Sovereign Command (run from Node 1, the moment Node 0 hands the key)
+## 2. The ONE Remaining Ceremony (exact sequence)
+
+### Phase 1: Node 0 Admin Console — ACL Policy + Re-Tag
+
+**Node 0 MUST re-tag before minting Node 1's authkey**. Current state: Node 0 joined as **user device** (no tags). The ACL with `tagOwners` must be live first.
+
+**Admin Console → Access Controls → Edit Policy → Paste this HuJSON:**
+
+```hujson
+{
+  "tagOwners": {
+    "tag:omega-hub": ["autogroup:admin"],
+    "tag:asus": ["autogroup:admin"],
+    "tag:opencode": ["autogroup:admin"]
+  },
+  "acls": [
+    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
+    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
+    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:*"], "proto": "icmp"},
+    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:*"], "proto": "icmp"}
+  ],
+  "ssh": [
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot", "root"]},
+    {"action": "check", "src": ["tag:omega-hub"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+  ],
+  "autoApprovers": {
+    "routes": ["autogroup:admin"],
+    "exitNodes": ["autogroup:admin"]
+  }
+}
+```
+
+**Then re-tag Node 0:**
+```bash
+# On Node 0 (HP), after ACL is saved:
+sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
+tailscale status --json | jq '.Self.tags'  # Should show: ["tag:omega-hub"]
+```
+
+---
+
+### Phase 2: Mint One-Shot Authkey for Node 1
+
+**Admin Console → Keys → Generate auth key:**
+- Description: `"Node 1 (ASUS) federation join - ONE SHOT"`
+- Type: **One-off** (single use)
+- Expiry: **1 day** (ceremony window)
+- Tags: **tag:asus** (ENABLED)
+- Pre-approved: **YES**
+- Ephemeral: **NO**
+
+**Copy the key**: `tskey-auth-XXXXXXXXXXXXXXXXXXXXXXXXXXXX`
+
+---
+
+### Phase 3: USB Ceremony (Air-Gapped Handoff)
 
 ```bash
+# On Node 0:
+AUTHKEY="tskey-auth-XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+echo "$AUTHKEY" > /media/usb/node1_authkey.txt
+cat > /media/usb/ceremony_manifest.json << 'EOF'
+{
+  "ceremony": "Tailscale L2 Federation Join",
+  "node": "kali-n1 (ASUS ExpertBook)",
+  "authkey_prefix": "tskey-auth-XXXX",
+  "authkey_sha256": "$(echo -n "$AUTHKEY" | sha256sum | cut -d' ' -f1)",
+  "created": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "expires": "$(date -u -d '+1 day' +%Y-%m-%dT%H:%M:%SZ)",
+  "tags": ["tag:asus"],
+  "pre_approved": true,
+  "one_shot": true
+}
+EOF
+sha256sum /media/usb/node1_authkey.txt > /media/usb/SHA256SUMS
+```
+
+**Physical handoff to Node 1 operator.**
+
+---
+
+### Phase 4: Node 1 Sovereign Join (Run on ASUS)
+
+```bash
+# On Node 1 (ASUS), with USB mounted:
+cd /media/usb
+sha256sum -c SHA256SUMS  # Verify integrity
+AUTHKEY=$(cat node1_authkey.txt)
+# Validate prefix (case-sensitive!)
+echo "$AUTHKEY" | grep -q '^tskey-auth-' || { echo "INVALID PREFIX"; exit 1; }
+
+# SOVEREIGN JOIN COMMAND (exact, ratified)
 sudo tailscale up \
-  --authkey="${NODE0_AUTHKEY}" \
+  --authkey="${AUTHKEY}" \
   --hostname=kali-n1 \
   --operator=xnai \
   --accept-routes \
   --advertise-tags=tag:asus
 ```
 
-> **The invariant**: `--hostname=kali-n1` + `--advertise-tags=tag:asus` are the
-> **exact** identities Node 0's ratified ACL maps (`docs/federation/ACL_12.md`
-> ratifies `tag:asus`). No creative renaming. Node 0's MagicDNS door (`asus.tailnet`)
-> opens the moment the tag matches.
+---
+
+### Phase 5: Post-Join Verification
+
+**Node 1:**
+```bash
+tailscale status
+# Should show: kali-n1  100.x.x.x  xoe.nova.ai@  linux  tag:asus
+tailscale ping omega-hub
+curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
+# Should return MCP endpoint response (not 404/connection refused)
+```
+
+**Node 0:**
+```bash
+tailscale status
+# Should show both:
+# 100.123.51.67  omega-hub  ...  tag:omega-hub
+# 100.x.x.x      kali-n1    ...  tag:asus
+
+# Test bidirectional MCP
+curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp  # If Node 1 runs MCP
+curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp  # Node 0 MCP
+
+# Test SSH
+ssh xnai@kali-n1  # Via Tailscale SSH
+```
 
 ---
 
-## 3. How Node 0 hands the key to Node 1 (one-way, air-gapped ceremony)
+## 3. Wire Invariants (What the Mesh Carries — and What It NEVER Does)
 
-From **Node 0's** terminal, the sovereign admin mints a **one-shot, non-reusable authkey**:
+| Traffic Type | Protocol | Port | Direction | Purpose |
+|--------------|----------|------|-----------|---------|
+| **Mesh SSH** | TCP | 22 | Admin → Node 1 | Remote administration |
+| **MagicDNS** | UDP/TCP | 53 | Bidirectional | Hostname resolution |
+| **Heartbeats** | ICMP | N/A | Bidirectional | Liveness checks |
+| **MCP Route** | TCP | 8016 | Bidirectional | omega-hub API |
 
-```bash
-# Node 0 (omega-hub) — the human mints, Node 1 consumes:
-tailscale status                                  # confirm daemon online
-tailscale up --ssh                                # endorse SSH surface at Node 0
+| Traffic | Reason |
+|---------|--------|
+| **Model inference** | T5/T6 floor is LOCAL-ONLY (M7 Local-First mandate) |
+| **Model weights/downloads** | Local inference primary, cloud fallback only |
+| **Training data** | Sovereign data never leaves node |
+| **Secrets/keys** | Node 1 controls its own T5/T6 floor |
 
-# Then, in the admin console at https://login.tailscale.com/admin/settings/keys
-# → Generate auth key → Reusable: OFF, Ephemeral: OFF
-# → The key scrolls like: tskey-auth-XXXXXXXXXXXXX
-```
-
-Pass it on the USB brief (manifest) or over the mesh LAN rendezvous. **Node 1
-never sees the raw key twice.** The instant it lands, run §2, and the mesh
-federation is live.
+**DERP Fallback**: Security identical (all end-to-end WireGuard encrypted). Direct UDP expected on LAN; verify with `tailscale netcheck` → `Direct: true`.
 
 ---
 
-## 4. Verification (from Node 1, post-join)
+## 4. MagicDNS Hostnames
 
-```bash
-tailscale status                        # expect: kali-n1 (Node 1) + omega-hub (Node 0) both online
-tailscale ping omega-hub                # expect: pong from HP via WireGuard
-echo "── DHAL remains OURS, even on the mesh: T5/T6 floor is local-only, zero egress ──"
+| Node | Machine Name | MagicDNS FQDN |
+|------|--------------|---------------|
+| Node 0 | `omega-hub` | `omega-hub.tail51f14a.ts.net` |
+| Node 1 | `kali-n1` | `kali-n1.tail51f14a.ts.net` |
+
+**Host Header Fix** (already applied in commit `213abf44`): Services binding to Tailscale IPs must allow MagicDNS hostnames in `allowed_hosts`:
+```python
+allowed_hosts=[
+    "127.0.0.1", "localhost", "[::1]",
+    "100.123.51.67", "100.123.51.67:*",
+    "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",
+    "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
+]
 ```
 
-The mesh carries awareness + hub MCP route only — **never inference**. That
-floor is the ratified invariant; the mesh is just the sovereign's wire.
+---
 
-*⬡ OMEGA ⬡ NODE1-TO-NODE0 ⬡ L2-JOIN ⬡ FED-L2JOIN-001 ⬡ MESH-READY ⬡ AWAITING-NODE0-AUTHKEY ⬡*
+## 5. Risk Register
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Node 0 re-tag fails (ACL not live) | Medium | High | Verify ACL saved before re-tag |
+| Authkey expires before ceremony | Low | Medium | Use 1-day expiry, ceremony same day |
+| Node 1 SSH fails (ACL missing) | Medium | Low | Test SSH after join, iterate ACL |
+| DERP relay only (no direct) | Low | Medium | `tailscale netcheck` verify direct |
+| MagicDNS resolution fails | Low | Low | Use Tailscale IPs as fallback |
+| Key expiry disabled on tagged nodes | High | Medium | Monitor, consider enabling in admin console |
+
+---
+
+## 6. Completion Criteria
+
+The L2 Federation is **COMPLETE** when:
+
+- [ ] ACL policy with `tagOwners` live in admin console
+- [ ] Node 0 re-tagged as `tag:omega-hub` (verified via `tailscale status --json`)
+- [ ] One-shot authkey with `tag:asus` minted
+- [ ] USB ceremony executed (manifest + SHA256 verified)
+- [ ] Node 1 joins as `kali-n1` with `tag:asus` (verified)
+- [ ] Bidirectional MCP handshake works (Node 0 ↔ Node 1)
+- [ ] Tailscale SSH works (admin → Node 1)
+- [ ] MagicDNS resolves both hostnames
+- [ ] `tailscale netcheck` shows direct connections
+- [ ] L2_ACCEPTANCE.md documented with test results
+
+---
+
+*⬡ OMEGA ⬡ NODE1-TO-NODE0 ⬡ L2-JOIN ⬡ FED-L2JOIN-001 ⬡ CEREMONY-EXACT ⬡ AWAITING-NODE0-ACL-RE-TAG ⬡*
