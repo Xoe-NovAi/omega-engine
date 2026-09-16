@@ -99,6 +99,7 @@ dev = [
     "pytest-xdist>=3.5",
     "pytest-testmon>=1.4",
     "pytest-clarity",
+    "pathspec>=0.12.1",  # used by tests/contract/test_context_packer*.py
     "pytest-json-report",
     "pytest-instafail",
     "pytest-tldr",
