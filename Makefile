@@ -6,8 +6,10 @@
 # First public release — this IS the legacy.
 
 # Configuration — M24: Always use project venv Python
-PYTHON := .venv/bin/python
-PYTEST := .venv/bin/python -m pytest
+# Fall back to system python3 when .venv is absent (CI runners install
+# deps into the active interpreter, not a local .venv).
+PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
+PYTEST := $(PYTHON) -m pytest
 
 # Use bash so targets can rely on [[ ]] / bash-isms (e.g. local inference lifecycle)
 SHELL := /bin/bash
