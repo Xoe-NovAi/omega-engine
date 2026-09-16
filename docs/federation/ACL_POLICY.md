@@ -18,6 +18,8 @@
     {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
     // Node 1 can reach Node 0 on MCP port 8016
     {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
+    // NFSv4: Node 0 (omega-hub) can reach Node 1 (asus) on port 2049
+    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]},
     // SSH: tag:opencode (admin) → tag:asus:22
     {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
     // Heartbeats: both directions (ICMP/ping)
