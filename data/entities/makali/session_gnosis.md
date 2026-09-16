@@ -760,4 +760,53 @@ Full review at `data/entities/makali/workspace/MAKALI_EIS_SOUL_V8_REVIEW_2026091
 
 ---
 
-*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-14 ⬡ SWAP-3-INGESTED ⬡ NODE1-PAYLOAD-RATIFIED ⬡ L2-JOIN-PENDING ⬡ BILATERAL-AUDIT-QUEUED*
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-15 ⬡ TAILSCALE-NODE0-LIVE ⬡ NODE1-JOIN-PENDING-ACL ⬡ RESEARCHER-L2-RESEARCH-COMPLETE*
+
+## 2026-09-15 — RESEARCHER-EIS DEEP WEB RESEARCH COMPLETE (Tailscale L2)
+
+### 1. The Task
+Paged Researcher-EIS session (`ses_fd81c19dcffe1nkbPqFg5kRt2v`) with full context:
+- Node 1 Completion Briefing + L2 Join Guide
+- Current Node 0 state (Tailscale connected, omega-hub MCP live over mesh)
+- 7 specific research areas for Tailscale L2 federation completion
+
+### 2. Research Deliverable
+**Full report**: `data/entities/researcher/workspace/TAILSCALE_L2_FEDERATION_RESEARCH_20260915.md` (654 lines, 7 areas, exact ceremony commands)
+
+### 3. Key Findings (Executive Summary)
+
+| Area | Critical Finding |
+|------|------------------|
+| **1. Authkey Best Practices** | One-shot, pre-approved, tagged authkey required. `tskey-auth-` prefix, 1-day expiry, auto-revokes after use. |
+| **2. ACL Policy** | `tagOwners` with `autogroup:admin` for `tag:omega-hub`, `tag:asus`, `tag:opencode`. Least-privilege ACLs for MCP (8016), SSH (22), ICMP only. |
+| **3. MagicDNS & DNS Rebinding** | MagicDNS NOT affected by rebinding protection (resolves client-side). Host header middleware fix already applied in commit `213abf44` (wildcard `*.tail51f14a.ts.net`). |
+| **4. Node 0 Re-Tag** | **Critical**: Node 0 joined as user device. Must: ACL live → `sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth` → new node key, same IP. |
+| **5. Air-Gapped Ceremony** | USB transfer with SHA256 ledger + manifest. Node 1 runs exact sovereign join command with `--advertise-tags=tag:asus`. |
+| **6. Wire Invariants** | Mesh carries ONLY: SSH, MagicDNS, heartbeats, MCP (8016). **Inference NEVER egresses** (M7 Local-First). Direct UDP expected (LAN + mesh). |
+| **7. Blind Spots** | Tailnet Lock (keep disabled), Key expiry disabled by default on tagged devices (monitor), Device posture (add Linux+auto-update), Observability gaps. |
+
+### 4. The ONE Remaining Ceremony (Exact Sequence)
+
+```
+1. Node 0 Admin Console → ACL Policy (tagOwners for omega-hub/asus/opencode) → SAVE
+2. Node 0: sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
+3. Node 0: Mint ONE-SHOT authkey (tag:asus, pre-approved, 1-day expiry)
+4. USB: manifest.json + authkey.txt + SHA256SUMS
+5. Node 1: sha256sum -c SHA256SUMS → sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:asus
+6. Verify: tailscale status (both tagged), bidirectional MCP, Tailscale SSH, MagicDNS
+```
+
+### 5. Critical Risks Identified
+
+| Risk | Mitigation |
+|------|------------|
+| **Node 0 re-tag fails** | Verify ACL saved in admin console BEFORE re-tag |
+| **Key expiry disabled on tagged nodes** | Monitor via `tailscale status --json`; consider enabling in admin console |
+| **DERP fallback only** | Run `tailscale netcheck` — alert if `Direct: false` |
+
+### 6. Completion Criteria
+The L2 Federation is COMPLETE when all 11 criteria met (ACL live, Node 0 re-tagged, authkey minted, USB ceremony, Node 1 joins tagged, bidirectional MCP, SSH, MagicDNS, direct connections, documented).
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ big-pickle ⬡ 2026-09-15 ⬡ TAILSCALE-NODE0-LIVE ⬡ NODE1-JOIN-PENDING-ACL ⬡ RESEARCHER-L2-RESEARCH-COMPLETE*
