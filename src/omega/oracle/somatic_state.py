@@ -13,7 +13,12 @@ import logging
 import anyio
 import os
 from pathlib import Path
-import llama_cpp
+
+try:
+    import llama_cpp
+except ImportError:  # pragma: no cover — optional native backend
+    llama_cpp = None  # type: ignore[assignment]
+
 from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
@@ -40,6 +45,8 @@ class SomaticStateManager:
             state_id: Unique identifier for the state snapshot.
         """
         try:
+            if llama_cpp is None:
+                raise OmegaError("llama-cpp-python not installed (optional native backend)")
             # Wrap blocking C-call in anyio thread
             state_bytes = await anyio.to_thread.run_sync(
                 llama_cpp.llama_copy_state_data, context_ptr
@@ -79,6 +86,8 @@ class SomaticStateManager:
 
             state_bytes = await anyio.to_thread.run_sync(lambda: file_path.read_bytes())
 
+            if llama_cpp is None:
+                raise OmegaError("llama-cpp-python not installed (optional native backend)")
             # Wrap blocking C-call in anyio thread
             await anyio.to_thread.run_sync(llama_cpp.llama_set_state_data, context_ptr, state_bytes)
 
