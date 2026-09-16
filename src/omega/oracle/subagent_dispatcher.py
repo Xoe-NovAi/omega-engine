@@ -278,6 +278,7 @@ ROLE_CONSTANTS: Dict[str, str] = {
     "COMPLIANCE_GNOSIS": "compliance_gnosis",
     "HERITAGE_ATTRIBUTION": "heritage_attribution",
     "DEEP_RESEARCH": "deep_research",
+    "FEDERATION_MESH": "federation_mesh",  # omega_federation (2026-09-16)
     
     # Slot Semantics (Neutral Engineering Terms)
     "S1": "infrastructure",
