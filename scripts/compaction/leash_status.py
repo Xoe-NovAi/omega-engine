@@ -211,22 +211,37 @@ def main() -> int:
     # 9. Leash Check (state machine): pending_pack must be reflected, or the
     #    ritual will refuse new packs. A taut leash is NOT a failure by itself
     #    (capture→reflect is the normal flow) but must be surfaced loudly so
-    #    nobody compacts while a pack still hangs un-ingested.
+    #    nobody compacts while a pack still hangs un-ingested. Only a STALE
+    #    taut leash (reflection skipped for >24h) is a true degradation — the
+    #    pipeline was abandoned mid-flight. A fresh taut leash is the human's
+    #    turn to reflect, not a system failure.
+    TAUT_STALE_SECONDS = 24 * 60 * 60
     if IDENTITY_JSON.is_file():
         idn = json.loads(IDENTITY_JSON.read_text("utf-8"))
         pending = idn.get("pending_pack", "")
         current = idn.get("current_session", "")
         pending_status = "captured"
+        pending_age = None
         if pending:
             pm = GNOSIS_SESSIONS / f"{pending}_manifest.json"
             if pm.is_file():
-                pending_status = json.loads(pm.read_text("utf-8")).get("reflection_status", "captured")
+                m = json.loads(pm.read_text("utf-8"))
+                pending_status = m.get("reflection_status", "captured")
+                pending_age = (datetime.now(timezone.utc) - datetime.fromtimestamp(pm.stat().st_mtime, timezone.utc)).total_seconds()
         if pending and pending_status != "reflected":
-            problems.append(
-                f"LEASH TAUT — pending_pack {pending} is {pending_status}; "
-                f"reflect it (run /gnosis-lock) before the next ritual or compaction (1: degraded)"
-            )
-            print(f"  leash     : ❌ TAUT — pending_pack {pending} ({pending_status})")
+            if pending_age is not None and pending_age > TAUT_STALE_SECONDS:
+                problems.append(
+                    f"LEASH TAUT (STALE {pending_age/3600:.0f}h) — pending_pack {pending} is "
+                    f"{pending_status}; reflection was skipped. Reflect it (run /gnosis-lock) "
+                    f"before the next ritual or compaction (1: degraded)"
+                )
+                print(f"  leash     : ❌ TAUT-STALE — pending_pack {pending} ({pending_status}, {pending_age/3600:.0f}h old)")
+            else:
+                notes.append(
+                    f"pending_pack {pending} is {pending_status} — capture→reflect is the normal "
+                    f"flow; run /gnosis-lock to reflect before compaction"
+                )
+                print(f"  leash     : ⏳ TAUT (in-flight) — pending_pack {pending} ({pending_status}); reflect before compaction")
         elif pending:
             print(f"  leash     : OK — pending_pack {pending} is REFLECTED")
         else:

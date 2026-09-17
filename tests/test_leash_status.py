@@ -233,7 +233,20 @@ class TestRitualPluginCongruence(unittest.TestCase):
                 Path(m["artifacts"][artifact]).is_file(),
                 f"manifest points to missing {artifact} file",
             )
-        self.assertTrue(m.get("ready_for_compaction"), "manifest not marked ready")
+        # Readiness is a CONSISTENCY invariant, not an absolute: a REFLECTED
+        # pack must be marked ready (with a reflected_at timestamp), while a
+        # mid-pipeline CAPTURED pack is legitimately not-yet-ready (the ritual
+        # stamps it before the human reflection step runs). Requiring
+        # ready=true on every current session broke the normal capture→reflect
+        # flow that happens on every compaction prep.
+        if m.get("reflection_status") == "reflected":
+            self.assertTrue(m.get("ready_for_compaction"),
+                            f"reflected pack {manifest.name} not marked ready")
+            self.assertTrue(m.get("reflected_at"),
+                            f"reflected pack {manifest.name} missing reflected_at")
+        else:
+            self.assertFalse(m.get("ready_for_compaction"),
+                             f"captured pack {manifest.name} must not claim readiness")
 
     def test_evolution_log_count_matches_manifests(self):
         """Every SESSION_END in the evolution log must resolve to a manifest.
