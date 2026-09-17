@@ -268,3 +268,6 @@ opencode/
 # Entity knowledge test fixtures (never commit)
 data/entities/test_*_entity/
 *.md
+# Registry model cards are .yaml.md — un-ignore AFTER the blanket *.md rule
+# (git uses the LAST matching pattern).
+!config/model_registry/models/**/*.yaml.md
