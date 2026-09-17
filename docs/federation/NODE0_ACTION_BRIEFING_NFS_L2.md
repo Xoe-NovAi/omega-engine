@@ -53,17 +53,15 @@ To eliminate namespace collisions across multi-user environments and the broader
 
 Run the following commands on **Node 0** (`omega-hub`, Ubuntu 25.10):
 
-### Step 0: Pre-flight — Verify UID Mapping
+### Step 0: Pre-flight — capture Node 0's local UID
 ```bash
 id -u && id -g
 ```
-*Expected: `1000` / `1000`. NFS identity is numeric — Node 0's **username is
-irrelevant**. The server's `all_squash,anonuid=1000,anongid=1000` maps every
-incoming write to UID/GID 1000 (`xnai:xnai`) on Node 1 **regardless of what UID
-the client sends**, so the mount works with any client UID. The check below
-matters only for **local file ownership on Node 0's own mountpoint** (so
-`arcana-novai` can read/write files it creates there): if the UID differs from
-1000, use the actual `id -u`/`id -g` values in Step 3's `chown` instead.*
+*NFS identity is numeric and server-side `all_squash` maps every write to
+UID/GID 1000 (`xnai:xnai`) on Node 1 — Node 0's **username is irrelevant**.
+The local UID only matters for ownership of Node 0's own mountpoint, so
+`arcana-novai` can read/write there without sudo. Ubuntu's first user is UID
+1000; if `id -u` reports otherwise, substitute the real values below.*
 
 ### Step 1: (Optional but Recommended) Align Hostname
 ```bash
@@ -78,7 +76,9 @@ sudo apt update && sudo apt install -y nfs-common
 ### Step 3: Create Mountpoint
 ```bash
 sudo mkdir -p /mnt/node-drive
-sudo chown -R 1000:1000 /mnt/node-drive
+# chown (NOT recursive) the mountpoint so the local user can use it;
+# do this BEFORE mounting — recursive -R on a mounted share is harmful
+sudo chown $(id -u):$(id -g) /mnt/node-drive
 ```
 
 ### Step 4: Perform Manual Verification Mount
@@ -96,10 +96,18 @@ sudo umount /mnt/node-drive
 ```
 
 ### Step 5: Configure Persistent, Boot-Safe Automount
-Append to `/etc/fstab` on Node 0. The mount unit's only line is the NFS entry
-itself — the guard below only prevents a **duplicate NFS line** if the step is
-re-run. Before running it, inspect `/etc/fstab` (`cat /etc/fstab`) and confirm
-nothing else references `/mnt/node-drive`:
+First inspect `/etc/fstab` to see what's there (it may already contain an NFS
+entry from a prior attempt — the guard below is idempotent, but knowing the
+current state is required):
+
+```bash
+cat /etc/fstab
+# If an OLD /mnt/node-drive line exists (e.g. an earlier test), either remove
+# it or ensure the NEW line below is identical — duplicates are the bug.
+```
+
+Then append the single NFS entry (command is idempotent — re-running will not
+duplicate):
 
 ```bash
 if ! grep -q "/mnt/node-drive" /etc/fstab; then
@@ -128,12 +136,20 @@ findmnt /mnt/node-drive
 
 ## 4. Tailscale Admin Console Note (ACLs)
 
-Both nodes are currently directly communicating under user-owned status. If Node 0's admin applies the custom tag policy from `docs/federation/ACL_POLICY.md`, ensure the NFS rule is included:
+Both nodes are currently untagged user devices — the default Tailscale policy
+(implicit `autogroup:member`) allows them to communicate, which is why NFS
+works today. **Do NOT paste a tag-only policy now**: saving a custom policy
+REPLACES the default, and a tag-only policy with no `autogroup:member` rule
+will **silently kill all traffic between the untagged nodes** (NFS, MCP, ICMP).
+
+When tag-based enforcement is wanted, follow the **two-phase migration** in
+`docs/federation/ACL_POLICY.md`: Phase A keeps `autogroup:member` while
+staging tag rules, both nodes re-join tagged, and only then does Phase B
+remove the member rule. The NFS rule itself is always:
 
 ```hujson
 {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]}
 ```
-Without this rule, tag-based enforcement will drop port 2049.
 
 ---
 

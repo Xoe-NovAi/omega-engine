@@ -239,7 +239,7 @@ MagicDNS resolves Tailscale hostnames to Tailscale IPs. You can use hostnames in
 
 ```bash
 # Using hostname (requires MagicDNS enabled)
-kali-n1:/ /mnt/node-drive nfs4 rsize=1048576,wsize=1048576,noatime,_netdev 0 0
+xnai-n1-asus:/ /mnt/node-drive nfs4 rsize=1048576,wsize=1048576,noatime,_netdev 0 0
 ```
 
 ### Potential Issues
@@ -257,7 +257,7 @@ If you want hostname convenience, use `/etc/hosts` entries:
 
 ```bash
 # /etc/hosts — static entries for Tailscale IPs
-100.x.y.z  kali-n1
+100.y.z  xnai-n1-asus
 100.a.b.c  omega-hub
 ```
 

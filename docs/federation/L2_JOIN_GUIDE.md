@@ -12,7 +12,7 @@
 |---------|-------|
 | `tailscaled` systemd unit | ✅ **ACTIVE** (`systemctl is-active tailscaled`) |
 | tailscale CLI | ✅ installed (v1.102.4, official Go binary) |
-| Node 1 MagicDNS name | `kali-n1.tail51f14a.ts.net` (ratified hostname) |
+| Node 1 MagicDNS name | `xnai-n1-asus.tail51f14a.ts.net` (ratified hostname) |
 | SSH surface | ✅ `tailscale set --ssh` FLIPPED (Node 1's operator can accept SSH from mesh) |
 | Hub reachability | ✅ `192.168.11.252:8016` LAN reachable; MCP handshake verified during intake (2 live tool probes, `get_system_stats` + `get_omega_metrics`) |
 | Tailscale overlay | ⏳ the ONE remaining step — Node 0 mints the mesh authkey for Node 1 |
@@ -25,7 +25,9 @@
 
 **Node 0 MUST re-tag before minting Node 1's authkey**. Current state: Node 0 joined as **user device** (no tags). The ACL with `tagOwners` must be live first.
 
-**Admin Console → Access Controls → Edit Policy → Paste this HuJSON:**
+**Admin Console → Access Controls → Edit Policy → Paste this HuJSON**
+**(PHASE A — DO NOT remove the `autogroup:member` line; the tag-only Phase B
+belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
 
 ```hujson
 {
@@ -35,6 +37,8 @@
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
+    // KEEP THE MEMBER RULE — untagged devices (both nodes today) depend on it
+    {"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]},
     {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
     {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
     // NFSv4: Node 0 -> Node 1 shared drive (docs/federation/NFS_OVER_TAILSCALE_PLAN.md)
@@ -55,6 +59,12 @@
   }
 }
 ```
+
+> ⚠️ **FATAL if omitted**: without the `autogroup:member` rule, saving this
+> policy immediately blocks BOTH untagged nodes from each other (NFS + MCP +
+> ICMP silently die). The member rule preserves current behavior while the tag
+> rules stage for the migration. Remove it only in Phase B
+> (`docs/federation/ACL_POLICY.md`) after both nodes are tagged and verified.
 
 **Then re-tag Node 0:**
 ```bash
@@ -88,7 +98,7 @@ echo "$AUTHKEY" > /media/usb/node1_authkey.txt
 cat > /media/usb/ceremony_manifest.json << 'EOF'
 {
   "ceremony": "Tailscale L2 Federation Join",
-  "node": "kali-n1 (ASUS ExpertBook)",
+  "node": "xnai-n1-asus (ASUS ExpertBook)",
   "authkey_prefix": "tskey-auth-XXXX",
   "authkey_sha256": "$(echo -n "$AUTHKEY" | sha256sum | cut -d' ' -f1)",
   "created": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -118,7 +128,7 @@ echo "$AUTHKEY" | grep -q '^tskey-auth-' || { echo "INVALID PREFIX"; exit 1; }
 # SOVEREIGN JOIN COMMAND (exact, ratified)
 sudo tailscale up \
   --authkey="${AUTHKEY}" \
-  --hostname=kali-n1 \
+  --hostname=xnai-n1-asus \
   --operator=xnai \
   --accept-routes \
   --advertise-tags=tag:asus
@@ -131,7 +141,7 @@ sudo tailscale up \
 **Node 1:**
 ```bash
 tailscale status
-# Should show: kali-n1  100.x.x.x  xoe.nova.ai@  linux  tag:asus
+# Should show: xnai-n1-asus  100.x.x.x  xoe.nova.ai@  linux  tag:asus
 tailscale ping omega-hub
 curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
 # Should return MCP endpoint response (not 404/connection refused)
@@ -142,14 +152,14 @@ curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
 tailscale status
 # Should show both:
 # 100.123.51.67  omega-hub  ...  tag:omega-hub
-# 100.x.x.x      kali-n1    ...  tag:asus
+# 100.x.x.x      xnai-n1-asus    ...  tag:asus
 
 # Test bidirectional MCP
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp  # If Node 1 runs MCP
+curl -s http://xnai-n1-asus.tail51f14a.ts.net:8016/mcp  # If Node 1 runs MCP
 curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp  # Node 0 MCP
 
 # Test SSH
-ssh xnai@kali-n1  # Via Tailscale SSH
+ssh xnai@xnai-n1-asus  # Via Tailscale SSH
 ```
 
 ---
@@ -179,7 +189,7 @@ ssh xnai@kali-n1  # Via Tailscale SSH
 | Node | Machine Name | MagicDNS FQDN |
 |------|--------------|---------------|
 | Node 0 | `omega-hub` | `omega-hub.tail51f14a.ts.net` |
-| Node 1 | `kali-n1` | `kali-n1.tail51f14a.ts.net` |
+| Node 1 | `xnai-n1-asus` | `xnai-n1-asus.tail51f14a.ts.net` |
 
 **Host Header Fix** (already applied in commit `213abf44`): Services binding to Tailscale IPs must allow MagicDNS hostnames in `allowed_hosts`:
 ```python
@@ -214,7 +224,7 @@ The L2 Federation is **COMPLETE** when:
 - [ ] Node 0 re-tagged as `tag:omega-hub` (verified via `tailscale status --json`)
 - [ ] One-shot authkey with `tag:asus` minted
 - [ ] USB ceremony executed (manifest + SHA256 verified)
-- [ ] Node 1 joins as `kali-n1` with `tag:asus` (verified)
+- [ ] Node 1 joins as `xnai-n1-asus` with `tag:asus` (verified)
 - [ ] Bidirectional MCP handshake works (Node 0 ↔ Node 1)
 - [ ] Tailscale SSH works (admin → Node 1)
 - [ ] MagicDNS resolves both hostnames
