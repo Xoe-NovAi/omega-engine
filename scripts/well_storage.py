@@ -322,6 +322,28 @@ def main():
         write_wisdom_md()
         print(f"Rendered {WELL_MD}")
 
+    elif cmd == "search":
+        # Stub: semantic search over The Well. Deliberately NOT implemented —
+        # corpus is ~dozen records; static injection is complete and semantic
+        # ranking of 12 items adds no signal. Build when the corpus grows
+        # (est. >30-50 records) or federated Well sharing makes relevance
+        # filtering genuinely necessary. See docs/WELL_SYSTEM.md §8/§10 and
+        # ROADMAP.
+        query = " ".join(sys.argv[2:]).strip()
+        if not query:
+            print("Usage: search <query>", file=sys.stderr)
+            sys.exit(1)
+        print(
+            "well-search: not implemented (stub).\n"
+            "The Well is injected statically (top-N recency + domain filter); "
+            "semantic ranking is theater at the current corpus size ~dozen "
+            "records. Planned implementation: embed query with nomic-embed-text "
+            "via Ollama, cosine-rank against active records (rule+rationale), "
+            "return top-N. Trigger: corpus >30-50 records or federated Well "
+            "sharing. Tracked in ROADMAP."
+        )
+        sys.exit(0)
+
     else:
         print(f"Unknown command: {cmd}", file=sys.stderr)
         sys.exit(1)

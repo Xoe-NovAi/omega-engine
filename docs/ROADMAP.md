@@ -180,6 +180,25 @@ from "re-teach the agent every time" to "the agent already knows."
   `test_well_supersession_resolves` proves chain resolves + superseded drops
   from active list + WISDOM.md.
 
+### P1.4.1 — The Well semantic search (DEFERRED — stub only)
+- **Goal**: relevance-ranked retrieval of Well lessons on demand, instead of
+  static top-N bombing alone.
+- **Rationale for deferral**: corpus is ~12 records; static injection of all
+  active operating rules is complete, and semantic ranking of a dozen items
+  adds no signal ("theater at this corpus size").
+- **Planned implementation** (when triggered): extend `well_storage.py search
+  <query>` — embed query with `nomic-embed-text` via Ollama
+  (`localhost:11434/api/embeddings`), cosine-rank against active records
+  (rule + rationale), return top-N. Mirrors `wander-search.py` mechanics. The
+  plugin could then inject a task-relevant block at first user-message context
+  alongside the static session-start block.
+- **Trigger**: corpus grows >30–50 active records, **or** federated Well
+  sharing (Node 0 lessons arriving via USB/pipe) makes relevance filtering
+  genuinely necessary — whichever comes first. Do not build before then.
+- **Status**: 🚧 **STUB ONLY (2026-09-17)** — `make well-search QUERY="..."`
+  present, returns explicit not-implemented guidance. Tracked here to prevent
+  re-discovery + premature implementation.
+
 ---
 
 ## P1.5 — Idea-flood management
@@ -202,9 +221,10 @@ lose a spark, never drown in one.
 - **Done when**: sparks captured during a session appear in the Well dreams and
   can be promoted to ROADMAP items.
 - **Status**: ✅ **DONE (2026-09-11)** — `kind: dream` in `VALID_KINDS`,
-  `make well-add KIND=dream ...` works, renders in `WISDOM.md`, excluded from
-  plugin injection (only harness/local_ai domains injected). Promotion to
-  ROADMAP is manual via `docs/ROADMAP.md` edit (the canonical backlog).
+  `make well-add KIND=dream ...` works, renders in `WISDOM.md`. Injection
+  filters by domain only (harness/local_ai), so dreams outside those domains
+  are not injected; harness/local_ai dreams are. Promotion to ROADMAP is
+  manual via `docs/ROADMAP.md` edit (the canonical backlog).
 
 ---
 

@@ -425,6 +425,9 @@ well-export: ## Render WISDOM.md (human view) + JSONL bundle for tuning: make we
 	@python3 $(WELL_SCRIPT) render-md
 	@echo "JSONL at $(HOME)/Documents/Projects/omega-engine-alpha/gnosis/well/well.jsonl"
 
+well-search: ## Stub: semantic search over The Well (not implemented yet — see ROADMAP): make well-search QUERY="..."
+	@python3 $(WELL_SCRIPT) search $(QUERY)
+
 # ============================================================================
 # § QUICK REFS
 # ============================================================================
