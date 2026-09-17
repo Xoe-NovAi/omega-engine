@@ -91,6 +91,7 @@ python3 ~/hivemind_first_contact.py
 | **[HARDWARE.md](docs/HARDWARE.md)** | Engineers | Pin-trap, BIOS, thermal, RAM, storage |
 | **[AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md)** | Agents | Node 1 ops awareness: gnosis-lock, /compact, quality gates |
 | **[GNOSIS_USAGE.md](docs/GNOSIS_USAGE.md)** | Operators | Gnosis Lock protocol deep-dive & exact commands |
+| **[WELL_SYSTEM.md](docs/WELL_SYSTEM.md)** | Everyone | The Well: operating-memory corpus, schema, auto-injection into system prompts |
 | **[ROADMAP.md](docs/ROADMAP.md)** | Everyone | Single ordered backlog: phases, vanguard tools, finish gates |
 | **[Model cards](docs/models/README.md)** | Researchers | Canonical model registry, evidence labels, and card contract |
 | **[Nex-N2.5-Pro card](docs/models/nex-n2-5-pro.md)** | Model evaluators | Current OpenRouter candidate, strengths, quirks, and validation plan |

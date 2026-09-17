@@ -247,6 +247,8 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
   plugin active.
 
 ### 5.2 The Well (corrections/tuning corpus — P1, **LIVE**)
+- **Full-depth reference**: `docs/WELL_SYSTEM.md` (schema, validation,
+  injection mechanics, lifecycle, CLI, closed-loop).
 - Storage: `gnosis/well/well.jsonl` (append-only) + `gnosis/well/WISDOM.md` (human view).
 - Schema: `record_id`, `ts`, `kind` (correction|preference|tip|anti_pattern|insight|dream),
   `source_pack`, `domain`, `trigger`, `rule`, `rationale`, `tags`, `status` (active|superseded),
@@ -254,11 +256,13 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - Lifecycle: `CAPTURED → ACTIVE → SUPERSEDED` (mirrors pack lifecycle).
 - **Writers**: Skill Step 4c (during `/gnosis-lock` reflection, agent extracts
   corrections → `make well-add`), Prepare-for-compaction "Well sweep",
-  CLI `make well-add`.
+  CLI `make well-add`, immediate capture of sharp lessons (see GNOSIS-LEARN-001).
 - **Readers**: gnosis-leash plugin injects top-6 (harness/local_ai) at session
   start + top-8 at compaction; `make well-export` → `WISDOM.md` + JSONL bundle.
 - **Evolution**: `make well-supersede OLD=<id> NEW=<id>`; injection excludes
-  superseded; `kind:dream` captures idea sparks (excluded from injection).
+  superseded. **Injection filters by status+domain only — NOT by kind**
+  (a `dream` in harness/local_ai IS injected; verified against plugin source
+  2026-09-17).
 - CLI: `make well-add|well-list|well-stats|well-supersede|well-export`.
 - Tests: 7 `TestWellStorage` tests (JSONL validity, secret rejection,
   supersession chain, index parity, UTF-8 integrity, stats accuracy, Make targets).
