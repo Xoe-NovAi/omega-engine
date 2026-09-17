@@ -119,9 +119,16 @@ ss -tulpn | grep 2049
 
 ### Phase 2: Node 0 (HP Pavilion) — NFS Client & Automount Configuration
 
-Execute on **Node 0 (`omega-hub` / `xnai-n0-hp`)**:
+Execute on **Node 0 (`omega-hub` / `xnai-n0-hp`, Ubuntu 25.10, user `arcana-novai`)**:
 
 ```bash
+# Step 0: Pre-flight — capture Node 0's local UID/GID
+# NFS identity is numeric and server-side `all_squash` maps all writes to
+# UID/GID 1000 on Node 1 regardless of the client's UID. The local UID
+# matters only for ownership of Node 0's own mountpoint (Step 2):
+id -u && id -g
+# If not 1000, substitute the real values into the chown below.
+
 # Step 1: Install NFS client utilities
 sudo apt update && sudo apt install -y nfs-common
 

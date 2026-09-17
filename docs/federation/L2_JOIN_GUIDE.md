@@ -37,7 +37,11 @@
   "acls": [
     {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
     {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
+    // NFSv4: Node 0 -> Node 1 shared drive (docs/federation/NFS_OVER_TAILSCALE_PLAN.md)
+    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]},
     {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
+    // SSH: Node 1 -> Node 0 remote administration
+    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:22"]},
     {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:*"], "proto": "icmp"},
     {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:*"], "proto": "icmp"}
   ],

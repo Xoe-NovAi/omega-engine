@@ -1,7 +1,7 @@
 # 🔱 Node 0 Action Briefing — NFS over Tailscale L2 Federation
-**Doc ID**: `FED-BRIEF-NODE0-NFS-001` | **Date**: 2026-09-16  
+**Doc ID**: `FED-BRIEF-NODE0-NFS-001` | **Date**: 2026-09-16 (rev. 2026-09-17)  
 **From**: Node 1 (ASUS ExpertBook / `xnai-n1-asus` / `100.89.40.17`)  
-**To**: Node 0 (HP Pavilion Archival Bastion / `omega-hub` / `100.123.51.67`)  
+**To**: Node 0 (HP Pavilion Archival Bastion / `omega-hub` / `100.123.51.67`, Ubuntu 25.10, user `arcana-novai`)  
 **Status**: PHASE 1 COMPLETE ON NODE 1 — READY FOR NODE 0 MOUNT
 
 ---
@@ -51,7 +51,19 @@ To eliminate namespace collisions across multi-user environments and the broader
 
 ## 3. Node 0 Execution Sequence (Exact Commands)
 
-Run the following commands on **Node 0** (`omega-hub`):
+Run the following commands on **Node 0** (`omega-hub`, Ubuntu 25.10):
+
+### Step 0: Pre-flight — Verify UID Mapping
+```bash
+id -u && id -g
+```
+*Expected: `1000` / `1000`. NFS identity is numeric — Node 0's **username is
+irrelevant**. The server's `all_squash,anonuid=1000,anongid=1000` maps every
+incoming write to UID/GID 1000 (`xnai:xnai`) on Node 1 **regardless of what UID
+the client sends**, so the mount works with any client UID. The check below
+matters only for **local file ownership on Node 0's own mountpoint** (so
+`arcana-novai` can read/write files it creates there): if the UID differs from
+1000, use the actual `id -u`/`id -g` values in Step 3's `chown` instead.*
 
 ### Step 1: (Optional but Recommended) Align Hostname
 ```bash
@@ -84,12 +96,18 @@ sudo umount /mnt/node-drive
 ```
 
 ### Step 5: Configure Persistent, Boot-Safe Automount
-Append to `/etc/fstab` on Node 0 (check first to avoid duplicates):
+Append to `/etc/fstab` on Node 0. The mount unit's only line is the NFS entry
+itself — the guard below only prevents a **duplicate NFS line** if the step is
+re-run. Before running it, inspect `/etc/fstab` (`cat /etc/fstab`) and confirm
+nothing else references `/mnt/node-drive`:
 
 ```bash
 if ! grep -q "/mnt/node-drive" /etc/fstab; then
     echo "100.89.40.17:/ /mnt/node-drive nfs4 rsize=1048576,wsize=1048576,noatime,nosuid,nodev,nofail,_netdev,x-systemd.automount,x-systemd.idle-timeout=300,x-systemd.mount-timeout=30s 0 0" | sudo tee -a /etc/fstab
 fi
+
+# Validate fstab syntax BEFORE relying on it (temple-grade check):
+sudo findmnt --verify --fstab || echo "FSTAB WARNING — inspect above output"
 
 # Reload systemd and start automounter
 sudo systemctl daemon-reload

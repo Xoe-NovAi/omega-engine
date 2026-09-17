@@ -22,6 +22,8 @@
     {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]},
     // SSH: tag:opencode (admin) → tag:asus:22
     {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
+    // SSH: Node 1 (asus) → Node 0 (omega-hub) for remote administration
+    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:22"]},
     // Heartbeats: both directions (ICMP/ping)
     {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:*"], "proto": "icmp"},
     {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:*"], "proto": "icmp"}
@@ -48,7 +50,9 @@
 | **Default deny** | Only explicitly allowed traffic passes |
 | **Least privilege** | Each tag only accesses what it needs |
 | **Bidirectional MCP** | Both nodes can call each other's MCP on 8016 |
-| **Admin SSH only** | Only `tag:opencode` (admin) + Node 0 can SSH to Node 1 |
+| **Bidirectional NFS** | Node 0 mounts Node 1's shared drive on 2049 |
+| **Bidirectional SSH** | Each node can administer the other on 22 |
+| **Admin SSH** | `tag:opencode` (admin) has SSH to both nodes |
 | **Heartbeats only** | ICMP allowed both ways for liveness |
 | **No subnet routing** | Both nodes are endpoints, not routers |
 | **No exit nodes** | No internet traffic routed through mesh |
@@ -66,6 +70,21 @@
 ---
 
 ## Pre-Requisites for This Policy to Work
+
+> **⚠️ SEQUENCING (critical — NFS breaks silently if done out of order)**:
+> The NFS mount works today because both nodes are **user-owned and untagged**
+> (Tailscale default-allow). The moment the tag policy above is saved, default
+> deny takes effect — if the `tag:asus:2049` rule is missing, the NFS mount
+> fails with **no error pointing at the ACL**. Order matters:
+>
+> 1. **Save this ACL policy** in the admin console (rules included, harmless
+>    while nodes are untagged).
+> 2. **Re-tag Node 0** (`--advertise-tags=tag:omega-hub`) — only after the
+>    policy is live, or the tag will be rejected as unowned.
+> 3. **Mint Node 1's authkey with `tag:asus`** — only after Node 0 re-tags.
+> 4. Full ceremony: `docs/federation/L2_JOIN_GUIDE.md`.
+>
+> Related: NFS mount itself — `docs/federation/NODE0_ACTION_BRIEFING_NFS_L2.md`.
 
 1. **Node 0 must re-tag** after policy is saved:
    ```bash
