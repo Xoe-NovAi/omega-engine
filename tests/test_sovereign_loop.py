@@ -104,15 +104,15 @@ class TestSovereignLoop:
     async def test_full_loop_with_entity_summon(self):
         """Test the full loop with explicit entity summon."""
         oracle = Oracle()
-        result = await oracle.summon("SysAdmin", "how do I deploy a container?")
+        result = await oracle.summon("Kali", "how do I deploy a container?")
         assert result is not None
         assert result.text, "Response should have text"
-        assert result.entity == "SysAdmin", "Should respond as SysAdmin"
+        assert result.entity == "Kali", "Should respond as Kali"
         assert result.session_id, "Should have a session ID"
         memory_store = get_memory_store()
-        history = await memory_store.get_history("SysAdmin", result.session_id, limit=10)
+        history = await memory_store.get_history("Kali", result.session_id, limit=10)
         assert len(history) >= 1, "Memory should be recorded for summoned entity"
-        assert result.entity == "SysAdmin"
+        assert result.entity == "Kali"
 
     @pytest.mark.anyio
     async def test_transient_mode_skips_memory(self):

@@ -9,7 +9,8 @@
 Derives the engine's mandate compliance % from MECHANICAL checks, never
 hand-written numbers. This resolves the 3-way SSOT contradiction found in
 Web Claude audit r2 §4 (25/26/27 disagreeing mandate counts): the denominator
-is parsed from SOVEREIGN_MANDATES.md (27 `### N. Title` sections, v3.8.0).
+is parsed from SOVEREIGN_MANDATES.md (28 `### N. Title` sections, v3.8.0+
+M35 Third-Party Boundary).
 
 Each mandate maps to a mechanical check (grep / config parse / gate script).
 Mandates with no mechanical check yet are reported as `untested` and are NOT
@@ -188,14 +189,17 @@ def build_checks(mandates: list[tuple[str, str]]) -> list[CheckResult]:
         f = REPO / "config/providers.yaml"
         if not f.exists():
             return False, "providers.yaml not found"
-        content = f.read_text()
-        has_local = "local_first" in content
-        has_cloud = "cloud_first" in content
-        if has_local and not has_cloud:
+        try:
+            import yaml as _yaml
+            data = _yaml.safe_load(f.read_text()) or {}
+        except Exception as e:  # noqa: BLE001
+            return False, f"providers.yaml unparseable: {e}"
+        strategy = str(data.get("strategy", "")).lower()
+        if strategy == "local_first":
             return True, "strategy local_first"
-        if has_cloud:
+        if strategy == "cloud_first":
             return False, "cloud_first present — M7 violation"
-        return False, "local_first not found"
+        return False, f"local_first not found (strategy={strategy!r})"
     results.append(make_check("M7", m("M7"), "parse config/providers.yaml strategy", m7_check))
 
     # ── M8: Zero Telemetry — no telemetry SDK imports in core ───────────────
@@ -456,8 +460,8 @@ def emit_human(results: list[CheckResult], total: int) -> str:
 def main() -> int:
     mandates = parse_mandates()
     total = len(mandates)
-    if total != 27:
-        print(f"⚠️  Denominator drift: SOVEREIGN_MANDATES.md has {total} mandates (expected 27, v3.8.0)",
+    if total != 28:
+        print(f"⚠️  Denominator drift: SOVEREIGN_MANDATES.md has {total} mandates (expected 28, v3.8.0 + M35)",
               file=sys.stderr)
     results = build_checks(mandates)
 

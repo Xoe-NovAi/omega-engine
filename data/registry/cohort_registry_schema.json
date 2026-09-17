@@ -4,29 +4,57 @@
   "title": "Omega Cohort Registry",
   "description": "Fleet-level tracking of multi-orchestrator subagent cohorts. Per M15 (Sovereign Continuity), a cohort is a group of subagents dispatched together by a single orchestrator that share a common lifecycle.",
   "type": "object",
-  "required": ["version", "updated", "cohorts"],
+  "required": [
+    "version",
+    "updated",
+    "cohorts"
+  ],
   "properties": {
-    "version": {"const": "1.0"},
-    "updated": {"type": "string", "format": "date-time"},
-    "schema_url": {"const": "https://omega-engine/cohort_registry/v1"},
+    "version": {
+      "const": "1.0"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "schema_url": {
+      "const": "https://omega-engine/cohort_registry/v1"
+    },
     "cohorts": {
       "type": "object",
-      "additionalProperties": {"$ref": "#/$defs/cohort"}
+      "additionalProperties": {
+        "$ref": "#/$defs/cohort"
+      }
     }
   },
   "$defs": {
     "cohort": {
       "type": "object",
-      "required": ["cohort_id", "dispatched_by", "subagent_ids", "cohort_type", "created_at"],
+      "required": [
+        "cohort_id",
+        "dispatched_by",
+        "subagent_ids",
+        "cohort_type",
+        "created_at"
+      ],
       "properties": {
-"cohort_id": {
+        "cohort_id": {
           "type": "string",
           "pattern": "^cohort_[a-zA-Z0-9_]{8,}$",
           "description": "UUID-style cohort identifier (cohort_xxxxxxxx)"
         },
         "dispatched_by": {
           "type": "string",
-          "enum": ["kali", "grokster", "lilith", "maat", "researcher", "roc_racoon", "node", "sophia", "verity"],
+          "enum": [
+            "grokster",
+            "kali",
+            "lilith",
+            "maat",
+            "researcher",
+            "roc_racoon",
+            "slot",
+            "verity"
+          ],
           "description": "Fleet entity that dispatched this cohort"
         },
         "dispatched_by_session_id": {
@@ -45,18 +73,37 @@
         },
         "cohort_type": {
           "type": "string",
-          "enum": ["EIS_BURST", "RESEARCH_PAIR", "IMPLEMENT_TRIO", "FLEET_DISPATCH", "PIPELINE"],
+          "enum": [
+            "EIS_BURST",
+            "RESEARCH_PAIR",
+            "IMPLEMENT_TRIO",
+            "FLEET_DISPATCH",
+            "PIPELINE"
+          ],
           "description": "Cohort pattern"
         },
         "task_brief": {
           "type": "string",
           "description": "One-sentence description of the cohort's mission"
         },
-        "created_at": {"type": "string", "format": "date-time"},
-        "last_updated": {"type": "string", "format": "date-time"},
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time"
+        },
         "status": {
           "type": "string",
-          "enum": ["ALIVE", "COMPLETED", "FAILED", "ABANDONED", "DEAD_LETTER", "INTERRUPTED"],
+          "enum": [
+            "ALIVE",
+            "COMPLETED",
+            "FAILED",
+            "ABANDONED",
+            "DEAD_LETTER",
+            "INTERRUPTED"
+          ],
           "default": "ALIVE"
         },
         "resumption_count": {
@@ -69,9 +116,16 @@
           "items": {
             "type": "object",
             "properties": {
-              "ts": {"type": "string", "format": "date-time"},
-              "resumed_by": {"type": "string"},
-              "reason": {"type": "string"},
+              "ts": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "resumed_by": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
               "subagent_decisions": {
                 "type": "object",
                 "description": "Per-subagent decision: resume | abandon | defer"
@@ -86,7 +140,9 @@
         },
         "tags": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Free-form tags for cross-referencing"
         }
       }

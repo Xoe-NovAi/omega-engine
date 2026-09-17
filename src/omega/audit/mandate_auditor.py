@@ -147,7 +147,9 @@ class MandateAuditor:
         # Check WAD entities for Iris in Node slots
         for ent in entities:
             role = ent.get("role")
-            if role == ROLE_CONSTANTS["MESSENGER_BRIDGE"]:
+            # dispatch.yaml uses ROLE_CONSTANT KEYS (uppercase, e.g.
+            # "MESSENGER_BRIDGE"); ROLE_CONSTANTS maps key -> lowercase value.
+            if role in ("MESSENGER_BRIDGE", ROLE_CONSTANTS["MESSENGER_BRIDGE"]):
                 # This is the Iris entity - check if it has a Node slot
                 slot = ent.get("slot")
                 if slot is not None and str(slot).startswith("S"):

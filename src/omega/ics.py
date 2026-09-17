@@ -80,6 +80,7 @@ ROLE_CONSTANTS = {
     "COMPLIANCE_GNOSIS": "compliance_gnosis",
     "HERITAGE_ATTRIBUTION": "heritage_attribution",
     "DEEP_RESEARCH": "deep_research",
+    "FEDERATION_MESH": "federation_mesh",  # omega_federation (2026-09-16)
     "S1": "infrastructure",
     "S2": "persistence",
     "S3": "engineering",

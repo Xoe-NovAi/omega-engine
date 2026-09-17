@@ -30,28 +30,6 @@ maat:
 """
 
 
-import pytest
-import yaml
-import anyio
-from omega.oracle.hierarchy import SovereignHierarchy
-
-SAMPLE_HIERARCHY = """
-sophia:
-  rank: 0
-  domains:
-    - gnosis
-    - wisdom
-  color: gold
-
-maat:
-  rank: 1
-  domains:
-    - audit
-    - balance
-  color: silver
-"""
-
-
 @pytest.fixture
 async def hierarchy():
     h = SovereignHierarchy()
@@ -72,11 +50,16 @@ async def hierarchy_with_config():
 
 @pytest.mark.anyio
 async def test_default_ranks(hierarchy):
-    """Hierarchy entries should resolve correctly based on YAML."""
-    assert hierarchy.get_rank("sophia") == 0
-    assert hierarchy.get_rank("kali") == 1
-    assert hierarchy.get_rank("maat") == 2
-    assert hierarchy.get_rank("lilith") == 2
+    """Hierarchy entries should resolve correctly based on YAML.
+
+    Current default hierarchy.yaml: kali (Founder)=rank 0,
+    maat/lilith (Executive)=rank 1, all others default to rank 3.
+    """
+    assert hierarchy.get_rank("kali") == 0
+    assert hierarchy.get_rank("maat") == 1
+    assert hierarchy.get_rank("lilith") == 1
+    # sophia was removed in the Phase-1 nomenclature sweep — defaults to rank 3
+    assert hierarchy.get_rank("sophia") == 3
     # Isis is per-IWAD (Arcana-NovAi), not in core hierarchy — defaults to rank 3
     assert hierarchy.get_rank("isis") == 3
 
@@ -96,56 +79,56 @@ async def test_unknown_entity_is_keeper(hierarchy):
 @pytest.mark.anyio
 async def test_case_insensitive(hierarchy):
     """Rank lookup is case-insensitive."""
-    assert hierarchy.get_rank("Sophia") == 0
-    assert hierarchy.get_rank("MAAT") == 2
+    assert hierarchy.get_rank("KALI") == 0
+    assert hierarchy.get_rank("MAAT") == 1
     assert hierarchy.get_rank("Isis") == 3  # per-IWAD entity, defaults to rank 3
 
 
 @pytest.mark.anyio
-async def test_recursion_sophia_allowed_at_depth_2(hierarchy):
-    """Sophia (Rank 0) max_allowed_depth=3, so depth 2 is allowed."""
-    result = hierarchy.check_recursion("sophia", 2)
+async def test_recursion_kali_allowed_at_depth_2(hierarchy):
+    """Kali (Rank 0) max_allowed_depth=3, so depth 2 is allowed."""
+    result = hierarchy.check_recursion("kali", 2)
     assert result["allowed"] is True
     assert result["rank"] == 0
     assert result["max_allowed_depth"] == 3
 
 
 @pytest.mark.anyio
-async def test_recursion_sophia_blocked_at_depth_3(hierarchy):
-    """Sophia (Rank 0) max_allowed_depth=3, so depth 3 is blocked."""
-    result = hierarchy.check_recursion("sophia", 3)
+async def test_recursion_kali_blocked_at_depth_3(hierarchy):
+    """Kali (Rank 0) max_allowed_depth=3, so depth 3 is blocked."""
+    result = hierarchy.check_recursion("kali", 3)
     assert result["allowed"] is False
     assert "recursion limit" in result["reason"]
 
 
 @pytest.mark.anyio
-async def test_recursion_kali_allowed_at_depth_1(hierarchy):
-    """Kali (Rank 1) max_allowed_depth=2, so depth 1 is allowed."""
-    result = hierarchy.check_recursion("kali", 1)
+async def test_recursion_oversoul_allowed_at_depth_1(hierarchy):
+    """Oversoul (Rank 1) max_allowed_depth=2, so depth 1 is allowed."""
+    result = hierarchy.check_recursion("maat", 1)
     assert result["allowed"] is True
     assert result["max_allowed_depth"] == 2
 
 
 @pytest.mark.anyio
-async def test_recursion_kali_blocked_at_depth_2(hierarchy):
-    """Kali (Rank 1) max_allowed_depth=2, so depth 2 is blocked."""
-    result = hierarchy.check_recursion("kali", 2)
+async def test_recursion_oversoul_blocked_at_depth_2(hierarchy):
+    """Oversoul (Rank 1) max_allowed_depth=2, so depth 2 is blocked."""
+    result = hierarchy.check_recursion("lilith", 2)
     assert result["allowed"] is False
 
 
 @pytest.mark.anyio
 async def test_recursion_oversoul_allowed_at_depth_0(hierarchy):
-    """Oversoul (Rank 2) max_allowed_depth=1, so depth 0 is allowed."""
+    """Oversoul (Rank 1) max_allowed_depth=2, so depth 0 is allowed."""
     result = hierarchy.check_recursion("maat", 0)
     assert result["allowed"] is True
-    assert result["max_allowed_depth"] == 1
+    assert result["max_allowed_depth"] == 2
 
 
 @pytest.mark.anyio
 async def test_recursion_oversoul_blocked_at_depth_1(hierarchy):
-    """Oversoul (Rank 2) max_allowed_depth=1, so depth 1 is blocked."""
+    """Oversoul (Rank 1) max_allowed_depth=2, so depth 1 is allowed (not blocked)."""
     result = hierarchy.check_recursion("lilith", 1)
-    assert result["allowed"] is False
+    assert result["allowed"] is True
 
 
 @pytest.mark.anyio
