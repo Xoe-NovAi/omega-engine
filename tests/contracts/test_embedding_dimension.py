@@ -4,6 +4,7 @@
 
 """Contract tests: All providers MUST output canonical dimension (768)."""
 import pytest
+import shutil
 import subprocess
 from omega.memory.embedding_strategy import get_embedding_strategy
 
@@ -34,6 +35,9 @@ def test_no_1024_dim_references_in_memory():
     """
     result = subprocess.run(
         ["rg", "-n", "dimension=1024", "src/omega/memory"],
+        capture_output=True, text=True
+    ) if shutil.which("rg") else subprocess.run(
+        ["grep", "-rn", "dimension=1024", "src/omega/memory"],
         capture_output=True, text=True
     )
     lines = [

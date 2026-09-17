@@ -89,10 +89,21 @@ async def test_first_breath_recording(oracle_setup):
 @pytest.mark.anyio
 async def test_first_breath_domain_routing(oracle_setup):
     oracle, _ = oracle_setup
-    
+
+    # Deterministic domain routing: pin the semantic router to testentity so
+    # this test verifies the BIRTH-RECORD mechanism, not router internals
+    # (tfidf_svm can route "Tell me about test" to researcher in CI).
+    from unittest.mock import AsyncMock
+    from omega.oracle.entity_registry import EntityRegistry
+    reg = oracle.registry
+    test_entity = reg.get("testentity")
+    oracle.semantic_router.route = AsyncMock(
+        return_value=(test_entity, 0.9, "keyword")
+    )
+
     # Test that routing by domain also records birth
     await oracle.talk("Tell me about test")
-    
+
     # The entity assigned to "test" domain should have a birth record
     # Based on our setup, "testentity" is the match
     record = await get_birth_record("testentity")
