@@ -7,7 +7,7 @@ moves through a lifecycle:
     CAPTURED  →  REFLECTED  →  COMPACTED
     (ritual,     (skill fills   (plugin injects
      TODO by      narrative,     into a /compact)
-     intent)      flips status)
+     intent)      flips status)      )
 
 This tool prints the full ledger: for every pack, its state, who locked it
 (entity/channel/phase), when events happened, and whether the leash (pending
@@ -58,7 +58,7 @@ def main() -> int:
                 "entity": m.get("entity", "?"),
                 "phase": m.get("phase", "unset"),
                 "captured": m.get("timestamp", "?"),
-                "reflected_at": m.get("reflected_at", ""),
+                "reflected_at": m.get("reflected_at", "") or "",
                 "triaged": "triage_at" in m,
             }
         )

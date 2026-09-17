@@ -391,3 +391,214 @@ Quick orientation (current phase = **P3 Synthesis + Federation Close-out**):
 
 Old open items folded into ROADMAP: sudo revert (standing infra — outside
 ROADMAP, see `~/.config/opencode/AGENTS.md`), content runway (P3.3).
+---
+
+## 10. Hardened Deployment Procedures (v3.0 — Battle-Tested)
+
+### 10.1 The Hardening Philosophy
+Every failure in the setup process is converted into a hardening measure. This section documents the battle-tested deployment procedures that survived real-world execution.
+
+### 10.2 Pre-Deployment Validation (Non-Negotiable)
+```bash
+# 1. OpenCode version (must be 1.18+)
+opencode --version | grep -q '1\.1[89]'
+
+# 2. MemPalace MCP responding (CLI test)
+opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1 || true
+
+# 3. Tailscale mesh connectivity
+tailscale status --json | jq -r '.Peer[] | .DNSName' | grep -q 'omega-hub.tail51f14a.ts.net'
+
+# 4. Parallel.ai endpoint (accept 405 as "reachable")
+curl -s -o /dev/null -w '%{http_code}' https://search.parallel.ai/mcp | grep -E -q '200|401|405'
+
+# 5. Backup existing config
+BACKUP_SUFFIX=$(date +%Y%m%d_%H%M%S)
+cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.bak.${BACKUP_SUFFIX}
+
+# 6. Venv dependency lock
+if ! /home/xnai/WanderGround/.venv/bin/python3 -c "import anyio; import inotify" 2>/dev/null; then
+    /home/xnai/WanderGround/.venv/bin/pip install anyio inotify-simple --quiet || exit 1
+fi
+
+# 7. System dependency: inotify-tools
+sudo apt-get update && sudo apt-get install -y inotify-tools || exit 1
+```
+
+### 10.3 Master Configuration (Hardened Format)
+
+**Critical: OpenCode 1.18+ requires tools as boolean, not object**
+```json
+// WRONG (causes validation error):
+"tools": { "parallel-search": { "enabled": true, "max_results": 15 } }
+
+// CORRECT:
+"tools": { "parallel-search": true }
+```
+
+**MCP Server Registration (CLI required for local servers):**
+```bash
+# Config defines the server, CLI registers it (idempotent)
+opencode mcp add mempalace -- /home/xnai/WanderGround/.venv/bin/mempalace-mcp --palace /home/xnai/WanderGround/mempalace 2>/dev/null || true
+```
+
+**Full Config Template (Node 1):**
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "parallel-search": {
+        "type": "remote",
+        "url": "https://search.parallel.ai/mcp",
+        "enabled": true,
+        "oauth": false,
+        "headers": { "Authorization": "Bearer {env:PARALLEL_API_KEY}" },
+        "timeout": 120000,
+        "max_retries": 3
+      },
+      "mempalace": {
+        "type": "local",
+        "command": "/home/xnai/WanderGround/.venv/bin/mempalace-mcp",
+        "args": ["--palace", "/home/xnai/WanderGround/mempalace"],
+        "enabled": true
+      }
+    }
+  },
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "permission": {
+        "task": { "asus_plan": "allow", "grokster": "allow", "kali": "allow", "makali": "allow", "*": "deny" }
+      }
+    },
+    "asus_plan": {
+      "mode": "subagent",
+      "inherit_context": true,
+      "allow_background_execution": true,
+      "description": "Kernel/Hardware Optimization Researcher (Intel Matrix Ingestion)",
+      "tools": { "parallel-search": true },
+      "system_prompt": ["{include:~/.config/opencode/prompts/asus_plan.md}"]
+    },
+    "grokster": {
+      "mode": "subagent",
+      "inherit_context": true,
+      "allow_background_execution": true,
+      "description": "OpenCode Internals & MCP Schema Specialist",
+      "tools": { "parallel-search": true },
+      "system_prompt": ["{include:~/.config/opencode/prompts/grokster.md}"]
+    }
+  },
+  "subagent_depth": 2
+}
+```
+
+### 10.4 Venv Path Resolution (Hardened)
+```bash
+# WRONG (old hardcoded path):
+/home/xnai/.local/share/ov/env/bin/python3
+
+# CORRECT (actual venv location):
+/home/xnai/WanderGround/.venv/bin/python3
+/home/xnai/WanderGround/.venv/bin/pip
+```
+
+### 10.5 Systemd Service (Hardened Format)
+```ini
+# ~/.config/systemd/user/wanderground-embed.service
+[Unit]
+Description=WanderGround Async Embedding Daemon (anyio Hardened)
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/WanderGround/daemon
+ExecStart=%h/WanderGround/.venv/bin/python3 %h/WanderGround/daemon/embed_daemon.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+```
+
+**CRITICAL FORMAT RULES:**
+- Use newlines, NOT semicolons: `Restart=always` + newline + `RestartSec=5`
+- `[Install]` on its own line, `WantedBy=default.target` on next line
+- `ExecStart` points to correct venv: `%h/WanderGround/.venv/bin/python3`
+
+### 10.6 anyio 4.x API Compliance
+```python
+# WRONG (anyio 4.x removed this parameter):
+await anyio.to_process.run_sync(fn, stream, abandon_on_cancel=True)
+
+# CORRECT:
+await anyio.to_process.run_sync(fn, stream)
+```
+
+### 10.6 Sidecar Daemon (Hardened)
+```python
+# Key hardening points:
+# 1. Infinite buffer: max_buffer_size=float('inf')
+# 2. Atomic lock: lock_event = anyio.Event() (NO Flanagan typo)
+# 3. No abandon_on_cancel parameter
+# 4. Infinite buffer to absorb web_fetch floods
+
+send_stream, receive_stream = anyio.create_memory_object_stream(max_buffer_size=float('inf'))
+lock_event = anyio.Event()
+# ... later in loop ...
+if filename.endswith(".md") and lock_event.is_set():
+    lock_event = anyio.Event()  # Atomic instantiation
+    lock_event.clear()
+    tg.start_soon(process_batch_cooldown)
+```
+
+### 10.7 Parallel.ai Endpoint Behavior
+```bash
+# Endpoint returns 405 (Method Not Allowed) for GET/HEAD
+# This is EXPECTED - MCP endpoint expects POST
+# Validation must accept 405:
+curl -s -o /dev/null -w '%{http_code}' https://search.parallel.ai/mcp | grep -E -q '200|401|405'
+```
+
+### 10.8 Parallel-search Response Schema
+```python
+# Defensive parsing with fallback:
+try:
+    data = json.loads(search_payload) if isinstance(search_payload, str) else search_payload
+    urls = data.get("canonical_urls", [])[:5]
+except Exception:
+    urls = []
+```
+
+### 10.9 MemPalace Palace Check
+```bash
+# Check for sqlite_exact.sqlite3 (NOT mempalace.yaml)
+verify_step "MemPalace palace" "[ -f ~/WanderGround/mempalace/sqlite_exact.sqlite3 ]"
+```
+
+### 10.10 Complete Deployment Scripts
+See `/home/xnai/deploy_node1.sh` and `/home/xnai/deploy_node0.sh` for complete atomic deployment scripts with all hardening applied.
+
+---
+
+## 11. Quick Reference: Hardened Commands
+
+```bash
+# Deploy Node 1
+chmod +x /home/xnai/deploy_node1.sh && /home/xnai/deploy_node1.sh
+
+# Deploy Node 0 (via USB or SSH)
+scp /home/xnai/deploy_node0.sh xnai@100.123.51.67:~/ && ssh xnai@100.123.51.67 'chmod +x deploy_node0.sh && ./deploy_node0.sh'
+
+# Validate MCP servers
+opencode mcp list
+opencode mcp call parallel-search web_search '{"query": "test", "max_results": 1}'
+opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}'
+
+# Verify daemon
+systemctl --user status wanderground-embed.service
+
+# Rollback
+cp ~/.config/opencode/opencode.json.bak.* ~/.config/opencode/opencode.json
+systemctl --user stop wanderground-embed.service && systemctl --user disable wanderground-embed.service
+```

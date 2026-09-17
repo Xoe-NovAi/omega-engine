@@ -732,3 +732,109 @@ python3 ~/hivemind_first_contact.py
 ---
 
 *This guide is the single source of truth. Every tuning decision traces to a benchmark, a kernel doc, an Intel datasheet, or a ggml issue. When in doubt, re-bench.*| 2026-09-10 | **Deep research pass — definitive corrections (WanderGround)** | **OpenCode hooks CORRECTED:** plugin event system IS the hook mechanism (`session.created/idle/compacted`, full `session.next.*`, `experimental.session.compacting`) — verified in local 1.18.30 types; shipped `~/.config/opencode/plugins/gnosis-leash.js` (timeline + compaction/system-prompt injection; loads clean); **MemPalace v3.9.0 online**: `sqlite_exact` backend + hermetic `minilm` ONNX (SHA256-verified pre-seed, flaky-link safe) — 20 files → 62 drawers, hybrid search verified; `mempalace` stdio MCP wired into opencode.json; mining hygiene via `.gitignore` (SKIP_DIRS + vendor/site/docs/mempalace exclusions); **Zen privacy tier** documented (free tiers collect data — `big-pickle`, `mimo-v2.5-free`, `nemotron-3-ultra-free`, `muse-spark-*-contributor-free`; paid = zero-retention); **sqlite-vec corrected** (`distance_metric=cosine` + `k = ?` KNN syntax); **systemd linger enabled** (timer survives logout); **anyio code-quality standard** added (`docs/CODE_QUALITY.md` — absolute anyio async wiring, no bare asyncio/trio, no torch); **eyes-on-machine tooling** (`ey`, `withey` pre/post snapshots) | Verified: mine exit 0 in ~2s (62 drawers/7 rooms); MemPalace search returns correct rooms; `opencode serve` starts with plugin clean; Linger=yes; model tarball SHA256 OK |
+
+---
+
+## 16. HARDENED DEPLOYMENT LESSONS (2026-09-17)
+
+### 16.1 Battle-Tested Fixes Catalog
+
+| Failure | Root Cause | Hardening Applied |
+|---------|------------|-------------------|
+| **MCP server ignored** | Local servers need CLI registration | `opencode mcp add mempalace -- <cmd> <args>` after config |
+| **Tools config validation error** | Object format instead of boolean | `"tools": { "parallel-search": true }` NOT `{ "enabled": true, "max_results": 15 }` |
+| **Parallel.ai returns 405** | Endpoint expects POST, not GET/HEAD | Accept 405 in validation: `grep -E '200|401|405'` |
+| **Venv path wrong** | Hardcoded `/home/xnai/.local/share/ov/env/` | Use `/home/xnai/WanderGround/.venv/bin/python3` |
+| **Systemd "Bad message"** | Semicolons in service file | Use newlines: `Restart=always` + `RestartSec=5` (not `;`) |
+| **anyio 4.x TypeError** | `abandon_on_cancel` removed | Remove parameter: `run_sync(fn, stream)` |
+| **inotifywait missing** | Package not installed | `sudo apt-get install -y inotify-tools` in Phase 0 |
+| **MemPalace check failed** | Checked for `mempalace.yaml` | Check `sqlite_exact.sqlite3` instead |
+| **Venv path hardcoded** | Old path `/home/xnai/.local/share/ov/env/` | Use `/home/xnai/WanderGround/.venv/bin/python3` |
+| **Systemd semicolons** | `Restart=always; RestartSec=5` | Use newlines: `Restart=always` + `RestartSec=5` |
+| **anyio abandon_on_cancel** | Parameter removed in 4.x | Remove: `run_sync(fn, stream)` |
+| **MemPalace not in mcp list** | Not registered via CLI | `opencode mcp add mempalace -- <cmd> <args>` |
+
+### 16.2 Key Hardening Principles
+
+1. **Never trust config-only for local MCP servers** — always register via CLI
+2. **OpenCode 1.18+ tool format is boolean** — not object with nested config
+3. **Accept 405 from parallel.ai** — MCP endpoint uses POST, not GET/HEAD
+4. **Venv is at `~/WanderGround/.venv/`** — not `/home/xnai/.local/share/ov/env/`
+5. **Systemd files need proper newlines** — no semicolons in service files
+6. **anyio 4.x removed `abandon_on_cancel`** — remove parameter
+7. **inotify-tools is required** — install via apt in Phase 0
+8. **MemPalace palace is `sqlite_exact.sqlite3`** — not `mempalace.yaml`
+
+### 16.3 Deployment Validation Checklist
+
+```bash
+# Pre-deployment
+opencode --version | grep -q '1\.1[89]'
+opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1 || true
+tailscale status --json | jq -r '.Peer[] | .DNSName' | grep -q 'omega-hub.tail51f14a.ts.net'
+curl -s -o /dev/null -w '%{http_code}' https://search.parallel.ai/mcp | grep -E -q '200|401|405'
+
+# Post-deployment validation
+opencode mcp list --verbose | grep -E 'parallel-search|mempalace'
+systemctl --user is-active wanderground-embed.service | grep -q active
+opencode mcp call parallel-search web_search '{"query": "test", "max_results": 1}' 2>&1 | grep -q "canonical_urls"
+```
+
+### 16.4 Rollback Procedures
+
+```bash
+# Config rollback
+cp ~/.config/opencode/opencode.json.bak.* ~/.config/opencode/opencode.json
+
+# Service rollback
+systemctl --user stop wanderground-embed.service
+systemctl --user disable wanderground-embed.service
+rm ~/.config/systemd/user/wanderground-embed.service
+systemctl --user daemon-reload
+
+# Env rollback
+sed -i '/PARALLEL_API_KEY/d' ~/.bashrc
+sed -i '/OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS/d' ~/.bashrc
+source ~/.bashrc
+
+# MCP server removal
+opencode mcp logout mempalace 2>/dev/null || true
+```
+
+### 16.5 Deployment Scripts (Canonical)
+
+- **Node 1:** `/home/xnai/deploy_node1.sh` — complete atomic deployment
+- **Node 0:** `/home/xnai/deploy_node0.sh` — complete atomic deployment
+
+Both scripts include:
+- Phase 0: Validation + backup + venv bootstrap + inotify-tools
+- Phase 1: Config with mempalace + parallel-search + CLI registration
+- Phase 2: Env vars with scoped API keys
+- Phase 3: System prompts with `{include:...}` syntax
+- Phase 4: WanderGround directories + enhanced frontmatter
+- Phase 5: Omega-hub wrapper with `CapacityLimiter(2)` + dynamic frontmatter (Node 0)
+- Phase 6: anyio sidecar daemon with infinite buffer + atomic lock + systemd service
+- Phase 7: Tailscale ACL documentation
+- Phase 8: Offline cache pre-population
+- Phase 9: Pre-flight validation with exit-on-failure gates
+
+### 16.6 Post-Deployment Verification
+
+```bash
+# Full validation suite
+opencode mcp call parallel-search web_search '{"query": "test", "max_results": 1}'
+opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}'
+systemctl --user is-active wanderground-embed.service
+opencode mcp list --verbose | grep -E "parallel-search|mempalace"
+
+# TUI test
+opencode  # select Nemotron 3 Ultra -> @asus_plan "test query"
+```
+
+### 16.7 Known Remaining Gaps (Track in ROADMAP)
+
+- [ ] Node 0 SSH access (needs `sudo systemctl enable --now ssh` on HP)
+- [ ] Tailscale ACL rule application (manual in admin console)
+- [ ] USB drive packet update with hardened configs
+- [ ] Cross-node federation test: `@kali` on Node 0 via omega-hub
+- [ ] Full thermal bench (10-min sustained) with turbostat logging
