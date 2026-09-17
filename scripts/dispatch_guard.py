@@ -406,7 +406,15 @@ def step4_all_locations_verification(prompt: str, result: GuardResult) -> None:
     # Validate session IDs by searching the OpenCode DB
     if session_refs:
         home_db = Path.home() / ".local" / "share" / "opencode" / "opencode.db"
-        if home_db.exists():
+        if not home_db.exists():
+            # No local DB (fresh CI checkout / other machine): cannot verify
+            # session IDs — warn rather than silently trust them.
+            result.add_warn(
+                "4-all-locations-verification",
+                f"OpenCode DB not found at {home_db}; cannot verify session IDs. "
+                f"Treating {len(session_refs)} session ref(s) as unverified.",
+            )
+        elif home_db.exists():
             try:
                 conn = sqlite3.connect(f"file:{home_db}?mode=ro", uri=True, timeout=5)
                 cur = conn.cursor()

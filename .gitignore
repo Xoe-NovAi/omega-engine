@@ -271,3 +271,13 @@ data/entities/test_*_entity/
 # Registry model cards are .yaml.md — un-ignore AFTER the blanket *.md rule
 # (git uses the LAST matching pattern).
 !config/model_registry/models/**/*.yaml.md
+# Soul-contract evidence artifacts referenced by approved_lessons.yaml
+# (test_every_promoted_lesson_carries_resolvable_evidence requires them in CI).
+!docs/strategy/*.md
+!docs/specs/*.md
+!docs/decisions/PIVOT_LOG.md
+!data/coordination/MAKALI_COUNCIL_AUDIT_*.md
+!data/coordination/GAP_REGISTRY.json
+!data/coordination/meditations/records/MEDITATION_KALI_*.md
+!data/coordination/teamstudy_*/FINAL_SYNTHESIS.md
+!.opencode/skills/git-secret-scrub/SKILL.md
