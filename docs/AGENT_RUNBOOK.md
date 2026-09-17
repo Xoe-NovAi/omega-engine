@@ -99,7 +99,10 @@ CAPTURED ──(skill answers reflection questions)──▶ REFLECTED ──(pl
   **leash**. While it is set and the pack is not reflected:
   - the ritual **refuses** to create a new pack (`LEASH CHECK FAILED`),
     unless `FORCE_PACK=1` explicitly acknowledges the override;
-  - the watchdog prints `LEASH TAUT` and exits degraded;
+  - the watchdog prints `LEASH TAUT (in-flight)` and exits **0** (healthy
+    advisory note) if captured within the 24-hour TTL; it exits **1** (degraded)
+    only if stale (>24h without reflection) or if a compaction ran without a
+    human narrative;
   - the pause ledger shows the pack as `captured`.
 - Reflection (the skill) flips the manifest to `reflected`, stamps
   `reflected_at`, sets `ready_for_compaction = true`, and clears
@@ -266,7 +269,7 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - CLI: `make well-add|well-list|well-stats|well-supersede|well-export`.
 - Tests: 7 `TestWellStorage` tests (JSONL validity, secret rejection,
   supersession chain, index parity, UTF-8 integrity, stats accuracy, Make targets).
-- 43/43 total tests green, lint+docs clean.
+- 48/48 total tests green, lint+docs clean.
 
 ### 5.3 OMER — Model Card Registry (P3.3a/b, **LIVE**)
 - **What**: git-native model evaluation registry. A card is a **decision record**
@@ -288,6 +291,30 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
   P-core-trap guard rejects `allowed_cpus: 0,2,4,6,8,10`.
 - **Rule**: never present provider benchmarks as independent validation; keep
   rejected/retired cards for future comparisons.
+
+### 5.4 Frontier Gnosis & Epistemic Principles (Hard-Won Invariants)
+- **1. Intent is the Contract**: Code comments, docstrings, and architectural
+  specifications define the normative system contract. If an automated
+  watchdog or test contradicts stated intent, the test/watchdog is the defect—
+  not the intent. Reframe from *"what is the code doing?"* to *"what SHOULD
+  the system do?"* (Well record `013c6037`).
+- **2. Invariants Over Transient States**: Test state consistency across
+  transitions (e.g., `reflection_status == "reflected" <=> ready_for_compaction == true`),
+  never assert absolute terminal readiness on an active, in-flight, mid-pipeline
+  session pack (Well record `a254a505`).
+- **3. Multi-Model Verification Over Authority**: In a multi-model harness,
+  models will propose conflicting theories (e.g. ACL drops, package managers,
+  file ownership). Never accept confident assertions from any model without
+  empirical verification: probe the port, parse the configuration with
+  deterministic scripts, and consult canonical specs (`HARDWARE.md`).
+- **4. The Tailscale ACL Replacement Trap**: Custom Tailscale policies replace
+  default rules rather than merging. Saving a tag-only policy while nodes are
+  untagged instantly severs all mesh communication. Always execute Phase A
+  (preserving `autogroup:member`), tag both nodes, and only then enforce
+  Phase B lockdown.
+- **5. The Network SQLite WAL Breakdown**: SQLite WAL mode requires POSIX shared
+  memory (`-shm`) across processes on the *same kernel*. Over network filesystems
+  (NFS/SMB), locks silently fail. Never run WAL mode on `/mnt/node-drive`.
 
 ---
 
@@ -352,8 +379,13 @@ Quick orientation (current phase = **P3 Synthesis + Federation Close-out**):
      (95.2% vs 96.6% R@5 LongMemEval-S); MemPalace already integrated.
    All verdicts documented in ROADMAP + WanderGround dossiers (to be created).
 5. **P3 — Synthesis + Federation Close-out** — **ACTIVE**:
-   - P3.1 Architecture synthesis (fold all P0-P2 decisions into docs, de-duplicate).
-   - P3.2 Node 0 federation (Tailscale, C6 comms-contract, publish gate).
+   - P3.1 Architecture synthesis (folded P0-P2 decisions into `ARCHITECTURE.md`).
+   - P3.2 Node 0 federation:
+     - Hostname schema ratified (`xnai-n1-asus`, `xnai-n0-hp`).
+     - Pure NFSv4.2 server live on Node 1 bound strictly to `100.89.40.17:2049` (`all_squash` -> `1000:1000`).
+     - Two-phase ACL migration policy ratified (Phase A safe member rule -> Phase B tag lockdown).
+     - Node 0 Action Briefing (`NODE0_ACTION_BRIEFING_NFS_L2.md`) delivered on USB.
+     - **Next physical action**: Mount `/mnt/node-drive` on Node 0 via USB briefing and enable `tailscale set --ssh`.
    - P3.3 Content runway (Obsidian, Godot/KQ5, Open WebUI, `make publish-bastion`).
    - P3.3a Model research cards — registry live; Nex-N2.5-Pro is a candidate.
 
