@@ -390,6 +390,21 @@ without trial by fire.
   validated; P-core trap guard prevents invalid CPU masks; wired into `make lint`;
   Nex-N2.5-Pro card passes; CLI skeleton with `validate` subcommand works.
 
+### P3.4 — Cooling matrix: flat vs raised+fan (PARKED)
+- **Why**: 2026-09-18 10-min `stress-ng fft` run in performance mode spiked to
+  96°C PkgTmp in ~3 min (choked airflow), then PL1=45W clamped P-cores to a
+  uniform ~2.69GHz (no OS clamp, zero throttle counters, no kernel PROCHOT).
+  User observed raising + fan drops temps to low-mid 80s — but the run was
+  confounded mid-flight (cooling changed during the test).
+- **Plan**: controlled matrix with `scripts/thermal_bench.sh` (self-terminating,
+  detached-safe): Run A flat/no-fan 5 min → soak to <55°C → Run B raised+fan
+  5 min → optional Run C raised/no-fan (isolate variables) → 10-min validation
+  in winning config. Compare peak PkgTmp, time-to-peak, sustained P-core MHz,
+  PkgWatt, throttle counters. Controls: AC, governor/EPP performance (auto-logged).
+- **Done when**: matrix table recorded in `docs/CPU_PERFORMANCE_TUNING_GUIDE.md`;
+  PL1 finding confirmed or revised.
+- **Status**: `backlog` (parked 2026-09-18 for PR + Node 0 priority).
+
 ---
 
 ## Research Deliverables (Completed This Session)
