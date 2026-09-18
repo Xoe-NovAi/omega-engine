@@ -40,7 +40,26 @@ Branch stays pushed as reviewable lineage; no merge until the Node 0 window.
    `xnai/omega-engine-alpha` (404); FIRST_RUN points at `xnai/omega-engine` (404);
    real repo is `Xoe-NovAi/omega-engine`. Fix when docs are next touched.
 
-## Options
+## Reframe 2026-09-18 — engine vs WAD layering (operator vision)
+
+The split is **not** winner-takes-all. Remote `main` is the Engine (sovereign runtime
+harness); local work is the nascent **Arcana-NovAi WAD** (heavy Lilith influence) plus
+Node 1 harness systems. Custom aspects live in WADs; both machines run the Engine.
+
+- The 9 conflicts re-read as layering questions: `AGENTS.md`/`CONTRIBUTING.md` =
+  engine landing vs WAD landing (both may coexist: root landing + `wads/arcana-novai/`
+  scope); `Makefile` targets may split the same way; `LICENSE` still needs a human
+  (MIT WAD on Apache engine? or unified?).
+- Their `.opencode/opencode.json` absolute path (`/home/arcana-novai/...`) is Node 0's
+  machine identity leaking into config — portable `{env:}`/relative references are a
+  WAD-portability fix both sides want.
+- Their versioned `data/` (entity DBs, sqlite) is engine RUNTIME STATE, not source —
+  it should never have merged into our tree; WADs must declare state vs payload.
+- Node 1 systems triage (WAD payload vs engine-core contribution) is open work:
+  `parallel_bridge.py`, `exa_search.py`, `thermal_bench.sh`, gnosis-lock/ritual,
+  the Well, §11 transport lessons, CPU tuning guide.
+
+## Options (re-scored under the WAD vision)
 
 - **A (recommended)**: leave lineages separate; reconcile in the Node 0 window
   (they own `main`'s lineage). This branch stays reviewable as-is.

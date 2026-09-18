@@ -405,6 +405,23 @@ without trial by fire.
   PL1 finding confirmed or revised.
 - **Status**: `backlog` (parked 2026-09-18 for PR + Node 0 priority).
 
+### P3.5 — Arcana-NovAi WAD: Node 1's custom stack ON the Engine (VISION 2026-09-18)
+- **The picture** (operator): the Omega Engine (`Xoe-NovAi/omega-engine` `main` —
+  sovereign runtime, entity system, IWADs, Hivemind) is the harness that runs an
+  endless myriad of custom stacks via the Doom-style WAD system. Node 0 (HP Pavilion,
+  refurbished) holds the Engine proper. Node 1 (ASUS) began as a from-knowledge
+  fresh-start experiment — the "renegade Engine" built here (bench/tuning, gnosis-lock,
+  Well, MCP bridges, thermal tooling) now becomes the **Arcana-NovAi WAD**
+  (heavy Lilith influence), RUNNING on the Engine — custom aspects contained in WADs
+  so thousands of unique stacks worldwide can connect and collaborate.
+- **Consequences**: the lineage split is engine-vs-WAD layering, not winner-takes-all
+  (see `docs/federation/LINEAGE_RECONCILIATION_NOTES.md` reframe). Node 1 systems are
+  triaged as WAD payload vs engine-core contributions. Both machines run the Engine.
+- **Done when**: Engine runs on Node 1; Arcana-NovAi WAD scaffold exists (`wads/`
+  placement decided with Node 0); Node 1 systems triaged WAD-vs-core; first
+  cross-node WAD interop proven.
+- **Status**: `backlog` (vision recorded 2026-09-18; awaits Node 0 window).
+
 ---
 
 ## Research Deliverables (Completed This Session)
