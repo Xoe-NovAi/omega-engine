@@ -65,7 +65,9 @@ Not this repo. Gaming/Ollama-Iris-Xe agent config and knowledge base live under
 `~/.config/opencode/agent/gaming-expert.md` and `~/GameResearch/` respectively.
 
 ## OpenCode model config (Big Pickle)
-Built-in (models.dev registry — zero custom config; verified live: `opencode models`
-lists `opencode/big-pickle` with the 1M window and sessions run past the old 200K
-auto-compact threshold). Do NOT add a custom `provider.opencode.models` override
-to chase it — stale lore, corrected 2026-09-18 (see gaps guide §11.8).
+Built-in (models.dev registry — zero custom config; `opencode models` lists it).
+History: a custom 1M-window override existed here and matched reality (sessions
+at 205.8K+ tokens) — then Zen moved Big Pickle to 200K within ~a day
+(operator-observed 2026-09-18, registry snapshot confirms 200K/160K/32K).
+Doctrine: NEVER hardcode model limits; drift-detect against live models.dev
+(`scripts/opencode_provider_doctor.sh`). See gaps guide §11.8/§13.

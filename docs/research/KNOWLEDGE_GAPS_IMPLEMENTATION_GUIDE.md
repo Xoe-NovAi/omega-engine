@@ -437,4 +437,73 @@ CRITICAL llama.cpp advisory. Verdict changes noted; confirmations noted.
 
 ---
 
-*⬡ OMEGA ENGINE ALPHA ⬡ RES-GAPS-003 ⬡ WEB RESEARCH COMPLETE ⬡ TEMPLE-GRADE ⬡*
+## 13. Provider Expertise Record — 2026-09-18 (RES-GAPS-004, definitive)
+
+Everything below was verified live on Node 1 (1.18.31) or against primary
+sources. It supersedes all earlier provider theorizing (§11.8 corrected here).
+
+### 13.1 Merge semantics (proven behaviorally, twice)
+
+- Official docs: config files are "**merged together, not replaced**"; custom
+  models are "**additional**".
+- Live proof: Node 0's exact project `provider.opencode.models` block (3 entries)
+  replicated in a scratch dir — all 7 built-ins still enumerate AND Spark PONGs.
+  Same for an `options: {}` overlay. Closed-world theory dead.
+- Consequence: enumerating models in config is never a fix. At best redundant,
+  at worst (stale limits) harmful.
+
+### 13.2 The Big Pickle window move (operator-observed, registry-confirmed)
+
+- Then: custom 1M override + sessions at 205.8K+ tokens (true at the time).
+- Now: operator noticed degraded/changed behavior ~2026-09-17/18; live
+  models.dev snapshot reads big-pickle **200K/160K/32K**; Spark 1.2/1.3 read
+  **1048576/131072** (1M, built-in, no override ever needed); Nemotron 1M/128K.
+- Doctrine: Zen mutates models/limits in place without notice. NEVER hardcode;
+  drift-detect (`scripts/opencode_provider_doctor.sh` C4 compares every custom
+  limit against live models.dev and flags disagreement).
+
+### 13.3 Auth canonical path
+
+- `opencode auth login` → `$XDG_DATA_HOME/opencode/auth.json`
+  (`~/.local/share/...`), confirmed by official CLI/troubleshooting docs +
+  live files. `~/.config/opencode/auth.json` is a dead path (v1 collector
+  looked there; v1.1 fixed). `opencode auth ls` cross-checks providers.
+- Zen login = `/connect` → API key; endpoints `https://opencode.ai/zen/v1/*`;
+  Big Pickle + Spark 1.3-free are limited-time free models (official Zen docs).
+
+### 13.4 Error-string atlas
+
+- `invalid openai provider options` = AI SDK `AI_InvalidArgumentError` at
+  client construction (cf. cherry-studio#10526, same string on `serviceTier`
+  validation). Distinct from `Invalid API key.` (auth rejection — reproduced
+  live with a bogus key).
+- Node 0's trigger: NOT the models map (exonerated), NOT empty options
+  (exonerated) — remaining: 1.18.23-vs-.31 delta (1.18.30 bumped the OpenAI
+  provider SDK; changelog names nothing decisive) or Node 0 auth.json content
+  (862B vs 236B healthy — v1.1 collector now captures its structure).
+- Bonus: project plugin `awareness.ts:137` crashed on non-string errors,
+  masking the real message (String-guard fix shipped in apply script).
+
+### 13.5 GHSA-j8rj-fmpv-wcxw (corrected from §10/§12.5)
+
+- Advisory text: affected `<= b7991`, **Patched versions: None** (still, as
+  scraped 2026-09-18). The §10 "patched in b8492" claim is WITHDRAWN —
+  no such version exists in the advisory; do not cite.
+- Reporter las7, CERT/CC VU#748698 (closed by CERT, filed direct); full RCE
+  chain (ASLR bypass → arbitrary R/W → `system()` via iface overwrite);
+  same-root third instance after CVE-2024-42478/42479 (GET/SET_TENSOR paths).
+- Ollama 0.33.3 vendors llama.cpp **b10729** (post-advisory). Upstream fix
+  status unchecked — open verification, not a claim. Local exposure: none
+  (no rpc-server in our stack; gap-22 gate already demands SPIRE mTLS).
+
+### 13.6 OpenRouter (closed)
+
+- `api.openrouter.ai` NXDOMAIN globally (system DNS + 1.1.1.1 + Node 0 DNS —
+  triple-proven). Apex `https://openrouter.ai/api/v1` HTTP 200 everywhere.
+- OpenRouter is BUILT-IN (`openrouter/~…` IDs, auth.json credential). All 9
+  Node 0 keys HTTP 200. No config has ever been needed; v1's 80-model catalog
+  dump is retracted as an anti-pattern exhibit.
+
+---
+
+*⬡ OMEGA ENGINE ALPHA ⬡ RES-GAPS-004 ⬡ PROVIDER EXPERTISE COMPLETE ⬡ TEMPLE-GRADE ⬡*

@@ -427,6 +427,17 @@ without trial by fire.
   5 validation questions + Node 1 triage recorded. Next: boot Engine here (P3.5b)
   or scaffold WAD deltas (P3.5c) — operator's call.
 
+### P3.6 — Provider Doctor (community tool, DONE 2026-09-18)
+- **Why**: Zen rotates models/limits without notice (Big Pickle 1M→200K); Node 0
+  down with `invalid openai provider options`; hardcoding enumerations is the
+  disease. A subtractive, secret-safe doctor diagnoses any machine.
+- **Done when**: diagnose-only default, backups + idempotent repair, hermetic
+  tests, registry-drift detection live.
+- **Status**: ✅ **DONE** — `scripts/opencode_provider_doctor.sh` (10 checks:
+  versions/layers/options-emptiness/baseURL-DNS/embedded-secrets/placeholders/
+  enumeration-rot/registry-drift/auth/env) + `tests/test_provider_doctor.py`
+  (6 tests) + expertise record gaps §13. Staged to USB for Node 0.
+
 ---
 
 ## Research Deliverables (Completed This Session)

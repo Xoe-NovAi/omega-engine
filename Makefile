@@ -513,7 +513,7 @@ env-all: ## Show all Ollama env variables with descriptions
 
 test: ## FULL regression suite: 48 tests (repo hygiene, well, gnosis, omer)
 	@.venv/bin/python3 -m unittest discover -s tests
-	@echo "$(C_GREEN)  ✓ 48/48 tests green$(C_RESET)"
+	@echo "$(C_GREEN)  ✓ all tests green (see count above)$(C_RESET)"
 
 lint: ## ALL code-quality gates: anyio purity + bare-exception ban + torch ban + model card validation
 	@echo "$(C_BOLD)$(C_CYAN)── Code-quality gates ──$(C_RESET)"

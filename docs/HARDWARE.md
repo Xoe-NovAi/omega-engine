@@ -351,13 +351,13 @@ LLM inference streams weights from DRAM continuously. Single-channel is your **h
 - `docker-compose.yml`, `.env.docker`
 - Local git repo (main): tracks SSOT docs/scripts/gnosis-protocol; secrets & generated gnosis data ignored
 
-### OpenCode model configuration (Big Pickle — 1M window)
+### OpenCode model configuration (Big Pickle)
 Built-in via the models.dev registry — no custom `provider.opencode.models` block
-exists on this machine and none is needed (`opencode models` lists it; sessions
-routinely run past the old 200K auto-compact threshold — 205.8K+ tokens, no
-compaction, verified live 2026-09-09 and re-verified 2026-09-18). Do not
-re-introduce a hand-maintained override: Zen rotates free models constantly and
-stale enumerations break things (gaps guide §11.8).
+exists on this machine and none is needed. History: a 1M-window override lived
+here and was true (205.8K+ token sessions); Zen moved the model to 200K within
+~a day (operator-observed 2026-09-18; registry: 200K/160K/32K). Doctrine going
+forward: drift-detect, never hardcode (`scripts/opencode_provider_doctor.sh`;
+gaps guide §11.8/§13).
 - Instructions stack loaded per session (project config): `AGENTS.md`, `docs/HARDWARE.md`,
   `docs/SYSTEM_GUIDE.md`, `docs/BENCHMARKS.md` ≈ 13.5K tokens before MCP tools.
   HARDWARE.md loads from the PROJECT config only (de-duplicated 2026-09-09).
