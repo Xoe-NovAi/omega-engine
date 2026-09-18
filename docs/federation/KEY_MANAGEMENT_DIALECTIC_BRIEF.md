@@ -56,3 +56,4 @@ Node 0 is ingesting the USB payload now. Both nodes must converge on **one** key
 
 - 2026-09-18, Node 1: placeholders purged (30 lines), `.env` (600) created, Exa validated HTTP 200, PARALLEL/CONTEXT7 flagged missing, Node 0 probed (8016 OPEN / 22 closed), brief written.
 - 2026-09-18, Node 1 (post-brief): real Parallel + Context7 keys installed to `.env` (mode 600, history scrubbed); hosted Firecrawl MCP wired (`mcp.firecrawl.dev/v2/mcp`); `parallel_bridge.py` built + live-verified — **all 5 MCP green**. Remaining for Node 0: Q1–Q5 positions, pattern ratification, placeholder-detector test.
+- 2026-09-18, shared-pool structural proof: Node 0 collector bundle confirms **no Tailscale exit node** on Node 0 (`ExitNodeID` empty) — both nodes share one egress IP, so Zen's IP-keyed pool is necessarily shared. warp-proxy-pool (per-machine egress) is the structural fix; nothing config-side changes this.

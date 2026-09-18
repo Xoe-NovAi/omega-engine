@@ -348,6 +348,21 @@ Keyed POST init → valid handshake (`firecrawl-fastmcp`). Wired as remote MCP
 servers (or direct APIs like `scripts/exa_search.py`). The session `websearch`
 tool is Parallel-backed host-side and 401s independently of local env.
 
+### 11.8 Project-config provider override clobbers undefined models (Node 0 field case)
+
+Node 0's PROJECT `opencode.json` (highest precedence per official docs)
+redefined `provider.opencode.models` with only 3 entries. Selecting
+`opencode/muse-spark-1.2-contributor-free` (absent from the override) failed
+with `invalid openai provider options` — while the 3 defined models worked.
+**Rule: a project-level `models` map is a closed world for that provider; every
+model you intend to use must be enumerated in the HIGHEST-precedence file that
+touches that provider.** Suspect this first for any "invalid provider options"
+error. Remediation pattern: additive entries mirroring a known-good limit shape
+(see `scripts/apply_node0_fix.sh`), never blind deletion of the override.
+Bonus find from the same bundle: a project plugin (`awareness.ts:137`) called
+`error?.slice` on a non-string, crashing the error handler and masking the real
+message — guard with `String(error?.message ?? error ?? '')`.
+
 ---
 
 ## 12. Critical-Gap Research Sweep — 2026-09-18 (RES-GAPS-003)
