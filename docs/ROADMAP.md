@@ -421,6 +421,11 @@ without trial by fire.
   placement decided with Node 0); Node 1 systems triaged WAD-vs-core; first
   cross-node WAD interop proven.
 - **Status**: `backlog` (vision recorded 2026-09-18; awaits Node 0 window).
+- **Status**: 🟢 **ACTIVE (2026-09-18)** — WAD contract mapped read-only from
+  `origin/main` (`docs/federation/WAD_CONTRACT_BRIEF.md`): manifest V1/V2 schema,
+  Doom-faithful override semantics, M2 firewall, both IWADs inventoried,
+  5 validation questions + Node 1 triage recorded. Next: boot Engine here (P3.5b)
+  or scaffold WAD deltas (P3.5c) — operator's call.
 
 ---
 
