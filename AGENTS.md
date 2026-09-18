@@ -65,5 +65,7 @@ Not this repo. Gaming/Ollama-Iris-Xe agent config and knowledge base live under
 `~/.config/opencode/agent/gaming-expert.md` and `~/GameResearch/` respectively.
 
 ## OpenCode model config (Big Pickle)
-Live at ~/.config/opencode/opencode.json → `provider.opencode.models["big-pickle"].limit`
-= `{context: 1000000, input: 950000, output: 64000}` (verified 1M window; see HARDWARE.md).
+Built-in (models.dev registry — zero custom config; verified live: `opencode models`
+lists `opencode/big-pickle` with the 1M window and sessions run past the old 200K
+auto-compact threshold). Do NOT add a custom `provider.opencode.models` override
+to chase it — stale lore, corrected 2026-09-18 (see gaps guide §11.8).

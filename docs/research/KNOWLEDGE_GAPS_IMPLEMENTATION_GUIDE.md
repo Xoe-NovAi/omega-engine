@@ -348,20 +348,25 @@ Keyed POST init → valid handshake (`firecrawl-fastmcp`). Wired as remote MCP
 servers (or direct APIs like `scripts/exa_search.py`). The session `websearch`
 tool is Parallel-backed host-side and 401s independently of local env.
 
-### 11.8 Project-config provider override clobbers undefined models (Node 0 field case)
+### 11.8 Project-config override EXONERATED (Node 0 field case, corrected 2026-09-18)
 
-Node 0's PROJECT `opencode.json` (highest precedence per official docs)
-redefined `provider.opencode.models` with only 3 entries. Selecting
-`opencode/muse-spark-1.2-contributor-free` (absent from the override) failed
-with `invalid openai provider options` — while the 3 defined models worked.
-**Rule: a project-level `models` map is a closed world for that provider; every
-model you intend to use must be enumerated in the HIGHEST-precedence file that
-touches that provider.** Suspect this first for any "invalid provider options"
-error. Remediation pattern: additive entries mirroring a known-good limit shape
-(see `scripts/apply_node0_fix.sh`), never blind deletion of the override.
-Bonus find from the same bundle: a project plugin (`awareness.ts:137`) called
-`error?.slice` on a non-string, crashing the error handler and masking the real
-message — guard with `String(error?.message ?? error ?? '')`.
+Initial theory (a project-level `provider.opencode.models` map is a closed
+world that drops built-ins) was **disproven live on 1.18.31**: with Node 0's
+exact project block replicated, all 7 built-ins still enumerate AND Spark
+PONGs at request time; same for an `options: {}` overlay. Official docs agree:
+files are "merged together, not replaced", custom models are "additional".
+**Do NOT enumerate models to fix provider errors — the disease, not the cure**
+(v1 of `apply_node0_fix.sh` did this; v2 is subtractive).
+Remaining ranked suspects for Node 0's `invalid openai provider options`
+(AI SDK client-construction validation, distinct from `Invalid API key`):
+(1) version 1.18.23 vs 1.18.31 (1.18.30 bumped the OpenAI provider SDK;
+no changelog entry names this error, unproven); (2) Node 0 auth.json's extra
+content (862B vs 236B healthy — v1 collector looked at the WRONG path,
+`~/.config/...` instead of `~/.local/share/opencode/auth.json`; v1.1 fixed);
+(3) stale `OPENCODE_API_KEY` env (absent on healthy Node 1).
+Bonus find (stands): project plugin `awareness.ts:137` calls `error?.slice`
+on a non-string, crashing the error handler and masking the real message —
+guard with `String(error?.message ?? error ?? '')`.
 
 ---
 

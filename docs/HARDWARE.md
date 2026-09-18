@@ -352,10 +352,12 @@ LLM inference streams weights from DRAM continuously. Single-channel is your **h
 - Local git repo (main): tracks SSOT docs/scripts/gnosis-protocol; secrets & generated gnosis data ignored
 
 ### OpenCode model configuration (Big Pickle — 1M window)
-`~/.config/opencode/opencode.json` → `provider.opencode.models["big-pickle"].limit`:
-- `context: 1000000`, `input: 950000`, `output: 64000`
-- Verified live 2026-09-09: OpenCode reads Big Pickle as a 1M-token model; routinely
-  runs past the old 200K auto-compact threshold (205.8K+ tokens, no compaction).
+Built-in via the models.dev registry — no custom `provider.opencode.models` block
+exists on this machine and none is needed (`opencode models` lists it; sessions
+routinely run past the old 200K auto-compact threshold — 205.8K+ tokens, no
+compaction, verified live 2026-09-09 and re-verified 2026-09-18). Do not
+re-introduce a hand-maintained override: Zen rotates free models constantly and
+stale enumerations break things (gaps guide §11.8).
 - Instructions stack loaded per session (project config): `AGENTS.md`, `docs/HARDWARE.md`,
   `docs/SYSTEM_GUIDE.md`, `docs/BENCHMARKS.md` ≈ 13.5K tokens before MCP tools.
   HARDWARE.md loads from the PROJECT config only (de-duplicated 2026-09-09).

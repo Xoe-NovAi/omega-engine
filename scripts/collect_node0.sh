@@ -120,12 +120,15 @@ echo "wrote $OUT/03_configs_scrubbed.txt"
   if [[ -f "$CONF_DIR/.env" ]]; then grep -v "^#" "$CONF_DIR/.env" | env_shape; else echo "<no .env>"; fi; } > "$OUT/04_env_shapes.txt" 2>&1
 echo "wrote $OUT/04_env_shapes.txt"
 
-# ── 05 auth structure only ───────────────────────────────────────────
+# ── 05 auth structure only (CORRECT PATH: $DATA_DIR, not $CONF_DIR) ──
+# v1 looked at ~/.config/opencode/auth.json (absent everywhere) and missed the
+# real store. The live credential file is $XDG_DATA_HOME/opencode/auth.json.
 {
   echo "### auth.json STRUCTURE (provider names + field names + value shapes; no values)"
-  if [[ -f "$CONF_DIR/auth.json" ]]; then
+  echo "### path: $DATA_DIR/auth.json"
+  if [[ -f "$DATA_DIR/auth.json" ]]; then
     if have python3; then
-      python3 - "$CONF_DIR/auth.json" <<'PYEOF'
+      python3 - "$DATA_DIR/auth.json" <<'PYEOF'
 import json,sys
 a=json.load(open(sys.argv[1]))
 def shape(v):
@@ -140,7 +143,7 @@ PYEOF
       echo "<no python3 — cannot inventory safely; skipping>"
     fi
   else
-    echo "<no auth.json>"
+    echo "<no auth.json at $DATA_DIR/auth.json>"
   fi
 } > "$OUT/05_auth_structure.txt" 2>&1
 echo "wrote $OUT/05_auth_structure.txt"
