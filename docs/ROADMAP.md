@@ -357,11 +357,12 @@ without trial by fire.
 - **Status**: 🔥 **HIGH PRIORITY (2026-09-18)** — Secure key-management dialectic with Node 0:
   `docs/federation/KEY_MANAGEMENT_DIALECTIC_BRIEF.md` (FED-KEY-DIALECTIC-001, brief ready).
   Node 1 purged all placeholder keys (30 stale bashrc lines removed, `~/.config/opencode/.env` mode 600
-  created, Exa validated live HTTP 200). Missing fleet-wide: real **Parallel.ai** + **Context7** keys
-  (absent from Node 1 inventory — Node 0 must supply or confirm). Node 0 probed 2026-09-18:
-  omega-hub `:8016` OPEN (dialectic channel live), `:22` closed (gap 14 pending).
-  **Done when**: brief §4 checklist complete (Q1–Q5 answered on record, parallel-search 200/405
-  with a real key, pattern ratified, placeholder-detector in hygiene test).
+  created, Exa validated live HTTP 200). **Update 2026-09-18 (post-brief)**: real Parallel +
+  Context7 keys installed (history scrubbed), hosted Firecrawl MCP wired,
+  `scripts/parallel_bridge.py` built + live-verified — **all 5 MCP green** (see gaps guide §11).
+  Node 0 probed 2026-09-18: omega-hub `:8016` OPEN (dialectic channel live), `:22` closed (gap 14 pending).
+  **Done when**: brief §4 checklist complete (Q1–Q5 answered on record, bridge-vs-native
+  endgame ratified, pattern signed into C6/policy, placeholder-detector in hygiene test).
 
 ### P3.3 — Content runway
 - Obsidian vault, Godot/KQ5 research, Open WebUI experimentation,

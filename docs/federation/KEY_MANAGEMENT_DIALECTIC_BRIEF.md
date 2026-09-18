@@ -48,10 +48,11 @@ Node 0 is ingesting the USB payload now. Both nodes must converge on **one** key
 ## 4. Definition of done
 
 - [ ] Both nodes answer Q1–Q5 on the record (this file updated with Node 0's position)
-- [ ] `parallel-search` returns 200/405 with a real key from at least one node
+- [x] (Node 1, 2026-09-18) `parallel-search` returns live results with a real key — via `scripts/parallel_bridge.py` stdio→curl bridge (endpoint fingerprint rejected opencode's client; see gaps guide §11). Tools/list + tools/call verified over pipes. Native-vs-bridge endgame deferred to this dialectic.
 - [ ] `docs/federation/ACL_POLICY.md`-style ratification: key-management pattern signed into C6 or its own policy file
 - [ ] Repo hygiene test extended with a placeholder-key detector (fail on `pk_*_$(date` without adjacent `PENDING`)
 
 ## 5. Session log
 
 - 2026-09-18, Node 1: placeholders purged (30 lines), `.env` (600) created, Exa validated HTTP 200, PARALLEL/CONTEXT7 flagged missing, Node 0 probed (8016 OPEN / 22 closed), brief written.
+- 2026-09-18, Node 1 (post-brief): real Parallel + Context7 keys installed to `.env` (mode 600, history scrubbed); hosted Firecrawl MCP wired (`mcp.firecrawl.dev/v2/mcp`); `parallel_bridge.py` built + live-verified — **all 5 MCP green**. Remaining for Node 0: Q1–Q5 positions, pattern ratification, placeholder-detector test.
