@@ -1,6 +1,7 @@
 # Lineage Reconciliation Notes — `node1/all-5-mcp-green` vs `main`
 
-**Date**: 2026-09-18 · **Status**: trial merge attempted + aborted, tree clean, decision pending.
+**Date**: 2026-09-18 · **Status**: DECIDED 2026-09-18 — Option A (wait for Node 0).
+Branch stays pushed as reviewable lineage; no merge until the Node 0 window.
 
 ## Facts
 
