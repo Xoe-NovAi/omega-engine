@@ -35,17 +35,33 @@ def log(msg: str) -> None:
     print(f"[parallel_bridge] {msg}", file=sys.stderr, flush=True)
 
 
+def _looks_placeholder(v: str) -> bool:
+    """Known fake-key patterns that must never be sent upstream."""
+    v = (v or "").strip()
+    return (not v or "pk_asus_" in v or "pk_hp_" in v
+            or "$(date" in v or "xxxx" in v.lower() or "placeholder" in v.lower())
+
+
 def api_key() -> str:
-    k = os.environ.get("PARALLEL_API_KEY", "")
-    if not k:
-        envp = Path.home() / ".config" / "opencode" / ".env"
-        if envp.exists():
-            for line in envp.read_text().splitlines():
-                if line.startswith("PARALLEL_API_KEY="):
-                    k = line.split("=", 1)[1].strip().strip('"')
-    if not k:
-        sys.exit("PARALLEL_API_KEY not set (env or ~/.config/opencode/.env)")
-    return k
+    # Source priority: real key wins regardless of where it lives.
+    # A stale placeholder inherited from an old shell must NOT shadow .env.
+    env_key = os.environ.get("PARALLEL_API_KEY", "")
+    file_key = ""
+    envp = Path.home() / ".config" / "opencode" / ".env"
+    if envp.exists():
+        for line in envp.read_text().splitlines():
+            if line.startswith("PARALLEL_API_KEY="):
+                file_key = line.split("=", 1)[1].strip().strip('"')
+    if file_key and not _looks_placeholder(file_key):
+        log(f"using key from .env (len {len(file_key)})")
+        return file_key
+    if env_key and not _looks_placeholder(env_key):
+        log(f"using key from environment (len {len(env_key)})")
+        return env_key
+    if file_key or env_key:  # last resort: whatever exists
+        log("WARNING: only placeholder-shaped keys found; trying anyway")
+        return file_key or env_key
+    sys.exit("PARALLEL_API_KEY not set (env or ~/.config/opencode/.env)")
 
 
 class Upstream:
