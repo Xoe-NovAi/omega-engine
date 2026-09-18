@@ -26,3 +26,6 @@ gnosis/well/
 data/
 docs/federation/node0_received/
 
+
+# thermal bench logs (large, machine-local)
+logs/thermal/
