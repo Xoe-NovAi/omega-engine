@@ -350,4 +350,71 @@ tool is Parallel-backed host-side and 401s independently of local env.
 
 ---
 
-*⬡ OMEGA ENGINE ALPHA ⬡ RES-GAPS-002 ⬡ WEB RESEARCH COMPLETE ⬡ TEMPLE-GRADE ⬡*
+## 12. Critical-Gap Research Sweep — 2026-09-18 (RES-GAPS-003)
+
+Fresh official + practitioner sources for every Phase-0 critical item and the
+CRITICAL llama.cpp advisory. Verdict changes noted; confirmations noted.
+
+### 12.1 ZRAM (gap 1) — upstream man page confirms our config
+
+- `systemd/zram-generator` man `zram-generator.conf(5)`: `swap-priority`
+  documented (range -1…32767, **default 100**); drop-in dir
+  `/etc/systemd/zram-generator.conf.d/` overrides base file; `zram-size` accepts
+  the `min(ram / 2, 8192)` DSL; `compression-algorithm = zstd` canonical;
+  recompression chains + `writeback-device` exist for later tuning.
+- Our `99-llm.conf` conforms exactly. No verdict change.
+- Sources: `github.com/systemd/zram-generator` (README + man + `.example`).
+
+### 12.2 THP madvise (gap 2) — independent llama.cpp benchmark agrees
+
+- Phoronix, THP madvise-vs-always on Linux 6.18 LTS: **CPU inferencing with
+  llama.cpp slightly faster in madvise mode** (Fedora/Ubuntu default madvise;
+  CachyOS/openSUSE default always — distro split is real, our explicit grub
+  pin is the right call).
+- Nuance (llama.cpp #2251): one user saw *no* difference with file-backed mmap
+  + `--mlock` (MADV_HUGEPAGE needs anonymous/KV memory to matter). Our win is
+  khugepaged-stall avoidance during KV growth, not raw t/s — claim stays scoped.
+- Sources: `phoronix.com/review/thp-madvise-always`, `kernel.org transhuge.html`,
+  `ggml-org/llama.cpp#2251`.
+
+### 12.3 OWUI keep-alive (gap 3) — per-model is the ONLY reliable path
+
+- open-webui #10096: global `Settings > General > Advanced > Keep Alive` is
+  **overridden back to 5m by OWUI's own requests**; per-model Advanced Params
+  keepalive (added ~0.6.15) is the working control. Our "set `-1` per model in
+  the UI" guidance is the correct workaround, not a preference.
+- open-webui #3291: purge-culprit is often `OLLAMA_NUM_PARALLEL` (default 1
+  loaded model; embeddings + chat evict each other). Consistent with our
+  `MAX_LOADED_MODELS=1` + `NUM_PARALLEL=1` + KV `q8_0` stack.
+- open-webui #10048 (closed): global keep-alive historically unreliable —
+  reinforces: do the manual per-model step, verify with `ollama ps` after 10 min.
+- Sources: `open-webui#10096`, `#3291`, `#10048`. **Manual UI step still open.**
+
+### 12.4 Exa MCP endpoint (gap 5) — hosted URL triple-confirmed
+
+- Independent third-party proxy doc points at `https://mcp.exa.ai/mcp`;
+  `exa.ai/mcp` + `exa.ai/docs/get-started/exa-mcp` + `exa-labs/exa-mcp-server`
+  all current (docs updated 2026-09-15). Dead `api.exa.ai/mcp` stays dead.
+- Decision stands: direct-API via `scripts/exa_search.py` (no MCP fragility).
+  Re-adding hosted MCP is now a *safe* option, not a fix — defer to need.
+
+### 12.5 llama.cpp RCE advisory (gap 22) — VERIFIED + one new finding
+
+- **GHSA-j8rj-fmpv-wcxw verified**: "Unauthenticated RCE via GRAPH_COMPUTE
+  buffer=0", severity **Critical**, RPC backend, affected `<= b7991`,
+  published by ggerganov 2026-03-26
+  (`github.com/ggml-org/llama.cpp/security/advisories/GHSA-j8rj-fmpv-wcxw`).
+- ⚠️ **§10 correction**: the "patched in b8492" claim is UNCONFIRMED from the
+  advisory snippet (only "affected <= b7991" verified). Do not cite b8492 until
+  the advisory's Patched-versions field is read directly.
+- 🆕 **Second live issue**: llama.cpp #22267 — CVE-2026-21869 (CVSS 8.8 High),
+  negative `n_discard` → heap-buffer-overflow in `server_context::update_slots`,
+  **still present on master `0d0764df` (2026-04-22)**, any unauthenticated remote
+  client vs `llama-server` with context shift. One-line clamp fix proposed.
+- **Actions**: (1) check Ollama 0.33.3's vendored llama.cpp against both
+  advisories; (2) gap-22 distributed inference stays gated on RPC hardening —
+  SPIRE mTLS prerequisite stands and grows teeth.
+
+---
+
+*⬡ OMEGA ENGINE ALPHA ⬡ RES-GAPS-003 ⬡ WEB RESEARCH COMPLETE ⬡ TEMPLE-GRADE ⬡*
