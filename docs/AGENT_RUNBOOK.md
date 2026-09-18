@@ -393,28 +393,28 @@ Old open items folded into ROADMAP: sudo revert (standing infra — outside
 ROADMAP, see `~/.config/opencode/AGENTS.md`), content runway (P3.3).
 ---
 
-## 10. Hardened Deployment Procedures (v3.0 — Battle-Tested)
+## 10. Hardened Deployment Procedures (v3.1 — Sonnet 5 Review Hardened)
 
 ### 10.1 The Hardening Philosophy
-Every failure in the setup process is converted into a hardening measure. This section documents the battle-tested deployment procedures that survived real-world execution.
+Every failure in the setup process is converted into a hardening measure. This section documents the battle-tested deployment procedures that survived real-world execution **and Sonnet 5 review**.
 
 ### 10.2 Pre-Deployment Validation (Non-Negotiable)
 ```bash
 # 1. OpenCode version (must be 1.18+)
 opencode --version | grep -q '1\.1[89]'
 
-# 2. MemPalace MCP responding (CLI test)
-opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1 || true
+# 2. MemPalace MCP responding (CLI test) — NO || true masking failures
+opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1
 
-# 3. Tailscale mesh connectivity
+# 3. Tailscale mesh connectivity (Node 1 checks Peer[] for omega-hub)
 tailscale status --json | jq -r '.Peer[] | .DNSName' | grep -q 'omega-hub.tail51f14a.ts.net'
 
 # 4. Parallel.ai endpoint (accept 405 as "reachable")
 curl -s -o /dev/null -w '%{http_code}' https://search.parallel.ai/mcp | grep -E -q '200|401|405'
 
-# 5. Backup existing config
+# 5. Backup existing config — guard for first deploy
 BACKUP_SUFFIX=$(date +%Y%m%d_%H%M%S)
-cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.bak.${BACKUP_SUFFIX}
+[ -f ~/.config/opencode/opencode.json ] && cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.bak.${BACKUP_SUFFIX} || true
 
 # 6. Venv dependency lock
 if ! /home/xnai/WanderGround/.venv/bin/python3 -c "import anyio; import inotify" 2>/dev/null; then
@@ -503,7 +503,7 @@ opencode mcp add mempalace -- /home/xnai/WanderGround/.venv/bin/mempalace-mcp --
 /home/xnai/WanderGround/.venv/bin/pip
 ```
 
-### 10.5 Systemd Service (Hardened Format)
+### 10.5 Systemd Service (Hardened Format — With Circuit Breaker)
 ```ini
 # ~/.config/systemd/user/wanderground-embed.service
 [Unit]
@@ -516,6 +516,8 @@ WorkingDirectory=%h/WanderGround/daemon
 ExecStart=%h/WanderGround/.venv/bin/python3 %h/WanderGround/daemon/embed_daemon.py
 Restart=always
 RestartSec=5
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Install]
 WantedBy=default.target
@@ -525,31 +527,45 @@ WantedBy=default.target
 - Use newlines, NOT semicolons: `Restart=always` + newline + `RestartSec=5`
 - `[Install]` on its own line, `WantedBy=default.target` on next line
 - `ExecStart` points to correct venv: `%h/WanderGround/.venv/bin/python3`
+- **Circuit breaker**: `StartLimitIntervalSec=60` + `StartLimitBurst=3` prevents infinite crash-loops
 
 ### 10.6 anyio 4.x API Compliance
 ```python
 # WRONG (anyio 4.x removed this parameter):
 await anyio.to_process.run_sync(fn, stream, abandon_on_cancel=True)
 
-# CORRECT:
-await anyio.to_process.run_sync(fn, stream)
+# CORRECT (to_thread for thread workers, not to_process):
+await anyio.to_thread.run_sync(fn, stream)
 ```
 
-### 10.6 Sidecar Daemon (Hardened)
+### 10.6 Sidecar Daemon (Hardened — to_thread Fixed)
 ```python
-# Key hardening points:
-# 1. Infinite buffer: max_buffer_size=float('inf')
-# 2. Atomic lock: lock_event = anyio.Event() (NO Flanagan typo)
-# 3. No abandon_on_cancel parameter
-# 4. Infinite buffer to absorb web_fetch floods
-
-send_stream, receive_stream = anyio.create_memory_object_stream(max_buffer_size=float('inf'))
-lock_event = anyio.Event()
-# ... later in loop ...
-if filename.endswith(".md") and lock_event.is_set():
-    lock_event = anyio.Event()  # Atomic instantiation
-    lock_event.clear()
-    tg.start_soon(process_batch_cooldown)
+# CURRENT GENERATION (2026-09-18): queue.SimpleQueue + poll — NO anyio.Event
+#
+# Why not Event.set() from the inotify thread?
+#  - Direct set() from a worker thread sets the flag but CANNOT wake loop waiters
+#    (misses call_soon_threadsafe scheduling) — sync worker stays stuck forever.
+#  - from_thread.run_sync(set) fixes that, but a set() landing between wait()'s
+#    flag check and waiter registration is SILENTLY LOST (flaky stuck worker,
+#    reproduced ~1-in-6 in sandbox trials).
+#
+# Deterministic alternative used by scripts/embed_daemon.py:
+pending_queue = queue.SimpleQueue()          # GIL-safe, cannot lose items
+POLL_INTERVAL_SECONDS = 0.5
+# inotify thread:
+pending_queue.put(filename)                  # NO thread signaling at all
+# sync worker (async task):
+while True:
+    files = []
+    while True:
+        try:
+            files.append(pending_queue.get_nowait())
+        except queue.Empty:
+            break
+    if not files:
+        await anyio.sleep(POLL_INTERVAL_SECONDS)
+        continue
+    # cooldown + ONE mine+sync per batch (see scripts/embed_daemon.py)
 ```
 
 ### 10.7 Parallel.ai Endpoint Behavior
@@ -577,11 +593,30 @@ verify_step "MemPalace palace" "[ -f ~/WanderGround/mempalace/sqlite_exact.sqlit
 ```
 
 ### 10.10 Complete Deployment Scripts
-See `/home/xnai/deploy_node1.sh` and `/home/xnai/deploy_node0.sh` for complete atomic deployment scripts with all hardening applied.
+See `/home/xnai/deploy_node1.sh` and `/home/xnai/deploy_node0.sh` for complete atomic deployment scripts with all hardening applied (including Sonnet 5 fixes).
+
+### 10.11 Sonnet 5 Review Fixes (v3.1 — All Critical Bugs Fixed)
+The following critical bugs were identified by Sonnet 5 review and fixed in the deployed scripts:
+
+| # | Component | Bug | Fix |
+|---|-----------|-----|-----|
+| 1 | **embed_daemon.py** (CRITICAL) | `to_process` used for inotify worker — MemoryObjectStream not picklable | Changed to `anyio.to_thread.run_sync()` |
+| 2 | **Deploy scripts Phase 0** | `|| true` masked MemPalace verify failure | Removed `|| true` from command strings |
+| 3 | **Node 0 Tailscale check** | Checked Self.DNSName instead of Peer[] | Fixed to check `.Peer[]` for `xnai-n1-asus` |
+| 4 | **Node 1 opencode.json** | Duplicate `mempalace` key in config | Removed duplicate `mcp.mempalace` block |
+| 5 | **Bashrc env vars** | Unconditional append duplicated on re-run | Marker guards (`# OMEGA_ENGINE_API_KEYS`) with `grep -q` |
+| 6 | **Backup step** | Failed on first deploy (no existing config) | Guarded with `[ -f ... ] &&` |
+| 7 | **library_web_search.py** | Bare `except: pass` swallowed signals | Changed to `except Exception:` |
+| 8 | **library_web_search.py** | No domain fallback for unrecognized queries | Added `06_general` catch-all domain |
+| 9 | **embed_daemon.py** (CRITICAL) | Sync worker never woke — `Event.set()` from thread can't wake loop waiters; `from_thread.run_sync(set)` still has lost-wakeup race | Rewrote to `queue.SimpleQueue` + 0.5s poll; verified end-to-end 2026-09-18 |
+| 10 | **Systemd service** | No circuit breaker for crash-loops | Added `StartLimitIntervalSec=60`, `StartLimitBurst=3` |
+| 11 | **API Keys** | Date-derived placeholders documented as real | Added explicit warnings: must replace with real keys |
 
 ---
 
 ## 11. Quick Reference: Hardened Commands
+
+**⚠️ CRITICAL: Deployed API keys are DATE-DERIVED PLACEHOLDERS (`pk_asus_YYYYMM`, `pk_hp_YYYYMM`). They WILL 401 on every call. Replace with real Parallel.ai API keys before production use.**
 
 ```bash
 # Deploy Node 1
@@ -601,4 +636,9 @@ systemctl --user status wanderground-embed.service
 # Rollback
 cp ~/.config/opencode/opencode.json.bak.* ~/.config/opencode/opencode.json
 systemctl --user stop wanderground-embed.service && systemctl --user disable wanderground-embed.service
+rm ~/.config/systemd/user/wanderground-embed.service
+systemctl --user daemon-reload
+# Remove API key block (between markers)
+sed -i '/# OMEGA_ENGINE_API_KEYS/,/# END OMEGA_ENGINE_API_KEYS/d' ~/.bashrc
+source ~/.bashrc
 ```

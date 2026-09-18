@@ -383,6 +383,36 @@ without trial by fire.
 
 ---
 
+## Research Deliverables (Completed This Session)
+
+### RES-EMBED-001 — Embedding Model Decision (Definitive)
+- **What**: Definitive recommendation for federated embedding model compatibility
+- **Decision**: Switch both nodes to `qwen3-embedding:0.6b` with `truncate_dim=768` (MRL)
+- **Rationale**: Only path achieving true federated semantic compatibility (direct cosine similarity) with quality gain (C-MTEB 66.33 vs 62.28), 4× context (32K vs 2K), instruction-aware, zero projection layer
+- **Deliverable**: `docs/research/EMBEDDING_MODEL_DECISION.md` (complete with comparison table, migration path, rollback)
+- **Status**: ✅ **DONE (2026-09-17)**
+
+### RES-GAPS-001 — Knowledge Gaps Implementation Guide (Complete Audit)
+- **What**: Complete audit of all 25 remaining gaps, sequenced by dependency with temple-grade specs
+- **Deliverable**: `docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` (dependency graph, 4 phases, per-gap specs, portability checklist, rollback points)
+- **Phases**: 0=Critical Foundation (5 items, Node 1 only), 1=Validation (3 items), 2=Federation Close-Out P3.2 (7 items, needs Node 0), 3=Architecture Decisions (6 items), 4=Speculative (4 items)
+- **Status**: ✅ **DONE (2026-09-17)**
+
+### RES-DAEMON-001 — WanderGround Embed Daemon Coordination Fix (Stuck Sync Worker)
+- **What**: Root-caused and fixed the daemon sync worker that never woke (files queued, mine+sync never ran).
+- **Root cause**: `anyio.Event.set()` from the inotify worker thread cannot wake loop waiters (thread-safe
+  callback scheduling requires `call_soon_threadsafe`); even `from_thread.run_sync(set)` lost wakeups
+  (~1-in-6 flaky) when set() landed between wait()'s flag check and waiter registration.
+- **Fix**: Coordinated via `queue.SimpleQueue` + 0.5s poll loop in `scripts/embed_daemon.py` — deterministic
+  by construction. Batch mine+sync (one per drained batch) with 2.5s write-settle cooldown.
+- **Verified**: Sandbox (2 batches clean) + production (39-file backlog drained incl. res_gaps_002 +
+  previously-stuck queue_wake_test; marker phrase searchable via mempalace MCP).
+- **Deliverables**: `scripts/embed_daemon.py`, `scripts/wanderground-embed.service`, USB deploy scripts
+  (`omega-exchange/deploy_node{0,1}_hardened.sh`) + `embed_daemon_hardened.py` all carry the fix.
+- **Status**: ✅ **DONE (2026-09-18)**
+
+---
+
 ## Dream log (kind: dream — captured, unpromised)
 
 1. **Beam-back continuity**: memory/skills learned inside Odysseus surviving

@@ -1,0 +1,17 @@
+[Unit]
+Description=WanderGround Async Embedding Daemon (anyio Hardened)
+After=default.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=%h/WanderGround/daemon
+ExecStart=%h/WanderGround/.venv/bin/python3 %h/WanderGround/daemon/embed_daemon.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+SyslogIdentifier=wanderground-embed
+
+[Install]
+WantedBy=default.target

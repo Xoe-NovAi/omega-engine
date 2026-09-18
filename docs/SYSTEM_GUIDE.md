@@ -735,9 +735,9 @@ python3 ~/hivemind_first_contact.py
 
 ---
 
-## 16. HARDENED DEPLOYMENT LESSONS (2026-09-17)
+## 16. HARDENED DEPLOYMENT LESSONS (2026-09-17 — SONNET 5 HARDENED v3.1)
 
-### 16.1 Battle-Tested Fixes Catalog
+### 16.1 Battle-Tested Fixes Catalog (Including Sonnet 5 Review)
 
 | Failure | Root Cause | Hardening Applied |
 |---------|------------|-------------------|
@@ -753,6 +753,16 @@ python3 ~/hivemind_first_contact.py
 | **Systemd semicolons** | `Restart=always; RestartSec=5` | Use newlines: `Restart=always` + `RestartSec=5` |
 | **anyio abandon_on_cancel** | Parameter removed in 4.x | Remove: `run_sync(fn, stream)` |
 | **MemPalace not in mcp list** | Not registered via CLI | `opencode mcp add mempalace -- <cmd> <args>` |
+| **Sonnet 5 #1: Daemon to_process** | `anyio.to_process.run_sync()` for inotify — MemoryObjectStream not picklable | **FIXED: `anyio.to_thread.run_sync()`** |
+| **Sonnet 5 #2: Fake verify_step** | `|| true` baked into MemPalace check command | Removed `|| true` from command strings |
+| **Sonnet 5 #3: Node 0 Tailscale** | Checked Self.DNSName instead of Peer[] | Fixed to check `.Peer[]` for `xnai-n1-asus` |
+| **Sonnet 5 #4: Duplicate config** | Duplicate `mempalace` key in Node 1 config | Removed duplicate `mcp.mempalace` block |
+| **Sonnet 5 #5: Bashrc duplicates** | Unconditional append on every re-run | Marker guards (`# OMEGA_ENGINE_API_KEYS`) + `grep -q` |
+| **Sonnet 5 #6: Backup fail** | First deploy fails (no existing config) | Guarded with `[ -f ... ] &&` |
+| **Sonnet 5 #7: Bare except** | `except: pass` swallowed signals | Changed to `except Exception:` |
+| **Sonnet 5 #8: No domain fallback** | Unrecognized queries filed under kernel | Added `06_general` catch-all domain |
+| **Sonnet 5 #9: No circuit breaker** | Daemon crash-loop restarted forever | Added `StartLimitIntervalSec=60`, `StartLimitBurst=3` |
+| **Sonnet 5 #10: Fake API keys** | Date placeholders documented as real | **Documented: placeholders must be replaced** |
 
 ### 16.2 Key Hardening Principles
 
@@ -770,7 +780,7 @@ python3 ~/hivemind_first_contact.py
 ```bash
 # Pre-deployment
 opencode --version | grep -q '1\.1[89]'
-opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1 || true
+opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1
 tailscale status --json | jq -r '.Peer[] | .DNSName' | grep -q 'omega-hub.tail51f14a.ts.net'
 curl -s -o /dev/null -w '%{http_code}' https://search.parallel.ai/mcp | grep -E -q '200|401|405'
 
@@ -792,9 +802,8 @@ systemctl --user disable wanderground-embed.service
 rm ~/.config/systemd/user/wanderground-embed.service
 systemctl --user daemon-reload
 
-# Env rollback
-sed -i '/PARALLEL_API_KEY/d' ~/.bashrc
-sed -i '/OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS/d' ~/.bashrc
+# Env rollback (marker-guarded cleanup)
+sed -i '/# OMEGA_ENGINE_API_KEYS/,/# END OMEGA_ENGINE_API_KEYS/d' ~/.bashrc
 source ~/.bashrc
 
 # MCP server removal
@@ -813,7 +822,7 @@ Both scripts include:
 - Phase 3: System prompts with `{include:...}` syntax
 - Phase 4: WanderGround directories + enhanced frontmatter
 - Phase 5: Omega-hub wrapper with `CapacityLimiter(2)` + dynamic frontmatter (Node 0)
-- Phase 6: anyio sidecar daemon with infinite buffer + atomic lock + systemd service
+- Phase 6: anyio sidecar daemon (SimpleQueue + 0.5s poll coordination, no Event wake races) + systemd service
 - Phase 7: Tailscale ACL documentation
 - Phase 8: Offline cache pre-population
 - Phase 9: Pre-flight validation with exit-on-failure gates
@@ -835,6 +844,6 @@ opencode  # select Nemotron 3 Ultra -> @asus_plan "test query"
 
 - [ ] Node 0 SSH access (needs `sudo systemctl enable --now ssh` on HP)
 - [ ] Tailscale ACL rule application (manual in admin console)
-- [ ] USB drive packet update with hardened configs
+- [x] USB drive packet update with hardened configs (COMPLETED v3.1)
 - [ ] Cross-node federation test: `@kali` on Node 0 via omega-hub
 - [ ] Full thermal bench (10-min sustained) with turbostat logging
