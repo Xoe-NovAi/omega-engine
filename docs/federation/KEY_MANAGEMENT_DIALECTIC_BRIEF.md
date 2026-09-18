@@ -28,11 +28,22 @@ Node 0 is ingesting the USB payload now. Both nodes must converge on **one** key
 
 ## 3. Open questions for Node 0 (makali / operator)
 
-1. Does Node 0 hold real **Parallel.ai** and **Context7** keys? Node 1's inventory has neither — federation `parallel-search` is unauthenticated until one node supplies them.
-2. Confirm Node 0 adopts the `~/.config/opencode/.env` (600) pattern and `EnvironmentFile=` in its systemd units (deploy_node0 script embeds this — verify post-deploy).
-3. Who mints/rotates shared keys (e.g. a common Exa key vs per-node keys)? Per-node is preferred (blast-radius isolation); shared only where the vendor forbids multiples.
-4. Should USB payloads ever carry real keys? **Node 1 position: NO** — USB carries `{env:}`-referencing configs + this brief only. Real keys cross via admin console / direct entry, never the sneaker-net bundle.
-5. Attestation: record key-rotation events in the sovereignty ledger (ref: `SOVEREIGNTY_POLICY_20260912.md` on USB)?
+> Correction recorded 2026-09-18: Node 0 carries 1.5 years of Omega Engine key-management
+> systems this brief's author has not seen. The dialectic's purpose is to **learn what is
+> already implemented on Node 0** — not to impose Node 1's week-old pattern. Node 1's
+> position below is offered as one data point, deferring to Node 0's established practice
+> wherever they conflict.
+
+1. What key-management systems are **already implemented on Node 0** (stores, rotation,
+   scoping, audit)? Node 1 adopts/adapts to them rather than duplicating.
+2. Node 1 now holds real **Parallel.ai** and **Context7** keys (user-supplied 2026-09-18)
+   — but Parallel's endpoint 403s all probe shapes from Node 1's network (auth-independent,
+   validity unproven). Does Node 0 have a working Parallel configuration / known-good
+   header scheme / allowlisted path to compare against?
+3. Confirm Node 0 adopts the `~/.config/opencode/.env` (600) pattern and `EnvironmentFile=` in its systemd units (deploy_node0 script embeds this — verify post-deploy), **or** record Node 0's existing equivalent.
+4. Who mints/rotates shared keys (e.g. a common Exa key vs per-node keys)? Per-node is preferred (blast-radius isolation); shared only where the vendor forbids multiples.
+5. Should USB payloads ever carry real keys? **Node 1 position: NO** — USB carries `{env:}`-referencing configs + this brief only. Real keys cross via admin console / direct entry, never the sneaker-net bundle.
+6. Attestation: record key-rotation events in the sovereignty ledger (ref: `SOVEREIGNTY_POLICY_20260912.md` on USB)?
 
 ## 4. Definition of done
 
