@@ -353,7 +353,15 @@ without trial by fire.
   via USB (`node0-to-node1/`, 69.3 MB git bundle, C6 contract, SPIRE, Tailscale configs,
   and governance policies). Intake manual (`docs/federation/INTAKE_MANUAL.md`) and
   pipeline script (`scripts/federation/intake_node0.py`) built and verified clean.
-  Next: execute `--ingest`, ratify C6 contract, and test Git bundle fetch.
+   Next: execute `--ingest`, ratify C6 contract, and test Git bundle fetch.
+- **Status**: 🔥 **HIGH PRIORITY (2026-09-18)** — Secure key-management dialectic with Node 0:
+  `docs/federation/KEY_MANAGEMENT_DIALECTIC_BRIEF.md` (FED-KEY-DIALECTIC-001, brief ready).
+  Node 1 purged all placeholder keys (30 stale bashrc lines removed, `~/.config/opencode/.env` mode 600
+  created, Exa validated live HTTP 200). Missing fleet-wide: real **Parallel.ai** + **Context7** keys
+  (absent from Node 1 inventory — Node 0 must supply or confirm). Node 0 probed 2026-09-18:
+  omega-hub `:8016` OPEN (dialectic channel live), `:22` closed (gap 14 pending).
+  **Done when**: brief §4 checklist complete (Q1–Q5 answered on record, parallel-search 200/405
+  with a real key, pattern ratified, placeholder-detector in hygiene test).
 
 ### P3.3 — Content runway
 - Obsidian vault, Godot/KQ5 research, Open WebUI experimentation,

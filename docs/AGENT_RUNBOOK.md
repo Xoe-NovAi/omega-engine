@@ -335,6 +335,73 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 
 ---
 
+## 6.5. CPU Performance Tuning (i7-13620H, intel_pstate + HWP)
+
+**Critical Finding**: Ubuntu defaults to `powersave` pseudo-governor even when GUI power profile = "Performance", causing ~2200 MHz sustained instead of 3600+ MHz.
+
+### The Three-Layer Problem
+| Layer | Component | Default | Fix |
+|-------|-----------|---------|-----|
+| 1 | Kernel (`intel_pstate` active + HWP) | `powersave` pseudo-governor | `echo performance > scaling_governor` |
+| 2 | Daemon (`power-profiles-daemon`) | Platform profile set, but **does not force pseudo-governor** | `powerprofilesctl set performance` |
+| 3 | GUI (GNOME power menu) | Synced to daemon via `powerprofilesctl` | Click "Performance" → runs daemon |
+
+### Immediate Fix (run once)
+```bash
+# 1. Set governor to performance (immediate)
+echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+# 2. Set power profile (persists via daemon)
+powerprofilesctl set performance
+
+# 3. Kernel cmdline fallback (highest priority, survives reboot)
+sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="intel_pstate=performance /' /etc/default/grub
+sudo update-grub
+```
+
+### Verification
+```bash
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor   # → performance
+cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference  # → performance
+powerprofilesctl  # → * performance:
+grep intel_pstate /proc/cmdline  # → intel_pstate=performance (after reboot)
+```
+
+### Expected Results
+| Metric | `powersave` governor | `performance` governor |
+|--------|---------------------|------------------------|
+| Avg MHz (sustained load) | 2023-2758 MHz | **3600+ MHz** |
+| Peak Temp | 92°C brief | 81-82°C stabilized |
+| Throttle <3000 MHz | Never | Never |
+
+### BIOS Settings (ExpertBook P1503CVA)
+| Setting | Location | Value |
+|---------|----------|-------|
+| Fan Profile | Advanced → Fan Control | **Performance** |
+| Turbo Boost | Advanced → CPU Configuration | **Enabled** |
+| Intel Speed Shift (HWP) | Advanced → CPU Configuration | **Enabled** |
+| SpeedStep | Advanced → CPU Configuration | **Enabled** |
+| C-States | Advanced → CPU Power Management | **Enabled** |
+| AVX Offset | Advanced → CPU Configuration | **0** |
+
+**NOT in BIOS** (firmware-locked): PL1, PL2, Tau, IccMax — managed by firmware/thermald.
+
+### Why GUI Setting Was Ignored
+1. GUI → `powerprofilesctl` → daemon sets platform profile (ACPI hint)
+2. `intel_pstate` (HWP active) reads hint but **chooses own pseudo-governor** based on kernel default (`powersave`)
+3. Result: Platform=Performance, Governor=powersave → frequency scales with load
+
+### Persistence
+| Method | Survives Reboot | Priority |
+|--------|-----------------|----------|
+| `powerprofilesctl set performance` | ✅ (daemon enabled) | Medium |
+| `intel_pstate=performance` kernel param | ✅ (GRUB) | **Highest** |
+| Sysfs write | ❌ | Immediate only |
+
+**Full guide**: `docs/CPU_PERFORMANCE_TUNING_GUIDE.md`
+
+---
+
 ## 7. For agents running in sub-projects (WanderGround, future)
 
 Same global rules apply. If `wander`/`mempalace` are referenced, they live in

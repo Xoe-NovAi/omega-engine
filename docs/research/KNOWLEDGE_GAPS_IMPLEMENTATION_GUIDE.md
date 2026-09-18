@@ -71,8 +71,8 @@ graph TD
 
 | # | Gap | Commands | Validation | Rollback |
 |---|-----|----------|------------|----------|
-| 6 | **10-min Thermal Bench** | Terminal 1: `while true; do curl -s http://localhost:11434/api/generate -d '{"model":"phi4-mini","prompt":"Continue:","stream":false}' >/dev/null; done`<br>Terminal 2: `turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2 > thermals.log`<br>Run 10 min, then `awk '/Avg_MHz/ {print $2}' thermals.log | sort -n | head -5` | Avg P-core MHz ≥ 3500 sustained<br>Pkg temp < 90°C<br>No throttle to < 3000 MHz | N/A (read-only) |
-| 7 | **BIOS Verify** | Reboot → Enter BIOS (F2) → Verify:<br>Speed Shift=Enabled<br>Turbo=Enabled<br>EPP=Performance<br>Fan=Performance<br>AVX Offset=0 | Photo/document settings | N/A |
+| 6 | **10-min Thermal Bench** | **PRE-REQ**: Set governor to performance first:<br>`echo performance \| sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`<br>`powerprofilesctl set performance`<br>Then:<br>Terminal 1: `while true; do curl -s http://localhost:11434/api/generate -d '{"model":"phi4-mini","prompt":"Continue:","stream":false}' >/dev/null; done`<br>Terminal 2: `sudo turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2 > thermals.log`<br>Run 10 min, then `awk '/Avg_MHz/ {print $2}' thermals.log \| sort -n \| head -5` | Avg P-core MHz ≥ 3500 sustained<br>Pkg temp < 90°C<br>No throttle to < 3000 MHz | N/A (read-only) |
+| 7 | **BIOS Verify** | Reboot → Enter BIOS (F2) → Verify:<br>Speed Shift=Enabled<br>Turbo=Enabled<br>EPP=Performance (or Fan=Performance)<br>AVX Offset=0<br>Fan=Performance<br>**NOTE**: PL1/PL2/IccMax/Tau are firmware-locked on ASUS ExpertBook P1503CVA — not exposed in BIOS. Managed by firmware/thermald. | Photo/document settings | N/A |
 | 8 | **Q5_K_M deepseek-r1** | `ollama pull deepseek-r1:8b-q5_K_M`<br>`make bench MODEL=deepseek-r1:8b-q5_K_M PROMPTS=3 WARM=1`<br>Compare tool-call reliability vs Q4_K_M | Bench: t/s within 10% of Q4_K_M<br>Tool calls: fewer hallucinations/format errors | `ollama rm deepseek-r1:8b-q5_K_M` |
 
 ---
@@ -196,7 +196,7 @@ Each gap above follows this template. Full detail in Phase tables.
 | 1 | ZRAM 8GB zstd | ✅ Confirmed + **CHANGED**: add install step | zram-generator.conf(5) manpages confirm `zram-size`, `compression-algorithm=zstd`, `swap-priority` default 100. Default size is `min(ram/2, 4096)`; our `min(ram/2, 8192)` override is valid. Newer option: `zram-resident-limit`. **Local: package NOT installed — must run `sudo apt install systemd-zram-generator` first.** |
 | 2 | THP madvise grub | ✅ Confirmed | kernel.org transhuge docs: `transparent_hugepage=madvise` is a valid kernel cmdline param; madvise mode only allocates hugepages for madvise'd regions → avoids khugepaged stalls during model load/KV growth. Note: `MADV_COLLAPSE` can force hugepages regardless of mode; newer kernels have per-size sysfs controls + mTHP. |
 | 3 | OWUI keep-alive=-1 | ✅ Confirmed | Settings → General → Advanced Parameters → Keep Alive → Custom (per-model) documented (issues #10096, #11694). **Caveat: #11694 reports "Keep Alive setting has no effect" as a known bug** — verify each model stays warm after 10 min. Current OWUI shows green "Loaded" + Eject button for warm models. |
-| 4 | Real API Keys | ✅ Confirmed | Dashboard-only; no web research possible. Placeholders in `~/.bashrc` remain the pending work. |
+| 4 | Real API Keys | ✅ **PARTIALLY DONE 2026-09-18** | `~/.bashrc`: 30 stale placeholder lines purged → single clean block. `~/.config/opencode/.env` (mode 600) created. **EXA_API_KEY + FIRECRAWL_API_KEY live** (Exa validated: `/search` HTTP 200). **STILL PENDING: PARALLEL_API_KEY + CONTEXT7_API_KEY** — absent from Node 1 key inventory; escalated to FED-KEY-DIALECTIC-001 (Node 0 must supply or confirm). |
 | 5 | Fix Websearch MCP (Exa 404) | ✅ **CHANGED: endpoint found** | **Correct MCP endpoint is `https://mcp.exa.ai/mcp`** — verified locally: POST with proper MCP headers returns 200 (serverInfo exa-search-server 3.2.1). Current config points at `https://api.exa.ai/mcp` → **404 confirmed on this machine**. Fix = update `opencode.json` URL only. |
 | 6 | 10-min Thermal Bench | ✅ Confirmed | i7-13620H: Raptor Lake-H, TDP 45W, 4.9 GHz boost, 10C/16T (TechPowerUp). ASUS BIOS exposes PL1/PL2/IccMax; Intel-default vs ASUS profile changes power behavior; Tau ~56s in ASUS BIOS (Intel community thread). turbostat(8) confirms PkgWatt/CoreTmp/Avg_MHz/Busy% columns; summary row = temp max, watts total. |
 | 7 | BIOS Verify | ✅ Confirmed | ASUS PL1/PL2/IccMax semantics per Intel community; Speed Shift (HWP) + EPP settings exist. BIOS check list stands. |
@@ -266,6 +266,26 @@ zramctl && swapon -s
 | Dist Inference | llama.cpp tools/rpc README; security advisory GHSA-j8rj-fmpv-wcxw |
 | KV q4_k | llama.cpp issue #27109 (2026-08) |
 | DDR5 | arXiv 2507.14397; dev.to "DDR5 Speed, CPU and LLM Inference" |
+
+---
+
+---
+
+## 10. Fresh Confirmations — 2026-09-18 Deep Research Sweep
+
+Additional sources confirming existing verdicts (no verdict changes):
+
+| Gap | New Confirmation Source |
+|-----|-------------------------|
+| ZRAM (1) | `zram-resident-limit` option documented in `zram-generator.conf(5)` manpages (Apr 2026); defaults to 0 (no limit) |
+| Redis L3 (12) | Redis 8.0 Streams: consumer groups, XACK, XCLAIM, XAUTOCLAIM, XREADGROUP provide at-least-once delivery; Pub/Sub remains fire-and-forget (redis.io, oneuptime 2026) |
+| Tailscale ACL (13) | tailscale.com ACL docs: custom policy REPLACES default `autogroup:member`; Phase A sequencing is the only safe path |
+| SQLite WAL (17) | **Multiple independent corruption reports**: oh-my-pi #9082 (Aug 2026), OpenCode #14970, OpenAI Codex #30957 — all confirm WAL-over-NFS silent corruption; TRUNCATE journal mode validated as NFS-safe |
+| Distributed Inference (22) | **CVE-2026-34159 / GHSA-j8rj-fmpv-wcxw**: CVSS 9.8 CRITICAL, unauthenticated RCE via GRAPH_COMPUTE buffer=0 bypass; patched in llama.cpp b8492; SPIRE mTLS non-negotiable prerequisite |
+| DDR5 (24) | dev.to benchmark (May 2026): DDR5-5600 dual-channel ~80 GB/s on AMD 7940HS; everything (CPU/GPU/KV/OS) shares one pipe; dual-channel ~doubles peak bandwidth; +52-58% claim unverified — **measure with `make bench` after install** |
+| qwen3-embedding (16) | Ollama library: qwen3-embedding:0.6b available; MRL truncate_dim=768/512/256/128; 32K ctx; per-seq defaults to 4096 — raise num_ctx for long docs |
+| OWUI keep-alive (3) | Issue #596 (feat: keep_alive param) closed/completed 2025; Issue #11694 "Keep Alive setting has no effect" remains open bug; verify per-model after 10 min |
+| Exa MCP (5) | Local probe confirmed: `mcp.exa.ai/mcp` → 200 (serverInfo exa-search-server 3.2.1); `api.exa.ai/mcp` → 404 |
 
 ---
 
