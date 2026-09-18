@@ -332,8 +332,12 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - Commands: `~/.config/opencode/commands/gnosis-lock.md`
 - Connected MCP (verified 2026-09-18, all green): mempalace (local),
   parallel-search (local via `scripts/parallel_bridge.py`), firecrawl (remote),
-  context7 (remote), grep_app (remote). omega-hub (:8016) + searxng (:8018)
-  are Node 0 services — pending Node 0 online.
+  context7 (remote), grep_app (remote). omega-hub: **Omega Core Hub v1.28.1
+  HEALTHY on Node 0 :8016** (live handshake + 93 tools incl. `task_registry_*`
+  verified 2026-09-18) but NOT wired on Node 1 — absent from all config
+  layers/backups (was TUI-visible historically; removal predates the backup
+  window; wiring deferred to Node 0 strategic window). searxng (:8018) DOWN
+  (connection refused 2026-09-18) — Node 0 to (re)start.
 
 ---
 
