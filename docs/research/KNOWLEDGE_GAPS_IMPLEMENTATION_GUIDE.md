@@ -289,4 +289,65 @@ Additional sources confirming existing verdicts (no verdict changes):
 
 ---
 
+---
+
+## 11. MCP Transport Lessons — 2026-09-18 Field Record (all 5 MCP green)
+
+Hard-won findings from bringing `parallel-search` online. Every claim verified live.
+
+### 11.1 Dual-config merge (`opencode.json` + `opencode.jsonc`)
+
+OpenCode merges **both** files in `~/.config/opencode/`. A stale `websearch`
+entry (`https://api.exa.ai/mcp` → 404) survived in `opencode.jsonc` after
+removal from `opencode.json`, haunting `mcp list` across restarts. **Rule:
+when adding/removing an MCP server, check both files.**
+
+### 11.2 Env substitution happens once, at server startup
+
+`{env:VAR}` headers are resolved when the opencode server process starts — not
+per-request. A key added to `.bashrc`/`.env` after startup is invisible until
+a **full restart** (quit TUI completely; attach reuses the old process). The
+running server also holds stale entries deleted from config after startup.
+
+### 11.3 Streamable-HTTP-only endpoints vs SSE clients
+
+`search.parallel.ai/mcp`: `GET` → 405, `GET /sse` → 404, `POST` init → 200.
+opencode 1.18's remote client leads with SSE; servers that 405 it (context7,
+grep_app) still connect via POST fallback — but Parallel's edge refused
+opencode's POST while accepting curl's byte-identical request. Fingerprint
+evidence: Python-urllib → 403, curl → 200, opencode-client → fail.
+
+### 11.4 The stale-shell env-shadow trap (root-caused via `code 16`)
+
+`scripts/parallel_bridge.py` preferred process env over `.env`. opencode
+inherits its launcher shell's env — a shell predating key setup carries the
+`pk_asus_*` placeholder, which shadowed the real `.env` key upstream
+(`Invalid API key (C.1)`). Fix: placeholder-pattern guard
+(`pk_asus_`, `pk_hp_`, `$(date`, `xxxx`) + real-key-wins-anywhere priority.
+**Rule: never trust inherited env for secrets; validate shape before sending.**
+
+### 11.5 The bridge pattern (`scripts/parallel_bridge.py`, committed)
+
+Local stdio MCP ↔ curl-subprocess upstream. opencode handles local transport;
+curl's TLS fingerprint passes the edge. Verified over pipes: init,
+`tools/list` (`web_search`, `web_fetch`), `tools/call` with live results.
+Parser handles **both** plain-JSON and SSE envelopes (Parallel answers
+`application/json`; HTTP/2 header dumps lack `\r\n\r\n` separators).
+Upstream quirk: `Mcp-Session-Id` header required after init; notifications
+(`initialized`/`cancelled`) get no reply.
+
+### 11.6 Hosted Firecrawl MCP (`https://mcp.firecrawl.dev/v2/mcp`)
+
+Keyed POST init → valid handshake (`firecrawl-fastmcp`). Wired as remote MCP
++ `firecrawl_*` tools allowlist. Note: `https://api.firecrawl.dev/v2/mcp` is
+**not** an MCP endpoint (`NOT_FOUND`) — the `mcp.` subdomain is the one.
+
+### 11.7 No native search in OpenCode (verified, don't re-derive)
+
+`opencode --help` + official MCP docs: web search arrives only via MCP
+servers (or direct APIs like `scripts/exa_search.py`). The session `websearch`
+tool is Parallel-backed host-side and 401s independently of local env.
+
+---
+
 *⬡ OMEGA ENGINE ALPHA ⬡ RES-GAPS-002 ⬡ WEB RESEARCH COMPLETE ⬡ TEMPLE-GRADE ⬡*

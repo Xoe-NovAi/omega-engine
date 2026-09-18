@@ -330,8 +330,10 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - Plugins: `~/.config/opencode/plugins/` (gnosis-leash.js)
 - Skills: `~/.config/opencode/skills/gnosis-lock/SKILL.md`
 - Commands: `~/.config/opencode/commands/gnosis-lock.md`
-- Connected MCP: omega-hub (remote :8016), searxng (:8018), websearch (Exa),
-  context7, grep_app, mempalace (local)
+- Connected MCP (verified 2026-09-18, all green): mempalace (local),
+  parallel-search (local via `scripts/parallel_bridge.py`), firecrawl (remote),
+  context7 (remote), grep_app (remote). omega-hub (:8016) + searxng (:8018)
+  are Node 0 services — pending Node 0 online.
 
 ---
 

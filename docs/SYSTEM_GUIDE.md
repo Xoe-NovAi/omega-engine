@@ -380,9 +380,29 @@ OpenCode includes **three built-in remote MCP servers** (no config needed, alway
 
 ---
 
-### 14.2 Exa Web Search (`websearch`)
+### 14.2 Exa Web Search — MCP REMOVED 2026-09-18, direct API live
 
-**Configuration in `opencode.jsonc`:**
+> **Status change**: the `websearch` MCP (old URL `https://api.exa.ai/mcp` → 404;
+> correct endpoint `https://mcp.exa.ai/mcp`) was **removed from both
+> `opencode.json` and `opencode.jsonc`** per operator directive. There is no
+> native Exa/search tool in OpenCode (verified CLI + docs) — web research now
+> flows through the replacements below. `EXA_API_KEY` is live (validated
+> `/search` HTTP 200) and consumed by `scripts/exa_search.py`.
+
+**Replacement 1 — `scripts/exa_search.py` (committed, no MCP needed):**
+```bash
+python3 scripts/exa_search.py search "query" [--num 5]
+python3 scripts/exa_search.py fetch <url> [--chars 6000]
+```
+Reads `EXA_API_KEY` from env / `~/.config/opencode/.env`. Key never printed.
+
+**Replacement 2 — `parallel-search` MCP** (via `scripts/parallel_bridge.py`,
+connected): `web_search` + `web_fetch` tools in-session.
+
+**Replacement 3 — `firecrawl` MCP** (`https://mcp.firecrawl.dev/v2/mcp`,
+connected): `firecrawl_search` / `scrape` / `parse`.
+
+**Legacy configuration (REMOVED — kept for archaeology):**
 ```json
 {
   "mcp": {
@@ -611,16 +631,25 @@ Each skill defines its own MCP server definition + scoped permissions.
 
 ---
 
-### 14.8 My Current Config (Verified)
+### 14.8 My Current Config (Verified 2026-09-18 — all 5 connected)
 
-```json
+> Discovery 2026-09-18: opencode merges **`opencode.json` + `opencode.jsonc`**
+> (both in `~/.config/opencode/`). A stale `websearch` entry survived in
+> `opencode.jsonc` after removal from `opencode.json` — always check both.
+
+// ~/.config/opencode/opencode.json
+{
+  "mcp": {
+    "parallel-search": { "type": "local", "command": ["<repo>/scripts/parallel_bridge.py"], "enabled": true },
+    "mempalace": { "type": "local", "command": [".../mempalace-mcp", "--palace", "..."], "enabled": true },
+    "firecrawl": { "type": "remote", "url": "https://mcp.firecrawl.dev/v2/mcp", "enabled": true,
+                   "headers": { "Authorization": "Bearer {env:FIRECRAWL_API_KEY}" } }
+  },
+  "tools": { "mempalace_*": true, "parallel-search_*": true, "firecrawl_*": true }
+}
 // ~/.config/opencode/opencode.jsonc
 {
-  "$schema": "https://opencode.ai/config.json",
-  "instructions": ["/home/xnai/Documents/Projects/omega-engine-alpha/docs/HARDWARE.md"],
-  "agent": { "build": { "prompt": "{file:./prompts/build.md}" } },
   "mcp": {
-    "websearch": { "type": "remote", "url": "https://api.exa.ai/mcp", "enabled": true, "headers": { "Authorization": "Bearer {env:EXA_API_KEY}" } },
     "context7": { "type": "remote", "url": "https://mcp.context7.com/mcp", "enabled": true },
     "grep_app": { "type": "remote", "url": "https://mcp.grep.app", "enabled": true }
   }
