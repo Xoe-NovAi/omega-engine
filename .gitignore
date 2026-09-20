@@ -311,3 +311,4 @@ opencode_provider_doctor.sh
 !docs/kb/REFINEMENT_PROTOCOL.md
 !config/glossary.md
 !config/domains/**/*.md
+!docs/architecture/ORACLE_DEEP_DIVE.md
