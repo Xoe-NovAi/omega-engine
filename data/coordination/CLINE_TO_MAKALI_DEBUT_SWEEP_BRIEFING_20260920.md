@@ -273,8 +273,28 @@ actually holds **28** mandates, so the 28 rows are correct — one row is simply
 process. Needs single-owner resolution (either systemd owns it, or the manual process does) — M23 risk.
 
 **P2-I · Doc hygiene**
-`config/wads/arcana_novai/tmpfzhu8kz4.tmp` (untracked; delete at leisure). Untracked `docs/strategy/*`
-and `docs/specs/*` files from other agents remain — do not sweep them blindly.
+`config/wads/arcana_novai/tmpfzhu8kz4.tmp` **DELETED** (stale 41KB tmpfile). Other untracked
+`docs/strategy/*` / `docs/specs/*` files from other agents remain — do not sweep them blindly.
+
+**P2-J · Archiving TRACKED coordination notes is blocked on a decision**
+`.gitignore:122` ignores `data/coordination/archive/` by design (`:113` ignores `data/archive/`).
+Consequence: moving a *tracked* note there removes it from the repo while the replacement sits in
+an ignored directory. This pass therefore only archived files that were **already untracked**
+(`DEL1_MICRO_PR_MAP.md`, `MAAT_CI_BRIEF_20260830.md`, `SONNET5_AUDIT_REPORT_20260830.md`), and
+`MAKALI_EIS_NOMENCLATURE_SWEEP_20260910.md` was **restored** to its tracked path (commit `83829614`).
+**Also verified:** of 82 candidate pre-debut notes, **78 are still cited by live surfaces** —
+`Makefile`, `scripts/dispatch_guard.py`, `scripts/verify_mandate_claims.py`,
+`scripts/promote_soul_lessons.py`, `scripts/consolidate_docs.py`,
+`scripts/generate_session_registry.py`, `DECISION_LEDGER.md`, `HMC_COLLABORATION_HUB.md`, `.clinerules`.
+**So further archiving requires updating those six scripts first.** Decide: un-ignore the archive
+dir, retire superseded docs with tombstones, or leave the corpus in place.
+
+**P2-K · Legacy nomenclature-era entity dirs**
+Archived (verified unreferenced): `makali_fusion`, `web_gemini` → `data/archive/entities_nomenclature_era/`.
+**Left in place deliberately** because they ARE referenced or are arcana_novai IWAD members:
+`sophia` + `sekhmet` + `p10` + `movie-expert` (arcana_novai `entities.yaml`/`spheres.yaml`),
+`pillar_p1` (`scripts/verify_mandate_claims.py`), `node` (`config/distiller_prompts.yaml`,
+nemotron model card, arcana_novai plugin). **Your call** on the remaining five.
 
 ---
 
@@ -388,7 +408,12 @@ and `docs/specs/*` files from other agents remain — do not sweep them blindly.
 - **`src/omega/` change (1 file, comment-only):** `src/omega/astrology.py` — a DISABLED notice added
   to `record_first_breath()`'s docstring (D-605). No behavior change; `tests/test_first_breath.py`
   carries the matching module-level skip. Everything else is content/config/docs.
-- **Cline's session commits:** `783a17fa` (CI fixes: ruff + venv + test path) · soul-gate fix
-  (grokster dict → flat list) · this briefing + `.clinerules` v8.2.0 + codex de-N + archive moves.
+- **Cline's session commits (all pushed to `release/debut-v1.6.0`, HEAD `83829614`):**
+  `783a17fa` CI fixes (ruff + venv + test path) · `6dc2fea5` soul-gate fix (grokster flat list) +
+  D-605 first-breath disable · `ccf1cffa` this briefing + `.clinerules` v8.2.0 + de-N sweep +
+  regenerated Codex · `83829614` restore of the mis-archived tracked note.
 - **Data hygiene:** 11 grokster dry-run stubs + the original dict file archived to
-  `data/archive/entity-lessons/` — **nothing deleted**.
+  `data/archive/entity-lessons/` — **nothing deleted**. Two dead entity dirs + 3 untracked
+  coordination notes archived; the stale 41KB WAD tmpfile deleted.
+- **Gates at hand-off:** `make check-mandates` EXIT 0 (meter 23/28, 0 failing) · soul gate EXIT 0
+  (ALL COMPLIANT) · `make check-codex-stale` fresh · focused pytest `OK (skipped=2)`.
