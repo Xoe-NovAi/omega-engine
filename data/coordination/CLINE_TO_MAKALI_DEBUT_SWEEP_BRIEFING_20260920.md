@@ -92,10 +92,29 @@ Verify: `gh api repos/Xoe-NovAi/omega-engine/actions/jobs/<job_id>/logs > /tmp/j
 **PASSED** on `70291e94`; it is an *intermittent* concurrency flake (failed 2026-09-17, run
 `35181134455`), **not** a current blocker. Do not chase it before the real three.
 
-### 1.3 What Cline fixed in CI
-`REUSE v3.3 Lint: FAIL → PASS`. Cause was self-inflicted: untracking `*.backup.license`
-sidecars orphaned three bare `*.backup` files from their licensing. Fixed by untracking
-those three too (files kept on disk) and broadening the ignore rules.
+### 1.3 ⚠️ THE FAILURE CHAIN — fixes reveal the next latent failure
+CI uses `-x` + pytest-xdist, and `test-and-lint` dies at its **first** failing step. So each fix
+merely **advances the queue** and exposes the next pre-existing failure. Verified on `254fc402`
+(Cline's HEAD):
+
+| Order | Check that went red | Why it was invisible before | Status |
+|---|---|---|---|
+| 1 | `test-and-lint (3.12)` — M23 `[TOOL-CHAIN-COLLAPSE]` (no ruff) | first step to fail in that job | ✅ FIXED (`783a17fa`) |
+| 2 | `pytest (3.12/3.13)` — jem `FileNotFoundError` | first `-x` failure | ✅ FIXED (`783a17fa`) |
+| 3 | `pytest (3.12/3.13)` — `test_first_breath_recording` | second `-x` failure | ✅ DISABLED (D-605) |
+| 4 | **`test-and-lint (3.13)` — Doc Lint: `docs/decisions/PIVOT_LOG.md: Missing or invalid session header in first line` + `Missing AP Token in first 5 lines`** | the job previously **never reached** the doc-lint step (it died at M23) | ❌ **NEWLY VISIBLE** — the `PIVOT_LOG` skip lives in the **UNCOMMITTED** `scripts/ci_check_docs.sh` |
+| 5 | **`pytest (3.13)` — `tests/test_m34_registration_wiring.py::TestDispatchGuardStep6b::test_step6b_skips_when_m34_disabled` → `AssertionError: assert True is False`; `Ran 291 tests` then `-x` stop** | masked behind #2/#3 | ❌ **NEWLY VISIBLE** — passes locally (`ok`); the committed `src/omega/oracle/m34_registry.py` is the **UNCOMMITTED** foreign fix |
+
+**Proof the ruff fix worked:** the 3.13 log now shows `pip install flake8 pytest anyio pyyaml ruff
+reuse` → `Successfully installed … ruff-0.16.8` and the full mandate run
+`Total: 28 | Passed: 23 | Failed: 0 | Untested: 4 | Compliance: 23/28 = 82.1%`.
+
+**Conclusion:** PR #3 will not go green from the three B-fixes alone. The remaining blockers are in
+the **uncommitted foreign working tree** (`scripts/ci_check_docs.sh`, `src/omega/oracle/m34_registry.py`,
+and likely `src/omega/oracle/oracle.py`, `src/omega/oracle/search_providers.py`,
+`src/omega/audit/firewall_checker.py`, `src/omega/cli/fleet_status_tui.py`, `src/scripts/soul_inscriber.py`).
+**Next action: audit that tree, repair/discard as appropriate, commit in scoped batches, and re-run.
+Expect ≥2 more iterations of the chain.**
 
 ---
 
