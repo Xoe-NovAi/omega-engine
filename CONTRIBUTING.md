@@ -95,15 +95,16 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install in editable mode with dev dependencies
-pip install -e ".[cli,nova,voice,dev]"
+pip install -e ".[native,cli,dev]"
 ```
 
 ### Quick Verification
 
 ```bash
-make test         # Run all tests (OMEGA_ENV=test, mock backend)
-make lint         # Check code quality with flake8
-make demo         # End-to-end Oracle validation
+make test                        # Fast unit-tier suite (OMEGA_ENV=test, mock backend)
+make lint                        # flake8 code quality (F821 enforced)
+make check-mandate-compliance    # Full 28-row mandate meter
+make doc-llm-validate            # M26 documentation gate
 ```
 
 ---
@@ -151,21 +152,22 @@ git commit -m "docs(contributing): add AI-assisted contribution policy"
 1. **Pull latest** from `main`
 2. **Create a feature branch**: `git checkout -b feat/my-feature`
 3. **Make changes** — follow the style guide below
-4. **Run tests**: `make test` — all Tests currently broken — fix queued must pass
+4. **Run tests**: `make test` — CI is the authority for full-suite green (dev-box full runs are unstable, P2-6)
 5. **Lint**: `make lint` — flake8 must pass
-6. **Commit** with a clear message describing *why* the change was made
-7. **Push and open a PR**
+6. **Gates**: `make lint` and `make check-mandate-compliance` must pass (`make temple-grade` is decorative until the PR-H wiring lands)
+7. **Commit** with a clear message describing *why* the change was made
+8. **Push and open a PR** against `main` or `release/debut-v1.6.0`
 
 ### Makefile Commands
 
 | Command | Purpose |
 |---------|---------|
-| `make test` | Run Tests currently broken — fix queued with OMEGA_ENV=test |
-| `make lint` | flake8 code quality check |
-| `make demo` | End-to-end Oracle demo |
-| `make start-iris` | Build and run Iris voice assistant |
-| `make start-infra` | Start Redis, Qdrant, PostgreSQL, Caddy |
-| `make doctor` | System diagnosis (versions, deps, entities) |
+| `make test` | Fast unit-tier suite with OMEGA_ENV=test (stops on first failure) |
+| `make test-debug TEST=<pattern>` | Single test, verbose output |
+| `make lint` | flake8 code quality check (F821 enforced) |
+| `make check-mandate-compliance` | Full 28-row mandate meter |
+| `make temple-grade` | Temple-Grade gate chain (⚠️ decorative until PR-H wiring lands) |
+| `make doc-llm-validate` | M26 documentation standards gate |
 | `make clean` | Remove Python cache and build artifacts |
 
 ---
@@ -178,7 +180,7 @@ The Omega Engine is an **entity-centric AI orchestration fabric**. Key systems:
 |--------|-------------|
 | **Entity Registry** | YAML-backed CRUD (`config/entities.yaml`). Any entity, any pantheon. |
 | **Oracle** | Main entry point — intent detection, domain routing, speculative decoding |
-| **Model Gateway** | Provider fabric with fallback chain (lmster → Ollama → OpenRouter → ...) |
+| **Model Gateway** | Provider fabric with fallback chain (native-gguf → Ollama → Google → OpenRouter → ...; priorities live in `config/providers.yaml`) |
 | **Provider Fabric** | Configurable local + cloud inference, unified memory pipeline |
 | **Iris** | Voice assistant container (messenger goddess, daughter of Hermes) |
 | **Soul System** | Per-entity `soul.yaml` with lessons, evolution, cross-pollination |
@@ -188,7 +190,7 @@ The Omega Engine is an **entity-centric AI orchestration fabric**. Key systems:
 | **ResourceGuard** | AnyIO Semaphore(1) — OOM protection for local inference |
 | **Hivemind** | Cross-CLI context sharing between OpenCode, Cline, and other agents |
 
-All responses — regardless of provider (local GGUF, lmster, remote API) — flow into the same memory, entity knowledge, and cross-pollination pipeline.
+All responses — regardless of provider (local GGUF, remote API) — flow into the same memory, entity knowledge, and cross-pollination pipeline.
 
 ---
 
@@ -283,7 +285,7 @@ Every PR must pass before merge:
 
 ```python
 # GOOD — local-first, sovereign
-async def infer(prompt: str, provider: str = "lmster") -> str:
+async def infer(prompt: str, provider: str = "native-gguf") -> str:
     ...
 
 # AVOID — cloud-dependent default

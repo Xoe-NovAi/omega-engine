@@ -41,6 +41,13 @@ scripts/godot_spatial_bridge.py
 README.md
 LICENSE
 CONTRIBUTING.md
+QUICKSTART.md
+SECURITY.md
+CHANGELOG.md
+docs/USER_MANUAL.md
+docs/user/ONBOARDING_GUIDE.md
+docs/user/TROUBLESHOOTING_GUIDE.md
+docs/architecture/ORACLE_DEEP_DIVE.md
 docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
 docs/strategy/PUBLIC_ALLOWLIST.txt
 docs/strategy/INGESTION_PIPELINE_SPEC.md
@@ -126,7 +133,6 @@ data/coordination/anchored_summary/kali/projection.md
 # Strategy & Architecture
 docs/strategy/CANONICAL_DECISIONS.md
 docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
-docs/architecture/ORACLE_DEEP_DIVE.md
 docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
 ```
 

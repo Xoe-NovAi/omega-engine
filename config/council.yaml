@@ -36,8 +36,8 @@ council:
   # Phase 2: Oversoul distillation
   oversoul_distillation:
     enabled: true
-    maat_persona: "maat"      # Light Oversoul — Build Side (N1-N5)
-    lilith_persona: "lilith"  # Dark Oversoul — Run Side (N6-N10)
+    maat_persona: "maat"      # Light Oversoul — Build Side (S1-S5)
+    lilith_persona: "lilith"  # Dark Oversoul — Run Side (S6-S10)
 
   # Phase 3: Kali synthesis
   kali_synthesis:

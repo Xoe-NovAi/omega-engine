@@ -153,7 +153,7 @@ steering:
   enabled: true
   queue_path: "data/steering_queue"
   human_review_threshold: "high"  # Priority >= HIGH triggers human review
-  default_node: "N6"
+  default_slot: "S6"
   max_retries: 3
 
 

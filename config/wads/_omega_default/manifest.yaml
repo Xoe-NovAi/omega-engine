@@ -14,24 +14,22 @@ wad:
   
   startup:
     message: |
-      The Company is loaded. Kali (Founder) sets direction. Ma'at (CTO) builds the system right. Lilith (CISO) keeps it running. Your team: SysAdmin, DataStore, BuildMaster, Bridge, Sentinel, ModelGate, Context, WatchTower, Link, Verifier.
+      The Company is loaded. Kali (Founder) sets direction. Ma'at (CTO) builds the system right. Lilith (CISO) keeps it running. Ma'at governs the build slots (S1-S5); Lilith governs the run slots (S6-S10); keepers are assigned as they prove out.
 
   entities:
     - "default.yaml"        # Default assistant — general queries
-    - "kali.yaml"           # P0: Founder — sets direction
-    - "maat.yaml"           # P0: CTO — builds side (N1-N5)
-    - "lilith.yaml"         # P0: CISO — run side (N6-N10)
+    - "kali.yaml"           # Founder — sets direction (Grand Oversight)
+    - "maat.yaml"           # CTO — build side (slots S1-S5)
+    - "lilith.yaml"         # CISO — run side (slots S6-S10)
     - "iris.yaml"           # Voice Interface — first contact
-    - "sysadmin.yaml"       # N1: Infrastructure
-    - "datastore.yaml"      # N2: Data Engineering
-    - "buildmaster.yaml"    # N3: Build & Release
-    - "bridge.yaml"         # N4: API & Integration
-    - "sentinel.yaml"       # N5: Security
-    - "modelgate.yaml"      # N6: AI & Inference
-    - "context.yaml"        # N7: Memory & State
-    - "watchtower.yaml"     # N8: Observability
-    - "link.yaml"           # N9: Coordination
-    - "verifier.yaml"       # N10: Quality Assurance
+    - "jem.yaml"            # Research orchestrator (slot S9)
+    - "researcher.yaml"     # Deep research (slot S6)
+    - "john_carmack.yaml"   # S3 consultant (slot S3)
+    - "verity.yaml"         # Compliance + gnosis distillation
+    - "scribe.yaml"         # Gnosis keeper
+    - "quality.yaml"        # QA
+    - "roc_racoon.yaml"     # Legacy mining & archaeology
+    - "doom_guy.yaml"       # id Software heritage & performance
 
   voices:
     primary: "jem.yaml"

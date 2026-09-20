@@ -138,12 +138,12 @@ inference:
     is_cloud: false
   - provider: lmster
     priority: 1
-    enabled: true
+    enabled: false   # de-scoped: Ollama is the other local provider
     description: LM Studio local server (OpenAI-compatible API)
     is_cloud: false
   - provider: ollama
     priority: 2
-    enabled: false
+    enabled: true
     description: Ollama local server (OpenAI-compatible API)
     is_cloud: false
   - provider: antigravity
@@ -240,7 +240,7 @@ inference:
       - lfm-2.5-2.6b-local
     lmster:
       priority: 1
-      enabled: true
+      enabled: false   # de-scoped (post-release update); Ollama is the other local provider
       description: LM Studio local server (OpenAI-compatible API)
       api_key: lm-studio
       base_url: http://localhost:1234/v1
@@ -261,7 +261,7 @@ inference:
       - embeddinggemma-300m-local
     ollama:
       priority: 2
-      enabled: false
+      enabled: true
       description: Ollama local server (OpenAI-compatible API)
       api_key: ollama
       base_url: http://localhost:11434/v1

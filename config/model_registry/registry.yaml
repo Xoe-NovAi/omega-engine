@@ -69,8 +69,8 @@ platforms:
     description: "Cloud API models (OpenRouter, Google, Anthropic, OpenAI)"
     providers: ["openrouter", "google", "anthropic", "openai", "together", "sambanova"]
   local:
-    description: "Local GGUF models via native-gguf, LM Studio, Ollama"
-    providers: ["native-gguf", "lmster", "ollama"]
+    description: "Local GGUF models via native-gguf and Ollama"
+    providers: ["native-gguf", "ollama"]
   cli:
     description: "CLI-exclusive models (OpenCode Zen, Cline)"
     providers: ["opencode-zen", "cline"]
@@ -91,9 +91,6 @@ provider_fabric:
     - provider: "native-gguf"
       priority: 0
       description: "Local GGUF via llama.cpp (highest priority)"
-    - provider: "lmster"
-      priority: 1
-      description: "LM Studio local server"
     - provider: "ollama"
       priority: 2
       description: "Ollama local server"
