@@ -560,7 +560,7 @@ class WADLoader:
             if path.name == "soul.yaml":
                 entity_name = path.parent.name
             elif path.suffix == ".yaml":
-                entity_name = path.stem  # e.g., "sysadmin.yaml" → "sysadmin"
+                entity_name = path.stem  # e.g., "maat.yaml" → "maat"
             else:
                 continue
 

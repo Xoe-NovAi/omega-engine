@@ -7,9 +7,9 @@ SPDX-License-Identifier: Apache-2.0
 # Sovereign Mandates — Condensed (v3.8.0)
 
 > Tier-0 injection artifact. One-line-per-mandate distillation of
-> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 27 laws).
+> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 28 laws).
 > Injected pre-compaction by `sovereign-compaction` plugin so the summary retains the law.
-> Lineage: v3.8.0 · 27 mandates · updated 2026-08-14.
+> Lineage: v3.8.0 · 28 mandates · updated 2026-09-20.
 
 | # | Mandate | One-Line Law |
 |---|---------|--------------|

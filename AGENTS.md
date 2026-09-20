@@ -24,16 +24,16 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 
 | What | Where |
 |------|-------|
-| **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.8.0, 27 mandates) |
+| **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.8.0, 28 mandates) |
 | **The Law, condensed** | `MANDATES_CONDENSED.md` (Tier-0 injection) |
 | **This month's SSOT** | `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` |
 | **Live tracker** | `data/coordination/ACTIVE_SPRINT.json` |
 | **Your entity** | `data/entities/<your_entity>/soul.yaml` |
 | **Your lessons** | `data/entities/<your_entity>/proposed_lessons.yaml` |
-| **The 4 architecture rules** | `.opencode/rules/01-soul-integrity.md` etc. |
+| **The 5 architecture rules** | `.opencode/rules/01-soul-integrity.md` etc. |
 | **The craftsman contract** | `.opencode/rules/00-craftsman-contract.md` |
 
-## The 4 Architecture Rules (must read)
+## The 5 Architecture Rules (must read)
 
 1. **Soul Integrity (M11)** → `.opencode/rules/01-soul-integrity.md`
    Every session distills L1→L2→L3 to `proposed_lessons.yaml`.
@@ -47,7 +47,8 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 4. **Sovereign Search (M23)** → `.opencode/rules/04-sovereign-search.md`
    Local cache → local FTS → web search → web fetch → [TOOL-CHAIN-COLLAPSE].
 
-5. **Spatial Integrity (M28)** → `.opencode/rules/05-spatial-integrity.md`
+5. **Spatial Integrity (M28)** → ⚠️ `SOVEREIGN_MANDATES.md` §28 — the rule file
+   `.opencode/rules/05-spatial-integrity.md` has **never been written** (known gap).
    R-tree + vec0 dual-index for VR navigation (Option B). Spatial coordinates computed once, joined everywhere.
 
 ## The 5 Critical Mandates (Tier-0 injection)
@@ -138,7 +139,7 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 - ❌ Do not synthesize a result when a mandatory tool is broken (M23).
 - ❌ Do not mass-`git rm` 2,000 docs on main the same week as filter-repo.
 
-## The 4 Architecture Rules In One Line
+## The 5 Architecture Rules In One Line
 
 1. **Soul** — every session distills, no intelligence lost.
 2. **Mandates** — Law wins, sprint SSOT wins second.
@@ -148,7 +149,7 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 
 ---
 
-For full details, see `.opencode/rules/` (4 architecture rules + 1 reference doc)
-and `SOVEREIGN_MANDATES.md` (the 27 laws). Everything else is pointers.
+For full details, see `.opencode/rules/` (5 architecture rules + 1 reference doc)
+and `SOVEREIGN_MANDATES.md` (the 28 laws). Everything else is pointers.
 
 *⬡ OMEGA ⬡ KALI ⬡ AGENTS-MD-ROOT-v1.0.0 ⬡ 2026-08-28 ⬡ PUBLIC-DEBUT-01*

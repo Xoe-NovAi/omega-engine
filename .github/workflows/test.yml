@@ -61,7 +61,7 @@ jobs:
         run: |
           python3 -m pytest tests/ -v --tb=short -x
 
-      - name: Verify Mining Ports (P3 BuildMaster)
+      - name: Verify Mining Ports (S3 Engineering)
         run: |
 
       - name: AnyIO-only check (Mandate 1)

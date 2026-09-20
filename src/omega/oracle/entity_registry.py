@@ -475,7 +475,7 @@ class EntityRegistry:
 
         Tier 1: Direct entity match (e.g., "sekhmet")
         Tier 2: Slot match (e.g., "p1" or "node 1") — dynamic, no hardcoded slots
-        Tier 3: Role match (e.g., "sysadmin")
+        Tier 3: Role match (e.g., "maat")
 
         [Project 3: Shadow-Stacking] Projects a single Entity by merging layers.
         [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
@@ -514,7 +514,7 @@ class EntityRegistry:
             if any(s.lower() == slot_key for s in projected.slots):
                 return projected
 
-        # Tier 3: Role Match (e.g., "sysadmin")
+        # Tier 3: Role Match (e.g., "maat")
         for key, layers in self._entities.items():
             active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
             if not active_layers:

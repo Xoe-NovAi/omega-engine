@@ -2,8 +2,8 @@
 **AP Token**: `AP-AGENT-FLEET-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
 
-**Date**: 2026-07-06
-**Purpose**: Architecture of the 11-agent sovereign fleet and governance hierarchy.
+**Date**: 2026-07-06 · **Nomenclature refreshed 2026-09-20**
+**Purpose**: Architecture of the 13-agent sovereign fleet and S1–S10 slot governance hierarchy.
 
 ---
 
@@ -12,6 +12,13 @@
 # ICS: [NODE: CORE | ARCHETYPE: FLEET | CONTEXT: AGENT-HIEARCHY]
 
 This document defines the structure, roles, and delegation paths of the consolidated Omega Engine Agent Fleet.
+
+> **Nomenclature (2026-09-20).** Engine language is **Slot / S1–S10** — never "Node N1–N10" and
+> never the retired department labels (`SysAdmin`, `DataStore`, `BuildMaster`, `Bridge`,
+> `Sentinel`, `ModelGate`, `Context`, `WatchTower`, `Link`, `Verifier`). Those ten labels were
+> never entities; they were the old names for S1–S10 and were retired along with ten
+> "slot-fill ghost" pseudo-entities. **"Node 0" / "Node 1" refer only to the two physical
+> machines** (the HP dev laptop and the ASUS ExpertBook) — federation topology, not domains.
 
 ## 1. Fleet Philosophy: The Single Renderer Principle
 Inspired by id Software's engine design, the Omega Engine uses a **parameterized agent architecture**. Instead of maintaining dozens of separate agent files with nearly identical logic, the engine utilizes a single, highly optimized **Slot Agent** that changes its behavior based on the `--slot` flag.
