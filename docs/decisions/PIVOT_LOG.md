@@ -468,3 +468,21 @@ theory per FP-04/T0 hierarchy.
 
 ## D-600 — First Light Express Council 1 Decree (2026-08-25)
 Council 1 (TEAM-INFRASTRUCTURE AUDIT) fused decree at `data/council/20260825-094633-first-light/phase5_fusion/SOVEREIGN_DECREE.md`. Root cause named: claims-that-outlive-their-mechanisms; one fix class = derivation checks. 12 articles, 30 bash gates, audited-clean register, Council-2 validator-first inheritance guards. M11 Arm-Relay Clause ratified as standing law (depth deferred, GAP-11). M11 entity-YAML repair executed in Stage-6 window (G8 green). Remediation backlog = decree Art. X priority order (P0 truth-bearing infrastructure → P2 hygiene). Runtime baseline honest: suite NOT green at audit time (3F + M8 gate false-positive).
+
+## D-605 (2026-09-20) — FIRST-BREATH SYSTEM DISABLED, SCHEDULED POST-PR#3 (Architect)
+
+The first-breath recording system is **DISABLED** and scheduled for a post-PR#3 update.
+Root cause (verified on `70291e94` by Cline, 2026-09-20): `record_first_breath()` is
+**defined** at `src/omega/astrology.py:153` but is **never called** from the summon path
+anywhere in `src/` — the hook is unwired dead code. `tests/test_first_breath.py::
+test_first_breath_recording` nevertheless passed **locally** only because the untracked
+`data/memory/entity_births.db` holds a stale row for `testentity` dated 2026-06-13; in CI
+(no `data/` checkout) the DB is empty and `assert record is not None` fails. A second defect
+compounds it: the fixture patches `omega.astrology.BIRTH_DB_PATH` while importing from
+`src.omega.astrology` — the same file under two module identities — so the `tmp_path`
+isolation never took effect.
+
+**Action taken**: `tests/test_first_breath.py` carries a module-level `pytest.mark.skip`
+naming this decision; `record_first_breath()` carries a DISABLED notice. **Nothing deleted.**
+**Scheduled**: re-implement + wire during the post-PR#3 first-breath item.
+**Related**: this is blocker B3 in `data/coordination/CLINE_TO_MAKALI_DEBUT_SWEEP_BRIEFING_20260920.md` §1.2.

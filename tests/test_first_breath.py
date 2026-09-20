@@ -13,6 +13,22 @@ from src.omega.astrology import get_birth_record
 from unittest.mock import AsyncMock
 from omega.memory_store import reset_memory_store
 
+# ── FIRST-BREATH SYSTEM DISABLED — D-605 (2026-09-20, Architect ruling) ──────────────
+# Why (verified on 70291e94 by Cline, 2026-09-20):
+#   1. `record_first_breath()` is DEFINED at src/omega/astrology.py:153 but is NEVER
+#      called from the summon path anywhere in src/ — the hook is unwired dead code.
+#   2. This test nonetheless passed LOCALLY only because the untracked
+#      data/memory/entity_births.db holds a stale row for "testentity" dated 2026-06-13.
+#      In CI (no data/ checkout) the DB is empty → `assert record is not None` fails.
+#   3. The fixture patches `omega.astrology.BIRTH_DB_PATH` but imports from
+#      `src.omega.astrology` — the same file under two module identities — so the
+#      tmp_path isolation never took effect.
+# Disabled (not deleted) pending the post-PR#3 first-breath re-implementation.
+pytestmark = pytest.mark.skip(
+    reason="FIRST-BREATH SYSTEM DISABLED (D-605): the hook is unwired dead code and this "
+           "test was masked by a stale local DB row; scheduled for a post-PR#3 update."
+)
+
 @pytest.fixture
 async def oracle_setup(tmp_path):
     # 1. Reset singleton and set isolated data dir
