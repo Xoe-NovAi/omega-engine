@@ -284,6 +284,9 @@ data/entities/test_*_entity/
 
 # ── Local backups, atomic-write temps, node-local artifacts (keep on disk, never commit) ──
 *.backup.*
+*.backup
+*.bak
+*.tmp
 *.bak.*
 *.tmp
 config/wads/*/tmp*
