@@ -16,7 +16,7 @@ so no re-discovery or re-research is needed. Last verified: 2026-09-08.
   - Intel Thread Director (HW-guided scheduling) present; OS scheduler integration via `intel_pstate` + HWP.
   - **Scaling Driver**: `intel_pstate` (active mode, HWP enabled) — pseudo-governors: `performance` (EPP=0) / `powersave` (schedutil-like).
   - **Performance Tuning**: Governor `performance` + EPP=0 + power profile `performance` = 3600+ MHz sustained. Default `powersave` governor caps at ~2200 MHz. See `docs/CPU_PERFORMANCE_TUNING_GUIDE.md`.
-- **GPU**: Intel Iris Xe 96EU (integrated, shared system memory) — for Open WebUI/Ollama host tasks; the primary compute target for the linked gaming-expert agent.
+  - **GPU**: Intel UHD Graphics 64EU (Raptor Lake-P, PCI ID 0xA7A8) — integrated, shared system memory. **Important**: Despite lspci showing Iris Xe branding in some tools, this CPU physically has a 64 EU die; the iris driver correctly rejects this PCI ID and falls back to the intel driver (harmless quirk). VA-API acceleration available via iHD driver. — for Open WebUI/Ollama host tasks; the primary compute target for the linked gaming-expert agent.
 - **RAM**: **1×16GB Samsung DDR5-5600 SODIMM** (`M425R2GA3EB0-CWMOL`), **single-channel**, in `Controller0-ChannelA-DIMM0`, **running at 5200 MT/s** (not 5600). Second slot `Controller1-ChannelA-DIMM0` **EMPTY**. Max capacity 64GB, **2 slots (dual-channel capable)**. Dual-channel with 2nd matched stick expected **+52–58% token generation** (InsiderLLM Aug 2026). Predicted ~20–22 t/s on phi4-mini.
 
 ## System — Node 0 (HP Pavilion) — THE ARCHIVAL BASTION & NEXUS
@@ -90,7 +90,7 @@ python3 ~/hivemind_first_contact.py
   - Base clocks: E-cores ~3600 MHz, P-cores 4700–4900 MHz.
   - SIMD: `avx2` + `avx_vnni` (VNNI only on P-cores; E-cores lack VNNI).
   - Intel Thread Director (HW-guided scheduling) present; OS scheduler integration via `intel_pstate` + HWP.
-- **GPU**: Intel Iris Xe 96EU (integrated, shared system memory) — for Open WebUI/Ollama host tasks; the primary compute target for the linked gaming-expert agent.
+  - **GPU**: Intel UHD Graphics 64EU (Raptor Lake-P, PCI ID 0xA7A8) — integrated, shared system memory. **Important**: Despite lspci showing Iris Xe branding in some tools, this CPU physically has a 64 EU die; the iris driver correctly rejects this PCI ID and falls back to the intel driver (harmless quirk). VA-API acceleration available via iHD driver. — for Open WebUI/Ollama host tasks; the primary compute target for the linked gaming-expert agent.
 - **RAM**: **1×16GB Samsung DDR5-5600 SODIMM** (`M425R2GA3EB0-CWMOL`), **single-channel**, in `Controller0-ChannelA-DIMM0`, **running at 5200 MT/s** (not 5600). Second slot `Controller1-ChannelA-DIMM0` **EMPTY**. Max capacity 64GB, 2 slots. (Dual-channel with a 2nd matched stick expected **+52–58% token generation** (InsiderLLM Aug 2026), not 1.8–2×. Predicted ~20–22 t/s on phi4-mini.)
 
 ## Compute inference profile (Ollama, CPU-only)
