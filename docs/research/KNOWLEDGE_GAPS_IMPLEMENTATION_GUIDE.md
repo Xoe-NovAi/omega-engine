@@ -564,10 +564,14 @@ verifications. Every claim sourced; live local evidence marked.
     V4.1 Flash frontier-review session ran 15 iterations (825,136 in / 771,072
     cache-read / 33,249 out, $0, 220,755 ms) and the long-context probe read a
     151,604-char file in full (459,904 cache-read) with needle + all questions
-    correct at 65,243 ms. **Operator observation (2026-09-21): 1M-window Cline
-    models reach 700K tokens and remain usable in speed and accuracy** — the
-    128K-compact assumption is not reproducing on V4.1. Open: 100K+ probe;
-    re-open the issues to record which model each names.
+    correct at 65,243 ms. **100K probe (2026-09-21) — VERIFIED**: 7,315-line /
+    404,476-char (~100K-token) corpus read page-by-page, 11 truncation gaps
+    self-patched, needles @51.1%/84.9% verbatim, 4/4 comprehension, $0, 145,127
+    ms, 2,610,044 in / 2,450,176 cache-read / 13,837 out. **Operator observation
+    (2026-09-21): 1M-window Cline models reach 700K tokens and remain usable in
+    speed and accuracy** — the 128K-compact assumption is not reproducing on
+    V4.1. Open: 250K–500K probe; re-open the issues to record which model each
+    names.
 
 ### 14.2 Antigravity IDE — quota system, lockout reports, OpenCode-route context
 
@@ -643,7 +647,7 @@ locally-built Modelfiles — risk is prospective, not realized). Open ROADMAP it
 | Cline caveats | cline/cline#10980 (128K DeepSeek compact — pre-V4.1 dating), cline/cline#13041 (text loop — pre-V4.1 dating), PR #13042 |
 | Live smoke | local: `cline --json -m z-ai/glm-5.3-flash` + `cline --json -m cline-free/deepseek-v4.1-flash` (2026-09-21); re-run by DeepSeek V4.1 Flash review session (6563 in / 8 out / 5189 cache read) |
 | Frontier review | DeepSeek V4.1 Flash session 2026-09-21: 15 iterations, 825,136 in / 771,072 cache-read / 33,249 out, $0, 220,755 ms, live machine checks; findings F1–F8/C1–C5/G1–G8 applied to ROADMAP + ANTIGRAVITY_GUIDE + this §14 |
-| Long-context probe | DeepSeek V4.1 Flash 2026-09-21: 151,604-char / ~43.5K-token full read, needle + 4 questions correct, 459,904 cache-read, $0, 65,243 ms; operator 700K usability observation |
+| Long-context probe | DeepSeek V4.1 Flash 2026-09-21: 151,604-char / ~43.5K-token full read, needle + 4 questions correct, 459,904 cache-read, $0, 65,243 ms; **100K probe VERIFIED** (7,315 lines / 404,476 chars, needles A/B verbatim, 2,450,176 cache-read, $0, 145,127 ms); operator 700K usability observation |
 | Antigravity | antigravity.google/docs/plans + /docs/models + /docs/cli/usage; botmonster.com (2026-07-31); discuss.ai.google.dev threads (2026-02→05); codeagentswarm.com plans (2026-09-01) |
 | CVE-2026-21869 | NVD; Red Hat bug 2427743; OpenCVE; GHSA-8947-pfff-2f3c (published 2026-01-05, affected <= 55d4206c8, patched >= c78fb90) |
 | GGUF overflow | OpenCVE llama.cpp list (b8146 boundary) |

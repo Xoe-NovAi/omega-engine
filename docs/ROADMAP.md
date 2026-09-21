@@ -460,12 +460,15 @@ without trial by fire.
   citations relabeled (pre-V4.1), F6 CVE severity reconciled, F7 token counts
   marked as per-run, C1/C2 guide retraction + failsafe deletion, G6 HARDWARE.md
   section added, G7 open items below. Detail: `docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` §14 + both model cards.
-- **Long-context probe (2026-09-21, DeepSeek V4.1 Flash, $0)**: 151,604-char /
-  ~43.5K-token concatenated docs read **in full** by the model (459,904
-  cache-read tokens), embedded `NEEDLE-TEST-KEY-7Q9X2` found verbatim at line
-  1698, all 4 comprehension questions answered correctly, 65,243 ms. First
-  first-party evidence that effective context on this route ≫ 128K (see
-  cline#10980 rebalance in RES-GAPS-005).
+- **Long-context probes (2026-09-21, DeepSeek V4.1 Flash, $0)**: 43.5K probe —
+  151,604-char / 2,706-line docs read **in full** (459,904 cache-read), needle
+  verbatim at line 1698, 4/4 questions, 65,243 ms. **100K probe — VERIFIED**:
+  7,315-line / 404,476-char corpus of 13 docs read page-by-page (2,450,176
+  cache-read), needles @51.1% (mid-sentence) + @84.9% (standalone) both verbatim,
+  4/4 comprehension, 145,127 ms, 29 iterations — first fully-verified
+  single-file window on this route. Effective context on V4.1 ≥ ~100K and 128K
+  compact from cline#10980 is NOT reproducing; operator observes ~700K usable
+  (see cline#10980 rebalance in RES-GAPS-005).
 - **Done when**: ✅ Cline free-tier smoke tests PASSED (GLM-5.3-Flash and
   DeepSeek V4.1 Flash, both $0);
   ✅ Antigravity IDE confirmed running + signed in (process tree live, config dir
