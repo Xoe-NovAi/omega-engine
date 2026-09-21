@@ -81,9 +81,11 @@ succeeds afterwards.
    `model not found` even though the catalog resolves the model. The selector
    grants the entitlement; non-interactive agents inherit whatever was last
    selected.
-3. **Effective context may be < 1M.** For DeepSeek V4.1 Flash, Cline auto-compacts
-   at 128K regardless of the 1M marketing window (`cline/cline#10980`); a
-   similar compact should be assumed until GLM's effective window is measured.
+3. **Effective context may be < 1M.** `cline/cline#10980` (128K compact) was
+   filed 2026-05-21 against an *earlier* DeepSeek-Flash-family model — dated
+   pre-V4.1 and NOT reproduced on Node 1 (DS card: 43.5K-token full read
+   passed; operator observes ~700K usability on 1M-window Cline models). GLM's
+   effective window remains unmeasured; assume generous but verify.
 4. **License unconfirmed.** No authoritative license string confirmed for
    GLM-5.3-Flash on this route as of 2026-09-21; privacy/retention terms of the
    free Cline route not established — treat as non-private.

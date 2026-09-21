@@ -557,6 +557,17 @@ verifications. Every claim sourced; live local evidence marked.
     was pending). Mitigation: avoid `xhigh` reasoning on long sessions.
   - free-tier model roster rotates; a "free" model today may be paid tomorrow
     (same doctrine as Zen model rotation — drift-detect, don't hardcode).
+  - **⚠️ Citation-model dating (added 2026-09-21, review F5)** — both issues
+    predate DeepSeek V4.1 Flash's release (2026-09-10 live catalog), so they
+    describe an *earlier DeepSeek-Flash-family model*, NOT V4.1. Keep the
+    doctrine, drop the specificity. **Rebalance against live evidence:** DeepSeek
+    V4.1 Flash frontier-review session ran 15 iterations (825,136 in / 771,072
+    cache-read / 33,249 out, $0, 220,755 ms) and the long-context probe read a
+    151,604-char file in full (459,904 cache-read) with needle + all questions
+    correct at 65,243 ms. **Operator observation (2026-09-21): 1M-window Cline
+    models reach 700K tokens and remain usable in speed and accuracy** — the
+    128K-compact assumption is not reproducing on V4.1. Open: 100K+ probe;
+    re-open the issues to record which model each names.
 
 ### 14.2 Antigravity IDE — quota system, lockout reports, OpenCode-route context
 
@@ -589,15 +600,17 @@ verifications. Every claim sourced; live local evidence marked.
 - **Primary-source verdict** (NVD + Red Hat + OpenCVE, published 2026-01-08):
   llama.cpp commits `55d4206c8` and prior parse `n_discard` from JSON without
   non-negative validation → reversed range + negative offset → OOB write in the
-  token-eval loop → crash or RCE (CVSS 8.1 per Red Hat bug 2427743; Feedly cites
-  CVSS 8.1 with AV:N/AC:L/PR:N/UI:R).
-- **Patch status — CORRECTED from §12.5**: "still present on master 0d0764df
-  (2026-04-22)" is now *superseded by evidence*: Feedly lists
-  **GHSA-8947-pfff-2f3c** as the patch advisory (added 2026-02-02); OpenCVE and
-  Red Hat both say "no fix at time of publication" (Jan 2026), so a fix landed
-  between Jan and Feb 2026. The §12.5 "master still vulnerable at 0d0764df" claim
-  was itself dated 2026-04-22 and conflicts with the GHSA existence — **action:
-  verify the exact fixed range against GHSA-8947-pfff-2f3c before citing either.**
+  token-eval loop → crash or RCE. **Severity — reconciled 2026-09-21 (review F6):
+  the numbers differ by source**: NVD/OpenCVE CNA record = **CVSS 8.8 High**
+  (`CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`, interaction-required); Red Hat
+  bug 2427743 = **8.1**. Cite the source alongside the number; 8.8 is the CNA
+  value.
+- **Patch status — RESOLVED 2026-09-21**: GHSA-8947-pfff-2f3c (published by
+  ggerganov **2026-01-05**) lists **Affected `<= 55d4206c8`, Patched `>= c78fb90`**.
+  This **supersedes and corrects §12.5** ("still present on master 0d0764df
+  (2026-04-22)" — wrong; the fix landed ~Jan 2026, months before that master
+  commit, so master includes it). OpenCVE/Red Hat "no fix at time of publication"
+  reflected Jan-2026 publication state only.
 - **Ollama exposure (applied, unchanged)**: Ollama 0.33.3 vendors llama.cpp
   **b10729**; `llama-server` completion endpoint exposure is limited to
   localhost-bound Ollama API (no direct llama-server on Node 1's network).
@@ -610,8 +623,16 @@ OpenCVE llama.cpp CVE list: **before b8146**, `gguf_init_from_file_impl()` in
 `fread()` writes 528+ attacker-controlled bytes past the buffer → RCE via memory
 corruption. Meaning: **don't load untrusted .gguf files** (models or
 embeddings) from unknown sources — this is a local-file attack surface
-independent of network exposure. Add to model provenance checks where
-`make create-coder` imports GGUFs.
+independent of network exposure. **Exposure on Node 1 (reconciled 2026-09-21):
+b10729 > b8146 numerically, and llama.cpp build numbers advance monotonically,
+so the vendored build *should* include the fix — but we could not extract the
+exact build string from the `ollama` binary (`strings` scan non-conclusive), so
+treat this as "likely patched, unverified"** — do not load community GGUFs until
+confirmed. Add to model provenance checks wherever GGUFs are imported:
+`make create-coder` **and** `ollama pull` / `ollama create` (the primary ingest
+surface on this host; all 8 currently-loaded models are official namespaces or
+locally-built Modelfiles — risk is prospective, not realized). Open ROADMAP item
+(G7): GGUF provenance policy + a `tests/`/doctor check.
 
 ### 14.5 Sources (RES-GAPS-005)
 
@@ -619,8 +640,10 @@ independent of network exposure. Add to model provenance checks where
 |--------|--------|
 | Cline free roster | docs.cline.bot free-models + cline-provider; freellm.net/providers/cline (2026-08-27); freetokens.custats.info GLM-5.3 (2026-09-20); cline.bot/models; GitHub ltmoerdani/cline-copilot-chat |
 | Context windows / pricing | llm-stats.com compares (GLM-5.3 vs Muse Spark 1.3/1.2; DeepSeek V4.1 Flash vs Muse Spark 1.3, 2026-09-02); devtools.sh |
-| Cline caveats | cline/cline#10980 (128K DeepSeek V4.1 compact), cline/cline#13041 (text loop), PR #13042 |
-| Live smoke | local: `cline --json -m z-ai/glm-5.3-flash` + `cline --json -m cline-free/deepseek-v4.1-flash` (2026-09-21) |
+| Cline caveats | cline/cline#10980 (128K DeepSeek compact — pre-V4.1 dating), cline/cline#13041 (text loop — pre-V4.1 dating), PR #13042 |
+| Live smoke | local: `cline --json -m z-ai/glm-5.3-flash` + `cline --json -m cline-free/deepseek-v4.1-flash` (2026-09-21); re-run by DeepSeek V4.1 Flash review session (6563 in / 8 out / 5189 cache read) |
+| Frontier review | DeepSeek V4.1 Flash session 2026-09-21: 15 iterations, 825,136 in / 771,072 cache-read / 33,249 out, $0, 220,755 ms, live machine checks; findings F1–F8/C1–C5/G1–G8 applied to ROADMAP + ANTIGRAVITY_GUIDE + this §14 |
+| Long-context probe | DeepSeek V4.1 Flash 2026-09-21: 151,604-char / ~43.5K-token full read, needle + 4 questions correct, 459,904 cache-read, $0, 65,243 ms; operator 700K usability observation |
 | Antigravity | antigravity.google/docs/plans + /docs/models + /docs/cli/usage; botmonster.com (2026-07-31); discuss.ai.google.dev threads (2026-02→05); codeagentswarm.com plans (2026-09-01) |
-| CVE-2026-21869 | NVD; Red Hat bug 2427743; OpenCVE; Feedly (GHSA-8947-pfff-2f3c patch, 2026-02-02) |
+| CVE-2026-21869 | NVD; Red Hat bug 2427743; OpenCVE; GHSA-8947-pfff-2f3c (published 2026-01-05, affected <= 55d4206c8, patched >= c78fb90) |
 | GGUF overflow | OpenCVE llama.cpp list (b8146 boundary) |

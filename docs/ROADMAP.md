@@ -429,12 +429,15 @@ without trial by fire.
 
 ### P3.7 — Frontier-model access: Cline CLI free tier + Antigravity IDE (NEW 2026-09-21)
 - **Why**: Antigravity models never worked inside OpenCode (plugin route blocked —
-  see gaps guide §11/§13 + `docs/ANTIGRAVITY_GUIDE.md` traps) and frontier insight
-  is critical path. Operator installed two independent routes: **Cline CLI 3.0.62**
-  (npm global, hub healthy, `cline`-provider OAuth, no keys in files) advertising
-  free models — DeepSeek V4.1 Flash (1M ctx), Muse Spark 1.3 Contributor (1M),
-  GLM-5.3 Flash, Solar Pro 4, Laguna S 2.1 — and **Antigravity IDE 2.5.5** (snap,
-  classic confinement) as the native GUI route.
+  see gaps guide §14.2 + `docs/ANTIGRAVITY_GUIDE.md` traps; the guide's §11/§13
+  pointer was wrong and is fixed here) and frontier insight is critical path.
+  Operator installed two independent routes: **Cline CLI 3.0.62** (npm global,
+  hub healthy, `cline`-provider OAuth — NOTE: OAuth access/refresh tokens persist
+  in `~/.cline/data/settings/providers.json`, 0600; NOT "no keys in files",
+  corrected per frontier review F1) advertising free models — DeepSeek V4.1
+  Flash (1M ctx), Muse Spark 1.3 Contributor (1M), GLM-5.3 Flash, Solar Pro 4,
+  Laguna S 2.1 — and **Antigravity IDE 2.5.5** (snap, classic confinement) as the
+  native GUI route.
 - **Ground truth (measured 2026-09-21, Node 1)**: default Cline run fails with
   `Insufficient balance ... $-0.04` (default model `prism-ml/ternary-bonsai-2-27b`,
   usage-billed). Free-model catalog is visible — `cline-free/deepseek-v4.1-flash`
@@ -443,22 +446,45 @@ without trial by fire.
 - **VERIFIED working (2026-09-21, live smoke tests)**: after the operator selected
   `z-ai/glm-5.3-flash` in `cline -i` settings, `cline --json -m z-ai/glm-5.3-flash
   "Reply with exactly: CLINE_SMOKE_OK"` returned `CLINE_SMOKE_OK`, reason
-  `completed`, 1 iteration, $0 cost (6602 in / 27 out tokens, 1622 cache read).
-  `cline --json -m cline-free/deepseek-v4.1-flash "Reply with exactly:
-  DS41_SMOKE_OK"` also returned `DS41_SMOKE_OK`, `completed`, 1 iteration, $0
-  cost (6854 in / 8 out). The earlier `model not found` on `-m` was
+  `completed`, 1 iteration, $0 cost (one run's usage — 6602 in / 27 out tokens,
+  1622 cache read; varies per run). The earlier `model not found` on `-m` was
   **entitlement-gated**: the free-model selection in `/settings` grants it;
   after that the same `-m` form works. ⚠️ Model name is **DeepSeek V4.1 Flash**
   (registry `cline-free/deepseek-v4.1-flash`) — "deepseek-v4-flash" is a
   **paid** model and was removed from `providers.json`.
+- **Frontier review executed (2026-09-21, DeepSeek V4.1 Flash, $0)**: 15
+  iterations, 825,136 in / 771,072 cache-read / 33,249 out tokens, 220,755 ms —
+  the model ran live machine checks itself. Findings applied to this repo:
+  F1 credential-file correction (above), F2 phantom `antigravity-accounts.json`
+  corrected, F3 card-next staleness fixed, F4 cross-ref fixed, F5 issue
+  citations relabeled (pre-V4.1), F6 CVE severity reconciled, F7 token counts
+  marked as per-run, C1/C2 guide retraction + failsafe deletion, G6 HARDWARE.md
+  section added, G7 open items below. Detail: `docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` §14 + both model cards.
+- **Long-context probe (2026-09-21, DeepSeek V4.1 Flash, $0)**: 151,604-char /
+  ~43.5K-token concatenated docs read **in full** by the model (459,904
+  cache-read tokens), embedded `NEEDLE-TEST-KEY-7Q9X2` found verbatim at line
+  1698, all 4 comprehension questions answered correctly, 65,243 ms. First
+  first-party evidence that effective context on this route ≫ 128K (see
+  cline#10980 rebalance in RES-GAPS-005).
 - **Done when**: ✅ Cline free-tier smoke tests PASSED (GLM-5.3-Flash and
   DeepSeek V4.1 Flash, both $0);
   ✅ Antigravity IDE confirmed running + signed in (process tree live, config dir
-  populated); remaining: per-model candidate cards filed under `docs/models/`
-  (GLM-5.3-Flash card filed; DeepSeek V4.1 Flash card next);
-  frontier review session via Antigravity IDE (deferred per operator — "not yet").
-- **Status**: `active` (Cline route verified; IDE route installed + signed in,
-  review session pending operator timing).
+  populated);
+  ✅ per-model candidate cards filed under `docs/models/` ( **both** GLM-5.3-Flash
+  and DeepSeek V4.1 Flash filed + committed — `5ca705df`);
+  ✅ frontier review of this P3.7 documentation executed via DeepSeek V4.1 Flash
+  ($0, findings applied);
+  remaining: frontier review session via Antigravity IDE (deferred per operator —
+  "not yet").
+- **Open items (standing-rule; landed from review G7)**: (a) re-open
+  cline/cline#10980/#13041 to confirm which DeepSeek model each names (dates
+  predate V4.1 release 2026-09-10 — see RES-GAPS-005 §14.1); (b) verify
+  GHSA-8947-pfff-2f3c fixed range ≥ `c78fb90` against llama.cpp master; (c) GGUF
+  provenance policy covering `ollama pull`/`ollama create` AND `make create-coder`
+  (b10729 > b8146 ⇒ GGUF-overflow fix included — treat as closed unless the
+  vendored build is confirmed older).
+- **Status**: `active` (Cline route verified + reviewed; IDE route installed +
+  signed in, review session pending operator timing).
 
 ### P3.6 — Provider Doctor (community tool, DONE 2026-09-18)
 - **Why**: Zen rotates models/limits without notice (Big Pickle 1M→200K); Node 0

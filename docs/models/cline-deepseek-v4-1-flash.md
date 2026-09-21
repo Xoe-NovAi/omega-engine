@@ -82,14 +82,19 @@ interactive selector.
 
 1. **Free tier is a quota, not a door** — rotating promotions; after quota
    exhaustion, switch to usage-billing. Same drift-detect doctrine as Zen.
-2. **Effective context may be < 1M in Cline** — `cline/cline#10980`: Cline
-   auto-compacts DeepSeek context at 128K regardless of the 1M marketing window;
-   `settings` 400000 cannot raise it. Verify effective window with a real long
-   input before relying on 1M.
-3. **Text-loop collapse in long ACT sessions** — `cline/cline#13041`: can stop
-   emitting `tool_use` and stream unbounded near-identical text (worst observed
-   turn 137K chars, 0 tools). Mitigation: avoid `xhigh` reasoning on long
-   sessions, prefer plan mode, abort on repeated no-tool turns.
+2. **Effective context — REBALANCED 2026-09-21**: `cline/cline#10980` (filed
+   2026-05-21, an *earlier* DeepSeek-Flash-family model) reported Cline
+   auto-compacting DeepSeek context at 128K regardless of the 1M marketing
+   window. **On V4.1, Node 1's own probe contradicts that**: a 151,604-char
+   (~43.5K-token) file was read **in full** with needle + all questions correct
+   at $0, and the operator reports Cline 1M-window models stay usable at 700K
+   tokens. Do NOT assume 128K compact on V4.1; a 100K+ probe remains open.
+3. **Text-loop collapse in long ACT sessions** — `cline/cline#13041` (filed
+   2026-08-07, also pre-V4.1-dated): can stop emitting `tool_use` and stream
+   unbounded near-identical text (worst observed turn 137K chars, 0 tools).
+   Mitigation: avoid `xhigh` reasoning on long sessions, prefer plan mode,
+   abort on repeated no-tool turns. Reviews run through this card have not
+   observed the loop (see Local Measurement).
 4. **License/privacy unconfirmed** — free-route retention terms not established;
    treat as non-private.
 5. **Name/ID churn risk** — "V4.1" vs "V4" confusion (this card documents the
@@ -106,24 +111,33 @@ No independent benchmark table is available. The live Cline catalog metadata
 | Date | Measurement | Reproduction status | Evidence |
 |---|---|---|---|
 | 2026-09-21 | `timeout 150 cline --json -m cline-free/deepseek-v4.1-flash "Reply with exactly: DS41_SMOKE_OK"` | Indicative | **Local measurement** |
+| 2026-09-21 | Frontier review of P3.7 docs (15 iterations, 825,136 in / 771,072 cache-read / 33,249 out, $0, 220,755 ms; ran live machine checks) | Controlled | **Local measurement** |
+| 2026-09-21 | Long-context probe: 151,604-char / ~43.5K-token docs read in full (459,904 cache-read), needle + 4/4 questions correct, $0, 65,243 ms | Controlled | **Local measurement** |
 
-Details: returned `DS41_SMOKE_OK`, `finishReason: completed`, 1 iteration,
+Details (smoke): returned `DS41_SMOKE_OK`, `finishReason: completed`, 1 iteration,
 **$0 cost**, usage 6854 in / 8 out tokens, duration 1695 ms. Hardware: Node 1
-(i7-13620H, CPU-only — hosted route, so irrelevant to throughput). Trials: 1.
-Command is reproducible from the plain CLI (no repo wrapper yet).
+(i7-13620H, CPU-only — hosted route, so irrelevant to throughput).
+Details (review/probe): executed via the same `-m` route at $0; the review's
+findings are committed to `docs/ROADMAP.md`, `docs/ANTIGRAVITY_GUIDE.md`, and
+`KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` §14. Operator observation (2026-09-21):
+1M-window Cline models reach 700K tokens and remain usable in speed and accuracy —
+consistent with the 771K cache-read review session. Command is reproducible from
+the plain CLI (no repo wrapper yet).
 
 ## Omega Verdict
 
 | Workload | Fit | Reason |
 |---|---|---|
-| Frontier review / insight generation | **Candidate** | Zero-cost reasoning with 1M ctx; smoke-verified route |
-| Image/UI verification | **Candidate** | First free Cline model with image input on Node 1 |
-| Repository coding agent | **Untested** | No real Omega task run yet |
+| Frontier review / insight generation | **Active** | Ran the P3.7 doc review end-to-end at $0; live checks + 15 iterations; findings committed |
+| Long-context ingestion | **Candidate→Active** | 43.5K-token full read with needle + 4/4 correct; operator confirms ~700K usable |
+| Image/UI verification | **Untested (capable)** | First free Cline model with image input on Node 1; catalog capability confirmed |
+| Repository coding agent | **Candidate** | Frontier review = real Omega task; repo edit quality unproven |
 | Private work | **Conditional / no** | Free-tier retention not established |
 | High-volume swarms | **No/conditional** | Free quota is burst-credit, not capacity |
 
-**Verdict:** keep `candidate`; do NOT promote to `active` until a real Omega
-task runs through this `-m` route and effective context is measured.
+**Verdict:** promote to `active` for frontier-review scope (verified: real task,
+$0, quality findings applied); keep the card `candidate` overall until a 100K+
+context probe and an image-input run confirm the remaining open questions.
 
 ## Operating recipe
 
@@ -135,10 +149,11 @@ Precondition: model selected once in `cline -i` → `/settings` → Cline provid
 
 ## Open questions / next validation
 
-- [ ] Run one real Omega task (frontier review or UI screenshot check) via
-  `-m cline-free/deepseek-v4.1-flash` and record factual accuracy vs. cost.
-- [ ] Measure effective context window on a long input (does it compact at 128K
-  per cline#10980?).
+- [x] Run one real Omega task (frontier review of P3.7 docs) via
+  `-m cline-free/deepseek-v4.1-flash` at $0 — DONE 2026-09-21, findings applied.
+- [x] Measure effective context window on a long input — DONE 2026-09-21:
+  43.5K-token full read passed; 128K compact from cline#10980 NOT observed on V4.1.
+- [ ] Probe 100K+ token input (operator reports usable at 700K).
 - [ ] Test image input (screenshot) through the `-m` route.
 - [ ] Confirm free-list roster/rotation cadence and quota size over 2 weeks.
 - [ ] Confirm privacy/retention terms of the Cline free route before private

@@ -362,6 +362,23 @@ gaps guide §11.8/§13).
   `docs/SYSTEM_GUIDE.md`, `docs/BENCHMARKS.md` ≈ 13.5K tokens before MCP tools.
   HARDWARE.md loads from the PROJECT config only (de-duplicated 2026-09-09).
 
+## Frontier-model access tooling (added 2026-09-21, review G6)
+Two host-level routes to free frontier-class models (ROADMAP P3.7; see
+`docs/ANTIGRAVITY_GUIDE.md` for full traps and operation):
+- **Cline CLI 3.0.62** — npm global (`/usr/local/bin/cline`), hub healthy.
+  State: `~/.cline/data/settings/providers.json` (0600; **contains live OAuth
+  tokens** — accessToken/refreshToken, never copy into docs/USB; rotate by
+  deleting the auth block + `cline` re-login). Verified free models
+  (2026-09-21, $0 smoke tests + frontier review + 43.5K long-context probe):
+  `z-ai/glm-5.3-flash`, `cline-free/deepseek-v4.1-flash` (1M/384K, images).
+  Entitlement: select the FREE model once in `cline -i` → `/settings` →
+  Cline provider, then `-m` works headless.
+- **Antigravity IDE 2.5.5** — `snap install antigravity-ide-snap --classic`,
+  latest/stable. State: `~/.antigravity-ide/`, `~/.config/Antigravity IDE/`.
+  Plugin route (opencode-antigravity-auth v1.6.0 via repo `.opencode/opencode.json`)
+  is **DEAD on Node 1** — no working model call ever; reference only.
+  Credentials: `~/.local/share/opencode/auth.json` (0600, canonical).
+
 ## Network / disk caveats
 - Slow/flaky link (~300KB/s–4MiB/s). `/tmp` is a 7.4GB tmpfs (cleared on reboot).
 - Big downloads → real disk `/home/xnai/ollama-install/` (used aria2 `-x8 -s8 -c` + `curl -C -` resume).
