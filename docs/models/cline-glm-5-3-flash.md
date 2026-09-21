@@ -81,7 +81,7 @@ succeeds afterwards.
    `model not found` even though the catalog resolves the model. The selector
    grants the entitlement; non-interactive agents inherit whatever was last
    selected.
-3. **Effective context may be < 1M.** For DeepSeek V4 Flash, Cline auto-compacts
+3. **Effective context may be < 1M.** For DeepSeek V4.1 Flash, Cline auto-compacts
    at 128K regardless of the 1M marketing window (`cline/cline#10980`); a
    similar compact should be assumed until GLM's effective window is measured.
 4. **License unconfirmed.** No authoritative license string confirmed for
@@ -133,9 +133,9 @@ Precondition: model selected once in `cline -i` → `/settings` → Cline provid
   task) via `-m z-ai/glm-5.3-flash` and record factual accuracy vs. cost.
 - [ ] Measure effective context window (does it compact below 1M?).
 - [ ] Confirm free-list roster/rotation cadence and quota size over 2 weeks.
-- [ ] File sibling cards for `cline-pass/deepseek-v4-flash` (1M/384K catalog
-  verified, not yet entitlement-granted on Node 1) and `zai/glm-5.2` if probes
-  succeed.
+- [x] File sibling cards for `cline-free/deepseek-v4.1-flash` (1M/384K catalog
+  verified + smoke-tested live 2026-09-21 — **DONE**, filed) and `zai/glm-5.2`
+  if probes succeed.
 - [ ] Confirm privacy/retention terms of the Cline free route before any
   private work.
 
@@ -147,4 +147,4 @@ Precondition: model selected once in `cline -i` → `/settings` → Cline provid
   (accessed 2026-09-20)
 - Live Node 1 probe: `~/.cline/data/settings/providers.json` (verified
   2026-09-21)
-- `cline/cline#10980` (DeepSeek 128K compact; cited as the caveat pattern)
+- `cline/cline#10980` (DeepSeek V4.1 128K compact; cited as the caveat pattern)

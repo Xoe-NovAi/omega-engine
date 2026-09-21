@@ -82,10 +82,10 @@ healthy (`cline doctor`: hub yes, 0 stale daemons). Auth is OAuth under the
 `cline` provider (`~/.cline/data/settings/providers.json`, `lastUsedProvider:
 cline`) — no API keys in files.
 
-Advertised free models (user/community-reported; **GLM-5.3-Flash VERIFIED live on
-Node 1 2026-09-21** — see smoke gate): DeepSeek V4.1 Flash (1M ctx), Muse Spark 1.3
-Contributor (1M), GLM-5.3 Flash, Solar Pro 4, Laguna S 2.1 (+ Union Alpha, Gemma 4
-per community).
+Advertised free models (user/community-reported; **GLM-5.3-Flash + DeepSeek V4.1
+Flash VERIFIED live on Node 1 2026-09-21** — see smoke gate): DeepSeek V4.1 Flash
+(1M ctx), Muse Spark 1.3 Contributor (1M), GLM-5.3 Flash, Solar Pro 4, Laguna S
+2.1 (+ Union Alpha, Gemma 4 per community).
 
 ### Measured behavior on Node 1 (2026-09-21 — read before assuming free = working)
 
@@ -97,29 +97,34 @@ per community).
    operator selects a FREE model in `cline -i` → `/settings` → Cline provider,
    the same `-m` form works: **`cline --json -m z-ai/glm-5.3-flash "Reply with
    exactly: CLINE_SMOKE_OK"` → `completed`, $0** (6602 in / 27 out, 1622 cache
-   read). Before that selection, `-m cline-pass/deepseek-v4-flash` (and others)
-   returned `model not found` despite the catalog resolving full model info.
-3. **`-m` requires `modelType/model` format.** Bare `-m deepseek-v4-flash`
+   read), and **`cline --json -m cline-free/deepseek-v4.1-flash "Reply with
+   exactly: DS41_SMOKE_OK"` → `completed`, $0** (6854 in / 8 out). Before that
+   selection, `-m` runs on unselected free models returned `model not found`
+   despite the catalog resolving full model info (entitlement-gated, not a
+   routing bug).
+3. **`-m` requires `modelType/model` format.** Bare `-m deepseek-v4.1-flash`
    fails `invalid model format. Expected format: modelType/model`.
 
 ### Smoke gate (source of truth before any doc claims "working")
 
 ```bash
 cline doctor                                   # hub healthy, 0 stale daemons
-timeout 100 cline --json -m z-ai/glm-5.3-flash "Reply with exactly: CLINE_SMOKE_OK"
+timeout 120 cline --json -m z-ai/glm-5.3-flash "Reply with exactly: CLINE_SMOKE_OK"
+# PASSED on Node 1: reason=completed, $0 cost (2026-09-21)
+timeout 120 cline --json -m cline-free/deepseek-v4.1-flash "Reply with exactly: DS41_SMOKE_OK"
 # PASSED on Node 1: reason=completed, $0 cost (2026-09-21)
 ```
 
 ### Known Cline traps (upstream issues, watch for them)
 
-- **DeepSeek V4 Flash text-loop collapse** (`cline/cline#13041`, CLI 3.0.51):
+- **DeepSeek V4.1 Flash text-loop collapse** (`cline/cline#13041`, CLI 3.0.51):
   long ACT sessions can stop emitting `tool_use` and stream unbounded
   near-identical text (worst observed turn 137K chars, 0 tools). Mitigation:
   keep reasoning effort off `xhigh` for long sessions, prefer plan mode for
   big tasks, abort on repeated no-tool turns. Circuit-breaker PR #13042 was
   pending at time of writing.
 - **DeepSeek 128K compact** (`cline/cline#10980`): Cline auto-compacts DeepSeek
-  context at 128K regardless of the model's 1M marketing window; `settings`
+  V4.1 context at 128K regardless of the model's 1M marketing window; `settings`
   400000 cannot raise it. Verify effective context per-model before relying on
   1M for long inputs.
 

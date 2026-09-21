@@ -515,7 +515,7 @@ sources. It supersedes all earlier provider theorizing (§11.8 corrected here).
 Focused sweep on three threads tied to P3.7 (frontier access) and open security
 verifications. Every claim sourced; live local evidence marked.
 
-### 14.1 Cline free models — community-confirmed + one live smoke test
+### 14.1 Cline free models — community-confirmed + two live smoke tests
 
 - **Concept confirmed**: Cline runs *rotating* free-model promotions through the
   Cline Usage-Billing provider; signed-in users pick models tagged **FREE** in the
@@ -523,26 +523,35 @@ verifications. Every claim sourced; live local evidence marked.
   free tokens tracker 2026-09-20 lists GLM-5.3 Flash "Ox Alpha" free in Cline).
   After the free quota is exhausted you are meant to switch to usage-billing or
   ClinePass — the free tier is a quota, not a door.
+- **⚠️ Model-name correction (operator, 2026-09-21)**: the free DeepSeek model is
+  **DeepSeek V4.1 Flash**, registry ID `cline-free/deepseek-v4.1-flash` — NOT
+  "V4" (`cline-pass/deepseek-v4-flash` was a probe artifact; that is a **paid**
+  model and was removed from `providers.json`). The live catalog confirmed:
+  "DeepSeek V4.1 Flash (free)", contextWindow 1,048,576, maxTokens 384,000,
+  releaseDate 2026-09-10, family `deepseek-flash`, all pricing $0.
 - **Context windows (secondary sources, cross-checked)**: GLM-5.3-Flash 1,048,576
   input + output (llm-stats.com, released 2026-08-26, $0.15/$0.50 per M, ~8.4×
-  cheaper per token than Muse Spark 1.3); DeepSeek-V4-Flash-0731 1,048,576 in /
-  384K out (devtools.sh, llm-stats.com 2026-09-02, $0.14/$0.28 per M via
-  ClinePass reference); Muse Spark 1.3 1,048,576 in / 943,718 out (llm-stats.com);
-  cline-copilot-chat API table lists `deepseek/deepseek-v4-flash` 1M/384K ⭐ free,
-  `zai/glm-5.2` 1M/128K, and states **the free model returns 200 OK even at $0
-  balance** (GitHub ltmoerdani/cline-copilot-chat, 2026).
-- **Live smoke test PASSED on Node 1 (2026-09-21)**: `cline --json -m
+  cheaper per token than Muse Spark 1.3); DeepSeek V4.1 Flash 1,048,576 in /
+  384K out (live catalog match on Node 1; devtools.sh/llm-stats.com secondary
+  dated 2026-09-02); Muse Spark 1.3 1,048,576 in / 943,718 out (llm-stats.com);
+  cline-copilot-chat API table lists `deepseek/deepseek-v4.1-flash` 1M/384K ⭐
+  free, `zai/glm-5.2` 1M/128K, and states **the free model returns 200 OK even
+  at $0 balance** (GitHub ltmoerdani/cline-copilot-chat, 2026).
+- **Live smoke tests PASSED on Node 1 (2026-09-21)**: `cline --json -m
   z-ai/glm-5.3-flash "Reply with exactly: CLINE_SMOKE_OK"` → `completed`,
-  `CLINE_SMOKE_OK`, $0 cost (6602 in / 27 out, 1622 cache read). Owner-picked
-  model in `~/.cline/data/settings/providers.json`: `provider=cline
-  model=z-ai/glm-5.3-flash`. `providers.json` also carried
-  `provider=cline-pass model=cline-pass/deepseek-v4-flash` (a probe artifact).
+  `CLINE_SMOKE_OK`, $0 cost (6602 in / 27 out, 1622 cache read); and
+  `cline --json -m cline-free/deepseek-v4.1-flash "Reply with exactly:
+  DS41_SMOKE_OK"` → `completed`, `DS41_SMOKE_OK`, $0 cost (6854 in / 8 out).
+  Owner-picked models in `~/.cline/data/settings/providers.json`: `provider=
+  cline model=z-ai/glm-5.3-flash` and `provider=cline
+  model=cline-free/deepseek-v4.1-flash` (both under the same `cline` provider,
+  `tokenSource: oauth`).
 - **⚠️ Known caveats logged for the model cards**:
-  - `cline/cline#10980` (2026-05-21): "Deepseek V4 context window is limited in
-    128K" — Cline auto-compacts DeepSeek context when the window reaches 128K and
-    `settings` 400000 cannot raise it. The 1M marketing window is NOT necessarily
-    what Cline actually gives you; verify per-model, don't trust the card.
-  - `cline/cline#13041` (2026-08-07): DeepSeek V4 Flash long ACT sessions can
+  - `cline/cline#10980` (2026-05-21): DeepSeek context window limited in
+    128K — Cline auto-compacts when the window reaches 128K and `settings` 400000 cannot raise it. The 1M marketing window is NOT
+    necessarily what Cline actually gives you; verify per-model, don't trust the
+    card.
+  - `cline/cline#13041` (2026-08-07): DeepSeek V4.1 Flash long ACT sessions can
     collapse into endless "Let me…" text with zero `tool_use` (reproduced on
     3.0.51; worst observed turn 137K chars, 0 tools; circuit-breaker PR #13042
     was pending). Mitigation: avoid `xhigh` reasoning on long sessions.
@@ -609,9 +618,9 @@ independent of network exposure. Add to model provenance checks where
 | Thread | Source |
 |--------|--------|
 | Cline free roster | docs.cline.bot free-models + cline-provider; freellm.net/providers/cline (2026-08-27); freetokens.custats.info GLM-5.3 (2026-09-20); cline.bot/models; GitHub ltmoerdani/cline-copilot-chat |
-| Context windows / pricing | llm-stats.com compares (GLM-5.3 vs Muse Spark 1.3/1.2; DeepSeek-V4-Flash-0731 vs Muse Spark 1.3, 2026-09-02); devtools.sh |
-| Cline caveats | cline/cline#10980 (128K DeepSeek compact), cline/cline#13041 (text loop), PR #13042 |
-| Live smoke | local: `cline --json -m z-ai/glm-5.3-flash` (2026-09-21) |
+| Context windows / pricing | llm-stats.com compares (GLM-5.3 vs Muse Spark 1.3/1.2; DeepSeek V4.1 Flash vs Muse Spark 1.3, 2026-09-02); devtools.sh |
+| Cline caveats | cline/cline#10980 (128K DeepSeek V4.1 compact), cline/cline#13041 (text loop), PR #13042 |
+| Live smoke | local: `cline --json -m z-ai/glm-5.3-flash` + `cline --json -m cline-free/deepseek-v4.1-flash` (2026-09-21) |
 | Antigravity | antigravity.google/docs/plans + /docs/models + /docs/cli/usage; botmonster.com (2026-07-31); discuss.ai.google.dev threads (2026-02→05); codeagentswarm.com plans (2026-09-01) |
 | CVE-2026-21869 | NVD; Red Hat bug 2427743; OpenCVE; Feedly (GHSA-8947-pfff-2f3c patch, 2026-02-02) |
 | GGUF overflow | OpenCVE llama.cpp list (b8146 boundary) |

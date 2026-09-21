@@ -437,18 +437,25 @@ without trial by fire.
   classic confinement) as the native GUI route.
 - **Ground truth (measured 2026-09-21, Node 1)**: default Cline run fails with
   `Insufficient balance ... $-0.04` (default model `prism-ml/ternary-bonsai-2-27b`,
-  usage-billed). Free-model catalog is visible — `cline-pass/deepseek-v4-flash`
-  resolves with 1M context / 384K maxTokens. Bare `-m id` without `modelType/`
+  usage-billed). Free-model catalog is visible — `cline-free/deepseek-v4.1-flash`
+  resolves with 1M context / 384K maxTokens (verified live 2026-09-21). Bare `-m id` without `modelType/`
   prefix fails `invalid model format. Expected format: modelType/model`.
-- **VERIFIED working (2026-09-21, live smoke test)**: after the operator selected
+- **VERIFIED working (2026-09-21, live smoke tests)**: after the operator selected
   `z-ai/glm-5.3-flash` in `cline -i` settings, `cline --json -m z-ai/glm-5.3-flash
   "Reply with exactly: CLINE_SMOKE_OK"` returned `CLINE_SMOKE_OK`, reason
   `completed`, 1 iteration, $0 cost (6602 in / 27 out tokens, 1622 cache read).
-  The earlier `model not found` on `-m` was **entitlement-gated**: the free-model
-  selection in `/settings` grants it; after that the same `-m` form works.
-- **Done when**: ✅ Cline free-tier smoke test PASSED (GLM-5.3-Flash, $0);
+  `cline --json -m cline-free/deepseek-v4.1-flash "Reply with exactly:
+  DS41_SMOKE_OK"` also returned `DS41_SMOKE_OK`, `completed`, 1 iteration, $0
+  cost (6854 in / 8 out). The earlier `model not found` on `-m` was
+  **entitlement-gated**: the free-model selection in `/settings` grants it;
+  after that the same `-m` form works. ⚠️ Model name is **DeepSeek V4.1 Flash**
+  (registry `cline-free/deepseek-v4.1-flash`) — "deepseek-v4-flash" is a
+  **paid** model and was removed from `providers.json`.
+- **Done when**: ✅ Cline free-tier smoke tests PASSED (GLM-5.3-Flash and
+  DeepSeek V4.1 Flash, both $0);
   ✅ Antigravity IDE confirmed running + signed in (process tree live, config dir
-  populated); remaining: per-model candidate cards filed under `docs/models/`;
+  populated); remaining: per-model candidate cards filed under `docs/models/`
+  (GLM-5.3-Flash card filed; DeepSeek V4.1 Flash card next);
   frontier review session via Antigravity IDE (deferred per operator — "not yet").
 - **Status**: `active` (Cline route verified; IDE route installed + signed in,
   review session pending operator timing).
