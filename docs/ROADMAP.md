@@ -427,6 +427,32 @@ without trial by fire.
   5 validation questions + Node 1 triage recorded. Next: boot Engine here (P3.5b)
   or scaffold WAD deltas (P3.5c) — operator's call.
 
+### P3.7 — Frontier-model access: Cline CLI free tier + Antigravity IDE (NEW 2026-09-21)
+- **Why**: Antigravity models never worked inside OpenCode (plugin route blocked —
+  see gaps guide §11/§13 + `docs/ANTIGRAVITY_GUIDE.md` traps) and frontier insight
+  is critical path. Operator installed two independent routes: **Cline CLI 3.0.62**
+  (npm global, hub healthy, `cline`-provider OAuth, no keys in files) advertising
+  free models — DeepSeek V4.1 Flash (1M ctx), Muse Spark 1.3 Contributor (1M),
+  GLM-5.3 Flash, Solar Pro 4, Laguna S 2.1 — and **Antigravity IDE 2.5.5** (snap,
+  classic confinement) as the native GUI route.
+- **Ground truth (measured 2026-09-21, Node 1)**: default Cline run fails with
+  `Insufficient balance ... $-0.04` (default model `prism-ml/ternary-bonsai-2-27b`,
+  usage-billed). Free-model catalog is visible — `cline-pass/deepseek-v4-flash`
+  resolves with 1M context / 384K maxTokens. Bare `-m id` without `modelType/`
+  prefix fails `invalid model format. Expected format: modelType/model`.
+- **VERIFIED working (2026-09-21, live smoke test)**: after the operator selected
+  `z-ai/glm-5.3-flash` in `cline -i` settings, `cline --json -m z-ai/glm-5.3-flash
+  "Reply with exactly: CLINE_SMOKE_OK"` returned `CLINE_SMOKE_OK`, reason
+  `completed`, 1 iteration, $0 cost (6602 in / 27 out tokens, 1622 cache read).
+  The earlier `model not found` on `-m` was **entitlement-gated**: the free-model
+  selection in `/settings` grants it; after that the same `-m` form works.
+- **Done when**: ✅ Cline free-tier smoke test PASSED (GLM-5.3-Flash, $0);
+  ✅ Antigravity IDE confirmed running + signed in (process tree live, config dir
+  populated); remaining: per-model candidate cards filed under `docs/models/`;
+  frontier review session via Antigravity IDE (deferred per operator — "not yet").
+- **Status**: `active` (Cline route verified; IDE route installed + signed in,
+  review session pending operator timing).
+
 ### P3.6 — Provider Doctor (community tool, DONE 2026-09-18)
 - **Why**: Zen rotates models/limits without notice (Big Pickle 1M→200K); Node 0
   down with `invalid openai provider options`; hardcoding enumerations is the

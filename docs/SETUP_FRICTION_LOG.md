@@ -31,3 +31,11 @@
 *   **Symptom**: Expected peer connection failed; `tailscale` binary and daemon missing on fresh OS.
 *   **Root Cause**: Node 0 shipped the ratified ACL configuration, but clean nodes lack the daemon package.
 *   **Resolution Applied**: Official repository package installed and enabled; acceptance document `L2_ACCEPTANCE.md` drafted to explicitly decouple daemon readiness from auth-key mesh join.
+
+### [2026-09-21] — FL-005: TUI Shows Only mempalace After Network Outage (Stale MCP Snapshot)
+*   **Component**: OpenCode TUI $\leftrightarrow$ MCP handshake at session start
+*   **Symptom**: TUI sidebar shows only `mempalace` connected; `parallel-search`, `firecrawl`, `context7`, `grep_app` appear down. Yet `opencode mcp list` in a fresh shell shows all 5 ✓ connected.
+*   **Root Cause**: The TUI snapshots MCP server state once at startup. If the machine has no network at that moment (log: `Failed to fetch models.dev ... Unable to connect` + `server unavailable key=firecrawl/parallel-search/context7/grep_app status=failed`), every network-dependent server fails its handshake. `mempalace` survives because it is pure-local SQLite (`sqlite_exact.sqlite3`) with no network path. The TUI never re-handshakes mid-session, so it stays stuck at 1/5 after the network recovers.
+*   **Resolution Applied**: No config change needed. Exit the TUI (`/exit` or Ctrl+C) and restart `opencode` — all 5 show green on the fresh handshake.
+*   **Diagnostic Fingerprint**: `grep -E "server unavailable|Failed to fetch models.dev" ~/.local/share/opencode/log/opencode.log` shows the outage window matching the TUI `run=` id. Cross-check with `opencode mcp list` (fresh probe, source of truth) and per-endpoint health: `parallel_bridge.py` stdio `initialize` → `parallel-bridge`; remote POSTs return 400/406 (alive) not 000/timeout.
+*   **Action for Alpha Release**: Document the restart-first rule in the MCP troubleshooting table (SYSTEM_GUIDE §16.1); never debug MCP config until `opencode mcp list` in a fresh shell disagrees with the TUI.

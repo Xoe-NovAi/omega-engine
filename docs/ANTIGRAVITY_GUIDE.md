@@ -54,6 +54,75 @@ Access these models in OpenCode via the `--model` flag or in your agent configur
 - `google/antigravity-claude-sonnet-4-6-thinking`
 - `google/antigravity-claude-opus-4-6-thinking`
 
+## Route B — Antigravity IDE (native GUI, NEW 2026-09-21)
+
+The OpenCode plugin route above never produced a working model call on Node 1,
+so the operator installed the **native Antigravity IDE** as the GUI route to the
+same frontier models.
+
+- **Install / status**: `antigravity-ide-snap 2.5.5`, snap `latest/stable`,
+  classic confinement (`snap list | grep antigravity`). **CONFIRMED RUNNING +
+  SIGNED IN (verified 2026-09-21)**: process tree live via
+  `pgrep -af antigravity` (incl. `language_server_linux_x64` with a live
+  `cloud_code_endpoint` → cloudcode-pa.googleapis.com); config populated at
+  `~/.antigravity-ide/` and `~/.config/Antigravity IDE/`.
+- **Quota model (official docs + community, RES-GAPS-005 §14.2)**: baseline =
+  Gemini 3.1 Pro / 3.8 Flash; Pro refreshes every 5h until a weekly cap; free
+  tier = weekly rate limits; **weekly limits apply to all models (Ultra exempt)**.
+  Community lockout reports (81h / 6-day `MODEL_CAPACITY_EXHAUSTED`) warn against
+  assuming generous daily quota. Track `/usage` in the IDE.
+- **Done when**: one frontier session (Gemini 3.1 Pro or Claude Sonnet 4.6)
+  completes against this repo — **deferred per operator ("not yet")**.
+
+## Route C — Cline CLI free tier (NEW 2026-09-21)
+
+**Cline CLI 3.0.62** (`/usr/local/bin/cline`, npm global `cline@3.0.62`,
+core 0.0.83) as the terminal route to free frontier-class models. Hub verified
+healthy (`cline doctor`: hub yes, 0 stale daemons). Auth is OAuth under the
+`cline` provider (`~/.cline/data/settings/providers.json`, `lastUsedProvider:
+cline`) — no API keys in files.
+
+Advertised free models (user/community-reported; **GLM-5.3-Flash VERIFIED live on
+Node 1 2026-09-21** — see smoke gate): DeepSeek V4.1 Flash (1M ctx), Muse Spark 1.3
+Contributor (1M), GLM-5.3 Flash, Solar Pro 4, Laguna S 2.1 (+ Union Alpha, Gemma 4
+per community).
+
+### Measured behavior on Node 1 (2026-09-21 — read before assuming free = working)
+
+1. **Default run is usage-billed, balance $-0.04 → hard fail.** `cline --json
+   "<prompt>"` resolves to `prism-ml/ternary-bonsai-2-27b` and dies with
+   `Insufficient balance. Your Cline Credits balance is $-0.04`. The free tier
+   is per-model opt-in, not account-wide.
+2. **The free tier is per-model opt-in via the interactive selector.** Once the
+   operator selects a FREE model in `cline -i` → `/settings` → Cline provider,
+   the same `-m` form works: **`cline --json -m z-ai/glm-5.3-flash "Reply with
+   exactly: CLINE_SMOKE_OK"` → `completed`, $0** (6602 in / 27 out, 1622 cache
+   read). Before that selection, `-m cline-pass/deepseek-v4-flash` (and others)
+   returned `model not found` despite the catalog resolving full model info.
+3. **`-m` requires `modelType/model` format.** Bare `-m deepseek-v4-flash`
+   fails `invalid model format. Expected format: modelType/model`.
+
+### Smoke gate (source of truth before any doc claims "working")
+
+```bash
+cline doctor                                   # hub healthy, 0 stale daemons
+timeout 100 cline --json -m z-ai/glm-5.3-flash "Reply with exactly: CLINE_SMOKE_OK"
+# PASSED on Node 1: reason=completed, $0 cost (2026-09-21)
+```
+
+### Known Cline traps (upstream issues, watch for them)
+
+- **DeepSeek V4 Flash text-loop collapse** (`cline/cline#13041`, CLI 3.0.51):
+  long ACT sessions can stop emitting `tool_use` and stream unbounded
+  near-identical text (worst observed turn 137K chars, 0 tools). Mitigation:
+  keep reasoning effort off `xhigh` for long sessions, prefer plan mode for
+  big tasks, abort on repeated no-tool turns. Circuit-breaker PR #13042 was
+  pending at time of writing.
+- **DeepSeek 128K compact** (`cline/cline#10980`): Cline auto-compacts DeepSeek
+  context at 128K regardless of the model's 1M marketing window; `settings`
+  400000 cannot raise it. Verify effective context per-model before relying on
+  1M for long inputs.
+
 ## Known Architecture Traps
 
 ### 1. Claude Tool Schema Validation Bug (#197)

@@ -507,3 +507,111 @@ sources. It supersedes all earlier provider theorizing (§11.8 corrected here).
 ---
 
 *⬡ OMEGA ENGINE ALPHA ⬡ RES-GAPS-004 ⬡ PROVIDER EXPERTISE COMPLETE ⬡ TEMPLE-GRADE ⬡*
+
+---
+
+## 14. Web Research Sweep — 2026-09-21 (RES-GAPS-005)
+
+Focused sweep on three threads tied to P3.7 (frontier access) and open security
+verifications. Every claim sourced; live local evidence marked.
+
+### 14.1 Cline free models — community-confirmed + one live smoke test
+
+- **Concept confirmed**: Cline runs *rotating* free-model promotions through the
+  Cline Usage-Billing provider; signed-in users pick models tagged **FREE** in the
+  selector (docs.cline.bot "Cline Free Models"; freellm.net listing 2026-08-27;
+  free tokens tracker 2026-09-20 lists GLM-5.3 Flash "Ox Alpha" free in Cline).
+  After the free quota is exhausted you are meant to switch to usage-billing or
+  ClinePass — the free tier is a quota, not a door.
+- **Context windows (secondary sources, cross-checked)**: GLM-5.3-Flash 1,048,576
+  input + output (llm-stats.com, released 2026-08-26, $0.15/$0.50 per M, ~8.4×
+  cheaper per token than Muse Spark 1.3); DeepSeek-V4-Flash-0731 1,048,576 in /
+  384K out (devtools.sh, llm-stats.com 2026-09-02, $0.14/$0.28 per M via
+  ClinePass reference); Muse Spark 1.3 1,048,576 in / 943,718 out (llm-stats.com);
+  cline-copilot-chat API table lists `deepseek/deepseek-v4-flash` 1M/384K ⭐ free,
+  `zai/glm-5.2` 1M/128K, and states **the free model returns 200 OK even at $0
+  balance** (GitHub ltmoerdani/cline-copilot-chat, 2026).
+- **Live smoke test PASSED on Node 1 (2026-09-21)**: `cline --json -m
+  z-ai/glm-5.3-flash "Reply with exactly: CLINE_SMOKE_OK"` → `completed`,
+  `CLINE_SMOKE_OK`, $0 cost (6602 in / 27 out, 1622 cache read). Owner-picked
+  model in `~/.cline/data/settings/providers.json`: `provider=cline
+  model=z-ai/glm-5.3-flash`. `providers.json` also carried
+  `provider=cline-pass model=cline-pass/deepseek-v4-flash` (a probe artifact).
+- **⚠️ Known caveats logged for the model cards**:
+  - `cline/cline#10980` (2026-05-21): "Deepseek V4 context window is limited in
+    128K" — Cline auto-compacts DeepSeek context when the window reaches 128K and
+    `settings` 400000 cannot raise it. The 1M marketing window is NOT necessarily
+    what Cline actually gives you; verify per-model, don't trust the card.
+  - `cline/cline#13041` (2026-08-07): DeepSeek V4 Flash long ACT sessions can
+    collapse into endless "Let me…" text with zero `tool_use` (reproduced on
+    3.0.51; worst observed turn 137K chars, 0 tools; circuit-breaker PR #13042
+    was pending). Mitigation: avoid `xhigh` reasoning on long sessions.
+  - free-tier model roster rotates; a "free" model today may be paid tomorrow
+    (same doctrine as Zen model rotation — drift-detect, don't hardcode).
+
+### 14.2 Antigravity IDE — quota system, lockout reports, OpenCode-route context
+
+- **Antigravity = Gemini CLI successor** (botmonster.com 2026-07-31): Gemini CLI
+  shut down free/Pro/Ultra service 2026-06-18; replaced by closed-source Go
+  binary `agy` (async multi-agent, MCP support, single shared weekly quota pool).
+- **Quota model (official docs + community)**: all plans get a baseline of Gemini
+  3.1 Pro / 3.8 Flash as core agent models; Pro = higher quota refreshed every 5h
+  until a weekly cap; Ultra = highest, 5h refresh, third-party models; free tier =
+  "weekly rate limits rather than features" (antigravity.google/docs/plans,
+  codeagentswarm.com 2026-09-01). Free tier includes "multiple frontier models…
+  including Gemini and Claude models" per codeagentswarm.
+- **⚠️ Community lockout reports (boards, 2026-02→05)**: Pro users reported
+  81-hour and 6-day `MODEL_CAPACITY_EXHAUSTED` lockouts; Google staff say weekly
+  limits apply to all models, Ultra exempt; some claim Pro ≈ free ("get your
+  feet wet"). The 0.38.x CLI change introduced a hard 200-request/24h cap in one
+  report. Implication for us: **don't build the frontier review workflow on an
+  assumption of high daily quota** — treat Antigravity as burst-credit, track
+  `/usage` in the IDE, and keep Cline free tier as the steady-state path.
+- **OpenCode-route context**: the antigravity-assumed plugin route never worked
+  on Node 1; Antigravity IDE being live + signed in (verified 2026-09-21 —
+  process tree via `pgrep -af antigravity`, config in `~/.config/Antigravity IDE`
+  and `~/.antigravity-ide/`) provides the native route. The IDE's
+  `language_server_linux_x64` (Antigravity code assist) is running with a live
+  `cloud_code_endpoint` to cloudcode-pa.googleapis.com — consistent with signed-in
+  operation.
+
+### 14.3 CVE-2026-21869 (llama.cpp `n_discard`) — advisory reconciled
+
+- **Primary-source verdict** (NVD + Red Hat + OpenCVE, published 2026-01-08):
+  llama.cpp commits `55d4206c8` and prior parse `n_discard` from JSON without
+  non-negative validation → reversed range + negative offset → OOB write in the
+  token-eval loop → crash or RCE (CVSS 8.1 per Red Hat bug 2427743; Feedly cites
+  CVSS 8.1 with AV:N/AC:L/PR:N/UI:R).
+- **Patch status — CORRECTED from §12.5**: "still present on master 0d0764df
+  (2026-04-22)" is now *superseded by evidence*: Feedly lists
+  **GHSA-8947-pfff-2f3c** as the patch advisory (added 2026-02-02); OpenCVE and
+  Red Hat both say "no fix at time of publication" (Jan 2026), so a fix landed
+  between Jan and Feb 2026. The §12.5 "master still vulnerable at 0d0764df" claim
+  was itself dated 2026-04-22 and conflicts with the GHSA existence — **action:
+  verify the exact fixed range against GHSA-8947-pfff-2f3c before citing either.**
+- **Ollama exposure (applied, unchanged)**: Ollama 0.33.3 vendors llama.cpp
+  **b10729**; `llama-server` completion endpoint exposure is limited to
+  localhost-bound Ollama API (no direct llama-server on Node 1's network).
+  Distributed Inference L4 (gap 22) remains gated on SPIRE mTLS regardless.
+
+### 14.4 New finding — GGUF parse integer overflow (adjacent, gap 22 family)
+
+OpenCVE llama.cpp CVE list: **before b8146**, `gguf_init_from_file_impl()` in
+`gguf.cpp` has an integer overflow → undersized heap allocation → subsequent
+`fread()` writes 528+ attacker-controlled bytes past the buffer → RCE via memory
+corruption. Meaning: **don't load untrusted .gguf files** (models or
+embeddings) from unknown sources — this is a local-file attack surface
+independent of network exposure. Add to model provenance checks where
+`make create-coder` imports GGUFs.
+
+### 14.5 Sources (RES-GAPS-005)
+
+| Thread | Source |
+|--------|--------|
+| Cline free roster | docs.cline.bot free-models + cline-provider; freellm.net/providers/cline (2026-08-27); freetokens.custats.info GLM-5.3 (2026-09-20); cline.bot/models; GitHub ltmoerdani/cline-copilot-chat |
+| Context windows / pricing | llm-stats.com compares (GLM-5.3 vs Muse Spark 1.3/1.2; DeepSeek-V4-Flash-0731 vs Muse Spark 1.3, 2026-09-02); devtools.sh |
+| Cline caveats | cline/cline#10980 (128K DeepSeek compact), cline/cline#13041 (text loop), PR #13042 |
+| Live smoke | local: `cline --json -m z-ai/glm-5.3-flash` (2026-09-21) |
+| Antigravity | antigravity.google/docs/plans + /docs/models + /docs/cli/usage; botmonster.com (2026-07-31); discuss.ai.google.dev threads (2026-02→05); codeagentswarm.com plans (2026-09-01) |
+| CVE-2026-21869 | NVD; Red Hat bug 2427743; OpenCVE; Feedly (GHSA-8947-pfff-2f3c patch, 2026-02-02) |
+| GGUF overflow | OpenCVE llama.cpp list (b8146 boundary) |

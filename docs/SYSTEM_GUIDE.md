@@ -782,6 +782,7 @@ python3 ~/hivemind_first_contact.py
 | **Systemd semicolons** | `Restart=always; RestartSec=5` | Use newlines: `Restart=always` + `RestartSec=5` |
 | **anyio abandon_on_cancel** | Parameter removed in 4.x | Remove: `run_sync(fn, stream)` |
 | **MemPalace not in mcp list** | Not registered via CLI | `opencode mcp add mempalace -- <cmd> <args>` |
+| **TUI shows only mempalace, CLI shows all green** | TUI snapshots MCP state at startup; network was down then | Restart TUI — `opencode mcp list` (fresh probe) is source of truth, not the sidebar |
 | **Sonnet 5 #1: Daemon to_process** | `anyio.to_process.run_sync()` for inotify — MemoryObjectStream not picklable | **FIXED: `anyio.to_thread.run_sync()`** |
 | **Sonnet 5 #2: Fake verify_step** | `|| true` baked into MemPalace check command | Removed `|| true` from command strings |
 | **Sonnet 5 #3: Node 0 Tailscale** | Checked Self.DNSName instead of Peer[] | Fixed to check `.Peer[]` for `xnai-n1-asus` |
@@ -803,6 +804,7 @@ python3 ~/hivemind_first_contact.py
 6. **anyio 4.x removed `abandon_on_cancel`** — remove parameter
 7. **inotify-tools is required** — install via apt in Phase 0
 8. **MemPalace palace is `sqlite_exact.sqlite3`** — not `mempalace.yaml`
+9. **TUI MCP sidebar is a startup snapshot** — `opencode mcp list` is the source of truth; restart TUI after any network blip (see FL-005)
 
 ### 16.3 Deployment Validation Checklist
 
