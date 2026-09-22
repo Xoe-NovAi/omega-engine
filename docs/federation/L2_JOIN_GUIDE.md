@@ -51,12 +51,12 @@ belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
   ],
   "ssh": [
     {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
-    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
-  ],
-  "autoApprovers": {
-    "routes": ["autogroup:admin"],
-    "exitNodes": ["autogroup:admin"]
-  }
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
+    // Node 1 can SSH to Node 0 (remote administration, bidirectional)
+    {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
+  ]
+  // NOTE: autoApprovers intentionally OMITTED — no subnet routes, no exit
+  // nodes (FED-ACL-001 v1.2). Omitted = no auto-approval.
 }
 ```
 

@@ -67,11 +67,9 @@ Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
     {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
     // Node 1 can SSH to Node 0 (remote administration, bidirectional)
     {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
-  ],
-  "autoApprovers": {
-    "routes": ["autogroup:admin"],
-    "exitNodes": ["autogroup:admin"]
-  }
+  ]
+  // NOTE: autoApprovers intentionally OMITTED — design has no subnet routes
+  // and no exit nodes (see Design Principles). Omitted = no auto-approval.
 }
 ```
 
@@ -110,11 +108,9 @@ and Phase A connectivity is verified:
     {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
     // Node 1 can SSH to Node 0 (remote administration, bidirectional)
     {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
-  ],
-  "autoApprovers": {
-    "routes": ["autogroup:admin"],
-    "exitNodes": ["autogroup:admin"]
-  }
+  ]
+  // NOTE: autoApprovers intentionally OMITTED — design has no subnet routes
+  // and no exit nodes (see Design Principles). Omitted = no auto-approval.
 }
 ```
 
@@ -140,6 +136,7 @@ and Phase A connectivity is verified:
 | **Heartbeats only** | ICMP allowed both ways for liveness |
 | **No subnet routing** | Both nodes are endpoints, not routers |
 | **No exit nodes** | No internet traffic routed through mesh |
+| **No autoApprovers** | `autoApprovers` omitted — nothing can be auto-approved (matches no-routes/no-exit design) |
 
 ---
 
