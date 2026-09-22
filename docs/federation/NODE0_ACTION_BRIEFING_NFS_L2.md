@@ -14,22 +14,27 @@
 > - **Canonical tags ratified** (FED-ACL-001 v1.2): Node 0 = `tag:node0`,
 >   Node 1 = `tag:node1` (legacy `tag:omega-hub`/`tag:asus` retired). Live on
 >   both nodes already.
-> - **MCP**: Node 1's `kali-n1-mcp` answers on `:8016`; Node 0's **Omega Core
->   Hub v1.30.0** answered on LAN `192.168.10.168:8016` (L1 OK) but does NOT
->   answer on the Tailscale IP `100.123.51.67:8016` — hub needs to listen on
->   the Tailscale interface (0.0.0.0 or the TS IP) for Peer-to-peer L2 MCP.
-> - **Node 0 still must do** (Steps 2–6 below): install `nfs-common`, create
->   `/mnt/node-drive`, manual mount `100.89.40.17:/`, add fstab automount,
->   verify. Then paste **Phase A** (canonical-tag policy) from
->   `docs/federation/ACL_POLICY.md` and re-test MCP+NFS+SSH before Phase B.
+> - **LIVE COMMUNICATION TEST (2026-09-21, via `tailscale ssh arcana-novai@n0`)**:
+>   - SSH Node 1 → Node 0: **WORKS** (`tailscale ssh arcana-novai@n0`).
+>   - MCP n1 → n0 over Tailscale IP (`100.123.51.67:8016`): **Omega Core Hub
+>     v1.30.0 answers** (93 tools). Earlier refusal was transient — Node 0 had
+>     rebooted; hub binds `0.0.0.0:8016`.
+>   - MCP n0 → n1 (`100.89.40.17:8016`): **kali-n1-mcp answers**.
+>   - From Node 0: TCP **2049 OPEN**, **8016 OPEN**, **22 OPEN** toward Node 1;
+>     ping 0% loss both ways over the mesh.
+> - **⚠️ ONLY REMAINING NODE 0 ACTION**: the NFS client **mount** (Steps 2–6
+>   below) needs `sudo` — password required on Node 0. `mount.nfs4` is
+>   installed; `/mnt/node-drive` exists; run the manual mount + probe write +
+>   fstab automount, then re-verify. After that, paste **Phase A** (canonical
+>   tags) from `docs/federation/ACL_POLICY.md` → re-test → Phase B.
 
 ---
 
 ## 1. Executive Summary
 
-Node 1 (`xnai-n1-asus`) and Node 0 (`100.123.51.67`) are **actively peered directly over Tailscale WireGuard** (`192.168.10.168:41641` direct transport, zero DERP relay overhead, ~100ms local latency).
+Node 1 (`xnai-n1-asus`) and Node 0 (`100.123.51.67`) are **actively peered directly over Tailscale WireGuard** (`192.168.10.168:41641` direct transport, zero DERP relay overhead, ~35-100ms local latency).
 
-Node 1 has fully deployed, hardened, and verified the **NFSv4.2 server** (re-verified 2026-09-21 after binding fix). The shared scratch and model-exchange workspace (`/home/xnai/node-drive`) is live, bound strictly to the mesh IP (`100.89.40.17:2049`), and exported exclusively to Node 0 (`100.123.51.67`).
+Node 1 has fully deployed, hardened, and verified the **NFSv4.2 server** (re-verified 2026-09-21 after binding fix). The shared scratch and model-exchange workspace (`/home/xnai/node-drive`) is live, bound strictly to the mesh IP (`100.89.40.17:2049`), and exported exclusively to Node 0 (`100.123.51.67`). Bidirectional MCP over the mesh is confirmed working; the only outstanding Node 0 step is the client mount (requires `sudo`, password-protected on Node 0).
 
 This briefing provides:
 1. The **new best practices & architectural standards** established during implementation.
