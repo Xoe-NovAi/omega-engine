@@ -676,3 +676,30 @@ DP-1..8, DS-1..5, KD-1..3, LI-1/2/5, R21, R36, R37 — internal design; research
 - federation.py: direct-detection fix (PeerRelay/CurAddr) — committed with research
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ D-606-GN-CANCELLED ⬡ CI-HARDENED ⬡ 2026-09-22*
+
+---
+
+## 23. FINAL PUBLIC FLIP READY (2026-09-22)
+
+### 23.1 Complete State
+- **Temple-Grade**: 53/53 PASS (post-blocker fixes)
+- **Private files tracked**: 0 (628 removed)
+- **Public files tracked**: 2,154
+- **Antigravity blockers**: Both fixed (install scripts + release CI)
+- **PR #3**: Merged to main (v1.6.1-alpha, commit f062a626)
+- **Repo**: PRIVATE, ready for flip
+
+### 23.2 Blocker Fixes (Antigravity validation)
+1. **Install scripts**: Qwen3-1.7B → LFM2.5-2.6B-Q4_K_M (matches fleet default)
+2. **Release CI**: OMEGA_PROVIDER=mock for CI smoke test
+
+### 23.3 Flip Sequence (ready to execute)
+```bash
+gh repo edit Xoe-NovAi/omega-engine --visibility public
+git tag v1.6.1-alpha && git push origin v1.6.1-alpha
+```
+
+### 23.4 Post-Flip Roadmap (D-584 updated)
+DS → LI → KD → HR → ZS (GN cancelled by D-606)
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ PUBLIC-FLIP-READY ⬡ 2026-09-22*
