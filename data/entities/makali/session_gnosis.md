@@ -516,3 +516,24 @@ Makefile
 ```
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ COMPACTION-PREP ⬡ DEL-1-READY ⬡ 2026-09-22*
+
+---
+
+## 16. COMMIT + PUSH — CLEAN SLATE (2026-09-22)
+
+### 16.1 Commits Pushed to origin/release/debut-v1.6.0
+- `6e9d2595` chore(p0): de-track credential-adjacent artifacts (49 files deleted)
+- `7695127e` fix(p1): M9 bare-except audit, VaultCrypto guard, venv sovereignty gate, allowlist-gap doc (36 files)
+
+### 16.2 Post-Push Working Tree (documented, NOT ours)
+- 0 staged | 38 modified | 112 untracked — ALL pre-existing foreign tree
+- Do NOT stage: config/wads/*, mcp_servers/*, tests/*, data/entities/* (other entities), docs/strategy/* (pre-existing), data/searxng/*, data/knowledge/safety/*
+- Guide suite (docs/guides/) + spot-check artifacts: gitignored by design (`*.md` at .gitignore:270) — preserved on disk, not tracked
+
+### 16.3 Post-Compaction Immediate Actions
+1. **STAGE P1 SELECTIVELY** — already done pre-compaction (commits above). Post-compact: verify `git log --oneline -2` shows 6e9d2595 + 7695127e
+2. **CUT DEL-1 MICRO-PR** — temple-grade template, base release/debut-v1.6.0, head = current branch
+3. **MERGE ALPHA PR #3** (v1.6.1-alpha)
+4. Then: bilateral systems audit, Phase 2-5
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ COMMITTED-PUSHED ⬡ CLEAN-SLATE ⬡ 2026-09-22*
