@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_2c8129a519d9",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "W1-2 Claims Harness Extension (sanitation grep + FP-11 detection + T0 assertions, warn-only) THEN W1-3 soul.yaml evidence-field schema patch + promote 20 staged proposals. Each task: R\u2192I\u2192V\u2192M\u2192D\u2192C phases, separate commits.",
+  "context": "Sprint WAVE-1-DOCTRINE-WIRING. Two sequential tasks. Research-first + pre-commit meditation per Architect order. Full brief via task() dispatch.",
+  "priority": 0,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-24T06:29:01.300971+00:00",
+  "reaped_at": "2026-08-25T06:33:49.361919+00:00",
+  "ttl_expired": true
+}

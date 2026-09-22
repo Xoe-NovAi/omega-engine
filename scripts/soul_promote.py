@@ -451,6 +451,23 @@ def promote(
         raise PromotionError(f"Post-write verification failed, soul.yaml restored: {e}") from e
 
     print(f"PROMOTED {len(new_entries)} lesson(s) into {soul_path}")
+
+    # ── Staging hygiene: remove promoted proposals from staging ──
+    # The contract (test_staging_emptied_after_promotion) requires that
+    # promoted proposals do not linger in proposed_lessons.yaml (they would
+    # otherwise be re-selected on the next run). Un-promoted proposals stay.
+    promoted_indices = {idx for idx, _ in selected}
+    remaining = [p for i, p in enumerate(proposals) if i not in promoted_indices]
+    if len(remaining) != len(proposals):
+        if remaining:
+            staging_text = "proposals:\n" + yaml.dump(
+                remaining, default_flow_style=False, sort_keys=False
+            )
+        else:
+            staging_text = "proposals: []\n"
+        atomic_write(proposals_path, staging_text)
+        print(f"Staging cleaned: {len(proposals) - len(remaining)} promoted proposal(s) removed")
+
     return 0
 
 

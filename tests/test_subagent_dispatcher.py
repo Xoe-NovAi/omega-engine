@@ -183,8 +183,9 @@ class TestHandoffPacket:
 class TestCapabilityRegistry:
     def test_registry_contains_expected_agents(self):
         expected = [
-            "kali", "doom_guy", "roc_racoon", "jem", "john_carmack",
-            "makali", "researcher", "maat", "lilith", "verity", "node"
+            "kali", "doom_guy", "roc_racoon", "jem", "carmack",
+            "makali", "researcher", "maat", "lilith", "verity",
+            "iris", "omega_federation", "slot",
         ]
         for agent in expected:
             assert agent in CAPABILITY_REGISTRY
@@ -195,7 +196,8 @@ class TestCapabilityRegistry:
             assert "purpose" in desc
             assert "capabilities" in desc
             assert "domains" in desc
-            assert "node_slot" in desc
+            assert "node_slot" not in desc  # nomenclature sweep: node_slot → slot
+            assert "slot" in desc
             assert "task_tool_type" in desc
             assert "owned_files" in desc
             assert isinstance(desc["capabilities"], list)
@@ -207,9 +209,6 @@ class TestCapabilityRegistry:
 
     def test_maat_is_subagent(self):
         assert CAPABILITY_REGISTRY["maat"]["mode"] == "subagent"
-
-    def test_node_has_slot(self):
-        assert CAPABILITY_REGISTRY["node"]["node_slot"] == "NX"
 
 
 class TestGetAgentCapabilities:

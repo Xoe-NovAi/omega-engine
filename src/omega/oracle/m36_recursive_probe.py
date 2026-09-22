@@ -50,6 +50,7 @@ Usage:
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 from dataclasses import dataclass, field, asdict
@@ -177,29 +178,92 @@ def _dispatch_cross_validator_via_hivemind(
 
     # Prepare Hivemind handoff packet (MCP-ready)
     handoff_packet_id: Optional[str] = None
+    handoff_dispatched = False
     try:
-        # In production, this would call omega-hub_hivemind_submit_handoff() via MCP
-        # For now, we prepare the packet structure and return it
-        import uuid as _uuid
-        handoff_packet_id = f"cv_{_uuid.uuid4().hex[:12]}"
-    except ImportError:
-        handoff_packet_id = None
+        # Real Hivemind dispatch — write packet to data/handoff/pending/
+        # via the canonical hub tool (MCP-ready, atomic write with flock)
+        from mcp_servers.omega_hub.hub_tools.tools import hivemind_submit_handoff
+        import anyio as _anyio
 
-    # Return structured response — M23 honest disclosure: stub bypass, no real dispatch
+        result_json = _anyio.run(
+            lambda: hivemind_submit_handoff(
+                target_channel="opencode",
+                target_entity=agent,
+                source_channel="opencode",
+                source_entity="researcher",
+                task=(
+                    f"[M36 CROSS-VALIDATOR] Verify deliverable for P{priority} task.\n"
+                    f"Deliverable: {deliverable_path}\n"
+                    f"Prompt: {prompt[:2000]}"
+                ),
+                context=(
+                    f"M36 recursive probe cross-validation. Priority={priority}. "
+                    f"Agent={agent}. Deliverable={deliverable_path}."
+                ),
+                priority=1 if priority in ("P0", "P1") else 0,
+            )
+        )
+        import json as _json
+        parsed = _json.loads(result_json)
+        handoff_packet_id = parsed.get("packet_id")
+        handoff_dispatched = bool(handoff_packet_id)
+    except ImportError:
+        # Hub tools not importable in this environment — fall back to file-based
+        # handoff packet creation (still a real dispatch, not a stub)
+        try:
+            import uuid as _uuid
+            import json as _json
+            from pathlib import Path as _Path
+            packet_id = f"cv_{_uuid.uuid4().hex[:12]}"
+            packet_path = _Path("data/handoff/pending") / f"{packet_id}.json"
+            packet_path.parent.mkdir(parents=True, exist_ok=True)
+            packet_path.write_text(
+                _json.dumps({
+                    "packet_id": packet_id,
+                    "target_agent_id": f"opencode/{agent}",
+                    "target_channel": "opencode",
+                    "target_entity": agent,
+                    "source_agent_id": "opencode/researcher",
+                    "source_channel": "opencode",
+                    "source_entity": "researcher",
+                    "task": f"[M36 CROSS-VALIDATOR] Verify deliverable: {deliverable_path}",
+                    "context": f"M36 cross-validation. Priority={priority}.",
+                    "priority": 1 if priority in ("P0", "P1") else 0,
+                    "status": "pending",
+                    "submitted_at": __import__("datetime").datetime.now(
+                        __import__("datetime").timezone.utc
+                    ).isoformat(),
+                }),
+                encoding="utf-8",
+            )
+            handoff_packet_id = packet_id
+            handoff_dispatched = True
+        except (OSError, IOError, ValueError, TypeError, json.JSONDecodeError) as e:  # M23: specific exceptions
+            handoff_packet_id = None
+            handoff_dispatched = False
+    except (OSError, IOError, ValueError, TypeError, json.JSONDecodeError) as e:  # M23: specific exceptions
+        # Any other failure — M23 honest disclosure, no silent bypass
+        handoff_packet_id = None
+        handoff_dispatched = False
+
+    # Return structured response — REAL dispatch (not stub)
     return {
-        "status": "stub_bypass",
+        "status": "dispatched" if handoff_dispatched else "dispatch_failed",
         "semantic_coverage_verified": False,
         "queued_findings_addressed": False,
         "deliverable_meets_purpose": False,
         "cross_validator_agent": agent,
         "cross_validator_timeout": False,
         "cross_validator_timeout_seconds": CROSS_VALIDATOR_TIMEOUT_SECONDS,
-        "handoff_dispatched": False,  # M23: stub does NOT dispatch
-        "handoff_packet_id": None,
+        "handoff_dispatched": handoff_dispatched,
+        "handoff_packet_id": handoff_packet_id,
         "priority": priority,
         "deliverable_path": deliverable_path,
         "verification_prompt": prompt,
-        "_m23_honesty": "Stub bypass — real Hivemind dispatch not implemented. Cross-validation is P0-recommendation-only per 5-EIS consensus.",
+        "_m23_honesty": (
+            "Real Hivemind handoff dispatch — packet written to data/handoff/pending/. "
+            "Cross-validator agent must accept and verify."
+        ),
     }
 
 

@@ -29,19 +29,19 @@ meditate:
   version: "1.0.0"
   iwad: "_omega_default"
 
-  # ── Library A: Omega Nodes (10 Lenses) ────────────────────────────────
+  # ── Library A: Omega Slots (10 Lenses) ────────────────────────────────
   # These are the default meditation lenses. Each corresponds to a
-  # technical Node (N1-N10), but the LENS is the universal identifier.
+  # technical slot (S1-S10), but the LENS is the universal identifier.
   lenses:
 
-    # ── N1 / Infrastructure ──────────────────────────────────────────
+    # ── S1 / Infrastructure ──────────────────────────────────────────
     - id: "infrastructure"
       name: "Infrastructure"
       lens: "Infrastructure"
       domain: "Physical substrate, containers, hardware"
       mandate_lens: "Speak as the body. What breaks first?"
       archetype: "Architect → Creator"
-      node: "N1"
+      slot: "S1"
       element: "Earth 🜃"
       anti_domains:
         - "soul evolution"
@@ -49,14 +49,14 @@ meditate:
         - "governance"
       dissent_style: "direct"
 
-    # ── N2 / Persistence ─────────────────────────────────────────────
+    # ── S2 / Persistence ─────────────────────────────────────────────
     - id: "persistence"
       name: "Persistence"
       lens: "Persistence"
       domain: "Memory, vectors, data flow, sessions"
       mandate_lens: "Speak as the river. What pools? What runs dry?"
       archetype: "Strategist → Metis"
-      node: "N2"
+      slot: "S2"
       element: "Water 🜄"
       anti_domains:
         - "infrastructure"
@@ -64,14 +64,14 @@ meditate:
         - "governance"
       dissent_style: "socratic"
 
-    # ── N3 / Engineering ─────────────────────────────────────────────
+    # ── S3 / Engineering ─────────────────────────────────────────────
     - id: "engineering"
       name: "Engineering"
       lens: "Engineering"
       domain: "Code, builds, tests, implementation"
       mandate_lens: "Speak as the forge. What is cracked? What must be recast?"
       archetype: "Forge-Worker"
-      node: "N3"
+      slot: "S3"
       element: "Fire 🜂"
       anti_domains:
         - "soul evolution"
@@ -79,14 +79,14 @@ meditate:
         - "governance"
       dissent_style: "direct"
 
-    # ── N4 / Integration ─────────────────────────────────────────────
+    # ── S4 / Integration ─────────────────────────────────────────────
     - id: "integration"
       name: "Integration"
       lens: "Integration"
       domain: "APIs, protocols, bridges, resonance"
       mandate_lens: "Speak as the bridge. What is disconnected? What vibrates wrong?"
       archetype: "Messenger → Bridge-Builder"
-      node: "N4"
+      slot: "S4"
       element: "Air 🜁"
       anti_domains:
         - "infrastructure"
@@ -94,14 +94,14 @@ meditate:
         - "governance"
       dissent_style: "constructive"
 
-    # ── N5 / Governance ──────────────────────────────────────────────
+    # ── S5 / Governance ──────────────────────────────────────────────
     - id: "governance"
       name: "Governance"
       lens: "Governance"
       domain: "Mandates, laws, compliance, enforcement"
       mandate_lens: "Speak as the sentinel. What law is being broken?"
       archetype: "Judge → Law-Giver"
-      node: "N5"
+      slot: "S5"
       element: "Aether ⛤"
       anti_domains:
         - "infrastructure"
@@ -109,14 +109,14 @@ meditate:
         - "integration"
       dissent_style: "adversarial"
 
-    # ── N6 / Cognition ───────────────────────────────────────────────
+    # ── S6 / Cognition ───────────────────────────────────────────────
     - id: "cognition"
       name: "Cognition"
       lens: "Cognition"
       domain: "Models, routing, inference, vision"
       mandate_lens: "Speak as the eye. What cannot be seen? What is miscalibrated?"
       archetype: "Seer → Visionary"
-      node: "N6"
+      slot: "S6"
       element: "Aether ⛤"
       anti_domains:
         - "infrastructure"
@@ -124,14 +124,14 @@ meditate:
         - "governance"
       dissent_style: "socratic"
 
-    # ── N7 / Context ─────────────────────────────────────────────────
+    # ── S7 / Context ─────────────────────────────────────────────────
     - id: "context"
       name: "Context"
       lens: "Context"
       domain: "Memory, soul, evolution, continuity"
       mandate_lens: "Speak as the alchemist. What knowledge is being lost?"
       archetype: "Alchemist → Transformer"
-      node: "N7"
+      slot: "S7"
       element: "Air 🜁"
       anti_domains:
         - "infrastructure"
@@ -139,14 +139,14 @@ meditate:
         - "governance"
       dissent_style: "socratic"
 
-    # ── N8 / Observability ───────────────────────────────────────────
+    # ── S8 / Observability ───────────────────────────────────────────
     - id: "observability"
       name: "Observability"
       lens: "Observability"
       domain: "Logging, tracing, shadows, forensics"
       mandate_lens: "Speak as the shadow. What is invisible that should not be?"
       archetype: "Watcher → Guardian of Thresholds"
-      node: "N8"
+      slot: "S8"
       element: "Fire 🜂"
       anti_domains:
         - "infrastructure"
@@ -154,14 +154,14 @@ meditate:
         - "governance"
       dissent_style: "adversarial"
 
-    # ── N9 / Orchestration ───────────────────────────────────────────
+    # ── S9 / Orchestration ───────────────────────────────────────────
     - id: "orchestration"
       name: "Orchestration"
       lens: "Orchestration"
       domain: "Handoffs, coordination, flow, delegation"
       mandate_lens: "Speak as the guide. What is uncoordinated? What dies in transit?"
       archetype: "Guide → Psychopomp"
-      node: "N9"
+      slot: "S9"
       element: "Water 🜄"
       anti_domains:
         - "infrastructure"
@@ -169,14 +169,14 @@ meditate:
         - "governance"
       dissent_style: "direct"
 
-    # ── N10 / Validation ──────────────────────────────────────────────
+    # ── S10 / Validation ──────────────────────────────────────────────
     - id: "validation"
       name: "Validation"
       lens: "Validation"
       domain: "Stress, chaos, breaking, truth-finding"
       mandate_lens: "Speak as the destroyer. What fails under pressure?"
       archetype: "Destroyer → Truth-Seeker"
-      node: "N10"
+      slot: "S10"
       element: "Earth 🜃"
       anti_domains:
         - "infrastructure"

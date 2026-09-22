@@ -47,7 +47,7 @@ jobs:
       - name: Install minimal dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install pytest
+          pip install pytest pytest-xdist pytest-timeout
 
       - name: "Smoke: --once render"
         run: |

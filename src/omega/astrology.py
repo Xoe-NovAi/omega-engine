@@ -154,6 +154,13 @@ async def record_first_breath(entity_id: str, response_text: str, trace_id: str)
     """
     Record the first utterance of an entity.
 
+    ⚠️ DISABLED — D-605 (2026-09-20, Architect ruling): this system is UNWIRED.
+    Nothing in `src/` calls this function, so no birth record is ever written by the
+    summon path, and `tests/test_first_breath.py` is module-skipped. The prior test pass
+    was an artifact of a stale row in the untracked data/memory/entity_births.db
+    (dated 2026-06-13). Scheduled for re-implementation + wiring post-PR#3.
+    See docs/decisions/PIVOT_LOG.md §D-605.
+
     Sovereign Implementation:
     1. Captures host location/timezone from config.
     2. Records to SQLite (Fast Index).

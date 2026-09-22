@@ -4,7 +4,7 @@
 
 # 🔱 Soul Lessons Schema — Evidence-Bearing Lesson Models (W1-3)
 # AP: AP-SOUL-LESSONS-v1.0.0
-# ⬡ OMEGA ⬡ MAAT ⬡ N3 ⬡ soul_lessons ⬡ EVIDENCE-FIELD
+# ⬡ OMEGA ⬡ MAAT ⬡ S3 ⬡ soul_lessons ⬡ EVIDENCE-FIELD
 #
 # Ruling S5 / Ma'at Fork 2 (Team-Study #1): explicit evidence field day one,
 # WARN-ONLY start. Gemini 3.1 adjudication trap-catch #2: soul schema lacked

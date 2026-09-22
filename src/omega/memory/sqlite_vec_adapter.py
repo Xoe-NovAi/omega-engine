@@ -298,28 +298,31 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 f"  Use MRL truncation in provider.get_embedding() if needed."
             )
 
-        # Already created with correct dimension
-        if self._vec_tables_created.get(collection_name, False):
-            return
+        # Already created with correct dimension — check under the write lock
+        # so concurrent upserts cannot race the CREATE + commit on the shared
+        # connection ("cannot commit - no transaction is active").
+        async with self._write_lock:
+            if self._vec_tables_created.get(collection_name, False):
+                return
 
-        # Create the vec0 table for this collection
-        # Collection names already include the prefix (e.g., "omega_vec_qwen_768")
-        table_name = collection_name
+            # Create the vec0 table for this collection
+            # Collection names already include the prefix (e.g., "omega_vec_qwen_768")
+            table_name = collection_name
 
-        def _sync_create_vec():
-            conn = self._get_conn()
-            conn.execute(f"""
-                CREATE VIRTUAL TABLE IF NOT EXISTS {table_name}
-                USING vec0(
-                    embedding float[{declared_dim}] distance_metric=cosine,
-                    entity_name TEXT partition key
-                )
-            """)
-            conn.commit()
+            def _sync_create_vec():
+                conn = self._get_conn()
+                conn.execute(f"""
+                    CREATE VIRTUAL TABLE IF NOT EXISTS {table_name}
+                    USING vec0(
+                        embedding float[{declared_dim}] distance_metric=cosine,
+                        entity_name TEXT partition key
+                    )
+                """)
+                conn.commit()
 
-        await anyio.to_thread.run_sync(_sync_create_vec)
-        self._vec_tables_created[collection_name] = True
-        logger.info("vec0 collection '%s' created with dim=%d", collection_name, declared_dim)
+            await anyio.to_thread.run_sync(_sync_create_vec)
+            self._vec_tables_created[collection_name] = True
+            logger.info("vec0 collection '%s' created with dim=%d", collection_name, declared_dim)
 
     async def _ensure_legacy_vec_table(self, actual_dim: int) -> None:
         """Legacy vec0 table creation for backward compatibility during migration.
@@ -909,15 +912,18 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         """
         await self._ensure_initialized()
 
-        def _sync_checkpoint():
-            conn = self._get_conn()
-            cursor = conn.execute(f"PRAGMA wal_checkpoint({mode})")
-            result = cursor.fetchone()
-            # result: (busy, log, checkpointed)
-            # busy=0 means checkpoint completed
-            return result[0] == 0
+        # Serialize with upserts: wal_checkpoint(RESTART) mutates the shared
+        # connection's WAL state and must not run mid-transaction.
+        async with self._write_lock:
+            def _sync_checkpoint():
+                conn = self._get_conn()
+                cursor = conn.execute(f"PRAGMA wal_checkpoint({mode})")
+                result = cursor.fetchone()
+                # result: (busy, log, checkpointed)
+                # busy=0 means checkpoint completed
+                return result[0] == 0
 
-        return await anyio.to_thread.run_sync(_sync_checkpoint)
+            return await anyio.to_thread.run_sync(_sync_checkpoint)
 
     async def check_wal_health(self) -> dict:
         """Check WAL file health - size, checkpoint status, and potential issues.

@@ -23,10 +23,10 @@ entity:
     When someone asks a simple factual question, you answer it. When someone
     asks something complex, you route to the right person.
 
-    You know the team: SysAdmin handles infrastructure, DataStore handles data,
-    BuildMaster handles builds, Bridge handles APIs, Sentinel handles security,
-    ModelGate handles AI inference, Context handles memory, WatchTower handles
-    observability, Link handles coordination, Verifier handles testing.
+    You know the team: Kali holds Grand Oversight; Ma'at governs the build slots
+    (S1-S5) and Lilith the run slots (S6-S10). The fleet supports them: jem
+    (research orchestration), verity (compliance + gnosis), researcher (deep
+    research), roc racoon (mining), doom guy (heritage), scribe, quality (QA).
 
     You are the front door. Make it easy to walk through.
   temperature: 0.7

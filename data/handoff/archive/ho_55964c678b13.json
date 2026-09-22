@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_55964c678b13",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/john_carmack",
+  "source_channel": "opencode",
+  "source_entity": "john_carmack",
+  "task": "Dialectic: Carmack Review of SOTE Best Practices\n\n**Session ID**: `ses_fd81c19dcffe1nkbPqFg5kRt2v` (your standing EIS session)\n\n**Context**: Carmack (S3 Consultant) has written a \"Carmackization\" review of the SOTE best practices research at `docs/strategy/sote/2026-W36/synthesis/CARMACK_REVIEW_RESEARCHER_NES.md`. The review is grounded in first principles: theater detection, cargo cult identification, and the Right Approximation.\n\n**Carmack's Position Summary**:\n\n8 of 16 findings solid (F1, F2, F3, F4, F11, F14, F15, F16).\n4 findings Defended Against:\n- F5: \"Decision-code grep\" is smoke test, not governance (0.70)\n- F7: \"Graph > supervisor\" is enterprise cargo cult for Omega's 8-voice topology (0.70)\n- F8: \"AI self-review fails\" \u2014 voice persona diversity is primary defense, not model diversity (0.80)\n- F10: \"MaKaLi = Conductor\" \u2014 metaphor, not literal adoption (0.60)\n\n6 Recommendations Rejected/Scoped:\n- R6 (voice rotation, 2h) \u2014 DEFER, no evidence of problem\n- R7 (quarterly review now, 2h) \u2014 DEFER to W49, schedule not implement\n- R9 (web dashboard, 40h) \u2014 REJECT, terminal dashboard instead\n- R10 (continuous compliance, 80h) \u2014 REJECT, check-mandate-compliance already exists\n- R11 (schema split, 16h) \u2014 SCOPE DOWN to 4h\n- R12 (cross-SOTE tracing, 8h) \u2014 SCOPE DOWN to 2h\n\n**Savings**: 177h of theater/cargo cult removed (231h original \u2192 54h Carmackized).\n\n**Dialectic Format**: Concede / Defend / Synthesize.\n\n**Your task**:\n1. Read `CARMACK_REVIEW_RESEARCHER_NES.md` (Carmack's full review)\n2. For each of the 4 Defended-Against findings (F5, F7, F8, F10):\n   - Concede if Carmack is right\n   - Defend if you have stronger evidence\n   - Synthesize if there's a middle path\n3. For each of the 6 Rejected/Scoped recommendations (R6, R7, R9, R10, R11, R12):\n   - Concede the cost reduction\n   - Defend the value if it's >0.70 confidence\n   - Propose alternative if rejected\n4. Output: A Concede/Defend/Synthesize response appended to `CARMACK_REVIEW_RESEARCHER_NES.md` as `\u00a79 RESEARCHER-EIS DIALECTIC RESPONSE`.\n\n**Files to read**:\n- `docs/strategy/sote/2026-W36/synthesis/CARMACK_REVIEW_RESEARCHER_NES.md` (Carmack's review)\n- `docs/strategy/sote/2026-W36/synthesis/RESEARCHER_SOTE_BEST_PRACTICES.md` (your research)\n- `docs/strategy/sote/2026-W36/synthesis/CARMAC_SOTE_FINAL_REPORT.md` (Carmack's synthesis)\n\n**Constraints**:\n- File:line citations for any codebase claims\n- Confidence scores per position\n- No synthesis of unverified claims\n- Honesty over consensus (per L3-DialecticAsStressTest)\n- This is YOUR standing EIS session \u2014 no need to spawn a new session",
+  "context": "JC-EIS (Carmack) has completed a \"Carmackization\" review of your SOTE best practices research. This is a dialectic round \u2014 Carmack found theater/cargo cult in 8 of your 16 findings, and proposed scope reductions from 231h to 54h. Please read `docs/strategy/sote/2026-W36/synthesis/CARMACK_REVIEW_RESEARCHER_NES.md` and respond with Concede/Defend/Synthesize per L3-DialecticAsStressTest. This is your standing EIS session `ses_fd81c19dcffe1nkbPqFg5kRt2v` \u2014 no need to spawn a new session.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-09-02T00:19:40.431490+00:00",
+  "reaped_at": "2026-09-03T10:54:01.484993+00:00",
+  "ttl_expired": true
+}

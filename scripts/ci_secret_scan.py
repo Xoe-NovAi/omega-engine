@@ -62,8 +62,12 @@ SECRET_PATTERNS: List[Tuple[str, str, str]] = [
 # Allowlist (false-positive guards) — ONLY for KNOWN test fixtures, not real patterns.
 # Per DEBUT §5 P0-1c, planted sk-/csk-/AIza must FAIL. No allowlist for real patterns.
 FALSE_POSITIVE_ALLOWLIST = {
-    # None for now. Any future test fixture should use a clearly-tagged pattern
-    # (e.g., "sk-TEST-FIXTURE-...") and add to this list.
+    # C3 mirror plant fixture (secret-scan.yml step) — deliberately planted,
+    # must be caught by the plant test but not fail the full-repo scan.
+    "sk-plantedtestfixture9f8a7b6c5d4e3f2a1b0c",
+    # AWS docs example access key (tests/test_pii_masker.py) — standard
+    # public example from AWS documentation, not a real credential.
+    "AKIAIOSFODNN7EXAMPLE",
 }
 
 

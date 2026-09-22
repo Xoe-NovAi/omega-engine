@@ -26,6 +26,39 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
+# Archangel Architecture: Environmental State Register injection
+try:
+    from omega.oracle.env_hardware_probe import inject_system_envelope_sync
+except ImportError:
+    inject_system_envelope_sync = None  # type: ignore
+
+# HardwareMonitor & ModelGateway singletons for envelope injection
+_hw_monitor = None
+_model_gateway = None
+
+def _get_hw_monitor():
+    """Lazily initialise HardwareMonitor singleton."""
+    global _hw_monitor
+    if _hw_monitor is None:
+        try:
+            from omega.monitoring import HardwareMonitor
+            _hw_monitor = HardwareMonitor()
+        except (ImportError, OSError, ValueError):
+            logger.debug("HardwareMonitor unavailable — skipping envelope injection")
+    return _hw_monitor
+
+def _get_model_gateway():
+    """Lazily initialise ModelGateway singleton."""
+    global _model_gateway
+    if _model_gateway is None:
+        try:
+            from omega.oracle.model_gateway import ModelGateway
+            from omega.oracle.health_monitor import get_health_monitor
+            _model_gateway = ModelGateway(health_monitor=get_health_monitor())
+        except (ImportError, OSError, ValueError):
+            logger.debug("ModelGateway unavailable — skipping envelope injection")
+    return _model_gateway
+
 logger = logging.getLogger(__name__)
 
 # ── M34 Registry hook (M34-HOOK-001) ─────────────────────────────────────
@@ -33,8 +66,21 @@ logger = logging.getLogger(__name__)
 _m34_registry = None
 
 def _get_m34_registry():
-    """Lazily initialise M34Registry singleton."""
+    """Lazily initialise M34Registry singleton.
+
+    When OMEGA_M34_REGISTRY is set, a fresh registry is created per call
+    so tests/deployments that change the env var between calls get the
+    intended path (no stale singleton).
+    """
     global _m34_registry
+    env_path = os.environ.get("OMEGA_M34_REGISTRY")
+    if env_path:
+        try:
+            from omega.oracle.m34_registry import M34Registry
+            return M34Registry(registry_path=Path(env_path))
+        except (ImportError, OSError, ValueError):
+            logger.debug("M34 registry unavailable — skipping registration")
+            return None
     if _m34_registry is None:
         try:
             from omega.oracle.m34_registry import M34Registry
@@ -46,7 +92,7 @@ def _get_m34_registry():
 # ── Handoff sub-types ────────────────────────────────────────────────────
 
 PacketType = Literal["request", "response", "delegation", "notification", "broadcast"]
-TaskType = Literal["design", "review", "research", "mine", "verify", "implement"]
+TaskType = Literal["design", "review", "research", "forensic", "mine", "verify", "implement"]
 PacketStatus = Literal["pending", "active", "completed", "stale", "archived"]
 AgentMode = Literal["primary", "subagent"]
 ResolverStrategy = Literal["terminate", "escalate", "fallback", "retry"]
@@ -216,19 +262,35 @@ AgentDescriptor = Dict[str, Any]
 # WAD YAML (config/wads/<iwad>/entities/dispatch.yaml) maps ROLE → entity.
 # These constants are engine architecture, not WAD content (M2-compliant).
 ROLE_CONSTANTS: Dict[str, str] = {
-    "GRAND_OVERSIGHT": "grand_oversight",
-    "BUILD_OVERSOUL": "build_oversoul",
-    "RUNTIME_OVERSOUL": "runtime_oversoul",
-    "N1": "infrastructure",
-    "N2": "persistence",
-    "N3": "engineering",
-    "N4": "integration",
-    "N5": "governance",
-    "N6": "cognition",
-    "N7": "context",
-    "N8": "observability",
-    "N9": "orchestration",
-    "N10": "validation",
+    # Engine Core Governance
+    "GRAND_OVERSIGHT": "grand_oversight",      # Kali
+    "BUILD_OVERSOUL": "build_oversoul",        # Ma'at → S1-S5
+    "RUNTIME_OVERSOUL": "runtime_oversoul",    # Lilith → S6-S10
+    "MESSENGER_BRIDGE": "messenger_bridge",    # Iris (M3)
+    
+    # Proven Slot Keeper
+    "S3_DEDICATED_KEEPER": "s3_dedicated_keeper",  # Carmack
+    
+    # Dispatched Capabilities
+    "LEGACY_MINER": "legacy_miner",
+    "RESEARCH_ORCHESTRATOR": "research_orchestrator",
+    "COUNCIL_ORCHESTRATOR": "council_orchestrator",
+    "COMPLIANCE_GNOSIS": "compliance_gnosis",
+    "HERITAGE_ATTRIBUTION": "heritage_attribution",
+    "DEEP_RESEARCH": "deep_research",
+    "FEDERATION_MESH": "federation_mesh",  # omega_federation (2026-09-16)
+    
+    # Slot Semantics (Neutral Engineering Terms)
+    "S1": "infrastructure",
+    "S2": "persistence",
+    "S3": "engineering",
+    "S4": "integration",
+    "S5": "governance",
+    "S6": "cognition",
+    "S7": "context",
+    "S8": "observability",
+    "S9": "orchestration",
+    "S10": "validation",
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase B).
@@ -241,7 +303,7 @@ from omega.governance.dispatch_registry import get_dispatch_entities
 def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescriptor]:
     """Build the capability registry from WAD dispatch.yaml at runtime.
 
-    Engine core defines SLOTS (N1-N10, Grand Oversight) and INTERFACES.
+    Engine core defines SLOTS (S1-S10, Grand Oversight) and INTERFACES.
     WADs provide the ENTITIES that fill those slots. No entity names are
     hardcoded in engine code (M2 Firewall compliant).
 
@@ -262,7 +324,7 @@ def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescri
             "purpose": ent.get("purpose", ""),
             "capabilities": ent.get("capabilities", []),
             "domains": ent.get("domains", []),
-            "node_slot": ent.get("node_slot"),
+            "slot": ent.get("slot"),
             "task_tool_type": ent.get("task_tool_type", "general"),
             "owned_files": ent.get("owned_files", []),
             "role": ent.get("role"),
@@ -568,5 +630,26 @@ def dispatch(packet: HandoffPacket) -> str:
         logger.debug("M33 probe not available: %s", exc)
     except (OSError, ValueError, TypeError) as exc:
         logger.warning("M33 probe wiring failed: %s", exc)
+
+    # ── Archangel Architecture: Environmental State Register Injection ─────
+    # Inject hardware register envelope after M33Probe validation, before prompt build
+    if inject_system_envelope_sync is not None:
+        hw_monitor = _get_hw_monitor()
+        model_gateway = _get_model_gateway()
+        if hw_monitor is not None and model_gateway is not None:
+            try:
+                packet = inject_system_envelope_sync(
+                    packet=packet,
+                    target_agent=packet.target_agent,
+                    hw_monitor=hw_monitor,
+                    model_gateway=model_gateway,
+                )
+                logger.debug("Archangel envelope injected for %s → %s",
+                           packet.source_agent, packet.target_agent)
+            except (OSError, ValueError, TypeError) as exc:
+                logger.warning("Archangel envelope injection failed: %s", exc)
+        else:
+            logger.debug("Archangel envelope skipped: hw_monitor=%s, model_gateway=%s",
+                       hw_monitor, model_gateway)
 
     return build_dispatch_prompt(packet, write_tool_required=write_tool_required)

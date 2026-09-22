@@ -98,7 +98,7 @@ omega-hub_hivemind_post_context(
         "D112: Consolidate AsyncCircuitBreaker + SyncCircuitBreaker → single class",
         "D113: ZONEID_PRESENCE = 0x1d4a17 for Hivemind presence records"
     ],
-    continuation="Next: Phase 1.4 HealthMonitor integration — @pillar P8 owns observability hooks",
+    continuation="Next: Phase 1.4 HealthMonitor integration — @slot S8 owns observability hooks",
     session_id="ses_20260712_maat_003",
     intent="status",
     suggested_model=None,
@@ -138,7 +138,7 @@ omega-hub_hivemind_post_context(
     channel="opencode",
     entity="doom_guy",
     model="deepseek-v4-flash",
-    task_current="[SESSION] Link P9 Runtime — WASM polyglot linkage failing",
+    task_current="[SESSION] Link S9 Runtime — WASM polyglot linkage failing",
     focus_chain=[
         "Debug wasm-ld undefined symbol: __wasm_call_ctors",
         "Check omega-vetala v2.0.0 symbol exports",
@@ -201,7 +201,7 @@ omega-hub_hivemind_post_context(
         "D-122: Two-tier TTL — hot (5 min) for presence, cold (24h) for continuation",
         "D-123: hivemind_get_continuation falls back to HALL_OF_RECORDS on hot miss"
     ],
-    continuation="Next: implement in mcp_servers/omega_hub/state.py — @pillar P9 owns orchestration layer",
+    continuation="Next: implement in mcp_servers/omega_hub/state.py — @slot S9 owns orchestration layer",
     session_id="ses_20260712_lilith_002",
     intent="decision",
     suggested_model=None,
@@ -258,7 +258,7 @@ omega-hub_hivemind_post_context(
 |-----------|----------|---------|
 | `Next:` | ✅ | `"Next: Run test_hivemind.py"` |
 | Blocker/Dependency | ✅ | `"— blocked on @verity review"` |
-| Owner | ✅ | `"— @pillar P8"` |
+| Owner | ✅ | `"— @slot S8"` |
 
 **Bad**: `"Continuing work"`  
 **Good**: `"Next: Verify heritage tags in CREDITS.md — waiting on @doom_guy audit — @kali to merge"`
@@ -301,8 +301,8 @@ resumption_status: {none|verified|failed|pending}
 ## §9 Heritage
 
 - **Template design**: Jem (Research Orchestrator) — D-124
-- **Protocol authority**: Ma'at (Light Oversoul, P1-P5) — HIVEMIND_PROTOCOL.md
-- **Observations mandate**: Lilith (Dark Oversoul, P6-P10) — D-121
+- **Protocol authority**: Ma'at (Light Oversoul, S1-P5) — HIVEMIND_PROTOCOL.md
+- **Observations mandate**: Lilith (Dark Oversoul, S6-P10) — D-121
 - **Fleet governance**: Kali (Grand Oversight) — SOVEREIGN_ARK_BLUEPRINT.md
 
 ---

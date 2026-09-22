@@ -137,6 +137,14 @@ def test_apply_merges_and_snapshots(entity_dir):
     pre = yaml.safe_load(baks[0].read_text(encoding="utf-8"))
     assert "lessons" not in pre or pre["lessons"] in (None, [])
 
+    # Staging hygiene: promoted proposals are removed from staging
+    staged = yaml.safe_load(
+        (entity_dir / "data/entities/testent/proposed_lessons.yaml").read_text(encoding="utf-8")
+    )
+    assert staged.get("proposals") == [], (
+        f"Expected staging emptied after promotion, got {len(staged.get('proposals', []))} remaining"
+    )
+
 
 def test_select_by_ids_and_indices(entity_dir):
     rc = run_promote(entity_dir, ["--ids", "L3-TestPrincipleTwo", "--apply", "--confirm"])

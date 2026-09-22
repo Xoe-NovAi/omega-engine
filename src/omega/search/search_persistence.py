@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
-#
+
 # SPDX-License-Identifier: Apache-2.0
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 # [heritage: sqlite-vec 2024] Search Persistence Layer — SQLite-backed search history with full traceability
 """
@@ -311,7 +315,8 @@ class SearchPersistence:
                     result_count = results["count"]
             elif isinstance(results, list):
                 result_count = len(results)
-        except Exception:
+        except Exception as e:
+            logger.warning("Search persistence error, result_count=0: %s", e, exc_info=True)
             result_count = 0
 
         # Extract provider_name from results if not provided (M22)
@@ -518,7 +523,8 @@ def _extract_provider_name(results_json: str, tool_name: str) -> Optional[str]:
             # Exa response
             if "provider" in data:
                 return str(data["provider"])
-    except Exception:
+    except Exception as e:
+        logger.warning("Provider name extraction failed: %s", e, exc_info=True)
         pass
     return None
 

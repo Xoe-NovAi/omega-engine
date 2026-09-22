@@ -1,0 +1,22 @@
+{
+  "packet_id": "ho_9a9d34eac9c8",
+  "target_agent_id": "opencode/cline",
+  "target_channel": "opencode",
+  "target_entity": "cline",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Execute D-K1..D-K7 rulings on repo cleanse \u2014 resume from R_DECISIONS_FOR_KALI_20260822.md",
+  "context": "RULINGS from Architect (2026-08-22 ~00:40 UTC), relayed by kali:\n\u2022 D-K1 ADOPTED(a): Execute filter-repo --replace-text with /tmp/opencode/replacements.txt \u2014 VERIFY all 20 unique secrets covered \u2014 plus whole-file purges (2 heapsnapshots + scraped HTML w/ JWT). Force-push after rewrite.\n\u2022 D-K2 AMENDED BY ARCHITECT: NO key rotation. Repo is private; keys found in first cleanse days ago were old and already rotated. Cleanliness only \u2014 do NOT rotate anything. CONSEQUENCE: since rotation is off the table, your filter-repo pass is the SOLE barrier protecting secrets at public flip. Post-rewrite verification must be exhaustive: full-history gitleaks MUST return 0 findings before you report done.\n\u2022 D-K3 ADOPTED(a): Commit-hygiene redaction set NOW, durable redactions first.\n\u2022 D-K4 ADOPTED: Graduate observe-build policy to fleet guide now; Mandate amendment deferred post-debut.\n\u2022 D-K5 ADOPTED: Re-baseline instrumented run post-zswap-switch \u2014 you own it.\n\u2022 D-K6 ADOPTED: Codify secret gates as `make gate-secrets` target.\n\u2022 D-K7 ADOPTED(b): Disk-backed caches for >500MB artifacts.\n\nExecution order: D-K3 redactions \u2192 D-K1 rewrite+force-push \u2192 verify 0 findings \u2192 D-K6 gate target \u2192 D-K4 guide graduation. Report completion via Hivemind; kali runs post-push tracker-correction package after your push lands.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-22T00:41:52.720820+00:00",
+  "accepted_at": "2026-08-22T00:45:45.889262+00:00",
+  "accepted_by_agent_id": "cline/omega-engine",
+  "accepted_by_channel": "cline",
+  "accepted_by_entity": "omega-engine",
+  "reaped_at": "2026-08-24T00:46:12.794932+00:00",
+  "ttl_expired": true
+}

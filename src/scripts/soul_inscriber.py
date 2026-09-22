@@ -8,7 +8,7 @@ import json
 import re
 import yaml
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 # Project root is 2 levels up from src/scripts/

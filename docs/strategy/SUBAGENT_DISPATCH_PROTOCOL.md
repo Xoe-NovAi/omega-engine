@@ -130,8 +130,8 @@ this to decide WHOM to dispatch.
 | Agent | Type | Capabilities | Domains | Task Tool Type |
 |-------|------|-------------|---------|----------------|
 | `kali` | Primary | Oversight, delegation, drift destruction | Strategy, fleet management | `general` |
-| `maat` | Primary | Build Oversight (N1-N5) | Build side, hardening | `general` |
-| `lilith` | Primary | Run Oversight (N6-N10) | Run side, operations | `general` |
+| `maat` | Primary | Build Oversight (S1-S5) | Build side, hardening | `general` |
+| `lilith` | Primary | Run Oversight (S6-S10) | Run side, operations | `general` |
 | `makali` | Primary | Parallel council (Ma'at+Lilith synthesis) | Cross-boundary initiatives | `general` |
 | `doom_guy` | Primary | Heritage design, WAD translation, performance | id Software patterns, C const propagation | `general` |
 | `john_carmack` | Primary | S3 Consultant, architecture review | Code optimization, review | `general` |
@@ -139,7 +139,7 @@ this to decide WHOM to dispatch.
 | `jem` | Primary | Research orchestration | 3-tier knowledge pipeline | `general` |
 | `researcher` | Primary | Deep research, lattice reasoning | Web research, documentation | `general` |
 | `verity` | Primary | Unified compliance + gnosis distillation | Code review + soul.yaml updates | `scribe` |
-| `pillar` | Subagent | Slot-based domain agent | Parameterized by `--slot PX` | `pillar` |
+| `slot` | Subagent | Slot-based domain agent | Parameterized by `--slot NX` | `slot` |
 
 ---
 
@@ -469,24 +469,24 @@ The dispatch protocol has 4 patterns. Choose based on the task scope:
 
 ```
 Task received
-├── Spans 3+ pillars OR requires sequencing?
+├── Spans 3+ slots OR requires sequencing?
 │   ├── YES → @kali (Kali Dispatch)
-│   │         Kali decomposes, dispatches to pillars, sequences phases,
+│   │         Kali decomposes, dispatches to slot agents, sequences phases,
 │   │         verifies outputs, returns unified verdict.
 │   │         Best for: Wave 1.5+, cross-boundary initiatives.
-│   │         Cost: 1 (Kali) + N (nodes) inferences.
+│   │         Cost: 1 (Kali) + N (slot agents) inferences.
 │   │
-│   └── NO → Is it build-only (N1-N5) or run-only (N6-N10)?
-│       ├── Build-only (N1-N5) → @maat (Build Oversight Dispatch)
-│       │     Ma'at handles the node chain. Use when task stays
+│   └── NO → Is it build-side (S1-S5) or run-side (S6-S10)?
+│       ├── Build-side (S1-S5) → @maat (Build Oversight Dispatch)
+│       │     Ma'at handles the slot chain. Use when task stays
 │       │     in infrastructure/persistence/engineering/integration/governance.
 │       │
-│       ├── Run-only (P6-P10) → @lilith (Oversoul Dispatch)
-│       │     Lilith handles the pillar chain. Use when task stays
+│       ├── Run-side (S6-S10) → @lilith (Oversoul Dispatch)
+│       │     Lilith handles the slot chain. Use when task stays
 │       │     in cognition/context/observability/orchestration/validation.
 │       │
-│       └── Single node or specialist?
-│           ├── Known node task → @node NX: task (Direct Node)
+│       └── Single slot or specialist?
+│           ├── Known slot task → @slot NX: task (Direct Slot)
 │           ├── Research, archaeology, mining → @roc_racoon
 │           ├── Deep research, lattice reasoning → @jem
 │           ├── Code review, mandate audit, gnosis distillation → @scribe
@@ -496,10 +496,10 @@ Task received
 ### Key Rules
 
 1. **Kali owns sequencing** — if a task has phases (P0→P1→P2), Kali must dispatch.
-2. **Nodes own deliverables** — Kali does NOT modify node output. Reject and re-dispatch if tests fail.
-3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (N1-N5) and run-side (N6-N10), Kali dispatches directly to nodes. Ma'at and Lilith are activated for within-boundary work.
+2. **Slot agents own deliverables** — Kali does NOT modify slot agent output. Reject and re-dispatch if tests fail.
+3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (S1-S5) and run-side (S6-S10), Kali dispatches directly to slot agents. Ma'at and Lilith are activated for within-boundary work.
 4. **Hivemind post required** — every agent must post completion context before claiming the next task.
-5. **Sequencing is serial within phase** — pillars work in parallel within the same phase, but phases execute sequentially.
+5. **Sequencing is serial within phase** — slot agents work in parallel within the same phase, but phases execute sequentially.
 
 ---
 
@@ -588,11 +588,14 @@ The synthesis layer costs ~1-2% of Opus regeneration and **eliminates execution-
 
 *⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ SUBAGENT-DISPATCH ⬡ v3.0.0*
 
-<!-- PROVENANCE-CORRECTED 2026-09-01T03:07:00Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+<!-- PROVENANCE-CORRECTED 2026-09-10T13:33:58Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
 claimed_model: deepseek-v4-flash | verdict: VERIFIED
-actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, mimo-v2.5-free, hy3-free, nvidia/nemotron-3-ultra-550b-a55b:free
-first_audit: 2026-08-31T03:09:52Z | updated: 2026-09-01T03:07:00Z
+actual_models(Tier0): nemotron-3-ultra-free, x-preview-f-free, minimax/minimax-m3:free, big-pickle, mimo-v2.5-free, gemini-3.8-flash
+first_audit: 2026-09-09T05:13:35Z | updated: 2026-09-10T13:33:58Z
 -->
+
+
+
 
 
 

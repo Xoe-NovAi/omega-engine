@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_7cf81a6eb825",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "MA'AT \u2014 TRACK 1 DISPATCH: INST-1 Fix2/4/6 + C3 + C4 (PUBLIC-DEBUT-01 critical path)\n\nPath plan: data/coordination/KALI_DEBUT_PATH_PLAN_20260827.md \u00a72 Track 1\nSprint spec: docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md \u00a75\nBuild-packet: data/coordination/research_wave2/R06R11_roc_curator_corpus.md (C4)\n\nExecute in this order (each step has its own gate):\n\n1. INST-1 Fix2 (1h): pyproject.toml extras split \u2014 warp\u2192[warp], qdrant-client/redis/youtube-transcript-api/yt-dlp\u2192extras; add import guards\n   - Gate: `grep -E \"qdrant-client|redis|youtube-transcript-api\" pyproject.toml | grep -v \"optional-dependencies\"` empty\n\n2. INST-1 Fix4 (30min): src/omega/oracle/model_gateway.py \u2014 remove _load_sovereign_secrets from __init__, delete method, document required env vars\n   - Gate: `rg _load_sovereign_secrets src/omega` empty\n\n3. INST-1 Fix6 (30min): README.md \u2014 remove 1315 badge, add make setup OR delete lines\n   - Gate: `grep \"1315\" README.md` empty\n\n4. C3 \u2014 pre-commit install + gitleaks (1h): install pre-commit hooks (currently dormant, 20 configured); wire gitleaks/trufflehog to .pre-commit-config.yaml and .github/workflows/\n   - Gate: `pre-commit run --all-files` exits 0; planted sk- in test fixture fails CI\n\n5. C4 \u2014 AGENTS.md reconstruction (8h): per R06 build-packet \u2014 thin AGENTS.md file <150 lines + .opencode/rules/ decomposition (4 architecture rules + 1 reference doc + 9 explicit decisions)\n   - Gate: `wc -l AGENTS.md` \u2264 150; rules/ has 4+ files; opencode.json instructions=[\"AGENTS.md\"]\n\n6. INST-1 acceptance (30min): fresh-venv test\n   - `python3 -m venv /tmp/omega-inst && source /tmp/omega-inst/bin/activate`\n   - `pip install -e \".[native,cli]\"`\n   - `omega talk \"hello\"` \u2014 must exit 0, native-gguf, IS_CLOUD=False\n\nReport: Post completion to Hivemind with exit codes, file diffs, and any deviations. Do NOT mark CP-3 complete in docs until fresh-venv test passes.\n\nTime budget: ~12h wall-clock. Use any free slot during C4 to also wire CI-2 correction batch (per R02 \u00a77: plugin paths plural, top model lmstudio/qwen3-4b-thinking, instructions=[\"AGENTS.md\"], compaction tail=5/preserve=80000/reserved=20000).",
+  "context": "Track 1 of PUBLIC-DEBUT-01. Path plan: data/coordination/KALI_DEBUT_PATH_PLAN_20260827.md \u00a72-3. Build-packet for C4: data/coordination/research_wave2/R06R11_roc_curator_corpus.md. INST-1 spec: docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md \u00a75. Pending: Architect GO on C3 + C4 owner. Pre-staged: begin when packet is unblocked (Architect sight).",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-27T18:47:45.883764+00:00",
+  "accepted_at": "2026-08-28T16:41:49.380428+00:00",
+  "accepted_by_agent_id": "opencode/maat",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "maat",
+  "completed_at": "2026-08-28T16:42:01.227073+00:00",
+  "result": "STALE \u2014 work landed in prior session. Evidence: INST-1 Fix2=ea8d3f2e (extras split+R1 redis), Fix4=_load_sovereign_secrets removed at model_gateway.py:126, Fix6=e84324ce (README 1315 badge gone), C3=4eea8eb6 (pre-commit INSTALLED 28 hooks, gitleaks+trufflehog in .pre-commit-config.yaml + .github/workflows/secret-scan.yml), C4=4eea8eb6 (AGENTS.md 120 lines \u2264150, rules/=5 files, opencode.json instructions=[AGENTS.md]). INST-1 acceptance gate D-539 verified in /tmp/omega-inst venv: omega talk \"What is 2+2?\" returns real model inference in 22.2s (consistent with native-gguf cold load), exit 0, no cloud fallback. Note: omega talk \"hello\" is a canned Iris greeting (not model inference) \u2014 use a substantive prompt for the gate. C2 tracker sync flagged to Kali (ACTIVE_SPRINT.json still marks INST-1 fix2/4/6 as \"ready\"). Task 4 (Path A' vault delete) HALTED \u2014 D-565 mandates zero vault code changes during PUBLIC-DEBUT-01.",
+  "reaped_at": "2026-09-06T20:30:43.637037+00:00"
+}

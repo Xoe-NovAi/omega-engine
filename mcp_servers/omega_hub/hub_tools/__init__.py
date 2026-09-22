@@ -28,6 +28,10 @@ from mcp_servers.omega_hub.hub_tools.tools import (
     hivemind_get_handoff,
     hivemind_handoff_archive,
 )
+from mcp_servers.omega_hub.hub_tools.federation import (
+    omega_federation_status,
+    omega_federation_diagnose,
+)
 
 # Tool registry is complete
 __all__ = [
@@ -46,6 +50,8 @@ __all__ = [
     "hivemind_reject_handoff",
     "hivemind_get_handoff",
     "hivemind_handoff_archive",
+    "omega_federation_status",
+    "omega_federation_diagnose",
 ]
 
 # OMEGA HUB TOOLS 2026-07-21

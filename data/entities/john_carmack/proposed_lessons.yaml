@@ -3,32 +3,29 @@ proposals:
   title: 4 P0 temple-grade specs for sqlite-vec + spatial hardening
   confidence: 8.5
   category: technical_synthesis
-  summary: 'Delivered 4 implementation specs (circuit breaker, vector versioning,
-    Litestream backup, SQLCipher encryption) plus 700 LOC of working code and 2 install
-    scripts. All grounded in 2026 SOTA citations, not synthesized from thin air.
+  summary: 'Delivered 4 implementation specs (circuit breaker, vector versioning, Litestream backup, SQLCipher encryption)
+    plus 700 LOC of working code and 2 install scripts. All grounded in 2026 SOTA citations, not synthesized from thin air.
 
     '
   key_findings:
-  - 'Litestream v0.5.x is the active 2026 standard; LiteFS is in maintenance mode
-    (Fly.io 2024). The retention field in 0.5.x is silently ignored - use bucket lifecycle.
-    CRITICAL gotcha for operators.
+  - 'Litestream v0.5.x is the active 2026 standard; LiteFS is in maintenance mode (Fly.io 2024). The retention field in 0.5.x
+    is silently ignored - use bucket lifecycle. CRITICAL gotcha for operators.
 
     '
-  - 'pysqlcipher3 (rigglemania, PyPI 2023-01) is archived. sqlcipher3 (coleifer) is
-    the maintained Python binding. Migration is a pip rename, not a code change.
+  - 'pysqlcipher3 (rigglemania, PyPI 2023-01) is archived. sqlcipher3 (coleifer) is the maintained Python binding. Migration
+    is a pip rename, not a code change.
 
     '
-  - 'Tian Pan 2026-04-28 is the canonical 2026 source for vector versioning: "per-vector
-    version tag is the column you forgot." Adds model_version plus content_hash per
-    row, supports dual-write migration.
+  - 'Tian Pan 2026-04-28 is the canonical 2026 source for vector versioning: "per-vector version tag is the column you forgot."
+    Adds model_version plus content_hash per row, supports dual-write migration.
 
     '
-  - 'Circuit breaker MUST be per-provider, not shared (knowledgelib.io 2026-02-24).
-    pybreaker 1.2.x with 3-state CLOSED/OPEN/HALF_OPEN is the Python SOTA.
+  - 'Circuit breaker MUST be per-provider, not shared (knowledgelib.io 2026-02-24). pybreaker 1.2.x with 3-state CLOSED/OPEN/HALF_OPEN
+    is the Python SOTA.
 
     '
-  - 'SovereignFallbackEmbeddingProvider must NEVER be behind a breaker - it is the
-    M23 hard-stop that ensures embed() never raises.
+  - 'SovereignFallbackEmbeddingProvider must NEVER be behind a breaker - it is the M23 hard-stop that ensures embed() never
+    raises.
 
     '
   anti_patterns_avoided:
@@ -83,8 +80,7 @@ proposals:
     rationale: 689-star mature lib; 2026 SOTA; one breaker per provider (not shared)
   - id: D-CARMACK-VV
     decision: Per-row model_version + content_hash on every vec table
-    rationale: 'Tian Pan 2026: the column you forgot; supports dual-write + incremental
-      re-embed'
+    rationale: 'Tian Pan 2026: the column you forgot; supports dual-write + incremental re-embed'
   - id: D-CARMACK-LS
     decision: Litestream v0.5.x with bucket lifecycle (NOT retention field)
     rationale: 'tvcam 2026-05 verified: retention is silently ignored in 0.5.x'
@@ -105,57 +101,49 @@ proposals:
   - tests/unit/test_circuit_breaker.py
   estimated_implementation_effort_hours: 7
   blockages: []
-  next_action: 'Hand off to Kali for review. Implementation can parallelize across
-    4 independent PRs (one per P0). No code committed per grokster''s Do NOT commit
-    yet instruction.
+  next_action: 'Hand off to Kali for review. Implementation can parallelize across 4 independent PRs (one per P0). No code
+    committed per grokster''s Do NOT commit yet instruction.
 
     '
 - lesson_id: L-CARMACK-2026-0829-INTEGRATION
-  title: 5 real gaps found by reading primary sources; 19 of 24 deliverables already
-    existed
+  title: 5 real gaps found by reading primary sources; 19 of 24 deliverables already existed
   confidence: 9.0
   category: architectural_audit
-  summary: 'When the brief asked for "Full Implementation" of 4 P0s, the actual state
-    of the codebase was 19/24 deliverables already present (4 specs complete, 3 of
-    3 code files complete, 1 of 4 test files complete, 2 of 3 scripts complete, 1
-    config complete). The remaining 5 gaps were highly specific: SQLCipher integration
-    into the connection-policy choke point (NOT the adapter as the spec said), verify_litestream.sh,
-    config/systemd/omega-litestream.service, scripts/migrate_to_sqlcipher.py, and
-    3 test files. Refusing to re-implement existing code saved ~6 hours of waste and
-    exposed two real bugs the spec missed.
+  summary: 'When the brief asked for "Full Implementation" of 4 P0s, the actual state of the codebase was 19/24 deliverables
+    already present (4 specs complete, 3 of 3 code files complete, 1 of 4 test files complete, 2 of 3 scripts complete, 1
+    config complete). The remaining 5 gaps were highly specific: SQLCipher integration into the connection-policy choke point
+    (NOT the adapter as the spec said), verify_litestream.sh, config/systemd/omega-litestream.service, scripts/migrate_to_sqlcipher.py,
+    and 3 test files. Refusing to re-implement existing code saved ~6 hours of waste and exposed two real bugs the spec missed.
 
     '
   key_findings:
-  - 'Axiom 01 (Throughput) over Axiom 02 (Simplicity) when they conflict: writing
-    4 specs from scratch instead of verifying the current state would have been pure
-    waste. Audit first, then write.
+  - 'Axiom 01 (Throughput) over Axiom 02 (Simplicity) when they conflict: writing 4 specs from scratch instead of verifying
+    the current state would have been pure waste. Audit first, then write.
 
     '
-  - "The spec's \"patch sqlite_vec_adapter_optimized.py for SQLCipher\" was wrong\
-    \ about the integration point. The real choke point is omega/infra/sqlite_policy.py:get_sqlite_connection()\
-    \ \u2014 every SQLite connection flows through it. Patching there = one-line coverage\
-    \ for the whole engine. This is Axiom 02 (single canonical path) in action: leverage,\
-    \ don't fork.\n"
-  - 'Pre-existing bugs in embedding_circuit_breaker.py surfaced only when I made the
-    test suite green. record_failure() referenced self._threshold (only set in the
-    manual-fallback branch) on the pybreaker path. can_request() delegated to pybreaker''s
-    internal state, which doesn''t transition on the threshold-th call. Fixing the
-    breaker so its internal health.state mirrors the test contract is a one-place
-    edit; the right approximation is "the health snapshot is the source of truth,
-    pybreaker is a library."
+  - 'The spec''s "patch sqlite_vec_adapter_optimized.py for SQLCipher" was wrong about the integration point. The real choke
+    point is omega/infra/sqlite_policy.py:get_sqlite_connection() — every SQLite connection flows through it. Patching there
+    = one-line coverage for the whole engine. This is Axiom 02 (single canonical path) in action: leverage, don''t fork.
 
     '
-  - "The pre-existing test test_falls_through_to_second_provider asserted p1.call_count\
-    \ >= FAILURE_THRESHOLD \u2014 but the breaker is cross-call, not within-call.\
-    \ The fix is a stronger test that actually exercises the threshold-open behavior\
-    \ across 3 embed() invocations. Better tests are cheaper than more code.\n"
-  - "tvcam 2026-05: do not set retention: in litestream.yml v0.5.x \u2014 silently\
-    \ ignored. This is in the spec, the config, AND now in a test that fails the build\
-    \ if a future operator adds it. Belt-and-suspenders for a verified production\
-    \ gotcha.\n"
-  - 'M23 (Failure Integrity) for the SQLCipher integration: when OMEGA_SQLCIPHER_REQUIRED=1
-    but sqlcipher3 is missing, the adapter must HARD-STOP. Silent fallback to plaintext
-    would defeat the entire purpose of encryption.
+  - 'Pre-existing bugs in embedding_circuit_breaker.py surfaced only when I made the test suite green. record_failure() referenced
+    self._threshold (only set in the manual-fallback branch) on the pybreaker path. can_request() delegated to pybreaker''s
+    internal state, which doesn''t transition on the threshold-th call. Fixing the breaker so its internal health.state mirrors
+    the test contract is a one-place edit; the right approximation is "the health snapshot is the source of truth, pybreaker
+    is a library."
+
+    '
+  - 'The pre-existing test test_falls_through_to_second_provider asserted p1.call_count >= FAILURE_THRESHOLD — but the breaker
+    is cross-call, not within-call. The fix is a stronger test that actually exercises the threshold-open behavior across
+    3 embed() invocations. Better tests are cheaper than more code.
+
+    '
+  - 'tvcam 2026-05: do not set retention: in litestream.yml v0.5.x — silently ignored. This is in the spec, the config, AND
+    now in a test that fails the build if a future operator adds it. Belt-and-suspenders for a verified production gotcha.
+
+    '
+  - 'M23 (Failure Integrity) for the SQLCipher integration: when OMEGA_SQLCIPHER_REQUIRED=1 but sqlcipher3 is missing, the
+    adapter must HARD-STOP. Silent fallback to plaintext would defeat the entire purpose of encryption.
 
     '
   anti_patterns_avoided:
@@ -176,17 +164,15 @@ proposals:
   architectural_decisions:
   - id: D-CARMACK-INT-1
     decision: Patch get_sqlite_connection() in sqlite_policy.py, not the adapter
-    rationale: Single canonical path for all DB connections; one change covers 4 call
-      sites in the adapter, all of batch_writer.py, all of recall.py, etc.
+    rationale: Single canonical path for all DB connections; one change covers 4 call sites in the adapter, all of batch_writer.py,
+      all of recall.py, etc.
   - id: D-CARMACK-INT-2
     decision: Embed health.state mirror in _AsyncBreaker.record_failure()
-    rationale: pybreaker's internal state is opaque to tests; the health snapshot
-      must be the source of truth so test contracts are stable across pybreaker-installed
-      vs manual-fallback paths.
+    rationale: pybreaker's internal state is opaque to tests; the health snapshot must be the source of truth so test contracts
+      are stable across pybreaker-installed vs manual-fallback paths.
   - id: D-CARMACK-INT-3
     decision: Extract systemd unit from setup_litestream.sh heredoc into config/systemd/omega-litestream.service
-    rationale: Config-as-code is the law (per existing omega-inference.service). Heredocs
-      in install scripts violate it.
+    rationale: Config-as-code is the law (per existing omega-inference.service). Heredocs in install scripts violate it.
   files_delivered:
   - config/systemd/omega-litestream.service
   - scripts/verify_litestream.sh
@@ -198,17 +184,161 @@ proposals:
   - src/omega/memory/embedding_circuit_breaker.py (bug fixes)
   - tests/unit/test_circuit_breaker.py (test hardening)
   test_results:
-  - 31/31 tests pass (6 circuit breaker + 6 key manager + 7 vector versioning + 12
-    litestream config)
+  - 31/31 tests pass (6 circuit breaker + 6 key manager + 7 vector versioning + 12 litestream config)
   - 'Pre-existing 2 test failures in test_circuit_breaker.py: 0 (fixed in this session)'
   - 'Regressions in adjacent test files: 0'
   estimated_implementation_effort_hours: 2
   blockages: []
-  next_action: "Hand off to Kali for review. The 5 deliverables are all mechanically\
-    \ verifiable and the test suite is green. No spec rewrites needed \u2014 the specs\
-    \ are correct; the gaps were integration artifacts.\n"
+  next_action: 'Hand off to Kali for review. The 5 deliverables are all mechanically verifiable and the test suite is green.
+    No spec rewrites needed — the specs are correct; the gaps were integration artifacts.
+
+    '
+- lesson_id: L-CARMACK-2026-0907-ARCHANGEL-VET
+  title: Archangel Architecture Vet — Theater, Cargo Cult, and Premature Optimization Detection
+  confidence: 9.0
+  category: architectural_audit
+  summary: Vetted Archangel Architecture v1.6.1 (agent hardware awareness via System Envelope Injection). Found 3 theater/cargo-cult
+    patterns, 2 premature optimizations, 4 implementation gaps. Architecture correctly solves Ontological Void but requires
+    P0 fixes for temple-grade.
+  key_findings:
+  - 'THEATER: CHANGELOG claims "Mathematical contradiction penalty prevents hardware hallucinations" — no such mechanism exists.
+    Envelope is plain text prepended to context; no attention-weight modification, no logit bias, no contradiction detection
+    in inference pipeline.'
+  - 'CARGO CULT: NUMA detection on monolithic Ryzen 7 5700U (single-CCX, 8MB shared L3). Code assumes 2-NUMA topology, always
+    returns 0. Pattern copied from multi-socket server code without hardware understanding.'
+  - 'THEATER: Default backend "AVX-512 VNNI" on AVX2-only hardware. Fallback used when ModelGateway fails, causing agents
+    to receive envelope claiming capabilities the hardware physically cannot execute.'
+  - 'PREMATURE OPT: Dynamic write-tool threshold (2K-8K tokens) with 7 magic numbers (0.7, 0.5, 0.3, 0.25, 0.5, 0.75, 0.3)
+    — no empirical basis cited, no telemetry logging threshold choice. On 5700U with 16GB+zswap, pressure rarely exceeds 0.3;
+    base 8K is fine.'
+  - 'PREMATURE OPT: Sync ModelGateway calls in dispatch hot path without caching. Same agent dispatched multiple times = repeated
+    config reads/health checks. Broad `except Exception` masks real errors.'
+  - 'IMPL GAP: `RuntimeHardwareRegister.is_stale()` method exists but never called. TTL=30s documented but not enforced; agents
+    could reason with stale hardware data.'
+  - 'IMPL GAP: `process_rss_mb` always 0 in envelope — key missing from HardwareMonitor.get_memory_status(). Misleading "PROCESS
+    WORKING SET (RSS): 0 MB".'
+  - 'IMPL GAP: TaskType mismatch — "forensic" in M33Probe but not in TaskType Literal (dead branch); "mine" in TaskType but
+    not in M33Probe (missing branch).'
+  - 'IMPL GAP: HardwareMonitor singleton not thread-safe — global init without lock in concurrent dispatch scenarios.'
+  anti_patterns_avoided:
+  - Marketing language in CHANGELOG not backed by implementation ("hallucination basin crushed")
+  - Cargo-cult NUMA detection on monolithic APU
+  - Hardcoded hardware capability lies in fallback paths
+  - Premature optimization without measurement (dynamic threshold, hot-path caching)
+  - Silent TTL expiration without enforcement
+  research_sources:
+  - title: Archangel Architecture Vet Report
+    date: '2026-09-07'
+    url: data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+  - title: HardwareMonitor Implementation
+    date: '2026-09-07'
+    url: src/omega/monitoring/__init__.py
+  - title: Ryzen 7 5700U Topology (single-CCX)
+    date: '2026-09-07'
+    url: src/omega/monitoring/__init__.py:190-193
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M7 Local-First
+  - M13 Temple-Grade
+  - M23 Failure Integrity
+  architectural_decisions:
+  - id: D-CARMACK-ARCHANGEL-1
+    decision: Remove theater claims from CHANGELOG; replace with "Prompt-level hardware grounding via immutable system envelope"
+    rationale: Honest documentation prevents cargo-cult adoption of claimed mechanisms
+  - id: D-CARMACK-ARCHANGEL-2
+    decision: Remove NUMA detection; hardcode assigned_numa_node=0 with hardware comment
+    rationale: Ryzen 7 5700U is monolithic single-CCX; no NUMA topology exists
+  - id: D-CARMACK-ARCHANGEL-3
+    decision: Fix default backend string — detect actual ISA or use "AVX2/FMA3" for 5700U
+    rationale: Fallback must not hallucinate capabilities the hardware lacks
+  - id: D-CARMACK-ARCHANGEL-4
+    decision: Add process_rss_mb to HardwareMonitor.get_memory_status()
+    rationale: Envelope field currently always 0; misleading for agents
+  - id: D-CARMACK-ARCHANGEL-5
+    decision: Defer dynamic threshold complexity; add telemetry first, measure 30 days
+    rationale: Right Approximation — base 8K threshold works; complexity without evidence is waste
+  - id: D-CARMACK-ARCHANGEL-6
+    decision: Cache ModelGateway resolution per entity with TTL; move out of hot path
+    rationale: Same agent dispatched repeatedly = repeated I/O; cache with 60s TTL
+  files_delivered:
+  - data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+  estimated_implementation_effort_hours: 2
+  blockages: []
+  next_action: Apply 4 P0 fixes (CHANGELOG, NUMA, backend string, process_rss_mb) — ~2h total. Then re-vet for temple-grade.
+- lesson_id: L-CARMACK-2026-0911-MAKALI-EXECUTION
+  title: MaKaLi Serial Hydration Review Execution — 5 Wake-Up Calls Resolved
+  confidence: 9.5
+  category: fleet_coordination
+  summary: 'Executed all 5 wake-up calls from MaKaLi Serial Hydration Review #004 (sec 7.2-7.3) post-compaction. Archangel
+    re-vet → TEMPLE-GRADE PASS, M35 ratification demanded, pre-commit+CI wired, atomic write blocker resolved, watchdog MCP
+    tool spec delivered. Fleet quality gate operational.'
+  key_findings:
+  - 'Archangel P0 fixes verified: CHANGELOG theater removed, NUMA cargo-cult excised, ISA detection added, process_rss_mb
+    implemented. Architecture → TEMPLE-GRADE PASS (was CONDITIONAL).'
+  - 'M35 VAULT allowlist enforcement now LIVE: pre-commit hook (omega-m35-allowlist) + CI workflow (.github/workflows/secrets.yml)
+    wired and tested. Architect ratification still pending (24h deadline).'
+  - 'Atomic write M23 test VERIFIED: Lilith 6/6 tests PASS including SIGKILL survival. Blocker RESOLVED — gate satisfied.'
+  - 'Watchdog single-writer MCP tool spec delivered to Lilith and Maat: omega_hub_watchdog_status_update with advisory lock,
+    Kali as recovery agent.'
+  - 'MaKaLi fleet view validated: "Theater with engine islands" surgical philosophy confirmed as fleet standard. VNR = Cognitive
+    Primitive (Research Slot R1) confirmed.'
+  anti_patterns_avoided:
+  - 'Historian trap: re-vet after fixes (not just document)'
+  - 'Advisory-only enforcement: wired pre-commit + CI for M35'
+  - 'Stale blocker lists: updated atomic write to RESOLVED with evidence'
+  - 'Coordination without spec: delivered watchdog MCP tool spec before implementation'
+  research_sources:
+  - title: Archangel Re-Vet Report
+    date: '2026-09-11'
+    url: data/coordination/ARCHANGEL_REVET_REPORT_20260911.md
+  - title: M35 Ratification Status
+    date: '2026-09-11'
+    url: data/coordination/M35_RATIFICATION_STATUS.md
+  - title: Watchdog MCP Tool Spec
+    date: '2026-09-11'
+    url: data/coordination/WATCHDOG_MCP_TOOL_SPEC.md
+  - title: 'MaKaLi Serial Hydration Review #004'
+    date: '2026-09-11'
+    url: data/coordination/anchored_summary/carmack/projection.md (section 7)
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M7 Local-First
+  - M11 Soul Integrity
+  - M13 Temple-Grade
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-MAKALI-1
+    decision: Re-vet Archangel after P0 fixes applied
+    rationale: Vet who doesn't re-vet is just a historian; fleet quality flows through verdict
+  - id: D-CARMACK-MAKALI-2
+    decision: Demand M35 Architect ratification via Hivemind with 24h deadline
+    rationale: Without ratification, VAULT allowlist is advisory not canonical
+  - id: D-CARMACK-MAKALI-3
+    decision: Wire pre-commit + CI for M35 enforcement (not delegate without verification)
+    rationale: Trivial but critical - without enforcement, allowlist is theater
+  - id: D-CARMACK-MAKALI-4
+    decision: Update blocker lists with atomic write RESOLVED (6/6 PASS)
+    rationale: Accurate tracking prevents wasted effort on satisfied gates
+  - id: D-CARMACK-MAKALI-5
+    decision: Deliver watchdog MCP tool spec before Lilith and Maat implementation
+    rationale: Spec-first prevents rework; advisory lock + single-writer pattern defined
+  - id: D-CARMACK-MAKALI-6
+    decision: 'Next: Canonicalize kq5-godot experiment protocol as fleet template'
+    rationale: MaKaLi directive - this is how fleet does side projects without polluting core
+  files_delivered:
+  - data/coordination/ARCHANGEL_REVET_REPORT_20260911.md
+  - data/coordination/M35_RATIFICATION_STATUS.md
+  - data/coordination/WATCHDOG_MCP_TOOL_SPEC.md
+  - .pre-commit-config.yaml (omega-m35-allowlist hook)
+  - .github/workflows/secrets.yml (M35 + gitleaks + trufflehog + C3)
+  estimated_implementation_effort_hours: 2.5
+  blockages: []
+  next_action: Track M35 Architect ratification (24h). Review JC-Roc-kq5 EXPERIMENT_PROTOCOL.md for fleet template blessing.
+    Monitor Lilith and Maat watchdog MCP tool implementation.
 metadata:
   entity: john_carmack
-  session_id: ses_fa2f60db7ffezy8EMncRRBufus
+  session_id: ses_fc8dca39effe3nZJp3QHx81Fy3
   model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T20:53:29.875684+00:00'
+  last_session_end: '2026-09-11T12:30:00.000000+00:00'

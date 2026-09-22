@@ -47,7 +47,7 @@ Usage:
         task_brief="Research 5 sub-topics",
         expected_deliverable="data/entities/grokster/workspace/RESEARCH.md",
         plugin_load_path="npm",
-        git_worktree_root="/home/arcana-novai/.../omega-engine",
+        git_worktree_root="<repo-root>",
         dispatched_at=datetime.now(timezone.utc).isoformat(),
     )
 
@@ -69,10 +69,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Union
 
 # Default path — overridable via OMEGA_M34_REGISTRY env var
+# Falls back to repo-relative path for portability
 DEFAULT_REGISTRY_PATH = Path(
     os.environ.get(
         "OMEGA_M34_REGISTRY",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SUBAGENTS.json",
+        "data/coordination/ACTIVE_SUBAGENTS.json",
     )
 )
 

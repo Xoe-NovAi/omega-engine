@@ -139,7 +139,7 @@ class SemanticRouter:
     def _make_signature(self, entity: Entity) -> str:
         """Create a text signature for embedding from entity domains + role.
 
-        Example: "strength protection boundaries SysAdmin — Environment Hardening"
+        Example: "strength protection boundaries S1 Infrastructure — Environment Hardening"
         """
         parts: List[str] = []
         if entity.domains:

@@ -530,20 +530,20 @@ async def oracle_list_entities() -> str:
     return json.dumps(result, indent=2)
 
 
-@m9_safe("oracle_list_pillar_keepers")
+@m9_safe("oracle_list_slot_keepers")
 @mcp.tool()
-async def oracle_list_pillar_keepers() -> str:
+async def oracle_list_slot_keepers() -> str:
     _require_service()
-    """List entities with slot assignments (backward-compat name).
-    
-    The concept of "Pillar Keepers" is Arcana-NovAi WAD content. The engine
-    discovers slot-holding entities dynamically. WAD-specific display fields
-    are in Entity.metadata and passed through for client use.
-    
+    """List entities with slot assignments (canonical name).
+
+    The engine discovers slot-holding entities dynamically. Slot semantics
+    (labels, meanings) are WAD-defined content; the engine only reports
+    occupied slot IDs and passes WAD metadata through for client use.
+
     Returns:
         JSON string containing entities with slot assignments.
     """
-    entities = await anyio.to_thread.run_sync((await registry).list_pillar_keepers)
+    entities = await anyio.to_thread.run_sync((await registry).list_slot_keepers)
     result = [{
         "name": e.name,
         "slots": e.slots,
@@ -938,7 +938,11 @@ async def hivemind_get_continuation(channel: str, entity: str) -> str:
     async with _awareness_lock:
         snap = _awareness.get(agent_id)
     if snap:
-        return snap.get("continuation", "No continuation note found.")
+        continuation = snap.get("continuation", "No continuation note found.")
+        session_id = snap.get("session_id", "unknown")
+        timestamp = snap.get("timestamp", "unknown")
+        task_current = snap.get("task_current", "unknown")
+        return f"[Agent: {agent_id} | Session: {session_id} | Time: {timestamp} | Task: {task_current}]\nContinuation: {continuation}"
     
     # Cold-store fallback: scan HALL_OF_RECORDS/<agent_id>/*.json for latest
     def _read_cold_fallback():
@@ -958,7 +962,11 @@ async def hivemind_get_continuation(channel: str, entity: str) -> str:
 
     cold = await anyio.to_thread.run_sync(_read_cold_fallback)
     if cold:
-        return cold.get("continuation", "No continuation note found in cold store.")
+        continuation = cold.get("continuation", "No continuation note found in cold store.")
+        session_id = cold.get("session_id", "unknown")
+        timestamp = cold.get("timestamp", "unknown")
+        task_current = cold.get("task_current", "unknown")
+        return f"[Cold Agent: {agent_id} | Session: {session_id} | Time: {timestamp} | Task: {task_current}]\nContinuation: {continuation}"
     return f"No awareness data for '{agent_id}' (checked hot + cold stores)."
 
 
@@ -1289,16 +1297,16 @@ async def hivemind_get_entity_context(entity_name: str) -> str:
         entity_identity = {
             "name": entity_name,
             "type": "unknown",
-            "pillar": None,
+            "slot": None,
             "role": None,
             "pantheon": None,
         }
         if entity_reg:
-            entity_identity["type"] = "pillar_keeper" if entity_reg.slots else "entity"
+            entity_identity["type"] = "slot_keeper" if entity_reg.slots else "entity"
             entity_identity["role"] = entity_reg.role
             entity_identity["pantheon"] = entity_reg.metadata.get("pantheon")
             if entity_reg.slots:
-                entity_identity["pillar"] = entity_reg.slots[0]
+                entity_identity["slot"] = entity_reg.slots[0]
 
         # Assess readiness
         readiness_flags = []
@@ -3344,10 +3352,10 @@ async def oracle_debug(
     Actions:
         assess_intent: Test how Oracle would classify a query (requires query)
         discover_entity: Find best entity for a task (requires query)
-        list_pillar_keepers: List entities with slot assignments (no args)
+        list_slot_keepers: List entities with slot assignments (no args)
     
     Args:
-        action: The operation to perform (assess_intent|discover_entity|list_pillar_keepers)
+        action: The operation to perform (assess_intent|discover_entity|list_slot_keepers)
         query: Query to analyze (for assess_intent|discover_entity)
         
     Returns:
@@ -3355,7 +3363,7 @@ async def oracle_debug(
     """
     _require_service()
     
-    valid_actions = {"assess_intent", "discover_entity", "list_pillar_keepers"}
+    valid_actions = {"assess_intent", "discover_entity", "list_slot_keepers"}
     if action not in valid_actions:
         return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
     
@@ -3395,7 +3403,7 @@ async def oracle_debug(
                 "note": "No specific entity matched; defaulting to SOPHIA",
             })
         
-        elif action == "list_pillar_keepers":
+        elif action == "list_slot_keepers":
             entities = (await registry).list_all()
             result = []
             for e in entities:

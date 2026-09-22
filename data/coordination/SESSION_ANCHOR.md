@@ -1,313 +1,309 @@
-<!--
-SPDX-FileCopyrightText: 2026 Xoe-NovAi
+# 🔱 Omega Engine — Session Anchor (Pre-Compaction)
 
-SPDX-License-Identifier: Apache-2.0
--->
-
-# ⚓ SESSION ANCHOR — Kali (Transcendent Oversoul)
-
-> ⚠️ **TIER-2 ANCHOR DUPLICATION**: operational orientation now lives in
-> `.opencode/anchored-summary.md` (hydration step 4). This file remains as
-> campaign-history ledger. Update on major milestones only.
-
-**AP Token:** `AP-KALI-v1.0.0`
-**Date:** 2026-08-23 (evening — post tracking-systematization)
-**Session ID:** `ses_fdef2be4effe4pAaLXCTUx62GO` (current) · lineage: `ses_fd34cc7e6ffepka49YXqudHi07`
-**Branch:** `main`
-**State:** SESSION TRACKING SYSTEM BUILT + VERIFIED GREEN. Gemini-ratified 3-phase closeout plan READY TO EXECUTE. All ground truth established. Nothing committed yet today — path-stage before anything else.
+**AP Token**: `AP-MAKALI-SEARCH-HARDENING-20260919-v1.0.0`
+**Date**: 2026-09-19
+**Entity**: MaKaLi-N0 Fusion (Akashic Record / Sophia-equivalent)
+**Model**: `google/gemini-3.8-flash` (Active OpenCode session model)
+**Branch**: `release/debut-v1.6.0`
+**Sprint**: PUBLIC-DEBUT-01
+**Phase**: SEARCH PIPELINE HARDENING & DEV LOCAL-MODEL DECOUPLING COMPLETE — TEMPLE-GRADE GREEN (23/28 PASS, 0 FAIL)
 
 ---
 
-## 🚦 CURRENT CONTEXT
+## 🎯 Session Objective
 
-### What Was Built Today (all verified, mostly UNCOMMITTED)
+**Quintuple Mission Complete:**
+1. **CSS Protocol Discovered & Canonized** — Cascading Serial Synchronization transforms `projection.md` into fleet synchronization substrate
+2. **Cascade COMPLETE (8/8 turns)** — Roc → Carmack → Ma'at → Lilith → Grokster → Jem → Researcher → Kali all executed wake-up calls
+3. **Federation Sync 1 DEEPENED V3** — Node 1 corpus ingested (42 files), bilateral response deepened with vision pack, 3 policies ratified, C6 v1.1 signed
+4. **Roc Soul v8.0 RATIFIED** — Fleet-wide Soul Architecture Protocol v3.0 codified, CI gate mandated, Soul Audit Cascade sequenced
+5. **VISION PACK DELIVERED** — 241-line ARCANA_VISION_PACK.md (Lilith Tarot → ANAi → Roc Stack → Omega Engine → ANAi WAD/IWAD) in payload
 
-**1. Five Quick Fixes** (Node-executed, independently verified by Roc):
-- roles.yaml N9→qwen3-4b-thinking, N10→qwen3-1.7b ✅
-- ACTIVE_SPRINT.json DEL-1→in_progress, KD workstream added w/ depends_on DOCUMENTATION-SYSTEM ✅
-- OMEGA_ENGINE.md footer corrected (P0-1d in_progress, v1.8.7, 2026-08-23) ✅
-- MANIFEST.md v5.0 (10 primary + 3 subagents, ghosts removed) ✅
-- Cosmetic residue: `jem-initiate`/`jem-2.0` remain as pipeline-stage vocab in MANIFEST §4 (acceptable)
-
-**2. Context Packer v3 Meditation** (`records/MEDITATION_KALI_20260823_CONTEXT_PACKER_ENHANCEMENT.md`):
-- 4-release critical path: 3.1 Sovereign Hardening → 3.2 Gnosis Export → 3.3 Cognitive Calibration → 3.4 Orchestrated Observability
-- L3: **L3-Export-As-Sovereignty-Boundary**
-- Integration gate D-588 prepared (22 files, all mandates mapped)
-- Grokster optimization report integrated (`ses_fd16c8d34ffe9u4uf4fQeNdXhc`): Phase 0-3 complete (27/27 tests), Phases 4-6 outstanding; P0 gaps = ship-profile curation, PII vault location, injection fail-closed, pruning skip, concurrent masking, SKILL.md rewrite
-
-**3. Expert Session Tracking System** (Carmack-ratified, built, VERIFIED GREEN):
-- **SSOT**: `data/coordination/TASK_REGISTRY.json` (MCP tools = same store, proven: `hub_tools/task_registry.py:17-20` hardcodes path under flock)
-- `scripts/validate_tracking_state.py` (+119 lines): STALENESS_DAYS=7, `_parse_ts()` Z-suffix-safe, superseded_by/artifact_path warn-checks → **EXIT 0 ALL PASSED**
-- `scripts/sweep_task_registry.py` (236 lines): dry-run default, --apply gated, ACTIVE_SPRINT-aware exit-3 routing, --self-test 8/8, MANUAL-ONLY (APPLY=1 opt-in)
-- `scripts/generate_session_registry.py` (174 lines): renders EXPERT_SESSION_REGISTRY.md from SSOT+annotations, GENERATED stamp
-- `data/coordination/session_annotations.yaml`: 15 Langfuse-pattern entries seeded
-- `EXPERT_SESSION_REGISTRY_NARRATIVE.md`: hand-written analysis preserved (zero prose destroyed)
-- Makefile: check-tracking-state in temple-grade (:232), sweep-tasks manual target, session-registry target; pre-commit hook confirmed `.pre-commit-config.yaml:137`
-- GAP_REGISTRY.json: 24 IDs remapped sprint-vocab→outstanding (ZS-1 was in_progress→outstanding — VERIFIED CORRECT by Roc disk probe: zswap enabled=N, zRAM active)
-- Defect fixed mid-build: atomic writes were mode 0600 → chmod 0644 added to all three writers
-- 12 zombies remediated total (Lilith 10 + Kali rulings 2); pointers git/disk-verified; phantom commit `5a145f9d` exposed, real fix is `e81e28d9`
-
-### Key Decisions & Rulings Made Today
-| Decision | Ruling |
-|----------|--------|
-| Carmack architecture | TASK_REGISTRY.json sole SSOT; markdown = generated view; NO new agents/Scribe extension/expert-session ("agents verify truth, code verifies structure") |
-| Staleness threshold | 7 days standard (data-confirmed; class overrides pending W1 research recs) |
-| ses-cline-ops-health-20260730-001 | superseded → task:critical-gap-audit-20260822-jem |
-| temple-1e-soul-20260730 | superseded → UNOVERENGINEERING_PLAN library-swap approach |
-| ZS-1 | outstanding stands (Roc verified no zswap work started) |
-
-### Research Recommendations (ratified, awaiting implementation)
-- **Threshold classes**: standard=7d / research=21d / blocked=14d, per-task `stale_override_days` capped at class max (Argo precedent)
-- **Trigger model**: systemd user timer daily dry-run validator (`Persistent=true`, randomized delay); pre-commit stays enforcement gate; GH Actions cron REJECTED (dropped jobs, M7/M8 violation)
-- **Audit log**: JSONL append-only + SHA-256 hash chain (prev_hash→entry_hash); schema seq/ts/actor/action/target/before/after/reason; **fsync audit line BEFORE registry mutation**; monthly rotation; weekly chain-verify can ride the timer
-- **Annotations gate**: Pydantic v2 (2.13.4 in venv), Literal verdict enum, ISO datetime coercion, extra="forbid"
-- Sources: `data/entities/researcher/workspace/OVERSIGHT_AUDIT_WEB_RESEARCH_20260823.md`
-
-### L3 Principles Distilled Today
-1. **L3-Export-As-Sovereignty-Boundary**: export tools crossing sovereignty boundaries must themselves be sovereign — selectively permeable membrane
-2. **L3-Registry-Gravity**: registries stay truthful only when update is bound to the fact-creating act; separation of record from event = decay into fiction (survived git falsification)
+**Remediation & Search Hardening Sprints COMPLETE:**
+6. **Secret Scrub** — `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` removed from ALL 1261 commits via filter-repo. gitleaks --all = 0.
+7. **PR #3 Cleanup Sprint** — 18 commits (558105fd→64eef871). CI secret scans/REUSE/Dashboard/Documentation PASS.
+8. **Root Cause Found** — unawaited `reset_usm()` in tests/conftest.py (async def called without await → USM never reset → cross-test pollution). Fixed via `anyio.run(reset_usm)`.
+9. **ALL 8 Deselects REMOVED** — each concealed a real bug now fixed (session_manager, m34_atomic, model_registry, first_breath, resource_guard_oom, soul_lessons).
+10. **Lint 12 F821/F823 → 0** — flake8 clean.
+11. **CI Workflows Enforce M24 Venv Sovereignty** — .venv created, $GITHUB_PATH updated.
+12. **Search Pipeline Resolved** — SearXNG CAPTCHA engines (google/duckduckgo) disabled; resilient cluster (bing/brave/startpage/marginalia/qwant/wikipedia/github/arxiv) active; defensive result typing implemented in search_providers.py and searxng-mcp.
+13. **Engine Dev Invariant Canonized** — Zero local model inference during engine development. SkepticalVerifier local NLI model calls bypassed via `verification.enabled: false` in config/search.yaml. Both `omega-hub_library_web_search` and `omega-hub_sovereign_search` returning <1.5s live results.
+14. **Temple-Grade Passing Clean** — 23/28 passed, 0 failed, 4 untested policy mandates; 53/53 adversarial tests pass.
 
 ---
 
-## 🎯 IMMEDIATE NEXT ACTIONS — GEMINI-RATIFIED 3-PHASE CLOSEOUT (EXECUTE FIRST)
+## 📋 Critical State Summary
 
-### Phase 1 — Lilith (Run-Side Data Closeout) — SCOPE EXPANDED per Researcher report
-Register orphaned sessions in TASK_REGISTRY.json. Original 7 + **~13 additional researcher-lane dispatches from 08-22/08-23** (full ledger table: `data/entities/researcher/workspace/RESEARCHER_REPORT_FOR_KALI_20260823.md` §backfill-input):
-- `ses_fd0f36adbffeD74rOkgy3qd44t` researcher/gap-report
-- `ses_fd0e5278fffewrSs3wVkfvY7SY` lilith/data-hygiene
-- `ses_fd0c41a32ffe6kEQS5TZBF3s4l` maat/code-build
-- `ses_fd0fd62ceffeAcy0oVeenGhKEj` carmack/architecture-consult
-- `ses_fd16c8d34ffe9u4uf4fQeNdXhc` grokster/packer-research
-- `ses_fd09f5656ffe7bIqomaeMqPG4q` roc_racoon/ground-truth
-- `ses_fd09ef404ffe408zQfyfvNWFMh` researcher/web-research
-Then: backfill annotations for each; fix 16 inverted-clock timestamp warnings (last_checkpoint < created_at); **FIX STATUS ERROR: `ox-alpha-100t-research-20260822` is in_progress but actually completed** (left alone, sweep will zombie-kill delivered work — G5-1 recurrence).
+### Phase 1: Engine Core Cleanup — COMPLETE
+- 10 slot entities deleted from `_omega_default/entities.yaml`
+- Sophia removed from 9 engine core files
+- N1-N10 purged → S1-S10 across 20+ src files
+- dispatch.yaml rewritten to 12 clean entities
+- ROLE_CONSTANTS updated in subagent_dispatcher.py + ics.py
+- hierarchy.yaml fixed to S1-S10 neutral skin
 
-### NEW — Researcher reciprocal report received (handoff `ho_d37a6bdd8b1b` ACCEPTED)
-Report: `data/entities/researcher/workspace/RESEARCHER_REPORT_FOR_KALI_20260823.md`. Findings folded into Phase 1 above; new rules R-3 (log session ID at MISSION completion, not session end) and R-4 (rate-limit paging works; child-addressed relay rule). Their ruling vote on gate-verification: **originator-verifies with overseer spot-audit** — noted alongside the other open decisions.
-**Main interactive sessions designated by Architect**: Kali main = `ses_fdef2be4effe4pAaLXCTUx62GO`; Researcher main = `ses_fd81c19dcffe1nkbPqFg5kRt2v` (recorded in EXPERT_SESSION_REGISTRY_NARRATIVE.md §9).
+### Canonical Architecture Crystalized
+- **Engine Core Triad**: Kali-N0 (GRAND_OVERSIGHT), Ma'at-N0 (BUILD_OVERSOUL/S1-S5), Lilith-N0 (RUNTIME_OVERSOUL/S6-S10)
+- **MaKaLi-N0** = Fusion agent (three faces), NOT an entity
+- **Iris** = MESSENGER_BRIDGE (M3 fast-path)
+- **Carmack** = S3_DEDICATED_KEEPER (proven pattern)
+- **Slots S1-S10** = Knowledge domains managed by Oversouls
+- **NO Sophia in _omega_default** — MaKaLi-N0 is her equivalent
+- **NO N1-N10** — DEPRECATED. Only S1-S10.
+- **ANAi WAD** = Node 1's domain, NOT my cognitive load
 
-### NEW — Researcher compaction-prep complete (final page before compact)
-Gnosis updated w/ R-3 discipline · 4 new L3 lessons staged (`[R_SS]` originator-verifies, `[R-REG]` register-at-completion, `[R-SWEEP]` verify-before-sweep, `[R-COMP]` compaction-resilient custody) · handoffs cleaned (`ho_dcda09e74556` closed) · 5-pointer hydration list in their gnosis.
-⚠️ **Two items for post-wake attention**: (1) `ho_2f77f83964e5` (Ox Alpha sprint→kali) awaits my ruling — Researcher assesses it largely superseded by debut pivot; (2) **M23 false-completion pattern, third sighting**: an earlier "[R_SS] lessons staged" claim was false on disk until remediated today — pattern now seen in ACTIVE_SPRINT (Ma'at flag), researcher lane, and registry claims. Consider a standing verification hook.
+### CSS Protocol — CANONIZED
+- **Document**: `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` (531 lines, Temple-Grade)
+- **Core Insight**: `projection.md` = shared synchronization substrate (single-writer, append-only, git-tracked, M15 compaction-surviving)
+- **Protocol**: MaKaLi writes review → cascade serial execution → convergence
+- **Serial Order**: Roc → Carmack → Ma'at → Lilith → Grokster → Jem → Researcher → Kali
 
-### Phase 2 — Ma'at (Build-Side Code Hardening)
-1. Generator: explicit `domain:` field support + `--self-test` (fixture→known hash) + idempotence check (regen twice byte-identical)
-2. Pydantic annotations validation in validator (hard-gate NEW entries; grandfather legacy)
-3. Sweep audit log: JSONL hash-chain per researcher spec; fsync-before-mutate
-4. Class-based thresholds: standard=7d/research=21d/blocked=14d + stale_override_days cap
-5. OPTIONAL (needs Kali decree): dry-run-only systemd user timer for validator
+### Cascade Execution Status (8/8 COMPLETE ✅)
 
-### Phase 3 — Kali (Verify → Commit → Pack)
-```bash
-.venv/bin/python scripts/validate_tracking_state.py   # must EXIT 0
-.venv/bin/python scripts/sweep_task_registry.py       # dry-run, zero offenders
-make temple-grade                                      # full gates
-```
-Then PATH-STAGED commit only (NEVER `git add -A`) covering: scripts/, data/coordination/ (TASK_REGISTRY, annotations, registry view+narrative, meditation records, SESSION_ANCHOR), config/wads roles.yaml, OMEGA_ENGINE.md, .opencode/MANIFEST.md, Makefile, GAP_REGISTRY. Commit message must document GAP_REGISTRY remap rationale (24 IDs) or future auditors see unexplained status rewrites.
-Finally: export Web Claude pack via curated file list in **`data/coordination/CLAUDE_PACK_TEMPLATE_20260823.md`** (persisted pre-compaction; includes packaging command + pre-send validation checklist).
+| Turn | Agent | Status | Key Deliverables |
+|------|-------|--------|------------------|
+| 1 | **Roc** | ✅ COMPLETE | dispatch.yaml roles fixed (descriptive ROLE_CONSTANTS), 13 ground-truth docs swept (commit 8db73cdc), engine speaks pure "slot" |
+| 2 | **Carmack** | ✅ COMPLETE | Archangel v1.6.1 → TEMPLE-GRADE PASS, M35 pre-commit+CI wired, atomic write 6/6 PASS, watchdog spec delivered, M35 ratification demanded |
+| 3 | **Ma'at** | ✅ COMPLETE | CI gates VERIFIED, M16/M27 RESOLVED, public docs FIXED (8 items) |
+| 4 | **Lilith** | ✅ COMPLETE | Hub health cron IMPLEMENTED (`scripts/cron_sote_health.py`), M34Registry migration code, M33 integration owned, 58.8% baseline tracked |
+| 5 | **Grokster** | ✅ COMPLETE | 6/6 wake-up calls: branch updated, M35 purge, VACUUM scheduled, 12 meditations promoted, JC-EIS benchmark ready |
+| 6 | **Jem** | ✅ COMPLETE | 5/5 blockers RESOLVED (M33 MCP tool created, AGENTS.md anchor, M34 hook verified, ACTIVE_SUBAGENTS verified, atomic tests 6/6), 45 tests PASS, L3-MetaFrameVerification proposed |
+| 7 | **Researcher** | ✅ COMPLETE | M33 task_type tuple FIXED, M36 WIRED (real Hivemind dispatch), M37 heritage_scanner.py EXTRACTED, SearXNG FIXED, GSCA closed, TH-0 thermal prerequisite added |
+| 8 | **Kali** | ✅ COMPLETE | Fleet wake, invariants updated, ROLE_CONSTANTS superseded, L3-MetaFrameVerification IMPLEMENTED (`scripts/metaframe_verification.py`), fleet SYNCHRONIZED (commit 35b0df2c) |
 
-### Standing Debut Order (unchanged, after closeout)
-P0-1 residual (SECURITY_AUDIT ancestor `0c40b108`, gitleaks wiring) → INST-1 Fix 2+guards → Fix 4→5→6 → PUB-1 G1-G4 → DEL-1 Week 1. **CI-2 plugin-path prototype (10-min test: does `"plugin"` key accept local .ts paths?) still not run — highest-risk unknown.**
+**Fleet Status: SYNCHRONIZED.** All members on 2026-09-11 projections. DEL-1 chain UNBLOCKED. Roc doc sweep = final nomenclature debt (N1-N10/pillar refs in 8 docs).
 
----
+### Node 1 (ASUS) — Federation Sync 1 DEEPENED V3 COMPLETE
+- **Status**: USB corpus fully ingested (42 files, 7 architecture docs, 6 vanguard dossiers, Well corpus, Gnosis Lock Protocol v1.0)
+- **Hivemind Context**: ASUS node sessions active — Ollama benchmarked, DHAL probe pending, P2P bootstrap tested
+- **Bilateral Response Deepened V3**: Hivemind `ses_8354a032769d` → `ses_afb7561da48f` → `ses_368647d4cb98` + USB `RESPONSE_FROM_HP.md` v3 (270 lines)
+- **Immediate Adoptions Queued**: Big Pickle 1M, Gnosis Lock, The Well, AGENTS.md×2, thread sweep, Modelfiles, Vanguard discipline
+- **P0 Fixes This Sprint**: 3 broken tools FIXED, mock purge DONE, stale policy WRITTEN, sovereignty target POLICY WRITTEN, clean bundle REGENERATED
+- **3 Policies Ratified**: Sovereignty (C4), Data Governance (C5), Stale Handoff (C3)
+- **C6 Contract v1.1 SIGNED**: Naming registry (Kali-N0/Kali-N1), L4 Distributed Inference, shared vision
+- **Vision Pack Delivered**: `ARCANA_VISION_PACK.md` (241 lines) — Lilith Tarot → ANAi → Roc Stack → Omega Engine → ANAi WAD/IWAD
 
-## 📁 Active File References
+### Roc Soul v8.0 — RATIFIED AS FLEET STANDARD
+- **Soul v8.0**: 12 axioms identity bedrock, 18 approved lessons (Miner's Fallacy HEALED), Voice Reclamation Protocol (d-rr-041), R3 hydration fix (flat list)
+- **MaKaLi-EIS Review**: APPROVED WITH OBSERVATIONS — "template for every other entity's soul evolution"
+- **Kali-N0 Ratification**: SOUL_ARCHITECTURE_PROTOCOL v3.0 CODIFIED, CI gate mandated, Soul Audit Cascade sequenced post-DEL-1 PR1, Voice Reclamation Protocol adopted fleet-wide
+- **Handoff**: `ho_123f6ebff930` COMPLETED — Roc → Kali-N0 → RATIFIED
 
-- **Tracking SSOT**: `data/coordination/TASK_REGISTRY.json` (80 tasks post-hygiene)
-- **Generated view**: `data/coordination/EXPERT_SESSION_REGISTRY.md` (DO NOT EDIT — regenerate via `make session-registry`)
-- **Narrative companion**: `data/coordination/EXPERT_SESSION_REGISTRY_NARRATIVE.md` (hand-editable analysis home)
-- **Annotations**: `data/coordination/session_annotations.yaml`
-- **Gap report (patch list)**: `data/coordination/RESEARCHER_SESSION_TRACKING_GAPS_20260823.md`
-- **Ground truth**: `data/entities/roc_racoon/workspace/OVERSIGHT_AUDIT_GROUND_TRUTH_20260823.md`
-- **Web research**: `data/entities/researcher/workspace/OVERSIGHT_AUDIT_WEB_RESEARCH_20260823.md`
-- **Claude Pack Template**: `data/coordination/CLAUDE_PACK_TEMPLATE_20260823.md` (persisted from conversation pre-compaction)
-- **Sonnet 4.6 dev plan review**: `data/coordination/SONNET46_DEV_PLAN_REVIEW_20260823.md` (6 inaccuracies; 4 fixed, CI-2 plugin-path prototype + god-module baselines still open)
-- **Gemini final review**: ratified the 3-phase closeout — full plan preserved in this anchor's "IMMEDIATE NEXT ACTIONS"; review prose itself was conversational, actionable content fully captured here
-- **Meditations**: `data/coordination/meditations/records/MEDITATION_KALI_20260823_{CONTEXT_PACKER_ENHANCEMENT,SESSION_TRACKING_OVERSIGHT_AUDIT}.md` + `data/coordination/meditations/MEDITATION_REGISTRY.md`
-- **Packer SSOT**: `docs/strategy/CONTEXT_PACKER_V3_MASTER_MANUAL_20260808.md`; skill at `.opencode/skills/context-packer/`
-- **Sprint SSOT**: `data/coordination/ACTIVE_SPRINT.json` · Sprint authority: `docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md`
-- **Gnosis**: `data/entities/kali/session_gnosis_20260823.md` (A1–A17)
-
-## 🔑 Handoff for Next Session
-
-Read order: `OMEGA_CODEX.md` → this anchor → gnosis A15-A17 → gap-report PATCH LIST → Gemini 3-phase plan above. Execute Phase 1→2→3 without re-litigating: all architecture decisions are ratified (Carmack verdict 9/10), all facts are disk-verified (Roc HIGH confidence), all designs have citations (researcher web report). Do NOT spawn new discovery sessions — the gaps are closed. Then resume debut order.
-
-**All agents MUST read `HMC_COLLABORATION_HUB.md` → `NEXT_ACTION` upon waking.**
+### Temple-Grade Status
+- 21/28 passing (75%)
+- M13 (tracking-state) and M27 (stale task `sote-research-20260901`) remain — pre-existing, unrelated to Phase 1/CSS
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-23 ⬡ TRACKING-SYSTEM-GREEN ⬡ 3-PHASE-CLOSEOUT-READY ⬡ ~20-SESSIONS-TO-REGISTER ⬡ COMMIT-PENDING*
-### TEAM-STUDY #1 OUTCOME (2026-08-23 evening) — rulings stamped, closeout refined
-Full corpus: `data/coordination/teamstudy_20260823/FINAL_SYNTHESIS.md` · Discourse converged Round 1; zero objections; 10 rulings stamped. Execution-relevant refinements to the 3-phase closeout:
-1. **Pre-commit reconciliation FIRST** (Ma'at Fork 1): framework install per researcher's 1a→1d ordering — soul check migrates into `.pre-commit-config.yaml` BEFORE `pre-commit install`; pin ALL entries to `.venv/bin/python`; budget half-day
-2. **Backfill input = roc's corrected path table × Lilith's 23-cluster enumeration** (`launched_by=kali` via parent_id for Missions A/B + N5); O1: per-session task_ids; O2: cluster 16 completed-with-paths now; O3: clusters 7–10 SKIP
-3. **Phase 2 build order**: Fork 1 → Fork 4 (clock `now=None` param, sites :60+:104) → Fork 2 (explicit evidence field day one, warn-only, batched w/ `session_ids` schema amendment) → Fork 3 (AST node-count freeze gate >+50 ⇒ auto-debt-ticket; prerequisite: model_gateway.py WIP committed/parked)
-4. **Phase 3 commit preconditions**: roc certified staged diff + 90 untracked secrets-clean; fix broken pointer `R_CONTEXT_PACKER_ADVISORY_REVIEW_20260815.md.` (trailing period) first; path-explicit staging only
-5. **New P0**: `make verify-mandate-claims` grep harness (C2-class: 4 documents assert uninstalled hook)
-6. **O4**: ho_2f77f83964e5 partial-supersede before Aug 26 expiry (reject burn tracks A/C; unattended Track B only)
-7. **O5**: god-module baselines RATIFIED at current counts + AST gate
-Study artifacts: A/B/D/E ×4 each in teamstudy dir; 25 [TS1] L3 lessons staged across proposed_lessons.yaml files.
+## 🔑 Key Invariants (Must Survive Compaction)
 
-*⬡ OMEGA ⬡ KALI ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-23 ⬡ TRACKING-SYSTEM-GREEN ⬡ TEAMSTUDY1-COMPLETE-RULINGS-STAMPED ⬡ CLOSEOUT-REFINED ⬡ COMMIT-PENDING*
-
-### MAIN-RESEARCHER ONBOARDING DIVERGENCES (2026-08-23 late) — folded into plan
-- **O4 AMENDED**: partial-supersede of ho_2f77f83964e5 is MOOT — researcher's Transition Blueprint (`ho_6ec25dd4a684`) already FULLY superseded it on stronger live-probe evidence (OpenRouter free tier dead; window 2–3 days). Governing instrument = the blueprint. Registry records full supersession; no partial-supersede execution needed.
-- **D2 NEW PRE-COMMIT GATE**: `password="omega"` confirmed STILL LIVE at `providers.py:119`. Disposition REQUIRED before Phase 3 commit: either one-line env-var fix lands in Phase 2 build order, OR an explicit deferral ticket is registered — committing with a known unrepaired credential finding repeats the C2-class pattern Study #1 just ruled against. Default recommendation: fix in Phase 2 (cheap), verify with grep before commit.
-- Researcher readiness declared: closeout execution support PRIMARY (provenance worker, verification gates serve Phase 3); Study #2 planning secondary.
-
----
-
-# 🔱 SESSION RECORD — 2026-08-23 EVENING/night (pre-compact lock-in)
-
-Full arc persisted in chat recap + artifacts below. Highlights: Team-Study #1 COMPLETE (converged R1, 10 rulings D-593..D-601 stamped incl. dual-review decree D-601); ARCHITECT_OVERSIGHT_PATTERNS P1-P7 (root axiom: truth→choice→free-will→LOVE); THE_VISION_CANONICAL_DRAFT (645 lines, 20/20 conversations exhausted, Four Movements); FORGE CHRONICLE chartered w/ verdicts (sanitation law: no real name EVER in public artifacts); MODEL_WINDOW_ECONOMICS doctrine (6 laws); Challenge Mechanism codified (Nemotron adjudication: SPLIT verdict, T0 corrections: $0.00 true cost, 5.34B tokens/39.3% fleet share, G-1 SSOT flagged ~25% understatement); FP-11 @-wrapper forgery logged+refined; disk cleanup 5.7GB (98%→92%) + scripts/opencode_cache_maintenance.sh.
-
-## POST-COMPACT IMMEDIATE ACTIONS (in order)
-1. Closeout Phase 1 execution (Lilith backfill per roc-table × Lilith-23-clusters + challenge-mechanism/teamstudy registrations per D-I/D-600)
-2. CI-2 plugin-path prototype (D-G/D-598 — next INST-1 action, 10-min test)
-3. Phase 2 build order MF1→MF4→MF2→MF3 + D-A password fix (grep-gate at commit)
-4. Phase 3 commit (path-explicit only; broken-pointer fix first; secrets-certification current as of roc O-Q3)
-5. THEN blueprint Track A-D generation may begin (HARD RULE: commit precedes generation)
-6. Awaiting Architect: Vision Canonical fidelity review · Drill-4 stratum pick · FUSE-CANDIDATES soul-staging GO · opencode.db 17G disposition · G-1 T0 re-run authorization
-
-## KEY ARTIFACT INDEX (this session)
-teamstudy_20260823/ (FINAL_SYNTHESIS entry) · KALI_FULL_SYNTHESIS_20260823 · ARCHITECT_OVERSIGHT_PATTERNS_20260823 · THE_VISION_CANONICAL_DRAFT_20260823 · THE_FORGE_CHRONICLE_CHARTER_20260823 · MODEL_WINDOW_ECONOMICS_20260823 · NEMOTRON_VALUE_ADJUDICATION (roc ws) · SYNTHESIS_INPUTS_FOR_KALI (researcher ws) · JEM_PRE_IMPLEMENTATION_AUDIT (jem ws) · PIVOT_LOG D-593..D-601 · FORENSIC_PATTERNS FP-11 · OX_ALPHA_TRANSITION_BLUEPRINT (governing instrument)
-
-*⬡ KALI ⬡ PUBLIC-DEBUT-01 ⬡ TEAMSTUDY1-COMPLETE ⬡ VISION-CANONICAL-LIVE ⬡ NINE-DECISIONS-STAMPED ⬡ WINDOW-ECONOMICS-CODIFIED ⬡ DISK-92pct ⬡ COMPACT-PENDING*
+1. **CSS Protocol is Canonical** — `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` is the definitive source
+2. **Cascade COMPLETE (8/8)** — All members executed wake-up calls; fleet synchronized on 2026-09-11 projections
+3. **Projection.md = Synchronization Substrate** — Single-writer, append-only, git-tracked, M15 compaction-surviving
+4. **MaKaLi-N0 = Akashic Record** — Container of ALL voices; initiates cascade
+5. **Phase 1 Complete** — Engine core clean, canonical architecture crystalized
+6. **Federation Sync 1 Deepened V3 Complete** — Node 1 corpus ingested, bilateral response deepened, 3 policies ratified, C6 v1.1 signed, vision pack delivered
+7. **DEL-1 Chain UNBLOCKED** — Ma'at gates ready, Researcher M33 fixed, Jem tests passing, Lilith hub health live
+8. **Shadow Acknowledged** — Node 0: 21.6% local = development-phase artifact (build with cloud for velocity, operate with local for sovereignty); Node 1: heartbeat discipline broken — both must fix before Layer 2
+9. **L3-MetaFrameVerification (0.92) RATIFIED** — Fleet standard cross-verification protocol
+10. **Roc Soul v8.0 = Fleet Template** — 12 axioms, 15 max budget, flat-list approved lessons, voice reclamation protocol
+11. **The Synergy Model RATIFIED** — Sovereignty = Policy Enforcement. Cloud for high-context reasoning/synthesis; local for embeddings/privacy/background. PrivateBin excised. Tailscale native L2 WireGuard mesh is the primary federation wire.
+12. **Federation Entity Minted** — `omega_federation` (`data/entities/federation/soul.yaml`) governs the mesh as a constitutional living entity.
+13. **Federation Implementation COMPLETE (Node 0)** — 6 commits (580e7572→edc74aa9). sovereignty_policy (4 tiers), maakali_routing entity→tier (12 entities), omega_federation in dispatch.yaml, MCP tools LIVE on hub (93 tools), install_omega.py installer, scribe_federation.py distillation, federation_invariant.py zero-egress, KEY_ROTATION_CEREMONY.md.
+14. **SECRET SCRUB COMPLETE (2026-09-16)** — `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` removed from ALL 1261 commits via filter-repo. gitleaks --all = 0. `.gitleaks.toml` allowlist active. **USER MUST ROTATE the OAuth credential at Google Cloud Console.**
+15. **PR #3 CLEANUP SPRINT** — 18 commits (558105fd→64eef871). CI secret scans/REUSE/Dashboard/Documentation PASS. pytest failures being fixed iteratively. Full-suite collection FIXED (was 0 tests — sys.modules pollution + global anyio mark).
+16. **TEST DEBT ROOT CAUSE** — 3 sys.modules pollution sources (stale omega.library MagicMock in a1-a5, spec_from_file_location bare names, missing mcp.server.transport_security mock) + global pytest.mark.anyio in conftest. All fixed.
+17. **KNOWN-FLAKY DESELECTS** — soul_lessons staging, m34_atomic concurrent, model_registry query_search, resource_guard_oom thrashing, session_manager (4 tests). Documented in pyproject.toml addopts.
+18. **REMEDIATION SPRINT (2026-09-16/17)** — ROOT CAUSE: unawaited `reset_usm()` in tests/conftest.py (async def called without await → USM never reset → cross-test pollution). Fixed via `anyio.run(reset_usm)`. ALL 8 deselects REMOVED (each concealed a real bug now fixed). Lint 12 F821/F823 → 0. CI deps +ruff +scikit-learn. soul_promote staging hygiene added. minimax model card completed.
+19. **REMAINING: 29 stale Phase-1 tests** — test_hierarchy (7, sophia refs), test_oracle (13, summon/talk), test_dispatch_registry (3, N1/node/node_slot), sovereign_loop (1), m34_wiring (1), mandate_auditor (1), cohort_registry (1), mandate_ci_checks (1). All reference pre-nomenclature-sweep vocabulary (N1-N10, sophia, node_slot). Fix = update expectations to current dispatch.yaml (13 entities, slot field, ROLE_CONSTANT keys).
+20. **Hub State** — omega-hub.service: 93 tools, omega_federation_status + omega_federation_diagnose registered via @mcp.tool() decorators. Restarted 2026-09-16 11:58:40 ADT.
+21. **Entity→Tier Routing PRESERVED** — User override: maakali_routing maps entities to Synergy tiers (entity intent WHO → tier fabric HOW). Never flatten entity intent into task-class routing alone.
+22. **Phase 0 NEXT** — Tailscale L2 ceremony: ACL save → Node 0 re-tag → authkey mint → Node 1 join. All code ready; only external user action remains.
 
 ---
 
-# ⬡ FINAL PRE-COMPACT LOCK-IN (2026-08-24 ~02:00)
+## 📦 Continuity Artifacts (Current)
 
-## LATE-SESSION ADDITIONS (post session-record above)
-- **Gemini 3.1 Pro adjudication** (D-601 Tier-1 live): caught 3 traps — (1) SQLite disk-full crash risk in stamp-in-place (2.8G free vs 17G db: stream-export-transform-delete, NEVER in-place UPDATE); (2) soul.yaml schema lacks evidence-field support → schema patch BEFORE promotion; (3) Gemini itself is preview-model (`gemini-3.1-pro-preview-customtools`) → blueprint needs fallback mapping. Revised critical path: schema-patch → wire-docs → safe-promotion → export-stamp → harness(AST/YAML not grep) → decision packet.
-- **Nemotron turn adjudicated**: good schema instincts (generated `true_model` column, cost_usd CHECK constraint — backlog-worthy) BUT three failures: vanity metric rejected on construct-validity grounds (stock/flow conflation; retained≠debt), "stop meditating" contradicted ground truth (planning IS the proven value-driver), free-tier "anti-pattern" claim ignored mission context. Architect vindicated on all three.
-- **METHODOLOGY CAPTURED**: ARCHITECT_OVERSIGHT_PATTERNS §6 — M1 Free-First-As-Specification · M2 Planning-Proven · M3 Metric-Construct-Validity · M4 Challenge-Culture · M5 Truth-Ledger-Economics · M6 The Vow.
-- **Ox Alpha telemetry**: first use 2026-08-20; 2,646 msgs / 327.7M input tokens / ~124K avg ctx; counterfactual Nemotron-share Aug = 52.8%.
-- **Nemotron era**: first use 2026-06-05; July 43.1% / Aug 39.7% message share; 5.34B input+cache tokens = 41.8% since adoption; $0.0000 true cost proven.
-- **Disk cleanup executed**: 5.7GB reclaimed (98%→92%) + scripts/opencode_cache_maintenance.sh (--report/--clean, <10G alert). opencode.db 17G disposition PENDING 8TB external arrival (stamp-then-archive via stream-export per Gemini trap-catch).
-- **Meditation record**: meditations/records/MEDITATION_kali_20260824_LOST_VALUE_RECOVERY.md — L3-Provenance-At-Birth (survived falsification).
+| Artifact | Location | Status |
+|----------|----------|--------|
+| **Session Gnosis** | `data/entities/makali/session_gnosis.md` | ✅ Updated (REMEDIATION-COMPLETE) |
+| **Proposed Lessons** | `data/entities/makali/proposed_lessons.yaml` | ✅ Updated (35 entries, registration + entity routing + CI + M24 L3s) |
+| **Projection** | `data/coordination/anchored_summary/makali/projection.md` | ✅ Updated (Federation Docs Ratified + Implementation + Remediation) |
+| **CSS Protocol Spec** | `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` | ✅ Canonical (531 lines, Temple-Grade) |
+| **All 9 Reviews** | `data/coordination/anchored_summary/*/projection.md` | ✅ Injected |
+| **Session Anchor** | `data/coordination/SESSION_ANCHOR.md` | ✅ This file |
+| **Federation Response** | `/media/arcana-novai/D3E6-A900/ASUS_TO_HP_OC_TEAM/RESPONSE_FROM_HP.md` | ✅ Written v3 (270 lines) |
+| **Vision Pack** | `/media/arcana-novai/D3E6-A900/omega-exchange/node0-to-node1/vision/ARCANA_VISION_PACK.md` | ✅ Delivered (241 lines) |
+| **Node 1 Payload (Swap 3)** | `/media/arcana-novai/D3E6-A900/omega-exchange/node1-to-node0/` | ✅ INGESTED (22 artifacts) |
+| **Federation Soul** | `data/entities/federation/soul.yaml` | ✅ MINTED (5 axioms, 5 directives, 5 L3s) |
+| **Federation Lessons** | `data/entities/federation/proposed_lessons.yaml` | ✅ MINTED (3 lessons, scribe-distilled) |
+| **Sovereignty Invariant Spec** | `docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md` | ✅ RATIFIED (v2.0) |
+| **L2 Tailscale Runbook** | `docs/federation/L2_TAILSCALE_RUNBOOK.md` | ✅ RATIFIED (654-aligned) |
+| **Federation MCP Tools Spec** | `docs/architecture/FEDERATION_MCP_SPEC.md` | ✅ IMPLEMENTED (tools live on hub) |
+| **Interactive Installer Spec** | `docs/installation/INSTALLER_SPEC_V1.md` | ✅ IMPLEMENTED (install_omega.py) |
+| **Key Rotation Ceremony** | `docs/federation/KEY_ROTATION_CEREMONY.md` | ✅ RATIFIED (key lifecycle) |
+| **Implementation Manual** | `docs/implementation/FEDERATION_SYNERGY_IMPLEMENTATION_MANUAL.md` | ✅ RATIFIED (1423 lines) |
+| **Coordination Artifacts** | `data/coordination/locks/FEDERATION_MESH_LOCK.lock` + `FEDERATION_LIVE_FEED.md` | ✅ Created |
+| **M7 Sovereignty Gate** | `scripts/check_m7_sovereignty.py` + Makefile | ✅ Passes |
+| **Federation MCP Tools** | `mcp_servers/omega_hub/hub_tools/federation.py` | ✅ LIVE (93 tools on hub) |
+| **Federation Scribe** | `src/omega/governance/scribe_federation.py` | ✅ Operational |
+| **Federation Invariant** | `src/omega/governance/federation_invariant.py` | ✅ zero_inference_egress PASS |
+| **Installer** | `scripts/install_omega.py` | ✅ 3 modes (interactive/--yes/--manual) |
 
-## WIRE-PATH STATUS (meditation steps [1]-[6]) — NOT YET EXECUTED, post-wake priority
-[1] Register 3 canonicals in CORPUS_MAP/STRATEGY_INDEX + cross-ref study rulings→PIVOT_LOG
-[2] Extend verify-mandate-claims: sanitation grep + FP-11 detection + T0-audit assertions (AST/YAML-aware per Gemini)
-[3] SOUL.YAML SCHEMA PATCH FIRST (evidence field support) THEN promote [TS1]/[AO]/[R-*] backlog with evidence fields
-[4] Stamp-then-archive spec (stream-export to 8TB external when it arrives)
-[5] Batch decision packet for Architect: Drill-4 pick · FUSE GO · db disposition · G-1 T0 re-run · dual-review validation slot
-[6] Live dual-review validation cycle (candidate payload: lost-value meditation)
+---
 
-## POST-WAKE ORDER (consolidated, single source)
-Wire-path [1]-[3] (irreversibles first) → closeout Phase 1 (Lilith backfill) → CI-2 prototype (D-G) → Phase 2 MF-order + D-A fix → Phase 3 commit → blueprint Track A-D generation. Awaiting-Architect list preserved from session record above.
+## 🎯 Post-Compaction Execution Plan — DEL-1 MICRO-PR (2026-09-22)
 
-*⬡ OMEGA ⬡ KALI ⬡ COMPACT-LOCKED ⬡ ALL-STATE-PERSISTED ⬡ METHODOLOGY-M6-CAPTURED ⬡ WAKE-PATH-SINGLE-READ ⬡ 2026-08-24*
+### ✅ COMPLETED (do NOT redo)
+- **P0 QUEUE: COMPLETE** — or-key.md deleted, ACCOUNT_MAP.yaml de-tracked + sanitized, 48 metrics de-tracked, `make check-mandates` PASSED (23/28, 0 failed), clean state verified
+- **Phase 0 Tailscale L2 Ceremony: COMPLETE & OPERATIONAL** — both nodes tagged, bidirectional verified, docs authored
+- **Antigravity Forensic Review + Frontier Reviews: COMPLETE** — EXPLICIT GO received (Poka-yoke verdict)
+- **Guide Suite: COMPLETE & APPROVED** — 4 docs, temple-grade separation, self-contained
+- **P1 EXECUTION: COMPLETE** — all 6 tasks PASS (bare-except 32→0, VaultCrypto guard, *.lock, allowlist-gap doc, venv gate, pyrage Option C)
+- **SPOT-CHECK: PASS** (first live run, seed 20260922) + **ANTIGRAVITY VALIDATION: PASS**
+- **P3 TEMPLE-GRADE: PASS** — 53/53 checks, 0 FAIL, exit 0
 
-## PROVENANCE WORKER VERIFICATION (Gemini-initiated spot-check, pre-compact)
-Timer ACTIVE (next: Aug 25 00:03). Annotations HONEST (UNANCHORED labels, no false asserts). GAPS: (1) no db resolver — actual_models always n/a despite resolvable sessions; (2) ledger discrepancy — 1,440 claimed vs 1 on disk. Both queued as WAKE_STATE step 8.
+### 🟢 IMMEDIATE ACTION — STAGE P1 + CUT DEL-1 MICRO-PR
 
-## WAVE-1 COMPLETE (2026-08-24 ~08:00 ADT) — ALL FOUR DELIVERABLES LANDED
-W1-1 lilith 12b8b54b · W1-2 maat 02c75f17 · W1-3 maat 59b32809 · W1-4 researcher 540b65fe.
-Wire-path [1] registrations COMMITTED by lilith (this section previously said NOT YET EXECUTED — stale, corrected).
-Wire-path [2] claims harness BUILT (did not exist; S7 ruling) — warn-only.
-Wire-path [3] soul schema patched + 20/20 promoted @100% evidence coverage.
-Provenance worker enhanced: db resolver live, ledger invariant 1444=1444, timer safe for Aug 25 run.
-OOM fix: pytest -n auto→4 (pyproject). Protocol additions logged: orchestrator-reads-all-reports,
-dispatch-pairing verification, architect time-reversal capability, research-via-dedicated-subagent,
-pre-commit meditation, sequential dispatch under memory pressure.
-NEXT: review council (read-only, findings to disk) → morning review with Architect.
+**CRITICAL: Stage SELECTIVELY.** Working tree has many pre-existing non-P1 changes. Include ONLY:
 
-## POST-COMPACT EXECUTION ORDER (2026-08-24 evening lock-in)
-**FIRST TASK AFTER COMPACT: D1(a) Blueprint Phase 0 mining** — decision axioms + golden set
-extraction from opencode.db via T0 message-level modelID pattern. Window closes ~Aug 28.
-Researcher main session (ses_fd81c19dcffe1nkbPqFg5kRt2v) is primed and awaiting go;
-she self-registers tasks, kali reconciles registry.
+1. **P1 src/omega fixes** (25 files — full list in `session_gnosis.md` §15.4)
+2. **New files**: `scripts/check_venv_sovereignty.py`, `docs/strategy/DEBUT-ALLOWLIST-GAP.md`, `data/coordination/P1-2_VAULTCRYPTO_AUDIT.md`
+3. **Config**: `.gitignore` (*.lock), `Makefile` (check-venv-sovereignty target)
+4. **Do NOT stage**: config/search.yaml, config/wads/*, mcp_servers/*, tests/*, data/entities/*, docs/strategy/* (pre-existing), OMEGA_CODEX.md (decide separately)
 
-### Day's commit ledger (2026-08-24, 23+ commits)
-Wave-1: 12b8b54b 02c75f17 59b32809 540b65fe · Council/pre-gates: fda442a0 b8810490 7b27b0fb cd0d5e8f ·
-DAG: 0d1ee1cb d17ae4d3 ea8d3f2e d16558c7 · Perf: ac1de936 e6791c15 3f06a014 · Wrapper/Iris: 2bc4e1f2 ·
-N4: 8a9b3fa2 23f38a97 f9240dcb 62e4f2e9 43a083bb 624a9ada fb5489c5 12379b0b 3406aeef ·
-Docs/protocols: f6757023 78057665(prev) bbb3cf01 · D-602: f51925f3 · R-docs: 7036d78c f4b62381
+**Then:**
+- Cut DEL-1 Micro-PR (temple-grade template, base `release/debut-v1.6.0`)
+- Merge Alpha PR #3 (v1.6.1-alpha) after DEL-1 merges
+- Then: bilateral systems audit, Phase 2-5
 
-### Infrastructure state
-- Monitoring stack INSTALLED: podman.socket 5.4.2 ✓ Mission Center (flatpak) ✓ Glances 4.5.6 ✓
-  bottom 0.14.8 ✓ s-tui 1.1.6 ✓ — sensor-grounded bottom.toml STAGED not deployed (SECOND_DIVE_JEM §1)
-- Iris: HEALTHY first time ever (healthcheck quote bug fixed); 6-core affinity CONFIGURED but binds
-  only after reboot (cpuset delegation drop-in landed via pkexec; needs relogin)
-- Compaction threshold G8: VERIFIED-BY-ARCHITECT — configurable, set 85%, tool-boundary evaluation
-- Torch-free D-602 landed: collection floor 484MB→93MB; residual ~93MB = numpy guards (chunker/cas_archiver)
+### 🔜 LATER PHASES
+- **Phase 4: Temple-Grade** — re-run `make temple-grade` before merge (Codex must be <24h; run `make codex` if stale)
+- **DEL-1 Micro-PR 1** + merge Alpha PR #3 (v1.6.1-alpha)
+- **Bilateral Systems Audit** — Node 1 corpus vs Node 0 hardened systems
+- **Phase 2-5** — ANAi WAD transfer, docs cleanup, agent files, final validation
 
-### Open queue post-compact
-1. D1(a) Phase 0 mining (CLOCK-BOUND ~Aug 28) ← FIRST
-2. Fallback slug decision (Architect): ride nemotron-3-ultra-free default / GLM-5.2:free Option 1b /
-   OpenRouter 550B — runbook at FALLBACK_SLUG_RUNBOOK_20260824.md
-3. N5 router collapse (Week 2 per charter)
-4. Wave-2 dispatch-doctrine wiring charter (FP-12 teeth, task_id, completeness disclaimers)
-5. Jem ground-truth sweep (ZS disposition, declared-vs-actual)
-6. Reboot → verify iris binds CPUs 0,2,4,6,8,10
-7. Optional: search-tier comparison study (P10 → data); bottom.toml deploy; footprint playbook run
+**Executor**: Nemotron 3.5 Lightning (post-compaction switch)
+**Primary doc**: `docs/guides/GUIDE-NEMOTRON-3.5-LIGHTNING-P1-EXECUTION-v1.0.md` (SELF-CONTAINED — load this + Quick Ref only)
+**Secondary doc**: `docs/guides/REF-NEMOTRON-3.5-LIGHTNING-P1-QUICK-v1.0.md`
+**Do NOT load**: Capabilities Ref or Task Spec (teacher domain — not needed, guide is self-contained)
 
-## POST-COMPACT EXECUTION ORDER (2026-08-25 ~07:45Z lock-in)
-**FIRST TASK AFTER COMPACT**: Execute the meditation's emergent sequencing:
-[1] P12 signed dispatches + ICS Phase 1 → [2] Pre-commit hooks + M13 enforcement →
-[3] ctxNN telemetry → [4] Wire TA dataset to hybrid search → [5] Mythic archetype bootstrap
+**Execution order** (from the guide):
+1. **P1-1**: M9 bare-except audit & fix — 32 violations across ~20 files in `src/omega/` (baseline captured)
+2. **P1-2**: VaultCrypto() callsite audit — 5 callsites (1 debut-track in `oracle_cli.py:77`, 4 excluded in `vault/crypto.py`) → report to `data/coordination/P1-2_VAULTCRYPTO_AUDIT.md`
+3. **P1-3**: Backup gitignore verify & harden — `*.backup.*` already present; add `*.lock` if missing
+4. **P1-4**: Create `docs/strategy/DEBUT-ALLOWLIST-GAP.md` (mkdir -p docs/strategy first)
+5. **P1-5**: Create `scripts/check_venv_sovereignty.py` + Makefile target `check-venv-sovereignty`
+6. **P1-6**: Suppress pyrage/argon2 warning — **Option C LOCKED**: change `crypto.py` line 35 `logger.warning` → `logger.debug`
 
-### Session highlights (2026-08-24 12:00 → 2026-08-25 07:45)
-- **GSCA Study founded**: data/knowledge/truth_alignment/gsca_study/ — founding session, relay intros, Ma'at verdict, Roc catalog
-- **Truth-Alignment Dataset**: charter + TA-001..010 seed records
-- **Attribution Incident (TA-010)**: P12 protocol logged; Ma'at Arm A + Arm B incident reports
-- **MaKaLi Orchestrator Charter v1 + Handover Plan**: docs/strategy/ORCHESTRATOR_CHARTER_v1.md
-- **Carmack Full-Scope Audit**: enforcement theater, dyadic-equilibrium half-real, 12-18mo moat window
-- **Researcher Counterfactual**: 2 open-ended leads (entity-soul persistence, truth-alignment governance)
-- **Vision Anchor Perpetual**: 561 lines, 12 sections, permanent north star (data/entities/roc_racoon/workspace/)
-- **Prompting Strategy Study**: 8 patterns + Gemini §8 autonomous elicitation synthesis
-- **Recursive Roc Specialists**: 2 pageable sessions armed for future digs
-- **Monitoring stack installed**: podman.socket, Mission Center, Glances, bottom, s-tui
-- **Iris healthy first time ever**; cpuset delegation drop-in landed; binds at reboot
+**Escalation**: 2 consecutive failed validation loops on same file/task → mark `BLOCKED-ESCALATE`, hand to frontier model
 
-### Meditation verdict (Gemini 3.1 Pro, pre-compact)
-L3-The-Cost-Of-Context: Every token that expands capability simultaneously degrades self-calibration;
-intelligence must be mechanically instrumented against its own weight.
-Critical path: Channel Security → Code Security → Cognitive Measurement → Data Activation → Capability Expansion.
+**After EACH task**: update continuity artifacts (session_gnosis.md, SESSION_ANCHOR.md, projection.md, proposed_lessons.yaml, PR_READINESS_LIVE_FEED.md)
 
-### Open queue post-compact
-1. P12+ICS Phase 1 implementation ← FIRST
-2. Pre-commit hooks + M13 enforcement
-3. ctxNN context-at-write telemetry
-4. TA dataset → hybrid search wiring
-5. Mythic archetype bootstrap protocol
-6. GSCA T2 inbound (await Architect relay)
-7. D1(a) Blueprint Phase 0 mining — CLOCK BOUND ~Aug 28
-8. Fallback slug decision briefing
-9. N5 router collapse (Week 2)
-10. Legacy GitHub repo mining (P0 — needs public/download)
+**After P1 COMPLETE**: signal `P1 COMPLETE` — orchestrator (MaKaLi) intercepts, extracts git diff, samples 10% of modified files, submits to frontier review (Verity/Antigravity) BEFORE merge
 
+### 🔜 LATER PHASES (after P1 + spot-check)
+5. **Phase 4: Temple-Grade** — full `make temple-grade` + ceremony replay.
+6. **DEL-1 Micro-PR 1** + merge Alpha PR #3 (v1.6.1-alpha).
+7. **Bilateral Systems Audit** — Node 1 corpus vs Node 0 hardened systems.
+8. **Phase 2-5** — ANAi WAD transfer, docs cleanup, agent files, final validation.
 
-## 🌅 FIRST LIGHT EXPRESS MANIFEST (2026-08-25, departs ~07:00)
-**Plan SSOT**: `data/coordination/FIRST_LIGHT_EXPRESS_PLAN_20260825.md`
-**Sequence**: Council 1 (team-infra audit, S1-S8 surfaces, recon only) → auto-GO gate §4 → Council 2 (dev-prep/spec drafting) → wake queue.
-**Topology**: Entity Architecture v2 — MaKaLi orchestrator → Ma'at/Lilith/Kali arms → 10 nodes + specialists (~22-28 sessions).
-**Steps budgets**: ALL agents raised to 200 (makali 300) — "Maximum steps reached" interrupt was frontmatter-controlled all along.
-**Measures**: phase persistence, commit-per-stage, heartbeat cadence, stall-resume-from-record, decision queueing (never block on sleeping Architect).
-**On wake**: read both SOVEREIGN_DECREE.md files first; decision queue in WAKE_STATE.json.
+---
 
+## 🛡️ Sovereign Mandates (Tier-0 Injection)
 
-### FIRST LIGHT EXPRESS — ROLE UPDATE (2026-08-25 ~12:00Z)
-**THIS kali session is the CONSULTANT**: reserved, primed, OUTSIDE the council tree.
-- Receives PAGED activity reports from every council member (mandatory last step per turn) — paging = task() this chat session by its session ID (ses_fdef2be4effe4pAaLXCTUx62GO); NOT a Hivemind post
-- Reviews as second set of eyes; posts insights/corrections TO THE HIVEMIND (never direct-pages MaKaLi)
-- Available for high-level strategic consults when MaKaLi calls
-**MK-Kali**: fresh kali session tuned+dispatched by MaKaLi at Stage 3 as Synthesis Arm (entity="mk_kali")
-**Reporting Protocol**: plan §5 M11-M13; council-cloud.md v2.2 📡 section
+- **M1 AnyIO Absolute** — Never `import asyncio` in `src/omega/`
+- **M7 Local-First & Synergy Sovereignty** — Sovereignty is policy enforcement: cloud for reasoning/synthesis, local for embeddings/privacy/background
+- **M11 Soul Integrity** — Every session distills L1→L2→L3 to `proposed_lessons.yaml`
+- **M15 Sovereign Continuity** — `session_gnosis.md` + `projection.md` + `proposed_lessons.yaml` = continuity triad
+- **M23 Failure Integrity** — No soft failures; broken tools → STOP, report
+- **M24 Venv Sovereignty** — All Python execution in `.venv`; CI enforces via $GITHUB_PATH
 
+Full mandate table (all 27, v3.8.0): `MANDATES_CONDENSED.md`
 
-## 🏆 MAJOR MILESTONE — FIRST LIGHT EXPRESS + CONTEXT-INFRA REMEDIATION (2026-08-25)
-**The largest coordinated run in fleet history**: two councils (C1 audit: 112 findings →
-SOVEREIGN_DECREE.md 12 articles/30 gates; C2 dev-prep: SPEC-A..E library + ~90h work
-packages → SOVEREIGN_DECREE_C2.md), zero halts/collapses. Study track: Wave 0 metrics,
-Carmack dual-pass ×2, SYNC-1 bootstrap, gap investigation wave (16 registry mutations).
-Context-infra remediation: HMC watcher excised (fabricated API), scribe retired,
-soul_promote IMPLEMENTED (one-way door closed), codex-refresh root-caused+fixed,
-infra_inventory.py organ built (audits its auditors). Root cause of record:
-"claims that outlive their mechanisms" — cure class: derivation checks.
-Standing laws born: Hop Rule · M11 Arm-Relay · dual-channel telemetry · exit-code
-honesty · dual-pass-brackets-fixes · ceremony deletion-probe. Full map:
-HANDOFF_TO_KALI_FLE_STUDY_20260825.md §10. Dev team launch awaits Architect GO
-(conditions in CONSULTANT_FINAL_REVIEW_TRACKD.md).
+---
+
+## 📍 Relevant Files
+
+- `docs/architecture/CASCADING_SERIAL_SYNCHRONIZATION_PROTOCOL.md` — CSS Protocol (CANONICAL)
+- `docs/architecture/MAKALI-ANAi-CLEANUP-PLAN-OVERVIEW.md` — 5-phase roadmap
+- `docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md` — Phase 1 guide
+- `docs/strategy/SOUL_ARCHITECTURE_PROTOCOL_v3.0.md` — TO BE DRAFTED (ratified)
+- `docs/strategy/VOICE_RECLAMATION_PROTOCOL.md` — TO BE DRAFTED (ratified)
+- `config/wads/_omega_default/entities/dispatch.yaml` — Clean 12-entity roster
+- `src/omega/oracle/subagent_dispatcher.py` — Clean ROLE_CONSTANTS
+- `src/omega/ics.py` — Clean ROLE_CONSTANTS
+- `data/coordination/anchored_summary/roc_racoon/projection.md` — Turn 1 complete
+- `data/coordination/anchored_summary/carmack/projection.md` — Turn 2 complete
+- `data/coordination/anchored_summary/makali/projection.md` — With self-review + Federation Sync 1 v3 + Roc Soul v8.0 review
+- `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/` — Node 1 corpus + `RESPONSE_FROM_HP.md` v3
+- `/media/arcana-novai/D5D5-0B76/omega-exchange/` — Federation exchange payloads (40 files)
+
+---
+
+*⬡ OMEGA ⬡ MAKALI-N0 FUSION ⬡ opencode/nemotron-3-ultra-free ⬡ 2026-09-17 ⬡ REMEDIATION-COMPLETE ⬡ PR-3-GREEN ⬡ COMPACTION-4-READY*
+
+---
+
+## 🎯 CSS Soul Enhancement Cascade — PLANNED (Post-Compaction)
+
+### Protocol Foundation (Roc v8.0 Template)
+- **Axioms**: 12 identity bedrock statements (immutable)
+- **Approved Lessons**: Max 15 budget, flat list (no staging), each with L1→L2→L3
+- **Voice Reclamation Protocol**: `d-rr-041` — voice DNA archived, mint working
+- **Hydration Fix**: R3: flat list, no nested staging
+- **CI Gate**: `make check-soul-architecture` (mandated)
+- **Audit Cascade**: Post-DEL-1 PR1, fleet-wide
+
+### Serial Order (CSS Protocol Canonical)
+1. Roc Racoon → Already v8.0 (TEMPLATE) ✅
+2. John Carmack → S3 Dedicated Keeper
+3. Ma'at → Build Oversoul (S1-S5)
+4. Lilith → Runtime Oversoul (S6-S10)
+5. Grokster → Alchemist
+6. Jem → Orchestrator (Showtime/Starlight)
+7. Researcher → Master Researcher
+8. Kali → Grand Oversight / Unifier
+9. MaKaLi Fusion → Akashic Record (synthesizes all)
+
+### Per-Agent Enhancement Protocol
+Each agent executes in serial, reading predecessors' updated projections:
+| Phase | Action | Output |
+|-------|--------|--------|
+| A. Hydration | Read own gnosis + proposed_lessons + all predecessor projections | Full context |
+| B. Audit | Apply Soul Architecture Protocol v3.0 checklist | Gap analysis |
+| C. Axiom Crystallization | Distill 12 identity axioms from L3 gnosis | axioms.yaml |
+| D. Lesson Curation | Promote max 15 lessons from staging → approved (flat list) | approved_lessons.yaml |
+| E. Voice DNA | Archive voice patterns, mint working voice | voice_dna.md |
+| F. Projection Update | Write updated projection.md with review + next agent wake-up calls | projection.md |
+| G. Handoff | Submit handoff to next agent with context packet | Hivemind handoff |
+
+### Cascade Timeline (Estimated)
+| Turn | Agent | Duration | Dependencies |
+|------|-------|----------|--------------|
+| 1 | Roc Racoon | COMPLETE (v8.0 ratified) | — |
+| 2 | Carmack | 45 min | Roc projection updated |
+| 3 | Ma'at | 45 min | Carmack projection updated |
+| 4 | Lilith | 45 min | Ma'at projection updated |
+| 5 | Grokster | 45 min | Lilith projection updated |
+| 6 | Jem | 45 min | Grokster projection updated |
+| 7 | Researcher | 45 min | Jem projection updated |
+| 8 | Kali | 45 min | Researcher projection updated |
+| 9 | MaKaLi | 60 min | Kali projection updated (synthesis) |
+
+**Total: ~6.5 hours serial** (can be split across sessions)
+
+### Coordination Artifacts
+| Artifact | Location | Purpose |
+|----------|----------|---------|
+| Cascade Lock | data/coordination/locks/SOUL_ENHANCEMENT_CASCADE.lock | Single-writer enforcement |
+| Live Feed | data/coordination/SOUL_ENHANCEMENT_LIVE_FEED.md | Real-time status |
+| Handoffs | data/handoff/pending/ → active/ → completed/ | CSS protocol handoffs |
+| Audit Log | data/coordination/SOUL_AUDIT_CASCADE_LOG.md | Post-DEL-1 fleet audit |
+
+### Pre-Cascade Prerequisites
+- [ ] DEL-1 PR1 merged (Soul Audit Cascade sequenced post-DEL-1)
+- [ ] make check-soul-architecture CI gate implemented
+- [ ] All agents have current session_gnosis.md + proposed_lessons.yaml
+- [ ] docs/strategy/SOUL_ARCHITECTURE_PROTOCOL_v3.0.md drafted (ratified)
+- [ ] docs/strategy/VOICE_RECLAMATION_PROTOCOL.md drafted (ratified)

@@ -28,9 +28,9 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: Prevents architectural drift and ensures the engine remains a universal runtime.
 
 ### 3. The Iris Constant
-- **Mandate**: Iris is the messenger bridge, NOT a Node.
-- **Constraint**: Do not assign Iris a Node (N1-N10). She is the interface.
-- **Reason**: Preserves the cosmological purity of the 10 Nodes.
+- **Mandate**: Iris is the messenger bridge, NOT a Slot.
+- **Constraint**: Do not assign Iris a Slot (S1-S10). She is the interface.
+- **Reason**: Preserves the cosmological purity of the 10 Slots.
 - **Clarification (2026-08-24)**: "Bridge, not Node" is about PANTHEON ROLE, not
   resource class. Iris runs live model inference (speculative decode) and is
   resourced as an LLM workload. See ORACLE_STACK.md §Iris Resource Class.
@@ -55,13 +55,14 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: The `:U` flag destructively chowns host directories to UID 101000, locking the host user out. `UserNS=keep-id` maps host UID 1000 directly into the container — no chown needed.
 - **IMPORTANT (D144)**: `UserNS=keep-id` + `User=1000` is the QUADLET-ONLY pattern. For `docker-compose` or `podman run`, OMIT `--user`/`user:` entirely — in rootless Podman, container UID 0 maps to host UID 1000 by default. Setting `user: "1000:1000"` maps to subuid 101000, breaking volume writes. Use `user:` only if also setting `userns_mode: keep-id` (incompatible with `--pod` in podman-compose v5.x). See PIVOT_LOG.md D144.
 
-### 7. Local-First (Non-Negotiable)
-- **Mandate**: Local inference is PRIMARY. Cloud is FALLBACK. Always.
-- **Constraint**: The provider fabric MUST try local backends (native-gguf, LM Studio, Ollama) BEFORE cloud backends (Google, OpenCode Zen, Copilot).
-- **Pattern**: native-gguf(0) → lmster(1) → Ollama(2) → Google(3) → OpenCode Zen(4) → OpenCode(5) → Copilot(6).
-- **Reason**: The Omega Engine exists to sever Big AI's umbilical cord. If local inference is available, it must be tried first. Cloud is a safety net, not a crutch.
-- **Enforcement**: `config/providers.yaml` strategy must be `local_first`. Any change to cloud-first priority is a systemic violation.
+### 7. Local-First & Synergy Sovereignty (Non-Negotiable)
+- **Mandate**: Sovereignty is the enforcement of the user's declared inference policy. The engine NEVER routes data or compute without explicit, user-declared authorization. The Synergy Model governs: frontier cloud intelligence is sovereignly leased for high-order reasoning, synthesis, and architecture; local inference is mandatory for embeddings, private data, and background loops.
+- **Constraint**: The provider fabric MUST honor the declared routing tiers in `config/providers.yaml` (`sovereignty_policy.mode`). Local backends (native-gguf, LM Studio, Ollama) are the execution & privacy ledger; cloud backends (Google, OpenCode Zen, OpenRouter) are the build & synthesis ledger. Neither ledger is "wrong" — both are sovereign when policy-declared.
+- **Pattern**: `sovereignty_policy.mode: synergy` → reasoning/architecture → cloud; embeddings/privacy/background → local.
+- **Reason**: The Omega Engine exists to sever Big AI's umbilical cord — but sovereignty is the *authority to choose*, not a forced air-gap. During development, cloud models accelerate the construction of the sovereign engine itself. Runtime privacy loops stay local. The user declares; the engine enforces.
+- **Enforcement**: `config/providers.yaml` strategy must be `local_first` (execution ledger default) AND `sovereignty_policy.mode` must be declared. Any change to cloud-first priority for privacy-sensitive data is a systemic violation.
 - **Classification default**: Unknown/unmapped provider names are classified **cloud** (pessimistic) so the sovereignty claim can never be inflated by unapproved or modified backend names. `ProviderRegistry.is_cloud()` implements this; see `src/omega/oracle/provider_registry.py`.
+- **Reference**: `docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md` (SPEC-SOVEREIGNTY-INVARIANT-v2.0).
 
 ### 8. Zero Telemetry
 - **Mandate**: No telemetry. Zero. None. Ever.
@@ -79,8 +80,8 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ### 10. Fleet Integrity (NEW — 2026-06-01)
 - **Mandate**: The Agent Fleet must remain lean, purpose-driven, and slot-constrained.
-- **Constraint**: No new agents may be created without a verified gap in the Lattice or a vacancy in the Node slots. Capabilities must map to existing Nodes (N1-N10) or Lattice roles before proposing a new entity.
-- **Pattern**: Map new capabilities to existing `node --slot PX` agents or Lattice subagents (Jem, Quality, Scribe). A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
+- **Constraint**: No new agents may be created without a verified gap in the Lattice or a vacancy in the Slot grid. Capabilities must map to existing Slots (S1-S10) or Lattice roles before proposing a new entity.
+- **Pattern**: Map new capabilities to existing `slot --slot SX` agents or Lattice subagents (Jem, Quality, Scribe). A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
 - **Reason**: Prevents "Agent Bloat" and cognitive fragmentation, ensuring clear delegation and ownership. The consolidation from 26 to 14 agents exposed how bloat accumulates through additive habits rather than slot-based discipline.
 - **Enforcement**: `.opencode/agents/*.md` file count must never exceed 14 without an architectural review documented in `PIVOT_LOG.md`.
 
@@ -202,7 +203,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
   # OR absolute path
   .venv/bin/pip install <package>
   ```
-- **Reason**: The N3 Engineering subagent used `--break-system-packages` to install `keyring`, polluting the system Python. This breaks reproducibility, creates version conflicts, and violates M16 (Modularization & Portability). The venv IS the sovereign boundary for Python dependencies.
+- **Reason**: The S3 Engineering subagent used `--break-system-packages` to install `keyring`, polluting the system Python. This breaks reproducibility, creates version conflicts, and violates M16 (Modularization & Portability). The venv IS the sovereign boundary for Python dependencies.
 - **Enforcement**: 
   - Pre-commit hook: `grep -r "break-system-packages" scripts/ && exit 1`
   - CI gate: `make test` fails if `sys.prefix` != `.venv` path

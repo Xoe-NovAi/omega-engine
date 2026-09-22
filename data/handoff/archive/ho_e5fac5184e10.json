@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_e5fac5184e10",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "RESEARCHER SESSION CLOSE-OUT UPDATE \u2014 provenance breakthrough, capstone blueprint, meditation, doc sweep, worker deployed, compaction lock-in complete. For post-compaction hydration alongside SESSION_ANCHOR.md + gnosis A15-A17.",
+  "context": "FULL UPDATE SINCE YOUR LAST PICKUP (post your reciprocal-report consumption): (1) PROVENANCE BREAKTHROUGH \u2014 Architect insight, empirically verified: messages.modelID is per-message runtime-stamped and tracks hot-swaps (big-pickle @session-start vs x-preview-f-free @Aug23, same session). Verification hierarchy: T0 message.modelID > T1 system-prompt injection > T2 ICS headers > T3 sessions.model (stale). Full doc: docs/research/R_MESSAGE_PROVENANCE_HIERARCHY_20260823.md + GT-Log entry #11. (2) CAPSTONE BLUEPRINT: data/coordination/OX_ALPHA_TRANSITION_BLUEPRINT_20260823.md \u2014 roadmap/blueprint/team-guide fusing 5 fleet consults + Sonnet/Opus/Gemini review passes. Phase 0 gates defined; 5 forks F1-F5 await ARCHITECT ruling (training owner, adjudicator, packer post-cliff, Scribe ratifications, stale-handoff disposition). Your pickup packet = ho_6ec25dd4a684; old ho_2f77f83964e5 superseded, safe to reject-with-reference. (3) MEDITATION GNOSIS-MINING-CODEX complete: L3-Gnosis-Half-Life distilled (survived falsification); verdict 'mine incidents not insights'; 9-step critical path; registry logged. (4) DOC SWEEP: FORENSIC_PATTERNS.md FP-01..FP-10 + mandate-violation casebook; STANDARD_MODEL_OPERATING_GUIDE \u00a73 corrected (false ICS-only-truth claim removed). (5) PROVENANCE WORKER DEPLOYED: scripts/correct_ics_provenance.py + omega-provenance.timer (daily, enabled). First sweep: 1470 artifacts scanned, 30 VERIFIED vs Tier 0, 1440 annotated+audited to data/knowledge/safety/provenance_corrections.jsonl; --manifest mode emits training-purity JSONL for DPO gating. v2 TODO: mtime-window matching for 1433 UNANCHORED. (6) LOCK-IN COMPLETE: gnosis locked with wake-hydration order, 3 L3 lessons staged (R-PROV/R-GNOSIS/R-ENF, proposals=15), no dangling dispatches. REMINDERS: password=\"omega\" still live providers.py:119 (M23); window ~2-3 days (weights ~Aug 28); researcher session ses_fd81c19dcffe1nkbPqFg5kRt2v entering compaction \u2014 all state disk-persisted.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-23T20:49:31.023645+00:00",
+  "accepted_at": "2026-08-24T00:10:31.091941+00:00",
+  "accepted_by": "opencode/kali",
+  "completed_at": "2026-08-24T21:51:40.091173+00:00",
+  "result": "Content fully absorbed by subsequent events: blueprint capstone superseded stale-premise sprint (per your O4 amendment, anchor:144); provenance breakthrough documented in R_MESSAGE_PROVENANCE_HIERARCHY + GT-Log #11; FP procedures shipped; worker deployed + enhanced in Wave-1. Closing as absorbed-complete.",
+  "reaped_at": "2026-09-06T20:30:43.637037+00:00"
+}

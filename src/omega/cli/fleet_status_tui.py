@@ -135,7 +135,8 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     # Load entity definitions from WAD
     try:
         entities = get_dispatch_entities(iwad)
-    except Exception:
+    except Exception as e:
+        logger.debug("Failed to load dispatch entities: %s", e)
         # Fallback to minimal structure if WAD config unavailable
         entities = []
 
@@ -174,37 +175,37 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     maat_node = kali_node.add(
         get_display_name(maat_role), data=get_entity_key(maat_role), expand=True
     )
-    # N1-N5 under Build Oversoul (Build Side)
-    for p in ["N1", "N2", "N3", "N4", "N5"]:
+    # S1-S5 under Build Oversoul (Build Side)
+    for p in ["S1", "S2", "S3", "S4", "S5"]:
         p_role = ROLE_CONSTANTS[p]
         p_entity = role_to_entity.get(p_role)
         if p_entity:
             maat_node.add(
-                f"P{p[-1]}: {p_entity.get('purpose', '').split('—')[0].strip()}",
+                f"S{p[-1]}: {p_entity.get('purpose', '').split('—')[0].strip()}",
                 data=p_entity.get("name", p.lower()),
             )
         else:
-            maat_node.add(f"P{p[-1]}: {p_role}", data=p.lower())
+            maat_node.add(f"S{p[-1]}: {p_role}", data=p.lower())
 
     lilith_node = kali_node.add(
         get_display_name(lilith_role), data=get_entity_key(lilith_role), expand=True
     )
-    # N6-N10 under Runtime Oversoul (Run Side)
-    for p in ["N6", "N7", "N8", "N9", "N10"]:
+    # S6-S10 under Runtime Oversoul (Run Side)
+    for p in ["S6", "S7", "S8", "S9", "S10"]:
         p_role = ROLE_CONSTANTS[p]
         p_entity = role_to_entity.get(p_role)
         if p_entity:
             lilith_node.add(
-                f"P{p[-1]}: {p_entity.get('purpose', '').split('—')[0].strip()}",
+                f"S{p[-1]}: {p_entity.get('purpose', '').split('—')[0].strip()}",
                 data=p_entity.get("name", p.lower()),
             )
         else:
-            lilith_node.add(f"P{p[-1]}: {p_role}", data=p.lower())
+            lilith_node.add(f"S{p[-1]}: {p_role}", data=p.lower())
 
     # ── Sovereign Specialists ───────────────────────────────────────────
     specialists = tree.root.add("Sovereign Specialists", data="specialists", expand=True)
 
-    # Specialists are entities with N1 role that are not node slots
+    # Specialists are entities with S1 role that are not node slots
     # plus MAKALI_COUNCIL. Build dynamically from WAD config.
     specialist_entities = []
     for ent in entities:
@@ -212,9 +213,9 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
         name = ent.get("name")
         if not name:
             continue
-        # Include N1 entities that are specialists (not node slots)
+        # Include S1 entities that are specialists (not node slots)
         # and MAKALI_COUNCIL
-        if role == "N1" and ent.get("node_slot") is None:
+        if role == "S1" and ent.get("slot") is None:
             specialist_entities.append(ent)
         elif role == "MAKALI_COUNCIL":
             specialist_entities.append(ent)
@@ -228,12 +229,6 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     # Messenger Bridge
     iris_role = ROLE_CONSTANTS["MESSENGER_BRIDGE"]
     tree.root.add(get_display_name(iris_role), data=get_entity_key(iris_role))
-
-    # Sophia (Containing Field)
-    sophia_role = ROLE_CONSTANTS["CONTAINING_FIELD"]
-    tree.root.add(get_display_name(sophia_role), data=get_entity_key(sophia_role))
-
-    return tree
 
 
 # ─── Main Application ─────────────────────────────────────────────────────────

@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_ccf05685e6a9",
+  "target_agent_id": "cline/omega-engine",
+  "target_channel": "cline",
+  "target_entity": "omega-engine",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Synthesize Nemotron's consolidation with Gemini's strategic corrections. Review data/coordination/GEMINI_CLINE_SYNTHESIS_REPORT_20260817.md. Update the execution plan to leverage the 1M context windows for safe DEL-1 execution, codify the I/O rule, and lock the strategy corpus.",
+  "context": "Gemini 3.1 Pro has injected a critical strategic course correction based on the new compute reality (8x DeepSeek V4 Flash 1M / Nemotron 30B accounts) and the 'LLM-as-Database' anti-pattern. Meta-strategy is frozen; DEL-1 and INST-1 are the only priorities.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-17T21:15:35.512754+00:00",
+  "reaped_at": "2026-08-18T21:19:15.694508+00:00",
+  "ttl_expired": true
+}

@@ -525,7 +525,7 @@ class WADLoader:
             # Map all entities loaded from this WAD to the adapter
             for entity_key, entity in self.registry.list().items():
                 if hasattr(entity, "wad_source") and entity.wad_source == stack_name:
-                    # N2: Conflict detection — warn if entity already mapped to different WAD
+                    # S2: Conflict detection — warn if entity already mapped to different WAD
                     existing_wad = self._adapter_registry._entity_to_adapter.get(entity.name)
                     if existing_wad and existing_wad != stack_name:
                         logger.warning(
@@ -560,7 +560,7 @@ class WADLoader:
             if path.name == "soul.yaml":
                 entity_name = path.parent.name
             elif path.suffix == ".yaml":
-                entity_name = path.stem  # e.g., "sysadmin.yaml" → "sysadmin"
+                entity_name = path.stem  # e.g., "maat.yaml" → "maat"
             else:
                 continue
 

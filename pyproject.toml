@@ -33,6 +33,7 @@ dependencies = [
     "idna==3.18",  # relaxed from 3.15: httpx2 requires idna>=3.18
     "iniconfig==2.3.0",
     "jsonschema==4.26.0",
+    "json-repair>=0.30.0",  # used by src/omega/ingestion/extractors.py
     "jsonschema-specifications==2025.9.1",
     "markdown-it-py==4.2.0",
     "mdurl==0.1.2",
@@ -78,7 +79,7 @@ dependencies = [
 
 [project.optional-dependencies]
 native = ["llama-cpp-python>=0.3.0,<0.4.0"]
-cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0"]
+cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0", "textual>=0.80.0"]
 # [INST-1-fix2] Optional subsystem extras — core install (.[native,cli]) must
 # NOT pull these; every module importing them carries an ImportError lazy-guard.
 memory = ["redis==7.4.1"]
@@ -95,10 +96,13 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest-timeout>=2.4.0",
     "flake8>=7.0.0",
+    "ruff>=0.6.0",  # required by scripts/m23_gate.py (M23 CI gate)
+    "scikit-learn>=1.4.0",  # required by src/omega/eval/calibrate.py (isotonic regression)
     "hypothesis>=6.100.0",
     "pytest-xdist>=3.5",
     "pytest-testmon>=1.4",
     "pytest-clarity",
+    "pathspec>=0.12.1",  # used by tests/contract/test_context_packer*.py
     "pytest-json-report",
     "pytest-instafail",
     "pytest-tldr",
@@ -108,6 +112,7 @@ all = ["omega[native,cli,dev,memory,vectors,youtube]"]
 
 [project.scripts]
 omega = "omega.cli.oracle_cli:main"
+omega-install = "scripts.install_omega:main"
 
 [project.urls]
 Homepage = "https://github.com/Xoe-NovAi/omega-engine"

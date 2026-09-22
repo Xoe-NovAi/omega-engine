@@ -118,8 +118,9 @@ async def _atomic_write(path: Path, content: str) -> None:
             f.flush()
             os.fsync(f.fileno())  # Force to physical disk
         os.replace(tmp_path, path)  # Atomic on POSIX + Windows NTFS
-    except Exception:
+    except Exception as e:
         # Cleanup temp file on failure
+        logger.warning("Atomic write to %s failed: %s", path, e)
         try:
             os.unlink(tmp_path)
         except OSError:

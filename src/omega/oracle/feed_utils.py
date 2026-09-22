@@ -4,7 +4,7 @@
 
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Cross-Pollination Feed Utilities
-# ⬡ OMEGA ⬡ N9:LINK ⬡ deepseek-v4-flash ⬡ opencode ⬡ FEED-UTILS
+# ⬡ OMEGA ⬡ S9:LINK ⬡ deepseek-v4-flash ⬡ opencode ⬡ FEED-UTILS
 # AP: FEED-UTILS-v1.0.0
 #
 # Shared utilities for knowledge feed and demand signal operations.

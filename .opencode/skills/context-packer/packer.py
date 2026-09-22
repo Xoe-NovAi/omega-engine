@@ -992,7 +992,7 @@ class EnhancedContextPacker:
             "sovereign-audit": "architecture audit, mandate compliance, un-overengineering",
             "tech-architecture-research": "technology architecture research, decision matrix, grounded truth",
             "provider-fabric-review": "provider fabric deep review, local inference, cloud backends, routing",
-            "engineering-p3": "N3 Engineering Node context, core logic, validation",
+            "engineering-p3": "S3 Engineering slot context, core logic, validation",
             "kali-oversight": "grand oversight, mandates, fleet topology, decisions, agents",
             "youtube-research-primer": "YouTube research module, spec, implementation, integration",
             "decision-tools-review": "decision tools implementation review, grounding, schema, CLI",

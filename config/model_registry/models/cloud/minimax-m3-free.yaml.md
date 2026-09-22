@@ -54,4 +54,21 @@ probe_data:
   avg_latency_ms: 2000
 promoted_by: PIVOT_LOG D-585 (2026-08-27)
 promotion_evidence: data/coordination/MINIMAX_M3_LONG_WRITE_CHAMPION_20260827.md
+parameters:
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 40
+  repetition_penalty: 1.0
+  stop_sequences: []
+  presence_penalty: 0.0
+  frequency_penalty: 0.0
+benchmark_sources:
+  reasoning: ''
+  code_generation: ''
+  knowledge: ''
+  creative: ''
+  tool_use: ''
+  structured_output: ''
+  multimodal: ''
+  overall: ''
 ---

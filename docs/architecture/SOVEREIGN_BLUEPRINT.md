@@ -13,7 +13,7 @@ The Omega Engine adopts the **Engine $\rightarrow$ IWAD $\rightarrow$ PWAD** arc
 
 ### Tier 1: Omega Engine (Core) — The Holographic Grid
 **Purpose**: Defines the empty structure of the universe.
-- **Pillar Slots**: P1 through P10.
+- **Pillar Slots**: S1 through S10.
 - **Domain Constants**: The fundamental elements (Flesh, Dream, Will, Heart, Voice, Mind, Gnosis, Shadow, Spirit, Chaos).
 - **Duality Logic**: The interaction between Light and Dark.
 - **The Resolver**: The logic that performs the `Slot $\rightarrow$ Role $\rightarrow$ Entity` lookup.
@@ -77,7 +77,7 @@ Beyond the Engine/IWAD/PWAD core, the Omega Engine now includes three supporting
 ## §5 Implementation Path
 
 ### Phase 1: Registry Refactor
-- **Modify `Entity`**: Remove `pillars: List[str]`. Add `slot: str` and `role: str`.
+- **Modify `Entity`**: Remove `slots: List[str]`. Add `slot: str` and `role: str`.
 - **Modify `EntityRegistry`**: 
   - Implement `_role_map: Dict[str, str]` (Slot $\rightarrow$ Role).
   - Implement `_entity_map: Dict[str, Entity]` (Role $\rightarrow$ Entity).

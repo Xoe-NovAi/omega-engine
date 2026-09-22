@@ -232,7 +232,16 @@ class SovereignSearchService:
         )
         self.firecrawl = FirecrawlProvider(firecrawl_key) if firecrawl_key else FirecrawlProvider()
         self.exa = ExaProvider(exa_key) if exa_key else ExaProvider()
-        self.verifier = verifier or SkepticalVerifier(self.model_gateway)
+
+        # Verification is opt-in (disabled by default during dev to prevent local inference stalls)
+        verification_cfg = self.config.get("verification", {})
+        if verifier is not None:
+            self.verifier = verifier
+        elif verification_cfg.get("enabled", False):
+            self.verifier = SkepticalVerifier(self.model_gateway)
+        else:
+            self.verifier = None
+
         self.router = router or SearchRouter(config=routing_cfg)
 
         # [C-6'] Initialize HealthMonitor-backed breakers (canonical)
@@ -906,7 +915,8 @@ class SovereignSearchService:
                 self._provider_health_cache[tier] = self.model_gateway.health_monitor.is_available(
                     name
                 )
-            except Exception:
+            except Exception as e:
+                logger.debug("Health check failed for provider %s: %s", name, e)
                 self._provider_health_cache[tier] = False
 
         self._health_cache_time = now

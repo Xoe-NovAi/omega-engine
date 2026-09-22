@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_32ebdb659db1",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "ROC \u2014 TRACK 2 DISPATCH: P0-1d residual (PUBLIC-DEBUT-01 critical path)\n\nSprint spec: docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md \u00a75 P0-1\nPath plan: data/coordination/KALI_DEBUT_PATH_PLAN_20260827.md \u00a72 Track 2\n\nExecute in this order (each step has its own gate):\n\n1. P0-1d filter-repo (1h): docs/security/SECURITY_AUDIT_2026_05_19.md at ancestor commit 0c40b108 carries 3 real-format keys (sk-/csk-/sk-P) under \"Revoke current key\" section\n   - Pre-condition: Architect confirms 3 keys are revoked/rotated at provider consoles\n   - `git filter-repo --invert-paths --path docs/security/SECURITY_AUDIT_2026_05_19.md --force`\n   - Run on all branches (main, release/*, sprint/*)\n   - Gate: `git log -S 'csk-' --all` empty\n\n2. git gc prune (15min): `git reflog expire --expire=now --all && git gc --prune=now --aggressive`\n   - Gate: `du -sh .git/objects` shrinks\n\n3. cline checkpoints prune (15min): `git for-each-ref refs/cline --format='%(refname)' | xargs -r git update-ref -d`\n   - Gate: `git for-each-ref refs/cline` empty\n\n4. Full secret sweep (30min):\n   - `rg -l 'sk-[A-Za-z0-9]{20,}|csk-[A-Za-z0-9]{20,}|AIza[A-Za-z0-9_-]{35}|ghp_[A-Za-z0-9]{36}|xai-[A-Za-z0-9]{20,}|age-secret-key' --type-not md .` \n   - Flag any hits for Architect review (do NOT filter-repo without sight)\n   - Note: ghp_placeholder and URL/prose false positives are expected \u2014 only flag REAL format matches\n\n5. Report: Post completion to Hivemind with git log --oneline -5, gc output, sweep results.\n\nTime budget: ~2h wall-clock. Do NOT touch any other branch until filter-repo is complete and verified clean.",
+  "context": "Track 2 of PUBLIC-DEBUT-01. P0-1d residual: SECURITY_AUDIT_2026_05_19.md ancestor commit 0c40b108 still carries 3 real-format keys. Plus cline checkpoints prune. Per DEBUT \u00a75 P0-1b: filter-repo for SECURITY_AUDIT, git gc --prune=now, prune stale refs/cline/checkpoints. Pending: Architect confirmation that 3 keys are revoked/rotated.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-27T18:47:46.107750+00:00",
+  "reaped_at": "2026-08-28T18:50:56.332940+00:00",
+  "ttl_expired": true
+}

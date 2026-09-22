@@ -97,6 +97,12 @@ class TestFileStorageProvider:
         assert len(history) == 1
 
 class TestRedisStorageProvider:
+    # Redis is an optional extra (INST-1 fix2); these tests mock the client
+    # but the constructor raises without the redis package.
+    @pytest.fixture(autouse=True)
+    def _skip_without_redis(self):
+        pytest.importorskip("redis", reason="redis not installed (optional [memory] extra)")
+
     @pytest.mark.anyio
     async def test_health_check_failure(self):
         # Redis is not running or fails health check — mock ping to fail fast
@@ -137,6 +143,9 @@ class TestRedisStorageProvider:
 class TestMemoryStoreFallbackChain:
     @pytest.mark.anyio
     async def test_fallback_flow(self, temp_data_dir):
+        # Redis is an optional extra (INST-1 fix2); the fallback chain test
+        # exercises Redis → File → InMemory, so skip when redis is absent.
+        pytest.importorskip("redis", reason="redis not installed (optional [memory] extra)")
         # Setup providers:
         # 1. Redis (fails health check)
         redis_provider = RedisStorageProvider(host="10.255.255.1")

@@ -68,7 +68,7 @@ class CircuitBreakerState(Enum):
 class NodeReport:
     """A single node's independent output."""
 
-    node_id: str  # "N1" through "N10"
+    node_id: str  # "S1" through "S10"
     domain: str  # "Infrastructure", "Engineering", etc.
     content: str  # Full report markdown
     file_path: Path  # Path to the written report file

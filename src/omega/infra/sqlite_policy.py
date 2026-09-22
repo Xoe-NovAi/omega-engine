@@ -141,7 +141,8 @@ def get_sqlite_connection(
             try:
                 _resolved_key = km.get_key()
                 use_sqlcipher = True
-            except Exception:
+            except Exception as e:
+                logger.debug("No SQLCipher key resolvable: %s", e)
                 # No key resolvable. If REQUIRED=1, re-raise; else plaintext.
                 if _SQLCIPHER_REQUIRED:
                     raise RuntimeError(
@@ -227,7 +228,8 @@ def sqlite_transaction(
         yield conn
         if not readonly:
             conn.commit()
-    except Exception:
+    except Exception as e:
+        logger.warning("SQLite transaction failed, rolling back: %s", e)
         if not readonly:
             conn.rollback()
         raise

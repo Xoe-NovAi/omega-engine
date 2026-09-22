@@ -6,8 +6,10 @@
 # First public release — this IS the legacy.
 
 # Configuration — M24: Always use project venv Python
-PYTHON := .venv/bin/python
-PYTEST := .venv/bin/python -m pytest
+# Fall back to system python3 when .venv is absent (CI runners install
+# deps into the active interpreter, not a local .venv).
+PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
+PYTEST := $(PYTHON) -m pytest
 
 # Use bash so targets can rely on [[ ]] / bash-isms (e.g. local inference lifecycle)
 SHELL := /bin/bash
@@ -18,7 +20,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-hub-health
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-hub-health soul-validate
 
 help:
 	@echo "Omega Engine Makefile"
@@ -373,6 +375,14 @@ temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-co
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
 
+# SOUL_ARCHITECTURE_PROTOCOL v3.0 — Soul v8.0 CI gate (ratified by Kali-N0, ho_123f6ebff930)
+# Enforces: axiom coverage (>=1 directive + >=1 principle ref), flat-list approved_lessons.yaml
+# (R3 hydration contract), <=15 axiom ceiling, duplicate-key rejection.
+soul-validate:
+	@echo "$(YELLOW)Running Soul Architecture Validator (SOUL_ARCHITECTURE_PROTOCOL v3.0)...$(NC)"
+	@$(PYTHON) scripts/validate_soul_architecture.py || (echo "$(RED)FAIL: Soul architecture violations found$(NC)" && false)
+	@echo "$(GREEN)Soul architecture compliant: axioms covered, flat-list approved lessons, no duplicate keys$(NC)"
+
 # M37 Heritage — REUSE v3.3 SPDX compliance gate
 # Verifies every file has SPDX-FileCopyrightText and SPDX-License-Identifier
 # per the REUSE specification v3.3. Wired into CI (.github/workflows/reuse-compliance.yml)
@@ -481,10 +491,22 @@ check-m7-local-first:
 	@echo "$(YELLOW)Checking M22 SSOT: is_cloud only in fallback_chain...$(NC)"
 	@$(PYTHON) scripts/check_m22_ssot.py
 
+# Check M7: Sovereignty policy (Synergy Model) — entity->tier mapping
+check-m7-sovereignty:
+	@echo "$(YELLOW)Checking M7 (sovereignty_policy + entity->tier mapping)...$(NC)"
+	@$(PYTHON) scripts/check_m7_sovereignty.py || (echo "$(RED)FAIL: sovereignty_policy not configured$(NC)" && false)
+	@echo "$(GREEN)M7 passed: sovereignty_policy + entity->tier mapping OK$(NC)"
+
 check-m23-failure-integrity:
 	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"
 	@$(PYTHON) scripts/m23_gate.py || (echo "$(RED)FAIL: M23 soft-failure patterns$(NC)" && false)
 	@echo "$(GREEN)M23 passed: No new soft-failure patterns$(NC)"
+
+# L3-MetaFrameVerification (0.92) — Cross-verification protocol for paged prompts
+check-metaframe:
+	@echo "$(YELLOW)Running L3-MetaFrameVerification (0.92) cross-verification...$(NC)"
+	@$(PYTHON) scripts/metaframe_verification.py --stdin --agent kali --json < /dev/null 2>&1 | python3 -c "import sys, json; data=json.load(sys.stdin); sys.exit(0 if data.get('result')=='PASS' else 1)" || (echo "$(RED)FAIL: MetaFrame verification failed$(NC)" && false)
+	@echo "$(GREEN)L3-MetaFrameVerification (0.92) passed: No spoofable metadata detected$(NC)"
 
 # P0 CI Gates — Broken imports detection
 check-broken-imports:
@@ -504,28 +526,6 @@ check-broken-imports:
 	echo "$(GREEN)No broken imports in src/omega/$(NC)"
 
 # P0 CI Gates — Omega Hub health check
-check-hub-health:
-	@echo "$(YELLOW)Checking Omega Hub health...$(NC)"
-	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
-		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
-		systemctl --user status omega-hub.service --no-pager; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)omega-hub.service is active$(NC)"
-	@if ! curl -sf -o /dev/null --max-time 5 http://localhost:8080/sse 2>/dev/null; then \
-		echo "$(RED)FAIL: SSE endpoint not responding on localhost:8080/sse$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)SSE endpoint responding$(NC)"
-	@if ! curl -sf -o /dev/null --max-time 5 -X POST http://localhost:8080/mcp \
-		-H "Content-Type: application/json" \
-		-d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' 2>/dev/null; then \
-		echo "$(RED)FAIL: Streamable HTTP endpoint not responding$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)Streamable HTTP endpoint responding$(NC)"
-	@echo "$(GREEN)Omega Hub health check passed$(NC)"
-
 # Regenerate the M23 baseline (run after intentionally fixing violations)
 m23-baseline:
 	@echo "$(YELLOW)Regenerating M23 baseline...$(NC)"
@@ -534,8 +534,12 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity verify-mandate-claims check-mandate-compliance
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe verify-mandate-claims check-mandate-compliance
 	@echo "$(GREEN)All mandate checks passed$(NC)"
+
+# M24b Venv Sovereignty Gate (P1-5): verify .venv matches pyproject requirements
+check-venv-sovereignty:
+	@.venv/bin/python scripts/check_venv_sovereignty.py
 
 # Claims harness (Team-Study #1 ruling S7, P0): claims-vs-disk gate +
 # sanitation / FP-11 / T0 detectors over changed files. WARN-ONLY phase
@@ -575,7 +579,7 @@ heritage-map:
 	@$(PYTHON) scripts/heritage_audit.py --output-report
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5
 
 # === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
 # Wrap ANY long/native build with telemetry + auto-postmortem.
@@ -773,3 +777,20 @@ gate-secrets:
 		echo '  (gitleaks not on PATH - regex gates only)'; \
 	fi; \
 	if [ "$$FAIL" -eq 0 ]; then echo 'gate-secrets PASSED'; else echo 'gate-secrets FAILED'; exit 1; fi
+
+# Check Omega Hub health (SSE endpoint + process)
+check-hub-health:
+	@echo "$(YELLOW)Checking Omega Hub health...$(NC)"
+	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
+		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
+		systemctl --user status omega-hub.service --no-pager; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)omega-hub.service is active$(NC)"
+	@if ! curl -sfI --max-time 3 http://localhost:8016/sse 2>/dev/null; then \
+		echo "$(RED)FAIL: SSE endpoint not responding on localhost:8016/sse$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)SSE endpoint responding$(NC)"
+	@echo "$(GREEN)Omega Hub health check passed$(NC)"
+

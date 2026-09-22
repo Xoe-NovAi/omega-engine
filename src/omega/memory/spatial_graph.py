@@ -238,8 +238,8 @@ class SpatialKnowledgeGraph:
                     if vec_row and vec_row[0]:
                         import struct
                         semantic_vector = list(struct.unpack(f"{768}f", vec_row[0]))
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("Failed to unpack semantic vector from row %s: %s", rowid, e, exc_info=True)
 
                 nodes.append(SpatialNode(
                     rowid=rowid,

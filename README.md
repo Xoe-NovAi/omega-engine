@@ -1,36 +1,32 @@
-# 🔱 Omega Engine — Sovereign AI Runtime
+# Omega Engine — Sovereign AI Runtime
 
-**Prometheus' Fire** — A universal, community-owned runtime for sovereign AI. One install. Your computer. Your data. Your stack.
+**One install. Your computer. Your data. Your stack.**
 
-[![Tests](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml/badge.svg)](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml)
-[![Sovereignty](https://img.shields.io/badge/Sovereignty-Active-brightgreen)]()
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
-[![Omegaverse](https://img.shields.io/badge/Omegaverse-P2P%20Godot%20VR-ff6b35)]()
 [![AnyIO](https://img.shields.io/badge/Async-AnyIO%20Only-00d4aa)]()
 [![Zero Telemetry](https://img.shields.io/badge/Telemetry-Zero-ff3333)]()
 
 ---
 
-## ⚠️ Maturity: Alpha
+## Maturity: Alpha (v1.6.1-alpha)
 
 This is the **first public alpha** of Omega Engine. Honest state:
 
 | Aspect | Status |
 |--------|--------|
-| Local inference (native-gguf, LM Studio) | ✅ Working |
-| Provider routing (10 providers, local-first) | ✅ Working |
+| Local inference (native-gguf, llama-cpp-python) | ✅ Working |
+| Provider routing (10 of 12 configured providers enabled, local-first) | ✅ Working |
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
-| `omega` CLI binary | ❌ Not built (use OpenCode or `python -m omega.cli.bundle`) |
-| `make test` | ❌ Broken (12 files import removed module) |
-| CI gates (Temple-Grade) | ❌ Cascading fail (M23 root cause) |
-| Mandate compliance meter | ⚠️ 64.3% (18/28; 5 failing, 4 untested) |
-| Secret scan | ❌ Fails (committed OAuth secret, queued for filter-repo) |
+| `make test` (unit tier) | ✅ Green in CI (CI is authoritative for full-suite green; dev-box full runs are unstable, P2-6) |
+| Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ Passing |
+| Mandate compliance | 23/28 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
+| `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The CI badges, mandate compliance, and secret-scan gates are not yet green. We're shipping alpha to get feedback before hardening the rest.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 4 untested mandates (M4, M17, M18, M19) are policy mandates with no mechanical check. M13 (Temple-Grade) requires a Codex less than 24h old — `make codex` refreshes it. We're shipping to get feedback before hardening the rest.
 
 ---
 
@@ -42,7 +38,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
  cd omega-engine
  ./scripts/install.sh
  
- # 2. (optional) Re-download / verify the default local model (LFM2.5-2.6B Q4_K_M, ~1.67GB)
+ # 2. (optional) Re-download / verify the default local model (Qwen3-1.7B-Q6_K, ~1.6GB)
  # The engine auto-discovers backends — no internet needed after the model is present.
  ./scripts/download_model.sh
  
@@ -85,11 +81,8 @@ Example: `pip install -e ".[native,cli,memory,youtube]"`
 **Recommended: Use OpenCode** (the same IDE/CLI the developers use).  
 See the agent definitions in `.opencode/agents/` and the EIS session protocol in `docs/`.
 
-**Direct CLI**: The `omega` CLI bundle lives in `src/omega/cli/`, but the console-script entry point is not yet wired in `pyproject.toml`. You can invoke modules directly:
+**Direct CLI**: the `omega` console script **is** wired in `pyproject.toml` (`omega = "omega.cli.oracle_cli:main"`) once you run `pip install -e ".[native,cli]"`. Note that `omega.cli.bundle` is a separate, narrower tool (entity-bundle export/import only) — it is **not** the engine CLI.
 
-```bash
-python -m omega.cli.bundle talk "hello"
-```
 
 **Note**: The install script (`scripts/install.sh`) targets CP-3 (one-click install). On a fresh machine it should complete in <5 minutes including the ~1.6GB model download.
 
@@ -97,7 +90,7 @@ python -m omega.cli.bundle talk "hello"
 
 ## Why Omega Is Different
 
-Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 declared architectural mandates** — 18 currently pass the automated compliance meter, 5 failing, 4 untested. The mandates are **gates that fail the build** if violated.
+Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 declared architectural mandates** (28 rows in the automated meter). At the 2026-09-19 audit: **23 pass, 0 fail, 4 have no mechanical check** (M4, M17, M18, M19). The mechanically-checkable mandates are **gates that fail the build** if violated.
 
 | Mandate | What It Means | Verified By |
 |---------|---------------|-------------|
@@ -105,11 +98,10 @@ Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 decl
 | **M7 Local-First** | Cloud is **opt-in fallback only**; local inference primary | Provider fabric ✅ |
 | **M8 Zero Telemetry** | **No phone-home, ever**. No analytics, no metrics | `make check-m8-zero-telemetry` ✅ |
 | **M11 Soul Integrity** | L1→L2→L3 distillation **every session**, persisted to `soul.yaml` | `src/omega/memory/soul_store.py` atomic writer (partially wired) |
-| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` ⚠️ (failing today) |
+| **M23 Failure Integrity** | **No soft failures** — broken tools → hard stop | `make check-m23-failure-integrity` ✅ |
+| **M26 Doc Standards** | Reference docs pass `make doc-llm-validate` | `make doc-llm-validate` ✅ |
+| **M27 Tracking Integrity** | 5-Tier Tracking Architecture validated | `scripts/validate_tracking_state.py` ✅ |
 | **M28 Spatial** | **R-tree + vec0 dual-index** for VR navigation | `src/omega/memory/spatial_graph.py` ✅ |
-
-> **The Cathedral Metaphor**: We build a cathedral, not a bazaar. Every stone (mandate) is placed with intention. The architecture is the theology.
-
 ---
 
 ## What Omega Is
@@ -119,8 +111,8 @@ Omega is a **universal AI runtime** that treats models as infrastructure, not pr
 | Capability | Why It Matters |
 |-----------|----------------|
 | **Sovereign (M7, M8)** | Local inference primary — cloud is opt-in fallback. **Zero telemetry.** No phone-home. |
-| **Multi-provider** | Switch between Native GGUF, LM Studio, Ollama, and cloud providers — same engine, no code changes |
-| **Entity system** | Domain-matched personas (13 canonical agents) routed by intent detection; 24 default entities in the shipped `_omega_default` IWAD with 10 Node Keepers at N1-N10 slots |
+| **Multi-provider** | Switch between Native GGUF and configured cloud providers (Google, OpenRouter, Anthropic, xAI, …) — same engine, no code changes |
+| **Entity system** | Domain-matched personas routed by intent detection; the shipped `_omega_default` IWAD registers 14 entities, with **slots S1–S10 governed by Ma'at (S1-S5) and Lilith (S6-S10)**; a keeper is assigned only when proven (currently `carmack` → S3) |
 | **IWAD architecture** | Engine-content separation — swap entity stacks like Doom WADs |
 | **Memory & soul evolution** | Every interaction deepens entity knowledge; L1→L2→L3 gnosis distillation |
 | **MCP framework** | Model Context Protocol for tool integration (Hivemind, file system, search) |
@@ -132,16 +124,16 @@ Omega is a **universal AI runtime** that treats models as infrastructure, not pr
 ## Key Commands
 
 ```bash
-omega talk "what can you do"             # Auto-route to best entity
-omega summon SysAdmin "check the logs"   # Summon a specific entity
-omega list-entities                      # Show all available entities
-omega backends                           # List available inference backends
-omega health                             # Show provider status and latency
-omega talk "hello" --iwad arcana_novai   # Load a specific IWAD stack
-omega version                            # Show version
-make test                                # Run the fast unit-tier test suite (currently broken)
-make temple-grade                        # Verify Temple-Grade gates (6 checks; currently fails on M23 cascade)
-make menu                                # Full command menu
+omega talk "what can you do"              # Auto-route to best entity
+omega summon ma'at "check the logs"       # Summon a specific entity
+omega list-entities                        # Show all available entities
+omega backends                             # List available inference backends
+omega model-status                         # Provider/model status
+omega talk "hello" --iwad arcana_novai     # Load a specific IWAD stack
+omega --help                               # Full command list
+make test                                  # Fast unit-tier suite (CI is authority for full-suite green)
+make doc-llm-validate                       # M26 documentation gate
+make check-mandate-compliance               # Mandate gate meter
 ```
 
 ---
@@ -155,11 +147,12 @@ Omega auto-detects available inference backends. **Local providers are tried fir
 | Priority | Provider | Setup | Speed | Sovereign |
 |:--------:|----------|-------|-------|:---------:|
 | **1** | **Native GGUF** | `./scripts/download_model.sh` | 🏠 CPU, llama-cpp-python | ✅ Full |
-| **2** | **LM Studio** | `lms server start` (port 1234) | 🏠 CPU/GPU | ✅ Full |
-| **3** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
-| **4** | **Mock** | Automatic in `OMEGA_ENV=test` | Instant, deterministic | ✅ Test |
+| **2** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
 
-**No configuration needed** — the engine discovers running local backends automatically at startup.
+
+**No configuration needed** — the engine discovers the local GGUF model automatically at startup.
+
+> **Provider availability (2026-09-19):** `config/providers.yaml` defines 12 providers and **enables 10**. **The local providers are `native-gguf` (primary, llama-cpp-python) and `ollama`** — install Ollama (`curl -fsSL https://ollama.ai/install.sh | sh`) and `ollama pull qwen3:1.7b`; it is **enabled by default** (`providers.ollama.enabled: true`). **LM Studio (`lmster`) is disabled** (`enabled: false`) — de-scoped until a post-release update. `mock` is test-only (`OMEGA_ENV=test`).
 
 ### Cloud Fallbacks (opt-in, last resort)
 
@@ -167,11 +160,14 @@ Cloud providers are **optional** and **never called unless local inference fails
 
 | Priority | Provider | Setup | Speed | Sovereign |
 |:--------:|----------|-------|-------|:---------:|
-| **5** | **Google AI Studio** | Set `GOOGLE_API_KEY` in `.env` | ☁️ Cloud, free Gemma 4 31B (262K context) | ❌ Cloud |
-| **6** | **OpenRouter** | Set `OPENROUTER_API_KEY` in `.env` | ☁️ Cloud, 300+ models | ❌ Cloud |
-| **7** | **OpenCode Zen** | Auto via OpenCode CLI | ☁️ Cloud | ❌ Cloud |
-| **8** | **Copilot** | Auto via GitHub CLI | ☁️ Cloud | ❌ Cloud |
-| **9** | **Antigravity** | Auto via Cline CLI | ☁️ Cloud | ❌ Cloud |
+| **3** | **Antigravity** | Set `ANTIGRAVITY_API_KEY` in `.env` | ☁️ Cloud, Google/Anthropic/OpenAI models | ❌ Cloud |
+| **4** | **Google AI Studio** | Set `GOOGLE_API_KEY` in `.env` | ☁️ Cloud, free Gemma 4 31B (262K context) | ❌ Cloud |
+| **4** | **Google (compat)** | Set `GOOGLE_API_KEY` in `.env` | ☁️ Cloud, Gemma 4 thinking (compat endpoint) | ❌ Cloud |
+| **5** | **OpenRouter** | Set `OPENROUTER_API_KEY` in `.env` | ☁️ Cloud, 300+ models | ❌ Cloud |
+| **6** | **OpenCode Zen** | Auto via OpenCode CLI | ☁️ Cloud | ❌ Cloud |
+| **7** | **Cline** | Auto via Cline CLI | ☁️ Cloud | ❌ Cloud |
+| **8** | **Anthropic** | Set `ANTHROPIC_API_KEY` in `.env` | ☁️ Cloud, Claude models | ❌ Cloud |
+| **9** | **xAI** | Set `XAI_API_KEY` in `.env` | ☁️ Cloud, Grok models | ❌ Cloud |
 
 > **⚠️ Terms of Service**: Cloud providers may use your data for model training. Review each provider's ToS before enabling. The Omega Engine is not affiliated with any cloud provider.
 
@@ -196,18 +192,23 @@ Cloud providers are **optional** and **never called unless local inference fails
                      │ ModelGateway│  Provider fabric with circuit breaker:
                      │             │
                      │  1. native-gguf  ← PRIMARY (Sovereign, local-first)
-                     │  2. lmster       ← LOCAL (LM Studio :1234)
-                     │  3. ollama       ← LOCAL (:11434)
+                     │  2. ollama       ← LOCAL (:11434)
+                     │  3. antigravity  ← CLOUD (Google/Anthropic/OpenAI)
                      │  4. google       ← CLOUD FALLBACK (Gemma 4)
-                     │  5. openrouter   ← CLOUD FALLBACK (300+ models)
-                     │  ...            (opencode, copilot, mock)
+                     │  5. google-compat← CLOUD (Gemma 4 thinking)
+                     │  6. openrouter   ← CLOUD FALLBACK (300+ models)
+                     │  7. opencode-zen ← CLOUD (CLI-exclusive)
+                     │  8. cline        ← CLOUD (DeepSeek/MiMo)
+                     │  9. anthropic    ← CLOUD (Claude)
+                     │  10. xai         ← CLOUD (Grok)
+                     │  11. mock        ← TEST (disabled)
                      │
                      └──────┬──────────┘
                             │
-               ┌────────────┴────────────┐
-               │    Memory + Soul        │  Session memory, L3 gnosis distillation
-               │  (memory_store.py)      │  Qdrant vectors, FTS5 search
-               └─────────────────────────┘
+                ┌────────────┴────────────┐
+                │    Memory + Soul        │  Session memory, L3 gnosis distillation
+                │  (memory_store.py)      │  SQLite-vec + FTS5 + RRF hybrid search
+                └─────────────────────────┘
 ```
 
 ### IWAD Architecture — Engine-Content Separation
@@ -218,14 +219,14 @@ Omega separates the engine from user content using the IWAD architecture (inspir
 omega-engine/
 ├── src/omega/          ← Engine core (runtime, no content) [M2 Firewall]
 ├── config/wads/
-│   ├── _omega_default/ ← Reference IWAD — 24 entities, 10 Node Keepers at N1-N10
+│   ├── _omega_default/ ← Reference IWAD — 14 entities
 │   └── arcana_novai/   ← Personal IWAD — 13 Spheres (Kabbalistic Tree of Life + Da'ath + Qliphoth + Mnemosyne)
 ├── models/gguf/        ← Local GGUF models (downloaded, not shipped)
 ├── data/entities/      ← Entity soul/knowledge (runtime evolved)
 └── mcp_servers/        ← MCP Hub for cross-agent Hivemind
 ```
 
-Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
+Switch IWADs at runtime: `omega talk "hello" --iwad arcana_novai`
 
 ---
 
@@ -235,13 +236,13 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 | Session Type | Purpose | Example |
 |--------------|---------|---------|
-| **EIS** | Expert Interactive Session — persistent, Architect steers live | Kali↔Roc (5 rounds), Kali+Lilith+Ma'at (6 rounds nested) |
+| **EIS** | Expert Interactive Session — persistent, Architect steers live | Multi-round dialectic convergence |
 | **NES** | Non-Expert Session — one-shot delegation | Quick research task |
 | **SPT** | Subagent Pair Task — paired execution | Roc+Jem for sqlite-vec |
 
 **How it works**: Two agents with domain orthogonality ≥0.7 engage in Concede/Defend/Synthesize rounds until consensus. Every challenge posed = our job to anticipate. The dialectic IS the stress test.
 
-**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest. This is real, not theatre: see `data/coordination/ACTIVE_SPRINT.json` for SOTE v1.0.3 records and the nested dialectic rounds (6 rounds, consensus achieved).
+**SOTE (State of the Engine)**: Weekly cadence (Monday 06:00 UTC). 8 voices → synthesis → public digest → master index. The practice keeps the engine honest.
 
 ---
 
@@ -278,18 +279,17 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 | Aspect | Status |
 |--------|--------|
-| Local inference (native-gguf, LM Studio) | ✅ Working |
-| Provider routing (10 providers, local-first) | ✅ Working |
+| Local inference (native-gguf, llama-cpp-python) | ✅ Working |
+| Provider routing (10 of 12 configured providers enabled, local-first) | ✅ Working |
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
-| `omega` CLI binary | ❌ Not built (use OpenCode or `python -m omega.cli.bundle`) |
-| `make test` | ❌ Broken (12 files import removed module) |
-| CI gates (Temple-Grade) | ❌ Cascading fail (M23 root cause) |
-| Mandate compliance meter | ⚠️ 64.3% (18/28; 5 failing, 4 untested) |
-| Secret scan | ❌ Fails (committed OAuth secret, queued for filter-repo) |
+| `make test` (unit tier) | ✅ Green in CI (CI is authoritative for full-suite green; dev-box full runs are unstable, P2-6) |
+| Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ Passing |
+| Mandate compliance | 23/28 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
+| `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The CI badges, mandate compliance, and secret-scan gates are not yet green. We're shipping alpha to get feedback before hardening the rest.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 4 untested mandates (M4, M17, M18, M19) are policy mandates with no mechanical check. M13 (Temple-Grade) requires a Codex less than 24h old — `make codex` refreshes it. We're shipping to get feedback before hardening the rest.
 
 ---
 
@@ -308,7 +308,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 ---
 
-## v1.6.0-alpha — Current Status
+## v1.6.1-alpha — Current Status
 
 ### Engine
 
@@ -316,7 +316,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 |---------|--------|
 | Core Inference (multi-provider, local-first) | ✅ Working |
 | Native GGUF (llama-cpp-python, primary provider) | ✅ Working |
-| Provider Fabric (10 active providers, local-first) | ✅ Working |
+| Provider Fabric (12 configured providers, 10 enabled, local-first) | ✅ Working |
 | Entity System & Domain Routing | ✅ Working |
 | IWAD Architecture (engine-content separation) | ✅ Working |
 | `omega talk` / `omega summon` CLI | ✅ Working (via OpenCode) |
@@ -330,14 +330,14 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 | Gate | Status |
 |------|--------|
-| Test Suite | ❌ Broken — 12 files import `omega.library` (removed in D-565, not restored) |
-| Temple-Grade | ❌ Fails — 6 checks run; M23 cascade failure |
-| Mandate Compliance | ⚠️ 64.3% (18/28; 5 failing: M13, M16, M23, M27, +1; 4 untested) |
-| Agent Fleet | **13 agents** (canonical), M10 compliant (≤14) |
+| Test Suite (unit tier) | ✅ Green in CI (counts vary by environment; CI is authoritative) |
+| Core CI Gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ Passing |
+| Mandate Compliance | 23/28 passing; 0 failing; 4 untested (M4, M17, M18, M19) |
+| Agent Fleet | **13 agents** (canonical), M10 compliant (max 14) |
 | AnyIO Compliance | ✅ Zero `import asyncio` in core (M1) |
 | Zero Telemetry | ✅ No external phone-home (M8) |
 | UID Sovereignty | ✅ All Podman containers use `keep-id` (M6) |
-| Heritage Tags | **216 `[id-soft:]` tags** across `src/omega/` |
+| Heritage Tags | **318 `[id-soft:]` tags** across `src/omega/` (counted 2026-09-19) |
 
 ### Roadmap
 
@@ -363,3 +363,7 @@ Apache 2.0 — Free. Sovereign. Yours.
 ---
 
 *Built by the Xoe-NovAi Foundation with ~8,000 hours of self-directed research. No VC funding. No cloud dependency. No telemetry. Just sovereign AI.*
+
+---
+
+*⬡ OMEGA ⬡ README ⬡ v1.6.1-alpha ⬡ 2026-09-19*

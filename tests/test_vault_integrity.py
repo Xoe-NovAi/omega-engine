@@ -8,6 +8,11 @@ import os
 import base64
 from pathlib import Path
 from datetime import datetime, timezone
+
+# Vault crypto deps are optional (pyrage/argon2) — skip when absent (CI).
+pytest.importorskip("pyrage", reason="pyrage not installed (optional vault extra)")
+pytest.importorskip("argon2", reason="argon2-cffi not installed (optional vault extra)")
+
 from src.omega.vault.vault_core import (
     VaultCore, VaultCredential, 
     VaultError, CredentialNotFoundError, LeaseError, QuotaExceededError

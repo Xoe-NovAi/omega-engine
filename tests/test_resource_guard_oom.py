@@ -230,11 +230,11 @@ async def test_contract_cgroup_pressure_throttles():
 
 
 @pytest.mark.asyncio
-async def test_contract_healthy_system_denies_thrashing():
-    """M21: All three signals healthy returns DENY_THRASHING (C-2' fusion).
+async def test_contract_healthy_system_allows():
+    """M21: All three signals healthy returns ALLOW (C-2' fusion).
 
-    Under C-2' three-signal fusion, even healthy systems deny thrashing
-    to maintain admission pressure. OOMProtector MUST return DENY_THRASHING.
+    Under C-2' three-signal fusion, a healthy system admits work — ALLOW.
+    (The file header contract: "Healthy system returns ALLOW".)
     """
     config = OOMProtectorConfig(
         min_reserve_gb=2.0,
@@ -258,8 +258,8 @@ async def test_contract_healthy_system_denies_thrashing():
 
     result = protector._fuse_signals(snapshot)
     assert isinstance(result, AdmissionResult)
-    assert result == AdmissionResult.DENY_THRASHING, (
-        f"Expected DENY_THRASHING, got {result}"
+    assert result == AdmissionResult.ALLOW, (
+        f"Expected ALLOW, got {result}"
     )
 
 

@@ -6,10 +6,15 @@
 # This is an EXPERIMENT-layer interface (not Core).
 # See docs/architecture/COGNITIVE_PRIMITIVES.md for the primitive definitions.
 
+import logging
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, List, Optional, Tuple
 from PIL import Image
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -216,7 +221,8 @@ class IVisionBackend(ABC):
             test_img = Image.new('RGB', (10, 10), (255, 255, 255))
             _ = self.tokenize(test_img, block_size=5)
             return True
-        except Exception:
+        except Exception as e:
+            logger.debug("Vision backend health check failed: %s", e)
             return False
 
 

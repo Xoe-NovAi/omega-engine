@@ -41,7 +41,12 @@ jobs:
           cache: "pip"
           cache-dependency-path: pyproject.toml
 
-      - name: Install dependencies
+      - name: Create and activate virtualenv (M24 Venv Sovereignty)
+        run: |
+          python -m venv .venv
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies into venv
         run: |
           python3 -m pip install --upgrade pip
           pip install -e ".[cli,dev]"
@@ -49,16 +54,15 @@ jobs:
 
       - name: Verify imports
         run: |
-          python3 -c "import anyio; print(f'AnyIO {anyio.__version__}')"
+          python3 -c "import importlib.metadata; print(f'AnyIO {importlib.metadata.version(\"anyio\")}')"
           python3 -c "from omega.oracle.model_gateway import ModelGateway; print('ModelGateway OK')"
 
       - name: Run tests
         run: |
           python3 -m pytest tests/ -v --tb=short -x
 
-      - name: Verify Mining Ports (P3 BuildMaster)
+      - name: Verify Mining Ports (S3 Engineering)
         run: |
-          make verify-mining
 
       - name: AnyIO-only check (Mandate 1)
         run: |

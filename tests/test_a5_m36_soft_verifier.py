@@ -20,10 +20,6 @@ _test_path_file.close()
 os.environ["OMEGA_M34_REGISTRY"] = str(_test_path)
 os.environ["OMEGA_M34_ENABLED"] = "1"
 
-# Mock the missing omega.library module BEFORE any imports
-sys.modules['omega.library'] = MagicMock()
-sys.modules['omega.library.indexer'] = MagicMock()
-
 # Now import with src in path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
@@ -136,9 +132,9 @@ def test_dispatch_returns_structured_json():
     parsed = json.loads(json_str)
     assert parsed["cross_validator_agent"] == "jem"
     assert parsed["priority"] == "P0"
-    assert parsed["status"] == "stub_bypass"
-    assert parsed["handoff_dispatched"] is False
-    assert parsed["handoff_packet_id"] is None
+    assert parsed["status"] == "dispatched"
+    assert parsed["handoff_dispatched"] is True
+    assert parsed["handoff_packet_id"] is not None
     print("✓ Hivemind dispatch returns full structured JSON response (M23 honest stub)")
 
 
@@ -160,8 +156,8 @@ def test_p0_escalation_uses_jem():
     )
     assert result["cross_validator_agent"] == "jem"
     assert result["priority"] == "P0"
-    assert result["handoff_dispatched"] is False  # M23: stub does NOT dispatch
-    assert result["status"] == "stub_bypass"
+    assert result["handoff_dispatched"] is True  # real dispatch (stub removed)
+    assert result["status"] == "dispatched"
     print("✓ P0 escalation uses jem (M23 honest stub)")
 
 
@@ -181,8 +177,8 @@ def test_p1_escalation_uses_verity():
     )
     assert result["cross_validator_agent"] == "verity"
     assert result["priority"] == "P1"
-    assert result["handoff_dispatched"] is False  # M23: stub does NOT dispatch
-    assert result["status"] == "stub_bypass"
+    assert result["handoff_dispatched"] is True  # real dispatch (stub removed)
+    assert result["status"] == "dispatched"
     print("✓ P1 escalation uses verity (M23 honest stub)")
 
 
@@ -258,9 +254,9 @@ def test_handoff_packet_id_generated():
         priority="P0",
     )
     assert result["handoff_packet_id"] is not None
-    assert result["handoff_packet_id"].startswith("cv_")
+    assert result["handoff_packet_id"].startswith("ho_")
     assert len(result["handoff_packet_id"]) > 10
-    print("✓ Handoff packet ID generated (cv_XXXX format)")
+    print("✓ Handoff packet ID generated (ho_XXXX format)")
 
 
 # ── Test 7: Cross-validator agent mapping is correct ─────────────────────

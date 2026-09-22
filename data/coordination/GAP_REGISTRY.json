@@ -1,0 +1,654 @@
+{
+  "version": "1.0",
+  "updated": "2026-08-26T00:10:26Z",
+  "purpose": "Authoritative registry of ALL research gap IDs. Prevents gap-number reuse across plans (root cause of the 2026-08-14 R13-R38 collision). Any new research plan MUST register its gaps here with a UNIQUE prefix.",
+  "rules": [
+    "Gap IDs R1-R38 are OWNED by RESEARCH_PLAN_PHASE1_4_20260813.md (authoritative).",
+    "R39-R56 are supplementary (Phase2-plan topics, renumbered 2026-08-14).",
+    "New plans MUST use a DISTINCT prefix (e.g. P2-, S-, X-) \u2014 NEVER reuse R1-R99 bare.",
+    "Before assigning any gap ID, CHECK THIS REGISTRY for collisions.",
+    "Superseded plans (e.g. Phase2) are archived, not authoritative."
+  ],
+  "authoritative_plan": "data/coordination/RESEARCH_PLAN_PHASE1_4_20260813.md",
+  "gaps": {
+    "R1": {
+      "topic": "tokens.total schema",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R_OPENCODE_DB_SCHEMA_REFERENCE_20260810.md"
+    },
+    "R2": {
+      "topic": "Model window detection",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R2_MODEL_WINDOW_DETECTION_20260813.md"
+    },
+    "R3": {
+      "topic": "Subagent state machine",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R3_SUBAGENT_STATE_MACHINE_20260813.md"
+    },
+    "R4": {
+      "topic": "AGY account pool",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md"
+    },
+    "R5": {
+      "topic": "TriageRouter constraints",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R5_TRIAGE_CONSTRAINT_TYPES_20260813.md"
+    },
+    "R6": {
+      "topic": "RHP schema",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R6_RHP_SCHEMA_20260813.md"
+    },
+    "R7": {
+      "topic": "MCP tool patterns",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R7_MCP_TOOL_PATTERNS_20260813.md"
+    },
+    "R8": {
+      "topic": "Streaming timeout mystery",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "STREAMING_TIMEOUT_MYSTERY_RESEARCH_20260810.md"
+    },
+    "R8b": {
+      "topic": "Streaming observability",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R8B_STREAMING_OBSERVABILITY_20260813.md"
+    },
+    "R9": {
+      "topic": "Memory system (zswap vs zRAM)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R10": {
+      "topic": "Memory system (OOMProtector)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R11": {
+      "topic": "Memory system (Circuit Breaker)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R12": {
+      "topic": "Memory system (Context Gauge)",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "MEMORY_SYSTEMS_DEFINITIVE_REPORT.md"
+    },
+    "R13": {
+      "topic": "OpenCode plugin architecture",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R13_OPENCODE_PLUGIN_ARCHITECTURE_20260814.md"
+    },
+    "R14": {
+      "topic": "Streaming heartbeat",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R_C11_STREAMING_PATTERNS_20260723.md"
+    },
+    "R14b": {
+      "topic": "Nemotron fallback chain",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "RESOLVED 2026-08-25: M25 streaming implemented (openai_compat.py:136-163), fallback_chain wired (model_gateway.py:528), antigravity tuned for Nemotron gaps. RESIDUAL GHOST: fallback_resolver config block providers.yaml:21-63 has ZERO src consumers \u2014 UO-6 cut-or-wire candidate. Evidence: data/coordination/gap_investigation_20260825/roc/GAP_INVESTIGATION_REPORT_20260825.md"
+    },
+    "R16": {
+      "topic": "pydantic v2",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R16_PYDANTIC_V2_MIGRATION_20260814.md"
+    },
+    "R17": {
+      "topic": "structlog",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R17_STRUCTLOG_ADOPTION_20260814.md"
+    },
+    "R18": {
+      "topic": "prometheus_client",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R18_PROMETHEUS_CLIENT_METRICS_20260814.md"
+    },
+    "R19": {
+      "topic": "Retry strategy",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R19_RETRY_STRATEGY_20260814.md"
+    },
+    "R20": {
+      "topic": "Keyblind/Authy/Vault",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R20_KEYBLIND_AUTHY_VAULT_20260814.md"
+    },
+    "R21": {
+      "topic": "Workhorse paths",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md"
+    },
+    "R22": {
+      "topic": "WARP proxy pool",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "warp-proxy-pool/scripts/warp-ns-setup.sh"
+    },
+    "R23": {
+      "topic": "Restic passphrase",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R23_RESTIC_PASSPHRASE_20260814.md"
+    },
+    "R24": {
+      "topic": "AppArmor profiles",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R24_APPARMOR_PROFILES_20260814.md"
+    },
+    "R25": {
+      "topic": "IA2 envelope freshness",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R25_IA2_ENVELOPE_FRESHNESS_20260814.md"
+    },
+    "R26": {
+      "topic": "Honker/Redis",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "docs/research/R26_HONKER_REDIS_20260814.md"
+    },
+    "R27": {
+      "topic": "tokens.total query verify",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R27_TOKENS_TOTAL_VERIFICATION_20260813.md"
+    },
+    "R27b": {
+      "topic": "NULL tokens.total",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R27B_NULL_TOKENS_TOTAL_HANDLING_20260813.md"
+    },
+    "R28": {
+      "topic": "MCP Streamable HTTP",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R28_MCP_STREAMABLE_HTTP_20260813.md"
+    },
+    "R29": {
+      "topic": "OpenCode plugin detection",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R29_OPENCODE_PLUGIN_DETECTION_20260813.md"
+    },
+    "R30": {
+      "topic": "5-way CB spike",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R30_CIRCUIT_BREAKER_BENCHMARK_20260813.md"
+    },
+    "R31": {
+      "topic": "Plugin scope reduction",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": "CONSENSUS FOUND 2026-08-25: minimal core (loop+state+tool registry) + MCP surface; three documented monolith regrets validate our architecture. Design input recorded."
+    },
+    "R32": {
+      "topic": "In-session gauge source",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "R32_IN_SESSION_GAUGE_DATA_SOURCE_20260813.md"
+    },
+    "R33": {
+      "topic": "Cold session context",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": null
+    },
+    "R34": {
+      "topic": "Provider band adjustments",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": "UPDATED 2026-08-25: Google killed static quota tables (live dashboard only) \u2014 bands must be MEASURED from telemetry, never hardcoded. LOAD-BEARING finding; hardcoded-band approaches are obsolete."
+    },
+    "R35": {
+      "topic": "Model degradation",
+      "status": "resolved",
+      "plan": "phase1_4",
+      "report": "METHODOLOGY RESOLVED 2026-08-25 (web-sourced): silent provider swaps systemic (arXiv 2608.11803: 2/9 providers flag changes); detection standard = behavioral fingerprinting (~86% power) + canary-hash tripwire + served-model logging. IMPLEMENTATION TICKET OPEN: provider drift canary extending M22 provenance with served_model_id. Evidence: data/coordination/gap_investigation_20260825/researcher/RESEARCHER_GAP_REPORT_20260825.md"
+    },
+    "R36": {
+      "topic": "Baseline calibration",
+      "status": "partial",
+      "plan": "phase1_4",
+      "report": "SPLIT 2026-08-25: methodology research CLOSED (Miller error bars, evalci, n>=30 floor, Procedure-Aware Evaluation 27-78% corrupt successes); implementation ticket OPEN: golden-set calibration harness (>=30 frozen prompts per oracle path, paired-difference reporting). Serves FLE study M1/M2 metrics directly."
+    },
+    "R37": {
+      "topic": "Identity fluidity (E-0)",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": "[BLOCKED-EXTERNAL \u2014 see note] BLOCKED-EXTERNAL 2026-08-25: SPEC_IDENTITY_FLUIDITY_v1.md awaiting Architect review + Kali ratification; 9 prototypes exist in grokster/workspace/prototypes/, zero engine wiring. One ratification from implementation-ready."
+    },
+    "R38": {
+      "topic": "NotebookLM integration",
+      "status": "outstanding",
+      "plan": "phase1_4",
+      "report": "UPDATED 2026-08-25: R52c SUPERSEDED by NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md v2.1 per D-583 (2-notebook, quota corrected 10 DR/mo NOT 30 \u2014 product renamed Gemini Notebook Jul 16 2026). notebooklm-py 0.8.1 installed. Missing: master_token.json auth capture (Architect browser), systemd service, opencode.json wiring."
+    },
+    "R39": {
+      "topic": "Fleet Health Dashboard (SUPPLEMENTARY, Phase2-plan topic)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R39_FLEET_HEALTH_DASHBOARD_20260813.md"
+    },
+    "R40": {
+      "topic": "Subagent Pair-Execution Chains (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R40_SUBAGENT_PAIR_EXECUTION_20260813.md"
+    },
+    "R41": {
+      "topic": "Cross-Agent A2A Protocol (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R41_CROSS_AGENT_A2A_PROTOCOL_20260813.md"
+    },
+    "R42": {
+      "topic": "MemoryStore wiring (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R42_MEMORYSTORE_WIRING_VERIFICATION_20260813.md"
+    },
+    "R43": {
+      "topic": "Handoff Protocol v2 (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R43_HANDOFF_PROTOCOL_V2_20260813.md"
+    },
+    "R44": {
+      "topic": "Provider Chain Hardening (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R44_PROVIDER_CHAIN_HARDENING_20260813.md"
+    },
+    "R45": {
+      "topic": "Tokenomics Cost Modeling (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R45_TOKENOMICS_COST_MODELING_20260813.md"
+    },
+    "R46": {
+      "topic": "Firewall Audit (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R46_FIREWALL_AUDIT_20260813.md"
+    },
+    "R47": {
+      "topic": "Container Hardening (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R47_CONTAINER_HARDENING_20260813.md"
+    },
+    "R48": {
+      "topic": "Signature Freshness (SUPPLEMENTARY, partial overlap R25)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R48_SIGNATURE_FRESHNESS_20260813.md"
+    },
+    "R49": {
+      "topic": "Grok CLI Fabric Pool (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R49_GROK_FABRIC_POOL_20260813.md"
+    },
+    "R51": {
+      "topic": "Dimension/Free-Will Hub Split (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R51_DIMENSION_FREEWILL_HUB_SPLIT_20260813.md"
+    },
+    "R52": {
+      "topic": "Living Research OS Body (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R52_LIVING_RESEARCH_OS_BODY_20260813.md"
+    },
+    "R53": {
+      "topic": "Roadmap SSOT (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R53_ROADMAP_SSOT_20260813.md"
+    },
+    "R54": {
+      "topic": "Identity Fluidity (SUPPLEMENTARY, different from R37)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R54_IDENTITY_FLUIDITY_20260813.md"
+    },
+    "R55": {
+      "topic": "YouTube Research Deep Dive (SUPPLEMENTARY)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "R55_YOUTUBE_RESEARCH_DEEP_DIVE_20260813.md"
+    },
+    "R56": {
+      "topic": "Lazy Loading (SUPPLEMENTARY, re-researched 2026-08-14)",
+      "status": "resolved",
+      "plan": "phase2_supplementary",
+      "report": "docs/research/R56_LAZY_LOADING_20260814.md"
+    },
+    "DP-1": {
+      "topic": "Dynamic Prompt Builder \u2014 template engine, role-aware composition, domain injection",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "owner": "maat",
+      "phase": "P1"
+    },
+    "DP-2": {
+      "topic": "Context Window Registry \u2014 single source for all model context windows",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "UPDATED 2026-08-25 CRITICAL FRESHNESS: Qwen3-2507=262K native; Nemotron3-Ultra=262K native (1M=extended+warning); Gemma4-31B=256K; Gemini output default 8K trap. 12+ hardcoded window sites catalogued across src/ by jem. Registry needed as single source.",
+      "owner": "maat",
+      "phase": "P0"
+    },
+    "DP-3": {
+      "topic": "Planner/Executor Model Router \u2014 routes by role + context window need",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "DESIGN FILLED 2026-08-25: 2026 consensus = static tier map v1, learned router only at volume, cascade-with-verifier for quality floors. Ready for spec drafting.",
+      "owner": "maat",
+      "phase": "P2"
+    },
+    "DP-4": {
+      "topic": "Domain Module Loader \u2014 unified load_domain() API with packaging",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "owner": "maat",
+      "phase": "P3",
+      "depends_on": "QDRANT-MIGRATION (vector store scale-up)"
+    },
+    "DP-5": {
+      "topic": "Per-Role Token Budget Manager \u2014 planner vs executor budgets",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "owner": "maat",
+      "phase": "P1"
+    },
+    "DP-6": {
+      "topic": "Domain Context Window Map \u2014 domain \u2192 optimal context window",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "owner": "maat",
+      "phase": "P0"
+    },
+    "DP-7": {
+      "topic": "Planner/Executor Prompt Templates \u2014 versioned, validated templates",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "owner": "kali",
+      "phase": "P4"
+    },
+    "DP-8": {
+      "topic": "SomaticState Planner Integration \u2014 state save/restore for planning continuity",
+      "status": "outstanding",
+      "plan": "cognitive_arch_20260819",
+      "report": "data/coordination/DYNAMIC_PROMPT_PLANNER_EXECUTOR_LOCAL_GAPS_20260819.md",
+      "owner": "maat",
+      "phase": "P8"
+    },
+    "GN-1": {
+      "topic": "notebooklm-py[mcp] deployment with isolated auth profiles",
+      "status": "partial",
+      "plan": "gemini_notebook_20260820",
+      "report": "SPLIT 2026-08-25: library install DONE (notebooklm-py 0.8.1 = latest upstream, 18.9k stars); AUTH OUTSTANDING (master_token.json capture needs Architect browser sign-in). GN-2..5 blocked via this dependency chain.",
+      "owner": "maat_n3"
+    },
+    "GN-2": {
+      "topic": "2 strategic notebooks: \u03a9-ACTIVE-RESEARCH + \u03a9-KNOWLEDGE-BASE",
+      "status": "outstanding",
+      "plan": "gemini_notebook_20260820",
+      "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "owner": "researcher"
+    },
+    "GN-3": {
+      "topic": "Free-tier fetch pipeline + systemd timer (30 DR/mo budget)",
+      "status": "outstanding",
+      "plan": "gemini_notebook_20260820",
+      "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "owner": "maat_n3"
+    },
+    "GN-4": {
+      "topic": "Single-account free-tier Deep Research smoke test",
+      "status": "outstanding",
+      "plan": "gemini_notebook_20260820",
+      "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "owner": "researcher"
+    },
+    "GN-5": {
+      "topic": "SDP distillation pipeline + Scribe handoff (manual mode)",
+      "status": "outstanding",
+      "plan": "gemini_notebook_20260820",
+      "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "owner": "researcher"
+    },
+    "DS-1": {
+      "topic": "Documentation system meta-doc (DOMAIN_DOCUMENTATION_SYSTEM.md)",
+      "status": "outstanding",
+      "plan": "documentation_system_20260820",
+      "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
+      "owner": "kali"
+    },
+    "DS-2": {
+      "topic": "docs/strategy/domains/gemini-notebook/ workspace structure",
+      "status": "outstanding",
+      "plan": "documentation_system_20260820",
+      "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
+      "owner": "kali"
+    },
+    "DS-3": {
+      "topic": "config/domains/gemini-notebook/ runtime module",
+      "status": "outstanding",
+      "plan": "documentation_system_20260820",
+      "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
+      "owner": "maat_n3"
+    },
+    "DS-4": {
+      "topic": "scripts/sync_domain_docs.py (validated copy, not symlink)",
+      "status": "outstanding",
+      "plan": "documentation_system_20260820",
+      "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
+      "owner": "maat_n3"
+    },
+    "DS-5": {
+      "topic": "STRATEGY_INDEX.md + STRATEGY_CORPUS_MAP.md Domain layer updates",
+      "status": "outstanding",
+      "plan": "documentation_system_20260820",
+      "report": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
+      "owner": "kali"
+    },
+    "LI-1": {
+      "topic": "AdaptiveContextBuffer implementation",
+      "status": "outstanding",
+      "plan": "local_inference_opt_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "maat_n3"
+    },
+    "LI-2": {
+      "topic": "SequentialModelLoader (no mmap, keep context alive)",
+      "status": "outstanding",
+      "plan": "local_inference_opt_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "maat_n3"
+    },
+    "LI-3": {
+      "topic": "llama-fit-params hardware probe at startup",
+      "status": "partial",
+      "plan": "local_inference_opt_20260820",
+      "report": "UPDATED 2026-08-25: hardware fit-probe EXISTS at providers.py:692-755 (detect_hardware_profile); only CLI exposure missing. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
+      "owner": "maat_n3"
+    },
+    "LI-4": {
+      "topic": "Tier 0 model matrix: Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B",
+      "status": "outstanding",
+      "plan": "local_inference_opt_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "maat_n3"
+    },
+    "LI-5": {
+      "topic": "Startup script (zRAM + THP + pinning + prompt caching)",
+      "status": "outstanding",
+      "plan": "local_inference_opt_20260820",
+      "report": "[BLOCKED-EXTERNAL \u2014 see note] BLOCKED-BY-ZS 2026-08-25: tune_ryzen.sh self-declared DEPRECATED; building replacement before ZS adjudication (zswap-vs-zRAM D-584 vs Carmack-H-1 schism) would encode the losing memory architecture. Sequence after Architect ruling.",
+      "owner": "maat_n3"
+    },
+    "KD-1": {
+      "topic": "Domain module schema (metadata.yaml + CONTEXT.md + PROMPTS/ + sources/)",
+      "status": "outstanding",
+      "plan": "knowledge_domains_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "kali"
+    },
+    "KD-2": {
+      "topic": "Curator model implementation (config/domains/curators.yaml governance)",
+      "status": "outstanding",
+      "plan": "knowledge_domains_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "kali"
+    },
+    "KD-3": {
+      "topic": "Affinity presets per domain (AFFINITY_PRESETS.yaml)",
+      "status": "outstanding",
+      "plan": "knowledge_domains_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "kali"
+    },
+    "HR-1": {
+      "topic": "HeadroomMiddleware implementation (src/omega/oracle/middleware/headroom.py)",
+      "status": "resolved",
+      "plan": "headroom_integration_20260820",
+      "report": "RESOLVED 2026-08-25: HeadroomMiddleware shipped 811f813f (2026-07-05), wired oracle.py:163/189/897 + context_builder.py:504. Registry row was born-stale (written 6 weeks AFTER fill). Evidence: data/coordination/gap_investigation_20260825/roc/GAP_INVESTIGATION_REPORT_20260825.md",
+      "owner": "maat_n3"
+    },
+    "HR-2": {
+      "topic": "Adaptive context buffer integration (src/omega/research/adaptive_context.py)",
+      "status": "resolved",
+      "plan": "headroom_integration_20260820",
+      "report": "[SUPERSEDED-BY-MIDDLEWARE \u2014 see note] SUPERSEDED 2026-08-25: adaptive_context.py never existed (phantom path); functionality subsumed by HeadroomMiddleware. Duplicate of LI-1 concern. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
+      "owner": "maat_n3"
+    },
+    "HR-3": {
+      "topic": "MCP headroom tools (compress tool outputs before context injection)",
+      "status": "resolved",
+      "plan": "headroom_integration_20260820",
+      "report": "RESOLVED 2026-08-25: MCP headroom_retrieve live at hub_tools/tools.py:153-168. Metrics debt remains (tokens_saved hardcoded 0). Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
+      "owner": "maat_n3"
+    },
+    "ZS-1": {
+      "topic": "zswap sysctl + kernel cmdline deployment (max_pool_percent=25, lzo_rle, zsmalloc, zswap.enabled=1)",
+      "status": "outstanding",
+      "plan": "zswap_subsystem_20260820",
+      "report": "[BLOCKED-EXTERNAL \u2014 see note] ADJUDICATION-REQUIRED 2026-08-25: TRIPLE CONTRADICTION \u2014 locked decisions (D-526/527/581/584) say zswap+NVMe/zRAM-disabled; live machine has zswap OFF + zRAM ACTIVE 8G zstd (matches Carmack H-1 review instead). Same-day decision schism D-584 vs H-1 is load-bearing for community installer defaults. Architect sudo ruling required BEFORE deployment or ZS-3 WAD packaging.",
+      "owner": "maat_n3"
+    },
+    "ZS-2": {
+      "topic": "16GB NVMe swap file + systemd cgroup config (MemoryMin=2G, MemoryHigh=5G, MemoryMax=6G, MemorySwapMax=infinity)",
+      "status": "outstanding",
+      "plan": "zswap_subsystem_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "maat_n3"
+    },
+    "ZS-3": {
+      "topic": "WAD packaging (zswap-config.wad for community stacks)",
+      "status": "outstanding",
+      "plan": "zswap_subsystem_20260820",
+      "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "owner": "maat_n3"
+    }
+  },
+  "next_free_id": 57,
+  "plans": {
+    "cognitive_arch_20260819": {
+      "name": "Dynamic Prompt + Planner/Executor + Domain Loading (D-569 ratified)",
+      "source": "data/coordination/KALI_BRIEFING_DYNAMIC_PROMPT_PLANNER_EXECUTOR_20260819.md",
+      "horizon": "H3 (post-debut)",
+      "ratified": "2026-08-19"
+    },
+    "qdrant_migration_20260819": {
+      "name": "Qdrant replaces sqlite-vec (D-570 ratified)",
+      "source": "docs/strategy/RESEARCHER_QDRANT_MIGRATION_GAPS_20260816.md",
+      "horizon": "H2 (post-debut)",
+      "ratified": "2026-08-19"
+    },
+    "gemini_notebook_20260820": {
+      "name": "Gemini Notebook v2.0 \u2014 Free-tier-only, 2-NB, 30 DR/mo (D-582/D-583)",
+      "source": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
+      "horizon": "H1 (post-debut)",
+      "ratified": "2026-08-20",
+      "prefix": "GN"
+    },
+    "documentation_system_20260820": {
+      "name": "Modular Domain Documentation System (D-579)",
+      "source": "docs/strategy/DOMAIN_DOCUMENTATION_SYSTEM.md",
+      "horizon": "H1 (post-debut)",
+      "ratified": "2026-08-20",
+      "prefix": "DS"
+    },
+    "local_inference_opt_20260820": {
+      "name": "Local Inference Tiered Architecture (D-580)",
+      "source": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "horizon": "H1 (post-debut)",
+      "ratified": "2026-08-20",
+      "prefix": "LI"
+    },
+    "knowledge_domains_20260820": {
+      "name": "Knowledge Domains \u2014 Runtime + Workspace + Curator (D-579)",
+      "source": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "horizon": "H1 (post-debut)",
+      "ratified": "2026-08-20",
+      "prefix": "KD"
+    },
+    "headroom_integration_20260820": {
+      "name": "Headroom Integration \u2014 Semantic Compression (40-90%)",
+      "source": "data/coordination/HEADROOM_RESEARCH_20260820.md",
+      "horizon": "H1 (post-debut)",
+      "ratified": "2026-08-20",
+      "prefix": "HR"
+    },
+    "zswap_subsystem_20260820": {
+      "name": "zswap + NVMe Swap Subsystem \u2014 16GB NVMe swap, zswap enabled (25% pool, lzo_rle, zsmalloc), zRAM disabled (D-526/D-581/D-584)",
+      "source": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
+      "horizon": "H1 (post-debut)",
+      "ratified": "2026-08-20",
+      "prefix": "ZS"
+    }
+  },
+  "collision_incidents": [
+    {
+      "date": "2026-08-14",
+      "description": "RESEARCH_PLAN_PHASE2_20260813.md (untracked) reused R13-R38 for DIFFERENT topics than RESEARCH_PLAN_PHASE1_4. Resolved by renumbering Phase2 reports to R39-R56. R56 lost during rename.",
+      "prevention": "GAP_REGISTRY.json created; new plans must use distinct prefixes."
+    }
+  ]
+}

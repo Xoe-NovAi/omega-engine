@@ -93,6 +93,46 @@ class HardwareProfile:
 
 # DEFAULT_RECOMMENDED_THREADS must be defined before CPUProfile default factory
 DEFAULT_RECOMMENDED_THREADS = 7
+def _parse_cpu_range(content: str) -> List[int]:
+    """Parse comma-separated CPU range string (e.g. '0-3,7,9-11') into a sorted list of ints."""
+    cpus: List[int] = []
+    content = content.strip()
+    if not content:
+        return cpus
+    for part in content.split(","):
+        part = part.strip()
+        if "-" in part:
+            try:
+                start, end = map(int, part.split("-"))
+                cpus.extend(range(start, end + 1))
+            except ValueError:
+                pass
+        elif part:
+            try:
+                cpus.append(int(part))
+            except ValueError:
+                pass
+    return sorted(list(set(cpus)))
+
+
+def _detect_cpu_flags() -> dict:
+    """Detect CPU instruction set extensions from /proc/cpuinfo."""
+    flags = {"avx2": False, "fma": False, "avx_vnni": False, "avx512": False}
+    try:
+        with open("/proc/cpuinfo", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("flags"):
+                    fset = set(line.split(":", 1)[1].strip().split())
+                    flags["avx2"] = "avx2" in fset
+                    flags["fma"] = "fma" in fset
+                    flags["avx_vnni"] = "avx_vnni" in fset or "avx512_vnni" in fset
+                    flags["avx512"] = "avx512f" in fset
+                    break
+    except OSError:
+        pass
+    return flags
+
+
 def _read_int(path: str) -> Optional[int]:
     """Read an integer from a sysfs file, tolerating absence."""
     try:

@@ -18,44 +18,46 @@ async def test_talk_empty_query():
 
 @pytest.mark.anyio
 async def test_talk_summon_pattern():
-    result = await Oracle().talk("@SysAdmin how do I deploy a container?")
-    assert result.entity == "SysAdmin"
+    result = await Oracle().talk("@Kali how do I deploy a container?")
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
 async def test_talk_summon_hey():
-    result = await Oracle().talk("hey Sentinel, check the security audit")
-    assert result.entity == "Sentinel"
+    result = await Oracle().talk("hey Verity, check the security audit")
+    assert result.entity == "Verity"
 
 
 @pytest.mark.anyio
 async def test_talk_summon_command():
-    result = await Oracle().talk("summon ModelGate, how is inference routing?")
-    assert result.entity == "ModelGate"
+    result = await Oracle().talk("summon Lilith, how is inference routing?")
+    assert result.entity == "Lilith"
 
 
 @pytest.mark.anyio
 async def test_talk_domain_routing():
     result = await Oracle().talk("I need to check infrastructure monitoring")
-    assert result.entity == "SysAdmin"
+    # No entity in dispatch.yaml owns the "infrastructure" domain — routes to default
+    assert result.entity == "default"
 
 
 @pytest.mark.anyio
 async def test_talk_domain_routing_shadow():
     result = await Oracle().talk("check observability and logging")
-    assert result.entity == "WatchTower"
+    # No entity in dispatch.yaml owns "observability" — routes to default
+    assert result.entity == "default"
 
 
 @pytest.mark.anyio
 async def test_summon_direct():
-    result = await Oracle().summon("sysAdmin", "how do I configure the server?")
-    assert result.entity == "SysAdmin"
+    result = await Oracle().summon("Kali", "how do I configure the server?")
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
 async def test_summon_case_insensitive():
-    result = await Oracle().summon("WATCHTOWER", "what metrics do you track?")
-    assert result.entity == "WatchTower"
+    result = await Oracle().summon("LILITH", "what metrics do you track?")
+    assert result.entity == "Lilith"
 
 
 @pytest.mark.anyio
@@ -64,18 +66,18 @@ async def test_summon_unknown_entity():
     assert result.entity is not None
 
 
-def test_all_node_keepers_have_required_fields():
-    """Structural invariants - every node keeper must have required fields.
+def test_all_slot_keepers_have_required_fields():
+    """Structural invariants - every slot keeper must have required fields.
     
     Does NOT hardcode entity names per the Engine-Stack Firewall mandate.
     """
     oracle = Oracle()
-    keepers = oracle.registry.list_node_keepers()
+    keepers = oracle.registry.list_slot_keepers()
     assert len(keepers) >= 1  # At least one keeper exists
     for k in keepers:
-        assert k.name is not None, "Node keeper missing name"
-        assert k.slots, "Node keeper must have slot assignments"
-        assert k.domains is not None, "Node keeper must have domains"
+        assert k.name is not None, "Slot keeper missing name"
+        assert k.slots, "Slot keeper must have slot assignments"
+        assert k.domains is not None, "Slot keeper must have domains"
 
 
 @pytest.mark.anyio
@@ -158,12 +160,12 @@ async def test_summon_uses_record_interaction():
 
     oracle = Oracle()
     oracle._record_interaction = AsyncMock()
-    result = await oracle.summon("sysAdmin", "configure the server")
+    result = await oracle.summon("Kali", "configure the server")
     oracle._record_interaction.assert_called_once()
     call_args = oracle._record_interaction.call_args
     assert call_args[0][1] == "configure the server"
     assert call_args[0][3] is False
-    assert result.entity == "SysAdmin"
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
@@ -173,11 +175,11 @@ async def test_summon_transient_skips_recording():
 
     oracle = Oracle()
     oracle._record_interaction = AsyncMock()
-    result = await oracle.summon("sysAdmin", "ephemeral query", transient=True)
+    result = await oracle.summon("Kali", "ephemeral query", transient=True)
     oracle._record_interaction.assert_called_once()
     call_args = oracle._record_interaction.call_args
     assert call_args[0][3] is True
-    assert result.entity == "SysAdmin"
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
@@ -201,14 +203,14 @@ async def test_record_interaction_memory_failure_does_not_crash():
 
 @pytest.mark.anyio
 async def test_talk_mention_at_start():
-    result = await Oracle().talk("@sysAdmin how do I deploy a container?")
-    assert result.entity == "SysAdmin"
+    result = await Oracle().talk("@Kali how do I deploy a container?")
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
 async def test_talk_mention_within_text():
-    result = await Oracle().talk("Hello @sysAdmin, can you help me with the server?")
-    assert result.entity == "SysAdmin"
+    result = await Oracle().talk("Hello @Kali, can you help me with the server?")
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
@@ -219,8 +221,8 @@ async def test_talk_invalid_mention():
 
 @pytest.mark.anyio
 async def test_talk_mention_case_insensitive():
-    result = await Oracle().talk("Can you help me @SYSADMIN?")
-    assert result.entity == "SysAdmin"
+    result = await Oracle().talk("Can you help me @KALI?")
+    assert result.entity == "Kali"
 
 
 @pytest.mark.anyio
@@ -233,8 +235,8 @@ async def test_talk_mention_email_false_positive():
 @pytest.mark.anyio
 async def test_talk_multiple_mentions():
     """Verify that the first valid mention takes priority."""
-    result = await Oracle().talk("Hello @sysAdmin and @watchTower")
-    assert result.entity == "SysAdmin"
+    result = await Oracle().talk("Hello @Kali and @Lilith")
+    assert result.entity == "Kali"
 
 
 def test_get_valid_agents_missing_file():

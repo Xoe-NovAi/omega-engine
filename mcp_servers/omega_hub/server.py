@@ -61,6 +61,7 @@ for p in [_project_root, _mcp_servers_root]:
 
 import anyio
 from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, TextContent
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -119,7 +120,34 @@ logger = logging.getLogger("omega.hub")
 from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 
 
-mcp = FastMCP("Omega Core Hub", json_response=True)  # JSON-only responses for OpenCode/Cline compatibility
+# Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback + Tailscale mesh with all ports
+_transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=[
+        "192.168.10.168", "192.168.10.168:*",
+        "127.0.0.1", "127.0.0.1:*",
+        "localhost", "localhost:*",
+        "[::1]", "[::1]:*",
+        # Tailscale L2 federation (C6 v1.1 / L2_ACCEPTANCE.md FED-L2-001)
+        "100.123.51.67", "100.123.51.67:*",
+        "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",
+        "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
+    ],
+    allowed_origins=[
+        "http://192.168.10.168:*",
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "http://100.123.51.67:*",
+        "http://omega-hub.tail51f14a.ts.net:*",
+        "http://*.tail51f14a.ts.net:*",
+    ],
+)
+
+mcp = FastMCP(
+    "Omega Core Hub",
+    json_response=True,  # JSON-only responses for OpenCode/Cline compatibility
+    transport_security=_transport_security,
+)
 
 # [P1a-2] State, service singletons, hivemind state, background tasks,
 # and helper functions are now in mcp_servers.omega_hub.state (extracted).
@@ -143,7 +171,7 @@ def __getattr__(name: str):
     """Lazy-load tools to resolve circular imports while maintaining backward compatibility."""
     if name in [
         "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
-        "oracle_list_pillar_keepers", "oracle_entity_info", "oracle_assess_intent",
+        "oracle_list_slot_keepers", "oracle_entity_info", "oracle_assess_intent",
         "oracle_discover_entity", "sovereign_search", "delegate_task",
         "hivemind_post_context", "hivemind_heartbeat", "hivemind_get_awareness",
         "hivemind_get_continuation", "hivemind_extended_checkin", "hivemind_extended_checkout",
@@ -299,7 +327,7 @@ async def _agent_list(request: Request) -> JSONResponse:
                 "purpose": desc.get("purpose", ""),
                 "capabilities": desc.get("capabilities", []),
                 "domains": desc.get("domains", []),
-                "pillar_slot": desc.get("pillar_slot"),
+                "slot": desc.get("slot"),
                 "task_tool_type": desc.get("task_tool_type", "general"),
                 "owned_files": desc.get("owned_files", []),
             })

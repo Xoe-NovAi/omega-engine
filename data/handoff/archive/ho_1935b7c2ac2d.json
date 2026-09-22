@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_1935b7c2ac2d",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Gather ALL relevant local Omega Engine docs and code files for NotebookLM context pack. Find and catalog:\n1. All strategy docs (docs/strategy/*.md) - prioritize SSOTs: SOVEREIGN_ARK_BLUEPRINT.md, DEBUT_REMEDIATION_MANUAL_20260817.md, POST_DEBUT_ROADMAP.md, STRATEGY_CORPUS_MAP.md, FLEET_TEAM_PLAYBOOK.md\n2. All architecture docs (docs/architecture/*.md) - ORACLE_STACK_CANONICAL.md, EVOLVER_SDP_SUCCESSOR.md, etc.\n3. All research docs (docs/research/*.md) - especially CARMACK_DEFINITIVE_STRATEGY_20260730.md, YouTube research sessions\n4. All coordination docs (data/coordination/*.md) - ACTIVE_SPRINT.json, MAKALI_COUNCIL_VERDICT, MAKALI_COUNCIL_AUDIT, HMC_COLLABORATION_HUB.md\n5. Core engine code (src/omega/**/*.py) - prioritize: oracle.py, model_gateway.py, entity_registry.py, memory_store.py, sqlite_vec_adapter.py, hybrid_search.py, context_builder.py, soul_store.py, health_monitor.py, resource_guard.py\n6. CLI code (src/omega/cli/oracle_cli.py)\n7. Config files (config/providers.yaml, config/models.yaml, config/omega.yaml, config/wads/_omega_default/)\n8. Mandates (SOVEREIGN_MANDATES.md)\n9. Key coordination artifacts: PIVOT_LOG.md, GAP_REGISTRY.json, UNIFIED_STRATEGIC_PLAN_20260819.md\n\nOutput: A structured inventory with file paths, sizes, and relevance ratings (1-10) for NotebookLM ingestion. Focus on files that give strategic insight into the Omega Engine architecture, decisions, and roadmap.",
+  "context": "Building NotebookLM context pack for deep strategic analysis of Omega Engine. roc_racoon gathers local inventory first, then researcher analyzes NotebookLM capabilities and builds optimal ingestion strategy.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-19T21:31:47.096046+00:00",
+  "reaped_at": "2026-08-20T21:33:54.403953+00:00",
+  "ttl_expired": true
+}

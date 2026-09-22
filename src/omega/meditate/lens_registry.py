@@ -191,7 +191,7 @@ def _def_to_spec(defn: dict[str, Any]) -> PersonaSpec:
         domain=defn.get("domain", "General"),
         mandate_lens=defn.get("mandate_lens", "Speak from your domain."),
         anti_domains=defn.get("anti_domains", []),
-        node=defn.get("node"),
+        slot=defn.get("slot"),
         element=defn.get("element"),
         known_for=defn.get("known_for"),
         dissent_style=dissent,

@@ -1,6 +1,12 @@
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
-#
+
 # SPDX-License-Identifier: Apache-2.0
+
+from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 """
 Provider Quota Pollers for Omega Engine
@@ -18,8 +24,6 @@ with the VaultCore credential system.
 M13 Temple-Grade: All implementations include error handling,
 retry logic, and structured logging.
 """
-
-from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
@@ -227,8 +231,9 @@ class GrokQuotaPoller(QuotaPoller):
         # For now, assume JSON response from mock or test endpoint
         try:
             data = response.json()
-        except Exception:
-            # gRPC-web returns binary proto, need proper parsing
+        except Exception as e:
+            logger.warning("gRPC-web JSON parse failed, using fallback: %s", e, exc_info=True)
+            # For now, assume JSON response from mock or test endpoint
             # For production, use grpcio-tools or protobuf library
             return QuotaSnapshot(
                 provider="grok",
@@ -258,8 +263,10 @@ class GrokQuotaPoller(QuotaPoller):
             try:
                 reset_time = datetime.fromisoformat(billing_period_end.replace("Z", "+00:00"))
                 reset_seconds = int((reset_time - datetime.now(timezone.utc)).total_seconds())
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to parse reset time from billing period end: %s", e, exc_info=True)
+                reset_time = None
+                reset_seconds = None
 
         return QuotaSnapshot(
             provider="grok",
@@ -347,8 +354,10 @@ class OpenRouterQuotaPoller(QuotaPoller):
             try:
                 reset_time = datetime.fromisoformat(limit_reset.replace("Z", "+00:00"))
                 reset_seconds = int((reset_time - datetime.now(timezone.utc)).total_seconds())
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to parse reset time from billing period end: %s", e, exc_info=True)
+                reset_time = None
+                reset_seconds = None
 
         # Determine rate limits based on free tier status
         rate_limit_rpm = 20  # Default
@@ -649,8 +658,10 @@ class FirecrawlQuotaPoller(QuotaPoller):
             try:
                 reset_time = datetime.fromisoformat(billing_period_end.replace("Z", "+00:00"))
                 reset_seconds = int((reset_time - datetime.now(timezone.utc)).total_seconds())
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to parse reset time from billing period end: %s", e, exc_info=True)
+                reset_time = None
+                reset_seconds = None
 
         return QuotaSnapshot(
             provider="firecrawl",

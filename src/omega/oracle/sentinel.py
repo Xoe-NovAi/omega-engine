@@ -5,7 +5,7 @@
 # AP: AP-SENTINEL-SCORE-v1.0.0
 """
 🔱 SENTINEL SCORE AUTOMATION
-Role: N5 Governance Metric Engine.
+Role: S5 Governance Metric Engine.
 Computes the "Sentinel Score" — a weighted composite of 7 sub-metrics
 that measure the engine's documentation hygiene and mandate compliance.
 
@@ -466,7 +466,7 @@ class SentinelScore:
     async def generate_pulse_report(self, result: SentinelResult) -> str:
         """Generate the 'Governance Pulse' Hivemind post."""
         lines = [
-            "Entity: N5 Governance",
+            "Entity: S5 Governance",
             "Intent: status",
             f"Sentinel Score: {result.total_score}/100 {self._get_emoji(result.grade)}",
             "Top Issue: " + self._get_top_issue(result),

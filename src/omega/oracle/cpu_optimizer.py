@@ -436,10 +436,12 @@ class Zen2Optimizer:
 
         try:
             import anyio
+            import subprocess
 
             result = await anyio.run_process(
                 ["awk", "/MemAvailable/{print $2}", "/proc/meminfo"],
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 check=False,
             )
             available_kb = int(result.stdout.decode().strip())
@@ -872,4 +874,144 @@ class Zen2Optimizer:
                 "draft_resident_mb": RAM_DRAFT_RESIDENT_MB,
                 "available_ai_mb": RAM_AVAILABLE_AI_MB,
             },
+        }
+
+
+# ── Polymorphic CPU Optimizer Factory (DHAL Phase 2) ──────────────────────
+
+class CpuOptimizerFactory:
+    """Factory for selecting hardware-appropriate CPU optimizer.
+
+    Reads hardware profile from YAML and returns the matching optimizer:
+    - Zen2Optimizer: AMD Zen 2 (default, fallback)
+    - RaptorLakeOptimizer: Intel Raptor Lake hybrid (P/E cores)
+    - GenericFallbackOptimizer: Unknown/unsupported microarchitectures
+    """
+
+    _PROFILE_PATH = Path("config/hardware_profile.yaml")
+
+    @classmethod
+    def get_optimizer(cls):
+        """Select and return the appropriate optimizer based on hardware profile."""
+        import yaml
+        profile_path = cls._PROFILE_PATH
+
+        if not profile_path.exists():
+            logger.info("Hardware profile not found, defaulting to Zen2Optimizer")
+            return Zen2Optimizer()
+
+        try:
+            with open(profile_path, "r") as f:
+                profile = yaml.safe_load(f) or {}
+        except (yaml.YAMLError, OSError, IOError) as e:
+            logger.warning(f"Failed to load hardware profile: {e}, defaulting to Zen2Optimizer")
+            return Zen2Optimizer()
+
+        cpu_info = profile.get("cpu", {})
+        microarch = cpu_info.get("microarch", "").lower()
+        is_hybrid = cpu_info.get("is_hybrid", False)
+
+        if microarch == "raptorlake" or (microarch == "intel" and is_hybrid):
+            logger.info("Detected Raptor Lake hybrid topology, using RaptorLakeOptimizer")
+            return RaptorLakeOptimizer(
+                p_cores_physical=cpu_info.get("p_cores_physical", [0, 2, 4]),
+                e_cores_logical=cpu_info.get("e_cores_logical", [12, 13]),
+            )
+        elif microarch == "zen2":
+            logger.info("Detected Zen 2 microarchitecture, using Zen2Optimizer")
+            return Zen2Optimizer()
+        else:
+            logger.info(f"Unknown microarch '{microarch}', using GenericFallbackOptimizer")
+            return GenericFallbackOptimizer()
+
+
+class RaptorLakeOptimizer:
+    """Optimizer for Intel Raptor Lake hybrid architecture (P-cores + E-cores).
+
+    Provides core pinning and compilation flags for P-core/E-core topology.
+    """
+
+    def __init__(
+        self,
+        p_cores_physical: Optional[List[int]] = None,
+        e_cores_logical: Optional[List[int]] = None,
+    ):
+        self.p_cores_physical = p_cores_physical or [0, 2, 4]
+        self.e_cores_logical = e_cores_logical or [12, 13]
+
+    def get_compilation_flags(self) -> CompilationFlags:
+        """Get recommended llama.cpp compilation flags for Raptor Lake."""
+        return CompilationFlags(
+            march="raptorlake",
+            avx2=True,
+            fma=True,
+            f16c=True,
+            no_avx512=True,
+            blas=False,
+            cuda=False,
+            metal=False,
+        )
+
+    def get_compute_affinity(self) -> List[int]:
+        """Return P-core physical cores for compute workloads."""
+        return list(self.p_cores_physical)
+
+    def get_io_affinity(self) -> List[int]:
+        """Return E-core logical threads for I/O workloads."""
+        return list(self.e_cores_logical)
+
+    def get_recommended_threads(self) -> int:
+        """Return recommended thread count for inference."""
+        return len(self.p_cores_physical)
+
+    def get_system_overview(self) -> Dict[str, Any]:
+        return {
+            "microarch": "raptorlake",
+            "is_hybrid": True,
+            "p_cores_physical": self.p_cores_physical,
+            "e_cores_logical": self.e_cores_logical,
+            "recommended_compute_cores": self.p_cores_physical,
+            "recommended_threads": len(self.p_cores_physical),
+            "compilation_flags": self.get_compilation_flags().to_cmake_flags(),
+        }
+
+
+class GenericFallbackOptimizer:
+    """Generic fallback optimizer for unknown/unsupported microarchitectures.
+
+    Provides safe defaults that work on any x86-64 CPU with AVX2.
+    """
+
+    def __init__(self):
+        self.recommended_threads = 4
+
+    def get_compilation_flags(self) -> CompilationFlags:
+        """Get safe compilation flags for generic x86-64 with AVX2."""
+        return CompilationFlags(
+            march="x86-64-v3",
+            avx2=True,
+            fma=True,
+            f16c=True,
+            no_avx512=True,
+            blas=False,
+            cuda=False,
+            metal=False,
+        )
+
+    def get_compute_affinity(self) -> List[int]:
+        return list(range(self.recommended_threads))
+
+    def get_io_affinity(self) -> List[int]:
+        return []
+
+    def get_recommended_threads(self) -> int:
+        return self.recommended_threads
+
+    def get_system_overview(self) -> Dict[str, Any]:
+        return {
+            "microarch": "generic",
+            "is_hybrid": False,
+            "recommended_compute_cores": list(range(self.recommended_threads)),
+            "recommended_threads": self.recommended_threads,
+            "compilation_flags": self.get_compilation_flags().to_cmake_flags(),
         }

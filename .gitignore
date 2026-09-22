@@ -267,3 +267,55 @@ opencode/
 
 # Entity knowledge test fixtures (never commit)
 data/entities/test_*_entity/
+*.md
+# Registry model cards are .yaml.md — un-ignore AFTER the blanket *.md rule
+# (git uses the LAST matching pattern).
+!config/model_registry/models/**/*.yaml.md
+# Soul-contract evidence artifacts referenced by approved_lessons.yaml
+# (test_every_promoted_lesson_carries_resolvable_evidence requires them in CI).
+!docs/strategy/*.md
+!docs/specs/*.md
+!docs/decisions/PIVOT_LOG.md
+!data/coordination/MAKALI_COUNCIL_AUDIT_*.md
+!data/coordination/GAP_REGISTRY.json
+!data/coordination/meditations/records/MEDITATION_KALI_*.md
+!data/coordination/teamstudy_*/FINAL_SYNTHESIS.md
+!.opencode/skills/git-secret-scrub/SKILL.md
+
+# ── Local backups, atomic-write temps, node-local artifacts (keep on disk, never commit) ──
+*.backup.*
+*.backup
+*.bak
+*.tmp
+*.bak.*
+*.tmp
+*.lock
+config/wads/*/tmp*
+*.hujson
+node0-collect-*/
+opencode.json.bak.*
+session-*.mdv
+
+# ── User-facing docs (un-ignore AFTER the blanket *.md rule above) ──
+!QUICKSTART.md
+!SECURITY.md
+!CHANGELOG.md
+!docs/USER_MANUAL.md
+!docs/user/*.md
+
+# ── Node-local operational scripts (Node 0 forge ops, not engine code) ──
+apply_node0_fix.sh
+collect_node0.sh
+opencode_provider_doctor.sh
+
+# Codex sources (required by `make codex`) + tracked config docs
+!ORACLE_STACK.md
+!CREDITS.md
+!scripts/codex/*.md
+!docs/kb/REFINEMENT_PROTOCOL.md
+!config/glossary.md
+!config/domains/**/*.md
+!docs/architecture/ORACLE_DEEP_DIVE.md
+!data/coordination/CLINE_*.md
+data/entities/*/knowledge/ACCOUNT_MAP.yaml
+data/metrics/*

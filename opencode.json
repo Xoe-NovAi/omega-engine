@@ -177,6 +177,14 @@
               "reasoningEffort": "high"
             }
           }
+        },
+        "big-pickle": {
+          "name": "Big Pickle",
+          "limit": {
+            "context": 1000000,
+            "input": 950000,
+            "output": 64000
+          }
         }
       }
     }
@@ -272,11 +280,11 @@
       },
       "toolProfile": "audit"
     },
-    "node": {
+    "slot": {
       "mode": "all",
-      "description": "Slot-based domain agent — parameterized by --slot NX for any Node domain",
+      "description": "Slot-based domain agent — parameterized by --slot NX for any Slot domain",
       "instructions": [
-        ".opencode/agents/node.md"
+        ".opencode/agents/slot.md"
       ],
       "temperature": 0.1,
       "steps": 20,

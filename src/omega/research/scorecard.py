@@ -4,7 +4,7 @@
 
 """
 Ω-Research Scorecard — CLEAR-Pareto Sovereignty Scorecard + AMFO Evaluator
-⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ SCORECARD
+⬡ OMEGA ⬡ LILITH ⬡ S6-S10 ⬡ SCORECARD
 
 Mandate Compliance:
 - M1 AnyIO: All async via AnyIO
@@ -18,6 +18,8 @@ Mandate Compliance:
 
 from __future__ import annotations
 import anyio
+import logging
+logger = logging.getLogger(__name__)
 import json
 import time
 from dataclasses import dataclass, field
@@ -136,7 +138,8 @@ class CalibratedJudge:
 
             if ISOTONIC_REGRESSION_PATH.exists():
                 self._calibrator = joblib.load(ISOTONIC_REGRESSION_PATH)
-        except Exception:
+        except Exception as e:
+            logger.warning("Calibration load failed: %s", e)
             self._calibrator = None
 
     def calibrate(self, raw_scores: list[float], true_labels: list[int]) -> None:

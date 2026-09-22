@@ -7,9 +7,9 @@ SPDX-License-Identifier: Apache-2.0
 # Sovereign Mandates — Condensed (v3.8.0)
 
 > Tier-0 injection artifact. One-line-per-mandate distillation of
-> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 27 laws).
+> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 28 laws).
 > Injected pre-compaction by `sovereign-compaction` plugin so the summary retains the law.
-> Lineage: v3.8.0 · 27 mandates · updated 2026-08-14.
+> Lineage: v3.8.0 · 28 mandates · updated 2026-09-20.
 
 | # | Mandate | One-Line Law |
 |---|---------|--------------|
@@ -19,7 +19,7 @@ SPDX-License-Identifier: Apache-2.0
 | M4 | Sequentiality | Complex changes follow Plan → Verify → Execute against PIVOT_LOG; no cowboy coding. |
 | M5 | Gnosis Preservation | No intelligence discarded; every session distills L1→L2→L3 into the entity soul. |
 | M6 | Podman Sovereignty | Quadlets mounting host dirs use `UserNS=keep-id` + `User=1000`; `:U` forbidden on shared volumes. |
-| M7 | Local-First | Local inference PRIMARY, cloud FALLBACK; fabric order native-gguf→lmster→Ollama→cloud. |
+| M7 | Local-First & Synergy | Sovereignty is policy enforcement: cloud for high-order reasoning/synthesis, local for embeddings, privacy & background loops. |
 | M8 | Zero Telemetry | No analytics, tracking, or phone-home, ever; local observability in `data/` only. |
 | M9 | Error Integrity | Errors typed, traceable, testable; no silent swallowing; public APIs raise `OmegaError` subtypes. |
 | M10 | Fleet Integrity | Agent fleet lean and slot-constrained; ≤14 agent files without architectural review. |

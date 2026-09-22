@@ -43,8 +43,8 @@ NOT directly into `soul.yaml`. The Scribe agent is the canonical executor of thi
   `data/entities/<your_entity>/proposed_lessons.yaml`.
 - **Scribe** (verity subagent): the canonical pipeline runner. Can also be invoked
   via `make soul-distill` if available, or via the `scribe` skill.
-- **Build-side (Ma'at, N1-N5)**: distill decisions, not implementation details.
-- **Run-side (Lilith, N6-N10)**: distill runtime lessons, not user interactions.
+- **Build-side (Ma'at, S1-S5)**: distill decisions, not implementation details.
+- **Run-side (Lilith, S6-S10)**: distill runtime lessons, not user interactions.
 - **Orchestrators (Kali, MaKaLi)**: distill strategic insights.
 
 ## Cross-references
