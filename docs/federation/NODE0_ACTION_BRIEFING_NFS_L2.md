@@ -4,26 +4,20 @@
 **To**: Node 0 (HP Pavilion Archival Bastion / `100.123.51.67`, Ubuntu 25.10, user `arcana-novai`)  
 **Status**: ✅ COMPLETE — NFS mounted + automount live (2026-09-21)
 
-> ## ✅ 2026-09-21 COMPLETED STATE (verified end-to-end from Node 1)
-> - **NFS server**: fixed + live (`nfs-server.service` active, bound strictly
->   `100.89.40.17:2049`; `/etc/nfs.conf [nfsd] host` restored after errno 99).
-> - **NFS client (Node 0)**: `mount.nfs4` present; **manual mount OK**
->   (vers=4.2, all_squash → `1000:1000` verified by probe file ownership);
->   **fstab automount added** (`100.89.40.17:/ /mnt/node-drive nfs4 ...`
->   + `findmnt --verify` 0 errors) and **triggered live** (autofs → nfs4,
->   AUTOMOUNT_OK).
-> - **Round-trip proven**: Node 0 wrote
->   `exchange/final_probe_<ts>` → appeared on Node 1 server side
->   (`/home/xnai/node-drive/exchange/`) as `1000:1000`.
-> - **MCP bidirectional**: `Omega Core Hub v1.30.0` (93 tools) on Node 0 and
->   `kali-n1-mcp` on Node 1 both answer over the Tailscale IPs.
-> - **SSH**: `tailscale ssh arcana-novai@n0` works from Node 1.
-> - **Canonical tags** (FED-ACL-001 v1.2): Node 0 = `tag:node0`, Node 1 =
->   `tag:node1` — live on both.
-> - **▶ REMAINING (ACL migration only)**: paste **Phase A** (canonical tags)
->   from `docs/federation/ACL_POLICY.md` into the Tailscale Admin Console →
->   re-verify (NFS mount, MCP, SSH, ICMP) → then paste **Phase B**. NFS
->   operational work is finished.
+> ## ✅ 2026-09-21 PHASE A LIVE + VERIFIED (all 9 checks)
+> - **Phase A policy pasted into Admin Console — SAVED** (operator, 2026-09-21).
+>   Two schema fixes were required first (from live console validation):
+>   (1) `autoApprovers.routes` must be a map, not array — omitted entirely
+>   (no subnet routes / no exit nodes in design); (2) SSH `src` tags require
+>   `action: "accept"` — `check` rejects tag src; human rule uses
+>   `autogroup:admin`. See `docs/federation/ACL_POLICY.md`.
+> - **Verified under Phase A**: tags match policy (n0 `["tag:node0"]`, n1
+>   `["tag:node1"]`+inert `tag:asus`); ICMP pong 21ms; MCP n1→n0 and n0→n1
+>   both answer initialize; **NFS re-mount OK + bidirectional probe write
+>   under tagged ACL**; SSH n1→n0 OK; `task_registry_query` round-trip OK;
+>   `PeerExcludedByPolicy` = none.
+> - **▶ NEXT**: paste **Phase B** (same policy minus the allow-all rule) from
+>   `docs/federation/ACL_POLICY.md` → re-run the same 9-check battery.
 
 ---
 
