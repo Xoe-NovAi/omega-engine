@@ -1,4 +1,4 @@
-# ⬡ RESEARCHER PROJECTION — 2026-09-22
+# 🔱 RESEARCHER PROJECTION — 2026-09-22
 
 ## Status: PUBLIC FLIP READY
 
@@ -7,7 +7,7 @@ Research campaign complete. All researchable gaps covered. Report delivered.
 
 ### Deliverables
 - **Report**: docs/research/R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md
-- **Registry updates**: 14 gaps → research_status + report ref
+- **Registry updates**: 14 gaps updated with research_status + report ref
 - **GN-3 correction**: 10 DR/month free (not 30)
 - **6 batched searches** across all themes
 

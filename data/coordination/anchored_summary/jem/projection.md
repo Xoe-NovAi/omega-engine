@@ -1,4 +1,4 @@
-# ⬡ JEM PROJECTION — 2026-09-22
+# 🔱 JEM PROJECTION — 2026-09-22
 
 ## Status: PUBLIC FLIP READY
 
@@ -17,6 +17,11 @@ Research complete. 14 gaps researched, 6 batched searches. All researchable gaps
 - LI-3: KV cache formula + q8_0 quant = -50%
 - R34: OpenRouter 1000/day workhorse; Gemini dynamic limits
 - R22: WARP proxy pool viable (adasThePrime Docker ref)
+
+### Post-Flip Support
+- KD workstream: knowledge domain loading research
+- HR workstream: headroom integration research
+- LI workstream: KV cache / memory fitting research
 
 ---
 
