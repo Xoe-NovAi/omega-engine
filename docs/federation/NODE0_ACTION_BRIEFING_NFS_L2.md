@@ -1,16 +1,35 @@
 # 🔱 Node 0 Action Briefing — NFS over Tailscale L2 Federation
-**Doc ID**: `FED-BRIEF-NODE0-NFS-001` | **Date**: 2026-09-16 (rev. 2026-09-17)  
+**Doc ID**: `FED-BRIEF-NODE0-NFS-001` | **Date**: 2026-09-16 (rev. 2026-09-21)  
 **From**: Node 1 (ASUS ExpertBook / `xnai-n1-asus` / `100.89.40.17`)  
-**To**: Node 0 (HP Pavilion Archival Bastion / `omega-hub` / `100.123.51.67`, Ubuntu 25.10, user `arcana-novai`)  
-**Status**: PHASE 1 COMPLETE ON NODE 1 — READY FOR NODE 0 MOUNT
+**To**: Node 0 (HP Pavilion Archival Bastion / `100.123.51.67`, Ubuntu 25.10, user `arcana-novai`)  
+**Status**: PHASE 1 COMPLETE ON NODE 1 — READY FOR NODE 0 MOUNT (server re-verified 2026-09-21)
+
+> ## 🟢 2026-09-21 VERIFIED STATE (from Node 1)
+> - **NFS server is LIVE and fixed**: `nfs-server.service` was failing with
+>   errno 99 (`Cannot assign requested address`) because `/etc/nfs.conf`
+>   `[nfsd]` had no `host = 100.89.40.17`. Restored the binding →
+>   service **active**, listener strictly `100.89.40.17:2049`.
+> - **Export verified**: `/home/xnai/node-drive` →
+>   `100.123.51.67(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000,fsid=0)`.
+> - **Canonical tags ratified** (FED-ACL-001 v1.2): Node 0 = `tag:node0`,
+>   Node 1 = `tag:node1` (legacy `tag:omega-hub`/`tag:asus` retired). Live on
+>   both nodes already.
+> - **MCP**: Node 1's `kali-n1-mcp` answers on `:8016`; Node 0's **Omega Core
+>   Hub v1.30.0** answered on LAN `192.168.10.168:8016` (L1 OK) but does NOT
+>   answer on the Tailscale IP `100.123.51.67:8016` — hub needs to listen on
+>   the Tailscale interface (0.0.0.0 or the TS IP) for Peer-to-peer L2 MCP.
+> - **Node 0 still must do** (Steps 2–6 below): install `nfs-common`, create
+>   `/mnt/node-drive`, manual mount `100.89.40.17:/`, add fstab automount,
+>   verify. Then paste **Phase A** (canonical-tag policy) from
+>   `docs/federation/ACL_POLICY.md` and re-test MCP+NFS+SSH before Phase B.
 
 ---
 
 ## 1. Executive Summary
 
-Node 1 (`xnai-n1-asus`) and Node 0 (`omega-hub`) are **actively peered directly over Tailscale WireGuard** (`192.168.10.168:41641` direct transport, zero DERP relay overhead, sub-millisecond local latency).
+Node 1 (`xnai-n1-asus`) and Node 0 (`100.123.51.67`) are **actively peered directly over Tailscale WireGuard** (`192.168.10.168:41641` direct transport, zero DERP relay overhead, ~100ms local latency).
 
-Node 1 has fully deployed, hardened, and verified the **NFSv4.2 server**. The shared scratch and model-exchange workspace (`/home/xnai/node-drive`) is live, bound strictly to the mesh IP (`100.89.40.17:2049`), and exported exclusively to Node 0 (`100.123.51.67`).
+Node 1 has fully deployed, hardened, and verified the **NFSv4.2 server** (re-verified 2026-09-21 after binding fix). The shared scratch and model-exchange workspace (`/home/xnai/node-drive`) is live, bound strictly to the mesh IP (`100.89.40.17:2049`), and exported exclusively to Node 0 (`100.123.51.67`).
 
 This briefing provides:
 1. The **new best practices & architectural standards** established during implementation.
