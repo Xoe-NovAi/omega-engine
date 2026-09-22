@@ -26,8 +26,8 @@
 **Node 0 MUST re-tag before minting Node 1's authkey**. Current state: Node 0 joined as **user device** (no tags). The ACL with `tagOwners` must be live first.
 
 **Admin Console → Access Controls → Edit Policy → Paste this HuJSON**
-**(PHASE A — DO NOT remove the `autogroup:member` line; the tag-only Phase B
-belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
+**(PHASE A — DO NOT remove the allow-all rule; the tag-only Phase B belongs in
+`docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
 
 ```hujson
 {
@@ -37,8 +37,8 @@ belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
-    // KEEP THE MEMBER RULE — untagged devices (both nodes today) depend on it
-    {"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]},
+    // KEEP THE ALLOW-ALL RULE — untagged devices (both nodes today) depend on it
+    {"action": "accept", "src": ["*"], "dst": ["*:*"]},
     {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:8016"]},
     {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016"]},
     // NFSv4: Node 0 -> Node 1 shared drive (docs/federation/NFS_OVER_TAILSCALE_PLAN.md)
@@ -60,11 +60,15 @@ belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
 }
 ```
 
-> ⚠️ **FATAL if omitted**: without the `autogroup:member` rule, saving this
-> policy immediately blocks BOTH untagged nodes from each other (NFS + MCP +
-> ICMP silently die). The member rule preserves current behavior while the tag
+> ⚠️ **FATAL if omitted**: without the allow-all rule, saving this policy
+> immediately blocks BOTH untagged nodes from each other (NFS + MCP + ICMP
+> silently die). The allow-all rule preserves current behavior while the tag
 > rules stage for the migration. Remove it only in Phase B
 > (`docs/federation/ACL_POLICY.md`) after both nodes are tagged and verified.
+>
+> ⚠️ **Syntax**: use `src:["*"] dst:["*:*"]` for the allow-all — NEVER
+> `autogroup:member` in `dst` (Tailscale parses `dst` as `host:port` and
+> rejects it with `port range "member": invalid first integer`).
 
 **Then re-tag Node 0:**
 ```bash

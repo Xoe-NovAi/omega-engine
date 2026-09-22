@@ -310,7 +310,8 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - **4. The Tailscale ACL Replacement Trap**: Custom Tailscale policies replace
   default rules rather than merging. Saving a tag-only policy while nodes are
   untagged instantly severs all mesh communication. Always execute Phase A
-  (preserving `autogroup:member`), tag both nodes, and only then enforce
+  (preserving the allow-all rule `src:["*"] dst:["*:*"]`; never
+  `autogroup:member` in `dst`), tag both nodes, and only then enforce
   Phase B lockdown.
 - **5. The Network SQLite WAL Breakdown**: SQLite WAL mode requires POSIX shared
   memory (`-shm`) across processes on the *same kernel*. Over network filesystems
@@ -456,7 +457,7 @@ Quick orientation (current phase = **P3 Synthesis + Federation Close-out**):
    - P3.2 Node 0 federation:
      - Hostname schema ratified (`xnai-n1-asus`, `xnai-n0-hp`).
      - Pure NFSv4.2 server live on Node 1 bound strictly to `100.89.40.17:2049` (`all_squash` -> `1000:1000`).
-     - Two-phase ACL migration policy ratified (Phase A safe member rule -> Phase B tag lockdown).
+     - Two-phase ACL migration policy ratified (Phase A allow-all rule -> Phase B tag lockdown; NFS+MCP+SSH verified live 2026-09-21).
      - Node 0 Action Briefing (`NODE0_ACTION_BRIEFING_NFS_L2.md`) delivered on USB.
      - **Next physical action**: Mount `/mnt/node-drive` on Node 0 via USB briefing and enable `tailscale set --ssh`.
    - P3.3 Content runway (Obsidian, Godot/KQ5, Open WebUI, `make publish-bastion`).

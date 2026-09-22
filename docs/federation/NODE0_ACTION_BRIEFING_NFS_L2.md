@@ -157,16 +157,18 @@ findmnt /mnt/node-drive
 
 ## 4. Tailscale Admin Console Note (ACLs)
 
-Both nodes are currently untagged user devices — the default Tailscale policy
-(implicit `autogroup:member`) allows them to communicate, which is why NFS
-works today. **Do NOT paste a tag-only policy now**: saving a custom policy
-REPLACES the default, and a tag-only policy with no `autogroup:member` rule
-will **silently kill all traffic between the untagged nodes** (NFS, MCP, ICMP).
+Both nodes are now **tagged** (`tag:node0` / `tag:node1`) and the canonical
+Phase A/B policies in `docs/federation/ACL_POLICY.md` reference exactly those
+tags — the default policy currently allows them to communicate, which is why
+NFS works today. **Do NOT paste a tag-only (Phase B) policy now**: saving a
+custom policy REPLACES the default, and a tag-only policy whose tags don't
+match live tags will **silently kill all traffic** (NFS, MCP, ICMP).
 
 When tag-based enforcement is wanted, follow the **two-phase migration** in
-`docs/federation/ACL_POLICY.md`: Phase A keeps `autogroup:member` while
-staging tag rules, both nodes re-join tagged, and only then does Phase B
-remove the member rule. The NFS rule itself is always:
+`docs/federation/ACL_POLICY.md`: Phase A keeps the allow-all rule
+(`src:["*"] dst:["*:*"]`; never `autogroup:member` in `dst`) while staging
+tag rules on the canonical names, verify, and only then does Phase B remove
+the allow-all. The NFS rule itself is always:
 
 ```hujson
 {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:2049"]}

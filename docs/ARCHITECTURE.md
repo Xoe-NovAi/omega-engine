@@ -149,8 +149,8 @@ The federation connects across five discrete abstraction layers:
 
 ### Layer 2.1 — Two-Phase ACL Migration Protocol
 Tailscale ACL policies **replace** default access rules wholesale. Applying a tag-only policy while nodes are untagged immediately drops all mesh communication.
-- **Phase A (Transitional Policy)**: Retains `{"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]}` while staging `tag:node0`, `tag:node1`, and `tag:opencode` rules. Preserves untagged traffic while tag owners are registered.
-- **Phase B (Hardened Lockdown)**: Applied **only after** Node 0 re-authenticates with `--advertise-tags=tag:node0` and Node 1 joins with `tag:node1`. Removes `autogroup:member` to enforce strict default-deny least privilege. (Canonical tags ratified 2026-09-21; legacy `tag:omega-hub`/`tag:asus` retired.)
+- **Phase A (Transitional Policy)**: Retains `{"action": "accept", "src": ["*"], "dst": ["*:*"]}` (allow-all — NOT `autogroup:member`, which is `src`-only in Tailscale and rejected in `dst`) while staging `tag:node0`, `tag:node1`, and `tag:opencode` rules. Preserves untagged traffic while tag owners are registered.
+- **Phase B (Hardened Lockdown)**: Applied **only after** Node 0 re-authenticates with `--advertise-tags=tag:node0` and Node 1 joins with `tag:node1`. Removes the allow-all rule to enforce strict default-deny least privilege. (Canonical tags ratified 2026-09-21; legacy `tag:omega-hub`/`tag:asus` retired.)
 
 ### Layer 2.5 — Distributed Shared Scratch Substrate (NFSv4.2)
 To allow zero-copy model weight sharing, dataset staging, and cross-node artifact exchange without cloud storage intermediaries, Node 1 exposes `/home/xnai/node-drive` to Node 0:
@@ -245,7 +245,7 @@ The Omega Engine records critical operational hazards as non-negotiable architec
 ### 3. The Tailscale ACL Wholesale Replacement Hazard
 - **Hazard**: Replacing Tailscale ACLs with a tag-only policy before all nodes are tagged.
 - **Consequence**: Custom policies replace the default allow-all rule for untagged devices. Both nodes lose all network connectivity instantly and silently.
-- **Invariant**: Always execute the Two-Phase Migration: stage with Phase A (preserving `autogroup:member`), tag both nodes, verify traffic, and only then apply Phase B lockdown.
+- **Invariant**: Always execute the Two-Phase Migration: stage with Phase A (preserving the allow-all rule `src:["*"] dst:["*:*"]`), tag both nodes, verify traffic, and only then apply Phase B lockdown.
 
 ### 4. The Intent-as-Contract Principle
 - **Hazard**: Treating a failing watchdog or test as proof that runtime behavior must change to accommodate the failure.

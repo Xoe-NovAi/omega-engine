@@ -10,24 +10,31 @@ Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
 >
 > In Tailscale, saving a custom ACL policy **REPLACES** the default policy — it
 > does NOT merge. The default policy contains
-> `{"action":"accept","src":["autogroup:member"],"dst":["autogroup:member"]}`,
-> which is what lets **untagged, user-owned devices** talk to each other.
+> `{"action":"accept","src":["*"],"dst":["*:*"]}` (allow-all), which is what
+> lets **untagged, user-owned devices** talk to each other. A custom policy
+> drops that allowance for anything not covered by your explicit rules.
 >
-> A tag-only policy with no `autogroup:member` rule drops every device whose
-> live tags do not literally match the policy's tag names. **Never paste Phase B
-> while live tags differ from the policy tags** (a tag-name drift caused a
-> near-miss 2026-09-21: live `tag:node0`/`tag:node1` while the policy still
-> referenced `tag:omega-hub`/`tag:asus` — Phase B would have silently killed the
-> whole mesh). The failure is silent: behaves like a network drop.
+> ⚠️ **Syntax gotcha**: `autogroup:member` is ONLY valid in `src`. In `dst`,
+> Tailscale parses the value as `host:port`, so
+> `"dst": ["autogroup:member"]` fails validation
+> (`port range "member": invalid first integer`). The Transitional allow-all
+> rule must be `{"action":"accept","src":["*"],"dst":["*:*"]}`.
+>
+> A tag-only policy with no allow-all rule drops every device whose live tags
+> do not literally match the policy's tag names. **Never paste Phase B while
+> live tags differ from the policy tags** (a tag-name drift caused a near-miss
+> 2026-09-21: live `tag:node0`/`tag:node1` while the policy still referenced
+> `tag:omega-hub`/`tag:asus` — Phase B would have silently killed the whole
+> mesh). The failure is silent: behaves like a network drop.
 >
 > **The ONLY safe order**:
-> 1. Paste **Phase A** (members + tags) with the **canonical** tag names. It
->    keeps current behavior (`autogroup:member` untouched) AND stages the tag
->    rules. Save.
+> 1. Paste **Phase A** (allow-all + tags) with the **canonical** tag names. It
+>    keeps current behavior (allow-all untouched) AND stages the tag rules.
+>    Save.
 > 2. Verify live tags === policy tags on both nodes
 >    (`tailscale status --json | jq '.Self.tags'`).
 > 3. Verify connectivity (MCP `:8016`, NFS `:2049`, SSH `:22`).
-> 4. **Only then** paste **Phase B** to remove the member rule. Verify again.
+> 4. **Only then** paste **Phase B** to remove the allow-all rule. Verify again.
 >
 > **Never skip Phase A.** Phase B is a post-migration lockdown, not a starting
 > point.
@@ -44,8 +51,8 @@ Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
-    // KEEP the default member rule — untagged uses this. DO NOT REMOVE until Phase B.
-    {"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]},
+    // KEEP the allow-all rule — untagged uses this. DO NOT REMOVE until Phase B.
+    {"action": "accept", "src": ["*"], "dst": ["*:*"]},
     // Node 0 (node0) can reach Node 1 (node1) on MCP port 8016
     {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:8016"]},
     // Node 1 can reach Node 0 on MCP port 8016
@@ -73,7 +80,7 @@ Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
 }
 ```
 
-## Phase B — Hardened Policy (post-migration lockdown; remove `autogroup:member`)
+## Phase B — Hardened Policy (post-migration lockdown; remove allow-all)
 
 Run **only after** both nodes carry the canonical tags (`tag:node0`/`tag:node1`)
 and Phase A connectivity is verified:
@@ -86,7 +93,7 @@ and Phase A connectivity is verified:
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
-    // NOTE: member rule intentionally REMOVED — tagged devices don't need it.
+    // NOTE: allow-all rule intentionally REMOVED — tagged devices don't need it.
     // Node 0 (node0) can reach Node 1 (node1) on MCP port 8016
     {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:8016"]},
     // Node 1 can reach Node 0 on MCP port 8016
@@ -157,16 +164,16 @@ and Phase A connectivity is verified:
 
 ## Migration Sequence (exact order — Phase A FIRST, NEVER Phase B first)
 
-1. **Paste Phase A policy** in the admin console and save. `autogroup:member`
-   preserves untagged access, so **nothing breaks** — the tag rules simply sit
-   ready.
+1. **Paste Phase A policy** in the admin console and save. The allow-all rule
+   (`src:["*"] dst:["*:*"]`) preserves existing connectivity, so **nothing
+   breaks** — the tag rules simply sit ready.
 2. **Verify live tags match the policy exactly**: `tailscale status --json |
    jq '.Self.tags'` on both nodes → Node 0 `["tag:node0"]`, Node 1
    `["tag:node1"]` (+ inert legacy `tag:asus` on Node 1 is tolerable but
    preferred removed).
 3. **Verify connectivity with tags live**: NFS + MCP + ICMP + SSH from both
    sides (see Verification Commands below).
-4. **Only now** paste **Phase B** (member rule removed) and re-verify every
+4. **Only now** paste **Phase B** (allow-all removed) and re-verify every
    service end-to-end (NFS mount, MCP call, ICMP, SSH).
 
 **Never skip to Phase B while live tags differ from the policy tags** — it is

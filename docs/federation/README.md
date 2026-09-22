@@ -49,7 +49,7 @@ The federation subsystem is documented across specialized architectural, operati
 - **[CAPABILITY_FIREWALL_SPEC.md](CAPABILITY_FIREWALL_SPEC.md)**: Security boundaries governing tool execution, remote MCP calls, and local-only inference mandates.
 
 ### 2.2 Network Mesh & Access Control (Layer 2)
-- **[ACL_POLICY.md](ACL_POLICY.md)**: **The authoritative HuJSON policy specification**. Documents the critical Two-Phase Migration protocol (Phase A transitional with `autogroup:member` vs Phase B hardened tag lockdown) preventing silent network drops.
+- **[ACL_POLICY.md](ACL_POLICY.md)**: **The authoritative HuJSON policy specification**. Documents the critical Two-Phase Migration protocol (Phase A transitional with the allow-all rule `src:["*"] dst:["*:*"]` vs Phase B hardened tag lockdown) preventing silent network drops.
 - **[L2_JOIN_GUIDE.md](L2_JOIN_GUIDE.md)**: Step-by-step ceremony for minting one-shot authkeys on Node 0 and securely enrolling Node 1 under `tag:node1`.
 - **[L2_ACCEPTANCE.md](L2_ACCEPTANCE.md)**: Formal acceptance test criteria, latency targets, and ping/curl verification batteries.
 - **[NODE1_SSH_JOIN_GUIDE.md](NODE1_SSH_JOIN_GUIDE.md)**: Operational instructions for Tailscale SSH configuration between the Bastion and Vanguard.
@@ -76,7 +76,7 @@ The federation subsystem is documented across specialized architectural, operati
 |:---|:---|:---|:---|:---|
 | **L1** | Local Physical LAN | Streamable HTTP (`POST /mcp`) | Port `8016` on Node 0 (`0.0.0.0:8016`) | Immediate high-speed discovery on shared subnets; vulnerable to DHCP churn. |
 | **L2** | Sovereign Overlay Mesh | Tailscale WireGuard direct | Direct transport (`192.168.10.168:41641`) | Zero DERP relay overhead; MagicDNS addressing; zero cloud inference egress. |
-| **L2.1**| Access Control | Two-Phase HuJSON ACLs | Tailscale Admin Console | Never paste Phase B while untagged; stage with Phase A (`autogroup:member`). |
+| **L2.1**| Access Control | Two-Phase HuJSON ACLs | Tailscale Admin Console | Never paste Phase B while untagged; stage with Phase A (allow-all `src:["*"] dst:["*:*"]`). |
 | **L2.5**| Shared Scratch Storage | Pure NFSv4.2 over WireGuard | `100.89.40.17:2049` -> `/mnt/node-drive` | `all_squash` to `1000:1000`; interface bound; `nofail` automount; **NO SQLite WAL**. |
 | **L3** | Ephemeral Coordination | Redis Pub/Sub & File Locks | Redis `:6379` / `data/coordination/locks/` | Heartbeat feeds; graceful degradation to atomic lockfiles (M23 failure integrity). |
 | **L4** | Distributed Inference | `llama.cpp` RPC & Zen Router | `llama-rpc-server` / OpenCode Zen | Provable result-level provider provenance; layer-splitting across memory pools. |
@@ -112,13 +112,14 @@ When ready to lock down the tailnet with least-privilege tags:
    - `tailscale status --json | jq '.Self.tags'` on each node
    - `tailscale ping` each way, `curl` both MCP endpoints, `ls /mnt/node-drive`
 2. **Phase A**: Paste the Phase A policy from `docs/federation/ACL_POLICY.md`
-   into the Tailscale Admin Console. Verify it saves. (`autogroup:member` stays
-   as a safety net for any untagged/legacy devices; tagged nodes are covered by
-   the explicit `tag:node0`/`tag:node1` rules.)
+   into the Tailscale Admin Console. Verify it saves. (The allow-all rule
+   `src:["*"] dst:["*:*"]` stays as a safety net for any untagged/legacy
+   devices; tagged nodes are covered by the explicit `tag:node0`/`tag:node1`
+   rules.)
 3. **Verify under Phase A**: `ping` each way, `curl :8016/mcp` both directions,
    `ls /mnt/node-drive` (NFS still mounts), `tailscale ssh` n1→n0 still works.
 4. **Phase B**: Paste the Phase B policy from `docs/federation/ACL_POLICY.md`
-   to remove `autogroup:member`. Re-run the same verification battery — all
+   to remove the allow-all rule. Re-run the same verification battery — all
    services must remain fully operational.
 
 ---
