@@ -2,31 +2,28 @@
 **Doc ID**: `FED-BRIEF-NODE0-NFS-001` | **Date**: 2026-09-16 (rev. 2026-09-21)  
 **From**: Node 1 (ASUS ExpertBook / `xnai-n1-asus` / `100.89.40.17`)  
 **To**: Node 0 (HP Pavilion Archival Bastion / `100.123.51.67`, Ubuntu 25.10, user `arcana-novai`)  
-**Status**: PHASE 1 COMPLETE ON NODE 1 — READY FOR NODE 0 MOUNT (server re-verified 2026-09-21)
+**Status**: ✅ COMPLETE — NFS mounted + automount live (2026-09-21)
 
-> ## 🟢 2026-09-21 VERIFIED STATE (from Node 1)
-> - **NFS server is LIVE and fixed**: `nfs-server.service` was failing with
->   errno 99 (`Cannot assign requested address`) because `/etc/nfs.conf`
->   `[nfsd]` had no `host = 100.89.40.17`. Restored the binding →
->   service **active**, listener strictly `100.89.40.17:2049`.
-> - **Export verified**: `/home/xnai/node-drive` →
->   `100.123.51.67(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000,fsid=0)`.
-> - **Canonical tags ratified** (FED-ACL-001 v1.2): Node 0 = `tag:node0`,
->   Node 1 = `tag:node1` (legacy `tag:omega-hub`/`tag:asus` retired). Live on
->   both nodes already.
-> - **LIVE COMMUNICATION TEST (2026-09-21, via `tailscale ssh arcana-novai@n0`)**:
->   - SSH Node 1 → Node 0: **WORKS** (`tailscale ssh arcana-novai@n0`).
->   - MCP n1 → n0 over Tailscale IP (`100.123.51.67:8016`): **Omega Core Hub
->     v1.30.0 answers** (93 tools). Earlier refusal was transient — Node 0 had
->     rebooted; hub binds `0.0.0.0:8016`.
->   - MCP n0 → n1 (`100.89.40.17:8016`): **kali-n1-mcp answers**.
->   - From Node 0: TCP **2049 OPEN**, **8016 OPEN**, **22 OPEN** toward Node 1;
->     ping 0% loss both ways over the mesh.
-> - **⚠️ ONLY REMAINING NODE 0 ACTION**: the NFS client **mount** (Steps 2–6
->   below) needs `sudo` — password required on Node 0. `mount.nfs4` is
->   installed; `/mnt/node-drive` exists; run the manual mount + probe write +
->   fstab automount, then re-verify. After that, paste **Phase A** (canonical
->   tags) from `docs/federation/ACL_POLICY.md` → re-test → Phase B.
+> ## ✅ 2026-09-21 COMPLETED STATE (verified end-to-end from Node 1)
+> - **NFS server**: fixed + live (`nfs-server.service` active, bound strictly
+>   `100.89.40.17:2049`; `/etc/nfs.conf [nfsd] host` restored after errno 99).
+> - **NFS client (Node 0)**: `mount.nfs4` present; **manual mount OK**
+>   (vers=4.2, all_squash → `1000:1000` verified by probe file ownership);
+>   **fstab automount added** (`100.89.40.17:/ /mnt/node-drive nfs4 ...`
+>   + `findmnt --verify` 0 errors) and **triggered live** (autofs → nfs4,
+>   AUTOMOUNT_OK).
+> - **Round-trip proven**: Node 0 wrote
+>   `exchange/final_probe_<ts>` → appeared on Node 1 server side
+>   (`/home/xnai/node-drive/exchange/`) as `1000:1000`.
+> - **MCP bidirectional**: `Omega Core Hub v1.30.0` (93 tools) on Node 0 and
+>   `kali-n1-mcp` on Node 1 both answer over the Tailscale IPs.
+> - **SSH**: `tailscale ssh arcana-novai@n0` works from Node 1.
+> - **Canonical tags** (FED-ACL-001 v1.2): Node 0 = `tag:node0`, Node 1 =
+>   `tag:node1` — live on both.
+> - **▶ REMAINING (ACL migration only)**: paste **Phase A** (canonical tags)
+>   from `docs/federation/ACL_POLICY.md` into the Tailscale Admin Console →
+>   re-verify (NFS mount, MCP, SSH, ICMP) → then paste **Phase B**. NFS
+>   operational work is finished.
 
 ---
 
