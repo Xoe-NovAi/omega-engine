@@ -64,7 +64,9 @@ Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
     // Admin (tag:opencode) can SSH to Node 1
     {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
     // Node 0 can SSH to Node 1 (for automation)
-    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
+    // Node 1 can SSH to Node 0 (remote administration, bidirectional)
+    {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
   ],
   "autoApprovers": {
     "routes": ["autogroup:admin"],
@@ -105,7 +107,9 @@ and Phase A connectivity is verified:
     // Admin (tag:opencode) can SSH to Node 1
     {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
     // Node 0 can SSH to Node 1 (for automation)
-    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
+    // Node 1 can SSH to Node 0 (remote administration, bidirectional)
+    {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
   ],
   "autoApprovers": {
     "routes": ["autogroup:admin"],

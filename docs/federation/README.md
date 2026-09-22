@@ -106,11 +106,20 @@ The federation subsystem is documented across specialized architectural, operati
 
 ### 4.2 Two-Phase ACL Migration Runbook
 When ready to lock down the tailnet with least-privilege tags:
-1. **Phase A**: Paste the Phase A policy from `docs/federation/ACL_POLICY.md` into the Tailscale Admin Console. Verify it saves. (Both nodes are untagged; `autogroup:member` preserves all connectivity).
-2. **Re-tag Node 0**: On Node 0, execute `sudo tailscale up --advertise-tags=tag:node0 --force-reauth`. Verify via `tailscale status --json | jq '.Self.tags'`.
-3. **Re-join Node 1**: Generate a one-shot authkey tagged `tag:node1` on Node 0. On Node 1, execute the join command in `docs/federation/L2_JOIN_GUIDE.md`. Verify tag `["tag:node1"]`.
-4. **Verify Connectivity**: Test `ping`, `curl :8016/mcp`, and `ls /mnt/node-drive` across the tagged boundary.
-5. **Phase B**: Paste the Phase B policy from `docs/federation/ACL_POLICY.md` to remove `autogroup:member`. Verify all services remain fully operational.
+1. **Verify current state** (2026-09-21: BOTH nodes already carry canonical tags —
+   `tag:node0` on Node 0, `tag:node1` on Node 1 — and NFS+MCP+SSH are verified
+   working, so steps 2–3 below are already complete):
+   - `tailscale status --json | jq '.Self.tags'` on each node
+   - `tailscale ping` each way, `curl` both MCP endpoints, `ls /mnt/node-drive`
+2. **Phase A**: Paste the Phase A policy from `docs/federation/ACL_POLICY.md`
+   into the Tailscale Admin Console. Verify it saves. (`autogroup:member` stays
+   as a safety net for any untagged/legacy devices; tagged nodes are covered by
+   the explicit `tag:node0`/`tag:node1` rules.)
+3. **Verify under Phase A**: `ping` each way, `curl :8016/mcp` both directions,
+   `ls /mnt/node-drive` (NFS still mounts), `tailscale ssh` n1→n0 still works.
+4. **Phase B**: Paste the Phase B policy from `docs/federation/ACL_POLICY.md`
+   to remove `autogroup:member`. Re-run the same verification battery — all
+   services must remain fully operational.
 
 ---
 
