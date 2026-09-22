@@ -91,5 +91,5 @@ jobs:
       - name: Verify install
         run: |
           pip install dist/*.whl
-          omega talk "Release verification: hello from ${{ github.ref }}"
+          OMEGA_PROVIDER=mock omega talk "Release verification: hello from ${{ github.ref }}"
 

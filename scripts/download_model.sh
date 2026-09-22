@@ -11,8 +11,8 @@
 set -euo pipefail
 
 # Configuration
-MODEL_REPO="Qwen/Qwen3-1.7B-GGUF"
-MODEL_FILE="Qwen3-1.7B-Q6_K.gguf"
+MODEL_REPO="lmstudio-community/LFM2.5-2.6B-GGUF"
+MODEL_FILE="LFM2.5-2.6B-Q4_K_M.gguf"
 MODEL_URL="https://huggingface.co/${MODEL_REPO}/resolve/main/${MODEL_FILE}"
 EXPECTED_SHA256="8f3b2c1e9d4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c"  # Placeholder - will be fetched
 TARGET_DIR="${OMEGA_MODELS_DIR:-/media/arcana-novai/omega_library/models/gguf}"
