@@ -523,6 +523,17 @@ verifications. Every claim sourced; live local evidence marked.
   free tokens tracker 2026-09-20 lists GLM-5.3 Flash "Ox Alpha" free in Cline).
   After the free quota is exhausted you are meant to switch to usage-billing or
   ClinePass — the free tier is a quota, not a door.
+- **⚠️ Quota-exhaustion behavior — FIRST CAPTURED 2026-09-21 (§14.1 G3 resolved)**:
+  after ~15M cumulative input tokens on DeepSeek V4.1 Flash in one day (825K
+  review + 2.6M 100K probe + 11.4M 395K probe + smokes), the run terminated with
+  `Error 429: Daily free limit reached on model deepseek/deepseek-v4.1-flash. Try
+  again in 22h 50m` (`code: INFERENCE_CAP_ERROR`). **Verified facts**: (a) the
+  free ceiling is a **daily per-model input-token cap** (not account-wide —
+  GLM-5.3-Flash continued working at the same minute); (b) exhaustion surfaces as
+  **HTTP 429 `INFERENCE_CAP_ERROR`** with a `Try again in Nh` message; (c) **no
+  silent fallback to a billed model** — `totalCost: 0`, run finishes with
+  `finishReason: error`. Operator action at exhaustion: switch `-m` to another
+  free model (GLM) or wait for the window; never top-up blindly on a "free" model.
 - **⚠️ Model-name correction (operator, 2026-09-21)**: the free DeepSeek model is
   **DeepSeek V4.1 Flash**, registry ID `cline-free/deepseek-v4.1-flash` — NOT
   "V4" (`cline-pass/deepseek-v4-flash` was a probe artifact; that is a **paid**
