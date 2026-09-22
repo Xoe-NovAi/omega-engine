@@ -8,8 +8,8 @@ set -euo pipefail
 # Node 0 → Node 1 ratified cluster wide — And the daemon shall not go up until
 # Node 0's authkey is present (C6 L2 go) — explicit publish gate, not default.
 
-OMEGA_TAG="${OMEGA_TAG:-tag:asus}"          # our federation role tag (ratified ACL)
-NODE1_HOSTNAME="${NODE1_HOSTNAME:-kali-n1}" # MagicDNS name on the omega tailnet
+OMEGA_TAG="${OMEGA_TAG:-tag:node1}"          # our canonical federation role tag (FED-ACL-001 v1.2)
+NODE1_HOSTNAME="${NODE1_HOSTNAME:-xnai-n1-asus}" # MagicDNS name on the omega tailnet (ratified)
 AUTHKEY="${AUTHKEY:-${NODE0_AUTHKEY:-}}"
 OPS_USER="${OPS_USER:-$USER}"
 
@@ -42,4 +42,4 @@ tailscale status
 echo ""
 echo "── mesh ready. Verify BOTH directions: ──"
 echo "  tailscale ping omega-hub    # pong from Node 0"
-echo "  tailscale ping kali-n1      # pong from Node 1 (self)"
+echo "  tailscale ping xnai-n1-asus  # pong from Node 1 (self)"

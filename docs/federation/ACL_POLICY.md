@@ -1,6 +1,10 @@
 # 🛡️ ACL Policy — Omega Engine Federation (L2 Tailscale)
-**Doc ID**: `FED-ACL-001` | **Version**: 1.1 | **Status**: READY FOR ADMIN CONSOLE (TWO-PHASE)
+**Doc ID**: `FED-ACL-001` | **Version**: 1.2 | **Status**: READY FOR ADMIN CONSOLE (TWO-PHASE)
 **Source**: `docs/TAILSCALE_L2_FEDERATION_RESEARCH_20260915.md` §2
+**2026-09-21 amendment**: canonical tag set ratified by operator
+(**`tag:node0`** for the Archival Bastion, **`tag:node1`** for the Exploration
+Vanguard — replaces legacy `tag:omega-hub` / `tag:asus`). Live on both nodes:
+Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
 
 > ## ⚠️ THE ONE FATAL SEQUENCING ERROR (read before pasting anything)
 >
@@ -9,16 +13,20 @@
 > `{"action":"accept","src":["autogroup:member"],"dst":["autogroup:member"]}`,
 > which is what lets **untagged, user-owned devices** talk to each other.
 >
-> Both our nodes are currently **untagged user devices**. If you paste the
-> **Phase B** (tag-only) policy below and save it right now, the mesh
-> **immediately loses all connectivity** — NFS, MCP, ICMP — with no visible
-> error pointing at the ACL. The failure is silent: behaves like a network drop.
+> A tag-only policy with no `autogroup:member` rule drops every device whose
+> live tags do not literally match the policy's tag names. **Never paste Phase B
+> while live tags differ from the policy tags** (a tag-name drift caused a
+> near-miss 2026-09-21: live `tag:node0`/`tag:node1` while the policy still
+> referenced `tag:omega-hub`/`tag:asus` — Phase B would have silently killed the
+> whole mesh). The failure is silent: behaves like a network drop.
 >
 > **The ONLY safe order**:
-> 1. Paste **Phase A** (members + tags). It keeps current behavior
->    (`autogroup:member` untouched) AND stages the tag rules. Save.
-> 2. Re-tag Node 0 → `tag:omega-hub`. Verify connectivity.
-> 3. Re-join Node 1 with `tag:asus`. Verify connectivity (esp. NFS `:2049`).
+> 1. Paste **Phase A** (members + tags) with the **canonical** tag names. It
+>    keeps current behavior (`autogroup:member` untouched) AND stages the tag
+>    rules. Save.
+> 2. Verify live tags === policy tags on both nodes
+>    (`tailscale status --json | jq '.Self.tags'`).
+> 3. Verify connectivity (MCP `:8016`, NFS `:2049`, SSH `:22`).
 > 4. **Only then** paste **Phase B** to remove the member rule. Verify again.
 >
 > **Never skip Phase A.** Phase B is a post-migration lockdown, not a starting
@@ -31,32 +39,32 @@
 ```hujson
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:asus": ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1": ["autogroup:admin"],
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
     // KEEP the default member rule — untagged uses this. DO NOT REMOVE until Phase B.
     {"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]},
-    // Node 0 (omega-hub) can reach Node 1 (asus) on MCP port 8016
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
+    // Node 0 (node0) can reach Node 1 (node1) on MCP port 8016
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:8016"]},
     // Node 1 can reach Node 0 on MCP port 8016
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
-    // NFSv4: Node 0 (omega-hub) can reach Node 1 (asus) on port 2049
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]},
-    // SSH: tag:opencode (admin) → tag:asus:22
-    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
-    // SSH: Node 1 (asus) → Node 0 (omega-hub) for remote administration
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:22"]},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016"]},
+    // NFSv4: Node 0 (node0) can reach Node 1 (node1) on port 2049
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:2049"]},
+    // SSH: tag:opencode (admin) → tag:node1:22
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node1:22"]},
+    // SSH: Node 1 (node1) → Node 0 (node0) for remote administration
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:22"]},
     // Heartbeats: both directions (ICMP/ping)
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:*"], "proto": "icmp"},
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:*"], "proto": "icmp"}
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:*"], "proto": "icmp"},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
     // Admin (tag:opencode) can SSH to Node 1
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot", "root"]},
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
     // Node 0 can SSH to Node 1 (for automation)
-    {"action": "check", "src": ["tag:omega-hub"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
   ],
   "autoApprovers": {
     "routes": ["autogroup:admin"],
@@ -67,36 +75,37 @@
 
 ## Phase B — Hardened Policy (post-migration lockdown; remove `autogroup:member`)
 
-Run **only after** both nodes are tagged and Phase A connectivity is verified:
+Run **only after** both nodes carry the canonical tags (`tag:node0`/`tag:node1`)
+and Phase A connectivity is verified:
 
 ```hujson
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:asus": ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1": ["autogroup:admin"],
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
     // NOTE: member rule intentionally REMOVED — tagged devices don't need it.
-    // Node 0 (omega-hub) can reach Node 1 (asus) on MCP port 8016
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
+    // Node 0 (node0) can reach Node 1 (node1) on MCP port 8016
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:8016"]},
     // Node 1 can reach Node 0 on MCP port 8016
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
-    // NFSv4: Node 0 (omega-hub) can reach Node 1 (asus) on port 2049
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]},
-    // SSH: tag:opencode (admin) → tag:asus:22
-    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
-    // SSH: Node 1 (asus) → Node 0 (omega-hub) for remote administration
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:22"]},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016"]},
+    // NFSv4: Node 0 (node0) can reach Node 1 (node1) on port 2049
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:2049"]},
+    // SSH: tag:opencode (admin) → tag:node1:22
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node1:22"]},
+    // SSH: Node 1 (node1) → Node 0 (node0) for remote administration
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:22"]},
     // Heartbeats: both directions (ICMP/ping)
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:*"], "proto": "icmp"},
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:*"], "proto": "icmp"}
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:*"], "proto": "icmp"},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
     // Admin (tag:opencode) can SSH to Node 1
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot", "root"]},
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
     // Node 0 can SSH to Node 1 (for automation)
-    {"action": "check", "src": ["tag:omega-hub"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
   ],
   "autoApprovers": {
     "routes": ["autogroup:admin"],
@@ -134,9 +143,14 @@ Run **only after** both nodes are tagged and Phase A connectivity is verified:
 
 | Tag | Owner | Applied To | Purpose |
 |-----|-------|------------|---------|
-| `tag:omega-hub` | `autogroup:admin` | Node 0 (HP Pavilion) | Archival Bastion identity |
-| `tag:asus` | `autogroup:admin` | Node 1 (ASUS ExpertBook) | Exploration Vanguard identity |
+| `tag:node0` | `autogroup:admin` | Node 0 (HP Pavilion / xnai-n0-hp / 100.123.51.67) | Archival Bastion identity (canonical) |
+| `tag:node1` | `autogroup:admin` | Node 1 (ASUS ExpertBook / xnai-n1-asus / 100.89.40.17) | Exploration Vanguard identity (canonical) |
 | `tag:opencode` | `autogroup:admin` | Admin operator (human) | SSH/admin access identity |
+
+> Legacy tags `tag:omega-hub` / `tag:asus` replaced 2026-09-21 (operator
+> ratification). Node 1 still carries `tag:asus`; it is inert (matches no rule)
+> and should be removed at the next Node 1 rejoin. Node 0's live tag is
+> `tag:node0`.
 
 ---
 
@@ -145,28 +159,28 @@ Run **only after** both nodes are tagged and Phase A connectivity is verified:
 1. **Paste Phase A policy** in the admin console and save. `autogroup:member`
    preserves untagged access, so **nothing breaks** — the tag rules simply sit
    ready.
-2. **Re-tag Node 0**: `sudo tailscale up --advertise-tags=tag:omega-hub
-   --force-reauth` — only now, because `tagOwners` must exist in a saved policy
-   first or the tag is rejected as unowned.
-3. **Verify Node 0's tag**: `tailscale status --json | jq '.Self.tags'` →
-   `["tag:omega-hub"]`. Verify NFS + MCP still work from Node 1.
-4. **Mint Node 1's authkey** with `tag:asus` (admin console → Keys), then run
-   the L2 join ceremony (`docs/federation/L2_JOIN_GUIDE.md` Phase 4) so Node 1
-   comes back tagged.
-5. **Verify everything tagged**: NFS mount + MCP + ICMP + SSH from both sides.
-6. **Only now** paste **Phase B** (member rule removed) and re-verify.
+2. **Verify live tags match the policy exactly**: `tailscale status --json |
+   jq '.Self.tags'` on both nodes → Node 0 `["tag:node0"]`, Node 1
+   `["tag:node1"]` (+ inert legacy `tag:asus` on Node 1 is tolerable but
+   preferred removed).
+3. **Verify connectivity with tags live**: NFS + MCP + ICMP + SSH from both
+   sides (see Verification Commands below).
+4. **Only now** paste **Phase B** (member rule removed) and re-verify every
+   service end-to-end (NFS mount, MCP call, ICMP, SSH).
 
-**Never skip to Phase B while either node is untagged** — it is a lockdown for
-after the migration, not a starting point.
+**Never skip to Phase B while live tags differ from the policy tags** — it is
+a lockdown for after the migration, not a starting point. (2026-09-21: pasting
+Phase B with the OLD `tag:omega-hub`/`tag:asus` names while nodes carried
+`tag:node0`/`tag:node1` would have dropped the entire mesh silently.)
 
 ---
 
-1. **Node 0 must re-tag** after Phase A is saved:
+1. **Node 0 must carry `tag:node0`** (verify before Phase B):
    ```bash
-   sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
+   sudo tailscale up --advertise-tags=tag:node0 --force-reauth
    ```
 
-2. **Node 1 authkey must include `tag:asus`** (auto-applies on join)
+2. **Node 1 must carry `tag:node1`** (legacy `tag:asus` may remain inert)
 
 3. **Tailnet Lock** should remain **disabled** for 2-node federation (default)
 
@@ -188,4 +202,4 @@ curl -s http://<other-node>.tail51f14a.ts.net:8016/mcp
 
 ---
 
-*⬡ OMEGA ⬡ FEDERATION ⬡ ACL-001 ⬡ READY-FOR-ADMIN-CONSOLE ⬡*
+*⬡ OMEGA ⬡ FEDERATION ⬡ ACL-001 ⬡ v1.2 — CANONICAL TAGS tag:node0/tag:node1 ⬡*

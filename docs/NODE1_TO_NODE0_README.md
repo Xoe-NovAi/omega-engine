@@ -204,17 +204,17 @@ superseded_by: UUID of replacement
 ```json
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:searxng": ["autogroup:admin"],
-    "tag:ollama-node": ["autogroup:admin"]
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1": ["autogroup:admin"],
+    "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
-    {"action": "accept", "src": ["tag:ollama-node"], "dst": ["tag:omega-hub:8016,8018"]},
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:ollama-node:11434"]}
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016"]},
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:11434"]}
   ]
 }
 ```
-**Tags:** HP → `omega-hub`, `searxng`; ASUS → `ollama-node`
+**Tags:** HP → `tag:node0`; ASUS → `tag:node1` (canonical per FED-ACL-001 v1.2; older drafts used `omega-hub`/`ollama-node`/`asus` — superseded)
 
 ### 5. C6 Comms-Contract Draft (A2A + hivemind_handoff Hybrid)
 **Your call on format** — you built the hivemind handoff schema. Align with A2A `Task` + `contextId`.

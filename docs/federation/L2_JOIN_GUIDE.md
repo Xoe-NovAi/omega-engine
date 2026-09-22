@@ -32,26 +32,26 @@ belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
 ```hujson
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:asus": ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1": ["autogroup:admin"],
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
     // KEEP THE MEMBER RULE — untagged devices (both nodes today) depend on it
     {"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]},
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:8016"]},
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016"]},
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:8016"]},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016"]},
     // NFSv4: Node 0 -> Node 1 shared drive (docs/federation/NFS_OVER_TAILSCALE_PLAN.md)
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]},
-    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:2049"]},
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node1:22"]},
     // SSH: Node 1 -> Node 0 remote administration
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:22"]},
-    {"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:*"], "proto": "icmp"},
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:*"], "proto": "icmp"}
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:22"]},
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:*"], "proto": "icmp"},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot", "root"]},
-    {"action": "check", "src": ["tag:omega-hub"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
   ],
   "autoApprovers": {
     "routes": ["autogroup:admin"],
@@ -69,8 +69,8 @@ belongs in `docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
 **Then re-tag Node 0:**
 ```bash
 # On Node 0 (HP), after ACL is saved:
-sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
-tailscale status --json | jq '.Self.tags'  # Should show: ["tag:omega-hub"]
+sudo tailscale up --advertise-tags=tag:node0 --force-reauth
+tailscale status --json | jq '.Self.tags'  # Should show: ["tag:node0"]
 ```
 
 ---
@@ -81,7 +81,7 @@ tailscale status --json | jq '.Self.tags'  # Should show: ["tag:omega-hub"]
 - Description: `"Node 1 (ASUS) federation join - ONE SHOT"`
 - Type: **One-off** (single use)
 - Expiry: **1 day** (ceremony window)
-- Tags: **tag:asus** (ENABLED)
+- Tags: **tag:node1** (ENABLED)
 - Pre-approved: **YES**
 - Ephemeral: **NO**
 
@@ -103,7 +103,7 @@ cat > /media/usb/ceremony_manifest.json << 'EOF'
   "authkey_sha256": "$(echo -n "$AUTHKEY" | sha256sum | cut -d' ' -f1)",
   "created": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "expires": "$(date -u -d '+1 day' +%Y-%m-%dT%H:%M:%SZ)",
-  "tags": ["tag:asus"],
+  "tags": ["tag:node1"],
   "pre_approved": true,
   "one_shot": true
 }
@@ -131,7 +131,7 @@ sudo tailscale up \
   --hostname=xnai-n1-asus \
   --operator=xnai \
   --accept-routes \
-  --advertise-tags=tag:asus
+  --advertise-tags=tag:node1
 ```
 
 ---
@@ -141,9 +141,9 @@ sudo tailscale up \
 **Node 1:**
 ```bash
 tailscale status
-# Should show: xnai-n1-asus  100.x.x.x  xoe.nova.ai@  linux  tag:asus
-tailscale ping omega-hub
-curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
+# Should show: xnai-n1-asus  100.x.x.x  xoe.nova.ai@  linux  tag:node1
+tailscale ping node0
+curl -s http://node0.tail51f14a.ts.net:8016/mcp
 # Should return MCP endpoint response (not 404/connection refused)
 ```
 
@@ -151,8 +151,8 @@ curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
 ```bash
 tailscale status
 # Should show both:
-# 100.123.51.67  omega-hub  ...  tag:omega-hub
-# 100.x.x.x      xnai-n1-asus    ...  tag:asus
+# 100.123.51.67  node0  ...  tag:node0
+# 100.x.x.x      xnai-n1-asus    ...  tag:node1
 
 # Test bidirectional MCP
 curl -s http://xnai-n1-asus.tail51f14a.ts.net:8016/mcp  # If Node 1 runs MCP
@@ -220,11 +220,11 @@ allowed_hosts=[
 
 The L2 Federation is **COMPLETE** when:
 
-- [ ] ACL policy with `tagOwners` live in admin console
-- [ ] Node 0 re-tagged as `tag:omega-hub` (verified via `tailscale status --json`)
-- [ ] One-shot authkey with `tag:asus` minted
+- [ ] ACL policy with `tagOwners` live in admin console (canonical `tag:node0`/`tag:node1`)
+- [ ] Node 0 re-tagged as `tag:node0` (verified via `tailscale status --json`)
+- [ ] One-shot authkey with `tag:node1` minted
 - [ ] USB ceremony executed (manifest + SHA256 verified)
-- [ ] Node 1 joins as `xnai-n1-asus` with `tag:asus` (verified)
+- [ ] Node 1 joins as `xnai-n1-asus` with `tag:node1` (verified)
 - [ ] Bidirectional MCP handshake works (Node 0 ↔ Node 1)
 - [ ] Tailscale SSH works (admin → Node 1)
 - [ ] MagicDNS resolves both hostnames
@@ -233,4 +233,4 @@ The L2 Federation is **COMPLETE** when:
 
 ---
 
-*⬡ OMEGA ⬡ NODE1-TO-NODE0 ⬡ L2-JOIN ⬡ FED-L2JOIN-001 ⬡ CEREMONY-EXACT ⬡ AWAITING-NODE0-ACL-RE-TAG ⬡*
+*⬡ OMEGA ⬡ NODE1-TO-NODE0 ⬡ L2-JOIN ⬡ FED-L2JOIN-001 ⬡ CEREMONY-EXACT ⬡ CANONICAL TAGS tag:node0/tag:node1 ⬡*

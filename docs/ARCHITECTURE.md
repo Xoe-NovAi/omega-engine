@@ -149,8 +149,8 @@ The federation connects across five discrete abstraction layers:
 
 ### Layer 2.1 — Two-Phase ACL Migration Protocol
 Tailscale ACL policies **replace** default access rules wholesale. Applying a tag-only policy while nodes are untagged immediately drops all mesh communication.
-- **Phase A (Transitional Policy)**: Retains `{"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]}` while staging `tag:omega-hub`, `tag:asus`, and `tag:opencode` rules. Preserves untagged traffic while tag owners are registered.
-- **Phase B (Hardened Lockdown)**: Applied **only after** Node 0 re-authenticates with `--advertise-tags=tag:omega-hub` and Node 1 joins with `tag:asus`. Removes `autogroup:member` to enforce strict default-deny least privilege.
+- **Phase A (Transitional Policy)**: Retains `{"action": "accept", "src": ["autogroup:member"], "dst": ["autogroup:member"]}` while staging `tag:node0`, `tag:node1`, and `tag:opencode` rules. Preserves untagged traffic while tag owners are registered.
+- **Phase B (Hardened Lockdown)**: Applied **only after** Node 0 re-authenticates with `--advertise-tags=tag:node0` and Node 1 joins with `tag:node1`. Removes `autogroup:member` to enforce strict default-deny least privilege. (Canonical tags ratified 2026-09-21; legacy `tag:omega-hub`/`tag:asus` retired.)
 
 ### Layer 2.5 — Distributed Shared Scratch Substrate (NFSv4.2)
 To allow zero-copy model weight sharing, dataset staging, and cross-node artifact exchange without cloud storage intermediaries, Node 1 exposes `/home/xnai/node-drive` to Node 0:

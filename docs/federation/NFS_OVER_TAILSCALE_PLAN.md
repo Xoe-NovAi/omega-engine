@@ -197,7 +197,7 @@ rm /home/xnai/node-drive/federation_health.txt
 
 | Failure | Root Cause | Remediation |
 |---------|------------|-------------|
-| **Mount hangs on `mount` command** | Port 2049 blocked by Tailscale ACL | Inspect Tailscale Admin Console; verify `tag:asus:2049` is accepted from `tag:omega-hub`. |
+| **Mount hangs on `mount` command** | Port 2049 blocked by Tailscale ACL | Inspect Tailscale Admin Console; verify `tag:node1:2049` is accepted from `tag:node0`. |
 | **`access denied by server while mounting`** | IP mismatch or export syntax error | Check `NODE0_IP` in `/etc/exports.d/node-drive.exports`; run `sudo exportfs -ra` on Node 1; inspect `/var/log/syslog`. |
 | **`Permission Denied` when writing** | Incorrect UID mapping or local folder permissions | Verify `/home/xnai/node-drive` on Node 1 is `chmod 775` and export uses `all_squash,anonuid=1000,anongid=1000`. |
 | **Node 0 boot hang / slow boot** | Network mount attempted before Tailscale active | Verify `/etc/fstab` has `nofail` and `x-systemd.automount`. Automount never blocks boot. |

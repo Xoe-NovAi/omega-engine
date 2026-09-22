@@ -50,7 +50,7 @@ The federation subsystem is documented across specialized architectural, operati
 
 ### 2.2 Network Mesh & Access Control (Layer 2)
 - **[ACL_POLICY.md](ACL_POLICY.md)**: **The authoritative HuJSON policy specification**. Documents the critical Two-Phase Migration protocol (Phase A transitional with `autogroup:member` vs Phase B hardened tag lockdown) preventing silent network drops.
-- **[L2_JOIN_GUIDE.md](L2_JOIN_GUIDE.md)**: Step-by-step ceremony for minting one-shot authkeys on Node 0 and securely enrolling Node 1 under `tag:asus`.
+- **[L2_JOIN_GUIDE.md](L2_JOIN_GUIDE.md)**: Step-by-step ceremony for minting one-shot authkeys on Node 0 and securely enrolling Node 1 under `tag:node1`.
 - **[L2_ACCEPTANCE.md](L2_ACCEPTANCE.md)**: Formal acceptance test criteria, latency targets, and ping/curl verification batteries.
 - **[NODE1_SSH_JOIN_GUIDE.md](NODE1_SSH_JOIN_GUIDE.md)**: Operational instructions for Tailscale SSH configuration between the Bastion and Vanguard.
 
@@ -107,8 +107,8 @@ The federation subsystem is documented across specialized architectural, operati
 ### 4.2 Two-Phase ACL Migration Runbook
 When ready to lock down the tailnet with least-privilege tags:
 1. **Phase A**: Paste the Phase A policy from `docs/federation/ACL_POLICY.md` into the Tailscale Admin Console. Verify it saves. (Both nodes are untagged; `autogroup:member` preserves all connectivity).
-2. **Re-tag Node 0**: On Node 0, execute `sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth`. Verify via `tailscale status --json | jq '.Self.tags'`.
-3. **Re-join Node 1**: Generate a one-shot authkey tagged `tag:asus` on Node 0. On Node 1, execute the join command in `docs/federation/L2_JOIN_GUIDE.md`. Verify tag `["tag:asus"]`.
+2. **Re-tag Node 0**: On Node 0, execute `sudo tailscale up --advertise-tags=tag:node0 --force-reauth`. Verify via `tailscale status --json | jq '.Self.tags'`.
+3. **Re-join Node 1**: Generate a one-shot authkey tagged `tag:node1` on Node 0. On Node 1, execute the join command in `docs/federation/L2_JOIN_GUIDE.md`. Verify tag `["tag:node1"]`.
 4. **Verify Connectivity**: Test `ping`, `curl :8016/mcp`, and `ls /mnt/node-drive` across the tagged boundary.
 5. **Phase B**: Paste the Phase B policy from `docs/federation/ACL_POLICY.md` to remove `autogroup:member`. Verify all services remain fully operational.
 
@@ -127,4 +127,4 @@ When ready to lock down the tailnet with least-privilege tags:
 
 ---
 
-*⬡ OMEGA ENGINE ALPHA ⬡ FEDERATION SUBSYSTEM MASTER SPECIFICATION ⬡*
+*⬡ OMEGA ENGINE ALPHA ⬡ FEDERATION SUBSYSTEM MASTER SPECIFICATION ⬡ (ACL tags: canonical `tag:node0`/`tag:node1`, FED-ACL-001 v1.2)*

@@ -2,7 +2,7 @@
 **Doc ID**: `FED-N1-COMPLETE-001` | **Status**: CANONICAL (Node 1)  
 **Audience**: Node 0 hub operator (you, at the HP, or the omega-hub admin)  
 **Contract ref**: C6 v1.1 §L2, ratified 2026-09-12 | L2_ACCEPTANCE, ratified 2026-09-12  
-**Genome tag**: `tag:asus` (Node 1 name that TLS grants are issued for)
+**Genome tag**: `tag:node1` (Node 1 name that TLS grants are issued for)
 
 ---
 
@@ -22,9 +22,9 @@ authority. You mint the key; we flip the switch. That handshake is the entire po
 ## The One-Key Join (runs on Node 1, one shot, idempotent)
 
 ```bash
-# Node 0 (or tailnet admin) mints the key with tag:asus attached:
+# Node 0 (or tailnet admin) mints the key with tag:node1 attached:
 #   Admin console → Settings → Keys → Generate auth key
-#   Tags:  tag:asus   (node-qualified asus surface)
+#   Tags:  tag:node1   (node-qualified asus surface)
 #   Reusable...: no  | Ephemeral...: no  | Preauth: yes
 
 # Then on Node 1:
@@ -32,7 +32,7 @@ sudo tailscale up --authkey="${NODE0_MINTED_AUTHKEY}" \
   --hostname=kali-n1 \
   --operator=xnai \
   --accept-routes \
-  --advertise-tags=tag:asus
+  --advertise-tags=tag:node1
 ```
 
 ### Verify the wire (from Node 1)

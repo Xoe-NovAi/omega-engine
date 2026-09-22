@@ -148,7 +148,7 @@ staging tag rules, both nodes re-join tagged, and only then does Phase B
 remove the member rule. The NFS rule itself is always:
 
 ```hujson
-{"action": "accept", "src": ["tag:omega-hub"], "dst": ["tag:asus:2049"]}
+{"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1:2049"]}
 ```
 
 ---

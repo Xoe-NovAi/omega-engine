@@ -10,6 +10,12 @@ SPDX-License-Identifier: Apache-2.0
 **AP Token**: `AP-RESEARCHER-TAILSCALE-L2-20260915-v1.0.0`
 **Status**: COMPLETE — All 7 research areas covered
 
+> **⚠️ 2026-09-21 SUPERSESSION NOTE**: This research predates the canonical
+> tag ratification. **FED-ACL-001 v1.2 (`docs/federation/ACL_POLICY.md`) is the
+> authoritative policy**; canonical tags are `tag:node0` / `tag:node1` /
+> `tag:opencode`. Any `tag:omega-hub` / `tag:asus` / `tag:ollama-node` /
+> `tag:searxng` references below are historical and must not be pasted.
+
 ---
 
 ## 📋 Executive Summary

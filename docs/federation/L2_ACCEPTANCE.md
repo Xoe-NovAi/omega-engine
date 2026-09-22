@@ -1,6 +1,6 @@
 # 🔱 Layer 2 Acceptance — Tailscale Mesh (Node 1 ratification)
 **Doc ID**: FED-L2-001
-**Node**: Node 1 (ASUS ExpertBook, `tag:asus`)
+**Node**: Node 1 (ASUS ExpertBook, `tag:node1`)
 **Date**: 2026-09-12
 **Contract ref**: C6 v1.1, ratified 2026-09-12 (§comms_layers → L2_Tailscale)
 **Payload ref**: `docs/federation/node0_received/tailscale/acl.hujson` (Node 0 shipment)
@@ -26,16 +26,16 @@ coordination plane, subject to the commitments below.
 | Commitment | Detail |
 |-----------|--------|
 | Mesh daemon | `tailscaled` ACTIVE on Node 1 (v1.102.4, systemd unit) |
-| Routing | `tag:asus` only toward `tag:omega-hub:8016` + `tag:opencode` (Node 0 Ollama) |
+| Routing | `tag:node1` only toward `tag:node0:8016` + `tag:opencode` (Node 0 Ollama) |
 | Ping | ICMP health both directions (ACL ratified) |
-| SSH | `tag:opencode` → `tag:asus` non-root only |
+| SSH | `tag:opencode` → `tag:node1` non-root only |
 | No-inference-egress | T5/T6 local-only (UNCHANGED by Layer 2) |
 
 ## 3. Join Command (one-shot, fires on Node 0 auth key)
 
 ```bash
 # Node 0 tailnet admin mints: tailscale up --authkey=tskey-auth-<N0>
-sudo tailscale up --authkey=${NODE0_AUTHKEY} --hostname=kali-n1 --operator=xnai --accept-routes --advertise-tags=tag:asus
+sudo tailscale up --authkey=${NODE0_AUTHKEY} --hostname=kali-n1 --operator=xnai --accept-routes --advertise-tags=tag:node1
 # Verify:
 tailscale status          # expect: kali-n1 (Node 1) + omega-hub (Node 0) both "online"
 tailscale ping omega-hub  # expect: pong from HP node

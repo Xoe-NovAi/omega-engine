@@ -40,7 +40,7 @@ so no re-discovery or re-research is needed. Last verified: 2026-09-08.
 | Layer | Transport | Binding | Purpose |
 |-------|-----------|---------|---------|
 | **1. Local LAN** | Streamable HTTP (`POST /mcp`) | Node 0: `0.0.0.0:8016` → Node 1 connects to `192.168.10.168:8016/mcp` | Immediate P2P federation |
-| **2. Tailscale Mesh** | WireGuard via MagicDNS | `hp.tailnet:8016`, `asus.tailnet` | Roaming/Zero-config, tag-based ACLs (`tag:opencode -> tag:omega-hub:8016`) |
+| **2. Tailscale Mesh** | WireGuard via MagicDNS | `hp.tailnet:8016`, `asus.tailnet` | Roaming/Zero-config, tag-based ACLs (`tag:opencode -> tag:node0:8016`) |
 | **3. Redis Pub/Sub** | High-frequency heartbeats | Ephemeral event bus | Phase 2: awareness heartbeats, graceful degradation to atomic lockfiles |
 
 ### Hivemind Channel Partitioning
