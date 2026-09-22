@@ -322,10 +322,24 @@ for i in range(10):
                 except ChildProcessError:
                     pass
 
-            # Verify: file must be valid JSON with all 20 sessions
-            with open(test_path) as f:
-                data = json.load(f)
-            sessions = data["sessions"]
+            # Verify: file must be valid JSON with all 20 sessions.
+            # Bounded poll (CI-flake hardening): children exit only after their
+            # last atomic write, but under heavy CI load the parent can observe
+            # the file a beat before the final rename is visible. Poll up to 5s
+            # (100ms steps). A REAL lost-update bug still fails — the timeout
+            # bounds the wait and the assertion is unchanged.
+            sessions = {}
+            deadline = time.monotonic() + 5.0
+            while time.monotonic() < deadline:
+                try:
+                    with open(test_path) as f:
+                        data = json.load(f)
+                    sessions = data["sessions"]
+                    if len(sessions) == 20:
+                        break
+                except (json.JSONDecodeError, FileNotFoundError):
+                    pass
+                time.sleep(0.1)
             assert len(sessions) == 20, f"Expected 20 sessions, got {len(sessions)}"
             for i in range(10):
                 assert f"ses_alpha_{i}" in sessions

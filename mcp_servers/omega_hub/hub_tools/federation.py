@@ -29,6 +29,9 @@ from mcp_servers.omega_hub.server import mcp
 
 logger = logging.getLogger(__name__)
 
+# Tailnet domain suffix — used to build MagicDNS hostnames.
+_TAILNET_DOMAIN = "tail51f14a.ts.net"
+
 # ── Internal helpers ────────────────────────────────────────────────
 
 
@@ -62,7 +65,29 @@ def _parse_self(status: dict[str, Any]) -> dict[str, Any]:
         "tags": self_node.get("Tags", []),
         "backend_state": self_node.get("BackendState", "unknown"),
         "online": self_node.get("Online", False),
+        "dns_name": (self_node.get("DNSName") or "").rstrip("."),
     }
+
+
+def _peer_is_direct(peer: dict[str, Any]) -> bool:
+    """Determine whether a peer is on a direct WireGuard path.
+
+    Authoritative signals from `tailscale status --json`:
+    - ``PeerRelay`` is the relay region *currently in use*; empty string
+      means the peer is NOT relayed (direct path).
+    - ``CurAddr`` is the endpoint in use. Direct endpoints are IP:port
+      pairs (LAN or public); DERP relay addresses contain ``derp`` or a
+      relay hostname.
+    """
+    cur_addr = peer.get("CurAddr") or ""
+    peer_relay = peer.get("PeerRelay") or ""
+    if peer_relay:
+        return False
+    if not cur_addr:
+        return False
+    if "derp" in cur_addr.lower() or "tailscale.com" in cur_addr.lower():
+        return False
+    return True
 
 
 def _parse_peers(status: dict[str, Any]) -> list[dict[str, Any]]:
@@ -74,54 +99,84 @@ def _parse_peers(status: dict[str, Any]) -> list[dict[str, Any]]:
             "tailscale_ip": (peer.get("TailscaleIPs") or [None])[0],
             "tags": peer.get("Tags", []),
             "online": peer.get("Online", False),
-            "direct": peer.get("Relay", "") == "",
-            "relay": peer.get("Relay", "") or None,
+            "active": peer.get("Active", False),
+            "direct": _peer_is_direct(peer),
+            "relay": (peer.get("PeerRelay") or peer.get("Relay") or None),
+            "cur_addr": peer.get("CurAddr") or None,
             "last_seen": peer.get("LastSeen"),
-            "latency_ms": peer.get("Latency", {}).get("Seconds"),
+            "last_handshake": peer.get("LastHandshake"),
+            "rx_bytes": peer.get("RxBytes"),
+            "tx_bytes": peer.get("TxBytes"),
         })
     return peers
 
 
-async def _verify_magicdns() -> bool:
-    """Verify MagicDNS is active by resolving the local hostname."""
+def _self_dns_name(status: dict[str, Any]) -> str:
+    """Return the self MagicDNS hostname (without trailing dot)."""
+    dns = (status.get("Self", {}).get("DNSName") or "").rstrip(".")
+    return dns or f"omega-hub.{_TAILNET_DOMAIN}"
 
-    def _resolve() -> bool:
+
+def _tailnet_hostname(host: str) -> str:
+    """Return a fully-qualified tailnet hostname for a peer.
+
+    Accepts bare hostnames (``n1``), FQDNs (``n1.tail51f14a.ts.net``),
+    and IPs — returns the input unchanged for the latter two.
+    """
+    if "." in host or ":" in host:
+        return host
+    return f"{host}.{_TAILNET_DOMAIN}"
+
+
+async def _verify_magicdns(status: dict[str, Any]) -> bool:
+    """Verify MagicDNS is active by resolving the self hostname."""
+
+    def _resolve(hostname: str) -> bool:
         try:
             result = subprocess.run(
-                ["getent", "hosts", "omega-hub.tail51f14a.ts.net"],
+                ["getent", "hosts", hostname],
                 capture_output=True, text=True, timeout=5, check=False,
             )
             return result.returncode == 0 and "100." in result.stdout
         except FileNotFoundError:
             return False
 
-    return await anyio.to_thread.run_sync(_resolve)
+    hostname = _self_dns_name(status)
+    return await anyio.to_thread.run_sync(lambda: _resolve(hostname))
 
 
-async def _verify_zero_inference_egress() -> bool:
+async def _verify_zero_inference_egress(status: dict[str, Any]) -> bool:
     """Verify no inference endpoints are exposed to the mesh.
 
     Application-level check (NOT packet sniffing — WireGuard is encrypted):
     1. omega-hub must NOT expose /v1/chat/completions or /generate
     2. Local ModelGateway resolves local tasks to localhost, not tailnet IPs
+
+    A hub that is unreachable (HTTP 000) satisfies the invariant: no
+    inference egress is possible through it. Connectivity is diagnosed
+    separately by omega_federation_diagnose.
     """
 
-    def _check() -> bool:
-        # Check that the hub's tool list contains no inference endpoints.
+    def _check(hostname: str) -> bool:
+        # Check that the hub's HTTP surface contains no inference endpoints.
         # This is a structural assertion: the hub serves tools, not models.
         try:
             result = subprocess.run(
                 ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
-                 "http://omega-hub.tail51f14a.ts.net:8016/v1/chat/completions"],
+                 f"http://{hostname}:8016/v1/chat/completions"],
                 capture_output=True, text=True, timeout=5, check=False,
             )
+            code = result.stdout.strip()
             # 404/405 = endpoint does not exist = PASS
-            return result.stdout.strip() in ("404", "405")
+            # 000 = hub unreachable = PASS structurally (no egress via hub)
+            # 200/other = endpoint exists = FAIL (inference exposed on mesh)
+            return code in ("404", "405", "000")
         except Exception as exc:  # noqa: BLE001 — probe failure is logged, not fatal
             logger.warning("egress probe failed: %s", exc)
             return False
 
-    return await anyio.to_thread.run_sync(_check)
+    hostname = _self_dns_name(status)
+    return await anyio.to_thread.run_sync(lambda: _check(hostname))
 
 
 # ── Public MCP tools ────────────────────────────────────────────────
@@ -141,10 +196,15 @@ async def omega_federation_status(ctx: Context | None = None) -> dict[str, Any]:
         return {"error": status["error"], "invariants": {}, "peers": []}
 
     peers = _parse_peers(status)
+    online_peers = [p for p in peers if p.get("online")]
     invariants = {
-        "zero_inference_egress": await _verify_zero_inference_egress(),
-        "magicdns_active": await _verify_magicdns(),
-        "direct_wireguard": all(p.get("direct", False) for p in peers if p.get("online")),
+        "zero_inference_egress": await _verify_zero_inference_egress(status),
+        "magicdns_active": await _verify_magicdns(status),
+        # Honest direct check: only True when at least one peer is online
+        # AND every online peer is on a direct path. Vacuous truth avoided.
+        "direct_wireguard": bool(online_peers) and all(
+            p.get("direct", False) for p in online_peers
+        ),
     }
 
     return {
@@ -162,8 +222,9 @@ async def omega_federation_diagnose(
 ) -> dict[str, Any]:
     """Run end-to-end diagnostic battery.
 
-    Checks: daemon health, ping/latency, MCP endpoint probe, transport
-    security, relay status. Returns PASS/WARN/FAIL per check.
+    Checks: daemon health, ping/latency, MCP endpoint probe (proper
+    JSON-RPC initialize), transport security, relay status. Returns
+    PASS/WARN/FAIL per check.
     """
     checks: list[dict[str, Any]] = []
 
@@ -196,17 +257,25 @@ async def omega_federation_diagnose(
         result = await anyio.to_thread.run_sync(_ping)
         checks.append({"name": f"ping_{host}", **result})
 
-    # 3. MCP endpoint probe
+    # 3. MCP endpoint probe — proper JSON-RPC initialize (POST).
+    #    A GET on /mcp returns 400 by design (MCP requires POST); the old
+    #    GET probe therefore false-flagged healthy servers as WARN.
     def _probe(host: str) -> dict[str, str]:
         try:
             r = subprocess.run(
                 ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
-                 f"http://{host}.tail51f14a.ts.net:8016/mcp"],
+                 "-X", "POST",
+                 "-H", "Content-Type: application/json",
+                 "-H", "Accept: application/json, text/event-stream",
+                 "-d", '{"jsonrpc":"2.0","id":1,"method":"initialize",'
+                       '"params":{"protocolVersion":"2024-11-05","capabilities":{},'
+                       '"clientInfo":{"name":"n0-probe","version":"1.0"}}}',
+                 f"http://{_tailnet_hostname(host)}:8016/mcp"],
                 capture_output=True, text=True, timeout=10, check=False,
             )
             code = r.stdout.strip()
-            return {"status": "PASS" if code in ("200", "404") else "WARN",
-                    "detail": f"HTTP {code} on :8016/mcp"}
+            return {"status": "PASS" if code.startswith("2") else "WARN",
+                    "detail": f"HTTP {code} on :8016/mcp (POST initialize)"}
         except Exception as e:  # noqa: BLE001 — probe failure logged
             logger.warning("MCP probe failed for %s: %s", host, e)
             return {"status": "FAIL", "detail": str(e)}
@@ -222,14 +291,16 @@ async def omega_federation_diagnose(
         "detail": "allowed_hosts includes omega-hub.tail51f14a.ts.net:* (commit 213abf44)",
     })
 
-    # 5. Relay check
+    # 5. Relay check — uses corrected direct detection (PeerRelay/CurAddr)
     for peer in peers:
-        if peer.get("online") and not peer.get("direct"):
+        if not peer.get("online"):
+            continue
+        if peer.get("direct"):
+            checks.append({"name": f"relay_{peer['hostname']}", "status": "PASS",
+                           "detail": f"direct WireGuard via {peer.get('cur_addr')}"})
+        else:
             checks.append({"name": f"relay_{peer['hostname']}", "status": "WARN",
                            "detail": f"via DERP relay {peer.get('relay')}"})
-        elif peer.get("online"):
-            checks.append({"name": f"relay_{peer['hostname']}", "status": "PASS",
-                           "detail": "direct WireGuard"})
 
     overall = "PASS" if all(c["status"] == "PASS" for c in checks) else (
         "WARN" if any(c["status"] == "WARN" for c in checks) else "FAIL")

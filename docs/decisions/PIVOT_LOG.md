@@ -486,3 +486,32 @@ isolation never took effect.
 naming this decision; `record_first_breath()` carries a DISABLED notice. **Nothing deleted.**
 **Scheduled**: re-implement + wire during the post-PR#3 first-breath item.
 **Related**: this is blocker B3 in `data/coordination/CLINE_TO_MAKALI_DEBUT_SWEEP_BRIEFING_20260920.md` §1.2.
+
+## D-606 (2026-09-22) — GEMINI-NOTEBOOK WORKSTREAM CANCELLED; SOVEREIGN ALTERNATIVE IN-ENGINE (User)
+
+**Decision**: The GN (GEMINI-NOTEBOOK) workstream is **CANCELLED**. No payment for
+NotebookLM/Gemini Notebook; no enhancement of systems around it. The sovereign
+alternative will be developed **inside the Omega Engine** instead.
+
+**Scope removed**:
+- GN-1 (notebooklm-py[mcp] deployment) — CANCELLED
+- GN-2 (strategic notebooks Ω-ACTIVE-RESEARCH + Ω-KNOWLEDGE-BASE) — CANCELLED
+- GN-3 (free-tier fetch pipeline + systemd timer) — CANCELLED
+- GN-4 (single-account Deep Research smoke test) — CANCELLED
+- GN-5 (SDP distillation pipeline + Scribe handoff) — CANCELLED
+- R38 (NotebookLM integration) — CANCELLED
+- D-578 (GEMINI-NOTEBOOK workstream) — SUPERSEDED
+
+**Replacement**: The knowledge-distillation + research-loop capabilities GN would
+have provided become an **in-engine sovereign workstream** (grounded RAG over the
+Omega library, SDP distillation, gap detection — all local-first per M7).
+
+**Post-debut execution order (updated)**: ~~GN~~ → **DS → LI → KD → HR → ZS**
+(per D-584, GN removed).
+
+**Research note**: The 2026-09-22 web-research campaign confirmed GN-3's free-tier
+Deep Research = 10/month (not 30) — the cancellation removes the only paid-adjacent
+dependency in the post-debut order. All remaining workstreams are fully sovereign.
+
+**Related**: GAP_REGISTRY.json (GN-1..GN-5, R38 → status "cancelled"),
+POST_DEBUT_ROADMAP.md (GN row removed), session_gnosis.md §22.

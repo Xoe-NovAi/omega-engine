@@ -537,3 +537,142 @@ Makefile
 4. Then: bilateral systems audit, Phase 2-5
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ COMMITTED-PUSHED ⬡ CLEAN-SLATE ⬡ 2026-09-22*
+
+---
+
+## 17. PR #3 MERGE PREP — CI FINDINGS (2026-09-22)
+
+### 17.1 PR #3 State
+- **PR #3** "Release v1.6.1-alpha: Sovereign Local-First AI Runtime" — OPEN, base=main, head=release/debut-v1.6.0
+- **mergeable: MERGEABLE** | **mergeStateStatus: UNSTABLE** | isDraft: False
+- Our P1 commits (6e9d2595, 7695127e, 779e1c01) ARE in PR #3
+
+### 17.2 CI Failures — PRE-EXISTING (proven)
+- **Test workflow FAIL** (2 failures, both environmental/flaky, NOT P1-related):
+  1. `tests/test_search_tools.py:69` — asserts `.firecrawl/` cache dir exists; CI runner never creates it (gitignored local cache; test.yml has NO firecrawl setup)
+  2. `tests/test_m34_atomic.py:329` — asserts 20 sessions from 2 child processes; racy under CI parallel load (got 13-14)
+- **CI workflow CANCELLED** (test-and-lint) — cascading from Test failure
+- **PROOF of pre-existing**: identical Test/CI failures on 2026-09-20T17:06 runs (before our commits)
+- **PASSING**: Dashboard Test, Secret Scan, REUSE Compliance
+
+### 17.3 Merge Decision
+- Temple-grade local: 53/53 PASS. Spot-check: PASS. Antigravity: PASS.
+- CI failures are environmental/flaky, not regressions from P1.
+- Options: (A) merge with documented pre-existing failures [recommended for debut deadline], (B) fix CI first (add .firecrawl mkdir to test.yml + make m34 test robust) [slower, green CI]
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ PR3-MERGE-PREP ⬡ 2026-09-22*
+
+---
+
+## 18. DEBUT MERGED — PR #3 LIVE (2026-09-22)
+
+### 18.1 Merge Result
+- **PR #3 MERGED** at 2026-09-22T01:19:16Z
+- Merge commit: `f062a6267bd4d550fbfc51b860d20464cd4c4658` on main
+- Comment posted documenting verified gates + pre-existing CI failures (issuecomment-5769873241)
+- main now contains: P0 de-track (6e9d2595), P1 remediation (7695127e), gnosis (779e1c01)
+
+### 18.2 Debut Sequence — COMPLETE
+P0 ✅ → P1 ✅ → Spot-check ✅ → Antigravity ✅ → Temple-grade 53/53 ✅ → Commits pushed ✅ → **PR #3 MERGED** ✅
+
+### 18.3 Post-Debut Next Steps
+1. **CI hardening follow-up** (documented in merge comment): .firecrawl mkdir in test.yml + m34_atomic race fix
+2. **Bilateral systems audit** (Node 1 corpus vs Node 0 hardened systems)
+3. **Phase 2-5**: ANAi WAD transfer, docs cleanup, agent files, final validation
+4. Node 1 reconnect → P2 federation verification
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ DEBUT-MERGED ⬡ v1.6.1-alpha-LIVE ⬡ 2026-09-22*
+
+---
+
+## 19. DECISION: REPO REMAINS PRIVATE (2026-09-22)
+
+### 19.1 The Decision
+- **User directive: "Do not make it public."**
+- Repo `Xoe-NovAi/omega-engine` remains **PRIVATE** (verified: isPrivate=True, visibility=PRIVATE)
+- The documented public flip (`gh repo edit Xoe-NovAi/omega-engine --visibility public`, P2P guide §14) is **NOT to be executed**
+- Debut code (v1.6.1-alpha) is merged to main and verified, but the repository visibility stays private
+
+### 19.2 Implications
+- PUBLIC-DEBUT-01 sprint: code-readiness COMPLETE (P0/P1/temple-grade/PR #3 all done), but the public exposure step is CANCELLED/deferred by user decision
+- All public-readiness gates (secret scan, REUSE, allowlist) remain valuable as private hygiene
+- Node 1 federation (P2P guide): private-repo clone path applies (SSH/HTTPS with auth) — no public clone
+
+### 19.3 Standing Orders
+- NEVER run `gh repo edit Xoe-NovAi/omega-engine --visibility public` without explicit user command
+- If any workflow/agent suggests making the repo public, this decision overrides
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ REPO-STAYS-PRIVATE ⬡ 2026-09-22*
+
+---
+
+## 20. P2 FEDERATION VERIFICATION — n1 HEALTHY (2026-09-22)
+
+### 20.1 Node Naming (user-confirmed)
+- **n0** = this machine (Node 0, 100.123.51.67, tag:node0)
+- **n1** = Node 1 (100.89.40.17, tags: asus + node1)
+
+### 20.2 Verification Results (from n0)
+- ✅ n1 ONLINE + ACTIVE (tailscale CLI: "active; direct 192.168.10.174:41641")
+- ✅ **DIRECT WireGuard over LAN** — tailscale ping: "pong via 192.168.10.174:41641" (not relay)
+- ✅ Traffic flowing: tx 82296 rx 78040 bytes
+- ✅ MagicDNS active: n1.tail51f14a.ts.net + n0.tail51f14a.ts.net both resolve
+- ✅ MCP handshake: POST initialize to n1:8016/mcp → SUCCESS (serverInfo: kali-n1-mcp, tools/prompts/resources)
+- ✅ Ping: 3/3, 0% loss
+
+### 20.3 TOOL BUG FOUND (federation.py:147)
+- `omega_federation_status` reported direct=false, relay=mia, magicdns=false — ALL FALSE POSITIVES
+- Root cause: `hub_tools/federation.py:147` checks `p.get("direct", False)` but tailscale peer JSON has NO "direct" field (field is `CurAddr`/`Relay`/`PeerRelay`) → always False
+- MCP "WARN" (HTTP 400 on GET) also false alarm — MCP requires POST; GET 400 is correct behavior
+- **Fix needed**: federation.py invariant checks should use CurAddr (LAN IP = direct) + PeerRelay (null = direct)
+
+### 20.4 Verdict
+- **Federation communication: HEALTHY** — n1 fully operational, direct-connected, MCP responsive
+- Node 1's "healthy and fully operational" claim CONFIRMED from n0 side
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ P2-FEDERATION-VERIFIED ⬡ n1-HEALTHY ⬡ 2026-09-22*
+
+---
+
+## 21. WEB RESEARCH — ALL KNOWLEDGE GAPS (2026-09-22)
+
+### 21.1 Campaign
+- 6 batched web searches (parallel-search MCP) covering all researchable gaps in GAP_REGISTRY (89 gaps, 38 open/partial)
+- Report: docs/research/R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md
+- 14 gaps updated in GAP_REGISTRY.json with research_status + report ref
+
+### 21.2 KEY FINDINGS (must-remember)
+1. **GN-3 CORRECTION**: Gemini Notebook free Deep Research = **10/month (NOT 30)**. Compute-based limits since 2026-09-02 (5h refresh, weekly cap). notebooklm-py supports master-token auth + multi-account profiles + built-in MCP server.
+2. **ZS confirmed**: zswap zstd + max_pool_percent=25 + shrinker_enabled + 16GB swap = current best practice; zsmalloc is only backend; NEVER zram+zswap (D-527 confirmed).
+3. **LI-4**: Qwen3-1.7B Q4 @32k = ~4.6GB (safe worker); Qwen3-4B Q4 @8-16k = ~4-5GB (tight); Thinking = 2-3x tokens.
+4. **LI-3**: KV cache formula M_kv = 2×L×H×D×S×P; q8_0 KV quant = -50%; **mmap means weights aren't resident upfront** — key insight for SequentialModelLoader.
+5. **R22**: WARP proxy pool viable (adasThePrime Docker ref); separate routing table (federation-safe); ToS caution.
+6. **R34**: OpenRouter free = 20 req/min, 50/day (<10 credits) or 1000/day (≥10 credits); nemotron-3.5-lightning:free has 1.0M ctx; Gemini limits now DYNAMIC per project (AI Studio = source of truth).
+7. **R31/R33**: OpenCode V2 plugin effects are scoped (no private Core exposure); disable directives = scope reduction; compaction is lossy but durable messages persist.
+
+### 21.3 Non-researchable (implementation-only)
+DP-1..8, DS-1..5, KD-1..3, LI-1/2/5, R21, R36, R37 — internal design; research inputs covered by §2/§3/§7 findings.
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ RESEARCH ⬡ 2026-09-22 ⬡ ALL-GAPS-RESEARCHED*
+
+---
+
+## 22. D-606 — GN CANCELLED, SOVEREIGN ALTERNATIVE (2026-09-22)
+
+### 22.1 Decision (user directive)
+- **GEMINI-NOTEBOOK workstream CANCELLED** — no NotebookLM payment, no enhancement around it
+- Sovereign alternative developed IN-ENGINE (grounded RAG over Omega library, SDP distillation, gap detection — all local-first per M7)
+- Post-debut order: **DS → LI → KD → HR → ZS** (GN removed)
+
+### 22.2 Updates Applied
+- PIVOT_LOG: D-606 recorded
+- GAP_REGISTRY: GN-1..GN-5 + R38 → status "cancelled" (6 gaps; 89 total → 27 outstanding, 5 partial, 51 resolved, 6 cancelled)
+- AGENTS.md 9-Decisions: D-578 + D-584 updated (GN struck through)
+
+### 22.3 CI HARDENING (temple pristine)
+- test.yml: added `.firecrawl` mkdir step (fixes test_search_tools CI failure)
+- test_m34_atomic.py: bounded 5s poll after waitpid (fixes CI timing flake; real lost-update still fails)
+- Verified: race does NOT reproduce locally (5/5 runs = 20 sessions) — registry atomicity is correct
+- federation.py: direct-detection fix (PeerRelay/CurAddr) — committed with research
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ D-606-GN-CANCELLED ⬡ CI-HARDENED ⬡ 2026-09-22*

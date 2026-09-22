@@ -57,6 +57,11 @@ jobs:
           python3 -c "import importlib.metadata; print(f'AnyIO {importlib.metadata.version(\"anyio\")}')"
           python3 -c "from omega.oracle.model_gateway import ModelGateway; print('ModelGateway OK')"
 
+      - name: Prepare test fixtures (.firecrawl cache dir)
+        run: |
+          mkdir -p .firecrawl
+          echo "✅ .firecrawl/ cache directory created (test_search_tools fixture)"
+
       - name: Run tests
         run: |
           python3 -m pytest tests/ -v --tb=short -x
