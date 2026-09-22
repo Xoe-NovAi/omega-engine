@@ -50,10 +50,12 @@
     {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
-    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
+    // Admin: human tailnet admins can SSH to any node — check mode
+    {"action": "check", "src": ["autogroup:admin"], "dst": ["tag:node0", "tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    // NOTE: tagged-device → tagged-device SSH MUST be "accept"; "check" rejects tag src
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
     // Node 1 can SSH to Node 0 (remote administration, bidirectional)
-    {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
   ]
   // NOTE: autoApprovers intentionally OMITTED — no subnet routes, no exit
   // nodes (FED-ACL-001 v1.2). Omitted = no auto-approval.

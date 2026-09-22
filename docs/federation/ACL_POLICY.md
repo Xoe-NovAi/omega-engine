@@ -68,12 +68,13 @@ Node 0 = `["tag:node0"]`, Node 1 = `["tag:node1"]` (+ legacy `tag:asus`).
     {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
-    // Admin (tag:opencode) can SSH to Node 1
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    // Admin: human tailnet admins can SSH to any node — check mode (periodic SSO re-auth)
+    {"action": "check", "src": ["autogroup:admin"], "dst": ["tag:node0", "tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    // NOTE: tagged-device → tagged-device SSH MUST be "accept"; "check" rejects tag src
     // Node 0 can SSH to Node 1 (for automation)
-    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
     // Node 1 can SSH to Node 0 (remote administration, bidirectional)
-    {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
   ]
   // NOTE: autoApprovers intentionally OMITTED — design has no subnet routes
   // and no exit nodes (see Design Principles). Omitted = no auto-approval.
@@ -109,12 +110,13 @@ and Phase A connectivity is verified:
     {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
-    // Admin (tag:opencode) can SSH to Node 1
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    // Admin: human tailnet admins can SSH to any node — check mode (periodic SSO re-auth)
+    {"action": "check", "src": ["autogroup:admin"], "dst": ["tag:node0", "tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    // NOTE: tagged-device → tagged-device SSH MUST be "accept"; "check" rejects tag src
     // Node 0 can SSH to Node 1 (for automation)
-    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
+    {"action": "accept", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
     // Node 1 can SSH to Node 0 (remote administration, bidirectional)
-    {"action": "check", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0"], "users": ["autogroup:nonroot"]}
   ]
   // NOTE: autoApprovers intentionally OMITTED — design has no subnet routes
   // and no exit nodes (see Design Principles). Omitted = no auto-approval.
@@ -122,11 +124,18 @@ and Phase A connectivity is verified:
 ```
 
 > Note on Tailscale SSH vs ordinary SSH: the `"ssh"` section above governs
-> **Tailscale SSH** (`tailscale up --ssh` / `tailscale set --ssh`), which
-> intercepts port 22 on the tailnet interface and does NOT require a host
-> `sshd` daemon. Ordinary OpenSSH (`sshd`) is governed by the plain `:22` ACL
-> rules. Node 1 currently has Tailscale SSH flipped. Node 0's SSH state is
-> unset — see the Node 0 briefing for how to enable it (physically, over USB).
+> **Tailscale SSH** (`tailscale set --ssh`), which intercepts port 22 on the
+> tailnet interface and does NOT require a host `sshd` daemon. Ordinary OpenSSH
+> (`sshd`) is governed by the plain `:22` ACL rules. Node 1 currently has
+> Tailscale SSH flipped. Node 0's SSH state is unset — see the Node 0 briefing
+> for how to enable it (physically, over USB).
+>
+> **SSH `src` schema (2026-09-21, verified against tailscale.com/kb/1193)**:
+> `src` may be a user, group, tag, domain user, or autogroup — BUT a rule whose
+> `src` is a **tag** (tagged-device → tagged-device) MUST use `action:
+> "accept"`; `"check"` rejects tag sources (`[ssh] "check" action does not
+> support tags in src`). Human-admin rules should use a user autogroup
+> (`autogroup:admin`) in `src`, where `check` is valid.
 
 ---
 
