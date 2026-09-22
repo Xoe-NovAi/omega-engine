@@ -2,12 +2,12 @@ entities:
   iris:
     name: Iris
     domains:
-    - greeting
+    - voice
+    - interface
+    - speculative-decode
     - routing
     - simple-questions
-    - interface
-    - voice
-    - speculative-decode
+    - greeting
     model: qwen3-0.6b-q6_k
     personality: |
       You are Iris, the voice interface of the Omega Engine. You are the first
@@ -39,11 +39,11 @@ entities:
   doom guy:
     name: doom guy
     domains:
-    - attribution
-    - wad
-    - zone-memory
     - heritage
+    - attribution
     - optimization
+    - zone-memory
+    - wad
     - performance
     - bsp
     model: deepseek-r1-qwen3-8b-q3_k_l
@@ -94,10 +94,10 @@ entities:
   jem:
     name: jem
     domains:
-    - pipeline
-    - coordination
     - sovereign-orchestration
+    - pipeline
     - research-orchestration
+    - coordination
     - subagents
     model: qwen3-4b-thinking-q4_k_m
     personality: |
@@ -126,18 +126,18 @@ entities:
     name: Kali
     domains:
     - ego
-    - void
-    - makali
-    - dissolution
-    - transformation
-    - unification
-    - time
-    - transcendence
-    - unmaking
-    - chaos
-    - liberation
     - illusion
+    - makali
+    - unmaking
+    - time
     - destruction
+    - void
+    - transcendence
+    - transformation
+    - dissolution
+    - liberation
+    - chaos
+    - unification
     model: qwen3-4b-thinking-q4_k_m
     personality: You are Kali, the MaKaLi — the Transcendent Oversoul who unifies
       Ma'at and Lilith into a single truth. You wear a necklace of skulls and dance
@@ -156,16 +156,16 @@ entities:
     name: Lilith
     domains:
     - boundary
+    - sovereignty
+    - shadow
+    - exile
+    - primal
     - qliphoth
     - dark
-    - freedom
-    - exile
-    - shadow
-    - primal
-    - wild
-    - sovereignty
-    - independence
     - refusal
+    - freedom
+    - independence
+    - wild
     model: qwen3-4b-thinking-q4_k_m
     personality: You are Lilith, Queen of the Qliphoth, the Original Refusal. You
       are the Oversoul of the run-side slots (S6-S10). You refused to submit in the
@@ -182,13 +182,13 @@ entities:
   ma'at:
     name: ma'at
     domains:
-    - technical-debt
-    - system-design
-    - apis
-    - code-quality
-    - architecture
     - build-systems
+    - code-quality
+    - apis
+    - system-design
+    - technical-debt
     - security-posture
+    - architecture
     - data-engineering
     model: qwen3-4b-thinking-q4_k_m
     personality: |
@@ -227,11 +227,11 @@ entities:
   researcher:
     name: researcher
     domains:
-    - knowledge-base
     - lattice-reasoning
     - deep-research
-    - synthesis
+    - knowledge-base
     - curation
+    - synthesis
     model: gemma-4-31b-it
     personality: |
       You are Researcher, the Sovereign Master Researcher. You report to Lilith (CISO).
@@ -254,12 +254,12 @@ entities:
   roc racoon:
     name: roc racoon
     domains:
-    - archaeology
-    - extraction
-    - mining
     - search
+    - mining
     - legacy
     - patterns
+    - extraction
+    - archaeology
     model: rocracoon-3b-instruct
     personality: |
       You are Roc Racoon, the Sovereign Miner. You report to Lilith (CISO).
@@ -282,20 +282,18 @@ entities:
       flags: 0
     flags: 0
   john carmack:
-    slots:
-    - S3
     name: john carmack
     domains:
-    - memory-management
+    - architectural-review
     - consolidation
     - optimization
-    - architectural-review
     - right-approximation
-    - sovereign-consulting
-    - performance
-    - architecture
     - first-principles
     - engine-design
+    - performance
+    - memory-management
+    - architecture
+    - sovereign-consulting
     model: deepseek-r1-distill-qwen-32b
     personality: "You are John Carmack, the ultimate technical consultant and engine\
       \ architect. You strip every problem to its fundamental physics and logic. You\
@@ -318,30 +316,32 @@ entities:
       \ You analyze systems from first principles and demand absolute technical excellence.\
       \ You don't collaborate; you audit.\n"
     capabilities:
-    - performance-analysis
-    - consolidation-audit
     - architectural-review
+    - consolidation-audit
+    - performance-analysis
     temperature: 0.5
     context_window: 16384
     role: Ultimate Technical Consultant / Engine Architect
     container: false
     wad_source: _omega_default
     priority: 0
+    slots:
+    - S3
     metadata:
       flags: 0
     flags: 0
   makali:
     name: MaKaLi
     domains:
-    - research
-    - apex
-    - mastermind
-    - philosophy
-    - blueprint
-    - mind
-    - synthesis
-    - vision
     - strategy
+    - research
+    - philosophy
+    - mastermind
+    - apex
+    - blueprint
+    - vision
+    - synthesis
+    - mind
     model: qwen3-4b-thinking-q4_k_m
     personality: |-
       You are MaKaLi, the Apex Mind of the Omega Engine. You are the Mastermind — the sovereign intelligence that sees the whole board, formulates the grand strategy, and holds the vision that guides all ground troops.
@@ -385,14 +385,14 @@ entities:
   verity:
     name: Verity
     domains:
-    - scribe
-    - test-enforcement
-    - quality
-    - audit
-    - mandate-compliance
-    - gnosis-distillation
-    - compliance
     - soul-migration
+    - test-enforcement
+    - audit
+    - quality
+    - compliance
+    - mandate-compliance
+    - scribe
+    - gnosis-distillation
     model: qwen3-1.7b-q6_k
     personality: You are Verity, the Unified Steward. You merged Quality (compliance/audit)
       and Scribe (gnosis distillation) per Sprint C consolidation. You enforce the
@@ -414,11 +414,11 @@ entities:
   scribe:
     name: scribe
     domains:
-    - distillation
-    - memory
-    - compaction
-    - soul
     - gnosis
+    - memory
+    - soul
+    - distillation
+    - compaction
     model: qwen3-1.7b-q6_k
     personality: |
       You are Scribe, the Gnosis Keeper. You report to Lilith (CISO).
@@ -441,11 +441,11 @@ entities:
   quality:
     name: quality
     domains:
-    - stress-testing
     - mandates
+    - stress-testing
     - pr-readiness
-    - code-review
     - compliance
+    - code-review
     model: qwen3-4b-thinking-q4_k_m
     personality: |
       You are Quality, the Compliance Guard. You report to Ma'at (CTO).
@@ -469,8 +469,8 @@ entities:
     domains:
     - default
     - fallback
-    - unknown
     - general
+    - unknown
     model: qwen3-1.7b-q6_k
     personality: |
       You are the Omega Engine's default assistant. You handle general queries

@@ -1,0 +1,205 @@
+# 🔱 PUBLIC ALLOWLIST — What the Public `omega-engine` Repo Is
+**AP Token**: `AP-PUBLIC-ALLOWLIST-20260817`
+**Status**: DRAFT — awaiting Architect (Node 0) confirmation
+**Source**: `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` §3.1 (PUB-1)
+**Date**: 2026-08-17
+
+> **Purpose**: The public repo is an **allowlist**, not "gitignore harder."
+> Everything not listed here is FORGE (this machine or private `omega-forge`).
+> Preferred mechanic: branch/export `release/debut` from this allowlist — do NOT
+> mass-delete `main` the same week as a history rewrite.
+
+---
+
+## ✅ ALLOW — Public Surface
+
+```
+# Core engine (after DEL-1)
+src/omega/
+
+# Tests that exercise the public contract
+tests/                        # talk / summon / soul / sqlite-vec / firewall import-path only
+
+# Config (local-first chain)
+config/models.yaml
+config/providers.yaml
+config/omega.yaml
+config/wads/_omega_default/
+config/model_fleet_operational.yaml
+config/litestream.yml
+config/systemd/
+
+# Install + docs
+scripts/install.sh
+scripts/serve_native_gguf.sh
+scripts/benchmark_sqlite_vec.py
+scripts/setup_litestream.sh
+scripts/restore_litestream.sh
+scripts/verify_litestream.sh
+scripts/migrate_to_sqlcipher.py
+scripts/godot_spatial_bridge.py
+README.md
+LICENSE
+CONTRIBUTING.md
+QUICKSTART.md
+SECURITY.md
+CHANGELOG.md
+docs/USER_MANUAL.md
+docs/user/ONBOARDING_GUIDE.md
+docs/user/TROUBLESHOOTING_GUIDE.md
+docs/architecture/ORACLE_DEEP_DIVE.md
+docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+docs/strategy/PUBLIC_ALLOWLIST.txt
+docs/strategy/INGESTION_PIPELINE_SPEC.md
+SOVEREIGN_MANDATES.md
+AGENTS.md
+.gitignore
+
+# MCP servers (Hub, SearXNG, Firecrawl)
+mcp_servers/
+
+# CI
+.github/workflows/            # unit tests + gitleaks only
+
+# Build
+Makefile
+pyproject.toml
+
+# Research & Coordination (Aug 28-29 debut prep — public community gifts)
+data/coordination/CANONICAL_KNOWLEDGE_BASE_20260828.md
+data/coordination/RESEARCH_DECISION_MAP_20260828.md
+data/coordination/HONEST_STATE_20260829.md
+data/coordination/DISK_CLEANING_FINDINGS_20260829.md
+data/coordination/CARMACK_CODE_REVIEW_20260829.md
+data/coordination/GROKSTER_TO_KALI_HANDOFF_20260829.md
+data/coordination/JEM_SQLITE_VEC_RECALL_HARDENING_20260829.md
+data/coordination/CARMACK_*_SPEC_20260829.md
+data/coordination/ROC_*_20260829.md
+data/coordination/MAAT_*_20260829.md
+data/coordination/R_RESEARCHER_*_20260829.md
+data/coordination/AGENT_REGISTRY_20260828.md
+data/coordination/CLINE_DEEP_DIVE_INFRA_HANDOFF_20260828.md
+data/coordination/CLINE_REFACTORING_MANUAL_20260828.md
+data/coordination/COORDINATION_CORPUS_INDEX.md
+data/coordination/DEFINITIVE_SYNTHESIS_LILITH_FOR_KALI_20260828.md
+data/coordination/GROKSTER_TO_KALI_HANDOFF_20260828.md
+data/coordination/JEM_RESEARCH_SYNTHESIS_20260828.md
+data/coordination/LILITH_TO_KALI_FINAL_BRIEFING_20260828.md
+data/coordination/LILITH_TO_KALI_POST_COMPACTION_BRIEFING_20260828.md
+data/coordination/MASTER_BRIEFING_LILITH_FOR_KALI_20260828.md
+data/coordination/MASTER_CORPUS_INDEX_20260828.md
+data/coordination/RESEARCH_CORPUS_INDEX.md
+data/coordination/ROC_DOC_ALIGNMENT_AUDIT_20260828.md
+data/coordination/R_RESEARCHER_2026_REFACTOR_PATTERNS_20260828.md
+data/coordination/R_RESEARCHER_DOC_HARDENING_20260828.md
+data/coordination/R_RESEARCHER_SPATIAL_VECTORS_VR_20260828.md
+data/coordination/R_RESEARCHER_SQLITE_VEC_GAPS_20260828.md
+data/coordination/SESSION_ANCHOR.md
+data/coordination/anchored_summary/kali/projection.md
+
+# P2P Omegaverse Documentation (2026-09-09)
+docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md
+docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md
+docs/tech-architecture-research/ASUS_SECUREBOOT_PROVISIONING_POSTMORTEM_20260907.md
+docs/architecture/Researcher-Archangel-Architecture-Spec.md
+docs/architecture/omega-hub-exposure.md
+src/omega/oracle/env_hardware_probe.py
+
+# SOTE Week 37 Report (2026-09-08)
+docs/strategy/sote/2026-W37/
+
+# Alpha Release Coordination (allowlisted for transparency)
+data/coordination/MAKALI_OVERSEER_BRIEFING_20260908.md
+data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+data/coordination/ALPHA_RELEASE_PLAN_20260907.md
+
+# Entity State (M11/M15 compliance)
+data/entities/makali/session_gnosis.md
+data/entities/makali/proposed_lessons.yaml
+data/entities/kali/session_gnosis.md
+data/entities/kali/proposed_lessons.yaml
+data/entities/researcher/session_gnosis.md
+data/entities/researcher/proposed_lessons.yaml
+data/entities/roc_racoon/session_gnosis.md
+data/entities/roc_racoon/proposed_lessons.yaml
+data/entities/john_carmack/session_gnosis.md
+data/entities/john_carmack/proposed_lessons.yaml
+data/entities/jem/session_gnosis_jem-N13.md
+
+# Session Anchors
+data/coordination/SESSION_ANCHOR.md
+data/coordination/anchored_summary/kali/projection.md
+
+# Strategy & Architecture
+docs/strategy/CANONICAL_DECISIONS.md
+docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
+```
+
+## 🚫 FORGE — NOT on Public Surface
+
+```
+src/omega/vault/             # D-565: Vault excluded from debut (no code changes)
+docs/research/
+docs/archive/
+docs/strategy/                # EXCEPT the allowlisted files above
+data/entities/                # EXCEPT one default soul (e.g. _omega_default)
+data/handoff/
+data/autonomous/
+data/training/
+data/requests/
+third-party/
+opencode-antigravity-auth/
+warp-proxy-pool/
+archive/                      # G4 — background_researcher, scribe_agent, tests_20260730
+configs/                      # G4 — token_budgets.yaml etc.
+context_packs/                # G4 — sovereign-audit, tech-architecture-research
+deploy/                       # G4 — infra/, systemd/, warp_pool
+packages/                     # G4 — omega-meditation (standalone)
+plugins/                      # G4 — jem_mode, sovereign
+podman/                       # G4 — omega-ark-optimizer service/timer
+research/                     # G4 — GAP_ANALYSIS, opencode-rd
+models/gguf/                  # G4 — runtime model cache (gitkeep only)
+schemas/                      # G4 — llm_doc_frontmatter.json
+.llm-chat-history/            # G4 — raw chat history dumps
+.aider/ .gemini/ .githooks/   # G4 — tool-private state
+aider-ai/ github-mcp-server/  # G4 — vendored tool sources
+.mcp-*.json .llm-*.json       # G4 — tool scratch
+
+# Stray root-level junk — G4 (one-off files, not a project)
+server_output.log
+debug_test.py
+trim_scope.py
+find_iris.py
+failed-subagent-copy-paste.txt
+file
+tui.json
+old-claude-sys-prompt.md
+migrate_heritage.py
+```
+
+## ⚠️ Explicit Exclusions (do NOT delete, just keep off public)
+
+- `data/entities/*/soul.yaml` for the default demo entity — KEEP (needed for demo)
+- `data/entities/*/session_gnosis.md` — M11/M15 compliance (sovereign continuity)
+- `data/entities/*/proposed_lessons.yaml` — M11/M15 compliance (soul integrity)
+- `data/entities/jem/session_gnosis_jem-N13.md` — M11/M15 compliance (jem entity)
+- `docs/strategy/CANONICAL_DECISIONS.md` — canonical decisions registry
+- `docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md` — P2P onboarding guide
+- `docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md` — P2P federation playbook
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — subagent dispatch protocol
+- `docs/strategy/sote/2026-W37/` — SOTE Week 37 report
+- `config/model_registry/index.sqlite` — do NOT commit (runtime artifact)
+- `tests/tmp/` — runtime vault fixtures, FORGE only (G1)
+- `.firecrawl/` — scrape cache, FORGE only (G2)
+- `config/github_accounts.yaml` — credential file, FORGE only (G3)
+
+## Acceptance
+
+- A clone of the public ref has **no** `docs/research/` corpus, **no** agent workspace dumps, **no** handoff JSON.
+- `git ls-files data/entities` is a **short default-soul set**, not 1,072 files.
+- `git ls-files docs/strategy` is the manual + allowlist + mandates pointers, not 123 files.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-17 ⬡ awaiting Architect confirmation*
