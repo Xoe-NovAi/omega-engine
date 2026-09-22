@@ -4,20 +4,18 @@
 **To**: Node 0 (HP Pavilion Archival Bastion / `100.123.51.67`, Ubuntu 25.10, user `arcana-novai`)  
 **Status**: ✅ COMPLETE — NFS mounted + automount live (2026-09-21)
 
-> ## ✅ 2026-09-21 PHASE A LIVE + VERIFIED (all 9 checks)
-> - **Phase A policy pasted into Admin Console — SAVED** (operator, 2026-09-21).
->   Two schema fixes were required first (from live console validation):
->   (1) `autoApprovers.routes` must be a map, not array — omitted entirely
->   (no subnet routes / no exit nodes in design); (2) SSH `src` tags require
->   `action: "accept"` — `check` rejects tag src; human rule uses
->   `autogroup:admin`. See `docs/federation/ACL_POLICY.md`.
-> - **Verified under Phase A**: tags match policy (n0 `["tag:node0"]`, n1
->   `["tag:node1"]`+inert `tag:asus`); ICMP pong 21ms; MCP n1→n0 and n0→n1
->   both answer initialize; **NFS re-mount OK + bidirectional probe write
->   under tagged ACL**; SSH n1→n0 OK; `task_registry_query` round-trip OK;
+> ## ✅ 2026-09-21 PHASE B LIVE + VERIFIED (all 9 checks — default-deny lockdown)
+> - **Phase B policy pasted into Admin Console — SAVED** (operator, 2026-09-21).
+>   Hardened policy: allow-all rule removed; only explicit tag rules remain.
+> - **Verified under Phase B**: tags match (n0 `["tag:node0"]`, n1
+>   `["tag:node1"]`+inert `tag:asus`); ICMP 73ms; MCP bidirectional
+>   initialize; **NFS re-mount OK + bidirectional probe write under pure
+>   tag-based ACL (no allow-all fallback)**; SSH n1→n0 OK (accept rule
+>   required for tagged src); `task_registry_query` round-trip OK;
 >   `PeerExcludedByPolicy` = none.
-> - **▶ NEXT**: paste **Phase B** (same policy minus the allow-all rule) from
->   `docs/federation/ACL_POLICY.md` → re-run the same 9-check battery.
+> - **Federation L2 ACL migration COMPLETE**. NFS + MCP + SSH + ICMP all
+>   function under least-privilege tags. The two-phase migration protocol
+>   (Phase A safety net → Phase B lockdown) is proven end-to-end.
 
 ---
 
