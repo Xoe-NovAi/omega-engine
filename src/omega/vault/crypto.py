@@ -32,7 +32,10 @@ try:
     _HAS_CRYPTO = True
 except ImportError:
     _HAS_CRYPTO = False
-    logger.warning("pyrage or argon2 not installed — crypto operations will fail")
+    # [P1-6 Option C] Downgraded warning→debug (Antigravity dialectic 2026-09-21):
+    # Vault excluded from debut (D-565); debug keeps failure discoverable without
+    # console spam at default WARNING level.
+    logger.debug("pyrage or argon2 not installed — crypto operations will fail")
 
 
 class VaultCryptoError(Exception):

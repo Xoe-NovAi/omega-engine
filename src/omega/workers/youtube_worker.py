@@ -1079,7 +1079,8 @@ def _cpu_percent() -> float:
         import psutil  # noqa: F401 — psutil is an Omega dependency
 
         return float(psutil.cpu_percent(interval=0.1))
-    except Exception:
+    except Exception as e:
+        logger.debug("cpu_percent unavailable, falling back to 0.0: %s", e)
         return 0.0
 
 

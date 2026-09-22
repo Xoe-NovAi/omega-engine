@@ -92,7 +92,8 @@ class GoogleCompatProvider:
             vault._load_sync()
             cred = vault._credentials.get("google:api_key")
             return cred.encrypted_blob if cred else ""
-        except Exception:
+        except Exception as e:
+            logger.debug("Vault key resolution failed, falling back to config: %s", e)
             return self.config.get("api_key", "") or ""
 
     async def _get_client(self) -> httpx.AsyncClient:

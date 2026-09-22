@@ -1,6 +1,12 @@
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
-#
+
 # SPDX-License-Identifier: Apache-2.0
+
+from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 """
 Ω-Research Generic Sandbox Runtime — YAML-Driven, M2 Firewall-Compliant, AnyIO-Native
@@ -18,7 +24,6 @@ Mandate Compliance:
 - M23 Failure Integrity: No soft-failures — sandbox crash = hard error
 """
 
-from __future__ import annotations
 import anyio
 import json
 import time
@@ -553,8 +558,9 @@ class SandboxRuntime(ABC):
         if self._workspace and self._workspace.exists():
             try:
                 await anyio.to_thread.run_sync(shutil.rmtree, self._workspace)
-            except Exception:
-                pass  # Best effort cleanup
+            except Exception as e:
+                logger.warning("Workspace cleanup best-effort failed: %s", e, exc_info=True)
+                # Best effort cleanup
 
     async def _monitor_resources(self, budget_token: BudgetToken) -> None:
         """Background task to monitor RAM/CPU against budget."""
@@ -584,8 +590,9 @@ class SandboxRuntime(ABC):
                 break
             except (SandboxTimeoutError, SandboxResourceExhausted):
                 raise
-            except Exception:
+            except Exception as e:
                 # Log and continue monitoring
+                logger.warning("Monitor error: %s", e)
                 await anyio.sleep(0.5)
 
     @abstractmethod

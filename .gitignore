@@ -289,6 +289,7 @@ data/entities/test_*_entity/
 *.tmp
 *.bak.*
 *.tmp
+*.lock
 config/wads/*/tmp*
 *.hujson
 node0-collect-*/
@@ -316,3 +317,5 @@ opencode_provider_doctor.sh
 !config/domains/**/*.md
 !docs/architecture/ORACLE_DEEP_DIVE.md
 !data/coordination/CLINE_*.md
+data/entities/*/knowledge/ACCOUNT_MAP.yaml
+data/metrics/*

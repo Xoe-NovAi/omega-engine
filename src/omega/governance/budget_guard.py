@@ -20,9 +20,12 @@ Mandate Compliance:
 
 from __future__ import annotations
 import anyio
+import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 try:
     import redis.asyncio as redis
@@ -202,8 +205,9 @@ class BudgetGuard:
         if self.enable_redis:
             try:
                 return await self._check_redis(tier, experiment_id, time_budget, ram_budget, model)
-            except Exception:
+            except Exception as e:
                 # Fall back to local quota if Redis fails
+                logger.debug("Redis budget check failed, falling back to local quota: %s", e)
                 pass
 
         # Local fallback
@@ -308,7 +312,8 @@ class BudgetGuard:
                     pipe.delete(exp_key)
                     await pipe.execute()
                 return
-            except Exception:
+            except Exception as e:
+                logger.debug("Redis budget release failed, falling back to local: %s", e)
                 pass
 
         # Local fallback
@@ -364,7 +369,8 @@ class BudgetGuard:
                     "model": budget["model"],
                     "backend": "redis",
                 }
-            except Exception:
+            except Exception as e:
+                logger.debug("Redis tier status failed, falling back to local: %s", e)
                 pass
 
         # Local fallback

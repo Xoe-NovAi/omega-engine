@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sqlite3
 import sys
 import time
@@ -37,6 +38,9 @@ from pathlib import Path
 from typing import Optional
 
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -205,7 +209,8 @@ class ArtificialAnalysisClient:
                 vault._load_sync()
                 cred = vault._credentials.get("artificial_analysis:api_key")
                 api_key = cred.encrypted_blob if cred else None
-            except Exception:
+            except Exception as e:
+                logger.debug("Vault API key unavailable: %s", e)
                 api_key = None
 
         self.api_key = api_key
@@ -708,7 +713,8 @@ def main() -> int:
             vault._load_sync()
             cred = vault._credentials.get("artificial_analysis:api_key")
             aa_api_key = cred.encrypted_blob if cred else None
-        except Exception:
+        except Exception as e:
+            logger.debug("Vault API key unavailable: %s", e)
             aa_api_key = None
 
     if not Path(args.db).exists():

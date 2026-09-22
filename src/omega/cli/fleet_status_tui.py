@@ -135,7 +135,8 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     # Load entity definitions from WAD
     try:
         entities = get_dispatch_entities(iwad)
-    except Exception:
+    except Exception as e:
+        logger.debug("Failed to load dispatch entities: %s", e)
         # Fallback to minimal structure if WAD config unavailable
         entities = []
 
@@ -228,9 +229,6 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     # Messenger Bridge
     iris_role = ROLE_CONSTANTS["MESSENGER_BRIDGE"]
     tree.root.add(get_display_name(iris_role), data=get_entity_key(iris_role))
-
-
-    return tree
 
 
 # ─── Main Application ─────────────────────────────────────────────────────────

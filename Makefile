@@ -537,6 +537,10 @@ m23-baseline:
 check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe verify-mandate-claims check-mandate-compliance
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
+# M24b Venv Sovereignty Gate (P1-5): verify .venv matches pyproject requirements
+check-venv-sovereignty:
+	@.venv/bin/python scripts/check_venv_sovereignty.py
+
 # Claims harness (Team-Study #1 ruling S7, P0): claims-vs-disk gate +
 # sanitation / FP-11 / T0 detectors over changed files. WARN-ONLY phase
 # (ruling S5) — always EXIT 0; findings are structured warnings.

@@ -365,8 +365,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             logger.warning("Read conn %d broken, reopening", idx)
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Error closing broken read conn: %s", e)
             conn = self._open_read_conn()
             self._read_connections[idx] = conn
         return conn
@@ -1671,8 +1671,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             # Await the task to let the group exit cleanly.
             try:
                 await self._checkpoint_task
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Error awaiting checkpoint task: %s", e)
             self._checkpoint_task = None
             self._checkpoint_cancel_scope = None
             logger.info("Stopped periodic WAL checkpoint task")
@@ -1695,8 +1695,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         for conn in self._read_connections:
             try:
                 await anyio.to_thread.run_sync(conn.close)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Error closing read conn: %s", e)
         self._read_connections.clear()
         self._initialized = False
         self._vec_tables_created.clear()

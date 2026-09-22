@@ -73,7 +73,7 @@ def _inject_vault_to_env() -> int:
     # (corrupted blob). Each is audit-logged; bare except is forbidden.]
     import json as _json
     try:
-        from omega.vault.crypto import VaultCrypto
+        from omega.vault.crypto import VaultCrypto, VaultCryptoError
         crypto = VaultCrypto(master_key)
         encrypted = vault_path.read_text().strip()
         decrypted = crypto.decrypt(encrypted)
@@ -83,7 +83,7 @@ def _inject_vault_to_env() -> int:
             if k not in _os.environ:
                 _os.environ[k] = v
         return len(secrets)
-    except (ValueError, OSError, _json.JSONDecodeError) as e:
+    except (ValueError, OSError, _json.JSONDecodeError, VaultCryptoError) as e:
         logger.debug(f"Vault injection skipped: {e}")
         return 0
 
@@ -192,8 +192,8 @@ def talk(
         finally:
             try:
                 oracle.model_gateway.shutdown()
-            except Exception:
-                pass  # best-effort cleanup; never block exit
+            except Exception as e:
+                logger.debug("Model gateway shutdown failed: %s", e)
 
     anyio.run(_run)
 
@@ -228,8 +228,8 @@ def summon(
         finally:
             try:
                 oracle.model_gateway.shutdown()
-            except Exception:
-                pass  # best-effort cleanup; never block exit
+            except Exception as e:
+                logger.debug("Model gateway shutdown failed: %s", e)
 
     anyio.run(_run)
 

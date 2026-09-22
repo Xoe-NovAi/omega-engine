@@ -65,7 +65,8 @@ class IterativeRAG:
                     def _retrieve(q: str):
                         try:
                             return self.memory_store.search_fts(q, limit=3)
-                        except Exception:  # noqa: BLE001
+                        except Exception as e:  # noqa: BLE001
+                            logger.debug("IterativeRAG FTS retrieval failed: %s", e)
                             return []
 
                     results = await anyio.to_thread.run_sync(_retrieve, sub_questions[-1])
