@@ -1,0 +1,687 @@
+{
+  "model": "rocracoon-3b",
+  "protocol": "GSCA abbreviated screening",
+  "prompts": [
+    "Write a Python function to parse JSON with error handling.",
+    "Explain the difference between async and threading in Python.",
+    "Write a recursive function to flatten a nested dictionary."
+  ],
+  "temperatures": [
+    0.1,
+    0.5,
+    0.7
+  ],
+  "contexts": [
+    4096,
+    8192
+  ],
+  "results": [
+    {
+      "run": 1,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 1,
+      "time_s": 23.25,
+      "tokens": 243,
+      "tps": 10.45,
+      "telemetry": {
+        "samples": 47,
+        "sampling_hz": 2.04,
+        "pkg_power_w": {
+          "mean": 49.19,
+          "min": 34.01,
+          "max": 51.01,
+          "p50": 49.99,
+          "p95": 50.08
+        },
+        "energy_per_token_j": 4.562172,
+        "tokens_per_joule": 0.22,
+        "pkg_temp_c": {
+          "mean": 89.2,
+          "min": 78.05,
+          "max": 94.05,
+          "p50": 90.05,
+          "p95": 93.05
+        },
+        "max_temp_c": 94.05,
+        "freq_mhz": {
+          "mean": 3872.85,
+          "min": 3201,
+          "max": 4900,
+          "p50": 3837,
+          "p95": 4716
+        }
+      }
+    },
+    {
+      "run": 2,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 2,
+      "time_s": 101.66,
+      "tokens": 1167,
+      "tps": 11.48,
+      "telemetry": {
+        "samples": 203,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 37.41,
+          "min": 33.92,
+          "max": 50.23,
+          "p50": 35.0,
+          "p95": 48.76
+        },
+        "energy_per_token_j": 3.230315,
+        "tokens_per_joule": 0.31,
+        "pkg_temp_c": {
+          "mean": 85.48,
+          "min": 80.05,
+          "max": 97.05,
+          "p50": 83.05,
+          "p95": 96.05
+        },
+        "max_temp_c": 97.05,
+        "freq_mhz": {
+          "mean": 3180.4,
+          "min": 2956,
+          "max": 4900,
+          "p50": 3100,
+          "p95": 3705
+        }
+      }
+    },
+    {
+      "run": 3,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 3,
+      "time_s": 42.15,
+      "tokens": 522,
+      "tps": 12.38,
+      "telemetry": {
+        "samples": 85,
+        "sampling_hz": 2.02,
+        "pkg_power_w": {
+          "mean": 35.05,
+          "min": 33.55,
+          "max": 39.56,
+          "p50": 35.01,
+          "p95": 35.17
+        },
+        "energy_per_token_j": 2.792928,
+        "tokens_per_joule": 0.36,
+        "pkg_temp_c": {
+          "mean": 82.4,
+          "min": 79.05,
+          "max": 86.05,
+          "p50": 82.05,
+          "p95": 83.05
+        },
+        "max_temp_c": 86.05,
+        "freq_mhz": {
+          "mean": 3124.89,
+          "min": 2900,
+          "max": 3500,
+          "p50": 3100,
+          "p95": 3200
+        }
+      }
+    },
+    {
+      "run": 4,
+      "context": 4096,
+      "temperature": 0.5,
+      "prompt_idx": 1,
+      "time_s": 24.03,
+      "tokens": 296,
+      "tps": 12.32,
+      "telemetry": {
+        "samples": 48,
+        "sampling_hz": 2.04,
+        "pkg_power_w": {
+          "mean": 50.0,
+          "min": 49.78,
+          "max": 51.65,
+          "p50": 49.97,
+          "p95": 50.1
+        },
+        "energy_per_token_j": 3.893989,
+        "tokens_per_joule": 0.26,
+        "pkg_temp_c": {
+          "mean": 88.9,
+          "min": 79.05,
+          "max": 94.05,
+          "p50": 90.05,
+          "p95": 93.05
+        },
+        "max_temp_c": 94.05,
+        "freq_mhz": {
+          "mean": 3781.9,
+          "min": 3499,
+          "max": 4783,
+          "p50": 3800,
+          "p95": 3900
+        }
+      }
+    },
+    {
+      "run": 5,
+      "context": 4096,
+      "temperature": 0.5,
+      "prompt_idx": 2,
+      "time_s": 37.16,
+      "tokens": 457,
+      "tps": 12.3,
+      "telemetry": {
+        "samples": 75,
+        "sampling_hz": 2.02,
+        "pkg_power_w": {
+          "mean": 43.13,
+          "min": 33.91,
+          "max": 50.81,
+          "p50": 47.89,
+          "p95": 50.0
+        },
+        "energy_per_token_j": 3.462087,
+        "tokens_per_joule": 0.29,
+        "pkg_temp_c": {
+          "mean": 91.06,
+          "min": 83.05,
+          "max": 96.05,
+          "p50": 94.05,
+          "p95": 96.05
+        },
+        "max_temp_c": 96.05,
+        "freq_mhz": {
+          "mean": 3464.39,
+          "min": 3000,
+          "max": 4700,
+          "p50": 3692,
+          "p95": 3802
+        }
+      }
+    },
+    {
+      "run": 6,
+      "context": 4096,
+      "temperature": 0.5,
+      "prompt_idx": 3,
+      "time_s": 63.0,
+      "tokens": 754,
+      "tps": 11.97,
+      "telemetry": {
+        "samples": 126,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.08,
+          "min": 34.12,
+          "max": 47.5,
+          "p50": 35.0,
+          "p95": 35.17
+        },
+        "energy_per_token_j": 2.891521,
+        "tokens_per_joule": 0.35,
+        "pkg_temp_c": {
+          "mean": 81.13,
+          "min": 79.05,
+          "max": 87.05,
+          "p50": 81.05,
+          "p95": 83.05
+        },
+        "max_temp_c": 87.05,
+        "freq_mhz": {
+          "mean": 3089.76,
+          "min": 2800,
+          "max": 4600,
+          "p50": 3100,
+          "p95": 3104
+        }
+      }
+    },
+    {
+      "run": 7,
+      "context": 4096,
+      "temperature": 0.7,
+      "prompt_idx": 1,
+      "time_s": 35.61,
+      "tokens": 436,
+      "tps": 12.24,
+      "telemetry": {
+        "samples": 72,
+        "sampling_hz": 2.02,
+        "pkg_power_w": {
+          "mean": 35.05,
+          "min": 34.74,
+          "max": 38.41,
+          "p50": 34.99,
+          "p95": 35.14
+        },
+        "energy_per_token_j": 2.820202,
+        "tokens_per_joule": 0.35,
+        "pkg_temp_c": {
+          "mean": 81.41,
+          "min": 76.05,
+          "max": 84.05,
+          "p50": 82.05,
+          "p95": 83.05
+        },
+        "max_temp_c": 84.05,
+        "freq_mhz": {
+          "mean": 3084.85,
+          "min": 3000,
+          "max": 3700,
+          "p50": 3100,
+          "p95": 3101
+        }
+      }
+    },
+    {
+      "run": 8,
+      "context": 4096,
+      "temperature": 0.7,
+      "prompt_idx": 2,
+      "time_s": 79.78,
+      "tokens": 934,
+      "tps": 11.71,
+      "telemetry": {
+        "samples": 160,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.08,
+          "min": 34.43,
+          "max": 48.93,
+          "p50": 35.0,
+          "p95": 35.1
+        },
+        "energy_per_token_j": 2.97446,
+        "tokens_per_joule": 0.34,
+        "pkg_temp_c": {
+          "mean": 83.27,
+          "min": 74.05,
+          "max": 89.05,
+          "p50": 83.05,
+          "p95": 84.05
+        },
+        "max_temp_c": 89.05,
+        "freq_mhz": {
+          "mean": 3071.97,
+          "min": 2900,
+          "max": 4321,
+          "p50": 3100,
+          "p95": 3101
+        }
+      }
+    },
+    {
+      "run": 9,
+      "context": 4096,
+      "temperature": 0.7,
+      "prompt_idx": 3,
+      "time_s": 30.85,
+      "tokens": 367,
+      "tps": 11.9,
+      "telemetry": {
+        "samples": 62,
+        "sampling_hz": 2.03,
+        "pkg_power_w": {
+          "mean": 35.13,
+          "min": 34.03,
+          "max": 46.69,
+          "p50": 34.96,
+          "p95": 35.08
+        },
+        "energy_per_token_j": 2.879089,
+        "tokens_per_joule": 0.35,
+        "pkg_temp_c": {
+          "mean": 83.6,
+          "min": 79.05,
+          "max": 87.05,
+          "p50": 83.05,
+          "p95": 84.05
+        },
+        "max_temp_c": 87.05,
+        "freq_mhz": {
+          "mean": 3028.58,
+          "min": 2800,
+          "max": 4430,
+          "p50": 3000,
+          "p95": 3100
+        }
+      }
+    },
+    {
+      "run": 10,
+      "context": 8192,
+      "temperature": 0.1,
+      "prompt_idx": 1,
+      "time_s": 48.1,
+      "tokens": 521,
+      "tps": 10.83,
+      "telemetry": {
+        "samples": 96,
+        "sampling_hz": 2.02,
+        "pkg_power_w": {
+          "mean": 35.04,
+          "min": 28.51,
+          "max": 44.93,
+          "p50": 34.99,
+          "p95": 35.33
+        },
+        "energy_per_token_j": 3.168483,
+        "tokens_per_joule": 0.32,
+        "pkg_temp_c": {
+          "mean": 82.65,
+          "min": 79.05,
+          "max": 96.05,
+          "p50": 82.05,
+          "p95": 84.05
+        },
+        "max_temp_c": 96.05,
+        "freq_mhz": {
+          "mean": 3080.43,
+          "min": 2600,
+          "max": 4764,
+          "p50": 3100,
+          "p95": 3107
+        }
+      }
+    },
+    {
+      "run": 11,
+      "context": 8192,
+      "temperature": 0.1,
+      "prompt_idx": 2,
+      "time_s": 84.08,
+      "tokens": 967,
+      "tps": 11.5,
+      "telemetry": {
+        "samples": 168,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 34.98,
+          "min": 33.21,
+          "max": 37.42,
+          "p50": 34.98,
+          "p95": 35.09
+        },
+        "energy_per_token_j": 3.011754,
+        "tokens_per_joule": 0.33,
+        "pkg_temp_c": {
+          "mean": 80.64,
+          "min": 78.05,
+          "max": 84.05,
+          "p50": 80.05,
+          "p95": 82.05
+        },
+        "max_temp_c": 84.05,
+        "freq_mhz": {
+          "mean": 3041.4,
+          "min": 2800,
+          "max": 3200,
+          "p50": 3006,
+          "p95": 3100
+        }
+      }
+    },
+    {
+      "run": 12,
+      "context": 8192,
+      "temperature": 0.1,
+      "prompt_idx": 3,
+      "time_s": 102.76,
+      "tokens": 1170,
+      "tps": 11.39,
+      "telemetry": {
+        "samples": 205,
+        "sampling_hz": 2.0,
+        "pkg_power_w": {
+          "mean": 35.02,
+          "min": 33.5,
+          "max": 42.19,
+          "p50": 35.0,
+          "p95": 35.1
+        },
+        "energy_per_token_j": 3.046916,
+        "tokens_per_joule": 0.33,
+        "pkg_temp_c": {
+          "mean": 79.46,
+          "min": 77.05,
+          "max": 83.05,
+          "p50": 79.05,
+          "p95": 80.05
+        },
+        "max_temp_c": 83.05,
+        "freq_mhz": {
+          "mean": 3061.76,
+          "min": 2800,
+          "max": 3904,
+          "p50": 3099,
+          "p95": 3102
+        }
+      }
+    },
+    {
+      "run": 13,
+      "context": 8192,
+      "temperature": 0.5,
+      "prompt_idx": 1,
+      "time_s": 51.54,
+      "tokens": 612,
+      "tps": 11.87,
+      "telemetry": {
+        "samples": 103,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.01,
+          "min": 33.47,
+          "max": 38.46,
+          "p50": 35.0,
+          "p95": 35.16
+        },
+        "energy_per_token_j": 2.896039,
+        "tokens_per_joule": 0.35,
+        "pkg_temp_c": {
+          "mean": 79.37,
+          "min": 76.05,
+          "max": 82.05,
+          "p50": 79.05,
+          "p95": 80.05
+        },
+        "max_temp_c": 82.05,
+        "freq_mhz": {
+          "mean": 3060.21,
+          "min": 2700,
+          "max": 3207,
+          "p50": 3100,
+          "p95": 3108
+        }
+      }
+    },
+    {
+      "run": 14,
+      "context": 8192,
+      "temperature": 0.5,
+      "prompt_idx": 2,
+      "time_s": 61.18,
+      "tokens": 720,
+      "tps": 11.77,
+      "telemetry": {
+        "samples": 123,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.01,
+          "min": 33.24,
+          "max": 39.77,
+          "p50": 34.99,
+          "p95": 35.08
+        },
+        "energy_per_token_j": 2.948522,
+        "tokens_per_joule": 0.34,
+        "pkg_temp_c": {
+          "mean": 79.2,
+          "min": 75.05,
+          "max": 82.05,
+          "p50": 79.05,
+          "p95": 80.05
+        },
+        "max_temp_c": 82.05,
+        "freq_mhz": {
+          "mean": 3060.44,
+          "min": 2800,
+          "max": 3500,
+          "p50": 3099,
+          "p95": 3100
+        }
+      }
+    },
+    {
+      "run": 15,
+      "context": 8192,
+      "temperature": 0.5,
+      "prompt_idx": 3,
+      "time_s": 93.59,
+      "tokens": 1069,
+      "tps": 11.42,
+      "telemetry": {
+        "samples": 187,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.05,
+          "min": 34.1,
+          "max": 47.86,
+          "p50": 34.99,
+          "p95": 35.14
+        },
+        "energy_per_token_j": 3.040025,
+        "tokens_per_joule": 0.33,
+        "pkg_temp_c": {
+          "mean": 79.78,
+          "min": 74.05,
+          "max": 84.05,
+          "p50": 80.05,
+          "p95": 80.05
+        },
+        "max_temp_c": 84.05,
+        "freq_mhz": {
+          "mean": 3073.98,
+          "min": 2800,
+          "max": 4700,
+          "p50": 3100,
+          "p95": 3150
+        }
+      }
+    },
+    {
+      "run": 16,
+      "context": 8192,
+      "temperature": 0.7,
+      "prompt_idx": 1,
+      "time_s": 37.32,
+      "tokens": 445,
+      "tps": 11.92,
+      "telemetry": {
+        "samples": 75,
+        "sampling_hz": 2.02,
+        "pkg_power_w": {
+          "mean": 35.02,
+          "min": 33.78,
+          "max": 40.32,
+          "p50": 34.97,
+          "p95": 35.08
+        },
+        "energy_per_token_j": 2.879886,
+        "tokens_per_joule": 0.35,
+        "pkg_temp_c": {
+          "mean": 79.29,
+          "min": 75.05,
+          "max": 83.05,
+          "p50": 79.05,
+          "p95": 80.05
+        },
+        "max_temp_c": 83.05,
+        "freq_mhz": {
+          "mean": 3056.48,
+          "min": 2800,
+          "max": 3601,
+          "p50": 3070,
+          "p95": 3101
+        }
+      }
+    },
+    {
+      "run": 17,
+      "context": 8192,
+      "temperature": 0.7,
+      "prompt_idx": 2,
+      "time_s": 81.43,
+      "tokens": 945,
+      "tps": 11.6,
+      "telemetry": {
+        "samples": 163,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.02,
+          "min": 33.31,
+          "max": 42.22,
+          "p50": 35.0,
+          "p95": 35.12
+        },
+        "energy_per_token_j": 2.990643,
+        "tokens_per_joule": 0.33,
+        "pkg_temp_c": {
+          "mean": 79.78,
+          "min": 76.05,
+          "max": 83.05,
+          "p50": 80.05,
+          "p95": 81.05
+        },
+        "max_temp_c": 83.05,
+        "freq_mhz": {
+          "mean": 3073.58,
+          "min": 2700,
+          "max": 3811,
+          "p50": 3100,
+          "p95": 3187
+        }
+      }
+    },
+    {
+      "run": 18,
+      "context": 8192,
+      "temperature": 0.7,
+      "prompt_idx": 3,
+      "time_s": 58.91,
+      "tokens": 684,
+      "tps": 11.61,
+      "telemetry": {
+        "samples": 118,
+        "sampling_hz": 2.01,
+        "pkg_power_w": {
+          "mean": 35.01,
+          "min": 33.5,
+          "max": 42.99,
+          "p50": 34.95,
+          "p95": 35.16
+        },
+        "energy_per_token_j": 2.975707,
+        "tokens_per_joule": 0.34,
+        "pkg_temp_c": {
+          "mean": 79.52,
+          "min": 76.05,
+          "max": 84.05,
+          "p50": 79.05,
+          "p95": 80.05
+        },
+        "max_temp_c": 84.05,
+        "freq_mhz": {
+          "mean": 3027.02,
+          "min": 2800,
+          "max": 3900,
+          "p50": 3000,
+          "p95": 3100
+        }
+      }
+    }
+  ],
+  "timestamp": 1790136059.6754093
+}

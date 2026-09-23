@@ -184,11 +184,18 @@ swapon -s
 
 # CPU
 cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference
-turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2
+turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2   # needs CAP_SYS_RAWIO (sudo)
 
 # Memory
 free -h
 ```
+
+> **Privilege-free alternative (2026-09-23)**: `scripts/screening.py` now embeds a
+> `TelemetryCollector` that reads power/thermal/freq directly from sysfs
+> (`/sys/class/powercap/intel-rapl/*`, `/sys/class/thermal/thermal_zone*`,
+> `/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq`) — **no sudo**.
+> Use that for automated screening; `turbostat` above remains for manual/forensic
+> runs only. See `docs/TELEMETRY_PLAN.md`.
 
 ---
 
@@ -210,10 +217,14 @@ free -h
 # Terminal 1: Run continuous inference
 while true; do curl -s http://localhost:11434/api/generate -d '{"model":"phi4-mini","prompt":"Continue the story:","stream":false}' >/dev/null; done
 
-# Terminal 2: Log thermals
+# Terminal 2: Log thermals (turbostat needs sudo; privilege-free variant below)
 turbostat --Summary --show PkgWatt,CoreTmp,Avg_MHz,Busy% -i 2 > thermals.log
 # Also: watch -n 2 sensors
 ```
+
+**Privilege-free thermal logging:** use `scripts/screening.py --model <m>`
+with its embedded TelemetryCollector (reads RAPL/thermal/freq sysfs, no sudo).
+Reference: `docs/TELEMETRY_PLAN.md`.
 
 **Pass criteria:** Avg P-core freq ≥ 3.5 GHz sustained, no throttle to < 3.0 GHz, pkg temp < 90°C.
 

@@ -268,6 +268,9 @@ Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`
 - `thermald` active — adaptive thermal management. Risk: over-throttling if misconfigured (intel/thermal_daemon #550 shows PL1=0 bug).
 - Idle ~63°C @ 400MHz — normal for laptop in silent mode.
 - **Fan: already set to Performance mode in BIOS** (user confirmed).
+- **RAPL powercap is ROOT-ONLY by default** (`energy_uj` mode `r--------`). Fixed one-time via `/etc/udev/rules.d/90-rapl-readable.rules` + `/etc/tmpfiles.d/rapl-readable.conf` (group `xnai`, mode 0440) so `scripts/screening.py` telemetry needs no sudo. Verified `max_energy_range_uj = 262,143,328,850` (≈262 kJ → wraps ~87 min @ 40W — wraparound correction required).
+- **Telemetry under screening load (rocracoon-3b, 18 runs):** avg pkg power 37.2W, peak pkg temp 97.05°C (near Tj max 100°C → sustained inference sits right at the 45W PL1 thermal envelope), avg 3.14 J/token, boost freq 4.3–4.8 GHz.
+- **Thermal zones:** `thermal_zone9` = `x86_pkg_temp`, `thermal_zone0` = `acpitz` (skin), `thermal_zone2` = `TCPU`. Telemetry selects by type priority, not sort order.
 
 ### Recommendations
 - **Keep EPP=performance** (done). Don't force `performance` governor — bypasses HWP.

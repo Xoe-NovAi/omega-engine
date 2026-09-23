@@ -96,7 +96,7 @@ Sources: arXiv:2601.14277 (unified eval Llama-3.1-8B), ggml #2094, Qwen3 quantiz
 ## Pending benchmarks
 
 - [ ] `bench-all` full sweep across all 8 installed models
-- [ ] 10-min sustained phi4-mini + `turbostat` / `sensors` log (thermal validation)
+- [ ] 10-min sustained phi4-mini thermal validation — now privilege-free: `scripts/screening.py` TelemetryCollector (RAPL + thermal + freq sysfs, no sudo); turbostat optional for forensic runs (see `docs/TELEMETRY_PLAN.md`)
 - [ ] Q5_K_M vs Q4_K_M deepseek-r1:8b (tool-call quality vs speed)
 - [ ] ZRAM 8GB vs 4GB swap.img (memory pressure test)
 - [ ] THP `madvise` vs `always` (latency spike measurement)
