@@ -93,6 +93,25 @@ Sources: arXiv:2601.14277 (unified eval Llama-3.1-8B), ggml #2094, Qwen3 quantiz
 - `AllowedCPUs=0-11` + `OLLAMA_NUM_THREADS=8` → **14.4 t/s** (swept 6→14.0/8→14.4/10→14.17/12→13.88).
 - P-core-only pin (`0,2,4,6,8,10`) → ~0.5 t/s barrier convoy. DO NOT REGRESS.
 
+## 2026-09-23 — Gemma 4 12B QAT single probe (think:false, 512-cap)
+
+Official Google `gemma-4-12b-it-qat-q4_0.gguf` (6.98GB, sha256 verified),
+ctx=4096, temp=0.1, prompt 1, `think: false` — vs gemma-3-12b (IQ3_M) same config:
+
+| Metric | gemma4-12b-qat | gemma-3-12b |
+|---|---|---|
+| Throughput | **5.11 t/s** (100.3s/512 tok) | 3.12 t/s (163.8s) |
+| Energy/token | **7.42 J** | 12.69 J |
+| Power mean/max | 38.08 / 50.14W | 39.8 / 50.2W |
+| Temp max | 97.05°C | 98.0°C |
+| Freq mean | 3.46 GHz | 3.27 GHz |
+
+Verdict: strict upgrade on every axis (+64% speed, −42% J/tok). Full 18-run
+screen ≈ 30 min (deferred). Card: `docs/models/gemma4-12b-qat.md`.
+Thinking-model note: default think-on consumes the 512 budget as trace →
+empty answer; `think:false` required for screening (`generate()` needs a
+`think` flag — open harness item).
+
 ## Pending benchmarks
 
 - [ ] `bench-all` full sweep across all 8 installed models

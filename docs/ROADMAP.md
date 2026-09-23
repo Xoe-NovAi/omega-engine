@@ -391,15 +391,20 @@ without trial by fire.
 - **Evidence**: GSCA abbreviated screening (18 runs/model), provider benchmarks (HumanEval 88.4%, SWE-Bench ~58%)
 - **Status**: ✅ **DONE** — both promoted to `active`; 7B = daily driver, 14B = complex tasks
 
-### P3.3a.3 — Gemma 4 12B QAT evaluation (ACTIVE 2026-09-23)
+### P3.3a.3 — Gemma 4 12B QAT evaluation (VERDICT 2026-09-23)
 - **Why**: official Google QAT q4_0 (6.98GB) — QAT beats PTQ at low bits; 12B
   Unified encoder-free arch (512-token sliding window → small KV, fits 16GB);
   Ollama 0.33.3 supports gemma4 (official `gemma4` library + community QAT upload exist).
 - **Done when**: sha256 verified → `ollama create` import probe green →
   single 512-cap telemetry run recorded → capability verdict vs gemma-3-12b /
   qwen2.5-coder-7b (speed, energy, quality) → model card filed.
-- **Status**: 🔄 **ACTIVE** — Xet download running under systemd unit
-  (`fetch-gemma4-qat-main`); mmproj landed + sha256 exact match.
+- **Status**: ✅ **VERDICT REACHED** — sha256 exact; import green
+  (`gemma4-12b-qat`, arch gemma4, 11.9B, Q4_0, 256K ctx); single probe
+  **5.11 t/s, 7.42 J/tok, 97.05°C** (`think:false`) vs gemma-3-12b 3.12 t/s,
+  12.69 J/tok, 98°C → **strict upgrade, +64% speed / −42% energy**.
+  Card `docs/models/gemma4-12b-qat.md` filed (`candidate`).
+  Open: full 18-run screen (~30 min, deferred); `generate()` needs `think`
+  flag for reasoning models; role decision pending.
 
 ### P3.3a.4 — Fast model-fetch layer (DONE 2026-09-23)
 - **Why**: agent-harness shells reap child process groups on call end (`nohup`
