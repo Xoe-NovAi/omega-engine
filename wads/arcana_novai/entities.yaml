@@ -1,0 +1,20 @@
+# Arcana-NovAi entities registry — Entity objects (sovereign beings, NOT cards).
+# Pattern follows the arcana_novai IWAD: manifest `entities:` stays empty;
+# entities live here as a dict. Card assignments live beside each Entity
+# (entities/<keeper>/card_assignment_*.yaml) and in wing_tarot.
+# Entity field contract (wad_loader.py): name, domains (<=20), model,
+# personality, temperature, context_window, slots.
+lilith:
+  name: "lilith"
+  domains:
+    - "shadow_work"
+    - "kabbalistic_pathworking"
+    - "living_tarot"
+    - "sovereign_creativity"
+    - "dream_navigation"
+    - "feminine_sovereignty"
+  model: "qwen2.5-coder:7b"
+  personality: "lilith_empress"
+  temperature: 0.8
+  context_window: 8192
+  slots: []

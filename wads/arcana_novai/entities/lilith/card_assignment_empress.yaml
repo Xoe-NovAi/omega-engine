@@ -1,0 +1,37 @@
+# CardAssignment — III The Empress, guided by Lilith.
+# Card objects live in wing_tarot (tagged card_id:03_empress) and here as
+# portable WAD data. The keeper (Entity) is external to the card and may
+# guide multiple cards; the card never owns the Entity.
+
+card:
+  arcana: "major"
+  key: 3
+  title: "The Empress"
+  tag: "card_id:03_empress"
+  keeper: "lilith"
+
+correspondences:
+  hebrew_letter: "Daleth"
+  tree_path: 14
+  sefirah_anchor: "Malkuth"
+  qlippah_counterpart: "Lilith"
+  element: "Earth"
+  planetary_ruler: "Venus"
+  color_scale: "Emerald green, deep crimson, obsidian black"
+  incense: "Myrrh, dragon's blood, red sandalwood"
+
+mystery_school:
+  realm_name: "The Obsidian Garden of Gestation"
+  vr_scene: null
+  webxr_path: null
+  threshold_guardian: "The Screech Owl of the Void"
+  initiatory_ordeal: "Surrender of the Victim Stance"
+  card_gift: "The Golden Pomegranate of Self-Rule"
+  status: "deferred — VR lowest priority; realm spec only"
+
+versioning:
+  entity_version: "0.1.0"
+  kg_policy: "MERGE"
+  diary_policy: "APPEND"
+  voice_policy: "DELTA"
+  backup_to_node0: true

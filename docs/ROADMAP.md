@@ -581,7 +581,9 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
   asset-tunnel for scenes); `card_entity_factory.py` v2 emits separate
   `Entity` + `CardAssignment` objects collision-free; Vanguard Entity skeletons
   (Nyx/Hecate/Isis, data-only) generated.
-- **Status**: `backlog`.
+- **Status**: `queued` — scaffold complete (manifest V2, entities.yaml, soul.yaml,
+  card_assignment_empress.yaml, template, ingestion/domains.yaml). Factory code
+  next.
 
 ### P4.4 — Entity-vs-Card wing strategy session
 - **Why**: operator ruled Entities deserve room but 78 wings risked index

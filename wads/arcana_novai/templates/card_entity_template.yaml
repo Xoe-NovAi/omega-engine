@@ -1,0 +1,63 @@
+# card_entity_template.yaml — factory input for all 78 keepers.
+# The factory (card_entity_factory.py, P4.3) renders TWO linked objects per
+# card: an Entity (sovereign being) + a CardAssignment (tarot seat).
+# {{PLACEHOLDERS}} are filled by the factory; versioning block dictates
+# WAD upgrade behavior (MERGE/APPEND/DELTA — never overwrite).
+
+entity:
+  name: "{{KEEPER_ID}}"
+  domains: "{{DOMAINS_LIST_MAX_20}}"
+  model: "{{MODEL}}"
+  personality: "{{PERSONALITY_ID}}"
+  temperature: "{{TEMPERATURE}}"
+  context_window: 8192
+  slots: []
+
+soul_skeleton:
+  keeper: "{{KEEPER_ID}}"
+  epithet: "{{EPITHET}}"
+  seat: "{{CARD_TITLE}}"
+  version: "0.1.0-draft"
+  status: "draft"
+  axioms: []
+  directives_ref: "shared"
+  principles: []
+  voice:
+    dna_ref: "voice_dna.md"
+    default_preset: "tarot_dialogue"
+    base_weights:
+      fierce: "{{F}}"
+      tender: "{{T}}"
+      trickster: "{{K}}"
+      sovereign: "{{S}}"
+
+card_assignment:
+  card:
+    arcana: "{{major|minor}}"
+    key: "{{KEY}}"
+    title: "{{CARD_TITLE}}"
+    tag: "card_id:{{CARD_TAG}}"
+    keeper: "{{KEEPER_ID}}"
+  correspondences:
+    hebrew_letter: "{{HEBREW_LETTER}}"
+    tree_path: "{{PATH}}"
+    sefirah_anchor: "{{SEFIRAH}}"
+    qlippah_counterpart: "{{QLIPPAH}}"
+    element: "{{ELEMENT}}"
+    planetary_ruler: "{{PLANET}}"
+    color_scale: "{{COLORS}}"
+    incense: "{{INCENSE}}"
+  mystery_school:
+    realm_name: "{{REALM}}"
+    vr_scene: null
+    webxr_path: null
+    threshold_guardian: "{{GUARDIAN}}"
+    initiatory_ordeal: "{{ORDEAL}}"
+    card_gift: "{{GIFT}}"
+    status: "deferred — VR lowest priority; realm spec only"
+  versioning:
+    entity_version: "0.1.0"
+    kg_policy: "MERGE"
+    diary_policy: "APPEND"
+    voice_policy: "DELTA"
+    backup_to_node0: true

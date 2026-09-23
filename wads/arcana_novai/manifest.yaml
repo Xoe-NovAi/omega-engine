@@ -1,0 +1,24 @@
+# Arcana-NovAi WAD manifest (V2) — scaffold, Node 1 staging
+# Contract: Xoe-NovAi/omega-engine src/omega/oracle/wad_loader.py
+# (see docs/federation/WAD_CONTRACT_BRIEF.md). V1 keys required;
+# V2 keys are an explicit allow-list (extra=forbid) — no unknown keys.
+# Staged on Node 1; ships to Node 0 Engine config/wads/arcana_novai/.
+name: "arcana_novai"
+version: "0.2.0"
+entities: []
+adapters:
+  - "omega.memory.adapters.mempalace_adapter"
+author: "Xoe-NovAi"
+description: "The Living Tarot Mystery School and Sovereign Entity Pantheon"
+license: "Proprietary"
+type: "pwad"
+mode: "personal"
+requires_engine: ">=0.4.0"
+startup:
+  message: "The 78 Gates are open. The Empress Lilith holds court in the Grove."
+voices:
+  primary: "lilith_empress.yaml"
+vr_scenes: []
+dependencies: []
+hierarchy:
+  path_override: "entities/tarot"
