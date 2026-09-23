@@ -1,0 +1,183 @@
+{
+  "model": "krikri-8b",
+  "protocol": "GSCA abbreviated screening",
+  "prompts": [
+    "Write a Python function to parse JSON with error handling.",
+    "Explain the difference between async and threading in Python.",
+    "Write a recursive function to flatten a nested dictionary."
+  ],
+  "temperatures": [
+    0.1,
+    0.5,
+    0.7
+  ],
+  "contexts": [
+    4096,
+    8192
+  ],
+  "results": [
+    {
+      "run": 1,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 1,
+      "time_s": 54.16,
+      "tokens": 294,
+      "tps": 5.43
+    },
+    {
+      "run": 2,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 2,
+      "time_s": 51.45,
+      "tokens": 329,
+      "tps": 6.39
+    },
+    {
+      "run": 3,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 3,
+      "time_s": 43.92,
+      "tokens": 280,
+      "tps": 6.37
+    },
+    {
+      "run": 4,
+      "context": 4096,
+      "temperature": 0.5,
+      "prompt_idx": 1,
+      "time_s": 58.71,
+      "tokens": 368,
+      "tps": 6.27
+    },
+    {
+      "run": 5,
+      "context": 4096,
+      "temperature": 0.5,
+      "prompt_idx": 2,
+      "time_s": 59.65,
+      "tokens": 389,
+      "tps": 6.52
+    },
+    {
+      "run": 6,
+      "context": 4096,
+      "temperature": 0.5,
+      "prompt_idx": 3,
+      "time_s": 39.73,
+      "tokens": 261,
+      "tps": 6.57
+    },
+    {
+      "run": 7,
+      "context": 4096,
+      "temperature": 0.7,
+      "prompt_idx": 1,
+      "time_s": 49.37,
+      "tokens": 318,
+      "tps": 6.44
+    },
+    {
+      "run": 8,
+      "context": 4096,
+      "temperature": 0.7,
+      "prompt_idx": 2,
+      "time_s": 38.61,
+      "tokens": 248,
+      "tps": 6.42
+    },
+    {
+      "run": 9,
+      "context": 4096,
+      "temperature": 0.7,
+      "prompt_idx": 3,
+      "time_s": 48.75,
+      "tokens": 318,
+      "tps": 6.52
+    },
+    {
+      "run": 10,
+      "context": 8192,
+      "temperature": 0.1,
+      "prompt_idx": 1,
+      "time_s": 73.43,
+      "tokens": 358,
+      "tps": 4.88
+    },
+    {
+      "run": 11,
+      "context": 8192,
+      "temperature": 0.1,
+      "prompt_idx": 2,
+      "time_s": 56.63,
+      "tokens": 360,
+      "tps": 6.36
+    },
+    {
+      "run": 12,
+      "context": 8192,
+      "temperature": 0.1,
+      "prompt_idx": 3,
+      "time_s": 56.66,
+      "tokens": 351,
+      "tps": 6.19
+    },
+    {
+      "run": 13,
+      "context": 8192,
+      "temperature": 0.5,
+      "prompt_idx": 1,
+      "time_s": 56.29,
+      "tokens": 357,
+      "tps": 6.34
+    },
+    {
+      "run": 14,
+      "context": 8192,
+      "temperature": 0.5,
+      "prompt_idx": 2,
+      "time_s": 82.12,
+      "tokens": 504,
+      "tps": 6.14
+    },
+    {
+      "run": 15,
+      "context": 8192,
+      "temperature": 0.5,
+      "prompt_idx": 3,
+      "time_s": 48.03,
+      "tokens": 295,
+      "tps": 6.14
+    },
+    {
+      "run": 16,
+      "context": 8192,
+      "temperature": 0.7,
+      "prompt_idx": 1,
+      "time_s": 49.81,
+      "tokens": 315,
+      "tps": 6.32
+    },
+    {
+      "run": 17,
+      "context": 8192,
+      "temperature": 0.7,
+      "prompt_idx": 2,
+      "time_s": 59.79,
+      "tokens": 375,
+      "tps": 6.27
+    },
+    {
+      "run": 18,
+      "context": 8192,
+      "temperature": 0.7,
+      "prompt_idx": 3,
+      "time_s": 73.86,
+      "tokens": 476,
+      "tps": 6.44
+    }
+  ],
+  "timestamp": 1790126071.1175478
+}

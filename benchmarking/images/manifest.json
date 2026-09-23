@@ -1,0 +1,26 @@
+{
+  "design2code": 50,
+  "websight": 40,
+  "max_dim": 448,
+  "categories_d2c": [
+    "user",
+    "ecommerce",
+    "content",
+    "auth",
+    "form",
+    "utility",
+    "marketing",
+    "admin",
+    "dashboard"
+  ],
+  "categories_ws": [
+    "user",
+    "ecommerce",
+    "content",
+    "auth",
+    "form",
+    "marketing",
+    "admin",
+    "dashboard"
+  ]
+}

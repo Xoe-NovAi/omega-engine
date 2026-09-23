@@ -159,6 +159,47 @@ Custom models (Modelfiles in `.modelfiles/`): code-reviewer (FROM qwen2.5-coder:
 Sources: arXiv:2601.14277 (unified eval Llama-3.1-8B), ggml #2094, Qwen3 quantization guide, OmniCoder benchmarks.
 **For 16GB + swap:** Q4_K_M (phi4-mini, qwen2.5-coder, deepseek-r1) optimal. Q5_K_M for deepseek-r1 if tool-call reliability matters.
 
+## MoE vs Dense Architecture Reality (2026-09-22)
+
+### The Fundamental Distinction
+
+| Architecture | Active Params/Token | Total Params | RAM Determined By |
+|--------------|---------------------|--------------|-------------------|
+| **Dense (Qwen3.8-27B)** | 27.8B | 27.8B | **Total params** |
+| **MoE (Qwen3.5-35B-A3B)** | 3B | 35B | **Total params** |
+
+**Critical insight**: MoE saves *compute* (FLOPs/token), NOT *storage*. The entire expert pool + dense backbone must reside in RAM. GGUF file size ≈ model size in RAM.
+
+### What `--cpu-moe` Actually Does
+
+| Flag | Effect |
+|------|--------|
+| `--cpu-moe` | Moves ALL routed experts from VRAM → system RAM |
+| `--n-cpu-moe N` | Moves first N layers' experts to RAM |
+| **Does NOT do** | Stream inactive experts from NVMe on-demand |
+
+True on-demand expert paging from disk exists only in `solid.cpp` fork (private, Apple Metal, 0.12 tok/s — unusable here).
+
+### MoE Models That Fit 16GB RAM (with expert offloading)
+
+| Model | Total / Active | Best Quant | Size | Quality Signal |
+|-------|----------------|------------|------|----------------|
+| Devstral Small 2505 | 23.6B / ~8B | Q4_K_M | 13.4 GB | 46.8% SWE-Verified, agentic design |
+| gpt-oss-20b | 20B / ~4B | Q4 | 12.8 GB | o3-mini reasoning |
+| Qwen3.5-35B-A3B | 35B / 3B | UD-Q2_K_XL | 12.2 GB | 69.2% SWE-Verified |
+
+### Our Selection: Dense Coders for 16GB
+
+| Model | Quant | Model Size | Total RAM (est.) | Use Case |
+|-------|-------|------------|------------------|----------|
+| Qwen2.5-Coder-7B | Q4_K_M | 4.68 GB | ~8.2 GB | Daily driver, long context headroom |
+| Qwen2.5-Coder-7B | Q5_K_M | 5.44 GB | ~9.0 GB | Higher quality, less headroom |
+| Qwen2.5-Coder-14B | Q4_K_M | 7.34 GB | ~10.8 GB | Complex tasks, when 32GB arrives |
+
+**Apache 2.0 license on all** — commercial use, no restrictions.
+
+---
+
 ## Open WebUI
 - Container: `ghcr.io/open-webui/open-webui:v0.11.3` (pinned from `:main`), port **3000→8080**
 - `OLLAMA_BASE_URL=http://host.docker.internal:11434`

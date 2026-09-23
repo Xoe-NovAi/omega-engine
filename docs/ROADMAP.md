@@ -379,6 +379,18 @@ without trial by fire.
   `docs/models/nex-n2-5-pro.md` created; Nex-N2.5-Pro remains `candidate` until
   a controlled Omega A/B is complete.
 
+### P3.3a.1 — Qwen3.8-27B Dense Analysis (COMPLETED 2026-09-22)
+- **Card**: `docs/models/qwen3.8-27b-dense.md`
+- **Finding**: Dense 27.8B, NOT MoE. Expert offloading impossible. UD-Q2_K_XL (9.8GB) = quality floor for coding.
+- **Evidence**: NVIDIA blog, Kingy AI specs, Sebastian Raschka, Qwen blog "Dense200" category
+- **Status**: ✅ captured in Well, decision: pivot to Qwen2.5-Coder 7B/14B
+
+### P3.3a.2 — Qwen2.5-Coder 7B & 14B (COMPLETED 2026-09-22)
+- **Card**: `docs/models/qwen2.5-coder-7b-14b.md`
+- **Finding**: 7B Q5_K_M (5.44GB) **7.9 t/s measured**; 14B Q4_K_M (7.34GB) **4.1 t/s measured**
+- **Evidence**: GSCA abbreviated screening (18 runs/model), provider benchmarks (HumanEval 88.4%, SWE-Bench ~58%)
+- **Status**: ✅ **DONE** — both promoted to `active`; 7B = daily driver, 14B = complex tasks
+
 ### P3.3b — OMER M1: Schema & Validation
 - Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
   v1.0 (from `docs/OMER_FOUNDATION.md` §2.1); validation rules for evidence
