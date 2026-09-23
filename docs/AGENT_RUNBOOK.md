@@ -212,17 +212,25 @@ make -C ~/WanderGround 3d-serve          # offline Three.js constellation viewer
 
 ---
 
-## 4. OpenCode Zen / Model guidance
+## 4. OpenCode hosted-free model foundation
 
-- Local inference is CPU-only (i7-13620H). NO local model for deep/long synthesis.
-- Use OpenCode Zen cloud models (Big Pickle 1M verified, Nemotron 3 Ultra, MiMo V2.5,
-  Muse Spark) for deep synthesis/long content.
-- **Privacy tier (hard rule)**: Free Zen tiers collect prompt data
-  (`big-pickle` free period, `mimo-v2.5-free`, `nemotron-*-free`,
-  `muse-spark-*-contributor-free`, `ling-3.0-flash-fin-free`).
-  Private explorations NEVER cross free tiers. Paid = zero-retention
-  (`muse-spark-1.3`, `minimax-m3`, `glm-5.3-flash`, ...).
-- max 1M context Big Pickle limit configured in `opencode.json`.
+- **Canonical guide**: `docs/OPENCODE_FOUNDATION.md`.
+- `big-pickle`, `space-bunny-free`, and other stealth aliases are dynamic
+  endpoints. Their underlying checkpoints and limits may change in place and
+  differ by node/time. Never hardcode their context, output, modality, or
+  identity; use the alias ID and refresh the live registry.
+- Big Pickle is always a free stealth alias despite lacking a `-free` suffix.
+  Space Bunny is an anonymous free alias; it is **not** confirmed to be
+  DeepSeek V4.1 Flash.
+- Google free API models include Gemini 3.8/3.7/3.6/3.5 Flash and Gemini 3.5
+  Flash-Lite. Prefer 3.8 for current public research; use 3.5 Flash-Lite for
+  high-volume work. Free Google API data may be used to improve Google products.
+- **Privacy rule**: Space Bunny is the current hosted free zero-retention
+  exception. Big Pickle, MiMo, Ling, NVIDIA trial, and Muse contributor free
+  tiers have explicit training/retention caveats. Private material must not
+  cross those boundaries.
+- Local inference remains CPU-only and is deferred from this hosted foundation.
+- Drift detection before model claims: `opencode models <provider> --verbose --refresh`.
 
 ---
 
@@ -425,6 +433,7 @@ Zen tiers. Prefer the same CODE_QUALITY §1–5 standards for new Python code.
 4. `docs/HARDWARE.md` — canonical hardware spec
 5. `docs/CODE_QUALITY.md` — invariants & how to enforce
 6. `docs/WANDERGROUND_SPEC.md` — exploration-node architecture & research corrections
+7. `docs/OPENCODE_FOUNDATION.md` — hosted-free aliases, dynamic-model safety, schema-current agents, and v1 compaction
 
 ---
 
@@ -499,72 +508,33 @@ fi
 sudo apt-get update && sudo apt-get install -y inotify-tools || exit 1
 ```
 
-### 10.3 Master Configuration (Hardened Format)
+### 10.3 Master Configuration (schema-current principles)
 
-**Critical: OpenCode 1.18+ requires tools as boolean, not object**
-```json
-// WRONG (causes validation error):
-"tools": { "parallel-search": { "enabled": true, "max_results": 15 } }
+The live `https://opencode.ai/config.json` schema is authoritative. Do not
+copy historical templates that contain removed or pass-through-only fields.
 
-// CORRECT:
-"tools": { "parallel-search": true }
-```
+Current rules:
 
-**MCP Server Registration (CLI required for local servers):**
+- Agent prompt file: `"prompt": "{file:~/.config/opencode/prompts/<agent>.md}"`.
+- `inherit_context`, `allow_background_execution`, and `system_prompt` are not
+  current top-level agent controls; unknown fields become provider options.
+- Task permission rules are last-match-wins: put `*: deny` **before** explicit
+  allows.
+- `subagent_depth: 1` is the safe default for primary-to-specialist work.
+- Do not manually duplicate the live model catalog or hardcode stealth-alias
+  limits. See `docs/OPENCODE_FOUNDATION.md`.
+- Current v1 compaction is adaptive; hardcode only intentional policy such as
+  `compaction: { "auto": true, "prune": true }`.
+- MCP config keys are top-level server names, not an `mcp.servers` wrapper.
+  Local servers use `command: [absolute executable, ...args]`; remote servers use
+  `type`, `url`, and `headers`. Unsupported keys such as remote `max_retries`
+  must not be carried in active templates.
+
+Validate after every active config change:
+
 ```bash
-# Config defines the server, CLI registers it (idempotent)
-opencode mcp add mempalace -- /home/xnai/WanderGround/.venv/bin/mempalace-mcp --palace /home/xnai/WanderGround/mempalace 2>/dev/null || true
-```
-
-**Full Config Template (Node 1):**
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "servers": {
-      "parallel-search": {
-        "type": "remote",
-        "url": "https://search.parallel.ai/mcp",
-        "enabled": true,
-        "oauth": false,
-        "headers": { "Authorization": "Bearer {env:PARALLEL_API_KEY}" },
-        "timeout": 120000,
-        "max_retries": 3
-      },
-      "mempalace": {
-        "type": "local",
-        "command": "/home/xnai/WanderGround/.venv/bin/mempalace-mcp",
-        "args": ["--palace", "/home/xnai/WanderGround/mempalace"],
-        "enabled": true
-      }
-    }
-  },
-  "agent": {
-    "build": {
-      "mode": "primary",
-      "permission": {
-        "task": { "asus_plan": "allow", "grokster": "allow", "kali": "allow", "makali": "allow", "*": "deny" }
-      }
-    },
-    "asus_plan": {
-      "mode": "subagent",
-      "inherit_context": true,
-      "allow_background_execution": true,
-      "description": "Kernel/Hardware Optimization Researcher (Intel Matrix Ingestion)",
-      "tools": { "parallel-search": true },
-      "system_prompt": ["{include:~/.config/opencode/prompts/asus_plan.md}"]
-    },
-    "grokster": {
-      "mode": "subagent",
-      "inherit_context": true,
-      "allow_background_execution": true,
-      "description": "OpenCode Internals & MCP Schema Specialist",
-      "tools": { "parallel-search": true },
-      "system_prompt": ["{include:~/.config/opencode/prompts/grokster.md}"]
-    }
-  },
-  "subagent_depth": 2
-}
+opencode debug config
+opencode models opencode --verbose --refresh
 ```
 
 ### 10.4 Venv Path Resolution (Hardened)

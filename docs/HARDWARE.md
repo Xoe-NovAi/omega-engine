@@ -395,13 +395,16 @@ LLM inference streams weights from DRAM continuously. Single-channel is your **h
 - `docker-compose.yml`, `.env.docker`
 - Local git repo (main): tracks SSOT docs/scripts/gnosis-protocol; secrets & generated gnosis data ignored
 
-### OpenCode model configuration (Big Pickle)
-Built-in via the models.dev registry — no custom `provider.opencode.models` block
-exists on this machine and none is needed. History: a 1M-window override lived
-here and was true (205.8K+ token sessions); Zen moved the model to 200K within
-~a day (operator-observed 2026-09-18; registry: 200K/160K/32K). Doctrine going
-forward: drift-detect, never hardcode (`scripts/opencode_provider_doctor.sh`;
-gaps guide §11.8/§13).
+### OpenCode model configuration (rotating hosted aliases)
+Built-in via the Models.dev/provider registry — no custom
+`provider.opencode.models` block exists on this machine and none is needed.
+Big Pickle and Space Bunny are dynamic stealth aliases: their underlying
+models and capacity may rotate in place, and Node 1/Node 0 observations can
+legitimately disagree. Big Pickle remains free despite lacking a `-free`
+suffix. Never hardcode context/output limits for a rotating alias; select the
+alias and refresh live metadata (`opencode models <provider> --verbose --refresh`).
+Canonical policy: `docs/OPENCODE_FOUNDATION.md`; historical measurements:
+gaps guide §13.
 - Instructions stack loaded per session (project config): `AGENTS.md`, `docs/HARDWARE.md`,
   `docs/SYSTEM_GUIDE.md`, `docs/BENCHMARKS.md` ≈ 13.5K tokens before MCP tools.
   HARDWARE.md loads from the PROJECT config only (de-duplicated 2026-09-09).

@@ -99,8 +99,8 @@ Inference is architected as an accountable hierarchy: local compute provides the
 ┌───────────────────────────────────────┐   ┌───────────────────────────────────┐
 │     SOVEREIGN LOCAL FLOOR (T5/T6)     │   │   ACCOUNTABLE CLOUD EXTENSION     │
 │ • Ollama systemd service (:11434)     │   │ • OpenCode Zen Cloud Models       │
-│ • AllowedCPUs=0-11, THREADS=8         │   │ • Free: Big Pickle (1M context)   │
-│ • OLLAMA_KV_CACHE_TYPE=q8_0           │   │ • Paid: Muse Spark 1.3 / MiniMax  │
+│ • AllowedCPUs=0-11, THREADS=8         │   │ • Free stealth aliases (rotating) │
+│ • OLLAMA_KV_CACHE_TYPE=q8_0           │   │ • Big Pickle / Space Bunny        │
 │ • OLLAMA_FLASH_ATTENTION=1            │   │ • Hard Privacy Tiers (Spec §10.4) │
 │ • llama-server via AVX-VNNI           │   │ • Result-Level Provenance Tracked │
 │ • 13.4 - 14.4 tokens/sec              │   │ • Sovereignty Ratio Logged in DB  │

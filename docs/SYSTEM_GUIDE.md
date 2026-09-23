@@ -725,26 +725,24 @@ opencode run "Find production Axum middleware examples. use gh_grep"
 
 ### 15.5 ASUS OpenCode Config for Federation
 
+Federation MCP configuration is independent of model selection:
+
 ```json
 {
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "omega-hub": {
       "type": "remote",
       "url": "http://192.168.10.168:8016/mcp",
       "enabled": true
     }
-  },
-  "provider": {
-    "opencode": {
-      "models": {
-        "big-pickle": {
-          "limit": { "context": 1000000, "input": 950000, "output": 64000 }
-        }
-      }
-    }
   }
 }
 ```
+
+Do not add `provider.opencode.models.big-pickle.limit` overrides. Big Pickle
+and Space Bunny are rotating stealth aliases; their context and output limits
+are mutable and node/time-dependent. See `docs/OPENCODE_FOUNDATION.md`.
 
 ### 15.6 Connectivity Verification
 

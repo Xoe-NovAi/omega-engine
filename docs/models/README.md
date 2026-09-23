@@ -18,6 +18,25 @@ copy: every claim is dated, sourced, and labeled by evidence type. Cards are
 Deployment is separate from lifecycle. A hosted trial can be `candidate` while a
 local model is `active`; record both states in the card.
 
+## Rotating stealth aliases are not stable model identities
+
+OpenCode stealth aliases such as `opencode/big-pickle` and
+`opencode/space-bunny-free` may change underlying checkpoints, context windows,
+output limits, modalities, or privacy terms in place. They can also behave
+differently across nodes at the same time. Therefore:
+
+- do not create a permanent OMER card that freezes a rotating alias's current
+  context/output limits as model identity;
+- do not hardcode those limits under `provider.opencode.models`;
+- record dated node-specific observations as operational evidence, not a model
+  specification;
+- use exact alias IDs for routing and `opencode models <provider> --verbose
+  --refresh` for current runtime metadata;
+- use named, stable model IDs for OMER cards when evaluating the underlying
+  model.
+
+See `docs/OPENCODE_FOUNDATION.md` for the hosted-free policy and privacy tiers.
+
 ## Evidence labels (standardized — enforced by OMER)
 
 Use these exact labels in every table's **Evidence** column. The validator

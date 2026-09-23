@@ -26,7 +26,7 @@ Inference on Node 1 is CPU-only, executed across the 10-core/16-thread Intel Cor
 - **Memory Ceiling**: Strict `MAX_LOADED_MODELS=1` in Ollama. 16GB single-channel cannot hold two resident models plus system overhead without swap thrashing.
 - **Inference Boundary**:
   - **Local Models**: Reserved exclusively for fast, lightweight tasks: embedding (`nomic-embed-text`), classification, tagging, entity extraction, quick queries, and small tool routing (`phi4-mini:latest`, `qwen3-1.7b`, `smollm2-135m`, `functiongemma-270m`).
-  - **Deep Synthesis & Long-Context Work**: Must NEVER be scheduled on local quantizations of 8B+ or long-context windows. Heavy dialectic analysis, multi-source literature synthesis, and long-form narrative production are routed via OpenCode Zen to cloud frontier engines (`Nemotron 3 Ultra`, `MiMo V2.5`, `Muse Spark 1.3/1.2`, and `Big Pickle` 1M).
+  - **Deep Synthesis & Long-Context Work**: Must NEVER be scheduled on local quantizations of 8B+ or long-context windows. Heavy dialectic analysis, multi-source literature synthesis, and long-form narrative production are routed through hosted free aliases (`Big Pickle`, `Space Bunny Free`, current Gemini Flash families) or explicitly selected paid models. Stealth-alias context is dynamic; never hardcode it.
 
 ---
 
@@ -207,7 +207,7 @@ To adhere to the hardware ceiling of the ASUS ExpertBook (CPU-only, single-chann
 | **Terminal / CLI Harness Code** | Local CPU | `qwen2.5-coder:7b` (Ollama) | 8,192 | Rapid generation of Bash scripts, Make targets, and systemd service units. |
 | **Interactive Co-Pilot & Ideation** | Cloud Frontier | `google/gemini-3.8-flash` / `Muse Spark 1.3/1.2` | 200k - 1M | Low latency, highly responsive conversational partner for multi-turn brainstorming. |
 | **Classical Antiquity & Dialectic** | Cloud Frontier | `nvidia/nemotron-3-ultra` / `MiMo V2.5` | 128k - 256k | Deep philosophical reasoning, etymological dissection, and complex ontological debate. |
-| **Cross-Corpus Synthesis (Weaving)** | Cloud Frontier | `big-pickle` / `Nemotron 3 Ultra` | Up to 1,000,000 | Ingesting dozens of papers, transcripts, and dossiers into a single context window to synthesize comprehensive field guides. |
+| **Cross-Corpus Synthesis (Weaving)** | Cloud Frontier | `opencode/space-bunny-free`, `opencode/big-pickle`, or named Gemini 3.8 Flash | **Dynamic — read live registry** | Ingesting papers, transcripts, and dossiers using the currently exposed window; never hardcode a stealth alias's capacity. |
 
 ---
 
@@ -337,21 +337,25 @@ the curator pipeline, MemPalace-side tooling, and the omega-engine scripts.
 - **MCP wired**: `opencode.json` → `mempalace` stdio server (`mempalace-mcp --palace ...`).
   Sessions can now `palace_query`/`palace_exec` on the WanderGround palace.
 
-### 10.4 OpenCode Zen model reality (2026-09-10, primary source: docs + zen endpoint)
-- Zen exposes exactly 70 curated models; model id format `opencode/<id>`.
-- **Free tiers COLLECT PROMPT DATA** (privacy page, official):
-  - `big-pickle` (free period: data may be used to improve the model)
-  - `mimo-v2.5-free`, `nemotron-3-ultra-free`, `nemotron-3.5-lightning-free`
-    (NVIDIA trial: no personal/confidential data, logged; trial use only)
-  - `muse-spark-1.3/1.2-contributor-free` (trains Meta models from your prompts)
-  - `ling-3.0-flash-fin-free`
-- **Paid = zero-retention providers** (exceptions: OpenAI/Anthropic 30-day retention).
-  e.g. `muse-spark-1.3` $1.25/$4.25 per 1M; `minimax-m3` $0.30/$1.20; `glm-5.3-flash` $0.15/$0.50.
-- **Privacy tier decision (WanderGround):** raw captures & private explorations NEVER go
-  through free data-collecting tiers. Deep synthesis on sensitive material uses paid
-  zero-retention models (Muse Spark 1.3 paid, MiniMax, GLM, Kimi) or local-only where
-  cheap enough. Free tiers remain fine for non-sensitive, innocuous synthesis.
-- Zen model endpoint returns only id/created/owned_by (no context windows published).
+### 10.4 OpenCode hosted-free model reality (verified 2026-09-23)
+- Canonical policy: `docs/OPENCODE_FOUNDATION.md`.
+- Zen model IDs use `opencode/<id>`. Big Pickle and Space Bunny are dynamic
+  stealth aliases: select the alias, but never hardcode context/output limits.
+  Node 0 and Node 1 may legitimately observe different served capacities.
+- Big Pickle is always a free stealth alias despite lacking a `-free` suffix.
+  Space Bunny is an anonymous free zero-retention alias; its underlying model is
+  not publicly identified and is not confirmed to be DeepSeek V4.1 Flash.
+- Free privacy exceptions remain explicit: MiMo, Ling, Big Pickle, NVIDIA trial
+  endpoints, and Muse contributor models may collect, log, or train on prompts.
+  Space Bunny is the current free zero-retention exception.
+- Google Gemini 3.8/3.7/3.6/3.5 Flash and 3.5 Flash-Lite have genuine free API
+  tiers. Free Google API data may be used to improve Google products; use only
+  for public/non-confidential research.
+- **WanderGround rule:** private captures use Space Bunny or another verified
+  zero-retention route; free data-collecting aliases are for non-sensitive work.
+- The Zen `/models` endpoint is not a capacity contract. Use
+  `opencode models <provider> --verbose --refresh` and record observations with
+  date, node, and evidence class.
 
 ### 10.5 sqlite-vec — corrected usage (definitive)
 - `vec0` defaults to **L2 distance**; create with `distance_metric=cosine` for cosine KNN

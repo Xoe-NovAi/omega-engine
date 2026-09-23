@@ -182,8 +182,8 @@ superseded_by: UUID of replacement
 - **Explicit-publish gate** — no cross-node egress without human approval
 - **Local inference = CPU-only** — i7-13620H, AllowedCPUs=0-11, THREADS=8 → 14.4 t/s
 - **MAX_LOADED_MODELS=1** — 16GB single-channel discipline
-- **Deep synthesis → OpenCode Zen** (Big Pickle 1M ctx, free tiers collect data, paid = zero-retention)
-- **Privacy tier hard rule** — free Zen tiers collect data; private work = paid zero-retention only
+- **Deep synthesis → OpenCode Zen / Gemini API** — use stable free aliases such as `big-pickle` and `space-bunny-free`; never hardcode their mutable context/output limits. Gemini 3.8 Flash is the latest confirmed free Google API model.
+- **Privacy tier hard rule** — Space Bunny is the current free zero-retention exception; Big Pickle/MiMo/Ling/NVIDIA/Muse contributor free tiers carry training or retention caveats; Google free API data may improve Google products.
 - **Roadmap-first standing rule** — no idea enters code without ROADMAP status first
 
 ---

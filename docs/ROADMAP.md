@@ -416,6 +416,33 @@ without trial by fire.
   `docs/federation/NODE0_ACTION_BRIEFING_FAST_DOWNLOAD_LAYER.md`;
   `docs/research/MODEL_FETCH_DEEP_DIVE.md`.
 
+### P3.3a.5 — OpenCode hosted-free foundation + dynamic-model safety (QUEUED 2026-09-23)
+- **Why**: stealth aliases rotate checkpoints and mutable limits in place. Node 1
+  has observed Big Pickle at 1M while Node 0/registry exposure behaves like 200K.
+  Hardcoding an alias's context is therefore invalid even when locally verified.
+  The current global config also contains pass-through-only agent keys and a
+  task allowlist whose final `*: deny` overrides all prior allows.
+- **Research locked**: `docs/OPENCODE_FOUNDATION.md` (first-party Zen/Go/Google
+  sources, Models.dev refresh evidence, privacy classes, v1 compaction source
+  semantics, schema-current agent/permission rules).
+- **Done when**:
+  1. Global config selects stable alias IDs without `provider.*.models.*.limit`
+     overrides for Big Pickle/Space Bunny or other rotating aliases.
+  2. `researcher_humboldt` uses `prompt: {file:...}`; invalid
+     `system_prompt`/`inherit_context`/`allow_background_execution` fields are
+     removed from active config.
+  3. Task allowlists are broad-first/specific-last and contain only authorized
+     agents.
+  4. Unsupported active MCP keys (including remote `max_retries`) are removed.
+  5. `subagent_depth: 1` unless a measured workflow proves nesting necessary.
+  6. v1 compaction uses adaptive defaults plus intentional `prune: true`; no
+     rotating-model context number is hardcoded.
+  7. `opencode debug config` plus provider refresh commands pass; restart and
+     verify Big Pickle, Space Bunny, Gemini 3.8, and Gemini 3.5 Flash-Lite paths.
+- **Status**: 📋 **QUEUED** — research and doctrine complete; active config
+  migration intentionally deferred until the next implementation window. Local
+  model routing remains a later phase.
+
 ### P3.3b — OMER M1: Schema & Validation
 - Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
   v1.0 (from `docs/OMER_FOUNDATION.md` §2.1); validation rules for evidence
