@@ -121,6 +121,8 @@ from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 
 
 # Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback + Tailscale mesh with all ports
+# FED-HANDOFF-ANTIGRAVITY-20260920: Machine renamed omega-hub → n0; n0 entries added to unblock
+# Node 1 MCP access (421 Misdirected Request). omega-hub entries retained for backward compat.
 _transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
@@ -130,6 +132,10 @@ _transport_security = TransportSecuritySettings(
         "[::1]", "[::1]:*",
         # Tailscale L2 federation (C6 v1.1 / L2_ACCEPTANCE.md FED-L2-001)
         "100.123.51.67", "100.123.51.67:*",
+        # n0 — current hostname (renamed from omega-hub 2026-09-19)
+        "n0", "n0:*",
+        "n0.tail51f14a.ts.net", "n0.tail51f14a.ts.net:*",
+        # omega-hub — legacy hostname (retained for backward compat with older clients)
         "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",
         "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
     ],
@@ -138,6 +144,10 @@ _transport_security = TransportSecuritySettings(
         "http://localhost:*",
         "http://127.0.0.1:*",
         "http://100.123.51.67:*",
+        # n0 origins
+        "http://n0:*",
+        "http://n0.tail51f14a.ts.net:*",
+        # omega-hub origins (legacy)
         "http://omega-hub.tail51f14a.ts.net:*",
         "http://*.tail51f14a.ts.net:*",
     ],
@@ -165,6 +175,20 @@ _sovereign_reader = SovereignReader(
 # [P1b] All MCP tool definitions moved to mcp_servers.omega_hub.tools
 # They register with the mcp instance via side-effect import.
 from mcp_servers.omega_hub import hub_tools as tools  # noqa: F401
+
+# ── Tool Surface Curation (2026-09-22) ────────────────────────────────
+# Remove deprecated/confusing tools so the exposed surface stays
+# temple-grade. Removed tools are filtered from list_tools and cannot
+# be called (mcp SDK FastMCP.remove_tool).
+#
+# library_search: legacy hybrid-search name, superseded by
+#   library_fts_search (local FTS5) + library_web_search (web). Its name
+#   misleadingly suggested local search while hitting the web pipeline.
+try:
+    mcp.remove_tool("library_search")
+    logger.info("Tool surface curation: removed deprecated 'library_search'")
+except Exception as e:  # pragma: no cover — defensive, must never block boot
+    logger.warning("Tool surface curation failed (non-fatal): %s", e)
 
 
 def __getattr__(name: str):

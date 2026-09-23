@@ -3584,7 +3584,7 @@ async def library_web_search(query: str, domain: str = "", limit: int = 20) -> s
 Returns:
         JSON string containing the search results and hit count.
     """
-    _deprecated("library_search", "library_web_search (for web) or library_fts_search (for local)")
+    _deprecated("library_web_search", "library_fts_search (for local) or sovereign_search (for web)")
     _require_service()
     
     if not query.strip():

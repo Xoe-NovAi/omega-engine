@@ -78,16 +78,52 @@ def _peer_is_direct(peer: dict[str, Any]) -> bool:
     - ``CurAddr`` is the endpoint in use. Direct endpoints are IP:port
       pairs (LAN or public); DERP relay addresses contain ``derp`` or a
       relay hostname.
+
+    Caveat (fixed 2026-09-22): ``tailscale status --json`` returns an
+    empty ``CurAddr`` for IDLE peers even when a direct path exists. The
+    old logic treated empty CurAddr as "not direct", which misreported
+    healthy LAN peers as DERP-relayed. When the JSON is ambiguous we now
+    probe with ``tailscale ping`` to resolve the actual path.
     """
     cur_addr = peer.get("CurAddr") or ""
     peer_relay = peer.get("PeerRelay") or ""
     if peer_relay:
         return False
-    if not cur_addr:
+    if cur_addr:
+        if "derp" in cur_addr.lower() or "tailscale.com" in cur_addr.lower():
+            return False
+        return True
+    # Ambiguous: idle peer with no CurAddr. Probe live path.
+    ips = peer.get("TailscaleIPs") or []
+    if not ips:
         return False
-    if "derp" in cur_addr.lower() or "tailscale.com" in cur_addr.lower():
+    return _probe_peer_direct(str(ips[0]))
+
+
+def _probe_peer_direct(ip: str) -> bool:
+    """Probe a peer with `tailscale ping` to resolve direct vs relayed path.
+
+    Parses the human-readable output:
+      "pong from n1 (100.89.40.17) via 192.168.10.174:41641 in 104ms"  → direct
+      "pong from n1 (100.89.40.17) via DERP(mia) in 242ms"             → relayed
+    """
+    try:
+        result = subprocess.run(
+            ["tailscale", "ping", "--c", "1", "--timeout", "2s", ip],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        output = (result.stdout or "") + (result.stderr or "")
+        lowered = output.lower()
+        if "via derp" in lowered or "via relay" in lowered or "relay" in lowered:
+            return False
+        if "pong" in lowered and "via" in lowered:
+            return True
         return False
-    return True
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
 
 
 def _parse_peers(status: dict[str, Any]) -> list[dict[str, Any]]:
