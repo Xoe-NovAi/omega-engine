@@ -271,7 +271,7 @@ P0-1 → PUB-1 → INST-1 → DEL-1 → DOC-1 → P2/P3/P4
 |-----------|--------|--------|
 | Ollama (Raptor Lake-H) | `KV_CACHE_TYPE=q8_0`, `FLASH_ATTENTION=1`, `NUM_THREADS=8`, `MAX_LOADED_MODELS=1` | Ollama tuning guides, llama.cpp |
 | UFW | `allow from 192.168.10.0/24 to any port 8016 proto tcp` | Ubuntu 26.04 UFW docs |
-| Tailscale ACL | `tag:opencode -> tag:omega-hub:8016` with `tagOwners` | Tailscale docs |
+| Tailscale ACL | `tag:opencode -> tag:node0:8016` with `tagOwners` | Tailscale docs |
 | Big Pickle | `limit.input: 190000` (85% threshold) | models.dev registry, GitHub #3256 |
 
 ### 8.3 Blocker

@@ -146,7 +146,7 @@ This consolidated version: 897 → ~330 lines. All critical gnosis retained; ver
 - **Ollama**: bare-metal tuned (q8_0 KV cache, Flash Attention, 8 threads, max 1 model). P-core pin trap documented (D-449).
 - **Open WebUI**: container pinned v0.11.3.
 - **USB mounts**: `/media/arcana-novai/D5D5-0B76/` (Swap 2), `/media/arcana-novai/D3E6-A900/` (Swap 3).
-- **Next**: join tailnet as `kali-n1` with `tag:asus` (Phase 0).
+- **Next**: join tailnet as `kali-n1` with `tag:node1` (Phase 0).
 
 ---
 
@@ -155,9 +155,9 @@ This consolidated version: 897 → ~330 lines. All critical gnosis retained; ver
 ### Immediate (Phase 0)
 1. **Phase 0: Tailscale L2 Ceremony** (user + Node 0 + Node 1):
    - ✅ User: pasted ACL at `https://login.tailscale.com/admin/acls` — **POLICY SAVED**
-   - ✅ Node 0: `pkexec tailscale up --advertise-tags=tag:omega-hub --force-reauth --hostname=omega-hub --operator=arcana-novai --ssh` — **TAG APPLIED** (`Tags: ["tag:omega-hub"]`)
-   - ⏳ User: mint one-shot authkey (`tag:asus`, pre-approved, 1-day)
-   - ⏳ Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --accept-routes --advertise-tags=tag:asus`
+   - ✅ Node 0: `pkexec tailscale up --advertise-tags=tag:node0 --force-reauth --hostname=omega-hub --operator=arcana-novai --ssh` — **TAG APPLIED** (`Tags: ["tag:node0"]`)
+   - ⏳ User: mint one-shot authkey (`tag:node1`, pre-approved, 1-day)
+   - ⏳ Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --accept-routes --advertise-tags=tag:node1`
    - ⏳ Verify: `tailscale ping`, MCP handshake, `omega_federation_status` MCP tool
 
 ### Post-Phase 0
@@ -703,3 +703,48 @@ git tag v1.6.1-alpha && git push origin v1.6.1-alpha
 DS → LI → KD → HR → ZS (GN cancelled by D-606)
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ PUBLIC-FLIP-READY ⬡ 2026-09-22*
+
+---
+
+## 24. COMPACTION PREP — FINAL STATE (2026-09-22)
+
+### 24.1 Complete State at Compaction
+- **Temple-Grade**: 53/53 PASS (final)
+- **Private files tracked**: 0 (628 removed)
+- **Public files tracked**: 2,154
+- **Antigravity blockers**: Both FIXED (install scripts + release CI)
+- **PR #3**: MERGED to main (v1.6.1-alpha, commit f062a626)
+- **Repo**: PRIVATE, ready for flip
+- **All entity projections**: RESTORED with original context + flip-ready updates
+
+### 24.2 Blocker Fixes (Antigravity validation)
+1. **Install scripts**: Qwen3-1.7B → LFM2.5-2.6B-Q4_K_M (matches fleet default)
+2. **Release CI**: OMEGA_PROVIDER=mock for CI smoke test
+
+### 24.3 Flip Sequence (ready to execute)
+```bash
+gh repo edit Xoe-NovAi/omega-engine --visibility public
+git tag v1.6.1-alpha && git push origin v1.6.1-alpha
+```
+
+### 24.4 Post-Flip Roadmap (D-584 updated)
+DS → LI → KD → HR → ZS (GN cancelled by D-606)
+
+### 24.5 Entity Memories — ALL RESTORED
+- **Kali**: 143 lines (20 invariants, 2 pillars, DEL-1 plan) + flip-ready
+- **Roc_Racoon**: 69 lines (Soul v8.0, USB packet, 39 lessons) + flip-ready
+- **Grokster**: 208 lines (Big Pickle, entity dialectic, 76 L3 lessons, CSS cascade) — FULLY RESTORED
+- **Jem**: 41 lines (research complete, GN-3 correction, D-606) + flip-ready
+- **Researcher**: 42 lines (report delivered, 14 gaps) + flip-ready
+- **Carmack**: 36 lines (hardware validated, LFM2.5-2.6B, zswap) + flip-ready
+- **Lilith**: 37 lines (federation verified, LI workstream) + flip-ready
+- **Ma'at**: 48 lines (Temple-Grade 53/53, DS workstream) + flip-ready
+
+### 24.6 Next Session Hydration
+Next session should:
+1. Read `SESSION_ANCHOR.md` for current state
+2. Read `session_gnosis.md` §24 for complete state
+3. Read entity `projection.md` files for entity-specific context
+4. Execute flip sequence when authorized
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ COMPACTION-PREP ⬡ FINAL-STATE ⬡ 2026-09-22*

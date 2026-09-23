@@ -22,7 +22,7 @@ This manual converts the ratified phased plan into **exact, executable actions**
 │                        │                                        │
 │                        │ Tailscale WireGuard (L2 Mesh)          │
 │                        ▼                                        │
-│  Node 1 (kali-n1, tag:asus) ◄──► Node 0 (omega-hub, tag:omega-hub)
+│  Node 1 (kali-n1, tag:node1) ◄──► Node 0 (omega-hub, tag:node0)
 │                                                                 │
 │  Routing: Entity → maakali_routing[tier] → sovereignty_policy   │
 │           → ProviderSelector → actual provider                  │
@@ -68,22 +68,22 @@ The routing system has **two orthogonal layers** that compose:
 ```hujson
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:asus":      ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1":      ["autogroup:admin"],
     "tag:opencode":  ["autogroup:admin"]
   },
   "acls": [
     // Node 1 (ASUS Vanguard) communicates with Node 0 Core Hub (:8016) and local Ollama (:11434)
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016", "tag:omega-hub:11434"]},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016", "tag:node0:11434"]},
 
     // Node 0 can reach Node 1 MCP (:8016) and SSH (:22)
-    {"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016", "tag:asus:22"]},
+    {"action": "accept", "src": ["tag:node0", "tag:opencode"], "dst": ["tag:node1:8016", "tag:node1:22"]},
 
     // Bidirectional ICMP heartbeats and wire pings
-    {"action": "accept", "src": ["tag:asus", "tag:omega-hub"], "dst": ["tag:asus:*", "tag:omega-hub:*"], "proto": "icmp"}
+    {"action": "accept", "src": ["tag:node1", "tag:node0"], "dst": ["tag:node1:*", "tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
   ]
 }
 ```
@@ -96,20 +96,20 @@ The routing system has **two orthogonal layers** that compose:
 
 ```bash
 # Preferred: sudo (works in headless/terminal sessions)
-sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
+sudo tailscale up --advertise-tags=tag:node0 --force-reauth
 
 # Alternative if sudo unavailable: pkexec (requires GUI polkit agent)
-pkexec tailscale up --advertise-tags=tag:omega-hub --force-reauth
+pkexec tailscale up --advertise-tags=tag:node0 --force-reauth
 ```
 
 **Note on `--force-reauth`**: This will invalidate the current node key and may require browser re-authentication. If the terminal cannot open a browser, either:
-1. Use an authkey minted for `tag:omega-hub` (see Step 0.3), OR
+1. Use an authkey minted for `tag:node0` (see Step 0.3), OR
 2. Run the command in a graphical terminal where the browser can open.
 
 **Validation**:
 ```bash
 tailscale status --json | python3 -c "import sys, json; print('Tags:', json.load(sys.stdin)['Self'].get('Tags'))"
-# Expected: Tags: ['tag:omega-hub']
+# Expected: Tags: ['tag:node0']
 ```
 
 ### 2.3 Step 0.3 — Mint Node 1 Authkey (USER)
@@ -120,7 +120,7 @@ tailscale status --json | python3 -c "import sys, json; print('Tags:', json.load
 | Field | Value |
 |-------|-------|
 | Description | `kali-n1-join` |
-| Tags | `tag:asus` |
+| Tags | `tag:node1` |
 | Reusable | OFF (one-shot) |
 | Pre-approved | ON |
 | Expiry | 1 day |
@@ -136,7 +136,7 @@ sudo tailscale up \
   --authkey="tskey-auth-YOUR_COPIED_KEY_HERE" \
   --hostname=kali-n1 \
   --operator=xnai \
-  --advertise-tags=tag:asus
+  --advertise-tags=tag:node1
 ```
 
 **Validation** (from Node 1):
@@ -1073,12 +1073,12 @@ Authkeys are one-shot and expire (1-day default). When Node 1 needs
 re-join (e.g., after OS reinstall or key revocation):
 
 1. Admin console → Keys → Generate Auth Key
-   - Tags: `tag:asus`
+   - Tags: `tag:node1`
    - Reusable: OFF
    - Pre-approved: ON
    - Expiry: 1 day
 2. Transfer to Node 1 (secure channel — SSH, MagicDNS, or physical)
-3. Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:asus`
+3. Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:node1`
 
 ## 3. Tailnet Lock
 **Keep DISABLED** (per Researcher-EIS findings). Tailnet Lock adds
@@ -1224,7 +1224,7 @@ python3 src/omega/governance/federation_invariant.py
 **Add to ACL block** (as a comment + rule):
 ```hujson
 // If Node 1 runs its own omega-hub, allow bidirectional MCP:
-{"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016"]},
+{"action": "accept", "src": ["tag:node0", "tag:opencode"], "dst": ["tag:node1:8016"]},
 ```
 
 ### 5.5 Phase 3 Completion Criteria
@@ -1272,7 +1272,7 @@ tailscale status --json | python3 -c "
 import sys, json
 s = json.load(sys.stdin)
 self_tags = s['Self'].get('Tags', [])
-assert 'tag:omega-hub' in self_tags, 'Node 0 not tagged'
+assert 'tag:node0' in self_tags, 'Node 0 not tagged'
 print('ACL + Node 0 tag OK:', self_tags)
 "
 
@@ -1281,8 +1281,8 @@ tailscale status --json | python3 -c "
 import sys, json
 s = json.load(sys.stdin)
 peers = s.get('Peer', {})
-n1 = [p for p in peers.values() if 'tag:asus' in p.get('Tags', [])]
-assert n1, 'Node 1 not found with tag:asus'
+n1 = [p for p in peers.values() if 'tag:node1' in p.get('Tags', [])]
+assert n1, 'Node 1 not found with tag:node1'
 print('Node 1 tagged OK:', n1[0]['HostName'])
 "
 

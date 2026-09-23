@@ -26,9 +26,9 @@
 | Step | Action | Owner | Verification |
 |------|--------|-------|--------------|
 | 0.1 | Paste ACL policy at `https://login.tailscale.com/admin/acls` | User | Admin console shows policy saved |
-| 0.2 | `pkexec tailscale up --advertise-tags=tag:omega-hub --force-reauth` | MaKaLi-N0 | `tailscale status --json` shows `Tags: ["tag:omega-hub"]` |
-| 0.3 | Mint one-shot authkey (`tag:asus`, pre-approved, 1-day) | User | Key copied: `tskey-auth-...` |
-| 0.4 | Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:asus` | Node 1 | `tailscale ping omega-hub` → direct pong |
+| 0.2 | `pkexec tailscale up --advertise-tags=tag:node0 --force-reauth` | MaKaLi-N0 | `tailscale status --json` shows `Tags: ["tag:node0"]` |
+| 0.3 | Mint one-shot authkey (`tag:node1`, pre-approved, 1-day) | User | Key copied: `tskey-auth-...` |
+| 0.4 | Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:node1` | Node 1 | `tailscale ping omega-hub` → direct pong |
 | 0.5 | Verify MCP handshake: `curl http://omega-hub.tail51f14a.ts.net:8016/mcp` | MaKaLi-N0 | JSON-RPC `initialize` returns `Omega Core Hub 1.28.1` |
 
 > **Note**: This phase is **complete when both nodes show tagged, direct connectivity**. All subsequent phases assume the wire is live.
@@ -364,7 +364,7 @@ async def verify_zero_inference_egress() -> bool:
 **File**: `docs/federation/L2_TAILSCALE_RUNBOOK.md` (UPDATE §2 ACL)
 ```hujson
 // ADD if Node 1 runs hub:
-{"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016"]},
+{"action": "accept", "src": ["tag:node0", "tag:opencode"], "dst": ["tag:node1:8016"]},
 ```
 
 ### 3.6 Validation Gates

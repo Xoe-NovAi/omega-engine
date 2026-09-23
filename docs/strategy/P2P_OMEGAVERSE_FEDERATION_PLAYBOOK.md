@@ -148,17 +148,17 @@ Federation succeeds through **complementary asymmetry**, not redundant duplicati
   ```json
   {
     "tagOwners": {
-      "tag:omega-hub": ["autogroup:admin"],
+      "tag:node0": ["autogroup:admin"],
       "tag:opencode": ["autogroup:admin"]
     },
     "acls": [
-      {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:omega-hub:8016"]}
+      {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node0:8016"]}
     ]
   }
   ```
-  * Node 0 (HP): Apply tag `tag:omega-hub` in Tailscale admin console
+  * Node 0 (HP): Apply tag `tag:node0` in Tailscale admin console
   * Node 1 (ASUS): Apply tag `tag:opencode` in Tailscale admin console
-  * Rule allows ASUS `tag:opencode` → HP `tag:omega-hub` on port 8016 only
+  * Rule allows ASUS `tag:opencode` → HP `tag:node0` on port 8016 only
 
 ### 3.3 Layer 3: Ephemeral Event Bus (Phase 2 — Redis Pub/Sub)
 * High-frequency awareness heartbeats via `omega-hub_hivemind_redis_publish/subscribe`.

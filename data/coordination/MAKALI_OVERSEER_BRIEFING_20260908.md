@@ -180,7 +180,7 @@ The Architect conducted intensive local setup and testing on Node 1:
 | **D-445** | `omega-hub` LAN binding with DNS-rebinding security allowlist | Opens port 8016 to local Wi-Fi while neutralizing host spoofing. Wildcard port patterns (`host:*`) mandatory for 0.0.0.0 bind. |
 | **D-446** | Zero-dependency physical USB bootstrap package generated | Enables instant 3-minute onboarding for fresh Node 1 install. |
 | **D-447** | UFW rule restricted to LAN subnet | `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp` — restricts to LAN only, not world. |
-| **D-448** | Tailscale ACL exact syntax defined | Tag-based: `tag:opencode -> tag:omega-hub:8016` with `tagOwners` for admin control. |
+| **D-448** | Tailscale ACL exact syntax defined | Tag-based: `tag:opencode -> tag:node0:8016` with `tagOwners` for admin control. |
 | **D-449** | Ollama Raptor Lake-H optimal config verified | `KV_CACHE_TYPE=q8_0`, `FLASH_ATTENTION=1`, `NUM_THREADS=8`, `MAX_LOADED_MODELS=1`. P-core pin trap documented. |
 | **D-450** | Big Pickle 1M ceiling declared dangerous | Official registry: 200K context / 160K input. 950K input causes API hard rejects at >200K. |
 
@@ -211,9 +211,9 @@ Per your strategic alignment (D-440 / D-441), the sequencing is tightly locked:
    ```
 6. Runs `make probe-hardware` to generate `config/hardware_profile.yaml` (Raptor Lake-H profile).
 7. **Tailscale Phase 1** (when roaming): Install on both nodes, join same tailnet, apply tags:
-   * HP: `tag:omega-hub`
+   * HP: `tag:node0`
    * ASUS: `tag:opencode`
-   * ACL: `{"action": "accept", "src": ["tag:opencode"], "dst": ["tag:omega-hub:8016"]}`
+   * ACL: `{"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node0:8016"]}`
 
 ### Action 2: Branch Sync & Push (Node 0)
 1. Synchronize `release/debut-v1.6.0` with `main` to pull in commit `45398ecd` (`omega.library` core restore).

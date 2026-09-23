@@ -141,7 +141,7 @@
 - **Entity→Tier RATIFIED**: user override — maakali_routing maps entities to Synergy tiers (WHO composes with HOW)
 
 ### Next Sprint: Phase 0 L2 Wire Ceremony (ALL CODE READY)
-- **Immediate**: ACL policy save (user) → Node 0 re-tag (`sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth`) → authkey mint (user) → Node 1 join
+- **Immediate**: ACL policy save (user) → Node 0 re-tag (`sudo tailscale up --advertise-tags=tag:node0 --force-reauth`) → authkey mint (user) → Node 1 join
 - **After wire**: Phase 4 (temple-grade + ceremony replay), DEL-1 PR1, bilateral audit
 
 ---

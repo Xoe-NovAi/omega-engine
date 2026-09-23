@@ -187,14 +187,21 @@ ls -la /mnt/test-node1/
 
 ### FIX 5: Apply Tailscale tags + ACL (joint)
 
+**CANONICAL TAG NAMING (decreed 2026-09-22):**
+- `tag:node0` → Node 0 (n0) — MCP hub :8016
+- `tag:node1` → Node 1 (n1/ASUS)
+- `tag:opencode` → OpenCode agents
+
+**DEPRECATED (never use again):** `tag:omega-hub` → `tag:node0`; `tag:asus` → `tag:node1`
+
 Node 0 has prepared the ACL policy at `data/federation/usb-payload/tailscale/ACL_POLICY_20260922.hujson`.
 
 ```bash
-# On Node 1 — tag yourself:
-sudo tailscale set --tag=tag:asus
+# On Node 1 — tag yourself (DROP any legacy tag:asus):
+sudo tailscale set --tag=tag:node1
 
 # On Node 0 — tag the hub (Node 0 action, already planned):
-sudo tailscale set --tag=tag:omega-hub
+sudo tailscale set --tag=tag:node0
 ```
 
 **Then apply the ACL in the Tailscale admin console** (https://login.tailscale.com/admin/acls) — paste the HuJSON from the USB payload.
