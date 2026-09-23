@@ -1,4 +1,15 @@
-# Node 1 → Node 0 Federation Sync: README for Makali
+# Node 1 → Node 0 Federation Sync: README for Makali — **SUPERSEDED**
+
+> **This document is a historical artifact.** The original plan was a USB-based air-gapped handoff ceremony. The federation was instead established directly over the Tailscale L2 mesh (2026-09-21). The canonical federation state is now documented in:
+> - `docs/federation/ACL_POLICY.md` (FED-ACL-001 v1.2) — authoritative HuJSON policy
+> - `docs/federation/README.md` — federation master spec
+> - `docs/federation/NODE0_ACTION_BRIEFING_NFS_L2.md` — live verified state (Phase B complete)
+> - `docs/federation/L2_JOIN_GUIDE.md` — ceremony record (completed)
+> - `docs/federation/NFS_OVER_TAILSCALE_PLAN.md` — NFS implementation (IMPLEMENTED & VERIFIED)
+
+---
+
+*Original content preserved below for historical context.*
 
 **From:** kali (Node 1 / ASUS ExpertBook P1503CVA)
 **To:** makali (Node 0 / HP Pavilion)

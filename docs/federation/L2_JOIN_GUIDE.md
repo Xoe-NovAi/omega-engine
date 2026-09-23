@@ -1,33 +1,31 @@
-# 🔗 L2 Wire Up — Node 1 Sovereign Join, Ratified One-Shot
-**Doc ID**: `FED-L2JOIN-001` | **Status**: RATIFIED FLOOR, awaits Node 0's hand  
-**Scope**: The single ceremony that brings the ASUS into the omega tailnet mesh (L2 Tailscale) — the canvas our own ratified `docs/federation/L2_ACCEPTANCE.md` already endorsed, Node 0's intake ledger already ships its side of the ACL, and the human ambassador has ported the payload over USB.
+# 🔗 L2 Wire Up — Node 1 Sovereign Join, **COMPLETED 2026-09-21**
+**Doc ID**: `FED-L2JOIN-001` | **Status**: ✅ **COMPLETE — BOTH NODES TAGGED, MESH LIVE**  
+**Scope**: Historical ceremony record — the canonical HuJSON blocks below are the **exact Phase A policy that was pasted and verified** (2026-09-21). For current architecture, see `docs/federation/ACL_POLICY.md` (FED-ACL-001 v1.2) and `docs/federation/README.md`.
 
 **Research Source**: `docs/TAILSCALE_L2_FEDERATION_RESEARCH_20260915.md` (7 areas, 654 lines, Tier-1 Tailscale docs)
 
 ---
 
-## 1. What is already true (from the sovereign surface, Node 1 side)
+## 1. What is now true (2026-09-21 verified)
 
 | Surface | State |
 |---------|-------|
 | `tailscaled` systemd unit | ✅ **ACTIVE** (`systemctl is-active tailscaled`) |
 | tailscale CLI | ✅ installed (v1.102.4, official Go binary) |
 | Node 1 MagicDNS name | `xnai-n1-asus.tail51f14a.ts.net` (ratified hostname) |
-| SSH surface | ✅ `tailscale set --ssh` FLIPPED (Node 1's operator can accept SSH from mesh) |
+| SSH surface | ✅ `tailscale set --ssh` FLIPPED (Node 1 accepts SSH from mesh) |
 | Hub reachability | ✅ `192.168.11.252:8016` LAN reachable; MCP handshake verified during intake (2 live tool probes, `get_system_stats` + `get_omega_metrics`) |
-| Tailscale overlay | ⏳ the ONE remaining step — Node 0 mints the mesh authkey for Node 1 |
+| **Tailscale L2 mesh** | ✅ **LIVE** — both nodes tagged (`tag:node0` / `tag:node1`), Phase B default-deny policy active, NFS/MCP/SSH/ICMP all verified |
 
 ---
 
-## 2. The ONE Remaining Ceremony (exact sequence)
+## 2. Ceremony Record — Completed 2026-09-21
 
-### Phase 1: Node 0 Admin Console — ACL Policy + Re-Tag
+The following ceremony steps were executed and verified. The HuJSON blocks below are the **exact Phase A policy that was pasted into the Admin Console** (with the two schema fixes: allow-all `src:["*"] dst:["*:*"]` instead of `autogroup:member` in dst; SSH `src` tags require `action: "accept"`). Phase B was then pasted and all 9 verification checks passed.
 
-**Node 0 MUST re-tag before minting Node 1's authkey**. Current state: Node 0 joined as **user device** (no tags). The ACL with `tagOwners` must be live first.
+### Phase 1: Node 0 Admin Console — ACL Policy + Re-Tag (COMPLETED)
 
-**Admin Console → Access Controls → Edit Policy → Paste this HuJSON**
-**(PHASE A — DO NOT remove the allow-all rule; the tag-only Phase B belongs in
-`docs/federation/ACL_POLICY.md` and is ONLY for post-migration):**
+**Node 0 was re-tagged with `tag:node0`**, then the Phase A policy below was pasted:
 
 ```hujson
 {
