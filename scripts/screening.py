@@ -251,7 +251,7 @@ def log(msg):
     print(msg, flush=True)
 
 
-def generate(host, model, prompt, temperature=0.1, num_ctx=4096, timeout=REQUEST_TIMEOUT):
+def generate(host, model, prompt, temperature=0.1, num_ctx=4096, num_predict=512, timeout=REQUEST_TIMEOUT):
     data = json.dumps({
         "model": model,
         "prompt": prompt,
@@ -259,6 +259,7 @@ def generate(host, model, prompt, temperature=0.1, num_ctx=4096, timeout=REQUEST
         "options": {
             "temperature": temperature,
             "num_ctx": num_ctx,
+            "num_predict": num_predict,
             "num_thread": 8,
             "num_gpu": 0
         }
@@ -303,6 +304,7 @@ def save_results(output_file, model, results):
     data = {
         "model": model,
         "protocol": "GSCA abbreviated screening",
+        "num_predict": num_predict if "num_predict" in dir() else 512,
         "prompts": SCREENING_PROMPTS,
         "temperatures": TEMPERATURES,
         "contexts": CONTEXTS,
@@ -318,7 +320,11 @@ def main():
     ap = argparse.ArgumentParser(description="Abbreviated screening per GSCA protocol")
     ap.add_argument("--model", required=True)
     ap.add_argument("--host", default="http://localhost:11434")
+    ap.add_argument("--num-predict", type=int, default=512,
+                    help="max output tokens per run (default 512; bounds reasoning-model"
+                         " chains that never emit EOS — e.g. Qwen3 think loops)")
     args = ap.parse_args()
+    num_predict = args.num_predict
 
     log(f"=== ABBREVIATED SCREENING: {args.model} ===")
     log(f"Prompts: {len(SCREENING_PROMPTS)} | Temps: {TEMPERATURES} | Contexts: {CONTEXTS}")
@@ -352,7 +358,7 @@ def main():
                 collector.start()
                 t0 = time.time()
                 try:
-                    resp = generate(args.host, args.model, prompt, temperature=temp, num_ctx=ctx)
+                    resp = generate(args.host, args.model, prompt, temperature=temp, num_ctx=ctx, num_predict=num_predict)
                 except Exception as exc:
                     dt = time.time() - t0
                     telemetry = collector.stop()
