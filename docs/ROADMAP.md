@@ -391,6 +391,25 @@ without trial by fire.
 - **Evidence**: GSCA abbreviated screening (18 runs/model), provider benchmarks (HumanEval 88.4%, SWE-Bench ~58%)
 - **Status**: ✅ **DONE** — both promoted to `active`; 7B = daily driver, 14B = complex tasks
 
+### P3.3a.3 — Gemma 4 12B QAT evaluation (ACTIVE 2026-09-23)
+- **Why**: official Google QAT q4_0 (6.98GB) — QAT beats PTQ at low bits; 12B
+  Unified encoder-free arch (512-token sliding window → small KV, fits 16GB);
+  Ollama 0.33.3 supports gemma4 (official `gemma4` library + community QAT upload exist).
+- **Done when**: sha256 verified → `ollama create` import probe green →
+  single 512-cap telemetry run recorded → capability verdict vs gemma-3-12b /
+  qwen2.5-coder-7b (speed, energy, quality) → model card filed.
+- **Status**: 🔄 **ACTIVE** — Xet download running under systemd unit
+  (`fetch-gemma4-qat-main`); mmproj landed + sha256 exact match.
+
+### P3.3a.4 — Fast model-fetch layer (DONE 2026-09-23)
+- **Why**: agent-harness shells reap child process groups on call end (`nohup`
+  proven dead at 68MB); flaky WiFi needs parallel transfer + resume.
+- **Done when**: reusable primitive exists + proven end-to-end + N0 briefed.
+- **Status**: ✅ **DONE** — `scripts/fetch_model.sh` (systemd-run --user +
+  Xet high-perf + 10GB chunk cache); proven via mmproj (sha256 exact);
+  `docs/federation/NODE0_ACTION_BRIEFING_FAST_DOWNLOAD_LAYER.md`;
+  `docs/research/MODEL_FETCH_DEEP_DIVE.md`.
+
 ### P3.3b — OMER M1: Schema & Validation
 - Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
   v1.0 (from `docs/OMER_FOUNDATION.md` §2.1); validation rules for evidence
