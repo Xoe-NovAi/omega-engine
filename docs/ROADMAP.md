@@ -548,7 +548,8 @@ Entity as guide (`docs/entities/LILITH_STRATEGY_FINAL.md` v2.0, locked 2026-09-2
 
 **Standing constraints**: `qwen3-embedding:0.6b truncate_dim=768` both nodes
 (RES-EMBED-001); standalone ONNX embedding server (no Ollama deadlock);
-`wing_lilith` + `wing_tarot` (NOT `wing_arcana`); soul.yaml WAD-portable;
+one wing per Entity + `wing_tarot` (NOT `wing_arcana`; FINAL per wing-topology
+session 2026-09-23); KG Entity IDs prefixed; soul.yaml WAD-portable;
 passwordless sudo KEPT for now (Sanctum UX designed for end users later);
 VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 
@@ -583,11 +584,15 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 - **Status**: `backlog`.
 
 ### P4.4 — Entity-vs-Card wing strategy session
-- **Why**: operator ruled Entities deserve room but 78 wings fragment the index;
-  needs volume/retrieval/sovereignty/cost tests, not guesses.
+- **Why**: operator ruled Entities deserve room but 78 wings risked index
+  fragmentation; needed volume/retrieval/sovereignty/cost tests, not guesses.
 - **Done when**: session runs; final wing topology recorded in
   `LILITH_STRATEGY_FINAL.md`; no Hecate/Nyx/Isis wings before it concludes.
-- **Status**: `backlog`.
+- **Status**: ✅ **DONE (2026-09-23)** — session ran against live Node 1
+  measurements (schema, query path, corpus, KG, dims). Verdict: **one wing per
+  Entity + `wing_tarot`**, KG ID prefixes, factory-owned creation. Antigravity's
+  fragmentation claim refuted for `sqlite_exact` (indexed metadata, zero-cost).
+  Hecate/Nyx/Isis wings unblocked for factory creation in P4.3.
 
 ### P4.5 — Spatial school (PARKED — xyz only)
 - **Why**: VR is lowest priority by operator directive; xyz prep helps now.
