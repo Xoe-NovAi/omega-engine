@@ -165,13 +165,20 @@ machine rules baked in (real disk default `/home/xnai/ollama-install/`,
 `HF_XET_HIGH_PERFORMANCE=1`, sha256 gate reminder). Agents must use this
 (or raw `systemd-run --user`) for every background download from now on.
 
-**Xet resume finding**: restarting an `hf download` mints a NEW `.incomplete`
-token (Xet signed-URL ETags rotate) and starts a fresh 0-byte partial — the
-old partial is orphaned. BUT: copying the old partial bytes onto the new
-token name before restart **resumes correctly** (file not truncated on open;
-`206 Partial Content` range requests in Xet log; growth continued from
-3.5GB). Fold this copy-resume trick into the engine fetcher for wedged
-transfers. (Aria2c `-c` resume does not apply to hf `.incomplete` files.)
+**Xet resume finding (CORRECTED 2026-09-23 — earlier copy-trick claim falsified)**:
+restarting an `hf download` mints a NEW `.incomplete` token (Xet signed-URL
+ETags rotate) and the new process downloads from 0% into the new file —
+copying old partial bytes onto the new token name does **NOT** resume (live
+test: copied 3.5GB → new process ignored it, minted a third token, downloaded
+fresh to 2.4GB). Per HF docs, `huggingface_hub` resumes via the **file cache**
+but `hf_xet` resumes via the **chunk cache** — and the chunk cache is
+**DISABLED by default** (hf_xet≥1.2.0). The real fix, now baked into
+`scripts/fetch_model.sh`: set **`HF_XET_CHUNK_CACHE_SIZE_BYTES=10737418240`**
+(10GB) so all future fetches are resumable + deduped. (Also useful:
+`HF_HUB_DISABLE_XET=1` forces plain-HTTP path for diagnostics;
+`HF_XET_RECONSTRUCT_WRITE_SEQUENTIALLY=1` for HDDs; `hf cache verify`
+checks local files against Hub checksums.) (Aria2c `-c` resume does not apply
+to hf `.incomplete` files.)
 
 **Secondary finding**: WiFi `wlo1` has `power_save: on`. On bursty transfers
 (Xet RAM-stage → flush cycles) this sharpens the troughs BTOP shows. For

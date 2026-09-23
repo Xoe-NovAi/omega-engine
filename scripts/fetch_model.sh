@@ -46,9 +46,14 @@ HF_BIN="$(dirname "$0")/../.venv/bin/hf"
 mkdir -p "$LOCAL_DIR"
 
 echo "[*] launching unit $UNIT (repo=$REPO file=$FILE dir=$LOCAL_DIR)"
+# HF_XET_CHUNK_CACHE_SIZE_BYTES: Xet's chunk cache is DISABLED by default
+# (hf_xet>=1.2.0) — without it, every process restart starts the download
+# from 0% (new .incomplete token; old partial orphaned). 10GB cache on real
+# disk makes all future fetches resumable + deduped. Proven 2026-09-23.
 systemd-run --user --unit="$UNIT" --collect \
     -p Description="model-fetch $REPO/$FILE" \
     env HF_XET_HIGH_PERFORMANCE=1 HF_HUB_DISABLE_TELEMETRY=1 \
+        HF_XET_CHUNK_CACHE_SIZE_BYTES=10737418240 \
     "$HF_BIN" download "$REPO" "$FILE" --local-dir "$LOCAL_DIR"
 
 echo "[+] running. watch: journalctl --user -u $UNIT -f"
