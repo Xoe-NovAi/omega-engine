@@ -748,3 +748,49 @@ Next session should:
 4. Execute flip sequence when authorized
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ NEMOTRON-3.5-LIGHTNING ⬡ COMPACTION-PREP ⬡ FINAL-STATE ⬡ 2026-09-22*
+
+---
+
+## 25. FEDERATION REMEDIATION + TOOL AUDIT (2026-09-22)
+
+### 25.1 Naming Convention — CANONICAL (decreed by Operator)
+- **tag:node0** → Node 0 (n0.tail51f14a.ts.net / 100.123.51.67)
+- **tag:node1** → Node 1 (n1.tail51f14a.ts.net / 100.89.40.17)
+- **DEPRECATED**: tag:omega-hub → tag:node0; tag:asus → tag:node1
+- Fixed across 22 docs + ACL_POLICY_20260922.hujson + N1_REMEDIATION_REPORT
+
+### 25.2 Federation Truth (verified via live probes)
+- Nodes ARE directly connected (LAN 192.168.10.0/24) — "DERP relay mia" was a stale-snapshot artifact
+- Fixed `_peer_is_direct()` in federation.py to live-probe idle peers via `tailscale ping`
+- Node 1 MCP server (kali-n1-mcp) is ALIVE on :8016 (both Tailscale + LAN)
+- Node 1 SSH: LAN works, Tailscale IP times out → sshd ListenAddress binding issue (Node 1 fix)
+- Node 1 opencode.json points at LAN IP → should use `n0.tail51f14a.ts.net:8016/mcp` (Node 1 fix)
+- `oracle_list_pillar_keepers` NOT registered on Node 0 → stale client cache on Node 1
+
+### 25.3 Node 0 Fixes Applied (committed 4bbb5462)
+1. Removed deprecated `library_search` tool (93→92)
+2. Fixed `_deprecated()` log in `library_web_search`
+3. Fixed `_peer_is_direct()` live-probe bug in federation.py
+4. Verified `hivemind_get_continuation` cold-store (2,873 sessions)
+5. NFSv4.2 export operational (mountd 20048, nfsd 2049, loopback verified)
+6. USB payload prepared: data/federation/usb-payload/ (ACL, patches, C6, redis, attestation)
+7. N1_REMEDIATION_REPORT_20260922.md written (5 fixes for Node 1)
+
+### 25.4 TOOL AUDIT — POST-COMPACTION EXECUTION REQUIRED
+- **File**: data/coordination/TOOL_AUDIT_20260922.md
+- **Current**: 92 tools exposed
+- **Target**: 55 (remove 37) or 40 (full consolidation)
+- **P0 (26)**: redundant — replaced by unified tools (github, hivemind_handoff, library_discovery, library_inbox, oracle_debug, system_stats)
+- **P1 (3)**: deprecated — search_extract, search_status, memory_search
+- **P2 (23)**: niche — 8 remove, 15 consolidate
+- **Mechanism**: `mcp.remove_tool(name)` in server.py after registration (proven with library_search)
+- **Caveat**: grep for external references before removing
+
+### 25.5 NEXT SESSION (post-compaction) PRIORITIES
+1. **Execute tool audit** — remove P0+P1 (29 tools) → 63; then P2 removals → 55
+2. Run temple-grade + verify tools/list count
+3. Deliver N1_REMEDIATION_REPORT + USB payload to Operator for Node 1
+4. Node 1 fixes: SSH ListenAddress, opencode.json MagicDNS URL, stale cache, NFS server
+5. P2 Federation Verification battery (after Node 1 fixes)
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ 2026-09-22 ⬡ FEDERATION-REMEDIATION-COMPLETE ⬡ COMPACTION-READY*
