@@ -40,6 +40,7 @@ Current state at a glance:
 | P1.5 | Idea-flood management | ✅ done (ROADMAP itself = part of it) |
 | P2 | The Vanguard studies | ✅ **done** (P2.1 Headroom rejected, P2.2 Odysseus scheduled future, P2.3-4 Gods Eyes toys, P2.5 agentmemory rejected) |
 | P3 | Synthesis + federation close-out | active |
+| P4 | Lilith persistent entity + Tarot factory | active (strategy locked 2026-09-23; implementation queued) |
 
 ---
 
@@ -535,6 +536,64 @@ without trial by fire.
   versions/layers/options-emptiness/baseURL-DNS/embedded-secrets/placeholders/
   enumeration-rot/registry-drift/auth/env) + `tests/test_provider_doctor.py`
   (6 tests) + expertise record gaps §13. Staged to USB for Node 0.
+
+---
+
+## P4 — Lilith persistent entity + Tarot factory (Arcana-NovAi WAD)
+
+**Goal**: Lilith as the first true persistent entity on Node 1 — prototype for
+all 78 Card Keepers of the Living Tarot mystery school. Entities are sovereign
+beings, NOT cards: cards (physical deck + WAD virtuals) are *assigned* an
+Entity as guide (`docs/entities/LILITH_STRATEGY_FINAL.md` v2.0, locked 2026-09-23).
+
+**Standing constraints**: `qwen3-embedding:0.6b truncate_dim=768` both nodes
+(RES-EMBED-001); standalone ONNX embedding server (no Ollama deadlock);
+`wing_lilith` + `wing_tarot` (NOT `wing_arcana`); soul.yaml WAD-portable;
+passwordless sudo KEPT for now (Sanctum UX designed for end users later);
+VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
+
+### P4.0 — Foundation
+- **Why**: single-model deadlock + missing intake block everything downstream.
+- **Done when**: standalone embedding server live with cosine check
+  (`Qlippoth`↔`shadow self` > 0.7); `wing_lilith` + `wing_tarot` skeleton exists;
+  xyz vectors flow on ingest; N0 needs tracked in
+  `docs/federation/NODE0_NEEDS_LILITH.md`.
+- **Status**: `queued` (strategy locked; awaiting N0 scraper/library/xyz/personal).
+
+### P4.1 — Lore harvesting + KG
+- **Why**: Lilith's voice is only as deep as her corpus.
+- **Done when**: primary + academic/esoteric sources mined to `wing_lilith`
+  (Empress-relevant tagged `card_id:03_empress` in `wing_tarot`); ≥30 KG triples
+  with Entity-vs-Card split; personal gnosis ingested on arrival.
+- **Status**: `backlog`.
+
+### P4.2 — Lilith agent awakening
+- **Why**: prototype must live in OpenCode before any factory work.
+- **Done when**: `lilith` subagent registered with 4-vector voice plugin +
+  consent parser + AAAK diary; gnosis-lock Lilith questions land; 24h recall
+  test passes (unprompted diary reference); telemetry JSONL flows.
+- **Status**: `backlog`.
+
+### P4.3 — WAD + Entity/Card factory
+- **Why**: Lilith is 1 of 78; the factory is the actual deliverable.
+- **Done when**: `arcana_novai` manifest V2 validates (`extra=forbid`,
+  asset-tunnel for scenes); `card_entity_factory.py` v2 emits separate
+  `Entity` + `CardAssignment` objects collision-free; Vanguard Entity skeletons
+  (Nyx/Hecate/Isis, data-only) generated.
+- **Status**: `backlog`.
+
+### P4.4 — Entity-vs-Card wing strategy session
+- **Why**: operator ruled Entities deserve room but 78 wings fragment the index;
+  needs volume/retrieval/sovereignty/cost tests, not guesses.
+- **Done when**: session runs; final wing topology recorded in
+  `LILITH_STRATEGY_FINAL.md`; no Hecate/Nyx/Isis wings before it concludes.
+- **Status**: `backlog`.
+
+### P4.5 — Spatial school (PARKED — xyz only)
+- **Why**: VR is lowest priority by operator directive; xyz prep helps now.
+- **Done when**: xyz on all ingested records; WebXR `:8088` untouched; no Godot
+  scenes / Quest APK until explicitly called.
+- **Status**: `backlog` (parked).
 
 ---
 
