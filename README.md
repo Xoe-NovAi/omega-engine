@@ -92,6 +92,7 @@ python3 ~/hivemind_first_contact.py
 | **[AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md)** | Agents | Node 1 ops awareness: gnosis-lock, /compact, quality gates |
 | **[GNOSIS_USAGE.md](docs/GNOSIS_USAGE.md)** | Operators | Gnosis Lock protocol deep-dive & exact commands |
 | **[WELL_SYSTEM.md](docs/WELL_SYSTEM.md)** | Everyone | The Well: operating-memory corpus, schema, auto-injection into system prompts |
+| **[CONTINUITY_KERNEL.md](docs/CONTINUITY_KERNEL.md)** | Engine developers | Portable semantic write-through kernel, WAD contract, and recovery acceptance test |
 | **[Federation Subsystem](docs/federation/README.md)** | Everyone | Dual-node P2P architecture, NFSv4.2, Tailscale WireGuard, Two-Phase ACLs |
 | **[ROADMAP.md](docs/ROADMAP.md)** | Everyone | Single ordered backlog: phases, vanguard tools, finish gates |
 | **[Model cards](docs/models/README.md)** | Researchers | Canonical model registry, evidence labels, and card contract |

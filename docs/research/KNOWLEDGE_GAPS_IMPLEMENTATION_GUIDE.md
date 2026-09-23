@@ -662,3 +662,88 @@ locally-built Modelfiles — risk is prospective, not realized). Open ROADMAP it
 | Antigravity | antigravity.google/docs/plans + /docs/models + /docs/cli/usage; botmonster.com (2026-07-31); discuss.ai.google.dev threads (2026-02→05); codeagentswarm.com plans (2026-09-01) |
 | CVE-2026-21869 | NVD; Red Hat bug 2427743; OpenCVE; GHSA-8947-pfff-2f3c (published 2026-01-05, affected <= 55d4206c8, patched >= c78fb90) |
 | GGUF overflow | OpenCVE llama.cpp list (b8146 boundary) |
+
+---
+
+## 15. Web Research Update — 2026-09-23 (P3.3a.6 Continuity Kernel)
+
+This update applies the current web evidence to the continuity-kernel gate. It
+does not declare the unrelated hardware, Node 0 intake, or ACL gaps complete.
+Those remain sequenced in §2–§7 and retain their own dependencies.
+
+### 15.1 Findings that change the implementation plan
+
+| Gap exposed by the reference kernel | Research finding | Plan change |
+|---|---|---|
+| Event, state pointer, and checkpoint were three individually atomic files, not one commit | SQLite's atomic-commit documentation makes the transaction boundary explicit; a commit record/journal determines whether recovery sees old or new state | Add a prepared-intent journal, replay on startup, and idempotent application of each prepared commit |
+| Retry/replay could append a duplicate semantic event | AWS durable-execution guidance requires stable idempotency keys; append-only logs should deduplicate by deterministic event ID | Add caller-supplied `idempotency_key`, event-ID deduplication, and sequence-collision rejection |
+| A stale checkpoint could block recovery after a crash between state and checkpoint writes | Durable execution systems treat checkpoints as replay accelerators; event history is the durable execution record and checkpoints can be rebuilt | Make the event log authoritative; rebuild missing or stale checkpoints during recovery |
+| A crash after event append but before state write could strand an event and duplicate its sequence | Event-sourced replay requires recorded decisions and deterministic replay; a single-writer commit path preserves total order | Add POSIX file locking for the reference adapter, an intent journal, and event-log state reconstruction |
+| `fsync(file)` does not make a directory rename durable by itself | Crash-consistency guidance calls for file sync, atomic rename, then directory sync; the same ordering is used by durable content-addressed stores | Add `fsync` of the containing directory after atomic replacement and journal commit |
+| A mutable state snapshot cannot rebuild a missing pointer | Event-sourced replay stores the decisions needed to reconstruct state; large payloads should remain external references | Store an `active_work` snapshot and artifact reference in each semantic event; keep bulk payload bytes in the artifact store |
+| SQLite WAL is unsafe for the shared NFS path | SQLite documents WAL's shared-memory design; the repository's federation guidance already forbids WAL on NFS | Keep the current kernel file adapter local/POSIX; the production NFS adapter must use rollback journaling or a non-WAL transport and must not copy the WAL assumption |
+| Model/session recovery must not depend on provider execution | Microsoft Agent Framework's durable extension separates persisted agent state from host/model execution and supports resumption on different workers | Keep model IDs as route metadata, preserve WAD identity, and test a different model/adapter after discarding the kernel instance |
+| File-backed operations are not automatically multi-writer safe | SQLite serializes writers; durable object/filesystem designs likewise use a single-writer commit path or conditional writes | The reference adapter uses an advisory POSIX lock; production adapters must provide equivalent single-writer/CAS semantics |
+
+### 15.2 Local continuity substrate finding
+
+The active host uses SQLite `3.46.1` and the WanderGround MemPalace database is
+local with `journal_mode=wal`, `synchronous=FULL`, and `PRAGMA quick_check = ok`.
+That is a good current runtime posture, but `3.46.1` is inside SQLite's
+2026 WAL-reset defect range. The new `SqliteContinuityStore` therefore rejects
+versions below `3.51.3` by default. Upgrade the local SQLite runtime before
+using the new adapter as a production commit authority; do not copy a live WAL
+database without its `-wal` companion.
+
+The Arcana-NovAi WAD manifest also remains a separate interoperability blocker:
+its `adapters` list and `hierarchy` mapping must be reconciled with the inspected
+Node 0 loader's mapping/string contract before full WAD rollout. The standalone
+continuity contract is valid, but it does not prove that the full WAD manifest
+activates on the upstream Engine.
+
+### 15.3 Sources
+
+- SQLite, **Atomic Commit In SQLite**: https://sqlite.org/atomiccommit.html
+- SQLite, **SQLite Is Transactional**: https://sqlite.org/transactional.html
+- SQLite, **Isolation In SQLite**: https://sqlite.org/isolation.html
+- SQLite, **Write-Ahead Logging**: https://www.sqlite.org/wal.html?v=1.1.1
+- AWS, **Idempotency and retries**: https://docs.aws.amazon.com/durable-execution/patterns/best-practices/idempotency/
+- AWS, **Manage state**: https://docs.aws.amazon.com/durable-execution/patterns/best-practices/state/
+- AWS, **Durable Execution SDK**: https://docs.aws.amazon.com/lambda/latest/dg/durable-execution-sdk.html
+- Azure Durable Task, **Replay and durability**: https://github.com/Azure/durabletask/blob/main/docs/concepts/replay-and-durability.md
+- Microsoft, **Durable Extension for Agent Framework**: https://learn.microsoft.com/en-us/agent-framework/integrations/durable-extension
+- ZeroFS, **Durability & Consistency**: https://www.zerofs.net/docs/durability
+- Flux, **Content Storage Service specification**: https://flux-framework.readthedocs.io/projects/flux-rfc/en/latest/spec_10.html
+- Dapr, **State machine actors**: https://docs.dapr.io/developing-applications/sdks/dotnet/dotnet-actors-next/dotnet-actorsnext-statemachine/
+
+### 15.4 Updated next-gate sequence
+
+1. **Reference adapter hardening (implemented in this pass):** prepared-intent
+   journal, directory synchronization, POSIX single-writer lock, idempotency
+   keys, event-ID/sequence collision checks, event-log state reconstruction,
+   and checkpoint rebuild.
+2. **Crash matrix:** inject failure before/after intent prepare, event append,
+   state write, checkpoint write, and journal commit. Assert recovery yields
+   either the complete prior state or the complete next state, never a mixed
+   pointer.
+3. **MemPalace adapter:** bind the interfaces to the real event graph and
+   drawers. Preserve artifact references in the event stream; do not place
+   unbounded payloads in checkpoints.
+4. **Custom CLI adapter:** resume the same WAD + durable state through a
+   non-OpenCode process and verify identity, mission, todos, and decisions.
+5. **NFS/federation adapter:** use rollback journaling or a transport-level
+   commit protocol; never enable SQLite WAL on `/mnt/node-drive`.
+6. **Operational gate:** add telemetry dashboards for pending intents,
+   checkpoint rebuilds, idempotent replays, sequence conflicts, missing
+   artifacts, and adapter/model swaps.
+
+### 15.5 Acceptance criteria for the next pass
+
+- A crash at every measured write boundary recovers to a complete state.
+- Replaying the same idempotency key creates no duplicate semantic event.
+- A missing or stale checkpoint is rebuilt from the event log.
+- A missing state pointer is rebuilt from event `active_work` snapshots.
+- A corrupted artifact or sequence gap fails loudly.
+- A model/adaptor swap changes provenance but never entity identity.
+- No WAD or core kernel import depends on OpenCode, provider SDKs, or a
+  network filesystem.

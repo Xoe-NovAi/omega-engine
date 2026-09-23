@@ -1,0 +1,28 @@
+{
+  "contract_version": 1,
+  "entity_id": "researcher_humboldt",
+  "identity": {
+    "entity_id": "researcher_humboldt",
+    "name": "Alexander von Humboldt",
+    "ontology": "sovereign_entity",
+    "wing": "wing_researcher_humboldt"
+  },
+  "model_policy": {
+    "preferred_aliases": [],
+    "limits_source": "live_runtime",
+    "swap_allowed": true
+  },
+  "durable_state_destinations": [
+    "mempalace",
+    "event_log",
+    "artifact_store"
+  ],
+  "active_work_pointer": "active_work",
+  "recovery_procedure": [
+    "load_wad_contract",
+    "load_state_pointer",
+    "replay_semantic_events",
+    "verify_artifact_hashes",
+    "resume_active_work"
+  ]
+}

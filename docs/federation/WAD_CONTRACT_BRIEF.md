@@ -70,3 +70,42 @@ hierarchy (§5). WADs modify **runtime state only** — never engine internals.
 - **Engine-core candidates**: placeholder-key detector hygiene test; sysctl/ZRAM/THP
   deploy tuning; `AllowedCPUs` + thread policy.
 - **Rule**: nothing custom in the engine tree, nothing engine in the WAD.
+
+## 8. P3.3a.6 continuity extension (Node 1 reference)
+
+The WAD continuity contract is a separate portable data contract, materialized
+at `wads/arcana_novai/continuity.contract.json` and validated by
+`scripts/continuity_kernel.py`. It mandates identity, model policy, durable-state
+destinations, an active-work pointer, and an ordered recovery procedure.
+
+The contract does not freeze a model identity, provider SDK, context window, or
+OpenCode session. `model_policy.limits_source` must be `live_runtime`; model
+aliases are preferences and may be swapped as a register. The core kernel is
+adapter-neutral. OpenCode, the future custom Omega Engine CLI, and MemPalace
+transports are adapters around the same `StateStore`, `ArtifactStore`,
+`EventBus`, `ModelRouter`, `CheckpointStore`, and `Recovery` interfaces.
+
+The first acceptance test is in `tests/test_continuity_kernel.py`: write a
+semantic boundary, discard the kernel instance, swap model and adapter, and
+recover mission, identity, events, and artifacts from durable state. The next
+gate is production adapter wiring, not another compaction ritual.
+
+## 9. Web-research blockers before full WAD rollout (2026-09-23)
+
+The standalone continuity contract is not equivalent to proving that the full
+WAD manifest activates on the Node 0 Engine. Current research and source review
+identify these reconciliation gates:
+
+1. `manifest.yaml` currently uses `adapters` as a list and `hierarchy` as a
+   mapping; the inspected upstream loader contract expects an adapters mapping
+   with a `memory` object and a hierarchy path string. Choose one versioned
+   schema and add a contract test against the actual Node 0 loader.
+2. `requires_engine` must be enforced or explicitly documented as informational.
+3. Continuity-contract digests, publisher signatures, and dependency provenance
+   must be added before treating a WAD release as an authenticated supply.
+4. The loader's adapter import path, initialization order, path containment, and
+   total-size/resource limits must be tested mechanically. WAD content remains
+   untrusted data until the review gate passes.
+
+These are full-WAD rollout blockers, not blockers to the adapter-neutral
+continuity reference kernel.

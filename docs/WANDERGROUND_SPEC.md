@@ -211,6 +211,28 @@ To adhere to the hardware ceiling of the ASUS ExpertBook (CPU-only, single-chann
 
 ---
 
+## 7.1 Semantic Write-Through & Platform-Independent Continuity
+
+**The cloud context window is a volatile CPU register. MemPalace is durable RAM/Disk.** Compaction is cache eviction, not a ceremonial crisis.
+
+### Register / RAM / Disk Model
+
+| Layer | Role | Technology | Volatility |
+|-------|------|------------|------------|
+| **Context (Register)** | Immediate computation | Cloud context window | Lossy, 4K summary bottleneck |
+| **MemPalace / Event Log (RAM)** | Active state | SQLite graph, RFC 003 events | Durable working memory |
+| **Artifacts / Well (Disk)** | Canonical records | JSONL, patches, gnosis narrative | Immutable |
+
+### Operational Rules
+
+1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or batch completion, persist state to MemPalace/Event Log before continuing. Do not accumulate semantic debt in context.
+2. **Compaction is ordinary cache eviction.** No ceremony. `gnosis-lock` and `/compact` are fallback/recovery only.
+3. **Active-work pointer lives in MemPalace.** When context evicts, the entity resumes from its durable pointer, not from a summarization lottery.
+4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) is transparent; durable state in MemPalace is model-agnostic.
+5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via different adapter, resume from WAD + MemPalace. The entity must recover mission, todos, decisions, identity.
+
+---
+
 ## 8. Directory Layout & File Organization
 
 The WanderGround workspace is established at `~/WanderGround/`:

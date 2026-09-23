@@ -605,23 +605,32 @@ opencode mcp add
 
 **Instruction stack cost (what we load every session, pre-MCP, measured
 2026-09-09):** `AGENTS.md` (global+project) + `HARDWARE.md` + `SYSTEM_GUIDE.md`
-+ `BENCHMARKS.md` ≈ **13.5K tokens** (~52KB). After the 1M Big Pickle raise this
-is negligible; at a 200K window it is ~7% of context before anything happens —
-keep the stack lean there, and note HARDWARE.md is loaded once per project
-(de-duplicated 2026-09-09; the global config no longer also loads it).
++ `BENCHMARKS.md` ≈ **13.5K tokens** (~52KB). Its share of usable context depends
+on the selected model's live metadata, so keep the stack lean across every cloud
+model. HARDWARE.md is loaded once per project (de-duplicated 2026-09-09; the
+global config no longer also loads it).
 
 **Best Practices:**
-1. **Disable unused MCPs** in `opencode.jsonc`:
+1. **Disable unused MCP servers** in `opencode.json`:
    ```json
-   "tools": { "grep_app_*": false, "websearch_*": false }
+   "mcp": { "example": { "enabled": false } }
    ```
-2. **Enable per-agent** (disable globally, enable in agent config):
+2. **Use per-agent permission rules** for tool access (never the deprecated
+   `tools` block):
    ```json
-   "tools": { "grep_app_*": false },
-   "agent": { "my-research-agent": { "tools": { "grep_app_*": true } } }
+   "permission": { "websearch": "deny" },
+   "agent": {
+     "my-research-agent": {
+       "permission": { "websearch": "allow" }
+     }
+   }
    ```
 3. **Invoke explicitly in prompt** (`use context7`) rather than relying on auto-invocation
 4. **Consolidate similar tools** — one search tool with provider param vs multiple
+5. **Semantic write-through over context hoarding.** The context window is a volatile
+   CPU register; MemPalace is durable RAM. After every decision, discovery, or batch
+   completion, persist state to MemPalace/Event Log. Compaction becomes ordinary
+   cache eviction — no ceremony, no `prepare for compaction` ritual.
 
 ---
 

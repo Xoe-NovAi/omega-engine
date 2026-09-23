@@ -117,24 +117,29 @@ CAPTURED ──(skill answers reflection questions)──▶ REFLECTED ──(pl
 > a populated narrative — is now impossible by default: the leash check blocks
 > the second lock before any capture happens.
 
-### 1.4 The "prepare for compaction" orchestration checklist
+### 1.4 The "prepare for compaction" Fallback/Recovery Procedure
 
-When the user phrases it as a session-close instruction (NOT the bare command):
+**Primary mode is Semantic Write-Through (continuous, no ceremony).** The "prepare for compaction" orchestration is now a **fallback/recovery procedure** used only when:
+- A compaction ran without a populated narrative (Gnosis incident)
+- Context was evicted unexpectedly and the active-work pointer was lost
+- Model swap or adapter restart requires manual state reconciliation
+- The user explicitly requests a full session-close audit
 
-- [ ] `/gnosis-lock` capture + reflection (see §1.3) — **run it even if a pack
-      was already captured earlier in the session**; each new round of work
-      deserves its own pack record
+When invoked as a session-close instruction (NOT the bare command):
+
+- [ ] `/gnosis-lock` capture + reflection (see §1.3) — run only if a semantic
+      boundary was crossed without a prior write-through
 - [ ] Update documentation: `docs/` + `README.md` + `SYSTEM_GUIDE.md` as relevant
-      — **docs are part of the artifact, not an afterthought; do them BEFORE
-      committing**
+      — **docs are part of the artifact, not an afterthought**
 - [ ] `make lint` green (anyio purity, no bare exceptions, no torch)
 - [ ] `make test` green (or `python3 -m unittest discover -s tests`)
 - [ ] Commit all work with descriptive message
 - [ ] Confirm: "🔱 Gnosis locked, docs updated, gates green. Safe to /compact."
 
-**The full loop, always.** Order: capture → reflect → docs → lint → test →
-commit. Skipping any step breaks the whole. Discipline is enforced, not assumed
-(by the checklist, the test suite, and the user).
+**The full loop is now the exception, not the rule.** Primary workflow:
+`Observe → reason in context → classify durable state → write through → continue.`
+Compaction becomes ordinary cache eviction. `gnosis-lock` and `/compact` are
+fallback/recovery only.
 
 ---
 
@@ -183,7 +188,35 @@ the last real reflection.
 
 ---
 
-## 3. WanderGround & Knowledge Capture
+## 3. Semantic Write-Through & Platform-Independent Continuity
+
+**The 1M context window is a volatile CPU register. MemPalace is durable RAM/Disk.** Compaction is cache eviction, not a ceremonial crisis.
+
+### 3.1 The Register / RAM / Disk Model
+
+| Layer | Role | Technology | Volatility |
+|-------|------|------------|------------|
+| **Context (Register)** | Immediate computation | OpenCode context window | Lossy, 4K summary bottleneck |
+| **MemPalace / Event Log (RAM)** | Active state | SQLite graph, RFC 003 events | Durable working memory |
+| **Artifacts / Well (Disk)** | Canonical records | JSONL, patches, gnosis narrative | Immutable |
+
+### 3.2 Operational Doctrine
+
+1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or completed batch, persist state to MemPalace/Event Log before continuing. Do not accumulate semantic debt in context.
+2. **Compaction is ordinary cache eviction.** No ceremony. `gnosis-lock` and `/compact` are fallback/recovery only.
+3. **Active-work pointer lives in MemPalace.** When context evicts, the entity resumes from its durable pointer, not from a summarization lottery.
+4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) is transparent; durable state in MemPalace is model-agnostic.
+5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via different adapter, resume from WAD + MemPalace. The entity must recover mission, todos, decisions, identity.
+
+### 3.3 Agent Protocol (replaces "prepare for compaction")
+
+```
+Observe → reason in context → classify durable state → write through → continue
+```
+
+The "prepare for compaction" orchestration (§1.4) is now a **fallback/recovery procedure** used only when semantic write-through was missed or a Gnosis incident occurred.
+
+---
 
 ### 3.1 Layout (`~/WanderGround/`, own git repo)
 - `inbox/` → raw sparks via `wander -d <domain> "thought"`
@@ -523,8 +556,10 @@ Current rules:
 - `subagent_depth: 1` is the safe default for primary-to-specialist work.
 - Do not manually duplicate the live model catalog or hardcode stealth-alias
   limits. See `docs/OPENCODE_FOUNDATION.md`.
-- Current v1 compaction is adaptive; hardcode only intentional policy such as
-  `compaction: { "auto": true, "prune": true }`.
+- Current v1 compaction is adaptive. Omit `reserved`; it derives from live model
+  input/output metadata. Hardcode only intentional policy such as
+  `compaction: { "auto": true, "prune": true }`. In future V2 config, omit
+  `buffer`; OpenCode applies its default against live model metadata.
 - MCP config keys are top-level server names, not an `mcp.servers` wrapper.
   Local servers use `command: [absolute executable, ...args]`; remote servers use
   `type`, `url`, and `headers`. Unsupported keys such as remote `max_retries`
@@ -533,7 +568,7 @@ Current rules:
 Validate after every active config change:
 
 ```bash
-opencode debug config
+opencode debug config  # sanitize output; it resolves env substitutions
 opencode models opencode --verbose --refresh
 ```
 

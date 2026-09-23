@@ -241,8 +241,9 @@ without trial by fire.
   (`compress`/`retrieve`/`stats`); cross-agent memory with provenance + temporal
   versioning; **`headroom learn` mines failed sessions → writes corrections to
   AGENTS.md**.
-- **Why**: token savings on our 1M-context Big Pickle usage; its learned
-  corrections are a natural second source for the Well.
+- **Why**: context-pressure reduction on hosted long-context routes; its learned
+  corrections are a natural second source for the Well. Cloud capacity is read
+  live and is never embedded in configuration.
 - **Study**: install via PyPI (`headroom-ai[all]`), wrap opencode, verify
   compression ratio on real traces; connect `headroom learn` output into the
   Well as `kind: correction` records (double-source).
@@ -251,13 +252,13 @@ without trial by fire.
 - **Status**: ❌ **REJECTED (2026-09-11)** — **Verdict: well-built project, but
   benefits do not apply to our CPU-only local inference setup.**
   - Local Ollama = zero per-token cost (savings metric irrelevant)
-  - 1M context window = context pressure barely exists
+  - Hosted long-context routes reduce token pressure but still require compaction
   - Prompt-cache busting penalty (39% more expensive on metered APIs,
     documented by community A/B tests) doesn't apply to local inference, BUT:
     - Python + ONNX runtime + 150M-param model load adds ~15-50ms latency/call
       on our already CPU-constrained pipeline (14.4 t/s)
     - Compression is designed for "too many tokens for the context window" —
-      our 1M window already solves that problem
+      high-capacity hosted routes reduce that pressure but do not eliminate it
   - `headroom learn` is well-implemented (reads `opencode.db`, writes `AGENTS.md`),
     but our Well + MemPalace already cover this space
   - **Credit & documentation**: see WanderGround dossier `05_headroom/` (to be
@@ -416,32 +417,73 @@ without trial by fire.
   `docs/federation/NODE0_ACTION_BRIEFING_FAST_DOWNLOAD_LAYER.md`;
   `docs/research/MODEL_FETCH_DEEP_DIVE.md`.
 
-### P3.3a.5 — OpenCode hosted-free foundation + dynamic-model safety (QUEUED 2026-09-23)
-- **Why**: stealth aliases rotate checkpoints and mutable limits in place. Node 1
-  has observed Big Pickle at 1M while Node 0/registry exposure behaves like 200K.
-  Hardcoding an alias's context is therefore invalid even when locally verified.
-  The current global config also contains pass-through-only agent keys and a
-  task allowlist whose final `*: deny` overrides all prior allows.
-- **Research locked**: `docs/OPENCODE_FOUNDATION.md` (first-party Zen/Go/Google
-  sources, Models.dev refresh evidence, privacy classes, v1 compaction source
-  semantics, schema-current agent/permission rules).
+### P3.3a.5 — OpenCode hosted-free foundation + dynamic-model safety (IN PROGRESS 2026-09-23)
+- **Why**: hosted catalogs, stealth aliases, and provider routing mutate in place.
+  Node-specific observations may disagree with registry snapshots. Hardcoding any
+  cloud model's context/output metadata is invalid even when locally verified.
+  The current global config also contains pass-through-only agent keys, a paid
+  model pin in a free-only agent, and a task allowlist whose final `*: deny`
+  overrides all prior allows.
+- **Research locked**: `docs/OPENCODE_FOUNDATION.md` (first-party Zen/Go/Google/
+  OpenRouter sources, live operator evidence, privacy classes, OpenCode 1.18.32
+  adaptive `reserved` behavior, V2 `keep.tokens`/`buffer` migration, and
+  schema-current agent/permission rules).
 - **Done when**:
-  1. Global config selects stable alias IDs without `provider.*.models.*.limit`
-     overrides for Big Pickle/Space Bunny or other rotating aliases.
-  2. `researcher_humboldt` uses `prompt: {file:...}`; invalid
+  1. Global config selects no durable cloud-model `provider.*.models.*.limit`,
+     modality, or identity override.
+  2. No free-only agent pins a paid model; paid routes require explicit opt-in.
+  3. `researcher_humboldt` uses the string `prompt: "{file:...}"`; invalid
      `system_prompt`/`inherit_context`/`allow_background_execution` fields are
      removed from active config.
-  3. Task allowlists are broad-first/specific-last and contain only authorized
+  4. Task allowlists are broad-first/specific-last and contain only authorized
      agents.
-  4. Unsupported active MCP keys (including remote `max_retries`) are removed.
-  5. `subagent_depth: 1` unless a measured workflow proves nesting necessary.
-  6. v1 compaction uses adaptive defaults plus intentional `prune: true`; no
-     rotating-model context number is hardcoded.
-  7. `opencode debug config` plus provider refresh commands pass; restart and
-     verify Big Pickle, Space Bunny, Gemini 3.8, and Gemini 3.5 Flash-Lite paths.
-- **Status**: 📋 **QUEUED** — research and doctrine complete; active config
-  migration intentionally deferred until the next implementation window. Local
-  model routing remains a later phase.
+  5. Unsupported active MCP keys (including remote `max_retries`) are removed.
+  6. `subagent_depth: 1` unless a measured workflow proves nesting necessary.
+  7. v1 config omits `reserved`; it may set only intentional `auto`/`prune`
+     policy. No cloud-model capacity number is hardcoded.
+  8. Provider refresh commands pass after restart; verify the selected free
+     alias, Gemini route, and OpenRouter route without persisting capacities.
+  9. Diagnostic output is sanitized and any credential exposed by resolution is
+     rotated before shared storage.
+- **Status**: 🚧 **IMPLEMENTED; EXTERNAL ROTATION PENDING** — global config now
+  uses broad-first permissions, schema-valid Humboldt prompt loading, inherited
+  free-agent model selection, adaptive compaction, `subagent_depth: 1`, supported
+  MCP fields, and a pinned plugin. Fresh-process config assertions and OpenCode/
+  Google/OpenRouter refreshes pass. The current TUI must be restarted to load the
+  change; the credential exposed by diagnostic output still requires external
+  provider-side rotation. Local-model routing remains a later phase.
+
+### P3.3a.6 — Semantic Write-Through & Platform-Independent Continuity (ACTIVE 2026-09-23)
+- **Why**: The "prepare for compaction" ceremony is an anti-pattern. The 1M context
+  window is a volatile CPU register; MemPalace is durable RAM/Disk. Agents must
+  write durable state continuously (semantic write-through) so that context eviction
+  becomes ordinary cache behavior, not a ceremonial crisis.
+- **Research locked**: `docs/OPENCODE_FOUNDATION.md` §Compaction doctrine,
+  `docs/AGENT_RUNBOOK.md` §Session-close, gnosis-leash architecture.
+- **Done when**:
+  1. Engine kernel exposes portable `StateStore`, `ArtifactStore`, `EventBus`,
+     `ModelRouter`, `Checkpoint`, `Recovery` interfaces (OpenCode is one adapter).
+  2. WAD contract mandates: model policy, durable-state destinations, active-work
+     pointer, recovery procedure, zero OpenCode coupling in core logic.
+  3. Agent protocol replaces "prepare for compaction" with mandatory write-through
+     at semantic boundaries: decisions, discoveries, task transitions, batch completion.
+  4. Constitutional observability: telemetry for unpersisted semantic state, missing
+     WAD contracts, platform coupling, model affinity, recovery integrity.
+  5. Chaos test: swap models, discard context, restart via different adapter,
+     resume solely from WAD + MemPalace — entity recovers mission, todos, decisions,
+     identity.
+  6. `make gnosis-lock` and `/compact` become fallback/recovery only; routine
+     compaction needs no ritual.
+- **Status**: 🚧 **ACTIVE — REFERENCE ADAPTER HARDENED; SQLITE AUTHORITY AND ADAPTER WIRING PENDING** (2026-09-23) —
+  `scripts/continuity_kernel.py` exposes the portable interfaces and now hardens
+  the file adapter with a prepared-intent journal, POSIX single-writer lock,
+  directory synchronization, idempotency keys, event-ID/sequence collision
+  checks, event-log state reconstruction, and checkpoint rebuild. The WAD
+  contract is materialized at `wads/arcana_novai/continuity.contract.json`.
+  Web research (`docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` §15)
+  identifies one authoritative local SQLite commit record as the next production
+  boundary, plus SQLite 3.51.3+ before WAL-based production use, MemPalace/CLI
+  adapters, crash-matrix coverage, and WAD manifest/loader reconciliation.
 
 ### P3.3b — OMER M1: Schema & Validation
 - Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
@@ -554,7 +596,7 @@ without trial by fire.
   signed in, review session pending operator timing).
 
 ### P3.6 — Provider Doctor (community tool, DONE 2026-09-18)
-- **Why**: Zen rotates models/limits without notice (Big Pickle 1M→200K); Node 0
+- **Why**: Zen rotates models and limits without notice; Node 0
   down with `invalid openai provider options`; hardcoding enumerations is the
   disease. A subtractive, secret-safe doctor diagnoses any machine.
 - **Done when**: diagnose-only default, backups + idempotent repair, hermetic

@@ -222,9 +222,43 @@ The Well (`gnosis/well/well.jsonl` + `WISDOM.md`) stores atomic, immutable lesso
 - **Visualization**: Three.js/WebXR interactive 3D constellation viewer served on port 8088.
 
 ### 5.4 Ponytail (Cognitive Load & Architecture Filter)
-An active lazy-senior-developer filter preventing premature complexity:
+- An active lazy-senior-developer filter preventing premature complexity:
 - **The Ladder**: 1. Does it need to exist? -> 2. Already in codebase? -> 3. Stdlib does it? -> 4. Native platform feature? -> 5. Existing dependency? -> 6. Can it be one line? -> 7. Minimum working diff.
 - **Root-Cause Invariant**: Bug fixes must guard the shared origin rather than patching individual callers.
+
+### 5.5 Portable Continuity Kernel (P3.3a.6)
+
+The engine continuity layer is an adapter-neutral kernel. The portable core is
+`scripts/continuity_kernel.py`; the file coordinator is
+`scripts/continuity_files.py`; the local SQLite commit-authority adapter is
+`scripts/continuity_sqlite.py`. The contract and usage are documented in
+`docs/CONTINUITY_KERNEL.md`.
+
+```text
+WAD contract ──► StateStore ──► EventBus ──► ArtifactStore
+      │              │             │              │
+      │              └────── CheckpointStore ◄──┘
+      └──────────────► Recovery ◄── ModelRouter (register only)
+```
+
+**Invariants:**
+
+- Context is a volatile CPU register; semantic state is written through to
+  MemPalace/event/artifact stores at decisions, discoveries, task transitions,
+  and batch completion.
+- A model alias or adapter is not entity identity. Recovery must preserve WAD
+  identity when the model or adapter changes.
+- `StateStore`, `ArtifactStore`, `EventBus`, `ModelRouter`, `CheckpointStore`,
+  `CommitJournal`, and `Recovery` are interfaces. OpenCode is an adapter, not a
+  kernel import.
+- The event log is authoritative; state and checkpoints are rebuildable
+  projections. Recovery verifies contiguous sequences and artifact hashes,
+  reconstructs missing state, and rebuilds missing/stale checkpoints.
+- The local SQLite adapter applies event, state, checkpoint, and intent
+  retirement in one transaction with rollback journaling and `synchronous=FULL`.
+  Production use requires SQLite `3.51.3+`; WAL is not used on NFS.
+- Missing or invalid durable state is surfaced as `RecoveryError`; no silent
+  fallback to a compaction summary.
 
 ---
 
