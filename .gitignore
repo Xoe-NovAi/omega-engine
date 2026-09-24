@@ -29,3 +29,12 @@ docs/federation/node0_received/
 
 # thermal bench logs (large, machine-local)
 logs/thermal/
+
+# ── Local model binaries (large, machine-local, re-fetchable) ────────────────
+# models/ holds HF/ONNX checkouts incl. .cache + .incomplete partials (1.1G+).
+# Never version weights; fetch via scripts/fetch_model.sh + verification chain.
+models/
+*.gguf
+*.onnx
+*.safetensors
+*.bin

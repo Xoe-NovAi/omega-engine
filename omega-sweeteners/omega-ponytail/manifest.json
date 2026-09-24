@@ -1,0 +1,35 @@
+{
+  "name": "omega-ponytail",
+  "version": "1.0.0",
+  "description": "Lazy Senior Dev code review plugin — forces the laziest solution that actually works",
+  "author": "Omega Engine Team",
+  "license": "MIT",
+  "hooks": ["experimental.chat.system.transform", "command.execute.before"],
+  "commands": [
+    "ponytail",
+    "ponytail-review",
+    "ponytail-audit",
+    "ponytail-debt",
+    "ponytail-gain",
+    "ponytail-help"
+  ],
+  "skills": ["ponytail"],
+  "modes": ["off", "lite", "full", "ultra", "review"],
+  "defaultMode": "full",
+  "stateFile": ".ponytail-active",
+  "configSchema": {
+    "defaultMode": {"type": "string", "enum": ["off", "lite", "full", "ultra"]},
+    "hideStatus": {"type": "boolean"},
+    "quietStartup": {"type": "boolean"}
+  },
+  "environmentVariables": {
+    "PONYTAIL_DEFAULT_MODE": "Default mode (off|lite|full|ultra)",
+    "PONYTAIL_QUIET_STARTUP": "Hide startup toast",
+    "PONYTAIL_HIDE_STATUS": "Hide status indicator"
+  },
+  "dependencies": {
+    "ponytail-instructions": "Shared ruleset builder",
+    "ponytail-config": "Config resolver",
+    "ponytail-frontmatter": "Command frontmatter parser"
+  }
+}

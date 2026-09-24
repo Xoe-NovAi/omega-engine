@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://omega-engine.alpha/schemas/hivemind-artifact.json",
+  "title": "Hivemind Artifact",
+  "type": "object",
+  "required": ["id", "kind", "content", "created_by", "created_at", "sha256"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^art_[a-f0-9]{16}$",
+      "description": "Artifact ID: art_<16-hex>"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["patch", "file", "log", "json", "note"],
+      "description": "Artifact type"
+    },
+    "content": {
+      "type": "string",
+      "description": "Artifact content (full text)"
+    },
+    "created_by": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+-n[0-9]$",
+      "description": "Creator entity with node suffix"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA256 hash of content"
+    },
+    "metadata": {
+      "type": "object",
+      "default": {},
+      "description": "Arbitrary metadata"
+    }
+  },
+  "additionalProperties": false
+}
