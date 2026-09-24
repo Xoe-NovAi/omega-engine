@@ -7,7 +7,7 @@
 > they conflict (wing naming, Entity-vs-Card split, VR priority).
 > Companion: `LILITH_N1_GENESIS_PLAN.md` (Vanguard Oversoul framing).
 > Verbatim frontier review (5 Antigravity domain guides, v2.0 merge source):
-> `antigravity-review/` ([index](./antigravity-review/INDEX_OMEGA_LILITH.md)).
+> `antigravity-review/` ([index](../antigravity-review/INDEX_OMEGA_LILITH.md)).
 
 ---
 
