@@ -68,12 +68,11 @@ clean, explicit, watchable state before layering new toys on top.
 - **Done when**: every manifest in `gnosis/sessions/` has an explicit
   `reflection_status`; ledger rows all resolve; a migration script exists at
   `scripts/compaction/migrate_legacy_packs.py` (or the migration is recorded).
-- **Status**: ⚠️ **PARTIAL / DEGRADED (2026-09-23)** — the legacy migration
-  completed its historical 2026-09-11 pass (10 superseded, 12 explicitly
-  triaged captured, 3 already-reflected), but the live ledger currently reports
-  46 manifests: 10 superseded, 21 reflected, 15 captured, including 3 untriaged
-  current packs. The migration logic is sound; current pack reflection/triage
-  remains open. `make gnosis-ledger` correctly exits degraded.
+- **Status**: ✅ **DONE (2026-09-24)** — the 2026-09-23 "3 untriaged current packs"
+  have all been reflected since. Live ledger reports every pack accounted for:
+  all current packs `reflected`, 12 legacy packs explicitly triaged (`triage_at`
+  set), remainder superseded. `make gnosis-ledger` exits clean
+  ("✅ PAUSE LEDGER CLEAN — every pack accounted for, leash slack").
 
 ### P0.3 — Watchdog green on next successful compact
 - **Why**: the historical `has_narrative: false` compacting event keeps the
@@ -82,8 +81,9 @@ clean, explicit, watchable state before layering new toys on top.
   should flip it green.
 - **Done when**: a real `/compact` with narrative injection → `make gnosis-leash-status`
   exits 0.
-- **Status**: ⏳ **PENDING** — the leash is currently slack, but the pause ledger
-  remains degraded because three current captured packs are untriaged.
+- **Status**: ✅ **DONE (2026-09-24)** — `make gnosis-leash-status` exits 0:
+  "✅ LEASH HEALTHY — puppeteer hand is alive, timeline fresh, zero errors."
+  Stale `pending_pack` pointer cleared from identity (pack was already reflected).
 
 ### P0.4 — Ponytail install (first vanguard adoption)
 - **Repo**: `DietrichGebert/ponytail` (MIT) — "the lazy senior dev" ruleset for

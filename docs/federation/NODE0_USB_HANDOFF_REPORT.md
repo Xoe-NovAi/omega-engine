@@ -189,19 +189,22 @@ Qwen3-Embedding-0.6B
 → UMAP/3D projection
 ```
 
-Current status:
+Current status (updated 2026-09-24 — see ROADMAP RES-ECORE-001):
 
-- `scripts/embedding_server.py` prototype exists in the working tree;
-- it is not currently running;
-- no production model revision/hash is pinned;
-- no server test suite exists;
-- the prototype needs anyio compliance review because it imports bare `asyncio`;
-- no 384-D → 768-D migration ledger exists;
-- no production atlas exists;
-- no `make 3d-rebuild` target currently exists;
-- no cross-node retrieval comparison exists.
+- `scripts/embedding_server.py` is now an **E-core-pinned implementation** (CPUs
+  12–15, 4 threads, `allow_spinning=0`, graceful fallback), not a prototype;
+  the bare-`asyncio` import was fixed — `make lint` is green;
+- a systemd user unit exists (`scripts/omega-embedding-server.service`) but is
+  **staged, not enabled** — the server is still not running;
+- model artifact present (`models/embedding/qwen3-0.6b-onnx/`, INT8,
+  Matryoshka 768d); measured 89.24 ms/query on E-cores, 84% Ollama retention
+  under full embedding saturation;
+- full mechanics in `docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md`;
+- still open: service enable + live cosine check, no 384-D → 768-D migration
+  ledger, no production atlas, no `make 3d-rebuild`, no cross-node retrieval
+  comparison, no server test suite.
 
-Qwen3 supports user-defined/MRL dimensions, and an ONNX artifact is available, but the exact artifact, tokenizer, pooling, normalization, instruction handling, CPU footprint, and retrieval quality must be pinned and measured before cutover.
+Qwen3 supports user-defined/MRL dimensions, and an ONNX artifact is available, but the exact artifact revision/hash pinning, tokenizer, pooling, normalization, instruction handling, CPU footprint, and retrieval quality must be pinned and measured before cutover.
 
 ### 2.8 Node 1 local runtime
 
@@ -221,22 +224,24 @@ Current Node 1 facts:
 | THP | `madvise` |
 | Swap | zRAM active; NVMe `/swap.img` disabled and retained for rollback |
 | zRAM | zstd, priority 100, approximately 7.4 GiB observed |
-| Current governor | powersave with performance EPP profile |
+| Power profile | `performance` (`powerprofilesctl set performance`; verified 2026-09-24) |
 | Measured inference | approximately 14.4 t/s for tested 3B–4B models |
 
 These are Node 1 measurements, not Node 0 requirements.
 
 ### 2.9 Gnosis continuity
 
-Current state after triage:
+Current state (verified 2026-09-24 — this release corrects the older degraded
+statement the roadmap carried):
 
-- pause ledger clean;
-- no untriaged current captured packs;
-- leash healthy/slack;
+- pause ledger clean (`make gnosis-ledger`: "✅ PAUSE LEDGER CLEAN — every pack
+  accounted for, leash slack");
+- all current packs reflected; 12 legacy packs explicitly triaged; stale
+  `pending_pack` pointer cleared;
+- leash healthy (`make gnosis-leash-status` exits 0);
+- ROADMAP P0.2/P0.3 flipped to DONE (this release);
 - reflection status is authoritative before narrative injection;
 - malformed Well records produce diagnostics.
-
-The roadmap still contains an older statement that the ledger is degraded. That statement should be corrected before the next handoff release.
 
 ### 2.10 OpenCode/MCP configuration
 
@@ -454,10 +459,20 @@ Planned Node 1 outbound contents:
     `FED-MAKALI-N0-ONBOARDING-20260925-01`) — the entity-practice briefing plus the
     engineering-strategy layer: `STRATEGY_AND_TECHNOLOGY_MAP.md` (comprehensive
     strategy/technology view with status, evidence, and honest gaps),
-    inference-operations doctrine, model-evaluation lab with measured leaderboard,
-    harness failure classes and quality gates, gnosis lifecycle and The Well,
-    fast model-fetch layer, onboarding/MCP-parity checklists, and consented
+    inference-operations doctrine (**incl. §10.6 Ryzen subset-trap: N0 must never
+    copy N1's `{12-15}` embedding affinity**), model-evaluation lab with measured
+    leaderboard, harness failure classes and quality gates, gnosis lifecycle and
+    The Well, fast model-fetch layer, cross-node mesh status (**incl. the
+    Hivemind-is-the-event-logstream realization + measured transport table**),
+    the sweetener quintet in transplant form
+    (`resources_SWEETENER_QUINTET.md`), trajectory and handshake expectations
+    (`WHERE_NODE1_IS_HEADED.md`), onboarding/MCP-parity checklists, and consented
     operator-vision resources.
+15. Vendored portable systems (`omega-sweeteners/` in the bundle): Well, Ponytail,
+    Context Engineering Protocol, Wander CLI (scaffold), MemPalace Hivemind —
+    per-package honesty labels in the quintet doc. Plus
+    `docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md` (heterogeneous-arch
+    mechanics, E-core benchmarks, iGPU verdict) and ROADMAP RES-ECORE-001.
 
 Do not describe the current WAD as a signed, Engine-loadable package. It is currently a scaffold with unresolved loader and signature gates.
 
@@ -627,22 +642,20 @@ The USB report is a handoff and alignment instrument. It does not authorize prod
 
 ### Repository state
 
-At report preparation time:
+At final-touch time (2026-09-24):
 
 ```text
 branch: node1/all-5-mcp-green
-working tree: dirty
+head: 8e6f1f07 (E-core offload + review integration)
+working tree: clean except machine-local state (gnosis/identity, Well — gitignored by design)
+gates: make lint 6/6 · make test 88/88 · make docs OK · ledger clean · leash healthy
 ```
 
-Important uncommitted/current-working-tree materials are not automatically release artifacts. Before packaging, review and stage only intended files. In particular, review:
-
-- `scripts/continuity_mempalace.py`
-- `tests/test_continuity_mempalace.py`
-- `scripts/embedding_server.py`
-- `scripts/check_docs.py`
-- current WAD/entity additions
-- model artifacts
-- documentation changes
+Previously uncommitted materials (continuity adapter, embedding server + service
+unit, research report, WAD/entity additions, onboarding final touch) are all
+committed. Before packaging, confirm `git status` shows only intended
+machine-local files. Model artifacts under `models/` travel only if explicitly
+staged — never by default.
 
 ### Key local references
 
