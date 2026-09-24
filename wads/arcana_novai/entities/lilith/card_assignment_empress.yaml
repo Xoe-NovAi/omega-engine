@@ -30,7 +30,7 @@ mystery_school:
   status: "deferred — VR lowest priority; realm spec only"
 
 versioning:
-  entity_version: "0.1.0"
+  entity_version: "0.2.0"
   kg_policy: "MERGE"
   diary_policy: "APPEND"
   voice_policy: "DELTA"
