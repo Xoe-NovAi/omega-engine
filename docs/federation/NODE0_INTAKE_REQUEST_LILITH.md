@@ -78,15 +78,17 @@ lilith_sources/personal/
 
 ---
 
-## 📍 Node 1 Staging Ready
+## 📍 Node 1 Staging Status
 
-All deploy paths created and empty:
+The source directories are staged, but the spatial target is not currently
+present:
 - `~/WanderGround/scrapers/` ✓
 - `~/WanderGround/library/` ✓
-- `~/WanderGround/spatial/knowledge_atlas.db` (sqlite-vec ready) ✓
+- `~/WanderGround/spatial/knowledge_atlas.db` — **missing; target migration**
 - `~/WanderGround/lilith_sources/{harvested,curated,personal}/` ✓
 
-**Node 1 is waiting. No further prep needed on this side.**
+**Node 1 is waiting on the atlas/viewer restoration and the Qwen3 768-D
+migration before the spatial hand-off can be called ready.**
 
 ---
 

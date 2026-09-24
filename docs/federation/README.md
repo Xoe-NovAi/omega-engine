@@ -31,8 +31,8 @@
 ## 1. Executive Summary
 
 The **Omega Engine Federation Subsystem** bridges two distinct physical machines into a unified, resilient, sovereign AI computing cluster:
-- **Node 0 (`xnai-n0-hp` / HP Pavilion)**: Serves as the **Archival Bastion & Nexus**. It hosts the canonical Git repository (`omega-engine.bundle`), the multi-domain FastMCP hub (`omega-hub` on port 8016 exposing 91 sovereign tools), vector databases (Qdrant), relational memory stores (SQLite), and the Cascading Serial Synchronization (CSS) council orchestration engine.
-- **Node 1 (`xnai-n1-asus` / ASUS ExpertBook P1503CVA)**: Serves as the **Exploration Vanguard & Compute Engine**. It delivers bare-metal, CPU-only local neural inference via Ollama (14.4 t/s on 3B–4B models using Intel Raptor Lake-H AVX-VNNI), spatial knowledge management (WanderGround `sqlite-vec` atlas), OpenCode subagent harnesses, and the Gnosis session-continuity engine.
+- **Node 0 (`xnai-n0-hp` / HP Pavilion)**: Serves as the **Archival Bastion & Nexus**. It hosts the canonical Git repository (`omega-engine.bundle`), the multi-domain FastMCP hub (`omega-hub` on port 8016; 93 tools in the latest verified handshake), vector databases (Qdrant), relational memory stores (SQLite), and the Cascading Serial Synchronization (CSS) council orchestration engine.
+- **Node 1 (`xnai-n1-asus` / ASUS ExpertBook P1503CVA)**: Serves as the **Exploration Vanguard & Compute Engine**. It delivers bare-metal, CPU-only local neural inference via Ollama (14.4 t/s on 3B–4B models using Intel Raptor Lake-H AVX-VNNI), local MemPalace memory, and the Gnosis session-continuity engine. The WanderGround `sqlite-vec` atlas/viewer are target services and are not currently deployed.
 
 Federation is strictly peer-to-peer (P2P). Neither node is a subordinate worker; both retain local sovereignty and can operate disconnected. When connected, they pool capabilities: Node 1 provides high-throughput inference and shared scratch storage; Node 0 provides immutable state management, archival compliance, and tooling execution.
 
@@ -41,6 +41,11 @@ Federation is strictly peer-to-peer (P2P). Neither node is a subordinate worker;
 ## 2. Canonical Document Map
 
 The federation subsystem is documented across specialized architectural, operational, and historical records:
+
+### 2.0 Current USB Handoff
+- **[MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md](MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md)**: Single consolidated Node 0 briefing covering verified Node 1 systems, personal Lilith/legacy materials, agent experiments, WAD/loader reconciliation, cryptographic trust, continuity, embedding/spatial migration, packaging, and joint acceptance gates.
+- **[NODE0_USB_HANDOFF_REPORT.md](NODE0_USB_HANDOFF_REPORT.md)**: Provenance-aware Node 1 → Node 0 USB handoff report covering verified builds, uncommitted/target-only state, WAD/loader blockers, continuity and spatial acceptance gates, cryptographic verification requirements, and numbered requests for Node 0.
+- **[makali_n0_onboarding/](makali_n0_onboarding/)**: Persistent-entity onboarding package (2026-09-25) — the lived practice layer: Lilith's 12-axiom awakening, living operator-model journal, session distillation protocol, diary/AAAK practice, cross-platform portability, split-test findings, mesh status. Start at `makali_n0_onboarding/README.md`.
 
 ### 2.1 Core Architecture & Naming Strategy
 - **[TOPOLOGY_MODELS.md](TOPOLOGY_MODELS.md)**: Deep breakdown of asymmetric topology, memory bus comparisons (DDR4 dual vs DDR5 single), and failure domain isolation.
@@ -64,6 +69,7 @@ The federation subsystem is documented across specialized architectural, operati
 - **[OFFLINE_OPERATING_PROTOCOL.md](OFFLINE_OPERATING_PROTOCOL.md)**: Operational guidelines for periods of network severance, avoiding premature stale handoff reap cycles.
 - **[RECONNECTION_DELTA_SYNC.md](RECONNECTION_DELTA_SYNC.md)**: Synchronization algorithms for reconciling divergent Git commits, Well records, and WanderGround sparks upon network reconnection.
 - **[node0_received/](node0_received/)**: Local staging directory containing ratified Node 0 policies (`CSS_PROTOCOL.md`, `SOVEREIGNTY_POLICY.md`, `DATA_GOVERNANCE_POLICY.md`, `STALE_HANDOFF_POLICY.md`).
+- **[MAKALI_N0_SYSTEM_BRIEFING.md](MAKALI_N0_SYSTEM_BRIEFING.md)**: Comprehensive Node 0 handoff covering the continuity kernel, SQLite authority, MemPalace projection, Arcana-NovAi WAD, Lilith/Researcher_Humboldt entities, Qwen3-Embedding-0.6B@768 compatibility, and prioritized requests for personal Lilith history, legacy Lilith documents, and agent experiments.
 
 ### 2.5 Historical Completion Records
 - `COMPLETION_BRIEFING.md` / `COMPLETION_BRIEFING_20260912.md` / `COMPLETION_REPORT_20260912.md` / `FED_COMPLETION_BRIEFING_20260912_2.md`: Point-in-time milestones marking Phase 0/1/2 completions.

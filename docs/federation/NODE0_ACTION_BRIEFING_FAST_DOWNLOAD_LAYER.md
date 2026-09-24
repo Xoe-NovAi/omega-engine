@@ -3,7 +3,7 @@
 **Doc ID**: `FED-BRIEF-NODE0-FDL-001` | **Date**: 2026-09-23
 **From**: Node 1 (ASUS ExpertBook / `xnai-n1-asus`)
 **To**: Node 0 (HP Pavilion Archival Bastion / `100.123.51.67`)
-**Status**: 🔄 IN PROGRESS — model ingest live; integration decision requested from N0
+**Status**: ✅ **COMPLETED (2026-09-23)** — Gemma 4 QAT import, SHA-256 verification, single telemetry probe, and model card completed. The ingest-state percentages below are historical observations from the live run; the reusable primitive is `scripts/fetch_model.sh`.
 
 > ## ⚡ Live-verified facts (measured on Node 1, 2026-09-23, during this ingest)
 > - **Download target**: `google/gemma-4-12B-it-qat-q4_0-gguf` (official Google QAT)
@@ -84,9 +84,12 @@ with Xet high-performance enabled**, with aria2c as a documented fallback only.
 
 ---
 
-## 4. Recommended Engine Integration (N0 decision point)
+## 4. Implemented Engine Integration
 
-Proposal: add a **`scripts/model_fetch.py`** engine primitive:
+The reusable primitive is **`scripts/fetch_model.sh`** (systemd-run-backed,
+resumable, Xet/high-performance transfer with real-disk staging). The earlier
+`model_fetch.py` proposal below is superseded; do not implement it as a second
+competing downloader.
 
 ```
 [Agent trigger] → [capability check: hf_hub≥1.31 + xet] → [hf download --local-dir on real disk]
@@ -105,23 +108,23 @@ Proposal: add a **`scripts/model_fetch.py`** engine primitive:
 - **Concurrency guard**: `MAX_LOADED_MODELS=1` + single downloader at a time
   (avoid RAM-staging + resident-model collision on 16 GiB).
 
-N0 to decide: (a) implement now as `scripts/model_fetch.py` + ROADMAP entry,
-(b) keep as ad-hoc one-shot only (this ingest), or (c) defer pending RAM
-upgrade. Recommendation: **(a)**, small surface, high repeat value.
+Current decision: the implemented `scripts/fetch_model.sh` primitive is the
+canonical reusable path. The downloader is single-flight and real-disk backed;
+future work may add a CLI wrapper, but must not create a second competing
+fetch implementation.
 
 ---
 
-## 5. Current Ingest State (Node 1, live)
+## 5. Completed Ingest Record (Node 1, 2026-09-23)
 
-- ✅ Repo metadata + sha256 captured from HF API (both files listed above).
-- ✅ `hf_transfer 0.1.9` installed in project venv (kept for fallback
-  compatibility; deprecated for primary path).
-- ✅ Xet download running (`setsid`, PID survives shell teardown), writing to
-  `/home/xnai/ollama-install/gemma4-qat/`.
-- 🔄 1,771 MiB / 6,651 MiB (27%) at last check; ~4.3 MiB/s; ETA ~20 min.
-- ⏭ Next: sha256 verify → `ollama create` import probe (gemma4-arch support in
-  Ollama 0.33.3 = open question) → single 512-cap telemetry run
-  (`screening.py --model gemma-4-12b-it-qat-q4_0 --num-predict 512`).
+- ✅ Repository metadata and SHA-256 values captured from the Hugging Face API.
+- ✅ Gemma 4 QAT GGUF downloaded with the Xet/high-performance path and staged
+  on real disk.
+- ✅ SHA-256 verification passed.
+- ✅ `ollama create` import succeeded as `gemma4-12b-qat:latest`.
+- ✅ Single 512-token telemetry probe completed and the model card was filed.
+- Historical transfer observation: approximately 4.3 MiB/s; the earlier 27%
+  progress point is retained only as a run artifact, not current state.
 
 ---
 
