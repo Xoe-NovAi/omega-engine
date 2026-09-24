@@ -1,4 +1,9 @@
 # 🚀 First-Run Experience (FRX) Specification
+
+> **Design specification, not the current installation path.** The executable
+> onboarding commands and current hardware policy are maintained in
+> `docs/GETTING_STARTED.md`, `docs/HARDWARE.md`, and `docs/SYSTEM_GUIDE.md`.
+
 **Target**: Clean-room clone to interactive inference in under 10 minutes  
 **Audience**: Developers deploying on x86-64 / ARM laptops
 

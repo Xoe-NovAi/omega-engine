@@ -1,14 +1,24 @@
 # CPU Performance Tuning Guide — ASUS ExpertBook P1 (P1503CVA, i7-13620H)
 
-**Doc ID**: `CPU-PERF-001` | **Date**: 2026-09-18 | **Status**: VETTED & DEPLOYED
+**Doc ID**: `CPU-PERF-001` | **Date**: 2026-09-23 | **Status**: PERFORMANCE-MODE PROCEDURE (not current desktop state)
 
 ---
 
 ## Executive Summary
 
-This guide documents the complete CPU performance tuning process for the ASUS ExpertBook P1 (P1503CVA) with Intel i7-13620H (Raptor Lake-H, 6P+4E, 10C/16T). The core issue: **Ubuntu defaults to `powersave` governor even when the GUI power profile is set to "Performance"**, causing sustained frequencies ~2200 MHz instead of 3500+ MHz.
+This guide documents a controlled **performance-mode benchmark procedure** for
+the ASUS ExpertBook P1 (P1503CVA) with Intel i7-13620H. It is not a claim
+about the current desktop state. The live state measured 2026-09-23 is:
 
-**Solution**: Align three layers — kernel driver, userspace daemon, and GUI — to `performance`.
+- governor: `powersave`
+- EPP: `balance_performance`
+- power profile: `balanced`
+- kernel command line: `intel_pstate=performance`
+- THP: `madvise`
+
+The commands below temporarily align the three layers to `performance` for a
+controlled benchmark. Restore the balanced profile after measuring unless the
+operator intentionally chooses sustained performance mode.
 
 ---
 
@@ -72,15 +82,18 @@ sudo update-grub
 
 ## Verification
 
+For a deliberate performance-mode run, verify all three layers are aligned:
+
 ```bash
-# Check all three layers aligned
+# Performance-mode benchmark target
 cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor   # → performance
 cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference  # → performance
 powerprofilesctl  # → * performance:
 grep intel_pstate /proc/cmdline  # → intel_pstate=performance (after reboot)
 ```
 
-**Expected under load**: 3500+ MHz average (vs ~2200 MHz with `powersave`)
+For the current desktop state, use `powersave` + `balance_performance` +
+`balanced`; do not report performance-mode numbers as ambient system state.
 
 ---
 
@@ -136,7 +149,9 @@ The `power-profiles-daemon` does NOT write to `/sys/.../scaling_governor` for `i
 
 ## Ubuntu GUI ↔ Terminal Sync
 
-**They ARE now synced** via `power-profiles-daemon`:
+The current desktop state is `balanced` with governor `powersave` and EPP
+`balance_performance`. The following commands intentionally switch to the
+performance profile for a controlled benchmark:
 
 ```bash
 # Terminal → GUI
@@ -146,7 +161,9 @@ powerprofilesctl set performance  # Updates GUI menu
 # Click top-right → Performance → runs powerprofilesctl set performance
 ```
 
-**Verified**: `powerprofilesctl` shows `performance` active, governor=`performance`, EPP=`performance`.
+**Current measured desktop state (2026-09-23)**: `powerprofilesctl` shows
+`balanced`, governor=`powersave`, EPP=`balance_performance`. Performance-mode
+results must be recorded separately with their controlled state.
 
 ---
 
@@ -200,7 +217,7 @@ cat /proc/cpuinfo | grep "MHz" | awk '{sum+=$4} END {print "Avg MHz:", sum/NR}'
 ## Related Documentation
 
 - `docs/HARDWARE.md` — Hardware specs
-- `docs/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` — Gap 6 (Thermal Bench)
+- `docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` — Gap 6 (Thermal Bench)
 - `docs/AGENT_RUNBOOK.md` — P-core pin trap, ZRAM, THP
 - `scripts/bench.py` — Benchmarking script
 

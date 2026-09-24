@@ -19,7 +19,7 @@
 make gnosis-lock REASON="..."    # CLI capture (equivalent to the skill's Step 1)
 make gnosis-leash-status         # watchdog: is the puppeteer hand alive?
 make lint                        # anyio purity + no bare exceptions + no torch
-make test                        # 24+ regression tests (also python3 -m unittest)
+make test                        # current regression suite (88 tests at 2026-09-24 audit)
 wander -d <domain> "spark"       # capture a thought into the WanderGround
 ```
 
@@ -190,23 +190,30 @@ the last real reflection.
 
 ## 3. Semantic Write-Through & Platform-Independent Continuity
 
-**The 1M context window is a volatile CPU register. MemPalace is durable RAM/Disk.** Compaction is cache eviction, not a ceremonial crisis.
+**The hosted context window is a volatile CPU register. SQLite continuity state is the durable authority; MemPalace is a one-way searchable projection.** Compaction is cache eviction, not a ceremonial crisis.
+
+> **Current implementation status (2026-09-23):** semantic write-through is the
+> normative target architecture, not yet a live end-to-end runtime path. The
+> portable file kernel and SQLite reference adapter are implemented and tested;
+> the SQLite production runtime decision, live MemPalace MCP injection, custom
+> CLI recovery, and WAD loader reconciliation remain open gates.
 
 ### 3.1 The Register / RAM / Disk Model
 
 | Layer | Role | Technology | Volatility |
 |-------|------|------------|------------|
 | **Context (Register)** | Immediate computation | OpenCode context window | Lossy, 4K summary bottleneck |
-| **MemPalace / Event Log (RAM)** | Active state | SQLite graph, RFC 003 events | Durable working memory |
+| **SQLite Continuity Store (RAM/Disk)** | Authoritative state and event log | Local SQLite `StateStore`/`EventBus` | Durable; production runtime-gated |
+| **MemPalace Projection** | Searchable knowledge surface | MCP drawer sink | Rebuildable; never the write authority |
 | **Artifacts / Well (Disk)** | Canonical records | JSONL, patches, gnosis narrative | Immutable |
 
 ### 3.2 Operational Doctrine
 
-1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or completed batch, persist state to MemPalace/Event Log before continuing. Do not accumulate semantic debt in context.
+1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or completed batch, persist state to the local SQLite continuity authority before continuing. Project to MemPalace only after the SQLite commit succeeds.
 2. **Compaction is ordinary cache eviction.** No ceremony. `gnosis-lock` and `/compact` are fallback/recovery only.
-3. **Active-work pointer lives in MemPalace.** When context evicts, the entity resumes from its durable pointer, not from a summarization lottery.
-4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) is transparent; durable state in MemPalace is model-agnostic.
-5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via different adapter, resume from WAD + MemPalace. The entity must recover mission, todos, decisions, identity.
+3. **The active-work pointer lives in SQLite.** MemPalace is a one-way searchable projection and is not the recovery source of truth.
+4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) changes provenance, not entity identity; recovery reads the SQLite event/state history.
+5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via a different adapter, and resume from WAD + SQLite continuity state. The entity must recover mission, todos, decisions, and identity; MemPalace projection may be rebuilt afterward.
 
 ### 3.3 Agent Protocol (replaces "prepare for compaction")
 
@@ -218,30 +225,36 @@ The "prepare for compaction" orchestration (§1.4) is now a **fallback/recovery 
 
 ---
 
-### 3.1 Layout (`~/WanderGround/`, own git repo)
+### 3.4 Layout (`~/WanderGround/`, own git repo)
 - `inbox/` → raw sparks via `wander -d <domain> "thought"`
 - `archive/` → ingested notes moved here
 - `domains/` (01_local_ai … 05_video_games)
 - `dossiers/` → curated synthesis per domain (template in `dossiers/_template_dossier.md`)
-- `mempalace/` → MemPalace palace (sqlite_exact + minilm), 62+ drawers
-- `spatial/knowledge_atlas.db` → sqlite-vec 768-dim embeddings + 3D projection
+- `mempalace/` → MemPalace `3.10.0` palace (`sqlite_exact`; 5,047 document
+  rows, all currently 384-D, measured 2026-09-23)
+- `spatial/knowledge_atlas.db` → target sqlite-vec atlas with Qwen3 768-D
+  embeddings + 3D projection; currently absent on Node 1
 - `site/` → MkDocs encyclopedia (wiki-sync via `make wiki-sync`)
 
-### 3.2 Commands
+### 3.5 Commands
 ```bash
 wander -d consciousness "new spark..."    # capture (auto-triggers curator)
 make -C ~/WanderGround status            # current atlas/domain state
 make -C ~/WanderGround search q="..."    # search the atlas
-make -C ~/WanderGround 3d-serve          # offline Three.js constellation viewer :8088
+make -C ~/WanderGround 3d-serve          # target offline Three.js constellation viewer :8088 (not currently deployed)
 ```
 
-### 3.3 Background curator
+### 3.6 Background curator
 - systemd user timer `wander-curator.timer` (every 30 min) → ingest, embed, UMAP, wiki
 - Linger enabled — survives logout (see docs/HARDWARE.md / SYSTEM_GUIDE)
 
-### 3.4 MemPalace MCP (in OpenCode)
-- MCP server `mempalace` (type: local) exposes `palace_query`, `palace_exec`, etc.
+### 3.7 MemPalace MCP (in OpenCode)
+- MCP server `mempalace` (type: local) exposes the live MemPalace tool surface;
+  current operations use names such as `mempalace_search` and
+  `mempalace_add_drawer`. Do not assume the historical `palace_query` name.
 - Palace path: `/home/xnai/WanderGround/mempalace`
+- The continuity adapter reaches this boundary through an injected
+  `McpDrawerSink`; it never mutates the palace SQLite database directly.
 
 ---
 
@@ -258,10 +271,11 @@ make -C ~/WanderGround 3d-serve          # offline Three.js constellation viewer
 - Google free API models include Gemini 3.8/3.7/3.6/3.5 Flash and Gemini 3.5
   Flash-Lite. Prefer 3.8 for current public research; use 3.5 Flash-Lite for
   high-volume work. Free Google API data may be used to improve Google products.
-- **Privacy rule**: Space Bunny is the current hosted free zero-retention
-  exception. Big Pickle, MiMo, Ling, NVIDIA trial, and Muse contributor free
-  tiers have explicit training/retention caveats. Private material must not
-  cross those boundaries.
+- **Privacy rule**: Space Bunny is currently described as a hosted free
+  zero-retention route, but the global policy is conservative: private material
+  uses paid zero-retention models only. Big Pickle, MiMo, Ling, NVIDIA trial,
+  and Muse contributor free tiers have explicit training/retention caveats.
+  Free routes remain for public/non-sensitive work until policy is revalidated.
 - Local inference remains CPU-only and is deferred from this hosted foundation.
 - Drift detection before model claims: `opencode models <provider> --verbose --refresh`.
 
@@ -310,7 +324,8 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - CLI: `make well-add|well-list|well-stats|well-supersede|well-export`.
 - Tests: 7 `TestWellStorage` tests (JSONL validity, secret rejection,
   supersession chain, index parity, UTF-8 integrity, stats accuracy, Make targets).
-- 48/48 total tests green, lint+docs clean.
+- Current suite count is discovered by `make test`; the 2026-09-23 audit
+   observed 88 passing tests. Lint and documentation gates are green.
 
 ### 5.3 OMER — Model Card Registry (P3.3a/b, **LIVE**)
 - **What**: git-native model evaluation registry. A card is a **decision record**
@@ -385,7 +400,10 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 
 ## 6.5. CPU Performance Tuning (i7-13620H, intel_pstate + HWP)
 
-**Critical Finding**: Ubuntu defaults to `powersave` pseudo-governor even when GUI power profile = "Performance", causing ~2200 MHz sustained instead of 3600+ MHz.
+> The commands in this section are a deliberate performance-mode benchmark
+> procedure, not the current desktop state. Current live state (2026-09-23):
+> governor `powersave`, EPP `balance_performance`, power profile `balanced`,
+> kernel command line `intel_pstate=performance`.
 
 ### The Three-Layer Problem
 | Layer | Component | Default | Fix |
@@ -407,15 +425,15 @@ sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="intel_ps
 sudo update-grub
 ```
 
-### Verification
+### Verification (performance-mode target)
 ```bash
-cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor   # → performance
-cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference  # → performance
-powerprofilesctl  # → * performance:
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor   # target: performance
+cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference  # target: performance
+powerprofilesctl  # target: * performance:
 grep intel_pstate /proc/cmdline  # → intel_pstate=performance (after reboot)
 ```
 
-### Expected Results
+### Expected Results (controlled performance-mode runs)
 | Metric | `powersave` governor | `performance` governor |
 |--------|---------------------|------------------------|
 | Avg MHz (sustained load) | 2023-2758 MHz | **3600+ MHz** |
@@ -487,7 +505,7 @@ Quick orientation (current phase = **P3 Synthesis + Federation Close-out**):
 3. **P1.5** — ✅ **DONE**: `docs/ROADMAP.md` backlog + `kind:dream` capture.
 4. **P2 — Vanguard studies** — ✅ **DONE** (all evaluated, documented):
    - **Headroom**: REJECTED — well-built, but benefits don't apply to local
-     inference (zero token cost, 1M context, CPU-constrained pipeline).
+     inference (zero token cost, dynamic hosted context, CPU-constrained pipeline).
    - **Odysseus**: SCHEDULED FOR A FUTURE DATE (after P3) — too large for now.
    - **God's Eye View + Gods Eye**: TOY — WAITING (user: "just for me to play
      with"; not on the work track).
@@ -519,8 +537,9 @@ Every failure in the setup process is converted into a hardening measure. This s
 # 1. OpenCode version (must be 1.18+)
 opencode --version | grep -q '1\.1[89]'
 
-# 2. MemPalace MCP responding (CLI test) — NO || true masking failures
-opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1
+# 2. MCP inventory — OpenCode has no `mcp call` subcommand
+opencode mcp list
+opencode run "Use mempalace_search for a test query"
 
 # 3. Tailscale mesh connectivity (Node 1 checks Peer[] for omega-hub)
 tailscale status --json | jq -r '.Peer[] | .DNSName' | grep -q 'omega-hub.tail51f14a.ts.net'
@@ -695,7 +714,9 @@ The following critical bugs were identified by Sonnet 5 review and fixed in the 
 
 ## 11. Quick Reference: Hardened Commands
 
-**⚠️ CRITICAL: Deployed API keys are DATE-DERIVED PLACEHOLDERS (`pk_asus_YYYYMM`, `pk_hp_YYYYMM`). They WILL 401 on every call. Replace with real Parallel.ai API keys before production use.**
+**Credential boundary:** live API credentials are stored outside the repository
+in the canonical runtime locations. Never print, copy, or commit them; verify
+authentication with the configured MCP client rather than placeholder probes.
 
 ```bash
 # Deploy Node 1
@@ -706,8 +727,8 @@ scp /home/xnai/deploy_node0.sh xnai@100.123.51.67:~/ && ssh xnai@100.123.51.67 '
 
 # Validate MCP servers
 opencode mcp list
-opencode mcp call parallel-search web_search '{"query": "test", "max_results": 1}'
-opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}'
+opencode run "Use parallel-search web_search for a test query"
+opencode run "Use mempalace_search for a test query"
 
 # Verify daemon
 systemctl --user status wanderground-embed.service

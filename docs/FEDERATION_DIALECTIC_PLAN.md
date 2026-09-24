@@ -18,7 +18,10 @@
 ## Node 1 Corpus Ready for Transfer (P0-P2 Complete)
 
 ### P0 - Temple-Grade Pulse
-- MemPalace MCP bridge verified (42 tools, 62 drawers, sqlite_exact + minilm)
+- MemPalace MCP bridge historically verified (42 tools, 62 drawers,
+  `sqlite_exact`); current Node 1 runtime is MemPalace `3.10.0` with a local
+  `sqlite_exact` database. The canonical embedding route is standalone Qwen3
+  ONNX at 768 dimensions; the legacy MiniLM route is historical.
 - Legacy pack migration: 22 packs → 10 superseded, 12 triaged-captured, ledger clean
 - Ponytail installed (hooks reviewed, registered, awaiting restart)
 

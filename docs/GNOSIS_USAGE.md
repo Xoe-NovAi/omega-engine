@@ -129,11 +129,10 @@ gnosis-lock "finished implementing bench-compare"
 gnosis-lock "before adding ZRAM config + rewrites"
 ```
 
-**Output**: the full 8-step ritual, then a friendly reminder:
+**Output**: the full 9-step ritual, then an explicit readiness reminder:
 ```
-✅ PRE-COMPACTION RITUAL COMPLETE — Session <id> fully captured.
-✅ Gnosis locked. Complete the compact INSIDE OpenCode:
-   Switch to your session and type:  /compact
+📦 PRE-COMPACTION RITUAL COMPLETE — Session <id> captured.
+📦 Captured, not ready for /compact. Run /gnosis-lock reflection first.
 ```
 *(Note: `/compact` takes NO arguments in OpenCode. Type it alone on its line.)*
 
@@ -145,9 +144,10 @@ gnosis-lock "before adding ZRAM config + rewrites"
 - **It does NOT compact anything.** It only locks gnosis. The `/compact` is
   always typed inside the running OpenCode session.
 
-### 3.2 After locking — compact inside OpenCode
+### 3.2 After capture and reflection — compact inside OpenCode
 
-There is no `oc compact` / CLI compaction. After `gnosis-lock` succeeds:
+There is no `oc compact` / CLI compaction. Capture creates a `CAPTURED` pack;
+the `/gnosis-lock` reflection step must mark it `REFLECTED` first. After that:
 
 1. Switch to your **running OpenCode session** (the TUI).
 2. Type `/compact` **on its own line** (no arguments — OpenCode ignores any text after `/compact`).

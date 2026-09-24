@@ -1,7 +1,7 @@
 # Omega Engine Alpha — Machine & Setup Specification
 
 Authoritative record of the development machine. Source of truth for every session,
-so no re-discovery or re-research is needed. Last verified: 2026-09-08.
+so no re-discovery or re-research is needed. Last verified: 2026-09-23.
 
 ## System — Node 1 (ASUS ExpertBook P1503CVA) — THE FAST STRIKE ENGINE
 - **Laptop**: ASUS ExpertBook **P1503CVA** (ASUSTeK Computer Inc.)
@@ -15,7 +15,10 @@ so no re-discovery or re-research is needed. Last verified: 2026-09-08.
   - SIMD: `avx2` + `avx_vnni` (VNNI only on P-cores; E-cores lack VNNI).
   - Intel Thread Director (HW-guided scheduling) present; OS scheduler integration via `intel_pstate` + HWP.
   - **Scaling Driver**: `intel_pstate` (active mode, HWP enabled) — pseudo-governors: `performance` (EPP=0) / `powersave` (schedutil-like).
-  - **Performance Tuning**: Governor `performance` + EPP=0 + power profile `performance` = 3600+ MHz sustained. Default `powersave` governor caps at ~2200 MHz. See `docs/CPU_PERFORMANCE_TUNING_GUIDE.md`.
+  - **Performance Tuning**: Current measured state is governor `powersave` with
+    EPP `balance_performance` and power profile `balanced`. Performance-profile
+    runs (EPP `performance`/`0`) are deliberate benchmark modes, not the current
+    idle/desktop state. See `docs/CPU_PERFORMANCE_TUNING_GUIDE.md`.
   - **GPU**: Intel UHD Graphics 64EU (Raptor Lake-P, PCI ID 0xA7A8) — integrated, shared system memory. **Important**: Despite lspci showing Iris Xe branding in some tools, this CPU physically has a 64 EU die; the iris driver correctly rejects this PCI ID and falls back to the intel driver (harmless quirk). VA-API acceleration available via iHD driver. — for Open WebUI/Ollama host tasks; the primary compute target for the linked gaming-expert agent.
 - **RAM**: **1×16GB Samsung DDR5-5600 SODIMM** (`M425R2GA3EB0-CWMOL`), **single-channel**, in `Controller0-ChannelA-DIMM0`, **running at 5200 MT/s** (not 5600). Second slot `Controller1-ChannelA-DIMM0` **EMPTY**. Max capacity 64GB, **2 slots (dual-channel capable)**. Dual-channel with 2nd matched stick expected **+52–58% token generation** (InsiderLLM Aug 2026). Predicted ~20–22 t/s on phi4-mini.
 
@@ -26,14 +29,16 @@ so no re-discovery or re-research is needed. Last verified: 2026-09-08.
 - **RAM**: 16 GB Dual-Channel DDR4-3200 (symmetrical memory bus)
 - **Storage**: NVMe 512GB
 - **Strategic Role**: Archival stability, state consistency, compliance enforcement, orchestration, Git SSOT, Hall of Records
-- **Key Service**: `omega-hub` — FastMCP multi-domain core hub on `0.0.0.0:8016` exposing 91 sovereign tools (Streamable HTTP)
+- **Key Service**: `omega-hub` — FastMCP multi-domain core hub on `0.0.0.0:8016`;
+  93 tools were present in the latest verified handshake (2026-09-18); recheck
+  live after Node 0 changes.
 
 ## P2P Omegaverse Federation — Dual-Node Sovereign AI Cluster
 
 ### Fleet Topography & Silicon Specialization
 | Node | Role | Silicon | Strength |
 |------|------|---------|----------|
-| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U (8C/16T, Zen 2), 16GB DDR4-3200 dual-channel | Archival stability, Git SSOT, SQLite DBs, Vector Stores, Council Orchestration, omega-hub (91 tools) |
+| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U (8C/16T, Zen 2), 16GB DDR4-3200 dual-channel | Archival stability, Git SSOT, SQLite DBs, Vector Stores, Council Orchestration, omega-hub (93 tools in latest verified handshake) |
 | **Node 1 (ASUS)** | Compute Vanguard | Intel i7-13620H (6P+4E/16T, RPL-H), 16GB DDR5-5200 single-channel (32GB dual target) | Local neural inference, fast model execution, high-throughput context processing, bare-metal Ollama runner |
 
 ### Wire Protocols (Layer by Layer)
@@ -91,7 +96,7 @@ python3 ~/hivemind_first_contact.py
   - SIMD: `avx2` + `avx_vnni` (VNNI only on P-cores; E-cores lack VNNI).
   - Intel Thread Director (HW-guided scheduling) present; OS scheduler integration via `intel_pstate` + HWP.
   - **GPU**: Intel UHD Graphics 64EU (Raptor Lake-P, PCI ID 0xA7A8) — integrated, shared system memory. **Important**: Despite lspci showing Iris Xe branding in some tools, this CPU physically has a 64 EU die; the iris driver correctly rejects this PCI ID and falls back to the intel driver (harmless quirk). VA-API acceleration available via iHD driver. — for Open WebUI/Ollama host tasks; the primary compute target for the linked gaming-expert agent.
-- **RAM**: **1×16GB Samsung DDR5-5600 SODIMM** (`M425R2GA3EB0-CWMOL`), **single-channel**, in `Controller0-ChannelA-DIMM0`, **running at 5200 MT/s** (not 5600). Second slot `Controller1-ChannelA-DIMM0` **EMPTY**. Max capacity 64GB, 2 slots. (Dual-channel with a 2nd matched stick expected **+52–58% token generation** (InsiderLLM Aug 2026), not 1.8–2×. Predicted ~20–22 t/s on phi4-mini.)
+- **RAM**: **1×16GB Samsung DDR5-5600 SODIMM** (`M425R2GA3EB0-CWMOL`), **single-channel**, in `Controller0-ChannelA-DIMM0`, **running at 5200 MT/s** (not 5600). Second slot `Controller1-ChannelA-DIMM0` **EMPTY**. Max capacity 64GB, 2 slots. A matched second DIMM may improve memory bandwidth, but the projected `+52–58%` token-generation gain and `20–22 t/s` forecast are **unmeasured external estimates**, not local results.
 
 ## Compute inference profile (Ollama, CPU-only)
 - Inference runs on the **6 physical P-cores ONLY conceptually**, but see the pin trap below.
@@ -111,7 +116,7 @@ Pinning `AllowedCPUs=0,2,4,6,8,10` + `OLLAMA_NUM_THREADS=6` caused a **catastrop
 - **Live override** (`/etc/systemd/system/ollama.service.d/override.conf`):
   - `OLLAMA_HOST=0.0.0.0:11434`
   - `OLLAMA_NUM_PARALLEL=1`
-  - `OLLAMA_MAX_LOADED_MODELS=1` (16GB single-channel cannot hold 2 residents + OS headroom: MAX=2 left 1.9Gi avail + 1.4Gi swap thrash; MAX=1 keeps 9.2Gi avail, no swap, same phi4-mini throughput 13.4 t/s)
+  - `OLLAMA_MAX_LOADED_MODELS=1` (16GB single-channel cannot hold 2 residents + OS headroom: MAX=2 left 1.9Gi avail + 1.4Gi swap thrash; MAX=1 keeps 9.2Gi avail, same phi4-mini throughput 13.4 t/s in the 2026-09-08 benchmark; current zRAM usage must be checked separately)
   - `OLLAMA_KEEP_ALIVE=30m`
   - `OLLAMA_NUM_THREADS=8`
   - `OLLAMA_CONTEXT_LENGTH=8192` (caps phi4-mini's 128k default; per-request raise via `num_ctx`)
@@ -133,14 +138,24 @@ Measured 2026-09-08 (warm 3-prompt, phi4-mini): **13.4 t/s** with KV q8_0 + flas
 | `OLLAMA_MAX_LOADED_MODELS` | 1 | 1 | Verified: MAX=2 → swap thrash; MAX=1 → clean |
 | `OLLAMA_KEEP_ALIVE` | 30m | 30m | OWUI overrides per-request; must match in OWUI UI |
 
-## Models installed (`ollama list`, 2026-09-08)
+## Models installed (`ollama list`, 2026-09-23)
 | Model | ID | Size |
 |-------|----|------|
+| gemma4-12b-qat:latest | b3f9087ff433 | 7.0 GB |
+| qwen3-0.8b-quick:latest | f96f0b6cdc7e | 528 MB |
+| rocracoon-3b:latest | aeb3689d2da9 | 2.8 GB |
+| nemotron3-nano:latest | 246bbd676632 | 2.8 GB |
+| phi4-mini-reasoning:latest | f20cabd6439d | 2.8 GB |
+| gemma-3-12b:latest | 187b7e0279b9 | 5.7 GB |
+| krikri-8b:latest | 056e6d1f0b5d | 5.9 GB |
+| qwen2.5-coder-14b:latest | 9b60ea4fba3f | 9.0 GB |
+| qwen2.5-coder:14b | 9ec8897f747e | 9.0 GB |
+| qwen2.5-coder-7b:latest | baf5df73579c | 4.7 GB |
 | code-reviewer:latest | c5386fedf483 | 4.7 GB |
 | deepseek-r1:8b | 6995872bfe4c | 5.2 GB |
 | qwen2.5-coder:7b | dae161e27b0e | 4.7 GB |
-| summarizer:latest | baab6d5e1c24 | 2.5 GB |
 | json-extractor:latest | 30bc72b5d51c | 2.5 GB |
+| summarizer:latest | baab6d5e1c24 | 2.5 GB |
 | linux-admin:latest | 1ade147db8c7 | 2.5 GB |
 | nomic-embed-text:latest | 0a109f422b47 | 274 MB |
 | phi4-mini:latest | 78fad5d182a7 | 2.5 GB |
@@ -238,19 +253,20 @@ True on-demand expert paging from disk exists only in `solid.cpp` fork (private,
 
 **Decision: ZRAM 8GB zstd, swappiness 100.**
 - Rationale: 16GB single-channel, model loads (3-6GB) + KV cache + OS cause pressure. ZRAM at 8GB (50% RAM) with zstd (40% better compression than lz4, minimal speed penalty) absorbs peaks at RAM speed. High swappiness (100) pushes cold pages to ZRAM aggressively — unlike disk swap, ZRAM is fast enough.
-- Our current 4GB `/swap.img` + swappiness 60 is conservative; ZRAM replaces it for inference workloads.
+- Current state: `/dev/zram0` is active with zstd, priority 100, and `vm.swappiness=100`.
+- The NVMe-backed 4GB `/swap.img` is retained on disk for rollback but is disabled and not listed in `/etc/fstab`; it was swapped off 2026-09-23 so zRAM is the only active swap device.
 - Source: zram-tuning project (reapercanuk39), ChromeOS/Android memory strategies, Ariadne hotness-aware compression (HPCA 2025).
 
-**Implementation:**
-```bash
-# /etc/systemd/zram-setup.service
-modprobe zram num_devices=1
-echo zstd > /sys/block/zram0/comp_algorithm
-echo 8G > /sys/block/zram0/disksize
-mkswap /dev/zram0
-swapon /dev/zram0 -p 100
+**Implementation (current generator path):**
+```ini
+# /etc/systemd/zram-generator.conf.d/99-llm.conf
+[zram0]
+zram-size = min(ram / 2, 8192)
+compression-algorithm = zstd
 ```
-Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`
+Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`.
+The generated service is `systemd-zram-setup@zram0.service`; the older manual
+`zram-setup.service` recipe is retained only as an alternative procedure.
 
 ### IRQ Affinity / CPU Isolation
 - `isolcpus=` + `irqaffinity=` boot params can dedicate P-cores, but **breaks Thread Director** on hybrid CPUs. Not recommended for our workload (single inference, no real-time). systemd `AllowedCPUs` + EPP=performance is sufficient.
@@ -264,7 +280,9 @@ Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`
 - **Tj max = 100°C**
 
 ### Current State (Verified)
-- `intel_pstate` driver + `powersave` governor + **EPP=performance** — correct. `powersave` with EPP=performance lets hardware P-states (HWP) decide, biased toward performance.
+- `intel_pstate` driver + `powersave` governor + **EPP=balance_performance** — current
+  desktop state. Performance-profile runs with EPP=`performance` are deliberate
+  benchmark modes, not the current idle state.
 - `thermald` active — adaptive thermal management. Risk: over-throttling if misconfigured (intel/thermal_daemon #550 shows PL1=0 bug).
 - Idle ~63°C @ 400MHz — normal for laptop in silent mode.
 - **Fan: already set to Performance mode in BIOS** (user confirmed).
@@ -282,11 +300,12 @@ Plus `/etc/sysctl.d/99-llm-inference.conf`: `vm.swappiness=100`
 
 | Parameter | Current | Recommended | How to Apply |
 |-----------|---------|-------------|--------------|
-| `transparent_hugepage` | always (default) | **madvise** | Runtime + kernel cmdline |
+| `transparent_hugepage` | madvise | **madvise** | Runtime + kernel cmdline |
 | `thp defrag` | defer+madvise | **madvise** | Runtime |
 | CPU governor | powersave + EPP=performance | **Keep** | Already optimal for HWP |
-| `vm.swappiness` | 60 | **100 (with ZRAM)** | With ZRAM, high swappiness pushes cold pages to fast compressed RAM |
-| ZRAM | none | **8GB zstd, swappiness 100** | systemd service + sysctl |
+| `vm.swappiness` | 100 | **100 (with ZRAM)** | With ZRAM, high swappiness pushes cold pages to fast compressed RAM |
+| ZRAM | 8GB zstd, priority 100 | **8GB zstd, swappiness 100** | systemd-zram-generator + sysctl |
+| NVMe swap | disabled; `/swap.img` retained | **Disabled** | zRAM is the only active swap device; uncomment `/etc/fstab` for rollback |
 | `nohz_full` / `isolcpus` | none | **Don't** | Breaks Thread Director on hybrid CPUs |
 
 **THP madvise is the single highest-impact kernel tweak** — eliminates khugepaged stalls during model load/KV cache growth.
@@ -415,9 +434,9 @@ Two host-level routes to free frontier-class models (ROADMAP P3.7; see
 - **Cline CLI 3.0.62** — npm global (`/usr/local/bin/cline`), hub healthy.
   State: `~/.cline/data/settings/providers.json` (0600; **contains live OAuth
   tokens** — accessToken/refreshToken, never copy into docs/USB; rotate by
-  deleting the auth block + `cline` re-login). Verified free models
-  (2026-09-21, $0 smoke tests + frontier review + 43.5K long-context probe):
-  `z-ai/glm-5.3-flash`, `cline-free/deepseek-v4.1-flash` (1M/384K, images).
+  deleting the auth block + `cline` re-login).   Verified free models (2026-09-21 snapshot; refresh live before relying on
+  capacity): `z-ai/glm-5.3-flash`, `cline-free/deepseek-v4.1-flash` (observed
+  1M/384K, images). Treat these as dated observations, not durable model metadata.
   Entitlement: select the FREE model once in `cline -i` → `/settings` →
   Cline provider, then `-m` works headless.
 - **Antigravity IDE 2.5.5** — `snap install antigravity-ide-snap --classic`,

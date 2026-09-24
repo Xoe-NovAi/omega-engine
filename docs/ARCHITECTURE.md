@@ -9,7 +9,7 @@
 │  RAM: 16 GB Dual-Channel DDR4-3200  •  Storage: NVMe 512 GB                  │
 │  ──────────────────────────────────────────────────────────────────────────  │
 │  Git SSOT ................. omega-engine.bundle (authoritative repository)   │
-│  omega-hub ................ FastMCP, 91 sovereign tools on :8016 (Streamable) │
+│  omega-hub ................ FastMCP; 93 tools in latest dated handshake on :8016 (Streamable) │
 │  Stores ................... SQLite (rollback journal) + Qdrant Vector Stores │
 │  Council Orchestration .... 9-agent Cascading Serial Synchronization (CSS)   │
 │  Roles .................... Archival stability, Git SSOT, compliance, DHAL   │
@@ -24,15 +24,15 @@
 │  NODE 1 — ASUS ExpertBook P1503CVA (COMPUTE & EXPLORATION VANGUARD)          │
 │  Hostname: xnai-n1-asus  •  Tailscale IP: 100.89.40.17                       │
 │  OS: Ubuntu 26.04 LTS  •  CPU: Intel Core i7-13620H (6P+4E, 10C/16T, RPL-H)   │
-│  RAM: 16 GB Single-Channel DDR5-5200 (32 GB Dual target)  •  GPU: Iris Xe     │
+│  RAM: 16 GB Single-Channel DDR5-5200 (32 GB Dual target)  •  GPU: Intel UHD 64EU │
 │  ──────────────────────────────────────────────────────────────────────────  │
 │  Ollama Runtime ........... AllowedCPUs=0-11, THREADS=8 -> 14.4 t/s (AVX-VNNI)│
 │  Open WebUI ............... :3000 (Docker, pinned v0.11.3)                  │
-│  OpenCode Engine .......... Local subagents + Zen 1M-ctx Cloud Extension     │
+│  OpenCode Engine .......... Local subagents + dynamic hosted routes           │
 │  Shared Storage Server .... /home/xnai/node-drive (NFSv4.2, bound to TS IP)  │
 │  Gnosis Engine ............ 9-step ritual, dynamic reflection, leash watchdog│
 │  The Well ................. Active operating-memory corpus (closed-loop)     │
-│  The WanderGround ......... sqlite-vec 3D atlas, MemPalace, WebXR 3D viewer  │
+│  The WanderGround ......... MemPalace live; sqlite-vec atlas/viewer target  │
 │  OMER Model Registry ...... Git-native decision records (v1.0 schema)        │
 │  Ponytail Filter .......... Zero-debt cognitive engine (YAGNI ladder)        │
 └──────────────────────────────────────────────────────────────────────────────┘
@@ -52,7 +52,7 @@ The Omega Engine is an asymmetric, federated, dual-node sovereign artificial int
 | **Silicon Architecture** | AMD Ryzen 7 5700U (8C/16T, Zen 2, homogeneous) | Intel Core i7-13620H (6P+4E/16T, Raptor Lake-H hybrid) |
 | **Memory Topology** | 16 GB Dual-Channel DDR4-3200 (symmetrical bus) | 16 GB Single-Channel DDR5-5200 (high-latency bus) |
 | **Operating System** | Ubuntu 25.10 (Linux 6.x, Mesa, Wayland/GNOME) | Ubuntu 26.04 LTS "Resolute Raccoon" (Linux 7.0) |
-| **Primary Services** | `omega-hub` (FastMCP 91 tools), Qdrant, SQLite | `ollama.service` (14.4 t/s), Open WebUI, OpenCode |
+| **Primary Services** | `omega-hub` (FastMCP; 93 tools in latest dated handshake), Qdrant, SQLite | `ollama.service` (14.4 t/s), Open WebUI, OpenCode, SQLite continuity authority |
 | **Tailscale Identity** | `omega-hub.tail51f14a.ts.net` (`100.123.51.67`) | `xnai-n1-asus.tail51f14a.ts.net` (`100.89.40.17`) |
 | **Shared Drive Role** | NFSv4.2 Client (`/mnt/node-drive`, automounted) | NFSv4.2 Server (`/home/xnai/node-drive`, TS-bound) |
 
@@ -95,7 +95,7 @@ Inference is architected as an accountable hierarchy: local compute provides the
                                  ╱ ╲
                                 ╱   ╲
                           YES  ╱     ╲  NO (Deep multi-doc synthesis,
-                              ▼       ▼     1M-token context sweeps)
+                              ▼       ▼     long-context sweeps; live limits)
 ┌───────────────────────────────────────┐   ┌───────────────────────────────────┐
 │     SOVEREIGN LOCAL FLOOR (T5/T6)     │   │   ACCOUNTABLE CLOUD EXTENSION     │
 │ • Ollama systemd service (:11434)     │   │ • OpenCode Zen Cloud Models       │
@@ -120,8 +120,8 @@ The federation connects across five discrete abstraction layers:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ LAYER 4: DISTRIBUTED INFERENCE & CAPABILITY UNION                           │
-│ Per-task routing policy, true provider provenance, llama-rpc memory pooling │
+│ LAYER 4: DISTRIBUTED INFERENCE & CAPABILITY UNION [TARGET]                 │
+│ Future authenticated llama-rpc memory pooling; not current live service   │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ LAYER 3: EPHEMERAL COORDINATION & PUBSUB                                    │
 │ Redis Pub/Sub heartbeats, awareness feeds, atomic lockfile fallback (M23)   │
@@ -179,10 +179,10 @@ To allow zero-copy model weight sharing, dataset staging, and cross-node artifac
 │                                                                             │
 │  ┌───────────────────────┐  ┌───────────────────────┐  ┌─────────────────┐  │
 │  │   THE GNOSIS ENGINE   │  │       THE WELL        │  │  WANDERGROUND   │  │
-│  │ • 9-step lock ritual  │  │ • well.jsonl corpus   │  │ • sqlite-vec    │  │
-│  │ • Dynamic reflection  │  │ • Top-6 session start │  │ • 768-dim nomic │  │
-│  │ • Pack state machine  │  │ • Top-8 compaction    │  │ • MemPalace     │  │
-│  │ • Watchdog leash      │  │ • Supersession chains │  │ • WebXR 3D      │  │
+│  │ • 9-step lock ritual  │  │ • well.jsonl corpus   │  │ • MemPalace     │  │
+│  │ • Dynamic reflection  │  │ • Top-6 session start │  │ • sqlite-vec    │  │
+│  │ • Pack state machine  │  │ • Top-8 compaction    │  │ • 768-D target  │  │
+│  │ • Watchdog leash      │  │ • Supersession chains │  │ • viewer target │  │
 │  └───────────────────────┘  └───────────────────────┘  └─────────────────┘  │
 │                                 ▲                                           │
 │                                 │ Filtered By                               │
@@ -213,13 +213,20 @@ The Well (`gnosis/well/well.jsonl` + `WISDOM.md`) stores atomic, immutable lesso
 - **Schema**: `record_id`, `ts`, `kind` (`correction|preference|tip|anti_pattern|insight|dream`), `trigger`, `rule`, `rationale`, `tags`, `status` (`active|superseded`).
 - **Closed-Loop Injection**: `gnosis-leash.js` reads active rules and injects the top-6 rules at session initialization and top-8 rules at compaction.
 - **Filtering Invariant**: Injected based on `status == "active"` and domain (`harness`, `local_ai`). **Kind is not filtered** (inspirational dreams and sharp corrections both circulate).
-- **Deferred Semantic Search (P1.4.1)**: Stubbed at `make well-search`. Semantic ranking with `nomic-embed-text` is deferred until the corpus exceeds 30–50 entries or cross-node federated sync warrants relevance filtering.
+- **Deferred Semantic Search (P1.4.1)**: Stubbed at `make well-search`. The canonical embedding route is the standalone Qwen3 embedding server at 768 dimensions; semantic ranking remains deferred until the corpus exceeds 30–50 entries or cross-node federated sync warrants relevance filtering.
 
 ### 5.3 The WanderGround (Spatial Knowledge Constellation)
-- **Atlas Store**: `~/WanderGround/spatial/knowledge_atlas.db` using `sqlite-vec`.
-- **Embeddings**: 768-dimensional vector representations generated via local `nomic-embed-text`.
-- **Episodic Memory**: MemPalace v3.9.0 with `minilm` ONNX runtime managing 62+ thematic drawers.
-- **Visualization**: Three.js/WebXR interactive 3D constellation viewer served on port 8088.
+- **Current state (2026-09-23):** MemPalace `3.10.0` is live on the local
+  `sqlite_exact` backend. The current palace contains 5,047 documents, all
+  reported as 384-dimensional by the current database.
+- **Target migration:** standalone `qwen3-embedding:0.6b` ONNX at 768-D
+  (`truncate_dim=768`) is the federated target. Legacy 384-D vectors are not
+  compatible with the target space and must be re-embedded.
+- **Atlas Store:** `~/WanderGround/spatial/knowledge_atlas.db` is a target
+  artifact and is currently absent; no spatial directory or 3D viewer was
+  present during the 2026-09-23 audit.
+- **Visualization:** the Three.js/WebXR viewer on port `8088` is a target and
+  was not listening during the audit.
 
 ### 5.4 Ponytail (Cognitive Load & Architecture Filter)
 - An active lazy-senior-developer filter preventing premature complexity:
@@ -243,17 +250,11 @@ WAD contract ──► StateStore ──► EventBus ──► ArtifactStore
 
 **Invariants:**
 
-- Context is a volatile CPU register; semantic state is written through to
-  MemPalace/event/artifact stores at decisions, discoveries, task transitions,
-  and batch completion.
-- A model alias or adapter is not entity identity. Recovery must preserve WAD
-  identity when the model or adapter changes.
-- `StateStore`, `ArtifactStore`, `EventBus`, `ModelRouter`, `CheckpointStore`,
-  `CommitJournal`, and `Recovery` are interfaces. OpenCode is an adapter, not a
-  kernel import.
-- The event log is authoritative; state and checkpoints are rebuildable
-  projections. Recovery verifies contiguous sequences and artifact hashes,
-  reconstructs missing state, and rebuilds missing/stale checkpoints.
+- Context is a volatile CPU register; semantic state is written through to the local SQLite continuity authority at decisions, discoveries, task transitions, and batch completion.
+- MemPalace is a one-way searchable projection. It must not be treated as a second write authority or recovery source.
+- A model alias or adapter is not entity identity. Recovery must preserve WAD identity when the model or adapter changes.
+- `StateStore`, `ArtifactStore`, `EventBus`, `ModelRouter`, `CheckpointStore`, `CommitJournal`, and `Recovery` are interfaces. OpenCode is an adapter, not a kernel import.
+- The SQLite continuity event log is authoritative; state and checkpoints are rebuildable projections. Recovery verifies contiguous sequences and artifact hashes, reconstructs missing state, and rebuilds missing/stale checkpoints.
 - The local SQLite adapter applies event, state, checkpoint, and intent
   retirement in one transaction with rollback journaling and `synchronous=FULL`.
   Production use requires SQLite `3.51.3+`; WAL is not used on NFS.

@@ -28,10 +28,13 @@ Notes:
 
 ## 2026-09-08 — Memory headroom: MAX_LOADED_MODELS 1 vs 2
 
+> These are point-in-time benchmark results. Current swap state is zRAM-only;
+> the `~0` swap figure below describes this benchmark run, not a system invariant.
+
 | Config | phi4-mini t/s | Resident | Available | Swap |
 | ------ | ------------- | -------- | --------- | ---- |
 | MAX=2 (2 models resident) | 13.5 | 11.3GB (qwen+deepseek) | 1.9Gi | 1.4Gi (thrash) |
-| MAX=1 (1 model resident)  | 13.4 | 3.2GB (phi4-mini) | 9.2Gi | ~0 |
+| MAX=1 (1 model resident)  | 13.4 | 3.2GB (phi4-mini) | 9.2Gi | ~0 in this benchmark |
 
 **Decision: keep `OLLAMA_MAX_LOADED_MODELS=1`.** Single-channel 16GB can't hold
 two residents with OS headroom; the swap thrash under MAX=2 (visible as cold-load
@@ -93,29 +96,29 @@ Sources: arXiv:2601.14277 (unified eval Llama-3.1-8B), ggml #2094, Qwen3 quantiz
 - `AllowedCPUs=0-11` + `OLLAMA_NUM_THREADS=8` → **14.4 t/s** (swept 6→14.0/8→14.4/10→14.17/12→13.88).
 - P-core-only pin (`0,2,4,6,8,10`) → ~0.5 t/s barrier convoy. DO NOT REGRESS.
 
-## 2026-09-23 — Gemma 4 12B QAT single probe (think:false, 512-cap)
+## 2026-09-23 — Gemma 4 12B QAT 3-prompt lite screen (think:false, 512-cap)
 
 Official Google `gemma-4-12b-it-qat-q4_0.gguf` (6.98GB, sha256 verified),
-ctx=4096, temp=0.1, prompt 1, `think: false` — vs gemma-3-12b (IQ3_M) same config:
+3 prompts, ctx=4096, temp=0.1, `think:false`; RAPL/thermal/freq telemetry at
+2 Hz. Versus gemma-3-12b (IQ3_M) baseline:
 
 | Metric | gemma4-12b-qat | gemma-3-12b |
 |---|---|---|
-| Throughput | **5.11 t/s** (100.3s/512 tok) | 3.12 t/s (163.8s) |
-| Energy/token | **7.42 J** | 12.69 J |
-| Power mean/max | 38.08 / 50.14W | 39.8 / 50.2W |
-| Temp max | 97.05°C | 98.0°C |
-| Freq mean | 3.46 GHz | 3.27 GHz |
+| Throughput | **4.54 t/s average** (4.13–4.84) | 3.12 t/s |
+| Energy/token | **6.50 J average** (5.74–7.74) | 12.69 J |
+| Package power | 29.41W mean | ~40W observed |
+| Peak temperature | 92.05°C | 98.0°C |
 
-Verdict: strict upgrade on every axis (+64% speed, −42% J/tok). Full 18-run
-screen ≈ 30 min (deferred). Card: `docs/models/gemma4-12b-qat.md`.
-Thinking-model note: default think-on consumes the 512 budget as trace →
-empty answer; `think:false` required for screening (`generate()` needs a
-`think` flag — open harness item).
+Verdict: **active** — strict upgrade across the representative screen
+(+45% speed, −49% J/tok). Raw result:
+`benchmarking/screening/gemma4-12b-qat_lite_screening.json`. Card:
+`docs/models/gemma4-12b-qat.md`. The harness now exposes `--think {on,off}`
+(default off) and `--lite`; the full 18-run matrix is optional follow-up.
 
 ## Pending benchmarks
 
 - [ ] `bench-all` full sweep across all 8 installed models
 - [ ] 10-min sustained phi4-mini thermal validation — now privilege-free: `scripts/screening.py` TelemetryCollector (RAPL + thermal + freq sysfs, no sudo); turbostat optional for forensic runs (see `docs/TELEMETRY_PLAN.md`)
 - [ ] Q5_K_M vs Q4_K_M deepseek-r1:8b (tool-call quality vs speed)
-- [ ] ZRAM 8GB vs 4GB swap.img (memory pressure test)
+- [x] ZRAM 8GB active; NVMe-backed `/swap.img` disabled and retained for rollback (2026-09-23)
 - [ ] THP `madvise` vs `always` (latency spike measurement)

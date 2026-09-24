@@ -1,6 +1,6 @@
 # SYSTEM_GUIDE.md — Definitive Living Guide for ASUS ExpertBook P1503CVA (i7-13620H) Local AI Inference
 
-**Machine:** ASUS ExpertBook P1503CVA | **CPU:** i7-13620H (6P+4E, 10C/16T) | **RAM:** 1×16GB DDR5-5600 @ 5200 MT/s (single-channel) | **GPU:** Iris Xe 96EU (shared) | **OS:** Ubuntu 26.04 LTS, Linux 7.0 | **BIOS:** P1503CVA.337 (2026-05-29)
+**Machine:** ASUS ExpertBook P1503CVA | **CPU:** i7-13620H (6P+4E, 10C/16T) | **RAM:** 1×16GB DDR5-5600 @ 5200 MT/s (single-channel) | **GPU:** Intel UHD Graphics 64EU / Raptor Lake-P, PCI ID 8086:a7a8 (shared) | **OS:** Ubuntu 26.04 LTS, Linux 7.0 | **BIOS:** P1503CVA.337 (2026-05-29)
 
 **Purpose:** Single authoritative source for all system tunings, decisions, rationale, and future evolution. Updated every session. No re-discovery.
 
@@ -18,7 +18,7 @@
 
 ---
 
-## 2. CURRENT OPTIMAL CONFIG (Verified 2026-09-08)
+## 2. CURRENT OPTIMAL CONFIG (Verified 2026-09-23)
 
 ### Ollama (systemd override: `/etc/systemd/system/ollama.service.d/override.conf`)
 ```ini
@@ -51,7 +51,7 @@ AllowedCPUs=0-11
 |--------|-------|
 | Throughput | **13.4 t/s** (3-prompt avg) |
 | Resident RAM | **3.2 GB** (down from 3.7 GB f16 KV) |
-| Swap pressure | **~0** (MAX_LOADED_MODELS=1) |
+| Swap pressure | **~0 during the 2026-09-08 benchmark**; current zRAM usage is runtime-dependent |
 | Available RAM | **9.2 GiB** |
 
 ---
@@ -68,23 +68,19 @@ AllowedCPUs=0-11
 | **Swappiness** | 100 | Pushes cold pages to fast ZRAM aggressively |
 | **Conflict** | Never ZRAM+ZSWAP | They fight for pages |
 
-**Implementation (persistent):**
-```bash
-# /etc/systemd/zram-setup.service
-[Unit]
-Description=ZRAM for LLM Inference
-After=local-fs.target
-[Service]
-Type=oneshot
-ExecStart=/bin/bash -c 'modprobe zram num_devices=1 && echo zstd > /sys/block/zram0/comp_algorithm && echo 8G > /sys/block/zram0/disksize && mkswap /dev/zram0 && swapon /dev/zram0 -p 100'
-RemainAfterExit=yes
-[Install]
-WantedBy=multi-user.target
+**Implementation (persistent, current):**
+```ini
+# /etc/systemd/zram-generator.conf.d/99-llm.conf
+[zram0]
+zram-size = min(ram / 2, 8192)
+compression-algorithm = zstd
 ```
 ```ini
 # /etc/sysctl.d/99-llm-inference.conf
 vm.swappiness=100
 ```
+The generated `/dev/zram0` is the only active swap device. The NVMe-backed
+`/swap.img` is retained for rollback but disabled in `/etc/fstab`.
 
 **Sources:** zram-tuning (reapercanuk39), ChromeOS/Android strategies, Ariadne HPCA 2025.
 
@@ -158,11 +154,12 @@ vm.swappiness=100
 
 | Parameter | Current | Target | Method |
 |-----------|---------|--------|--------|
-| `transparent_hugepage` | always | **madvise** | Runtime + `grub` cmdline |
-| `thp defrag` | defer+madvise | **madvise** | Runtime |
-| CPU governor | powersave + EPP=performance | **Keep** | Optimal for HWP |
-| `vm.swappiness` | 60 | **100 (with ZRAM)** | High swappiness = push cold to fast ZRAM |
-| ZRAM | none | **8GB zstd, pri=100** | systemd service + sysctl |
+| `transparent_hugepage` | madvise | **madvise** | Runtime + `grub` cmdline |
+| `thp defrag` | madvise | **madvise** | Runtime |
+| CPU governor | powersave + EPP=balance_performance | **Keep** | Current desktop state; performance profile is an explicit benchmark mode |
+| `vm.swappiness` | 100 | **100 (with ZRAM)** | High swappiness = push cold to fast ZRAM |
+| ZRAM | 7.4 GiB zstd, priority 100 | **8GB class, zstd, priority 100** | `systemd-zram-generator` + sysctl |
+| NVMe `/swap.img` | disabled; retained for rollback | **Disabled** | zRAM is the only active swap device |
 | `nohz_full` / `isolcpus` | none | **Don't** | Breaks Thread Director on hybrid |
 
 ### Grub Cmdline Addition
@@ -322,6 +319,11 @@ Reference: `docs/TELEMETRY_PLAN.md`.
 
 ## 12. SESSION LOG (Append-Only)
 
+> Entries in this section are historical records captured on their stated dates.
+> They intentionally preserve old package versions, tool counts, and benchmark
+> observations; current machine state and policy are maintained in §§1–5 and
+> `docs/HARDWARE.md`.
+
 | Date | Session | Changes | Verified |
 |------|---------|---------|----------|
 | 2026-09-08 | Initial deep research + config | HARDWARE.md, BENCHMARKS.md, SYSTEM_GUIDE.md created; Ollama KV q8_0 + flash-attn applied; MAX_LOADED_MODELS=1; OWUI pinned v0.11.3; cold backup taken | Bench: 13.4 t/s, 3.2 GB resident, 9.2 GiB avail |
@@ -357,9 +359,10 @@ Reference: `docs/TELEMETRY_PLAN.md`.
 
 ## 13. NEXT ACTIONS (Immediate)
 
-Status verified 2026-09-10:
-- ✅ **THP madvise — runtime applied** (`[madvise]` live). grub persistence pending confirm on next reboot.
-- ⏳ **ZRAM 8GB zstd — NOT deployed** (zramctl empty). Still highest-priority RAM safety item.
+Status verified 2026-09-23:
+- ✅ **THP madvise** — runtime is `[madvise]`; GRUB persistence is configured.
+- ✅ **ZRAM 8GB class zstd** — `/dev/zram0` is active at priority 100; `vm.swappiness=100`.
+- ✅ **NVMe swap disabled** — `/swap.img` remains on disk for rollback but is not active or in `/etc/fstab`.
 - ⏳ **OWUI Keep Alive = -1** per model (UI manual step) — still pending.
 - ⏳ **10-min thermal bench** with turbostat logging — still pending.
 - ⏳ **BIOS settings verify** — still pending (next reboot).
@@ -651,7 +654,7 @@ Each skill defines its own MCP server definition + scoped permissions.
 
 ---
 
-### 14.8 My Current Config (Verified 2026-09-18 — all 5 connected)
+### 14.8 Current Config (Verified 2026-09-23 — 5 connected)
 
 > Discovery 2026-09-18: opencode merges **`opencode.json` + `opencode.jsonc`**
 > (both in `~/.config/opencode/`). A stale `websearch` entry survived in
@@ -676,14 +679,17 @@ Each skill defines its own MCP server definition + scoped permissions.
 }
 ```
 
-**To enable Exa API key:** `export EXA_API_KEY="..."` in shell profile or `.env` file.
+**Current MCP inventory:** `parallel-search`, `mempalace`, `firecrawl`,
+`context7`, and `grep_app` are connected. Exa is not currently configured as
+an MCP server; use the direct Exa script only if that route is explicitly
+reintroduced.
 
 **Test commands:**
 ```bash
-opencode mcp list          # Should show all 3 connected
-opencode run "Search for latest Rust 1.81 features. use websearch"
+opencode mcp list          # Should show 5 connected servers
+opencode run "Search for latest Rust 1.81 features. use context7"
 opencode run "How to use Axum extractors? use context7"
-opencode run "Find production Axum middleware examples. use gh_grep"
+opencode run "Find production Axum middleware examples. use grep_app"
 ```
 
 ---
@@ -694,7 +700,7 @@ opencode run "Find production Axum middleware examples. use gh_grep"
 
 | Node | Role | Hardware | Key Service |
 |------|------|----------|-------------|
-| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U, 16GB DDR4-3200 dual-channel, Ubuntu 25.10 | `omega-hub` (FastMCP, 91 tools, Streamable HTTP on `:8016`) |
+| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U, 16GB DDR4-3200 dual-channel, Ubuntu 25.10 | `omega-hub` (FastMCP, 93 tools in the latest verified handshake, Streamable HTTP on `:8016`) |
 | **Node 1 (ASUS)** | Compute Vanguard | Intel i7-13620H, 16GB DDR5-5200 single-channel, Ubuntu 26.04 | Bare-metal Ollama, Open WebUI, OpenCode client |
 
 ### 15.2 Wire Protocols
@@ -762,14 +768,14 @@ are mutable and node/time-dependent. See `docs/OPENCODE_FOUNDATION.md`.
 # Ceremonial first contact
 python3 ~/hivemind_first_contact.py
 
-# Expected: Health check + MCP handshake + 91 tools + SSE stream
+# Expected: Health check + MCP handshake + latest tool count (93 in the 2026-09-18 verification) + SSE stream
 ```
 
 ### 15.7 Migration Status
 
 | Component | HP (Node 0) | ASUS (Node 1) | Status |
 |-----------|-------------|---------------|--------|
-| `omega-hub` | ✅ Running (91 tools) | — | Source |
+| `omega-hub` | ✅ Running (93 tools in latest verified handshake) | — | Recheck live after Node 0 changes |
 | OpenCode | ✅ Custom agents, skills | ✅ Fresh + USB config | Connected |
 | MCP Servers | 5 (Exa, Firecrawl, omega-hub, SearXNG, parallel-search) | 7 (Exa, Context7, Grep.app, omega-hub, SearXNG, Firecrawl*) | Synced |
 | Git Repo | ✅ SSOT | ⏳ Pending clone | Phase 0 |
@@ -829,14 +835,14 @@ python3 ~/hivemind_first_contact.py
 ```bash
 # Pre-deployment
 opencode --version | grep -q '1\.1[89]'
-opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}' >/dev/null 2>&1
+opencode mcp list
 tailscale status --json | jq -r '.Peer[] | .DNSName' | grep -q 'omega-hub.tail51f14a.ts.net'
 curl -s -o /dev/null -w '%{http_code}' https://search.parallel.ai/mcp | grep -E -q '200|401|405'
 
 # Post-deployment validation
-opencode mcp list --verbose | grep -E 'parallel-search|mempalace'
+opencode mcp list
 systemctl --user is-active wanderground-embed.service | grep -q active
-opencode mcp call parallel-search web_search '{"query": "test", "max_results": 1}' 2>&1 | grep -q "canonical_urls"
+opencode run "Use the parallel-search web_search tool for a test query"
 ```
 
 ### 16.4 Rollback Procedures
@@ -880,10 +886,10 @@ Both scripts include:
 
 ```bash
 # Full validation suite
-opencode mcp call parallel-search web_search '{"query": "test", "max_results": 1}'
-opencode mcp call mempalace mempalace_search '{"query": "test", "limit": 1}'
+opencode mcp list
 systemctl --user is-active wanderground-embed.service
-opencode mcp list --verbose | grep -E "parallel-search|mempalace"
+opencode run "Use mempalace_search for a test query"
+opencode run "Use parallel-search web_search for a test query"
 
 # TUI test
 opencode  # select Nemotron 3 Ultra -> @asus_plan "test query"

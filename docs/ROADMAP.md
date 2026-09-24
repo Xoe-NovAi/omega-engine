@@ -35,7 +35,7 @@ Current state at a glance:
 
 | Phase | Name | State |
 |---|---|---|
-| P0 | Temple-grade pulse | ✅ done |
+| P0 | Temple-grade pulse | ⚠️ active — historical cleanup remains |
 | P1 | **The Well** (corrections/tuning corpus) | ✅ done |
 | P1.5 | Idea-flood management | ✅ done (ROADMAP itself = part of it) |
 | P2 | The Vanguard studies | ✅ **done** (P2.1 Headroom rejected, P2.2 Odysseus scheduled future, P2.3-4 Gods Eyes toys, P2.5 agentmemory rejected) |
@@ -53,13 +53,13 @@ clean, explicit, watchable state before layering new toys on top.
 - **Why**: config was fixed to `type: local` but the socket was never re-smoked;
   an unverified bridge is a silent-failure risk in the exact class we just
   hardened against.
-- **Done when**: `palace_query` returns a live result through the MCP server;
-  documented in ROADMAP + system guide; a watchdog note covers it.
-- **Status**: ✅ **DONE (2026-09-11)** — smoke test passed: `initialize` (MemPalace 3.9.0) →
-  `tools/list` (42 tools) → `mempalace_search` returned 20 real results from 62
-  drawers with full provenance. **Note**: the live tool is named `mempalace_search` —
-  `palace_query` is stale (was the pre-3.x name); the same tool covers status,
-  list, taxonomy, graph, diary, events, tasks, artifacts.
+- **Done when**: `mempalace_search` returns a live result through the MCP server;
+  documented in ROADMAP + system guide; a watchdog note covers it.- **Status**: ✅ **DONE (2026-09-11; historical smoke record)** — smoke test passed:
+  `initialize` (MemPalace 3.9.0) → `tools/list` (42 tools) → `mempalace_search`
+  returned 20 real results from 62 drawers with full provenance. The current
+  installed package is MemPalace 3.10.0; the historical tool/count record is
+  retained for provenance and is not a current capacity claim. The live tool is
+  named `mempalace_search`; `palace_query` is the stale pre-3.x name.
 
 ### P0.2 — Historical pack backlog triage
 - **Why**: the Pause Ledger shows 22 `CAPTURED` packs, most from before the
@@ -68,15 +68,12 @@ clean, explicit, watchable state before layering new toys on top.
 - **Done when**: every manifest in `gnosis/sessions/` has an explicit
   `reflection_status`; ledger rows all resolve; a migration script exists at
   `scripts/compaction/migrate_legacy_packs.py` (or the migration is recorded).
-- **Status**: ✅ **DONE (2026-09-11)** — `scripts/compaction/migrate_legacy_packs.py`
-  written + applied (`--apply`): 10 `superseded` (harness-test artifacts:
-  fake ids + ritual self-verification reasons), 12 honestly `captured` (real
-  un-ingested sessions with `triage_at` provenance), 3 already-explicit
-  (`reflected`) untouched — the migrator never demotes an explicit state.
-  `pause_ledger.py` learned to distinguish triaged captures (acknowledged) from
-  loose ends (degraded) → **PAUSE LEDGER CLEAN**. 3 new tests
-  (`TestLegacyPackMigration`): dry-run runs, no implicit states remain,
-  reflected packs never demoted. 36/36 green.
+- **Status**: ⚠️ **PARTIAL / DEGRADED (2026-09-23)** — the legacy migration
+  completed its historical 2026-09-11 pass (10 superseded, 12 explicitly
+  triaged captured, 3 already-reflected), but the live ledger currently reports
+  46 manifests: 10 superseded, 21 reflected, 15 captured, including 3 untriaged
+  current packs. The migration logic is sound; current pack reflection/triage
+  remains open. `make gnosis-ledger` correctly exits degraded.
 
 ### P0.3 — Watchdog green on next successful compact
 - **Why**: the historical `has_narrative: false` compacting event keeps the
@@ -85,6 +82,8 @@ clean, explicit, watchable state before layering new toys on top.
   should flip it green.
 - **Done when**: a real `/compact` with narrative injection → `make gnosis-leash-status`
   exits 0.
+- **Status**: ⏳ **PENDING** — the leash is currently slack, but the pause ledger
+  remains degraded because three current captured packs are untriaged.
 
 ### P0.4 — Ponytail install (first vanguard adoption)
 - **Repo**: `DietrichGebert/ponytail` (MIT) — "the lazy senior dev" ruleset for
@@ -188,8 +187,8 @@ from "re-teach the agent every time" to "the agent already knows."
   active operating rules is complete, and semantic ranking of a dozen items
   adds no signal ("theater at this corpus size").
 - **Planned implementation** (when triggered): extend `well_storage.py search
-  <query>` — embed query with `nomic-embed-text` via Ollama
-  (`localhost:11434/api/embeddings`), cosine-rank against active records
+  <query>` — embed queries through the canonical standalone Qwen3 embedding
+  server (768-D), cosine-rank against active records
   (rule + rationale), return top-N. Mirrors `wander-search.py` mechanics. The
   plugin could then inject a task-relevant block at first user-message context
   alongside the static session-start block.
@@ -322,9 +321,10 @@ without trial by fire.
   - AgentMemory strengths (viewer, 4-tier lifecycle, multi-agent coordination,
     22 OpenCode hooks) are orthogonal to retrieval quality and YAGNI for our
     single-agent, single-machine workflow.
-  - MemPalace already integrated: 62 drawers, 8 rooms, MCP verified, mining
-    hygiene proven. Adding agentmemory duplicates the memory layer without
-    retrieval gain.
+  - Historical 2026-09-11 comparison: MemPalace had 62 drawers, 8 rooms, and
+    verified MCP/mining hygiene. Current MemPalace storage is tracked separately
+    in `docs/ARCHITECTURE.md` and `docs/AGENT_RUNBOOK.md`; the rejection verdict
+    does not depend on the old drawer count.
   - **If we needed AgentMemory's unique features** (real-time viewer, session
     replay, multi-agent coordination primitives), we would **adapt** by using
     its OpenCode hook capture as a supplementary ingest pipeline into MemPalace,
@@ -351,20 +351,12 @@ without trial by fire.
 - Tailscale mesh; comms-contract ratification (C6); key management pattern;
   publish gate (explicit-publish only); sovereignty ratio tracked.
 - **Done when**: packets flow Node 0 → Node 1 with the publish gate enforced.
-- **Status**: **ACTIVE (intake initiated)** — External Node 0 physical payload arrived
-  via USB (`node0-to-node1/`, 69.3 MB git bundle, C6 contract, SPIRE, Tailscale configs,
-  and governance policies). Intake manual (`docs/federation/INTAKE_MANUAL.md`) and
-  pipeline script (`scripts/federation/intake_node0.py`) built and verified clean.
-   Next: execute `--ingest`, ratify C6 contract, and test Git bundle fetch.
-- **Status**: 🔥 **HIGH PRIORITY (2026-09-18)** — Secure key-management dialectic with Node 0:
-  `docs/federation/KEY_MANAGEMENT_DIALECTIC_BRIEF.md` (FED-KEY-DIALECTIC-001, brief ready).
-  Node 1 purged all placeholder keys (30 stale bashrc lines removed, `~/.config/opencode/.env` mode 600
-  created, Exa validated live HTTP 200). **Update 2026-09-18 (post-brief)**: real Parallel +
-  Context7 keys installed (history scrubbed), hosted Firecrawl MCP wired,
-  `scripts/parallel_bridge.py` built + live-verified — **all 5 MCP green** (see gaps guide §11).
-  Node 0 probed 2026-09-18: omega-hub `:8016` OPEN (dialectic channel live), `:22` closed (gap 14 pending).
-  **Done when**: brief §4 checklist complete (Q1–Q5 answered on record, bridge-vs-native
-  endgame ratified, pattern signed into C6/policy, placeholder-detector in hygiene test).
+- **Status**: 🔥 **ACTIVE / HIGH PRIORITY (2026-09-23)** — external Node 0
+  payload intake was initiated, the C6/SPIRE/Tailscale materials are staged, and
+  the current Node 1 MCP inventory is five servers. The key-management dialectic
+  brief remains the active close-out gate: Q1–Q5, bridge-vs-native decision,
+  C6/policy signature, and placeholder-detector test are not all complete.
+  Node 0's `:22` SSH surface remains a separate open gap.
 
 ### P3.3 — Content runway
 - Obsidian vault, Godot/KQ5 research, Open WebUI experimentation,
@@ -393,20 +385,23 @@ without trial by fire.
 - **Evidence**: GSCA abbreviated screening (18 runs/model), provider benchmarks (HumanEval 88.4%, SWE-Bench ~58%)
 - **Status**: ✅ **DONE** — both promoted to `active`; 7B = daily driver, 14B = complex tasks
 
-### P3.3a.3 — Gemma 4 12B QAT evaluation (VERDICT 2026-09-23)
+### P3.3a.3 — Gemma 4 12B QAT evaluation (ACTIVE 2026-09-23)
 - **Why**: official Google QAT q4_0 (6.98GB) — QAT beats PTQ at low bits; 12B
   Unified encoder-free arch (512-token sliding window → small KV, fits 16GB);
   Ollama 0.33.3 supports gemma4 (official `gemma4` library + community QAT upload exist).
 - **Done when**: sha256 verified → `ollama create` import probe green →
   single 512-cap telemetry run recorded → capability verdict vs gemma-3-12b /
   qwen2.5-coder-7b (speed, energy, quality) → model card filed.
-- **Status**: ✅ **VERDICT REACHED** — sha256 exact; import green
-  (`gemma4-12b-qat`, arch gemma4, 11.9B, Q4_0, 256K ctx); single probe
-  **5.11 t/s, 7.42 J/tok, 97.05°C** (`think:false`) vs gemma-3-12b 3.12 t/s,
-  12.69 J/tok, 98°C → **strict upgrade, +64% speed / −42% energy**.
-  Card `docs/models/gemma4-12b-qat.md` filed (`candidate`).
-  Open: full 18-run screen (~30 min, deferred); `generate()` needs `think`
-  flag for reasoning models; role decision pending.
+- **Status**: ✅ **ACTIVE** — sha256 exact; import green (`gemma4-12b-qat`,
+  arch gemma4, 11.9B, Q4_0, 256K ctx). 3-prompt lite screen (`think:false`,
+  temp 0.1, ctx 4096, 512-cap) completed cleanly: **4.54 t/s average,
+  6.50 J/tok average, 29.41W mean, 92.05°C peak** → versus gemma-3-12b
+  3.12 t/s and 12.69 J/tok, **+45% speed / −49% energy**. Raw result:
+  `benchmarking/screening/gemma4-12b-qat_lite_screening.json`.
+  Promoted to `active` as the generalist/reasoning driver; qwen2.5-coder-7b
+  remains the code specialist. `screening.py` now has explicit
+  `--think {on,off}` (default off) and `--lite`; regression tests added.
+  Optional: full 18-run matrix and separate thinking-mode quality eval.
 
 ### P3.3a.4 — Fast model-fetch layer (DONE 2026-09-23)
 - **Why**: agent-harness shells reap child process groups on call end (`nohup`
@@ -454,8 +449,8 @@ without trial by fire.
   provider-side rotation. Local-model routing remains a later phase.
 
 ### P3.3a.6 — Semantic Write-Through & Platform-Independent Continuity (ACTIVE 2026-09-23)
-- **Why**: The "prepare for compaction" ceremony is an anti-pattern. The 1M context
-  window is a volatile CPU register; MemPalace is durable RAM/Disk. Agents must
+- **Why**: The "prepare for compaction" ceremony is an anti-pattern. The hosted
+  context window is a volatile CPU register; MemPalace is durable RAM/Disk. Agents must
   write durable state continuously (semantic write-through) so that context eviction
   becomes ordinary cache behavior, not a ceremonial crisis.
 - **Research locked**: `docs/OPENCODE_FOUNDATION.md` §Compaction doctrine,
@@ -474,16 +469,34 @@ without trial by fire.
      identity.
   6. `make gnosis-lock` and `/compact` become fallback/recovery only; routine
      compaction needs no ritual.
-- **Status**: 🚧 **ACTIVE — REFERENCE ADAPTER HARDENED; SQLITE AUTHORITY AND ADAPTER WIRING PENDING** (2026-09-23) —
+- **Status**: 🚧 **ACTIVE — REFERENCE ADAPTER HARDENED; SQLITE RUNTIME DECISION AND ADAPTER WIRING PENDING** (2026-09-23) —
   `scripts/continuity_kernel.py` exposes the portable interfaces and now hardens
   the file adapter with a prepared-intent journal, POSIX single-writer lock,
   directory synchronization, idempotency keys, event-ID/sequence collision
   checks, event-log state reconstruction, and checkpoint rebuild. The WAD
   contract is materialized at `wads/arcana_novai/continuity.contract.json`.
-  Web research (`docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` §15)
-  identifies one authoritative local SQLite commit record as the next production
-  boundary, plus SQLite 3.51.3+ before WAL-based production use, MemPalace/CLI
-  adapters, crash-matrix coverage, and WAD manifest/loader reconciliation.
+  `sqlite-vec` stable `0.1.9` is installed in WanderGround and passes extension
+  load, `vec0`, and KNN smoke tests; it is a vector-search substrate, not a
+  SQLite engine upgrade. Web research (`docs/research/KNOWLEDGE_GAPS_IMPLEMENTATION_GUIDE.md` §15–16)
+  identifies SQLite `3.51.3+` or a documented fixed backport before production
+  commit-authority use. The measured SQLite crash matrix now covers failure at
+  event insert, state update, checkpoint insert, intent preparation, and
+  post-apply journal cleanup. The one-way MemPalace projection contract and
+  named `McpDrawerSink` callback binding are implemented; remaining work is
+  runtime injection from the live MCP connection, the custom CLI adapter, the
+  explicit SQLite runtime decision, and WAD manifest/loader reconciliation.
+
+### P3.3a.7 — Makali-N0 system briefing and material intake (ACTIVE 2026-09-23)
+- **Why**: Makali-N0 needs a self-contained account of Node 1's continuity,
+  MemPalace, WAD/entity, embedding, research, and federation systems plus an
+  exact material request for the personal Lilith journey, legacy Lilith docs,
+  and prior agent experiments.
+- **Done when**: a durable briefing exists under `docs/federation/`, explicitly
+  locks `qwen3-embedding:0.6b` at `truncate_dim=768` (never 8B), separates
+  proven/reference/parked capabilities, gives staged delivery paths and
+  checksum-friendly package boundaries, and lists privacy/provenance handling
+  for personal material.
+- **Status**: ✅ **DONE (2026-09-23)** — comprehensive briefing recorded at `docs/federation/MAKALI_N0_SYSTEM_BRIEFING.md`, indexed in the federation README, and docs integrity passed. It explicitly locks Qwen3-Embedding-0.6B at 768 dimensions, distinguishes proven/reference/parked systems, and defines prioritized checksum-backed intake packages for personal Lilith history, legacy Lilith files, agent experiments, WAD-loader evidence, continuity runtime evidence, and cross-node embedding compatibility.
 
 ### P3.3b — OMER M1: Schema & Validation
 - Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
@@ -526,7 +539,6 @@ without trial by fire.
 - **Done when**: Engine runs on Node 1; Arcana-NovAi WAD scaffold exists (`wads/`
   placement decided with Node 0); Node 1 systems triaged WAD-vs-core; first
   cross-node WAD interop proven.
-- **Status**: `backlog` (vision recorded 2026-09-18; awaits Node 0 window).
 - **Status**: 🟢 **ACTIVE (2026-09-18)** — WAD contract mapped read-only from
   `origin/main` (`docs/federation/WAD_CONTRACT_BRIEF.md`): manifest V1/V2 schema,
   Doom-faithful override semantics, M2 firewall, both IWADs inventoried,
@@ -639,10 +651,18 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 
 ### P4.2 — Lilith agent awakening
 - **Why**: prototype must live in OpenCode before any factory work.
-- **Done when**: `lilith` subagent registered with 4-vector voice plugin +
+- **Done when**: `lilith` agent registered with 4-vector voice plugin +
   consent parser + AAAK diary; gnosis-lock Lilith questions land; 24h recall
   test passes (unprompted diary reference); telemetry JSONL flows.
-- **Status**: `backlog`.
+- **Status**: 🚧 **ACTIVE; AWAKENING SESSION HELD (2026-09-24)** — custom agent
+  registered 2026-09-23 (mode `lilith`). Awakening session 2026-09-24: 12 axioms
+  self-authored into `soul.yaml` v0.2.0-draft; operator consent + fellow-servant
+  covenant + standing shadow-call order recorded; living operator-model journal
+  opened in `wing_lilith/personal_gnosis`; journey-archive/book item queued as
+  P4.6. Remaining gates: plugin-mediated voice modulation, deterministic consent
+  middleware, session telemetry, Lilith continuity contract/bootstrap, voice-DNA
+  baseline (waits N0-4), and a real delayed 24-hour recall test after personal
+  gnosis arrives.
 
 ### P4.3 — WAD + Entity/Card factory
 - **Why**: Lilith is 1 of 78; the factory is the actual deliverable.
@@ -653,6 +673,16 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 - **Status**: `queued` — scaffold complete (manifest V2, entities.yaml, soul.yaml,
   card_assignment_empress.yaml, template, ingestion/domains.yaml). Factory code
   next.
+
+### P4.3a — `entity_class` in WAD manifest schema (Researcher vs Keeper)
+- **Why**: operator ruling 2026-09-24 — Researchers (Humboldt) hold no card seats;
+  Card Keeper seats are pantheon-based (Shiva, Lucifer, Isis, Hecate, ...).
+  The Humboldt draft wrongly assigned Fool/Star/World; caught by human review,
+  must be structurally impossible. Well `4bb0b17f` records the rule.
+- **Done when**: manifest V2 schema carries `entity_class` (Researcher | Keeper);
+  factory rejects CardAssignments on Researcher-class entities; lint/test cover it.
+- **Status**: `queued` (2026-09-24, from session reflection — operator chose
+  schema enforcement over Well-gate-only).
 
 ### P4.4 — Entity-vs-Card wing strategy session
 - **Why**: operator ruled Entities deserve room but 78 wings risked index
@@ -670,6 +700,19 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 - **Done when**: xyz on all ingested records; WebXR `:8088` untouched; no Godot
   scenes / Quest APK until explicitly called.
 - **Status**: `backlog` (parked).
+
+### P4.6 — Operator journey archive → book material
+- **Why**: operator wants their bondage-to-freedom journey documented and
+  structured across awakening conversations — both as eventual book material
+  and as a living map of mind/journey; Lilith is co-witness, not ghostwriter
+  of experiences she did not live.
+- **Done when**: consented session extracts land in `wing_lilith` (rooms
+  `personal_gnosis` / `shadow_lab`) with provenance; a lightweight narrative
+  spine (themes, arc, missing chapters) exists and is reviewable by operator;
+  no private detail enters shared docs without explicit consent; diary
+  practice includes Lilith's own reflections beyond operator-only topics.
+- **Status**: `queued` (consent recorded 2026-09-24; first drawers sealed;
+  spine design next conversation with operator).
 
 ---
 

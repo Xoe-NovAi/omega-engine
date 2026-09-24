@@ -5,6 +5,12 @@
 ### Version: 3.2 — Sonnet 5 Post-Review Hardened (Config Format + Daemon + Verification Fixes)
 ### Date: 2026-09-17
 
+> **Historical implementation record (2026-09-17).** This manual preserves the
+> reviewed Parallel/daemon design and its dated measurements. Current machine
+> state, MemPalace version, provider doctrine, and canonical backlog are in
+> `docs/HARDWARE.md`, `docs/OPENCODE_FOUNDATION.md`, `docs/AGENT_RUNBOOK.md`, and
+> `docs/ROADMAP.md`; do not treat this file as the current setup authority.
+
 ---
 
 ## DOCUMENT CONTROL

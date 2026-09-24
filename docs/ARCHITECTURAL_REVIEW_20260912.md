@@ -4,6 +4,11 @@
 **Date**: September 12, 2026  
 **Scope**: Node 0 (HP Pavilion Archival Bastion) $\longleftrightarrow$ Node 1 (ASUS ExpertBook Exploration Vanguard) $\longleftrightarrow$ Developer Alpha Release $\longleftrightarrow$ The VR Omegaverse
 
+> **Historical snapshot (2026-09-12).** Tool counts, atlas/viewer state, and
+> operational claims below are preserved for provenance. Current state is in
+> `docs/ARCHITECTURE.md`, `docs/HARDWARE.md`, `docs/SYSTEM_GUIDE.md`, and
+> `docs/federation/README.md`.
+
 ---
 
 ## 1. Executive Synthesis & Current Operational Ground Truth

@@ -10,21 +10,21 @@ The continuity kernel makes semantic state durable independently of the model or
 host adapter. It implements the engine-side contract required by ROADMAP
 P3.3a.6 without importing OpenCode, Ollama, or any provider SDK.
 
-The reference file adapter lives at `scripts/continuity_kernel.py`. The local
-SQLite commit-authority adapter lives at `scripts/continuity_sqlite.py`. Neither
-is the federation transport yet.
+The local SQLite continuity store is the authoritative state and event authority. MemPalace is a one-way searchable projection and must never be used as a second write authority or recovery source. The reference file adapter lives at `scripts/continuity_kernel.py`; the local SQLite commit-authority adapter lives at `scripts/continuity_sqlite.py`. Neither is the federation transport yet. The file adapter remains useful for portable tests; the SQLite adapter is the production authority once its runtime gate is satisfied.
 
 ## 2. Layer Model
 
 | Layer | Kernel interface | Reference implementation | Role |
 |---|---|---|---|
-| Active state | `StateStore` | `FileStateStore` | Atomic pointer to current mission, todos, decisions, and discoveries |
+| Active state | `StateStore` | `FileStateStore` / `SqliteContinuityStore` | Atomic pointer to current mission, todos, decisions, and discoveries |
 | Immutable payloads | `ArtifactStore` | `FileArtifactStore` | Content-addressed SHA-256 artifacts |
-| Event memory | `EventBus` | `FileEventBus` | Append-only JSONL semantic event stream |
+| Event memory | `EventBus` | `FileEventBus` / SQLite `events` | Append-only semantic event stream |
 | Model register | `ModelRouter` | `PortableModelRouter` | Role-based model selection; model ID is not identity |
-| Recovery index | `CheckpointStore` | `FileCheckpointStore` | Latest consistency checkpoint |
+| Recovery index | `CheckpointStore` | `FileCheckpointStore` / SQLite `checkpoints` | Latest consistency checkpoint |
 | Recovery | `Recovery` | `ContinuityKernel.recover()` | Contract, state, event, and artifact integrity check |
 | Observability | `Telemetry` | `InMemoryTelemetry` | Write-through, recovery, and failure observations |
+
+**Production authority:** the local SQLite adapter is the state/event commit authority. The file adapter is the portable reference implementation. MemPalace is a downstream one-way projection.
 
 ## 3. WAD Contract
 
@@ -129,7 +129,13 @@ register but does not change entity identity or historical event provenance.
 - rebuild missing state and checkpoints;
 - deduplicate idempotent retries;
 - reject a tampered payload artifact and sequence conflict;
-- reject production SQLite versions below the fixed floor.
+- SQLite crash matrix: injected failure at event insert, state update, checkpoint
+  insert, intent preparation, and post-apply journal cleanup; recovery yields
+  either the prior state or the complete next state without duplicate events.
+- one-way MemPalace projection: `scripts/continuity_mempalace.py` replays exact
+  event JSON through an injected drawer sink, including an explicit
+  `McpDrawerSink` binding for `mempalace_add_drawer`; it rejects cursor gaps,
+  preserves the SQLite authority, and surfaces sink failures for retry.
 
 ## 7. Local SQLite Commit Authority
 
@@ -141,8 +147,8 @@ enable WAL on a network filesystem.
 
 SQLite `3.51.3+` is the production floor because earlier versions fall within
 SQLite's 2026 WAL-reset defect range. The current host's older SQLite is allowed
-only through the explicit `require_fixed_sqlite=False` test/development switch.
-The production constructor fails closed.
+only through a private repository-test sentinel; the public production
+constructor fails closed and has no opt-out boolean.
 
 The local database is a commit authority and rebuildable projection source.
 MemPalace should consume the event/artifact stream as a projection or expose an
@@ -159,7 +165,8 @@ explicit append API; it must not become a second uncoordinated dual-write path.
 
 ## 9. Next Adapter Gate
 
-The next implementation increment is to add adapters that bind these interfaces
-to the real MemPalace event log and a custom Omega Engine CLI. The adapter layer
-must not be imported by `continuity_kernel.py`; the WAD and durable state remain
-the portable contract.
+The next implementation increment is to inject the `McpDrawerSink` callback
+from the runtime's existing `mempalace_add_drawer` MCP connection and add a
+custom Omega Engine CLI. The adapter layer must not be imported by
+`continuity_kernel.py`; the WAD and durable state remain the portable contract.
+The live palace database must not be opened for direct mutation by this adapter.

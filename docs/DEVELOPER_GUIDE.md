@@ -9,17 +9,25 @@ Read `CODE_QUALITY.md` first — it contains the invariants.
 omega-engine-alpha/
 ├── Makefile                 # The daily interface (all operations)
 ├── AGENTS.md                # Agent instructions (machine rules)
-├── docs/                    # All SSOT documentation
+├── docs/                    # Canonical documentation, federation, and research
 ├── scripts/
 │   ├── bench.py             # Inference benchmarking
 │   ├── chatbot.py           # Interactive CLI chat
-│   ├── serve.py             # HTTP server
+│   ├── serve.py             # HTTP server (default :8000)
+│   ├── continuity_kernel.py # Portable semantic continuity kernel
+│   ├── continuity_sqlite.py # Local SQLite commit-authority adapter
+│   ├── continuity_mempalace.py # One-way MemPalace projection
+│   ├── embedding_server.py  # Qwen3 ONNX target/prototype (not live by default)
+│   ├── check_docs.py        # Markdown path and anchor validator
 │   ├── backup_harness.sh    # Backup + cron
-│   └── compaction/          # Gnosis Lock ritual (9 steps)
+│   ├── federation/          # Node 0 intake and transport helpers
+│   └── compaction/          # Gnosis Lock ritual and watchdog
+├── tests/                   # Regression and crash-matrix tests
+├── wads/                    # Portable Entity/Card/WAD contracts
 ├── .modelfiles/             # Custom Modelfile sources
 ├── .env.ollama / .env.docker # Runtime env (gitignored; examples committed)
 ├── gnosis/                  # Gnosis Lock state (identity, evolution, sessions)
-└── session-*.md             # Archived session transcripts (kinglist, ignore)
+└── session-*.md             # Archived session transcripts (ignored)
 ```
 
 ## Environment
@@ -30,6 +38,14 @@ omega-engine-alpha/
 python3 --version
 make help
 ```
+
+## Continuity authority rule
+
+The local SQLite continuity store is the authoritative state and event store.
+MemPalace is a one-way searchable projection and must not become a second write
+authority. Recovery reads SQLite continuity state plus the WAD identity contract;
+MemPalace can be rebuilt after recovery. Production use requires SQLite
+`3.51.3+` or a documented fixed backport.
 
 ## Development loop
 
@@ -42,14 +58,16 @@ make lint-async                    # no bare asyncio/trio
 
 ## Testing
 
-There is a growing test suite (see `docs/TESTING.md` if added). Until then:
+The repository uses the standard-library unittest suite under `tests/`:
 
 ```bash
-python3 -m pytest scripts/ 2>/dev/null || echo "no tests yet — add one!"
+make test
 ```
 
-The philosophy: **verify on real hardware, don't assume.** Any perf- or
-memory-claiming change gets benchmarked (`make bench`, `make bench-all`).
+The test count is discovered at runtime; do not copy a historical milestone
+count into current documentation. The philosophy is **verify on real hardware,
+don't assume**. Any performance- or memory-claiming change gets benchmarked
+(`make bench`, `make bench-all`).
 
 ## Debugging discipline
 

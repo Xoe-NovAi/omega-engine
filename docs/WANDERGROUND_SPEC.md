@@ -2,7 +2,7 @@
 ## Node 1 (ASUS ExpertBook P1503CVA) Autonomous Exploration, Research & Spatial Knowledge Substrate
 
 **Author**: Xoe-NovAi (ASUS Build & Research Vanguard)  
-**Target Hardware**: ASUS ExpertBook P1503CVA (Intel i7-13620H, 16GB DDR5-5200 Single-Channel, Iris Xe 96EU)  
+**Target Hardware**: ASUS ExpertBook P1503CVA (Intel i7-13620H, 16GB DDR5-5200 Single-Channel, Intel UHD Graphics 64EU / Raptor Lake-P, PCI ID 8086:a7a8)
 **Role**: Node 1 Exploration, Experimentation & Playground Vanguard  
 **Federation Peer**: Node 0 (HP Pavilion - Archival Bastion & Nexus, `192.168.10.168:8016`)  
 **Status**: Active Architecture & Implementation Specification  
@@ -25,7 +25,7 @@ Inference on Node 1 is CPU-only, executed across the 10-core/16-thread Intel Cor
 - **P-Core Affinity Rule**: Pinned strictly to `AllowedCPUs=0-11` + `OLLAMA_NUM_THREADS=8` yielding ~14.4 t/s on 3B-4B models. E-cores (12-15) are strictly excluded from inference thread pools to prevent barrier convoys.
 - **Memory Ceiling**: Strict `MAX_LOADED_MODELS=1` in Ollama. 16GB single-channel cannot hold two resident models plus system overhead without swap thrashing.
 - **Inference Boundary**:
-  - **Local Models**: Reserved exclusively for fast, lightweight tasks: embedding (`nomic-embed-text`), classification, tagging, entity extraction, quick queries, and small tool routing (`phi4-mini:latest`, `qwen3-1.7b`, `smollm2-135m`, `functiongemma-270m`).
+  - **Local Models**: Reserved exclusively for fast, lightweight tasks: the canonical embedding path is the standalone Qwen3 ONNX server, while Ollama remains reserved for classification, tagging, entity extraction, quick queries, and small tool routing. The legacy `nomic-embed-text` model may remain installed for historical workloads but is not the federated canonical route.
   - **Deep Synthesis & Long-Context Work**: Must NEVER be scheduled on local quantizations of 8B+ or long-context windows. Heavy dialectic analysis, multi-source literature synthesis, and long-form narrative production are routed through hosted free aliases (`Big Pickle`, `Space Bunny Free`, current Gemini Flash families) or explicitly selected paid models. Stealth-alias context is dynamic; never hardcode it.
 
 ---
@@ -99,8 +99,8 @@ The WanderGround is organized across five persistent knowledge wings that interc
 - **Artifacts**: Concept maps, dream and motif analyses, and ethical alignment frameworks.
 
 #### Domain 5: Video Games as Worlds, Simulations & Engine Architecture
-- **Focus**: Deep RPGs (*Planescape: Torment*), space simulation mechanics (*Pioneer*, *Privateer*), fast visceral movement engines (*Doom* idTech), tactical mech combat (*MechWarrior*), and Iris Xe 96EU Linux optimization via Gamemode/Gamescope/Mesa Vulkan.
-- **Artifacts**: Game research cards, Iris Xe compatibility verdicts, reproducible shell recipes, and game mechanic teardowns.
+- **Focus**: Deep RPGs (*Planescape: Torment*), space simulation mechanics (*Pioneer*, *Privateer*), fast visceral movement engines (*Doom* idTech), tactical mech combat (*MechWarrior*), and Intel UHD Graphics 64EU Linux optimization via Gamemode/Gamescope/Mesa Vulkan. Third-party Iris Xe labels may appear for this device, but the verified PCI identity is 64EU.
+- **Artifacts**: Game research cards, graphics compatibility verdicts, reproducible shell recipes, and game mechanic teardowns.
 
 ---
 
@@ -113,14 +113,34 @@ Our source code audit of `MemPalace/mempalace` reveals a modular backend registr
 3. **`PGVectorBackend`**: PostgreSQL with the pgvector extension and advisory locks.
 4. **`SQLiteExactBackend` (`mempalace/backends/sqlite_exact.py`)**: A pure SQLite engine storing vectors directly alongside metadata.
 
-### 4.2 Architectural Decision: ChromaBackend + ONNX `all-MiniLM-L6-v2`
-**Decision**: Configure MemPalace with its default in-tree `ChromaBackend` using the embedded local ONNX `all-MiniLM-L6-v2` embedding provider.
+### 4.2 Current Architectural Decision: SQLiteExactBackend + Qwen3 Embeddings
+
+**Decision**: Keep MemPalace on its local `sqlite_exact` backend and use the
+standalone Qwen3 embedding server (`qwen3-embedding:0.6b`, ONNX,
+`truncate_dim=768`) for the canonical embedding route. The legacy
+`nomic-embed-text` model may remain installed for historical workflows, but it
+is not the federated canonical route.
+
+The local runtime currently uses MemPalace `3.10.0`; the active palace database
+is `/home/xnai/WanderGround/mempalace/sqlite_exact.sqlite3` (5,047 document
+rows, all currently 384-dimensional, `PRAGMA quick_check = ok`, measured
+2026-09-23). The 768-D Qwen3 route is a target migration and is not yet live.
+MemPalace remains behind an MCP/drawer-sink boundary for continuity projection;
+the continuity adapter must not mutate its SQLite database directly. The local
+SQLite continuity store is the authoritative state/event source; MemPalace is a
+rebuildable searchable projection.
 
 #### Technical Rationale:
-1. **Process Isolation**: The ONNX runtime runs embedded inside the Python process without requiring Ollama to load or stay awake. This preserves Ollama's strict `MAX_LOADED_MODELS=1` limit for active user tasks.
-2. **Zero Daemon Dependency**: No Docker container or server process (PostgreSQL, Qdrant) is required to run on Node 1. The database is a set of flat files located at `~/.mempalace/` or `~/WanderGround/mempalace/`.
-3. **Zero GPU/VRAM Intrusion**: `all-MiniLM-L6-v2` runs on CPU with minimal footprint (< 100MB RAM), executing embeddings in milliseconds without thermal or memory contention.
-4. **Lightweight MCP Surface**: MemPalace provides `mcp_light_server.py`, which consolidates 45 internal primitives into three high-performance tools (`palace_query`, `palace_exec`, `palace_coordinate`) powered by Palace Query Language (PQL). This prevents tool-definition bloat in OpenCode.
+1. **Process isolation**: The Qwen3 embedding server runs outside Ollama, so the
+   `MAX_LOADED_MODELS=1` inference discipline remains intact.
+2. **Exact local storage**: `sqlite_exact` keeps the palace in a local SQLite
+   database with FTS and exact vector storage; no Chroma, Qdrant, PostgreSQL,
+   Docker, or GPU service is required on Node 1.
+3. **Federated compatibility**: Both nodes use the same Qwen3 model and 768-D
+   Matryoshka truncation for direct cosine compatibility.
+4. **MCP boundary**: MemPalace is accessed through its MCP/drawer surface. The
+   continuity projector passes exact event JSON to an injected drawer sink; it
+   does not import MemPalace internals or open its database for mutation.
 
 ---
 
@@ -142,7 +162,7 @@ We implement a two-tier execution pattern:
    - A systemd user timer fires every 30 minutes to clean up untriaged notes, reconcile vector embeddings, and recompute spatial coordinates.
 3. **The Worker Core (`wander-curator.py`)**:
    - Processes all unprocessed Markdown cards in `~/WanderGround/inbox/`.
-   - Generates embeddings using `nomic-embed-text` via Ollama HTTP API (or local ONNX).
+   - Generates embeddings through the standalone Qwen3 ONNX server at 768 dimensions (`qwen3-embedding:0.6b`).
    - Inserts records into `knowledge_atlas.db` (`sqlite-vec`).
    - Updates MemPalace drawers with verbatim extracts.
    - Calculates 3D UMAP coordinates for spatial exploration.
@@ -152,8 +172,11 @@ We implement a two-tier execution pattern:
 
 ## 6. Spatial Knowledge Engine: 3D Vectors & Godot/VR Pathway
 
-### 6.1 Database Schema (`sqlite-vec`)
-The spatial memory foundation lives in `~/WanderGround/spatial/knowledge_atlas.db`:
+### 6.1 Target Database Schema (`sqlite-vec`)
+
+The target spatial memory foundation is `~/WanderGround/spatial/knowledge_atlas.db`.
+This file and the `spatial/` directory are not currently present on Node 1; the
+schema below describes the intended migration target, not a live database.
 
 ```sql
 -- Core concept storage with 3D projection coordinates
@@ -174,7 +197,7 @@ CREATE TABLE IF NOT EXISTS concepts (
 -- sqlite-vec virtual table for fast semantic retrieval
 CREATE VIRTUAL TABLE IF NOT EXISTS vec_concepts USING vec0(
     id TEXT PRIMARY KEY,
-    embedding FLOAT[768]               -- nomic-embed-text 768-dimensional vector
+    embedding FLOAT[768]               -- qwen3-embedding:0.6b, truncate_dim=768
 );
 ```
 
@@ -200,36 +223,44 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_concepts USING vec0(
 
 To adhere to the hardware ceiling of the ASUS ExpertBook (CPU-only, single-channel RAM, `MAX_LOADED_MODELS=1`), responsibilities are divided between local runtimes and OpenCode Zen frontier engines:
 
-| Exploration Task | Execution Engine | Model / Provider | Context Window | Operational Justification |
+| Exploration Task | Execution Engine | Model / Provider | Runtime window policy | Operational Justification |
 |---|---|---|---|---|
-| **Frictionless Note Embedding** | Local CPU | `nomic-embed-text:latest` (Ollama) | 8,192 | Sub-100ms vectorization of raw thoughts for SQLite-vec and MemPalace. |
-| **Fast Entity & Tag Extraction** | Local CPU | `smollm2:135m` or `qwen3:1.7b` | 2,048 - 8,192 | Zero-overhead parsing of inbox notes into clean frontmatter and taxonomic routes. |
-| **Terminal / CLI Harness Code** | Local CPU | `qwen2.5-coder:7b` (Ollama) | 8,192 | Rapid generation of Bash scripts, Make targets, and systemd service units. |
-| **Interactive Co-Pilot & Ideation** | Cloud Frontier | `google/gemini-3.8-flash` / `Muse Spark 1.3/1.2` | 200k - 1M | Low latency, highly responsive conversational partner for multi-turn brainstorming. |
-| **Classical Antiquity & Dialectic** | Cloud Frontier | `nvidia/nemotron-3-ultra` / `MiMo V2.5` | 128k - 256k | Deep philosophical reasoning, etymological dissection, and complex ontological debate. |
-| **Cross-Corpus Synthesis (Weaving)** | Cloud Frontier | `opencode/space-bunny-free`, `opencode/big-pickle`, or named Gemini 3.8 Flash | **Dynamic — read live registry** | Ingesting papers, transcripts, and dossiers using the currently exposed window; never hardcode a stealth alias's capacity. |
+| **Frictionless Note Embedding** | Local ONNX server | `qwen3-embedding:0.6b` | Server max length 8,192; output 768-D | Canonical federated embeddings without loading a second Ollama model. |
+| **Fast Entity & Tag Extraction** | Local CPU | `smollm2:135m` or `qwen3:1.7b` | Configured Ollama context; read live before scheduling | Zero-overhead parsing of inbox notes into clean frontmatter and taxonomic routes. |
+| **Terminal / CLI Harness Code** | Local CPU | `qwen2.5-coder:7b` (Ollama) | `OLLAMA_CONTEXT_LENGTH=8192` | Rapid generation of Bash scripts, Make targets, and systemd service units. |
+| **Interactive Co-Pilot & Ideation** | Cloud Frontier | Rotating hosted aliases, selected explicitly | **Dynamic — read live runtime metadata** | Low-latency ideation; never treat an alias's advertised window as a stable contract. |
+| **Classical Antiquity & Dialectic** | Cloud Frontier | Selected named or free route, subject to privacy policy | **Dynamic — read live runtime metadata** | Deep philosophical reasoning, etymological dissection, and complex ontological debate. |
+| **Cross-Corpus Synthesis (Weaving)** | Cloud Frontier | `opencode/space-bunny-free` or another explicitly selected route | **Dynamic — read live runtime metadata** | Ingesting papers, transcripts, and dossiers without hardcoding rotating limits. |
+
 
 ---
 
 ## 7.1 Semantic Write-Through & Platform-Independent Continuity
 
-**The cloud context window is a volatile CPU register. MemPalace is durable RAM/Disk.** Compaction is cache eviction, not a ceremonial crisis.
+**The hosted context window is a volatile CPU register. MemPalace is durable RAM/Disk.** Compaction is cache eviction, not a ceremonial crisis.
+
+> **Current implementation status (2026-09-23):** semantic write-through is
+> the target architecture. The file/SQLite continuity adapters and a one-way
+> MemPalace projection contract are tested; live MCP injection, a custom CLI
+> recovery path, and end-to-end WAD→SQLite→MemPalace recovery are not yet
+> deployed.
 
 ### Register / RAM / Disk Model
 
 | Layer | Role | Technology | Volatility |
 |-------|------|------------|------------|
 | **Context (Register)** | Immediate computation | Cloud context window | Lossy, 4K summary bottleneck |
-| **MemPalace / Event Log (RAM)** | Active state | SQLite graph, RFC 003 events | Durable working memory |
+| **SQLite Continuity Store (RAM/Disk)** | Authoritative active state and event history | Local SQLite `StateStore`/`EventBus` | Durable; production runtime-gated |
+| **MemPalace Projection** | Searchable knowledge surface | MCP drawer sink | Rebuildable; never the write authority |
 | **Artifacts / Well (Disk)** | Canonical records | JSONL, patches, gnosis narrative | Immutable |
 
 ### Operational Rules
 
-1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or batch completion, persist state to MemPalace/Event Log before continuing. Do not accumulate semantic debt in context.
+1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or batch completion, persist state to the local SQLite continuity authority before continuing. Project to MemPalace only after the SQLite commit succeeds.
 2. **Compaction is ordinary cache eviction.** No ceremony. `gnosis-lock` and `/compact` are fallback/recovery only.
-3. **Active-work pointer lives in MemPalace.** When context evicts, the entity resumes from its durable pointer, not from a summarization lottery.
-4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) is transparent; durable state in MemPalace is model-agnostic.
-5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via different adapter, resume from WAD + MemPalace. The entity must recover mission, todos, decisions, identity.
+3. **The active-work pointer lives in SQLite.** MemPalace is a one-way searchable projection and is not the recovery source of truth.
+4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) changes provenance, not entity identity; recovery reads SQLite continuity state.
+5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via a different adapter, and resume from WAD + SQLite continuity state. The entity must recover mission, todos, decisions, and identity; MemPalace projection may be rebuilt afterward.
 
 ---
 
@@ -253,7 +284,7 @@ The WanderGround workspace is established at `~/WanderGround/`:
 │   ├── 02_consciousness_time/   # Ontology, phenomenology, non-linear temporality, observer theory
 │   ├── 03_classical_studies/    # Antiquity, Greco-Roman literature, Hermetica, early science
 │   ├── 04_deep_psychology/      # Jungian archetypes, unconscious, active imagination, Ma'at ideals
-│   └── 05_video_games/          # Space sims, retro engines, Iris Xe compatibility, game mechanics
+│   └── 05_video_games/          # Space sims, retro engines, Intel UHD compatibility, game mechanics
 │
 ├── dossiers/                    # Synthesized, evergreen research monographs
 │   ├── templates/               # Reusable dossier structure (based on pioneer.md pattern)
@@ -266,7 +297,7 @@ The WanderGround workspace is established at `~/WanderGround/`:
 │   │   ├── index.html
 │   │   └── app.js
 │   └── scripts/
-│       ├── embed_inbox.py       # nomic-embed vectorizer & entity extractor
+│       ├── embed_inbox.py       # Qwen3 ONNX embedding + entity extraction pipeline
 │       └── project_umap_3d.py   # 768D -> 3D UMAP coordinate projection pipeline
 │
 ├── mempalace/                   # MemPalace repository root & wing configurations
@@ -286,18 +317,17 @@ The WanderGround workspace is established at `~/WanderGround/`:
 - [x] Implement `wander` CLI utility (`~/.local/bin/wander` — supports `-d <domain>`, `-i` interactive, auto-triggers the curator) + PATH wiring (`~/.config/environment.d/10-wanderground.conf`, `~/.bash_aliases`).
 - [x] Scaffold `mkdocs.yml` + root `Makefile` (venv-aware; `wiki-sync` regenerates the MkDocs `docs/` mirror).
 
-### Phase 2: Memory Substrate & Spatial Pipeline — ✅ MOSTLY DONE 2026-09-10 (🔥 MemPalace wings pending)
-- [x] Initialize `~/WanderGround/spatial/knowledge_atlas.db` — `concepts` (with SQLite vector schema path) + `embeddings` (portable 768-dim JSON) + `vec_concepts` sqlite-vec `vec0` virtual table (768-dim cosine, refreshed idempotently).
-- [x] Write `embed_inbox.py` utilizing Ollama's `nomic-embed-text` endpoint (verified: sub-second CPU embedding of inbox → atlas → archive).
-- [x] Implement `project_umap_3d.py` — UMAP for N≥8, PCA/hash fallback below (guards the scipy `k >= N` eigen edge case); KMeans clustering + 100-sphere normalization.
-- [x] Deploy lightweight Three.js / WebXR interactive canvas on `http://localhost:8088` — **fully offline** (three.module.min.js + OrbitControls vendored), domain-color legend, click-to-open dossier HUD, cluster bridge lines, slow dream-drift.
-- [ ] Scaffold MemPalace wings (`local_ai`, `consciousness_time`, `classical`, `psychology`, `games`) — **next large task** (go: `mempalace init`, ONNX `all-MiniLM-L6-v2` embedded backend, `mcp_light_server` = `palace_query`/`palace_exec`/`palace_coordinate`).
+### Phase 2: Memory Substrate & Spatial Pipeline — ⚠️ TARGET / NOT DEPLOYED (2026-09-23)
+- [ ] Create `~/WanderGround/spatial/knowledge_atlas.db` — target `concepts`, portable embeddings, and `vec_concepts` schema.
+- [ ] Restore `embed_inbox.py` using the canonical Qwen3 ONNX route (768-D, `truncate_dim=768`).
+- [ ] Restore `project_umap_3d.py` — UMAP for N≥8, PCA/hash fallback below; KMeans + 100-sphere normalization.
+- [ ] Deploy the offline Three.js/WebXR canvas on `http://localhost:8088`.
+- [x] Record the current MemPalace 3.10.0 / 384-D legacy corpus and the Qwen3 migration boundary.
 
-### Phase 3: Background Automation & Autonomous Curation — ✅ OPERATIONAL 2026-09-10 (🔥 semantics pending)
-- [x] Configure `wander-curator.py` ingest pipeline (`embed_inbox.py` → `upgrade_sqlite_vec.py` → `project_umap_3d.py` → `export_viewer_json.py` chained in `curator_run.sh`).
-- [x] Systemd user **service** `wander-curator.service` (oneshot) — verified run: exit 0, 223.8MB peak, idles to nothing.
-- [x] Systemd user **timer** `wander-curator.timer` (every 30 min) — enabled, verified `next run` slot; `wander` also fire-and-forgets an immediate run on capture.
-- [ ] Establish the "Weaving Session" workflow inside OpenCode utilizing cloud frontier models (Big Pickle / Nemotron 3 Ultra / MiMo V2.5 / Muse Spark).
+### Phase 3: Background Automation & Autonomous Curation — ⚠️ TARGET / NOT VERIFIED (2026-09-23)
+- [ ] Restore the `wander-curator.py` ingest pipeline and its spatial stages.
+- [ ] Re-enable and verify `wander-curator.service` and `wander-curator.timer`.
+- [ ] Establish the "Weaving Session" workflow inside OpenCode using explicitly selected hosted routes.
 - [ ] Enforce the Federation Publish Gate (`make publish-bastion`) requiring explicit user confirmation before transferring dossiers to Node 0.
 
 
@@ -338,26 +368,28 @@ Any new async Python code in this repo/Omega Engine MUST use **anyio** primitive
 lint gate live in `docs/CODE_QUALITY.md`. This covers WanderGround python utilities,
 the curator pipeline, MemPalace-side tooling, and the omega-engine scripts.
 
-### 10.3 MemPalace v3.9.0 — revised backend decision (was: Chroma + ONNX MiniLM — now confirmed)
-- Installed into `~/WanderGround/.venv` as `mempalace 3.9.0` (provides CLI `mempalace`,
-  `mempalace-mcp`, hardened `mcp_light_server.py`).
-- **Backend: `sqlite_exact`** (bundled, pure-SQLite, exact NumPy, zero daemon) — verified
-  mining + search on this box. `rust_exact` is the scale-up path (same `.sqlite3` file,
-  -77% RSS @ 334k rows) when the corpus grows.
-- **Embedder: `minilm` (ChromaDB ONNXMiniLM_L6_V2)** — hermetic CPU ONNX, NOT openai-compat
-  (that path churned Ollama model-load per batch and caused the earlier runaway).
-- **Model cache pre-seeded** to `~/.cache/chroma/onnx_models/all-MiniLM-L6-v2/` with
-  SHA256-verified tarball (S3 source; flaky-link-safe via curl -C -).
-- **Mining hygiene (verified):** MemPalace SKIP_DIRS already excludes `.venv`, `node_modules`,
-  `.mempalace`, etc. Additional exclusions for this repo must live in `.gitignore`
-  (not `.mempalaceignore` — that file is not consulted): `spatial/webxr/vendor/`,
-  `site/`, `docs/`, `mempalace/`. Mine `mempalace.yaml` (wing `wanderground`, 7 rooms)
-  verified: 20 files → 62 drawers, all rooms, exit 0 in ~2s CPU.
-- **Watch-outs:** every CLI invocation should pass `</dev/null` (non-interactive EOF
-  safety) + a hard `timeout`; first-run LLM features (corpus-origin, entity detection)
-  default to Ollama `gemma4:e4b` and must be avoided (heuristics-only is the norm now).
-- **MCP wired**: `opencode.json` → `mempalace` stdio server (`mempalace-mcp --palace ...`).
-  Sessions can now `palace_query`/`palace_exec` on the WanderGround palace.
+### 10.3 MemPalace 3.10.0 — current backend and embedding decision
+- Installed in `~/WanderGround/.venv` as `mempalace 3.10.0`; the CLI exposes
+  `mempalace`, `mempalace-mcp`, and the local `sqlite_exact` database.
+- **Backend: `sqlite_exact`** — local pure-SQLite storage with FTS and exact
+  vector data. The active database is
+  `~/WanderGround/mempalace/sqlite_exact.sqlite3`; read-only inspection on
+  2026-09-23 reported SQLite `3.46.1`, WAL mode, `quick_check = ok`, and 5,047
+  document rows, all 384-dimensional.
+- **Canonical embeddings:** standalone Qwen3 ONNX server,
+  `qwen3-embedding:0.6b`, `truncate_dim=768`, outside Ollama. The legacy
+  `nomic-embed-text` model may remain installed for historical workflows but
+  is not the federated canonical route.
+- **Continuity boundary:** `scripts/continuity_mempalace.py` projects exact
+  continuity events through an injected drawer/MCP sink. It does not mutate
+  the live palace database directly and does not create a second commit
+  authority.
+- **Mining hygiene:** use `mempalace sync` for source-file cleanup; keep
+  ignored/vendor paths out of the palace corpus according to the current
+  repository `.gitignore` and project-specific curation policy.
+- **MCP boundary:** wire the existing `mempalace-mcp` stdio server through the
+  runtime's `mempalace_add_drawer`/query tools. Do not substitute direct SQL
+  writes to the palace database.
 
 ### 10.4 OpenCode hosted-free model reality (verified 2026-09-23)
 - Canonical policy: `docs/OPENCODE_FOUNDATION.md`.
@@ -369,12 +401,14 @@ the curator pipeline, MemPalace-side tooling, and the omega-engine scripts.
   not publicly identified and is not confirmed to be DeepSeek V4.1 Flash.
 - Free privacy exceptions remain explicit: MiMo, Ling, Big Pickle, NVIDIA trial
   endpoints, and Muse contributor models may collect, log, or train on prompts.
-  Space Bunny is the current free zero-retention exception.
+  Space Bunny is currently described as zero-retention, but that is a mutable
+  provider claim and is not sufficient for private work under the global policy.
 - Google Gemini 3.8/3.7/3.6/3.5 Flash and 3.5 Flash-Lite have genuine free API
   tiers. Free Google API data may be used to improve Google products; use only
   for public/non-confidential research.
-- **WanderGround rule:** private captures use Space Bunny or another verified
-  zero-retention route; free data-collecting aliases are for non-sensitive work.
+- **WanderGround rule:** private captures use a paid zero-retention route only.
+  Free routes, including Space Bunny, are for public/non-sensitive work until
+  the privacy policy is explicitly revalidated and changed.
 - The Zen `/models` endpoint is not a capacity contract. Use
   `opencode models <provider> --verbose --refresh` and record observations with
   date, node, and evidence class.

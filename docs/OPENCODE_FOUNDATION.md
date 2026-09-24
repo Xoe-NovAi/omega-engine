@@ -19,7 +19,12 @@
 The official Zen page is the policy baseline; the live registry is the availability check. Current free entries include anonymous/stealth aliases and rotating free endpoints.
 
 - **Big Pickle:** officially priced at $0 and therefore free despite lacking a `-free` suffix. During its free period, OpenCode states collected data may be used to improve the model. Treat it as non-private.
-- **Space Bunny Free:** officially free and described as a stealth model with zero data retention and no model-training use. OpenCode and OpenRouter currently advertise 1M context and multimodality; operator use reached nearly 500K active context before compaction. Treat 1M as current observed evidence, not configuration.
+- **Space Bunny Free:** officially free and described as a stealth model with
+  zero data retention and no model-training use. This is a current provider
+  claim, not a permanent alias property. Under the global conservative policy,
+  private work still uses paid zero-retention models only; Space Bunny is for
+  public/non-sensitive work unless policy is explicitly revalidated. Treat any
+  observed context number as dated evidence, never configuration.
 - **Other free Zen entries:** free status and privacy vary by endpoint. NVIDIA trial endpoints and contributor-training endpoints require stricter non-private handling.
 
 The public model behind a stealth alias is not identified. Similarities to a named model are not an identity proof.
@@ -102,21 +107,22 @@ Thus, the durable configuration should still **omit `buffer`**. OpenCode applies
 
 ### The CPU Register / RAM / Disk Paradigm (Semantic Write-Through)
 
-**The 1M context window is a volatile CPU register. MemPalace is durable RAM/Disk.** Treating context as working memory is a category error. Compaction is cache eviction, not a ceremonial crisis.
+**Hosted context is a volatile CPU register. MemPalace is durable RAM/Disk.** Treating context as working memory is a category error. Compaction is cache eviction, not a ceremonial crisis.
 
 **Doctrine:**
 
 - **Context (Register):** Volatile, lossy, bounded by `keep.tokens` and 4K summary bottleneck. Use for immediate computation only.
-- **MemPalace / Event Log (RAM):** Durable working memory. All active state — decisions, discoveries, blockers, todos, active-work pointers — lives here continuously.
+- **SQLite Continuity Store (RAM/Disk):** Authoritative durable state and event history. All active state — decisions, discoveries, blockers, todos, active-work pointers — is committed here first.
+- **MemPalace Projection:** One-way searchable knowledge surface. It is rebuilt from continuity events and is never a second write authority or recovery source.
 - **Artifacts / Well (Disk):** Immutable, canonical records. Snapshots, patches, gnosis narrative, constitutional records.
 
 **Operational rules:**
 
-1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or completed batch, persist state to MemPalace/Event Log before continuing. Do not accumulate semantic debt in context.
+1. **Semantic write-through is mandatory.** After every decision, discovery, task transition, or completed batch, persist state to the local SQLite continuity authority before continuing. Project to MemPalace only after the SQLite commit succeeds.
 2. **Compaction is ordinary cache eviction.** No ceremony, no `prepare for compaction` ritual. `gnosis-lock` and `/compact` are fallback/recovery only.
-3. **Active-work pointer lives in MemPalace.** When context evicts, the entity resumes from its durable pointer, not from a summarization lottery.
-4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) must be transparent. The entity's durable state in MemPalace is model-agnostic.
-5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via different adapter, resume from WAD + MemPalace. The entity must recover mission, todos, decisions, identity.
+3. **The active-work pointer lives in SQLite.** MemPalace is a one-way searchable projection and is not the recovery source of truth.
+4. **Model swap = register swap.** Swapping models (Gemini ↔ Space Bunny ↔ Big Pickle) changes provenance, not entity identity; recovery reads SQLite continuity state.
+5. **Chaos recovery is the acceptance test.** Kill the model, discard context, restart via a different adapter, and resume from WAD + SQLite continuity state. The entity must recover mission, todos, decisions, and identity; MemPalace projection may be rebuilt afterward.
 
 ## Agent schema and delegation
 
