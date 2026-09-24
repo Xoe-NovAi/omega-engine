@@ -1,0 +1,131 @@
+{
+  "model": "gemma4-12b-qat",
+  "protocol": "GSCA abbreviated screening",
+  "num_predict": 512,
+  "think": false,
+  "prompts": [
+    "Write a Python function to parse JSON with error handling.",
+    "Explain the difference between async and threading in Python.",
+    "Write a recursive function to flatten a nested dictionary."
+  ],
+  "temperatures": [
+    0.1
+  ],
+  "contexts": [
+    4096
+  ],
+  "results": [
+    {
+      "run": 1,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 1,
+      "time_s": 124.01,
+      "tokens": 512,
+      "tps": 4.13,
+      "telemetry": {
+        "samples": 248,
+        "sampling_hz": 2.0,
+        "pkg_power_w": {
+          "mean": 32.14,
+          "min": 14.65,
+          "max": 48.93,
+          "p50": 28.01,
+          "p95": 43.37
+        },
+        "energy_per_token_j": 7.742584,
+        "tokens_per_joule": 0.13,
+        "pkg_temp_c": {
+          "mean": 77.26,
+          "min": 54.05,
+          "max": 92.05,
+          "p50": 76.05,
+          "p95": 89.05
+        },
+        "max_temp_c": 92.05,
+        "freq_mhz": {
+          "mean": 3220.42,
+          "min": 2600,
+          "max": 3823,
+          "p50": 2902,
+          "p95": 3800
+        }
+      }
+    },
+    {
+      "run": 2,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 2,
+      "time_s": 110.34,
+      "tokens": 512,
+      "tps": 4.64,
+      "telemetry": {
+        "samples": 221,
+        "sampling_hz": 2.0,
+        "pkg_power_w": {
+          "mean": 28.05,
+          "min": 21.71,
+          "max": 41.37,
+          "p50": 28.0,
+          "p95": 28.4
+        },
+        "energy_per_token_j": 6.013881,
+        "tokens_per_joule": 0.17,
+        "pkg_temp_c": {
+          "mean": 73.96,
+          "min": 69.05,
+          "max": 80.05,
+          "p50": 74.05,
+          "p95": 75.05
+        },
+        "max_temp_c": 80.05,
+        "freq_mhz": {
+          "mean": 2733.34,
+          "min": 2500,
+          "max": 3800,
+          "p50": 2700,
+          "p95": 2800
+        }
+      }
+    },
+    {
+      "run": 3,
+      "context": 4096,
+      "temperature": 0.1,
+      "prompt_idx": 3,
+      "time_s": 105.77,
+      "tokens": 512,
+      "tps": 4.84,
+      "telemetry": {
+        "samples": 211,
+        "sampling_hz": 2.0,
+        "pkg_power_w": {
+          "mean": 28.05,
+          "min": 26.8,
+          "max": 39.27,
+          "p50": 28.01,
+          "p95": 28.38
+        },
+        "energy_per_token_j": 5.740062,
+        "tokens_per_joule": 0.17,
+        "pkg_temp_c": {
+          "mean": 73.94,
+          "min": 67.05,
+          "max": 77.05,
+          "p50": 74.05,
+          "p95": 75.05
+        },
+        "max_temp_c": 77.05,
+        "freq_mhz": {
+          "mean": 2752.95,
+          "min": 1600,
+          "max": 2901,
+          "p50": 2800,
+          "p95": 2900
+        }
+      }
+    }
+  ],
+  "timestamp": 1790212569.9102938
+}

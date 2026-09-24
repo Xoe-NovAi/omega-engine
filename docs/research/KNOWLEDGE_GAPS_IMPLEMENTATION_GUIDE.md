@@ -62,8 +62,8 @@ graph TD
 | 1 | **ZRAM 8GB zstd** | `sudo tee /etc/systemd/zram-generator.conf.d/99-llm.conf <<'EOF'\n[zram0]\nzram-size = min(ram / 2, 8192)\ncompression-algorithm = zstd\nEOF`<br>`sudo systemctl daemon-reload && sudo systemctl start systemd-zram-setup@zram0`<br>`zramctl && swapon -s` | `zramctl` shows `/dev/zram0` 8G zstd<br>`swapon -s` shows priority 100 | `sudo systemctl stop systemd-zram-setup@zram0 && sudo rm /etc/systemd/zram-generator.conf.d/99-llm.conf` |
 | 2 | **THP madvise grub** | `echo madvise | sudo tee /sys/kernel/mm/transparent_hugepage/enabled`<br>`echo madvise | sudo tee /sys/kernel/mm/transparent_hugepage/defrag`<br>`sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="transparent_hugepage=madvise /' /etc/default/grub`<br>`sudo update-grub` | `cat /sys/kernel/mm/transparent_hugepage/enabled` → `[madvise]`<br>Verify after reboot | Remove `transparent_hugepage=madvise` from grub, `update-grub` |
 | 3 | **OWUI keep-alive=-1** | Manual per model in UI:<br>Workspace → Models → (each) → Advanced Parameters → Keep Alive = `-1`<br>Document exact path for all 8 models | `docker logs open-webui` shows no model reloads at 10-min | Revert to default in UI |
-| 4 | **Real API Keys** | Replace placeholders in `~/.bashrc`:<br>`EXA_API_KEY=<real>`<br>`PARALLEL_API_KEY=<real>`<br>`CONTEXT7_API_KEY=<real>`<br>`source ~/.bashrc` | `opencode mcp call websearch web_search '{"query":"test"}'` → 200<br>`opencode mcp call parallel-search web_search '{"query":"test"}'` → 200/405 | Restore placeholder block from backup |
-| 5 | **Fix Websearch MCP (Exa 404)** | Verify endpoint: `curl -v https://api.exa.ai/mcp` (expect 405)<br>If 404: check Exa dashboard for correct MCP endpoint<br>Update `opencode.json` MCP URL if changed | `opencode mcp list` → websearch connected<br>`opencode mcp call websearch web_search '{"query":"test"}'` works | Revert `opencode.json` MCP URL |
+| 4 | **Real API Keys** | Store credentials only in canonical runtime secret locations; never print or commit them | `opencode mcp list` shows the five current servers; perform one authenticated tool invocation through the client | Restore the prior secret file from backup |
+| 5 | **Exa MCP status** | Historical Exa endpoint research only; Exa is not a current Node 1 MCP server | `opencode mcp list` shows the current five-server inventory; direct Exa route requires a separate decision | Revert any optional direct-API configuration |
 
 ---
 
@@ -97,7 +97,7 @@ graph TD
 |---|-----|---------------|----------------|
 | 16 | **Federated Well Semantic Sync** | Merge Well corpora across nodes with **same embedding model** (qwen3-embedding:0.6b@768 per RES-EMBED-001) | 1. Node 0 adopts qwen3-embedding:0.6b@768<br>2. Both nodes run `make well-export` → JSONL bundles<br>3. USB exchange or Tailscale sync of bundles<br>4. `make well-import` (new target) merges with deduplication by `rule` hash<br>5. Plugin injects merged top-N |
 | 17 | **SQLite WAL on NFS Alternative** | **Never WAL on NFS**. Use rollback journal (`DELETE` or `TRUNCATE`) or JSONL snapshots | 1. Document in `docs/federation/NFS_TAILSCALE_DEEP_RESEARCH.md` §4<br>2. All shared DBs on `/mnt/node-drive` use `PRAGMA journal_mode=DELETE;`<br>3. For high-write scenarios: sync flat JSONL bundles via `rsync` over NFS |
-| 18 | **omega-hub Tool Curation (91→50)** | Curate 41 tools for removal based on:<br>- Node 1 never calls (local-only inference)<br>- Duplicate functionality<br>- Security surface reduction | 1. Audit all 91 tools in omega-hub<br>2. Tag each: `keep|drop|delegate`<br>3. Generate `ASUS-build-curated-tools.json`<br>4. Apply to Node 1 `opencode.json` `tools` block |
+| 18 | **omega-hub Tool Curation (93→50)** | Curate 43 tools for removal based on:<br>- Node 1 never calls (local-only inference)<br>- Duplicate functionality<br>- Security surface reduction | 1. Audit all 93 tools in the latest verified handshake<br>2. Tag each: `keep|drop|delegate`<br>3. Generate `ASUS-build-curated-tools.json`<br>4. Apply to Node 1 `opencode.json` `tools` block |
 | 19 | **Sovereignty Ratio Ledger** | Per-task-class local/cloud policy with documented escape hatch | 1. Define task classes: T1-T6 (T5/T6=local-only)<br>2. Implement ledger in WanderGround sqlite-vec<br>3. Log every cloud call with `provider_name` provenance<br>4. Dashboard: sovereignty ratio % per session |
 | 20 | **Publish Gate (Explicit-Publish Only)** | Air-gapped Git workflow: no auto-push, explicit `git bundle create` + USB | 1. `make publish-bastion` creates signed bundle<br>2. USB physical transfer<br>3. Node 0: `git bundle verify` + `git fetch bundle main:refs/remotes/node1/main`<br>4. Council review → explicit merge |
 | 21 | **Stale Handoff Pruning** | Implement `STALE_HANDOFF_POLICY.md` timeout limits | 1. Cron job scans `data/handoff/pending/`<br>2. Auto-move >7d to `completed/` with `stale=true`<br>3. Notify via Redis `handoff` channel |
@@ -210,7 +210,7 @@ Each gap above follows this template. Full detail in Phase tables.
 | 15 | Phase B ACL Lockdown | ✅ Confirmed | Sequence is right: keep the allow-all rule (`src:["*"] dst:["*:*"]`) until both nodes tagged AND all Phase A validations pass; ACL tests in policy file can pre-verify rules before save. NOTE: `autogroup:member` is valid ONLY in `src` — `dst:["autogroup:member"]` fails validation (`port range "member": invalid first integer`). |
 | 16 | Federated Well Sync | ✅ Confirmed | qwen3-embedding:0.6b on Ollama (MRL; truncate to 768/512/256/128; 32K ctx; Qwen/Qwen3-Embedding-0.6B). Caveats: Ollama v0.12.5 CPU crash bug (closed); per-seq context defaults to 4096 even though model supports 32768 — raise num_ctx for long docs. Our installed Ollama 0.33.3 unaffected. |
 | 17 | SQLite WAL on NFS | ✅ **CHANGED: use TRUNCATE not DELETE** | openai/codex#30957 (Jul 2026): WAL corrupts runtime DBs on NFS (mmap'd -shm incoherent across clients; independent of fcntl locking). Empirically measured on NFSv4.2 + sqlite 3.46.1 (**our exact version**): Truncate == WAL on batched path (0.0041s both), Delete slightly slower (0.0055s). Rollback journal modes are NFS-safe. **Recommendation update: `PRAGMA journal_mode=TRUNCATE` (not DELETE) for shared DBs on `/mnt/node-drive`.** |
-| 18 | Tool Curation | 🔒 Internal | 91→50 audit is a local task; no web research. |
+| 18 | Tool Curation | 🔒 Internal | 93→50 audit is a local task; no web research. |
 | 19 | Sovereignty Ledger | 🔒 Internal | No web research; policy doc on USB is source of truth. |
 | 20 | Publish Gate | ✅ Confirmed | git-bundle(1) docs: bundles are for "offline transfer of Git objects without an active server" — matches our USB CI/CD model. NVIDIA NIM air-gap doc confirms two-phase (networked prep → air-gapped import), same pattern. |
 | 21 | Stale Handoff Pruning | 🔒 Internal | No web research; STALE_HANDOFF_POLICY is source of truth. |
@@ -722,13 +722,17 @@ activates on the upstream Engine.
    journal, directory synchronization, POSIX single-writer lock, idempotency
    keys, event-ID/sequence collision checks, event-log state reconstruction,
    and checkpoint rebuild.
-2. **Crash matrix:** inject failure before/after intent prepare, event append,
-   state write, checkpoint write, and journal commit. Assert recovery yields
-   either the complete prior state or the complete next state, never a mixed
-   pointer.
-3. **MemPalace adapter:** bind the interfaces to the real event graph and
-   drawers. Preserve artifact references in the event stream; do not place
-   unbounded payloads in checkpoints.
+2. **Crash matrix — COMPLETE for the local SQLite adapter:** injected failure
+   before/after intent preparation, at event insert, state update, checkpoint
+   insert, and post-apply journal cleanup. Recovery yields either the complete
+   prior state or the complete next state, never a mixed pointer or duplicate
+   event. The portable file adapter retains its existing failure matrix.
+3. **MemPalace adapter — PROJECTION AND MCP CALLBACK CONTRACT COMPLETE:** bind
+   the interfaces to the real event graph and drawer-append/MCP sink. The
+   one-way projector and named `McpDrawerSink` preserve artifact references in
+   the event stream, keep the SQLite authority unchanged, and do not open the
+   live palace database for direct mutation. Runtime injection from the live MCP
+   connection remains.
 4. **Custom CLI adapter:** resume the same WAD + durable state through a
    non-OpenCode process and verify identity, mission, todos, and decisions.
 5. **NFS/federation adapter:** use rollback journaling or a transport-level
@@ -747,3 +751,88 @@ activates on the upstream Engine.
 - A model/adaptor swap changes provenance but never entity identity.
 - No WAD or core kernel import depends on OpenCode, provider SDKs, or a
   network filesystem.
+
+---
+
+## 16. Local Measurement and sqlite-vec Census — 2026-09-23
+
+This is a fresh field census after the continuity-kernel gate. It does not
+reopen rejected or deferred roadmap items; it records what is now measured,
+what remains to be measured, and which work is blocked by Node 0 or a separate
+hardware decision.
+
+### 16.1 sqlite-vec: measured and operational
+
+- **Selected release:** `sqlite-vec==0.1.9`, the current stable PyPI release.
+  PyPI's release page lists `0.1.9` as the latest release; the repository's
+  newer `0.1.10-alpha.4` is pre-release and was not installed.
+- **Install target:** `/home/xnai/WanderGround/.venv` only. The package is not
+  installed into the system interpreter.
+- **Runtime measured:** Python `3.14.4`, SQLite `3.46.1`, extension loading
+  enabled.
+- **Smoke test passed:** `sqlite_vec.load(connection)`, `vec_version() =
+  v0.1.9`, `vec0` virtual-table creation, three float32 vector inserts, and a
+  KNN query returned the exact vector first and the near vector second.
+- **Scope:** this validates vector search capability only. It does not upgrade
+  SQLite, repair the SQLite WAL-reset defect, or wire `sqlite-vec` into the
+  MemPalace/sovereignty-ledger schema.
+- **Sources:** [PyPI sqlite-vec](https://pypi.org/project/sqlite-vec/),
+  [official Python usage](https://alexgarcia.xyz/sqlite-vec/python.html),
+  [official repository](https://github.com/asg017/sqlite-vec), and
+  [release v0.1.9](https://github.com/asg017/sqlite-vec/releases/tag/v0.1.9).
+
+### 16.2 SQLite core boundary remains open
+
+- The official SQLite download page currently lists `3.53.4` as the current
+  release. The continuity adapter's production floor remains `3.51.3+`, not
+  because `sqlite-vec` requires it, but because SQLite documents the WAL-reset
+  corruption bug through `3.51.2`; fixes are available in `3.51.3` and later,
+  plus selected backports such as `3.50.7` and `3.44.6`.
+- The current Python runtime is `3.46.1`, so `sqlite-vec` passes its smoke test
+  but `SqliteContinuityStore` still fails closed for production by design.
+- **No SQLite core upgrade was performed in this census.** The next action is
+  an explicit runtime decision: use a patched current SQLite build, or
+  document and test a supported fixed backport. Do not silently substitute a
+  system upgrade for the extension installation.
+- Sources: [SQLite download](https://www.sqlite.org/download.html),
+  [SQLite WAL-reset bug](https://www.sqlite.org/wal.html#the-wal-reset-bug),
+  and [SQLite atomic commit](https://sqlite.org/atomiccommit.html).
+
+### 16.3 Gap-by-gap field census
+
+| Gap class | Current evidence | Next gate |
+|---|---|---|
+| 1 ZRAM | **Measured active:** generator `1.2.1-2`; zstd device is 7.4 GiB at priority 100; config uses the approved 8 GiB cap. NVMe-backed `/swap.img` was disabled 2026-09-23 and retained only for rollback. | Record reboot persistence and rollback in the final operational run. |
+| 2 THP | **Measured active:** runtime `madvise`; GRUB line contains `transparent_hugepage=madvise`. | Reboot verification remains a separate confirmation. |
+| 3 OWUI keep-alive | Research complete; per-model setting remains an operator/UI validation. | Verify warm model after 10 minutes and record `ollama ps`. |
+| 4 API keys | Transport endpoints return expected `405` to GET; this is not authentication proof. | Restart clients and run one authenticated MCP query per provider. |
+| 5 Exa endpoint | Research closed: `mcp.exa.ai` is the correct endpoint; direct API remains preferred. | Preserve live POST evidence in the federation record. |
+| 6 Thermal bench | Required instruments exist: `turbostat`, `stress-ng`, `powerprofilesctl`. | Run the parked flat-vs-raised+fan matrix; no result is claimed here. |
+| 7 BIOS | No fresh firmware reading. | Physical BIOS checklist and signed record. |
+| 8 Q5 model | No new controlled quantization result. | Verify available tag, then benchmark against Q4_K_M. |
+| 9–15 Federation | Node 0 physical/admin work remains the dependency. | Do not simulate intake, ACL lockdown, SPIRE, Redis, or SSH success. |
+| 16 Well sync | Same-embedding decision is locked (`qwen3-embedding:0.6b`, 768). | Implement merge/dedup only after Node 0 exchange path is live. |
+| 17 NFS SQLite | Research closed: no WAL on NFS; rollback journal/transport is the contract. | Add the production adapter test against the chosen shared path. |
+| 18 Tool curation | Internal audit, not a web gap. | Inventory 93 tools from the latest verified Node 0 handshake and tag `keep/drop/delegate`. |
+| 19 Sovereignty ledger | `sqlite-vec` substrate is now available; ledger schema and provenance are not built. | Implement ledger on the continuity authority, not as a second uncoordinated write path. |
+| 20 Publish gate | Internal air-gap contract remains source of truth. | Add signed bundle creation and Node 0 verification. |
+| 21 Stale handoffs | Internal policy remains source of truth. | Implement timeout scan only after federation storage is live. |
+| 22 Distributed inference | Security verdict is negative for unauthenticated RPC; SPIRE mTLS is a hard prerequisite. | Keep rejected/deferred until authenticated transport and patched build are proven. |
+| 23 KV q4_k | Research says q4_k is not a safe replacement for the current q8_0 rule. | Re-evaluate only with a measured upstream implementation. |
+| 24 32 GB RAM | Hardware purchase is unmeasured and speculative. | Buy/measure later; do not forecast throughput. |
+| 25 Content runway | Internal milestones remain queued. | Capture each first milestone in the canonical roadmap. |
+
+### 16.4 Census verdict
+
+The 25-gap guide is not a list of 25 unmeasured ideas. It now separates:
+
+1. **Locally measured foundation:** gaps 1, 2, 17, and the `sqlite-vec`
+   substrate for gap 19.
+2. **Research-complete but externally blocked:** gaps 3–8, 9–15, and 22–24.
+3. **Internal implementation work:** gaps 18–21 and 25.
+4. **Already decided/deferred/rejected:** P2 headroom, agentmemory, toys, VR,
+   and unsafe distributed RPC remain outside the active critical path.
+
+The next active engineering sequence is therefore: crash-matrix coverage for
+continuity, explicit SQLite runtime decision, MemPalace/CLI adapters, and then
+Node 0 federation work. No knowledge gap is silently treated as complete.

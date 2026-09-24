@@ -6,7 +6,7 @@
 
 ## Executive Summary (One Paragraph)
 
-**Switch Node 1 to `qwen3-embedding:0.6b` (768-dim via MRL) — it matches Node 0's vector space exactly while delivering superior retrieval quality (C-MTEB 66.33 vs 62.28), 4× context window (32K vs 8K), instruction-aware embeddings, and Apache-2.0 license.** The Qwen3-Embedding series' Matryoshka Representation Learning (MRL) supports user-defined output dimensions from 32 to 1024, so `qwen3-embedding:0.6b` can emit 768-dim vectors natively — no projection layer needed, no re-embedding of the 62+ MemPalace drawers + WanderGround atlas. Migration is a single `ollama pull qwen3-embedding:0.6b` + config change. This is the only path that achieves **true federated semantic compatibility** (direct cosine similarity across nodes) with **zero quality loss** and **minimal operational cost**.
+**Use `qwen3-embedding:0.6b` at 768 dimensions on both nodes through the standalone ONNX embedding server (`truncate_dim=768`).** This is the current federated semantic-compatibility decision: the model family and dimension match, the server stays outside Ollama's `MAX_LOADED_MODELS=1` path, and the route is instruction-aware and CPU-local. The historical comparison remains useful, but the current Node 1 deployment is not an `ollama pull` migration. Existing legacy vectors must be re-embedded before they can participate in a shared Qwen3 index.
 
 ---
 
@@ -37,10 +37,15 @@
 | **Different models** | Different geometries | ❌ Scores not comparable | Projection layer OR re-embedding |
 | Different models, different dim | Different geometries + dim | ❌ Double incompatibility | Projection + dim alignment |
 
-### Current State (Incompatible)
-- **Node 0**: "qwen embeddings" — almost certainly `qwen3-embedding` series (only qwen embedding on Ollama)
-- **Node 1**: `nomic-embed-text:latest` (768-dim, but different vector space geometry)
-- **Result**: Cross-node semantic search returns **meaningless cosine scores** — rankings may correlate but thresholds, absolute scores, and top-K sets diverge
+### Current State (2026-09-23)
+- **Canonical route:** standalone Qwen3 ONNX server,
+  `qwen3-embedding:0.6b`, `truncate_dim=768`, outside Ollama.
+- **Node 0:** must run the same model family, pooling, normalization, and
+  dimension before direct cross-node cosine claims are valid.
+- **Legacy route:** `nomic-embed-text:latest` remains installed in Ollama for
+  historical workloads, but its vectors are not compatible with Qwen3 vectors.
+- **Result:** Qwen3-to-Qwen3 comparisons are compatible when the preprocessing
+  contract matches; legacy Nomic-to-Qwen3 comparisons are not.
 
 ### Projection Layer Options (If Staying with Different Models)
 | Method | Paper | Quality Loss | Complexity | Maintenance |
@@ -72,78 +77,79 @@
 > Qwen3-Embedding paper (arXiv:2506.05176): "Qwen3-8B-Embedding attains 80.68 on MTEB Code benchmark, surpassing Gemini-Embedding." The 0.6B inherits the same training recipe.
 
 ### ✅ Hardware Efficiency on Node 1 (Priority #3)
-- **639 MB (Q4_K_M)** vs 274 MB (nomic) — still trivial on 16GB
-- **32K context** vs 2K (Ollama nomic) / 8K (HF nomic) — 4-16× longer context
+- The standalone server uses the Qwen3 ONNX model outside Ollama; the current
+  server configuration caps input length at 8,192 tokens and emits normalized
+  768-D float32 vectors.
+- The server's INT8 ONNX artifact is approximately 614 MB in the current
+  implementation; verify the actual artifact size before capacity planning.
 - **Instruction-aware** → better for agent memory retrieval with task prompts
 - **MRL** → can shrink to 256/512-dim for speed if needed later
 
 ### ✅ License & Portability (Priority #4)
-- **Apache-2.0** — same as nomic, community-distributable
-- **Ollama native** — both nodes use Ollama, single `ollama pull` deployment
-- **No custom code** — MRL dimension specified at inference time via `truncate_dim` parameter
+- **Apache-2.0** — community-distributable model family.
+- **Portable runtime** — the same server contract can run on both nodes without
+  coupling embeddings to Ollama model residency.
+- **No projection layer** — both nodes must use the same Qwen3 truncation and
+  normalization settings.
 
 ### ✅ Operational Simplicity (Priority #5)
-- **Zero migration of existing data** — WanderGround atlas re-embedding NOT needed if we accept fresh embeddings (atlas rebuilds on next curator cycle anyway)
-- **Single config change** — update WanderGround embedder model name
-- **Rollback trivial** — `ollama rm qwen3-embedding:0.6b` + revert config
+- **Legacy data requires re-embedding** — old Nomic vectors cannot be mixed
+  into a Qwen3 index.
+- **Rollback** — stop the standalone server and restore the historical Nomic
+  route only as an explicitly separate, non-federated index.
 
 ---
 
-## 4. Migration Path (Exact Commands)
+## 4. Migration Path (Current Standalone-Server Route)
 
-### Phase 1: Pull & Verify (Node 1)
+### Phase 1: Start and verify the embedding server (Node 1)
 ```bash
-# Pull the model (639 MB Q4_K_M)
-ollama pull qwen3-embedding:0.6b
-
-# Verify MRL 768-dim output works
-curl -s http://localhost:11434/api/embed \
-  -d '{"model": "qwen3-embedding:0.6b", "input": "test", "options": {"truncate_dim": 768}}' \
-  | jq '.embeddings[0] | length'
+cd /home/xnai/Documents/Projects/omega-engine-alpha
+/home/xnai/WanderGround/.venv/bin/python3 scripts/embedding_server.py
+curl -s http://127.0.0.1:8090/health | jq
+curl -s http://127.0.0.1:8090/embed \
+  -H 'content-type: application/json' \
+  -d '{"inputs":["test"],"input_type":"query","truncate_dim":768}' \
+  | jq '.dimensions'
 # Expected: 768
 ```
 
-### Phase 2: Update WanderGround Embedder Config
-```bash
-# WanderGround uses nomic-embed-text via Ollama API
-# Update the embedder model in spatial/scripts/wander-search.py or config
-# Change from "nomic-embed-text" to "qwen3-embedding:0.6b" with truncate_dim=768
-```
+### Phase 2: Point the embedding clients at the server
+- Configure WanderGround/embedding clients to use the server's `/embed`
+  endpoint, `qwen3-embedding:0.6b`, normalized vectors, and
+  `truncate_dim=768`.
+- Keep the legacy Ollama embedding route disabled for any index that will be
+  compared across nodes.
 
-### Phase 3: Rebuild Atlas (Next Curator Cycle)
+### Phase 3: Rebuild the atlas and migrate legacy vectors
 ```bash
-# The 30-min curator timer will naturally re-embed inbox → archive
-# Or force immediate rebuild:
 cd ~/WanderGround && make 3d-rebuild
-# This re-embeds all documents with new model — ~2-5 min for current corpus
 ```
+The rebuild must re-embed legacy Nomic vectors; mixing vector geometries in one
+index is invalid. Keep the old index available only as a rollback artifact.
 
-### Phase 4: Verify Federated Compatibility
-```bash
-# On Node 1: embed test corpus with qwen3-embedding:0.6b @ 768
-# On Node 0: embed same corpus with their qwen model @ 768
-# Compare cosine similarities — should be ~0.99+ for identical texts
-```
+### Phase 4: Verify federated compatibility
+- Run the same test corpus through both nodes' Qwen3 server configurations.
+- Confirm identical model revision, 768 dimensions, normalization, pooling,
+  instruction handling, and truncation.
+- Compare cosine rankings and absolute scores before declaring compatibility.
 
-### Rollback (if needed)
-```bash
-ollama rm qwen3-embedding:0.6b
-# Revert WanderGround config to nomic-embed-text
-# Rebuild atlas (curator cycle or manual)
-```
+### Rollback
+Stop the standalone server and restore the historical Nomic route only as a
+separate, explicitly non-federated index. Do not mix the two vector spaces.
 
 ---
 
 ## 5. Implementation Checklist for Node 1
 
-- [ ] `ollama pull qwen3-embedding:0.6b` (verify 639 MB download)
-- [ ] Test 768-dim output via `truncate_dim` parameter
-- [ ] Update WanderGround embedder config (model name + `truncate_dim: 768`)
-- [ ] Update MemPalace MCP if it uses separate embedder (check `mempalace-mcp` config)
-- [ ] Trigger atlas rebuild (`make 3d-rebuild` or wait for curator)
-- [ ] Verify cross-node similarity with Node 0 (when Node 0 intake complete)
-- [ ] Document in `SYSTEM_GUIDE.md` §9 upgrade roadmap
-- [ ] Add to `docs/models/` registry as `qwen3-embedding-0.6b.md` card
+- [x] Select `qwen3-embedding:0.6b` with `truncate_dim=768` as the canonical route.
+- [x] Keep the embedding server outside Ollama to preserve `MAX_LOADED_MODELS=1`.
+- [ ] Start the standalone server and verify `/health` plus 768-D `/embed` output.
+- [ ] Update all embedding clients and the MemPalace projection boundary.
+- [ ] Re-embed the legacy atlas; never mix Nomic and Qwen3 vectors.
+- [ ] Verify cross-node similarity with Node 0 after its runtime is available.
+- [x] Record the decision in `docs/WANDERGROUND_SPEC.md`, `docs/ARCHITECTURE.md`,
+      `docs/AGENT_RUNBOOK.md`, and `docs/ROADMAP.md`.
 
 ---
 
