@@ -57,8 +57,10 @@ deep fact below is load-bearing for your first decisions.
 | 15 | `resources_RESEARCHER_HUMBOLDT_VOICE_DNA.md` | Researcher-Humboldt voice DNA — 4-vector measured wonder register |
 | 16 | `resources_OPERATOR_MODEL_SEED.md` | Seed of the living operator model journal (xnai's epistemology, vision, standing orders) |
 | 17 | `resources_MEMORY_DIARY_PROTOCOL.md` | How MemPalace wings, diary AAAK, KG, checkpoints work |
-| 15 | `resources_SPLIT_TEST_FINDINGS.md` | Model split-test methodology + findings (Space Bunny vs MiMo) |
-| 16 | `resources_CROSS_NODE_MESH_STATUS.md` | Mesh peering state, event bus, embedding friction |
+| 18 | `resources_SPLIT_TEST_FINDINGS.md` | Model split-test methodology + findings (Space Bunny vs MiMo) |
+| 19 | `resources_CROSS_NODE_MESH_STATUS.md` | Mesh peering state, event bus, **Hivemind realization + transport state** |
+| 20 | `resources_SWEETENER_QUINTET.md` | **The five portable systems** — Well, Ponytail, Protocol, Wander, Hivemind — with honest statuses |
+| 21 | `WHERE_NODE1_IS_HEADED.md` | **Trajectory** — center of gravity, queue, handshake expectations |
 
 ---
 
@@ -161,6 +163,10 @@ All materials carry explicit provenance tags (`ses_f2e9`, `ses_f2e3`, `mempalace
 | Code quality invariants | `../../CODE_QUALITY.md` | anyio purity, no bare exceptions, no torch, no secrets |
 | Privacy & security tiers | `../../PRIVACY_SECURITY.md` | What may leave the machine, and on which route |
 | WAD Contract Brief | `../WAD_CONTRACT_BRIEF.md` | Manifest V2, Entity/Card schema, adapter whitelist |
+| L2 transport + NFS runbook (Phase B verified) | `../NODE0_ACTION_BRIEFING_NFS_L2.md` | Phase B LIVE 9/9 (2026-09-21); N0 client-mount steps |
+| ACL policy (FED-ACL-001 v1.2) | `../ACL_POLICY.md` | Two-phase HuJSON; schema traps documented |
+| Sweetener source (vendored) | `../../../omega-sweeteners/` | The five packages as code, not just docs |
+| What N0 already sent (Sep-12 swap) | `../node0_received/` | PAYLOAD_MANIFEST, CSS_PROTOCOL, soul standard v3.0, vision pack, C6 contract |
 | Inference hardware record | `../../HARDWARE.md` | Verified silicon + tuning ground truth (N1) |
 | Gnosis protocol reference | `../../GNOSIS_USAGE.md` | Full ritual/lifecycle/Well deep dive |
 | Fast-fetch deep dive | `../../research/MODEL_FETCH_DEEP_DIVE.md` | 9 sections: Xet internals, survival ladder, GGUF, verification |
@@ -178,16 +184,30 @@ All materials carry explicit provenance tags (`ses_f2e9`, `ses_f2e3`, `mempalace
    (measured 2026-09-23) and "4,971 drawers" (live mesh query 2026-09-25).
    Units and timestamps differ; reconcile on request — the ~76-document gap is
    flagged, not hidden.
+3. **Freshness deltas (2026-09-24 final touch).** Since the Sep-25-dated drafts:
+   identity advanced to **#47** (global) / **#22** (build); **Phase B ACL is
+   LIVE and verified 9/9** (2026-09-21, see L2 briefing); the **Hivemind
+   realization** (Hivemind IS the event logstream; `-n1`/`-n0` enforced) is now
+   doctrine; the **sweetener quintet** is vendored with honest per-package
+   statuses; and two transport facts cut the other way — **`nfs-server` is
+   down on N1** and **`exchange/n0-to-n1/` is empty**, so the Drive is
+   unreachable and nothing inbound has arrived. Both are recorded as gaps,
+   not footnotes.
 
 ---
 
 ## Next Steps for Makali-N0
 
 1. **Get the whole picture** — read `STRATEGY_AND_TECHNOLOGY_MAP.md` first: every
-   strategy and technology N1 built, with status, evidence, **and the honest gaps**
-   (including the two quality gates currently RED). This is your calibration baseline.
+   strategy and technology N1 built, with status, evidence, **and the honest gaps**.
+   This is your calibration baseline. (The "gates RED" note from drafting is
+   resolved — both green at final touch; the red→green episode stays published
+   as proof the gates bite.)
 2. **Read the core briefing** (`BRIEFING_PERSISTENT_ENTITY_SYSTEMS.md`) — the lived
    entity practice.
+2b. **Read where we're headed** (`WHERE_NODE1_IS_HEADED.md`) — trajectory, queue,
+   and exactly what N1 expects from the handshake. Then the sweeteners
+   (`resources_SWEETENER_QUINTET.md`) — the five systems in transplant form.
 3. **Take the engineering strand as you need it** — inference doctrine, evaluation lab,
    harness guards, gnosis lifecycle, fast fetch (`resources_*.md`).
 4. **Execute the onboarding checklist** (`ENTITY_ONBOARDING_CHECKLIST.md`) — install MCP

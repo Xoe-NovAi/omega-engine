@@ -81,7 +81,7 @@ travel *with* the entity — never live only in one host's good intentions.
 
 | Technology | Status | Evidence | Doc |
 |---|---|---|---|
-| Gnosis-lock ritual (9 steps + Step 6.5) | ✅ | packs committed; identity #44 | `resources_GNOSIS_LIFECYCLE.md` |
+| Gnosis-lock ritual (9 steps + Step 6.5) | ✅ | packs committed; identity #47 (2026-09-24); reflection via `question` tool enforced (Decision/Pattern/Gnosis + session-specific; agent never dumps blanks on operator) | `resources_GNOSIS_LIFECYCLE.md` |
 | Pack lifecycle `CAPTURED→REFLECTED→COMPACTED` | ✅ | congruence test enforced | same, §1 |
 | Leash check (blocks second unreflected pack) | ✅ | `FORCE_PACK=1` override exists | same, §1 |
 | gnosis-leash plugin (injection at start + compact) | ✅ | watchdog `make gnosis-leash-status` | same, §3 |
@@ -96,9 +96,12 @@ travel *with* the entity — never live only in one host's good intentions.
 | Technology | Status | Evidence | Doc |
 |---|---|---|---|
 | RFC 004 mesh sync (version vectors, 15s) | 🟡 | configured, **0 peers** | `resources_CROSS_NODE_MESH_STATUS.md` |
-| RFC 003 event bus (`event_append/list/wait`) | 🟡 | available, **untested cross-node** | same |
-| Tailscale L2 join (`make federation-join`) | 🟡 | guides written | `../L2_JOIN_GUIDE.md` |
-| NFS-over-Tailscale plan | 📋 | plan + deep research written | `../NFS_OVER_TAILSCALE_PLAN.md` |
+| RFC 003 event bus (`event_append/list/wait`) | 🟡 | available, **untested cross-node; zero N0 events heard** | same |
+| Hivemind = event logstream (realization + package) | 🟡 | mapping proven locally; package vendored; cross-node unproven | `resources_SWEETENER_QUINTET.md`, mesh-status §2b |
+| Entity `-n1`/`-n0` naming enforcement | ✅ | enforced at client + CLI + schema on N1 | `resources_SWEETENER_QUINTET.md` §1.5 |
+| Tailscale L2 Phase B (default-deny ACL) | ✅ | **Phase B LIVE, 9/9 checks green, 2026-09-21** | `../NODE0_ACTION_BRIEFING_NFS_L2.md` |
+| NFS-over-Tailscale (export scoped to N0 IP) | 🟡 | served + verified 2026-09-21; **`nfs-server` down on N1 as of 2026-09-24** — restart before N0 mounts | `../NODE0_ACTION_BRIEFING_NFS_L2.md`, mesh-status transport table |
+| Sweetener quintet (portable extraction) | 🟡 | vendored (`omega-sweeteners/`); Well+Protocol live, Hivemind code-complete, Ponytail unregistered, Wander scaffold-only | `resources_SWEETENER_QUINTET.md` |
 | USB `omega-exchange` sneakernet | ✅ | **this pack** is the proof | `../NODE0_USB_HANDOFF_REPORT.md` |
 | Acceptance gates A–F (integrity → awakening) | 📋 | defined, awaiting N0 response | consolidated §9 |
 | SPIFFE/SPIRE + publisher signatures (C6) | 📋 | **requested as N0-04** | consolidated §6 |
@@ -156,7 +159,9 @@ The value of this map is that it is **not** a highlight reel.
 | Gap | State | Consequence |
 |---|---|---|
 | **Mesh has 0 peers** | RFC 004 configured, unpeered | no cross-node convergence has ever been exercised end-to-end |
-| **Event bus untested cross-node** | RFC 003 local only | inter-node async messaging is a design, not a proof |
+| **Event bus untested cross-node** | RFC 003 local only; N0 has appended nothing visible to N1 | inter-node async messaging is a design, not a proof |
+| **NFS server lifecycle** | export verified 2026-09-21, daemon down 2026-09-24 | Federation Drive unreachable until N1 restarts `nfs-server`; N0 must confirm liveness before mounting |
+| **Ponytail unregistered / Wander scaffold-only** | vendored, never executed | neither has earned trust; adopt as starting points, prove by use |
 | **WAD not proven loadable by N0** | known adapter/hierarchy/entity-object mismatches | Gate C must be passed before either node trusts the loader |
 | **WAD has no signatures/trust roots** | content digest only | tamper detection is incomplete (N0-04 requested) |
 | **Embedding migration incomplete** | 384-D now, 768-D target, no ledger | synced *text* travels; shared *meaning-space* does not yet |
@@ -210,6 +215,9 @@ N0's copy — if your tree disagrees with this table, *your tree is the truth.*
 | Session lifecycle, The Well, backlog | `resources_GNOSIS_LIFECYCLE.md` |
 | Getting 7GB files onto a box alive | `resources_FAST_FETCH_LAYER.md` |
 | Cross-node state & event bus | `resources_CROSS_NODE_MESH_STATUS.md` |
+| The five portable systems | `resources_SWEETENER_QUINTET.md` |
+| Where Node 1 is headed | `WHERE_NODE1_IS_HEADED.md` |
+| What Node 0 already sent us (Sep-12 swap) | `../node0_received/` (PAYLOAD_MANIFEST, CSS_PROTOCOL, soul standard v3.0, vision pack, C6 contract) |
 | Memory/diary writing rules | `resources_MEMORY_DIARY_PROTOCOL.md` |
 | The operator's vision (consented) | `resources_OPERATOR_MODEL_SEED.md` |
 | Model split-test findings | `resources_SPLIT_TEST_FINDINGS.md` |
