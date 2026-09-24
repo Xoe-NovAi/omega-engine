@@ -251,11 +251,14 @@ def log(msg):
     print(msg, flush=True)
 
 
-def generate(host, model, prompt, temperature=0.1, num_ctx=4096, num_predict=512, timeout=REQUEST_TIMEOUT):
-    data = json.dumps({
+def build_generate_payload(model, prompt, temperature=0.1, num_ctx=4096,
+                           num_predict=512, think=False):
+    """Build an Ollama /api/generate payload with bounded reasoning control."""
+    return {
         "model": model,
         "prompt": prompt,
         "stream": False,
+        "think": think,
         "options": {
             "temperature": temperature,
             "num_ctx": num_ctx,
@@ -263,7 +266,20 @@ def generate(host, model, prompt, temperature=0.1, num_ctx=4096, num_predict=512
             "num_thread": 8,
             "num_gpu": 0
         }
-    }).encode()
+    }
+
+
+def generate(host, model, prompt, temperature=0.1, num_ctx=4096,
+             num_predict=512, think=False, timeout=REQUEST_TIMEOUT):
+    payload = build_generate_payload(
+        model=model,
+        prompt=prompt,
+        temperature=temperature,
+        num_ctx=num_ctx,
+        num_predict=num_predict,
+        think=think,
+    )
+    data = json.dumps(payload).encode()
     req = urllib.request.Request(
         f"{host}/api/generate",
         data=data,
@@ -290,24 +306,26 @@ def load_existing_results(output_file):
         data = json.loads(output_file.read_text())
         results = data.get("results", [])
         completed = {(r["context"], r["temperature"], r["prompt_idx"]) for r in results if r.get("tps") is not None}
-        log(f"[RESUME] Found {len(completed)}/18 runs already completed")
+        log(f"[RESUME] Found {len(completed)} completed run(s)")
         return results, completed
     except Exception as e:
         log(f"[WARN] Could not load existing results: {e}")
         return [], set()
 
 
-def save_results(output_file, model, results):
+def save_results(output_file, model, results, *, num_predict=512, think=False,
+                 temperatures=None, contexts=None):
     """Save results atomically (write to temp, then rename)."""
     output_file.parent.mkdir(parents=True, exist_ok=True)
     temp_file = output_file.with_suffix(".tmp")
     data = {
         "model": model,
         "protocol": "GSCA abbreviated screening",
-        "num_predict": num_predict if "num_predict" in dir() else 512,
+        "num_predict": num_predict,
+        "think": think,
         "prompts": SCREENING_PROMPTS,
-        "temperatures": TEMPERATURES,
-        "contexts": CONTEXTS,
+        "temperatures": temperatures or TEMPERATURES,
+        "contexts": contexts or CONTEXTS,
         "results": results,
         "timestamp": time.time()
     }
@@ -323,24 +341,34 @@ def main():
     ap.add_argument("--num-predict", type=int, default=512,
                     help="max output tokens per run (default 512; bounds reasoning-model"
                          " chains that never emit EOS — e.g. Qwen3 think loops)")
+    ap.add_argument("--think", choices=("on", "off"), default="off",
+                    help="reasoning mode sent to Ollama (default: off)")
+    ap.add_argument("--lite", action="store_true",
+                    help="run one representative setting: 3 prompts at temp 0.1, ctx 4096")
     args = ap.parse_args()
     num_predict = args.num_predict
+    think = args.think == "on"
+    temperatures = [0.1] if args.lite else TEMPERATURES
+    contexts = [4096] if args.lite else CONTEXTS
+    total_runs = len(SCREENING_PROMPTS) * len(temperatures) * len(contexts)
 
-    log(f"=== ABBREVIATED SCREENING: {args.model} ===")
-    log(f"Prompts: {len(SCREENING_PROMPTS)} | Temps: {TEMPERATURES} | Contexts: {CONTEXTS}")
-    log(f"Total runs: {len(SCREENING_PROMPTS) * len(TEMPERATURES) * len(CONTEXTS)}")
+    log(f"=== {'LITE ' if args.lite else ''}ABBREVIATED SCREENING: {args.model} ===")
+    log(f"Prompts: {len(SCREENING_PROMPTS)} | Temps: {temperatures} | Contexts: {contexts}")
+    log(f"Think: {'on' if think else 'off'} | Max output: {num_predict} tokens")
+    log(f"Total runs: {total_runs}")
     log("")
 
     # Output file path
     output_dir = Path("benchmarking") / "screening"
-    output_file = output_dir / f"{args.model.replace(':', '-')}_screening.json"
+    suffix = "_lite" if args.lite else ""
+    output_file = output_dir / f"{args.model.replace(':', '-')}{suffix}_screening.json"
 
     # Load existing results
     results, completed = load_existing_results(output_file)
 
     run_id = 0
-    for ctx in CONTEXTS:
-        for temp in TEMPERATURES:
+    for ctx in contexts:
+        for temp in temperatures:
             for i, prompt in enumerate(SCREENING_PROMPTS, 1):
                 run_id += 1
                 key = (ctx, temp, i)
@@ -348,17 +376,18 @@ def main():
                 # Skip if already completed
                 if key in completed:
                     existing = next(r for r in results if (r["context"], r["temperature"], r["prompt_idx"]) == key)
-                    log(f"[Run {run_id:2d}/18] ctx={ctx:5d} temp={temp:.1f} prompt={i} — SKIPPED (already done: {existing['tps']:.2f} t/s)")
+                    log(f"[Run {run_id:2d}/{total_runs}] ctx={ctx:5d} temp={temp:.1f} prompt={i} — SKIPPED (already done: {existing['tps']:.2f} t/s)")
                     continue
 
-                log(f"[Run {run_id:2d}/18] ctx={ctx:5d} temp={temp:.1f} prompt={i}")
+                log(f"[Run {run_id:2d}/{total_runs}] ctx={ctx:5d} temp={temp:.1f} prompt={i}")
                 log(f"  Prompt: {prompt!r}")
 
                 collector = TelemetryCollector()
                 collector.start()
                 t0 = time.time()
                 try:
-                    resp = generate(args.host, args.model, prompt, temperature=temp, num_ctx=ctx, num_predict=num_predict)
+                    resp = generate(args.host, args.model, prompt, temperature=temp,
+                                    num_ctx=ctx, num_predict=num_predict, think=think)
                 except Exception as exc:
                     dt = time.time() - t0
                     telemetry = collector.stop()
@@ -369,7 +398,9 @@ def main():
                         "telemetry": telemetry or None
                     })
                     # Save immediately on error too
-                    save_results(output_file, args.model, results)
+                    save_results(output_file, args.model, results,
+                                 num_predict=num_predict, think=think,
+                                 temperatures=temperatures, contexts=contexts)
                     continue
 
                 dt = time.time() - t0
@@ -385,7 +416,9 @@ def main():
                 results.append(result)
 
                 # INCREMENTAL SAVE AFTER EACH RUN
-                save_results(output_file, args.model, results)
+                save_results(output_file, args.model, results,
+                             num_predict=num_predict, think=think,
+                             temperatures=temperatures, contexts=contexts)
 
                 log(f"  {dt:.1f}s | {tok} tokens | {tps:.2f} t/s  ✓ SAVED")
                 if telemetry:
@@ -402,8 +435,8 @@ def main():
     log("=== SCREENING SUMMARY ===")
     valid = [r for r in results if r["tps"] is not None]
     if valid:
-        for ctx in CONTEXTS:
-            for temp in TEMPERATURES:
+        for ctx in contexts:
+            for temp in temperatures:
                 subset = [r for r in valid if r["context"] == ctx and r["temperature"] == temp]
                 if subset:
                     avg_tps = sum(r["tps"] for r in subset) / len(subset)

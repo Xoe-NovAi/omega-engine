@@ -183,14 +183,20 @@ class TestPauseLedger(unittest.TestCase):
         self.assertIn("CAPTURED", r.stdout + r.stderr)
 
     def test_ledger_lists_manifests(self):
-        """Ledger must surface every manifest on disk — no pack hidden."""
-        n_manifests = len(list((GNOSIS / "sessions").glob("*_manifest.json")))
+        """Ledger must surface every manifest on disk — including named packs."""
+        manifest_paths = list((GNOSIS / "sessions").glob("*_manifest.json"))
+        manifest_ids = []
+        for path in manifest_paths:
+            data = json.loads(path.read_text())
+            manifest_ids.append(data.get("session_id", path.stem.replace("_manifest", "")))
         r = subprocess.run(["python3", str(self.LEDGER)], capture_output=True, text=True, timeout=30)
         self.assertEqual(r.returncode in (0, 1), True, "ledger runs")
-        # count bold pack lines (session-… or test-… rows) — reasonably ≥ manifests
-        rows = [l for l in r.stdout.splitlines() if "session-" in l or "test-session" in l or "__" in l]
-        self.assertGreaterEqual(len(rows), n_manifests - 5,
-                                f"ledger hides packs: {n_manifests} manifests vs {len(rows)} rows")
+        rows = [line for line in r.stdout.splitlines() if any(sid in line for sid in manifest_ids)]
+        self.assertGreaterEqual(
+            len(rows),
+            len(manifest_paths),
+            f"ledger hides packs: {len(manifest_paths)} manifests vs {len(rows)} rows",
+        )
 
 
 class TestRitualPluginCongruence(unittest.TestCase):

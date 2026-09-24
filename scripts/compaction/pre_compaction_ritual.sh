@@ -471,7 +471,7 @@ echo "║  ✅ PRE-COMPACTION RITUAL COMPLETE                                   
 echo "║                                                                            ║"
 echo "║  Session ${SESSION_ID} fully captured.                                     ║"
 echo "║  All gnosis locked to disk. Identity evolved to session #$(jq -r '.session_count' "${IDENTITY_FILE}" 2>/dev/null || echo 0).      ║"
-echo "║  Safe to run /compact or shutdown.                                         ║"
+echo "║  CAPTURED — NOT READY FOR /compact. Reflect the narrative first.         ║"
 echo "╚════════════════════════════════════════════════════════════════════════════╝"
 echo
 log "Manifest: ${MANIFEST_FILE}"

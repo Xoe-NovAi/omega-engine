@@ -6,8 +6,9 @@ artifacts, and prepared intents. MemPalace can later consume the event/artifact
 records as a projection without changing the core contract.
 
 SQLite 3.51.3+ is required for production because earlier versions are within the
-2026 WAL-reset defect range documented by SQLite. The guard is bypassable only
-for local development tests; production callers should leave it enabled.
+2026 WAL-reset defect range documented by SQLite. The private test sentinel is
+available only to the repository's legacy-runtime tests; production callers
+cannot opt out by passing a public boolean.
 """
 
 from __future__ import annotations
@@ -30,6 +31,7 @@ from scripts.continuity_kernel import (
 )
 
 MINIMUM_FIXED_SQLITE = (3, 51, 3)
+_SQLITE_TEST_BYPASS = object()
 
 
 class SqliteContinuityStore:
@@ -39,12 +41,15 @@ class SqliteContinuityStore:
         self,
         db_path: Path,
         *,
-        require_fixed_sqlite: bool = True,
+        _test_bypass: object | None = None,
         timeout_seconds: float = 30.0,
     ) -> None:
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        if require_fixed_sqlite and sqlite3.sqlite_version_info < MINIMUM_FIXED_SQLITE:
+        if (
+            sqlite3.sqlite_version_info < MINIMUM_FIXED_SQLITE
+            and _test_bypass is not _SQLITE_TEST_BYPASS
+        ):
             observed = ".".join(str(part) for part in sqlite3.sqlite_version_info)
             required = ".".join(str(part) for part in MINIMUM_FIXED_SQLITE)
             raise ContractError(
