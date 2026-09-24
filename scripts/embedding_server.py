@@ -24,8 +24,33 @@ from tokenizers import Tokenizer
 from huggingface_hub import hf_hub_download, snapshot_download
 
 # ─── Prevent ONNX Runtime spin-wait BEFORE importing ort ─────────
-# These must be set before session creation to take effect
-os.environ.setdefault("OMP_NUM_THREADS", "8")
+# On hybrid CPUs (e.g. Intel i7-13620H 6P+4E), run the embedding server on the
+# 4 Gracemont E-cores (logical CPUs 12-15). This keeps the 6 P-cores + HT siblings
+# (logical CPUs 0-11) 100% unencumbered for Ollama LLM inference.
+#
+# E-core affinity allocation:
+# - Logical CPUs: 12, 13, 14, 15
+# - Thread count: 4 (1 thread per physical E-core; Gracemont has no HT)
+# - Spin-wait disabled: prevents OS thread thrash and barrier convoys
+E_CORE_AFFINITY = {12, 13, 14, 15}
+NUM_E_CORE_THREADS = 4
+
+def configure_cpu_affinity():
+    """Pin process to Gracemont E-cores (12-15) if available on Linux."""
+    if hasattr(os, "sched_setaffinity"):
+        try:
+            available_cpus = set(range(os.cpu_count() or 16))
+            if E_CORE_AFFINITY.issubset(available_cpus):
+                os.sched_setaffinity(0, E_CORE_AFFINITY)
+                logging.info(f"CPU affinity locked to Gracemont E-cores: {os.sched_getaffinity(0)}")
+            else:
+                logging.warning(f"Target E-cores {E_CORE_AFFINITY} not subset of available {available_cpus}; keeping default affinity")
+        except Exception as e:
+            logging.warning(f"Could not set CPU affinity: {e}")
+
+configure_cpu_affinity()
+
+os.environ.setdefault("OMP_NUM_THREADS", str(NUM_E_CORE_THREADS))
 os.environ.setdefault("KMP_AFFINITY", "granularity=fine,compact,1,0")
 os.environ.setdefault("KMP_BLOCKTIME", "0")
 
@@ -87,11 +112,10 @@ class Qwen3EmbeddingONNX:
             raise FileNotFoundError(f"ONNX model not found at {self.model_path}. Run download first.")
         
         # ONNX Runtime session - CPU execution provider with optimization
-        # Critical: Disable spin-wait to prevent CPU burn on hybrid CPUs (i7-13620H)
-        # Per ONNX Runtime docs: spin_duration_us=1000 + spin_backoff_max=8 is optimal
+        # Pin to E-cores: 4 Gracemont cores (12-15), 4 threads, spin-wait disabled
         sess_options = ort.SessionOptions()
         sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-        sess_options.intra_op_num_threads = 8  # Match OLLAMA_NUM_THREADS=8 (P-core range + HT siblings)
+        sess_options.intra_op_num_threads = NUM_E_CORE_THREADS  # Dedicated to 4 physical E-cores (12-15)
         sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
         
         # Disable spin-wait (prevents barrier convoy on hybrid CPUs)

@@ -240,6 +240,17 @@ Full target list: `make help`.
 5. **The traps are universal** — barrier convoys, khugepaged stalls, THP, single-channel
    ceilings, and "obvious" pinning will hurt on *any* hybrid CPU. The *numbers* are
    local; the *failure modes* are not.
+6. **Embedding-server affinity — the Ryzen subset-trap (READ THIS FIRST).**
+   N1's `scripts/embedding_server.py` pins to `{12,13,14,15}` behind a
+   subset-check guard. That guard passes on *any* ≥16-thread machine — including
+   your Ryzen 7 5700U, where CPUs 12–15 are SMT siblings, not efficiency cores.
+   Copying N1's constants would silently pin your embeddings to four
+   hyperthreads sharing execution ports. Subset-check ≠ topology-check.
+   Re-derive from `lscpu` on your silicon, or wait for the queued
+   `EMBED_CPU_AFFINITY` env override (ROADMAP RES-ECORE-001). N1's numbers:
+   89.24 ms/query on E-cores, 84% Ollama retention under saturation —
+   reference only. Full mechanics:
+   `docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md`.
 
 ---
 

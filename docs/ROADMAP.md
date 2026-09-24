@@ -744,6 +744,33 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
   (`omega-exchange/deploy_node{0,1}_hardened.sh`) + `embed_daemon_hardened.py` all carry the fix.
 - **Status**: ✅ **DONE (2026-09-18)**
 
+### RES-ECORE-001 — Raptor Lake E-core embedding offload (DONE on N1 2026-09-24)
+- **What**: Isolate the standalone ONNX embedding server (INT8 Qwen3-Embedding-0.6B,
+  Matryoshka 768d, `TRUNCATE_DIM=768` per RES-EMBED-001) to the 4 Gracemont E-cores
+  (CPUs 12–15), leaving P-cores 0–11 fully unencumbered for Ollama.
+- **Authorship**: third-party audit by Cline CLI (Gemini 3.8 Flash, free tier —
+  hardware benchmarks only, no private material exposed); reviewed by Build 2026-09-24.
+- **Evidence**: E-core embed latency **89.24 ms**/query; Ollama under full E-core
+  saturation holds **11.76 t/s = 84%** of the 14.04 t/s run-baseline (canonical
+  14.4 t/s; delta is run variance, not regression); P-core pounding is worse
+  (11.46 t/s) — isolation wins. iGPU offload rejected (shared 35 GB/s bus, no
+  SYCL stack for 64EU UHD, DMA overhead).
+- **Deliverables**: `scripts/embedding_server.py` (E-core affinity + 4 threads +
+  `allow_spinning=0`, graceful fallback), `scripts/omega-embedding-server.service`
+  (user unit, `CPUAffinity=12 13 14 15`), `docs/HARDWARE.md` §E-Core offload,
+  `docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md` (224 lines: Ryzen-vs-Raptor
+  Lake mechanics, convoy physics, benchmarks, iGPU assessment).
+- **Review findings (Build, 2026-09-24 — gates re-verified: lint 6/6, test 88/88,
+  docs OK)**: (1) service is **staged, not live** — installed but
+  `disabled`/`inactive`; enable pending. (2) **Ryzen subset-trap**: the
+  `E_CORE_AFFINITY.issubset(available)` guard passes on any ≥16-thread box —
+  on N0's Ryzen 7 5700U it would silently pin embeddings to SMT siblings 12–15.
+  Subset-check ≠ topology-check. **N0 must not copy `{12,13,14,15}`.**
+- **Status**: ✅ **DONE (N1, 2026-09-24)**. Remaining, queued: (a) `systemctl
+  --user enable --now omega-embedding-server` + cosine live-check (advances P4.0);
+  (b) `EMBED_CPU_AFFINITY` env override so affinity is config, not constant;
+  (c) N0 Ryzen re-derive per doctrine §10 (never copy N1 constants).
+
 ---
 
 ## Dream log (kind: dream — captured, unpromised)

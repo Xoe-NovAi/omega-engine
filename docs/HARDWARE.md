@@ -107,6 +107,13 @@ python3 ~/hivemind_first_contact.py
 Pinning `AllowedCPUs=0,2,4,6,8,10` + `OLLAMA_NUM_THREADS=6` caused a **catastrophic ~0.5 t/s** (was 13.5 t/s). Root cause: `llama-server` spawns ~29 threads; starving all onto the 6 physical P-cores causes a spin-wait barrier convoy (ollama #17916). Direct llama.cpp P-core-only tests (2.4–3×) do **not** transfer to Ollama's thread model.
 **Correct config: keep HT siblings (0–11) in the CPU mask, exclude E-cores. Do NOT narrow to physical P-cores only.**
 
+
+### ⚡ E-Core Embedding Offload (Hardware Coexistence)
+- **Standalone ONNX Server**: `scripts/embedding_server.py` runs INT8 Qwen3-Embedding-0.6B (Matryoshka 768d) on the **4 Gracemont E-cores ONLY (logical CPUs 12-15)** with 4 intra-op threads and spin-wait disabled (`allow_spinning=0`).
+- **Benchmarked latency**: **89.24 ms** per query embedding on E-cores; zero contention with P-cores.
+- **Service Unit**: `scripts/omega-embedding-server.service` (`~/.config/systemd/user/omega-embedding-server.service`).
+- **Full Architecture Report**: See `docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md`.
+
 ## Ollama setup
 - **Version**: 0.33.3
 - **Service**: systemd `ollama.service`, runs as user `ollama` (uid 997)

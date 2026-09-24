@@ -62,6 +62,7 @@ travel *with* the entity — never live only in one host's good intentions.
 | THP `madvise`, ZRAM 8GB, KV `q8_0` | ✅ | measured, documented | same, §4 |
 | Open WebUI (port 3000, per-model keep-alive) | ✅ | container live | same, §5 |
 | `make` harness (bench/env/chat/serve/create) | ✅ | `make help` | same, §9 |
+| Standalone ONNX embedding server, E-core pinned | ✅ (N1) | 89.24 ms/q; 84% Ollama retention under saturation; service **staged, not enabled** | ROADMAP RES-ECORE-001; doctrine §10.6 (Ryzen subset-trap — N0 must re-derive, never copy `{12-15}`) |
 
 ### 2.3 Model selection — evaluation & routing
 

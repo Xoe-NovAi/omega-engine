@@ -1,10 +1,14 @@
 # The Well — Active Records
 
-Generated: 2026-09-24T22:36:27Z
+Generated: 2026-09-24T23:44:34Z
 
-Total active: 31
+Total active: 32
 
-## Correction (18)
+## Correction (19)
+
+- **CPU-affinity constants are topology-gated: a subset-check (E_CORE_AFFINITY.issubset) is NOT a topology-check; on homogeneous SMT silicon it silently pins to hyperthread siblings**
+  *N1 {12-15}=Gracemont E-cores; N0 Ryzen 5700U {12-15}=SMT siblings sharing FMA/ALU ports. Copying N1 constants to N0 degrades embeddings silently. Re-derive from lscpu per host; prefer EMBED_CPU_AFFINITY env override (ROADMAP RES-ECORE-001).*
+  — pack: manual | domain: harness | id: e9ece119
 
 - **Lilith-N1 axioms fuse operator answers with ancient and modern sources on the historical Lilith; the shape-questions themselves were largely shaped by that corpus** [entity-ontology,lilith,axiom-provenance]
   *Same provenance rule as Humboldt: entity souls ground in their source corpus, not in Q&A alone. Prevents future briefings from understating the historical grounding of Lilith's axioms.*

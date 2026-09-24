@@ -1,0 +1,24 @@
+[Unit]
+Description=Omega Engine Standalone Qwen3 Embedding ONNX Server (E-Core Pinned)
+After=network.target default.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/Projects/omega-engine-alpha
+Environment="PATH=%h/WanderGround/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="OMP_NUM_THREADS=4"
+Environment="EMBED_MODEL_DIR=%h/Documents/Projects/omega-engine-alpha/models/embedding/qwen3-0.6b-onnx"
+Environment="TRUNCATE_DIM=768"
+# Hardware affinity: pin strictly to Gracemont E-cores (12-15)
+# Excludes P-cores + HT siblings (0-11) so Ollama has full unencumbered throughput
+CPUAffinity=12 13 14 15
+ExecStart=%h/WanderGround/.venv/bin/python3 %h/Documents/Projects/omega-engine-alpha/scripts/embedding_server.py
+Restart=always
+RestartSec=3
+StandardOutput=journal
+SyslogIdentifier=omega-embedding-server
+
+[Install]
+WantedBy=default.target
