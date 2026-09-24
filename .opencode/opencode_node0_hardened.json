@@ -1,46 +1,55 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "servers": {
-      "parallel-search": {
-        "type": "remote",
-        "url": "https://search.parallel.ai/mcp",
-        "enabled": true,
-        "oauth": false,
-        "headers": { "Authorization": "Bearer {env:PARALLEL_API_KEY}" },
-        "timeout": 120000,
-        "max_retries": 3
+    "parallel-search": {
+      "type": "remote",
+      "url": "https://search.parallel.ai/mcp",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:PARALLEL_API_KEY}"
       },
-      "mempalace": {
-        "type": "local",
-        "command": ["/home/xnai/WanderGround/.venv/bin/mempalace-mcp", "--palace", "/home/xnai/WanderGround/mempalace"],
-        "enabled": true
-      }
+      "timeout": 120000
+    },
+    "mempalace": {
+      "type": "local",
+      "command": [
+        "/home/xnai/WanderGround/.venv/bin/mempalace-mcp",
+        "--palace",
+        "/home/xnai/WanderGround/mempalace"
+      ],
+      "enabled": true
     }
   },
   "agent": {
     "build": {
       "mode": "primary",
       "permission": {
-        "task": { "asus_plan": "allow", "grokster": "allow", "kali": "allow", "makali": "allow", "*": "deny" }
+        "task": {
+          "asus_plan": "allow",
+          "grokster": "allow",
+          "kali": "allow",
+          "makali": "allow",
+          "*": "deny"
+        }
       }
     },
     "kali": {
       "mode": "subagent",
-      "inherit_context": true,
-      "allow_background_execution": true,
       "description": "Council Synthesis / Federation Law",
-      "tools": { "parallel-search": true },
-      "system_prompt": ["{include:~/.config/opencode/prompts/kali.md}"]
+      "prompt": "{file:~/.config/opencode/prompts/kali.md}",
+      "tools": {
+        "parallel-search": true
+      }
     },
     "makali": {
       "mode": "subagent",
-      "inherit_context": true,
-      "allow_background_execution": true,
       "description": "AMD Architecture Vault (Zen 2 Only)",
-      "tools": { "parallel-search": true },
-      "system_prompt": ["{include:~/.config/opencode/prompts/makali.md}"]
+      "prompt": "{file:~/.config/opencode/prompts/makali.md}",
+      "tools": {
+        "parallel-search": true
+      }
     }
   },
-  "subagent_depth": 2
+  "subagent_depth": 1
 }

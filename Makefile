@@ -2,7 +2,7 @@
 # Omega Engine Alpha — Local AI Harness
 # ============================================================================
 # Makefile for Ollama-powered local AI on ASUS Expertbook
-# i7-13620H (16 cores) | 16GB DDR5 | 512GB NVMe | CPU-only
+# i7-13620H (10 cores / 16 threads) | 16GB DDR5 | 512GB NVMe | CPU-only
 #
 # Usage:  make help
 # ============================================================================
@@ -104,7 +104,7 @@ rm: ## Remove a model: make rm MODEL=phi4-mini
 	@if [ -z "$(MODEL)" ]; then echo "$(C_RED)Usage: make rm MODEL=<name>$(C_RESET)"; exit 1; fi
 	@ollama rm $(MODEL)
 
-pull-core: ## Pull essential models (phi4-mini + embedding)
+pull-core: ## Pull essential Ollama models (phi4-mini + legacy Nomic embed)
 	@echo "$(C_BOLD)$(C_CYAN)⬇ Pulling core models...$(C_RESET)"
 	@ollama pull phi4-mini
 	@ollama pull nomic-embed-text
@@ -120,7 +120,7 @@ pull-reason: ## Pull reasoning model (deepseek-r1)
 	@ollama pull deepseek-r1:8b
 	@echo "$(C_GREEN)  ✓ Reasoning model ready$(C_RESET)"
 
-pull-embed: ## Pull embedding model for RAG
+pull-embed: ## Pull legacy Ollama Nomic embedding model (not canonical Qwen3 route)
 	@echo "$(C_BOLD)$(C_CYAN)⬇ Pulling embedding model...$(C_RESET)"
 	@ollama pull nomic-embed-text
 	@echo "$(C_GREEN)  ✓ Embedding model ready$(C_RESET)"
@@ -338,7 +338,7 @@ python-test: ## Test Python Ollama connection
 python-chatbot: ## Launch Python streaming chatbot (requires .venv)
 	@.venv/bin/python3 scripts/chatbot.py --model $(or $(MODEL),phi4-mini)
 
-python-rag: ## Quick RAG demo (requires .venv + langchain)
+python-rag: ## Legacy optional RAG demo (requires .venv + langchain; not the canonical atlas)
 	@.venv/bin/pip install --quiet langchain langchain-ollama langchain-chroma chromadb pypdf 2>/dev/null
 	@echo "$(C_BOLD)$(C_CYAN)◆ RAG stack installed. Use in your scripts:${C_RESET}"
 	@echo "  $(C_DIM)from langchain_ollama import OllamaEmbeddings, ChatOllama$(C_RESET)"
@@ -392,8 +392,8 @@ gnosis-lock: ## Run pre-compaction ritual: make gnosis-lock REASON="why" [ENTITY
 	echo "" ; \
 	bash "$(GNOSIS_RITUAL)" "$$SESSION_ID" "$$REASON" ; \
 	echo "" ; \
-	echo "$(C_CYAN)✅ Gnosis locked. Complete the compact INSIDE OpenCode:$(C_RESET)" ; \
-	echo "   Switch to your session and type:  /compact $$REASON"
+	echo "$(C_CYAN)📦 Gnosis captured, not ready for compaction.$(C_RESET)" ; \
+	echo "   Run /gnosis-lock reflection first, then type /compact with no arguments."
 
 gnosis-stats: ## Show evolution-log stats + recent timeline: make gnosis-stats LIMIT=5
 	@python3 "$(GNOSIS_EVOLUTION)" stats
@@ -511,7 +511,7 @@ env-all: ## Show all Ollama env variables with descriptions
 # ============================================================================
 .PHONY: docs lint lint-async test
 
-test: ## FULL regression suite: 48 tests (repo hygiene, well, gnosis, omer)
+test: ## FULL regression suite (repo hygiene, well, gnosis, omer, continuity)
 	@.venv/bin/python3 -m unittest discover -s tests
 	@echo "$(C_GREEN)  ✓ all tests green (see count above)$(C_RESET)"
 
@@ -527,10 +527,7 @@ docs: ## Validate docs integrity: README links + CODE_QUALITY async gate
 	@for f in README.md docs/GETTING_STARTED.md docs/ARCHITECTURE.md docs/DEVELOPER_GUIDE.md docs/PLUGIN_DEVELOPMENT.md docs/CODE_QUALITY.md docs/WANDERGROUND_SPEC.md docs/SYSTEM_GUIDE.md docs/HARDWARE.md docs/AGENT_RUNBOOK.md docs/GNOSIS_USAGE.md docs/ROADMAP.md LICENSE CONTRIBUTING.md; do \
 		[ -f "$$f" ] && echo "  ✓ $$f" || { echo "  ✗ MISSING: $$f"; exit 1; }; \
 	done
-	@echo "$(C_BOLD)Markdown headers anchor sanity (README internal links):$(C_RESET)"
-	@grep -oE '\]\(#[^)]+' README.md | tr -d '](#' | while read -r h; do \
-		[ -n "$$h" ] && { grep -q "## .*$$h" README.md || echo "  ⚠ unverified anchor: #$$h"; }; \
-	done || true
+	@python3 scripts/check_docs.py
 	@echo "  docs OK ✓"
 
 lint-async: ## Reject bare asyncio/trio imports in first-party scripts
