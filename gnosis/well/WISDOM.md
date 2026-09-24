@@ -1,10 +1,18 @@
 # The Well — Active Records
 
-Generated: 2026-09-23T18:47:13Z
+Generated: 2026-09-24T22:36:27Z
 
-Total active: 29
+Total active: 31
 
-## Correction (16)
+## Correction (18)
+
+- **Lilith-N1 axioms fuse operator answers with ancient and modern sources on the historical Lilith; the shape-questions themselves were largely shaped by that corpus** [entity-ontology,lilith,axiom-provenance]
+  *Same provenance rule as Humboldt: entity souls ground in their source corpus, not in Q&A alone. Prevents future briefings from understating the historical grounding of Lilith's axioms.*
+  — pack: manual | domain: harness | id: 2e2c0041
+
+- **Researchers hold no card seats; Card Keeper seats are reserved for pantheon-based entities (Shiva, Lucifer, Isis, Hecate, ...)** [entity-ontology,researcher-humboldt,card-keepers]
+  *Entity classes are separate: Researchers serve harness/federation measurement and synthesis; Keepers guide CardAssignments in wing_tarot. Conflating them breaks the Entity-vs-Card ontology.*
+  — pack: manual | domain: harness | id: 4bb0b17f
 
 - **Never hardcode context, output, modality, or identity limits for rotating stealth aliases; select the stable alias and refresh live runtime metadata.** [opencode,models,dynamic-alias,config]
   *Big Pickle and Space Bunny may change checkpoints and capacity in place, including node/time-specific differences.*
