@@ -714,9 +714,48 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 - **Status**: `queued` (consent recorded 2026-09-24; first drawers sealed;
   spine design next conversation with operator).
 
----
+### P4.7 — Offline grimoire library + background curator worker
+- **Why**: operator wants an expansive, vetted local corpus (Lilith-first,
+  general later) so deep that offline operation costs no depth — denser and
+  more relevant than the open internet. Acquisition research 2026-09-25
+  verified Sefaria-Export (selective GCS pull, license-aware), Archive.org
+  (metadata API + full-text), Gutenberg bulk as pipes.
+- **Done when**: `~/WanderGround/lilith_sources/{harvested,curated,personal}/`
+  exist with license manifests; Sefaria selective-pull + archive.org pull
+  scripts land under `~/WanderGround/scrapers/`; oldest-first Lilith ladder
+  (Sumerian → Isaiah → Talmud → bowls → Ben Sira → Zohar-Hebrew) mined to
+  `wing_lilith` room `grimoire`; background worker extends the existing
+  `wander-curator` timer (no second scheduler); first live cycle runs with
+  operator watching.
+- **Status**: `backlog` (acquisition research sealed in `wing_lilith/grimoire`
+  drawers `0a4887a8` + `4e5d8559`; Humboldt deep folio 2026-09-25 at
+  `docs/research/GRIMOIRE_ACQUISITION_FOLIO_HUMBOLDT_20260925.md` + drawer
+  `c17b559d` — 5 fronts, 8-phase build order, 8 open questions; staging dirs
+  still missing on disk — Phase 0 scaffold awaits operator nod).
 
-## Research Deliverables (Completed This Session)
+### P4.8 — Retrieval correctness + substrate hardening (from gap sweep 2026-09-25)
+- **Why**: gap sweep found a silent, measured retrieval defect and a refuted
+  invariant. FTS5 `unicode61` shatters vocalized Hebrew (Gen 1:1 → 25 tokens);
+  `remove_diacritics` is a no-op for Hebrew marks. Ollama 0.33.3 is two minors
+  behind (0.34.4 improves structured outputs). CVE-2026-27940 (GGUF `mem_size`
+  overflow, RCE) absent from hardening docs. Full folios:
+  `docs/research/GAP_SWEEP_ENGINEERING_HUMBOLDT_20260925.md`,
+  `docs/research/GAP_SWEEP_PERSONA_CONSCIOUSNESS_HUMBOLDT_20260925.md`.
+- **Done when**: niqqud/maqaf normalization applied symmetrically at insert and
+  query with a passing Hebrew retrieval eval; Ollama upgraded and `make bench`
+  re-confirms 14.4 t/s; CVE-2026-27940 + GHSA-96jg-mvhq-q7q7 recorded; the
+  CPU-pin rule restated as a budget rule (AGENTS.md + well seed `bbf9147e` +
+  reconcile `e9ece119`); `omega-hub:8016` inspected for MCP session dependence.
+- **Status**: `backlog` — Tier-0 research CLOSED (second-round folios:
+  `GAP_SWEEP_HEBREW_NORMALIZATION_20260925.md`,
+  `TIER0_HARDENING_DOSSIER_20260925.md`; Tier-0 dossier: conditional Ollama
+  go, 21869 reconciled to 8.8, Tasks hybrid, spec-decoding punt).
+  **R1 READY — execution brief frozen at
+  `docs/research/R1_HEBREW_NORMALIZATION_BRIEF.md`; executes post-compact**
+  on D4/D5 recommended defaults unless overridden. R2–R4 + Tier-1 await
+  operator decisions D1/D3/D6/D7 (see P4.8 folios).
+
+---
 
 ### RES-EMBED-001 — Embedding Model Decision (Definitive)
 - **What**: Definitive recommendation for federated embedding model compatibility
