@@ -153,11 +153,29 @@ _transport_security = TransportSecuritySettings(
     ],
 )
 
+# SSOT for the version surfaced by /health and MCP serverInfo
+# (pyproject.toml [project] version, resolved by omega.__version__).
+from omega import __version__ as _ENGINE_VERSION
+
 mcp = FastMCP(
     "Omega Core Hub",
     json_response=True,  # JSON-only responses for OpenCode/Cline compatibility
     transport_security=_transport_security,
 )
+
+# FastMCP (mcp 1.30.0) accepts no `version` kwarg; when the underlying
+# serverInfo version is unset the SDK reports its OWN library version, so
+# clients saw "1.30.0" (the mcp package) instead of the engine version.
+# Set it explicitly, guarded so an SDK change can never block boot.
+try:
+    mcp._mcp_server.version = _ENGINE_VERSION
+except (AttributeError, ValueError) as exc:  # pragma: no cover - defensive
+    import sys as _sys
+
+    print(
+        f"[TOOL-CHAIN-COLLAPSE] could not set MCP serverInfo version: {exc}",
+        file=_sys.stderr,
+    )
 
 # [P1a-2] State, service singletons, hivemind state, background tasks,
 # and helper functions are now in mcp_servers.omega_hub.state (extracted).
@@ -191,22 +209,81 @@ except Exception as e:  # pragma: no cover — defensive, must never block boot
     logger.warning("Tool surface curation failed (non-fatal): %s", e)
 
 
+# Legacy tool names retired during tool-surface curation (92 → 66 tools),
+# mapped to their unified replacements. Accessing any of these names returns a
+# thin adapter so existing callers keep working instead of raising
+# AttributeError. Each entry is (unified_tool_name, bound_kwargs).
+_LEGACY_TOOL_ADAPTERS = {
+    # Hivemind handoff: 7 fragmented tools → 1 action-based tool
+    "hivemind_submit_handoff": ("hivemind_handoff", {"action": "submit"}),
+    "hivemind_accept_handoff": ("hivemind_handoff", {"action": "accept"}),
+    "hivemind_complete_handoff": ("hivemind_handoff", {"action": "complete"}),
+    "hivemind_reject_handoff": ("hivemind_handoff", {"action": "reject"}),
+    "hivemind_handoff_list": ("hivemind_handoff", {"action": "list"}),
+    "hivemind_get_handoff": ("hivemind_handoff", {"action": "get"}),
+    "hivemind_handoff_archive": ("hivemind_handoff", {"action": "archive"}),
+    # Oracle debug: 3 fragmented tools → 1 action-based tool
+    "oracle_list_slot_keepers": ("oracle_debug", {"action": "list_slot_keepers"}),
+    "oracle_assess_intent": ("oracle_debug", {"action": "assess_intent"}),
+    "oracle_discover_entity": ("oracle_debug", {"action": "discover_entity"}),
+}
+
+# Tools still resolvable by their original name.
+_PASSTHROUGH_TOOLS = frozenset({
+    "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
+    "oracle_entity_info", "sovereign_search", "hivemind_post_context",
+    "hivemind_heartbeat", "hivemind_get_awareness", "hivemind_get_continuation",
+    "hivemind_extended_checkin", "hivemind_extended_checkout", "hivemind_get_session",
+    "hivemind_list_sessions", "hivemind_get_entity_context",
+    "hivemind_workspace_lock_acquire", "hivemind_workspace_lock_release",
+    "hivemind_workspace_lock_check",
+})
+
+
+def _raw_tool(tool: object) -> object:
+    """Return the underlying coroutine of a FastMCP-decorated tool.
+
+    @mcp.tool() wraps callables so direct invocation yields a CallToolResult
+    instead of the tool's JSON string. Adapters must call the raw function.
+    """
+    return getattr(tool, "__wrapped__", tool)
+
+
 def __getattr__(name: str):
     """Lazy-load tools to resolve circular imports while maintaining backward compatibility."""
-    if name in [
-        "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
-        "oracle_list_slot_keepers", "oracle_entity_info", "oracle_assess_intent",
-        "oracle_discover_entity", "sovereign_search", "delegate_task",
-        "hivemind_post_context", "hivemind_heartbeat", "hivemind_get_awareness",
-        "hivemind_get_continuation", "hivemind_extended_checkin", "hivemind_extended_checkout",
-        "hivemind_get_session", "hivemind_list_sessions", "hivemind_get_entity_context",
-        "hivemind_workspace_lock_acquire", "hivemind_workspace_lock_release",
-        "hivemind_workspace_lock_check", "hivemind_submit_handoff", "hivemind_accept_handoff",
-        "hivemind_complete_handoff", "hivemind_reject_handoff", "hivemind_handoff_list",
-        "hivemind_get_handoff", "hivemind_handoff_archive"
-    ]:
-        import mcp_servers.omega_hub.hub_tools.tools as _tools
+    import mcp_servers.omega_hub.hub_tools.tools as _tools
+
+    if name in _PASSTHROUGH_TOOLS:
         return getattr(_tools, name)
+
+    if name in _LEGACY_TOOL_ADAPTERS:
+        target_name, bound_kwargs = _LEGACY_TOOL_ADAPTERS[name]
+        _raw = _raw_tool(getattr(_tools, target_name))
+
+        async def _legacy_adapter(**kwargs):
+            """Backward-compatible adapter → unified action-based tool."""
+            return await _raw(**{**bound_kwargs, **kwargs})
+
+        _legacy_adapter.__name__ = name
+        _legacy_adapter.__doc__ = (
+            f"Backward-compatible adapter for {target_name} "
+            f"(bound: {', '.join(f'{k}={v!r}' for k, v in bound_kwargs.items())})."
+        )
+        return _legacy_adapter
+
+    if name == "delegate_task":
+        # Retired in favour of oracle_summon; preserved because callers used it
+        # as a context-prefixed summon.
+        _raw_summon = _raw_tool(getattr(_tools, "oracle_summon"))
+
+        async def _delegate_task(target_entity: str, query: str, context: str = "") -> str:
+            full_query = f"CONTEXT: {context}\n\nREQUEST: {query}" if context else query
+            return await _raw_summon(entity_name=target_entity, query=full_query)
+
+        _delegate_task.__name__ = "delegate_task"
+        _delegate_task.__doc__ = "Backward-compatible adapter for oracle_summon."
+        return _delegate_task
+
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
@@ -216,7 +293,7 @@ async def _health(request: Request) -> JSONResponse:
     return JSONResponse({
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "version": "2.2.0"
+        "version": _ENGINE_VERSION
     })
 
 async def _debug_tools(request: Request) -> JSONResponse:

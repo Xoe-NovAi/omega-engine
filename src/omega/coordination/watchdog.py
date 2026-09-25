@@ -208,9 +208,14 @@ async def log_failure_to_hivemind(
 ) -> str:
     """Log failure to Hivemind for coordination and alerting."""
     try:
-        from omega_hub import hivemind_submit_handoff
+        # The Hub exposes the consolidated action-based handoff tool; the legacy
+        # `hivemind_submit_handoff` name resolves through the server's
+        # backward-compatibility adapter (the old `omega_hub` module no longer
+        # exists, so this import previously failed unconditionally).
+        from mcp_servers.omega_hub.server import hivemind_submit_handoff
+        import json as _json
 
-        packet_id = await hivemind_submit_handoff(
+        response = await hivemind_submit_handoff(
             target_channel=launching_channel,
             target_entity=launching_entity,
             source_channel="watchdog",
@@ -228,6 +233,11 @@ async def log_failure_to_hivemind(
             ),
             priority=2,  # Critical
         )
+        packet_id = _json.loads(response).get("packet_id")
+        if not packet_id:
+            raise RuntimeError(
+                f"Hivemind handoff returned no packet_id: {str(response)[:200]}"
+            )
         return packet_id
     except Exception as e:
         logger.error(f"Failed to log failure to Hivemind: {e}")

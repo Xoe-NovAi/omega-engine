@@ -44,9 +44,16 @@ def test_should_require_write_tool_exists():
     print("✓ should_require_write_tool function exists")
 
 
-def test_should_require_write_tool_8k_threshold():
-    """Test 8K token threshold - should require write tool for >8K tokens."""
+def test_should_require_write_tool_static_8k_threshold(monkeypatch):
+    """Static 8K baseline: >8K tokens requires the write tool.
+
+    Archangel Architecture made the *effective* threshold dynamic (see
+    calculate_dynamic_write_threshold). This test pins the static baseline
+    explicitly so the 8K contract stays covered regardless of live hardware
+    pressure on the host running the suite.
+    """
     probe = M33Probe(m34_registry=None)  # type: ignore
+    monkeypatch.setattr(probe, "calculate_dynamic_write_threshold", lambda: 8000)
     # Just under threshold
     assert probe.should_require_write_tool(7999, "implement", "P3") is False
     # At threshold (implement is not research/forensic, so no auto)
@@ -55,7 +62,28 @@ def test_should_require_write_tool_8k_threshold():
     assert probe.should_require_write_tool(8001, "implement", "P3") is True
     # Way over threshold
     assert probe.should_require_write_tool(10000, "implement", "P3") is True
-    print("✓ 8K token threshold works correctly")
+    print("✓ static 8K token threshold works correctly")
+
+
+def test_should_require_write_tool_dynamic_threshold():
+    """Dynamic threshold is honoured and stays within its documented bounds.
+
+    M33 1.1 Archangel: pressure/thermal/OOM signals lower the threshold
+    (2000-8000) so long deliverables hit disk earlier. The boundary must
+    follow the *computed* threshold, not a hardcoded 8000.
+    """
+    probe = M33Probe(m34_registry=None)  # type: ignore
+    threshold = probe.calculate_dynamic_write_threshold()
+    assert 2000 <= threshold <= 8000, f"threshold out of bounds: {threshold}"
+    # Boundary is strictly-greater on the computed threshold
+    assert probe.should_require_write_tool(threshold, "implement", "P3") is False
+    assert probe.should_require_write_tool(threshold + 1, "implement", "P3") is True
+    # P0/P1 always require the write tool, regardless of size
+    assert probe.should_require_write_tool(1, "implement", "P0") is True
+    assert probe.should_require_write_tool(1, "implement", "P1") is True
+    # Long-form task types always require the write tool
+    assert probe.should_require_write_tool(1, "research", "P3") is True
+    print(f"✓ dynamic write threshold honoured (effective={threshold})")
 
 
 def test_should_require_write_tool_p0_p1_always():

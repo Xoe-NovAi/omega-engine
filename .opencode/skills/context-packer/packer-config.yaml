@@ -1,0 +1,293 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+profiles:
+  sonnet5-post-refactor:
+    description: Post-Refactor State — Theater stripped, Qwen3 embeddings, Hub restored, Dialectic complete
+    tier: ship
+    tokenizer_encoding: cl100k_base
+    target_platform: web-claude
+    target_model: claude-sonnet-5
+    max_slots: 12
+    format: xml
+    bundle_ordering: litm-u-shaped
+    prompt_caching:
+      enabled: true
+      cache_prefix:
+      - manifest
+      - mandates
+      - engine_state
+      - refactor_summary
+    token_budget:
+      total: 600000
+      per_bundle: 120000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: spotlighting
+    account: arcana.novai@gmail.com
+    project: omega-engine
+    version: "2026-09-01"
+    include:
+      # === MANDATES & LAW (immutable) ===
+      - SOVEREIGN_MANDATES.md
+      - MANDATES_CONDENSED.md
+      - OMEGA_ENGINE.md
+      - AGENTS.md
+      - CREDITS_CANONICAL.md
+      - ORACLE_STACK_CANONICAL.md
+      
+      # === CORE ENGINE (post-refactor) ===
+      # Oracle Gateway — theater stripped, Sentinel Seal + EIS Dialectic
+      - src/omega/oracle/subagent_dispatcher.py
+      - src/omega/oracle/model_gateway.py
+      - src/omega/oracle/providers.py
+      - src/omega/oracle/provider_registry.py
+      - src/omega/oracle/health_monitor.py
+      - src/omega/oracle/oom_protector.py
+      - src/omega/oracle/admission_controller.py
+      - src/omega/oracle/resource_guard.py
+      - src/omega/oracle/entity_registry.py
+      - src/omega/oracle/m36_recursive_probe.py  # stub_bypass (honest)
+      
+      # Memory Layer — Qwen3-Embedding-0.6B 768-dim unified
+      - src/omega/memory_store.py
+      - src/omega/memory/sqlite_vec_adapter.py
+      - src/omega/memory/sqlite_vec_adapter_optimized.py
+      - src/omega/memory/hybrid_search.py
+      - src/omega/memory/embeddings.py
+      - src/omega/memory/fts_index.py
+      - src/omega/memory/vector_adapters.py
+      - src/omega/memory/providers.py
+      - src/omega/memory/vector_versioning.py
+      - src/omega/memory/spatial_graph.py
+      - src/omega/memory/embedding_strategy.py
+      
+      # Observability & Hub — Hivemind operational
+      - src/omega/observability/bleg.py
+      - src/omega/observability/context.py
+      - src/omega/observability/latency_tracker.py
+      - src/omega/observability/metrics_db.py
+      - src/omega/observability/sovereignty.py
+      - src/omega/mcp_runtime.py
+      - src/omega/hub.py
+      
+      # Library Module — restored (was deleted in D-565)
+      - src/omega/library/__init__.py
+      - src/omega/library/library.py
+      - src/omega/library/inbox.py
+      - src/omega/library/curator.py
+      - src/omega/library/indexer.py
+      - src/omega/library/discovery.py
+      - src/omega/library/research.py
+      - src/omega/library/catalog.py
+      - src/omega/library/coordinator.py
+      - src/omega/library/extractor.py
+      - src/omega/library/enrichment.py
+      - src/omega/library/security.py
+      - src/omega/library/api_clients.py
+      - src/omega/library/model_api_clients.py
+      - src/omega/library/rate_limiter.py
+      
+      # Config — Qwen3 primary, library RRF 0.6/0.4
+      - config/providers.yaml
+      - config/models.yaml
+      - config/model_fleet_operational.yaml
+      - config/embedding_strategy.yaml
+      
+      # Strategy & Execution Plans
+      - docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+      - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+      - docs/strategy/HIVEMIND_PROTOCOL.md
+      - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+      - docs/strategy/UNOVERENGINEERING_PLAN.md
+      - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+      
+      # Breakthrough Artifacts
+      - .opencode/skills/sentinel-seal/SKILL.md
+      - .opencode/rules/03-hop-rule.md
+      - .opencode/config/entity_verification_rules.yaml
+      - docs/research/SOVEREIGN_HARNESS_BREAKTHROUGH_20260831.md
+      
+      # Dialectic Records (4 rounds, 28 challenges, 23+ decisions)
+      - data/coordination/DEL1_DIALECTIC_20260901.md
+      - data/coordination/DEL1_POSTCOMPACT_DIALECTIC_20260901.md
+      - data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md
+      - data/coordination/DEL1_SQLITE_VEC_DIALECTIC_20260901.md
+      - data/coordination/DEL1_SQLITE_VEC_DIALECTIC_QA_20260901.md
+      - data/coordination/DEL1_768_DIM_ROC_DIG_20260901.md
+      - data/coordination/DEL1_768_DIM_DIALECTIC_20260901.md
+      - data/coordination/QWEN3_EMBEDDING_FINETUNING_RESEARCH_20260901.md
+      - data/coordination/CARMACK_DIALECTIC_20260901.md
+      - data/coordination/KALI_CARMACK_RESPONSE_20260901.md
+      
+      # Hub Remediation
+      - data/coordination/CARMACK_HUB_REMEDIATION_REPORT_20260901.md
+      
+      # Migration & Tooling
+      - scripts/migrate_to_qwen3_768.py
+      - scripts/m23_gate.py
+      - config/m23_baseline.txt
+      
+      # Empirical Baseline
+      - data/coordination/RETROACTIVE_AUDIT_SUMMARY_20260831.md
+      - scripts/retroactive_verification_audit.py
+      - omega_engine_audit_report.md
+      - data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md
+      
+      # Coordination State (current)
+      - data/coordination/ACTIVE_SPRINT.json
+      - data/coordination/HMC_COLLABORATION_HUB.md
+      - data/coordination/WAKE_STATE.json
+      - data/coordination/anchored_summary/kali/projection.md
+      - data/entities/kali/session_gnosis.md
+      - data/entities/kali/proposed_lessons.yaml
+      - data/entities/researcher/soul.yaml
+      - data/entities/researcher/proposed_lessons.yaml
+      - data/entities/researcher/session_gnosis.md
+      - data/entities/roc_racoon/proposed_lessons.yaml
+      - data/entities/carmack/proposed_lessons.yaml
+      - data/entities/carmack/session_gnosis.md
+      
+      # Tests (24 honest tests target)
+      - tests/test_engine_islands.py
+      - tests/contracts/test_embedding_dimension.py
+      - tests/test_sqlite_vec_adapter.py
+      
+      # Gates
+      - scripts/m23_gate.py
+      - config/m23_baseline.txt
+      
+    exclude:
+      - '**/__pycache__/**'
+      - '**/*.pyc'
+      - '**/*.log'
+      - '**/*.tmp'
+      - context_packs/**
+      - data/coordination/anchored_summary/**/projection.md  # only kali included above
+      - data/entities/*/session_gnosis_*.md  # archives excluded
+      - data/entities/*/proposed_lessons.yaml.tmp
+      - mcp_servers/archives/**
+      - .git/**
+      - node_modules/**
+      - .venv/**
+      - models/**
+      - data/library/documents/**
+      - data/library/sources/**
+      - data/library/software/**
+      - Roc-launched-ses_ff78.md
+      - sovereign-intelligence-unlocked-ses_fdef.md
+      - data/entities/cline_kqv/**
+      - data/entities/sophia/**
+    themes:
+      mandates:
+        - SOVEREIGN_MANDATES.md
+        - MANDATES_CONDENSED.md
+        - OMEGA_ENGINE.md
+        - AGENTS.md
+      oracle_core:
+        - src/omega/oracle/subagent_dispatcher.py
+        - src/omega/oracle/model_gateway.py
+        - src/omega/oracle/providers.py
+        - src/omega/oracle/provider_registry.py
+        - src/omega/oracle/health_monitor.py
+        - src/omega/oracle/oom_protector.py
+        - src/omega/oracle/admission_controller.py
+        - src/omega/oracle/resource_guard.py
+        - src/omega/oracle/entity_registry.py
+        - src/omega/oracle/m36_recursive_probe.py
+      memory_layer:
+        - src/omega/memory_store.py
+        - src/omega/memory/sqlite_vec_adapter.py
+        - src/omega/memory/sqlite_vec_adapter_optimized.py
+        - src/omega/memory/hybrid_search.py
+        - src/omega/memory/embeddings.py
+        - src/omega/memory/fts_index.py
+        - src/omega/memory/vector_adapters.py
+        - src/omega/memory/providers.py
+        - src/omega/memory/vector_versioning.py
+        - src/omega/memory/spatial_graph.py
+        - src/omega/memory/embedding_strategy.py
+      library_module:
+        - src/omega/library/library.py
+        - src/omega/library/inbox.py
+        - src/omega/library/curator.py
+        - src/omega/library/indexer.py
+        - src/omega/library/discovery.py
+        - src/omega/library/research.py
+        - src/omega/library/catalog.py
+        - src/omega/library/coordinator.py
+        - src/omega/library/extractor.py
+        - src/omega/library/enrichment.py
+        - src/omega/library/security.py
+        - src/omega/library/api_clients.py
+        - src/omega/library/model_api_clients.py
+        - src/omega/library/rate_limiter.py
+      embeddings:
+        - config/embedding_strategy.yaml
+        - src/omega/memory/embeddings.py
+        - src/omega/memory/sqlite_vec_adapter.py
+        - src/omega/memory/sqlite_vec_adapter_optimized.py
+        - scripts/migrate_to_qwen3_768.py
+      dialectic:
+        - data/coordination/DEL1_DIALECTIC_20260901.md
+        - data/coordination/DEL1_POSTCOMPACT_DIALECTIC_20260901.md
+        - data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md
+        - data/coordination/DEL1_SQLITE_VEC_DIALECTIC_20260901.md
+        - data/coordination/DEL1_SQLITE_VEC_DIALECTIC_QA_20260901.md
+        - data/coordination/DEL1_768_DIM_ROC_DIG_20260901.md
+        - data/coordination/DEL1_768_DIM_DIALECTIC_20260901.md
+        - data/coordination/QWEN3_EMBEDDING_FINETUNING_RESEARCH_20260901.md
+        - data/coordination/CARMACK_DIALECTIC_20260901.md
+        - data/coordination/KALI_CARMACK_RESPONSE_20260901.md
+      hub_remediation:
+        - data/coordination/CARMACK_HUB_REMEDIATION_REPORT_20260901.md
+        - src/omega/library/__init__.py
+        - src/omega/library/library.py
+      coordination:
+        - data/coordination/ACTIVE_SPRINT.json
+        - data/coordination/HMC_COLLABORATION_HUB.md
+        - data/coordination/WAKE_STATE.json
+        - data/coordination/anchored_summary/kali/projection.md
+        - data/entities/kali/session_gnosis.md
+        - data/entities/kali/proposed_lessons.yaml
+        - data/entities/researcher/soul.yaml
+        - data/entities/researcher/proposed_lessons.yaml
+        - data/entities/researcher/session_gnosis.md
+        - data/entities/roc_racoon/proposed_lessons.yaml
+        - data/entities/carmack/proposed_lessons.yaml
+        - data/entities/carmack/session_gnosis.md
+      breakthrough:
+        - .opencode/skills/sentinel-seal/SKILL.md
+        - .opencode/rules/03-hop-rule.md
+        - .opencode/config/entity_verification_rules.yaml
+        - docs/research/SOVEREIGN_HARNESS_BREAKTHROUGH_20260831.md
+      strategy:
+        - docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
+        - docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
+        - docs/strategy/HIVEMIND_PROTOCOL.md
+        - docs/strategy/FLEET_TEAM_PLAYBOOK.md
+        - docs/strategy/UNOVERENGINEERING_PLAN.md
+        - data/coordination/POST_SONNET5_EXECUTION_PLAN_20260831.md
+      empirical:
+        - data/coordination/RETROACTIVE_AUDIT_SUMMARY_20260831.md
+        - scripts/retroactive_verification_audit.py
+        - omega_engine_audit_report.md
+        - data/coordination/ROC_SONNET5_CONTEXT_DIG_20260830.md
+      tests:
+        - tests/test_engine_islands.py
+        - tests/contracts/test_embedding_dimension.py
+        - tests/test_sqlite_vec_adapter.py
+      config:
+        - config/providers.yaml
+        - config/models.yaml
+        - config/model_fleet_operational.yaml
+        - config/embedding_strategy.yaml
+      observability:
+        - src/omega/observability/bleg.py
+        - src/omega/observability/context.py
+        - src/omega/observability/latency_tracker.py
+        - src/omega/observability/metrics_db.py
+        - src/omega/observability/sovereignty.py
+        - src/omega/mcp_runtime.py
+        - src/omega/hub.py

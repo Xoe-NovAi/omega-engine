@@ -271,6 +271,18 @@ data/entities/test_*_entity/
 # Registry model cards are .yaml.md — un-ignore AFTER the blanket *.md rule
 # (git uses the LAST matching pattern).
 !config/model_registry/models/**/*.yaml.md
+
+# .opencode/ is core project structure, NOT vendored/scratch content:
+#   * AGENTS.md (tracked, public) points every newcomer at
+#     .opencode/rules/*.md — 11 references, all dangling until now
+#   * M10 Fleet Integrity requires .opencode/agents/ to exist
+# The blanket *.md rule above silently swallowed both, so they were absent
+# from every clone: broken onboarding docs + a failing mandate. Un-ignore
+# AFTER the blanket rule (git uses the LAST matching pattern).
+# archive/ subdirs stay ignored — they are historical, not live surface.
+!.opencode/agents/*.md
+!.opencode/rules/*.md
+
 # Soul-contract evidence artifacts referenced by approved_lessons.yaml
 # (test_every_promoted_lesson_carries_resolvable_evidence requires them in CI).
 !docs/strategy/*.md

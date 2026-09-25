@@ -29,6 +29,16 @@ config/model_fleet_operational.yaml
 config/litestream.yml
 config/systemd/
 
+# M35 public-client catalog — MUST ship (SOVEREIGN_MANDATES.md §28.3:
+# "data/secrets-public.toml MUST be committed to git, reviewed on every PR,
+# versioned"). It holds RFC 6749 §2.1 / RFC 8252 §8 PUBLIC OAuth native-app
+# client secrets, each with primary-source verification — not private
+# credentials. scripts/check_secrets.py fails closed without it.
+data/secrets-public.toml
+
+# Audited secret-history baseline (sha256 hashes only, no secret material)
+.secret-history-baseline.toml
+
 # Install + docs
 scripts/install.sh
 scripts/serve_native_gguf.sh

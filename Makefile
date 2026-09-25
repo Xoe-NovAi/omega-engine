@@ -20,7 +20,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-hub-health soul-validate
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health soul-validate
 
 help:
 	@echo "Omega Engine Makefile"
@@ -525,6 +525,23 @@ check-broken-imports:
 	fi; \
 	echo "$(GREEN)No broken imports in src/omega/$(NC)"
 
+# P0 CI Gates — Untracked dependency detection
+# Fails if any committed .py file imports modules from untracked files
+check-untracked-deps:
+	@echo "$(YELLOW)Checking for untracked dependencies...$(NC)"
+	@failed=0; \
+	for f in $$(git ls-files --others --exclude-standard 'src/**/*.py' 2>/dev/null); do \
+		if [ -f "$$f" ] && grep -qE '^(import |from )' "$$f" 2>/dev/null; then \
+			echo "$(RED)UNTRACKED DEPENDENCY: $$f$(NC)"; \
+			failed=1; \
+		fi; \
+	done; \
+	if [ $$failed -eq 1 ]; then \
+		echo "$(RED)Untracked dependencies detected$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(GREEN)No untracked dependencies found$(NC)"
+
 # P0 CI Gates — Omega Hub health check
 # Regenerate the M23 baseline (run after intentionally fixing violations)
 m23-baseline:
@@ -534,7 +551,7 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe verify-mandate-claims check-mandate-compliance
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps verify-mandate-claims check-mandate-compliance
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # M24b Venv Sovereignty Gate (P1-5): verify .venv matches pyproject requirements
@@ -749,15 +766,19 @@ infer-debug:
 # dangling commits and must neither fail gates nor hide durable-ref leaks.
 # Gate passes ONLY at zero findings on durable refs (31 baselined FPs in
 # .gitleaksignore, WHY-documented line-above each fingerprint).
+#
+# Credential-shaped history is handled by scripts/check_secret_history.py:
+# every distinct token in durable refs is hashed and must carry a disposition
+# in .secret-history-baseline.toml (2026-09-25: 6 audited tokens — 2 revoked
+# Firecrawl keys, 4 public GOCSPX cert fingerprints). The gate previously used
+# a bare "any match => fail" loop with no way to record a disposition, so it
+# failed on history gitleaks already accepted and could never go green. A token
+# baselined "revoked" must also never reappear in the working tree.
 .PHONY: gate-secrets
 gate-secrets:
 	@echo '=== gate-secrets: format-regex PRIMARY gates (durable refs) ==='
 	@FAIL=0; \
-	for R in 'GOCSPX-[A-Za-z0-9_-]{10,}' 'fc-[A-Za-z0-9_-]{16,}' 'AIzaSy[A-Za-z0-9_-]{20,}' 'tvly-[A-Za-z0-9]{10,}' 'eyJhbGci[A-Za-z0-9_.-]{30,}'; do \
-		N=$$(git log -G "$$R" --branches --tags --oneline | wc -l); \
-		echo "  git log -G '$$R' -> $$N commits"; \
-		[ "$$N" -eq 0 ] || FAIL=1; \
-	done; \
+	$(PYTHON) scripts/check_secret_history.py || FAIL=1; \
 	PEM_R='-----BEGIN[ A-Z]*PRIVATE KEY-----'; \
 	PEM_FILES=$$(git log -G "$$PEM_R" --branches --tags --name-only --format= | sort -u); \
 	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^$$' | wc -l); \
