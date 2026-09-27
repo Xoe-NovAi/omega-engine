@@ -96,11 +96,20 @@ fd5dc1771805226a0a9897196494da4bfa03bcfa:src/omega/oracle/soul_validator.py:gene
 7ffb78dc58ce985cb75bf5f728914eb549d61bc7:20260829-session-ses_fdef.md:generic-api-key:3314
 # WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
 4406dedb2e98267e652b22acc4da6aac8f3963e8:20260829-session-ses_fdef.md:generic-api-key:3314
-# WHY: explicit test fixture sk-test12345678901234567890 in scan_secrets doc example, never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+# WHY: explicit 20-digit sk- test fixture in the scan_secrets doc example; literal
+#      redacted here because .gitleaksignore is itself a tracked file scanned by
+#      ci_secret_scan.py, which flagged the quoted string (C3 mirror, PR #4).
+#      Never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
 3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
-# WHY: explicit test fixture sk-test12345678901234567890 in scan_secrets doc example, never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+# WHY: explicit 20-digit sk- test fixture in the scan_secrets doc example; literal
+#      redacted here because .gitleaksignore is itself a tracked file scanned by
+#      ci_secret_scan.py, which flagged the quoted string (C3 mirror, PR #4).
+#      Never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
 44470d8689e2d09532ee6bce784d3448dbec16ae:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
-# WHY: explicit test fixture sk-test12345678901234567890 in scan_secrets doc example, never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+# WHY: explicit 20-digit sk- test fixture in the scan_secrets doc example; literal
+#      redacted here because .gitleaksignore is itself a tracked file scanned by
+#      ci_secret_scan.py, which flagged the quoted string (C3 mirror, PR #4).
+#      Never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
 d0a66e861e12d4057dcc1d37b296169f790b6d30:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
 # WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
 3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:134
