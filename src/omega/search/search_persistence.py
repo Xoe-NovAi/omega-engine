@@ -404,7 +404,6 @@ def persist_search(entity_name: str = "unknown", channel: str = "opencode"):
                 "firecrawl": 6,
                 "library_search": 3,
                 "library_fts_search": 0,
-                "memory_search": 0,
             }
             tier = tier_map.get(tool_name, 0)
 
@@ -460,7 +459,6 @@ def persist_search(entity_name: str = "unknown", channel: str = "opencode"):
 # ─── Tier Mapping ───
 TOOL_TO_TIER = {
     # Tier 0: Local
-    "memory_search": 0,
     "omega_memory_search": 0,
     "library_fts_search": 0,
     "library_search": 0,

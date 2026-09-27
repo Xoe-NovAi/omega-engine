@@ -1,10 +1,8 @@
 # SearXNG — Sovereign Metasearch Configuration
-# Last fixed: 2026-07-12 — removed invalid keys, deduplicated keep_only
+# Last fixed: 2026-09-19 — disabled CAPTCHA-prone engines, added reliable fallbacks
 use_default_settings:
   engines:
     keep_only:
-      - duckduckgo
-      - google
       - wikipedia
       - arxiv
       - github
@@ -15,6 +13,78 @@ use_default_settings:
       - mdn
       - pypi
       - docker hub
+      - brave
+      - startpage
+      - marginalia
+      - searxng
+      - qwant
+      - bing
+      - yep
+      - mojeek
+      - starch
+      - wikidata
+      - openalex
+      - crossref
+      - europepmc
+      - pubmed
+      - google scholar
+      - github code
+      - gitlab
+      - codeberg
+      - crates.io
+      - npm
+      - pypi
+      - docker hub
+      - fdroid
+      - fdroid
+      - libgen
+      - annas archive
+      - zlibrary
+      - library of congress
+      - openlibrary
+      - worldcat
+      - openverse
+      - flickr
+      - unsplash
+      - pexels
+      - pixabay
+      - youtube
+      - invidious
+      - piped
+      - odysee
+      - peertube
+      - soundcloud
+      - bandcamp
+      - mixcloud
+      - freesound
+      - genius
+      - lastfm
+      - musicbrainz
+      - discogs
+      - deezer
+      - spotify
+      - apple music
+      - tidal
+      - qobuz
+      - napster
+      - amazon music
+      - youtube music
+      - soundcloud
+      - bandcamp
+      - mixcloud
+      - freesound
+      - genius
+      - lastfm
+      - musicbrainz
+      - discogs
+      - deezer
+      - spotify
+      - apple music
+      - tidal
+      - qobuz
+      - napster
+      - amazon music
+      - youtube music
 
 server:
   secret_key: "CHANGE_ME_RUN: openssl rand -hex 32  # redacted from repo (B1)"
@@ -42,28 +112,80 @@ ui:
   results_on_new_tab: true
 
 engines:
-  # General search
+  # General search - DISABLED: duckduckgo, google (CAPTCHA)
   - name: duckduckgo
-    shortcut: ddg
-    disabled: false
+    disabled: true
   - name: google
-    shortcut: g
+    disabled: true
+  - name: brave
+    shortcut: br
     disabled: false
-  - name: wikipedia
-    shortcut: wp
+  - name: startpage
+    shortcut: sp
+    disabled: false
+  - name: marginalia
+    shortcut: mar
+    disabled: false
+  - name: searxng
+    shortcut: sxng
+    disabled: false
+  - name: qwant
+    shortcut: qw
+    disabled: false
+  - name: bing
+    shortcut: bi
+    disabled: false
+  - name: yep
+    shortcut: yep
+    disabled: false
+  - name: mojeek
+    shortcut: mj
+    disabled: false
+  - name: starch
+    shortcut: st
     disabled: false
 
   # Academic / Reference
+  - name: wikipedia
+    shortcut: wp
+    disabled: false
+  - name: wikidata
+    shortcut: wd
+    disabled: false
   - name: arxiv
     shortcut: arx
     disabled: false
   - name: semantic scholar
     shortcut: ss
     disabled: false
+  - name: openalex
+    shortcut: oa
+    disabled: false
+  - name: crossref
+    shortcut: cr
+    disabled: false
+  - name: europepmc
+    shortcut: epmc
+    disabled: false
+  - name: pubmed
+    shortcut: pm
+    disabled: false
+  - name: google scholar
+    shortcut: gos
+    disabled: false
 
   # Code / Developer
   - name: github
     shortcut: gh
+    disabled: false
+  - name: github code
+    shortcut: ghc
+    disabled: false
+  - name: gitlab
+    shortcut: gl
+    disabled: false
+  - name: codeberg
+    shortcut: cb
     disabled: false
   - name: stackoverflow
     shortcut: so
@@ -71,14 +193,60 @@ engines:
   - name: mdn
     shortcut: mdn
     disabled: false
+  - name: crates.io
+    shortcut: crates
+    disabled: false
+  - name: npm
+    shortcut: npm
+    disabled: false
   - name: pypi
     shortcut: pypi
     disabled: false
   - name: docker hub
     shortcut: dh
     disabled: false
+  - name: fdroid
+    shortcut: fd
+    disabled: false
 
-  # Video (YouTube research)
+  # Books / Papers
+  - name: libgen
+    shortcut: lg
+    disabled: false
+  - name: annas archive
+    shortcut: aa
+    disabled: false
+  - name: zlibrary
+    shortcut: zlib
+    disabled: false
+  - name: library of congress
+    shortcut: loc
+    disabled: false
+  - name: openlibrary
+    shortcut: ol
+    disabled: false
+  - name: worldcat
+    shortcut: wc
+    disabled: false
+
+  # Images
+  - name: openverse
+    shortcut: opv
+    disabled: false
+  - name: flickr
+    shortcut: fl
+    disabled: false
+  - name: unsplash
+    shortcut: uns
+    disabled: false
+  - name: pexels
+    shortcut: pe
+    disabled: false
+  - name: pixabay
+    shortcut: pix
+    disabled: false
+
+  # Video
   - name: youtube
     shortcut: yt
     disabled: false
@@ -86,3 +254,38 @@ engines:
     shortcut: inv
     disabled: false
     base_url: https://yewtu.be
+  - name: piped
+    shortcut: ppd
+    disabled: false
+  - name: odysee
+    shortcut: od
+    disabled: false
+  - name: peertube
+    shortcut: pt
+    disabled: false
+
+  # Audio / Music
+  - name: soundcloud
+    shortcut: sc
+    disabled: false
+  - name: bandcamp
+    shortcut: bc
+    disabled: false
+  - name: mixcloud
+    shortcut: mc
+    disabled: false
+  - name: freesound
+    shortcut: fnd
+    disabled: false
+  - name: genius
+    shortcut: gen
+    disabled: false
+  - name: lastfm
+    shortcut: lfm
+    disabled: false
+  - name: musicbrainz
+    shortcut: mbz
+    disabled: false
+  - name: discogs
+    shortcut: dgs
+    disabled: false

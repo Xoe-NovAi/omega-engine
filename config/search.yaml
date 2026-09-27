@@ -17,8 +17,8 @@ tiers:
     enabled: true
   T1:
     name: searxng
-    provider: searxng_mcp
-    url: "http://127.0.0.1:8018/mcp"
+    provider: searxng_direct
+    url: "http://127.0.0.1:8017"
     timeout_seconds: 15
     retries: 2
     retry_delay_seconds: [5, 10]
@@ -27,7 +27,7 @@ tiers:
       - general
       - science
       - it
-    engines: ""
+    engines: "github,brave,startpage,marginalia,wikipedia,arxiv,semantic_scholar,openalex,crossref,pubmed,google_scholar"
     language: auto
   T2:
     name: exa
@@ -100,3 +100,9 @@ circuit_breaker:
   T3:
     failure_threshold: 2
     recovery_timeout_seconds: 120
+
+verification:
+  # SkepticalVerifier calls NLI model via ModelGateway.
+  # Disabled during engine development (no local models invoked).
+  enabled: false
+

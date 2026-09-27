@@ -95,7 +95,7 @@ class TestToolRegistration:
         assert "tool_manager_count" in data
 
     def test_tool_count_above_minimum(self, hub_client):
-        """At least 50 tools must be registered (we have 70+)."""
+        """The Hub must retain a healthy minimum tool surface."""
         resp = hub_client.get("/debug/tools")
         data = resp.json()
         count = data["tool_manager_count"]
