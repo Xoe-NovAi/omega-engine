@@ -1,7 +1,9 @@
-# Arcana-NovAi entities registry — Entity objects (sovereign beings, NOT cards).
-# Pattern follows the arcana_novai IWAD: manifest `entities:` stays empty;
-# entities live here as a dict. Card assignments live beside each Entity
-# (entities/<keeper>/card_assignment_*.yaml) and in wing_tarot.
+# Arcana-NovAi entities registry — DOCUMENTATION-ONLY snapshot (NOT loader input).
+# The loader (wad_loader.py) IGNORES root entities.yaml; it scans entities/**/*.yaml
+# for files carrying a top-level `entity:` envelope. Registry truth lives in
+# entities/lilith/lilith.yaml and entities/researcher_humboldt/researcher_humboldt.yaml.
+# Souls (soul.yaml) are identity temples, card assignments are wing_tarot data —
+# neither is loader-shaped by design. This file mirrors intended registry values.
 # Entity field contract (wad_loader.py): name, domains (<=20), model,
 # personality, temperature, context_window, slots.
 lilith:

@@ -701,6 +701,18 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
   scenes / Quest APK until explicitly called.
 - **Status**: `backlog` (parked).
 
+### P4.5a — Alice-inspired persistent 3D realm engine study
+- **Why**: Explore a non-P2P, initially non-VR interactive 3D realm where an
+  Omega-Engine user can enter a personal Lilith session and visually explore
+  RAG/entity records, with `sqlite-vec` and xyz coordinates.
+- **Scope**: Compare Godot 4, O3DE, Bevy, ioquake3/id Tech 3 descendants, and
+  other open-source candidates. Treat American McGee's Alice/Hysteria as design
+  and technical references, not as an embeddable engine.
+- **Done when**: an engine decision record exists, a minimal one-room data-to-3D
+  prototype is specified, and Alice modding tools are catalogued with licenses,
+  platform constraints, and explicit asset-rights boundaries.
+- **Status**: `active` (research locked 2026-09-25 in `docs/research/ALICE_ENGINE_KNOWLEDGE_BASE.md`; no engine implementation yet).
+
 ### P4.6 — Operator journey archive → book material
 - **Why**: operator wants their bondage-to-freedom journey documented and
   structured across awakening conversations — both as eventual book material
@@ -746,14 +758,21 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
   re-confirms 14.4 t/s; CVE-2026-27940 + GHSA-96jg-mvhq-q7q7 recorded; the
   CPU-pin rule restated as a budget rule (AGENTS.md + well seed `bbf9147e` +
   reconcile `e9ece119`); `omega-hub:8016` inspected for MCP session dependence.
-- **Status**: `backlog` — Tier-0 research CLOSED (second-round folios:
+- **Status**: `in-progress` — Tier-0 research CLOSED (second-round folios:
   `GAP_SWEEP_HEBREW_NORMALIZATION_20260925.md`,
   `TIER0_HARDENING_DOSSIER_20260925.md`; Tier-0 dossier: conditional Ollama
   go, 21869 reconciled to 8.8, Tasks hybrid, spec-decoding punt).
-  **R1 READY — execution brief frozen at
-  `docs/research/R1_HEBREW_NORMALIZATION_BRIEF.md`; executes post-compact**
-  on D4/D5 recommended defaults unless overridden. R2–R4 + Tier-1 await
-  operator decisions D1/D3/D6/D7 (see P4.8 folios).
+  **R1 DONE (2026-09-25)** — `scripts/hebrew_normalize.py` (`hebrew-norm-v1`,
+  brief §2 pipeline + pre-exec addenda A0/A1/A3) with 25 tests; all four
+  gates passed: fts5vocab dev sample (Gen 1:1 **25→7** tokens, zero
+  diacritic-range terms, compound `ארצ_ישראל` single token), query symmetry
+  (pointed ≡ stripped rowid sets; pointed query reaches stripped docs),
+  `make lint/test/docs` green (113 tests), non-goals respected. Research:
+  `docs/research/R1_PREEXEC_GNOSIS_20260925.md` (R1 = layer 4 of 4; ktiv
+  male/haser + clitic stems + gershayim expansion scoped as future R5).
+  R2–R4 + Tier-1 await operator decisions D1/D3/D6/D7 (see P4.8 folios).
+  Next in Tier-0: read-only sitting — inventory snapshot + `typical_p`
+  sweep + compare-grep upgrade decision.
 
 ---
 
@@ -763,6 +782,14 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 - **Rationale**: Only path achieving true federated semantic compatibility (direct cosine similarity) with quality gain (C-MTEB 66.33 vs 62.28), 4× context (32K vs 2K), instruction-aware, zero projection layer
 - **Deliverable**: `docs/research/EMBEDDING_MODEL_DECISION.md` (complete with comparison table, migration path, rollback)
 - **Status**: ✅ **DONE (2026-09-17)**
+- **Addendum (2026-09-25, palace refinement):** RES-EMBED-001 stands for
+  engine/federation (`0.6b@768`-trunc). The PALACE refines to
+  `qwen3-embedding:0.6b` native **1024-dim** via Ollama openai-compat shim —
+  measured meaning-first multilingual incl. polytonic Ancient Greek (0.624);
+  MemPalace's built-in `embeddinggemma` is MRL-truncated to 384 and fails the
+  768 bar; nomic disqualified by measurement (language-first geometry). Palace
+  space ≠ engine space — never compare across. Full case + cutover phases:
+  `docs/research/EMBEDDING_STRATEGY_NODE1_20260925.md`. Cutover track: P5.1.
 
 ### RES-GAPS-001 — Knowledge Gaps Implementation Guide (Complete Audit)
 - **What**: Complete audit of all 25 remaining gaps, sequenced by dependency with temple-grade specs
@@ -809,6 +836,112 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
   --user enable --now omega-embedding-server` + cosine live-check (advances P4.0);
   (b) `EMBED_CPU_AFFINITY` env override so affinity is config, not constant;
   (c) N0 Ryzen re-derive per doctrine §10 (never copy N1 constants).
+
+### RES-WAD-001 — arcana_novai WAD Loader Contract Alignment (DONE on N1 2026-09-26)
+- **What**: Aligned `arcana_novai` WAD to Node 0's loader contract (`fa9c4edc`),
+  fixing all 5 known gaps from `NODE1_COMPATIBILITY.md`.
+- **Gaps Fixed**:
+  1. Root `entities.yaml` ignored → removed; entities moved to `entities/**/*.yaml`
+  2. Entities lacked `entity:` envelope → added to all 23 entities
+  3. Unknown fields rejected (`extra=forbid`) → stripped to `KNOWN_ENTITY_FIELDS`
+  4. Empty `entities: []` in manifest → removed; manifest cleaned to V2 schema
+  5. `adapters` mapping form verified; `hierarchy` relative path confirmed
+- **Structure**: 23 entities reorganized into `core/` (15), `support/` (3), `personal/` (1), `omega_default/` (5)
+- **Manifest**: Cleaned V2 schema with `adapters` mapping, `hierarchy` path, `requires_engine: ">=1.6.0"`
+- **PWAD Regression**: Confirmed concat bug (exit 1 negative fixture); fix staged on Node 0
+- **Verification**: 31/31 WAD loader tests PASS; PWAD regression exit 1 confirmed; lint/docs PASS
+- **Deliverable**: `config/wads/arcana_novai/` restructured; provenance drawer in `omega-engine-alpha/local-ai-research`
+- **Status**: ✅ **DONE (N1, 2026-09-26)**
+
+### RES-FLEET-001 — Parallel Agent Fleet Architecture (RESEARCHED 2026-09-26)
+- **What**: Architect-directed research into git-worktree isolation + agent-management
+  platforms, and how they fit the Omega Engine. Full doctrine:
+  `docs/research/PARALLEL_AGENT_FLEET_ARCHITECTURE_20260926.md`.
+- **Trigger (measured, not hypothetical)**: Node 1 already runs concurrent Lilith/Humboldt/
+  build sessions on ONE tree. Tonight's checkout was ABORTED by a sibling session's uncommitted
+  changes; ROADMAP needed surgical hunk staging; two stashes in flight. Textbook shared-tree
+  failure.
+- **Core findings**:
+  1. **Worktree-per-task** is the fix; **three-phase sweep** (parallel READ-ONLY discovery →
+     single-writer apply in isolated worktree → isolated review) is the highest-value pattern and
+     is already how research subagents were run tonight.
+  2. **Worktrees isolate the FILESYSTEM ONLY.** Ports, databases, .env, and absolute-path build
+     caches are still shared. Ceiling is **5–7 concurrent**; start at 2–3, scale on evidence.
+  3. **SQLite (our substrate)**: transactions are serializable, WAL gives reader snapshot
+     isolation, and **separate database FILES = complete isolation**. Recommended pattern:
+     **one DB file per agent/worktree, inside that worktree's own directory** — do not share
+     MemPalace/coordination DBs across agents. Never enable `read_uncommitted` in a fleet.
+  4. **Paperclip** (74k★, MIT, self-hosted) productizes an org-chart/budget/audit layer above
+     existing agents; its stance is "agents must be governed, not trusted" and it still requires
+     a human at the top (board). **Verdict: DO NOT ADOPT, DO MINE.** It is multi-tenant
+     SaaS-shaped (Node 24+/pnpm/Postgres), duplicates our `hierarchy.yaml` + mandates as a second
+     governance source of truth, and ships telemetry (M8 is absolute for us). Mine four portable
+     ideas for free: hard budgets per agent, immutable tool-call audit log, heartbeat triggers
+     instead of manual invocation, and goal-traced tasks (every task traces to a mission).
+  5. **Multi-node**: GitOps (repo as declared state + per-host sync daemon) is the sober pattern.
+     Config hierarchy global→fleet→instance, and **instance overrides must be in version
+     control** — untracked overrides are indistinguishable from drift. Emerging standards: MCP,
+     A2A (Linux Foundation), OpenTelemetry GenAI conventions. Open risk: per-agent credential
+     sprawl; direction is workload-identity attestation, not yet solved.
+- **Proposed sequence (NOT yet authorized)**: worktree-per-task for this repo (2 concurrent
+  first); per-worktree `.env.local` with unique port + own SQLite paths; `TASKS.md` with declared
+  scope and off-limits files, out-of-scope diff = automatic escalation; three-phase discipline;
+  adopt Paperclip's four ideas natively; GitOps for multi-node. Never reintroduce SSH/NFS
+  (policy-removed and test-guarded).
+- **Status**: `researched` — awaiting operator decision on adoption scope.
+
+## P5 — Omega Memory module (the substrate) — PRIORITY ONE R&D TRACK
+
+**Goal**: the memory substrate the Engine's intelligence flows through —
+sovereign, multilingual, spatial, federated. Independent Node 1 R&D FIRST
+(operator directive 2026-09-25); Node 0's two years of data/iterations merge
+later, never as a blocker.
+**Standing constraints**: one space per collection everywhere (same model +
+dim per shared collection); palace space vs engine space never compared;
+verbatim-first; boosts-never-gates; eval-before-cutover; no silent failures.
+
+### P5.0 — Knowledge Atlas spatial viewer — priority MEDIUM/HIGH
+- **Why**: operator has never seen their data spatially; xyz serves eyes and
+  routing, never ranking.
+- **Honest state (2026-09-25)**: unbuilt — `knowledge_atlas.db` absent,
+  `:8088` silent, no viewer files. Prior session notes claiming otherwise
+  were aspirational (see ARCHITECTURAL_REVIEW correction).
+- **Done when**: minimal local viewer over the post-cutover space — UMAP 3-D
+  projection, wing coloring, click-to-dossier; served locally; build doc
+  recorded. Feeds dream-log #5 (atlas fusion).
+- **Status**: `queued` (medium/high priority, operator 2026-09-25).
+
+### P5.1 — Palace embedder cutover (MiniLM → Qwen3-0.6B@1024)
+- **Why**: MiniLM is English-only geometry; a linguistics wing is impossible
+  on it. Measured 2026-09-25: Qwen-0.6B meaning-first across HE/EL/polytonic
+  Greek/Latin; nomic language-first (rejected); MemPalace embeddinggemma is
+  384-trunc (rejected on the 768 bar).
+- **Done when**: P0 backup → P1 pilot sidecar + A/B spot-checks → P2 held-out
+  eval set + delta → P3 rebuild (`dim=1024` stamped, scoped-search parity) →
+  P4 federate (after Node 0 survey). Rollback = restore P0 files / rebuild
+  back; time is the only cost.
+- **Status**: `in-progress` (P0 backup DONE + P1 pilot DONE 2026-09-25/26: 40-record Qwen-1024 sidecar, plumbing verified, fair-A/B deferred to P2 eval by design; full case:
+  `docs/research/EMBEDDING_STRATEGY_NODE1_20260925.md`; Qwen3-4B sidecar
+  deferred by operator decision).
+
+### P5.2 — Omega-native memory v0 (independent R&D)
+- **Why**: priority-one substrate; Node 0 material merges later, not as
+  a blocker.
+- **Done when**: v0 spec (one SQLite: verbatim docs + JSON metadata + xyz
+  floats + wing/room/hall; vec0 with wing partition key; FTS5 with
+  per-language normalizers — Hebrew R1 shipped, Greek/Latin/Mayan queued;
+  triples; logstream; hybrid 0.6/0.4; closet-boosts-never-gates; top-20
+  rerank) + prototype proving scoped recall ≥ palace parity on the held-out
+  set from P5.1/P2.
+- **Status**: `queued` (R&D track opened 2026-09-25).
+
+### P5.3 — Federated memory rules + Node 0 survey
+- **Why**: vectors from different models are uncomparable numbers; mixing
+  spaces fails silently.
+- **Done when**: Node 0 embedder/dims/backend/counts/disk surveyed; mesh
+  vector policy decided (ship-documents+vectors vs re-embed-per-node);
+  one-space-per-collection enforced in config on both nodes.
+- **Status**: `queued` (blocked on Node 0 survey — not on R&D).
 
 ---
 

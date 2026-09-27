@@ -1,0 +1,31 @@
+[Unit]
+Description=Ollama embedding instance pinned to E-cores (background work)
+After=network.target
+# Deliberately NOT After=ollama.service: these are independent workloads.
+
+[Service]
+Type=simple
+# Identity MUST mirror the stock unit. Without User= and an explicit HOME,
+# ollama aborts at startup with `panic: $HOME is not defined`
+# (envconfig.Models() -> config.go:120) and systemd restarts it forever. The
+# first install of this unit failed exactly that way.
+User=ollama
+Group=ollama
+Environment=HOME=/usr/share/ollama
+WorkingDirectory=/usr/share/ollama
+Environment=OLLAMA_HOST=127.0.0.1:11435
+Environment=OLLAMA_MAX_LOADED_MODELS=1
+Environment=OLLAMA_NUM_PARALLEL=1
+Environment=OLLAMA_KEEP_ALIVE=30m
+Environment=OLLAMA_CONTEXT_LENGTH=8192
+Environment=OLLAMA_KV_CACHE_TYPE=q8_0
+Environment=OLLAMA_FLASH_ATTENTION=1
+Environment=OLLAMA_NO_CLOUD=1
+Environment=OMP_NUM_THREADS=4
+AllowedCPUs=12-15
+ExecStart=/usr/local/bin/ollama serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

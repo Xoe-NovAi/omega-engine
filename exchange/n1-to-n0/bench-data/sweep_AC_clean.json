@@ -1,0 +1,701 @@
+{
+  "environment": {
+    "ollama_version": "ollama version is 0.33.3",
+    "ollama_api_version": "0.33.3",
+    "model": "phi4-mini",
+    "nproc_logical": 16,
+    "nproc_physical_total": 10,
+    "nproc_physical_p": 6,
+    "nproc_e_cores": 4,
+    "allowed_cpus": "0-11",
+    "power_profile": "performance",
+    "epp": "performance",
+    "ac_online": true,
+    "battery_pct": "13",
+    "pl1_w": 200.0,
+    "pl2_w": 82.0,
+    "domain_max_w": 45.0,
+    "dimm_layout": "Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY",
+    "mem_type": "DDR5",
+    "mem_configured_mt_s": "5200 MT/s",
+    "mem_theoretical_gb_s": 41.6,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i7-13620H"
+  },
+  "gate_results": [
+    {
+      "threads": 2,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 2,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 5604,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "13",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449144.088002,
+        "foreign_cpu_pct": 4.6
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 46.71,
+          "peak_mhz": 4713,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449177.5246387
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 41.97,
+          "peak_mhz": 4775,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449191.0075169
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 40.0,
+          "peak_mhz": 4304,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449204.0331695
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.98,
+          "peak_mhz": 4000,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449217.0995133
+        }
+      ]
+    },
+    {
+      "threads": 3,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 3,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 1290,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "14",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449229.5444195,
+        "foreign_cpu_pct": 3.0
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 49.43,
+          "peak_mhz": 4300,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449262.944207
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 44.91,
+          "peak_mhz": 4400,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449274.303611
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 35.18,
+          "peak_mhz": 4201,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449285.1410549
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.87,
+          "peak_mhz": 3507,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449296.1928735
+        }
+      ]
+    },
+    {
+      "threads": 4,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 4,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 957,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "15",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449307.2915835,
+        "foreign_cpu_pct": 7.1
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 50.01,
+          "peak_mhz": 4200,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449340.959994
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 46.94,
+          "peak_mhz": 4400,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449351.3472598
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 35.07,
+          "peak_mhz": 3900,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449361.6916597
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 35.12,
+          "peak_mhz": 4000,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449372.2226076
+        }
+      ]
+    },
+    {
+      "threads": 5,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 5,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 592,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "15",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449382.824037,
+        "foreign_cpu_pct": 5.3
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 49.93,
+          "peak_mhz": 4000,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449416.2857802
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 48.88,
+          "peak_mhz": 3909,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449426.2746956
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.91,
+          "peak_mhz": 3700,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449436.273479
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.79,
+          "peak_mhz": 3600,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449446.0762546
+        }
+      ]
+    },
+    {
+      "threads": 6,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 6,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 170,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "16",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449456.3778646,
+        "foreign_cpu_pct": 5.7
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 49.45,
+          "peak_mhz": 4400,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449489.9329722
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 40.06,
+          "peak_mhz": 3800,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449500.706873
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.87,
+          "peak_mhz": 3103,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449510.3373635
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.84,
+          "peak_mhz": 3203,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449520.0000088
+        }
+      ]
+    },
+    {
+      "threads": 8,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 8,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 507,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "17",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449529.4281485,
+        "foreign_cpu_pct": 0.7
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 49.95,
+          "peak_mhz": 3900,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449562.6036925
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 50.04,
+          "peak_mhz": 3901,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449571.8746722
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 43.67,
+          "peak_mhz": 3806,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449581.0562737
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 34.78,
+          "peak_mhz": 3220,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449590.436907
+        }
+      ]
+    },
+    {
+      "threads": 12,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 12,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 337,
+      "contamination": [],
+      "thermally_limited": true,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "18",
+          "battery_status": "Charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790449599.8945024,
+        "foreign_cpu_pct": 0.9
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 49.9,
+          "peak_mhz": 3700,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449633.2015698
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 50.0,
+          "peak_mhz": 3765,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449642.6494992
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 44.69,
+          "peak_mhz": 3800,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449651.8786333
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 128,
+          "anomalies": [],
+          "watts": 35.0,
+          "peak_mhz": 3800,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790449661.256094
+        }
+      ]
+    }
+  ],
+  "ranked": [
+    {
+      "threads": 12,
+      "n": 3,
+      "tps_mean": 14.648388063777986,
+      "tps_ci95": 0.2279073054100319,
+      "tps_cv": 1.3749058685431887,
+      "ttft_mean": 0.10252778233310285,
+      "itl_mean": 0.0688174398439187,
+      "power_mean": 43.23,
+      "temp_max": 94,
+      "peak_mhz": 3800,
+      "burned": 16,
+      "thermally_limited": true
+    },
+    {
+      "threads": 8,
+      "n": 3,
+      "tps_mean": 14.32628310837795,
+      "tps_ci95": 0.1369022898726631,
+      "tps_cv": 0.8444651648735516,
+      "ttft_mean": 0.07616969799952737,
+      "itl_mean": 0.07035909838889282,
+      "power_mean": 42.830000000000005,
+      "temp_max": 95,
+      "peak_mhz": 3901,
+      "burned": 16,
+      "thermally_limited": true
+    },
+    {
+      "threads": 6,
+      "n": 3,
+      "tps_mean": 13.70342538684445,
+      "tps_ci95": 0.2919928522040482,
+      "tps_cv": 1.882988366520983,
+      "ttft_mean": 0.0821267373333588,
+      "itl_mean": 0.07357089466137358,
+      "power_mean": 36.59,
+      "temp_max": 95,
+      "peak_mhz": 3800,
+      "burned": 16,
+      "thermally_limited": true
+    },
+    {
+      "threads": 5,
+      "n": 3,
+      "tps_mean": 13.369104115674837,
+      "tps_ci95": 0.19604785365698738,
+      "tps_cv": 1.2958786729869747,
+      "ttft_mean": 0.08300488500026404,
+      "itl_mean": 0.07540137076719754,
+      "power_mean": 39.526666666666664,
+      "temp_max": 97,
+      "peak_mhz": 3909,
+      "burned": 16,
+      "thermally_limited": true
+    },
+    {
+      "threads": 4,
+      "n": 3,
+      "tps_mean": 12.922186635901388,
+      "tps_ci95": 0.19365694699600902,
+      "tps_cv": 1.3243464985041793,
+      "ttft_mean": 0.08310629733326398,
+      "itl_mean": 0.07800951321428208,
+      "power_mean": 39.04333333333333,
+      "temp_max": 94,
+      "peak_mhz": 4400,
+      "burned": 16,
+      "thermally_limited": true
+    },
+    {
+      "threads": 3,
+      "n": 3,
+      "tps_mean": 11.937970557970653,
+      "tps_ci95": 0.23261222885139995,
+      "tps_cv": 1.721894723398842,
+      "ttft_mean": 0.09054070733327535,
+      "itl_mean": 0.0844477415291039,
+      "power_mean": 38.32,
+      "temp_max": 97,
+      "peak_mhz": 4400,
+      "burned": 16,
+      "thermally_limited": true
+    },
+    {
+      "threads": 2,
+      "n": 3,
+      "tps_mean": 10.366137071036476,
+      "tps_ci95": 0.10674241911712529,
+      "tps_cv": 0.9099649193050346,
+      "ttft_mean": 0.10789542366607445,
+      "itl_mean": 0.09723891829893756,
+      "power_mean": 38.98333333333333,
+      "temp_max": 98,
+      "peak_mhz": 4775,
+      "burned": 16,
+      "thermally_limited": true
+    }
+  ],
+  "verdict": "config 12 leads 8 by only 0.32 t/s, within combined 95% CI (\u00b10.36) \u2014 NOT a significant difference"
+}

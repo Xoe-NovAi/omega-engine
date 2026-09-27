@@ -1,0 +1,60 @@
+Node 1 self-validating thread benchmark — model=lfm25-t6 predict=512 repeats=3
+ollama ollama version is 0.34.4 | allowed_cpus=0-11 | profile=performance | mem=Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY 5200 MT/s
+
+==========================================================================
+  CONFIG 1/1  num_thread=6   model=lfm25-t6  predict=512
+==========================================================================
+
+-- config: num_thread=6 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 6
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   rep1: 512 tok  20.45 t/s  ttft     70ms  itl  49.0ms   48.4W[44-54]  96C  3900MHz  [performance]
+   rep2: 512 tok  20.29 t/s  ttft     75ms  itl  49.4ms   36.8W[33-51]  96C  3800MHz  [performance]
+   rep3: 512 tok  20.20 t/s  ttft     64ms  itl  49.6ms   35.1W[34-39]  86C  3300MHz  [performance]
+   + token count identical across reps: {512}
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=6003 core=1635  [THERMALLY LIMITED]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+ENVIRONMENT (disclosed for reproducibility — IETF §4.1.4)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  ollama_version             ollama version is 0.34.4
+  ollama_api_version         0.34.4
+  model                      lfm25-t6
+  nproc_logical              16
+  nproc_physical_total       10
+  nproc_physical_p           6
+  nproc_e_cores              4
+  allowed_cpus               0-11
+  power_profile              performance
+  epp                        performance
+  ac_online                  True
+  battery_pct                100
+  pl1_w                      200.0
+  pl2_w                      82.0
+  domain_max_w               45.0
+  dimm_layout                Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY
+  mem_type                   DDR5
+  mem_configured_mt_s        5200 MT/s
+  mem_theoretical_gb_s       41.6
+  cpu_model                  13th Gen Intel(R) Core(TM) i7-13620H
+  memory_at_report           {'mem_total_gb': 15.79, 'mem_available_gb': 8.93, 'mem_used_pct': 43.4, 'swap_total_gb': 0.0, 'swap_used_gb': 0.0, 'zram_used_gb': 0.0, 'zram_orig_gb': 0.0, 'zram_pct': 0.0}
+  stream_benchmark_triad_gbs  (see scripts/bench_memory.py)
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+VERIFICATION GATE RESULTS
+════════════════════════════════════════════════════════════════════════════════════════════════
+  num_thread=6   PASS  runner -t=6  burned=16/19  tokens=[512, 512, 512]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+RESULTS (mean ± 95% CI over repeats)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  threads              t/s    CV%   TTFT ms   ITL ms      W  maxC  peakMHz  burned  thermal  embed/s
+        6     20.31 ± 0.14    0.6        69     49.3   40.1    96     3900      16      YES      0.0
+
+  WINNER: num_thread=6  (20.31 t/s)
+  only one valid config; no comparison possible
+  full spread across tested range: 0.00 t/s (0.0% of winner)
+
+  report written: /tmp/opencode/lfm_solo_zram_off.json

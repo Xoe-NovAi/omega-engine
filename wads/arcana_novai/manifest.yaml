@@ -1,24 +1,26 @@
-# Arcana-NovAi WAD manifest (V2) — scaffold, Node 1 staging
-# Contract: Xoe-NovAi/omega-engine src/omega/oracle/wad_loader.py
-# (see docs/federation/WAD_CONTRACT_BRIEF.md). V1 keys required;
-# V2 keys are an explicit allow-list (extra=forbid) — no unknown keys.
+# Arcana-NovAi WAD manifest (V2) — Node 1 staging, aligned to WAD_LOADER_CONTRACT.md
+# (N0 package 02_wad_loader_contract/, active checkout fa9c4edc).
+# V1 keys required; V2 keys are an explicit allow-list (extra=forbid) — no unknown keys.
+# Loader facts honored here:
+# - `adapters` mapping-only {memory: {module, class}}, module whitelist enforced.
+#   OMITTED: MemPalace binding is Node-local runtime config, and the mempalace
+#   adapter module is not in the loader whitelist — a list-form entry would crash
+#   load (AttributeError on .get). Revisit when whitelist extends.
+# - `hierarchy` must be a relative-path STRING. OMITTED: no hierarchy.yaml exists
+#   in this WAD; a mapping value raises TypeError and fails the whole load.
 # Staged on Node 1; ships to Node 0 Engine config/wads/arcana_novai/.
 name: "arcana_novai"
 version: "0.2.0"
 entities: []
-adapters:
-  - "omega.memory.adapters.mempalace_adapter"
 author: "Xoe-NovAi"
 description: "The Living Tarot Mystery School and Sovereign Entity Pantheon"
 license: "Proprietary"
 type: "pwad"
 mode: "personal"
-requires_engine: ">=0.4.0"
+requires_engine: ">=1.6.0"
 startup:
   message: "The 78 Gates are open. The Empress Lilith holds court in the Grove."
 voices:
   primary: "lilith_empress.yaml"
 vr_scenes: []
 dependencies: []
-hierarchy:
-  path_override: "entities/tarot"

@@ -7,8 +7,30 @@ opencode agent configuration that knows the hardware.
 The authoritative machine & setup record lives in **`docs/HARDWARE.md`**.
 - **CPU**: i7-13620H, 6P+4E (10C/16T), no discrete GPU
 - **RAM**: 1×16GB DDR5-5600 single-channel @ 5200 MT/s (2nd slot EMPTY, 32GB planned)
-- **Ollama**: 0.33.3, `AllowedCPUs=0-11` + `OLLAMA_NUM_THREADS=8` = 14.4 t/s
+- **Ollama**: see `docs/HARDWARE.md` for the live version; `AllowedCPUs=0-11` (P-cores incl. HT)
 - **Open WebUI**: container on port 3000→8080
+
+## ⚠️ Downloads: always use `aria2c`, never bare `curl`/`wget` (DO NOT regress)
+`aria2c` is installed (`/usr/bin/aria2c`, v1.37.0). For **any file over ~5 MB** — release
+tarballs, GGUF weights, Python wheels, model blobs, container layers — use multi-connection
+download:
+
+```bash
+aria2c -x 16 -s 4 -k 1M --file-allocation=none -o <outfile> <url>
+```
+
+Bare `curl -o` on a large file wastes 10–20x the wall-clock. Observed 2026-09-26 on the
+1.43 GB Ollama 0.34.4 tarball: `curl` did not finish in 5 minutes; `aria2c -x 16 -s 4`
+completed in 7m32s at 3.0 MiB/s average with resume support.
+
+Companion rules that go with it:
+- **Verify the checksum before installing anything.** Ollama publishes `sha256sum.txt` per
+  release; M23 failure integrity means no install on mismatch.
+- Prefer `curl` only for small text/API responses (< ~1 MB).
+- `aria2c` resumes automatically; do not delete a partial file on failure, re-run the same
+  command.
+- Ollama Linux release assets are `.tar.zst` (not `.tgz`) as of the 0.34.x series — a `.tgz`
+  URL 404s. List real asset names with the GitHub releases API before guessing a URL.
 
 ## ⚠️ The P-core pin trap (DO NOT regress)
 Do NOT narrow the CPU mask to physical P-cores only (`0,2,4,6,8,10`). That collapses

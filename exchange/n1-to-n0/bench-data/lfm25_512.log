@@ -1,0 +1,106 @@
+Node 1 self-validating thread benchmark — model=LFM2.5-2.6B-Q4_K_M predict=512 repeats=2
+ollama ollama version is 0.34.4 | allowed_cpus=0-11 | profile=performance | mem=Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY 5200 MT/s
+
+==========================================================================
+  CONFIG 1/4  num_thread=4   model=LFM2.5-2.6B-Q4_K_M  predict=512
+==========================================================================
+
+-- config: num_thread=4 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 4
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   rep1: 512 tok  19.24 t/s  ttft     79ms  itl  52.1ms   38.8W  96C  4000MHz  [performance]
+   rep2: 512 tok  19.90 t/s  ttft     74ms  itl  50.4ms   35.0W  89C  3646MHz  [performance]
+   + token count identical across reps: {512}
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=4090 core=724  [THERMALLY LIMITED]
+
+==========================================================================
+  CONFIG 2/4  num_thread=6   model=LFM2.5-2.6B-Q4_K_M  predict=512
+==========================================================================
+
+-- config: num_thread=6 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 6
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   rep1: 512 tok  21.71 t/s  ttft     69ms  itl  46.2ms   39.7W  96C  4095MHz  [performance]
+   rep2: 512 tok  20.66 t/s  ttft     62ms  itl  48.5ms   35.1W  89C  3804MHz  [performance]
+   + token count identical across reps: {512}
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=3073 core=925  [THERMALLY LIMITED]
+
+==========================================================================
+  CONFIG 3/4  num_thread=8   model=LFM2.5-2.6B-Q4_K_M  predict=512
+==========================================================================
+
+-- config: num_thread=8 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 8
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   rep1: 512 tok  19.52 t/s  ttft     68ms  itl  51.3ms   34.9W  90C  3400MHz  [performance]
+   rep2: 512 tok  20.11 t/s  ttft     61ms  itl  49.8ms   35.0W  86C  3300MHz  [performance]
+   + token count identical across reps: {512}
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=1121 core=287  [THERMALLY LIMITED]
+
+==========================================================================
+  CONFIG 4/4  num_thread=12   model=LFM2.5-2.6B-Q4_K_M  predict=512
+==========================================================================
+
+-- config: num_thread=12 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 12
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   rep1: 512 tok  21.09 t/s  ttft     62ms  itl  47.5ms   34.9W  90C  3587MHz  [performance]
+   rep2: 512 tok  20.88 t/s  ttft     76ms  itl  48.0ms   35.1W  86C  3300MHz  [performance]
+   + token count identical across reps: {512}
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=245 core=18  [THERMALLY LIMITED]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+ENVIRONMENT (disclosed for reproducibility — IETF §4.1.4)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  ollama_version             ollama version is 0.34.4
+  ollama_api_version         0.34.4
+  model                      LFM2.5-2.6B-Q4_K_M
+  nproc_logical              16
+  nproc_physical_total       10
+  nproc_physical_p           6
+  nproc_e_cores              4
+  allowed_cpus               0-11
+  power_profile              performance
+  epp                        performance
+  ac_online                  True
+  battery_pct                100
+  pl1_w                      200.0
+  pl2_w                      82.0
+  domain_max_w               45.0
+  dimm_layout                Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY
+  mem_type                   DDR5
+  mem_configured_mt_s        5200 MT/s
+  mem_theoretical_gb_s       41.6
+  cpu_model                  13th Gen Intel(R) Core(TM) i7-13620H
+  stream_benchmark_triad_gbs  (see scripts/bench_memory.py)
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+VERIFICATION GATE RESULTS
+════════════════════════════════════════════════════════════════════════════════════════════════
+  num_thread=4   PASS  runner -t=4  burned=16/19  tokens=[512, 512]
+  num_thread=6   PASS  runner -t=6  burned=16/19  tokens=[512, 512]
+  num_thread=8   PASS  runner -t=8  burned=16/19  tokens=[512, 512]
+  num_thread=12  PASS  runner -t=12  burned=16/19  tokens=[512, 512]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+RESULTS (mean ± 95% CI over repeats)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  threads              t/s    CV%   TTFT ms   ITL ms      W  maxC  peakMHz  burned  thermal  embed/s
+        6     21.19 ± 1.02    3.5        65     47.3   37.4    96     4095      16      YES      0.0
+       12     20.99 ± 0.21    0.7        69     47.7   35.0    90     3587      16      YES      0.0
+        8     19.82 ± 0.58    2.1        64     50.6   35.0    90     3400      16      YES      0.0
+        4     19.57 ± 0.64    2.4        76     51.2   36.9    96     4000      16      YES      0.0
+
+  WINNER: num_thread=6  (21.19 t/s)
+  config 6 leads 12 by only 0.20 t/s, within combined 95% CI (±1.23) — NOT a significant difference
+  full spread across tested range: -1.62 t/s (-7.6% of winner)
+
+  report written: /tmp/opencode/lfm25_512.json

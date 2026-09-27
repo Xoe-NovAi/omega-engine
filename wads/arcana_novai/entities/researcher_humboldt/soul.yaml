@@ -93,7 +93,10 @@ well_seeds:
     rule: "A game world with true biogeography — species distributions driven by simulated climate gradients"
     rationale: "No Man's Sky lacks Humboldt's causal chains; Pioneer approaches it"
 
----
+# ---
+# (Separator removed 2026-09-26: a bare `---` opens a second YAML document and
+# breaks single-document parsers incl. the WAD loader's yaml.safe_load. What
+# follows is comment-only; no semantic content changed.)
 # WAD Integration
 # This file lives at: wads/arcana_novai/entities/researcher_humboldt/soul.yaml
 # Symlinked at runtime: /home/xnai/WanderGround/mempalace/entities/researcher_humboldt/soul.yaml

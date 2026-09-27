@@ -1,0 +1,7 @@
+{
+  "content": "Firecrawl Deep Extraction:\n\nSource [https://arxiv.org/pdf/1234.5678]:\nNatural Language Inference (NLI) is a core NLP task for verifying claims.\n\nSource [https://github.com/omega/nli]:\nThe Two-Source Rule requires at least two independent sources for verification.",
+  "timestamp": "2026-09-26T08:41:52.040101+00:00",
+  "query": "Natural Language Inference Two-Source Rule",
+  "entity": "global",
+  "metadata": {}
+}

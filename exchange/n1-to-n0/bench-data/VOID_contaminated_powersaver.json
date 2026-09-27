@@ -1,0 +1,254 @@
+{
+  "environment": {
+    "ollama_version": "ollama version is 0.33.3",
+    "ollama_api_version": "0.33.3",
+    "model": "phi4-mini",
+    "nproc_logical": 16,
+    "nproc_physical_p": 4,
+    "allowed_cpus": "0-11",
+    "power_profile": "performance",
+    "pl1_w": 200.0,
+    "pl2_w": 82.0,
+    "domain_max_w": 45.0,
+    "dimm_layout": "Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY",
+    "mem_type": "DDR5",
+    "mem_configured_mt_s": "5200 MT/s",
+    "mem_theoretical_gb_s": 41.6,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i7-13620H"
+  },
+  "gate_results": [
+    {
+      "threads": 1,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 1,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 2,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 2,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 3,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 3,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 4,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 4,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 5,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 5,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 6,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 6,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 8,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 8,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 10,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 10,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    },
+    {
+      "threads": 12,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 12,
+      "burned_threads": 15,
+      "total_threads": 18,
+      "token_counts": [
+        128,
+        128,
+        128
+      ],
+      "throttle_delta": 0
+    }
+  ],
+  "ranked": [
+    {
+      "threads": 4,
+      "n": 3,
+      "tps_mean": 10.286231798381246,
+      "tps_ci95": 0.1623414326662322,
+      "tps_cv": 1.3946897959651412,
+      "ttft_mean": 0.12118046933392179,
+      "itl_mean": 0.09800153092592588,
+      "power_mean": 14.390698528428691,
+      "temp_max": 62,
+      "peak_mhz": 1534,
+      "burned": 15
+    },
+    {
+      "threads": 5,
+      "n": 3,
+      "tps_mean": 9.764610070732132,
+      "tps_ci95": 0.42555341592283025,
+      "tps_cv": 3.8512679157422696,
+      "ttft_mean": 0.12320132133390871,
+      "itl_mean": 0.10332433312169327,
+      "power_mean": 14.095536338966804,
+      "temp_max": 61,
+      "peak_mhz": 1300,
+      "burned": 15
+    },
+    {
+      "threads": 6,
+      "n": 3,
+      "tps_mean": 7.998515855623155,
+      "tps_ci95": 0.2504226432230123,
+      "tps_cv": 2.7667424989557556,
+      "ttft_mean": 0.14948061566671336,
+      "itl_mean": 0.1260796453386209,
+      "power_mean": 13.479745074487802,
+      "temp_max": 60,
+      "peak_mhz": 1100,
+      "burned": 15
+    },
+    {
+      "threads": 12,
+      "n": 3,
+      "tps_mean": 7.555265005593067,
+      "tps_ci95": 0.12124911686130145,
+      "tps_cv": 1.4181867972213167,
+      "ttft_mean": 0.17329410833372094,
+      "itl_mean": 0.1334265293650773,
+      "power_mean": 13.514193899551664,
+      "temp_max": 60,
+      "peak_mhz": 1000,
+      "burned": 15
+    },
+    {
+      "threads": 10,
+      "n": 3,
+      "tps_mean": 7.471679090068132,
+      "tps_ci95": 0.019938044381456202,
+      "tps_cv": 0.23581363007602651,
+      "ttft_mean": 0.1561043150001448,
+      "itl_mean": 0.13490143613228336,
+      "power_mean": 13.320659683759118,
+      "temp_max": 60,
+      "peak_mhz": 1022,
+      "burned": 15
+    },
+    {
+      "threads": 8,
+      "n": 3,
+      "tps_mean": 7.262108141645044,
+      "tps_ci95": 0.0398852049784189,
+      "tps_cv": 0.48534847851983265,
+      "ttft_mean": 0.15903847533324247,
+      "itl_mean": 0.13879610581216906,
+      "power_mean": 13.220333278792461,
+      "temp_max": 60,
+      "peak_mhz": 1084,
+      "burned": 15
+    },
+    {
+      "threads": 3,
+      "n": 3,
+      "tps_mean": 7.165403575707804,
+      "tps_ci95": 0.0902350232211349,
+      "tps_cv": 1.1128561605850031,
+      "ttft_mean": 0.1540322336659301,
+      "itl_mean": 0.14067865809523958,
+      "power_mean": 13.888495236386914,
+      "temp_max": 62,
+      "peak_mhz": 1529,
+      "burned": 15
+    },
+    {
+      "threads": 1,
+      "n": 3,
+      "tps_mean": 5.870065001673837,
+      "tps_ci95": 0.193326655886658,
+      "tps_cv": 2.9104047083231563,
+      "ttft_mean": 0.17031396466639612,
+      "itl_mean": 0.17180357003174626,
+      "power_mean": 23.555317283408083,
+      "temp_max": 77,
+      "peak_mhz": 4225,
+      "burned": 15
+    }
+  ],
+  "verdict": "config 4 leads 5 by only 0.52 t/s, within combined 95% CI (\u00b10.59) \u2014 NOT a significant difference"
+}

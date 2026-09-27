@@ -1,0 +1,155 @@
+{
+  "environment": {
+    "ollama_version": "ollama version is 0.34.4",
+    "ollama_api_version": "0.34.4",
+    "model": "lfm25-t6",
+    "nproc_logical": 16,
+    "nproc_physical_total": 10,
+    "nproc_physical_p": 6,
+    "nproc_e_cores": 4,
+    "allowed_cpus": "0-11",
+    "power_profile": "performance",
+    "epp": "performance",
+    "ac_online": true,
+    "battery_pct": "100",
+    "pl1_w": 200.0,
+    "pl2_w": 82.0,
+    "domain_max_w": 45.0,
+    "dimm_layout": "Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY",
+    "mem_type": "DDR5",
+    "mem_configured_mt_s": "5200 MT/s",
+    "mem_theoretical_gb_s": 41.6,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i7-13620H"
+  },
+  "gate_results": [
+    {
+      "threads": 6,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 6,
+      "burned_threads": 16,
+      "total_threads": 19,
+      "token_counts": [
+        512,
+        512,
+        512
+      ],
+      "throttle_delta": 1829,
+      "contamination": [],
+      "thermally_limited": true,
+      "thread_verified": true,
+      "thread_verification_skipped": false,
+      "thread_mismatch": false,
+      "embed_rate": 8.0,
+      "embed_errors": 0,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "100",
+          "battery_status": "Full"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1790462413.357337,
+        "memory": {
+          "mem_total_gb": 15.79,
+          "mem_available_gb": 8.94,
+          "mem_used_pct": 43.4,
+          "swap_total_gb": 7.9,
+          "swap_used_gb": 0.0,
+          "zram_used_gb": 0.0,
+          "zram_orig_gb": 0.0,
+          "zram_pct": 0.0
+        },
+        "foreign_cpu_pct": 3.8
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 48.7,
+          "watts_min": 33.27,
+          "watts_max": 52.57,
+          "watts_stdev": 3.45,
+          "peak_mhz": 3800,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790462442.3333173
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.8,
+          "watts_min": 32.88,
+          "watts_max": 37.02,
+          "watts_stdev": 0.73,
+          "peak_mhz": 3099,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790462472.34004
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 35.04,
+          "watts_min": 33.98,
+          "watts_max": 36.64,
+          "watts_stdev": 0.5,
+          "peak_mhz": 3001,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790462501.8415167
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.97,
+          "watts_min": 33.58,
+          "watts_max": 36.68,
+          "watts_stdev": 0.68,
+          "peak_mhz": 3100,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1790462531.6907938
+        }
+      ]
+    }
+  ],
+  "ranked": [
+    {
+      "threads": 6,
+      "n": 3,
+      "tps_mean": 17.30834125569321,
+      "tps_ci95": 0.09171710039630027,
+      "tps_cv": 0.4682733291637947,
+      "ttft_mean": 0.07886201666769921,
+      "itl_mean": 0.057889741324838935,
+      "power_mean": 34.93666666666667,
+      "temp_max": 90,
+      "peak_mhz": 3100,
+      "burned": 16,
+      "thermally_limited": true,
+      "embed_rate": 8.0,
+      "embed_batches": 0,
+      "embed_errors": 0
+    }
+  ],
+  "verdict": "only one valid config; no comparison possible"
+}

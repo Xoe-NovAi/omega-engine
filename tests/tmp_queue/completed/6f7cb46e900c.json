@@ -1,0 +1,20 @@
+{
+  "task_id": "6f7cb46e900c",
+  "task_type": "youtube_deep_dive",
+  "topic_filter": "AI Sovereignty",
+  "slot": "S6",
+  "priority": 1,
+  "status": "completed",
+  "created_at": 1790412112.181283,
+  "updated_at": 1790412112.182277,
+  "started_at": 1790412112.1821697,
+  "completed_at": 1790412112.1822767,
+  "human_prompt": "Deep dive into AI sovereignty",
+  "parameters": {},
+  "result": {
+    "result": "success"
+  },
+  "error": null,
+  "retry_count": 0,
+  "max_retries": 3
+}

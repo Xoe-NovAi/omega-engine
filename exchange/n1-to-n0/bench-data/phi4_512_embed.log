@@ -1,0 +1,119 @@
+Node 1 self-validating thread benchmark — model=phi4-mini predict=512 repeats=3
+  CONCURRENT EMBEDDING LOAD ENABLED: emb-t4 @ http://127.0.0.1:11435
+ollama ollama version is 0.34.4 | allowed_cpus=0-11 | profile=performance | mem=Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY 5200 MT/s
+
+==========================================================================
+  CONFIG 1/4  num_thread=4   model=phi4-mini  predict=512
+==========================================================================
+
+-- config: num_thread=4 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 4
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   … starting concurrent embedding load on http://127.0.0.1:11435
+   rep1: 512 tok  10.49 t/s  ttft    121ms  itl  95.5ms   35.8W  96C  3702MHz  [performance]
+   rep2: 512 tok  10.84 t/s  ttft    106ms  itl  92.4ms   35.0W  88C  3300MHz  [performance]
+   rep3: 512 tok  10.91 t/s  ttft     93ms  itl  91.8ms   35.1W  91C  3300MHz  [performance]
+   + token count identical across reps: {512}
+   .. background embedding load: 8.0 texts/s over 103 batches (0 errors)
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=5718 core=18  [THERMALLY LIMITED]
+
+==========================================================================
+  CONFIG 2/4  num_thread=6   model=phi4-mini  predict=512
+==========================================================================
+
+-- config: num_thread=6 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 6
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   … starting concurrent embedding load on http://127.0.0.1:11435
+   rep1: 512 tok  11.74 t/s  ttft    118ms  itl  85.3ms   35.0W  88C  3000MHz  [performance]
+   rep2: 512 tok  11.53 t/s  ttft     91ms  itl  86.9ms   35.0W  87C  3000MHz  [performance]
+   rep3: 512 tok  11.14 t/s  ttft     94ms  itl  90.0ms   35.0W  86C  2900MHz  [performance]
+   + token count identical across reps: {512}
+   .. background embedding load: 8.0 texts/s over 87 batches (0 errors)
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=1539 core=38  [THERMALLY LIMITED]
+
+==========================================================================
+  CONFIG 3/4  num_thread=8   model=phi4-mini  predict=512
+==========================================================================
+
+-- config: num_thread=8 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 8
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   … starting concurrent embedding load on http://127.0.0.1:11435
+   rep1: 512 tok  11.69 t/s  ttft    117ms  itl  85.7ms   34.9W  87C  3000MHz  [performance]
+   rep2: 512 tok  11.23 t/s  ttft     91ms  itl  89.2ms   35.0W  87C  3000MHz  [performance]
+   rep3: 512 tok  11.31 t/s  ttft    104ms  itl  88.6ms   35.0W  87C  2988MHz  [performance]
+   + token count identical across reps: {512}
+   .. background embedding load: 8.0 texts/s over 84 batches (0 errors)
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=796 core=4  [THERMALLY LIMITED]
+
+==========================================================================
+  CONFIG 4/4  num_thread=12   model=phi4-mini  predict=512
+==========================================================================
+
+-- config: num_thread=12 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 12
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   … starting concurrent embedding load on http://127.0.0.1:11435
+   rep1: 512 tok   5.42 t/s  ttft    383ms  itl 184.8ms   35.0W  91C  3500MHz  [performance]
+   rep2: 512 tok   4.65 t/s  ttft    508ms  itl 215.6ms   35.0W  93C  3500MHz  [performance]
+   rep3: 512 tok   5.80 t/s  ttft    382ms  itl 172.7ms   35.0W  91C  3500MHz  [performance]
+   + token count identical across reps: {512}
+   .. background embedding load: 8.0 texts/s over 190 batches (0 errors)
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=2172 core=3  [THERMALLY LIMITED]
+   ! config 12 excluded: CV 11.1% exceeds 6.0% (run not repeatable)
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+ENVIRONMENT (disclosed for reproducibility — IETF §4.1.4)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  ollama_version             ollama version is 0.34.4
+  ollama_api_version         0.34.4
+  model                      phi4-mini
+  nproc_logical              16
+  nproc_physical_total       10
+  nproc_physical_p           6
+  nproc_e_cores              4
+  allowed_cpus               0-11
+  power_profile              performance
+  epp                        performance
+  ac_online                  True
+  battery_pct                100
+  pl1_w                      200.0
+  pl2_w                      82.0
+  domain_max_w               45.0
+  dimm_layout                Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY
+  mem_type                   DDR5
+  mem_configured_mt_s        5200 MT/s
+  mem_theoretical_gb_s       41.6
+  cpu_model                  13th Gen Intel(R) Core(TM) i7-13620H
+  stream_benchmark_triad_gbs  (see scripts/bench_memory.py)
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+VERIFICATION GATE RESULTS
+════════════════════════════════════════════════════════════════════════════════════════════════
+  num_thread=4   PASS  runner -t=4  burned=16/19  tokens=[512, 512, 512]
+  num_thread=6   PASS  runner -t=6  burned=16/19  tokens=[512, 512, 512]
+  num_thread=8   PASS  runner -t=8  burned=16/19  tokens=[512, 512, 512]
+  num_thread=12  PASS  runner -t=12  burned=16/19  tokens=[512, 512, 512]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+RESULTS (mean ± 95% CI over repeats)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  threads              t/s    CV%   TTFT ms   ITL ms      W  maxC  peakMHz  burned  thermal  embed/s
+        6     11.47 ± 0.35    2.7       101     87.4   35.0    88     3000      16      YES      8.0
+        8     11.41 ± 0.27    2.1       104     87.8   35.0    87     3000      16      YES      8.0
+        4     10.75 ± 0.25    2.1       107     93.3   35.3    96     3702      16      YES      8.0
+
+  WINNER: num_thread=6  (11.47 t/s)
+  config 6 leads 8 by only 0.06 t/s, within combined 95% CI (±0.62) — NOT a significant difference
+  full spread across tested range: -0.72 t/s (-6.3% of winner)
+
+  report written: /tmp/opencode/phi4_512_embed.json

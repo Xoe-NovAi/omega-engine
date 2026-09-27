@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "threads": 1,
+      "ok": false,
+      "error": "Error: unknown shorthand flag: 'H' in -H"
+    },
+    {
+      "threads": 2,
+      "ok": false,
+      "error": "Error: unknown shorthand flag: 'H' in -H"
+    },
+    {
+      "threads": 3,
+      "ok": false,
+      "error": "Error: unknown shorthand flag: 'H' in -H"
+    },
+    {
+      "threads": 4,
+      "ok": false,
+      "error": "Error: unknown shorthand flag: 'H' in -H"
+    }
+  ]
+}

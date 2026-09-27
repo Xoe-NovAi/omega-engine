@@ -1,0 +1,18 @@
+{
+  "task_id": "93233629e0e9",
+  "task_type": "youtube_deep_dive",
+  "topic_filter": "into AI",
+  "slot": "S6",
+  "priority": 1,
+  "status": "queued",
+  "created_at": 1790412112.1737645,
+  "updated_at": 1790412112.1737714,
+  "started_at": null,
+  "completed_at": null,
+  "human_prompt": "Deep dive into AI",
+  "parameters": {},
+  "result": null,
+  "error": null,
+  "retry_count": 0,
+  "max_retries": 3
+}

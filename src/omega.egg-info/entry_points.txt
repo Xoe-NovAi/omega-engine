@@ -1,0 +1,3 @@
+[console_scripts]
+omega = omega.cli.oracle_cli:main
+omega-install = scripts.install_omega:main

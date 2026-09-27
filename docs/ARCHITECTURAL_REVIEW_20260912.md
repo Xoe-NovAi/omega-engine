@@ -90,6 +90,12 @@ The Omegaverse is not an abstract text database; it is a **user- and agent-trave
 
 1. **WanderGround as the Geometric Proto-Client**:
    Node 1 already runs WanderGround with `sqlite-vec`, MemPalace (62 semantic drawers), and a Three.js spatial constellation viewer (`:8088`). This is the seed of the spatial engine.
+   > **Correction (2026-09-25, verified live):** the `:8088` viewer was never
+   > deployed — no listener, no viewer files on disk; `docs/INSTALLATION.md`
+   > and `docs/TROUBLESHOOTING.md` record it absent. What exists: `sqlite-vec`
+   > 0.1.9 passing load/vec0/KNN smoke tests. The spatial viewer is a
+   > build-ahead target (ROADMAP P5.0, medium/high). Drawer counts elsewhere
+   > in this review are 2026-09-12 figures.
 2. **From Metaphor to Spatial Reality**:
    In the VR Omegaverse, a "Memory Palace" is rendered as an interactive 3D WebXR / Godot environment:
    *   Drawers are physical chests or architectural alcoves.

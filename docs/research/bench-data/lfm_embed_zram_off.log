@@ -1,0 +1,63 @@
+Node 1 self-validating thread benchmark — model=lfm25-t6 predict=512 repeats=3
+  CONCURRENT EMBEDDING LOAD ENABLED: emb-t4 @ http://127.0.0.1:11435
+ollama ollama version is 0.34.4 | allowed_cpus=0-11 | profile=performance | mem=Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY 5200 MT/s
+
+==========================================================================
+  CONFIG 1/1  num_thread=6   model=lfm25-t6  predict=512
+==========================================================================
+
+-- config: num_thread=6 --------------------------------------
+   + preflight OK: AC=True batt=100% profile=performance epp=performance
+   + runner verified via /proc: -t 6
+   + threads with CPU time burned: 16/19
+   ... cooling down 25s
+   … starting concurrent embedding load on http://127.0.0.1:11435
+   rep1: 512 tok  17.40 t/s  ttft     68ms  itl  57.6ms   34.8W[33-37]  90C  3099MHz  [performance]
+   rep2: 512 tok  17.25 t/s  ttft     85ms  itl  58.1ms   35.0W[34-37]  86C  3001MHz  [performance]
+   rep3: 512 tok  17.28 t/s  ttft     85ms  itl  58.0ms   35.0W[34-37]  84C  3100MHz  [performance]
+   + token count identical across reps: {512}
+   .. background embedding load: 8.0 texts/s over 61 batches (0 errors)
+   + zero profile changes, power and clock plausible; throttle events recorded: pkg=1829 core=6  [THERMALLY LIMITED]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+ENVIRONMENT (disclosed for reproducibility — IETF §4.1.4)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  ollama_version             ollama version is 0.34.4
+  ollama_api_version         0.34.4
+  model                      lfm25-t6
+  nproc_logical              16
+  nproc_physical_total       10
+  nproc_physical_p           6
+  nproc_e_cores              4
+  allowed_cpus               0-11
+  power_profile              performance
+  epp                        performance
+  ac_online                  True
+  battery_pct                100
+  pl1_w                      200.0
+  pl2_w                      82.0
+  domain_max_w               45.0
+  dimm_layout                Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY
+  mem_type                   DDR5
+  mem_configured_mt_s        5200 MT/s
+  mem_theoretical_gb_s       41.6
+  cpu_model                  13th Gen Intel(R) Core(TM) i7-13620H
+  memory_at_report           {'mem_total_gb': 15.79, 'mem_available_gb': 7.8, 'mem_used_pct': 50.6, 'swap_total_gb': 7.9, 'swap_used_gb': 0.03, 'zram_used_gb': 0.0, 'zram_orig_gb': 0.0, 'zram_pct': 0.0}
+  stream_benchmark_triad_gbs  (see scripts/bench_memory.py)
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+VERIFICATION GATE RESULTS
+════════════════════════════════════════════════════════════════════════════════════════════════
+  num_thread=6   PASS  runner -t=6  burned=16/19  tokens=[512, 512, 512]
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+RESULTS (mean ± 95% CI over repeats)
+════════════════════════════════════════════════════════════════════════════════════════════════
+  threads              t/s    CV%   TTFT ms   ITL ms      W  maxC  peakMHz  burned  thermal  embed/s
+        6     17.31 ± 0.09    0.5        79     57.9   34.9    90     3100      16      YES      8.0
+
+  WINNER: num_thread=6  (17.31 t/s)
+  only one valid config; no comparison possible
+  full spread across tested range: 0.00 t/s (0.0% of winner)
+
+  report written: /tmp/opencode/lfm_embed_zram_off.json

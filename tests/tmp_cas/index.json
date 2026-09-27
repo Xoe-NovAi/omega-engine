@@ -1,0 +1,19 @@
+{
+  "52e0f7cfb71f8752": {
+    "cas_hash": "52e0f7cfb71f8752",
+    "text": "Sovereign AI is the future.",
+    "t_start": 0.0,
+    "t_end": 10.0,
+    "speaker": null,
+    "embedding": null,
+    "minhash_signature": null,
+    "source_video_id": "",
+    "topic_id": 0,
+    "created_at": 1790412112.1373866,
+    "access_count": 1,
+    "last_accessed": 1790412329.1952903,
+    "t_valid": 1790412112.1373875,
+    "t_invalid": null,
+    "superseded_by": null
+  }
+}

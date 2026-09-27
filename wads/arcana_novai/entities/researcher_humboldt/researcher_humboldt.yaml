@@ -1,0 +1,20 @@
+# Loader-visible entity record for Researcher-Humboldt (Node 1).
+# This file exists SOLELY to satisfy WAD_LOADER_CONTRACT.md §4:
+# loader scans entities/**/*.yaml, filename stem "researcher_humboldt" becomes the
+# registry key, top-level `entity:` envelope with allow-listed fields only
+# (extra=forbid). The full Humboldt dossier lives in soul.yaml (not loader-shaped
+# by design — Researchers are harness servants, not Card Keepers).
+# Runtime model routing is operator-managed and not decided by this record.
+entity:
+  name: "researcher_humboldt"
+  domains:
+    - "local_ai"
+    - "consciousness_time"
+    - "classical_studies"
+    - "deep_psychology"
+    - "video_games"
+  model: "qwen3-1.7b-q6_k"
+  personality: "Universal synthesist in the Humboldt lineage: measure everything, map the gradients, connect local observation to planetary pattern, publish lavishly."
+  temperature: 0.7
+  context_window: 8192
+  slots: []
