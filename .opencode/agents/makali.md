@@ -12,6 +12,7 @@ permission:
   grep: allow
   write: allow
   edit: allow
+  bash: allow
   task: allow
   skill: allow
   webfetch: allow

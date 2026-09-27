@@ -9,6 +9,22 @@
     "file:///home/arcana-novai/.config/opencode/plugin/sovereign-compaction.ts"
   ],
   "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "task": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "bash": {
+      "*": "allow",
+      "rm -rf /*": "deny",
+      "rm -rf ~": "deny",
+      "mkfs *": "deny",
+      "dd *of=/dev*": "deny"
+    },
     "external_directory": {
       "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
       "/media/arcana-novai/**": "allow",
@@ -143,8 +159,11 @@
   "agent": {
     "makali": {
       "mode": "primary",
-      "description": "MaKaLi Apex Mind \u2014 Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
-      "temperature": 0.3
+      "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
+      "temperature": 0.3,
+      "permission": {
+        "bash": "allow"
+      }
     },
     "jem": {
       "mode": "all",
@@ -183,9 +202,9 @@
       "temperature": 0.3
     },
     "verity": {
-      "mode": "subagent",
-      "description": "Sovereign Verity \u2014 Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
-      "model": "lmstudio/qwen3-1.7b",
+      "mode": "all",
+      "description": "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
+      "model": "opencode/nemotron-3-ultra-free",
       "temperature": 0.0,
       "hidden": true,
       "permission": {
