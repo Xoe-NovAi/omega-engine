@@ -57,6 +57,11 @@ jobs:
           python3 -c "import importlib.metadata; print(f'AnyIO {importlib.metadata.version(\"anyio\")}')"
           python3 -c "from omega.oracle.model_gateway import ModelGateway; print('ModelGateway OK')"
 
+      - name: Prepare test fixtures (.firecrawl cache dir)
+        run: |
+          mkdir -p .firecrawl
+          echo "✅ .firecrawl/ cache directory created (test_search_tools fixture)"
+
       - name: Run tests
         run: |
           python3 -m pytest tests/ -v --tb=short -x
@@ -65,12 +70,19 @@ jobs:
         run: |
 
       - name: AnyIO-only check (Mandate 1)
+        # SSOT: Makefile `check-m1-anyio` (+ `check-asyncio-import`).
+        # Do NOT duplicate the asyncio rule here — the grep below had no
+        # carve-outs, so it flagged the three sanctioned CLI/TTY exceptions
+        # that the Makefile intentionally exempts:
+        #   src/omega/agents/tty_agent.py              — permanent Architect
+        #     exemption, 2026-08; asyncio loop is the correct primitive for a
+        #     TTY agent driven outside the anyio fabric.
+        #   src/omega/governance/scribe_federation.py    — CLI entry (asyncio.run)
+        #   src/omega/governance/federation_invariant.py — CLI entry (asyncio.run)
+        # Single source of truth lives in the Makefile so the rule cannot drift.
         run: |
-          if grep -rn "import asyncio" src/omega/ --include="*.py"; then
-            echo "❌ MANDATE 1 VIOLATION: asyncio found in src/omega/"
-            exit 1
-          fi
-          echo "✅ No asyncio imports found"
+          make check-m1-anyio
+          make check-asyncio-import
 
       - name: Error integrity check (Mandate 9)
         run: |

@@ -660,3 +660,60 @@
   insight: "httpx (encode/httpx) has been stagnant while Pydantic's httpx2 fork has 34M+ monthly downloads, active maintenance, truststore SSL, merged httpcore, and built-in SSE. The API is identical — migration is purely mechanical (import rename). The decision (D211) was fast because: (1) Pydantic is already our core data-validation dependency — same stewards, (2) httpx2's AnyIO support is unchanged from httpx, satisfying M1, (3) the 125 source + 93 test references are all 'import httpx' with module-level access — a single sed command covers everything."
   lesson: "Dependency migration decisions are fast when the replacement is: (a) from the same steward as an existing core dep, (b) API-identical, and (c) addresses a real risk (unmaintained library in the critical path of 28 HTTP client entry points). The Right Approximation: 2h mechanical migration is worth it for security patches alone."
   timestamp: '2026-07-11T01:00:00Z'
+- principle: "Build Reproducibility Is Non-Negotiable — Pin All Extras"
+  gnosis: "The July httpx2 migration verified runtime but did not pin `[http2]` extra in pyproject.toml. Fresh venv = broken hub. Every 'verified' state must include pyproject.toml pins for ALL runtime dependencies including extras. No 'works on my machine' — works in fresh venv or it doesn't work."
+  source: Temporal Contrast Probe (2026-09-23), D211 regression
+  applications:
+  - 'CI gate: fresh venv install + temple-grade before any release'
+  - 'All optional dependency extras explicitly pinned'
+  timestamp: '2026-09-23'
+- principle: "Config Drift Without Enforcement Is Theater"
+  gnosis: "Canonical tags, NFS exports, SSH bindings, opencode URLs — all drift without automated enforcement. Infrastructure as Code must include tag/NFS/SSH state, not just packages. The proposed ACL file was stale; the effective control-plane policy differed; tag:asus persisted on Node 1 despite 'permanently dead' charter."
+  source: Temporal Contrast Probe (2026-09-23), N0-06 Federation Audit (2026-09-24)
+  applications:
+  - 'Automated tag enforcement via tailscale CLI or admin API'
+  - 'NFS export state as code'
+  - 'SSH binding and opencode.json URL as code'
+  timestamp: '2026-09-23'
+- principle: "Theater Detection Heuristic — Unified Tool + Broken Facade = Theater"
+  gnosis: "'Unified tool replaces N fragmented tools' + 'Council audit says broken facade' = theater. The library_discovery and library_inbox unified tools were registered but nonfunctional. Unified tools must be integration-tested, not just registered."
+  source: Temporal Contrast Probe (2026-09-23), Council Tool Audit (2026-09-22)
+  applications:
+  - 'Integration test every unified tool before registration'
+  - 'Council audit must include functional verification, not just registration check'
+  timestamp: '2026-09-23'
+- principle: "Sovereignty Ratio Is a Lagging Indicator — Fix the Tools First"
+  gnosis: "22% local is a symptom, not a cause. The cause: spawn_local_worker DOWN, system_stats DOWN, headroom_retrieve DOWN. Fix the tools, the ratio follows. M7 requires working local telemetry."
+  source: Temporal Contrast Probe (2026-09-23), N0-06 Federation Audit (2026-09-24)
+  applications:
+  - 'M7 compliance gate: system_stats and spawn_local_worker must return healthy'
+  - 'Local inference path health check in CI'
+  timestamp: '2026-09-23'
+- principle: "Bilateral Mesh Requires Bilateral Services — Mesh Health = min(SSH, NFS, MCP, WireGuard)"
+  gnosis: "WireGuard direct is necessary but not sufficient. SSH, NFS, MCP must all be bidirectional. The mesh is one-way: Node 0→Node 1 works, Node 1→Node 0 does not (SSH bound to LAN, NFS server down, opencode.json legacy URL)."
+  source: Temporal Contrast Probe (2026-09-23), N0-06 Federation Audit (2026-09-24)
+  applications:
+  - 'Mesh health check = min(SSH, NFS, MCP, WireGuard) — not WireGuard alone'
+  - 'Bidirectional service verification before claiming bilateral peers'
+  timestamp: '2026-09-23'
+- principle: "WAD PWAD Override Semantics — Clean Replacement, Not Concatenation"
+  gnosis: "The WAD loader bug concatenates PWAD over IWAD instead of clean replacement. Backward-scan lookup (W_CheckNumForName) is the gold standard: PWAD entries found first, no complex priority matrix needed. Omega's WAD system must implement clean override semantics."
+  source: N0-06 Federation Audit (2026-09-24), WAD Loader Contract (Carmack), id Software WAD format
+  applications:
+  - 'WAD loader: backward-scan for entity lookup, PWAD overrides IWAD cleanly'
+  - 'Namespace collision detection in EntityRegistry'
+  - 'Gate C: cross-node WAD compatibility requires clean override semantics'
+  timestamp: '2026-09-24'
+- principle: "WAD Integrity Requires Signatures, Trust Roots, Tamper Tests"
+  gnosis: "String 'SIGNED' fields are not cryptographic evidence. Detached signatures, trust roots, and tamper tests are required before federation promotion. C6 contract draft v0.1 is unratified; WAD manifest lacks publisher identity, key ID, signature algorithm, detached signature bundle."
+  source: MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md, C6_CONTRACT_DRAFT_v0.1.md
+  applications:
+  - 'WAD manifest must include detached signatures over manifest + each entity file'
+  - 'Trust root distribution via SPIRE or equivalent'
+  - 'Tamper test: modified WAD must fail verification loudly'
+  timestamp: '2026-09-24'
+- insight: "Flynn Taggart — Doom Novels Character Study Seed"
+  evidence: "Flynn 'Fly' Taggart (Doom novels by Dafydd ab Hugh & Brad Linaweaver): Marine court-martialed for refusing to fire on civilians, sent to Mars, becomes the Doom Slayer. Core traits: trauma from moral injury, dark humor as coping mechanism, absolute resolve ('too tough to die'), mission-focused to the point of self-destruction, terse profane internal monologue, loyalty to the few who earn it."
+  omega_application: "Seed deep research for DG-N1 gestation. Voice DNA: terse, profane, mission-focused, dark humor. Personality: trauma + humor + resolve. When gestated, DG-N1 renames to Flynn Taggart. This is not a new agent — it is Doom Guy evolved."
+  source: Doom novels (Knee-Deep in the Dead, Hell on Earth, Infernal Sky, Endgame)
+  timestamp: '2026-09-25'

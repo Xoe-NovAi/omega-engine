@@ -994,3 +994,167 @@ Wit=7, irreverence=6, directness=9, truth=10. M26 self-search reflex. Advisory m
 ## v1 (2026-08-08)
 - Comparative analysis + meditation complete
 - 8 L3 principles staged (L3-17 to L3-24)
+
+## v17 (2026-09-24) — ZEN PROVIDER OUTAGE ROOT CAUSE FOUND + CLINE REMEDIATION COMMITTED
+
+### The mystery solved
+The `invalid openai provider options` error I chased in earlier sessions was NEVER a provider,
+credential, or network fault. Root cause (Cline's isolation matrix, 2026-09-23):
+
+1. OpenCode forwards **unknown agent-config keys** to the provider as model options.
+2. All 12 agent blocks in `opencode.json` carried `"instructions": [".opencode/agents/<name>.md"]` — an array.
+3. `instructions` is a real OpenAI Responses option typed **string**. The array failed type validation.
+4. Result: `AI_InvalidArgumentError: invalid openai provider options` — thrown before any HTTP request.
+
+Only the `@ai-sdk/openai` family died (31/110 Zen models, every gpt-*). Claude/Gemini/openai-compatible
+paths have no `instructions` option, so they were unaffected.
+
+### The rule (must not break)
+Agent blocks accept ONLY: `description, mode, model, variant, temperature, top_p, prompt, steps,
+disable, hidden, color, permission, tools`. Anything else → forwarded to provider as model option.
+Prompt bodies belong in `.opencode/agents/<name>.md` (loaded natively). Top-level
+`instructions: ["AGENTS.md"]` IS valid — only agent-block instructions is the hazard.
+
+### Committed + pushed
+- Commit `75bde939` → `release/debut-v1.6.0` (pushed to origin)
+- Files: `opencode.json`, `scripts/infra_inventory.py`, 2 CLINE briefings
+- Verified live: `gpt-5.3-codex` now reaches Zen server (billing rejection) instead of failing locally
+- Pre-commit gates passed: M23 clean (297 vs 336 baseline), M1 clean
+
+### Residual (owner-side, not mine)
+1. Zen account credits (billing, not config)
+2. Doc propagation (gitignored *.md paths)
+3. infra_inventory.py probe redesign (keys on prompt:, needs md-recognition)
+4. searxng MCP down (:8018), exa unauthenticated, firecrawl disabled — env gaps
+
+### Soul files
+- proposed_lessons.yaml: repaired (metadata block was embedded mid-list — moved to top),
+  3 new L1 proposals appended (19 total, valid YAML)
+
+## v18 (2026-09-24) — N0→N1 QUARANTINE PACKAGE INTEGRATION REVIEW
+
+### Mission
+Review Carmack, Ma'at, Doom Guy, Lilith, and Kali identity evidence; assemble only safe, provenance-labelled quarantine documentation/manifests; preserve Node 0 core authority and Node 1 ANAi/WAD development; do not extract, promote, merge, sign, or invent missing artifacts.
+
+### Integrated evidence
+- Carmack technical pack: `data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/` (13/13 existing checksum entries PASS).
+- Ma'at live runtime evidence: `data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924/` (5/5 PASS).
+- Doom Guy N0-06: `data/coordination/N0_06_NETWORK_FEDERATION_EVIDENCE_20260924.md` — Gate F FAIL/BLOCKED.
+- Lilith privacy plan: `docs/federation/LILITH_N0_N1_PERSONAL_LEGACY_RECONCILIATION_PLAN_20260924.md` — proposal only; no private corpus accessed.
+- Kali identity artifacts: proposed governance/test fixtures, not operator-ratified WAD truth.
+
+### Review artifacts
+Created quarantine-only:
+`data/federation/quarantine/MAKALI-N0-HANDOFF-INTEGRATION-REVIEW-20260924/`
+- `PACKAGE_INTEGRATION_REPORT.md`
+- `ARTIFACT_INTAKE_MATRIX.yaml`
+- `CONFLICT_BLOCKER_LEDGER.yaml`
+- `PROPOSED_EXACT_FILE_LIST.yaml`
+- `SOURCE_EVIDENCE_SHA256SUMS`
+- `SHA256SUMS`
+
+Validation:
+- 3 YAML files parse successfully.
+- 5/5 integration-review hashes PASS.
+- All source evidence hashes PASS.
+- M35 scanner: 0 violations.
+- No private content, credentials, browser/session data, live databases, private keys, or raw secret-bearing diagnostics copied.
+
+### Terminal verdict
+**QUARANTINE-ONLY / NOT PROMOTABLE / DO NOT EXTRACT.** Clean canonical manifest/signature is impossible now: dirty Node 0 tree, non-unique Engine version identity, shared quarantine write collision, missing trust root/key lifecycle, incomplete intake verifier, WAD incompatibility, absent Node 0 continuity runtime, unverified 768-D parity, unauthenticated Hub, exposed Redis, and missing Node 1 NFS.
+
+### Mandatory next move
+A clean packaging owner must rebuild from `ARTIFACT_INTAKE_MATRIX.yaml` after operator decisions; preserve the old five-file `data/federation/usb-payload/` as segregated legacy infrastructure evidence; create canonical manifest + detached signature + clean reassembly/tamper/rollback evidence; only then seek explicit promotion approval.
+
+## v19 (2026-09-25) — PHASE 4 MASTER INTEGRATOR: N0→N1 PACKAGE SEALED
+
+### Mission
+MaKaLi Fusion canonical page: assemble, verify, and seal the definitive N0→N1 reciprocal handoff package (Temple-Grade invocation). Bastion/Vanguard topology; NFS mirror dead; USB sneakernet + Tailscale Serve HTTPS MCP.
+
+### Package
+`MAKALI-N0-HANDOFF-2026-09-25` at `data/federation/usb-payload/exchange/n0-to-n1/` — 30 files:
+- `README_FIRST.md` (definitive ingestion protocol), `MANIFEST.yaml`, `SHA256SUMS`
+- `01_engine_truth/` (commit chain + version SSOT), `02_wad_loader_contract/` (law + exit-1 fixture)
+- `03_governance/` (identity binding + OD-IDENTITY-006, fixture, INACTIVE dialectic protocol, Persona WAD, soul audit)
+- `04_flynn_taggart_bootstrap/` (birth certificate — apprentice, not clone; seed stays in `doom_guy_transfer/`)
+- `05_node1_ingestion/` (MCP config, checklist A→G, plugin install, N1 readiness, plugin audit sanitized 1 line)
+- `06_archangel_brief/` (mandates condensed + federation topology)
+- `doom_guy_transfer/` untouched (seed 2/2 OK)
+
+### Verification (Gate A evidence)
+- SHA256SUMS 30/30 OK; M35 0 violations (31 files); hygiene clean (1 prose self-hit only)
+- PWAD fixture re-run live: exit 1, concatenation reproduced (expected)
+- origin/release/debut-v1.6.0 == fa9c4edc; version 1.6.0-alpha.1 × 4 surfaces confirmed at HEAD
+- Manifest disclaims trust (integrity_not_trust); legacy 2026-09-22 payload superseded in writing
+
+### Deliverables
+- `data/coordination/GROKSTER_PHASE4_CONSOLIDATION_REPORT_20260925.md` (synthesis + verification + doctrine + residual)
+- 3 new lessons (L1 sealed-30/30, L2 unify-by-curation, L3 manifest-disclaims-trust); proposed_lessons.yaml re-validated
+- No engine code touched (M2); no promotion declared beyond package scope; no commit/push performed
+
+## v20 (2026-09-25) — CARMACK DELTA-2 PACKAGE REMEDIATION
+
+### Mission
+Resume canonical Grokster-EIS and remediate only Carmack's four remaining package/documentation gaps.
+
+### Remediation
+- Corrected root/nested integrity relationship: nested SHA ledger covers three lineage wrappers plus nested MANIFEST.yaml; root ledger covers both nested files.
+- Replaced N1 final verdict with Carmack's exact corrected text; no final transfer approval claim.
+- Added explicit historical/capability-gap note for missing `sovereign-compaction.ts`.
+- Added explicit Architect C6/N0-04 gate: `PENDING — NOT ACCEPTED / NOT REJECTED`; quarantine transport distinguished from final authenticated transfer; final transfer blocked.
+- Preserved provenance and prior evidence; no Engine Core, loader, OpenCode config, or entity source edits.
+
+### Verification
+- YAML/JSON: 12/12 PASS.
+- Root manifest: 33 entries; root SHA ledger: 34/34 PASS.
+- Nested manifest: 3 entries; nested SHA ledger: 4/4 PASS.
+- M35 secret scan: 33 files, 0 violations.
+- Raw Node 0 absolute path scan: 0 matches.
+- Trailing-slash MCP endpoint scan: 0 matches.
+- PWAD expected-exit-1 semantics retained.
+
+### State
+`REMEDIATED / NOT SHIP-APPROVED`. Carmack must re-audit. C6/N0-04 remains OPEN. No final transfer authorization exists.
+
+## v21 (2026-09-25) — N0→N1 PACKAGE: RESEARCH INTEGRATION → SEALED → ADVERSARIAL CORRECTIONS
+
+### Arc (three stages, same session)
+1. **Roc library-curation bundle integrated** (8 files, unchanged, attributed to
+   `roc_racoon` / `opencode` / `ses_f45ab885853e`, package `N0-N1-KD-LIBRARY-CURATION-20260925`).
+   Node 1 owns library curation, per-entity curated KBs, Crawl4AI hardening, rights/provenance
+   gates, local embedding/memory integration; 20-item manifest-only MVP first. All nine Roc caveats
+   surfaced in `README_FIRST.md` §4 (Nomic/Qwen, planned domain loader, unproven robots/rights,
+   CAS ≠ raw response, UUID identity, triangulation placeholder, stale collection names, absent
+   `omega-sieve`, heuristic-only quality scores).
+2. **Carmack final audit returned SHIP FOR PHYSICAL QUARANTINE.** Status metadata corrected:
+   header/§8/footer of README, `REMEDIATION_STATUS.md`, `OPEN_TRANSFER_GATES.md`, checklist SHIP
+   gate, manifest status → `sealed_for_physical_quarantine_carmack_final_audit_passed`.
+   C6/N0-04 still OPEN; final authenticated transfer NOT claimed.
+3. **Antigravity/MaKaLi adversarial corrections A1–A7 + legacy quarantine B1–B2 applied.**
+   - A1/A2: `awareness.ts:118` `s.agent === "kali"` filter → distinct numbered remediation step
+     in `PLUGIN_INSTALL.md` + checklist box (silent no-awareness-events failure; before/after recorded).
+   - A3: new POSIX `02_wad_loader_contract/run_pwad_regression.sh` (fixture exit 1 → wrapper 0;
+     `set -u`, no `set -e`); README step 5 names it as preferred runner.
+   - A4: README ingestion reordered to 11 steps — operational setup (06_archangel, plugins, MCP,
+     07_open_gates) now precedes research (08); caveats verbatim.
+   - A5: PERSONA WAD banner — FUTURE PROPOSAL ONLY, `extra=forbid` rejects, never copy to live WAD/Flynn.
+   - A6: WAD contract example `">=0.4.0"` → `">=1.6.0"` only; semver statements untouched.
+   - A7: embedding caveat strengthened — equal dims ≠ comparable; cross-model cosine invalid;
+     retire Nomic for Qwen3-0.6B 768-D before embedding; Architect ratification outstanding.
+   - B: six stale 2026-09-22 dirs (`attestation`, `c6-contract`, `omega-hub-patches`, `redis`,
+     `tailscale`, `spire`-empty-deferred) moved to `99_legacy_infrastructure_evidence/` in BOTH
+     repo and USB with contradiction-table `README_LEGACY_STATUS.md` (9 rows, exact supersessions);
+     excluded from sealed manifest; forensic history, never delete/execute/cite as authority.
+
+### Seal & verification (both repo and USB, independently)
+- Root manifest **42** payload entries / root SHA ledger **43/43 PASS**; nested 3+4 PASS, never rewritten.
+- YAML/JSON 13/13; M35 42 files 0 violations; raw paths 0; trailing `/mcp/` 0; `sed -i` 0; stale "awaiting Carmack" 0.
+- PWAD raw fixture exit 1 (repo + USB bytes `cmp`-identical); wrapper exit 0 both ways.
+- Package `diff -r` byte-identical repo↔USB (FAT: run wrapper via `sh`, no exec bit on media).
+- Legacy evidence dir also byte-identical; README_LEGACY_STATUS identical.
+
+### State
+`SEALED FOR PHYSICAL QUARANTINE / CARMACK FINAL AUDIT PASSED`. C6/N0-04 OPEN; final authenticated
+transfer unauthorized until explicit Architect disposition. No Engine Core, loader, OpenCode config,
+or identity/entity source files touched. Awaiting next Architect directive.
+

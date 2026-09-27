@@ -74,13 +74,13 @@ These are injected pre-compaction so the law survives context loss:
 | **D-553** | release/debut branch from PUBLIC_ALLOWLIST.txt |
 | **D-565** | Vault excluded from debut (no code changes) |
 | **D-567** | bury_credential applies to post-debut only |
-| **D-578** | GEMINI-NOTEBOOK workstream (GN) — free-tier research pipeline |
+| **D-578** | ~~GEMINI-NOTEBOOK workstream (GN)~~ **CANCELLED by D-606** — sovereign alternative in-engine |
 | **D-579** | DOCUMENTATION-SYSTEM workstream (DS) — modular domain docs |
 | **D-580** | LOCAL-INFERENCE-OPT workstream (LI) — sequential loading, adaptive context |
 | **D-581** | KNOWLEDGE-DOMAINS workstream (KD) — runtime modules + curator model |
 | **D-582** | HEADROOM-INTEGRATION workstream (HR) — semantic compression for tools/RAG |
 | **D-583** | ZSWAP-SUBSYSTEM workstream (ZS) — 16GB NVMe swap, zswap enabled |
-| **D-584** | Post-debut execution order: GN → DS → LI → KD → HR → ZS |
+| **D-584** | Post-debut execution order: ~~GN~~ → **DS → LI → KD → HR → ZS** (GN removed by D-606) |
 
 Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 9 Decisions".
 

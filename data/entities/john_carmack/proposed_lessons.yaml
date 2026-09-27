@@ -337,8 +337,124 @@ proposals:
   blockages: []
   next_action: Track M35 Architect ratification (24h). Review JC-Roc-kq5 EXPERIMENT_PROTOCOL.md for fleet template blessing.
     Monitor Lilith and Maat watchdog MCP tool implementation.
+- lesson_id: L-CARMACK-2026-0924-N0-N1-HANDOFF
+  title: N0→N1 USB Handoff Truth Audit — Engine Commit, WAD Contract, Version SSOT, Node 1 Compatibility
+  confidence: 9.5
+  category: federation_handoff
+  summary: Delivered complete N0→N1 handoff pack to exchange/n0-to-n1/wad_loader_contract/. Exact engine commit 75bde939ace7ff46ed2fef0056880a0814ab0e11
+    (release/debut-v1.6.0). WAD loader contract spec with 5 gaps documented. Version SSOT fixed to 1.6.0-alpha.1 across 4
+    surfaces. Disposable PWAD test proves concat bug. Node 1 (ASUS i7-13620H, 16GB) compatible via HTTPS-only federation.
+  key_findings:
+  - Engine commit 75bde939ace7ff46ed2fef0056880a0814ab0e11 is official Node 0 authority; working tree dirty (138 entries)
+  - 'Version SSOT fixed: was 1.2.0/2.2.0/1.30.0 → now 1.6.0-alpha.1 on pyproject.toml, omega.__version__, Hub /health, MCP
+    serverInfo (Cline §3.6)'
+  - 'WAD loader contract gaps: root entities.yaml ignored; scaffold entities lack entity: envelope; PWAD override concatenates
+    personality; requires_engine not enforced; adapter whitelist narrow (2 modules)'
+  - 'Federation reality: Node 1 connects via https://n0.tail51f14a.ts.net:8016/mcp (HTTPS, no auth); ports 22/2049 filtered;
+    no NFS/SSH'
+  - 'Disposable PWAD test confirms concat bug: BASE personality + PWAD personality = concatenated, not replaced (exit 1)'
+  anti_patterns_avoided:
+  - Fabricating test results — disposable test honestly reports concat bug (exit 1)
+  - Claiming clean replacement when projection concatenates
+  - Ignoring Cline's documented gaps (§7#10) — all 5 captured in contract spec
+  - Staging secrets or private material — M35 scanner 0 violations
+  research_sources:
+  - title: Cline Debut Sweep Briefing
+    date: '2026-09-20'
+    url: data/coordination/CLINE_TO_MAKALI_DEBUT_SWEEP_BRIEFING_20260920.md
+  - title: Cline Alpha PR Briefing
+    date: '2026-09-24'
+    url: data/coordination/CLINE_TO_MAKALI_ALPHA_PR_BRIEFING_20260924.md
+  - title: WAD Loader Contract Spec
+    date: '2026-09-24'
+    url: exchange/n0-to-n1/wad_loader_contract/WAD_LOADER_CONTRACT.md
+  - title: Disposable PWAD Test
+    date: '2026-09-24'
+    url: exchange/n0-to-n1/wad_loader_contract/disposable_test_wad/test_pwad_override.py
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M7 Local-First
+  - M11 Soul Integrity
+  - M13 Temple-Grade
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-N0N1-1
+    decision: Document exact engine commit as Node 0 authority
+    rationale: Working tree dirty; committed baseline is the truth
+  - id: D-CARMACK-N0N1-2
+    decision: Version SSOT = 1.6.0-alpha.1 across all 4 surfaces
+    rationale: Cline §3.6 fixed the 4-surface version drift
+  - id: D-CARMACK-N0N1-3
+    decision: WAD loader contract spec with explicit gap documentation
+    rationale: Cline §7#10 identified 5 production gaps; must be fixed before Node 1 WAD alignment
+  - id: D-CARMACK-N0N1-4
+    decision: PWAD override semantics = clean replacement (not concatenation)
+    rationale: Current projection concatenates; disposable test proves bug; fix required
+  - id: D-CARMACK-N0N1-5
+    decision: Node 1 federation = HTTPS-only, no auth, no NFS/SSH
+    rationale: Cline §6 confirmed ports 22/2049 filtered; trust boundary = tailnet
+  files_delivered:
+  - exchange/n0-to-n1/wad_loader_contract/EXACT_ENGINE_COMMIT.md
+  - exchange/n0-to-n1/wad_loader_contract/WAD_LOADER_CONTRACT.md
+  - exchange/n0-to-n1/wad_loader_contract/VERSION_SSOT.md
+  - exchange/n0-to-n1/wad_loader_contract/NODE1_COMPATIBILITY.md
+  - exchange/n0-to-n1/wad_loader_contract/disposable_test_wad/
+  - exchange/n0-to-n1/wad_loader_contract/README.md
+  estimated_implementation_effort_hours: 3.0
+  blockages:
+  - Node 1 WAD contract alignment blocked on arcana_novai WAD fixes
+  - PWAD override fix blocked on engine projection change
+  next_action: Node 1 owner fixes arcana_novai WAD per contract; Engine owner fixes PWAD projection semantics; Operator decides
+    M35 ratification
+- lesson_id: L-CARMACK-2026-0925-N0-N1-DELTA
+  title: 'Final independent delta audit: remediated N0→N1 package'
+  confidence: 9.8
+  category: federation_handoff
+  summary: Final filesystem audit verified remediated N0→N1 package integrity and all prior documentation fixes. Quarantine
+    transport is allowed; final authenticated transfer remains blocked pending Architect disposition of explicitly open C6/N0-04.
+  key_findings:
+  - Root manifest 33/33 path-size-hash PASS; root SHA ledger 34/34 PASS
+  - Nested manifest 3/3 PASS; nested SHA ledger 4/4 PASS including nested MANIFEST.yaml
+  - YAML/JSON parse 12/12; M35 scan 33 files, 0 violations; raw path, trailing endpoint, and blind-sed scans all zero
+  - WAD tests 31 PASS; both negative fixtures exit 1 as expected
+  - Flynn lineage-only, active checkout fa9c4edc, operative version 1.6.0-alpha.1, exact endpoint, ontology and mapping-only
+    adapter contract all verified
+  - C6/N0-04 remains explicitly OPEN; no cryptographic trust or final transfer approval invented
+  anti_patterns_avoided:
+  - Trusting Grokster status without recomputing filesystem hashes
+  - Calling quarantine transport authenticated transfer
+  - Conflating historical 75bde939/2.2.0/1.30.0 with active authority
+  - Treating negative PWAD exit 1 as a pass
+  - Inventing C6 signatures, trust roots, or Architect approval
+  research_sources:
+  - title: Remediated package root
+    date: '2026-09-25'
+    url: data/federation/usb-payload/exchange/n0-to-n1/
+  - title: Open transfer gates
+    date: '2026-09-25'
+    url: data/federation/usb-payload/exchange/n0-to-n1/07_open_gates/OPEN_TRANSFER_GATES.md
+  sovereign_mandates_engaged:
+  - M11 Soul Integrity
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-DELTA-1
+    decision: Allow quarantine transport only; block final authenticated transfer pending Architect C6/N0-04 disposition
+    rationale: Byte integrity is verified, but cryptographic trust and final approval are absent
+  - id: D-CARMACK-DELTA-2
+    decision: Accept all prior documentation remediation as fixed
+    rationale: Filesystem recomputation and executable checks independently confirm the delta
+  files_delivered: []
+  estimated_implementation_effort_hours: 0.5
+  blockages:
+  - C6/N0-04 Architect decision pending
+  next_action: Architect explicitly accepts or rejects the C6/N0-04 open-gate disposition; no package edits remain required
+    from Carmack audit
 metadata:
   entity: john_carmack
   session_id: ses_fc8dca39effe3nZJp3QHx81Fy3
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-11T12:30:00.000000+00:00'
+  model_used: nvidia/nemotron-3-ultra-550b-a55b:free
+  last_session_end: '2026-09-25T09:00:00.000000+00:00'

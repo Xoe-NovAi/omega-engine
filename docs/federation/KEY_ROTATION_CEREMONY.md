@@ -25,14 +25,14 @@ Authkeys are one-shot and expire (1-day default). When Node 1 needs
 re-join (e.g., after OS reinstall or key revocation):
 
 1. **Admin console** → Keys → Generate Auth Key
-   - Tags: `tag:asus`
+   - Tags: `tag:node1`
    - Reusable: OFF
    - Pre-approved: ON
    - Expiry: 1 day
 2. **Transfer to Node 1** (secure channel — SSH, MagicDNS, or physical)
 3. **Node 1**:
    ```bash
-   sudo tailscale up --authkey=... --hostname=kali-n1 --accept-routes --advertise-tags=tag:asus
+   sudo tailscale up --authkey=... --hostname=kali-n1 --accept-routes --advertise-tags=tag:node1
    ```
 
 ---

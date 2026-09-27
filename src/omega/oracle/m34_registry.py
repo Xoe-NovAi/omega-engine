@@ -213,7 +213,8 @@ class ActiveSubagent:
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "ActiveSubagent":
-        """Deserialize from dict."""
+        """Deserialize from dict. Does not mutate input."""
+        d = dict(d)  # Shallow copy to avoid mutating caller's dict
         if "checkpoint" in d and isinstance(d["checkpoint"], dict):
             d["checkpoint"] = Checkpoint(**d["checkpoint"])
         if "status" in d and isinstance(d["status"], str):
@@ -325,7 +326,7 @@ class M34Registry:
 
     # ── Write (Atomic, Crash-Safe) ─────────────────────────────────
 
-    def _write(self, registry: Dict[str, Any]) -> None:
+    def _write(self, registry: Dict[str, Any], lock_fd: Optional[int] = None) -> None:
         """Atomic write: tmp + fsync + os.replace + fsync parent.
 
         4-layer guarantee (per SoulStore + protectyr-labs/atomic-jsonwrite):
@@ -336,18 +337,24 @@ class M34Registry:
 
         M23 status: VERIFIED via test_atomic_write_survives_sigkill
         (see tests/test_m34_atomic.py).
+
+        Args:
+            registry: The registry data to write.
+            lock_fd: Optional pre-acquired lock file descriptor. If provided,
+                the lock is assumed to be already held (e.g., by _mutate).
+                If None, a new lock is acquired and released.
         """
-        # Acquire exclusive lock on registry file (or create if missing)
-        # Open in append mode to avoid truncating; lock the FD
         lock_path = self.path.with_suffix(".lock")
-        lock_fd = os.open(
-            str(lock_path),
-            os.O_CREAT | os.O_RDWR,
-            0o600,
-        )
-        try:
+        own_lock = lock_fd is None
+        if own_lock:
+            lock_fd = os.open(
+                str(lock_path),
+                os.O_CREAT | os.O_RDWR,
+                0o600,
+            )
             fcntl.flock(lock_fd, fcntl.LOCK_EX)
 
+        try:
             # Create backup of existing file (if exists)
             if self.path.exists():
                 self._rotate_backups()
@@ -378,12 +385,13 @@ class M34Registry:
                 # Log warning but don't fail — main file is durable
                 pass
         finally:
-            fcntl.flock(lock_fd, fcntl.LOCK_UN)
-            os.close(lock_fd)
-            try:
-                os.unlink(lock_path)
-            except FileNotFoundError:
-                pass
+            if own_lock:
+                fcntl.flock(lock_fd, fcntl.LOCK_UN)
+                os.close(lock_fd)
+                try:
+                    os.unlink(lock_path)
+                except FileNotFoundError:
+                    pass
 
     def _rotate_backups(self) -> None:
         """Rotate .1.bak, .2.bak, .3.bak before write."""
@@ -402,17 +410,39 @@ class M34Registry:
 
     # ── Operations ────────────────────────────────────────────────
 
+    def _mutate(self, fn) -> Dict[str, Any]:
+        """Run a read-modify-write cycle under ONE exclusive lock.
+
+        Prevents the lost-update race: register()/update_status() previously
+        did read() (shared lock) -> modify -> _write() (exclusive lock), so two
+        processes could clobber each other's writes between the read and write.
+        """
+        lock_path = self.path.with_suffix(".lock")
+        lock_fd = os.open(str(lock_path), os.O_CREAT | os.O_RDWR, 0o600)
+        try:
+            fcntl.flock(lock_fd, fcntl.LOCK_EX)
+            registry = self.read()
+            registry["updated"] = datetime.now(timezone.utc).isoformat()
+            result = fn(registry)
+            self._write(registry, lock_fd=lock_fd)
+            return result
+        finally:
+            try:
+                fcntl.flock(lock_fd, fcntl.LOCK_UN)
+            finally:
+                os.close(lock_fd)
+
     def register(self, entry: ActiveSubagent) -> ActiveSubagent:
         """Register a new subagent. Returns the stored entry.
 
         Idempotent: if session_id already exists, updates it instead of failing.
         """
-        registry = self.read()
-        registry["updated"] = datetime.now(timezone.utc).isoformat()
-        entry_dict = entry.to_dict()
-        registry.setdefault("sessions", {})[entry.session_id] = entry_dict
-        self._write(registry)
-        return ActiveSubagent.from_dict(entry_dict)
+        def _apply(registry: Dict[str, Any]) -> ActiveSubagent:
+            entry_dict = entry.to_dict()
+            registry.setdefault("sessions", {})[entry.session_id] = entry_dict
+            return ActiveSubagent.from_dict(entry_dict)
+
+        return self._mutate(_apply)
 
     def update_status(
         self,
@@ -423,38 +453,38 @@ class M34Registry:
         resumption_count_increment: bool = False,
     ) -> Optional[Dict[str, Any]]:
         """Update session status. Returns updated entry or None if not found."""
-        registry = self.read()
-        session = registry.get("sessions", {}).get(session_id)
-        if not session:
-            return None
+        def _apply(registry: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+            session = registry.get("sessions", {}).get(session_id)
+            if not session:
+                return None
 
-        old_status = session.get("status")
-        session["status"] = new_status.value
-        session["last_heartbeat"] = datetime.now(timezone.utc).isoformat()
+            old_status = session.get("status")
+            session["status"] = new_status.value
+            session["last_heartbeat"] = datetime.now(timezone.utc).isoformat()
 
-        if new_status in (
-            SessionStatus.INTERRUPTED_EXTERNALLY,
-            SessionStatus.INTERRUPTED_MODEL_SWITCH,
-            SessionStatus.INTERRUPTED_CRASH,
-        ):
-            session["interruption_reason"] = interruption_reason if interruption_reason else "unknown"
-            session["interrupted_at"] = datetime.now(timezone.utc).isoformat()
+            if new_status in (
+                SessionStatus.INTERRUPTED_EXTERNALLY,
+                SessionStatus.INTERRUPTED_MODEL_SWITCH,
+                SessionStatus.INTERRUPTED_CRASH,
+            ):
+                session["interruption_reason"] = interruption_reason if interruption_reason else "unknown"
+                session["interrupted_at"] = datetime.now(timezone.utc).isoformat()
+                if checkpoint:
+                    session["checkpoint"] = checkpoint.to_dict()
+                session["checkpoint"]["last_action"] = (
+                    f"Interrupted: {interruption_reason if interruption_reason else 'unknown'}"
+                )
+
+            if resumption_count_increment:
+                session["resumption_count"] = session.get("resumption_count", 0) + 1
+                session["last_resumed_at"] = datetime.now(timezone.utc).isoformat()
+
             if checkpoint:
                 session["checkpoint"] = checkpoint.to_dict()
-            session["checkpoint"]["last_action"] = (
-                f"Interrupted: {interruption_reason if interruption_reason else 'unknown'}"
-            )
 
-        if resumption_count_increment:
-            session["resumption_count"] = session.get("resumption_count", 0) + 1
-            session["last_resumed_at"] = datetime.now(timezone.utc).isoformat()
+            return session
 
-        if checkpoint:
-            session["checkpoint"] = checkpoint.to_dict()
-
-        registry["updated"] = datetime.now(timezone.utc).isoformat()
-        self._write(registry)
-        return session
+        return self._mutate(_apply)
 
     def heartbeat(self, session_id: str, last_action: str = "") -> Optional[Dict[str, Any]]:
         """Update last_heartbeat for a session (called by pruning loop)."""

@@ -570,9 +570,21 @@ proposals:
   - M33
   - M34
   confidence: 0.95
-  narrative: "Ma'at implemented the 12-Step Brief Verification Protocol in scripts/dispatch_guard.py (602 lines, v2.0). The protocol included step4_all_locations_verification but only checked 5 standard paths (workspace root, src/, scripts/, data/, docs/). Per JEM-FORENSIC-001 self-correction ('Verification must be exhaustive, not selective'), the protocol was hardened to search ALL possible locations: git worktree DBs, sub-repo DBs, ~/.local/share/opencode/{tool-output,snapshot,log,storage,repos}, entity workspaces, session exports. The hardened step4 now discovers 114+ locations at runtime (23x improvement over 5)."
-  insight: "The JEM-FORENSIC-001 lesson is now codified as test methodology: verification must be exhaustive, not selective. The 12-Step Protocol's step4 was the operational gap that allowed the original brief to pass initial checks — it only verified the obvious locations, not the sub-repo where the actual files lived."
-  principle: "Verification must be exhaustive, not selective. The 12-Step Protocol must require 'all possible locations' — git worktrees, sub-repos, tool-output/, snapshot/, entity workspaces — not just the obvious workspace paths."
+  narrative: 'Ma''at implemented the 12-Step Brief Verification Protocol in scripts/dispatch_guard.py
+    (602 lines, v2.0). The protocol included step4_all_locations_verification but
+    only checked 5 standard paths (workspace root, src/, scripts/, data/, docs/).
+    Per JEM-FORENSIC-001 self-correction (''Verification must be exhaustive, not selective''),
+    the protocol was hardened to search ALL possible locations: git worktree DBs,
+    sub-repo DBs, ~/.local/share/opencode/{tool-output,snapshot,log,storage,repos},
+    entity workspaces, session exports. The hardened step4 now discovers 114+ locations
+    at runtime (23x improvement over 5).'
+  insight: "The JEM-FORENSIC-001 lesson is now codified as test methodology: verification\
+    \ must be exhaustive, not selective. The 12-Step Protocol's step4 was the operational\
+    \ gap that allowed the original brief to pass initial checks \u2014 it only verified\
+    \ the obvious locations, not the sub-repo where the actual files lived."
+  principle: "Verification must be exhaustive, not selective. The 12-Step Protocol\
+    \ must require 'all possible locations' \u2014 git worktrees, sub-repos, tool-output/,\
+    \ snapshot/, entity workspaces \u2014 not just the obvious workspace paths."
 - id: JEM-12STEP-002
   node: JEM-12STEP-HARDENING
   date: '2026-08-30'
@@ -583,9 +595,25 @@ proposals:
   - ADVERSARIAL-TESTING
   - PROBE-THEATRE
   confidence: 0.95
-  narrative: "Adversarial review of Grokster's M33 proposal revealed a critical bypass attack: a lazy or malicious subagent can immediately reply 'STREAM_EXHAUSTED' to the sentinel probe, escaping verification entirely. The single-prompt self-probe is theatre. The hardened parse_completion_envelope() now detects 10 bypass patterns: exact 'STREAM_EXHAUSTED', 'done', 'complete', 'finished' (case-insensitive, with/without punctuation/whitespace) and rejects them as _bypass_detected. Valid structured JSON envelopes with required fields (state, last_chunk_id, total_chunks, queued_findings, confidence) are accepted. The bypass test suite (10 tests) covers all known patterns."
-  insight: "A single-prompt sentinel probe is theatre — any subagent can claim completion to evade work. The probe must require a structured JSON envelope with all required fields (state, last_chunk_id, total_chunks, queued_findings, confidence) and validate confidence thresholds per priority tier. Free-form text matching the probe's keyword is a bypass attack, not a valid response."
-  principle: "A sentinel probe that accepts free-form 'STREAM_EXHAUSTED' is not a gate — it is theatre. The probe must require a structured JSON envelope with mandatory fields and validate confidence thresholds per priority tier. Bypass attacks are detected by rejecting free-form text that mimics the probe's keyword."
+  narrative: 'Adversarial review of Grokster''s M33 proposal revealed a critical bypass
+    attack: a lazy or malicious subagent can immediately reply ''STREAM_EXHAUSTED''
+    to the sentinel probe, escaping verification entirely. The single-prompt self-probe
+    is theatre. The hardened parse_completion_envelope() now detects 10 bypass patterns:
+    exact ''STREAM_EXHAUSTED'', ''done'', ''complete'', ''finished'' (case-insensitive,
+    with/without punctuation/whitespace) and rejects them as _bypass_detected. Valid
+    structured JSON envelopes with required fields (state, last_chunk_id, total_chunks,
+    queued_findings, confidence) are accepted. The bypass test suite (10 tests) covers
+    all known patterns.'
+  insight: "A single-prompt sentinel probe is theatre \u2014 any subagent can claim\
+    \ completion to evade work. The probe must require a structured JSON envelope\
+    \ with all required fields (state, last_chunk_id, total_chunks, queued_findings,\
+    \ confidence) and validate confidence thresholds per priority tier. Free-form\
+    \ text matching the probe's keyword is a bypass attack, not a valid response."
+  principle: "A sentinel probe that accepts free-form 'STREAM_EXHAUSTED' is not a\
+    \ gate \u2014 it is theatre. The probe must require a structured JSON envelope\
+    \ with mandatory fields and validate confidence thresholds per priority tier.\
+    \ Bypass attacks are detected by rejecting free-form text that mimics the probe's\
+    \ keyword."
 - id: JEM-12STEP-003
   node: JEM-12STEP-HARDENING
   date: '2026-08-30'
@@ -596,9 +624,22 @@ proposals:
   - PRIORITY-TIER
   - ESCALATION-TIER
   confidence: 0.95
-  narrative: "The 5-EIS meta-review (Researcher, Jem, Lilith, Carmack, Ma'at) established a tiered confidence model for M33 sentinel probe responses: P0/P1 deliverables require confidence ≥ 0.95 OR cross-validator escalation; P2+ deliverables require confidence ≥ 0.80 baseline. The validate_completion_envelope() function enforces this tiered model. Confidence values outside [0.0, 1.0] are flagged as _invalid_confidence. The test suite (9 tests) validates P0/P1 ≥ 0.95, P2+ ≥ 0.80, and rejects invalid confidence values (negative, >1.0, strings)."
-  insight: "Confidence is not a single threshold — it must be tiered by deliverable priority. P0/P1 (security, data-loss) require ≥ 0.95 OR cross-validator; P2+ require ≥ 0.80. A single threshold creates either false negatives (too high) or false positives (too low). The tiered model matches the 5-EIS consensus and Carmack's escalation tier model."
-  principle: "Confidence thresholds must be tiered by deliverable priority: P0/P1 ≥ 0.95 (or cross-validator), P2+ ≥ 0.80. A single threshold is either too strict or too permissive. The tiered model is the 5-EIS consensus."
+  narrative: "The 5-EIS meta-review (Researcher, Jem, Lilith, Carmack, Ma'at) established\
+    \ a tiered confidence model for M33 sentinel probe responses: P0/P1 deliverables\
+    \ require confidence \u2265 0.95 OR cross-validator escalation; P2+ deliverables\
+    \ require confidence \u2265 0.80 baseline. The validate_completion_envelope()\
+    \ function enforces this tiered model. Confidence values outside [0.0, 1.0] are\
+    \ flagged as _invalid_confidence. The test suite (9 tests) validates P0/P1 \u2265\
+    \ 0.95, P2+ \u2265 0.80, and rejects invalid confidence values (negative, >1.0,\
+    \ strings)."
+  insight: "Confidence is not a single threshold \u2014 it must be tiered by deliverable\
+    \ priority. P0/P1 (security, data-loss) require \u2265 0.95 OR cross-validator;\
+    \ P2+ require \u2265 0.80. A single threshold creates either false negatives (too\
+    \ high) or false positives (too low). The tiered model matches the 5-EIS consensus\
+    \ and Carmack's escalation tier model."
+  principle: "Confidence thresholds must be tiered by deliverable priority: P0/P1\
+    \ \u2265 0.95 (or cross-validator), P2+ \u2265 0.80. A single threshold is either\
+    \ too strict or too permissive. The tiered model is the 5-EIS consensus."
 - id: JEM-12STEP-004
   node: JEM-12STEP-HARDENING
   date: '2026-08-30'
@@ -609,9 +650,22 @@ proposals:
   - M33
   - M34
   confidence: 0.85
-  narrative: "The L3-CompletionIllusion lesson (confidence 0.85, from 5-EIS meta-review) was codified into the hardened dispatch_guard.py: when a subagent reports state=exhausted but queued_findings is non-empty, the parse_completion_envelope() function sets _false_exhaust_detected=true. The validate_completion_envelope() function then flags this as a contradiction: 'FALSE-EXHAUST DETECTED: state=exhausted but queued_findings is non-empty. Subagent is contradicting itself. Cross-validator required.' This is the L3-CompletionIllusion lesson codified as executable verification."
-  insight: "An LLM subagent's state=exhausted is necessary but not sufficient for semantic exhaustion. The completion illusion produces graceful conclusions even when the agent's internal outline is truncated. The goldmine often lives in the tail. The false-exhaust detection is the executable form of the L3-CompletionIllusion principle."
-  principle: "An LLM subagent's state=exhausted is necessary but not sufficient for semantic exhaustion. The completion illusion produces graceful conclusions even when the agent's internal outline is truncated. The goldmine often lives in the tail. False-exhaust (state=exhausted + non-empty queued_findings) is a contradiction requiring cross-validator."
+  narrative: 'The L3-CompletionIllusion lesson (confidence 0.85, from 5-EIS meta-review)
+    was codified into the hardened dispatch_guard.py: when a subagent reports state=exhausted
+    but queued_findings is non-empty, the parse_completion_envelope() function sets
+    _false_exhaust_detected=true. The validate_completion_envelope() function then
+    flags this as a contradiction: ''FALSE-EXHAUST DETECTED: state=exhausted but queued_findings
+    is non-empty. Subagent is contradicting itself. Cross-validator required.'' This
+    is the L3-CompletionIllusion lesson codified as executable verification.'
+  insight: An LLM subagent's state=exhausted is necessary but not sufficient for semantic
+    exhaustion. The completion illusion produces graceful conclusions even when the
+    agent's internal outline is truncated. The goldmine often lives in the tail. The
+    false-exhaust detection is the executable form of the L3-CompletionIllusion principle.
+  principle: An LLM subagent's state=exhausted is necessary but not sufficient for
+    semantic exhaustion. The completion illusion produces graceful conclusions even
+    when the agent's internal outline is truncated. The goldmine often lives in the
+    tail. False-exhaust (state=exhausted + non-empty queued_findings) is a contradiction
+    requiring cross-validator.
 - id: JEM-12STEP-005
   node: JEM-12STEP-HARDENING
   date: '2026-08-30'
@@ -622,9 +676,23 @@ proposals:
   - MODEL-SWITCH
   - DOCUMENTED-VS-ACTIVE
   confidence: 0.9
-  narrative: "MaKaLi L3 ('The gap between documented and active is where the engine bleeds') applied to the 12-Step hardening revealed 3 documented-vs-active gaps: (1) M34 registry module exists (26KB) but no hook in subagent_dispatcher.py → M34-HOOK-001; (2) M33 sentinel probe is a stub returning hardcoded envelope → M33-PROBE-001; (3) AGENTS.md does not reference dispatch_guard.py → AGENTS-UPDATE-001. These are documented capabilities that are not active in the dispatch system. The MaKaLi L3 principle: 'The gap between documented and active is where the engine bleeds' directly applies."
-  insight: "Documented capabilities that are not active in the dispatch system are the primary source of production failures. The M34 module (26KB) exists but has no hook; the M33 probe exists but is a stub; the 12-Step Protocol exists but is not in AGENTS.md. These are not missing capabilities — they are active gaps."
-  principle: "The gap between documented and active is where the engine bleeds. Every documented capability must have an active hook in the dispatch system, or it is a ghost capability. Audit: for every documented module, verify it is called in the dispatch path."
+  narrative: "MaKaLi L3 ('The gap between documented and active is where the engine\
+    \ bleeds') applied to the 12-Step hardening revealed 3 documented-vs-active gaps:\
+    \ (1) M34 registry module exists (26KB) but no hook in subagent_dispatcher.py\
+    \ \u2192 M34-HOOK-001; (2) M33 sentinel probe is a stub returning hardcoded envelope\
+    \ \u2192 M33-PROBE-001; (3) AGENTS.md does not reference dispatch_guard.py \u2192\
+    \ AGENTS-UPDATE-001. These are documented capabilities that are not active in\
+    \ the dispatch system. The MaKaLi L3 principle: 'The gap between documented and\
+    \ active is where the engine bleeds' directly applies."
+  insight: "Documented capabilities that are not active in the dispatch system are\
+    \ the primary source of production failures. The M34 module (26KB) exists but\
+    \ has no hook; the M33 probe exists but is a stub; the 12-Step Protocol exists\
+    \ but is not in AGENTS.md. These are not missing capabilities \u2014 they are\
+    \ active gaps."
+  principle: 'The gap between documented and active is where the engine bleeds. Every
+    documented capability must have an active hook in the dispatch system, or it is
+    a ghost capability. Audit: for every documented module, verify it is called in
+    the dispatch path.'
 - id: JEM-12STEP-006
   node: JEM-12STEP-HARDENING
   date: '2026-08-30'
@@ -635,9 +703,20 @@ proposals:
   - JEM-FORENSIC-001
   - REGRESSION
   confidence: 0.95
-  narrative: "The JEM-FORENSIC-001 lesson ('Verification must be exhaustive, not selective') was codified as test methodology in tests/jem/test_dispatch_guard_adversarial.py. The test suite (45 tests, 10 classes, 722 lines) includes a dedicated regression test class (TestJemForensicRegression) that verifies: (1) sub-repo files are searched, not just workspace root; (2) spoofed session IDs in sub-repos are handled. The test suite itself is the executable form of the JEM-FORENSIC-001 lesson — it IS the verification methodology."
-  insight: "A lesson is only as good as its executable test. The JEM-FORENSIC-001 lesson ('Verification must be exhaustive, not selective') is now codified as 45 adversarial tests across 10 classes. The test suite IS the verification methodology — it enforces the lesson at CI gate."
-  principle: "A lesson without an executable test is a wish. The JEM-FORENSIC-001 lesson ('Verification must be exhaustive, not selective') is now codified as 45 adversarial tests that enforce exhaustive verification at CI gate. The test suite IS the lesson."
+  narrative: "The JEM-FORENSIC-001 lesson ('Verification must be exhaustive, not selective')\
+    \ was codified as test methodology in tests/jem/test_dispatch_guard_adversarial.py.\
+    \ The test suite (45 tests, 10 classes, 722 lines) includes a dedicated regression\
+    \ test class (TestJemForensicRegression) that verifies: (1) sub-repo files are\
+    \ searched, not just workspace root; (2) spoofed session IDs in sub-repos are\
+    \ handled. The test suite itself is the executable form of the JEM-FORENSIC-001\
+    \ lesson \u2014 it IS the verification methodology."
+  insight: "A lesson is only as good as its executable test. The JEM-FORENSIC-001\
+    \ lesson ('Verification must be exhaustive, not selective') is now codified as\
+    \ 45 adversarial tests across 10 classes. The test suite IS the verification methodology\
+    \ \u2014 it enforces the lesson at CI gate."
+  principle: A lesson without an executable test is a wish. The JEM-FORENSIC-001 lesson
+    ('Verification must be exhaustive, not selective') is now codified as 45 adversarial
+    tests that enforce exhaustive verification at CI gate. The test suite IS the lesson.
 - id: JEM-12STEP-007
   node: JEM-12STEP-HARDENING
   date: '2026-08-30'
@@ -649,11 +728,23 @@ proposals:
   - 5-EIS-CONSENSUS
   - MAKALI-L3
   confidence: 0.95
-  narrative: "The 5-EIS meta-review (Researcher, Jem, Lilith, Carmack, Ma'at) achieved unprecedented convergence: 8 unanimous findings, 5 strong consensus (4 of 5), 6 divergences adjudicated. Key consensus: M33 bypass attack exists (all 5), M34 schema gaps exist (all 5), M35 needs SPDX/REUSE (all 5), L3 must split into 2 lessons at 0.85/0.80 (4 of 5), OAuth remediation TODAY (all 5), atomic write M23 violation (4 of 5). The 5-EIS fleet produced a unified adversarial truth that is the basis for Phase 1 execution."
-  insight: "When 5 independent adversarial perspectives converge on the same findings, the findings are robust. The 5-EIS meta-review is the adversarial equivalent of the 3-source triangulation principle from JEM-FORENSIC-001. Consensus across adversarial perspectives is the highest epistemic standard."
-  principle: "When 5 independent adversarial perspectives converge on the same findings, the findings are robust. The 5-EIS meta-review is the adversarial equivalent of the 3-source triangulation principle. Consensus across adversarial perspectives is the highest epistemic standard."
+  narrative: 'The 5-EIS meta-review (Researcher, Jem, Lilith, Carmack, Ma''at) achieved
+    unprecedented convergence: 8 unanimous findings, 5 strong consensus (4 of 5),
+    6 divergences adjudicated. Key consensus: M33 bypass attack exists (all 5), M34
+    schema gaps exist (all 5), M35 needs SPDX/REUSE (all 5), L3 must split into 2
+    lessons at 0.85/0.80 (4 of 5), OAuth remediation TODAY (all 5), atomic write M23
+    violation (4 of 5). The 5-EIS fleet produced a unified adversarial truth that
+    is the basis for Phase 1 execution.'
+  insight: When 5 independent adversarial perspectives converge on the same findings,
+    the findings are robust. The 5-EIS meta-review is the adversarial equivalent of
+    the 3-source triangulation principle from JEM-FORENSIC-001. Consensus across adversarial
+    perspectives is the highest epistemic standard.
+  principle: When 5 independent adversarial perspectives converge on the same findings,
+    the findings are robust. The 5-EIS meta-review is the adversarial equivalent of
+    the 3-source triangulation principle. Consensus across adversarial perspectives
+    is the highest epistemic standard.
 metadata:
   entity: jem
-  session_id: ses_jem_12step_hardening_20260830
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-08-30T11:45:00.000000+00:00'
+  session_id: ses_f33f79d75ffeozprA9nRejTdDi
+  model_used: big-pickle
+  last_session_end: '2026-09-23T03:01:24.435066+00:00'

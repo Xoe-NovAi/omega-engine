@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 # 🔱 Omega Engine — YouTube Research Module (P0)
 # AP: AP-YOUTUBE-RESEARCH-MODULE-v1.0.0
 # ⬡ OMEGA ⬡ JEM ⬡ hy3-free ⬡ opencode ⬡ trc_youtube_research ⬡ P0-STRUCTURAL

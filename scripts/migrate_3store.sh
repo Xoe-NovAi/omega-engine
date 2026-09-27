@@ -29,12 +29,15 @@
 #   ./migrate_3store.sh --yes        # non-interactive (CI/scripted)
 #   ./migrate_3store.sh --dry-run    # scan only, no writes
 #
-# Post-migration, add to crontab.txt:
-#   0 3 * * * /home/.../scripts/three_store_shim.py scan > /home/.../data/metrics/3store_inventory.log 2>&1
+# Post-migration, add to crontab.txt (use YOUR worktree/repo root, not a hardcoded path):
+#   0 3 * * * <repo-root>/scripts/three_store_shim.py scan > <repo-root>/data/metrics/3store_inventory.log 2>&1
 
 set -euo pipefail
 
-REPO_ROOT="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine"
+# Worktree-safe: derive repo root from script location so linked worktrees
+# (../omega-wt-maat, ../omega-wt-doom, ../omega-wt-grok) resolve to themselves,
+# never to the main tree. (Doom Guy audit 2026-09-27; M27 tracking integrity.)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)"
 SHIM="${REPO_ROOT}/scripts/three_store_shim.py"
 BACKUP_ROOT="${HOME}/.omega-vault-migration/$(date -u +%Y%m%dT%H%M%SZ)"
 MASTER_KEY_PATH="${REPO_ROOT}/data/vault/.master_key"

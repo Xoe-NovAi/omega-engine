@@ -85,7 +85,7 @@ class HybridRequest(BaseModel):
     spatial_weight: float = Field(0.3, ge=0.0, le=1.0)
     radius: float = Field(50.0, ge=0.1, le=1000.0)
     limit: int = Field(20, ge=1, le=100)
-    collection: str = Field("omega_vec_qwen_768", description="Vector collection")
+    collection: str = Field("omega_vec_qwen_1024", description="Vector collection")
 
 
 class NeighborsRequest(BaseModel):
@@ -272,7 +272,7 @@ async def spatial_hybrid(
     spatial_weight: float = Query(0.3, ge=0.0, le=1.0),
     radius: float = Query(50.0, ge=0.1, le=1000.0),
     limit: int = Query(20, ge=1, le=100),
-    collection: str = Query("omega_vec_qwen_768"),
+    collection: str = Query("omega_vec_qwen_1024"),
 ):
     """Hybrid semantic + spatial query for VR-aware retrieval."""
     try:

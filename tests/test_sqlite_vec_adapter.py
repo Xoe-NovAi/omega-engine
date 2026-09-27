@@ -41,8 +41,15 @@ import pytest
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from omega.memory.sqlite_vec_adapter import SQLiteVecAdapter
+from omega.memory.sqlite_vec_adapter import (
+    CANONICAL_DIMENSION,
+    SQLiteVecAdapter,
+)
 from omega.memory.vector_adapters import IVectorStoreAdapter
+
+# [D-1024-DIM-NATIVE-20260926] never hardcode the canonical width in tests —
+# reference the adapter's constant so this file can't silently drift again.
+CANONICAL_DIM = CANONICAL_DIMENSION
 
 
 # ── Test Fixtures ──
@@ -58,7 +65,7 @@ def tmp_db():
 @pytest.fixture
 async def adapter(tmp_db):
     """Create a SQLiteVecAdapter instance for testing."""
-    # FS-Β1: Use canonical 768-dim from embedding strategy
+    # [D-1024-DIM-NATIVE-20260926] canonical dim comes from the adapter (SSOT)
     adapter = SQLiteVecAdapter(db_path=tmp_db)
     await adapter._ensure_initialized()
     yield adapter
@@ -194,7 +201,7 @@ class TestSQLiteVecIsolation:
     async def test_entity_isolation(self, adapter):
         """Query for entity A should not return results from entity B."""
         # Insert data for entity A
-        vector_a = [0.1] * 768
+        vector_a = [0.1] * CANONICAL_DIM
         await adapter.upsert(
             entity_name="entity_a",
             vector=vector_a,
@@ -207,7 +214,7 @@ class TestSQLiteVecIsolation:
         )
         
         # Insert data for entity B
-        vector_b = [0.2] * 768
+        vector_b = [0.2] * CANONICAL_DIM
         await adapter.upsert(
             entity_name="entity_b",
             vector=vector_b,
@@ -255,10 +262,10 @@ class TestSQLiteVecQuery:
     async def test_query_returns_ranked_list(self, adapter):
         """Should return results sorted by similarity score descending."""
         # Insert multiple vectors with varying similarity
-        base_vector = [0.1] * 768
+        base_vector = [0.1] * CANONICAL_DIM
         
         # Very similar vector
-        similar_vector = [0.101] * 768
+        similar_vector = [0.101] * CANONICAL_DIM
         await adapter.upsert(
             entity_name="test_entity",
             vector=similar_vector,
@@ -271,7 +278,7 @@ class TestSQLiteVecQuery:
         )
         
         # Less similar vector
-        dissimilar_vector = [0.5] * 768
+        dissimilar_vector = [0.5] * CANONICAL_DIM
         await adapter.upsert(
             entity_name="test_entity",
             vector=dissimilar_vector,
@@ -312,7 +319,7 @@ class TestSQLiteVecHybridSearch:
     async def test_hybrid_search_fuses_results(self, adapter):
         """Should combine FTS and vector results with RRF scoring."""
         # Insert data with both text and vector
-        vector = [0.1] * 768
+        vector = [0.1] * CANONICAL_DIM
         content = "Omega engine is sovereign"
         
         await adapter.upsert(
@@ -354,7 +361,7 @@ class TestSQLiteVecDelete:
     async def test_delete_removes_from_both(self, adapter):
         """Should delete from metadata, FTS5, and vec0 tables."""
         # Insert data
-        vector = [0.1] * 768
+        vector = [0.1] * CANONICAL_DIM
         point_id = await adapter.upsert(
             entity_name="test_entity",
             vector=vector,
@@ -387,7 +394,7 @@ class TestSQLiteVecDelete:
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_fts")
             assert cursor.fetchone()[0] == 0
             
-            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_qwen_768")
+            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_qwen_1024")
             assert cursor.fetchone()[0] == 0
         
         await anyio.to_thread.run_sync(check_removed)
@@ -402,7 +409,7 @@ class TestSQLiteVecDeleteSession:
     async def test_delete_session_scoped(self, adapter):
         """Should only remove data for the specified session."""
         # Insert data for two sessions
-        vector = [0.1] * 768
+        vector = [0.1] * CANONICAL_DIM
         
         await adapter.upsert(
             entity_name="test_entity",
@@ -469,7 +476,7 @@ class TestSQLiteVecConcurrency:
         
         async def write_task(i: int):
             try:
-                vector = [float(i)] * 768
+                vector = [float(i)] * CANONICAL_DIM
                 await adapter.upsert(
                     entity_name=f"entity_{i}",
                     vector=vector,
@@ -514,7 +521,7 @@ class TestSQLiteVecWriterStarvation:
         """Launch readers + writer concurrently; writer must make progress."""
         # Seed 5 entries for readers (same entity, same dimension)
         for i in range(5):
-            vector = [float(i)] * 768
+            vector = [float(i)] * CANONICAL_DIM
             await adapter.upsert(
                 entity_name="seed_entity",
                 vector=vector,
@@ -533,7 +540,7 @@ class TestSQLiteVecWriterStarvation:
             """Query the vector store repeatedly."""
             for _ in range(2):
                 try:
-                    vector = [0.5] * 768  # Same vector for all readers
+                    vector = [0.5] * CANONICAL_DIM  # Same vector for all readers
                     await adapter.query(
                         entity_name="seed_entity",
                         vector=vector,
@@ -546,7 +553,7 @@ class TestSQLiteVecWriterStarvation:
         async def writer_task():
             nonlocal writer_success
             try:
-                vector = [0.99] * 768
+                vector = [0.99] * CANONICAL_DIM
                 await adapter.upsert(
                     entity_name="writer_probe",
                     vector=vector,
@@ -594,7 +601,7 @@ class TestSQLiteVecCheckpointContention:
 
         async def write_task(i: int):
             try:
-                vector = [float(i)] * 768
+                vector = [float(i)] * CANONICAL_DIM
                 await adapter.upsert(
                     entity_name=f"ckpt_entity_{i}",
                     vector=vector,
@@ -663,7 +670,7 @@ import time
 async def child_write():
     adapter = SQLiteVecAdapter(db_path=r"{tmp_db}", )
     await adapter._ensure_initialized()
-    vector = [0.5] * 768
+    vector = [0.5] * CANONICAL_DIM
     for i in range(5):
         await adapter.upsert(
             entity_name=f"child_entity_{{i}}",
@@ -679,7 +686,7 @@ print("CHILD DONE")
 
         # Seed some data from parent
         for i in range(3):
-            vector = [float(i)] * 768
+            vector = [float(i)] * CANONICAL_DIM
             await adapter.upsert(
                 entity_name=f"parent_entity_{i}",
                 vector=vector,
@@ -704,7 +711,7 @@ print("CHILD DONE")
 
         # Parent writes more data
         for i in range(3, 6):
-            vector = [float(i)] * 768
+            vector = [float(i)] * CANONICAL_DIM
             await adapter.upsert(
                 entity_name=f"parent_entity_{i}",
                 vector=vector,

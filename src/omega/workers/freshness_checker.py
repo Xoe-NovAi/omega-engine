@@ -589,30 +589,52 @@ class FreshnessChecker:
             return None
 
         try:
-            # Import here to avoid circular dependency
-            from omega_hub import hivemind_submit_handoff
+            # Import here to avoid circular dependency. The Hub exposes the
+            # consolidated action-based handoff tool; the legacy
+            # `hivemind_submit_handoff` name resolves through the server's
+            # backward-compatibility adapter.
+            from mcp_servers.omega_hub.server import hivemind_submit_handoff
+            import anyio
 
-            packet_id = f"freshness_{report.run_id}"
-
-            hivemind_submit_handoff(
-                target_channel="opencode",
-                target_entity="researcher",
-                source_channel="scheduler",
-                source_entity="kali",
-                task=f"Re-validate {len(stale_models)} stale models: {', '.join(m.model_id for m in stale_models[:5])}{'...' if len(stale_models) > 5 else ''}",
-                context=f"Freshness checker ({report.tier} tier) detected staleness in {len(stale_models)} models",
-                priority=1 if report.tier == "critical" else 0,
-                metadata={
-                    "stale_models": [
-                        {"model_id": m.model_id, "reasons": m.staleness_reasons}
-                        for m in stale_models
-                    ],
-                    "check_run_at": report.started_at.isoformat(),
-                    "tier": report.tier,
-                    "packet_id": packet_id,
-                },
+            correlation_id = f"freshness_{report.run_id}"
+            metadata = {
+                "stale_models": [
+                    {"model_id": m.model_id, "reasons": m.staleness_reasons}
+                    for m in stale_models
+                ],
+                "check_run_at": report.started_at.isoformat(),
+                "tier": report.tier,
+                "correlation_id": correlation_id,
+            }
+            task = (
+                f"Re-validate {len(stale_models)} stale models: "
+                f"{', '.join(m.model_id for m in stale_models[:5])}"
+                f"{'...' if len(stale_models) > 5 else ''}"
             )
-            return packet_id
+            context = (
+                f"Freshness checker ({report.tier} tier) detected staleness in "
+                f"{len(stale_models)} models\n"
+                f"metadata={json.dumps(metadata, default=str)}"
+            )
+
+            async def _submit() -> str:
+                return await hivemind_submit_handoff(
+                    target_channel="opencode",
+                    target_entity="researcher",
+                    source_channel="scheduler",
+                    source_entity="kali",
+                    task=task,
+                    context=context,
+                    priority=1 if report.tier == "critical" else 0,
+                )
+
+            response = anyio.run(_submit)
+            submitted_id = json.loads(response).get("packet_id")
+            if not submitted_id:
+                raise RuntimeError(
+                    f"Hivemind handoff returned no packet_id: {str(response)[:200]}"
+                )
+            return submitted_id
         except Exception as e:
             print(f"⚠️  Hivemind notification failed: {e}")
             return None

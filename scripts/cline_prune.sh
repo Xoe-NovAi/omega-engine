@@ -23,8 +23,9 @@
 #   5. Logs to data/vault/cline_prune.jsonl (append-only audit)
 #   6. Posts to Hivemind if > N prunes happened (M23 alert)
 #
-# Cron entry (paste into scripts/crontab.txt):
-#   0 4 * * 0 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/cline_prune.sh >> /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/metrics/cline_prune.log 2>&1
+# Cron entry (paste into scripts/crontab.txt — replace <repo-root> with YOUR checkout root;
+# never hardcode the main-tree path, or a worktree run would prune MAIN's cline sessions):
+#   0 4 * * 0 <repo-root>/scripts/cline_prune.sh >> <repo-root>/data/metrics/cline_prune.log 2>&1
 #
 # Why Sunday 04:00 UTC: lowest activity window; before the Monday morning sprint standup.
 
@@ -37,7 +38,10 @@ for arg in "$@"; do
     esac
 done
 
-REPO_ROOT="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine"
+# Worktree-safe: derive repo root from script location so linked worktrees
+# resolve to themselves. Running this in a worktree must prune THAT worktree's
+# log, never MAIN's cline sessions. (Doom Guy audit 2026-09-27.)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)"
 CLINE_DB="${HOME}/.cline/data/db/sessions.db"
 PRUNE_LOG="${REPO_ROOT}/data/vault/cline_prune.jsonl"
 HIVEMIND_ALERT_THRESHOLD=20

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L8 Oracle Steering Queue — Human-in-the-Loop Task Injection
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L8 ⬡ STEERING
@@ -466,3 +469,11 @@ def assert_background_queue_type(obj: Any) -> None:
     assert callable(obj.get_task)
     assert hasattr(obj, "list_tasks")
     assert callable(obj.list_tasks)
+
+# ── Legacy alias ───────────────────────────────────────────────────────────
+# `OracleSteeringQueue` is advertised in omega_youtube_research.__all__ and
+# imported by cli.py, but was never given its own class. There is only one
+# queue implementation in this module, so alias the canonical class rather
+# than leave a phantom name that breaks `import omega_youtube_research.cli`.
+# Keep `BackgroundResearcherQueue` as the source of truth.
+OracleSteeringQueue = BackgroundResearcherQueue

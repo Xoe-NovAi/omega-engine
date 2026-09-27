@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L7 Freshness & Drift Detection — Arc Labs Base-2 Half-Life Framework
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L7 ⬡ FRESHNESS

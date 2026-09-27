@@ -27,10 +27,10 @@ def load_session_gnosis() -> List[Dict[str, Any]]:
     """Parse session gnosis file into structured events."""
     if not SESSION_GNOSIS_FILE.exists():
         return []
-        
+
     events = []
     current_event = None
-    
+
     for line in SESSION_GNOSIS_FILE.read_text().splitlines():
         if line.startswith("### ["):
             if current_event:
@@ -51,29 +51,29 @@ def load_session_gnosis() -> List[Dict[str, Any]]:
                 # For this implementation, we assume the JSON is on one line or we'll read until next ###
                 # Since we wrote it with json.dumps(indent=2), it's multi-line.
                 # We'll skip the complex parsing for now and just use a simple marker.
-                pass 
+                pass
             except Exception:
                 pass
-    
+
     if current_event:
         events.append(current_event)
-    
+
     return events
 
 def distill_principles(events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Apply refractive abstraction to extract high-level principles."""
     principles = []
     seen_templates = set()
-    
+
     for event in events:
-        # In our current scribe, the data is in a JSON block. 
+        # In our current scribe, the data is in a JSON block.
         # For this script, we'll look for "lesson" in the raw text as a fallback.
         raw = event.get("raw", "")
         # This is a simplified extraction for the MVE
         if "lesson" in raw.lower() or "principle" in raw.lower():
             # Extract a plausible lesson string
             lesson = "Extracted principle from session gnosis" # Placeholder
-            
+
             template = re.sub(r'\b\w+\b', 'X', lesson)
             if template not in seen_templates:
                 seen_templates.add(template)
@@ -83,7 +83,7 @@ def distill_principles(events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                     "first_seen": event.get("time", datetime.now(timezone.utc).isoformat()),
                     "confidence": 0.9
                 })
-    
+
     return principles
 
 def update_soul(soul: Dict[str, Any], principles: List[Dict[str, Any]]):
@@ -91,14 +91,14 @@ def update_soul(soul: Dict[str, Any], principles: List[Dict[str, Any]]):
     for principle in principles:
         principle["injected_at"] = datetime.now(timezone.utc).isoformat()
         soul["entity"]["lessons_learned"].append(principle)
-    
+
     # Ensure directory exists
     SOUL_FILE.parent.mkdir(parents=True, exist_ok=True)
-    
+
     temp_file = SOUL_FILE.with_suffix(".tmp")
     with temp_file.open("w", encoding="utf-8") as f:
         yaml.dump(soul, f, default_flow_style=False, sort_keys=False)
-    
+
     temp_file.replace(SOUL_FILE)
     print(f"✓ Inscribed {len(principles)} new principles to {SOUL_FILE}")
 
@@ -107,12 +107,13 @@ def main():
     soul = load_soul()
     events = load_session_gnosis()
     principles = distill_principles(events)
-    
+
     if not principles:
         print("No new principles to inscribe.")
         return
-    
+
     update_soul(soul, principles)
 
 if __name__ == "__main__":
     main()
+

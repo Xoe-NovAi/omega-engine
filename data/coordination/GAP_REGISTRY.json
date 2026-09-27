@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-08-26T00:10:26Z",
+  "updated": "2026-09-22T02:10:00Z",
   "purpose": "Authoritative registry of ALL research gap IDs. Prevents gap-number reuse across plans (root cause of the 2026-08-14 R13-R38 collision). Any new research plan MUST register its gaps here with a UNIQUE prefix.",
   "rules": [
     "Gap IDs R1-R38 are OWNED by RESEARCH_PLAN_PHASE1_4_20260813.md (authoritative).",
@@ -33,7 +33,10 @@
       "topic": "AGY account pool",
       "status": "partial",
       "plan": "phase1_4",
-      "report": "SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md"
+      "report": "SDP_KNOWLEDGE_GAP_RESEARCH_20260809.md",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "R5": {
       "topic": "TriageRouter constraints",
@@ -147,7 +150,10 @@
       "topic": "WARP proxy pool",
       "status": "partial",
       "plan": "phase1_4",
-      "report": "warp-proxy-pool/scripts/warp-ns-setup.sh"
+      "report": "warp-proxy-pool/scripts/warp-ns-setup.sh",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "R23": {
       "topic": "Restic passphrase",
@@ -207,7 +213,10 @@
       "topic": "Plugin scope reduction",
       "status": "outstanding",
       "plan": "phase1_4",
-      "report": "CONSENSUS FOUND 2026-08-25: minimal core (loop+state+tool registry) + MCP surface; three documented monolith regrets validate our architecture. Design input recorded."
+      "report": "CONSENSUS FOUND 2026-08-25: minimal core (loop+state+tool registry) + MCP surface; three documented monolith regrets validate our architecture. Design input recorded.",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "R32": {
       "topic": "In-session gauge source",
@@ -219,13 +228,19 @@
       "topic": "Cold session context",
       "status": "outstanding",
       "plan": "phase1_4",
-      "report": null
+      "report": null,
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "R34": {
       "topic": "Provider band adjustments",
       "status": "outstanding",
       "plan": "phase1_4",
-      "report": "UPDATED 2026-08-25: Google killed static quota tables (live dashboard only) \u2014 bands must be MEASURED from telemetry, never hardcoded. LOAD-BEARING finding; hardcoded-band approaches are obsolete."
+      "report": "UPDATED 2026-08-25: Google killed static quota tables (live dashboard only) \u2014 bands must be MEASURED from telemetry, never hardcoded. LOAD-BEARING finding; hardcoded-band approaches are obsolete.",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "R35": {
       "topic": "Model degradation",
@@ -247,9 +262,15 @@
     },
     "R38": {
       "topic": "NotebookLM integration",
-      "status": "outstanding",
+      "status": "cancelled",
       "plan": "phase1_4",
-      "report": "UPDATED 2026-08-25: R52c SUPERSEDED by NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md v2.1 per D-583 (2-notebook, quota corrected 10 DR/mo NOT 30 \u2014 product renamed Gemini Notebook Jul 16 2026). notebooklm-py 0.8.1 installed. Missing: master_token.json auth capture (Architect browser), systemd service, opencode.json wiring."
+      "report": "UPDATED 2026-08-25: R52c SUPERSEDED by NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md v2.1 per D-583 (2-notebook, quota corrected 10 DR/mo NOT 30 \u2014 product renamed Gemini Notebook Jul 16 2026). notebooklm-py 0.8.1 installed. Missing: master_token.json auth capture (Architect browser), systemd service, opencode.json wiring.",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22",
+      "cancelled_by": "D-606",
+      "cancelled_date": "2026-09-22",
+      "reason": "User decision: sovereign alternative in-engine; no NotebookLM"
     },
     "R39": {
       "topic": "Fleet Health Dashboard (SUPPLEMENTARY, Phase2-plan topic)",
@@ -420,38 +441,62 @@
     },
     "GN-1": {
       "topic": "notebooklm-py[mcp] deployment with isolated auth profiles",
-      "status": "partial",
+      "status": "cancelled",
       "plan": "gemini_notebook_20260820",
       "report": "SPLIT 2026-08-25: library install DONE (notebooklm-py 0.8.1 = latest upstream, 18.9k stars); AUTH OUTSTANDING (master_token.json capture needs Architect browser sign-in). GN-2..5 blocked via this dependency chain.",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22",
+      "cancelled_by": "D-606",
+      "cancelled_date": "2026-09-22",
+      "reason": "User decision: sovereign alternative in-engine; no NotebookLM"
     },
     "GN-2": {
       "topic": "2 strategic notebooks: \u03a9-ACTIVE-RESEARCH + \u03a9-KNOWLEDGE-BASE",
-      "status": "outstanding",
+      "status": "cancelled",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
-      "owner": "researcher"
+      "owner": "researcher",
+      "cancelled_by": "D-606",
+      "cancelled_date": "2026-09-22",
+      "reason": "User decision: sovereign alternative in-engine; no NotebookLM"
     },
     "GN-3": {
       "topic": "Free-tier fetch pipeline + systemd timer (30 DR/mo budget)",
-      "status": "outstanding",
+      "status": "cancelled",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22",
+      "cancelled_by": "D-606",
+      "cancelled_date": "2026-09-22",
+      "reason": "User decision: sovereign alternative in-engine; no NotebookLM"
     },
     "GN-4": {
       "topic": "Single-account free-tier Deep Research smoke test",
-      "status": "outstanding",
+      "status": "cancelled",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
-      "owner": "researcher"
+      "owner": "researcher",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22",
+      "cancelled_by": "D-606",
+      "cancelled_date": "2026-09-22",
+      "reason": "User decision: sovereign alternative in-engine; no NotebookLM"
     },
     "GN-5": {
       "topic": "SDP distillation pipeline + Scribe handoff (manual mode)",
-      "status": "outstanding",
+      "status": "cancelled",
       "plan": "gemini_notebook_20260820",
       "report": "docs/strategy/NOTEBOOKLM_UNIFIED_STRATEGY_20260820.md",
-      "owner": "researcher"
+      "owner": "researcher",
+      "cancelled_by": "D-606",
+      "cancelled_date": "2026-09-22",
+      "reason": "User decision: sovereign alternative in-engine; no NotebookLM"
     },
     "DS-1": {
       "topic": "Documentation system meta-doc (DOMAIN_DOCUMENTATION_SYSTEM.md)",
@@ -507,14 +552,20 @@
       "status": "partial",
       "plan": "local_inference_opt_20260820",
       "report": "UPDATED 2026-08-25: hardware fit-probe EXISTS at providers.py:692-755 (detect_hardware_profile); only CLI exposure missing. Evidence: data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "LI-4": {
       "topic": "Tier 0 model matrix: Qwen3-4B / Qwen3-4B-Thinking / Qwen3-1.7B",
       "status": "outstanding",
       "plan": "local_inference_opt_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "LI-5": {
       "topic": "Startup script (zRAM + THP + pinning + prompt caching)",
@@ -570,21 +621,30 @@
       "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
       "report": "[BLOCKED-EXTERNAL \u2014 see note] ADJUDICATION-REQUIRED 2026-08-25: TRIPLE CONTRADICTION \u2014 locked decisions (D-526/527/581/584) say zswap+NVMe/zRAM-disabled; live machine has zswap OFF + zRAM ACTIVE 8G zstd (matches Carmack H-1 review instead). Same-day decision schism D-584 vs H-1 is load-bearing for community installer defaults. Architect sudo ruling required BEFORE deployment or ZS-3 WAD packaging.",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "ZS-2": {
       "topic": "16GB NVMe swap file + systemd cgroup config (MemoryMin=2G, MemoryHigh=5G, MemoryMax=6G, MemorySwapMax=infinity)",
       "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     },
     "ZS-3": {
       "topic": "WAD packaging (zswap-config.wad for community stacks)",
       "status": "outstanding",
       "plan": "zswap_subsystem_20260820",
       "report": "data/coordination/HOLISTIC_ARCHITECTURE_PLAN_20260820.md",
-      "owner": "maat_n3"
+      "owner": "maat_n3",
+      "research_status": "researched",
+      "research_report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+      "research_date": "2026-09-22"
     }
   },
   "next_free_id": 57,
@@ -649,6 +709,35 @@
       "date": "2026-08-14",
       "description": "RESEARCH_PLAN_PHASE2_20260813.md (untracked) reused R13-R38 for DIFFERENT topics than RESEARCH_PLAN_PHASE1_4. Resolved by renumbering Phase2 reports to R39-R56. R56 lost during rename.",
       "prevention": "GAP_REGISTRY.json created; new plans must use distinct prefixes."
+    }
+  ],
+  "last_research_campaign": {
+    "date": "2026-09-22",
+    "report": "R_KNOWLEDGE_GAP_WEB_RESEARCH_20260922.md",
+    "gaps_covered": [
+      "GN-1",
+      "GN-3",
+      "GN-4",
+      "LI-3",
+      "LI-4",
+      "R22",
+      "R31",
+      "R33",
+      "R34",
+      "R38",
+      "R4",
+      "ZS-1",
+      "ZS-2",
+      "ZS-3"
+    ],
+    "method": "T1 websearch (parallel-search MCP), 6 batched queries"
+  },
+  "decision_log": [
+    {
+      "id": "D-606",
+      "date": "2026-09-22",
+      "action": "GN workstream cancelled (GN-1..GN-5, R38)",
+      "reason": "Sovereign alternative in Omega Engine; no paid NotebookLM"
     }
   ]
 }

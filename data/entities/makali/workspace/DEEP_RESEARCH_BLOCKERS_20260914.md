@@ -25,7 +25,7 @@ SPDX-License-Identifier: Apache-2.0
 
 **Tailscale ACL core principles** (deny-by-default, directional, locally enforced):
 1. **Deny-by-default**: No `acls` section = allow-all. To deny all, use empty `acls: {}`
-2. **Tags = purpose-based identity**: `tag:omega-hub`, `tag:asus`, `tag:opencode` — access based on purpose, not owner
+2. **Tags = purpose-based identity**: `tag:node0`, `tag:node1`, `tag:opencode` — access based on purpose, not owner
 3. **tagOwners**: Define who can apply tags. Can be users, groups, or OTHER TAGS (hierarchies)
 4. **Auth keys with tags**: `tskey-auth-...` auto-tags devices on join
 5. **MagicDNS**: Stable hostnames (`omega-hub.tailnet.ts.net`) — solves DHCP-shifting LAN IPs
@@ -34,34 +34,34 @@ SPDX-License-Identifier: Apache-2.0
 ```hujson
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:asus":     ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1":     ["autogroup:admin"],
     "tag:opencode": ["autogroup:admin"],
   },
   "acls": [
-    // Node 1 (tag:asus) → Node 0 omega-hub MCP (8016) + Ollama (11434)
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016", "tag:omega-hub:11434"]},
+    // Node 1 (tag:node1) → Node 0 omega-hub MCP (8016) + Ollama (11434)
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016", "tag:node0:11434"]},
     // Node 0 opencode → Node 1 (non-root SSH only)
-    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus:22"]},
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node1:22"]},
     // Heartbeat/ping both directions
-    {"action": "accept", "src": ["tag:asus", "tag:omega-hub"], "dst": ["tag:asus", "tag:omega-hub"]},
+    {"action": "accept", "src": ["tag:node1", "tag:node0"], "dst": ["tag:node1", "tag:node0"]},
   ],
   "ssh": [
-    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]},
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]},
   ],
 }
 ```
 
 **Auth key creation** (for Node 1 join):
 ```bash
-# Via admin console: Keys → Generate auth key → Tags: tag:asus → Pre-approved
+# Via admin console: Keys → Generate auth key → Tags: tag:node1 → Pre-approved
 # Or via API (needs API access token):
 curl "https://api.tailscale.com/api/v2/tailnet/{tailnet}/keys" \
   -u "tskey-api-XXXX:" \
   --data-binary '{
     "capabilities": {"devices": {"create": {
       "reusable": false, "ephemeral": false, "preauthorized": true,
-      "tags": ["tag:asus"]
+      "tags": ["tag:node1"]
     }}},
     "expirySeconds": 86400,
     "description": "kali-n1 join"
@@ -71,7 +71,7 @@ curl "https://api.tailscale.com/api/v2/tailnet/{tailnet}/keys" \
 **Node 1 join command** (from L2_ACCEPTANCE.md):
 ```bash
 sudo tailscale up --authkey=${NODE0_AUTHKEY} --hostname=kali-n1 \
-  --operator=xnai --accept-routes --advertise-tags=tag:asus
+  --operator=xnai --accept-routes --advertise-tags=tag:node1
 ```
 
 **Security notes**:
@@ -235,7 +235,7 @@ sudo tailscale up --authkey=${NODE0_AUTHKEY} --hostname=kali-n1 \
 ## 🎯 IMMEDIATE NEXT ACTIONS
 
 1. **USER ACTION**: Visit `https://login.tailscale.com/a/c4cf83201d8b2` to authenticate Tailscale
-2. **After auth**: Mint auth key for Node 1 (`tag:asus`, pre-approved) → send to Node 1
+2. **After auth**: Mint auth key for Node 1 (`tag:node1`, pre-approved) → send to Node 1
 3. **Apply ACL** (from research above) matching L2_ACCEPTANCE.md commitments
 4. **Fix gh 401**: `echo $GITHUB_TOKEN; gh auth status --json hosts`
 5. **Fix M20**: Update check script to use `.venv/bin/python`

@@ -12,7 +12,7 @@
 ```
 Node 0 (HP Hub)                                Node 1 (ASUS Vanguard)
 Hostname: omega-hub                            Hostname: kali-n1
-Tag: tag:omega-hub                             Tag: tag:asus
+Tag: tag:node0                             Tag: tag:node1
 Tailscale IP: 100.123.51.67                    Tailscale IP: 100.x.x.x (assigned on join)
 MagicDNS: omega-hub.tail51f14a.ts.net          MagicDNS: kali-n1.tail51f14a.ts.net
 Role: Archival Hub & MCP Host (:8016)          Role: Vanguard Execution & Compute
@@ -28,23 +28,23 @@ Before nodes can claim their tags or communicate with least privilege, the polic
 ```hujson
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
-    "tag:asus":      ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
+    "tag:node1":      ["autogroup:admin"],
     "tag:opencode":  ["autogroup:admin"]
   },
   "acls": [
     // Node 1 (ASUS Vanguard) communicates with Node 0 Core Hub (:8016) and local Ollama (:11434)
-    {"action": "accept", "src": ["tag:asus"], "dst": ["tag:omega-hub:8016", "tag:omega-hub:11434"]},
+    {"action": "accept", "src": ["tag:node1"], "dst": ["tag:node0:8016", "tag:node0:11434"]},
 
     // Node 0 can reach Node 1 MCP (:8016) and SSH (:22)
-    {"action": "accept", "src": ["tag:omega-hub", "tag:opencode"], "dst": ["tag:asus:8016", "tag:asus:22"]},
+    {"action": "accept", "src": ["tag:node0", "tag:opencode"], "dst": ["tag:node1:8016", "tag:node1:22"]},
 
     // Bidirectional ICMP heartbeats and wire pings
-    {"action": "accept", "src": ["tag:asus", "tag:omega-hub"], "dst": ["tag:asus:*", "tag:omega-hub:*"], "proto": "icmp"}
+    {"action": "accept", "src": ["tag:node1", "tag:node0"], "dst": ["tag:node1:*", "tag:node0:*"], "proto": "icmp"}
   ],
   "ssh": [
-    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:asus"], "users": ["autogroup:nonroot", "root"]},
-    {"action": "check", "src": ["tag:omega-hub"], "dst": ["tag:asus"], "users": ["autogroup:nonroot"]}
+    {"action": "check", "src": ["tag:opencode"], "dst": ["tag:node1"], "users": ["autogroup:nonroot", "root"]},
+    {"action": "check", "src": ["tag:node0"], "dst": ["tag:node1"], "users": ["autogroup:nonroot"]}
   ],
   "autoApprovers": {
     "routes": ["autogroup:admin"],
@@ -57,16 +57,16 @@ Before nodes can claim their tags or communicate with least privilege, the polic
 
 ## 3. Stage 2: Node 0 Tag Attachment
 
-Node 0 is currently active on the tailnet as an untagged device (`100.123.51.67`). Once Stage 1 is saved, run the following command on Node 0 to bind it to `tag:omega-hub`:
+Node 0 is currently active on the tailnet as an untagged device (`100.123.51.67`). Once Stage 1 is saved, run the following command on Node 0 to bind it to `tag:node0`:
 
 ```bash
-pkexec tailscale up --advertise-tags=tag:omega-hub --force-reauth
+pkexec tailscale up --advertise-tags=tag:node0 --force-reauth
 ```
 
 **Verification on Node 0**:
 ```bash
 tailscale status --json | python3 -c "import sys, json; print('Tags:', json.load(sys.stdin)['Self'].get('Tags'))"
-# Output must show: Tags: ['tag:omega-hub']
+# Output must show: Tags: ['tag:node0']
 ```
 
 ---
@@ -77,7 +77,7 @@ tailscale status --json | python3 -c "import sys, json; print('Tags:', json.load
 2. Click **Generate Auth Key**.
 3. Set the following fields:
    - **Description**: `kali-n1-join`
-   - **Tags**: Check `tag:asus`
+   - **Tags**: Check `tag:node1`
    - **Reusable**: **OFF** (Single-use security)
    - **Pre-approved**: **ON**
    - **Expiry**: 1 day (or standard default)
@@ -95,7 +95,7 @@ sudo tailscale up \
   --hostname=kali-n1 \
   --operator=xnai \
   --accept-routes \
-  --advertise-tags=tag:asus
+  --advertise-tags=tag:node1
 ```
 
 ---

@@ -461,11 +461,11 @@ After authentication, nodes are reachable via:
 ```json
 {
   "tagOwners": {
-    "tag:omega-hub": ["autogroup:admin"],
+    "tag:node0": ["autogroup:admin"],
     "tag:opencode": ["autogroup:admin"]
   },
   "acls": [
-    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:omega-hub:8016"]}
+    {"action": "accept", "src": ["tag:opencode"], "dst": ["tag:node0:8016"]}
   ]
 }
 ```
@@ -474,7 +474,7 @@ After authentication, nodes are reachable via:
 
 | Node | Tag | Command |
 |------|-----|---------|
-| Node 0 (HP) | `tag:omega-hub` | Tailscale admin console → Machines → HP → Tags → Add `tag:omega-hub` |
+| Node 0 (HP) | `tag:node0` | Tailscale admin console → Machines → HP → Tags → Add `tag:node0` |
 | Node 1 (ASUS) | `tag:opencode` | Tailscale admin console → Machines → ASUS → Tags → Add `tag:opencode` |
 
 ### 7.5 OpenCode Config Update for Tailscale
@@ -757,8 +757,8 @@ NEXT: Tailscale for roaming (Phase 1)
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 # Admin console: tag this machine 'tag:opencode'
-# HP should be tagged 'tag:omega-hub'
-# ACL: tag:opencode -> tag:omega-hub:8016
+# HP should be tagged 'tag:node0'
+# ACL: tag:opencode -> tag:node0:8016
 ```
 
 ---
@@ -1039,7 +1039,7 @@ OpenCode ignores model limit overrides if `opencode.json` mixes V1 (`agent`) and
 | `make probe-hardware` fails | Missing dependencies | `pip install -r requirements.txt` then `make probe-hardware` |
 | Ollama 0.5 t/s performance | P-core pin trap (`AllowedCPUs=0,2,4,6,8,10`) | Use `AllowedCPUs=0-11` or remove CPU affinity restriction (ollama #17916) |
 | Open WebUI won't start | Port 3000 in use or volume corrupt | `podman ps -a` check, remove old container, restore from backup |
-| Tailscale ping fails | ACL not configured or tags missing | Verify tailnet policy has `tag:opencode -> tag:omega-hub:8016` and both nodes tagged |
+| Tailscale ping fails | ACL not configured or tags missing | Verify tailnet policy has `tag:opencode -> tag:node0:8016` and both nodes tagged |
 
 ### 14.5 End-User Experience Test (The Goal)
 
@@ -1081,7 +1081,7 @@ This is the **critical test** — the user (Architect) will:
 | **D-445** | `omega-hub` LAN binding with DNS-rebinding security allowlist | Opens port 8016 to local Wi-Fi while neutralizing host spoofing |
 | **D-446** | Zero-dependency physical USB bootstrap package generated | Enables instant 3-minute onboarding for fresh Node 1 install |
 | **D-447** | UFW rule restricted to LAN subnet | `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp` |
-| **D-448** | Tailscale ACL exact syntax defined | Tag-based: `tag:opencode -> tag:omega-hub:8016` with `tagOwners` |
+| **D-448** | Tailscale ACL exact syntax defined | Tag-based: `tag:opencode -> tag:node0:8016` with `tagOwners` |
 | **D-449** | Ollama Raptor Lake-H optimal config verified | `KV_CACHE_TYPE=q8_0`, `FLASH_ATTENTION=1`, `NUM_THREADS=8`, `MAX_LOADED_MODELS=1` |
 | **D-450** | Big Pickle 1M ceiling declared dangerous | Official registry: 200K context / 160K input. 950K input causes API hard rejects |
 

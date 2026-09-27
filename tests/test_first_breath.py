@@ -11,6 +11,7 @@ from src.omega.oracle.oracle import Oracle
 from src.omega.oracle.entity_registry import EntityRegistry, Entity
 from src.omega.astrology import get_birth_record
 from unittest.mock import AsyncMock
+from omega.memory.sqlite_vec_adapter import CANONICAL_DIMENSION
 from omega.memory_store import reset_memory_store
 
 # ── FIRST-BREATH SYSTEM DISABLED — D-605 (2026-09-20, Architect ruling) ──────────────
@@ -66,8 +67,13 @@ async def oracle_setup(tmp_path):
     
     # 6. Mock embedding manager to avoid Ollama/Qdrant hangs
     oracle.memory_store.embedding_manager = AsyncMock()
-    oracle.memory_store.embedding_manager.get_embedding.return_value = ([0.0] * 768, "mock")
-    oracle.memory_store.embedding_manager.current_dimension = 768
+    # [D-1024-DIM-NATIVE-20260926] mock must answer at the canonical width,
+    # otherwise the adapter's dimension guard rejects every write (M23).
+    oracle.memory_store.embedding_manager.get_embedding.return_value = (
+        [0.0] * CANONICAL_DIMENSION,
+        "mock",
+    )
+    oracle.memory_store.embedding_manager.current_dimension = CANONICAL_DIMENSION
     
     # 7. Setup session
     session_id = "test_session_123"

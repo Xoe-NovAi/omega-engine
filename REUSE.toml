@@ -276,3 +276,22 @@ SPDX-License-Identifier = "Apache-2.0"
 path = "docs/tech-architecture-research/grub.cfg"
 SPDX-FileCopyrightText = "2026 Xoe-NovAi"
 SPDX-License-Identifier = "Apache-2.0"
+
+# ── Node 1 federation artifacts (received 2026-09, PR #4) ─────────────────
+# docs/federation/node1_received/** holds 21 files handed over by Node 1: the
+# Well harness (py + jsonl), its tests, deploy/systemd configs, and tuned
+# node configs. They are Omega Engine source in Apache-2.0 but carry no inline
+# SPDX header, so REUSE v3.3 flagged them as the non-compliant remainder
+# (1841/1864). Annotated here rather than editing 21 upstream files.
+[[annotations]]
+path = "docs/federation/node1_received/**"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Deprecated agent archives (PR #4) ─────────────────────────────────────
+# Two retired Nemotron-3.5 planning docs. The `.deprecated` suffix means the
+# `docs/**/*.md` glob does not match them.
+[[annotations]]
+path = "docs/agents/archive/*.md.deprecated"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"

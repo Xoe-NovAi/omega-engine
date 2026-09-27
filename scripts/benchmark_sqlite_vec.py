@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from omega.memory.sqlite_vec_adapter_optimized import SQLiteVecAdapterOptimized
 
 
-async def generate_test_vector(dim: int = 768) -> list:
+async def generate_test_vector(dim: int = 1024) -> list:
     """Generate a random test vector."""
     return [random.uniform(-1, 1) for _ in range(dim)]
 
@@ -39,13 +39,13 @@ async def benchmark_single_upsert(adapter, num_ops: int = 100):
     latencies = []
     
     for i in range(num_ops):
-        vector = await generate_test_vector(768)
+        vector = await generate_test_vector(1024)
         start = time.perf_counter()
         await adapter.upsert(
             entity_name="benchmark",
             vector=vector,
             metadata={"content": f"Test content {i}", "session_id": "bench", "role": "user"},
-            collection="omega_vec_qwen_768",
+            collection="omega_vec_qwen_1024",
         )
         latency = (time.perf_counter() - start) * 1000
         latencies.append(latency)
@@ -67,15 +67,15 @@ async def benchmark_batch_upsert(adapter, batch_size: int = 100, num_batches: in
     for batch in range(num_batches):
         items = []
         for i in range(batch_size):
-            vector = await generate_test_vector(768)
+            vector = await generate_test_vector(1024)
             items.append({
                 "entity_name": "benchmark",
-                "vector": await generate_test_vector(768),
+                "vector": await generate_test_vector(1024),
                 "metadata": {"content": f"Batch {batch} item {i}", "session_id": "bench", "role": "user"},
             })
         
         start = time.perf_counter()
-        await adapter.batch_upsert(items, collection="omega_vec_qwen_768")
+        await adapter.batch_upsert(items, collection="omega_vec_qwen_1024")
         latency = (time.perf_counter() - start) * 1000
         latencies.append(latency)
         total_vectors += batch_size
@@ -96,13 +96,13 @@ async def benchmark_query(adapter, num_queries: int = 100):
     latencies = []
     
     for i in range(num_queries):
-        vector = await generate_test_vector(768)
+        vector = await generate_test_vector(1024)
         start = time.perf_counter()
         results = await adapter.query(
             entity_name="benchmark",
             vector=vector,
             limit=10,
-            collection="omega_vec_qwen_768",
+            collection="omega_vec_qwen_1024",
         )
         latency = (time.perf_counter() - start) * 1000
         latencies.append(latency)
@@ -121,7 +121,7 @@ async def benchmark_hybrid_search(adapter, num_searches: int = 50):
     latencies = []
     
     for i in range(num_searches):
-        vector = await generate_test_vector(768)
+        vector = await generate_test_vector(1024)
         start = time.perf_counter()
         results = await adapter.hybrid_search(
             query=f"test query {i}",
@@ -147,7 +147,7 @@ async def main():
     # Initialize adapter
     adapter = SQLiteVecAdapterOptimized(
         db_path="/tmp/benchmark_omega_memory.db",
-        embedding_dim=768,
+        embedding_dim=1024,
         read_pool_size=4,
         batch_size=100,
         enable_metrics=True,

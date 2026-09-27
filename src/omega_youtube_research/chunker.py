@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L3 Temporal RAG Synthesis — Semantic Chunking + Hybrid Search
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L3 ⬡ CHUNKER

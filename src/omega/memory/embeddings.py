@@ -51,7 +51,16 @@ class SovereignFallbackEmbeddingProvider(IEmbeddingProvider):
     for basic semantic retrieval when no model is available.
     """
 
-    def __init__(self, dimension: int = 768):  # [D-768-DIM-SOVEREIGN-FALLBACK] aligned to 768
+    def __init__(self, dimension: Optional[int] = None):
+        # [D-1024-DIM-NATIVE-20260926] Default follows the SSOT canonical
+        # dimension (config/embedding_strategy.yaml). Feature hashing can
+        # emit ANY width, so this provider always matches the canonical
+        # collection — including the pre-migration 768 default, which is
+        # kept working by passing dimension= explicitly.
+        if dimension is None:
+            from .embedding_strategy import get_embedding_strategy
+
+            dimension = get_embedding_strategy().canonical_dimension
         self._dimension = dimension
         self._stopwords = {
             "the",
@@ -485,8 +494,9 @@ class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
     [D-768-DIM-MODEL-SWAP] Replaces EmbeddingGemma-300M as the primary
     embedding model. 600M params, Q5_K_M quantized (~470MB).
 
-    Native dimension: 1024. Supports Matryoshka Representation Learning
-    (MRL) for 32-1024 dim output via truncation. Canonical target: 768.
+    Native dimension: 1024 — which IS the canonical dimension
+    (D-1024-DIM-NATIVE-20260926), so no MRL truncation is applied by
+    default. MRL remains available by passing target_dim explicitly.
 
     Quality: MTEB 64.33 (native 1024), ~64.0 (MRL 768), ~62.0 (MRL 256).
     Instruction-aware: prepends "Instruct: Retrieve relevant technical
@@ -500,13 +510,14 @@ class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
     [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
     """
 
-    def __init__(self, target_dim: Optional[int] = 768):
+    def __init__(self, target_dim: Optional[int] = None):
         super().__init__(
             model_path="/media/arcana-novai/omega_library/models/embeddings/Qwen3-Embedding-0.6B-Q5_K_M.gguf",
-            dimension=1024,  # native
-            target_dim=target_dim,  # 768 default via MRL
+            dimension=1024,  # native == canonical
+            target_dim=target_dim,  # None = emit native 1024
         )
-        # [D-768-DIM-MRL-CHAIN] Two-stage MRL: provider 1024→768, adapter 768→512/256/128/64
+        # [D-1024-DIM-NATIVE-20260926] MRL chain 1024→768/512/256/128/64 is
+        # AVAILABLE but not the canonical path.
         self._instruction_prefix = (
             "Instruct: Retrieve relevant technical documentation\nQuery: "
         )
@@ -528,12 +539,18 @@ class EmbeddingManager:
     Ensures that the engine always has a way to vectorize text,
     preferring high-quality local models over the sovereign fallback.
 
-    Default provider chain (local-first, D-768-DIM-MODEL-SWAP):
-        1. Qwen3GGUFEmbeddingProvider — Qwen3-Embedding-0.6B via llama-cpp (768-dim MRL from 1024)
-        2. OllamaEmbeddingProvider — nomic-embed-text via Ollama (768-dim)
-        3. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (384-dim)
-        4. StaticEmbeddingProvider — potion-base-2M via model2vec (64-dim)
-        5. SovereignFallbackEmbeddingProvider — deterministic hashing (256-dim)
+    Default provider chain (local-first, D-1024-DIM-NATIVE-20260926):
+        1. Qwen3GGUFEmbeddingProvider — Qwen3-Embedding-0.6B via llama-cpp (native 1024 == canonical)
+        2. OllamaEmbeddingProvider — nomic-embed-text via Ollama (native 768)
+        3. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (native 384)
+        4. StaticEmbeddingProvider — potion-base-2M via model2vec (native 64)
+
+    Providers 2-4 are NATIVE-WIDTH only: MRL can only TRUNCATE, never widen,
+    so a 768/384/64-dim model can never serve the canonical 1024-dim
+    collection. They are kept in the chain for fallback-tier collections
+    (omega_vec_nomic_768 / omega_vec_minilm_384 / omega_vec_static_64).
+    If one of them answers for a 1024-dim write, the adapter's dimension
+    guard rejects it (M23) instead of silently corrupting the index.
     """
 
     def __init__(self, providers: Optional[List[IEmbeddingProvider]] = None):
@@ -544,21 +561,15 @@ class EmbeddingManager:
             from .embedding_strategy import get_embedding_strategy
 
             strategy = get_embedding_strategy()
-            target_dim = strategy.canonical_dimension  # 768
+            target_dim = strategy.canonical_dimension  # 1024 (D-1024-DIM-NATIVE)
 
             self._providers = [
                 Qwen3GGUFEmbeddingProvider(
                     target_dim=target_dim
-                ),  # 1024→768 MRL, 600M, primary (D-768-DIM-MODEL-SWAP)
-                OllamaEmbeddingProvider(
-                    dimension=target_dim
-                ),  # 768-dim, nomic-embed-text, local fallback
-                LocalGGUFEmbeddingProvider(
-                    target_dim=target_dim
-                ),  # 384-dim native, truncated to 768 via MRL
-                StaticEmbeddingProvider(
-                    target_dim=target_dim
-                ),  # 64-dim native, truncated to 768 via MRL
+                ),  # native 1024 == canonical, primary (D-1024-DIM-NATIVE)
+                OllamaEmbeddingProvider(),  # native 768 — fallback-tier collections only
+                LocalGGUFEmbeddingProvider(),  # native 384 — fallback-tier collections only
+                StaticEmbeddingProvider(),  # native 64 — fallback-tier collections only
             ]
 
     async def get_embedding(self, text: str) -> Tuple[List[float], str]:

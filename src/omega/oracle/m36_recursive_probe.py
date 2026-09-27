@@ -180,13 +180,19 @@ def _dispatch_cross_validator_via_hivemind(
     handoff_packet_id: Optional[str] = None
     handoff_dispatched = False
     try:
-        # Real Hivemind dispatch — write packet to data/handoff/pending/
-        # via the canonical hub tool (MCP-ready, atomic write with flock)
-        from mcp_servers.omega_hub.hub_tools.tools import hivemind_submit_handoff
+        # Canonical Hub handoff tool. The 7 fragmented handoff tools were
+        # consolidated into the action-based `hivemind_handoff`.
+        from mcp_servers.omega_hub.hub_tools.tools import hivemind_handoff
         import anyio as _anyio
 
+        # FastMCP wraps @mcp.tool() callables, so invoking the decorated
+        # object returns a CallToolResult instead of the JSON string this
+        # contract parses. Call the raw coroutine when the wrapper is present.
+        _submit_handoff = getattr(hivemind_handoff, "__wrapped__", hivemind_handoff)
+
         result_json = _anyio.run(
-            lambda: hivemind_submit_handoff(
+            lambda: _submit_handoff(
+                action="submit",
                 target_channel="opencode",
                 target_entity=agent,
                 source_channel="opencode",
@@ -207,14 +213,18 @@ def _dispatch_cross_validator_via_hivemind(
         parsed = _json.loads(result_json)
         handoff_packet_id = parsed.get("packet_id")
         handoff_dispatched = bool(handoff_packet_id)
-    except ImportError:
-        # Hub tools not importable in this environment — fall back to file-based
-        # handoff packet creation (still a real dispatch, not a stub)
+    except (ImportError, RuntimeError):
+        # Hub tool unavailable, or Hub services still initializing
+        # (`_require_service()` raises RuntimeError). Fall back to file-based
+        # handoff packet creation (still a real dispatch, not a stub).
         try:
             import uuid as _uuid
             import json as _json
             from pathlib import Path as _Path
-            packet_id = f"cv_{_uuid.uuid4().hex[:12]}"
+            # Canonical Hivemind packet format is ho_<12 hex> (same as the Hub
+            # tool). The fallback MUST use the same prefix so downstream
+            # accept/complete lookups keep working.
+            packet_id = f"ho_{_uuid.uuid4().hex[:12]}"
             packet_path = _Path("data/handoff/pending") / f"{packet_id}.json"
             packet_path.parent.mkdir(parents=True, exist_ok=True)
             packet_path.write_text(

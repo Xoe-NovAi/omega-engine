@@ -369,144 +369,8 @@ async def local_queue_list(
             status_enum = TaskStatus(status.lower())
         except ValueError:
             return json.dumps({"error": f"Invalid status: {status}. Use: queued, completed, dead, all"})
-    
+
     tasks = await list_local_tasks(status=status_enum, limit=limit, entity=entity if entity else None)
-    return json.dumps(tasks, indent=2)
-
-
-@m9_safe("spawn_local_worker")
-@mcp.tool()
-async def spawn_local_worker(
-    task: str,
-    model: str = "qwen3-1.7b",
-    system_prompt: str = "",
-    max_tokens: int = 1024,
-    temperature: float = 0.7,
-    top_p: float = 0.95,
-    entity: str = "roc_racoon",
-) -> str:
-    """Fire-and-forget local inference using GGUF models. Returns task_id immediately.
-    
-    Offloads work to background local worker pool. Use for:
-    - Legacy code mining (@roc_racoon)
-    - Soul distillation L1→L2 (@scribe, @verity)
-    - Pattern extraction (@roc_racoon, @researcher)
-    - Cross-video synthesis (@youtube_worker)
-    - Pre-commit mandate checks (@verity)
-    
-    Args:
-        task: The prompt/task for local inference
-        model: GGUF model to use (default: qwen3-1.7b)
-        system_prompt: Optional system prompt
-        max_tokens: Max tokens to generate (default: 1024)
-        temperature: Sampling temperature (default: 0.7)
-        top_p: Top-p sampling (default: 0.95)
-        entity: Entity name for tracking (default: roc_racoon)
-        
-    Returns:
-        JSON string with task_id and status. Check result with local_queue_status.
-    """
-    _require_service()
-    from omega.oracle.local_worker_pool import queue_local_task
-    
-    task_id = await queue_local_task(
-        prompt=task,
-        model=model,
-        system_prompt=system_prompt,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        top_p=top_p,
-        entity=entity,
-    )
-    return json.dumps({
-        "status": "queued",
-        "task_id": task_id,
-        "model": model,
-        "entity": entity,
-        "check_status": f"local_queue_status {task_id}",
-        "get_result": f"local_queue_cat {task_id}",
-    }, indent=2)
-
-
-@m9_safe("local_queue_status")
-@mcp.tool()
-async def local_queue_status(task_id: str) -> str:
-    """Check status of a local worker task.
-    
-    Args:
-        task_id: Task ID returned by spawn_local_worker
-        
-    Returns:
-        JSON string with task status, model, entity, created_at, etc.
-    """
-    _require_service()
-    from omega.oracle.local_worker_pool import get_local_task_status
-    
-    status = await get_local_task_status(task_id)
-    if not status:
-        return json.dumps({"error": f"Task '{task_id}' not found"})
-    return json.dumps(status, indent=2)
-
-
-@m9_safe("local_queue_cat")
-@mcp.tool()
-async def local_queue_cat(task_id: str) -> str:
-    """Get result of a completed local worker task.
-    
-    Args:
-        task_id: Task ID returned by spawn_local_worker
-        
-    Returns:
-        JSON string with result text, provider, tokens, latency, metadata.
-    """
-    _require_service()
-    from omega.oracle.local_worker_pool import get_local_task_result
-    
-    result = await get_local_task_result(task_id)
-    if not result:
-        return json.dumps({"error": f"Result for '{task_id}' not found. Task may not be completed yet."})
-    return json.dumps({
-        "task_id": result.task_id,
-        "text": result.text,
-        "model": result.model,
-        "provider_name": result.provider_name,
-        "tokens_generated": result.tokens_generated,
-        "latency_ms": result.latency_ms,
-        "entity": result.entity,
-        "trace_id": result.trace_id,
-        "completed_at": result.completed_at,
-        "error": result.error,
-    }, indent=2)
-
-
-@m9_safe("local_queue_list")
-@mcp.tool()
-async def local_queue_list(
-    status: Optional[str] = None,
-    limit: int = 20,
-    entity: Optional[str] = None,
-) -> str:
-    """List local worker tasks with optional filters.
-    
-    Args:
-        status: Filter by status (queued/completed/dead)
-        limit: Max tasks to return (default: 20)
-        entity: Filter by entity name
-        
-    Returns:
-        JSON string with list of tasks.
-    """
-    _require_service()
-    from omega.oracle.local_worker_pool import list_local_tasks, TaskStatus
-    
-    status_enum = None
-    if status:
-        try:
-            status_enum = TaskStatus(status.lower())
-        except ValueError:
-            return json.dumps({"error": f"Invalid status: {status}. Use: queued, completed, dead"})
-    
-    tasks = await list_local_tasks(status=status_enum, limit=limit, entity=entity)
     return json.dumps(tasks, indent=2)
 
 
@@ -526,28 +390,6 @@ async def oracle_list_entities() -> str:
         "role": e.role,
         "domains": e.domains,
         "model": e.model,
-    } for e in entities]
-    return json.dumps(result, indent=2)
-
-
-@m9_safe("oracle_list_slot_keepers")
-@mcp.tool()
-async def oracle_list_slot_keepers() -> str:
-    _require_service()
-    """List entities with slot assignments (canonical name).
-
-    The engine discovers slot-holding entities dynamically. Slot semantics
-    (labels, meanings) are WAD-defined content; the engine only reports
-    occupied slot IDs and passes WAD metadata through for client use.
-
-    Returns:
-        JSON string containing entities with slot assignments.
-    """
-    entities = await anyio.to_thread.run_sync((await registry).list_slot_keepers)
-    result = [{
-        "name": e.name,
-        "slots": e.slots,
-        "metadata": e.metadata,  # WAD content: element, chakra, planet, sigil, etc.
     } for e in entities]
     return json.dumps(result, indent=2)
 
@@ -578,59 +420,6 @@ async def oracle_entity_info(name: str) -> str:
         "domains": entity.domains,
         "model": entity.model,
         "temperature": entity.temperature,
-    }, indent=2)
-
-
-@m9_safe("oracle_assess_intent")
-@mcp.tool()
-async def oracle_assess_intent(query: str) -> str:
-    _require_service()
-    """Test how the Oracle would classify a query without generating a response.
-    
-    Args:
-        query: The message to analyze for intent and confidence.
-        
-    Returns:
-        JSON string containing the classification result and confidence metrics.
-    """
-    async def _assess():
-        # P0-B: Use module-level singleton (not fresh IntentMatcher per call)
-        matcher = _get_intent_matcher()
-        classification = matcher.classify(query)
-        domain_entity = (await registry).find_by_domain(query)
-        # P0-B: Use public assess_confidence() alias, not private _assess_iris_confidence
-        iris_confidence = (await oracle).assess_confidence(query)
-        return classification, domain_entity, iris_confidence
-    
-    classification, domain_entity, iris_confidence = await _assess()
-    return json.dumps({
-        "query": query,
-        "classification": classification,
-        "iris_confidence": iris_confidence,
-        "would_escalate": iris_confidence <= 0.4,
-        "domain_entity": domain_entity.name if domain_entity else None,
-        "detected_summon": (await oracle)._detect_summon(query),
-    }, indent=2)
-
-
-@m9_safe("oracle_discover_entity")
-@mcp.tool()
-async def oracle_discover_entity(query: str) -> str:
-    _require_service()
-    """Find the best entity in the pantheon to handle a specific task or domain.
-    
-    Args:
-        query: A description of the task or a domain keyword.
-    """
-    entity = (await registry).find_by_domain(query)
-    if not entity:
-        return json.dumps({"error": "No matching entity found for this domain."})
-    return json.dumps({
-        "entity": entity.name,
-        "slots": entity.slots,
-        "role": entity.role,
-        "domains": entity.domains,
-        "reason": f"Matched domain via query: {query}"
     }, indent=2)
 
 @m9_safe("sovereign_search")
@@ -706,64 +495,11 @@ async def search_extract(query: str, limit: int = 10) -> str:
         )
     except Exception as e:
         logger.warning(f"Search persistence failed: {e}")
-    
+
     return json.dumps({"result": result, "tier": 6, "provider": "firecrawl"}, indent=2)
-
-@m9_safe("search_status")
-@mcp.tool()
-async def search_status() -> str:
-    _require_service()
-    """Get the current health and configuration status of the Sovereign Search pipeline.
-    
-    Returns:
-        JSON string containing tier availability, credit status, and cache metrics.
-    """
-    # Gather health from the gateway's health monitor
-    tier_map = {0: "local", 1: "searxng", 2: "exa", 3: "firecrawl"}
-    gw = await gateway
-    health_monitor = gw.model_gateway._health_monitor
-    health = {name: health_monitor.is_available(name) for name in tier_map.values()}
-    
-    service = await sovereign_search_service
-    status = {
-        "pipeline_version": "SSP-V2",
-        "tier_health": health,
-        "firecrawl_credits": (await sovereign_search_service).budget.has_quota("firecrawl", 100),
-        "cache_dir": str((await sovereign_search_service).cache.cache_dir),
-        "config_version": (await sovereign_search_service).config.get("version", "unknown")
-    }
-    return json.dumps(status, indent=2)
-
-
-
-
-@m9_safe("delegate_task")
-@mcp.tool()
-async def delegate_task(target_entity: str, query: str, context: str = "") -> str:
-    _require_service()
-    """Delegate a task to another entity and receive their response.
-
-    This allows agents to collaborate by summoning specialized keepers for sub-tasks.
-
-    Args:
-        target_entity: The name of the entity to delegate to.
-        query: The specific request or question for the target entity.
-        context: Optional background context or findings to pass along.
-    """
-    full_query = f"CONTEXT: {context}\n\nREQUEST: {query}" if context else query
-    response = await (await oracle).summon(target_entity, full_query)
-    return json.dumps({
-        "status": "delegated",
-        "target": response.entity,
-        "response": response.text,
-        "trace_id": response.trace_id,
-        "backend": response.backend,
-        "model": response.model,
-    }, indent=2)
 
 
 # === HIVEMIND TOOLS (7) ===
-
 @m9_safe("hivemind_post_context")
 @mcp.tool()
 async def hivemind_post_context(
@@ -1061,7 +797,6 @@ async def hivemind_get_session(session_id: str) -> str:
     Returns:
         JSON string containing the session snapshot or an error.
     """
-    _deprecated("hivemind_get_session", "hivemind_session(action='get')")
     snapshot = await hot_store_get(session_id)
     if snapshot is not None:
         return json.dumps(snapshot, indent=2)
@@ -1095,7 +830,6 @@ async def hivemind_list_sessions(channel: Optional[str] = None, entity: Optional
     Returns:
         JSON string containing a list of session IDs and agent associations.
     """
-    _deprecated("hivemind_list_sessions", "hivemind_session(action='list')")
     filter_id = _make_agent_id(channel, entity) if (channel and entity) else None
     def _list_sessions():
         sessions = []
@@ -1502,442 +1236,7 @@ async def hivemind_workspace_lock_check(domain: str) -> str:
     return json.dumps(result, indent=2)
 
 
-# [P1b] _find_packet_path is now in state.py — imported above
-
-
-@m9_safe("hivemind_submit_handoff")
-@mcp.tool()
-async def hivemind_submit_handoff(
-    target_channel: str,
-    target_entity: str,
-    source_channel: str,
-    source_entity: str,
-    task: str,
-    context: str = "",
-    priority: int = 0,
-) -> str:
-    """Submit a handoff packet to the queue. [hardening-p9] Contract Layer.
-
-    Writes the packet to data/handoff/pending/ and returns the packet_id.
-    The target agent must call hivemind_accept_handoff() to move it to active/.
-
-    Args:
-        target_channel: The channel of the target agent (e.g., 'opencode').
-        target_entity: The entity of the target agent (e.g., 'roc_racoon').
-        source_channel: The channel of the submitting agent.
-        source_entity: The entity of the submitting agent.
-        task: The task description for the target agent.
-        context: Optional background context.
-        priority: 0=normal, 1=high, 2=critical.
-        
-    Returns:
-        JSON string containing the packet_id and storage path.
-    """
-    _deprecated("hivemind_submit_handoff", "hivemind_handoff(action='submit')")
-    target_agent_id = _make_agent_id(target_channel, target_entity)
-    source_agent_id = _make_agent_id(source_channel, source_entity)
-    packet_id = f"ho_{uuid.uuid4().hex[:12]}"
-    packet = {
-        "packet_id": packet_id,
-        "target_agent_id": target_agent_id,
-        "target_channel": target_channel,
-        "target_entity": target_entity,
-        "source_agent_id": source_agent_id,
-        "source_channel": source_channel,
-        "source_entity": source_entity,
-        "task": task,
-        "context": context,
-        "priority": priority,
-        "context_delivery": "inline",
-        "resolver_strategy": "escalate",
-        "status": "pending",
-        "submitted_at": datetime.now(timezone.utc).isoformat(),
-    }
-    path = HANDOFF_PENDING / f"{packet_id}.json"
-
-    def _write():
-        with open(path, "w") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
-            json.dump(packet, f, indent=2)
-            fcntl.flock(f, fcntl.LOCK_UN)
-
-    await anyio.to_thread.run_sync(_write)
-    handoff_index_add(packet_id, "pending")
-    return json.dumps({"status": "submitted", "packet_id": packet_id, "path": str(path)})
-
-
-@m9_safe("hivemind_accept_handoff")
-@mcp.tool()
-async def hivemind_accept_handoff(packet_id: str, accepting_channel: str, accepting_entity: str) -> str:
-    """Accept a handoff packet. [hardening-p9] Moves -> active/.
-
-    Args:
-        packet_id: The packet_id from hivemind_submit_handoff.
-        accepting_channel: The channel of the accepting agent.
-        accepting_entity: The entity of the accepting agent.
-        
-    Returns:
-        JSON string confirming acceptance or stating an error.
-    """
-    _deprecated("hivemind_accept_handoff", "hivemind_handoff(action='accept')")
-    acceptor_agent_id = _make_agent_id(accepting_channel, accepting_entity)
-    src = _find_packet_path(packet_id)
-    dst = HANDOFF_ACTIVE / f"{packet_id}.json"
-
-    if not src:
-        return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
-
-    def _move():
-        with open(src) as f:
-            packet = json.load(f)
-        
-        # If already active and accepted by the same entity, just return success
-        if src.parent == HANDOFF_ACTIVE and packet.get("accepted_by_agent_id") == acceptor_agent_id:
-            return True
-
-        packet["status"] = "active"
-        packet["accepted_at"] = datetime.now(timezone.utc).isoformat()
-        packet["accepted_by_agent_id"] = acceptor_agent_id
-        packet["accepted_by_channel"] = accepting_channel
-        packet["accepted_by_entity"] = accepting_entity
-        
-        with open(dst, "w") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
-            json.dump(packet, f, indent=2)
-            fcntl.flock(f, fcntl.LOCK_UN)
-            
-        if src != dst:
-            src.unlink()
-        return True
-
-    await anyio.to_thread.run_sync(_move)
-    handoff_index_move(packet_id, "active")
-    return json.dumps({"status": "accepted", "packet_id": packet_id, "accepted_by": acceptor_agent_id})
-
-
-@m9_safe("hivemind_complete_handoff")
-@mcp.tool()
-async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
-    """Complete a handoff packet. [hardening-p9] Moves -> completed/.
-
-    Args:
-        packet_id: The packet_id from hivemind_accept_handoff.
-        result: The outcome or result of the handoff.
-        
-    Returns:
-        JSON string confirming completion or stating an error.
-    """
-    _deprecated("hivemind_complete_handoff", "hivemind_handoff(action='complete')")
-    src = _find_packet_path(packet_id)
-    dst = HANDOFF_COMPLETED / f"{packet_id}.json"
-
-    if not src:
-        return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
-
-    def _move():
-        with open(src) as f:
-            packet = json.load(f)
-            
-        # If already completed, just update the result and return
-        if src.parent == HANDOFF_COMPLETED:
-            packet["result"] = result
-            with open(src, "w") as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
-                json.dump(packet, f, indent=2)
-                fcntl.flock(f, fcntl.LOCK_UN)
-            return True
-
-        packet["status"] = "completed"
-        packet["completed_at"] = datetime.now(timezone.utc).isoformat()
-        packet["result"] = result
-        with open(dst, "w") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
-            json.dump(packet, f, indent=2)
-            fcntl.flock(f, fcntl.LOCK_UN)
-            
-        if src != dst:
-            src.unlink()
-        return True
-
-    await anyio.to_thread.run_sync(_move)
-    handoff_index_move(packet_id, "completed")
-    return json.dumps({"status": "completed", "packet_id": packet_id})
-
-
-@m9_safe("hivemind_reject_handoff")
-@mcp.tool()
-async def hivemind_reject_handoff(packet_id: str, reason: str) -> str:
-    """Reject a pending handoff packet.
-
-    Reads from pending/, marks as rejected, moves to stale/.
-
-    Args:
-        packet_id: The packet_id from hivemind_submit_handoff.
-        reason: Why the handoff was rejected.
-
-    Returns:
-        JSON string confirming rejection with trace info.
-    """
-    _deprecated("hivemind_reject_handoff", "hivemind_handoff(action='reject')")
-    src = HANDOFF_PENDING / f"{packet_id}.json"
-    dst = HANDOFF_STALE / f"{packet_id}.json"
-
-    def _reject():
-        if not src.exists():
-            return None
-        with open(src) as f:
-            packet = json.load(f)
-        packet["status"] = "stale"
-        packet["rejected"] = True
-        packet["reason"] = reason
-        packet["rejected_at"] = datetime.now(timezone.utc).isoformat()
-        with open(dst, "w") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
-            json.dump(packet, f, indent=2)
-            fcntl.flock(f, fcntl.LOCK_UN)
-        src.unlink()
-        return packet
-
-    result = await anyio.to_thread.run_sync(_reject)
-    if not result:
-        return json.dumps({"error": f"Packet '{packet_id}' not found in pending queue"})
-    handoff_index_move(packet_id, "stale")
-    return json.dumps({
-        "status": "rejected",
-        "packet_id": packet_id,
-        "reason": reason,
-        "rejected_at": result["rejected_at"],
-        "trace_id": new_trace_id(),
-    })
-
-
-@m9_safe("hivemind_handoff_list")
-@mcp.tool()
-async def hivemind_handoff_list(status: str) -> str:
-    """List handoff packets by status.
-
-    Args:
-        status: One of "pending", "active", "completed", or "stale".
-
-    Returns:
-        JSON string listing packets and their metadata.
-    """
-    _deprecated("hivemind_handoff_list", "hivemind_handoff(action='list')")
-    dir_map = {
-        "pending": HANDOFF_PENDING,
-        "active": HANDOFF_ACTIVE,
-        "completed": HANDOFF_COMPLETED,
-        "stale": HANDOFF_STALE,
-    }
-    handoff_dir = dir_map.get(status)
-    if not handoff_dir:
-        return json.dumps({"error": f"Invalid status '{status}'. Must be one of: {', '.join(dir_map)}"})
-
-    def _list():
-        packets = []
-        for f in sorted(handoff_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
-            try:
-                with open(f) as fh:
-                    packet = json.load(fh)
-                packets.append({
-                    "packet_id": packet.get("packet_id", f.stem),
-                    "target_agent_id": packet.get("target_agent_id", packet.get("target_cli", "unknown")),
-                    "target_channel": packet.get("target_channel", ""),
-                    "target_entity": packet.get("target_entity", packet.get("target_cli", "")),
-                    "source_agent_id": packet.get("source_agent_id", packet.get("source_cli", "unknown")),
-                    "source_channel": packet.get("source_channel", ""),
-                    "source_entity": packet.get("source_entity", packet.get("source_cli", "")),
-                    "task": packet.get("task", "")[:80],
-                    "status": packet.get("status", status),
-                    "priority": packet.get("priority", 0),
-                    "submitted_at": packet.get("submitted_at", ""),
-                    "accepted_by": packet.get("accepted_by", packet.get("accepted_by_agent_id", "")),
-                    "completed_at": packet.get("completed_at", ""),
-                    "rejected": packet.get("rejected", False),
-                })
-            except Exception as e:
-                logger.debug("Failed to read handoff %s: %s", f, e)
-        return packets
-
-    packets = await anyio.to_thread.run_sync(_list)
-    return json.dumps({
-        "status": status,
-        "count": len(packets),
-        "packets": packets,
-    }, indent=2)
-
-
-@m9_safe("hivemind_get_handoff")
-@mcp.tool()
-async def hivemind_get_handoff(packet_id: str) -> str:
-    """Retrieve full details for a specific handoff packet.
-
-    Args:
-        packet_id: The unique identifier for the handoff packet.
-
-    Returns:
-        JSON string containing the full packet details or an error.
-    """
-    _deprecated("hivemind_get_handoff", "hivemind_handoff(action='get')")
-    path = _find_packet_path(packet_id)
-    if not path:
-        return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
-
-    def _read():
-        with open(path) as f:
-            return json.load(f)
-
-    packet = await anyio.to_thread.run_sync(_read)
-    return json.dumps(packet, indent=2)
-
-
-@m9_safe("hivemind_handoff_archive")
-@mcp.tool()
-async def hivemind_handoff_archive(packet_ids: List[str]) -> str:
-    """Batch archive completed handoff packets.
-
-    Moves specified packets from completed/ to archive/.
-
-    Args:
-        packet_ids: List of packet IDs to archive.
-
-    Returns:
-        JSON string with counts of success/failure.
-    """
-    _deprecated("hivemind_handoff_archive", "hivemind_handoff(action='archive')")
-    def _archive():
-        succeeded = 0
-        failed = 0
-        failures = []
-        for pid in packet_ids:
-            src = HANDOFF_COMPLETED / f"{pid}.json"
-            if not src.exists():
-                failed += 1
-                failures.append({"packet_id": pid, "reason": "not found"})
-                continue
-            dst = HANDOFF_ARCHIVE / f"{pid}.json"
-            try:
-                with open(src) as f:
-                    packet = json.load(f)
-                packet["status"] = "archived"
-                packet["archived_at"] = datetime.now(timezone.utc).isoformat()
-                with open(dst, "w") as f:
-                    fcntl.flock(f, fcntl.LOCK_EX)
-                    json.dump(packet, f, indent=2)
-                    fcntl.flock(f, fcntl.LOCK_UN)
-                src.unlink()
-                succeeded += 1
-            except Exception as e:
-                failed += 1
-                failures.append({"packet_id": pid, "reason": str(e)})
-        return succeeded, failed, failures
-
-    succeeded, failed, failures = await anyio.to_thread.run_sync(_archive)
-    # Update index for successfully archived packets
-    for pid in packet_ids:
-        if (HANDOFF_ARCHIVE / f"{pid}.json").exists():
-            handoff_index_move(pid, "archive")
-    return json.dumps({
-        "status": "archived" if failed == 0 else "partial",
-        "total": len(packet_ids),
-        "succeeded": succeeded,
-        "failed": failed,
-        "failures": failures if failures else None,
-    }, indent=2)
-
-
 # === LIBRARY TOOLS (12) ===
-
-@m9_safe("library_inbox_add_url")
-@tdp_wrap(source="library_inbox_add_url", taint_level=determine_url_taint)
-@mcp.tool()
-async def library_inbox_add_url(url: str, tags: str = "", priority: int = 0) -> str:
-    _require_service()
-    """Add a URL to the intake inbox for later curation.
-    
-    Args:
-        url: The web address to ingest.
-        tags: Optional comma-separated list of tags.
-        priority: Processing priority (0=normal, higher=sooner).
-        
-    Returns:
-        JSON string containing the item_id and source metadata.
-    """
-    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    item = await (await inbox).add_url(url, tags=tag_list, priority=priority)
-    return json.dumps({"status": "added", "item_id": item.item_id, "source": item.source, "source_type": item.source_type})
-
-
-@m9_safe("library_inbox_add_note")
-@tdp_wrap(source="library_inbox_add_note", taint_level=1)
-@mcp.tool()
-async def library_inbox_add_note(text: str, tags: str = "") -> str:
-    _require_service()
-    """Add a text note to the intake (await inbox).
-    
-    Args:
-        text: The content of the note.
-        tags: Optional comma-separated list of tags.
-        
-    Returns:
-        JSON string containing the item_id and title.
-    """
-    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    item = await (await inbox).add_note(text, tags=tag_list)
-    return json.dumps({"status": "added", "item_id": item.item_id, "title": item.title})
-
-
-@m9_safe("library_inbox_add_file")
-@tdp_wrap(source="library_inbox_add_file", taint_level=1)
-@mcp.tool()
-async def library_inbox_add_file(path: str, tags: str = "") -> str:
-    _require_service()
-    """Add a local file path to the intake (await inbox).
-    
-    Args:
-        path: The absolute path to the file on disk.
-        tags: Optional comma-separated list of tags.
-        
-    Returns:
-        JSON string containing the item_id and file source.
-    """
-    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    item = await (await inbox).add_file(path, tags=tag_list)
-    return json.dumps({"status": "added", "item_id": item.item_id, "source": item.source})
-
-
-@m9_safe("library_inbox_list")
-@mcp.tool()
-async def library_inbox_list(limit: int = 20) -> str:
-    _require_service()
-    """List pending items in the intake (await inbox).
-    
-    Args:
-        limit: Maximum number of pending items to retrieve.
-        
-    Returns:
-        JSON string containing the total counts and a list of pending items.
-    """
-    items = await (await inbox).list_pending(limit=limit)
-    counts = await (await inbox).count()
-    return json.dumps({
-        "counts": counts,
-        "items": [{"item_id": i.item_id, "source": i.source[:80], "source_type": i.source_type, "title": i.title, "priority": i.priority, "created_at": i.created_at} for i in items],
-    }, indent=2)
-
-
-@m9_safe("library_inbox_stats")
-@mcp.tool()
-async def library_inbox_stats() -> str:
-    _require_service()
-    """Get inbox statistics (pending, processing, failed counts).
-    
-    Returns:
-        JSON string with counts for each inbox item status.
-    """
-    counts = await (await inbox).count()
-    return json.dumps(counts)
-
 
 @m9_safe("library_ingest_pending")
 @mcp.tool()
@@ -2156,157 +1455,10 @@ async def library_recent(limit: int = 20) -> str:
     } for d in docs], indent=2, default=str)
 
 
-@m9_safe("library_index_flush")
-@mcp.tool()
-async def library_index_flush() -> str:
-    _require_service()
-    """Flush search indices to disk.
-    
-    Returns:
-        JSON string confirming the flush status and providing current index stats.
-    """
-    await (await indexer).flush()
-    stats = (await indexer).stats()
-    return json.dumps({"status": "flushed", "stats": stats})
-
-
-# === DISCOVERY TOOLS (3) ===
-
-@m9_safe("library_discovery_research")
-@mcp.tool()
-async def library_discovery_research(query: str, depth: int = 2) -> str:
-    _require_service()
-    """Execute the tiered external discovery pipeline.
-
-    This performs real-time web discovery and returns a consolidated report.
-    Async — non-blocking (P2-A: M-A8 docstring fix).
-    
-    Args:
-        query: The search or discovery query.
-        depth: Discovery depth (1-3).
-        
-    Returns:
-        JSON string containing the consolidated discovery report.
-    """
-    import time
-    start = time.perf_counter()
-    
-    report = await (await discovery).discover(query, depth=depth)
-    
-    # Persist search result
-    latency_ms = int((time.perf_counter() - start) * 1000)
-    try:
-        persistence = SearchPersistence(entity_name="researcher", channel="opencode")
-        persistence.wrap_search(
-            tool_name="library_discovery_research",
-            tier=3,  # Discovery uses web search = Tier 3+
-            query=query,
-            results=report.to_dict(),
-            latency_ms=latency_ms,
-            status="success",
-            provider_name="discovery_engine",
-        )
-    except Exception as e:
-        logger.warning(f"Search persistence failed: {e}")
-    
-    return json.dumps(report.to_dict(), indent=2)
-
-
-@m9_safe("library_discovery_start")
-@mcp.tool()
-async def library_discovery_start(query: str) -> str:
-    _require_service()
-    """Start a background discovery job and return the job ID.
-
-    Use library_discovery_status to poll for results.
-    
-    Args:
-        query: The discovery query to run in the background.
-        
-    Returns:
-        JSON string containing the job_id.
-    """
-    job_id = await (await discovery).start_discovery(query)
-    async with anyio.create_task_group() as tg:
-        tg.start_soon(_run_discovery_background, job_id)
-    return json.dumps({"status": "started", "job_id": job_id})
-
-
-@m9_safe("library_discovery_status")
-@mcp.tool()
-async def library_discovery_status(job_id: str) -> str:
-    _require_service()
-    """Get the current status and partial results of a background discovery job.
-    
-    Args:
-        job_id: The job identifier returned by library_discovery_start.
-        
-    Returns:
-        JSON string containing the job status and any results found so far.
-    """
-    _deprecated("library_discovery_status", "library_discovery(action='status')")
-    result = (await discovery).get_job_status(job_id)
-    return json.dumps(result, indent=2)
-
-
 # === MEMORY TOOLS (6) ===
 # Sterile-named tools (P2 DataStore — Wave 1.5 P1)
 # These wrap MemoryStore methods with context params for MCP client compatibility.
 # The `omega_memory_*` tools above remain for backward compatibility.
-
-@m9_safe("memory_search")
-@tdp_wrap(source="memory_store", taint_level=1)
-@mcp.tool()
-async def memory_search(
-    ctx: Context,
-    query: str,
-    entity_name: str,
-    limit: int = 20,
-) -> str:
-    """Search across conversation history using FTS5 full-text search.
-    
-    Wraps MemoryStore.search_fts() — BM25 keyword ranking, no vector overhead.
-    Use this for exact-match and keyword-focused memory lookups.
-    
-    Args:
-        query: The search query (natural language or keywords).
-        entity_name: The sovereign owner of the memory (REQUIRED).
-        limit: Maximum number of results to return.
-        
-    Returns:
-        JSON string containing matched exchanges with scores and timestamps.
-    """
-    import time
-    start = time.perf_counter()
-    
-    if not query.strip():
-        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
-    memory_store = get_memory_store()
-    results = await memory_store.search_fts(query, entity_name, limit)
-    
-    # Persist search result
-    latency_ms = int((time.perf_counter() - start) * 1000)
-    try:
-        persistence = SearchPersistence(entity_name=entity_name, channel="opencode")
-        persistence.wrap_search(
-            tool_name="memory_search",
-            tier=0,  # Local memory search = Tier 0
-            query=query,
-            results={"results": results, "count": len(results)},
-            latency_ms=latency_ms,
-            status="success",
-            provider_name="local_memory_fts5",
-        )
-    except Exception as e:
-        logger.warning(f"Search persistence failed: {e}")
-    
-    return json.dumps({
-        "query": query,
-        "entity": entity_name,
-        "count": len(results),
-        "results": results,
-    }, indent=2)
-
 
 @m9_safe("omega_memory_search")
 @tdp_wrap(source="memory_store", taint_level=1)
@@ -2462,53 +1614,6 @@ async def research_get(research_id: str) -> str:
     if not result:
         return json.dumps({"error": f"Research '{research_id}' not found"})
     return json.dumps(result.to_dict(), indent=2, default=str)
-
-
-@m9_safe("research_list")
-@mcp.tool()
-async def research_list(limit: int = 20) -> str:
-    _require_service()
-    """List recent research results.
-
-    Args:
-        limit: Maximum results to return
-        
-    Returns:
-        JSON string containing a list of recent research IDs and queries.
-    """
-    results = await (await research_engine).list_results(limit=limit)
-    return json.dumps(results, indent=2, default=str)
-
-
-@m9_safe("research_depths")
-@mcp.tool()
-async def research_depths() -> str:
-    """List available research depth levels and their configurations.
-    
-    Returns:
-        JSON string containing the available depth levels and source counts.
-    """
-    return json.dumps(RESEARCH_DEPTHS, indent=2)
-
-
-@m9_safe("research_stats")
-@mcp.tool()
-async def research_stats() -> str:
-    _require_service()
-    """Get research engine statistics.
-    
-    Returns:
-        JSON string containing the total count and depth distribution of research tasks.
-    """
-    results = await (await research_engine).list_results(limit=1000)
-    depths = {}
-    for r in results:
-        d = str(r.get("depth", 2))
-        depths[d] = depths.get(d, 0) + 1
-    return json.dumps({
-        "total_research": len(results),
-        "by_depth": depths,
-    }, indent=2)
 
 
 # === STATS TOOLS (5) ===
@@ -3422,6 +2527,174 @@ async def oracle_debug(
         return json.dumps({"error": str(e)})
 
 
+# ── Internal Helper Functions for system_stats ──────────────────────────────────
+
+async def _get_system_summary() -> dict:
+    """Collect system summary stats (CPU, memory, zRAM, disk, GPU, Podman, Ryzen).
+
+    Returns:
+        Dict with system summary metrics.
+    """
+    def _collect():
+        stats = {
+            "timestamp": datetime.now().isoformat(),
+            "cpu": {"available": False},
+            "memory": {"available": False},
+            "zram": {"available": False},
+            "disk": {"available": False},
+            "gpu": {"available": False},
+            "podman": {"available": False},
+            "ryzen_tuning": {"available": False},
+        }
+
+        # CPU
+        try:
+            with open("/proc/loadavg") as f:
+                parts = f.read().strip().split()
+                stats["cpu"] = {
+                    "available": True,
+                    "load_1min": float(parts[0]),
+                    "load_5min": float(parts[1]),
+                    "load_15min": float(parts[2]),
+                    "running_processes": int(parts[3].split("/")[0]),
+                    "total_processes": int(parts[3].split("/")[1]),
+                }
+        except Exception as exc:
+            logger.debug("Failed to collect CPU stats: %s", exc)
+
+        # Memory
+        try:
+            with open("/proc/meminfo") as f:
+                mem = {}
+                for line in f:
+                    k, v = line.split(":", 1)
+                    mem[k.strip()] = int(v.strip().split()[0]) // 1024
+                stats["memory"] = {
+                    "available": True,
+                    "total_mb": mem.get("MemTotal", 0),
+                    "free_mb": mem.get("MemFree", 0),
+                    "available_mb": mem.get("MemAvailable", 0),
+                    "used_mb": mem.get("MemTotal", 0) - mem.get("MemAvailable", 0),
+                }
+        except Exception as exc:
+            logger.debug("Failed to collect memory stats: %s", exc)
+
+        # zRAM
+        zram_path = Path("/sys/block/zram0/mm_stat")
+        if zram_path.exists():
+            try:
+                with open(zram_path) as f:
+                    mm = f.read().strip().split()
+                stats["zram"] = {
+                    "available": True,
+                    "orig_data_mb": round(int(mm[0]) / 1048576, 1),
+                    "compressed_mb": round(int(mm[1]) / 1048576, 1),
+                    "mem_used_mb": round(int(mm[2]) / 1048576, 1),
+                    "ratio": round(int(mm[0]) / max(int(mm[1]), 1), 2),
+                }
+            except Exception as exc:
+                logger.debug("Failed to collect zRAM stats: %s", exc)
+
+        # Disk — omega_library partition (M16: path from env var)
+        try:
+            statvfs = os.statvfs(str(_OMEGA_LIBRARY_PATH))
+            total = statvfs.f_frsize * statvfs.f_blocks // (1024**3)
+            free = statvfs.f_frsize * statvfs.f_bfree // (1024**3)
+            stats["disk"] = {
+                "available": True,
+                "mount": str(_OMEGA_LIBRARY_PATH),
+                "total_gb": total,
+                "free_gb": free,
+                "used_gb": total - free,
+                "used_pct": round((total - free) / total * 100, 1) if total > 0 else 0,
+            }
+        except Exception as exc:
+            logger.debug("Failed to collect disk stats: %s", exc)
+
+        # Vulkan iGPU
+        gpu_path = Path("/sys/class/drm/card1/device/gpu_busy_percent")
+        if gpu_path.exists():
+            try:
+                with open(gpu_path) as f:
+                    stats["gpu"] = {
+                        "available": True,
+                        "utilization_pct": int(f.read().strip()),
+                    }
+            except Exception as exc:
+                logger.debug("Failed to collect GPU stats: %s", exc)
+
+        # Podman
+        try:
+            result = os.popen("podman ps --format json 2>/dev/null").read()
+            if result:
+                containers = json.loads(result)
+                stats["podman"] = {
+                    "available": True,
+                    "running": sum(1 for c in containers if c.get("State") == "running"),
+                    "total": len(containers),
+                    "names": [c.get("Names", [""])[0] for c in containers],
+                }
+        except Exception as exc:
+            logger.debug("Failed to collect Podman stats: %s", exc)
+
+        # Ryzen tuning check
+        try:
+            with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
+                governor = f.read().strip()
+            stats["ryzen_tuning"] = {
+                "available": True,
+                "governor": governor,
+            }
+        except Exception as exc:
+            logger.debug("Failed to collect Ryzen tuning stats: %s", exc)
+
+        return stats
+
+    stats = await anyio.to_thread.run_sync(_collect)
+    return stats
+
+
+async def _get_hardware_detail() -> dict:
+    """Collect detailed hardware stats (per-core CPU, memory pressure, OOM risk, threads, topology).
+
+    Returns:
+        Dict with detailed hardware metrics.
+    """
+    try:
+        from omega.monitoring import HardwareMonitor
+    except ImportError:
+        return {
+            "available": False,
+            "error": "HardwareMonitor module not available (import omega.monitoring failed)",
+        }
+
+    def _collect():
+        hm = HardwareMonitor()
+        stats = hm.collect_all()
+        # Per-core CPU utilization
+        stats["cpu"]["per_core_percent"] = hm.get_per_core_utilization(interval=0.3)
+        stats["cpu"]["avg_percent"] = round(
+            sum(stats["cpu"]["per_core_percent"].values())
+            / max(len(stats["cpu"]["per_core_percent"]), 1), 1
+        )
+
+        # Threads
+        stats["threads"] = hm.get_process_thread_count()
+
+        # Topology
+        stats["topology"] = hm.get_cpu_topology()
+        return stats
+
+    try:
+        stats = await anyio.to_thread.run_sync(_collect)
+        return stats
+    except Exception as exc:
+        logger.exception("_get_hardware_detail failed")
+        return {"available": False, "error": str(exc)}
+
+
+# ── SYSTEM STATS TOOL ───────────────────────────────────────────────────────────
+
 @m9_safe("system_stats")
 @mcp.tool()
 async def system_stats(
@@ -3536,36 +2809,6 @@ async def github(
         return json.dumps({"error": str(e)})
 
 
-# === OBSERVABILITY STREAM ===
-
-@m9_safe("observability_stream")
-@mcp.tool()
-async def observability_stream() -> str:
-    """Get the SSE endpoint URL for real-time observability streaming.
-    
-    Agents can connect to this endpoint via EventSource to receive live metrics,
-    trace events, and system health updates without polling.
-    
-    Returns:
-        JSON string with the SSE endpoint URL and connection instructions.
-    """
-    _require_service()
-    
-    # The SSE endpoint is served by the Hub's Starlette app
-    # We return the relative path; the agent constructs the full URL
-    return json.dumps({
-        "endpoint": "/obs/stream",
-        "transport": "SSE (Server-Sent Events)",
-        "description": "Real-time observability stream. Connect via EventSource to receive live metrics, traces, and health updates.",
-        "event_types": [
-            "metric_update",      # Per-entity metric changes
-            "trace_event",        # New trace events
-            "health_change",      # Circuit breaker state changes
-            "entity_focus"        # Entity selection changes
-        ],
-        "usage": "const es = new EventSource('http://localhost:8016/obs/stream'); es.onmessage = (e) => console.log(JSON.parse(e.data));"
-    }, indent=2)
-
 @m9_safe("library_web_search")
 @tdp_wrap(source="library_web_search", taint_level=1)
 @mcp.tool()
@@ -3584,7 +2827,7 @@ async def library_web_search(query: str, domain: str = "", limit: int = 20) -> s
 Returns:
         JSON string containing the search results and hit count.
     """
-    _deprecated("library_search", "library_web_search (for web) or library_fts_search (for local)")
+    _deprecated("library_web_search", "library_fts_search (for local) or sovereign_search (for web)")
     _require_service()
     
     if not query.strip():

@@ -20,7 +20,7 @@ import anyio
 from src.omega.oracle.observability import ObservabilityEngine
 
 async def create_snapshot():
-    \"\"\"
+    """
     Creates an atomic, idempotent snapshot of the Omega Engine state 
     before a major version upgrade (e.g., OpenCode 1.16.0).
     
@@ -29,7 +29,7 @@ async def create_snapshot():
     2. Engine Config (config/omega.yaml, config/providers.yaml, config/models.yaml)
     3. PIVOT Log (docs/decisions/PIVOT_LOG.md)
     4. Current State (OMEGA_ENGINE.md)
-    \"\"\"
+    """
     trace_id = str(uuid.uuid4())
     timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
     snapshot_dir = Path(f"data/snapshots/pre_upgrade_{timestamp}_{trace_id[:8]}")
