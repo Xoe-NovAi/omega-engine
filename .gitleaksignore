@@ -74,3 +74,105 @@ fd5dc1771805226a0a9897196494da4bfa03bcfa:src/omega/oracle/soul_validator.py:gene
 # WHY: AP token in soul backup file (excluded from release per D-565), verified inert
 2e4ea0fce4b3f694b3e3a6ac6b2720cf25b3642b:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
 36508d92e04afdddf9ff0ef2c10e262d740ece30:data/coordination/WAKE_STATE.json:generic-api-key:289
+
+# ARCHITECT-STRIKE 2026-09-27 triage: useDefault=true surfaced 50 findings (33 generic-api-key, 9 openrouter-api-key, 4 private-key, 4 curl-auth-header) across 18 unique rule:file pairs. All triaged WONTFIX (AP tokens / session IDs / explicit test fixtures / doc curl examples / template PEM with ... placeholders / Architect-REVOKED sk-or-v1-62dc75 key). Zero live secrets. Entries below are bare fingerprints (gitleaks 8.21.2 parsing).
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-extractor placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:251)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-extractor placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:251)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-reasoner placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:263)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-reasoner placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:263)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+# WHY: AP token AP-NEMOTON-TEACHER-v1.0.0 internal identifier, not a credential (20260829-session-ses_fdef.md:142)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:20260829-session-ses_fdef.md:generic-api-key:142
+# WHY: AP token AP-NEMOTON-TEACHER-v1.0.0 internal identifier, not a credential (20260829-session-ses_fdef.md:142)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:20260829-session-ses_fdef.md:generic-api-key:142
+# WHY: AP token AP-NEMOTON-TEACHER-v1.0.0 internal identifier, not a credential (20260829-session-ses_fdef.md:142)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:20260829-session-ses_fdef.md:generic-api-key:142
+# WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:20260829-session-ses_fdef.md:generic-api-key:3314
+# WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:20260829-session-ses_fdef.md:generic-api-key:3314
+# WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:20260829-session-ses_fdef.md:generic-api-key:3314
+# WHY: explicit test fixture sk-test12345678901234567890 in scan_secrets doc example, never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+# WHY: explicit test fixture sk-test12345678901234567890 in scan_secrets doc example, never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+44470d8689e2d09532ee6bce784d3448dbec16ae:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+# WHY: explicit test fixture sk-test12345678901234567890 in scan_secrets doc example, never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+d0a66e861e12d4057dcc1d37b296169f790b6d30:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+# WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:134
+# WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:128
+# WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:128
+# WHY: obvious placeholder ses_abc123def456 resume_token, never a real secret (LILITH_M34_RUNTIME_SPEC_20260830.md:162/156)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:162
+# WHY: obvious placeholder ses_abc123def456 resume_token, never a real secret (LILITH_M34_RUNTIME_SPEC_20260830.md:162/156)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:156
+# WHY: obvious placeholder ses_abc123def456 resume_token, never a real secret (LILITH_M34_RUNTIME_SPEC_20260830.md:162/156)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:156
+# WHY: AP token AP-DEEP-SIPHON-CARMACK-v1.0 internal identifier, not a credential (DEEP_SIPHON_CARMACK_REVIEW.md:2)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:2
+# WHY: AP token AP-DEEP-SIPHON-CARMACK-v1.0 internal identifier, not a credential (DEEP_SIPHON_CARMACK_REVIEW.md:2)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:2
+# WHY: AP token AP-ROC-LEGACY-v1.0.0 internal identifier, not a credential (KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:98)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:98
+# WHY: AP token AP-ROC-LEGACY-v1.0.0 internal identifier, not a credential (KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:98)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:98
+# WHY: AP token AP-GROKSTER-v1.0.0 internal identifier, not a credential (R54_IDENTITY_FLUIDITY_20260813.md:47)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:47
+# WHY: AP token AP-GROKSTER-v1.0.0 internal identifier, not a credential (R54_IDENTITY_FLUIDITY_20260813.md:47)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:47
+# WHY: documented PII test fixture sk-proj-abc123def456 with abc123 marker, never a real secret (PII_MASKER_IMPLEMENTATION_SPEC.md:635)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:635
+# WHY: documented PII test fixture sk-proj-abc123def456 with abc123 marker, never a real secret (PII_MASKER_IMPLEMENTATION_SPEC.md:635)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:635
+# WHY: AP token AP-VOS-OMEGAVERSE-20260814 internal identifier, not a credential (omegaverse/archive/state.yaml:3)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/realms/omegaverse/archive/state.yaml:generic-api-key:3
+# WHY: AP token AP-VOS-OMEGAVERSE-20260814 internal identifier, not a credential (omegaverse/archive/state.yaml:3)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/realms/omegaverse/archive/state.yaml:generic-api-key:3
+# WHY: AP token AP-VOS-OMEGAVERSE-20260814 internal identifier, not a credential (omegaverse/archive/state.yaml:7, SPDX-header variant)
+b44b34be859b6fc96d8ac13d4097ad7e227e2021:data/realms/omegaverse/archive/state.yaml:generic-api-key:7
+# WHY: adversarial test fixture sk-exploit in security test doc, never a real secret (VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:122)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+# WHY: adversarial test fixture sk-exploit in security test doc, never a real secret (VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:122)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+# WHY: test fixture explicit_key_123 in CCR store unit-test doc, never a real secret (10_VERIFICATION_TESTS.md:558)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+# WHY: test fixture explicit_key_123 in CCR store unit-test doc, never a real secret (10_VERIFICATION_TESTS.md:558)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+# WHY: AP token AP-F821-EXECUTION-FINAL-v1.0.0 internal identifier, not a credential (AGENT_EXECUTION_PLAN.md:2)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+# WHY: AP token AP-F821-EXECUTION-FINAL-v1.0.0 internal identifier, not a credential (AGENT_EXECUTION_PLAN.md:2)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+# WHY: AP token AP-OMEGA-HIVEMIND-MCP-v1.0.0 internal identifier, not a credential (archived server.py:3)
+296fd1d50faf7826b1919fc0eb2dfdd4e8602592:mcp_servers/archives/omega-hivemind_superseded_by_hub_20260519/server.py:generic-api-key:3
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:146)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:private-key:146
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:146)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:private-key:146
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (R_VAULT_SCHEMA_V2.md:220)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:220
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (R_VAULT_SCHEMA_V2.md:220)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:220
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209 documents the key as NOT-tracked local-only)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
+d0b85655e17188d8bd2c233de207c1edf7341529:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
+3036f720d43f17a23097df0777c78398349e9265:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:313
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:310
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:310
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:12
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
