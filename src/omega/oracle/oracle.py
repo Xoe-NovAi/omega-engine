@@ -84,7 +84,6 @@ ROLE_CONSTANTS: Dict[str, str] = {
     "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",  # Kali role
     "BUILD_OVERSOUL": "BUILD_OVERSOUL",  # Ma'at role (Build-side, S1-S5)
     "RUNTIME_OVERSOUL": "RUNTIME_OVERSOUL",  # Lilith role (Run-side, S6-S10)
-    "S1": "S1",
     "S2": "S2",
     "S3": "S3",
     "S4": "S4",

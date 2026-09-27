@@ -235,6 +235,10 @@ class TestDispatchGuardStep6b:
     def test_step6b_skips_when_m34_disabled(self):
         """Step 6b passes without registering when M34 disabled."""
         import scripts.dispatch_guard as dg
+        import os
+
+        # Ensure M34 is disabled
+        os.environ.pop("OMEGA_M34_ENABLED", None)
 
         result = dg.GuardResult()
         dg.step6b_m34_register_subagent(

@@ -569,13 +569,10 @@ class EntityRegistry:
             # Metadata: Merge dictionaries (Highest priority wins for shared keys)
             projected.metadata.update(layer.metadata)
 
-            # Personality: Concatenation
-            if layer.personality and layer.personality != projected.personality:
-                projected.personality = (
-                    f"{layer.personality}\n\n{projected.personality}"
-                    if projected.personality
-                    else layer.personality
-                )
+            # Personality: Clean Replacement (DOOM WAD backward-scan semantics)
+            # Higher-priority PWAD layer completely replaces IWAD base personality.
+            if layer.personality:
+                projected.personality = layer.personality
 
             # Other core fields: Highest priority wins
             projected.temperature = layer.temperature or projected.temperature

@@ -282,7 +282,11 @@ if __name__ == "__main__":
     
     try:
         test_should_require_write_tool_exists()
-        test_should_require_write_tool_8k_threshold()
+        # NOTE: the static-8K test (test_should_require_write_tool_static_8k_threshold)
+        # needs the pytest `monkeypatch` fixture and cannot run standalone; its
+        # no-fixture sibling below covers the same contract under the live
+        # (dynamic) threshold. [D-1024-DIM-NATIVE-20260926 / F821 fix]
+        test_should_require_write_tool_dynamic_threshold()
         test_should_require_write_tool_p0_p1_always()
         test_should_require_write_tool_research_forensic()
         test_should_require_write_tool_small_implement()
