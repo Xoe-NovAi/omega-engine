@@ -80,7 +80,6 @@ class FirewallChecker:
         r"\bMa[']?at\b",  # Build Oversoul / CTO
         r"\bLilith\b",  # Runtime Oversoul / CISO
         r"\bJem\b",  # Sovereign Synthesizer
-        r"\bIris\b",  # Voice Assistant / Messenger Bridge
         r"\bMnemosyne\b",  # Memory System Archetype
         r"\bJohn\.?Carmack\b",  # S3 Consultant
         r"\bDoom\.?Guy\b",  # Doom Universe Architect
@@ -116,7 +115,6 @@ class FirewallChecker:
         r"\bWater\b.*\bCosmic\s*Heart\b",
         r"\bEarth\b.*\bCelestial\s*Breath\b",
     ]
-
     def __init__(self, patterns: list[tuple[str, Literal["error", "warning"]]] | None = None):
         """Initialize with custom patterns if provided."""
         self._patterns = patterns if patterns is not None else self.FORBIDDEN_PATTERNS
