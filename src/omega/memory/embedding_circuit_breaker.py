@@ -161,8 +161,11 @@ class EmbeddingCircuitBreaker:
             for p in providers
         }
         # Sovereign fallback is ALWAYS last and NEVER breaker-wrapped
-        # (it cannot fail; zero external dependencies)
-        self._sovereign = SovereignFallbackEmbeddingProvider(dimension=768)
+        # (it cannot fail; zero external dependencies).
+        # [D-1024-DIM-NATIVE-20260926] No explicit dimension: the sovereign
+        # hash emitter follows the canonical dimension from the SSOT, so a
+        # total-failure result is always the width the vec index expects.
+        self._sovereign = SovereignFallbackEmbeddingProvider()
 
     async def embed(self, text: str) -> List[float]:
         """Try each provider in order; fall through to sovereign hash on total failure.

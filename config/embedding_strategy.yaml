@@ -7,21 +7,24 @@
 # SOURCE OF TRUTH for all embedding dimensions, models, collections
 # Derived from: docs/strategy/EMBEDDING_HARDENING_STRATEGY_20260720.md
 
-version: "1.0.0"
-canonical_dimension: 768
+version: "1.2.0"   # 1.2.0 — D-1024-DIM-NATIVE-20260926 (768 -> 1024)
+canonical_dimension: 1024
+
+# MRL truncation ladder (AVAILABLE, NOT canonical).
+# 1024 is first because native width == canonical width.
+mrl_dimensions: [1024, 768, 512, 256, 128, 64]
 
 # Vec0 table lock — HARDCODED, prevents silent corruption
 vec0_lock:
   enabled: true
-  dimension: 768
+  dimension: 1024
   error_on_mismatch: true
   message: |
-    Embedding dimension mismatch: provider={actual_dim}, canonical=768.
-    All providers MUST output 768-dim vectors. Use MRL truncation in provider.
+    Embedding dimension mismatch: provider={actual_dim}, canonical=1024.
+    All providers MUST output 1024-dim vectors. MRL truncation available but NOT canonical.
 
 # Provider chain (quality-first order)
-# D-768-DIM-MODEL-SWAP: Qwen3-Embedding-0.6B replaces EmbeddingGemma-300M
-# D-768-DIM-UNIFIED: All embeddings 768-dim via MRL truncation from 1024 native
+# D-1024-DIM-NATIVE-20260926: Qwen3-Embedding-0.6B at 1024-dim native is canonical
 providers:
   - id: "qwen3_primary"
     class: "Qwen3GGUFEmbeddingProvider"
@@ -29,10 +32,10 @@ providers:
     native_dim: 1024
     mrl_enabled: true
     mrl_dimensions: [768, 512, 256, 128, 64]
-    default_mrl: 768
+    default_mrl: 1024
     pooling: "last"
     instruction_prefix: "Instruct: Retrieve relevant technical documentation\nQuery: "
-    collection: "omega_vec_qwen_768"
+    collection: "omega_vec_qwen_1024"
     quantization: "int8_rescore"
     oversample: 2
     priority: 0
@@ -72,11 +75,10 @@ providers:
     capabilities: ["zero_cost", "no_dependencies"]
 
 # Collection definitions (maps to vec0 tables)
-# D-768-DIM-RENAME-GEMMA: gemma_768 → qwen_768
-# D-768-DIM-DELETE-LIBRARY-256: dead code removed
+# D-1024-DIM-NATIVE-20260926: qwen_1024 is canonical
 collections:
-  omega_vec_qwen_768:
-    dimension: 768
+  omega_vec_qwen_1024:
+    dimension: 1024
     metric: "cosine"
     quantization: "int8_rescore"
     hnsw_params:
@@ -84,12 +86,12 @@ collections:
       ef_construction: 200
       ef_search: 64
 
-  omega_vec_library_768:
-    dimension: 768
+  omega_vec_library_1024:
+    dimension: 1024
     metric: "cosine"
     quantization: "none"
-    rrf_weights: {"fts": 0.6, "vec": 0.4}  # D-768-DIM-LIBRARY-RRF: FTS-primary with proper semantic weight
-      
+    rrf_weights: {"fts": 0.6, "vec": 0.4}
+       
   omega_vec_nomic_768:
     dimension: 768
     metric: "cosine"
@@ -98,7 +100,7 @@ collections:
       m: 16
       ef_construction: 200
       ef_search: 64
-      
+       
   omega_vec_nomic_512:
     dimension: 512
     metric: "cosine"
@@ -107,7 +109,7 @@ collections:
       m: 16
       ef_construction: 200
       ef_search: 64
-      
+       
   omega_vec_nomic_256:
     dimension: 256
     metric: "cosine"
@@ -116,7 +118,7 @@ collections:
       m: 16
       ef_construction: 200
       ef_search: 64
-      
+       
   omega_vec_minilm_384:
     dimension: 384
     metric: "cosine"
@@ -125,14 +127,14 @@ collections:
       m: 16
       ef_construction: 200
       ef_search: 64
-      
+       
   omega_vec_static_64:
     dimension: 64
     metric: "cosine"
     quantization: "none"
 
 # RRF Fusion (universal k=60)
-# D-768-DIM-RENAMED-WEIGHTS: qwen3_primary replaces gemma_primary
+# D-1024-DIM-NATIVE-20260926: qwen3_primary at 1024 is canonical
 fusion:
   method: "rrf"
   k: 60

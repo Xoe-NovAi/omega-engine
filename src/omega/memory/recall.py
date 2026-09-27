@@ -694,8 +694,10 @@ class RecallStore:
                 alpha = float(row["decay_alpha"])
                 self._entity_decay_cache[entity_name] = alpha
                 return alpha
-        except Exception:
-            pass
+        except Exception as e:
+                logger.warning("Failed to load decay alpha for %s: %s", entity_name, e, exc_info=True)
+                self._entity_decay_cache[entity_name] = DEFAULT_DECAY_ALPHA
+                return DEFAULT_DECAY_ALPHA
 
         self._entity_decay_cache[entity_name] = DEFAULT_DECAY_ALPHA
         return DEFAULT_DECAY_ALPHA

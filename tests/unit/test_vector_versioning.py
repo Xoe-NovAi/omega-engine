@@ -79,7 +79,7 @@ def test_tag_vector_with_content_hash(in_memory_db):
     reg.tag_vector("omega_vec_nomic_768", 1, "nomic-embed-v1.5", "hello world")
     reg.tag_vector(
         "omega_vec_nomic_768", 2, "nomic-embed-v1.5", "hello world"
-    )  # same content
+    )
     counts = reg.count_by_version("omega_vec_nomic_768")
     assert counts == {"nomic-embed-v1.5": 2}
 
@@ -90,7 +90,8 @@ def test_ensure_schema_creates_all_mrl_collections(in_memory_db):
     reg.ensure_schema()
     for coll in MRL_COLLECTIONS:
         row = in_memory_db.execute(
-            f"SELECT name FROM sqlite_master WHERE type='table' AND name='{coll}_meta'"
+            f"SELECT name FROM sqlite_master WHERE type='table' "
+            f"AND name='{coll}_meta'"
         ).fetchone()
         assert row is not None, f"Missing meta table for {coll}"
 
@@ -137,5 +138,7 @@ def test_drift_detector_with_synthetic_distributions():
     b_raw = rng.standard_normal((50, 8)) + 3.0
     b = [row.tolist() for row in b_raw]
     shift_drift = dd.compute_drift(a, b)
-    assert same_drift < 0.1, f"Same-distribution drift should be tiny, got {same_drift}"
+    assert same_drift < 0.1, (
+        f"Same-distribution drift should be tiny, got {same_drift}"
+    )
     assert shift_drift > same_drift, "Shifted distribution should drift more"

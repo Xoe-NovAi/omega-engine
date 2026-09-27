@@ -37,7 +37,9 @@ class EmbeddingStrategy:
 
     @property
     def mrl_dimensions(self) -> List[int]:
-        return self.data.get("mrl_dimensions", [768, 512, 256, 128, 64])
+        # [D-1024-DIM-NATIVE-20260926] 1024 is native/canonical; the rest are
+        # MRL truncation targets (available, NOT canonical).
+        return self.data.get("mrl_dimensions", [1024, 768, 512, 256, 128, 64])
 
     def get_collections(self) -> Dict[str, Dict]:
         return self.data["collections"]

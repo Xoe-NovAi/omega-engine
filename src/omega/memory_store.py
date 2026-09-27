@@ -21,9 +21,7 @@ from typing import Any, Dict, List, Optional
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError,
     OmegaPersistenceError,
-    EntityTombstonedError,
 )
 
 from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY
@@ -39,7 +37,7 @@ from .memory.providers import (
 from .memory.vector_adapters import IVectorStoreAdapter, MemoryVectorAdapter
 from .memory.sqlite_vec_adapter import SQLiteVecAdapter
 from .memory.fts_index import ConversationFTSIndex
-from .memory.embeddings import EmbeddingManager, GemmaGGUFEmbeddingProvider, StaticEmbeddingProvider
+from .memory.embeddings import EmbeddingManager, Qwen3GGUFEmbeddingProvider, SovereignFallbackEmbeddingProvider
 from .memory.adapters import MemoryAdapterRegistry
 
 logger = logging.getLogger(__name__)
@@ -189,9 +187,9 @@ class MemoryStore:
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
 
-        # FS-Β1: Embedding Strategy SSOT — canonical_dimension=768
-        # The 1024-dim fallback (SovereignFallbackEmbeddingProvider) is REMOVED.
-        # All providers MUST output 768-dim via MRL truncation.
+        # FS-Β1: Embedding Strategy SSOT — canonical_dimension=1024
+        # (D-1024-DIM-NATIVE-20260926). Native 1024 IS canonical; MRL
+        # truncation is available but NOT the canonical path.
 
         if vector_store is not None:
             self.vector_store = vector_store
@@ -204,20 +202,20 @@ class MemoryStore:
         if embedding_manager is not None:
             self.embedding_manager = embedding_manager
         else:
-            # FS-Β1: Embedding Strategy SSOT — write-path default = 768 only
-            # Gemma + Nomic primary/fallback with MRL truncation to 768
-            # MiniLM/static demoted to non-default collections (Option A)
+            # FS-Β1 / [D-1024-DIM-NATIVE-20260926]: write-path must emit the
+            # canonical width or the adapter's dimension guard rejects it (M23).
+            # Qwen3-Embedding-0.6B is native 1024 == canonical. EmbeddingGemma
+            # (768 native) and potion (768 native) CANNOT reach 1024 — MRL only
+            # truncates — so they are demoted to fallback-tier collections.
             from .memory.embedding_strategy import get_embedding_strategy
 
             strategy = get_embedding_strategy()
-            target_dim = strategy.canonical_dimension  # 768
+            target_dim = strategy.canonical_dimension  # 1024
 
             self.embedding_manager = EmbeddingManager(
                 [
-                    GemmaGGUFEmbeddingProvider(target_dim=target_dim),
-                    StaticEmbeddingProvider(
-                        model_name="blobbybob/potion-mxbai-micro", target_dim=target_dim
-                    ),
+                    Qwen3GGUFEmbeddingProvider(target_dim=target_dim),
+                    SovereignFallbackEmbeddingProvider(dimension=target_dim),
                 ]
             )
         # [Horizon 2: MiMo] FTS5 Search Index

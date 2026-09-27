@@ -163,7 +163,7 @@ class Indexer:
     def __init__(
         self,
         vector_adapter: Optional[IVectorStoreAdapter] = None,
-        vector_collection: str = "omega_vec_qwen_768",
+        vector_collection: str = "omega_vec_qwen_1024",  # [D-1024-DIM-NATIVE-20260926]
     ):
         self._fts: Optional[Any] = None
         self._vector_adapter = vector_adapter or MemoryVectorAdapter()
@@ -459,12 +459,14 @@ class Indexer:
         """Compute a simple bag-of-words embedding.
 
         Uses stable MD5-based Feature Hashing (hashing trick) to map
-        tokens deterministically to the canonical 768-dimensional space.
+        tokens deterministically to the canonical 1024-dimensional space.
         """
         import hashlib
 
-        # Canonical dimension per EMBEDDING_HARDENING_STRATEGY_20260720.md
-        CANONICAL_DIM = 768
+        # Canonical dimension — D-1024-DIM-NATIVE-20260926 (SSOT:
+        # config/embedding_strategy.yaml canonical_dimension).
+        # Must match the target collection's declared width or upsert() raises.
+        CANONICAL_DIM = 1024
 
         vec = [0.0] * CANONICAL_DIM
         tokens = self._tokenize(text)
