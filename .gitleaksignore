@@ -176,3 +176,109 @@ cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_MINI
 c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
 # WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
 cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
+
+# ──────────────────────────────────────────────────────────────────────
+# CI-parity triage 2026-09-27 (PR #4) — the `--all` scan set
+#
+# Why this block exists: the earlier local triage ran gitleaks 8.21.2 with
+# --log-opts="--branches --tags". CI (secret-scan.yml, secrets.yml) pins
+# gitleaks 8.24.3 and runs --log-opts="--all" over the FULL 1310-commit
+# history, so CI saw a different (larger, differently-fingerprinted) set.
+# local != CI was a FALSE GREEN. These 38 fingerprints reproduce CI
+# exactly (verified in a clean clone of origin at 445f851b: 38 leaks,
+# 309.90 MB — byte-identical to the CI job log).
+#
+# VERDICT: all 38 are non-secrets. Zero live, zero unrevoked.
+#   18  prose word list (mining report)          - not a credential
+#    4  LLM telemetry prose "finish_reason"      - not a credential
+#    3  AP artifact tokens                       - internal identifiers
+#    3  GROQ_API_KEY=gsk_...  (literal dots)     - doc placeholder
+#    3  "src/omega/vault/" quoted as a path      - not a credential
+#    2  curl local/redacted auth examples        - placeholders
+#    2  tag/label strings ("M2-compliance")      - taxonomy labels
+#    1  M23-hard-stop prose                      - not a credential
+#    1  sk-1234... test fixture in doc example   - asserted-inert
+#    1  ghp_... in test_well.py                  - INVERTED fixture:
+#        that test asserts such tokens are REJECTED by the scanner
+#
+# The single sk-or-v1-62dc75... OpenRouter key (revoked 2026-09-27) does
+# NOT appear in this CI set: it is already covered by the block above.
+# Its history presence remains dead-by-revocation; the scrub decision
+# is tracked separately (ACTIVE_SPRINT step 18, before public flip).
+# ──────────────────────────────────────────────────────────────────────
+# WHY: explicit test fixture in the scan_secrets.py doc example - asserted-inert
+0b58b1170b8b08bd5f403f0a587299baf04786b6:tests/test_well.py:generic-api-key:70
+# WHY: ghp_ test token inside tests/test_well.py::test_well_no_secrets, which asserts such tokens are REJECTED - inverted fixture
+0b58b1170b8b08bd5f403f0a587299baf04786b6:tests/test_well.py:github-pat:81
+# WHY: internal AP artifact token (AP-<ENTITY>-<TOPIC>-v<n>), not a credential
+2e8e3b9bc85ad411b2e064cede77b2fcd493d6ed:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:83
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1288
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+3fe053bf503dbc7d696894dbb368cd5f2da42d86:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:93
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/IDEA_INTAKE.md:generic-api-key:533
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:50
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:84
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:93
+# WHY: internal AP artifact token (AP-<ENTITY>-<TOPIC>-v<n>), not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:83
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+# WHY: documentation placeholder with literal ellipsis 'gsk_...' (no key material) in a LiteLLM integration research doc
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:576
+# WHY: filesystem path quoted after 'Sovereign Key Vault:' - a path, not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+# WHY: local/redacted curl auth example (127.0.0.1 placeholder or tskey-api-XXXX) - not a credential
+4bbb5462ba55d5ffb7b4f527d3a02c9c13fd5704:data/entities/makali/workspace/DEEP_RESEARCH_BLOCKERS_20260914.md:curl-auth-user:59
+# WHY: local/redacted curl auth example (127.0.0.1 placeholder or tskey-api-XXXX) - not a credential
+6d186f988c4a26e425e12d34b35475accbb21eba:data/entities/makali/workspace/DEEP_RESEARCH_BLOCKERS_20260914.md:curl-auth-user:59
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/IDEA_INTAKE.md:generic-api-key:533
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:50
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:84
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:93
+# WHY: internal AP artifact token (AP-<ENTITY>-<TOPIC>-v<n>), not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:83
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+# WHY: documentation placeholder with literal ellipsis 'gsk_...' (no key material) in a LiteLLM integration research doc
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:576
+# WHY: filesystem path quoted after 'Sovereign Key Vault:' - a path, not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+# WHY: documentation placeholder with literal ellipsis 'gsk_...' (no key material) in a LiteLLM integration research doc
+b1c2a1c80a5b5b396cc494c7c65126e80821ee25:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:576
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+b44b34be859b6fc96d8ac13d4097ad7e227e2021:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+# WHY: prose phrase in a feasibility report - not a credential
+c4a9325d8d7478bceb338edb9d53517008d3360b:data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md:generic-api-key:68
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1159
+# WHY: filesystem path quoted after 'Sovereign Key Vault:' - a path, not a credential
+c6df3b7bb76c8eb1db26e72e3975b569a23a0e15:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1159
+# WHY: tag/label string in a lessons taxonomy list - not a credential
+cf9b9768f9bbcb01a369fd918a41368bfad0554c:session-ses_0b56.md:generic-api-key:4118
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+da46c0701fdc48e6f85721f037f6b210045dfcd0:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1159
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+e6fac9c9592f372f1480d936422b6a056e24b8c6:data/entities/roc_racoon/workspace/ideas_archive/IDEA_INTAKE_ARCHIVE_20260912.md:generic-api-key:539
+# WHY: tag/label string in a lessons taxonomy list - not a credential
+e8a2ad2b9bb8a3cc0e3217bdc204c1766c20797d:data/entities/JOHN_CARMACK/workspace/proposed_lessons.yaml:generic-api-key:39
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/IDEA_INTAKE.md:generic-api-key:489
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:50
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:84
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/session_gnosis.md:generic-api-key:117
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+feb985f3fa28ceba07f45d36eaf063615fd3f9a0:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
