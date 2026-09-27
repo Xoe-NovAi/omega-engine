@@ -31,6 +31,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 import anyio
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.version import InvalidVersion, Version
+
 from .entity_registry import EntityRegistry, Entity
 from .world_state import world_state, WorldLump
 from omega.errors import OmegaError
@@ -84,6 +87,67 @@ ENTITY_FIELD_TYPES = {
     "context_window": int,
     "slots": list,
 }
+
+
+def _get_engine_version_str() -> str:
+    """Return the running engine version string (SSOT: pyproject.toml)."""
+    try:
+        from omega import __version__ as _v
+    except ImportError:
+        return "0.0.0+unknown"
+    if isinstance(_v, str) and _v:
+        return _v
+    return "0.0.0+unknown"
+
+
+def enforce_engine_compatibility(stack_name: str, requires_engine: Any | None) -> None:
+    """Enforce WAD `requires_engine` semver against the running engine (M23).
+
+    Contract: WAD_LOADER_CONTRACT.md §6.2 (`packaging.SpecifierSet`).
+
+    - Missing (`None`) or empty/whitespace `requires_engine` → no constraint
+      (equivalent to the contract's `manifest.get("requires_engine", ">=0.0.0")`
+      default: any engine version passes).
+    - Otherwise the running engine version MUST satisfy the specifier.
+      Incompatible or malformed specifiers FAIL LOUD via `ValueError`
+      carrying the exact required vs running versions (no soft-skip).
+
+    Note on prereleases: enforced via
+    `spec.contains(engine_version, prereleases=True)` rather than the
+    contract pseudo-code's bare `engine_version not in required`, so that
+    prerelease engine builds (e.g. `1.6.0-alpha.1`) satisfy stable lower
+    bounds (e.g. `>=0.4.0`). Verified equivalent for the shipped IWADs
+    under `packaging==26.2`; the explicit flag is the PEP 440-correct
+    hardening.
+
+    Raises:
+        ValueError: If the specifier is invalid or not satisfied.
+    """
+    if requires_engine is None:
+        return
+    if isinstance(requires_engine, str) and not requires_engine.strip():
+        return
+    engine_version_str = _get_engine_version_str()
+    try:
+        spec = SpecifierSet(requires_engine)
+    except InvalidSpecifier as e:
+        raise ValueError(
+            f"WAD {stack_name} has invalid requires_engine "
+            f"'{requires_engine}' (running engine {engine_version_str}): {e}"
+        ) from e
+    try:
+        engine_version = Version(engine_version_str)
+    except InvalidVersion as e:
+        raise ValueError(
+            f"Running engine version '{engine_version_str}' is not valid "
+            f"PEP 440 (required by WAD {stack_name} requires_engine "
+            f"'{requires_engine}'): {e}"
+        ) from e
+    if not spec.contains(engine_version, prereleases=True):
+        raise ValueError(
+            f"WAD {stack_name} requires_engine '{requires_engine}' "
+            f"not satisfied by running engine {engine_version_str}"
+        )
 
 
 logger = logging.getLogger(__name__)
@@ -409,6 +473,11 @@ class WADLoader:
                 raise ValueError(f"WAD {stack_name} manifest 'name' is empty")
             if not manifest.get("version", "").strip():
                 raise ValueError(f"WAD {stack_name} manifest 'version' is empty")
+
+            # §6.2 Engine-version enforcement — FAIL LOUD (M23, no soft-skip).
+            # Raises ValueError with exact required vs running versions;
+            # the outer except logs it and returns (False, None).
+            enforce_engine_compatibility(stack_name, manifest.get("requires_engine"))
 
             # Capture startup personality if defined
             if manifest.get("startup") and manifest["startup"].get("message"):
