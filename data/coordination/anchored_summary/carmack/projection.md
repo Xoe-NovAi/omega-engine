@@ -3,34 +3,51 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# 🔱 JOHN_CARMACK PROJECTION — 2026-09-22
+# 🔱 JOHN_CARMACK PROJECTION — 2026-09-25
 
-## Status: PUBLIC FLIP READY
+## Status: FINAL DELTA AUDIT COMPLETE — QUARANTINE ONLY
 
 ### Executive Summary
-Hardware architecture validated. LFM2.5-2.6B confirmed as fleet default. 16GB system constraint respected. The local-first stack is hardware-aware.
+Final independent filesystem audit of `data/federation/usb-payload/exchange/n0-to-n1/` verified all remediated documentation and integrity corrections. Quarantine transport is allowed. Final authenticated transfer remains blocked pending Architect disposition of C6/N0-04.
 
-### Key Validations
-| Component | Validation |
-|-----------|------------|
-| **LFM2.5-2.6B** | 1.67GB Q4_K_M fits 16GB system (agentic_local default, port 1234) |
-| **Qwen3-4B-Thinking** | Opt-in only (2.5GB+ RAM, 2-3x tokens) — `serve_native_gguf.sh` v2.0.0 `start-reasoner` |
-| **Qwen3-1.7B** | System default model (`_system_default_model()` returns `qwen3-1.7b`) |
-| **Zswap** | `zstd + max_pool_percent=25 + shrinker_enabled` confirmed; zsmalloc only backend |
-| **Zswap + zRAM** | **NEVER both** (D-527 reaffirmed) — double compression wastes CPU |
+### Verified Evidence
 
-### Hardware Reality (Ryzen 7 5700U)
-- **16GB RAM** (8GB usable for models after OS)
-- **Local Model Stack v2.0.0**: LFM2.5-2.6B (always-on, 2.5GB RSS) + Qwen3-4B-Thinking (opt-in, +3GB) = 5.5GB max
-- **KV Cache Quantization**: `--cache-type-k q8_0 --cache-type-v q8_0` = **-50% cache** (q4_0 = -75%)
-- **mmap Insight**: GGUF is memory-mapped, NOT loaded upfront — pages load on demand; critical for SequentialModelLoader design
+| Gate | Result |
+|---|---|
+| Root manifest | 33/33 paths, sizes, hashes PASS |
+| Root SHA ledger | 34/34 PASS, including nested manifest and nested ledger |
+| Nested manifest | 3/3 lineage wrappers PASS |
+| Nested SHA ledger | 4/4 PASS, including nested `MANIFEST.yaml` |
+| YAML/JSON parse | 12/12 PASS |
+| M35 secret scan | 33 files, 0 violations |
+| Raw `/home/arcana-novai` | 0 matches |
+| Trailing `/mcp/` | 0 matches |
+| Blind `sed -i` | 0 matches |
+| WAD loader tests | 31 PASS in 1.12s |
+| Root PWAD fixture | Exit 1, expected negative regression |
+| Nested PWAD fixture | Exit 1, expected negative regression |
 
-### Post-Flip Support
-- **LI workstream**: hardware-aware model loading (SequentialModelLoader with mmap insight)
-- **HR workstream**: headroom integration (semantic compression for tools/RAG)
-- **ZS workstream**: zswap subsystem deployment (16GB NVMe swap, zstd + shrinker)
+### Invariants Confirmed
 
-### Carmack's Voice
-> "The hardware is the constraint. The model fits or it doesn't. LFM2.5-2.6B fits. Qwen3-4B-Thinking is opt-in. Zswap is configured. The hardware is the truth."
+- Doom Guy-N0 remains sovereign, invariant, and continuous on Node 0.
+- Flynn is lineage-only, fresh identity, fresh EIS, `continuation_of: null`.
+- Active checkout: `fa9c4edc68fe0f23a052e941f88d573f47c6c249`.
+- Active version: `1.6.0-alpha.1`.
+- Canonical endpoint: `https://n0.tail51f14a.ts.net:8016/mcp`.
+- No NFS/SSH; NXDOMAIN host is not operational.
+- Build and Slot are not agents; Scribe is separate; duplicate Makali counts once.
+- WAD adapters are mapping-only; persona fields are not current-loader law.
+- C6/N0-04 is explicitly OPEN; SHA integrity is not cryptographic trust.
 
-*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ 2026-09-22 ⬡ PUBLIC-FLIP-READY ⬡ HARDWARE-VALIDATED*
+### Transfer Decision
+
+- **Quarantine transport:** ALLOWED, explicitly labeled and untrusted.
+- **Final authenticated transfer:** BLOCKED pending Architect acceptance/rejection of C6/N0-04.
+- **Remaining Architect decision:** explicitly accept or reject the C6/N0-04 open-gate disposition.
+
+### P2 Notes
+
+- Grokster Phase 4 report is externally reviewed but absent; package does not claim it as authority.
+- Historical N1 model/version observations remain labeled historical.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_handoff ⬡ FINAL DELTA AUDIT — COMPACTION-READY*

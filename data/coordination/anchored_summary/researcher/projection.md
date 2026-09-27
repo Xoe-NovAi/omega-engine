@@ -40,3 +40,53 @@ Research campaign complete. All researchable gaps covered. The sovereign alterna
 > "The research is done. The gaps are closed. The data is in the registry. The sovereign alternative is the roadmap. No more NotebookLM — we build our own."
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ 2026-09-22 ⬡ PUBLIC-FLIP-READY ⬡ RESEARCH-COMPLETE*
+
+---
+
+## §12 — TAILSCALE L2 FEDERATION (2026-09-15)
+
+**Deliverable**: `data/entities/researcher/workspace/TAILSCALE_L2_FEDERATION_RESEARCH_20260915.md` (27 KB, 653 lines, 16 citations)
+
+### Live State (verified by probe)
+| Node | Tailscale | Tags | MCP |
+|------|-----------|------|-----|
+| **Node 0** (HP/omega-hub) | ✅ `100.123.51.67` | ❌ NONE (user device) | ✅ reachable |
+| **Node 1** (ASUS/kali-n1) | ❌ NOT JOINED | n/a | ❌ untestable |
+
+**Transport security**: ✅ wildcard `*.tail51f14a.ts.net` in `allowed_hosts` (commit `213abf44`)
+
+### Corrected Ceremony (6 phases) — NOT 2 as SESSION_ANCHOR states
+```
+1. Admin console → ACL HuJSON with tagOwners{tag:omega-hub, tag:asus, tag:opencode} → SAVE
+2. Node 0: sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
+3. Node 0: mint ONE-SHOT authkey (tag:asus, pre-approved, 1-day expiry, NOT ephemeral)
+4. USB: manifest.json + authkey.txt + SHA256SUMS
+5. Node 1: sha256sum -c && sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:asus
+6. Verify: tailscale status (both tagged) + bidi MCP + SSH + MagicDNS + netcheck direct
+```
+
+**Why the extra steps**: Tailscale requires a tag to exist in `tagOwners` before it can be advertised. Node 0's original `--advertise-tags` failed for this reason; joined as user device. Node 0 must re-tag or ACLs referencing `tag:omega-hub` never match.
+
+### Critical Findings
+1. **Tagged devices: key expiry DISABLED by default** — persistent-access risk. Monitor `KeyExpiryDisabled`.
+2. **Cannot use `--advertise-tags` on authkey-joined devices** — must mint a NEW authkey with tags.
+3. **Tailscale SSH needs no key distribution** — short-lived certs, ACL-gated, session-audited.
+4. **ACL syntax**: `proto` is a TOP-LEVEL field, not nested. `{"action":"accept","src":[],"dst":[],"proto":"icmp"}`.
+5. **DERP = end-to-end WireGuard encrypted** — relay cannot decrypt. Security parity with direct.
+6. **MagicDNS immune to DNS rebinding** (client-side resolution) — but service Host-header middleware still needs `allowed_hosts`.
+7. **`--accept-routes` unnecessary** — no subnet routers in mesh.
+
+### Naming Collision (UNRESOLVED)
+Node 1's `L2_JOIN_GUIDE.md` says MagicDNS = `asus.tailnet`; actual suffix = `tail51f14a.ts.net`; join command says `--hostname=kali-n1` → FQDN `kali-n1.tail51f14a.ts.net`. **Three names, one device.** Requires Architect ruling.
+
+### Next Moves
+| P | Commitment | Target |
+|---|------------|--------|
+| P0 | Architect ruling: Node 1 MagicDNS name (asus vs kali-n1) | Before ceremony |
+| P0 | Node 0 admin console → ACL HuJSON paste | Immediate |
+| P0 | Node 0 re-tag `tag:omega-hub` | After ACL save |
+| P0 | Mint one-shot authkey + USB ceremony | Same day |
+| P1 | `docs/federation/L2_ACCEPTANCE.md` (FED-L2-001) with test results | Post-ceremony |
+| P1 | Observability: cron `tailscale status` + `netcheck` alerts | Post-ceremony |
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ TAILSCALE-L2-COMPLETE ⬡ 2026-09-15 ⬡ CEREMONY-CORRECTED ⬡ 6-PHASES ⬡ 16-CITATIONS*
