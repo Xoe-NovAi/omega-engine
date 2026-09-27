@@ -16,7 +16,7 @@ from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
 
-ROOT = Path("/home/arcana-novai/Documents/Xoe-NovAi/omega-engine")
+ROOT = Path(__file__).resolve().parents[1]  # worktree-safe: scripts/ -> repo root (Doom Guy audit 2026-09-27)
 
 # ============================================================
 # CLASSIFICATION RULES

@@ -12,7 +12,10 @@ set -euo pipefail
 SKILL_NAME="autonomous-meditation-pipeline"
 SKILL_DIR="$HOME/.config/opencode/skills/$SKILL_NAME"
 VENV_DIR="$SKILL_DIR/.venv"
-SOURCE_DIR="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/packages/omega-meditation"
+# Worktree-safe: derive repo root from script location so linked worktrees
+# resolve to themselves, never to the main tree. (Doom Guy audit 2026-09-27.)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)"
+SOURCE_DIR="${REPO_ROOT}/packages/omega-meditation"
 
 echo "[install-global-skill] Installing $SKILL_NAME to $SKILL_DIR"
 
@@ -33,8 +36,8 @@ uv pip install -e "$SOURCE_DIR"
 
 # Copy skill manifests
 echo "[install-global-skill] Copying skill manifests..."
-cp -r "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/skills/meditate-pipeline/"* "$SKILL_DIR/" 2>/dev/null || true
-cp -r "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/skills/meditate-research-pipeline/"* "$SKILL_DIR/" 2>/dev/null || true
+cp -r "${REPO_ROOT}/.opencode/skills/meditate-pipeline/"* "$SKILL_DIR/" 2>/dev/null || true
+cp -r "${REPO_ROOT}/.opencode/skills/meditate-research-pipeline/"* "$SKILL_DIR/" 2>/dev/null || true
 
 # Create merged SKILL.md with triggers
 cat > "$SKILL_DIR/SKILL.md" << 'SKILL_EOF'
