@@ -539,3 +539,63 @@ This session completed **7 major research missions** + hardware upgrade analysis
 | P1 | Post-debut: TH-0 thermal → ZS → LI → HR → KD | Post-DEL-1 |
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ CSS-TURN-7-COMPLETE ⬡ 2026-09-11 ⬡ 7/7 WAKE-UP CALLS EXECUTED*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE #9 (2026-09-15) — TAILSCALE L2 FEDERATION RESEARCH
+
+### Deliverable
+`data/entities/researcher/workspace/TAILSCALE_L2_FEDERATION_RESEARCH_20260915.md` (27 KB, 653 lines)
+AP-RESEARCHER-TAILSCALE-L2-20260915-v1.0.0 — 7/7 research areas covered, 16 Tier-1/2 citations.
+
+### Key Finding That INVALIDATES the SESSION_ANCHOR Plan
+**SESSION_ANCHOR §Post-Compaction-11 says**: "L2 Tailscale Join — Mint auth key on Node 0, execute `tailscale up` on Node 1 (Node 1 daemon ready)".
+
+**That plan is INCOMPLETE.** Research proves a mandatory intermediate step:
+1. ACL policy with `tagOwners` must be **LIVE in admin console FIRST** (Tailscale requires tag to exist in `tagOwners` before it can be advertised — this is why Node 0's original `--advertise-tags` failed)
+2. **Node 0 must re-tag as `tag:omega-hub`** — currently a USER device (no tags). Without this, ACLs referencing `tag:omega-hub` never match, and least-privilege is impossible
+3. Only THEN mint the tagged one-shot authkey for Node 1
+
+**Corrected ceremony (6 phases)**:
+```
+1. Node 0 admin console → Access Controls → paste HuJSON policy → SAVE
+2. Node 0: sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth
+3. Node 0: mint ONE-SHOT authkey (tag:asus, pre-approved, 1-day expiry, NOT ephemeral)
+4. USB: manifest.json + authkey.txt + SHA256SUMS
+5. Node 1: sha256sum -c SHA256SUMS && sudo tailscale up --authkey=... --hostname=kali-n1 --operator=xnai --accept-routes --advertise-tags=tag:asus
+6. Verify: tailscale status (both tagged) + bidirectional MCP + Tailscale SSH + MagicDNS + netcheck direct
+```
+
+### Verified Node 0 State (live probes, 2026-09-15)
+| Probe | Result |
+|-------|--------|
+| `tailscale status` | `100.123.51.67  omega-hub  xoe.nova.ai@  linux  -` (no tags → USER device) |
+| `tailscale ip -4` | `100.123.51.67` |
+| `tailscale ping kali-n1` | **FAILS** — `lookup kali-n1 on 127.0.0.53:53: server misbehaving` (Node 1 not joined) |
+| `curl omega-hub.tail51f14a.ts.net:8016/mcp` | `406` (endpoint alive, MCP handshake needs proper headers) |
+| Transport security | ✅ `100.123.51.67` + `omega-hub.tail51f14a.ts.net` + `*.tail51f14a.ts.net` in `allowed_hosts` (commit `213abf44`) |
+
+### Research Findings That Matter Beyond Tailscale
+1. **Tagged devices have key expiry DISABLED by default** — persistent access if compromised. Risk register entry: HIGH likelihood / MEDIUM impact. Mitigation: monitor `KeyExpiryDisabled`, consider enabling in admin console.
+2. **Cannot use `--advertise-tags` on a device that joined via authkey** — must mint a NEW authkey with updated tags. This bit us on Node 0.
+3. **Tailscale SSH needs no key distribution** — short-lived certs from coordination server, ACL-gated, session-audited. Eliminates an entire credential-management workstream.
+4. **ACL syntax correction**: `proto` is a top-level ACL field, NOT nested under an object. `{"action":"accept","src":[...],"dst":[...],"proto":"icmp"}` — this is the correct form.
+5. **DERP is end-to-end WireGuard encrypted** — relay servers cannot decrypt. Security parity between direct and relayed; only performance differs. So "inference never egresses" is safe even if DERP relays.
+6. **MagicDNS is immune to DNS rebinding protection** (resolves client-side, no external DNS) — but service-side Host-header middleware still needs `allowed_hosts` entries (our `213abf44` fix).
+7. **`--accept-routes` in Node 1's join command is harmless but unnecessary** — no subnet routers in the mesh.
+
+### Open Question for MaKaLi/Architect
+Node 1's `L2_JOIN_GUIDE.md` specifies MagicDNS name `asus.tailnet` while the actual Tailscale suffix is `tail51f14a.ts.net`. **Naming collision?** The ratified ACL maps `tag:asus` but the MagicDNS name in the guide is `asus.tailnet`, not `kali-n1.tail51f14a.ts.net`. Recommend: hostname = `kali-n1` (per join command `--hostname=kali-n1`), FQDN = `kali-n1.tail51f14a.ts.net`. Either update the ACL or the guide — they disagree.
+
+### CSS Turn 7 Deliverables — Still Intact (verified 2026-09-15)
+1. ✅ M33 task_type tuple (`subagent_dispatcher.py:82` + `m33_probe.py:271`)
+2. ✅ M36 Soft Verifier wired (real Hivemind handoff, no stub_bypass)
+3. ✅ `scripts/heritage_scanner.py` extracted (scan + provenance verified)
+4. ✅ SearXNG healthy on :8017
+5. ✅ GSCA study closed (Archangel = concrete deliverable)
+6. ✅ TH-0 thermal prerequisite added
+
+### Compaction Readiness
+✅ READY — Tailscale L2 research complete, ceremony corrected, all prior deliverables intact.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-NOTE-9 ⬡ 2026-09-15 ⬡ TAILSCALE-L2-CEREMONY-CORRECTED ⬡ 16-CITATIONS ⬡ M15-SATISFIED*

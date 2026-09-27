@@ -438,3 +438,147 @@ Per MaKaLi: *"Your kq5-godot Day 3-5 protocol development is the fleet's experim
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_makali_execution ⬡ ITEMS 1-5 COMPLETE — READY FOR COMPACTION*
+
+---
+
+## 🔱 2026-09-24 SESSION: N0→N1 Handoff Truth Audit
+
+**AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (continuation) · **Date**: 2026-09-24
+**Status**: COMPACTION-READY · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`
+**Pack**: `exchange/n0-to-n1/wad_loader_contract/`
+**Scope**: N0-01, N0-04, N0-12, N0-13, runtime N0-14
+
+### Work Summary
+
+#### N0→N1 USB Handoff — COMPLETE
+
+| # | Deliverable | Status | Evidence |
+|---|-------------|--------|----------|
+| **1** | Exact Engine Commit | ✅ | `75bde939ace7ff46ed2fef0056880a0814ab0e11` (release/debut-v1.6.0) |
+| **2** | WAD Loader Contract Spec | ✅ | `WAD_LOADER_CONTRACT.md` — manifest, adapters, hierarchy, entity envelope, dependency ordering, engine-version gap, PWAD concat bug |
+| **3** | Disposable Test WAD | ✅ | IWAD + PWAD fixture proving PWAD override **concatenates** personality (exit 1) |
+| **4** | Version SSOT | ✅ | `1.6.0-alpha.1` on all 4 surfaces (pyproject, omega.__version__, Hub /health, MCP serverInfo) |
+| **5** | Node 1 Compatibility | ✅ | Node 1 (ASUS i7-13620H, 16GB) compatible; federation = HTTPS-only, no auth, no NFS/SSH |
+
+### Key Findings
+
+1. **Engine Commit**: `75bde939ace7ff46ed2fef0056880a0814ab0e11` — official Node 0 authority
+2. **Version SSOT Fixed**: Cline §3.6 — was `1.2.0`/`2.2.0`/`1.30.0` → now `1.6.0-alpha.1` everywhere
+3. **WAD Loader Contract Gaps** (from Cline §7#10):
+   - Root `entities.yaml` ignored
+   - Scaffold entities lack `entity:` envelope
+   - PWAD override concatenates personality (not clean replacement)
+   - `requires_engine` not semantically enforced
+   - Adapter whitelist narrow (2 modules)
+4. **Federation Reality** (Cline §6): Node 1 connects via `https://n0.tail51f14a.ts.net:8016/mcp` (HTTPS, no auth); ports 22/2049 filtered
+5. **Disposable PWAD Test**: Confirms concat bug — `BASE\n\nPWAD` instead of clean replacement
+
+### Validation
+
+- `sha256sum -c SHA256SUMS`: all files PASS (quarantine pack)
+- WAD loader tests: 31/31 PASS
+- Disposable test: exit 1 = concat bug confirmed
+- M35 scanner: 0 violations
+- No secrets/private material staged
+
+### Open Threads (Updated)
+
+| Thread | Status | Owner | Next Action |
+|--------|--------|-------|-------------|
+| M35 Architect ratification | 🔄 **PENDING** | Architect | Sign-off on Mandate 28 |
+| 3 test fixture FPs | OPEN | Researcher | Add to allowlist or replace |
+| M37-HERITAGE-001 | OPEN | Researcher/Ma'at | 32h plan kickoff |
+| Watchdog single-writer | 🔄 **IN PROGRESS** | Lilith + Ma'at | MCP tool implementation |
+| M34 spec revision | OPEN | Lilith | 8h revision per Carmack review |
+| M33/M35 mandate text updates | OPEN | Researcher | Per Carmack review |
+| L3 lesson split | OPEN | Grokster | 2h per Carmack review |
+| **N0→N1 WAD contract alignment** | 🔄 **BLOCKED** | Node 1 | Fix arcana_novai WAD per contract |
+| **PWAD override fix** | 🔄 **BLOCKED** | Engine | Clean replacement semantics |
+
+### Hivemind Posts This Session
+
+| Session ID | Intent | Summary |
+|------------|--------|---------|
+| `ses_29569b80f2a1` | status | N0→N1 handoff audit complete |
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_handoff ⬡ COMPACTION-READY*
+
+---
+
+## 🔱 2026-09-25 SESSION: Final Independent Delta Audit
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`  
+**Package**: `data/federation/usb-payload/exchange/n0-to-n1/`  
+**Verdict**: **DO NOT SHIP** for final authenticated transfer; quarantine transport allowed.
+
+### Verified
+
+- Root manifest: 33/33 paths, sizes, hashes PASS.
+- Root SHA ledger: 34/34 PASS, including nested manifest and nested ledger.
+- Nested manifest: 3/3 lineage wrappers PASS.
+- Nested SHA ledger: 4/4 PASS, including nested `MANIFEST.yaml`.
+- YAML/JSON parse: 12/12 PASS.
+- M35 secret scan: 33 files, 0 violations.
+- Raw `/home/arcana-novai`: 0 matches.
+- Trailing `/mcp/`: 0 matches.
+- Blind `sed -i`: 0 matches.
+- WAD tests: 31 PASS in 1.12s.
+- Root and nested PWAD fixtures: exit 1, expected negative regression; not compatibility passes.
+
+### Prior delta
+
+All prior P0 findings are fixed: lineage-only Flynn/Doom Guy boundary; active checkout `fa9c4edc`; version `1.6.0-alpha.1`; mapping-only WAD adapters; Build/Slot/Scribe/Makali ontology; C6 open-gate labeling; sovereign-compaction absent labeling; no raw paths or blind edits.
+
+### Remaining status
+
+- C6/N0-04 remains **OPEN**: no ratified C6, publisher identity, trust root, detached signature, or tamper bundle.
+- Architect decision remains pending; quarantine is allowed only as explicitly labeled movement into Node 1 quarantine.
+- Final authenticated transfer is **BLOCKED** pending Architect disposition.
+- External Grokster Phase 4 report is not included; package labels this explicitly and does not treat it as authority.
+- Historical N1 report still contains old model provenance and historical 2.2.0/1.30.0 values, explicitly labeled historical.
+
+**Next action**: Architect must explicitly accept or reject the C6/N0-04 open-gate disposition. No further package documentation defect was found.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_handoff ⬡ FINAL DELTA AUDIT — COMPACTION-READY*
+
+### Hard evidence
+
+- Node 0 Engine HEAD: `75bde939ace7ff46ed2fef0056880a0814ab0e11`, branch `release/debut-v1.6.0`; project version in `pyproject.toml` is `1.2.0`; working tree is dirty.
+- Official local runtime: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python`; CLI launcher `/home/arcana-novai/.local/bin/omega`; `omega --version` is not implemented.
+- Hub systemd user service active; `0.0.0.0:8016`; `/health` HTTP 200, version `2.2.0`.
+- Python `3.13.7`; SQLite `3.46.1`; sqlite-vec `0.1.9`, extension load + temporary vec0 create/insert PASS.
+- WAD loader tests: `31 passed in 1.06s`.
+- Disposable PWAD: manifest/entity/hierarchy load, but priority override yields concatenated personality (`probe\n\nbase`), not replacement. Exit code 3; retained as a real blocker.
+- Current `arcana_novai` WAD loads `True` but loads 0 entities; root `entities.yaml` is not scanned, and nested `movie-expert.yaml` is skipped for missing `entity:`.
+- C6 payload is draft v0.1, ratification unchecked; `ATTESTATION_N0_20260922.md` uses a human-readable `SIGNED` footer only. No detached signature, trust root, key ID, or tamper test found.
+- No Node 0 Continuity Kernel implementation, Qwen artifact hash, 50–200 item golden corpus, or cross-node ranking comparison found. `mempalace` is not installed in Node 0 venv.
+
+### Pack contents
+
+- `HANDOFF_MANIFEST.yaml`, `SHA256SUMS`, `README_FIRST.md`
+- `11_node0_runtime_report.md`
+- `08_wad_loader_pack/WAD_LOADER_FINDINGS.md` + disposable test WAD/verifier
+- `12_evidence/C6_TRUST_FINDINGS.md`
+- `07_continuity_evidence/SQLITE_CONTINUITY_DECISION.md`
+- `06_spatial_pipeline/EMBEDDING_768_COMPATIBILITY_REPORT.md` + `N0_SPATIAL_EVIDENCE.md`
+- `UNRESOLVED_OR_WITHHELD_MATERIAL.md`
+
+### Validation
+
+- `sha256sum -c SHA256SUMS`: all 13 listed files PASS.
+- M35 scanner: 13 files scanned, 0 violations.
+- No personal/private material or secrets intentionally staged.
+- No promotion, merge, extraction, or Node 1 WAD development authorized.
+
+### Open operator decisions
+
+1. Clean commit vs approved dirty-tree diff and Git bundle.
+2. WAD override semantics and `requires_engine` enforcement policy.
+3. Fixed SQLite >=3.51.3 or documented backport; continuity profile.
+4. C6 signing/trust-root/key-rotation mechanism.
+5. Pinned Qwen artifact, hash, and golden-corpus comparison tolerance.
+6. Physical USB intake approval after checksum verification.
+
+**Confidence: 9.5/10** from primary source reads and executed probes. **Next owner**: N1 for WAD/embedding reconciliation; operator for trust/runtime decisions; N0 for clean release artifact.

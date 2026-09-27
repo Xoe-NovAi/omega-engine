@@ -863,6 +863,6 @@ proposals:
   promotion_ready: true
 metadata:
   entity: kali
-  session_id: ses_fdef2be4effe4pAaLXCTUx62GO
-  model_used: nvidia/nemotron-3-ultra-550b-a55b:free
-  last_session_end: '2026-08-31T22:07:47.448753+00:00'
+  session_id: ses_f285aa052fferzOQg6dCg3MsHB
+  model_used: nemotron-3-ultra-free
+  last_session_end: '2026-09-25T09:36:14.783936+00:00'

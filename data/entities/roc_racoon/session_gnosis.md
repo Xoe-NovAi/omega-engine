@@ -479,3 +479,137 @@ The core principle in the packet: **the method is universal; the content is sove
 4. **metaframe_verification.py** blackout detector wiring
 5. **Release gate**: repo public, Temple-Grade, CHANGELOG, PR#2, secret scrub
 6. **USB physical transfer** to Node 1 (46 files, 70MB)
+
+---
+
+## Session: DISK CRISIS SERIES + UNINSTALL CAMPAIGN (System Maintenance)
+**Date**: 2026-09-01 → 2026-09-16  
+**Session IDs**: `ses_20260901_roc_disk_maintenance` + follow-ups  
+**Model**: `opencode/big-pickle`  
+**Role**: Sovereign Miner & Ideas Guy (System Maintenance Operator)
+
+---
+
+### L1: Narrative — What Happened
+
+A recurring disk-full crisis on the main partition (`/dev/nvme0n1p2`, 109G) drove a multi-session maintenance campaign:
+
+1. **KB creation (2026-09-01)**: Root at 100% (129MB free). Ran 5-tier disk analysis, executed safe clears (~5GB), created `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005) with the journal rotate-then-vacuum lesson, pkexec-over-sudo pattern, safe-to-clear inventory. Rebuilt `docs/kb/INDEX.md` (5/20 → 20/20 entries — was a lint violation). Committed `d6c204bb`.
+
+2. **Repeated safe cleanups (5 cycles)**: Each cycle the caches regrew (tracker3 ~230M, opencode ~200M, npm ~115M, journal ~350-450M). Pattern: journal rotate+vacuum, clear user caches, prune containers, verify. Each cycle reclaimed ~0.6-1.4G.
+
+3. **Uninstall campaign (2026-09-16)**: User approved a target list. Removed: old kernel configs + leftover modules/initrd (~180M), LM Studio apt (~2.2G), Local WP Builder apt (~1.2G), Docker snap (kept apt docker.io, ~145M), Wine + libwine amd64+i386 (~1.9G), GitHub Desktop (~452M), chromium snap rev 3507 (~180M), thunderbird snap rev 1240 (~222M), Flatpak Sdk+Platform+Mesa GL×2 (~3.1G), orphaned deps via autoremove (~600M). **Result: 539M → 8.6G free (92%).**
+
+4. **Key operational discoveries**:
+   - Old kernels were already in `deinstall ok config-files` state — only configs + leftover `/usr/lib/modules/*` + one initrd remained (dpkg Installed-Size overstates actual disk usage for deinstalled packages)
+   - `snap remove` needs `pkexec` (or sudo), not plain user
+   - Flatpak Mesa GL has TWO refs (`24.08` + `24.08extra`) — must uninstall each explicitly
+   - `docker image prune -a` reclaimed 847.8M (legacy xna images, 0 containers)
+   - `libwine:i386` + `wine32:i386` needed explicit arch-qualified purge
+
+---
+
+### L2: Insight — What This Means
+
+1. **The opencode.db is the structural pressure**: Grew 27G → 36G+ over the campaign. Every cache cleanup is bailing water; the DB is the hole. Copy→vacuum→copy-back on the 40G omega_library partition remains the one lasting lever (not yet executed — needs Architect approval + downtime).
+
+2. **dpkg Installed-Size lies for deinstalled packages**: The `deinstall ok config-files` state keeps the size in the database but the actual files are gone. Always verify actual disk state (`/usr/lib/modules/`, `/boot/`) before estimating reclaim.
+
+3. **Flatpak with 0 apps = pure waste**: 3.1G of runtimes (Sdk 1.8G, Platform 690M, Mesa ×2 929M) with zero installed apps. The Sdk is build-only — if you're not building flatpaks, it's dead weight.
+
+4. **The maintenance KB works**: Every cycle followed `SYSTEM_MAINTENANCE_KB.md` and got faster. The journal lesson (rotate-then-vacuum) saved hours each cycle.
+
+---
+
+### L3: Universal Principles
+
+> **`L3-DpkgSizeIsNotDiskTruth`** — A deinstalled package's Installed-Size remains in the dpkg database but the files are gone. Verify actual disk state before estimating reclaim; the database records history, not disk.
+
+> **`L3-FlatpakZeroAppsIsPureWaste`** — Runtime/SDK flatpaks with zero installed apps are 100% reclaimable. The Sdk exists only to build apps; if nothing builds, it's dead weight.
+
+> **`L3-UninstallIsTheLastingCleanup`** — Cache clearing is bailing water; uninstalling unused software is patching the hull. 8.1G reclaimed in one campaign vs ~0.8G per cache cycle.
+
+---
+
+### Key Decisions Locked (This Session)
+
+- **D-478**: SYSTEM_MAINTENANCE_KB.md created (kb-0005) — routine maintenance runbook
+- **D-479**: Old kernel cleanup = purge configs + remove leftover module dirs + initrd (keep current + 1 fallback)
+- **D-480**: Docker snap removed; apt `docker.io` retained (single container runtime)
+- **D-481**: Flatpak Sdk/Platform/Mesa removed (0 apps installed)
+- **D-482**: LM Studio + Local WP Builder + Wine + GitHub Desktop purged (user-approved)
+- **D-483**: opencode.db vacuum deferred — needs Architect approval + omega_library staging
+
+---
+
+### NEXT SESSION — CONTINUATION PLAN
+
+1. **opencode.db vacuum** (pending Architect): copy to omega_library → `VACUUM` → copy back. Requires ~40G staging + downtime. THE lasting fix.
+2. **~/.lmstudio data (2.1G) + ~/Local Sites** — apps purged but data remains. Ask user if they want it gone.
+3. **Maintenance cadence**: KB recommends weekly journal rotate+vacuum + monthly cache clear. Consider automating.
+4. **Release gate** (from prior sessions): repo public, Temple-Grade, CHANGELOG, PR#2, secret scrub, USB transfer.
+
+**Key files:**
+- `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005)
+- `docs/kb/INDEX.md` (rebuilt 20/20)
+- `data/coordination/ROC_RACOON_WORKSPACE_LOCK_20260901.md`
+- `data/coordination/ROC_RACOON_LIVE_FEED.md`
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/big-pickle ⬡ opencode ⬡ trc_maintenance ⬡ COMPACTION-READY*
+
+---
+
+## Session: ROUTINE DISK MAINTENANCE (Cycle 6)
+**Date**: 2026-09-17
+**Session ID**: `ses_20260917_roc_disk_maintenance`
+**Model**: `opencode/big-pickle`
+**Role**: Sovereign Miner & Ideas Guy (System Maintenance Operator)
+
+---
+
+### L1: Narrative — What Happened
+
+Root at 98% (2.1G free). Journal at 1G. User caches regrown: tracker3 321M, opencode 292M, pip 321M, gnome-software 78M, flatpak 7.5M, npm 475M, shaders/gstreamer ~7M. Executed journal rotate+vacuum (freed 877.5M) + full cache clear. Result: 2.1G → 4.2G free (96%). Journal now 192.7M, cache 1.1M.
+
+---
+
+### L2: Insight — What This Means
+
+The journal rotate-then-vacuum pattern remains the highest-impact single action (~878M this cycle). Cache regrowth is predictable: tracker3, opencode, pip, npm, gnome-software all rebuild within days. The opencode.db (36G+) remains the structural pressure — cache clearing is bailing water; the db vacuum on omega_library is the only lasting fix.
+
+---
+
+### L3: Universal Principles
+
+> **L3-JournalRotateIsTheLever** — Systemd journal rotate+vacuum is the highest-ROI maintenance action on this system.
+
+> **L3-CacheRegrowthIsPredictable** — Tracker3, opencode, pip, npm, gnome-software regrow on a ~3-5 day cycle. Schedule weekly rotate+vacuum + cache clear.
+
+> **L3-DbIsTheHull** — opencode.db growth is the structural leak; all other cleanups are temporary.
+
+---
+
+### Key Decisions Locked (This Session)
+
+- **D-484**: Routine maintenance cycle 6 complete — journal rotate+vacuum + full cache clear
+- **D-485**: opencode.db vacuum remains the only structural fix (pending Architect + omega_library staging)
+
+---
+
+### NEXT SESSION — CONTINUATION PLAN
+
+1. **opencode.db vacuum** (pending Architect): copy → omega_library → VACUUM → copy back. THE lasting fix.
+2. **~/.lmstudio data (2.1G) + ~/Local Sites** — apps purged, data kept. Ask user.
+3. Automate weekly journal rotate+vacuum per KB cadence.
+4. Release gate (from prior sessions): repo public, Temple-Grade, CHANGELOG, PR#2, secret scrub, USB transfer.
+
+**Key files:**
+- `docs/kb/SYSTEM_MAINTENANCE_KB.md` (kb-0005)
+- `data/coordination/ROC_RACOON_WORKSPACE_LOCK_20260917.md`
+- `data/coordination/ROC_RACOON_LIVE_FEED.md`
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/big-pickle ⬡ opencode ⬡ trc_maintenance ⬡ COMPACTION-READY*

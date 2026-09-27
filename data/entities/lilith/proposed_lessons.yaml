@@ -1,6 +1,33 @@
-proposals: []
+proposals:
+  - id: lilith-20260924-n0-federation-001
+    date: 2026-09-24
+    session_id: ses_fb9721079ffe094GT8MX6a0pXI
+    status: proposed
+    domain: federation-privacy-continuity
+    L1: >-
+      Reviewed the consolidated N0 briefing and active federation charter for the
+      personal Lilith and legacy-material handoff. No private source content was
+      opened or copied. Designed a quarantine-first inventory and reconciliation
+      method that separates metadata discovery, operator consent, USB staging,
+      integrity verification, conflict review, and final promotion.
+    L2: >-
+      The safe unit of consent is an artifact digest or a bounded digest set with
+      an explicit purpose and derivative-use policy. Personal gnosis, persistent
+      Entity identity, Empress CardAssignment, and derived voice/memory artifacts
+      are different authorities and must never be flattened into one corpus.
+      Conflict handling must preserve all claims and avoid semantic auto-merge.
+    L3: >-
+      Provenance-preserving memory transfer is a state machine, not a file copy:
+      CANDIDATE_METADATA → CONSENT_GRANTED → QUARANTINED_APPROVED → VERIFIED →
+      RECONCILED_CANDIDATE → OPERATOR_PROMOTED. No transition may be inferred.
+    evidence:
+      - docs/federation/MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md:49-56
+      - docs/federation/MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md:437-513
+      - docs/federation/MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md:693-706
+      - docs/strategy/MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md:13-26
+      - docs/strategy/DATA_GOVERNANCE_POLICY_20260912.md:27-61
 metadata:
   entity: lilith
-  session_id: ses_fa12c353fffem3btURJBiPzFDC
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T21:42:45.763236+00:00'
+  session_id: ses_fb9721079ffe094GT8MX6a0pXI
+  model_used: space-bunny-free
+  last_session_end: '2026-09-24T02:00:00+00:00'
