@@ -21,6 +21,34 @@ TIMELINE = STATE_DIR / "gnosis-events.jsonl"
 INDEX_MD = Path.home() / "WanderGround/INDEX.md"
 
 
+# Markers leash_status.py prints for each DISTINCT degradation reason. The
+# watchdog deliberately collapses every reason to a non-zero exit (UNIX-style
+# "unhealthy"), which is correct for CI but means callers cannot infer the
+# CAUSE from the exit code alone. These markers let a test distinguish
+# "degraded for reason X" from "degraded for reason Y" instead of guessing.
+DEGRADATION_MARKERS = (
+    "PLUGIN MISSING",
+    "TIMELINE MISSING",
+    "NARRATIVE MISSING",
+    "LEASH TAUT",
+    "TIMELINE STALE",
+    "GNOSIS-LOCK INCIDENT",
+    "LEASH DEGRADED",
+)
+
+
+def _first_degradation(stdout: str) -> str | None:
+    """Return the first degradation marker present in watchdog output, or None.
+
+    "LEASH TAUT" is checked before "LEASH DEGRADED" because the taut line is
+    the specific cause and the degraded line is the summary that follows it.
+    """
+    for marker in DEGRADATION_MARKERS:
+        if marker in stdout:
+            return marker
+    return None
+
+
 class TestLeashStatus(unittest.TestCase):
     def test_watchdog_exists_and_runs_clean(self):
         script = REPO / "scripts/compaction/leash_status.py"
@@ -85,7 +113,6 @@ class TestLeashStatus(unittest.TestCase):
         incident, never 'healthy'."""
         script = REPO / "scripts/compaction/leash_status.py"
         r = subprocess.run(["python3", str(script)], capture_output=True, text=True, timeout=30)
-        src_check = PLUGIN.read_text()
         event_lines = []
         if TIMELINE.is_file():
             for l in TIMELINE.read_text().splitlines():
@@ -104,10 +131,71 @@ class TestLeashStatus(unittest.TestCase):
                                 "watchdog must be degraded while last compaction lacked narrative")
             self.assertIn("NARRATIVE MISSING", r.stdout)
         else:
-            # No historical incident: watchdog must be healthy AND source-marks ok.
-            if "GNOSIS-LOCK INCIDENT" in src_check:
-                self.assertEqual(r.returncode, 0,
-                                 "watchdog should be healthy when last compaction had narrative")
+            # No narrative-missing incident. A non-zero exit is STILL not proof
+            # of one: the watchdog degrades for multiple independent reasons
+            # (stale leash, stale timeline, missing plugin). Asserting
+            # returncode == 0 here made this test fail for an unrelated,
+            # legitimate reason and report it as a narrative failure.
+            #
+            # So: only assert health when nothing at all is degraded. If any
+            # other degradation is present, the reason is reported and the
+            # health assertion is skipped — the cause is not this test's job.
+            other = _first_degradation(r.stdout)
+            if other is None:
+                self.assertEqual(
+                    r.returncode, 0,
+                    "watchdog should be healthy when no degradation of any kind is present",
+                )
+            else:
+                self.skipTest(
+                    f"watchdog degraded for a non-narrative reason ({other}); "
+                    "health assertion not applicable to this test"
+                )
+
+    def test_watchdog_flags_stale_leash_distinctly(self):
+        """A stale leash (pending pack > 24h, never reflected) is a REAL and
+        separate degradation, and must be reported as such — not silently
+        conflated with a missing narrative.
+
+        Regression, 2026-09-28: the original test asserted `returncode == 0`
+        whenever the last compaction had a narrative. On this box the pack
+        `session-2026-09-27T09-23-17Z` crossed the 24h TAUT-STALE threshold
+        mid-session (19.7h at the first green run, 33.3h at the failure), so
+        the watchdog correctly degraded and the test failed with a misleading
+        message about narrative. The watchdog was right; the test was wrong.
+        """
+        script = REPO / "scripts/compaction/leash_status.py"
+        r = subprocess.run(["python3", str(script)], capture_output=True, text=True, timeout=30)
+
+        identity = REPO / "gnosis/identity/identity.json"
+        sessions = REPO / "gnosis/sessions"
+        stale_pending = None
+        if identity.is_file():
+            pending = json.loads(identity.read_text()).get("pending_pack", "")
+            if pending:
+                # Mirror leash_status.py exactly: the stale age comes from the
+                # manifest's mtime and its reflection_status, NOT from parsing
+                # the session-id string. (That string is not valid ISO-8601 —
+                # `session-2026-09-27T09-23-17Z` uses hyphens in the time.)
+                manifest = sessions / f"{pending}_manifest.json"
+                if manifest.is_file():
+                    state = json.loads(manifest.read_text("utf-8")).get("reflection_status", "captured")
+                    age_h = (
+                        datetime.now(timezone.utc)
+                        - datetime.fromtimestamp(manifest.stat().st_mtime, timezone.utc)
+                    ).total_seconds() / 3600
+                    if state != "reflected" and age_h > 24:
+                        stale_pending = (pending, age_h, state)
+
+        if stale_pending is None:
+            self.skipTest("no stale pending pack on this box")
+
+        pending, age_h, state = stale_pending
+        self.assertNotEqual(r.returncode, 0, f"stale pack {pending} must degrade the watchdog")
+        self.assertIn("LEASH TAUT", r.stdout, "stale leash must be named in the report")
+        self.assertIn(pending, r.stdout, "report must name WHICH pack is taut")
+        self.assertIn(state, r.stdout, "report must name the pack's reflection state")
+        self.assertIn(f"{age_h:.0f}h", r.stdout, "report must include the pack age")
 
     def test_agent_awareness_surfaces_reference_runbook(self):
         """Global + project AGENTS.md, build prompt, and INDEX.md must point
