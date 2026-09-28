@@ -890,6 +890,137 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
   (policy-removed and test-guarded).
 - **Status**: `researched` — awaiting operator decision on adoption scope.
 
+### P4.10 — Gaming WAD: the vision layer (VISION 2026-09-28)
+
+**Origin**: operator, 2026-09-28. The realization that a *vision-capable* agent
+changes what a gaming agent can be — from one that reads numbers to one that
+sees the screen. Framed against a real finding: on an Intel 64-EU iGPU, a CSV
+saying "1% low 4.9 FPS" is nearly meaningless on its own, because the same
+number covers a VRAM-loading stall (GPU idle, CPU at 51%, 34 ms CPU frame time
+vs 2.9 ms GPU) and a genuine in-game stutter. Only the frame distinguishes
+them. MangoHud cannot even log its `resolution` widget — a screenshot is the
+*only* channel for that datum.
+
+**The loop that works** (proven on Warframe 2026-09-28):
+1. MangoHud CSV indexes the run by time, and names the interesting moments
+   (`min`, `p0.1`, `p1`, `median`) with GPU/CPU load and clock attached.
+2. A screen recording supplies *what it looked like* at those instants.
+   MangoHud's overlay is composited into the framebuffer, so it is in the video.
+3. `hudframe.py` pulls the exact frame for a named moment.
+4. The agent **looks at it** and answers the question a number cannot: is this
+   softness, banding, shadow acne, texture pop-in, or just a slow frame?
+
+This is the "eyes on the ground" loop. It already exists as a working tool
+(`GameResearch/scripts/hudframe.py`, verified end-to-end against synthetic
+ground truth) and needs only a vision-capable agent to close.
+
+**Why Omega cares**: a WAD entity that can see the game state is a different
+class of tool from one that scrapes telemetry. The kill shot is not "it tells me
+my FPS" — it is **realtime visual coaching**: seeing a mis-aimed shot, a
+missed timing window, a bad rotation, or a settings change that traded
+readability for framerate, and saying so while the player is still in the
+moment.
+
+**Candidate surface**:
+- `screenshot` → structured observation (what is on screen, HUD state, alerts)
+- `hudframe extract` → look at the frame behind a specific regression
+- Before/after diff → did this settings change cost me visual quality?
+- Live coaching loop → realtime, bounded latency, opt-in, never autonomous input
+
+**Hard constraints (non-negotiable, from the Code Quality + safety rules)**:
+- **Advisory only.** The agent observes and advises; it never takes input.
+  An agent with hands on a game is a different risk class and needs explicit
+  operator authorization, not a default.
+- No keystroke injection, no aim assistance, no automated play. This is a
+  coaching tool, not a cheat.
+- Privacy: screen contents stay local. No frames leave the machine unless the
+  operator explicitly shares one (as happened 2026-09-28).
+- Cost ceiling: a vision call per frame is unaffordable. Sample on events, not
+  on a timer.
+
+**Done when**: a `screenshot`/`observe` tool that returns structured game-state
+observations; the `hudframe` → vision loop demonstrated on a real regression
+where the number and the frame disagreed; a written privacy + advisory-only
+policy; a measured cost model for realtime latency; and — before any of it
+ships — explicit operator sign-off on the advisory-only boundary.
+
+**Status**: `backlog` — captured, not authorized. The tool half is DONE and
+verified (`GameResearch/hudframe.md`); the vision half depends on the Engine
+running a vision-capable model. Blocked on the alpha release.
+
+**Related**: P4.9 (agent vitals — the text-only half of the same idea),
+`GameResearch/hudframe.md`, `GameResearch/benchmarks/warframe/scenes/`.
+
+---
+
+### P4.9 — Agent vitals: a HUD for autonomous agents (VISION 2026-09-28)
+
+**Origin**: operator experience during Warframe performance work. MangoHud made
+a hidden machine legible in real time — GPU engine-busy (97–100%), CPU load,
+watts, frame time, 1% lows. The same legibility gap applies to agents, which
+fail *silently* and get diagnosed only after the fact.
+
+**Why Omega cares**: the roadmap already demands "no silent failures" (standing
+rule 3) and the gnosis-leash watchdog exists to surface compaction state. But
+vitals are read by a human, on demand, in another terminal. An agent has no
+equivalent sense of "I am degrading." This closes that gap with the mechanism
+that demonstrably worked for the human: continuous, cheap, fused, visible.
+
+**Design principles** (borrowed from MangoHud, several learned the hard way):
+1. **Cheap enough to always be on.** MangoHud costs ~1% because it samples
+   counters it already has. Vitals must not require a polling agent or a
+   second inference pass. Sample on the tick, aggregate, emit.
+2. **One fused view, not five terminals.** The value was never `intel_gpu_top`
+   alone — it was GPU+CPU+RAM+temp+power *simultaneously*. Same for agents:
+   tokens/s, KV-cache occupancy, RAM pressure, context position, tool latency.
+3. **Tell the truth, including when it is unflattering.** A readout that says
+   "fine" when the truth is "degraded" is worse than no readout. A vital that
+   only reports good news is a lie with a graph.
+4. **Zero-value must be visible.** Silence is a value. If nothing sampled, the
+   HUD must say "no data" — it must never render as healthy.
+5. **Cheap to read.** A glanceable block, not a dashboard. If reading it costs
+   more than the problem, nobody reads it.
+
+**Candidate vitals** (to be pruned, not all to ship):
+
+| Vital | Source | Analogue | Why it matters |
+|---|---|---|---|
+| Inference tok/s | Ollama `/api/generate` timings | FPS | Is the substrate actually fast, or assumed fast? |
+| Prompt-eval vs generation split | `prompt_eval_count` / `eval_count` | frame vs CPU time | Separates "slow model" from "huge prompt" — the most misdiagnosed bottleneck in this stack |
+| KV-cache size / context occupancy | Ollama response metadata | VRAM | Single-channel 16GB has no slack; OOM risk is foreseeable |
+| RSS + swap + zram | `/proc` + `zram` | RAM widget | Silent swap thrash is the classic slow death |
+| Host thermals / RAPL watts | RAPL (already built: `GameResearch/scripts/rapl_power.py`) | watts | The 28W PL1 ceiling bites during long runs |
+| Tool-call latency histogram | opencode hooks | 1% lows | An average hides tail latency; the tail *is* the UX |
+| Consecutive-error streak | existing leash logs | stutter | Degradation *before* failure, not after |
+| Time since last checkpoint | Well + manifest | FPS graph | A stuck run looks identical to a slow run unless tracked |
+| Drift: intent vs. actual diff | git + TASKS scope | throttling | Out-of-scope edits are a leading indicator, not a postmortem |
+
+**Delivery surfaces** (pick ONE to start; do not build all):
+- `make vitals` — one-shot fused report, appended to the session log.
+- Compacted block injected into the system prompt at compaction time (piggyback
+  on the existing gnosis-leash injection point — cheapest possible wiring).
+- `docs/VITALS.md` board recording the last N runs for longitudinal drift.
+
+**Explicit non-goals** (temple-grade discipline): no dashboards, no always-on
+daemon in v1, no per-tick telemetry, no new database. A poller process is a
+liability on a 16GB single-channel box. If the vitals cannot ride existing
+hooks, the design is wrong.
+
+**Done when**: `make vitals` prints a fused block with every field sourced and
+timestamped; a deliberately induced fault (swap pressure, a hung tool, a
+stalled model) is visible within one cycle; the block survives into the next
+session via the leash injection point; no field can report healthy when its
+source returned nothing; total added overhead measured and published (budget:
+<2% of a 14.4 t/s inference run).
+
+**Status**: `backlog` — captured, not authorized. Awaiting operator decision on
+surface choice (one-shot vs. compaction-injected) before any implementation.
+Related: `docs/AGENT_RUNBOOK.md` (substrate facts),
+`GameResearch/scripts/rapl_power.py` (a working unprivileged RAPL reader worth
+reusing), `GameResearch/hardware-profile.md` (the 28W PL1 ceiling).
+
+---
+
 ## P5 — Omega Memory module (the substrate) — PRIORITY ONE R&D TRACK
 
 **Goal**: the memory substrate the Engine's intelligence flows through —
