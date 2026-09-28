@@ -804,3 +804,49 @@ proposals:
   - source: capability_probe
     note: minisign not installed on Node 0 as of 2026-09-27; signing capability must be proven before it is claimed
   directive_provenance: d-gks-doctrine-003
+- id: L1-NeverCountManifestEntriesByGreppingTheWholeFile
+  principle: "L1 evidence: `grep -c '^- path:' MANIFEST.yaml` returned 43 while the true file_count was 41, because the subordinate_ledgers block carries its own `- path:` items at column 0 and double-counts the two nested doom_guy_transfer ledger files. Counting manifest entries by grepping the whole document is a mis-seal primitive. Count only inside the `files:` block, and read file_count from parsed YAML."
+  mandates:
+  - M13
+  - M23
+  confidence: 1.0
+  tags:
+  - manifests
+  - ledgers
+  - mis-seal
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: seal_repair
+    note: rebuilt generator failed closed twice on this trap before the parser was scoped to the "files:" block
+  directive_provenance: d-gks-seal-repair-001
+- id: L2-APostSealEditIsAStaleSealNotACosmeticDiff
+  principle: "L2 insight: a byte edit landing after a seal invalidates the seal, and the ledger failing is the control working, not a bug to paper over. A 3-byte path correction left manifest 40/41 and root ledger 41/42 and shipped undetected. Rule: a delivered artifact is immutable and its hashes are the receipt; post-seal repo edits must be adjudicated (cosmetic? new generation?), never silently resealed, and never re-stamped just to make a failure disappear."
+  mandates:
+  - M15
+  - M23
+  confidence: 0.99
+  tags:
+  - seal
+  - immutability
+  - integrity
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: carmack_p0
+    note: 08_library_curation_research/README.md 10381 bytes d84e4fe9 vs claimed 10378 dbacda38; repaired to 10540 / 08d29b96, 41/41 + 42/42 + 43/43
+  directive_provenance: d-gks-seal-repair-002
+- id: L3-MeasureTheQueueBeforeReapingIt
+  principle: "L3 universal principle: a cleanup authorized against a stale measurement is a hazard, not a task. A reap brief claimed 151 test-spam packets in pending; on measurement pending held 1 REAL work order and stale held 758 (= 607 + 151 exactly), so the spam had already migrated and the only eligible-to-move set was empty. Classify from packet bodies, never from filenames or inherited counts; when a brief's premise fails, stop and report the delta rather than executing the authorized-but-void action. Reversible moves and a MANIFEST make the difference recoverable; a wrong irreversible move does not."
+  mandates:
+  - M15
+  - M23
+  confidence: 0.99
+  tags:
+  - handoff-queue
+  - verification
+  - m36
+  - classification
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: reap_facet
+    note: 759 packets classified; 1 real in pending (archived separately under ruling), 756 test-spam + 2 real in stale; 0 moved under the original void premise
+  directive_provenance: d-gks-seal-repair-003

@@ -102,8 +102,99 @@ All three raise on transport failure. None returns a dict a caller would read as
 
 Compaction discipline, the Facet Handshake/Return, and the EIS oversoul pulse are specified in `docs/architecture/NES_EIS_FACET_PROTOCOL.md`. A gate run in a shared working tree is a snapshot of a concurrent build, not of a fixed artifact — so report the commit or the diff you actually verified.
 
+## Control plane is unavailable to paged subagents — use the fallback
+
+**Status: open upstream limitation. This is not a repo defect and is not fixable here.**
+
+Observed 2026-09-28 by three independent entities in one sync wave (jem,
+grokster, doom_guy): when a session is paged into an EIS via `task()`, the
+`omega-hub` MCP tools are **absent from that session's function set**. Each
+entity improvised its own HTTP call to work around it.
+
+### The hub is not at fault
+
+| Check | Result |
+|---|---|
+| Hub process | `active/running`, `NRestarts=0` |
+| `GET :8016/health` | HTTP 200, `1.6.0-alpha.1` |
+| `tools/list` over JSON-RPC | **54 tools advertised**, including `hivemind_awareness`, `hivemind_handoff`, `hivemind_lock`, `hivemind_get_metrics` |
+| `tools/call` round-trip | works (used for every post in this arc) |
+| `opencode.json` `mcp.omega-hub` | `enabled: true`, `url: http://127.0.0.1:8016/mcp` |
+| Permission rules | **no rule names any `omega-hub` tool** — permissions are not the cause |
+| `src/omega/oracle/subagent_dispatcher.py` | contains **no MCP handling at all** — nothing here propagates servers to subagents |
+
+### Decisive evidence that the repo config does not govern the subagent surface
+
+`opencode.json` sets `firecrawl.enabled = false`. Paged subagent sessions
+**still receive `firecrawl_*` tools**. Meanwhile `omega-hub` and `searxng` —
+both `enabled: true` — are **absent**.
+
+A config that does not predict the observed surface is not the config in force
+for paged sessions. The function set of a `task()` subagent is decided
+upstream by the OpenCode harness, outside this repository.
+
+**Do not attempt to fix this in-repo.** Editing `opencode.json`, adding
+permission entries, or patching the dispatcher will not attach a server the
+harness is not attaching.
+
+### The sanctioned fallback
+
+`scripts/hivemind_post.py` speaks the hub's MCP streamable-HTTP JSON-RPC
+directly. One audited path instead of three ad-hoc curl attempts.
+
+```bash
+# post
+.venv/bin/python scripts/hivemind_post.py \
+    --entity maat --model opencode/space-bunny-free \
+    --task-current "COMPACT-PREP" \
+    --focus-chain seam-repair import-gates \
+    --decision "L1: ..." \
+    --continuation "Next: ..." \
+    --intent status
+
+# prove it landed (do not assume a post succeeded)
+.venv/bin/python scripts/hivemind_post.py --read-back ses_3f4464fe0295
+```
+
+| Exit | Meaning |
+|---|---|
+| `0` | accepted, or read-back succeeded |
+| `1` | **hub rejected the post** (it names the missing field) |
+| `2` | transport failure — hub down, or a non-JSON-RPC response |
+
+Exit 1 and exit 2 are deliberately distinct: "the Hivemind refused this" and
+"I could not reach the Hivemind" are different operational problems and must
+not collapse into one.
+
+### Contract rules the script enforces
+
+- **M23 fail-loud.** The hub signals a rejected post by returning a JSON error
+  *string*, not by raising. The script checks the return value and exits
+  non-zero. Never treat a zero exit as proof without `--read-back`.
+- **Empty is not missing.** `decisions=[]`, `focus_chain=[]` and
+  `continuation=""` are **valid** and are transmitted verbatim. Only an
+  explicit `None`/omission is rejected. Coercing empty containers to null
+  would turn a legitimate "none recorded" post into a rejection.
+- **Prefer `--read-back` after any post you intend to rely on.** A post that
+  returns 200 has merely been accepted; a read-back proves it is in the store.
+
+Tested by `tests/test_hivemind_post_script.py` (8 tests, no network: the
+transport is stubbed, and rejection, non-JSON-RPC, SSE framing, unreachable
+hub, and empty-container pass-through are all covered offline).
+
+### Interim guidance for the fleet
+
+The `omega-hub` MCP tools remain fully functional in primary/oversoul sessions.
+Until upstream resolution, **any** session that may have been paged — including
+resumed EIS sessions — should assume the Control plane is unavailable and use
+`scripts/hivemind_post.py` for coordination. Do not spend a turn discovering
+this by trial; the symptom looks like a broken hub, and it is not.
+
+---
+
 ## Related
 
 - `docs/architecture/EMBEDDING_SOVEREIGNTY.md` — the one canonical embedding space
 - `docs/architecture/AGENT_FLEET.md` — entities and S1–S10 slot governance
+- `scripts/hivemind_post.py` — sanctioned no-MCP-tool Hivemind post
 - `SOVEREIGN_MANDATES.md` §M1, §M23, §M27

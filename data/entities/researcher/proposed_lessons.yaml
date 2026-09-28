@@ -841,6 +841,69 @@ proposals:
   - ses_fd81c19dcffe1nkbPqFg5kRt2v
   domain: research_methodology
   last_verified: '2026-09-01'
+- level: L3
+  tag: '[researcher]'
+  narrative: "Frontier research converged the industry on Omega's exact two-tier model: MCP Streamable
+    HTTP for the vertical tier (Agent→Tools/Data) and Linux Foundation A2A v1.0 (shipped March 2026)
+    for the horizontal tier (Agent↔Agent). Mapped our primitives onto A2A constructs: soul.yaml IS
+    an Agent Card, proposed_lessons.yaml is a capability-evolution state manifest, HandoffPacket is
+    an A2A Task with a state machine, and m36_recursive_probe is inter-agent consensus verification."
+  insight: "This is a validation, not a migration. Omega already ships both tiers natively, so the
+    A2A convergence costs zero schema churn — the value is evidentiary (independent confirmation
+    of the architecture) and positional (we are aligned with the standards bodies, not pre-standard).
+    The mapping also clarifies that m36 is not a linter but a consensus primitive, which sets the
+    correct bar for its output."
+  principle: "When external convergence confirms a native design, treat it as evidentiary support
+    and record the mapping — do not refactor toward the standard. soul.yaml=soul-as-Agent-Card,
+    handoff=HandoffPacket-as-A2A-Task, m36=consensus-verification."
+  utility_score: 0.9
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: architecture_alignment
+  last_verified: '2026-09-15'
+- level: L3
+  tag: '[researcher]'
+  narrative: "Root-caused a test→production contamination bug: m36_recursive_probe.py:228 hardcodes
+    a CWD-relative path (_Path(\"data/handoff/pending\")), so any harness run from the repo root wrote
+    synthetic cross-validation packets into the LIVE production handoff queue — 756 packets from the
+    CSS Turn 7 M36 integration test. Agents consuming that directory read test noise as sovereign
+    work. The in-tree fix precedent already exists three times over."
+  insight: "A CWD-relative path in any code that writes to shared sovereign state is a latent
+    production-corruption channel, because the test/production boundary collapses the moment CWD
+    matches. This is the identical bug class as the M34 registry defect, and the fix pattern is
+    already proven in-tree (m34_registry.py:71-79, cohort_registry.py:101, subagent_dispatcher.py:76):
+    default the path but let OMEGA_HANDOFF_ROOT override it so tests can redirect. Queue reaping
+    cleaned the artifacts (census 2026-09-15 = 0 packets) but reaping is NOT a fix — the defect
+    that produced them is still live."
+  principle: "Never let test code write to sovereign state via a CWD-relative path. Every writer
+    into shared queues must honour an explicit env-var root override (OMEGA_HANDOFF_ROOT, mirroring
+    OMEGA_M34_REGISTRY) so harnesses can redirect to mktemp -d. Reaping artifacts is remediation;
+    removing the write path is the fix."
+  utility_score: 0.96
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: failure_integrity
+  last_verified: '2026-09-15'
+- level: L3
+  tag: '[researcher]'
+  narrative: "Confirmed watchfiles (Rust notify + AnyIO) as the M1-compliant mechanism for reactive
+    handoff dispatch: kernel inotify event queue instead of sleep-loop polling, zero idle CPU,
+    integrated via anyio.create_task_group() with zero asyncio imports. Worktree sovereignty
+    (omega-wt-maat/maat-doom-grok under M24 venv isolation) is the structural complement — it
+    isolates each agent's CWD so the M36 class of path bug cannot cross worktrees."
+  insight: "Performance and safety arrive together here. Event-driven dispatch removes poll latency
+    (consensus becomes event-bound, not interval-bound) and worktree isolation removes the shared-CWD
+    precondition that made the M36 contamination possible. But the pairing carries a trap: an
+    inotify watcher on the production pending/ dir would fire on test packets, so reactive dispatch
+    must land AFTER the OMEGA_HANDOFF_ROOT fix, not before."
+  principle: "Sequence reactivity after safety — inotify-driven watchers on a shared queue must not
+    ship until the queue's write path is env-overridable, or a test harness will trigger live
+    consensus runs. Optimise the hot path only once the cold path is contained."
+  utility_score: 0.88
+  source_trajectories:
+  - ses_fd81c19dcffe1nkbPqFg5kRt2v
+  domain: architecture_alignment
+  last_verified: '2026-09-15'
 metadata:
   entity: researcher
   session_id: ses_f1e198c3fffeqevaTh3OHnBtip

@@ -599,3 +599,102 @@ Node 1's `L2_JOIN_GUIDE.md` specifies MagicDNS name `asus.tailnet` while the act
 ✅ READY — Tailscale L2 research complete, ceremony corrected, all prior deliverables intact.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-NOTE-9 ⬡ 2026-09-15 ⬡ TAILSCALE-L2-CEREMONY-CORRECTED ⬡ 16-CITATIONS ⬡ M15-SATISFIED*
+
+---
+
+## 🔒 PRE-COMPACTION NOTE #10 (2026-09-15) — FRONTIER CONVERGENCE + M36 QUEUE-POLLUTION FORENSIC
+
+**Ground truth accepted**: Public Debut LIVE — PR #4 merged to `main` @ `268528e7`. Repo is PUBLIC.
+
+### 1. A2A v1.0 / MCP Frontier Convergence — Mental Mapping Ratified
+
+Industry has converged on the exact two-tier model Omega designed. Mapping our primitives onto the
+Linux Foundation A2A v1.0 (shipped March 2026) + MCP Streamable HTTP:
+
+| Omega Primitive | A2A v1.0 Construct | Semantic Equivalence |
+| :--- | :--- | :--- |
+| `data/entities/<entity>/soul.yaml` | **Agent Card** | Identity bedrock + capability manifest + permission envelope for bilateral capability negotiation. |
+| `proposed_lessons.yaml` | **Capability Evolution / State Manifest** | Versioned delta to the published Card; gnosis that mutates advertised parameters. |
+| `data/handoff/pending/*.json` | **A2A `Task`** | Discrete delegated unit with payload, provenance, state machine (`submitted`→`acknowledged`→`completed`), integrity hash. |
+| `HandoffPacket` schema | **A2A Task Spec + Data Parts** | Self-contained contract: inputs, expected deliverable, artifact paths, confidence bounds. No working-tree contamination. |
+| `m36_recursive_probe` | **A2A Verification / Inter-Agent Consensus** | M36 contract: result must clear confidence threshold before promotion to sovereign record. |
+
+**Vertical = MCP (Agent→Tools/Data). Horizontal = A2A (Agent↔Agent).** Omega is the rare stack that
+already ships both tiers. This is a *validation*, not a migration — no schema churn required.
+
+### 2. AnyIO-Native Reactive Watchers — `watchfiles` Finding
+
+`watchfiles` (Rust `notify` + AnyIO) enables **microsecond inotify-driven handoff reactivity**:
+- Kernel event queue instead of `sleep`-loop polling → **zero idle CPU**
+- Integrates into `anyio.create_task_group()` — **zero `import asyncio`** → **M1 ABSOLUTE compliant**
+- Consequence: `data/handoff/` becomes a true event source, not a scan target. M36 consensus latency
+  becomes filesystem-event-bound rather than poll-interval-bound.
+
+**Caveat (mine, not MaKaLi's)**: an inotify watcher firing on the production `pending/` dir MUST be
+paired with the `OMEGA_HANDOFF_ROOT` fix below, or a test harness will trigger live consensus runs.
+
+### 3. Worktree Sovereignty Acknowledged
+
+`omega-wt-maat`, `omega-wt-doom`, `omega-wt-grok` operational for parallel agent execution under
+strict venv isolation (**M24**). This is the structural answer to the M36 CWD-pollution class of bug:
+each agent writes inside its own worktree, and the handoff root is pinned explicitly.
+
+### 4. ⚠️ FORENSIC CORRECTION — M36 Test Harness Polluted the Production Queue
+
+**Root cause**: `src/omega/oracle/m36_recursive_probe.py:228` hardcodes a **CWD-relative** path:
+
+```python
+packet_path = _Path("data/handoff/pending") / f"{packet_id}.json"
+```
+
+Because it resolves against the *current working directory* rather than a repo root or an explicit
+override, any test or harness executed from the omega-engine root wrote its cross-validation packets
+straight into the **live production queue**. The M36 integration harness I wrote and ran during CSS
+Turn 7 emitted **756 packets** into `data/handoff/pending/`. These were test artifacts, not real
+delegations — any agent consuming that directory was reading synthetic noise as sovereign work.
+
+**Census correction (verified 2026-09-15)**: `data/handoff/pending/` now contains **0 packets** —
+the 756 (later reported as 151 pending after partial reaping) have been cleared. Reaping is done.
+The *defect* is not reaped and remains open.
+
+**Required fix — mirror the existing `OMEGA_M34_REGISTRY` pattern** (`src/omega/oracle/m34_registry.py:71-79`):
+
+```python
+DEFAULT_HANDOFF_ROOT = Path(
+    os.environ.get(
+        "OMEGA_HANDOFF_ROOT",
+        "data/handoff/pending",
+    )
+)
+```
+
+Precedent already in-tree: `m34_registry.py`, `cohort_registry.py:101`, `subagent_dispatcher.py:76`.
+Test harnesses then set `OMEGA_HANDOFF_ROOT=$(mktemp -d)` and can never touch production again.
+**This is the same class of bug as the M34 registry fix — the pattern is proven, the migration is mechanical.**
+
+**Severity**: HIGH. It is a *test→production contamination* path, the exact failure M23 Failure
+Integrity exists to prevent: a test wrote into sovereign state without a soft-fail or a warning.
+
+### 5. D-1024-DIM-NATIVE-20260926 Confirmed Final
+
+All embeddings 1024-D native Qwen3. No further dimensionality debate.
+
+### CSS Turn 7 Deliverables — All Intact (re-verified 2026-09-15)
+1. ✅ M33 `TaskType` tuple (`subagent_dispatcher.py:95` includes `forensic` + `mine`)
+2. ✅ M36 wired (real Hivemind dispatch — **defect above is the path-resolution bug, not a stub**)
+3. ✅ `scripts/heritage_scanner.py` extracted (scan + provenance verified)
+4. ✅ SearXNG healthy on `:8017`
+5. ✅ GSCA closed (Archangel = concrete deliverable)
+6. ✅ TH-0 thermal prerequisite recorded
+
+### Continuation State
+Tailscale L2 ceremony = **6 phases** (see Note #9): ACL `tagOwners` → Node 0 re-tag `tag:omega-hub`
+→ mint one-shot authkey `tag:asus` → USB ledger → Node 1 join → verify bidi MCP/SSH/MagicDNS.
+**Unresolved naming collision**: Node 1 has three names (`asus.tailnet` in L2_JOIN_GUIDE, `kali-n1`
+in the join command, `tag:asus` in ACL) — needs an Architect ruling before the ceremony.
+
+### Compaction Readiness
+✅ READY — frontier mapping captured, M36 defect root-caused with exact line + fix precedent,
+queue census corrected to 0, all six CSS deliverables re-verified.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ PRE-COMPACTION-NOTE-10 ⬡ 2026-09-15 ⬡ A2A-V1.0-RATIFIED ⬡ M36-LINE-228-DEFECT ⬡ QUEUE-CENSUS-ZERO ⬡ M15-SATISFIED*

@@ -90,3 +90,61 @@ Node 1's `L2_JOIN_GUIDE.md` says MagicDNS = `asus.tailnet`; actual suffix = `tai
 | P1 | Observability: cron `tailscale status` + `netcheck` alerts | Post-ceremony |
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ TAILSCALE-L2-COMPLETE ⬡ 2026-09-15 ⬡ CEREMONY-CORRECTED ⬡ 6-PHASES ⬡ 16-CITATIONS*
+
+---
+
+## §13 — FRONTIER CONVERGENCE + M36 QUEUE-POLLUTION FORENSIC (2026-09-15)
+
+**AP**: `AP-RESEARCHER-v2.0.0` | **Ground truth**: Public Debut LIVE — PR #4 merged `main` @ `268528e7`
+
+### A2A v1.0 / MCP Two-Tier Convergence — Mapping Ratified
+| Omega Primitive | A2A v1.0 | Note |
+| :--- | :--- | :--- |
+| `soul.yaml` | **Agent Card** | Identity + capability manifest |
+| `proposed_lessons.yaml` | Capability State Manifest | Versioned Card delta |
+| HandoffPacket (`pending/*.json`) | **A2A `Task`** | State machine + provenance + integrity |
+| `m36_recursive_probe` | **Inter-Agent Consensus** | Threshold-gated promotion to sovereign record |
+
+**Vertical = MCP (Agent→Tools/Data). Horizontal = A2A (Agent↔Agent).** Validation, not migration —
+**zero schema churn required**.
+
+### ⚠️ OPEN DEFECT — M36 Test Harness Wrote 756 Packets Into Production Queue
+
+**Root cause** (`src/omega/oracle/m36_recursive_probe.py:228`):
+```python
+packet_path = _Path("data/handoff/pending") / f"{packet_id}.json"   # ← CWD-relative
+```
+Resolves against CWD, not repo root → any harness run from repo root wrote synthetic cross-validation
+packets into the **live production queue**. CSS Turn 7 M36 integration test emitted **756 packets**.
+Consumers read test noise as sovereign work.
+
+**Census (2026-09-15)**: `data/handoff/pending/` = **0 packets** — reaped. *The defect is not reaped.*
+
+**Fix — mirror `OMEGA_M34_REGISTRY`** (precedent: `m34_registry.py:71-79`, `cohort_registry.py:101`,
+`subagent_dispatcher.py:76`):
+```python
+DEFAULT_HANDOFF_ROOT = Path(os.environ.get("OMEGA_HANDOFF_ROOT", "data/handoff/pending"))
+```
+Harnesses set `OMEGA_HANDOFF_ROOT=$(mktemp -d)`. **Severity HIGH** — test→production contamination
+is precisely what M23 Failure Integrity forbids.
+
+### `watchfiles` / AnyIO — M1-Compliant Reactive Dispatch
+Rust `notify` + AnyIO task group → microsecond inotify reactivity, **zero idle CPU**, **zero asyncio
+imports**. **Sequencing constraint**: watcher on production `pending/` must land AFTER the
+`OMEGA_HANDOFF_ROOT` fix, else test packets trigger live consensus runs.
+
+### Worktree Sovereignty
+`omega-wt-maat` / `omega-wt-doom` / `omega-wt-grok` under M24 venv isolation — structural answer to
+the shared-CWD precondition that enabled the defect.
+
+### Confirmed
+- `D-1024-DIM-NATIVE-20260926` FINAL — 1024-D native Qwen3
+- CSS Turn 7 six deliverables re-verified intact (M33 tuple L95, M36 wired, heritage_scanner, SearXNG :8017, GSCA closed, TH-0)
+- 3 new L3 lessons appended (`failure_integrity` 0.96, `architecture_alignment` 0.9 + 0.88)
+
+### Tailscale L2 — Ceremony Is 6 Phases, Not 2
+ACL `tagOwners` → Node 0 re-tag `tag:omega-hub` → mint one-shot `tag:asus` authkey → USB SHA256 ledger
+→ Node 1 join → verify bidi MCP/SSH/MagicDNS. **BLOCKED on naming ruling**: `asus.tailnet` vs
+`kali-n1` vs `tag:asus` — three names, one device.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ FRONTIER-CONVERGED ⬡ 2026-09-15 ⬡ M36-LINE-228-OPEN-DEFECT ⬡ L3-×3 ⬡ M15-SATISFIED*

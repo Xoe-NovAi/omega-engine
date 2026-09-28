@@ -1146,6 +1146,41 @@ proposals:
     turns it into entity knowledge. Treat every external source as metadata, abstract,
     or restricted content until its exact license and jurisdiction are recorded; never
     let a convenient API or a same-dimension vector substitute for provenance.'
+- id: PL-ROC-COMPACT-SYNC-20260926
+  date: '2026-09-26'
+  session_id: ses_f45ab885853e
+  tags:
+  - compact-prep
+  - persistence
+  - file-based
+  - sqlite-federation
+  - opencode-db
+  - hivemind
+  - embeddings
+  - hardware
+  L1_narrative: 'Received MaKaLi Fusion''s nine-report synthesis brief. Re-anchored on
+    the FIX-vs-REPLACE ruling: file-based coordination stays for now, the 15-tool surface
+    is consolidated to 4 tools, and Roc''s six-table SQLite schema is banked for the
+    D-584 multi-node federation horizon behind the same MCP interface. Confirmed the
+    opencode.db disk leak as a real OpenCode session-history store growing 27G to 36G+
+    and structurally separate from Hivemind. Recorded D-1024-DIM-NATIVE-20260926 as
+    final: native 1024-D Qwen3 supersedes the earlier 768-D conflict framing. Confirmed
+    the Node 1 library package at n0-to-n1-v2/08_library_curation_research/ was
+    hand-delivered and verified 43/43 by Lilith. Reported readiness for the post-debut
+    Soul Audit Cascade and for a scheduled, staged opencode.db vacuum.'
+  L2_insight: 'Repairing the smallest live coordination seam is not architectural retreat;
+    bank the stronger backend for the horizon when contention justifies it. OpenCode
+    session history and Hivemind coordination state are separate failure domains and must
+    never be vacuumed or maintained as if they were one store. A later canonical
+    embedding decision must be persisted across all continuation records so the fleet
+    does not revive a settled 768/1024 conflict. The boot seam that imported deleted
+    _extended_sessions proves import graphs require runtime startup tests.'
+  L3_principle: 'L3-FixTheSeamBeforeReplacingTheEngine: repair the smallest observable interface
+    first and bank larger migrations for the horizon. L3-StoreBoundariesAreFailureDomains:
+    OpenCode history, Hivemind coordination, and entity knowledge are separate stores.
+    L3-DecisionSupersessionMustBePersisted: later canonical rulings replace earlier
+    framing in continuity records so the fleet does not re-litigate settled architecture
+    or dimensions.'
 metadata:
   entity: roc_racoon
   session_id: ses_f1dfbd9e4ffex7GMetpUom0P1t

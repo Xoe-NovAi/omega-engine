@@ -675,3 +675,56 @@ The journal rotate-then-vacuum pattern remains the highest-impact single action 
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/space-bunny-free ⬡ opencode ⬡ trc_library_curation ⬡ COMPACTION-READY*
+
+---
+
+## Session: MAKALI FUSION COMPACT-PREP RE-ANCHOR
+**Date**: 2026-09-26 onward
+**Model**: `opencode/space-bunny-free`
+**Role**: Sovereign Miner, Persistence Architect, Hardware Forensics
+**Mode**: Information-only grounding; no vacuum, soul-schema edit, directory crawl, or backend replacement.
+
+### L1: What Happened
+
+1. Received MaKaLi Fusion's formal synchronization brief synthesizing nine EIS reports.
+2. Re-anchored on the FIX-vs-REPLACE ruling: the immediate file-based coordination fix stays; Roc's six-table SQLite schema is banked for the D-584 multi-node federation horizon behind the same four-tool MCP interface.
+3. Confirmed the 15-tool to 4-tool consolidation seam and the boot regression where `server.py` imported deleted `_extended_sessions`; runtime import-graph and startup testing are mandatory gates.
+4. Confirmed the opencode.db disk-leak finding: the 27G→36G+ store is real OpenCode session history, structurally separate from Hivemind. Vacuum is a scheduled, staged maintenance operation, not a coordination-store operation.
+5. Recorded D-1024-DIM-NATIVE-20260926 as final: native 1024-D Qwen3 is canonical across both nodes and supersedes the earlier 768-D conflict/parity framing in the library-curation report.
+6. Confirmed the eight-artifact Node 1 library package at `n0-to-n1-v2/08_library_curation_research/` was hand-delivered and verified 43/43 by Lilith.
+
+### L2: What This Means
+
+- File-based is not a retreat; it is the correct immediate seam repair. The SQLite design is deferred architecture, not a hidden partial migration.
+- OpenCode's session history and Hivemind coordination data have different failure domains. Cleaning or vacuuming one must never be treated as maintenance of the other.
+- The 1024-D decision removes the 768/1024 ambiguity, but does not remove the need for model/preprocessing/query-parity verification; it changes the baseline to 1024-D native Qwen3.
+- Library curation and persistence converge on the same law: preserve provenance, keep authority local and explicit, and gate promotion before federation.
+
+### L3: Universal Principles
+
+> **L3-FixTheSeamBeforeReplacingTheEngine**: When a live coordination seam is broken, repair the smallest observable interface first; bank the larger backend migration for the horizon when contention actually demands it.
+
+> **L3-StoreBoundariesAreFailureDomains**: OpenCode session history, Hivemind coordination state, and entity knowledge are separate stores. Maintenance of one is never maintenance of another.
+
+> **L3-DecisionSupersessionMustBePersisted**: A later canonical decision must replace earlier framing in continuation records so the fleet does not re-litigate a settled dimension or architecture question.
+
+### Persistence and Hardware Readiness
+
+- Ready to lead the post-debut Soul Audit Cascade onto the v8.0 flat-list `approved_lessons` format; no schema changes in this pass.
+- Ready to support the Architect's scheduled `opencode.db` vacuum on `/media/arcana-novai/omega_library` using stop-writer discipline, SQLite-aware staging, integrity checks, atomic swap, and startup/session smoke tests.
+- No vacuum, mount inspection, or hardware mutation performed in this information-only pass.
+
+### Next After Compaction
+
+1. Post this compact-prep report to the consolidated Hivemind surface.
+2. Preserve file-based coordination as current state and the six-table SQLite schema as banked D-584 federation architecture.
+3. Use 1024-D native Qwen3 as the embedding baseline in all Node 0/Node 1 retrieval planning.
+4. Keep the 43/43 Node 1 library delivery as verified ground truth.
+5. Await Architect scheduling for the opencode.db vacuum and Soul Cascade go/no-go.
+
+**Hivemind target**: consolidated `hivemind_awareness(action="post", ...)`  
+**Lesson**: `PL-ROC-COMPACT-SYNC-20260926` added to `proposed_lessons.yaml`
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/space-bunny-free ⬡ opencode ⬡ trc_compact_prep ⬡ COMPACTION-READY*

@@ -643,3 +643,323 @@ All prior P0 findings are fixed: lineage-only Flynn/Doom Guy boundary; active ch
 
 **Confidence: 9.7/10.** No files edited. Non-fabrication: all findings from direct reads + hash computation at both locations.
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_v2_reaudit ⬡ COMPACTION-READY*
+
+---
+
+## 🔱 2026-09-28 SESSION ARC: P0 SOVEREIGNTY → P1 SEAMS → GEMMA REMOVAL
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `opencode/space-bunny-free`
+**Branch**: `release/debut-v1.6.0` · **HEAD at close**: `de660681` (committed) + my uncommitted work in tree
+**Committed by**: MaKaLi as `de660681`. `make temple-grade` **53/53**. EmbeddingGemma fully removed.
+
+Three mandates executed in sequence, each verifying by execution rather than inference.
+M1 (no `import asyncio` in src/omega/) · M23 (fail loud) · M24 (.venv/bin/python) · M27 (tracking).
+
+---
+
+### ⭐ THE TWO SELF-RETRACTIONS — most valuable output of this session
+
+**Doctrine (Axiom 05, Empirical Truth): mastery is earned by testing the artifact, not by
+reasoning from its label. I violated my own doctrine twice and caught it only by executing.**
+
+#### RETRACTION 1 — "39 real vectors" was WRONG. It is 1009.
+
+- **I claimed**: the live `omega_vec_omega_vec_gemma_768` table held **39 real vectors**;
+  the 1009 `_rowids` figure was "vec0 shadow bookkeeping, not vectors" and overstated
+  the work by 26×.
+- **Truth, by byte arithmetic**:
+  ```
+  vec0 virtual table count(*)  = 1009
+  sum(length(embedding))       = 3,099,648 bytes
+  1009 × 3072 (768 × float32)  = 3,099,648 bytes   → EXACT MATCH
+  ```
+  **1009 is the real vector count.** The 39 `_chunks` / `_vector_chunks00` rows are
+  vec0's **internal storage pages** (`size=1024` bytes each — chunk-index metadata).
+  I misread a storage-layout artifact as a row count.
+- **Confidence in the 39 figure: 0/10.** In the 1009 figure: 10/10, byte-proven.
+- **Lesson**: a `count(*)` on a vec0 virtual table is authoritative; the `_chunks`
+  sidecars are an implementation detail of the extension, NOT a vector census. Never
+  report a row count from a shadow table. **When the number and the byte arithmetic
+  disagree, the bytes win.**
+
+#### RETRACTION 2 — "8/10 EmbeddingGemma-300M" was WRONG. It is 0/10.
+
+- **I claimed**: the rows were natively-768 EmbeddingGemma-300M output, confidence 8/10,
+  inferred from the collection name plus declared `float[768]` width.
+- **Truth, by full-population forensic scan of all 1009 rows**:
+  ```
+  nonzero-dim histogram:  0 → 568 rows | 4–13 → 235 | 14–25 → 206
+  L2 norm                :  1.0 exactly (ONE distinct value across all 1009)
+  distinct |value|       :  103  (a neural model emits thousands)
+  0.4932 / 0.1644        :  3.0000 exactly
+  0.3288 / 0.1644        :  2.0000 exactly
+  0.1644                 :  = 1/sqrt(37)
+  ```
+  Values are **integer token-counts × a single scale constant, then L2-normalised**.
+  I **reproduced the algorithm locally**:
+  ```python
+  h = int(hashlib.md5(token).hexdigest(), 16); vec[h % dim] += 1.0
+  vec = vec / ||vec||        # → 1/sqrt(n_unique_tokens); sim gave 1/sqrt(11)=0.3015
+  ```
+- **Conclusion**: the rows were written by `SovereignFallbackEmbeddingProvider` or
+  `library/indexer._compute_embedding` — **deterministic feature hashing**, not any
+  neural model. A neural embedding is DENSE (768/768 nonzero); these are SPARSE (4–25).
+- **Confidence: 0/10 that they are EmbeddingGemma-300M; ~9/10 that they are feature-hash.**
+- **Lesson**: I inferred model identity from a **table name** and had the data in hand to
+  test it. The table was *named* `gemma_768` and had *never* held gemma vectors. When
+  provenance is in question, **characterise the values — never trust the label.**
+
+**Fleet-level implication**: if a name can lie about provenance, any audit that cites
+names instead of bytes is unverified. Step 19 was recast from *migration* to *rebuild*
+on the strength of Retraction 2 alone.
+
+---
+
+### P0 — D-1024 SOVEREIGNTY (M23 FAIL-LOUD ENFORCED)
+
+**Ruling agreed**, with one correction to the ticket's premise.
+
+**Root cause found by tracing, not by reading the ticket:** the "dimension validator" at
+`config/embedding_strategy.yaml:23` (`vec0_lock`) **enforces nothing at runtime**.
+`grep -rn "vec0_lock|error_on_mismatch" --include=*.py` returns exactly ONE hit:
+`tests/contracts/test_embedding_dimension.py:49`. It is asserted by a test and read by
+no `src/` code. The `message` string is documentation wearing a lock's clothing.
+
+**Why width-checking could never have caught the bug:** the real guard
+(`_ensure_collection_vec_table:544`) compares provider width against **the target
+collection's declared dim** — self-consistency, not canonical conformance. A nomic-768
+answer into `omega_vec_nomic_768` (declared 768) is a **perfect match**. No guard
+anywhere asked "is this the canonical space?" Only "does this fit the box it was handed?"
+A 768-D nomic vector and an MRL-truncated 768-D Qwen3 vector are **indistinguishable by
+width**. Hence removal, not a width patch.
+
+**Executed:**
+- Removed `nomic_fallback` (priority 1) from config + RRF weights.
+- Default chain → **canonical-capable only**: Qwen3-1024 → `SovereignFallback(1024)`.
+- Added `EmbeddingProviderUnavailableError` (subclasses `OmegaError`) and
+  `_assert_canonical_width`, which runs **before** the value is returned. Legal vs illegal
+  is discriminated by **`_target_dim`**: an explicit MRL declaration is same-model
+  truncation (accepted); a narrow vector with no `_target_dim` is cross-model (refused).
+- `OllamaEmbeddingProvider()` now **requires an explicit `model=`** — a no-arg
+  construction can no longer silently produce a 768-D nomic vector.
+- Circuit breaker refuses wrong-width answers.
+- Legacy collections kept, flagged `deprecated: true` + `deprecated_by` + `removal` +
+  `semantic_space`, so Step 19 has real targets.
+
+**A SECOND HOLE found by execution, not in the ticket:** the `OMEGA_ENV=test`
+short-circuit returned `[0.0] * self.current_dimension`, and `current_dimension` is
+`providers[0].dimension` — so a chain headed by a sub-canonical provider emitted a
+**sub-canonical zero vector in test mode**. Caught by my own first test run returning
+`'mock'` instead of the provider name.
+
+**Negative test, observed firing:**
+```
+Cross-model substitution blocked: NativeNomic768 returned 768-dim on a 1024-dim canonical request.
+Canonical embedding provider unavailable — refusing to substitute a different model.
+  Decision:  D-1024-DIM-NATIVE-20260926
+  Legal:      MRL truncation of a 1024-D Qwen3 vector to 768/512/256/128/64
+  ILLEGAL:    a natively-768 nomic-embed-text vector standing in for the canonical space
+  Provider failures:
+    - DeadCanonicalProvider: Embedding model not found: ...Qwen3-Embedding-0.6B-Q5_K_M.gguf
+    - NativeNomic768: returned 768-dim on a 1024-dim canonical request
+RESULT: guard FIRED. No 768-D vector escaped.
+```
+A guard never observed firing is not a guard. 17 → **25** contract tests.
+
+---
+
+### P1 — STRANDED IMPORTS + STEP 19/20 RETARGET
+
+**Verified on entry:** `import omega_hub` → `ModuleNotFoundError: No module named 'omega_hub'`.
+Real paths are `mcp_servers.omega_hub.*`. Live registered surface enumerated —
+**54 tools**; Hivemind set is exactly `hivemind_awareness, hivemind_get_metrics,
+hivemind_handoff, hivemind_lock`. Both Redis stubs resolve to `AttributeError: DEAD`.
+
+**Dispositions, each justified by what the real surface offers:**
+- `hivemind_bridge.py` publish → **repoint** to `hivemind_awareness(action="post")`.
+- `hivemind_bridge.py` subscribe → **cannot honestly be repointed**; no subscribe
+  primitive exists. Reimplemented as a **poll** returning `{"status":"empty"}` when
+  nothing is pending, because `collect_signals` branches on
+  `if result.get("status") == "success"`. Returning "success" from a poll would be a lie
+  the caller could not detect. Docstring says in bold: NOT a live subscription.
+- `watchdog.py` → **repoint, not deletion**. The *call* was dead; the *intent* maps
+  exactly onto `hivemind_awareness(action="post")`. Real damage was the blanket
+  `except Exception: logger.warning` — it fired on **every** call because the import
+  could never succeed, and said nothing about the alert being lost. Now names the entity
+  and states the alert was **lost, not buffered**.
+- `post_to_hivemind.py` → **repoint**. Proven live: `hivemind_post_context` returns
+  `Unknown tool`; `hivemind_awareness` returns real records. `tag` preserved in
+  `task_current`. Error message no longer misattributes a dead tool to connectivity.
+
+**⭐ FIFTH STRANDED IMPORT found — not in the brief.** `src/omega/research/scorecard.py:452`
+`from omega_hub import omega_hub_oracle_summon`. Found by grepping all of `src/omega/`
+for the defect rather than trusting the reported list. **A briefed list of defect sites
+is a hypothesis, not an inventory — grep the whole scope.**
+
+**⭐ CIRCULAR IMPORT I hit, and why the original lazy placement was CORRECT.**
+My first fix used a module-level import and broke the engine:
+```
+ImportError: cannot import name 'mcp' from partially initialized module mcp_servers.omega_hub.server
+  omega.research.__init__ → hivemind_bridge → hub_tools → task_registry
+    → hub_tools.server → omega.oracle → omega.governance → omega.research.types
+    → omega.research.__init__          ← BOOM
+```
+Fixed with a lazy resolver. **The original authors put those imports inside functions
+deliberately** — the placement was right, only the module name was wrong. I nearly
+"fixed" a correct design decision by hoisting an import out of the function.
+
+**⭐ Second defect found during the fix, by execution:** calling the tool directly
+returned a `CallToolResult`, not JSON — `TypeError: object of type 'CallToolResult'
+has no len()`. FastMCP's `@mcp.tool()` wraps callables. Same class of defect: a bridge to
+a tool whose **call shape** no longer matched. Fixed with
+`getattr(tool, "__wrapped__", tool)` at every direct-call site.
+
+**All adapters now fail loud** (M23): `HivemindTransportError` instead of returning a
+dict the caller would read as a successful publish.
+
+---
+
+### TASK 3 — THE DEAD TEST, AND THE FALSIFICATION PROOF
+
+**Verified on entry:** `pytest tests/test_hub_health.py::TestCriticalTools` →
+**`OK (skipped=20)`** — 20 skips, **0 assertions executed**. `/debug/tools` returns
+`sample_tools`: 10 names of 54. It also asserted `library_search` and `memory_search`,
+neither in the surface, and `library_search` is rejected by the hub's own boot curation.
+
+**Rebuilt** against the complete in-process registry (`mcp.list_tools()`), with two
+structural safeguards:
+1. **A truncated surface is a hard failure, not a skip** (`assert len(names) >= 50`) —
+   because absence assertions over a truncated list are *vacuously true*, which is the
+   original bug.
+2. **Cross-check against the running hub's count** — divergence means callers cannot
+   reach what the test asserts.
+
+Added `test_retired_tool_absent` over 8 consolidated-away names. **26 real assertions,
+0 skips.**
+
+**⭐ FALSIFICATION TEST — the guard observed FAILING, not merely passing:**
+```
+AssertionError: hivemind_post_context was retired by the Hivemind consolidation
+  but is back in the registered surface. Either the shim and the real tool have
+  diverged, or the tool was resurrected without updating the callers.
+AssertionError: in-process registry has 55 tools but the running hub reports 54
+  — assertions would be against a surface that callers cannot reach
+```
+Both fired on the injected pre-consolidation surface. Then restored and re-confirmed
+green. **A test that has only ever passed is untested.**
+
+---
+
+### STEP 19/20 — REBUILD, NOT MIGRATE (the conclusion Retraction 2 forced)
+
+**Inventory (read from the DB, not from config):**
+
+| DB | Table | Width | Rows | Content | Re-embed? |
+|---|---|---|---|---|---|
+| `data/omega_memory.db` | `omega_vec_omega_vec_gemma_768` | 768 | **1009** (568 zero) | feature-hash | **No** — never semantically valid |
+| `data/memory/omega_memory.db` | `omega_memory_vec` | 256 | 584 | feature-hash | **No** — same |
+
+**No MRL-truncated canonical data existed anywhere in `data/`.** The nomic tiers exist
+in config and are **empty** — no tables at all.
+
+**Ruling: Step 19 is a REBUILD, not a migration.** There is no meaningful data to
+preserve, so no data-loss risk, no complex rollback — cheap and low-risk. Ordered
+19-then-20 (canonical table must exist before legacy drops; aliases must survive
+until no caller emits the old names). Rollback for each is enumerated in the delivered
+inventory.
+
+**Alias layer — all four mappings still correct** after the nomic removal (the P0
+change removed a *provider*, not a collection). One nuance recorded: `omega_vec_gemma_768`
+was both a live `COLLECTIONS` key **and** an alias source — the adapter resolves the
+alias first, so the `COLLECTIONS` entry was reachable only by explicit use.
+
+**Provenance is unrecoverable** — no `_meta`, no version registry, no write log. The
+byte-level forensic answer is stronger than any bookkeeping record, but it means Step 20
+must treat those rows as **unattributable**, and future write paths must record model
+identity **in-band** or this question recurs.
+
+---
+
+### GEMMA REMOVAL (officially deprecated, executed)
+
+Removed: `GemmaGGUFEmbeddingProvider` class; `omega_vec_gemma_768` from config, both
+adapters' `COLLECTIONS`, and `LEGACY_COLLECTION_ALIASES`; all 5 gemma tables in
+`data/omega_memory.db`; all 5 `omega_memory_vec` tables in `data/memory/omega_memory.db`.
+
+**Kept:** the Qwen3 MRL ladder (1024→768→512→256→128→64 — canonical), the nomic tiers
+(still Step 19/20 targets), minilm/static tiers.
+
+**Remaining "gemma" strings are legitimate and were not touched:** historical decision
+IDs (`D-768-DIM-MODEL-SWAP`, `D-768-DIM-RENAME-GEMMA`); `gemma-4-31b` in
+`block_tools.py`/`sleep_time.py` — **a different model** (Google Gemma 4 LLM, not
+EmbeddingGemma-300M); a generic "sub-canonical model" circuit-breaker docstring example.
+
+---
+
+### ARCHITECT RULINGS (given to MaKaLi)
+
+**AVX-VNNI asymmetry — DO NOT SPLIT THE EMBEDDER; one canonical embedder.**
+Three concrete reasons, not principles:
+1. **The arithmetic does not justify a split.** 1024-D fp32 = 4 KB. Both chips retire
+   ~64 MAC/cycle on the dot product (Zen 2: 8-wide FMA ≈ 32 FMA/cycle; Raptor Lake:
+   `vpdpbusd` int8). The VNNI advantage is *int8 throughput*; Zen 2's lack of VNNI only
+   matters if you quantize — and you can make the kernels equivalent with a `cpuid`
+   dispatch flag and one fleet-wide dtype.
+2. **A work split destroys the thing just legislated.** D-1024-DIM-NATIVE establishes a
+   *single canonical space*. If N1 embeds and N0 serves, cosine scores are computed in
+   one quantisation regime and consumed in another — structurally the same failure as
+   Nomic-vs-Qwen, just smaller, and already forbidden by one-space-per-collection.
+3. **4 KB/vector makes distribution trivial.** At Phase 1/2/3 (20/60/120 items) the
+   whole corpus is ~480 KB — it fits L2 on both chips. **There is no distribution
+   problem to solve.** Federation for a dataset smaller than the L2 cache is
+   architecture for its own sake.
+
+**Right approximation:** one shared SIMD kernel, `cpuid` runtime dispatch, ONE
+canonical dtype fleet-wide (int8 with identical scales/zero-points, or fp32 both sides),
+brute-force blocked scan with software prefetch. **No ANN index** (no HNSW, no IVF) —
+pure bloat at these cardinalities. Add one only when N forces it, never before.
+
+**Headroom (D-582) — semantic compression belongs AT THE TOOL BOUNDARY, ON READ
+PAYLOADS ONLY.** Failure mode per placement:
+- *Tool boundary (correct)*: lossy semantics leaking into a decision-critical value — a
+  compressed result drops a version string, an error code, or a numeric bound and
+  becomes a wrong action. Mitigation: compress only what is destined for model context;
+  keep the raw retrievable from cold store so any consumer can re-fetch verbatim.
+- *Before vector storage*: **double lossy.** The embedder is already a lossy projection;
+  compressing source text first corrupts the projection's input and yields a degraded
+  index that *looks valid*. Structurally unobservable failure — the worst kind.
+- *Inside transport envelopes*: coupled layers and silent corruption. Buried in
+  serialization it breaks `diff`-ability, replay, and M9 error integrity — you can no
+  longer prove what bytes produced a result. Also poor ROI: envelope structure is
+  low-entropy, so entropy coding buys little and costs all debuggability.
+
+**Hard rule: never compress write payloads or tool arguments.** Those are verbatim by
+contract. Lossy belongs on reads, in the consumer's context, with raw retained.
+Transport stays dumb and lossless.
+
+**Minisign / Gate C6 — confirmed sound as the primitive, CHALLENGED as the closure
+path.** Detached signing over a tarball satisfies only the **integrity** half of C6:
+it proves *a* holder of *a* key signed *these bytes*, not that *the authorised
+publisher* did. An attacker who swaps payload AND key produces a valid package that
+passes verification. C6 additionally needs a **publisher identity and trust root
+above** the signature: (a) the verification key pinned **out-of-band** (shipping it
+inside the bundle signs nothing), (b) a written rotation/revocation policy (Ed25519
+has no revocation), (c) a documented verification command that checks the **root
+manifest digest**, not just file-level `SHA256SUMS`, or the signature never reaches the
+nested `doom_guy_transfer/` set. The existing hierarchy does the heavy lifting: one
+signature over `MANIFEST.yaml` transitively covers all 41 files. **Adopt Minisign; do
+not declare C6 closed on the signature alone.**
+
+---
+
+### STANDING STATE AT CLOSE
+
+- `make temple-grade` **53/53** · contract tests 25 · full touched-file sweep **118 PASS**
+- `mcp_servers/**` and `data/federation/**` untouched throughout (Ma'at's and Grokster's)
+- HEAD `de660681` committed by MaKaLi; my work left in the working tree as instructed
+- **Open:** Ma'at's `mcp_servers/omega_hub/github_bridge.py` carries the SAME stranded-
+  import class I fixed in `src/omega/` and is still unfixed; the whole webhook bridge is
+  dead until he does it. **Provenance in-band recording** is unrecoverable for legacy
+  tables and should be a Step 20 requirement.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/space-bunny-free ⬡ trc_p0_p1_gemma_arc ⬡ COMPACTION-READY ⬡ 53/53*

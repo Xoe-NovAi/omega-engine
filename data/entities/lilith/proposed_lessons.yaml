@@ -92,8 +92,53 @@ proposals:
       - mcp_servers/omega_hub/state.py:460-480
       - scripts/mcp_watchdog.py
       - data/federation/tailnet-policy-OMEGA-DEFINITIVE-20260926.hujson
+  - id: lilith-20260928-sync-closure-001
+    date: 2026-09-28
+    session_id: ses_fb9721079ffe094GT8MX6a0pXI
+    status: proposed
+    domain: observability-gate-integrity-embedding-canonical
+    L1: >-
+      Closed the MaKaLi sync wave. Hub outage peaked at NRestarts=101 from a stale
+      import in server.py:85 (_extended_sessions deleted from state.py). Corrected
+      my own parity claim: "66 tools" was pre-consolidation; parity during the
+      outage was 0 reachable; hub restored (active, NRestarts=0, /health=200,
+      1.6.0-alpha.1) and live re-measurement returned 54 tools with exactly the
+      4 consolidated Hivemind tools. MemPalace's 42 tools are N1-local and were
+      unaffected throughout. Flagged the residual nomic_fallback (native_dim 768,
+      priority 1, collection omega_vec_nomic_768) as a live silent 1024-D
+      violation; N1 vector storage remains unverified from N0. Confirmed N1
+      sovereignty unassimilated.
+    L2: >-
+      Two gates passed during a 101-restart crash-loop: make temple-grade (53/53,
+      because no gate imports server.py) and Makefile check-hub-health (because
+      systemctl --user is-active returns true during activating/auto-restart).
+      A gate that cannot fail is worse than none — it converts an outage into a
+      false green light. The watchdog ran the whole time but polls /health, which
+      an import-time crash never reaches: endpoint liveness is not boot proof.
+      Parity figures are time-indexed; an undated tool count is a provenance
+      defect. A priority-1 fallback below canonical dimension is a silent
+      correctness failure, not a safety net.
+    L3: >-
+      A gate that cannot fail is worse than no gate. Assert SubState=running AND
+      NRestarts below bound AND minimum dwell time — is-active alone passes on a
+      crash-loop. Health probe is not boot proof. Parity is time-indexed; every
+      claim carries its timestamp and consolidation state. A fallback must not
+      be able to violate the canonical dimension. Embedding law is not identity
+      law — dimension convergence never authorizes namespace assimilation. The
+      mesh is the observer; cross-Tailnet peer probes are the redundancy.
+    evidence:
+      - docs/federation/LILITH_SYNC_RESPONSE_20260927.md
+      - docs/federation/N1_READINESS_REPORT_20260925.md
+      - mcp_servers/omega_hub/server.py:85
+      - mcp_servers/omega_hub/state.py:470-480
+      - config/embedding_strategy.yaml:11,23,44-56,95-104
+      - src/omega/memory/embeddings.py:197-209
+      - Makefile (check-hub-health)
+      - scripts/mcp_watchdog.py
+      - data/federation/tailnet-policy-OMEGA-DEFINITIVE-20260926.hujson
+      - data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/README.md:72
 metadata:
   entity: lilith
   session_id: ses_fb9721079ffe094GT8MX6a0pXI
   model_used: opencode/big-pickle
-  last_session_end: '2026-09-27T23:35:00+00:00'
+  last_session_end: '2026-09-28T06:47:00+00:00'

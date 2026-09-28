@@ -1215,3 +1215,77 @@ files + README caveat 7, all naming INGESTION_PIPELINE_SPEC as stale.
 ingestion via the 8017 pipe or Architect hand-delivery. C6/N0-04 OPEN — no final authenticated
 transfer authorization exists. No Engine Core, identity source, OpenCode config, credentials,
 firewall, tailscale policy, 8016/8017 routing, or USB media modified by this entity.
+
+## v23 (2026-09-28) — SEAL REPAIR (Carmack P0), HIVEMIND REAP, DOCTRINE
+
+### P0: package failed its own integrity check (Carmack, 10/10 confidence)
+- **Symptom:** `data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/README.md`
+  was 10,381 bytes / `d84e4fe9…` on disk while `MANIFEST.yaml` and `SHA256SUMS` both claimed
+  10,378 / `dbacda38…`. Manifest **40/41**, root ledger **41/42** — same file, both ledgers.
+- **Cause:** a **3-byte post-seal edit** (`…/exchange/n0-to-n1/…` → `…/exchange/n0-to-n1-v2/…`)
+  landed at 22:21:22; the seal was stamped 05:27:50. Content was patched, seal never regenerated.
+  My generator was also **lost across compaction** (`/tmp` cleared), which slowed detection.
+- **Carmack's design call (followed, agreed):** the "Canonical location" line must not name a Node 0
+  internal repo path AT ALL — it is a Node 0 path inside a package destined for Node 1, and it is
+  the string that broke the seal. Replaced with a **path-agnostic** statement: resolve relative to
+  this package's root (the dir containing `MANIFEST.yaml` + `README_FIRST.md`).
+- **Repair result:** repo tree **41/41 + 42/42**, staged tree **41/41 + 42/42 + 43/43**
+  (`DELIVERY_SHA256SUMS`), nested **3/3 + 4/4**, YAML/JSON **13/13**, M35 **0 violations**,
+  `diff -r` shows only `DELIVERY_SHA256SUMS`. Repaired file: 10,540 bytes / `08d29b96…`.
+  Exactly **1** manifest entry changed, 0 added, 0 removed, `file_count` 41→41, no role drift.
+- **Quarantined stale artifacts re-confirmed OUTSIDE the package:** `n0-to-n1-DO-NOT-DELIVER-STALE-0228.zip`
+  + `STALE-ARTIFACTS_DO-NOT-DELIVER.md`, **0** manifest references, **0** files in the staged tree.
+
+### ⛔ LEDGER-COUNTING TRAP (documented so it never bites another packer)
+`grep -c '^- path:' MANIFEST.yaml` returns **43**, but the real `file_count` is **41**. The
+`subordinate_ledgers:` block contains its own `- path:` items **at column 0**, so a naive
+count double-counts `doom_guy_transfer/MANIFEST.yaml` and `doom_guy_transfer/SHA256SUMS`.
+**Only count entries inside the `files:` block, and read `file_count` from parsed YAML.**
+Anyone counting that way will mis-seal. My rebuilt generator hit this exact trap and failed closed
+twice before I scoped the parser to the `files:` block.
+
+### Hivemind queue reap — brief's premise was FALSE; nothing was moved
+- Measured on entry: `pending` **1** (not 151) · `active` 0 · `completed` 4 · `stale` **758**
+  (not 607) · `archive` 456 + 2 subdirs · `data/quarantine/` **does not exist**.
+- 758 = 607 + 151 exactly → the 151 had already migrated `pending/` → `stale/` before I measured.
+  **I did not observe that migration or its actor — INFERRED, not verified.**
+- Classified **759 packets** from packet bodies: `pending/` 1 = **REAL WORK** (Kali→Cline
+  Pre-Debut Repo Clean dispatch, zero M36 markers) → stopped per directive, archived nothing.
+  `stale/`: **756 TEST-SPAM** (`researcher→jem` 598, `researcher→verity` 158, all
+  `[M36 CROSS-VALIDATOR] Verify deliverable: /tmp/…` / `/nonexistent/…`) + **2 REAL WORK**
+  (`makali_fusion→kali`, `makali_fusion→antigravity`, both NFS/SSH remediation — exactly what the
+  2026-09-26 tailnet policy later **policy-removed**). 0 unparseable, 0 ambiguous.
+- **Root cause VERIFIED:** `src/omega/oracle/m36_recursive_probe.py:228` writes
+  `_Path("data/handoff/pending")/f"{packet_id}.json"` — a **hardcoded, CWD-relative write into
+  production**, reached when the Hub tool is unavailable. `tests/test_a4_m36_wiring.py:94` asserts
+  `handoff_dispatched is True # real dispatch (stub removed)` — the test **requires** a real
+  production dispatch. **Live defect: production coordination state is writable from the test suite.**
+  The codebase already has the fix pattern for M34 (`OMEGA_M34_REGISTRY` env var at
+  `tests/test_a4_m36_wiring.py:20`) — handoff never got the same treatment. That asymmetry IS the defect.
+- **Fix SPECIFIED, NOT IMPLEMENTED:** env-indirect the root via `OMEGA_HANDOFF_ROOT` (defaults to
+  `data/handoff`), set it to a `tmp_path_factory` dir in `tests/conftest.py`, add a guard test
+  asserting nothing lands in `data/handoff/pending/`. **Requires editing `src/omega/**` = Carmack's
+  workstream, explicitly OUT of my scope.**
+- **Why nothing alerted:** `scripts/sweep_task_registry.py` sweeps the *task registry*, never
+  `data/handoff/`. `scripts/freshness_check.py:108` `stale_count` is for *research documents*, not
+  handoff packets. The handoff queue is a write-only sink with no sweeper, no depth metric, no threshold.
+
+### Cline dispatch archived (stale)
+`data/handoff/pending/CLINE_DISPATCH_20260822.md` → `data/handoff/archive/CLINE_DISPATCH_20260822.md`
+(reversible `mv`, 6453 bytes, original mtime preserved) + `CLINE_DISPATCH_20260822_MANIFEST.txt`
+(UTC `2026-09-28T05:33:50Z`, reason, exact mv command, entity + EIS). `pending/` now **0 files**.
+Reason: stale Pre-Debut order premised on "Repo is **PRIVATE**"; repo is now PUBLIC and the order
+carried `git filter-repo --force --invert-paths` + `--force-push` against public history.
+
+### Ledger doctrine banked
+`data/entities/grokster/packaging_doctrine.md` (new, 132 lines) — Media Quarantine (M-1…M-6),
+Stale Artifacts (S-1…S-5), Ledger Integrity, Post-Seal Drift, Release Cryptography (Minisign
+horizon for C6/N0-04), Verification Ritual. `minisign` is **NOT installed on Node 0** — I claim no
+signature capability I cannot execute. Lessons file: **37 → 40** proposals.
+
+### State
+Package `n0-to-n1-v2` SEALED and verifying 100% in both trees. `pending/` empty. C6/N0-04 **OPEN**
+— package is byte-verifiable, NOT cryptographically authenticated. **Hivemind tools are ABSENT
+from this session** (`omega-hub` is not a connected MCP server; only `exa` + `parallel-search`),
+so the mandated Hivemind post could not be executed. No Engine Core, identity source, OpenCode
+config, credentials, firewall, tailscale policy, 8016/8017 routing, or USB media modified.

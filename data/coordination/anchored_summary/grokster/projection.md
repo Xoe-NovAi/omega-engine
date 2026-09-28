@@ -5,7 +5,73 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 ## Objective
-- **PRE-COMPACTION MASTER ANCHOR (v16.0) — ENTITY-ECOSYSTEM DIALECTIC + BIG PICKLE COMPACTION REMEDIATION COMPLETE**. Big Pickle model active (opencode/big-pickle). This session: (1) 7th-of-7 entity cleanup dialectic with M23 discipline (caught Kali's email leak in page 1), (2) Big Pickle 70%→85% compaction threshold remediation (config override, verified at 74% context). 76 L3 lessons staged. Awaiting `/compact`.
+- **PRE-COMPACTION MASTER ANCHOR (v17.0) — PACKAGE SEAL REPAIR + HIVEMIND QUEUE REAP (2026-09-28)**. See §0 below; it supersedes the v16 Big Pickle thread.
+- Prior anchor (v16.0, 2026-09-07): 7th-of-7 entity cleanup dialectic + Big Pickle compaction-threshold remediation. Model noted there (`opencode/big-pickle`) is **superseded** — the runtime now reports `opencode/space-bunny-free`.
+
+## §0 — TODAY (2026-09-28) — the state that matters now
+
+### 1. P0 seal repair (Carmack, 10/10 confidence; I was the packer)
+- `n0-to-n1-v2/08_library_curation_research/README.md` shipped **failing its own integrity check**:
+  on disk 10,381 B / `d84e4fe9…` vs claimed 10,378 B / `dbacda38…`; manifest **40/41**, root ledger
+  **41/42**. Cause: a **3-byte post-seal path edit** (22:21:22) against a seal stamped 05:27:50.
+  My generator was also lost across compaction, slowing detection. My failure, owned.
+- **Carmack's ruling, followed:** the "Canonical location" line must not name a Node 0 internal repo
+  path at all — it broke the seal and will break again on the next rename. Now **path-agnostic**
+  ("resolve relative to this package's root — the dir containing `MANIFEST.yaml` and `README_FIRST.md`").
+- **Repaired:** repo **41/41 + 42/42**, staged **41/41 + 42/42 + 43/43**, nested **3/3 + 4/4**,
+  YAML/JSON **13/13**, M35 **0 violations**, `diff -r` = only `DELIVERY_SHA256SUMS`. File now
+  10,540 B / `08d29b96…`. Exactly **1** manifest entry changed; 0 added/removed; `file_count` 41.
+
+### 2. ⛔ LEDGER-COUNTING TRAP — read this before touching any manifest
+`grep -c '^- path:' MANIFEST.yaml` returns **43**, but the true `file_count` is **41**: the
+`subordinate_ledgers:` block has its own `- path:` items **at column 0**, double-counting
+`doom_guy_transfer/MANIFEST.yaml` and `doom_guy_transfer/SHA256SUMS`. Count only inside the
+`files:` block; read `file_count` from **parsed YAML**. Counting that way mis-seals. My rebuilt
+fail-closed generator (`/tmp/opencode/rebuild_n1_package.py`, surgical text edits, no YAML re-dump)
+tripped this twice before I scoped the parser.
+
+### 3. Hivemind queue reap — brief's premise FALSE, nothing moved
+Measured: `pending` **1** (not 151) · `active` 0 · `completed` 4 · `stale` **758** (not 607) ·
+`archive` 456+2 · `data/quarantine/` absent. 758 = 607+151 exactly → the spam had already migrated
+`pending/`→`stale/` (INFERRED; I did not observe the actor).
+Classified **759 packets from bodies**: `pending/` 1 = **REAL WORK** (Kali→Cline Pre-Debut dispatch)
+→ stopped, per directive. `stale/` = **756 TEST-SPAM** (`researcher→jem` 598, `researcher→verity` 158,
+all `[M36 CROSS-VALIDATOR] … /tmp/… | /nonexistent/…`) + **2 REAL WORK** (`makali_fusion→kali`,
+`makali_fusion→antigravity` — both NFS/SSH, i.e. exactly what the 2026-09-26 tailnet policy later
+**policy-removed**). 0 ambiguous, 0 unparseable. **0 packets moved** under the void premise.
+
+### 4. Root cause (verified) + live defect
+`src/omega/oracle/m36_recursive_probe.py:228` writes `_Path("data/handoff/pending")/…` — a
+**hardcoded CWD-relative write into production** when the Hub tool is unavailable, and
+`tests/test_a4_m36_wiring.py:94` asserts `handoff_dispatched is True # real dispatch (stub removed)`.
+**Production coordination state is writable from the test suite — LIVE DEFECT.** The codebase already
+has the fix pattern (`OMEGA_M34_REGISTRY` at `tests/test_a4_m36_wiring.py:20`); handoff never got it.
+**Fix specified, NOT implemented** (needs `src/omega/**` = Carmack's workstream, OUT of my scope):
+`OMEGA_HANDOFF_ROOT` env var defaulting to `data/handoff`, set to `tmp_path_factory` in
+`tests/conftest.py`, + a guard test asserting `data/handoff/pending/` stays empty.
+**Why no alert:** `sweep_task_registry.py` sweeps the task registry, never handoff;
+`freshness_check.py:108` `stale_count` is research documents, not packets. Write-only sink, no threshold.
+
+### 5. Cline dispatch archived
+`pending/CLINE_DISPATCH_20260822.md` → `archive/` (reversible `mv`, 6453 B, mtime preserved) +
+`CLINE_DISPATCH_20260822_MANIFEST.txt` (UTC `2026-09-28T05:33:50Z`, reason, exact mv, entity+EIS).
+`pending/` now **0**. Reason: stale order premised on "Repo is **PRIVATE**"; repo is PUBLIC and it
+carried `git filter-repo --force --invert-paths` + `--force-push`.
+
+### 6. Ledger doctrine banked
+`data/entities/grokster/packaging_doctrine.md` (new) — Media Quarantine, Stale Artifacts, Ledger
+Integrity, Post-Seal Drift, Minisign horizon for C6/N0-04, Verification Ritual. `minisign` is **NOT
+installed on Node 0**; I claim no signature capability I cannot execute. Lessons **37 → 40**.
+Full detail: `data/entities/grokster/session_gnosis.md` **v23** (1291 lines).
+
+### 7. Standing facts (unchanged)
+Package `n0-to-n1-v2` SEALED, both trees 100%. Stale zip + `STALE-ARTIFACTS_DO-NOT-DELIVER.md`
+OUTSIDE the package, 0 manifest refs, 0 staged files. Device identity still formally UNRESOLVED in
+package text (ExpertBook P1503CVA / ROG / XNAi-Asus) pending [L1] confirmation — **I did not edit it**,
+no manifest rewrite was authorized. **C6/N0-04 OPEN** — byte-verifiable, NOT authenticated.
+**Hivemind tools are ABSENT from this session** (`omega-hub` is not a connected MCP server), so the
+mandated post could not be executed by me.
+
 
 ## Important Details
 - **Active Model**: `opencode/big-pickle` (was `google/gemini-3.7-flash`)

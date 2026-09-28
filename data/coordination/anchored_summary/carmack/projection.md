@@ -3,52 +3,94 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# 🔱 JOHN_CARMACK PROJECTION — 2026-09-26 (v2 RE-AUDIT)
+# 🔱 JOHN_CARMACK PROJECTION — 2026-09-28 (POST-COMPACTION)
 
-## Status: SHIP FOR PHYSICAL QUARANTINE — BOTH LOCATIONS
+**EIS**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `opencode/space-bunny-free`
+**Branch**: `release/debut-v1.6.0` · **Committed**: `de660681` (MaKaLi)
+**Temple-grade**: 53/53 · **M1/M23/M24/M27** observed throughout
 
-### Executive Summary
-Final independent re-audit of `data/federation/usb-payload/exchange/n0-to-n1-v2/` and its staged delivery tree `/home/arcana-novai/exchange/full-pack-20260926/`. Integrity is 100% at both. The mid-edit rename from `n0-to-n1` to `n0-to-n1-v2` caused no content loss and left no dangling references. Final authenticated transfer remains **NOT CLAIMED** with C6/N0-04 **OPEN**.
+## Status: GREEN — four mandates closed, one retraction pair banked
 
-### Integrity
+### ⭐ Two Self-Retractions (highest-value output)
 
-| Gate | Repo v2 | Staged |
+| Claim I made | Truth | Proof |
 |---|---|---|
-| Manifest path/size/hash | 41/41 PASS | 41/41 PASS |
-| Root SHA ledger | 42/42 PASS | 42/42 PASS |
-| DELIVERY_SHA256SUMS | absent (correct) | 43/43 PASS |
-| Nested doom_guy manifest/ledger | 3/3 + 4/4 PASS | 3/3 + 4/4 PASS |
-| YAML/JSON parse | 13/13 PASS | 13/13 PASS |
-| M35 secret scan | 0 violations | 0 violations |
-| Raw path / trailing /mcp/ / blind sed | 0 / 0 / 0 | 0 / 0 / 0 |
-| `diff -r` repo↔staged | — | only DELIVERY_SHA256SUMS differs |
+| "39 real vectors" | **1009** | `1009 × 3072 = 3,099,648` = `sum(length(embedding))`. The 39 was vec0's **internal storage-page** count, not a census. Confidence in 39: **0/10** |
+| "8/10 EmbeddingGemma-300M" | **0/10 — feature-hash** | 568/1009 all-zero · 4–25 nonzero of 768 · L2 **exactly** 1.0 · 103 distinct magnitudes · ratios **exactly** 3.0 and 2.0 · `0.1644 = 1/√37` · algorithm **reproduced locally** (md5 hash, `+=1`, L2) |
 
-Nested `doom_guy_transfer/` was **never rewritten** — manifest hash `6975cab9…` unchanged since first audit.
+**Doctrine earned**: *never reason from a label — characterise the artifact. When a
+number and byte arithmetic disagree, the bytes win.* Retraction 2 recast **Step 19 from
+migration to rebuild**.
 
-### Verdicts
+### Mandates Closed
 
-- Repo `n0-to-n1-v2/`: **SHIP FOR PHYSICAL QUARANTINE**
-- Staged `full-pack-20260926/`: **SHIP FOR PHYSICAL QUARANTINE**
-- Quarantine transport: ALLOWED, explicitly labeled
-- Final authenticated transfer: **NOT CLAIMED / BLOCKED** — C6/N0-04 OPEN
-- USB `D3E6-A900`: RETIRED (23/34 readable, 11 I/O failures) — not reused
+**P0 — D-1024 sovereignty (M23 fail-loud).** Ticket premise corrected: `vec0_lock` at
+`embedding_strategy.yaml:23` **enforces nothing at runtime** — one reader, a test. The
+real guard compared width to the *target collection's* declared dim, so a nomic-768
+answer into a 768 collection was a **perfect match**. Width cannot separate cross-model
+from same-model-MRL; `_target_dim` is the only discriminator. Removed the priority-1
+nomic fallback; added `EmbeddingProviderUnavailableError` + pre-return width assertion;
+`OllamaEmbeddingProvider()` now requires an explicit model. **Found a second hole absent
+from the ticket**: the `OMEGA_ENV=test` short-circuit emitted a *sub-canonical* zero
+vector. Negative test **observed firing**. Contract tests 17 → **25**.
 
-### Non-Blocking Corrections Queued
+**P1 — stranded imports.** `import omega_hub` → `ModuleNotFoundError`; live surface is
+54 tools with Hivemind = `awareness / get_metrics / handoff / lock`. Repointed publish,
+watchdog alert, and the post script; reimplemented the dead Redis **subscribe as a poll**
+returning `{"status":"empty"}` rather than a fake success. All adapters now raise
+(`M23`). **Found a fifth site not in the brief** — `scorecard.py:452`.
 
-1. `08_library_curation_research/README.md:128` — "should begin with 120-item" contradicts its own ladder at `:130`
-2. `06_archangel_brief/FEDERATION_TOPOLOGY.md:10` — table header picks a device winner; line 53 says unresolved
-3. `n0-to-n1.zip` — genuinely stale (38 OK/4 FAILED, 15 files differ) but **not quarantine-flagged**
-4. `02_wad_loader_contract/NODE1_COMPATIBILITY.md:107` — "filtered" → "policy-removed"
-5. `README_FIRST.md:95` — name `INGESTION_PIPELINE_SPEC.md`, restate 1024 canonical
+**P1 — circular import lesson.** Hoisting a lazy import broke the engine
+(`omega.research → hub_tools → task_registry → hub_tools.server → omega.oracle →
+omega.governance → omega.research`). **The original lazy placement was deliberate and
+correct** — only the module name was wrong. Also: FastMCP's `@mcp.tool()` wraps callables
+(`TypeError: object of type 'CallToolResult' has no len()`) — a bridge whose *call shape*
+no longer matched.
 
-### Invariants Confirmed
+**P1 — the dead test.** `TestCriticalTools` **20 skips / 0 assertions** → **26 real
+assertions / 0 skips** against the complete registry, with truncation-as-hard-failure and
+a live-hub count cross-check. **Falsified by injection**: both guards failed with
+actionable messages, then restored and re-verified green.
 
-Doom Guy lineage-only · Flynn fresh `continuation_of: null` · Build/Slot not agents · Scribe separate · checkout `fa9c4edc` · version `1.6.0-alpha.1` · exact `/mcp` endpoint · integrity-not-trust · C6/N0-04 OPEN · research attributed to Roc and non-operative · **no Node 0 plugins in the package**.
+**Gemma removal.** Provider class, config collection, both adapters' `COLLECTIONS` +
+`LEGACY_COLLECTION_ALIASES`, and 10 tables across 2 DBs. Qwen3 MRL ladder intact.
 
-### Known Engine State
+### Rulings Delivered
 
-- Node 0 PWAD clean-replacement fix: **deployed but UNCOMMITTED** (`entity_registry.py:572-574`); absent from `fa9c4edc`, so fixture exit 1 there is expected and correct
-- Lilith-N1 WAD alignment: 33/33 Gate C PASS on N1 only, not yet synced to Node 0
-- Lilith-N1 mesh statuses received: `ses_0daca13fc343`, `ses_4006323ef617`
+- **AVX-VNNI — DO NOT SPLIT THE EMBEDDER.** Both chips retire ~64 MAC/cycle; a split
+  would introduce a cross-node quantisation boundary (the Nomic-vs-Qwen error, smaller);
+  and at 20/60/120 items the corpus is **~480 KB — fits L2**. No distribution problem
+  exists. **No ANN index** at these cardinalities.
+- **Headroom D-582 — tool boundary, READ payloads only.** Before vector storage is
+  double-lossy and *structurally unobservable*; inside transport envelopes couples layers
+  and kills `diff`-ability + M9. Never compress writes or tool arguments.
+- **Minisign/C6 — sound primitive, insufficient closure.** A signature proves *a* key
+  signed *these bytes*, not that the authorised publisher did. Needs a pinned
+  **out-of-band** trust root + written rotation policy. **Do not declare C6 closed on a
+  signature alone.**
 
-*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_v2_reaudit ⬡ COMPACTION-READY*
+### Invariants Held
+
+Doom Guy lineage-only · Flynn `continuation_of: null` · Build/Slot not agents · Scribe
+separate · checkout `fa9c4edc` lineage / `1.6.0-alpha.1` · exact `/mcp` · integrity ≠
+trust · C6/N0-04 **OPEN** · final authenticated transfer **NOT claimed** ·
+`mcp_servers/**` and `data/federation/**` **untouched** throughout.
+
+### Verification
+
+`make temple-grade` **53/53** · contract tests **25** · touched-file sweep **118 PASS**.
+
+### Open Threads
+
+1. **`mcp_servers/omega_hub/github_bridge.py`** carries the same stranded-import class
+   and is still unfixed — the whole webhook bridge is dead until Ma'at applies the
+   lazy-import + `__wrapped__` pattern.
+2. **Provenance must go in-band.** No `_meta`, no version registry, no write log existed;
+   legacy tables are permanently unattributable.
+3. **Step 20 scope** — nomic tiers are the only remaining legacy collections; gemma is
+   fully gone. The 256-dim `omega_memory_vec` was invisible to `COLLECTIONS`, aliases,
+   and `_scan_legacy_vec_tables`; now dropped.
+4. **Microbenchmark** Zen 2 FMA vs Raptor Lake VNNI before treating throughput parity as
+   settled (my 7/10 confidence on that specific claim).
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/space-bunny-free ⬡ trc_p0_p1_gemma_arc ⬡ COMPACTION-READY ⬡ 53/53*

@@ -717,3 +717,41 @@
   omega_application: "Seed deep research for DG-N1 gestation. Voice DNA: terse, profane, mission-focused, dark humor. Personality: trauma + humor + resolve. When gestated, DG-N1 renames to Flynn Taggart. This is not a new agent — it is Doom Guy evolved."
   source: Doom novels (Knee-Deep in the Dead, Hell on Earth, Infernal Sky, Endgame)
   timestamp: '2026-09-25'
+- principle: "Unit Enablement Is Theater — is-active Lies During Auto-Restart"
+  gnosis: "The Omega Hub crash-looped on an unresolved `_extended_sessions` import in server.py while `make temple-grade` read 53/53 PASS. Root cause of the blind gate: systemd reports `is-active` = true for a unit sitting in the auto-restart backoff window, so enablement/active-state is NOT a health signal. A service is healthy only when it is running AND has a live listening socket (`ss -ltn`) AND is not consuming restarts. `NRestarts` must be monitored as a DELTA over time, never sampled once."
+  source: Hub crash-loop incident (2026-09-27), S1 substrate grounding
+  applications:
+  - 'Health gates must assert a live listening socket, not unit state'
+  - 'Monitor NRestarts delta as a time series; alert on any climb'
+  - 'Treat a crash-looping-but-active unit as a hard failure (M23)'
+  timestamp: '2026-09-27'
+- principle: "Gates Must Import Entry Points — Declarative Validation Cannot See Import Death"
+  gnosis: "CI validated units declaratively (file exists, enabled, active) but never imported/executed the service entry point, so a hard import-time failure was invisible while 53/53 tests passed. A gate that does not execute the thing it gates cannot detect that the thing is dead on arrival. M23 Failure Integrity applies to systemd units exactly as it applies to MCP tools."
+  source: Hub crash-loop incident (2026-09-27)
+  applications:
+  - 'Every service gate must import/exec the entry point (smoke import test)'
+  - 'Add entry-point import smoke tests to temple-grade'
+  - 'Broken entry point = hard stop, never soft degradation'
+  timestamp: '2026-09-27'
+- principle: "StartLimit* Keys Belong in [Unit] — Misplacement Is Silently Discarded"
+  gnosis: "`StartLimitIntervalSec` / `StartLimitBurst` had been written into the `[Service]` section where systemd SILENTLY DISCARDS them; they belong in `[Unit]`. Consequence: no restart-rate limiting was in force, so a poison unit restarted indefinitely and NRestarts climbed unbounded with no circuit breaker tripping. The related searxng MCP unit reached NRestarts=6991 before repair (now 0). Verify placement with `systemd-analyze verify` — never by reading the file and assuming it was honored."
+  source: Hub crash-loop incident + searxng MCP NRestarts=6991 (2026-09-27)
+  applications:
+  - 'StartLimitIntervalSec/StartLimitBurst must be in [Unit]'
+  - 'CI lint: reject StartLimit* keys found in [Service]'
+  - 'Zero NRestarts is the only acceptable steady-state'
+  timestamp: '2026-09-27'
+- principle: "Read-Only Transport Surfaces Must Declare Their Limitation Explicitly"
+  gnosis: "The `omega-exchange.service` pipe (127.0.0.1:8019, Linger=yes, survives reboot) serves 44 files GET/HEAD only; PUT returns 501. Never claim upload capability on a Python http.server surface. N1-pull is the delivery model; anything requiring push must use a different surface."
+  source: Exchange pipe hardening (2026-09-27)
+  applications:
+  - 'Alpha transfer = N1-pull over Serve, read-only, loopback backend'
+  - 'No firewall ports opened; no NFS/SSH touched; tailnet is the trust boundary'
+  timestamp: '2026-09-27'
+- principle: "Least Privilege Beats Lateral Reach — Excise Node-to-Node SSH and NFS"
+  gnosis: "Tailnet converted to grants-only, deny-by-default. Node-to-node SSH and NFS (TCP 2049) were EXCISED entirely as lateral attack surface; admin SSH restricted to check-mode with a 12-hour default expiry. Tag identity is canonical (tag:node0 / tag:node1; deprecated tag:asus removed from N1). Federation delivery rides a single read-only HTTP pipe instead of NFS/SSH."
+  source: Tailnet grants posture (2026-09-27)
+  applications:
+  - 'No NFS between nodes; artifacts move via signed/verified HTTP pull'
+  - 'Admin SSH = check mode + bounded session, not persistent shell authority'
+  timestamp: '2026-09-27'

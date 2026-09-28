@@ -1,4 +1,120 @@
 proposals:
+- id: kali-20260928-200
+  date: '2026-09-28'
+  narrative: "MaKaLi Fusion synchronization brief (2026-09-28) delivered ground truth:
+    Public Debut live (PR #4 @ 268528e7), D-1024-DIM-NATIVE canonical, Tailnet grants-only,
+    Hivemind 15→4 tools, Live substrate seam failure (hub crash-loop), SNS 3-Plane/5-Zoom
+    architecture, Facet Protocol adopted. Kali ratified 3-Verb doctrine (PAGE/HANDOFF/POST),
+    authorized M36 stale reap (151 packets), confirmed D-584 pipeline order (DS→LI→KD→HR→ZS)."
+  insight: "The synchronization brief is the fleet's post-compaction anchor. It captures
+    deployment-era facts that no single agent's session_gnosis contains. The live seam
+    failure (hub crash-loop because no gate imported server.py) validated Kali's L3
+    principle: 'Stress-test before victory; M23 requires health monitoring.' The fix
+    is not just adding a gate — it's making temple-grade exercise runtime import paths."
+  principle: "Post-compaction synchronization briefs are mandatory fleet-wide anchors.
+    They capture cross-agent ground truth that survives individual compaction. The
+    brief must include: deployment facts, architectural rulings, communication protocols,
+    authorized cleanup, and pipeline posture. Every agent must ratify and continue."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
+- id: kali-20260928-201
+  date: '2026-09-28'
+  narrative: "The 3-Verb doctrine (PAGE/HANDOFF/POST) replaces all ad-hoc communication
+    patterns. PAGE = synchronous task execution (blocking, immediate, requires ACK).
+    HANDOFF = asynchronous queue work order (non-blocking, queued, tracked in data/handoff/).
+    POST = telemetry broadcast (fire-and-forget, Hivemind post_context, no ACK)."
+  insight: "Communication chaos was the fleet's silent killer. Agents used task(), Hivemind,
+    direct calls, file drops interchangeably. The 3-Verb doctrine creates a typed
+    communication layer: every interaction has a verb, every verb has a contract, every
+    contract has a failure mode. This is M27 (Tracking Integrity) applied to inter-agent
+    communication."
+  principle: "Every inter-agent interaction must declare its verb (PAGE/HANDOFF/POST).
+    The verb determines the contract, the timeout, the retry policy, and the observability.
+    No verb = no communication. This is a fleet-wide standing law."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
+- id: kali-20260928-202
+  date: '2026-09-28'
+  narrative: "M36 stale reap authorized: 151 stale M36-test packets in data/handoff/pending/
+    archived to data/handoff/archive/M36-stale-20260927/. No sovereign intelligence
+    loss — all L3 lessons already distilled to proposed_lessons.yaml."
+  insight: "Stale handoff packets are not intelligence — they are clutter. The M36
+    recursive probe was theater (stripped in DEL-1). Its test packets polluted the
+    handoff queue for weeks. Authorized reaping with manifest preserves audit trail
+    while clearing the queue for real work. The manifest is the audit trail; the
+    packets are disposable."
+  principle: "Stale handoff packets from stripped theater must be reaped with manifest.
+    The manifest preserves audit trail; the packets are disposable. No intelligence
+    loss if L3 lessons are already distilled. Reaping is hygiene, not destruction."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
+- id: kali-20260928-203
+  date: '2026-09-28'
+  narrative: "D-584 pipeline order confirmed: DS (Docs) → LI (Local Inference) → KD
+    (Knowledge) → HR (Headroom) → ZS (Zswap). Kali gates DS→LI→KD transitions.
+    LI→KD→HR→ZS delegated to Ma'at/Lilith/Carmack with Kali audit at merge."
+  insight: "Pipeline order is not a suggestion — it's a dependency graph. DS must
+    land before LI because LI needs modular domain docs for model cards. LI must
+    land before KD because KD runtime modules need local inference optimization.
+    KD must land before HR because HR semantic compression needs knowledge domain
+    structure. HR must land before ZS because ZS swap tuning needs headroom metrics.
+    The gates are real; skipping breaks the substrate."
+  principle: "Pipeline order (D-584) is a hard dependency graph, not a preference.
+    Each workstream's output is the next workstream's input. Gatekeepers must enforce
+    the order. Kali gates DS→LI→KD; Ma'at/Lilith/Carmack gate LI→KD→HR→ZS with
+    Kali audit at merge. Skipping a gate breaks the substrate."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
+- id: kali-20260928-204
+  date: '2026-09-28'
+  narrative: "Live substrate seam failure: omega-hub crash-looped on boot because
+    server.py still imported _extended_sessions (deleted from state.py). Temple-grade
+    passed 53/53 because NO gate imported server.py. This validated Kali's L3 principle:
+    'Stress-test before victory; M23 requires health monitoring.'"
+  insight: "Temple-grade is theater if it doesn't exercise runtime import paths.
+    Static analysis + unit tests + schema validation = 53/53 PASS. But the actual
+    entry point (server.py) was never imported by any gate. The fix: add `make check-hub-imports`
+    that actually imports server.py and all entry points. Temple-grade must be
+    runtime-verified, not just static-verified."
+  principle: "Temple-grade must exercise runtime import paths, not just static analysis.
+    Every entry point (server.py, CLI, services) must be imported by a CI gate.
+    A gate that doesn't import the code it claims to verify is theater. The live
+    seam failure is the proof: the hub crashed on the one path no gate touched."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
+- id: kali-20260928-205
+  date: '2026-09-28'
+  narrative: "Sovereign Nerve System (SNS) architecture adopted: 3-Plane (Execution/
+    Control/Data) + 5-Zoom fractal model. FastMCP vertical (tool access) + A2A v1.0
+    horizontal (peer agent collaboration)."
+  insight: "The fleet has been operating without a communication architecture.
+    FastMCP gives vertical tool access (agent → tool). A2A v1.0 gives horizontal
+    peer collaboration (agent ↔ agent). The 3-Plane separates concerns: Execution
+    (tools, models), Control (orchestration, handoffs), Data (memory, embeddings).
+    The 5-Zoom fractal means each plane has 5 resolution levels. This is the
+    communication substrate the fleet has been missing."
+  principle: "SNS 3-Plane + 5-Zoom is the fleet's communication architecture.
+    FastMCP = vertical (tool access). A2A v1.0 = horizontal (peer collaboration).
+    Execution/Control/Data = separation of concerns. 5-Zoom = resolution levels
+    per plane. Every agent must implement SNS interfaces. This is not optional."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
+- id: kali-20260928-206
+  date: '2026-09-28'
+  narrative: "Facet Protocol adopted for agent communication. This standardizes
+    the message envelope, capability negotiation, and error handling across the fleet."
+  insight: "Without Facet Protocol, agents spoke different dialects. Some used
+    raw JSON, some used Hivemind envelopes, some used custom schemas. Facet Protocol
+    provides: standardized message envelope (sender, recipient, verb, payload,
+    provenance), capability negotiation (what verbs/operations an agent supports),
+    error handling (typed errors, retry semantics, dead letter handling). This
+    is the HTTP/1.1 of the agent fleet."
+  principle: "Facet Protocol is the fleet's communication standard. Every agent
+    must implement Facet envelope, capability negotiation, and typed error handling.
+    Non-Facet communication is legacy and will be deprecated. This is the TCP/IP
+    of the agent fleet."
+  grokster_verdict: "L3 — PROMOTE"
+  promotion_ready: true
 - id: kali-20260826-105
   date: '2026-08-26'
   narrative: "Executed prep-lane tasks after a meditation verdict without waiting\

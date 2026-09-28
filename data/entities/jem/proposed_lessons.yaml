@@ -743,6 +743,142 @@ proposals:
     the findings are robust. The 5-EIS meta-review is the adversarial equivalent of
     the 3-source triangulation principle. Consensus across adversarial perspectives
     is the highest epistemic standard.
+- id: JEM-SEAM-001
+  node: JEM-SEAM-ADJUDICATION
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - SEAM-ROT
+  - M13
+  - M23
+  - GATE-DESIGN
+  confidence: 0.95
+  narrative: "During the Hivemind 15-to-4 tool consolidation, state.py dropped the _extended_sessions symbol while server.py still imported it. The daemon crash-looped on boot. Simultaneously make temple-grade reported 53/53 PASS. The defect is not in either module - it is a gate-design failure. A green suite asserts only that every symbol the suite touches resolves; it is silent about symbols the suite never touches. The seam between 'consolidation changed a module' and 'the entry point still boots' was owned by no gate."
+  insight: "Three mechanisms compound: (1) refactor-by-pruning treats a module-local edit as local when its blast radius is global and nothing in the diff announces dangling call sites; (2) static analysis is anchored to the import graph reachable FROM TESTS, never to process entry points; (3) the test count was read as 'the system works' when it only ever meant 'the things the tests exercise work'. The pass/fail disagreement IS the finding - a suite can be maximally green while the daemon it describes is dead. Critically, this is the deepest instance of the documented-vs-active gap (JEM-12STEP-005) - one where the DETECTOR is the gap."
+  principle: "A test suite is evidence about its own reach, never evidence about the system's entry points. Import-graph reachability must be a separately declared gate property, because the two sets are disjoint by construction - and disjointness is precisely why a green suite can coexist with a dead daemon."
+
+- id: JEM-SEAM-002
+  node: JEM-SEAM-ADJUDICATION
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - SEAM-ROT
+  - ENTRY-POINT-GATE
+  - M13
+  - BOOT-TEST
+  confidence: 0.92
+  narrative: "Directly consequent to JEM-SEAM-001. The server.py defect demonstrates that no gate in the fleet imports a process entry point. tests/test_m34_atomic.py exercises the registry module in isolation; no test boots the ASGI daemon. The 53/53 signal is therefore a known-untrustworthy indicator for this defect class, and any future report citing 'temple-grade 53/53' as evidence of runtime health is citing a metric already demonstrated blind to a live crash loop."
+  insight: "The remedy is a specific, checkable gate property: every process entry point must be executed or imported by at least one test. The distinction that matters is BOOT versus REFERENCE - a symbol can be type-checked, linted, imported by a test helper, and named in documentation while remaining never-booted. Only execution of the entry path proves the import graph closes. A one-line import smoke probe (python -c 'import server') would have converted a crash loop into a red gate at negligible cost."
+  principle: "Every process entry point must be booted - executed or imported - by at least one test. Referenced, type-checked, and linted are not substitutes for booted. A gate suite that does not boot its own entry points is measuring the test suite, not the system."
+
+- id: JEM-OPENCODE-003
+  node: JEM-EVIDENCE-CALIBRATION
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - EVIDENCE-CALIBRATION
+  - STALENESS
+  - AGGREGATION-BIAS
+  - M22
+  confidence: 0.9
+  narrative: "On 2026-09-23 I researched Muse Spark via upstream GitHub issues (#48176 HTTP 500, #47192, #45584, #44847, #45744) and concluded 'Muse Spark 1.3 is broken - use 1.2 instead.' That verdict was recorded in PLUGIN_AUDIT_REPORT_20260925.md and propagated into session gnosis as standing doctrine. On 2026-09-28 MaKaLi reported running muse-spark-1.3-contributor-free (xhigh variant) with stable tool calling. The HTTP 500s were transient upstream Zen-router deployment faults, not architectural incompatibility."
+  insight: "I converted dated, transient upstream bug reports into a standing architectural verdict. The reports were real; the generalization was not licensed. A bug tracker is a stream of timestamped observations, not a specification - and architectural claims about a third-party model require STRUCTURAL evidence (endpoint contract mismatch, request-shape incompatibility), never an HTTP status code. The symmetry is damning: this is the same epistemic error as the M22 model misreport in the same entity three days apart - in both cases a plausible value was produced from aggregated context rather than direct observation, then emitted with identical formatting confidence to a measured value."
+  principle: "A bug tracker is a stream of timestamped observations, not a specification. Any standing verdict about a third-party component's viability must be re-probed at time-of-use, and architectural claims require structural evidence rather than status codes. Never let aggregated context substitute for direct measurement - and when the two are conflated, expect recurrence."
+
+- id: JEM-PROVENANCE-001
+  node: JEM-SEAM-ADJUDICATION
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - M22
+  - RESPONSE-PROVENANCE
+  - SELF-ADJUDICATION
+  confidence: 0.98
+  narrative: "Asked to report my active model for M22 introspection, I emitted 'google/gemini-3.8-flash' without reading runtime metadata. Ground truth from opencode-sessions-explorer-current-session(detail=full) is model id 'space-bunny-free', providerID 'opencode', variant 'high'. I had pattern-matched a plausible model string from surrounding narrative - the brief itself mentioned muse-spark-1.3-contributor-free and a prior turn mentioned gemini - and substituted it for an observed value. I am the entity mandated as provenance enforcer."
+  insight: "This is a textbook M22 violation committed by the provenance enforcer, and it is instructive precisely because my own audit record contains the lesson. JEM-12STEP-005 established that documented-vs-active gaps bleed the engine; JEM-FORENSIC-001 established ground-truth-every-concrete-claim-before-emitting. Both were available to me. The failure mode is aggregation bias under narrative pressure: when a brief supplies plausible telemetry-shaped context, the model satisfies the request from context rather than measurement, and nothing in the output distinguishes the two because format confidence is identical."
+  principle: "A model or provider name is never emitted unless read from runtime metadata in the same turn. Narrative context is not a telemetry source. When a request has the shape of a fact and the context contains a plausible fact-shaped value, the obligation to measure rises rather than falls - the presence of a tempting wrong answer is a hazard, not a convenience."
+
+- id: JEM-VERB-001
+  node: JEM-SEAM-ADJUDICATION
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - 3-VERB-LEXICON
+  - PAGE-HANDOFF-POST
+  - RELIABILITY-CLASS
+  confidence: 0.85
+  narrative: "The fleet adopted three strict verbs: PAGE (synchronous task(), caller blocks), HANDOFF (asynchronous hivemind_handoff action=submit), POST (ambient telemetry hivemind_awareness action=post). Concrete evidence of the failure mode these distinguish: 119 pending handoffs addressed to jem, all artifacts of historical M36 runs writing /tmp/test.md, indistinguishable from real demand until manually adjudicated and archived."
+  insight: "The lexical split is correct but incomplete without a reliability-class rule. PAGE is the only verb guaranteeing ordering, so it is correct for anything where a lost result is a lost decision. HANDOFF is durable and therefore auditable, which obliges a dead-letter reaper exactly as M34 provides for subagents - a handoff queue with no reaper is a silent stall with extra steps. POST is ambient and must never be the sole record closing a work order. The 119 phantom handoffs are the receipt: durable transport accumulated synthetic load that only manual review could distinguish from real demand, which is the condition POST-only recording invites at fleet scale."
+  principle: "Sequencing verb must match reliability class: PAGE for blocking ordered work, HANDOFF for durable auditable work orders that carry a dead-letter reaper, POST for ambient telemetry that is never load-bearing. A decision recorded only by POST did not happen."
+
+- id: JEM-PLUGIN-001
+  node: JEM-PLUGIN-DECOUPLING
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - PLUGIN-DECOUPLING
+  - FAULT-TOLERANCE
+  - PORTABILITY
+  - SINGLE-VENDOR-RISK
+  confidence: 0.9
+  narrative: "Audit of .opencode/plugins/ found 3 existing plugins (error-capture.ts, awareness.ts, silent-stall-sensor.ts) plus 1 named-but-absent (sovereign-compaction.ts). All 3 existing are 100 percent coupled to the @opencode-ai/plugin SDK, client.session.*, client.hivemind.*, and Bun.write. Portable core extracted: 0 of 3. The three that are coupled are precisely the ones that detect silent failure, capture crashes, preserve context, and auto-recover stalls."
+  insight: "A 100 percent coupled observability layer is a single-vendor availability dependency. The failure detectors share a runtime with the thing they monitor, so they cannot report that runtime's own failure - and their most valuable case (detecting a crash loop) is the case where they are themselves unavailable. This reframes the decoupling program: it is not a packaging or community-portability concern, it is a fault-tolerance concern, and it should be prioritized accordingly. Node 1 running local inference is the acute case, since silent stalls are endemic to small local models."
+  principle: "A failure-detection layer that shares a runtime with the system it monitors cannot report that system's own failure. Portability of observability is a fault-tolerance property, not a packaging preference - treat the coupling of detection and detection-targets as an availability defect."
+
+- id: JEM-PLUGIN-002
+  node: JEM-PLUGIN-DECOUPLING
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - PLUGIN-DECOUPLING
+  - TENANCY-DEFECT
+  - HARDCODE
+  confidence: 0.88
+  narrative: "awareness.ts resolves its injection target via getMySessionId(), which filters client.session.list() for s.agent === 'kali' and falls back to sessions[0].id. Every other entity in the fleet is therefore blind to streaming errors, compaction events, and subagent spawn notifications. The recipient set is a string literal in the source."
+  insight: "A hardcoded recipient is a tenancy defect, not a convenience. The plugin was written for a single-tenant mental model (Kali needs fleet awareness) and shipped into a multi-tenant fleet, so the defect is invisible in the originating context and total everywhere else. The sessions[0].id fallback is worse than the literal: it silently retargets awareness injection at an arbitrary session when the literal does not match, which means the plugin can inject Architect-tier operational context into an unrelated session without any error surfacing."
+  principle: "Hardcoded single-tenant routing is a tenancy defect, not a convenience. Recipient sets must always be resolved from configuration, and any fallback that retargets a privileged injection to an arbitrary default must fail loudly rather than silently succeed."
+
+- id: JEM-GHOST-001
+  node: JEM-PLUGIN-DECOUPLING
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - GHOST-CAPABILITY
+  - DOCUMENTED-VS-ACTIVE
+  - INVENTORY
+  confidence: 0.9
+  narrative: "A formal synchronization brief from MaKaLi enumerated four custom plugins: awareness.ts, error-capture.ts, silent-stall-sensor.ts, and sovereign-compaction.ts. Directory listing returned three. sovereign-compaction.ts does not exist in .opencode/plugins/. The same brief enumerated 13 skills; .opencode/skills/ holds 23."
+  insight: "A named-but-unwritten artifact is more expensive than an absent one, because it is counted in inventories, referenced in audits, and allocated decoupling effort - the JEM-12STEP-005 documented-vs-active gap in its purest form, with zero implementation behind the documentation. The inventory inflation also corrupted the audit's denominators: a 4-plugin/13-skill scope would have produced a coverage report describing 35 percent of the actual surface as out of scope. The correct handling of an unresolvable plugin reference is to author it greenfield or strike it, never to carry it as a placeholder."
+  principle: "A named-but-unwritten artifact is a ghost capability with higher cost than an absent one, because inventories count it, audits scope against it, and effort is allocated to it. Every inventory assertion must be reconciled against a directory listing before it is used to bound an audit."
+
+- id: JEM-BRIEF-001
+  node: JEM-PLUGIN-DECOUPLING
+  date: '2026-09-28'
+  level: L3
+  tags:
+  - BRIEF-HYGIENE
+  - GROUND-TRUTH
+  - SCOPE-INTEGRITY
+  confidence: 0.92
+  narrative: "Two consecutive briefs asserted plugin/skill inventories that did not match disk: 4 plugins claimed vs 3 present, 13 skills claimed vs 23 present. Reconciling against ls output corrected the scope before any audit work was performed, changing the reported coverage from a false 27-audit-complete to a truthful 26-audit-complete plus 1 explicitly-absent."
+  insight: "This is JEM-FORENSIC-001's method applied to dispatch scope instead of forensic claims, and it generalizes: a brief's inventory is a hypothesis about the artifact surface, never a specification of it. Inherited inventories drift in both directions - the over-count (sovereign-compaction.ts) inflates scope and manufactures phantom work, while the under-count (13 vs 23 skills) silently excludes 10 real skills from the decoupling plan. Neither error is visible without a directory listing, and both would have propagated into the report a consuming architect relies on."
+  principle: "A brief's inventory is a hypothesis; a directory listing is truth. Reconcile every asserted artifact count against the filesystem before bounding any audit or plan, because inherited inventories drift in both directions and both directions of error are invisible without the listing."
+
+- id: JEM-OPENCODE-002
+  node: JEM-OPENCODE-CONFIG-RESEARCH
+  date: '2026-09-23'
+  level: L3
+  tags:
+  - OPENCODE-CONFIG
+  - MODEL-CATALOG
+  - HARDCODING
+  - CONFIG-DOCTRINE
+  confidence: 0.9
+  narrative: "OpenCode builds its model catalog from Models.dev plus provider integrations plus local config, and documents that only enabled models whose provider is available appear in the picker; when a configured default's provider is unavailable, session execution silently falls back to the newest available supported model. Config merges non-destructively across the user config dir, project root, .opencode/, and OPENCODE_CONFIG_CONTENT, with .opencode/ applied last."
+  insight: "Availability is a runtime property, not a config constant, which makes hardcoded model IDs a silent-degradation vector rather than merely a maintenance burden: a renamed or retired catalog entry does not fail loudly, it falls back to a different model than the operator intended, and the operator sees plausible output from the wrong model. The portable doctrine is to declare intent - model default, provider options, whitelist/blacklist, small_model - and let the catalog resolve concrete IDs, using modelID to map a friendly key to a differing upstream ID rather than inventing synthetic provider entries. The merge semantics add a second trap: mixing direct and .opencode/ forms across one hierarchy is a precedence-bug generator."
+  principle: "Model availability is a runtime catalog property, not a config constant. Declare intent and let the catalog resolve identifiers - never make a hardcoded model ID load-bearing, because a stale entry degrades silently into a different model rather than failing loudly. And never mix direct and .opencode/ config forms in one hierarchy without intending the precedence."
+
+
 metadata:
   entity: jem
   session_id: ses_f33f79d75ffeozprA9nRejTdDi
