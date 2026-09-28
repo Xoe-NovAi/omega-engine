@@ -1,3 +1,11 @@
+<!-- GNOSIS-META:BEGIN
+  entity: makali
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 ---
 
 ## 27. THE FRONTIER GNOSIS & SOVEREIGN RE-ONBOARDING PASS (2026-09-23)

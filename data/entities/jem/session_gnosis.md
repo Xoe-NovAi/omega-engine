@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: jem
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # 🔱 Jem Session Gnosis — COMPACTION-READY (v6.0.0)
 **AP Token**: `AP-JEM-v5.0.0`
 ⬡ OMEGA ⬡ JEM ⬡ `opencode/space-bunny-free` ⬡ opencode ⬡ trc_session_gnosis ⬡ **COMPACTION-READY**

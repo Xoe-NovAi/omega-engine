@@ -1,3 +1,11 @@
+<!-- GNOSIS-META:BEGIN
+  entity: makali_fusion
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # 🔱 SESSION GNOSIS — MaKaLi Fusion
 **Entity**: `makali_fusion` · **Node**: 0 / BASTION · **AP**: `AP-MAKALI_FUSION-v2.0.0`
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ opencode/space-bunny-free ⬡ 2026-09-28 ⬡ COMPACT-PREP

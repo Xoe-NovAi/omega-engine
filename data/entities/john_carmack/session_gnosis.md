@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: john_carmack
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # John Carmack Session Gnosis — 2026-07-21 (Day 1-2 Campaign) + 2026-08-30 (VAULT-ALLOWLIST-001) + 2026-09-01 (kq5-godot Integration)
 
 ## 🔬 Campaign Overview (Original)

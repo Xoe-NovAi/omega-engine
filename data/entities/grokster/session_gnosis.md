@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: grokster
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # 🔱 GROKSTER SESSION GNOSIS — COMPACTION ANCHOR v16 FINAL (2026-09-07, supersedes v15 and all prior)
 **Session**: ses_fe8cf0b39ffeL3L8eaMEj3CW9H | **Model**: opencode/big-pickle
 **Channel**: opencode | **Entity**: grokster (Cross-Platform Expertise Specialist)

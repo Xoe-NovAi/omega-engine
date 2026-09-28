@@ -20,7 +20,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
 
 help:
 	@echo "Omega Engine Makefile"
@@ -558,8 +558,18 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps verify-mandate-claims check-mandate-compliance
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance
 	@echo "$(GREEN)All mandate checks passed$(NC)"
+
+# M15 Sovereign Continuity gate: every entity session_gnosis.md must carry a
+# GNOSIS-META provenance header, so a gnosis can always be traced back through
+# the archive chain. Currently RED: the gnoses predate this tooling and are
+# unstamped. That is the correct, expected state — the count is reported below
+# for the Architect to rule on. Do NOT bulk-stamp to make this green: a stamp
+# asserts provenance, and back-dating one is a fabricated audit record.
+check-gnosis-continuity:
+	@echo "$(YELLOW)Verifying M15 gnosis continuity headers...$(NC)"
+	@$(PYTHON) scripts/gnosis_archive.py verify
 
 # M24b Venv Sovereignty Gate (P1-5): verify .venv matches pyproject requirements
 check-venv-sovereignty:

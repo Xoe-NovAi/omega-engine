@@ -1,3 +1,11 @@
+<!-- GNOSIS-META:BEGIN
+  entity: kali
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # 🔱 KALI SESSION GNOSIS — GOVERNANCE DELIVERABLES COMPLETE + DEPLOYMENT SYNC v4.9.0
 
 **AP Token**: `AP-KALI-v4.9.0`
