@@ -117,6 +117,33 @@ CAPTURED ──(skill answers reflection questions)──▶ REFLECTED ──(pl
 > a populated narrative — is now impossible by default: the leash check blocks
 > the second lock before any capture happens.
 
+#### 1.3.1 Node 1 has not yet adapted to the leash (2026-09-28)
+
+**State**: the leash system is installed, monitored, and working on Node 1 — but
+the surrounding session habit is not yet adapted to it. Symptom seen in
+practice: a pack (`session-2026-09-27T09-23-17Z`) was captured and never
+reflected, and crossed the 24 h TTL into `LEASH TAUT (STALE 33h)` while sessions
+continued. Operator chose to dismiss rather than reflect it.
+
+**Dismissal, done honestly** (2026-09-28): `identity.pending_pack` cleared to
+`""`; the manifest left untouched at `reflection_status = captured`. The system
+reserves `superseded` for harness/test artifacts (see
+`migrate_legacy_packs.py` docstring) and mandates that real never-reflected
+sessions *stay* `captured` — relabelling a real session as `superseded` would be
+dishonest, and the manifest is the historical record. Clearing the *pointer* is
+what returns the pack to "not in flight" and the watchdog to healthy. Any new
+ritual run repoints `pending_pack` at its own pack.
+
+**No federation notification was sent about this.** Deliberate: advertising a
+Node 1 state that Node 1 has not adapted to would invite cross-node confusion
+about whose leash is authoritative. Fix the local habit first; the stale-pack
+alert is a correct report of an unadapted workflow, not a system defect.
+
+**Implication for agents**: if you see `LEASH TAUT (STALE ...)`, it means
+"someone captured and did not reflect," not "the ritual is broken." The correct
+response is to run `/gnosis-lock` (or explicitly dismiss with the operator's
+say-so) — never to clear the pointer unilaterally to quiet an alert.
+
 ### 1.4 The "prepare for compaction" Fallback/Recovery Procedure
 
 **Primary mode is Semantic Write-Through (continuous, no ceremony).** The "prepare for compaction" orchestration is now a **fallback/recovery procedure** used only when:
@@ -161,6 +188,26 @@ make gnosis-leash-status        # exit 0 = healthy, 1 = degraded, 2 = FAIL
 ```
 Checks: plugin source + hooks, timeline freshness, event-kind coverage, error log,
 INDEX.md payload, skill+command registration.
+
+**A non-zero exit is a MULTI-CAUSE signal — read the cause, don't infer it.**
+The watchdog deliberately collapses every degradation into one exit code
+(UNIX-style "unhealthy"), which is right for CI but means the code alone cannot
+tell you *why*. Independent causes, all exit 1: `PLUGIN MISSING`,
+`TIMELINE MISSING`, `NARRATIVE MISSING`, `LEASH TAUT` (in-flight or STALE),
+`TIMELINE STALE`, `GNOSIS-LOCK INCIDENT`.
+
+Consumers — including tests — must read the reason from stdout, not assume.
+`tests/test_leash_status.py` demonstrates this with `DEGRADATION_MARKERS` +
+`_first_degradation()`; marker order puts the specific cause ahead of the
+`LEASH DEGRADED` summary line. Regression (fixed `50970529`): a test asserted
+`returncode == 0` whenever the last compaction had a narrative, so an unrelated
+`LEASH TAUT (STALE)` failure was reported as a narrative failure. The watchdog
+was right; the consumer was wrong.
+
+**Staleness is derived from the manifest, not the session id.** The pack name
+`session-2026-09-27T09-23-17Z` is **not valid ISO-8601** (hyphens in the time
+part). `leash_status.py` computes age from the manifest's mtime plus its
+`reflection_status`. Never parse the session id as a timestamp.
 
 ### 2.3 Why agents should care
 Because the narrative you write in Step 1.3 is **read by the plugin and injected

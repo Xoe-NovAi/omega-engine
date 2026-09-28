@@ -25,7 +25,8 @@
     "HP Node 0 federation live",
     "Tailscale mesh operational",
     "Secure key management pattern",
-    "Agent team migration complete"
+    "Agent team migration complete",
+    "Node 1 has not yet adapted to the leash/gnosis system; stale-pack alerts are expected until it does (2026-09-28: operator dismissed one)"
   ],
   "entities": {
     "build": {
@@ -47,6 +48,6 @@
       "last_channel": "opencode"
     }
   },
-  "pending_pack": "session-2026-09-27T09-23-17Z",
+  "pending_pack": "",
   "current_entity": "build"
 }

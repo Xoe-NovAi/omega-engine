@@ -38,3 +38,6 @@ models/
 *.onnx
 *.safetensors
 *.bin
+
+# gnosis state backups (timestamped, machine-local)
+gnosis/**/*.bak-*
