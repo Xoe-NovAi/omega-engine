@@ -331,6 +331,8 @@ opencode_provider_doctor.sh
 !docs/architecture/HIVEMIND_TRANSPORT.md
 !docs/architecture/EMBEDDING_SOVEREIGNTY.md
 !docs/architecture/NES_EIS_FACET_PROTOCOL.md
+!data/entities/*/session_gnosis.md
+!data/entities/*/gnosis/session_gnosis.md
 !data/coordination/CLINE_*.md
 data/entities/*/knowledge/ACCOUNT_MAP.yaml
 data/metrics/*
