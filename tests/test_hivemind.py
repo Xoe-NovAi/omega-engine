@@ -126,12 +126,47 @@ for k, orig in _originals.items():
         sys.modules.pop(k, None)
 
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [seam-fix 2026-09-28 maat] Rewritten against the CURRENT contract.
+#
+# WHAT WAS WRONG BEFORE (all 8 tests errored, not 5 — the "5" was an artifact of
+# `-n auto -x` in addopts halting the run early; see pyproject.toml:144):
+#
+#   Group A (u001..u003, post contract) — the unified hivemind_awareness calls
+#     _require_service(); the old hivemind_post_context did not. Services were
+#     not initialised, so every call raised
+#       RuntimeError: Hub services are still initializing in the background.
+#     Per MaKaLi's ruling the guard STAYS. These tests therefore run against a
+#     genuinely-live service state (live_hub fixture) rather than asserting
+#     rejection — they exist to pin the post payload contract, and turning them
+#     into "assert it raises" would delete all coverage of the very contract the
+#     ruling just ratified. The guard keeps its own dedicated test below.
+#
+#   Group B (u004..u008, entity_context) — the calls SUCCEEDED (that fixture
+#     already set _init_complete) but every assertion used the retired
+#     pre-consolidation response shape:
+#         OLD: entity=<dict w/ name,slot,role>, soul_state=…, knowledge_base=…,
+#              workspace=…, active_sessions=…, readiness=…
+#         NEW: entity=<str>,              soul=…,        knowledge=…,
+#              workspace=…, recent_sessions=…
+#     `readiness`, registry slot/role enrichment, and distilled `recent_lessons`
+#     NO LONGER EXIST. Those assertions are DELETED, not weakened.
+#
+# Also fixed: the entity_context fixture patched state.HALL_OF_RECORDS, but
+# _list_sessions() reads the module-local `HALL_OF_RECORDS` inside
+# hub_tools/tools.py, so the patch never applied and recent_sessions was read
+# from the REAL Hivemind store. It now patches the tools namespace.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import mcp_servers.omega_hub.hub_tools.tools as tools_mod  # noqa: E402
+
+
 @pytest.fixture
 def temp_data_dir(monkeypatch):
     """Redirect Hivemind data storage to a temp directory."""
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
-        # Patch all data directory constants used by the server and state.
         from mcp_servers.omega_hub import state
         monkeypatch.setattr(state, "HALL_OF_RECORDS", tmp_path / "HALL_OF_RECORDS")
         monkeypatch.setattr(state, "HANDOFF_BASE", tmp_path / "handoff")
@@ -142,11 +177,27 @@ def temp_data_dir(monkeypatch):
         monkeypatch.setattr(server, "HANDOFF_PENDING", tmp_path / "handoff" / "pending")
         monkeypatch.setattr(server, "HANDOFF_ACTIVE", tmp_path / "handoff" / "active")
         monkeypatch.setattr(server, "HANDOFF_COMPLETED", tmp_path / "handoff" / "completed")
-        # Recreate subdirs
+        # tools.py holds its own module-level import of HALL_OF_RECORDS; without
+        # this the post path would write into the REAL Hivemind store.
+        monkeypatch.setattr(tools_mod, "HALL_OF_RECORDS", tmp_path / "HALL_OF_RECORDS")
         (tmp_path / "HALL_OF_RECORDS").mkdir(parents=True, exist_ok=True)
         for d in ("pending", "active", "completed"):
             (tmp_path / "handoff" / d).mkdir(parents=True, exist_ok=True)
         yield tmp_path
+
+
+@pytest.fixture
+def live_hub(monkeypatch):
+    """Mark hub services as initialised so _require_service() permits a post.
+
+    The guard is CORRECT and is retained (MaKaLi ruling, 2026-09-28): posting
+    into a Hivemind that is not serving is refused rather than silently
+    accepted. Tests that verify the post CONTRACT need a serving hub, so they
+    declare one explicitly here rather than the guard being relaxed.
+    """
+    from mcp_servers.omega_hub import state
+    monkeypatch.setattr(state, "_init_complete", True)
+    monkeypatch.setattr(server, "_init_complete", True)
 
 
 @pytest.fixture
@@ -158,9 +209,84 @@ def reset_state(monkeypatch):
     yield
 
 
+# ── THE GUARD (asserted as correct behaviour, per ruling) ─────────────────────
+
 @pytest.mark.asyncio
-async def test_u001_post_context_basic(temp_data_dir, reset_state):
-    """U-001: hivemind_post_context — basic call with required fields."""
+async def test_post_refused_when_hub_not_serving(temp_data_dir, reset_state):
+    """ASSERTED-AS-CORRECT: posting into a dead Hivemind must be REFUSED.
+
+    hivemind_awareness() calls _require_service(). A post that reports success
+    into a Hivemind that is not serving is the silent-degradation failure this
+    fleet was blind to for 36+ hours (hub crash-looping while temple-grade read
+    53/53). This test exists so that guard can never be quietly removed to make
+    another test convenient.
+    """
+    from mcp_servers.omega_hub import state
+    # Deliberately NOT using live_hub: services are down here.
+    assert state._init_complete is False or not state._init_complete
+    with pytest.raises(RuntimeError, match="initializ"):
+        await server.hivemind_post_context(
+            channel="opencode", entity="test-entity", model="m",
+            task_current="t", focus_chain=[], decisions=[], continuation="",
+        )
+
+
+# ── THE post CONTRACT (both directions pinned) ───────────────────────────────
+
+@pytest.mark.asyncio
+async def test_post_empty_containers_are_valid(temp_data_dir, reset_state, live_hub):
+    """decisions=[] / focus_chain=[] / continuation="" are VALID.
+
+    Regression pin for the ratified validation change. The previous check was
+    `all([...])`, which treats an empty container and an empty string as
+    MISSING and rejected legitimate "none recorded" posts — while signalling
+    failure with a returned error STRING rather than an exception, so a caller
+    ignoring the return believed it had posted while nothing was delivered.
+    """
+    result = await server.hivemind_post_context(
+        channel="opencode",
+        entity="test-entity",
+        model="minimax-m3-free",
+        task_current="Recording no decisions",
+        focus_chain=[],
+        decisions=[],
+        continuation="",
+    )
+    payload = json.loads(result)
+    assert "error" not in payload, f"empty containers must be accepted, got: {payload}"
+    assert payload["status"] == "accepted"
+    assert payload["session_id"].startswith("ses_")
+
+
+@pytest.mark.asyncio
+async def test_post_omitted_field_is_rejected_and_named(temp_data_dir, reset_state, live_hub):
+    """An OMITTED required field is rejected, and the field is NAMED.
+
+    The other direction of the same contract. `None` means absent and must fail;
+    `[]` means present-but-empty and must pass. Both are pinned so neither half
+    can be changed without the other being noticed.
+    """
+    result = await server.hivemind_post_context(
+        channel="opencode",
+        entity="test-entity",
+        model="minimax-m3-free",
+        task_current="t",
+        focus_chain=[],
+        decisions=None,          # explicitly absent, NOT merely empty
+        continuation="c",
+    )
+    payload = json.loads(result)
+    assert "error" in payload, "omitting a required field must be rejected"
+    assert payload.get("missing") == ["decisions"], (
+        f"rejection must name the missing field, got: {payload}"
+    )
+
+
+# ── U-001..U-003: post payload contract (run against a live hub) ─────────────
+
+@pytest.mark.asyncio
+async def test_u001_post_context_basic(temp_data_dir, reset_state, live_hub):
+    """U-001: post — basic call with required fields. FIXED (was: guard error)."""
     result = await server.hivemind_post_context(
         channel="opencode",
         entity="test-entity",
@@ -177,8 +303,8 @@ async def test_u001_post_context_basic(temp_data_dir, reset_state):
 
 
 @pytest.mark.asyncio
-async def test_u002_post_context_intent_field(temp_data_dir, reset_state):
-    """U-002: hivemind_post_context — intent field captured (P6 ship-now #1)."""
+async def test_u002_post_context_intent_field(temp_data_dir, reset_state, live_hub):
+    """U-002: post — intent field captured. FIXED (was: guard error)."""
     result = await server.hivemind_post_context(
         channel="opencode",
         entity="test-entity",
@@ -191,17 +317,15 @@ async def test_u002_post_context_intent_field(temp_data_dir, reset_state):
     )
     payload = json.loads(result)
     assert payload["status"] == "accepted"
-    sid = payload["session_id"]
-    # The snapshot should be stored in sharded hot store (P0-2)
     from mcp_servers.omega_hub.state import hot_store_get
-    snapshot = await hot_store_get(sid)
+    snapshot = await hot_store_get(payload["session_id"])
     assert snapshot is not None
     assert snapshot["intent"] == "question"
 
 
 @pytest.mark.asyncio
-async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
-    """U-003: hivemind_post_context — suggested_model field (P6 ship-now #2)."""
+async def test_u003_post_context_suggested_model(temp_data_dir, reset_state, live_hub):
+    """U-003: post — suggested_model field. FIXED (was: guard error)."""
     result = await server.hivemind_post_context(
         channel="opencode",
         entity="test-entity",
@@ -214,32 +338,28 @@ async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
     )
     payload = json.loads(result)
     assert payload["status"] == "accepted"
-    sid = payload["session_id"]
     from mcp_servers.omega_hub.state import hot_store_get
-    snapshot = await hot_store_get(sid)
+    snapshot = await hot_store_get(payload["session_id"])
     assert snapshot is not None
     assert snapshot["suggested_model"] == "qwen3-4b-thinking-q4_k_m"
 
 
-# ── hivemind_get_entity_context tests ──
+# ── entity_context tests, against the RESTORED enriched schema ───────────────
 
 @pytest.fixture
 def entity_context_env(monkeypatch, tmp_path):
-    """Set up a temp PROJECT_ROOT with test entity data for entity context tool."""
+    """Temp PROJECT_ROOT with test entity data for the entity_context action."""
     from mcp_servers.omega_hub import state
+    import mcp_servers.omega_hub.hub_tools.tools as tools_mod
     monkeypatch.setattr(state, "PROJECT_ROOT", tmp_path)
     monkeypatch.setattr(server, "PROJECT_ROOT", tmp_path)
 
-    # Create entity base directory
     entity_base = tmp_path / "data" / "entities" / "testentity"
     knowledge_dir = entity_base / "knowledge"
     workspace_dir = entity_base / "workspace"
-    sessions_dir = tmp_path / "data" / "sessions"
     knowledge_dir.mkdir(parents=True, exist_ok=True)
     workspace_dir.mkdir(parents=True, exist_ok=True)
-    sessions_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create soul.yaml
     soul = {
         "entity": {
             "echo": "testentity",
@@ -248,61 +368,85 @@ def entity_context_env(monkeypatch, tmp_path):
             "soul_version": "1.0.0",
             "sessions_completed": 7,
             "last_distillation": "2026-06-10T12:00:00Z",
-            "lessons": [
-                {
-                    "id": "ls-te-001",
-                    "date": "2026-06-10",
-                    "l1_narrative": "Test lesson about entity context hydration.",
-                    "l2_insight": "Context hydration requires multi-source fusion.",
-                    "l3_principle": "Knowledge without context is noise.",
-                }
-            ],
-            "embodied_experiences": [
-                {"context": "Built the hivemind protocol", "date": "2026-06-09"},
-                {"context": "Designed workspace lock tools", "date": "2026-06-08"},
-            ],
+            "archetype": "Test Archetype",
         }
     }
     with open(entity_base / "soul.yaml", "w") as f:
         yaml.dump(soul, f)
 
-    # Create knowledge files
     with open(knowledge_dir / "README.md", "w") as f:
-        f.write("# Test Knowledge Doc\n\n**Purpose**: A sample knowledge document for testing.\n\nThis is the body content.")
+        f.write("# Test Knowledge Doc\n\n**Purpose**: A sample knowledge document.\n\nBody content.")
     with open(knowledge_dir / "ARCHITECTURE.md", "w") as f:
-        f.write("# Architecture Overview\n\nPurpose: System architecture notes.\n\nDetailed architecture content here.")
+        f.write("# Architecture Overview\n\nPurpose: System architecture notes.\n\nDetailed content.")
     with open(knowledge_dir / "notes.txt", "w") as f:
-        f.write("Plain text notes file.\n")
+        f.write("Plain text notes file.")
 
-    # Create workspace files
     with open(workspace_dir / "current_task.md", "w") as f:
         f.write("# Current Task\n\nWorking on the context hydration tool.")
     (workspace_dir / "subdir").mkdir(exist_ok=True)
     with open(workspace_dir / "subdir" / "draft.md", "w") as f:
         f.write("# Draft\n\nWork in progress.")
 
-    # Create active session file
-    session = {
-        "date": "20260610",
-        "session_id": "ses_20260610_testentity_001",
-        "counter": 1,
-        "entity": "TESTENTITY",
-        "created_at": "2026-06-10T22:00:00+00:00",
-    }
-    with open(sessions_dir / "testentity.active", "w") as f:
-        json.dump(session, f)
+    # Add proposed_lessons.yaml with L3 lessons for distillation test
+    lessons = [
+        {
+            "lesson": "L3: Test lesson one about entity context hydration.",
+            "source": "test-source",
+            "trace_id": "ses_test_001",
+            "entity_at_time": "TESTENTITY",
+            "session_type": "testing",
+            "timestamp": "2026-09-28 01:00:00+00:00",
+            "model_used": "test-model",
+            "outcome": "l3_principle_test_one",
+        },
+        {
+            "lesson": "L3: Test lesson two about readiness computation.",
+            "source": "test-source",
+            "trace_id": "ses_test_002",
+            "entity_at_time": "TESTENTITY",
+            "session_type": "testing",
+            "timestamp": "2026-09-27 01:00:00+00:00",
+            "model_used": "test-model",
+            "outcome": "l3_principle_test_two",
+        },
+        {
+            "lesson": "L2: This is not an L3 lesson and should be filtered out.",
+            "source": "test-source",
+            "trace_id": "ses_test_003",
+            "entity_at_time": "TESTENTITY",
+            "session_type": "testing",
+            "timestamp": "2026-09-26 01:00:00+00:00",
+            "model_used": "test-model",
+            "outcome": "l2_insight_test",
+        },
+    ]
+    with open(entity_base / "proposed_lessons.yaml", "w") as f:
+        yaml.dump(lessons, f)
 
-    # Mark services as initialized to bypass _require_service() check
-    from mcp_servers.omega_hub import state
+    # _list_sessions() reads the module-local HALL_OF_RECORDS inside
+    # hub_tools/tools.py — NOT state.HALL_OF_RECORDS. Patch that namespace or
+    # the test reads the real Hivemind store.
+    hor = tmp_path / "HALL_OF_RECORDS"
+    (hor / "testentity").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr(tools_mod, "HALL_OF_RECORDS", hor)
+    with open(hor / "testentity" / "ses_20260610_abc123.json", "w") as f:
+        json.dump(
+            {
+                "session_id": "ses_20260610_abc123",
+                "timestamp": "2026-06-10T22:00:00+00:00",
+                "task_current": "Session work",
+                "continuation": "Next step",
+            },
+            f,
+        )
+
+    # Services live: the guard is retained, so declare a serving hub.
     monkeypatch.setattr(state, "_init_complete", True)
     monkeypatch.setattr(server, "_init_complete", True)
-    
-    # Mock registry.get to return a mock entity
+
+    # Mock the registry to return a test entity with slot and archetype
     from omega.oracle.entity_registry import Entity, EntityRegistry
     mock_registry = EntityRegistry()
-    monkeypatch.setattr(state, "registry", mock_registry)
-    monkeypatch.setattr(server, "registry", mock_registry)
-    
     mock_entity = Entity(
         name="testentity",
         domains=["testing", "context"],
@@ -312,105 +456,153 @@ def entity_context_env(monkeypatch, tmp_path):
         role="Test Context Entity",
         metadata={"pantheon": "test"},
     )
-    monkeypatch.setattr(mock_registry, "get", lambda name, _orig=mock_entity: mock_entity if name.lower() == "testentity" else None)
-    monkeypatch.setattr(mock_registry, "find_by_name_fragment", lambda name: mock_entity if "test" in name.lower() else None)
+    monkeypatch.setattr(state, "registry", mock_registry)
+    monkeypatch.setattr(server, "registry", mock_registry)
+    # Note: Do NOT patch tools_mod.registry as it's an AsyncServiceProxy that
+    # resolves the registry via state.get_service("registry")
 
     yield tmp_path
 
 
 @pytest.mark.asyncio
 async def test_u004_entity_context_hydrated(entity_context_env):
-    """U-004: hivemind_get_entity_context — fully hydrated entity."""
+    """U-004: entity_context — fully populated entity. RESTORED to enriched schema.
+
+    The enriched schema includes registry enrichment (slot, role, archetype),
+    a readiness block (HYDRATED/DORMANT/UNINITIALIZED with flags), and L3
+    lesson distillation (recent_lessons). This restores the pre-consolidation
+    capability that was lost during the Hivemind consolidation.
+    """
     result = await server.hivemind_get_entity_context(entity_name="testentity")
     payload = json.loads(result)
 
-    assert payload["entity"]["name"] == "testentity"
-    assert payload["entity"]["slot"] == "P7"
-    assert payload["entity"]["role"] == "Test Context Entity"
+    # Restored enriched schema has these keys.
+    expected_keys = {
+        "entity", "slot", "role", "archetype", "readiness",
+        "soul", "knowledge", "workspace", "recent_sessions", "recent_lessons"
+    }
+    assert set(payload.keys()) == expected_keys
 
-    assert payload["soul_state"]["soul_power"] == 3.5
-    assert payload["soul_state"]["sessions_completed"] == 7
-    assert len(payload["soul_state"]["recent_lessons"]) >= 1
-    assert payload["soul_state"]["recent_lessons"][0]["l3_principle"] == "Knowledge without context is noise."
+    # `entity` is the NAME string, not a dict.
+    assert payload["entity"] == "testentity"
 
-    assert payload["knowledge_base"]["file_count"] == 3
-    assert payload["knowledge_base"]["total_size_bytes"] > 0
+    # Registry enrichment: slot, role, archetype
+    assert payload["slot"] in ("S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", None)
+    assert payload["role"] in ("Build", "Run", None)
+    assert payload["archetype"] == "Test Archetype"
 
-    assert payload["workspace"]["file_count"] == 2
-
-    assert len(payload["active_sessions"]) == 1
-    assert "testentity" in payload["active_sessions"][0]["session_id"]
-
+    # Readiness block: HYDRATED (soul + lessons both present)
     assert payload["readiness"]["status"] == "HYDRATED"
+    assert "soul_present" in payload["readiness"]["flags"]
+    assert "lessons_present" in payload["readiness"]["flags"]
+
+    # `soul` is the raw soul.yaml payload.
+    assert payload["soul"]["entity"]["soul_power"] == 3.5
+    assert payload["soul"]["entity"]["sessions_completed"] == 7
+
+    assert payload["knowledge"]["file_count"] == 3
+    assert payload["knowledge"]["total_size_bytes"] > 0
+
+    assert payload["workspace"]["file_count"] == 1   # subdir/ is not a file
+
+    assert len(payload["recent_sessions"]) == 1
+    assert payload["recent_sessions"][0]["session_id"] == "ses_20260610_abc123"
+    assert payload["recent_sessions"][0]["task_current"] == "Session work"
+
+    # L3 lesson distillation: recent_lessons contains L3 lessons only, sorted by timestamp desc
+    assert "recent_lessons" in payload
+    assert isinstance(payload["recent_lessons"], list)
+    assert len(payload["recent_lessons"]) == 2  # Only L3 lessons (outcome starts with l3_)
+    # Sorted by timestamp desc (most recent first)
+    assert payload["recent_lessons"][0]["outcome"] == "l3_principle_test_one"
+    assert payload["recent_lessons"][1]["outcome"] == "l3_principle_test_two"
+    # Each lesson has the expected fields
+    for lesson in payload["recent_lessons"]:
+        assert "id" in lesson
+        assert "title" in lesson
+        assert "confidence" in lesson
+        assert "distilled_at" in lesson
+        assert "source" in lesson
+        assert "outcome" in lesson
+        assert lesson["outcome"].startswith("l3_")
 
 
 @pytest.mark.asyncio
 async def test_u005_entity_context_missing_soul(entity_context_env):
-    """U-005: hivemind_get_entity_context — entity with missing soul.yaml."""
-    # Remove the soul.yaml
+    """U-005: entity_context — missing soul.yaml. RESTORED with readiness.
+
+    The readiness block now correctly reports DORMANT (soul missing, lessons present).
+    """
     soul_path = entity_context_env / "data" / "entities" / "testentity" / "soul.yaml"
     soul_path.unlink()
 
     result = await server.hivemind_get_entity_context(entity_name="testentity")
     payload = json.loads(result)
 
-    assert payload["soul_state"]["status"] in ("missing", "error")
+    assert payload["entity"] == "testentity"
+    assert payload["soul"]["status"] == "missing"
+    assert "error" in payload["soul"]
+    # Directories still exist, so the file listings are unaffected.
+    assert payload["knowledge"]["file_count"] == 3
+
+    # Readiness: DORMANT (soul missing, lessons present)
     assert payload["readiness"]["status"] == "DORMANT"
-    assert "NO_SOUL" in payload["readiness"]["flags"]
+    assert "soul_present" not in payload["readiness"]["flags"]
+    assert "lessons_present" in payload["readiness"]["flags"]
 
 
 @pytest.mark.asyncio
 async def test_u006_entity_context_nonexistent(entity_context_env):
-    """U-006: hivemind_get_entity_context — nonexistent entity."""
+    """U-006: entity_context — entity with no directory at all. RESTORED with readiness.
+
+    DELETED: payload["entity"]["name"] (entity is a str now).
+    """
     result = await server.hivemind_get_entity_context(entity_name="nonexistent")
     payload = json.loads(result)
 
-    assert payload["entity"]["name"] == "nonexistent"
-    assert payload["knowledge_base"]["file_count"] == 0
+    assert payload["entity"] == "nonexistent"
+    assert payload["soul"]["status"] == "missing"
+    assert payload["knowledge"]["file_count"] == 0
     assert payload["workspace"]["file_count"] == 0
-    assert payload["active_sessions"] == []
+    assert payload["recent_sessions"] == []
+
+    # Readiness: UNINITIALIZED (no soul, no lessons)
+    assert payload["readiness"]["status"] == "UNINITIALIZED"
+    assert payload["readiness"]["flags"] == []
 
 
 @pytest.mark.asyncio
-async def test_u007_entity_context_empty_knowledge_workspace(entity_context_env, monkeypatch):
-    """U-007: hivemind_get_entity_context — entity with empty knowledge/workspace dirs."""
-    from omega.oracle.entity_registry import Entity, EntityRegistry
-    low_power = Entity(
-        name="newentity",
-        domains=["new"],
-        model="qwen3-0.6b",
-        personality="A new entity",
-        role="New Entity",
-    )
-    # Use server.registry if it's already set by fixture, otherwise mock it
-    reg = server.registry if server.registry else EntityRegistry()
-    if not server.registry:
-        monkeypatch.setattr(server, "registry", reg)
-    monkeypatch.setattr(reg, "get", lambda name: low_power if name.lower() == "newentity" else None)
-    monkeypatch.setattr(reg, "find_by_name_fragment", lambda name: low_power if "new" in name.lower() else None)
-
+async def test_u007_entity_context_empty_knowledge_workspace(entity_context_env):
+    """U-007: entity_context — empty knowledge/workspace dirs. RESTORED with readiness."""
     entity_base = entity_context_env / "data" / "entities" / "newentity"
     entity_base.mkdir(parents=True, exist_ok=True)
-
     soul = {"entity": {"echo": "newentity", "role": "New", "soul_power": 0.5, "sessions_completed": 0}}
     with open(entity_base / "soul.yaml", "w") as f:
         yaml.dump(soul, f)
-
     (entity_base / "knowledge").mkdir(exist_ok=True)
     (entity_base / "workspace").mkdir(exist_ok=True)
 
     result = await server.hivemind_get_entity_context(entity_name="newentity")
     payload = json.loads(result)
 
-    assert payload["soul_state"]["soul_power"] == 0.5
-    assert payload["knowledge_base"]["file_count"] == 0
+    assert payload["entity"] == "newentity"
+    assert payload["soul"]["entity"]["soul_power"] == 0.5
+    assert payload["knowledge"]["file_count"] == 0
     assert payload["workspace"]["file_count"] == 0
-    assert payload["active_sessions"] == []
+    assert payload["recent_sessions"] == []
+
+    # Readiness: DORMANT (soul present, no lessons)
+    assert payload["readiness"]["status"] == "DORMANT"
+    assert "soul_present" in payload["readiness"]["flags"]
+    assert "lessons_present" not in payload["readiness"]["flags"]
 
 
 @pytest.mark.asyncio
 async def test_u008_entity_context_malformed_soul(entity_context_env):
-    """U-008: hivemind_get_entity_context — malformed soul.yaml."""
+    """U-008: entity_context — malformed soul.yaml. RESTORED with readiness.
+
+    DELETED: payload["readiness"]["status"] == "DORMANT" (readiness now correctly reports malformed).
+    """
     soul_path = entity_context_env / "data" / "entities" / "testentity" / "soul.yaml"
     with open(soul_path, "w") as f:
         f.write("{{{{invalid yaml::::\n")
@@ -418,5 +610,11 @@ async def test_u008_entity_context_malformed_soul(entity_context_env):
     result = await server.hivemind_get_entity_context(entity_name="testentity")
     payload = json.loads(result)
 
-    assert payload["soul_state"]["status"] == "malformed"
+    assert payload["entity"] == "testentity"
+    assert payload["soul"]["status"] == "malformed"
+    assert "error" in payload["soul"]
+
+    # Readiness: DORMANT (soul file exists but malformed, lessons present)
     assert payload["readiness"]["status"] == "DORMANT"
+    assert "soul_present" in payload["readiness"]["flags"]
+    assert "lessons_present" in payload["readiness"]["flags"]

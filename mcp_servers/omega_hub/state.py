@@ -373,48 +373,66 @@ HEARTBEAT_TTL = 2700
 
 # ── Cold-store awareness cache (P0-4) ──
 # [id-soft: doom-1993] Precomputed Lookup — pay I/O cost once, serve from cache.
-_AWARENESS_CACHE_TTL = 5.0  # seconds
-_awareness_cache: Dict[str, tuple] = {}  # "cold" -> (monotonic_timestamp, data_list)
-_awareness_cache_lock = anyio.Lock()
-
-
 async def _scan_cold_store() -> List[Dict[str, Any]]:
-    """Scan HALL_OF_RECORDS for active agents. Extracted from tools.py L594-622."""
+    """Scan HALL_OF_RECORDS for active agents using single glob.
+
+    Optimized: single glob(**/ses_*.json) sorted by mtime instead of
+    per-agent directory iteration. Target: <50ms for 10K sessions.
+    """
     now = datetime.now(timezone.utc)
     recovered: List[Dict[str, Any]] = []
     if not HALL_OF_RECORDS.exists():
         return recovered
-    for agent_dir in HALL_OF_RECORDS.iterdir():
-        if not agent_dir.is_dir():
-            continue
-        json_files = sorted(
-            agent_dir.glob("ses_*.json"),
+
+    # Single glob for all session files, sorted by mtime descending
+    # This is much faster than per-agent directory iteration
+    session_files = await anyio.to_thread.run_sync(
+        lambda: sorted(
+            HALL_OF_RECORDS.glob("**/ses_*.json"),
             key=lambda p: p.stat().st_mtime,
             reverse=True
         )
-        if not json_files:
+    )
+
+    # Track which agents we've already seen (only need latest per agent)
+    seen_agents = set()
+    for latest in session_files:
+        if len(recovered) >= 1000:  # Safety cap
+            break
+        agent_dir = latest.parent
+        agent_id = agent_dir.name
+        if agent_id in seen_agents:
             continue
-        latest = json_files[0]
+        seen_agents.add(agent_id)
+
         mtime = datetime.fromtimestamp(latest.stat().st_mtime, tz=timezone.utc)
         age = (now - mtime).total_seconds()
-        if age <= HEARTBEAT_TTL:
-            try:
-                def _read_session():
-                    with latest.open() as f:
-                        return json.load(f)
-                snap = await anyio.to_thread.run_sync(_read_session)
-                recovered.append({
-                    "agent_id": snap.get("agent_id", agent_dir.name),
-                    "channel": snap.get("channel", ""),
-                    "entity": snap.get("entity", agent_dir.name),
-                    "model": snap.get("model", "unknown"),
-                    "task_current": snap.get("task_current", ""),
-                    "last_seen": snap.get("timestamp", mtime.isoformat()),
-                    "source": "cold_store",
-                })
-            except Exception as exc:
-                logger.debug("Failed to load cold session %s: %s", latest.name, exc)
+        if age > HEARTBEAT_TTL:
+            continue
+
+        try:
+            def _read_session():
+                with latest.open() as f:
+                    return json.load(f)
+            snap = await anyio.to_thread.run_sync(_read_session)
+            recovered.append({
+                "agent_id": snap.get("agent_id", agent_dir.name),
+                "channel": snap.get("channel", ""),
+                "entity": snap.get("entity", agent_dir.name),
+                "model": snap.get("model", "unknown"),
+                "task_current": snap.get("task_current", ""),
+                "last_seen": snap.get("timestamp", mtime.isoformat()),
+                "source": "cold_store",
+            })
+        except Exception as exc:
+            logger.debug("Failed to load cold session %s: %s", latest.name, exc)
+
     return recovered
+
+
+_AWARENESS_CACHE_TTL = 5.0  # seconds
+_awareness_cache: Dict[str, tuple] = {}  # "cold" -> (monotonic_timestamp, data_list)
+_awareness_cache_lock = anyio.Lock()
 
 
 async def get_cached_cold_awareness() -> List[Dict[str, Any]]:
@@ -451,38 +469,10 @@ METRICS_PATH: Path = PROJECT_ROOT / "data" / "coordination" / "metrics.json"
 # HEARTBEAT / EXTENDED SESSIONS
 # ═══════════════════════════════════════════════════════════════════════════
 
-_extended_sessions: Dict[str, Dict[str, Any]] = {}  # cli -> {ttl_seconds, registered_at, reason}
-_extended_sessions_lock = anyio.Lock()
 EXTENDED_SAFETY_TTL_DEFAULT = 3 * 60 * 60  # 3 hours = 10800s
-EXTENDED_SESSIONS_FILE = HALL_OF_RECORDS / "extended_sessions.json"
 
-
-def _load_extended_sessions() -> Dict[str, Dict[str, Any]]:
-    """Load extended sessions from disk."""
-    if not EXTENDED_SESSIONS_FILE.exists():
-        return {}
-    try:
-        with open(EXTENDED_SESSIONS_FILE) as f:
-            return dict(json.load(f))
-    except Exception as e:
-        logger.warning("Failed to load extended sessions: %s", e)
-        return {}
-
-
-def _save_extended_sessions(sessions: Dict[str, Dict[str, Any]]) -> None:
-    """Save extended sessions to disk atomically."""
-    EXTENDED_SESSIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = EXTENDED_SESSIONS_FILE.with_suffix(".tmp")
-    with open(tmp_path, "w") as f:
-        json.dump(sessions, f, indent=2)
-    os.replace(str(tmp_path), str(EXTENDED_SESSIONS_FILE))
-
-
-# Load persistent extended sessions on module start
-_saved = _load_extended_sessions()
-_extended_sessions.update(_saved)
-if _saved:
-    logger.info("Restored %d extended session(s) from disk", len(_saved))
+# Extended session TTL is now stored directly in _awareness[agent_id]["extended_ttl"]
+# No separate file persistence needed - folded into hot store
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -626,9 +616,7 @@ __all__ = [
     # cold-store cache
     "_AWARENESS_CACHE_TTL", "get_cached_cold_awareness", "invalidate_awareness_cache",
     # heartbeat / extended sessions
-    "HEARTBEAT_TTL", "_extended_sessions", "_extended_sessions_lock",
-    "EXTENDED_SAFETY_TTL_DEFAULT", "EXTENDED_SESSIONS_FILE",
-    "_load_extended_sessions", "_save_extended_sessions",
+    "HEARTBEAT_TTL", "EXTENDED_SAFETY_TTL_DEFAULT",
     # pruning cycle
     "_last_pruning_cycle", "METRICS_PATH",
     # background tasks

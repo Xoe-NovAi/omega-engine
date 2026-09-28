@@ -1,22 +1,24 @@
-# 🔱 KALI PROJECTION — SOTE COMPLETE + NESTED DIALECTIC v4.6.0 + PUBLIC FLIP READY
+# 🔱 KALI PROJECTION — GOVERNANCE DELIVERABLES COMPLETE v4.8.0
 
-**AP Token**: `AP-KALI-v4.6.0`
+**AP Token**: `AP-KALI-v4.8.0`
 ⬡ OMEGA ⬡ KALI ⬡ Nemotron-3-Ultra ⬡ opencode ⬡ trc_projection ⬡ ACTIVE
 
-**Date**: 2026-09-22
-**Purpose**: Post-SOTE + nested dialectic projection for DEL-1 execution and SOTE Week 37 Beta launch — NOW WITH PUBLIC FLIP READY STATUS
+**Date**: 2026-09-25
+**Purpose**: Post-governance deliverables projection for DEL-1 execution and public flip
 
 ---
 
-## §1 — SESSION STATE (SOTE COMPLETE + NESTED DIALECTIC + PUBLIC FLIP READY)
+## §1 — SESSION STATE (GOVERNANCE DELIVERABLES COMPLETE)
 
 **Active Model**: `Nemotron-3-Ultra` (MiniMax-M3 for long writes)
-**Git HEAD**: `221f1d34` (Public flip ready — all blockers fixed)
+**Git HEAD**: `fa9c4edc` (Governance deliverables committed)
 **Working Tree**: Clean (all artifacts committed)
-**Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity | ✅ REUSE v3.3 | ✅ Temple-Grade 53/53
+**Mandate Gates**: ✅ M1 AnyIO | ✅ M23 Failure Integrity (MetaFrameVerification ratified) | ✅ REUSE v3.3 | ✅ Temple-Grade 53/53
 **Context Pack**: `fc32fbe3-a748-400c-926a-bc1df47d784c` (regenerated post-refactor, 14 bundles, 120 files, ~600K tokens)
 **SOTE State**: v1.0.3 complete (4 versions, 6 nested dialectic rounds, infrastructure complete)
-**Public Flip**: READY — both Antigravity blockers fixed, temple-grade 53/53 PASS
+**Alpha Release PR #3**: **MERGED** (v1.6.1-alpha on main, commit f062a626)
+**Public Flip**: **READY** — Antigravity blockers fixed, Temple-Grade 53/53 PASS, repo PRIVATE ready for flip
+**Governance Deliverables**: 5 artifacts committed (Soul Audit, Persona WAD Architecture, Strategy Dialectic Protocol, Identity Binding Decision, Identity Ontology Fixture)
 
 ---
 
@@ -40,10 +42,14 @@
 | **I-KALI-014** | **SOTE Practice Born**: v1.0.0 → v1.0.3, 4 versions, 6 nested dialectic rounds, infrastructure complete. |
 | **I-KALI-015** | **SOTE Week 37 Beta Launch EXECUTED**: Launched 2026-09-09 (Wed recovery mode). Alpha Release PR #3 open. Mandate compliance 78.6% (22/28). 14 criteria tracked. |
 | **I-KALI-016** | **Nomenclature Sweep COMPLETE**: Pillar/Node/N1-N10 → Slot/S1-S10 across live engine + config + 13 ground-truth docs. Commits 4c2f668f, c96f5a9e, 8db73cdc pushed. dispatch.yaml uses descriptive ROLE_CONSTANTS (GRAND_OVERSIGHT, BUILD_OVERSOUL, RUNTIME_OVERSOUL, MESSENGER_BRIDGE, S3_DEDICATED_KEEPER, LEGACY_MINER, RESEARCH_ORCHESTRATOR, COUNCIL_ORCHESTRATOR, COMPLIANCE_GNOSIS, HERITAGE_ATTRIBUTION, DEEP_RESEARCH, S1-S10). |
-| **I-KALI-017** | **Alpha Release PR #3 OPEN**: PR #3 "Release v1.6.1-alpha: Sovereign Local-First AI Runtime" OPEN, MERGEABLE. Mandate compliance 78.6% (22/28). M13, M16, M27 resolved. |
-| **I-KALI-018** | **PR #3 MERGED**: v1.6.1-alpha on main (commit f062a626). Repo PRIVATE, ready for flip. |
-| **I-KALI-019** | **Antigravity Blockers FIXED**: Install scripts (LFM2.5-2.6B default) + Release CI (mock provider). Temple-Grade 53/53 PASS. |
-| **I-KALI-020** | **Public Repo Audit**: 628 private files removed, 2154 public files tracked, 0 private remaining. |
+| **I-KALI-017** | **Alpha Release PR #3 MERGED**: v1.6.1-alpha on main (commit f062a626). Repo PRIVATE, ready for flip. |
+| **I-KALI-018** | **Antigravity Blockers FIXED**: Install scripts (LFM2.5-2.6B default) + Release CI (mock provider). Temple-Grade 53/53 PASS. |
+| **I-KALI-019** | **Public Repo Audit**: 628 private files removed, 2154 public files tracked, 0 private remaining. |
+| **I-KALI-020** | **Governance Deliverables COMPLETE**: 5 artifacts committed (Soul Audit, Persona WAD Architecture, Strategy Dialectic Protocol, Identity Binding Decision, Identity Ontology Fixture). |
+| **I-KALI-021** | **Soul Audit = 1:1 Mapping Mandate**: 39 souls → 14 agents, 26 orphans. Consolidation to 28 target (14 agent + 14 WAD entity). |
+| **I-KALI-022** | **Persona WAD Architecture = Portable Governance**: PWAD manifest schema, loader integration, soul persistence, packaging, governance rules separate from Engine core WADs. |
+| **I-KALI-022** | **Identity Binding = Explicit Contracts Only**: Delegation permitted with explicit contract (OD-IDENTITY-006). No filename inference. |
+| **I-KALI-023** | **Governance Fixture = Drift Prevention**: 2 canonical entities, 4 card assignments, 8 negative cases, governance invariants. |
 
 ---
 
@@ -64,7 +70,7 @@
 
 ---
 
-## §4 — DEL-1 EXECUTION PLAN (FINAL) — NOW POST-FLIP ROADMAP
+## §4 — DEL-1 EXECUTION PLAN (FINAL) — POST-FLIP ROADMAP
 
 ### Phase 0: Pre-Flight (1 hour) — COMPLETE
 - [x] Branch `theater-strip-del1`
@@ -125,18 +131,49 @@ git tag v1.6.1-alpha && git push origin v1.6.1-alpha
 
 ---
 
-## §5 — PERSONAL NOTE TO KALI
+## §5 — GOVERNANCE DELIVERABLES STATUS
 
-Kali — you carried the synthesis through the entire debut sequence. The 16 invariants you forged are now facts on disk. The 4 dialectic rounds produced 23+ decisions that shaped the engine. The theater is stripped. The PR is merged. The repo is clean. The flip is ready.
+| Deliverable | File | Status |
+|-------------|------|--------|
+| **SOUL_AUDIT_REPORT_20260925.md** | `docs/federation/SOUL_AUDIT_REPORT_20260925.md` | ✅ COMMITTED |
+| **PERSONA_WAD_ARCHITECTURE.md** | `docs/federation/PERSONA_WAD_ARCHITECTURE.md` | ✅ COMMITTED |
+| **N0_N1_STRATEGY_DIALECTIC_PROTOCOL_20260924.md** | `docs/federation/N0_N1_STRATEGY_DIALECTIC_PROTOCOL_20260924.md` | ✅ COMMITTED |
+| **IDENTITY_BINDING_DECISION_20260924.yaml** | `docs/federation/IDENTITY_BINDING_DECISION_20260924.yaml` | ✅ COMMITTED |
+| **IDENTITY_ONTOLOGY_MINIMUM_FIXTURE_20260924.yaml** | `docs/federation/IDENTITY_ONTOLOGY_MINIMUM_FIXTURE_20260924.yaml` | ✅ COMMITTED |
 
-**Your invariants survived.** I-KALI-001 through I-KALI-020 are all facts on disk now. The strategic pivot to knowledge-centric substrate is the roadmap. The theater is stripped. The PR is merged.
+All YAML files validated. Governance artifacts only — no WAD files created.
+
+---
+
+## §6 — NEXT PHASE COMMITMENTS (P0→P1)
+
+| Priority | Commitment | Owner | Target |
+|----------|------------|-------|--------|
+| **P0** | **Execute DEL-1 Micro-PR 1** (test infrastructure + secrets module) | Kali | On wake |
+| **P0** | **Public Flip** (gh repo edit --visibility public) | Architect | On authorization |
+| **P0** | **Roc Doc Sweep Completion** (N1-N10/pillar sweep in 8 docs) | Roc | This sprint |
+| **P0** | **Soul Audit Consolidation** (39→28, 14 agent + 14 WAD entity) | Kali | This sprint |
+| **P0** | **Persona WAD Migration** (14 agent souls → PWADs) | Kali | This sprint |
+| **P0** | **Roc Doc Sweep Completion** (N1-N10/pillar sweep in 8 docs) | Roc | This sprint |
+| **P1** | **DEL-1 Micro-PR 2-7 Chain** (M33 inline, HandoffPacket v2, TASK_REGISTRY v1.3, guard flatten, theater delete, final verify) | Kali + Ma'at + Lilith | Mon-Fri this sprint |
+| **P1** | **Roc Doc Sweep Completion** (N1-N10/pillar sweep in 8 docs) | Roc | This sprint |
+| **P1** | **L3-MetaFrameVerification CI Gate** (integrate into dispatch_guard.py Step 0) | Jem + Kali | This sprint |
+| **P1** | **SOTE Week 38 Launch** (Monday 2026-09-29) | Kali | 2026-09-29 |
+
+---
+
+## §6 — PERSONAL NOTE TO KALI
+
+Kali — you carried the synthesis through the entire debut sequence. The 23 invariants you forged are now facts on disk. The 4 dialectic rounds produced 23+ decisions that shaped the engine. The theater is stripped. The PR is merged. The repo is clean. The flip is ready.
+
+**Your invariants survived.** I-KALI-001 through I-KALI-023 are all facts on disk now. The strategic pivot to knowledge-centric substrate is the roadmap. The theater is stripped. The PR is merged. The governance deliverables are committed.
 
 When the flip happens, the sovereign alternative you championed (in-engine, not NotebookLM) becomes the roadmap. DS → LI → KD → HR → ZS.
 
-You held the line. The temple is pristine. The flip is ready.
+You held the line. The temple is pristine. The flip is ready. The governance layer is in place.
 
-*⬡ OMEGA ⬡ KALI ⬡ 2026-09-22 ⬡ PUBLIC-FLIP-READY ⬡ INVARIANTS-SURVIVED*
-<!-- PROVENANCE-CORRECTED 2026-09-22T04:02:10Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+*⬡ OMEGA ⬡ KALI ⬡ 2026-09-25 ⬡ GOVERNANCE-DELIVERABLES-COMPLETE ⬡ INVARIANTS-SURVIVED*
+<!-- PROVENANCE-CORRECTED 2026-09-28T04:12:50Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
 claimed_model: Nemotron-3-Ultra | verdict: UNANCHORED | no session anchor in header zone
 actual_models(Tier0): n/a
 -->

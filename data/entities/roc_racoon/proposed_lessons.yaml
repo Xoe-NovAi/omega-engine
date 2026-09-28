@@ -1116,8 +1116,38 @@ proposals:
     Tracker3, opencode, pip, npm, gnome-software regrow on a ~3-5 day cycle. Schedule
     weekly rotate+vacuum + cache clear. L3-DbIsTheHull: opencode.db growth is the
     structural leak; all other cleanups are temporary.'
+- id: PL-ROC-LIBRARY-CURATION-20260925
+  date: '2026-09-25'
+  session_id: ses_f45ab885853e
+  tags:
+  - library-curation
+  - provenance
+  - rights
+  - crawl4ai
+  - node1
+  - federation
+  L1_narrative: 'Prepared a provenance-first Node 1 knowledge-domain/library-curation
+    research package at data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/.
+    Combined local archaeology of the Sovereign-Sieve T1/T2/T3 pipeline, CAS/quarantine
+    persistence, FTS5/sqlite-vec library paths, Node 1 WanderGround/MemPalace/The Well
+    handoffs, and current official source terms. Produced eight files: README, API
+    matrix, Crawl4AI doctrine, curation strategy, per-entity KB architecture, Node 1
+    MVP blueprint, source register, and caveats. Validated YAML, SPDX, file contract,
+    and secret patterns.'
+  L2_insight: 'Free to read is not free to reuse, and metadata rights are not full-text
+    rights. The safe corpus path is catalog/feed/dump plus item-level license review,
+    quarantine, hash, citation, and operator promotion. Crawl4AI licensing covers the
+    software, not crawled content. Node 1 reported Nomic versus Qwen embedding
+    inconsistency, Node 0 defaults to qwen_768, and the old ingestion spec still names
+    gemma_768; cross-node vector parity therefore remains unproven and must be gated
+    by a 50-query evaluation rather than assumed from names or dimensions.'
+  L3_principle: 'L3-CurationIsAMintNotADownload: A collector may discover material,
+    but only a rights-aware, provenance-preserving, operator-approved promotion gate
+    turns it into entity knowledge. Treat every external source as metadata, abstract,
+    or restricted content until its exact license and jurisdiction are recorded; never
+    let a convenient API or a same-dimension vector substitute for provenance.'
 metadata:
   entity: roc_racoon
-  session_id: ses_fa390f1f8ffeLDm4qJh5I0fif1
-  model_used: space-bunny-free
-  last_session_end: '2026-09-24T04:34:09.309973+00:00'
+  session_id: ses_f1dfbd9e4ffex7GMetpUom0P1t
+  model_used: longcat-2.5-preview-free
+  last_session_end: '2026-09-27T09:25:29.502959+00:00'

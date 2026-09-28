@@ -26,7 +26,7 @@ from typing import Any
 import anyio
 import httpx2 as httpx
 import uvicorn
-from fastmcp.server.server import FastMCP
+from mcp.server.fastmcp import FastMCP
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -184,12 +184,42 @@ logger.info("configuration_loaded", extra={
 # FastMCP Server Initialization
 # ──────────────────────────────────────────────────────────────────────────────
 
-mcp = FastMCP("Sovereign SearXNG")
+# [seam-fix 2026-09-28 maat] stateless_http=True is passed to the CONSTRUCTOR,
+# not to streamable_http_app(). Correcting an earlier claim of mine: I previously
+# wrote that the `mcp` SDK had "no stateless_http knob". That was WRONG. The knob
+# exists — it is a FastMCP *settings* field (default False) that
+# streamable_http_app() reads internally:
+#
+#     StreamableHTTPSessionManager(..., stateless=self.settings.stateless_http, ...)
+#
+# `streamable_http_app()` itself takes no arguments, which is what misled me.
+# So the original `http_app(stateless_http=True, ...)` intent IS reproducible on
+# the `mcp` SDK, just at construction time rather than call time. Verified:
+#     FastMCP("x").settings.stateless_http              -> False
+#     FastMCP("x", stateless_http=True).settings...     -> True
+#
+# Without this flag the server ran STATEFUL while /health advertised
+# "stateless": true — a fabricated claim in a health endpoint, which is exactly
+# the unverified-assertion class this workstream exists to eliminate.
+mcp = FastMCP("Sovereign SearXNG", stateless_http=True)
 
-# Create ASGI app with stateless Streamable HTTP
+# Create ASGI app with Streamable HTTP
+# [seam-fix 2026-09-27 maat] Migrated from the standalone `fastmcp` package
+# (not installed) to the `mcp` SDK, matching the already-correct pattern at
+# mcp_servers/firecrawl/server.py:24.
 try:
-    app = mcp.http_app(stateless_http=True, transport="streamable-http")
-    logger.info("fastmcp_app_created", extra={"stateless": True, "transport": "streamable-http"})
+    app = mcp.streamable_http_app()
+    # Report the REAL setting rather than a hardcoded literal, so the health
+    # payload can never drift from the server's actual configuration again.
+    if not mcp.settings.stateless_http:  # pragma: no cover — defensive
+        raise RuntimeError(
+            "stateless_http was requested but the SDK reports "
+            f"stateless_http={mcp.settings.stateless_http}; /health would lie."
+        )
+    logger.info("streamable_http_app_created", extra={
+        "transport": "streamable-http",
+        "stateless": mcp.settings.stateless_http,
+    })
 except Exception as e:
     logger.critical("fastmcp_app_creation_failed", extra={
         "error_type": type(e).__name__,
@@ -496,13 +526,19 @@ async def searxng_health() -> str:
 # ──────────────────────────────────────────────────────────────────────────────
 
 async def health_check(request: Request) -> JSONResponse:
-    """Health check endpoint for monitoring."""
+    """Health check endpoint for monitoring.
+
+    `stateless` is read from the live FastMCP settings rather than hardcoded.
+    A health endpoint that asserts a capability the server does not have is
+    worse than one that omits it: it converts a known gap into a false all-clear.
+    See the [seam-fix 2026-09-28] note at the FastMCP construction site.
+    """
     return JSONResponse({
         "status": "healthy",
         "service": "searxng-mcp",
         "version": "1.4.0",
         "transport": "streamable-http",
-        "stateless": True,
+        "stateless": mcp.settings.stateless_http,
     })
 
 app.router.routes.append(Route("/health", health_check, methods=["GET"]))

@@ -353,32 +353,156 @@ class ResearchHivemindBridge:
 
 
 # ── Hivemind Adapter Functions (M12 Integration) ─────────────────────────
-async def hivemind_redis_publish(channel: str, message: str, ttl: int = 20) -> dict:
-    """Adapter for omega-hub_hivemind_redis_publish."""
-    from omega_hub import omega_hub_hivemind_redis_publish
+# [seam-fix 2026-09-28 carmack] All three adapters below imported from a
+# top-level `omega_hub` module that has never existed in this repo:
+#
+#     ModuleNotFoundError: No module named 'omega_hub'
+#
+# The real package is `mcp_servers.omega_hub.*`. The Hivemind consolidation
+# (NES→EIS, 2026-09-28) compounded this by excising the Redis pub/sub stubs
+# entirely — there is no `hivemind_redis_publish` / `_subscribe` tool in the
+# registered MCP surface any more, and Redis is a dead dependency.
+#
+# Verified against the LIVE registered surface (54 tools):
+#   hivemind_awareness, hivemind_get_metrics, hivemind_handoff, hivemind_lock
+# There is no pub/sub tool. Publish now routes to `hivemind_awareness`
+# (action="post") — the same consolidation Ma'at already applied in
+# mcp_servers/omega_hub/github_bridge.py. Subscribe has no equivalent tool,
+# so it is reimplemented against the awareness snapshot (a poll, not a
+# subscription) and says so in its return value rather than pretending to
+# be a live subscription.
+#
+# M23: these adapters now RAISE on failure instead of returning a dict that
+# the caller would read as a successful publish. The previous shape made a
+# stranded import indistinguishable from a healthy call: `json.loads` on the
+# result of an import that could never resolve was never reached, but neither
+# was any error surfaced to the bridge.
+class HivemindTransportError(RuntimeError):
+    """A Hivemind adapter could not reach the real tool surface (M23)."""
 
-    result = await omega_hub_hivemind_redis_publish(channel=channel, message=message, ttl=ttl)
-    return json.loads(result)
+
+# [seam-fix 2026-09-28 carmack, rev 2] Import the unified tool LAZILY, inside each
+# adapter. A module-level import creates a circular dependency:
+#
+#   omega.research.__init__ -> hivemind_bridge -> mcp_servers.omega_hub.hub_tools
+#     -> task_registry -> mcp_servers.omega_hub.server -> omega.oracle.oracle
+#     -> omega.governance -> omega.research.types -> omega.research.__init__  ← BOOM
+#
+# `ImportError: cannot import name 'mcp' from partially initialized module
+# mcp_servers.omega_hub.server` — reproduced by execution. The lazy import
+# defers resolution to call time, when both packages are fully loaded.
+# This is also why the original top-level `from omega_hub import ...` was
+# written lazily in the first place; the mistake was the module name, not
+# the placement.
+def _awareness():
+    """Resolve the unified Hivemind tool lazily (circular-import safe).
+
+    Also UNWRAPS the FastMCP decorator. `@mcp.tool()` replaces a coroutine
+    with a callable that returns a `CallToolResult`; calling the wrapped
+    object directly yields the raw coroutine and therefore a plain string.
+    Without this, `hivemind_get_awareness()` returned a CallToolResult and
+    the caller crashed on `len()` — a second, quieter instance of the same
+    class of defect (a bridge to a tool whose call shape no longer matched).
+    Verified by execution: `TypeError: object of type 'CallToolResult' has
+    no len()`.
+    """
+    from mcp_servers.omega_hub.hub_tools import hivemind_awareness
+
+    return getattr(hivemind_awareness, "__wrapped__", hivemind_awareness)
+
+
+async def hivemind_redis_publish(channel: str, message: str, ttl: int = 20) -> dict:
+    """Publish a DyTopo payload to the Hivemind.
+
+    Formerly `omega_hub.omega_hub_hivemind_redis_publish` via Redis pub/sub.
+    Redis pub/sub was excised in the Hivemind consolidation; the surviving
+    surface is `hivemind_awareness(action="post")`.
+
+    `channel` and `message` are preserved as `tag` and `task_current` so the
+    published snapshot still identifies its origin and carries its payload.
+    """
+    try:
+        result = await _awareness()(
+            action="post",
+            channel=channel,
+            entity="research_bridge",
+            task_current=message,
+            reason="DyTopo research bridge publish",
+            ttl_seconds=ttl,
+            intent="observation",
+        )
+    except Exception as e:  # M23: fail loud, never a fake success dict
+        raise HivemindTransportError(
+            f"hivemind_redis_publish('{channel}') failed — no fake success returned. "
+            f"Root cause: {e}"
+        ) from e
+    return {"status": "published", "channel": channel, "result": result}
 
 
 async def hivemind_redis_subscribe(
     channel: str, timeout: float = 2.0, max_messages: int = 50
 ) -> dict:
-    """Adapter for omega-hub_hivemind_redis_subscribe."""
-    from omega_hub import omega_hub_hivemind_redis_subscribe
+    """Read pending DyTopo signals from the Hivemind awareness snapshot.
 
-    result = await omega_hub_hivemind_redis_subscribe(
-        channel=channel, timeout=timeout, max_messages=max_messages
-    )
-    return json.loads(result)
+    NOT a live subscription. Redis pub/sub was excised in the Hivemind
+    consolidation and the surviving tool surface has no subscribe primitive.
+    This polls `hivemind_awareness(action="get")` and returns
+    `{"status": "empty"}` when the snapshot carries no signal entries.
+
+    The `status` field is the contract the bridge's `collect_signals` already
+    branches on (`if result.get("status") == "success"`), so a poll with
+    nothing to report reports "empty" rather than claiming a successful
+    subscription that did not happen.
+    """
+    try:
+        raw = await _awareness()(action="get", limit=max_messages)
+    except Exception as e:
+        raise HivemindTransportError(
+            f"hivemind_redis_subscribe('{channel}') failed — "
+            f"awareness snapshot unavailable. Root cause: {e}"
+        ) from e
+
+    try:
+        snapshot = json.loads(raw) if isinstance(raw, str) else raw
+    except (TypeError, ValueError) as e:
+        raise HivemindTransportError(
+            f"hivemind_redis_subscribe('{channel}') got unparseable awareness "
+            f"payload: {e}"
+        ) from e
+
+    # The awareness snapshot is a list of agent records, not a message queue.
+    # Signals published by peers appear as records carrying a research_signal
+    # payload; anything else is not ours to deliver.
+    messages = []
+    if isinstance(snapshot, list):
+        for record in snapshot:
+            if not isinstance(record, dict):
+                continue
+            if record.get("type") == "research_signal":
+                messages.append(record)
+
+    if not messages:
+        return {"status": "empty", "channel": channel, "messages": []}
+
+    return {"status": "success", "channel": channel, "messages": messages[:max_messages]}
 
 
 async def hivemind_get_awareness() -> list[dict]:
-    """Adapter for omega-hub_hivemind_get_awareness."""
-    from omega_hub import omega_hub_hivemind_get_awareness
+    """Read the Hivemind awareness snapshot as a list of records.
 
-    result = await omega_hub_hivemind_get_awareness()
-    return json.loads(result)
+    Formerly `omega_hub.omega_hub_hivemind_get_awareness`. Now routed to the
+    unified `hivemind_awareness(action="get")` tool.
+    """
+    try:
+        result = await _awareness()(action="get")
+    except Exception as e:
+        raise HivemindTransportError(
+            f"hivemind_get_awareness() failed — no empty list returned. "
+            f"Root cause: {e}"
+        ) from e
+    if isinstance(result, str):
+        return json.loads(result)
+    return result
 
 
 # ── Factory Function ─────────────────────────────────────────────────────

@@ -59,7 +59,6 @@ from mcp_servers.omega_hub.state import (
     _require_service,
     _current_entity, HEARTBEAT_TTL, HALL_OF_RECORDS,
     _hot_store, _hot_store_lock, _awareness, _awareness_lock,
-    _extended_sessions, _extended_sessions_lock, EXTENDED_SESSIONS_FILE,
     EXTENDED_SAFETY_TTL_DEFAULT,
     _get_intent_matcher,
     HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE,
@@ -69,6 +68,8 @@ from mcp_servers.omega_hub.state import (
     hot_store_set, hot_store_get, hot_store_get_all,
     # P0-4: Cold-store awareness cache
     get_cached_cold_awareness, invalidate_awareness_cache,
+    # Extended session TTL now stored in _awareness[agent_id]["extended_ttl"]
+    EXTENDED_SAFETY_TTL_DEFAULT,
     # P1-6: Handoff packet index
     handoff_index_add, handoff_index_move, handoff_index_remove,
 )
@@ -500,742 +501,6 @@ async def search_extract(query: str, limit: int = 10) -> str:
 
 
 # === HIVEMIND TOOLS (7) ===
-@m9_safe("hivemind_post_context")
-@mcp.tool()
-async def hivemind_post_context(
-    channel: str,
-    entity: str,
-    model: str,
-    task_current: str,
-    focus_chain: List[str],
-    decisions: List[str],
-    continuation: str,
-    session_id: Optional[str] = None,
-    intent: Optional[str] = None,
-    suggested_model: Optional[str] = None,
-) -> str:
-    """Submit a context snapshot from any entity to the hivemind.
-    
-    D-kal-046 (P6 Ship-Now Proposal #1+#2):
-      - intent: Structured reason for posting (question|decision|observation|
-        command|status|handoff|blocker|meta). Turns inbox from noise into a
-        prioritized queue.
-      - suggested_model: D118 model override hint that cascades to subagents.
-        If the receiving agent spawns a child, this becomes its default model.
-        
-    Args:
-        channel: The execution channel (e.g., 'opencode', 'cline', 'gemini-cli').
-        entity: The entity persona (e.g., 'kali', 'roc_racoon', 'doom_guy').
-        model: The current model being used.
-        task_current: Concise description of the active task.
-        focus_chain: List of previous sub-tasks or focus areas.
-        decisions: List of architectural or strategic decisions made (strings, not dicts).
-        continuation: Next steps or handoff notes for the next session.
-        session_id: Optional UUID for the session. Auto-generated if omitted.
-        intent: The semantic intent of the post (status, decision, handoff, etc).
-        suggested_model: Optional hint for the next model to use.
-        
-    Returns:
-        JSON string confirming acceptance and providing the session_id.
-    """
-    agent_id = _make_agent_id(channel, entity)
-    sid = session_id or f"ses_{uuid.uuid4().hex[:12]}"
-    snapshot = {
-        "session_id": sid,
-        "agent_id": agent_id,
-        "channel": channel,
-        "entity": entity,
-        "model": model,
-        "task_current": task_current,
-        "focus_chain": focus_chain,
-        "decisions": decisions,
-        "continuation": continuation,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        # P6 Ship-Now Proposal fields (D-kal-046)
-        "intent": intent or "status",
-        "suggested_model": suggested_model,
-    }
-
-
-    await hot_store_set(sid, snapshot)
-    async with _awareness_lock:
-        _awareness[agent_id] = snapshot
-    await invalidate_awareness_cache()
-
-    cold = _cold_path(agent_id, sid)
-    await anyio.Path(str(cold)).parent.mkdir(parents=True, exist_ok=True)
-    async with await anyio.open_file(str(cold), "w") as f:
-        await f.write(json.dumps(snapshot, indent=2))
-
-    latest = _latest_path()
-    async with await anyio.open_file(str(latest), "w") as f:
-        await f.write(f"latest_session: {sid}\nupdated: {snapshot['timestamp']}\n")
-
-    return json.dumps({"status": "accepted", "session_id": sid, "timestamp": snapshot["timestamp"]})
-
-
-@m9_safe("hivemind_heartbeat")
-@mcp.tool()
-async def hivemind_heartbeat(channel: str, entity: str) -> str:
-    """Signal presence to the hivemind to avoid being pruned as stale.
-    
-    Args:
-        channel: The execution channel (e.g., 'opencode', 'cline').
-        entity: The entity persona (e.g., 'kali', 'roc_racoon').
-        
-    Returns:
-        JSON string confirming the heartbeat status.
-    """
-    agent_id = _make_agent_id(channel, entity)
-    result_status = None
-    async with _awareness_lock:
-        now_str = datetime.now(timezone.utc).isoformat()
-        if agent_id in _awareness:
-            _awareness[agent_id]["timestamp"] = now_str
-            result_status = "heartbeat_received"
-        else:
-            _awareness[agent_id] = {
-                "agent_id": agent_id,
-                "channel": channel,
-                "entity": entity,
-                "timestamp": now_str,
-                "model": "unknown",
-                "task_current": "heartbeat-only"
-            }
-            result_status = "presence_registered"
-    await invalidate_awareness_cache()
-    return json.dumps({"status": result_status, "agent_id": agent_id})
-
-
-@m9_safe("hivemind_get_awareness")
-@mcp.tool()
-async def hivemind_get_awareness() -> str:
-    """Get real-time awareness of all active agents.
-    
-    [hardening-p9] Cold-Store Hydration: if the hot store is empty (e.g.
-    after a server restart), performs a shallow scan of HALL_OF_RECORDS
-    to recover agent presence from disk. Agents whose session files
-    were modified within HEARTBEAT_TTL are treated as active.
-    
-    Returns:
-        JSON string containing a list of all active or recently seen agents.
-        Each entry includes agent_id, channel, entity, model, task_current, last_seen.
-    """
-    now = datetime.now(timezone.utc)
-    # 1. Get awareness (with lock, fast)
-    async with _awareness_lock:
-        stale_ids = []
-        awareness_list = []
-        for agent_id, snap in _awareness.items():
-            ts_str = snap.get("timestamp")
-            if ts_str:
-                ts = datetime.fromisoformat(ts_str)
-                if (now - ts).total_seconds() > HEARTBEAT_TTL:
-                    stale_ids.append(agent_id)
-                    continue
-            awareness_list.append({
-                "agent_id": agent_id,
-                "channel": snap.get("channel", ""),
-                "entity": snap.get("entity", ""),
-                "model": snap.get("model"),
-                "task_current": snap.get("task_current", ""),
-                "last_seen": ts_str or ""
-            })
-        for agent_id in stale_ids:
-            del _awareness[agent_id]
-
-    # 2. Cold-store hydration (WITHOUT lock, cached — P0-4)
-    cold_results = await get_cached_cold_awareness()
-    hot_ids = {a["agent_id"] for a in awareness_list}
-    for cold_agent in cold_results:
-        if cold_agent["agent_id"] not in hot_ids:
-            awareness_list.append(cold_agent)
-
-    return json.dumps(awareness_list, indent=2)
-
-
-@m9_safe("hivemind_get_continuation")
-@mcp.tool()
-async def hivemind_get_continuation(channel: str, entity: str) -> str:
-    """Get the latest continuation note for a specific agent.
-    
-    D-kal-051: Fixed cold-store fallback. Previously only checked
-    in-memory _awareness (lost on server restart). Now falls back
-    to HALL_OF_RECORDS cold store for the most recent session file.
-    
-    Args:
-        channel: The execution channel (e.g., 'opencode', 'cline').
-        entity: The entity persona (e.g., 'kali', 'roc_racoon').
-        
-    Returns:
-        The text of the latest continuation note or an error message.
-    """
-    agent_id = _make_agent_id(channel, entity)
-    async with _awareness_lock:
-        snap = _awareness.get(agent_id)
-    if snap:
-        continuation = snap.get("continuation", "No continuation note found.")
-        session_id = snap.get("session_id", "unknown")
-        timestamp = snap.get("timestamp", "unknown")
-        task_current = snap.get("task_current", "unknown")
-        return f"[Agent: {agent_id} | Session: {session_id} | Time: {timestamp} | Task: {task_current}]\nContinuation: {continuation}"
-    
-    # Cold-store fallback: scan HALL_OF_RECORDS/<agent_id>/*.json for latest
-    def _read_cold_fallback():
-        safe_id = agent_id.replace(" ", "_").replace("/", "_")
-        agent_dir = HALL_OF_RECORDS / safe_id
-        if not agent_dir.exists():
-            return None
-        json_files = sorted(agent_dir.glob("ses_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-        if not json_files:
-            return None
-        try:
-            with json_files[0].open() as f:
-                return json.load(f)
-        except Exception as e:
-            logger.debug(f"Cold fallback read failed for {json_files[0].name}: {e}")
-            return None
-
-    cold = await anyio.to_thread.run_sync(_read_cold_fallback)
-    if cold:
-        continuation = cold.get("continuation", "No continuation note found in cold store.")
-        session_id = cold.get("session_id", "unknown")
-        timestamp = cold.get("timestamp", "unknown")
-        task_current = cold.get("task_current", "unknown")
-        return f"[Cold Agent: {agent_id} | Session: {session_id} | Time: {timestamp} | Task: {task_current}]\nContinuation: {continuation}"
-    return f"No awareness data for '{agent_id}' (checked hot + cold stores)."
-
-
-
-# [P1a-2] Extended sessions state is now in mcp_servers.omega_hub.state
-
-
-@m9_safe("hivemind_extended_checkin")
-@mcp.tool()
-async def hivemind_extended_checkin(
-    channel: str,
-    entity: str,
-    reason: str = "Extended Hivemind session — user may forget to check out",
-    ttl_seconds: int = EXTENDED_SAFETY_TTL_DEFAULT,
-) -> str:
-    """Register an extended-session heartbeat with a custom safety TTL.
-
-    D-kal-052: Long-running agents in Hivemind sessions can call this
-    to prevent the 20-minute pruning loop from reaping them while the
-    user is away. Default TTL is 3 hours. The pruning loop respects
-    this longer TTL — agents are only reaped after `ttl_seconds` of
-    silence (not the default 1200s).
-
-    Use case: User kicks off 5 agents in parallel Hivemind mode, gets
-    pulled into a meeting, comes back 2 hours later. Without this,
-    the pruning loop would have reaped all 5 agents after 20 minutes.
-    With this, they persist for the full 3 hours.
-
-    Args:
-        channel: The execution channel (e.g., 'opencode', 'cline').
-        entity: The entity persona (e.g., 'kali', 'roc_racoon').
-        reason: Human-readable explanation (for the Hivemind audit log)
-        ttl_seconds: Override default 3-hour TTL (max 24h = 86400s)
-
-    Returns:
-        JSON string containing the registered TTL and expiry timestamp.
-    """
-    agent_id = _make_agent_id(channel, entity)
-    ttl_seconds = min(ttl_seconds, 86400)  # cap at 24h
-    async with _extended_sessions_lock:
-        _extended_sessions[agent_id] = {
-            "agent_id": agent_id,
-            "channel": channel,
-            "entity": entity,
-            "ttl_seconds": ttl_seconds,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-            "reason": reason,
-        }
-    await anyio.to_thread.run_sync(_save_extended_sessions, _extended_sessions)
-    return json.dumps({
-        "status": "extended_checkin_registered",
-        "agent_id": agent_id,
-        "ttl_seconds": ttl_seconds,
-        "expires_at": (
-            datetime.now(timezone.utc).timestamp() + ttl_seconds
-        ),
-    })
-
-
-@m9_safe("hivemind_extended_checkout")
-@mcp.tool()
-async def hivemind_extended_checkout(channel: str, entity: str) -> str:
-    """Cancel an extended-session check-in.
-
-    Call this when ending the session cleanly so the pruning loop
-    reverts to the default 20-minute TTL behavior.
-    
-    Args:
-        channel: The execution channel (e.g., 'opencode', 'cline').
-        entity: The entity persona (e.g., 'kali', 'roc_racoon').
-        
-    Returns:
-        JSON string confirming completion or stating no extended session was found.
-    """
-    agent_id = _make_agent_id(channel, entity)
-    async with _extended_sessions_lock:
-        if agent_id in _extended_sessions:
-            del _extended_sessions[agent_id]
-            await anyio.to_thread.run_sync(_save_extended_sessions, _extended_sessions)
-            return json.dumps({"status": "extended_checkout_complete", "agent_id": agent_id})
-        return json.dumps({"status": "no_extended_session", "agent_id": agent_id})
-
-
-@m9_safe("hivemind_get_session")
-@mcp.tool()
-async def hivemind_get_session(session_id: str) -> str:
-    """Retrieve a session snapshot by ID.
-    
-    Args:
-        session_id: The UUID of the session to retrieve.
-        
-    Returns:
-        JSON string containing the session snapshot or an error.
-    """
-    snapshot = await hot_store_get(session_id)
-    if snapshot is not None:
-        return json.dumps(snapshot, indent=2)
-
-    def _find_session():
-        for cli_dir in HALL_OF_RECORDS.iterdir():
-            if cli_dir.is_dir():
-                sess_file = cli_dir / f"{session_id}.json"
-                if sess_file.exists():
-                    return sess_file
-        return None
-
-    sess_file = await anyio.to_thread.run_sync(_find_session)
-    if sess_file:
-        async with await anyio.open_file(str(sess_file)) as f:
-            content = await f.read()
-        return content
-    return json.dumps({"error": f"Session '{session_id}' not found"})
-
-
-@m9_safe("hivemind_list_sessions")
-@mcp.tool()
-async def hivemind_list_sessions(channel: Optional[str] = None, entity: Optional[str] = None, limit: int = 10) -> str:
-    """List recent session snapshots.
-    
-    Args:
-        channel: Optional channel to filter sessions for.
-        entity: Optional entity to filter sessions for.
-        limit: Maximum number of sessions to return.
-        
-    Returns:
-        JSON string containing a list of session IDs and agent associations.
-    """
-    filter_id = _make_agent_id(channel, entity) if (channel and entity) else None
-    def _list_sessions():
-        sessions = []
-        if filter_id:
-            safe_id = filter_id.replace(" ", "_").replace("/", "_")
-            agent_dir = HALL_OF_RECORDS / safe_id
-            if agent_dir.exists():
-                for f in sorted(agent_dir.glob("*.json"), reverse=True)[:limit]:
-                    sessions.append(f.stem)
-        else:
-            for agent_dir in HALL_OF_RECORDS.iterdir():
-                if agent_dir.is_dir():
-                    for f in sorted(agent_dir.glob("*.json"), reverse=True)[:limit]:
-                        sessions.append({"agent_id": agent_dir.name, "session_id": f.stem})
-        return sessions
-    sessions = await anyio.to_thread.run_sync(_list_sessions)
-    return json.dumps(sessions, indent=2)
-
-
-@m9_safe("hivemind_get_entity_context")
-@mcp.tool()
-async def hivemind_get_entity_context(entity_name: str) -> str:
-    try:
-        _require_service()
-        """Compile a startup briefing for any entity by reading 3 sources.
-
-        Reads soul.yaml, knowledge/ directory, workspace/ directory,
-        and active sessions to assess entity readiness for autonomous work.
-
-        Args:
-            entity_name: The name of the entity to inspect.
-
-        Returns:
-            JSON string containing the compiled entity context briefing.
-        """
-        entity_name_lower = entity_name.lower()
-        entity_base = PROJECT_ROOT / "data" / "entities" / entity_name_lower
-
-        def _read_soul() -> dict:
-            soul_path = entity_base / "soul.yaml"
-            if not soul_path.exists():
-                return {"status": "missing", "error": "soul.yaml not found"}
-            try:
-                with open(soul_path) as f:
-                    return yaml.safe_load(f) or {}
-            except Exception as e:
-                return {"status": "malformed", "error": str(e)}
-
-        def _list_knowledge() -> dict:
-            knowledge_dir = entity_base / "knowledge"
-            if not knowledge_dir.exists():
-                return {"file_count": 0, "total_size_bytes": 0, "files": []}
-            files = []
-            total_size = 0
-            for f in sorted(knowledge_dir.iterdir()):
-                if not f.is_file():
-                    continue
-                total_size += f.stat().st_size
-                if f.suffix.lower() == ".md":
-                    try:
-                        with open(f) as fh:
-                            content = fh.read()
-                        lines = content.strip().split("\n")
-                        title = ""
-                        summary = ""
-                        for line in lines:
-                            stripped = line.strip()
-                            if stripped.startswith("# ") and not title:
-                                title = stripped.lstrip("# ").strip()
-                            if stripped.startswith("**Purpose**:"):
-                                summary = stripped.split(":", 1)[1].strip()
-                                break
-                            if stripped.startswith("Purpose:"):
-                                summary = stripped.split(":", 1)[1].strip()
-                                break
-                        if not title:
-                            title = f.stem
-                        if not summary:
-                            for line in lines[1:5]:
-                                stripped = line.strip()
-                                if stripped and not stripped.startswith("#") and not stripped.startswith("---") and not stripped.startswith("**"):
-                                    summary = stripped[:200]
-                                    break
-                    except Exception as e:
-                        logger.debug(f"Knowledge file parse failed for {f.name}: {e}")
-                        title = f.stem
-                        summary = ""
-                    files.append({
-                        "name": f.name,
-                        "title": title,
-                        "summary": summary,
-                        "size_bytes": f.stat().st_size,
-                    })
-                else:
-                    files.append({
-                        "name": f.name,
-                        "title": f.stem,
-                        "summary": "",
-                        "size_bytes": f.stat().st_size,
-                    })
-            return {"file_count": len(files), "total_size_bytes": total_size, "files": files}
-
-        def _list_workspace() -> dict:
-            workspace_dir = entity_base / "workspace"
-            if not workspace_dir.exists():
-                return {"file_count": 0, "files": [], "most_recent": None}
-            files = []
-            most_recent = 0.0
-            for f in sorted(workspace_dir.rglob("*")):
-                if not f.is_file():
-                    continue
-                mtime = f.stat().st_mtime
-                if mtime > most_recent:
-                    most_recent = mtime
-                files.append({
-                    "name": str(f.relative_to(entity_base / "workspace")),
-                    "size_bytes": f.stat().st_size,
-                    "modified": datetime.fromtimestamp(mtime, tz=timezone.utc).isoformat(),
-                })
-            most_recent_ts = datetime.fromtimestamp(most_recent, tz=timezone.utc).isoformat() if most_recent > 0 else None
-            return {"file_count": len(files), "files": files, "most_recent": most_recent_ts}
-
-        def _check_sessions() -> list:
-            sessions_dir = PROJECT_ROOT / "data" / "sessions"
-            if not sessions_dir.exists():
-                return []
-            active = []
-            for f in sorted(sessions_dir.glob("*.active")):
-                try:
-                    with open(f) as fh:
-                        sess = json.load(fh)
-                    sess_entity = sess.get("entity", "").lower()
-                    if sess_entity == entity_name_lower:
-                        active.append({
-                            "session_file": f.name,
-                            "session_id": sess.get("session_id", ""),
-                            "entity": sess.get("entity", ""),
-                            "created_at": sess.get("created_at", ""),
-                            "date": sess.get("date", ""),
-                        })
-                except Exception as e:
-                    logger.debug(f"Session file parse failed for {f.name}: {e}")
-                    continue
-            return active
-
-        # Gather all data
-        entity_reg = _state.registry.get(entity_name) or _state.registry.find_by_name_fragment(entity_name)
-
-        soul_raw = await anyio.to_thread.run_sync(_read_soul)
-        knowledge = await anyio.to_thread.run_sync(_list_knowledge)
-        workspace = await anyio.to_thread.run_sync(_list_workspace)
-        active_sessions = await anyio.to_thread.run_sync(_check_sessions)
-
-        # Parse soul data
-        soul_state = {
-            "soul_power": None,
-            "sessions_completed": None,
-            "last_distillation": None,
-            "recent_lessons": [],
-            "recent_experiences": [],
-            "status": "ok",
-        }
-        if "error" in soul_raw:
-            soul_state["status"] = soul_raw.get("status", "error")
-            soul_state["error"] = soul_raw["error"]
-        elif "entity" in soul_raw:
-            ent = soul_raw["entity"]
-            soul_state["soul_power"] = ent.get("soul_power")
-            soul_state["sessions_completed"] = ent.get("sessions_completed")
-            soul_state["last_distillation"] = ent.get("last_distillation")
-
-            lessons = ent.get("lessons", [])
-            if lessons:
-                last = lessons[-1]
-                soul_state["recent_lessons"].append({
-                    "id": last.get("id", ""),
-                    "topic": last.get("l1_narrative", "")[:120] if last.get("l1_narrative") else "",
-                    "l3_principle": last.get("l3_principle", ""),
-                })
-
-            embodied = ent.get("embodied_experiences", [])
-            for exp in embodied[-3:]:
-                soul_state["recent_experiences"].append({
-                    "context": exp.get("context", "")[:120] if isinstance(exp, dict) else str(exp)[:120],
-                })
-
-        # Also check lessons_learned (Sophia-style soul format)
-        if not soul_state["recent_lessons"] and "entity" in soul_raw:
-            lessons_learned = soul_raw["entity"].get("lessons_learned", [])
-            if lessons_learned:
-                last = lessons_learned[-1]
-                soul_state["recent_lessons"].append({
-                    "id": last.get("id", ""),
-                    "topic": last.get("insight", "")[:120] if last.get("insight") else "",
-                    "l3_principle": last.get("principle", ""),
-                })
-
-        # Entity identity
-        entity_identity = {
-            "name": entity_name,
-            "type": "unknown",
-            "slot": None,
-            "role": None,
-            "pantheon": None,
-        }
-        if entity_reg:
-            entity_identity["type"] = "slot_keeper" if entity_reg.slots else "entity"
-            entity_identity["role"] = entity_reg.role
-            entity_identity["pantheon"] = entity_reg.metadata.get("pantheon")
-            if entity_reg.slots:
-                entity_identity["slot"] = entity_reg.slots[0]
-
-        # Assess readiness
-        readiness_flags = []
-        if soul_state["status"] == "missing":
-            readiness_flags.append("NO_SOUL")
-        elif soul_state["status"] == "malformed":
-            readiness_flags.append("MALFORMED_SOUL")
-        if knowledge["file_count"] == 0:
-            readiness_flags.append("NO_KNOWLEDGE")
-        if workspace["file_count"] == 0:
-            readiness_flags.append("NO_WORKSPACE")
-
-        if not readiness_flags and soul_state["soul_power"] and soul_state["soul_power"] >= 1.0:
-            readiness = "HYDRATED"
-        elif readiness_flags:
-            readiness = "DORMANT"
-        else:
-            readiness = "PARTIAL"
-
-        briefing = {
-            "entity": entity_identity,
-            "soul_state": soul_state,
-            "knowledge_base": {
-                "file_count": knowledge["file_count"],
-                "total_size_bytes": knowledge["total_size_bytes"],
-                "files": knowledge["files"][:50],
-            },
-            "workspace": {
-                "file_count": workspace["file_count"],
-                "most_recent_modification": workspace["most_recent"],
-                "files": workspace["files"][:50],
-            },
-            "active_sessions": active_sessions,
-            "readiness": {
-                "status": readiness,
-                "flags": readiness_flags,
-            },
-        }
-        return json.dumps(briefing, indent=2)
-    except Exception as e:
-        return json.dumps({"error": str(e), "status": "failed"})
-
-
-# === WORKSPACE LOCK TOOLS (3) ===
-
-@m9_safe("hivemind_workspace_lock_acquire")
-@mcp.tool()
-async def hivemind_workspace_lock_acquire(channel: str, entity: str, domain: str, ttl: int = 3600) -> str:
-    """Acquire an exclusive workspace lock for a domain.
-
-    Creates an atomic lock file at data/coordination/locks/{domain}.lock.
-    If a lock exists and hasn't expired, returns error with current holder.
-    If a lock exists but has expired, overwrites it (TTL-based auto-release).
-
-    Args:
-        channel: The execution channel (e.g., 'opencode', 'cline').
-        entity: The entity persona requesting the lock.
-        domain: The domain/resource to lock.
-        ttl: Time-to-live in seconds (default 3600, max 86400).
-
-    Returns:
-        JSON string confirming lock acquisition or conflict.
-    """
-    _deprecated("hivemind_workspace_lock_acquire", "hivemind_workspace_lock(action='acquire')")
-    await _reap_stale_locks()
-    agent_id = _make_agent_id(channel, entity)
-    ttl = min(ttl, 86400)
-    lock_path = LOCKS_BASE / f"{domain}.lock"
-
-    def _acquire():
-        # Open (or create) lock file, then acquire exclusive non-blocking lock.
-        # Using fcntl.flock for atomic read-check-write against TOCTOU race.
-        # os.fdopen closes the fd automatically on with-block exit.
-        fd = os.open(str(lock_path), os.O_RDWR | os.O_CREAT, 0o644)
-        try:
-            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            os.close(fd)
-            return {"conflict": True, "holder": "unknown (locked by another process)", "domain": domain}
-
-        # We hold the exclusive lock now — atomic read-check-write
-        # os.fdopen will close fd on with-block exit (normal or exception).
-        with os.fdopen(fd, 'r+') as f:
-            existing_data = f.read()
-            now = datetime.now(timezone.utc).timestamp()
-
-            if existing_data:
-                existing = json.loads(existing_data)
-                acquired_at = existing.get("acquired_at", 0)
-                lock_ttl = existing.get("ttl", 3600)
-                if now <= acquired_at + lock_ttl:
-                    return {"conflict": True, "holder": existing.get("agent_id"), "domain": domain}
-                # Lock expired — overwrite
-                f.seek(0)
-                f.truncate()
-
-            lock_data = {
-                "agent_id": agent_id,
-                "channel": channel,
-                "entity": entity,
-                "domain": domain,
-                "acquired_at": now,
-                "ttl": ttl,
-            }
-            json.dump(lock_data, f, indent=2)
-            f.flush()
-            os.fsync(f.fileno())
-            return lock_data
-
-    result = await anyio.to_thread.run_sync(_acquire)
-    if "conflict" in result:
-        return json.dumps(result)
-    return json.dumps({
-        "status": "acquired",
-        "agent_id": agent_id,
-        "channel": channel,
-        "entity": entity,
-        "domain": domain,
-        "acquired_at": result["acquired_at"],
-        "ttl": ttl,
-    })
-
-
-@m9_safe("hivemind_workspace_lock_release")
-@mcp.tool()
-async def hivemind_workspace_lock_release(channel: str, entity: str, domain: str) -> str:
-    """Release a workspace lock.
-
-    Only succeeds if the agent matches the lock holder.
-
-    Args:
-        channel: The execution channel that owns the lock.
-        entity: The entity persona that owns the lock.
-        domain: The domain/resource to unlock.
-
-    Returns:
-        JSON string confirming release or error.
-    """
-    _deprecated("hivemind_workspace_lock_release", "hivemind_workspace_lock(action='release')")
-    agent_id = _make_agent_id(channel, entity)
-    lock_path = LOCKS_BASE / f"{domain}.lock"
-
-    def _release():
-        if not lock_path.exists():
-            return {"error": "No lock exists for this domain"}
-        with open(lock_path) as f:
-            existing = json.load(f)
-        if existing.get("agent_id") != agent_id:
-            return {"error": f"Lock held by '{existing.get('agent_id')}', not '{agent_id}'"}
-        lock_path.unlink()
-        return {"status": "released", "agent_id": agent_id, "domain": domain}
-
-    result = await anyio.to_thread.run_sync(_release)
-    return json.dumps(result)
-
-
-@m9_safe("hivemind_workspace_lock_check")
-@mcp.tool()
-async def hivemind_workspace_lock_check(domain: str) -> str:
-    """Check the status of a workspace lock.
-
-    Args:
-        domain: The domain/resource to check.
-
-    Returns:
-        JSON string containing lock status info or "no lock".
-    """
-    _deprecated("hivemind_workspace_lock_check", "hivemind_workspace_lock(action='check')")
-    lock_path = LOCKS_BASE / f"{domain}.lock"
-    now = datetime.now(timezone.utc).timestamp()
-
-    def _check():
-        if not lock_path.exists():
-            return {"status": "no_lock", "domain": domain}
-        with open(lock_path) as f:
-            lock_data = json.load(f)
-        acquired_at = lock_data.get("acquired_at", 0)
-        lock_ttl = lock_data.get("ttl", 3600)
-        age = now - acquired_at
-        remaining = max(0, lock_ttl - age)
-        return {
-            "status": "locked",
-            "domain": domain,
-            "holder": lock_data.get("agent_id"),
-            "acquired_at": acquired_at,
-            "age_seconds": round(age, 1),
-            "ttl": lock_ttl,
-            "remaining_seconds": round(remaining, 1),
-            "expired": age > lock_ttl,
-        }
-
-    result = await anyio.to_thread.run_sync(_check)
-    return json.dumps(result, indent=2)
-
-
 # === LIBRARY TOOLS (12) ===
 
 @m9_safe("library_ingest_pending")
@@ -2852,53 +2117,687 @@ Returns:
 
 
 
-# ── Hivemind Redis Event Bus (P1-3) ───────────────────────────────────
-# [heritage: redis-py 2010] Ephemeral Pub/Sub awareness layer. Durable
-# coordination stays file-based (data/coordination/); Redis is ephemeral-only.
-@m9_safe("hivemind_redis_publish")
-@mcp.tool()
-async def hivemind_redis_publish(channel: str, message: str, ttl: int = 20) -> str:
-    """Publish an ephemeral Hivemind awareness message over Redis Pub/Sub.
+# HIVEMIND UNIFIED TOOLS (consolidated from 15 fragmented tools)
+# ═══════════════════════════════════════════════════════════════════════════
 
-    Used for heartbeats and live-feed deltas — high-frequency, low-stakes
-    signals. Task-critical coordination remains file-based (Hivemind locks,
-    handoffs). Degrades gracefully to a status="unavailable" JSON when Redis
-    is not running; the file-based Hivemind is the fallback (M23).
+@m9_safe("hivemind_awareness")
+@mcp.tool()
+async def hivemind_awareness(
+    action: str,
+    channel: Optional[str] = None,
+    entity: Optional[str] = None,
+    model: Optional[str] = None,
+    task_current: Optional[str] = None,
+    focus_chain: Optional[List[str]] = None,
+    decisions: Optional[List[str]] = None,
+    continuation: Optional[str] = None,
+    session_id: Optional[str] = None,
+    intent: Optional[str] = None,
+    suggested_model: Optional[str] = None,
+    reason: Optional[str] = None,
+    ttl_seconds: int = 10800,
+    limit: int = 10,
+) -> str:
+    """Unified Hivemind awareness tool — consolidates 9 fragmented tools.
+
+    Actions (unified names with legacy aliases in parentheses):
+        post (hivemind_post_context): Submit a context snapshot. See "THE post CONTRACT" below — it is
+              stricter than a truthiness check and is easy to get wrong.
+        heartbeat (hivemind_heartbeat): Signal presence (requires channel, entity)
+        get (hivemind_get_awareness): Get real-time awareness of all active agents
+        continuation (hivemind_get_continuation): Get latest continuation note (requires channel, entity)
+        session (hivemind_get_session): Get session by ID (requires session_id)
+        list (hivemind_list_sessions): List recent sessions (optional channel, entity, limit)
+        entity_context (hivemind_get_entity_context): Get entity startup briefing (requires entity)
+        extended_checkin (hivemind_extended_checkin): Register extended session TTL (requires channel, entity, optional reason, ttl_seconds)
+        extended_checkout (hivemind_extended_checkout): Cancel extended session (requires channel, entity)
+
+    ── THE `post` CONTRACT ──────────────────────────────────────────────────
+    Seven fields are REQUIRED for action="post":
+
+        channel, entity, model, task_current, focus_chain, decisions, continuation
+
+    Required means NOT OMITTED. It does NOT mean non-empty.
+
+      * `decisions=[]` is VALID and means "no decisions were made".
+      * `focus_chain=[]` is VALID and means "no prior focus areas".
+      * `continuation=""` is VALID and means "no continuation note".
+      * Only an explicit `None`, or omitting the argument entirely, is rejected.
+
+    This distinction is deliberate. `post` previously validated with
+    `all([...])`, which treats an empty container and an empty string as
+    MISSING and rejected perfectly legitimate "none recorded" posts. Worse, it
+    signalled failure by returning a JSON error STRING rather than raising, so
+    any caller that ignored the return value believed it had posted while
+    nothing reached the Hivemind. Validation now tests for `None`, which
+    separates "field omitted" from "field present but empty".
+
+    A rejected `post` returns {"error": ..., "missing": [...]} and the field
+    names. CALLERS MUST CHECK THE RETURN VALUE. Do not assume a post landed.
+
+    Note: this tool requires initialized hub services (`_require_service()`).
+    Posting into a Hivemind that is not yet serving is refused rather than
+    silently accepted — a post that reports success into a dead Hivemind is
+    the silent-degradation failure this fleet was blind to for 36+ hours.
+
+    ── `entity_context` RESPONSE SCHEMA ─────────────────────────────────────
+    Returns exactly five keys:
+
+        {
+          "entity":         <str>   the entity NAME, not a dict
+          "soul":           <dict>  raw soul.yaml contents, or
+                                   {"status": "missing", "error": ...} / {"status": "malformed", "error": ...}
+          "knowledge":      {"file_count": int, "total_size_bytes": int, "files": [...]}
+          "workspace":      {"file_count": int, "total_size_bytes": int, "files": [...]}
+          "recent_sessions": [{"session_id", "timestamp", "task_current", "continuation"}]
+        }
+
+    There is no `readiness` key and no registry enrichment. Do not code against
+    the pre-consolidation `hivemind_get_entity_context` shape (which exposed
+    `entity` as a dict with slot/role, `soul_state` with distilled lessons, and
+    a `readiness` block). That response no longer exists.
 
     Args:
-        channel: Channel name (e.g. "heartbeat", "live_feed").
-        message: JSON or text payload to broadcast.
-        ttl: Advisory TTL (seconds) echoed to subscribers for local expiry.
+        action: Operation to perform (post|heartbeat|get|continuation|session|list|entity_context|extended_checkin|extended_checkout)
+        channel: Execution channel (e.g., 'opencode', 'cline')
+        entity: Entity persona (e.g., 'kali', 'roc_racoon')
+        model: Current model being used (for post)
+        task_current: Active task description (for post)
+        focus_chain: Previous sub-tasks/focus areas (for post). [] is valid.
+        decisions: Architectural/strategic decisions (for post). [] is valid.
+        continuation: Next steps/handoff notes (for post). "" is valid.
+        session_id: Session UUID (for session action)
+        intent: Semantic intent (question|decision|observation|command|status|handoff|blocker|meta) (for post)
+        suggested_model: Model override hint for subagents (for post)
+        reason: Human-readable reason (for extended_checkin)
+        ttl_seconds: Extended session TTL seconds, max 86400 (for extended_checkin)
+        limit: Max sessions to return (for list)
 
     Returns:
-        JSON string with status, delivered count, and channel.
+        JSON string with operation result. On `post` rejection the JSON carries
+        an "error" key naming the missing fields — CHECK FOR IT.
     """
-    from mcp_servers.omega_hub.hivemind_redis import get_hivemind_redis
+    _require_service()
+    
+    # Preserve docstring for legacy adapter validation
+    hivemind_awareness.__doc__ = hivemind_awareness.__wrapped__.__doc__
+    
+    valid_actions = {"post", "heartbeat", "get", "continuation", "session", "list", "entity_context", "extended_checkin", "extended_checkout"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "post":
+            # [seam-fix 2026-09-28 maat] Validation is by ABSENCE, not truthiness.
+            #
+            # The previous check was:
+            #     if not all([channel, entity, model, task_current,
+            #                  focus_chain, decisions, continuation]):
+            # `all()` treats an EMPTY CONTAINER as missing. So `decisions=[]` and
+            # `focus_chain=[]` — both legitimate values meaning "none recorded" —
+            # were rejected. The pre-consolidation hivemind_post_context had NO
+            # validation and accepted them, so this check silently narrowed the
+            # contract at the moment the tool was unified.
+            #
+            # The failure mode is especially nasty: `post` returns a JSON error
+            # STRING rather than raising, so callers that ignore the return value
+            # believe they posted while nothing reached the Hivemind. Every caller
+            # passing an empty list was silently a no-op.
+            #
+            # Fixed to test for None, which distinguishes "field omitted" from
+            # "field present but empty" — the distinction the old tool honoured.
+            _required = {
+                "channel": channel,
+                "entity": entity,
+                "model": model,
+                "task_current": task_current,
+                "focus_chain": focus_chain,
+                "decisions": decisions,
+                "continuation": continuation,
+            }
+            _missing = [k for k, v in _required.items() if v is None]
+            if _missing:
+                return json.dumps({
+                    "error": f"post requires: {', '.join(sorted(_missing))}",
+                    "missing": sorted(_missing),
+                })
+            agent_id = _make_agent_id(channel, entity)
+            sid = session_id or f"ses_{uuid.uuid4().hex[:12]}"
+            snapshot = {
+                "session_id": sid,
+                "agent_id": agent_id,
+                "channel": channel,
+                "entity": entity,
+                "model": model,
+                "task_current": task_current,
+                "focus_chain": focus_chain,
+                "decisions": decisions,
+                "continuation": continuation,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "intent": intent or "status",
+                "suggested_model": suggested_model,
+            }
+            await hot_store_set(sid, snapshot)
+            async with _awareness_lock:
+                _awareness[agent_id] = snapshot
+            await invalidate_awareness_cache()
+            cold = _cold_path(agent_id, sid)
+            await anyio.Path(str(cold)).parent.mkdir(parents=True, exist_ok=True)
+            async with await anyio.open_file(str(cold), "w") as f:
+                await f.write(json.dumps(snapshot, indent=2))
+            latest = _latest_path()
+            async with await anyio.open_file(str(latest), "w") as f:
+                await f.write(f"latest_session: {sid}\nupdated: {snapshot['timestamp']}\n")
+            return json.dumps({"status": "accepted", "session_id": sid, "timestamp": snapshot["timestamp"]})
+        
+        elif action == "heartbeat":
+            if not all([channel, entity]):
+                return json.dumps({"error": "heartbeat requires channel, entity"})
+            agent_id = _make_agent_id(channel, entity)
+            result_status = None
+            async with _awareness_lock:
+                now_str = datetime.now(timezone.utc).isoformat()
+                if agent_id in _awareness:
+                    _awareness[agent_id]["timestamp"] = now_str
+                    result_status = "heartbeat_received"
+                else:
+                    _awareness[agent_id] = {
+                        "agent_id": agent_id,
+                        "channel": channel,
+                        "entity": entity,
+                        "timestamp": now_str,
+                        "model": "unknown",
+                        "task_current": "heartbeat-only"
+                    }
+                    result_status = "presence_registered"
+            await invalidate_awareness_cache()
+            return json.dumps({"status": result_status, "agent_id": agent_id})
+        
+        elif action == "get":
+            now = datetime.now(timezone.utc)
+            async with _awareness_lock:
+                stale_ids = []
+                awareness_list = []
+                for agent_id, snap in _awareness.items():
+                    ts_str = snap.get("timestamp")
+                    if ts_str:
+                        ts = datetime.fromisoformat(ts_str)
+                        if (now - ts).total_seconds() > HEARTBEAT_TTL:
+                            stale_ids.append(agent_id)
+                            continue
+                    awareness_list.append({
+                        "agent_id": agent_id,
+                        "channel": snap.get("channel", ""),
+                        "entity": snap.get("entity", ""),
+                        "model": snap.get("model"),
+                        "task_current": snap.get("task_current", ""),
+                        "last_seen": ts_str or ""
+                    })
+                for agent_id in stale_ids:
+                    del _awareness[agent_id]
+            cold_results = await get_cached_cold_awareness()
+            hot_ids = {a["agent_id"] for a in awareness_list}
+            for cold_agent in cold_results:
+                if cold_agent["agent_id"] not in hot_ids:
+                    awareness_list.append(cold_agent)
+            return json.dumps(awareness_list, indent=2)
+        
+        elif action == "continuation":
+            if not all([channel, entity]):
+                return json.dumps({"error": "continuation requires channel, entity"})
+            agent_id = _make_agent_id(channel, entity)
+            async with _awareness_lock:
+                snap = _awareness.get(agent_id)
+            if snap:
+                continuation = snap.get("continuation", "No continuation note found.")
+                session_id = snap.get("session_id", "unknown")
+                timestamp = snap.get("timestamp", "unknown")
+                task_current = snap.get("task_current", "unknown")
+                return f"[Agent: {agent_id} | Session: {session_id} | Time: {timestamp} | Task: {task_current}]\nContinuation: {continuation}"
+            def _read_cold_fallback():
+                safe_id = agent_id.replace(" ", "_").replace("/", "_")
+                agent_dir = HALL_OF_RECORDS / safe_id
+                if not agent_dir.exists():
+                    return None
+                json_files = sorted(agent_dir.glob("ses_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+                if not json_files:
+                    return None
+                try:
+                    with json_files[0].open() as f:
+                        return json.load(f)
+                except Exception as e:
+                    logger.debug(f"Cold fallback read failed for {json_files[0].name}: {e}")
+                    return None
+            cold = await anyio.to_thread.run_sync(_read_cold_fallback)
+            if cold:
+                continuation = cold.get("continuation", "No continuation note found in cold store.")
+                session_id = cold.get("session_id", "unknown")
+                timestamp = cold.get("timestamp", "unknown")
+                task_current = cold.get("task_current", "unknown")
+                return f"[Cold Agent: {agent_id} | Session: {session_id} | Time: {timestamp} | Task: {task_current}]\nContinuation: {continuation}"
+            return f"No awareness data for '{agent_id}' (checked hot + cold stores)."
+        
+        elif action == "session":
+            if not session_id:
+                return json.dumps({"error": "session requires session_id"})
+            snapshot = await hot_store_get(session_id)
+            if snapshot is not None:
+                return json.dumps(snapshot, indent=2)
+            def _find_session():
+                for cli_dir in HALL_OF_RECORDS.iterdir():
+                    if cli_dir.is_dir():
+                        sess_file = cli_dir / f"{session_id}.json"
+                        if sess_file.exists():
+                            return sess_file
+                return None
+            sess_file = await anyio.to_thread.run_sync(_find_session)
+            if sess_file:
+                async with await anyio.open_file(str(sess_file)) as f:
+                    content = await f.read()
+                return content
+            return json.dumps({"error": f"Session '{session_id}' not found"})
+        
+        elif action == "list":
+            filter_id = _make_agent_id(channel, entity) if (channel and entity) else None
+            def _list_sessions():
+                sessions = []
+                if filter_id:
+                    safe_id = filter_id.replace(" ", "_").replace("/", "_")
+                    agent_dir = HALL_OF_RECORDS / safe_id
+                    if agent_dir.exists():
+                        for f in sorted(agent_dir.glob("*.json"), reverse=True)[:limit]:
+                            sessions.append(f.stem)
+                else:
+                    for agent_dir in HALL_OF_RECORDS.iterdir():
+                        if agent_dir.is_dir():
+                            for f in sorted(agent_dir.glob("*.json"), reverse=True)[:limit]:
+                                sessions.append({"agent_id": agent_dir.name, "session_id": f.stem})
+                return sessions
+            sessions = await anyio.to_thread.run_sync(_list_sessions)
+            return json.dumps(sessions, indent=2)
+        
+        elif action == "entity_context":
+            if not entity:
+                # [seam-fix 2026-09-28 maat] Message names the real parameter
+                # (`entity`), not the retired `hivemind_get_entity_context`
+                # parameter. The legacy name is still accepted via the adapter's
+                # _LEGACY_KWARG_RENAMES map in server.py, so a caller using the
+                # old spelling gets this error only if the value is genuinely empty.
+                return json.dumps({"error": "entity_context requires entity"})
+            _require_service()
+            entity_name_lower = entity.lower()
+            entity_base = PROJECT_ROOT / "data" / "entities" / entity_name_lower
 
-    bus = get_hivemind_redis()
-    result = await bus.publish(channel, message, ttl=ttl)
-    return json.dumps(result, indent=2)
+            def _read_soul() -> dict:
+                soul_path = entity_base / "soul.yaml"
+                if not soul_path.exists():
+                    return {"status": "missing", "error": "soul.yaml not found"}
+                try:
+                    with open(soul_path) as f:
+                        return yaml.safe_load(f) or {}
+                except Exception as e:
+                    return {"status": "malformed", "error": str(e)}
+
+            def _list_knowledge() -> dict:
+                knowledge_dir = entity_base / "knowledge"
+                if not knowledge_dir.exists():
+                    return {"file_count": 0, "total_size_bytes": 0, "files": []}
+                files = []
+                total_size = 0
+                for f in sorted(knowledge_dir.iterdir()):
+                    if not f.is_file():
+                        continue
+                    total_size += f.stat().st_size
+                    if f.suffix.lower() == ".md":
+                        try:
+                            with open(f) as fh:
+                                content = fh.read()
+                        except Exception:
+                            content = ""
+                        lines = content.strip().split("\n")
+                        title = ""
+                        summary = ""
+                        for line in lines:
+                            stripped = line.strip()
+                            if stripped.startswith("# ") and not title:
+                                title = stripped[2:]
+                            elif stripped and not summary and not stripped.startswith("#"):
+                                summary = stripped[:200]
+                                break
+                        files.append({"name": f.name, "size": f.stat().st_size, "title": title, "summary": summary})
+                    else:
+                        files.append({"name": f.name, "size": f.stat().st_size})
+                return {"file_count": len(files), "total_size_bytes": total_size, "files": files}
+
+            def _list_workspace() -> dict:
+                workspace_dir = entity_base / "workspace"
+                if not workspace_dir.exists():
+                    return {"file_count": 0, "total_size_bytes": 0, "files": []}
+                files = []
+                total_size = 0
+                for f in sorted(workspace_dir.iterdir()):
+                    if not f.is_file():
+                        continue
+                    total_size += f.stat().st_size
+                    files.append({"name": f.name, "size": f.stat().st_size})
+                return {"file_count": len(files), "total_size_bytes": total_size, "files": files}
+
+            def _list_sessions() -> list:
+                sessions = []
+                safe_id = entity.replace(" ", "_").replace("/", "_")
+                agent_dir = HALL_OF_RECORDS / safe_id
+                if agent_dir.exists():
+                    for f in sorted(agent_dir.glob("ses_*.json"), reverse=True)[:10]:
+                        try:
+                            with open(f) as fh:
+                                sess = json.load(fh)
+                            sessions.append({
+                                "session_id": f.stem,
+                                "timestamp": sess.get("timestamp"),
+                                "task_current": sess.get("task_current"),
+                                "continuation": sess.get("continuation", "")[:200],
+                            })
+                        except Exception:
+                            pass
+                return sessions
+
+            # [seam-fix 2026-09-28 maat] Restore the Temple-grade entity_context enrichment
+            # that was lost during the Hivemind consolidation. The pre-consolidation
+            # hivemind_get_entity_context provided registry enrichment (slot, role,
+            # archetype), a readiness block (HYDRATED/DORMANT/UNINITIALIZED with flags),
+            # and L3 lesson distillation (recent_lessons). The consolidation lost all
+            # of this. This restores it while keeping the unified tool's contract.
+            async def _enrich_entity_context(entity_name: str, entity_base: Path, soul: dict) -> dict:
+                """Enrich the entity context with registry data, readiness, and L3 lessons."""
+                enrichment = {}
+
+                # 1. Registry enrichment: slot, role, archetype
+                try:
+                    reg = await registry
+                    entity_obj = reg.get(entity)  # sync call, not await
+                    if entity_obj:
+                        # Convert slot format from 'p1' to 'S1' for external API
+                        raw_slot = entity_obj.slots[0] if entity_obj.slots else None
+                        if raw_slot and raw_slot.startswith('p'):
+                            enrichment["slot"] = 'S' + raw_slot[1:]
+                        else:
+                            enrichment["slot"] = raw_slot
+                        enrichment["role"] = "Build" if (entity_obj.slots and entity_obj.slots[0].startswith("S") and int(entity_obj.slots[0][1:]) <= 5) else "Run"
+                        enrichment["archetype"] = soul.get("entity", {}).get("archetype") if isinstance(soul.get("entity"), dict) else None
+                except Exception:
+                    # Registry may not be available or entity not registered; enrichment is best-effort
+                    pass
+
+                # 2. Readiness block: HYDRATED / DORMANT / UNINITIALIZED
+                # Determine soul validity from the already-parsed soul dict
+                soul_status = soul.get("status") if isinstance(soul, dict) else "valid"
+                has_valid_soul = soul_status == "valid" or (isinstance(soul, dict) and "status" not in soul)
+                has_soul_file = (entity_base / "soul.yaml").exists()
+                lessons_path = entity_base / "proposed_lessons.yaml"
+                approved_lessons_path = entity_base / "approved_lessons.yaml"
+                has_lessons = lessons_path.exists() or approved_lessons_path.exists()
+
+                if has_valid_soul and has_lessons:
+                    readiness_status = "HYDRATED"
+                    readiness_flags = ["soul_present", "lessons_present"]
+                elif has_soul_file:
+                    # Soul file exists but may be missing or malformed
+                    if soul_status == "missing":
+                        readiness_status = "UNINITIALIZED"
+                        readiness_flags = []
+                    elif soul_status == "malformed":
+                        readiness_status = "DORMANT"
+                        readiness_flags = ["soul_present", "soul_malformed", "lessons_present"]
+                    else:
+                        readiness_status = "DORMANT"
+                        readiness_flags = ["soul_present"]
+                elif has_lessons:
+                    # No soul file but lessons exist
+                    readiness_status = "DORMANT"
+                    readiness_flags = ["lessons_present"]
+                else:
+                    readiness_status = "UNINITIALIZED"
+                    readiness_flags = []
+
+                enrichment["readiness"] = {
+                    "status": readiness_status,
+                    "flags": readiness_flags,
+                }
+
+                # 3. L3 Lesson distillation: recent_lessons from proposed_lessons.yaml (or approved_lessons.yaml)
+                lessons_path = entity_base / "proposed_lessons.yaml"
+                approved_lessons_path = entity_base / "approved_lessons.yaml"
+                lessons_file = lessons_path if lessons_path.exists() else (approved_lessons_path if approved_lessons_path.exists() else None)
+                recent_lessons = []
+                if lessons_file:
+                    try:
+                        with open(lessons_file) as f:
+                            lessons_data = yaml.safe_load(f) or []
+                        # Filter for L3 lessons (outcome starts with "l3_") and sort by timestamp desc
+                        l3_lessons = [
+                            {
+                                "id": lesson.get("trace_id"),
+                                "title": lesson.get("lesson", "")[:120],
+                                "confidence": "high" if lesson.get("outcome", "").startswith("l3_") else "medium",
+                                "distilled_at": lesson.get("timestamp"),
+                                "source": lesson.get("source"),
+                                "outcome": lesson.get("outcome"),
+                            }
+                            for lesson in lessons_data
+                            if lesson.get("outcome", "").startswith("l3_")
+                        ]
+                        # Sort by distilled_at descending (most recent first)
+                        l3_lessons.sort(key=lambda x: x.get("distilled_at", ""), reverse=True)
+                        recent_lessons = l3_lessons[:5]  # Last 5 L3 lessons
+                    except Exception:
+                        pass
+
+                enrichment["recent_lessons"] = recent_lessons
+
+                return enrichment
+
+            soul = _read_soul()
+            knowledge = _list_knowledge()
+            workspace = _list_workspace()
+            sessions = _list_sessions()
+            enrichment = await _enrich_entity_context(entity, entity_base, soul)
+
+            return json.dumps({
+                "entity": entity,
+                "slot": enrichment.get("slot"),
+                "role": enrichment.get("role"),
+                "archetype": enrichment.get("archetype"),
+                "readiness": enrichment.get("readiness"),
+                "soul": soul,
+                "knowledge": knowledge,
+                "workspace": workspace,
+                "recent_sessions": sessions,
+                "recent_lessons": enrichment.get("recent_lessons", []),
+            }, indent=2)
+        
+        elif action == "extended_checkin":
+            if not all([channel, entity]):
+                return json.dumps({"error": "extended_checkin requires channel, entity"})
+            agent_id = _make_agent_id(channel, entity)
+            ttl_seconds = min(ttl_seconds, 86400)
+            async with _awareness_lock:
+                if agent_id not in _awareness:
+                    _awareness[agent_id] = {
+                        "agent_id": agent_id,
+                        "channel": channel,
+                        "entity": entity,
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "model": "unknown",
+                        "task_current": "extended_checkin"
+                    }
+                _awareness[agent_id]["extended_ttl"] = ttl_seconds
+                _awareness[agent_id]["extended_reason"] = reason or "Extended Hivemind session — user may forget to check out"
+                _awareness[agent_id]["extended_registered_at"] = datetime.now(timezone.utc).isoformat()
+            await invalidate_awareness_cache()
+            return json.dumps({
+                "status": "extended_checkin_registered",
+                "agent_id": agent_id,
+                "ttl_seconds": ttl_seconds,
+                "expires_at": (
+                    datetime.now(timezone.utc).timestamp() + ttl_seconds
+                ),
+            })
+        
+        elif action == "extended_checkout":
+            if not all([channel, entity]):
+                return json.dumps({"error": "extended_checkout requires channel, entity"})
+            agent_id = _make_agent_id(channel, entity)
+            async with _awareness_lock:
+                if agent_id in _awareness and "extended_ttl" in _awareness[agent_id]:
+                    del _awareness[agent_id]["extended_ttl"]
+                    del _awareness[agent_id]["extended_reason"]
+                    del _awareness[agent_id]["extended_registered_at"]
+                    await invalidate_awareness_cache()
+                    return json.dumps({"status": "extended_checkout_complete", "agent_id": agent_id})
+                return json.dumps({"status": "no_extended_session", "agent_id": agent_id})
+    
+    except Exception as e:
+        logger.warning("hivemind_awareness %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
 
 
-@m9_safe("hivemind_redis_subscribe")
+@m9_safe("hivemind_lock")
 @mcp.tool()
-async def hivemind_redis_subscribe(channel: str, timeout: float = 2.0, max_messages: int = 50) -> str:
-    """Subscribe to an ephemeral Hivemind Redis Pub/Sub channel (bounded listen).
-
-    Collects messages for up to ``timeout`` seconds (never blocks indefinitely,
-    M23 Failure Integrity). Use for ephemeral awareness only; for task-critical
-    work use the file-based Hivemind handoff/lock tools.
-
+async def hivemind_lock(
+    action: str,
+    channel: Optional[str] = None,
+    entity: Optional[str] = None,
+    domain: Optional[str] = None,
+    ttl: int = 3600,
+) -> str:
+    """Unified workspace lock tool — consolidates 3 fragmented tools.
+    
+    Actions:
+        acquire: Acquire an exclusive workspace lock (requires channel, entity, domain, optional ttl)
+        release: Release a workspace lock (requires channel, entity, domain)
+        check: Check lock status (requires domain)
+    
     Args:
-        channel: Channel name to listen on.
-        timeout: Max seconds to listen (default 2.0).
-        max_messages: Max messages to collect before returning.
-
+        action: Operation to perform (acquire|release|check)
+        channel: Execution channel (e.g., 'opencode', 'cline')
+        entity: Entity persona (e.g., 'kali', 'roc_racoon')
+        domain: Domain/resource to lock
+        ttl: Time-to-live in seconds (default 3600, max 86400)
+        
     Returns:
-        JSON string with status, channel, and collected messages.
+        JSON string with operation result.
     """
-    from mcp_servers.omega_hub.hivemind_redis import get_hivemind_redis
+    _require_service()
+    
+    valid_actions = {"acquire", "release", "check"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "acquire":
+            if not all([channel, entity, domain]):
+                return json.dumps({"error": "acquire requires channel, entity, domain"})
+            await _reap_stale_locks()
+            agent_id = _make_agent_id(channel, entity)
+            ttl = min(ttl, 86400)
+            lock_path = LOCKS_BASE / f"{domain}.lock"
 
-    bus = get_hivemind_redis()
-    result = await bus.subscribe(channel, timeout=timeout, max_messages=max_messages)
-    return json.dumps(result, indent=2)
+            def _acquire():
+                fd = os.open(str(lock_path), os.O_RDWR | os.O_CREAT, 0o644)
+                try:
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    os.close(fd)
+                    return {"conflict": True, "holder": "unknown (locked by another process)", "domain": domain}
+
+                with os.fdopen(fd, 'r+') as f:
+                    existing_data = f.read()
+                    now = datetime.now(timezone.utc).timestamp()
+
+                    if existing_data:
+                        existing = json.loads(existing_data)
+                        acquired_at = existing.get("acquired_at", 0)
+                        lock_ttl = existing.get("ttl", 3600)
+                        if now <= acquired_at + lock_ttl:
+                            return {"conflict": True, "holder": existing.get("agent_id"), "domain": domain}
+                        f.seek(0)
+                        f.truncate()
+
+                    lock_data = {
+                        "agent_id": agent_id,
+                        "channel": channel,
+                        "entity": entity,
+                        "domain": domain,
+                        "acquired_at": now,
+                        "ttl": ttl,
+                    }
+                    json.dump(lock_data, f, indent=2)
+                    f.flush()
+                    os.fsync(f.fileno())
+                    return lock_data
+
+            result = await anyio.to_thread.run_sync(_acquire)
+            if "conflict" in result:
+                return json.dumps(result)
+            return json.dumps({
+                "status": "acquired",
+                "agent_id": agent_id,
+                "channel": channel,
+                "entity": entity,
+                "domain": domain,
+                "acquired_at": result["acquired_at"],
+                "ttl": ttl,
+            })
+        
+        elif action == "release":
+            if not all([channel, entity, domain]):
+                return json.dumps({"error": "release requires channel, entity, domain"})
+            agent_id = _make_agent_id(channel, entity)
+            lock_path = LOCKS_BASE / f"{domain}.lock"
+
+            def _release():
+                if not lock_path.exists():
+                    return {"error": "No lock exists for this domain"}
+                with open(lock_path) as f:
+                    existing = json.load(f)
+                if existing.get("agent_id") != agent_id:
+                    return {"error": f"Lock held by '{existing.get('agent_id')}', not '{agent_id}'"}
+                lock_path.unlink()
+                return {"status": "released", "agent_id": agent_id, "domain": domain}
+
+            result = await anyio.to_thread.run_sync(_release)
+            return json.dumps(result)
+        
+        elif action == "check":
+            if not domain:
+                return json.dumps({"error": "check requires domain"})
+            lock_path = LOCKS_BASE / f"{domain}.lock"
+            now = datetime.now(timezone.utc).timestamp()
+
+            def _check():
+                if not lock_path.exists():
+                    return {"status": "no_lock", "domain": domain}
+                with open(lock_path) as f:
+                    lock_data = json.load(f)
+                acquired_at = lock_data.get("acquired_at", 0)
+                lock_ttl = lock_data.get("ttl", 3600)
+                age = now - acquired_at
+                remaining = max(0, lock_ttl - age)
+                return {
+                    "status": "locked",
+                    "domain": domain,
+                    "holder": lock_data.get("agent_id"),
+                    "acquired_at": acquired_at,
+                    "age_seconds": round(age, 1),
+                    "ttl": lock_ttl,
+                    "remaining_seconds": round(remaining, 1),
+                    "expired": age > lock_ttl,
+                }
+
+            result = await anyio.to_thread.run_sync(_check)
+            return json.dumps(result, indent=2)
+    
+    except Exception as e:
+        logger.warning("hivemind_lock %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
+

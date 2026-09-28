@@ -37,8 +37,30 @@ async def main():
                     "tag": "experiment:kq5-godot"
                 }
                 
-                result = await session.call_tool("hivemind_post_context", payload)
-                
+                # [seam-fix 2026-09-28 carmack] `hivemind_post_context` is not
+                # in the registered MCP surface. The Hivemind consolidation
+                # (NES→EIS) folded it into `hivemind_awareness(action="post")`.
+                # Verified against the live surface: 54 registered tools, of
+                # which the Hivemind set is exactly
+                #   hivemind_awareness, hivemind_get_metrics,
+                #   hivemind_handoff, hivemind_lock
+                # — no `hivemind_post_context`. Calling it returned a
+                # "Unknown tool" error from the server, caught by the blanket
+                # `except` below and reported as "Error connecting to
+                # Hivemind", which misattributed a dead tool name to a
+                # connectivity problem.
+                #
+                # `tag` is not a field of the unified tool; it is carried in
+                # `task_current` so the experiment label is not silently lost.
+                tag = payload.pop("tag", None)
+                if tag:
+                    payload["task_current"] = f"{payload.get('task_current', '')} [tag={tag}]"
+
+                result = await session.call_tool("hivemind_awareness", {
+                    "action": "post",
+                    **payload,
+                })
+
                 print("\n--- POST STATUS ---")
                 for content in result.content:
                     if hasattr(content, "text"):
@@ -46,7 +68,9 @@ async def main():
                     else:
                         print(json.dumps(content.model_dump(), indent=2))
     except Exception as e:
-        print(f"Error connecting to Hivemind: {e}")
+        # M23: distinguish a dead tool name from a transport failure. The old
+        # message claimed connectivity for every failure mode.
+        print(f"Error posting to Hivemind: {type(e).__name__}: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())

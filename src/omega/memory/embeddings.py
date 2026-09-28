@@ -24,6 +24,20 @@ from omega.errors import OmegaError
 logger = logging.getLogger(__name__)
 
 
+class EmbeddingProviderUnavailableError(OmegaError):
+    """Raised when no canonical-capable embedding provider can serve a request.
+
+    [D-1024-DIM-NATIVE-20260926 / M23] This error exists so the engine NEVER
+    silently answers with a different model. It is raised when every
+    canonical-capable provider fails, and when a provider returns a
+    natively-sub-canonical vector (cross-model substitution attempt).
+
+    Inherits OmegaError so existing `except OmegaError` handlers in the
+    provider chain keep working; callers that must not swallow it should
+    catch this type specifically.
+    """
+
+
 class IEmbeddingProvider(ABC):
     """Abstract base class for embedding providers.
 
@@ -194,23 +208,48 @@ class SovereignFallbackEmbeddingProvider(IEmbeddingProvider):
 
 
 class OllamaEmbeddingProvider(IEmbeddingProvider):
-    """Ollama-based embedding provider using nomic-embed-text v1.5.
+    """Ollama-based embedding provider.
 
     [Right Approximation: evolved from FISR, id Software 1999]
-    Provides high-quality 768-dim embeddings via local Ollama inference,
-    falling back gracefully if Ollama is unavailable.
+    Legacy-tier provider for `omega_vec_nomic_768` / `_512` / `_256`.
 
-    Model: nomic-embed-text:v1.5 (Q8_0, 274MB, 768-dim, 62.28 MTEB)
+    [D-1024-DIM-NATIVE-20260926] LEGACY — NOT a canonical-path provider.
+    nomic-embed-text is a DIFFERENT MODEL from the canonical
+    Qwen3-Embedding-0.6B. Its vectors are not comparable with the canonical
+    space, and it MUST NOT be used as a fallback for the canonical collection.
+    It is not in `EmbeddingManager`'s default chain; that chain is
+    canonical-capable only and raises `EmbeddingProviderUnavailableError`
+    rather than substituting this model.
+
+    The previous default model was nomic-embed-text:v1.5. The default is now
+    `None`: a caller must name the model and the collection explicitly, so
+    instantiating this class with no arguments cannot silently produce a
+    768-D nomic vector for a canonical write.
+
+    Model (legacy default, must be passed explicitly): nomic-embed-text:v1.5
+    (Q8_0, 274MB, 768-dim, 62.28 MTEB)
     Endpoint: http://127.0.0.1:11434/api/embed
     """
 
     def __init__(
         self,
-        model: str = "nomic-embed-text:v1.5",
+        model: Optional[str] = None,
         base_url: str = "http://127.0.0.1:11434",
         dimension: int = 768,
         target_dim: Optional[int] = None,
     ):
+        if model is None:
+            raise ValueError(
+                "OllamaEmbeddingProvider requires an explicit model.\n"
+                "[D-1024-DIM-NATIVE-20260926] The former default "
+                "(nomic-embed-text:v1.5) was removed because a nominal "
+                "nomic-embed-text was silently substituted for the canonical "
+                "Qwen3-Embedding-0.6B whenever the canonical provider was "
+                "unavailable. This class is LEGACY-TIER ONLY: it may serve "
+                "omega_vec_nomic_768 / _512 / _256 and must never serve "
+                "omega_vec_qwen_1024. Pass model=... and target the matching "
+                "collection explicitly."
+            )
         self._model = model
         self._base_url = base_url.rstrip("/")
         self._native_dimension = dimension
@@ -470,24 +509,6 @@ class StaticEmbeddingProvider(IEmbeddingProvider):
         self._loaded = False
 
 
-class GemmaGGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
-    """Google EmbeddingGemma 300M via llama-cpp-python.
-
-    768-dim, 300M params, Q6_K quantized (249MB).
-    Higher quality than MiniLM for the cost of more RAM.
-    Sits in the chain as an intermediate-quality option.
-
-    [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
-    """
-
-    def __init__(self, target_dim: Optional[int] = None):
-        super().__init__(
-            model_path="/media/arcana-novai/omega_library/models/embeddings/embeddinggemma-300m-Q6_K.gguf",
-            dimension=768,
-            target_dim=target_dim,
-        )
-
-
 class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
     """Qwen3-Embedding-0.6B via llama-cpp-python.
 
@@ -534,28 +555,57 @@ class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
 
 
 class EmbeddingManager:
-    """Manages the embedding provider chain (Local -> Static -> Ollama -> Fallback).
+    """Manages the embedding provider chain (canonical-first, fail-loud).
 
-    Ensures that the engine always has a way to vectorize text,
-    preferring high-quality local models over the sovereign fallback.
+    [D-1024-DIM-NATIVE-20260926] The default chain is CANONICAL-CAPABLE ONLY:
 
-    Default provider chain (local-first, D-1024-DIM-NATIVE-20260926):
-        1. Qwen3GGUFEmbeddingProvider — Qwen3-Embedding-0.6B via llama-cpp (native 1024 == canonical)
-        2. OllamaEmbeddingProvider — nomic-embed-text via Ollama (native 768)
-        3. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (native 384)
-        4. StaticEmbeddingProvider — potion-base-2M via model2vec (native 64)
+        1. Qwen3GGUFEmbeddingProvider — Qwen3-Embedding-0.6B via llama-cpp
+           (native 1024 == canonical)
+        2. SovereignFallbackEmbeddingProvider — deterministic feature hashing
+           at the canonical width; zero dependencies, cannot fail
 
-    Providers 2-4 are NATIVE-WIDTH only: MRL can only TRUNCATE, never widen,
-    so a 768/384/64-dim model can never serve the canonical 1024-dim
-    collection. They are kept in the chain for fallback-tier collections
-    (omega_vec_nomic_768 / omega_vec_minilm_384 / omega_vec_static_64).
-    If one of them answers for a 1024-dim write, the adapter's dimension
-    guard rejects it (M23) instead of silently corrupting the index.
+    M23 FAIL-LOUD: if the canonical provider is unavailable the chain RAISES
+    `EmbeddingProviderUnavailableError` naming D-1024-DIM-NATIVE-20260926. It
+    does NOT silently substitute a different model. Previously this chain
+    carried OllamaEmbeddingProvider (nomic-embed-text, natively 768-D) at
+    position 1: when Qwen3 was unavailable it answered with 768-D vectors from
+    a DIFFERENT MODEL, and because the write went to omega_vec_nomic_768 the
+    vec0 lock (1024) and the adapter's per-collection guard (768) both saw a
+    legal width. The substitution was invisible by construction.
+
+    MRL truncation is unaffected and remains LEGAL: a 1024-D Qwen3 vector
+    truncated to 768/512/256/128/64 by `target_dim` is the same model and is
+    accepted. What is now impossible is a NATIVE sub-canonical vector from a
+    different model reaching the canonical write path.
+
+    Sub-canonical providers (Ollama/nomic, MiniLM, potion) still exist as
+    classes for their own legacy collections; they are simply not in the
+    default canonical chain. A caller that explicitly wants a legacy-tier
+    collection must pass that provider AND target the matching collection.
     """
+
+    # Explicit, actionable failure text — referenced by tests and by the
+    # negative test in tests/contracts/test_embedding_dimension.py.
+    CANONICAL_UNAVAILABLE_MESSAGE = (
+        "Canonical embedding provider unavailable — refusing to substitute a "
+        "different model.\n"
+        "  Decision:  D-1024-DIM-NATIVE-20260926\n"
+        "  Canonical:  Qwen3-Embedding-0.6B at 1024-dim NATIVE "
+        "(collection omega_vec_qwen_1024)\n"
+        "  Cause:      every canonical-capable provider failed\n"
+        "  Legal:      MRL truncation of a 1024-D Qwen3 vector to "
+        "768/512/256/128/64 (same model, narrower width)\n"
+        "  ILLEGAL:    a natively-768 nomic-embed-text (or minilm/potion) "
+        "vector standing in for the canonical space\n"
+        "  Fix:        restore the Qwen3 GGUF model and its llama.cpp build "
+        "(--pooling last), or explicitly pass a provider and target a "
+        "matching legacy collection. Do NOT re-add a cross-model fallback."
+    )
 
     def __init__(self, providers: Optional[List[IEmbeddingProvider]] = None):
         if providers is not None:
             self._providers = providers
+            self._canonical_width = None  # infer below when possible
         else:
             # FS-Β1: Use EmbeddingStrategy SSOT for target dimension
             from .embedding_strategy import get_embedding_strategy
@@ -563,34 +613,92 @@ class EmbeddingManager:
             strategy = get_embedding_strategy()
             target_dim = strategy.canonical_dimension  # 1024 (D-1024-DIM-NATIVE)
 
+            self._canonical_width = target_dim
             self._providers = [
                 Qwen3GGUFEmbeddingProvider(
                     target_dim=target_dim
                 ),  # native 1024 == canonical, primary (D-1024-DIM-NATIVE)
-                OllamaEmbeddingProvider(),  # native 768 — fallback-tier collections only
-                LocalGGUFEmbeddingProvider(),  # native 384 — fallback-tier collections only
-                StaticEmbeddingProvider(),  # native 64 — fallback-tier collections only
+                # Sovereign hash fallback at the CANONICAL width. Deterministic,
+                # zero-dependency, cannot fail — so the chain never has to
+                # reach a different model to produce a 1024-D answer.
+                SovereignFallbackEmbeddingProvider(dimension=target_dim),
             ]
+
+        if self._canonical_width is None:
+            from .embedding_strategy import get_embedding_strategy
+
+            self._canonical_width = get_embedding_strategy().canonical_dimension
+
+    def _assert_canonical_width(
+        self, embedding: List[float], provider: IEmbeddingProvider
+    ) -> None:
+        """M23: a sub-canonical answer is a FAILURE, not a fallback.
+
+        Guards the case the removed nomic fallback exploited: a provider that
+        returns a natively-narrower vector than canonical. Same-model MRL
+        truncation is allowed because it is signalled by an explicit
+        `target_dim` on the provider, not inferred from width.
+        """
+        if self._canonical_width is None or not embedding:
+            return
+        actual = len(embedding)
+        if actual == self._canonical_width:
+            return
+
+        # A provider explicitly configured for MRL truncation is a same-model
+        # narrow view of the canonical space — legal.
+        if getattr(provider, "_target_dim", None) is not None:
+            return
+
+        raise EmbeddingProviderUnavailableError(
+            f"{provider.__class__.__name__} returned {actual}-dim on a "
+            f"{self._canonical_width}-dim canonical request.\n"
+            f"{self.CANONICAL_UNAVAILABLE_MESSAGE}"
+        )
 
     async def get_embedding(self, text: str) -> Tuple[List[float], str]:
         # [test-mode] Short-circuit in test env — returns zero vector to avoid
-        # loading the 300M Gemma GGUF embedding model via llama-cpp-python.
+        # loading the Qwen3-Embedding-0.6B GGUF embedding model via llama-cpp-python.
         # Each Oracle() creation triggers add_exchange() which calls this,
-        # and loading a 300M GGUF takes ~15-30s + 600MB on Ryzen 5700U.
+        # and loading a 600M GGUF takes ~15-30s + 600MB on Ryzen 5700U.
         if os.environ.get("OMEGA_ENV") == "test":
-            dim = self.current_dimension
+            # [Carmack audit 2026-09-26] Use the CANONICAL width, not
+            # providers[0].dimension. The short-circuit used to mirror the head
+            # provider, so a chain headed by a sub-canonical provider emitted a
+            # sub-canonical zero vector in test mode — the same cross-model
+            # width violation the production path now refuses. M23: the
+            # canonical collection is the only thing this feeds.
+            dim = self._canonical_width or self.current_dimension
             return [0.0] * dim, "mock"
 
+        failures: List[str] = []
         for provider in self._providers:
             try:
                 embedding = await provider.get_embedding(text)
-                return embedding, provider.__class__.__name__
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Embedding provider {provider.__class__.__name__} failed: {e}")
+                failures.append(f"{provider.__class__.__name__}: {e}")
                 continue
 
-        # This should theoretically never be reached if Fallback is last
-        raise RuntimeError("All embedding providers failed.")
+            # M23: width is verified BEFORE the answer is returned. A provider
+            # that answered at the wrong width is treated as a failure and the
+            # chain continues — it is never handed to the caller.
+            try:
+                self._assert_canonical_width(embedding, provider)
+            except EmbeddingProviderUnavailableError as e:
+                logger.error("Cross-model substitution blocked: %s", e)
+                failures.append(f"{provider.__class__.__name__}: {e}")
+                continue
+
+            return embedding, provider.__class__.__name__
+
+        # M23: never return a sub-canonical answer. Fail loud and name the
+        # decision so the operator knows exactly what was refused.
+        raise EmbeddingProviderUnavailableError(
+            f"{self.CANONICAL_UNAVAILABLE_MESSAGE}\n"
+            f"  Provider failures:\n"
+            + "".join(f"    - {f}\n" for f in failures)
+        )
 
     @property
     def current_dimension(self) -> int:

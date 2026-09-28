@@ -843,6 +843,6 @@ proposals:
   last_verified: '2026-09-01'
 metadata:
   entity: researcher
-  session_id: ses_f32e185bbffeo6D86rAsCB9z3H
-  model_used: nvidia/nemotron-3-super-120b-a12b:free
-  last_session_end: '2026-09-23T07:16:22.462173+00:00'
+  session_id: ses_f1e198c3fffeqevaTh3OHnBtip
+  model_used: nemotron-3-ultra-free
+  last_session_end: '2026-09-27T08:24:50.047181+00:00'

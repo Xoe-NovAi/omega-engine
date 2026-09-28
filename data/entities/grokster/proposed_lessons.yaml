@@ -711,3 +711,96 @@ proposals:
   - source: legacy_status
     note: 99_legacy_infrastructure_evidence/README_LEGACY_STATUS.md in repo and USB; 9-row supersession table
   directive_provenance: d-gks-seal-003
+- id: L1-VerifyAttributionBeforeSealingForeignDocs
+  principle: "L1 evidence: before sealing a document from outside the package, verify the node/context it actually describes. A Node 0 incident log (hostname, tailnet IP, Node-0-only backup filenames, 127.0.0.1 bind) was framed as Node 1 operational guidance and shipped once. Attribution errors are content errors and must be reverted whole, not annotated."
+  mandates:
+  - M15
+  - M23
+  confidence: 0.99
+  tags:
+  - provenance
+  - attribution
+  - transfer
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: revert_round
+    note: Node 0 crash doc reverted from the package; zero residue confirmed in both locations
+  directive_provenance: d-gks-reissue-001
+- id: L2-NegativeFixturesNeedATransitionNotice
+  principle: "L2 insight: a negative regression fixture pinned to a sealed engine can invert meaning once the fix lands — the fixture's expected exit code becomes a false alarm. Document a TRANSITION NOTICE wherever the expectation appears: identify which outcome means 'engine fixed' versus 'harness stale', and state explicitly not to 'fix' the engine."
+  mandates:
+  - M15
+  - M23
+  confidence: 0.99
+  tags:
+  - testing
+  - fixtures
+  - transition
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: pwad_notice
+    note: staged fixture exits 0 on N0 working tree while wrapper reports FAIL; notice placed in 4 package files
+  directive_provenance: d-gks-reissue-002
+- id: L3-ScopesNeedExplicitLaddersAndPolicyOfRecord
+  principle: "L3 universal principle: a single headline number misleads. When a workstream spans phases, publish the ladder with per-phase exit gates and name the only immediately authorized action. When an infrastructure policy changes, propagate a dated 'policy of record' to every file that describes it, retire the superseded transport with its measured evidence, and prefer a table that refuses to pick a winner when identifiers conflict."
+  mandates:
+  - M13
+  - M15
+  - M23
+  confidence: 0.98
+  tags:
+  - scope-ladder
+  - policy
+  - tailnet
+  - federation
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: reissue
+    note: 20/60/120 ladder; 2026-09-26 grants posture propagated to 5 files; degraded USB retired with 23/34 evidence
+  directive_provenance: d-gks-reissue-003
+- id: L1-LedgerProvesBytesNeverRecency
+  principle: "L1 evidence: a self-consistent SHA256SUMS proves bytes, never recency and never authorship. The retired n0-to-n1.zip had a real manifest, a real ledger, the correct layout and a plausible timestamp, and was one directory away from the live package - it was more dangerous than no artifact. Detonate that class of risk by quarantining snapshots OUTSIDE the delivery tree and renaming them to refuse use; keep a sibling DO-NOT-DELIVER note carrying the self-verify result and divergence count."
+  mandates:
+  - M15
+  - M23
+  confidence: 0.99
+  tags:
+  - ledgers
+  - stale-artifacts
+  - delivery
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: stale_zip_incident
+    note: n0-to-n1-DO-NOT-DELIVER-STALE-0228.zip, 43 files, self-verify 38 OK / 4 FAILED, 15 files divergent, zero manifest references
+  directive_provenance: d-gks-doctrine-001
+- id: L2-VerifyMediaCompletelyOrDoNotVerifyIt
+  principle: "L2 insight: media that fails silently cannot be partially verified. The D3E6-A900 drive returned zero checksum mismatches on the 23 of 34 files it could read - which is not evidence of integrity, it is evidence the reader never saw the other 11. Require n_read == manifest_count as a precondition of any ledger verification; one unreadable file quarantines the whole medium, and retrying or skipping manufactures confidence that was never earned. vfat cannot persist the exec bit, so chmod is a no-op and the correct invocation is an explicit interpreter."
+  mandates:
+  - M15
+  - M23
+  confidence: 0.99
+  tags:
+  - media
+  - verification
+  - quarantine
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: degraded_usb
+    note: 23/34 readable, 11 I/O failures, zero checksum mismatches on readable files; chmod +x no-op on vfat
+  directive_provenance: d-gks-doctrine-002
+- id: L3-BytesAreNotAuthenticity-SignTheManifest
+  principle: "L3 universal principle: authentication is a different property from integrity, and it must be layered without ever replacing the lower layer. Future releases: sign MANIFEST.yaml with an Ed25519 detached minisig so one signature transitively binds every path to its bytes; ship the publisher public key in-package AND out-of-band, because a key delivered beside the artifact it authenticates is not a trust anchor; verify in the order trust-root, then bytes, then delivery-tree, so a failure at step one invalidates the rest retroactively. Key id is the rotation handle, revocation is a published deny-list. Timestamping and hardware binding remain C6 workstream items, not packaging items."
+  mandates:
+  - M13
+  - M15
+  confidence: 0.95
+  tags:
+  - signing
+  - minisign
+  - c6
+  - release-cryptography
+  source_session: ses_fe8cf0b39ffeL3L8eaMEj3CW9H
+  evidence:
+  - source: capability_probe
+    note: minisign not installed on Node 0 as of 2026-09-27; signing capability must be proven before it is claimed
+  directive_provenance: d-gks-doctrine-003

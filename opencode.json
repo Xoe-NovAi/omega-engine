@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
   "subagent_depth": 2,
   "plugin": [
     "opencode-sessions-explorer",
@@ -53,7 +54,8 @@
       "pr-readiness-checker": "deny",
       "provider-validator": "deny",
       "sovereign-refinement-protocol": "deny",
-      "sovereign-search": "deny"
+      "sovereign-search": "deny",
+      "agent-session-resume": "allow"
     }
   },
   "instructions": [

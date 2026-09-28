@@ -15,9 +15,19 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 from datetime import datetime, timezone
 
-from mcp_servers.omega_hub.server import mcp
+from mcp_servers.omega_hub.server import mcp, _raw_tool
 from mcp_servers.omega_hub.state import PROJECT_ROOT
-from mcp_servers.omega_hub.hub_tools import hivemind_post_context
+# [seam-fix 2026-09-28 maat] The Hivemind consolidation removed the standalone
+# `hivemind_post_context` tool, folding it into `hivemind_awareness(action="post")`.
+# This import was left pointing at the deleted name, which killed the module at
+# import time and took the whole GitHub webhook bridge with it (0 tests collected
+# in tests/test_github_bridge.py).
+#
+# Import the UNIFIED tool directly. Do NOT route through
+# `mcp_servers.omega_hub.server`, whose legacy-name shim covers only the MCP
+# tool surface — that shim is a different compatibility mechanism and does not
+# apply to a direct Python import from hub_tools.
+from mcp_servers.omega_hub.hub_tools import hivemind_awareness
 
 logger = logging.getLogger("omega.hub.github_bridge")
 
@@ -133,20 +143,30 @@ async def process_github_event(event_type: str, payload: Dict[str, Any], signatu
 
     # 4. Post to Hivemind
     # We use the tool's logic directly to avoid MCP overhead for internal bridging.
-    from mcp_servers.omega_hub.hub_tools import hivemind_post_context
-    
-    # We wrap the call to match the tool's expected arguments
-    await hivemind_post_context(
+    # [seam-fix 2026-09-28 maat] Call the unified tool. Every field the retired
+    # hivemind_post_context call passed is preserved verbatim below; the only
+    # addition is the `action` discriminator the unified API requires.
+    result = await _raw_tool(hivemind_awareness)(
+        action="post",
         channel="github-bridge",
         entity=entity,
-        model="SOPHIA", # Bridge uses Sophia for general awareness
+        model="SOPHIA",  # Bridge uses Sophia for general awareness
         task_current=f"GitHub Event: {event_summary}",
         focus_chain=["github-integration", event_type],
         decisions=[],
         continuation=f"Event processed by bridge. Source: {sender}",
-        intent="observation"
+        intent="observation",
     )
-    
+
+    # M23: the unified tool returns a JSON error STRING rather than raising, so an
+    # ignored return value makes a failed post indistinguishable from a successful
+    # one. A webhook bridge that silently swallows failed posts is worse than one
+    # that is down, because the failure is invisible. Check explicitly.
+    if isinstance(result, str) and '"error"' in result:
+        raise RuntimeError(
+            f"Hivemind post rejected for GitHub event {event_type} from {sender}: {result}"
+        )
+
     logger.info(f"Bridged GitHub event {event_type} from {sender} as {entity}")
 
 # ── Simulation for Testing ────────────────────────────────────────────────────

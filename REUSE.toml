@@ -231,23 +231,23 @@ SPDX-License-Identifier = "Apache-2.0"
 # These directories contain external dependencies with their own licenses.
 # The actual licensing is documented in each dependency's own LICENSE file.
 # This annotation tells REUSE these directories are covered.
-[[annotations]]
-path = "third-party/**"
-SPDX-FileCopyrightText = "Various copyright holders"
-SPDX-License-Identifier = "MIT"
-
-# node_modules: npm/bun dependencies (external, MIT/BSD/Apache licensed)
-# These are managed by the package manager and have their own licenses.
-[[annotations]]
-path = "**/node_modules/**"
-SPDX-FileCopyrightText = "Various copyright holders"
-SPDX-License-Identifier = "MIT"
-
-# opencode: bundled opencode binary and its dependencies (external)
-[[annotations]]
-path = "opencode/**"
-SPDX-FileCopyrightText = "Various copyright holders"
-SPDX-License-Identifier = "MIT"
+# [[annotations]]
+# path = "third-party/**"
+# SPDX-FileCopyrightText = "Various copyright holders"
+# SPDX-License-Identifier = "MIT"
+#
+# # node_modules: npm/bun dependencies (external, MIT/BSD/Apache licensed)
+# # These are managed by the package manager and have their own licenses.
+# [[annotations]]
+# path = "**/node_modules/**"
+# SPDX-FileCopyrightText = "Various copyright holders"
+# SPDX-License-Identifier = "MIT"
+#
+# # opencode: bundled opencode binary and its dependencies (external)
+# [[annotations]]
+# path = "opencode/**"
+# SPDX-FileCopyrightText = "Various copyright holders"
+# SPDX-License-Identifier = "MIT"
 
 # ── Runtime/operational data (machine-generated, not authored source) ──────
 # M37 heritage applies to authored source; runtime state is excluded.

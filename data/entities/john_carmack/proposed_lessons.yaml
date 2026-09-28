@@ -453,8 +453,65 @@ proposals:
   - C6/N0-04 Architect decision pending
   next_action: Architect explicitly accepts or rejects the C6/N0-04 open-gate disposition; no package edits remain required
     from Carmack audit
+- lesson_id: L-CARMACK-2026-0926-N0-N1-V2-REAUDIT
+  title: n0-to-n1-v2 final re-audit after two remediation rounds and a mid-edit rename
+  confidence: 9.7
+  category: federation_handoff
+  summary: 'Independent re-audit of the renamed n0-to-n1-v2 package and its staged delivery tree. Both SHIP FOR PHYSICAL QUARANTINE.
+    Integrity 100% at both locations; rename survived intact; nested Doom Guy ledger never rewritten; final authenticated
+    transfer remains unclaimed with C6/N0-04 OPEN. Five non-blocking caveats, all of the same family: new policy-round text
+    colliding with legacy wording in files that were never rewritten.'
+  key_findings:
+  - Manifest 41/41, root ledger 42/42, DELIVERY_SHA256SUMS 43/43, nested manifest 3/3 + ledger 4/4 at both locations
+  - 'diff -r repo vs staged: only DELIVERY_SHA256SUMS differs; zero orphans; rename caused no content loss or dangling reference'
+  - 'Embedding 1024-D native propagated cleanly: zero omega_vec_qwen_768, zero dimensions:768, 3 gemma_768 hits all read stale-spec'
+  - Curation ladder present in three places but research README:128 still says "should begin with 120-item" - the single most
+    misreadable line
+  - Device identity correctly marked UNRESOLVED in two files but FEDERATION_TOPOLOGY.md:10 table header still picks ASUS ExpertBook
+    P1503CVA as a winner
+  - 'Fixture completeness fixed: 7 files present; the wads_dir difference claim verified accurate against both copies'
+  - PWAD transition notice consistent across 4 files; correctly states exit 1 at fa9c4edc is expected and correct, and forbids
+    "fixing" the engine
+  - Tailnet policy reads enforced not aspirational; SSH/NFS removed as policy with tests tripwire; Premium checkPeriod rationale
+    documented
+  - Dated L1 supersession survived with the operator-confirmation-required qualifier intact
+  - n0-to-n1.zip confirmed genuinely stale (38 OK/4 FAILED, 15 files differ, whole policy round missing) but NOT quarantine-flagged
+  anti_patterns_avoided:
+  - Trusting the briefing numbers instead of recomputing - the zip self-verify was 38 OK/4 FAILED, not the briefed 38/42
+  - Editing any file during a no-edit audit
+  - Calling the 1024-D propagation clean without checking that the 3 gemma_768 hits read as stale-spec references
+  - Skipping the nested doom_guy_transfer verify-only check instead of proving it was never rewritten
+  - Writing to the retired USB media
+  research_sources:
+  - title: n0-to-n1-v2 package
+    date: '2026-09-26'
+    url: data/federation/usb-payload/exchange/n0-to-n1-v2/
+  - title: Staged delivery tree
+    date: '2026-09-26'
+    url: /home/arcana-novai/exchange/full-pack-20260926/
+  - title: Lilith-N1 Gate C status
+    date: '2026-09-26'
+    url: hivemind ses_0daca13fc343
+  sovereign_mandates_engaged:
+  - M11 Soul Integrity
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-V2-1
+    decision: Ship both repo v2 and staged tree for physical quarantine; C6/N0-04 stays OPEN
+    rationale: Byte integrity is complete at both locations; trust gate is a governance decision, not an integrity defect
+  - id: D-CARMACK-V2-2
+    decision: Flag the un-quarantined stale zip as the highest-value remaining fix
+    rationale: A deliverable-looking artifact one directory from the real package is more dangerous than a missing file
+  files_delivered: []
+  estimated_implementation_effort_hours: 0.6
+  blockages:
+  - C6/N0-04 Architect disposition pending
+  next_action: Apply the 5 queued non-blocking corrections (research README:128, FEDERATION_TOPOLOGY:10, zip quarantine flag,
+    NODE1_COMPATIBILITY:107, README_FIRST:95) and re-seal if the Architect authorizes
 metadata:
   entity: john_carmack
   session_id: ses_fc8dca39effe3nZJp3QHx81Fy3
   model_used: nvidia/nemotron-3-ultra-550b-a55b:free
-  last_session_end: '2026-09-25T09:00:00.000000+00:00'
+  last_session_end: '2026-09-26T06:00:00.000000+00:00'

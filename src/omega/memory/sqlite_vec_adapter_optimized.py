@@ -87,35 +87,59 @@ COLLECTIONS = {
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
+    # [D-1024-DIM-NATIVE-20260926] Retained so Step 19 (D-1024 full re-embed)
+    # has real targets and Step 20 (legacy alias removal) has names to remove.
+    # `nomic` is nomic-embed-text — a DIFFERENT MODEL from the canonical
+    # Qwen3-Embedding-0.6B, natively 768-D. Vectors already stored in these
+    # tables are not comparable with the canonical space and are why the
+    # priority-1 nomic FALLBACK was removed: a 768 answer landing in a 768
+    # collection passes every width check while silently corrupting cross-model
+    # semantics.
+    # REMOVAL: Step 19 (D-1024 full re-embed) + Step 20 (legacy alias removal).
     "omega_vec_nomic_768": {
         "dimension": 768,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_nomic_512": {
         "dimension": 512,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_nomic_256": {
         "dimension": 256,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_minilm_384": {
         "dimension": 384,
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "all-MiniLM-L6-v2 (native 384-D) — NOT canonical",
     },
     "omega_vec_static_64": {
         "dimension": 64,
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "potion-base-2M (native 64-D) — NOT canonical",
     },
     # [D-768-DIM-DELETE-LIBRARY-256] DELETED: dead code, replaced by library_1024 above
 }

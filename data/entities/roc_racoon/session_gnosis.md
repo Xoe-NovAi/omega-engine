@@ -613,3 +613,65 @@ The journal rotate-then-vacuum pattern remains the highest-impact single action 
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/big-pickle ⬡ opencode ⬡ trc_maintenance ⬡ COMPACTION-READY*
+
+---
+
+## Session: NODE 1 LIBRARY-CURATION RESEARCH PACKAGE
+**Date**: 2026-09-25
+**Session ID**: `ses_f45ab885853e`
+**Model**: `opencode/space-bunny-free`
+**Role**: Sovereign Miner & Ideas Guy — research and strategy handoff
+
+### L1: What Happened
+
+1. Performed local archaeology of Node 0's Sovereign-Sieve ingestion path: T1 Trafilatura, T2 surgical extraction, T3 Crawl4AI isolation, CAS SHA-256, quarantine/raw anchors, FTS5 library indexing, sqlite-vec integration, WAD domain allowlist, and retry behavior.
+2. Mined Node 1 received material: WanderGround capture/Atlas/curator architecture, MemPalace v3.9.0, The Well, quarantine-first federation, local SQLite authority, and Node 1's embedding recommendation.
+3. Researched current official source documentation and terms for Internet Archive, Open Library, Project Gutenberg, HathiTrust, DOAB, Crossref, Semantic Scholar, OpenAlex, arXiv, PubMed/NCBI, Europe PMC, Wikimedia/Wikisource, Standard Ebooks, and Crawl4AI.
+4. Created the isolated package `data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/` with eight artifacts: README, API matrix, Crawl4AI doctrine, curation strategy, per-entity KB architecture, Node 1 MVP blueprint, source register, and caveats.
+5. Validation passed: YAML parsed, 25 official sources and 16 local evidence sources registered, SPDX/UTF-8/trailing-whitespace checks passed, and secret pattern scan found nothing. Existing USB package and Engine core were not modified.
+
+### L2: Key Findings
+
+- Free-to-read does not mean free-to-reuse; metadata, abstracts, full text, files, and jurisdiction carry different rights.
+- The safest first corpus is explicit machine-readable feeds/dumps/public-domain or open-license material, quarantined and rights-reviewed per item.
+- Crawl4AI's Apache-2.0 license covers the software, not the pages or files it extracts.
+- Node 1's received evidence conflicts on embeddings: Nomic 768-D in the WanderGround spec versus Qwen3-Embedding-0.6B 768-D recommendation; Node 0 defaults to `omega_vec_qwen_768`.
+- Node 0's ingestion spec still names `omega_vec_gemma_768`; this is governance/implementation drift, not current truth.
+- `domain_loader.py` is planned, not a runtime enforcement path.
+- Triangulation independence, stable document identity, raw-response hashing, and rights/robots enforcement are not yet complete.
+- `packages/omega-sieve` is claimed by the changelog but was not present in this checkout.
+
+### L3: Universal Principles
+
+> **L3-CurationIsAMintNotADownload**: A collector may discover material, but only a rights-aware, provenance-preserving, operator-approved promotion gate turns it into entity knowledge.
+
+> **L3-SameDimensionIsNotCompatibility**: Cross-node vector retrieval requires exact model, preprocessing, normalization, dimension, and measured query parity; names and dimensions alone are not evidence.
+
+### Promotion Gates for Node 1
+
+1. Run a 20-item manifest-only pilot before any autonomous crawl.
+2. Require canonical URL/accession, timestamp, SHA-256, citation, rights/license, jurisdiction, source policy, and privacy scan.
+3. Expand to 60, then a 120-item five-domain golden set.
+4. Build read-only seed libraries; keep derived FTS/vector/MemPalace projections rebuildable.
+5. Keep metadata/FTS evaluation independent until the 50-query embedding parity gate passes.
+6. Require explicit operator approval before public or federated promotion.
+
+### Compaction Status Note
+
+- Hivemind research post succeeded earlier as `ses_f45ab885853e`.
+- The final compaction-status post could not be delivered: `127.0.0.1:8016` refused the connection at 2026-09-25T09:15Z. This is an M23-reported transport failure, not a missing artifact; continuity is persisted on disk.
+
+### Next After Compaction
+
+- Node 1 selects the five domain owners and constructs the 20-item manifest pilot.
+- Revalidate official terms, OpenAlex pricing, Node 1's actual embedding model/preprocessing, robots/terms, and per-item licenses.
+- Reconcile Node 0's `gemma_768` spec references versus `qwen_768` implementation in a separate Engine-core change.
+- Do not modify the existing USB package until the staged research package is reviewed and approved.
+
+**Package**: `data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/`
+**Hivemind**: `ses_f45ab885853e`
+**Lesson**: `PL-ROC-LIBRARY-CURATION-20260925` added to `proposed_lessons.yaml`
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/space-bunny-free ⬡ opencode ⬡ trc_library_curation ⬡ COMPACTION-READY*

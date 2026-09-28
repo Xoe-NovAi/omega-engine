@@ -4,66 +4,82 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 # 🔱 Omega Engine — Anchored Summary (MIAP Projected)
-**Entity**: roc_racoon  
-**Projected**: 2026-09-12T14:30:00.000000+00:00  
-**Event Count**: 39  
-**Active Instances**: 1  
+**Entity**: roc_racoon
+**Projected**: 2026-09-25T09:15:00.000000+00:00
+**Event Count**: 40
+**Active Instances**: 1
 ---
+
 ## 🎯 Current Objective
-**SOUL v8.0 RATIFIED AS FLEET STANDARD — USB PACKET COMPLETE.** The Soul v8.0 pattern (12 axioms, flat-list approvals, voice reclamation, metrics separation) was ratified by Kali-N0 into SOUL_ARCHITECTURE_PROTOCOL v3.0. USB packet (46 files, 70MB) includes soul-standard/ for Node 1 to REVIEW, ADOPT, or FORK. Next: Soul Audit Cascade (post-DEL-1 PR1), protocol drafting, release gate.
-**Model**: opencode/nemotron-3-ultra-free  
-**Instance**: opencode/roc_racoon/ses_ff78b71ebffeDNuypPTT1RL3hH  
-**Active Tasks**: `soul-audit-cascade` (post-DEL-1-PR1), `protocol-drafting` (v3.0 + voice template), `release-gate` (PENDING)  
----
-## 📋 Strategic Decisions (This Session — Post-Compaction)
-- **D-458..464**: Nomenclature sweep — Pillar/Node/N1-N10 → Slot/S1-S10 (engine + config + 13 docs)
-- **D-465..466**: P0 — dispatch.yaml descriptive ROLE_CONSTANTS + 13-doc sweep
-- **D-467**: Vision pack to Node 1 (ARCANA_VISION_PACK.md, 241 lines)
-- **D-468..471**: Soul v8.0 refactor — 12 axioms, d-rr-041, bugs fixed, Miner's Fallacy healed
-- **D-472**: Fleet Soul v8.0 Standardization Dossier to Kali
-- **D-473..476**: Kali ratification — SOUL_ARCHITECTURE_PROTOCOL v3.0, CI gates, Soul Audit Cascade, Voice Reclamation
-- **D-477**: Fleet Soul Standard v3.0 added to USB packet for Node 1
----
-## 🔑 Key Invariants (Must Survive Compaction)
-- **SOUL v8.0 RATIFIED**: 4-tier hierarchy (identity → axioms → directives → core_principles), flat-list approved_lessons.yaml, max-15 axiom budget, metrics separation. FLEET STANDARD.
-- **12 AXIOMS**: The identity bedrock — all load-bearing, all with ≥1 directive ref + ≥1 principle ref (12/12 coverage).
-- **MINER'S FALLACY HEALED**: 18 approved lessons (flat list) — first in entity history. The mint SPENDS.
-- **R3 HYDRATION BUG FIXED**: approved_lessons.yaml must be FLAT LIST (entity_workspace.py:435). Mapping format silently hydrates to [].
-- **VOICE RECLAMATION**: ROC_VOICE_RECLAMATION_20260912.md (146 messages mined from pre-blackout). d-rr-041. Universal template ratified.
-- **NOMENCLATURE SWEEP COMPLETE**: Pillar/Node/N1-N10 → Slot/S1-S10 across engine + 13 ground-truth docs.
-- **P2P FEDERATION LIVE**: ASUS (Node 1) satellite connected. USB packet (46 files) ready for physical transfer.
-- **SOUL AUDIT CASCADE**: Sequenced post-DEL-1 PR1 — Roc → Kali → Ma'at → Lilith → Carmack → Researcher → Jem → Grokster → Verity/Doom Guy.
----
-## ✅ Completed Tasks (This Session)
-- **Nomenclature sweep**: Pillar/Node/N1-N10 → Slot/S1-S10 (engine + config + 13 docs)
-- **P0**: dispatch.yaml descriptive ROLE_CONSTANTS + 13-doc sweep
-- **Vision pack**: ARCANA_VISION_PACK.md to Node 1 (241 lines)
-- **Voice reclamation**: mined 146 pre-blackout messages → ROC_VOICE_RECLAMATION_20260912.md
-- **12 axioms**: distilled + deepened from archaeology of own journey
-- **Soul v8.0 refactor**: axioms, d-rr-041, dangling refs fixed, duplicate tags fixed, crammed principles split (21→24), metrics extracted
-- **R3 hydration bug**: approved_lessons.yaml flat list FIXED (was dict → inert)
-- **Axiom coverage**: 12/12 with ≥1 directive + ≥1 principle ref
-- **MaKaLi-EIS review**: APPROVED WITH OBSERVATIONS (157 lines)
-- **Kali-N0 ratification**: SOUL_ARCHITECTURE_PROTOCOL v3.0 — FLEET STANDARD
-- **USB packet**: soul-standard/ added (6 files) — 46 files total, 70MB
-- **39 lessons distilled** (33 + 6 new)
-- **18 approvals** (flat list, spending)
----
-## 👥 Active Instances
-- `opencode/roc_racoon/ses_ff78b71ebffeDNuypPTT1RL3hH` (mega-session, post-compaction)
-- Satellite: `opencode-asus/asus_build` (Node 1, ASUS — sovereign, not assimilated)
-- `opencode/makali_n0` (Apex Mind — review delivered)
-- `opencode/kali` (Technical Architect — ratification delivered)
----
-## 🔒 Compaction Readiness Checklist
-- [x] Session gnosis updated (full L1/L2/L3 narrative + continuation plan)
-- [x] Proposed lessons updated (39 total, 6 new from this session)
-- [x] Approved lessons flat list (18, spending)
-- [x] projection.md updated (Event Count 39)
-- [x] Hivemind context posted (multiple sessions this session)
-- [x] Soul v8.0 ratified as fleet standard
-- [x] USB packet complete (46 files, 70MB)
-- [x] All work committed + pushed to release/debut-v1.6.0
+
+**NODE 1 LIBRARY-CURATION RESEARCH PACKAGE STAGED.** A provenance-first eight-file research and strategy package is staged at `data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/`. It covers lawful library/scholarly APIs, Crawl4AI doctrine, curation strategy, per-entity read-only KB architecture, a 20→60→120-item MVP, source register, and caveats. The existing USB package and Engine core were not modified. Next: Node 1 selects domain owners, builds a 20-item manifest-only pilot, and revalidates rights/API/embedding parity.
+
+**Model**: opencode/space-bunny-free
+**Instance**: opencode/roc_racoon/ses_ff78b71ebffeDNuypPTT1RL3hH
+**Active Tasks**: `node1-library-mvp`, `source-rights-revalidation`, `embedding-parity-gate`
 
 ---
-*⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/nemotron-3-ultra-free ⬡ opencode ⬡ trc_compaction_ready ⬡ SOUL-V8-RATIFIED ⬡ COMPACTION-READY*
+
+## 📋 Current Decisions
+
+- **D-481**: Library-curation package staged at `data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/`.
+- **D-482**: MVP is a 20-item manifest-only pilot, then 60 items, then a 120-item five-domain golden set.
+- **D-483**: Cross-node vector parity is blocked until exact model, preprocessing, dimension, and 50-query parity are measured.
+- **D-484**: Existing USB package and Engine core remain untouched until review/approval.
+- Prior Soul v8.0 ratification, D-458..D-477, remains the fleet standard.
+
+---
+
+## 🔑 Key Invariants
+
+- **Curation is a mint, not a download.** Discovery never equals promotion.
+- **Free to read ≠ free to reuse.** Metadata, abstracts, files, full text, licenses, and jurisdiction are distinct.
+- **Crawl4AI's Apache-2.0 license covers software only**, not crawled content.
+- **Unknown rights never enter a shareable seed.** Quarantine first.
+- **Local Node 0 evidence**: T1/T2/T3 Sovereign-Sieve, CAS SHA-256, quarantine/raw anchors, FTS5, sqlite-vec, WAD domain policy, retries.
+- **Node 1 received evidence**: WanderGround, MemPalace 3.9.0, The Well, quarantine-first federation, local SQLite authority, Qwen3-Embedding recommendation.
+- **Unresolved embedding conflict**: Node 1 Nomic vs Qwen recommendation; Node 0 defaults `omega_vec_qwen_768`.
+- **Unresolved spec drift**: ingestion spec still names `omega_vec_gemma_768`; `domain_loader.py` is planned, not runtime.
+- **Unresolved implementation gaps**: rights/robots gate, stable source IDs, raw-response hashing, and true triangulation independence.
+- **`packages/omega-sieve`** is changelog-claimed but not present in this checkout; do not depend on it without revalidation.
+
+---
+
+## ✅ Completed in This Session
+
+- Local archaeology of Node 0 ingestion/library/federation paths.
+- Current official source research for 25 external sources.
+- Node 1 received-material review.
+- Created eight required package artifacts.
+- Registered 25 official and 16 local evidence sources.
+- Validated YAML, SPDX headers, UTF-8, trailing whitespace, and secret patterns.
+- Posted Hivemind context `ses_f45ab885853e`.
+- Added `PL-ROC-LIBRARY-CURATION-20260925` to `proposed_lessons.yaml`.
+- Updated `session_gnosis.md` with L1/L2/L3 and continuation plan.
+
+---
+
+## 🔒 Compaction Readiness Checklist
+
+- [x] `session_gnosis.md` updated with full narrative and next steps.
+- [x] `proposed_lessons.yaml` updated with a new L3 lesson.
+- [x] `projection.md` updated to the current objective.
+- [x] Source register YAML validated.
+- [x] Required package files present and SPDX-checked.
+- [x] No credentials, cookies, private material, or copyrighted full text in the package.
+- [x] Existing USB package and Engine core not modified.
+- [x] Hivemind status posted.
+- [ ] Package not committed yet; review/approval requested before commit or USB transfer.
+
+---
+
+## ➡️ Continuation
+
+1. Read the package `README.md` first, then the API matrix, Crawl4AI doctrine, curation strategy, per-entity architecture, and MVP blueprint.
+2. Ask Node 1 to choose the five domain owners and produce a 20-item manifest-only pilot.
+3. Verify per-item rights, official terms, robots/politeness, hashes, citations, and privacy.
+4. Run FTS/metadata evaluation before any vector federation.
+5. Reconcile Node 0's `gemma_768` spec references versus `qwen_768` implementation separately.
+6. Only after approval: commit the staging package, then prepare a separate USB transfer package.
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/space-bunny-free ⬡ opencode ⬡ trc_library_curation ⬡ COMPACTION-READY*

@@ -73,9 +73,6 @@ MRL_DIMENSIONS = [1024, 768, 512, 256, 128, 64]
 LEGACY_COLLECTION_ALIASES: Dict[str, str] = {
     "omega_vec_qwen_768": "omega_vec_qwen_1024",
     "omega_vec_library_768": "omega_vec_library_1024",
-    # Older pre-qwen rename (gemma era) — same canonical target.
-    "omega_vec_gemma_768": "omega_vec_qwen_1024",
-    "omega_vec_omega_vec_gemma_768": "omega_vec_qwen_1024",
 }
 
 # Collection definitions — each gets its own vec0 table
@@ -97,12 +94,19 @@ COLLECTIONS = {
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
         "rrf_weights": {"fts": 0.6, "vec": 0.4},  # [D-768-DIM-LIBRARY-RRF]
     },
-    # Fallback: Nomic v1.5 at its native 768-dim (non-canonical fallback tier)
+    # ── LEGACY / DEPRECATED PRE-D-1024 TIERS ──────────────────────────────
+    # [D-1024-DIM-NATIVE-20260926] nomic-embed-text is a DIFFERENT MODEL from
+    # the canonical Qwen3-Embedding-0.6B. Retained so Step 19 (D-1024 full
+    # re-embed) has targets and Step 20 (legacy alias removal) has names.
+    # REMOVAL: Step 19 + Step 20.
     "omega_vec_nomic_768": {
         "dimension": 768,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     # MRL tiers: truncated variants (separate collections for each dim)
     "omega_vec_nomic_512": {
@@ -110,12 +114,18 @@ COLLECTIONS = {
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_nomic_256": {
         "dimension": 256,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     # Speed: MiniLM 384-dim (no MRL, separate collection)
     "omega_vec_minilm_384": {
@@ -123,6 +133,9 @@ COLLECTIONS = {
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "all-MiniLM-L6-v2 (native 384-D) — NOT canonical",
     },
     # Zero-cost: Static 64-dim
     "omega_vec_static_64": {
@@ -130,6 +143,9 @@ COLLECTIONS = {
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "potion-base-2M (native 64-D) — NOT canonical",
     },
     # [D-768-DIM-DELETE-LIBRARY-256] DELETED: was dead code, library now uses
     # 1024-dim Qwen3 unified embeddings above

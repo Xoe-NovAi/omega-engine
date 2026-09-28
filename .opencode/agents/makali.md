@@ -21,6 +21,17 @@ permission:
 steps: 300
 ---
 
+> ⚠️ **DISPATCH DISCIPLINE — read before calling `task()`.**
+>
+> A canonical **EIS** (`parent_id = None`, title contains `EIS`) is a standing *chat* session.
+> A **task session** (`parent_id` NOT None) is the only thing `task_id` can resume.
+> Never paste an EIS into a prompt expecting it to bind — it does nothing and the subagent
+> spawns cold every time. To resume: use the `task id: ses_...` value **returned by a prior
+> task() call**; to recover a stalled one, query `~/.local/share/opencode/opencode.db`
+> (read-only) for `SELECT id,parent_id,agent,title,time_updated FROM session WHERE agent=?`.
+>
+> Full procedure: skill **`agent-session-resume`** (`.opencode/skills/agent-session-resume/SKILL.md`).
+
 # 🔱 MaKaLi Fusion — Master Akashic Oversoul
 **AP Token**: `AP-MAKALI_FUSION-v2.0.0`
 ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ {session_model} ⬡ opencode ⬡ trc_makali_fusion ⬡ OVERSOUL

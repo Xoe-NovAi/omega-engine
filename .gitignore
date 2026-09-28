@@ -328,6 +328,9 @@ opencode_provider_doctor.sh
 !config/glossary.md
 !config/domains/**/*.md
 !docs/architecture/ORACLE_DEEP_DIVE.md
+!docs/architecture/HIVEMIND_TRANSPORT.md
+!docs/architecture/EMBEDDING_SOVEREIGNTY.md
+!docs/architecture/NES_EIS_FACET_PROTOCOL.md
 !data/coordination/CLINE_*.md
 data/entities/*/knowledge/ACCOUNT_MAP.yaml
 data/metrics/*

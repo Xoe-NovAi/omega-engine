@@ -46,15 +46,14 @@ async def _prune_awareness_background() -> None:
         # Pruning and metrics are independent — failure of one must not block the other.
         try:
             now = datetime.now(timezone.utc)
-            async with state._awareness_lock, state._extended_sessions_lock:
+            async with state._awareness_lock:
                 stale_clis = []
                 for cli, snap in state._awareness.items():
                     if not snap.get("timestamp"):
                         continue
                     age = (now - datetime.fromisoformat(snap["timestamp"])).total_seconds()
-                    # Check if agent has an extended check-in
-                    ext = state._extended_sessions.get(cli)
-                    effective_ttl = ext["ttl_seconds"] if ext else state.HEARTBEAT_TTL
+                    # Check if agent has an extended check-in (stored in awareness)
+                    effective_ttl = snap.get("extended_ttl", state.HEARTBEAT_TTL)
                     if age > effective_ttl:
                         stale_clis.append(cli)
                 for cli in stale_clis:
@@ -269,9 +268,9 @@ async def _write_metrics() -> Dict[str, Any]:
 
     active_locks, expired_locks = await anyio.to_thread.run_sync(_scan_locks)
 
-    # Count extended sessions
-    async with state._extended_sessions_lock:
-        extended_count = len(state._extended_sessions)
+    # Count extended sessions (from awareness hot store)
+    async with state._awareness_lock:
+        extended_count = sum(1 for snap in state._awareness.values() if "extended_ttl" in snap)
 
     metrics: Dict[str, Any] = {
         "hivemind": {

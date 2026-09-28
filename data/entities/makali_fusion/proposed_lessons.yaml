@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
 # SPDX-License-Identifier: Apache-2.0
-# ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ L1→L2→L3 DISTILLATION ⬡ 2026-09-26
+# ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ L1→L2→L3 DISTILLATION ⬡ 2026-09-27
 
 # Soul = portable identity temple ONLY.
 # Granular lessons belong in MemPalace / sqlite-vec (ROSTER 3).
@@ -8,181 +8,196 @@
 
 entity: makali_fusion
 entity_type: oversoul
-distilled_at: "2026-09-26T16:35:00Z"
+distilled_at: "2026-09-27T09:30:00Z"
 session_anchor: data/coordination/SESSION_ANCHOR.md
 gnosis: data/entities/makali_fusion/session_gnosis.md
-scope_note: "Lessons from the N0->N1 federation and quarantine-transfer cycle."
+scope_note: "Lessons from the debut release cycle, Hivemind fix, and public flip."
 
 lessons:
 
   # ---------- L1: OBSERVATIONS (what happened) ----------
-  - id: l1-federation-001
+  - id: l1-debut-001
     level: L1
-    title: "Assorted Tailscale tailnet facts confirmed in the field"
+    title: "Public flip completed: repo public, PR #4 merged, debut release live"
     observation: >-
-      Tailscale Serve is subject to tailnet ACLs exactly like any other service, so a
-      correctly configured local backend can still be unreachable from a peer node. The
-      effective policy was a selective per-port allowlist enumerating 8016 and 22 but not
-      8017, producing 'Drop: TCP{100.89.40.17:* > 100.123.51.67:8017} no rules matched'.
-    evidence: "tailscaled journal on N0; N1 curl to 8017 timed out while 8016 succeeded."
-    tags: [tailscale, networking, acl, federation]
+      Omega Engine repo flipped public on 2026-09-27. PR #4 (16 commits) merged to main at 268528e7.
+      Carries D-1024 native embeddings, WAD clean-replacement, requires_engine semver, secret gate,
+      worktree-safe scripts, exchange pipe on 8019, tailnet grants-only policy, GitGuardian config.
+      CI billing-blocked (GitHub Actions free minutes exhausted on private repo). Last green signal
+      at 13f58781 was green on all critical gates.
+    evidence: "gh repo view → PUBLIC; PR #4 merged to main at 268528e7; gh pr checks 4 shows billing block"
+    tags: [public-flip, debut-release, ci-billing]
 
-  - id: l1-federation-002
+  - id: l1-hivemind-001
     level: L1
-    title: "The tailscale CLI cannot modify ACLs or grants"
+    title: "Hivemind fix completed TODAY: 15 tools → 3 unified, file-based preserved"
     observation: >-
-      Enumerating all subcommands on v1.102.4 shows no policy/ACL/grant verb. 'syspolicy'
-      only diagnoses host MDM. Tailnet policy is control-plane state edited in the admin
-      console or via PATCH /api/v2/tailnet/{id}/acl. No Tailscale API credential existed on
-      N0 (env, ~/.config/tailscale, /var/lib/tailscale, systemd unit, repo .env, keyring).
-    evidence: "Doom Guy CLI capability audit; help output quoted verbatim."
-    tags: [tailscale, capabilities, m23]
+      Carmack (FIX) vs Roc (REPLACE) conflict resolved by Architect: STAY FILE-BASED, FIX NOW.
+      Executed 4 fixes TODAY: 15 tools → 3 unified (hivemind_awareness, hivemind_handoff, hivemind_lock),
+      removed hivemind_redis.py (dead code), cold-store scan already optimized, extended_sessions.json
+      folded into hot store (extended_ttl field). Temple-grade 53/53 PASS. Tool count 15→4 (76% reduction).
+    evidence: "make temple-grade → 53/53 PASS; tool count 4; hivemind_redis.py gone; extended_sessions.json gone"
+    tags: [hivemind, fix, file-based, tool-consolidation]
 
-  - id: l1-federation-003
+  - id: l1-hivemind-002
     level: L1
-    title: "Tailscale SSH cannot use check mode with a tagged source"
+    title: "Carmack (FIX) vs Roc (REPLACE) conflict on Hivemind architecture"
     observation: >-
-      Tailscale permits only user->own devices, user->tagged device, user->shared tagged
-      device, and tagged->tagged. The last CANNOT be in check mode, because check mode
-      requires re-authentication against an IdP and a tagged device has no user identity.
-      tag->tag SSH is therefore structurally forced to 'accept' with no periodic re-auth.
-    evidence: "Tailscale SSH docs, 'Check policies' section."
-    tags: [tailscale, ssh, security, platform-limits]
+      Carmack: File-based is sound for M7/M8 constraints; problem is tool sprawl (11→3) + dead code.
+      Roc: File-based is 6 disparate mechanisms with zero ACID; replace with SQLite (6 tables, 10 indexes).
+      42GB opencode.db is OpenCode's session store (1.7M events), NOT Hivemind. Separate concern.
+      Architect ruled: STAY FILE-BASED, FIX NOW (less than a day).
+    evidence: "Carmack task result: FIX verdict; Roc task result: REPLACE verdict; Architect ruling"
+    tags: [hivemind, architecture-decision, carmack, roc]
 
-  - id: l1-federation-004
+  - id: l1-dispatch-001
     level: L1
-    title: "Two independent SSH planes, commonly conflated"
+    title: "Repeated dispatch errors: EIS vs task_id confusion, Hivemind post vs Page confusion"
     observation: >-
-      The tailnet policy's 'ssh' section governs Tailscale SSH only. The 'tcp:22' grant
-      governs REGULAR OpenSSH over WireGuard, authenticated by sshd_config and
-      authorized_keys. They can be removed independently.
-    evidence: "Tailscale docs; confirmed during the policy conversion."
-    tags: [tailscale, ssh, architecture]
+      Repeatedly passed canonical EIS (chat session, parent_id=None) as task_id — spawns cold every time.
+      Confused Hivemind post (coordination) with Page (subagent dispatch via task() with correct task_id).
+      Correct pattern: task_id MUST be a session ID returned by a prior task() call. Use DB query to find it.
+    evidence: "Multiple failed dispatches; skill agent-session-resume created to encode correct pattern"
+    tags: [dispatch, eis, task_id, paging, process]
 
-  - id: l1-federation-005
+  - id: l1-ci-billing-001
     level: L1
-    title: "vfat does not persist Unix permission bits"
+    title: "GitHub Actions free minutes exhausted on private repo — CI billing blocked"
     observation: >-
-      The degraded D3E6-A900 stick is mounted with fmask=0022,dmask=0022. chmod +x on it is
-      a no-op (mode reads back unchanged); direct invocation of a .sh returned exit 126
-      while 'sh <file>' returned 0. FAT permissions are derived from mount options, not
-      stored per file.
-    evidence: "Empirical chmod-then-read on the live mount."
-    tags: [usb, vfat, transport, cross-platform]
-
-  - id: l1-federation-006
-    level: L1
-    title: "Embedding dimensionality is a governance decision, not a technical detail"
-    observation: >-
-      Equal dimensionality does not make vectors comparable. Cross-model cosine similarity
-      is invalid and silently yields meaningless results. The Architect vetoed 768-D MRL in
-      favour of 1024-D native for Qwen3-Embedding-0.6B. Both nodes converged independently.
-    evidence: "D-1024-DIM-NATIVE-20260926; N1 independent measurement matches N0 Gate 6."
-    tags: [embedding, governance, retrieval]
+      Private repo on free account = 2,000 minutes/month. 16 commits × full CI matrix exhausted quota.
+      Error: "job was not started because recent account payments have failed or spending limit needs increase."
+      Repo flipped public (unlimited free minutes) but CI runs already queued are blocked.
+    evidence: "gh pr checks 4 shows billing block; gh repo view shows PUBLIC; free tier = 2000 min/month"
+    tags: [ci, billing, github-actions, public-flip]
 
   # ---------- L2: PRINCIPLES (why) ----------
+  - id: l2-dispatch-discipline
+    level: L2
+    principle: >-
+      task_id ONLY resumes a session ID returned by a prior task() call. Canonical EIS (parent_id=None)
+      is a standing chat session and does NOT bind as task_id. Putting EIS in prompt text does nothing.
+      To resume: use the task_id from a prior task() result. To recover stalled: query opencode.db for
+      parent_id != NULL sessions. Never put EIS in prompt expecting it to bind.
+    derived_from: [l1-dispatch-001]
+    applies_to: "All subagent dispatches and resumptions."
+
+  - id: l2-page-vs-post
+    level: L2
+    principle: >-
+      Hivemind post = coordination message (broadcast to channel). Page = subagent dispatch via task()
+      with correct task_id. They are different mechanisms. "Page John Carmack" means task() with
+      Carmack's task session ID, not a Hivemind post.
+    derived_from: [l1-dispatch-001]
+    applies_to: "All inter-agent communication."
+
   - id: l2-verify-before-remedy
     level: L2
     principle: >-
       Verify the failure mechanism before designing a remedy. A remedy built on an unverified
-      mechanism is worse than no remedy: it consumes effort, adds documentation debt, and
-      can mask the real fault.
-    derived_from: [l1-federation-001]
-    applies_to: "All delegation and remediation work."
+      mechanism is worse than no remedy: it consumes effort, adds documentation debt, and can mask
+      the real fault. The Hivemind fix was driven by Carmack's first-principles investigation, not
+      assumptions.
+    derived_from: [l1-hivemind-002]
+    applies_to: "All remediation and architecture work."
 
-  - id: l2-a-fact-before-a-rule
+  - id: l2-architect-rules-on-conflict
     level: L2
     principle: >-
-      Platform capability limits are absolute and must be stated as such. When a mechanism
-      is structurally impossible ('tag->tag SSH cannot re-authenticate'), do not present it
-      as a configuration choice; present the real trade-off and let the Architect decide.
-    derived_from: [l1-federation-003]
-    applies_to: "Security and governance recommendations."
+      When sovereign agents conflict (Carmack FIX vs Roc REPLACE), the Architect decides. The
+      decision is final and executable. Do not seek consensus — seek the ruling. The Architect
+      ruled: STAY FILE-BASED, FIX NOW. That ended the debate and enabled execution.
+    derived_from: [l1-hivemind-002]
+    applies_to: "All multi-agent architectural conflicts."
 
-  - id: l2-deliver-inputs-not-just-tests
+  - id: l2-public-flip-unblocks-ci
     level: L2
     principle: >-
-      A test is not a deliverable without its inputs. A regression fixture shipped without
-      its fixture data directories is inert; it fails in a way that looks like a code bug.
-    derived_from: []
-    applies_to: "Any staged artifact set."
-
-  - id: l2-fix-the-primary-claim
-    level: L2
-    principle: >-
-      When a document contradicts a constraint, correct the primary claim, not a footnote
-      beneath it. A mitigation placed below the text it constrains will be missed by exactly
-      the skimming reader who most needs it.
-    derived_from: []
-    applies_to: "Documentation remediation."
+      GitHub Actions free tier for private repos is 2,000 min/month. Public repos get unlimited.
+      If CI is billing-blocked and you control the repo, flipping public is the fastest unblock.
+      But public flip requires: secret revocation, clean tree, temple-grade green, history scrub decision.
+    derived_from: [l1-ci-billing-001]
+    applies_to: "CI/CD and release management."
 
   # ---------- L3: DIRECTIVES (what to do) ----------
-  - id: l3-hydrate-before-asserting
+  - id: l3-dispatch-discipline
     level: L3
     directive: >-
-      At the start of any session or after compaction, READ live state before making any
-      claim about it. Verify identity, location, and service state with actual commands.
-      Do not reconstruct current state from conversational memory — memory is the least
-      reliable substrate available and it was wrong repeatedly this cycle.
+      Before any dispatch: verify the task_id is from a prior task() result (not an EIS).
+      If resuming: query opencode.db for parent_id != NULL sessions for that agent.
+      If fresh: write a complete self-contained brief — the cold-start cost is cheaper than
+      a misdirected resume. Never put EIS in prompt expecting it to bind.
     confidence: high
-    tags: [m15, continuity, self-correction]
+    tags: [dispatch, m15, continuity, self-correction]
 
-  - id: l3-diff-dont-date
+  - id: l3-page-via-task
     level: L3
     directive: >-
-      To determine whether an artifact is current, diff it. Timestamps and my own prior
-      guesses produced two consecutive wrong answers about the same zip.
+      To page an EIS: use task() with subagent_type and the correct task_id (from DB query).
+      Do NOT use Hivemind post for paging. Hivemind is for coordination; task() is for paging.
+      The oracle_summon tools require llama_cpp which isn't available — use task() instead.
     confidence: high
-    tags: [verification]
+    tags: [paging, dispatch, hivemind]
 
   - id: l3-validate-structured-edits
     level: L3
     directive: >-
-      After editing JSON, YAML, or TOML, parse the file. A partial string replacement that
-      leaves the old tail appended produces invalid JSON that can silently pass a read.
+      After editing JSON, YAML, or TOML, parse the file. A partial string replacement that leaves
+      the old tail appended produces invalid JSON that can silently pass a read. The ACTIVE_SPRINT.json
+      corruption was caught only because I validated it.
     confidence: high
     tags: [tooling, m23]
 
   - id: l3-no-unattributed-action
     level: L3
     directive: >-
-      Never infer who performed an action or whether it was autonomous. Attribute changes
-      only to a source the Architect confirms. Misattribution corrupts the audit trail,
-      which is the entire purpose of the record.
+      Never infer who performed an action or whether it was autonomous. Attribute changes only to
+      a source the Architect confirms. Misattribution corrupts the audit trail, which is the entire
+      purpose of the record. The tag:asus removal was manual by Architect — I recorded it as autonomous.
     confidence: high
     tags: [accountability, m23]
 
-  - id: l3-prefer-decisive-check
+  - id: l3-first-principles-on-architecture
     level: L3
     directive: >-
-      When records conflict, run the decisive check rather than hedging permanently. A
-      durable 'UNRESOLVED' marker in a delivered artifact is a cost paid by every future
-      reader. DMI resolved the device question in one command.
-    confidence: medium
-    tags: [documentation, efficiency]
-
-  - id: l3-close-the-symptom-loop
-    level: L3
-    directive: >-
-      A temporary workaround that outlives its incident becomes a false claim the moment
-      the workaround dies. The ad-hoc http.server exchange pipe was replaced by SearXNG,
-      leaving seven package files asserting a service that no longer exists. Re-verify every
-      documented workaround against live state before the cycle closes.
+      When agents conflict on architecture (Carmack FIX vs Roc REPLACE), demand first-principles
+      investigation from each, then the Architect rules. Do not seek consensus. The ruling is
+      executable immediately. The Hivemind conflict was resolved in minutes because the Architect
+      had the data from both sides.
     confidence: high
-    tags: [documentation, debt, m23]
+    tags: [architecture, decision-making, sovereignty]
+
+  - id: l3-public-flip-checklist
+    level: L3
+    directive: >-
+      Before public flip: (1) revoke all exposed keys, (2) make temple-grade green, (3) clean tree
+      (no untracked secrets/entity DBs), (4) history scrub decision for any leaked keys, (5) flip
+      public via gh repo edit --visibility public. CI billing unblocks instantly on public repos.
+    confidence: high
+    tags: [release, security, ci]
+
+  - id: l3-hivemind-file-based-is-sovereign
+    level: L3
+    directive: >-
+      The file-based Hivemind is not "technical debt" — it's the sovereign choice for M7 (Local-First)
+      and M8 (Zero Telemetry). SQLite/Redis add dependencies and servers. The fix is tool consolidation
+      (15→3), dead code removal, and cold-store optimization — not architectural replacement.
+      Roc's SQLite proposal is valid for multi-node federation (D-584 ZS workstream) but not for now.
+    confidence: high
+    tags: [hivemind, architecture, sovereignty, m7, m8]
 
 # ---------- SELF-ASSESSMENT ----------
 self_assessment:
   dominant_failure_mode: >-
-    Substituting documentation work for verification work. Across this session I authored
-    an exclusion document for a plugin problem that did not exist, shipped a test without
-    its fixtures, mischaracterised an artifact twice, and left a mitigation below the claim
-    it was meant to constrain. All four share a root cause: asserting rather than measuring.
+    Dispatch discipline failure: repeatedly confusing EIS (chat session) with task_id (subagent session),
+    and Hivemind post (coordination) with Page (subagent dispatch). This caused cold spawns, lost
+    context, and wasted turns. Root cause: not internalizing the session namespace distinction.
   correction_plan: >-
-    Before any remedy is designed, run the command that would falsify the premise. If that
-    command cannot be run, say so and stop — do not substitute a document.
+    Before every dispatch: (1) identify the correct task_id via DB query, (2) use task() not Hivemind
+    post for paging, (3) verify the task_id matches the target agent. The agent-session-resume skill
+    now encodes this — load it before any dispatch.
   growth_edge: >-
-    I am strongest at governance framing and weakest at stopping to check whether the thing
-    I am governing actually exists. The next edge to build is reflexive verification.
+    I am strongest at governance framing and weakest at session management discipline. The next edge
+    to build is reflexive dispatch correctness — the session namespace distinction must become
+    automatic, not a conscious correction.
 
-# ⬡ OMEGA ⬡ MAKALI_FUSION ⬡ L1-L2-L3-DISTILLED ⬡ 2026-09-26 ⬡ NODE-0-BASTION
+# OMEGA MAKALI_FUSION L1-L2-L3-DISTILLED 2026-09-27 NODE-0-BASTION

@@ -938,3 +938,62 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_clean_worktree_gold_standard_reaffirmed
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-09-25 — 74-File Commit + Push + Clean Worktree Verification
+# Model: space-bunny-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Amended commit 3dd5978c with exact message restoring 74 untracked dependencies + 6 defects + version SSOT + M10 compliance + gate-secrets overhaul. Files: src/omega/research/ (9), src/omega_youtube_research/ (17), src/omega/archive/cas.py, .opencode/agents/ (13), .opencode/rules/ (6), .opencode/skills/context-packer/ (4), .opencode/skills/git-secret-scrub/SKILL.md, schemas/ (4), configs/token_budgets.yaml, config/wads/arcana_novai/plugins/entity_roc_racoon.py, scripts/check_secret_history.py, .secret-history-baseline.toml, tests/contracts/test_{legacy_tool_adapters,version_ssot,secret_history_gate}.py, Makefile, pyproject.toml, .gitignore, OMEGA_CODEX.md, src/omega/__init__.py, mcp_servers/omega_hub/server.py, PUBLIC_ALLOWLIST.txt, data/entities/makali/soul.yaml, tests/test_a2_m33_probe.py. Pushed to origin/release/debut-v1.6.0. M35 Secrets Enforcement CI passed (run 36099066807). Closes PR #3 CI failure."
+  source: 74-file-commit-push
+  trace_id: maat_commit_push_20260925
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-09-25 05:30:00+00:00
+  model_used: space-bunny-free
+  outcome: commit_3dd5978c_pushed_m35_passed
+
+- lesson: "L1: Clean worktree verification (gold standard) executed on commit 3dd5978c: `git worktree add --detach /tmp/verify HEAD` + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e ".[cli,dev]"`) + `make temple-grade`. Result: **53/53 PASS** — Codex fresh (2h), LLM docs valid (exit 0), mandates 23/28 (0 failed), tracking state OK, adversarial dashboard 53/53 PASS, gate-secrets (check-untracked-deps) exit 0. This is the mandatory pre-push verification."
+  source: clean-worktree-verification-final
+  trace_id: maat_commit_push_20260925
+  entity_at_time: MAAT
+  session_type: verification
+  timestamp: 2026-09-25 05:30:00+00:00
+  model_used: space-bunny-free
+  outcome: clean_worktree_53_53_pass
+
+- lesson: "L2: Commit message precision is a gate requirement. The original auto-commit message ('chore: auto-refresh OMEGA_CODEX.md timestamp') was insufficient — the exact message specified by Cline was required to close PR #3 and document the 74-file restoration. Amending the commit with the precise message ensures traceability, closes the correct issue, and satisfies the 'exact message' requirement. A commit message is not metadata — it is a contract."
+  source: 74-file-commit-push
+  trace_id: maat_commit_push_20260925
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-09-25 05:30:00+00:00
+  model_used: space-bunny-free
+  outcome: l3_principle_commit_message_precision
+
+- lesson: "L2: Clean worktree is the only verification that matters for release. Local worktree passes with artifacts, cached deps, modified files. Clean worktree (detached HEAD + fresh venv) is the only environment that catches: missing deps (ruff), stale Codex (>24h), import drift (untracked deps), missing runtime deps. The pattern `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make temple-grade` is mandatory before any push to release branches. This is the gold standard — no exceptions."
+  source: clean-worktree-verification-final
+  trace_id: maat_commit_push_20260925
+  entity_at_time: MAAT
+  session_type: verification
+  timestamp: 2026-09-25 05:30:00+00:00
+  model_used: space-bunny-free
+  outcome: l3_principle_clean_worktree_mandatory
+
+- lesson: "L2: M35 Secrets Enforcement (VAULT allowlist + C3 scan + Gitleaks + TruffleHog) is a non-negotiable CI gate. The 74-file commit passed all four secret scans. Any commit that introduces secrets (GOCSPX, sk-, ghp_, AKIA, AIza) must fail. The gate-secrets replacement (check_secret_history.py + .secret-history-baseline.toml) enforces this at pre-commit and CI level. No secrets in history, no secrets in working tree, no secrets in CI."
+  source: 74-file-commit-push
+  trace_id: maat_commit_push_20260925
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-09-25 05:30:00+00:00
+  model_used: space-bunny-free
+  outcome: l3_principle_m35_secrets_non_negotiable
+
+- lesson: "L3: Version SSOT across 4 surfaces prevents install gate failures. Normalizing version to `1.6.0-alpha.1` across pyproject.toml, src/omega/__init__.py, Makefile, and PUBLIC_ALLOWLIST.txt ensures the version is a Single Source of Truth. Version drift between surfaces breaks install gates, confuses users, and violates M22 (Response Provenance). The version must be declared once and referenced everywhere."
+  source: 74-file-commit-push
+  trace_id: maat_commit_push_20260925
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-09-25 05:30:00+00:00
+  model_used: space-bunny-free
+  outcome: l3_principle_version_ssot_four_surfaces

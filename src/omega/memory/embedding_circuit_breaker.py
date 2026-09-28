@@ -26,6 +26,7 @@ from typing import Dict, List, Optional
 import anyio
 
 from .embeddings import (
+    EmbeddingProviderUnavailableError,
     IEmbeddingProvider,
     SovereignFallbackEmbeddingProvider,
 )
@@ -139,13 +140,22 @@ class _AsyncBreaker:
 class EmbeddingCircuitBreaker:
     """Failover chain for embedding providers with per-provider circuit breakers.
 
-    Usage:
-        breaker = EmbeddingCircuitBreaker([
-            OllamaEmbeddingProvider("nomic-embed-text"),
-            LMStudioEmbeddingProvider("bge-small-en"),
-            OpenRouterEmbeddingProvider("text-embedding-3-small"),
-        ])
-        vec = await breaker.embed("hello world")  # never raises on chain end
+        Usage:
+        breaker = EmbeddingCircuitBreaker([provider_a, provider_b])
+        vec = await breaker.embed("hello world")
+
+    [D-1024-DIM-NATIVE-20260926] Width enforcement: the breaker is a
+    *failover* device, not a *substitution* device. It will try each
+    configured provider in turn, but a provider that answers at a width
+    other than the canonical width — with no explicit MRL `target_dim`
+    declared — is treated as a FAILURE and the chain continues. When every
+    provider is exhausted the chain falls through to the sovereign hash
+    emitter, which is constructed at the canonical width. The breaker never
+    returns a sub-canonical vector to a canonical caller.
+
+    Do NOT register a sub-canonical model (nomic-embed-text, gemma, minilm,
+    potion) on a chain intended to serve `omega_vec_qwen_1024`. It will be
+    refused, which is the intended M23 behaviour.
     """
 
     def __init__(self, providers: List[IEmbeddingProvider],
@@ -156,6 +166,10 @@ class EmbeddingCircuitBreaker:
             raise ValueError("providers list must not be empty")
         self.providers = providers
         self._timeout_s = timeout_s
+        # [D-1024-DIM-NATIVE-20260926] Width this chain is expected to serve.
+        from .embedding_strategy import get_embedding_strategy
+
+        self._canonical_width = get_embedding_strategy().canonical_dimension
         self._breakers: Dict[IEmbeddingProvider, _AsyncBreaker] = {
             p: _AsyncBreaker(p.__class__.__name__, threshold, cooldown)
             for p in providers
@@ -188,6 +202,25 @@ class EmbeddingCircuitBreaker:
                 # import inspect; if not inspect.iscoroutinefunction(provider.get_embedding):
                 #     vec = await anyio.to_thread.run_sync(provider.get_embedding, text, abandon_on_timeout=True)
                 vec = await provider.get_embedding(text)
+
+                # [D-1024-DIM-NATIVE-20260926] A wrong-width answer is a
+                # FAILURE, not a success. Refuse it here so a sub-canonical
+                # model can never answer a canonical request (M23).
+                if (
+                    self._canonical_width is not None
+                    and vec
+                    and len(vec) != self._canonical_width
+                    and getattr(provider, "_target_dim", None) is None
+                ):
+                    raise EmbeddingProviderUnavailableError(
+                        f"{provider.__class__.__name__} returned {len(vec)}-dim on a "
+                        f"{self._canonical_width}-dim canonical request — "
+                        "cross-model substitution refused "
+                        "(D-1024-DIM-NATIVE-20260926). MRL truncation of a "
+                        "canonical 1024-D vector remains legal; a native "
+                        "sub-canonical vector from another model does not."
+                    )
+
                 breaker.record_success((time.monotonic() - t0) * 1000.0)
                 return vec
             except Exception as e:

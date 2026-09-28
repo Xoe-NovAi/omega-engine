@@ -26,8 +26,74 @@ proposals:
       - docs/federation/MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md:693-706
       - docs/strategy/MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md:13-26
       - docs/strategy/DATA_GOVERNANCE_POLICY_20260912.md:27-61
+  - id: lilith-20260925-n1-readiness-001
+    date: 2026-09-25
+    session_id: ses_fb9721079ffe094GT8MX6a0pXI
+    status: proposed
+    domain: federation-readiness-p2-handshake
+    L1: >-
+      Verified MCP parity at https://n0.tail51f14a.ts.net:8016/mcp/ — 66 tools
+      exposed via HTTPS over Tailscale. Completed P2 handshake: health, initialize,
+      tools/list, system_stats, hivemind_get_awareness, hivemind_post_context.
+      Packaged Archangel transfer (exact commit, version SSOT, loader contract,
+      compatibility assessment, disposable test WAD). Signaled mesh join via
+      hivemind_post_context — accepted. Single remaining blocker: Node 1 WAD
+      contract alignment (5 gaps).
+    L2: >-
+      HTTPS MCP over Tailscale is the federation substrate — no auth, trust
+      boundary = tailnet; ports 22/2049 filtered; all coordination through port
+      8016. 66-tool parity means full federation surface operational cross-node.
+      Archangel package transfers the law (commit, version, contract, tests);
+      Node 1 compliance is the only variable. Mesh join is a Hivemind event,
+      not a config change — presence signaled, awareness propagates via fabric.
+    L3: >-
+      Federation is law transfer, not config sync. The Archangel package
+      transfers the law (commit, version, contract, tests); Node 1 compliance
+      is the only variable. Mesh join is a Hivemind event — presence signaled,
+      awareness propagates through the coordination fabric. Single blocker
+      pattern is correct federation topology: upstream law complete, downstream
+      compliance gate final.
+    evidence:
+      - docs/federation/N1_READINESS_REPORT_20260925.md
+      - exchange/n0-to-n1/wad_loader_contract/WAD_LOADER_CONTRACT.md
+      - exchange/n0-to-n1/wad_loader_contract/NODE1_COMPATIBILITY.md
+      - exchange/n0-to-n1/wad_loader_contract/EXACT_ENGINE_COMMIT.md
+      - exchange/n0-to-n1/wad_loader_contract/VERSION_SSOT.md
+- id: lilith-20260927-sync-brief-001
+    date: 2026-09-27
+    session_id: ses_fb9721079ffe094GT8MX6a0pXI
+    status: proposed
+    domain: observability-watchtower-m23
+    L1: >-
+      Received MaKaLi post-compaction sync brief. Confirmed ground truth (debut
+      live @ 268528e7, N1 43/43, SearXNG :8888, D-1024 native, 4-tool surface).
+      Diagnosed live hub crash-loop: omega-hub.service NRestarts=31, root cause
+      stale import `_extended_sessions` from state.py (refactored away). Watchdog
+      running but blind to import-time crashes (polls /health only). data/health/
+      missing. Reported M22 provenance honestly: opencode/big-pickle, not the
+      brief's nemotron-3-ultra-free. Did not modify code per brief.
+    L2: >-
+      A /health 200 proves a process served a request, not that it booted.
+      Import-time crashes are invisible to endpoint polling. The watchdog must
+      watch NRestarts, exit codes, and stderr. The 2026-09-01 failure class
+      (stale import after refactor) repeated — detection requires an
+      ExecStartPre import-graph gate. Cross-Tailnet peer probes make the mesh
+      the redundancy: a silent hub is detected by the peer.
+    L3: >-
+      Health-probe is not boot-proof: watch restart counters, exit codes, and
+      stderr for the crash-loop class. Crash-loop is an incident, not a retry:
+      NRestarts past StartLimitBurst is a hard-stop (M23). Peer-probe is the
+      mesh-redundancy: federation is the observer. Provenance is observed, not
+      requested: M22 reports the injected model even when a brief suggests
+      another.
+    evidence:
+      - docs/federation/LILITH_SYNC_RESPONSE_20260927.md
+      - mcp_servers/omega_hub/server.py:85
+      - mcp_servers/omega_hub/state.py:460-480
+      - scripts/mcp_watchdog.py
+      - data/federation/tailnet-policy-OMEGA-DEFINITIVE-20260926.hujson
 metadata:
   entity: lilith
   session_id: ses_fb9721079ffe094GT8MX6a0pXI
-  model_used: space-bunny-free
-  last_session_end: '2026-09-24T02:00:00+00:00'
+  model_used: opencode/big-pickle
+  last_session_end: '2026-09-27T23:35:00+00:00'

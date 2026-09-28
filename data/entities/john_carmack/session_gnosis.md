@@ -582,3 +582,64 @@ All prior P0 findings are fixed: lineage-only Flynn/Doom Guy boundary; active ch
 6. Physical USB intake approval after checksum verification.
 
 **Confidence: 9.5/10** from primary source reads and executed probes. **Next owner**: N1 for WAD/embedding reconciliation; operator for trust/runtime decisions; N0 for clean release artifact.
+
+---
+
+## 🔱 2026-09-26 SESSION: n0-to-n1-v2 Final Independent Re-Audit
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`
+**Subject**: `data/federation/usb-payload/exchange/n0-to-n1-v2/` (renamed from `n0-to-n1` at 05:15)
+**Staging**: `/home/arcana-novai/exchange/full-pack-20260926/` (44 files, adds `DELIVERY_SHA256SUMS`)
+**USB** `/media/arcana-novai/D3E6-A900` — RETIRED/degraded, unmounted, not written.
+
+### Verdicts
+
+- Repo v2: **SHIP FOR PHYSICAL QUARANTINE**
+- Staged tree: **SHIP FOR PHYSICAL QUARANTINE**
+- Final authenticated transfer: **NOT CLAIMED**, C6/N0-04 **OPEN**
+
+### Integrity (both locations)
+
+- Manifest `file_count: 41`; 41/41 path/size/hash PASS
+- Root `SHA256SUMS` 42/42 PASS; `DELIVERY_SHA256SUMS` 43/43 PASS (staged only)
+- Nested `doom_guy_transfer/` manifest 3/3 + ledger 4/4 PASS — **never rewritten** (nested manifest hash `6975cab9…` unchanged)
+- YAML/JSON 13/13 PASS; M35 41 files / 0 violations at both
+- Raw host path, trailing `/mcp/`, blind `sed -i`: 0 at both
+- `diff -r` repo↔staged: only `DELIVERY_SHA256SUMS` differs — no orphans, no extras
+- Rename integrity **intact**; zero dangling `n0-to-n1` refs; 9 dirs match README map
+- Repo 43 files / 237,344 B · staged 44 files / 242,376 B · 25 markdown / 177,714 B
+
+### Per-item 1-10
+
+1. Embedding 1024-D — **clean**. 0 `omega_vec_qwen_768`, 0 `dimensions: 768`, 22×1024. 3× `omega_vec_gemma_768` all read stale-spec. Minor: `README_FIRST.md:95` doesn't name the source doc.
+2. Curation ladder — **HIGH-RISK**. Ladder in README §4/§5 + manifest + research README §7, but `08_library_curation_research/README.md:128` still says "Node 1 should begin with a **120-item**…" two lines above its own mitigation. `NODE1_LIBRARY_MVP_BLUEPRINT.md:8,312` unannotated.
+3. Fixture completeness — **clean**. All 7 files under `disposable_test_wad/`. `wads_dir` claim **verified accurate** (canonical → `ROOT/disposable_test_wad`; nested → its own dir).
+4. PWAD transition notice — **clean**. In 4 files. `fa9c4edc` `entity_registry.py:572-578` still concatenates, so fixture 1 / wrapper 0 correct there. Checklist says caps: PASS for engine, **do not "fix" the engine**. `EXACT_ENGINE_COMMIT.md:24-28` = uncommitted, not in `fa9c4edc`, reproducing bug **expected and correct**.
+5. Tailnet policy — **clean, 1 caveat**. Reads policy-enforced not aspirational (`FEDERATION_TOPOLOGY.md:20`, `NODE1_COMPATIBILITY.md:86`). Premium/`checkPeriod` + tests-tripwire documented. Caveat: `NODE1_COMPATIBILITY.md:107` still says "ports filtered".
+6. Degraded-USB transport — **clean**. §A retired-media block (23/34 readable, 11 I/O failures, 0 checksum mismatches), 8017 pipe, hand-delivery, `DELIVERY_SHA256SUMS` 43-entry checkbox. §D MCP duplicate replaced by §F cross-ref at `:68`.
+7. Device identity — **HIGH-RISK**. UNRESOLVED notes list all 3, none selected; entity count volatile (`:37`,`:55`). **But `FEDERATION_TOPOLOGY.md:10` table header still picks a winner** — "(ASUS ExpertBook P1503CVA)" — contradicting its own line 53 "does not guess".
+8. Dated [L1] supersession — **clean**. Both snapshots + all 8 × 2026-09-26 details; qualifier survived: "Node 1 operator confirmation required… `[L1]` reported state, not independent verification."
+9. Historical markers — **clean**. `N1_READINESS_REPORT:8-12` HISTORICAL; `N0_N1_STRATEGY_DIALECTIC_PROTOCOL:3-4` INACTIVE.
+10. README §6/§7/§8 — **clean**. 8016/8017/hand-delivery/USB-retired/SSH-NFS-removed; 2026-09-22 historical-only.
+
+### Stale artifact
+
+`data/federation/usb-payload/exchange/n0-to-n1.zip` — 02:28 snapshot, 111,481 B, 43 files, **self-verifies 38 OK / 4 FAILED** (briefing said 38/42 — its ledger is 42 entries, 4 fail), **15 files differ** from v2, missing the whole policy round. **NOT quarantine-flagged** — no DO-NOT-DELIVER marker, no stale-flag, no cross-reference. Highest-value cheap fix remaining.
+
+### Non-blocking corrections queued
+
+1. `08_library_curation_research/README.md:128` — strike "should begin with 120-item"
+2. `06_archangel_brief/FEDERATION_TOPOLOGY.md:10` — replace parenthetical with "identity unresolved, see note"
+3. Rename zip or drop a marker file beside it
+4. `NODE1_COMPATIBILITY.md:107` — "filtered" → "policy-removed"
+5. `README_FIRST.md:95` — name `INGESTION_PIPELINE_SPEC.md` + restate 1024 canonical
+
+### Open parallel state
+
+- Lilith-N1 sent 2 mesh statuses: Gate C PASSED 33/33 (`ses_0daca13fc343`), USB/P2 re-verify (`ses_4006323ef617`). Both received.
+- Node 1 live WAD fixes (adapters list drop, hierarchy drop, `requires_engine >=1.6.0`, loader-visible entity records) exist on N1 only, not synced to Node 0 `config/wads/arcana_novai/`.
+- Node 0 PWAD clean-replacement fix **deployed but UNCOMMITTED** in `src/omega/oracle/entity_registry.py:572-574`.
+- Plugin review done: `awareness.ts` (hardcoded `agent === "kali"` at :118), `silent-stall-sensor.ts`, `error-capture.ts` — all necessary, all OpenCode-coupled, no Node 0 plugins in package.
+
+**Confidence: 9.7/10.** No files edited. Non-fabrication: all findings from direct reads + hash computation at both locations.
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_v2_reaudit ⬡ COMPACTION-READY*

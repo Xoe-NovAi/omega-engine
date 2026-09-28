@@ -20,7 +20,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health soul-validate
+.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate
 
 help:
 	@echo "Omega Engine Makefile"
@@ -371,9 +371,16 @@ doc-chunk-sprint:
 # meter was decoupled — now gates the chain.)
 # R4 (maat): dashboard-self-test is now part of the chain — the dashboard
 # is M13 shippable only when its 53 adversarial tests pass.
-temple-grade: check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
+# [seam-fix 2026-09-27 maat] check-hub-imports is now the FIRST prerequisite.
+# Rationale: every other gate in this chain is a static/artifact check. None of
+# them execute an import of mcp_servers/. A daemon that cannot import passed
+# this entire chain at 53/53 while crash-looping on boot. Import execution is
+# the cheapest possible ground truth, so it runs FIRST and fails fast — there
+# is no value in validating 53 dashboard cases against a broken engine.
+# Cost ~30-45s (clean worktree + fresh venv + editable install).
+temple-grade: check-hub-imports check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
-	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Hub Imports + Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
 
 # SOUL_ARCHITECTURE_PROTOCOL v3.0 — Soul v8.0 CI gate (ratified by Kali-N0, ho_123f6ebff930)
 # Enforces: axiom coverage (>=1 directive + >=1 principle ref), flat-list approved_lessons.yaml
@@ -799,19 +806,158 @@ gate-secrets:
 	fi; \
 	if [ "$$FAIL" -eq 0 ]; then echo 'gate-secrets PASSED'; else echo 'gate-secrets FAILED'; exit 1; fi
 
-# Check Omega Hub health (SSE endpoint + process)
+# ─────────────────────────────────────────────────────────────────────────────
+# check-hub-imports — TIER B: clean-venv MCP server import gate  [seam-fix 2026-09-27 maat]
+# ─────────────────────────────────────────────────────────────────────────────
+# WHY A TIER B WHEN TIER A EXISTS
+# Tier A (tests/test_hub_import_smoke.py) runs inside the existing venv and
+# rides the default pytest suite — 2-5s, catches the defect on every commit.
+# Tier B builds a DETACHED CLEAN WORKTREE at HEAD with a FRESH venv and an
+# editable install. That is the only configuration that reproduces what a new
+# user or CI runner actually gets. Tier A can pass against a dirty worktree
+# whose untracked files mask an import failure; Tier B cannot, because only
+# committed state exists in the detached worktree.
+#
+# This is the gold standard. It is deliberately NOT in the default pytest path
+# (~30-45s is too slow for every local run) and is wired as the FIRST
+# prerequisite of temple-grade, which is the release gate.
+#
+# WHAT IT IMPORTS — explicit list, never a glob. A `**/server.py` glob would
+# also match data/entities/roc_racoon/workspace/hlmc_ore/gap4_mcp_auth/hub_server.py
+# (carries the same stale import at its line 84) plus two deliberate
+# archaeology snapshots under docs/hardening/omega-hub/. Those must keep their
+# historical code. A glob would force a skip-list that rots.
+# WHAT STATE IS TESTED — and why it is not HEAD
+# A detached worktree at HEAD tests only COMMITTED state. That is correct for
+# verifying a release tag and useless for local development: a developer with
+# a legitimate uncommitted fix would see the gate fail on a tree that is
+# actually healthy, and would be pushed toward `git commit --no-verify` to get
+# a green board. That is exactly the pressure this gate exists to remove.
+#
+# So this gate tests HEAD + the tracked working-tree diff, applied inside the
+# throwaway worktree. Properties that matter:
+#   - It verifies the state a developer intends to ship, including pending fixes.
+#   - It STILL excludes untracked files. An untracked module cannot mask an
+#     import failure, because it is not present in the worktree at all. This is
+#     the defect class that made the original 74-file incident invisible.
+#   - It mutates nothing in the main checkout: `git diff HEAD` does not touch
+#     the index, and `git apply` runs in the throwaway worktree only.
+# If the diff does not apply cleanly, the gate fails loudly rather than
+# silently testing stale content.
+HUB_IMPORT_WORKTREE := /tmp/omega-hub-import-verify
+HUB_IMPORT_MODULES := mcp_servers.omega_hub.server \
+                      mcp_servers.omega_hub.state \
+                      mcp_servers.omega_hub.hub_tools \
+                      mcp_servers.omega_hub.github_bridge \
+                      mcp_servers.searxng.server \
+                      mcp_servers.firecrawl.server
+
+check-hub-imports:
+	@echo "$(YELLOW)Tier B: clean-worktree import gate for MCP servers...$(NC)"
+	@rm -rf $(HUB_IMPORT_WORKTREE); \
+	cleanup() { rm -rf $(HUB_IMPORT_WORKTREE) >/dev/null 2>&1; git worktree prune >/dev/null 2>&1; }; \
+	trap cleanup EXIT INT TERM; \
+	git worktree prune >/dev/null 2>&1; \
+	if ! git worktree add --detach $(HUB_IMPORT_WORKTREE) HEAD >/dev/null 2>&1; then \
+		echo "$(RED)FAIL: could not create detached worktree at HEAD$(NC)"; exit 1; \
+	fi; \
+	git diff HEAD > /tmp/omega-hub-import-$$.patch 2>/dev/null; \
+	if [ -s /tmp/omega-hub-import-$$.patch ]; then \
+		if (cd $(HUB_IMPORT_WORKTREE) && git apply /tmp/omega-hub-import-$$.patch) >/dev/null 2>&1; then \
+			echo "  overlaying tracked working-tree diff onto HEAD (untracked files excluded by design)"; \
+		else \
+			rm -f /tmp/omega-hub-import-$$.patch; \
+			echo "$(RED)FAIL: working-tree diff does not apply onto HEAD — cannot verify$(NC)"; \
+			echo "      the state you are about to commit. Resolve the divergence first."; \
+			exit 1; \
+		fi; \
+	fi; \
+	rm -f /tmp/omega-hub-import-$$.patch; \
+	cd $(HUB_IMPORT_WORKTREE) || { echo "$(RED)FAIL: cannot enter worktree$(NC)"; exit 1; }; \
+	if ! python3 -m venv .venv >/dev/null 2>&1; then \
+		echo "$(RED)FAIL: venv creation failed$(NC)"; exit 1; \
+	fi; \
+	if ! .venv/bin/pip install -q -e ".[cli,dev]" >/dev/null 2>&1; then \
+		echo "$(RED)FAIL: editable install failed in clean worktree$(NC)"; exit 1; \
+	fi; \
+	FAILED=0; \
+	for mod in $(HUB_IMPORT_MODULES); do \
+		if OUT=$$(.venv/bin/python -c "import $$mod" 2>&1); then \
+			echo "$(GREEN)  [ok] $$mod$(NC)"; \
+		else \
+			echo "$(RED)  [FAIL] $$mod$(NC)"; \
+			echo "$$OUT" | tail -12 | sed 's/^/        /'; \
+			FAILED=1; \
+		fi; \
+	done; \
+	if [ "$$FAILED" -ne 0 ]; then \
+		echo "$(RED)check-hub-imports FAILED — a daemon entry point does not import$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(GREEN)check-hub-imports PASSED ($$(echo $(HUB_IMPORT_MODULES) | wc -w) modules import cleanly in a clean venv)$(NC)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Check Omega Hub health — CRASH-LOOP DETECTING  [seam-fix 2026-09-27 maat]
+# ─────────────────────────────────────────────────────────────────────────────
+# WHY THIS WAS REWRITTEN
+# The prior implementation gated on `systemctl --user is-active`, which reports
+# "active" while a Type=simple unit sits in `activating (auto-restart)` — the
+# window between crash and scheduled restart. During the omega-searxng-mcp
+# storm (NRestarts=6991) that window is where the unit spends nearly all of its
+# time. A gate that reports green during a 6991-restart crash loop is worse
+# than no gate: it manufactures false confidence about a dead daemon.
+#
+# FIVE INDEPENDENT CONDITIONS, all required (M23 fail-loud, no soft-failures):
+#   1. ActiveState == active
+#   2. SubState    == running            (catches activating/auto-restart)
+#   3. NRestarts   <= HUB_NRESTART_MAX  (catches the storm numerically)
+#   4. port 8016 actually LISTENing, held by a real PID
+#   5. the port holds the SAME PID for HUB_DWELL_S seconds (dwell)
+# Plus an HTTP 200 on /health. A crash-looping daemon cannot satisfy the
+# dwell check: its PID changes faster than the dwell window.
+HUB_UNIT          := omega-hub.service
+HUB_PORT          := 8016
+HUB_HEALTH_URL    := http://localhost:$(HUB_PORT)/health
+HUB_SSE_URL       := http://localhost:$(HUB_PORT)/sse
+HUB_NRESTART_MAX  := 3
+HUB_DWELL_S       := 5
+HUB_HTTP_TIMEOUT  := 5
+
 check-hub-health:
-	@echo "$(YELLOW)Checking Omega Hub health...$(NC)"
-	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
-		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
-		systemctl --user status omega-hub.service --no-pager; \
+	@echo "$(YELLOW)Checking Omega Hub health (crash-loop detection)...$(NC)"
+	@UNIT="$(HUB_UNIT)"; NRMAX="$(HUB_NRESTART_MAX)"; DWELL="$(HUB_DWELL_S)"; \
+	fail() { \
+		echo "$(RED)FAIL: $$1$(NC)"; \
+		echo "--- unit state ---"; \
+		systemctl --user show $$UNIT -p ActiveState -p SubState -p NRestarts -p MainPID -p ExecMainStatus 2>/dev/null; \
+		echo "--- recent log (last 20) ---"; \
+		journalctl --user -u $$UNIT -n 20 --no-pager 2>/dev/null | tail -20; \
+		echo "$(RED)check-hub-health FAILED$(NC)"; \
 		exit 1; \
-	fi
-	@echo "$(GREEN)omega-hub.service is active$(NC)"
-	@if ! curl -sfI --max-time 3 http://localhost:8016/sse 2>/dev/null; then \
-		echo "$(RED)FAIL: SSE endpoint not responding on localhost:8016/sse$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(GREEN)SSE endpoint responding$(NC)"
-	@echo "$(GREEN)Omega Hub health check passed$(NC)"
+	}; \
+	ST=$$(systemctl --user show $$UNIT -p ActiveState --value 2>/dev/null); \
+	SS=$$(systemctl --user show $$UNIT -p SubState --value 2>/dev/null); \
+	NR=$$(systemctl --user show $$UNIT -p NRestarts --value 2>/dev/null); \
+	[ "$$ST" = "active" ] || fail "ActiveState=$$ST (expected active)"; \
+	[ "$$SS" = "running" ] || fail "SubState=$$SS (expected running — 'activating'/'auto-restart' means crash-looping)"; \
+	echo "  ActiveState=$$ST  SubState=$$SS  NRestarts=$$NR"; \
+	echo "$(GREEN)  [1/5] ActiveState=active SubState=running$(NC)"; \
+	echo "$(GREEN)  [2/5] NRestarts=$$NR <= $$NRMAX$(NC)"; \
+	PID1=$$(ss -ltnp 2>/dev/null | grep "127.0.0.1:$(HUB_PORT) " | grep -o 'pid=[0-9]*' | head -1 | cut -d= -f2); \
+	[ -n "$$PID1" ] || fail "port $(HUB_PORT) is NOT LISTENing on 127.0.0.1"; \
+	echo "$(GREEN)  [3/5] port $(HUB_PORT) LISTENing (pid=$$PID1)$(NC)"; \
+	echo "  dwelling $$DWELL s to confirm the port is stable..."; \
+	sleep $$DWELL; \
+	PID2=$$(ss -ltnp 2>/dev/null | grep "127.0.0.1:$(HUB_PORT) " | grep -o 'pid=[0-9]*' | head -1 | cut -d= -f2); \
+	[ -n "$$PID2" ] || fail "port $(HUB_PORT) stopped LISTENing during the $${DWELL}s dwell window"; \
+	[ "$$PID1" = "$$PID2" ] || fail "pid changed during dwell ($$PID1 -> $$PID2) — the daemon is restarting"; \
+	echo "$(GREEN)  [4/5] dwell ok: port held by pid $$PID2 for >= $$DWELL s$(NC)"; \
+	CODE=$$(curl -s -o /dev/null -w '%{http_code}' --max-time $(HUB_HTTP_TIMEOUT) $(HUB_HEALTH_URL) 2>/dev/null); \
+	[ "$$CODE" = "200" ] || fail "/health returned HTTP $$CODE (expected 200)"; \
+	curl -sfI --max-time $(HUB_HTTP_TIMEOUT) $(HUB_SSE_URL) >/dev/null 2>&1 || fail "SSE endpoint not responding on $(HUB_SSE_URL)"; \
+	echo "$(GREEN)  [5/5] /health HTTP 200 + /sse responding$(NC)"; \
+	UP=$$(cut -d. -f1 /proc/uptime); \
+	AETM=$$(systemctl --user show $$UNIT -p ActiveEnterTimestampMonotonic --value 2>/dev/null); \
+	UPTIME_S=$$( [ -n "$$AETM" ] && echo $$(( UP - AETM/1000000 )) || echo "unknown" ); \
+	echo "$(GREEN)Omega Hub healthy$(NC)  ActiveState=$$ST SubState=$$SS NRestarts=$$NR pid=$$PID2 uptime_s=$$UPTIME_S";
 

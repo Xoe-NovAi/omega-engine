@@ -1158,3 +1158,60 @@ Resume canonical Grokster-EIS and remediate only Carmack's four remaining packag
 transfer unauthorized until explicit Architect disposition. No Engine Core, loader, OpenCode config,
 or identity/entity source files touched. Awaiting next Architect directive.
 
+
+## v22 (2026-09-26) — FULL RE-ISSUE: 1024-D, LADDER, TAILNET GRANTS, v2 RENAME
+
+### Package identity (renamed)
+- Package is now `data/federation/usb-payload/exchange/n0-to-n1-v2/` (Architect renamed from `n0-to-n1`).
+  Rebuild generator repointed to the v2 path; old path no longer exists.
+- Status: `sealed_for_physical_quarantine_carmack_final_audit_passed`; **C6/N0-04 OPEN**; final
+  authenticated transfer NOT claimed. Audit verdict: **SHIP FOR PHYSICAL QUARANTINE** (both locations).
+- Sizes at close: root manifest **41** entries, root ledger **42**, nested 3 + 4 (verify-only),
+  physical 43; staging `/home/arcana-novai/exchange/full-pack-20260926/` = **44 files** with
+  `DELIVERY_SHA256SUMS` 43 entries, 43/43 OK.
+
+### Content rounds applied (this session, in order)
+1. **Embedding 1024-D native** (Architect final veto `D-1024-DIM-NATIVE-20260926`): 08 README L69,
+   PER_ENTITY KB (profile `dimensions: 1024`, 2 prose spots), strategy protocol precondition 6.
+   Nomic-768 native references and MRL-not-canonical statements preserved.
+2. **20/60/120 scope ladder** (20 = Phase 1 only immediately authorized; 60 Phase 2; 120 Phase 3;
+   each behind its own exit gate; no skipping) in README §4 + §5 step 9 + 08 README §7.
+3. **Fixture completeness** (six `disposable_test_wad/**` files mandatory companions; partial copy
+   unusable; the two `.py` copies differ in `wads_dir`).
+4. **PWAD TRANSITION NOTICE** in 4 files: raw exit 0 OR wrapper exit 1 ⇒ engine HAS the fix and the
+   wrapper is stale (PASS for engine, FAIL only for wrapper; do not "fix" the engine).
+   N0 working tree fix is UNCOMMITTED (`M src/omega/oracle/entity_registry.py`), not in `fa9c4edc`.
+   Verified empirically: staged fixture exits **0** on N0, wrapper exits **1** — the documented trap.
+5. **Degraded USB retired**: `D3E6-A900` 23/34 readable, 11 I/O failures → transport is the 8017
+   HTTPS exchange pipe (read-only, N1-pull, PUT 501) or Architect hand-delivery.
+6. **Tailnet `grants` posture of record (2026-09-26)**: granted N1→N0 8016+8017, N0→N1 8016, ICMP
+   both ways; REMOVED node-to-node SSH (tcp:22) and NFS (tcp:2049) and the `funnel` nodeAttrs; kept
+   admin-only SSH in `check` action (12h default checkPeriod — Premium-only override not on plan);
+   added `tests` section where Tailscale REFUSES to save a policy that re-adds 22/2049.
+   Tag→tag SSH was removed because `check` mode cannot apply to a tag source (no user identity).
+7. **Simplification** per Architect: plugin install/exclusion docs and audit report DELETED (plugins
+   are untracked, not in the commit) — over-engineering removed.
+8. **Five Carmack non-blocking corrections** (MaKaLi-applied, verified only): Phase 1 lead sentence in
+   08 §7, device-identity UNRESOLVED in topology table header, policy-removed/test-guarded wording,
+   README caveat 7 naming INGESTION_PIPELINE_SPEC + `omega_vec_qwen_1024`, and stale-artifact
+   retirement (`n0-to-n1-DO-NOT-DELIVER-STALE-0228.zip` + `STALE-ARTIFACTS_DO-NOT-DELIVER.md`,
+   both OUTSIDE the package and absent from the manifest).
+
+### Reverted under Architect correction (recorded, not re-applied)
+- Node 0 crash-remediation doc: MaKaLi framed a **Node 0** incident log as Node 1 guidance →
+  REVERTED completely (attribution error must not ship). Zero residue confirmed.
+- Plugin logDir/agent-filter patching and the "Node 0 plugin exclusion" doc: both obsolete once the
+  Architect established the plugin files are untracked and absent from the commit.
+
+### Verification at close (both trees)
+41/41 manifest, 42/42 ledger, 3/3 + 4/4 nested, 13/13 YAML/JSON, M35 0 violations, raw host paths 0,
+trailing `/mcp/` 0, `sed -i` 0, stale-audit language 0, `diff -r` only `DELIVERY_SHA256SUMS`.
+Negative + positive assertion sets all pass. Legitimate carve-outs documented: `ASUS ExpertBook
+P1503CVA` only inside the 3-identifier UNRESOLVED list; `omega_vec_gemma_768` in exactly 2 research
+files + README caveat 7, all naming INGESTION_PIPELINE_SPEC as stale.
+
+### State
+`SEALED / SHIPPED FOR PHYSICAL QUARANTINE` (Carmack final re-audit, both locations). Awaiting Node 1
+ingestion via the 8017 pipe or Architect hand-delivery. C6/N0-04 OPEN — no final authenticated
+transfer authorization exists. No Engine Core, identity source, OpenCode config, credentials,
+firewall, tailscale policy, 8016/8017 routing, or USB media modified by this entity.

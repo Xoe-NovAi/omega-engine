@@ -82,7 +82,6 @@ from mcp_servers.omega_hub.state import (
     research_engine, sovereign_search_service,
     _current_entity, HEARTBEAT_TTL, HALL_OF_RECORDS,
     _hot_store, _hot_store_lock, _awareness, _awareness_lock,
-    _extended_sessions, _extended_sessions_lock, EXTENDED_SESSIONS_FILE,
     EXTENDED_SAFETY_TTL_DEFAULT,
     _background_tasks, _get_intent_matcher,
     HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE,
@@ -226,17 +225,63 @@ _LEGACY_TOOL_ADAPTERS = {
     "oracle_list_slot_keepers": ("oracle_debug", {"action": "list_slot_keepers"}),
     "oracle_assess_intent": ("oracle_debug", {"action": "assess_intent"}),
     "oracle_discover_entity": ("oracle_debug", {"action": "discover_entity"}),
+    # Hivemind awareness: 9 fragmented tools → 1 action-based tool
+    # [seam-fix 2026-09-28 maat] These 9 names were previously listed in
+    # _PASSTHROUGH_TOOLS, which does `getattr(_tools, name)`. The consolidation
+    # deleted all 9 from tools.py, so EVERY one of them raised
+    #   AttributeError: module '...hub_tools.tools' has no attribute 'hivemind_post_context'
+    # on first use — a deferred failure that only fired when a caller actually
+    # invoked the name, which is why the hub booted clean and stayed broken.
+    # They are adapters now, bound to the correct hivemind_awareness action.
+    "hivemind_post_context": ("hivemind_awareness", {"action": "post"}),
+    "hivemind_heartbeat": ("hivemind_awareness", {"action": "heartbeat"}),
+    "hivemind_get_awareness": ("hivemind_awareness", {"action": "get"}),
+    "hivemind_get_continuation": ("hivemind_awareness", {"action": "continuation"}),
+    "hivemind_extended_checkin": ("hivemind_awareness", {"action": "extended_checkin"}),
+    "hivemind_extended_checkout": ("hivemind_awareness", {"action": "extended_checkout"}),
+    "hivemind_get_session": ("hivemind_awareness", {"action": "session"}),
+    "hivemind_list_sessions": ("hivemind_awareness", {"action": "list"}),
+    "hivemind_get_entity_context": ("hivemind_awareness", {"action": "entity_context"}),
+    # Hivemind lock: 3 fragmented tools → 1 action-based tool (same defect, same fix)
+    "hivemind_workspace_lock_acquire": ("hivemind_lock", {"action": "acquire"}),
+    "hivemind_workspace_lock_release": ("hivemind_lock", {"action": "release"}),
+    "hivemind_workspace_lock_check": ("hivemind_lock", {"action": "check"}),
 }
 
-# Tools still resolvable by their original name.
+# Legacy parameter names that differ from their unified replacement.
+# [seam-fix 2026-09-28 maat] The adapter forwards **kwargs straight through, so a
+# legacy name whose signature used a different parameter name raises TypeError on
+# call. This was the only such mismatch across all 12 awareness/lock tools,
+# established by comparing every pre-consolidation signature
+# (tools.py.fixbak) against the unified ones:
+#
+#   OLD  hivemind_get_entity_context(entity_name: str)      tools.py.fixbak:854
+#   NEW  hivemind_awareness(action, channel, entity, ...)   tools.py:2125
+#
+# The other 11 (post_context, heartbeat, get_awareness, get_continuation,
+# extended_checkin/out, get_session, list_sessions, lock_acquire/release/check)
+# share every parameter name and forward unchanged.
+#
+# Kept declarative and separate from _LEGACY_TOOL_ADAPTERS so the binding map
+# stays a flat (target, kwargs) table that existing adapter-contract tests read
+# without needing to know about renames.
+_LEGACY_KWARG_RENAMES = {
+    "hivemind_get_entity_context": {"entity_name": "entity"},
+}
+
+# Tools still resolvable by their original name — these MUST still exist as
+# module-level functions in hub_tools/tools.py, because __getattr__ forwards
+# them with a bare getattr(_tools, name) and no adapter.
+#
+# [seam-fix 2026-09-28 maat] The 9 Hivemind awareness names and 3 Hivemind lock
+# names were REMOVED from this set and given real adapter bindings above. They
+# were dead entries: naming a deleted symbol here produced a shim that resolved
+# the name and then failed with AttributeError on invocation. Every name in this
+# set is asserted to exist by tests/test_hub_import_smoke.py::test_passthrough_tools_exist,
+# so a future consolidation cannot silently reintroduce a dead passthrough.
 _PASSTHROUGH_TOOLS = frozenset({
     "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
-    "oracle_entity_info", "sovereign_search", "hivemind_post_context",
-    "hivemind_heartbeat", "hivemind_get_awareness", "hivemind_get_continuation",
-    "hivemind_extended_checkin", "hivemind_extended_checkout", "hivemind_get_session",
-    "hivemind_list_sessions", "hivemind_get_entity_context",
-    "hivemind_workspace_lock_acquire", "hivemind_workspace_lock_release",
-    "hivemind_workspace_lock_check",
+    "oracle_entity_info", "sovereign_search",
 })
 
 
@@ -258,10 +303,15 @@ def __getattr__(name: str):
 
     if name in _LEGACY_TOOL_ADAPTERS:
         target_name, bound_kwargs = _LEGACY_TOOL_ADAPTERS[name]
+        renames = _LEGACY_KWARG_RENAMES.get(name, {})
         _raw = _raw_tool(getattr(_tools, target_name))
 
         async def _legacy_adapter(**kwargs):
             """Backward-compatible adapter → unified action-based tool."""
+            if renames:
+                for old_param, new_param in renames.items():
+                    if old_param in kwargs:
+                        kwargs[new_param] = kwargs.pop(old_param)
             return await _raw(**{**bound_kwargs, **kwargs})
 
         _legacy_adapter.__name__ = name

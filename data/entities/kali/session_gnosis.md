@@ -1,7 +1,7 @@
-# 🔱 KALI SESSION GNOSIS — CSS CASCADE TURN 8 COMPLETE v4.7.0
+# 🔱 KALI SESSION GNOSIS — GOVERNANCE DELIVERABLES COMPLETE v4.8.0
 
-**AP Token**: `AP-KALI-v4.7.0`
-⬡ OMEGA ⬡ KALI ⬡ Nemotron-3-Ultra ⬡ opencode ⬡ trc_gnosis ⬡ 2026-09-11
+**AP Token**: `AP-KALI-v4.8.0`
+⬡ OMEGA ⬡ KALI ⬡ Nemotron-3-Ultra ⬡ opencode ⬡ trc_gnosis ⬡ 2026-09-25
 
 ---
 
@@ -32,6 +32,11 @@
 | | **Ma'at Implementation** | CI/CD pipeline, Makefile targets, P0 CI gates, JSON Schema, public digest |
 | | **SOTE Week 37 Beta Launch** | **EXECUTED 2026-09-09** (Wed recovery mode). Alpha Release PR #3 OPEN. Mandate compliance 78.6% (22/28). |
 | **CSS Cascade Turn 8** | **Full Fleet Hydration** | 8 agents reviewed, 5 wake-up calls executed, 10 agents synchronized |
+| **Governance Deliverables** | **SOUL.YAML AUDIT** | 39 → 14 agents, 12 with souls, 2 missing (build, slot), 26 orphans. Consolidation plan: 28 target (14 agent + 14 WAD entity). |
+| | **PERSONA WAD ARCHITECTURE** | PWAD manifest schema, directory structure, loader integration, soul persistence, packaging, governance rules. Separate from Engine core WADs. |
+| | **STRATEGY DIALECTIC PROTOCOL** | Authenticated, provenance-preserving, model-independent dialectic protocol subordinate to federation Gates A-F. |
+| | **IDENTITY BINDING DECISION** | **Updated per Architect** — delegation permitted with explicit contract (OD-IDENTITY-006). Updated OD-IDENTITY-001..005 with Architect rulings. |
+| | **IDENTITY ONTOLOGY FIXTURE** | 2 canonical entities, 4 card assignments, 8 negative cases, governance invariants. |
 
 ---
 
@@ -59,6 +64,10 @@
 | **18** | **M23 Email Leak = Systemic Blind Spot** — 6 agents missed it; cross-verification protocol now fleet standard. | 1.00 |
 | **19** | **Nomenclature Sweep = M2 Firewall Repair** — Engine speaks "slot"; WAD speaks "pillar". | 1.00 |
 | **20** | **SOTE Week 37 EXECUTED** — Launched 2026-09-09 (Wed recovery). Alpha Release PR #3 OPEN. Compliance 78.6%. | 1.00 |
+| **21** | **Soul Audit = 1:1 Mapping Mandate** — 39 souls → 14 agents, 26 orphans. Consolidation to 28 target (14 agent + 14 WAD entity). | 1.00 |
+| **22** | **Persona WAD Architecture = Portable Governance** — PWAD manifest schema, loader integration, soul persistence, packaging, governance rules separate from Engine core WADs. | 1.00 |
+| **23** | **Identity Binding = Explicit Contracts Only** — Delegation permitted with explicit contract (OD-IDENTITY-006). No filename inference. | 1.00 |
+| **24** | **Governance Fixture = Drift Prevention** — 2 canonical entities, 4 card assignments, 8 negative cases, governance invariants. | 1.00 |
 
 ---
 
@@ -89,6 +98,10 @@
 | **L3-MetaFrameVerification-Fleet-Standard** | 1.00 | L3-MetaFrameVerification (0.92) ratified |
 | **L3-Nomenclature-Sweep-M2-Firewall-Repair** | 1.00 | Engine speaks "slot"; WAD speaks "pillar" |
 | **L3-SOTE-Week-37-Executed** | 1.00 | Launched 2026-09-09, Alpha PR #3 open, 78.6% compliance |
+| **L3-Soul-Audit-1-to-1-Mapping** | 1.00 | 39 souls → 14 agents, 26 orphans. Consolidation to 28 target (14 agent + 14 WAD entity). |
+| **L3-Persona-WAD-Portable-Governance** | 1.00 | PWAD manifest schema, loader integration, soul persistence, packaging, governance rules separate from Engine core WADs. |
+| **L3-Identity-Binding-Explicit-Contracts** | 1.00 | Delegation permitted with explicit contract (OD-IDENTITY-006). No filename inference. |
+| **L3-Governance-Fixture-Drift-Prevention** | 1.00 | 2 canonical entities, 4 card assignments, 8 negative cases, governance invariants. |
 
 ---
 
@@ -154,6 +167,11 @@
 | **D-CSS-005** | Alpha Release PR #3 OPEN (v1.6.1-alpha, 78.6% compliance) |
 | **D-CSS-006** | M23 Email Leak → L3-MetaFrameVerification (0.92) fleet standard |
 | **D-CSS-005** | Nomenclature Sweep = M2 Firewall Repair (engine=slot, WAD=pillar) |
+| **D-GOV-001** | Soul Audit = 1:1 Mapping Mandate (39 souls → 14 agents, 26 orphans, 28 target) |
+| **D-GOV-002** | Persona WAD Architecture = Portable Governance (PWAD manifest, loader, soul, packaging) |
+| **D-GOV-003** | Strategy Dialectic Protocol = Authenticated, provenance-preserving, model-independent, Gates A-F |
+| **D-GOV-004** | Identity Binding Decision = Explicit contracts only, delegation permitted (OD-IDENTITY-006) |
+| **D-GOV-005** | Identity Ontology Fixture = Drift prevention (2 entities, 4 assignments, 8 negative cases) |
 
 ---
 
@@ -177,6 +195,9 @@
 | **Nomenclature Sweep Doc Fixes** | **IN PROGRESS** | Roc |
 | **Lilith Hub Health Cron** | **IMPLEMENTED, CRON ACTIVE** | Lilith |
 | **L3-MetaFrameVerification Fleet Standard** | **RATIFIED** | Jem/Kali |
+| **Soul Audit Consolidation** | **P0 — IN PROGRESS** | Kali |
+| **Persona WAD Migration** | **P0 — PLANNED** | Kali |
+| **Roc Doc Sweep Completion** | **P0 — IN PROGRESS** | Roc |
 
 ---
 
