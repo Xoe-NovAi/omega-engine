@@ -105,7 +105,7 @@ def check_dependencies() -> None:
         failures.append("No dependencies parsed from pyproject.toml")
         return
 
-    # Deduplicate while preserving order (redis appears in both deps and optional)
+    # Deduplicate while preserving order (a dep may appear in both core and an extra)
     seen: set[str] = set()
     unique_deps: list[str] = []
     for dep in all_deps:

@@ -5,10 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.8.0
+**Version**: 3.9.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-08-14 (Added M26 Doc Standards, M27 Tracking Integrity)
+**Updated**: 2026-09-28 (Added M29 Sovereign Artifact Preservation)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -244,7 +244,23 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
   - CI gate: `make temple-grade` + `make test` include `check-tracking-state`
   - Relational integrity: any R-ID referenced in `ACTIVE_SPRINT.json` MUST exist in `GAP_REGISTRY.json`
 
-### 28. Third-Party Boundary & Public Secret Exemption (M35 — NEW — 2026-08-30)
+---
+
+### 28. Sovereign Artifact Preservation (M29 — NEW — 2026-09-28)
+- **Mandate**: No sovereign artifact (handoff packets, session gnosis, proposed lessons, entity souls, federation contracts, audit trails, MemPalace events) shall be automatically deleted, overwritten, or rendered unrecoverable by any automated process.
+- **Constraint**: 
+  - Transitions between lifecycle states must be **explicit, auditable, and recoverable**.
+  - Deep-archival to cold storage requires a signed manifest and operator authorization.
+  - Destruction requires a deliberate human act with provenance recorded in the PIVOT_LOG.
+- **Reason**: The Hivemind reaper (`background.py`) deleted handoff packets 37 days after submission via `f.unlink()` — no tombstone, no receipt, no index entry — while `make temple-grade` reported 53/53, because temple-grade ran **zero pytest tests** and no gate imported an entry point. Five instances of that same shape landed in one week. M29 makes the principle explicit: **evidence survives by default.**
+- **Enforcement**: 
+  - `make check-sahs` asserts exactly one authoritative handoff surface per node; all others are read-only projections.
+  - `make check-policy-constants` asserts `handoff.stale_threshold_days == handoff.hot_storage_max_days` (one constant, not two).
+  - The reaper may only move envelopes between queues (`hot → cold`); it may not unlink an envelope, change `status`, change `read_by`, or write a terminal decision.
+
+---
+
+### 29. Third-Party Boundary & Public Secret Exemption (M35 — NEW — 2026-08-30)
 - **Mandate**: All third-party code MUST be managed via a controlled boundary; public OAuth client secrets (per RFC 6749 §2.1, RFC 8252 §8) MUST be catalogued in `data/secrets-public.toml` with primary-source verification.
 - **Constraint**:
   1. **SPDX/REUSE Enforcement**: All third-party code MUST carry `SPDX-License-Identifier` in file header OR entry in `.reuse/dep5` (or `REUSE.toml` per REUSE Specification v3.3, 2024-11-14).

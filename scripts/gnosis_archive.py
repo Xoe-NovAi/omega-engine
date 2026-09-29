@@ -241,6 +241,35 @@ def do_stamp(entity: str, stamped_by: str, supersedes: str | None, dry_run: bool
 
     block = build_block(entity, stamped_by, supersedes)
 
+    # Preserve an existing `history_lost` line across refreshes. The pre-regime
+    # loss is a permanent property of an entity's history: once an entity has
+    # ONE archive it stops appearing in at_risk_entities(), so a later `stamp`
+    # would otherwise silently erase the only record that earlier states were
+    # lost. That is precisely the silent-data-loss failure this tooling exists
+    # to prevent, and it would have recurred on the very next session.
+    #
+    # Two sources, in order of authority:
+    #   1. the current file's own header (already there -> just carry it)
+    #   2. the newest archived copy, which is immutable and retains the line
+    # Note we must NOT gate the archive scan on the current file having the
+    # line: that is circular, because the current file is precisely what lost
+    # it. (First draft of this bug did exactly that and silently no-opped.)
+    prior = parse_meta(text) or {}
+    history_lost = prior.get("history_lost")
+    if not history_lost:
+        ad = archive_dir(entity)
+        if ad.is_dir():
+            for cand in sorted(ad.glob("session_gnosis_*.md"), reverse=True):
+                try:
+                    pm = parse_meta(cand.read_text(encoding="utf-8"))
+                except OSError:
+                    continue
+                if pm and pm.get("history_lost"):
+                    history_lost = pm["history_lost"]
+                    break
+    if history_lost:
+        block = build_block(entity, stamped_by, supersedes, history_lost)
+
     if META_RE.search(text):
         new_text = META_RE.sub(block, text, count=1)
         action = "refreshed"

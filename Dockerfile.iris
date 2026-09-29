@@ -44,8 +44,7 @@ RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
         "pydantic>=2.11.0" \
         "tenacity>=8.0.0" \
         "aiosqlite>=0.20.0" \
-        "qdrant-client>=1.11.0" \
-        "redis>=7.0.0"
+        "qdrant-client>=1.11.0"
 
 # ── Application code ───────────────────────────────────────────────────
 COPY src/omega/ /app/omega/

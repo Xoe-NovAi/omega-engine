@@ -38,7 +38,7 @@ DYTOPO_CONFIG = {
     "max_signals": 10,
     "expertise_weight": 0.7,
     "confidence_weight": 0.3,
-    "redis_channels": {
+    "hivemind_channels": {
         "proposals": "hivemind:research:proposals",
         "signals": "hivemind:research:signals",
         "consensus": "hivemind:research:consensus",
@@ -69,22 +69,23 @@ class ResearchHivemindBridge:
     DyTopo Cross-Pollination Bridge for Research Agents.
 
     Flow:
-    1. broadcast_proposal() → Fan-out to relevant agents via Redis Pub/Sub
+    1. broadcast_proposal() → Fan-out to relevant agents via the Hivemind
     2. collect_signals() → Gather critiques, validations, extensions
     3. synthesize_consensus() → Weighted aggregation → ConsensusResult
 
-    Integrates with existing Hivemind (M12) via omega-hub_hivemind_redis_publish/subscribe.
+    Integrates with the Hivemind (M12) via the local publish/subscribe
+    adapters below, which route to `hivemind_awareness`.
     """
 
     def __init__(
         self,
-        redis_publish: Callable[[str, str, int], Any],
-        redis_subscribe: Callable[[str, float, int], Any],
+        publish_sink: Callable[[str, str, int], Any],
+        subscribe_source: Callable[[str, float, int], Any],
         get_awareness: Callable[[], Any],
         nodes: dict[str, DyTopoNode] | None = None,
     ):
-        self.redis_publish = redis_publish
-        self.redis_subscribe = redis_subscribe
+        self.publish_sink = publish_sink
+        self.subscribe_source = subscribe_source
         self.get_awareness = get_awareness
         self.nodes = nodes or {}
         self._pending_proposals: dict[str, ResearchProposal] = {}
@@ -92,7 +93,7 @@ class ResearchHivemindBridge:
 
     async def broadcast_proposal(self, proposal: ResearchProposal) -> list[str]:
         """
-        Fan-out proposal to relevant agents via Hivemind Redis Pub/Sub.
+        Fan-out proposal to relevant agents via the Hivemind.
 
         Returns list of agent_ids that received the proposal.
         """
@@ -111,9 +112,9 @@ class ResearchHivemindBridge:
             "trace_id": str(uuid4()),
         }
 
-        # M12: Publish to Hivemind Redis channel
-        channel = DYTOPO_CONFIG["redis_channels"]["proposals"]
-        await self.redis_publish(channel, json.dumps(payload), ttl=30)
+        # M12: Publish to the Hivemind
+        channel = DYTOPO_CONFIG["hivemind_channels"]["proposals"]
+        await self.publish_sink(channel, json.dumps(payload), ttl=30)
 
         # Track pending
         self._pending_proposals[str(proposal.id)] = proposal
@@ -147,9 +148,9 @@ class ResearchHivemindBridge:
         """
         Gather signals from peer agents for a proposal.
 
-        Uses Redis Pub/Sub subscription with timeout (M23: no indefinite blocking).
+        Polls the Hivemind snapshot with a timeout (M23: no indefinite blocking).
         """
-        channel = DYTOPO_CONFIG["redis_channels"]["signals"]
+        channel = DYTOPO_CONFIG["hivemind_channels"]["signals"]
         proposal_key = str(proposal_id)
 
         # Subscribe with timeout
@@ -162,7 +163,7 @@ class ResearchHivemindBridge:
                 break
 
             try:
-                result = await self.redis_subscribe(
+                result = await self.subscribe_source(
                     channel, timeout=min(remaining, 5.0), max_messages=10
                 )
                 if result.get("status") == "success":
@@ -336,7 +337,7 @@ class ResearchHivemindBridge:
 
     async def _publish_consensus(self, consensus: ConsensusResult) -> None:
         """Publish consensus result to Hivemind."""
-        channel = DYTOPO_CONFIG["redis_channels"]["consensus"]
+        channel = DYTOPO_CONFIG["hivemind_channels"]["consensus"]
         payload = {
             "type": "research_consensus",
             "consensus": {
@@ -349,7 +350,7 @@ class ResearchHivemindBridge:
             },
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
-        await self.redis_publish(channel, json.dumps(payload), ttl=60)
+        await self.publish_sink(channel, json.dumps(payload), ttl=60)
 
 
 # ── Hivemind Adapter Functions (M12 Integration) ─────────────────────────
@@ -411,7 +412,7 @@ def _awareness():
     return getattr(hivemind_awareness, "__wrapped__", hivemind_awareness)
 
 
-async def hivemind_redis_publish(channel: str, message: str, ttl: int = 20) -> dict:
+async def hivemind_publish(channel: str, message: str, ttl: int = 20) -> dict:
     """Publish a DyTopo payload to the Hivemind.
 
     Formerly `omega_hub.omega_hub_hivemind_redis_publish` via Redis pub/sub.
@@ -433,13 +434,13 @@ async def hivemind_redis_publish(channel: str, message: str, ttl: int = 20) -> d
         )
     except Exception as e:  # M23: fail loud, never a fake success dict
         raise HivemindTransportError(
-            f"hivemind_redis_publish('{channel}') failed — no fake success returned. "
+            f"hivemind_publish('{channel}') failed — no fake success returned. "
             f"Root cause: {e}"
         ) from e
     return {"status": "published", "channel": channel, "result": result}
 
 
-async def hivemind_redis_subscribe(
+async def hivemind_subscribe(
     channel: str, timeout: float = 2.0, max_messages: int = 50
 ) -> dict:
     """Read pending DyTopo signals from the Hivemind awareness snapshot.
@@ -458,7 +459,7 @@ async def hivemind_redis_subscribe(
         raw = await _awareness()(action="get", limit=max_messages)
     except Exception as e:
         raise HivemindTransportError(
-            f"hivemind_redis_subscribe('{channel}') failed — "
+            f"hivemind_subscribe('{channel}') failed — "
             f"awareness snapshot unavailable. Root cause: {e}"
         ) from e
 
@@ -466,7 +467,7 @@ async def hivemind_redis_subscribe(
         snapshot = json.loads(raw) if isinstance(raw, str) else raw
     except (TypeError, ValueError) as e:
         raise HivemindTransportError(
-            f"hivemind_redis_subscribe('{channel}') got unparseable awareness "
+            f"hivemind_subscribe('{channel}') got unparseable awareness "
             f"payload: {e}"
         ) from e
 
@@ -509,8 +510,8 @@ async def hivemind_get_awareness() -> list[dict]:
 def create_research_bridge(nodes: dict[str, DyTopoNode] | None = None) -> ResearchHivemindBridge:
     """Create bridge with default Hivemind adapters."""
     return ResearchHivemindBridge(
-        redis_publish=hivemind_redis_publish,
-        redis_subscribe=hivemind_redis_subscribe,
+        publish_sink=hivemind_publish,
+        subscribe_source=hivemind_subscribe,
         get_awareness=hivemind_get_awareness,
         nodes=nodes,
     )

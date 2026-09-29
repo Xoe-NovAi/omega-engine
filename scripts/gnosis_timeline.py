@@ -50,6 +50,67 @@ ROW_RE = re.compile(
 HEAD_RE = re.compile(r"^#{1,6}\s*(?P<date>20\d\d-\d\d-\d\d)\b.*$", re.M)
 SESSION_ID_RE = re.compile(r"\bses_[A-Za-z0-9]{8,}\b")
 
+# ═══════════════════════════════════════════════════════════════════════════
+# PROVENANCE — M29-class blocker, fixed 2026-09-28 (maat)
+# ═══════════════════════════════════════════════════════════════════════════
+# This module previously contained ZERO references to GNOSIS-META,
+# schema_version, supersedes or history_lost. It parsed gnosis entries and
+# never surfaced provenance, so an entity carrying an explicit
+# `history_lost:` line — meaning its pre-regime history was overwritten before
+# versioning began — rendered IDENTICALLY to an entity with intact history.
+#
+# The provenance exists in the file. The reporting layer dropped it. That is
+# laundering by omission, and it is the exact shape of every defect in this
+# arc: the fact was recorded, and then not reported, so a reader could not tell
+# a clean record from a lossy one. The fix scoped to the file where the bug was
+# found is not a fix of the class.
+META_BEGIN = "<!-- GNOSIS-META:BEGIN"
+META_RE = re.compile(
+    re.escape(META_BEGIN) + r".*?" + re.escape("<!-- GNOSIS-META:END -->"), re.S
+)
+
+
+def parse_meta(text: str) -> dict:
+    """Parse the GNOSIS-META header. Returns {} when absent.
+
+    Keys are `key: value` so a model can read them and a regex can recover them
+    without a YAML dependency.
+    """
+    m = META_RE.search(text)
+    if not m:
+        return {}
+    meta: dict[str, str] = {}
+    for line in m.group(0).splitlines():
+        kv = re.match(r"\s*(?:#\s*)?([a-z_]+):\s*(.+?)\s*$", line)
+        if kv and kv.group(1) != "GNOSIS-META":
+            meta[kv.group(1)] = kv.group(2)
+    return meta
+
+
+def entity_provenance(entity: str, path: Path) -> dict:
+    """Provenance for one gnosis. Surfaced in every output format.
+
+    `history_lost` is carried through verbatim — the point is that a consumer
+    can tell "this entity's earlier gnoses are gone" from "this entity has a
+    continuous record", without opening the file.
+    """
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError as exc:
+        return {"entity": entity, "error": str(exc)}
+    meta = parse_meta(text)
+    return {
+        "entity": entity,
+        "stamped": bool(meta),
+        "stamped_at": meta.get("stamped_at"),
+        "stamped_by": meta.get("stamped_by"),
+        "supersedes": meta.get("supersedes"),
+        "schema_version": meta.get("schema_version"),
+        "history_lost": meta.get("history_lost"),
+        "source": str(path.relative_to(REPO_ROOT)) if path.is_relative_to(REPO_ROOT)
+                   else str(path),
+    }
+
 
 def gnosis_files(entity: str | None) -> list[tuple[str, Path]]:
     """(entity, path) for every gnosis: both the legacy and new locations."""
@@ -134,7 +195,8 @@ def _parse_date(s: str) -> date | None:
 
 
 def render_md(entries: list[dict], orphan: dict[str, list[str]],
-              stale: dict[str, int] | None) -> str:
+              stale: dict[str, int] | None,
+              provenance: list[dict] | None = None) -> str:
     lines: list[str] = ["# Fleet Gnosis Timeline", ""]
     if not entries:
         lines.append("_No dated gnosis entries found._")
@@ -151,6 +213,22 @@ def render_md(entries: list[dict], orphan: dict[str, list[str]],
             sid = e["session_id"] or "—"
             summary = e["summary"].replace("|", "\\|")
             lines.append(f"| {d} | {e['entity']} | `{sid}` | {summary} |")
+
+    if provenance:
+        lines += ["", "## Gnosis Provenance", "",
+                  "Per-entity record integrity. `history_lost` is surfaced",
+                  "verbatim: an entity carrying it had earlier gnoses",
+                  "overwritten before versioning began, and a consumer must",
+                  "not have to open the file to learn that.", "",
+                  "| Entity | Stamped | schema | supersedes | history_lost |",
+                  "|---|---|---|---|---|"]
+        for pv in sorted(provenance, key=lambda x: x.get("entity") or ""):
+            lines.append(
+                f"| {pv.get('entity')} | {'yes' if pv.get('stamped') else 'NO'} "
+                f"| {pv.get('schema_version') or '—'} "
+                f"| {pv.get('supersedes') or '—'} "
+                f"| {pv.get('history_lost') or '—'} |"
+            )
 
     if orphan:
         lines += ["", "## Orphan Session IDs", "",
@@ -236,15 +314,18 @@ def main(argv: list[str] | None = None) -> int:
             if age > args.stale_days:
                 stale[ent] = age
 
+    provenance = [entity_provenance(e, p) for e, p in gnosis_files(args.entity)]
+
     if args.format == "json":
         print(json.dumps({
             "generated_at": datetime.now().isoformat(timespec="seconds"),
             "entries": entries,
             "orphan_session_ids": orphan,
             "stale_entities": stale,
+            "provenance": provenance,
         }, indent=2))
     else:
-        print(render_md(entries, orphan, stale))
+        print(render_md(entries, orphan, stale, provenance))
 
     return 0
 

@@ -516,7 +516,19 @@ class TestSQLiteVecWriterStarvation:
     """Test 9: Writer should not starve under heavy reader load."""
 
     @pytest.mark.anyio
-    @pytest.mark.xfail(reason="Test design issue - query fails under concurrent load with BEGIN IMMEDIATE")
+    # [maat 2026-09-29] The stale `xfail` marker is REMOVED, not flipped.
+    #
+    # It read:
+    #     @pytest.mark.xfail(reason="Test design issue - query fails under
+    #                             concurrent load with BEGIN IMMEDIATE")
+    # but the test now PASSES, so pytest reported it as XPASS. A test that
+    # carries an xfail it no longer earns is a test lying about its own
+    # status: the marker says "known broken" while the code is fixed, and
+    # anyone reading the suite is told to distrust a passing result.
+    #
+    # It is worth being explicit that this hides a real regression path in
+    # BOTH directions: while the xfail stood, a future break would have
+    # reported as the expected outcome and changed nothing.
     async def test_writer_starvation(self, adapter):
         """Launch readers + writer concurrently; writer must make progress."""
         # Seed 5 entries for readers (same entity, same dimension)

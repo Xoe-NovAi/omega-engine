@@ -24,7 +24,7 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 
 | What | Where |
 |------|-------|
-| **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.8.0, 28 mandates) |
+| **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.9.0, 29 mandates) |
 | **The Law, condensed** | `MANDATES_CONDENSED.md` (Tier-0 injection) |
 | **This month's SSOT** | `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` |
 | **Live tracker** | `data/coordination/ACTIVE_SPRINT.json` |
@@ -100,6 +100,7 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 | M24 Venv Sovereignty | All Python in `.venv/`; no `--break-system-packages` |
 | M26 Doc Standards | Reference docs pass `make doc-llm-validate` |
 | M27 Tracking Integrity | State follows 5-Tier Tracking Architecture |
+| M28 Sovereign Artifact Preservation | No auto-deletion; transitions explicit, auditable, recoverable; deep-archive requires manifest + operator auth; destruction requires human act in PIVOT_LOG |
 
 ## M33/M34 Dispatch Guard Anchors (Jem §1.2.1)
 

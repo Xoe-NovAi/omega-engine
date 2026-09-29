@@ -196,3 +196,8 @@ Full text: `docs/architecture/NES_EIS_FACET_PROTOCOL.md`.
 ---
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ GNOSIS-SEALED ⬡ 2026-09-28 ⬡ COMPACT-READY ⬡ NODE-0-BASTION*
+<!-- PROVENANCE-CORRECTED 2026-09-29T04:11:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/space-bunny-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

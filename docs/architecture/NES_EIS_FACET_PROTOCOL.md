@@ -132,3 +132,8 @@ Before any `task()` call, the pager must:
 ---
 
 *🔱 OMEGA ⬡ MAKALI_FUSION ⬡ NES-EIS-FACET-PROTOCOL ⬡ 2026-09-28 ⬡ PROPOSED*
+<!-- PROVENANCE-CORRECTED 2026-09-29T04:11:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/space-bunny-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -287,5 +287,59 @@ def test_stale_entities_flagged(fake_repo, capsys):
     assert "new" not in payload["stale_entities"], "fresh entity must not be flagged"
 
 
+def test_history_lost_survives_later_stamps(fake_repo):
+    """REGRESSION: `history_lost` must survive every subsequent stamp.
+
+    Once an entity has ONE archive it no longer matches at_risk_entities(), so
+    the `history_lost` fact is no longer re-derivable from the live file. A
+    naive `stamp` would silently drop it — erasing the only record that
+    pre-regime history was lost, which is the exact failure this tooling exists
+    to prevent.
+
+    The first draft of the fix gated the archive scan on the CURRENT file
+    already having the line, which is circular (the current file is precisely
+    what lost it) and silently no-opped. The scan must be unconditional.
+    """
+    p = _write_gnosis(fake_repo, "h", SPDX + "\n# Gnosis\n\n| Date | ID | S |\n|---|---|---|\n"
+                      "| 2026-09-01 | a1 | x |\n| 2026-09-02 | a2 | y |\n")
+    # adopt: entity has 2 rows and no archive -> at risk
+    ga.do_adopt("tester", dry_run=False)
+    meta = ga.parse_meta(p.read_text(encoding="utf-8"))
+    assert meta and meta.get("history_lost"), "adopt must record the loss for at-risk entities"
+    original_note = meta["history_lost"]
+
+    # archive, then the agent overwrites -> header gone
+    ga.do_archive("h", dry_run=False)
+    p.write_text(SPDX + "\n# Gnosis rewritten\n", encoding="utf-8")
+    assert ga.parse_meta(p.read_text(encoding="utf-8")) is None
+
+    # stamp must recover the fact from the immutable archive
+    ga.do_stamp("h", "tester", None, dry_run=False)
+    meta2 = ga.parse_meta(p.read_text(encoding="utf-8"))
+    assert meta2 is not None
+    assert meta2.get("history_lost") == original_note, \
+        "history_lost must be recovered from the archive, not dropped"
+
+    # and it must survive ANOTHER stamp too
+    ga.do_stamp("h", "tester2", None, dry_run=False)
+    meta3 = ga.parse_meta(p.read_text(encoding="utf-8"))
+    assert meta3.get("history_lost") == original_note, \
+        "history_lost must survive repeated stamps"
+    assert meta3["stamped_by"] == "tester2", "stamp still refreshes normally"
+
+
+def test_entity_with_archive_is_no_longer_at_risk(fake_repo):
+    """at-risk is derived, and an entity that now archives is no longer at risk.
+
+    This is why history_lost must be preserved by stamp rather than re-derived:
+    the derivation legitimately stops firing once archiving begins.
+    """
+    p = _write_gnosis(fake_repo, "k", SPDX + "\n| Date | ID | S |\n|---|---|---|\n"
+                      "| 2026-09-01 | a1 | x |\n| 2026-09-02 | a2 | y |\n")
+    assert "k" in ga.at_risk_entities()
+    ga.do_archive("k", dry_run=False)          # now it retains history
+    assert "k" not in ga.at_risk_entities(), "entity with an archive is no longer at risk"
+
+
 if __name__ == "__main__":  # pragma: no cover
     sys.exit(pytest.main([__file__]))

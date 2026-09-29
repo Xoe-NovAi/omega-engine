@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Ω-Research ML Training Sandbox Specification
+# ⬡ OMEGA ⬡ MA'AT ⬡ P6 ⬡ SANDBOX-SPEC
+# AP Token: AP-MAAT-ML-SANDBOX-SPEC-v1.0.0
+
+spec:
+  name: "ml_training"
+  pillar: "P6"  # Cognition / Vision Specialist
+  infrastructure:
+    benchmark_harness: "internal_synthetic"
+    target_hw: "zen2_avx2"
+    python_version: "3.12+"
+    dependencies:
+      - "numpy"
+      - "psutil"
+  mutable_surface:
+    - "config/wads/omega_research/workspaces/*"
+  metrics:
+    - {name: "val_bpb", weight: -0.5, direction: "minimize"}
+    - {name: "val_accuracy", weight: 0.3, direction: "maximize"}
+    - {name: "training_time_sec", weight: -0.2, direction: "minimize"}
+  adversarial_validators:
+    - "chaos_cache_flush"
+    - "memory_pressure_test"
+  budget_tier: "cpu_intensive"
+  description: |
+    Trains a small embedding model on synthetic data to validate
+    training pipeline improvements. Outputs val_bpb for CLEARScore.

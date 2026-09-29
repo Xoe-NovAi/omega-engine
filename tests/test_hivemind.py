@@ -45,13 +45,57 @@ mock_mcp_fastmcp = types.ModuleType("mcp.server.fastmcp")
 
 
 class MockFastMCP:
+    """Faithful-enough stand-in for FastMCP.
+
+    [maat 2026-09-28] Extended beyond a bare no-op constructor. The mock is
+    installed into `sys.modules` BEFORE `mcp_servers.omega_hub.server` is first
+    imported (module-level `spec.loader.exec_module` at the bottom of this
+    file). So the REAL server module binds THIS class as its `mcp` singleton and
+    keeps it for the whole session -- it is not restored afterwards, because the
+    reference lives in the server module, not in `sys.modules`.
+
+    Consequence, measured: running `test_hivemind.py` before `test_hub_health.py`
+    in one session gave 26 errors, all
+        AttributeError: 'MockFastMCP' object has no attribute 'list_tools'
+    from `test_hub_health.py::TestCriticalTools`, which enumerates the real
+    registered tool surface. Standalone, test_hub_health is 46/46 green. The
+    hub was never broken; the mock was simply too thin to stand in for the class
+    the other file legitimately uses.
+
+    These are the attributes the rest of the suite actually touches. They return
+    plausible, obviously-synthetic values — this is a stub, and it must never be
+    mistaken for a real tool registry. A test that needs the REAL surface
+    should import the server in a fresh process rather than rely on the mock.
+    """
+
     def __init__(self, *args, **kwargs):
-        pass
+        self._tools: dict = {}
+        # server.py sets this after construction; accept it so that line does
+        # not raise (it previously logged a non-fatal TOOL-CHAIN-COLLAPSE).
+        self._mcp_server = None
+        self.settings = types.SimpleNamespace(stateless_http=True)
 
     def tool(self, *args, **kwargs):
         def decorator(f):
+            name = kwargs.get("name") or getattr(f, "__name__", "tool")
+            self._tools[name] = f
             return f
         return decorator
+
+    def remove_tool(self, name):
+        self._tools.pop(name, None)
+
+    def add_tool(self, fn, name=None, **kwargs):
+        self._tools[name or getattr(fn, "__name__", "tool")] = fn
+
+    async def list_tools(self):
+        return [
+            types.SimpleNamespace(name=n, description="", inputSchema={})
+            for n in sorted(self._tools)
+        ]
+
+    def get_tool(self, name):
+        return self._tools.get(name)
 
 
 mock_mcp_fastmcp.FastMCP = MockFastMCP
@@ -124,6 +168,34 @@ for k, orig in _originals.items():
         sys.modules[k] = orig
     else:
         sys.modules.pop(k, None)
+
+# [maat 2026-09-28] ALSO evict the omega_hub package cache.
+#
+# Restoring `sys.modules["mcp"]` is necessary but NOT sufficient. Executing
+# server.py under the mock transitively imports `mcp_servers.omega_hub.*`,
+# which CACHES `mcp_servers.omega_hub.server` in sys.modules with its `mcp`
+# singleton permanently bound to MockFastMCP. The `mcp` key can be restored; the
+# reference inside the cached server module cannot. Any later importer — in this
+# file or any other — receives the mock.
+#
+# Measured consequence: `test_hub_health.py::TestCriticalTools` enumerates the
+# REAL registered tool surface and failed in BOTH file orders, not just the
+# polluting one, because pytest imports every test module at collection time —
+# so the mock is always installed before any test body runs. That is also how
+# the phantom 54-vs-55 tool count appeared (the old mock had no remove_tool, so
+# server.py's curation of deprecated `library_search` silently no-opped).
+#
+# Evicting the package forces a clean re-import against the real `mcp` library.
+# `server` (the local name) still points at the mock-built module, so this
+# file's own 11 tests keep testing through the mock exactly as before.
+# Evict ONLY `mcp_servers.omega_hub.server`, which is the single module holding
+# the poisoned `mcp` singleton. Do NOT purge the whole `omega_hub` package:
+# `state` and `hub_tools.tools` carry the service-init flags, and re-importing
+# them resets `_init_complete` to False, so every later tool call raises
+# "Hub services are still initializing" — which broke 15
+# `tests/contracts/test_legacy_tool_adapters.py` cases. Measured both ways.
+for _k in ("mcp_servers.omega_hub.server",):
+    sys.modules.pop(_k, None)
 
 
 

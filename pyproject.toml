@@ -82,12 +82,16 @@ native = ["llama-cpp-python>=0.3.0,<0.4.0"]
 cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0", "textual>=0.80.0"]
 # [INST-1-fix2] Optional subsystem extras — core install (.[native,cli]) must
 # NOT pull these; every module importing them carries an ImportError lazy-guard.
-memory = ["redis==7.4.1"]
+# [redis-20260928] `memory = ["redis==7.4.1"]` REMOVED (Architect ruling,
+# twice). The extra existed to satisfy RedisStorageProvider, which is gone.
+# An empty extra is kept so `.[memory]` does not break any existing install
+# command or CI step that still passes it — the flag now means "core memory
+# features", which are all local.
+memory = []
 vectors = ["qdrant-client==1.18.0"]
 youtube = [
     "youtube-transcript-api>=0.6.3",
     "yt-dlp>=2025.1.1",
-    "redis==7.4.1",
 ]
 warp = ["warp-proxy-pool"]
 dev = [
@@ -130,6 +134,8 @@ pythonpath = ["."]
 markers = [
     "unit: fast tests (<10s total), run by default",
     "integration: slow tests (DB, network, full stack), opt-in",
+    "chaos: fault-injection / host-destruction test",
+    "real_oom_sensor: exercises the real host RAM sensor; must not be neutralised",
 ]
 
 # Default: fast tier only, parallel, stop on first failure, short traceback
@@ -141,7 +147,19 @@ markers = [
 # MemAvailable at launch (350MB/worker + 2.5GB system reserve). Full speed on
 # an idle box; throttles only under real agent-session pressure. The earlier
 # hard -n 4 was symptom mitigation; this is the mechanism.
-addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
+# [carmack-20260928] The phantom --ignore below is REMOVED, not commented out.
+# It named `data/entities/roc_racoon/workspace/odysseus-dev`, a path that has
+# never existed in git. Under pytest 9.1.1 an `--ignore` matching nothing
+# SILENCES ALL COLLECTION and exits 0 — a green build masking a suite that
+# never ran. Verified in both directions here.
+# [maat-20260928] `-x` is ALSO REMOVED, with cause: it aborts at the first
+# failure, so the reported number is however many failed before the run died,
+# and with `-n auto` WHICH tests run first varies per run. This repo's true
+# failure state was 41 while a default `pytest` reported 4. Same defect class
+# as the phantom --ignore: a reporting surface that cannot go red.
+# Fail-fast still exists where it belongs — `pytest -x` in a deliberate local
+# run — just never as the default, because the default is what people quote.
+addopts = "-n auto --tb=short --timeout=60 --durations=15"
 
 # testmon config (incremental re-runs) — enabled per-target via --testmon flag
 # testmon = true        # REMOVED: caused PytestConfigWarning (invalid global option)

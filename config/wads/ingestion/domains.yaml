@@ -44,8 +44,10 @@ ingestion:
     hash_algorithm: "sha256"
     
   # Worker configuration
+  # [redis-20260928] redis_url removed — the Redis service layer was
+  # decommissioned. Nothing reads this block today (scraper.py only consumes
+  # ingestion.domain_allowlist); it is retained for the non-redis tuning below.
   worker:
-    redis_url: "redis://localhost:6379"
     queue_name: "curation_queue"
     max_retries: 3
     backoff_base_ms: 100

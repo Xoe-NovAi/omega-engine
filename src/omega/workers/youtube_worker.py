@@ -30,9 +30,6 @@
 
 # DocRef: docs/research/R_YOUTUBE_BACKGROUND_WORKER_SPEC.md
 
-# [INST-1-fix2/R1] Lazy annotations: `-> redis.Redis` signatures below are
-# evaluated at class-definition time; with the redis=None ImportError stub
-# they would crash at import. PEP 563 defers evaluation.
 from __future__ import annotations
 
 import argparse
@@ -53,16 +50,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anyio
-# [INST-1-fix2/R1] Redis is an OPTIONAL dependency (omega[memory] extra).
-# Guard pattern from src/omega/governance/budget_guard.py:23-29 — module must
-# import cleanly on a core-only install; use-site guard in _get_redis().
-try:
-    import redis.asyncio as redis
-
-    REDIS_AVAILABLE = True
-except ImportError:
-    redis = None
-    REDIS_AVAILABLE = False
 import yaml
 
 from omega.errors import (
@@ -650,11 +637,11 @@ class YouTubeWorker:
             resource_guard=self.resource_guard,
         )
 
-        # Redis connection
-        redis_cfg = self.config.get("redis", {})
-        self.redis_url = redis_cfg.get("url", "redis://localhost:6379/0")
-        self._redis: Optional[redis.Redis] = None
-        self.queue_name = redis_cfg.get("queue_name", "youtube_queue")
+        # [redis-20260928] Redis queue REMOVED (Architect ruling, group B).
+        # The queue keys ("queue", "queue_name", "redis") in the YAML config
+        # are now ignored. Queue-backed methods raise QueueBackendRemoved
+        # rather than silently doing nothing — see _require_queue().
+        self.queue_name = self.config.get("queue_name", "youtube_queue")
 
         # Synthesis config
         synth_cfg = self.config.get("synthesis", {})
@@ -699,27 +686,36 @@ class YouTubeWorker:
         await self.close()
 
     async def close(self):
-        """Graceful shutdown: close Redis + YouTube module."""
-        if self._redis:
-            await self._redis.close()
-            self._redis = None
+        """Graceful shutdown: release the YouTube module resources."""
+        # [redis-20260928] no queue connection to close — backend excised.
         await self.ingester.close()
         logger.info("YouTube worker resources released")
 
-    # ── Redis Connection ─────────────────────────────────────────────────
+    # ── Queue backend ────────────────────────────────────────────────────
 
-    async def _get_redis(self) -> redis.Redis:
-        if not REDIS_AVAILABLE:
-            # [INST-1-fix2/R1] Core install ships without redis. Fail loudly
-            # with a typed error instead of AttributeError on the None stub.
-            raise ProviderUnavailableError(
-                provider="redis",
-                message="redis package not installed — YouTube queue unavailable. "
-                "Install the optional extra: pip install 'omega[youtube]'",
-            )
-        if self._redis is None:
-            self._redis = redis.from_url(self.redis_url, decode_responses=True)
-        return self._redis
+    def _require_queue(self):
+        """[redis-20260928] The YouTube queue backend was Redis; it is gone.
+
+        The class, its config surface and its contract tests are retained —
+        only the transport was excised. Every queue-backed method
+        (submit_url, submit_playlist, submit_topic, submit_file, run_cycle,
+        run_batch_cycle, get_status) now raises here.
+
+        M23: raises rather than returning empty. A queue that silently
+        accepts nothing is indistinguishable from a queue that is idle, and
+        that ambiguity is the same defect class as the handoff reaper.
+        The non-queue surface (fetching, synthesis, extractors) is
+        unaffected and still works.
+        """
+        raise ProviderUnavailableError(
+            provider="youtube_queue",
+            message=(
+                "YouTube queue backend removed with Redis "
+                "(D-redis-20260928). Queue-backed operations are unavailable. "
+                "The fetch/synthesis surface is unaffected. Re-implement the "
+                "queue on omega_handoff / the local worker pool to restore it."
+            ),
+        )
 
     # ── Somatic Save-Points ──────────────────────────────────────────────
 
@@ -750,7 +746,7 @@ class YouTubeWorker:
 
     async def submit_url(self, url: str, source: str = "queue", topic: Optional[str] = None) -> str:
         """Submit a URL to the Redis queue."""
-        r = await self._get_redis()
+        self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
         job = IngestJob(
             job_id=f"yt_{uuid.uuid4().hex[:12]}",
             url=url,
@@ -771,7 +767,7 @@ class YouTubeWorker:
         playlist_title = await self.playlist_expander.get_playlist_title(playlist_url)
         playlist_id = extract_playlist_id(playlist_url)
 
-        r = await self._get_redis()
+        self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
         count = 0
         for video in videos:
             job = IngestJob(
@@ -796,7 +792,7 @@ class YouTubeWorker:
             logger.warning("No YouTube results found for topic: %s", topic)
             return 0
 
-        r = await self._get_redis()
+        self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
         count = 0
         for video in results:
             job = IngestJob(
@@ -826,7 +822,7 @@ class YouTubeWorker:
             if line.strip() and line.strip().startswith("http")
         ]
 
-        r = await self._get_redis()
+        self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
         count = 0
         for url in urls:
             job = IngestJob(
@@ -886,7 +882,7 @@ class YouTubeWorker:
                 await self._save_state(cycle_id, "dequeue")
 
                 # 3. Dequeue next job
-                r = await self._get_redis()
+                self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
                 result = await r.blpop(self.queue_name, timeout=10)
                 if not result:
                     return {"cycle_id": cycle_id, "skipped": True, "reason": "empty_queue"}
@@ -992,7 +988,7 @@ class YouTubeWorker:
 
         results = []
         for _ in range(max_jobs):
-            r = await self._get_redis()
+            self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
             result = await r.blpop(self.queue_name, timeout=5)
             if not result:
                 break
@@ -1051,7 +1047,7 @@ class YouTubeWorker:
 
     async def get_status(self) -> Dict:
         """Return current worker status."""
-        r = await self._get_redis()
+        self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
         queue_len = await r.llen(self.queue_name)
         topic_counts = {topic: len(videos) for topic, videos in self._topic_buckets.items()}
         return {

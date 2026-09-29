@@ -198,3 +198,8 @@ this by trial; the symptom looks like a broken hub, and it is not.
 - `docs/architecture/AGENT_FLEET.md` — entities and S1–S10 slot governance
 - `scripts/hivemind_post.py` — sanctioned no-MCP-tool Hivemind post
 - `SOVEREIGN_MANDATES.md` §M1, §M23, §M27
+<!-- PROVENANCE-CORRECTED 2026-09-29T04:11:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/space-bunny-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

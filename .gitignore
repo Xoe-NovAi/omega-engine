@@ -294,6 +294,12 @@ data/entities/test_*_entity/
 !data/coordination/teamstudy_*/FINAL_SYNTHESIS.md
 !.opencode/skills/git-secret-scrub/SKILL.md
 
+# Governance artifacts (Phase 1 Federation Contract Refactor)
+!docs/governance/SAHS_RULE.md
+!docs/governance/HANDOFF_LIFECYCLE.md
+!config/handoff_policy.yaml
+!docs/strategy/FEDERATION_CONTRACT_REFACTOR_20260928.md
+
 # ── Local backups, atomic-write temps, node-local artifacts (keep on disk, never commit) ──
 *.backup.*
 *.backup
@@ -304,6 +310,7 @@ data/entities/test_*_entity/
 *.lock
 config/wads/*/tmp*
 *.hujson
+!data/federation/tailnet-policy-OMEGA-DEFINITIVE-v2-20260928.hujson
 node0-collect-*/
 opencode.json.bak.*
 session-*.mdv
@@ -336,3 +343,10 @@ opencode_provider_doctor.sh
 !data/coordination/CLINE_*.md
 data/entities/*/knowledge/ACCOUNT_MAP.yaml
 data/metrics/*
+
+# Handoff packet corpus is RUNTIME STATE, not source. 723 live packets +
+# receipts. Never commit. Receipts/manifests for audit are in docs/ and PIVOT_LOG.
+data/handoff/**
+!data/handoff/*.md
+!data/handoff/**/MANIFEST.sha256
+!data/handoff/**/MANIFEST.json

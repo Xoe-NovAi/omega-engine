@@ -1,0 +1,166 @@
+// =============================================================================
+// TAILNET POLICY — OMEGA ENGINE DEFINITIVE v2 (GRANTS + HUMAN-ONLY SSH)
+// Date: 2026-09-28 | By: MaKaLi Fusion for the Architect
+// Supersedes: tailnet-policy-OMEGA-DEFINITIVE-20260926.hujson
+// =============================================================================
+//
+// CHANGES FROM v1 (2026-09-26) — exactly four, all E1/federation driven:
+//
+//   1. GRANT  tcp:8017  ->  tcp:8019
+//      8017 was SearXNG all along. The exchange pipe moved to 8019 on
+//      2026-09-27. The 8017 Serve route has been REMOVED (tailscale serve
+//      --https=8017 off) so SearXNG cannot be re-armed by a policy edit.
+//      8019 is the read-only exchange pipe, loopback-bound on Node 0.
+//
+//   2. TEST   accept list updated 8017 -> 8019. Tailscale REJECTS a policy
+//      whose tests do not match the rules, so this was mandatory.
+//
+//   3. TEST   added deny assertions for tcp:8017, tcp:6379, tcp:51372.
+//      Each is a service we have REMOVED (SearXNG route, Redis, Deluge).
+//      A deny test means a future policy edit that re-adds them is refused
+//      at save time instead of silently widening the blast radius.
+//
+//   4. Comments corrected: "exchange pipe (:8017)" -> (:8019) throughout,
+//      and the 8017 grant comment no longer claims it was "the MISSING
+//      rule" when it was in fact never the right port.
+//
+// UNCHANGED FROM v1:
+//   - All node-to-node SSH removed, both planes (ssh rules AND tcp:22 grants).
+//   - Human-operator-only Tailscale SSH, action=check, default 12h period.
+//   - NFS 2049 removed.
+//   - ICMP both directions.
+//   - No funnel, no autoApprovers, deny-by-default.
+//
+// -----------------------------------------------------------------------------
+// WHY tag->tag SSH CANNOT BE IN CHECK MODE  (unchanged, still load-bearing)
+// -----------------------------------------------------------------------------
+// Tailscale permits exactly four kinds of Tailscale SSH connection:
+//   - user -> their own devices
+//   - user -> a tagged device
+//   - user -> a shared tagged device
+//   - tagged device -> another tagged device   <-- CANNOT be check mode
+//
+// Check mode requires periodic re-auth against an identity provider. A tagged
+// device has no user identity to re-authenticate as, so tag->tag SSH is
+// STRUCTURALLY forced to "accept" -- meaning NO periodic re-auth, ever. There
+// is no policy setting that changes this. Accept it or remove the rule.
+//
+// On 2026-09-28 S1 verified the host-layer reality behind this: `ss -ltn`
+// showed rpcbind:111 and statd:662 still wildcard-bound, and a DLNA server
+// (rygel) on seven non-loopback addresses including the LAN. The tailnet
+// policy was never the whole exposure. `make check-lan-exposure` now exists
+// to see the part the policy cannot describe.
+//
+// WHAT YOU KEEP: human operator (autogroup:admin) -> tag:node0, tag:node1,
+// action "check". src is autogroup:admin, NOT a tag -- that is the entire
+// point: a user identity can re-authenticate; a tag cannot.
+// =============================================================================
+
+{
+	"tagOwners": {
+		"tag:node0":    ["autogroup:admin"],
+		"tag:node1":    ["autogroup:admin"],
+		"tag:opencode": ["autogroup:admin"],
+	},
+
+	// allow-all intentionally ABSENT. Deny-by-default for anything unlisted.
+	"grants": [
+		// --- MCP bridge, Node 0 -> Node 1 (8016) ---------------------------
+		{"src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016"]},
+
+		// --- MCP bridge + exchange pipe, Node 1 -> Node 0 (8016, 8019) ------
+		// 8016 = omega-hub FastMCP. Proven working: GE-N1 and Carmack-N1 both
+		// pulled a 24KB study pack over it and submitted packets back.
+		// 8019 = read-only exchange pipe (systemd user unit, loopback-bound).
+		//   Unblock proof, from Node 1:
+		//     curl -sk https://n0.tail51f14a.ts.net:8019/
+		//   Keep the backend on 127.0.0.1 -- do NOT bind 0.0.0.0.
+		{
+			"src": ["tag:node1"],
+			"dst": ["tag:node0"],
+			"ip":  ["tcp:8016", "tcp:8019"],
+		},
+
+		// --- (removed) tcp:8017 ---------------------------------------------
+		// 8017 is the SearXNG web service. It was never the exchange pipe in
+		// this policy; the exchange pipe is 8019. The 8017 Serve route was
+		// removed on 2026-09-28 because SearXNG is an unauthenticated
+		// outbound-proxy surface with SSRF and abuse-as-a-proxy
+		// characteristics. Do not re-add. A deny test below guards it.
+
+		// --- (removed) tcp:6379 (Redis) -------------------------------------
+		// omega-redis container and quadlet deleted 2026-09-28. Dead code in
+		// src/omega is being excised. Deny test below guards it.
+
+		// --- (removed) tcp:51372 (Deluge) -----------------------------------
+		// deluged was bound to wlo1 AND tailscale0. Removal in progress
+		// 2026-09-28. Deny test below guards it.
+
+		// --- (removed) tcp:2049 (NFSv4) -------------------------------------
+		// Removed under D-FED-01. Host service was disabled 2026-09-28;
+		// rpcbind.socket and rpc-statd still required root to finish.
+
+		// --- (removed) tag:opencode -> tag:node1 tcp:22 ---------------------
+		// Automation SSH. The same ungoverned side door, differently named.
+
+		// --- (removed) tag:node1 -> tag:node0 tcp:22 -----------------------
+		// Regular OpenSSH over WireGuard -- a separate plane from the "ssh"
+		// section below. No port-22 path between nodes at all.
+
+		// --- ICMP / ping, both directions -----------------------------------
+		{"src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["icmp:*"]},
+		{"src": ["tag:node1"], "dst": ["tag:node0"], "ip": ["icmp:*"]},
+	],
+
+	// --- SSH: HUMAN OPERATOR ONLY -------------------------------------------
+	"ssh": [
+		{
+			// checkPeriod is intentionally ABSENT. Tailscale rejected a custom
+			// value: "Functionality outside your plan: custom 'checkPeriod' is
+			// only available on the Premium or Enterprise plans." Omitting it
+			// applies the default of 12h, which is correct for this tier. Do not
+			// re-add unless the tailnet is upgraded. If you later move to
+			// Premium/Enterprise, add back e.g. "checkPeriod": "4h".
+			"action": "check",
+			"src":    ["autogroup:admin"],
+			"dst":    ["tag:node0", "tag:node1"],
+			"users":  ["autogroup:nonroot", "root"],
+		},
+	],
+
+	// Funnel node attribute: REMOVED (public-internet exposure; unused).
+	// autoApprovers: OMITTED (no subnet routes, no exit nodes).
+
+	// ---------------------------------------------------------------------------
+	// POLICY TESTS -- a failing assertion makes Tailscale REJECT the whole file.
+	// src/accept/deny must name specific entities; "*" is not permitted here.
+	// ---------------------------------------------------------------------------
+	"tests": [
+		{
+			// N1 must keep reaching N0's MCP bridge AND the exchange pipe.
+			"src":    "tag:node1",
+			"accept": ["tag:node0:8016", "tag:node0:8019"],
+		},
+		{
+			// N0 must keep reaching N1's MCP bridge.
+			"src":    "tag:node0",
+			"accept": ["tag:node1:8016"],
+		},
+		{
+			// REGRESSION GUARD 1 -- no cross-node SSH, no NFS, and no path back
+			// to the three services removed on 2026-09-28. If anyone re-adds
+			// any of these, the save is REFUSED by Tailscale.
+			"src":  "tag:node1",
+			"deny": ["tag:node0:22", "tag:node0:2049", "tag:node0:8017", "tag:node0:6379"],
+		},
+		{
+			"src":  "tag:node0",
+			"deny": ["tag:node1:22", "tag:node1:2049", "tag:node1:51372", "tag:node1:6379"],
+		},
+		{
+			// Deluge's tailnet bind, in the direction that mattered.
+			"src":  "tag:node1",
+			"deny": ["tag:node0:51372"],
+		},
+	],
+}

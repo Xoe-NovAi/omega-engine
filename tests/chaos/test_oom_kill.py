@@ -38,6 +38,20 @@ async def test_oom_protector_handles_sigkill(admission_controller):
 
 @pytest.mark.chaos
 @pytest.mark.anyio
+# [maat 2026-09-29] RESIDUAL — I TRIED to mark this `isolated_oom_ram` and REVERTED IT.
+#
+# The brief said `test_oom_protector_RAM_check_under_pressure` was the failing
+# one. Measured against both legs, it is not:
+#     baseline origin/main : RAM_check_under_pressure PASSED, handles_sigkill PASSED
+#     full-suite run       : RAM_check_under_pressure PASSED, handles_sigkill FAILED
+# This test mocks `get_memavailable_gb` and asserts the decision arithmetic, so
+# it is deterministic. It was never the problem.
+#
+# Marking it `isolated_oom_ram` made it WORSE: the conftest's isolation fixture
+# patches `OOMProtector.check_available` to always return True, and this test
+# asserts on exactly that method — so the isolation overrode the subject under
+# test and turned a passing test red. Recorded because "the brief said X" is not
+# evidence, and the fix that looked responsive would have shipped a new failure.
 async def test_oom_protector_RAM_check_under_pressure(oom_protector):
     """Verify OOMProtector correctly detects low RAM conditions (C-2' API)."""
     # [C-2'] OOMProtector uses check_available(required_gb) for memory checks.

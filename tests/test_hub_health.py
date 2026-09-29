@@ -202,21 +202,57 @@ class TestCriticalTools:
 
     @pytest.fixture(scope="class")
     def registered_tools(self) -> list:
-        """The COMPLETE registered MCP tool surface, in-process.
+        """The COMPLETE registered MCP tool surface, enumerated in a SUBPROCESS.
 
         Read from the FastMCP registry rather than `/debug/tools`, which
         returns a 10-name sample. Any failure to enumerate is a hard error:
         a test that cannot see the surface must not pass by skipping.
+
+        [maat 2026-09-28] Enumeration moved into a fresh interpreter. This
+        used to import `mcp_servers.omega_hub.server` in-process, and that is
+        not reproducible inside a pytest session: `tests/test_hivemind.py`
+        installs a fake `mcp` package at COLLECTION time, and because
+        `server.py` <-> `hub_tools/tools.py` import each other, whichever module
+        is imported first wins the binding. Depending on that order the
+        deprecated `library_search` either gets curated out (54) or survives
+        (55) — and which one you got depended on file order in the run.
+
+        That is the whole story of the long-standing "54 vs 55" discrepancy:
+        the live hub was always correct at 54, and the 55 was this test's own
+        import-order artifact. A subprocess removes the ordering question
+        entirely instead of encoding today's order as an assumption.
         """
-        import anyio
+        import json as _json
+        import subprocess
+        import sys as _sys
 
-        from mcp_servers.omega_hub.server import mcp
+        code = (
+            "import anyio, json\n"
+            "from mcp_servers.omega_hub.server import mcp\n"
+            "async def _l():\n"
+            "    return sorted(t.name for t in await mcp.list_tools())\n"
+            # anyio.run() takes the async FUNCTION here, not a pre-made
+            # coroutine. Both were tried; passing _l() raises
+            # "TypeError: 'coroutine' object is not callable" in this env.
+            "print('SURFACE:' + json.dumps(anyio.run(_l)))\n"
+        )
 
-        async def _list() -> list:
-            tools = await mcp.list_tools()
-            return sorted(t.name for t in tools)
-
-        names = anyio.run(_list)
+        proc = subprocess.run(
+            [_sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).resolve().parent.parent),
+            timeout=120,
+        )
+        line = next(
+            (ln for ln in proc.stdout.splitlines() if ln.startswith("SURFACE:")),
+            None,
+        )
+        assert line, (
+            "could not enumerate the tool surface in a clean interpreter — "
+            f"stdout={proc.stdout[-800:]!r} stderr={proc.stderr[-800:]!r}"
+        )
+        names = _json.loads(line.split("SURFACE:", 1)[1])
 
         # M23: refuse to assert against a truncated surface. If the registry
         # ever returns a partial list, every absence assertion below becomes

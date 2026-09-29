@@ -10,6 +10,11 @@
 # deps into the active interpreter, not a local .venv).
 PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 PYTEST := $(PYTHON) -m pytest
+# [maat 2026-09-28] Absolute form, for recipes that `cd` off the repo root
+# before invoking the interpreter (check-kq5 checks an external checkout).
+# M24: venv sovereignty applies there too — a bare `python3` in a gate is
+# the same defect class as `--break-system-packages`.
+PYTHON_ABS := $(abspath $(PYTHON))
 
 # Use bash so targets can rely on [[ ]] / bash-isms (e.g. local inference lifecycle)
 SHELL := /bin/bash
@@ -314,7 +319,7 @@ DOC_FRONTMATTER_SCHEMA := schemas/llm_doc_frontmatter.json
 # Validate all LLM-friendly docs in a sprint directory
 doc-llm-validate:
 	@echo "$(YELLOW)Validating LLM-friendly documentation...$(NC)"
-	@python3 scripts/validate_llm_docs.py \
+	@$(PYTHON) scripts/validate_llm_docs.py \
 		--frontmatter-schema $(DOC_FRONTMATTER_SCHEMA) \
 		--token-budget $(DOC_TOKEN_BUDGETS) \
 		--answer-first-check \
@@ -357,13 +362,13 @@ sprint-plan-llms-txt:
 # Check token count for sprint plan docs only
 doc-token-check:
 	@echo "$(YELLOW)Checking token budgets for sprint plan docs...$(NC)"
-	@python3 scripts/check_doc_tokens.py --budget $(DOC_TOKEN_BUDGETS) docs/sprints/current/
+	@$(PYTHON) scripts/check_doc_tokens.py --budget $(DOC_TOKEN_BUDGETS) docs/sprints/current/
 	@echo "$(GREEN)Token check complete$(NC)"
 
 # Chunk sprint plan for RAG/vector storage
 doc-chunk-sprint:
 	@echo "$(YELLOW)Chunking sprint plan for RAG...$(NC)"
-	@python3 scripts/chunk_sprint_plan.py docs/sprints/current/README.md
+	@$(PYTHON) scripts/chunk_sprint_plan.py docs/sprints/current/README.md
 	@echo "$(GREEN)Chunking complete$(NC)"
 
 # Temple-grade includes Codex freshness, LLM doc validation, mandate
@@ -378,9 +383,70 @@ doc-chunk-sprint:
 # the cheapest possible ground truth, so it runs FIRST and fails fast — there
 # is no value in validating 53 dashboard cases against a broken engine.
 # Cost ~30-45s (clean worktree + fresh venv + editable install).
-temple-grade: check-hub-imports check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
+# ── check-engine: FAST, DETERMINISTIC engine-touching subset ────────────────
+# [maat 2026-09-28] Architect-ruled. `temple-grade` ran ZERO pytest tests: its
+# transitive closure had no pytest invocation at all, and the headline "53/53"
+# was `benchmark_dashboard.py --self-test`, a separate harness. So the release
+# gate could be green while the engine did not boot.
+#
+# This is a SUBSET, not the full 2410-test suite — temple-grade must stay
+# runnable in seconds. The full suite remains available as `make test-suite-full`.
+#
+# DETERMINISM. No `-n auto` and no pytest-randomly here, on purpose. With xdist
+# the visible subset varies per run, so a red result could not be told apart
+# from a flake, and "flaky" would become a verdict rather than a diagnosis. This
+# subset must be either green or honestly red, every time.
+#
+# WHAT IS EXCLUDED, AND WHY (measured, not guessed):
+#   tests/contracts/test_secret_history_gate.py — 42s alone; it re-runs the
+#     secret scan that `gate-secrets` already performs in this same chain, so
+#     including it doubles the cost and buys nothing. Still gated, just not here.
+#   The 2 `TestFirewallCheckerIntegration` cases — 5.6s each. They are genuine
+#     integration tests, not gate-relevant to engine boot. Still in the full suite.
+ENGINE_FAST_TESTS := tests/test_hub_import_smoke.py \
+                     tests/contracts/ \
+                     --deselect tests/contracts/test_secret_history_gate.py \
+                     --deselect tests/contracts/test_firewall_checker.py::TestFirewallCheckerIntegration \
+                     tests/test_lan_exposure.py
+
+check-engine:
+	@echo "$(YELLOW)check-engine: fast engine-touching subset (deterministic, serial)...$(NC)"
+	@$(PYTHON) -m pytest $(ENGINE_FAST_TESTS) \
+	    -o addopts="--timeout=60 --tb=line -q -p no:randomly -p no:tldr" \
+	    || (echo "$(RED)check-engine FAILED — the engine-touching subset is red.$(NC)"; exit 1)
+	@$(PYTHON) scripts/test_lan_exposure_audit.py >/dev/null \
+	    || (echo "$(RED)check-engine FAILED: LAN negative tests.$(NC)"; exit 1)
+	@$(PYTHON) scripts/gnosis_archive.py verify >/dev/null \
+	    || (echo "$(RED)check-engine FAILED: M15 gnosis continuity.$(NC)"; exit 1)
+	@echo "$(GREEN)check-engine PASSED (boot + contracts + LAN + M15)$(NC)"
+
+# ── Full pytest suite — NOT in temple-grade (too slow) ──────────────────────
+# [maat 2026-09-28] Available on demand and writing a machine-readable count to
+# data/validation/last_test_run.json. Kept out of the release chain because the
+# full run is ~3-4 minutes and 15 of its failures are resource-dependent
+# (InferenceOOMError at <1GB available RAM) — see the handoff. A gate that
+# flaps on host memory is not a release gate; it is a coin toss with a
+# confusing message. Run it before a PR, not inside the gate.
+test-suite-full:
+	@echo "$(YELLOW)Running full pytest suite...$(NC)"
+	@mkdir -p data/validation
+	@$(PYTHON) -m pytest \
+	    -o addopts="--timeout=120 -n auto --tb=line -q -p no:randomly" \
+	    --json-report --json-report-file=data/validation/last_test_run.json \
+	    || (echo ""; \
+	        echo "$(RED)═══ PYTEST SUITE FAILED ═══$(NC)"; \
+	        echo "$(RED)Counts: the 'OMEGA TEST RESULT' line above is authoritative;$(NC)"; \
+	        echo "$(RED)the bare terminal summary is suppressed by tests/conftest.py.$(NC)"; \
+	        echo "$(RED)Machine-readable: data/validation/last_test_run.json$(NC)"; \
+	        exit 1)
+
+# check-engine joins the chain FIRST, before check-hub-imports: it is the
+# cheapest signal that the engine boots, and there is no value in a 30-45s
+# clean-worktree import gate if the fast subset is already red.
+temple-grade: check-engine check-hub-imports check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
+
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
-	@echo "$(GREEN)Temple-grade complete (Hub Imports + Codex + LLM doc validation + Mandates + Compliance + Tracking State + Dashboard)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Hub Imports + Codex + LLM doc validation + Mandates + Compliance + Tracking State + Engine Subset + Dashboard)$(NC)"
 
 # SOUL_ARCHITECTURE_PROTOCOL v3.0 — Soul v8.0 CI gate (ratified by Kali-N0, ho_123f6ebff930)
 # Enforces: axiom coverage (>=1 directive + >=1 principle ref), flat-list approved_lessons.yaml
@@ -418,9 +484,13 @@ check-kq5:
 	@echo "$(YELLOW)Running kq5-godot make check (22 checks)...$(NC)"
 	@cd data/experiments/kq5-godot && $(MAKE) check
 	@echo "$(YELLOW)Verifying VNR script...$(NC)"
-	@cd /media/arcana-novai/omega_library/games/kq5-godot && python3 scripts/vnr_render.py --help >/dev/null
+# [maat 2026-09-28] M24: was bare `python3`. Interpreter only — behaviour
+# unchanged. $(CURDIR)-anchored because the recipe `cd`s to the external
+# kq5-godot checkout first, so a relative .venv/bin/python would not
+# resolve from there. PYTHON_ABS is the same interpreter as $(PYTHON).
+	@cd /media/arcana-novai/omega_library/games/kq5-godot && $(PYTHON_ABS) scripts/vnr_render.py --help >/dev/null
 	@echo "$(YELLOW)Verifying VNR backend import...$(NC)"
-	@cd /media/arcana-novai/omega_library/games/kq5-godot && python3 -c "import sys; sys.path.insert(0, '.'); from vnr import VisionBackendVNR; print('VNR backend import OK')"
+	@cd /media/arcana-novai/omega_library/games/kq5-godot && $(PYTHON_ABS) -c "import sys; sys.path.insert(0, '.'); from vnr import VisionBackendVNR; print('VNR backend import OK')"
 	@echo "$(GREEN)kq5-godot check passed: experiment operational, VNR integrated$(NC)"
 
 # Download license texts to LICENSES/ directory (run once after clone)
@@ -558,7 +628,7 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # M15 Sovereign Continuity gate: every entity session_gnosis.md must carry a
@@ -594,6 +664,42 @@ check-mandate-compliance:
 check-mandate-compliance-json:
 	@$(PYTHON) scripts/check_mandate_compliance.py --json
 
+# ─────────────────────────────────────────────────────────────────────────────
+# check-sahs — Single Authoritative Handoff Surface gate [M29, 2026-09-28]
+# ─────────────────────────────────────────────────────────────────────────────
+# Three assertions, not counts:
+#   1. EXACTLY ONE WRITER: Only the Hivemind daemon holds a write FD on any
+#      packet file in the handoff tree.
+#   2. PROJECTION RECONCILIATION (both directions):
+#      A) Every packet on any surface (MCP list, filesystem, MemPalace) has
+#         a 1:1 match in the authoritative store with identical session_id/
+#         target_entity/status/created_at_utc.
+#      B) Every envelope in the authoritative store is reachable via at least
+#         one projection surface.
+#   3. NO ROGUE WRITES: No process other than the Hivemind daemon writes
+#      to the authoritative store.
+#
+# A count-only gate passes GE-N1's failure modes (11 dead M36 packets in
+# pending/, MemPalace events with peers:[]). Reconciliation fails them.
+# The gate MUST be observed red — a deliberate rogue write or orphan must
+# make it fail before it is trusted green.
+check-sahs:
+	@echo "$(YELLOW)Checking SAHS Rule (Single Authoritative Handoff Surface)...$(NC)"
+	@$(PYTHON) scripts/check_sahs.py
+	@echo "$(GREEN)SAHS Rule passed: exactly one writer, projections reconciled, no rogue writes$(NC)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# check-policy-constants — One constant for stale threshold [M29, 2026-09-28]
+# ─────────────────────────────────────────────────────────────────────────────
+# Enforces: handoff.stale_threshold_days == handoff.hot_storage_max_days
+# Coincidence is a bug waiting to drift. If two policies derive from separate
+# constants, they WILL drift silently — the same failure mode as
+# retention_expires_at being a stored field instead of a derived one.
+check-policy-constants:
+	@echo "$(YELLOW)Checking handoff policy constants (stale_threshold_days == hot_storage_max_days)...$(NC)"
+	@$(PYTHON) scripts/check_policy_constants.py
+	@echo "$(GREEN)Policy constants consistent: single source of truth for 90-day threshold$(NC)"
+
 ## Run Ark Blueprint drift & M14 integrity check (read-only dry-run)
 ark-optimize:
 	@$(PYTHON) scripts/ark_optimizer.py --dry-run
@@ -613,7 +719,7 @@ heritage-map:
 	@$(PYTHON) scripts/heritage_audit.py --output-report
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5 check-sahs check-policy-constants
 
 # === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
 # Wrap ANY long/native build with telemetry + auto-postmortem.

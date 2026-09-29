@@ -146,12 +146,29 @@ def post(
     decisions: list[str],
     continuation: str,
     intent: str | None = None,
+    **extra: object,
 ) -> dict:
     """Post one awareness snapshot. Returns the decoded hub payload.
 
     Raises RuntimeError on transport failure OR if the hub rejects the post.
+
+    [maat 2026-09-28] **FAILS OPEN — FIXED. This is a Phase-2 blocker.**
+
+    The signature previously listed a fixed set of fields and rebuilt `args`
+    from exactly those. Any field the caller supplied that was not on that list
+    was silently dropped, and the post went through looking successful. When
+    R5 made `session_id` mandatory, this script — the sanctioned fallback for
+    agents with no local MCP tools — became structurally incapable of sending
+    it. Every agent using it would get stamped-but-unattributed posts with NO
+    error anywhere. That is worse than having no fallback at all, because it
+    looks like success.
+
+    `**extra` now forwards every caller-supplied field verbatim. This script no
+    longer knows the schema, so it cannot fall behind it. The named parameters
+    are kept because the CLI is the primary caller and explicit is better; they
+    are now a CONVENIENCE, not the contract.
     """
-    args = {
+    args: dict[str, object] = {
         "action": "post",
         "channel": channel,
         "entity": entity,
@@ -163,6 +180,12 @@ def post(
     }
     if intent:
         args["intent"] = intent
+    # Forward everything the caller gave us that we did not name above.
+    # Unknown-to-hub fields are the hub's business to reject loudly, not this
+    # script's to swallow.
+    for k, v in extra.items():
+        if v is not None:
+            args[k] = v
 
     _rpc(url, INITIALIZE)  # handshake; hub is stateless so nothing to retain
 
@@ -210,7 +233,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--intent", default=None, help="question|observation|status|blocker|...")
     ap.add_argument("--read-back", metavar="SESSION_ID",
                     help="fetch a posted snapshot instead of posting")
-    args = ap.parse_args(argv)
+    # [maat 2026-09-28] R5 makes `session_id` mandatory on post. This script used
+    # to be structurally incapable of sending it (see `post()`), which would
+    # have made the sanctioned fallback silently drop the newly-required field.
+    ap.add_argument("--session-id", dest="session_id", default=None,
+                    help="calling session id (R5; validated server-side)")
+    # Unknown flags are forwarded rather than rejected, so this CLI cannot fall
+    # behind the hub's schema the same way `post()` did. A field the hub does
+    # not know is the HUB's job to reject loudly, not this script's to swallow.
+    args, passthrough = ap.parse_known_args(argv)
+    extra: dict[str, object] = dict(p.split("=", 1) for p in passthrough
+                                    if "=" in p and not p.startswith("--"))
+    if args.session_id:
+        extra["session_id"] = args.session_id
 
     if not args.read_back and not args.entity:
         ap.error("--entity is required unless --read-back is used")
@@ -218,7 +253,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.read_back:
             snap = read_back(args.url, args.read_back)
-            print(json.dumps(snap, indent=2)[:2000])
+            # Emit complete, valid JSON. A previous version truncated to 2000
+            # chars, which cut mid-string and produced output that could not be
+            # re-parsed — so a caller verifying its own post got a crash instead
+            # of a confirmation. Truncation is a display concern, not a
+            # correctness one; pipe through `head` if you want less.
+            print(json.dumps(snap, indent=2))
             return 0
 
         payload = post(
@@ -231,6 +271,7 @@ def main(argv: list[str] | None = None) -> int:
             decisions=args.decisions,
             continuation=args.continuation,
             intent=args.intent,
+            **extra,
         )
     except RuntimeError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

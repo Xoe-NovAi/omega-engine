@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Ω-Research BudgetGuard — Redis-Backed Distributed Quota Enforcement for AMFO Tiers
+Ω-Research BudgetGuard — Process-Local Quota Enforcement for AMFO Tiers
 ⬡ OMEGA ⬡ MA'AT ⬡ S2/S5 ⬡ BUDGET-GUARD
 AP Token: AP-MAAT-BUDGET-GUARD-v1.0.0
 
 Mandate Compliance:
-- M1 AnyIO: anyio.to_thread.run_sync() for Redis ops
+- M1 AnyIO: async via anyio
 - M2 Firewall: No Core Engine writes
 - M7 Local-First: Budget tiers use local models
 - M9 Error Integrity: Typed BudgetError hierarchy
@@ -27,13 +27,11 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-try:
-    import redis.asyncio as redis
-
-    REDIS_AVAILABLE = True
-except ImportError:
-    redis = None
-    REDIS_AVAILABLE = False
+# [redis-20260928] The `import redis.asyncio` guard and the remote INCR/TTL
+# tier were removed (Architect ruling, group B). BudgetGuard is retained because
+# ingestion/pipeline.py:142 constructs it and 9 tests in test_sandbox.py cover
+# its local-quota behaviour; only the transport was excised. Allocation is now
+# process-local — a cross-process shared quota needs a new backend, not Redis.
 
 from omega.errors import OmegaError
 from omega.research.types import BudgetToken
@@ -63,7 +61,7 @@ class BudgetExceededError(BudgetError):
 
 
 class BudgetUnavailableError(BudgetError):
-    """Budget cannot be allocated (Redis unavailable, quota exhausted)."""
+    """Budget cannot be allocated (local quota exhausted)."""
 
     def __init__(self, tier: str, reason: str, **kwargs):
         self.tier = tier
@@ -128,12 +126,12 @@ TIER_BUDGETS: dict[str, dict[str, Any]] = {
 
 class BudgetGuard:
     """
-    Redis-backed distributed quota enforcement for AMFO tiers.
+    Process-local quota enforcement for AMFO tiers. [redis-20260928]
 
-    Uses Redis INCR with TTL for atomic budget allocation.
+    Was Redis INCR with TTL for atomic allocation; now in-process.
     Returns BudgetToken with auto-release on context exit.
 
-    M1: AnyIO async (redis.asyncio)
+    M1: AnyIO async
     M7: Local-first tier models
     M12: BudgetToken has terminal states
     M21: Contract test compatible
@@ -144,29 +142,18 @@ class BudgetGuard:
 
     def __init__(
         self,
-        redis_url: str = "redis://localhost:6379/0",
         key_prefix: str = "omega:budget:",
-        enable_redis: bool = True,
         max_concurrent_per_tier: int = 4,
     ):
-        self.redis_url = redis_url
+        # [redis-20260928] Redis transport REMOVED (Architect ruling, group B).
+        # `redis_url` and `enable_redis` are gone; the guard is local-only.
         self.key_prefix = key_prefix
-        self.enable_redis = enable_redis and REDIS_AVAILABLE
         self.max_concurrent_per_tier = max_concurrent_per_tier
-        self._redis: redis.Redis | None = None
-        self._local_quota: dict[str, dict] = {}  # Fallback when Redis unavailable
-
-    async def _get_redis(self) -> redis.Redis:
-        """Lazy Redis connection."""
-        if self._redis is None and self.enable_redis:
-            self._redis = redis.from_url(self.redis_url, decode_responses=True)
-        return self._redis
+        self._local_quota: dict[str, dict] = {}
 
     async def close(self) -> None:
-        """Close Redis connection."""
-        if self._redis:
-            await self._redis.close()
-            self._redis = None
+        """Release local quota state. [redis-20260928] no remote connection."""
+        self._local_quota.clear()
 
     def _tier_key(self, tier: str) -> str:
         return f"{self.key_prefix}tier:{tier}"
@@ -187,7 +174,7 @@ class BudgetGuard:
 
         Raises:
             BudgetExceededError: If tier limits would be exceeded
-            BudgetUnavailableError: If Redis unavailable and local quota exhausted
+            BudgetUnavailableError: If local quota is exhausted
         """
         if tier not in self.TIER_BUDGETS:
             raise BudgetExceededError(
@@ -201,68 +188,10 @@ class BudgetGuard:
         ram_budget = budget["ram_mb"]
         model = budget["model"]
 
-        # Try Redis first
-        if self.enable_redis:
-            try:
-                return await self._check_redis(tier, experiment_id, time_budget, ram_budget, model)
-            except Exception as e:
-                # Fall back to local quota if Redis fails
-                logger.debug("Redis budget check failed, falling back to local quota: %s", e)
-                pass
-
-        # Local fallback
+        # [redis-20260928] The remote INCR/TTL tier is gone; allocation is
+        # process-local. Single-node semantics — a cross-process shared quota
+        # needs a new backend (omega_handoff / a lock service), not Redis.
         return await self._check_local(tier, experiment_id, time_budget, ram_budget, model)
-
-    async def _check_redis(
-        self, tier: str, experiment_id: str, time_budget: int, ram_budget: int, model: str
-    ) -> BudgetToken:
-        """Allocate budget via Redis."""
-        r = await self._get_redis()
-
-        # Use Redis transaction for atomicity
-        async with r.pipeline(transaction=True) as pipe:
-            # Check current tier usage
-            tier_key = self._tier_key(tier)
-            exp_key = self._experiment_key(experiment_id)
-
-            current = await r.get(tier_key)
-            current_count = int(current) if current else 0
-
-            if current_count >= self.max_concurrent_per_tier:
-                raise BudgetUnavailableError(
-                    tier=tier,
-                    reason=f"Tier concurrency limit reached ({self.max_concurrent_per_tier})",
-                )
-
-            # Allocate
-            pipe.incr(tier_key)
-            pipe.expire(tier_key, time_budget + 60)  # TTL = budget + buffer
-
-            # Track experiment
-            pipe.hset(
-                exp_key,
-                mapping={
-                    "tier": tier,
-                    "time_budget": str(time_budget),
-                    "ram_budget": str(ram_budget),
-                    "model": model,
-                    "allocated_at": datetime.now(timezone.utc).isoformat(),
-                },
-            )
-            pipe.expire(exp_key, time_budget + 60)
-
-            await pipe.execute()
-
-        expires_at = datetime.now(timezone.utc) + timedelta(seconds=time_budget)
-
-        return BudgetToken(
-            experiment_id=experiment_id,
-            tier=tier,
-            time_budget_sec=time_budget,
-            ram_budget_mb=ram_budget,
-            model=model,
-            expires_at=expires_at,
-        )
 
     async def _check_local(
         self, tier: str, experiment_id: str, time_budget: int, ram_budget: int, model: str
@@ -301,22 +230,7 @@ class BudgetGuard:
 
     async def release(self, tier: str, experiment_id: str) -> None:
         """Release budget allocation (called on context exit)."""
-        if self.enable_redis:
-            try:
-                r = await self._get_redis()
-                tier_key = self._tier_key(tier)
-                exp_key = self._experiment_key(experiment_id)
-
-                async with r.pipeline(transaction=True) as pipe:
-                    pipe.decr(tier_key)
-                    pipe.delete(exp_key)
-                    await pipe.execute()
-                return
-            except Exception as e:
-                logger.debug("Redis budget release failed, falling back to local: %s", e)
-                pass
-
-        # Local fallback
+        # [redis-20260928] remote release path removed.
         if tier in self._local_quota:
             tier_data = self._local_quota[tier]
             tier_data["count"] = max(0, tier_data["count"] - 1)
@@ -355,24 +269,8 @@ class BudgetGuard:
 
         budget = self.TIER_BUDGETS[tier]
 
-        if self.enable_redis:
-            try:
-                r = await self._get_redis()
-                current = await r.get(self._tier_key(tier))
-                current_count = int(current) if current else 0
-                return {
-                    "tier": tier,
-                    "current_usage": current_count,
-                    "max_concurrent": self.max_concurrent_per_tier,
-                    "time_budget_sec": budget["time_sec"],
-                    "ram_budget_mb": budget["ram_mb"],
-                    "model": budget["model"],
-                    "backend": "redis",
-                }
-            except Exception as e:
-                logger.debug("Redis tier status failed, falling back to local: %s", e)
-                pass
-
+        # [redis-20260928] remote status path removed.
+        # Local status
         # Local fallback
         tier_data = self._local_quota.get(tier, {"count": 0})
         return {

@@ -80,3 +80,8 @@ Order matters: 19 before 20. Removing aliases first would strand any caller stil
 - `config/embedding_strategy.yaml` — canonical dimension, providers, collections, MRL ladder
 - `src/omega/memory/sqlite_vec_adapter.py` — legacy aliases and dimension enforcement
 - `SOVEREIGN_MANDATES.md` §M7 (Local-First), §M23 (Failure Integrity)
+<!-- PROVENANCE-CORRECTED 2026-09-29T04:11:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode/space-bunny-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

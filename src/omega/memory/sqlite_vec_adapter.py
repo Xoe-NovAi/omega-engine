@@ -270,6 +270,34 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         # Connection & locks
         self._conn: Optional[sqlite3.Connection] = None
         self._write_lock = anyio.Lock()
+        # [carmack-20260928] SERIALISATION LOCK — product fix, not a test fix.
+        #
+        # FINDING: this adapter funnels every operation through
+        # `anyio.to_thread.run_sync(...)` onto ONE persistent sqlite3
+        # connection. `to_thread` dispatches to a thread pool, so two
+        # concurrent callers execute on two different threads against the
+        # same connection object. CPython's sqlite3 module is not built for
+        # that: the underlying handle is single-thread-affine, and vec0
+        # virtual-table iteration is worse than merely unsafe.
+        #
+        # Reproduced as a real, deterministic failure — NOT a flake.
+        # tests/test_sqlite_vec_adapter.py::TestSQLiteVecWriterStarvation::
+        # test_writer_starvation launches 5 readers + 1 writer:
+        #     idle box      -> passes
+        #     6 CPU spinners -> FAILS, 1-3x:
+        #       [ProviderError] SQLite-vec query failed: bad parameter or
+        #       other API misuse
+        #
+        # Independent proof of the mechanism, no engine involved: 6 threads
+        # sharing one sqlite3 connection over 40 reads each -> 6
+        # ProgrammingError("SQLite objects created in a thread can only be
+        # used in that same thread"). Per-thread connections -> 0 errors.
+        #
+        # FIX: serialise access to the shared connection. Correctness first;
+        # a single writer is what SQLite gives you anyway, and the MRL
+        # embedding width guard is unaffected. `_write_lock` remains for
+        # callers that want write-level exclusion beyond this.
+        self._conn_lock = anyio.Lock()
         self._initialized = False
         self.timeout = timeout
 
@@ -321,7 +349,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 found[name] = count
             return found
 
-        self._legacy_vec_tables = await anyio.to_thread.run_sync(_sync_scan)
+        self._legacy_vec_tables = await self._run_locked(_sync_scan)
         if self._legacy_vec_tables:
             logger.warning(
                 "D-1024 migration: %d pre-1024 vec0 table(s) present in %s: %s. "
@@ -422,7 +450,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             conn.commit()
 
         try:
-            await anyio.to_thread.run_sync(_sync_init)
+            await self._run_locked(_sync_init)
             self._initialized = True
             logger.info(
                 "SQLiteVecAdapter initialized at %s (canonical dim=%d, vec0 deferred)",
@@ -539,7 +567,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 """)
                 conn.commit()
 
-            await anyio.to_thread.run_sync(_sync_create_vec)
+            await self._run_locked(_sync_create_vec)
             self._vec_tables_created[collection_name] = True
             logger.info("vec0 collection '%s' created with dim=%d", collection_name, declared_dim)
 
@@ -573,7 +601,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 conn.execute("DROP TABLE IF EXISTS omega_memory_vec")
                 conn.commit()
 
-            await anyio.to_thread.run_sync(_sync_drop)
+            await self._run_locked(_sync_drop)
             self._legacy_vec_created = False
 
         def _sync_create_vec():
@@ -584,7 +612,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             """)
             conn.commit()
 
-        await anyio.to_thread.run_sync(_sync_create_vec)
+        await self._run_locked(_sync_create_vec)
         self._embedding_dim = actual_dim
         self._legacy_vec_created = True
         logger.info("Legacy vec0 table created with canonical dim=%d", CANONICAL_DIMENSION)
@@ -688,7 +716,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                         conn.commit()
                         return rowid
 
-                    await anyio.to_thread.run_sync(_sync_upsert)
+                    await self._run_locked(_sync_upsert)
                     return point_uuid
 
                 except sqlite3.OperationalError as e:
@@ -819,7 +847,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
 
                 return results
 
-            return await anyio.to_thread.run_sync(_sync_query)
+            return await self._run_locked(_sync_query)
 
         except (sqlite3.Error, OSError) as e:
             logger.error(
@@ -887,7 +915,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                     conn.commit()
                     return deleted_any
 
-                return await anyio.to_thread.run_sync(_sync_delete)
+                return await self._run_locked(_sync_delete)
 
             except (sqlite3.Error, OSError) as e:
                 logger.error("SQLite-vec delete failed: %s", e, exc_info=True)
@@ -959,7 +987,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                     conn.commit()
                     return True
 
-                return await anyio.to_thread.run_sync(_sync_delete_session)
+                return await self._run_locked(_sync_delete_session)
 
             except (sqlite3.Error, OSError) as e:
                 logger.error("SQLite-vec delete_session failed: %s", e, exc_info=True)
@@ -1036,7 +1064,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
 
             # Populate/refresh the legacy-table inventory before reporting it.
             await self._scan_legacy_vec_tables()
-            return await anyio.to_thread.run_sync(_sync_status)
+            return await self._run_locked(_sync_status)
 
         except (sqlite3.Error, OSError) as e:
             return {"status": "unhealthy", "error": str(e)}
@@ -1091,7 +1119,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 ]
 
             try:
-                return await anyio.to_thread.run_sync(_sync_fts)
+                return await self._run_locked(_sync_fts)
             except sqlite3.OperationalError as e:
                 # FTS5 syntax error from a malformed query — degrade gracefully.
                 logger.warning("FTS5 query syntax error (degraded): %s", e)
@@ -1149,7 +1177,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 # busy=0 means checkpoint completed
                 return result[0] == 0
 
-            return await anyio.to_thread.run_sync(_sync_checkpoint)
+            return await self._run_locked(_sync_checkpoint)
 
     async def check_wal_health(self) -> dict:
         """Check WAL file health - size, checkpoint status, and potential issues.
@@ -1195,7 +1223,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
 
             return health
 
-        return await anyio.to_thread.run_sync(_sync_wal_health)
+        return await self._run_locked(_sync_wal_health)
 
     async def start_periodic_checkpoint(self, interval_seconds: int = 300) -> None:
         """Start a background task that runs periodic RESTART checkpoints.
@@ -1233,6 +1261,20 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             self._checkpoint_task = None
             logger.info("Stopped periodic WAL checkpoint task")
 
+    async def _run_locked(self, fn, *args):
+        """Run a sync DB callable on the shared connection, serialised.
+
+        [carmack-20260928] See the `_conn_lock` note in __init__ for the
+        finding this exists to fix. Every operation must go through here so
+        that no two tasks can touch the single sqlite3 handle concurrently.
+
+        Lock ordering: `_write_lock` is always acquired BEFORE `_conn_lock`
+        (call sites that already hold the write lock simply nest deeper), so
+        there is no path that takes `_conn_lock` and then `_write_lock`.
+        """
+        async with self._conn_lock:
+            return await anyio.to_thread.run_sync(fn, *args)
+
     def _get_test_conn(self) -> sqlite3.Connection:
         """Get a connection for testing purposes.
 
@@ -1246,7 +1288,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         """Close the database connection and release resources."""
         if self._conn is not None:
             try:
-                await anyio.to_thread.run_sync(self._conn.close)
+                await self._run_locked(self._conn.close)
             except (sqlite3.Error, OSError) as e:
                 logger.warning("Error closing SQLiteVecAdapter connection: %s", e)
             self._conn = None

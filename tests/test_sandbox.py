@@ -251,7 +251,7 @@ def test_sandbox_error_hierarchy():
 @pytest.mark.asyncio
 async def test_budget_guard_check_returns_budget_token():
     """M21: BudgetGuard.check() returns BudgetToken."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
 
     token = await guard.check("scout", "exp_123")
 
@@ -266,7 +266,7 @@ async def test_budget_guard_check_returns_budget_token():
 @pytest.mark.asyncio
 async def test_budget_guard_tier_budgets():
     """BudgetGuard has correct tier budgets for AMFO."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
 
     for tier_name, budget in TIER_BUDGETS.items():
         token = await guard.check(tier_name, f"exp_{tier_name}")
@@ -277,7 +277,7 @@ async def test_budget_guard_tier_budgets():
 @pytest.mark.asyncio
 async def test_budget_guard_concurrency_limit():
     """BudgetGuard enforces max concurrent per tier."""
-    guard = BudgetGuard(enable_redis=False, max_concurrent_per_tier=2)
+    guard = BudgetGuard(max_concurrent_per_tier=2)
 
     # First two should succeed
     token1 = await guard.check("scout", "exp_1")
@@ -297,7 +297,7 @@ async def test_budget_guard_concurrency_limit():
 @pytest.mark.asyncio
 async def test_budget_guard_enforce_context_manager():
     """BudgetGuard.enforce() context manager enforces time budget."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
     token = await guard.check("scout", "exp_test")
 
     async with guard.enforce(token) as t:
@@ -312,7 +312,7 @@ async def test_budget_guard_enforce_context_manager():
 @pytest.mark.asyncio
 async def test_budget_guard_enforce_timeout():
     """BudgetGuard.enforce() raises on timeout (M23: hard failure)."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
     # Create token with very short expiry
     from src.omega.research.types import BudgetToken
     from datetime import datetime, timedelta, timezone
@@ -333,7 +333,7 @@ async def test_budget_guard_enforce_timeout():
 @pytest.mark.asyncio
 async def test_budget_guard_get_tier_status():
     """BudgetGuard.get_tier_status() returns correct info."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
 
     status = await guard.get_tier_status("scout")
 
@@ -348,7 +348,7 @@ async def test_budget_guard_get_tier_status():
 @pytest.mark.asyncio
 async def test_budget_guard_get_all_tiers_status():
     """BudgetGuard.get_all_tiers_status() returns all tiers."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
 
     all_status = await guard.get_all_tiers_status()
 
@@ -477,7 +477,7 @@ def test_assert_sandbox_runtime_type():
             pass
 
     spec = SandboxSpec(name="test", slot="S3")
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
     runtime = MockRuntime(spec, guard)
 
     # Should not raise
@@ -489,7 +489,7 @@ def test_assert_sandbox_runtime_type():
 
 def test_assert_budget_guard_type():
     """M21: assert_budget_guard_type validates BudgetGuard contract."""
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
 
     # Should not raise
     assert_budget_guard_type(guard)
@@ -528,7 +528,7 @@ async def test_ml_training_sandbox_creation():
     from omega.research.sandbox import SandboxRuntime
 
     spec = SandboxSpec(name="ml_training", slot="S6")
-    guard = BudgetGuard(enable_redis=False)
+    guard = BudgetGuard()
 
     sandbox = MLTrainingSandbox(spec, guard)
 
