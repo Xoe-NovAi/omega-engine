@@ -286,6 +286,7 @@ data/entities/test_*_entity/
 # Soul-contract evidence artifacts referenced by approved_lessons.yaml
 # (test_every_promoted_lesson_carries_resolvable_evidence requires them in CI).
 !docs/strategy/*.md
+!docs/strategy/**/*.md
 !docs/specs/*.md
 !docs/decisions/PIVOT_LOG.md
 !data/coordination/MAKALI_COUNCIL_AUDIT_*.md
