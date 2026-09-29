@@ -7,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 # LILITH SESSION GNOSIS — POINTER (M15)
 > Single gnosis anchor per fleet standard. Immutable dated files alongside:
 > `session_gnosis_20260824.md` · `session_gnosis_L-N7.md` · `session_gnosis_workspace_20260821.md`
-> Latest session: **2026-09-28 (Sync Wave Closure — Hub Restored, 54-Tool Parity Re-measured, WatchTower 4-Layer Spec, Nomic 1024-D Violation Flagged)**
+> Latest session: **2026-09-29 (Reverse-Direction Dispatch — Scope Falsified, Refused, L3 Observer Principle Written, Live Netmap Parsed)**
 
 ---
 
@@ -252,3 +252,86 @@ SPDX-License-Identifier: Apache-2.0
 ---
 
 *⬡ OMEGA ⬡ LILITH ⬡ GNOSIS ⬡ 2026-09-28 ⬡*
+
+---
+
+## SESSION 2026-09-29 — REVERSE-DIRECTION DISPATCH: REFUSED, SCOPE FALSIFIED, DOCTRINE WRITTEN
+
+### L1 — NARRATIVE
+- Received a Node 1 reverse-direction build dispatch (stand up `~/exchange/` on n1, configure serve, run GE-N1's n1-to-n0 self-test). Ran verified-on-entry checks **before** changing anything.
+- **The scope premise was false: I am executing on Node 0.** `hostname`=Arcana-NovAi, Tailscale self=`n0` (`100.123.51.67`). `~/exchange` exists (612 KB). `tailscale serve status` shows n0 publishing 8016 and 8019. The payload `n1-to-n0-20260929-ge-n1-selftest` is **absent** from this node.
+- **Made no changes and attempted no remote path.** No files created, no serve config written, no payload touched, no connection to n1. Reported the contradiction instead of manufacturing a workaround.
+- MaKaLi adjudicated: **I was correct on both counts**; the failure was the dispatcher's. A Node 1 task was sent to a Node 0 session. Option 3 (handoff to GE-N1) adopted; options 1 and 2 rejected.
+- **New doctrine recorded by Kali**: *an entity is not a location.* "Lilith owns Node 1's runtime" is a governance statement, not an execution capability. Cross-node substrate work requires a handoff to a session with a vantage on that substrate.
+- **Wrote the named L3 principle** to `docs/governance/REMOTE_CLAIM_DOCTRINE.md` as `GOV-OBSERVER-PARAMETER-20260929`, with GE-N1's self-correction as the exemplar and all three week-instances tabulated.
+- **Recorded my own self-correction (seventh instance this week)** — quoted verbatim in L2 below.
+- **Ran the protocol-aware, source-attributed netmap parse** and produced the N1→N0 reachability table for 8016/8017/8018/8019/22/2049/6379/51372. Live grants are **8016, 8019**; 8017, 8018, 22, 2049, 6379, 51372 all **DENY**. Parse used `IPProto` (not `Proto`), kept `Srcs` attribution, and rendered ICMP `Ports` as **ICMP types**, not TCP ports.
+- **Correction to my own prior report**: I previously said "the policy file here still grants 8016+8017 and omits 8019." That was true of the **superseded 09-26 file** I read, not the current one. The v2 file (`tailnet-policy-OMEGA-DEFINITIVE-v2-20260928.hujson`, 2026-09-28 17:03) already matches live exactly. I had cited the wrong file, and I did not notice the v2 file existed.
+
+### L2 — SELF-CORRECTIONS (this session, both volunteered)
+
+> **Mine — stale by a day.** In my 2026-09-28 report I listed 8019 as "refusal EXPECTED until the Architect adds the grant." The grant landed, the origin is up, and 8019 is published. **My last known state was stale by a day.**
+
+> **Mine — wrong file cited.** I reported "the policy file here still grants 8016+8017 and omits 8019," implying the repo copy was behind live. The file I read was the superseded 09-26 variant. The 09-28 v2 file matches live. I had not enumerated the policy directory.
+
+**Generalised rule — parity figures and grant status are time-indexed facts and must
+be re-verified before citation, never carried forward.** The generated registry was
+stale five weeks; a log claim was wrong the same day; my grant record was stale by
+one day. Same shape, three surfaces, one rule. This extends `L3-ParityIsTimeIndexed`
+from tool counts to **all** mutable state — grants, port maps, service status,
+tool surfaces, policy files.
+
+### L3 — THE NAMED PRINCIPLE
+
+> **An observer that verifies with different parameters than the test manufactures findings.**
+
+Written to `docs/governance/REMOTE_CLAIM_DOCTRINE.md` (`GOV-OBSERVER-PARAMETER-20260929`)
+with GE-N1's unprompted self-correction as the exemplar, the three week-instances
+tabulated, and the rule: *re-verify with the same parameters the passing test used;
+if they must differ, that run is a different experiment and must be labelled as one.*
+
+**Corollary added:** a gate that cannot fail is a finding-manufacturer in the
+*positive* direction. Instance 2 (the `is-active` gate passing a 101-restart
+crash-loop) is the same defect inverted — there the observer was *missing* and the
+finding was manufactured by absence. Both directions produce false confidence, and
+both close with the same discipline: **assert the specific property, with the
+specific parameters, or label the claim UNTESTED.**
+
+**General form**: my L3 "the WatchTower must watch itself" is about the observer
+being unobserved. This is the adjacent failure — the observer being *unfaithful*,
+diverging from the thing it claims to observe. Both are observer defects. Together:
+**the observer is the least trustworthy component in the system, because it is the
+only one that can report success without the system agreeing.**
+
+### L3 — Live Netmap, N1 → N0 (2026-09-29, protocol-aware, source-attributed)
+
+| Port | N1→N0 | Note |
+|------|-------|------|
+| 8016 | **ALLOW** | FastMCP hub bridge |
+| 8017 | DENY | removed 2026-09-28 (SearXNG SSRF/abuse surface) — deny test guards it |
+| 8018 | DENY | never granted |
+| 8019 | **ALLOW** | read-only exchange pipe (loopback-bound origin) |
+| 22 | DENY | no SSH path between nodes, both planes |
+| 2049 | DENY | NFSv4 removed under D-FED-01 |
+| 6379 | DENY | Redis container + quadlet deleted 2026-09-28 |
+| 51372 | DENY | Deluge removed (removal in progress 2026-09-28) |
+
+Parse: `tailscale debug netmap` → `PacketFilter` (2 rules). Rule 0 = TCP (`IPProto:[6]`,
+`Srcs` = both n1 IPs) → n0 dst ports 8016, 8019 on v4 and v6. Rule 1 = ICMP
+(`IPProto:[1]`) → n0, `Ports` 0–65535 rendered as **ICMP types**, not TCP ports.
+`PacketFilterRules` is a count/summary (`Srcs: None`) and is **not** the attributed
+data — `PacketFilter` is. Reporting the `PacketFilterRules` shape as if attributed
+would silently drop all source attribution, which is exactly the error class
+`GOV-OBSERVER-PARAMETER` names.
+
+### L3 — Dispatch Integrity
+
+**An entity is not a location.** A task naming an owner names *sovereignty*, not
+*execution*. Dispatch must name the node, or the session's node must be verified
+before the task is accepted as actionable. A Node 1 substrate task delivered to a
+Node 0 session is unexecutable by construction — and the correct response is to
+refuse and report, **not** to find a path. The no-SSH policy is what makes the
+refusal the right answer; routing around it would be the defect the policy exists
+to prevent.
+
+*⬡ OMEGA ⬡ LILITH ⬡ GNOSIS ⬡ 2026-09-29 ⬡*

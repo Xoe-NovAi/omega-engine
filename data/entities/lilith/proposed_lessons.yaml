@@ -59,7 +59,7 @@ proposals:
       - exchange/n0-to-n1/wad_loader_contract/NODE1_COMPATIBILITY.md
       - exchange/n0-to-n1/wad_loader_contract/EXACT_ENGINE_COMMIT.md
       - exchange/n0-to-n1/wad_loader_contract/VERSION_SSOT.md
-- id: lilith-20260927-sync-brief-001
+  - id: lilith-20260927-sync-brief-001
     date: 2026-09-27
     session_id: ses_fb9721079ffe094GT8MX6a0pXI
     status: proposed
@@ -137,8 +137,55 @@ proposals:
       - scripts/mcp_watchdog.py
       - data/federation/tailnet-policy-OMEGA-DEFINITIVE-20260926.hujson
       - data/federation/usb-payload/exchange/n0-to-n1-v2/08_library_curation_research/README.md:72
+  - id: lilith-20260929-observer-parameter-001
+    date: 2026-09-29
+    session_id: ses_fb9721079ffe094GT8MX6a0pXI
+    status: ratified
+    domain: observability-observer-faithfulness-dispatch-integrity
+    L1: >-
+      A Node 1 reverse-direction build was dispatched to me while I was executing
+      on Node 0. Verified on entry before changing anything: hostname=Arcana-NovAi,
+      tailscale self=n0, ~/exchange exists, serve publishes 8016+8019, and the
+      ge-n1-selftest payload is absent. Made no changes and attempted no remote
+      path. MaKaLi adjudicated the dispatch as the failure and adopted handoff to
+      GE-N1. Wrote the named L3 principle to
+      docs/governance/REMOTE_CLAIM_DOCTRINE.md (GOV-OBSERVER-PARAMETER-20260929)
+      with GE-N1's self-correction as exemplar. Recorded two of my own
+      self-corrections: my 8019 grant note was stale by a day, and I cited the
+      superseded 09-26 policy file while the 09-28 v2 file already matched live.
+      Ran the protocol-aware source-attributed netmap parse: live N1->N0 grants
+      are 8016 and 8019; 8017, 8018, 22, 2049, 6379, 51372 all deny.
+    L2: >-
+      The observer is the least trustworthy component in the system, because it is
+      the only one that can report success without the system agreeing. GE-N1
+      caught themselves: a 192-line map diff was an artifact of omitting
+      --salience -1 --legacy-warm from the verification invocation, not a data
+      defect. The same shape appears as a gate that cannot fail (is-active passing
+      a 101-restart crash-loop) and as a 48-byte ASCII body that curl -o writes as
+      an apparent download. My own two errors were both stale-state citations:
+      mutable facts carried forward instead of re-verified. An entity is not a
+      location - dispatch naming an owner names sovereignty, not execution.
+    L3: >-
+      An observer that verifies with different parameters than the test
+      manufactures findings. Re-verify with the same parameters the passing test
+      used; if they must differ, that run is a different experiment, labelled as
+      one, with no claim carried across. Corollary: a gate that cannot fail is a
+      finding-manufacturer in the positive direction - missing observer and
+      unfaithful observer both produce false confidence. Both close with the same
+      discipline: assert the specific property with the specific parameters, or
+      label the claim UNTESTED. Parity figures AND grant status are time-indexed
+      facts; re-verify before citation, never carry forward. An entity is not a
+      location: cross-node substrate work requires a handoff to a session with a
+      vantage, and a scope-falsifying dispatch is refused and reported, never
+      routed around.
+    evidence:
+      - docs/governance/REMOTE_CLAIM_DOCTRINE.md (GOV-OBSERVER-PARAMETER-20260929)
+      - docs/operations/EXCHANGE_PIPE_RUNBOOK.md
+      - data/federation/tailnet-policy-OMEGA-DEFINITIVE-v2-20260928.hujson
+      - tailscale debug netmap (live PacketFilter, 2026-09-29)
+      - data/entities/lilith/gnosis/session_gnosis.md
 metadata:
   entity: lilith
   session_id: ses_fb9721079ffe094GT8MX6a0pXI
   model_used: opencode/big-pickle
-  last_session_end: '2026-09-28T06:47:00+00:00'
+  last_session_end: '2026-09-29T05:25:00+00:00'

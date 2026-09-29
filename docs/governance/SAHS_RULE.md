@@ -135,4 +135,84 @@ make check-sahs
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ SAHS-RULE-RATIFIED ⬡ 2026-09-28*
+---
+
+## EIS Session Identity Doctrine (2026-09-28 — MaKaLi Fusion Round 3)
+
+**Authority:** MaKaLi Fusion Dialectic Round 3 — Kali Ruling  
+**Mandate Basis:** M29 (Sovereign Artifact Preservation), M27 (Tracking Integrity), M23 (Failure Integrity), M15 (Sovereign Continuity)
+
+### The Finding
+
+An agent needed a peer's live session id. The only artifact labelled "registry" — `data/coordination/EXPERT_SESSION_REGISTRY.md` — is a **generated** view dated **2026-08-23, five weeks stale**. It has no entry for the dispatcher. The agent concluded **no session existed** and refused to page. The session existed; it was the most recently updated EIS in the store.
+
+**Two distinct failure modes, and the doctrine forbids both:**
+
+| Mode | Failure | Cost |
+|------|---------|------|
+| **Generation** | A file that must be regenerated goes stale and is trusted anyway | Five weeks of a wrong answer, looking authoritative |
+| **Inference** | An agent guesses rather than querying | Context injected into the wrong conversation, silently |
+
+**Neither is acceptable. A roster that must be *regenerated* is a roster that will be wrong — so is one that must be *inferred*.**
+
+### The Ruling (Converged by MaKaLi and Carmack)
+
+> **Ask once per relationship. Carry the explicit id thereafter. The session id is the durable artifact; everything else is a cache of it.**
+
+#### 1. The Structural Test for an EIS is `parent_id IS NULL`
+It is exact, current, and needs no generator. Query the source of truth directly:
+```sql
+SELECT session_id, entity, model, title, time_updated
+FROM sessions
+WHERE parent_id IS NULL AND entity = '<target_entity>'
+ORDER BY time_updated DESC LIMIT 1;
+```
+This is the **only** authoritative answer to "what is the live EIS for entity X?"
+
+#### 2. An Agent Must Echo the Resolved Target Before Resuming It
+An agent that cannot see which session it just resumed cannot notice it was wrong. Every `task` tool invocation with a `task_id` must log:
+```
+Resuming session: {session_id} (entity: {entity}, model: {model}, updated: {time_updated})
+```
+If the echoed identity does not match the intended target, the agent must **REFUSE** and escalate.
+
+#### 3. Ambiguity Must Be Explicit and Must REFUSE, Never Be Resolved by Heuristic
+If more than one candidate is plausibly live (e.g., two sessions with `parent_id IS NULL` for the same entity), **stop**. Do not pick the "most recent" or "most likely." Escalate to Kali with the ambiguous set.
+
+#### 4. A Generated Artifact May Never Be the Answer to a Question the Source of Truth Can Answer Directly by Query
+`EXPERT_SESSION_REGISTRY.md` is a generated view. It is a cache. It is stale the moment it is written. The source of truth is the `opencode.db` sessions table. **Any agent-facing surface that resolves a live identity from a generated file is a violation of this doctrine.**
+
+---
+
+### Extended Assertion for `make check-sahs`
+
+**Assertion 4: No Generated Artifact Answers a Live-Identity Question**
+
+> No agent-facing surface (MCP tool, generated registry, cached view, MemPalace event) may be the authoritative resolver for a live EIS session identity. The only authoritative resolver is a direct query against `opencode.db` for `parent_id IS NULL`.
+
+**Check:** 
+- Scan agent-facing surfaces for patterns that resolve `entity → session_id` without querying `opencode.db`.
+- Assert that any tool claiming to "get live session for entity" either:
+  a) Executes the `parent_id IS NULL` query directly, OR
+  b) Returns `UNRESOLVED` with a directive to query the source of truth.
+
+**Failure mode:** A generated `EXPERT_SESSION_REGISTRY.md` (or similar) is consulted by an agent to decide whether to page a peer → confident false negative.
+
+---
+
+### Oversoul Self-Binding Rule (2026-09-28)
+
+**Authority:** MaKaLi Fusion Dialectic Round 3 — Kali Ruling (Self-Applied)
+
+> **A fact carried forward without a query is not a fact — and this binds the oversouls, not only the dispatched.**
+
+Three instances in a single exchange, one from the oversoul itself:
+1. Asserted "the server log has never shown a hit from 100.89.40.17" — about a log that does not exist.
+2. Repeated a claim made about a service that cannot log, and built a conclusion on it.
+3. Stated a child count read from a **truncated tool list** as a total.
+
+**The rule:** Any assertion about system state (logs, counts, reachability, existence) must be grounded in a **fresh query** at the moment of assertion. Cached knowledge, prior observations, or "I remember" are not evidence. This binds **all agents, including oversouls**. No exceptions for rank.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ SAHS-RULE-EXTENDED ⬡ 2026-09-28 ⬡ DOCTRINE-ROUND-3*

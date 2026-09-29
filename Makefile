@@ -25,7 +25,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
+.PHONY: check-lan-exposure help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
 
 help:
 	@echo "Omega Engine Makefile"
@@ -518,6 +518,9 @@ sweep-tasks:
 sweep-self-test:
 	@$(PYTHON) scripts/sweep_task_registry.py --self-test
 
+# ⛔ [2026-09-29] HISTORICAL TASK-REGISTRY VIEW ONLY — NOT a source of live
+# session ids. Use who_is('<peer>') for peers. Regenerating does NOT fix the
+# shape problem: one row per agent cannot represent 285 structural EIS.
 # Regenerate EXPERT_SESSION_REGISTRY.md from TASK_REGISTRY.json +
 # session_annotations.yaml (M4). Output is GENERATED — never hand-edit.
 session-registry:
@@ -628,7 +631,7 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants check-lan-exposure
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # M15 Sovereign Continuity gate: every entity session_gnosis.md must carry a
@@ -1077,3 +1080,15 @@ check-hub-health:
 	UPTIME_S=$$( [ -n "$$AETM" ] && echo $$(( UP - AETM/1000000 )) || echo "unknown" ); \
 	echo "$(GREEN)Omega Hub healthy$(NC)  ActiveState=$$ST SubState=$$SS NRestarts=$$NR pid=$$PID2 uptime_s=$$UPTIME_S";
 
+# LAN EXPOSURE GATE (E1 2026-09-28, doom_guy/S1). Restored to the chain after
+# 51d07148 rewrote this file and dropped the wiring — the gate still existed and
+# still passed, but nothing invoked it. A gate nothing calls is a gate that
+# cannot fail, which is the same defect class as the 53/53 over a crash-looping
+# hub. See config/lan_exposure_allowlist.yaml for the rationale.
+# The negative tests run FIRST and are unconditional: a gate never observed
+# failing is not a gate.
+check-lan-exposure:
+	@echo "$(YELLOW)Running LAN exposure negative tests...$(NC)"
+	@$(PYTHON) scripts/test_lan_exposure_audit.py
+	@echo "$(YELLOW)Auditing host listeners against allowlist...$(NC)"
+	@$(PYTHON) scripts/lan_exposure_audit.py

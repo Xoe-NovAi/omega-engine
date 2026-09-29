@@ -434,3 +434,92 @@ Failures oscillate 35/45/29 → **flaky**. 13 named tests failed post-restart an
 ### Gates
 `make check-lan-exposure` → 22/22 + no unapproved binds, **exit 0**
 `make temple-grade` → **TOTAL 53 / PASS 53 / FAIL 0, exit 0**
+
+---
+
+## 🔴 THE 8019 FALSE-SUCCESS BUG (2026-09-29) — highest priority, closed
+
+**Trace:** `trc_8019_false_success` · **Model (M22):** `opencode/space-bunny-free` (runtime-injected)
+**Origin:** `scripts/omega_exchange_server.py` (AnyIO/starlette/uvicorn) — replaces `python3 -m http.server`.
+
+### The defect (Carmack, verified by execution — I reproduced it byte-for-byte)
+```
+$ curl -o /tmp/tail.zip http://100.123.51.67:8019/full-pack-20260926.zip
+$ file /tmp/tail.zip   →  ASCII text, 48 bytes
+$ xxd  →  43 6c 69 65 6e 74 ...  "Client sent an HTTP request to an HTTPS server.\n"
+```
+`curl -o` writes an error body to disk indistinguishably from a download. A
+receiver that skips the manifest writes a 48-byte "zip", believes the transfer
+succeeded, and fails later at `unzip` — far from the cause.
+
+### 🔴 THE FINDING THAT CHANGES THE FIX
+**The 48 bytes are emitted by `tailscaled` (Go `net/http`), NOT by the origin.**
+Proof — three independent lines:
+1. `HTTP/1.0 400` with **no headers at all** (no content-type, no content-length).
+   `http.server` always emits both.
+2. tailscaled journal: `http: TLS handshake error from 100.123.51.67:55616:
+   client sent an HTTP request to an HTTPS server`.
+3. The origin's access log records **no** entry for those requests — the
+   connection dies **before** it is proxied.
+
+**No origin-side change can suppress that body.** I did not pretend otherwise.
+The fix is a layered defence that makes a false success impossible for a correct
+client:
+1. **`curl -f`** (the documented form) → exit 22, **no file written** (verified).
+2. **Manifest-first** — `/manifest.json` publishes path/size/sha256/content_type
+   for all 88 artifacts, so a client verifies *before* accepting bytes.
+3. **Self-describing errors** — every error is a JSON envelope tagged
+   `X-Omega-Error: 1`; artifacts carry `X-Omega-SHA256`/`X-Omega-Size` so a
+   client can verify from headers alone.
+4. `X-Omega-Error: 1` also survives the traversal and 404 paths, so a 400/404
+   can never be parsed as a payload.
+
+### OBSERVED-RED PROOF (a gate never seen failing is not a gate)
+Regression test run against the OLD `python3 -m http.server`:
+```
+Ran 8 tests — FAILED (errors=7, failures=8)
+```
+It caught, among others:
+- `manifest` fixture **errored** (no manifest exists on `http.server`) — which
+  is the structural root of "a client can skip verification"
+- write verbs returned **501**, not 405
+- `test_traversal_is_refused` produced **335 bytes on disk**
+
+After the swap: **15/15 PASS**, `Ran 15 tests in 0.16s — OK`.
+
+### Second defect closed: the log that did not exist
+`http.server` wrote **no** access log. I had previously asserted "the log has
+never shown a hit from 100.89.40.17" **about a log that cannot log requests** —
+so we never knew whether an N1 pull had ever succeeded. The new origin emits one
+JSON line per request (ts UTC +00:00, method, path, status, bytes, client_ip,
+user_agent, note). **A genuine tailnet request is now on record:**
+```json
+{"ts":"2026-09-29T08:28:25.867+00:00","service":"omega-exchange/2.0","method":"GET",
+ "path":"/full-pack-20260926.zip","status":200,"bytes":122463,
+ "client_ip":"100.123.51.67","user_agent":"curl/8.14.1",
+ "note":"sha256=36ac1468f2397c00 dur_ms=0.6"}
+```
+
+### URL form published
+`https://n0.tail51f14a.ts.net:8019/<path>` — **HTTPS only**.
+`http://100.123.51.67:8019/<path>` is named **BROKEN** in the runbook, the
+manifest, and the index — not omitted, so nobody rediscovers it.
+Runbook: `docs/operations/EXCHANGE_PIPE_RUNBOOK.md`
+
+### Preserved
+Loopback `127.0.0.1:8019` GET still works (200, hash matches). Unit **enabled**,
+`Linger=yes` (survives reboot). Backend **loopback-only** — and the service
+*refuses to start* on a non-loopback HOST, exiting 2 with a FATAL message.
+Write verbs → **405** (was 501; both refuse).
+
+### Side findings
+- **A commit (`51d07148`) rewrote the Makefile and silently dropped my
+  `check-lan-exposure` wiring.** The gate still existed and still passed, but
+  nothing invoked it — *a gate nothing calls cannot fail*. Restored to
+  `check-mandates`. This is the "53/53 over a crash-looping hub" class again.
+- `--collect-only` under `pytest-tldr` reports 0; true count is **2489** via JSON.
+
+### Gates
+`scripts/test_exchange_false_success.py` → **15/15 OK**
+`make check-lan-exposure` → **PASS**, exit 0
+`make temple-grade` → **TOTAL 53 / PASS 53 / FAIL 0**, exit 0, wall 98s

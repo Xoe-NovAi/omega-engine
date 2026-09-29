@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# Sovereign Mandates — Condensed (v3.9.0)
+# Sovereign Mandates — Condensed (v3.10.0)
 
 > Tier-0 injection artifact. One-line-per-mandate distillation of
-> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 29 laws).
+> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 30 laws).
 > Injected pre-compaction by `sovereign-compaction` plugin so the summary retains the law.
-> Lineage: v3.9.0 · 29 mandates · updated 2026-09-28.
+> Lineage: v3.10.0 · 30 mandates · updated 2026-09-28.
 
 | # | Mandate | One-Line Law |
 |---|---------|--------------|
@@ -41,8 +41,11 @@ SPDX-License-Identifier: Apache-2.0
 | M26 | Doc Standards | Reference docs pass `make doc-llm-validate`; sprint plans use `docs/sprints/<name>/` structure. |
 | M27 | Tracking Integrity | Execution state follows the 5-Tier Tracking Architecture; validate via `scripts/validate_tracking_state.py`. |
 | M28 | Sovereign Artifact Preservation | No sovereign artifact auto-deleted; transitions explicit, auditable, recoverable; deep-archive requires signed manifest + operator auth; destruction requires human act in PIVOT_LOG. |
+| M29 | Remote Claim Integrity | "Works from here" ≠ "works from there." Remote claims require test from peer's vantage or are UNTESTED. Local success ≠ remote success. Post-hoc verification necessary but not sufficient. If test cannot distinguish success from failure, claim is UNTESTABLE, not true. |
 
 **Critical five for oversight**: M1·M7·M11·M15·M23
+
+**Critical six for oversight (post-Round-3)**: M1·M7·M11·M15·M23·M29
 
 ## Enforcement Map
 
@@ -55,4 +58,4 @@ SPDX-License-Identifier: Apache-2.0
 | `config/providers.yaml` strategy=`local_first` | Local-First routing law (M7) |
 | `make test-streaming` | M25 chunk-timeout behavior |
 
-*⬡ OMEGA ⬡ KALI ⬡ MANDATES-CONDENSED-v3.9.0 ⬡ CI-1 ⬡ PUBLIC-DEBUT-01 ⬡ 2026-09-28*
+*⬡ OMEGA ⬡ KALI ⬡ MANDATES-CONDENSED-v3.10.0 ⬡ CI-1 ⬡ PUBLIC-DEBUT-01 ⬡ 2026-09-28*

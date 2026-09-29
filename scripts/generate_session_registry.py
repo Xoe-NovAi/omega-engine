@@ -6,6 +6,13 @@
 
 """Render EXPERT_SESSION_REGISTRY.md from the Tier-3 SSOT (M4 / G4-Ruling-4).
 
+⛔ DEPRECATED AS A PEER-INDEX ANSWER PATH (2026-09-29). Regenerating this file
+does NOT fix the defect that prompted its deprecation: the output has ONE row
+per agent, while the live store holds 285 structural EIS and multi-EIS per
+entity is the norm. The SHAPE is wrong, so refreshing the data cannot make it a
+valid source of live session ids. It remains a legitimate HISTORICAL
+TASK-REGISTRY view; for peers use `who_is('<peer>')`.
+
 Sources of truth:
   - data/coordination/TASK_REGISTRY.json      (task records)
   - data/coordination/session_annotations.yaml (judgments attach to records)

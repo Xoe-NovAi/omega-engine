@@ -5,10 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.9.0
+**Version**: 3.10.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-09-28 (Added M29 Sovereign Artifact Preservation)
+**Updated**: 2026-09-28 (Added M30 Remote Claim Integrity)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -260,7 +260,21 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ---
 
-### 29. Third-Party Boundary & Public Secret Exemption (M35 — NEW — 2026-08-30)
+### 29. Remote Claim Integrity (M30 — NEW — 2026-09-28)
+- **Mandate**: "Works from here" is not "works from there." A claim about remote behaviour requires a test from the peer's vantage, or is labelled **UNTESTED** — never "verified."
+- **Constraint**: 
+  - A local success is not a remote success, and must never be reported as one.
+  - Post-hoc verification is necessary and not sufficient. A transfer protocol must include a verification step that **cannot** report success when the payload is corrupt, truncated, or an error page.
+  - If a test cannot distinguish success from failure, the claim is **UNTESTABLE**, not true. The correct response to UNTESTABLE is to instrument, not to assume.
+- **Reason**: The exchange channel 8019 was tested from loopback and declared "verified"; a peer's plain-HTTP path returned a 400 whose 48-byte body `curl -o` wrote to disk as a "successful download." The receiver who skipped the manifest wrote a 48-byte "zip" and failed later at `unzip`, far from the cause. The same claim recurred in earlier forms: mis-aimed pixel probe, confabulated object, phantom port. This is structurally identical to temple-grade 53/53 over a crash-looping hub — the test passes, but the property it claims to verify is false.
+- **Enforcement**: 
+  - Any claim about remote behaviour must include: test harness from peer's vantage, environment snapshot, success criteria (HTTP 200 + valid manifest + SHA256 match), failure mode analysis, observability gap statement.
+  - Claims lacking these are **UNTESTED**, not verified.
+  - If the system cannot distinguish success from failure for a path, the path is **UNTESTABLE** — instrument, do not assume.
+
+---
+
+### 30. Third-Party Boundary & Public Secret Exemption (M35 — NEW — 2026-08-30)
 - **Mandate**: All third-party code MUST be managed via a controlled boundary; public OAuth client secrets (per RFC 6749 §2.1, RFC 8252 §8) MUST be catalogued in `data/secrets-public.toml` with primary-source verification.
 - **Constraint**:
   1. **SPDX/REUSE Enforcement**: All third-party code MUST carry `SPDX-License-Identifier` in file header OR entry in `.reuse/dep5` (or `REUSE.toml` per REUSE Specification v3.3, 2024-11-14).

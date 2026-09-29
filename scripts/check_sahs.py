@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-check_sahs.py — Single Authoritative Handoff Surface gate [M29]
+check_sahs.py — Single Authoritative Handoff Surface gate [M29, M30]
 
-Three assertions:
+Four assertions:
 1. EXACTLY ONE WRITER: Only the Hivemind daemon holds a write FD on any
    packet file in the handoff tree.
 2. PROJECTION RECONCILIATION (both directions):
@@ -16,6 +16,11 @@ Three assertions:
       one projection surface.
 3. NO ROGUE WRITES: No process other than the Hivemind daemon writes
    to the authoritative store.
+4. NO GENERATED ARTIFACT ANSWERS A LIVE-IDENTITY QUESTION: No agent-facing
+   surface (MCP tool, generated registry, cached view, MemPalace event) may
+   be the authoritative resolver for a live EIS session identity. The only
+   authoritative resolver is a direct query against `opencode.db` for
+   `parent_id IS NULL`.
 
 A count-only gate passes GE-N1's failure modes. Reconciliation fails them.
 """
@@ -241,9 +246,77 @@ def assertion_no_rogue_writes() -> Tuple[bool, str]:
     # This is essentially the same check as Assertion 1
     return assertion_one_writer()
 
+def assertion_no_generated_identity_resolver() -> Tuple[bool, List[str]]:
+    """Assertion 4: No Generated Artifact Answers a Live-Identity Question.
+    
+    No agent-facing surface (MCP tool, generated registry, cached view, MemPalace event)
+    may be the authoritative resolver for a live EIS session identity. The only
+    authoritative resolver is a direct query against `opencode.db` for `parent_id IS NULL`.
+    
+    Returns: (passed, list_of_violations)
+    """
+    violations = []
+    
+    # Check for generated registry files that claim to resolve live EIS identities
+    registry_files = [
+        PROJECT_ROOT / "data" / "coordination" / "EXPERT_SESSION_REGISTRY.md",
+        PROJECT_ROOT / "data" / "coordination" / "SESSION_REGISTRY.md",
+    ]
+    
+    for reg_file in registry_files:
+        if reg_file.exists():
+            try:
+                content = reg_file.read_text()
+                # Check if it claims to be a live registry or resolver
+                if any(keyword in content.lower() for keyword in [
+                    "live session", "current session", "active session", 
+                    "resolves", "resolver", "lookup", "find session"
+                ]):
+                    violations.append(
+                        f"Generated artifact '{reg_file.relative_to(PROJECT_ROOT)}' "
+                        f"claims to resolve live EIS session identities. "
+                        f"Only direct query against opencode.db (parent_id IS NULL) is authoritative."
+                    )
+            except Exception:
+                pass
+    
+    # Check for MCP tools that claim to resolve live identities without querying opencode.db
+    # This is a static check - we look for tool definitions that claim resolver capability
+    mcp_tools_dir = PROJECT_ROOT / "mcp_servers" / "omega_hub" / "hub_tools"
+    if mcp_tools_dir.exists():
+        for tool_file in mcp_tools_dir.glob("*.py"):
+            try:
+                content = tool_file.read_text()
+                if "session" in content.lower() and "resolve" in content.lower():
+                    # Check if it queries opencode.db directly
+                    if "opencode.db" not in content and "parent_id" not in content:
+                        violations.append(
+                            f"MCP tool '{tool_file.relative_to(PROJECT_ROOT)}' may resolve "
+                            f"session identities without querying opencode.db (parent_id IS NULL)."
+                        )
+            except Exception:
+                pass
+    
+    # Check for generated registry files in data/coordination that are not the source of truth
+    coord_dir = PROJECT_ROOT / "data" / "coordination"
+    if coord_dir.exists():
+        for md_file in coord_dir.glob("*REGISTRY*.md"):
+            if md_file.name not in ["EXPERT_SESSION_REGISTRY.md", "SESSION_REGISTRY.md"]:
+                try:
+                    content = md_file.read_text()
+                    if "session_id" in content and "entity" in content:
+                        violations.append(
+                            f"Generated file '{md_file.relative_to(PROJECT_ROOT)}' contains "
+                            f"session_id/entity mappings. Only opencode.db is the source of truth for live EIS."
+                        )
+                except Exception:
+                    pass
+    
+    return len(violations) == 0, violations
+
 def main() -> int:
     print("=" * 70)
-    print("SAHS Rule Gate — Single Authoritative Handoff Surface [M29]")
+    print("SAHS Rule Gate — Single Authoritative Handoff Surface [M29, M30]")
     print("=" * 70)
     
     all_passed = True
@@ -254,7 +327,7 @@ def main() -> int:
     print(f"\nAuthoritative store: {len(envelopes)} envelopes across {len(HANDOFF_DIRS)} queues")
     
     # Assertion 1: Exactly one writer
-    print("\n[1/3] Assertion: Exactly one writer (Hivemind daemon)...")
+    print("\n[1/4] Assertion: Exactly one writer (Hivemind daemon)...")
     passed, msg = assertion_one_writer()
     if passed:
         print(f"  ✅ PASS: {msg}")
@@ -264,7 +337,7 @@ def main() -> int:
     messages.append(("Assertion 1 (One Writer)", passed, msg))
     
     # Assertion 2: Projection reconciliation
-    print("\n[2/3] Assertion: Projection reconciliation (both directions)...")
+    print("\n[2/4] Assertion: Projection reconciliation (both directions)...")
     passed, violations = assertion_projection_reconciliation(envelopes)
     if passed:
         print(f"  ✅ PASS: All projections reconciled with authoritative store")
@@ -276,7 +349,7 @@ def main() -> int:
     messages.append(("Assertion 2 (Projection Reconciliation)", passed, violations if not passed else "All reconciled"))
     
     # Assertion 3: No rogue writes
-    print("\n[3/3] Assertion: No rogue writes...")
+    print("\n[3/4] Assertion: No rogue writes...")
     passed, msg = assertion_no_rogue_writes()
     if passed:
         print(f"  ✅ PASS: {msg}")
@@ -284,6 +357,18 @@ def main() -> int:
         print(f"  ❌ FAIL: {msg}")
         all_passed = False
     messages.append(("Assertion 3 (No Rogue Writes)", passed, msg))
+    
+    # Assertion 4: No generated artifact answers a live-identity question
+    print("\n[4/4] Assertion: No generated artifact answers a live-identity question...")
+    passed, violations = assertion_no_generated_identity_resolver()
+    if passed:
+        print(f"  ✅ PASS: No generated artifact resolves live EIS identities")
+    else:
+        print(f"  ❌ FAIL: {len(violations)} violation(s):")
+        for v in violations:
+            print(f"    - {v}")
+        all_passed = False
+    messages.append(("Assertion 4 (No Generated Identity Resolver)", passed, violations if not passed else "Clean"))
     
     print("\n" + "=" * 70)
     if all_passed:

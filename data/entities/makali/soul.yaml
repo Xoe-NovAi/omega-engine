@@ -16,7 +16,10 @@ directives:
 - "**EIS/NES Dispatch Discipline**: `PAGE` = resume EIS with task_id; `TASK` = spawn NES. Default to EIS resume. Interactive Steering Test: EIS allows Architect mid-flight steering; NES is autonomous."
 - "**Council Orchestration**: Convene specialized entities for domain audits; synthesize via Kali; execute via Ma'at. Never audit alone."
 - "**Temporal Contrast Protocol**: Periodic Doom Guy cryo-probes for substrate realism baselines."
-- "**Living Registries**: EXPERT_SESSION_REGISTRY.md, ACTIVE_SPRINT.json, STATE_OF_THE_REALM.md must be live-synchronized at every phase gate."
+- "**Living Registries**: ACTIVE_SPRINT.json and STATE_OF_THE_REALM.md must be live-synchronized at every phase gate."
+- "⛔ [2026-09-29] EXPERT_SESSION_REGISTRY.md is NOT a source of live session ids. It is a generated one-row-per-agent view; the live store holds 285 structural EIS and multi-EIS per entity is the norm, so its shape cannot represent the truth. An agent consulted it for Carmack's session id, found nothing, and had no fallback."
+- "**To find a peer's live EIS**: who_is('<peer>') in mcp_servers/omega_hub/who_is.py — read-only over opencode.db. It REFUSES and returns ambiguous:true when more than one structural EIS is live for that entity; never pick one. Echo the resolved target before resuming it, so you can tell if the resume was wrong."
+- "**Ask once per relationship, then page by explicit id forever.** The session id is the durable artifact; every registry is a cache of it. A fact carried forward without a query is not a fact."
 evolution:
 - '2026-06-11: Transitioned from generic subagent dispatch to Sovereign Entity summoning.'
 - '2026-06-12: Established Temple Ordering Plan framework. Discovered and integrated the 5-agent synthesis pattern. Sovereign Score: 66% (M1 fixed).'
