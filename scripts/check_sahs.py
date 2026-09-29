@@ -267,11 +267,12 @@ def assertion_no_generated_identity_resolver() -> Tuple[bool, List[str]]:
         if reg_file.exists():
             try:
                 content = reg_file.read_text()
-                # Check if it claims to be a live registry or resolver
-                if any(keyword in content.lower() for keyword in [
-                    "live session", "current session", "active session", 
-                    "resolves", "resolver", "lookup", "find session"
-                ]):
+                # Check if it claims to be a live registry or resolver (with word boundaries)
+                patterns = [
+                    r"\blive session\b", r"\bcurrent session\b", r"\bactive session\b", 
+                    r"\bresolves\b", r"\bresolver\b", r"\blookup\b", r"\bfind session\b"
+                ]
+                if any(re.search(pat, content, re.IGNORECASE) for pat in patterns):
                     violations.append(
                         f"Generated artifact '{reg_file.relative_to(PROJECT_ROOT)}' "
                         f"claims to resolve live EIS session identities. "
