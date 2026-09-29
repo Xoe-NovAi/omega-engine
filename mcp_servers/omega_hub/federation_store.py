@@ -147,6 +147,11 @@ class FederationStore:
 
     # ── R4: list ─────────────────────────────────────────────────────────────
 
+    # `scope=all` is deprecated, NOT removed. "Deprecated" without a date is a
+    # euphemism for permanent: nobody ever revisits a deprecation with no
+    # deadline, and the opt-in counter keeps ticking. Carmack's review note.
+    SCOPE_ALL_REMOVAL_DATE = "2026-12-31"
+
     def list_packets(self, caller_entity: str, target_entity: str | None,
                      scope: str = "default") -> dict:
         """Filtered by target BY DEFAULT. Bare listing is not possible.
@@ -162,8 +167,20 @@ class FederationStore:
             )
         if scope == "all":
             self.bump("scope_all_optin_total")
-            return {"entries": self.query(target_entity=None), "scope": "all",
-                    "deprecated": "scope=all is deprecated and logged"}
+            return {
+                "entries": self.query(target_entity=None),
+                "scope": "all",
+                "deprecated": True,
+                "removal_date": self.SCOPE_ALL_REMOVAL_DATE,
+                "optin_count": self.counters().get("scope_all_optin_total", 0),
+                "note": (
+                    f"scope=all is deprecated and will be REMOVED on "
+                    f"{self.SCOPE_ALL_REMOVAL_DATE}. It is logged so the "
+                    "deprecation decision is evidence-based: when the removal "
+                    "date arrives, the opt-in count says whether anyone is "
+                    "still relying on it. Pass target_entity instead."
+                ),
+            }
         return {"entries": self.query(target_entity=target_entity), "scope": "default"}
 
     # ── cursor (R1) ──────────────────────────────────────────────────────────

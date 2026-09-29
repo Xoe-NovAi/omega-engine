@@ -52,10 +52,40 @@ from mcp_servers.omega_hub.federation_envelope import (  # noqa: E402
 )
 
 REPO = Path(__file__).resolve().parent.parent
+# The ruled-on layout lives INSIDE data/handoff/. An earlier version of this
+# script targeted `data/handoffs/` — a different directory with an extra "s" —
+# so its 1451 copies sit in a tree that is not the contract. Nothing was lost
+# (the sources were copied, never moved), but that tree is superseded and must
+# not be mistaken for the migration's output.
+DEST_NAME = "handoff_migrated"
 LEGACY_ROOT = REPO / "data" / "handoff"
-DEST = REPO / "data" / "handoffs"
-CENSUS_PATH = DEST / ".census.json"
-RECEIPTS = DEST / ".receipts"
+DEST = REPO / "data" / "handoff"          # hot/ cold/ envelopes/ retired/ land here
+CENSUS_PATH = LEGACY_ROOT / "MIGRATION_CENSUS_20260929.json"
+RECEIPTS = LEGACY_ROOT / ".receipts"
+INDEX_PATH = REPO / "data" / "handoff_index.json"
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _load_index() -> dict:
+    """Existing handoff index, if any. Recorded per packet as `index_entry`."""
+    if not INDEX_PATH.is_file():
+        return {}
+    try:
+        data = json.loads(INDEX_PATH.read_text())
+    except (OSError, ValueError):
+        return {}
+    if isinstance(data, dict):
+        return {k: v for k, v in data.items() if not k.startswith("_")}
+    if isinstance(data, list):
+        out = {}
+        for row in data:
+            if isinstance(row, dict) and row.get("packet_id"):
+                out[row["packet_id"]] = row
+        return out
+    return {}
 
 
 def _sha256(path: Path) -> str:
@@ -85,12 +115,33 @@ def classify(src_dir_name: str, packet: dict) -> str:
 
 
 def census() -> dict:
-    """Baseline: id, dir, status, size, SHA-256, timestamp, index entry, target."""
+    """Baseline: id, dir, status, size, SHA-256, timestamp, index entry, target.
+
+    [maat 2026-09-29] RECURSIVE, and the fix is load-bearing. The first version
+    globbed only the top level of each queue, so it silently missed
+    `archive/M36-test-spam-20260928/` (757 packets that Kali archived under the
+    M36 ruling). A census that under-counts is worse than no census: it becomes
+    the reconciliation baseline, and anything it does not name is invisible to
+    the "no unclassified file outside the census" check — the one check that
+    would have caught it.
+
+    `classify()` keys on the TOP-LEVEL queue name, never the nested subdirectory,
+    so Kali's M36 archive classifies as `cold/legacy-archive` — which is right:
+    it IS in `archive/`, and per Roc's ruling a legacy directory name never
+    reaches `retired/`.
+    """
     rows = []
-    for src in sorted(LEGACY_ROOT.iterdir()) if LEGACY_ROOT.is_dir() else []:
-        if not src.is_dir():
+    index = _load_index()
+    if not LEGACY_ROOT.is_dir():
+        return {"created_at_utc": _now(), "count": 0, "pre_migration_ids": [], "rows": []}
+    for src in sorted(p for p in LEGACY_ROOT.iterdir() if p.is_dir()):
+        if src.name in (DEST_NAME, ".receipts"):
             continue
-        for f in sorted(src.glob("*.json")):
+        for f in sorted(src.rglob("*.json")):
+            if DEST_NAME in f.relative_to(LEGACY_ROOT).parts:
+                continue  # never re-ingest our own destination tree
+            if f.name.upper().startswith(("MANIFEST", "MIGRATION_", "README", "INDEX")):
+                continue  # a manifest is not a packet
             try:
                 packet = json.loads(f.read_text())
             except (OSError, ValueError):
@@ -100,15 +151,17 @@ def census() -> dict:
                 "packet_id": pid,
                 "source": str(f.relative_to(REPO)),
                 "src_dir": src.name,
+                "src_subdir": str(f.parent.relative_to(src)) if f.parent != src else "",
                 "status": packet.get("status"),
                 "size": f.stat().st_size,
                 "sha256": _sha256(f),
                 "mtime_utc": datetime.fromtimestamp(
                     f.stat().st_mtime, tz=timezone.utc).isoformat(timespec="seconds"),
+                "index_entry": index.get(pid) is not None,
                 "target": classify(src.name, packet),
             })
     return {
-        "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "created_at_utc": _now(),
         "count": len(rows),
         "pre_migration_ids": sorted({r["packet_id"] for r in rows}),
         "rows": rows,
@@ -197,7 +250,7 @@ def main(argv=None) -> int:
 
     global DEST
     if a.root:
-        DEST = Path(a.root)
+        DEST = Path(a.root).resolve()
 
     if a.census or (not a.apply and not a.reconcile):
         cen = census()

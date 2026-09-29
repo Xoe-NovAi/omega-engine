@@ -350,3 +350,11 @@ data/handoff/**
 !data/handoff/*.md
 !data/handoff/**/MANIFEST.sha256
 !data/handoff/**/MANIFEST.json
+
+# Quarantined PACKET COPIES are runtime state, not source. The READMEs are the
+# audit record of the decision and ARE tracked; the packets are not.
+data/quarantine/**/*.json
+data/quarantine/**/*.md
+!data/quarantine/**/README.md
+!data/quarantine/**/*.sha256
+!data/quarantine/**/*.jsonl

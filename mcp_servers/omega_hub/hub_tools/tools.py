@@ -1278,6 +1278,93 @@ async def ics_render_header(
 # These replace the fragmented CRUD tools with single action-based interfaces.
 # Old tools are deprecated but kept for backward compatibility.
 
+# ═══════════════════════════════════════════════════════════════════════════
+# R1-R5 MCP BINDING
+# ═══════════════════════════════════════════════════════════════════════════
+# The store already raises StoreUnreachable rather than returning []. THIS is
+# where that guarantee could be lost, because MCP makes it easier to lose: a
+# tool result is a success payload by default, so `{"entries": []}` on a dead
+# store looks identical to a healthy "no news". The natural caller is
+# `if not entries: pass`, which passes on both.
+#
+# So a failure is a DISCRIMINATOR, never an empty list.
+
+def _federation_store():
+    # `tools.py` imports selected NAMES from state, not the module itself, so
+    # `state` is not a module-level name here. Import it inside the function.
+    from .. import state as _state
+    from ..federation_store import FederationStore
+    return FederationStore(_state.HANDOFF_BASE)
+
+
+def _fe_mark_read(env: dict, entity: str) -> None:
+    from .. import federation_envelope as fe
+    fe.mark_read(env, entity, action="read")
+
+
+def _federation_dispatch(action: str, *, source_channel, source_entity, packet_id,
+                         target_entity, session_id, limit, scope) -> str:
+    """Bind inbox / receipts / read to the store, without losing its guarantees."""
+    from .. import federation_store as fstore
+    from .. import federation_session as fsess
+
+    if not source_channel or not source_entity:
+        return json.dumps({"error": {"code": "missing_identity",
+                                     "message": f"{action} requires source_channel and source_entity"}})
+    store = _federation_store()
+
+    resolved = fsess.resolve_session_id(
+        session_id, bump=store.bump, fallback_entity=source_entity,
+        daemon_session_id=f"ses_stamped_{source_channel}_{source_entity}")
+    session_block = {
+        "session_id": resolved["session_id"],
+        "session_id_source": resolved["source"],
+        "session_verified": resolved["verified"],
+        "unverified_sender": resolved["unverified_sender"],
+    }
+    if resolved["source"] == "server_stamped":
+        # Never substitute silently: the caller must learn their id was NOT the
+        # one recorded, or they will believe provenance that does not exist.
+        session_block["session_id_substituted"] = True
+        session_block["session_id_note"] = (
+            f"your supplied session_id was {resolved['reason']!r}; the server stamped "
+            "one instead and flagged the envelope unverified")
+
+    try:
+        if action == "inbox":
+            payload = store.inbox(source_entity, limit=limit)
+        elif action == "receipts":
+            payload = store.receipts(source_entity)
+        elif action == "read":
+            if not packet_id:
+                return json.dumps({"error": {"code": "missing_packet_id",
+                                             "message": "read requires packet_id"}})
+            rows = store.query()
+            hit = next((e for e in rows if e.get("handoff_id") == packet_id), None)
+            if hit is None:
+                return json.dumps({"error": {"code": "not_found",
+                                             "message": f"no packet {packet_id}"}})
+            _fe_mark_read(hit, source_entity)   # THIS agent's entry, not a global flag
+            store.submit(hit)
+            payload = {"entries": [hit], "read_by": hit.get("read_by", {})}
+        else:
+            return json.dumps({"error": {"code": "bad_action", "message": action}})
+    except fstore.StoreUnreachable as exc:
+        # THE discriminator. An error, never an empty list.
+        return json.dumps({
+            "error": {"code": "store_unreachable", "message": str(exc),
+                      "hint": "entries are ABSENT, not empty. Do not treat this as "
+                              "'no new handoffs'."},
+            **session_block})
+    except ValueError as exc:
+        return json.dumps({"error": {"code": "invalid_request", "message": str(exc)},
+                           **session_block})
+
+    out = {**payload, **session_block}
+    out.pop("error", None)
+    return json.dumps(out)
+
+
 @m9_safe("hivemind_handoff")
 @mcp.tool()
 async def hivemind_handoff(
@@ -1296,6 +1383,9 @@ async def hivemind_handoff(
     reason: Optional[str] = None,
     status: Optional[str] = None,
     packet_ids: Optional[List[str]] = None,
+    session_id: Optional[str] = None,
+    scope: str = "default",
+    limit: Optional[int] = None,
 ) -> str:
     """Unified handoff management — replaces 7 fragmented tools.
     
@@ -1307,9 +1397,38 @@ async def hivemind_handoff(
         list: List handoffs by status (requires status: pending|active|completed|stale)
         get: Get full handoff details (requires packet_id)
         archive: Archive completed handoffs (requires packet_ids list)
+        inbox: NEW — unread submissions addressed to YOU, across all queues
+        receipts: NEW — every packet YOU sent, with full state_history
+        read: NEW — record that YOU read a packet. Explicit, and DISTINCT from
+               accept: reading is not deciding, and collapsing the two loses the
+               fact that someone looked and did not act.
+
+    ERROR CONTRACT (load-bearing)
+    -----------------------------
+    A store failure is an ERROR PAYLOAD, never an empty list:
+
+        {"error": {"code": "store_unreachable", "message": "..."}}
+
+    Branch on `error.code` — NOT on emptiness. The natural caller is
+    `if not entries: pass`, which passes on BOTH an empty inbox and a dead store,
+    which is the confident-false-negative this contract exists to eliminate. An
+    `entries` key and an `error` key are mutually exclusive: you will never
+    receive `{"entries": [], "error": ...}`, nor `{"entries": [], "cursor_reset":
+    true}` (a reset with no entries is indistinguishable from genuinely no news).
+
+    SESSION PROVENANCE
+    ------------------
+    `session_id` is validated read-only against opencode.db; malformed and
+    unknown are SEPARATE outcomes. Unknown ids are stamped and flagged
+    `unverified_sender` on the ENVELOPE — visible to the RECEIVING agent, not
+    merely counted — because a counter tells you the rate while the flag tells
+    the reader, and the reader is who M29 exists to protect. Every response
+    echoes the resolved `session_id` and states explicitly when the server
+    substituted a stamped one. Silent substitution is the same failure class as
+    a silent post.
     
     Args:
-        action: The operation to perform (submit|accept|complete|reject|list|get|archive)
+        action: submit|accept|complete|reject|list|get|archive|inbox|receipts|read
         packet_id: Handoff packet ID (for accept|complete|reject|get)
         target_channel: Target agent channel (for submit)
         target_entity: Target agent entity (for submit)
@@ -1324,6 +1443,10 @@ async def hivemind_handoff(
         reason: Rejection reason (for reject)
         status: Filter status for list (pending|active|completed|stale)
         packet_ids: List of packet IDs to archive (for archive)
+        session_id: Calling session id. Validated; stamped+flagged if malformed/unknown.
+        scope: list only. "default" filters by target_entity; "all" is a DEPRECATED,
+               LOGGED opt-in with removal date 2026-12-31.
+        limit: Optional cap on inbox entries
         
     Returns:
         JSON string with operation result.
@@ -1331,10 +1454,21 @@ async def hivemind_handoff(
     _require_service()
     
     # Validate action
-    valid_actions = {"submit", "accept", "complete", "reject", "list", "get", "archive"}
+    # R1-R5 federation actions are ADDED, not substituted.
+    valid_actions = {"submit", "accept", "complete", "reject", "list", "get", "archive",
+                     "inbox", "receipts", "read"}
     if action not in valid_actions:
-        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
-    
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {sorted(valid_actions)}"})
+
+    # Federation actions (R1-R5) dispatch BEFORE the legacy queue logic, which is
+    # untouched: submit/accept/complete/reject/get/list keep their behaviour.
+    # This is an ADDITION, not a replacement.
+    if action in ("inbox", "receipts", "read"):
+        return _federation_dispatch(
+            action, source_channel=source_channel, source_entity=source_entity,
+            packet_id=packet_id, target_entity=target_entity,
+            session_id=session_id, limit=limit, scope=scope)
+
     try:
         if action == "submit":
             if not all([target_channel, target_entity, source_channel, source_entity, task]):

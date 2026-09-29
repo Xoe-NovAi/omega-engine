@@ -221,6 +221,12 @@ _LEGACY_TOOL_ADAPTERS = {
     "hivemind_handoff_list": ("hivemind_handoff", {"action": "list"}),
     "hivemind_get_handoff": ("hivemind_handoff", {"action": "get"}),
     "hivemind_handoff_archive": ("hivemind_handoff", {"action": "archive"}),
+    # [maat 2026-09-29] R1-R3 legacy names, so callers written against the
+    # three-queue era keep working across the four-directory refactor.
+    "hivemind_inbox": ("hivemind_handoff", {"action": "inbox"}),
+    "hivemind_receipts": ("hivemind_handoff", {"action": "receipts"}),
+    "hivemind_read_handoff": ("hivemind_handoff", {"action": "read"}),
+    "hivemind_federation_list": ("hivemind_handoff", {"action": "list"}),
     # Oracle debug: 3 fragmented tools → 1 action-based tool
     "oracle_list_slot_keepers": ("oracle_debug", {"action": "list_slot_keepers"}),
     "oracle_assess_intent": ("oracle_debug", {"action": "assess_intent"}),
