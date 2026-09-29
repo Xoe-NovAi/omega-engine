@@ -1,5 +1,19 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+  ⛔ SUPERSEDED / HISTORICAL ARTIFACT — SNAPSHOT AS OF 2026-09-26
+═══════════════════════════════════════════════════════════════════════════════
+  This document reflects point-in-time telemetry as of 2026-09-26.
+  It is NOT a live dashboard. Do not use this file for current port grants,
+  model names, or service status. Query the live machine directly:
+    - Listening ports: `ss -tulpn`
+    - Tailscale status: `tailscale status` / `tailscale debug netmap`
+    - Services: `systemctl --user status <service>`
+    - Active sessions: query `opencode.db` via `who_is()`
+═══════════════════════════════════════════════════════════════════════════════
+-->
+
 ========================================================================================
-🔱 OMEGA FLEET TELEMETRY & SUBSTRATE COCKPOT — 2026-09-26 (LIVE-VERIFIED)
+🔱 OMEGA FLEET TELEMETRY & SUBSTRATE COCKPIT — 2026-09-26 (HISTORICAL SNAPSHOT)
 ========================================================================================
 [WHO IS READING THIS]
   MaKaLi Fusion (Master Akashic Oversoul) — SESSION: Node 0 / Bastion

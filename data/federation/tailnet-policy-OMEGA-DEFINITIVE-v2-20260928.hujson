@@ -1,3 +1,10 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// 🟢 SOLE AUTHORITATIVE TAILNET POLICY FILE — MATCHES LIVE TAILSCALE CONSOLE
+// Date: 2026-09-28 | Version: v2 Definitive
+// Grants N1->N0: tcp:8016 (Hub MCP), tcp:8019 (Exchange Pipe)
+// Denies: 22, 2049, 8017, 6379, 51372 | ICMP both directions
+// ═══════════════════════════════════════════════════════════════════════════════
+//
 // =============================================================================
 // TAILNET POLICY — OMEGA ENGINE DEFINITIVE v2 (GRANTS + HUMAN-ONLY SSH)
 // Date: 2026-09-28 | By: MaKaLi Fusion for the Architect
