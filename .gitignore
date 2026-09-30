@@ -287,6 +287,7 @@ data/entities/test_*_entity/
 # (test_every_promoted_lesson_carries_resolvable_evidence requires them in CI).
 !docs/strategy/*.md
 !docs/strategy/**/*.md
+!docs/federation/node1_received/*.md
 !docs/specs/*.md
 !docs/decisions/PIVOT_LOG.md
 !data/coordination/MAKALI_COUNCIL_AUDIT_*.md
