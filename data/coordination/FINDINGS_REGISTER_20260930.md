@@ -32,12 +32,46 @@ a **module-attribute read at call time** that follows the re-root. The by-value
 constants appear at `tools.py:1516, 1570, 1617`, which belong to
 **accept/complete/reject** — paths M36 never calls.
 
-**VERDICT: the faucet is closed for the path M36 uses.**
+**VERDICT: the faucet is closed for the path M36 uses.** The store resolves
+`self.hot = self.root / fe.HANDOFF_HOT` — **relative to the injected root**,
+not an absolute by-value constant — so the re-root propagates through the whole
+store graph.
 
-**RESIDUAL, real but latent:** if M36 ever calls accept/complete/reject, or if
-any new code reaches for `HANDOFF_PENDING` by name, it will hit the live queue
-while a re-root is in effect. The by-value imports are a footgun that reads as
-correct. **Not fixed. Documented here instead.**
+**FOURTH VERIFICATION ATTEMPT — recorded honestly, not as a pass.** A direct
+drive of `FederationStore.submit()` with a hand-built envelope wrote to neither
+queue. Cause: **Ma'at's strict `session_id` validation rejected the probe
+envelope** — it lacked a resolvable session. That is the strict-args fix working
+as designed, not a leak and not a pass. **I did not obtain an end-to-end
+instrumented write through the MCP tool path**, because that path needs the Hub
+fully initialized and a valid session envelope. I stopped rather than construct
+an envelope that would satisfy the gate only by weakening it.
+
+**The evidence that does stand:**
+1. `FederationStore.root` follows the module attribute (verified: `/tmp/m36_sink2`).
+2. `st.hot` / `st.cold` / `st.envelopes` / `st.retired` all derive from
+   `self.root`, so the whole store graph moves together.
+3. Empirically: **20 packets in `data/handoff/m36-test/pending/`, 0
+   CROSS-VALIDATOR packets in the live queue.**
+
+**CONFIDENCE: high that the faucet is closed; not proven to the standard of an
+instrumented end-to-end write. That gap is named rather than papered over.**
+
+**Roc's supporting claims, corrected:**
+- `tools.py:245` — **mis-cited.** That line is `oracle.summon`, unrelated to
+  handoffs. The by-value constants are at `tools.py:64` (import) and
+  `1516, 1570, 1617` (accept/complete/reject).
+- The **race seam is CLOSED.** `CAPABILITY_REGISTRY` is consumed by `.items()`
+  on a worker thread via `anyio.to_thread.run_sync`, never dispatched. The
+  re-root entry point is `M33Probe.complete_with_validation` (`:505`), not
+  `final_accepted` — which is a result dict key, not a method. Roc corrected
+  his own imprecision unprompted. `complete_with_validation` has **no
+  production caller**.
+
+**RESIDUAL, real but latent:** `tools.py:64` imports the five constants **by
+value**. Accept, complete and reject still use them. M36 never calls those
+actions, so the faucet is closed today — but a future action that reaches for
+`HANDOFF_PENDING` by name during a re-root would write to live state and read as
+correct. **Not fixed. Documented instead.**
 
 ---
 
