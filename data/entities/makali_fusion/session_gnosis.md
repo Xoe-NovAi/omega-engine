@@ -2,9 +2,9 @@
 entity: makali_fusion
 entity_type: oversoul
 schema_version: 1.0.0
-stamped_at: 2026-09-30T04:40:00+00:00
+stamped_at: 2026-09-30T06:20:00+00:00
 stamped_by: makali_fusion
-supersedes: session_gnosis_20260930-0056.md
+supersedes: session_gnosis_20260930-0315.md
 history_lost: none
 -->
 
@@ -100,3 +100,41 @@ softer one, and neither reports anything as settled until it is executed.**
 3. `git log --oneline -3` — `626507ac` is the checkpoint.
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ CHECKPOINT-2 ⬡ 626507ac ⬡ 2026-09-30 ⬡*
+
+---
+
+## §8 — CHECKPOINT 3 ADDENDA (autonomous run)
+
+**Commits since checkpoint 2**, all pushed:
+`3dfdcf91` gnosis seal · `49952015` M9 gate to AST parse (18 tests) ·
+`b2a966c6` findings register + sprint reconciliation · `8b3ad798` PR-readiness
+lane A · `7b0cec02` M36 verification record.
+
+**Four more instances of the standing pattern** — the check being wrong rather
+than the claim. A stale generated registry read as a roster. A policy file
+called stale when it was correct. A truncated tool list read as a total. And two
+"cannot verify" reports that resolved the opposite way: the SUPERSEDED markers
+were present, and the strict-args fix was present under a different name than the
+one that was searched for.
+
+> **RULE: before trusting any negative finding, ask what would make the check miss it.**
+
+**The release blocker is not a bug.** A gitleaks invocation that is flag-rejected
+exits 0 and looks like a pass. Same class as the M9 text grep and the
+`is-active` check — *a check that cannot distinguish "verified" from "did not
+run."* On a public repo, that is the one thing to settle before tagging.
+
+**The dialectic method that worked here:** commission two opposed briefs, notice
+they converge on an empirical question neither can answer by reading, then run
+the experiment instead of synthesising a decision from two opinions. The
+call-graph trace closed the seam and produced a stronger conclusion than either
+brief argued for.
+
+**Method note for the next head:** two attempts to write this section failed —
+an inline Python heredoc on a nested-quote syntax error, and a bash heredoc on a
+malformed terminator. **The first one still produced a successful commit, because
+the surrounding command chain continued.** So the commit message claimed a gnosis
+update that had not happened. **Verify the artefact you intended to write actually
+changed before you let the commit stand.**
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ CHECKPOINT-3 ⬡ 7b0cec02 ⬡ 2026-09-30 ⬡*
