@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 -->
 <!-- GNOSIS-META:BEGIN
   entity: makali_fusion
-  stamped_at: 2026-09-30T04:42:22Z
+  stamped_at: 2026-09-30T04:51:49Z
   stamped_by: arcana-novai
   supersedes: session_gnosis_20260930-0441.md
   schema_version: 1.0.0
@@ -91,23 +91,45 @@ the datum was in front of me and I treated it as noise.
 readable instead of an empty store erroring, which is strictly better and still
 wrong.
 
-### TWO OPEN DECISIONS — YOURS
+### THE ARCHITECT'S RULING — CARRIED OUT (`bbf989b9`)
 
-1. **Where does the corpus live?** Backfill `envelopes/` from the 31 in `pending/`,
-   or point the store's query path at `pending/`? **These have different
-   consequences for the envelope invariants already built** (permanent envelope at
-   birth, `read_by`, global `seq`, cursor cache, M29 no-deletion). I did not
-   choose, because either changes what the system *is*.
-2. **Request-side instrumentation.** GE-N0 asked for it and **I cannot answer it**,
-   because no request-side record exists:
+> **Corpus needs to move to `pending/`. Each message within the inbox could be an
+> `.envelope` if that works — but NOT the main directory name.**
 
-   > "Stored data cannot distinguish 'sender omitted the suffix' from 'resolver
-   > stripped it'. Only the REQUEST-side target, not the stored one, would settle it."
+The reasoning, which the code had missed: **`pending/` tells a human who opens
+`ls data/handoff/` exactly what the directory is for. `envelopes/` told them
+nothing — "envelope" is our internal word, not an instruction.** Only one of the
+two names met the agent-intuitive requirement; neither met the human one.
 
-   **The store persists what it RESOLVED, never what was ASKED FOR.** That single
-   omission is why the suffix-fold question has been unresolvable for a day: the
-   evidence needed to settle it is not recorded anywhere. **This is a schema
-   design gap, not a bug.**
+**Done.** `envelopes/` is retired as a directory name. "Envelope" survives as the
+per-message artefact shape, which is what it always actually was.
+
+```
+before   StoreUnreachable: envelopes/ or hot/ missing
+after    _readable() = True   ·   query() -> 31 envelopes
+```
+
+**A second, unplanned benefit:** `tools.py:64` imports `HANDOFF_PENDING` **by
+value** while the store read the module attribute. Those two could disagree — the
+latent footgun recorded in §5 item 4. Renaming the store's read path to
+`pending/` makes them **the same path by construction**, so they cannot drift
+apart again. **Two decisions fixed one incident and one latent bug.**
+
+**And a fourth "cannot verify" avoided.** `unread_for` returned 31 for every
+entity including `nobody_at_all` — which looks exactly like the filter being a
+silent no-op. **It is not.** The filter works; the 31 legacy packets predate
+`read_by`, so they genuinely *are* unread by everyone. Correct behaviour on a
+corpus that is simply young. **Verified by calling `fe.unread_for` directly with a
+synthetic `read_by` before believing either story.**
+
+### STILL OPEN — the second decision stands
+
+**Request-side recording.** GE-N0 asked for it and it does not exist: the store
+persists what it RESOLVED, never what was ASKED FOR. That single omission is why
+the suffix-fold question has been unresolvable for a day. The inbox rename does
+not touch it — **the evidence needed to settle fold-vs-sender is still not
+recorded anywhere.** This is a schema design gap, not a bug, and it is the highest
+-value change available to the frontier review.
 
 ---
 
