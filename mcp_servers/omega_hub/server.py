@@ -162,6 +162,52 @@ mcp = FastMCP(
     transport_security=_transport_security,
 )
 
+
+# ═══════════════════════════════════════════════════════════════════════════
+# M23 — REFUSE INPUT THE TOOL CANNOT HONOUR  (2026-09-29, GE-N1 finding)
+# ═══════════════════════════════════════════════════════════════════════════
+# THE DEFECT CLASS: THE INTERFACE ACCEPTS INPUT IT DOES NOT HONOUR.
+#
+# GE-N1 called `hivemind_handoff(action="submit", artifact_ids=[...])` over the
+# wire, got `{"status": "submitted"}`, and the stored packet had no
+# `artifact_ids` field at all. `artifact_ids` is in no signature and no schema.
+# They were not misusing the tool — the server should have thrown. A rejection
+# is safe: it fails loudly. A silent accept converts an error into a false
+# belief that propagates to the next agent, the next node, the next week.
+#
+# ROOT CAUSE, and it is NOT in our code. FastMCP builds a pydantic `arg_model`
+# from each tool's signature and validates with it at
+#     mcp/server/fastmcp/utilities/func_metadata.py:107
+#         arguments_parsed_model = self.arg_model.model_validate(...)
+# Pydantic's default is `extra='ignore'`, so any key not in the signature is
+# DISCARDED during validation and never reaches the function. Calling the tool
+# directly raises TypeError; only the wire path loses it — which is why a
+# schema-only test passes while the defect ships. See
+# `tests/test_handoff_contract.py::test_artifact_ids_is_rejected_not_dropped`.
+#
+# The fix is to make the arg model STRICT for every registered tool, so an
+# unknown parameter becomes a ValidationError -> `m9_safe` -> `isError=True`.
+# Applied generally rather than to `artifact_ids` alone: the class is the
+# defect, and a one-off fix for one parameter leaves the next one open.
+def _enforce_strict_tool_arguments(_server) -> int:
+    tools = getattr(getattr(_server, "_tool_manager", None), "_tools", {}) or {}
+    hardened = 0
+    for _name, _tool in tools.items():
+        meta = getattr(_tool, "fn_metadata", None)
+        model = getattr(meta, "arg_model", None)
+        if model is None:
+            continue
+        try:
+            if model.model_config.get("extra") == "forbid":
+                continue
+            model.model_config["extra"] = "forbid"
+            model.model_rebuild(force=True)
+            hardened += 1
+        except Exception as exc:  # pragma: no cover — never block boot
+            logger.warning("strict-args hardening skipped for %s: %s", _name, exc)
+    return hardened
+
+
 # FastMCP (mcp 1.30.0) accepts no `version` kwarg; when the underlying
 # serverInfo version is unset the SDK reports its OWN library version, so
 # clients saw "1.30.0" (the mcp package) instead of the engine version.
@@ -572,6 +618,21 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     else:
         logger.warning("No TaskGroup provided — background loops not started")
     logger.info("Background tasks started: pruning, reaper")
+
+
+# ── M23 strict arguments: RUN AFTER the @mcp.tool() registrations ──
+# MUST run BEFORE `run_mcp(...)` below, which BLOCKS for the process lifetime.
+# The first two attempts sat AFTER it and therefore never executed at all —
+# verified by the missing journal line, not assumed. Three placement bugs in
+# one fix, each caught by executing rather than reading.
+try:
+    _strict_tools = _enforce_strict_tool_arguments(mcp)
+    if _strict_tools:
+        logger.info(
+            "M23 strict-arguments: hardened %d tool schema(s) to reject unknown "
+            "parameters instead of silently dropping them", _strict_tools)
+except Exception as exc:  # pragma: no cover — defensive, must never block boot
+    logger.warning("M23 strict-arguments hardening unavailable: %s", exc)
 
 
 if __name__ == "__main__":

@@ -1289,6 +1289,12 @@ async def ics_render_header(
 #
 # So a failure is a DISCRIMINATOR, never an empty list.
 
+def _resolve_target_entity(entity: str, channel: str):
+    """Alias resolution, imported lazily to keep the module import graph flat."""
+    from ..handoff_alias import resolve_target_entity
+    return resolve_target_entity(entity, channel)
+
+
 def _federation_store():
     # `tools.py` imports selected NAMES from state, not the module itself, so
     # `state` is not a module-level name here. Import it inside the function.
@@ -1473,7 +1479,22 @@ async def hivemind_handoff(
         if action == "submit":
             if not all([target_channel, target_entity, source_channel, source_entity, task]):
                 return json.dumps({"error": "submit requires target_channel, target_entity, source_channel, source_entity, task"})
-            target_agent_id = _make_agent_id(target_channel, target_entity)
+
+            # M23/GE-N1: resolve the target through the DERIVED alias map
+            # instead of literal concatenation, which forked `ge_n1` away from
+            # `ge-n1`. Ambiguous input is REFUSED, never guessed.
+            try:
+                _alias = _resolve_target_entity(target_entity, target_channel)
+            except Exception as _exc:
+                return json.dumps({
+                    "error": "ambiguous_target_entity",
+                    "message": str(_exc),
+                    "supplied": target_entity,
+                    "hint": "a wrong target silently forks the packet; pass the "
+                            "exact entity name or an explicit agent_id",
+                })
+            target_entity = _alias["entity"]
+            target_agent_id = _alias["agent_id"]
             source_agent_id = _make_agent_id(source_channel, source_entity)
             packet_id = f"ho_{uuid.uuid4().hex[:12]}"
             packet = {
@@ -1501,7 +1522,47 @@ async def hivemind_handoff(
                     fcntl.flock(f, fcntl.LOCK_UN)
             await anyio.to_thread.run_sync(_write)
             handoff_index_add(packet_id, "pending")
-            return json.dumps({"status": "submitted", "packet_id": packet_id, "path": str(path)})
+
+            # M30/GE-N1: echo what was PERSISTED, not what was requested.
+            # GE-N1 had to make a SECOND call to discover their target was
+            # resolved differently than they sent it. Reading the packet back is
+            # the cheapest possible defence: the difference between requested and
+            # stored becomes visible in the response they already have.
+            _stored = {}
+            try:
+                _stored = json.loads(path.read_text())
+            except (OSError, ValueError) as _e:  # pragma: no cover — defensive
+                logger.warning("submit echo could not read back %s: %s", path, _e)
+
+            _resp = {
+                "status": "submitted",
+                "packet_id": _stored.get("packet_id", packet_id),
+                "path": str(path),
+                # what was ASKED for
+                "requested": {
+                    "target_entity": _alias.get("supplied", target_entity),
+                    "target_agent_id": f"{target_channel}/{_alias.get('supplied', target_entity)}",
+                },
+                # what was STORED — the authoritative answer
+                "stored": {
+                    "packet_id": _stored.get("packet_id"),
+                    "target_agent_id": _stored.get("target_agent_id"),
+                    "target_entity": _stored.get("target_entity"),
+                    "status": _stored.get("status"),
+                },
+                "target_resolution": {
+                    "resolved": _alias.get("resolved"),
+                    "rule": _alias.get("rule"),
+                    "candidates": _alias.get("candidates", []),
+                    "note": _alias.get("note"),
+                },
+            }
+            if _alias.get("resolved") is False:
+                _resp["warning"] = (
+                    f"target {target_entity!r} matched no live entity; the agent_id "
+                    "was left exactly as supplied and the packet may be undeliverable"
+                )
+            return json.dumps(_resp)
         
         elif action == "accept":
             if not all([packet_id, accepting_channel, accepting_entity]):

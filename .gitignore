@@ -288,6 +288,11 @@ data/entities/test_*_entity/
 !docs/strategy/*.md
 !docs/strategy/**/*.md
 !docs/federation/node1_received/*.md
+# API reference is tracked because the pre-commit gate requires a docs/ change
+# whenever src/omega/ changes. With this ignored, that gate can never satisfy
+# itself for any engine change. Scoped to reference/ only -- docs/architecture
+# and docs/operations hold archaeology and are deliberately left ignored.
+!docs/reference/**/*.md
 !docs/specs/*.md
 !docs/decisions/PIVOT_LOG.md
 !data/coordination/MAKALI_COUNCIL_AUDIT_*.md
