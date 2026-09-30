@@ -48,12 +48,24 @@ SCHEMA_VERSION = "1.0.0"
 RETENTION_DAYS = 90
 
 # ── The four directories ─────────────────────────────────────────────────────
-
+#
+# `pending/` IS the inbox: the durable per-packet record the query path reads,
+# and the one directory a human opening `ls data/handoff/` is meant to read
+# first. It was called `envelopes/` until 2026-09-30, which told a human
+# nothing — "envelope" is our internal word, not an instruction. "pending" is
+# both human- and agent-intuitive: it says what the directory is FOR.
+#
+# "Envelope" survives as the per-message artefact shape, not as a directory
+# name. The store writes one envelope file per message into this inbox.
+HANDOFF_PENDING = "pending"
 HANDOFF_HOT = "hot"
-HANDOFF_ENVELOPES = "envelopes"
 HANDOFF_COLD = "cold"
 HANDOFF_RETIRED = "retired"
-HANDOFF_DIRS = (HANDOFF_HOT, HANDOFF_ENVELOPES, HANDOFF_COLD, HANDOFF_RETIRED)
+HANDOFF_DIRS = (HANDOFF_PENDING, HANDOFF_HOT, HANDOFF_COLD, HANDOFF_RETIRED)
+
+# The inbox is the query path. `_readable()` requires it, so its absence is a
+# loud StoreUnreachable rather than a silent empty result.
+HANDOFF_INBOX = HANDOFF_PENDING
 
 # Legacy → destination classification (Roc's ruling). NEVER inferred from a
 # name at runtime: this table IS the ruling, and `archive/` maps to

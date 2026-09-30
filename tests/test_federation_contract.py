@@ -78,9 +78,9 @@ def test_cross_queue_duplicate_returns_once(store):
     about the fleet's state — a caller would act on a packet twice.
     """
     env = _env(1, "makali")
-    store.envelopes.mkdir(parents=True, exist_ok=True)
+    store.pending.mkdir(parents=True, exist_ok=True)
     # same envelope id written to both an envelope copy and a second location
-    p = store.envelopes / f"{env['handoff_id']}.json"
+    p = store.pending / f"{env['handoff_id']}.json"
     p.write_text(json.dumps(env))
     (store.root / "hot").mkdir(parents=True, exist_ok=True)
     (store.root / "hot" / f"{env['handoff_id']}.json").write_text(json.dumps(env))

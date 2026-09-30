@@ -53,8 +53,11 @@ class StoreUnreachable(RuntimeError):
 class FederationStore:
     def __init__(self, root: Path):
         self.root = Path(root)
+        # `pending` is the inbox AND the query path: one directory, one truth.
+        # Renaming it here means `tools.py`'s by-value `HANDOFF_PENDING` and
+        # this store's read path can no longer disagree.
+        self.pending = self.root / fe.HANDOFF_PENDING
         self.hot = self.root / fe.HANDOFF_HOT
-        self.envelopes = self.root / fe.HANDOFF_ENVELOPES
         self.cold = self.root / fe.HANDOFF_COLD
         self.retired = self.root / fe.HANDOFF_RETIRED
         self.seq_file = self.root / ".seq"
@@ -64,11 +67,11 @@ class FederationStore:
     # ── layout ───────────────────────────────────────────────────────────────
 
     def ensure_layout(self) -> None:
-        for d in (self.hot, self.envelopes, self.cold, self.retired):
+        for d in (self.pending, self.hot, self.cold, self.retired):
             d.mkdir(parents=True, exist_ok=True)
 
     def _readable(self) -> bool:
-        return self.root.is_dir() and self.hot.is_dir() and self.envelopes.is_dir()
+        return self.root.is_dir() and self.pending.is_dir() and self.hot.is_dir()
 
     # ── the ONE primitive ────────────────────────────────────────────────────
 
@@ -82,12 +85,12 @@ class FederationStore:
         """
         if not self._readable():
             raise StoreUnreachable(
-                f"handoff store not readable at {self.root} "
-                "(envelopes/ or hot/ missing)"
+                f"handoff inbox not readable at {self.root} "
+                "(pending/ or hot/ missing)"
             )
         out: list[dict] = []
         try:
-            for p in sorted(self.envelopes.glob("*.json")):
+            for p in sorted(self.pending.glob("*.json")):
                 env = self._load(p)
                 if env is None:
                     continue
@@ -256,7 +259,7 @@ class FederationStore:
         ok, why = fe.verify_envelope(envelope)
         if not ok:
             raise ValueError(f"refusing to store an unverifiable envelope: {why}")
-        fe.write_atomic(self.envelopes / f"{envelope['handoff_id']}.json",
+        fe.write_atomic(self.pending / f"{envelope['handoff_id']}.json",
                         json.dumps(envelope, indent=2, sort_keys=True))
         return envelope
 
