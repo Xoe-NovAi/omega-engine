@@ -1,10 +1,38 @@
 # The Well — Active Records
 
-Generated: 2026-09-24T23:44:34Z
+Generated: 2026-09-30T01:37:19Z
 
-Total active: 32
+Total active: 39
 
-## Correction (19)
+## Correction (26)
+
+- **A regression test that mutates history is itself a destructive operation. Check the working tree for uncommitted work first.** [lint,workflow,verification]
+  *I ran 'git reset --hard' inside a regression test without checking, and it destroyed two files written minutes earlier. The lesson is not about git, it is that a tool acting on an unverified assumption is the same failure class as every other bug this session catalogued.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 015f51ba
+
+- **Own the correction in the source of truth, not just in conversation. A correction that lives only in chat gets inherited as fact by the next session.** [memory,documentation,correctness]
+  *naikari.md asserted as VERIFIED that an AppImage bundles zero .so files; it bundles 52. The falsification lived 670 lines away in another file and was never propagated, so a game-database entry an agent reads as settled fact carried a falsified conclusion. SESSION-STATE.md also contradicted itself 18 lines apart on the MangoHud fix.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: e1674804
+
+- **An unmeasured threshold is a guess, and a guess that always alarms trains you to ignore the alarm. Calibrate from the real measurement, and if a self-imposed target is unreachable, split it into a hard cap plus a separately measured component budget.** [architecture,lint,measurement]
+  *My first core-band value (11,000 bytes) was already wrong against the measured 11,814. The 260-line target was unreachable without cutting the never-derive core, so the rule was split: hard cap 360 unchanged, whole-file band 260 to 340 documented, and a new core budget measured by section with overage as a HARD FAILURE.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: a15a0344
+
+- **The scarce resource is the operator's attention, not compute. A foreground subagent blocks its parent turn, so a 56-minute foreground task is 56 minutes of the human unable to use the session. Launch independent work in the background and end the turn.** [delegation,workflow,attention]
+  *4 background lanes ran 00:24Z to 00:52Z with 0 operator-blocked minutes. Background does not finish work sooner; it makes the operator unblocked while it does. The read-only-first contract is what makes this safe: writes, local inference, and anything needed to proceed stay foreground.*
+  — pack: session-2026-09-30T01-27-36Z | domain: consciousness | id: 4feb4508
+
+- **Reject what you cannot honour. Never accept-and-ignore; a loud rejection is safe because it fails visibly, whereas silent acceptance converts an error into a false belief the agent then acts on.** [architecture,correctness,interfaces,provenance]
+  *Three unrelated failures in one session shared this shape: a handoff tool accepted target_entity and artifact_ids and persisted neither; compact_prep.py hardcoded a hardware line and wrote stale specs to disk on every run; opencode persists synthetic:true on subagent results and every provider converter discards it. A submit response is a claim, not proof of delivery.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 32b1596c
+
+- **Absence of evidence on your own node is not evidence of absence. Check the actual hop before declaring a cross-node resource missing.** [verification,federation,cross-node]
+  *I reported Talescail file transfer on port 8019 as non-existent after checking only Node 1. It was live on Node 0 as omega-exchange/2.0, one hop away, HTTPS-only. Also: an a-level label in a UI is not authoritative when the underlying binary reports a different version.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 76c85093
+
+- **Verify the ORDER of guards, not just their presence. 'There is a limit' and 'the limit is authoritative' are different claims, and only the second justifies relying on it.** [security,verification,architecture]
+  *I told the operator that granting broad task permission was 'exactly the hazardous way'. Disassembly showed the depth check runs BEFORE the permission check and fails independently, so subagent_depth is a hard ceiling. I had overstated the risk. Verify sequence, and re-verify on a version bump.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 56db28d3
 
 - **CPU-affinity constants are topology-gated: a subset-check (E_CORE_AFFINITY.issubset) is NOT a topology-check; on homogeneous SMT silicon it silently pins to hyperthread siblings**
   *N1 {12-15}=Gracemont E-cores; N0 Ryzen 5700U {12-15}=SMT siblings sharing FMA/ALU ports. Copying N1 constants to N0 degrades embeddings silently. Re-derive from lscpu per host; prefer EMBED_CPU_AFFINITY env override (ROADMAP RES-ECORE-001).*
