@@ -554,8 +554,8 @@ check-asyncio-import:
 # Check M9: Error integrity - no bare except:
 check-m9-error-integrity:
 	@echo "$(YELLOW)Checking M9 (Error integrity)...$(NC)"
-	@! rg -n 'except\s*:' src/omega/ --type py --glob '!*test*' --glob '!*governance*' 2>/dev/null | rg -v 'except Exception' | rg -v '# noqa' || (echo "$(RED)FAIL: Bare except found in src/omega/$(NC)" && false)
-	@echo "$(GREEN)M9 passed: No bare except in core$(NC)"
+	@.venv/bin/python scripts/check_m9_error_integrity.py src/omega
+	@echo "$(GREEN)M9 passed: No bare except in core (AST-verified, comments exempt)$(NC)"
 
 # Check M8: Zero telemetry - no telemetry SDK imports
 check-m8-zero-telemetry:
