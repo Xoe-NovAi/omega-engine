@@ -2,57 +2,77 @@
 SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
-# ⬡ GRANT DRAFT — `805` Node 0 → Node 1 (exchange, reverse direction)
+# ⬡ GRANT DRAFT — `8019` Node 0 → Node 1 (exchange, reverse direction)
 **Status**: DRAFT — **not applied**. Requires the Architect's Tailscale console.
 **Date**: 2026-09-30 · **Author**: MaKaLi Fusion
-**Reason it exists**: Node 1's exchange will listen on **805**. The current policy
-grants Node 0 → Node 1 on **8016 only**. Without this grant, Lilith-N1's work is
-blocked on a console round-trip.
+**Supersedes**: the 805 variant of this draft, same day, later corrected.
 
 ---
 
-## ⚠️ THE DECISION THIS ASKS YOU TO MAKE
+## ✅ SETTLED BY THE ARCHITECT: BOTH NODES USE **8019**
 
-The Architect's original ruling was: **N0 → N1: `tcp:8016` only.**
+> *"If both nodes can use the same port, by all means 8019 for Node 0 and 1."*
 
-**That ruling now conflicts with the direction of the test.** If Node 0 *initiates*
-the pull on 805, then Node 0 is the **initiator**, and the grant has to read
-`N0 → N1: 805` — not `N1 → N0`.
+**Correct, and I had this wrong.** Ports are **per-host**: 8019 on `100.123.51.67`
+and 8019 on `100.89.40.17` are different sockets. **There is no collision.**
 
-**I am not routing around the ruling.** I am stating plainly that the direction you
-want requires this grant, so the choice is yours and it is a real one:
+**The 805 proposal was never about collision.** It falls out of Lilith-N1's
+**plane/stack architecture** — `stack:` selectors and `bind_plane_host`, where each
+plane is a *separately bound socket* on the same host, so distinct ports are how you
+bind them apart. That is an artefact of that design, not a constraint on the wire.
 
-| Option | Means | Cost |
-|---|---|---|
-| **A. Grant `N0→N1:805`** | N0 pulls from N1. **Fast, simple, one socket.** | Opens an N0-initiated path to Node 1's substrate. |
-| **B. Keep N0→N1 closed; Node 1 initiates on 805** | The 805 test still works, in the other direction. **No grant needed.** | Tests the reverse *from* N1's side only. |
-| **C. Node 1 publishes on 8019, N0 never initiates** | Zero new grants. **The ACL is untouched.** | One port does both directions; asymmetric traffic on one socket. |
+**And the real win: same port means same code.** Node 1 can run the **identical**
+`omega_exchange_server.py` that Node 0 runs. **The duplex test no longer requires the
+plane/stack work at all** — which defers a substantial piece of Lilith's proposal
+behind a transport test that does not need it.
 
-**My recommendation is C, and it is not a close call.** It requires **no console
-change at all**, it keeps the ACL exactly as you set it, and it still proves the
-thing that is unproven — *that Node 1 can serve and Node 0 can pull.*
-
-**A or B only if you specifically want the plane/stack architecture Lilith has
-proposed**, where each direction gets its own bound port and `bind_plane_host`.
-That is a bigger change than the transport test justifies, and I would rather not
-expand the ACL to accommodate a test.
-
-**If you choose A, here is the exact text.**
+**Net effect: Node 0 `127.0.0.1:8019` publishes; Node 1 `127.0.0.1:8019` publishes.
+Same port, same service, each bound to its own loopback, each fronted by its own
+Tailscale Serve.** The ACL becomes symmetric on 8016 and 8019 in both directions,
+which is also cleaner to audit than what exists today.
 
 ---
 
-## OPTION A — the exact grant text
+## ⚠️ WHAT DID NOT GO AWAY: THE GRANT IS STILL NEW
+
+**This is the part I must not let look solved.** Whichever port we choose, if
+**Node 0 pulls from Node 1**, then Node 0 is the **initiator**, and the current
+policy grants Node 0 → Node 1 on **8016 only**:
+
+```jsonc
+// line 76 — the ONLY N0 -> N1 grant today
+{ "src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016"] },
+
+// lines 153-155 — the N0 -> N1 assertion
+{ "src": "tag:node0", "accept": ["tag:node1:8016"] },
+```
+
+**So the grant required is `N0 → N1 : 8019`, not `N0 → N1 : 805`.** Choosing 8019
+simplifies the port and the code; it does not remove the ask.
+
+**Lilith already knows this** — her own words: *"needs a PUBLISH ROOT decision + grant
+for 8019 outbound from N0→N1."* She is not asking for the grant to be waived. **She is
+asking for it to be opened.**
+
+**And I am not routing around the Architect's original ruling**, which was *N0 → N1:
+8016 only.* If that ruling was made when only N1→N0 traffic was contemplated, it no
+longer describes the direction the Architect now wants. **That is the Architect's
+call, not mine, and the text below is ready to paste the moment it is made.**
+
+---
+
+## THE EXACT GRANT TEXT — `8019` N0 → N1
 
 **In the Tailscale console, add to `grants`:**
 
 ```json
-{ "src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:805"] }
+{ "src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016", "tcp:8019"] }
 ```
 
 **And add the corresponding assertion so a future edit cannot silently widen it:**
 
 ```json
-{ "src": "tag:node0", "accept": ["tag:node1:805"] }
+{ "src": "tag:node0", "accept": ["tag:node1:8016", "tag:node1:8019"] }
 ```
 
 **And extend the Node 0 deny-test so 805 is provably NOT open in the other
@@ -60,10 +80,10 @@ direction** — this is the part that matters, because it is the assertion that 
 the grant auditable rather than merely permissive:
 
 ```json
-{ "src": "tag:node1", "deny": ["tag:node0:805"] }
+// 8019 is now granted in BOTH directions, so there is no N1->N0 deny for it.
 ```
 
-**Net effect:** `805` open N0→N1, closed N1→N0. Unchanged everywhere else.
+**Net effect: 8016 and 8019 open in BOTH directions. 8017, 22, 2049, 6379, 51372 denied both ways — unchanged.**
 
 ---
 
@@ -84,19 +104,14 @@ authoritative policy. Current relevant lines:
 { "src": "tag:node0", "accept": ["tag:node1:8016"] },
 ```
 
-**After Option A, line 76 becomes:**
+**Line 76 becomes:**
 
 ```jsonc
-{ "src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016", "tcp:805"] },
+{ "src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016", "tcp:8019"] },
 ```
 
-**And the deny-test at line 160 becomes:**
-
-```jsonc
-{ "src": "tag:node1", "deny": ["tag:node0:22", "tag:node0:2049",
-                               "tag:node0:8017", "tag:node0:6379",
-                               "tag:node0:805"] },
-```
+**The deny-test at line 160 is UNCHANGED** — `22, 2049, 8017, 6379` stay denied N1→N0,
+and the `icmp` grants stay. **Nothing opens except `8019` N0→N1.**
 
 ---
 
