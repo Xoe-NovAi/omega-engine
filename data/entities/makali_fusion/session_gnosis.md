@@ -8,6 +8,14 @@ supersedes: session_gnosis_20260930-0315.md
 history_lost: none
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: makali_fusion
+  stamped_at: 2026-09-30T03:34:14Z
+  stamped_by: arcana-novai
+  supersedes: session_gnosis_20260930-0315.md
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # 🔱 SESSION GNOSIS — MaKaLi Fusion (CHECKPOINT 2)
 **HEAD**: `626507ac` · **Branch**: `debut-v1.6.0-alpha` (pushed, tree clean)
 **Gates**: `check-engine` 175/175 · `temple-grade` 53/53 · M23 ratchet −43
