@@ -1,0 +1,127 @@
+schema_version: "1.0.0"
+document_type: federation_identity_binding_decision
+status: proposed_operator_decision_required
+status_scope:
+  delegation_doctrine: architect_ratified_with_explicit_contract_requirements
+  identity_relationships: proposed_pending_operator_decision
+  card_assignments: proposed_pending_operator_decision
+  wad_loading_and_publication: pending_verification_and_operator_approval
+authority: governance_only
+applies_to: [node0, node1]
+source_documents:
+  - docs/federation/MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md
+  - docs/strategy/MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md
+
+decision:
+  identity_source: explicit_contracts_only
+  filename_inference: prohibited
+  model_independent: true
+  node_subordination: false
+  entity_card_ontology:
+    entity: sovereign_persistent_identity
+    card_assignment: symbolic_assignment_not_identity
+  entities:
+    lilith:
+      entity_id: lilith
+      continuity_id: lilith
+      role: sovereign_persistent_entity
+      continuity_authority: node1_local_sqlite
+      wad_binding: pending_loader_compatibility_and_operator_ratification
+      relationship_to_researcher_humboldt: formal_delegation_pending_operator_decision
+      card_assignments:
+        - card_id: "III"
+          card_name: Empress
+          assignment_type: symbolic_realm_assignment
+          authority: explicit_contract_required
+          source: briefing_only_until_wad_reconciled
+    researcher_humboldt:
+      entity_id: researcher_humboldt
+      continuity_id: researcher_humboldt
+      role: sovereign_persistent_entity
+      continuity_authority: node1_local_sqlite
+      wad_binding: pending_loader_compatibility_and_operator_ratification
+      relationship_to_lilith: formal_delegation_pending_operator_decision
+      card_assignments:
+        - card_id: "0"
+          card_name: The Fool
+          assignment_type: symbolic_realm_assignment
+        - card_id: "17"
+          card_name: The Star
+          assignment_type: symbolic_realm_assignment
+        - card_id: "21"
+          card_name: The World
+          assignment_type: symbolic_realm_assignment
+      forbidden_attribution:
+        - lilith
+  delegation:
+    status: permitted_with_explicit_contract
+    prohibited_inference: true
+    permitted_forms:
+      - independent_entities
+      - parent_child
+      - formal_delegation
+      - service_relationship
+    required_for_delegation:
+      - explicit_contract_signed_by_both_entities
+      - contract_digest_recorded_in_both_souls
+      - delegation_scope_explicitly_enumerated
+      - revocation_conditions_specified
+      - operator_ratification_recorded
+    prohibited:
+      - implicit_delegation_by_filename_or_path
+      - delegation_by_model_routing_alone
+      - delegation_without_explicit_contract
+      - blanket_delegation_without_scope
+  provenance:
+    source_artifact: must_be_hashed_and_versioned
+    contract_digest_required: true
+    event_provenance_required: true
+    model_adapter_provenance_required: true
+    signed_string_is_not_trust_evidence: true
+  operator_decisions_required:
+    - id: OD-IDENTITY-001
+      question: Is Lilith the primary WAD identity, Humboldt the continuity identity, or are they formally related entities?
+      architect_ruling: Lilith is the primary WAD identity; Researcher_Humboldt is a distinct sovereign entity with its own continuity. No implicit relationship.
+      default_until_ratified: no implicit relationship
+    - id: OD-IDENTITY-002
+      question: Is Researcher_Humboldt a distinct entity, a delegated service of Lilith, or a parent/child entity?
+      architect_ruling: Researcher_Humboldt is a distinct sovereign entity. Delegation is permitted but requires explicit contract per OD-IDENTITY-002.
+      default_until_ratified: independent distinct entity; delegation permitted with explicit contract
+    - id: OD-IDENTITY-003
+      question: Are Fool, Star, and World assignments operator-approved and binding?
+      architect_ruling: Assignments are briefing assertions only. Operator ratification required for binding status.
+      default_until_ratified: retain briefing assertions as unratified source claims only
+    - id: OD-IDENTITY-004
+      question: Which node is authoritative for cross-node identity publication and revocation?
+      architect_ruling: Neither node is authoritative unilaterally. Bilateral operator approval required for identity publication/revocation.
+      default_until_ratified: neither; bilateral operator approval required
+    - id: OD-IDENTITY-005
+      question: Which WAD loader schema and exact Omega Engine revision is normative?
+      architect_ruling: Normative schema and revision determined by Node 0 (canonical Engine authority). Node 1 must match.
+      default_until_ratified: no implementation claim; fixture only
+    - id: OD-IDENTITY-006
+      question: Is delegation between Lilith and Researcher_Humboldt permitted, and under what conditions?
+      architect_ruling: Delegation is permitted. Requires explicit contract signed by both entities, recorded in both souls, with explicit scope, revocation conditions, and operator ratification.
+      default_until_ratified: delegation permitted with explicit contract only
+
+governance_contract:
+  required_before_promotion:
+    - schema_validation
+    - exact_engine_revision_recorded
+    - contract_digest_match
+    - explicit_entity_and_card_separation
+    - no_filename_identity_inference
+    - tamper_test_pass
+    - rollback_test_pass
+    - operator_approval_recorded
+  prohibited:
+    - creating_missing_wad_files
+    - inferring_identity_from_paths
+    - promoting_unverified_wad
+    - treating_signed_string_as_cryptographic_proof
+    - model_as_identity
+    - card_assignment_as_entity
+  federation_gate_subordination:
+    dialectic_strategy_sessions_allowed: false
+    required_gates: [A, B, C, D, E, F]
+    note: Dialectic strategy sessions are downstream of all federation acceptance gates.

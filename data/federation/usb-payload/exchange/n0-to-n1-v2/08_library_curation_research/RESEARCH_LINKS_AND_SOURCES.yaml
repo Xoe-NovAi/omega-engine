@@ -1,0 +1,355 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+schema_version: "1.0"
+package_id: "N0-N1-KD-LIBRARY-CURATION-20260925"
+research_date: "2026-09-25"
+prepared_by: "roc_racoon"
+notes:
+  - "Evidence tier W1 means current official source documentation accessed on 2026-09-25."
+  - "A source being free to read does not grant unrestricted reuse of metadata, abstracts, files, or derived corpora."
+  - "Provider terms and API behavior must be revalidated before scale-up or federation promotion."
+  - "No credentials, cookies, private browser data, personal material, or copyrighted full text are included."
+
+official_sources:
+  - id: internet_archive_developer_portal
+    organization: "Internet Archive"
+    title: "Tools and APIs"
+    url: "https://archive.org/developers/index-apis.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Developer portal; item metadata, item/file, changes, and related APIs"
+    metadata: "Item metadata, identifiers, file lists, collection and access-related fields"
+    rights_notes: "No blanket content license; evaluate each item/file and rights/access state"
+    operational_notes: "Use official bulk/Changes paths; identify bot; cache; honor 429/Retry-After"
+
+  - id: internet_archive_bots
+    organization: "Internet Archive"
+    title: "Bots, LLMs, and Automated Access"
+    url: "https://archive.org/developers/bots.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official automated-access guidance"
+    metadata: "User-Agent, authentication, rate-limit, and bulk guidance"
+    rights_notes: "Operational guidance does not grant rights to item content"
+    operational_notes: "Descriptive UA; up to 4 concurrent downloads with 1-second delay; checksums; bulk endpoints"
+
+  - id: open_library_api
+    organization: "Open Library / Internet Archive"
+    title: "APIs"
+    url: "https://openlibrary.org/developers/api"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Books, Authors, Search, Covers, Subjects; monthly dumps for bulk"
+    metadata: "Work/edition/author records and identifiers"
+    rights_notes: "Catalog availability is not a license for linked editions or full text"
+    operational_notes: "Default 1 req/s; identified User-Agent with contact email gets 3 req/s; no high-traffic backend use"
+
+  - id: open_library_books
+    organization: "Open Library"
+    title: "Books API"
+    url: "https://openlibrary.org/dev/docs/api/books"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "JSON/YAML/RDF book lookup by ISBN, OCLC, LCCN, OLID"
+    metadata: "Work/edition title, subtitle, authors, identifiers, preview state"
+    rights_notes: "Preview/full view states are not blanket reuse grants"
+    operational_notes: "Prefer API and dumps over HTML scraping"
+
+  - id: project_gutenberg_offline_catalogs
+    organization: "Project Gutenberg"
+    title: "Offline Catalogs and Feeds"
+    url: "https://www.gutenberg.org/ebooks/offline_catalogs.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official XML/RDF/CSV catalog, RSS, OPDS; JSON OPDS2 currently contact-gated testing path"
+    metadata: "Gutenberg IDs, title, author, language, subjects, release date, formats"
+    rights_notes: "Catalog data public domain; individual ebook rights/license and jurisdiction still apply"
+    operational_notes: "Main site is human-facing; use catalog/feeds/mirrors for bulk; XML/RDF updated daily"
+
+  - id: project_gutenberg_robot_access
+    organization: "Project Gutenberg"
+    title: "Robot Access to Pages"
+    url: "https://gutenberg.org/policy/robot_access.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Human-facing site restrictions plus documented catalog/mirror routes"
+    metadata: "Catalog data and approved bulk access guidance"
+    rights_notes: "Do not infer global public-domain status from US availability"
+    operational_notes: "Automated main-site access may result in IP block; use official bulk paths"
+
+  - id: hathitrust_bibliographic_api
+    organization: "HathiTrust"
+    title: "Bibliographic API"
+    url: "https://www.hathitrust.org/member-libraries/resources-for-librarians/data-resources/bibliographic-api/"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Small-number ISBN/LCCN/OCLC/record ID lookups; OAI/Hathifiles for bulk metadata"
+    metadata: "Bibliographic, rights, volume, rightsCode, usRightsString, access profile"
+    rights_notes: "Metadata sharing subject to depositor contractual restrictions; content rights vary"
+    operational_notes: "Not a search API; use bulk OAI/Hathifiles for harvesting"
+
+  - id: hathitrust_metadata_policy
+    organization: "HathiTrust"
+    title: "Metadata Sharing and Use Policy"
+    url: "https://www.hathitrust.org/member-libraries/resources-for-librarians/metadata-in-the-digital-library/metadata-sharing-and-use-policy"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "OAI, Hathifiles, APIs, and exports"
+    metadata: "Bibliographic and rights metadata categories"
+    rights_notes: "Generally usable subject to contractual restrictions; no warranty; depositor obligations remain"
+    operational_notes: "HathiTrust contributions to metadata are described as CC0 where applicable"
+
+  - id: doab_api
+    organization: "Directory of Open Access Books"
+    title: "API: Search DOAB"
+    url: "https://doabooks.org/en/article/api-search-doab"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "REST search, OAI-PMH, metadata feeds, selective export"
+    metadata: "Dublin Core/book metadata, handle, identifiers, license and links"
+    rights_notes: "DOAB metadata feeds are CC0 1.0; each book has its own license"
+    operational_notes: "Use OAI/feeds for bulk; selective export optimized for limited sets"
+
+  - id: doab_faq
+    organization: "Directory of Open Access Books"
+    title: "FAQ"
+    url: "https://www.doabooks.org/en/researchers/full-faq"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official metadata/download guidance"
+    metadata: "Metadata formats and library reuse guidance"
+    rights_notes: "No restrictions stated for DOAB metadata feeds under CC0 1.0; book rights vary"
+    operational_notes: "DOAB is description/discovery; OAPEN is the related full-text library"
+
+  - id: crossref_rest_api
+    organization: "Crossref"
+    title: "REST API"
+    url: "https://www.crossref.org/documentation/retrieve-metadata/rest-api"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Public REST API; no signup for public metadata"
+    metadata: "DOI, bibliographic metadata, abstracts sometimes, funding, licenses, relations, updates"
+    rights_notes: "Most metadata is not copyrightable; abstracts may be copyrighted by publisher/author"
+    operational_notes: "Use polite pool/mailto, cache, batch/filter, and back off; no full-text license implied"
+
+  - id: semantic_scholar_tutorial
+    organization: "Allen Institute for AI"
+    title: "Academic Graph API Tutorial"
+    url: "https://www.semanticscholar.org/product/api/tutorial"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Academic Graph, Recommendations, and Datasets APIs"
+    metadata: "Papers, authors, citations, references, abstracts, open-access links"
+    rights_notes: "Use is governed by the API license and dataset terms; no blanket full-text right"
+    operational_notes: "429 means slow down; API key guidance currently states 1 req/s; use datasets locally for bulk"
+
+  - id: semantic_scholar_license
+    organization: "Allen Institute for AI"
+    title: "API License Agreement"
+    url: "https://www.semanticscholar.org/product/api/license"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official API terms"
+    metadata: "Access/display and rate-limit conditions"
+    rights_notes: "Limited, non-exclusive, non-transferable, non-sublicensable, terminable license; third-party terms apply"
+    operational_notes: "Do not expose API keys or attempt to circumvent rate limits"
+
+  - id: openalex_auth_pricing
+    organization: "OpenAlex / OurResearch"
+    title: "Authentication & Pricing"
+    url: "https://developers.openalex.org/guides/authentication"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "REST API with current account-based API key and usage budget"
+    metadata: "Works, authors, sources, topics, licenses, OA locations"
+    rights_notes: "Data remain available; API service use is priced/terms-bound; linked publication rights remain separate"
+    operational_notes: "Current page says no-key $0.10/day, free-key $1/day, paid after; older 100k/day snippets are stale"
+
+  - id: openalex_rate_limits
+    organization: "OpenAlex / OurResearch"
+    title: "Check Rate Limit Status"
+    url: "https://developers.openalex.org/api-reference/rate-limits/check-rate-limit-status"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official API rate-limit status endpoint"
+    metadata: "Current allowance, usage, and endpoint cost information"
+    rights_notes: "Operational budget information, not a content license"
+    operational_notes: "Read current headers/status; do not rely on old static limits"
+
+  - id: arxiv_api_terms
+    organization: "arXiv"
+    title: "Terms of Use for arXiv APIs"
+    url: "https://info.arxiv.org/help/api/tou.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "API, OAI-PMH, RSS, bulk data, SWORD"
+    metadata: "Descriptive metadata including title, abstract, authors, identifiers, classifications"
+    rights_notes: "Descriptive metadata CC0 1.0; e-prints remain subject to applicable copyright"
+    operational_notes: "Legacy APIs: max one request every 3 seconds, one connection at a time per machine group"
+
+  - id: arxiv_api_manual
+    organization: "arXiv"
+    title: "API User's Manual"
+    url: "https://info.arxiv.org/help/api/user-manual.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "export.arxiv.org API query/interface"
+    metadata: "Atom feed and arXiv entry metadata"
+    rights_notes: "Read the separate arXiv API terms before reuse"
+    operational_notes: "Paging, sorting, and response structure are documented; cache and rate-limit"
+
+  - id: ncbi_eutilities
+    organization: "NCBI / NLM"
+    title: "E-utilities Usage Guidelines"
+    url: "https://www.nlm.nih.gov/dataguide/eutilities/utilities.html"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "ESearch, ESummary, EFetch, ELink, EPost, History Server"
+    metadata: "PubMed IDs, DOI, MeSH, abstracts, publication types, links"
+    rights_notes: "NCBI does not transfer copyright rights; linked content retains rights-holder terms"
+    operational_notes: "No more than 3 requests/second without key; identify tool/email; off-peak large jobs; per-utility limits"
+
+  - id: ncbi_policies
+    organization: "NCBI / NLM"
+    title: "Website and Data Usage Policies"
+    url: "https://www.ncbi.nlm.nih.gov/home/about/policies"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official NCBI scripting and data-use policy"
+    metadata: "NCBI data-use and scripting constraints"
+    rights_notes: "Users must follow asserted copyright-holder terms; NCBI disclaims transfer of rights"
+    operational_notes: "Use E-utilities endpoint, <=3 requests/sec, tool/email identification, off-peak windows"
+
+  - id: europe_pmc_rest
+    organization: "EMBL-EBI / Europe PMC"
+    title: "Articles RESTful API"
+    url: "https://europepmc.org/RestfulWebService"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "REST search, OAI-PMH, bulk downloads, SOAP legacy, annotations"
+    metadata: "IDs, abstracts, citations, references, MeSH, grants, OA/full-text links"
+    rights_notes: "Metadata/abstracts distinct from full text; OA content and annotations have license conditions"
+    operational_notes: "idlist/lite/core result types; capture current API response and terms metadata in manifests"
+
+  - id: wikimedia_access_policy
+    organization: "Wikimedia Foundation / Wikisource"
+    title: "Wikimedia APIs Access Policy"
+    url: "https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "MediaWiki Action API and REST API; dumps for bulk"
+    metadata: "Page IDs, titles, revisions, categories, templates, page-specific license data"
+    rights_notes: "License varies by wiki/page; content and file licenses are separate"
+    operational_notes: "Descriptive User-Agent required; OAuth/auth affects limits; 2026 policy applies site-wide limits"
+
+  - id: wikimedia_etiquette
+    organization: "Wikimedia Foundation / Wikisource"
+    title: "API Etiquette"
+    url: "https://www.mediawiki.org/wiki/API%3AEtiquette"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Official read/edit etiquette guidance"
+    metadata: "Request batching, compression, and rate-limit discovery"
+    rights_notes: "Operational guidance; page licenses still control reuse"
+    operational_notes: "Serialize reads, batch with pipes, gzip, inspect userinfo ratelimits, honor 429"
+
+  - id: standard_ebooks_feeds
+    organization: "Standard Ebooks"
+    title: "Ebook Feeds"
+    url: "https://standardebooks.org/feeds"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "New-release RSS/Atom; OPDS; some feeds require Patrons/approved access"
+    metadata: "Catalog, title, author, source/transcription references, release history"
+    rights_notes: "Standard Ebooks-produced content is dedicated to public domain via CC0 1.0; source/transcription rights may differ"
+    operational_notes: "Do not automate around membership or bulk-download controls"
+
+  - id: crawl4ai_docs
+    organization: "Crawl4AI"
+    title: "Open-Source LLM-Friendly Web Crawler and Scraper Documentation"
+    url: "https://docs.crawl4ai.com/"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Self-hosted open-source library; hosted cloud is a separate service"
+    metadata: "Markdown, structured extraction, browser control, caching, concurrency"
+    rights_notes: "Apache-2.0 applies to software; no rights to crawled content"
+    operational_notes: "Use least expensive extractor; no stealth/CAPTCHA bypass; honor source policy"
+
+  - id: crawl4ai_license
+    organization: "Crawl4AI / UncleCode"
+    title: "License"
+    url: "https://github.com/unclecode/crawl4ai/blob/main/LICENSE"
+    access_date: "2026-09-25"
+    evidence_tier: "W1"
+    access_pattern: "Open-source software license"
+    metadata: "Apache-2.0 terms and attribution requirements"
+    rights_notes: "Software license does not grant rights to source documents or full text"
+    operational_notes: "Retain notices and follow attribution requirements for distributions/derivative works"
+
+local_sources:
+  - id: omega_ingestion_scraper
+    path: "src/omega/ingestion/scraper.py"
+    evidence_tier: "L0"
+    relevance: "T1/T2/T3 extraction, domain anchoring, isolated Crawl4AI process, timeout, CAS metadata"
+  - id: omega_ingestion_pipeline
+    path: "src/omega/ingestion/pipeline.py"
+    evidence_tier: "L0"
+    relevance: "Sovereign-Sieve orchestration, T1/T3 fallback, quality gates, quarantine/SCA flow"
+  - id: omega_ingestion_persistence
+    path: "src/omega/ingestion/persistence.py"
+    evidence_tier: "L0"
+    relevance: "Raw anchors, content hashes, SCA, quarantine, entity-partition persistence"
+  - id: omega_ingestion_verifier
+    path: "src/omega/ingestion/verifier.py"
+    evidence_tier: "L0"
+    relevance: "T1/T3 delta, metadata triangulation, confidence and dispute model"
+  - id: omega_cas
+    path: "src/omega/archive/cas.py"
+    evidence_tier: "L0"
+    relevance: "SHA-256 content-addressable local storage"
+  - id: omega_library_curator
+    path: "src/omega/library/curator.py"
+    evidence_tier: "L0"
+    relevance: "CuratedDocument, domain classification, quality factors, threshold"
+  - id: omega_library_indexer
+    path: "src/omega/library/indexer.py"
+    evidence_tier: "L0"
+    relevance: "SQLite FTS5 index and vector adapter; current qwen_1024 default"
+  - id: omega_ingestion_domain_config
+    path: "config/wads/ingestion/domains.yaml"
+    evidence_tier: "L0"
+    relevance: "WAD-layer source allowlist, tiers, CAS, retry configuration"
+  - id: omega_ingestion_spec
+    path: "docs/strategy/INGESTION_PIPELINE_SPEC.md"
+    evidence_tier: "L0"
+    relevance: "Declared ingestion boundaries, deny list, PII/secret and partition rules"
+  - id: node1_wanderground_spec
+    path: "docs/federation/node1_received/architecture/WANDERGROUND_SPEC.md"
+    evidence_tier: "L1"
+    relevance: "Node 1 reported capture, five domains, Atlas, curator, 3D viewer, local/private boundary"
+  - id: node1_mempalace_notes
+    path: "docs/federation/node1_received/mempalace/v3.9.0-integration-notes.md"
+    evidence_tier: "L1"
+    relevance: "Node 1 reported MemPalace 3.9.0, 42 MCP tools, 62 drawers, provenance search"
+  - id: node1_well
+    path: "docs/federation/node1_received/well/WISDOM.md"
+    evidence_tier: "L1"
+    relevance: "Node 1 reported active Well records, corrections, preferences, privacy/federation insights"
+  - id: node1_embedding_decision
+    path: "docs/federation/node1_received/research/EMBEDDING_MODEL_DECISION.md"
+    evidence_tier: "L1"
+    relevance: "Node 1 recommendation for Qwen3-Embedding-0.6B at 1024 dimensions native; ratified D-1024-DIM-NATIVE-20260926"
+  - id: federation_charter
+    path: "docs/strategy/MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md"
+    evidence_tier: "L1"
+    relevance: "Quarantine-first USB architecture, local SQLite authority, MemPalace projection boundary, privacy gate"
+  - id: delta_sync
+    path: "docs/federation/node1_received/federation/RECONNECTION_DELTA_SYNC.md"
+    evidence_tier: "L1"
+    relevance: "Reconnection, quarantine, hash-based delta, human conflict escalation"
+  - id: node1_sieve_test
+    path: "tests/test_e2e_sovereign_sieve.py"
+    evidence_tier: "L0"
+    relevance: "Smoke tests for T1/T3, verifier, CAS, and domain allowlist; not production/legal readiness"
