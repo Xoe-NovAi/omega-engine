@@ -301,6 +301,24 @@ data/entities/test_*_entity/
 !data/coordination/teamstudy_*/FINAL_SYNTHESIS.md
 !.opencode/skills/git-secret-scrub/SKILL.md
 
+# Frontier review package (2026-10-01) — Antigravity IDE peer-review chain.
+# THE FIFTH `.gitignore` DEFECT OF THIS SESSION, and the same class as the
+# other four: a rule written for a tree that has since grown a new kind of
+# content, so nothing catches it.
+#   1. blanket `docs/reference/` ignore made the pre-commit docs gate
+#      unsatisfiable for any src/omega/ change
+#   2. dangling `.opencode/rules/*.md` references + failing M10 mandate
+#   3. `data/coordination/sessions/` swept 637 transcripts, 2 with live tokens
+#   4. 81MB crash-looping error.log tracked under an agent workspace
+#   5. THIS: the blanket `*.md` at line 270 silently swallowed the entire
+#      frontier review package. I reported it as "committed to the repository"
+#      when git had never heard of it. A file that exists and is not tracked
+#      is the exact failure class of a check that cannot fail.
+# A briefing dispatched to three frontier models is a load-bearing governance
+# artifact. It is un-ignored here, AFTER the blanket rule (last match wins).
+!docs/federation/ANTIGRAVITY_REVIEW_BRIEFING_20261001.md
+!docs/federation/prompts/STAGE_*.md
+
 # Governance artifacts (Phase 1 Federation Contract Refactor)
 !docs/governance/SAHS_RULE.md
 !docs/governance/HANDOFF_LIFECYCLE.md
