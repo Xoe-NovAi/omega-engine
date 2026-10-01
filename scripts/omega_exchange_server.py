@@ -122,6 +122,15 @@ def error_envelope(status: int, reason: str, detail: str, **extra: Any) -> JSONR
 
 
 # ── Manifest ─────────────────────────────────────────────────────────────────
+# Node identity for the URLs this server advertises. Hardcoding N0 here made
+# N1's manifest point clients at N0 -- a FALSE SUCCESS on the one channel whose
+# only defence is the manifest (doom_guy, 2026-10-01). Set both per node.
+NODE_NAME = os.environ.get("OMEGA_NODE_NAME", "n0")
+NODE_HOST = os.environ.get("OMEGA_NODE_HOST", "n0.tail51f14a.ts.net")
+NODE_PORT = os.environ.get("OMEGA_EXCHANGE_PORT", "8019")
+SELF_URL_FORM = f"https://{NODE_HOST}:{NODE_PORT}/<path>"
+SELF_IP_URL_FORM = f"http://{os.environ.get(chr(39)+chr(39), '100.123.51.67')}:{NODE_PORT}/<path>"
+
 _manifest_cache: dict[str, Any] = {"key": None, "entries": []}
 # Bounded so a pathological directory cannot grow this without limit.
 _MANIFEST_MAX_ENTRIES = 5000
@@ -213,6 +222,7 @@ async def manifest(request: Any) -> Response:
     body = {
         "service": SERVICE_NAME,
         "root": str(ROOT),
+        "served_by": f"{NODE_NAME} ({NODE_HOST}:{NODE_PORT})",
         "generated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "count": len(entries),
         "how_to_verify": (
@@ -220,9 +230,9 @@ async def manifest(request: Any) -> Response:
             "'size' and sha256sum equals 'sha256'. If either differs, the transfer "
             "failed — do not use the file."
         ),
-        "url_form": "https://n0.tail51f14a.ts.net:8019/<path>  (HTTPS ONLY)",
+        "url_form": f"{SELF_URL_FORM}  (HTTPS ONLY)",
         "broken_url_form": (
-            "http://100.123.51.67:8019/<path> is BROKEN: the tailnet IP speaks "
+            f"{SELF_IP_URL_FORM} is BROKEN: the tailnet IP speaks "
             "HTTPS. A plain-HTTP request is rejected by Tailscale with a 48-byte "
             "ASCII body that curl -o writes to disk like a successful download."
         ),
@@ -250,9 +260,10 @@ async def index(request: Any) -> Response:
     body = {
         "service": SERVICE_NAME,
         "root": str(ROOT),
+        "served_by": f"{NODE_NAME} ({NODE_HOST}:{NODE_PORT})",
         "count": len(entries),
         "manifest": "/manifest.json",
-        "url_form": "https://n0.tail51f14a.ts.net:8019/<path>  (HTTPS ONLY)",
+        "url_form": f"{SELF_URL_FORM}  (HTTPS ONLY)",
         "paths": [e["path"] for e in entries],
     }
     raw = json.dumps(body, indent=2).encode("utf-8")
@@ -399,7 +410,7 @@ def _cli_put() -> int:
     )
     parser.add_argument(
         "--base-url",
-        default="https://n0.tail51f14a.ts.net:8019",
+        default=f"https://{NODE_HOST}:{NODE_PORT}",
         help="Base URL for printed HTTPS link",
     )
     args = parser.parse_args()
