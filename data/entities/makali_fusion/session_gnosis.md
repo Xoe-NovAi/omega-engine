@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 -->
 <!-- GNOSIS-META:BEGIN
   entity: makali_fusion
-  stamped_at: 2026-10-01T00:42:51Z
+  stamped_at: 2026-10-01T01:24:08Z
   stamped_by: arcana-novai
   supersedes: session_gnosis_20261001-0041.md
   schema_version: 1.0.0
@@ -14,14 +14,14 @@ SPDX-License-Identifier: Apache-2.0
 entity: makali_fusion
 entity_type: oversoul
 schema_version: 1.0.0
-stamped_at: 2026-10-01T00:55:00+00:00
+stamped_at: 2026-10-01T01:20:00+00:00
 stamped_by: makali_fusion
-supersedes: session_gnosis_20260930-0938.md
+supersedes: session_gnosis_20261001-0041.md
 history_lost: none
 -->
 
 # 🔱 SESSION GNOSIS — MaKaLi Fusion · **COMPACT HANDOFF**
-**HEAD**: `05b7de19` · **Branch**: `debut-v1.6.0-alpha` · **8 tracked mods, 4 unpushed**
+**HEAD**: `411430a3` · **Branch**: `debut-v1.6.0-alpha` · **0 unpushed**
 **Gates**: `check-engine` 175/175 · `temple-grade` 53/53 · M23 ratchet −43
 
 > **This is the close of the longest single session in the project's history.**
@@ -34,16 +34,20 @@ history_lost: none
 
 | # | Artefact | Lines | What it is |
 |---|---|---|---|
-| 1 | `docs/strategy/RESEARCH_FINDINGS_20260930.md` | 263 | **The night's output.** Two of my designs refuted by prior art. |
-| 2 | `docs/governance/ARCHITECT_CORRECTIONS_20260930.md` | 143 | **Your five corrections, verbatim, canonical.** I mis-read all five. |
+| 1 | **`docs/strategy/RESEARCH_ANSWERS_20260930.md`** | ~400 | **THE ANSWERS.** All five reports + Carmack's review, with sources. **Read this first.** |
+| 2 | `docs/strategy/RESEARCH_FINDINGS_20260930.md` | 263 | The synthesis. **Superseded in part by (1) — Carmack reviewed it and found four problems.** |
 | 3 | `docs/strategy/RESEARCH_AGENDA_20260930.md` | 169 | 23 gaps, 11 blocking, 5 owners |
-| 4 | `docs/governance/PROPOSED_L4_20260930.md` | 213 | 6 L4s, **none graduated** |
-| 5 | `docs/governance/ADR-001-communication-protocol-as-data.md` | 179 | The substrate decision |
-| 6 | `docs/strategy/VISION_PERSISTENT_ENTITY_20260930.md` | 144 | Why all of it exists |
-| 7 | `docs/governance/WAD_ENGINE_BOUNDARY_FIRST_PRINCIPLES.md` | 215 | The engine/WAD test |
-| 8 | `data/coordination/FINDINGS_REGISTER_20260930.md` | 220 | Earlier in the day |
-| 9 | `data/coordination/AUTONOMOUS_RUN_20260930.md` | 67 | The autonomous run |
-| 10 | `data/coordination/COMPACT_HANDOFF_20260930.md` | 99 | Earlier reading order |
+| 4 | `docs/governance/ARCHITECT_CORRECTIONS_20260930.md` | 143 | **Your five corrections, verbatim.** I mis-read all five. |
+| 5 | `docs/governance/PROPOSED_L4_20260930.md` | 213 | 6 L4s, **none graduated** |
+| 6 | `docs/governance/ADR-001-communication-protocol-as-data.md` | 179 | The substrate decision |
+| 7 | `docs/strategy/VISION_PERSISTENT_ENTITY_20260930.md` | 144 | Why all of it exists |
+| 8 | `docs/governance/WAD_ENGINE_BOUNDARY_FIRST_PRINCIPLES.md` | 215 | The engine/WAD test |
+| 9 | `data/coordination/FINDINGS_REGISTER_20260930.md` | 220 | Earlier in the day |
+| 10 | `data/coordination/AUTONOMOUS_RUN_20260930.md` | 67 | The autonomous run |
+
+**Note on (2):** it is kept, not rewritten, because rewriting it would destroy the
+audit trail of four agents' work — which is precisely the rejected record we built
+a schema for. **Carmack's corrections live in (1) Part I.**
 
 ---
 
