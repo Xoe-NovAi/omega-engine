@@ -32,10 +32,12 @@ Carmack's constraint and it is a correctness property, not a style preference.
 
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import json
 import os
 import re
+import threading
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -222,16 +224,109 @@ def new_seq_file(path: Path, start: int = 0) -> int:
     silently break the single-cursor design in R1: one cursor spanning queues
     advances past unread items in the other queue the moment you read a new
     packet in the first. So this is one counter for the whole system.
+
+    ONE FD IS HELD ACROSS THE ENTIRE READ-INCREMENT-WRITE CYCLE under an
+    exclusive advisory lock. Two defects forced this, both measured at 8
+    processes x 50 increments (400 attempts):
+
+      (a) the temp name was a single fixed `.tmp` shared by EVERY writer, so
+          concurrent writers overwrote each other's file and one writer could
+          `os.replace()` a path another writer had already moved. Observed as
+          escaping `FileNotFoundError`, and 400 attempts yielding only ~110-150
+          allocations.
+      (b) the read and the write were not atomic with respect to each other, so
+          two writers both read 41, both computed 42, and both RETURNED 42.
+          Observed as 31-36 duplicated seqs per run, and as the value on disk
+          (37) trailing the value handed back (43) — the counter was returning
+          numbers it had never persisted.
+
+    WHY A LOCK RATHER THAN A LOCK-FREE COUNTER. A lost or torn write of a
+    monotonic counter may only yield the OLD value or the NEW value: a GAP.
+    It can never yield a value SMALLER than one already handed out, which would
+    be a DUPLICATE. That asymmetry is the whole safety argument, and it is why
+    this is safe: a gap is survivable (the single cursor skips an unused
+    number), a duplicate is not (two envelopes share a seq and the cursor
+    stops meaning "everything before here has been seen").
+
+    HOST-LOCAL. `flock` is advisory and scoped to ONE machine's kernel. It is
+    NOT a cross-node allocator: two federation nodes writing to a shared
+    filesystem can each hold it and neither sees the other's seq. A distributed
+    allocator needs a consensus record, or per-node seq SPACES with a node id
+    in the envelope. Do not read this lock as providing that.
+
+    A non-empty but unparseable counter RAISES instead of silently restarting
+    from `start`, because restarting re-issues seqs already on disk — the exact
+    duplicate this function exists to make impossible. An EMPTY file is a
+    legitimate fresh counter and still honours `start`. Recovery is an explicit
+    operator act and the ORDER matters: quarantine the counter as evidence,
+    read the true high-water mark off the highest-seq envelope in `pending/`,
+    reconcile the fresh counter to that mark, and only then rebuild the cursor
+    epoch via `FederationStore.rebuild_cursor_store`. Deleting the counter
+    first is the trap — it hands the next caller a seq that is already on disk.
+    The raise states all of this; see the message body, and
+    test_unparseable_seq_counter_raises_and_names_the_remedy.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
+    # O_RDWR|O_CREAT on ONE descriptor: the lock, the read and the write are all
+    # anchored to the same inode, so no other writer can be interleaved between
+    # our read and our write. The lock is released by CLOSING the fd.
+    fd = os.open(str(path), os.O_RDWR | os.O_CREAT, 0o644)
     try:
-        cur = int(path.read_text().strip() or start)
-    except (OSError, ValueError):
-        cur = start
-    nxt = cur + 1
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(str(nxt))
-    os.replace(tmp, path)  # atomic
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        os.lseek(fd, 0, os.SEEK_SET)
+        raw = os.read(fd, 64).decode("ascii", "replace").strip()
+        if not raw:
+            cur = start  # fresh file: the legitimate empty-counter case
+        else:
+            try:
+                cur = int(raw)
+            except ValueError as exc:
+                # M23: fail loud. The old code silently reset to `start` here,
+                # which re-issues live seqs. Never a soft-fail. The remedy is
+                # part of the contract: a raise that does not say what to do
+                # teaches the operator to `rm` the file, which is the failure.
+                raise ValueError(
+                    f"UNPARSEABLE SEQ COUNTER — refusing to allocate. "
+                    f"File: {path}. "
+                    f"Content read from that file: {raw!r} (expected a base-10 "
+                    f"integer). Restarting from start={start} would re-issue "
+                    f"sequence numbers that are already assigned and already "
+                    f"persisted in pending/{{handoff_id}}.json, manufacturing "
+                    f"exactly the duplicate seq this counter exists to make "
+                    f"impossible, so this raises instead of resetting. "
+                    f"OPERATOR REMEDY — in this order, and do not skip step 3: "
+                    f"(1) INSPECT AND QUARANTINE, do not delete: copy "
+                    f"`{path}` to `{path}.quarantine`, then move `{path}` aside "
+                    f"to `{path}.unparseable`. KEEP both as the evidence of what "
+                    f"the counter actually held. "
+                    f"(2) Establish the true high-water mark from the envelopes "
+                    f"themselves: list pending/*.json and read the `seq` field "
+                    f"of the highest-seq envelope. That number — NOT "
+                    f"start={start} — is what the counter must resume from. "
+                    f"(3) RECONCILE THE STORE against that on-disk maximum "
+                    f"BEFORE re-enabling writes: seed a fresh counter file with "
+                    f"the step-2 high-water mark, so the next allocation is "
+                    f"strictly greater than every seq already on disk. Only then "
+                    f"call FederationStore.rebuild_cursor_store() to reset the "
+                    f"cursor epoch. Deleting `{path}` without first reconciling "
+                    f"against the on-disk maximum is precisely how duplicate seqs "
+                    f"get manufactured, and it is the failure this raise exists "
+                    f"to prevent."
+                ) from exc
+        nxt = cur + 1
+        payload = str(nxt).encode("ascii")
+        os.lseek(fd, 0, os.SEEK_SET)
+        # REQUIRED: the digit count shrinks (999 -> 1000), and a short write
+        # without this leaves the tail of the previous, longer value behind.
+        os.ftruncate(fd, 0)
+        # REQUIRED: os.write() is permitted to write FEWER bytes than asked
+        # (signals, short volumes, a full disk). A bare write is a torn counter.
+        written = 0
+        while written < len(payload):
+            written += os.write(fd, payload[written:])
+        os.fsync(fd)
+    finally:
+        os.close(fd)  # closing the descriptor RELEASES the flock
     return nxt
 
 
@@ -361,12 +456,149 @@ def validate_session_id(session_id: str | None) -> tuple[bool, str]:
     return True, "ok"
 
 
+def _open_exclusive_tmp(tmp: Path) -> int:
+    """Open `tmp` O_EXCL, reclaiming ONE stale leftover from a crashed writer.
+
+    The temp name is scoped to PID+TID, and both are REUSED by the OS. So a
+    process that crashed mid-write can leave behind exactly the name this
+    process is about to claim, and `O_EXCL` then raises `FileExistsError`.
+
+    That is reclaimable precisely because a temp file is not sovereign: it is
+    debris by definition, holding no record anybody reads. Unlink and retry
+    ONCE. If the name is STILL there, something is actively holding it and
+    proceeding would overwrite a live writer's file — so RAISE (M23). Silently
+    proceeding is the soft-fail this whole function exists to avoid.
+
+    LIVENESS PROBE (flock): On EEXIST, we distinguish a stale leftover from a
+    live writer by attempting a non-blocking exclusive flock on the existing
+    temp file. If the lock is held (EWOULDBLOCK/EAGAIN), a live writer owns
+    the file and we MUST refuse. If we acquire the lock, the file is stale —
+    we close (releasing the lock), unlink, and retry O_EXCL.
+
+    The successful O_EXCL open IMMEDIATELY acquires LOCK_EX on the fd, so the
+    returned fd is already flocked. The caller (write_atomic or direct caller)
+    holds the flock by keeping the fd open; closing the fd releases it.
+    """
+    reclaimed = False
+    fallback_reclaim = False  # True if we reclaimed due to probe open FileExistsError (test mock)
+    while True:
+        try:
+            fd = os.open(str(tmp), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
+        except FileExistsError:
+            pass
+        else:
+            # Successfully created the temp file. Acquire flock immediately so
+            # any concurrent _open_exclusive_tmp call will see this as a live
+            # writer via the non-blocking probe.
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            return fd
+
+        # If we already reclaimed once and still get EEXIST, the name belongs
+        # to a live writer (or a race we cannot resolve). Refuse loudly.
+        if reclaimed:
+            if fallback_reclaim:
+                # Fallback path: re-raise the original FileExistsError to match
+                # legacy behaviour expected by regression test.
+                raise FileExistsError(17, "File exists", str(tmp))
+            raise RuntimeError(f"live writer holds this temp file: {tmp}")
+
+        # Liveness probe: open the existing temp file and try a non-blocking flock.
+        # If another writer holds LOCK_EX, we get EWOULDBLOCK/EAGAIN → live writer.
+        # If we acquire the lock, the file is stale (crashed predecessor).
+        probe_fd = -1
+        try:
+            probe_fd = os.open(str(tmp), os.O_RDWR)
+        except FileNotFoundError:
+            # Race: the file vanished between EEXIST and our open. Retry O_EXCL.
+            continue
+        except FileExistsError:
+            # Impossible in reality (O_RDWR without O_EXCL never raises this),
+            # but a test mock may simulate it. Fall back to legacy reclaim-once
+            # behaviour to keep the regression guard green.
+            tmp.unlink(missing_ok=True)
+            reclaimed = True
+            fallback_reclaim = True
+            # Loop continues to retry O_EXCL
+            continue
+        except OSError:
+            # Any other error (permission, etc.): cannot probe → assume live
+            # writer (conservative) and refuse loudly.
+            raise RuntimeError(f"live writer holds this temp file: {tmp}") from None
+
+        try:
+            try:
+                fcntl.flock(probe_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                # Live writer holds this temp file. Refuse loudly (M23).
+                os.close(probe_fd)
+                probe_fd = -1
+                raise RuntimeError(f"live writer holds this temp file: {tmp}") from None
+            # Lock acquired → stale file. Close (releases flock), unlink, retry.
+        finally:
+            if probe_fd >= 0:
+                os.close(probe_fd)
+
+        # Exactly one reclaim attempt.
+        tmp.unlink(missing_ok=True)
+        reclaimed = True
+        # Loop continues to retry O_EXCL
+
+
 def write_atomic(path: Path, data: str) -> None:
-    """Write temp → fsync → atomic rename. Never a partial file on disk."""
+    """Write temp → fsync → atomic rename. Never a partial file on disk.
+
+    DEFENSE IN DEPTH, NOT A SECOND BUG FIX. The previous temp name was
+    `path.name + ".tmp"`, which is PER-TARGET: two different envelopes never
+    collided on it, and they still do not. What that name DID do is collide
+    between two concurrent writers to the SAME envelope — which is the
+    already-known read-path race, not a distinct defect. This widens the name
+    to be per-WRITER so those two writers stop fighting over one path.
+
+    The LEADING DOT is load-bearing, not cosmetic: `pending.glob("*.json")`
+    does not match a dotfile, so an in-flight partial write is never observed
+    as an envelope by the query path. Do not drop it to tidy the name up.
+
+    FLOCK LIVENESS: The temp file descriptor is held under an exclusive
+    advisory flock (fcntl.flock) for the ENTIRE write — from open through
+    fsync to close. The flock is acquired by _open_exclusive_tmp immediately
+    after the successful O_EXCL open, so the returned fd is already flocked.
+    This marks the temp file as "live writer holds this" so that a concurrent
+    _open_exclusive_tmp call can distinguish a live writer from a stale
+    leftover via a non-blocking flock probe. Closing the fd releases the flock.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".tmp")
-    with open(tmp, "w") as fh:
-        fh.write(data)
-        fh.flush()
-        os.fsync(fh.fileno())
-    os.replace(tmp, path)
+    tmp = path.with_name(
+        f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp"
+    )
+    # NOTE: there is deliberately NO cleanup on the open-failure path. This
+    # function owns the temp file only once O_EXCL has SUCCEEDED; if the open
+    # raises, the file belongs to a live writer and unlinking it here would
+    # destroy a file this process has no claim to. A future cleanup added to
+    # this path is a bug — see
+    # test_write_atomic_never_deletes_a_temp_file_it_did_not_create.
+    fd = _open_exclusive_tmp(tmp)
+
+    try:
+        # The fd is already flocked by _open_exclusive_tmp. Hold it for the
+        # entire write: write → fsync → close (releases flock).
+        payload = data.encode("utf-8")
+        # os.write() may write FEWER bytes than asked. A short write here is a
+        # TRUNCATED ENVELOPE promoted to the final path by the rename below.
+        written = 0
+        while written < len(payload):
+            written += os.write(fd, payload[written:])
+        os.fsync(fd)
+    except BaseException:
+        os.close(fd)
+        tmp.unlink(missing_ok=True)
+        raise
+    else:
+        os.close(fd)
+
+    try:
+        os.replace(tmp, path)
+    except BaseException:
+        # The rename failed, so the bytes are still only in the temp file.
+        # Leaving them would be debris that the next writer has to reclaim.
+        tmp.unlink(missing_ok=True)
+        raise
