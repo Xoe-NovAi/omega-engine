@@ -122,7 +122,7 @@ def error_envelope(status: int, reason: str, detail: str, **extra: Any) -> JSONR
 
 
 # ── Manifest ─────────────────────────────────────────────────────────────────
-_manifest_cache: dict[str, Any] = {"mtime": None, "entries": []}
+_manifest_cache: dict[str, Any] = {"key": None, "entries": []}
 # Bounded so a pathological directory cannot grow this without limit.
 _MANIFEST_MAX_ENTRIES = 5000
 
@@ -135,43 +135,43 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def _build_manifest() -> list[dict[str, Any]]:
-    entries: list[dict[str, Any]] = []
-    root_mtime = ROOT.stat().st_mtime if ROOT.exists() else 0.0
-    if _manifest_cache["mtime"] == root_mtime:
-        return _manifest_cache["entries"]
-
-    for dirpath, dirnames, filenames in os.walk(ROOT):
-        dirnames[:] = [d for d in dirnames if not d.startswith(".")]
-        for name in sorted(filenames):
-            if name.startswith("."):
-                continue
-            p = Path(dirpath) / name
-            try:
-                st = p.lstat()
-            except OSError:
-                continue
-            if not os.path.isfile(p) or os.path.islink(p):
-                # Never follow symlinks out of the root.
-                continue
-            entries.append(
-                {
-                    "path": str(p.relative_to(ROOT)),
-                    "size": st.st_size,
-                    "sha256": _sha256(p),
-                    "content_type": _guess_type(name),
-                    "modified_utc": datetime.fromtimestamp(
-                        st.st_mtime, timezone.utc
-                    ).isoformat(timespec="seconds"),
-                }
-            )
+def _build_manifest(root: Path | None = None) -> list[dict[str, Any]]:
+    """Walk the tree and collect entries + their mtimes.
+    
+    Cache key = (max_mtime, entry_count) — detects ANY change:
+    - New files added anywhere in the tree (max_mtime increases)
+    - Files removed (entry_count decreases)
+    - Files modified (max_mtime increases)
+    - Files replaced same-size (mtime increases)
+    """
+    target_root = root or ROOT
+    entries = []
+    max_mtime = 0.0
+    for path in target_root.rglob("*"):
+        if path.is_file():
+            st = path.stat()
+            max_mtime = max(max_mtime, st.st_mtime)
+            rel = path.relative_to(target_root)
+            entries.append({
+                "path": str(rel),
+                "size": st.st_size,
+                "sha256": _sha256(path),
+                "content_type": _guess_type(path.name),
+                "modified_utc": datetime.fromtimestamp(
+                    st.st_mtime, timezone.utc
+                ).isoformat(timespec="seconds"),
+            })
             if len(entries) >= _MANIFEST_MAX_ENTRIES:
-                entries.sort(key=lambda e: e["path"])
-                _manifest_cache.update(mtime=root_mtime, entries=entries)
-                return entries
-
-    entries.sort(key=lambda e: e["path"])
-    _manifest_cache.update(mtime=root_mtime, entries=entries)
+                break
+    
+    # Cache key = (max_mtime, entry_count) — detects ANY change
+    cache_key = (max_mtime, len(entries))
+    
+    if _manifest_cache.get("key") == cache_key:
+        return _manifest_cache["entries"]
+    
+    _manifest_cache["key"] = cache_key
+    _manifest_cache["entries"] = entries
     return entries
 
 
@@ -209,7 +209,7 @@ def _safe_resolve(rel_path: str) -> Path | None:
 
 # ── Handlers ─────────────────────────────────────────────────────────────────
 async def manifest(request: Any) -> Response:
-    entries = await anyio.to_thread.run_sync(_build_manifest)
+    entries = await anyio.to_thread.run_sync(_build_manifest, ROOT)
     body = {
         "service": SERVICE_NAME,
         "root": str(ROOT),
@@ -246,7 +246,7 @@ async def manifest(request: Any) -> Response:
 
 
 async def index(request: Any) -> Response:
-    entries = await anyio.to_thread.run_sync(_build_manifest)
+    entries = await anyio.to_thread.run_sync(_build_manifest, ROOT)
     body = {
         "service": SERVICE_NAME,
         "root": str(ROOT),
@@ -378,5 +378,88 @@ def main() -> None:
     )
 
 
+# ── CLI: omega-exchange-put ────────────────────────────────────────────────────
+# Assertion wrapper: copies source file to target directory under ROOT,
+# re-reads manifest via _build_manifest(), asserts the new path is listed
+# with matching sha256, then prints the HTTPS URL.
+def _cli_put() -> int:
+    import argparse
+    import shutil
+
+    parser = argparse.ArgumentParser(
+        prog="omega-exchange-put",
+        description="Copy artifact to exchange root and verify manifest entry",
+    )
+    parser.add_argument("source", help="Source file path")
+    parser.add_argument("target_rel", help="Target relative path under exchange root")
+    parser.add_argument(
+        "--root",
+        default=str(ROOT),
+        help=f"Exchange root (default: {ROOT})",
+    )
+    parser.add_argument(
+        "--base-url",
+        default="https://n0.tail51f14a.ts.net:8019",
+        help="Base URL for printed HTTPS link",
+    )
+    args = parser.parse_args()
+
+    src = Path(args.source)
+    if not src.exists() or not src.is_file():
+        print(f"ERROR: source {src} does not exist or is not a file", file=sys.stderr)
+        return 2
+
+    target_root = Path(args.root)
+    if not target_root.exists():
+        print(f"ERROR: exchange root {target_root} does not exist", file=sys.stderr)
+        return 2
+
+    target = target_root / args.target_rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    # Copy the file
+    shutil.copy2(src, target)
+
+    # Re-read manifest (bypasses cache by calling _build_manifest directly)
+    entries = _build_manifest(target_root)
+
+    # Assert the new path is listed with matching sha256
+    expected_sha256 = _sha256(target)
+    found = False
+    for entry in entries:
+        if entry["path"] == args.target_rel:
+            found = True
+            if entry["sha256"] != expected_sha256:
+                print(
+                    f"ERROR: manifest sha256 mismatch for {args.target_rel}: "
+                    f"expected {expected_sha256}, got {entry['sha256']}",
+                    file=sys.stderr,
+                )
+                return 3
+            if entry["size"] != target.stat().st_size:
+                print(
+                    f"ERROR: manifest size mismatch for {args.target_rel}: "
+                    f"expected {target.stat().st_size}, got {entry['size']}",
+                    file=sys.stderr,
+                )
+                return 3
+            break
+
+    if not found:
+        print(
+            f"ERROR: {args.target_rel} not found in manifest after put",
+            file=sys.stderr,
+        )
+        return 4
+
+    # Print the HTTPS URL
+    print(f"{args.base_url}/{args.target_rel}")
+    return 0
+
+
 if __name__ == "__main__":
+    # Check for CLI subcommand first (before starting server)
+    if len(sys.argv) > 1 and sys.argv[1] == "put":
+        sys.argv.pop(0)  # remove script name
+        sys.exit(_cli_put())
     main()
