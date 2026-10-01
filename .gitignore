@@ -397,3 +397,4 @@ data/quarantine/**/*.md
 # The class of defect is the same as the docs/reference/ blanket-ignore: the
 # rules predate this kind of content, so nothing caught it.
 data/coordination/sessions/
+!docs/federation/RESPONSE_TO_SONNET_4_6_*.md
