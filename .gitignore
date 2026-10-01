@@ -318,6 +318,12 @@ data/entities/test_*_entity/
 # artifact. It is un-ignored here, AFTER the blanket rule (last match wins).
 !docs/federation/ANTIGRAVITY_REVIEW_BRIEFING_20261001.md
 !docs/federation/prompts/STAGE_*.md
+# The RETURNS from that chain. Retrieved 2026-10-01 from
+# ~/.gemini/antigravity-ide/brain/5bc0596f-.../ — a vendor scratch directory
+# no fleet agent can read, which is exactly the condition M30 warns about:
+# a claim that exists only on one machine is not a verified claim.
+# Both are filed with provenance headers and inline corrections.
+!docs/federation/ANTIGRAVITY_REVIEW_RETURN_20261001_*.md
 
 # Governance artifacts (Phase 1 Federation Contract Refactor)
 !docs/governance/SAHS_RULE.md

@@ -1,10 +1,25 @@
-# 🔱 Omega Engine — Background Research Service (Daemon + Watchdog)
-# ⬡ OMEGA ⬡ SOPHIA ⬡ autonomous ⬡ research ⬡ WORKER
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
 #
-# Runs the sovereign background researcher as a CONTINUOUS daemon.
-#   - Inner watchdog (crash-loop breaker) restarts cycles on failure.
-#   - systemd Restart=on-failure provides the OUTER watchdog if the process dies.
-# API keys resolve from the sovereign vault at runtime — never from plaintext .env.
+# SPDX-License-Identifier: Apache-2.0
+# M13 Temple-Grade | Omega Background Researcher — Hardened Production Unit
+# Stage-2-Audit 2026-10-01
+#
+# CRASH-LOOP DEFENSE (root cause of 81.5 MB log accumulation):
+#   The original unit had RestartSec=30s but NO StartLimitBurst.
+#   On ModuleNotFoundError (exit 1), systemd restarts every 30s forever.
+#   At ~2 KB traceback per cycle: 7,200 restarts over 2.5 months = ~79 MB.
+#
+#   Fix: StartLimitBurst=5 + StartLimitIntervalSec=300 means if the service
+#   crashes 5 times in 5 minutes, systemd enters FAILED state and stops retrying.
+#   Operator must inspect: journalctl --user -u omega-research -n 50
+#   Then reset: systemctl --user reset-failed omega-research
+#
+# LOG ROUTING: stdout/stderr now go to the systemd journal (bounded by
+#   journald SystemMaxUse in /etc/systemd/journald.conf, default 10% of disk).
+#   To read: journalctl --user -u omega-research -n 200
+#   To tail:  journalctl --user -fu omega-research
+#   The flat .log files in HALL_OF_RECORDS are preserved by logrotate
+#   (see scripts/logrotate-omega-research.conf for rotation config).
 
 [Unit]
 Description=Omega Background Researcher — Sovereign Research Worker (Daemon)
@@ -12,32 +27,60 @@ Documentation=https://github.com/Xoe-NovAi/omega-engine
 After=network-online.target omega-searxng.service
 Wants=network-online.target
 Requires=omega-searxng.service
+# If searxng permanently fails, do not keep cycling this service
+PartOf=omega-searxng.service
 
 [Service]
 Type=simple
-ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 -m omega.workers.background_researcher.run --daemon
+ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 \
+    -m omega.workers.background_researcher.run \
+    --daemon
 WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
 Environment=PYTHONPATH=%h/Documents/Xoe-NovAi/omega-engine/src
-# Non-secret config only (SEARXNG_BASE_URL). API keys resolve from the
-# sovereign vault at runtime — never from plaintext .env.
+# Non-secret config only. API keys resolve from sovereign vault at runtime.
 EnvironmentFile=%h/Documents/Xoe-NovAi/omega-engine/.env
 Environment=OMEGA_ENV=production
 Environment=MALLOC_MMAP_THRESHOLD_=65536
 Environment=MALLOC_ARENA_MAX=2
-StandardOutput=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/background-researcher/output.log
-StandardError=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/background-researcher/error.log
 
-# Memory protection
+# ── Log routing: bounded journal (replaces unbounded append:) ────────────────
+# Output goes to systemd journal. Size bounded by journald config.
+# Flat file fallback is managed by logrotate (see companion config).
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=omega-research
+
+# ── Memory protection ────────────────────────────────────────────────────────
 MemoryMax=512M
 MemoryHigh=384M
+# Prefer killing this over the Hub on OOM (higher = more killable)
+OOMScoreAdjust=200
 
-# Outer watchdog: restart the process if it exits non-zero (e.g. crash-loop abort)
+# ── Crash-loop protection ────────────────────────────────────────────────────
+# Restart on non-zero exit or signal
 Restart=on-failure
-RestartSec=30s
 
-# Security hardening
+# 60s delay: first 5 failures take 5 minutes, triggering the rate limiter.
+# Longer than the original 30s to reduce log volume on persistent config errors.
+RestartSec=60s
+
+# THE CRITICAL FIX: rate limiter that was missing in the original unit.
+# 5 crashes in 300 seconds -> unit enters FAILED, restarts stop.
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+# Do NOT restart on permanent errors (M24 / ModuleNotFoundError class).
+# Exit code 3: ModuleNotFoundError (venv broken -- fix with pip install -e .)
+# Exit code 4: ConfigurationError (missing .env key, bad providers.yaml)
+# These require operator intervention; restart will not fix them.
+# PREREQUISITE: run.py __main__ must call sys.exit(3) or sys.exit(4)
+#   (see Stage-2 audit: omega/workers/background_researcher/run.py)
+RestartPreventExitStatus=3 4
+
+# ── Security hardening (unchanged) ──────────────────────────────────────────
 ProtectSystem=full
-ReadWritePaths=%h/Documents/Xoe-NovAi/omega-engine/data %h/Documents/Xoe-NovAi/omega-engine/docs
+ReadWritePaths=%h/Documents/Xoe-NovAi/omega-engine/data \
+               %h/Documents/Xoe-NovAi/omega-engine/docs
 PrivateTmp=yes
 NoNewPrivileges=yes
 
