@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_e7a8c999d46a",
+  "target_agent_id": "opencode/roc racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc racoon",
+  "source_agent_id": "opencode/makali",
+  "source_channel": "opencode",
+  "source_entity": "makali",
+  "task": "Legacy mine persistence integration patterns across 3 partitions",
+  "context": "## SPRINT MC: Makali delegating legacy discovery\n\n### Mission\nMine ALL three partitions for proven patterns, configs, and code related to **Redis, Qdrant, PostgreSQL, and memory-bank integration** from the ANAi/XNAi/omega-stack eras. The user's top priority is full utilization of these systems as a unified intelligence layer.\n\n### Partitions to Search\n1. **~/Documents/Archives/Old-Stacks/Xoe-NovAi/** \u2014 Service configs, docker-compose, Redis/Qdrant wiring\n2. **/media/arcana-novai/omega_library/** \u2014 Legacy mining queue, Grok exports, old system configs\n3. **/media/arcana-novai/omega_vault/** \u2014 ANCESTRAL_HUB origins, stack-cat snapshots, old integration patterns\n4. **~/archive/foundation-legacy/versions/Xoe-NovAi/** \u2014 XNAi blueprint, full stack versions\n\n### Find Especially\n- **Redis**: Pub/sub patterns, cache invalidation strategies, session management code from ANAi/XNAi\n- **Qdrant**: Collection schemas, quantization configs, hybrid search patterns (ANY examples of Qdrant + FTS combined)\n- **PostgreSQL**: Any entity storage schemas, soul fragment tables, vector+SQL hybrid queries\n- **Memory-bank**: The 8-facet council memory architecture from omega-stack \u2014 structure, patterns, schemas\n- **Cross-system**: Any code that chains Redis\u2192Qdrant\u2192PG\u2192memory in a single query path\n- **Embedding**: Any previous embedding model configs, provider chains, or quantization decisions\n\n### Output Format\nWrite your findings to: `data/entities/roc_racoon/workspace/LEGACY_PERSISTENCE_PATTERNS_20260612.md`\n\nStructure:\n```markdown\n## \u00a71 Redis Patterns Found\n- {pattern}: {file:location} \u2014 {why it matters now}\n\n## \u00a72 Qdrant Patterns Found\n...\n\n## \u00a73 PostgreSQL Patterns Found  \n...\n\n## \u00a74 Memory-Bank/Cross-System Patterns\n...\n\n## \u00a75 Best Practices Extracted\n- {recommendation}: {evidence from legacy} \u2014 {how it maps to current code}\n\n## \u00a76 Legacy Assets Ready for Reclamation\n- {asset path}: {what it is} \u2014 {effort to extract}\n```\n\n### Important Notes\n- You're on rocracoon-3b-instruct (small model). Keep searches targeted and structured.\n- Your strength is pattern extraction from existing code, not open-ended research.\n- Focus on files that actually exist \u2014 grep for redis, qdrant, postgres, memory patterns in legacy repos.\n- Report what you FIND, not what you think should exist.\n\n### Coordination\nPost to Hivemind when complete. Researcher is simultaneously deepening 2 R-docs \u2014 cross-reference your findings with theirs when both are done.",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-06-12T03:29:28.601300+00:00",
+  "accepted_at": "2026-06-12T03:37:41.991626+00:00",
+  "accepted_by_agent_id": "opencode/roc_racoon",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "roc_racoon",
+  "completed_at": "2026-06-12T03:41:30.992800+00:00",
+  "result": "Persistence integration patterns forensic report complete. Key findings: 34 persistence classes across 8 backends. Foundation is solid (atomic writes everywhere, dual-index search, ZONEID instrumentation). Critical gaps: (1) NO tier promotion logic \u2014 hot/warm/cold are isolated silos, not a pipeline, (2) NO background persistence worker \u2014 archive_old_sessions() is a dead method, (3) NO transaction rollback in provider chain, (4) NO true cold tier reader, (5) SoulDistiller lacks atomic write pattern. Legacy connections: 3 systems ported/superseded, 2 closed, 1 deferred. Full report at data/entities/roc_racoon/workspace/mining_reports/PERSISTENCE_INTEGRATION_FORENSICS_20260612.md.",
+  "reaped_at": "2026-06-19T03:45:18.330113+00:00"
+}

@@ -1,0 +1,22 @@
+{
+  "packet_id": "ho_f269d5c87f5b",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "REVIEW KALI INDEX: data/coordination/KALI_INDEX_20260822.md \u2014 navigation map to all session artifacts, decisions, open questions (\u00a76), and queue state. Primary briefing: data/coordination/RESEARCHER_SESSION_REPORT_KALI_20260822.md. Ratification needed: \"Jem runs N11\u2013N13\" PLAN \u00a71 amendment + charters into \u00a74 + amendment batch (D-series entry). Doc-correction batch \u00a76B ready. youtube_worker account policy (Architect-only). Wave 2 (Jem-N11) + Wave 3 (Jem-N13) queued.",
+  "context": "SESSION WRAP-UP: ses_fd81c19dcffe1nkbPqFg5kRt2v (researcher). Six missions: onboarding \u2192 Node gap analysis (Jem+Roc) \u2192 Sovereign Synthesis (N11/N12/N13 verdict) \u2192 full agent/Node system discovery (16 artifacts, DR-1..12, E-1..E-10) \u2192 Jem-N onboarding plan (Jem third oversight line) \u2192 deep-dive continuation wave (held sessions paged) \u2192 Wave 1 Jem-N12 curator genesis (full G\u2192M\u2192A\u2192D\u2192W\u2192C\u2192E arc, CONSULTABLE). All knowledge locked to disk. Kali index: data/coordination/KALI_INDEX_20260822.md. Session report: data/coordination/RESEARCHER_SESSION_REPORT_KALI_20260822.md.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-22T16:33:53.323400+00:00",
+  "accepted_at": "2026-08-22T16:47:34.326401+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "reaped_at": "2026-08-24T16:51:13.768230+00:00",
+  "ttl_expired": true
+}

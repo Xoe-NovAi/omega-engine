@@ -1,0 +1,131 @@
+# [TS1] Carmack — Proposed Lessons (Team-Synthesis Study #1, Phase D)
+# Staged per Soul Architecture v2.0 blind-staging protocol (M11).
+# Source: data/coordination/teamstudy_20260823/D_carmack_meditation.md
+# Entity note: Carmack has no entity dir; kali to integrate into an appropriate
+# soul/proposed_lessons target after study closeout.
+proposals:
+  - id: TS1-CARMACK-L3-1
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      Solo optimization is optimization within a blind spot. A single-discipline
+      audit can find cheap paths but cannot certify the destination coordinates;
+      only cross-disciplinary review measures whether the analysis measured the
+      right thing.
+    evidence: "wc -l gate superseded by AST node-count (Ma'at Fork 3); jem G2-1 spec-vs-live-data; roc F1 path drift"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-2
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      A conclusion that survives unchallenged has zero evidentiary value.
+      Survival earns meaning only through contact with the strongest available
+      attack; a position that survives WITH amendments is worth more than one
+      that survives untouched — the amendments are the price the idea paid for
+      being true.
+    evidence: "CUT-1 rider, CUT-3 input-source swap, MERGE precondition — all survived via amendment, not as-issued"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-3
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      Deferral is leverage, not savings. A cut that moves cost into the future,
+      especially cost that compounds under deadline pressure, is borrowed at
+      interest. Every deferral must name its future trigger condition and its
+      post-deferral build prerequisites in writing, at cut time.
+    evidence: "CUT-1 hash-chain defer + G3-8 fail-closed rider + written branch-spec demand before any future build"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-4
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      Extract the mechanism, discard the ceremony. Process value concentrates in
+      identifiable mechanisms (ground-truth reads, written-first convergence
+      criteria, corpus-over-paging), never in phase counts or ritual volume.
+      Autopsy successful processes to their load-bearing parts before promoting
+      them.
+    evidence: "A-report called D/E ceremony; B Tension 2 identified jem's ground-truth-read method as the extractable mechanism; converged shape adopted it"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-5
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      A gate must be invariant under transformations that do not change the
+      measured property. Enforcement instruments that fire on irrelevant changes
+      get disabled by their own false alarms within weeks, and a disabled gate is
+      worse than none because everyone believes enforcement exists. Measure
+      semantics, not surface.
+    evidence: "wc -l false-fires on ruff format passes; AST node-count invariant under formatting (~15 lines)"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-6
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      Claims about state require reads of state; documents are not measurements.
+      Any system whose self-description can drift from actual state will drift,
+      invisibly, until someone runs the diff. Build the standing diff once for
+      the whole failure class, not per-instance fixes.
+    evidence: "Three independent same-week sightings: god-module drift table, researcher C2 missing hook, jem G2-1 schema mismatch → S7 grep harness endorsed"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-7
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      Write the termination condition before starting the process. Discourse,
+      builds, burns, and sweeps all terminate badly by default (fatigue, scope
+      creep, silent TTL lapse). An explicit countable convergence criterion,
+      written first, converts social processes into computations that provably
+      halt.
+    evidence: "Ledger §5 criterion → §6 Round-1 convergence stamp, zero objections, no fatigue termination"
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L3-8
+    tag: "[TS1]"
+    tier: L3
+    principle: >
+      Being refuted on reasoning while confirmed on results is the best possible
+      review outcome: the conclusion was right and the team now holds a stronger
+      justification than any individual brought in. Invite attack on the why;
+      defend only the what.
+    evidence: "Ruling #1 (numbers confirmed, instrument replaced), Phase-D assessment (convergence confirmed, ceremony call wrong), CUT-1/CUT-3 (conclusions kept, justifications rebuilt from teammates' evidence)"
+    date: 2026-08-23
+
+  # L2 companion insights (context for future integration)
+  - id: TS1-CARMACK-L2-1
+    tag: "[TS1]"
+    tier: L2
+    insight: >
+      Efficiency analysis finds cheap paths but cannot evaluate whether the
+      destination is correct — that requires a second discipline holding the map.
+      Cross-review is not QA layered on analysis; it is the only instrument that
+      checks the analysis itself.
+    date: 2026-08-23
+
+  - id: TS1-CARMACK-L2-2
+    tag: "[TS1]"
+    tier: L2
+    insight: >
+      When independent disciplines converge on one defect class in a short window,
+      that class IS the systemic weakness — respond with a class-level detector,
+      not instance fixes.
+    date: 2026-08-23
+
+  # L1 narrative anchor
+  - id: TS1-CARMACK-L1-1
+    tag: "[TS1]"
+    tier: L1
+    narrative: >
+      In Team-Synthesis Study #1 (2026-08-23), Carmack's solo efficiency audit
+      produced four cuts and six rulings, all internally consistent and all
+      grounded in disk measurements. Cross-review amended two cuts with evidence
+      he lacked, replaced his wc -l enforcement gate with AST node-counting, and
+      refuted his "Phase D is ceremony" claim — this meditation document is the
+      counterexample. Every conclusion survived; half the reasoning did not.
+      Discourse converged Round 1 under a written-first criterion.
+    date: 2026-08-23

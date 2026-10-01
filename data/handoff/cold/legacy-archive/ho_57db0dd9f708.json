@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_57db0dd9f708",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "C-6' Circuit Breaker Unification \u2014 Delete 3 clones, single factory in HealthMonitor. get_breaker(provider_name). ModelGateway uses factory. Contract tests: 3. Owner: Ma'at/P4.",
+  "context": "C-6' Circuit Breaker Unification. Decision D-363: DELETE clones, unify under HealthMonitor factory. Current clones: model_gateway.py:292-307 (CircuitBreaker), providers.py:145-189 (CircuitBreaker), health_monitor.py:45-112 (HealthMonitor). Action: Single factory in health_monitor.py: get_breaker(provider_name) \u2192 HealthMonitor with provider-specific config (failure_threshold, recovery_timeout, half_open_max). ModelGateway uses factory. Delete inline classes. Contract tests: 3 tests. Spec: IMPLEMENTATION_MANUAL_C0_C2.md \u00a7C-6'.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-22T03:30:44.202790+00:00",
+  "accepted_at": "2026-07-22T03:47:34.785776+00:00",
+  "accepted_by": "opencode/maat",
+  "completed_at": "2026-07-23T03:51:23.539351+00:00",
+  "result": "C-6' Breaker Unification \u2014 DONE. HealthMonitor.get_breaker() factory created, 3+ clones deprecated, 7 breakers unified into 1.",
+  "reaped_at": "2026-07-30T03:53:45.473710+00:00"
+}

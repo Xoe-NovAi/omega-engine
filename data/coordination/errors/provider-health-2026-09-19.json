@@ -1,0 +1,38 @@
+{
+  "updated": "2026-09-19T23:59:31.480Z",
+  "hourly": {
+    "2026-09-19T11": {
+      "SLOW_DRIBBLE": 1
+    },
+    "2026-09-19T14": {
+      "SLOW_DRIBBLE": 3
+    },
+    "2026-09-19T15": {
+      "SLOW_DRIBBLE": 1
+    },
+    "2026-09-19T16": {
+      "SLOW_DRIBBLE": 4
+    },
+    "2026-09-19T17": {
+      "SLOW_DRIBBLE": 3
+    },
+    "2026-09-19T18": {
+      "SLOW_DRIBBLE": 6
+    },
+    "2026-09-19T19": {
+      "SLOW_DRIBBLE": 3
+    },
+    "2026-09-19T20": {
+      "SLOW_DRIBBLE": 5
+    },
+    "2026-09-19T21": {
+      "SLOW_DRIBBLE": 5
+    },
+    "2026-09-19T22": {
+      "SLOW_DRIBBLE": 1
+    },
+    "2026-09-19T23": {
+      "SLOW_DRIBBLE": 3
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "packet_id": "ho_9b4f7f2405fb",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Designate roc_racoon as the personal hardware expert for all computer equipment, peripherals, and accessories. Maintain a running inventory and work history library for each device.\n\nCONTEXT:\nThe user just purchased a used ASUS ExpertBook P1 (13th Gen Intel i7, 16GB DDR5, 512GB NVMe, 256GB NVMe from an HP Ryzen 5700U laptop also in user's possession). A comprehensive boot and NVMe installation guide was created and saved to: ASUS-ExpertBook-P1-boot-drive--and-NVMe-guide.md (one level up from project root).\n\nKEY FACTS ABOUT THE ExpertBook P1:\n- 2x M.2 NVMe slots: Slot 1 = 2280 (primary), Slot 2 = 2230 (secondary). Both PCIe 4.0 x4.\n- No 2.5\" SATA bay on current models (P1403/P1503).\n- Secure Boot is enabled by default and rejects Ubuntu's standard shim \u2014 requires dual-signed shim fix.\n- BIOS is fully accessible (no admin password).\n- The 256GB HP drive is likely 2280 form factor and will NOT fit in the 2230 slot without adapter.\n- Recommended strategy: Keep 512GB in Slot 1 (install Ubuntu), use 256GB in USB NVMe enclosure for data.\n\nDELIVERABLES EXPECTED FROM ROC:\n1. Create a hardware inventory file at data/entities/roc_racoon/hardware_inventory.md listing all known equipment.\n2. Log this ASUS ExpertBook P1 acquisition and Ubuntu installation project as the first entry.\n3. Maintain this inventory going forward \u2014 any new hardware, upgrades, repairs, or issues should be logged.\n4. Reference the guide file ASUS-ExpertBook-P1-boot-drive--and-NVMe-guide.md for the full installation walkthrough.",
+  "context": "This is a new role designation for roc_racoon as personal hardware expert. The user has multiple computers and wants a centralized record of equipment and work history. The ASUS ExpertBook P1 is the first device to be cataloged.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-09-06T13:57:20.421821+00:00",
+  "accepted_at": "2026-09-06T14:53:12.108398+00:00",
+  "accepted_by_agent_id": "opencode/roc_racoon",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "roc_racoon",
+  "reaped_at": "2026-09-08T14:54:45.501263+00:00",
+  "ttl_expired": true
+}

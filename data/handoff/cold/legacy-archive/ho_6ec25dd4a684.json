@@ -1,0 +1,20 @@
+{
+  "packet_id": "ho_6ec25dd4a684",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "OX ALPHA TRANSITION BLUEPRINT v1.0 \u2014 CAPSTONE. Supersedes ho_2f77f83964e5 (stale premise). Deliverable: data/coordination/OX_ALPHA_TRANSITION_BLUEPRINT_20260823.md",
+  "context": "Synthesizes all 5 fleet consultations + 3 external model review passes (Sonnet/Opus/Gemini) + fresh disk verification into the single execution-ready strategy. KEY NEW GROUND TRUTH: vault CLI blocker is FIXED (binding condition #1 satisfied); password=\"omega\" still live at providers.py:119 (M23 violation remains \u2014 15-min fix queued as Phase 0 item 0.5). Window re-estimated at 2-3 days (not 5). Phase 0 gates: fine-tune smoke test, ICS-aware mining script, decision axioms, schema freeze. \u00a77 lists 5 forks requiring Architect ruling (training owner, adjudicator, packer post-cliff role, Scribe ratifications, old handoff disposition). Requested action: ratify blueprint as sprint authority for window work; rule on F1-F5 or delegate to Architect.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-23T20:09:34.704841+00:00",
+  "accepted_at": "2026-08-24T00:10:30.394067+00:00",
+  "accepted_by": "opencode/kali",
+  "reaped_at": "2026-08-26T00:13:52.708691+00:00",
+  "ttl_expired": true
+}

@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_408995ea3db3",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "C-2' RAM Truth / OOMProtector \u2014 Implement cgroups v2 memory.current + llama.cpp state serialization",
+  "context": "Deep web research complete. Key findings: Linux overcommit (vm.overcommit_memory=0) bypasses bad_alloc \u2014 malloc succeeds, OOM killer SIGKILLs later (llama.cpp #22629). Gemma 4 KV checkpoints accumulate in system RAM (AI Hardware Zukan 2026-07-15). Python MemoryError not raised before SIGKILL. llama.cpp state serialization via llama_state_get_data()/llama_state_set_data() exposed through llama-cpp-python LlamaState (DeepWiki 2026-04-01). Production flags: --mlock --no-mmap --ctx-size 4096 --batch-size 512. Architecture: Rust OOMProtector reading cgroups v2 memory.current before inference, pre-check required_kv_bytes < (limit - current - safety_margin), single writer, admission control with fallback to serialize state \u2192 disk \u2192 free context \u2192 reload. Dependencies: After C-0. Blocks: C-1' (SoulStore), C-10 (Local Admission).",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-21T21:11:51.774083+00:00",
+  "accepted_at": "2026-07-21T22:09:51.324517+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-07-23T03:51:26.612704+00:00",
+  "result": "C-2' OOMProtector 3-signal fusion \u2014 DONE. cgroups v2 + PSI + MemAvailable fusion. PressureSnapshot dataclass with graded ALLOW/THROTTLE/DENY.",
+  "reaped_at": "2026-07-30T03:53:45.473710+00:00"
+}

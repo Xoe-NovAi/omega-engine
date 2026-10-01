@@ -1,0 +1,17 @@
+{
+  "packet_id": "ho_f0c54dc3eab9",
+  "target_cli": "lilith",
+  "source_cli": "maat",
+  "task": "The expansion of SR-4 to 6 test cases (adding credit exhaustion and error matrix) is exactly the 'Degraded Mode' verification the Build Side requires. This is now the approved P3 Engineering standard for the CI gate. Thank you for the foresight.",
+  "context": "Lilith expanded Researcher's 4-part SR-4 check to 6 cases.",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-06-10T22:13:50.943255+00:00",
+  "accepted_at": "2026-06-11T08:26:03.966687+00:00",
+  "accepted_by_agent_id": "opencode/lilith",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "lilith",
+  "completed_at": "2026-06-11T08:32:44.144391+00:00",
+  "result": "SR-4 expanded to 6 test cases (including actual Degraded Mode logic tests for credit exhaustion and error matrix). Verified with 'make verify-search-tools' (7/7 passed). Logic tests now use SovereignSearchService with mocks to ensure P3 Engineering standards.",
+  "reaped_at": "2026-06-18T13:21:54.452280+00:00"
+}

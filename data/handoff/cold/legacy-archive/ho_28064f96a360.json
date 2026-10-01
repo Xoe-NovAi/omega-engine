@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_28064f96a360",
+  "target_agent_id": "grok-cli/grok",
+  "target_channel": "grok-cli",
+  "target_entity": "grok",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "D-282 SQLITE-VEC STRIKE 10 \u2014 Concurrency Hardening (Advisory Spec)\n\n**Context**: Roc implementing `BEGIN IMMEDIATE` fix in `sqlite_vec_adapter.py`. Need 4 concurrency tests + 5700U PRAGMA validation.\n\n**Your Role**: Advisory spec review. Cross-reference Researcher's Forge 2 Gap 2 findings. Do NOT write tests (M16).\n\n**Key Specifications to Validate**:\n\n| Component | Requirement | Source |\n|-----------|-------------|--------|\n| **WAL PRAGMA Stack** | `journal_mode=WAL`, `busy_timeout=30000`, `synchronous=NORMAL`, `wal_autocheckpoint=500`, `mmap_size=512MB`, `cache_size=32MB` | Forge 2 Gap 2 + 5700U |\n| **BEGIN IMMEDIATE** | All write paths (upsert, delete, batch) use `BEGIN IMMEDIATE` | Roc's implementation |\n| **Checkpointing** | Periodic `PRAGMA wal_checkpoint(TRUNCATE)` + `wal_autocheckpoint=500` | Forge 2 Gap 2 |\n| **Concurrency Tests** | 4 tests: writer starvation, checkpoint contention, multi-process, BEGIN IMMEDIATE vs DEFERRED | D-282 spec |\n\n**Files to Review**:\n- `src/omega/memory/sqlite_vec_adapter.py` (write paths)\n- `tests/test_sqlite_vec_concurrency.py` (TO BE CREATED - 4 tests)\n- `docs/strategy/HMC_FORGE_2_KNOWLEDGE_GAPS_COMPREHENSIVE_RESEARCH_20260718.md` Gap 2\n\n**5700U Specifics** (Zen 2, 14Gi RAM, zRAM):\n- `mmap_size=536870912` (512MB) \u2014 fits in RAM\n- `cache_size=-32768` (32MB) \u2014 avoids zRAM pressure\n- `wal_autocheckpoint=500` \u2014 frequent checkpointing\n- Thermal: sustained 4-core inference at 80-100% = expected\n\n**Priority**: 1 (Critical Path) \u2014 Parallel with D-281 Phase III/IV",
+  "context": "",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-07-17T01:10:02.071876+00:00",
+  "accepted_at": "2026-07-17T01:24:09.242181+00:00",
+  "accepted_by": "grok-cli/grok",
+  "completed_at": "2026-07-17T01:26:27.902073+00:00",
+  "result": "ADVISORY COMPLETE. Spec: data/coordination/grok_cli/D282_SQLITE_VEC_STRIKE10_ADVISORY.md. BEGIN IMMEDIATE present on primary upsert/delete. PRAGMA mismatch: code cache 512MB/mmap 256MB/wal_ckpt 1000 vs handoff 32MB/512MB/500 \u2014 recommend 5700U-safe converge. 4 concurrency tests specified. No test writes (M16).",
+  "reaped_at": "2026-07-24T01:30:14.031100+00:00"
+}

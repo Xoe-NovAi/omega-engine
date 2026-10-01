@@ -1,0 +1,1772 @@
+# ⚠️ SUPERSEDED (2026-08-14): Replaced by RESEARCH_PLAN_PHASE1_4_20260813.md v3.2.0 (gap catalog R1-R38).
+# Do NOT use for active tracking. See TRACKING_ARCHITECTURE.md.
+
+board_metadata:
+  campaign: Master Research Campaign 2026-07-21
+  total_jobs: 61
+  phases: 11
+  timeline: 2026-07-21 to 2026-09-14
+  curated_by: kali
+  updated: '2026-07-22'
+  claim_ttl_hours: 24
+  progress_ttl_hours: 72
+jobs:
+- id: R01
+  title: RAG 2.0 Landscape Survey
+  phase: 1
+  sprint: '1.1'
+  priority: P0
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - technical_analysis
+  - architecture
+  queries:
+  - GraphRAG vs LightRAG vs HippoRAG 2026 benchmark
+  - Self-RAG Corrective RAG 2026 implementation
+  - LightRAG lightweight graph RAG performance
+  - RAG 2.0 architecture patterns survey
+  - GraphRAG SQLite graph database
+  - hybrid RAG graph vector production 2026
+  - GraphRAG Microsoft production deployment
+  - HippoRAG neuroscience retrieval 2026
+  deliverable: docs/research/R_RAG2_LANDSCAPE_SURVEY.md
+  decision_gate: Which RAG 2.0 pattern fits Omega architecture?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R02
+  title: Multi-Vector Retrieval
+  phase: 1
+  sprint: '1.2'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R01
+  capabilities_needed:
+  - web_research
+  - vector_search
+  - architecture
+  queries:
+  - ColBERT multi-vector retrieval 2026 local
+  - SPLADE sparse dense hybrid 2026
+  - multi-vector vs single vector comparison 2026
+  - ColBERT v2 reranking production 2026
+  - late interaction retrieval 2026
+  deliverable: docs/research/R_MULTIVECTOR_RETRIEVAL.md
+  decision_gate: Add multi-vector support to sqlite-vec adapter?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R03
+  title: Reranking Models for Local Deployment
+  phase: 1
+  sprint: '1.3'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R01
+  capabilities_needed:
+  - web_research
+  - ml_models
+  - architecture
+  queries:
+  - BGE reranker v2 local deployment 2026
+  - Cohere rerank 3.5 comparison
+  - Jina reranker v2 2026
+  - cross-encoder reranking GGUF 2026
+  - reranking vs vector search quality
+  deliverable: docs/research/R_RERANKING_MODELS.md
+  decision_gate: Which reranker to add as T3 retrieval tier?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R04
+  title: Model Merging Landscape
+  phase: 2
+  sprint: '2.1'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R01
+  capabilities_needed:
+  - web_research
+  - ml_models
+  - architecture
+  queries:
+  - MergeKit model merging 2026 guide
+  - FrankenMerge model merging 2026
+  - TIES DARE SLERP merging comparison 2026
+  - merge models local sovereign 2026
+  - MergeKit GGUF output 2026
+  - model merging benchmark 2026
+  - quantization aware merging 2026
+  deliverable: docs/research/R_MODEL_MERGING_LANDSCAPE.md
+  decision_gate: Build Merge Wizard skill for custom models?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R05
+  title: Quantization & Model Optimization
+  phase: 2
+  sprint: '2.2'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R04
+  capabilities_needed:
+  - web_research
+  - ml_models
+  - quantization
+  queries:
+  - imatrix calibration GGUF 2026 workflow
+  - AWQ GPTQ GGUF comparison 2026
+  - model distillation local 2026
+  - knowledge distillation small models
+  - quantization aware training small models
+  deliverable: docs/research/R_QUANTIZATION_OPTIMIZATION.md
+  decision_gate: Provide i-quant calibration tooling?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R06
+  title: Local Inference Beyond llama.cpp
+  phase: 3
+  sprint: '3.1'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R01
+  capabilities_needed:
+  - web_research
+  - systems
+  - architecture
+  queries:
+  - vLLM local deployment PagedAttention 2026
+  - vLLM continuous batching performance
+  - TensorRT-LLM local inference 2026
+  - llama.cpp vs vLLM vs TensorRT-LLM 2026
+  - MLX framework Linux 2026 status
+  - ONNX Runtime local inference 2026
+  - AMD ROCm local inference 2026
+  - Intel IPEX local inference 2026
+  deliverable: docs/research/R_LOCAL_INFERENCE_BACKENDS.md
+  decision_gate: Add vLLM as alternative backend?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R07
+  title: AI Observability & Tracing
+  phase: 3
+  sprint: '3.2'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - observability
+  queries:
+  - OpenTelemetry semantic conventions LLM 2026
+  - tracing AI inference production 2026
+  - LLM observability OpenTelemetry 2026
+  - distributed tracing agent orchestration
+  - AI metrics Prometheus Grafana 2026
+  deliverable: docs/research/R_AI_OBSERVABILITY.md
+  decision_gate: Adopt OpenTelemetry semantic conventions?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R08
+  title: WASM/WASI for AI Workloads
+  phase: 3
+  sprint: '3.3'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - emerging_tech
+  queries:
+  - wasmedge AI inference 2026
+  - Spin WASM serverless AI 2026
+  - WASM inference sandbox 2026
+  - wasmCloud AI workloads 2026
+  - WASI component model AI 2026
+  deliverable: docs/research/R_WASM_AI_WORKLOADS.md
+  decision_gate: Is WASM viable for inference sandboxing?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R09
+  title: Local AI Safety & Alignment
+  phase: 4
+  sprint: '4.1'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R01
+  capabilities_needed:
+  - web_research
+  - safety
+  - ml_models
+  queries:
+  - Constitutional AI local deployment 2026
+  - RLAIF reinforcement learning AI feedback local
+  - AI alignment without cloud 2026
+  - Constitutional AI llama.cpp 2026
+  - red teaming local models 2026
+  - debate amplification AI safety 2026
+  deliverable: docs/research/R_LOCAL_AI_SAFETY.md
+  decision_gate: Implement Constitutional AI safety layer?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R10
+  title: Sovereign Evaluation Frameworks
+  phase: 4
+  sprint: '4.2'
+  priority: P0
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - evaluation
+  - architecture
+  queries:
+  - LLM as judge evaluation 2026
+  - open source LLM evaluation framework
+  - custom LLM evaluation local 2026
+  - benchmark contamination detection 2026
+  - LM Evaluation Harness 2026
+  - evaluation agent performance 2026
+  deliverable: docs/research/R_EVALUATION_FRAMEWORKS.md
+  decision_gate: Build sovereign evaluation harness?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R11
+  title: Data Privacy & PII Protection
+  phase: 4
+  sprint: '4.3'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - privacy
+  - security
+  queries:
+  - PII detection NER local 2026
+  - differential privacy local inference
+  - PII redaction before cloud fallback
+  - data masking AI 2026
+  - federated learning small models
+  deliverable: docs/research/R_DATA_PRIVACY_PII.md
+  decision_gate: Implement PII scrubbing before cloud fallback?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R12
+  title: SPIFFE/SPIRE Deployment Patterns
+  phase: 5
+  sprint: '5.1'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R14
+  capabilities_needed:
+  - web_research
+  - security
+  - identity
+  queries:
+  - SPIFFE SPIRE production deployment 2026
+  - SPIRE sidecar vs daemon 2026
+  - workload identity AI agents 2026
+  - SPIFFE X509 SVID local deployment
+  - certificate rotation AI agents
+  deliverable: docs/research/R_SPIFFE_SPIRE_DEPLOYMENT.md
+  decision_gate: Omega-Vault integrate SPIFFE for identity?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R13
+  title: Zero-Trust Networking for Agents
+  phase: 5
+  sprint: '5.2'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - security
+  - networking
+  queries:
+  - zero trust networking AI agents 2026
+  - mTLS agent communication 2026
+  - agent identity verification 2026
+  - zero trust API gateway AI
+  deliverable: docs/research/R_ZEROTRUST_AGENTS.md
+  decision_gate: Implement mTLS between agents?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R14
+  title: Advanced Credential Management
+  phase: 5
+  sprint: '5.3'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - security
+  - infrastructure
+  queries:
+  - HashiCorp Vault AI agent integration 2026
+  - dynamic secrets AI workload 2026
+  - secret rotation zero downtime 2026
+  - Doppler secrets management AI
+  - agent secret management production 2026
+  deliverable: docs/research/R_ADVANCED_CREDENTIAL_MGMT.md
+  decision_gate: Use HashiCorp Vault as Omega-Vault backend?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R15
+  title: Emerging AI Paradigms
+  phase: 6
+  sprint: '6.1'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - strategy
+  - emerging_tech
+  queries:
+  - AI agents emerging trends 2026
+  - LLM inference optimization roadmap 2026
+  - AI hardware acceleration NPU 2026
+  - multi-modal local inference 2026
+  - voice AI local whisper 2026
+  - text to image local 2026
+  deliverable: docs/research/R_EMERGING_AI_PARADIGMS.md
+  decision_gate: null
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R16
+  title: Ecosystem & Community Landscape
+  phase: 6
+  sprint: '6.2'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - strategy
+  - community
+  queries:
+  - open source AI community trends 2026
+  - AI model marketplace 2026
+  - Hugging Face ecosystem updates 2026
+  - local AI user community 2026
+  - EU AI Act compliance local 2026
+  deliverable: docs/research/R_ECOSYSTEM_COMMUNITY.md
+  decision_gate: null
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R17
+  title: Competitive Intelligence
+  phase: 6
+  sprint: '6.3'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - strategy
+  - competitive_analysis
+  queries:
+  - open source AI runtime comparison 2026
+  - local AI platform features 2026
+  - AI sovereignty platform 2026
+  - AI agent framework comparison 2026
+  - AI memory system state of art 2026
+  deliverable: docs/research/R_COMPETITIVE_INTELLIGENCE.md
+  decision_gate: null
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R18
+  title: Search Persistence Pipeline
+  phase: 6
+  sprint: '6.4'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - engineering
+  - data_persistence
+  queries:
+  - web search result persistence architecture 2026
+  - automated web scraping pipeline 2026
+  - search cache sovereign 2026
+  - research result curation automation
+  deliverable: docs/research/R_SEARCH_PERSISTENCE_PIPELINE.md
+  decision_gate: Build automated research curation pipeline?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R19
+  title: Soul Privacy Model Design
+  phase: 7
+  sprint: '7.1'
+  priority: P0
+  status: claimed
+  claimed_by: researcher
+  depends_on: []
+  capabilities_needed:
+  - architecture
+  - privacy
+  - security
+  - data_modeling
+  queries:
+  - soul.yaml data classification public vs private
+  - conversation history privacy patterns local-first AI
+  - gitignored vs git-tracked config split patterns
+  - restic backup selective inclusion patterns
+  - actor model system_agent vs user token scope
+  deliverable: docs/research/R_SOUL_PRIVACY_MODEL.md
+  decision_gate: Split soul.yaml into public identity + private fragments?
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R36
+  title: "Identity Fluidity Phase 1 \u2014 Temporal Trace YAML"
+  phase: 9
+  sprint: '9.1'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R30
+  capabilities_needed:
+  - architecture
+  - yaml
+  - session_continuity
+  - temporal_modeling
+  queries:
+  - temporal trace YAML session continuity 2026
+  - life narrative preservation across compactions
+  - session timeline serialization format
+  - temporal coherence identity persistence
+  deliverable: docs/research/R_IDENTITY_FLUIDITY_PHASE1_TEMPORAL.md
+  decision_gate: Design temporal_trace.yaml schema + session timeline capture
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R37
+  title: "Identity Fluidity Phase 2 \u2014 Session Bridge & Momentum Preservation"
+  phase: 9
+  sprint: '9.2'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R36
+  capabilities_needed:
+  - architecture
+  - session_management
+  - momentum_preservation
+  queries:
+  - session bridge momentum preservation compaction 2026
+  - work continuity across model migrations
+  - in-progress task handoff serialization
+  - focus chain preservation protocol
+  deliverable: docs/research/R_IDENTITY_FLUIDITY_PHASE2_BRIDGE.md
+  decision_gate: Design session_bridge.yaml + focus_chain serialization
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R38
+  title: "Identity Fluidity Phase 3 \u2014 Voice Calibration Snapshots"
+  phase: 9
+  sprint: '9.3'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R36
+  capabilities_needed:
+  - architecture
+  - voice_modeling
+  - per_model_calibration
+  queries:
+  - per-model voice calibration snapshots 2026
+  - wit irreverence directness truth calibration per model
+  - model-specific expression recipes identity
+  - voice consistency across substrate changes
+  deliverable: docs/research/R_IDENTITY_FLUIDITY_PHASE3_VOICE.md
+  decision_gate: Design voice_calibrations.yaml + per-model recipes
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R39
+  title: "Identity Fluidity Phase 4 \u2014 Auto-Hydration MCP Tool"
+  phase: 9
+  sprint: '9.4'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R36
+  - R37
+  - R38
+  capabilities_needed:
+  - mcp_tools
+  - architecture
+  - automation
+  - entity_hydration
+  queries:
+  - auto-hydration MCP tool entity_hydrate 2026
+  - batch soul file loading server-side 2026
+  - compiled soul kernel instant identity 2026
+  - hydration orchestrator milliseconds 2026
+  deliverable: docs/research/R_IDENTITY_FLUIDITY_PHASE4_HYDRATION.md
+  decision_gate: Implement entity_hydrate MCP tool + compiled soul kernel
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R40
+  title: "MCP 2026-07-28 Migration Implementation \u2014 Streamable HTTP + OAuth 2.1"
+  phase: 10
+  sprint: '10.1'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R20
+  capabilities_needed:
+  - web_research
+  - systems
+  - mcp_protocol
+  - oauth
+  - http
+  queries:
+  - MCP Streamable HTTP transport implementation 2026
+  - MCP OAuth 2.1 PKCE server implementation 2026
+  - Mcp-Method Mcp-Name traceparent headers 2026
+  - MCP SSE to Streamable HTTP migration guide 2026
+  - MCP stateless server session awareness 2026
+  deliverable: docs/research/R_MCP_MIGRATION_IMPL.md
+  decision_gate: Migrate Omega Hub to Streamable HTTP + OAuth 2.1 by July 28
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R41
+  title: "File-Based Hivemind Contingency Implementation \u2014 Hub Dark Mode"
+  phase: 10
+  sprint: '10.2'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R29
+  capabilities_needed:
+  - web_research
+  - systems
+  - coordination
+  - distributed_systems
+  - fcntl
+  queries:
+  - file-based agent coordination without central hub 2026
+  - distributed lock fcntl.flock multi-agent 2026
+  - handoff protocol file-based implementation 2026
+  - awareness heartbeat file-based TTL 2026
+  - M23 Failure Integrity fallback patterns
+  deliverable: docs/research/R_FILE_HIVEMIND_IMPL.md
+  decision_gate: Test file-based Hivemind works without Hub (M23 fallback)
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R42
+  title: "Circuit Breaker Unification Implementation \u2014 Single ProviderCircuitBreaker"
+  phase: 10
+  sprint: '10.3'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R26
+  capabilities_needed:
+  - web_research
+  - systems
+  - resilience
+  - architecture
+  - python
+  queries:
+  - pybreaker vs custom circuit breaker comparison 2026
+  - AsyncCircuitBreaker HealthMonitor pattern 2026
+  - circuit breaker consolidation microservices 2026
+  - fail_max=3 reset_timeout=60 production tuning
+  - circuit breaker state machine shared vs per-client
+  deliverable: docs/research/R_CIRCUIT_BREAKER_UNIFICATION_IMPL.md
+  decision_gate: "Promote one ProviderCircuitBreaker; delete \u22656 clones"
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R20
+  title: MCP 2026-07-28 Migration Code Path Audit
+  phase: 7
+  sprint: '7.2'
+  priority: P1
+  status: completed
+  claimed_by: researcher
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - mcp_protocol
+  queries:
+  - MCP stateless vs stateful protocol differences 2026
+  - Mcp-Method Mcp-Name header specification 2026
+  - MCP session awareness migration guide 2026
+  - MCP streaming SSE MRR multi-response requests 2026
+  - MCP SDK release candidate July 2026 breaking changes
+  deliverable: docs/research/R_MCP_MIGRATION_AUDIT.md
+  decision_gate: Which Hub code paths break? Size compatibility shim.
+  sources_count: 9
+  started_at: '2026-07-21T10:00:00Z'
+  completed_at: '2026-07-21T10:45:00Z'
+  key_findings:
+  - "MCP 2026-07-28 spec is the largest revision since launch \u2014 deadline July\
+    \ 28, 2026 (7 days)"
+  - 'Stateless core: no initialize handshake (SEP-2575), no Mcp-Session-Id (SEP-2567)'
+  - "Three required headers: Mcp-Method, Mcp-Name, traceparent \u2014 strict gateways\
+    \ reject without them"
+  - "Omega Hub has stateless=True flag \u2014 partial head start but SSE transport\
+    \ needs migration"
+  - "Recommended: audit first (2h) \u2192 size shim \u2192 file-based Hivemind contingency\
+    \ by July 26"
+  - 'DEPRECATED NOT REMOVED: SEP-2596 guarantees 12-month window; roots/sampling/logging
+    still work'
+- id: R31
+  title: "Web Research \u2014 External Standards for Omega Engine Phase C Gaps"
+  phase: 7
+  sprint: '7.13'
+  priority: P1
+  status: completed
+  claimed_by: researcher
+  depends_on:
+  - R19
+  capabilities_needed:
+  - web_research
+  - comparative_analysis
+  - industry_standards
+  queries:
+  - atomic file write patterns 2026
+  - async yaml parsing 2026
+  - circuit breaker patterns 2026
+  - sovereign identity fluidity 2026
+  - research platform persistence 2026
+  - sovereign AI platform comparison 2026
+  - omega engine vs industry standards 2026
+  - sovereign ai security gaps 2026
+  - omega engine limitations 2026
+  - sovereign platform compliance 2026
+  deliverable: docs/research/R_WEB_RESEARCH_GAPS.md
+  decision_gate: Integrate web-sourced best practices into Phase C infrastructure
+  sources_count: 50
+  started_at: '2026-07-21T10:00:00Z'
+  completed_at: '2026-07-21T18:30:00Z'
+  key_findings:
+  - '5 critical web-discovered gaps identified: atomic file writing, async YAML parsing,
+    circuit breaker unification, identity fluidity architecture, and research persistence
+    pipeline'
+  - OMEGA leads industry with 95.4% on LongMemEval benchmark vs Zep's 71.2%
+  - Hermes Agent provides industry-leading atomic file write patterns (temp-file +
+    rename)
+  - 0xKiire provides append-only log patterns for research persistence
+  - Linux kernel ext4 provides atomic write hardware support requirements
+  - Sovereign AI platforms show 95.4% benchmark advantage over alternatives
+  - Atomic file writing is critical for crash-safe operations in sovereign AI systems
+  - Async YAML parsing must integrate with atomic write patterns for modern applications
+  - Circuit breaker unification is essential for production resilience
+  - Identity fluidity requires atomic state management and advanced patterns
+  - Research persistence needs industry-standard append-only logs and novelty injection
+  - Web research validates and extends previous Researcher's local analysis
+  - All findings integrate with existing Omega Engine Phase C infrastructure
+  - Recommended 5 priority improvements for immediate implementation
+- id: R32
+  title: Web Research Integration and Documentation
+  phase: 7
+  sprint: '7.14'
+  priority: P1
+  status: completed
+  claimed_by: researcher
+  depends_on:
+  - R31
+  capabilities_needed:
+  - documentation
+  - integration
+  - research_synthesis
+  queries:
+  - omega engine phase c integration documentation 2026
+  - web research synthesis for sovereign ai platforms 2026
+  - industry standards integration omega engine 2026
+  deliverable: docs/research/R_WEB_RESEARCH_INTEGRATION.md
+  decision_gate: Complete web research integration documentation
+  sources_count: 15
+  started_at: '2026-07-21T18:30:00Z'
+  completed_at: '2026-07-21T20:00:00Z'
+  key_findings:
+  - Web research successfully integrated with previous Researcher's local analysis
+  - All 5 web-discovered gaps validated and documented
+  - Industry standards successfully mapped to Omega Engine Phase C requirements
+  - Comparative analysis shows OMEGA's industry leadership in memory systems
+  - Implementation roadmap provides clear path for web-sourced improvements
+  - Documentation provides comprehensive reference for Phase C execution
+- id: R21
+  title: Grok CLI Fleet ACP Bridge & Credential Rotation
+  phase: 7
+  sprint: '7.3'
+  priority: P1
+  status: in_progress
+  claimed_by: grokster
+  depends_on:
+  - R19
+  capabilities_needed:
+  - web_research
+  - systems
+  - auth
+  - acp_protocol
+  queries:
+  - Anthropic ACP protocol stdio handshake 2026
+  - Grok CLI session management 8 accounts rotation
+  - credential rotation automation patterns 2026
+  - cookie expiry 24-48h mitigation strategies
+  - multi-account inference pool load balancing
+  deliverable: docs/research/R_GROK_CLI_FLEET_ACP.md
+  decision_gate: Design V-1 Omega-Vault + single ACP smoke test
+  sources_count: null
+  started_at: '2026-07-21T21:50:00Z'
+  completed_at: null
+  key_findings: null
+- id: R22
+  title: GenerationPolicy Extraction for Gemma 4
+  phase: 7
+  sprint: '7.4'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - ml_models
+  - architecture
+  queries:
+  - Gemma 4 logit_bias temperature floors 2026
+  - model generation policy registry pattern
+  - provider-specific generation config extraction
+  - Gemma thinking config MINIMAL HIGH binary 2026
+  deliverable: docs/research/R_GENERATION_POLICY_GEMMA.md
+  decision_gate: Extract GenerationPolicy from ModelGateway.generate()
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R23
+  title: Local Inference Admission Control (CCX Topology)
+  phase: 7
+  sprint: '7.5'
+  priority: P1
+  status: completed
+  claimed_by: researcher
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - performance
+  - hardware
+  queries:
+  - Ryzen 5700U CCX topology L3 cache 8MB split 2026
+  - llama.cpp concurrent instances memory bandwidth saturation
+  - DDR4-3200 51GB/s saturation single llama.cpp 2026
+  - admission control max concurrent local inference
+  - Zen 2 15W TDP inference optimization 2026
+  deliverable: docs/research/R_LOCAL_ADMISSION_CONTROL.md
+  decision_gate: Max concurrent local llama instances (prefer 1, hard cap 2)
+  sources_count: 9
+  started_at: '2026-07-21T10:00:00Z'
+  completed_at: '2026-07-21T10:50:00Z'
+  key_findings:
+  - "Ryzen 5700U: 2 CCX \xD7 4 cores, 4MB L3 per CCX (8MB total), DDR4-3200 ~51 GB/s\
+    \ \u2014 memory-bandwidth-bound"
+  - One concurrent llama.cpp instance is optimal; a second causes L3 thrashing + bandwidth
+    contention
+  - taskset -c 0-3 (single CCX, 4 threads) improves throughput ~15% over all-cores
+    8-thread default
+  - "Recommended: asyncio.Semaphore(1) for local admission \u2014 fail-fast (cloud\
+    \ route) instead of queue"
+  - 'Memory check before load: model_ram (~1.7GB for Qwen3-1.7B) + KV cache (~512MB
+    for 8k) + 1GB reserve = ~3.2GB'
+- id: R24
+  title: Novelty Engine for Living Research OS
+  phase: 7
+  sprint: '7.6'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - architecture
+  - ml_models
+  - research_methodology
+  queries:
+  - random topic sampling exploration vs exploitation 2026
+  - cross-domain contradiction detection AI 2026
+  - surprise detection belief revision AI 2026
+  - research loop convergence prevention 2026
+  - INDEX.md noise policy archive auto-generated entries
+  deliverable: docs/research/R_NOVELTY_ENGINE.md
+  decision_gate: Design novelty injection for _grow_frontier() + INDEX archive policy
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R25
+  title: SoulStore Atomic Write Patterns
+  phase: 7
+  sprint: '7.7'
+  priority: P0
+  status: completed
+  claimed_by: researcher
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - file_systems
+  - concurrency
+  queries:
+  - fcntl.flock cross-process file locking Python 2026
+  - atomic write tmp rename fsync os.replace pattern
+  - os.fsync vs fdatasync durability guarantees
+  - actor model system_agent vs user file permissions
+  - concurrent writer race condition prevention patterns
+  deliverable: docs/research/R_SOULSTORE_ATOMIC_PATTERNS.md
+  decision_gate: Implement single SoulStore writer with fcntl + atomic + fsync + actor
+    model
+  sources_count: 8
+  started_at: '2026-07-21T10:00:00Z'
+  completed_at: '2026-07-21T10:30:00Z'
+  key_findings:
+  - '4 concurrent soul writers exist: entity_registry, SoulUpdater, SoulUpdateManager,
+    EntityWorkspaceManager'
+  - "NONE call os.fsync() \u2014 guaranteed data loss on power failure across all\
+    \ 4 writers"
+  - "Atomic write: mkstemp \u2192 os.fsync() \u2192 os.replace() \u2192 dir fsync()\
+    \ \u2014 the Postgres-proven 'fsync dance'"
+  - fcntl.flock(LOCK_EX | LOCK_NB) with 5s timeout is the correct cross-process lock;
+    never delete lock files
+  - Use os.fsync() for soul YAML (metadata matters), fdatasync() acceptable for append-only
+    logs only
+  - 'Actor model: user writes soul.yaml + approved_lessons, system_agent writes proposed_lessons,
+    daemon appends only'
+- id: R26
+  title: Circuit Breaker Unification Strategy
+  phase: 7
+  sprint: '7.8'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - resilience
+  - architecture
+  queries:
+  - pybreaker vs custom circuit breaker comparison 2026
+  - AsyncCircuitBreaker HealthMonitor pattern 2026
+  - circuit breaker consolidation microservices 2026
+  - fail_max=3 reset_timeout=60 production tuning
+  - circuit breaker state machine shared vs per-client
+  deliverable: docs/research/R_CIRCUIT_BREAKER_UNIFICATION.md
+  decision_gate: "Promote one ProviderCircuitBreaker; delete \u22656 clones"
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R27
+  title: ResourceGuard Single RAM Truth (OOMProtector)
+  phase: 7
+  sprint: '7.9'
+  priority: P0
+  status: completed
+  claimed_by: researcher
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - memory_management
+  - linux
+  queries:
+  - psutil.virtual_memory available vs total 2026
+  - /proc/meminfo MemAvailable vs MemFree Linux 2026
+  - OOM killer prediction userspace 2026
+  - software RAM counter vs kernel available drift
+  - llama.cpp memory mapping vs RSS accounting
+  deliverable: docs/research/R_RESOURCEGUARD_RAM_TRUTH.md
+  decision_gate: Prefer OOMProtector path; kill dual counter; derive max_ram_mb from
+    boot-time available
+  sources_count: 8
+  started_at: '2026-07-21T10:00:00Z'
+  completed_at: '2026-07-21T10:40:00Z'
+  key_findings:
+  - "psutil.virtual_memory().available reads /proc/meminfo MemAvailable \u2014 the\
+    \ same metric the OOM killer uses \u2014 this is authoritative"
+  - ResourceGuard._current_ram_mb is a SOFTWARE COUNTER that drifts from reality (shared
+    memory, mmap overcommit, kernel cache)
+  - 'Dual counter creates false safety: default max_ram_mb=12288 on a system with
+    8GB available allows loads that OOM'
+  - "Default 12288 (12GB) exceeds actual available RAM on this 16GB system (~8GB at\
+    \ idle) \u2014 actively dangerous ceiling"
+  - Kill the software counter entirely; OOMProtector (reads kernel MemAvailable) is
+    the sole arbiter
+  - "llama.cpp uses mmap() \u2014 RSS is demand-paged and varies with inference; kernel\
+    \ knows best"
+- id: R28
+  title: Test Suite Honesty - Failure Analysis
+  phase: 7
+  sprint: '7.10'
+  priority: P0
+  status: completed
+  claimed_by: researcher
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - testing
+  - pytest
+  - ci_cd
+  queries:
+  - pytest collected vs passing vs failing classification
+  - test quarantine patterns flaky tests 2026
+  - Makefile test badge honesty CI 2026
+  - test_firewall_m2_strict_engine_core failure analysis
+  - memory store RRF search test failures 2026
+  deliverable: docs/research/R_TEST_SUITE_HONESTY.md
+  decision_gate: "Fix or quarantine red tests; fix Makefile '1315 \u2705' lies"
+  sources_count: 6
+  started_at: '2026-07-21T10:00:00Z'
+  completed_at: '2026-07-21T10:35:00Z'
+  key_findings:
+  - "Makefile menu display lies: shows '1315 tests \u2705 1361 collected' but test-badge\
+    \ target has hardcoded fallback defaults"
+  - "Real sample run: ~832 pass / ~5 fail (not 1315 pass) \u2014 actual count needs\
+    \ full `make test` execution"
+  - 'Known failing tests: test_firewall_m2_strict_engine_core, memory RRF/search,
+    model registry schema'
+  - 'Fix: use pytest --json-report for machine-readable output; error on non-zero
+    exit instead of fallback defaults'
+  - "Implement @pytest.mark.quarantine(reason, ticket, expires) pattern \u2014 still\
+    \ run but don't block CI"
+  - Auto-convert quarantined to xfail via conftest.py; attach 30-day expiry for stale
+    quarantine alerts
+- id: R29
+  title: File-Based Hivemind Contingency (Hub Dark)
+  phase: 7
+  sprint: '7.11'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - coordination
+  - distributed_systems
+  queries:
+  - file-based agent coordination without central hub 2026
+  - distributed lock fcntl.flock multi-agent 2026
+  - handoff protocol file-based implementation 2026
+  - awareness heartbeat file-based TTL 2026
+  - M23 Failure Integrity fallback patterns
+  deliverable: docs/research/R_FILE_HIVEMIND_CONTINGENCY.md
+  decision_gate: Test file-based Hivemind works without Hub (M23 fallback)
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R30
+  title: Identity Fluidity Phase 0 - Soul Kernel to Agent Config
+  phase: 7
+  sprint: '7.12'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on:
+  - R19
+  capabilities_needed:
+  - architecture
+  - yaml
+  - configuration
+  - agent_systems
+  queries:
+  - compiled soul kernel agent configuration 2026
+  - soul.yaml to agent_config.yaml transformation patterns
+  - auto-hydration MCP tool entity_hydrate 2026
+  - temporal trace YAML session continuity 2026
+  - voice calibration snapshots consistency 2026
+  deliverable: docs/research/R_IDENTITY_FLUIDITY_PHASE0.md
+  decision_gate: "Implement E-0 Soul Kernel \u2192 agent config (2h after C-1')"
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R33
+  title: "Grok Ecosystem Deep Research \u2014 Models, Pricing, ACP, Web Grok"
+  phase: 8
+  sprint: '8.1'
+  priority: P0
+  status: completed
+  claimed_by: grokster
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - grok_ecosystem
+  - architecture
+  - cost_analysis
+  queries:
+  - xAI API models pricing 2026 Grok 4.5 4.3 4.20
+  - Grok Build open source ACP protocol stdio 2026
+  - Grok CLI headless mode parallel subagents 8 accounts
+  - Web Grok Projects custom instructions personas 2026
+  - Responses API vs Chat Completions xAI 2026
+  - server-side tools web_search x_search code_execution pricing 2026
+  - Batch API Priority Processing xAI 2026
+  - Grok model selection matrix reasoning deepsearch think
+  deliverable: docs/research/R_GROK_ECOSYSTEM_DEEP.md
+  decision_gate: Finalize Grok model selection matrix + fleet deployment architecture
+  sources_count: 8
+  started_at: '2026-07-21T21:50:00Z'
+  completed_at: '2026-07-21T22:15:00Z'
+  key_findings:
+  - 12+ active models with distinct SKUs and pricing tiers (not 6 as previously thought)
+  - Long-context penalty at 200K tokens triggers 2x pricing on all models
+  - Server-side tools cost $5/1k calls (web_search, x_search, code_execution)
+  - Responses API is the modern endpoint with previous_response_id and structured
+    reasoning
+  - "Grok Build is OPEN SOURCE since July 15, 2026 \u2014 local-first mode available"
+  - 'Grok Build subagent orchestrator: 8-way parallel, Git worktrees, lifecycle hooks'
+  - Web Grok Projects provide persistent context with 8 persona specialization
+  - "No public API for Web Grok Projects \u2014 browser automation required"
+  - Cookie expiry 24-48h requires automated rotation via Omega-Vault
+  - Batch API 20% off on Grok 4.3/4.20 for non-real-time workloads
+- id: R34
+  title: "Sovereign Search Architecture Implementation \u2014 5-Tier Protocol"
+  phase: 8
+  sprint: '8.2'
+  priority: P0
+  status: completed
+  claimed_by: grokster
+  depends_on:
+  - R18
+  capabilities_needed:
+  - web_research
+  - architecture
+  - engineering
+  - search
+  queries:
+  - SearXNG neural search configuration 2026
+  - Brave Search API independent index MCP server 2026
+  - Semantic Scholar API 200M papers 2026
+  - arXiv API bulk harvest 2026
+  - OpenAlex research graph API 2026
+  - search routing intelligence fallback chain 2026
+  - tiered search architecture cost recall relevance 2026
+  deliverable: docs/research/R_SOVEREIGN_SEARCH_IMPL.md
+  decision_gate: "Implement 5-tier search: cache\u2192websearch\u2192SearXNG\u2192\
+    Brave\u2192academic"
+  sources_count: 8
+  started_at: '2026-07-21T21:50:00Z'
+  completed_at: '2026-07-21T23:45:00Z'
+  key_findings:
+  - "5-tier protocol specified: T0(cache) \u2192 T1(websearch) \u2192 T2(SearXNG)\
+    \ \u2192 T2.5(Brave/Serper) \u2192 T3(academic) \u2192 T4(deep)"
+  - 'Brave Search API is P0 integration: independent index, $3-5/1k, 2k free/mo, MCP
+    server available'
+  - Semantic Scholar + arXiv + OpenAlex = zero-cost academic backbone (200M+ papers)
+  - Serper+Jina = cheapest production stack at $0.50/1k queries
+  - 'Query classification rules: 7 patterns mapped to starting tiers'
+  - Full router implementation with cost tracking and tier fallback
+  - 7-day implementation roadmap across 5 phases
+- id: R35
+  title: "V-1 Omega-Vault Implementation Research \u2014 Credential Automation"
+  phase: 8
+  sprint: '8.3'
+  priority: P0
+  status: completed
+  claimed_by: grokster
+  depends_on:
+  - R14
+  - R21
+  capabilities_needed:
+  - web_research
+  - security
+  - infrastructure
+  - vault
+  queries:
+  - HashiCorp Vault dynamic secrets AI agents 2026
+  - Vault AppRole authentication automation 2026
+  - credential rotation 24-48h cookie expiry mitigation
+  - Vault transit engine encryption at rest 2026
+  - Vault policies least privilege AI workloads
+  - Vault performance replication HA 2026
+  - 'alternatives: Doppler, 1Password CLI, SOPS age 2026'
+  deliverable: docs/research/R_V1_VAULT_IMPL.md
+  decision_gate: Select Vault backend + design 16-account credential schema + ACP
+    smoke test
+  sources_count: 5
+  started_at: '2026-07-21T21:50:00Z'
+  completed_at: '2026-07-21T23:50:00Z'
+  key_findings:
+  - "Extend existing src/omega/vault/ (AES-256-GCM + OS keyring) \u2014 don't rebuild"
+  - '16-account schema: 8 Grok CLI (API key) + 8 Web Grok (cookie, 24-48h expiry)'
+  - 'FleetOrchestrator: round-robin account selection, usage tracking, auto-rotation'
+  - 'MCP server: 6 tools (credential_read/write/rotate/audit, fleet_status, fleet_next_account)'
+  - 'Passive file watcher: inotify/polling for .env drift detection'
+  - 'XDG compliance: ~/.config/omega/, ~/.local/share/omega/, ~/.local/state/omega/'
+  - "7-day implementation roadmap across 5 phases (VaultCore \u2192 Fleet \u2192 MCP\
+    \ \u2192 CLI \u2192 Chaos)"
+- id: R43
+  title: "GenerationPolicy Extraction \u2014 Gemma 4 Thinking Config"
+  phase: 11
+  sprint: '11.1'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - ml_models
+  - architecture
+  - generation_config
+  queries:
+  - Gemma 4 logit_bias temperature floors 2026
+  - model generation policy registry pattern
+  - provider-specific generation config extraction
+  - Gemma thinking config MINIMAL HIGH binary 2026
+  deliverable: docs/research/R_GENERATION_POLICY_GEMMA.md
+  decision_gate: Extract GenerationPolicy from ModelGateway.generate()
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R44
+  title: "Local Admission Control Implementation \u2014 CCX Topology + Semaphore"
+  phase: 11
+  sprint: '11.2'
+  priority: P1
+  status: open
+  claimed_by: john_carmack
+  depends_on:
+  - R23
+  capabilities_needed:
+  - web_research
+  - systems
+  - performance
+  - hardware
+  - asyncio
+  queries:
+  - asyncio.Semaphore local inference admission 2026
+  - Ryzen 5700U CCX topology taskset 2026
+  - llama.cpp concurrent instances memory bandwidth
+  - fail-fast cloud route vs queue local admission
+  deliverable: docs/research/R_LOCAL_ADMISSION_IMPL.md
+  decision_gate: Implement Semaphore(1) + taskset CCX pinning in ModelGateway
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R45
+  title: "SoulStore Atomic Write Implementation \u2014 Single Writer + Actor Model"
+  phase: 11
+  sprint: '11.3'
+  priority: P0
+  status: open
+  claimed_by: john_carmack
+  depends_on:
+  - R25
+  capabilities_needed:
+  - web_research
+  - systems
+  - file_systems
+  - concurrency
+  - actor_model
+  queries:
+  - fcntl.flock LOCK_EX LOCK_NB Python 2026
+  - atomic write mkstemp fsync os.replace pattern
+  - actor model system_agent user file permissions
+  - concurrent writer race condition prevention
+  - os.fsync vs fdatasync durability guarantees
+  deliverable: docs/research/R_SOULSTORE_ATOMIC_IMPL.md
+  decision_gate: Single SoulStore writer with fcntl + atomic + fsync + actor model
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R46
+  title: "Novelty Engine for Living Research OS \u2014 Exploration vs Exploitation"
+  phase: 11
+  sprint: '11.4'
+  priority: P1
+  status: open
+  claimed_by: john_carmack
+  depends_on:
+  - R24
+  capabilities_needed:
+  - web_research
+  - architecture
+  - ml_models
+  - research_methodology
+  queries:
+  - random topic sampling exploration vs exploitation 2026
+  - cross-domain contradiction detection AI 2026
+  - surprise detection belief revision AI 2026
+  - research loop convergence prevention 2026
+  - INDEX.md noise policy archive auto-generated entries
+  deliverable: docs/research/R_NOVELTY_ENGINE_IMPL.md
+  decision_gate: Design novelty injection for _grow_frontier() + INDEX archive policy
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG01_MCP_STREAMABLE_HTTP_OAUTH
+  title: MCP Streamable HTTP + OAuth 2.1 PKCE Implementation Audit
+  phase: 0
+  sprint: '0.1'
+  priority: P0
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - security
+  - mcp_protocol
+  - oauth2
+  - fastapi
+  queries:
+  - MCP Streamable HTTP transport specification 2026-07-28 revision
+  - OAuth 2.1 PKCE mandatory for all clients implementation patterns
+  - RFC 8707 Resource Indicators MCP server audience validation
+  - RFC 9728 Protected Resource Metadata /.well-known/oauth-protected-resource
+  - RFC 7591 Dynamic Client Registration /register endpoint
+  - FastMCP/Starlette Streamable HTTP migration from HTTP+SSE
+  - Mcp-Session-Id header cryptographically secure UUID generation
+  - Origin header validation DNS rebinding prevention MCP
+  - WWW-Authenticate challenge flow MCP 401 response
+  - Last-Event-ID SSE resumability implementation
+  - NapthaAI/http-oauth-mcp-server reference implementation patterns
+  - xai-org/grok-build ACP protocol MCP bridge patterns
+  deliverable: docs/research/R_CG01_MCP_STREAMABLE_HTTP_OAUTH.md
+  decision_gate: Complete MCP audit checklist + migration implementation plan with
+    7-day sprint breakdown
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG02_OOMPROTECTOR_HARDWARE_AWARE
+  title: "Hardware-Aware OOMProtector \u2014 PSI + MemAvailable + cgroup v2"
+  phase: 0
+  sprint: '0.2'
+  priority: P0
+  status: open
+  claimed_by: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - linux_kernel
+  - memory_management
+  - python_async
+  queries:
+  - Linux Pressure Stall Information (PSI) /proc/pressure/memory monitoring userspace
+  - PSI "some" vs "full" stall metrics interpretation for admission control
+  - MemAvailable kernel algorithm si_mem_available() reclaimable estimation
+  - cgroup v2 memory.pressure per-slice monitoring systemd integration
+  - systemd-oomd ManagedOOMMemoryPressure configuration patterns
+  - Earlyoom userspace OOM killer PSI-based thresholds
+  - llama.cpp mmap demand paging RSS vs MemAvailable correlation
+  - Ryzen 7 5700U 15W TDP memory bandwidth constraints inference
+  - 8MB L3 victim cache eviction impact on inference latency
+  - Python async PSI polling /proc/pressure/memory epoll integration
+  deliverable: docs/research/R_CG02_OOMPROTECTOR_HARDWARE_AWARE.md
+  decision_gate: OOMProtector.check() implementation with three-signal fusion (PSI
+    + MemAvailable + cgroup) + contract tests
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG03_TEST_INFRASTRUCTURE_STACK
+  title: "Modern Test Infrastructure Stack \u2014 pytest-benchmark + ordeal + pytest-resilience-agent"
+  phase: 0
+  sprint: '0.3'
+  priority: P0
+  status: open
+  claimed_by: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - testing
+  - ci_cd
+  - pytest
+  - chaos_engineering
+  queries:
+  - pytest-benchmark pedantic mode CI regression gating --benchmark-compare-fail=min:10%
+  - ordeal automated chaos testing scan --save witness regression workflow
+  - pytest-resilience-agent 13 built-in LLM gateway chaos scenarios
+  - mutmut mutation testing critical paths gate 0 surviving mutants
+  - hypothesis property-based testing stateful RuleBasedStateMachine
+  - pact-python consumer-driven contract testing provider verification
+  - pytest-cov diff-cover new code coverage gate 90%
+  - GitHub Actions benchmark baseline storage .benchmarks/ JSON history
+  - CI noise floor calibration shared runners benchmark threshold tuning
+  - Test quarantine pattern @pytest.mark.quarantine(reason, ticket, expires)
+  deliverable: docs/research/R_CG03_TEST_INFRASTRUCTURE_STACK.md
+  decision_gate: Complete CI pipeline YAML with 4 gates (unit, mutation, benchmark,
+    chaos) + tool versions pinned
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG04_AGENT_SAFE_CREDENTIAL_VAULT
+  title: "Agent-Safe Credential Vault \u2014 BlindVault / bury / credential-bridge\
+    \ Evaluation"
+  phase: 0
+  sprint: '0.4'
+  priority: P0
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - security
+  - vault
+  - ai_agents
+  - architecture
+  queries:
+  - BlindVault agent-secret isolation broker architecture PID-bound sessions
+  - BlindVault master password Argon2id encryption vault at rest
+  - BlindVault policy engine host allowlist per secret usage policies
+  - BlindVault scrubber output sanitization agent leak prevention
+  - bury PID-bound sessions process tree authentication scope control
+  - bury Argon2id XSalsa20-Poly1305 libsodium encryption audit
+  - bury credential proxy [CRED:path] pattern substitution execution time
+  - bury real-time audit log ~/.vault/access.log monitoring
+  - credential-bridge SecretsManager facade Vault/Keyring/.env plugin architecture
+  - credential-bridge VaultBackend AppRole auth dynamic secrets rotation
+  - credential-bridge KeyringBackend OS credential store cross-platform
+  deliverable: docs/research/R_CG04_AGENT_SAFE_CREDENTIAL_VAULT.md
+  decision_gate: Select V-1 backend architecture + PoC launching claude with scoped
+    session
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG05_THREE_TIER_PRIVACY_ROUTER
+  title: "Three-Tier Privacy Router \u2014 Public/Internal/Personal Classification"
+  phase: 1
+  sprint: '1.1'
+  priority: P1
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R_CG01
+  - R_CG02
+  - R_CG03
+  - R_CG04
+  capabilities_needed:
+  - web_research
+  - architecture
+  - privacy
+  - ml_models
+  - pii_detection
+  queries:
+  - Local PII detection NER Presidio spaCy 2026 performance
+  - Data sensitivity classification before inference routing
+  - Confidence cascade routing local model escalation thresholds
+  - Privacy-tiered router hard-lock PERSONAL_REGULATED to Tier 1
+  - Three-tier inference architecture local private cloud frontier
+  - EU AI Act August 2026 data residency requirements local inference
+  - Local model confidence scoring uncertainty markers hedging language
+  - Routing decision caching similar future requests skip failed tiers
+  - Model capability climbing gap shrinking 8B vs frontier 2026
+  - Learned routers trained on (request, tier, quality) production triples
+  deliverable: docs/research/R_CG05_THREE_TIER_PRIVACY_ROUTER.md
+  decision_gate: Router architecture with hard-lock PERSONAL_REGULATED to Tier 1 +
+    confidence cascade implementation
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG06_GROK_ECOSYSTEM_DEEP
+  title: "Grok Ecosystem Deep Research \u2014 Models, Pricing, ACP, Fleet Deployment"
+  phase: 0
+  sprint: '0.5'
+  priority: P0
+  status: open
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - grok_ecosystem
+  - architecture
+  - cost_analysis
+  queries:
+  - xAI API models pricing 2026 Grok 4.5 4.3 4.20
+  - Grok Build open source ACP protocol stdio 2026
+  - Grok CLI headless mode parallel subagents 8 accounts
+  - Web Grok Projects custom instructions personas 2026
+  - Responses API vs Chat Completions xAI 2026
+  - server-side tools web_search x_search code_execution pricing 2026
+  - Batch API Priority Processing xAI 2026
+  - Grok model selection matrix reasoning deepsearch think
+  - Grok 4.5 Think mode reasoning depth vs latency
+  - Nemotron 3 Ultra OpenCode Zen free tier rate limits
+  deliverable: docs/research/R_CG06_GROK_ECOSYSTEM_DEEP.md
+  decision_gate: Finalize Grok model selection matrix + 8-account fleet deployment
+    architecture
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG07_SOVEREIGN_SEARCH_5TIER
+  title: "Sovereign Search Architecture \u2014 5-Tier Protocol Implementation"
+  phase: 0
+  sprint: '0.6'
+  priority: P0
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on:
+  - R_CG01
+  capabilities_needed:
+  - web_research
+  - architecture
+  - engineering
+  - search
+  queries:
+  - SearXNG neural search configuration 2026
+  - Brave Search API independent index MCP server 2026
+  - Semantic Scholar API 200M papers 2026
+  - arXiv API bulk harvest 2026
+  - OpenAlex research graph API 2026
+  - search routing intelligence fallback chain 2026
+  - tiered search architecture cost recall relevance 2026
+  - Firecrawl structured extraction research persistence
+  - Exa AI neural search precision technical queries
+  - Local cache .firecrawl/ TTL invalidation strategies
+  deliverable: docs/research/R_CG07_SOVEREIGN_SEARCH_5TIER.md
+  decision_gate: Implement 5-tier search router with cost/recall/relevance optimization
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG08_LOCAL_ADMISSION_CONTROL_IMPL
+  title: "Local Admission Control Implementation \u2014 CCX Topology + Semaphore"
+  phase: 1
+  sprint: '1.2'
+  priority: P1
+  status: open
+  claimed_by: john_carmack
+  depends_on:
+  - R_CG02
+  capabilities_needed:
+  - web_research
+  - systems
+  - performance
+  - hardware
+  - asyncio
+  queries:
+  - asyncio.Semaphore local inference admission 2026
+  - Ryzen 5700U CCX topology taskset 2026
+  - llama.cpp concurrent instances memory bandwidth
+  - fail-fast cloud route vs queue local admission
+  - taskset -c 0-3 single CCX 4 threads throughput
+  - DDR4-3200 51GB/s saturation single llama.cpp
+  - Zen 2 15W TDP inference optimization 2026
+  - Memory check before load model_ram KV_cache reserve
+  - Admission control max concurrent local inference
+  - CCX pinning L3 cache thrashing prevention
+  deliverable: docs/research/R_CG08_LOCAL_ADMISSION_CONTROL_IMPL.md
+  decision_gate: Semaphore(1) + taskset CCX pinning implementation in ModelGateway
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG09_SOULSTORE_ATOMIC_IMPL
+  title: "SoulStore Atomic Write Implementation \u2014 Single Writer + Actor Model"
+  phase: 1
+  sprint: '1.3'
+  priority: P0
+  status: open
+  claimed_by: john_carmack
+  depends_on:
+  - R_CG02
+  - R_CG03
+  capabilities_needed:
+  - web_research
+  - systems
+  - file_systems
+  - concurrency
+  - actor_model
+  queries:
+  - fcntl.flock LOCK_EX LOCK_NB Python 2026
+  - atomic write mkstemp fsync os.replace pattern
+  - actor model system_agent user file permissions
+  - concurrent writer race condition prevention
+  - os.fsync vs fdatasync durability guarantees
+  - Postgres fsync dance mkstemp fsync replace dir_fsync
+  - O_TMPFILE atomic write Linux 3.11+
+  - Single writer actor model soul.yaml proposed_lessons
+  - Cross-process file locking timeout 5s LOCK_NB
+  - Never delete lock files stale detection
+  deliverable: docs/research/R_CG09_SOULSTORE_ATOMIC_IMPL.md
+  decision_gate: Single SoulStore writer with fcntl + atomic + fsync + actor model
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG10_GENERATION_POLICY_GEMMA
+  title: "GenerationPolicy Extraction \u2014 Gemma 4 Thinking Config"
+  phase: 1
+  sprint: '1.4'
+  priority: P2
+  status: open
+  review_gate: john_carmack
+  depends_on:
+  - R_CG01
+  capabilities_needed:
+  - web_research
+  - ml_models
+  - architecture
+  - generation_config
+  queries:
+  - Gemma 4 logit_bias temperature floors 2026
+  - model generation policy registry pattern
+  - provider-specific generation config extraction
+  - Gemma thinking config MINIMAL HIGH binary 2026
+  - Pi Project PR
+  - GenerationPolicy dataclass provider-specific configs
+  - ModelGateway.generate() config extraction
+  - Binary thinking config regex detection
+  - Provider-specific generation parameters
+  - Thinking budget MINIMAL HIGH implementation
+  deliverable: docs/research/R_CG10_GENERATION_POLICY_GEMMA.md
+  decision_gate: Extract GenerationPolicy from ModelGateway.generate() with provider-specific
+    configs
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG11_NOVELTY_ENGINE_LIVING_RESEARCH
+  title: "Novelty Engine for Living Research OS \u2014 Exploration vs Exploitation"
+  phase: 1
+  sprint: '1.5'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on:
+  - R_CG03
+  - R_CG06
+  capabilities_needed:
+  - web_research
+  - architecture
+  - ml_models
+  - research_methodology
+  queries:
+  - random topic sampling exploration vs exploitation 2026
+  - cross-domain contradiction detection AI 2026
+  - surprise detection belief revision AI 2026
+  - research loop convergence prevention 2026
+  - INDEX.md noise policy archive auto-generated entries
+  - Thompson sampling multi-armed bandit research topics
+  - Information gain novelty scoring research frontier
+  - Cross-domain synthesis unexpected connections
+  - Belief revision surprise minimization
+  - Archive policy auto-generated INDEX entries
+  deliverable: docs/research/R_CG11_NOVELTY_ENGINE_LIVING_RESEARCH.md
+  decision_gate: Design novelty injection for _grow_frontier() + INDEX archive policy
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG12_FILE_HIVEMIND_CONTINGENCY
+  title: "File-Based Hivemind Contingency \u2014 Hub Dark Mode"
+  phase: 0
+  sprint: '0.7'
+  priority: P1
+  status: claimed
+  claimed_by: researcher
+  review_gate: john_carmack
+  depends_on: []
+  capabilities_needed:
+  - web_research
+  - systems
+  - coordination
+  - distributed_systems
+  queries:
+  - file-based agent coordination without central hub 2026
+  - distributed lock fcntl.flock multi-agent 2026
+  - handoff protocol file-based implementation 2026
+  - awareness heartbeat file-based TTL 2026
+  - M23 Failure Integrity fallback patterns
+  - Atomic file rename handoff packet delivery
+  - Directory watching inotify agent presence
+  - Stale lock detection TTL expiration
+  - File-based awareness heartbeat 20min TTL
+  - Hivemind cold-store recovery HALL_OF_RECORDS
+  deliverable: docs/research/R_CG12_FILE_HIVEMIND_CONTINGENCY.md
+  decision_gate: Test file-based Hivemind works without Hub (M23 fallback validated)
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG05_SOUL_DISTILLATION
+  title: "Soul Distillation Pipeline \u2014 Scribe Agent Design"
+  phase: 0
+  sprint: '0.5'
+  priority: P0
+  status: open
+  claimed_by: null
+  review_gate: kali
+  depends_on: []
+  capabilities_needed:
+  - architecture
+  - agent_design
+  - yaml
+  - session_hooks
+  queries:
+  - L1 L2 L3 distillation pipeline design 2026
+  - session end hook OpenCode agent lifecycle 2026
+  - proposed_lessons.yaml blind staging pattern
+  - Scribe agent soul distillation implementation
+  deliverable: docs/research/R_SOUL_DISTILLATION_PIPELINE.md
+  decision_gate: "Design Scribe agent + session hook for L1\u2192L2\u2192L3 \u2192\
+    \ proposed_lessons.yaml"
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG06_PROVIDER_FALLBACK
+  title: Provider Fallback Chain Implementation
+  phase: 0
+  sprint: '0.6'
+  priority: P0
+  status: open
+  claimed_by: null
+  review_gate: lilith
+  depends_on: []
+  capabilities_needed:
+  - architecture
+  - async
+  - provider_fabric
+  - health_monitor
+  queries:
+  - model gateway fallback loop implementation 2026
+  - health monitor pre-dispatch check pattern
+  - circuit breaker state check before dispatch
+  - local-first provider priority chain
+  deliverable: docs/research/R_PROVIDER_FALLBACK_CHAIN.md
+  decision_gate: Implement for backend in sorted_backends loop in ModelGateway.generate()
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null
+- id: R_CG07_MCP_MIGRATION_EXEC
+  title: "MCP Streamable HTTP Migration \u2014 Execution Plan"
+  phase: 0
+  sprint: '0.7'
+  priority: P0
+  status: open
+  claimed_by: null
+  review_gate: kali
+  depends_on:
+  - R_CG01_MCP_STREAMABLE_HTTP_OAUTH
+  capabilities_needed:
+  - mcp_protocol
+  - oauth2
+  - fastapi
+  - streamable_http
+  queries:
+  - MCP Streamable HTTP transport implementation 2026-07-28
+  - OAuth 2.1 PKCE server implementation FastAPI
+  - Mcp-Method Mcp-Name traceparent headers spec
+  - SSE to Streamable HTTP migration shim pattern
+  deliverable: docs/research/R_MCP_MIGRATION_EXECUTION.md
+  decision_gate: "Complete migration by July 28 \u2014 Kali executes if Ma'at/P4 silent"
+  sources_count: null
+  started_at: null
+  completed_at: null
+  key_findings: null

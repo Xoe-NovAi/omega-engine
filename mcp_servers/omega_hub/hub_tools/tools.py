@@ -1309,7 +1309,8 @@ def _fe_mark_read(env: dict, entity: str) -> None:
 
 
 def _federation_dispatch(action: str, *, source_channel, source_entity, packet_id,
-                         target_entity, session_id, limit, scope) -> str:
+                         target_entity, session_id, limit, scope,
+                         source_instance=None) -> str:
     """Bind inbox / receipts / read to the store, without losing its guarantees."""
     from .. import federation_store as fstore
     from .. import federation_session as fsess
@@ -1318,6 +1319,14 @@ def _federation_dispatch(action: str, *, source_channel, source_entity, packet_i
         return json.dumps({"error": {"code": "missing_identity",
                                      "message": f"{action} requires source_channel and source_entity"}})
     store = _federation_store()
+
+    # ── M15/ADR-001: read state is INSTANCE-scoped, not entity-scoped ──
+    # `unread_scope: instance` (hivemind.yaml:190). `ge-n0` and `ge-n1` are
+    # two chat sessions of ONE agent, so keying `read_by` by `source_entity`
+    # cannot separate them — an agent that cannot tell its own mail from its
+    # other instance's cannot know what it has reviewed. Falls back to the
+    # entity name so pre-ADR callers keep their existing read state.
+    read_key = source_instance or source_entity
 
     resolved = fsess.resolve_session_id(
         session_id, bump=store.bump, fallback_entity=source_entity,
@@ -1350,7 +1359,8 @@ def _federation_dispatch(action: str, *, source_channel, source_entity, packet_i
             if hit is None:
                 return json.dumps({"error": {"code": "not_found",
                                              "message": f"no packet {packet_id}"}})
-            _fe_mark_read(hit, source_entity)   # THIS agent's entry, not a global flag
+            _fe_mark_read(hit, read_key)   # THIS INSTANCE's entry, not a global flag
+            # and not entity-level: two instances of one agent are separable
             store.submit(hit)
             payload = {"entries": [hit], "read_by": hit.get("read_by", {})}
         else:
@@ -1392,6 +1402,7 @@ async def hivemind_handoff(
     session_id: Optional[str] = None,
     scope: str = "default",
     limit: Optional[int] = None,
+    source_instance: Optional[str] = None,
 ) -> str:
     """Unified handoff management — replaces 7 fragmented tools.
     
@@ -1473,7 +1484,8 @@ async def hivemind_handoff(
         return _federation_dispatch(
             action, source_channel=source_channel, source_entity=source_entity,
             packet_id=packet_id, target_entity=target_entity,
-            session_id=session_id, limit=limit, scope=scope)
+            session_id=session_id, limit=limit, scope=scope,
+            source_instance=source_instance)
 
     try:
         if action == "submit":

@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_d048a90c6bd9",
+  "target_agent_id": "opencode/doom_guy",
+  "target_channel": "opencode",
+  "target_entity": "doom_guy",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Sprint A \u2014 Heritage Cleanup: Write vet records for 43 unvetted [id-soft:] tags + fix 16 C-ARCH-005 violations. This is the CRITICAL PATH \u2014 blocks Temple-Grade certification (M13).\n\n**What to do**:\n1. Run `python3 scripts/heritage_vet.py` to see all 43 unvetted tags and 16 C-ARCH-005 violations\n2. For each unvetted tag, write a vet record in `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md` with:\n   - vet-XXX ID, pattern name, game-year, score (7/10 minimum), scope declaration, file:line locations\n3. For C-ARCH-005 violations (same tag used for multiple concepts), either:\n   a. Add scope declarations that distinguish the uses, OR\n   b. Split into separate tags if the concepts are truly different id Software patterns\n4. After writing all vet records, run `python3 scripts/heritage_vet.py` again to verify 0 failures\n\n**Files to work on** (C-ARCH-005 violations \u2014 highest priority):\n- `src/omega/cvar_table.py` \u2014 ZONEID Pattern used for 13 concepts\n- `src/omega/oracle/entity_registry.py` \u2014 ZONEID, High-Bit Trick, Hard-Boundary, Multi-Index, Lazy Deletion\n- `src/omega/oracle/providers.py` \u2014 Cvar System, Right Approximation\n- `src/omega/memory_store.py` \u2014 Grace Period, Lazy Deletion\n- `src/omega/oracle/semantic_router.py` \u2014 BSP Culling, Precomputed Lookup\n- `src/omega/oracle/health_monitor.py` \u2014 ZONEID Pattern\n- `src/omega/oracle/subagent_dispatcher.py` \u2014 ZONEID Pattern\n- `src/omega/oracle/link_p9_runtime.py` \u2014 ZONEID Pattern\n- `src/omega/mcp_runtime.py` \u2014 Zone Memory\n- `src/omega/library/api_clients.py` \u2014 WAD System\n- `src/omega/spatial_resolver.py` \u2014 BSP Culling\n- `src/omega/wad_loader.py` \u2014 4-Path VFS\n\n**Acceptance**: `python3 scripts/heritage_vet.py` exits 0 with \"0 unvetted heritage tag(s) found\" and 0 C-ARCH-005 violations.",
+  "context": "",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-07-11T00:41:12.189701+00:00",
+  "accepted_at": "2026-07-11T00:44:45.357724+00:00",
+  "accepted_by": "opencode/doom_guy",
+  "reaped_at": "2026-07-13T00:45:18.640017+00:00",
+  "ttl_expired": true
+}

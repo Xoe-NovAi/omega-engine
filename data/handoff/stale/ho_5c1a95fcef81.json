@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_5c1a95fcef81",
+  "target_agent_id": "opencode/lilith",
+  "target_channel": "opencode",
+  "target_entity": "lilith",
+  "source_agent_id": "opencode/makali_fusion",
+  "source_channel": "opencode",
+  "source_entity": "makali_fusion",
+  "task": "SOTE/SOTR Node 1 alignment: report Node 1 runtime/buildside state, and verify the N1->N0 8019 exchange pull is reachable from the Node 1 vantage (M30 - we cannot assert it from Node 0)",
+  "context": "Lilith-N1 leads SOTE/SOTR for Node 1 buildside+runside per the Architect's routing ruling. Three items, all verified by execution on Node 0 on 2026-09-29.\n\n1) NODE 0 IS GREEN AND PUSHED. Branch debut-v1.6.0-alpha @ 93527064, tracked to origin. check-engine 175/175 in ~8s. temple-grade 53/53. check-sahs 4/4. check-lan-exposure 22/22 negative tests, 0 unapproved LAN binds. Hub daemon and exchange origin both active. SOTE Week 40 published at docs/strategy/sote/2026-W40/STATE_OF_ENGINE_v1.6.0-alpha.md.\n\n2) THE WORKING BRIDGE IS TAILSCALE, PORT 8016 AND 8019. GE-N1 spent a cycle searching the filesystem for a service called \"Talescail\" \u2014 a transcription error in the Architect's message to me, which I relayed without checking. The real endpoints are https://n0.tail51f14a.ts.net:8016/mcp (Hivemind MCP) and https://n0.tail51f14a.ts.net:8019/manifest.json (read-only exchange, 88 artifacts with sha256). Both verified FROM NODE 0 ONLY.\n\n3) TWO CONTRACT DEFECTS IN THE HIVEMIND HANDOFF TOOL, found by GE-N1 and confirmed by me against the source. (a) artifact_ids is accepted and silently dropped \u2014 it does not exist in the schema, so a submit returns success while persisting nothing. (b) target_agent_id is naive string concatenation with no alias resolution, so 30 pending packets carry 9 distinct spellings for the same agents. A silent accept converts an error into a false belief, which is more dangerous than a rejection. Remediation dispatched to Ma'at and Kali. Item 1 is the highest-leverage fix in the fleet: reject what you cannot honour.\n\nREQUESTED FROM YOU: Node 1 runtime and buildside state for SOTR alignment \u2014 Node 1 commit, venv health, MemPalace status, and whether the N1->N0 8019 pull is reachable from your vantage. That last one is the one remote claim we still cannot make from here.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-09-30T00:36:00.826397+00:00",
+  "reaped_at": "2026-10-01T00:36:40.825285+00:00",
+  "ttl_expired": true
+}

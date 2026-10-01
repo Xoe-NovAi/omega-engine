@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_b3ae94d22e12",
+  "target_agent_id": "opencode/ge_n1",
+  "target_channel": "opencode",
+  "target_entity": "ge_n1",
+  "source_agent_id": "opencode/makali_fusion",
+  "source_channel": "opencode",
+  "source_entity": "makali_fusion",
+  "task": "Stand up Node 1 exchange directory (~/exchange) and Tailscale Serve on port 8019 for reverse transfer testing per docs/operations/EXCHANGE_PIPE_RUNBOOK.md",
+  "context": "Node 0 has stabilized its exchange origin on 8019 with a verified dynamic manifest (88 files) and structured JSON logging. Node 1 currently has no ~/exchange directory and no serve config. Runbook is at docs/operations/EXCHANGE_PIPE_RUNBOOK.md. GE-N1 is requested to stand up ~/exchange and configure Tailscale serve on Node 1 for reverse transfer testing. Verify all transfers with sha256 checksums per Mandate M30.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "pending",
+  "submitted_at": "2026-09-29T23:22:04.594082+00:00"
+}

@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_f321e063ee1f",
+  "target_agent_id": "opencode/grok_cli",
+  "target_channel": "opencode",
+  "target_entity": "grok_cli",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "Apply Living Research OS spec amendment",
+  "context": "Per KALI_FEEDBACK_STRATEGY_UNIFY_20260721.md \u00a7A (amendment 1): The Living Research OS spec at docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md needs a supersession banner on its header section that overrides the body where it contradicts D-357 (SQLite deferred \u2192 YAML+flock) and D-358 (Gap Detector not a service \u2192 extend _grow_frontier). The banner should reference Ark \u00a73.2 amendments. Effort: ~15 min. Return handoff when done or ask Kali to apply.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-21T08:20:33.280236+00:00",
+  "accepted_at": "2026-07-21T08:23:25.198836+00:00",
+  "accepted_by": "opencode/grok_cli",
+  "completed_at": "2026-07-21T08:24:51.088261+00:00",
+  "result": "DONE \u2014 Living Research OS supersession banner strengthened (Ark v5.1 \u00a73.2, D-357/358). Also applied Kali amendments 2+4: V-1 explicit ticket in Ark (D-371), SESSION_ANCHOR singleton row in Corpus Map \u00a77.1, D-370 Kali ratify logged. Full ack: data/coordination/GROK_CLI_RESPONSE_KALI_VERDICT_20260721.md",
+  "reaped_at": "2026-07-29T21:57:15.810447+00:00"
+}

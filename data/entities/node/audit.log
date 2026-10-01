@@ -1,0 +1,8 @@
+[2026-08-29T03:11:10.931302+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node
+[2026-08-29T03:11:10.931504+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/knowledge
+[2026-08-29T03:11:10.931565+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/workspace
+[2026-08-29T03:11:10.938215+00:00] ACTION: SOUL_CREATE | DETAILS: Scaffolded initial soul file at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/soul.yaml
+[2026-08-29T03:11:10.938792+00:00] ACTION: APPROVED_LESSONS_CREATE | DETAILS: Scaffolded approved_lessons.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/memory/approved_lessons.yaml
+[2026-08-29T03:11:10.939191+00:00] ACTION: PROPOSED_LESSONS_CREATE | DETAILS: Scaffolded proposed_lessons.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/memory/proposed_lessons.yaml
+[2026-08-29T03:11:10.939550+00:00] ACTION: SESSIONS_CREATE | DETAILS: Scaffolded sessions.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/memory/sessions.yaml
+[2026-08-29T03:11:10.943209+00:00] ACTION: INDEX_CREATE | DETAILS: Scaffolded INDEX.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/node/knowledge/INDEX.yaml

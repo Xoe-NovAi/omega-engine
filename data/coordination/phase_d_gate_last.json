@@ -1,0 +1,91 @@
+{
+  "gate_pass": true,
+  "required_passed": 11,
+  "required_total": 11,
+  "results": [
+    {
+      "name": "C-1': SoulStore atomic writer",
+      "passed": true,
+      "required": true,
+      "detail": "soul_store markers 3/3 (os.replace, fsync, flock)"
+    },
+    {
+      "name": "C-3: Restic backup configured",
+      "passed": true,
+      "required": true,
+      "detail": "restic script + timer enabled"
+    },
+    {
+      "name": "C-4a: MCP audit doc present",
+      "passed": true,
+      "required": true,
+      "detail": "audit doc"
+    },
+    {
+      "name": "C-4b: MCP runtime module present",
+      "passed": true,
+      "required": true,
+      "detail": "mcp_runtime found"
+    },
+    {
+      "name": "C-5: MaKaLi local summon present",
+      "passed": true,
+      "required": true,
+      "detail": "src/omega/errors.py:144:    [D118 Dual-Inference Mandate] When oracle_summon_local() is called with"
+    },
+    {
+      "name": "C-6': HealthMonitor breaker factory",
+      "passed": true,
+      "required": true,
+      "detail": "525:class HealthMonitor:\n704:    def get_breaker("
+    },
+    {
+      "name": "C-10: Admission controller present",
+      "passed": true,
+      "required": true,
+      "detail": "1:# \ud83d\udd31 Local Inference Admission Control \u2014 C-10\n10:# Decision: C-10 (Local Inference Admission Control)\n14:Local inference admission control for Ryzen 5700U.\n41:class LocalInferenceAdmission:\n45:    Co"
+    },
+    {
+      "name": "C-11: Property tests exit 0",
+      "passed": true,
+      "required": true,
+      "detail": "0.25s call     tests/property/test_oom_protector_fuse.py::test_low_memory_deny_oom\n0.23s call     tests/property/test_oom_protector_fuse.py::test_high_psi_full_deny_thrashing\n0.14s call     tests/prop"
+    },
+    {
+      "name": "V-1: VaultCore tests / presence",
+      "passed": true,
+      "required": true,
+      "detail": "FAILED tests/unit/test_vault_core.py::TestVaultCorePersistence::test_wrong_passphrase_fails\nFAILED tests/unit/test_vault_core.py::TestVaultCoreEdgeCases::test_e"
+    },
+    {
+      "name": "C-0.5: session_end hook registered",
+      "passed": true,
+      "required": true,
+      "detail": "plugin=soul_distiller.js + hook=session_end.py"
+    },
+    {
+      "name": "CG-01: mcp dependency pin <2",
+      "passed": true,
+      "required": true,
+      "detail": "mcp 1.28.1 installed; pyproject pin present"
+    },
+    {
+      "name": "M5/M11: \u22651 L3 marker in proposed_lessons",
+      "passed": true,
+      "required": false,
+      "detail": "L3 markers=433 across 24 proposal files"
+    },
+    {
+      "name": "W-1: WARP SOCKS listeners",
+      "passed": true,
+      "required": false,
+      "detail": "LISTEN 0      1024              127.0.0.1:8083       0.0.0.0:*"
+    },
+    {
+      "name": "C-9: GenerationPolicy extracted",
+      "passed": false,
+      "required": false,
+      "detail": "GenerationPolicy not found"
+    }
+  ]
+}

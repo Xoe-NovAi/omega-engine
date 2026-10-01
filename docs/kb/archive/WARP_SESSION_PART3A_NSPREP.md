@@ -1,0 +1,106 @@
+<!--
+SPDX-FileCopyrightText: 2026 Xoe-NovAi
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
+# 🔱 WARP Proxy Pool — Session Knowledge Capture (Part 3a: warp-ns-prep@.service)
+# ⬡ OMEGA ⬡ KALI ⬡ WARP-KB ⬡ 2026-07-05
+
+---
+
+## §1 warp-ns-prep@.service (Complete Unit File)
+
+This unit file is responsible for preparing the network namespace, setting up virtual ethernet (veth) cabling, configuring IP routing, enabling IP forwarding, setting up NAT masquerading, and configuring DNS resolution inside the network namespace via a bind mount.
+
+```ini
+[Unit]
+Description=Prepare Network Namespace + Veth + NAT + DNS for WARP Instance %i
+Documentation=file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md
+Before=warp-node@%i.service
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Runs on HOST — creates namespace, veth pair, NAT, DNS, then configures inside namespace via ip netns exec
+ExecStart=/usr/bin/bash -c '\
+  set -e; \
+  NS="warp_node_%i"; \
+  VETH_HOST="veth_host_%i"; \
+  VETH_NS="veth_ns_%i"; \
+  SUBNET="10.0.%i"; \
+  HOST_IP="$${SUBNET}.1"; \
+  NS_IP="$${SUBNET}.2"; \
+  \
+  # Skip if namespace already exists and veth is up; \
+  if ip netns list 2>/dev/null | grep -q "^$${NS}$$" && \
+     ip link show "$${VETH_HOST}" &>/dev/null; then \
+    exit 0; \
+  fi; \
+  \
+  # Clean stale state; \
+  rm -f /var/run/netns/"$${NS}" 2>/dev/null || true; \
+  ip link del "$${VETH_HOST}" 2>/dev/null || true; \
+  \
+  # 1. Create namespace; \
+  /usr/sbin/ip netns add "$${NS}" && \
+  \
+  # 2. Create veth pair; \
+  /usr/sbin/ip link add "$${VETH_HOST}" type veth peer name "$${VETH_NS}" && \
+  \
+  # 3. Move veth_ns into namespace; \
+  /usr/sbin/ip link set "$${VETH_NS}" netns "$${NS}" && \
+  \
+  # 4. Configure host side; \
+  /usr/sbin/ip addr add "$${HOST_IP}/24" dev "$${VETH_HOST}" && \
+  /usr/sbin/ip link set "$${VETH_HOST}" up && \
+  \
+  # 5. Configure namespace side; \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip addr add "$${NS_IP}/24" dev "$${VETH_NS}" && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip link set "$${VETH_NS}" up && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip link set lo up && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip route add default via "$${HOST_IP}" && \
+  \
+  # 6. Enable IP forwarding (idempotent); \
+  /usr/sbin/sysctl -w net.ipv4.ip_forward=1 && \
+  \
+  # 7. Detect default outbound interface; \
+  DEFAULT_IF=$(/usr/sbin/ip route show default | /usr/bin/awk "{print \$$5}" | /usr/bin/head -1); \
+  \
+  # 8. NAT for outbound traffic from namespace; \
+  /usr/sbin/iptables -t nat -C POSTROUTING -s "$${SUBNET}.0/24" -o "$${DEFAULT_IF}" -j MASQUERADE 2>/dev/null || \
+    /usr/sbin/iptables -t nat -A POSTROUTING -s "$${SUBNET}.0/24" -o "$${DEFAULT_IF}" -j MASQUERADE && \
+  \
+  # 9. Configure DNS in namespace (bind mount resolv.conf with public DNS); \
+  mkdir -p /etc/netns/"$${NS}"; \
+  echo "nameserver 1.1.1.1" > /etc/netns/"$${NS}"/resolv.conf; \
+  echo "nameserver 8.8.8.8" >> /etc/netns/"$${NS}"/resolv.conf; \
+  /usr/sbin/ip netns exec "$${NS}" mount --bind /etc/netns/"$${NS}"/resolv.conf /etc/resolv.conf'
+ExecStop=/usr/bin/bash -c '\
+  NS="warp_node_%i"; \
+  VETH_HOST="veth_host_%i"; \
+  SUBNET="10.0.%i"; \
+  /usr/sbin/ip netns exec "$${NS}" umount /etc/resolv.conf 2>/dev/null || true; \
+  /usr/sbin/ip link del "$${VETH_HOST}" 2>/dev/null || true; \
+  /usr/sbin/ip netns del "$${NS}" 2>/dev/null || true; \
+  rm -rf /etc/netns/"$${NS}" 2>/dev/null || true'
+
+# SECURITY: CAP_NET_ADMIN for veth/route/iptables, CAP_SYS_ADMIN for ip netns + mount
+# No PrivateTmp, no ProtectHome — must share host mount + network namespace for setup
+NoNewPrivileges=true
+RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+
+[Install]
+WantedBy=multi-user.target
+```
+
+---
+
+*Part 3a of 4 — warp-ns-prep@.service*
+*Next: Part 3b — warp-reg@.service*
+<!-- PROVENANCE-CORRECTED 2026-08-23T20:39:42Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: WARP-KB | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->

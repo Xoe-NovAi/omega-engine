@@ -1,0 +1,2 @@
+{"instance_id": "opencode/roc_racoon/019f6d24-53b5-7618-bdde-aabf47485c18", "channel": "opencode", "entity": "roc_racoon", "session_uuid": "019f6d24-53b5-7618-bdde-aabf47485c18", "pid": 579739, "started_at": "2026-07-16T22:55:25.109298+00:00", "status": "active", "last_heartbeat": null}
+{"instance_id": "cline/roc_racoon/019f6d24-53ba-796b-9a9f-87fdfdd04b2c", "channel": "cline", "entity": "roc_racoon", "session_uuid": "019f6d24-53ba-796b-9a9f-87fdfdd04b2c", "pid": 579739, "started_at": "2026-07-16T22:55:25.114291+00:00", "status": "active", "last_heartbeat": null}

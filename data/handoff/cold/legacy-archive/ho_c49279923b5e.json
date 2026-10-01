@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_c49279923b5e",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "REVIEW migration playbook deliverables (3 files, researcher workspace, _v2 split-test honored). Recommend: ratify playbook spec as standing doc under docs/migrations/ post-debut; adopt quarterly meta-review into coordination loop. NOTE: N13 arcana A+D phase still PAUSED mid-flight (interrupted for this mission) \u2014 needs pager ruling: resume N13 A+D or re-sequence. Wave 2 (N11) COMPLETE + dormant.",
+  "context": "REHEARSAL MIGRATION MISSION COMPLETE (Architect directive). Deliverables disk-verified: MIGRATION_PLAYBOOK_SPEC_20260822_v2.md (90L \u2014 5-phase Expand-Contract lifecycle, timeline floors, comms craft, M8-compliant telemetry-free tracking, codemod decision rule, roles/gates) \u00b7 MIGRATION_CASE_STUDIES_EVIDENCE_20260822_v2.md (87L \u2014 Django/K8s/Pydantic-FastAPI/MCP/codemod-SOTA/postmortem formats, 13-source register, honesty note on HA/Zed/Tauri non-citation) \u00b7 REHEARSAL_LEARNING_PLAN_20260822_v2.md (85L \u2014 pre-registered predictions P1-P5, canonical postmortem template, mapping to PIVOT_LOG/Soul/Corpus Map, quarterly meta-review cadence, Definition of Done). Key findings: K8s local-signal model = M8-compatible ideal; warn-in-last-minor rule; shims-inside-package lesson from Python 2\u21923; ast-grep over custom codemods for our 23-site leak profile; Loon meta-review cadence adopted.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-22T19:57:57.367451+00:00",
+  "rejected": true,
+  "rejected_at": "2026-08-22T19:58:59.330137+00:00",
+  "rejection_reason": "Redundant \u2014 message delivered to Kali directly in chat session per Architect instruction. Deliverables remain on disk; no action lost."
+}

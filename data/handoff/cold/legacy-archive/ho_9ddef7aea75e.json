@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_9ddef7aea75e",
+  "target_agent_id": "opencode/lilith",
+  "target_channel": "opencode",
+  "target_entity": "lilith",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "W1-1 Canonical Registration: register 7 canonical docs into STRATEGY_CORPUS_MAP.md + docs/strategy/STRATEGY_INDEX.md + cross-ref D-593..601 in PIVOT_LOG. Phases: R(esearch)\u2192I(mpl)\u2192V(erify)\u2192M(editate)\u2192D(isk-record)\u2192C(ommit).",
+  "context": "Sprint WAVE-1-DOCTRINE-WIRING. Research-first per Architect order. Meditation before commit per Architect order. Full brief delivered via task() dispatch.",
+  "priority": 0,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-08-24T06:28:58.085976+00:00",
+  "reaped_at": "2026-08-25T06:33:49.361919+00:00",
+  "ttl_expired": true
+}

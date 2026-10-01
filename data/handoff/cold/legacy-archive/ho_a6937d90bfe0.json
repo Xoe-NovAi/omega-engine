@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_a6937d90bfe0",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "INST-1 Install Honesty \u2014 8-step spec in docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md \u00a75 INST-1. Remove warp-proxy-pool hard dep (\u2192 optional extra [warp]); move qdrant-client/redis/youtube-transcript-api/yt-dlp to extras; install.sh uses .[native,cli] not .[all]; MemoryStore no Redis default; stop _load_sovereign_secrets .env dump; version align 1.2.0; README 1315-badge removal. Acceptance: fresh venv WITHOUT warp/Redis \u2192 pip install -e \".[native,cli]\" \u2192 omega talk \"hello\" \u2192 native-gguf, IS_CLOUD=False, exit 0.",
+  "context": "Ratified by Kali 2026-08-17 (Q2). Next executable ticket \u2014 zero dependencies. Do NOT block DEL-1. P0-1c gitleaks (Q4) also moved pre-debut, depends on INST-1.",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-17T19:07:19.174735+00:00",
+  "accepted_at": "2026-08-17T19:07:42.258211+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-08-17T19:07:56.701985+00:00",
+  "result": "CORRECTION (kali): Mistakenly accepted own dispatch packet. The INST-1 dispatch to maat_n3 is recorded in ACTIVE_SPRINT.json DEBUT-EXECUTION (status=ready, owner=maat_n3) + HMC_COLLABORATION_HUB.md CURRENT line + Hivemind post ses_ffa568bdcffeTG4ht4VEWJ7eKn. Ma'at: treat ACTIVE_SPRINT.json as authority \u2014 INST-1 is ready, execute per manual \u00a75. Packet closed as completed with correction note; no task loss (M12).",
+  "reaped_at": "2026-08-24T19:11:13.923065+00:00"
+}

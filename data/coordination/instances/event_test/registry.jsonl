@@ -1,0 +1,2 @@
+{"instance_id": "opencode/event_test/019f6d26-5df3-748b-a4ec-db550851d9a8", "channel": "opencode", "entity": "event_test", "session_uuid": "019f6d26-5df3-748b-a4ec-db550851d9a8", "pid": 587038, "started_at": "2026-07-16T22:57:38.803180+00:00", "status": "terminated", "last_heartbeat": null}
+{"instance_id": "opencode/event_test/019f6d26-e8c8-779a-9acb-592ca0906156", "channel": "opencode", "entity": "event_test", "session_uuid": "019f6d26-e8c8-779a-9acb-592ca0906156", "pid": 589014, "started_at": "2026-07-16T22:58:14.344918+00:00", "status": "active", "last_heartbeat": null}

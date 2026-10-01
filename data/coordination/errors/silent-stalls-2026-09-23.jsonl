@@ -1,0 +1,1 @@
+{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-23T20:01:13.441Z","sessionID":"ses_fb6cf6856ffes3wd3wmvyrm2IG","modelID":"nvidia/nemotron-3-super-120b-a12b:free","providerID":"openrouter","detail":"msg=msg_0cfd1cee5001wMSNlF5Q9z3gov out=0tok text=0ch in=0tok dur=86s","metrics":{"outputTokens":0,"inputTokens":0,"textLen":0,"durationMs":85915}}

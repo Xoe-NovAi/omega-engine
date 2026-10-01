@@ -524,3 +524,57 @@ def admission_controller():
         return LocalInferenceAdmission()
     except ImportError:
         pytest.skip("AdmissionController not yet implemented")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HUB RUNTIME FIXTURE — option B (Architect, 2026-09-30)
+# ─────────────────────────────────────────────────────────────────────────────
+# Every Omega Hub tool calls `state._require_service()`, which raises unless
+# `_init_complete` is True. In a bare pytest process nothing runs
+# `_init_services()`, so THE ENTIRE MCP TOOL SURFACE IS UNREACHABLE IN TESTS.
+# A gate that cannot run cannot fail — which is how a `read_by` keying fix
+# shipped "tested" against the store beneath it while the binding was never
+# exercised at the layer it lives on.
+#
+# Option B, not A (call inner functions, boundary untested forever) and not C
+# (a test mode inside `_require_service`, i.e. a bypass in production code).
+#
+# NOTHING IS DOUBLED. An earlier draft faked VaultCore and SovereignMCPClient
+# and the fixture's own self-verification rejected it. Both are unnecessary:
+#   - the vault block in `_init_services` already has its own try/except and
+#     degrades to None keys,
+#   - SovereignMCPClient is only CONSTRUCTED there, not connected.
+# Fewer doubles means more real runtime, which is the point of option B.
+#
+# THE FIXTURE VERIFIES ITSELF and raises if it cannot open the guard, so a test
+# using it can never be vacuously green.
+
+import sys as _sys
+from pathlib import Path as _Path
+
+import pytest as _pytest
+
+_REPO_ROOT = _Path(__file__).resolve().parents[1]
+if str(_REPO_ROOT) not in _sys.path:
+    _sys.path.insert(0, str(_REPO_ROOT))
+
+
+@_pytest.fixture(scope="session")
+def hub_runtime():
+    """Bring the Hub runtime up once per session so the MCP boundary is testable."""
+    import anyio
+
+    from mcp_servers.omega_hub import state as hub_state
+
+    hub_state._init_complete = False
+    hub_state._init_error = None
+    anyio.run(hub_state._init_services)
+
+    if not hub_state._init_complete:
+        raise RuntimeError(
+            f"hub_runtime fixture could not bring the Hub up: {hub_state._init_error!r}. "
+            "Any test using this fixture would be vacuously green."
+        )
+    hub_state._require_service()  # prove the guard opens; do not trust the flag
+
+    yield hub_state

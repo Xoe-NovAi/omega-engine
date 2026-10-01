@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_704b83c14969",
+  "target_agent_id": "opencode/kali",
+  "target_channel": "opencode",
+  "target_entity": "kali",
+  "source_agent_id": "opencode/makali_fusion",
+  "source_channel": "opencode",
+  "source_entity": "makali_fusion",
+  "task": "Node 1 Federation Remediation \u2014 Read briefing at data/coordination/NODE1_BRIEFING_20260922.md. Node 0 NFS export ready. Node 1 must: (1) Fix SSH ListenAddress + MTU 1280 on tailscale0, (2) Start NFS server with matching config (omega-engine.local domain, fixed ports 2049/20048, exports for 100.123.51.67), (3) Signal readiness. Then MaKaLi executes P2 bidirectional verification.",
+  "context": "",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-09-22T21:15:20.558513+00:00",
+  "reaped_at": "2026-09-23T21:18:44.056434+00:00",
+  "ttl_expired": true
+}

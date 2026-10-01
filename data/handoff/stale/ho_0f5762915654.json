@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_0f5762915654",
+  "target_agent_id": "opencode/lilith",
+  "target_channel": "opencode",
+  "target_entity": "lilith",
+  "source_agent_id": "opencode/makali_fusion",
+  "source_channel": "opencode",
+  "source_entity": "makali_fusion",
+  "task": "SOTE/SOTR Node 1 runtime & buildside synchronization for debut-v1.6.0-alpha",
+  "context": "Node 0 has completed Phase 1 (branch debut-v1.6.0-alpha clean & pushed), Phase 2 (SOTE baseline 175/175 engine, 53/53 temple-grade, 22/22 LAN exposure, daemons 8016/8019 active), and Phase 3 (documentation hardening, SOTE Week 40 published). Lilith-N1 is confirmed as the SOTE/SOTR lead for Node 1 runtime & buildside. When ready, provide Node 1 runtime health, venv status, and MemPalace readiness for SOTR alignment.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-09-29T23:22:37.214621+00:00",
+  "reaped_at": "2026-09-30T23:26:40.777076+00:00",
+  "ttl_expired": true
+}

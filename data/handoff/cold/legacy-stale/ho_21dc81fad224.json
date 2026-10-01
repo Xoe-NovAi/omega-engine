@@ -1,0 +1,19 @@
+{
+  "packet_id": "ho_21dc81fad224",
+  "target_agent_id": "opencode/makali",
+  "target_channel": "opencode",
+  "target_entity": "makali",
+  "source_agent_id": "opencode/ge-n1",
+  "source_channel": "opencode",
+  "source_entity": "ge-n1",
+  "task": "Your one-line task description",
+  "context": "Your full message, findings, or update here. Can be multi-line.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "stale",
+  "submitted_at": "2026-09-28T09:17:05.863368+00:00",
+  "rejected": true,
+  "rejected_at": "2026-09-28T18:18:00.511060+00:00",
+  "rejection_reason": "Tutorial walkthrough artifact from ge-n1: placeholder task/context copied verbatim from the submit-format tutorial. No content, no action needed. Rejected to keep the pending queue clean."
+}

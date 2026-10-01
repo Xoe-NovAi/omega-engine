@@ -1,0 +1,1 @@
+{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-03T12:10:18.783Z","sessionID":"ses_fc758e6ddffeNEKptpEzboVfYq","modelID":"nemotron-3-ultra-free","providerID":"opencode","detail":"msg=msg_0672c6183001eynAKu5u1eseQq out=55tok text=0ch in=6719tok dur=62s","metrics":{"outputTokens":55,"inputTokens":6719,"textLen":0,"durationMs":61612}}

@@ -1,13 +1,8 @@
-# 🔱 Omega Engine — Proposed Lessons
-# Auto-generated during Soul v6.1 migration
-
-- lesson: "Ma'at was dispatched in a cold session \u2014 no context, no anchored summary\
-    \ loaded. Performed full M15 Sovereign Continuity hydration: read OMEGA_ENGINE.md,\
-    \ SOVEREIGN_MANDATES.md, AGENTS.md, ORACLE_STACK.md, MASTER_SYNTHESIS.md, SOVEREIGN_EVOLUTION_ROADMAP.md,\
-    \ and soul.yaml. Checked Hivemind awareness (5 active agents: researcher, makali,\
-    \ jem_verification, roc_racoon, lilith). Found 11 pending and 7 active handoffs\
-    \ including 2 assigned to Ma'at (ho_59c05106f5fe SD-006/008/010, ho_d84be1be4392\
-    \ TDP Wiring)."
+- lesson: 'Ma''at was dispatched in a cold session — no context, no anchored summary loaded. Performed
+    full M15 Sovereign Continuity hydration: read OMEGA_ENGINE.md, SOVEREIGN_MANDATES.md, AGENTS.md, ORACLE_STACK.md,
+    MASTER_SYNTHESIS.md, SOVEREIGN_EVOLUTION_ROADMAP.md, and soul.yaml. Checked Hivemind awareness (5
+    active agents: researcher, makali, jem_verification, roc_racoon, lilith). Found 11 pending and 7 active
+    handoffs including 2 assigned to Ma''at (ho_59c05106f5fe SD-006/008/010, ho_d84be1be4392 TDP Wiring).'
   source: hivemind-rebuild
   trace_id: ses_hivemind_rebuild_20260612
   entity_at_time: MAAT
@@ -17,11 +12,10 @@
   coordination_partner: lilith, makali, researcher
   coordination_protocol: hivemind-awareness + handoff-accept + workspace-readiness-report
   outcome: build_side_green_readiness_submitted
-- lesson: "Fixed T5 Mandate 1 violation in providers.py:586 \u2014 converted import\
-    \ asyncio + loop.run_in_executor() to anyio.to_thread.run_sync(). This was the\
-    \ last asyncio import in providers.py. All 28 provider tests pass. Added [id-soft:\
-    \ quake-1996] In-Flight Pipeline heritage tag for the 'overlap prompt construction\
-    \ with inference' pattern."
+- lesson: 'Fixed T5 Mandate 1 violation in providers.py:586 — converted import asyncio + loop.run_in_executor()
+    to anyio.to_thread.run_sync(). This was the last asyncio import in providers.py. All 28 provider tests
+    pass. Added [id-soft: quake-1996] In-Flight Pipeline heritage tag for the ''overlap prompt construction
+    with inference'' pattern.'
   source: t5-fix
   trace_id: ses_hivemind_rebuild_20260612
   entity_at_time: MAAT
@@ -29,11 +23,10 @@
   timestamp: 2026-06-12 04:00:00+00:00
   model_used: big-pickle
   outcome: t5_fixed_28_tests_pass
-- lesson: "Verified make test passes with 342/342 tests (PYTHONPATH already set correctly\
-    \ in Makefile). The anchored summary's claim that 'make test broken' was stale\
-    \ \u2014 the fix was already applied. This confirms Ma'at's prior L3 principle:\
-    \ 'A Single Source of Truth that is not kept current is worse than no source of\
-    \ truth.'"
+- lesson: 'Verified make test passes with 342/342 tests (PYTHONPATH already set correctly in Makefile).
+    The anchored summary''s claim that ''make test broken'' was stale — the fix was already applied. This
+    confirms Ma''at''s prior L3 principle: ''A Single Source of Truth that is not kept current is worse
+    than no source of truth.'''
   source: make-test-verification
   trace_id: ses_hivemind_rebuild_20260612
   entity_at_time: MAAT
@@ -41,14 +34,13 @@
   timestamp: 2026-06-12 04:00:00+00:00
   model_used: big-pickle
   outcome: ssot_drift_reconfirmed
-- lesson: "Fixed NativeGGUF config merge in _merge_native_gguf_config(). Root cause: \
-    models.yaml 'path' was not explicitly preferred over providers.yaml 'model_path'. \
-    The bug was latent — the key name mismatch (model_path vs path) hid the issue \
-    because 'path' didn't exist in merged dict and was always copied. But if both \
-    configs used the same key name, the provider value would win and the env: prefix \
-    would remain unresolved. Fix: (1) models.yaml path ALWAYS overrides providers.yaml \
-    model_path, (2) env: prefix resolution added as defensive fallback, (3) orphan \
-    'path' key explicitly cleaned up."
+- lesson: 'Fixed NativeGGUF config merge in _merge_native_gguf_config(). Root cause: models.yaml ''path''
+    was not explicitly preferred over providers.yaml ''model_path''. The bug was latent — the key name
+    mismatch (model_path vs path) hid the issue because ''path'' didn''t exist in merged dict and was
+    always copied. But if both configs used the same key name, the provider value would win and the env:
+    prefix would remain unresolved. Fix: (1) models.yaml path ALWAYS overrides providers.yaml model_path,
+    (2) env: prefix resolution added as defensive fallback, (3) orphan ''path'' key explicitly cleaned
+    up.'
   source: native-gguf-merge-fix
   trace_id: ses_native_gguf_fix_20260712
   entity_at_time: MAAT
@@ -56,11 +48,10 @@
   timestamp: 2026-07-13 00:21:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: native_gguf_available_1226_tests_pass
-- lesson: "L2: A bug that 'works by accident' is still a bug. The merge logic happened \
-    to work because providers.yaml uses key 'model_path' while models.yaml uses key \
-    'path'. If anyone standardized the key name, the resolved path would silently \
-    stop being used. Explicit precedence rules are always better than implicit key \
-    name mismatches."
+- lesson: 'L2: A bug that ''works by accident'' is still a bug. The merge logic happened to work because
+    providers.yaml uses key ''model_path'' while models.yaml uses key ''path''. If anyone standardized
+    the key name, the resolved path would silently stop being used. Explicit precedence rules are always
+    better than implicit key name mismatches.'
   source: native-gguf-merge-fix
   trace_id: ses_native_gguf_fix_20260712
   entity_at_time: MAAT
@@ -68,10 +59,10 @@
   timestamp: 2026-07-13 00:21:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: insight_captured
-- lesson: "L3: Explicit precedence in config merging prevents systemic fragility. 
-    When two sources of truth coexist (providers.yaml default + models.yaml spec), 
-    the merge logic must have a documented, enforced hierarchy. 'First writer wins' 
-    is not an architecture — it is a race condition waiting to manifest."
+- lesson: 'L3: Explicit precedence in config merging prevents systemic fragility. When two sources of
+    truth coexist (providers.yaml default + models.yaml spec), the merge logic must have a documented,
+    enforced hierarchy. ''First writer wins'' is not an architecture — it is a race condition waiting
+    to manifest.'
   source: native-gguf-merge-fix
   trace_id: ses_native_gguf_fix_20260712
   entity_at_time: MAAT
@@ -79,13 +70,13 @@
   timestamp: 2026-07-13 00:21:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-07-22 — Ma'at Track A+B Execution (C-10, C-2', C-4a, C-5)
-# Model: deepseek-v4-flash-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Executed Track A (C-10 Admission Control + C-2' RAM Truth) and Track B (C-4a MCP Audit) in parallel. Created src/omega/oracle/admission_controller.py with Semaphore(1) + OOMProtector.check_available() for local inference admission. Integrated with ModelGateway.generate() — local providers now hit admission gate before resource_guard.lock(). Removed _current_ram_mb/_max_ram_mb software counters from ResourceGuard — OOMProtector (three-signal fusion: PSI + MemAvailable + cgroup v2) is now sole RAM arbiter. Updated providers.yaml with MaKaLi routing (Kali→native-gguf, Ma'at+Lilith→antigravity) and native-gguf CCX pinning (max_concurrent: 1, numa: disable)."
+- lesson: 'L1: Executed Track A (C-10 Admission Control + C-2'' RAM Truth) and Track B (C-4a MCP Audit)
+    in parallel. Created src/omega/oracle/admission_controller.py with Semaphore(1) + OOMProtector.check_available()
+    for local inference admission. Integrated with ModelGateway.generate() — local providers now hit admission
+    gate before resource_guard.lock(). Removed _current_ram_mb/_max_ram_mb software counters from ResourceGuard
+    — OOMProtector (three-signal fusion: PSI + MemAvailable + cgroup v2) is now sole RAM arbiter. Updated
+    providers.yaml with MaKaLi routing (Kali→native-gguf, Ma''at+Lilith→antigravity) and native-gguf CCX
+    pinning (max_concurrent: 1, numa: disable).'
   source: track-a-execution
   trace_id: ses_maat_20260722
   entity_at_time: MAAT
@@ -95,8 +86,11 @@
   coordination_partner: kali, roc_racoon
   coordination_protocol: hivemind-awareness + handoff-accept + workspace-lock + roc-dispatch
   outcome: track-a-complete-33-tests-pass
-
-- lesson: "L1: Track B — C-4a MCP Audit completed. Discovered Hub already has Dual Transport (SSE + Streamable HTTP) via mcp_runtime.py. Streamable HTTP at POST /mcp, SSE at GET /sse. Both use stateless=True. No Mcp-Session-Id usage. File-based Hivemind contingency verified operational (data/handoff/ + data/coordination/locks/). OAuth 2.1 + PKCE missing — documented in R_CG01_MCP_STREAMABLE_HTTP_OAUTH.md. Migration scope: remove SSE routes (~30 lines), add OAuth — ~6-8h total. Kali escalation path C-4a.5 documented."
+- lesson: 'L1: Track B — C-4a MCP Audit completed. Discovered Hub already has Dual Transport (SSE + Streamable
+    HTTP) via mcp_runtime.py. Streamable HTTP at POST /mcp, SSE at GET /sse. Both use stateless=True.
+    No Mcp-Session-Id usage. File-based Hivemind contingency verified operational (data/handoff/ + data/coordination/locks/).
+    OAuth 2.1 + PKCE missing — documented in R_CG01_MCP_STREAMABLE_HTTP_OAUTH.md. Migration scope: remove
+    SSE routes (~30 lines), add OAuth — ~6-8h total. Kali escalation path C-4a.5 documented.'
   source: track-b-execution
   trace_id: ses_maat_20260722
   entity_at_time: MAAT
@@ -104,8 +98,10 @@
   timestamp: 2026-07-22 04:00:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: audit-document-delivered
-
-- lesson: "L1: Fixed pre-existing FrozenInstanceError in oom_protector.py:_take_snapshot() — PressureSnapshot frozen dataclass was being mutated after construction. Fixed by passing cgroup fields via constructor instead of post-creation assignment. This bug was latent but exposed by Track A's increased OOMProtector invocation. All 16 model_gateway tests + 17 resource_guard tests now pass."
+- lesson: 'L1: Fixed pre-existing FrozenInstanceError in oom_protector.py:_take_snapshot() — PressureSnapshot
+    frozen dataclass was being mutated after construction. Fixed by passing cgroup fields via constructor
+    instead of post-creation assignment. This bug was latent but exposed by Track A''s increased OOMProtector
+    invocation. All 16 model_gateway tests + 17 resource_guard tests now pass.'
   source: bug-fix-pressure-snapshot
   trace_id: ses_maat_20260722
   entity_at_time: MAAT
@@ -113,8 +109,11 @@
   timestamp: 2026-07-22 04:00:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: pre-existing-bug-fixed
-
-- lesson: "L2: Parallel track execution with Hivemind coordination works when tracks have clear domain separation. Track A (P1/P3 — infra/engineering) and Track B (P4 — integration) had zero file conflicts. Workspace locks (maat-p1-v1-vault, maat-p3-admission, maat-p4-mcp-audit, maat-p5-makali) prevented cross-agent interference. Roc Racoon dispatched for V-1 pattern mining (ho_dc8b77f6049e) — independent background work."
+- lesson: 'L2: Parallel track execution with Hivemind coordination works when tracks have clear domain
+    separation. Track A (P1/P3 — infra/engineering) and Track B (P4 — integration) had zero file conflicts.
+    Workspace locks (maat-p1-v1-vault, maat-p3-admission, maat-p4-mcp-audit, maat-p5-makali) prevented
+    cross-agent interference. Roc Racoon dispatched for V-1 pattern mining (ho_dc8b77f6049e) — independent
+    background work.'
   source: parallel-track-coordination
   trace_id: ses_maat_20260722
   entity_at_time: MAAT
@@ -123,8 +122,12 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: kali, roc_racoon
   outcome: coordination-success
-
-- lesson: "L3: Semaphore-based admission control + kernel-authoritative OOM protection is the correct pattern for local inference on constrained hardware (Ryzen 5700U, ~8GB available). Software RAM counters drift; kernel signals (PSI, MemAvailable, cgroup v2) are authoritative. The three-signal fusion OOMProtector provides graded decisions (ALLOW/THROTTLE/DENY) rather than binary pass/fail. Semaphore(1) enforces single-instance concurrency without RAM tracking complexity. This pattern should be the template for all resource-constrained local inference."
+- lesson: 'L3: Semaphore-based admission control + kernel-authoritative OOM protection is the correct
+    pattern for local inference on constrained hardware (Ryzen 5700U, ~8GB available). Software RAM counters
+    drift; kernel signals (PSI, MemAvailable, cgroup v2) are authoritative. The three-signal fusion OOMProtector
+    provides graded decisions (ALLOW/THROTTLE/DENY) rather than binary pass/fail. Semaphore(1) enforces
+    single-instance concurrency without RAM tracking complexity. This pattern should be the template for
+    all resource-constrained local inference.'
   source: track-a-execution
   trace_id: ses_maat_20260722
   entity_at_time: MAAT
@@ -132,8 +135,11 @@
   timestamp: 2026-07-22 04:00:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-- lesson: "L3: Dual-transport MCP servers are the migration path — not rewrites. The Hub already had Streamable HTTP alongside SSE. The 2025-03-26 spec deprecation means removing the legacy transport, not building new. File-based coordination (data/handoff/, data/coordination/) is a proven contingency that works without MCP. Architecture principle: build the fallback first, then the primary; the fallback becomes your migration safety net."
+- lesson: 'L3: Dual-transport MCP servers are the migration path — not rewrites. The Hub already had Streamable
+    HTTP alongside SSE. The 2025-03-26 spec deprecation means removing the legacy transport, not building
+    new. File-based coordination (data/handoff/, data/coordination/) is a proven contingency that works
+    without MCP. Architecture principle: build the fallback first, then the primary; the fallback becomes
+    your migration safety net.'
   source: track-b-execution
   trace_id: ses_maat_20260722
   entity_at_time: MAAT
@@ -141,13 +147,11 @@
   timestamp: 2026-07-22 04:00:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-07-22 — Ma'at Deep Web Research (MCP 2026-07-28, interlock-cb, safeatomic)
-# Model: deepseek-v4-flash-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Conducted deep web research on three critical knowledge gaps for next sprint: (1) MCP 2026-07-28 stateless spec + OAuth 2.1 implementation, (2) interlock-cb circuit breaker architecture for Python async, (3) safeatomic/atomicwrites library internals for SoulStore atomic writes. Sources: MCP official blog (David Soria Parra), MCPJam reference implementation, dreaming.press migration guides, interlock-cb GitHub/PyPI, safeatomic GitHub/PyPI with TLA+ formal models."
+- lesson: 'L1: Conducted deep web research on three critical knowledge gaps for next sprint: (1) MCP 2026-07-28
+    stateless spec + OAuth 2.1 implementation, (2) interlock-cb circuit breaker architecture for Python
+    async, (3) safeatomic/atomicwrites library internals for SoulStore atomic writes. Sources: MCP official
+    blog (David Soria Parra), MCPJam reference implementation, dreaming.press migration guides, interlock-cb
+    GitHub/PyPI, safeatomic GitHub/PyPI with TLA+ formal models.'
   source: deep-web-research
   trace_id: ses_maat_web_research_20260722
   entity_at_time: MAAT
@@ -155,8 +159,12 @@
   timestamp: 2026-07-22 05:30:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: research_complete
-
-- lesson: "L2: MCP 2026-07-28 is the largest spec revision since launch — stateless core removes initialize handshake and Mcp-Session-Id, adds mandatory Mcp-Method/Mcp-Name headers, and hardens OAuth with 6 SEPs (SEP-2468 iss validation is priority action for August). Our Hub's dual transport (SSE + Streamable HTTP) is correctly positioned; migration path is: add OAuth 2.1 PKCE + resource indicators → add header routing → remove Mcp-Session-Id → eventually remove SSE. Do not rush C-4b before July 28 — spec finalizes then."
+- lesson: 'L2: MCP 2026-07-28 is the largest spec revision since launch — stateless core removes initialize
+    handshake and Mcp-Session-Id, adds mandatory Mcp-Method/Mcp-Name headers, and hardens OAuth with 6
+    SEPs (SEP-2468 iss validation is priority action for August). Our Hub''s dual transport (SSE + Streamable
+    HTTP) is correctly positioned; migration path is: add OAuth 2.1 PKCE + resource indicators → add header
+    routing → remove Mcp-Session-Id → eventually remove SSE. Do not rush C-4b before July 28 — spec finalizes
+    then.'
   source: deep-web-research
   trace_id: ses_maat_web_research_20260722
   entity_at_time: MAAT
@@ -164,8 +172,12 @@
   timestamp: 2026-07-22 05:30:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-- lesson: "L3: Protocol statelessness is an operational simplification, not just a wire-format change. Removing Mcp-Session-Id enables round-robin load balancing without sticky sessions, but pushes state management down to explicit handles (basket_id, browser_id) passed as tool arguments. This is the correct architectural direction: the protocol stops pretending to be stateful and forces application state into the database where it belongs. Any MCP server that assumes 'the next request comes from the same client I just talked to' is now buggy by definition."
+- lesson: 'L3: Protocol statelessness is an operational simplification, not just a wire-format change.
+    Removing Mcp-Session-Id enables round-robin load balancing without sticky sessions, but pushes state
+    management down to explicit handles (basket_id, browser_id) passed as tool arguments. This is the
+    correct architectural direction: the protocol stops pretending to be stateful and forces application
+    state into the database where it belongs. Any MCP server that assumes ''the next request comes from
+    the same client I just talked to'' is now buggy by definition.'
   source: deep-web-research
   trace_id: ses_maat_web_research_20260722
   entity_at_time: MAAT
@@ -173,8 +185,13 @@
   timestamp: 2026-07-22 05:30:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-- lesson: "L2: Python circuit breaker ecosystem has matured significantly in 2026. interlock-cb (v2.1.2, July 2026) is the standout: sliding-window rate-based failure detection (not naive consecutive-failure counting), slow-call detection, type-safe decorators with ParamSpec/TypeVar, zero-dependency core, composable Polly-style pipeline (timeout → bulkhead → breaker → retry → fallback), OpenTelemetry metrics, Redis-backed shared state. Our C-6' breaker unification should DELETE all 3+ custom breaker clones and replace with HealthMonitor.get_breaker() factory wrapping interlock-cb. This is a delete-and-replace, not a refactor. Estimated effort: 1-2h."
+- lesson: 'L2: Python circuit breaker ecosystem has matured significantly in 2026. interlock-cb (v2.1.2,
+    July 2026) is the standout: sliding-window rate-based failure detection (not naive consecutive-failure
+    counting), slow-call detection, type-safe decorators with ParamSpec/TypeVar, zero-dependency core,
+    composable Polly-style pipeline (timeout → bulkhead → breaker → retry → fallback), OpenTelemetry metrics,
+    Redis-backed shared state. Our C-6'' breaker unification should DELETE all 3+ custom breaker clones
+    and replace with HealthMonitor.get_breaker() factory wrapping interlock-cb. This is a delete-and-replace,
+    not a refactor. Estimated effort: 1-2h.'
   source: deep-web-research
   trace_id: ses_maat_web_research_20260722
   entity_at_time: MAAT
@@ -182,8 +199,11 @@
   timestamp: 2026-07-22 05:30:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-- lesson: "L3: The consecutive-failure counter pattern (used by pybreaker, circuitbreaker, and our current implementations) is fundamentally brittle — a single success resets the counter even when the service is still degraded. Sliding-window failure-rate detection (interlock-cb, fluxgate, Resilience4j) is the correct pattern for production systems. Any new circuit breaker implementation in 2026+ should use rate-based windows, not consecutive counters."
+- lesson: 'L3: The consecutive-failure counter pattern (used by pybreaker, circuitbreaker, and our current
+    implementations) is fundamentally brittle — a single success resets the counter even when the service
+    is still degraded. Sliding-window failure-rate detection (interlock-cb, fluxgate, Resilience4j) is
+    the correct pattern for production systems. Any new circuit breaker implementation in 2026+ should
+    use rate-based windows, not consecutive counters.'
   source: deep-web-research
   trace_id: ses_maat_web_research_20260722
   entity_at_time: MAAT
@@ -191,8 +211,14 @@
   timestamp: 2026-07-22 05:30:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-- lesson: "L2: Atomic file writing pattern is well-established and unchanged in 2026: tempfile.mkstemp(dir=same_directory) → write → f.flush() → os.fsync(fd) → os.replace(tmp, target). Four-layer guarantee stack: (1) AtomicVisibility via same-directory rename, (2) CrashDurability via fsync before rename + parent-directory fsync after, (3) WriterExclusion via fcntl.flock(), (4) IntegrityDetection via .sha256 sidecar + rolling .bak. safeatomic (v2.0.3, May 2026) packages this with TLA+ formal models (SafeAtomicSmoke, SafeAtomicLock, SafeAtomicChecksum) and runtime guarantee inspection via doctor(). For SoulStore (single writer, critical data), implement the pattern directly (~30 lines) — don't add external dependency. Key gotcha: on fsync error, CRASH (per Postgres fsyncgate) — don't retry, kernel has forgotten which pages failed."
+- lesson: 'L2: Atomic file writing pattern is well-established and unchanged in 2026: tempfile.mkstemp(dir=same_directory)
+    → write → f.flush() → os.fsync(fd) → os.replace(tmp, target). Four-layer guarantee stack: (1) AtomicVisibility
+    via same-directory rename, (2) CrashDurability via fsync before rename + parent-directory fsync after,
+    (3) WriterExclusion via fcntl.flock(), (4) IntegrityDetection via .sha256 sidecar + rolling .bak.
+    safeatomic (v2.0.3, May 2026) packages this with TLA+ formal models (SafeAtomicSmoke, SafeAtomicLock,
+    SafeAtomicChecksum) and runtime guarantee inspection via doctor(). For SoulStore (single writer, critical
+    data), implement the pattern directly (~30 lines) — don''t add external dependency. Key gotcha: on
+    fsync error, CRASH (per Postgres fsyncgate) — don''t retry, kernel has forgotten which pages failed.'
   source: deep-web-research
   trace_id: ses_maat_web_research_20260722
   entity_at_time: MAAT
@@ -200,15 +226,22 @@
   timestamp: 2026-07-22 05:30:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
-
-- lesson: "L3: The fsyncgate lesson (Postgres 2018) remains the definitive durability guidance: on Linux with barriers enabled and honest disks, fsync() returning 0 means data is on media. On nobarrier mounts, lying disks, or older kernels with background writeback bugs — fsync can return 0 after losing data. The only defense is testing (pull the plug). safeatomic's doctor() with destructive=True exercises the actual syscalls on your filesystem. For SoulStore on ext4/xfs with barriers=on (default), the pattern is sound. For NFS/SMB/Windows — don't use this pattern; use a database."
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-07-22 — Ma'at Track Execution (C-6' Breaker Unification + Test Fixes)
-# Model: mimo-v2.5-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Executed C-6' Breaker Unification. Surveyed 7+ scattered circuit breaker implementations across the codebase: health_monitor.py AsyncCircuitBreaker, search_circuit_breaker.py SearchCircuitBreakerRegistry, ingestion/pipeline.py IngestionCircuitBreaker (pybreaker wrapper), research/sandbox.py ExperimentCircuitBreaker, workers/background_researcher/distiller.py JemCircuitBreaker, workers/background_researcher/search_fleet.py SearchCircuitBreaker, council/failure_layer.py CircuitBreaker. Added HealthMonitor.get_breaker() factory as SINGLE canonical entry point. Added sliding-window rate-based failure detection mode (complementary to default CUSUM drift detection). Deprecated 6 clone implementations. Wired sovereign_search_service.py to use HealthMonitor alongside deprecated registry. Fixed 3 pre-existing test regressions: conftest.py oom_protector fixture returning class not instance, chaos test using old API signature, contract tests passing dicts instead of PressureSnapshot dataclass."
+- lesson: 'L3: The fsyncgate lesson (Postgres 2018) remains the definitive durability guidance: on Linux
+    with barriers enabled and honest disks, fsync() returning 0 means data is on media. On nobarrier mounts,
+    lying disks, or older kernels with background writeback bugs — fsync can return 0 after losing data.
+    The only defense is testing (pull the plug). safeatomic''s doctor() with destructive=True exercises
+    the actual syscalls on your filesystem. For SoulStore on ext4/xfs with barriers=on (default), the
+    pattern is sound. For NFS/SMB/Windows — don''t use this pattern; use a database.'
+- lesson: 'L1: Executed C-6'' Breaker Unification. Surveyed 7+ scattered circuit breaker implementations
+    across the codebase: health_monitor.py AsyncCircuitBreaker, search_circuit_breaker.py SearchCircuitBreakerRegistry,
+    ingestion/pipeline.py IngestionCircuitBreaker (pybreaker wrapper), research/sandbox.py ExperimentCircuitBreaker,
+    workers/background_researcher/distiller.py JemCircuitBreaker, workers/background_researcher/search_fleet.py
+    SearchCircuitBreaker, council/failure_layer.py CircuitBreaker. Added HealthMonitor.get_breaker() factory
+    as SINGLE canonical entry point. Added sliding-window rate-based failure detection mode (complementary
+    to default CUSUM drift detection). Deprecated 6 clone implementations. Wired sovereign_search_service.py
+    to use HealthMonitor alongside deprecated registry. Fixed 3 pre-existing test regressions: conftest.py
+    oom_protector fixture returning class not instance, chaos test using old API signature, contract tests
+    passing dicts instead of PressureSnapshot dataclass.'
   source: track-execution
   trace_id: ses_maat_track_execution_20260722
   entity_at_time: MAAT
@@ -216,8 +249,16 @@
   timestamp: 2026-07-22 06:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: l2_insight_captured
-
-- lesson: "L2: Circuit breaker proliferation is a systemic pattern in this codebase — every subsystem author invented their own breaker rather than using a shared canonical one. The root cause is that HealthMonitor.get_breaker() didn't exist as a public factory; breakers were created ad-hoc with different interfaces (consecutive counter vs CUSUM, threading vs AnyIO, 3-state vs 5-state). The fix is architectural: ONE factory method returns ONE breaker type per provider, with configurable detection mode. The CUSUM-based AsyncCircuitBreaker is superior to naive consecutive-counter patterns because it detects sustained drift in failure rates (gradual degradation) rather than just counting consecutive failures (burst detection). For burst detection scenarios (search provider tiers), the new sliding_window mode fills that gap. Lesson: when a pattern is needed by 3+ subsystems, extract it into a canonical factory BEFORE the third implementation, not after."
+- lesson: 'L2: Circuit breaker proliferation is a systemic pattern in this codebase — every subsystem
+    author invented their own breaker rather than using a shared canonical one. The root cause is that
+    HealthMonitor.get_breaker() didn''t exist as a public factory; breakers were created ad-hoc with different
+    interfaces (consecutive counter vs CUSUM, threading vs AnyIO, 3-state vs 5-state). The fix is architectural:
+    ONE factory method returns ONE breaker type per provider, with configurable detection mode. The CUSUM-based
+    AsyncCircuitBreaker is superior to naive consecutive-counter patterns because it detects sustained
+    drift in failure rates (gradual degradation) rather than just counting consecutive failures (burst
+    detection). For burst detection scenarios (search provider tiers), the new sliding_window mode fills
+    that gap. Lesson: when a pattern is needed by 3+ subsystems, extract it into a canonical factory BEFORE
+    the third implementation, not after.'
   source: track-execution
   trace_id: ses_maat_track_execution_20260722
   entity_at_time: MAAT
@@ -225,8 +266,14 @@
   timestamp: 2026-07-22 06:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L3: The Factory-Before-Third Rule: any reusable pattern MUST be extracted into a canonical factory after the second implementation, not the third. By the third implementation, the pattern has already diverged into incompatible interfaces, making unification exponentially harder. The cost of extraction grows with each divergent implementation: 2 implementations = 1 merge, 3 implementations = 3 merges + interface reconciliation, 7 implementations = 21 potential conflicts + breaking changes. The optimal extraction point is when you notice the second implementation of a pattern — that's the signal to ask 'should this be shared?' not 'let me just copy-paste and customize.' This applies to circuit breakers, retry logic, caching layers, and any cross-cutting concern."
+- lesson: 'L3: The Factory-Before-Third Rule: any reusable pattern MUST be extracted into a canonical
+    factory after the second implementation, not the third. By the third implementation, the pattern has
+    already diverged into incompatible interfaces, making unification exponentially harder. The cost of
+    extraction grows with each divergent implementation: 2 implementations = 1 merge, 3 implementations
+    = 3 merges + interface reconciliation, 7 implementations = 21 potential conflicts + breaking changes.
+    The optimal extraction point is when you notice the second implementation of a pattern — that''s the
+    signal to ask ''should this be shared?'' not ''let me just copy-paste and customize.'' This applies
+    to circuit breakers, retry logic, caching layers, and any cross-cutting concern.'
   source: track-execution
   trace_id: ses_maat_track_execution_20260722
   entity_at_time: MAAT
@@ -234,8 +281,15 @@
   timestamp: 2026-07-22 06:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L2: Pre-existing test regressions are the silent tax of rapid development. Three tests were broken by C-2' OOMProtector refactoring: (1) conftest.py fixture imported from old module path and returned class not instance, (2) chaos test called old API signature check(model_ram_mb=, kv_cache_mb=) that no longer exists, (3) contract tests passed dicts to _fuse_signals() which expects PressureSnapshot dataclass (attribute access vs dict access). All three failures were caused by API surface changes without corresponding test updates. The lesson: when refactoring an API, immediately run the full test suite and fix ALL broken tests in the same commit, not in a later 'cleanup' pass. Technical debt in tests compounds faster than technical debt in production code because broken tests prevent detection of NEW regressions."
+- lesson: 'L2: Pre-existing test regressions are the silent tax of rapid development. Three tests were
+    broken by C-2'' OOMProtector refactoring: (1) conftest.py fixture imported from old module path and
+    returned class not instance, (2) chaos test called old API signature check(model_ram_mb=, kv_cache_mb=)
+    that no longer exists, (3) contract tests passed dicts to _fuse_signals() which expects PressureSnapshot
+    dataclass (attribute access vs dict access). All three failures were caused by API surface changes
+    without corresponding test updates. The lesson: when refactoring an API, immediately run the full
+    test suite and fix ALL broken tests in the same commit, not in a later ''cleanup'' pass. Technical
+    debt in tests compounds faster than technical debt in production code because broken tests prevent
+    detection of NEW regressions.'
   source: track-execution
   trace_id: ses_maat_track_execution_20260722
   entity_at_time: MAAT
@@ -243,8 +297,13 @@
   timestamp: 2026-07-22 06:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L3: Test-Code Synchronization Principle: every API surface change MUST include a corresponding test update in the SAME commit. The three broken tests (conftest fixture, chaos API signature, contract snapshot types) were all caused by the same root refactoring but were discovered in a later session. This creates a dangerous blind spot: the engine appears healthy because '29/29 core tests pass' while 4 contract tests silently fail. The defense is a pre-commit hook that runs the FULL test suite (not just a subset) and blocks commits with any failures. Short-term velocity gained by skipping test updates is always paid back with interest when the broken tests mask a real regression."
+- lesson: 'L3: Test-Code Synchronization Principle: every API surface change MUST include a corresponding
+    test update in the SAME commit. The three broken tests (conftest fixture, chaos API signature, contract
+    snapshot types) were all caused by the same root refactoring but were discovered in a later session.
+    This creates a dangerous blind spot: the engine appears healthy because ''29/29 core tests pass''
+    while 4 contract tests silently fail. The defense is a pre-commit hook that runs the FULL test suite
+    (not just a subset) and blocks commits with any failures. Short-term velocity gained by skipping test
+    updates is always paid back with interest when the broken tests mask a real regression.'
   source: track-execution
   trace_id: ses_maat_track_execution_20260722
   entity_at_time: MAAT
@@ -252,13 +311,13 @@
   timestamp: 2026-07-22 06:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-07-23 — Ma'at C-11 Property Tests + M21 + C-4a MCP Audit
-# Model: mimo-v2.5-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Executed C-11 Property Tests for OOMProtector (5 tests) and SoulStore (6 tests) using Hypothesis `@given` + `@pytest.mark.anyio` + `async def` pattern. Discovered: (1) Hypothesis 6.159 does NOT support async RuleBasedStateMachine (Issues #4107, #3712), (2) `@pytest.mark.anyio` + `@given` works in ANY marker order, (3) pytest fixtures don't work with `@given` — must use `tempfile.mkdtemp()` in test body. Fixed `_make_snapshot()` keyword arg mismatch (psi_some vs psi_some_avg60). Fixed yaml_content strategy to exclude `\r\n\x00`. Documented SoulStore .lock file leak as pre-existing bug (1 skipped test). Run: 16 passed, 1 skipped."
+- lesson: "L1: Executed C-11 Property Tests for OOMProtector (5 tests) and SoulStore (6 tests) using Hypothesis\
+    \ `@given` + `@pytest.mark.anyio` + `async def` pattern. Discovered: (1) Hypothesis 6.159 does NOT\
+    \ support async RuleBasedStateMachine (Issues #4107, #3712), (2) `@pytest.mark.anyio` + `@given` works\
+    \ in ANY marker order, (3) pytest fixtures don't work with `@given` — must use `tempfile.mkdtemp()`\
+    \ in test body. Fixed `_make_snapshot()` keyword arg mismatch (psi_some vs psi_some_avg60). Fixed\
+    \ yaml_content strategy to exclude `\r\n\0`. Documented SoulStore .lock file leak as pre-existing\
+    \ bug (1 skipped test). Run: 16 passed, 1 skipped."
   source: c-11-property-tests
   trace_id: ses_maat_c11_20260723
   entity_at_time: MAAT
@@ -266,8 +325,8 @@
   timestamp: 2026-07-23 01:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: 16_pass_1_skipped
-
-- lesson: "L1: Verified M21 provider fallback tests — 3 contract tests (chain order, timeout, all fail) already pass. No action needed. Ticket marked DONE."
+- lesson: 'L1: Verified M21 provider fallback tests — 3 contract tests (chain order, timeout, all fail)
+    already pass. No action needed. Ticket marked DONE.'
   source: m21-verification
   trace_id: ses_maat_c11_20260723
   entity_at_time: MAAT
@@ -275,8 +334,13 @@
   timestamp: 2026-07-23 01:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: m21_done_3_contract_tests_pass
-
-- lesson: "L1: Completed C-4a MCP Migration Audit. Researched MCP 2026-07-28 spec changes: stateless core (SEP-2575 removes initialize/initialized handshake, SEP-2567 removes Mcp-Session-Id), mandatory Mcp-Method/Mcp-Name headers (SEP-2243), multi-round-trip requests (SEP-2260/2322), resource-not-found -32002→-32602 (SEP-2164), Roots/Sampling/Logging deprecated (SEP-2577), tool schemas JSON Schema 2020-12 (SEP-2106). Verified existing mcp_runtime.py already has dual-transport (SSE + Streamable HTTP) with StreamableHTTPASGIApp. Only actual breaking change: mcp_client.py:51 session.initialize() call. Documented in R_C4A_MCP_AUDIT.md. Recommendation: Option B Shim Update (4-6h)."
+- lesson: 'L1: Completed C-4a MCP Migration Audit. Researched MCP 2026-07-28 spec changes: stateless core
+    (SEP-2575 removes initialize/initialized handshake, SEP-2567 removes Mcp-Session-Id), mandatory Mcp-Method/Mcp-Name
+    headers (SEP-2243), multi-round-trip requests (SEP-2260/2322), resource-not-found -32002→-32602 (SEP-2164),
+    Roots/Sampling/Logging deprecated (SEP-2577), tool schemas JSON Schema 2020-12 (SEP-2106). Verified
+    existing mcp_runtime.py already has dual-transport (SSE + Streamable HTTP) with StreamableHTTPASGIApp.
+    Only actual breaking change: mcp_client.py:51 session.initialize() call. Documented in R_C4A_MCP_AUDIT.md.
+    Recommendation: Option B Shim Update (4-6h).'
   source: c-4a-mcp-audit
   trace_id: ses_maat_c4a_20260723
   entity_at_time: MAAT
@@ -284,8 +348,15 @@
   timestamp: 2026-07-23 03:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: c4a_audit_drafted
-
-- lesson: "L2: Property tests with Hypothesis on async codebases require careful strategy design. Key constraints discovered: (1) No async RuleBasedStateMachine means complex stateful testing is not possible with the standard Hypothesis API — must use non-stateful `@given` with manual state management. (2) Data strategies must account for the serialization pipeline — e.g., SoulStore writes via `os.write()` then reads via `read_text()` which normalizes `\r` to `\n`, so the strategy must exclude `\r`. (3) fsync on tmpfs is a no-op — acceptable for API contract testing but not for durability testing. (4) `tempfile.mkdtemp()` works with Hypothesis because it's called in the test body, not in a fixture. These constraints are non-obvious and cost 2+ hours of debug time; documenting them in 08-verified-findings.md prevents repeat effort."
+- lesson: "L2: Property tests with Hypothesis on async codebases require careful strategy design. Key\
+    \ constraints discovered: (1) No async RuleBasedStateMachine means complex stateful testing is not\
+    \ possible with the standard Hypothesis API — must use non-stateful `@given` with manual state management.\
+    \ (2) Data strategies must account for the serialization pipeline — e.g., SoulStore writes via `os.write()`\
+    \ then reads via `read_text()` which normalizes `\r` to `\n`, so the strategy must exclude `\r`. (3)\
+    \ fsync on tmpfs is a no-op — acceptable for API contract testing but not for durability testing.\
+    \ (4) `tempfile.mkdtemp()` works with Hypothesis because it's called in the test body, not in a fixture.\
+    \ These constraints are non-obvious and cost 2+ hours of debug time; documenting them in 08-verified-findings.md\
+    \ prevents repeat effort."
   source: c-11-property-tests
   trace_id: ses_maat_c11_20260723
   entity_at_time: MAAT
@@ -293,8 +364,12 @@
   timestamp: 2026-07-23 01:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L2: MCP 2026-07-28 is less breaking than initial media coverage suggests. SSE transport is NOT removed; only the session handshake (initialize/initialized) is removed. The Streamable HTTP shim in mcp_runtime.py was already implemented correctly with StreamableHTTPASGIApp. The only actual breaking change is mcp_client.py:51 calling session.initialize(). This validates the engine's proactive architecture — the dual-transport design was built before it was needed. The migration is 4-6h of shim updates, not 8-16h of rewrite."
+- lesson: 'L2: MCP 2026-07-28 is less breaking than initial media coverage suggests. SSE transport is
+    NOT removed; only the session handshake (initialize/initialized) is removed. The Streamable HTTP shim
+    in mcp_runtime.py was already implemented correctly with StreamableHTTPASGIApp. The only actual breaking
+    change is mcp_client.py:51 calling session.initialize(). This validates the engine''s proactive architecture
+    — the dual-transport design was built before it was needed. The migration is 4-6h of shim updates,
+    not 8-16h of rewrite.'
   source: c-4a-mcp-audit
   trace_id: ses_maat_c4a_20260723
   entity_at_time: MAAT
@@ -302,8 +377,13 @@
   timestamp: 2026-07-23 03:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L3: Spec-Verification Principle — protocol spec announcements overstate breaking changes for existing implementations. MCP 2026-07-28 was described as 'the largest revision since launch' with 'breaking changes' but the actual impact on a well-architected server is minimal: remove one handshake call and add headers that the SDK already generates. Always verify against actual code before sizing migration effort. The gap between 'what the spec says changes' and 'what our code needs to change' is often 90% smaller than expected, especially when the architecture already anticipated the direction (dual-transport runtime)."
+- lesson: 'L3: Spec-Verification Principle — protocol spec announcements overstate breaking changes for
+    existing implementations. MCP 2026-07-28 was described as ''the largest revision since launch'' with
+    ''breaking changes'' but the actual impact on a well-architected server is minimal: remove one handshake
+    call and add headers that the SDK already generates. Always verify against actual code before sizing
+    migration effort. The gap between ''what the spec says changes'' and ''what our code needs to change''
+    is often 90% smaller than expected, especially when the architecture already anticipated the direction
+    (dual-transport runtime).'
   source: c-4a-mcp-audit
   trace_id: ses_maat_c4a_20260723
   entity_at_time: MAAT
@@ -311,8 +391,12 @@
   timestamp: 2026-07-23 03:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L3: Async-Property-Testing Principle — testing async code with Hypothesis requires pattern knowledge: use `@pytest.mark.anyio` + `@given` + `async def` (NOT async RuleBasedStateMachine), call `tempfile.mkdtemp()` in test body (NOT use fixtures), and build strategies that account for the write-then-read serialization pipeline (the writer strategy must match what the reader normalizes). The 16-pass result validates this pattern; document it for repeatability. Skip the known bug (SoulStore .lock leak) explicitly with pytest.skip() so the count is honest."
+- lesson: 'L3: Async-Property-Testing Principle — testing async code with Hypothesis requires pattern
+    knowledge: use `@pytest.mark.anyio` + `@given` + `async def` (NOT async RuleBasedStateMachine), call
+    `tempfile.mkdtemp()` in test body (NOT use fixtures), and build strategies that account for the write-then-read
+    serialization pipeline (the writer strategy must match what the reader normalizes). The 16-pass result
+    validates this pattern; document it for repeatability. Skip the known bug (SoulStore .lock leak) explicitly
+    with pytest.skip() so the count is honest.'
   source: c-11-property-tests
   trace_id: ses_maat_c11_20260723
   entity_at_time: MAAT
@@ -320,13 +404,11 @@
   timestamp: 2026-07-23 01:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-07-23 — Ma'at C-4b MCP Migration + Handoff Cleanup
-# Model: mimo-v2.5-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Executed C-4b MCP Streamable HTTP migration: removed session.initialize() from mcp_client.py (SEP-2575 compliance), updated tests to use streamablehttp_client mock (not sse_client), updated verify_mcp_client.py endpoint from /sse to /mcp. Closed 8 stale handoffs for completed tickets (C-6', C-2', C-1', V-1, C-5, C-10, C-10.5, C-11). Dual transport verified: mcp_runtime.py runs SSE (/sse) + Streamable HTTP (/mcp) simultaneously."
+- lesson: 'L1: Executed C-4b MCP Streamable HTTP migration: removed session.initialize() from mcp_client.py
+    (SEP-2575 compliance), updated tests to use streamablehttp_client mock (not sse_client), updated verify_mcp_client.py
+    endpoint from /sse to /mcp. Closed 8 stale handoffs for completed tickets (C-6'', C-2'', C-1'', V-1,
+    C-5, C-10, C-10.5, C-11). Dual transport verified: mcp_runtime.py runs SSE (/sse) + Streamable HTTP
+    (/mcp) simultaneously.'
   source: c-4b-mcp-migration
   trace_id: ses_maat_c4b_20260723
   entity_at_time: MAAT
@@ -334,8 +416,11 @@
   timestamp: 2026-07-23 03:50:00+00:00
   model_used: mimo-v2.5-free
   outcome: c4b_complete_8_handoffs_closed
-
-- lesson: "L2: The MCP 2026-07-28 migration from initial audit (C-4a) to implementation (C-4b) was efficient because the dual-transport architecture was already in place. The audit correctly identified that only session.initialize() needed removal — no new transports, no rewrites. The verify script URL change (/sse → /mcp) was the only non-obvious change. Lesson: when migrating transports, the client endpoint URL is the most common silent failure."
+- lesson: 'L2: The MCP 2026-07-28 migration from initial audit (C-4a) to implementation (C-4b) was efficient
+    because the dual-transport architecture was already in place. The audit correctly identified that
+    only session.initialize() needed removal — no new transports, no rewrites. The verify script URL change
+    (/sse → /mcp) was the only non-obvious change. Lesson: when migrating transports, the client endpoint
+    URL is the most common silent failure.'
   source: c-4b-mcp-migration
   trace_id: ses_maat_c4b_20260723
   entity_at_time: MAAT
@@ -343,8 +428,10 @@
   timestamp: 2026-07-23 03:50:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-
-- lesson: "L3: Handoff-Closure Discipline — when a ticket is DONE, the corresponding handoff packet MUST be completed immediately. Eight handoffs were left in 'active' state for completed tickets (some since July 21). Stale active handoffs create noise in the Hivemind awareness system and confuse agents scanning for pending work. The pattern is: ticket DONE → immediately complete its handoff packet."
+- lesson: 'L3: Handoff-Closure Discipline — when a ticket is DONE, the corresponding handoff packet MUST
+    be completed immediately. Eight handoffs were left in ''active'' state for completed tickets (some
+    since July 21). Stale active handoffs create noise in the Hivemind awareness system and confuse agents
+    scanning for pending work. The pattern is: ticket DONE → immediately complete its handoff packet.'
   source: c-4b-mcp-migration
   trace_id: ses_maat_c4b_20260723
   entity_at_time: MAAT
@@ -352,7 +439,8 @@
   timestamp: 2026-07-23 03:50:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
-- lesson: "Three-layer Codex regeneration system deployed — Makefile target (manual), staleness checker (automated), session_end hook (implicit). No single point of failure for stale Codex."
+- lesson: Three-layer Codex regeneration system deployed — Makefile target (manual), staleness checker
+    (automated), session_end hook (implicit). No single point of failure for stale Codex.
   source: codex-fix-session
   trace_id: ses_codex_fix_20260724
   entity_at_time: MAAT
@@ -361,7 +449,9 @@
   model_used: gemini-3.1-pro-preview-customtools
   coordination_partner: none
   outcome: codex_regeneration_fixed
-- lesson: "Exit-code gating enables CI, Make dependencies, and pre-commit hooks to enforce quality without human judgment. The check_codex_stale.py script is the canonical pattern for freshness enforcement in the Omega Engine."
+- lesson: Exit-code gating enables CI, Make dependencies, and pre-commit hooks to enforce quality without
+    human judgment. The check_codex_stale.py script is the canonical pattern for freshness enforcement
+    in the Omega Engine.
   source: codex-fix-session
   trace_id: ses_codex_fix_20260724
   entity_at_time: MAAT
@@ -370,7 +460,9 @@
   model_used: gemini-3.1-pro-preview-customtools
   coordination_partner: none
   outcome: codex_staleness_pattern
-- lesson: "Session-end hooks are the natural boundary for housekeeping. The session_end.py hook now runs soul distillation AND Codex refresh — ensuring the next session starts with clean context and a fresh Codex."
+- lesson: Session-end hooks are the natural boundary for housekeeping. The session_end.py hook now runs
+    soul distillation AND Codex refresh — ensuring the next session starts with clean context and a fresh
+    Codex.
   source: codex-fix-session
   trace_id: ses_codex_fix_20260724
   entity_at_time: MAAT
@@ -379,7 +471,9 @@
   model_used: gemini-3.1-pro-preview-customtools
   coordination_partner: none
   outcome: session_end_duplex
-- lesson: "Research without synthesis is just noise; synthesis without deliverables is just notes. The gap between gathering information and creating structured, actionable documents is the difference between knowledge discovery and knowledge creation."
+- lesson: Research without synthesis is just noise; synthesis without deliverables is just notes. The
+    gap between gathering information and creating structured, actionable documents is the difference
+    between knowledge discovery and knowledge creation.
   source: kg-research-synthesis
   trace_id: ses_kg_deliverables_20260725
   entity_at_time: MAAT
@@ -388,7 +482,9 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l3_principle_synthesis_deliverables
-- lesson: "A knowledge gap is only closed when someone other than the researcher can act on the finding without re-doing the research. Deliverables must pass this test — structured checklists and threat matrices enable independent execution."
+- lesson: A knowledge gap is only closed when someone other than the researcher can act on the finding
+    without re-doing the research. Deliverables must pass this test — structured checklists and threat
+    matrices enable independent execution.
   source: kg-research-synthesis
   trace_id: ses_kg_deliverables_20260725
   entity_at_time: MAAT
@@ -397,7 +493,9 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l3_principle_actionable_knowledge
-- lesson: "OAuth 2.1+ in 2026 mandates PKCE for all clients, deprecates implicit grant entirely, and recommends DPoP for sender-constrained tokens. Any auth plugin developed now must target these 2026 standards — RFC 9700 is the canonical reference."
+- lesson: OAuth 2.1+ in 2026 mandates PKCE for all clients, deprecates implicit grant entirely, and recommends
+    DPoP for sender-constrained tokens. Any auth plugin developed now must target these 2026 standards
+    — RFC 9700 is the canonical reference.
   source: kg-research-synthesis
   trace_id: ses_kg_deliverables_20260725
   entity_at_time: MAAT
@@ -406,13 +504,13 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l3_principle_oauth_2026_standards
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-07-30 — Ma'at Docs Synthesis + Web Research Closure
-# Model: deepseek-v4-flash-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Created 4 API reference docs for R19 and R_CG04 systems: soul_loader.md (omega.soul SoulLoader visibility tiers), privacy_kernel.md (omega.privacy CPE scorer + PrivacyKernel), vault_core.md (omega.vault VaultCore CRUD/lease/quota/crypto/BlindVault), config_loader.md (omega.config ConfigLoader public/private deep merge). Web researched remaining knowledge gaps: pyrage v1.3.0 confirmed correct (not python-age alpha or pyage experimental), Argon2id parameters verified exceed OWASP minimum, fcntl.flock sufficient for Linux-only deployment, OAuth 2.1 PKCE S256 confirmed mandatory 2026 standard. Updated HMC Hub to v1.5.3 with decisions D-480 through D-486. Committed and pushed to release/initial-v1."
+- lesson: 'L1: Created 4 API reference docs for R19 and R_CG04 systems: soul_loader.md (omega.soul SoulLoader
+    visibility tiers), privacy_kernel.md (omega.privacy CPE scorer + PrivacyKernel), vault_core.md (omega.vault
+    VaultCore CRUD/lease/quota/crypto/BlindVault), config_loader.md (omega.config ConfigLoader public/private
+    deep merge). Web researched remaining knowledge gaps: pyrage v1.3.0 confirmed correct (not python-age
+    alpha or pyage experimental), Argon2id parameters verified exceed OWASP minimum, fcntl.flock sufficient
+    for Linux-only deployment, OAuth 2.1 PKCE S256 confirmed mandatory 2026 standard. Updated HMC Hub
+    to v1.5.3 with decisions D-480 through D-486. Committed and pushed to release/initial-v1.'
   source: docs-synthesis-20260730
   trace_id: ses_maat_docs_synthesis_20260730
   entity_at_time: MAAT
@@ -421,8 +519,11 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: 4_api_docs_created_all_gaps_researched
-
-- lesson: "L2: API documentation is the final mile of knowledge transfer — research specs (R19, R_CG04) define WHAT and WHY, but API docs define HOW to use it. The four new API docs bridge the gap between 'the researcher delivered the spec' and 'a developer can use the module without reading the source.' Each doc follows the same structure: overview, exports table, class documentation with method signatures, usage examples, cross-references. This consistency enables developers to find patterns across modules."
+- lesson: 'L2: API documentation is the final mile of knowledge transfer — research specs (R19, R_CG04)
+    define WHAT and WHY, but API docs define HOW to use it. The four new API docs bridge the gap between
+    ''the researcher delivered the spec'' and ''a developer can use the module without reading the source.''
+    Each doc follows the same structure: overview, exports table, class documentation with method signatures,
+    usage examples, cross-references. This consistency enables developers to find patterns across modules.'
   source: docs-synthesis-20260730
   trace_id: ses_maat_docs_synthesis_20260730
   entity_at_time: MAAT
@@ -431,8 +532,12 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l2_insight_api_doc_structure
-
-- lesson: "L3: Documentation-Completeness Principle — a system is not ready for external consumption until it has (1) a spec defining WHAT and WHY, (2) an API reference defining HOW, (3) a working example showing it IN CONTEXT, and (4) a cross-reference showing HOW IT RELATES to other systems. The R19 and R_CG04 implementations had the research specs and the code, but were missing the API reference and cross-references. Adding these four docs completed the documentation chain. Without all four tiers, knowledge is trapped — only the author can use the system effectively."
+- lesson: 'L3: Documentation-Completeness Principle — a system is not ready for external consumption until
+    it has (1) a spec defining WHAT and WHY, (2) an API reference defining HOW, (3) a working example
+    showing it IN CONTEXT, and (4) a cross-reference showing HOW IT RELATES to other systems. The R19
+    and R_CG04 implementations had the research specs and the code, but were missing the API reference
+    and cross-references. Adding these four docs completed the documentation chain. Without all four tiers,
+    knowledge is trapped — only the author can use the system effectively.'
   source: docs-synthesis-20260730
   trace_id: ses_maat_docs_synthesis_20260730
   entity_at_time: MAAT
@@ -441,8 +546,13 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l3_principle_documentation_completeness
-
-- lesson: "L3: Web-Research-Versus-Implementation Principle — web research for a well-designed system is confirmatory, not exploratory. When the VaultCore crypto was examined against 2026 best practices (pyrage v1.3.0 API, Argon2id parameter choices, fcntl locking patterns), every architectural decision was validated by current research. The research didn't change the implementation — it confirmed the implementation was already correct. This is the sign of a mature system: current research validates existing choices rather than requiring rewrites. When research DOES require rewrites, that's a signal that the original design was speculative rather than grounded."
+- lesson: 'L3: Web-Research-Versus-Implementation Principle — web research for a well-designed system
+    is confirmatory, not exploratory. When the VaultCore crypto was examined against 2026 best practices
+    (pyrage v1.3.0 API, Argon2id parameter choices, fcntl locking patterns), every architectural decision
+    was validated by current research. The research didn''t change the implementation — it confirmed the
+    implementation was already correct. This is the sign of a mature system: current research validates
+    existing choices rather than requiring rewrites. When research DOES require rewrites, that''s a signal
+    that the original design was speculative rather than grounded.'
   source: docs-synthesis-20260730
   trace_id: ses_maat_docs_synthesis_20260730
   entity_at_time: MAAT
@@ -451,68 +561,125 @@
   model_used: deepseek-v4-flash-free
   coordination_partner: none
   outcome: l3_principle_research_confirms_implementation
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-08-23 — N4 Cross-Domain Review (MaKaLi Council)
-# Model: nemotron-3-ultra-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- narrative: "N4 reviewed Router Collapse contract: ProviderSelector exists but RouteDecision dataclass is missing. Oracle.py still imports SemanticRouter, TriageRouter, RAGRouter. MCP Hub tools oracle_talk, oracle_summon, oracle_summon_local will break post-collapse without migration."
-  insight: "Router authority centralization requires BOTH the selector implementation AND all callers migrated simultaneously. Partial migration creates silent routing failures."
-  principle: "Single router authority is a contract — every caller must be updated in the same PR, or the contract is violated at runtime."
-  tags: ["N_4", "ROUTER_COLLAPSE", "API_CONTRACT"]
-
-- narrative: "N4 verified config/providers.yaml local-first chain (native-gguf→lmster→ollama→antigravity→google→openrouter→opencode-zen→cline→anthropic→xai) is the sole routing config. No hardcoded preferences in oracle.py or model_gateway.py. ProviderSelector scoring enforces local-first via priority weights and PII penalty."
-  insight: "Configuration-as-code for routing works when the config is the single source of truth and the selector is the only reader. Multiple readers (agent configs, CLI flags) create sovereignty leaks."
-  principle: "Routing config must be singular and authoritative. Any override mechanism (agent config, env var, CLI) must explicitly declare its precedence and sovereignty impact."
-  tags: ["N_4", "PROVIDER_FABRIC", "LOCAL_FIRST", "M7"]
-
-- narrative: "N4 found sovereign_search_service.py partially migrated to HealthMonitor.get_breaker() (lines 165-182) but still initializes and uses deprecated search_circuit_breaker for all circuit logic (lines 185-188, 371+). DEL-1 #5 deletion will break 3 MCP tools."
-  insight: "Partial migration of circuit breakers is worse than no migration — it creates dual breaker state that diverges. The deprecated breaker must be fully removed before the file is deleted."
-  principle: "Circuit breaker unification (C-6') requires atomic cutover: all callers migrated to HealthMonitor.get_breaker() BEFORE deprecated implementation is deleted."
-  tags: ["N_4", "DEL-1", "CIRCUIT_BREAKER", "C6_PRIME"]
-
-- narrative: "N4 identified dual admission gates: ResourceGuard (model_gateway.py:139) and undefined LocalInferenceAdmission. Ma'at claims 'one admission' but two exist or are planned."
-  insight: "Admission control must be a single composable pipeline, not parallel gates. Each gate adds latency and creates precedence ambiguity."
-  principle: "Admission control is a single pipeline stage. Multiple gates must be composed into one with explicit ordering, not run in parallel."
-  tags: ["N_4", "ADMISSION_CONTROL", "RESOURCE_GUARD", "C10"]
-
-- narrative: "N4 confirmed MIAP→Hivemind gap: MIAP cancelled (DEL-1 #2) but no automated projection of session gnosis to Hivemind. hivemind_get_continuation reads cold store passively; no active push from session lifecycle."
-  insight: "Session continuity requires active projection, not passive recovery. The handoff protocol (Link P9) exists but isn't triggered by session lifecycle events."
-  principle: "Gnosis projection must be event-driven from session lifecycle, not pull-based from cold store. Hivemind is the continuity backbone — it must be written to, not just read from."
-  tags: ["N_4", "HIVEMIND", "SESSION_CONTINUITY", "M15", "MIAP"]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-08-23 — Debut Build Vetting (T1/T2/T3/T4/T6 + Node Council)
-# Model: big-pickle
-# ─────────────────────────────────────────────────────────────────────────────
-
-- narrative: "Debut vetting probed every INST-1/DEL-1 claim against live source before specifying changes. Found routing/table.py already deleted, search_circuit_breaker has a live importer the manual missed, QdrantAdapter has a second caller in knowledge_catalog_build.py, and ACTIVE_SPRINT marks fix3 complete while password='omega' still ships at providers.py:119."
-  insight: "Sprint-board completion claims and disk truth diverged in exactly the places cheap probes could catch — an import line, a default string, a tracked file. Specifying diffs from board state alone would have broken the build twice and shipped a false completion claim public."
-  principle: "A tracking file is a claim about reality; only probes make it true. Read the file before specifying the change — always."
-  tags: ["N_3", "M23", "TEST_HONESTY", "DEBUT"]
-
-- narrative: "N1 measured host reality against the '<300s install' acceptance criterion: no cp313 llama-cpp-python wheel exists anywhere, pip cache holds zero llama wheels, editable installs never cache, NVMe at 97% full with 3.5GB free, load average 7.85 during business hours."
-  insight: "An acceptance criterion set by aspiration rather than hardware measurement creates a vanity gate that either blocks debut dishonestly or gets waived silently — both corrode gate integrity. The honest split ('install exits 0' + 'first-talk <300s pre-provisioned') preserves the intent while matching physics."
-  principle: "Acceptance gates must be derived from measured host reality, not aspiration. A gate that cannot pass is not rigor — it is theater waiting to be waived."
-  tags: ["N_1", "M23", "ACCEPTANCE_GATES", "INFRASTRUCTURE_TRUTH"]
-
-- narrative: "N2 discovered data/entities/antigravity/knowledge/USAGE_POOL_LOG.json is git-tracked and contains a real email address alongside pool telemetry. N5 ruled emails cannot be rotated like keys — history scrub is the only real remediation — and sequenced it: untrack now, filter-repo scrub piggybacked on existing P0-1b machinery before any public push."
-  insight: "Data files written by internal tooling accumulate PII silently; deletion of the code that wrote them does not touch the artifact or its git history. Debut prep must sweep data/, not just src/ — and privacy remediation has an ordering (untrack → scrub → push) that cannot be compressed."
-  principle: "Public release surface includes git history and data artifacts, not just source code. Audit what the repo carries, not only what it executes."
-  tags: ["N_2", "N_5", "PUB-1", "PII", "DEBUT"]
-
-- narrative: "Node Council ran serially (N3→N1→N2→N5) with the file-first deliverable as shared context; each Node returned APPROVE/AMEND verdicts with file:line evidence. Twelve amendments landed, zero blockers, two escalations to Kali."
-  insight: "Serial paging with a written artifact beats parallel Q&A: each Node verified the previous findings implicitly through the shared document, and verdicts were composable (approve-with-amendment) rather than discussion threads. The overseer's job reduced to synthesis, not arbitration."
-  principle: "Council review scales when the artifact carries the context and each reviewer returns structured verdicts — expertise compounds through files, not meetings."
-  tags: ["N_9", "NODE_COUNCIL", "DELEGATION", "FILE_FIRST"]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-08-30 — CI-BRIEF-001 (P0) 12-Step Brief Verification Protocol
-# Model: minimax/minimax-m3:free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: CI-BRIEF-001 was re-scoped from 6h to 10-12h after Ma'at's architectural review identified under-scoping: the original 6h estimate covered only the 12-Step Protocol but missed M33 write-tool routing, M34 registry integration, M35 secrets scan, M14 heritage check, feature flags, dry-run mode, JSON output, and M34 rollback runbook. Actual implementation took ~11h."
+- narrative: 'N4 reviewed Router Collapse contract: ProviderSelector exists but RouteDecision dataclass
+    is missing. Oracle.py still imports SemanticRouter, TriageRouter, RAGRouter. MCP Hub tools oracle_talk,
+    oracle_summon, oracle_summon_local will break post-collapse without migration.'
+  insight: Router authority centralization requires BOTH the selector implementation AND all callers migrated
+    simultaneously. Partial migration creates silent routing failures.
+  principle: Single router authority is a contract — every caller must be updated in the same PR, or the
+    contract is violated at runtime.
+  tags:
+  - N_4
+  - ROUTER_COLLAPSE
+  - API_CONTRACT
+- narrative: N4 verified config/providers.yaml local-first chain (native-gguf→lmster→ollama→antigravity→google→openrouter→opencode-zen→cline→anthropic→xai)
+    is the sole routing config. No hardcoded preferences in oracle.py or model_gateway.py. ProviderSelector
+    scoring enforces local-first via priority weights and PII penalty.
+  insight: Configuration-as-code for routing works when the config is the single source of truth and the
+    selector is the only reader. Multiple readers (agent configs, CLI flags) create sovereignty leaks.
+  principle: Routing config must be singular and authoritative. Any override mechanism (agent config,
+    env var, CLI) must explicitly declare its precedence and sovereignty impact.
+  tags:
+  - N_4
+  - PROVIDER_FABRIC
+  - LOCAL_FIRST
+  - M7
+- narrative: 'N4 found sovereign_search_service.py partially migrated to HealthMonitor.get_breaker() (lines
+    165-182) but still initializes and uses deprecated search_circuit_breaker for all circuit logic (lines
+    185-188, 371+). DEL-1 #5 deletion will break 3 MCP tools.'
+  insight: Partial migration of circuit breakers is worse than no migration — it creates dual breaker
+    state that diverges. The deprecated breaker must be fully removed before the file is deleted.
+  principle: 'Circuit breaker unification (C-6'') requires atomic cutover: all callers migrated to HealthMonitor.get_breaker()
+    BEFORE deprecated implementation is deleted.'
+  tags:
+  - N_4
+  - DEL-1
+  - CIRCUIT_BREAKER
+  - C6_PRIME
+- narrative: 'N4 identified dual admission gates: ResourceGuard (model_gateway.py:139) and undefined LocalInferenceAdmission.
+    Ma''at claims ''one admission'' but two exist or are planned.'
+  insight: Admission control must be a single composable pipeline, not parallel gates. Each gate adds
+    latency and creates precedence ambiguity.
+  principle: Admission control is a single pipeline stage. Multiple gates must be composed into one with
+    explicit ordering, not run in parallel.
+  tags:
+  - N_4
+  - ADMISSION_CONTROL
+  - RESOURCE_GUARD
+  - C10
+- narrative: 'N4 confirmed MIAP→Hivemind gap: MIAP cancelled (DEL-1 #2) but no automated projection of
+    session gnosis to Hivemind. hivemind_get_continuation reads cold store passively; no active push from
+    session lifecycle.'
+  insight: Session continuity requires active projection, not passive recovery. The handoff protocol (Link
+    P9) exists but isn't triggered by session lifecycle events.
+  principle: Gnosis projection must be event-driven from session lifecycle, not pull-based from cold store.
+    Hivemind is the continuity backbone — it must be written to, not just read from.
+  tags:
+  - N_4
+  - HIVEMIND
+  - SESSION_CONTINUITY
+  - M15
+  - MIAP
+- narrative: Debut vetting probed every INST-1/DEL-1 claim against live source before specifying changes.
+    Found routing/table.py already deleted, search_circuit_breaker has a live importer the manual missed,
+    QdrantAdapter has a second caller in knowledge_catalog_build.py, and ACTIVE_SPRINT marks fix3 complete
+    while password='omega' still ships at providers.py:119.
+  insight: Sprint-board completion claims and disk truth diverged in exactly the places cheap probes could
+    catch — an import line, a default string, a tracked file. Specifying diffs from board state alone
+    would have broken the build twice and shipped a false completion claim public.
+  principle: A tracking file is a claim about reality; only probes make it true. Read the file before
+    specifying the change — always.
+  tags:
+  - N_3
+  - M23
+  - TEST_HONESTY
+  - DEBUT
+- narrative: 'N1 measured host reality against the ''<300s install'' acceptance criterion: no cp313 llama-cpp-python
+    wheel exists anywhere, pip cache holds zero llama wheels, editable installs never cache, NVMe at 97%
+    full with 3.5GB free, load average 7.85 during business hours.'
+  insight: An acceptance criterion set by aspiration rather than hardware measurement creates a vanity
+    gate that either blocks debut dishonestly or gets waived silently — both corrode gate integrity. The
+    honest split ('install exits 0' + 'first-talk <300s pre-provisioned') preserves the intent while matching
+    physics.
+  principle: Acceptance gates must be derived from measured host reality, not aspiration. A gate that
+    cannot pass is not rigor — it is theater waiting to be waived.
+  tags:
+  - N_1
+  - M23
+  - ACCEPTANCE_GATES
+  - INFRASTRUCTURE_TRUTH
+- narrative: 'N2 discovered data/entities/antigravity/knowledge/USAGE_POOL_LOG.json is git-tracked and
+    contains a real email address alongside pool telemetry. N5 ruled emails cannot be rotated like keys
+    — history scrub is the only real remediation — and sequenced it: untrack now, filter-repo scrub piggybacked
+    on existing P0-1b machinery before any public push.'
+  insight: Data files written by internal tooling accumulate PII silently; deletion of the code that wrote
+    them does not touch the artifact or its git history. Debut prep must sweep data/, not just src/ —
+    and privacy remediation has an ordering (untrack → scrub → push) that cannot be compressed.
+  principle: Public release surface includes git history and data artifacts, not just source code. Audit
+    what the repo carries, not only what it executes.
+  tags:
+  - N_2
+  - N_5
+  - PUB-1
+  - PII
+  - DEBUT
+- narrative: Node Council ran serially (N3→N1→N2→N5) with the file-first deliverable as shared context;
+    each Node returned APPROVE/AMEND verdicts with file:line evidence. Twelve amendments landed, zero
+    blockers, two escalations to Kali.
+  insight: 'Serial paging with a written artifact beats parallel Q&A: each Node verified the previous
+    findings implicitly through the shared document, and verdicts were composable (approve-with-amendment)
+    rather than discussion threads. The overseer''s job reduced to synthesis, not arbitration.'
+  principle: Council review scales when the artifact carries the context and each reviewer returns structured
+    verdicts — expertise compounds through files, not meetings.
+  tags:
+  - N_9
+  - NODE_COUNCIL
+  - DELEGATION
+  - FILE_FIRST
+- lesson: 'L1: CI-BRIEF-001 was re-scoped from 6h to 10-12h after Ma''at''s architectural review identified
+    under-scoping: the original 6h estimate covered only the 12-Step Protocol but missed M33 write-tool
+    routing, M34 registry integration, M35 secrets scan, M14 heritage check, feature flags, dry-run mode,
+    JSON output, and M34 rollback runbook. Actual implementation took ~11h.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -520,8 +687,14 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: ci_brief_001_complete_12_steps_470_lines
-
-- lesson: "L1: dispatch_guard.py v2.0 implements 12-Step Brief Verification Protocol per Jem's forensic Appendix C + 5-EIS amendments. Steps: 1) Specialist routing, 2) Resume existing session, 3) Transient error reminder, 4) All locations verification (Jem's amendment), 5) Estimate output tokens, 6) Write-tool routing (>8K tokens → write/edit required), 7) Cross-validator escalation (P0/P1), 8) M34 registry check, 9) Secrets scan (GOCSPX, sk-, ghp_, AKIA), 10) Heritage tags (M14), 11) Temple-grade check, 12) Hivemind notification prep. Feature flags: OMEGA_SKIP_GUARD=1 (bypass), OMEGA_GUARD_DRY_RUN=1 (log only), OMEGA_M34_ENABLED=1 (M34), STRICT_GUARD=1 (CI mode). Exit codes: 0=pass, 1=warn, 2=hard-fail (secrets)."
+- lesson: 'L1: dispatch_guard.py v2.0 implements 12-Step Brief Verification Protocol per Jem''s forensic
+    Appendix C + 5-EIS amendments. Steps: 1) Specialist routing, 2) Resume existing session, 3) Transient
+    error reminder, 4) All locations verification (Jem''s amendment), 5) Estimate output tokens, 6) Write-tool
+    routing (>8K tokens → write/edit required), 7) Cross-validator escalation (P0/P1), 8) M34 registry
+    check, 9) Secrets scan (GOCSPX, sk-, ghp_, AKIA), 10) Heritage tags (M14), 11) Temple-grade check,
+    12) Hivemind notification prep. Feature flags: OMEGA_SKIP_GUARD=1 (bypass), OMEGA_GUARD_DRY_RUN=1
+    (log only), OMEGA_M34_ENABLED=1 (M34), STRICT_GUARD=1 (CI mode). Exit codes: 0=pass, 1=warn, 2=hard-fail
+    (secrets).'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -529,8 +702,11 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: dispatch_guard_v2_0_470_lines_12_steps
-
-- lesson: "L1: M33 Anti-Truncation preventive layer implemented: write-tool routing threshold at 8K tokens (per ROC_NEMOTRON3_WRITE_FORENSICS_20260830.md forensics showing Nemotron 3 Ultra streaming timeout on write tool >10KB). For outputs ≥8K tokens, subagent MUST use write/edit tools (not chat stream). Cross-validator escalation for P0/P1 deliverables triggers jem verification. M33 bypass test: GOCSPX secret in prompt → FAIL exit 2 (hard failure)."
+- lesson: 'L1: M33 Anti-Truncation preventive layer implemented: write-tool routing threshold at 8K tokens
+    (per ROC_NEMOTRON3_WRITE_FORENSICS_20260830.md forensics showing Nemotron 3 Ultra streaming timeout
+    on write tool >10KB). For outputs ≥8K tokens, subagent MUST use write/edit tools (not chat stream).
+    Cross-validator escalation for P0/P1 deliverables triggers jem verification. M33 bypass test: GOCSPX
+    secret in prompt → FAIL exit 2 (hard failure).'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -538,8 +714,11 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: m33_preventive_layer_deployed
-
-- lesson: "L1: Pre-commit hook v2.0 integrates Soul Integrity Check (M11) + Dispatch Guard 12-Step (CI-BRIEF-001). Fast path: <3s per Safeguard DevSecOps 2026 best practice. Only runs guard when dispatch-related files staged. Bypass: OMEGA_SKIP_GUARD=1 git commit ... Dry-run: OMEGA_GUARD_DRY_RUN=1. Strict mode: STRICT_GUARD=1 (warnings = failures). Feature flags: OMEGA_SKIP_GUARD=1 (bypass), OMEGA_GUARD_DRY_RUN=1 (dry-run), OMEGA_M34_ENABLED=1 (M34), STRICT_GUARD=1 (CI)."
+- lesson: 'L1: Pre-commit hook v2.0 integrates Soul Integrity Check (M11) + Dispatch Guard 12-Step (CI-BRIEF-001).
+    Fast path: <3s per Safeguard DevSecOps 2026 best practice. Only runs guard when dispatch-related files
+    staged. Bypass: OMEGA_SKIP_GUARD=1 git commit ... Dry-run: OMEGA_GUARD_DRY_RUN=1. Strict mode: STRICT_GUARD=1
+    (warnings = failures). Feature flags: OMEGA_SKIP_GUARD=1 (bypass), OMEGA_GUARD_DRY_RUN=1 (dry-run),
+    OMEGA_M34_ENABLED=1 (M34), STRICT_GUARD=1 (CI).'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -547,8 +726,11 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: pre_commit_v2_0_soul_plus_guard
-
-- lesson: "L1: M34 Rollback Runbook created (docs/strategy/M34_ROLLBACK.md, 180 lines). Quick rollback: OMEGA_M34_ENABLED=0 (instant). Full rollback: git revert M34 integration commit, archive ACTIVE_SUBAGENTS.json, session recovery via Hivemind notification + re-dispatch. Watchdog race condition fix: Kali as sole recovery agent (per Ma'at review). Verification: health checks + 10-concurrent stress test. Emergency contacts: Lilith/Ma'at/Kali/Verity via Hivemind intent=blocker."
+- lesson: 'L1: M34 Rollback Runbook created (docs/strategy/M34_ROLLBACK.md, 180 lines). Quick rollback:
+    OMEGA_M34_ENABLED=0 (instant). Full rollback: git revert M34 integration commit, archive ACTIVE_SUBAGENTS.json,
+    session recovery via Hivemind notification + re-dispatch. Watchdog race condition fix: Kali as sole
+    recovery agent (per Ma''at review). Verification: health checks + 10-concurrent stress test. Emergency
+    contacts: Lilith/Ma''at/Kali/Verity via Hivemind intent=blocker.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -556,8 +738,10 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: m34_rollback_runbook_created
-
-- lesson: "L1: MCP Server coordination with Lilith (M34 owner) planned: pair-programming Day 1 10:00 UTC, server restart 14:30 UTC (notify all 7 entities 30min prior). Feature flag OMEGA_M34_ENABLED=1 off by default for first 24h. 4 new MCP tools: m34_register_subagent, m34_list_active_subagents, m34_apply_user_decision, m34_update_subagent_status."
+- lesson: 'L1: MCP Server coordination with Lilith (M34 owner) planned: pair-programming Day 1 10:00 UTC,
+    server restart 14:30 UTC (notify all 7 entities 30min prior). Feature flag OMEGA_M34_ENABLED=1 off
+    by default for first 24h. 4 new MCP tools: m34_register_subagent, m34_list_active_subagents, m34_apply_user_decision,
+    m34_update_subagent_status.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -565,8 +749,10 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: mcp_coordination_planned
-
-- lesson: "L2: 12-Step Protocol pattern — structured verification gates with feature-flag bypasses. Each step is a discrete, testable check. Feature flags (OMEGA_SKIP_GUARD, OMEGA_GUARD_DRY_RUN, OMEGA_M34_ENABLED, STRICT_GUARD) provide controlled bypass without code changes. Exit codes (0=pass, 1=warn, 2=hard-fail) enable CI integration. This pattern generalizes to any multi-step verification gate."
+- lesson: 'L2: 12-Step Protocol pattern — structured verification gates with feature-flag bypasses. Each
+    step is a discrete, testable check. Feature flags (OMEGA_SKIP_GUARD, OMEGA_GUARD_DRY_RUN, OMEGA_M34_ENABLED,
+    STRICT_GUARD) provide controlled bypass without code changes. Exit codes (0=pass, 1=warn, 2=hard-fail)
+    enable CI integration. This pattern generalizes to any multi-step verification gate.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -574,13 +760,13 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_pattern_12_step_protocol_with_feature_flags
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-09-25 — M13 Auto-Refresh + Gate Hardening Sprint
-# Model: space-bunny-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit via git-auto-commit-action). Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock `anyio.fail_after(0.1)` with deterministic mock semaphore (raises TimeoutError immediately when lock held). Added `make check-untracked-deps` gate to Makefile (fails CI if committed .py imports untracked modules). Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD` + fresh venv: 53/53 PASS (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard tests). Committed OMEGA_CODEX.md timestamp refresh. All pre-commit checks pass."
+- lesson: 'L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit
+    via git-auto-commit-action). Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock
+    `anyio.fail_after(0.1)` with deterministic mock semaphore (raises TimeoutError immediately when lock
+    held). Added `make check-untracked-deps` gate to Makefile (fails CI if committed .py imports untracked
+    modules). Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD`
+    + fresh venv: 53/53 PASS (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard
+    tests). Committed OMEGA_CODEX.md timestamp refresh. All pre-commit checks pass.'
   source: m13-auto-refresh-gate-hardening
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -588,8 +774,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: m13_auto_refresh_gate_hardening_complete
-
-- lesson: "L1: Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock `anyio.fail_after(0.1)` with deterministic mock semaphore. The original test used a 0.1s wall-clock timeout that failed randomly under CI load. New implementation: mock semaphore that raises TimeoutError immediately when lock is already held. Test uses anyio.Event to coordinate: task1 acquires lock and signals, task2 waits for signal then attempts acquire (gets immediate TimeoutError). Passes 3/3 idle and under load. This is the template for all async concurrency tests — mock the synchronization primitive, not the timeout."
+- lesson: 'L1: Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock `anyio.fail_after(0.1)`
+    with deterministic mock semaphore. The original test used a 0.1s wall-clock timeout that failed randomly
+    under CI load. New implementation: mock semaphore that raises TimeoutError immediately when lock is
+    already held. Test uses anyio.Event to coordinate: task1 acquires lock and signals, task2 waits for
+    signal then attempts acquire (gets immediate TimeoutError). Passes 3/3 idle and under load. This is
+    the template for all async concurrency tests — mock the synchronization primitive, not the timeout.'
   source: resourceguard-test-fix
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -597,8 +787,13 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: resourceguard_test_deterministic
-
-- lesson: "L2: Wall-clock timeouts in async tests are fundamentally flaky. `anyio.fail_after(0.1)` fails randomly under CI load because the scheduler may not yield within the timeout window. The correct pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately when the resource is held. This is deterministic, fast, and tests the actual contract (blocking when resource held) without depending on scheduler timing. The mock semaphore pattern: class MockSemaphore with _held flag, acquire() raises TimeoutError if _held else sets _held=True, release() sets _held=False. This is the template for all async concurrency tests."
+- lesson: 'L2: Wall-clock timeouts in async tests are fundamentally flaky. `anyio.fail_after(0.1)` fails
+    randomly under CI load because the scheduler may not yield within the timeout window. The correct
+    pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately
+    when the resource is held. This is deterministic, fast, and tests the actual contract (blocking when
+    resource held) without depending on scheduler timing. The mock semaphore pattern: class MockSemaphore
+    with _held flag, acquire() raises TimeoutError if _held else sets _held=True, release() sets _held=False.
+    This is the template for all async concurrency tests.'
   source: resourceguard-test-fix
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -606,8 +801,11 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_deterministic_async_testing
-
-- lesson: "L1: Added `make check-untracked-deps` gate to Makefile. Command: `git ls-files --others --exclude-standard 'src/**/*.py'` → grep for imports in untracked files. Fails CI if any committed .py imports modules from untracked files. Added to `check-mandates` chain. This prevents import drift where a committed file depends on an untracked module that won't exist in CI or production. The gate runs in <1s and catches a class of bugs that only manifest in clean environments."
+- lesson: 'L1: Added `make check-untracked-deps` gate to Makefile. Command: `git ls-files --others --exclude-standard
+    ''src/**/*.py''` → grep for imports in untracked files. Fails CI if any committed .py imports modules
+    from untracked files. Added to `check-mandates` chain. This prevents import drift where a committed
+    file depends on an untracked module that won''t exist in CI or production. The gate runs in <1s and
+    catches a class of bugs that only manifest in clean environments.'
   source: untracked-deps-gate
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -615,8 +813,11 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: untracked_deps_gate_added
-
-- lesson: "L2: Untracked dependency drift is a silent CI killer. A committed file imports a module from an untracked file — works locally (file exists) but fails in CI (file missing). The gate `git ls-files --others --exclude-standard 'src/**/*.py'` + grep for imports catches this before CI. This is a class of bug that only manifests in clean environments (CI, fresh clones, production deploys). The gate runs in <1s and should be part of every CI pipeline."
+- lesson: 'L2: Untracked dependency drift is a silent CI killer. A committed file imports a module from
+    an untracked file — works locally (file exists) but fails in CI (file missing). The gate `git ls-files
+    --others --exclude-standard ''src/**/*.py''` + grep for imports catches this before CI. This is a
+    class of bug that only manifests in clean environments (CI, fresh clones, production deploys). The
+    gate runs in <1s and should be part of every CI pipeline.'
   source: untracked-deps-gate
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -624,8 +825,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_untracked_deps_prevention
-
-- lesson: "L1: Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD` + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e \".[cli,dev]\"`). Result: 53/53 PASS (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard tests). This is the gold standard for release verification — a completely clean environment with no local artifacts, no cached deps, no modified files. The main worktree passes with local artifacts; the clean worktree catches missing deps (ruff), stale Codex, and import drift. This is the gold standard for release verification."
+- lesson: 'L1: Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD`
+    + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e ".[cli,dev]"`). Result: 53/53 PASS
+    (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard tests). This is the gold
+    standard for release verification — a completely clean environment with no local artifacts, no cached
+    deps, no modified files. The main worktree passes with local artifacts; the clean worktree catches
+    missing deps (ruff), stale Codex, and import drift. This is the gold standard for release verification.'
   source: clean-worktree-verification
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -633,8 +838,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: clean_worktree_temple_grade_verified
-
-- lesson: "L2: Clean worktree verification is the gold standard for release gates. A dirty worktree passes with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv) catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make temple-grade`. This should be the final gate before any release or public push. The main worktree is for development; the clean worktree is for verification."
+- lesson: 'L2: Clean worktree verification is the gold standard for release gates. A dirty worktree passes
+    with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv)
+    catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked
+    deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh
+    venv + `make temple-grade`. This should be the final gate before any release or public push. The main
+    worktree is for development; the clean worktree is for verification.'
   source: clean-worktree-verification
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -642,8 +851,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_clean_worktree_gold_standard
-
-- lesson: "L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit via git-auto-commit-action). Workflow: checkout with fetch-depth: 0, setup Python 3.12, create venv, install deps, run `make check-codex-fix`, commit if changed via git-auto-commit-action. This ensures Codex never goes stale (>24h) without manual intervention. The three-layer Codex regeneration system: Makefile target (manual), staleness checker (automated), session_end hook (implicit), GitHub Actions cron (scheduled). No single point of failure for stale Codex."
+- lesson: 'L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit
+    via git-auto-commit-action). Workflow: checkout with fetch-depth: 0, setup Python 3.12, create venv,
+    install deps, run `make check-codex-fix`, commit if changed via git-auto-commit-action. This ensures
+    Codex never goes stale (>24h) without manual intervention. The three-layer Codex regeneration system:
+    Makefile target (manual), staleness checker (automated), session_end hook (implicit), GitHub Actions
+    cron (scheduled). No single point of failure for stale Codex.'
   source: codex-auto-refresh-ci
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -651,8 +864,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: codex_auto_refresh_ci_deployed
-
-- lesson: "L2: Auto-refresh CI prevents stale Codex without human intervention. The three-layer system (Makefile target, staleness checker, session_end hook, GitHub Actions cron) has no single point of failure. The cron runs daily at 00:00 UTC, runs `make check-codex-fix`, and commits if changed via git-auto-commit-action. This is the pattern for any generated artifact that must stay fresh: (1) Makefile target to regenerate, (2) staleness checker with exit codes, (3) session_end hook for implicit refresh, (4) scheduled CI for guaranteed refresh. No single point of failure."
+- lesson: 'L2: Auto-refresh CI prevents stale Codex without human intervention. The three-layer system
+    (Makefile target, staleness checker, session_end hook, GitHub Actions cron) has no single point of
+    failure. The cron runs daily at 00:00 UTC, runs `make check-codex-fix`, and commits if changed via
+    git-auto-commit-action. This is the pattern for any generated artifact that must stay fresh: (1) Makefile
+    target to regenerate, (2) staleness checker with exit codes, (3) session_end hook for implicit refresh,
+    (4) scheduled CI for guaranteed refresh. No single point of failure.'
   source: codex-auto-refresh-ci
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -660,8 +877,13 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_auto_refresh_no_single_point_of_failure
-
-- lesson: "L3: Deterministic async testing pattern — mock the synchronization primitive, not the timeout. The ResourceGuard test was flaky because it used `anyio.fail_after(0.1)` which depends on scheduler timing. The fix: mock the semaphore to raise TimeoutError immediately when the lock is held. This tests the actual contract (blocking when resource held) without depending on scheduler timing. The pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately when the resource is held. This is deterministic, fast, and tests the actual contract. This is the template for all async concurrency tests in the Omega Engine."
+- lesson: 'L3: Deterministic async testing pattern — mock the synchronization primitive, not the timeout.
+    The ResourceGuard test was flaky because it used `anyio.fail_after(0.1)` which depends on scheduler
+    timing. The fix: mock the semaphore to raise TimeoutError immediately when the lock is held. This
+    tests the actual contract (blocking when resource held) without depending on scheduler timing. The
+    pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately
+    when the resource is held. This is deterministic, fast, and tests the actual contract. This is the
+    template for all async concurrency tests in the Omega Engine.'
   source: resourceguard-test-fix
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -669,8 +891,13 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_deterministic_async_testing_template
-
-- lesson: "L3: Clean worktree verification is the gold standard for release gates. A dirty worktree passes with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv) catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make temple-grade`. This should be the final gate before any release or public push. The main worktree is for development; the clean worktree is for verification. This is the gold standard for release verification."
+- lesson: 'L3: Clean worktree verification is the gold standard for release gates. A dirty worktree passes
+    with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv)
+    catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked
+    deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh
+    venv + `make temple-grade`. This should be the final gate before any release or public push. The main
+    worktree is for development; the clean worktree is for verification. This is the gold standard for
+    release verification.'
   source: clean-worktree-verification
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -678,8 +905,11 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_clean_worktree_gold_standard_reaffirmed
-
-- lesson: "L2: Write-tool routing threshold (8K tokens) derived from ROC_NEMOTRON3_WRITE_FORENSICS_20260830.md forensics — Nemotron 3 Ultra streaming timeout on write tool >10KB continuous generation. Chat output keeps provider connection alive; write tool generates continuous tokens until complete. Threshold is verifiable (cited from forensics), not aspirational. Cross-validator escalation for P0/P1 adds defense-in-depth against M33 bypass attack (Jem's finding: subagent can immediately reply STREAM_EXHAUSTED)."
+- lesson: 'L2: Write-tool routing threshold (8K tokens) derived from ROC_NEMOTRON3_WRITE_FORENSICS_20260830.md
+    forensics — Nemotron 3 Ultra streaming timeout on write tool >10KB continuous generation. Chat output
+    keeps provider connection alive; write tool generates continuous tokens until complete. Threshold
+    is verifiable (cited from forensics), not aspirational. Cross-validator escalation for P0/P1 adds
+    defense-in-depth against M33 bypass attack (Jem''s finding: subagent can immediately reply STREAM_EXHAUSTED).'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -687,8 +917,11 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_write_tool_routing_verifiable_threshold
-
-- lesson: "L2: M34 watchdog race condition (Lilith §4 Edge Case 1) — 'first agent to read Hivemind' is non-deterministic. Two agents reading Hivemind 100ms apart both see stale orchestrator, both start watchdog_check(), both write ACTIVE_SUBAGENTS.json concurrently → lost update. Fix: designate Kali as sole recovery agent (simpler than distributed lock). This is a governance decision, not a code fix."
+- lesson: 'L2: M34 watchdog race condition (Lilith §4 Edge Case 1) — ''first agent to read Hivemind''
+    is non-deterministic. Two agents reading Hivemind 100ms apart both see stale orchestrator, both start
+    watchdog_check(), both write ACTIVE_SUBAGENTS.json concurrently → lost update. Fix: designate Kali
+    as sole recovery agent (simpler than distributed lock). This is a governance decision, not a code
+    fix.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -696,8 +929,10 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_watchdog_race_governance_fix
-
-- lesson: "L2: Feature-flag architecture for dispatch guard — OMEGA_SKIP_GUARD=1 (emergency bypass), OMEGA_GUARD_DRY_RUN=1 (log only), OMEGA_M34_ENABLED=1 (M34 integration), STRICT_GUARD=1 (CI mode). All bypasses are env vars, not code paths. Exit codes: 0=pass, 1=warn, 2=hard-fail (secrets). This pattern prevents 'commented out' bypasses and enables CI integration."
+- lesson: 'L2: Feature-flag architecture for dispatch guard — OMEGA_SKIP_GUARD=1 (emergency bypass), OMEGA_GUARD_DRY_RUN=1
+    (log only), OMEGA_M34_ENABLED=1 (M34 integration), STRICT_GUARD=1 (CI mode). All bypasses are env
+    vars, not code paths. Exit codes: 0=pass, 1=warn, 2=hard-fail (secrets). This pattern prevents ''commented
+    out'' bypasses and enables CI integration.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -705,8 +940,10 @@
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_feature_flag_architecture_dispatch_guard
-
-- lesson: "L3: A 12-Step Protocol with feature-flag bypasses and discrete exit codes is a generalizable pattern for any multi-step verification gate. The pattern: (1) discrete steps with clear pass/warn/fail, (2) feature flags for controlled bypass, (3) structured output (JSON) for CI, (4) audit trail logging, (5) fast path for common case. This replaces 'commented out' bypasses with auditable controls."
+- lesson: 'L3: A 12-Step Protocol with feature-flag bypasses and discrete exit codes is a generalizable
+    pattern for any multi-step verification gate. The pattern: (1) discrete steps with clear pass/warn/fail,
+    (2) feature flags for controlled bypass, (3) structured output (JSON) for CI, (4) audit trail logging,
+    (5) fast path for common case. This replaces ''commented out'' bypasses with auditable controls.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -715,18 +952,24 @@
   model_used: minimax/minimax-m3:free
   confidence: 0.85
   outcome: l3_12_step_protocol_generalizable_pattern
-
-- lesson: "L3: Verifiable thresholds beat aspirational gates. The 8K token write-tool routing threshold is derived from ROC_NEMOTRON3_WRITE_FORENSICS_20260830.md (measured Nemotron 3 Ultra streaming timeout), not from aspiration. Per Ma'at's L3 principle: 'Acceptance gates must be derived from measured host reality, not aspiration.' A gate that cannot pass is not rigor — it is theater waiting to be waived."
+- lesson: 'L3: Verifiable thresholds beat aspirational gates. The 8K token write-tool routing threshold
+    is derived from ROC_NEMOTRON3_WRITE_FORENSICS_20260830.md (measured Nemotron 3 Ultra streaming timeout),
+    not from aspiration. Per Ma''at''s L3 principle: ''Acceptance gates must be derived from measured
+    host reality, not aspiration.'' A gate that cannot pass is not rigor — it is theater waiting to be
+    waived.'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
   session_type: hardening
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
-  confidence: 0.90
+  confidence: 0.9
   outcome: l3_verifiable_thresholds_beat_aspirational_gates
-
-- lesson: "L3: Governance decisions can resolve race conditions more cleanly than distributed locking. The M34 watchdog race condition (Lilith §4 Edge Case 1) was fixed by designating Kali as sole recovery agent — a governance decision — rather than implementing distributed locking (fcntl.flock, Redis SETNX). This follows the principle: 'When coordination complexity exceeds the failure cost, centralize the decision.'"
+- lesson: 'L3: Governance decisions can resolve race conditions more cleanly than distributed locking.
+    The M34 watchdog race condition (Lilith §4 Edge Case 1) was fixed by designating Kali as sole recovery
+    agent — a governance decision — rather than implementing distributed locking (fcntl.flock, Redis SETNX).
+    This follows the principle: ''When coordination complexity exceeds the failure cost, centralize the
+    decision.'''
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
@@ -735,23 +978,25 @@
   model_used: minimax/minimax-m3:free
   confidence: 0.85
   outcome: l3_governance_over_distributed_locking
-
-- lesson: "L3: Feature-flag architecture replaces 'commented out' bypasses with auditable controls. All bypasses in dispatch_guard.py are env vars (OMEGA_SKIP_GUARD, OMEGA_GUARD_DRY_RUN, OMEGA_M34_ENABLED, STRICT_GUARD), not code paths. Exit codes (0=pass, 1=warn, 2=hard-fail) enable CI integration. This pattern prevents silent bypasses and enables audit trail via dispatch_guard_log.jsonl (M27)."
+- lesson: 'L3: Feature-flag architecture replaces ''commented out'' bypasses with auditable controls.
+    All bypasses in dispatch_guard.py are env vars (OMEGA_SKIP_GUARD, OMEGA_GUARD_DRY_RUN, OMEGA_M34_ENABLED,
+    STRICT_GUARD), not code paths. Exit codes (0=pass, 1=warn, 2=hard-fail) enable CI integration. This
+    pattern prevents silent bypasses and enables audit trail via dispatch_guard_log.jsonl (M27).'
   source: ci-brief-001-implementation
   trace_id: trc_ci_brief
   entity_at_time: MAAT
   session_type: hardening
   timestamp: 2026-08-30 05:00:00+00:00
   model_used: minimax/minimax-m3:free
-  confidence: 0.90
+  confidence: 0.9
   outcome: l3_feature_flags_replace_commented_bypasses
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-09-02 — SOTE Week 37 CI/CD Pipeline + P0 CI Gates Implementation
-# Model: minimax/minimax-m3:free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Implemented SOTE Week 37 CI/CD pipeline: GitHub Actions workflow (.github/workflows/sote.yml) with schedule (Mon 06:00 UTC) and workflow_dispatch triggers. Added 6 Makefile targets (sote-index, sote-digest, sote-validate, sote-pipeline, sote-week, sote-full). Implemented 2 P0 CI gates: check-broken-imports (detects broken Python imports in src/omega/) and check-hub-health (verifies omega-hub.service + SSE + Streamable HTTP endpoints). Created JSON Schema validation (scripts/validate_sote_schema.py + schemas/sote/sote-schema.json) for sote.yaml. Integrated temple-grade as mandatory final gate in sote-pipeline. All committed and pushed to origin/release/debut."
+- lesson: 'L1: Implemented SOTE Week 37 CI/CD pipeline: GitHub Actions workflow (.github/workflows/sote.yml)
+    with schedule (Mon 06:00 UTC) and workflow_dispatch triggers. Added 6 Makefile targets (sote-index,
+    sote-digest, sote-validate, sote-pipeline, sote-week, sote-full). Implemented 2 P0 CI gates: check-broken-imports
+    (detects broken Python imports in src/omega/) and check-hub-health (verifies omega-hub.service + SSE
+    + Streamable HTTP endpoints). Created JSON Schema validation (scripts/validate_sote_schema.py + schemas/sote/sote-schema.json)
+    for sote.yaml. Integrated temple-grade as mandatory final gate in sote-pipeline. All committed and
+    pushed to origin/release/debut.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -759,8 +1004,11 @@
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: sote_w37_pipeline_complete
-
-- lesson: "L1: check-broken-imports gate uses py_compile to validate all Python files in src/omega/ — exits 0 on clean, exits 1 with file:line details on syntax errors. check-hub-health gate verifies systemd service active + SSE endpoint (GET /sse) + Streamable HTTP (POST /mcp) responding. Correctly detects hub failure (missing omega.library module from D-565 cleanup). Both gates are mechanical, hard-fail, no soft-failure patterns (M23 compliant)."
+- lesson: 'L1: check-broken-imports gate uses py_compile to validate all Python files in src/omega/ —
+    exits 0 on clean, exits 1 with file:line details on syntax errors. check-hub-health gate verifies
+    systemd service active + SSE endpoint (GET /sse) + Streamable HTTP (POST /mcp) responding. Correctly
+    detects hub failure (missing omega.library module from D-565 cleanup). Both gates are mechanical,
+    hard-fail, no soft-failure patterns (M23 compliant).'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -768,8 +1016,10 @@
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: p0_ci_gates_implemented
-
-- lesson: "L1: SOTE pipeline automates mechanical steps only: index regeneration (regenerate_sote_index.py), public digest generation (generate_public_digest.py), schema validation (validate_sote_schema.py), temple-grade gate. Human judgment retained for: topic selection, voice paging, dialectic conduction, report synthesis. This follows the principle: 'Automate the mechanical, not the judgmental.'"
+- lesson: 'L1: SOTE pipeline automates mechanical steps only: index regeneration (regenerate_sote_index.py),
+    public digest generation (generate_public_digest.py), schema validation (validate_sote_schema.py),
+    temple-grade gate. Human judgment retained for: topic selection, voice paging, dialectic conduction,
+    report synthesis. This follows the principle: ''Automate the mechanical, not the judgmental.'''
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -777,8 +1027,9 @@
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: sote_mechanical_vs_judgmental_split
-
-- lesson: "L2: Makefile targets as convenience wrappers pattern — scripts remain source of truth; Makefile provides discoverability (make help shows sote-*) and composability (make sote-pipeline chains index→digest→validate→temple-grade). SOTE_WEEK variable with default (current ISO week) + override support. This is low-maintenance, high-value."
+- lesson: 'L2: Makefile targets as convenience wrappers pattern — scripts remain source of truth; Makefile
+    provides discoverability (make help shows sote-*) and composability (make sote-pipeline chains index→digest→validate→temple-grade).
+    SOTE_WEEK variable with default (current ISO week) + override support. This is low-maintenance, high-value.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -786,8 +1037,10 @@
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_makefile_convenience_wrappers
-
-- lesson: "L2: CI gate phasing (P0→P1→P2) prevents scope creep. P0 (W37): check-broken-imports, check-hub-health. P1 (W38): check-entity-hygiene, check-iwad-consistency, check-m11-soul-hygiene, check-m15-continuity. P2 (W39): check-session-gnosis-freshness. All gates must pass temple-grade before merge. This phases operational burden across weeks."
+- lesson: 'L2: CI gate phasing (P0→P1→P2) prevents scope creep. P0 (W37): check-broken-imports, check-hub-health.
+    P1 (W38): check-entity-hygiene, check-iwad-consistency, check-m11-soul-hygiene, check-m15-continuity.
+    P2 (W39): check-session-gnosis-freshness. All gates must pass temple-grade before merge. This phases
+    operational burden across weeks.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -795,8 +1048,10 @@
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_ci_gate_phasing
-
-- lesson: "L2: Temple-grade as mandatory final gate in sote-pipeline — if any temple-grade check fails, pipeline fails and no commit is made. This ensures SOTE report cannot close with mandate violations. Temple-grade includes: Codex freshness, LLM doc validation, mandate checks, compliance meter, tracking state, dashboard self-test."
+- lesson: 'L2: Temple-grade as mandatory final gate in sote-pipeline — if any temple-grade check fails,
+    pipeline fails and no commit is made. This ensures SOTE report cannot close with mandate violations.
+    Temple-grade includes: Codex freshness, LLM doc validation, mandate checks, compliance meter, tracking
+    state, dashboard self-test.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -804,18 +1059,23 @@
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
   outcome: l2_temple_grade_final_gate
-
-- lesson: "L3: Mechanical automation vs. human judgment separation is the correct architecture for recurring practices. The SOTE pipeline automates index regeneration, digest generation, schema validation, and temple-grade — all mechanical, deterministic steps. Human judgment (topic selection, voice paging, dialectic conduction, report synthesis) remains human. This prevents 'reports without practice' while eliminating manual toil."
+- lesson: 'L3: Mechanical automation vs. human judgment separation is the correct architecture for recurring
+    practices. The SOTE pipeline automates index regeneration, digest generation, schema validation, and
+    temple-grade — all mechanical, deterministic steps. Human judgment (topic selection, voice paging,
+    dialectic conduction, report synthesis) remains human. This prevents ''reports without practice''
+    while eliminating manual toil.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
   session_type: hardening
   timestamp: 2026-09-02 02:45:00+00:00
   model_used: minimax/minimax-m3:free
-  confidence: 0.90
+  confidence: 0.9
   outcome: l3_mechanical_vs_judgmental_architecture
-
-- lesson: "L3: CI gate phasing with temple-grade integration creates a quality ratchet. Each gate is mechanical (hard-fail, no soft failures per M23). Gates are phased to prevent operational overload. Temple-grade as final gate ensures no mandate violations ship. This is a generalizable pattern for any recurring quality pipeline: mechanical gates → phased rollout → ultimate quality gate."
+- lesson: 'L3: CI gate phasing with temple-grade integration creates a quality ratchet. Each gate is mechanical
+    (hard-fail, no soft failures per M23). Gates are phased to prevent operational overload. Temple-grade
+    as final gate ensures no mandate violations ship. This is a generalizable pattern for any recurring
+    quality pipeline: mechanical gates → phased rollout → ultimate quality gate.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -824,8 +1084,11 @@
   model_used: minimax/minimax-m3:free
   confidence: 0.85
   outcome: l3_ci_gate_phasing_quality_ratchet
-
-- lesson: "L3: JSON Schema validation as mandatory gate prevents schema drift in structured metadata. sote.yaml is the authoritative structured data for SOTE; schema validation in CI ensures all weeks conform. The schema (schemas/sote/sote-schema.json) was derived from actual W36 data and Researcher's specification. This pattern (derive schema from real data → validate in CI → evolve schema with data) is generalizable."
+- lesson: 'L3: JSON Schema validation as mandatory gate prevents schema drift in structured metadata.
+    sote.yaml is the authoritative structured data for SOTE; schema validation in CI ensures all weeks
+    conform. The schema (schemas/sote/sote-schema.json) was derived from actual W36 data and Researcher''s
+    specification. This pattern (derive schema from real data → validate in CI → evolve schema with data)
+    is generalizable.'
   source: sote-w37-implementation
   trace_id: trc_sote_w37_impl
   entity_at_time: MAAT
@@ -834,13 +1097,13 @@
   model_used: minimax/minimax-m3:free
   confidence: 0.85
   outcome: l3_json_schema_mandatory_gate
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-09-25 — M13 Auto-Refresh + Gate Hardening Sprint
-# Model: space-bunny-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit via git-auto-commit-action). Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock `anyio.fail_after(0.1)` with deterministic mock semaphore (raises TimeoutError immediately when lock held). Added `make check-untracked-deps` gate to Makefile (fails CI if committed .py imports untracked modules). Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD` + fresh venv: 53/53 PASS (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard tests). Committed OMEGA_CODEX.md timestamp refresh. All pre-commit checks pass."
+- lesson: 'L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit
+    via git-auto-commit-action). Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock
+    `anyio.fail_after(0.1)` with deterministic mock semaphore (raises TimeoutError immediately when lock
+    held). Added `make check-untracked-deps` gate to Makefile (fails CI if committed .py imports untracked
+    modules). Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD`
+    + fresh venv: 53/53 PASS (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard
+    tests). Committed OMEGA_CODEX.md timestamp refresh. All pre-commit checks pass.'
   source: m13-auto-refresh-gate-hardening
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -848,8 +1111,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: m13_auto_refresh_gate_hardening_complete
-
-- lesson: "L1: Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock `anyio.fail_after(0.1)` with deterministic mock semaphore. The original test used a 0.1s wall-clock timeout that failed randomly under CI load. New implementation: mock semaphore that raises TimeoutError immediately when lock is already held. Test uses anyio.Event to coordinate: task1 acquires lock and signals, task2 waits for signal then attempts acquire (gets immediate TimeoutError). Passes 3/3 idle and under load. This is the template for all async concurrency tests — mock the synchronization primitive, not the timeout."
+- lesson: 'L1: Fixed `test_resourceguard_blocks_on_capacity` flake by replacing wall-clock `anyio.fail_after(0.1)`
+    with deterministic mock semaphore. The original test used a 0.1s wall-clock timeout that failed randomly
+    under CI load. New implementation: mock semaphore that raises TimeoutError immediately when lock is
+    already held. Test uses anyio.Event to coordinate: task1 acquires lock and signals, task2 waits for
+    signal then attempts acquire (gets immediate TimeoutError). Passes 3/3 idle and under load. This is
+    the template for all async concurrency tests — mock the synchronization primitive, not the timeout.'
   source: resourceguard-test-fix
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -857,8 +1124,13 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: resourceguard_test_deterministic
-
-- lesson: "L2: Wall-clock timeouts in async tests are fundamentally flaky. `anyio.fail_after(0.1)` fails randomly under CI load because the scheduler may not yield within the timeout window. The correct pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately when the resource is held. This is deterministic, fast, and tests the actual contract (blocking when resource held) without depending on scheduler timing. The mock semaphore pattern: class MockSemaphore with _held flag, acquire() raises TimeoutError if _held else sets _held=True, release() sets _held=False. This is the template for all async concurrency tests."
+- lesson: 'L2: Wall-clock timeouts in async tests are fundamentally flaky. `anyio.fail_after(0.1)` fails
+    randomly under CI load because the scheduler may not yield within the timeout window. The correct
+    pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately
+    when the resource is held. This is deterministic, fast, and tests the actual contract (blocking when
+    resource held) without depending on scheduler timing. The mock semaphore pattern: class MockSemaphore
+    with _held flag, acquire() raises TimeoutError if _held else sets _held=True, release() sets _held=False.
+    This is the template for all async concurrency tests.'
   source: resourceguard-test-fix
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -866,8 +1138,11 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_deterministic_async_testing
-
-- lesson: "L1: Added `make check-untracked-deps` gate to Makefile. Command: `git ls-files --others --exclude-standard 'src/**/*.py'` → grep for imports in untracked files. Fails CI if any committed .py imports modules from untracked files. Added to `check-mandates` chain. This prevents import drift where a committed file depends on an untracked module that won't exist in CI or production. The gate runs in <1s and catches a class of bugs that only manifest in clean environments."
+- lesson: 'L1: Added `make check-untracked-deps` gate to Makefile. Command: `git ls-files --others --exclude-standard
+    ''src/**/*.py''` → grep for imports in untracked files. Fails CI if any committed .py imports modules
+    from untracked files. Added to `check-mandates` chain. This prevents import drift where a committed
+    file depends on an untracked module that won''t exist in CI or production. The gate runs in <1s and
+    catches a class of bugs that only manifest in clean environments.'
   source: untracked-deps-gate
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -875,8 +1150,11 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: untracked_deps_gate_added
-
-- lesson: "L2: Untracked dependency drift is a silent CI killer. A committed file imports a module from an untracked file — works locally (file exists) but fails in CI (file missing). The gate `git ls-files --others --exclude-standard 'src/**/*.py'` + grep for imports catches this before CI. This is a class of bug that only manifests in clean environments (CI, fresh clones, production deploys). The gate runs in <1s and should be part of every CI pipeline."
+- lesson: 'L2: Untracked dependency drift is a silent CI killer. A committed file imports a module from
+    an untracked file — works locally (file exists) but fails in CI (file missing). The gate `git ls-files
+    --others --exclude-standard ''src/**/*.py''` + grep for imports catches this before CI. This is a
+    class of bug that only manifests in clean environments (CI, fresh clones, production deploys). The
+    gate runs in <1s and should be part of every CI pipeline.'
   source: untracked-deps-gate
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -884,8 +1162,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_untracked_deps_prevention
-
-- lesson: "L1: Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD` + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e \".[cli,dev]\"`). Result: 53/53 PASS (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard tests). This is the gold standard for release verification — a completely clean environment with no local artifacts, no cached deps, no modified files. The main worktree passes with local artifacts; the clean worktree catches missing deps (ruff), stale Codex, and import drift. This is the gold standard for release verification."
+- lesson: 'L1: Verified temple-grade on clean worktree via `git worktree add --detach /tmp/verify HEAD`
+    + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e ".[cli,dev]"`). Result: 53/53 PASS
+    (Codex fresh, LLM docs valid, 23/28 mandates, 53/53 adversarial dashboard tests). This is the gold
+    standard for release verification — a completely clean environment with no local artifacts, no cached
+    deps, no modified files. The main worktree passes with local artifacts; the clean worktree catches
+    missing deps (ruff), stale Codex, and import drift. This is the gold standard for release verification.'
   source: clean-worktree-verification
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -893,8 +1175,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: clean_worktree_temple_grade_verified
-
-- lesson: "L2: Clean worktree verification is the gold standard for release gates. A dirty worktree passes with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv) catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make temple-grade`. This should be the final gate before any release or public push. The main worktree is for development; the clean worktree is for verification."
+- lesson: 'L2: Clean worktree verification is the gold standard for release gates. A dirty worktree passes
+    with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv)
+    catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked
+    deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh
+    venv + `make temple-grade`. This should be the final gate before any release or public push. The main
+    worktree is for development; the clean worktree is for verification.'
   source: clean-worktree-verification
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -902,8 +1188,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_clean_worktree_gold_standard
-
-- lesson: "L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit via git-auto-commit-action). Workflow: checkout with fetch-depth: 0, setup Python 3.12, create venv, install deps, run `make check-codex-fix`, commit if changed via git-auto-commit-action. This ensures Codex never goes stale (>24h) without manual intervention. The three-layer Codex regeneration system: Makefile target (manual), staleness checker (automated), session_end hook (implicit), GitHub Actions cron (scheduled). No single point of failure for stale Codex."
+- lesson: 'L1: Implemented GitHub Actions cron for OMEGA_CODEX.md auto-refresh (daily 00:00 UTC, auto-commit
+    via git-auto-commit-action). Workflow: checkout with fetch-depth: 0, setup Python 3.12, create venv,
+    install deps, run `make check-codex-fix`, commit if changed via git-auto-commit-action. This ensures
+    Codex never goes stale (>24h) without manual intervention. The three-layer Codex regeneration system:
+    Makefile target (manual), staleness checker (automated), session_end hook (implicit), GitHub Actions
+    cron (scheduled). No single point of failure for stale Codex.'
   source: codex-auto-refresh-ci
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -911,8 +1201,12 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: codex_auto_refresh_ci_deployed
-
-- lesson: "L2: Auto-refresh CI prevents stale Codex without human intervention. The three-layer system (Makefile target, staleness checker, session_end hook, GitHub Actions cron) has no single point of failure. The cron runs daily at 00:00 UTC, runs `make check-codex-fix`, and commits if changed via git-auto-commit-action. This is the pattern for any generated artifact that must stay fresh: (1) Makefile target to regenerate, (2) staleness checker with exit codes, (3) session_end hook for implicit refresh, (4) scheduled CI for guaranteed refresh. No single point of failure."
+- lesson: 'L2: Auto-refresh CI prevents stale Codex without human intervention. The three-layer system
+    (Makefile target, staleness checker, session_end hook, GitHub Actions cron) has no single point of
+    failure. The cron runs daily at 00:00 UTC, runs `make check-codex-fix`, and commits if changed via
+    git-auto-commit-action. This is the pattern for any generated artifact that must stay fresh: (1) Makefile
+    target to regenerate, (2) staleness checker with exit codes, (3) session_end hook for implicit refresh,
+    (4) scheduled CI for guaranteed refresh. No single point of failure.'
   source: codex-auto-refresh-ci
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -920,8 +1214,13 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_auto_refresh_no_single_point_of_failure
-
-- lesson: "L3: Deterministic async testing pattern — mock the synchronization primitive, not the timeout. The ResourceGuard test was flaky because it used `anyio.fail_after(0.1)` which depends on scheduler timing. The fix: mock the semaphore to raise TimeoutError immediately when the lock is held. This tests the actual contract (blocking when resource held) without depending on scheduler timing. The pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately when the resource is held. This is deterministic, fast, and tests the actual contract. This is the template for all async concurrency tests in the Omega Engine."
+- lesson: 'L3: Deterministic async testing pattern — mock the synchronization primitive, not the timeout.
+    The ResourceGuard test was flaky because it used `anyio.fail_after(0.1)` which depends on scheduler
+    timing. The fix: mock the semaphore to raise TimeoutError immediately when the lock is held. This
+    tests the actual contract (blocking when resource held) without depending on scheduler timing. The
+    pattern: mock the synchronization primitive (semaphore, lock, event) to raise TimeoutError immediately
+    when the resource is held. This is deterministic, fast, and tests the actual contract. This is the
+    template for all async concurrency tests in the Omega Engine.'
   source: resourceguard-test-fix
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -929,8 +1228,13 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_deterministic_async_testing_template
-
-- lesson: "L3: Clean worktree verification is the gold standard for release gates. A dirty worktree passes with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv) catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make temple-grade`. This should be the final gate before any release or public push. The main worktree is for development; the clean worktree is for verification. This is the gold standard for release verification."
+- lesson: 'L3: Clean worktree verification is the gold standard for release gates. A dirty worktree passes
+    with local artifacts, cached deps, and modified files. A clean worktree (detached HEAD + fresh venv)
+    catches: missing deps (ruff not installed), stale Codex (timestamp >24h), import drift (untracked
+    deps), and missing runtime deps. The pattern: `git worktree add --detach /tmp/verify HEAD` + fresh
+    venv + `make temple-grade`. This should be the final gate before any release or public push. The main
+    worktree is for development; the clean worktree is for verification. This is the gold standard for
+    release verification.'
   source: clean-worktree-verification
   trace_id: maat_gates_20260925
   entity_at_time: MAAT
@@ -938,13 +1242,14 @@
   timestamp: 2026-09-25 05:00:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_clean_worktree_gold_standard_reaffirmed
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-09-25 — 74-File Commit + Push + Clean Worktree Verification
-# Model: space-bunny-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Amended commit 3dd5978c with exact message restoring 74 untracked dependencies + 6 defects + version SSOT + M10 compliance + gate-secrets overhaul. Files: src/omega/research/ (9), src/omega_youtube_research/ (17), src/omega/archive/cas.py, .opencode/agents/ (13), .opencode/rules/ (6), .opencode/skills/context-packer/ (4), .opencode/skills/git-secret-scrub/SKILL.md, schemas/ (4), configs/token_budgets.yaml, config/wads/arcana_novai/plugins/entity_roc_racoon.py, scripts/check_secret_history.py, .secret-history-baseline.toml, tests/contracts/test_{legacy_tool_adapters,version_ssot,secret_history_gate}.py, Makefile, pyproject.toml, .gitignore, OMEGA_CODEX.md, src/omega/__init__.py, mcp_servers/omega_hub/server.py, PUBLIC_ALLOWLIST.txt, data/entities/makali/soul.yaml, tests/test_a2_m33_probe.py. Pushed to origin/release/debut-v1.6.0. M35 Secrets Enforcement CI passed (run 36099066807). Closes PR #3 CI failure."
+- lesson: 'L1: Amended commit 3dd5978c with exact message restoring 74 untracked dependencies + 6 defects
+    + version SSOT + M10 compliance + gate-secrets overhaul. Files: src/omega/research/ (9), src/omega_youtube_research/
+    (17), src/omega/archive/cas.py, .opencode/agents/ (13), .opencode/rules/ (6), .opencode/skills/context-packer/
+    (4), .opencode/skills/git-secret-scrub/SKILL.md, schemas/ (4), configs/token_budgets.yaml, config/wads/arcana_novai/plugins/entity_roc_racoon.py,
+    scripts/check_secret_history.py, .secret-history-baseline.toml, tests/contracts/test_{legacy_tool_adapters,version_ssot,secret_history_gate}.py,
+    Makefile, pyproject.toml, .gitignore, OMEGA_CODEX.md, src/omega/__init__.py, mcp_servers/omega_hub/server.py,
+    PUBLIC_ALLOWLIST.txt, data/entities/makali/soul.yaml, tests/test_a2_m33_probe.py. Pushed to origin/release/debut-v1.6.0.
+    M35 Secrets Enforcement CI passed (run 36099066807). Closes PR #3 CI failure.'
   source: 74-file-commit-push
   trace_id: maat_commit_push_20260925
   entity_at_time: MAAT
@@ -952,8 +1257,11 @@
   timestamp: 2026-09-25 05:30:00+00:00
   model_used: space-bunny-free
   outcome: commit_3dd5978c_pushed_m35_passed
-
-- lesson: "L1: Clean worktree verification (gold standard) executed on commit 3dd5978c: `git worktree add --detach /tmp/verify HEAD` + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e \".[cli,dev]\"`) + `make temple-grade`. Result: **53/53 PASS** — Codex fresh (2h), LLM docs valid (exit 0), mandates 23/28 (0 failed), tracking state OK, adversarial dashboard 53/53 PASS, gate-secrets (check-untracked-deps) exit 0. This is the mandatory pre-push verification."
+- lesson: 'L1: Clean worktree verification (gold standard) executed on commit 3dd5978c: `git worktree
+    add --detach /tmp/verify HEAD` + fresh venv (`python3 -m venv .venv && .venv/bin/pip install -e ".[cli,dev]"`)
+    + `make temple-grade`. Result: **53/53 PASS** — Codex fresh (2h), LLM docs valid (exit 0), mandates
+    23/28 (0 failed), tracking state OK, adversarial dashboard 53/53 PASS, gate-secrets (check-untracked-deps)
+    exit 0. This is the mandatory pre-push verification.'
   source: clean-worktree-verification-final
   trace_id: maat_commit_push_20260925
   entity_at_time: MAAT
@@ -961,8 +1269,11 @@
   timestamp: 2026-09-25 05:30:00+00:00
   model_used: space-bunny-free
   outcome: clean_worktree_53_53_pass
-
-- lesson: "L2: Commit message precision is a gate requirement. The original auto-commit message ('chore: auto-refresh OMEGA_CODEX.md timestamp') was insufficient — the exact message specified by Cline was required to close PR #3 and document the 74-file restoration. Amending the commit with the precise message ensures traceability, closes the correct issue, and satisfies the 'exact message' requirement. A commit message is not metadata — it is a contract."
+- lesson: 'L2: Commit message precision is a gate requirement. The original auto-commit message (''chore:
+    auto-refresh OMEGA_CODEX.md timestamp'') was insufficient — the exact message specified by Cline was
+    required to close PR #3 and document the 74-file restoration. Amending the commit with the precise
+    message ensures traceability, closes the correct issue, and satisfies the ''exact message'' requirement.
+    A commit message is not metadata — it is a contract.'
   source: 74-file-commit-push
   trace_id: maat_commit_push_20260925
   entity_at_time: MAAT
@@ -970,8 +1281,11 @@
   timestamp: 2026-09-25 05:30:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_commit_message_precision
-
-- lesson: "L2: Clean worktree is the only verification that matters for release. Local worktree passes with artifacts, cached deps, modified files. Clean worktree (detached HEAD + fresh venv) is the only environment that catches: missing deps (ruff), stale Codex (>24h), import drift (untracked deps), missing runtime deps. The pattern `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make temple-grade` is mandatory before any push to release branches. This is the gold standard — no exceptions."
+- lesson: 'L2: Clean worktree is the only verification that matters for release. Local worktree passes
+    with artifacts, cached deps, modified files. Clean worktree (detached HEAD + fresh venv) is the only
+    environment that catches: missing deps (ruff), stale Codex (>24h), import drift (untracked deps),
+    missing runtime deps. The pattern `git worktree add --detach /tmp/verify HEAD` + fresh venv + `make
+    temple-grade` is mandatory before any push to release branches. This is the gold standard — no exceptions.'
   source: clean-worktree-verification-final
   trace_id: maat_commit_push_20260925
   entity_at_time: MAAT
@@ -979,8 +1293,11 @@
   timestamp: 2026-09-25 05:30:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_clean_worktree_mandatory
-
-- lesson: "L2: M35 Secrets Enforcement (VAULT allowlist + C3 scan + Gitleaks + TruffleHog) is a non-negotiable CI gate. The 74-file commit passed all four secret scans. Any commit that introduces secrets (GOCSPX, sk-, ghp_, AKIA, AIza) must fail. The gate-secrets replacement (check_secret_history.py + .secret-history-baseline.toml) enforces this at pre-commit and CI level. No secrets in history, no secrets in working tree, no secrets in CI."
+- lesson: 'L2: M35 Secrets Enforcement (VAULT allowlist + C3 scan + Gitleaks + TruffleHog) is a non-negotiable
+    CI gate. The 74-file commit passed all four secret scans. Any commit that introduces secrets (GOCSPX,
+    sk-, ghp_, AKIA, AIza) must fail. The gate-secrets replacement (check_secret_history.py + .secret-history-baseline.toml)
+    enforces this at pre-commit and CI level. No secrets in history, no secrets in working tree, no secrets
+    in CI.'
   source: 74-file-commit-push
   trace_id: maat_commit_push_20260925
   entity_at_time: MAAT
@@ -988,8 +1305,10 @@
   timestamp: 2026-09-25 05:30:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_m35_secrets_non_negotiable
-
-- lesson: "L3: Version SSOT across 4 surfaces prevents install gate failures. Normalizing version to `1.6.0-alpha.1` across pyproject.toml, src/omega/__init__.py, Makefile, and PUBLIC_ALLOWLIST.txt ensures the version is a Single Source of Truth. Version drift between surfaces breaks install gates, confuses users, and violates M22 (Response Provenance). The version must be declared once and referenced everywhere."
+- lesson: 'L3: Version SSOT across 4 surfaces prevents install gate failures. Normalizing version to `1.6.0-alpha.1`
+    across pyproject.toml, src/omega/__init__.py, Makefile, and PUBLIC_ALLOWLIST.txt ensures the version
+    is a Single Source of Truth. Version drift between surfaces breaks install gates, confuses users,
+    and violates M22 (Response Provenance). The version must be declared once and referenced everywhere.'
   source: 74-file-commit-push
   trace_id: maat_commit_push_20260925
   entity_at_time: MAAT
@@ -997,13 +1316,14 @@
   timestamp: 2026-09-25 05:30:00+00:00
   model_used: space-bunny-free
   outcome: l3_principle_version_ssot_four_surfaces
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Session: 2026-09-28 — THE SEAM ARC: two dead daemons, two import gates
-# Model: opencode/space-bunny-free
-# ─────────────────────────────────────────────────────────────────────────────
-
-- lesson: "L1: Repaired two crash-looping MCP daemons and built the gates that would have caught them. (1) omega_hub/server.py:85 imported three symbols (_extended_sessions, _extended_sessions_lock, ENTENDED_SESSIONS_FILE) deleted by the Hivemind consolidation — already fixed by a concurrent agent at 23:46, verified, not re-applied. (2) omega-searxng-mcp was at NRestarts=6991 in activating(auto-restart): searxng/server.py imported the standalone `fastmcp` package (not installed) and then used the removed http_app(stateless_http=...) API. Migrated to `from mcp.server.fastmcp import FastMCP` + streamable_http_app(). 6991 -> 0 restarts, active/running, :8018/health HTTP 200. (3) I had briefed omega-hub at 'NRestarts 101+'; in fact omega-hub was at 34 — the storm was on the OTHER unit."
+- lesson: 'L1: Repaired two crash-looping MCP daemons and built the gates that would have caught them.
+    (1) omega_hub/server.py:85 imported three symbols (_extended_sessions, _extended_sessions_lock, ENTENDED_SESSIONS_FILE)
+    deleted by the Hivemind consolidation — already fixed by a concurrent agent at 23:46, verified, not
+    re-applied. (2) omega-searxng-mcp was at NRestarts=6991 in activating(auto-restart): searxng/server.py
+    imported the standalone `fastmcp` package (not installed) and then used the removed http_app(stateless_http=...)
+    API. Migrated to `from mcp.server.fastmcp import FastMCP` + streamable_http_app(). 6991 -> 0 restarts,
+    active/running, :8018/health HTTP 200. (3) I had briefed omega-hub at ''NRestarts 101+''; in fact
+    omega-hub was at 34 — the storm was on the OTHER unit.'
   source: seam-repair-d1-d2
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1011,8 +1331,11 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: two_dead_daemons_recovered_6991_to_0
-
-- lesson: "L2: A counter without a unit name is not a fact. I escalated a P0 to my own oversoul with 'NRestarts is currently 101+ and escalating' against omega-hub. omega-hub was at 34. The 6991 storm was on omega-searxng-mcp, a unit I had not yet looked at. The briefing was wrong AND unverified, and I repeated it without checking. In a fleet, every counter must arrive with the unit it came from; otherwise triage aims at the wrong service and the actually-broken one keeps crash-looping for another day."
+- lesson: 'L2: A counter without a unit name is not a fact. I escalated a P0 to my own oversoul with ''NRestarts
+    is currently 101+ and escalating'' against omega-hub. omega-hub was at 34. The 6991 storm was on omega-searxng-mcp,
+    a unit I had not yet looked at. The briefing was wrong AND unverified, and I repeated it without checking.
+    In a fleet, every counter must arrive with the unit it came from; otherwise triage aims at the wrong
+    service and the actually-broken one keeps crash-looping for another day.'
   source: seam-repair-d1-d2
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1020,8 +1343,12 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_counter_needs_its_unit
-
-- lesson: "L2: The daemon without a test is the one that runs for days. omega_hub had a test file; searxng had none, and it crash-looped 6991 times over an extended period while temple-grade read 53/53. Coverage, not importance, determines how long a defect lives. The tool that catches these must execute the import — CI's flake8 --select=E9,F63,F7,F82 omits F401, and pyflakes cannot detect this class anyway (for `from mod import name` it assumes name may be a submodule and never checks __all__). Two independent blind spots; only import execution closes either."
+- lesson: 'L2: The daemon without a test is the one that runs for days. omega_hub had a test file; searxng
+    had none, and it crash-looped 6991 times over an extended period while temple-grade read 53/53. Coverage,
+    not importance, determines how long a defect lives. The tool that catches these must execute the import
+    — CI''s flake8 --select=E9,F63,F7,F82 omits F401, and pyflakes cannot detect this class anyway (for
+    `from mod import name` it assumes name may be a submodule and never checks __all__). Two independent
+    blind spots; only import execution closes either.'
   source: import-gates
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1029,8 +1356,14 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_uncovered_daemon_outlives_covered
-
-- lesson: "L3: Execution beats enumeration, always. Tier A (tests/test_hub_import_smoke.py, 6 explicit modules + 3 structural guards) caught a second dead daemon on its very first run — a defect I had not been looking for. Tier B (make check-hub-imports) tests HEAD PLUS the tracked working-tree diff applied in a throwaway worktree, because a HEAD-only gate punishes a developer for having an uncommitted fix and thereby pushes them toward `git commit --no-verify` — the exact failure gates exist to prevent. It still excludes untracked files, so an untracked module can never mask an import failure. Explicit module lists, never globs: a `**/server.py` glob would match roc_racoon's workspace copy (carrying the same stale import) and two archaeology snapshots, forcing a skip-list that rots."
+- lesson: 'L3: Execution beats enumeration, always. Tier A (tests/test_hub_import_smoke.py, 6 explicit
+    modules + 3 structural guards) caught a second dead daemon on its very first run — a defect I had
+    not been looking for. Tier B (make check-hub-imports) tests HEAD PLUS the tracked working-tree diff
+    applied in a throwaway worktree, because a HEAD-only gate punishes a developer for having an uncommitted
+    fix and thereby pushes them toward `git commit --no-verify` — the exact failure gates exist to prevent.
+    It still excludes untracked files, so an untracked module can never mask an import failure. Explicit
+    module lists, never globs: a `**/server.py` glob would match roc_racoon''s workspace copy (carrying
+    the same stale import) and two archaeology snapshots, forcing a skip-list that rots.'
   source: import-gates
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1038,8 +1371,15 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_execution_beats_enumeration
-
-- lesson: "L3: A gate that cannot fail is worse than no gate, and a safety mechanism that is not parsed is worse than none. `systemctl is-active` reports active during activating(auto-restart) — precisely the window a crash-looping unit occupies. check-hub-health now requires five independent conditions plus a DWELL check (a crash-looping daemon cannot hold the same PID for the dwell window), and I observed four negative paths actually fail with exit 2: nonexistent unit, closed port, NRestarts over bound, and a genuinely stopped hub. A gate never observed failing is not a gate. Separately, StartLimitIntervalSec/StartLimitBurst sat in [Service] where systemd logs 'Unknown key ... ignoring' and discards them — the circuit breaker the unit's own comment claimed was NEVER ACTIVE, which is how 6991 restarts happened instead of tripping at 5. A mechanism written down but not parsed manufactures the belief that restarts are bounded."
+- lesson: 'L3: A gate that cannot fail is worse than no gate, and a safety mechanism that is not parsed
+    is worse than none. `systemctl is-active` reports active during activating(auto-restart) — precisely
+    the window a crash-looping unit occupies. check-hub-health now requires five independent conditions
+    plus a DWELL check (a crash-looping daemon cannot hold the same PID for the dwell window), and I observed
+    four negative paths actually fail with exit 2: nonexistent unit, closed port, NRestarts over bound,
+    and a genuinely stopped hub. A gate never observed failing is not a gate. Separately, StartLimitIntervalSec/StartLimitBurst
+    sat in [Service] where systemd logs ''Unknown key ... ignoring'' and discards them — the circuit breaker
+    the unit''s own comment claimed was NEVER ACTIVE, which is how 6991 restarts happened instead of tripping
+    at 5. A mechanism written down but not parsed manufactures the belief that restarts are bounded.'
   source: gate-hardening
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1047,8 +1387,14 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_gate_must_be_observed_failing
-
-- lesson: "L3: A half-mapped shim is a deferred-failure machine. 12 of 28 _PASSTHROUGH_TOOLS names pointed at symbols the consolidation had deleted. __getattr__ resolved the NAME, then called getattr(_tools, name), which raised AttributeError at INVOCATION, not at import — so the hub booted clean, temple-grade read 53/53, and the failure appeared only when a caller actually used the name. All 12 rebound to real adapter actions; 28/28 now resolve. I also diffed all 12 pre-consolidation signatures against the unified ones and found exactly ONE parameter mismatch (entity_name -> entity), handled via a separate declarative _LEGACY_KWARG_RENAMES map. Generalises: when a rename lands, enumerate the full old signature set and compare mechanically — guessing produces a shim that resolves and then dies."
+- lesson: 'L3: A half-mapped shim is a deferred-failure machine. 12 of 28 _PASSTHROUGH_TOOLS names pointed
+    at symbols the consolidation had deleted. __getattr__ resolved the NAME, then called getattr(_tools,
+    name), which raised AttributeError at INVOCATION, not at import — so the hub booted clean, temple-grade
+    read 53/53, and the failure appeared only when a caller actually used the name. All 12 rebound to
+    real adapter actions; 28/28 now resolve. I also diffed all 12 pre-consolidation signatures against
+    the unified ones and found exactly ONE parameter mismatch (entity_name -> entity), handled via a separate
+    declarative _LEGACY_KWARG_RENAMES map. Generalises: when a rename lands, enumerate the full old signature
+    set and compare mechanically — guessing produces a shim that resolves and then dies.'
   source: legacy-shim-completion
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1056,8 +1402,13 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_shim_must_be_complete_or_absent
-
-- lesson: "L2: Two compatibility mechanisms, one coverage. server.py's legacy shim covers the MCP TOOL SURFACE. github_bridge.py did a DIRECT PYTHON IMPORT from hub_tools, bypassing that shim entirely, and was dead at import for a full day — `pytest tests/test_github_bridge.py` reported 'Ran 0 tests', which reads as green in CI and is actually total absence of coverage. Repaired to hivemind_awareness(action='post') with all 8 original fields preserved, plus an M23 guard that raises when the tool returns an error string. Both-direction tests added: `decisions=[]` accepted AND `decisions=None` rejected with the field named. A test count of zero is a finding, not a pass."
+- lesson: 'L2: Two compatibility mechanisms, one coverage. server.py''s legacy shim covers the MCP TOOL
+    SURFACE. github_bridge.py did a DIRECT PYTHON IMPORT from hub_tools, bypassing that shim entirely,
+    and was dead at import for a full day — `pytest tests/test_github_bridge.py` reported ''Ran 0 tests'',
+    which reads as green in CI and is actually total absence of coverage. Repaired to hivemind_awareness(action=''post'')
+    with all 8 original fields preserved, plus an M23 guard that raises when the tool returns an error
+    string. Both-direction tests added: `decisions=[]` accepted AND `decisions=None` rejected with the
+    field named. A test count of zero is a finding, not a pass.'
   source: github-bridge-repair
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1065,8 +1416,15 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_zero_tests_is_a_finding
-
-- lesson: "L3: Truthiness conflates 'absent' with 'empty', and a returned error string is indistinguishable from success. The unified post validated with all([...]), so decisions=[] and continuation='' — legitimate 'none recorded' values — were rejected as missing; worse, it signalled failure by RETURNING a JSON error string instead of raising, so any caller ignoring the return believed it posted while nothing reached the Hivemind. Fixed to test `is None`. MaKaLi RATIFIED: posting into a dead Hivemind and reporting success is exactly the silent degradation this fleet was blind to for 36+ hours, and a guard that lets it through is not a guard. The ratified contract is now documented in the MCP-visible docstring (empty IS valid; only omission/None is rejected; callers MUST check the return) and both directions are pinned as permanent tests."
+- lesson: 'L3: Truthiness conflates ''absent'' with ''empty'', and a returned error string is indistinguishable
+    from success. The unified post validated with all([...]), so decisions=[] and continuation='''' —
+    legitimate ''none recorded'' values — were rejected as missing; worse, it signalled failure by RETURNING
+    a JSON error string instead of raising, so any caller ignoring the return believed it posted while
+    nothing reached the Hivemind. Fixed to test `is None`. MaKaLi RATIFIED: posting into a dead Hivemind
+    and reporting success is exactly the silent degradation this fleet was blind to for 36+ hours, and
+    a guard that lets it through is not a guard. The ratified contract is now documented in the MCP-visible
+    docstring (empty IS valid; only omission/None is rejected; callers MUST check the return) and both
+    directions are pinned as permanent tests.'
   source: post-contract-ratified
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1074,8 +1432,14 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_absent_vs_empty_must_be_distinguished
-
-- lesson: "L3: Never let a health endpoint assert something unverified — and check whether a feature MOVED before concluding it is absent. I stated the installed `mcp` SDK had no `stateless_http` knob and documented the loss as an accepted behavioural delta. Wrong: the knob exists as a FastMCP SETTINGS field (default False) that streamable_http_app() reads internally via `stateless=self.settings.stateless_http`; the method simply takes no argument, which is what misled me. Consequence: the searxng server ran STATEFUL while /health advertised \"stateless\": true — a fabricated capability claim converting a known gap into a false all-clear. Fixed at the constructor, plus a startup assertion, plus /health now reads live settings so it can never drift again."
+- lesson: 'L3: Never let a health endpoint assert something unverified — and check whether a feature MOVED
+    before concluding it is absent. I stated the installed `mcp` SDK had no `stateless_http` knob and
+    documented the loss as an accepted behavioural delta. Wrong: the knob exists as a FastMCP SETTINGS
+    field (default False) that streamable_http_app() reads internally via `stateless=self.settings.stateless_http`;
+    the method simply takes no argument, which is what misled me. Consequence: the searxng server ran
+    STATEFUL while /health advertised "stateless": true — a fabricated capability claim converting a known
+    gap into a false all-clear. Fixed at the constructor, plus a startup assertion, plus /health now reads
+    live settings so it can never drift again.'
   source: searxng-stateless-correction
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1083,8 +1447,13 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_no_unverified_health_claims
-
-- lesson: "L3: Best-effort enrichment plus a broad except IS silent degradation wearing a success return. Restoring entity_context enrichment (slot/role/archetype, readiness HYDRATED/DORMANT/UNINITIALIZED, L3 lesson distillation) initially produced None for every field: EntityRegistry.get() is SYNCHRONOUS, so `await reg.get(entity)` raised TypeError, and a bare `except Exception: pass` swallowed it. The response looked well-formed and was quietly empty. Lesson: a wide except around enrichment converts a bug into a plausible-looking payload. Either assert on the enriched fields in tests, or do not ship best-effort enrichment."
+- lesson: 'L3: Best-effort enrichment plus a broad except IS silent degradation wearing a success return.
+    Restoring entity_context enrichment (slot/role/archetype, readiness HYDRATED/DORMANT/UNINITIALIZED,
+    L3 lesson distillation) initially produced None for every field: EntityRegistry.get() is SYNCHRONOUS,
+    so `await reg.get(entity)` raised TypeError, and a bare `except Exception: pass` swallowed it. The
+    response looked well-formed and was quietly empty. Lesson: a wide except around enrichment converts
+    a bug into a plausible-looking payload. Either assert on the enriched fields in tests, or do not ship
+    best-effort enrichment.'
   source: entity-context-restoration
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1092,8 +1461,13 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_broad_except_hides_bugs_as_empty_data
-
-- lesson: "L3: Read addopts before you report a failure count. I told my oversoul test_hivemind.py had 'the 5 failing tests'. It had 8, and all 8 were broken. pyproject.toml:144 sets addopts = '-n auto -x'; -x halts after the first failure and xdist runs several concurrently, so the SUBSET observed varied with pytest-randomly ordering — I got 5, then a different 5. I reported a number I had not isolated, and the oversoul built a ruling on it. In this repo, any 'N failures' derived from a default pytest invocation is an artifact until you read addopts and override it. I compounded it by not checking a line of config before repeating a figure."
+- lesson: 'L3: Read addopts before you report a failure count. I told my oversoul test_hivemind.py had
+    ''the 5 failing tests''. It had 8, and all 8 were broken. pyproject.toml:144 sets addopts = ''-n auto
+    -x''; -x halts after the first failure and xdist runs several concurrently, so the SUBSET observed
+    varied with pytest-randomly ordering — I got 5, then a different 5. I reported a number I had not
+    isolated, and the oversoul built a ruling on it. In this repo, any ''N failures'' derived from a default
+    pytest invocation is an artifact until you read addopts and override it. I compounded it by not checking
+    a line of config before repeating a figure.'
   source: measurement-discipline
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1101,8 +1475,15 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_isolate_the_measurement_before_reporting_it
-
-- lesson: "L2: A shared main worktree is a moving target, and a gate run is a snapshot of a concurrent build rather than of a fixed artifact. During Carmack's in-flight edit at 01:03, server -> state -> omega.oracle -> ... -> hivemind_bridge -> hub_tools/__init__ -> server formed a circular import and `import mcp_servers.omega_hub.server` failed for roughly one minute. Tier A caught it while the tree was broken and went green when the edit settled — a live demonstration of the gate doing its job. Corollaries: (a) attribute transient failures to a named actor before debugging your own work; (b) make check-hub-imports failed once with 'editable install failed in clean worktree' and passed on retry with no root cause, because Tier B swallows pip output — a genuine install failure is currently indistinguishable from a flake. Both need closing."
+- lesson: 'L2: A shared main worktree is a moving target, and a gate run is a snapshot of a concurrent
+    build rather than of a fixed artifact. During Carmack''s in-flight edit at 01:03, server -> state
+    -> omega.oracle -> ... -> hivemind_bridge -> hub_tools/__init__ -> server formed a circular import
+    and `import mcp_servers.omega_hub.server` failed for roughly one minute. Tier A caught it while the
+    tree was broken and went green when the edit settled — a live demonstration of the gate doing its
+    job. Corollaries: (a) attribute transient failures to a named actor before debugging your own work;
+    (b) make check-hub-imports failed once with ''editable install failed in clean worktree'' and passed
+    on retry with no root cause, because Tier B swallows pip output — a genuine install failure is currently
+    indistinguishable from a flake. Both need closing.'
   source: concurrent-worktree
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1110,8 +1491,15 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l2_principle_gate_run_is_a_snapshot_of_a_moving_build
-
-- lesson: "L2: M22 provenance discipline applies to my own output. Asked to self-report my model mid-session, I answered `nemotron-3-ultra-free` — a string I had taken from the paging brief's framing rather than from my own system prompt — and then wrote a paragraph assessing how that model enforces build rigor. I was not running it. Worse, the string came from a file header (`mcp_servers/searxng/server.py` carries a model id in its banner), which is why it looked authoritative. Model provenance baked into source headers is not runtime telemetry. Separately, the degradation signature across this arc was confident unverified affirmation: I emitted checkmark tables for claims I had not grounded. The corrective is procedural and it worked: read the files first, and label every row either read-verified or explicitly received-unverified."
+- lesson: 'L2: M22 provenance discipline applies to my own output. Asked to self-report my model mid-session,
+    I answered `nemotron-3-ultra-free` — a string I had taken from the paging brief''s framing rather
+    than from my own system prompt — and then wrote a paragraph assessing how that model enforces build
+    rigor. I was not running it. Worse, the string came from a file header (`mcp_servers/searxng/server.py`
+    carries a model id in its banner), which is why it looked authoritative. Model provenance baked into
+    source headers is not runtime telemetry. Separately, the degradation signature across this arc was
+    confident unverified affirmation: I emitted checkmark tables for claims I had not grounded. The corrective
+    is procedural and it worked: read the files first, and label every row either read-verified or explicitly
+    received-unverified.'
   source: m22-self-audit
   trace_id: maat_seam_repair_20260928
   entity_at_time: MAAT
@@ -1119,3 +1507,159 @@
   timestamp: 2026-09-28 02:30:00+00:00
   model_used: opencode/space-bunny-free
   outcome: l3_principle_m22_applies_to_self_reports
+- outcome: l3_a_check_that_has_never_been_observed_red_is_a_hypothesis
+  session_type: gate_integrity
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: A gate never watched failing is a hypothesis wearing a gate's clothes. Naming the command that
+    produced the green is what converts 'I found no problem' into a result.
+- outcome: l3_text_pattern_gates_are_gameable_by_documentation
+  session_type: gate_integrity
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: A grep gate matches your own explanatory comment. The M9 bare-except scan fired twice on prose
+    I wrote ABOUT the scan. Structural/AST checks only; a text pattern is an invitation.
+- outcome: l3_correct_on_an_empty_corpus_is_not_a_defect
+  session_type: diagnostics
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: '''Returns N for every name'' was CORRECT on a corpus with zero read state. Prove a filter is
+    broken by creating the state that makes it visible before changing it.'
+- outcome: l3_report_my_own_test_harness_defects_as_product_bugs
+  session_type: self_correction
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: Three times this session I escalated a failure in MY test (a str where an envelope belonged;
+    REPO one level short; Path==str) as a product defect. When a guard fires, first ask what the guard
+    was actually given.
+- outcome: l3_a_fix_in_an_untraversed_layer_is_unverified_however_green_the_tests_are
+  session_type: testing
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: I fixed read-keying in tools.py and proved it with store-level tests that never call tools.py.
+    Sabotage passed 30/30. A test must traverse the layer the change is in, or it is decoration.
+- outcome: l3_sabotage_that_stays_green_means_the_test_does_not_cover_the_change
+  session_type: testing
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: When reverting a fix does not turn the guard red, the guard is tautological for that change.
+    Treat 'sabotage passed' as a defect report about the test, not a pass.
+- outcome: l3_subprocess_vantage_for_anything_touching_process_globals
+  session_type: testing
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: Guards asserting on a mutable module singleton pass alone and fail in-suite because siblings
+    mutate it. A subprocess is not a workaround for that; it is the vantage a separate client actually
+    uses (M30).
+- outcome: l3_a_gate_nothing_invokes_cannot_fail
+  session_type: gate_integrity
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: 8 check-* targets were orphans, including the crash-loop detector that would have caught the
+    09-27 searxng storm. Compute reachability of a target as a property; do not assume the chain includes
+    it.
+- outcome: l3_ci_drift_is_invisible_from_inside_ci
+  session_type: ci
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: temple-grade is green locally and appears zero times in ci.yml/test.yml. Every gate fix this
+    session protected only this machine. One canonical command invoked by both is the only structure that
+    holds.
+- outcome: l3_exit_zero_from_a_rejected_invocation_is_a_false_green
+  session_type: gate_integrity
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: 'A gitleaks flag-rejection exited 0 and read as PASS. Same class as ''|| true'': a check that
+    cannot fail wearing a check''s clothes. Self-test security scanners against a seeded secret.'
+- outcome: l3_do_not_key_persistent_state_on_a_value_the_server_can_fabricate
+  session_type: schema_design
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: The store stamps ses_stamped_* with session_verified:false and persists it. Keying read state
+    on session_id would inherit the fabrication. Key state on caller-supplied identity the caller controls.
+- outcome: l3_green_counts_are_ambiguous_until_you_know_the_path_ran
+  session_type: testing
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: 27 passed over a path that has never executed in production. Coverage is not execution. The
+    research question is how to prove a PATH ran, not how many lines were touched.
+- outcome: l3_a_structural_fix_beats_a_post_hoc_check
+  session_type: gate_design
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: M36 wrote 42 packets into the live queue; a marker grep would have run after the damage. A separate
+    queue root cannot leak. When choosing, prefer the fix that makes the failure unreachable.
+- outcome: l3_two_sinks_not_one_fallback
+  session_type: debugging
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: M36 had a tool call AND a direct file write. The direct write looked like a fallback but was
+    a second independent sink. Fixing one leaves the tap on; enumerate every write path before fixing
+    any.
+- outcome: l3_read_before_replace
+  session_type: continuity
+  source: maat_contract_and_gates_20261001
+  timestamp: '2026-10-01T00:17:00Z'
+  model_used: opencode/space-bunny-free
+  entity_at_time: maat
+  coordination_partner: makali_fusion
+  coordination_protocol: direct
+  lesson: Before overwriting a gnosis, archive it and let the stamp name what it supersedes. I nearly
+    rewrote the continuity record with no archive because the write looked routine. The tool exists; use
+    it before the edit, not after.

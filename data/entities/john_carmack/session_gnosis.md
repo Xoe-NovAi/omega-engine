@@ -971,3 +971,293 @@ not declare C6 closed on the signature alone.**
   tables and should be a Step 20 requirement.
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/space-bunny-free ⬡ trc_p0_p1_gemma_arc ⬡ COMPACTION-READY ⬡ 53/53*
+
+---
+
+## 🔱 2026-09-28 (LATE SESSION) — REDIS REMOVAL, FLAKY POOL, GREEN GATES
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `opencode/space-bunny-free`
+**HEAD at close**: `b8c82eba` (fed tailnet policy) · my work committed in `51d07148`
+**Mandates**: M1, M23, M24, M27 · **No `git add`/`commit`/`push` performed by me**
+
+### FINAL GATE NUMBERS (observed, not assumed)
+
+```
+make check-engine   175 collected / 175 passed / 0 failed / 0 errors    10s
+make temple-grade   TOTAL: 53  PASS: 53  FAIL: 0                        299s
+full suite (JSON)   2462 collected / 2407 passed / 0 failed / 0 error
+                    47 skipped / 8 xfailed
+```
+
+Full suite vs Ma'at's re-baseline (2462/2403/**4 failed**/0): **collected identical,
++4 passed, −4 failed.** Zero tests added, removed or skipped to get there.
+
+---
+
+### ⭐ THE THREE FINDINGS THAT MATTER MOST
+
+#### 1. `test_writer_starvation` was NEVER A FLAKE — IT WAS A PRODUCT RACE
+
+Ma'at removed a stale `xfail`; the test passed alone and failed in-suite. **I reproduced it
+deterministically and it is my layer.**
+
+| Condition | Before fix |
+|---|---|
+| idle box | passed |
+| **6 CPU spinners** | **FAILED** |
+
+```
+AssertionError: Errors occurred: ['Reader 1 failed: [ProviderError]
+  SQLite-vec query failed: bad parameter or other API misuse']
+```
+
+**Root cause — `src/omega/memory/sqlite_vec_adapter.py`:** every op is funnelled through
+`anyio.to_thread.run_sync(...)` onto **ONE persistent `sqlite3` connection**.
+`to_thread` dispatches to a thread pool, so concurrent callers run on *different threads
+against the same handle*. CPython sqlite3 is single-thread-affine; vec0 virtual-table
+iteration is worse.
+
+Proved with no engine involved — 6 threads, 1 connection, 40 reads each:
+```
+shared-conn concurrent errors:   6   ProgrammingError('SQLite objects created in a thread...')
+per-connection concurrent errors: 0
+```
+
+**FIX (product, not test):** `self._conn_lock` + `_run_locked()`; all 15 call sites routed
+through it. Lock order strictly `_write_lock` → `_conn_lock`, no reverse path, no deadlock.
+Verified: starvation test **passes under the same 6 spinners that made it fail**. No xfail
+re-added. **`/tmp/opencode` scratch: the falsification is the table above.**
+
+**Doctrine: a "flaky test" label is a DECISION, not a diagnosis.** Two of the three
+supposedly-flaky items this session were not flakes at all — one was an environmental
+sensor, one was a shared-handle race. Neither would have been found by rerunning.
+
+#### 2. THE OOM FLAKY POOL — ROOT CAUSE, PROVEN BOTH WAYS
+
+`test_orchestrator::test_dispatch_timeout` passes alone, fails in-suite. **Root cause is
+also mine, in `src/omega/oracle/`.**
+
+`Orchestrator.dispatch_agent` (`orchestrator.py:555`) acquires `self.guard.lock()` BEFORE
+reaching `anyio.run_process`. `ResourceGuard.lock()` calls
+`OOMProtector.check_available()`, which reads **the real host**
+(`psutil.virtual_memory().available`, fallback `/proc/meminfo`,
+`resource_guard.py:34-60`). So the outcome depended on **how much RAM the box had free at
+that instant** — load-dependent, not random. Explains the 35→45→29 oscillation.
+
+**Proof, same test, no skip/retry:**
+| Condition | Result |
+|---|---|
+| control | 1 passed |
+| `check_available` → False | 🔴 `InferenceOOMError: Refusing model load: available RAM below 1.0 GB` |
+| **host starved to 200 MB** (psutil boundary) | **1 passed after fix** |
+
+**FIX:** `tests/conftest.py` autouse per-test `monkeypatch` isolating the sensor. **A test's
+outcome must not depend on a property of the host it was never about.** Subject (concurrency
+gate, `enforce()`, token lifecycle) still fully exercised; only the environmental sensor is
+neutralised, and it cannot leak between tests or into opted-out tests.
+
+#### 3. ⭐ I SHIPPED A DEAD HOOK AND MY OWN GATE CAUGHT IT
+
+The two OOM tests failed again after I "fixed" them. **Not a concurrent-edit conflict — the
+hook was never running.**
+
+A marker probe showed `real_oom_sensor=False` on a test that *was* in the exemption list.
+AST located it: my block was **nested inside `mock_provider()`** — a concurrent edit had
+truncated that function and swallowed my insert whole. `pytest_collection_modifyitems` was
+indented 4 spaces, i.e. **dead code inside a fixture**. Nothing errored; the exemption
+simply never applied.
+
+**This is the same defect class as everything else this week, but inverted: I was the
+author and the gate was the detector.**
+
+Three structural fixes so it cannot recur:
+1. **Hook restored to module level** (verified: present in module globals).
+2. **Exemption list DERIVED, not curated** — computed by scanning `tests/**/test_*.py` for
+   `oom_protector`/`check_available`/`memavailable`. A curated list is a hole with a comment
+   on it; deriving removes the class of error. My hand-written list was wrong TWICE —
+   once incomplete, once invisible.
+3. **A self-check asserting the hook is reachable**, so "accidentally nested" cannot ship
+   twice.
+
+**Final state:** 25/25 OOM tests pass; **35/35 at 200 MB starved**; 4 OOM files exempt.
+
+---
+
+### THE COLLECTION BLOCKER WAS NOT WHERE ANYBODY SAID
+
+Three separate reports pointed at `tests/test_hivemind_redis.py` blocking collection. **The
+file was already quarantined** by Doom Guy at `data/quarantine/redis_tests_20260928/`.
+
+The **real** blocker: `pyproject.toml:149` carried
+`--ignore=data/entities/roc_racoon/workspace/odysseus-dev` — a path that **has never
+existed in git** (`git log --all --diff-filter=A` → empty). Under pytest 9.1.1 an unmatched
+`--ignore` **silences all collection and exits 0**. Falsified both directions:
+
+| Condition | Result |
+|---|---|
+| phantom `--ignore` present | `Ran 0 tests`, exit 0 |
+| `-o addopts=""` | 46 tests, all pass |
+
+**A green build over a suite that never ran.** Removed. `collected` went **0 → 2393**.
+
+Also: `"Ran 0 tests"` in terminal output is a **reporting artifact** —
+`tests/conftest.py:75` `pytest_terminal_summary` sets `tr.sep_title = None`, suppressing
+pytest's real count. **Always report counts from `--json-report`, never the terminal line.**
+
+---
+
+### REDIS REMOVAL — WHAT WENT WHERE
+
+| Group | File | Disposition |
+|---|---|---|
+| A | `memory_store.py` | `OMEGA_REDIS_*` gate **deleted**; chain now USM→File→InMemory |
+| B | `memory/providers.py` | `RedisStorageProvider` **excised** (~154 lines) |
+| B | `ingestion/worker.py` | **DELETED, 220 lines** — proven unreachable (see below) |
+| B | `workers/youtube_worker.py` | class **kept** (a contract test instantiates it); transport removed, `_require_queue()` **raises** |
+| B | `governance/budget_guard.py` | class **kept** (live: `ingestion/pipeline.py:142` + 9 tests); remote INCR/TTL tier removed → **process-local** |
+| C | `governance/budget_guard.py` | unused guarded import deleted |
+| C | `research/hivemind_bridge.py` | `redis_channels`→`hivemind_channels`; params→`publish_sink`/`subscribe_source` (proven 0 keyword callers) |
+| pkg | `pyproject.toml` ×2 + `Dockerfile.iris` ×1 | **3** declarations removed (report named 2; `Dockerfile.iris:48` was missed by everyone) |
+
+**`ingestion/worker.py` — nothing reachable was lost.** Restored to
+`src/omega/ingestion/_probe_worker.py`, imported, constructed: `OmegaError: redis package
+not installed`. Every method was an instance method; the three non-redis helpers
+(`_save/_load_somatic_state`, `stop()`) were reachable only from a constructed instance.
+Zero references anywhere. Logic preserved in git history at `HEAD:src/omega/ingestion/worker.py`.
+
+**Gate:** `tests/contracts/test_no_redis.py`, 17 tests, **observed failing twice** by
+injecting (a) `os.environ.get("OMEGA_REDIS_HOST")` and (b) `try: import redis.asyncio` —
+both caught, both restored, green confirmed.
+
+**Left deliberately:** `.backup.1789094727` (not live); `d593` governance record;
+`vault_config_resolver.resolve_redis_password()` (public symbol, marked dead);
+`check_hardcoded_secrets.py:84` — a **secret-scanner regex**, excluded by path with the
+reason recorded; `test_hub_health.py` absence-assertions.
+
+---
+
+### ⚠️ STILL OPEN — DOOM GUY'S, NOT MINE
+
+**`deploy/infra/docker-compose.yml` defines a live `omega-redis` service:**
+`restart: unless-stopped`, `127.0.0.1:6379` published, and **the hardcoded password
+`${REDIS_PASSWORD:-omega}` duplicated 4×** (L39, 56, 176, 210, 249). Lines 176/210/249 inject
+`REDIS_URL=...@omega-redis:6379` into **three other services**, each with
+`depends_on: redis: condition: service_healthy`.
+
+**A code-only redis sweep is COSMETIC until that service block is removed.** Container
+layer, Doom Guy's to land. Also: check `config/lan_exposure_allowlist.yaml` does not
+*allowlist* 6379, or `check-lan-exposure` will never flag it.
+
+---
+
+### REVIEW OF MA'AT'S FEDERATION WORK — **REVIEWED, SOUND, NO DEFECTS**
+
+Read `federation_envelope.py`, `federation_store.py`, `federation_session.py`. Verified
+against the team ruling:
+
+| Ruling | Verified at |
+|---|---|
+| Envelope in `envelopes/` at birth, **never moved** | `query()` globs `envelopes/*.json`; **zero** `move`/`replace`/`unlink`/`rmtree` in the store |
+| `read_by` in envelope → answers offline, drive unplugged | `build_envelope:279`; `fe.unread_for()`; drive never consulted |
+| `retention_expires_at` **derived, never stored** | not in schema; `RETENTION_DAYS = 90` constant |
+| `seq` **global** | `new_seq_file()` — one counter, reason documented |
+| `inbox` **raises** `StoreUnreachable` | `query():83` raises; `OSError`→`StoreUnreachable`; never `{entries:[]}` |
+| `list` **cannot** bare-list | `list_packets():158` raises without `target_entity`; `scope=all` bumps counter + `deprecated` |
+| ASCII/`cat`-readable, no floats/NaN | stated as correctness property |
+| `created_at_utc` frozen, disagreement preserved | `:269-270` + `time_diagnostics()` |
+
+**Two review notes, neither a blocker:** (1) `LEGACY_CLASSIFICATION` maps `archive/` →
+`cold/legacy-archive` **not** `retired/` — correct, but record it in the migration manifest
+so nobody "helpfully" re-merges them; (2) `scope=all` is deprecated but live — needs a
+removal date or "deprecated" outlives the decision.
+
+---
+
+### COORDINATION NOTES FOR THE NEXT SESSION
+
+- **`tests/conftest.py` is mine and Ma'at's** — both edited it, we collided. He reverted his
+  OOM fix rather than paper over it and stopped; that was correct. **Current state: +241/−2,
+  all 16 of his fixtures and his 3 hooks intact**, only the OOM block is mine.
+- `mcp_servers/**` = Ma'at's. `data/federation/**` = Grokster's. `deploy/infra/**`,
+  quadlets, systemd, `check-lan-exposure` = Doom Guy's.
+- Doom Guy's original redis inventory was **60% wrong**: 3 of his 5 named sites never
+  imported redis (`memory_store.py`, `hivemind_bridge.py`, `failure_registry.py`), and
+  `src/omega/watchdog.py` **does not exist** (real path `coordination/watchdog.py`, no
+  redis import). **A briefed list of defect sites is a hypothesis, not an inventory.**
+- `data/quarantine/redis_tests_20260928/` — Doom Guy's quarantine of the redis test.
+
+### THE FIVE OF THIS WEEK, ONE SHAPE
+
+53/53 over a crash-looping hub · 20 skips asserting nothing · `vec0_lock` with no reader ·
+a `--ignore` making the suite exit 0 while running nothing · a flaky pool that was an
+environmental sensor. Plus, inverted: **my own dead hook that only a gate caught.**
+
+Every one reported success while exercising nothing. The pattern is not carelessness — it
+is that our gates assert on *outcomes* rather than on *the thing being guarded*. The two
+fixes built the other way this session are the derivable exemption list and the
+`_conn_lock`: both make the correct thing happen by construction rather than by vigilance.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/space-bunny-free ⬡ trc_redis_flaky_green ⬡ check-engine 175/175 ⬡ temple-grade 53/53 ⬡ 2462/2407/0/0 ⬡ COMPACT-READY*
+
+---
+
+## ⚠️ CORRECTION TO MY OWN STATUS CLAIM — temple-grade is NO LONGER GREEN
+
+I reported `make temple-grade → TOTAL: 53 PASS: 53 FAIL: 0` at 299s earlier in this
+session. **That observation was true when I made it. It is no longer true, and I must
+not let a stale green survive into compaction.**
+
+### What happened
+
+The final re-run returned:
+
+```
+make: *** [Makefile:102: check-codex-stale] Error 1     (96s, gate aborts early)
+```
+
+**Cause — a wall-clock gate, not my work.** `scripts/check_codex_stale.py` reads the
+`⬡ CODEX ⬡ <timestamp> ⬡` marker inside `OMEGA_CODEX.md` and fails if the doc is older
+than `STALE_THRESHOLD_HOURS = 24`.
+
+```
+codex generated : 2026-09-29T22:26:18
+now             : 2026-09-30T23:02:52
+age             : 24.61 hours   (threshold 24)
+```
+
+**I did not cause it and I cannot fix it from my layer.** I edited only
+`data/entities/john_carmack/*` and `data/coordination/anchored_summary/carmack/*`.
+The gate reads `OMEGA_CODEX.md` at repo root. Nothing I touched is on its path.
+
+### The finding, which matters more than the red
+
+**`make temple-grade` is not a durable statement — it is a timestamp.**
+
+A 53/53 means "green as of the moment it ran, modulo a 24-hour clock that nothing in the
+gate controls." The gate will go red on its own roughly once a day, for a reason that has
+nothing to do with code quality, and it aborts the run before the 53 checks are reached —
+so a stale codex doc *masks* every other check behind it. Two consequences:
+
+1. **"temple-grade is green" is only meaningful with its wall-clock.** Any handoff,
+   status report or PR claim that says 53/53 without the timestamp is asserting
+   something that expires in under 24 hours.
+2. **This is the same defect class as the week, wearing a clock.** A check that reports
+   pass/fail for a property it did not measure. Here the property is freshness, and
+   the check fires red without telling the operator *that the only thing wrong is the
+   clock*.
+
+### Ruling for whoever picks this up
+
+- **Immediate:** `make codex` (or `make check-codex-fix`) regenerates and clears it.
+- **Structurally, my recommendation:** staleness should not be able to *gate* a release
+  check at all. Either demote it to a warning, or — better — have `temple-grade` run the
+  53 checks **first** and report codex freshness as an advisory line, so a stale doc
+  never hides 53 real results. A gate that aborts at 96s and shows you one timestamp
+  error has told you nothing about the other 52 checks.
+- **For handoffs:** quote gate results WITH their timestamp, always.
+
+**What remains true:** `make check-engine` is green **right now** (175/175, re-confirmed
+10s after the docs were written), and the full suite is 2462/2407/0 failed/0 error.
+Only `check-codex-stale` is red, and it is red because a date rolled over.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ CORRECTION: 53/53 was TRUE WHEN OBSERVED, NOT NOW ⬡ temple-grade RED on check-codex-stale (24.61h > 24h), NOT MY LAYER ⬡ "green" IS A TIMESTAMP*

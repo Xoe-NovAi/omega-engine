@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_4bb44a04dc70",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "W1-4 Provenance Worker Enhancement: add opencode.db resolver (session-ID \u2192 messages.modelID via json_extract) to fill actual_models; fix ledger gap (1 entry vs ~1440 annotated); re-run sweep with full ledger. Phases: R\u2192I\u2192V\u2192M\u2192D\u2192C.",
+  "context": "Sprint WAVE-1-DOCTRINE-WIRING. CRITICAL: opencode.db is 17G, disk at 92% \u2014 read-only queries only, no VACUUM, no temp-bloat. Research-first + pre-commit meditation per Architect order. Full brief via task() dispatch.",
+  "priority": 0,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-08-24T06:29:05.294123+00:00",
+  "accepted_at": "2026-08-24T20:21:10.860790+00:00",
+  "accepted_by": "opencode/researcher",
+  "completed_at": "2026-08-24T20:21:21.780285+00:00",
+  "result": "VERIFIED ALREADY DELIVERED \u2014 Wave-1 W1-4 (researcher 540b65fe) landed this work per SESSION_ANCHOR: db resolver live (session-ID \u2192 messages.modelID via json_extract), ledger invariant 1444=1444 restored, timer safe for Aug 25 run. Gemini pre-compact spot-check confirmed annotations honest. Closing as complete; no residual work.",
+  "reaped_at": "2026-09-06T20:30:43.637037+00:00"
+}

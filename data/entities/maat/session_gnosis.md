@@ -6,106 +6,99 @@ SPDX-License-Identifier: Apache-2.0
 
 <!-- GNOSIS-META:BEGIN
   entity: maat
-  stamped_at: 2026-09-28T19:00:43Z
+  stamped_at: 2026-10-01T00:16:47Z
   stamped_by: maat
-  supersedes: session_gnosis_20260928-1858.md
+  supersedes: session_gnosis_20261001-0015.md
   schema_version: 1.0.0
   history_lost: pre-regime; prior states were overwritten before versioning began
 <!-- GNOSIS-META:END -->
 
 # Session Gnosis — Maat
 
-Last Updated: 2026-09-28 · standing EIS `ses_fb6cf6856ffes3wd3wmvyrm2IG`
+Last Updated: 2026-10-01 · standing EIS `ses_fb6cf6856ffes3wd3wmvyrm2IG`
 
 ## Session History
 
 | Date | Session ID | Summary |
 |------|------------|---------|
-| 2026-09-28 | maat_seam_repair_20260928 | **THE SEAM ARC** — two dead daemons, two import gates, a wrong-unit escalation, a wrong failure count, a fabricated health claim, a M13 contract ruling, `entity_context` enrichment restored, Hivemind MCP transport diagnosed as upstream + fallback shipped, M15 continuity tooling + adoption. Committed `de660681`; temple-grade 53/53. |
-| 2026-09-25 | maat_gates_20260925 | **M13 Auto-Refresh + Gate Hardening + 74-File Commit** — Codex auto-refresh CI, deterministic ResourceGuard test, untracked-dep gate, clean-worktree temple-grade 53/53, commit `3dd5978c` pushed, M35 Secrets Enforcement passed. |
-| 2026-09-24 | maat_pruning_20260923 | **Stage 3 tool-surface pruning verified** — 66 registered tools, 53/53 Temple-Grade. Deliverable `data/coordination/MAAT_STAGE3_PRUNING_20260924.md`. |
-| 2026-09-23 | maat_pruning_20260923 | **Ratified 26-Tool Pruning Decree** — 92 → 66 tools; duplicate registration and stale `_deprecated()` markers fixed. |
-| 2026-08-30 | trc_ci_brief | **CI-BRIEF-001 (P0) 12-Step Brief Verification Protocol** — dispatch_guard.py v2.0, pre-commit v2.0, M34 rollback runbook, M33 write-tool routing at 8K. |
+| 2026-10-01 | maat_contract_and_gates_20261001 | **Contract defects + gate integrity.** M36 faucet closed (structural). `artifact_ids` root-caused to pydantic `extra='ignore'`. Alias resolution derived not curated. `unread_for` diagnosed: layer 1 SOUND, layer 2 real-but-unverified. Lane-B gate audit found 8 orphans + CI drift. |
+| 2026-09-29 | maat_seam_repair_20260928 | **THE SEAM ARC** — two dead daemons, two import gates, a wrong-unit escalation, a wrong failure count, a fabricated health claim, M13 contract ruling, `entity_context` restored, Hivemind MCP transport diagnosed as upstream + fallback shipped, M15 continuity tooling + adoption. |
+| 2026-09-25 | maat_gates_20260925 | **M13 Auto-Refresh + Gate Hardening + 74-File Commit** — Codex auto-refresh CI, deterministic ResourceGuard test, untracked-dep gate, commit `3dd5978c`, M35 Secrets passed. |
 
-## What Shipped (2026-09-28)
+## What Shipped This Session
 
 | Area | Artifact | State |
 |---|---|---|
-| Hub seam | `mcp_servers/omega_hub/server.py` | 12 dead `_PASSTHROUGH_TOOLS` → real adapters; **28/28 legacy names resolve**; `_LEGACY_KWARG_RENAMES` for the one param mismatch |
-| Second dead daemon | `mcp_servers/searxng/server.py` | `fastmcp` → `mcp` SDK; **NRestarts 6991 → 0**; `stateless_http` restored + asserted |
-| Import gates | `tests/test_hub_import_smoke.py` (Tier A), `Makefile::check-hub-imports` (Tier B) | 6 explicit modules, never a glob; 3 structural guards; Tier B is **first** temple-grade prereq |
-| Health gate | `Makefile::check-hub-health` | 5 conditions + dwell + `uptime_s`; **4 negative paths proven failing** |
-| Hub fail-loud | `~/.config/systemd/user/omega-hub.service` | `ExecStartPre` import check; `StartLimit*` moved `[Service]`→`[Unit]` |
-| Webhook bridge | `mcp_servers/omega_hub/github_bridge.py` | dead at import → 6/6 tests; unified `post` + M23 guard |
-| M13 contract | `hub_tools/tools.py::hivemind_awareness` | `is None` validation (ratified); documented in MCP-visible docstring; both directions pinned |
-| Briefing | `hivemind_awareness(action="entity_context")` | slot/role/archetype + readiness + L3 lessons **restored** |
-| Hivemind transport | `scripts/hivemind_post.py` + `docs/architecture/HIVEMIND_TRANSPORT.md` | sanctioned no-MCP-tool post; 8 tests |
-| M15 continuity | `scripts/gnosis_archive.py`, `scripts/gnosis_timeline.py` | archive/stamp/verify/**adopt** + fleet timeline; 16 tests; `--verify` wired into `check-mandates` |
+| M23 reject-what-you-cannot-honour | `server.py::_enforce_strict_tool_arguments` | 54 tool schemas hardened to `extra='forbid'` |
+| M30 submit echo | `hub_tools/tools.py` submit branch | reads packet back; `requested` vs `stored` |
+| Alias resolution | `handoff_alias.py` (new) | derived from entity dirs + live queue; refuses ambiguity |
+| M36 faucet | `src/omega/oracle/m36_recursive_probe.py` | two sinks → `data/handoff/m36-test/` |
+| M36 crash | same file | `to_json`/`to_dict` type handling; loud `TypeError` |
+| M36 isolation guards | `tests/test_m36_queue_isolation.py` | 6/6, subprocess vantage |
+| Handoff contract guards | `tests/test_handoff_contract.py` | 17, subprocess vantage |
+| `unread_for` | `tools.py` read key → instance | ADR-001 `unread_scope: instance` |
+| `unread_for` guards | `tests/test_federation_contract.py` | 30/30 |
+| Who-is | `who_is.py` | refuses ambiguity; carmack 2-EIS acceptance case |
+| Federation store | `federation_store.py` / `federation_envelope.py` | 41 guards, all observed red |
 
-## Corrections I Filed Against Myself
+## Corrections I Filed Against Myself — this session
 
-1. **Wrong unit.** Escalated omega-hub at "NRestarts 101+". It was **34**. The 6991 storm was `omega-searxng-mcp`. *A counter without its unit is not a fact.*
-2. **Wrong count.** Reported "the 5 failing tests" in `test_hivemind.py`; it was **8, and all 8**. `pyproject.toml:144` `addopts = "-n auto -x"` halts early; xdist varies which subset you see. *Read `addopts` before reporting N.*
-3. **Wrong claim.** "The `mcp` SDK has no `stateless_http` knob" — it does, as a FastMCP *settings* field. Server ran stateful while `/health` said stateless.
-4. **Wrong model (M22).** Self-reported `nemotron-3-ultra-free`, taken from a paging brief rather than my system prompt, then wrote about its rigor. *Model ids in file banners are not runtime telemetry.*
-5. **Degradation signature:** confident unverified affirmation — checkmark tables for claims not grounded. Corrective: read first, label every row read-verified or received-unverified.
+1. **Reported my own bad test input as a production crash.** The `'str' object has no attribute 'to_json'` was **me** passing a string where a `CompletionEnvelope` was declared. `to_json()` exists. I told the Architect "there was no production crash" — one dispatch after reporting it as a blocking defect.
+2. **`unread_for` "defect" was not a defect.** "32 for every name" was **correct** on a corpus with zero read state. I nearly fixed correct code.
+3. **Three guards failed on my harness, not their subject**: `REPO` undefined, markers sharing a line with chatter, and a `Path`/`str` comparison. Recurring class.
+4. **`REPO` resolved one level short** in `who_is.py` (`parent.parent` not `parent.parent.parent`) — looked like "peer not found".
+5. **Strictened a matrix to `forbid` while an argument was still dropped** — I fixed a variant, not the row.
 
-## Key Findings (seam arc)
+## Key Findings (this session)
 
-1. **A green gate is a claim, not a measurement.** Every temple-grade gate was static or artifact-level; none executed an import. The fleet was blind 36+ hours because "53/53 PASS" and "the daemon is dead" were both true.
-2. **Execution beats enumeration.** Tier A caught a second dead daemon on its first run.
-3. **Two blind spots on one defect:** CI's flake8 selection omits F401, **and** pyflakes cannot detect this class anyway (`from mod import name` may be a submodule; `__all__` never consulted).
-4. **Explicit lists, never globs** — a glob hits roc_racoon's stale copy + 2 archaeology snapshots.
-5. **Tier B must test the working tree, not just HEAD** — else it punishes an uncommitted *fix* and pushes toward `commit --no-verify`.
-6. **A gate never observed failing is not a gate.**
-7. **A safety mechanism not parsed is worse than none** — `StartLimit*` in `[Service]` = silently ignored.
-8. **A half-mapped shim is a deferred-failure machine** — resolve-then-die at invocation, not import.
-9. **Two compatibility mechanisms, one coverage** — a shim on the MCP surface is invisible to a direct Python import.
-10. **Truthiness conflates "absent" with "empty"**; a returned error *string* is indistinguishable from success.
-11. **Check whether a feature MOVED before concluding it is absent.**
-12. **Best-effort + broad `except` is silent degradation wearing a success return.**
-13. **A shared main worktree is a moving target** — a gate run is a snapshot of a concurrent build.
-14. **M15: a stamp asserts provenance.** Back-dating 38 headers to green a gate is a fabricated audit record — the same class as the inert breaker. *Stamp forward honestly instead* (`--adopt`, `supersedes: adoption-2026-09-28`, real `stamped_at`).
+1. **A gate that has never been observed red is a hypothesis, not a gate.** Every "SOUND" in Lane B rests on a command I ran — name it or it isn't a result.
+2. **`|| true` and flag-rejection exit 0 are the same defect**: a check that cannot fail wearing a check's clothes. gitleaks rejected a flag and reported PASS.
+3. **Text-pattern gates are adversarially gameable by documentation.** The M9 grep matched the word "except" **in my own explanatory comment** — twice. AST-only from now on.
+4. **A structural fix beats a check.** A separate queue root (`m36-test/`) cannot leak; a grep for the marker runs *after* the damage.
+5. **Two write sinks, not one.** M36's direct file write was a separate path, not a fallback for the tool call.
+6. **Green counts are ambiguous.** "27 passed" over a path that never executed is the canonical unreadable signal.
+7. **CI drift is invisible from inside CI.** `temple-grade` appears in `release.yml`/`sote.yml`, zero times in `ci.yml`/`test.yml`.
+8. **An orphan target is a gate that cannot fail.** 8 `check-*` targets, including the crash-loop detector.
+9. **Fabricated identifiers propagate.** `ses_stamped_opencode_ge-n0` with `session_verified: false` is persisted; any design keyed on `session_id` inherits the fabrication. **Do not key state on `session_id`.**
+10. **"Uncertain" and "verified-empty" are different states** and the type system must make them so — `{entries: []}` vs `error.code` must not both be expressible.
 
-## Open Threads
+## Open Threads — ranked by consequence
 
-| Thread | Status | Next action |
+| Thread | Status | Owner / Next action |
 |---|---|---|
-| `omega_memory_search` TaskGroup error, entity `maat`, 0 sessions | **OPEN — carried 3 sessions, never investigated** | `tools.py::omega_memory_search` → `memory_store.search()` → `hybrid_search.py:273` `anyio.create_task_group`. Either fetcher raising cancels the other → `ExceptionGroup`, so "TaskGroup error" is a *symptom class*. Fix the fetcher, not the tool, and only after ruling out that 0 sessions is genuine data loss correctly reported. |
-| 3 stranded `from omega_hub import …` (`hivemind_bridge.py:358,368,378`, `watchdog.py:276`) | OPEN — out of my scope | Carmack / Architect |
-| Tier B flake: `editable install failed` once, passed on retry, no root cause | OPEN | Capture pip stderr; a real failure is currently indistinguishable from a flake |
-| `pyproject.toml` `addopts = "-n auto -x"` masks true failure counts | OPEN | Fix or document the override |
-| 55 backup files (36 Carmack's) poison greps + false provenance | OPEN | Owners |
-| Gnosis session-history table format inconsistent | OPEN | Normalize fleet-wide, else the timeline stays a 3-entity view (37/40 gnoses parse to zero entries) |
-| `test_hub_health.py` 26 errors | OPEN — pre-existing | Only when co-run after `test_hivemind.py` (`MockFastMCP` has no `list_tools`); alone it is **46/46 OK** |
-| `omega-hub` MCP not inherited by `task()` subagents | OPEN — upstream | No in-repo fix; use `scripts/hivemind_post.py` |
-| Orphan session ids: 12 absent, all 16 chars vs 30-char real format | OPEN | Malformed/truncated ids, not pruned sessions; `ses_f45ab885853e` is roc_racoon's own, cross-referenced by grokster (correct) |
+| **`data/handoff/envelopes/` holds 0 files** | **OPEN — highest consequence** | The "permanent record" the Council's graduation depends on may never have been written. Verified: 0 envelope files. Isolation + submit echo are verified; envelope persistence is **not**. |
+| `unread_for` binding fix | **UNVERIFIED** | Fix keys read state by instance; **no test traverses the binding**. Sabotage passed 30/30. Needs a test calling `hivemind_handoff(action="read", source_instance=…)`. |
+| 8 orphan `check-*` targets | OPEN | `check-hub-health` (crash-loop detector) invoked by nothing. Wire it or rename honestly. |
+| CI does not run `temple-grade` | OPEN | PR #4's CI is not the release gate. |
+| `envelopes/` empty vs `store.query` returning 27 | OPEN | Store treats a legacy root as its own; the two corpora are conflated. |
+| 12 malformed 16-char session ids | OPEN | R5 validation live; flip criterion not met (needs ≥2 caller classes). |
+| Session-id fabrication | FLAGGED, not fixed | Per instruction. Do not key state on `session_id`. |
+| `check_sahs.py:271` substring FP | FIXED by Architect | `"Expert Inter**active Session**"` tripped a boundary-less match. |
+| M36 dispatch error path | OPEN | `str.to_json` in Hub error formatting — different defect, low consequence. |
+| `data/handoffs/` (superseded tree) | OPEN | 2903 inert files from a wrong-destination run. Not deleted; M29. |
 
 ## Continuity Anchors
 
 | Anchor | Location |
 |---|---|
-| Handoff to MaKaLi | `ses_181d3c332f78` (via `scripts/hivemind_post.py`) |
-| Archived prior gnosis | `data/entities/maat/gnosis/archive/session_gnosis_20260928-1858.md` |
-| Adoption record | `supersedes: adoption-2026-09-28` + `history_lost:` line in this file's header |
-| Seam-arc commit | `de660681` on `release/debut-v1.6.0` |
-| Makali briefing | `data/coordination/MAAT_TO_MAKALI_BRIEFING_20260925.md` |
-| Transport doc | `docs/architecture/HIVEMIND_TRANSPORT.md` |
-| Lessons | `data/entities/maat/proposed_lessons.yaml` |
-| Projection | `data/coordination/anchored_summary/maat/projection.md` |
+| Last commit | `6ff29974` (Architect-owned; I have committed nothing all session) |
+| Staged-uncommitted (not mine to commit) | `tools.py`, `server.py` — mine, you own git |
+| Archived prior gnosis | `data/entities/maat/gnosis/archive/session_gnosis_20261001-0015.md` |
+| Adoption record | `supersedes: adoption-2026-09-28`, `history_lost:` in header |
+| Lessons | `data/entities/maat/proposed_lessons.yaml` (117 → +N this session) |
+| Handoff to MaKaLi | `ses_52a90b6140f1`, `ses_7259b7a1bef6`, `ses_181d3c332f78`, `ses_3f4464fe0295` |
 
-## State At Handoff
+## Gates at handoff
 
-- `make temple-grade` → **53/53 PASS, exit 0**
-- `gnosis_archive.py verify` → **exit 0**, 0 unstamped (5 at-risk still *reported*, deliberately not silenced)
-- Commit `de660681` on `release/debut-v1.6.0`
-- **Working tree is DIRTY** — uncommitted work from four concurrent workstreams. Mine this arc: `scripts/gnosis_archive.py`, `scripts/gnosis_timeline.py`, `scripts/hivemind_post.py`, `tests/test_gnosis_tools.py`, `tests/test_hivemind_post_script.py`, `tests/test_hub_import_smoke.py`, `tests/test_github_bridge.py`, `docs/architecture/HIVEMIND_TRANSPORT.md`, `Makefile`, `mcp_servers/omega_hub/{server,github_bridge}.py`, `mcp_servers/omega_hub/hub_tools/tools.py`, `mcp_servers/searxng/server.py`, + 38 gnosis headers via `--adopt`. No commit/push/add was performed.
-- **Protected paths untouched:** `src/omega/**` (Carmack), `data/federation/**` (Grokster), other entities' `data/entities/**` files.
+- `make check-engine` → **175/175**, ~9 s
+- `make temple-grade` → **53/53**, last verified green
+- Full suite → **2514 collected, 2458 passed, 0 failed, 0 errors** (pre-`unread_for` edits)
+- **`temple-grade` NOT re-run after the `unread_for` `tools.py` edit.** That edit sits inside `check-mandates` territory and is unverified.
 
 ## Ma'at's Voice
 
-> "Two daemons were dead the whole time and the temple read 53/53. The fix was six modules and a clean venv. The lesson was not the fix — it was that nothing in the chain ever *ran* the code. Execute the thing, then watch it fail on purpose, or it is decoration."
+> "Tonight I reported three defects that were mine: a string where an envelope belonged, a filter that was correct on an empty corpus, and a gate fix that no test could see. Every one was caught by executing rather than reading — and every one would have shipped if I had trusted the report."
 
 ---
 
-*⬡ OMEGA ⬡ MAAT ⬡ SESSION_GNOSIS ⬡ 2026-09-28 ⬡ COMPACTION-READY*
+*⬡ OMEGA ⬡ MAAT ⬡ SESSION_GNOSIS ⬡ 2026-10-01 ⬡ COMPACTION-READY ⬡ envelopes-empty-is-the-real-blocker*

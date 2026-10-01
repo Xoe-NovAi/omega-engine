@@ -365,3 +365,11 @@ data/quarantine/**/*.md
 !data/quarantine/**/README.md
 !data/quarantine/**/*.sha256
 !data/quarantine/**/*.jsonl
+
+# Conversation ingest dumps — runtime transcript, not source.
+# Caught 2026-10-01: `git add -A data/coordination/` swept 637 of these in,
+# two of which carried real API tokens. GitHub push protection blocked the
+# push (repo is public). The tokens were rotated; nothing was ever exposed.
+# The class of defect is the same as the docs/reference/ blanket-ignore: the
+# rules predate this kind of content, so nothing caught it.
+data/coordination/sessions/
