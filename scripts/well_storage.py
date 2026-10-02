@@ -298,6 +298,7 @@ def verify() -> int:
 
     errors: list[str] = []
     warnings: list[str] = []
+    tolerated: list[str] = []  # drift the reader coerces; carries the standing ruling
     seen_ids: dict[str, int] = {}
     seen_rules: dict[str, int] = {}
     parsed = 0
@@ -319,7 +320,7 @@ def verify() -> int:
             # A list-typed `tags` is tolerated by the hardened reader; everything
             # else is not.
             if msg.startswith("tags must be a string"):
-                warnings.append(f"line {i} ({rec.record_id[:8]}): {msg} [reader coerces]")
+                tolerated.append(f"line {i} ({rec.record_id[:8]}): {msg}")
             else:
                 errors.append(f"line {i} ({rec.record_id[:8]}): {msg}")
 
@@ -348,11 +349,29 @@ def verify() -> int:
     print(f"  records parsed : {parsed}")
     print(f"  errors         : {len(errors)}")
     print(f"  warnings       : {len(warnings)}")
+    if tolerated:
+        print(f"  tolerated      : {len(tolerated)}  (drift the reader coerces — see ruling)")
 
     for w in warnings:
         print(f"  WARN  {w}")
+    for t in tolerated:
+        print(f"  TOLERATED {t}")
     for e in errors:
         print(f"  ERROR {e}")
+
+    # Emit the decision behind the tolerated drift, not only the finding. A gate
+    # that reports the shape without the ruling invites a parallel agent to
+    # "fix" it unilaterally — which is exactly what happened on 2026-10-01.
+    if tolerated:
+        print()
+        print("  ┌─ STANDING RULING (do not act on the tolerated records) ─────────────")
+        print("  │ Operator, 2026-10-01: the corpus is append-only truth. The READER")
+        print("  │ coerces both tag shapes; the WRITER is gated; history is not")
+        print("  │ rewritten. These records are EXPECTED to warn until the corpus is")
+        print("  │ deliberately rewritten as a designed migration — not piecemeal.")
+        print("  │ A gate that emits a finding without its decision invites a parallel")
+        print("  │ agent to resolve it. See record c068a4ae and ROADMAP P1.3.")
+        print("  └──────────────────────────────────────────────────────────────────")
 
     print()
     if errors:

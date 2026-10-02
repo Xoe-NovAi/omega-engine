@@ -201,14 +201,29 @@ from "re-teach the agent every time" to "the agent already knows."
   Python venv for pip installs on this machine`,
   `Prepare-for-compaction orchestration loop is immutable`,
   `Readiness contract: captured=not-ready, reflected=ready`.
-- **Done when**: a rule that has demonstrably changed behaviour in a later session
-  is reachable; a `correction`/`anti_pattern` record never ages out of the top-N.
-- **Status**: `queued` — operator priority #1 (2026-10-02). Deterministic
-  dedup-by-rule-identity + permanence floor. **Do NOT add embeddings**: at N=64 a
+- **Status**: ✅ **DONE (2026-10-02, partial)** — `rankWellRecords()` in
+  `gnosis-leash.js` (tracked at `.opencode/plugins/`) now: **dedups by rule
+  identity** (identical text collapses to its newest record — two copies cannot
+  occupy two slots) and applies a **permanence floor** (`WELL_PERMANENCE_FLOOR=2`
+  of `correction`/`anti_pattern` guaranteed a slot). Two regression tests added
+  and verified to fail on pure recency. **Do NOT add embeddings**: at N=64 a
   full scan is free and CPU-only embedding recall adds a silent-failure mode.
+- **Deferred (P1.6)**: the floor is a *representation* guarantee, not full
+  old-rule reachability — with more corrections than slots, older corrections
+  still age out. Full reachability needs a rotation or a relevance term.
   Cross-check: `researcher_humboldt`'s `session-2026-10-02T13-07-00Z` narrative
-  independently reached the same conclusion ("outcome tracking may be
-  unmeasurable at our density... pivot to recurrence detection").
+  independently concluded ("outcome tracking may be unmeasurable at our
+  density... pivot to recurrence detection") — the recurrence detector
+  `scripts/well_recurrence_check.py` is that line's investigation.
+
+### P1.6 — The Well old-rule reachability (rotation / relevance)
+- **Why**: the permanence floor guarantees the class is represented, not that any
+  specific old rule resurfaces. A rule that changed behaviour long ago but has
+  been idle since is still unreachable.
+- **Done when**: any active record becomes reachable again on a bounded cycle,
+  without embeddings. Candidate: round-robin offset by session count, or an
+  age-boost that decays recency for never-injected records.
+- **Status**: `queued`.
 
 ### P1.4 — The Well evolution (supersession)
 - Corrections can be superseded by newer ones (same `domain`+`rule` family);
