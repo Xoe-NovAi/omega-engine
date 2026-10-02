@@ -406,6 +406,13 @@ gnosis-ledger: ## Pause Ledger — lifecycle state of every gnosis pack
 gnosis-leash-status: ## Watchdog: is the automated gnosis-leash plugin alive + clean?
 	@python3 scripts/compaction/leash_status.py
 
+LEASH_SRC = .opencode/plugins/gnosis-leash.js
+LEASH_RUNTIME = $(HOME)/.config/opencode/plugins/gnosis-leash.js
+
+plugin-sync: ## Deploy the tracked gnosis-leash source to the OpenCode runtime plugin dir
+	@cp "$(LEASH_SRC)" "$(LEASH_RUNTIME)"
+	@echo "Deployed $(LEASH_SRC) -> $(LEASH_RUNTIME)"
+
 # --- The Well (P1: corrections/tuning corpus) ---
 WELL_SCRIPT = scripts/well_storage.py
 

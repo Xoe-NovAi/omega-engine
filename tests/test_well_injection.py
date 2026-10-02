@@ -30,10 +30,39 @@ import unittest
 
 REPO = Path(__file__).resolve().parents[1]
 PLUGIN = Path.home() / ".config/opencode/plugins/gnosis-leash.js"
+PLUGIN_SRC = REPO / ".opencode/plugins/gnosis-leash.js"
 WELL_JSONL = REPO / "gnosis" / "well" / "well.jsonl"
 WELL_SCRIPT = REPO / "scripts" / "well_storage.py"
 
 NODE = shutil.which("node") or shutil.which("bun")
+
+
+class TestPluginVersionControl(unittest.TestCase):
+    """gnosis-leash.js must be versioned: the runtime file is a deployed copy.
+
+    Until 2026-10-02 the plugin lived ONLY at ~/.config/opencode/plugins/, so the
+    single most security-relevant file the session touched had no version
+    control at all. The tracked source now lives at .opencode/plugins/; the
+    runtime file must match it, so an edit made directly to the runtime copy
+    (outside git) is caught here instead of silently drifting.
+    """
+
+    def test_runtime_plugin_matches_tracked_source(self):
+        if not PLUGIN_SRC.is_file():
+            self.skipTest(f"no tracked source at {PLUGIN_SRC}")
+        self.assertTrue(
+            PLUGIN.is_file(),
+            f"runtime plugin missing at {PLUGIN} — run `make plugin-sync`",
+        )
+        runtime = PLUGIN.read_text(encoding="utf-8")
+        source = PLUGIN_SRC.read_text(encoding="utf-8")
+        self.assertEqual(
+            runtime,
+            source,
+            "runtime plugin and tracked source differ — edit .opencode/plugins/"
+            "gnosis-leash.js and run `make plugin-sync`, or the runtime copy has "
+            "been edited outside git",
+        )
 
 # Harness imports the real plugin by absolute path and calls the real hook with a
 # real-shaped output object, so nothing here reimplements the code under test.
@@ -154,6 +183,48 @@ class TestWellInjectionResilience(unittest.TestCase):
         self.assertIn("HARNESS DOMAIN RECORD", out["system0"])
         self.assertNotIn("CONSCIOUSNESS DOMAIN RECORD", out["system0"],
                          "domain filter must hold")
+
+    def test_dedup_collapses_identical_rule_text_to_one_slot(self):
+        """Two copies of one rule must not occupy two injection slots."""
+        self.write([
+            make_record(record_id="00000000-0000-4000-8000-0000000000a1",
+                        ts="2026-01-01T00:00:00Z", rule="DUPLICATE RULE TEXT"),
+            make_record(record_id="00000000-0000-4000-8000-0000000000a2",
+                        ts="2026-01-02T00:00:00Z", rule="DUPLICATE RULE TEXT"),
+        ])
+        out = run_hook(self.dir)
+        self.assertIn("DUPLICATE RULE TEXT", out["system0"])
+        # Each injected record carries "(kind:" once; the rule text must appear
+        # exactly once, meaning only the newest of the two survived.
+        self.assertEqual(out["system0"].count("DUPLICATE RULE TEXT"), 1,
+                         "identical rule text was injected more than once")
+
+    def test_permanence_floor_rescues_old_corrections(self):
+        """Recency alone buries old corrections; the floor must not."""
+        lines = []
+        # 6 NEWER records of a non-pinned kind — recency alone would take all 6.
+        for i in range(6):
+            lines.append(make_record(
+                record_id=f"00000000-0000-4000-8000-0000000000b{i}",
+                ts=f"2026-06-0{i+1}T00:00:00Z", kind="tip",
+                rule=f"NEWER TIP {i}"))
+        # 2 OLDER corrections — unreachable under pure recency.
+        lines.append(make_record(
+            record_id="00000000-0000-4000-8000-0000000000c1",
+            ts="2026-01-01T00:00:00Z", kind="correction", rule="OLD CORRECTION ONE"))
+        lines.append(make_record(
+            record_id="00000000-0000-4000-8000-0000000000c2",
+            ts="2026-01-02T00:00:00Z", kind="correction", rule="OLD CORRECTION TWO"))
+        self.write(lines)
+        out = run_hook(self.dir)
+        self.assertIn("OLD CORRECTION ONE", out["system0"],
+                      "permanence floor did not rescue an old correction")
+        self.assertIn("OLD CORRECTION TWO", out["system0"],
+                      "permanence floor did not rescue an old correction")
+        # With floor=2, only 2 of the 6 newer tips survive: the two newest.
+        tip_count = sum(out["system0"].count(f"NEWER TIP {i}") for i in range(6))
+        self.assertEqual(tip_count, 4,
+                         "floor should leave 4 recency slots, not 6")
 
 
 @unittest.skipIf(NODE is None, "node/bun not on PATH — cannot execute the plugin")
