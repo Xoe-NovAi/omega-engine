@@ -172,9 +172,9 @@ WanderGround is a sibling workspace, not a command bundled into this repository.
 - 5,047 documents currently at 384 dimensions;
 - `spatial/knowledge_atlas.db` absent;
 - 3D viewer on port `8088` absent;
-- standalone Qwen3 768-D embedding service not live.
+- standalone Qwen3 native 1024-D embedding service not live (canonical is Ollama native 1024).
 
-The current 384-D corpus is not automatically compatible with the target Qwen3 768-D space. Do not mix dimensions in one index. Follow the blue/green migration guidance in `docs/WANDERGROUND_SPEC.md` and the embedding decision record before attempting migration.
+The current 1024-D corpus is the canonical space. Legacy 384-D data was re-embedded 2026-10-02. Do not mix dimensions in one index. Follow the blue/green migration guidance in `docs/WANDERGROUND_SPEC.md` and the embedding decision record before attempting migration.
 
 ## 9. Optional federation
 

@@ -69,7 +69,7 @@ The federation subsystem is documented across specialized architectural, operati
 - **[OFFLINE_OPERATING_PROTOCOL.md](OFFLINE_OPERATING_PROTOCOL.md)**: Operational guidelines for periods of network severance, avoiding premature stale handoff reap cycles.
 - **[RECONNECTION_DELTA_SYNC.md](RECONNECTION_DELTA_SYNC.md)**: Synchronization algorithms for reconciling divergent Git commits, Well records, and WanderGround sparks upon network reconnection.
 - **[node0_received/](node0_received/)**: Local staging directory containing ratified Node 0 policies (`CSS_PROTOCOL.md`, `SOVEREIGNTY_POLICY.md`, `DATA_GOVERNANCE_POLICY.md`, `STALE_HANDOFF_POLICY.md`).
-- **[MAKALI_N0_SYSTEM_BRIEFING.md](MAKALI_N0_SYSTEM_BRIEFING.md)**: Comprehensive Node 0 handoff covering the continuity kernel, SQLite authority, MemPalace projection, Arcana-NovAi WAD, Lilith/Researcher_Humboldt entities, Qwen3-Embedding-0.6B@768 compatibility, and prioritized requests for personal Lilith history, legacy Lilith documents, and agent experiments.
+- **[MAKALI_N0_SYSTEM_BRIEFING.md](MAKALI_N0_SYSTEM_BRIEFING.md)**: Comprehensive Node 0 handoff covering the continuity kernel, SQLite authority, MemPalace projection, Arcana-NovAi WAD, Lilith/Researcher_Humboldt entities, Qwen3-Embedding-0.6B native 1024 compatibility, and prioritized requests for personal Lilith history, legacy Lilith documents, and agent experiments.
 
 ### 2.5 Historical Completion Records
 - `COMPLETION_BRIEFING.md` / `COMPLETION_BRIEFING_20260912.md` / `COMPLETION_REPORT_20260912.md` / `FED_COMPLETION_BRIEFING_20260912_2.md`: Point-in-time milestones marking Phase 0/1/2 completions.

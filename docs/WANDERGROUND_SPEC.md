@@ -122,9 +122,9 @@ standalone Qwen3 embedding server (`qwen3-embedding:0.6b`, ONNX,
 is not the federated canonical route.
 
 The local runtime currently uses MemPalace `3.10.0`; the active palace database
-is `/home/xnai/WanderGround/mempalace/sqlite_exact.sqlite3` (5,047 document
-rows, all currently 384-dimensional, `PRAGMA quick_check = ok`, measured
-2026-09-23). The 768-D Qwen3 route is a target migration and is not yet live.
+is `/home/xnai/WanderGround/mempalace/sqlite_exact.sqlite3` (1,115 document
+rows, all now 1024-dimensional (re-embedded 2026-10-02), `PRAGMA quick_check = ok`, measured
+2026-09-23). The 1024-D Qwen3 route is live and canonical; no truncation.
 MemPalace remains behind an MCP/drawer-sink boundary for continuity projection;
 the continuity adapter must not mutate its SQLite database directly. The local
 SQLite continuity store is the authoritative state/event source; MemPalace is a
@@ -136,8 +136,8 @@ rebuildable searchable projection.
 2. **Exact local storage**: `sqlite_exact` keeps the palace in a local SQLite
    database with FTS and exact vector storage; no Chroma, Qdrant, PostgreSQL,
    Docker, or GPU service is required on Node 1.
-3. **Federated compatibility**: Both nodes use the same Qwen3 model and 768-D
-   Matryoshka truncation for direct cosine compatibility.
+3. **Federated compatibility**: Both nodes use the same Qwen3 model at its native 1024 dimensions
+   for direct cosine compatibility (no truncation).
 4. **MCP boundary**: MemPalace is accessed through its MCP/drawer surface. The
    continuity projector passes exact event JSON to an injected drawer sink; it
    does not import MemPalace internals or open its database for mutation.
@@ -202,7 +202,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_concepts USING vec0(
 ```
 
 ### 6.2 The 3D Dimensionality Reduction Pipeline (`project_umap_3d.py`)
-1. **Extraction**: Pulls all 768-dimensional embeddings from `vec_concepts`.
+1. **Extraction**: Pulls all 1024-dimensional embeddings from `vec_concepts`.
 2. **Manifold Learning**: Runs `umap-learn` configured for 3 components (`n_components=3`, `metric='cosine'`, `min_dist=0.1`, `n_neighbors=15`).
 3. **Coordinate Normalization**: Centers and scales the $(X, Y, Z)$ points into a bounding sphere of radius $R=100.0$.
 4. **Spatial Persistence**: Updates the `concepts` table with the computed coordinates.

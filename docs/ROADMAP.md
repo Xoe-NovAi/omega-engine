@@ -188,14 +188,13 @@ from "re-teach the agent every time" to "the agent already knows."
   **Gate**: `make well-verify` audits the real corpus (ERROR = unreadable,
   WARN = reader-tolerated drift). `tests/test_well_injection.py` — 7 tests driving
   the real plugin in node, **verified to fail against the vulnerable reader**.
-  121/121 green. Corpus: 64 records, 0 errors, 2 warnings.
-- **Still open (P1.5)**: ranking is recency-only, so 39 of 45 injectable records
-  are permanently unreachable at session start. Two duplicate rule texts were
-  found; **both pairs are now fully superseded and no longer consume slots**, so
-  the remaining work is the permanence floor for `correction`/`anti_pattern`,
-  not dedup.
+  121/121 green. Corpus: 66 records, 0 errors, 2 warnings.
+- ✅ **DONE (P1.3b)**: ranking is no longer purely recency-only — dedup by rule
+  identity and a permanence floor (`WELL_PERMANENCE_FLOOR=2` for
+  `correction`/`anti_pattern`) now guarantee high-severity rules stay reachable.
+  The two duplicate rule pairs that wasted slots are fully superseded.
 
-### P1.5 — The Well injection ranking (reachability)
+### P1.3b — The Well injection ranking (reachability)
 - **Why**: top-6 by `ts` descending means an important old rule can *never*
   surface again once 6 newer records exist. Unreachable today: `ALWAYS use a
   Python venv for pip installs on this machine`,
@@ -206,17 +205,10 @@ from "re-teach the agent every time" to "the agent already knows."
   identity** (identical text collapses to its newest record — two copies cannot
   occupy two slots) and applies a **permanence floor** (`WELL_PERMANENCE_FLOOR=2`
   of `correction`/`anti_pattern` guaranteed a slot). Two regression tests added
-  and verified to fail on pure recency. **Do NOT add embeddings**: at N=64 a
+  and verified to fail on pure recency. **Do NOT add embeddings**: at N=66 a
   full scan is free and CPU-only embedding recall adds a silent-failure mode.
-- **Deferred (P1.6)**: the floor is a *representation* guarantee, not full
-  old-rule reachability — with more corrections than slots, older corrections
-  still age out. Full reachability needs a rotation or a relevance term.
-  Cross-check: `researcher_humboldt`'s `session-2026-10-02T13-07-00Z` narrative
-  independently concluded ("outcome tracking may be unmeasurable at our
-  density... pivot to recurrence detection") — the recurrence detector
-  `scripts/well_recurrence_check.py` is that line's investigation.
 
-### P1.6 — The Well old-rule reachability (rotation / relevance)
+### P1.3c — The Well old-rule reachability (rotation / relevance)
 - **Why**: the permanence floor guarantees the class is represented, not that any
   specific old rule resurfaces. A rule that changed behaviour long ago but has
   been idle since is still unreachable.

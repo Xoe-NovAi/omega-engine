@@ -181,7 +181,7 @@ To allow zero-copy model weight sharing, dataset staging, and cross-node artifac
 │  │   THE GNOSIS ENGINE   │  │       THE WELL        │  │  WANDERGROUND   │  │
 │  │ • 9-step lock ritual  │  │ • well.jsonl corpus   │  │ • MemPalace     │  │
 │  │ • Dynamic reflection  │  │ • Top-6 session start │  │ • sqlite-vec    │  │
-│  │ • Pack state machine  │  │ • Top-8 compaction    │  │ • 768-D target  │  │
+│  │ • Pack state machine  │  │ • Top-8 compaction    │  │ • 1024-D native target  │  │
 │  │ • Watchdog leash      │  │ • Supersession chains │  │ • viewer target │  │
 │  └───────────────────────┘  └───────────────────────┘  └─────────────────┘  │
 │                                 ▲                                           │
@@ -213,11 +213,11 @@ The Well (`gnosis/well/well.jsonl` + `WISDOM.md`) stores atomic, immutable lesso
 - **Schema**: `record_id`, `ts`, `kind` (`correction|preference|tip|anti_pattern|insight|dream`), `trigger`, `rule`, `rationale`, `tags`, `status` (`active|superseded`).
 - **Closed-Loop Injection**: `gnosis-leash.js` reads active rules and injects the top-6 rules at session initialization and top-8 rules at compaction.
 - **Filtering Invariant**: Injected based on `status == "active"` and domain (`harness`, `local_ai`). **Kind is not filtered** (inspirational dreams and sharp corrections both circulate).
-- **Deferred Semantic Search (P1.4.1)**: Stubbed at `make well-search`. The canonical embedding route is the standalone Qwen3 embedding server at 768 dimensions; semantic ranking remains deferred until the corpus exceeds 30–50 entries or cross-node federated sync warrants relevance filtering.
+- **Deferred Semantic Search (P1.4.1)**: Stubbed at `make well-search`. The canonical embedding route is qwen3-embedding:0.6b at its native 1024 dimensions; semantic ranking remains deferred until the corpus exceeds 30–50 entries or cross-node federated sync warrants relevance filtering.
 
 ### 5.3 The WanderGround (Spatial Knowledge Constellation)
 - **Current state (2026-09-23):** MemPalace `3.10.0` is live on the local
-  `sqlite_exact` backend. The current palace contains 5,047 documents, all
+  `sqlite_exact` backend. The current palace contains 1,115 documents, all now at native 1024-D (re-embedded 2026-10-02)
   reported as 384-dimensional by the current database.
 - **Target migration:** `qwen3-embedding:0.6b` at **native 1024-D** is the
   canonical federated target (operator ruling 2026-10-01; Node 0 already at

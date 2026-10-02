@@ -279,7 +279,7 @@ The "prepare for compaction" orchestration (§1.4) is now a **fallback/recovery 
 - `dossiers/` → curated synthesis per domain (template in `dossiers/_template_dossier.md`)
 - `mempalace/` → MemPalace `3.10.0` palace (`sqlite_exact`; 5,047 document
   rows, all currently 384-D, measured 2026-09-23)
-- `spatial/knowledge_atlas.db` → target sqlite-vec atlas with Qwen3 768-D
+- `spatial/knowledge_atlas.db` → target sqlite-vec atlas with Qwen3 native 1024-D
   embeddings + 3D projection; currently absent on Node 1
 - `site/` → MkDocs encyclopedia (wiki-sync via `make wiki-sync`)
 

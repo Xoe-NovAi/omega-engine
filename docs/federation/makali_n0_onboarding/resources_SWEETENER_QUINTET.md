@@ -53,7 +53,7 @@ on N1 silicon and N1 incidents do not transfer. Read ours, then earn yours.
 
 **⚠️ Staleness (2026-10-02):** this snapshot is frozen at the vendor commit
 (`2257495f`, 2026-09-26, 19 records). The live N1 corpus at `gnosis/well/` has
-since grown to 64 records and been hardened (reader resilience, `make
+since grown to 66 records and been hardened (reader resilience, `make
 well-verify`, injection dedup + permanence floor, the 1024-native embedding-dim
 correction). Do **not** transplant the snapshot's code or records over the live
 corpus. Refreshing this export is a Node 0 adoption decision — see ROADMAP P5.3.

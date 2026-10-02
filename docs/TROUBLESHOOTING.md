@@ -167,7 +167,7 @@ viewer on :8088: absent
 embedding server on :8090: absent
 ```
 
-These are target services, not failures of basic local inference. Do not mix current 384-D data with a future 768-D index.
+These are target services, not failures of basic local inference. Do not mix legacy 384-D data with the canonical 1024-D index.
 
 ### A 384-D/768-D mismatch is reported
 

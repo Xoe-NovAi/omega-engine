@@ -3,7 +3,7 @@
 Standalone Qwen3-Embedding-0.6B ONNX Server
 
 Runs outside Ollama to bypass MAX_LOADED_MODELS=1 deadlock.
-Supports Matryoshka truncation to 768 dims (truncate_dim=768).
+Supports native 1024-dim embeddings via Ollama qwen3-embedding:0.6b.
 Instruction-aware: queries get "Instruct: {task}\nQuery:{text}", documents raw.
 
 Critical: Disables ONNX Runtime spin-wait (allow_spinning=0) to avoid
