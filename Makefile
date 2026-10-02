@@ -1078,7 +1078,8 @@ check-hub-health:
 	UP=$$(cut -d. -f1 /proc/uptime); \
 	AETM=$$(systemctl --user show $$UNIT -p ActiveEnterTimestampMonotonic --value 2>/dev/null); \
 	UPTIME_S=$$( [ -n "$$AETM" ] && echo $$(( UP - AETM/1000000 )) || echo "unknown" ); \
-	echo "$(GREEN)Omega Hub healthy$(NC)  ActiveState=$$ST SubState=$$SS NRestarts=$$NR pid=$$PID2 uptime_s=$$UPTIME_S";
+	echo "$(GREEN)Omega Hub healthy$(NC)  ActiveState=$$ST SubState=$$SS NRestarts=$$NR pid=$$PID2 uptime_s=$$UPTIME_S"; \
+	$(PYTHON) scripts/check_hub_code_stamp.py || { echo "$(RED)check-hub-health FAILED: stale code process$(NC)"; exit 1; }
 
 # LAN EXPOSURE GATE (E1 2026-09-28, doom_guy/S1). Restored to the chain after
 # 51d07148 rewrote this file and dropped the wiring — the gate still existed and

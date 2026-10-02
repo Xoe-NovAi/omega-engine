@@ -1511,29 +1511,52 @@ async def hivemind_handoff(
             target_agent_id = _alias["agent_id"]
             source_agent_id = _make_agent_id(source_channel, source_entity)
             packet_id = f"ho_{uuid.uuid4().hex[:12]}"
-            packet = {
-                "packet_id": packet_id,
-                "target_agent_id": target_agent_id,
-                "target_channel": target_channel,
-                "target_entity": target_entity,
-                "source_agent_id": source_agent_id,
-                "source_channel": source_channel,
-                "source_entity": source_entity,
-                "task": task,
-                "context": context or "",
-                "priority": priority,
-                "context_delivery": "inline",  # D216 default
-                "resolver_strategy": "escalate",  # Decree 2 default
-                "status": "pending",
-                "submitted_at": datetime.now(timezone.utc).isoformat(),
-            }
+
+            # P0-2: the live submit path must produce a FULL envelope, not the
+            # legacy packet_id-only shape. Route through the envelope builder
+            # so new packets carry handoff_id, seq, body_sha256, read_by.
+            # Legacy packets on disk stay readable (dual-key lookup).
+            from .. import federation_envelope as fe
+            store = _federation_store()
+            envelope = fe.build_envelope(
+                seq=store.next_seq(),
+                task=task,
+                source_entity=source_entity,
+                source_channel=source_channel,
+                target_entity=target_entity,
+                target_channel=target_channel,
+                source_session_id=session_id or "",
+                source_hardware="",
+                sender_verified=bool(session_id),
+            )
+            # Legacy-compat keys so the legacy queue (accept/get/list by
+            # packet_id direct path) keeps working, and so no legacy field
+            # is lost. Added BEFORE the hash is recomputed.
+            envelope["packet_id"] = packet_id
+            envelope["target_agent_id"] = target_agent_id
+            envelope["source_agent_id"] = source_agent_id
+            envelope["context"] = context or ""
+            envelope["priority"] = priority
+            envelope["context_delivery"] = "inline"  # D216 default
+            envelope["resolver_strategy"] = "escalate"  # Decree 2 default
+            envelope["submitted_at"] = datetime.now(timezone.utc).isoformat()
+            # P1: persist session_id/source_instance when supplied — never
+            # write nulls (omit the keys entirely when absent).
+            if session_id:
+                envelope["session_id"] = session_id
+            if source_instance:
+                envelope["source_instance"] = source_instance
+            # Recompute AFTER all extras are in: body_sha256 covers every key
+            # except the hash fields themselves.
+            envelope["body_sha256"] = fe.body_sha256(envelope)
+            ok, why = fe.verify_envelope(envelope)
+            if not ok:
+                return json.dumps({"error": f"envelope failed verification: {why}"})
+            packet = envelope
             path = HANDOFF_PENDING / f"{packet_id}.json"
-            
+
             def _write():
-                with open(path, "w") as f:
-                    fcntl.flock(f, fcntl.LOCK_EX)
-                    json.dump(packet, f, indent=2)
-                    fcntl.flock(f, fcntl.LOCK_UN)
+                fe.write_atomic(path, json.dumps(packet, indent=2, sort_keys=True))
             await anyio.to_thread.run_sync(_write)
             handoff_index_add(packet_id, "pending")
 

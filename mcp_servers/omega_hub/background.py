@@ -164,6 +164,12 @@ async def _reap_stale_handoffs() -> None:
                         json.dump(packet, fh, indent=2)
                         fcntl.flock(fh, fcntl.LOCK_UN)
                     f.unlink()
+                    # P0-4: carry the receipt journal alongside the packet.
+                    # Without this, every journaled read becomes invisible the
+                    # moment the packet reaps — the fix un-fixes itself.
+                    journal = f.with_name(f.stem + ".receipts.jsonl")
+                    if journal.is_file():
+                        journal.replace(dst_dir / journal.name)
                     reaped += 1
                 except Exception as e:
                     logger.debug("Failed to reap handoff %s: %s", f, e)

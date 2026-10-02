@@ -4,6 +4,13 @@
 # ⬡ OMEGA ⬡ MAAT ⬡ P0-FIX-2 ⬡ RECEIPT-JOURNAL
 """P0 FIX 2 guards: append-only receipt journal (read state).
 
+NOTE (2026-10-02): tests/test_federation_read_canary.py was DELETED — it
+encoded the superseded envelope-mutation design (mark_read + submit). The
+journal design it was superseded by is covered here: read round-trip,
+legacy-packet no-crash, concurrent readers both recorded, unread_for uses
+the journal, corrupt-line skip. The store-unreachable discriminator is
+covered in test_federation_binding.py.
+
 MEASURED STATE: 0 of 10 packets in data/handoff/pending/ carry `read_by`.
 Read and unread are indistinguishable. `unread_for` returns identical rows for
 every name. This is why messages are missed.

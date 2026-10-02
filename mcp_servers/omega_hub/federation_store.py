@@ -120,7 +120,15 @@ class FederationStore:
                     continue
                 if source_entity and env.get("source_entity") != source_entity:
                     continue
-                if since_seq is not None and int(env.get("seq") or 0) <= since_seq:
+                # P0-1: the cursor filter applies ONLY to packets that HAVE a
+                # seq. Legacy packets predate the cursor machinery and carry no
+                # seq; treating their missing seq as 0 made `seq <= cursor`
+                # (cursor starts at 0) drop every one of them before the
+                # unread/journal filter ever ran. Packets without a seq are
+                # always candidates — the journal/unread filter is the
+                # authority for read state.
+                if (since_seq is not None and env.get("seq") is not None
+                        and int(env["seq"]) <= since_seq):
                     continue
                 if unread_for:
                     receipts = None

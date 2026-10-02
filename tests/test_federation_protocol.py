@@ -46,7 +46,9 @@ def _msg(**over):
     m = {
         "message_id": "ho_abc12345",
         "source_channel": "opencode",
-        "source_entity": "ge-n1",
+        "source_agent": "ge-n1",
+        "source_instance": "ge-n1",
+        "source_node": "node1",  # GE-N1 runs on Node 1 — suffix and node must agree
         "target_entity": "ge-n1",
         "requested_target": "ge-n1",
         "resolved_target": "ge-n1",

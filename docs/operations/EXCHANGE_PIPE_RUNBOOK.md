@@ -75,6 +75,13 @@ false success **impossible for a correct client**, in three layers:
 
 ## Verification procedure (the manifest rule)
 
+> **Manifest freshness note (2026-10-02):** the manifest cache key is now
+> `(root, entry_count, total_size, max_mtime_ns, path/size/mtime fingerprint)`.
+> Any add/remove/rename/modify changes the key. The previous implementation
+> hashed every file on every request before checking the cache, so the cache
+> saved no I/O. The new key lets the server skip content hashing when nothing
+> changed, while still detecting every real change.
+
 ```bash
 # 1. get the manifest
 curl -sf https://n0.tail51f14a.ts.net:8019/manifest.json -o /tmp/m.json
@@ -100,6 +107,19 @@ X-Omega-SHA256: 36ac1468f2397c00effd4634df75ee7038a4954d2e91c3b5655d1bc200af5a2e
 X-Omega-Size: 122463
 X-Omega-Error: 0
 ```
+
+Or use the built-in receiver-side wrapper, which does the manifest lookup,
+download, size check, and sha256 check in one step:
+
+```bash
+.venv/bin/python scripts/omega_exchange_server.py get \
+  full-pack-20260926/06_archangel_brief/LILITH_N1_ORIGIN_AND_VISION_BRIEF.md \
+  /tmp/brief.md \
+  --base-url https://n0.tail51f14a.ts.net:8019
+```
+
+It exits non-zero and does not write the file if the manifest entry is missing,
+the size differs, or the sha256 differs.
 
 ---
 
@@ -165,4 +185,6 @@ loginctl show-user arcana-novai -p Linger      # must be Linger=yes
 - **Tests:** `scripts/test_exchange_false_success.py` — 15 cases covering the
   three client paths, the manifest contract, the read-only surface, and path
   containment. Observed RED against the old `http.server` (7 errors, 8 failures)
-  before the swap; GREEN after.
+  before the swap; GREEN after. Run with pytest:
+  `.venv/bin/python -m pytest scripts/test_exchange_false_success.py`
+  (running the file directly exits 2 by design — it is a pytest module).

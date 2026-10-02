@@ -24,6 +24,7 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -280,3 +281,10 @@ class TestPathContainment:
         assert b"omega-error" in body or b"not_found" in body, (
             f"traversal {evil!r} refusal is not recognisable as an error: {body[:120]!r}"
         )
+
+
+if __name__ == "__main__":
+    # P0-3: this module is a pytest module. Run directly it executes zero
+    # tests and exits 0 — a false success. Fail loud instead.
+    print("run with pytest: .venv/bin/python -m pytest scripts/test_exchange_false_success.py")
+    sys.exit(2)

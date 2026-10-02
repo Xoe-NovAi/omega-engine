@@ -599,6 +599,15 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     running background loops concurrently with the server."""
     await _init_services()
 
+    # P0-5: stamp the code we loaded so a later probe can detect a stale
+    # process running pre-fix code.
+    try:
+        from mcp_servers.omega_hub import code_stamp
+        from pathlib import Path as _P
+        code_stamp.write_stamp(_P(__file__).resolve().parents[2])
+    except Exception as e:
+        logger.warning("code stamp write failed: %s", e)
+
     # P1-6: Rebuild handoff packet index from filesystem
     try:
         count = await handoff_index_rebuild()

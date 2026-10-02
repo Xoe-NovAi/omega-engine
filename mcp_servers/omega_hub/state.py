@@ -257,6 +257,15 @@ async def _init_services() -> None:
         
         _init_complete = True
         logger.info("All Hub services initialized (background)")
+
+        # P1: rehydrate the hot awareness map from the cold store so a
+        # restarted hub does not report an empty hivemind.
+        try:
+            n = await rehydrate_awareness_from_cold()
+            if n:
+                logger.info("Awareness rehydrated from cold store: %d agent(s)", n)
+        except Exception as e:
+            logger.warning("Awareness cold-store rehydrate failed: %s", e)
     except Exception as e:
         _init_error = str(e)
         logger.error("Hub service initialization FAILED: %s", e)
@@ -459,6 +468,31 @@ async def invalidate_awareness_cache() -> None:
     """Call when hot store is updated (post_context, heartbeat)."""
     async with _awareness_cache_lock:
         _awareness_cache.clear()
+
+
+async def rehydrate_awareness_from_cold() -> int:
+    """P1: on boot, repopulate the hot `_awareness` map from the cold store.
+
+    Without this, a restarted hub has an empty hot map and `awareness get`
+    returns near-empty even though agents are active — the cold merge in
+    `get` only helps the listing, not the hot map the pruning loop and
+    extended-TTL logic read. Returns the number of agents rehydrated.
+    """
+    cold = await get_cached_cold_awareness()
+    n = 0
+    async with _awareness_lock:
+        for agent in cold:
+            aid = agent.get("agent_id")
+            if aid and aid not in _awareness:
+                _awareness[aid] = {
+                    "channel": agent.get("channel", ""),
+                    "entity": agent.get("entity", ""),
+                    "model": agent.get("model", "unknown"),
+                    "task_current": agent.get("task_current", ""),
+                    "timestamp": agent.get("last_seen"),
+                }
+                n += 1
+    return n
 
 # Background pruning cycle tracker
 _last_pruning_cycle: Optional[str] = None

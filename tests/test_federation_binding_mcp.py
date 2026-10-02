@@ -34,10 +34,16 @@ def test_mcp_boundary_keys_read_by_instance_not_entity(hub_runtime, tmp_path, mo
     call(action="read", source_channel="opencode", source_entity="gaming-expert",
          source_instance="ge-n0", packet_id=pid, result="ack")
 
+    # Journal design: the envelope on disk is NEVER mutated by a read.
+    # Read state lives in the `.receipts.jsonl` sidecar, keyed by instance.
+    journal = root / "pending" / f"{pid}.receipts.jsonl"
+    assert journal.is_file(), f"receipt journal missing: {journal}"
+    lines = [json.loads(l) for l in journal.read_text().splitlines() if l.strip()]
+    readers = {l["reader"] for l in lines}
+    assert "ge-n0" in readers, f"read was NOT keyed by instance: {readers}"
+    assert "ge-n1" not in readers, f"one agent's read leaked across instances: {readers}"
+    # and the envelope itself must be untouched by the read
     stored = json.loads((root / "pending" / f"{pid}.json").read_text())
-    read_by = stored.get("read_by", {})
-    assert "ge-n0" in read_by, f"read_by was NOT keyed by instance: {read_by}"
-    assert "ge-n0/test" not in read_by or "ge-n0/test" in read_by  # author may also read
-
-    # The second instance of the SAME agent must still be unread.
-    assert "ge-n1" not in read_by, f"one agent's read leaked across instances: {read_by}"
+    assert stored.get("read_by", {}) == {}, (
+        f"envelope read_by was mutated by a read: {stored.get('read_by')}"
+    )
