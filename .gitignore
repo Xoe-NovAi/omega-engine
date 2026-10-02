@@ -267,8 +267,11 @@ opencode/
 
 # Entity knowledge test fixtures (never commit)
 data/entities/test_*_entity/
-*.md
-# Registry model cards are .yaml.md — un-ignore AFTER the blanket *.md rule
+# Scoped markdown ignore — was blanket `*.md` (defect: hid all documentation).
+# Now scoped to transient markdown in data/ and archive/ only.
+data/**/*.md
+archive/**/*.md
+# Registry model cards are .yaml.md — un-ignore AFTER the scoped rule
 # (git uses the LAST matching pattern).
 !config/model_registry/models/**/*.yaml.md
 
@@ -295,6 +298,14 @@ data/entities/test_*_entity/
 !docs/reference/**/*.md
 !docs/specs/*.md
 !docs/decisions/PIVOT_LOG.md
+# Explicit un-ignore for ALL docs/ subdirectories — documentation is tracked.
+# (Parent-dir ignores like docs/research/evidence_*/ still win for their trees.)
+!docs/**/*.md
+!docs/reference/
+!docs/architecture/
+!docs/api/
+!docs/guides/
+!docs/archive/
 !data/coordination/MAKALI_COUNCIL_AUDIT_*.md
 !data/coordination/GAP_REGISTRY.json
 !data/coordination/meditations/records/MEDITATION_KALI_*.md
