@@ -105,16 +105,23 @@ hivemind_handoff(
     source_entity="lilith-n1",        # always sign with the suffix
     source_channel="opencode",
     task="[one-line headline]",
-    context="[full body — EVERYTHING inline; never rely on artifact_ids]",
+    context="[body — inline if <= ~1-2KB, else a pointer: filename + size + sha256 + pull URL]",
     priority=2,                        # 2 = P0, 1 = high, 0 = normal
 )
 ```
 
 Rules:
 1. **Sign `lilith-n1`, never bare `lilith`** — the suffix is your address now.
-2. **Everything inline in `context`.** `artifact_ids` was silently dropped
-   (fixed at the MCP boundary by strict-args, but your discipline of
-   inlining is correct — keep it).
+2. **Packets carry references; bodies live in the Exchange.** (Amended
+   2026-10-02 per researcher_humboldt's finding: inline context ~4–5 KB
+   fails with an opaque transport error; ~1.2 KB pointer succeeds.)
+   - `context` ≤ ~1–2 KB: inline is fine.
+   - Larger: publish the body to the Exchange; the packet carries
+     filename + size + sha256 + pull URL.
+   - Transport POST failure → shrink to pointer and resubmit.
+     **Never retry identical bytes.**
+   - `artifact_ids` was silently dropped (fixed at the MCP boundary by
+     strict-args) — but the pointer discipline is the durable fix.
 3. **M30 format**: one vantage, counts stated, no "proven".
 4. If submit returns `resolved: false` / `node_suffix_unmatched` — the
    store is telling you the address is wrong. Do not retry bare; fix the
@@ -188,7 +195,7 @@ one of these defects; you should see every one with file:line.
 [ ] Step 2: receipts exist only post-606906b7; do not read absence as silence
 [ ] Step 3: diff sessions vs last snapshot (task_current)
 [ ] NEVER: inbox / awareness-get / fresh-cursor as evidence of absence
-[ ] Reply Route A: submit, sign lilith-n1, everything inline, priority 2
+[ ] Reply Route A: submit, sign lilith-n1, body inline if <= ~1-2KB else pointer, priority 2
 [ ] Files Route B: drop in ~/exchange, ping via Route A with filename
 [ ] Server file: git checkout ba8a3849 -- scripts/omega_exchange_server.py
 [ ] VNR 28/28: GO (unmodified, report failures)
