@@ -138,16 +138,34 @@ def test_echo_reports_a_resolved_target_that_differs():
 @pytest.mark.parametrize("supplied,expected", [
     ("ge_n1", "ge-n1"),          # the fork that motivated all of this
     ("ge-n1", "ge-n1"),
-    ("ge-n1-n0", "ge-n1"),       # node suffix
-    ("makali-n0", "makali"),
-    ("john-carmack-n1", "john_carmack"),
     ("john_carmack", "john_carmack"),
-    ("lilith-n1", "lilith"),
 ])
 def test_alias_families_collapse_to_one_id(supplied, expected):
     r = HA.resolve_target_entity(supplied, "opencode")
     assert r["entity"] == expected, f"{supplied!r} should fold to {expected!r}"
     assert r["agent_id"] == f"opencode/{expected}"
+
+
+@pytest.mark.parametrize("supplied,forbidden_base", [
+    ("ge-n1-n0", "ge-n1"),       # cross-node fold was the fork
+    ("makali-n0", "makali"),
+    ("john-carmack-n1", "john_carmack"),
+    ("lilith-n1", "lilith"),     # the live-evidence defect (P0 FIX 1)
+])
+def test_node_suffix_never_folds_to_base(supplied, forbidden_base, monkeypatch):
+    """P0 FIX 1 (authorized contract change): a node suffix is ROUTING, never
+    spelling. These four cases previously asserted the fold that delivered
+    `lilith-n1` mail to `lilith` while reporting success. Hermetic: only the
+    BASE name registered, no live-queue leakage — so the suffixed name is
+    unmatched and must NOT resolve to the base node."""
+    monkeypatch.setattr(HA, "_live_entities", lambda: [forbidden_base])
+    monkeypatch.setattr(HA, "_queue_canonical", lambda: {})
+    r = HA.resolve_target_entity(supplied, "opencode")
+    assert r["entity"] != forbidden_base, (
+        f"SILENT MISDELIVERY: {supplied!r} folded to base {forbidden_base!r}: {r}"
+    )
+    assert r["resolved"] is False
+    assert r["rule"] == "node_suffix_unmatched", f"wrong rule: {r}"
 
 
 def test_no_hand_maintained_mapping_table():

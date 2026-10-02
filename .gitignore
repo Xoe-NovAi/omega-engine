@@ -324,6 +324,9 @@ data/entities/test_*_entity/
 # a claim that exists only on one machine is not a verified claim.
 # Both are filed with provenance headers and inline corrections.
 !docs/federation/ANTIGRAVITY_REVIEW_RETURN_20261001_*.md
+# The handoff primer — the agent-facing communication contract (2026-10-01).
+# Replaces the retired "Handoff for substance, Hivemind for presence" law.
+!docs/federation/HANDOFF_PRIMER.md
 
 # Governance artifacts (Phase 1 Federation Contract Refactor)
 !docs/governance/SAHS_RULE.md

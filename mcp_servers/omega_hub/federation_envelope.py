@@ -417,12 +417,21 @@ def append_state(envelope: dict, *, status: str, by: str, event: str,
     return envelope
 
 
-def unread_for(envelope: dict, entity: str) -> bool:
+def unread_for(envelope: dict, entity: str, receipts: dict | None = None) -> bool:
     """Unread is DERIVED from read_by. Never a stored boolean.
 
     A denormalized `unread` flag can disagree with `read_by` and then both are
     wrong, with no way to tell which to believe.
+
+    `receipts` is the journal-derived read map (`FederationStore.read_receipts`,
+    `{reader: {"at": ..., "action": ...}}`). When supplied (not None) the
+    journal wins — the envelope on disk is never mutated by a read, so its
+    in-envelope `read_by` is stale by design for journaled packets. When None
+    (no journal on disk, e.g. pre-journal packets) the in-envelope `read_by`
+    is the fallback, so pre-existing packets keep their existing read state.
     """
+    if receipts is not None:
+        return receipts.get(entity) is None
     return (envelope.get("read_by") or {}).get(entity) is None
 
 

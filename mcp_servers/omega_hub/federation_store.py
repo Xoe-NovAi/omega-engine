@@ -30,11 +30,33 @@ that returns one error record.
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 import time
 from pathlib import Path
 
 from . import federation_envelope as fe
+
+# ── receipt journal (P0 FIX 2) ────────────────────────────────────────────
+#
+# Read state lives in an APPEND-ONLY sidecar, not in the envelope. Each
+# packet `X.json` gets a sibling `X.receipts.jsonl`: one JSON object per
+# line per read event. The envelope is NEVER mutated by a read — pure
+# addition, which is why this needs no mandate change (M28-clean).
+#
+# A single receipt line is ~120 bytes: atomic on local ext4 well under
+# PIPE_BUF, so no lock is needed for the append itself. Every write is
+# fsynced (a receipt that vanishes on crash is a lost acknowledgement), and
+# a write failure RAISES loudly (M23) — never swallowed.
+
+#: Sibling suffix: packet `pending/X.json` -> journal `pending/X.receipts.jsonl`.
+#: `pending.glob("*.json")` never matches it, so the query scan is unaffected.
+RECEIPT_SUFFIX = ".receipts.jsonl"
+
+#: Debug key carrying the count of skipped corrupt journal lines. Present
+#: ONLY when at least one line was skipped, so a clean journal reads back as
+#: exactly the reader map (no phantom entry beside real readers).
+RECEIPT_SKIPPED_DEBUG_KEY = "_skipped_corrupt_lines"
 
 # ── counters (R5). Malformed and unknown are SEPARATE. ───────────────────────
 
@@ -100,8 +122,19 @@ class FederationStore:
                     continue
                 if since_seq is not None and int(env.get("seq") or 0) <= since_seq:
                     continue
-                if unread_for and not fe.unread_for(env, unread_for):
-                    continue
+                if unread_for:
+                    receipts = None
+                    journal = self._receipt_path_for(p)
+                    try:
+                        if journal.is_file():
+                            receipts = self._parse_receipt_journal(journal)
+                    except OSError as exc:
+                        raise StoreUnreachable(
+                            f"envelope read failed: {exc}") from exc
+                    # receipts=None -> no journal on disk -> in-envelope fallback.
+                    # receipts=dict  -> journal wins, even when empty.
+                    if not fe.unread_for(env, unread_for, receipts=receipts):
+                        continue
                 out.append(env)
         except OSError as exc:
             raise StoreUnreachable(f"envelope read failed: {exc}") from exc
@@ -262,6 +295,143 @@ class FederationStore:
         fe.write_atomic(self.pending / f"{envelope['handoff_id']}.json",
                         json.dumps(envelope, indent=2, sort_keys=True))
         return envelope
+
+    # ── receipt journal (P0 FIX 2): read state without mutating envelopes ──
+
+    @staticmethod
+    def _receipt_path_for(packet_path: Path) -> Path:
+        """Sibling journal: `pending/X.json` -> `pending/X.receipts.jsonl`."""
+        return packet_path.with_name(packet_path.stem + RECEIPT_SUFFIX)
+
+    def _find_by_any_id_path(self, packet_id: str) -> Path | None:
+        """Dual-key lookup: match EITHER `handoff_id` OR `packet_id`.
+
+        Direct path first (`pending/{id}.json`), then a SINGLE linear scan.
+        Returns the Path — callers derive the journal from it, so there is NO
+        re-lookup and NO second scan inside the critical section.
+
+        Raises StoreUnreachable when the store itself is unreadable (never a
+        silent empty answer). Returns None when no packet matches.
+        """
+        if not self._readable():
+            raise StoreUnreachable(
+                f"handoff inbox not readable at {self.root} "
+                "(pending/ or hot/ missing)"
+            )
+        # A caller-supplied id must never escape the store: the scan below
+        # only ever matches files already under pending/.
+        if "/" not in packet_id and "\\" not in packet_id and ".." not in packet_id:
+            try:
+                direct = self.pending / f"{packet_id}.json"
+                if direct.is_file():
+                    return direct
+            except OSError as exc:
+                raise StoreUnreachable(f"envelope read failed: {exc}") from exc
+        try:
+            files = sorted(self.pending.glob("*.json"))
+        except OSError as exc:
+            raise StoreUnreachable(f"envelope read failed: {exc}") from exc
+        for p in files:
+            env = self._load(p)
+            if env is None:
+                continue
+            if env.get("handoff_id") == packet_id or env.get("packet_id") == packet_id:
+                return p
+        return None
+
+    def record_read_receipt(self, packet_id: str, reader_key: str,
+                            action: str = "read") -> dict | None:
+        """Append one read receipt to the packet's sidecar journal.
+
+        Returns the envelope (loaded from disk, NEVER mutated) so the caller
+        can echo what was read. Returns None when no packet matches
+        `packet_id` — the caller turns that into `not_found`, never into a
+        delivery to some other packet (M23).
+
+        Write path: O_APPEND single-line write (~120 bytes, atomic on local
+        ext4 under PIPE_BUF — no lock on the append path) + fsync on the fd.
+        A write failure RAISES (RuntimeError) — never swallowed, never a soft
+        `invalid_request`. Works on legacy packets (packet_id only, no
+        handoff_id, no body_sha256) that `submit()` would refuse.
+        """
+        found = self._find_by_any_id_path(packet_id)
+        if found is None:
+            return None
+        journal = self._receipt_path_for(found)
+        record = {"reader": reader_key, "action": action,
+                  "at": fe.utc_stamp(), "handoff_id": packet_id}
+        line = (json.dumps(record, sort_keys=True, separators=(",", ":"))
+                + "\n").encode("utf-8")
+        try:
+            fd = os.open(str(journal), os.O_WRONLY | os.O_CREAT | os.O_APPEND,
+                         0o644)
+        except OSError as exc:
+            raise RuntimeError(
+                f"receipt journal open failed for {packet_id}: {exc}") from exc
+        try:
+            written = 0
+            while written < len(line):
+                n = os.write(fd, line[written:])
+                if n == 0:  # pragma: no cover — defensive
+                    raise RuntimeError(
+                        f"receipt journal short write for {packet_id}: "
+                        "os.write returned 0")
+                written += n
+            # NOT optional: a receipt that vanishes on crash is a lost
+            # acknowledgement. The cost of one fsync per receipt is
+            # proportionate to the value of the record.
+            os.fsync(fd)
+        except OSError as exc:
+            raise RuntimeError(
+                f"receipt journal append failed for {packet_id}: {exc}") from exc
+        finally:
+            os.close(fd)
+        return self._load(found)
+
+    @staticmethod
+    def _parse_receipt_journal(journal: Path) -> dict:
+        """Reconstruct `{reader: {"at": ..., "action": ...}}`, last-writer-wins.
+
+        A corrupt line skips THAT LINE, never the whole read; skipped lines
+        are counted under the debug key (present only when nonzero).
+        """
+        readers: dict = {}
+        skipped = 0
+        try:
+            text = journal.read_text()
+        except FileNotFoundError:
+            return {}
+        except OSError as exc:
+            raise StoreUnreachable(f"envelope read failed: {exc}") from exc
+        for raw in text.splitlines():
+            if not raw.strip():
+                continue
+            try:
+                obj = json.loads(raw)
+            except ValueError:
+                skipped += 1
+                continue
+            reader = obj.get("reader") if isinstance(obj, dict) else None
+            if not isinstance(reader, str) or not reader:
+                skipped += 1
+                continue
+            readers[reader] = {"at": obj.get("at"),
+                               "action": obj.get("action", "read")}
+        if skipped:
+            readers[RECEIPT_SKIPPED_DEBUG_KEY] = skipped
+        return readers
+
+    def read_receipts(self, packet_id: str) -> dict:
+        """Read state for one packet, journal-derived. `{}` when none recorded.
+
+        Never raises for a missing packet or a missing journal — "nobody has
+        read this" is a legitimate empty state, not an error. A corrupt line
+        is skipped and counted, never fatal (see `_parse_receipt_journal`).
+        """
+        found = self._find_by_any_id_path(packet_id)
+        if found is None:
+            return {}
+        return self._parse_receipt_journal(self._receipt_path_for(found))
 
 
 def _age_seconds(envelope: dict) -> int | None:

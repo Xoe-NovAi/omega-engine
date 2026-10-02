@@ -1354,15 +1354,17 @@ def _federation_dispatch(action: str, *, source_channel, source_entity, packet_i
             if not packet_id:
                 return json.dumps({"error": {"code": "missing_packet_id",
                                              "message": "read requires packet_id"}})
-            rows = store.query()
-            hit = next((e for e in rows if e.get("handoff_id") == packet_id), None)
-            if hit is None:
+            # Dual-key lookup (handoff_id OR legacy packet_id) + append-only
+            # journal write. NEVER store.submit() here: submit re-validates the
+            # envelope, which rejects legacy packets (no body_sha256) and
+            # KeyErrors on envelope['handoff_id'] — the hidden crash. The
+            # envelope on disk is never mutated; read state is pure addition.
+            envelope = store.record_read_receipt(packet_id, read_key, action="read")
+            if envelope is None:
                 return json.dumps({"error": {"code": "not_found",
                                              "message": f"no packet {packet_id}"}})
-            _fe_mark_read(hit, read_key)   # THIS INSTANCE's entry, not a global flag
-            # and not entity-level: two instances of one agent are separable
-            store.submit(hit)
-            payload = {"entries": [hit], "read_by": hit.get("read_by", {})}
+            read_by = store.read_receipts(packet_id)
+            payload = {"entries": [envelope], "read_by": read_by}
         else:
             return json.dumps({"error": {"code": "bad_action", "message": action}})
     except fstore.StoreUnreachable as exc:
