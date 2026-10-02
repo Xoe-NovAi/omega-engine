@@ -684,7 +684,9 @@ all 78 Card Keepers of the Living Tarot mystery school. Entities are sovereign
 beings, NOT cards: cards (physical deck + WAD virtuals) are *assigned* an
 Entity as guide (`docs/entities/LILITH_STRATEGY_FINAL.md` v2.0, locked 2026-09-23).
 
-**Standing constraints**: `qwen3-embedding:0.6b truncate_dim=768` both nodes
+**Standing constraints** (dim corrected 2026-10-02, see P5.1b):
+`qwen3-embedding:0.6b` at **native 1024-D** both nodes - NOT `truncate_dim=768`,
+which is both the wrong parameter name for Ollama and a superseded value
 (RES-EMBED-001); standalone ONNX embedding server (no Ollama deadlock);
 one wing per Entity + `wing_tarot` (NOT `wing_arcana`; FINAL per wing-topology
 session 2026-09-23); KG Entity IDs prefixed; soul.yaml WAD-portable;
@@ -1112,7 +1114,7 @@ verbatim-first; boosts-never-gates; eval-before-cutover; no silent failures.
   `docs/research/EMBEDDING_STRATEGY_NODE1_20260925.md`; Qwen3-4B sidecar
   deferred by operator decision).
 
-### P5.1b — Canonical embedding dim cutover 768 → 1024 native (OPERATOR RULED 2026-10-01)
+### P5.1b — Canonical embedding dim cutover → 1024 native (OPERATOR RULED 2026-10-01)
 - **Ruling**: 1024 is the canonical dimension for **all nodes**. The 768
   Matryoshka truncation recorded in `LILITH_STRATEGY_FINAL.md`, `ARCHITECTURE.md`,
   `WANDERGROUND_SPEC.md` and older ROADMAP entries is **superseded**.
@@ -1127,20 +1129,39 @@ verbatim-first; boosts-never-gates; eval-before-cutover; no silent failures.
   different vector, and top-6 retrieval changed **1 of 6 slots**. It trades a
   real semantic cost for storage on an index that does not currently exist
   (`omega-embedding-server.service` is `inactive`).
+- **Node 0 survey ANSWERED (2026-10-02, operator): Node 0 is already on 1024.**
+  This removes the P5.3 cross-node incomparability blocker for the dim cutover:
+  both nodes agree at 1024, so there is no federation risk in Node 1 aligning.
+  (Cross-node *model/space* reconciliation is still P5.3; only the dim question
+  is settled.)
+- **⚠️ Node 1's actual state is WORSE than this item assumed.** Measured against
+  the live store, not the spec: `SELECT dim, COUNT(*) FROM documents GROUP BY
+  dim` on `~/WanderGround/mempalace/sqlite_exact.sqlite3` returns
+  **`dim=384`, 1115 rows** — the legacy `embeddinggemma`-MRL space that
+  `EMBEDDING_STRATEGY_NODE1_20260925.md` explicitly *rejected* for failing the
+  768 bar. The 768 engine space existed **only** as an inactive systemd default.
+  So **three** dims were in play on Node 1 (384 live, 768 vestigial, 1024
+  canonical) and *none of the live ones* was canonical. This is not a
+  768→1024 bump; it is a **384→1024 rebuild of 1115 documents**. Well record
+  `007428a2` carries the lesson: a plan's status field is a claim about data, not
+  evidence of it.
 - **Migration steps remaining**:
-  1. `scripts/embedding_server.py` — `TRUNCATE_DIM` default 768 → 1024
-     (effectively disabling MRL truncation). Verify no 768 index exists first.
+  1. ~~`scripts/embedding_server.py` — `TRUNCATE_DIM` default 768 → 1024~~
+     **DONE 2026-10-02** (service inactive, so no index impact).
   2. `docs/WANDERGROUND_SPEC.md` — schema `embedding FLOAT[768]` → `FLOAT[1024]`;
-     §checklist item "Restore `embed_inbox.py` … (768-D)".
-  3. `docs/ARCHITECTURE.md:223`, `docs/ROADMAP.md:630` — "standing constraints"
-     that assert `truncate_dim=768` as current.
-  4. **BLOCKED on P5.3** — Node 0 must be surveyed before any dim change is
-     federated. Changing Node 1 alone would make the two nodes' vectors
-     incomparable, which is the exact silent-failure mode P5.3 exists to prevent.
-     Historical research docs (`EMBEDDING_MODEL_DECISION.md`,
-     `EMBEDDING_STRATEGY_NODE1_20260925.md`) are left intact as dated evidence.
-- **Status**: `blocked` — decision made, corpus + agent files corrected,
-  stack migration awaiting the Node 0 survey.
+     §checklist item "Restore `embed_inbox.py` … (768-D)". **Spec only** — the
+     real store is 384, so the spec was wrong twice over.
+  3. ~~`docs/ARCHITECTURE.md`, `docs/ROADMAP.md` "standing constraints"~~ —
+     **DONE 2026-10-02**; historical research docs
+     (`EMBEDDING_MODEL_DECISION.md`, `EMBEDDING_STRATEGY_NODE1_20260925.md`)
+     left intact as dated evidence.
+  4. **RE-EMBED 1115 palace documents 384 → 1024.** This is the actual work and
+     it was not previously on the list. Backup first (P0 discipline), then
+     `mempalace repair rebuild-index`, then verify the `dim` column reads 1024
+     and scoped-search parity holds. Until this runs, Node 1 and Node 0 do NOT
+     share a vector space despite both nominally being "1024".
+- **Status**: `unblocked` — dim cutover unblocked and doc/code aligned; the
+  1115-document rebuild is the remaining substantive step.
 
 ### P5.2 — Omega-native memory v0 (independent R&D)
 - **Why**: priority-one substrate; Node 0 material merges later, not as

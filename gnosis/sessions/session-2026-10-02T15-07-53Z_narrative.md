@@ -92,13 +92,30 @@ Changed outside git (**no version control at all**):
   unmeasurable at our density... pivot to recurrence detection"). Ingested, not dismissed.
 - **18 older CAPTURED-but-unreflected packs** (2026-09-09 onward) remain, per operator
   instruction: repair corruption, never mass-dismiss.
-- **Embedding stack migration is blocked on Node 0.** `embedding_server.py` still defaults
-  `TRUNCATE_DIM=768`; `WANDERGROUND_SPEC.md` declares `embedding FLOAT[768]`. Changing Node 1
-  alone makes the two nodes' vectors incomparable.
+- **Embedding dim cutover UNBLOCKED, but Node 1's real state is worse than assumed.**
+  Operator confirmed Node 0 is already on 1024, which removes the P5.3
+  cross-node incomparability blocker. Then I checked the store instead of the
+  spec: `SELECT dim, COUNT(*) FROM documents GROUP BY dim` on
+  `~/WanderGround/mempalace/sqlite_exact.sqlite3` returns **`dim=384`, 1115 rows**
+  — the legacy `embeddinggemma`-MRL space that
+  `EMBEDDING_STRATEGY_NODE1_20260925.md` explicitly *rejected* for failing the
+  768 bar. The 768 engine space existed **only** as an inactive systemd default.
+  So three dims were in play on Node 1 (384 live, 768 vestigial, 1024
+  canonical) and neither live one was canonical. This is not a 768→1024 bump; it
+  is a **384→1024 rebuild of 1115 documents**, which was never on the migration
+  list. Code and docs are now aligned to native 1024; the rebuild is filed and
+  NOT run (too large to do hastily pre-compaction).
+- **`omega-hub_omega_federation_status` reports `self: n0` while running on Node 1.**
+  It also flagged `zero_inference_egress: false`, which would be a real sovereignty
+  invariant violation — but if `self` is misattributed, the flag may not describe
+  this node at all. Recorded as **observed with uncertain attribution**, not as a
+  confirmed violation. Next session: determine whether the hub is querying a
+  remote context, and re-read the invariant once `self` is trustworthy.
+- **18 older CAPTURED-but-unreflected packs** (2026-09-09 onward) remain, per operator
+  instruction: repair corruption, never mass-dismiss.
 - **`.gitignore:23` ignores `gnosis/well/`.** Both corpus files are tracked so they stage, but
   any *new* file there is silently untracked.
-- **The plugin has no version control.** The single most important file changed tonight is
-  untracked.
+- **The plugin had no version control** — now fixed, see Code Changes.
 - The ritual's "Working-tree changes" section only records **unstaged** changes — staged work
   is invisible to the capture step.
 - Not done: ranker dedup + permanence floor, `consciousness` domain injection, the 3 divergent
@@ -106,17 +123,23 @@ Changed outside git (**no version control at all**):
 
 ## Next Session Priorities
 
-1. **Fix ranking before more records land.** 45 injectable records compete for 6 slots;
-   39 are permanently unreachable, including `ALWAYS use a Python venv for pip installs`.
-   Two of 47 active records are exact duplicates already eating slots. Dedup by rule identity
-   plus a permanence floor for `correction`/`anti_pattern`. Do **not** add embeddings.
-2. **Make gates emit context, not just findings.** `well-verify` should surface the
-   operator's ruling ("do not rewrite the array tags") alongside its findings, so a parallel
-   agent cannot resolve a decision-dependent defect unilaterally.
-3. **Version-control the plugin.** `gnosis-leash.js` needs a tracked home.
-4. **Node 0 survey** to unblock P5.1b and P5.3.
-5. **Add an ID-format gate to the ritual** — it accepted a status string as `session_id`.
-   Same defect class as tonight's array tags.
+1. **Re-embed the 1115 palace documents 384 → 1024** (P5.1b step 4). Both nodes are
+   nominally 1024 but **do not yet share a vector space** — Node 1's live store is 384.
+   Backup first, then `mempalace repair rebuild-index`, then verify the `dim` column
+   reads 1024 and scoped-search parity holds. This is the single highest-value
+   correctness item: federated cosine silently fails across mismatched spaces.
+2. **Resolve the `self: n0` federation anomaly** before trusting any invariant
+   reading from that tool.
+3. **P1.6 — old-rule reachability.** The permanence floor guarantees the *class* is
+   represented, not that any specific old rule resurfaces. Needs rotation or a
+   relevance term.
+4. **Refresh or retire the frozen `omega-sweeteners` snapshot** (19 records vs 64
+   live) — a Node 0 adoption decision, P5.3.
+5. **Add an ID-format gate for the ritual** — DONE 2026-10-02, but the two existing
+   malformed packs show the gate was needed; watch for any new ones.
+6. **18 stale packs** — one at a time, operator ruling.
+7. `consciousness` domain injection (write-only for 2 records) and the 3 divergent
+   `well.jsonl` copies.
 
 ## Gnosis Gained
 
@@ -140,4 +163,16 @@ Changed outside git (**no version control at all**):
   accurately; the author was wrong.
 - **A gate that surfaces a finding without the reasoning behind it invites unilateral
   resolution.** `well-verify` flagged 16 records; `ge-n1` fixed them against an explicit
-  operator ruling it could not see.
+  operator ruling it could not see. The gate now prints the standing ruling inline.
+- **A plan's status field is a claim about data, not evidence of it.** ROADMAP P5.1 read
+  "`Qwen3-0.6B@1024`, in-progress"; the spec declared `FLOAT[768]`; the live store held
+  **384**. Three dims in play on one node, neither live one canonical. Query the store —
+  `SELECT dim, COUNT(*) … GROUP BY dim` — before planning on top of a migration's status.
+  (Well record `007428a2`.)
+- **Verify the tool before trusting its invariants.** `omega-hub_omega_federation_status`
+  reported `self: n0` while running on Node 1, and flagged `zero_inference_egress: false`.
+  A sovereignty invariant reading is only worth as much as the node identity behind it.
+- **A corpus can be right about the past and wrong about the present.** Two duplicate
+  `truncate_dim=768` records sat in The Well, injected into every session, after the
+  decision had already moved to 1024. Deduplicating by rule identity (now shipped in the
+  ranker) would not have caught it — only the operator's ruling did.

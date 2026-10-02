@@ -1,10 +1,14 @@
 # The Well — Active Records
 
-Generated: 2026-10-02T17:32:38Z
+Generated: 2026-10-02T19:58:30Z
 
-Total active: 60
+Total active: 61
 
-## Correction (50)
+## Correction (51)
+
+- **A ROADMAP status of 'in-progress' or a spec's schema declaration is a CLAIM about the data, not evidence of it. Read the store itself — query the dim column, count the rows — before planning work on top of it.** [verification,migration,schema,embodied-state,claims-vs-data]
+  *ROADMAP P5.1 read 'Qwen3-0.6B@1024' in-progress with a 40-record pilot sidecar, and WANDERGROUND_SPEC declared embedding FLOAT[768]. The live store said neither: the MemPalace palace holds 1115 documents stamped dim=384, the legacy embeddinggemma-MRL space that the strategy doc had explicitly rejected as failing the 768 bar. The 768 engine space existed only as an inactive systemd default. So three different dims were in play on one node and none was the canonical one. Verified by SELECT dim, COUNT(*) FROM documents GROUP BY dim.*
+  — pack: session-2026-10-02T15-07-53Z | domain: harness | id: 007428a2
 
 - **A gate must emit the decision behind a finding, not only the finding. A check that reports drift without the reasoning that resolved it invites another agent to decide unilaterally.** [coordination,federation,gates,context,handoff]
   *make well-verify correctly flagged 16 records with list-typed tags. The operator had already ruled 'do not rewrite the array tags'. ge-n1 saw only the warning, had no way to see the ruling, and rewrote all 16 anyway. The gate was right; the signal was incomplete.*

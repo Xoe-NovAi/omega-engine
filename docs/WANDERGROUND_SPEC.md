@@ -117,7 +117,7 @@ Our source code audit of `MemPalace/mempalace` reveals a modular backend registr
 
 **Decision**: Keep MemPalace on its local `sqlite_exact` backend and use the
 standalone Qwen3 embedding server (`qwen3-embedding:0.6b`, ONNX,
-`truncate_dim=768`) for the canonical embedding route. The legacy
+`dimensions=1024`, native) for the canonical embedding route. The legacy
 `nomic-embed-text` model may remain installed for historical workflows, but it
 is not the federated canonical route.
 
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS concepts (
 -- sqlite-vec virtual table for fast semantic retrieval
 CREATE VIRTUAL TABLE IF NOT EXISTS vec_concepts USING vec0(
     id TEXT PRIMARY KEY,
-    embedding FLOAT[768]               -- qwen3-embedding:0.6b, truncate_dim=768
+    embedding FLOAT[1024]              -- qwen3-embedding:0.6b, NATIVE (canonical, all nodes)
 );
 ```
 
@@ -319,7 +319,7 @@ The WanderGround workspace is established at `~/WanderGround/`:
 
 ### Phase 2: Memory Substrate & Spatial Pipeline — ⚠️ TARGET / NOT DEPLOYED (2026-09-23)
 - [ ] Create `~/WanderGround/spatial/knowledge_atlas.db` — target `concepts`, portable embeddings, and `vec_concepts` schema.
-- [ ] Restore `embed_inbox.py` using the canonical Qwen3 ONNX route (768-D, `truncate_dim=768`).
+- [ ] Restore `embed_inbox.py` using the canonical Qwen3 ONNX route (native 1024-D).
 - [ ] Restore `project_umap_3d.py` — UMAP for N≥8, PCA/hash fallback below; KMeans + 100-sphere normalization.
 - [ ] Deploy the offline Three.js/WebXR canvas on `http://localhost:8088`.
 - [x] Record the current MemPalace 3.10.0 / 384-D legacy corpus and the Qwen3 migration boundary.
@@ -377,7 +377,7 @@ the curator pipeline, MemPalace-side tooling, and the omega-engine scripts.
   2026-09-23 reported SQLite `3.46.1`, WAL mode, `quick_check = ok`, and 5,047
   document rows, all 384-dimensional.
 - **Canonical embeddings:** standalone Qwen3 ONNX server,
-  `qwen3-embedding:0.6b`, `truncate_dim=768`, outside Ollama. The legacy
+  `qwen3-embedding:0.6b` at native 1024-D, outside Ollama. The legacy
   `nomic-embed-text` model may remain installed for historical workflows but
   is not the federated canonical route.
 - **Continuity boundary:** `scripts/continuity_mempalace.py` projects exact

@@ -219,9 +219,12 @@ The Well (`gnosis/well/well.jsonl` + `WISDOM.md`) stores atomic, immutable lesso
 - **Current state (2026-09-23):** MemPalace `3.10.0` is live on the local
   `sqlite_exact` backend. The current palace contains 5,047 documents, all
   reported as 384-dimensional by the current database.
-- **Target migration:** standalone `qwen3-embedding:0.6b` ONNX at 768-D
-  (`truncate_dim=768`) is the federated target. Legacy 384-D vectors are not
-  compatible with the target space and must be re-embedded.
+- **Target migration:** `qwen3-embedding:0.6b` at **native 1024-D** is the
+  canonical federated target (operator ruling 2026-10-01; Node 0 already at
+  1024). Legacy 384-D vectors - which is what the palace actually holds today,
+  1115 documents - are not compatible and must be re-embedded. The 768-D MRL
+  truncation is superseded: it costs ~0 compute, yields a genuinely different
+  space (cos(native,truncated)=0.891), and was never actually in use.
 - **Atlas Store:** `~/WanderGround/spatial/knowledge_atlas.db` is a target
   artifact and is currently absent; no spatial directory or 3D viewer was
   present during the 2026-09-23 audit.

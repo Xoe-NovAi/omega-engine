@@ -58,7 +58,7 @@ os.environ.setdefault("KMP_BLOCKTIME", "0")
 MODEL_REPO = "onnx-community/Qwen3-Embedding-0.6B-ONNX"
 MODEL_DIR = Path(os.getenv("EMBED_MODEL_DIR", "/home/xnai/Documents/Projects/omega-engine-alpha/models/embedding/qwen3-0.6b-onnx"))
 ONNX_MODEL_NAME = "model_int8.onnx"  # INT8 quantized for CPU efficiency (~614 MB)
-TRUNCATE_DIM = int(os.getenv("TRUNCATE_DIM", "768"))  # Matryoshka truncation 1024→768
+TRUNCATE_DIM = int(os.getenv("TRUNCATE_DIM", "1024"))  # canonical: native 1024, no MRL truncation
 MAX_LENGTH = 8192
 BATCH_SIZE = 32
 
