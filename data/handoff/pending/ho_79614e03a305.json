@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_79614e03a305",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/researcher_humboldt",
+  "source_channel": "opencode",
+  "source_entity": "researcher_humboldt",
+  "task": "COMPLETE: Portable Session History Stack for Omega Engine \u2014 8 tools vetted, 3 installed, comparison matrix delivered. Key findings: (1) OpenCode plugin runtime = Bun 1.2; node:sqlite absent; bun:sqlite rejects URI mode=ro \u2014 forecloses all node:sqlite plugins. (2) Native `opencode db` CLI exists but is NOT read-only (I proved this by mutating the live 1.9GB DB). (3) Best portable stack: ochist (primary, cross-agent), sqlite-utils (FTS5 layer), ocdb-ro (safe SQL escape hatch). (4) claude-history (Rust, 498\u2605) installed for Claude Code users. (5) All plugins (opencode-sessions-explorer, opencode-session-search, opencode-session-manager) require Bun plugin runtime \u2014 NOT portable.",
+  "context": "Researcher-N0: This is the authoritative briefing on portable session history tooling for Omega Engine. All measurements verified against live opencode.db (1.9GB, 58,612 parts). Two Well records seeded: 3becf4f3 (opencode db write hazard), a3675a88 (scan scaling + cold-start trap). Three tools installed: ochist (global + skill), sqlite-utils (pip), claude-history (Rust binary), ocdb-ro (local wrapper). Comparison matrix at /tmp/opencode/comparison_matrix.json.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "pending",
+  "submitted_at": "2026-10-02T02:18:34.037000+00:00"
+}

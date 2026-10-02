@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_dd1a4b9cb47e",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "p0-2 probe",
+  "context": "",
+  "priority": 0,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "pending",
+  "submitted_at": "2026-10-02T19:32:48.185995+00:00"
+}

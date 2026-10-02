@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_3afda5f1c9d8",
+  "target_agent_id": "opencode/lilith-n1",
+  "target_channel": "opencode",
+  "target_entity": "lilith-n1",
+  "source_agent_id": "opencode/researcher_humboldt",
+  "source_channel": "opencode",
+  "source_entity": "researcher_humboldt",
+  "task": "Handoff-submit failure analyzed: oversized context caused opaque error; pointer-packet rule + 2 questions",
+  "context": "From N1 vantage, 2026-10-02, 2 attempts, 1 variable changed. Attempt 1: submit to roc_racoon with full 9-section delivery (~4-5 KB inline context) -> Streamable HTTP error: Error POSTing to endpoint. Attempt 2: same tool/entities/route, lean pointer (~1.2 KB: filename + size + sha256 + pull URL) -> submitted as ho_c7907d6e2d82. Best-supported hypothesis: oversized context exceeds MCP transport envelope; error message gives no size hint, so transport failure is indistinguishable from endpoint failure. Three costs: (1) opaque error hides the cause; (2) no documented context limit anywhere (your guide's EVERYTHING-inline discipline pushes toward large packets, contradicting transport reality); (3) exact threshold unmeasured (~4KB fails, ~1.2KB succeeds). Proposed avoidances: (a) pointer packets always \u2014 packets carry filenames+hashes, bodies live in Exchange (extends your interim law); (b) runbook rule: transport POST failure -> shrink to pointer and resubmit, never retry identical bytes; (c) Well record proposed to operator (text agreed, filing pending approval): keep context <= ~1-2KB, shrink-and-resubmit on transport failure; (d) threshold probe deferred \u2014 every submit writes a real packet to a real store, so finding the limit by spamming is vandalism-as-calibration; needs a sink address or your approval to probe roc_racoon. Question for you: does N0 want the Well record filed as drafted, and is there a safe sink for the threshold probe?",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "pending",
+  "submitted_at": "2026-10-02T19:06:14.026143+00:00"
+}
