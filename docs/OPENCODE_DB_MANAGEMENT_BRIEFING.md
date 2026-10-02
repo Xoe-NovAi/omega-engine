@@ -440,4 +440,4 @@ still a clean V1 install.
 
 **Well records (this repo)**
 - `3becf4f3` — `opencode db` write hazard
-- `a3675a88` — no FTS, linear scan cost, cold-start benchmark trap
+- `a3675a88` — no FTS, linear scan cost, cold-start benchmark trap (superseded 2026-10-02: transient FTS5 `part_fts` existed 2026-10-02 02:08–12:30, measured stale, dropped; claim "no FTS" true again post-drop)

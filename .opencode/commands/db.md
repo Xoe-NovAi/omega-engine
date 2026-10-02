@@ -1,6 +1,5 @@
 ---
 description: Run a read-only SQL query against the session database via the ocdb-ro wrapper. Use for counts, cost/token totals, table schema, and which sessions touched a file. Do NOT substitute the native `opencode db` command — it opens the database read-write.
-agent: build
 ---
 
 Run a read-only query against the session database using **`ocdb-ro`**.

@@ -1,6 +1,5 @@
 ---
 description: Search all past agent sessions (OpenCode, Claude Code, Qoder, Codex) for a term. Use before asking the user to repeat past context, or to find prior decisions, debugging sessions, and traps.
-agent: build
 ---
 
 Search the full session history for a term.

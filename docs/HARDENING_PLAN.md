@@ -68,13 +68,13 @@ Installing a recall tool ≠ agents use it. Test must verify agents *route* to t
 
 ### Implementation: `tests/test_recall_stack.py` (plain `unittest`, existing runner)
 
-**Layer 1 — tools work (deterministic):**
-```python
-def test_ochist_returns_hits(self):      # ochist grep "pin trap" --global --limit 3
-def test_ocdb_ro_blocks_writes(self):    # ocdb-ro "CREATE TABLE x" exits non-zero
-def test_ocdb_ro_reads(self):            # ocdb-ro "SELECT COUNT(*) FROM session"
-def test_immutable_documented_banned(self):
-```
+**Status: DONE.** The file is a real `unittest.TestCase` (Layer 1 live checks:
+ochist grep, ocdb-ro search/aggregate/schema, DDL + writefile/load_extension
+safety rejections, skill presence — with `skipUnless` guards for missing
+binaries). Collected by the existing `make test`
+(`python3 -m unittest discover -s tests`); a completeness meta-test in
+`test_repo_hygiene.py` fails if any `test_*.py` ever yields zero collected
+tests. Layer 1 below is historical sketch; see the file for what runs.
 
 **Layer 2 — commands route agents correctly (static):**
 ```python
@@ -94,10 +94,10 @@ def test_recall_command_requires_global(self):
 
 **Why not automated:** `opencode run` costs a model call, non-deterministic. Layer 2 catches the collision I hit; Layer 3 measures adoption.
 
-**Makefile:**
+**Makefile:** none needed — the existing target collects it:
 ```makefile
-test-recall:
-	.venv/bin/python3 -m pytest tests/test_recall_stack.py -v
+test:
+	.venv/bin/python3 -m unittest discover -s tests -v   # includes test_recall_stack
 ```
 
 ---
@@ -165,47 +165,15 @@ Production consensus: **Shared State** primary + **Event Bus** (omega-hub).
 
 ## 5. P1 — Recall stack E2E test (3h)
 
-**File: `tests/recall_stack_test.py`** (plain `unittest`)
+**Superseded by §2 — DONE.** The E2E test landed as
+`tests/test_recall_stack.py` (a `unittest.TestCase`, not the bare function
+sketched here) and is collected by the existing `make test`; there is no
+separate `test-recall` target. The bare-function sketch below would have been
+invisible to `unittest discover` — see `TestDiscoveryCompleteness` in
+`tests/test_repo_hygiene.py`, which fails any test file yielding zero
+collected tests. Historical sketch retained for context:
 
-```python
-#!/usr/bin/env python3
-import subprocess, sys
-
-def run(cmd): return subprocess.run(cmd, shell=True, capture_output=True, text=True)
-
-def test():
-    failures = []
-    # 1. /recall via ochist
-    r = run('ochist grep "pin trap" --global --limit 3')
-    if r.returncode != 0 or "pin trap" not in r.stdout: failures.append("recall failed")
-    # 2. /db via ocdb-ro
-    r = run('ocdb-ro --search "gnosis" --limit 2')
-    if r.returncode != 0: failures.append("db search failed")
-    # 3. Cost aggregate
-    r = run('ocdb-ro "SELECT ROUND(SUM(cost),2) AS usd, COUNT(*) FROM session"')
-    if r.returncode != 0: failures.append("cost aggregate failed")
-    # 4. Schema lookup
-    r = run('ocdb-ro --schema part')
-    if r.returncode != 0: failures.append("schema lookup failed")
-    # 5. Safety: ocdb-ro blocks DDL
-    r = run('ocdb-ro "CREATE TABLE evil(x)"')
-    if r.returncode == 0: failures.append("SAFETY: ocdb-ro allowed DDL")
-
-    if failures:
-        for f in failures: print(f"  - {f}")
-        sys.exit(1)
-    print("✅ All recall stack checks passed")
-
-if __name__ == "__main__": test()
-```
-
-**Makefile:**
-```makefile
-test-recall:
-	python3 tests/recall_stack_test.py
-
-test: test-recall
-```
+~~File: `tests/recall_stack_test.py` (bare function + `test-recall` Makefile target)~~
 
 ---
 
@@ -230,7 +198,8 @@ cd /home/xnai/Documents/Projects/omega-engine-alpha
 #   scripts/well_recurrence_check.py
 
 # P0-2: Regression test (existing runner)
-#   tests/test_recall_stack.py → make test picks it up
+#   tests/test_recall_stack.py → TestCase, collected by make test
+#   (enforced by test_repo_hygiene.TestDiscoveryCompleteness)
 
 # P1-1: Config repo remote — BLOCKED on repo URL
 #   cd ~/.config/opencode && git remote add origin <url> && git push -u origin main
@@ -241,12 +210,10 @@ pip install pre-commit          # gitleaks binary separately
 
 # P1-3: docs/COORDINATION.md (condensed)
 
-# P1-4: Recall stack E2E test
-#   Write tests/recall_stack_test.py
-#   Add make test-recall target
+# P1-4: Recall stack E2E test — DONE (tests/test_recall_stack.py, in make test)
 
 # Gates
-make lint && make test && make docs && make test-recall
+make lint && make test && make docs
 ```
 
 ---

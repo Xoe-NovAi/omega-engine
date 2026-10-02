@@ -93,5 +93,32 @@ class TestNoTorch(unittest.TestCase):
         self.assertIn("no torch", doc)
 
 
+class TestDiscoveryCompleteness(unittest.TestCase):
+    """Every tests/test_*.py must yield at least one collected test.
+
+    Guards the silent-uncollected-test failure mode: unittest discover only
+    collects TestCase methods, so a bare `def test_x():` in a test file is
+    invisible and the suite reads green while covering nothing. Measured
+    failure before test_recall_stack.py became a TestCase: ['test_recall_stack'].
+    """
+
+    def test_every_test_file_yields_at_least_one_test(self):
+        test_dir = Path(__file__).resolve().parent
+        collected = set()
+        suite = unittest.TestLoader().discover(str(test_dir), pattern="test*.py")
+
+        def walk(s):
+            for item in s:
+                if isinstance(item, unittest.TestSuite):
+                    walk(item)
+                else:
+                    collected.add(item.id().rsplit(".", 2)[0])
+
+        walk(suite)
+        stems = {p.stem for p in test_dir.glob("test_*.py")}
+        empty = sorted(stems - collected)
+        self.assertEqual([], empty, f"test files with 0 collected tests: {empty}")
+
+
 if __name__ == "__main__":
     unittest.main()
