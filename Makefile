@@ -418,6 +418,9 @@ well-list: ## List Well records: make well-list [KIND=...] [DOMAIN=...] [STATUS=
 well-stats: ## Show Well corpus stats (counts by kind/domain/status)
 	@python3 $(WELL_SCRIPT) stats
 
+well-verify: ## Audit the REAL Well corpus: exit 1 on records the reader cannot consume
+	@python3 $(WELL_SCRIPT) verify
+
 well-supersede: ## Mark a record superseded: make well-supersede OLD=<uuid> NEW=<uuid>
 	@python3 $(WELL_SCRIPT) supersede $(OLD) $(NEW)
 

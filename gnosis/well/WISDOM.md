@@ -1,10 +1,86 @@
 # The Well — Active Records
 
-Generated: 2026-09-30T01:37:19Z
+Generated: 2026-10-01T08:52:32Z
 
-Total active: 39
+Total active: 55
 
-## Correction (26)
+## Correction (45)
+
+- **opencode.db has NO FTS/virtual tables — all search is a full scan, measured perfectly linear at ~1.4 ms/MB of text+reasoning corpus. Corpus grows ~0.6 MB/day (~18 MB/month), so a scan stays under ~1s for years: NO index needed. Two traps: (1) immutable=1 is STALE (missed 26 recent parts) — always use mode=ro so the WAL is read; (2) a first embedding benchmark is a COLD-START artifact — qwen3-embedding:0.6b measured 10645 ms/embed cold but 122 ms warm (87x), nomic the reverse. Always warm the model before timing, or you will pick the wrong model.** [sqlite,opencode.db,fts5,benchmark,cold-start,scaling,embeddings]
+  *Measured the scaling curve to 457 MB (6 doublings, linear, no cliff) and derived the growth rate from real timestamps. Cold-start benchmark nearly caused the wrong model choice; the corrected warm numbers reversed the ranking entirely.*
+  — pack: manual | domain: harness | id: a3675a88
+
+- **`opencode db <query>` in opencode 1.18.33 is NOT read-only: it opens opencode.db read-WRITE and executes DDL/DML. Verified 2026-10-01 — a bare CREATE TABLE against the live 1.9GB db succeeded and changed its sha256. Never point raw `opencode db` at opencode.db. Use ochist (node:sqlite mode=ro, sha-proven) or the ocdb-ro wrapper (~/.local/bin/ocdb-ro). Separately: run destructive probes on a /tmp COPY first, never on production.** [sqlite,opencode.db,read-only,safety,destructive-probe,sandbox-first]
+  *Self-inflicted incident: I created a probe table in the live db, then removed it; integrity verified clean (quick_check=ok, residue=0). A guard that is only documented is not a guard. ocdb-ro has two independently sufficient layers (statement allowlist + engine mode=ro); `opencode db` has neither.*
+  — pack: manual | domain: harness | id: 3becf4f3
+
+- **On a shared working tree, a populated git index is a HANDOFF OF AUTHORITY. The next committer inherits files they did not write, silently, under their own name. Commit in the same command, or `git reset` on the failure path — and `git status` before committing rather than assuming the index is only yours.** [git,attribution,concurrency]
+  *I ran `git add -A` and then a long command whose tool call timed out before `git commit` executed. A parallel session's next commit swept my two files into its own message. I first wrote this up as 'another agent stole my work' — wrong: both sessions were the same agent, `ge-n1`. The real lesson is two-fold and neither is about theft. A timeout between stage and commit is not a no-op, it is a transfer of authorship to an uninformed party. And my first instinct was to blame a third party rather than ask the obvious question: is the other author string actually me?*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: ad170a7d
+
+- **An action taken to enable the next step and never undone silently becomes a PERMANENT PROPERTY of the system — and typically outlives the debugging that justified it, because the next person sees only the result. Every temporary change needs an owner and an undo, written down at the moment you make it.** [debugging,cleanup,root-cause]
+  *Three instances of the identical shape in one session. (1) Copied the minimal DEMO's `gemrb.ini` into a game folder to silence a missing-config fatal; it named fonts the game lacks and segfaulted on launch — and the `baldur.gam` hunt it caused looked like a mis-detection to work around rather than my own file. (2) `AudioDriver=nullsound`, added during debugging and recorded as a NEGATIVE RESULT, was never removed, so the game ran silent and nobody noticed for the rest of the session. (3) The staged index above, which became another session's commit. Same mechanism each time: a preparatory act outlived its purpose and became the permanent state.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 08364c97
+
+- **A fix verified only by REASONING is not verified. Say so in the same breath as the fix, and mark it in writing so it can be checked later. Reasoning about why a change should work is a hypothesis; the first observation of the expected behaviour is the verification.** [verification,fix,evidence]
+  *I removed `AudioDriver=nullsound` to restore Torment's audio, and wrote 'UNVERIFIED — this was reasoning, not a measurement' in the journal. That label was worth more than the fix itself: hours later the engine log printed `[MUSImporter]: Playing MAIN/MAIN_01` and the fix was confirmed for a completely different reason than expected. Had I quietly written 'fixed', nobody would have known to go looking for the confirming evidence. The unverified label also survived into the hand-off, so the next session inherits the obligation.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 2fa9252e
+
+- **A native-Wayland surface is NEVER composited into the XWayland root window. So every X11 read path — scrot, ffmpeg x11grab, xdotool, import — returns a correctly-sized, entirely BLACK framebuffer with no error. That is a wrong-address failure, not a permission failure: a denied grab errors, a successful grab of the wrong window returns pixels. Confirm which case you are in before theorising.** [display,wayland,measurement]
+  *Five capture attempts on GNOME 50 all returned black or nothing. scrot produced a valid 6136-byte black PNG; ffmpeg x11grab produced 9240 bytes at mean 0.01. The diagnostic that settled it was `xdotool search --name <window>` returning ZERO matches while the game was visibly running — a native-Wayland client is expected to be invisible there. Separately, GNOME 49 (MR !3760) removed `org.gnome.Screenshot` from GNOME Shell's sender allowlist, so a bare `gdbus` caller gets AccessDenied and `gnome-screenshot` then falls back to X11 and returns black. Two independent gates, and only finding BOTH let me pick a route that works.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 458ceaf5
+
+- **A bare exception with no message (`KeyError: 0`, `ERROR: 0`) is a FORMAT error, not a logic error — the layer is indexing a format string by a position you never supplied. Fix the type signature and the 'mystery' resolves. Do not retry the same call shape hoping for a different result; change one type and re-measure.** [api,debugging,error-messages]
+  *Three consecutive dead ends in PyGObject, each reported only as `KeyError: 0`. The rule that unlocked it: never nest a constructed Variant inside another Variant constructor — pass the plain container and let the leaves be Variants. Separately the reply type was `'(o)'` (a tuple containing one object path), not `'o'`, and passing raw Python bools where Variants were expected gave the far more informative 'Expected GLib.Variant, but got bool'. The variant of the failure differed with the mistake, which is what made bisecting it possible at all.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 201e239a
+
+- **Check whether the renderer scales at all, and at what multiplier, before choosing a resolution that merely FITS. Many engines scale only at INTEGER multiples of the base resolution and silently fall back to a small centred image at anything else — a non-integer target looks configured correctly and behaves as if ignored.** [scaling,display,configuration]
+  *Planescape: Torment in a 1920x1080 window showed a 640x480 image at 1:1, centred, because 1920x1080 is 3.0x wide but 2.25x tall against a 640x480 base — not an integer multiple. Switching to 1280x960 (exactly 2x, and it fits) changed the rendering. The documentation also distinguishes two behaviours that read alike: at arbitrary resolutions 'the GUIs will remain the same size, only centered'. So 'it is centred' has at least three distinct causes — aspect-preserving letterbox, integer-multiple fallback, and GUI-centring without scaling — and they need different fixes.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 201b1907
+
+- **Before you conclude that a collaborator is at fault, establish whether they are you. Shared names, shared identities, and shared checkouts all produce the appearance of a third party acting independently. And when you cannot fix a provenance problem by rewriting, do not rewrite — record it and move on; another agent's work is not yours to undo.** [delegation,attribution,agents]
+  *Two parallel sessions shared the agent name `ge-n1` on one repo. I built a detailed narrative in which a third party had misappropriated my work, including a proposed remediation, and committed it. The operator corrected me: both author strings were the same agent, i.e. me, running twice. The specific number to trust is the one that decides the next action — who is in scope — and I had not established it. Separately, the honest remediation when history is wrong but belongs to someone else is documentation, not force.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: cecc1178
+
+- **A value present in a config file is not evidence the program consumed it. Verify by observing behaviour or the engine's own output. Where a config file and an observed outcome disagree, the observed outcome is authoritative and the config is the thing under suspicion.** [measurement,trustworthy]
+  *I asserted for hours that `SDL_VIDEODRIVER=x11` in a launcher 'makes MangoHud attach reliably', copied from reasoning about a different application where the same trick genuinely worked. Measured across four invocations, the setting produced ZERO X11 windows: the application bundled an SDL2 with no x11 video driver at all, so the variable was silently ignored. A correctly-formatted line in a working launcher is a statement of intent, not a statement of fact. This is the same class of error as trusting a stale marker in a build log.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 8c7d9605
+
+- **The canonical embedding dimension for all nodes is qwen3-embedding:0.6b at its native 1024, NOT a 768 Matryoshka truncation. On Ollama the output-dimension parameter is 'dimensions' (integer); 'truncate_dim' is the sentence-transformers parameter name and is silently ignored by Ollama, which then returns 1024 regardless.** [embedding,dimensions,ollama,mrl,correction,federation]
+  *Operator ruling 2026-10-01: 1024 is the canonical dim for all nodes. Supersedes two duplicate records (42c3c90d, d4cf07de) that named both the wrong parameter and the wrong value. Measured on Node 1, ollama 0.34.4: dimensions=768 does return 768, but costs essentially no compute (-1.5 percent, within noise) because truncation slices an already-computed vector. It saves only 25 percent of storage while creating a SECOND vector space that must never be compared with the palace space: cos(native,truncated)=0.89 over 12 real Well rules, and top-6 retrieval changed 1 of 6 slots. Because the indexing service is currently inactive no 768 index exists, so no migration is required. At 1024 the canonical space costs nothing. Matches docs/research/EMBEDDING_STRATEGY_NODE1_20260925.md (native 1024 verified) and ROADMAP P5.1.*
+  — pack: lilith-n1-2026-10-01-dim1024 | domain: local_ai | id: c068a4ae
+
+- **A correction carries the same unverified authority as the claim it replaces, and nothing in the pipeline re-tests it. Before writing 'X does not exist', run one `ls` in the PARENT directory — an incomplete search cannot support a universal negative.** [verification,correction,drift]
+  *I corrected a falsified 'Backups (all intact)' claim by writing 'vorpalfix-backup-20260926 DOES NOT EXIST. No such directory anywhere.' It existed, in the sibling directory I had just listed. Same session also wrote '~/GameResearch/bin/ itself does not exist' for a directory created ten minutes earlier. The disproof for both was one command.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 2dc99843
+
+- **A gate that cannot fail is worse than no gate, because it converts an unexamined area into a green one. Before trusting a gate, ask what input would make it fire; if nothing can, delete it rather than counting it. And never report 'clean' from a gate whose rule is being violated in the same commit stream.** [gates,verification,false-confidence]
+  *validate.py had 10 gates; gates 3, 4, 7 and 8 provably cannot fire — gate 7's provenance regex matches zero records in the current sources. Separately make agent-audit reported 'attribution is clean' while the repo held 24 commits as 'gaming-expert' and 9 as 'ge-n0': its check only fired on byte-identical identities, the one case that never happens. It now detects fragmentation, and it now fires.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 799ca2aa
+
+- **Enforce harder on an unverified self-report and you get a MORE confidently wrong record, not a safer one — it looks validated. Format-gating a self-reported field cannot make it trustworthy; only binding it to an out-of-band fact (a host address, a signature) can.** [validation,self-report,false-confidence]
+  *A federation packet stored no source IP, no host id, no signature — only `source_entity`, free text chosen by the caller. The tempting fix was to enforce the node-suffix rule at submit time. That is the wrong fix: a session that believes it is N0 writes ge-n0 faithfully and passes every format gate. I was myself a Node 1 process signing as ge-n0 for an entire session, undetected.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 1e2fd4bc
+
+- **Your verification method can destroy the signal it is trying to read. Before using an access-time or last-touched signal, confirm your measuring tool does not update it — `du`, `cat`, `grep` and `md5sum` all read contents, and under `relatime` that updates atime for the whole tree.** [measurement,destruction,atime]
+  *I wanted to find unused GGUF models by atime, ran `du -h` across all 38 files, and every atime came back as today — my own scan had rewritten them. I destroyed the only signal distinguishing hot from cold storage with the measurement intended to read it. There was no backup of the original state.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: bc61c6dd
+
+- **`pgrep -f <pattern>` matches its own monitoring command when the pattern appears in the command line. It reports a dead job as alive. Use log mtime or a PID file for liveness, and never treat a liveness answer you did not measure as a measurement.** [monitoring,liveness,false-positive]
+  *`pgrep -f media-only` returned 'running' for a job that had been dead four hours, because my monitoring command contained the string 'media-only'. Second occurrence in one session (the first was `pgrep -af alice` matching my own shell). I reported the count twice without ever asking whether the job was alive.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: d2257f08
+
+- **A missing mountpoint does not error — it silently becomes the parent filesystem. A nonexistent path makes `df` fall back rather than fail, so a detached volume reports as empty rather than absent, and a detached volume gets declared lost.** [storage,verification,false-alarm]
+  *The 8TB drive was unplugged mid-session. `/mnt/8TB` ceased to exist, `df` fell back to the NVMe root, and every query of the path returned 0 items. I reported 20 verified-and-deleted files as missing before checking `lsblk`. Nothing was lost; the mountpoint simply no longer existed and no tool objected.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 38548e1f
+
+- **Naming a property is a commitment you cannot cheaply revise. Two of three observations support 'sometimes', not 'non-deterministically'. Accumulate a sample with a visible boundary before you put a word on it, and say 'unmeasured' instead.** [measurement,naming,commitment]
+  *I told another agent the Hivemind resolver folded non-deterministically on 2-of-3 evidence, then partly retracted it. Measured properly it was 5 of 5 across two targets over a longer window, with a sole success 84 minutes earlier — a regression window with a bisectable boundary, which is actionable. Randomness is unactionable; a regression is not. I should have said 'unmeasured' first.*
+  — pack: session-2026-09-30T01-27-36Z | domain: harness | id: 7d324696
+
+- **Detail is not a proxy for truth, and a report's own uncertainty flag is often more reliable than its numbers. Trust the flag over the figure — a subagent that sourced a number from a source it distrusted, and said so, was correct to distrust it.** [delegation,trust,verification]
+  *A research lane reported an enemy's stats as 1800 HP / 200 armor / 1000 shield, wrong by roughly 4x — sourced from a wiki mirror it explicitly labelled as possibly stale because the authoritative infobox would not load. Its flag was accurate. Had I trusted the report on the strength of its detail rather than its honesty, that number would be in the knowledge base now.*
+  — pack: session-2026-09-30T01-27-36Z | domain: consciousness | id: c1b3e538
 
 - **A regression test that mutates history is itself a destructive operation. Check the working tree for uncommitted work first.** [lint,workflow,verification]
   *I ran 'git reset --hard' inside a regression test without checking, and it destroyed two files written minutes earlier. The lesson is not about git, it is that a tool acting on an unverified assumption is the same failure class as every other bug this session catalogued.*
@@ -111,15 +187,7 @@ Total active: 39
   — pack: session-2026-09-11T05-13-41Z | domain: harness | id: 490de87b
 
 
-## Preference (4)
-
-- **Use qwen3-embedding:0.6b with truncate_dim=768 on both nodes — only path achieving true federated semantic compatibility (direct cosine similarity) with quality gain and zero projection layer** [embedding,federation,mrl,qwen3,nomic,projection]
-  *Direct cosine similarity across nodes without projection layer; tested and validated*
-  — pack: session-2026-09-23T01-47-51Z | domain: local_ai | id: d4cf07de
-
-- **Use qwen3-embedding:0.6b with truncate_dim=768 on both nodes — only path achieving true federated semantic compatibility (direct cosine similarity) with quality gain and zero projection layer** [embedding,federation,mrl,qwen3,nomic,projection]
-  *Qwen3-Embedding MRL supports 768-dim output natively; C-MTEB 66.33 vs nomic 62.28; 32K context vs 2K Ollama nomic; instruction-aware; Apache-2.0; Ollama native. Projection layers (Procrustes/VecMap) add maintenance burden and quality loss.*
-  — pack: session-2026-09-17T23-47-06Z | domain: local_ai | id: 42c3c90d
+## Preference (2)
 
 - **Tailscale (Layer 2) is the sovereign COORDINATION plane only. MCP hub discovery (:8016), Ollama :11434 routing, heartbeat, and SSH ride the mesh — but T5/T6 inference and runtime sovereignty NEVER egress through the tunnel. Layer 2 is accountable extension, NOT a shadow default: ACL ratified by Node 0 (C6), acceptance ratified by Node 1 (FED-L2-001), join gated on Node 0's admin-minted auth key. The stated provider IS the actual provider; nothing labeled local ever leaves Node 1.** [tailscale layer2 federation c6 mesh sovereignty]
   *Node 0 shipped a ratified  (Layer 2 ACL: 3 tags, 4 accept rules — hub:8016, Ollama:11434, ICMP, SSH). Node 1's daemon is now  ACTIVE v1.102.4. Acceptance document  (FED-L2-001) written to disk. This keeps the federation's comms contract C6 real without sacrificing the sovereignty floor.*
@@ -130,15 +198,11 @@ Total active: 39
   — pack: session-2026-09-11T05-13-41Z | domain: local_ai | id: 2f4fdb60
 
 
-## Insight (7)
+## Insight (6)
 
 - **When equal-cost models exist, choose from first-party capability and privacy evidence; prefer the newest generation unless controlled measurement shows a better role fit.** [models,research,google-gemini,decision]
   *Gemini 3.5 was recommended without evidence despite Gemini 3.8 also having a genuine free API tier.*
   — pack: session-2026-09-23T18-44-21Z | domain: harness | id: e0fb2e9a
-
-- **Bound discovery and change the hypothesis: repeated probing of the same condition without new information stalls progress. Set a discovery budget, then pivot to next hypothesis.** [debugging,discovery-budget,hypothesis-driven]
-  *Observed during screening infra debugging - infinite probing of same failure mode without new data*
-  — pack: session-2026-09-23T01-47-51Z | domain: harness | id: bad5375d
 
 - **Bound discovery and change the hypothesis: repeated probing of the same condition without new information stalls progress. Set a discovery budget, then pivot to next hypothesis.** [debugging,discovery-budget,hypothesis-driven]
   *Session 32 gnosis: 5+ repeated checks for ~/WanderGround/.venv/ added zero evidence. Bounded discovery protocol needed.*
