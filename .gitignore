@@ -328,6 +328,7 @@ data/entities/test_*_entity/
 # Replaces the retired "Handoff for substance, Hivemind for presence" law.
 !docs/federation/HANDOFF_PRIMER.md
 !docs/federation/HIVE_SYNC_GUIDE_*.md
+!docs/federation/COMMS_CHANNEL_REVIEW_*.md
 
 # Governance artifacts (Phase 1 Federation Contract Refactor)
 !docs/governance/SAHS_RULE.md
