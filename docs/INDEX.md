@@ -45,6 +45,7 @@ Superseded documents live in [`archive/`](archive/) — retained for provenance,
 | [`DEVELOPER_GUIDE.md`](DEVELOPER_GUIDE.md) | Code conventions, testing, PR flow |
 | [`CODE_QUALITY.md`](CODE_QUALITY.md) | anyio purity, no bare exceptions, no torch |
 | [`PLUGIN_DEVELOPMENT.md`](PLUGIN_DEVELOPMENT.md) | OpenCode plugin + gnosis-leash pattern |
+| [`HARDENING_PLAN.md`](HARDENING_PLAN.md) | Engineers | Node 1 hardening plan v2: mechanical recurrence detection, recall-stack regression tests, coordination contract |
 | [`PORTABILITY.md`](PORTABILITY.md) | What must not leak into the future Omega CLI |
 | [`WANDERGROUND_SPEC.md`](WANDERGROUND_SPEC.md) | Spatial knowledge, MemPalace, 3D substrate |
 
