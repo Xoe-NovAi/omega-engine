@@ -89,10 +89,23 @@ class WellRecord:
             errors.append("superseded record must have superseded_by")
         if self.superseded_by and not UUID_RE.match(self.superseded_by):
             errors.append(f"superseded_by must be UUIDv4, got {self.superseded_by!r}")
-        if not self.rule or not self.rule.strip():
-            errors.append("rule must be non-empty")
-        if not self.trigger or not self.trigger.strip():
-            errors.append("trigger must be non-empty")
+        if not isinstance(self.rule, str) or not self.rule.strip():
+            errors.append(f"rule must be a non-empty string, got {type(self.rule).__name__}")
+        if not isinstance(self.trigger, str) or not self.trigger.strip():
+            errors.append(f"trigger must be a non-empty string, got {type(self.trigger).__name__}")
+
+        # Type guards BEFORE the secret scan. The regex scanner assumes str and
+        # would raise TypeError on a list-typed field (e.g. tags written as a
+        # JSON array), turning a reportable schema error into a traceback.
+        for field_name in ("rule", "rationale", "trigger", "tags", "source_pack", "domain", "kind"):
+            val = getattr(self, field_name, "")
+            if not isinstance(val, str):
+                errors.append(
+                    f"{field_name} must be a string, got {type(val).__name__}"
+                    + (" — coerce before writing; the reader accepts both forms"
+                       if field_name == "tags" else "")
+                )
+
         # No secrets check: basic pattern matching
         secret_patterns = [
             r"api[_-]?key\s*[:=]\s*\S+",
@@ -104,6 +117,8 @@ class WellRecord:
         ]
         for field_name in ("rule", "rationale", "trigger", "tags"):
             val = getattr(self, field_name, "")
+            if not isinstance(val, str):
+                continue  # already reported as a type error above
             for pat in secret_patterns:
                 if re.search(pat, val, re.IGNORECASE):
                     errors.append(f"{field_name} contains potential secret pattern")
@@ -149,6 +164,18 @@ def append_record(rec: WellRecord) -> None:
     WELL_DIR.mkdir(parents=True, exist_ok=True)
     with WELL_JSONL.open("a", encoding="utf-8") as f:
         f.write(rec.to_jsonl() + "\n")
+
+
+def tags_display(raw) -> str:
+    """Render `tags` as a comma-string regardless of how the record stored it.
+
+    Historical records use a comma-string; newer ones a JSON array. The reader
+    (gnosis-leash.js normalizeTags) coerces both, so the human-facing renderers
+    must too — otherwise WISDOM.md shows Python list reprs.
+    """
+    if isinstance(raw, (list, tuple)):
+        return ",".join(str(t).strip() for t in raw if str(t).strip())
+    return str(raw or "").strip()
 
 
 def load_all() -> list[WellRecord]:
@@ -219,7 +246,8 @@ def render_wisdom_md() -> str:
         lines.append(f"## {kind.capitalize()} ({len(by_kind[kind])})")
         lines.append("")
         for rec in sorted(by_kind[kind], key=lambda r: r.ts, reverse=True):
-            tags = f" [{rec.tags}]" if rec.tags else ""
+            _t = tags_display(rec.tags)
+            tags = f" [{_t}]" if _t else ""
             lines.append(f"- **{rec.rule}**{tags}")
             if rec.rationale:
                 lines.append(f"  *{rec.rationale}*")
@@ -246,6 +274,113 @@ def stats() -> dict:
     }
 
 
+def verify() -> int:
+    """Audit the real corpus. Returns a process exit code (0 = pass).
+
+    Severity model — deliberately asymmetric, matching the reader's contract:
+
+      ERROR — the consumer cannot read this record at all, or the ledger's
+              integrity is broken (unparseable JSON, missing/unknown fields,
+              wrong type on a field the reader does not coerce, duplicate
+              record_id). Blocks the gate.
+      WARN  — the reader tolerates it (tags stored as a JSON array rather than
+              a comma-string), or the rule text duplicates another record.
+              Reported, does not block. Historical records are NOT rewritten:
+              the ledger is append-only truth and the reader is the thing that
+              adapts.
+    """
+    if not WELL_JSONL.is_file():
+        print(f"FAIL: no corpus at {WELL_JSONL}")
+        return 1
+
+    raw = WELL_JSONL.read_text(encoding="utf-8")
+    lines = raw.split("\n")
+
+    errors: list[str] = []
+    warnings: list[str] = []
+    tolerated: list[str] = []  # drift the reader coerces; carries the standing ruling
+    seen_ids: dict[str, int] = {}
+    seen_rules: dict[str, int] = {}
+    parsed = 0
+
+    for i, line in enumerate(lines, 1):
+        if not line.strip():
+            continue
+        try:
+            rec = WellRecord.from_jsonl(line)
+        except json.JSONDecodeError as e:
+            errors.append(f"line {i}: invalid JSON: {e}")
+            continue
+        except TypeError as e:
+            errors.append(f"line {i}: field set does not match schema: {e}")
+            continue
+        parsed += 1
+
+        for msg in rec.validate():
+            # A list-typed `tags` is tolerated by the hardened reader; everything
+            # else is not.
+            if msg.startswith("tags must be a string"):
+                tolerated.append(f"line {i} ({rec.record_id[:8]}): {msg}")
+            else:
+                errors.append(f"line {i} ({rec.record_id[:8]}): {msg}")
+
+        if rec.record_id in seen_ids:
+            errors.append(
+                f"line {i} ({rec.record_id[:8]}): duplicate record_id, first seen line {seen_ids[rec.record_id]}"
+            )
+        else:
+            seen_ids[rec.record_id] = i
+
+        rule_key = rec.rule.strip()
+        if rule_key in seen_rules:
+            first = seen_rules[rule_key]
+            warnings.append(
+                f"line {i} ({rec.record_id[:8]}): duplicate rule text, first seen at line {first}"
+                f" — ‘{rule_key[:70]}…’ occupies two injection slots"
+            )
+        else:
+            seen_rules[rule_key] = i
+
+    if not raw.endswith("\n") and raw:
+        warnings.append("corpus does not end with a newline")
+
+    total = parsed + len([e for e in errors if "invalid JSON" in e])
+    print(f"Well corpus audit: {WELL_JSONL}")
+    print(f"  records parsed : {parsed}")
+    print(f"  errors         : {len(errors)}")
+    print(f"  warnings       : {len(warnings)}")
+    if tolerated:
+        print(f"  tolerated      : {len(tolerated)}  (drift the reader coerces — see ruling)")
+
+    for w in warnings:
+        print(f"  WARN  {w}")
+    for t in tolerated:
+        print(f"  TOLERATED {t}")
+    for e in errors:
+        print(f"  ERROR {e}")
+
+    # Emit the decision behind the tolerated drift, not only the finding. A gate
+    # that reports the shape without the ruling invites a parallel agent to
+    # "fix" it unilaterally — which is exactly what happened on 2026-10-01.
+    if tolerated:
+        print()
+        print("  ┌─ STANDING RULING (do not act on the tolerated records) ─────────────")
+        print("  │ Operator, 2026-10-01: the corpus is append-only truth. The READER")
+        print("  │ coerces both tag shapes; the WRITER is gated; history is not")
+        print("  │ rewritten. These records are EXPECTED to warn until the corpus is")
+        print("  │ deliberately rewritten as a designed migration — not piecemeal.")
+        print("  │ A gate that emits a finding without its decision invites a parallel")
+        print("  │ agent to resolve it. See record c068a4ae and ROADMAP P1.3.")
+        print("  └──────────────────────────────────────────────────────────────────")
+
+    print()
+    if errors:
+        print(f"FAIL: {len(errors)} record(s) the consumer cannot read.")
+        return 1
+    print("PASS: every record is readable by the injection path.")
+    return 0
+
+
 def main():
     """CLI entry: `python3 scripts/well_storage.py <cmd> [args]`"""
     if len(sys.argv) < 2:
@@ -254,6 +389,7 @@ def main():
         print("  add <kind> <domain> <trigger> <rule> <rationale> [--tags TAGS] [--pack PACK]")
         print("  list [--kind KIND] [--domain DOMAIN] [--status active|all]")
         print("  stats")
+        print("  verify          — audit the real corpus (exit 1 on unreadable records)")
         print("  supersede <old_id> <new_id>")
         print("  render-md")
         sys.exit(1)
@@ -299,13 +435,17 @@ def main():
         if status == "active":
             recs = [r for r in recs if r.status == "active"]
         for r in recs:
-            tag = f" [{r.tags}]" if r.tags else ""
+            _t = tags_display(r.tags)
+            tag = f" [{_t}]" if _t else ""
             sup = f" → superseded by {r.superseded_by[:8]}" if r.status == "superseded" else ""
             print(f"{r.record_id[:8]} | {r.ts} | {r.kind:14s} | {r.domain:12s} | {r.rule[:60]}{tag}{sup}")
 
     elif cmd == "stats":
         s = stats()
         print(json.dumps(s, indent=2))
+
+    elif cmd == "verify":
+        sys.exit(verify())
 
     elif cmd == "supersede":
         if len(sys.argv) < 4:

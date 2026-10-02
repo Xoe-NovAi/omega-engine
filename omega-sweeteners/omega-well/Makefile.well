@@ -1,0 +1,35 @@
+# The Well — Makefile fragment
+#
+# Install by appending to your project Makefile:
+#     make -f Makefile.well -C /path/to/project test-well
+#
+# Or append the `well-*` targets block into your own Makefile.
+# Assumes: scripts/well_storage.py and gnosis/well/well.jsonl exist at PROJECT_ROOT.
+
+WELL_SCRIPT = scripts/well_storage.py
+
+.PHONY: well-add well-list well-stats well-verify well-supersede well-export well-search test-well
+
+well-add: ## Add a Well record: make well-add KIND=correction DOMAIN=harness TRIGGER="..." RULE="..." RATIONALE="..." [TAGS="..."] [PACK="..."]
+	@python3 $(WELL_SCRIPT) add $(KIND) $(DOMAIN) "$(TRIGGER)" "$(RULE)" "$(RATIONALE)" $(if $(TAGS),--tags "$(TAGS)") $(if $(PACK),--pack "$(PACK)")
+
+well-list: ## List Well records: make well-list [KIND=...] [DOMAIN=...] [STATUS=active|all]
+	@python3 $(WELL_SCRIPT) list $(if $(KIND),--kind $(KIND)) $(if $(DOMAIN),--domain $(DOMAIN)) $(if $(STATUS),--status $(STATUS))
+
+well-stats: ## Show Well corpus stats (counts by kind/domain/status)
+	@python3 $(WELL_SCRIPT) stats
+
+well-verify: ## Audit the REAL Well corpus: exit 1 on records the reader cannot consume
+	@python3 $(WELL_SCRIPT) verify
+
+well-supersede: ## Mark a record superseded: make well-supersede OLD=<uuid> NEW=<uuid>
+	@python3 $(WELL_SCRIPT) supersede $(OLD) $(NEW)
+
+well-export: ## Render WISDOM.md (human view)
+	@python3 $(WELL_SCRIPT) render-md
+
+well-search: ## Stub: semantic search over The Well (not implemented — see ROADMAP P1.4.1)
+	@python3 $(WELL_SCRIPT) search $(QUERY)
+
+test-well: ## Run The Well test suite against this project
+	@python3 -m unittest discover -s tests -p 'test_well*.py' -v

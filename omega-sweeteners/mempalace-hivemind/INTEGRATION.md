@@ -30,10 +30,10 @@ print('✅ Hivemind connected!')
 ```
 Omega Engine
 ├── mempalace-hivemind/           # This package
-│   ├── scripts/
-│   │   ├── mempalace_hivemind.py    # Core client
+│   ├── src/mempalace_hivemind/      # installable package (src layout)
+│   │   ├── __init__.py              # Core client (HivemindClient)
 │   │   ├── hivemind_cli.py          # CLI interface
-│   │   └── event_validator.py       # Schema validator
+│   │   └── validator.py             # Schema validator
 │   ├── schemas/
 │   │   ├── event.json               # JSON Schema
 │   │   └── artifact.json

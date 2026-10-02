@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# ocdb-ro — read-only SQLite access to opencode.db
+#
+# WHY THIS EXISTS: `opencode db <query>` in opencode 1.18.33 opens the database
+# READ-WRITE and happily executes DDL/DML. Verified 2026-10-01: a bare
+# `CREATE TABLE` against the live 1.9GB opencode.db succeeded. This wrapper
+# makes the read-only contract structural instead of aspirational.
+#
+# Safety layers (any one alone is insufficient):
+#   1. Statement allowlist — only SELECT/WITH/EXPLAIN/PRAGMA(ro)/VALUES
+#   2. Write-keyword rejection — catches DDL/DML hidden in CTEs or comments
+#   3. Read-only URI (mode=ro) handed to the sqlite3 CLI itself
+#   4. Multi-statement rejection — no stacked statements
+#   5. sqlite3 --safe — blocks writefile()/readfile()/load_extension(),
+#       .shell/.output and ATTACH (CVE-2022-46908 class; needs sqlite3 >= 3.40.1)
+#   6. Dangerous-function deny-list + dot-command line rejection
+#
+# Usage:
+#   ocdb-ro "SELECT COUNT(*) FROM part"
+#   ocdb-ro --json "SELECT id,title FROM session LIMIT 5"
+#   ocdb-ro --schema part
+#   ocdb-ro --search "pin trap" [--limit N]   # convenience: search text+reasoning
+#   ocdb-ro --explain "EXPLAIN SELECT ..."    # EXPLAIN output is NOT JSON (sqlite3 limitation)
+set -uo pipefail
+
+DB="${OPENCODE_DB_PATH:-$HOME/.local/share/opencode/opencode.db}"
+SCHEMA_ONLY=0; SEARCH=""; LIMIT=10; SQL=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --json)    shift ;;
+    --schema)  SCHEMA_ONLY=1; shift ;;
+    --search) if [ $# -lt 2 ]; then echo "error: --search requires a term" >&2; exit 2; fi; SEARCH="$2"; shift 2 ;;
+    --limit)   LIMIT="${2:-10}"; shift 2 ;;
+    -h|--help) sed -n '/^#/p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *)         SQL="$1"; shift ;;
+  esac
+done
+
+[ -f "$DB" ] || { echo "ocdb-ro: no database at $DB" >&2; exit 1; }
+
+RO_URI="file:${DB}?mode=ro"
+if ! command -v sqlite3 >/dev/null 2>&1; then
+  echo "ocdb-ro: sqlite3 CLI not found" >&2; exit 127
+fi
+
+# --- schema introspection: uses .schema dot-command, never SQL, so it is
+# inherently read-only. Validate the table name to avoid dot-command injection.
+if [ "$SCHEMA_ONLY" -eq 1 ]; then
+  case "$SQL" in
+    ""|*[!A-Za-z0-9_]*)
+      echo "ocdb-ro: BLOCKED — invalid table name" >&2; exit 2 ;;
+  esac
+  exec sqlite3 --safe -readonly "$RO_URI" ".schema ${SQL}"
+fi
+
+# --- build SQL for --search BEFORE validation (search terms are data, not SQL)
+if [ -n "$SEARCH" ]; then
+  # Escape for SQLite LIKE with ESCAPE '\' — order: backslash, %, _
+  esc="${SEARCH//\\/\\\\}"
+  esc="${esc//%/\\%}"
+  esc="${esc//_/\\_}"
+  case "$LIMIT" in (*[!0-9]*|"") LIMIT=10 ;; esac
+  SQL="SELECT s.title AS session, substr(json_extract(p.data,'\$.text'),1,300) AS excerpt
+       FROM part p JOIN session s ON s.id = p.session_id
+       WHERE json_extract(p.data,'\$.type') IN ('text','reasoning')
+         AND json_extract(p.data,'\$.text') LIKE '%${esc}%' ESCAPE '\\'
+       ORDER BY p.time_created DESC LIMIT ${LIMIT};"
+fi
+
+# --- 4. statement allowlist (first keyword only) ---
+first=$(printf '%s' "$SQL" | sed 's/^[[:space:]]*//' | awk 'NR==1{print toupper($1); exit}')
+case "$first" in
+  SELECT|WITH|EXPLAIN|VALUES|PRAGMA) : ;;
+  "") echo "ocdb-ro: BLOCKED — empty statement" >&2; exit 2 ;;
+  *) echo "ocdb-ro: BLOCKED — statement must begin with SELECT/WITH/EXPLAIN/VALUES/PRAGMA (got '${first}')" >&2; exit 2 ;;
+esac
+
+# --- 2. write-keyword rejection (defence in depth) ---
+# Strip string literals FIRST so that a legitimate search for the words
+# "CREATE TABLE" or "DROP" in past conversation text is not a false positive.
+sql_nolit=$(printf '%s' "$SQL" | sed "s/'[^']*'//g")
+# REPLACE narrowed to "REPLACE INTO": bare \bREPLACE\b false-positives on the
+# legitimate scalar replace() function (SQLite has no REPLACE statement).
+if printf '%s' "$sql_nolit" | grep -qiE '\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|ATTACH|DETACH|VACUUM|REINDEX|SAVEPOINT|RELEASE)\b|REPLACE[[:space:]]+INTO'; then
+  echo "ocdb-ro: BLOCKED — write keyword detected outside a string literal. This tool is read-only." >&2; exit 2
+fi
+# Shell-added / loader functions. fileio (readfile/writefile) has been compiled
+# into the stock sqlite3 shell since 3.8.6; load_extension reaches dlopen.
+# --safe also blocks these (layer 5) — belt and braces.
+if printf '%s' "$sql_nolit" | grep -qiE '\b(writefile|readfile|load_extension|fts3_tokenizer|edit)\b'; then
+  echo "ocdb-ro: BLOCKED — dangerous function (writefile/readfile/load_extension/fts3_tokenizer/edit). This tool is read-only." >&2; exit 2
+fi
+# PRAGMA that mutates
+if printf '%s' "$sql_nolit" | grep -qiE 'PRAGMA[[:space:]]+[a-z_]+[[:space:]]*='; then
+  echo "ocdb-ro: BLOCKED — PRAGMA assignment is a mutation." >&2; exit 2
+fi
+# stacked statements (checked outside literals too); also catch ";\n.shell"
+# and ";.shell" — dot-commands after a statement separator
+if printf '%s' "$sql_nolit" | grep -qE ';[[:space:]]*([A-Za-z]|\.)'; then
+  echo "ocdb-ro: BLOCKED — multiple statements detected." >&2; exit 2
+fi
+# dot-command line rejection: mid-argv "\n.shell" reaches the SQL parser as a
+# syntax error anyway, but reject explicitly (stdin would execute it).
+if printf '%s' "$SQL" | grep -qE '^[[:space:]]*\.[A-Za-z]'; then
+  echo "ocdb-ro: BLOCKED — dot-command detected." >&2; exit 2
+fi
+
+# "--" terminates option parsing so a SQL first token starting with "-" can
+# never be re-parsed as a sqlite3 flag (M-later probe: sqlite3 accepts "--").
+exec sqlite3 --safe -readonly "$RO_URI" -cmd ".mode json" -- "$SQL"

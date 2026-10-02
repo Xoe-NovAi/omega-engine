@@ -1,5 +1,21 @@
 # MemPalace Hivemind — Agent Coordination Backbone
 
+
+> ### ⚠️ Layout changed 2026-10-02
+>
+> The package previously shipped sources in `scripts/` while `pyproject.toml`
+> declared `packages = ["src/mempalace_hivemind"]` — a path that did not exist.
+> `uv pip install -e .` therefore could not produce a working install, and the
+> documented `from mempalace_hivemind import HivemindClient` could not resolve.
+>
+> Sources now live at `src/mempalace_hivemind/` (`__init__.py`, `hivemind_cli.py`,
+> `validator.py`), matching the declared package path. Both documented imports
+> are verified to resolve.
+>
+> **If you already installed the old layout:** uninstall, delete the stale
+> `scripts/` copy, and reinstall — otherwise you may be importing from two places.
+
+
 **Version**: 1.0 | **Status**: Production-ready | **License**: Apache-2.0
 
 ---
@@ -236,10 +252,10 @@ mempalace-hivemind/
 │   ├── EVENT_SCHEMA.md          # Event schema reference
 │   ├── ROOM_TOPOLOGY.md         # Room topology standard
 │   └── INTEGRATION.md           # Integration guide
-├── scripts/
-│   ├── mempalace_hivemind.py    # Python client wrapper
+├── src/mempalace_hivemind/      # installable package (src layout)
+│   ├── __init__.py              # Python client (HivemindClient)
 │   ├── hivemind_cli.py          # CLI interface
-│   └── event_validator.py       # Schema validator
+│   └── validator.py             # Schema validator
 ├── schemas/
 │   ├── event.json               # JSON Schema for events
 │   └── artifact.json            # JSON Schema for artifacts

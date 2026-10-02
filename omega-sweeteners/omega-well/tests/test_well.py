@@ -190,18 +190,18 @@ class TestWellStorage(unittest.TestCase):
         self.assertEqual(stats["by_domain"]["local_ai"], 1)
 
     def test_make_targets_work(self):
-        """The Makefile targets execute without error against isolated storage."""
+        """The shipped Makefile.well fragment executes without error against isolated storage."""
         # well-stats (--no-print-directory ensures clean stdout when run from sub-make)
-        r = subprocess.run(["make", "--no-print-directory", "well-stats"], cwd=REPO, env=self.env, capture_output=True, text=True, timeout=30)
+        r = subprocess.run(["make", "--no-print-directory", "-f", "Makefile.well", "well-stats"], cwd=REPO, env=self.env, capture_output=True, text=True, timeout=30)
         self.assertEqual(r.returncode, 0, f"make well-stats failed: {r.stderr}")
         stats = json.loads(r.stdout)
         self.assertIn("total", stats)
 
         # well-list
-        r = subprocess.run(["make", "--no-print-directory", "well-list"], cwd=REPO, env=self.env, capture_output=True, text=True, timeout=30)
+        r = subprocess.run(["make", "--no-print-directory", "-f", "Makefile.well", "well-list"], cwd=REPO, env=self.env, capture_output=True, text=True, timeout=30)
         self.assertEqual(r.returncode, 0, f"make well-list failed: {r.stderr}")
 
         # well-export (renders WISDOM.md)
-        r = subprocess.run(["make", "--no-print-directory", "well-export"], cwd=REPO, env=self.env, capture_output=True, text=True, timeout=30)
+        r = subprocess.run(["make", "--no-print-directory", "-f", "Makefile.well", "well-export"], cwd=REPO, env=self.env, capture_output=True, text=True, timeout=30)
         self.assertEqual(r.returncode, 0, f"make well-export failed: {r.stderr}")
         self.assertTrue(self.test_md.exists())

@@ -1,81 +1,70 @@
-# The Well — Structured Corrections Corpus
+# The Well — Portable Package
 
-**Version**: 1.0 | **Status**: Production-ready | **License**: Apache-2.0
+**Source:** Node 1 live corpus at `gnosis/well/` — **66 records** (62 active, 4 superseded)
+**Snapshot date:** 2026-10-02 (refreshed from vendor commit `2257495f`, 2026-09-26)
+**Status:** 🟢 Live corpus + hardened tooling, verified green (7/7 package tests)
 
-The Well is a structured, queryable, self-aging corpus of corrections, coding tips, preferences, anti-patterns, and insights. It provides institutional memory that survives context compactions and agent handoffs.
+## Contents
 
-## Features
+| Path | What it is |
+|---|---|
+| `scripts/well_storage.py` | Reader/writer/verify/rank — hardened (per-record isolation, `scanned/skipped/errors` result, dedup + permanence floor) |
+| `gnosis/well/well.jsonl` | **66 records** — live N1 corpus, byte-identical to `gnosis/well/` |
+| `gnosis/well/WISDOM.md` | Human-readable render of the active records |
+| `tests/test_well.py` | 7 regression tests (all passing) |
+| `Makefile.well` | Self-contained Make fragment — `well-add/list/stats/verify/supersede/export/search` |
+| `install.sh` | Installs corpus, script, tests, and Make fragment into a target project |
+| `WELL_INTEGRATION.md` | Integration guide |
 
-- **Append-only truth**: `well.jsonl` — immutable, line-delimited JSON records
-- **Human view**: `WISDOM.md` — auto-rendered, grouped by kind (Correction/Preference/Tip/Anti-pattern/Insight/Dream)
-- **Lifecycle**: `CAPTURED → ACTIVE → SUPERSEDED` (mirrors gnosis pack lifecycle)
-- **Zero external deps**: Pure Python stdlib
-- **Secret-safe**: Built-in secret pattern rejection (API keys, passwords, tokens)
-- **Tested**: 7 unit tests covering validation, supersession, rendering, stats, Make targets
+**Self-contained:** you do not need a host Makefile. `make -f Makefile.well well-verify`
+works immediately after `install.sh`.
 
-## Quick Start
+## The N0 rule — read this before you install
 
-```bash
-# Install (optional - just copy the gnosis/well/ dir and scripts/well_storage.py)
-./install.sh
+**Bring up The Well with a FRESH `well.jsonl`.** The 66 records shipped here are
+**reference, not transplant.** They encode incidents that happened on Node 1 —
+silently-dead injection paths, CPU-pin convoys, stale-WAL reads. Their weights
+and their triggers are calibrated to N1 silicon and N1 history. Reading them is
+how you learn what class of failure to watch for. Copying them into your corpus
+means asserting they happened to you, which they did not.
 
-# Add a record
-python3 scripts/well_storage.py add correction harness "trigger" "rule" "rationale" --tags "tag1,tag2" --pack "session-xyz"
+Read ours, then earn yours.
 
-# List records
-python3 scripts/well_storage.py list --kind correction --status active
+## What the hardening bought (2026-10-01/02)
 
-# Render human view
-python3 scripts/well_storage.py render-md
+These were real defects on N1, not theoretical:
 
-# Stats
-python3 scripts/well_storage.py stats
+- **Per-record isolation** — one malformed record can no longer empty the batch.
+  This is what silently killed injection on N1 while 114 tests stayed green.
+- **`scanned/skipped/errors` result object** — "no data" is now distinguishable
+  from "nothing indexed". A green gate can no longer certify a corpse.
+- **`normalizeTags()`** — records with `tags` as a JSON *array* are handled; the
+  earlier reader threw on them and the outer catch returned `[]`.
+- **Injection dedup + permanence floor** — two slots reserved for
+  `correction`/`anti_pattern` so pure-recency ranking cannot crowd them out.
+- **`make well-verify`** — audits the real corpus, exits 1 on unreadable records,
+  and emits the *decision* behind each finding, not just the finding.
+- **1024-native embedding dimension** — corrected from the old 768 claim.
 
-# Supersede a record
-python3 scripts/well_storage.py supersede <old_uuid> <new_uuid>
-```
-
-## Make Targets (if integrated into Makefile)
-
-```bash
-make well-add KIND=correction DOMAIN=harness TRIGGER="..." RULE="..." RATIONALE="..." [TAGS="..."] [PACK=...]
-make well-list [KIND=...] [DOMAIN=...] [STATUS=active|all]
-make well-stats
-make well-supersede OLD=<uuid> NEW=<uuid>
-make well-export   # renders WISDOM.md
-```
-
-## Schema
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| record_id | UUIDv4 | Yes | Auto-generated |
-| ts | ISO-8601 UTC | Yes | Auto-generated |
-| kind | enum | Yes | correction\|preference\|tip\|anti_pattern\|insight\|dream |
-| source_pack | string | Yes | Gnosis session ID |
-| domain | enum | Yes | local_ai\|consciousness\|psychology\|classical\|games\|harness\|other |
-| trigger | string | Yes | What prompted the rule |
-| rule | string | Yes | The actionable rule (single sentence preferred) |
-| rationale | string | Yes | Why it matters |
-| tags | string | No | Comma-separated |
-| status | enum | Yes | active\|superseded (default: active) |
-| superseded_by | UUID | Conditional | Required if status=superseded |
-
-## Integration
-
-1. Copy `gnosis/well/` and `scripts/well_storage.py` into your project
-2. Add `scripts/test_well.py` to your test suite
-3. Optionally add Make targets (see `WELL_INTEGRATION.md`)
-4. Hook into your agent's context injection to inject top-N active records at session start
-
-## Testing
+## Install
 
 ```bash
-python3 -m pytest tests/test_well.py -v
-# or
-python3 tests/test_well.py
+./install.sh /path/to/your/project
+cd /path/to/your/project
+
+# Verify the corpus you just installed
+make -f Makefile.well well-verify
+make -f Makefile.well well-stats
+
+# Run the tests
+python3 -m unittest discover -s tests -p 'test_well*.py' -v
+
+# Earn your first record
+make -f Makefile.well well-add \
+  KIND=correction DOMAIN=harness \
+  TRIGGER="the thing that surprised you" \
+  RULE="what to do instead" \
+  RATIONALE="why"
 ```
 
-## License
-
-Apache-2.0 — see LICENSE in parent repo.
+Full guide: `WELL_INTEGRATION.md`.
