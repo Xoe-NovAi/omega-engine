@@ -40,6 +40,25 @@ if [ "${1:-}" = "--force" ] || [ "${FORCE_PACK}" = "1" ]; then
   REASON="${2:-End of session}"
 fi
 
+# ─── Session-ID shape gate ───────────────────────────────────────────────
+# SESSION_ID becomes both a filename and an identity key. A human-readable
+# string passed as $1 (a status summary, a sentence) creates filename-unsafe
+# pack files and wedges identity.json's pending_pack permanently, because the
+# leash can never match a real session ID. Same defect class as a list in a
+# string-typed field: a shape violation that only surfaces downstream. Reject
+# it here, loudly, before any file is created. Allows the legacy non-timestamp
+# ids already in the tree (hook-test-002, real-compact-test) but forbids
+# whitespace, slashes, colons, and prose.
+if ! printf '%s' "${SESSION_ID}" | grep -Eq '^[A-Za-z0-9._-]{1,128}$'; then
+  err "SESSION_ID is not a safe identifier: ${SESSION_ID}"
+  err "It becomes a filename and an identity key, so it may contain only"
+  err "letters, digits, '.', '_' and '-' (no spaces, slashes or colons)."
+  err "Pass a session id such as: session-$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+  err "or omit the argument entirely to auto-generate one."
+  err "Aborting before any pack file is created."
+  exit 1
+fi
+
 # ─── Colors ───────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "parallel-search": {
+      "type": "local",
+      "command": [
+        "/home/xnai/Documents/Projects/omega-engine-alpha/scripts/parallel_bridge.py"
+      ],
+      "enabled": true
+    },
+    "mempalace": {
+      "type": "local",
+      "command": [
+        "/home/xnai/WanderGround/.venv/bin/mempalace-mcp",
+        "--palace",
+        "/home/xnai/WanderGround/mempalace"
+      ]
+    },
+    "firecrawl": {
+      "type": "remote",
+      "url": "https://mcp.firecrawl.dev/v2/mcp",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:FIRECRAWL_API_KEY}"
+      },
+      "timeout": 120000,
+      "max_retries": 3
+    }
+  },
+  "tools": {
+    "mempalace_*": true,
+    "parallel-search_*": true,
+    "firecrawl_*": true
+  },
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "permission": {
+        "task": {
+          "asus_plan": "allow",
+          "grokster": "allow",
+          "kali": "allow",
+          "makali": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    "asus_plan": {
+      "mode": "subagent",
+      "inherit_context": true,
+      "allow_background_execution": true,
+      "description": "Kernel/Hardware Optimization Researcher (Intel Matrix Ingestion)",
+      "system_prompt": [
+        "{include:~/.config/opencode/prompts/asus_plan.md}"
+      ]
+    },
+    "grokster": {
+      "mode": "subagent",
+      "inherit_context": true,
+      "allow_background_execution": true,
+      "description": "OpenCode Internals & MCP Schema Specialist",
+      "system_prompt": [
+        "{include:~/.config/opencode/prompts/grokster.md}"
+      ]
+    }
+  },
+  "subagent_depth": 2
+}

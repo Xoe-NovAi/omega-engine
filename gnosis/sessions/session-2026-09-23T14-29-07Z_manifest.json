@@ -1,0 +1,22 @@
+{
+  "session_id": "session-2026-09-23T14-29-07Z",
+  "timestamp": "2026-09-23T14:29:07Z",
+  "reason": "End of session",
+  "entity": "build",
+  "channel": "cli",
+  "phase": "unset",
+  "reflection_status": "reflected",
+  "reflected_at": "2026-09-23T18:44:13Z",
+  "artifacts": {
+    "git_state": "/home/xnai/Documents/Projects/omega-engine-alpha/gnosis/sessions/Gemma4-QAT verdict + fetch layer + thinking-trap + 3\u00d7 prompt screen queued_git_state.json",
+    "opencode_config": "/home/xnai/Documents/Projects/omega-engine-alpha/gnosis/sessions/Gemma4-QAT verdict + fetch layer + thinking-trap + 3\u00d7 prompt screen queued_opencode_config.json",
+    "mcp_status": "/home/xnai/Documents/Projects/omega-engine-alpha/gnosis/sessions/Gemma4-QAT verdict + fetch layer + thinking-trap + 3\u00d7 prompt screen queued_mcp_status.json",
+    "system_state": "/home/xnai/Documents/Projects/omega-engine-alpha/gnosis/sessions/Gemma4-QAT verdict + fetch layer + thinking-trap + 3\u00d7 prompt screen queued_system_state.json",
+    "narrative": "/home/xnai/Documents/Projects/omega-engine-alpha/gnosis/sessions/Gemma4-QAT verdict + fetch layer + thinking-trap + 3\u00d7 prompt screen queued_narrative.md",
+    "evolution": "/home/xnai/Documents/Projects/omega-engine-alpha/gnosis/evolution/evolution_2026-09-23T14:29:07Z.json"
+  },
+  "identity_updated": true,
+  "ready_for_compaction": true,
+  "malformed_session_id": "Gemma4-QAT verdict + fetch layer + thinking-trap + 3\u00d7 prompt screen queued",
+  "id_repair_note": "Original run passed a human-readable status string where a session ID belongs. Repaired to a timestamp-derived ID from this manifest's own 'timestamp' field. Narrative untouched."
+}
