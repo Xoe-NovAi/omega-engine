@@ -1,10 +1,14 @@
 # The Well — Active Records
 
-Generated: 2026-10-02T19:58:30Z
+Generated: 2026-10-02T20:37:56Z
 
-Total active: 61
+Total active: 62
 
-## Correction (51)
+## Correction (52)
+
+- **A tool timeout terminates the CALL, not the process it launched. Before relaunching a background job that a timed-out call may have started, check for existing instances with a self-match-proof check, and never run two writers against one store.** [background-jobs,tooling,concurrency,debugging,cleanup,root-cause]
+  *The 1115-doc palace re-embed stalled because THREE copies were running at once: the bash tool reported 'terminated after exceeding timeout' but the python process survived, and I launched a second via nohup. Load average hit 12.88 on 10 cores and two writers contended on the same SQLite file. Compounded by a diagnostic that self-matched - 'pgrep -f palace_reembed' matched the bash command containing that very string, so it reported the job alive while it was already dead. Use 'ps -eo pid,cmd | grep [p]attern' to avoid the bracket trick, and always read a PID file you wrote at launch.*
+  — pack: session-2026-10-02T15-07-53Z | domain: harness | id: 8a8c3663
 
 - **A ROADMAP status of 'in-progress' or a spec's schema declaration is a CLAIM about the data, not evidence of it. Read the store itself — query the dim column, count the rows — before planning work on top of it.** [verification,migration,schema,embodied-state,claims-vs-data]
   *ROADMAP P5.1 read 'Qwen3-0.6B@1024' in-progress with a 40-record pilot sidecar, and WANDERGROUND_SPEC declared embedding FLOAT[768]. The live store said neither: the MemPalace palace holds 1115 documents stamped dim=384, the legacy embeddinggemma-MRL space that the strategy doc had explicitly rejected as failing the 768 bar. The 768 engine space existed only as an inactive systemd default. So three different dims were in play on one node and none was the canonical one. Verified by SELECT dim, COUNT(*) FROM documents GROUP BY dim.*

@@ -123,23 +123,27 @@ Changed outside git (**no version control at all**):
 
 ## Next Session Priorities
 
-1. **Re-embed the 1115 palace documents 384 → 1024** (P5.1b step 4). Both nodes are
-   nominally 1024 but **do not yet share a vector space** — Node 1's live store is 384.
-   Backup first, then `mempalace repair rebuild-index`, then verify the `dim` column
-   reads 1024 and scoped-search parity holds. This is the single highest-value
-   correctness item: federated cosine silently fails across mismatched spaces.
-2. **Resolve the `self: n0` federation anomaly** before trusting any invariant
-   reading from that tool.
-3. **P1.6 — old-rule reachability.** The permanence floor guarantees the *class* is
+1. **Cross-node cosine is still UNTESTED** — the highest open risk. Node 1 is now
+   *verified* at native 1024 and Node 0 is operator-confirmed at 1024, but **no
+   end-to-end federated retrieval has run.** Do not assume parity until Node 0
+   replies to `ho_223918db14b5` and an actual cross-node query is measured.
+2. **P5.5 — palace corpus is semantically shallow.** Topical-vs-control query
+   separation is +0.0083. The vectors are correct; the *content* is drawer fragments
+   and log tails, not retrievable prose. Separate problem from the vector space.
+3. **Resolve the `self: n0` federation anomaly** before trusting any invariant
+   reading from that tool. Corroborated independently: handoff writes resolve to
+   `/home/arcana-novai/...`, a different user's home. Reported to Makali-N0 in
+   `ho_48edf2c93c91` along with the intermittent `[Errno 28]` on submit.
+4. **P1.6 — old-rule reachability.** The permanence floor guarantees the *class* is
    represented, not that any specific old rule resurfaces. Needs rotation or a
    relevance term.
-4. **Refresh or retire the frozen `omega-sweeteners` snapshot** (19 records vs 64
+5. **Refresh or retire the frozen `omega-sweeteners` snapshot** (19 records vs 64
    live) — a Node 0 adoption decision, P5.3.
-5. **Add an ID-format gate for the ritual** — DONE 2026-10-02, but the two existing
-   malformed packs show the gate was needed; watch for any new ones.
 6. **18 stale packs** — one at a time, operator ruling.
 7. `consciousness` domain injection (write-only for 2 records) and the 3 divergent
    `well.jsonl` copies.
+8. **Prune `/tmp` junk** — a 2.0 GB `opencode_c2_probe.db` has been sitting in
+   tmpfs since an earlier session.
 
 ## Gnosis Gained
 

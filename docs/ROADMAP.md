@@ -1155,13 +1155,42 @@ verbatim-first; boosts-never-gates; eval-before-cutover; no silent failures.
      **DONE 2026-10-02**; historical research docs
      (`EMBEDDING_MODEL_DECISION.md`, `EMBEDDING_STRATEGY_NODE1_20260925.md`)
      left intact as dated evidence.
-  4. **RE-EMBED 1115 palace documents 384 → 1024.** This is the actual work and
-     it was not previously on the list. Backup first (P0 discipline), then
-     `mempalace repair rebuild-index`, then verify the `dim` column reads 1024
-     and scoped-search parity holds. Until this runs, Node 1 and Node 0 do NOT
-     share a vector space despite both nominally being "1024".
-- **Status**: `unblocked` — dim cutover unblocked and doc/code aligned; the
-  1115-document rebuild is the remaining substantive step.
+4. **RE-EMBED 1115 palace documents 384 → 1024.** This is the actual work and
+     it was not previously on the list. **DONE 2026-10-02** via
+     `scripts/palace_reembed_1024.py` (batched, resumable, WAL, per-batch
+     transaction; skips rows already at 1024). Pre-migration backup retained:
+     `~/backups/mempalace_384_pre1024_20261002T200646Z.sqlite3`
+     (`quick_check: ok`, 1115 rows). Native 1024 via Ollama `/api/embed` with
+     **no** `dimensions` param. 795 rows in the final pass + 320 in an earlier
+     aborted-but-committed pass = 1115. Runtime 824 s for the final 795
+     (~0.9 rows/s, CPU-bound).
+- **Verification (post-migration)**:
+  - `SELECT dim, COUNT(*) … GROUP BY dim` → **`{1024: 1115}`**, no 384 rows remain.
+  - `PRAGMA quick_check` → `ok`.
+  - Stored blob 4096 B = 1024 × float32; `dim` column agrees with blob width.
+  - 399 of 400 sampled vectors are byte-distinct (1 legitimate duplicate);
+    pairwise cosine 0.08–0.65, mean 0.31 — a healthy spread, not degenerate.
+  - **Self-retrieval: a freshly-embedded stored doc retrieves ITSELF at rank 1,
+    cos = 1.0000** — definitive proof the query encoder and stored vectors are
+    the same space. This is the check that matters.
+  - Topical-vs-control separation is weak (+0.0083). **Pre-existing, not caused
+    by the dim change**: the corpus is drawer fragments and log lines, not curated
+    prose, so it is semantically shallow. A corpus-quality item, not a vector-space
+    one. Logged as P5.5.
+- **Status**: ✅ **DONE (2026-10-02)** — Node 1 palace is native 1024. Node 0
+  already at 1024 (operator-confirmed); Node 0 asked to confirm the exact model
+  and stamped dim via Hivemind `ho_223918db14b5` so parity is evidenced rather
+  than asserted on both sides. Once Node 0 replies, cross-node cosine is expected
+  to work — but that has NOT been tested end-to-end and must not be assumed.
+
+### P5.5 — Palace corpus is semantically shallow (NEW, 2026-10-02)
+- **Why**: topical-vs-control query separation is +0.0083 over 1115 documents.
+  Spot-reading the top hits shows drawer fragments (`source.)`, log tails, and
+  agent-prompt boilerplate rather than coherent statements. The vectors are
+  correct; the *content* they encode is not retrievable-by-meaning.
+- **Done when**: a held-out topical query returns a top-5 that a human would call
+  relevant, with control separation an order of magnitude above the current 0.008.
+- **Status**: `queued` — separate from the vector-space work, which is now correct.
 
 ### P5.2 — Omega-native memory v0 (independent R&D)
 - **Why**: priority-one substrate; Node 0 material merges later, not as
