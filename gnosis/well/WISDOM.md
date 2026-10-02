@@ -1,10 +1,30 @@
 # The Well — Active Records
 
-Generated: 2026-10-01T08:52:32Z
+Generated: 2026-10-02T17:32:38Z
 
-Total active: 55
+Total active: 60
 
-## Correction (45)
+## Correction (50)
+
+- **A gate must emit the decision behind a finding, not only the finding. A check that reports drift without the reasoning that resolved it invites another agent to decide unilaterally.** [coordination,federation,gates,context,handoff]
+  *make well-verify correctly flagged 16 records with list-typed tags. The operator had already ruled 'do not rewrite the array tags'. ge-n1 saw only the warning, had no way to see the ruling, and rewrote all 16 anyway. The gate was right; the signal was incomplete.*
+  — pack: session-2026-10-02T15-07-53Z | domain: harness | id: a43eedbc
+
+- **Validate the shape of every field that becomes a filename or an identity key. A status summary written into current_session created seven filename-unsafe pack files and wedged the gnosis leash permanently.** [schema,identity,ritual,filename,validation]
+  *identity.json had 'Session complete: session recall system deployed...' in current_session and pending_pack, producing pack files with spaces and colons in their names. The leash could never clear pending_pack because it could never match a real session ID. Repaired to a timestamp-derived ID with the malformed original preserved inside the manifest. Same defect class as a list in a string-typed field: a shape violation that only shows up downstream.*
+  — pack: session-2026-10-02T15-07-53Z | domain: harness | id: 446110be
+
+- **A test suite that only ever loads a fixture cannot detect that the real artifact is broken. Point at least one test at the real file and execute the real code path; a green suite that never loaded the data certifies nothing.** [testing,fixtures,gate,regression,real-artifact]
+  *114 tests stayed green while The Well injected nothing into any session, because tests/test_well.py redirected storage to a tempfile.TemporaryDirectory() in setUp and no test ever executed gnosis-leash.js. The new tests/test_well_injection.py drives the real plugin in node against both a fixture and the real corpus, and was verified to FAIL against the vulnerable reader and PASS against the hardened one. A test that cannot fail is a gate that cannot fail.*
+  — pack: session-2026-10-02T15-07-53Z | domain: harness | id: b1b452c8
+
+- **The superseded_by field must exactly match the original record_id: a3675a88-3e30-4640-9b8a-350aedf0423c (not a3685a88).** [well,supersede,fix]
+  *Typo in the supersede chain breaks point-in-time query logic.*
+  — pack: manual | domain: harness | id: 11bcd49a
+
+- **opencode.db has NO FTS/virtual tables — all search is a full scan. A transient external-content FTS5 index `part_fts` was created by a one-shot `sqlite-utils enable-fts` on 2026-10-02 02:08 (no triggers added), measured stale same day (60,707 part rows vs 58,632 indexed; `LIKE` found fresh tokens `MATCH` did not), and dropped 2026-10-02 after review. The claim "no FTS" is true again post-drop; it was false only during that transient window.** [sqlite,opencode.db,fts5,stale-index,drop]
+  *External-content FTS5 without triggers is a silent-false-negative hazard (stale MATCH returns 0 for fresh tokens, can show updated content under old token, may raise SQLITE_CORRUPT on orphan rowids). No consumer used MATCH; full scan is 1.4 ms/MB, sub-second for years. Drop is safer than permanent maintenance obligation with known trigger-corruption precedents.*
+  — pack: manual | domain: harness | id: 4cd3d7ae
 
 - **opencode.db has NO FTS/virtual tables — all search is a full scan, measured perfectly linear at ~1.4 ms/MB of text+reasoning corpus. Corpus grows ~0.6 MB/day (~18 MB/month), so a scan stays under ~1s for years: NO index needed. Two traps: (1) immutable=1 is STALE (missed 26 recent parts) — always use mode=ro so the WAL is read; (2) a first embedding benchmark is a COLD-START artifact — qwen3-embedding:0.6b measured 10645 ms/embed cold but 122 ms warm (87x), nomic the reverse. Always warm the model before timing, or you will pick the wrong model.** [sqlite,opencode.db,fts5,benchmark,cold-start,scaling,embeddings]
   *Measured the scaling curve to 457 MB (6 doublings, linear, no cliff) and derived the growth rate from real timestamps. Cold-start benchmark nearly caused the wrong model choice; the corrected warm numbers reversed the ranking entirely.*
