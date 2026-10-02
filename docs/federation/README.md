@@ -44,7 +44,7 @@ The federation subsystem is documented across specialized architectural, operati
 
 ### 2.0 Current USB Handoff
 - **[MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md](MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md)**: Single consolidated Node 0 briefing covering verified Node 1 systems, personal Lilith/legacy materials, agent experiments, WAD/loader reconciliation, cryptographic trust, continuity, embedding/spatial migration, packaging, and joint acceptance gates.
-- **[NODE0_USB_HANDOFF_REPORT.md](NODE0_USB_HANDOFF_REPORT.md)**: Provenance-aware Node 1 → Node 0 USB handoff report covering verified builds, uncommitted/target-only state, WAD/loader blockers, continuity and spatial acceptance gates, cryptographic verification requirements, and numbered requests for Node 0.
+- **[NODE0_USB_HANDOFF_REPORT.md](../archive/federation/NODE0_USB_HANDOFF_REPORT.md)**: Provenance-aware Node 1 → Node 0 USB handoff report covering verified builds, uncommitted/target-only state, WAD/loader blockers, continuity and spatial acceptance gates, cryptographic verification requirements, and numbered requests for Node 0. *(archived — point-in-time)*
 - **[makali_n0_onboarding/](makali_n0_onboarding/)**: Persistent-entity onboarding package (2026-09-25) — the lived practice layer: Lilith's 12-axiom awakening, living operator-model journal, session distillation protocol, diary/AAAK practice, cross-platform portability, split-test findings, mesh status. Start at `makali_n0_onboarding/README.md`.
 
 ### 2.1 Core Architecture & Naming Strategy

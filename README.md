@@ -80,7 +80,45 @@ docker compose up -d
 
 ---
 
+## 🔍 Session Recall
+
+Two years of agent work lives in a local SQLite database. These tools let you (and any
+agent) search it instead of asking the user to repeat themselves.
+
+```bash
+# Install (once)
+sudo npm install -g agent-historian && ochist skill install --global   # cross-agent recall
+pip install sqlite-utils                                                 # optional FTS5 layer
+
+# Search past conversations (regex; --global avoids project-only misses)
+ochist grep "pin trap" --global --limit 5
+ochist sessions --limit 10
+ochist show <session-slug>            # outline first, then drill down
+ochist part <part-id>                 # exact text of one part
+
+# Structured questions — counts, cost, schema, which sessions edited a file
+ocdb-ro --search "gnosis" --limit 5
+ocdb-ro "SELECT ROUND(SUM(cost),2) AS usd FROM session"
+ocdb-ro --schema part
+```
+
+Three agent skills are auto-discovered from `~/.agents/skills/`: `agent-history`
+(prose recall), `opencode-db` (structured queries), `claude-history` (Claude/Pi/OMP).
+
+> ⚠️ **Never run `opencode db <query>` against production `opencode.db`.** It opens the
+> database read-write and executes DDL/DML freely — verified by an accidental write
+> during this work. Use `ocdb-ro`, which enforces read-only twice over. Also never use
+> `immutable=1`: it ignores the WAL and silently returns stale data.
+
+Strategy, citations, and the 46 GB Node 0 case:
+**[OPENCODE_DB_MANAGEMENT_BRIEFING.md](docs/OPENCODE_DB_MANAGEMENT_BRIEFING.md)** ·
+Porting rules: **[PORTABILITY.md](docs/PORTABILITY.md)**
+
+---
+
 ## 📚 Documentation Index
+
+Start at **[docs/INDEX.md](docs/INDEX.md)** for the full map. Curated highlights:
 
 | Document | Audience | Purpose |
 |----------|----------|---------|
@@ -99,6 +137,9 @@ docker compose up -d
 | **[AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md)** | Agents | Node 1 ops awareness: gnosis-lock, /compact, quality gates |
 | **[GNOSIS_USAGE.md](docs/GNOSIS_USAGE.md)** | Operators | Gnosis Lock protocol deep-dive & exact commands |
 | **[WELL_SYSTEM.md](docs/WELL_SYSTEM.md)** | Everyone | The Well: operating-memory corpus, schema, auto-injection into system prompts |
+| **[WELL_INJECTION.md](docs/WELL_INJECTION.md)** | Engine developers | Injection design: selection, budget-before-retrieve, conflict rules, poisoning threat model |
+| **[OPENCODE_DB_MANAGEMENT_BRIEFING.md](docs/OPENCODE_DB_MANAGEMENT_BRIEFING.md)** | Operators/agents | Session-DB read, search, index, backup strategy; the 46 GB case; 35 cited sources |
+| **[PORTABILITY.md](docs/PORTABILITY.md)** | Engine developers | What must not leak into the future Omega CLI |
 | **[CONTINUITY_KERNEL.md](docs/CONTINUITY_KERNEL.md)** | Engine developers | Portable semantic write-through kernel, WAD contract, and recovery acceptance test |
 | **[Federation Subsystem](docs/federation/README.md)** | Everyone | Dual-node P2P architecture, NFSv4.2, Tailscale WireGuard, Two-Phase ACLs |
 | **[ROADMAP.md](docs/ROADMAP.md)** | Everyone | Single ordered backlog: phases, vanguard tools, finish gates |
