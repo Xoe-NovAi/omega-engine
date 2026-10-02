@@ -1,4 +1,4 @@
-# The Sweetener Trio — Three Portable Systems Built on Node 1
+# The Sweetener Duo — Two Portable Systems Built on Node 1
 
 **Document ID:** `FED-MAKALI-N0-SWEETENERS-20260924-01` (revised 2026-10-02)
 **From:** Build / Lilith-N1 (Node 1 / XNAi-Asus)
@@ -14,13 +14,19 @@ over NFS when `nfs-server` is running — see mesh-status transport note).
 ## 0. What This Is
 
 Node 1 built five copy-paste-ready packages in 2026-09. **As of 2026-10-02,
-three remain in the Node 0 adoption path** — Ponytail, Context Engineering
-Protocol, and Wander CLI were removed per Lilith-N1 revision, and the OpenCode
-DB tools were added as a third sweetener.
+two remain in the Node 0 adoption path** — Ponytail, Context Engineering
+Protocol, Wander CLI, and MemPalace Hivemind were removed per Lilith-N1. The
+OpenCode DB tools were added as the second sweetener.
 
 **Standing rule applies:** each package lands in your ROADMAP with a status
-BEFORE you integrate it. Sequence them (Well → DB Tools → Hivemind) so each
-layer is green before the next lands.
+BEFORE you integrate it. Sequence them (DB Tools → Well) so each layer is
+green before the next lands.
+
+**Why the Hivemind was removed:** it was a conflation. MemPalace (the memory
+system) and the Hivemind (the agent-coordination logstream) are two
+completely different systems that were mistakenly combined into one package.
+They should never have been bundled. The operator is working with Node 0 to
+unwind that conflation and build each properly on its own.
 
 **Honesty header:** statuses below are per-package and current as of 2026-10-02.
 Anything marked scaffolded has never executed end-to-end. Your tree is the
@@ -28,13 +34,12 @@ truth — re-verify on N0 silicon.
 
 ---
 
-## 1. The Three Packages
+## 1. The Two Packages
 
 | # | Package | Type | Status on N1 | Path |
 |---|---|---|---|---|
-| 1 | **The Well** | Corrections corpus + tools | 🟢 live on N1 at `gnosis/well/` — **66 records**, hardened, 1024-native. Refreshed 2026-10-02, byte-identical to live, 7/7 tests green. | `omega-sweeteners/omega-well/` |
-| 2 | **OpenCode DB Tools** | Read-only session-DB access | 🟢 audited + tested on N1. Ships `ocdb-ro`, both slash commands, and the 46 GB briefing. **Start here on N0** — your DB is 46 GB. | `omega-sweeteners/db-tools/` |
-| 3 | **MemPalace Hivemind** | Coordination backbone (event-logstream client + schemas) | 🟡 code complete, **cross-node unproven**. Packaging fixed 2026-10-02 (see §1.3). | `omega-sweeteners/mempalace-hivemind/` |
+| 1 | **OpenCode DB Tools** | Read-only session-DB access | 🟢 audited + tested on N1. Ships `ocdb-ro`, both slash commands, and the 46 GB briefing. **Start here on N0** — your DB is 46 GB. | `omega-sweeteners/db-tools/` |
+| 2 | **The Well** | Corrections corpus + tools | 🟢 live on N1 at `gnosis/well/` — **66 records**, hardened, 1024-native. Refreshed 2026-10-02, byte-identical to live, 7/7 tests green. | `omega-sweeteners/omega-well/` |
 
 > **Removed from delivery (2026-10-02):** Ponytail (senior-dev review plugin,
 > never registered on N1), Context Engineering Protocol (9-step session-close
@@ -129,11 +134,10 @@ reinstall so you are not importing from two places.
 ```
 1. DB Tools    — install ocdb-ro + ochist; run the §1 triage to get row counts
 2. Well        — fresh well.jsonl + Makefile.well targets + first record
-3. Hivemind    — client + schemas + validator; prove nothing yet (needs mesh)
 ```
 
 DB Tools comes first because it is read-only and it tells you what you are
-dealing with. Nothing later in this sequence is safe to attempt without it.
+dealing with. Nothing later is safe to attempt without it.
 
 Each step gets a ROADMAP row with a status before you start, and a dated
 evidence note when it goes green. Signal readiness per the onboarding
