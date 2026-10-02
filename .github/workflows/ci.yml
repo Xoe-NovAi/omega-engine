@@ -56,6 +56,10 @@ jobs:
       run: |
         make check-mandates
 
+      - name: Temple-Grade (full release gate)
+        run: |
+          make temple-grade
+
     - name: Test with pytest (Mock Mode)
       env:
         OMEGA_ENV: test
