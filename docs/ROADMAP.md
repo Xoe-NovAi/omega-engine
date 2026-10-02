@@ -167,6 +167,48 @@ from "re-teach the agent every time" to "the agent already knows."
   injects top-8 (harness, local_ai) into the compaction summary. Both use
   `readWellForInjection()` + `formatWellBlock()`. `well-export` = `make
   well-export` renders `WISDOM.md` + JSONL bundle. 43/43 tests green.
+- **Status**: 🔴 **REGRESSED 2026-09-30 → FIXED 2026-10-02.** The done-when above
+  ("next-session system prompt demonstrably contains Well rules") was a *human
+  eyeball* criterion and had been silently false since `2026-09-30T22:11`. Eight
+  (later sixteen) records stored `tags` as a JSON **array**; `readWellForInjection`
+  called `.split()` unguarded, the `TypeError` was caught by an outer `try` whose
+  only action was `return []`, and **the Well injected nothing into any session**
+  — while all 114 tests stayed green, because every test used a
+  `tempfile.TemporaryDirectory()` and none executed the JS.
+  **Fixed**: `normalizeTags()` coerces string/array/missing; the `.map()` moved
+  inside the per-record `try` so one bad record is *omitted*, never *everything*;
+  the function returns `{records, scanned, skipped, errors}` and
+  `wellRecordsOrReport()` treats `scanned>0 && records===0` as an **incident**
+  (silent-empty has no external standard, so it was designed, not borrowed);
+  `output.system[0]` is mutated in place so the array stays length 1 (a `push()`
+  leaves length 2, which upstream's `length > 2` collapse guard does not fire on
+  → two `{role:"system"}` messages, rejected by OpenAI-compatible providers,
+  anomalyco/opencode#34243 unmerged); dead `else` branches deleted;
+  `WELL_DIR_OVERRIDE` added for testability.
+  **Gate**: `make well-verify` audits the real corpus (ERROR = unreadable,
+  WARN = reader-tolerated drift). `tests/test_well_injection.py` — 7 tests driving
+  the real plugin in node, **verified to fail against the vulnerable reader**.
+  121/121 green. Corpus: 64 records, 0 errors, 2 warnings.
+- **Still open (P1.5)**: ranking is recency-only, so 39 of 45 injectable records
+  are permanently unreachable at session start. Two duplicate rule texts were
+  found; **both pairs are now fully superseded and no longer consume slots**, so
+  the remaining work is the permanence floor for `correction`/`anti_pattern`,
+  not dedup.
+
+### P1.5 — The Well injection ranking (reachability)
+- **Why**: top-6 by `ts` descending means an important old rule can *never*
+  surface again once 6 newer records exist. Unreachable today: `ALWAYS use a
+  Python venv for pip installs on this machine`,
+  `Prepare-for-compaction orchestration loop is immutable`,
+  `Readiness contract: captured=not-ready, reflected=ready`.
+- **Done when**: a rule that has demonstrably changed behaviour in a later session
+  is reachable; a `correction`/`anti_pattern` record never ages out of the top-N.
+- **Status**: `queued` — operator priority #1 (2026-10-02). Deterministic
+  dedup-by-rule-identity + permanence floor. **Do NOT add embeddings**: at N=64 a
+  full scan is free and CPU-only embedding recall adds a silent-failure mode.
+  Cross-check: `researcher_humboldt`'s `session-2026-10-02T13-07-00Z` narrative
+  independently reached the same conclusion ("outcome tracking may be
+  unmeasurable at our density... pivot to recurrence detection").
 
 ### P1.4 — The Well evolution (supersession)
 - Corrections can be superseded by newer ones (same `domain`+`rule` family);
