@@ -5,7 +5,9 @@ agent: build
 
 Run a read-only query against the session database using **`ocdb-ro`**.
 
-$ARGUMENTS is the SQL.
+Invoke as `/db <SQL>`, or non-interactively as `opencode run --command db "<SQL>"`.
+Do not paraphrase this as “run the db command”; that wording can route the model to
+the native `opencode db` CLI. `$ARGUMENTS` is the SQL.
 
 ```bash
 ocdb-ro "$ARGUMENTS"
@@ -17,7 +19,8 @@ and the native one is dangerous:
 - `ocdb-ro` — read-only, twice enforced (statement allowlist + `mode=ro`). Safe.
 - `opencode db <query>` — opens `opencode.db` **read-write** and executes DDL/DML. A
   bare `CREATE TABLE` against the live database was verified to succeed. **Never use it.**
-  (Well record `3becf4f3`.)
+  (Well record `3becf4f3`.) The only safe native exception is `opencode db path`, which
+  prints the database path and takes no SQL query.
 
 If you find yourself typing `opencode db`, stop and use `ocdb-ro` instead.
 

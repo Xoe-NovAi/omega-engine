@@ -29,17 +29,20 @@ Use `ocdb-ro`, never raw `opencode db` — see the hard rules below.
 1. **NEVER run `opencode db <query>` against production `opencode.db`.** It opens
    read-write and executes DDL/DML. Verified: a bare `CREATE TABLE` succeeded against
    the live database. Use `ocdb-ro` (two independent read-only layers). Well `3becf4f3`.
-2. **NEVER use `immutable=1`** on a SQLite database. It ignores the WAL and returns
+2. **NEVER run `opencode session delete <sessionID>`.** There is no undo path here.
+   For session inventory use read-only `opencode session list`; for usage use
+   `opencode stats`; for transcripts use sanitized `opencode export`.
+3. **NEVER use `immutable=1`** on a SQLite database. It ignores the WAL and returns
    stale data (measured 26 parts behind). Always `mode=ro`. Well `a3675a88`.
-3. **Probe destructive paths on a `/tmp` COPY, never on production.** This one was
+4. **Probe destructive paths on a `/tmp` COPY, never on production.** This one was
    learned by getting it wrong; `PRAGMA quick_check` after, always.
-4. **Never narrow the Ollama CPU mask to physical P-cores** (`0,2,4,6,8,10`). Use
+5. **Never narrow the Ollama CPU mask to physical P-cores** (`0,2,4,6,8,10`). Use
    `AllowedCPUs=0-11` (P-cores **including HT siblings**) + `OLLAMA_NUM_THREADS=8`
    = 14.4 t/s. Physical-only collapses to ~0.5 t/s via a spin-wait barrier convoy
    (ollama #17916). DO NOT REGRESS.
-5. **Warm a model before benchmarking it.** A cold first call is not the number.
+6. **Warm a model before benchmarking it.** A cold first call is not the number.
    `qwen3-embedding:0.6b` measured 10,645 ms/embed cold vs 122 ms warm — 87×. Well `a3675a88`.
-6. **Never hardcode model context limits.** Drift-detect against live models.dev
+7. **Never hardcode model context limits.** Drift-detect against live models.dev
    (`scripts/opencode_provider_doctor.sh`).
 
 ## Gates — run before claiming done

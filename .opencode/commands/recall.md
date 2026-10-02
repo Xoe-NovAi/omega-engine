@@ -5,10 +5,15 @@ agent: build
 
 Search the full session history for a term.
 
-**Step 1 — identify the search term.** It is usually the distinctive keyword(s) in the
-user's request — a file name, an error string, a concept, a person's name. The argument
-to `/recall` is the user's whole message, so **do not** search the message verbatim:
-that matches nothing but the invocation itself. Extract the 1–3 distinctive terms.
+Invoke as `/recall <search-term-or-regex>`, or non-interactively as
+`opencode run --command recall "<term>"`. Do not paraphrase this as free text like
+“run the recall command with …”, because that can pass the whole sentence as the term.
+
+**Step 1 — identify the search term.** If the invocation already supplies a term, use it
+as-is. Otherwise it is usually the distinctive keyword(s) in the user's request — a file
+name, an error string, a concept, a person's name. **Do not** search a whole sentence
+verbatim: that matches nothing but the invocation itself. Extract the 1–3 distinctive
+terms.
 
 Examples:
 
