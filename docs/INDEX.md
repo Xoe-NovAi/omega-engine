@@ -34,7 +34,6 @@ Superseded documents live in [`archive/`](archive/) — retained for provenance,
 |---|---|
 | [`OPENCODE_DB_MANAGEMENT_BRIEFING.md`](OPENCODE_DB_MANAGEMENT_BRIEFING.md) | Session-DB read/search/index/backup; the 46 GB case; 35 sources |
 | [`WELL_SYSTEM.md`](WELL_SYSTEM.md) | The Well corpus, schema, auto-injection |
-| [`WELL_INJECTION.md`](WELL_INJECTION.md) | Injection design: selection, budgets, conflicts, poisoning |
 | [`GNOSIS_USAGE.md`](GNOSIS_USAGE.md) | Gnosis Lock protocol deep-dive |
 | [`CONTINUITY_KERNEL.md`](CONTINUITY_KERNEL.md) | Portable semantic write-through kernel + WAD contract |
 
@@ -236,7 +235,6 @@ Superseded documents live in [`archive/`](archive/) — retained for provenance,
 - [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) — Troubleshooting — Omega Engine Alpha Node 1 ★
 - [`USER_GUIDE.md`](USER_GUIDE.md) — User Guide — Omega Engine Alpha ★
 - [`WANDERGROUND_SPEC.md`](WANDERGROUND_SPEC.md) — 🧭 THE WANDERGROUND: ARCHITECTURAL SPECIFICATION & ROADMAP ★
-- [`WELL_INJECTION.md`](WELL_INJECTION.md) — The Well — Injection Design ★
 - [`WELL_SYSTEM.md`](WELL_SYSTEM.md) — ⬡ The Well — Omega Engine Corrections & Insight Corpus ★
 
 </details>

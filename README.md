@@ -137,7 +137,6 @@ Start at **[docs/INDEX.md](docs/INDEX.md)** for the full map. Curated highlights
 | **[AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md)** | Agents | Node 1 ops awareness: gnosis-lock, /compact, quality gates |
 | **[GNOSIS_USAGE.md](docs/GNOSIS_USAGE.md)** | Operators | Gnosis Lock protocol deep-dive & exact commands |
 | **[WELL_SYSTEM.md](docs/WELL_SYSTEM.md)** | Everyone | The Well: operating-memory corpus, schema, auto-injection into system prompts |
-| **[WELL_INJECTION.md](docs/WELL_INJECTION.md)** | Engine developers | Injection design: selection, budget-before-retrieve, conflict rules, poisoning threat model |
 | **[OPENCODE_DB_MANAGEMENT_BRIEFING.md](docs/OPENCODE_DB_MANAGEMENT_BRIEFING.md)** | Operators/agents | Session-DB read, search, index, backup strategy; the 46 GB case; 35 cited sources |
 | **[PORTABILITY.md](docs/PORTABILITY.md)** | Engine developers | What must not leak into the future Omega CLI |
 | **[CONTINUITY_KERNEL.md](docs/CONTINUITY_KERNEL.md)** | Engine developers | Portable semantic write-through kernel, WAD contract, and recovery acceptance test |

@@ -527,7 +527,7 @@ lint: ## ALL code-quality gates: anyio purity + bare-exception ban + torch ban +
 docs: ## Validate docs integrity: README links + CODE_QUALITY async gate
 	@echo "$(C_BOLD)$(C_CYAN)── Docs integrity check ──$(C_RESET)"
 	@echo "$(C_BOLD)README links:$(C_RESET)"
-	@for f in README.md docs/INDEX.md docs/GETTING_STARTED.md docs/ARCHITECTURE.md docs/DEVELOPER_GUIDE.md docs/PLUGIN_DEVELOPMENT.md docs/CODE_QUALITY.md docs/WANDERGROUND_SPEC.md docs/SYSTEM_GUIDE.md docs/HARDWARE.md docs/AGENT_RUNBOOK.md docs/GNOSIS_USAGE.md docs/WELL_INJECTION.md docs/WELL_SYSTEM.md docs/OPENCODE_DB_MANAGEMENT_BRIEFING.md docs/PORTABILITY.md docs/HARDENING_PLAN.md docs/ROADMAP.md LICENSE CONTRIBUTING.md; do \
+	@for f in README.md docs/INDEX.md docs/GETTING_STARTED.md docs/ARCHITECTURE.md docs/DEVELOPER_GUIDE.md docs/PLUGIN_DEVELOPMENT.md docs/CODE_QUALITY.md docs/WANDERGROUND_SPEC.md docs/SYSTEM_GUIDE.md docs/HARDWARE.md docs/AGENT_RUNBOOK.md docs/GNOSIS_USAGE.md docs/WELL_SYSTEM.md docs/OPENCODE_DB_MANAGEMENT_BRIEFING.md docs/PORTABILITY.md docs/HARDENING_PLAN.md docs/ROADMAP.md LICENSE CONTRIBUTING.md; do \
 		[ -f "$$f" ] && echo "  ✓ $$f" || { echo "  ✗ MISSING: $$f"; exit 1; }; \
 	done
 	@python3 scripts/check_docs.py
