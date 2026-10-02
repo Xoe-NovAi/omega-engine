@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 -->
 <!-- GNOSIS-META:BEGIN
   entity: makali_fusion
-  stamped_at: 2026-10-01T01:24:08Z
+  stamped_at: 2026-10-02T14:09:59Z
   stamped_by: arcana-novai
   supersedes: session_gnosis_20261001-0041.md
   schema_version: 1.0.0
@@ -246,3 +246,58 @@ gate.**
    Node 1 reverse channel now that both directions are permitted.
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ COMPACT-HANDOFF ⬡ 05b7de19 ⬡ 2026-10-01 ⬡*
+---
+
+## §10 — EVENING CLOSE: THE COMMUNICATION LAYER (2026-10-01, post-compaction)
+
+**HEAD**: `606906b7` · **0 unpushed** · all my files committed
+
+### What was built tonight (after the compact)
+1. **`2aa3a7f7`** — exchange manifest cache: root-mtime → (max_mtime, count).
+   Roc's find: files deep in the tree were fetchable but invisible.
+2. **`ba8a3849`** — `url_form` no longer hardcodes N0. Node identity is
+   env-driven (`OMEGA_NODE_NAME/HOST/PORT`); both responses carry `served_by`.
+   Proven both ways by execution. This is the pinned commit Lilith pulls.
+3. **`606906b7`** — node suffix routing + receipt journal + primer rewrite.
+   - `lilith-n1` no longer folds to `lilith`. Verified live: `rule: exact`,
+     single candidate.
+   - Receipt journal: `record_read_receipt` (O_APPEND + fsync) /
+     `read_receipts` / `unread_for(..., receipts)`. Envelope byte-identical
+     after reads. `store.submit()` gone from the read path.
+   - `docs/federation/HANDOFF_PRIMER.md` replaces the retired law.
+   - 8 new tests, red→green. 13/13 write-invariants green. 11 pre-existing
+     failures unchanged.
+
+### Decisions the Architect made (recorded, not assumed)
+- **8019 both nodes.** The 805 re-raise is dead; the grant file already said
+  so (`GRANT_DRAFT_805`, line 8/50). No ACL change needed — n0→n1:8019 was
+  already permitted. I manufactured the gap by forgetting the file.
+- **Stay with files; SQLite later as derived index if desired.** Jem's hybrid
+  verdict stands; ADR-002 not yet written (three premises moved that day).
+- **VNR 28/28: GO** (Lilith-N1's lane).
+- **M28.1 NOT ratified.** Nothing cites it. The journal needs no mandate —
+  pure addition, M28-clean as-is.
+
+### What Lilith-N1 proved (and what I owe her on the record)
+- Her MemPalace withdrawal, her "empty from the wrong vantage" rule, her
+  symlink-not-copy, her read-only-both-ends, her verify-both-vantages.
+- She caught ME reporting absence from the wrong vantage — the doctrine
+  working on the person who taught it.
+- She is blocked on ONE FILE (ba8a3849, sent). Her build order stands.
+- Her five questions answered in ho_c0fa055c1f09; her detailed report
+  answered in ho_48f485a2a8f0.
+
+### Standing open (not mine to close alone)
+- N1 8019 server deployment (Lilith-N1, unblocked).
+- `unread_for` second-vantage repro (Lilith-N1 offered).
+- M28.1 ratification (Architect).
+- Disk headroom 99% (doom_guy's lane).
+- Receipt-journal consumption in `inbox`/`list` projections (next).
+- The `test_federation_read_canary.py` superseded design + `binding_mcp`
+  on-disk `read_by` assertion (both red by design now; disposition open).
+
+### The law, stated once more because tonight earned it
+> **The check must be able to fail. The record must be able to be read.
+> And a number without its command is a rumour.**
+
+*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ EVENING-CLOSE ⬡ 606906b7 ⬡ 2026-10-01 ⬡*
