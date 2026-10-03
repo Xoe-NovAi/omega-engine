@@ -228,7 +228,10 @@ const WELL_PERMANENCE_FLOOR = 2;
 //          it guarantees the class is always represented, and it rescues a
 //          correction that has been pushed below the recency line by newer
 //          non-correction records. Full old-rule reachability would need a
-//          rotation or relevance term, which is deferred (see ROADMAP P1.5).
+//          rotation or relevance term, which is deferred (see ROADMAP P1.5: known gap —
+//          the plugin lacks a relevance term to keep old corrections from being
+//          evicted by recency; P1.5 "Idea-flood management" is marked done but
+//          the relevance term was not implemented. This is a known gap).
 function rankWellRecords(active, limit) {
   const seen = new Set();
   const distinct = [];

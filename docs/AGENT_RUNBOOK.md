@@ -371,8 +371,7 @@ Full spec: `docs/CODE_QUALITY.md`. Enforce before committing.
 - CLI: `make well-add|well-list|well-stats|well-supersede|well-export`.
 - Tests: 7 `TestWellStorage` tests (JSONL validity, secret rejection,
   supersession chain, index parity, UTF-8 integrity, stats accuracy, Make targets).
-- Current suite count is discovered by `make test`; the 2026-09-23 audit
-   observed 88 passing tests. Lint and documentation gates are green.
+- Current suite count is discovered by `make test` (132 passed as of 2026-10-03). Lint and documentation gates are green.
 
 ### 5.3 OMER — Model Card Registry (P3.3a/b, **LIVE**)
 - **What**: git-native model evaluation registry. A card is a **decision record**
