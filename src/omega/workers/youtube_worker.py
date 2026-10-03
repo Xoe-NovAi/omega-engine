@@ -753,7 +753,7 @@ class YouTubeWorker:
             source=source,
             topic=topic,
         )
-        await r.lpush(self.queue_name, json.dumps(asdict(job)))
+        await r.lpush(self.queue_name, json.dumps(asdict(job)))  # noqa: F821 — unreachable reference impl; _require_queue() raises first
         logger.info("Submitted to queue: %s (%s)", job.job_id, url)
         return job.job_id
 
@@ -778,7 +778,7 @@ class YouTubeWorker:
                 playlist_id=playlist_id,
                 playlist_title=playlist_title,
             )
-            await r.lpush(self.queue_name, json.dumps(asdict(job)))
+            await r.lpush(self.queue_name, json.dumps(asdict(job)))  # noqa: F821 — unreachable reference impl; _require_queue() raises first
             count += 1
 
         self.metrics["playlists_expanded"] += 1
@@ -801,7 +801,7 @@ class YouTubeWorker:
                 source="topic",
                 topic=topic,
             )
-            await r.lpush(self.queue_name, json.dumps(asdict(job)))
+            await r.lpush(self.queue_name, json.dumps(asdict(job)))  # noqa: F821 — unreachable reference impl; _require_queue() raises first
             count += 1
 
         self.metrics["topics_searched"] += 1
@@ -830,7 +830,7 @@ class YouTubeWorker:
                 url=url,
                 source="file",
             )
-            await r.lpush(self.queue_name, json.dumps(asdict(job)))
+            await r.lpush(self.queue_name, json.dumps(asdict(job)))  # noqa: F821 — unreachable reference impl; _require_queue() raises first
             count += 1
 
         logger.info("File '%s': %d URLs queued", file_path, count)
@@ -883,7 +883,7 @@ class YouTubeWorker:
 
                 # 3. Dequeue next job
                 self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
-                result = await r.blpop(self.queue_name, timeout=10)
+                result = await r.blpop(self.queue_name, timeout=10)  # noqa: F821 — unreachable reference impl; _require_queue() raises first
                 if not result:
                     return {"cycle_id": cycle_id, "skipped": True, "reason": "empty_queue"}
 
@@ -898,7 +898,7 @@ class YouTubeWorker:
                     self.metrics["total_errors"] += 1
                     if job.retry_count < 3:
                         job.retry_count += 1
-                        await r.lpush(self.queue_name, json.dumps(asdict(job)))
+                        await r.lpush(self.queue_name, json.dumps(asdict(job)))  # noqa: F821 — unreachable reference impl; _require_queue() raises first
                         logger.warning(
                             "Ingestion failed for %s, re-queued (retry %d)",
                             job.url,
@@ -989,7 +989,7 @@ class YouTubeWorker:
         results = []
         for _ in range(max_jobs):
             self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
-            result = await r.blpop(self.queue_name, timeout=5)
+            result = await r.blpop(self.queue_name, timeout=5)  # noqa: F821 — unreachable reference impl; _require_queue() raises first
             if not result:
                 break
 
@@ -1048,7 +1048,7 @@ class YouTubeWorker:
     async def get_status(self) -> Dict:
         """Return current worker status."""
         self._require_queue()  # [redis-20260928] raises — body below is unreachable reference impl
-        queue_len = await r.llen(self.queue_name)
+        queue_len = await r.llen(self.queue_name)  # noqa: F821 — unreachable reference impl; _require_queue() raises first
         topic_counts = {topic: len(videos) for topic, videos in self._topic_buckets.items()}
         return {
             "running": self._running,

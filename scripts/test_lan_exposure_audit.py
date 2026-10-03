@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -94,6 +95,42 @@ def main() -> int:
         print(f"  [{status}] {name:<48} expected={expect:<8} got={got}")
         if not ok:
             failures.append(name)
+
+    # --- runner-scoped sshd exemption (PR #5 post-merge CI, 2026-10-03) ---
+    # The exemption must hold ONLY under GITHUB_ACTIONS. Pin both directions:
+    # without the env a wildcard :22 must still be caught (Node 0 full
+    # strength), and under the env nothing but port 22 may be excused.
+    saved_ga = os.environ.pop("GITHUB_ACTIONS", None)
+
+    def _run(cases: list[tuple[str, object, bool]]) -> None:
+        for name, listener, expect_clean in cases:
+            verdict = lea.classify(listener, ALLOW)
+            is_clean = verdict is None
+            ok = is_clean == expect_clean
+            status = f"{PASS}PASS{NC}" if ok else f"{FAIL}FAIL{NC}"
+            expect = "clean" if expect_clean else "FLAGGED"
+            got = "clean" if is_clean else f"flagged({verdict[0]})"
+            print(f"  [{status}] {name:<48} expected={expect:<8} got={got}")
+            if not ok:
+                failures.append(name)
+            CASES.append((name, listener, expect_clean))  # keep the total honest
+
+    _run([
+        ("no-CI: wildcard sshd :22 caught", L("0.0.0.0", 22, None, None), False),
+        ("no-CI: wildcard v6 sshd :::22 caught", L("::", 22, None, None), False),
+    ])
+    os.environ["GITHUB_ACTIONS"] = "true"
+    _run([
+        ("CI runner: wildcard sshd :22 exempt", L("0.0.0.0", 22, None, None), True),
+        ("CI runner: wildcard v6 sshd :::22 exempt", L("::", 22, None, None), True),
+        ("CI runner: wildcard :2222 still caught", L("0.0.0.0", 2222, None, None), False),
+        ("CI runner: wildcard nfsd 2049 still caught", L("0.0.0.0", 2049, None, None), False),
+        ("CI runner: LAN sshd on real IP still caught", L("10.0.3.1", 22, None, "sshd"), False),
+    ])
+    if saved_ga is None:
+        os.environ.pop("GITHUB_ACTIONS", None)
+    else:
+        os.environ["GITHUB_ACTIONS"] = saved_ga
 
     print("=" * 62)
     total = len(CASES)

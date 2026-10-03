@@ -26,6 +26,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -215,6 +216,21 @@ def classify(l: Listener, allow: dict) -> tuple[str, str] | None:
     if l.is_loopback or l.is_link_local:
         return None
     if l.port in {int(p) for p in _as_list(allow.get("suppressed_ports"))}:
+        return None
+
+    # CI-runner exemption (PR #5 post-merge CI, 2026-10-03): GitHub-hosted
+    # runners ship sshd bound to 0.0.0.0:22 and :::22 for their own debug
+    # path. The runner is an ephemeral CI VM, not a deployment target, and an
+    # unprivileged `ss -ltnp` there cannot attribute the socket
+    # (UNKNOWN-PROCESS). Scoped to GITHUB_ACTIONS + wildcard + port 22 ONLY —
+    # the gate stays at full strength on Node 0, where a wildcard :22 bind
+    # must still go RED. Pinning by env rather than the static allowlist
+    # keeps this hole out of the reviewed policy file entirely.
+    if (
+        os.environ.get("GITHUB_ACTIONS") == "true"
+        and l.is_wildcard
+        and l.port == 22
+    ):
         return None
     if l.bind_addr in HARDCODED_LOOPBACK:
         return None

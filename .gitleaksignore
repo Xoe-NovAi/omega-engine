@@ -291,3 +291,61 @@ fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/mini
 fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/session_gnosis.md:generic-api-key:117
 # WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
 feb985f3fa28ceba07f45d36eaf063615fd3f9a0:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PR #5 merge (2026-10-03) — historical findings, debut-v1.6.0-alpha ONLY.
+#
+# All 39 fingerprints below resolve to commit 0a639bb0 "chore(gnosis): compact
+# handoff". That commit is NOT an ancestor of main: main deleted these
+# data/coordination/ docs and archive strays, and our branch had renamed them
+# into data/handoff/cold/legacy-archive/. The merge re-exposed the archived
+# copies to gitleaks' `--all` history scan, which had never run on this branch
+# before (PR #5 was CI-dead while CONFLICTING).
+#
+# Each entry is a prose/example string in an archived research note or a
+# generic-api-key false positive, EXCEPT one that needs a decision:
+#   data/coordination/packer_signing_key.pem (private-key)
+#     A real Ed25519 key committed 2026-07-17 for the context-packer test path.
+#     It is ignored here as a historical artifact so it does not hide the other
+#     38, but it is PUBLIC IN HISTORY and must be treated as compromised and
+#     rotated. Tracked as a required follow-up, not a closed item.
+# ─────────────────────────────────────────────────────────────────────────────
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:134
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:162
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md:generic-api-key:74
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/grok_cli/ROC_ONBOARDING_MAP_FOR_LATER.md:generic-api-key:79
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/grok_cli/ROC_ONBOARDING_MAP_ho_c3ad398fd0fa.json:generic-api-key:9
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/packer_signing_key.pem:private-key:1
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_ROC_LOCAL_MINING_20260827.md:generic-api-key:313
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_ROC_LOCAL_MINING_20260827.md:generic-api-key:680
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_ANTIGRAVITY_20260827.md:curl-auth-header:46
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_ANTIGRAVITY_DEEPER_20260827.md:generic-api-key:149
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_CLINE_20260827.md:generic-api-key:142
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md:generic-api-key:124
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md:generic-api-key:426
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:313
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:12
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:8
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:104
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:53
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:641
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/ideas_archive/IDEA_INTAKE_ARCHIVE_20260912.md:generic-api-key:539
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:56
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:90
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:99
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:89
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/handoff/cold/legacy-archive/ho_c3ad398fd0fa.json:generic-api-key:9
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/archive/sessions/session-ses_0b56.md:generic-api-key:4118
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/great-agent-responses/session-ses_ff78.md:generic-api-key:7178
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:582
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/strategy/teacher_pipeline/NEMOTON_TEACHER_PIPELINE_SPEC.md:generic-api-key:2
+26379199f030f426ed6d2042ab9211e37e7f3b55:docs/reference/API_REFERENCE.md:generic-api-key:67
