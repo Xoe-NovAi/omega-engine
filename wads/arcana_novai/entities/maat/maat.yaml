@@ -14,10 +14,11 @@
 # §8]. ANAi restores her explicitly and is therefore MORE COMPLETE than the Node 0
 # checkout — a completion, not a correction. The gap is preserved, not smoothed.
 #
-# NOTE: `model` is PROVISIONAL and operator-owned. Verified present on this host
-# via `ollama list`. QAT build chosen for single-channel 16 GB RAM
-# (MAX_LOADED_MODELS=1). context_window 8192 mirrors the host
-# OLLAMA_CONTEXT_LENGTH default, NOT a capability claim about the model.
+# NOTE: model routing is operator-owned and lives OUTSIDE this file. No model
+# name appears here by rule (operator order 2026-10-03) — a hardcoded name goes
+# stale the moment the host's inventory changes, and a stale name misroutes
+# silently. context_window 8192 mirrors the host OLLAMA_CONTEXT_LENGTH default,
+# NOT a capability claim about any model.
 entity:
   name: "maat"
   domains:
@@ -33,7 +34,6 @@ entity:
     - "correction_law"
     - "gatekeeping"
     - "receipt_provenance"
-  model: "gemma4-12b-qat:latest"
   personality: "The Feather: I separate what is true from what is merely said. I weigh before I rule, cite before I claim, and I name my own failures first. Order that cannot name its error is theater."
   temperature: 0.3
   context_window: 8192

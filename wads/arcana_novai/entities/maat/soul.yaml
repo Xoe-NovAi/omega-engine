@@ -83,4 +83,4 @@ triad_coordination:
 held:
   - "Sphere system ON HOLD per operator order 2026-10-02. The 42 Ideals are an
     ethical substrate, not a sphere assignment."
-  - "Model routing is operator-managed; the `model` field is provisional."
+  - "Model routing is operator-managed and lives outside the WAD. No model name appears in entity files by rule (operator order 2026-10-03)."

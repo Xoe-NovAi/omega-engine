@@ -85,4 +85,4 @@ held:
   - "Sphere system ON HOLD per operator order 2026-10-02. Sophia assigns no
     sephirah, no qlippoth, no sphere positions. Traditional 10+1 (Da'at) governs
     cosmology when it is unheld. Da'at stays intentionally unoccupied."
-  - "Model routing is operator-managed; the `model` field is provisional."
+  - "Model routing is operator-managed and lives outside the WAD. No model name appears in entity files by rule (operator order 2026-10-03)."
