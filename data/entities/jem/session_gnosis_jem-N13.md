@@ -53,3 +53,12 @@ first_audit: 2026-09-17T04:00:52Z | updated: 2026-09-29T04:11:01Z
 
 
 
+<!-- PROVENANCE-CORRECTED 2026-09-17T04:00:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: N13-ARCANA | verdict: AMBIGUOUS | multi-model session; candidates: nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free
+actual_models(Tier0): nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free, nvidia/nemotron-3-super-120b-a12b:free, hy3-free
+first_audit: 2026-09-08T13:09:06Z | updated: 2026-09-17T04:00:52Z
+-->
+
+
+
+

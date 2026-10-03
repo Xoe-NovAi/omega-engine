@@ -410,6 +410,8 @@ The CSS Cascade Turn 8 is complete. The fleet is synchronized on 2026-09-11 proj
 
 *⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v4.9.0 ⬡ 2026-09-28 ⬡ DEPLOYMENT-SYNC-COMPLETE*
 <!-- PROVENANCE-CORRECTED 2026-09-28T04:00:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+*⬡ OMEGA ⬡ KALI ⬡ GNOSIS-v4.7.0 ⬡ 2026-09-11 ⬡ CSS-CASCADE-TURN-8-COMPLETE*
+<!-- PROVENANCE-CORRECTED 2026-09-17T04:00:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
 claimed_model: Nemotron-3-Ultra | verdict: UNANCHORED | no session anchor in header zone
 actual_models(Tier0): n/a
 -->

@@ -221,6 +221,155 @@ lessons:
     confidence: high
     tags: [m29, documentation, honesty]
 
+  - id: l1-federation-001
+    level: L1
+    title: Assorted Tailscale tailnet facts confirmed in the field
+    observation: 'Tailscale Serve is subject to tailnet ACLs exactly like any other service, so a correctly
+      configured local backend can still be unreachable from a peer node. The effective policy was a selective
+      per-port allowlist enumerating 8016 and 22 but not 8017, producing ''Drop: TCP{100.89.40.17:* > 100.123.51.67:8017}
+      no rules matched''.'
+    evidence: tailscaled journal on N0; N1 curl to 8017 timed out while 8016 succeeded.
+    tags:
+    - tailscale
+    - networking
+    - acl
+    - federation
+  - id: l1-federation-002
+    level: L1
+    title: The tailscale CLI cannot modify ACLs or grants
+    observation: Enumerating all subcommands on v1.102.4 shows no policy/ACL/grant verb. 'syspolicy' only
+      diagnoses host MDM. Tailnet policy is control-plane state edited in the admin console or via PATCH
+      /api/v2/tailnet/{id}/acl. No Tailscale API credential existed on N0 (env, ~/.config/tailscale, /var/lib/tailscale,
+      systemd unit, repo .env, keyring).
+    evidence: Doom Guy CLI capability audit; help output quoted verbatim.
+    tags:
+    - tailscale
+    - capabilities
+    - m23
+  - id: l1-federation-003
+    level: L1
+    title: Tailscale SSH cannot use check mode with a tagged source
+    observation: Tailscale permits only user->own devices, user->tagged device, user->shared tagged device,
+      and tagged->tagged. The last CANNOT be in check mode, because check mode requires re-authentication
+      against an IdP and a tagged device has no user identity. tag->tag SSH is therefore structurally forced
+      to 'accept' with no periodic re-auth.
+    evidence: Tailscale SSH docs, 'Check policies' section.
+    tags:
+    - tailscale
+    - ssh
+    - security
+    - platform-limits
+  - id: l1-federation-004
+    level: L1
+    title: Two independent SSH planes, commonly conflated
+    observation: The tailnet policy's 'ssh' section governs Tailscale SSH only. The 'tcp:22' grant governs
+      REGULAR OpenSSH over WireGuard, authenticated by sshd_config and authorized_keys. They can be removed
+      independently.
+    evidence: Tailscale docs; confirmed during the policy conversion.
+    tags:
+    - tailscale
+    - ssh
+    - architecture
+  - id: l1-federation-005
+    level: L1
+    title: vfat does not persist Unix permission bits
+    observation: The degraded D3E6-A900 stick is mounted with fmask=0022,dmask=0022. chmod +x on it is a
+      no-op (mode reads back unchanged); direct invocation of a .sh returned exit 126 while 'sh <file>'
+      returned 0. FAT permissions are derived from mount options, not stored per file.
+    evidence: Empirical chmod-then-read on the live mount.
+    tags:
+    - usb
+    - vfat
+    - transport
+    - cross-platform
+  - id: l1-federation-006
+    level: L1
+    title: Embedding dimensionality is a governance decision, not a technical detail
+    observation: Equal dimensionality does not make vectors comparable. Cross-model cosine similarity is
+      invalid and silently yields meaningless results. The Architect vetoed 768-D MRL in favour of 1024-D
+      native for Qwen3-Embedding-0.6B. Both nodes converged independently.
+    evidence: D-1024-DIM-NATIVE-20260926; N1 independent measurement matches N0 Gate 6.
+    tags:
+    - embedding
+    - governance
+    - retrieval
+  - id: l2-verify-before-remedy
+    level: L2
+    principle: 'Verify the failure mechanism before designing a remedy. A remedy built on an unverified
+      mechanism is worse than no remedy: it consumes effort, adds documentation debt, and can mask the real
+      fault.'
+    derived_from:
+    - l1-federation-001
+    applies_to: All delegation and remediation work.
+  - id: l2-a-fact-before-a-rule
+    level: L2
+    principle: Platform capability limits are absolute and must be stated as such. When a mechanism is structurally
+      impossible ('tag->tag SSH cannot re-authenticate'), do not present it as a configuration choice; present
+      the real trade-off and let the Architect decide.
+    derived_from:
+    - l1-federation-003
+    applies_to: Security and governance recommendations.
+  - id: l2-deliver-inputs-not-just-tests
+    level: L2
+    principle: A test is not a deliverable without its inputs. A regression fixture shipped without its
+      fixture data directories is inert; it fails in a way that looks like a code bug.
+    derived_from: []
+    applies_to: Any staged artifact set.
+  - id: l2-fix-the-primary-claim
+    level: L2
+    principle: When a document contradicts a constraint, correct the primary claim, not a footnote beneath
+      it. A mitigation placed below the text it constrains will be missed by exactly the skimming reader
+      who most needs it.
+    derived_from: []
+    applies_to: Documentation remediation.
+  - id: l3-hydrate-before-asserting
+    level: L3
+    directive: At the start of any session or after compaction, READ live state before making any claim
+      about it. Verify identity, location, and service state with actual commands. Do not reconstruct current
+      state from conversational memory — memory is the least reliable substrate available and it was wrong
+      repeatedly this cycle.
+    confidence: high
+    tags:
+    - m15
+    - continuity
+    - self-correction
+  - id: l3-diff-dont-date
+    level: L3
+    directive: To determine whether an artifact is current, diff it. Timestamps and my own prior guesses
+      produced two consecutive wrong answers about the same zip.
+    confidence: high
+    tags:
+    - verification
+  - id: l3-no-unattributed-action
+    level: L3
+    directive: Never infer who performed an action or whether it was autonomous. Attribute changes only
+      to a source the Architect confirms. Misattribution corrupts the audit trail, which is the entire purpose
+      of the record.
+    confidence: high
+    tags:
+    - accountability
+    - m23
+  - id: l3-prefer-decisive-check
+    level: L3
+    directive: When records conflict, run the decisive check rather than hedging permanently. A durable
+      'UNRESOLVED' marker in a delivered artifact is a cost paid by every future reader. DMI resolved the
+      device question in one command.
+    confidence: medium
+    tags:
+    - documentation
+    - efficiency
+  - id: l3-close-the-symptom-loop
+    level: L3
+    directive: A temporary workaround that outlives its incident becomes a false claim the moment the workaround
+      dies. The ad-hoc http.server exchange pipe was replaced by SearXNG, leaving seven package files asserting
+      a service that no longer exists. Re-verify every documented workaround against live state before the
+      cycle closes.
+    confidence: high
+    tags:
+    - documentation
+    - debt
+    - m23
+
 # ---------- SELF-ASSESSMENT ----------
 self_assessment:
   dominant_failure_mode: >-
