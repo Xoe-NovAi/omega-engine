@@ -1,9 +1,0 @@
-entity:
-  name: jem
-  model: qwen3-1.7b
-  personality: ''
-  priority: 0
-  domains: []
-  temperature: 0.7
-  context_window: 8192
-  slots: []

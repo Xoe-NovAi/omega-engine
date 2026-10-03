@@ -1,9 +1,0 @@
-entity:
-  name: default
-  model: lfm25-t6
-  personality: You are the Omega Oracle, the universal interface of the engine.
-  priority: 0
-  domains: []
-  temperature: 0.7
-  context_window: 8192
-  slots: []
