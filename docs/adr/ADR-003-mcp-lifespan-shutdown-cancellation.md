@@ -106,12 +106,19 @@ the hub it covers three loops, each of the hanging shape:
 The first two predate this ADR — the false comment predates all three. This is a
 **latent defect, not a regression** introduced by any recent commit.
 
-### §3.3 Cost that was being paid silently
+### §3.3 Cost that was being paid silently — inference, later DISPROVED
 
 Every restart cost a full 30-second stall followed by SIGKILL. A hard kill can
 truncate in-flight work — notably the MemoryStore batch-writer flush and the
 harvester's filesystem walk. The stall was invisible because systemd reports the
 unit as `active` throughout, and `ExecStartPre` guards *start*, never *stop*.
+
+**Correction (§7.1):** the 30s stall was measured **unchanged** before and after
+this ADR's fix, so the infinite loops were **not** the production blocker. The
+stall is real and the SIGKILL risk is real, but its cause is still unidentified.
+This section records a hypothesis that testing rejected — kept visible rather than
+deleted, because the reasoning error is the reusable lesson: correct semantics at
+the task-group level did not imply the blocker lived at the task-group level.
 
 ---
 
@@ -198,5 +205,53 @@ say so; silently inheriting its latency is the one option that is always wrong.
 | Cancel fixes it | Same repro + `tg.cancel_scope.cancel()` | rc=0 — clean exit |
 | Gate timeout branch fires | `HUB_IMPORT_PIP_TIMEOUT=1 make check-hub-imports` | Correct message in 7s, no hang |
 | Sub-target bisect | Each target run individually under `timeout` | Only `check-hub-imports` exceeded limit |
+
+### §7.1 Production A/B — the fix did NOT resolve the restart stall
+
+Recorded because the earlier inference in §2.3 deserved a verdict and did not get
+one until tested.
+
+| Restart | Process code | Wall time | systemd verdict |
+|---|---|---|---|
+| 1st (`systemctl --user restart`) | pre-fix (PID 3113) | **32s** | `State 'stop-sigterm' timed out. Killing.` → SIGKILL |
+| 2nd (same command) | post-fix (PID 2343228) | **31s** | identical — `stop-sigterm` timed out, SIGKILL |
+| 3rd (same command) | post-fix (PID 2346354) | **31s** | identical |
+
+The fixed `mcp_runtime.py` was confirmed to be the module actually loaded
+(`omega.mcp_runtime.__file__` → `src/omega/mcp_runtime.py`, and
+`inspect.getsource(run_mcp)` contains `cancel_scope.cancel()`), so this is a real
+negative result and not a stale-code artefact.
+
+**Therefore: the task group was never the thing blocking production shutdown.**
+The §2 inference — that the infinite loops were the cause — is **not supported**.
+Something else absorbs SIGTERM for the full `TimeoutStopSec=30` and the process is
+SIGKILLed. The cancellation change is retained because it is independently
+correct (§2.1 proves the semantics) and repairs a genuine latent hazard, but it
+is **not** a fix for the observed restart stall, and this ADR must not be cited as
+one.
+
+**Hypotheses tested and eliminated**
+
+- *Open SSE connection keeps uvicorn's graceful drain open.* `run_mcp` sets no
+  `timeout_graceful_shutdown`, so an open connection would hang the drain. But
+  `ss -tnp` showed **no established connections** to :8016 at the time of the
+  test (and `ss -tlnp` did list the listener, so the tool was working). Dead.
+- *The 30s stall is `check-hub-imports`-adjacent.* Eliminated — the hub is not
+  running that target.
+
+**Still open.** The blocker was not isolated: `py-spy` was refused
+(`Permission Denied`, `yama/ptrace_scope`, and no passwordless `sudo`), so the
+live stack could not be captured. A `faulthandler` all-thread sampler harness was
+attempted to reproduce the shutdown in-process on an alternate port, but port 8017
+turned out to be already bound by the local SearXNG instance, so the probe never
+started. Both attempts are recorded so the next attempt does not repeat them:
+re-run the sampler harness on a confirmed-free port (e.g. 8142).
+
+**Next step, cheap and likely decisive:** capture the stack at SIGTERM via
+`uvicorn.Config(timeout_graceful_shutdown=N)`. Setting a bounded graceful timeout
+converts the 30s SIGKILL into an observable, attributable shutdown, which is a
+better production posture than an unbounded drain regardless of the root cause.
+
+
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ ADR-003 ⬡ AP-ADR-003-MCP-TG-SHUTDOWN-v1.0.0 ⬡ 2026-10-03*
