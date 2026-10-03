@@ -1,9 +1,0 @@
-{
-  "classification_basis": "Roc ruling: legacy name -> cold/legacy-*, never retired/ by name equivalence",
-  "from": "data/handoff/archive/ag-router-1787878504-43d8.json",
-  "migrated_at_utc": "2026-09-29T06:51:43+00:00",
-  "packet_id": "ag-router-1787878504-43d8",
-  "provenance": "migrate_handoffs",
-  "sha256": "21a2fc914aa87d61ce8551656c8c6743a28fc43581cecaa39e9844ead7328d50",
-  "to": "data/handoff/cold/legacy-archive/ag-router-1787878504-43d8.json"
-}

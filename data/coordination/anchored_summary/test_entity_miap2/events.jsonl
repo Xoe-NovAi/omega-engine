@@ -1,3 +1,0 @@
-{"event_seq": 1, "event_type": "session_start", "instance_id": "opencode/test_entity_miap2/019f6d20-e5ba-70e1-b6f3-b58212459a4b", "timestamp": "2026-07-16T22:51:40.351141+00:00", "payload": {"objective": "Test MIAP", "model": "test-model"}}
-{"event_seq": 2, "event_type": "task_complete", "instance_id": "opencode/test_entity_miap2/019f6d20-e5ba-70e1-b6f3-b58212459a4b", "timestamp": "2026-07-16T22:51:40.353848+00:00", "payload": {"task": "Test task"}}
-{"event_seq": 3, "event_type": "decision", "instance_id": "opencode/test_entity_miap2/019f6d20-e5ba-70e1-b6f3-b58212459a4b", "timestamp": "2026-07-16T22:51:40.356404+00:00", "payload": {"decision": "Use MIAP", "rationale": "Prevents context loss"}}

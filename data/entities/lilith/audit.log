@@ -1,5 +1,0 @@
-[2026-08-29T03:11:24.198206+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith
-[2026-08-29T03:11:24.198489+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/knowledge
-[2026-08-29T03:11:24.198567+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/workspace
-[2026-08-29T03:11:24.199473+00:00] ACTION: SESSIONS_CREATE | DETAILS: Scaffolded sessions.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/memory/sessions.yaml
-[2026-08-29T03:11:24.200384+00:00] ACTION: INDEX_CREATE | DETAILS: Scaffolded INDEX.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/knowledge/INDEX.yaml

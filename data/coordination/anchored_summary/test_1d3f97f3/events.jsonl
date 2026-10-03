@@ -1,3 +1,0 @@
-{"event_seq": 1, "event_type": "session_start", "instance_id": "opencode/test_1d3f97f3/019fb42d-b91f-7263-8994-16457a40a593", "timestamp": "2026-07-30T17:58:43.234048+00:00", "payload": {"objective": "Test"}}
-{"event_seq": 2, "event_type": "task_complete", "instance_id": "opencode/test_1d3f97f3/019fb42d-b91f-7263-8994-16457a40a593", "timestamp": "2026-07-30T17:58:43.236598+00:00", "payload": {"task": "Task 1"}}
-{"event_seq": 3, "event_type": "decision", "instance_id": "opencode/test_1d3f97f3/019fb42d-b91f-7263-8994-16457a40a593", "timestamp": "2026-07-30T17:58:43.238610+00:00", "payload": {"decision": "Decision 1"}}

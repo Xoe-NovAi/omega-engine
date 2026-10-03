@@ -1,1 +1,0 @@
-{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-20T20:58:25.137Z","sessionID":"ses_fc758e6ddffeNEKptpEzboVfYq","modelID":"gemini-3.8-flash","providerID":"google","detail":"msg=msg_0c097d6d7001AKDp345ntRVrmr out=0tok text=0ch in=0tok dur=99s","metrics":{"outputTokens":0,"inputTokens":0,"textLen":0,"durationMs":98572}}

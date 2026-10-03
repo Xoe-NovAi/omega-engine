@@ -1,9 +1,0 @@
-# SPDX-License-Identifier: Apache-2.0
-entity:
-  name: n0_disposable_probe
-  domains: [federation-test]
-  model: qwen3-1.7b-q6_k
-  personality: disposable WAD loader probe
-  temperature: 0.0
-  context_window: 4096
-  slots: []
