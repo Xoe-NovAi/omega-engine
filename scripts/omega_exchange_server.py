@@ -154,31 +154,47 @@ def _build_manifest(root: Path | None = None) -> list[dict[str, Any]]:
     - Files replaced same-size (mtime increases)
     """
     target_root = root or ROOT
-    entries = []
-    max_mtime = 0.0
-    for path in target_root.rglob("*"):
+    # First pass: cheap metadata only. Do NOT hash every file on every request.
+    # The previous implementation walked the tree and sha256'd every artifact
+    # before checking the cache key, so the cache saved nothing and the
+    # manifest endpoint did expensive I/O on every poll.
+    candidates: list[dict[str, Any]] = []
+    max_mtime_ns = 0
+    total_size = 0
+    for path in sorted(target_root.rglob("*"), key=lambda p: str(p)):
         if path.is_file():
             st = path.stat()
-            max_mtime = max(max_mtime, st.st_mtime)
+            max_mtime_ns = max(max_mtime_ns, st.st_mtime_ns)
+            total_size += st.st_size
             rel = path.relative_to(target_root)
-            entries.append({
-                "path": str(rel),
-                "size": st.st_size,
-                "sha256": _sha256(path),
-                "content_type": _guess_type(path.name),
-                "modified_utc": datetime.fromtimestamp(
-                    st.st_mtime, timezone.utc
-                ).isoformat(timespec="seconds"),
-            })
-            if len(entries) >= _MANIFEST_MAX_ENTRIES:
+            candidates.append({"path": str(rel), "size": st.st_size, "mtime_ns": st.st_mtime_ns})
+            if len(candidates) >= _MANIFEST_MAX_ENTRIES:
                 break
-    
-    # Cache key = (max_mtime, entry_count) — detects ANY change
-    cache_key = (max_mtime, len(entries))
-    
+
+    # Cache key: root identity + count + total size + max mtime + a cheap
+    # fingerprint of every path/size/mtime. Any add/remove/rename/modify
+    # changes the key; only then do we pay for content hashing.
+    fingerprint = hashlib.sha256()
+    for c in candidates:
+        fingerprint.update(f"{c['path']}:{c['size']}:{c['mtime_ns']}\n".encode("utf-8"))
+    cache_key = (str(target_root.resolve()), len(candidates), total_size, max_mtime_ns, fingerprint.hexdigest())
+
     if _manifest_cache.get("key") == cache_key:
         return _manifest_cache["entries"]
-    
+
+    entries = []
+    for c in candidates:
+        path = target_root / c["path"]
+        entries.append({
+            "path": c["path"],
+            "size": c["size"],
+            "sha256": _sha256(path),
+            "content_type": _guess_type(path.name),
+            "modified_utc": datetime.fromtimestamp(
+                c["mtime_ns"] / 1_000_000_000, timezone.utc
+            ).isoformat(timespec="seconds"),
+        })
+
     _manifest_cache["key"] = cache_key
     _manifest_cache["entries"] = entries
     return entries
@@ -468,9 +484,88 @@ def _cli_put() -> int:
     return 0
 
 
+# ── CLI: omega-exchange-get ────────────────────────────────────────────────────
+# Manifest-first exact-path downloader. Fetches /manifest.json, finds the
+# exact relative path, downloads it, and refuses to keep the bytes unless
+# size and sha256 match the manifest. This is the receiver-side counterpart
+# to omega-exchange-put.
+def _cli_get() -> int:
+    import argparse
+    import urllib.error
+    import urllib.request
+
+    parser = argparse.ArgumentParser(
+        prog="omega-exchange-get",
+        description="Fetch an artifact by exact manifest path and verify size+sha256",
+    )
+    parser.add_argument("rel_path", help="Exact relative path from /manifest.json")
+    parser.add_argument("output", help="Local output file path")
+    parser.add_argument(
+        "--base-url",
+        default=f"https://{NODE_HOST}:{NODE_PORT}",
+        help="Base URL of the exchange origin",
+    )
+    parser.add_argument("--timeout", type=int, default=60)
+    args = parser.parse_args()
+
+    manifest_url = f"{args.base_url.rstrip('/')}/manifest.json"
+    try:
+        with urllib.request.urlopen(manifest_url, timeout=args.timeout) as resp:
+            manifest = json.loads(resp.read().decode("utf-8"))
+    except Exception as exc:
+        print(f"ERROR: cannot fetch manifest: {exc}", file=sys.stderr)
+        return 2
+
+    entry = None
+    for e in manifest.get("entries", []):
+        if e.get("path") == args.rel_path:
+            entry = e
+            break
+    if entry is None:
+        print(f"ERROR: {args.rel_path} not found in manifest", file=sys.stderr)
+        return 4
+
+    url = f"{args.base_url.rstrip('/')}/{args.rel_path}"
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with urllib.request.urlopen(url, timeout=args.timeout) as resp:
+            if resp.headers.get(ERROR_HEADER) == "1":
+                print(f"ERROR: server returned error envelope for {args.rel_path}", file=sys.stderr)
+                return 5
+            data = resp.read()
+    except urllib.error.HTTPError as exc:
+        print(f"ERROR: HTTP {exc.code} for {url}", file=sys.stderr)
+        return 2
+    except Exception as exc:
+        print(f"ERROR: download failed: {exc}", file=sys.stderr)
+        return 2
+
+    if len(data) != entry["size"]:
+        print(
+            f"ERROR: size mismatch for {args.rel_path}: expected {entry['size']}, got {len(data)}",
+            file=sys.stderr,
+        )
+        return 3
+    digest = hashlib.sha256(data).hexdigest()
+    if digest != entry["sha256"]:
+        print(
+            f"ERROR: sha256 mismatch for {args.rel_path}: expected {entry['sha256']}, got {digest}",
+            file=sys.stderr,
+        )
+        return 3
+
+    out.write_bytes(data)
+    print(f"OK {args.rel_path} -> {out} ({len(data)} bytes, sha256 {digest})")
+    return 0
+
+
 if __name__ == "__main__":
     # Check for CLI subcommand first (before starting server)
     if len(sys.argv) > 1 and sys.argv[1] == "put":
         sys.argv.pop(0)  # remove script name
         sys.exit(_cli_put())
+    if len(sys.argv) > 1 and sys.argv[1] == "get":
+        sys.argv.pop(0)
+        sys.exit(_cli_get())
     main()

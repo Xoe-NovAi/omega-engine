@@ -34,6 +34,7 @@ index table row when status changes.
 | **D-587** | NODE_ONBOARDING_PROTOCOL v1.0.0 ratified (N7-authored) | ✅ RATIFIED |
 | **D-588** | ICS upgrade: PP-4 node segment + P5 session_id + B1/B2/B3 fixes | ✅ IMPLEMENTED |
 | **D-589** | ICS-T final purge — deprecated system removed permanently | ✅ EXECUTED |
+| **D-607** | Packer Ed25519 signing key exposed on PUBLIC remote; key rotated to `~/.config/omega/keys/`, 9 pack attestations VOID, history scrub planned-not-executed (needs operator auth) | ⚠️ PARTIAL — OPERATOR AUTH REQUIRED |
 
 ---
 
@@ -515,3 +516,99 @@ dependency in the post-debut order. All remaining workstreams are fully sovereig
 
 **Related**: GAP_REGISTRY.json (GN-1..GN-5, R38 → status "cancelled"),
 POST_DEBUT_ROADMAP.md (GN row removed), session_gnosis.md §22.
+
+---
+
+## D-607 (2026-10-03) — PACKER SIGNING KEY EXPOSED ON PUBLIC REMOTE; ROTATED, HISTORY SCRUB **PLANNED NOT EXECUTED** (doom_guy, S1)
+
+**Trigger**: AGY frontier review `ho_cbb9092c45b8` returned CONDITIONAL NO-GO with a
+HARD PRODUCTION BLOCKER: an unencrypted Ed25519 PKCS#8 private key tracked in git.
+
+### Two premises in the referral brief were WRONG — corrected here (M29)
+
+| Brief claimed | Verified reality |
+|---|---|
+| "Repo is NOT yet public (debut pending)" | `gh repo view` → `visibility: PUBLIC`, `isPrivate: false`, pushed 2026-10-03 |
+| "commit 8a452dd9, July 17 2026" | `8a452dd9` **does not exist** (`git rev-parse --disambiguate` → empty). Real commit: **`0a639bb0`, 2026-09-30**. "Jul 17 21:41" was the file's filesystem mtime, not the commit date |
+
+**Consequence**: exposure is **already external**, not a pre-publication risk. Per
+`git-secret-scrub` Decision Gate — *"Key already exposed externally → ROTATE.
+ALWAYS. Scrub is cosmetic."* — rotation became the mandatory action.
+
+### Blast radius: the attestation guarantee is VOID, not just a leaked file
+
+The exposed key's public fingerprint is
+`aa46f56823fc9584a33ea708907c62069063c56aa5ff2772ec18134d0a747fa0`.
+It **cryptographically verifies 9 published pack manifests**:
+
+- `context_packs/engineering-p3/00_PROJECT_MANIFEST.md`
+- `context_packs/hybrid-benchmark-strategy/00_PROJECT_MANIFEST.md`
+- `context_packs/provider-fabric-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-buildwave-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-post-breakthrough/00_PROJECT_MANIFEST.md`
+- `context_packs/sovereign-audit/00_PROJECT_MANIFEST.md` (+ `/generated/`)
+- `context_packs/tech-architecture-research/00_PROJECT_MANIFEST.md` (+ `/generated/`)
+
+Anyone can `git clone` the public repo, extract the key, and forge a manifest for any
+pack. Every "Signed / Ed25519" claim on those 9 packs is worthless. **The signing
+mechanism currently provides zero integrity assurance and must not be cited as a
+trust anchor in debut material until re-established.**
+
+### EXECUTED (non-destructive, reversible)
+
+1. `git rm --cached data/coordination/packer_signing_key.pem` + removed from disk.
+   Note: `.gitignore` **already** covered it (`*.pem` L65, `data/coordination/*` L116)
+   — it was **force-added** (`git add -f`), an ignore bypass, not an oversight.
+2. **Rotation.** Fresh Ed25519 keypair generated **outside the repo** at
+   `~/.config/omega/keys/packer_signing_key.pem` (**0600**, dir 0700) +
+   `packer_signing_key.pub.pem`. New public fingerprint:
+   `7fb342abb48d3e76ba6f684e406f4493b141786607a655af12a18c8dcd9bc8ce`.
+   Private key NOT committed. Old key is not preserved: it is already public, so
+   retention has zero security value — the fingerprint above is the audit record.
+3. **Code decoupling.** `.opencode/skills/context-packer/packer.py` no longer
+   hardcodes an in-repo key path:
+   - L86–87 `PACKER_KEY_ENV_VAR = "OMEGA_PACKER_SIGNING_KEY_PATH"`,
+     `PACKER_KEY_DEFAULT = "~/.config/omega/keys/packer_signing_key.pem"`
+   - L103 `resolve_signing_key_path()` — env wins, else default; **raises** if the
+     resolved path is inside the repo working tree
+   - L122 `_assert_key_permissions()` — refuses a key with mode wider than 0600
+   - L934–960 `_sign_manifest()` uses the resolver; auto-generated keys are created
+     via `os.open(..., 0o600)` so the secret is never briefly world-readable
+
+### NOT EXECUTED — history scrub requires explicit operator auth (M28)
+
+`git filter-repo` rewrites every commit and **cannot be undone**. M28 requires
+manifest + operator auth for destruction. **No such auth was given, and the brief
+explicitly said not to push.** So the scrub is documented here, not performed.
+
+**Scrub plan (requires operator authorization to execute):**
+
+- **Refs still carrying blob `99da51ad…`** (verified, not assumed):
+  `refs/heads/debut-v1.6.0-alpha`, `refs/remotes/origin/debut-v1.6.0-alpha`,
+  `refs/tags/backup/pre-pr5-merge`, and 8 × `refs/cline/checkpoints/1790984268151_n4m8a/{1..8}`
+- **Step 1** — pre-scrub manifest: `git rev-list --all --objects > /tmp/pre-scrub-manifest.txt`;
+  archive `data/coordination/packer_signing_key.pem` blob sha
+- **Step 2** — `git filter-repo --path data/coordination/packer_signing_key.pem --invert-paths --force`
+- **Step 3** — delete the 8 checkpoint refs (`git update-ref -d …`) **and** the
+  `backup/pre-pr5-merge` tag; both survive filter-repo and keep the blob reachable
+  (skill pitfall #4)
+- **Step 4** — `git gc --prune=now` **twice**
+- **Step 5** — force-push all branches + tags (`--force`, incl. the tag)
+- **Step 6** — verify: `scripts/git-secret-scan.sh` + `git rev-list --all --objects | grep 99da51ad` → empty
+- **Step 7** — every downstream clone must be re-cloned; existing forks retain the blob permanently
+
+**Honest caveat**: because the repo is already PUBLIC, scrub + force-push does not
+un-publish. It removes the key from *reachable* history, which stops it being used
+as a live forgery oracle, and it stops the file re-entering a future public clone.
+It does **not** revoke anything. **Rotation (done) is the only real fix.**
+
+### Known gap found (unrelated to the key, filed not fixed)
+
+`scripts/git-secret-scan.sh` patterns cover `sk-`, `csk-`, `AIza`, `xai-`, `ghp_` —
+**no PEM/SSH/pkcs8 pattern**. It returned zero findings while a live private key sat
+in history. Recommend adding `BEGIN (RSA |EC |OPENSSH |)PRIVATE KEY` to the pattern set.
+Also: `git-secret-scrub/SKILL.md` documents its scan script at
+`.opencode/skills/git-secret-scrub/scripts/`; the real path is `scripts/git-secret-scan.sh`.
+
+**Related**: AGY review `ho_cbb9092c45b8`; `.opencode/skills/git-secret-scrub/SKILL.md`;
+`data/coordination/KALI_CLINE_SYNC_REPORT_20260817.md` (prior P0-1 scrub precedent).

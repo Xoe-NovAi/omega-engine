@@ -10,7 +10,7 @@
 
 ---
 
-## Maturity: Alpha (v1.6.1-alpha)
+## Maturity: Alpha (v1.6.0-alpha)
 
 This is the **first public alpha** of Omega Engine. Honest state:
 
@@ -308,7 +308,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 
 ---
 
-## v1.6.1-alpha — Current Status
+## v1.6.0-alpha — Current Status
 
 ### Engine
 
@@ -366,4 +366,4 @@ Apache 2.0 — Free. Sovereign. Yours.
 
 ---
 
-*⬡ OMEGA ⬡ README ⬡ v1.6.1-alpha ⬡ 2026-09-19*
+*⬡ OMEGA ⬡ README ⬡ v1.6.0-alpha ⬡ 2026-10-03*

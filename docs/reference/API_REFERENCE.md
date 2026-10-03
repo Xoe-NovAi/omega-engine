@@ -231,3 +231,8 @@ Common heritage tags used across modules:
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ API_REFERENCE-v1.0.0 ⬡ 2026-10-02 ⬡*
+<!-- PROVENANCE-CORRECTED 2026-10-03T06:22:36Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

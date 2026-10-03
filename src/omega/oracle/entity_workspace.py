@@ -543,12 +543,11 @@ class EntityWorkspaceManager:
         if gnosis:
             soul_section += "\n\n" + "\n\n".join(gnosis)
 
-        # -------------------------------------------------------------------------
-        # 🌍 THE ENVIRONMENT (Where): Engine State & Strategic Horizon
-        # -------------------------------------------------------------------------
+        from omega import __version__
+
         env_section = (
             "🌍 THE ENVIRONMENT (Where):\n"
-            "- Engine Version: 2.2.0\n"
+            f"- Engine Version: {__version__}\n"
             f"- Active IWAD: {cvar_get('config.entity.active_iwad', '_omega_default')}\n"  # [remediated: M2-LEAK] — was hardcoded 'arcana_novai', now dynamic via cvar_get
             f"- Strategic Horizon: {EntityWorkspaceManager._get_current_horizon()}"
         )

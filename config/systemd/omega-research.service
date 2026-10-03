@@ -2,27 +2,71 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # M13 Temple-Grade | Omega Background Researcher — Hardened Production Unit
-# Stage-2-Audit 2026-10-01
+# Stage-2-Audit 2026-10-01 | S1 completion 2026-09-30 (@doom_guy)
 #
-# CRASH-LOOP DEFENSE (root cause of 81.5 MB log accumulation):
-#   The original unit had RestartSec=30s but NO StartLimitBurst.
-#   On ModuleNotFoundError (exit 1), systemd restarts every 30s forever.
-#   At ~2 KB traceback per cycle: 7,200 restarts over 2.5 months = ~79 MB.
+# ═══════════════════════════════════════════════════════════════════════════
+# STATUS: PARKED — THIS UNIT DELIBERATELY DOES NOT RUN A RESEARCHER
+# ═══════════════════════════════════════════════════════════════════════════
+# The previous ExecStart targeted omega.workers.background_researcher.run.
+# That package does not exist and is NOT missing by accident: it was retired
+# on 2026-07-30 by commit 704c5028 ("C-6' Unification" — circuit-breaker
+# clones were never migrated) and moved, M28-style, to
+# archive/research_pipeline_20260730/background_researcher/ (4,204 lines,
+# carries explicit DEPRECATED markers dated 2026-07-25).
 #
-#   Fix: StartLimitBurst=5 + StartLimitIntervalSec=300 means if the service
-#   crashes 5 times in 5 minutes, systemd enters FAILED state and stops retrying.
-#   Operator must inspect: journalctl --user -u omega-research -n 50
-#   Then reset: systemctl --user reset-failed omega-research
+# The unit and its 20-minute timer were never disabled to match the retirement,
+# so systemd re-launched the dead target every 30 s for 62 days.
 #
-# LOG ROUTING: stdout/stderr now go to the systemd journal (bounded by
-#   journald SystemMaxUse in /etc/systemd/journald.conf, default 10% of disk).
-#   To read: journalctl --user -u omega-research -n 200
-#   To tail:  journalctl --user -fu omega-research
-#   The flat .log files in HALL_OF_RECORDS are preserved by logrotate
-#   (see scripts/logrotate-omega-research.conf for rotation config).
+# ── THE REAL ROOT CAUSE (the earlier comment here was wrong) ────────────────
+# The previous version of this file claimed the original unit had "NO
+# StartLimitBurst". That is FALSE. It had the systemd default of 5. What was
+# missing was an explicit StartLimitIntervalSec, so the unit inherited the
+# 10-second default while RestartSec was 30 seconds. Five starts cannot occur
+# inside a 10-second window when they are 30 seconds apart, so the rate limiter
+# was mathematically incapable of engaging. It was never "missing"; it was
+# configured in a way that could not fire.
+#   Measured on this host before the fix:
+#     $ systemctl --user show omega-research.service \
+#         -p StartLimitIntervalUSec -p StartLimitBurst
+#     StartLimitIntervalUSec=10s     <-- the killer
+#     StartLimitBurst=5
+#
+# ── CORRECTED ARITHMETIC ────────────────────────────────────────────────────
+# The previous claim of "7,200 restarts over 2.5 months = ~79 MB" was wrong.
+# 7,200 restarts x 30 s = 216,000 s = 2.5 DAYS, not 2.5 months.
+# Measured truth (see HALL_OF_RECORDS/background-researcher/
+# CRASHLOOP_ARCHIVE_20260930.md):
+#   crash loop ran  2026-07-30 13:38:15 -> 2026-09-30 23:23:18  = 62.4 days
+#   growth rate     705 bytes / 70 s = 870,171 B/day (live sample)
+#   log total       81,533,309 bytes
+#     - 34,616,249 B (42%) legitimate timestamped daemon output
+#     - 46,917,060 B (57%) crash-loop traceback noise
+#   Last good cycle was 2026-07-30 13:25:53 — twelve minutes before the
+#   archive commit. The loop began the instant the code was retired.
+#   The 42% that was real research work is why the file had to be ARCHIVED,
+#   not deleted (M28). It is preserved at
+#   error.log.20260730-20260930.crashloop.zst (666 KB, 122:1, hash-verified).
+#
+# ── WHY PARKED RATHER THAN REWIRED ──────────────────────────────────────────
+# Rewiring ExecStart to another research module was considered and rejected.
+# All three plausible candidates on disk are library COMPONENTS, not daemons:
+#   omega.library.research          -> ResearchEngine class, depth levels, no main
+#   omega.oracle.iterative_research -> IterativeResearcher component, no main
+#   omega.model_registry.research   -> 21 lines of dataclasses
+# Pointing ExecStart at any of them would either no-op "successfully" (worse —
+# a unit that looks healthy while doing nothing) or misrepresent an Architect
+# decision as an S1 patch. Which module OWNS the researcher slot is an
+# Architect ruling, not an infrastructure one.
+#
+# ── WHAT TO DO NEXT ────────────────────────────────────────────────────────
+#   Do NOT simply set Restart=always or raise StartLimitBurst to "fix" this.
+#   Architect names the owning research module -> replace the stub below with
+#   the real entry point -> keep every hardening clause in this file.
+#   Operator, this unit is safe to leave enabled: it exits 4 and will not
+#   restart. To silence it entirely:  systemctl --user disable omega-research.timer
 
 [Unit]
-Description=Omega Background Researcher — Sovereign Research Worker (Daemon)
+Description=Omega Background Researcher — PARKED (no daemon wired; exits 4)
 Documentation=https://github.com/Xoe-NovAi/omega-engine
 After=network-online.target omega-searxng.service
 Wants=network-online.target
@@ -30,11 +74,23 @@ Requires=omega-searxng.service
 # If searxng permanently fails, do not keep cycling this service
 PartOf=omega-searxng.service
 
+# ── Crash-loop rate limiter — in [Unit], not [Service] ──────────────────────
+# systemd ≥230 documents these in [Unit]. The [Service] placement is still
+# honoured on systemd 257 (verified: unit plateaus and goes to `failed` either
+# way), so this move is canonicalisation, not a bugfix. The VALUE is the fix.
+StartLimitIntervalSec=300
+StartLimitBurst=5
+StartLimitAction=none
+
 [Service]
-Type=simple
-ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 \
-    -m omega.workers.background_researcher.run \
-    --daemon
+# oneshot, NOT simple. The old unit was Type=simple --daemon while a 20-minute
+# timer also pointed at it: a service that never exits, re-triggered forever.
+# Parked, this unit exits immediately and the timer has nothing to collide with.
+Type=oneshot
+
+# Parked stub: prints why the researcher is retired, exits 4.
+# scripts/omega-research-parked.sh is the authority for this unit's behaviour.
+ExecStart=%h/Documents/Xoe-NovAi/omega-engine/scripts/omega-research-parked.sh
 WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
 Environment=PYTHONPATH=%h/Documents/Xoe-NovAi/omega-engine/src
 # Non-secret config only. API keys resolve from sovereign vault at runtime.
@@ -44,8 +100,11 @@ Environment=MALLOC_MMAP_THRESHOLD_=65536
 Environment=MALLOC_ARENA_MAX=2
 
 # ── Log routing: bounded journal (replaces unbounded append:) ────────────────
-# Output goes to systemd journal. Size bounded by journald config.
-# Flat file fallback is managed by logrotate (see companion config).
+# StandardOutput/StandardError=append:.../error.log is what reached 81.5 MB.
+# Journal retention is bounded. To read: journalctl --user -u omega-research
+# Legacy flat files in HALL_OF_RECORDS are rotated by
+# scripts/logrotate-omega-research.conf (created 2026-09-30 — it previously
+# did not exist, which made the earlier comment point operators at a ghost).
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=omega-research
@@ -57,24 +116,17 @@ MemoryHigh=384M
 OOMScoreAdjust=200
 
 # ── Crash-loop protection ────────────────────────────────────────────────────
-# Restart on non-zero exit or signal
 Restart=on-failure
-
-# 60s delay: first 5 failures take 5 minutes, triggering the rate limiter.
-# Longer than the original 30s to reduce log volume on persistent config errors.
+# 60s: slower than the original 30s. With StartLimitBurst=5/300s the loop is
+# capped at 5 attempts per 5 minutes regardless; the delay just reduces noise.
 RestartSec=60s
 
-# THE CRITICAL FIX: rate limiter that was missing in the original unit.
-# 5 crashes in 300 seconds -> unit enters FAILED, restarts stop.
-StartLimitIntervalSec=300
-StartLimitBurst=5
-
-# Do NOT restart on permanent errors (M24 / ModuleNotFoundError class).
-# Exit code 3: ModuleNotFoundError (venv broken -- fix with pip install -e .)
-# Exit code 4: ConfigurationError (missing .env key, bad providers.yaml)
-# These require operator intervention; restart will not fix them.
-# PREREQUISITE: run.py __main__ must call sys.exit(3) or sys.exit(4)
-#   (see Stage-2 audit: omega/workers/background_researcher/run.py)
+# Do NOT restart on permanent, operator-fixable errors.
+#   3 — ModuleNotFoundError class (venv broken; `pip install -e .`)
+#   4 — ConfigurationError class (no daemon wired to this unit)
+# The parked stub exits 4, so this clause is what makes the parked state
+# cycle-free. Verified on systemd 257: exit 3 + Restart=on-failure +
+# RestartPreventExitStatus=3 yields NRestarts=0 and state `failed`.
 RestartPreventExitStatus=3 4
 
 # ── Security hardening (unchanged) ──────────────────────────────────────────

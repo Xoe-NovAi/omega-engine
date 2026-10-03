@@ -103,3 +103,8 @@ This integration ensures that every research job moving forward will:
 
 *⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ opencode ⬡ trc_integration ⬡ 2026-07-22*
 *This document summarizes the successful integration of research best practices into the Omega Engine's documentation strategy.*
+<!-- PROVENANCE-CORRECTED 2026-10-03T06:22:36Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

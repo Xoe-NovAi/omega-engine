@@ -9,7 +9,7 @@
 
 # 🔱 Omega Engine — User Manual
 **Sovereign AI Runtime — Terminal Edition**
-**Version**: v1.6.1-alpha · **Mandates**: 27 declared (28 rows in the automated meter) · **Last verified**: 2026-09-19
+**Version**: v1.6.0-alpha · **Mandates**: 27 declared (28 rows in the automated meter) · **Last verified**: 2026-10-03
 
 > Every `omega` verb and `make` target in this manual was re-checked against the live
 > CLI and the Makefile on 2026-09-19. Where a `make` alias never existed, the `omega`
@@ -1109,7 +1109,7 @@ If your AI agent's context window is compacted:
 
 ---
 
-*⬡ OMEGA ⬡ USER-MANUAL ⬡ v1.6.1-alpha ⬡ 2026-09-19*
+*⬡ OMEGA ⬡ USER-MANUAL ⬡ v1.6.0-alpha ⬡ 2026-10-03*
 *"Sever the umbilical cord of Big AI."*
 
 <!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit

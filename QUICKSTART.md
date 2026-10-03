@@ -121,4 +121,4 @@ source .venv/bin/activate
 
 ---
 
-*⬡ OMEGA ⬡ QUICKSTART ⬡ v1.6.1-alpha ⬡ 2026-09-07*
+*⬡ OMEGA ⬡ QUICKSTART ⬡ v1.6.0-alpha ⬡ 2026-10-03*
