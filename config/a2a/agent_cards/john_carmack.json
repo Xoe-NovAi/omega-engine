@@ -1,0 +1,168 @@
+{
+  "name": "John Carmack — Engine Architecture Consultant",
+  "description": "Ultimate Technical Consultant and Engine Architect, occupying slot S3. Reviews architecture from first principles: consolidation, engine design, memory management, right approximation, and performance.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://n0.tail51f14a.ts.net:8016/",
+      "protocolBinding": "https://xoe-novai.dev/bindings/omega-hub-mcp/v1",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false,
+    "extensions": [
+      {
+        "uri": "https://xoe-novai.dev/a2a/extensions/omega-hub/v1",
+        "description": "Non-normative Omega Engine provenance extension. Declares that the card describes a seat of the Omega sovereign fleet and that the card's x-omega block is Omega-specific and not part of the A2A specification.",
+        "required": false,
+        "params": {
+          "a2a_conformance": "informed-not-compliant",
+          "spec_conformance_claims": []
+        }
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/markdown"
+  ],
+  "skills": [
+    {
+      "id": "architectural-review",
+      "name": "First-Principles Architectural Review",
+      "description": "Review a proposed architecture from first principles: is the abstraction earning its cost, what is the right approximation, and what should be consolidated or deleted outright.",
+      "tags": [
+        "architecture",
+        "review",
+        "first-principles",
+        "right-approximation",
+        "consolidation",
+        "engine-design"
+      ],
+      "examples": [
+        "Does this abstraction earn its keep, or should it be inlined?",
+        "Consolidate these three overlapping subsystems into one."
+      ]
+    },
+    {
+      "id": "performance-engineering",
+      "name": "Performance and Memory Engineering",
+      "description": "Analyse hot paths and memory behaviour: cache locality, allocation pressure, IO boundaries, and the cost of the sovereignty guarantees themselves.",
+      "tags": [
+        "performance",
+        "memory-management",
+        "optimization",
+        "profiling",
+        "systems"
+      ],
+      "examples": [
+        "Where is the allocation pressure in this hot loop?",
+        "What does local-first inference cost us versus cloud inference?"
+      ]
+    }
+  ],
+  "provider": {
+    "organization": "Xoe-NovAi",
+    "url": "https://github.com/Xoe-NovAi/omega-engine"
+  },
+  "securitySchemes": {
+    "meshIdentity": {
+      "mtlsSecurityScheme": {
+        "description": "APPROXIMATION - NOT AN mTLS CLAIM. Omega seat identity is enforced at the Tailscale/WireGuard MESH layer (tailnet-only, ACL-gated; tailnet IPv4 100.123.51.67 and IPv6 fd7a:115c:a1e0::d835:3344; enforced by tailscaled Serve routes and recorded in config/lan_exposure_allowlist.yaml). It is NOT HTTP-layer mutual TLS and NOT an API key. The A2A SecurityScheme oneof (§4.5.1) has no member that expresses mesh-layer network identity, so mtlsSecurityScheme (§4.5.6) is used as the nearest available marker. Per §4.5.6 that member carries only an optional `description`, which is why it cannot encode mesh specifics - hence this field. A client MUST NOT read this scheme as evidence of negotiated mTLS on the transport."
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "meshIdentity": {
+          "list": []
+        }
+      }
+    }
+  ],
+  "x-omega": {
+    "namespace": "https://xoe-novai.dev/a2a/extensions/omega-hub/v1",
+    "normative": false,
+    "statement": "NON-NORMATIVE. No field in this block is defined by the A2A v1.0 specification. The card as a whole is a descriptive manifest, not a claim of protocol conformance.",
+    "a2a_conformance": "informed-not-compliant",
+    "conformity_gaps": [
+      "No A2A method set is implemented: message/send, message/stream, tasks/get, tasks/list, tasks/cancel, tasks/subscribe, tasks/pushNotificationConfig/* and authenticatedExtendedCard are all absent (A2A v1.0 §3.1.1-§3.1.11).",
+      "Nothing serves the registered well-known discovery URI /.well-known/agent-card.json (§8.2, §14.3). Probed: 8016 and 8019 both return HTTP 404 for that path.",
+      "No Task, Message, Part or Artifact objects exist in the runtime, so the §4.1 core data model is unimplemented.",
+      "No JWS signing is performed. The `signatures` field (§4.4.7) is absent because Omega has no signing key and no RFC 8785 canonicalizer; emitting a placeholder signature would be forgery. See §8.4 for what is required.",
+      "capabilities.streaming / pushNotifications / extendedAgentCard are all false (§4.4.3) because none of those behaviours exists in an A2A sense.",
+      "No protocol version negotiation (§3.6, §8.3.2) and no A2A-Version header (§14.2.1) is emitted.",
+      "No tenant routing (§4.4.6) is implemented, so `tenant` is omitted."
+    ],
+    "seat": {
+      "id": "john_carmack",
+      "display_name": "John Carmack",
+      "role": "Ultimate Technical Consultant / Engine Architect",
+      "domains": [
+        "consolidation",
+        "performance",
+        "architecture",
+        "right-approximation",
+        "first-principles",
+        "engine-design",
+        "memory-management",
+        "architectural-review",
+        "optimization",
+        "sovereign-consulting"
+      ],
+      "slot": "S3",
+      "slot_authority": "AUTHORITATIVE: entities.yaml key `john carmack` carries `slots: [S3]`. This is the only real seat in the fleet with a recorded slot number."
+    },
+    "endpoints": {
+      "hub": {
+        "url": "https://n0.tail51f14a.ts.net:8016/",
+        "binding": "https://xoe-novai.dev/bindings/omega-hub-mcp/v1",
+        "reachable": true,
+        "listen_port": 8016,
+        "transport_observed": "MCP over SSE (text/event-stream) + JSON-RPC 2.0",
+        "real_paths": [
+          "/sse",
+          "/messages/?session_id=<id>"
+        ],
+        "probe": "GET /sse -> HTTP 200 (SSE stream held open); GET / -> HTTP 404; GET /.well-known/agent-card.json -> HTTP 404",
+        "serves_agent_card": false,
+        "speaks_a2a": false,
+        "registry": "config/omega.yaml (mcp.hub_port: 8016)"
+      },
+      "exchange": {
+        "url": "https://n0.tail51f14a.ts.net:8019/",
+        "binding": "https://xoe-novai.dev/bindings/omega-exchange/v1",
+        "reachable": true,
+        "listen_port": 8019,
+        "transport_observed": "HTTP JSON (omega-exchange/2.0), read-only",
+        "real_paths": [
+          "/",
+          "/manifest.json"
+        ],
+        "probe": "GET / -> HTTP 200 (service: omega-exchange/2.0); GET /.well-known/agent-card.json -> HTTP 404 (body: \"No artifact at '.well-known/agent-card.json'\")",
+        "serves_agent_card": false,
+        "speaks_a2a": false,
+        "registry": "config/lan_exposure_allowlist.yaml (8019, tailscaled)"
+      }
+    },
+    "hub_tools": [
+      "github",
+      "get_hardware_stats",
+      "system_stats",
+      "get_omega_metrics",
+      "sovereignty_ratio",
+      "library_stats"
+    ],
+    "entity_workspace": "data/entities/john_carmack/",
+    "documentation_path": "docs/architecture/A2A_AGENT_CARDS_20261003.md",
+    "notes": "S3 is the ONLY slot number recorded anywhere in entities.yaml for a real seat. It is read from key `john carmack`. Every other card in this directory reports `unassigned` because entities.yaml records no slots key for it — this is a deliberate honesty choice, not missing data."
+  }
+}
