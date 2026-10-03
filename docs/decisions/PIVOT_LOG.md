@@ -677,3 +677,66 @@ repo is PUBLIC so scrub is containment, rotation remains the real fix).
 **Status**: ✅ EXECUTED (attestations voided + regenerated + verified; remediation committed; NOT pushed).
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ ruling-3 ⬡ 2026-10-03*
+
+---
+
+## D-607-EXECUTED (2026-10-03) — HISTORY SCRUB EXECUTED + FORCE-PUSHED (doom_guy, S1)
+
+**Authority**: Operator authorization granted by the Architect (2026-10-03, verbatim:
+"Authorized. Proceed."). M28 manifest = D-607 plan above (lines ~585-604). This entry
++ that manifest + the pre-scrub bundle = the M28 audit trail.
+
+**Target**: `data/coordination/packer_signing_key.pem`, blob
+`99da51ade9a04fd23f487631693d2e689b468324` (exposed Ed25519 key, commit `0a639bb0`
+2026-09-30). Private key material is NEVER reproduced here.
+
+### Execution record
+
+1. **Pre-scrub safety** — `git rev-list --all --objects > /tmp/pre-scrub-manifest.txt`
+   (45063 lines, blob `99da51ad…` present). LOCAL-ONLY backup bundle OUTSIDE the repo:
+   `/home/arcana-novai/.local/share/omega/backups/pre-d607-scrub-20261003.bundle`
+   (81M, 90 refs, `git bundle verify` OK). Bundle NEVER pushed.
+2. **filter-repo** — `git filter-repo --path data/coordination/packer_signing_key.pem
+   --invert-paths --force`. Stale `.git/filter-repo/already_ran` (2026-09-16 P0-1 run)
+   removed first; fresh run parsed 1646 commits, HEAD rewritten to `5280dfd2`
+   (rewritten equivalent of `0af9b29e`). NOTE: filter-repo removed the `origin` remote
+   (documented behavior); re-added `https://github.com/Xoe-NovAi/omega-engine.git` after.
+   Stash rewritten by filter-repo.
+3. **Refs/tags deleted** (all survived filter-repo with rewritten SHAs, per skill pitfall #4):
+   8 × `refs/cline/checkpoints/1790984268151_n4m8a/{1..8}` via `git update-ref -d`
+   (exit 0 each); tag `backup/pre-pr5-merge` via `git tag -d` (was `df4069dd`).
+4. **GC** — `git gc --prune=now` TWICE (both OK). Pack: 44927 objects, 83822 KB, 0 garbage.
+5. **Force-push** —
+   - `git push --force --all` exit 0:
+     `377bbfce...5280dfd2 debut-v1.6.0-alpha -> debut-v1.6.0-alpha (forced update)`;
+     `268528e7...cbbc3539 main -> main (forced update)` (+ remote-only branches
+     `node1/all-5-mcp-green`, `release/debut-v1.6.0`, `agent/doom-infra`,
+     `agent/grok-pack`, `agent/maat-ci` reported by push; these were NOT in the
+     D-607 blob-carrier manifest and were not rewritten locally).
+   - `git push --force --tags` exit 0 (Everything up-to-date, 0 local tags).
+   - Explicit `git push origin --delete tag backup/pre-pr5-merge` → `- [deleted]
+     backup/pre-pr5-merge` (tag HAD existed remotely despite earlier `ls-remote --tags`
+     showing 0; now `git ls-remote origin --tags` = empty).
+   - Post-push `git ls-remote origin`: `refs/heads/debut-v1.6.0-alpha = 5280dfd2`,
+     `refs/heads/main = cbbc3539`, 0 tags. `refs/pull/*/head|merge` are GitHub-managed
+     and not force-pushable via `--all` (residual GitHub-internal reachability noted;
+     rotation remains the real fix per D-607 honest caveat).
+6. **Verify (all PASS)** —
+   - `git rev-list --all --objects | grep 99da51ad` → empty (prefix + full
+     `99da51ade9a04fd23f487631693d2e689b468324` both checked, pre-GC and post-GC).
+   - `git ls-files --stage data/coordination/packer_signing_key.pem` → empty.
+   - `git log --oneline -5` → `5280dfd2` (ex-`0af9b29e` D-608),
+     `05a617e8` (ex-`fa4c5383` Voice rename), `a2159dd7` (ex-`a6f06107` version
+     unification) on top — the 3 ahead-of-origin commits survived as rewritten
+     equivalents, no key material.
+   - `scripts/git-secret-scan.sh` exit 0 (32 pattern hits, all classified per skill
+     §3 as PROSE/PLACEHOLDER/DOCUMENTATION — e.g. SKILL.md, secret-scan.yml,
+     ACTIVE_SPRINT.json; ZERO hits for `packer_signing_key.pem`).
+7. **Downstream**: every downstream clone must be re-cloned; existing forks retain the
+   blob permanently. Rotation (done, D-608, fp `7fb342ab…`) remains the only real fix;
+   this scrub removes the key from *reachable* history only.
+
+**Status**: ✅ EXECUTED 2026-10-03 (scrubbed + force-pushed + verified; this PIVOT_LOG
+entry committed as a fresh commit on the rewritten history; bundle retained locally only).
+
+*⬡ OMEGA ⬡ DOOM_GUY ⬡ D-607-EXECUTED ⬡ 2026-10-03*
