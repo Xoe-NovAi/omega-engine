@@ -980,6 +980,33 @@ gate-secrets:
 #     the index, and `git apply` runs in the throwaway worktree only.
 # If the diff does not apply cleanly, the gate fails loudly rather than
 # silently testing stale content.
+# WHY THE INSTALL IS BOUNDED  [doom_guy 2026-10-03, P0 release-gate hang]
+# Measured, not assumed: `make temple-grade` exceeded 10 minutes and was killed.
+# Bisect of every sub-target isolated this recipe, and within it the stall was
+# the `pip install` at the editable-install step — NOT any pytest run, and NOT
+# the new hub background loops (those only execute under the FastAPI lifespan,
+# which a bare `python -c "import ..."` never reaches; proved by reading the
+# call graph, not by assuming it).
+#
+# The cause is that this gate builds a FRESH venv and re-resolves the entire
+# dependency closure from PyPI on every single run. There is no lockfile and no
+# offline fast path, so unpinned ranges drift to newer releases whose wheels
+# are not in the local pip cache, and the gate's wall time becomes
+#   network_throughput x total_uncached_wheel_bytes
+# rather than a property of the code under test. On this host pypi.org was
+# serving at ~300 kB/s and ~90 MB of wheels were uncached — several hundred
+# seconds of pure download, with the release gate appearing to "hang".
+#
+# A release gate that measures the network is a gate that reports a verdict
+# about the internet. Two changes, both fail-loud (M23):
+#   1. `timeout $(HUB_IMPORT_PIP_TIMEOUT)` — the chain can no longer be wedged
+#      indefinitely by a slow or stalled mirror.
+#   2. pip's own `--timeout/--retries` — a dead socket fails in seconds rather
+#      than sitting on a read forever.
+# The timeout is reported as its OWN distinct failure so an operator is told the
+# real cause instead of the generic "editable install failed", which points at
+# pyproject.toml and sends them debugging the wrong thing.
+HUB_IMPORT_PIP_TIMEOUT ?= 420
 HUB_IMPORT_WORKTREE := /tmp/omega-hub-import-verify
 HUB_IMPORT_MODULES := mcp_servers.omega_hub.server \
                       mcp_servers.omega_hub.state \
@@ -1013,8 +1040,20 @@ check-hub-imports:
 	if ! python3 -m venv .venv >/dev/null 2>&1; then \
 		echo "$(RED)FAIL: venv creation failed$(NC)"; exit 1; \
 	fi; \
-	if ! .venv/bin/pip install -q -e ".[cli,dev]" >/dev/null 2>&1; then \
-		echo "$(RED)FAIL: editable install failed in clean worktree$(NC)"; exit 1; \
+	if timeout $(HUB_IMPORT_PIP_TIMEOUT) .venv/bin/pip install -q --timeout=30 --retries=2 \
+	     -e ".[cli,dev]" >/dev/null 2>&1; then \
+		:; \
+	else \
+		rc=$$?; \
+		if [ "$$rc" -eq 124 ]; then \
+			echo "$(RED)FAIL: editable install exceeded $(HUB_IMPORT_PIP_TIMEOUT)s in clean worktree$(NC)"; \
+			echo "      This gate builds a fresh venv from PyPI with no lockfile, so its wall"; \
+			echo "      time is a function of network throughput, NOT of the code under test."; \
+			echo "      Warm the wheel cache and re-run, or raise HUB_IMPORT_PIP_TIMEOUT."; \
+		else \
+			echo "$(RED)FAIL: editable install failed in clean worktree (pip exit $$rc)$(NC)"; \
+		fi; \
+		exit 1; \
 	fi; \
 	FAILED=0; \
 	for mod in $(HUB_IMPORT_MODULES); do \

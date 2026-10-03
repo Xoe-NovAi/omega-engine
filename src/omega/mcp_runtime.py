@@ -222,7 +222,33 @@ def run_mcp(
                         await result
                 async with streamable_mgr.run():
                     yield
-            # TaskGroup exit: all background tasks cancelled
+            # [doom_guy 2026-10-03] TaskGroup exit: cancel all background tasks.
+            #
+            # The comment here previously read "all background tasks cancelled".
+            # That was FALSE, and the false comment is load-bearing: it is what
+            # let three infinite background loops ship as if they were self-
+            # terminating. anyio.create_task_group() does NOT cancel its children
+            # when the block exits — it WAITS for every child to finish. Proved
+            # with a 12-line repro (a single `while True: await anyio.sleep(300)`
+            # child hung the enclosing task group until the process was killed;
+            # exit code 124 under `timeout`).
+            #
+            # Every loop in omega_hub's _on_startup is of exactly that shape:
+            # _prune_awareness_background, _reaper_background and
+            # run_harvester_loop. So on SIGTERM the lifespan resumes after
+            # `yield`, tries to leave the task group, and blocks on children
+            # that will never return. The process only dies because systemd's
+            # TimeoutStopSec=30 escalates to SIGKILL — every restart costs a
+            # full 30s stall plus a hard kill, which can truncate in-flight
+            # work such as the MemoryStore batch-writer flush and the harvester's
+            # filesystem walk.
+            #
+            # This is the documented AnyIO pattern: cancel the scope, then let
+            # __aexit__ absorb the cancellation. Children get their cancellation
+            # delivered, the group joins cleanly, and `on_shutdown` below still
+            # runs. Streams must be exited BEFORE the cancel, which is why the
+            # cancel sits outside `streamable_mgr.run()`.
+            tg.cancel_scope.cancel()
             # Shutdown cleanup — call on_shutdown if provided
             # [id-soft: vet-008] Zone Memory — deterministic cleanup via zone-purge semantics
             if on_shutdown:
