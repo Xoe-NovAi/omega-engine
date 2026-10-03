@@ -237,7 +237,7 @@ from "re-teach the agent every time" to "the agent already knows."
   adds no signal ("theater at this corpus size").
 - **Planned implementation** (when triggered): extend `well_storage.py search
   <query>` — embed queries through the canonical standalone Qwen3 embedding
-  server (768-D), cosine-rank against active records
+  server (1024-D native), cosine-rank against active records
   (rule + rationale), return top-N. Mirrors `wander-search.py` mechanics. The
   plugin could then inject a task-relevant block at first user-message context
   alongside the static session-start block.
@@ -541,11 +541,11 @@ without trial by fire.
   exact material request for the personal Lilith journey, legacy Lilith docs,
   and prior agent experiments.
 - **Done when**: a durable briefing exists under `docs/federation/`, explicitly
-  locks `qwen3-embedding:0.6b` at `truncate_dim=768` (never 8B), separates
+  locks `qwen3-embedding:0.6b` at native 1024-D (never 8B), separates
   proven/reference/parked capabilities, gives staged delivery paths and
   checksum-friendly package boundaries, and lists privacy/provenance handling
   for personal material.
-- **Status**: ✅ **DONE (2026-09-23)** — comprehensive briefing recorded at `docs/federation/MAKALI_N0_SYSTEM_BRIEFING.md`, indexed in the federation README, and docs integrity passed. It explicitly locks Qwen3-Embedding-0.6B at 768 dimensions, distinguishes proven/reference/parked systems, and defines prioritized checksum-backed intake packages for personal Lilith history, legacy Lilith files, agent experiments, WAD-loader evidence, continuity runtime evidence, and cross-node embedding compatibility.
+- **Status**: ✅ **DONE (2026-09-23)** — comprehensive briefing recorded at `docs/federation/MAKALI_N0_SYSTEM_BRIEFING.md`, indexed in the federation README, and docs integrity passed. It explicitly locks Qwen3-Embedding-0.6B at 1024 dimensions (corrected 2026-10-02), distinguishes proven/reference/parked systems, and defines prioritized checksum-backed intake packages for personal Lilith history, legacy Lilith files, agent experiments, WAD-loader evidence, continuity runtime evidence, and cross-node embedding compatibility.
 
 ### P3.3b — OMER M1: Schema & Validation
 - Implement `scripts/validate_model_cards.py` with Pydantic models for frontmatter
@@ -829,7 +829,7 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 
 ### RES-EMBED-001 — Embedding Model Decision (Definitive)
 - **What**: Definitive recommendation for federated embedding model compatibility
-- **Decision**: Switch both nodes to `qwen3-embedding:0.6b` with `truncate_dim=768` (MRL)
+- **Decision**: Switch both nodes to `qwen3-embedding:0.6b` at native 1024-D (corrected 2026-10-02)
 - **Rationale**: Only path achieving true federated semantic compatibility (direct cosine similarity) with quality gain (C-MTEB 66.33 vs 62.28), 4× context (32K vs 2K), instruction-aware, zero projection layer
 - **Deliverable**: `docs/research/EMBEDDING_MODEL_DECISION.md` (complete with comparison table, migration path, rollback)
 - **Status**: ✅ **DONE (2026-09-17)**
