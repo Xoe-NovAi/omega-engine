@@ -76,6 +76,18 @@ notes, prose, and example strings, not live credentials.
 - `make lint` → clean (F821 eliminated)
 - `scripts/test_lan_exposure_audit.py` → 29/29 negative tests green
 
+### 4. C3 mirror — `git ls-files | xargs` split spaced filenames
+
+The C3 mirror job runs `git ls-files | xargs python3 scripts/ci_secret_scan.py`.
+`xargs` splits its input on **whitespace**, so the 11 tracked files whose names
+contain a space were fragmented into non-existent paths (`PR`, `READINESS.md`,
+`Grok`, `-`, `The`, `42`, `Ideals`, …). `scan_file` records a `READ_ERROR`
+finding for each unreadable path, so the run reported **33 findings** — every
+one a fragment, none a secret.
+
+**Fix:** NUL-delimit both sides of the pipe — `git ls-files -z | xargs -0` —
+so each path is passed verbatim and the real files are actually scanned.
+Verified locally: `exit=0`, clean.
 ## Not addressed (pre-existing, out of merge scope)
 
 - **REUSE v3.3** is RED on `main` as well (last main run 2026-09-27, and it
