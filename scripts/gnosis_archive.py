@@ -61,6 +61,7 @@ from __future__ import annotations
 
 import argparse
 import getpass
+import hashlib
 import os
 import re
 import shutil
@@ -71,6 +72,14 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ENTITIES_DIR = REPO_ROOT / "data" / "entities"
 SCHEMA_VERSION = "1.0.0"
+
+# Sibling-script import (M11/M15/M23, ticket P0-2): the compaction-immune
+# constraint manifest is re-asserted into every gnosis stamp header, so the
+# gnosis records WHICH constraint set it was written under. See
+# _constraint_stamp_lines(). M1 note: deliberately no asyncio anywhere in this
+# path -- AnyIO only, per the standing constraint this very layer defends.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from load_constraints import ConstraintManifestMissing, load_constraints  # noqa: E402
 
 # Header markers. BEGIN/END let `stamp` be idempotent: re-stamping replaces the
 # existing block in place rather than stacking a second one.
@@ -194,6 +203,29 @@ def do_archive(entity: str, dry_run: bool) -> int:
 
 # ── mode: stamp ──────────────────────────────────────────────────────────────
 
+def _constraint_stamp_lines() -> list[str]:
+    """Constraint re-assertion lines for the gnosis stamp header (M11/M15/M23).
+
+    Records WHICH constraint set a gnosis was stamped under, plus a digest. If a
+    later reader sees a different digest, the constraint regime changed between
+    sessions -- constraint drift, detectable without trusting any prose in the
+    gnosis body (cf. arXiv:2606.22528: prose in context is what erosion eats).
+
+    M23: raises ConstraintManifestMissing rather than emitting a header that
+    looks stamped but carries no constraints. An unstamped-looking header is
+    honest; a falsely-stamped one is not.
+    """
+    data = load_constraints()
+    digest = hashlib.sha256(
+        "\n".join(f"{mid}\t{law}" for mid, law in data["constraints"]).encode("utf-8")
+    ).hexdigest()[:12]
+    return [
+        f"  constraints: {' '.join(data['ids'])}",
+        f"  constraints_digest: sha256:{digest}",
+        f"  constraints_source: docs/governance/CONSTRAINTS.md",
+    ]
+
+
 def build_block(entity: str, stamped_by: str, supersedes: str,
                 history_lost: str | None = None) -> str:
     lines = [
@@ -206,6 +238,7 @@ def build_block(entity: str, stamped_by: str, supersedes: str,
     ]
     if history_lost:
         lines.append(f"  history_lost: {history_lost}")
+    lines.extend(_constraint_stamp_lines())
     lines.append(END)
     return "\n".join(lines)
 
@@ -451,18 +484,30 @@ def main(argv: list[str] | None = None) -> int:
 
     who = args.stamped_by or os.environ.get("USER") or getpass.getuser()
 
-    if args.mode == "adopt":
-        if args.entity:
-            ap.error("--entity is not used by adopt (it is fleet-wide)")
-        return do_adopt(who, args.dry_run)
+    # M23: stamping without a re-asserted constraint set would produce a header
+    # that LOOKS stamped but carries no constraints -- worse than no header,
+    # because `verify` would then read as satisfied. Fail loud instead, and
+    # leave the gnosis untouched so nothing is half-written.
+    try:
+        if args.mode == "adopt":
+            if args.entity:
+                ap.error("--entity is not used by adopt (it is fleet-wide)")
+            return do_adopt(who, args.dry_run)
 
-    if not args.entity:
-        ap.error(f"--entity is required for {args.mode}")
+        if not args.entity:
+            ap.error(f"--entity is required for {args.mode}")
 
-    if args.mode == "archive":
-        return do_archive(args.entity, args.dry_run)
+        if args.mode == "archive":
+            return do_archive(args.entity, args.dry_run)
 
-    return do_stamp(args.entity, who, args.supersedes, args.dry_run)
+        return do_stamp(args.entity, who, args.supersedes, args.dry_run)
+    except ConstraintManifestMissing as exc:
+        print("[CONSTRAINT-MANIFEST-MISSING] refusing to stamp.", file=sys.stderr)
+        print(f"[CONSTRAINT-MANIFEST-MISSING] {exc}", file=sys.stderr)
+        print("[CONSTRAINT-MANIFEST-MISSING] A gnosis stamped without its "
+              "constraint set is a falsely-stamped gnosis (M23). Nothing was "
+              "written. Restore docs/governance/CONSTRAINTS.md.", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

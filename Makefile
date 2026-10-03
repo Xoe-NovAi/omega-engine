@@ -443,7 +443,7 @@ test-suite-full:
 # check-engine joins the chain FIRST, before check-hub-imports: it is the
 # cheapest signal that the engine boots, and there is no value in a 30-45s
 # clean-worktree import gate if the fast subset is already red.
-temple-grade: check-engine check-hub-imports check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
+temple-grade: check-constraints check-engine check-hub-imports check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
 
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	@echo "$(GREEN)Temple-grade complete (Hub Imports + Codex + LLM doc validation + Mandates + Compliance + Tracking State + Engine Subset + Dashboard)$(NC)"
@@ -631,7 +631,7 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants check-lan-exposure
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants check-lan-exposure check-constraints
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # M15 Sovereign Continuity gate: every entity session_gnosis.md must carry a
@@ -643,6 +643,23 @@ check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity che
 check-gnosis-continuity:
 	@echo "$(YELLOW)Verifying M15 gnosis continuity headers...$(NC)"
 	@$(PYTHON) scripts/gnosis_archive.py verify
+
+# Compaction-Immune Constraint Re-assertion (P0-2, arXiv:2606.22528 defense).
+#
+# WHY THIS IS A GATE AND NOT A DOC. A governance artifact with nothing checking
+# it rots silently -- and silent rot of the constraint set is the exact failure
+# this layer exists to prevent (M13/Temple-Grade, M21/Gate Integrity). `--check`
+# exits 1 if the manifest is missing, unparseable, over the 4KB injection
+# budget, or missing any Tier-0/structural mandate ID.
+#
+# M23: the loader has no soft-fail path by construction. If this target ever
+# goes red, that is a governance failure to fix, not a flake to retry.
+check-constraints:
+	@echo "$(YELLOW)Verifying compaction-immune constraint manifest (P0-2)...$(NC)"
+	@$(PYTHON) scripts/load_constraints.py --check
+	@$(PYTHON) -m pytest tests/test_constraint_reassertion.py \
+	    -o addopts="--timeout=60 --tb=line -q -p no:randomly -p no:tldr" \
+	    || (echo "$(RED)check-constraints FAILED: constraint re-assertion tests red.$(NC)"; exit 1)
 
 # M24b Venv Sovereignty Gate (P1-5): verify .venv matches pyproject requirements
 check-venv-sovereignty:
