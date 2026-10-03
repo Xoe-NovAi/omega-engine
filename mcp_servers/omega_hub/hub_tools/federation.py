@@ -27,6 +27,14 @@ from mcp.server.fastmcp import Context
 # ── mcp instance (circular import — resolves because mcp is created before this import) ──
 from mcp_servers.omega_hub.server import mcp
 
+# P0-1 knowledge-gap: one source of truth for the Hub's protocol identity.
+# The probe used to inline "2024-11-05" — two years stale against the
+# 2026-07-28 stateless core the client in mcp_client.py actually speaks.
+from mcp_servers.omega_hub.protocol_version import (
+    PROTOCOL_VERSION,
+    SEND_PROTOCOL_VERSION_HEADER,
+)
+
 logger = logging.getLogger(__name__)
 
 # Tailnet domain suffix — used to build MagicDNS hostnames.
@@ -164,6 +172,39 @@ def _tailnet_hostname(host: str) -> str:
     return f"{host}.{_TAILNET_DOMAIN}"
 
 
+def _extract_json_rpc(body: str) -> dict[str, Any] | None:
+    """Parse a JSON-RPC envelope out of a probe response body.
+
+    A Streamable HTTP endpoint may answer with either a bare JSON body or an
+    SSE frame (``event: message`` / ``data: {...}``), so both shapes are
+    accepted. Returns ``None`` when no JSON-RPC object can be recovered —
+    the caller must treat that as a failed probe rather than a pass.
+    """
+    body = (body or "").strip()
+    if not body:
+        return None
+    try:
+        parsed = json.loads(body)
+        return parsed if isinstance(parsed, dict) else None
+    except (ValueError, TypeError):
+        # Not a bare JSON body — fall through to the SSE frame shape.
+        logger.debug("probe body is not bare JSON; trying SSE frame parse")
+    # SSE frame: take the last `data:` payload that parses as a JSON object.
+    for line in reversed(body.splitlines()):
+        line = line.strip()
+        if not line.startswith("data:"):
+            continue
+        try:
+            parsed = json.loads(line[len("data:"):].strip())
+        except (ValueError, TypeError):
+            # Non-JSON `data:` line (comment, keep-alive) — try the previous one.
+            logger.debug("SSE data line did not parse as JSON; skipping")
+            continue
+        if isinstance(parsed, dict):
+            return parsed
+    return None
+
+
 async def _verify_magicdns(status: dict[str, Any]) -> bool:
     """Verify MagicDNS is active by resolving the self hostname."""
 
@@ -258,9 +299,11 @@ async def omega_federation_diagnose(
 ) -> dict[str, Any]:
     """Run end-to-end diagnostic battery.
 
-    Checks: daemon health, ping/latency, MCP endpoint probe (proper
-    JSON-RPC initialize), transport security, relay status. Returns
-    PASS/WARN/FAIL per check.
+    Checks: daemon health, ping/latency, MCP endpoint probe (stateless
+    JSON-RPC ``tools/list``, identity carried in the SEP-2575 ``_meta``
+    envelope), transport security, relay status. Returns PASS/WARN/FAIL per
+    check. The probe parses the JSON-RPC envelope, so a peer that answers
+    HTTP 200 with a JSON-RPC ``error`` is scored FAIL, not PASS.
     """
     checks: list[dict[str, Any]] = []
 
@@ -293,28 +336,84 @@ async def omega_federation_diagnose(
         result = await anyio.to_thread.run_sync(_ping)
         checks.append({"name": f"ping_{host}", **result})
 
-    # 3. MCP endpoint probe — proper JSON-RPC initialize (POST).
+    # 3. MCP endpoint probe — stateless JSON-RPC call (P0-1 knowledge-gap).
     #    A GET on /mcp returns 400 by design (MCP requires POST); the old
     #    GET probe therefore false-flagged healthy servers as WARN.
+    #
+    #    SEP-2575 (MCP 2026-07-28) removed the initialize/initialized handshake,
+    #    so this probes with a stateless `tools/list` and carries the Hub's
+    #    declared identity in the _meta envelope (SEP-2575's protocol carrier)
+    #    rather than in initialize params. The old probe inlined
+    #    "protocolVersion":"2024-11-05" at the removed `initialize` method.
+    #
+    #    It then scored purely on the HTTP status. Under Streamable HTTP a
+    #    JSON-RPC error is delivered with HTTP 200, so a peer that answered
+    #    "unsupported protocol version" or "method not found" was recorded as
+    #    PASS — an M29 confident false negative on a liveness probe. The
+    #    envelope is now parsed and `error` is scored as a failure.
+    probe_body = json.dumps({
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/list",
+        "params": {},
+        "_meta": {
+            "protocolVersion": PROTOCOL_VERSION,
+            "clientInfo": {"name": "n0-probe", "version": "1.0"},
+        },
+    })
+
     def _probe(host: str) -> dict[str, str]:
+        cmd = [
+            "curl", "-s", "-w", "\n%{http_code}",
+            "-X", "POST",
+            "-H", "Content-Type: application/json",
+            "-H", "Accept: application/json, text/event-stream",
+            "-H", "Mcp-Method: tools/list",
+        ]
+        if SEND_PROTOCOL_VERSION_HEADER:
+            # Off by default: the installed mcp SDK answers a 2026-07-28
+            # value here with HTTP 400. See protocol_version.py.
+            cmd += ["-H", f"MCP-Protocol-Version: {PROTOCOL_VERSION}"]
+        cmd += ["-d", probe_body, f"http://{_tailnet_hostname(host)}:8016/mcp"]
+
         try:
             r = subprocess.run(
-                ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
-                 "-X", "POST",
-                 "-H", "Content-Type: application/json",
-                 "-H", "Accept: application/json, text/event-stream",
-                 "-d", '{"jsonrpc":"2.0","id":1,"method":"initialize",'
-                       '"params":{"protocolVersion":"2024-11-05","capabilities":{},'
-                       '"clientInfo":{"name":"n0-probe","version":"1.0"}}}',
-                 f"http://{_tailnet_hostname(host)}:8016/mcp"],
-                capture_output=True, text=True, timeout=10, check=False,
+                cmd, capture_output=True, text=True, timeout=10, check=False,
             )
-            code = r.stdout.strip()
-            return {"status": "PASS" if code.startswith("2") else "WARN",
-                    "detail": f"HTTP {code} on :8016/mcp (POST initialize)"}
         except Exception as e:  # noqa: BLE001 — probe failure logged
             logger.warning("MCP probe failed for %s: %s", host, e)
             return {"status": "FAIL", "detail": str(e)}
+
+        body, _, code = (r.stdout or "").rpartition("\n")
+        code = code.strip()
+        if not code:
+            return {"status": "FAIL",
+                    "detail": f"no HTTP status from peer (stderr: {(r.stderr or '').strip()[:120]})"}
+
+        if not code.startswith("2"):
+            return {"status": "WARN",
+                    "detail": f"HTTP {code} on :8016/mcp (POST tools/list)"}
+
+        envelope = _extract_json_rpc(body)
+        if envelope is None:
+            # HTTP 200 with an unreadable body is not evidence of health.
+            return {"status": "WARN",
+                    "detail": "HTTP 200 but response was not a JSON-RPC envelope"}
+
+        if "error" in envelope:
+            err = envelope["error"] or {}
+            return {"status": "FAIL",
+                    "detail": (f"JSON-RPC {err.get('code')}: "
+                               f"{str(err.get('message'))[:140]}")}
+
+        tools = (envelope.get("result") or {}).get("tools")
+        detail = "HTTP 200, JSON-RPC result"
+        if isinstance(tools, list):
+            detail += f", {len(tools)} tools advertised"
+        negotiated = (envelope.get("_meta") or {}).get("protocolVersion")
+        if isinstance(negotiated, str):
+            detail += f", peer protocol {negotiated}"
+        return {"status": "PASS", "detail": detail}
 
     for host in targets:
         result = await anyio.to_thread.run_sync(lambda h=host: _probe(h))
