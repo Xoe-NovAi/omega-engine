@@ -34,7 +34,7 @@ This document is the **single source of truth** for what gets ingested into the 
 - Proposed lessons (L1→L2→L3 distillation output)
 - Tool invocation traces (bash, read, write, task, webfetch, etc.)
 
-**Destination**: `omega_memory_data` + `omega_memory_fts` + `omega_vec_gemma_768` (canonical collection)
+**Destination**: `omega_memory_data` + `omega_memory_fts` + `omega_vec_qwen_1024` (canonical collection, D-1024; supersedes Gemma-era `omega_vec_gemma_768`)
 
 ### 1.2 Research Reports & Artifacts
 **Source**: `data/coordination/` + `data/coordination/research/`
@@ -45,7 +45,7 @@ This document is the **single source of truth** for what gets ingested into the 
 - Cross-session sync docs (`LATEST_CORRECTIONS_*.md`)
 - Session continuity anchors (`SESSION_ANCHOR.md`, `GROKSTER_TO_KALI_*.md`)
 
-**Destination**: `omega_vec_gemma_768` (primary) + `omega_vec_nomic_768` (fallback) + FTS5
+**Destination**: `omega_vec_qwen_1024` (canonical, D-1024; supersedes Gemma-era `omega_vec_gemma_768` primary) + `omega_vec_nomic_768` (fallback, deprecated pre-D-1024 tier) + FTS5
 
 ### 1.3 Strategic & Architectural Documents
 **Source**: `docs/strategy/`, `docs/specs/`, `docs/architecture/`
@@ -56,7 +56,7 @@ This document is the **single source of truth** for what gets ingested into the 
 - Strategic docs (`DEBUT_REMEDIATION_MANUAL_20260817.md`, `UNOVERENGINEERING_PLAN.md`)
 - Specs (`PROJECT_INDEX.md`, context injection specs, Qdrant specs)
 
-**Destination**: `omega_vec_gemma_768` + FTS5
+**Destination**: `omega_vec_qwen_1024` (canonical, D-1024; supersedes Gemma-era `omega_vec_gemma_768`) + FTS5
 
 ### 1.4 Codebase Knowledge (Selective)
 **Source**: `src/omega/` (core engine only)
@@ -68,7 +68,7 @@ This document is the **single source of truth** for what gets ingested into the 
 
 **NOT Ingested**: Test files, private modules, generated code, `__pycache__`
 
-**Destination**: `omega_vec_gemma_768` (code-optimized collection: `omega_vec_minilm_384`)
+**Destination**: `omega_vec_qwen_1024` (canonical, D-1024) + FTS5 (code-optimized collection: `omega_vec_minilm_384`, deprecated pre-D-1024 tier)
 
 ### 1.5 Mandate Compliance Records
 **Source**: `data/coordination/` + `data/entities/*/proposed_lessons.yaml`
@@ -78,7 +78,7 @@ This document is the **single source of truth** for what gets ingested into the 
 - Heritage vet records
 - Soul distillation lessons (L1→L2→L3)
 
-**Destination**: `omega_vec_gemma_768` + FTS5
+**Destination**: `omega_vec_qwen_1024` (canonical, D-1024; supersedes Gemma-era `omega_vec_gemma_768`) + FTS5
 
 ---
 
@@ -186,7 +186,7 @@ store = MemoryStore(entity_name="<entity>")
 await store.ingest(
     content="...",
     metadata={...},
-    collection="omega_vec_gemma_768"  # or specific collection
+    collection="omega_vec_qwen_1024"  # canonical (D-1024); or specific collection
 )
 ```
 
@@ -210,16 +210,18 @@ async def validate_before_ingest(content: str, metadata: dict) -> bool:
 
 | Source Type | Primary Collection | Fallback Collection | FTS5 |
 |-------------|-------------------|---------------------|------|
-| Entity sessions | `omega_vec_gemma_768` | `omega_vec_nomic_768` | ✅ |
-| Research reports | `omega_vec_gemma_768` | `omega_vec_nomic_768` | ✅ |
-| Strategy docs | `omega_vec_gemma_768` | `omega_vec_nomic_768` | ✅ |
-| Code signatures | `omega_vec_minilm_384` | `omega_vec_gemma_768` | ✅ |
-| Mandate records | `omega_vec_gemma_768` | `omega_vec_nomic_768` | ✅ |
+| Entity sessions | `omega_vec_qwen_1024` | `omega_vec_nomic_768` (deprecated) | ✅ |
+| Research reports | `omega_vec_qwen_1024` | `omega_vec_nomic_768` (deprecated) | ✅ |
+| Strategy docs | `omega_vec_qwen_1024` | `omega_vec_nomic_768` (deprecated) | ✅ |
+| Code signatures | `omega_vec_minilm_384` | `omega_vec_qwen_1024` | ✅ |
+| Mandate records | `omega_vec_qwen_1024` | `omega_vec_nomic_768` (deprecated) | ✅ |
 | MRL fallback (512) | `omega_vec_nomic_512` | — | ❌ |
 | MRL fallback (256) | `omega_vec_nomic_256` | — | ❌ |
 | Speed tier (384) | `omega_vec_minilm_384` | — | ❌ |
 | Zero-cost (64) | `omega_vec_static_64` | — | ❌ |
-| Library (256) | `omega_vec_library_256` | — | ❌ |
+| Library (1024) | `omega_vec_library_1024` | — | ❌ |
+
+> **D-1024 note**: `omega_vec_qwen_1024` is canonical (native 1024-dim Qwen3-Embedding-0.6B) and supersedes the Gemma-era `omega_vec_gemma_768` primary. Pre-D-1024 tiers (`omega_vec_nomic_*`, `omega_vec_minilm_384`, `omega_vec_static_64`) are deprecated as a semantic space — retained as read targets for Step 19 (D-1024 full re-embed) / Step 20 (legacy alias removal).
 
 ---
 

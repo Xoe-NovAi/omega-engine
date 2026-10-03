@@ -54,7 +54,11 @@ purpose in a sentence, and links to its full API detail document.
 | vault_core | Credential management and encryption | [vault_core.md](../reference/api/vault_core.md) |
 | workers | Background worker framework | [workers.md](../reference/api/workers.md) |
 
-**43 modules indexed.** For mandate compliance matrices, heritage tags, and
+**43 modules indexed** — one row per module, each linking to its detail doc
+in `docs/reference/api/` (43 files, full coverage). Release manifests citing
+"23 module reference docs" refer to the original PR #5 documentation-expansion
+batch (commit `a3a467a2`); coverage has since been extended to all 43 indexed
+modules. For mandate compliance matrices, heritage tags, and
 usage examples, see the [consolidated API reference](../reference/API_REFERENCE.md).
 
 *⬡ OMEGA ⬡ CLINE ⬡ API_INDEX-v1.0.0 ⬡ 2026-10-02 ⬡*
