@@ -37,6 +37,7 @@ Use `ocdb-ro`, never raw `opencode db` — see the hard rules below.
    `qwen3-embedding:0.6b` measured 10,645 ms/embed cold vs 122 ms warm — 87×. Well `a3675a88`.
 6. **Never hardcode model context limits.** Drift-detect against live models.dev
    (`scripts/opencode_provider_doctor.sh`).
+7. **Handoff packets ≤ 4 KB.** Context = filename + size + sha256 + pull URL; bodies live in Exchange. On transport POST failure, shrink to pointer and resubmit — never retry identical bytes. Measured 4.3 KB succeeds, 4.5 KB fails. Well `3a0c851b`.
 
 ## Gates — run before claiming done
 

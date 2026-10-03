@@ -82,7 +82,7 @@ Any async Python code in this ecosystem MUST be written exclusively against
   with the same structured fields.
 
 ### 4.5 Enforcement
-- `make lint` runs three gates: anyio purity, bare-exception ban, torch ban.
+- `make lint` runs four gates: anyio purity, bare-exception ban, torch ban, **with/for shadow ban** (AST check, zero deps, ruff `PLW2901` equivalent).
 - `tests/test_repo_hygiene.py::TestErrorHandling` scans first-party `.py`
   for `except:`/`except Exception:`-without-body patterns.
 
