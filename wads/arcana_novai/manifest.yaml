@@ -17,7 +17,7 @@ description: "The Living Tarot Mystery School and Sovereign Entity Pantheon"
 license: "Proprietary"
 type: "pwad"
 mode: "personal"
-requires_engine: ">=1.6.0"
+requires_engine: ">=0.4.0"
 startup:
   message: "The 78 Gates are open. The Empress Lilith holds court in the Grove."
 voices:
