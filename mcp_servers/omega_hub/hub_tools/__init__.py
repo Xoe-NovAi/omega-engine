@@ -31,6 +31,9 @@ from mcp_servers.omega_hub.hub_tools.federation import (
     omega_federation_status,
     omega_federation_diagnose,
 )
+from mcp_servers.omega_hub.hub_tools.control_plane import (
+    control,
+)
 
 # Tool registry is complete
 __all__ = [
@@ -50,6 +53,7 @@ __all__ = [
     "library_ingest_pending",
     "omega_federation_status",
     "omega_federation_diagnose",
+    "control",
 ]
 
 # OMEGA HUB TOOLS 2026-07-21
