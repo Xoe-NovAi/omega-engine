@@ -1,0 +1,10 @@
+{"event_seq": 1, "event_type": "task_complete", "instance_id": "opencode/test_b15ddea2/019f7276-c0c7-7178-9c30-5b5e94d0d5eb", "timestamp": "2026-07-17T23:43:33.067472+00:00", "payload": {"task": "Task 0"}}
+{"event_seq": 2, "event_type": "task_complete", "instance_id": "cline/test_b15ddea2/019f7276-c0c9-7efe-8097-f63a2c541740", "timestamp": "2026-07-17T23:43:33.070752+00:00", "payload": {"task": "Task 0"}}
+{"event_seq": 3, "event_type": "task_complete", "instance_id": "opencode/test_b15ddea2/019f7276-c0c7-7178-9c30-5b5e94d0d5eb", "timestamp": "2026-07-17T23:43:33.073905+00:00", "payload": {"task": "Task 1"}}
+{"event_seq": 4, "event_type": "task_complete", "instance_id": "cline/test_b15ddea2/019f7276-c0c9-7efe-8097-f63a2c541740", "timestamp": "2026-07-17T23:43:33.077035+00:00", "payload": {"task": "Task 1"}}
+{"event_seq": 5, "event_type": "task_complete", "instance_id": "opencode/test_b15ddea2/019f7276-c0c7-7178-9c30-5b5e94d0d5eb", "timestamp": "2026-07-17T23:43:33.080061+00:00", "payload": {"task": "Task 2"}}
+{"event_seq": 6, "event_type": "task_complete", "instance_id": "cline/test_b15ddea2/019f7276-c0c9-7efe-8097-f63a2c541740", "timestamp": "2026-07-17T23:43:33.083118+00:00", "payload": {"task": "Task 2"}}
+{"event_seq": 7, "event_type": "task_complete", "instance_id": "opencode/test_b15ddea2/019f7276-c0c7-7178-9c30-5b5e94d0d5eb", "timestamp": "2026-07-17T23:43:33.086240+00:00", "payload": {"task": "Task 3"}}
+{"event_seq": 8, "event_type": "task_complete", "instance_id": "cline/test_b15ddea2/019f7276-c0c9-7efe-8097-f63a2c541740", "timestamp": "2026-07-17T23:43:33.089451+00:00", "payload": {"task": "Task 3"}}
+{"event_seq": 9, "event_type": "task_complete", "instance_id": "opencode/test_b15ddea2/019f7276-c0c7-7178-9c30-5b5e94d0d5eb", "timestamp": "2026-07-17T23:43:33.092727+00:00", "payload": {"task": "Task 4"}}
+{"event_seq": 10, "event_type": "task_complete", "instance_id": "cline/test_b15ddea2/019f7276-c0c9-7efe-8097-f63a2c541740", "timestamp": "2026-07-17T23:43:33.095761+00:00", "payload": {"task": "Task 4"}}

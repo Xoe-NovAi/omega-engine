@@ -145,8 +145,9 @@ class SoulStore:
 
                 logger.debug("Atomic write complete: %s (%d bytes)", path, len(data))
 
-            except BaseException:
-                # Clean up tempfile on any error
+            except BaseException as e:
+                # Clean up tempfile on any error (incl. KeyboardInterrupt)
+                logger.debug("Atomic write failed, cleaning up temp: %s", e)
                 try:
                     os.unlink(tmp_path)
                 except OSError:

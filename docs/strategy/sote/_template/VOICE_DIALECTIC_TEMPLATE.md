@@ -103,3 +103,8 @@ SPDX-License-Identifier: Apache-2.0
 *No email. No fake signature. Just the substance — read from the corpus, verified against the disk, offered to the Architect and the 14 agents as the {voice_ordinal} voice in the dialectic.*
 
 *Concede. Defend. Synthesize. Verify. Close the loop.*
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: {session_model} | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

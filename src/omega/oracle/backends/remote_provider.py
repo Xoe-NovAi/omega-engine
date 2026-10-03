@@ -57,9 +57,16 @@ async def _get_metrics_db() -> "MetricsDB":
         return _metrics_db
     async with _metrics_db_lock:
         if _metrics_db is None:
+            from omega.observability import get_metrics_db_path
             from omega.observability.metrics_db import MetricsDB
 
-            db = MetricsDB(Path("data/observability/metrics.db"))
+            # Use the canonical resolver (respects OMEGA_DATA_DIR) rather than
+            # a hardcoded relative path. The hardcoded path ignored
+            # OMEGA_DATA_DIR, so tests that isolate data via the conftest
+            # autouse _set_test_env fixture still wrote real performance rows
+            # into the repo's data/observability/metrics.db. Those rows then
+            # failed the M7 Sovereignty Gate downstream in CI (PR #4).
+            db = MetricsDB(get_metrics_db_path())
             await anyio.to_thread.run_sync(db.initialize)  # initialize() is blocking
             _metrics_db = db
     return _metrics_db

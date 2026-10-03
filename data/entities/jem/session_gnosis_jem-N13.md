@@ -43,10 +43,22 @@ SPDX-License-Identifier: Apache-2.0
 
 Wake N13 by paging Jem with NODE PAGE header citing `NODE_EXPERT_SESSIONS_PLAN.md` §4 "N13 — arcana". Hydrate from: this file → `N13_DOMAIN_INDEX.md` (orientation) → KB §Deep Dig 1 (ownership map) → `N13_EXTERNAL_SOURCES.md` (ingestion queue). State at close: **DORMANT · CONSULTABLE**.
 
-<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: N13-ARCANA | verdict: AMBIGUOUS | multi-model session; candidates: x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, big-pickle
-actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, big-pickle, nvidia/nemotron-3-super-120b-a12b:free, hy3-free
-first_audit: 2026-08-30T03:06:41Z | updated: 2026-08-31T03:09:52Z
+<!-- PROVENANCE-CORRECTED 2026-09-29T04:11:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: N13-ARCANA | verdict: AMBIGUOUS | multi-model session; candidates: nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free
+actual_models(Tier0): nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free, space-bunny-free, nvidia/nemotron-3-super-120b-a12b:free
+first_audit: 2026-09-17T04:00:52Z | updated: 2026-09-29T04:11:01Z
 -->
+
+
+
+
+
+<!-- PROVENANCE-CORRECTED 2026-09-17T04:00:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: N13-ARCANA | verdict: AMBIGUOUS | multi-model session; candidates: nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free
+actual_models(Tier0): nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free, nvidia/nemotron-3-super-120b-a12b:free, hy3-free
+first_audit: 2026-09-08T13:09:06Z | updated: 2026-09-17T04:00:52Z
+-->
+
+
 
 

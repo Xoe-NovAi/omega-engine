@@ -23,13 +23,13 @@
 
 ---
 
-## 🤖 Agent Fleet (12 agents + 2 entities = 14 cap)
+## 🤖 Agent Fleet (13 active · M10 cap = 14)
 
 | Agent | Role | Use When |
 |-------|------|----------|
 | `@kali` | Synthesis (Triad) | Unify Ma'at + Lilith, synthesize verdicts, destroy drift |
-| `@maat` | Build Oversight (N1-N5) | Build side governance, structure, verification |
-| `@lilith` | Run Oversight (N6-N10) | Run side governance, knowledge metabolism, flow |
+| `@maat` | Build Oversoul (S1-S5) | Build side governance, structure, verification |
+| `@lilith` | Runtime Oversoul (S6-S10) | Run side governance, knowledge metabolism, flow |
 | `@makali` | MaKaLi Council | Decompose + parallel dispatch + synthesize |
 | `@researcher` | Deep Research | Lattice reasoning, multi-perspective |
 | `@jem` | Sovereign Synthesis | Complex queries → verified results |
@@ -37,7 +37,7 @@
 | `@john_carmack` | S3 Consultant | Architectural review, performance |
 | `@roc_racoon` | Sovereign Miner | Legacy archaeology, pattern extraction |
 | `@verity` | Compliance + Gnosis | Mandate audit, soul distillation |
-| `@node NX` | Domain Agent | Slot-based (N1-N10), `@node N3: {task}` |
+| `@slot SX` | Domain Agent | Slot-based (S1-S10), `@slot S3: {task}` |
 | `@grok_cli` | Consulting Cloud Mind | Advisory, web research |
 
 **Full fleet docs**: `AGENTS.md` §2-§3
@@ -48,12 +48,12 @@
 
 ```
 KALI (Synthesis) — unify, synthesize, return verdict
-├── MA'AT (Build Side: N1-N5)      LILITH (Run Side: N6-N10)
-│   ├── N1 Infrastructure          ├── N6 Cognition
-│   ├── N2 Persistence             ├── N7 Context
-│   ├── N3 Engineering             ├── N8 Observability
-│   ├── N4 Integration             ├── N9 Orchestration
-│   └── N5 Governance              └── N10 Validation
+├── MA'AT (Build Oversoul: S1-S5)   LILITH (Runtime Oversoul: S6-S10)
+│   ├── S1 Infrastructure           ├── S6 Cognition
+│   ├── S2 Persistence              ├── S7 Context
+│   ├── S3 Engineering              ├── S8 Observability
+│   ├── S4 Integration              ├── S9 Orchestration
+│   └── S5 Governance               └── S10 Validation
 ```
 
 Three co-equal sovereign entities. No apex, no hierarchy between them.

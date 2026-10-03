@@ -73,7 +73,7 @@ def _inject_vault_to_env() -> int:
     # (corrupted blob). Each is audit-logged; bare except is forbidden.]
     import json as _json
     try:
-        from omega.vault.crypto import VaultCrypto
+        from omega.vault.crypto import VaultCrypto, VaultCryptoError
         crypto = VaultCrypto(master_key)
         encrypted = vault_path.read_text().strip()
         decrypted = crypto.decrypt(encrypted)
@@ -83,7 +83,7 @@ def _inject_vault_to_env() -> int:
             if k not in _os.environ:
                 _os.environ[k] = v
         return len(secrets)
-    except (ValueError, OSError, _json.JSONDecodeError) as e:
+    except (ValueError, OSError, _json.JSONDecodeError, VaultCryptoError) as e:
         logger.debug(f"Vault injection skipped: {e}")
         return 0
 
@@ -138,7 +138,7 @@ except ImportError:
 # lazily inside app() as AttributeError('Group' has no 'registered_commands')
 # and killed the ENTIRE omega CLI (reproduced live, council decree H/N0).
 # Vault module stays importable for programmatic use; CLI mounting returns
-# only via Vault Path A/B (DEL-1 target #10 / council decree N6) as either
+# only via Vault Path A/B (DEL-1 target #10 / council decree S6) as either
 # a proper typer.Typer conversion or sanctioned removal.
 # LESSON (L3-Gates-Before-Blade corollary): typer validates registrations
 # LAZILY at app() time — try/except around add_typer cannot catch a bad
@@ -192,8 +192,8 @@ def talk(
         finally:
             try:
                 oracle.model_gateway.shutdown()
-            except Exception:
-                pass  # best-effort cleanup; never block exit
+            except Exception as e:
+                logger.debug("Model gateway shutdown failed: %s", e)
 
     anyio.run(_run)
 
@@ -228,8 +228,8 @@ def summon(
         finally:
             try:
                 oracle.model_gateway.shutdown()
-            except Exception:
-                pass  # best-effort cleanup; never block exit
+            except Exception as e:
+                logger.debug("Model gateway shutdown failed: %s", e)
 
     anyio.run(_run)
 
@@ -916,7 +916,7 @@ def bench_list():
 # ── CROSS-POLLINATION COMMANDS ───────────────────────────────────────────
 @app.command(name="check-feed")
 def check_feed_cmd(
-    agent: str = typer.Option("sophia", "--agent", "-a", help="Agent name to check feed for"),
+    agent: str = typer.Option("kali", "--agent", "-a", help="Agent name to check feed for"),
     consume: bool = typer.Option(
         False, "--consume", "-c", help="Mark unconsumed signals as consumed"
     ),

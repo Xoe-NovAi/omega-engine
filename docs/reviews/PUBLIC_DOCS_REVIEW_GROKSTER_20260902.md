@@ -228,3 +228,8 @@ Every "Production-ready" claim in README v1.6.0 status table is **false** for at
 ---
 
 *⬡ OMEGA ⬡ GROKSTER ⬡ PUBLIC-DOCS-REVIEW ⬡ 2026-09-02*
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: minimax/minimax-m3:free | verdict: UNANCHORED | session refs not found in DB
+actual_models(Tier0): n/a
+-->
+

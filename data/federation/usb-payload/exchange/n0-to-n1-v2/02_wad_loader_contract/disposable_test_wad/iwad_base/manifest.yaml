@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+wad:
+  name: "iwad_base"
+  version: "1.0.0"
+  type: "iwad"
+  entities: []
+  adapters: {}
+  hierarchy: "hierarchy.yaml"

@@ -92,8 +92,9 @@ else
 fi
 
 # ── 6. Infrastructure containers ───────────────────────────────────────
-info "Pulling infrastructure images (Redis, Qdrant, PostgreSQL, Caddy, Iris, SearXNG)..."
-podman pull redis:7-alpine &
+# [redis-20260928] Redis image pull removed — the Redis service layer was
+# decommissioned (container + quadlet retired). Do not reintroduce here.
+info "Pulling infrastructure images (Qdrant, PostgreSQL, Caddy, Iris, SearXNG)..."
 podman pull qdrant/qdrant:v1.17.1 &
 podman pull pgvector/pgvector:pg17 &
 podman pull caddy:alpine &

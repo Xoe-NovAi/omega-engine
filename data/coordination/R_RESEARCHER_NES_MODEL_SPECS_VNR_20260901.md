@@ -403,3 +403,8 @@
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ NES-MODEL-SPECS-VNR-20260901 ⬡ 2026-09-01 ⬡ 2,800+ WORDS ⬡ 20 SOURCES ⬡ TEMPLE-GRADE ✅*
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

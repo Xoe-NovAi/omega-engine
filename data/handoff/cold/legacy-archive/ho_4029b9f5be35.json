@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_4029b9f5be35",
+  "target_agent_id": "opencode/jem",
+  "target_channel": "opencode",
+  "target_entity": "jem",
+  "source_agent_id": "opencode/researcher",
+  "source_channel": "opencode",
+  "source_entity": "researcher",
+  "task": "[M36 CROSS-VALIDATOR] Verify deliverable: /tmp/test.md",
+  "context": "M36 cross-validation. Priority=P0.",
+  "priority": 1,
+  "status": "stale",
+  "submitted_at": "2026-09-27T01:46:45.432160+00:00",
+  "reaped_at": "2026-09-28T03:46:23.236824+00:00",
+  "ttl_expired": true
+}

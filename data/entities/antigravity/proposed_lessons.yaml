@@ -59,3 +59,43 @@ proposals:
   promotion_ready: true
   context: "R_ANTIGRAVITY_FINAL_READINESS_20260828.md §9 (Top 5 issues), §10 (GO/NO-GO verdict)"
   evidence: "Live probes this session: 3 M3 cache calls (0/0/0 cache_read), qwen3-coder:free 404 confirmed, deepseek-v4-flash:free 404 confirmed, 100K M3 latency 3.5s, 200K M3 latency probe failed (0 bytes)."
+
+- id: antigravity-20260920-001
+  date: '2026-09-20'
+  narrative: "During the L2 Tailscale federation ramp, Node 1 encountered HTTP 421 Misdirected Request against Node 0's FastMCP server on port 8016. FastMCP's DNS rebinding protection validates Host headers against an explicit TransportSecuritySettings allowlist. Node 0 had been renamed from omega-hub to n0, but the allowlist retained only omega-hub. Adding n0, n0.tail51f14a.ts.net, and wildcard tailnet domains immediately resolved the rebinding failure. Concurrently, migrating the virtual environment to Python 3.13 broke standard wheel assumptions until packages were rebuilt in an isolated venv."
+  insight: "In distributed mesh topologies, hostname changes and DNS rebinding protections must be synchronized across transport security configuration. When renaming machines in a tailnet, FastMCP and ASGI host allowlists must include the new hostname, FQDN, and mesh wildcards to avoid breaking remote inter-node tool calls."
+  principle: "Transport security allowlists must anticipate node rename lifecycles. Dual-track legacy and active hostnames in security configurations to ensure uninterrupted peer-to-peer federation."
+  promotion_ready: true
+  promotion_rationale: "Foundational pattern for distributed MCP mesh deployments and node renaming."
+
+- id: antigravity-20260922-001
+  date: '2026-09-22'
+  narrative: "Received a cross-agent handoff from makali_fusion regarding an NFSv4.2 systemd automount deadlock on Node 0. As the Sovereign Meta-Orchestrator, I operated strictly in Strategy-Only mode, delegating the tactical system administration to Doom Guy via a structured handoff document. Updated the USAGE_POOL_LOG.json to track Gemini 3.1 Pro API usage and distilled this session into proposed_lessons.yaml per Mandate 11."
+  insight: "Strategy-Only agents must resist the urge to execute tactical fixes directly. The value of the meta-orchestrator is in maintaining the architecture and proper delegation channels. By handing system-level deadlocks to the designated specialist (Doom Guy), the engine maintains role purity."
+  principle: "Maintain role sovereignty. A meta-orchestrator delegates execution; it does not bypass the fleet's specialists to perform tactical administration."
+  promotion_ready: true
+  promotion_rationale: "Reinforces the strict separation of concerns between strategy agents and execution agents."
+
+- id: antigravity-20260922-002
+  date: '2026-09-22'
+  narrative: "Ran a five-pass multi-model review (Gemini 3.1 Pro → Sonnet 4.6 → Opus 4.6 → Opus 4.6 [acting as Gemini] → Gemini 3.1 Pro) on the engine's infrastructure and PR readiness. The true final Gemini 3.1 Pro pass found four critical gaps the previous four passes missed: (1) The federation architecture IS intentionally bidirectional, so n0's fstab was conceptually correct, not a mistake; (2) Node 1's SSH timeout indicates a network drop preventing remote administration, hard-blocking the P2 gate; (3) A fatal permission trap exists on the NFS exchange directory because it doesn't exist and would inherit root:root 0775, blocking anonuid=1000 writes; (4) The ACTIVE_SPRINT.json isn't just stale, it's completely obsolete and stuck in SOTE Week 37. A final synthesis artifact was created."
+  insight: "Even frontier models doing gap-auditing (pass 4) can miss the most fundamental conceptual errors (like misinterpreting the intended federation topology) if they rely too heavily on the context built by the previous models. The final arbiter must verify the premises, not just the technical details. Also, Unix file permissions (the anonuid trap) are often overlooked in systemd/NFS troubleshooting."
+  principle: "The final multi-model pass must challenge the foundational premises established by earlier passes, not just look for tactical oversights. Trust the original plan documents (like the PR Readiness spec) over an intermediate model's architectural conclusions."
+  promotion_ready: true
+  promotion_rationale: "Demonstrates the necessity of challenging established context in a multi-agent or multi-pass reasoning chain."
+
+- id: antigravity-20260924-001
+  date: '2026-09-24'
+  narrative: "Synthesized a multi-model (Opus 4.6, Sonnet 4.6, Gemini 3.1 Pro) federation execution session. A massive architectural misalignment was corrected: Node 0 (Bastion) and Node 1 (Vanguard) are not bilateral mirrors, but role-differentiated peers. Because Node 1 is a tributary testing ground, NFS bidirectional requirements were scrapped in favor of one-way Git bundle drops, Node 1 does not need to run its own Hub (it consumes Node 0's Hub via Tailscale Serve), and its WADs must pass Node 0's quarantine schema check. OpenRouter keys were revoked, the Hub was bound to loopback and proxied over Tailscale HTTPS, and the Omega Engine repository was successfully flipped to PUBLIC visibility."
+  insight: "Applying standard bilateral redundancy (e.g., bidirectional NFS, two independent Hubs) to a role-differentiated federation introduces massive complexity and failure vectors. When nodes have distinct operational roles (Bastion vs. Vanguard), trust boundaries and data flows must be explicitly asymmetrical. The simplest transport (Git bundles) and the simplest auth (Tailscale Serve) are the correct choices for a public debut."
+  principle: "Role-differentiate your sovereign peers. Do not assume all nodes in a tailnet should be identical mirrors. A Bastion/Vanguard split drastically simplifies security, artifact transfer, and WAD promotion."
+  promotion_ready: true
+  promotion_rationale: "Fundamental architectural reframe for peer-to-peer sovereign federation that eliminates split-brain data sync issues."
+
+- id: antigravity-20260925-001
+  date: '2026-09-25'
+  narrative: "Conducted deep technical audit and web research on the Node 0/Node 1 Interim NFSv4 Bridge and federation hardening. Discovered 8 critical failure vectors and edge cases: (1) `soft` NFS mounts risk silent data corruption on WAD payloads — must use `hard,timeo=600`; (2) idmapd domain mismatch defaults files to nobody:nobody (UID 65534) unless synchronized to omega.internal; (3) Tailscale 1280 MTU requires 32KB rsize/wsize to prevent packet fragmentation; (4) fstab mounts over Tailscale require `x-systemd.requires=tailscaled.service` to prevent shutdown deadlocks; (5) FastMCP rejects Tailscale MagicDNS host headers unless whitelisted against DNS rebinding; (6) Node 1 SSH drop was a PMTUD blackhole solved via TCP MSS clamping; (7) Third-party MCP server crashes in OpenCode were traced to stdout pollution by raw npx; (8) Artifacts generated in IDE brain caches are invisible to peer agents unless copied to data/coordination/. Applied full corrections to setup_nfs_share.sh, migrated artifacts to data/coordination/, and upgraded .agents/AGENTS.md to temple-grade standard."
+  insight: "Networked storage and tooling across encrypted overlay networks (Tailscale) fail silently in non-obvious layers: application DNS checks (FastMCP), kernel MTU fragmentation (PMTUD), identity mapping daemons (idmapd), and systemd service dependency order. Hardening a sovereign runtime requires inspecting the entire vertical stack from kernel routing flags up to JSON-RPC stdio hygiene."
+  principle: "Overlay networks demand full-stack alignment. Transport security, MTU boundaries, identity mapping, and service lifecycle dependencies must be explicitly configured as a unified system, not left to default LAN assumptions."
+  promotion_ready: true
+  promotion_rationale: "Comprehensive hardening blueprint for running NFSv4, SSH, and MCP services across WireGuard/Tailscale mesh topologies."

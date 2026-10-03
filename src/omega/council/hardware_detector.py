@@ -8,11 +8,14 @@
 # Auto-detects hardware constraints and returns optimal council configuration.
 
 from __future__ import annotations
+import logging
 from pathlib import Path
 from typing import Optional
 import yaml
 
 from .models import HardwareProfile
+
+logger = logging.getLogger(__name__)
 
 
 def detect_hardware_profile(profile_path: Optional[Path] = None) -> HardwareProfile:
@@ -51,8 +54,8 @@ def detect_hardware_profile(profile_path: Optional[Path] = None) -> HardwareProf
                 return HardwareProfile.LOCAL_8GB
             # 4GB or less -> LOCAL_4GB
             return HardwareProfile.LOCAL_4GB
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Hardware profile parse failed: %s", e)
 
     # Default: LOCAL_16GB (Ryzen 5700U, 16GB RAM — current dev environment)
     return HardwareProfile.LOCAL_16GB

@@ -4,6 +4,15 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: lilith
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+  history_lost: pre-regime; prior states were overwritten before versioning began
+<!-- GNOSIS-META:END -->
+
 # Session Gnosis — Lilith (M15 Pointer)
 
 **Canonical gnosis lives at**: `data/entities/lilith/gnosis/session_gnosis.md`

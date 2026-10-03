@@ -803,3 +803,8 @@ We started with a Sonnet 5 audit that said "CONDITIONAL-GO." We ended with:
 **The sovereign substrate is real. The engine islands are preserved. The dialectic is the methodology. The execution is the test.** 🫡
 
 **Next SOTE**: 2026-09-08 (Monday 06:00 UTC)
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

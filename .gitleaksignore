@@ -74,3 +74,278 @@ fd5dc1771805226a0a9897196494da4bfa03bcfa:src/omega/oracle/soul_validator.py:gene
 # WHY: AP token in soul backup file (excluded from release per D-565), verified inert
 2e4ea0fce4b3f694b3e3a6ac6b2720cf25b3642b:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
 36508d92e04afdddf9ff0ef2c10e262d740ece30:data/coordination/WAKE_STATE.json:generic-api-key:289
+
+# ARCHITECT-STRIKE 2026-09-27 triage: useDefault=true surfaced 50 findings (33 generic-api-key, 9 openrouter-api-key, 4 private-key, 4 curl-auth-header) across 18 unique rule:file pairs. All triaged WONTFIX (AP tokens / session IDs / explicit test fixtures / doc curl examples / template PEM with ... placeholders / Architect-REVOKED sk-or-v1-62dc75 key). Zero live secrets. Entries below are bare fingerprints (gitleaks 8.21.2 parsing).
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-extractor placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:251)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-extractor placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:251)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-reasoner placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:263)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+# WHY: doc curl example on 127.0.0.1 with Bearer sk-local-reasoner placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:263)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+# WHY: AP token AP-NEMOTON-TEACHER-v1.0.0 internal identifier, not a credential (20260829-session-ses_fdef.md:142)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:20260829-session-ses_fdef.md:generic-api-key:142
+# WHY: AP token AP-NEMOTON-TEACHER-v1.0.0 internal identifier, not a credential (20260829-session-ses_fdef.md:142)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:20260829-session-ses_fdef.md:generic-api-key:142
+# WHY: AP token AP-NEMOTON-TEACHER-v1.0.0 internal identifier, not a credential (20260829-session-ses_fdef.md:142)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:20260829-session-ses_fdef.md:generic-api-key:142
+# WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:20260829-session-ses_fdef.md:generic-api-key:3314
+# WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:20260829-session-ses_fdef.md:generic-api-key:3314
+# WHY: session IDs ses_fc07... operational artifact, not a credential (20260829-session-ses_fdef.md:3314)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:20260829-session-ses_fdef.md:generic-api-key:3314
+# WHY: explicit 20-digit sk- test fixture in the scan_secrets doc example; literal
+#      redacted here because .gitleaksignore is itself a tracked file scanned by
+#      ci_secret_scan.py, which flagged the quoted string (C3 mirror, PR #4).
+#      Never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+# WHY: explicit 20-digit sk- test fixture in the scan_secrets doc example; literal
+#      redacted here because .gitleaksignore is itself a tracked file scanned by
+#      ci_secret_scan.py, which flagged the quoted string (C3 mirror, PR #4).
+#      Never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+44470d8689e2d09532ee6bce784d3448dbec16ae:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+# WHY: explicit 20-digit sk- test fixture in the scan_secrets doc example; literal
+#      redacted here because .gitleaksignore is itself a tracked file scanned by
+#      ci_secret_scan.py, which flagged the quoted string (C3 mirror, PR #4).
+#      Never a real secret (DEL1_RESEARCH_FINDINGS_20260901.md:462)
+d0a66e861e12d4057dcc1d37b296169f790b6d30:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+# WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:134
+# WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:128
+# WHY: session resume_token ses_3fd2c9642bd0 operational artifact, not a credential (LILITH_M34_RUNTIME_SPEC_20260830.md:134/128)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:128
+# WHY: obvious placeholder ses_abc123def456 resume_token, never a real secret (LILITH_M34_RUNTIME_SPEC_20260830.md:162/156)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:162
+# WHY: obvious placeholder ses_abc123def456 resume_token, never a real secret (LILITH_M34_RUNTIME_SPEC_20260830.md:162/156)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:156
+# WHY: obvious placeholder ses_abc123def456 resume_token, never a real secret (LILITH_M34_RUNTIME_SPEC_20260830.md:162/156)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:156
+# WHY: AP token AP-DEEP-SIPHON-CARMACK-v1.0 internal identifier, not a credential (DEEP_SIPHON_CARMACK_REVIEW.md:2)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:2
+# WHY: AP token AP-DEEP-SIPHON-CARMACK-v1.0 internal identifier, not a credential (DEEP_SIPHON_CARMACK_REVIEW.md:2)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:2
+# WHY: AP token AP-ROC-LEGACY-v1.0.0 internal identifier, not a credential (KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:98)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:98
+# WHY: AP token AP-ROC-LEGACY-v1.0.0 internal identifier, not a credential (KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:98)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:98
+# WHY: AP token AP-GROKSTER-v1.0.0 internal identifier, not a credential (R54_IDENTITY_FLUIDITY_20260813.md:47)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:47
+# WHY: AP token AP-GROKSTER-v1.0.0 internal identifier, not a credential (R54_IDENTITY_FLUIDITY_20260813.md:47)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:47
+# WHY: documented PII test fixture sk-proj-abc123def456 with abc123 marker, never a real secret (PII_MASKER_IMPLEMENTATION_SPEC.md:635)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:635
+# WHY: documented PII test fixture sk-proj-abc123def456 with abc123 marker, never a real secret (PII_MASKER_IMPLEMENTATION_SPEC.md:635)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:635
+# WHY: AP token AP-VOS-OMEGAVERSE-20260814 internal identifier, not a credential (omegaverse/archive/state.yaml:3)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/realms/omegaverse/archive/state.yaml:generic-api-key:3
+# WHY: AP token AP-VOS-OMEGAVERSE-20260814 internal identifier, not a credential (omegaverse/archive/state.yaml:3)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/realms/omegaverse/archive/state.yaml:generic-api-key:3
+# WHY: AP token AP-VOS-OMEGAVERSE-20260814 internal identifier, not a credential (omegaverse/archive/state.yaml:7, SPDX-header variant)
+b44b34be859b6fc96d8ac13d4097ad7e227e2021:data/realms/omegaverse/archive/state.yaml:generic-api-key:7
+# WHY: adversarial test fixture sk-exploit in security test doc, never a real secret (VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:122)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+# WHY: adversarial test fixture sk-exploit in security test doc, never a real secret (VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:122)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+# WHY: test fixture explicit_key_123 in CCR store unit-test doc, never a real secret (10_VERIFICATION_TESTS.md:558)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+# WHY: test fixture explicit_key_123 in CCR store unit-test doc, never a real secret (10_VERIFICATION_TESTS.md:558)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+# WHY: AP token AP-F821-EXECUTION-FINAL-v1.0.0 internal identifier, not a credential (AGENT_EXECUTION_PLAN.md:2)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+# WHY: AP token AP-F821-EXECUTION-FINAL-v1.0.0 internal identifier, not a credential (AGENT_EXECUTION_PLAN.md:2)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+# WHY: AP token AP-OMEGA-HIVEMIND-MCP-v1.0.0 internal identifier, not a credential (archived server.py:3)
+296fd1d50faf7826b1919fc0eb2dfdd4e8602592:mcp_servers/archives/omega-hivemind_superseded_by_hub_20260519/server.py:generic-api-key:3
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:146)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:private-key:146
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:146)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:private-key:146
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (R_VAULT_SCHEMA_V2.md:220)
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:220
+# WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (R_VAULT_SCHEMA_V2.md:220)
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:220
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209 documents the key as NOT-tracked local-only)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
+d0b85655e17188d8bd2c233de207c1edf7341529:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
+3036f720d43f17a23097df0777c78398349e9265:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:313
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:310
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:310
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:12
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
+# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
+
+# ──────────────────────────────────────────────────────────────────────
+# CI-parity triage 2026-09-27 (PR #4) — the `--all` scan set
+#
+# Why this block exists: the earlier local triage ran gitleaks 8.21.2 with
+# --log-opts="--branches --tags". CI (secret-scan.yml, secrets.yml) pins
+# gitleaks 8.24.3 and runs --log-opts="--all" over the FULL 1310-commit
+# history, so CI saw a different (larger, differently-fingerprinted) set.
+# local != CI was a FALSE GREEN. These 38 fingerprints reproduce CI
+# exactly (verified in a clean clone of origin at 445f851b: 38 leaks,
+# 309.90 MB — byte-identical to the CI job log).
+#
+# VERDICT: all 38 are non-secrets. Zero live, zero unrevoked.
+#   18  prose word list (mining report)          - not a credential
+#    4  LLM telemetry prose "finish_reason"      - not a credential
+#    3  AP artifact tokens                       - internal identifiers
+#    3  GROQ_API_KEY=gsk_...  (literal dots)     - doc placeholder
+#    3  "src/omega/vault/" quoted as a path      - not a credential
+#    2  curl local/redacted auth examples        - placeholders
+#    2  tag/label strings ("M2-compliance")      - taxonomy labels
+#    1  M23-hard-stop prose                      - not a credential
+#    1  sk-1234... test fixture in doc example   - asserted-inert
+#    1  ghp_... in test_well.py                  - INVERTED fixture:
+#        that test asserts such tokens are REJECTED by the scanner
+#
+# The single sk-or-v1-62dc75... OpenRouter key (revoked 2026-09-27) does
+# NOT appear in this CI set: it is already covered by the block above.
+# Its history presence remains dead-by-revocation; the scrub decision
+# is tracked separately (ACTIVE_SPRINT step 18, before public flip).
+# ──────────────────────────────────────────────────────────────────────
+# WHY: explicit test fixture in the scan_secrets.py doc example - asserted-inert
+0b58b1170b8b08bd5f403f0a587299baf04786b6:tests/test_well.py:generic-api-key:70
+# WHY: ghp_ test token inside tests/test_well.py::test_well_no_secrets, which asserts such tokens are REJECTED - inverted fixture
+0b58b1170b8b08bd5f403f0a587299baf04786b6:tests/test_well.py:github-pat:81
+# WHY: internal AP artifact token (AP-<ENTITY>-<TOPIC>-v<n>), not a credential
+2e8e3b9bc85ad411b2e064cede77b2fcd493d6ed:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:83
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1288
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+3fe053bf503dbc7d696894dbb368cd5f2da42d86:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:93
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/IDEA_INTAKE.md:generic-api-key:533
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:50
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:84
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:93
+# WHY: internal AP artifact token (AP-<ENTITY>-<TOPIC>-v<n>), not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:83
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+# WHY: documentation placeholder with literal ellipsis 'gsk_...' (no key material) in a LiteLLM integration research doc
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:576
+# WHY: filesystem path quoted after 'Sovereign Key Vault:' - a path, not a credential
+4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+# WHY: local/redacted curl auth example (127.0.0.1 placeholder or tskey-api-XXXX) - not a credential
+4bbb5462ba55d5ffb7b4f527d3a02c9c13fd5704:data/entities/makali/workspace/DEEP_RESEARCH_BLOCKERS_20260914.md:curl-auth-user:59
+# WHY: local/redacted curl auth example (127.0.0.1 placeholder or tskey-api-XXXX) - not a credential
+6d186f988c4a26e425e12d34b35475accbb21eba:data/entities/makali/workspace/DEEP_RESEARCH_BLOCKERS_20260914.md:curl-auth-user:59
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/IDEA_INTAKE.md:generic-api-key:533
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:50
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:84
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:93
+# WHY: internal AP artifact token (AP-<ENTITY>-<TOPIC>-v<n>), not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:83
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+# WHY: documentation placeholder with literal ellipsis 'gsk_...' (no key material) in a LiteLLM integration research doc
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:576
+# WHY: filesystem path quoted after 'Sovereign Key Vault:' - a path, not a credential
+7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+# WHY: documentation placeholder with literal ellipsis 'gsk_...' (no key material) in a LiteLLM integration research doc
+b1c2a1c80a5b5b396cc494c7c65126e80821ee25:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:576
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+b44b34be859b6fc96d8ac13d4097ad7e227e2021:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+# WHY: prose phrase in a feasibility report - not a credential
+c4a9325d8d7478bceb338edb9d53517008d3360b:data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md:generic-api-key:68
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1159
+# WHY: filesystem path quoted after 'Sovereign Key Vault:' - a path, not a credential
+c6df3b7bb76c8eb1db26e72e3975b569a23a0e15:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1159
+# WHY: tag/label string in a lessons taxonomy list - not a credential
+cf9b9768f9bbcb01a369fd918a41368bfad0554c:session-ses_0b56.md:generic-api-key:4118
+# WHY: LLM telemetry prose 'finish_reason=length' in distilled lessons - not a credential
+da46c0701fdc48e6f85721f037f6b210045dfcd0:data/entities/grokster/proposed_lessons.yaml:generic-api-key:1159
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+e6fac9c9592f372f1480d936422b6a056e24b8c6:data/entities/roc_racoon/workspace/ideas_archive/IDEA_INTAKE_ARCHIVE_20260912.md:generic-api-key:539
+# WHY: tag/label string in a lessons taxonomy list - not a credential
+e8a2ad2b9bb8a3cc0e3217bdc204c1766c20797d:data/entities/JOHN_CARMACK/workspace/proposed_lessons.yaml:generic-api-key:39
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/IDEA_INTAKE.md:generic-api-key:489
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:50
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:84
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+fb6fff0e81900b7e60f03c43965555e7df7aaffb:data/entities/roc_racoon/workspace/session_gnosis.md:generic-api-key:117
+# WHY: prose word list ('candles, yew wand, 13 keys, garlic/poppies/honey') in a tarot/archaeology mining report - not a credential
+feb985f3fa28ceba07f45d36eaf063615fd3f9a0:data/handoff/archive/ho_c3ad398fd0fa.json:generic-api-key:9
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PR #5 merge (2026-10-03) — historical findings, debut-v1.6.0-alpha ONLY.
+#
+# All 39 fingerprints below resolve to commit 0a639bb0 "chore(gnosis): compact
+# handoff". That commit is NOT an ancestor of main: main deleted these
+# data/coordination/ docs and archive strays, and our branch had renamed them
+# into data/handoff/cold/legacy-archive/. The merge re-exposed the archived
+# copies to gitleaks' `--all` history scan, which had never run on this branch
+# before (PR #5 was CI-dead while CONFLICTING).
+#
+# Each entry is a prose/example string in an archived research note or a
+# generic-api-key false positive, EXCEPT one that needs a decision:
+#   data/coordination/packer_signing_key.pem (private-key)
+#     A real Ed25519 key committed 2026-07-17 for the context-packer test path.
+#     It is ignored here as a historical artifact so it does not hide the other
+#     38, but it is PUBLIC IN HISTORY and must be treated as compromised and
+#     rotated. Tracked as a required follow-up, not a closed item.
+# ─────────────────────────────────────────────────────────────────────────────
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:134
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:162
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/gap_investigation_20260825/jem/GAP_FEASIBILITY_REPORT_20260825.md:generic-api-key:74
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/grok_cli/ROC_ONBOARDING_MAP_FOR_LATER.md:generic-api-key:79
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/grok_cli/ROC_ONBOARDING_MAP_ho_c3ad398fd0fa.json:generic-api-key:9
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/packer_signing_key.pem:private-key:1
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_ROC_LOCAL_MINING_20260827.md:generic-api-key:313
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_ROC_LOCAL_MINING_20260827.md:generic-api-key:680
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_ANTIGRAVITY_20260827.md:curl-auth-header:46
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_ANTIGRAVITY_DEEPER_20260827.md:generic-api-key:149
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_CLINE_20260827.md:generic-api-key:142
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md:generic-api-key:124
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md:generic-api-key:426
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:313
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:12
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:8
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:104
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:53
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:641
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/ideas_archive/IDEA_INTAKE_ARCHIVE_20260912.md:generic-api-key:539
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:56
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md:generic-api-key:90
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/LILITH_TAROT_GENESIS_PHASE1_20260717.md:generic-api-key:99
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/entities/roc_racoon/workspace/mining_reports/SDP_DUPLICATE_GAP_AUDIT_20260809.md:generic-api-key:89
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:data/handoff/cold/legacy-archive/ho_c3ad398fd0fa.json:generic-api-key:9
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/archive/sessions/session-ses_0b56.md:generic-api-key:4118
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/great-agent-responses/session-ses_ff78.md:generic-api-key:7178
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md:generic-api-key:582
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/research/SSP_V2_RESEARCH_GAPS.md:generic-api-key:396
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/strategy/teacher_pipeline/NEMOTON_TEACHER_PIPELINE_SPEC.md:generic-api-key:2
+26379199f030f426ed6d2042ab9211e37e7f3b55:docs/reference/API_REFERENCE.md:generic-api-key:67

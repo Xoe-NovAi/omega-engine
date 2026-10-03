@@ -33,7 +33,7 @@ make setup
 ollama pull qwen3:1.7b     # ~1.1 GB, best quality/speed balance
 
 # 4. Verify installation
-make test                   # Should show 1315/1315 passing
+make test                   # Should show Tests currently broken — fix queued
 ```
 
 ## First Interaction
@@ -57,7 +57,7 @@ make repl
 | Component | Description |
 |-----------|-------------|
 | **Oracle** | Intent detection, entity routing, speculative decoding |
-| **9 Providers** | native-gguf → lmster → Ollama → Antigravity → Google → OpenRouter → OpenCode → Cline → Mock |
+| **12 providers (10 enabled)** | native-gguf → Ollama → antigravity → google → google-compat → openrouter → opencode-zen → cline → anthropic → xai (lmster + mock disabled) |
 | **13 Presences** | Kali (oversight), Ma'at/Lilith (oversouls), 6 specialists, Verity, Iris, Sophia |
 | **23 Mandates** | Constitutional law governing all agent behavior |
 | **1315 Tests** | Comprehensive test suite via `make test` |

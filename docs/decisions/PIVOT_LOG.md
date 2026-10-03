@@ -34,6 +34,8 @@ index table row when status changes.
 | **D-587** | NODE_ONBOARDING_PROTOCOL v1.0.0 ratified (N7-authored) | ✅ RATIFIED |
 | **D-588** | ICS upgrade: PP-4 node segment + P5 session_id + B1/B2/B3 fixes | ✅ IMPLEMENTED |
 | **D-589** | ICS-T final purge — deprecated system removed permanently | ✅ EXECUTED |
+| **D-607** | Packer Ed25519 signing key exposed on PUBLIC remote; key rotated to `~/.config/omega/keys/`, 9 pack attestations VOID, history scrub planned-not-executed (needs operator auth) | ⚠️ PARTIAL — OPERATOR AUTH REQUIRED |
+| **D-608** | 9 pack manifests re-signed with new key (7fb342ab…); old attestations voided; pack_index.json updated | ✅ EXECUTED |
 
 ---
 
@@ -468,3 +470,273 @@ theory per FP-04/T0 hierarchy.
 
 ## D-600 — First Light Express Council 1 Decree (2026-08-25)
 Council 1 (TEAM-INFRASTRUCTURE AUDIT) fused decree at `data/council/20260825-094633-first-light/phase5_fusion/SOVEREIGN_DECREE.md`. Root cause named: claims-that-outlive-their-mechanisms; one fix class = derivation checks. 12 articles, 30 bash gates, audited-clean register, Council-2 validator-first inheritance guards. M11 Arm-Relay Clause ratified as standing law (depth deferred, GAP-11). M11 entity-YAML repair executed in Stage-6 window (G8 green). Remediation backlog = decree Art. X priority order (P0 truth-bearing infrastructure → P2 hygiene). Runtime baseline honest: suite NOT green at audit time (3F + M8 gate false-positive).
+
+## D-605 (2026-09-20) — FIRST-BREATH SYSTEM DISABLED, SCHEDULED POST-PR#3 (Architect)
+
+The first-breath recording system is **DISABLED** and scheduled for a post-PR#3 update.
+Root cause (verified on `70291e94` by Cline, 2026-09-20): `record_first_breath()` is
+**defined** at `src/omega/astrology.py:153` but is **never called** from the summon path
+anywhere in `src/` — the hook is unwired dead code. `tests/test_first_breath.py::
+test_first_breath_recording` nevertheless passed **locally** only because the untracked
+`data/memory/entity_births.db` holds a stale row for `testentity` dated 2026-06-13; in CI
+(no `data/` checkout) the DB is empty and `assert record is not None` fails. A second defect
+compounds it: the fixture patches `omega.astrology.BIRTH_DB_PATH` while importing from
+`src.omega.astrology` — the same file under two module identities — so the `tmp_path`
+isolation never took effect.
+
+**Action taken**: `tests/test_first_breath.py` carries a module-level `pytest.mark.skip`
+naming this decision; `record_first_breath()` carries a DISABLED notice. **Nothing deleted.**
+**Scheduled**: re-implement + wire during the post-PR#3 first-breath item.
+**Related**: this is blocker B3 in `data/coordination/CLINE_TO_MAKALI_DEBUT_SWEEP_BRIEFING_20260920.md` §1.2.
+
+## D-606 (2026-09-22) — GEMINI-NOTEBOOK WORKSTREAM CANCELLED; SOVEREIGN ALTERNATIVE IN-ENGINE (User)
+
+**Decision**: The GN (GEMINI-NOTEBOOK) workstream is **CANCELLED**. No payment for
+NotebookLM/Gemini Notebook; no enhancement of systems around it. The sovereign
+alternative will be developed **inside the Omega Engine** instead.
+
+**Scope removed**:
+- GN-1 (notebooklm-py[mcp] deployment) — CANCELLED
+- GN-2 (strategic notebooks Ω-ACTIVE-RESEARCH + Ω-KNOWLEDGE-BASE) — CANCELLED
+- GN-3 (free-tier fetch pipeline + systemd timer) — CANCELLED
+- GN-4 (single-account Deep Research smoke test) — CANCELLED
+- GN-5 (SDP distillation pipeline + Scribe handoff) — CANCELLED
+- R38 (NotebookLM integration) — CANCELLED
+- D-578 (GEMINI-NOTEBOOK workstream) — SUPERSEDED
+
+**Replacement**: The knowledge-distillation + research-loop capabilities GN would
+have provided become an **in-engine sovereign workstream** (grounded RAG over the
+Omega library, SDP distillation, gap detection — all local-first per M7).
+
+**Post-debut execution order (updated)**: ~~GN~~ → **DS → LI → KD → HR → ZS**
+(per D-584, GN removed).
+
+**Research note**: The 2026-09-22 web-research campaign confirmed GN-3's free-tier
+Deep Research = 10/month (not 30) — the cancellation removes the only paid-adjacent
+dependency in the post-debut order. All remaining workstreams are fully sovereign.
+
+**Related**: GAP_REGISTRY.json (GN-1..GN-5, R38 → status "cancelled"),
+POST_DEBUT_ROADMAP.md (GN row removed), session_gnosis.md §22.
+
+---
+
+## D-607 (2026-10-03) — PACKER SIGNING KEY EXPOSED ON PUBLIC REMOTE; ROTATED, HISTORY SCRUB **PLANNED NOT EXECUTED** (doom_guy, S1)
+
+**Trigger**: AGY frontier review `ho_cbb9092c45b8` returned CONDITIONAL NO-GO with a
+HARD PRODUCTION BLOCKER: an unencrypted Ed25519 PKCS#8 private key tracked in git.
+
+### Two premises in the referral brief were WRONG — corrected here (M29)
+
+| Brief claimed | Verified reality |
+|---|---|
+| "Repo is NOT yet public (debut pending)" | `gh repo view` → `visibility: PUBLIC`, `isPrivate: false`, pushed 2026-10-03 |
+| "commit 8a452dd9, July 17 2026" | `8a452dd9` **does not exist** (`git rev-parse --disambiguate` → empty). Real commit: **`0a639bb0`, 2026-09-30**. "Jul 17 21:41" was the file's filesystem mtime, not the commit date |
+
+**Consequence**: exposure is **already external**, not a pre-publication risk. Per
+`git-secret-scrub` Decision Gate — *"Key already exposed externally → ROTATE.
+ALWAYS. Scrub is cosmetic."* — rotation became the mandatory action.
+
+### Blast radius: the attestation guarantee is VOID, not just a leaked file
+
+The exposed key's public fingerprint is
+`aa46f56823fc9584a33ea708907c62069063c56aa5ff2772ec18134d0a747fa0`.
+It **cryptographically verifies 9 published pack manifests**:
+
+- `context_packs/engineering-p3/00_PROJECT_MANIFEST.md`
+- `context_packs/hybrid-benchmark-strategy/00_PROJECT_MANIFEST.md`
+- `context_packs/provider-fabric-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-buildwave-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-post-breakthrough/00_PROJECT_MANIFEST.md`
+- `context_packs/sovereign-audit/00_PROJECT_MANIFEST.md` (+ `/generated/`)
+- `context_packs/tech-architecture-research/00_PROJECT_MANIFEST.md` (+ `/generated/`)
+
+Anyone can `git clone` the public repo, extract the key, and forge a manifest for any
+pack. Every "Signed / Ed25519" claim on those 9 packs is worthless. **The signing
+mechanism currently provides zero integrity assurance and must not be cited as a
+trust anchor in debut material until re-established.**
+
+### EXECUTED (non-destructive, reversible)
+
+1. `git rm --cached data/coordination/packer_signing_key.pem` + removed from disk.
+   Note: `.gitignore` **already** covered it (`*.pem` L65, `data/coordination/*` L116)
+   — it was **force-added** (`git add -f`), an ignore bypass, not an oversight.
+2. **Rotation.** Fresh Ed25519 keypair generated **outside the repo** at
+   `~/.config/omega/keys/packer_signing_key.pem` (**0600**, dir 0700) +
+   `packer_signing_key.pub.pem`. New public fingerprint:
+   `7fb342abb48d3e76ba6f684e406f4493b141786607a655af12a18c8dcd9bc8ce`.
+   Private key NOT committed. Old key is not preserved: it is already public, so
+   retention has zero security value — the fingerprint above is the audit record.
+3. **Code decoupling.** `.opencode/skills/context-packer/packer.py` no longer
+   hardcodes an in-repo key path:
+   - L86–87 `PACKER_KEY_ENV_VAR = "OMEGA_PACKER_SIGNING_KEY_PATH"`,
+     `PACKER_KEY_DEFAULT = "~/.config/omega/keys/packer_signing_key.pem"`
+   - L103 `resolve_signing_key_path()` — env wins, else default; **raises** if the
+     resolved path is inside the repo working tree
+   - L122 `_assert_key_permissions()` — refuses a key with mode wider than 0600
+   - L934–960 `_sign_manifest()` uses the resolver; auto-generated keys are created
+     via `os.open(..., 0o600)` so the secret is never briefly world-readable
+
+### NOT EXECUTED — history scrub requires explicit operator auth (M28)
+
+`git filter-repo` rewrites every commit and **cannot be undone**. M28 requires
+manifest + operator auth for destruction. **No such auth was given, and the brief
+explicitly said not to push.** So the scrub is documented here, not performed.
+
+**Scrub plan (requires operator authorization to execute):**
+
+- **Refs still carrying blob `99da51ad…`** (verified, not assumed):
+  `refs/heads/debut-v1.6.0-alpha`, `refs/remotes/origin/debut-v1.6.0-alpha`,
+  `refs/tags/backup/pre-pr5-merge`, and 8 × `refs/cline/checkpoints/1790984268151_n4m8a/{1..8}`
+- **Step 1** — pre-scrub manifest: `git rev-list --all --objects > /tmp/pre-scrub-manifest.txt`;
+  archive `data/coordination/packer_signing_key.pem` blob sha
+- **Step 2** — `git filter-repo --path data/coordination/packer_signing_key.pem --invert-paths --force`
+- **Step 3** — delete the 8 checkpoint refs (`git update-ref -d …`) **and** the
+  `backup/pre-pr5-merge` tag; both survive filter-repo and keep the blob reachable
+  (skill pitfall #4)
+- **Step 4** — `git gc --prune=now` **twice**
+- **Step 5** — force-push all branches + tags (`--force`, incl. the tag)
+- **Step 6** — verify: `scripts/git-secret-scan.sh` + `git rev-list --all --objects | grep 99da51ad` → empty
+- **Step 7** — every downstream clone must be re-cloned; existing forks retain the blob permanently
+
+**Honest caveat**: because the repo is already PUBLIC, scrub + force-push does not
+un-publish. It removes the key from *reachable* history, which stops it being used
+as a live forgery oracle, and it stops the file re-entering a future public clone.
+It does **not** revoke anything. **Rotation (done) is the only real fix.**
+
+### Known gap found (unrelated to the key, filed not fixed)
+
+`scripts/git-secret-scan.sh` patterns cover `sk-`, `csk-`, `AIza`, `xai-`, `ghp_` —
+**no PEM/SSH/pkcs8 pattern**. It returned zero findings while a live private key sat
+in history. Recommend adding `BEGIN (RSA |EC |OPENSSH |)PRIVATE KEY` to the pattern set.
+Also: `git-secret-scrub/SKILL.md` documents its scan script at
+`.opencode/skills/git-secret-scrub/scripts/`; the real path is `scripts/git-secret-scan.sh`.
+
+**Related**: AGY review `ho_cbb9092c45b8`; `.opencode/skills/git-secret-scrub/SKILL.md`;
+`data/coordination/KALI_CLINE_SYNC_REPORT_20260817.md` (prior P0-1 scrub precedent).
+
+---
+
+## D-608 (2026-10-03) — 9 PACK ATTESTATIONS VOIDED + REGENERATED UNDER ROTATED KEY (doom_guy, S1)
+
+**Authority**: Architect Ruling 3 (via Oversoul, 2026-10-03). Follows D-607 rotation.
+**Reason**: Ed25519 signing key `aa46f56823fc9584a33ea708907c62069063c56aa5ff2772ec18134d0a747fa0`
+was committed in `0a639bb0` (2026-09-30) and published to the PUBLIC remote. Exposure
+window: 2026-09-30 → rotation 2026-10-03. Every manifest signature verifiable under the
+old key is forgeable by anyone holding the public clone.
+
+### VOIDED — the 9 old attestations (must NOT be cited as trust anchors)
+
+- `context_packs/engineering-p3/00_PROJECT_MANIFEST.md`
+- `context_packs/hybrid-benchmark-strategy/00_PROJECT_MANIFEST.md`
+- `context_packs/provider-fabric-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-buildwave-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-post-breakthrough/00_PROJECT_MANIFEST.md`
+- `context_packs/sovereign-audit/00_PROJECT_MANIFEST.md`
+- `context_packs/tech-architecture-research/00_PROJECT_MANIFEST.md`
+- `context_packs/sovereign-audit/generated/00_PROJECT_MANIFEST.md`
+- `context_packs/tech-architecture-research/generated/00_PROJECT_MANIFEST.md`
+
+Any copy of these files bearing only the `aa46f568…` attestation is VOID. **Old
+attestations must not be cited as trust anchors in debut material, exchange payloads,
+or reviews.** Each regenerated manifest carries an inline `Regenerated 2026-10-03 —
+old attestation VOID` note naming the exposed fingerprint and `0a639bb0`.
+
+### REGENERATED — 9/9 verify under the new key (2026-10-03)
+
+New public fingerprint:
+`7fb342abb48d3e76ba6f684e406f4493b141786607a655af12a18c8dcd9bc8ce`
+(private key at `~/.config/omega/keys/packer_signing_key.pem`, 0600, outside the repo).
+Verified 2026-10-03: all 9 manifests' Ed25519 signatures verify over their
+pre-signature content against the embedded pubkey; embedded fp = `7fb342ab…` in 9/9;
+fp `aa46f568…` appears in 0/9 as a verifying key (only inside the VOID note text).
+The 6 existing `pack_index.json` files (`engineering-p3`, `hybrid-benchmark-strategy`,
+`sonnet5-buildwave-review`, `sonnet5-post-breakthrough`, `sovereign-audit`,
+`tech-architecture-research`) carry `signature: ed25519:<hex>` + `public_key` under the
+new key as well (fp `7fb342ab…` in 6/6). `provider-fabric-review` has no
+`pack_index.json` — pre-existing packer behavior, not a regeneration failure.
+
+### Honest mechanics note (M28 — what this commit does and does NOT contain)
+
+`context_packs/` is gitignored (`.gitignore` L110) and was **never tracked**
+(`git ls-tree -r 0a639bb0 -- context_packs/` = 0 files; `git ls-files` = 0 files).
+The re-signed manifests therefore live in the worktree and are NOT part of any commit
+— deliberately: force-adding them (`git add -f`) would repeat the exact ignore-bypass
+that published the key. This commit contains only the trust re-establishment that git
+can carry:
+
+1. `.opencode/skills/context-packer/packer.py` — key resolution remediation
+   (`OMEGA_PACKER_SIGNING_KEY_PATH`, in-repo refusal, 0600 enforcement).
+2. Index removal of `data/coordination/packer_signing_key.pem` (blob `99da51ad…`) —
+   D-607 step 1 declared EXECUTED but the `git rm --cached` staging had not persisted
+   (blob still in index); staged here so this commit's tree no longer ships the key.
+3. This D-608 entry (the audit record for the state transition).
+
+History scrub remains PLANNED-NOT-EXECUTED per D-607 (needs operator auth + force-push;
+repo is PUBLIC so scrub is containment, rotation remains the real fix).
+
+**Status**: ✅ EXECUTED (attestations voided + regenerated + verified; remediation committed; NOT pushed).
+
+*⬡ OMEGA ⬡ DOOM_GUY ⬡ ruling-3 ⬡ 2026-10-03*
+
+---
+
+## D-607-EXECUTED (2026-10-03) — HISTORY SCRUB EXECUTED + FORCE-PUSHED (doom_guy, S1)
+
+**Authority**: Operator authorization granted by the Architect (2026-10-03, verbatim:
+"Authorized. Proceed."). M28 manifest = D-607 plan above (lines ~585-604). This entry
++ that manifest + the pre-scrub bundle = the M28 audit trail.
+
+**Target**: `data/coordination/packer_signing_key.pem`, blob
+`99da51ade9a04fd23f487631693d2e689b468324` (exposed Ed25519 key, commit `0a639bb0`
+2026-09-30). Private key material is NEVER reproduced here.
+
+### Execution record
+
+1. **Pre-scrub safety** — `git rev-list --all --objects > /tmp/pre-scrub-manifest.txt`
+   (45063 lines, blob `99da51ad…` present). LOCAL-ONLY backup bundle OUTSIDE the repo:
+   `/home/arcana-novai/.local/share/omega/backups/pre-d607-scrub-20261003.bundle`
+   (81M, 90 refs, `git bundle verify` OK). Bundle NEVER pushed.
+2. **filter-repo** — `git filter-repo --path data/coordination/packer_signing_key.pem
+   --invert-paths --force`. Stale `.git/filter-repo/already_ran` (2026-09-16 P0-1 run)
+   removed first; fresh run parsed 1646 commits, HEAD rewritten to `5280dfd2`
+   (rewritten equivalent of `0af9b29e`). NOTE: filter-repo removed the `origin` remote
+   (documented behavior); re-added `https://github.com/Xoe-NovAi/omega-engine.git` after.
+   Stash rewritten by filter-repo.
+3. **Refs/tags deleted** (all survived filter-repo with rewritten SHAs, per skill pitfall #4):
+   8 × `refs/cline/checkpoints/1790984268151_n4m8a/{1..8}` via `git update-ref -d`
+   (exit 0 each); tag `backup/pre-pr5-merge` via `git tag -d` (was `df4069dd`).
+4. **GC** — `git gc --prune=now` TWICE (both OK). Pack: 44927 objects, 83822 KB, 0 garbage.
+5. **Force-push** —
+   - `git push --force --all` exit 0:
+     `377bbfce...5280dfd2 debut-v1.6.0-alpha -> debut-v1.6.0-alpha (forced update)`;
+     `268528e7...cbbc3539 main -> main (forced update)` (+ remote-only branches
+     `node1/all-5-mcp-green`, `release/debut-v1.6.0`, `agent/doom-infra`,
+     `agent/grok-pack`, `agent/maat-ci` reported by push; these were NOT in the
+     D-607 blob-carrier manifest and were not rewritten locally).
+   - `git push --force --tags` exit 0 (Everything up-to-date, 0 local tags).
+   - Explicit `git push origin --delete tag backup/pre-pr5-merge` → `- [deleted]
+     backup/pre-pr5-merge` (tag HAD existed remotely despite earlier `ls-remote --tags`
+     showing 0; now `git ls-remote origin --tags` = empty).
+   - Post-push `git ls-remote origin`: `refs/heads/debut-v1.6.0-alpha = 5280dfd2`,
+     `refs/heads/main = cbbc3539`, 0 tags. `refs/pull/*/head|merge` are GitHub-managed
+     and not force-pushable via `--all` (residual GitHub-internal reachability noted;
+     rotation remains the real fix per D-607 honest caveat).
+6. **Verify (all PASS)** —
+   - `git rev-list --all --objects | grep 99da51ad` → empty (prefix + full
+     `99da51ade9a04fd23f487631693d2e689b468324` both checked, pre-GC and post-GC).
+   - `git ls-files --stage data/coordination/packer_signing_key.pem` → empty.
+   - `git log --oneline -5` → `5280dfd2` (ex-`0af9b29e` D-608),
+     `05a617e8` (ex-`fa4c5383` Voice rename), `a2159dd7` (ex-`a6f06107` version
+     unification) on top — the 3 ahead-of-origin commits survived as rewritten
+     equivalents, no key material.
+   - `scripts/git-secret-scan.sh` exit 0 (32 pattern hits, all classified per skill
+     §3 as PROSE/PLACEHOLDER/DOCUMENTATION — e.g. SKILL.md, secret-scan.yml,
+     ACTIVE_SPRINT.json; ZERO hits for `packer_signing_key.pem`).
+7. **Downstream**: every downstream clone must be re-cloned; existing forks retain the
+   blob permanently. Rotation (done, D-608, fp `7fb342ab…`) remains the only real fix;
+   this scrub removes the key from *reachable* history only.
+
+**Status**: ✅ EXECUTED 2026-10-03 (scrubbed + force-pushed + verified; this PIVOT_LOG
+entry committed as a fresh commit on the rewritten history; bundle retained locally only).
+
+*⬡ OMEGA ⬡ DOOM_GUY ⬡ D-607-EXECUTED ⬡ 2026-10-03*

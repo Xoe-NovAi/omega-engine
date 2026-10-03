@@ -120,8 +120,8 @@ class KeyManager:
         try:
             import keyring  # type: ignore[import-untyped]
             keyring.delete_password(self._service, KEYRING_USER)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Error deleting keyring password: %s", e)
         if self._key_file.exists():
             self._key_file.unlink()
         logger.warning("Key cleared from all sources (operator action)")

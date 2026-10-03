@@ -18,7 +18,10 @@ This session completed **Phases 0, 1, and 2** of the Public Debut Readiness Reme
 ### Incident
 - 12+ real API keys pushed to `origin/main` (commits `df174496`, `13351f9d`)
 - Files: `docs/archive/stale/migrate_keys_full.py` (16× `sk-`), `docs/guides/PROVIDER_FREE_TIER_GUIDE.md` (6× `sk-`/`csk-`)
-- Additional: `tests/test_failure_registry.py` (test key `sk-1234567890abcdef1234567890abcdef`)
+- Additional: `tests/test_failure_registry.py` (a 32-hex `sk-` test key; the literal is
+  redacted here because this file is tracked and scanned by `ci_secret_scan.py`,
+  which correctly flags any `sk-`-shaped string — the original value was a
+  placeholder in a fixture, never a credential)
 
 ### Resolution (Private Repo — No Rotation Needed)
 ```bash

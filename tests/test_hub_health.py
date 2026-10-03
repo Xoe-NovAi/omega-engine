@@ -95,7 +95,7 @@ class TestToolRegistration:
         assert "tool_manager_count" in data
 
     def test_tool_count_above_minimum(self, hub_client):
-        """At least 50 tools must be registered (we have 70+)."""
+        """The Hub must retain a healthy minimum tool surface."""
         resp = hub_client.get("/debug/tools")
         data = resp.json()
         count = data["tool_manager_count"]
@@ -134,49 +134,183 @@ class TestToolRegistration:
 
 
 class TestCriticalTools:
-    """Verify that critical tools are registered and accessible."""
+    """Verify that critical tools are registered and accessible.
 
-    EXPECTED_TOOLS = [
-        "oracle_talk",
-        "oracle_summon",
-        "oracle_list_entities",
-        "library_fts_search",
-        "library_search",
-        "library_web_search",
-        "library_get_document",
-        "memory_search",
-        "omega_memory_search",
-        "sovereign_search",
+    [seam-fix 2026-09-28 carmack] This class previously asserted against
+    `/debug/tools` → `sample_tools`, which the endpoint documents as a SAMPLE:
+    the live response is
+
+        {"tool_manager_count": 54, ..., "sample_tools": [ ...10 names... ]}
+
+    Ten of fifty-four. Every assertion therefore SKIPPED, permanently —
+    `OK (skipped=20)` — so this test could not fail, and in particular could
+    not have caught the Hivemind consolidation that removed
+    `hivemind_post_context`, `hivemind_get_awareness` and
+    `hivemind_heartbeat` from the registered surface.
+
+    It also asserted three names that were never in the surface
+    (`library_search`, `memory_search`, and — via the pass — the three retired
+    Hivemind names), and `library_search` is not even accepted by the hub's
+    own tool-surface curation at boot.
+
+    The fix: assert against the COMPLETE registered surface, obtained from
+    the FastMCP registry in-process (`mcp.list_tools()`), which is the same
+    list the MCP `tools/list` response serves. A truncated source is treated
+    as a hard failure, never as a skip.
+    """
+
+    # The Hivemind surface after the NES→EIS consolidation (2026-09-28):
+    # 15 tools collapsed to these 4. Naming the *current* set means a future
+    # consolidation that drops one of these fails loudly.
+    EXPECTED_HIVEMIND_TOOLS = [
+        "hivemind_awareness",
+        "hivemind_get_metrics",
+        "hivemind_handoff",
+        "hivemind_lock",
+    ]
+
+    # Retired by the consolidation. Kept as an explicit ABSENCE assertion:
+    # a name that was folded into another tool must not reappear, and its
+    # return to the surface would mean the shim and the real tool diverged.
+    RETIRED_HIVEMIND_TOOLS = [
         "hivemind_post_context",
         "hivemind_get_awareness",
         "hivemind_heartbeat",
-        # New consolidated tools
-        "hivemind_handoff",
+        "hivemind_workspace_lock_acquire",
+        "hivemind_workspace_lock_release",
+        "hivemind_workspace_lock_check",
+        "hivemind_redis_publish",
+        "hivemind_redis_subscribe",
+    ]
+
+    # Non-Hivemind tools that must remain available.
+    EXPECTED_CORE_TOOLS = [
+        "oracle_talk",
+        "oracle_summon",
+        "oracle_list_entities",
+        "omega_memory_search",
+        "sovereign_search",
+        "library_fts_search",
+        "library_web_search",
+        "library_get_document",
         "library_inbox",
         "library_discovery",
         "oracle_debug",
         "system_stats",
         "github",
-        "library_web_search",
     ]
 
-    def _get_all_tool_names(self, hub_client) -> list:
-        """Get full tool list from debug endpoint."""
-        resp = hub_client.get("/debug/tools")
-        data = resp.json()
-        return data.get("sample_tools", [])
+    @pytest.fixture(scope="class")
+    def registered_tools(self) -> list:
+        """The COMPLETE registered MCP tool surface, enumerated in a SUBPROCESS.
 
-    @pytest.mark.parametrize("tool_name", EXPECTED_TOOLS)
-    def test_critical_tool_registered(self, hub_client, tool_name):
-        """Each critical tool must be in the registered tool list."""
-        names = self._get_all_tool_names(hub_client)
-        # Note: debug endpoint only shows first 10 tools
-        # For full check, we'd need SSE protocol — this is a smoke test
-        if tool_name not in names:
-            pytest.skip(
-                f"{tool_name} not in debug sample (first 10 only) — "
-                "use SSE ListToolsRequest for full check"
-            )
+        Read from the FastMCP registry rather than `/debug/tools`, which
+        returns a 10-name sample. Any failure to enumerate is a hard error:
+        a test that cannot see the surface must not pass by skipping.
+
+        [maat 2026-09-28] Enumeration moved into a fresh interpreter. This
+        used to import `mcp_servers.omega_hub.server` in-process, and that is
+        not reproducible inside a pytest session: `tests/test_hivemind.py`
+        installs a fake `mcp` package at COLLECTION time, and because
+        `server.py` <-> `hub_tools/tools.py` import each other, whichever module
+        is imported first wins the binding. Depending on that order the
+        deprecated `library_search` either gets curated out (54) or survives
+        (55) — and which one you got depended on file order in the run.
+
+        That is the whole story of the long-standing "54 vs 55" discrepancy:
+        the live hub was always correct at 54, and the 55 was this test's own
+        import-order artifact. A subprocess removes the ordering question
+        entirely instead of encoding today's order as an assumption.
+        """
+        import json as _json
+        import subprocess
+        import sys as _sys
+
+        code = (
+            "import anyio, json\n"
+            "from mcp_servers.omega_hub.server import mcp\n"
+            "async def _l():\n"
+            "    return sorted(t.name for t in await mcp.list_tools())\n"
+            # anyio.run() takes the async FUNCTION here, not a pre-made
+            # coroutine. Both were tried; passing _l() raises
+            # "TypeError: 'coroutine' object is not callable" in this env.
+            "print('SURFACE:' + json.dumps(anyio.run(_l)))\n"
+        )
+
+        proc = subprocess.run(
+            [_sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).resolve().parent.parent),
+            timeout=120,
+        )
+        line = next(
+            (ln for ln in proc.stdout.splitlines() if ln.startswith("SURFACE:")),
+            None,
+        )
+        assert line, (
+            "could not enumerate the tool surface in a clean interpreter — "
+            f"stdout={proc.stdout[-800:]!r} stderr={proc.stderr[-800:]!r}"
+        )
+        names = _json.loads(line.split("SURFACE:", 1)[1])
+
+        # M23: refuse to assert against a truncated surface. If the registry
+        # ever returns a partial list, every absence assertion below becomes
+        # vacuously true, which is exactly the bug being fixed.
+        assert len(names) >= 50, (
+            f"registered tool surface looks truncated: {len(names)} tools. "
+            "Assertions over this list would be vacuous — refusing to assert."
+        )
+        return names
+
+    def test_registered_surface_is_complete(self, registered_tools):
+        """The enumeration must be the real surface, not a sample."""
+        assert len(registered_tools) == len(set(registered_tools)), (
+            "duplicate tool names in the registry"
+        )
+        # Cross-check against the running hub's own count. A mismatch means
+        # the in-process registry and the served surface have diverged.
+        try:
+            import httpx2 as _httpx
+
+            with _httpx.Client(base_url=HUB_BASE, timeout=5.0) as c:
+                served = c.get("/debug/tools").json()["tool_manager_count"]
+        except Exception as e:  # hub not running — in-process check stands alone
+            pytest.skip(f"hub not reachable for count cross-check: {e}")
+
+        assert served == len(registered_tools), (
+            f"in-process registry has {len(registered_tools)} tools but the "
+            f"running hub reports {served} — assertions would be against a "
+            "surface that callers cannot reach"
+        )
+
+    @pytest.mark.parametrize("tool_name", EXPECTED_HIVEMIND_TOOLS + EXPECTED_CORE_TOOLS)
+    def test_critical_tool_registered(self, registered_tools, tool_name):
+        """Each critical tool must be in the COMPLETE registered surface.
+
+        No skip path. If the tool is absent the test FAILS — a missing tool
+        is a defect, not an environmental condition.
+        """
+        assert tool_name in registered_tools, (
+            f"{tool_name} is not in the registered MCP surface "
+            f"({len(registered_tools)} tools). Either it was removed without "
+            "updating this list, or the hub failed to register it."
+        )
+
+    @pytest.mark.parametrize("tool_name", RETIRED_HIVEMIND_TOOLS)
+    def test_retired_tool_absent(self, registered_tools, tool_name):
+        """Consolidated-away names must NOT be in the served surface.
+
+        This is the assertion that would have caught the consolidation at
+        the moment it happened, when `hivemind_post_context` stopped being
+        servable while callers still invoked it.
+        """
+        assert tool_name not in registered_tools, (
+            f"{tool_name} was retired by the Hivemind consolidation but is "
+            "back in the registered surface. Either the shim and the real "
+            "tool have diverged, or the tool was resurrected without "
+            "updating the callers."
+        )
 
 
 # ── SSE Connectivity Tests ──

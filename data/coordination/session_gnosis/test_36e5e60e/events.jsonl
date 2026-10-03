@@ -1,0 +1,3 @@
+{"event_seq": 1, "event_type": "gnosis_entry", "instance_id": "opencode/test_36e5e60e/019f8d0b-abac-7fba-92ac-f53464b83f72", "timestamp": "2026-07-23T03:36:20.143736+00:00", "payload": {"section": "L1_Narrative", "content": "Did something"}}
+{"event_seq": 2, "event_type": "gnosis_entry", "instance_id": "opencode/test_36e5e60e/019f8d0b-abac-7fba-92ac-f53464b83f72", "timestamp": "2026-07-23T03:36:20.146549+00:00", "payload": {"section": "L3_Principle", "content": "Universal truth"}}
+{"event_seq": 3, "event_type": "distillation", "instance_id": "opencode/test_36e5e60e/019f8d0b-abac-7fba-92ac-f53464b83f72", "timestamp": "2026-07-23T03:36:20.149023+00:00", "payload": {"l1": "L1", "l2": "L2", "l3": "L3", "proposed_lesson": "Lesson"}}

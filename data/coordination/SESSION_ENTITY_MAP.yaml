@@ -1,0 +1,16 @@
+# SESSION ENTITY MAP
+# Maps OpenCode session IDs to Omega entities for compaction capture routing
+# Updated by: orchestrator when entities are activated
+# Used by: scripts/compaction_capture.py
+
+session_mappings:
+  # Example mappings (populated at runtime by orchestrator dispatch)
+  # - opencode_session: "ses_fd81c19dcffe1nkbPqFg5kRt2v"
+  #   omega_entity: "researcher"
+  #   activated_at: "2026-08-30T05:00:00Z"
+  # - opencode_session: "ses_fb9721079ffe094GT8MX6a0pXI"
+  #   omega_entity: "lilith"
+  #   activated_at: "2026-08-30T05:00:00Z"
+
+# Default entity for unmapped sessions
+default_entity: "default"

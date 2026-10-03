@@ -126,7 +126,8 @@ def run_mcp(
             """Handle server/discover RPC method."""
             try:
                 body = await request.json()
-            except Exception:
+            except Exception as e:
+                logger.warning("Failed to parse discover request body: %s", e, exc_info=True)
                 return Response(status_code=400)
             result = await discover_handler.handle(body)
             return Response(content=json.dumps(result), media_type="application/json")

@@ -208,9 +208,14 @@ async def log_failure_to_hivemind(
 ) -> str:
     """Log failure to Hivemind for coordination and alerting."""
     try:
-        from omega_hub import hivemind_submit_handoff
+        # The Hub exposes the consolidated action-based handoff tool; the legacy
+        # `hivemind_submit_handoff` name resolves through the server's
+        # backward-compatibility adapter (the old `omega_hub` module no longer
+        # exists, so this import previously failed unconditionally).
+        from mcp_servers.omega_hub.server import hivemind_submit_handoff
+        import json as _json
 
-        packet_id = await hivemind_submit_handoff(
+        response = await hivemind_submit_handoff(
             target_channel=launching_channel,
             target_entity=launching_entity,
             source_channel="watchdog",
@@ -228,6 +233,11 @@ async def log_failure_to_hivemind(
             ),
             priority=2,  # Critical
         )
+        packet_id = _json.loads(response).get("packet_id")
+        if not packet_id:
+            raise RuntimeError(
+                f"Hivemind handoff returned no packet_id: {str(response)[:200]}"
+            )
         return packet_id
     except Exception as e:
         logger.error(f"Failed to log failure to Hivemind: {e}")
@@ -261,24 +271,65 @@ async def log_system_failure(failure: FailureReport) -> None:
 
 
 async def alert_launching_agent(failure: FailureReport, launching_entity: str = "kali") -> None:
-    """Alert launching agent via Hivemind heartbeat."""
-    try:
-        from omega_hub import hivemind_redis_publish
+    """Alert the launching agent via the Hivemind.
 
-        await hivemind_redis_publish(
+    [seam-fix 2026-09-28 carmack] This imported `hivemind_redis_publish` from a
+    top-level `omega_hub` module that does not exist
+    (`ModuleNotFoundError: No module named 'omega_hub'`), AND that function
+    was the dead Redis stub excised in the Hivemind consolidation. Two
+    compounding breaks; the `except Exception` swallowed both, so every
+    subagent failure alert since the consolidation was silently dropped.
+
+    There is no correct replacement for the *call shape* — Redis pub/sub is
+    gone and the surviving tool surface has no publish primitive. But the
+    INTENT (make the launching agent aware of a subagent failure) maps
+    exactly onto `hivemind_awareness(action="post")`, which is what the
+    original `hivemind_post_context` collapsed into. So this is a REPOINT,
+    not a deletion: the alert still gets delivered, with every field carried
+    over, and it now lands somewhere real instead of nowhere.
+
+    M23: the broad `except Exception` becomes a logged warning that names the
+    entity, so a future transport break is visible in the log rather than
+    invisible. The function still does not raise — a watchdog alert must not
+    take down the caller — but it now says so loudly.
+    """
+    try:
+        from mcp_servers.omega_hub.hub_tools import hivemind_awareness
+
+        await hivemind_awareness(
+            action="post",
             channel="watchdog_alerts",
-            message={
-                "type": "subagent_failure",
-                "subagent_id": failure.subagent_id,
-                "failure_class": failure.failure_class.value,
-                "launching_entity": launching_entity,
-                "retry_recommendation": failure.retry_recommendation,
-                "timestamp": failure.timestamp.isoformat(),
-            },
-            ttl=300,
+            entity=launching_entity,
+            task_current=(
+                f"SUBAGENT FAILURE: {failure.subagent_id} "
+                f"({failure.failure_class.value})"
+            ),
+            focus_chain=[
+                f"launching_entity={launching_entity}",
+                f"retry_recommendation={failure.retry_recommendation}",
+                f"timestamp={failure.timestamp.isoformat()}",
+            ],
+            decisions=[
+                f"failure_class={failure.failure_class.value}",
+                f"subagent_id={failure.subagent_id}",
+            ],
+            reason="Watchdog detected a subagent failure",
+            intent="alert",
+            ttl_seconds=300,
         )
     except Exception as e:
-        logger.warning(f"Failed to publish watchdog alert: {e}")
+        # M23: previously a silent `logger.warning` that fired on EVERY call,
+        # because the import could never succeed. The failure is real and the
+        # alert was NOT delivered — say that explicitly.
+        logger.warning(
+            "WATCHDOG ALERT NOT DELIVERED: failed to post subagent failure "
+            "%s (%s) for launching entity %r to the Hivemind. The alert was "
+            "lost, not buffered. Root cause: %s",
+            failure.subagent_id,
+            failure.failure_class.value,
+            launching_entity,
+            e,
+        )
 
 
 # --- Task Wrapper with Watchdog ---

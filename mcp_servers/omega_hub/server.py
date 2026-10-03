@@ -61,6 +61,7 @@ for p in [_project_root, _mcp_servers_root]:
 
 import anyio
 from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, TextContent
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -81,7 +82,6 @@ from mcp_servers.omega_hub.state import (
     research_engine, sovereign_search_service,
     _current_entity, HEARTBEAT_TTL, HALL_OF_RECORDS,
     _hot_store, _hot_store_lock, _awareness, _awareness_lock,
-    _extended_sessions, _extended_sessions_lock, EXTENDED_SESSIONS_FILE,
     EXTENDED_SAFETY_TTL_DEFAULT,
     _background_tasks, _get_intent_matcher,
     HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE,
@@ -119,7 +119,108 @@ logger = logging.getLogger("omega.hub")
 from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 
 
-mcp = FastMCP("Omega Core Hub", json_response=True)  # JSON-only responses for OpenCode/Cline compatibility
+# Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback + Tailscale mesh with all ports
+# FED-HANDOFF-ANTIGRAVITY-20260920: Machine renamed omega-hub → n0; n0 entries added to unblock
+# Node 1 MCP access (421 Misdirected Request). omega-hub entries retained for backward compat.
+_transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=[
+        "192.168.10.168", "192.168.10.168:*",
+        "127.0.0.1", "127.0.0.1:*",
+        "localhost", "localhost:*",
+        "[::1]", "[::1]:*",
+        # Tailscale L2 federation (C6 v1.1 / L2_ACCEPTANCE.md FED-L2-001)
+        "100.123.51.67", "100.123.51.67:*",
+        # n0 — current hostname (renamed from omega-hub 2026-09-19)
+        "n0", "n0:*",
+        "n0.tail51f14a.ts.net", "n0.tail51f14a.ts.net:*",
+        # omega-hub — legacy hostname (retained for backward compat with older clients)
+        "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",
+        "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
+    ],
+    allowed_origins=[
+        "http://192.168.10.168:*",
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "http://100.123.51.67:*",
+        # n0 origins
+        "http://n0:*",
+        "http://n0.tail51f14a.ts.net:*",
+        # omega-hub origins (legacy)
+        "http://omega-hub.tail51f14a.ts.net:*",
+        "http://*.tail51f14a.ts.net:*",
+    ],
+)
+
+# SSOT for the version surfaced by /health and MCP serverInfo
+# (pyproject.toml [project] version, resolved by omega.__version__).
+from omega import __version__ as _ENGINE_VERSION
+
+mcp = FastMCP(
+    "Omega Core Hub",
+    json_response=True,  # JSON-only responses for OpenCode/Cline compatibility
+    transport_security=_transport_security,
+)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# M23 — REFUSE INPUT THE TOOL CANNOT HONOUR  (2026-09-29, GE-N1 finding)
+# ═══════════════════════════════════════════════════════════════════════════
+# THE DEFECT CLASS: THE INTERFACE ACCEPTS INPUT IT DOES NOT HONOUR.
+#
+# GE-N1 called `hivemind_handoff(action="submit", artifact_ids=[...])` over the
+# wire, got `{"status": "submitted"}`, and the stored packet had no
+# `artifact_ids` field at all. `artifact_ids` is in no signature and no schema.
+# They were not misusing the tool — the server should have thrown. A rejection
+# is safe: it fails loudly. A silent accept converts an error into a false
+# belief that propagates to the next agent, the next node, the next week.
+#
+# ROOT CAUSE, and it is NOT in our code. FastMCP builds a pydantic `arg_model`
+# from each tool's signature and validates with it at
+#     mcp/server/fastmcp/utilities/func_metadata.py:107
+#         arguments_parsed_model = self.arg_model.model_validate(...)
+# Pydantic's default is `extra='ignore'`, so any key not in the signature is
+# DISCARDED during validation and never reaches the function. Calling the tool
+# directly raises TypeError; only the wire path loses it — which is why a
+# schema-only test passes while the defect ships. See
+# `tests/test_handoff_contract.py::test_artifact_ids_is_rejected_not_dropped`.
+#
+# The fix is to make the arg model STRICT for every registered tool, so an
+# unknown parameter becomes a ValidationError -> `m9_safe` -> `isError=True`.
+# Applied generally rather than to `artifact_ids` alone: the class is the
+# defect, and a one-off fix for one parameter leaves the next one open.
+def _enforce_strict_tool_arguments(_server) -> int:
+    tools = getattr(getattr(_server, "_tool_manager", None), "_tools", {}) or {}
+    hardened = 0
+    for _name, _tool in tools.items():
+        meta = getattr(_tool, "fn_metadata", None)
+        model = getattr(meta, "arg_model", None)
+        if model is None:
+            continue
+        try:
+            if model.model_config.get("extra") == "forbid":
+                continue
+            model.model_config["extra"] = "forbid"
+            model.model_rebuild(force=True)
+            hardened += 1
+        except Exception as exc:  # pragma: no cover — never block boot
+            logger.warning("strict-args hardening skipped for %s: %s", _name, exc)
+    return hardened
+
+
+# FastMCP (mcp 1.30.0) accepts no `version` kwarg; when the underlying
+# serverInfo version is unset the SDK reports its OWN library version, so
+# clients saw "1.30.0" (the mcp package) instead of the engine version.
+# Set it explicitly, guarded so an SDK change can never block boot.
+try:
+    mcp._mcp_server.version = _ENGINE_VERSION
+except (AttributeError, ValueError) as exc:  # pragma: no cover - defensive
+    import sys as _sys
+
+    print(
+        f"[TOOL-CHAIN-COLLAPSE] could not set MCP serverInfo version: {exc}",
+        file=_sys.stderr,
+    )
 
 # [P1a-2] State, service singletons, hivemind state, background tasks,
 # and helper functions are now in mcp_servers.omega_hub.state (extracted).
@@ -138,23 +239,153 @@ _sovereign_reader = SovereignReader(
 # They register with the mcp instance via side-effect import.
 from mcp_servers.omega_hub import hub_tools as tools  # noqa: F401
 
+# ── Tool Surface Curation (2026-09-22) ────────────────────────────────
+# Remove deprecated/confusing tools so the exposed surface stays
+# temple-grade. Removed tools are filtered from list_tools and cannot
+# be called (mcp SDK FastMCP.remove_tool).
+#
+# library_search: legacy hybrid-search name, superseded by
+#   library_fts_search (local FTS5) + library_web_search (web). Its name
+#   misleadingly suggested local search while hitting the web pipeline.
+try:
+    mcp.remove_tool("library_search")
+    logger.info("Tool surface curation: removed deprecated 'library_search'")
+except Exception as e:  # pragma: no cover — defensive, must never block boot
+    logger.warning("Tool surface curation failed (non-fatal): %s", e)
+
+
+# Legacy tool names retired during tool-surface curation (92 → 66 tools),
+# mapped to their unified replacements. Accessing any of these names returns a
+# thin adapter so existing callers keep working instead of raising
+# AttributeError. Each entry is (unified_tool_name, bound_kwargs).
+_LEGACY_TOOL_ADAPTERS = {
+    # Hivemind handoff: 7 fragmented tools → 1 action-based tool
+    "hivemind_submit_handoff": ("hivemind_handoff", {"action": "submit"}),
+    "hivemind_accept_handoff": ("hivemind_handoff", {"action": "accept"}),
+    "hivemind_complete_handoff": ("hivemind_handoff", {"action": "complete"}),
+    "hivemind_reject_handoff": ("hivemind_handoff", {"action": "reject"}),
+    "hivemind_handoff_list": ("hivemind_handoff", {"action": "list"}),
+    "hivemind_get_handoff": ("hivemind_handoff", {"action": "get"}),
+    "hivemind_handoff_archive": ("hivemind_handoff", {"action": "archive"}),
+    # [maat 2026-09-29] R1-R3 legacy names, so callers written against the
+    # three-queue era keep working across the four-directory refactor.
+    "hivemind_inbox": ("hivemind_handoff", {"action": "inbox"}),
+    "hivemind_receipts": ("hivemind_handoff", {"action": "receipts"}),
+    "hivemind_read_handoff": ("hivemind_handoff", {"action": "read"}),
+    "hivemind_federation_list": ("hivemind_handoff", {"action": "list"}),
+    # Oracle debug: 3 fragmented tools → 1 action-based tool
+    "oracle_list_slot_keepers": ("oracle_debug", {"action": "list_slot_keepers"}),
+    "oracle_assess_intent": ("oracle_debug", {"action": "assess_intent"}),
+    "oracle_discover_entity": ("oracle_debug", {"action": "discover_entity"}),
+    # Hivemind awareness: 9 fragmented tools → 1 action-based tool
+    # [seam-fix 2026-09-28 maat] These 9 names were previously listed in
+    # _PASSTHROUGH_TOOLS, which does `getattr(_tools, name)`. The consolidation
+    # deleted all 9 from tools.py, so EVERY one of them raised
+    #   AttributeError: module '...hub_tools.tools' has no attribute 'hivemind_post_context'
+    # on first use — a deferred failure that only fired when a caller actually
+    # invoked the name, which is why the hub booted clean and stayed broken.
+    # They are adapters now, bound to the correct hivemind_awareness action.
+    "hivemind_post_context": ("hivemind_awareness", {"action": "post"}),
+    "hivemind_heartbeat": ("hivemind_awareness", {"action": "heartbeat"}),
+    "hivemind_get_awareness": ("hivemind_awareness", {"action": "get"}),
+    "hivemind_get_continuation": ("hivemind_awareness", {"action": "continuation"}),
+    "hivemind_extended_checkin": ("hivemind_awareness", {"action": "extended_checkin"}),
+    "hivemind_extended_checkout": ("hivemind_awareness", {"action": "extended_checkout"}),
+    "hivemind_get_session": ("hivemind_awareness", {"action": "session"}),
+    "hivemind_list_sessions": ("hivemind_awareness", {"action": "list"}),
+    "hivemind_get_entity_context": ("hivemind_awareness", {"action": "entity_context"}),
+    # Hivemind lock: 3 fragmented tools → 1 action-based tool (same defect, same fix)
+    "hivemind_workspace_lock_acquire": ("hivemind_lock", {"action": "acquire"}),
+    "hivemind_workspace_lock_release": ("hivemind_lock", {"action": "release"}),
+    "hivemind_workspace_lock_check": ("hivemind_lock", {"action": "check"}),
+}
+
+# Legacy parameter names that differ from their unified replacement.
+# [seam-fix 2026-09-28 maat] The adapter forwards **kwargs straight through, so a
+# legacy name whose signature used a different parameter name raises TypeError on
+# call. This was the only such mismatch across all 12 awareness/lock tools,
+# established by comparing every pre-consolidation signature
+# (tools.py.fixbak) against the unified ones:
+#
+#   OLD  hivemind_get_entity_context(entity_name: str)      tools.py.fixbak:854
+#   NEW  hivemind_awareness(action, channel, entity, ...)   tools.py:2125
+#
+# The other 11 (post_context, heartbeat, get_awareness, get_continuation,
+# extended_checkin/out, get_session, list_sessions, lock_acquire/release/check)
+# share every parameter name and forward unchanged.
+#
+# Kept declarative and separate from _LEGACY_TOOL_ADAPTERS so the binding map
+# stays a flat (target, kwargs) table that existing adapter-contract tests read
+# without needing to know about renames.
+_LEGACY_KWARG_RENAMES = {
+    "hivemind_get_entity_context": {"entity_name": "entity"},
+}
+
+# Tools still resolvable by their original name — these MUST still exist as
+# module-level functions in hub_tools/tools.py, because __getattr__ forwards
+# them with a bare getattr(_tools, name) and no adapter.
+#
+# [seam-fix 2026-09-28 maat] The 9 Hivemind awareness names and 3 Hivemind lock
+# names were REMOVED from this set and given real adapter bindings above. They
+# were dead entries: naming a deleted symbol here produced a shim that resolved
+# the name and then failed with AttributeError on invocation. Every name in this
+# set is asserted to exist by tests/test_hub_import_smoke.py::test_passthrough_tools_exist,
+# so a future consolidation cannot silently reintroduce a dead passthrough.
+_PASSTHROUGH_TOOLS = frozenset({
+    "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
+    "oracle_entity_info", "sovereign_search",
+})
+
+
+def _raw_tool(tool: object) -> object:
+    """Return the underlying coroutine of a FastMCP-decorated tool.
+
+    @mcp.tool() wraps callables so direct invocation yields a CallToolResult
+    instead of the tool's JSON string. Adapters must call the raw function.
+    """
+    return getattr(tool, "__wrapped__", tool)
+
 
 def __getattr__(name: str):
     """Lazy-load tools to resolve circular imports while maintaining backward compatibility."""
-    if name in [
-        "oracle_talk", "oracle_summon", "oracle_summon_local", "oracle_list_entities",
-        "oracle_list_pillar_keepers", "oracle_entity_info", "oracle_assess_intent",
-        "oracle_discover_entity", "sovereign_search", "delegate_task",
-        "hivemind_post_context", "hivemind_heartbeat", "hivemind_get_awareness",
-        "hivemind_get_continuation", "hivemind_extended_checkin", "hivemind_extended_checkout",
-        "hivemind_get_session", "hivemind_list_sessions", "hivemind_get_entity_context",
-        "hivemind_workspace_lock_acquire", "hivemind_workspace_lock_release",
-        "hivemind_workspace_lock_check", "hivemind_submit_handoff", "hivemind_accept_handoff",
-        "hivemind_complete_handoff", "hivemind_reject_handoff", "hivemind_handoff_list",
-        "hivemind_get_handoff", "hivemind_handoff_archive"
-    ]:
-        import mcp_servers.omega_hub.hub_tools.tools as _tools
+    import mcp_servers.omega_hub.hub_tools.tools as _tools
+
+    if name in _PASSTHROUGH_TOOLS:
         return getattr(_tools, name)
+
+    if name in _LEGACY_TOOL_ADAPTERS:
+        target_name, bound_kwargs = _LEGACY_TOOL_ADAPTERS[name]
+        renames = _LEGACY_KWARG_RENAMES.get(name, {})
+        _raw = _raw_tool(getattr(_tools, target_name))
+
+        async def _legacy_adapter(**kwargs):
+            """Backward-compatible adapter → unified action-based tool."""
+            if renames:
+                for old_param, new_param in renames.items():
+                    if old_param in kwargs:
+                        kwargs[new_param] = kwargs.pop(old_param)
+            return await _raw(**{**bound_kwargs, **kwargs})
+
+        _legacy_adapter.__name__ = name
+        _legacy_adapter.__doc__ = (
+            f"Backward-compatible adapter for {target_name} "
+            f"(bound: {', '.join(f'{k}={v!r}' for k, v in bound_kwargs.items())})."
+        )
+        return _legacy_adapter
+
+    if name == "delegate_task":
+        # Retired in favour of oracle_summon; preserved because callers used it
+        # as a context-prefixed summon.
+        _raw_summon = _raw_tool(getattr(_tools, "oracle_summon"))
+
+        async def _delegate_task(target_entity: str, query: str, context: str = "") -> str:
+            full_query = f"CONTEXT: {context}\n\nREQUEST: {query}" if context else query
+            return await _raw_summon(entity_name=target_entity, query=full_query)
+
+        _delegate_task.__name__ = "delegate_task"
+        _delegate_task.__doc__ = "Backward-compatible adapter for oracle_summon."
+        return _delegate_task
+
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
@@ -164,7 +395,7 @@ async def _health(request: Request) -> JSONResponse:
     return JSONResponse({
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "version": "2.2.0"
+        "version": _ENGINE_VERSION
     })
 
 async def _debug_tools(request: Request) -> JSONResponse:
@@ -299,7 +530,7 @@ async def _agent_list(request: Request) -> JSONResponse:
                 "purpose": desc.get("purpose", ""),
                 "capabilities": desc.get("capabilities", []),
                 "domains": desc.get("domains", []),
-                "pillar_slot": desc.get("pillar_slot"),
+                "slot": desc.get("slot"),
                 "task_tool_type": desc.get("task_tool_type", "general"),
                 "owned_files": desc.get("owned_files", []),
             })
@@ -368,6 +599,15 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     running background loops concurrently with the server."""
     await _init_services()
 
+    # P0-5: stamp the code we loaded so a later probe can detect a stale
+    # process running pre-fix code.
+    try:
+        from mcp_servers.omega_hub import code_stamp
+        from pathlib import Path as _P
+        code_stamp.write_stamp(_P(__file__).resolve().parents[2])
+    except Exception as e:
+        logger.warning("code stamp write failed: %s", e)
+
     # P1-6: Rebuild handoff packet index from filesystem
     try:
         count = await handoff_index_rebuild()
@@ -387,6 +627,21 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     else:
         logger.warning("No TaskGroup provided — background loops not started")
     logger.info("Background tasks started: pruning, reaper")
+
+
+# ── M23 strict arguments: RUN AFTER the @mcp.tool() registrations ──
+# MUST run BEFORE `run_mcp(...)` below, which BLOCKS for the process lifetime.
+# The first two attempts sat AFTER it and therefore never executed at all —
+# verified by the missing journal line, not assumed. Three placement bugs in
+# one fix, each caught by executing rather than reading.
+try:
+    _strict_tools = _enforce_strict_tool_arguments(mcp)
+    if _strict_tools:
+        logger.info(
+            "M23 strict-arguments: hardened %d tool schema(s) to reject unknown "
+            "parameters instead of silently dropping them", _strict_tools)
+except Exception as exc:  # pragma: no cover — defensive, must never block boot
+    logger.warning("M23 strict-arguments hardening unavailable: %s", exc)
 
 
 if __name__ == "__main__":

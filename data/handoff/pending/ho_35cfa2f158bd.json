@@ -1,0 +1,53 @@
+{
+  "body_sha256": "f49b62bb433ba270177f9cc8605a75c8f2629c5453edc3450c4562695d55e42d",
+  "context": "",
+  "context_delivery": "inline",
+  "created_at_utc": "2026-10-02T19:34:36+00:00",
+  "decided_by": null,
+  "decisions": [],
+  "handoff_id": "H0ZD1F9QN4301M3Z1S0ZS",
+  "last_event_at_utc": "2026-10-02T19:34:36+00:00",
+  "outcome": null,
+  "packet_id": "ho_35cfa2f158bd",
+  "payload_bytes": 0,
+  "payload_ref": "",
+  "payload_sha256": "",
+  "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "priority": 0,
+  "read_by": {},
+  "received_at_utc": "2026-10-02T19:34:36+00:00",
+  "released_at_utc": null,
+  "released_by": null,
+  "resolver_strategy": "escalate",
+  "schema_version": "1.0.0",
+  "sender_verified": false,
+  "seq": 1,
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "source_hardware": "",
+  "source_session_id": "",
+  "state_history": [
+    {
+      "at": "2026-10-02T19:34:36+00:00",
+      "by": "kali",
+      "event": "submitted",
+      "status": "pending"
+    }
+  ],
+  "status": "pending",
+  "submitted_at": "2026-10-02T19:34:36.793624+00:00",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "task": "p0-2 probe",
+  "time_diagnostics": {
+    "client_tz_offset_min": null,
+    "clock_skew_s": 0,
+    "daemon_tz": "UTC",
+    "producer": "handoff.submit",
+    "producer_module": "mcp_servers.omega_hub.hub_tools.tools",
+    "recorded_with": "federation_envelope.time_diagnostics"
+  },
+  "unverified_sender": null
+}

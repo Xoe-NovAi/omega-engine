@@ -1,0 +1,21 @@
+{
+  "updated": "2026-08-31T22:05:12.854Z",
+  "hourly": {
+    "2026-08-31T18": {
+      "SLOW_DRIBBLE": 3,
+      "SILENT_STALL_TASK": 3
+    },
+    "2026-08-31T19": {
+      "SLOW_DRIBBLE": 1
+    },
+    "2026-08-31T20": {
+      "SLOW_DRIBBLE": 3
+    },
+    "2026-08-31T21": {
+      "SLOW_DRIBBLE": 4
+    },
+    "2026-08-31T22": {
+      "SLOW_DRIBBLE": 1
+    }
+  }
+}

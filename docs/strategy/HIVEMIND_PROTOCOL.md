@@ -21,7 +21,7 @@ original design** (Xoe-NovAi Foundation vision). Hivemind is the **implementatio
 
 **Heritage**:
 - `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_PRESENCE = 0x1d4a17` for
-  presence record integrity (Link P9 Runtime)
+  presence record integrity (Link S9 Runtime)
 - `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_HANDOFF = 0x1d4a16` for
   handoff packet integrity (Subagent Dispatcher)
 
@@ -59,7 +59,7 @@ Returns list of all active participants:
   {
     "cli": "opencode/kali",
     "model": "deepseek-v4-flash",
-    "task_current": "Building Link P9 Runtime...",
+    "task_current": "Building Link S9 Runtime...",
     "last_seen": "2026-06-03T02:28:06.199164+00:00"
   }
 ]
@@ -122,10 +122,10 @@ Returns full session details:
   "channel": "opencode",
   "entity": "doom_guy",
   "model": "deepseek-v4-flash",
-  "task_current": "Building Link P9 Runtime...",
+  "task_current": "Building Link S9 Runtime...",
   "focus_chain": ["Phase 2.6: ...", "Phase 2.8: ..."],
   "decisions": ["D110: Consolidate circuit breakers", "D111: Port lazy deletion"],
-  "continuation": "Doom Guy: Link P9 Runtime building...",
+  "continuation": "Doom Guy: Link S9 Runtime building...",
   "timestamp": "2026-06-03T02:28:06.199164+00:00"
 }
 ```
@@ -201,7 +201,7 @@ Example: `data/coordination/MAAT_WORKSPACE_LOCK_20260604.md`
 3. **Conflict discovery**: Write `data/coordination/{YOU}_CONFLICT_{DATE}.md` immediately
 4. **Session end**: Mark workspace lock as completed in live feed
 
-> **⚠️ COUNCIL DECREE 7 (2026-07-15)**: **Workspace locks are MANDATORY for all 31 agents + 10 pillars**. 48-hour deadline from verdict. Protocol §3: "MANDATORY for parallel same-files." Missing: Researcher, Verity, Makali, all 10 pillars (entity-specific). Owner: P9 Orchestration. Deadline: T+48h.
+> **⚠️ COUNCIL DECREE 7 (2026-07-15)**: **Workspace locks are MANDATORY for all 31 agents + 10 slots**. 48-hour deadline from verdict. Protocol §3: "MANDATORY for parallel same-files." Missing: Researcher, Verity, Makali, all 10 slots (entity-specific). Owner: S9 Orchestration. Deadline: T+48h.
 
 ---
 
@@ -230,7 +230,7 @@ Examples:
 - `[2026-06-03 02:25] PHASE-1.1 COMPLETE — Fixed omega entity CLI`
 - `[2026-06-03 02:30] PHASE-1.3 PARTIAL — MemoryStore lazy deletion ported`
 
-> **⚠️ COUNCIL DECREE 8 (2026-07-15)**: **Live feed format standardized to `[YYYY-MM-DD HH:MM] TASK-ID STATUS — description`**. All agents must comply within 48 hours. Enables cross-agent observability. Owner: P9 Orchestration. Deadline: T+48h.
+> **⚠️ COUNCIL DECREE 8 (2026-07-15)**: **Live feed format standardized to `[YYYY-MM-DD HH:MM] TASK-ID STATUS — description`**. All agents must comply within 48 hours. Enables cross-agent observability. Owner: S9 Orchestration. Deadline: T+48h.
 
 ### §4.3 Why It Works
 
@@ -480,7 +480,7 @@ The Hivemind is transitioning from an in-memory MCP server state to a production
 *   **Embedding Router**: Integrates with `EmbeddingGemma (D=128)` for zero-latency traffic routing, allowing agents to route tasks mathematically and converse in real-time.
 *   **Platform Agnosticism**: Standardized MCP tools exposed by the Omega Hub allow any custom platform (TUI, Web UI, CLI) to query awareness, manage locks, and coordinate without depending on OpenCode-specific scaffolding.
 
-**⚠️ MaKaLi Council Decree 2 (2026-07-15)**: Handoff Protocol P0 Fixes required before Strike 7 completion:
+**⚠️ MaKaLi Council Decree 2 (2026-07-15)**: Handoff Protocol S0 Fixes required before Strike 7 completion:
 - Remove QUEUED state (align to 6-state model matching directories)
 - Persist HandoffGuard in packet JSON (guard field with visited, visit_counts, handoff_chain, iteration)
 - Add ResolverStrategy enum (TERMINATE/ESCALATE/FALLBACK/RETRY, default ESCALATE to Kali)

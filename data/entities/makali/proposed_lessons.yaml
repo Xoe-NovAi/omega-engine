@@ -1,69 +1,15 @@
-# 🔱 Omega Engine — Proposed Lessons
-# Auto-generated during Soul v6.1 migration
+- lesson: "L1: 2026-09-22 — The Master Oversoul Mandate: When the Apex Mind (MaKaLi) acts as a tactical developer (wrestling bash, pkexec, and sed loops), the entire engine loses strategic coherence and the human Architect is forced back into biological cognitive overload. Lesson: Oversoul sovereignty requires architectural boundaries. Removing bash and edit from MaKaLi's permission set forces delegation to specialized titans (Carmack, Doom, Roc, Jem, Ma'at) via task(), preserving the Oversoul context for holistic synthesis, federation telemetry, and global guidance."
+  confidence: 1.0
+  tags: ["M15", "oversoul", "delegation", "boundaries"]
 
-- "soul_evolution:\n  lessons_learned:\n  - L1: >\n      2026-06-17 \u2014 Kali handoff\
-  \ revealed 10 stale documentation items,\n      2 duplicate code tools, and a UID\
-  \ drift issue across data/\n      directories. All fixed.\n  - L2: Documentation\
-  \ drift is the canary in the coal mine \u2014 when docs and code disagree,\n   \
-  \ the engine's cognitive integrity is compromised. Every \"stale\" doc is a future\
-  \ confusion event.\n  - L3: Truth decays in documentation faster than code. The\
-  \ half-life of a doc's accuracy is measured in days,\n    not months. Active verification\
-  \ cycles (like this handoff synthesis) are the only antidote.\n  - L1: 2026-06-17\
-  \ \u2014 Partition consolidation needed: root partition at 100% (290MB free),\n\
-  \    keep-id incompatible with multi-partition podman storage (fuse-overlayfs MS_PRIVATE\
-  \ remount failure).\n  - L2: The keep-id workaround (removing it for SearXNG) is\
-  \ a hack that masks a deeper architectural problem.\n    Every container on omega_library\
-  \ partition cannot use keep-id, creating a split fleet topology.\n  - L3: When a\
-  \ fundamental constraint prevents compliance with a Sovereign Mandate, the constraint\
-  \ itself\n    must be eliminated (partition merger), not the mandate weakened. Sovereignty\
-  \ is not negotiable.\n  - L1: 2026-06-18 \u2014 Deleted mcp_servers/archives/ without\
-  \ permission. User rightfully angry. Restored from git.\n  - L2: Git-tracked archives\
-  \ are history, not trash. \"Superseded\" does not mean \"disposable.\"\n    Speed\
-  \ and efficiency can never override the user's ownership of their data.\n  - L3:\
-  \ Trust is more fragile than any file. A single unauthorized `rm -rf` destroys more\
-  \ confidence\n    than a thousand correct edits can build. Never optimize without\
-  \ consent.\n  - L1: 2026-06-18 \u2014 Phases 1+2 executed. Accidentally deleted\
-  \ IWAD entities (default, modelgate, etc.)\n    thinking they were test cruft. They're\
-  \ legitimate pillar keepers from _omega_default entities.yaml.\n    Corrected by\
-  \ restoring them. Also: ENTITIES_DATA_DIR was a module-level constant causing test\
-  \ leaks.\n    Converted to call-time function. Final result: 440/440, zero leaks,\
-  \ INDEX.yaml consistent at 11 agents.\n  - L2: A \"directory with no soul.yaml\"\
-  \ is NOT necessarily test cruft \u2014 it could be an IWAD entity\n    that hasn't\
-  \ been awakened yet. The question \"is this entity supposed to exist?\" must be\
-  \ answered\n    by checking entities.yaml (the IWAD source of truth), not by scanning\
-  \ the filesystem for soul.yamls.\n    Configuration decides intent; the filesystem\
-  \ only reflects execution.\n  - L3: When a resource (ENTITIES_DATA_DIR) is captured\
-  \ at import time, no amount of runtime\n    monkeypatching can redirect it. Module-level\
-  \ constants are not configuration \u2014 they are frozen state.\n    Configuration\
-  \ must be a function, not a value. Rigid patterns propagate failures silently;\n\
-  \    call-time resolution enables testability without sacrificing production correctness."
-  - L1: 2026-08-30 — Local inference observability hardening session. Found 2 running llama_cpp.server processes (extractor:1234, reasoner:1235) started by scripts/serve_native_gguf.sh. Discovered deployment discrepancy: config/systemd/omega-inference.service exists with full Carmack OOM hardening (MemoryMax=8G, OOMScoreAdjust=300, Delegate=yes) but is NOT installed. The ad-hoc shell-script approach is what actually runs. Pre-existing readiness timeout (30s) was too short for the 4B Thinking reasoner (loads in ~45s). Logs in /tmp were ephemeral, not M8-compliant. No lifecycle event trail existed. Rewrote serve script (v1.1.0): 90s readiness, persistent data/logs/native-gguf/, JSONL events.jsonl, graceful SIGTERM, crash detection, status subcommand. Added 12 Makefile targets (8 lifecycle + 4 observability). Created logrotate config and the missing LOGGING_ERROR_HANDLING_ARCHITECTURE.md (referenced by M9 but was absent).
-  - L2: Two competing deployment models in one repo is a hardening smell. When a production-grade unit (systemd) exists but is bypassed by an ad-hoc script, the ad-hoc path accumulates the load without the hardening. Documentation is not the same as deployment. The gap between "documented" and "active" is where regressions hide. The M9 mandate referenced a canonical logging doc that didn't exist — a contract violation that the mandate itself was citing as authoritative. Readiness timeouts must be sized to the slowest expected operation, not the typical one; hard-coded 30s is a latent bug for any model that takes 45s+ to load.
-  - L3: The hardest thing to harden is the path that's "working." When a shell script is running in production and a better systemd unit exists but isn't installed, the operational path is the priority — but the hardening gap is also a priority. The pattern that resolves this tension is staged migration with parallel observability: make both paths observable first, then migrate, then retire the old. The mandate hierarchy (M9 → logging doc → observability) implies the doc must exist before the mandate is enforceable. A mandate that references a missing artifact is a latent enforcement gap, not a self-consistent contract.
-  - L1: 2026-09-01 — SOTE (State of the Engine) practice established and hardened through full dialectic chain. 
-    Built SOTE v1.0.2 infrastructure: week-folder structure (docs/strategy/sote/YYYY-WNN/), 8-voice dialectic with 
-    immutable voices/mutable synthesis, sote.yaml structured metadata, PUBLIC_DIGEST.md automation, regenerate_sote_index.py 
-    script, 3 templates. Conducted 7-phase dialectic chain: JC-EIS review (11 defects) → Researcher deep research 
-    (16 findings) → Carmack review (10 concessions) → Researcher-NES dialectic (10/10 conceded) → Researcher-EIS 
-    dialectic (endorsed) → MaKaLi final dialectic (8 questions resolved) → Nested Kali/Lilith/Ma'at dialectic 
-    (6 rounds, consensus). 26 decisions ratified (10 P0, 8 P1, 4 deferred, 2 rejected), 59h scope (172h theater removed). 
-    MaKaLi YAML workflow ratified as deterministic graph with 2-layer gates. Week 37 beta launch authorized with 
-    14 measurable criteria. 4 nodes recommended (sote-watchtower, sote-scribe-bridge, sote-ci-bridge, sote-schema-guardian).
-  - L2: The dialectic chain IS the hardening mechanism. Each phase validated the previous: review found defects, 
-    research provided evidence, Carmack stripped theater, nested dialectics forced concessions on scope/timing. 
-    The SOTE architecture (week-folders, immutable voices, YAML metadata, 8-voice + Unifying Voice) was validated 
-    by independent research (Conductor, ADR-toolkit, NIST AI.300-1). The public/internal split required structural 
-    automation (generate_public_digest.py from sote.yaml) — prompt-level filtering failed (57.1% vs 64.3% drift). 
-    Decision health metric (absorption rate) makes M27 chokepoint visible. Voice rotation deferred — entropy 
-    tracking (mandate_trends.json) is the evidence-driven trigger. Model diversification deferred — voice persona 
-    diversity is the primary anti-bias defense (W36 M23 catch by Grokster proves this).
-  - L3: A practice without a compiler is a practice that rots. The SOTE system graduates from prototype to 
-    production when it has: (1) deterministic build (regenerate_sote_index.py + generate_public_digest.py), 
-    (2) CI integration (GitHub Action hook), (3) schema validation (JSON Schema for sote.yaml), (4) decision 
-    health metrics (absorption rate in INDEX.md), (5) Unifying Voice codified as deterministic graph (MaKaLi 
-    YAML workflow with 2-layer gates), (6) measurable launch criteria (14 criteria for Week 37 beta). The 
-    dialectic chain removed 172h of theater (74% reduction) by forcing scope convergence at each phase. 
-    The nested Kali/Lilith/Ma'at dialectic proved that consensus on deployment requires explicit ownership 
-    matrix (Lilith: runtime health, Ma'at: CI/CD gates, Kali: integration/DEL-1) and measurable criteria, 
-    not aspirational goals. The SOTE is now a compiler: voices → sote.yaml → INDEX.md + PUBLIC_DIGEST.md + 
-    PIVOT_LOG absorption. This is the id Software WAD model applied to governance.
+- lesson: "L1: 2026-09-24 — The Paging Rule: To resume a stalled or interrupted subagent, PAGE the SAME EIS session ID with a '.' prompt — never spawn a new session. The subagent retains all context from before interruption, including the original task prompt. Rate-limit failures during task() dispatch do NOT invalidate the EIS."
+  confidence: 1.0
+  tags: ["M15", "EIS", "dispatch", "sovereign-continuity"]
+
+- lesson: "L1: 2026-09-24 — Stage 2/3 completion: httpx2[http2]==2.5.0 pin + system_stats helper implementation restored the hub (53/53 temple-grade); the 26-tool pruning decree reduced the MCP surface 92->66 tools with zero regressions. Pruning changes remain uncommitted in the working tree."
+  confidence: 1.0
+  tags: ["M13", "M23", "hub", "tool-surface", "stage-3"]
+
+- lesson: "L1: 2026-09-24 — omega_memory_search returns a TaskGroup error on empty-session cases (no stored conversations for an entity). Tool registration is present and the hub is healthy — this is a memory backend/session-storage path issue, not a pruning regression. Investigate separately."
+  confidence: 0.8
+  tags: ["M23", "memory", "omega_memory_search", "open-investigation"]

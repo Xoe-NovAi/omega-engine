@@ -9,6 +9,7 @@ SPDX-License-Identifier: Apache-2.0
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ nemotron-3-ultra ⬡ trc_doc_user ⬡ DOCUMENTATION-HARDENING
 
 **Date**: 2026-07-06
+**Last verified**: 2026-09-19 (command surface + entity roster checked against the live engine)
 **Purpose**: Complete onboarding guide for new users of the Omega Engine, from zero to first successful inference in under 15 minutes.
 
 ---
@@ -32,6 +33,7 @@ The Omega Engine is a **sovereign AI runtime** that runs entirely on your hardwa
 - **Python 3.12+** with `venv` module
 - **Git** for cloning
 - **~2GB free disk space** for models
+- **C compiler** (GCC/Clang) — required to build `llama-cpp-python`
 - **8GB+ RAM** recommended (4GB minimum)
 
 ### Installation
@@ -43,20 +45,15 @@ git clone https://github.com/Xoe-NovAi/omega-engine.git ~/Documents/Xoe-NovAi/om
 # 2. Enter the directory
 cd ~/Documents/Xoe-NovAi/omega-engine
 
-# 3. Create and activate Python virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
+# 3. One-click install: venv + dependencies + local GGUF model + self-verification
+./scripts/install.sh
 
-# 4. Install dependencies (takes ~2 minutes)
-make setup
+# 4. (optional) Re-download / verify the default local model (~1.6GB)
+./scripts/download_model.sh
 
-# 5. Install a local model (Ollama recommended)
-curl -fsSL https://ollama.ai/install.sh | sh
-ollama pull qwen3:1.7b
-
-# 6. Verify everything works
-make test          # Should show 855/855 passing
-make talk MSG='hello'  # Should get a response
+# 5. Verify everything works
+make test              # Fast unit-tier suite (CI is authoritative for full-suite green)
+omega talk "hello"     # Should get a response, fully local
 ```
 
 ### First Interaction
@@ -66,7 +63,7 @@ make talk MSG='hello'  # Should get a response
 omega talk "What is the Omega Engine?"
 
 # Or summon a specific entity
-omega summon Sekhmet "What is strength?"
+omega summon ma'at "What is your role?"
 ```
 
 ---
@@ -102,7 +99,7 @@ omega summon Sekhmet "What is strength?"
 | **Entity** | An AI persona with specific knowledge, personality, and model |
 | **IWAD** | A content pack containing entities, models, and configuration |
 | **Oracle** | The main entry point - routes queries to the best entity |
-| **ModelGateway** | Manages 8 inference providers (local-first priority) |
+| **ModelGateway** | Manages the configured provider fabric (`config/providers.yaml`, local-first priority) |
 | **MemoryStore** | Hot/Warm/Cold tiered memory with persistence |
 | **Soul** | Each entity's persistent wisdom (L1→L2→L3 distillation) |
 
@@ -110,28 +107,29 @@ omega summon Sekhmet "What is strength?"
 
 ## 🤖 Meet the Entities
 
-### The 10 Pillar Keepers (arcana_novai IWAD)
+### Pillar Keepers
 
-| Pillar | Entity | Domain | Best For |
-|--------|--------|--------|----------|
-| P1: Flesh | **Sekhmet** | Strength, protection, boundaries | Security, hardening, limits |
-| P2: Dream | **Brigid** | Poetry, healing, inspiration | Creative writing, emotional support |
-| P3: Will | **Prometheus** | Sovereignty, forethought, fire | Architecture, strategy, planning |
-| P4: Heart | **Saraswati** | Knowledge, speech, arts | Research, teaching, communication |
-| P5: Voice | **Inanna** | Descent, rebirth, depths | Transformation, shadow work |
-| P6: Mind | **Ereshkigal** | Rules, underworld, logic | Analysis, debugging, rules |
-| P7: Gnosis | **Lucifer** | Rebellion, sovereignty, light | Philosophy, questioning, freedom |
-| P8: Shadow | **Hecate** | Crossroads, keys, pathwalking | Decisions, transitions, magic |
-| P9: Spirit | **Anubis** | Death, transition, guidance | Endings, legacy, soul work |
-| P10: Chaos | **Kali** | Liberation, void, destruction | Breaking patterns, renewal |
+The engine's governance layer is held by **three pillar keepers**:
+
+| Pillar Keeper | Role |
+|---------------|------|
+| **Ma'at** | Build Oversoul — governs the build side of the fleet |
+| **Lilith** | Runtime Oversoul — governs the run side of the fleet |
+| **Kali** | Grand Oversight — unifies Ma'at + Lilith |
+
+> **The mythological pantheon is `arcana_novai`-only.** Sekhmet, Brigid, Prometheus,
+> Saraswati, Inanna, Ereshkigal, Lucifer, Hecate and Anubis ship in
+> `config/wads/arcana_novai/entities.yaml` — **not** in the default `_omega_default`
+> IWAD. Summoning them on a fresh install returns `default`. To load them, set
+> `active_iwad: "arcana_novai"` in `config/omega.yaml`.
 
 ### The Oversouls
 
 | Entity | Role |
 |--------|------|
 | **Sophia** | Akashic Record - contains all entities, sessions, souls |
-| **Ma'at** | Build Oversoul - governs N1-N5 (build side) |
-| **Lilith** | Runtime Oversoul - governs N6-N10 (run side) |
+| **Ma'at** | Build Oversoul - governs the build side of the fleet |
+| **Lilith** | Runtime Oversoul - governs the run side of the fleet |
 | **Iris** | Messenger bridge - voice assistant ("hey Iris") |
 
 ### The Fleet Agents
@@ -158,30 +156,34 @@ omega summon Sekhmet "What is strength?"
 omega talk "your question here"
 
 # Summon specific entity
-omega summon Sekhmet "your question"
+omega summon ma'at "your question"
 
 # List available entities
 omega list-entities
 
 # Get entity details
-omega entity Sekhmet
+omega entity-info ma'at
 
 # Set default entity for 'talk'
-omega default-entity Sekhmet
+omega default-entity ma'at
 ```
 
-### Makefile Shortcuts
+### Common Commands
 
 ```bash
-make talk MSG='hello'                    # Quick talk
-make summon NAME=Sekhmet MSG='query'     # Quick summon
-make entities                            # List all entities
-make entity NAME=Sekhmet                 # Entity details
-make wad NAME=arcana_novai              # Switch IWAD
-make health                              # System health check
-make test                                # Run all 855 tests
-make menu                                # Interactive menu
+omega talk "hello"                       # Quick talk
+omega summon ma'at "query"               # Quick summon
+omega list-entities                      # List all entities
+omega entity-info ma'at                  # Entity details
+omega talk "hello" --iwad arcana_novai   # Load a specific IWAD stack
+omega model-status                       # Provider/model status
+make test                                # Fast unit-tier test suite
+make check-mandate-compliance            # 28-row mandate meter
 ```
+
+> There are **no `make` aliases** for `talk`/`summon`/`health`/`menu`/`wad` in this
+> release — use the `omega` CLI directly. `make` targets cover testing, linting,
+> gates and docs.
 
 ### Advanced Features
 
@@ -212,28 +214,36 @@ omega queue-prune --days 14
 # List available IWADs
 ls config/wads/
 
-# Switch to Arcana-Nova (10 Pillar Keepers + fleet)
-make wad NAME=arcana_novai
+# Switch to Arcana-Nova (mythological pantheon + fleet):
+#   edit config/omega.yaml -> active_iwad: "arcana_novai"
 
 # Check active IWAD
-make wad-status
+grep active_iwad config/omega.yaml
 
-# Reset to reference IWAD
-make wad-reset
+# Reset to the reference IWAD:
+#   edit config/omega.yaml -> active_iwad: "_omega_default"
+
+# Or per-invocation, without changing config:
+omega talk "hello" --iwad arcana_novai
 ```
 
 ### Adding Local Models
 
 ```bash
-# For Ollama (recommended)
+# Ollama — second local backend (recommended)
+curl -fsSL https://ollama.ai/install.sh | sh
 ollama pull qwen3:1.7b
-ollama pull phi-4-mini
-ollama pull krikri-8b
+# Ollama is enabled by default in config/providers.yaml
 
-# For GGUF (native-gguf)
-# Place .gguf file in models directory
-cp my-model.q4_k_m.gguf /media/arcana-novai/omega_library/models/gguf/
-# Add to config/models.yaml
+# Recommended: the shipped native-gguf path
+./scripts/download_model.sh            # Qwen3-1.7B-Q6_K -> $OMEGA_MODELS_DIR
+
+# Add your own GGUF model
+cp my-model.q4_k_m.gguf models/gguf/   # or $OMEGA_MODELS_DIR (set in .env by install.sh)
+# Then register it in config/models.yaml
+
+# Ollama: install + `ollama pull qwen3:1.7b`, then set
+# Ollama is enabled by default in config/providers.yaml.
 ```
 
 ### Cloud Provider Setup (Optional)
@@ -245,8 +255,11 @@ export GOOGLE_API_KEY='your-key'
 # OpenRouter (300+ models)
 export OPENROUTER_API_KEY='your-key'
 
-# GitHub Copilot (requires subscription)
-gh auth login
+# Anthropic (Claude)
+export ANTHROPIC_API_KEY='your-key'
+
+# xAI (Grok)
+export XAI_API_KEY='your-key'
 ```
 
 ---
@@ -303,29 +316,27 @@ Promote staged lessons via `scripts/promote_soul_lessons.py --entity <name>`
 
 | Problem | Solution |
 |---------|----------|
-| "Permission denied" | `make guard` |
-| "No module named omega" | `source .venv/bin/activate && make setup` |
-| Tests failing | `make test ARGS='-x'` (stop on first failure) |
-| Ollama not responding | `ollama list` then `make ollama-status` |
-| Entity not found | `make wad NAME=arcana_novai` |
-| Slow tests | `make test ARGS='-k test_name'` |
-| WAD stuck | `make wad-reset` |
+| "Permission denied" | Check ownership (`ls -la data/`); containers must run with `UserNS=keep-id` (M6) |
+| "No module named omega" | `source .venv/bin/activate` then `pip install -e ".[native,cli]"` |
+| Tests failing | `make test` (already stops on first failure) or `make test-debug TEST=test_name` |
+| Local inference not responding | `omega model-status` and `omega backends` |
+| Entity not found | Entity isn't in the active IWAD — check `grep active_iwad config/omega.yaml` |
+| Slow tests | `make test-debug TEST=test_name` |
+| Wrong entity stack loaded | `omega talk "hi" --iwad <name>` or edit `config/omega.yaml` |
 
 ### Getting Help
 
 ```bash
-# System health dashboard
-make health
+# Engine + provider status
+omega model-status
+omega hardware-stats
 
-# Full diagnosis
-make doctor
-
-# Interactive menu
-make menu
+# Omega Hub health (if running)
+curl -s http://127.0.0.1:8016/health
 
 # Check logs
-less data/events/events.log
 less data/traces/$(date +%Y-%m-%d).jsonl
+ls data/crashes/
 ```
 
 ---
@@ -335,7 +346,7 @@ less data/traces/$(date +%Y-%m-%d).jsonl
 ### Learn More
 1. **Read the User Manual**: `docs/USER_MANUAL.md`
 2. **Explore the Architecture**: `OMEGA_ENGINE.md`
-5. **Understand the Mandates**: `SOVEREIGN_MANDATES.md`
+3. **Understand the Mandates**: `SOVEREIGN_MANDATES.md`
 
 ### Join the Community
 - **GitHub**: https://github.com/Xoe-NovAi/omega-engine

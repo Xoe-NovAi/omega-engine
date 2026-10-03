@@ -4,6 +4,62 @@
 
 ---
 
+## Queue Isolation (2026-09-29)
+
+Cross-validation packets are written to a **dedicated test queue**, never to live
+Hivemind state.
+
+**Root**: `data/handoff/m36-test/` — with its own `pending/ active/ completed/
+stale/ archive/` subdirectories.
+
+The live queue root is `state.HANDOFF_BASE`. The probe re-roots that for the
+duration of the dispatch call and **restores it in a `finally` block**.
+
+### Why this is structural, not a check
+
+Before this change, the harness wrote `[M36 CROSS-VALIDATOR]` packets into the
+**live** queue at `data/handoff/pending/`. It accumulated **42** of them, making
+the live queue 64% test noise — which is why real packets went unread for hours.
+39 pointed at `/tmp/`, 3 at `/nonexistent/deliverable.md`; none referenced a real
+repo path, and none carried work product.
+
+There are **two write sinks**, both in this file:
+
+1. `hivemind_handoff(action="submit", ...)` called in-process
+2. a direct `Path("data/handoff/pending")` write, taken when the tool call fails
+
+Fixing only the tool call would have left the tap open. Both now target the test
+root, so reaching live state is **impossible by construction** rather than
+merely unlikely. A marker grep remains as belt-and-braces, but the separate
+directory is the load-bearing part.
+
+**Audit record** for the purge: `data/handoff/archive/M36-test-purge-20260929/PURGE_RECORD.md`
+
+### The restore must be in `finally`
+
+The restore originally sat *after* the outer `except` block. Any exception
+outside the caught tuple (`AttributeError`, `RuntimeError`, `KeyboardInterrupt`,
+`SystemExit`) exited the function without ever restoring the live root — leaving
+the process **permanently** re-rooted at the test root, so every subsequent
+handoff in that process wrote to a directory nobody watches.
+
+That is a live-queue corruption path, not a test-hygiene path. The restore is now
+in `finally` with pre-bound locals, so the import-failure path cannot itself
+raise `UnboundLocalError`.
+
+**Verified by sabotage**: removing the `finally` takes
+`test_live_root_is_restored_after_dispatch` red.
+
+### Known limitation
+
+`HANDOFF_BASE` is a **process-global**. A concurrent handoff dispatched while an
+M36 call is in flight will inherit the test root. There is no lock and no
+`contextvars` isolation. This is a known residual risk, not a resolved issue —
+the correct fix is to thread the queue root through as a parameter rather than
+mutating a module global.
+
+---
+
 ## Overview
 
 **File**: `src/omega/oracle/m36_recursive_probe.py`

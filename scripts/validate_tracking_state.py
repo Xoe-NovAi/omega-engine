@@ -39,7 +39,7 @@ ALLOWED_STATUSES = {"backlog", "ready", "in_progress", "blocked", "completed", "
 ALLOWED_EXECUTION_STATUSES = ALLOWED_STATUSES.union({"failed"})
 
 # GAP_REGISTRY allowed statuses
-ALLOWED_GAP_STATUSES = {"resolved", "outstanding", "partial", "lost"}
+ALLOWED_GAP_STATUSES = {"resolved", "outstanding", "partial", "lost", "cancelled"}
 
 # M1: staleness threshold (days). `in_progress` tasks whose last_checkpoint is
 # older than this are errors. 7d sits in the empirical gap of the age
@@ -213,8 +213,10 @@ def validate_active_sprint():
 def validate_task_registry():
     print(f"\n���� Validating {TASK_REGISTRY_PATH.name}...")
     if not TASK_REGISTRY_PATH.exists():
-        print_error(f"{TASK_REGISTRY_PATH.name} not found.")
-        return False
+        # TASK_REGISTRY.json is a runtime artifact (gitignored) — absent in a
+        # fresh CI checkout. Skip gracefully instead of failing the gate.
+        print_warn(f"{TASK_REGISTRY_PATH.name} absent (runtime artifact) — skipped.")
+        return True
 
     data = load_json(TASK_REGISTRY_PATH)
     errors = 0

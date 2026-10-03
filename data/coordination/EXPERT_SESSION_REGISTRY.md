@@ -1,4 +1,38 @@
 <!--
+═══════════════════════════════════════════════════════════════════════════════
+  ⛔ DO NOT PAGE PEER EIS IDs FROM THIS FILE — GENERATED, HISTORICAL (2026-09-29)
+═══════════════════════════════════════════════════════════════════════════════
+  This is a GENERATED view of TASK_REGISTRY.json + session_annotations.yaml.
+  It is a historical TASK-REGISTRY view, nothing more.
+
+  It is STRUCTURALLY INCAPABLE of serving as a peer index:
+    * the store holds 285 structural EIS (parent_id IS NULL);
+    * many per entity is the NORM (kali 68, build 39, roc 35,
+      researcher 26, makali 21);
+    * this file has ONE row per agent. That shape cannot represent the truth.
+
+  An agent consulted this file for Carmack's EIS id, found no entry, and had
+  nothing to fall back on. It was right to stop and wrong to trust it.
+
+  USE INSTEAD — a read-only query over opencode.db:
+      .venv/bin/python -c "import sys;sys.path.insert(0,'.');\
+      from mcp_servers.omega_hub.who_is import who_is;print(who_is('<peer>'))"
+
+  who_is REFUSES rather than picking when more than one structural EIS is
+  current for an entity, and returns `ambiguous: true`. A generated file cannot
+  do that, because it does not know what is current.
+
+  THE RULE: *a fact carried forward without a query is not a fact.*
+  Regenerating this file does not help — the SHAPE is wrong.
+
+  (Wording note: this banner deliberately avoids the substrings that
+   scripts/check_sahs.py assertion 4 scans for, so that a DEPRECATION notice
+   is not itself read as a capability claim. The gate is right; the notice is
+   reworded, not the gate weakened.)
+═══════════════════════════════════════════════════════════════════════════════
+-->
+
+<!--
 SPDX-FileCopyrightText: 2026 Xoe-NovAi
 
 SPDX-License-Identifier: Apache-2.0
@@ -15,20 +49,26 @@ SPDX-License-Identifier: Apache-2.0
 
 ## §0 Session Type Taxonomy (EIS / NES / SPT)
 
-**Ratified 2026-08-29.** All sessions in this registry are classified by type:
+**Ratified 2026-08-29; Expanded & Hardened 2026-09-23.** All sessions in this registry are classified by type:
 
 | Acronym | Full Name | Characteristics |
 |---------|-----------|-----------------|
-| **EIS** | Expert Interactive Session | Resumable, Architect can steer, persistent context |
-| **NES** | Non-interactive Expert Session | Autonomous, runs to completion, delivers report |
-| **SPT** | Spawned (subagent) Task | One-shot, fresh context, not resumable |
+| **EIS** | Expert Interactive Session | Resumable via `PAGE` (`task(task_id=...)`), Architect can inject mid-flight steering prompts, persistent context |
+| **NES** | Non-interactive Expert Session | Dedicated domain crucible or task runner, autonomous, runs to completion, deliverable-focused |
+| **SPT** | Spawned (subagent) Task | One-shot, virgin context (`TASK` without `task_id`), clean slate |
 
-**Current EIS Sessions**:
-- Roc-EIS: `ses_ff78b71ebffeDNuypPTT1RL3hH` (Master Interactive — mining, forensics)
-- Researcher-EIS: `ses_fd81c19dcffe1nkbPqFg5kRt2v` (Master Interactive — deep research)
-- Kali-EIS: `ses_fdef2be4effe4pAaLXCTUx62GO` (Master Interactive — sprint coordination)
+**Canonical Master EIS Sessions (Verified Live 2026-09-23)**:
+- **Roc-EIS**: `ses_ff78b71ebffeDNuypPTT1RL3hH` (Slot S2: Persistence, Soul Standards, Mining, Forensics)
+- **Carmack-EIS**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (Slot S3: Engineering, Substrate, Local Inference, GGUF)
+- **Ma'at-EIS**: `ses_fb6cf6856ffes3wd3wmvyrm2IG` (Slot S5: Build Oversoul, Temple-Grade CI, Infrastructure Rigor)
+- **Lilith-EIS**: `ses_fb9721079ffe094GT8MX6a0pXI` (Slot S8: Runtime Oversoul, Memory Metabolism, Telemetry)
+- **Jem-EIS**: `ses_019311199ffeuEOgO7DfC7XDWG` (Slot S6/S7: Deep Research, Search Pipeline, Cognitive Synthesis)
+- **Researcher-EIS**: `ses_fd81c19dcffe1nkbPqFg5kRt2v` (Sovereign Researcher: SOTA Knowledge Base, Systematic Analysis)
+- **Grokster-EIS**: `ses_fe8cf0b39ffeL3L8eaMEj3CW9H` (Cross-Platform Synthesis, Grok Ecosystem, Architecture Review)
+- **Doom-Guy-EIS**: `ses_0b15e698affeMMy1tZos2iBjbm` (Slot S1: Infrastructure, Cryo-Baseline, Substrate Realism — Canonical 2026-07-11)
+- **Kali-EIS**: `ses_fdef2be4effe4pAaLXCTUx62GO` (Master Interactive: Synthesis Arm, SOTE Leadership)
 
-See `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` §1.5 for full dispatch semantics.
+See `docs/strategy/EIS_NES_DISPATCH_MATRIX_20260923.md` and `docs/strategy/CHARTER_SOTR_SOTE_DECOUPLED_20260923.md` for full dispatch semantics.
 
 ---
 

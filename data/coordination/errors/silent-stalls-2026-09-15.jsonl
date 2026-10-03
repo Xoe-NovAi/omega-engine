@@ -1,0 +1,1 @@
+{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-15T15:37:44.135Z","sessionID":"ses_fc758e6ddffeNEKptpEzboVfYq","modelID":"big-pickle","providerID":"opencode","detail":"msg=msg_0a5a38c0f001Er6n7X7WXaTUBJ out=0tok text=0ch in=0tok dur=1302s","metrics":{"outputTokens":0,"inputTokens":0,"textLen":0,"durationMs":1301894}}

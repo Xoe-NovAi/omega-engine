@@ -1,0 +1,12 @@
+{
+  "transition": "retired",
+  "date": "2026-09-29",
+  "packet_id": "ho_b3ae94d22e12",
+  "source": "opencode/makali_fusion",
+  "target_as_sent": "opencode/ge_n1",
+  "sha256": "25773e968947bc60e1b9e657bbb71ca27d37588b65c3f716e4f7c80f740ce54f",
+  "reason": "Addressed to 'ge_n1' (underscore) \u2014 a spelling fork of six existing 'ge-n1' packets, created by makali_fusion. Substance is also fully superseded AND CONTRADICTED by ho_094745eca09e, which explicitly says 'Do NOT stand up a Node 1 Serve entry'. Retired rather than re-addressed: re-addressing would have delivered an instruction we have already ruled wrong.",
+  "superseded_by": "ho_094745eca09e",
+  "recoverable": true,
+  "note": "M29: explicit, auditable, recoverable. Not deleted. Restore by moving to pending/."
+}

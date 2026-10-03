@@ -42,8 +42,8 @@ should be to communicate, not to ship a half-fix.
 | Channel | Where | How routed |
 |---------|-------|------------|
 | **GitHub Dependabot security alert** | Security tab of the public repo | Auto-creates PR; reviewed within 24h |
-| **External security researcher** | `security@xoe-nov.ai` (to be created pre-debut) | Triage by Architect + Kali within 24h |
-| **CVE assignment** | GHSA / NVD | Routed to `security@xoe-nov.ai` |
+| **External security researcher** | [GitHub Security Advisory](https://github.com/xoe-novai/omega-engine/security/advisories/new) (private advisory — the disclosure channel; `security@xoe-nov.ai` email pending, to be created pre-debut) | Triage by Architect + Kali within 24h |
+| **CVE assignment** | GHSA / NVD | Routed via the private Security Advisory above (`security@xoe-nov.ai` pending) |
 | **Internal probe** | e.g. Ma'at's reliability sweeps | Direct ticket; no SLA, but treated as P0 if RCE |
 
 ## 4. Response Procedure

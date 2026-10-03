@@ -164,6 +164,7 @@ class M33Probe:
     """Sentinel probe that detects truncated subagent output.
 
     Per 5-EIS meta-review §4.1: 3-layer fix (preventive + structured probe + P0/P1 cross-validator).
+    Archangel Architecture: Dynamic write-tool threshold based on hardware state.
     """
 
     def __init__(self, m34_registry: M34RegistryLike, log_path: Optional[Path] = None):
@@ -175,6 +176,66 @@ class M33Probe:
             )
         )
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
+        # Archangel Architecture: HardwareMonitor for dynamic threshold
+        self._hw_monitor = None
+
+    def _get_hw_monitor(self):
+        """Lazily initialise HardwareMonitor singleton."""
+        if self._hw_monitor is None:
+            try:
+                from omega.monitoring import HardwareMonitor
+                self._hw_monitor = HardwareMonitor()
+            except (ImportError, OSError, ValueError):
+                logger.debug("HardwareMonitor unavailable — using static threshold")
+        return self._hw_monitor
+
+    def calculate_dynamic_write_threshold(self) -> int:
+        """
+        Archangel Architecture: Dynamic write-tool threshold based on hardware state.
+        
+        Adjusts the write-tool token threshold based on:
+        - Memory pressure (0.0-1.0): higher pressure → lower threshold
+        - Thermal throttling: active throttling → aggressive file writes
+        - OOM risk level: higher risk → lower threshold
+        
+        Base threshold: 8000 tokens (WRITE_TOOL_TOKEN_THRESHOLD)
+        """
+        base_threshold = WRITE_TOOL_TOKEN_THRESHOLD
+        hw = self._get_hw_monitor()
+        
+        if hw is None:
+            return base_threshold
+        
+        try:
+            mem = hw.get_memory_status()
+            pressure = mem.get("memory_pressure", 0.0)  # 0.0-1.0
+            thermal_throttling = hw.is_thermal_throttling()
+            oom_risk = mem.get("oom_risk", {}).get("risk_level", "SAFE")
+            
+            # Pressure scaling: high pressure → lower threshold (force earlier file writes)
+            if pressure > 0.7:
+                return max(2000, int(base_threshold * 0.25))   # CRITICAL: 2K tokens
+            elif pressure > 0.5:
+                return max(4000, int(base_threshold * 0.5))    # HIGH: 4K tokens
+            elif pressure > 0.3:
+                return max(6000, int(base_threshold * 0.75))   # MODERATE: 6K tokens
+            
+            # Thermal scaling: throttling → aggressive file writes
+            if thermal_throttling:
+                return max(2000, int(base_threshold * 0.3))
+            
+            # OOM risk scaling
+            if oom_risk == "CRITICAL":
+                return max(2000, int(base_threshold * 0.25))
+            elif oom_risk == "HIGH":
+                return max(4000, int(base_threshold * 0.5))
+            elif oom_risk == "MODERATE":
+                return max(6000, int(base_threshold * 0.75))
+            
+        except (OSError, ValueError, TypeError, AttributeError) as e:
+            logger.debug("Dynamic threshold calculation failed, using base: %s", e)
+        
+        return base_threshold
 
     # ── Layer 1: Preventive (at dispatch time) ──────────────────────
 
@@ -188,6 +249,7 @@ class M33Probe:
 
         Per meta-review §1.1: For reports > 8K tokens, the orchestrator must
         require the subagent to use the write tool, not the chat stream.
+        Archangel Architecture: Dynamic threshold based on hardware state.
 
         Args:
             estimated_output_tokens: Estimated deliverable size in tokens
@@ -197,14 +259,16 @@ class M33Probe:
         Returns:
             True if subagent should be flagged write_tool_required=True
         """
-        # Per meta-review: 8K token threshold
-        if estimated_output_tokens > WRITE_TOOL_TOKEN_THRESHOLD:
+        # Archangel Architecture: Dynamic threshold based on hardware state
+        dynamic_threshold = self.calculate_dynamic_write_threshold()
+        
+        if estimated_output_tokens > dynamic_threshold:
             return True
         # P0/P1 always require write tool (high-stakes deliverables)
         if priority in ("P0", "P1"):
             return True
         # Research/forensic tasks always require write tool (long-form)
-        if task_type in ("research", "forensic", "review", "design"):
+        if task_type in ("research", "forensic", "review", "design", "mine"):
             return True
         return False
 

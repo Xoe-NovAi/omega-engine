@@ -102,11 +102,14 @@ If OpenCode changes stamping behavior (e.g., batches responses, stamps at queue-
 ---
 *⬡ OMEGA ⬡ RESEARCHER ⬡ R_MESSAGE_PROVENANCE_HIERARCHY ⬡ v1.0 ⬡ 2026-08-23*
 
-<!-- PROVENANCE-CORRECTED 2026-08-31T03:09:52Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+<!-- PROVENANCE-CORRECTED 2026-09-29T04:11:01Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
 claimed_model: x-preview-f-free | verdict: VERIFIED
-actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, big-pickle, nvidia/nemotron-3-super-120b-a12b:free, hy3-free
-first_audit: 2026-08-30T03:06:41Z | updated: 2026-08-31T03:09:52Z
+actual_models(Tier0): nemotron-3-ultra-free, x-preview-f-free, big-pickle, minimax/minimax-m3:free, space-bunny-free, nvidia/nemotron-3-super-120b-a12b:free
+first_audit: 2026-09-14T16:31:49Z | updated: 2026-09-29T04:11:01Z
 -->
+
+
+
 
 
 

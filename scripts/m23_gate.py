@@ -47,13 +47,14 @@ def _fail(msg: str) -> None:
 def _run_ruff() -> dict[str, int]:
     """Run ruff check, return {relpath: count}. Exits non-zero if ruff missing."""
     venv_python = Path(".venv/bin/python")
-    if not venv_python.exists():
-        _fail("Venv not found at .venv/bin/python. Run from repo root.")
-    
+    # Fall back to the running interpreter when .venv is absent (CI runners
+    # install deps into the active interpreter, not a local .venv).
+    python_exe = str(venv_python) if venv_python.exists() else sys.executable
+
     try:
         result = subprocess.run(
             [
-                str(venv_python), "-m", "ruff", "check", SRC_DIR,
+                python_exe, "-m", "ruff", "check", SRC_DIR,
                 "--select", ",".join(RUFF_RULES),
                 "--output-format", "json",
             ],

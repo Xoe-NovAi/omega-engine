@@ -1,0 +1,1 @@
+{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-16T22:37:17.946Z","sessionID":"ses_fc758e6ddffeNEKptpEzboVfYq","modelID":"mimo-v2.5-free","providerID":"opencode","detail":"msg=msg_0ac5cf1ef001KWc5pmPyfr3pFt out=0tok text=0ch in=0tok dur=68s","metrics":{"outputTokens":0,"inputTokens":0,"textLen":0,"durationMs":67740}}

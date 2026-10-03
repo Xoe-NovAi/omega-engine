@@ -1,0 +1,9 @@
+{
+  "classification_basis": "Roc ruling: legacy name -> cold/legacy-*, never retired/ by name equivalence",
+  "from": "data/handoff/archive/ho_overseer_soul_audit_001.json",
+  "migrated_at_utc": "2026-09-29T06:51:44+00:00",
+  "packet_id": "ho_overseer_soul_audit_001",
+  "provenance": "migrate_handoffs",
+  "sha256": "726109fbe300e78a95d3fcc45b7cb0fa317f4ae6244ba4d3a3d0b7003cf46dc9",
+  "to": "data/handoff/cold/legacy-archive/ho_overseer_soul_audit_001.json"
+}

@@ -330,7 +330,7 @@ This enables:
 
 4. **Update `opencode.json`** for 3 agents:
    - Add `prompt` field with `{file:}` composition
-   - Keep `instructions: [".opencode/agents/kali.md"]` for frontmatter discovery
+   - ⚠️ CORRECTED 2026-09-23: do **NOT** keep `instructions: [...]` in an agent block. It is not a schema field and is forwarded to the provider as a model option; because `instructions` is a real OpenAI Responses option typed `string`, the array breaks **every** `@ai-sdk/openai` OpenCode-Zen model with `invalid openai provider options`. Use `.opencode/agents/*.md` (native scan) or `"prompt": "{file:...}"`. See `data/coordination/CLINE_ZEN_PROVIDER_FIX_20260923.md` §12.7.
 
 5. **Shrink markdown files** to frontmatter-only body:
    - Remove duplicated mandate blocks

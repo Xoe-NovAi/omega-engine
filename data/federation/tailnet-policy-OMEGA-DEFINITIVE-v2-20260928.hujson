@@ -1,0 +1,198 @@
+// =============================================================================
+// TAILNET POLICY — OMEGA ENGINE DEFINITIVE (GRANTS + HUMAN-ONLY SSH)
+// Date: 2026-09-30 | By: MaKaLi Fusion for the Architect
+// Supersedes: tailnet-policy-OMEGA-DEFINITIVE-20260926.hujson (v1)
+//            the 8017->8019 change of 2026-09-28    (v2)
+//            THIS FILE IS THE SOLE AUTHORITATIVE POLICY. There is no version
+//            chain and no superseded sibling — that arrangement is what produced
+//            "three policy files, no marker of which is authoritative", and a
+//            single file with its history in this header is the fix.
+// =============================================================================
+//
+// THE TWO PORTS, AND WHY BOTH. They are not versions of one thing and must
+// never be merged.
+//
+//   8016  omega-hub, FastMCP.        LIVE CONVERSATION.
+//         Reactive. A request comes in, an answer goes out, latency matters,
+//         someone is waiting.
+//
+//   8019  omega-exchange, read-only.  FILE TRANSFER.
+//         Durable. You fetch, you verify the sha256, it works at 3am or it
+//         does not.
+//
+//   THE HIGHWAY RULE: nothing moves that isn't a file, and no file moves that
+//   isn't hash-verified. Conversations stay on 8016. Everything else —
+//   packages, briefings, research, WADs, archives, reports, lessons — is a file
+//   on 8019. Merging the two gives either an unreliable file channel or a
+//   chatty one. Both nodes run the SAME services on the SAME ports; the ports
+//   are per-host, so 8019 here and 8019 there are different sockets.
+//
+// CHANGES FROM v1 (2026-09-26) — five, all federation-driven:
+//
+//   1. GRANT  tcp:8017 -> tcp:8019
+//      8017 was SearXNG all along; the exchange pipe moved to 8019 on
+//      2026-09-27. The 8017 Serve route has been REMOVED (tailscale serve
+//      --https=8017 off) so SearXNG cannot be re-armed by a policy edit.
+//
+//   2. GRANT  N0 -> N1 gains tcp:8019.  <-- NEW, 2026-09-30
+//      Until now the tailnet was a ONE-WAY STREET. Node 1 could reach Node 0 on
+//      8016 + 8019 — proven by 114 access-logged pulls including a 24-file,
+//      455,778-byte package verified 24/24 from Node 1's own vantage. Node 0
+//      could reach Node 1 on 8016 only, so the REVERSE direction had never been
+//      exercised by anyone. The Architect's ruling on 2026-09-30 is that the
+//      federation is duplex. This is a change of INTENT, deliberately recorded,
+//      not a widened blast radius.
+//
+//   3. TEST   accept lists made SYMMETRIC, both directions asserting 8016+8019.
+//      Tailscale REJECTS a policy whose tests do not match its rules, so this
+//      was mandatory with change 2. v2's tests were asymmetric; asymmetry meant
+//      duplex was a comment rather than a proved property.
+//
+//   4. TEST   deny assertions completed in BOTH directions for all five closed
+//      doors: 22, 2049, 8017, 6379, 51372. A deny test means a future policy
+//      edit that re-adds one is REFUSED AT SAVE TIME instead of silently
+//      widening the blast radius. v2 denied 8017 and 6379 in one direction only
+//      and 51372 in the other, which meant neither direction was fully guarded.
+//
+//   5. COMMENTS corrected and completed. The 8017 grant comment no longer claims
+//      it was "the MISSING rule" when it was never the right port, and the
+//      805 proposal Node 1 raised is recorded below as NOT adopted, with why.
+//
+// NOT ADOPTED — the 805 Node 1 proposed, and why:
+//   Not a collision. Ports are PER-HOST: 8019 on 100.123.51.67 and 8019 on
+//   100.89.40.17 are different sockets. 805 was an artefact of the plane/stack
+//   architecture, where each plane is a separately bound socket on one host and
+//   distinct ports are how you bind them apart. Both nodes bind 8019 and run
+//   the IDENTICAL omega_exchange_server.py — same port, same code.
+//
+// UNCHANGED FROM v1, and each one load-bearing:
+//   - All node-to-node SSH removed, both planes (ssh rules AND tcp:22 grants).
+//   - Human-operator-only Tailscale SSH, action=check, default 12h period.
+//   - NFS 2049 removed.
+//   - ICMP both directions.
+//   - No funnel, no autoApprovers, no allow-all, deny-by-default.
+//   - 8019 and 8016 backends stay bound to 127.0.0.1. NEVER 0.0.0.0.
+//
+// -----------------------------------------------------------------------------
+// WHY tag->tag SSH CANNOT BE IN CHECK MODE  (unchanged, still load-bearing)
+// -----------------------------------------------------------------------------
+// Tailscale permits exactly four kinds of Tailscale SSH connection:
+//   - user -> their own devices
+//   - user -> a tagged device
+//   - user -> a shared tagged device
+//   - tagged device -> another tagged device   <-- CANNOT be check mode
+//
+// Check mode requires periodic re-auth against an identity provider. A tagged
+// device has no user identity to re-authenticate as, so tag->tag SSH is
+// STRUCTURALLY forced to "accept" -- meaning NO periodic re-auth, ever. There
+// is no policy setting that changes this. Accept it or remove the rule.
+//
+// The tailnet policy is NOT the whole exposure. On 2026-09-28 S1 verified the
+// host-layer reality behind this: `ss -ltn` showed rpcbind:111 and statd:662
+// still wildcard-bound, and a DLNA server (rygel) on seven non-loopback
+// addresses including the LAN. `make check-lan-exposure` exists to see the part
+// the policy cannot describe.
+//
+// WHAT YOU KEEP: human operator (autogroup:admin) -> tag:node0, tag:node1,
+// action "check". src is autogroup:admin, NOT a tag -- that is the entire
+// point: a user identity can re-authenticate; a tag cannot.
+// =============================================================================
+
+{
+	"tagOwners": {
+		"tag:node0":    ["autogroup:admin"],
+		"tag:node1":    ["autogroup:admin"],
+		"tag:opencode": ["autogroup:admin"],
+	},
+
+	// allow-all intentionally ABSENT. Deny-by-default for anything unlisted.
+	"grants": [
+		// --- SYMMETRIC DUPLEX: MCP bridge + exchange, BOTH directions -------
+		// 8016 = omega-hub FastMCP.        8019 = read-only exchange pipe.
+		// Same port number, same service, each bound to its own loopback and
+		// fronted by its own Tailscale Serve. Keep both on 127.0.0.1 -- do NOT
+		// bind 0.0.0.0. Unblock proof, from Node 1:
+		//   curl -sk https://n0.tail51f14a.ts.net:8019/manifest.json
+		{"src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016", "tcp:8019"]},
+		{"src": ["tag:node1"], "dst": ["tag:node0"], "ip": ["tcp:8016", "tcp:8019"]},
+
+		// --- (removed) tcp:8017 ---------------------------------------------
+		// 8017 is the SearXNG web service. It was never the exchange pipe in
+		// this policy; the exchange pipe is 8019. The 8017 Serve route was
+		// removed on 2026-09-28 because SearXNG is an unauthenticated
+		// outbound-proxy surface with SSRF and abuse-as-a-proxy
+		// characteristics. Do not re-add. A deny test below guards it both ways.
+
+		// --- (removed) tcp:6379 (Redis) -------------------------------------
+		// omega-redis container, quadlet and volume deleted 2026-09-28. Guarded.
+
+		// --- (removed) tcp:51372 (Deluge) -----------------------------------
+		// deluged was bound to wlo1 AND tailscale0. Guarded.
+
+		// --- (removed) tcp:2049 (NFSv4) -------------------------------------
+		// Removed under D-FED-01. Host service disabled 2026-09-28; rpcbind
+		// and rpc-statd were later masked. Guarded both ways.
+
+		// --- (removed) tag:opencode -> tag:node1 tcp:22 ---------------------
+		// Automation SSH. The same ungoverned side door, differently named.
+
+		// --- (removed) tag:node1 -> tag:node0 tcp:22 -----------------------
+		// Regular OpenSSH over WireGuard -- a separate plane from the "ssh"
+		// section below. No port-22 path between nodes at all.
+
+		// --- ICMP / ping, both directions -----------------------------------
+		{"src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["icmp:*"]},
+		{"src": ["tag:node1"], "dst": ["tag:node0"], "ip": ["icmp:*"]},
+	],
+
+	// --- SSH: HUMAN OPERATOR ONLY -------------------------------------------
+	"ssh": [
+		{
+			// checkPeriod is intentionally ABSENT. Tailscale rejected a custom
+			// value: "Functionality outside your plan: custom 'checkPeriod' is
+			// only available on the Premium or Enterprise plans." Omitting it
+			// applies the default of 12h, which is correct for this tier. Do not
+			// re-add unless the tailnet is upgraded. If you later move to
+			// Premium/Enterprise, add back e.g. "checkPeriod": "4h".
+			"action": "check",
+			"src":    ["autogroup:admin"],
+			"dst":    ["tag:node0", "tag:node1"],
+			"users":  ["autogroup:nonroot", "root"],
+		},
+	],
+
+	// Funnel node attribute: REMOVED (public-internet exposure; unused).
+	// autoApprovers: OMITTED (no subnet routes, no exit nodes).
+
+	// ---------------------------------------------------------------------------
+	// POLICY TESTS -- a failing assertion makes Tailscale REJECT the whole file.
+	// src/accept/deny must name specific entities; "*" is not permitted here.
+	// These are not documentation: every grant is proved and every closed door
+	// is proved shut, in BOTH directions.
+	// ---------------------------------------------------------------------------
+	"tests": [
+		{
+			// Both nodes reach both ports on the other. Symmetric, because
+			// asymmetry is what made duplex a comment in v2.
+			"src":    "tag:node1",
+			"accept": ["tag:node0:8016", "tag:node0:8019"],
+		},
+		{
+			"src":    "tag:node0",
+			"accept": ["tag:node1:8016", "tag:node1:8019"],
+		},
+		{
+			// REGRESSION GUARD -- no cross-node SSH, no NFS, and no path back to
+			// the three services removed on 2026-09-28. If anyone re-adds any of
+			// these, the save is REFUSED by Tailscale.
+			"src":  "tag:node1",
+			"deny": ["tag:node0:22", "tag:node0:2049",
+			         "tag:node0:8017", "tag:node0:6379", "tag:node0:51372"],
+		},
+		{
+			"src":  "tag:node0",
+			"deny": ["tag:node1:22", "tag:node1:2049", "tag:node1:8017",
+			         "tag:node1:6379", "tag:node1:51372"],
+		},
+	],
+}

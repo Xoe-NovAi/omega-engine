@@ -63,7 +63,15 @@ def hivemind_fs(monkeypatch):
         monkeypatch.setattr(state, "HANDOFF_ARCHIVE", tmp_path / "handoff" / "archive")
         monkeypatch.setattr(state, "LOCKS_BASE", tmp_path / "locks")
         monkeypatch.setattr(state, "METRICS_PATH", tmp_path / "metrics.json")
-        monkeypatch.setattr(state, "EXTENDED_SESSIONS_FILE", tmp_path / "extended_sessions.json")
+
+        # [maat 2026-09-28] `EXTENDED_SESSIONS_FILE` was deliberately NOT
+        # patched here. The Hivemind consolidation (de660681) removed the
+        # separate on-disk extended-session store and folded extended TTLs into
+        # the in-memory `_awareness` map, so the symbol no longer exists.
+        # Patching it raised AttributeError inside this fixture, which killed
+        # ALL 26 tests in this file at setup -- not just the 5 extended-session
+        # ones. A fixture that errors is a file-wide outage that reads as 26
+        # unrelated problems. Do not reintroduce the patch.
 
         # Create all directories
         for d in [
@@ -77,14 +85,18 @@ def hivemind_fs(monkeypatch):
 
 @pytest.fixture
 def reset_state():
-    """Reset in-memory hivemind state between tests."""
+    """Reset in-memory hivemind state between tests.
+
+    [maat 2026-09-28] `_extended_sessions` removed: extended sessions live in
+    `_awareness` since the consolidation (de660781). See the note in
+    `hivemind_fs`; clearing a symbol that no longer exists raised AttributeError
+    and took down every test using this fixture.
+    """
     state._hot_store.clear()
     state._awareness.clear()
-    state._extended_sessions.clear()
     yield
     state._hot_store.clear()
     state._awareness.clear()
-    state._extended_sessions.clear()
 
 
 def _write_handoff_packet(directory: Path, packet: dict) -> str:
@@ -429,64 +441,148 @@ class TestWorkspaceLocks:
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestExtendedSessions:
-    """Tests for extended session checkin / checkout lifecycle."""
+    """Tests for extended session checkin / checkout lifecycle.
 
-    def test_checkin_registers_session(self, hivemind_fs, reset_state):
-        """T-INT-014: Extended checkin registers session with TTL."""
+    [maat 2026-09-28] REWRITTEN. These five tests previously manipulated a
+    `state._extended_sessions` dict that they populated themselves and then
+    asserted on — a dict the test built, testing nothing. They also referenced
+    `EXTENDED_SESSIONS_FILE` / `_save_extended_sessions` / `_load_extended_sessions`,
+    all removed by the Hivemind consolidation (de660681), which folded extended
+    TTLs into the in-memory `_awareness` map.
+
+    They now drive the REAL `hivemind_awareness` tool through the
+    `extended_checkin` / `extended_checkout` actions, so a regression in the
+    cap, the missing-argument guard, or the checkout path actually fails here.
+    """
+
+    @staticmethod
+    async def _call(action, **kw):
+        """Invoke the real tool and return its decoded JSON payload.
+
+        [maat 2026-09-28] The tool is a FastMCP-decorated function: calling it
+        directly returns a `CallToolResult`, NOT a string. It also refuses to
+        run until hub services are initialised, so we call `_require_service()`
+        to stand them up first. Both facts were discovered by running the test
+        rather than by reading the signature -- the decorator wraps the
+        function, so its type annotation no longer describes what it returns.
+
+        If the service cannot be stood up, the test FAILS. Returning an empty
+        or synthetic payload here would be the exact silent-degradation shape
+        this suite exists to catch.
+        """
+        from mcp_servers.omega_hub.hub_tools import tools as hub_tools
+
+        # Bypass ONLY the readiness gate. `_require_service()` blocks every tool
+        # until the full 12-singleton engine bootstrap finishes, which is not
+        # what these five tests are about -- they are about the extended-session
+        # branch inside `hivemind_awareness`. Setting the flag exercises the real
+        # code path: the real cap, the real guard, the real key deletions. If any
+        # of that logic regresses, these tests still fail. We are NOT stubbing
+        # the behaviour under test, only the "is the engine up" precondition.
+        # Restored in the finally block so no other test inherits the bypass.
+        # The readiness flags live in `state`, not in `tools` — `tools` imported
+        # the `_require_service` FUNCTION, not the module-level flags. Verified
+        # rather than assumed; a guessed attribute path cost one iteration here.
+        prev_init, prev_err = state._init_complete, state._init_error
+        state._init_complete, state._init_error = True, None
+        try:
+            args = {"action": action}
+            args.update(kw)
+            result = await hub_tools.hivemind_awareness(**args)
+        finally:
+            state._init_complete, state._init_error = prev_init, prev_err
+
+        # When the FastMCP decorator is not active (direct module import, as
+        # here) the tool returns a plain JSON string. When the wrapper IS active
+        # the same function returns a CallToolResult whose content holds that
+        # text. Handle both -- measured, not assumed: an earlier draft assumed
+        # CallToolResult unconditionally and every test failed KeyError 'status'.
+        if hasattr(result, "content"):
+            result = "".join(
+                getattr(c, "text", "") for c in result.content
+            )
+        if isinstance(result, str):
+            return json.loads(result)
+        return result
+
+    @pytest.mark.anyio
+    async def test_checkin_registers_session(self, hivemind_fs, reset_state):
+        """T-INT-014: Extended checkin registers a TTL in _awareness."""
+        out = await self._call("extended_checkin", channel="opencode",
+                               entity="test-entity", ttl_seconds=10800,
+                               reason="Long-running task")
+
+        assert out["status"] == "extended_checkin_registered"
+        assert out["ttl_seconds"] == 10800
+        assert out["expires_at"] > 0, "expiry must be a real future timestamp"
+
+        # The TTL must actually be recorded, not just echoed back.
         agent_id = "opencode/test-entity"
-        ttl = 10800  # 3 hours
+        assert agent_id in state._awareness
+        assert state._awareness[agent_id]["extended_ttl"] == 10800
+        assert state._awareness[agent_id]["extended_reason"] == "Long-running task"
+        assert "extended_registered_at" in state._awareness[agent_id]
 
-        state._extended_sessions[agent_id] = {
-            "agent_id": agent_id,
-            "channel": "opencode",
-            "entity": "test-entity",
-            "ttl_seconds": ttl,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-            "reason": "Long-running task",
-        }
-
-        assert agent_id in state._extended_sessions
-        assert state._extended_sessions[agent_id]["ttl_seconds"] == ttl
-
-    def test_checkout_removes_session(self, hivemind_fs, reset_state):
-        """T-INT-015: Extended checkout removes session."""
+    @pytest.mark.anyio
+    async def test_checkout_removes_session(self, hivemind_fs, reset_state):
+        """T-INT-015: Extended checkout clears the TTL keys."""
+        await self._call("extended_checkin", channel="opencode",
+                         entity="test-entity", ttl_seconds=10800)
         agent_id = "opencode/test-entity"
-        state._extended_sessions[agent_id] = {
-            "agent_id": agent_id,
-            "ttl_seconds": 10800,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-        }
+        assert "extended_ttl" in state._awareness[agent_id]
 
-        del state._extended_sessions[agent_id]
-        assert agent_id not in state._extended_sessions
+        out = await self._call("extended_checkout", channel="opencode",
+                               entity="test-entity")
+        assert out["status"] == "extended_checkout_complete"
+        # The extended keys must be gone. The base awareness entry legitimately
+        # remains — checkout releases the TTL, it does not evict the agent.
+        assert "extended_ttl" not in state._awareness[agent_id]
+        assert "extended_reason" not in state._awareness[agent_id]
+        assert "extended_registered_at" not in state._awareness[agent_id]
 
-    def test_checkout_nonexistent_returns_no_session(self, hivemind_fs, reset_state):
-        """T-INT-016: Checkout for nonexistent session returns no_extended_session."""
-        agent_id = "opencode/nonexistent"
-        assert agent_id not in state._extended_sessions
+    @pytest.mark.anyio
+    async def test_checkout_nonexistent_returns_no_session(self, hivemind_fs, reset_state):
+        """T-INT-016: Checkout of an unknown agent is a no-op, not an error.
 
-    def test_extended_session_persistence(self, hivemind_fs, reset_state):
-        """T-INT-017: Extended sessions persist to disk."""
-        agent_id = "opencode/persist-entity"
-        state._extended_sessions[agent_id] = {
-            "agent_id": agent_id,
-            "ttl_seconds": 7200,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-        }
+        This must NOT raise and must NOT fabricate a successful checkout.
+        """
+        out = await self._call("extended_checkout", channel="opencode",
+                               entity="nonexistent")
+        assert out["status"] == "no_extended_session"
 
-        # Save
-        state._save_extended_sessions(state._extended_sessions)
+    @pytest.mark.anyio
+    async def test_checkin_requires_channel_and_entity(self, hivemind_fs, reset_state):
+        """T-INT-019: M23 — a checkin missing its identity args fails loudly.
 
-        # Load in fresh state
-        loaded = state._load_extended_sessions()
-        assert agent_id in loaded
-        assert loaded[agent_id]["ttl_seconds"] == 7200
+        Guards the `all([channel, entity])` truthiness trap that also bit the
+        `post` validator: an empty list/None is 'missing', but these are
+        required and must produce an explicit error, not a silent no-op.
+        """
+        out = await self._call("extended_checkin", channel="", entity="")
+        assert "error" in out, f"expected an explicit error, got {out}"
 
-    def test_ttl_cap_at_24h(self, hivemind_fs, reset_state):
-        """T-INT-018: TTL is capped at 86400 seconds (24h)."""
-        requested_ttl = 100000  # > 24h
-        capped_ttl = min(requested_ttl, 86400)
-        assert capped_ttl == 86400
+        out2 = await self._call("extended_checkout", channel=None, entity=None)
+        assert "error" in out2, f"expected an explicit error, got {out2}"
+
+    @pytest.mark.anyio
+    async def test_ttl_cap_at_24h(self, hivemind_fs, reset_state):
+        """T-INT-018: TTL is capped at 86400s (24h) by the REAL implementation.
+
+        Previously this asserted `min(100000, 86400) == 86400` — a tautology
+        about Python's `min`, testing no product code whatsoever.
+        """
+        out = await self._call("extended_checkin", channel="opencode",
+                               entity="cap-entity", ttl_seconds=100000)
+        assert out["ttl_seconds"] == 86400, (
+            f"TTL must be clamped to 24h, got {out['ttl_seconds']}"
+        )
+        assert state._awareness["opencode/cap-entity"]["extended_ttl"] == 86400
+
+        # A TTL under the cap must pass through untouched — proves the cap is a
+        # clamp and not a constant.
+        out2 = await self._call("extended_checkin", channel="opencode",
+                                entity="ok-entity", ttl_seconds=3600)
+        assert out2["ttl_seconds"] == 3600
 
 
 # ═══════════════════════════════════════════════════════════════════════════

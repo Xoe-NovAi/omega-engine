@@ -1,0 +1,21 @@
+{
+  "updated": "2026-09-10T23:58:55.665Z",
+  "hourly": {
+    "2026-09-10T16": {
+      "SLOW_DRIBBLE": 5
+    },
+    "2026-09-10T20": {
+      "SLOW_DRIBBLE": 1
+    },
+    "2026-09-10T21": {
+      "SLOW_DRIBBLE": 2
+    },
+    "2026-09-10T22": {
+      "SLOW_DRIBBLE": 2
+    },
+    "2026-09-10T23": {
+      "SLOW_DRIBBLE": 2,
+      "SILENT_STALL_TASK": 2
+    }
+  }
+}

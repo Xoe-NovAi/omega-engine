@@ -179,9 +179,45 @@ class TestPromotedKaliSurface:
                     unanchored.append(f"{entry.get('id', '?')}:{art}")
         assert unanchored == [], f"unresolvable evidence: {unanchored}"
 
-    def test_staging_emptied_after_promotion(self):
-        self._load_promoted()
-        staged = yaml.safe_load(self.STAGED.read_text(encoding="utf-8")) or {}
+    def test_staging_emptied_after_promotion(self, tmp_path):
+        """M11 hygiene: promoted proposals are removed from staging.
+
+        Deterministic mechanism check (not a live-data snapshot): build a
+        temp entity with staged proposals, run the promotion, and assert the
+        staging file is emptied. The mechanism is scripts/soul_promote.py.
+        """
+        from scripts import soul_promote
+
+        base = tmp_path / "data" / "entities" / "proment"
+        base.mkdir(parents=True)
+        (base / "proposed_lessons.yaml").write_text(
+            "proposals:\n"
+            "- id: t-001\n"
+            "  date: '2026-09-16'\n"
+            "  narrative: n\n"
+            "  insight: i\n"
+            "  principle: p\n",
+            encoding="utf-8",
+        )
+        (base / "soul.yaml").write_text(
+            "# 🔱 Test Entity — Soul Configuration\n"
+            "entity:\n"
+            "  name: \"Proment\"\n"
+            "  version: \"1.0.0\"\n"
+            "\n"
+            "evolution:\n"
+            "  lesson_staging: \"blind\"\n",
+            encoding="utf-8",
+        )
+
+        rc = soul_promote.promote(
+            "proment", all_flag=True, apply=True, confirm=True, repo_root=tmp_path
+        )
+        assert rc == 0
+
+        staged = yaml.safe_load(
+            (base / "proposed_lessons.yaml").read_text(encoding="utf-8")
+        )
         assert staged.get("proposals") == []
 
     def test_schema_validator_accepts_promoted_surface(self):

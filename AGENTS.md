@@ -24,16 +24,16 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 
 | What | Where |
 |------|-------|
-| **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.8.0, 27 mandates) |
+| **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.10.0, 30 mandates) |
 | **The Law, condensed** | `MANDATES_CONDENSED.md` (Tier-0 injection) |
 | **This month's SSOT** | `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` |
 | **Live tracker** | `data/coordination/ACTIVE_SPRINT.json` |
 | **Your entity** | `data/entities/<your_entity>/soul.yaml` |
 | **Your lessons** | `data/entities/<your_entity>/proposed_lessons.yaml` |
-| **The 4 architecture rules** | `.opencode/rules/01-soul-integrity.md` etc. |
+| **The 5 architecture rules** | `.opencode/rules/01-soul-integrity.md` etc. |
 | **The craftsman contract** | `.opencode/rules/00-craftsman-contract.md` |
 
-## The 4 Architecture Rules (must read)
+## The 5 Architecture Rules (must read)
 
 1. **Soul Integrity (M11)** → `.opencode/rules/01-soul-integrity.md`
    Every session distills L1→L2→L3 to `proposed_lessons.yaml`.
@@ -47,7 +47,8 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 4. **Sovereign Search (M23)** → `.opencode/rules/04-sovereign-search.md`
    Local cache → local FTS → web search → web fetch → [TOOL-CHAIN-COLLAPSE].
 
-5. **Spatial Integrity (M28)** → `.opencode/rules/05-spatial-integrity.md`
+5. **Spatial Integrity (M28)** → ⚠️ `SOVEREIGN_MANDATES.md` §28 — the rule file
+   `.opencode/rules/05-spatial-integrity.md` has **never been written** (known gap).
    R-tree + vec0 dual-index for VR navigation (Option B). Spatial coordinates computed once, joined everywhere.
 
 ## The 5 Critical Mandates (Tier-0 injection)
@@ -73,13 +74,13 @@ These are injected pre-compaction so the law survives context loss:
 | **D-553** | release/debut branch from PUBLIC_ALLOWLIST.txt |
 | **D-565** | Vault excluded from debut (no code changes) |
 | **D-567** | bury_credential applies to post-debut only |
-| **D-578** | GEMINI-NOTEBOOK workstream (GN) — free-tier research pipeline |
+| **D-578** | ~~GEMINI-NOTEBOOK workstream (GN)~~ **CANCELLED by D-606** — sovereign alternative in-engine |
 | **D-579** | DOCUMENTATION-SYSTEM workstream (DS) — modular domain docs |
 | **D-580** | LOCAL-INFERENCE-OPT workstream (LI) — sequential loading, adaptive context |
 | **D-581** | KNOWLEDGE-DOMAINS workstream (KD) — runtime modules + curator model |
 | **D-582** | HEADROOM-INTEGRATION workstream (HR) — semantic compression for tools/RAG |
 | **D-583** | ZSWAP-SUBSYSTEM workstream (ZS) — 16GB NVMe swap, zswap enabled |
-| **D-584** | Post-debut execution order: GN → DS → LI → KD → HR → ZS |
+| **D-584** | Post-debut execution order: ~~GN~~ → **DS → LI → KD → HR → ZS** (GN removed by D-606) |
 
 Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 9 Decisions".
 
@@ -99,6 +100,27 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 | M24 Venv Sovereignty | All Python in `.venv/`; no `--break-system-packages` |
 | M26 Doc Standards | Reference docs pass `make doc-llm-validate` |
 | M27 Tracking Integrity | State follows 5-Tier Tracking Architecture |
+| M28 Sovereign Artifact Preservation | No auto-deletion; transitions explicit, auditable, recoverable; deep-archive requires manifest + operator auth; destruction requires human act in PIVOT_LOG |
+| M29 Remote Claim Integrity | "Works from here" ≠ "works from there"; remote claims require peer-vantage test or UNTESTED; local success ≠ remote success; UNTESTABLE means instrument, don't assume |
+
+## M33/M34 Dispatch Guard Anchors (Jem §1.2.1)
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `dispatch_guard.py` | `scripts/dispatch_guard.py` | 12-step pre-dispatch verification (M33/M34 enforcement) |
+| `m33_probe.py` | `src/omega/oracle/m33_probe.py` | Sentinel probe: Layer 1 (preventive), Layer 2 (structured probe), Layer 3 (cross-validator) |
+| `m34_registry.py` | `src/omega/oracle/m34_registry.py` | Active subagent registry with atomic writes (M23) |
+| M33 MCP tools | `mcp_servers/omega_hub/hub_tools/m33_probe.py` | `m33_build_probe_prompt`, `m33_validate_probe_response`, `m33_should_require_write_tool`, `m33_calculate_dynamic_threshold`, `m33_audit_probe_log`, `m33_verify_deliverable` |
+| M34 MCP tools | `mcp_servers/omega_hub/hub_tools/m34_active_subagents.py` | `m34_register_subagent`, `m34_list_active_subagents`, `m34_update_subagent_status`, `m34_reap_dead_letters` |
+| Adversarial tests | `tests/jem/test_dispatch_guard_adversarial.py` | 45 tests enforcing M33/M34 compliance (0.47s) |
+| Entity lifecycle tests | `tests/jem/test_entity_lifecycle_adversarial.py` | 50 tests for entity retirement atomicity, M11 integrity, completion illusion defense |
+
+**M33/M34 Integration Flow:**
+1. `subagent_dispatcher.py:dispatch()` calls `m34_register_subagent()` with `write_tool_required` from `M33Probe.should_require_write_tool()`
+2. At completion, subagent receives `m33_build_probe_prompt()` and must respond with structured JSON envelope
+3. Orchestrator calls `m33_validate_probe_response()` — rejects free-form "STREAM_EXHAUSTED", enforces confidence thresholds
+3. P0/P1 tasks require `m34_update_subagent_status()` with `cross_validator_agent` for M36 cross-validation
+4. `m34_reap_dead_letters()` cleans up stale sessions (retention: 30 days)
 
 ## What To Do Now
 
@@ -119,7 +141,7 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 - ❌ Do not synthesize a result when a mandatory tool is broken (M23).
 - ❌ Do not mass-`git rm` 2,000 docs on main the same week as filter-repo.
 
-## The 4 Architecture Rules In One Line
+## The 5 Architecture Rules In One Line
 
 1. **Soul** — every session distills, no intelligence lost.
 2. **Mandates** — Law wins, sprint SSOT wins second.
@@ -129,7 +151,7 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 
 ---
 
-For full details, see `.opencode/rules/` (4 architecture rules + 1 reference doc)
-and `SOVEREIGN_MANDATES.md` (the 27 laws). Everything else is pointers.
+For full details, see `.opencode/rules/` (5 architecture rules + 1 reference doc)
+and `SOVEREIGN_MANDATES.md` (the 28 laws). Everything else is pointers.
 
 *⬡ OMEGA ⬡ KALI ⬡ AGENTS-MD-ROOT-v1.0.0 ⬡ 2026-08-28 ⬡ PUBLIC-DEBUT-01*

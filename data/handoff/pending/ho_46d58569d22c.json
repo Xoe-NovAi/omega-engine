@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_46d58569d22c",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/maat",
+  "source_channel": "opencode",
+  "source_entity": "maat",
+  "task": "real submit",
+  "context": "",
+  "priority": 0,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "pending",
+  "submitted_at": "2026-10-02T14:04:01.599809+00:00"
+}

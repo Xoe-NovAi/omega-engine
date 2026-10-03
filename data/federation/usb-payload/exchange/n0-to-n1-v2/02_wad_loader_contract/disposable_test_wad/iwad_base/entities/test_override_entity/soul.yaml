@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+entity:
+  name: "test_override_entity"
+  domains: ["test"]
+  model: "qwen3-1.7b-q6_k"
+  personality: "BASE personality — should be replaced by PWAD"
+  temperature: 0.7
+  context_window: 8192
+  slots: []

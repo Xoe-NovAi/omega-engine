@@ -1,0 +1,618 @@
+{
+  "generated": "2026-08-25T23:26:40Z",
+  "root": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine",
+  "components": {
+    "MemoryStore": {
+      "subsystem": "context",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "src/omega/memory_store.py"
+        ],
+        "entry_symbol": "MemoryStore",
+        "entry_file": "src/omega/memory_store.py",
+        "wire_class": "import",
+        "wire_hits": [
+          "(from\\s+[\\w.]*memory_store[\\w.]*\\s+import)|(import\\s+[\\w.]*memory_store)"
+        ],
+        "doc_refs": {
+          "docs/user/ONBOARDING_GUIDE.md::MemoryStore": true
+        }
+      }
+    },
+    "Memory module (spatial/blocks/recall)": {
+      "subsystem": "context",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "src/omega/memory/__init__.py"
+        ],
+        "wire_class": "import",
+        "wire_hits": [
+          "omega\\.memory\\.(providers|spatial|recall|blocks|compaction|vector_adapters)"
+        ],
+        "doc_refs": {
+          "docs/user/ONBOARDING_GUIDE.md::memory": true
+        }
+      }
+    },
+    "ContextBuilder": {
+      "subsystem": "context",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "src/omega/oracle/context_builder.py"
+        ],
+        "entry_symbol": "ContextBuilder",
+        "entry_file": "src/omega/oracle/context_builder.py",
+        "wire_class": "import",
+        "wire_hits": [
+          "(from\\s+[\\w.]*context_builder[\\w.]*\\s+import)|(import\\s+[\\w.]*context_builder)"
+        ],
+        "doc_refs": {
+          "docs/user/ONBOARDING_GUIDE.md::ContextBuilder": true
+        }
+      }
+    },
+    "Headroom semantic compression": {
+      "subsystem": "context",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "MCP headroom_retrieve served by external omega-hub; in-repo wiring = middleware chain.",
+      "evidence": {
+        "resolved_paths": [
+          "src/omega/oracle/middleware/headroom.py"
+        ],
+        "entry_symbol": "get_headroom_middleware",
+        "entry_file": "src/omega/oracle/middleware/headroom.py",
+        "wire_class": "import",
+        "wire_hits": [
+          "middleware\\.headroom|get_headroom_middleware"
+        ],
+        "doc_refs": {
+          "docs/decisions/PIVOT_LOG_CANONICAL.md::headroom": true
+        }
+      }
+    },
+    "CompactionHarvester": {
+      "subsystem": "context",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "Audit orphan: implemented-but-undocumented (D=part).",
+      "evidence": {
+        "resolved_paths": [
+          "src/omega/oracle/compaction_harvester.py"
+        ],
+        "entry_symbol": "CompactionHarvester",
+        "entry_file": "src/omega/oracle/compaction_harvester.py",
+        "wire_class": "import",
+        "wire_hits": [
+          "compaction_harvester\\s+import|get_harvester"
+        ],
+        "doc_refs": {
+          "docs/research/R_HYDRATION_RECEIPT_COMPACTION_DETECTION_20260716.md::[Cc]ompaction": true
+        }
+      }
+    },
+    "anchored-summary.md (Tier-2 lifeboat)": {
+      "subsystem": "context",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          ".opencode/anchored-summary.md"
+        ],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "anchored-summary"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::anchored-summary": true
+        }
+      }
+    },
+    "SESSION_ANCHOR.md": {
+      "subsystem": "context",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "Audit FIX (2026-08-25): ~14h stale through the entire FLE campaign. Freshness gate added so that failure class can never recur silently.",
+      "evidence": {
+        "resolved_paths": [
+          "data/coordination/SESSION_ANCHOR.md"
+        ],
+        "freshness": "0.2h old (limit 48h)",
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "SESSION_ANCHOR"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::SESSION_ANCHOR": true
+        }
+      }
+    },
+    "session_gnosis files": {
+      "subsystem": "context",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "data/entities/JOHN_CARMACK/workspace/session_gnosis_20260810.md",
+          "data/entities/antigravity/workspace/session_gnosis.md",
+          "data/entities/cli_gemini/workspace/session_gnosis.md",
+          "data/entities/doom_guy/workspace/session_gnosis.md",
+          "data/entities/iris/workspace/session_gnosis.md",
+          "data/entities/jem/workspace/session_gnosis.md",
+          "data/entities/john_carmack/workspace/session_gnosis.md",
+          "data/entities/john_carmack/workspace/session_gnosis_20260811.md",
+          "data/entities/kali/workspace/session_gnosis.md",
+          "data/entities/lilith/workspace/session_gnosis.md"
+        ],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "session_gnosis"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::session_gnosis": true
+        }
+      }
+    },
+    "Hivemind continuation store": {
+      "subsystem": "context",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "MCP tools served by omega-hub (external); in-repo evidence = cold-store dir + references.",
+      "evidence": {
+        "resolved_paths": [
+          "data/knowledge/HALL_OF_RECORDS"
+        ],
+        "wire_class": "mcp",
+        "wire_hits": [
+          "post_context|get_continuation"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::continuation": true
+        }
+      }
+    },
+    "HMC Collaboration Hub": {
+      "subsystem": "context",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": null,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "FIRST-RUN CORRECTION: Carmack audit \u00a70 verdict 'CUT (already done)' was based on the archived v1.5.1 July-outage forum \u2014 but a live v2.0 rewrite (2026-08-22, pre-debut, kali-owned) is ACTIVE. The audit itself carried a stale claim; inventory caught it.",
+      "evidence": {
+        "resolved_paths": [
+          "data/coordination/HMC_COLLABORATION_HUB.md"
+        ],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "HMC_COLLABORATION_HUB|HMC Hub"
+        ]
+      }
+    },
+    "HMC Watcher (Quad-Forge)": {
+      "subsystem": "context",
+      "E": false,
+      "I": false,
+      "W": false,
+      "D": false,
+      "verdict": "CUT",
+      "expected": "CUT",
+      "notes": "Impossible API (anyio.Path.watch), unwired, start() untested. Remediation #1: delete + strike medal.",
+      "evidence": {
+        "resolved_paths": [],
+        "entry_symbol": "HMCWatcher",
+        "entry_file": null,
+        "wire_class": "import",
+        "wire_hits": [],
+        "doc_refs": {
+          "OMEGA_ENGINE.md::Quad-Forge": false
+        }
+      }
+    },
+    "Root AGENTS.md": {
+      "subsystem": "instructions",
+      "E": false,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "GHOST",
+      "expected": "GHOST",
+      "notes": "Absent from entire git history; ~462 citers. WP-E owns reconstruction.",
+      "evidence": {
+        "resolved_paths": [],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "AGENTS\\.md"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::AGENTS": true
+        }
+      }
+    },
+    "OMEGA_CODEX.md (hydration law)": {
+      "subsystem": "instructions",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "OMEGA_CODEX.md"
+        ],
+        "wire_class": "hook",
+        "wire_hits": [
+          "OMEGA_CODEX|codex_cat|CODEX_CAT"
+        ],
+        "doc_refs": {
+          "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md::OMEGA_CODEX": true
+        }
+      }
+    },
+    "Codex freshness automation": {
+      "subsystem": "instructions",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "Audit FIX (2026-08-25): refresh silently did NOT fire across a dozen session ends. Freshness gate = OMEGA_CODEX.md mtime < 24h; regression now detectable by --ci.",
+      "evidence": {
+        "resolved_paths": [
+          ".opencode/hooks/session_end.py"
+        ],
+        "entry_symbol": "_regenerate_codex",
+        "entry_file": ".opencode/hooks/session_end.py",
+        "freshness": "0.1h old (limit 24h)",
+        "wire_class": "hook",
+        "wire_hits": [
+          "check-codex-stale|codex"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::hydration": true
+        }
+      }
+    },
+    "Agent markdown defs (.opencode/agents/*.md)": {
+      "subsystem": "instructions",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "Loader is OpenCode-native directory scan; opencode.json agent key = config surface.",
+      "evidence": {
+        "resolved_paths": [
+          ".opencode/agents/build.md",
+          ".opencode/agents/doom_guy.md",
+          ".opencode/agents/grokster.md",
+          ".opencode/agents/jem.md",
+          ".opencode/agents/john_carmack.md",
+          ".opencode/agents/kali.md",
+          ".opencode/agents/lilith.md",
+          ".opencode/agents/maat.md",
+          ".opencode/agents/makali.md",
+          ".opencode/agents/node.md"
+        ],
+        "wire_class": "cli",
+        "wire_hits": [
+          "\"agent\"|\"agents\""
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::agent": true
+        }
+      }
+    },
+    "Agent-level instructions[] (opencode.json)": {
+      "subsystem": "instructions",
+      "E": true,
+      "I": false,
+      "W": true,
+      "D": true,
+      "verdict": "FIX",
+      "expected": "FIX",
+      "notes": "Audit FIX (WP-B2): agents carry instructions[], zero prompt:{file:} \u2014 GAP-4 exposure class.",
+      "evidence": {
+        "resolved_paths": [
+          "opencode.json"
+        ],
+        "extra_probe": {
+          "agents_total": 12,
+          "with_instructions_array": 12,
+          "with_prompt_file": 0
+        },
+        "wire_class": "cli",
+        "wire_hits": [
+          "\"instructions\""
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::instruction": true
+        }
+      }
+    },
+    "Root instructions[] chain (opencode.json)": {
+      "subsystem": "instructions",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": null,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "Live injection verified by audit; still carries archive entry (G5 pending).",
+      "evidence": {
+        "resolved_paths": [
+          "opencode.json"
+        ],
+        "extra_probe": {
+          "root_instruction_count": 5
+        },
+        "wire_class": "cli",
+        "wire_hits": [
+          "\"instructions\""
+        ]
+      }
+    },
+    "Scribe agent def": {
+      "subsystem": "instructions",
+      "E": false,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "GHOST",
+      "expected": "GHOST",
+      "notes": "Remediation #2 executed (def cut). Residual GHOST: M11 still cites 'Scribe agent' as canonical executor of a pipeline that was scrapped \u2014 de-document or re-document.",
+      "evidence": {
+        "resolved_paths": [],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "Scribe agent"
+        ],
+        "doc_refs": {
+          "SOVEREIGN_MANDATES.md::Scribe agent": true
+        }
+      }
+    },
+    "OpenCode native compaction": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "opencode.json"
+        ],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "compaction"
+        ],
+        "doc_refs": {
+          "OMEGA_CODEX.md::compaction": true
+        }
+      }
+    },
+    "session_end.py hook": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          ".opencode/hooks/session_end.py"
+        ],
+        "entry_symbol": "_write_timestamp",
+        "entry_file": ".opencode/hooks/session_end.py",
+        "wire_class": "hook",
+        "wire_hits": [
+          "session_end\\.py"
+        ],
+        "doc_refs": {
+          "data/coordination/CONSULTANT_TUTORIAL_PRE_COMPACTION.md::session_end": true
+        }
+      }
+    },
+    "Manual lesson staging (proposed_lessons.yaml)": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "data/entities/JOHN_CARMACK/proposed_lessons.yaml",
+          "data/entities/cli_cline/proposed_lessons.yaml",
+          "data/entities/doom_guy/proposed_lessons.yaml",
+          "data/entities/grokster/proposed_lessons.yaml",
+          "data/entities/jem/proposed_lessons.yaml",
+          "data/entities/john_carmack/proposed_lessons.yaml",
+          "data/entities/kali/proposed_lessons.yaml",
+          "data/entities/lilith/proposed_lessons.yaml",
+          "data/entities/maat/proposed_lessons.yaml",
+          "data/entities/makali/proposed_lessons.yaml"
+        ],
+        "wire_class": "hook",
+        "wire_hits": [
+          "proposed_lessons|proposed"
+        ],
+        "doc_refs": {
+          "SOVEREIGN_MANDATES.md::proposed_lessons": true
+        }
+      }
+    },
+    "soul_promote": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": true,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "IMPLEMENTED 2026-08-25 20:16 (review-gated, atomic, dry-run default) \u2014 audit's 'one-way door' closed same-day. Verify --ci keeps it wired.",
+      "evidence": {
+        "resolved_paths": [
+          "scripts/soul_promote.py"
+        ],
+        "entry_symbol": "main",
+        "entry_file": "scripts/soul_promote.py",
+        "wire_class": "cli",
+        "wire_hits": [
+          "soul_promote"
+        ],
+        "doc_refs": {
+          "data/coordination/CONSULTANT_TUTORIAL_PRE_COMPACTION.md::soul_promote": true
+        }
+      }
+    },
+    "WAKE_STATE decision queue": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "data/coordination/WAKE_STATE.json"
+        ],
+        "wire_class": "cli",
+        "wire_hits": [
+          "WAKE_STATE"
+        ],
+        "doc_refs": {
+          "data/coordination/CONSULTANT_TUTORIAL_PRE_COMPACTION.md::WAKE_STATE": true
+        }
+      }
+    },
+    "Handoff packets (active queue)": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "",
+      "evidence": {
+        "resolved_paths": [
+          "data/handoff/KALI_SPRINT_B_VERDICT_20260615.json",
+          "data/handoff/active/ho_076fad7e4dd0.json",
+          "data/handoff/active/ho_6ec25dd4a684.json",
+          "data/handoff/archive/ho_0038a70bf921.json",
+          "data/handoff/archive/ho_00cb63f04efb.json",
+          "data/handoff/archive/ho_02e339254466.json",
+          "data/handoff/archive/ho_083d10b19818.json",
+          "data/handoff/archive/ho_0a2b13447e76.json",
+          "data/handoff/archive/ho_0a4c183883ca.json",
+          "data/handoff/archive/ho_0a7175e13f61.json"
+        ],
+        "wire_class": "import",
+        "wire_hits": [
+          "data/handoff\\b|data[/\\\\]handoff"
+        ],
+        "doc_refs": {
+          "docs/strategy/FLEET_TEAM_PLAYBOOK.md::handoff": true
+        }
+      }
+    },
+    "Legacy synonym dir (data/handoffs/)": {
+      "subsystem": "continuation",
+      "E": false,
+      "I": null,
+      "W": null,
+      "D": null,
+      "verdict": "CUT",
+      "expected": "CUT",
+      "notes": "Art. XII synonym-dir recurrence #2. Remediation #6: consolidate into data/handoff/archive/.",
+      "evidence": {
+        "resolved_paths": []
+      }
+    },
+    "CONSULTANT_TUTORIAL_PRE_COMPACTION.md": {
+      "subsystem": "continuation",
+      "E": true,
+      "I": null,
+      "W": true,
+      "D": true,
+      "verdict": "KEEP",
+      "expected": "KEEP",
+      "notes": "Audit FIX(minor) EXECUTED 2026-08-25 20:19: tutorial now cites the real scripts/soul_promote.py implementation. Negated doc-ref remains as a guard against any future citation of nonexistent mechanisms.",
+      "evidence": {
+        "resolved_paths": [
+          "data/coordination/CONSULTANT_TUTORIAL_PRE_COMPACTION.md"
+        ],
+        "wire_class": "doc-only",
+        "wire_hits": [
+          "CONSULTANT_TUTORIAL"
+        ],
+        "doc_refs": {
+          "data/coordination/fle_study_20260825/CARMACK_CONTEXT_INFRA_AUDIT.md::TUTORIAL": true,
+          "data/coordination/CONSULTANT_TUTORIAL_PRE_COMPACTION.md::soul_promote\\s*\\.?\\s*$|requires explicit soul_promote [negate]": true
+        }
+      }
+    }
+  }
+}

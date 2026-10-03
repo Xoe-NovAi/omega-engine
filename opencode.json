@@ -1,8 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
   "subagent_depth": 2,
   "plugin": [
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth",
     "opencode-sessions-explorer",
     "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
     "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
@@ -10,6 +10,22 @@
     "file:///home/arcana-novai/.config/opencode/plugin/sovereign-compaction.ts"
   ],
   "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "task": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "bash": {
+      "*": "allow",
+      "rm -rf /*": "deny",
+      "rm -rf ~": "deny",
+      "mkfs *": "deny",
+      "dd *of=/dev*": "deny"
+    },
     "external_directory": {
       "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
       "/media/arcana-novai/**": "allow",
@@ -38,7 +54,8 @@
       "pr-readiness-checker": "deny",
       "provider-validator": "deny",
       "sovereign-refinement-protocol": "deny",
-      "sovereign-search": "deny"
+      "sovereign-search": "deny",
+      "agent-session-resume": "allow"
     }
   },
   "instructions": [
@@ -64,7 +81,7 @@
       "type": "remote",
       "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
       "headers": {
-        "x-api-key": "${EXA_API_KEY}"
+        "x-api-key": "{env:EXA_API_KEY}"
       },
       "enabled": true
     },
@@ -139,171 +156,81 @@
           }
         }
       }
-    },
-    "opencode": {
-      "models": {
-        "nemotron-3-ultra-free": {
-          "name": "OpenCode Zen Nemotron 3 Ultra",
-          "limit": {
-            "context": 1000000,
-            "output": 128000
-          },
-          "variants": {
-            "low": {
-              "reasoningEffort": "low"
-            },
-            "medium": {
-              "reasoningEffort": "medium"
-            },
-            "high": {
-              "reasoningEffort": "high"
-            }
-          }
-        },
-        "mimo-v2.5-free": {
-          "name": "OpenCode Zen MiMo v2.5",
-          "limit": {
-            "context": 200000,
-            "output": 32000
-          },
-          "variants": {
-            "low": {
-              "reasoningEffort": "low"
-            },
-            "medium": {
-              "reasoningEffort": "medium"
-            },
-            "high": {
-              "reasoningEffort": "high"
-            }
-          }
-        }
-      }
     }
   },
   "agent": {
     "makali": {
       "mode": "primary",
       "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
-      "instructions": [
-        ".opencode/agents/plan.md"
-      ],
       "temperature": 0.3,
-      "toolProfile": "plan"
+      "permission": {
+        "bash": "allow"
+      }
     },
     "jem": {
       "mode": "all",
-      "description": "Research Orchestrator — 3-tier pipeline with inline KBs (Discovery/Synthesis/Verification), self-dispatch pattern",
-      "instructions": [
-        ".opencode/agents/jem.md"
-      ],
-      "temperature": 0.2,
-      "toolProfile": "research"
+      "description": "Research Orchestrator \u2014 3-tier pipeline with inline KBs (Discovery/Synthesis/Verification), self-dispatch pattern",
+      "temperature": 0.2
     },
     "doom_guy": {
       "mode": "all",
-      "description": "Sovereign id Software Architect — WAD translation & performance",
-      "instructions": [
-        ".opencode/agents/doom_guy.md",
-        "CREDITS.md"
-      ],
-      "temperature": 0.2,
-      "toolProfile": "heritage"
+      "description": "Sovereign id Software Architect \u2014 WAD translation & performance",
+      "temperature": 0.2
     },
     "roc_racoon": {
       "mode": "all",
-      "description": "Sovereign Miner — Legacy archaeology & pattern extraction",
-      "instructions": [
-        ".opencode/agents/roc_racoon.md"
-      ],
-      "temperature": 0.2,
-      "toolProfile": "mining"
+      "description": "Sovereign Miner \u2014 Legacy archaeology & pattern extraction",
+      "temperature": 0.2
     },
     "researcher": {
       "mode": "all",
-      "description": "Sovereign Master Researcher — Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
-      "instructions": [
-        ".opencode/agents/researcher.md"
-      ],
-      "temperature": 0.1,
-      "toolProfile": "research"
+      "description": "Sovereign Master Researcher \u2014 Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
+      "temperature": 0.1
     },
     "kali": {
       "mode": "all",
-      "description": "Grand Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift",
-      "instructions": [
-        ".opencode/agents/kali.md"
-      ],
+      "description": "Grand Oversight \u2014 Sees all, delegates to Ma'at/Lilith, destroys drift",
       "model": "opencode/nemotron-3-ultra-free",
-      "temperature": 0.3,
-      "toolProfile": "deploy"
+      "temperature": 0.3
     },
     "maat": {
       "mode": "all",
-      "description": "Build Oversoul — Governs N1-N5 (build side), delegates to node",
-      "instructions": [
-        ".opencode/agents/maat.md"
-      ],
-      "temperature": 0.2,
-      "toolProfile": "dev"
+      "description": "Build Oversoul \u2014 Governs N1-N5 (build side), delegates to node",
+      "temperature": 0.2
     },
     "lilith": {
       "mode": "all",
-      "description": "Runtime Oversoul — Governs N6-N10 (run side), delegates to node",
-      "instructions": [
-        ".opencode/agents/lilith.md"
-      ],
-      "temperature": 0.3,
-      "toolProfile": "run"
+      "description": "Runtime Oversoul \u2014 Governs N6-N10 (run side), delegates to node",
+      "temperature": 0.3
     },
     "verity": {
-      "mode": "subagent",
+      "mode": "all",
       "description": "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
-      "instructions": [
-        ".opencode/agents/verity.md"
-      ],
-      "model": "lmstudio/qwen3-1.7b",
+      "model": "opencode/nemotron-3-ultra-free",
       "temperature": 0.0,
       "hidden": true,
       "permission": {
         "edit": "deny",
         "bash": "deny",
         "skill": "deny"
-      },
-      "toolProfile": "audit"
+      }
     },
-    "node": {
+    "slot": {
       "mode": "all",
-      "description": "Slot-based domain agent — parameterized by --slot NX for any Node domain",
-      "instructions": [
-        ".opencode/agents/node.md"
-      ],
+      "description": "Slot-based domain agent \u2014 parameterized by --slot NX for any Slot domain",
       "temperature": 0.1,
-      "steps": 20,
-      "toolProfile": "debug"
+      "steps": 20
     },
     "john_carmack": {
       "mode": "all",
-      "description": "Ultimate Technical Consultant — id Software heritage, systems architecture, sovereign engineering",
-      "instructions": [
-        ".opencode/agents/john_carmack.md",
-        "CREDITS.md"
-      ],
-      "temperature": 0.2,
-      "toolProfile": "consult"
+      "description": "Ultimate Technical Consultant \u2014 id Software heritage, systems architecture, sovereign engineering",
+      "temperature": 0.2
     },
     "grok_cli": {
       "mode": "all",
-      "description": "Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
-      "instructions": [
-        ".opencode/agents/grok_cli.md"
-      ],
-      "env": {
-        "GROK_BRIDGE_TIMEOUT_MS": "120000",
-        "GROK_CLI_PATH": "grok"
-      },
+      "description": "Bridge to xAI Grok CLI \u2014 spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
       "temperature": 0.1,
-      "toolProfile": "bridge"
+      "prompt": "{file:.opencode/agents/archive/grok_cli.md}"
     }
   },
   "model": "lmstudio/qwen3-4b-thinking",

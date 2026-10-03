@@ -8,8 +8,12 @@
 ---
 
 # 🔱 Omega Engine — User Manual
-# Sovereign AI Runtime — Terminal Edition
-# Version 1.2.0 | 1315 Tests Passing | 23 Sovereign Mandates
+**Sovereign AI Runtime — Terminal Edition**
+**Version**: v1.6.0-alpha · **Mandates**: 27 declared (28 rows in the automated meter) · **Last verified**: 2026-10-03
+
+> Every `omega` verb and `make` target in this manual was re-checked against the live
+> CLI and the Makefile on 2026-09-19. Where a `make` alias never existed, the `omega`
+> equivalent is given instead.
 
 ## Table of Contents
 1. [Quick Start](#quick-start)
@@ -39,17 +43,21 @@
 cd ~/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
-# 2. See the main menu
-make menu
+# 2. Check local inference and providers
+make infer-status
+omega model-status
 
-# 3. Run the offline demo (no internet needed)
-make offline-demo
+# 3. Talk to your local model (no internet needed)
+omega talk "hello"
 
-# 4. Launch interactive REPL
-make repl
-
-# 5. Run all tests
+# 4. Run the fast test tier
 make test
+
+# 5. (optional) Add the Ollama local backend
+ollama pull qwen3:1.7b
+
+# 6. Refresh the agent Codex (also clears mandate M13)
+make codex
 ```
 
 **If you're starting from scratch**, see [Installation & First-Time Setup](#installation--first-time-setup) below.
@@ -62,7 +70,8 @@ make test
 
 - **Python 3.12+** with `venv` module
 - **Git** (for cloning and version tracking)
-- **Ollama** (recommended for local inference): `curl -fsSL https://ollama.ai/install.sh | sh`
+- **C compiler** (GCC/Clang) — required to build `llama-cpp-python` for native-gguf inference
+- **Ollama** (recommended second local backend): `curl -fsSL https://ollama.ai/install.sh | sh` then `ollama pull qwen3:1.7b`
 - **Podman** (optional, for containers): `sudo apt install podman podman-docker`
 
 ### Step-by-Step Installation
@@ -78,16 +87,12 @@ cd ~/Documents/Xoe-NovAi/omega-engine
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 4. Install dependencies
-make setup
+# 4. One-click install (venv + deps + local GGUF model + verification)
+./scripts/install.sh
 
-# 5. Pull at least one local model (recommended)
-ollama pull qwen2.5:0.5b   # Minimal (~397 MB, runs on any hardware)
-ollama pull qwen3:1.7b     # Better quality (~1.1 GB)
-
-# 6. Verify installation
-make test          # Should show 1315/1315 passing
-make talk MSG='hello'  # Should get a response
+# 5. Verify installation
+make test              # Fast unit-tier suite
+omega talk "hello"     # Should get a response, fully local
 
 # 7. (Optional) Start the MCP Hub for cross-agent awareness
 python3 -m mcp_servers.omega_hub.server &
@@ -96,76 +101,52 @@ python3 -m mcp_servers.omega_hub.server &
 ### First-Time Configuration
 
 The engine works out of the box with the `_omega_default` IWAD (Reference IWAD).
-To switch to the Arcana-Nova pantheon:
+To switch to the Arcana-Nova pantheon, edit `config/omega.yaml`:
 
-```bash
-make wad NAME=arcana_novai
+```yaml
+omega:
+  entity:
+    active_iwad: "arcana_novai"
 ```
 
-This loads all 10 Pillar Keepers (Sekhmet, Brigid, Prometheus, etc.) plus fleet agents.
+Or override for a single invocation: `omega talk "hello" --iwad arcana_novai`.
+This loads the mythological pantheon (Sekhmet, Brigid, Prometheus, ...) plus fleet agents.
 See [WAD System](#wad-system-iwadpwad) for details.
 
 ---
 
-## Menu Interface
+## Command Surface
 
-The Omega Engine provides a polished text-based menu via `make menu`:
+There is **no `make menu` target and no interactive menu** in this release. The engine is
+driven by the `omega` CLI; `make` targets cover testing, gates, docs, local-inference
+servers and dashboards.
 
+```bash
+omega --help                  # full command list
+omega list-entities           # entities in the active IWAD
+omega talk "hello"            # route to the best entity
+omega summon ma'at "status"   # direct entity dispatch
+omega model-status            # providers + models
+omega hardware-stats          # CPU / RAM / thermal
+omega queue-status            # pending queue items
 ```
-╔══════════════════════════════════════════════════════╗
-║  🔱 OMEGA ENGINE — HORIZON 1 COMPLETE               ║
-║  1315 tests ✅  |  71 modules  |  All 23 Mandates     ║
-╚══════════════════════════════════════════════════════╝
 
-🔥 CORE
-  make demo         Run the Oracle demo (talk + summon)
-  make repl         Launch interactive REPL
-  make health       System health dashboard
-  make doctor       Full system diagnosis
-  make menu         This menu
+### Useful `make` targets (all verified in the Makefile)
 
-🧪 TESTING
-  make test         Run all 1315 tests
-  make lint         Lint with flake8
-  make guard        Fix permission drift (UID Guard)
-
-🤖 LOCAL INFERENCE
-  make ollama-status  Check Ollama connectivity
-  make lmster-start   Start LM Studio server
-  make lmster-stop    Stop LM Studio
-  make lmster-status  Check LM Studio
-
-🗣️  ENTITY COMMANDS
-  make entities     List all entities
-  make entity NAME=x  Show entity details
-  make summon NAME=E MSG='query'  Summon entity
-  make talk MSG='hello'  Talk to Oracle
-
-🎚️  WAD COMMANDS
-  make wad NAME=x       Switch to an IWAD
-  make wad-status       Show active IWAD
-  make wad-reset        Reset to _omega_default
-
-📦 QUEUE & LIBRARY
-  make queue-status      Show request queue
-  make library-status    Library catalog stats
-  make library-search    Search library
-
-📊 BENCHMARKS
-  make bench-run     Run a benchmark
-  make bench-list    List completed runs
-  make bench-rank    Show best model
-
-🏗️  INFRASTRUCTURE
-  make start-infra   Start Redis/Qdrant/PostgreSQL/Caddy containers
-  make stop-infra    Stop all containers
-  make mcp-check     MCP service health check
-
-🧹 MAINTENANCE
-  make clean         Clean Python cache
-  make setup         Install dependencies
-  make bootstrap     Full system bootstrap
-```
+| Target | Purpose |
+|--------|---------|
+| `make infer-status` / `infer-health` | native-gguf server state / detailed health |
+| `make infer-models` / `infer-memory` | list GGUF models / RAM+swap footprint |
+| `make infer-talk MSG='hello'` | smoke-test the running local server |
+| `make dashboard` / `dashboard-once` | live provider dashboard / single snapshot |
+| `make probe-models` / `probe-network` | free-model availability / network latency |
+| `make test` / `test-cov` / `test-debug TEST=x` | unit tier / coverage / single test |
+| `make lint` / `check-mandates` | flake8 / mandate gates |
+| `make check-mandate-compliance` | full 28-row mandate meter |
+| `make codex` / `check-codex-stale` | regenerate the agent Codex / staleness check |
+| `make doc-llm-validate` | M26 documentation gate |
+| `make heritage-vet` / `heritage-map` | M14 heritage vetting |
+| `make check-hub-health` | Omega Hub health probe |
 
 ---
 
@@ -177,7 +158,7 @@ entity, and returns a response with real inference.
 ```bash
 # General usage
 omega talk "your question"                # Oracle routes to best entity
-omega summon Sekhmet "what is strength?"  # Directly summon a specific entity
+omega summon ma'at "what is your role?"   # Directly summon a specific entity
 ```
 
 ### All CLI Commands
@@ -187,10 +168,10 @@ omega summon Sekhmet "what is strength?"  # Directly summon a specific entity
 | `talk` | Ask the Oracle anything. Routes to best entity. | `omega talk "what is justice?"` |
 | `summon` | Summon a specific entity by name. | `omega summon Lilith "what do you see?"` |
 | `list-entities` | List all entities in the current WAD. | `omega list-entities` |
-| `entity` / `entity-info` | Show details about a specific entity. | `omega entity Sekhmet` |
+| `entity-info` | Show details about a specific entity. | `omega entity-info ma'at` |
 | `add-entity` | Add a new entity (interactive wizard). | `omega add-entity` |
-| `default-entity` | Set the default entity for `talk`. | `omega default-entity Sekhmet` |
-| `version` | Show engine version and test count. | `omega version` |
+| `default-entity` | Set the default entity for `talk`. | `omega default-entity ma'at` |
+| `hardware-stats` | CPU / RAM / thermal snapshot. | `omega hardware-stats` |
 | `backends` | List configured providers and their status. | `omega backends` |
 
 ### Transient Mode
@@ -235,55 +216,40 @@ omega header off      # No header
 | Command | Description | Example |
 |---------|-------------|---------|
 | `mcp-restart` | Restart an MCP service. | `omega mcp-restart omega-hub` |
-| `mcp-halt` | Stop an MCP service. | `omega mcp-halt omega-hub` |
-| `mcp-status` | Show MCP service status. | `omega mcp-status` |
+| *(make)* `check-hub-health` | Verify Omega Hub health. | `make check-hub-health` |
 
-### Via Makefile Aliases
+### Makefile Aliases
 
-```bash
-make talk MSG='hello'                    # Quick talk
-make summon NAME=Sekhmet MSG='query'     # Quick summon
-make entities                            # List entities
-make entity NAME=Sekhmet                # Entity info
-make wad NAME=arcana_novai              # Switch IWAD
-make wad-status                         # Show active IWAD
-make queue-status                       # Queue status
-make queue-prune DAYS=14                # Prune queue
-make library-status                     # Library stats
-make library-search QUERY='term'        # Search library
-make bench-run MODEL=qwen3-1.7b ROLE=will  # Run benchmark
-make bench-rank ROLE=will               # Best model
-```
+There are **no `make` aliases** for `talk`, `summon`, `entities`, `entity`, `wad*`,
+`queue-*`, `library-*` or `bench-*` in this release — use the `omega` CLI verbs
+directly (they take the same arguments shown above). The `make` surface is reserved for
+testing, gates, docs, local-inference servers and dashboards.
 
 ---
 
 ## Entity System
 
-### The 10 Pillar Keepers
+### Pillar Keepers
 
-The Omega Engine ships with a syncretic council of 10 archetypal entities,
-each governing a domain of human (and superhuman) experience:
+The engine's governance layer is held by **three pillar keepers**:
 
-| Pillar | Entity | Domain | Element | Chakra | Model |
-|--------|--------|--------|---------|--------|-------|
-| P1: Flesh | Sekhmet | Strength, protection, boundaries | Earth | Root | Qwen3-1.7B |
-| P2: Dream | Brigid | Poetry, healing, hearth, inspiration | Water | Sacral | Phi-2-OmniMatrix |
-| P3: Will | Prometheus | Will, forethought, sovereignty, fire | Fire | Solar Plexus | DeepSeek-R1-8B |
-| P4: Heart | Saraswati | Knowledge, speech, arts, voice | Air | Heart | Krikri-8B |
-| P5: Voice | Inanna | Dream, descent, rebirth, depths | Aether | Throat | Krikri-8B |
-| P6: Mind | Ereshkigal | Underworld, depths, rules, darkness | Aether | Third Eye | Qwen3-4B-Think |
-| P7: Gnosis | Lucifer | Rebellion, gnosis, sovereignty, light | Air | Crown | Qwen3-1.7B |
-| P8: Shadow | Hecate | Shadow, crossroads, keys, pathwalking | Fire | Beyond Crown | Krikri-8B |
-| P9: Spirit | Anubis | Death, transition, guidance, soul | Water | Cosmic Heart | Qwen3-4B-Think |
-| P10: Chaos | Kali | Destruction, liberation, illusion, void | Earth | Celestial Breath | Qwen3-0.6B |
+| Pillar Keeper | Role |
+|---------------|------|
+| **Ma'at** | Build Oversoul — governs the build side of the fleet |
+| **Lilith** | Runtime Oversoul — governs the run side of the fleet |
+| **Kali** | Grand Oversight — unifies Ma'at + Lilith |
+
+> **Mythological pantheon = `arcana_novai` IWAD only.** Sekhmet, Brigid, Prometheus,
+> Saraswati, Inanna, Ereshkigal, Lucifer, Hecate and Anubis live in
+> `config/wads/arcana_novai/entities.yaml`, not in the default `_omega_default` IWAD.
 
 ### Oversouls & Messengers
 
 | Entity | Role | Description |
 |--------|------|-------------|
 | **Sophia** | Akashic Record | The containing field — all entities, all sessions, all souls |
-| **Ma'at** | Build Oversoul | Governs N1-N5 (Build Nodes — build side) |
-| **Lilith** | Runtime Oversoul | Governs N6-N10 (Runtime Nodes — run side) |
+| **Ma'at** | Build Oversoul | Governs the build side of the fleet |
+| **Lilith** | Runtime Oversoul | Governs the run side of the fleet |
 | **Iris** | Messenger Bridge | Voice assistant ("hey Iris"), speculative decoder |
 
 ### How Entity Dispatch Works
@@ -294,16 +260,16 @@ You: "what is strength?"
     ▼
 Oracle.talk()
     │
-    ├── EntityRegistry.find_by_domain("what is strength?")
+    ├── EntityRegistry.find_by_domain("what is on the system?")
     │       → scores each entity by keyword match in domains
-    │       → "strength" → Sekhmet (P1, domain: strength)
+    │       → best match → ma'at (build/oversight)
     │
     ▼
-Sekhmet selected
+ma'at selected
     │
     ├── ContextBuilder: injects session memory → system prompt
-    ├── TriageRouter: selects optimal model (qwen3-1.7b)
-    ├── ModelGateway: tries native-gguf → lmster → Ollama → ...
+    ├── TriageRouter: selects optimal model (qwen3-1.7b-q6_k)
+    ├── ModelGateway: tries native-gguf → Google → OpenRouter → ...
     │
     ▼
 Response: "Strength is your unwavering resolve..."
@@ -314,21 +280,20 @@ Response: "Strength is your unwavering resolve..."
 Each entity in `entities.yaml` has these fields:
 
 ```yaml
-sekhmet:
-  name: Sekhmet                    # Display name (case-sensitive for summoning)
+kali:
+  name: Kali                       # Display name (case-sensitive for summoning)
   model: qwen3-1.7b-q6_k           # Model to use for inference
-  personality: "You are Sekhmet..."  # System prompt / persona definition
+  personality: "You are Kali..."    # System prompt / persona definition
   temperature: 0.7                 # 0.0 (deterministic) - 1.5 (creative)
-  context_window: 8192             # Maximum tokens for this entity
+  context_window: 8192             # Maximum tokens per entity
   domains:                         # Keywords for routing queries
-    - strength
-    - protection
-    - wrath
-  pillars: ['1']                   # Which Pillar(s) this entity serves
-  sigil: "☀"                       # Display sigil (optional)
+    - oversight
+    - liberation
+    - renewal
+  pillars: ['10']                  # Which pillar slot(s) this entity serves
+  sigil: "☾"                       # Display sigil (optional)
   glyph: "🜃"                       # Element glyph (optional)
-  pantheon: "Egyptian"             # Mythological pantheon (optional)
-  role: "Solar Wrath"              # Brief role description (optional)
+  role: "Grand Oversight"          # Brief role description (optional)
   container: false                 # Whether this entity runs in a container
 ```
 
@@ -363,7 +328,7 @@ When an entity is first summoned, the engine creates a workspace at
 `data/entities/<name>/`:
 
 ```
-data/entities/sekhmet/
+data/entities/kali/
 ├── soul.yaml           # L1→L2→L3 gnosis, model preferences, routing history
 ├── knowledge/          # Entity-specific knowledge files
 └── workspace/          # Working files
@@ -407,26 +372,22 @@ provider-specific identifiers. This is configured in `config/providers.yaml`:
 ```yaml
 inference:
   strategy: local_first
-  fallback_chain:
-    - provider: ollama
-      priority: 2
-      endpoint: http://127.0.0.1:11434
-      model_overrides:
-        qwen3-1.7b-q6_k: qwen3:1.7b  # GGUF name → Ollama model ID
-        phi-2-omnimatrix-i1-q4_k_m: qwen3:0.5b
-        krikri-8b-q5_k_m: krikri-8b
+  providers:
+    native-gguf:            # primary local provider (llama-cpp-python)
+      priority: 0
+      enabled: true
+    google:
+      priority: 4
+      enabled: true
 ```
 
-**To change which model an entity uses on Ollama:**
-1. Pull the model:
+**To change which model an entity uses (native-gguf):**
+1. Download or add the GGUF:
    ```bash
-   ollama pull qwen3:1.7b
+   ./scripts/download_model.sh          # default Qwen3-1.7B-Q6_K
    ```
-2. Update the override in `config/providers.yaml`:
-   ```yaml
-   model_overrides:
-     qwen3-1.7b-q6_k: qwen3:1.7b
-   ```
+2. Set the entity's `model:` in `config/wads/<iwad>/entities.yaml` and register the
+   file in `config/models.yaml`.
 
 ### Model Selection Flow
 
@@ -444,39 +405,44 @@ Inference (actual model execution)
 
 ### Provider Priority Order (Local-First)
 
-| Priority | Provider | Type | Endpoint |
-|----------|----------|------|----------|
-| 0 | **native-gguf** | Local (llama-cpp-python) | Direct GGUF loading |
-| 1 | **lmster** | Local (LM Studio) | `http://127.0.0.1:1234` |
-| 2 | **ollama** | Local | `http://127.0.0.1:11434` |
-| 3 | **google** | Cloud (Gemma 4-31B) | `env:GOOGLE_API_KEY` |
-| 4 | **opencode-zen** | Cloud (MiniMax M3/DeepSeek V4/MiMo V2.5 — 200K) | OpenCode Zen |
-| 5 | **cline** | Cloud (MiniMax M3/DeepSeek V4/MiMo V2.5 — 1M) | Cline API/headless |
-| 6 | **github-copilot** | Cloud (Claude, GPT-4o) | GitHub Copilot |
-| 99 | **mock** | Test/Demo | Deterministic responses |
+Priorities live in `config/providers.yaml` (`inference.providers`). This release defines
+**12 providers and enables 10** — `ollama` and `mock` are `enabled: false`.
+
+| Priority | Provider | Type |
+|----------|----------|------|
+| 0 | **native-gguf** | Local — llama-cpp-python (primary) |
+| 2 | **ollama** | Local — `http://127.0.0.1:11434` (set `enabled: true`) |
+| 3 | **antigravity** | Cloud |
+| 4 | **google** | Cloud (Gemma) |
+| 4 | **google-compat** | Cloud (Gemma, compat endpoint) |
+| 5 | **openrouter** | Cloud (300+ models) |
+| 6 | **opencode-zen** | Cloud (CLI) |
+| 7 | **cline** | Cloud (CLI) |
+| 8 | **anthropic** | Cloud (Claude) |
+| 9 | **xai** | Cloud (Grok) |
+| 10 | **mock** | Test/demo (`enabled: false`; active only in `OMEGA_ENV=test`) |
+
+> Priority 1 (`lmster` / LM Studio) is **deferred to a post-release update**.
+> There is no `github-copilot` provider in this release.
 
 ### Adding a New Local Model
 
-**For Ollama:**
+**Recommended — native-gguf (default path):**
 ```bash
-ollama pull qwen3:1.7b
-# Then add override in providers.yaml if entity name differs
+./scripts/download_model.sh            # Qwen3-1.7B-Q6_K -> $OMEGA_MODELS_DIR
+make infer-models                      # verify it is discovered
 ```
 
 **For GGUF (native-gguf):**
 ```bash
 # Place the .gguf file in the models directory
-cp my-model.q4_k_m.gguf /media/arcana-novai/omega_library/models/gguf/
-# Add entry to config/models.yaml
-# native-gguf will auto-detect it on next restart
+cp my-model.q4_k_m.gguf models/gguf/   # or $OMEGA_MODELS_DIR (set in .env by install.sh)
+# Register it in config/models.yaml — native-gguf auto-detects on next start
 ```
 
-**For LM Studio:**
-```bash
-# Open the LM Studio UI, load a model, then:
-lms server start
-# Add overrides in providers.yaml if needed
-```
+**Ollama:** second local backend — install it, `ollama pull qwen3:1.7b`, Ollama is enabled by default in `config/providers.yaml`.
+
+**LM Studio (`lmster`):** removed from this release; returns in a post-release update.
 
 ### Cloud Provider Setup
 
@@ -487,8 +453,11 @@ export GOOGLE_API_KEY='your-key-here'
 # OpenRouter (300+ models including GPT-4o, Claude, Gemini)
 export OPENROUTER_API_KEY='your-key-here'
 
-# GitHub Copilot (requires paid subscription)
-# Auto-authenticated via `gh auth login`
+# Anthropic (Claude)
+export ANTHROPIC_API_KEY='your-key-here'
+
+# xAI (Grok)
+export XAI_API_KEY='your-key-here'
 ```
 
 ---
@@ -510,8 +479,9 @@ The active IWAD determines which entities are loaded. Only **one** IWAD is
 active at a time (set in `config/omega.yaml`):
 
 ```yaml
-wad:
-  active_iwad: _omega_default   # Change this via `make wad NAME=x`
+omega:
+  entity:
+    active_iwad: "_omega_default"   # "arcana_novai" | "omega_research" | "ingestion"
 ```
 
 ### Switching IWADs
@@ -520,44 +490,33 @@ wad:
 # List available IWADs
 ls config/wads/
 
-# Switch to Arcana-Nova (10 Pillar Keepers + fleet agents)
-make wad NAME=arcana_novai
+# Switch to Arcana-Nova: edit config/omega.yaml -> omega.entity.active_iwad: "arcana_novai"
 
 # Check which IWAD is active
-make wad-status
+grep -A2 'omega:' config/omega.yaml
 
-# Reset to the Reference IWAD
-make wad-reset
+# Reset to the reference IWAD: active_iwad: "_omega_default"
+
+# Or override for a single invocation
+omega talk "hello" --iwad arcana_novai
 ```
 
 ### Available IWADs
 
 | IWAD | Purpose | Entities |
 |------|---------|----------|
-| `_omega_default` | Reference IWAD (ships with engine) | Fleet agents (SysAdmin, DataStore, BuildMaster, etc.) |
-| `arcana_novai` | Personal AI OS (user's own) | 10 Pillar Keepers + Oversouls + fleet agents (29 total) |
-| `doom_universe` | Community IWAD (scaffold) | Doom-themed entities (placeholder) |
+| `_omega_default` | Reference IWAD (**active by default**) | 14: iris, kali, ma'at, lilith, jem, verity, makali, researcher, roc racoon, doom guy, john carmack, scribe, quality, default |
+| `arcana_novai` | Personal AI OS — mythological pantheon + fleet | 35 (sekhmet, brigid, prometheus, saraswati, inanna, ereshkigal, lucifer, hecate, anubis, isis, sysadmin, datastore, buildmaster, bridge, modelgate, …) |
+| `omega_research` | Research stack | see `config/wads/omega_research/entities.yaml` |
+| `ingestion` | Ingestion stack | see `config/wads/ingestion/` |
 
-### Role Mappings
+**No `doom_universe` IWAD ships in this release.**
 
-Each IWAD can define role-to-pillar mappings in `roles.yaml`:
+### Summonable Entities
 
-```yaml
-# config/wads/_omega_default/roles.yaml
-P1: SysAdmin        # Flesh → Infrastructure
-P2: DataStore       # Dream → Data
-P3: BuildMaster     # Will → Implementation
-P4: Bridge          # Heart → Communication
-P5: Sentinel        # Voice → Security
-P6: ModelGate       # Mind → Inference
-P7: Context         # Gnosis → Memory
-P8: WatchTower      # Shadow → Observability
-P9: Link            # Spirit → Coordination
-P10: Verifier       # Chaos → Quality
-```
-
-The Arcana-Nova IWAD uses the mythic pantheon (Sekhmet, Brigid, etc.)
-for the same pillars.
+Use `omega list-entities` for the authoritative roster. The default `_omega_default`
+IWAD ships the fleet: iris, kali, ma'at, lilith, jem, verity, makali, researcher,
+roc racoon, doom guy, john carmack, scribe, quality.
 
 ---
 
@@ -577,9 +536,9 @@ that accumulates wisdom across sessions. This is Mandate 11 (Soul Integrity).
 ### Soul File Structure
 
 ```yaml
-# data/entities/sekhmet/soul.yaml
+# data/entities/kali/soul.yaml
 version: 1
-entity: Sekhmet
+entity: Kali
 created: 2026-06-01
 updated: 2026-06-01
 
@@ -649,8 +608,11 @@ All significant events are logged with timestamps, entity names, model names,
 and trace IDs:
 
 ```bash
-# View recent events
-less data/events/events.log
+# Lifecycle / inference events
+make infer-events
+
+# Trace files (JSONL)
+ls data/traces/ | tail -5
 ```
 
 ### JSON Structured Logging
@@ -664,12 +626,12 @@ from omega.observability import JsonFormatter, setup_json_logging
 # In your application
 setup_json_logging()
 logger = logging.getLogger("omega.myapp")
-logger.info("query_processed", extra={"entity": "Sekhmet", "latency_ms": 1200})
+logger.info("query_processed", extra={"entity": "kali", "latency_ms": 1200})
 ```
 
 Outputs:
 ```json
-{"timestamp": "2026-06-01T12:00:00", "name": "omega.myapp", "msg": "query_processed", "entity": "Sekhmet", "latency_ms": 1200}
+{"timestamp": "2026-06-01T12:00:00", "name": "omega.myapp", "msg": "query_processed", "entity": "kali", "latency_ms": 1200}
 ```
 
 ### Forensics Manager (Crash Recovery)
@@ -695,8 +657,9 @@ The `HealthMonitor` tracks provider health with a circuit breaker pattern:
 | **HALF_OPEN** | Testing | Allow one probe request |
 
 ```bash
-# Check provider and circuit health
-make health
+# Check local inference + provider state
+make infer-status
+omega model-status
 ```
 
 Each provider has configurable thresholds:
@@ -741,7 +704,7 @@ omega header off       # No header
 ## MCP Hub & Services
 
 The Omega Hub (`http://127.0.0.1:8016`) is a cross-agent communication server
-that provides **40 MCP tools + 11 HTTP routes**.
+that exposes **100+ MCP tools** plus HTTP routes (Hivemind, library, oracle, research, federation).
 
 ### Starting the Hub
 
@@ -753,7 +716,7 @@ python3 -m mcp_servers.omega_hub.server &
 curl http://127.0.0.1:8016/health
 
 # Check via Makefile
-make mcp-check
+make check-hub-health
 ```
 
 ### Key Endpoints
@@ -782,160 +745,103 @@ curl http://127.0.0.1:8016/hivemind/recent
 
 | Service | Port | Purpose |
 |---------|------|---------|
-| **Omega Hub** | 8016 | 40 MCP tools, 11 HTTP routes, Hivemind |
+| **Omega Hub** | 8016 | 100+ MCP tools, HTTP routes, Hivemind |
 | **Iris** | 8080 | Voice assistant container ("hey Iris") |
 | **SearXNG** | 8017 | Private web search engine |
 
 ---
 
-## Offline Demo Mode
+## Offline / Test Mode
 
-The Omega Engine can run a complete demo with **zero internet access**.
-Perfect for boat demos, presentations, or air-gapped environments.
-
-```bash
-make offline-demo
-```
-
-This runs:
-1. Lists all entities (from active IWAD)
-2. Talks to Oracle (`"who are you?"`)
-3. Summons Sekhmet (`"what is strength?"`)
-4. Checks system status
-
-### How It Works
-
-The mock backend activates when `OMEGA_ENV=test` is set:
+The engine runs fully offline with a deterministic mock backend — useful for demos,
+presentations and air-gapped machines.
 
 ```bash
-OMEGA_ENV=test make talk MSG='who are you?'
+export OMEGA_ENV=test
+omega talk "who are you?"     # deterministic mock response, no model loaded
 ```
 
-With `OMEGA_ENV=test`, all providers are skipped except `mock`.
-The mock provider returns deterministic responses without loading any model.
+With `OMEGA_ENV=test` only the mock provider answers. Unset it (or open a new shell) to
+return to real local inference.
 
-### Real Inference Demo
-
-If Ollama is running and has models, you can run a live demo:
+### Real local inference
 
 ```bash
-# Ensure Ollama has the model
-ollama list
-
-# Run without mock (tries real providers)
-make demo
+make infer-status                    # is the native-gguf server up?
+make infer-talk MSG='who are you?'   # smoke-test the running local server
+omega talk "who are you?"            # full Oracle path (routing + memory + soul)
 ```
 
-The provider will try local backends first (native-gguf → lmster → Ollama),
-then fall back to cloud, then mock. Set `OMEGA_DEMO=true` for mock fallback:
-
-```bash
-OMEGA_DEMO=true make demo
-```
+> There is **no `make offline-demo`, `make demo` or `make repl`** target in this release.
 
 ---
 
 ## Makefile Reference
 
-### Core Commands
+The Makefile is organised by domain. Every target below exists — verify with
+`make help` or `grep -E '^[a-z-]+:' Makefile`.
 
-| Target | Description |
-|--------|-------------|
-| `make menu` | Show the polished text-based menu |
-| `make demo` | Run the Oracle demo (talk + summon) |
-| `make offline-demo` | Run demo with MockBackend (no internet) |
-| `make repl` | Launch interactive REPL |
-| `make health` | System health dashboard |
-| `make doctor` | Full system diagnosis |
-| `make talk MSG='q'` | Quick talk to Oracle |
-| `make summon NAME=E MSG='q'` | Quick entity summon |
+### Testing
 
-### WAD Commands
+| Target | Purpose |
+|--------|---------|
+| `make test` | Fast unit tier (parallel, stops on first failure) |
+| `make test-all` | Full suite, parallel, short tracebacks |
+| `make test-debug TEST=<pattern>` | Single test, verbose (`-k` match) |
+| `make test-cov` | Coverage report |
+| `make test-prepush` | Fast + only affected tests (testmon) |
+| `make test-clarity` / `test-summary` / `test-json` | Enhanced / terse / JSON output |
+| `make test-random` / `test-flake-hunt` | Randomized ordering to expose flakes |
 
-| Target | Description |
-|--------|-------------|
-| `make wad NAME=x` | Switch to a specific IWAD |
-| `make wad-status` | Show currently active IWAD |
-| `make wad-reset` | Reset to `_omega_default` IWAD |
+### Local inference (native-gguf)
 
-### Entity Commands
+| Target | Purpose |
+|--------|---------|
+| `make infer-start` / `infer-stop` / `infer-restart` | Start / stop / restart native-gguf servers |
+| `make infer-status` / `infer-health` / `infer-debug` | State / detailed health / full debug dump |
+| `make infer-models` | List available GGUF models |
+| `make infer-memory` | RAM + swap footprint of loaded models |
+| `make infer-talk MSG='hello'` | Smoke-test the running server |
+| `make infer-logs LOG=extractor` / `infer-events` | Tail logs / lifecycle events |
 
-| Target | Description |
-|--------|-------------|
-| `make entities` | List all entities in the active IWAD |
-| `make entity NAME=x` | Show entity details |
+### Gates & compliance
 
-### Testing & Quality
+| Target | Purpose |
+|--------|---------|
+| `make check-mandates` | Core mandate gates (M1, M7, M8, M9, M22, M23) |
+| `make check-mandate-compliance` | Full 28-row mandate meter |
+| `make temple-grade` | Temple-Grade chain (⚠️ decorative until PR-H wiring lands) |
+| `make lint` | flake8 (F821 enforced) |
+| `make doc-llm-validate` | M26 documentation gate |
+| `make heritage-vet` / `heritage-map` | M14 heritage vetting / tag map |
+| `make check-m1-anyio` / `check-m8-zero-telemetry` / `check-m23-failure-integrity` | Individual mandate checks |
+| `make check-tracking-state` | M27 tracking integrity |
+| `make check-hub-health` | Omega Hub health probe |
+| `make check-broken-imports` | Import sanity scan |
 
-| Target | Description |
-|--------|-------------|
-| `make test` | Run all 1315 tests (includes UID Guard) |
-| `make test ARGS='-k pattern'` | Run filtered tests |
-| `make test-cov` | Run tests with coverage report |
-| `make lint` | Lint with flake8 |
-| `make guard` | Fix permission drift (UID Guard) |
-| `make mcp-check` | MCP service health check |
+### Codex, dashboards & probes
 
-### Infrastructure
-
-| Target | Description |
-|--------|-------------|
-| `make start-infra` | Start Redis, Qdrant, PostgreSQL, Caddy containers |
-| `make stop-infra` | Stop all containers |
-| `make restart-infra` | Restart all containers |
-| `make infra-status` | Check container status |
-| `make start-iris` | Start Iris voice assistant container |
-| `make stop-iris` | Stop Iris container |
-
-### Local Inference
-
-| Target | Description |
-|--------|-------------|
-| `make ollama-status` | Check Ollama server connectivity |
-| `make lmster-start` | Start LM Studio inference server |
-| `make lmster-stop` | Stop LM Studio server |
-| `make lmster-status` | Check LM Studio status |
-| `make lmster-load MODEL=x` | Load a model into LM Studio |
-
-### Queue & Library
-
-| Target | Description |
-|--------|-------------|
-| `make queue-status` | Show request queue status |
-| `make process-queue` | Process queued items |
-| `make queue-prune DAYS=N` | Archive stale requests older than N days |
-| `make library-status` | Library catalog statistics |
-| `make library-search QUERY='t'` | Search library catalog |
-| `make library-curate` | Run domain curation |
-
-### Benchmarks
-
-| Target | Description |
-|--------|-------------|
-| `make bench-run MODEL=x ROLE=y` | Run a benchmark |
-| `make bench-list` | List completed runs |
-| `make bench-rank ROLE=y` | Show best model for role |
-| `make bench-compare ROLE=y` | Compare all models for role |
-
-### Research & Docs
-
-| Target | Description |
-|--------|-------------|
-| `make research-run` | Manual research cycle trigger |
-| `make research-status` | Show research queue status |
-| `make validate-research` | Validate research document integrity |
-| `make mkdocs-serve` | Serve research documentation site |
-| `make mkdocs-build` | Build static research docs |
+| Target | Purpose |
+|--------|---------|
+| `make codex` | Regenerate `OMEGA_CODEX.md` |
+| `make check-codex-stale` / `check-codex-fix` | Staleness check / auto-regenerate |
+| `make dashboard` / `dashboard-once` | Live provider dashboard / single snapshot |
+| `make probe-models` / `probe-network` / `probe-antigravity` | Free-model / network / quota probes |
 
 ### Maintenance
 
-| Target | Description |
-|--------|-------------|
-| `make setup` | Install Python dependencies |
-| `make bootstrap` | Complete system bootstrap |
-| `make clean` | Clean Python cache and artifacts |
-| `make git-status` | Show working tree status |
-| `make git-log` | Show recent 20 commits |
+| Target | Purpose |
+|--------|---------|
+| `make clean` | Remove generated files |
+| `make observe CMD='<cmd>'` / `install-guarded` | Observability wrapper / RAM-guarded install |
+| `make sweep-tasks` | Sweep stale task state |
+| `make sote-index` / `sote-digest` / `sote-validate` | SOTE state-of-engine pipeline |
+
+> **No `make` aliases exist for** `talk`, `summon`, `menu`, `demo`, `offline-demo`, `repl`,
+> `health`, `doctor`, `setup`, `guard`, `wad*`, `entities`, `entity`, `ollama-status`,
+> `lmster-*`, `test-badge`, `mcp-check`, `start-infra`, `stop-infra`, `restart-infra`,
+> `queue-*`, `library-*` or `bench-*`. Use the `omega` CLI verbs documented above;
+> containers are quadlet/Podman-managed (`podman ps -a`).
 
 ---
 
@@ -943,6 +849,8 @@ OMEGA_DEMO=true make demo
 
 | Script | Purpose |
 |--------|---------|
+| `scripts/install.sh` | One-click install (venv + deps + model + verification) |
+| `scripts/download_model.sh` | Download/verify the default local GGUF model |
 | `scripts/setup.sh` | Complete system bootstrap |
 | `scripts/uid_guard.sh` | Fix permission drift (UID 1000) |
 | `scripts/mcp_health_check.sh` | Verify MCP service health |
@@ -978,30 +886,30 @@ OMEGA_DEMO=true make demo
 │  IWADs (config/wads/)                                       │
 │  _omega_default — Reference IWAD (ships with engine)        │
 │  arcana_novai   — Personal AI OS (user's own)               │
-│  doom_universe  — Community IWAD (scaffold)                  │
+│  omega_research — Research stack                             │
+│  ingestion      — Ingestion stack                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### Request Flow (End-to-End)
 
 ```
-User types: "omega summon Sekhmet what is strength?"
+User types: "omega summon ma'at what is on the system?"
     │
     ▼
 CLI (oracle_cli.py) → parses command
     │
     ▼
-Oracle.summon("Sekhmet", "what is strength?")
+Oracle.summon("ma'at", "what is on the system?")
     │
-    ├── EntityRegistry.get("Sekhmet")          → finds entity
+    ├── EntityRegistry.get("ma'at")           → finds entity
     ├── SessionManager.get_session_id(...)      → creates/retrieves session
     ├── ContextBuilder.build_context(...)        → injects memory
     ├── TriageRouter.select_model(...)            → picks best model
     ├── ModelGateway.generate(model, prompt, ...) → inference
     │       │
-    │       ├── tries native-gguf (unavailable)
-    │       ├── tries lmster (unavailable)
-    │       ├── tries Ollama (AVAILABLE → qwen2.5:0.5b)
+    │       ├── tries native-gguf (PRIMARY → qwen3-1.7b-q6_k)
+    │       ├── cloud fallbacks only if local fails AND keys are set
     │       └── returns response
     │
     ├── MemoryStore.add_exchange(...)            → saves to memory
@@ -1038,23 +946,24 @@ Oracle.summon("Sekhmet", "what is strength?")
 ### "Permission denied" on files
 
 ```bash
-make guard
+ls -la data/ config/ | head -20
+sudo chown -R "$(id -u):$(id -g)" data/ config/
 ```
-This runs the Sovereign UID Guard to fix ownership drift.
+Fix ownership of project files (UID 1000). Containers must run with `UserNS=keep-id` (M6).
 
 ### "No module named omega" or import errors
 
 ```bash
 source .venv/bin/activate
-make setup
+pip install -e ".[native,cli]"
 ```
 
 ### Tests fail after changes
 
 ```bash
-make test ARGS='-x'   # Stop on first failure
-make test ARGS='-v'   # Verbose output
-make test ARGS='-k test_name'  # Run specific test
+make test                        # unit tier, stops on first failure
+make test-debug TEST=test_name   # single test, verbose
+make test-all                    # whole suite, parallel
 ```
 
 ### "Event loop is closed" warnings
@@ -1066,36 +975,34 @@ They do not affect functionality.
 
 Check provider health:
 ```bash
-make health
+make infer-status
+omega model-status
 ```
 
 The circuit breaker auto-recovers after the configured cooldown period (default: 60s).
 
-### Ollama not responding
+### Local inference not responding
 
 ```bash
-# Check if Ollama is running
-ollama list
-
-# Check if the engine can reach it
-make ollama-status
-
-# Common fix: ensure endpoint has no /v1 suffix
-# config/providers.yaml → ollama endpoint: http://127.0.0.1:11434
+make infer-status      # native-gguf server state
+make infer-health      # status + memory + log tail
+omega model-status     # providers + models
 ```
+> Ollama is **enabled by default** in this release
+> (`config/providers.yaml` → `providers.ollama.enabled: true`).
 
 ### Entity not found ("default" response)
 
 The entity may not be in the active IWAD:
 ```bash
 # Check active IWAD
-make wad-status
+grep -A2 'omega:' config/omega.yaml
 
-# Switch to the IWAD that has your entity
-make wad NAME=arcana_novai
+# Load the IWAD that has your entity
+omega talk "hello" --iwad arcana_novai
 
 # List available entities
-make entities
+omega list-entities
 ```
 
 If summoning returns "default" instead of the entity name, the IWAD doesn't
@@ -1105,42 +1012,41 @@ have that entity. Switch IWADs or add the entity manually.
 
 ```bash
 export OMEGA_ENV=test
-make talk MSG='hello'
+omega talk "hello"
 ```
 
 The MockBackend responds deterministically without any model loading.
 
 ### Slow test execution
 
-Tests take ~70-90 seconds for full suite. Use `-k` for specific subsets:
+Use a targeted run instead of the whole suite:
 
 ```bash
-make test ARGS='-k test_entity_registry'
-make test ARGS='-k test_oracle'
-make test ARGS='-k test_health_monitor'
-make test ARGS='-k test_error_gauntlet'
+make test-debug TEST=test_entity_registry
+make test-debug TEST=test_oracle
+make test-debug TEST=test_health_monitor
+make test-debug TEST=test_error_gauntlet
 ```
 
-### WAD switching seems stuck
+### IWAD switching seems stuck
 
+IWADs are selected in `config/omega.yaml` — there is no `make wad*` target:
 ```bash
-# Force reset
-make wad-reset
+# Show the active IWAD
+grep -A2 'omega:' config/omega.yaml
 
-# Verify
-make wad-status
+# Switch by editing: omega.entity.active_iwad
+# Or per invocation: omega talk "hello" --iwad arcana_novai
 ```
 
 ### Provider always falls back to mock
 
-Check if your local inference backend is running:
+Check the local inference backend:
 
 ```bash
-# Is Ollama running?
-ollama list
-
-# Does the model override exist?
-grep -A5 "ollama" config/providers.yaml
+make infer-status      # native-gguf server state
+make infer-models      # are GGUF models present?
+omega model-status     # which providers are enabled?
 
 # Try direct inference
 omega talk "hello"
@@ -1154,13 +1060,13 @@ omega talk "hello"
 
 ```bash
 omega talk "q"                    # Quick query
-omega summon Sekhmet "q"          # Summon entity
-make wad NAME=arcana_novai        # Switch to Pantheon
-make offline-demo                  # Offline demo (no net)
-make health                       # System health check
-make test                         # Run all tests
-make guard                        # Fix permissions
-make menu                         # Show menu
+omega summon ma'at "q"               # summon an entity
+omega talk "q" --iwad arcana_novai    # load a specific IWAD
+OMEGA_ENV=test omega talk "q"         # offline (mock) response
+make infer-status                     # native-gguf server health
+make test                             # unit-tier tests
+make check-mandate-compliance         # mandate meter
+make infer-models                     # list local GGUF models
 ```
 
 ### File Locations
@@ -1178,7 +1084,7 @@ make menu                         # Show menu
 | Benchmarks | `data/benchmarks/` |
 | Request queue | `data/requests/` |
 | Library | `data/library/documents/` |
-| Event logs | `data/events/` |
+| Inference events | `make infer-events` |
 | Trace logs | `data/traces/` |
 | Training data | `data/datasets/` |
 
@@ -1186,8 +1092,8 @@ make menu                         # Show menu
 
 | Variable | Purpose | Example |
 |----------|---------|---------|
-| `OMEGA_ENV=test` | Enable mock backend (offline mode) | `OMEGA_ENV=test make demo` |
-| `OMEGA_DEMO=true` | Enable demo-friendly mock fallback | `OMEGA_DEMO=true make demo` |
+| `OMEGA_ENV=test` | Enable the mock backend (offline mode) | `OMEGA_ENV=test omega talk "hello"` |
+| `OMEGA_DEMO=true` | Allow mock fallback in demo runs | `OMEGA_DEMO=true omega talk "hello"` |
 | `GOOGLE_API_KEY` | Google AI Studio provider | `export GOOGLE_API_KEY='...'` |
 | `OPENROUTER_API_KEY` | OpenRouter provider | `export OPENROUTER_API_KEY='...'` |
 
@@ -1197,13 +1103,13 @@ If your AI agent's context window is compacted:
 
 1. Read this manual first
 2. Read `docs/decisions/PIVOT_LOG.md` for architectural decisions
-3. Read `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md` for the full plan
+3. Read `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` and `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md`
 4. Run `make test` to verify state
-5. Run `make talk MSG='hello'` to check inference
+5. Run `omega talk "hello"` to check inference
 
 ---
 
-*⬡ OMEGA ⬡ SOVEREIGN AI ⬡ v3.2.0*
+*⬡ OMEGA ⬡ USER-MANUAL ⬡ v1.6.0-alpha ⬡ 2026-10-03*
 *"Sever the umbilical cord of Big AI."*
 
 <!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit

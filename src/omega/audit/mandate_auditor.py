@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
-#
+
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 # 🔱 MandateAuditor — M1-M23 Compliance Verification
-# ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
+# ⬡ OMEGA ⬡ NODE-S10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
 # AP: AP-MANDATE-AUDITOR-v1.0.0
 """Sovereign Mandate Auditor — Core Engine Module.
 
@@ -36,8 +42,6 @@ Mandates enforced elsewhere (do not duplicate):
 - M21: Gate Integrity (test_contract_m21.py)
 - M22: Response Provenance (test_contract_m21.py + oracle.py wiring)
 """
-
-from __future__ import annotations
 
 import re
 import sys
@@ -88,7 +92,7 @@ class MandateAuditor:
         )
 
     def check_m3_iris_constant(self) -> None:
-        """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Node slot (N1-N10)."""
+        """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Slot (S1-S10)."""
         from omega.ics import ROLE_CONSTANTS
         import yaml
 
@@ -113,14 +117,16 @@ class MandateAuditor:
                     entities = []
             else:
                 entities = []
-        except Exception:
+        except Exception as e:
+            logger.warning("Mandate audit WAD config unavailable, falling back: %s", e, exc_info=True)
             # Fallback to original scan if WAD config unavailable
             wad_glob = str(Path("config") / "wads" / "**" / "*.yaml")
             wad_files = list(self.root.glob(wad_glob))
             for f in wad_files:
                 try:
                     content = f.read_text()
-                except Exception:
+                except Exception as e:
+                    logger.warning("Failed to read WAD file %s: %s", f, e, exc_info=True)
                     continue
                 # Search for MESSENGER_BRIDGE role entity in Node slots
                 # Use case-insensitive search for the role name
@@ -147,12 +153,14 @@ class MandateAuditor:
         # Check WAD entities for Iris in Node slots
         for ent in entities:
             role = ent.get("role")
-            if role == ROLE_CONSTANTS["MESSENGER_BRIDGE"]:
+            # dispatch.yaml uses ROLE_CONSTANT KEYS (uppercase, e.g.
+            # "MESSENGER_BRIDGE"); ROLE_CONSTANTS maps key -> lowercase value.
+            if role in ("MESSENGER_BRIDGE", ROLE_CONSTANTS["MESSENGER_BRIDGE"]):
                 # This is the Iris entity - check if it has a Node slot
-                node_slot = ent.get("node_slot")
-                if node_slot is not None and str(node_slot).startswith("N"):
+                slot = ent.get("slot")
+                if slot is not None and str(slot).startswith("S"):
                     iris_in_node = True
-                    violations.append(f"WAD entity '{ent.get('name')}' has Node slot: {node_slot}")
+                    violations.append(f"WAD entity '{ent.get('name')}' has Slot: {slot}")
 
         self._check(
             "M3",
@@ -178,7 +186,8 @@ class MandateAuditor:
                 for f in search_dir.rglob(pattern):
                     try:
                         content = f.read_text()
-                    except Exception:
+                    except Exception as e:
+                        logger.warning(f"Failed to read {f}: {e}")
                         continue
                     for line_no, line in enumerate(content.split("\n"), 1):
                         if (
@@ -284,7 +293,8 @@ class MandateAuditor:
         for f in core_files:
             try:
                 content = f.read_text()
-            except Exception:
+            except Exception as e:
+                logger.warning(f"Failed to read {f}: {e}")
                 continue
             for pat in atomic_patterns:
                 if re.search(pat, content):
@@ -349,7 +359,8 @@ class MandateAuditor:
                 continue
             try:
                 content = f.read_text()
-            except Exception:
+            except Exception as e:
+                logger.warning(f"Failed to read {f}: {e}")
                 continue
             for line_no, line in enumerate(content.split("\n"), 1):
                 stripped = line.strip()

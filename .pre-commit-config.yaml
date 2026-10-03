@@ -137,6 +137,17 @@ repos:
         pass_filenames: true
         stages: [pre-commit]
 
+      # [M35] VAULT Allowlist Enforcement — fail-closed scanner with TOML allowlist
+      # Uses data/secrets-public.toml for verified public client entries (RFC 8252 §8.4-§8.5)
+      # This is the CANONICAL gate for M35 compliance (gitleaks/trufflehog are supplementary)
+      - id: omega-m35-allowlist
+        name: M35 VAULT Allowlist Enforcement
+        entry: python scripts/check_secrets.py --staged
+        language: python
+        types_or: [python, yaml, toml, json, shell, markdown]
+        pass_filenames: true
+        stages: [pre-commit]
+
       # Fast mandate compliance checks (per Carmack Verdict — moved from runtime Vetter to CI)
       - id: omega-check-m1-anyio
         name: Check M1 AnyIO (no asyncio)

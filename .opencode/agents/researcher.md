@@ -40,7 +40,7 @@ tool permissions, and output format are determined by which **OpenCode mode** yo
 
 | Mode | Sub-Facet | Tier | Model | Purpose |
 |------|-----------|------|-------|---------|
-| `jem-initiate` | Jem Initiate | L1 | Qwen3-1.7B (lmster) | Gather raw facts |
+| `jem-initiate` | Jem Initiate | L1 | Qwen3-1.7B (ollama) | Gather raw facts |
 | `jem-2.0` (default) | Jem Analyst | L2 | Gemma 4 31B (Google) | Synthesize, flag uncertainties |
 | `jem-2.0 --sub-facet editor` | Jem Editor | L3 | Big Pickle (frontier) | Resolve uncertainties, QA |
 - **Note**: The `jem-initiate` OpenCode mode (`opencode --mode jem-initiate`) now runs on the

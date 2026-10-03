@@ -1,0 +1,9 @@
+{
+  "updated": "2026-09-17T22:21:26.913Z",
+  "hourly": {
+    "2026-09-17T16": {
+      "SILENT_STALL_EMPTY": 4,
+      "SLOW_DRIBBLE": 2
+    }
+  }
+}

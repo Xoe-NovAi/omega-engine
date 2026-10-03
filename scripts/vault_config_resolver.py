@@ -343,9 +343,20 @@ def resolve_xai_api_key() -> str:
 
 
 def resolve_redis_password() -> str:
-    """Replacement for the 2 OMEGA_REDIS_PASSWORD sites in memory_store.py
-    and memory/providers.py. Does NOT try vault (Redis is infra, not a
-    provider in the vault's provider registry)."""
+    """[redis-20260928] RETAINED (dead) — do not call.
+
+    The Redis service layer was decommissioned, so there is no longer a
+    password to resolve. This helper had exactly one intended consumer (the
+    2 OMEGA_REDIS_PASSWORD sites in src/omega/memory_store.py and
+    src/omega/memory/providers.py, Carmack's purge) and no live caller; the
+    only reference left in-tree is a dry-run replacement string in
+    scripts/delete_11_broken_sites.py.
+
+    It is kept, not deleted, because it is a public symbol of this module and
+    deleting it would be an unrelated API break for a module that is still the
+    canonical credential resolver. Callers must migrate to the vault or a plain
+    env lookup (see D-593 / DC-29). Returns "" for every caller, as the env var
+    is no longer defined anywhere."""
     try:
         r = get_resolver().resolve_env_var_only("OMEGA_REDIS_PASSWORD", label="redis")
         return r.value

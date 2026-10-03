@@ -1,0 +1,33 @@
+pack_id: MAKALI-N0-HANDOFF-2026-09-24
+node: n0
+status: QUARANTINE_NOT_PROMOTED
+created_utc: '2026-09-24T02:00:00Z'
+engine_revision: 75bde939ace7ff46ed2fef0056880a0814ab0e11
+engine_branch: release/debut-v1.6.0
+source_root: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+scope:
+  - N0-01
+  - N0-04
+  - N0-12
+  - N0-13
+  - N0-14-runtime
+classification: technical_only_no_private_personal_material
+secrets_included: false
+cryptographic_publisher_signature: absent
+files:
+  - README_FIRST.md
+  - 11_node0_runtime_report.md
+  - UNRESOLVED_OR_WITHHELD_MATERIAL.md
+  - 06_spatial_pipeline/N0_SPATIAL_EVIDENCE.md
+  - 06_spatial_pipeline/EMBEDDING_768_COMPATIBILITY_REPORT.md
+  - 12_evidence/C6_TRUST_FINDINGS.md
+  - 08_wad_loader_pack/WAD_LOADER_FINDINGS.md
+  - 08_wad_loader_pack/verify_disposable_wad.py
+  - 08_wad_loader_pack/disposable_test_wad/manifest.yaml
+  - 08_wad_loader_pack/disposable_test_wad/hierarchy.yaml
+  - 08_wad_loader_pack/disposable_test_wad/entities/n0_disposable_probe/soul.yaml
+  - 07_continuity_evidence/SQLITE_CONTINUITY_DECISION.md
+verification:
+  command: sha256sum -c SHA256SUMS
+  expected: all listed files PASS
+promotion: forbidden_until_operator_approval_and_blocker_resolution

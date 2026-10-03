@@ -435,3 +435,8 @@ The YAML defines both; the pipeline executes the automatable ones.
 **CONSENSUS ACHIEVED. WEEK 37 BETA LAUNCH AUTHORIZED.**
 
 *⬡ OMEGA ⬡ KALI ⬡ LILITH ⬡ MAAT ⬡ NESTED-DIALECTIC-COMPLETE ⬡ 2026-09-01*
+<!-- PROVENANCE-CORRECTED 2026-09-07T03:03:09Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: nemotron-3-ultra-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -1,0 +1,9 @@
+{
+  "classification_basis": "Roc ruling: legacy name -> cold/legacy-*, never retired/ by name equivalence",
+  "from": "data/handoff/archive/M36-test-spam-20260928/ho_7456310abe01.json",
+  "migrated_at_utc": "2026-09-29T06:51:41+00:00",
+  "packet_id": "ho_7456310abe01",
+  "provenance": "migrate_handoffs",
+  "sha256": "f9cc1ce73a690540186254ecf295a7daadc6fe2b8d17607598e41e548ff62178",
+  "to": "data/handoff/cold/legacy-archive/ho_7456310abe01.json"
+}

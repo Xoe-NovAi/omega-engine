@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L2 Anti-Bot Infrastructure — Sticky Proxy Identity + Adaptive Rate Limiting
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L2 ⬡ PROXY_IDENTITY
@@ -19,7 +22,7 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 from src.omega.errors import OmegaError
 

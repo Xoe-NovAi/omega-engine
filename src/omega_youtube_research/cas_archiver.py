@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L4 CAS Deduplication — Content-Addressable Chunk Store with Semantic Deduplication
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L4 ⬡ CAS-ARCHIVER

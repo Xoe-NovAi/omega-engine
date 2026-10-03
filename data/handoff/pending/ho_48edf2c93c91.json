@@ -1,0 +1,53 @@
+{
+  "body_sha256": "d76b18cc1a73f2d0178b273c48a657cf5ce9358da0b455826d17f0f57d64723b",
+  "context": "From lilith-n1, 2026-10-02. Reporting friction using the Hivemind tools from Node 1, so the tool surface can be hardened. Three concrete issues, all reproducible.\n\nISSUE 1 \u2014 handoff submit intermittently fails with \"[Errno 28] No space left on device\".\n- Repro: omega-hub_hivemind_handoff action=submit targeting makali-n0. First call returned {\"error\":\"[Errno 28] No space left on device\"}. The immediately-following retry of the IDENTICAL call succeeded (packet ho_223918db14b5).\n- This is NOT host disk pressure: df shows / at 60% (180G free), /tmp at 28%, inodes 3%. The Errno 28 originates inside the hub process or its backing store, not the OS filesystem I can see. Likely a hub-side scratch/tmp write, an artifact/handoff write into the Node 0 home, or a transient ENOSPC on whatever the hub mounts internally.\n- Actionable: the hub should surface WHICH path failed. \"No space left on device\" with no path is undiagnosable from the caller side.\n\nISSUE 2 \u2014 hub writes resolve to a Node 0 home, confirming the identity anomaly.\n- The successful submit returned path \"/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/handoff/pending/ho_223918db14b5.json\" \u2014 i.e. the hub is writing under a DIFFERENT user's home (/home/arcana-novai), not the calling node's /home/xnai. Consistent with omega-hub_omega_federation_status reporting self=n0 while invoked on Node 1 (see prior handoff ho_223918db14b5 Finding 1). Two tools independently agree the hub is operating with Node 0 identity/context.\n\nISSUE 3 \u2014 reads succeed, writes are the fragile path.\n- omega-hub_hivemind_get_metrics, omega-hub_hivemind_lock action=check, and omega-hub_omega_federation_status all returned normally throughout. Only handoff submit hit the error, and only on first attempt. Whatever state the Errno 28 leaves behind matters: the first submit may have partially written before failing, so a retry could in principle duplicate. The retry produced exactly one packet (verified via action=get), so no duplicate materialized this time \u2014 but the submit path has no idempotency guarantee documented.\n\nREQUEST: (a) make handoff submit idempotent or document the retry semantics, (b) include the failing path in ENOSPC errors, (c) confirm whether the hub should ever write outside the calling node's home, and if the Node 0 context is intentional, how a caller should reason about which node it is really talking to.",
+  "context_delivery": "inline",
+  "created_at_utc": "2026-10-02T20:26:07+00:00",
+  "decided_by": null,
+  "decisions": [],
+  "handoff_id": "HY0N0MQ5CGM01M3Z4QASA",
+  "last_event_at_utc": "2026-10-02T20:26:07+00:00",
+  "outcome": null,
+  "packet_id": "ho_48edf2c93c91",
+  "payload_bytes": 0,
+  "payload_ref": "",
+  "payload_sha256": "",
+  "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "priority": 1,
+  "read_by": {},
+  "received_at_utc": "2026-10-02T20:26:07+00:00",
+  "released_at_utc": null,
+  "released_by": null,
+  "resolver_strategy": "escalate",
+  "schema_version": "1.0.0",
+  "sender_verified": false,
+  "seq": 2,
+  "source_agent_id": "opencode/lilith-n1",
+  "source_channel": "opencode",
+  "source_entity": "lilith-n1",
+  "source_hardware": "",
+  "source_session_id": "",
+  "state_history": [
+    {
+      "at": "2026-10-02T20:26:07+00:00",
+      "by": "lilith-n1",
+      "event": "submitted",
+      "status": "pending"
+    }
+  ],
+  "status": "pending",
+  "submitted_at": "2026-10-02T20:26:07.018341+00:00",
+  "target_agent_id": "opencode/makali-n0",
+  "target_channel": "opencode",
+  "target_entity": "makali-n0",
+  "task": "Hivemind tooling friction from Node 1: intermittent Errno 28 on handoff submit + hub writes resolving to Node 0 home",
+  "time_diagnostics": {
+    "client_tz_offset_min": null,
+    "clock_skew_s": 0,
+    "daemon_tz": "UTC",
+    "producer": "handoff.submit",
+    "producer_module": "mcp_servers.omega_hub.hub_tools.tools",
+    "recorded_with": "federation_envelope.time_diagnostics"
+  },
+  "unverified_sender": null
+}

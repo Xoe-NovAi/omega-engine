@@ -1,0 +1,241 @@
+schema_version: "1.0"
+review_id: GROKSTER-MAKALI-N0-INT-20260924-01
+created_at_utc: "2026-09-24T03:00:00Z"
+status: quarantine_only
+promotion_authorized: false
+classification_policy:
+  - no_private_personal_content
+  - no_credentials_or_secret_bearing_diagnostics
+  - no_live_databases
+  - provenance_required
+  - stale_artifacts_must_be_non_authoritative
+sources:
+  carmack:
+    session_id: ses_fc8dca39effe3nZJp3QHx81Fy3
+    root: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24
+    checksum_ledger_sha256: c98b2b8fca00e6ee699beb8a24800836e0675190db844c1c2190878998320243
+    caveat: shared_namespace_concurrent_writes
+  maat:
+    session_id: ses_fb6cf6856ffes3wd3wmvyrm2IG
+    root: data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924
+    checksum_ledger_sha256: a7de73d2e35ed02f205cc280d4f800039043f1efc55820f701372a9e20686882
+  doom_guy:
+    session_id: ses_0b15e698affeMMy1tZos2iBjbm
+  lilith:
+    session_id: ses_fb9721079ffe094GT8MX6a0pXI
+  kali:
+    session_id: ses_fdef2be4effe4pAaLXCTUx62GO
+intake:
+  - id: INT-001
+    source: docs/federation/MAKALI_N0_SYSTEM_BRIEFING_CONSOLIDATED.md
+    sha256: dabdf0c9f300b8c8983cec8fc817b9c9364803297b8c044fb517064cc4df34be
+    owner: federation_governance
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_THIS_BRIEFING
+    proposed_destination: THIS_BRIEFING.md
+  - id: INT-002
+    source: docs/strategy/MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md
+    sha256: e0ecc689f13f74140f057f15088077fd3944edda419fa08bbf7909c9d71e17c7
+    owner: federation_governance
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_REFERENCE
+    proposed_destination: 12_evidence/governance/MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md
+  - id: INT-003
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/README_FIRST.md
+    sha256: 39c2a4545d8222077df2d3d46f7d0e46dddd341c278fea6d38bd3ad35e8f884a
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: REPLACE_WITH_NEW_PACK_README
+    proposed_destination: README_FIRST.md
+  - id: INT-004
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/11_node0_runtime_report.md
+    sha256: f8eac4422bb9310b0f817d6fb63befa4178bf462cfe052949cd0ba4c00f14ae5
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_WITH_LIVE_RUNTIME_CORRECTIONS
+    proposed_destination: 11_node0_runtime_report.md
+  - id: INT-005
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/UNRESOLVED_OR_WITHHELD_MATERIAL.md
+    sha256: cc44ea2b585629b7d52ba2f71ebdd45f2b465b9bde165856d78c6462622aecd8
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: SUPERSEDE_BY_INTEGRATION_LEDGER
+    proposed_destination: UNRESOLVED_OR_WITHHELD_MATERIAL.md
+  - id: INT-006
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/06_spatial_pipeline/N0_SPATIAL_EVIDENCE.md
+    sha256: cbfed2351eac90ae4358d150509641ae7c48d70b9cfcd48d3eb845f0cb112819
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE
+    proposed_destination: 06_spatial_pipeline/N0_SPATIAL_EVIDENCE.md
+  - id: INT-007
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/06_spatial_pipeline/EMBEDDING_768_COMPATIBILITY_REPORT.md
+    sha256: 33a32e8d4d9cc8e4802bc0761f507509d2be43a773be834d486c16888f166c32
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_UNVERIFIED_REPORT
+    proposed_destination: 06_spatial_pipeline/EMBEDDING_768_COMPATIBILITY_REPORT.md
+  - id: INT-008
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/12_evidence/C6_TRUST_FINDINGS.md
+    sha256: 1a72529f813419e4f3751266b976e57aa51a422e5fdc88f7cb4ea6584df154ad
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE
+    proposed_destination: 12_evidence/trust/C6_TRUST_FINDINGS.md
+  - id: INT-009
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/08_wad_loader_pack/WAD_LOADER_FINDINGS.md
+    sha256: 2e01e2048f9e2b24833d047a05344b5805d96c8b8d3b5a8a76e5298b686ffa83
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE
+    proposed_destination: 08_wad_loader_pack/WAD_LOADER_FINDINGS.md
+  - id: INT-010
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/08_wad_loader_pack/verify_disposable_wad.py
+    sha256: 9895fb98fef15e9230bcc5ec4c3bea677bc3a59076f70079769c022de374994e
+    owner: carmack_maat_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_ONLY_AFTER_REVIEW_AND_RERUN
+    proposed_destination: 08_wad_loader_pack/verify_disposable_wad.py
+  - id: INT-011
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/08_wad_loader_pack/disposable_test_wad/manifest.yaml
+    sha256: 57cf583158da41bf0c74ede1501037ef9f733ca203de3d1f428f3992e6fb0264
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_TEST_FIXTURE_ONLY
+    proposed_destination: 08_wad_loader_pack/disposable_test_wad/manifest.yaml
+  - id: INT-012
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/08_wad_loader_pack/disposable_test_wad/hierarchy.yaml
+    sha256: 0fbad94ccb93b1d9526321f35fb53eb43b1d365ab5e7d8a2966a9e7fb9b7f0e4
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_TEST_FIXTURE_ONLY
+    proposed_destination: 08_wad_loader_pack/disposable_test_wad/hierarchy.yaml
+  - id: INT-013
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/08_wad_loader_pack/disposable_test_wad/entities/n0_disposable_probe/soul.yaml
+    sha256: 9c3482b98c4f08378c7def8a74eff72593ca02797088cc1acfd58c49f7257e1f
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_TEST_FIXTURE_ONLY
+    proposed_destination: 08_wad_loader_pack/disposable_test_wad/entities/n0_disposable_probe/soul.yaml
+  - id: INT-014
+    source: data/federation/quarantine/MAKALI-N0-HANDOFF-2026-09-24/07_continuity_evidence/SQLITE_CONTINUITY_DECISION.md
+    sha256: 48c74f6f283cd49fe4a7f4f89052334b851ae409c532db5757e40a253ca15803
+    owner: carmack_shared_draft
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_BLOCKED_DECISION
+    proposed_destination: 07_continuity_evidence/SQLITE_CONTINUITY_DECISION.md
+  - id: INT-015
+    source: data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924/README.md
+    sha256: 19a06a683ca8cae0c969715401dd0569f7cb15d074fe8be2fdbf72584b3bcb8b
+    owner: maat
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_EVIDENCE_README
+    proposed_destination: 12_evidence/runtime/README.md
+  - id: INT-016
+    source: data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924/N0_03_LIVE_RUNTIME_EVIDENCE.md
+    sha256: 025512a346c0e739156a30c992d24d838cc4836adf6040972e45e22da96613fa
+    owner: maat
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_WITH_TIMESTAMP_QUALIFICATION
+    proposed_destination: 12_evidence/runtime/N0_03_LIVE_RUNTIME_EVIDENCE.md
+  - id: INT-017
+    source: data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924/N0_03_TOOL_INVENTORY.md
+    sha256: 745e2f2c8f860af26ce9c2277a88bcc4e4141edf9c3670101c21237c3799b282
+    owner: maat
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_POINT_IN_TIME_SNAPSHOT
+    proposed_destination: 12_evidence/runtime/N0_03_TOOL_INVENTORY.md
+  - id: INT-018
+    source: data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924/N0_N1_CONFLICT_BLOCKER_REPORT.md
+    sha256: 5678f9ef98d82f86ea8f8703792ce28f389c1b24d40a6c631363dcb0c3182a33
+    owner: maat
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_SUPERSEDED_BY_INTEGRATION_LEDGER
+    proposed_destination: 12_evidence/runtime/N0_N1_CONFLICT_BLOCKER_REPORT.md
+  - id: INT-019
+    source: data/federation/quarantine/MAAT_N0_N1_EVIDENCE_20260924/PACKAGE_INTEGRITY_INVENTORY.md
+    sha256: eb95f51073e6da5a294d3ba8c579ca5f66c930dfa8c14121e47438e01b79f3a7
+    owner: maat
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_AS_LEGACY_PACK_AUDIT
+    proposed_destination: 12_evidence/runtime/PACKAGE_INTEGRITY_INVENTORY.md
+  - id: INT-020
+    source: data/coordination/N0_06_NETWORK_FEDERATION_EVIDENCE_20260924.md
+    sha256: 373129402182e393b17ad3f634e00fc18a2d528085eda61e14bcc894252b0589
+    owner: doom_guy
+    privacy_class: SHAREABLE_TECHNICAL
+    decision: INCLUDE_PRIMARY_NETWORK_SECURITY_EVIDENCE
+    proposed_destination: 12_evidence/network/N0_06_NETWORK_FEDERATION_EVIDENCE_20260924.md
+  - id: INT-021
+    source: docs/federation/LILITH_N0_N1_PERSONAL_LEGACY_RECONCILIATION_PLAN_20260924.md
+    sha256: 569c55044c6c04ddc4bb3e5f12ea8356010c78eeada95261cb0a5f9636741688
+    owner: lilith
+    privacy_class: SHAREABLE_GOVERNANCE_NO_PRIVATE_CONTENT
+    decision: INCLUDE_AS_PROPOSAL_ONLY
+    proposed_destination: 12_evidence/privacy/LILITH_N0_N1_PERSONAL_LEGACY_RECONCILIATION_PLAN_20260924.md
+  - id: INT-022
+    source: docs/federation/IDENTITY_BINDING_DECISION_20260924.yaml
+    sha256: 35976cca29882ff112e32bc1c3d2e6b37ef26e0bf96b61dacafc74d66b3a5e60
+    owner: kali
+    privacy_class: SHAREABLE_GOVERNANCE
+    decision: INCLUDE_AS_PROPOSED_NOT_RATIFIED
+    proposed_destination: 08_wad_loader_pack/identity/IDENTITY_BINDING_DECISION_20260924.yaml
+  - id: INT-023
+    source: docs/federation/IDENTITY_ONTOLOGY_MINIMUM_FIXTURE_20260924.yaml
+    sha256: eaefcc0adc4c5ada6d3f1e2273165675c7887187ff4ef0051eb7c3d557bc7d0f
+    owner: kali
+    privacy_class: SHAREABLE_GOVERNANCE
+    decision: INCLUDE_AS_TEST_FIXTURE_ONLY
+    proposed_destination: 08_wad_loader_pack/identity/IDENTITY_ONTOLOGY_MINIMUM_FIXTURE_20260924.yaml
+  - id: INT-024
+    source: docs/federation/N0_N1_STRATEGY_DIALECTIC_PROTOCOL_20260924.md
+    sha256: c614b0766ab52b4bc9e3cf59cfb74d45a40ffd83a7e492b7bb162ea7f7b7f734
+    owner: kali
+    privacy_class: SHAREABLE_GOVERNANCE
+    decision: INCLUDE_AS_INACTIVE_PROTOCOL
+    proposed_destination: 12_evidence/governance/N0_N1_STRATEGY_DIALECTIC_PROTOCOL_20260924.md
+  - id: INT-025
+    source: data/federation/usb-payload/tailscale/ACL_POLICY_20260922.hujson
+    sha256: 3cd7a3a4d0e57c71c09cadc374c8708327a1030a11e33226edff2f3ffef1ce7e
+    owner: legacy_infrastructure_evidence
+    privacy_class: PROPOSED_STALE_TECHNICAL
+    decision: SEGREGATE_NON_EXECUTABLE
+    proposed_destination: 99_legacy_infrastructure_evidence/tailscale/ACL_POLICY_20260922.hujson
+  - id: INT-026
+    source: data/federation/usb-payload/redis/REDIS_FED_CONFIG_20260922.md
+    sha256: 9bbf0f18b808ff0e058e8fa444f1b16e0e5c66785d1616cb69d5fe51352cef1b
+    owner: legacy_infrastructure_evidence
+    privacy_class: PROPOSED_STALE_TECHNICAL
+    decision: SEGREGATE_NON_EXECUTABLE
+    proposed_destination: 99_legacy_infrastructure_evidence/redis/REDIS_FED_CONFIG_20260922.md
+  - id: INT-027
+    source: data/federation/usb-payload/omega-hub-patches/PATCHES_20260922.md
+    sha256: ea1e483336c1828ffa6bcf0da9d574830c1d3a45b6e304eb022d2e397c9a514b
+    owner: legacy_infrastructure_evidence
+    privacy_class: HISTORICAL_TECHNICAL
+    decision: SEGREGATE_NON_EXECUTABLE
+    proposed_destination: 99_legacy_infrastructure_evidence/omega-hub-patches/PATCHES_20260922.md
+  - id: INT-028
+    source: data/federation/usb-payload/attestation/ATTESTATION_N0_20260922.md
+    sha256: 138097169514ab75b60e3bfa81c1ba982bd3a92d275d85340642ceae50fa9e02
+    owner: legacy_infrastructure_evidence
+    privacy_class: HISTORICAL_UNSIGNED
+    decision: SEGREGATE_NON_TRUST_EVIDENCE
+    proposed_destination: 99_legacy_infrastructure_evidence/attestation/ATTESTATION_N0_20260922.md
+  - id: INT-029
+    source: data/federation/usb-payload/c6-contract/C6_CONTRACT_DRAFT_v0.1.md
+    sha256: 15e23eff8cb0f63c078b14c4e9bce94941e8cb3ee8f72f0fd5e9f730adb84de9
+    owner: legacy_infrastructure_evidence
+    privacy_class: DRAFT_UNRATIFIED
+    decision: SEGREGATE_NON_EXECUTABLE
+    proposed_destination: 99_legacy_infrastructure_evidence/c6-contract/C6_CONTRACT_DRAFT_v0.1.md
+excluded_classes:
+  - credentials
+  - cookies
+  - browser_material
+  - private_keys
+  - raw_secret_bearing_diagnostics
+  - live_sqlite_databases
+  - unapproved_personal_material
+  - guessed_withheld_content
+promotion: forbidden

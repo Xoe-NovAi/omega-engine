@@ -29,11 +29,11 @@
 | **UO-4 Doc Sanity** | **COMPLETE** — PART 1 archival (67 files) + PART 2 web reconciliation (Phase 3/4 docs) + core strategy docs freshened (Pillar→Node, co-equal MaKaLi) | ✅ Freeze **LIFTED** (DOC_SANITY_COMPLETE met 2026-08-07) | 2026-08-07 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **Phase D gate** | Mechanical **PASS 11/11** · Operational **NO-GO** (C-3/W-1/G-1) | 🟡 Dual-layer — see verdict | 2026-07-30 | `python scripts/verify_phase_d_gate.py` · `cat data/coordination/PHASE_D_GATE_VERDICT_20260730.md` |
 | Tests | Focused **27 passed** (vault+property+hivemind 2026-07-30) · Full suite **1706 collected** (make test timeout risk) | ✅ Focused green; full suite needs longer budget | 2026-07-30 | `pytest tests/test_vault_integrity.py tests/property/ tests/test_hivemind.py -q` |
-| Mandates | **27 (M1-M27)** | ✅ All enforced (v3.8.0) | 2026-08-14 | `grep -c "^### [0-9]" SOVEREIGN_MANDATES.md` |
+| Mandates | **28 (M1-M28)** | ✅ All enforced (v3.8.0) | 2026-09-20 | `grep -c "^### [0-9]" SOVEREIGN_MANDATES.md` |
 | **Mandate Compliance** | **25/27 FULL (92%)** — 0 Partial, 2 Fail | ✅ M5, M11 fixed via wrapper (EXIT trap + DB integration) | 2026-07-30 | `grep -r "M5\|M11" SOVEREIGN_MANDATES.md \| head -5` |
 | Fleet | **13 agents (cap 14 per M10)** | ✅ Clean | 2026-08-22 | `ls .opencode/agents/ \| wc -l` |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ \| wc -l` |
-| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, N1: 5/5, N2: 6/6, N3: 1/4 | ✅ P0-N2 Complete | 2026-07-18 | `grep -c "status: cloned" data/coordination/THIRD_PARTY_REGISTRY.yaml` |
+| **Third-Party Registry** | **18/19 repos cloned** — wave-0: 4/4, wave-1: 5/5, wave-2: 6/6, wave-3: 1/4 | ✅ waves 0-2 complete | 2026-07-18 | ⚠️ `data/coordination/THIRD_PARTY_REGISTRY.yaml` **no longer exists** — historical row, re-derive before citing |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ \| wc -l` |
 | Shared modules | **1** (`omega-meditation` — local editable only) | ✅ 0 on PyPI | 2026-08-08 | `pip list \| grep omega-meditation` |
 | **Foundation Stabilization** | **HISTORICAL** — Gate Α/Β done; not current sprint | 📦 Superseded by PUBLIC-DEBUT-01 | 2026-08-17 | `cat data/coordination/ACTIVE_SPRINT.json` |
@@ -78,16 +78,16 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 |-----------|--------|--------|-------------|
 | **Oracle** | `src/omega/oracle/` | ✅ Operational | Intent detection, entity routing, Iris speculative decode |
 | **Entity Registry** | `src/omega/oracle/entity_registry.py` | ✅ Operational | YAML-backed entity CRUD, auto-scaffolds sovereign workspaces |
-| **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock). N3 fixed graceful fallback + path/spec resolution |
+| **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | **12-provider fabric, 10 enabled** — local: `native-gguf` (primary, llama-cpp-python) + `ollama`; cloud: antigravity, google, google-compat, openrouter, opencode-zen, cline, anthropic, xai; disabled: `lmster` (de-scoped to a post-release update), `mock` (test-only). S3 fixed graceful fallback + path/spec resolution |
 | **Memory Store** | `src/omega/memory_store.py` | ✅ Operational | Hot/Warm/Cold/Temp tiers, hybrid FTS5+vector search |
 | **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | ✅ Strike 10 COMPLETE | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + 7 per-model vec0 collections + SQL edges). PRAGMA SSOT converged: cache_size 32MB, wal_autocheckpoint 500 |
 | **Vector Adapter Pattern** | `src/omega/memory/vector_adapters.py` | ✅ Operational | `IVectorStoreAdapter` ABC with 3 implementations: `SQLiteVecAdapter` (core), `MemoryVectorAdapter` (fallback), `QdrantAdapter` (deprecated heritage ref) |
 
 > **Vector Store Decision (UO-4)**: `sqlite-vec` is the **SINGLE Core store** for the engine. It is native on SQLite (FTS5 + 7 per-model vec0 collections + SQL edges) and powers GraphRAG natively. **Qdrant** is an **optional WAD adapter only** — implements `IVectorStoreAdapter` for stacks that opt into external vector infrastructure. No new core dependency on Qdrant/FAISS/PostgreSQL is permitted.
 >
-> **Current Unified Fabric**: 7 per-model vec0 collections (`omega_vec_gemma_768`, `omega_vec_nomic_768`, `omega_vec_nomic_512`, `omega_vec_nomic_256`, `omega_vec_minilm_384`, `omega_vec_static_64`, `omega_vec_library_256`) + FTS5 BM25 + RRF fusion (k=60) via `HybridSearchEngine`. All working in production.
+> **Current Unified Fabric** (D-1024-DIM-NATIVE): canonical `omega_vec_qwen_1024` (1024-dim native, Qwen3-Embedding-0.6B) + `omega_vec_library_1024` + FTS5 BM25 + RRF fusion (k=60) via `HybridSearchEngine`. Pre-D-1024 tiers (`omega_vec_nomic_768/512/256`, `omega_vec_minilm_384`, `omega_vec_static_64`) retained as deprecated read targets only (Step 19 re-embed / Step 20 removal). The Gemma-era `omega_vec_gemma_768` primary is superseded by Qwen. All working in production.
 >
-> **Qdrant Migration Strategy**: Implement `QdrantAdapter` as a **swappable backend** implementing `IVectorStoreAdapter` (not a replacement). Add config toggle in `config/jit_rag.yaml`: `vector_store: {type: qdrant|sqlite_vec}`. Migrate primary collection (`omega_vec_gemma_768`) first, parity test per collection (≥95% recall), keep SQLite-vec as hot standby for 30 days.
+> **Qdrant Migration Strategy**: Implement `QdrantAdapter` as a **swappable backend** implementing `IVectorStoreAdapter` (not a replacement). Add config toggle in `config/jit_rag.yaml`: `vector_store: {type: qdrant|sqlite_vec}`. Migrate primary collection (`omega_vec_qwen_1024` — canonical under D-1024, supersedes Gemma-era `omega_vec_gemma_768`) first, parity test per collection (≥95% recall), keep SQLite-vec as hot standby for 30 days.
 | **Config Resolver** | `src/omega/governance/config_resolver.py` | ✅ Phase II COMPLETE | Pure Path constants, lazy `get_active_iwad()`, single source of truth for all WAD paths |
 | **Hybrid Search** | `src/omega/memory/hybrid_search.py` | ✅ D-283 Phase 1 COMPLETE | RRF k=60 fusion of FTS5 + vector results. 20 contract tests + 8 RRF math vectors |
 | **Recall Store** | `src/omega/memory/recall.py` | 🟡 D-283 Phase 2 DESIGN COMPLETE | Quality-weighted warm memory tier with power-law decay. 27/29 tests pass |

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L1-L9 YouTube Researcher CLI
 ⬡ OMEGA ⬡ RESEARCHER ⬡ CLI
@@ -18,6 +21,7 @@ Commands:
 import typer
 import asyncio
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -144,12 +148,13 @@ def chunk(
     """L3: Semantic chunking with temporal anchors."""
     
     async def run():
-        if not transcript:
-            transcript = typer.prompt("Enter transcript")
-        
+        text = transcript
+        if not text:
+            text = typer.prompt("Enter transcript")
+
         # Parse into segments (simplified)
-        segments = [{"text": transcript, "start": 0.0, "end": 3600.0}]
-        
+        segments = [{"text": text, "start": 0.0, "end": 3600.0}]
+
         chunks = await semantic_chunk(
             transcript_segments=segments,
             boundary_model=boundary_model,
@@ -172,7 +177,7 @@ def chunk(
 @app.command()
 def steer(
     prompt: str = typer.Argument(..., help="Natural language steering prompt"),
-    node: str = typer.Option("N6", "--node", "-p", help="Target node (N1-N10)"),
+    slot: str = typer.Option("S6", "--slot", "-p", help="Target slot (S1-S10)"),
     priority: str = typer.Option("normal", "--priority", help="Priority: low/normal/high/critical"),
     task_type: str = typer.Option("youtube_deep_dive", "--type", help="Task type"),
 ):
@@ -180,20 +185,20 @@ def steer(
     
     async def run():
         task_priority = TaskPriority[priority.upper()]
-        task_type = SteeringTaskType(task_type)
-        
+        task_type_enum = SteeringTaskType(task_type)
+
         task_id = await inject_steering(
             prompt=prompt,
-            node=node,
+            slot=slot,
             priority=task_priority,
-            task_type=task_type,
+            task_type=task_type_enum,
         )
-        
+
         typer.echo(f"✅ Injected steering task: {task_id}")
         typer.echo(f"   Prompt: {prompt}")
-        typer.echo(f"   Node: {node}")
+        typer.echo(f"   Slot: {slot}")
         typer.echo(f"   Priority: {priority}")
-        typer.echo(f"   Type: {task_type}")
+        typer.echo(f"   Type: {task_type_enum.value}")
     
     asyncio.run(run())
 
@@ -284,11 +289,12 @@ def gnosis(
     """L5: Emit Gnosis Graph edges from video chunks."""
     
     async def run():
-        if not transcript:
-            transcript = typer.prompt("Enter transcript")
-        
+        text = transcript
+        if not text:
+            text = typer.prompt("Enter transcript")
+
         # Chunk first
-        segments = [{"text": transcript, "start": 0.0, "end": 3600.0}]
+        segments = [{"text": text, "start": 0.0, "end": 3600.0}]
         chunks = await semantic_chunk(segments)
         for chunk in chunks:
             chunk.source_video_id = video_id

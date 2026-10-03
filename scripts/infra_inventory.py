@@ -241,7 +241,13 @@ REGISTRY: list[ComponentSpec] = [
         wire_patterns=[r'"instructions"'],
         wire_roots=["opencode.json"],
         doc_refs=[DocRef("OMEGA_CODEX.md", "instruction")],
-        notes="Audit FIX (WP-B2): agents carry instructions[], zero prompt:{file:} — GAP-4 exposure class.",
+        notes="RESOLVED 2026-09-23: agent instructions[] is not a schema field and was forwarded to the provider "
+              "as a model option; `instructions` is a real OpenAI Responses option (string), so the array broke "
+              "every @ai-sdk/openai OpenCode-Zen model with 'AI_InvalidArgumentError: invalid openai provider options'. "
+              "All 12 keys removed (HAZARD GUARD: re-adding them re-breaks Zen GPT models); prompts now resolve from "
+              ".opencode/agents/*.md (verified via `opencode debug agent kali`). Probe still keys on prompt: and needs "
+              "redesign to recognise md-defined prompts — owner TODO. Evidence: "
+              "data/coordination/CLINE_ZEN_PROVIDER_FIX_20260923.md §2/§12.",
         expected="FIX"),
     ComponentSpec(
         name="Root instructions[] chain (opencode.json)", subsystem="instructions",

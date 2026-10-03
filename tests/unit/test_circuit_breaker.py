@@ -20,11 +20,33 @@ from src.omega.memory.embeddings import IEmbeddingProvider
 
 
 class MockProvider(IEmbeddingProvider):
-    """Minimal IEmbeddingProvider stand-in for testing."""
+    """Minimal IEmbeddingProvider stand-in for testing.
 
-    def __init__(self, name: str, fail_n: int = 0, dim: int = 768):
+    [maat 2026-09-28] `dim` now defaults to the CANONICAL width read from
+    `config/embedding_strategy.yaml` (1024, D-1024-DIM-NATIVE) instead of a
+    hardcoded 768.
+
+    Why this had to change: `EmbeddingCircuitBreaker` treats a wrong-width
+    answer as a FAILURE (M23, cross-model substitution refused). With the mock
+    at 768 and the canonical width at 1024, the breaker correctly refused every
+    "healthy" mock and fell through to the sovereign hash — which is also
+    1024-wide, so the tests asserted `len(vec) == 768` against a 1024 vector and
+    failed. The production code was RIGHT; the fixture was stale. Three tests
+    failed here and none of them were engine defects.
+
+    The default is read from the SSOT so a future dimension change updates these
+    tests automatically instead of silently re-breaking them.
+    """
+
+    def __init__(self, name: str, fail_n: int = 0, dim: int | None = None):
         self.name = name
         self.fail_n = fail_n
+        if dim is None:
+            # Correct module is `embedding_strategy`, not `embeddings` — the
+            # breaker imports it from there (line 170). Guessing the module and
+            # importing the wrong one cost an iteration; verified this time.
+            from src.omega.memory.embedding_strategy import get_embedding_strategy
+            dim = get_embedding_strategy().canonical_dimension
         self._dim = dim
         self.call_count = 0
 
@@ -44,7 +66,8 @@ async def test_healthy_provider_succeeds():
     p = MockProvider("ok", fail_n=0)
     cb = EmbeddingCircuitBreaker([p])
     vec = await cb.embed("test")
-    assert len(vec) == 768
+    # Canonical width comes from the SSOT, not a literal (D-1024).
+    assert len(vec) == p.dimension, "must be the mock's own width"
     assert p.call_count == 1
 
 
@@ -61,7 +84,7 @@ async def test_falls_through_to_second_provider():
     p2 = MockProvider("ok", fail_n=0)
     cb = EmbeddingCircuitBreaker([p1, p2])
     vec = await cb.embed("test")
-    assert len(vec) == 768
+    assert len(vec) == p2.dimension, "must be p2's width"
     # p1 was tried at least once (failed)
     assert p1.call_count == 1
     # p2 was tried at least once (succeeded)
@@ -134,3 +157,50 @@ async def test_reset_all_force_closes_breakers():
     for entry in report:
         assert entry["state"] == "closed"
         assert entry["fail"] == 0
+
+
+@pytest.mark.asyncio
+async def test_sub_canonical_provider_is_refused():
+    """[maat 2026-09-28] A sub-canonical provider must NOT answer a canonical
+    request (D-1024, M23 cross-model substitution refused).
+
+    This is the guard that made three of the other tests fail while the engine
+    was behaving correctly -- and it had NO test of its own. Without this case,
+    someone could have deleted the width check and the suite would have stayed
+    green, because the "healthy" mocks had been sized to dodge it entirely.
+    """
+    from src.omega.memory.embedding_strategy import get_embedding_strategy
+
+    canonical = get_embedding_strategy().canonical_dimension
+    # Deliberately half the canonical width: a sub-canonical model.
+    p = MockProvider("small", fail_n=0, dim=canonical // 2)
+    cb = EmbeddingCircuitBreaker([p])
+
+    vec = await cb.embed("test")
+
+    # The sub-canonical answer must be refused, so the result comes from the
+    # sovereign fallback at the canonical width -- never from p.
+    assert len(vec) == canonical, (
+        f"a {canonical // 2}-dim provider must not answer a {canonical}-dim request"
+    )
+    assert vec != [0.0] * (canonical // 2), "must not be the refused vector"
+
+
+@pytest.mark.asyncio
+async def test_mrl_truncation_of_canonical_is_legal():
+    """[maat 2026-09-28] The inverse guard: a shorter vector that declares
+    `_target_dim` is MRL truncation of a canonical model, which IS legal and
+    must pass through rather than being refused.
+
+    Without this, a correct "refuse cross-model substitution" fix would
+    over-block legitimate MRL and the next person would "fix" it by deleting
+    the width check entirely. The two tests together pin the actual boundary.
+    """
+    canonical = 1024
+    p = MockProvider("mrl", fail_n=0, dim=canonical // 2)
+    p._target_dim = canonical  # declares itself a truncated canonical model
+    cb = EmbeddingCircuitBreaker([p])
+
+    vec = await cb.embed("test")
+    assert len(vec) == canonical // 2, "MRL truncation must be served, not refused"
+    assert p.call_count == 1

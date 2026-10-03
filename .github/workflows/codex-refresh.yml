@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+name: Codex Auto-Refresh
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write  # Needed to commit changes
+
+jobs:
+  codex-refresh:
+    name: Refresh OMEGA_CODEX.md if stale
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for commit
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create and activate virtualenv
+        run: |
+          python -m venv .venv
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[cli,dev]"
+
+      - name: Check and fix Codex staleness
+        id: codex
+        run: |
+          make check-codex-fix
+          # Check if OMEGA_CODEX.md was modified
+          if git diff --quiet OMEGA_CODEX.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "✅ Codex is fresh, no changes needed"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "📝 Codex was regenerated"
+
+      - name: Commit and push if changed
+        if: steps.codex.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add OMEGA_CODEX.md
+          git commit -m "chore: auto-refresh OMEGA_CODEX.md [skip ci]"
+          git push

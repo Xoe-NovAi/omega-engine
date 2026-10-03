@@ -7,7 +7,7 @@
 model_id: "<provider>/<model-name>[:<variant>]"  # e.g., "google/gemma-4-31b-it:free", "qwen3-1.7b-local"
 display_name: "<Human-Readable Name>"            # e.g., "Gemma 4 31B IT (Free)"
 version: "YYYY-MM-DD"                            # Model version / knowledge cutoff
-provider: "<provider-name>"                      # openrouter, google, together, native-gguf, lmster, ollama, antigravity, opencode-zen, cline
+provider: "<provider-name>"                      # openrouter, google, together, native-gguf, ollama, antigravity, opencode-zen, cline
 platform: "<cloud|local|cli|stealth>"            # Deployment platform
 tier: "<T1|T2|T3>"                               # Capability tier
 status: "<active|deprecated|experimental|stealth>"  # Model status

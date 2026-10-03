@@ -89,13 +89,14 @@ The FLE Council (2026-08-25) ratified **5 Standing Laws** for sovereign executio
 - M20 SomaticState · M21 Gate Integrity · M22 Response Provenance · M23 Failure Integrity
 - M24 Venv Sovereignty · M25 Streaming Resilience · M26 Doc Standards · M27 Tracking Integrity
 
-### The Pillar / Node Cosmology (10 Nodes + Iris)
+### The Slot Cosmology (10 Slots + Iris)
 
-- **N0** Architect (human) · **N1** Infrastructure · **N2** Persistence
-- **N3** Engineering · **N4** Integration · **N5** Governance
-- **N6** Cognition · **N7** Context · **N8** Observability · **N9** Orchestration · **N10** Validation
-- **Iris** is the messenger bridge (M3), NOT a Node. She runs live model inference
+- **Node 0** Architect (human) · **S1** Infrastructure · **S2** Persistence
+- **S3** Engineering · **S4** Integration · **S5** Governance
+- **S6** Cognition · **S7** Context · **S8** Observability · **S9** Orchestration · **S10** Validation
+- **Iris** is the messenger bridge (M3), NOT a slot. She runs live model inference
   (speculative decode) and is resourced as an LLM workload.
+  ("Node 0" here is the HP laptop the Engine is developed on — federation topology, not a domain.)
 
 ### Craftsman Contract (Carmack Philosophy)
 

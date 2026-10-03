@@ -34,9 +34,9 @@ from .quota_pollers import (
 )
 
 # [DEL-1 4h] fleet_orchestrator default exports removed 2026-08-24 —
-# zero importers verified (MaKaLi council N4). The file itself stays on
+# zero importers verified (MaKaLi council S4). The file itself stays on
 # disk until the Week-2 router collapse (its private RouteDecision would
-# collide with the single-control-plane gate, N4(4h)->N5 edge).
+# collide with the single-control-plane gate, S4(4h)->S5 edge).
 
 __all__ = [
     # Grok CLI

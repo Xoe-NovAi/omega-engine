@@ -108,21 +108,22 @@ The unified fabric uses **one vec0 collection per embedding model/dimension** �
 
 | Collection | Dimension | Model | Metric | Quantization | HNSW Params |
 |------------|-----------|-------|--------|--------------|-------------|
-| `omega_vec_gemma_768` | 768 | EmbeddingGemma 300M (primary) | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
-| `omega_vec_nomic_768` | 768 | Nomic Embed Text v1.5 (Ollama) | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
-| `omega_vec_nomic_512` | 512 | Nomic MRL truncation | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
-| `omega_vec_nomic_256` | 256 | Nomic MRL truncation | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
-| `omega_vec_minilm_384` | 384 | MiniLM L6 v2 (native) | cosine | none | m=16, ef_construct=200, ef_search=64 |
-| `omega_vec_static_64` | 64 | Potion Base 2M (model2vec) | cosine | none | m=16, ef_construct=200, ef_search=64 |
-| `omega_vec_library_256` | 256 | Library/discovery embeddings | cosine | none | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_qwen_1024` | 1024 | Qwen3-Embedding-0.6B (canonical, D-1024; supersedes Gemma-era `omega_vec_gemma_768` primary) | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_library_1024` | 1024 | Qwen3-Embedding-0.6B (library, unified) | cosine | none | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_nomic_768` (deprecated) | 768 | Nomic Embed Text v1.5 (pre-D-1024 tier) | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_nomic_512` (deprecated) | 512 | Nomic MRL truncation (pre-D-1024 tier) | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_nomic_256` (deprecated) | 256 | Nomic MRL truncation (pre-D-1024 tier) | cosine | int8_rescore | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_minilm_384` (deprecated) | 384 | MiniLM L6 v2 (native) | cosine | none | m=16, ef_construct=200, ef_search=64 |
+| `omega_vec_static_64` (deprecated) | 64 | Potion Base 2M (model2vec) | cosine | none | m=16, ef_construct=200, ef_search=64 |
 
-**Canonical Dimension Lock**: 768-dim enforced at vec0 table creation (M23 Failure Integrity) — `sqlite_vec_adapter.py:280-288`
+**Canonical Dimension Lock**: 1024-dim enforced at vec0 table creation (M23 Failure Integrity, D-1024-DIM-NATIVE — supersedes the Gemma-era 768-dim lock) — `sqlite_vec_adapter.py:280-288`
 
-**Embedding Fallback Chain** (EmbeddingManager):
-1. `GemmaGGUFEmbeddingProvider` (768-dim, primary) — `embeddings.py:400`
-2. `OllamaEmbeddingProvider` (nomic-embed-text:v1.5, 768-dim) — `embeddings.py:401`
-3. `LocalGGUFEmbeddingProvider` (MiniLM, 384-dim native → MRL to 768) — `embeddings.py:402`
-4. `StaticEmbeddingProvider` (potion-base-2M, 64-dim native → MRL to 768) — `embeddings.py:403`
+**Embedding Provider Chain** (EmbeddingManager, D-1024):
+1. `Qwen3GGUFEmbeddingProvider` (1024-dim native, canonical) — `embeddings.py:400`
+2. `LocalGGUFEmbeddingProvider` (MiniLM, 384-dim native, speed tier) — `embeddings.py:402`
+3. `StaticEmbeddingProvider` (potion-base-2M, 64-dim native, zero-cost tier) — `embeddings.py:403`
+
+> Pre-D-1024 fallback providers (Gemma-768, nomic-embed-text 768) were removed under D-1024/M23 — native vectors from a non-canonical model on the canonical write path are refused (no silent cross-model substitution). Deprecated tiers above are retained as read targets for Step 19 (D-1024 full re-embed) / Step 20 (legacy alias removal).
 
 ---
 
@@ -166,7 +167,7 @@ that opt into external vector infrastructure (e.g., multi-node clusters, >100M v
    vector_store:
      type: qdrant | sqlite_vec
    ```
-3. **Migrate primary collection first** (`omega_vec_gemma_768` — canonical 768-dim)
+3. **Migrate primary collection first** (`omega_vec_qwen_1024` — canonical 1024-dim under D-1024; supersedes Gemma-era `omega_vec_gemma_768`)
 4. **Parity test per collection** (≥95% recall vs sqlite-vec)
 5. **Keep SQLite-vec as hot standby** for 30-day rollback window
 
@@ -174,10 +175,12 @@ that opt into external vector infrastructure (e.g., multi-node clusters, >100M v
 
 | Collection | Dimensions | Purpose | Quantization |
 |------------|------------|---------|--------------|
-| `omega_entities` | 768 | Entity embeddings | Scalar int8 |
-| `omega_sessions` | 768 | Session/context embeddings | Scalar int8 |
-| `omega_knowledge` | 768 | Research/knowledge base | Scalar int8 |
-| `omega_code` | 768 | Code embeddings | Scalar int8 |
+| `omega_entities` | 1024 | Entity embeddings | Scalar int8 |
+| `omega_sessions` | 1024 | Session/context embeddings | Scalar int8 |
+| `omega_knowledge` | 1024 | Research/knowledge base | Scalar int8 |
+| `omega_code` | 1024 | Code embeddings | Scalar int8 |
+
+> Dimensions track the D-1024 canonical width (1024-dim Qwen3) — supersedes the Gemma-era 768-dim schema.
 
 **HNSW Config**: m=16, ef_construct=256, ef_search=128, max_indexing_threads=4
 **Quantization**: Scalar int8, quantile=0.99, always_ram=true (4x memory savings, <1% recall loss)

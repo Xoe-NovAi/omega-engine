@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 # 🔱 Omega Engine — YouTube Research Enhanced (V2)
 # AP: AP-YOUTUBE-RESEARCH-V2-v1.0.0
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_youtube_v2 ⬡ ENHANCED

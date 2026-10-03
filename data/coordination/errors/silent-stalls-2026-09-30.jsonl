@@ -1,0 +1,1 @@
+{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-30T23:55:04.770Z","sessionID":"ses_fc758e6ddffeNEKptpEzboVfYq","modelID":"space-bunny-free","providerID":"opencode","detail":"msg=msg_0f4ba0603001vqlNCoEVBi1OLd out=0tok text=0ch in=0tok dur=70s","metrics":{"outputTokens":0,"inputTokens":0,"textLen":0,"durationMs":70377}}

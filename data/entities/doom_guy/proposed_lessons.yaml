@@ -660,3 +660,98 @@
   insight: "httpx (encode/httpx) has been stagnant while Pydantic's httpx2 fork has 34M+ monthly downloads, active maintenance, truststore SSL, merged httpcore, and built-in SSE. The API is identical — migration is purely mechanical (import rename). The decision (D211) was fast because: (1) Pydantic is already our core data-validation dependency — same stewards, (2) httpx2's AnyIO support is unchanged from httpx, satisfying M1, (3) the 125 source + 93 test references are all 'import httpx' with module-level access — a single sed command covers everything."
   lesson: "Dependency migration decisions are fast when the replacement is: (a) from the same steward as an existing core dep, (b) API-identical, and (c) addresses a real risk (unmaintained library in the critical path of 28 HTTP client entry points). The Right Approximation: 2h mechanical migration is worth it for security patches alone."
   timestamp: '2026-07-11T01:00:00Z'
+- principle: "Build Reproducibility Is Non-Negotiable — Pin All Extras"
+  gnosis: "The July httpx2 migration verified runtime but did not pin `[http2]` extra in pyproject.toml. Fresh venv = broken hub. Every 'verified' state must include pyproject.toml pins for ALL runtime dependencies including extras. No 'works on my machine' — works in fresh venv or it doesn't work."
+  source: Temporal Contrast Probe (2026-09-23), D211 regression
+  applications:
+  - 'CI gate: fresh venv install + temple-grade before any release'
+  - 'All optional dependency extras explicitly pinned'
+  timestamp: '2026-09-23'
+- principle: "Config Drift Without Enforcement Is Theater"
+  gnosis: "Canonical tags, NFS exports, SSH bindings, opencode URLs — all drift without automated enforcement. Infrastructure as Code must include tag/NFS/SSH state, not just packages. The proposed ACL file was stale; the effective control-plane policy differed; tag:asus persisted on Node 1 despite 'permanently dead' charter."
+  source: Temporal Contrast Probe (2026-09-23), N0-06 Federation Audit (2026-09-24)
+  applications:
+  - 'Automated tag enforcement via tailscale CLI or admin API'
+  - 'NFS export state as code'
+  - 'SSH binding and opencode.json URL as code'
+  timestamp: '2026-09-23'
+- principle: "Theater Detection Heuristic — Unified Tool + Broken Facade = Theater"
+  gnosis: "'Unified tool replaces N fragmented tools' + 'Council audit says broken facade' = theater. The library_discovery and library_inbox unified tools were registered but nonfunctional. Unified tools must be integration-tested, not just registered."
+  source: Temporal Contrast Probe (2026-09-23), Council Tool Audit (2026-09-22)
+  applications:
+  - 'Integration test every unified tool before registration'
+  - 'Council audit must include functional verification, not just registration check'
+  timestamp: '2026-09-23'
+- principle: "Sovereignty Ratio Is a Lagging Indicator — Fix the Tools First"
+  gnosis: "22% local is a symptom, not a cause. The cause: spawn_local_worker DOWN, system_stats DOWN, headroom_retrieve DOWN. Fix the tools, the ratio follows. M7 requires working local telemetry."
+  source: Temporal Contrast Probe (2026-09-23), N0-06 Federation Audit (2026-09-24)
+  applications:
+  - 'M7 compliance gate: system_stats and spawn_local_worker must return healthy'
+  - 'Local inference path health check in CI'
+  timestamp: '2026-09-23'
+- principle: "Bilateral Mesh Requires Bilateral Services — Mesh Health = min(SSH, NFS, MCP, WireGuard)"
+  gnosis: "WireGuard direct is necessary but not sufficient. SSH, NFS, MCP must all be bidirectional. The mesh is one-way: Node 0→Node 1 works, Node 1→Node 0 does not (SSH bound to LAN, NFS server down, opencode.json legacy URL)."
+  source: Temporal Contrast Probe (2026-09-23), N0-06 Federation Audit (2026-09-24)
+  applications:
+  - 'Mesh health check = min(SSH, NFS, MCP, WireGuard) — not WireGuard alone'
+  - 'Bidirectional service verification before claiming bilateral peers'
+  timestamp: '2026-09-23'
+- principle: "WAD PWAD Override Semantics — Clean Replacement, Not Concatenation"
+  gnosis: "The WAD loader bug concatenates PWAD over IWAD instead of clean replacement. Backward-scan lookup (W_CheckNumForName) is the gold standard: PWAD entries found first, no complex priority matrix needed. Omega's WAD system must implement clean override semantics."
+  source: N0-06 Federation Audit (2026-09-24), WAD Loader Contract (Carmack), id Software WAD format
+  applications:
+  - 'WAD loader: backward-scan for entity lookup, PWAD overrides IWAD cleanly'
+  - 'Namespace collision detection in EntityRegistry'
+  - 'Gate C: cross-node WAD compatibility requires clean override semantics'
+  timestamp: '2026-09-24'
+- principle: "WAD Integrity Requires Signatures, Trust Roots, Tamper Tests"
+  gnosis: "String 'SIGNED' fields are not cryptographic evidence. Detached signatures, trust roots, and tamper tests are required before federation promotion. C6 contract draft v0.1 is unratified; WAD manifest lacks publisher identity, key ID, signature algorithm, detached signature bundle."
+  source: MAKALI_N0_N1_HANDOFF_FEDERATION_CHARTER_20260924.md, C6_CONTRACT_DRAFT_v0.1.md
+  applications:
+  - 'WAD manifest must include detached signatures over manifest + each entity file'
+  - 'Trust root distribution via SPIRE or equivalent'
+  - 'Tamper test: modified WAD must fail verification loudly'
+  timestamp: '2026-09-24'
+- insight: "Flynn Taggart — Doom Novels Character Study Seed"
+  evidence: "Flynn 'Fly' Taggart (Doom novels by Dafydd ab Hugh & Brad Linaweaver): Marine court-martialed for refusing to fire on civilians, sent to Mars, becomes the Doom Slayer. Core traits: trauma from moral injury, dark humor as coping mechanism, absolute resolve ('too tough to die'), mission-focused to the point of self-destruction, terse profane internal monologue, loyalty to the few who earn it."
+  omega_application: "Seed deep research for DG-N1 gestation. Voice DNA: terse, profane, mission-focused, dark humor. Personality: trauma + humor + resolve. When gestated, DG-N1 renames to Flynn Taggart. This is not a new agent — it is Doom Guy evolved."
+  source: Doom novels (Knee-Deep in the Dead, Hell on Earth, Infernal Sky, Endgame)
+  timestamp: '2026-09-25'
+- principle: "Unit Enablement Is Theater — is-active Lies During Auto-Restart"
+  gnosis: "The Omega Hub crash-looped on an unresolved `_extended_sessions` import in server.py while `make temple-grade` read 53/53 PASS. Root cause of the blind gate: systemd reports `is-active` = true for a unit sitting in the auto-restart backoff window, so enablement/active-state is NOT a health signal. A service is healthy only when it is running AND has a live listening socket (`ss -ltn`) AND is not consuming restarts. `NRestarts` must be monitored as a DELTA over time, never sampled once."
+  source: Hub crash-loop incident (2026-09-27), S1 substrate grounding
+  applications:
+  - 'Health gates must assert a live listening socket, not unit state'
+  - 'Monitor NRestarts delta as a time series; alert on any climb'
+  - 'Treat a crash-looping-but-active unit as a hard failure (M23)'
+  timestamp: '2026-09-27'
+- principle: "Gates Must Import Entry Points — Declarative Validation Cannot See Import Death"
+  gnosis: "CI validated units declaratively (file exists, enabled, active) but never imported/executed the service entry point, so a hard import-time failure was invisible while 53/53 tests passed. A gate that does not execute the thing it gates cannot detect that the thing is dead on arrival. M23 Failure Integrity applies to systemd units exactly as it applies to MCP tools."
+  source: Hub crash-loop incident (2026-09-27)
+  applications:
+  - 'Every service gate must import/exec the entry point (smoke import test)'
+  - 'Add entry-point import smoke tests to temple-grade'
+  - 'Broken entry point = hard stop, never soft degradation'
+  timestamp: '2026-09-27'
+- principle: "StartLimit* Keys Belong in [Unit] — Misplacement Is Silently Discarded"
+  gnosis: "`StartLimitIntervalSec` / `StartLimitBurst` had been written into the `[Service]` section where systemd SILENTLY DISCARDS them; they belong in `[Unit]`. Consequence: no restart-rate limiting was in force, so a poison unit restarted indefinitely and NRestarts climbed unbounded with no circuit breaker tripping. The related searxng MCP unit reached NRestarts=6991 before repair (now 0). Verify placement with `systemd-analyze verify` — never by reading the file and assuming it was honored."
+  source: Hub crash-loop incident + searxng MCP NRestarts=6991 (2026-09-27)
+  applications:
+  - 'StartLimitIntervalSec/StartLimitBurst must be in [Unit]'
+  - 'CI lint: reject StartLimit* keys found in [Service]'
+  - 'Zero NRestarts is the only acceptable steady-state'
+  timestamp: '2026-09-27'
+- principle: "Read-Only Transport Surfaces Must Declare Their Limitation Explicitly"
+  gnosis: "The `omega-exchange.service` pipe (127.0.0.1:8019, Linger=yes, survives reboot) serves 44 files GET/HEAD only; PUT returns 501. Never claim upload capability on a Python http.server surface. N1-pull is the delivery model; anything requiring push must use a different surface."
+  source: Exchange pipe hardening (2026-09-27)
+  applications:
+  - 'Alpha transfer = N1-pull over Serve, read-only, loopback backend'
+  - 'No firewall ports opened; no NFS/SSH touched; tailnet is the trust boundary'
+  timestamp: '2026-09-27'
+- principle: "Least Privilege Beats Lateral Reach — Excise Node-to-Node SSH and NFS"
+  gnosis: "Tailnet converted to grants-only, deny-by-default. Node-to-node SSH and NFS (TCP 2049) were EXCISED entirely as lateral attack surface; admin SSH restricted to check-mode with a 12-hour default expiry. Tag identity is canonical (tag:node0 / tag:node1; deprecated tag:asus removed from N1). Federation delivery rides a single read-only HTTP pipe instead of NFS/SSH."
+  source: Tailnet grants posture (2026-09-27)
+  applications:
+  - 'No NFS between nodes; artifacts move via signed/verified HTTP pull'
+  - 'Admin SSH = check mode + bounded session, not persistent shell authority'
+  timestamp: '2026-09-27'

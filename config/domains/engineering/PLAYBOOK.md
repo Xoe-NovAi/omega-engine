@@ -217,7 +217,7 @@ proposals:
 | `subprocess.run()` in async | `anyio.run_process()` |
 | `git add -A` | Path-stage every commit |
 | New circuit breaker class | `HealthMonitor.get_breaker()` |
-| Cloud-first provider order | Local-first (native-gguf → lmster → Ollama → cloud) |
+| Cloud-first provider order | Local-first (native-gguf → Ollama → cloud) |
 | `git add -A` | Path-stage every commit |
 | New control plane | One router (ProviderSelector) |
 | God-module growth >1000 lines | Split in same PR |

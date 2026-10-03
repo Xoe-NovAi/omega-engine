@@ -261,7 +261,7 @@ class EntityWorkspaceManager:
             if not sessions_file.exists():
                 _atomic_write_yaml(sessions_file, [], audit, "SESSIONS_CREATE", name)
 
-        # [N7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
+        # [S7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
         # This enables the global knowledge catalog to index this entity's topics
         index_file = knowledge_dir / "INDEX.yaml"
 
@@ -543,12 +543,11 @@ class EntityWorkspaceManager:
         if gnosis:
             soul_section += "\n\n" + "\n\n".join(gnosis)
 
-        # -------------------------------------------------------------------------
-        # 🌍 THE ENVIRONMENT (Where): Engine State & Strategic Horizon
-        # -------------------------------------------------------------------------
+        from omega import __version__
+
         env_section = (
             "🌍 THE ENVIRONMENT (Where):\n"
-            "- Engine Version: 2.2.0\n"
+            f"- Engine Version: {__version__}\n"
             f"- Active IWAD: {cvar_get('config.entity.active_iwad', '_omega_default')}\n"  # [remediated: M2-LEAK] — was hardcoded 'arcana_novai', now dynamic via cvar_get
             f"- Strategic Horizon: {EntityWorkspaceManager._get_current_horizon()}"
         )

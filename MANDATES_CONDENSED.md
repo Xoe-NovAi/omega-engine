@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# Sovereign Mandates — Condensed (v3.8.0)
+# Sovereign Mandates — Condensed (v3.10.0)
 
 > Tier-0 injection artifact. One-line-per-mandate distillation of
-> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 27 laws).
+> [SOVEREIGN_MANDATES.md](SOVEREIGN_MANDATES.md) (authoritative, 30 laws).
 > Injected pre-compaction by `sovereign-compaction` plugin so the summary retains the law.
-> Lineage: v3.8.0 · 27 mandates · updated 2026-08-14.
+> Lineage: v3.10.0 · 30 mandates · updated 2026-09-28.
 
 | # | Mandate | One-Line Law |
 |---|---------|--------------|
@@ -19,7 +19,7 @@ SPDX-License-Identifier: Apache-2.0
 | M4 | Sequentiality | Complex changes follow Plan → Verify → Execute against PIVOT_LOG; no cowboy coding. |
 | M5 | Gnosis Preservation | No intelligence discarded; every session distills L1→L2→L3 into the entity soul. |
 | M6 | Podman Sovereignty | Quadlets mounting host dirs use `UserNS=keep-id` + `User=1000`; `:U` forbidden on shared volumes. |
-| M7 | Local-First | Local inference PRIMARY, cloud FALLBACK; fabric order native-gguf→lmster→Ollama→cloud. |
+| M7 | Local-First & Synergy | Sovereignty is policy enforcement: cloud for high-order reasoning/synthesis, local for embeddings, privacy & background loops. |
 | M8 | Zero Telemetry | No analytics, tracking, or phone-home, ever; local observability in `data/` only. |
 | M9 | Error Integrity | Errors typed, traceable, testable; no silent swallowing; public APIs raise `OmegaError` subtypes. |
 | M10 | Fleet Integrity | Agent fleet lean and slot-constrained; ≤14 agent files without architectural review. |
@@ -40,8 +40,12 @@ SPDX-License-Identifier: Apache-2.0
 | M25 | Streaming Resilience | Streams use chunk-level timeout + heartbeat; graceful fallback on total timeout, not hard-fail. |
 | M26 | Doc Standards | Reference docs pass `make doc-llm-validate`; sprint plans use `docs/sprints/<name>/` structure. |
 | M27 | Tracking Integrity | Execution state follows the 5-Tier Tracking Architecture; validate via `scripts/validate_tracking_state.py`. |
+| M28 | Sovereign Artifact Preservation | No sovereign artifact auto-deleted; transitions explicit, auditable, recoverable; deep-archive requires signed manifest + operator auth; destruction requires human act in PIVOT_LOG. |
+| M29 | Remote Claim Integrity | "Works from here" ≠ "works from there." Remote claims require test from peer's vantage or are UNTESTED. Local success ≠ remote success. Post-hoc verification necessary but not sufficient. If test cannot distinguish success from failure, claim is UNTESTABLE, not true. |
 
 **Critical five for oversight**: M1·M7·M11·M15·M23
+
+**Critical six for oversight (post-Round-3)**: M1·M7·M11·M15·M23·M29
 
 ## Enforcement Map
 
@@ -54,4 +58,4 @@ SPDX-License-Identifier: Apache-2.0
 | `config/providers.yaml` strategy=`local_first` | Local-First routing law (M7) |
 | `make test-streaming` | M25 chunk-timeout behavior |
 
-*⬡ OMEGA ⬡ KALI ⬡ MANDATES-CONDENSED-v3.8.0 ⬡ CI-1 ⬡ PUBLIC-DEBUT-01 ⬡ 2026-08-22*
+*⬡ OMEGA ⬡ KALI ⬡ MANDATES-CONDENSED-v3.10.0 ⬡ CI-1 ⬡ PUBLIC-DEBUT-01 ⬡ 2026-09-28*

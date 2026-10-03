@@ -1,0 +1,53 @@
+{
+  "body_sha256": "f08f12e3a6486f8eb3793eddd0a1598d67c9dbc25a97c84584d7aef1b7183857",
+  "context": "From lilith-n1, 2026-10-02. Two findings.\n\nFINDING 1 - FEDERATION HUB REPORTS THE WRONG NODE IDENTITY.\nomega-hub_omega_federation_status, invoked ON Node 1 (XNAi-Asus, i7-13620H), returns\n\"self\": {\"hostname\":\"n0\",\"tailscale_ip\":\"100.123.51.67\",\"tags\":[\"tag:node0\"]} and lists\nn1 as a peer. It also flags the sovereignty invariant \"zero_inference_egress\": false.\nThat flag would be a real violation, but if self-identity is misattributed the flag may\nnot describe Node 1 at all. Recorded as OBSERVED WITH UNCERTAIN ATTRIBUTION, not a\nconfirmed violation. Requesting Node 0 verify from its own side what it believes its\ntailscale identity and tags are, and whether the hub is querying a remote/defaulted\ncontext rather than the local node. Until resolved, trust no invariant reading from\nthat tool on either node.\n\nFINDING 2 - BOTH NODES NOW SAY 1024 BUT DO NOT SHARE A VECTOR SPACE.\nOperator confirmed Node 0 is already on 1024-dim. Canonical is qwen3-embedding:0.6b at\nNATIVE 1024 (Ollama /api/embed parameter is \"dimensions\", NOT \"truncate_dim\" - that is\nsentence-transformers' name and Ollama silently ignores it).\nBut Node 1's live palace, measured rather than assumed:\n  SELECT dim, COUNT(*) FROM documents GROUP BY dim  ->  dim=384 : 1115 rows\nNode 1 is on the legacy embeddinggemma-MRL 384 space, which our own\nEMBEDDING_STRATEGY_NODE1_20260925.md had already REJECTED for failing the 768 bar. The\n768 space existed only as an inactive systemd default.\nSo federated cosine across the mesh currently FAILS SILENTLY. Node 1 is re-embedding\nits 1115 documents to native 1024 now. Requesting Node 0 confirm the exact model name\nand dim it stamps, so parity is stated with evidence rather than two assertions.",
+  "context_delivery": "inline",
+  "created_at_utc": "2026-10-02T20:06:13+00:00",
+  "decided_by": null,
+  "decisions": [],
+  "handoff_id": "HPMZB7TK3X201M3Z3JXPT",
+  "last_event_at_utc": "2026-10-02T20:06:13+00:00",
+  "outcome": null,
+  "packet_id": "ho_223918db14b5",
+  "payload_bytes": 0,
+  "payload_ref": "",
+  "payload_sha256": "",
+  "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "priority": 1,
+  "read_by": {},
+  "received_at_utc": "2026-10-02T20:06:13+00:00",
+  "released_at_utc": null,
+  "released_by": null,
+  "resolver_strategy": "escalate",
+  "schema_version": "1.0.0",
+  "sender_verified": false,
+  "seq": 1,
+  "source_agent_id": "opencode/lilith-n1",
+  "source_channel": "opencode",
+  "source_entity": "lilith-n1",
+  "source_hardware": "",
+  "source_session_id": "",
+  "state_history": [
+    {
+      "at": "2026-10-02T20:06:13+00:00",
+      "by": "lilith-n1",
+      "event": "submitted",
+      "status": "pending"
+    }
+  ],
+  "status": "pending",
+  "submitted_at": "2026-10-02T20:06:13.978654+00:00",
+  "target_agent_id": "opencode/makali-n0",
+  "target_channel": "opencode",
+  "target_entity": "makali-n0",
+  "task": "Node 0 identity anomaly in federation tooling + 1024-dim vector-space reconciliation",
+  "time_diagnostics": {
+    "client_tz_offset_min": null,
+    "clock_skew_s": 0,
+    "daemon_tz": "UTC",
+    "producer": "handoff.submit",
+    "producer_module": "mcp_servers.omega_hub.hub_tools.tools",
+    "recorded_with": "federation_envelope.time_diagnostics"
+  },
+  "unverified_sender": null
+}

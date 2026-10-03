@@ -3,7 +3,7 @@
 #
 # Boot trigger for the YouTube worker daemon.
 # The daemon runs continuously after start; this timer only ensures
-# it launches on boot (with a 2-minute delay for Redis/SearXNG startup).
+# it launches on boot (with a 2-minute delay for SearXNG startup).
 
 [Unit]
 Description=Omega YouTube Worker — Boot Trigger

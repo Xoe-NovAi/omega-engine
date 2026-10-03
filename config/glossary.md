@@ -39,7 +39,7 @@ SPDX-License-Identifier: Apache-2.0
 |------|-----------|---------|---------|
 | **Gem** | Google's term for a custom, persistent Gemini assistant. NOT the same as Jem. | — | Gemini custom assistant (do not use "Jem") |
 | **Godot** | The open-source game engine used for VR rendering in Omega Engine | `engine/godot/` | Godot Engine |
-| **Guardian** | Default N1 entity in the Omega Engine — domain expert in strength, protection, boundaries | — | (generic, no alias) |
+| **Guardian** | Default S1 entity in the Omega Engine — domain expert in strength, protection, boundaries | — | (generic, no alias) |
 
 ## I
 
@@ -74,8 +74,8 @@ SPDX-License-Identifier: Apache-2.0
 |------|-----------|---------|---------|
 | **P2P** | Peer-to-peer networking layer for consent-based stack sharing between Omega instances | — | — |
 | **Persona Mask** | A facet of an entity's personality that can be switched contextually | Performer, Businesswoman, Secret Identity (Jem) | Facet, Aspect |
-| **Node** | A domain category (1-10). The node structure is core engine; the entity that fills it is stack-specific. | N1=Strength, N2=Dream, N3=Will... | Domain, Expertise area |
-| **Provider Fabric** | The fallback chain of inference backends | lmster → ollama → opencode-zen → cline → google | ModelGateway |
+| **Slot** | A domain category (S1-S10). The slot structure is core engine; the entity that fills it is stack-specific. | S1=infrastructure, S2=persistence, S3=engineering... | Domain, Expertise area |
+| **Provider Fabric** | The fallback chain of inference backends | native-gguf → ollama → opencode-zen → cline → google | ModelGateway |
 
 ## S
 

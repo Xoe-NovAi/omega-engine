@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L6 Faithfulness Audit — S2 Eval Integration with AutoCal-R Calibration
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L6 ⬡ FAITHFULNESS

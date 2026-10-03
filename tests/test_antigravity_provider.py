@@ -54,6 +54,7 @@ def test_s75_sdk_import_guard_no_leak():
 
 def test_s75_auth_error_without_key():
     """[S7.5] With SDK present but no resolved key, raise ProviderAuthError."""
+    pytest.importorskip("google.genai", reason="google-genai SDK not installed (optional)")
     cfg = ProviderConfig(name="antigravity", priority=0)
     provider = AntigravityProvider(cfg)
     with patch.object(provider, "resolve_current_api_key", return_value=None):

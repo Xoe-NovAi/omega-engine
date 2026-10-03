@@ -50,10 +50,10 @@ Documented rollback procedures for all critical sprint infrastructure components
 
 | Role | Agent | Escalation |
 |------|-------|------------|
-| **Infrastructure** | @pillar P1 | Architect (sudo) |
+| **Infrastructure** | @slot S1 | Architect (sudo) |
 | **Soul/Identity** | @scribe / @roc_racoon | @kali |
 | **WARP/Network** | @john_carmack | Architect |
-| **AGY/Cloud Auth** | @pillar P4 | @maat |
+| **AGY/Cloud Auth** | @slot S4 | @maat |
 | **Tests/Quality** | @verity | @kali |
 | **Research/Knowledge** | @researcher | @jem |
 

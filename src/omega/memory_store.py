@@ -21,16 +21,13 @@ from typing import Any, Dict, List, Optional
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError,
     OmegaPersistenceError,
-    EntityTombstonedError,
 )
 
 from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY
 from .errors import EntityTombstonedError
 from .memory.providers import (
     StorageProvider,
-    RedisStorageProvider,
     FileStorageProvider,
     InMemoryStorageProvider,
     USMStorageProvider,
@@ -39,7 +36,7 @@ from .memory.providers import (
 from .memory.vector_adapters import IVectorStoreAdapter, MemoryVectorAdapter
 from .memory.sqlite_vec_adapter import SQLiteVecAdapter
 from .memory.fts_index import ConversationFTSIndex
-from .memory.embeddings import EmbeddingManager, GemmaGGUFEmbeddingProvider, StaticEmbeddingProvider
+from .memory.embeddings import EmbeddingManager, Qwen3GGUFEmbeddingProvider, SovereignFallbackEmbeddingProvider
 from .memory.adapters import MemoryAdapterRegistry
 
 logger = logging.getLogger(__name__)
@@ -159,39 +156,33 @@ class MemoryStore:
             # 0. USM Provider (Sovereign Primary)
             self.providers.append(USMStorageProvider())
 
-            # Skip Redis in test environment to keep tests fast
-            is_test = os.environ.get("OMEGA_ENV") == "test"
+            # [redis-20260928] Redis provider REMOVED (Architect ruling, group A).
+            #
+            # This branch was gated on `OMEGA_REDIS_HOST`, which meant the
+            # entire hot-storage tier was re-creatable by setting ONE env var —
+            # a config surface that reads as configuration but is not
+            # configuration. It was the live re-creation vector for a
+            # non-loopback `*:6379` connection that `check-lan-exposure`
+            # never voted on. Redis was `*:6379` on this box for a month and
+            # no gate saw it.
+            #
+            # A capability that cannot be reached, guarded by an env var
+            # nobody remembers setting, is not a capability. Storage chain is
+            # now: USM (sovereign primary) -> File (warm) -> InMemory (cold).
+            # See scripts/lan_exposure_audit.py for the historical evidence.
 
-            if not is_test:
-                # 1. Redis Provider (Hot)
-                try:
-                    redis_host = os.environ.get("OMEGA_REDIS_HOST")
-                    if redis_host:
-                        redis_port = int(os.environ.get("OMEGA_REDIS_PORT", "6379"))
-                        redis_password = os.environ.get("OMEGA_REDIS_PASSWORD")
-                        self.providers.append(
-                            RedisStorageProvider(
-                                host=redis_host, port=redis_port, password=redis_password
-                            )
-                        )
-                except OmegaError:
-                    raise
-                except (ConnectionError, RuntimeError) as e:
-                    logger.error(f"Failed to initialize RedisStorageProvider: {e}", exc_info=True)
-                    raise OmegaPersistenceError(f"Redis init failed: {e}", raw_error=e) from e
-
-            # 2. File Provider (Warm) - Always enabled to support persistence tests and local-first fallback
+            # 1. File Provider (Warm) - Always enabled to support persistence tests and local-first fallback
             try:
                 self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
             except (OSError, RuntimeError) as e:
                 logger.warning(f"Failed to initialize FileStorageProvider: {e}")
 
-            # 3. InMemory Provider (Cold/Volatile Fallback)
+            # 2. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
 
-        # FS-Β1: Embedding Strategy SSOT — canonical_dimension=768
-        # The 1024-dim fallback (SovereignFallbackEmbeddingProvider) is REMOVED.
-        # All providers MUST output 768-dim via MRL truncation.
+        # FS-Β1: Embedding Strategy SSOT — canonical_dimension=1024
+        # (D-1024-DIM-NATIVE-20260926). Native 1024 IS canonical; MRL
+        # truncation is available but NOT the canonical path.
 
         if vector_store is not None:
             self.vector_store = vector_store
@@ -204,20 +195,20 @@ class MemoryStore:
         if embedding_manager is not None:
             self.embedding_manager = embedding_manager
         else:
-            # FS-Β1: Embedding Strategy SSOT — write-path default = 768 only
-            # Gemma + Nomic primary/fallback with MRL truncation to 768
-            # MiniLM/static demoted to non-default collections (Option A)
+            # FS-Β1 / [D-1024-DIM-NATIVE-20260926]: write-path must emit the
+            # canonical width or the adapter's dimension guard rejects it (M23).
+            # Qwen3-Embedding-0.6B is native 1024 == canonical. EmbeddingGemma
+            # (768 native) and potion (768 native) CANNOT reach 1024 — MRL only
+            # truncates — so they are demoted to fallback-tier collections.
             from .memory.embedding_strategy import get_embedding_strategy
 
             strategy = get_embedding_strategy()
-            target_dim = strategy.canonical_dimension  # 768
+            target_dim = strategy.canonical_dimension  # 1024
 
             self.embedding_manager = EmbeddingManager(
                 [
-                    GemmaGGUFEmbeddingProvider(target_dim=target_dim),
-                    StaticEmbeddingProvider(
-                        model_name="blobbybob/potion-mxbai-micro", target_dim=target_dim
-                    ),
+                    Qwen3GGUFEmbeddingProvider(target_dim=target_dim),
+                    SovereignFallbackEmbeddingProvider(dimension=target_dim),
                 ]
             )
         # [Horizon 2: MiMo] FTS5 Search Index

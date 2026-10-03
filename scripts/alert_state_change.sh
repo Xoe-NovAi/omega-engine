@@ -25,7 +25,11 @@
 
 set -uo pipefail
 
-LOG_DIR="${HOME}/Documents/Xoe-NovAi/omega-engine/data/metrics"
+# Worktree-safe: derive repo root from script location so linked worktrees
+# resolve to themselves, never to the main tree. (Doom Guy audit 2026-09-27.)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)"
+export REPO_ROOT
+LOG_DIR="${REPO_ROOT}/data/metrics"
 PROBE_FILE="${LOG_DIR}/free_model_probes.jsonl"
 STATE_FILE="${LOG_DIR}/model_state.json"
 ALERT_LOG="${LOG_DIR}/alert_state_change.log"
@@ -47,11 +51,11 @@ fi
 
 # === Compute current state (most recent probe per model) ====================
 CURRENT=$(python3 << 'PYEOF'
-import json, sys
+import json, sys, os
 from pathlib import Path
 from collections import defaultdict
 
-PROBE_FILE = Path.home() / "Documents/Xoe-NovAi/omega-engine/data/metrics/free_model_probes.jsonl"
+PROBE_FILE = Path(os.environ["REPO_ROOT"]) / "data/metrics/free_model_probes.jsonl"
 
 # Track most recent probe per model, plus last 3 for outage detection
 latest = {}
@@ -275,7 +279,7 @@ fi
 log "Writing handoff packet for Hivemind"
 
 PKT_ID="alert-state-$(date -u +%Y%m%d%H%M%S)-$(printf '%04x' $RANDOM)"
-PKT_FILE="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff/pending/${PKT_ID}.json"
+PKT_FILE="${REPO_ROOT}/data/handoff/pending/${PKT_ID}.json"
 mkdir -p "$(dirname "$PKT_FILE")"
 
 # Build payload: alerts JSON + body markdown
