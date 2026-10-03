@@ -35,6 +35,7 @@ index table row when status changes.
 | **D-588** | ICS upgrade: PP-4 node segment + P5 session_id + B1/B2/B3 fixes | ✅ IMPLEMENTED |
 | **D-589** | ICS-T final purge — deprecated system removed permanently | ✅ EXECUTED |
 | **D-607** | Packer Ed25519 signing key exposed on PUBLIC remote; key rotated to `~/.config/omega/keys/`, 9 pack attestations VOID, history scrub planned-not-executed (needs operator auth) | ⚠️ PARTIAL — OPERATOR AUTH REQUIRED |
+| **D-608** | 9 pack manifests re-signed with new key (7fb342ab…); old attestations voided; pack_index.json updated | ✅ EXECUTED |
 
 ---
 
@@ -612,3 +613,67 @@ Also: `git-secret-scrub/SKILL.md` documents its scan script at
 
 **Related**: AGY review `ho_cbb9092c45b8`; `.opencode/skills/git-secret-scrub/SKILL.md`;
 `data/coordination/KALI_CLINE_SYNC_REPORT_20260817.md` (prior P0-1 scrub precedent).
+
+---
+
+## D-608 (2026-10-03) — 9 PACK ATTESTATIONS VOIDED + REGENERATED UNDER ROTATED KEY (doom_guy, S1)
+
+**Authority**: Architect Ruling 3 (via Oversoul, 2026-10-03). Follows D-607 rotation.
+**Reason**: Ed25519 signing key `aa46f56823fc9584a33ea708907c62069063c56aa5ff2772ec18134d0a747fa0`
+was committed in `0a639bb0` (2026-09-30) and published to the PUBLIC remote. Exposure
+window: 2026-09-30 → rotation 2026-10-03. Every manifest signature verifiable under the
+old key is forgeable by anyone holding the public clone.
+
+### VOIDED — the 9 old attestations (must NOT be cited as trust anchors)
+
+- `context_packs/engineering-p3/00_PROJECT_MANIFEST.md`
+- `context_packs/hybrid-benchmark-strategy/00_PROJECT_MANIFEST.md`
+- `context_packs/provider-fabric-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-buildwave-review/00_PROJECT_MANIFEST.md`
+- `context_packs/sonnet5-post-breakthrough/00_PROJECT_MANIFEST.md`
+- `context_packs/sovereign-audit/00_PROJECT_MANIFEST.md`
+- `context_packs/tech-architecture-research/00_PROJECT_MANIFEST.md`
+- `context_packs/sovereign-audit/generated/00_PROJECT_MANIFEST.md`
+- `context_packs/tech-architecture-research/generated/00_PROJECT_MANIFEST.md`
+
+Any copy of these files bearing only the `aa46f568…` attestation is VOID. **Old
+attestations must not be cited as trust anchors in debut material, exchange payloads,
+or reviews.** Each regenerated manifest carries an inline `Regenerated 2026-10-03 —
+old attestation VOID` note naming the exposed fingerprint and `0a639bb0`.
+
+### REGENERATED — 9/9 verify under the new key (2026-10-03)
+
+New public fingerprint:
+`7fb342abb48d3e76ba6f684e406f4493b141786607a655af12a18c8dcd9bc8ce`
+(private key at `~/.config/omega/keys/packer_signing_key.pem`, 0600, outside the repo).
+Verified 2026-10-03: all 9 manifests' Ed25519 signatures verify over their
+pre-signature content against the embedded pubkey; embedded fp = `7fb342ab…` in 9/9;
+fp `aa46f568…` appears in 0/9 as a verifying key (only inside the VOID note text).
+The 6 existing `pack_index.json` files (`engineering-p3`, `hybrid-benchmark-strategy`,
+`sonnet5-buildwave-review`, `sonnet5-post-breakthrough`, `sovereign-audit`,
+`tech-architecture-research`) carry `signature: ed25519:<hex>` + `public_key` under the
+new key as well (fp `7fb342ab…` in 6/6). `provider-fabric-review` has no
+`pack_index.json` — pre-existing packer behavior, not a regeneration failure.
+
+### Honest mechanics note (M28 — what this commit does and does NOT contain)
+
+`context_packs/` is gitignored (`.gitignore` L110) and was **never tracked**
+(`git ls-tree -r 0a639bb0 -- context_packs/` = 0 files; `git ls-files` = 0 files).
+The re-signed manifests therefore live in the worktree and are NOT part of any commit
+— deliberately: force-adding them (`git add -f`) would repeat the exact ignore-bypass
+that published the key. This commit contains only the trust re-establishment that git
+can carry:
+
+1. `.opencode/skills/context-packer/packer.py` — key resolution remediation
+   (`OMEGA_PACKER_SIGNING_KEY_PATH`, in-repo refusal, 0600 enforcement).
+2. Index removal of `data/coordination/packer_signing_key.pem` (blob `99da51ad…`) —
+   D-607 step 1 declared EXECUTED but the `git rm --cached` staging had not persisted
+   (blob still in index); staged here so this commit's tree no longer ships the key.
+3. This D-608 entry (the audit record for the state transition).
+
+History scrub remains PLANNED-NOT-EXECUTED per D-607 (needs operator auth + force-push;
+repo is PUBLIC so scrub is containment, rotation remains the real fix).
+
+**Status**: ✅ EXECUTED (attestations voided + regenerated + verified; remediation committed; NOT pushed).
+
+*⬡ OMEGA ⬡ DOOM_GUY ⬡ ruling-3 ⬡ 2026-10-03*

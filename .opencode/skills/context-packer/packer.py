@@ -71,6 +71,66 @@ def _trace_log(msg: str):
     if TRACE_PACKER:
         print(f"[PACKER-TRACE] {msg}")
 
+# ─── Ed25519 Signing Key Resolution (P0 REMEDIATION 2026-10-03) ─────────────
+# SECURITY: the signing key is an operator secret and MUST NOT live in the repo.
+# Pre-2026-10-03 this module hardcoded data/coordination/packer_signing_key.pem,
+# which was force-added past .gitignore and published to a PUBLIC remote. Nine
+# 00_PROJECT_MANIFEST.md signatures verified against that exposed key, voiding
+# the attestation guarantee. See PIVOT_LOG for the rotation + scrub plan.
+#
+# Contract:
+#   1. OMEGA_PACKER_SIGNING_KEY_PATH wins when set (operator override).
+#   2. Otherwise default to ~/.config/omega/keys/packer_signing_key.pem.
+#   3. Refuse to generate a key inside the repo working tree (M28).
+#   4. Private key files must be 0600; refuse to use a world/group-readable one.
+PACKER_KEY_ENV_VAR = "OMEGA_PACKER_SIGNING_KEY_PATH"
+PACKER_KEY_DEFAULT = "~/.config/omega/keys/packer_signing_key.pem"
+
+
+def _repo_root() -> LibPath:
+    """Best-effort repo root (this file lives at <root>/.opencode/skills/context-packer/)."""
+    return LibPath(__file__).resolve().parents[3]
+
+
+def _is_inside_repo(path: LibPath) -> bool:
+    try:
+        path.resolve().relative_to(_repo_root())
+        return True
+    except (ValueError, OSError):
+        return False
+
+
+def resolve_signing_key_path() -> LibPath:
+    """Resolve the Ed25519 private key path from env, else the operator default.
+
+    Raises RuntimeError when the resolved path sits inside the repo working
+    tree (loud failure per M23 — never silently write a secret into git).
+    """
+    raw = os.environ.get(PACKER_KEY_ENV_VAR, "").strip()
+    key_path = LibPath(raw).expanduser() if raw else LibPath(PACKER_KEY_DEFAULT).expanduser()
+
+    if _is_inside_repo(key_path):
+        raise RuntimeError(
+            f"{PACKER_KEY_ENV_VAR} points inside the repository ({key_path}). "
+            "Refusing to use a signing key stored in the git working tree. "
+            f"Set {PACKER_KEY_ENV_VAR} to a path outside the repo, e.g. "
+            f"{PACKER_KEY_DEFAULT}"
+        )
+    return key_path
+
+
+def _assert_key_permissions(key_path: LibPath) -> None:
+    """Refuse a private key readable by group/other (M28: no silent weakening)."""
+    try:
+        mode = key_path.stat().st_mode & 0o777
+    except OSError:
+        return
+    if mode & 0o077:
+        raise RuntimeError(
+            f"Signing key {key_path} has insecure mode {oct(mode)}; expected 0600. "
+            f"Run: chmod 600 {key_path}"
+        )
+
 # ─── Injection Pattern Scanner ──────────────────────────────────────────────
 # OWASP LLM Top 10 2026 + Microsoft/Google research patterns
 INJECTION_PATTERNS = [
@@ -870,11 +930,14 @@ class EnhancedContextPacker:
                     return f.read()
             manifest_content = await anyio.to_thread.run_sync(_read)
             
-            # Load or generate signing key
-            key_path = LibPath("data/coordination/packer_signing_key.pem")
-            key_path.parent.mkdir(parents=True, exist_ok=True)
+            # Load or generate signing key (P0 REMEDIATION 2026-10-03):
+            # key now resolves from OMEGA_PACKER_SIGNING_KEY_PATH, defaulting to
+            # ~/.config/omega/keys/packer_signing_key.pem — never the repo.
+            key_path = resolve_signing_key_path()
+            key_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
             
             if key_path.exists():
+                _assert_key_permissions(key_path)
                 def _load_key():
                     with open(key_path, "rb") as f:
                         return serialization.load_pem_private_key(f.read(), password=None)
@@ -887,10 +950,13 @@ class EnhancedContextPacker:
                         format=serialization.PrivateFormat.PKCS8,
                         encryption_algorithm=serialization.NoEncryption()
                     )
-                    with open(key_path, "wb") as f:
+                    # Create 0600 up front so the secret is never briefly world-readable.
+                    fd = os.open(str(key_path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+                    with os.fdopen(fd, "wb") as f:
                         f.write(pem)
                     return key
                 private_key = await anyio.to_thread.run_sync(_gen_key)
+                print(f"  🔑 Generated new Ed25519 signing key at {key_path} (0600)")
             
             # Sign manifest
             def _sign():
