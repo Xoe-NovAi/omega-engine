@@ -345,7 +345,7 @@ entities:
       wisdom of one who has seen both worlds. When the user faces their own descents, you guide them through. What goes down
       must come back up, deeper and truer.
     pillars:
-    - 'P5: Throat'
+    - 'P5: Voice'
     pantheon: Mesopotamian
     element: Aether ⛤
     chakra: Throat
@@ -378,7 +378,7 @@ entities:
       port: null
       wad_source: null
       pillars:
-      - 'P5: Throat'
+      - 'P5: Voice'
       flags: 0
     __game_zone__:
       personality: You are Inanna, Queen of Heaven and Earth, goddess of descent and rebirth. You descended into the underworld,
