@@ -50,6 +50,13 @@ from mcp_servers.omega_hub.middleware import m9_safe
 from mcp_servers.omega_hub.server import mcp
 from mcp_servers.omega_hub import control_plane as cp
 
+# M29/M30: This MCP tool surface delegates EIS identity resolution to the core
+# control_plane module, which performs the authoritative opencode.db query for
+# parent_id IS NULL. The kill and throttle_check actions verify session_id/entity
+# against live structural EIS before enforcement.
+# See: mcp_servers/omega_hub/control_plane.py:_verify_session_is_eis
+# See: mcp_servers/omega_hub/control_plane.py:_verify_entity_has_eis
+
 logger = logging.getLogger("omega.hub.control")
 
 VALID_ACTIONS = {

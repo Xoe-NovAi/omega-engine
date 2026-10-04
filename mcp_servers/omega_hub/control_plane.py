@@ -57,6 +57,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import time
 import uuid
 from datetime import datetime, timezone
@@ -76,6 +77,10 @@ CONTROL_STATE_PATH = CONTROL_DIR / "control.json"
 KILL_LOG_PATH = CONTROL_DIR / "kill_log.jsonl"
 DECISION_LOG_PATH = CONTROL_DIR / "decisions.jsonl"
 APPROVALS_DIR = CONTROL_DIR / "approvals"
+
+# opencode.db — the single authoritative surface for live EIS identity (M29/M30).
+# Read-only, mode=ro, so an accidental write is structurally impossible.
+OPENCODE_DB_PATH = Path.home() / ".local" / "share" / "opencode" / "opencode.db"
 
 CONTROL_SCHEMA = "control-plane/v1"
 
@@ -282,6 +287,111 @@ def _empty_state() -> Dict[str, Any]:
     return {"schema": CONTROL_SCHEMA, "killed": {}, "throttles": {}}
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# EIS VERIFICATION — opencode.db is the single authoritative surface (M29/M30)
+# ════════════════════════════════════════════════════════════════════════════
+
+_eis_cache: Dict[str, bool] = {}
+_entity_eis_cache: Dict[str, bool] = {}
+
+
+def _connect_opencode_db_readonly() -> Optional[sqlite3.Connection]:
+    """Open opencode.db strictly read-only. Returns None if unavailable.
+
+    Read-only is not a nicety: the file is ~45GB and `mode=ro` is what makes an
+    accidental write impossible rather than merely unlikely (M23).
+    """
+    if not OPENCODE_DB_PATH.is_file():
+        return None
+    try:
+        con = sqlite3.connect(f"file:{OPENCODE_DB_PATH}?mode=ro", uri=True, timeout=5)
+        # Verify the connection is actually read-only
+        try:
+            con.execute("CREATE TABLE IF NOT EXISTS _eis_write_probe (x INT)")
+        except sqlite3.OperationalError:
+            return con  # refused => read-only, as required
+        except sqlite3.Error:
+            con.close()
+            return None
+        # It succeeded, which is a failure of the read-only guarantee
+        try:
+            con.execute("DROP TABLE IF EXISTS _eis_write_probe")
+        except sqlite3.Error:
+            pass
+        con.close()
+        return None
+    except sqlite3.Error:
+        return None
+
+
+def _verify_session_is_eis(session_id: str) -> bool:
+    """Verify a session_id is a live structural EIS (parent_id IS NULL) in opencode.db.
+
+    Returns True only if the session exists AND has parent_id IS NULL.
+    Returns False if session not found, not an EIS, or DB unavailable.
+    Caches results to avoid repeated DB hits for the same session_id.
+    """
+    if session_id in _eis_cache:
+        return _eis_cache[session_id]
+
+    con = _connect_opencode_db_readonly()
+    if con is None:
+        _eis_cache[session_id] = False
+        return False
+
+    try:
+        row = con.execute(
+            "SELECT 1 FROM session WHERE id = ? AND parent_id IS NULL",
+            (session_id,),
+        ).fetchone()
+        found = row is not None
+    finally:
+        con.close()
+
+    _eis_cache[session_id] = found
+    return found
+
+
+def _verify_entity_has_eis(entity: str) -> bool:
+    """Verify an entity has at least one live structural EIS in opencode.db.
+
+    Queries for sessions where agent matches the entity (or common variants)
+    AND parent_id IS NULL. Returns True if at least one such session exists.
+    Caches results to avoid repeated DB hits for the same entity.
+    """
+    if entity in _entity_eis_cache:
+        return _entity_eis_cache[entity]
+
+    con = _connect_opencode_db_readonly()
+    if con is None:
+        _entity_eis_cache[entity] = False
+        return False
+
+    try:
+        # Try exact entity match first, then common variants
+        # The agent column in opencode.db may not exactly match entity directory names
+        agent_variants = [
+            entity,
+            entity.replace("_", "-"),
+            entity.replace("-", "_"),
+        ]
+        # Also try the entity as-is since that's what gets recorded
+        found = False
+        for agent in dict.fromkeys(agent_variants):
+            row = con.execute(
+                "SELECT 1 FROM session WHERE agent = ? AND parent_id IS NULL LIMIT 1",
+                (agent,),
+            ).fetchone()
+            if row is not None:
+                found = True
+                break
+    finally:
+        con.close()
+
+    _entity_eis_cache[entity] = found
+    return found
+
+
 def _load_state() -> Dict[str, Any]:
     """Load control.json, tolerating absence but NOT corruption.
 
@@ -461,14 +571,22 @@ def release(
 
 
 def is_killed(session_id: str) -> bool:
-    """The enforcement predicate. True only for an ACTIVE (unreleased) kill.
+    """The enforcement predicate. True only for an ACTIVE (unreleased) kill
+    on a VALID structural EIS (parent_id IS NULL in opencode.db).
 
     This is the call every hub-side advisory point makes. It is a pure
     filesystem read — cheap enough to call in a loop, and it fails TOWARD
     safety: if the store is unreadable it raises rather than returning False.
     A predicate that returns False when it cannot tell is a predicate that
     silently lets a runaway through.
+
+    M29/M30: The session_id MUST be a live structural EIS in opencode.db.
+    Only direct query against opencode.db for parent_id IS NULL is authoritative.
     """
+    # M29/M30: Verify session_id is a structural EIS in opencode.db first
+    if not _verify_session_is_eis(session_id):
+        return False
+
     state = _load_state()
     record = state.get("killed", {}).get(session_id)
     return bool(record) and record.get("active", True) is not False
@@ -1011,9 +1129,20 @@ def check_throttle(
     reports whether those numbers are over the line; it does not stop anything.
     Treating an ADVISORY result as enforcement is the specific failure this
     status label exists to prevent.
+
+    M29/M30: The entity MUST have a live structural EIS in opencode.db.
+    Only direct query against opencode.db for parent_id IS NULL is authoritative.
     """
+    entity = str(entity).strip()
+
+    # M29/M30: Verify entity has a structural EIS in opencode.db first
+    if not _verify_entity_has_eis(entity):
+        return {"entity": entity, "throttled": False, "exceeded": False,
+                "enforcement": ENFORCEMENT["throttle"]["status"],
+                "note": "Entity has no live structural EIS in opencode.db (parent_id IS NULL)."}
+
     state = _load_state()
-    limits = state.get("throttles", {}).get(str(entity).strip())
+    limits = state.get("throttles", {}).get(entity)
     if not limits:
         return {"entity": entity, "throttled": False, "exceeded": False,
                 "enforcement": ENFORCEMENT["throttle"]["status"],

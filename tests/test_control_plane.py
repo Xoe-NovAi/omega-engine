@@ -45,6 +45,12 @@ def store(tmp_path, monkeypatch):
     monkeypatch.setattr(CP, "KILL_LOG_PATH", cdir / "kill_log.jsonl")
     monkeypatch.setattr(CP, "DECISION_LOG_PATH", cdir / "decisions.jsonl")
     monkeypatch.setattr(CP, "APPROVALS_DIR", approvals)
+    # Mock EIS verification to return True for all test sessions by default
+    monkeypatch.setattr(CP, "_verify_session_is_eis", lambda sid: True)
+    monkeypatch.setattr(CP, "_verify_entity_has_eis", lambda ent: True)
+    # Clear caches to avoid cross-test pollution
+    CP._eis_cache.clear()
+    CP._entity_eis_cache.clear()
     return cdir
 
 
@@ -445,6 +451,150 @@ def test_corrupt_state_raises_rather_than_reporting_all_clear(tmp_path, monkeypa
     (cdir / "control.json").write_text("not json at all")
     monkeypatch.setattr(CP, "CONTROL_DIR", cdir)
     monkeypatch.setattr(CP, "CONTROL_STATE_PATH", cdir / "control.json")
+    # Mock EIS verification to return True so we hit the corrupt state check
+    monkeypatch.setattr(CP, "_verify_session_is_eis", lambda sid: True)
+    CP._eis_cache.clear()
     with pytest.raises(CP.ControlPlaneError) as exc:
         CP.is_killed("ses_a")
     assert exc.value.code == "control_state_corrupt"
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EIS VERIFICATION (M29/M30) — opencode.db is the single authoritative surface
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def test_is_killed_returns_false_for_non_eis_session(store, monkeypatch):
+    """is_killed() returns False for session_id not in opencode.db as EIS (parent_id IS NULL)."""
+    # Kill a session in the control plane
+    CP.kill(session_id="ses_not_in_db", entity="doom_guy", reason="test")
+    # With default mock (EIS=True), is_killed should be True
+    assert CP.is_killed("ses_not_in_db") is True
+
+    # Now mock _verify_session_is_eis to return False (session not an EIS in opencode.db)
+    monkeypatch.setattr(CP, "_verify_session_is_eis", lambda sid: False)
+    CP._eis_cache.clear()
+
+    # After EIS check, is_killed should return False even though control plane has the kill
+    assert CP.is_killed("ses_not_in_db") is False
+
+
+def test_is_killed_returns_true_for_valid_eis_session(store, monkeypatch):
+    """is_killed() returns True for session_id that IS a valid EIS in opencode.db."""
+    CP.kill(session_id="ses_valid_eis", entity="doom_guy", reason="test")
+
+    # Mock _verify_session_is_eis to return True (session IS an EIS in opencode.db)
+    monkeypatch.setattr(CP, "_verify_session_is_eis", lambda sid: sid == "ses_valid_eis")
+
+    assert CP.is_killed("ses_valid_eis") is True
+
+
+def test_is_killed_returns_false_for_unknown_session_even_if_eis(store, monkeypatch):
+    """is_killed() returns False for unknown session_id even if it's a valid EIS."""
+    # Mock _verify_session_is_eis to return True for a session that was never killed
+    monkeypatch.setattr(CP, "_verify_session_is_eis", lambda sid: sid == "ses_never_killed")
+
+    # Session is valid EIS but was never killed in control plane
+    assert CP.is_killed("ses_never_killed") is False
+
+
+def test_check_throttle_returns_no_throttle_for_entity_without_eis(store, monkeypatch):
+    """check_throttle() returns throttled=False for entity with no live EIS in opencode.db."""
+    CP.set_throttle(entity="doom_guy", max_tokens_per_hour=1000)
+
+    # Mock _verify_entity_has_eis to return False (entity has no EIS)
+    monkeypatch.setattr(CP, "_verify_entity_has_eis", lambda ent: False)
+
+    result = CP.check_throttle(entity="doom_guy", tokens_used=100)
+    assert result["throttled"] is False
+    assert result["exceeded"] is False
+    assert "no live structural EIS" in result["note"]
+
+
+def test_check_throttle_works_for_entity_with_valid_eis(store, monkeypatch):
+    """check_throttle() works normally for entity with valid EIS in opencode.db."""
+    CP.set_throttle(entity="doom_guy", max_tokens_per_hour=1000)
+
+    # Mock _verify_entity_has_eis to return True (entity HAS an EIS)
+    monkeypatch.setattr(CP, "_verify_entity_has_eis", lambda ent: ent == "doom_guy")
+
+    under = CP.check_throttle(entity="doom_guy", tokens_used=100)
+    assert under["throttled"] is True
+    assert under["exceeded"] is False
+
+    over = CP.check_throttle(entity="doom_guy", tokens_used=1001)
+    assert over["throttled"] is True
+    assert over["exceeded"] is True
+    assert "tokens" in over["exceeded_dimensions"]
+
+
+def test_check_throttle_returns_no_throttle_for_unknown_entity_even_with_eis(store, monkeypatch):
+    """check_throttle() returns throttled=False for unknown entity even if it has EIS."""
+    # Mock _verify_entity_has_eis to return True for an entity with no throttle registered
+    monkeypatch.setattr(CP, "_verify_entity_has_eis", lambda ent: ent == "unknown_entity")
+
+    result = CP.check_throttle(entity="unknown_entity", tokens_used=100)
+    assert result["throttled"] is False
+    assert result["exceeded"] is False
+    assert "No throttle registered" in result["note"]
+
+
+def test_eis_verification_caches_results(tmp_path, monkeypatch):
+    """EIS verification caches results to avoid repeated DB hits."""
+    # Set up isolated control plane store
+    cdir = tmp_path / "control"
+    approvals = cdir / "approvals"
+    monkeypatch.setattr(CP, "CONTROL_DIR", cdir)
+    monkeypatch.setattr(CP, "CONTROL_STATE_PATH", cdir / "control.json")
+    monkeypatch.setattr(CP, "KILL_LOG_PATH", cdir / "kill_log.jsonl")
+    monkeypatch.setattr(CP, "DECISION_LOG_PATH", cdir / "decisions.jsonl")
+    monkeypatch.setattr(CP, "APPROVALS_DIR", approvals)
+    # Clear caches first
+    CP._eis_cache.clear()
+    CP._entity_eis_cache.clear()
+
+    # Mock the DB connection to track calls
+    db_call_count = {"session": 0, "entity": 0}
+
+    def mock_connect_readonly():
+        class MockConnection:
+            def execute(self, query, params):
+                db_call_count["session"] += 1
+                class MockCursor:
+                    def fetchone(self):
+                        return (1,)  # Found
+                    def __enter__(self):
+                        return self
+                    def __exit__(self, *args):
+                        pass
+                return MockCursor()
+            def close(self):
+                pass
+        return MockConnection()
+
+    # Patch the internal connection function
+    monkeypatch.setattr(CP, "_connect_opencode_db_readonly", mock_connect_readonly)
+
+    # For entity verification, mock the function but check cache first like real function
+    original_verify_entity = CP._verify_entity_has_eis
+    def mock_verify_entity(ent):
+        # Check cache first (like real function)
+        if ent in CP._entity_eis_cache:
+            return CP._entity_eis_cache[ent]
+        db_call_count["entity"] += 1
+        result = ent == "cached_entity"
+        CP._entity_eis_cache[ent] = result
+        return result
+    monkeypatch.setattr(CP, "_verify_entity_has_eis", mock_verify_entity)
+
+    # First calls - should hit DB
+    CP.is_killed("ses_cached")
+    CP.check_throttle(entity="cached_entity", tokens_used=10)
+
+    # Second calls - should use cache
+    CP.is_killed("ses_cached")
+    CP.check_throttle(entity="cached_entity", tokens_used=20)
+
+    # Each should only hit DB once due to caching
+    assert db_call_count["session"] == 1
+    assert db_call_count["entity"] == 1
