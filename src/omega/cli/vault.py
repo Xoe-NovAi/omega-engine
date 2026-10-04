@@ -25,17 +25,66 @@ Commands:
 import anyio
 import click
 import json
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from omega.vault.vault_core import VaultCore
-from omega.vault.models import (
-    ProviderName,
-    CredentialType,
-    CredentialTier,
-    VaultCredential,
-)
-from omega.vault.vault_core import VaultError as VaultCoreError
+# [D-565 / M2 — vault is FORGE on the public cut]
+# `src/omega/vault/` is excluded from the public release by D-565, but this
+# module sits under the broad `src/omega/` allow pattern and is RETAINED.
+# A hard `from omega.vault...` made `import omega.cli.vault` raise a bare
+# ModuleNotFoundError on every allowlist cut.
+#
+# This module is vault-EXCLUSIVE: every command below requires VaultCore. The
+# fix makes the MODULE importable when vault is absent (so import-time tooling
+# and clean-worktree gates do not break) while every command fails fast with a
+# clear D-565 message. Vault is still cut — nothing about D-565 is weakened.
+try:
+    from omega.vault.vault_core import VaultCore
+    from omega.vault.models import (
+        ProviderName,
+        CredentialType,
+        CredentialTier,
+        VaultCredential,
+    )
+    from omega.vault.vault_core import VaultError as VaultCoreError
+
+    VAULT_AVAILABLE = True
+except ImportError as _vault_import_error:  # pragma: no cover - env dependent
+    VAULT_AVAILABLE = False
+    _VAULT_ABSENT_REASON = _vault_import_error
+
+    class VaultCoreError(Exception):  # type: ignore[no-redef]
+        """Stand-in for omega.vault.vault_core.VaultError when vault is FORGE'd."""
+
+    class _VaultSymbolAbsent(str, Enum):
+        """Placeholder for a vault enum that is not present on this cut.
+
+        Iterating it yields NO members, so the module-level
+        `click.Choice([x.value for x in ...])` decorators evaluate to empty
+        choice lists and the module imports cleanly. Nothing is duplicated
+        from omega.vault.models, so the two can never drift.
+        """
+
+    ProviderName = _VaultSymbolAbsent  # type: ignore[assignment,misc]
+    CredentialType = _VaultSymbolAbsent  # type: ignore[assignment,misc]
+    CredentialTier = _VaultSymbolAbsent  # type: ignore[assignment,misc]
+    VaultCore = None  # type: ignore[assignment,misc]
+    VaultCredential = None  # type: ignore[assignment,misc]
+
+
+def _require_vault():
+    """Fail fast with an actionable message when vault is unavailable.
+
+    D-565: `src/omega/vault/` is intentionally absent from public cuts. The
+    vault CLI has no non-vault mode, so it must refuse rather than half-run.
+    """
+    if not VAULT_AVAILABLE:
+        raise click.ClickException(
+            "Sovereign vault is not present in this build "
+            f"({_VAULT_ABSENT_REASON}). D-565 excludes src/omega/vault/ from "
+            "the public release; vault commands require a forge build."
+        )
 
 
 @click.group()
@@ -44,8 +93,9 @@ def vault():
     pass
 
 
-def _get_vault(passphrase: str, vault_dir: Path) -> VaultCore:
+def _get_vault(passphrase: str, vault_dir: Path) -> "VaultCore":
     """Create VaultCore instance."""
+    _require_vault()
     return VaultCore(vault_dir, passphrase)
 
 
@@ -482,9 +532,14 @@ def restore(input: Path, passphrase: str, vault_dir: Path):
 
         # Restore leases
         for lid, lease_data in backup_data.get("leases", {}).items():
-            lease = __import__("src.omega.vault.vault_core", fromlist=["VaultLease"]).VaultLease(
-                **lease_data
-            )
+            _require_vault()
+            try:
+                from omega.vault.vault_core import VaultLease
+            except ImportError as e:  # [D-565] vault vanished mid-flight
+                click.echo(f"Vault lease model unavailable: {e}", err=True)
+                raise click.Abort() from e
+
+            lease = VaultLease(**lease_data)
             if lease.is_valid():
                 vault._leases[lid] = lease
 

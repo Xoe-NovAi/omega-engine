@@ -46,7 +46,8 @@ class FirecrawlProvider(SearchProvider):
             vault._load_sync()
             cred = vault._credentials.get("firecrawl:api_key")
             return cred.encrypted_blob if cred else ""
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (ImportError, OmegaError, RuntimeError, OSError) as e:
+            # ImportError: D-565 — src/omega/vault/ is FORGE on public cuts.
             logger.debug(f"Firecrawl key fallback failed: {e}")
             return ""
 
@@ -276,7 +277,8 @@ class ExaProvider(SearchProvider):
             vault._load_sync()
             cred = vault._credentials.get("exa:api_key")
             return cred.encrypted_blob if cred else ""
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (ImportError, OmegaError, RuntimeError, OSError) as e:
+            # ImportError: D-565 — src/omega/vault/ is FORGE on public cuts.
             logger.debug(f"Exa key fallback failed: {e}")
             return ""
 

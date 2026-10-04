@@ -165,11 +165,24 @@ class Orchestrator:
         # Collect all Google API keys from the sovereign vault.
         # The vault is the single source of truth (no scattered
         # os.getenv reads for API keys).
-        from omega.vault import VaultCore
+        #
+        # [D-565] `src/omega/vault/` is FORGE on public cuts. An absent vault
+        # means zero google: keys, not a crash — the worker then runs with an
+        # empty key list. Previously the bare `from omega.vault import VaultCore`
+        # raised ModuleNotFoundError out of __init__ on every public cut.
+        google_creds = []
+        try:
+            from omega.vault import VaultCore
 
-        vault = VaultCore()
-        vault._load_sync()
-        google_creds = [c for c in vault._credentials.values() if c.provider.value == "google"]
+            vault = VaultCore()
+            vault._load_sync()
+            google_creds = [c for c in vault._credentials.values() if c.provider.value == "google"]
+        except (ImportError, OmegaError, RuntimeError, OSError, AttributeError) as e:
+            logger.warning(
+                "VaultCore unavailable while collecting Google API keys (%s) — "
+                "starting with an empty key list (expected on public cuts per D-565)",
+                e,
+            )
         keys = [c.encrypted_blob for c in google_creds]
         self.background_worker = BackgroundWorker(
             model_gateway=ModelGateway(health_monitor=get_health_monitor()), api_keys=keys

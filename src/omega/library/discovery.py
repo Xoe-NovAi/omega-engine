@@ -29,9 +29,35 @@ from omega.errors import (
     ProviderError,
     OmegaPersistenceError,
 )
-from omega.vault import VaultCore
 
 logger = logging.getLogger(__name__)
+
+# [D-565 / M2 — vault is FORGE on the public cut]
+# `src/omega/vault/` is excluded from the public release by D-565. This module
+# is RETAINED (it sits under the broad `src/omega/` allow pattern) and is
+# imported at module scope by `mcp_servers/omega_hub/state.py`, which the
+# `check-hub-imports` temple-grade gate imports in a CLEAN worktree.
+#
+# A hard `from omega.vault import VaultCore` therefore made `make temple-grade`
+# fail with ModuleNotFoundError on every allowlist cut — including the already
+# published release/debut (3c051021).
+#
+# Resolution: vault is an OPTIONAL capability. Absent vault => no credential
+# resolution => discovery degrades to its non-vault path (mock/web sources).
+# D-565 is NOT weakened: vault is still cut, and it is still the single source
+# of truth for credentials whenever it IS present.
+try:
+    from omega.vault import VaultCore
+
+    VAULT_AVAILABLE = True
+except ImportError as _vault_import_error:  # pragma: no cover - env dependent
+    VaultCore = None  # type: ignore[assignment,misc]
+    VAULT_AVAILABLE = False
+    logger.debug(
+        "omega.vault unavailable (%s) — discovery runs without VaultCore "
+        "credential resolution (expected on public cuts per D-565)",
+        _vault_import_error,
+    )
 
 DATA_DIR = Path(
     os.environ.get("OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data"))
@@ -91,28 +117,47 @@ class DiscoveryOrchestrator:
         # Use gateway's provider chain: local → antigravity → ... → gemini.
         # The gateway will try local inference first (M7 Local-First).
         self.default_model = default_model  # None = let gateway decide
-        try:
-            vault = VaultCore()
-            vault._load_sync()
-            exa_cred = vault._credentials.get("exa:api_key")
-            self.exa_key = exa_cred.encrypted_blob if exa_cred else None
-            if not self.exa_key:
-                logger.warning("VaultCore exa resolution failed - no key in vault")
-        except (OmegaError, KeyError) as e:
-            logger.warning(f"VaultCore exa resolution failed: {e}")
-            self.exa_key = None
-        try:
-            vault = VaultCore()
-            vault._load_sync()
-            fc_cred = vault._credentials.get("firecrawl:api_key")
-            self.firecrawl_key = fc_cred.encrypted_blob if fc_cred else None
-            if not self.firecrawl_key:
-                logger.warning("VaultCore firecrawl resolution failed - no key in vault")
-        except (OmegaError, KeyError) as e:
-            logger.warning(f"VaultCore firecrawl resolution failed: {e}")
-            self.firecrawl_key = None
+        # [D-565] VaultCore is OPTIONAL. On a public cut `omega.vault` does not
+        # exist; resolve to no credential rather than raising. `ImportError` is
+        # deliberately included in the caught set below because the original
+        # handler caught only (OmegaError, KeyError) and would have propagated
+        # ModuleNotFoundError out of __init__.
+        self._resolve_vault_credentials()
         self._jobs: Dict[str, DiscoveryReport] = {}
         self._load_jobs()
+
+    def _resolve_vault_credentials(self) -> None:
+        """Resolve Exa/Firecrawl keys from VaultCore, degrading to None.
+
+        Sets `self.exa_key` and `self.firecrawl_key`. When vault is absent
+        (public cut, D-565) or fails to load, both are set to None and
+        discovery continues on its non-vault path.
+        """
+        if not VAULT_AVAILABLE or VaultCore is None:
+            logger.debug(
+                "VaultCore unavailable — Exa/Firecrawl keys unresolved "
+                "(expected on public cuts per D-565)"
+            )
+            self.exa_key = None
+            self.firecrawl_key = None
+            return
+
+        for attr, provider in (("exa_key", "exa:api_key"), ("firecrawl_key", "firecrawl:api_key")):
+            try:
+                vault = VaultCore()
+                vault._load_sync()
+                cred = vault._credentials.get(provider)
+                key = cred.encrypted_blob if cred else None
+                setattr(self, attr, key)
+                if not key:
+                    logger.warning(f"VaultCore {provider} resolution failed - no key in vault")
+            except ImportError as e:
+                # Belt-and-braces: vault vanished between import and call.
+                logger.warning(f"VaultCore {provider} resolution failed (import): {e}")
+                setattr(self, attr, None)
+            except (OmegaError, KeyError) as e:
+                logger.warning(f"VaultCore {provider} resolution failed: {e}")
+                setattr(self, attr, None)
 
     def _job_path(self, job_id: str, status: str = "") -> Path:
         """Get the path for a job file based on its status."""

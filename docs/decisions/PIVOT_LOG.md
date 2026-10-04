@@ -909,3 +909,134 @@ D-553 (publication mechanic), D-565 (vault boundary)
 vault/public-surface conflict. Cut + D-610 record complete; dev branch pushed.
 
 *⬡ OMEGA ⬡ MAAT ⬡ D-610 ⬡ 2026-10-04*
+
+---
+
+## D-611 (2026-10-04) — Vault Import Made Optional; Symlink Guard Fixed (maat, S5)
+
+**Decision**: D-610's BLOCKING FINDING is resolved on **both** defects by
+mechanical repair, with **no change to the D-565 boundary**. `omega.vault`
+stays FORGE. Vault is **not** added to the public allowlist. The D-610 log
+itself recorded the gap as *"script fix owed"* and offered option (a) *"make
+the vault import lazy/optional in retained code"*; that option is taken here,
+under the Architect-adjacent recommendation.
+
+### Defect 1 — `temple-grade` failed on EVERY allowlist cut (M13, pre-existing)
+
+`src/omega/vault/` is cut (D-565) but `src/omega/library/discovery.py:32`
+hard-imported it. `mcp_servers/omega_hub/state.py:50` imports
+`DiscoveryOrchestrator` at module scope, and `make temple-grade` →
+`check-hub-imports` imports that state module in a **clean worktree**.
+
+Direct verification against the **already-published** `release/debut`
+(`3c051021`), read-only:
+
+| Probe | Result |
+|-------|--------|
+| `git ls-tree -r 3c051021 -- src/omega/vault/` | **0 files** (cut, per D-565) |
+| `git show 3c051021:src/omega/library/discovery.py` | line 32 `from omega.vault import VaultCore` |
+| `git show 3c051021:mcp_servers/omega_hub/state.py` | line 50 `from omega.library.discovery import DiscoveryOrchestrator` |
+
+→ `import mcp_servers.omega_hub.state` **must** raise
+`ModuleNotFoundError: No module named 'omega.vault'`. **The published release
+has been failing M13 since it was cut.** Gates had only ever been validated
+pre-cut, on a dev tree where `src/omega/vault/` is present.
+
+**Fix — vault is an OPTIONAL capability.** Every `omega.vault` import in
+cut-retained code is now ImportError-guarded, and absence degrades:
+
+| File | Defect | Fix |
+|------|--------|-----|
+| `library/discovery.py` | module-scope hard import; handler caught only `(OmegaError, KeyError)` so a missing module escaped `__init__` | guarded import + `VAULT_AVAILABLE`; credential resolution moved to `_resolve_vault_credentials()`, degrading to `None`; `ImportError` added to the caught set |
+| `cli/vault.py` | module-scope hard import of `VaultCore` + 3 vault enums; `click.Choice([p.value for p in ProviderName])` evaluates at **import** time | module imports cleanly; commands fail fast via `_require_vault()` naming D-565; absent enums resolve to an **empty placeholder enum** — nothing is duplicated from `omega.vault.models`, so the two cannot drift |
+| `cli/oracle_cli.py` | the import sat inside the try whose `except` **named `VaultCryptoError`** — unbound if the import failed, so handling the `ModuleNotFoundError` raised `NameError` instead | import moved to its own `try/except ImportError`; the tightened M23 handler is preserved verbatim below it |
+| `oracle/orchestrator.py` | bare call-scope import in `__init__` | guarded; absent vault ⇒ zero `google:` keys, not a crash |
+| `oracle/search_providers.py` | Firecrawl + Exa fallbacks caught `(OmegaError, RuntimeError, OSError)` — `ImportError` escaped, crashing at **call** time | `ImportError` added |
+
+Already safe, deliberately untouched: `oracle/providers.py` (has
+`except ImportError`), `backends/google_compat.py`,
+`teachers/nemotron_pipeline.py`, `tools/firecrawl_direct.py`,
+`workers/freshness_checker.py` (all catch `Exception`).
+
+**Regression test**: `tests/test_discovery_without_vault.py` blocks
+`omega.vault` at the **import-system level** in a child interpreter — a
+faithful cut simulation, not a monkeypatch — and asserts import cleanliness,
+explicit degradation, correct non-vault results, and CLI fail-fast. Two AST
+guards fail on re-introduction: any unguarded **module-scope** import, and any
+import — module **or** call scope — not wrapped in an ImportError-catching
+`try`.
+
+### Defect 2 — the cut script skipped symlinks, leaking a username + mount layout
+
+`scripts/apply_public_allowlist.sh` guarded its `git rm --cached` loop with
+`[[ ! -f "$f" ]]`. `-f` is **false for a symlink-to-directory and for a
+dangling symlink**, so removal was skipped for exactly the entries that most
+needed it — while the script's own report still listed them as "would be
+removed". Fix: `[[ ! -e "$f" && ! -L "$f" ]]` (proceed if `-e` **or** `-L`).
+
+Read-only verification on the published `3c051021` — `git ls-tree -r` mode
+`120000` entries:
+
+```
+data/library -> /media/arcana-novai/omega_library/library-archive
+data/memory  -> /media/arcana-novai/omega_library/memory-archive
+```
+
+Both match **no** ALLOW pattern, so both were classified REMOVE, then dropped
+with `WARN: skip … (not in working tree)`. **The account name and the host
+mount layout are live in the public repo.**
+
+**Symlink leak audit (new).** A tracked symlink publishes its target verbatim,
+so one the allowlist **keeps** still leaks. Every kept symlink is now reported
+with its target (`LEAK` = absolute host path, `CHECK` = repo-relative), and
+`--strict` **refuses to cut** while any remain. This deliberately *reports*
+rather than overrides — narrowing the boundary is a human act under M23.
+
+**Regression test**: `tests/test_public_allowlist_script.py` builds real
+throwaway git repos and runs the real script — symlink-to-dir, absolute-target
+leak, dangling symlink, symlink-to-file, ordinary files, absent-path, summary
+counts, kept-symlink audit, `--strict`, plus static guards on the predicate.
+
+**Mutation-verified** (guard reverted to the pre-fix state, tests re-run):
+
+| Reverted to | Tests failing |
+|--------------|---------------|
+| hard `from omega.vault import VaultCore` in `discovery.py` | **6 / 13** — with the exact `ModuleNotFoundError` |
+| bare call-scope import in `orchestrator.py` | structural guard flags it |
+| hard module-scope import in `cli/vault.py` | **4 / 13** |
+| `[[ ! -f "$f" ]]` in the cut script | **4 / 12** — `data/library`, `data/memory` and the dangling symlink all survive the cut |
+
+### MANDATES
+
+**M13** 53/53 on the dev branch; dry-run cut verified clean in an isolated
+worktree. **M28** nothing deleted from the working tree — `git rm --cached` is
+index-only; the four `_archive` `session_gnosis.md` symlinks are correctly cut
+by the FORGE section and untouched on disk. **M23** every gate result is
+reported as measured; the impractically-slow `--confirm` loop is reported, not
+worked around. **D-565** untouched — vault still cut, still never allowlisted.
+
+### ⚠️ ESCALATED, NOT ACTIONED
+
+1. **Two kept symlinks still ship** in the published cut:
+   `data/entities/cline_kqv/session_gnosis.md` and `.../soul.yaml`, both
+   pointing at `../../experiments/kq5-godot/gnosis/` — which is **not shipped**.
+   They are broken links in a public clone and leak an internal experiment
+   path. They survive via the `data/entities/*/…` globs in the **Explicit
+   Exclusions** section, so removing them is a **new sovereignty decision**.
+   The new audit now reports them on every run; `--strict` blocks on them.
+   **Architect decision required.**
+2. **Pre-existing, vault-independent, NOT fixed here (out of scope):**
+   `DiscoveryOrchestrator._phase_discovery` **does not exist**. Its body sits
+   as unreachable dead code after a `return` in `_try_generate`
+   (`library/discovery.py`), and `_research_subtopic` calls it — so
+   `discover()` raises `AttributeError` **with or without vault**. Verified
+   present at `3c051021` and at `17a940dd`. A real P0, but not a vault
+   defect; filed for a separate ticket rather than smuggled into this fix.
+3. **`--confirm` is impractically slow.** The classification loop compiles
+   ~200 regexes per tracked file (bash `=~` recompiles each time), and the
+   removal loop issues one `git rm` per file — ~9,000 index rewrites on a
+   10,365-file tree. A single `--confirm` did not complete in 12 minutes.
+   Recommended: `git rm --cached --pathspec-from-file=- --pathspec-file-nul`.
+   Not applied — release mechanics are not this ticket's mandate.
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-611 ⬡ 2026-10-04*

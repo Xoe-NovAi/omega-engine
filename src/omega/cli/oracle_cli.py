@@ -72,8 +72,16 @@ def _inject_vault_to_env() -> int:
     # (bad ciphertext/passphrase), OSError (file read), json.JSONDecodeError
     # (corrupted blob). Each is audit-logged; bare except is forbidden.]
     import json as _json
+    # [D-565] `src/omega/vault/` is FORGE on public cuts. Import in its own
+    # try so the tightened except below cannot reference an unbound
+    # `VaultCryptoError` — that raised NameError while handling the very
+    # ModuleNotFoundError it was supposed to swallow.
     try:
         from omega.vault.crypto import VaultCrypto, VaultCryptoError
+    except ImportError as _e:
+        logger.debug(f"Vault injection skipped — omega.vault absent (D-565): {_e}")
+        return 0
+    try:
         crypto = VaultCrypto(master_key)
         encrypted = vault_path.read_text().strip()
         decrypted = crypto.decrypt(encrypted)
