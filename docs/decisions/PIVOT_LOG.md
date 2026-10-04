@@ -779,3 +779,88 @@ entry committed as a fresh commit on the rewritten history; bundle retained loca
 **Status**: ✅ RATIFIED
 
 *⬡ OMEGA ⬡ KALI ⬡ D-609 ⬡ 2026-10-03*
+
+## D-610 (2026-10-04) — `release/debut` Re-Cut From Hardened HEAD `17a940dd` (maat, S5)
+
+**Decision**: `release/debut` is re-cut from hardened HEAD `17a940dd` by
+`scripts/apply_public_allowlist.sh --confirm`, **superseding the D-553 cut at
+`3c051021`** (which was taken from the PRE-hardening HEAD). Force-push of
+`release/debut` explicitly authorized by the Architect.
+
+**Base SHA**: `17a940dd6542211f50b4110c57209ea9348f580d`
+(verified strict fast-forward via `git merge-base --is-ancestor`;
+12 hardening commits: harvester, four control planes, constraints manifest,
+A2A agent cards, MCP probe fix, D-609 mandate ratification, codex refresh)
+
+**Timestamp**: 2026-10-04 02:32 UTC / 2026-10-03 22:32 AST
+
+**Allowlist used**: `docs/strategy/PUBLIC_ALLOWLIST.txt` — the **DEFAULT**
+(v5, D-565 enforcement). The root-level `PUBLIC_ALLOWLIST.txt` was **rejected**:
+its cut section is headed `## 🚫 DENY`, which the script's `/^## 🚫 FORGE/`
+matcher never matches, so `FORGE_PATTERNS` parses to **zero** and D-565 vault
+enforcement would be **silently dropped**. Verified empirically (0 FORGE
+patterns vs 37 in the canonical file). D-565 enforced via 35 FORGE patterns.
+
+**Cut result**:
+
+| Metric | Value |
+|--------|-------|
+| Total tracked at `17a940dd` | 10,365 |
+| Files kept | **797** (prior cut: 790) |
+| Files removed | 9,568 |
+| ALLOW / FORGE / explicit-exclusion patterns | 95 / 35 / 13 |
+
+**Acceptance criteria verified against the index** (not disk):
+`docs/research/` = 0 files; `docs/strategy/` = 8 files; `data/entities/` = 113
+(prior cut 112 — within the "short default-soul set" criterion);
+`OMEGA_ENGINE.md`, `src/omega/vault/`, and
+`data/coordination/packer_signing_key.pem` all absent from the tracked tree.
+
+**Two defects found and handled during the cut**:
+
+1. **Symlink leak (fixed).** The script's apply guard is `[[ ! -f "$f" ]]`,
+   which is false for symlinks, so `git rm --cached` was skipped for
+   `data/library`, `data/memory`, and
+   `data/entities/cline_kqv/projection.md` — all three already classified
+   REMOVED by the script's own matcher. `git rm --cached` operates purely on
+   the index and needs no working-tree file, so the guard is both wrong and
+   unnecessary. `data/library` and `data/memory` **already leaked into the
+   published cut at `3c051021`** as symlinks to
+   `/media/arcana-novai/omega_library/...`, publishing a local username and a
+   machine-specific mount path. Cut manually; final count 797 then matches the
+   script's own report exactly. **Script fix owed: change `-f` to `-e || -L`,
+   or drop the guard.**
+
+2. **Dangling symlinks retained (reported, not changed).**
+   `data/entities/cline_kqv/{soul.yaml,session_gnosis.md}` point at
+   `../../experiments/kq5-godot/gnosis/` which is **not shipped**, so they are
+   broken links in the public clone. They are deliberately KEPT via the
+   `data/entities/*/…` globs in the Explicit Exclusions section, and they are
+   pre-existing at `3c051021`. Removing them would be a **new sovereignty
+   decision** on the public surface — escalated to the Architect, not actioned.
+
+**PIVOT_LOG divergence — resolved by DOCUMENTATION, not cherry-pick.**
+`docs/decisions/` is **entirely excluded** by the allowlist (0 files kept), so
+`PIVOT_LOG.md` cannot ship on `release/debut` without *expanding* the public
+surface — i.e. mutating the sovereignty boundary, which the script itself
+reserves for a human under M23 ("the allowlist is the sovereignty boundary;
+boundary changes must go through a human"). Cherry-picking this entry onto
+`release/debut` was therefore rejected in favour of documenting the split:
+`release/debut` = allowlist-filtered publication artifact (797 files);
+`debut-v1.6.0-alpha` = governance branch carrying the decision record. This is
+the intended design, not a regression.
+
+**Gates verified on the cut tree** (run in an isolated worktree at the exact
+cut SHA, prior to publishing): `check-engine` 175/175 PASS ·
+`doc-llm-validate` PASS (exit 0) · pre-commit mandate gates PASS
+(M23 scan, M1 AnyIO clean, Ruff) · `make temple-grade` 53/53 (see gate log).
+
+**Mandates**: M13 (Temple-Grade), M23 (Failure Integrity — no synthesis; the
+Ruff `TOOL-CHAIN-COLLAPSE` in the bare worktree was resolved by supplying the
+real `.venv`, not by bypassing the gate), M28 (Artifact Preservation — force-push
+recorded here with operator authorization), D-553 (publication mechanic),
+D-565 (vault non-enforcement avoidance)
+
+**Status**: ✅ EXECUTED
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-610 ⬡ 2026-10-04*
