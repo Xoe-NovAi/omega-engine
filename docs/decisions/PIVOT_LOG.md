@@ -785,7 +785,8 @@ entry committed as a fresh commit on the rewritten history; bundle retained loca
 **Decision**: `release/debut` is re-cut from hardened HEAD `17a940dd` by
 `scripts/apply_public_allowlist.sh --confirm`, **superseding the D-553 cut at
 `3c051021`** (which was taken from the PRE-hardening HEAD). Force-push of
-`release/debut` explicitly authorized by the Architect.
+`release/debut` was authorized by the Architect — but is **WITHHELD** on
+M13 grounds; see the BLOCKING FINDING below.
 
 **Base SHA**: `17a940dd6542211f50b4110c57209ea9348f580d`
 (verified strict fast-forward via `git merge-base --is-ancestor`;
@@ -851,16 +852,60 @@ boundary changes must go through a human"). Cherry-picking this entry onto
 the intended design, not a regression.
 
 **Gates verified on the cut tree** (run in an isolated worktree at the exact
-cut SHA, prior to publishing): `check-engine` 175/175 PASS ·
-`doc-llm-validate` PASS (exit 0) · pre-commit mandate gates PASS
-(M23 scan, M1 AnyIO clean, Ruff) · `make temple-grade` 53/53 (see gate log).
+cut SHA, **prior to publishing**): `check-engine` **175/175 PASS** ·
+`doc-llm-validate` **PASS** (exit 0) · pre-commit mandate gates **PASS**
+(M23 scan, M1 AnyIO clean, Ruff) · **`make temple-grade` FAILED (exit 2)**.
 
-**Mandates**: M13 (Temple-Grade), M23 (Failure Integrity — no synthesis; the
-Ruff `TOOL-CHAIN-COLLAPSE` in the bare worktree was resolved by supplying the
-real `.venv`, not by bypassing the gate), M28 (Artifact Preservation — force-push
-recorded here with operator authorization), D-553 (publication mechanic),
-D-565 (vault non-enforcement avoidance)
+### ⛔ BLOCKING FINDING — temple-grade FAILS on any allowlist cut (pre-existing)
 
-**Status**: ✅ EXECUTED
+`make temple-grade` aborts at `check-hub-imports`:
+
+```
+mcp_servers/omega_hub/state.py:50  → from omega.library.discovery import DiscoveryOrchestrator
+src/omega/library/discovery.py:32   → from omega.vault import VaultCore
+ModuleNotFoundError: No module named 'omega.vault'
+check-hub-imports FAILED — a daemon entry point does not import
+```
+
+**Cause (a latent D-565 structural conflict, not a regression):** the cut
+removes `src/omega/vault/` per D-565, but retained core code
+`src/omega/library/discovery.py` **hard-imports** it. Every `omega_hub` MCP
+entry point therefore cannot import in the public tree. `check-hub-imports` has
+been a `temple-grade` prerequisite since the `2026-09-27` seam-fix (Makefile:446,
+where it was made the *first* prerequisite).
+
+**Empirically proven pre-existing.** The gate was run directly against the
+already-published cut:
+
+| Ref | `src/omega/vault/` | `check-hub-imports` |
+|-----|--------------------|---------------------|
+| `3c051021` (published D-553 cut) | 0 files | **FAIL (exit 2, identical error)** |
+| `6300f633` (this cut) | 0 files | **FAIL (exit 2, identical error)** |
+| `17a940dd` (dev, pre-cut) | 5 files | PASS — `temple-grade` 53/53 |
+
+**The published release branch has been failing M13 since it was cut.** It went
+undetected because gates were only ever validated **pre-cut** on the dev branch,
+where `src/omega/vault/` is present. The "all gates green" authorisation
+premise was true of `17a940dd` and **false of the cut tree**.
+
+**Force-push WITHHELD.** M13 requires 53/53 before release. Resolution requires
+an Architect sovereignty ruling, because both candidate fixes move the D-565
+boundary: either (a) make the vault import lazy/optional in retained code, or
+(b) admit vault to the public allowlist. Per the cut script's own M23 note,
+"the allowlist is the sovereignty boundary; boundary changes must go through a
+human" — so neither was actioned unilaterally.
+
+Prepared-not-published release commit `6300f633` is retained in the worktree at
+`/tmp/opencode/debut-cut` and is fully re-pushable on a green ruling.
+
+**Mandates**: M13 (Temple-Grade — **NOT met**, reported not synthesized),
+M23 (Failure Integrity — no synthesis; the Ruff `TOOL-CHAIN-COLLAPSE` in the
+bare worktree was resolved by supplying the real `.venv`, not by bypassing the
+gate; temple-grade failure reported plainly, not worked around), M28 (Artifact
+Preservation — cut commit retained and recoverable; no destructive action taken),
+D-553 (publication mechanic), D-565 (vault boundary)
+
+**Status**: ⛔ BLOCKED — force-push withheld pending Architect ruling on the
+vault/public-surface conflict. Cut + D-610 record complete; dev branch pushed.
 
 *⬡ OMEGA ⬡ MAAT ⬡ D-610 ⬡ 2026-10-04*
