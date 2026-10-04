@@ -413,6 +413,24 @@ plugin-sync: ## Deploy the tracked gnosis-leash source to the OpenCode runtime p
 	@cp "$(LEASH_SRC)" "$(LEASH_RUNTIME)"
 	@echo "Deployed $(LEASH_SRC) -> $(LEASH_RUNTIME)"
 
+# --- Soul → agent bridge (OpenCode adapter; see docs/PORTABILITY.md) ---
+# soul_render.py is interface-agnostic. soul_agents_opencode.py is the ONLY
+# file allowed to know OpenCode's registration format — it is the disposable
+# adapter that the custom Omega CLI will replace.
+
+SOUL_ADAPTER = scripts/soul_agents_opencode.py
+
+.PHONY: agent-souls agent-souls-render agent-souls-verify
+
+agent-souls: ## Render WAD souls and register them as OpenCode agents (RESTART opencode after)
+	@python3 $(SOUL_ADAPTER) install
+
+agent-souls-render: ## Print a rendered soul prompt to stdout: make agent-souls-render ENTITY=avgn
+	@python3 scripts/soul_render.py $(ENTITY)
+
+agent-souls-verify: ## Drift gate: fail if a soul changed without re-render, or a prompt file was hand-edited
+	@python3 $(SOUL_ADAPTER) verify
+
 # --- The Well (P1: corrections/tuning corpus) ---
 WELL_SCRIPT = scripts/well_storage.py
 
