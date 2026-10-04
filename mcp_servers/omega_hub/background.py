@@ -4,7 +4,7 @@
 
 # [id-soft: quake-1996] Hivemind Background — lazy thinker deletion / grace-period reap pattern for pruning stale agents
 
-"""Omega Hub — Background orchestration: pruning, reaping, metrics.
+"""Omega Hub — Background orchestration: pruning, reaping, metrics, harvester.
 
 AP Token: AP-OMEGA-HUB-BACKGROUND-v1.0.0
 
@@ -324,3 +324,35 @@ async def _write_metrics() -> Dict[str, Any]:
 
     await anyio.to_thread.run_sync(_persist)
     return metrics
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BACKGROUND: HIVEMIND HARVESTER LOOP
+# ═══════════════════════════════════════════════════════════════════════════
+
+async def run_harvester_loop() -> None:
+    """Background coroutine running the zero-inference harvester every 300s ± jitter.
+
+    Invariant: Must use anyio, NEVER asyncio.
+    Runs the blocking filesystem harvest in an AnyIO worker thread.
+    Error isolation: background task must not crash the hub.
+    """
+    # Initial short delay for clean server startup
+    await anyio.sleep(5)
+    while True:
+        try:
+            # Run blocking filesystem harvest in AnyIO worker thread
+            await anyio.to_thread.run_sync(_harvest_once_sync)
+        except Exception as exc:
+            # Fail-safe: background task must not crash the hub
+            logger.warning(f"Hivemind harvester cycle encountered error: {exc}")
+
+        # Sleep 300s (with small ±15s deterministic jitter if desired)
+        await anyio.sleep(300)
+
+
+def _harvest_once_sync() -> int:
+    """Synchronous wrapper for harvest_once to run in AnyIO worker thread."""
+    # Import here to avoid circular imports at module load time
+    from scripts.hivemind_harvest import harvest_once
+    return harvest_once()

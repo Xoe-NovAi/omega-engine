@@ -95,7 +95,7 @@ from mcp_servers.omega_hub.state import (
     handoff_index_rebuild,
 )
 
-# [P1a-3] Background orchestration: pruning, reaping, metrics
+# [P1a-3] Background orchestration: pruning, reaping, metrics, harvester
 from mcp_servers.omega_hub.background import (
     _prune_awareness_background,
     _run_discovery_background,
@@ -103,6 +103,7 @@ from mcp_servers.omega_hub.background import (
     _reap_stale_handoffs,
     _reaper_background,
     _write_metrics,
+    run_harvester_loop,
 )
 
 from omega.observability import new_trace_id, get_engine
@@ -619,6 +620,7 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     if tg:
         tg.start_soon(_prune_awareness_background)
         tg.start_soon(_reaper_background)
+        tg.start_soon(run_harvester_loop)
         
         # Start MemoryStore batch writer
         from omega.memory_store import get_memory_store
@@ -626,7 +628,7 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
         tg.start_soon(store.start_batch_writer, tg)
     else:
         logger.warning("No TaskGroup provided — background loops not started")
-    logger.info("Background tasks started: pruning, reaper")
+    logger.info("Background tasks started: pruning, reaper, harvester")
 
 
 # ── M23 strict arguments: RUN AFTER the @mcp.tool() registrations ──
