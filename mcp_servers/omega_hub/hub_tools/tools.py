@@ -2369,6 +2369,8 @@ async def hivemind_awareness(
     reason: Optional[str] = None,
     ttl_seconds: int = 10800,
     limit: int = 10,
+    digest: Optional[str] = None,
+    format: Optional[str] = None,
 ) -> str:
     """Unified Hivemind awareness tool — consolidates 9 fragmented tools.
 
@@ -2383,6 +2385,7 @@ async def hivemind_awareness(
         entity_context (hivemind_get_entity_context): Get entity startup briefing (requires entity)
         extended_checkin (hivemind_extended_checkin): Register extended session TTL (requires channel, entity, optional reason, ttl_seconds)
         extended_checkout (hivemind_extended_checkout): Cancel extended session (requires channel, entity)
+        overview: Read the aggregated fleet overview (latest.json or latest.md) with optional format override
 
     ── THE `post` CONTRACT ──────────────────────────────────────────────────
     Seven fields are REQUIRED for action="post":
@@ -2430,7 +2433,7 @@ async def hivemind_awareness(
     a `readiness` block). That response no longer exists.
 
     Args:
-        action: Operation to perform (post|heartbeat|get|continuation|session|list|entity_context|extended_checkin|extended_checkout)
+        action: Operation to perform (post|heartbeat|get|continuation|session|list|entity_context|extended_checkin|extended_checkout|overview)
         channel: Execution channel (e.g., 'opencode', 'cline')
         entity: Entity persona (e.g., 'kali', 'roc_racoon')
         model: Current model being used (for post)
@@ -2444,6 +2447,8 @@ async def hivemind_awareness(
         reason: Human-readable reason (for extended_checkin)
         ttl_seconds: Extended session TTL seconds, max 86400 (for extended_checkin)
         limit: Max sessions to return (for list)
+        digest: Optional micro-summary (≤280 chars) in format 'DOING <task> · NEXT <next> · BLOCKER <blocker>' (for post)
+        format: Output format for overview action — "json" (default) or "md" (for overview)
 
     Returns:
         JSON string with operation result. On `post` rejection the JSON carries
@@ -2454,7 +2459,7 @@ async def hivemind_awareness(
     # Preserve docstring for legacy adapter validation
     hivemind_awareness.__doc__ = hivemind_awareness.__wrapped__.__doc__
     
-    valid_actions = {"post", "heartbeat", "get", "continuation", "session", "list", "entity_context", "extended_checkin", "extended_checkout"}
+    valid_actions = {"post", "heartbeat", "get", "continuation", "session", "list", "entity_context", "extended_checkin", "extended_checkout", "overview"}
     if action not in valid_actions:
         return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
     
@@ -2495,6 +2500,19 @@ async def hivemind_awareness(
                 })
             agent_id = _make_agent_id(channel, entity)
             sid = session_id or f"ses_{uuid.uuid4().hex[:12]}"
+            
+            # Validate and normalize digest (Hivemind Harvester Enhancement 4)
+            normalized_digest = None
+            digest_truncated = False
+            if digest is not None:
+                # Collapse whitespace, strip
+                clean_digest = " ".join(str(digest).split()).strip()
+                if len(clean_digest) > 280:
+                    normalized_digest = clean_digest[:277] + "…"
+                    digest_truncated = True
+                else:
+                    normalized_digest = clean_digest
+            
             snapshot = {
                 "session_id": sid,
                 "agent_id": agent_id,
@@ -2508,6 +2526,7 @@ async def hivemind_awareness(
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "intent": intent or "status",
                 "suggested_model": suggested_model,
+                "digest": normalized_digest,
             }
             await hot_store_set(sid, snapshot)
             async with _awareness_lock:
@@ -2520,7 +2539,11 @@ async def hivemind_awareness(
             latest = _latest_path()
             async with await anyio.open_file(str(latest), "w") as f:
                 await f.write(f"latest_session: {sid}\nupdated: {snapshot['timestamp']}\n")
-            return json.dumps({"status": "accepted", "session_id": sid, "timestamp": snapshot["timestamp"]})
+            
+            response = {"status": "accepted", "session_id": sid, "timestamp": snapshot["timestamp"]}
+            if digest_truncated:
+                response["digest_truncated"] = True
+            return json.dumps(response)
         
         elif action == "heartbeat":
             if not all([channel, entity]):
@@ -2887,6 +2910,34 @@ async def hivemind_awareness(
                     await invalidate_awareness_cache()
                     return json.dumps({"status": "extended_checkout_complete", "agent_id": agent_id})
                 return json.dumps({"status": "no_extended_session", "agent_id": agent_id})
+        
+        elif action == "overview":
+            overview_dir = PROJECT_ROOT / "data" / "coordination" / "hivemind_overview"
+            latest_json_path = overview_dir / "latest.json"
+            latest_md_path = overview_dir / "latest.md"
+            
+            # Optional format override: format="json" (default) or format="md"
+            req_format = format or "json"
+            
+            if not latest_json_path.exists():
+                return json.dumps({
+                    "status": "UNINITIALIZED",
+                    "message": "Hivemind overview has not run yet. Run scripts/hivemind_harvest.py or wait for cycle.",
+                    "rows": []
+                })
+            
+            try:
+                if req_format == "md":
+                    content = latest_md_path.read_text(encoding="utf-8")
+                    return content
+                else:
+                    content = json.loads(latest_json_path.read_text(encoding="utf-8"))
+                    return json.dumps(content)
+            except Exception as e:
+                return json.dumps({
+                    "status": "ERROR",
+                    "error": f"Failed to read hivemind overview: {e}"
+                })
     
     except Exception as e:
         logger.warning("hivemind_awareness %s failed: %s", action, e)
