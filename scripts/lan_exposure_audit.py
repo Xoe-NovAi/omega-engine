@@ -10,7 +10,7 @@
 #
 # WHY (2026-09-28, E1 dispatch): three services were found LAN-bound while the
 # tailnet policy was believed to describe total exposure (NFS 2049/20048/32803,
-# Redis *:6379, deluged wlo1:51372). None appeared in any policy file. None
+# Redis *:6379, deluged <WIFI_IFACE>:51372). None appeared in any policy file. None
 # would have been caught by an existing gate.
 #
 # A LAN bind and a tailnet bind are DIFFERENT classes and are reported
@@ -190,9 +190,9 @@ def parse_ss() -> list[Listener]:
         except ValueError:
             continue
         # ss emits bracketed IPv6 with the %iface suffix INSIDE the brackets:
-        #   "[::]:111"  "[::1]:631"  "[fe80::1%wlo1]:44348"
+        #   "[::]:111"  "[::1]:631"  "[fe80::1%<WIFI_IFACE>]:44348"
         # The bracket test must therefore happen AFTER splitting off %iface —
-        # a string like "[fe80::1%wlo1]" does not end with ']', which is why an
+        # a string like "[fe80::1%<WIFI_IFACE>]" does not end with ']', which is why an
         # endswith-based strip silently misses every link-local bind.
         ifname = None
         if "%" in addr:

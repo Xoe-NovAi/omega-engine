@@ -28,6 +28,9 @@ config/wads/_omega_default/
 config/model_fleet_operational.yaml
 config/litestream.yml
 config/systemd/
+config/embedding_strategy.yaml
+config/lan_exposure_allowlist.yaml
+config/wads/arcana_novai/axioms.yaml
 
 # M35 public-client catalog — MUST ship (SOVEREIGN_MANDATES.md §28.3:
 # "data/secrets-public.toml MUST be committed to git, reviewed on every PR,
@@ -48,6 +51,11 @@ scripts/restore_litestream.sh
 scripts/verify_litestream.sh
 scripts/migrate_to_sqlcipher.py
 scripts/godot_spatial_bridge.py
+scripts/check_secret_history.py
+scripts/gnosis_archive.py
+scripts/load_constraints.py
+scripts/test_lan_exposure_audit.py
+scripts/lan_exposure_audit.py
 README.md
 LICENSE
 CONTRIBUTING.md

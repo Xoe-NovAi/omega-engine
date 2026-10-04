@@ -45,7 +45,7 @@ CASES = [
     ("loopback v6 ::1 ignored", L("::1", 631, None, None), True),
     (
         "link-local fe80 ignored (the bug this caught)",
-        L("fe80::70ed:3d61:6fe7:a202", 44348, "wlo1", "rygel"),
+        L("fe80::70ed:3d61:6fe7:a202", 44348, "<WIFI_IFACE>", "rygel"),
         True,
     ),
     (
@@ -54,8 +54,8 @@ CASES = [
         True,
     ),
     # --- must be CLEAN: explicitly approved tailnet binds ---
-    ("approved tailnet 8016 v4", L("100.123.51.67", 8016, None, None), True),
-    ("approved tailnet 8019 v4", L("100.123.51.67", 8019, None, None), True),
+    ("approved tailnet 8016 v4", L("10.0.0.1", 8016, None, None), True),
+    ("approved tailnet 8019 v4", L("10.0.0.1", 8019, None, None), True),
     ("approved tailnet 8016 v6", L("fd7a:115c:a1e0::d835:3344", 8016, None, None), True),
     ("approved tailnet 8019 v6", L("fd7a:115c:a1e0::d835:3344", 8019, None, None), True),
     # --- must be FLAGGED: the exact regressions this gate was built to catch ---
@@ -65,17 +65,17 @@ CASES = [
     ("WILDCARD redis 6379 caught", L("0.0.0.0", 6379, None, "pasta.avx2"), False),
     ("WILDCARD rpcbind 111 caught", L("0.0.0.0", 111, None, None), False),
     ("WILDCARD v6 rpcbind :: caught", L("::", 111, None, None), False),
-    ("LAN deluged wlo1 caught", L("192.168.10.168", 51372, "wlo1", "deluged"), False),
-    ("TAILNET deluged caught", L("100.123.51.67", 51372, "tailscale0", "deluged"), False),
+    ("LAN deluged <WIFI_IFACE> caught", L("192.168.1.100", 51372, "<WIFI_IFACE>", "deluged"), False),
+    ("TAILNET deluged caught", L("10.0.0.1", 51372, "<TAILSCALE_IFACE>", "deluged"), False),
     ("LAN docker veth caught", L("10.0.3.1", 51372, "veth_host_3", "deluged"), False),
     ("LAN rygel caught", L("10.0.1.1", 50158, "veth_host_1", "rygel"), False),
     ("bridge 172.17.0.1 caught", L("172.17.0.1", 45907, None, "rygel"), False),
     # --- boundary: approved PORT but different PORT must still be caught ---
-    ("8016 approved but 9999 is not", L("100.123.51.67", 9999, None, None), False),
+    ("8016 approved but 9999 is not", L("10.0.0.1", 9999, None, None), False),
     # --- boundary: an approved port owned by a DIFFERENT process is a takeover ---
     (
         "approved addr+port, foreign process still caught",
-        L("100.123.51.67", 8016, None, "evil-daemon"),
+        L("10.0.0.1", 8016, None, "evil-daemon"),
         False,
     ),
 ]

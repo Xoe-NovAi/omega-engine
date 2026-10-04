@@ -9,7 +9,7 @@
 #   while the tailnet policy was believed to describe the whole exposure:
 #     1. NFS      — 0.0.0.0:[::] on 2049, 20048, 32803
 #     2. Redis    — *:6379 via the omega-redis quadlet
-#     3. deluged  — 192.168.10.168%wlo1:51372 and 100.123.51.67%tailscale0:51372
+#     3. deluged  — 192.168.1.100%<WIFI_IFACE>:51372 and 10.0.0.1%<TAILSCALE_IFACE>:51372
 #   None were visible in the tailnet policy. None would have been caught by any
 #   existing gate. "Policy excision is not host excision" — this file is the
 #   machine-checkable form of that sentence.
@@ -42,12 +42,12 @@ always_exempt_addresses:
 # packet filter, so a bind here is not equivalent to a LAN bind. The audit
 # reports them in a separate section and applies a separate allowlist.
 tailnet_addresses:
-  - 100.123.51.67      # n0 tailnet IPv4
+  - 10.0.0.1      # n0 tailnet IPv4
   - fd7a:115c:a1e0::d835:3344   # n0 tailnet IPv6
 
 # Interfaces whose addresses count as "tailnet" for classification purposes.
 tailnet_interfaces:
-  - tailscale0
+  - <TAILSCALE_IFACE>
 
 # LAN / routable bindings that are APPROVED. Currently none.
 #
@@ -68,27 +68,27 @@ allowed_lan_bindings: []
 # the risk is lower than a LAN bind, but they are still enumerated so that a
 # new one cannot appear silently.
 allowed_tailnet_bindings:
-  - address: "100.123.51.67"
+  - address: "10.0.0.1"
     port: 8016
     process: "tailscaled"
     reason: "Hub MCP — Tailscale Serve route, tailnet-only, ACL-gated"
-  - address: "100.123.51.67"
+  - address: "10.0.0.1"
     port: 8019
     process: "tailscaled"
     reason: "Omega exchange pipe — Tailscale Serve route, tailnet-only, read-only"
-  - address: "100.123.51.67"
+  - address: "10.0.0.1"
     port: 40656
     process: "tailscaled"
     reason: "tailscaled internal (peerapi/DERP), not user-facing"
   # tailscaled also holds a v4 listener on an ephemeral high port for its own
   # peer/telemetry traffic. Attribution was confirmed with a root-side
-  # `ss -ltnp`: 100.123.51.67:43961 is tailscaled pid 2280 fd=22. It is
+  # `ss -ltnp`: 10.0.0.1:43961 is tailscaled pid 2280 fd=22. It is
   # infrastructure, not a user service, and it is tailnet-scoped. The port
   # number is assigned by tailscaled and can change across restarts, so it is
   # matched by process rather than pinned — if a future run reports a
   # different high port from tailscaled, update this entry rather than
   # widening the LAN allowlist.
-  - address: "100.123.51.67"
+  - address: "10.0.0.1"
     port: 43961
     process: "tailscaled"
     reason: "tailscaled internal peer/telemetry listener (root-confirmed pid 2280)"
