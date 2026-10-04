@@ -1,7 +1,7 @@
 # The Well — Portable Package
 
-**Source:** Node 1 live corpus at `gnosis/well/` — **66 records** (62 active, 4 superseded)
-**Snapshot date:** 2026-10-02 (refreshed from vendor commit `2257495f`, 2026-09-26)
+**Source:** Node 1 live corpus at `gnosis/well/` — **71 records** (65 active, 6 superseded)
+**Snapshot date:** 2026-10-03 (refreshed from vendor commit `c079475a`, 2026-10-03)
 **Status:** 🟢 Live corpus + hardened tooling, verified green (7/7 package tests)
 
 ## Contents
@@ -9,7 +9,7 @@
 | Path | What it is |
 |---|---|
 | `scripts/well_storage.py` | Reader/writer/verify/rank — hardened (per-record isolation, `scanned/skipped/errors` result, dedup + permanence floor) |
-| `gnosis/well/well.jsonl` | **66 records** — live N1 corpus, byte-identical to `gnosis/well/` |
+| `gnosis/well/well.jsonl` | **71 records** — live N1 corpus, byte-identical to `gnosis/well/` |
 | `gnosis/well/WISDOM.md` | Human-readable render of the active records |
 | `tests/test_well.py` | 7 regression tests (all passing) |
 | `Makefile.well` | Self-contained Make fragment — `well-add/list/stats/verify/supersede/export/search` |
@@ -21,7 +21,7 @@ works immediately after `install.sh`.
 
 ## The N0 rule — read this before you install
 
-**Bring up The Well with a FRESH `well.jsonl`.** The 66 records shipped here are
+**Bring up The Well with a FRESH `well.jsonl`.** The 71 records shipped here are
 **reference, not transplant.** They encode incidents that happened on Node 1 —
 silently-dead injection paths, CPU-pin convoys, stale-WAL reads. Their weights
 and their triggers are calibrated to N1 silicon and N1 history. Reading them is

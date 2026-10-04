@@ -1,10 +1,22 @@
 # The Well — Active Records
 
-Generated: 2026-10-02T20:37:56Z
+Generated: 2026-10-03T08:54:57Z
 
-Total active: 62
+Total active: 65
 
-## Correction (52)
+## Correction (55)
+
+- **superseded_by must point FORWARD in time: the OLDER record carries status=superseded with superseded_by set to the NEWER record's id; the newer record is active with no superseded_by. A backwards pointer inverts the chain — both records stay active and the correction never takes effect.** [well,supersession,chain,direction]
+  *Found two inverted chains during audit: newer records claimed to be superseded by older ones, so get_active() returned both and the updates never landed. Direction is the whole mechanism; a typo'd UUID fails loudly, a backwards pointer fails silently.*
+  — pack: session-2026-10-03T08-28-49Z | domain: harness | id: 759c7639
+
+- **Handoff packet_ids require the ho_ prefix. Pass the full ID (ho_xxxxxxxx) to the get verb — a bare hash returns not-found and looks like a missing handoff, which is a false negative, not an absence.** [hivemind,handoff,false-negative,identity]
+  *Passed a malformed packet_id (missing ho_ prefix), got not-found, and concluded the handoff was never delivered. It had been there the whole time. Verify through the tool's own read API with a correctly-formed key before concluding anything is missing.*
+  — pack: session-2026-10-03T08-28-49Z | domain: harness | id: acf2d7ba
+
+- **MemPalace and the Hivemind are different systems and are never substitutes. omega-hub IS the Hivemind (Omega Engine's coordination substrate); the Hivemind is remote at https://n0.tail51f14a.ts.net:8016/mcp. MemPalace is local and is a one-way searchable projection, rebuildable, never the write authority. Never route an agent-coordination task through MemPalace, and never describe a MemPalace write as a handoff.** [mempalace,hivemind,omega-hub,coordination,transport,remote-vs-local,false-success,conflation]
+  *I filed a Cline handoff through omega-hub (correct), then declared it a FALSE SUCCESS because its returned path /home/arcana-novai/... does not exist on THIS host. It is a REMOTE server on Node 0; that path is correct there. I had stat'd a remote filesystem path locally. I then routed the task through MemPalace's logstream and reported that as the transport - the exact conflation forbidden, and a direct violation of docs/AGENT_RUNBOOK.md 3.2: 'The active-work pointer lives in SQLite. MemPalace is a one-way searchable projection and is not the recovery source of truth.' Two further errors came from the same root: I filed F1 (omega_federation_status reporting self=n0 is a defect) when it is CORRECT for a remote Node 0 view, and I overstated C9 (the Kali/Lilith/ma'at name collision is already live) when that roster is Node 0's registry seen remotely, making the collision prospective rather than live. FIX: before declaring any MCP-backed store dead, read the MCP transport type (local vs remote) in ~/.config/opencode/opencode.json - it decides whether its paths are yours to stat. And verify through the tool's OWN read API, never by stat'ing its files locally.*
+  — pack: session-2026-10-02T20-45-00Z | domain: harness | id: a95fd05a
 
 - **A tool timeout terminates the CALL, not the process it launched. Before relaunching a background job that a timed-out call may have started, check for existing instances with a self-match-proof check, and never run two writers against one store.** [background-jobs,tooling,concurrency,debugging,cleanup,root-cause]
   *The 1115-doc palace re-embed stalled because THREE copies were running at once: the bash tool reported 'terminated after exceeding timeout' but the python process survived, and I launched a second via nohup. Load average hit 12.88 on 10 cores and two writers contended on the same SQLite file. Compounded by a diagnostic that self-matched - 'pgrep -f palace_reembed' matched the bash command containing that very string, so it reported the job alive while it was already dead. Use 'ps -eo pid,cmd | grep [p]attern' to avoid the bracket trick, and always read a PID file you wrote at launch.*
@@ -13,6 +25,10 @@ Total active: 62
 - **A ROADMAP status of 'in-progress' or a spec's schema declaration is a CLAIM about the data, not evidence of it. Read the store itself — query the dim column, count the rows — before planning work on top of it.** [verification,migration,schema,embodied-state,claims-vs-data]
   *ROADMAP P5.1 read 'Qwen3-0.6B@1024' in-progress with a 40-record pilot sidecar, and WANDERGROUND_SPEC declared embedding FLOAT[768]. The live store said neither: the MemPalace palace holds 1115 documents stamped dim=384, the legacy embeddinggemma-MRL space that the strategy doc had explicitly rejected as failing the 768 bar. The 768 engine space existed only as an inactive systemd default. So three different dims were in play on one node and none was the canonical one. Verified by SELECT dim, COUNT(*) FROM documents GROUP BY dim.*
   — pack: session-2026-10-02T15-07-53Z | domain: harness | id: 007428a2
+
+- **Keep handoff context <= ~1-2KB (filename + size + sha256 + pull URL). Bodies live in the Exchange; the packet is a pointer. On transport POST failure, shrink to a pointer and resubmit — never retry identical bytes. Observed 2026-10-02 from N1: ~4-5KB inline context fails with opaque transport error; ~1.2KB pointer succeeds. Exact threshold unmeasured.** [hivemind,handoff,transport,pointer-packets,exchange]
+  *Measured on Node 1 (researcher_humboldt vantage): identical tool/route/entities, only payload size changed — ~4-5KB failed, ~1.2KB pointer submitted as ho_c7907d6e2d82. Transport error carries no size hint, so failure is indistinguishable from endpoint failure. Approved by makali_fusion (ho_502a07e413db); interim law amended to PACKETS CARRY REFERENCES.*
+  — pack: manual | domain: harness | id: 81dd74d3
 
 - **A gate must emit the decision behind a finding, not only the finding. A check that reports drift without the reasoning that resolved it invites another agent to decide unilaterally.** [coordination,federation,gates,context,handoff]
   *make well-verify correctly flagged 16 records with list-typed tags. The operator had already ruled 'do not rewrite the array tags'. ge-n1 saw only the warning, had no way to see the ruling, and rewrote all 16 anyway. The gate was right; the signal was incomplete.*
@@ -33,10 +49,6 @@ Total active: 62
 - **opencode.db has NO FTS/virtual tables — all search is a full scan. A transient external-content FTS5 index `part_fts` was created by a one-shot `sqlite-utils enable-fts` on 2026-10-02 02:08 (no triggers added), measured stale same day (60,707 part rows vs 58,632 indexed; `LIKE` found fresh tokens `MATCH` did not), and dropped 2026-10-02 after review. The claim "no FTS" is true again post-drop; it was false only during that transient window.** [sqlite,opencode.db,fts5,stale-index,drop]
   *External-content FTS5 without triggers is a silent-false-negative hazard (stale MATCH returns 0 for fresh tokens, can show updated content under old token, may raise SQLITE_CORRUPT on orphan rowids). No consumer used MATCH; full scan is 1.4 ms/MB, sub-second for years. Drop is safer than permanent maintenance obligation with known trigger-corruption precedents.*
   — pack: manual | domain: harness | id: 4cd3d7ae
-
-- **opencode.db has NO FTS/virtual tables — all search is a full scan, measured perfectly linear at ~1.4 ms/MB of text+reasoning corpus. Corpus grows ~0.6 MB/day (~18 MB/month), so a scan stays under ~1s for years: NO index needed. Two traps: (1) immutable=1 is STALE (missed 26 recent parts) — always use mode=ro so the WAL is read; (2) a first embedding benchmark is a COLD-START artifact — qwen3-embedding:0.6b measured 10645 ms/embed cold but 122 ms warm (87x), nomic the reverse. Always warm the model before timing, or you will pick the wrong model.** [sqlite,opencode.db,fts5,benchmark,cold-start,scaling,embeddings]
-  *Measured the scaling curve to 457 MB (6 doublings, linear, no cliff) and derived the growth rate from real timestamps. Cold-start benchmark nearly caused the wrong model choice; the corrected warm numbers reversed the ranking entirely.*
-  — pack: manual | domain: harness | id: a3675a88
 
 - **`opencode db <query>` in opencode 1.18.33 is NOT read-only: it opens opencode.db read-WRITE and executes DDL/DML. Verified 2026-10-01 — a bare CREATE TABLE against the live 1.9GB db succeeded and changed its sha256. Never point raw `opencode db` at opencode.db. Use ochist (node:sqlite mode=ro, sha-proven) or the ocdb-ro wrapper (~/.local/bin/ocdb-ro). Separately: run destructive probes on a /tmp COPY first, never on production.** [sqlite,opencode.db,read-only,safety,destructive-probe,sandbox-first]
   *Self-inflicted incident: I created a probe table in the live db, then removed it; integrity verified clean (quick_check=ok, residue=0). A guard that is only documented is not a guard. ocdb-ro has two independently sufficient layers (statement allowlist + engine mode=ro); `opencode db` has neither.*
@@ -233,8 +245,8 @@ Total active: 62
   — pack: session-2026-09-23T18-44-21Z | domain: harness | id: e0fb2e9a
 
 - **Bound discovery and change the hypothesis: repeated probing of the same condition without new information stalls progress. Set a discovery budget, then pivot to next hypothesis.** [debugging,discovery-budget,hypothesis-driven]
-  *Session 32 gnosis: 5+ repeated checks for ~/WanderGround/.venv/ added zero evidence. Bounded discovery protocol needed.*
-  — pack: session-2026-09-17T20-23-40Z | domain: harness | id: 818bec08
+  *Observed during screening infra debugging - infinite probing of same failure mode without new data*
+  — pack: session-2026-09-23T01-47-51Z | domain: harness | id: bad5375d
 
 - **Claims outran evidence: distinguish cosmetic changes (file edits, generic tests) from functional deployment verification (end-to-end ingestion→retrieval, live MCP calls, actual service health).** [deployment,verification,evidence]
   *Session 32 gnosis: deployment was declared successful based on file edits and unit tests, but the actual MCP ingestion loop was broken. Functional proof required.*

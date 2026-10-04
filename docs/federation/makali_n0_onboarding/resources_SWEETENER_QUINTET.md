@@ -39,7 +39,7 @@ truth — re-verify on N0 silicon.
 | # | Package | Type | Status on N1 | Path |
 |---|---|---|---|---|
 | 1 | **OpenCode DB Tools** | Read-only session-DB access | 🟢 audited + tested on N1. Ships `ocdb-ro`, both slash commands, and the 46 GB briefing. **Start here on N0** — your DB is 46 GB. | `omega-sweeteners/db-tools/` |
-| 2 | **The Well** | Corrections corpus + tools | 🟢 live on N1 at `gnosis/well/` — **66 records**, hardened, 1024-native. Refreshed 2026-10-02, byte-identical to live, 7/7 tests green. | `omega-sweeteners/omega-well/` |
+| 2 | **The Well** | Corrections corpus + tools | 🟢 live on N1 at `gnosis/well/` — **71 records**, hardened, 1024-native. Refreshed 2026-10-03, byte-identical to live, 7/7 tests green. | `omega-sweeteners/omega-well/` |
 
 > **Removed from delivery (2026-10-02):** Ponytail (senior-dev review plugin,
 > never registered on N1), Context Engineering Protocol (9-step session-close
@@ -57,12 +57,12 @@ packaged for transplant: `well.jsonl` + `WISDOM.md` + `well_storage.py` +
 `WELL_INTEGRATION.md`.
 
 **N0 rule (repeated because it matters):** bring up The Well with a **fresh**
-`well.jsonl`. N1's 66 records are *reference*, not transplant — they encode N1
+`well.jsonl`. N1's 71 records are *reference*, not transplant — they encode N1
 incidents and their weights are calibrated to N1 silicon. Read ours, then earn
 yours.
 
-**Refreshed 2026-10-02 (was frozen at 19 records).** The package now carries
-the **live 66-record corpus** (62 active, 4 superseded) and the **hardened**
+**Refreshed 2026-10-03 (was frozen at 19 records).** The package now carries
+the **live 71-record corpus** (65 active, 6 superseded) and the **hardened**
 `well_storage.py`, verified byte-identical to `gnosis/well/` and green 7/7 on
 the package test suite. What changed since the frozen vendor commit
 (`2257495f`, 2026-09-26):
@@ -79,6 +79,35 @@ the package test suite. What changed since the frozen vendor commit
 - **1024-native embedding dimension** — corrected from the old 768 claim.
 
 The package is now **self-contained**: no host Makefile required.
+
+**Five records added 2026-10-03** (66 → 71). Two are correctness mechanisms
+you want before you write your first record:
+
+- **`759c7639` — `superseded_by` must point FORWARD in time.** The *older*
+  record carries `status=superseded` with `superseded_by` pointing at the
+  *newer* record's id. A backwards pointer inverts the chain, both records
+  stay active, and the correction silently never takes effect. A typo'd UUID
+  fails loudly; a backwards pointer fails *silently*. If you hand-roll
+  supersession anywhere on N0, read this one first.
+- **`3a0c851b` — handoff context ≤ 4 KB.** Packet is a pointer (filename +
+  size + sha256 + pull URL); bodies live in the Exchange. Measured on
+  2026-10-02 from N1: 4.3 KB succeeds, 4.5 KB fails with a JSON parse error
+  at transport. Exact threshold ~4.4 KB. On transport POST failure, shrink to
+  pointer and resubmit — never retry identical bytes.
+- `acf2d7ba` — handoff `packet_id`s require the `ho_` prefix; a bare hash
+  returns not-found and looks like a missing handoff (false negative, not an
+  absence).
+- `a95fd05a` — MemPalace (local memory) and the Hivemind (remote
+  coordination) are different systems and are never substitutes. Recorded
+  because bundling them was a real conflation here, not a hypothetical.
+- `81dd74d3` — superseded by `3a0c851b` above. Kept in the ledger as
+  append-only truth.
+
+**Why the supersession record matters most:** the chain-integrity check
+passed while `81dd74d3` and `3a0c851b` were *both* active and contradicting
+each other. Nothing dangled and no pointer ran backwards — the pointer was
+simply never set. A structurally green Well was semantically wrong. Check
+semantics, not just structure, when you adopt.
 
 ### 2. OpenCode DB Tools (`db-tools/`)
 
