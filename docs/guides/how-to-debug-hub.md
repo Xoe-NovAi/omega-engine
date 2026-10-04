@@ -68,13 +68,13 @@ python -m mcp_servers.omega_hub.server &
 
 ### Issue 2: Tools Not Appearing in OpenCode
 
-**Symptoms**: OpenCode shows fewer than 54 tools
+**Symptoms**: OpenCode shows fewer than 55 tools
 
 **Diagnosis**:
 ```bash
 # Check tool registration
 curl -s http://localhost:8016/mcp | jq '.tools | length'
-# Should be 54+
+# Should be 55 (verified 2026-10-03 via MCP tools/list against the live hub)
 
 # List all tools
 curl -s http://localhost:8016/mcp | jq '.tools[].name' | sort

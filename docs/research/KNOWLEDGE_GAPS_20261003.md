@@ -16,7 +16,7 @@ SPDX-License-Identifier: Apache-2.0
 | # | Gap | Severity | Evidence |
 |:--|:---|:---|:---|
 | 1 | **Governance Decay** — compaction silently erases standing constraints | 🔴 CRITICAL | arXiv 2606.22528 (Jun 2026); validated in LangGraph/AutoGen/OpenAI SDK |
-| 2 | **MCP spec drift** — federation probe uses `2024-11-05` while hub client is on `2026-07-28` stateless | 🔴 CRITICAL | `hub_tools/federation.py:307` vs `mcp_client.py:8` |
+| 2 | **MCP spec drift** — federation probe used `2024-11-05` while the hub declared `2026-07-28` in `_meta`. **RESOLVED (`de866948`)**; 2026-07-28 compliance itself NOT claimed — SDK 1.30.0 tops out at 2025-11-25 | ✅ CLOSED | `hub_tools/federation.py:359` vs `protocol_version.py` |
 | 3 | **No control planes** — kill switch / escalation / approval / throttling | 🟠 HIGH | arXiv 2605.20173 ("build the dashboard before the agent") |
 | 4 | **A2A v1.0 not adopted** — signed agent cards, capability discovery, task delegation | 🟠 HIGH | a2a-protocol.org v1.0 (Mar 2026, Linux Foundation AAIF) |
 | 5 | **No agent identity standard** — WIMSE + OAuth 2.0 (IETF draft) | 🟡 MEDIUM | IETF draft-klrc-aiagent-auth |
@@ -35,12 +35,47 @@ SPDX-License-Identifier: Apache-2.0
 
 **Recommended action:** Add a **Constraint Re-assertion Layer** to the hydration triple — a compact, always-re-injected `CONSTRAINTS.md` (mandate IDs + one-line prohibitions) that survives compaction by construction and is re-asserted at every post-compact hydration. Treat standing constraints as **compaction-immune**, not as ordinary context.
 
-### Gap 2: MCP protocol version drift (internal inconsistency)
-**The finding:** `mcp_servers/omega_hub/mcp_client.py:8` already implements the **MCP 2026-07-28 stateless core** (SEP-2575 removed the initialize/initialized handshake). But `hub_tools/federation.py:307` still probes peers with `"protocolVersion":"2024-11-05"` — a **2-year-old protocol string**.
+### Gap 2: MCP protocol version drift (internal inconsistency) — RESOLVED, with a stated ceiling
 
-**Why it matters:** The federation health probe may false-flag or mis-negotiate against peers that have moved to the 2026-07-28 spec. It also signals spec drift inside our own hub.
+**Status: addressed by `de866948`.** This entry is retained for provenance and
+corrected for accuracy (2026-10-03 audit). The original finding was:
 
-**Recommended action:** Align the probe to the current protocol version (or better: omit `protocolVersion` and rely on capability negotiation, since 2026-07-28 is stateless). Add a single `PROTOCOL_VERSION` constant imported by both files so they cannot drift again.
+> `mcp_servers/omega_hub/mcp_client.py:8` already implements the **MCP 2026-07-28
+> stateless core** (SEP-2575 removed the initialize/initialized handshake). But
+> `hub_tools/federation.py:307` still probes peers with
+> `"protocolVersion":"2024-11-05"` — a 2-year-old protocol string.
+
+**Correction to the original wording.** The claim that our client "already
+implements the 2026-07-28 stateless core" was an **overclaim**, and the fix
+(`de866948`) deliberately did not do what this entry recommended. Precisely:
+
+| Question | Answer (verified 2026-10-03) |
+|:---|:---|
+| What the probe **SENDS** | `_meta.protocolVersion = "2026-07-28"` (`hub_tools/federation.py:359-360`) — the SEP-2575 envelope carrier |
+| What the probe **does NOT send** | The `MCP-Protocol-Version` header. `SEND_PROTOCOL_VERSION_HEADER = False` (`protocol_version.py:57`) |
+| What the installed SDK **ACCEPTS** | `mcp` **1.30.0** → `['2024-11-05', '2025-03-26', '2025-06-18', '2025-11-25']`; `LATEST_PROTOCOL_VERSION = 2025-11-25` |
+| Is `2026-07-28` in that set? | **No.** Verified via `mcp.shared.version.SUPPORTED_PROTOCOL_VERSIONS` |
+| Full 2026-07-28 stateless compliance? | **NOT achieved** |
+
+The recommendation in the original entry — "align the probe to the current
+protocol version" — would have been **wrong if applied literally**. The installed
+SDK answers a `2026-07-28` version in the SEP-2243 transport header with
+**HTTP 400 / JSON-RPC `-32600`**. Asserting a version the peer will reject is
+strictly worse than omitting it, so identity is declared in `_meta` and the
+transport header is left off entirely. See `mcp_servers/omega_hub/protocol_version.py`
+and the regression guard `tests/mcp/test_hub_protocol_version.py`.
+
+**One nuance, stated so it is not itself over-read:** the live transport *does*
+answer a handshake-less `POST tools/list` with HTTP 200 and a full tool list
+(verified 2026-10-03). That is **tolerance**, not compliance — the SDK still
+negotiates `2025-11-25` at `initialize`, and it cannot speak `2026-07-28` at
+all. Treating that HTTP 200 as proof of stateless compliance is the same
+error class this audit exists to catch.
+
+**Why it mattered:** the federation health probe could false-flag or
+mis-negotiate against peers, and the drift signalled spec divergence inside our
+own hub. The single `PROTOCOL_VERSION` constant in `protocol_version.py`, now
+imported by both call sites, closes the drift.
 
 ### Gap 3: No formal control planes
 **The finding (arXiv 2605.20173, "A Methodology for Selecting and Composing Runtime Architecture Patterns for Production LLM Agents", 2026):**
@@ -108,9 +143,15 @@ SPDX-License-Identifier: Apache-2.0
 
 **Coverage gaps in the library:** thin coverage of `research` (1), `systems` (1), `integration` (1), `testing` (1) — the exact domains the gaps above touch (control planes, OTel, A2A, compaction). The library is strong on governance (modelgate/sentinel) but weak on the 2026 agent-runtime frontier.
 
-**Spec-version audit (hub):**
-- `mcp_client.py` — ✅ MCP 2026-07-28 stateless (SEP-2575)
-- `hub_tools/federation.py:307` — ❌ probes with `2024-11-05` (drift)
+**Spec-version audit (hub)** — as of 2026-10-03, post-`de866948`:
+- `protocol_version.py` — single source of truth. `PROTOCOL_VERSION = "2026-07-28"`,
+  `SEND_PROTOCOL_VERSION_HEADER = False`
+- `hub_tools/federation.py` — ✅ probe sends `_meta.protocolVersion = 2026-07-28`
+  and deliberately omits the SEP-2243 transport header (SDK 1.30.0 would reject it
+  with HTTP 400 / `-32600`). Drift closed.
+- `mcp_client.py` — imports the shared constant (test-enforced). It does **not**
+  make the hub 2026-07-28 compliant: the installed SDK negotiates
+  `2025-11-25` and does not support `2026-07-28` at all.
 - `federation_envelope.py` — envelope dir renamed from `envelopes/` 2026-09-30 (current)
 
 ---
@@ -119,7 +160,7 @@ SPDX-License-Identifier: Apache-2.0
 
 | Pri | Action | Effort | Mandate link |
 |:---|:---|:---|:---|
-| P0 | Fix MCP probe version drift (`federation.py:307`) | S | M23 (probe honesty) |
+| ~~P0~~ ✅ | ~~Fix MCP probe version drift (`federation.py:307`)~~ — **DONE `de866948`** | S | M23 (probe honesty) |
 | P0 | Constraint Re-assertion Layer (compaction-immune `CONSTRAINTS.md`) | M | M11/M15 (soul/continuity integrity) |
 | P1 | Four control planes (kill/escalate/approve/throttle) | L | M23/M28 (failure/preservation) |
 | P1 | A2A v1.0 Agent Cards per sovereign seat | M | S9 (federation) |

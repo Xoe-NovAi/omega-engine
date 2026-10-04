@@ -1,5 +1,13 @@
 # CROSS-NODE COMMUNICATION: HIVEMIND + TAILSCALE EXPERIENCE REPORT
 
+> **📅 HISTORICAL SNAPSHOT — dated 2026-09-28. Do not read the tool counts below
+> as current.** This report records the state of the federation bridge on
+> 2026-09-28, when the hub served **54 tools**. As of **2026-10-03** the live hub
+> serves **55** — the four control planes (kill/escalate/approve/throttle) landed
+> as the unified `control` tool in `5e97ef84`. The "54 tools" figures are left
+> verbatim below as a record of that date, per M28 (nothing is rewritten
+> retroactively). For the current count see `docs/guides/how-to-debug-hub.md`.
+
 ## What Went Well
 
 ### 1. The MCP Bridge (Port 8016) is the Transport That Works

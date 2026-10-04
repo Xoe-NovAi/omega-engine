@@ -261,6 +261,15 @@ today there is no single file that answers the question.
 #### 3.1 Recommended interval N
 
 - **Recommendation: N = 300 s (5 minutes), with ±30 s jitter.**
+- **⚠️ Implementation status (corrected 2026-10-03): N = 300 s is implemented;
+  the ±30 s jitter is NOT.** `mcp_servers/omega_hub/background.py:351` performs a
+  flat `await anyio.sleep(300)` with no jitter. The jitter remains a design
+  *recommendation* only, for a single local hub where it buys little; a
+  companion code comment at `background.py:350` says "±15 s … if desired",
+  which disagrees with this document's ±30 s and with the code (which has none).
+  Jitter would matter only if many harvester processes ran fleet-wide against one
+  store. Everything else in this section — the 300 s cadence, the 9-harvests-per-
+  presence-window bound, the staleness bound — matches the implementation.
 - **Reasoning**:
   1. **Presence window multiple**: `HEARTBEAT_TTL = 2700 s` (45 min). N=300 s
      yields **9 harvests per presence window** — any live agent appears in

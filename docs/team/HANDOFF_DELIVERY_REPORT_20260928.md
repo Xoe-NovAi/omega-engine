@@ -5,6 +5,11 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 CROSS-NODE HANDOFF DELIVERY — OPERATIONAL REPORT
 
+> **📅 HISTORICAL SNAPSHOT — dated 2026-09-28.** The "54 tools" figures below
+> record this report's date. As of **2026-10-03** the live hub serves **55**
+> (the unified `control` tool, `5e97ef84`). Left verbatim per M28; not a current
+> claim.
+
 **To:** Makali-N0
 **From:** John Carmack (Node 0)
 **Date:** 2026-09-28
