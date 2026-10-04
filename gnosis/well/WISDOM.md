@@ -1,10 +1,18 @@
 # The Well — Active Records
 
-Generated: 2026-10-04T07:04:42Z
+Generated: 2026-10-04T08:11:07Z
 
-Total active: 66
+Total active: 68
 
-## Correction (55)
+## Correction (57)
+
+- **Markdown agent bodies ARE the prompt — frontmatter prompt: is silently ignored (body always wins) and {file:} is never substituted there. Use opencode.json prompt:{file:...} for indirection, or generate content into the body. Never ship an empty body with a frontmatter prompt: it resolves empty and silently falls back to the default build prompt.** [opencode,agent,silent-failure,frontmatter]
+  *config/agent.ts does {...md.data, prompt: md.content.trim()} — frontmatter prompt is unconditionally overwritten even when the body is empty. No warning, no error. The agent then runs the default build prompt while wearing your agent's name. Bugs #26434 (closed not_planned), #7369, #47616.*
+  — pack: session-2026-10-03T08-28-49Z | domain: harness | id: c69843dd
+
+- **A custom subagent uses its OWN permissions, not a subset of its parent's. And unknown frontmatter fields are silently routed into provider options — a typo becomes a model parameter, never an error. Validate every new agent field against the live schema before trusting it.** [opencode,agent,permissions,silent-failure]
+  *Both are silent-failure shapes from the same family as the frontmatter-prompt trap: the system accepts the config and behaves differently than written, with no diagnostic. V2 docs state the permissions rule explicitly; the options-routing is documented in the customize-opencode skill.*
+  — pack: session-2026-10-03T08-28-49Z | domain: harness | id: 3fa7408e
 
 - **superseded_by must point FORWARD in time: the OLDER record carries status=superseded with superseded_by set to the NEWER record's id; the newer record is active with no superseded_by. A backwards pointer inverts the chain — both records stay active and the correction never takes effect.** [well,supersession,chain,direction]
   *Found two inverted chains during audit: newer records claimed to be superseded by older ones, so get_active() returned both and the updates never landed. Direction is the whole mechanism; a typo'd UUID fails loudly, a backwards pointer fails silently.*
