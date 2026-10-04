@@ -16,6 +16,17 @@
 #     D-565 GAP: FORGE section was purely documentary — vault files shipped in
 #                public release because broad `src/omega/` allow matched them.
 #                Now: FORGE section parsed as cut list, checked before ALLOW match.
+#   Round-6 (1 bug + 1 audit, Ma'at's audit, 2026-10-03, D-610 re-cut):
+#     BUG #9: `[[ ! -f "$f" ]]` guard before `git rm --cached` is FALSE for a
+#            symlink-to-directory and for a dangling symlink, so removal was
+#            SKIPPED for exactly those entries. `data/library` and
+#            `data/memory` -> /media/arcana-novai/omega_library/... shipped in
+#            the published release/debut (3c051021), leaking the account name
+#            and mount layout. Now `[[ ! -e "$f" && ! -L "$f" ]]`.
+#     AUDIT: symlink detection reads mode 120000 from the git INDEX, never
+#            `[[ -f ]]` on the working tree. A KEPT symlink still ships as a
+#            pointer to its target, so every kept symlink is now reported with
+#            its target, and --strict refuses to cut while any remain.
 #
 # See data/coordination/research/R_VAULT_COPILOT_ROUND3_20260827.md §2
 # See data/coordination/research/R_VAULT_COPILOT_ROUND4_20260828.md §1
@@ -311,6 +322,31 @@ is_forge() {
 REMOVED=()
 KEPT=()
 
+# [maat 2026-10-03] Symlink detection helpers.
+# `git ls-files -s` prints "<mode> <sha> <stage>\t<path>". Mode 120000 is the
+# ONLY symlink mode in the git index; 100644/100755 are regular files and
+# 160000 is a gitlink (submodule). A symlink must be recognised from the INDEX,
+# never from `[[ -f ]]` on the working tree — that is the bug being fixed.
+declare -A INDEX_MODE=()
+while IFS=$'\t' read -r _meta path; do
+  mode="${_meta%% *}"
+  INDEX_MODE["$path"]="$mode"
+done < <(git ls-files -s)
+
+is_symlink() { [[ "${INDEX_MODE[$1]:-}" == "120000" ]]; }
+
+index_mode_of() { printf '%s' "${INDEX_MODE[$1]:-}"; }
+
+count_symlinks_in() {
+  local arrname="$1" n=0 p
+  local -n _arr="$arrname"
+  for p in "${_arr[@]:-}"; do
+    [[ -z "$p" ]] && continue
+    if is_symlink "$p"; then n=$((n + 1)); fi
+  done
+  printf '%d' "$n"
+}
+
 while IFS= read -r f; do
   # Priority: exception > explicit exclusion (keep) > FORGE (cut) > allowlist (keep) > remove
   if is_exception "$f"; then
@@ -335,6 +371,8 @@ if [[ "$SUMMARY_ONLY" -eq 1 ]]; then
   echo "Kept:    $KEPT_COUNT"
   echo "Removed: $REMOVED_COUNT"
   echo "Total:   $((KEPT_COUNT + REMOVED_COUNT))"
+  echo "Symlinks removed: $(count_symlinks_in REMOVED)"
+  echo "Symlinks kept:    $(count_symlinks_in KEPT)"
   if [[ -n "$WARN_VULN6" ]]; then
     echo "WARN: VULN #6 patterns skipped (see warnings above)"
   fi
@@ -355,10 +393,54 @@ echo "Explicit exclusions:   ${#KEEP_EXTRA[@]}"
 echo "Files kept:            $KEPT_COUNT"
 echo "Files removed:         $REMOVED_COUNT"
 echo "Total tracked:         $((KEPT_COUNT + REMOVED_COUNT))"
+echo "Symlinks removed:      $(count_symlinks_in REMOVED)"
+echo "Symlinks kept:         $(count_symlinks_in KEPT)"
 if [[ -n "$WARN_VULN6" ]]; then
   echo "WARN: VULN #6 patterns skipped: $WARN_VULN6"
 fi
 echo
+
+# === SYMLINK LEAK AUDIT ===
+# [maat 2026-10-03] A symlink in the git index is stored as a blob whose CONTENT
+# is the target path. Publishing it publishes the target — for `data/library`
+# and `data/memory` that was `/media/arcana-novai/omega_library/...`, leaking
+# the account name and the host mount layout into the public repo.
+#
+# The `-f` guard bug (fixed below) let REMOVED symlinks survive the cut. This
+# audit closes the other half: a symlink the ALLOWLIST KEEPS still ships as a
+# pointer to its target. Whether it should ship is a boundary question, not a
+# mechanical one, so this audit REPORTS rather than overrides the allowlist —
+# but it can no longer be silent, and `--strict` refuses to proceed while any
+# remain.
+SYMLINK_KEPT=()
+for k in "${KEPT[@]}"; do
+  if is_symlink "$k"; then SYMLINK_KEPT+=("$k"); fi
+done
+
+if [[ ${#SYMLINK_KEPT[@]} -gt 0 ]]; then
+  echo "### SYMLINK LEAK AUDIT — ${#SYMLINK_KEPT[@]} symlink(s) KEPT by the allowlist"
+  echo "A tracked symlink publishes its TARGET PATH verbatim. Review each:"
+  for s in "${SYMLINK_KEPT[@]}"; do
+    target=$(git cat-file blob ":$s" 2>/dev/null || echo "<unreadable>")
+    if [[ "$target" == /* ]]; then
+      echo "  LEAK  $s"
+      echo "          -> $target   (absolute host path — leaks account/mount layout)"
+    else
+      echo "  CHECK $s"
+      echo "          -> $target   (repo-relative — leaks internal layout)"
+    fi
+  done
+  echo
+  if [[ "$STRICT" -eq 1 ]]; then
+    echo "FATAL: --strict refuses to cut while the allowlist keeps ${#SYMLINK_KEPT[@]} symlink(s)." >&2
+    echo "       Narrow the ALLOW / Explicit-Exclusions patterns, or add the paths" >&2
+    echo "       to the 🚫 FORGE section. Boundary changes need a human (M23)." >&2
+    exit 2
+  fi
+  echo "WARN: the symlink(s) above WILL ship. Add them to 🚫 FORGE or narrow the" >&2
+  echo "      Explicit Exclusions that keep them. (M23: boundary changes need a human.)" >&2
+  echo
+fi
 
 if [[ "$REMOVED_COUNT" -eq 0 ]]; then
   echo "OK All tracked files match PUBLIC_ALLOWLIST.txt — no action needed."
@@ -375,8 +457,24 @@ echo
 if [[ "$CONFIRM" -eq 1 ]]; then
   echo "Applying (--confirm mode)..."
   for f in "${REMOVED[@]}"; do
-    if [[ ! -f "$f" ]]; then
-      echo "WARN: skip $f (not in working tree)" >&2
+    # [maat 2026-10-03] BUG #9 — symlink leak.
+    #
+    # The guard was `[[ ! -f "$f" ]]`. `-f` is FALSE for a symlink whose target
+    # is a directory and for a DANGLING symlink, so the removal was silently
+    # SKIPPED for exactly the entries that most need removing.
+    #
+    # Real impact on the published release/debut (3c051021):
+    #   data/library -> /media/arcana-novai/omega_library/library-archive
+    #   data/memory  -> /media/arcana-novai/omega_library/memory-archive
+    # Both were classified REMOVE by this script, listed in the report, and
+    # then dropped with "WARN: skip ... (not in working tree)". The symlink
+    # blobs shipped publicly, leaking the account name and the mount layout.
+    #
+    # Fix: skip only when the path is BOTH absent AND not a symlink, so
+    # regular files, directories, symlinks (live or dangling) and other
+    # special entries are all handed to `git rm --cached`.
+    if [[ ! -e "$f" && ! -L "$f" ]]; then
+      echo "WARN: skip $f (absent from the working tree and not a symlink)" >&2
       continue
     fi
     git rm --cached "$f" >/dev/null 2>&1 || {
