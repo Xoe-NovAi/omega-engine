@@ -16,6 +16,7 @@ Superseded documents live in [`archive/`](archive/) — retained for provenance,
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | System topology, data flows, federation |
 | [`AGENT_RUNBOOK.md`](AGENT_RUNBOOK.md) | Node 1 ops awareness for agents |
 | [`ROADMAP.md`](ROADMAP.md) | The single ordered backlog |
+| [`OPENCODE_AGENT_SYSTEM_GUIDE.md`](OPENCODE_AGENT_SYSTEM_GUIDE.md) | Canonical guide to agents, skills, commands, plugins, and the silent-failure traps |
 
 ### Operating
 
