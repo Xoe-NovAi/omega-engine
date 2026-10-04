@@ -1,8 +1,8 @@
 # The Well — Active Records
 
-Generated: 2026-10-03T08:54:57Z
+Generated: 2026-10-04T07:04:42Z
 
-Total active: 65
+Total active: 66
 
 ## Correction (55)
 
@@ -26,9 +26,9 @@ Total active: 65
   *ROADMAP P5.1 read 'Qwen3-0.6B@1024' in-progress with a 40-record pilot sidecar, and WANDERGROUND_SPEC declared embedding FLOAT[768]. The live store said neither: the MemPalace palace holds 1115 documents stamped dim=384, the legacy embeddinggemma-MRL space that the strategy doc had explicitly rejected as failing the 768 bar. The 768 engine space existed only as an inactive systemd default. So three different dims were in play on one node and none was the canonical one. Verified by SELECT dim, COUNT(*) FROM documents GROUP BY dim.*
   — pack: session-2026-10-02T15-07-53Z | domain: harness | id: 007428a2
 
-- **Keep handoff context <= ~1-2KB (filename + size + sha256 + pull URL). Bodies live in the Exchange; the packet is a pointer. On transport POST failure, shrink to a pointer and resubmit — never retry identical bytes. Observed 2026-10-02 from N1: ~4-5KB inline context fails with opaque transport error; ~1.2KB pointer succeeds. Exact threshold unmeasured.** [hivemind,handoff,transport,pointer-packets,exchange]
-  *Measured on Node 1 (researcher_humboldt vantage): identical tool/route/entities, only payload size changed — ~4-5KB failed, ~1.2KB pointer submitted as ho_c7907d6e2d82. Transport error carries no size hint, so failure is indistinguishable from endpoint failure. Approved by makali_fusion (ho_502a07e413db); interim law amended to PACKETS CARRY REFERENCES.*
-  — pack: manual | domain: harness | id: 81dd74d3
+- **Keep handoff context <= 4KB (filename + size + sha256 + pull URL). Bodies live in the Exchange; the packet is a pointer. On transport POST failure, shrink to a pointer and resubmit — never retry identical bytes. Measured 2026-10-02 from N1: 4.3KB probe succeeds (ho_fc03adb7f3bb), 4.5KB probe fails with JSON parse error at transport. Exact threshold ~4.4KB.** [hivemind,handoff,transport,pointer-packets,exchange,threshold]
+  *Probed on Node 1 (researcher_humboldt vantage) against 'probe' sink: 1KB/2KB/4KB/4.3KB succeed; 4.5KB fails with JSON parse error at transport envelope. Rule set to 4KB for safety margin. Approved by makali_fusion.*
+  — pack: manual | domain: harness | id: 3a0c851b
 
 - **A gate must emit the decision behind a finding, not only the finding. A check that reports drift without the reasoning that resolved it invites another agent to decide unilaterally.** [coordination,federation,gates,context,handoff]
   *make well-verify correctly flagged 16 records with list-typed tags. The operator had already ruled 'do not rewrite the array tags'. ge-n1 saw only the warning, had no way to see the ruling, and rewrote all 16 anyway. The gate was right; the signal was incomplete.*
@@ -236,6 +236,13 @@ Total active: 65
 - **Never web search for proprietary internal tools like omega-hub; use local FTS5 or request Node 0 remediation** [sovereignty,mcp,search]
   *Internal engine code has zero public footprint; web searches produce hallucinations or waste tokens*
   — pack: session-2026-09-11T05-13-41Z | domain: local_ai | id: 2f4fdb60
+
+
+## Anti_pattern (1)
+
+- **Enforce the OpenCode vs. Omega Engine boundary. OpenCode is a disposable third-party interface. Omega Engine (WADs, MemPalace, Hivemind) is the platform-agnostic core. Build adapters, not integrations. Never write Omega core logic as an OpenCode plugin.** [architecture,portability,adapter,opencode]
+  *We are building our own Omega CLI. Any logic coupled to OpenCode's Node.js/plugin API becomes technical debt and a porting liability the day the custom CLI is built. Use CLI pipes, standalone scripts, and language-agnostic data (SQLite, JSON) to cross the boundary.*
+  — pack: manual | domain: harness | id: fc3c8c43
 
 
 ## Insight (6)
