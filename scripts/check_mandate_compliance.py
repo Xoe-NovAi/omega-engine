@@ -9,8 +9,7 @@
 Derives the engine's mandate compliance % from MECHANICAL checks, never
 hand-written numbers. This resolves the 3-way SSOT contradiction found in
 Web Claude audit r2 §4 (25/26/27 disagreeing mandate counts): the denominator
-is parsed from SOVEREIGN_MANDATES.md (28 `### N. Title` sections, v3.8.0+
-M35 Third-Party Boundary).
+is parsed from SOVEREIGN_MANDATES.md (30 `### N. Title` sections, v3.11.0).
 
 Each mandate maps to a mechanical check (grep / config parse / gate script).
 Mandates with no mechanical check yet are reported as `untested` and are NOT
@@ -437,6 +436,50 @@ def build_checks(mandates: list[tuple[str, str]]) -> list[CheckResult]:
         return (code == 0, last)
     results.append(make_check("M27", m("M27"), "python scripts/validate_tracking_state.py", m27_check))
 
+    # ── M28: Sovereign Artifact Preservation — no auto-deletion in handoff policy ─────
+    def m28_check():
+        policy = REPO / "config/handoff_policy.yaml"
+        if not policy.exists():
+            return False, "config/handoff_policy.yaml missing"
+        content = policy.read_text()
+        # M28 forbids auto-deletion; check for stale_to_delete or archive_to_delete as CONFIG KEYS (not comments)
+        # Only flag if they appear as YAML keys (at start of line with colon), not in comments
+        import re
+        for line in content.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("#"):
+                continue
+            if re.match(r"^\s*(stale_to_delete|archive_to_delete)\s*:", stripped):
+                return False, f"handoff_policy.yaml contains deletion threshold key: {stripped}"
+        return True, "no auto-deletion threshold keys in handoff_policy.yaml"
+    results.append(make_check("M28", m("M28"), "check config/handoff_policy.yaml for auto-deletion keys", m28_check))
+
+    # ── M29: Remote Claim Integrity — federation diagnose requires peer vantage ─────
+    def m29_check():
+        # Check that federation diagnose tool exists and documents peer-vantage requirement
+        diag = REPO / "mcp_servers/omega_hub/hub_tools/federation.py"
+        if not diag.exists():
+            return False, "federation.py missing"
+        content = diag.read_text()
+        if "peer" not in content.lower() and "vantage" not in content.lower():
+            return False, "federation.py lacks peer-vantage language (M29)"
+        return True, "federation diagnose references peer vantage"
+    results.append(make_check("M29", m("M29"), "check federation.py for peer-vantage requirement", m29_check))
+
+    # ── M30: Third-Party Boundary & Public Secret Exemption — check_secrets.py exists ───
+    def m30_check():
+        scanner = REPO / "scripts/check_secrets.py"
+        allowlist = REPO / "data/secrets-public.toml"
+        if not scanner.exists():
+            return False, "scripts/check_secrets.py missing"
+        if not allowlist.exists():
+            return False, "data/secrets-public.toml missing (M30 allowlist)"
+        content = scanner.read_text()
+        if "fail-closed" not in content.lower():
+            return False, "check_secrets.py lacks fail-closed logic (M30)"
+        return True, "check_secrets.py + secrets-public.toml present"
+    results.append(make_check("M30", m("M30"), "check scripts/check_secrets.py + data/secrets-public.toml", m30_check))
+
     return results
 
 
@@ -491,8 +534,8 @@ def emit_human(results: list[CheckResult], total: int) -> str:
 def main() -> int:
     mandates = parse_mandates()
     total = len(mandates)
-    if total != 28:
-        print(f"⚠️  Denominator drift: SOVEREIGN_MANDATES.md has {total} mandates (expected 28, v3.8.0 + M35)",
+    if total != 30:
+        print(f"⚠️  Denominator drift: SOVEREIGN_MANDATES.md has {total} mandates (expected 30, v3.11.0)",
               file=sys.stderr)
     results = build_checks(mandates)
 

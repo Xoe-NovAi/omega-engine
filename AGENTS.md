@@ -152,6 +152,6 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 ---
 
 For full details, see `.opencode/rules/` (5 architecture rules + 1 reference doc)
-and `SOVEREIGN_MANDATES.md` (the 28 laws). Everything else is pointers.
+and `SOVEREIGN_MANDATES.md` (the 30 mandates). Everything else is pointers.
 
 *⬡ OMEGA ⬡ KALI ⬡ AGENTS-MD-ROOT-v1.0.0 ⬡ 2026-08-28 ⬡ PUBLIC-DEBUT-01*

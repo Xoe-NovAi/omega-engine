@@ -5,10 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.10.0
+**Version**: 3.11.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-09-28 (Added M30 Remote Claim Integrity)
+**Updated**: 2026-10-03 (Ratified mandate ID convention: ID == section number; D-609)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -246,7 +246,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ---
 
-### 28. Sovereign Artifact Preservation (M29 — NEW — 2026-09-28)
+### 28. Sovereign Artifact Preservation (NEW — 2026-09-28)
 - **Mandate**: No sovereign artifact (handoff packets, session gnosis, proposed lessons, entity souls, federation contracts, audit trails, MemPalace events) shall be automatically deleted, overwritten, or rendered unrecoverable by any automated process.
 - **Constraint**: 
   - Transitions between lifecycle states must be **explicit, auditable, and recoverable**.
@@ -260,7 +260,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ---
 
-### 29. Remote Claim Integrity (M30 — NEW — 2026-09-28)
+### 29. Remote Claim Integrity (NEW — 2026-09-28)
 - **Mandate**: "Works from here" is not "works from there." A claim about remote behaviour requires a test from the peer's vantage, or is labelled **UNTESTED** — never "verified."
 - **Constraint**: 
   - A local success is not a remote success, and must never be reported as one.
@@ -274,7 +274,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ---
 
-### 30. Third-Party Boundary & Public Secret Exemption (M35 — NEW — 2026-08-30)
+### 30. Third-Party Boundary & Public Secret Exemption (NEW — 2026-08-30)
 - **Mandate**: All third-party code MUST be managed via a controlled boundary; public OAuth client secrets (per RFC 6749 §2.1, RFC 8252 §8) MUST be catalogued in `data/secrets-public.toml` with primary-source verification.
 - **Constraint**:
   1. **SPDX/REUSE Enforcement**: All third-party code MUST carry `SPDX-License-Identifier` in file header OR entry in `.reuse/dep5` (or `REUSE.toml` per REUSE Specification v3.3, 2024-11-14).

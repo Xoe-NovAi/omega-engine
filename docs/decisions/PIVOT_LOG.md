@@ -740,3 +740,42 @@ repo is PUBLIC so scrub is containment, rotation remains the real fix).
 entry committed as a fresh commit on the rewritten history; bundle retained locally only).
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ D-607-EXECUTED ⬡ 2026-10-03*
+
+---
+
+## D-609 (2026-10-03) — Mandate Identity Convention Ratified: ID == Section Number (kali, S0)
+
+**Decision**: The mandate identity convention is **ID == section number, full stop**. All inline `(Mn)` tags in `SOVEREIGN_MANDATES.md` that disagree with their section number are retired. The governance tier (MANDATES_CONDENSED.md, AGENTS.md, CONSTRAINTS.md, check_mandate_compliance.py) already used this convention consistently.
+
+**Ground-Truth Mapping (SOVEREIGN_MANDATES.md v3.11.0)**:
+
+| Section | Title | Old Inline Tag | Verdict |
+|---------|-------|----------------|---------|
+| §28 | Sovereign Artifact Preservation | (M29) | **REMOVED** — off by +1 |
+| §29 | Remote Claim Integrity | (M30) | **REMOVED** — off by +1 |
+| §30 | Third-Party Boundary & Public Secret Exemption | (M35) | **REMOVED** — off by +5 |
+
+**True mandate count**: 30 numbered sections (§1–§30). AGENTS.md "28 laws" corrected to "30 mandates".
+
+**Contradiction found**: The Law carried three inline tags (M29, M30, M35) that did not match their section numbers. The governance tier used ID == section number exclusively. M30 and M35 appeared nowhere in the governance tier as section-derived IDs. The CI workflow "M35 Secrets Enforcement" and `scripts/check_secrets.py` use M35 as a *named control* (enforcement mechanism for §30), not a numbered mandate — this is now documented explicitly.
+
+**Chosen resolution**: Option (c) — Retire inline tags entirely; mandate ID == section number, full stop.
+
+**Reasoning**:
+- Governance tier already consistent on ID == section number (zero edits needed there)
+- Fewest edits: only 3 inline tags removed from SOVEREIGN_MANDATES.md + 1 count fix in AGENTS.md
+- New agent rule: "mandate ID = section number, period" — no guessing
+- M35 as named control (CI workflow, scanner) is distinct from the numbered mandate tier; documented in M30 entry of MANDATES_CONDENSED.md
+
+**Scope of edits**:
+1. `SOVEREIGN_MANDATES.md` — removed `(M29)`, `(M30)`, `(M35)` from §28/§29/§30 headings; version → 3.11.0
+2. `AGENTS.md` — "28 laws" → "30 mandates" (line 155)
+3. `MANDATES_CONDENSED.md` — added M30 entry for Third-Party Boundary; version → 3.11.0
+4. `scripts/check_mandate_compliance.py` — expected count 28 → 30; added M28/M29/M30 mechanical checks
+5. `tests/test_mandate_id_integrity.py` — NEW regression test asserting: inline tags resolve, governance refs resolve, AGENTS.md count matches sections, no phantom M30/M35 in governance tier
+
+**Mandates**: M9 (Provenance), M23 (Failure Integrity), M28 (Sovereign Artifact Preservation — this IS a Law amendment)
+
+**Status**: ✅ RATIFIED
+
+*⬡ OMEGA ⬡ KALI ⬡ D-609 ⬡ 2026-10-03*
