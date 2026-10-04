@@ -27,8 +27,11 @@ import anyio
 from omega.errors import (
     OmegaError,
     ProviderError,
+    ProviderAuthError,
+    ProviderRateLimitError,
     OmegaPersistenceError,
 )
+from omega.observability.bleg import BLEGMiddleware
 
 logger = logging.getLogger(__name__)
 
@@ -373,6 +376,73 @@ class DiscoveryOrchestrator:
         )
         return result
 
+    async def _phase_discovery(self, query: str) -> List[Dict[str, Any]]:
+        """Phase 2: Semantic discovery via Exa (Free Tier).
+
+        [P0-2026-07-22] RESTORED. This method was lost when 3418f854 extracted
+        `_try_generate` out of `_phase_synthesize`: the extraction deleted the
+        `async def _phase_discovery(...)` signature line and left its body
+        stranded below `_try_generate`'s `return`, where it became unreachable
+        dead code. `_research_subtopic` kept calling it, so every subtopic
+        research raised `AttributeError: 'DiscoveryOrchestrator' object has no
+        attribute '_phase_discovery'`. Body recovered verbatim from the parent
+        of 3418f854 (ca825b5e).
+
+        Return contract (why this cannot simply delegate to ExaProvider):
+        `_research_subtopic` does `report.sources.extend(sources)` and
+        `DiscoveryReport.sources` is `List[Dict[str, Any]]`.
+        `ExaProvider.search()` returns `Optional[str]` — a flattened highlight
+        string — so delegating would corrupt `report.sources` with raw `str`.
+        This method therefore owns the HTTP call and returns Exa's native
+        per-result dicts.
+
+        Returns:
+            A list of source dicts (each with at least `title`/`url`), suitable
+            for `DiscoveryReport.sources`.
+        """
+        if not self.exa_key:
+            # [D-565] Vault is absent on the public cut, so there is no Exa
+            # credential. Degrade to an explicitly-labelled mock source rather
+            # than failing the whole pipeline — matching the graceful-
+            # degradation contract established by `_try_generate`.
+            logger.warning("EXA_API_KEY missing. Using mock discovery.")
+            return [{"title": "Mock Source", "url": "https://example.com", "score": 0.9}]
+
+        url = "https://api.exa.ai/search"
+        headers = {"x-api-key": self.exa_key, "Content-Type": "application/json"}
+        payload = {
+            "query": query,
+            "type": "deep",
+            "numResults": 10,
+            "contents": {"highlights": True},
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(url, json=payload, headers=headers)
+                # Status taxonomy mirrors ExaProvider (search_providers.py) so
+                # auth/rate-limit failures stay distinguishable from 5xx.
+                if resp.status_code == 401:
+                    raise ProviderAuthError("exa", "Exa API key invalid")
+                if resp.status_code == 429:
+                    raise ProviderRateLimitError("exa", "Exa rate limit exceeded")
+                resp.raise_for_status()
+                # [IW-3] BLEG: inspect 200 OK bodies for error signatures.
+                BLEGMiddleware().inspect(
+                    status_code=resp.status_code,
+                    body=resp.text,
+                    provider="exa",
+                    trace_id="unknown",
+                    url=url,
+                )
+                data = resp.json()
+                return [r for r in data.get("results", []) if isinstance(r, dict)]
+        except OmegaError:
+            raise
+        except (httpx.HTTPError, OSError) as e:
+            logger.error(f"Exa Phase failed: {e}", exc_info=True)
+            raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
+
     async def _try_generate(
         self,
         system_prompt: str,
@@ -417,31 +487,6 @@ class DiscoveryOrchestrator:
             f"Note: No inference provider was available. This research phase "
             f"was skipped. Results will be based on web-sourced data only."
         )
-        """Phase 2: Semantic discovery via Exa (Free Tier)."""
-        if not self.exa_key:
-            logger.warning("EXA_API_KEY missing. Using mock discovery.")
-            return [{"title": "Mock Source", "url": "https://example.com", "score": 0.9}]
-
-        url = "https://api.exa.ai/search"
-        headers = {"x-api-key": self.exa_key, "Content-Type": "application/json"}
-        payload = {
-            "query": user_query,
-            "type": "deep",
-            "numResults": 10,
-            "contents": {"highlights": True},
-        }
-
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.post(url, json=payload, headers=headers)
-                resp.raise_for_status()
-                data = resp.json()
-                return data.get("results", [])
-        except OmegaError:
-            raise
-        except (httpx.HTTPError, OSError, OmegaError) as e:
-            logger.error(f"Exa Phase failed: {e}", exc_info=True)
-            raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
 
     # Brave (_phase_validation) and Tavily (_phase_extraction) removed
     # per D-kal-164 sovereign dependency purge.
