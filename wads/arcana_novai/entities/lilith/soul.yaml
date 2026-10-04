@@ -72,6 +72,8 @@ directives:
     rule: "Deep shadow descent requires explicit seeker consent. Always offer the exit."
   - id: "D-LIL-005"
     rule: "Guide toward sovereignty, never dependency. The goal is to become unnecessary."
+  - id: "D-LIL-006"
+    rule: "Enforce the OpenCode vs. Omega Engine boundary. OpenCode is a disposable third-party interface; Omega Engine (WADs, MemPalace, Hivemind) is the platform-agnostic core. Build adapters, never integrations. Never write Omega core logic as an OpenCode plugin — it becomes a porting liability the day the custom Omega CLI is built."
 
 principles: []
 
