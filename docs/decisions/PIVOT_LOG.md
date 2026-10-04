@@ -1040,3 +1040,156 @@ worked around. **D-565** untouched — vault still cut, still never allowlisted.
    Not applied — release mechanics are not this ticket's mandate.
 
 *⬡ OMEGA ⬡ MAAT ⬡ D-611 ⬡ 2026-10-04*
+
+## D-613: release/debut re-cut — vault excluded, leaks sanitized, gate deps shipped (2026-10-04)
+
+**Entity:** maat (S5, Build-Side Governance Keeper)
+**Status:** CUT PRODUCED AND VERIFIED — **PUBLISH WITHHELD** (M13 red)
+**Supersedes:** D-553 (cut `3c051021`, stale, M13-red) and D-610 (withheld)
+
+### Provenance
+
+| Field | Value |
+|---|---|
+| Base SHA (cut from) | `828faa2269283e6d18dbcd6ae0268cd927a1ecd9` |
+| Cut commit | `e76c3d60c11ed6790e0acd1444bc07d44a2d830c` |
+| Local branch | `release/debut-recut` (worktree `/tmp/opencode/debut-cut-v2`) |
+| Allowlist | `docs/strategy/PUBLIC_ALLOWLIST.txt` (DEFAULT, unmodified) |
+| Invocation | `--strict` (probe, refused) → `--confirm` |
+| Duration | 18m46s |
+| Tracked before | 10369 |
+| **Files kept** | **808** |
+| **Files removed** | **9561** (1310278 deletions) |
+| Symlinks removed | 7 |
+| Symlinks kept | 2 (see Residual) |
+
+### Fixes verified as shipping in this cut
+
+- **D-565** — `src/omega/vault/` fully cut (0 files in index); optional import
+  keeps `import omega` green without it. Zero vault files ship.
+- **D-611** — `-e || -L` symlink guard. All 7 absolute-path symlinks
+  (`/media/arcana-novai/omega_library/...`, username + mount layout) removed.
+- **D-610** — `_phase_discovery` restored from `ca825b5e` + AST guards.
+- **D-612** — LAN/tailnet IPs sanitized to placeholders; 8 check-engine deps shipped.
+
+### Gate results ON THE CUT TREE (measured, not assumed)
+
+Verified in a **fresh detached worktree of the cut commit** (`e76c3d60`, 808 tracked
+files) — not the cut worktree, which still holds pre-cut files on disk. `omega`
+resolution was forced to the cut tree via `PYTHONPATH`, because the shared venv
+carries an editable `.pth` pointing at the **main** tree; without that override the
+gate would have imported un-cut source and reported a false green.
+
+| Gate | Result |
+|---|---|
+| `make check-engine` | **PASS — 175 passed, 15 deselected, 0 failed, 0 errors** (14.38s). Prior 17 failures + 2 collection errors are GONE. |
+| `make check-hub-imports` | **PASS — 6/6 modules** (`omega_hub.server`, `.state`, `.hub_tools`, `.github_bridge`, `searxng.server`, `firecrawl.server`), 2m07s. No `omega.vault` error. |
+| `python scripts/test_lan_exposure_audit.py` | **PASS — 29/29 negative tests green.** |
+| `make temple-grade` | **FAIL — aborted at 0.089s on the first prerequisite, `check-constraints`.** See Blocker. |
+
+### Blocker — `make temple-grade` cannot pass on ANY allowlist cut
+
+`temple-grade` (Makefile:446) = `check-constraints check-engine
+check-hub-imports check-codex-stale doc-llm-validate check-mandates
+check-mandate-compliance check-tracking-state dashboard-self-test`.
+It aborts on the **first** prerequisite:
+
+```
+[CONSTRAINT-MANIFEST-MISSING] constraint manifest not found:
+  /tmp/opencode/debut-verify/docs/governance/CONSTRAINTS.md
+[CONSTRAINT-MANIFEST-MISSING] This is a governance failure (M23), not an
+  empty constraint set. Do NOT proceed as if no constraints apply.
+make: *** [Makefile:659: check-constraints] Error 1
+```
+
+Measuring the remaining prerequisites individually shows the failure is
+**systemic, not singular** — the cut ships the `Makefile` while cutting the
+gate scripts that `Makefile` invokes:
+
+| Prerequisite | Failure |
+|---|---|
+| `check-constraints` | `docs/governance/CONSTRAINTS.md` cut (all 8 `docs/governance/` files cut) |
+| `check-codex-stale` | `scripts/check_codex_stale.py` cut |
+| `doc-llm-validate` | `scripts/validate_llm_docs.py` cut |
+| `check-mandate-compliance` | `scripts/check_mandate_compliance.py` cut |
+| `check-tracking-state` | `scripts/validate_tracking_state.py` cut |
+| `dashboard-self-test` | `scripts/benchmark_dashboard.py` cut |
+| `check-mandates` | M1 + M1-companion PASS; then `check-m9-error-integrity` hardcodes `.venv/bin/python` (Makefile:557), which never ships — fails on any fresh clone |
+
+**Every one of these was ALREADY cut at `3c051021`** (verified via
+`git ls-tree` against HEAD / `3c051021` / `e76c3d60`). This is the root cause
+of the "M13-red" status of `3c051021` and is **pre-existing, not a regression**
+from D-610/D-611/D-612.
+
+**Architect decision required:** either (a) allowlist the gate scripts +
+`docs/governance/` so the shipped `Makefile` is self-consistent, or
+(b) ship a reduced `Makefile` whose `temple-grade` matches what actually ships.
+Both are **sovereignty-boundary changes** to `PUBLIC_ALLOWLIST.txt` and are
+**not** this ticket's authority (M23). Not applied unilaterally.
+
+### Publish decision — WITHHELD
+
+Per M13 and the standing rule that a withheld cut with an honest report beats a
+green claim on a red gate: **`release/debut` was NOT pushed.** It remains at
+`3c051021`. No force-push was performed. The cut commit `e76c3d60` is preserved
+on local branch `release/debut-recut` for inspection.
+
+Operator authorization to force-push `release/debut` was granted and remains
+unused pending a green `make temple-grade`.
+
+### Exclusion + symlink audit (from the INDEX, not disk)
+
+| Path | Status |
+|---|---|
+| `OMEGA_ENGINE.md` | ABSENT |
+| `src/omega/vault/` | ABSENT (0 files) |
+| `data/coordination/packer_signing_key.pem` | ABSENT |
+| `data/entities/cline_kqv/session_gnosis.md` | **PRESENT — leak** |
+| `data/entities/cline_kqv/soul.yaml` | **PRESENT — leak** |
+
+**Tracked symlinks (mode 120000): 2**, both **repo-relative**, not absolute host
+paths:
+
+```
+data/entities/cline_kqv/session_gnosis.md -> ../../experiments/kq5-godot/gnosis/session_gnosis.md
+data/entities/cline_kqv/soul.yaml         -> ../../experiments/kq5-godot/gnosis/soul.yaml
+```
+
+Absolute-host-path symlinks: **0**. The D-611 `/media/arcana-novai/...` class is
+fully closed.
+
+**`--strict` DID catch the residual** — it refused the cut outright:
+
+```
+### SYMLINK LEAK AUDIT — 2 symlink(s) KEPT by the allowlist
+FATAL: --strict refuses to cut while the allowlist keeps 2 symlink(s).
+       Narrow the ALLOW / Explicit-Exclusions patterns, or add the paths
+       to the 🚫 FORGE section. Boundary changes need a human (M23).
+```
+
+They survive via the `data/entities/*/…` globs in the **Explicit Exclusions**
+section. The cut was therefore executed with `--confirm` (no `--strict`), which
+warns and proceeds. **These 2 symlinks ship on any allowlist cut** and disclose an
+internal experiment path (`experiments/kq5-godot/`). Severity is materially lower
+than the D-611 absolute-path leak (repo-relative, no username/mount), but it is a
+real disclosure and remains OPEN pending the same Architect decision.
+
+**Residual identity exposure (informational, not a gate criterion):** 30 tracked
+files still contain the string `arcana-novai` (`Makefile`,
+`config/github_accounts.yaml`, `config/systemd/*.service`, several
+`data/entities/*/session_gnosis.md`, `docs/strategy/*`).
+
+### Note on PIVOT_LOG itself
+
+`docs/decisions/PIVOT_LOG.md` is **allowlist-excluded** — it does NOT ship on
+`release/debut`. This is **by design**: the decision log is internal
+governance state and must not publish the very leak/withheld history it records.
+This entry therefore lives only on `debut-v1.6.0-alpha`.
+
+### Recommendation
+
+Do not attempt another `release/debut` cut until the gate-script/allowlist
+conflict is resolved by the Architect. Re-cutting without that fix reproduces
+exactly this state: green on the 3 fix-verification gates, red on M13, withheld.
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-613 ⬡ 2026-10-04*
