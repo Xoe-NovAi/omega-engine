@@ -17,6 +17,15 @@
 # separately: a LAN bind is reachable by anything on the segment with no policy
 # in the path; a tailnet bind is still filtered by tailscaled's packet filter.
 #
+# POLICY RESOLUTION (D-616) — two files, two jobs:
+#   config/lan_exposure_allowlist.yaml            TRACKED. Public template.
+#                                               Placeholders only; ships.
+#   config/lan_exposure_allowlist.local.yaml     UNTRACKED. Host-local reality.
+#                                               Real values; gitignored.
+#   effective = local overlay tracked, by top-level key replacement.
+# Rationale in `load_allowlist`. Do not "fix" this by writing a real address
+# back into the tracked file — that reintroduces the public leak D-612 closed.
+#
 # Exit codes:  0 = clean   1 = exposure found (gate RED)   2 = audit error
 #
 # MANDATE NOTE: read-only. This script never stops, disables, or removes
@@ -27,6 +36,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -34,7 +44,45 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Tracked policy: placeholder-only on purpose. It ships publicly, so it must
+# never carry a real address, interface, or MagicDNS name (D-612).
 ALLOWLIST = REPO_ROOT / "config" / "lan_exposure_allowlist.yaml"
+
+# Host-local policy overlay: UNTRACKED and gitignored. This is where a node
+# records the values that are true on THIS machine and must not ship.
+#
+# WHY THIS EXISTS (D-616): D-612 replaced the real host values in the tracked
+# file with documentation placeholders so the public cut would not leak them.
+# That is correct for the public surface and it broke the gate on the host that
+# D-612 was run from — `tailnet_interfaces: [<TAILSCALE_IFACE>]` cannot match
+# `tailscale0`, so three real tailscaled binds on the tailnet address were
+# reclassified as LAN and the gate went RED. The regression was invisible in CI
+# because the negative tests were sanitized by the same commit, so both sides
+# moved together and the suite agreed with itself.
+#
+# THE FIX IS A SEPARATION OF CONCERNS, NOT A REVERSAL:
+#   tracked file  = the PUBLIC TEMPLATE. Placeholders only. Never a real value.
+#   local file    = the HOST-LOCAL REALITY. Real values. Never committed.
+# Precedence: local override > tracked. See `load_allowlist`.
+LOCAL_OVERRIDE_ENV = "OMEGA_LAN_ALLOWLIST_LOCAL"
+LOCAL_OVERRIDE_CANDIDATES = (
+    REPO_ROOT / "config" / "lan_exposure_allowlist.local.yaml",
+    Path.home() / ".config" / "omega" / "lan_exposure_allowlist.local.yaml",
+)
+
+# A value like `<TAILSCALE_IFACE>` is documentation, not policy. If one reaches
+# the EFFECTIVE config it means the local override is missing or stale, and the
+# gate is blind in exactly the way D-612 blinded it. Surfaced, never silenced.
+PLACEHOLDER_RE = re.compile(r"^<.+>$")
+SECURITY_RELEVANT_KEYS = (
+    "always_exempt_addresses",
+    "tailnet_addresses",
+    "tailnet_interfaces",
+    "allowed_lan_bindings",
+    "allowed_tailnet_bindings",
+    "suppressed_ports",
+)
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -91,21 +139,135 @@ class Finding:
         )
 
 
-def load_allowlist() -> dict:
-    """Parse the allowlist. Minimal YAML subset parse — no third-party dep.
+def _load_yaml_file(path: Path) -> dict:
+    """Parse one allowlist file. Minimal YAML subset parse — no third-party dep.
 
     Falls back to PyYAML if present, else uses a small hand parser. The file is
     authored in a deliberately simple block style so the fallback stays correct.
     """
-    if not ALLOWLIST.exists():
-        raise SystemExit(f"[FATAL] allowlist not found: {ALLOWLIST}")
+    if not path.exists():
+        raise SystemExit(f"[FATAL] allowlist not found: {path}")
     try:
         import yaml  # type: ignore
 
-        return yaml.safe_load(ALLOWLIST.read_text()) or {}
+        return yaml.safe_load(path.read_text()) or {}
     except ImportError:
         pass
-    return _mini_yaml(ALLOWLIST.read_text())
+    return _mini_yaml(path.read_text())
+
+
+def resolve_local_override_path(explicit: Path | None = None) -> Path | None:
+    """Find the host-local override file, or None if this host has none.
+
+    Discovery order (first hit wins):
+      1. `explicit`            — an argument, used by the tests to point at a
+                                synthetic file instead of the real host's.
+      2. $OMEGA_LAN_ALLOWLIST_LOCAL — operator override, wins over discovery so
+                                a node can relocate the file off the repo.
+      3. config/lan_exposure_allowlist.local.yaml  (repo-adjacent, gitignored)
+      4. ~/.config/omega/lan_exposure_allowlist.local.yaml
+
+    An explicitly-requested path that does not exist is an ERROR, not a silent
+    fall-through to the tracked file: a caller asking for a specific override
+    and quietly getting template policy instead is how a gate goes blind while
+    reporting PASS.
+    """
+    if explicit is not None:
+        p = Path(explicit)
+        if not p.exists():
+            raise SystemExit(f"[FATAL] local override not found: {p}")
+        return p
+
+    env = os.environ.get(LOCAL_OVERRIDE_ENV)
+    if env:
+        p = Path(env).expanduser()
+        return p if p.exists() else None
+
+    for cand in LOCAL_OVERRIDE_CANDIDATES:
+        if cand.exists():
+            return cand
+    return None
+
+
+def merge_allowlists(base: dict, overlay: dict) -> dict:
+    """Overlay `overlay` onto `base` by TOP-LEVEL KEY REPLACEMENT.
+
+    Replacement, not concatenation, and that choice is load-bearing. The tracked
+    values for host-specific keys are documentation placeholders
+    (`tailnet_interfaces: [<TAILSCALE_IFACE>]`, `tailnet_addresses: [10.0.0.1]`).
+    Concatenating would leave the placeholder sitting in the effective policy as
+    a dead entry that reads like coverage while matching nothing — precisely the
+    "policy excision is not host excision" shape this gate exists to catch.
+
+    A key present in the overlay replaces the tracked value wholesale. A key
+    absent from the overlay is inherited. So a node can tighten policy (redefine
+    `allowed_lan_bindings` to be non-empty and refuse the tracked default) as
+    well as extend it.
+    """
+    merged = dict(base)
+    for key, value in overlay.items():
+        merged[key] = value
+    return merged
+
+
+def load_allowlist(
+    path: Path | None = None,
+    local_path: Path | None = None,
+    *,
+    use_local: bool = True,
+) -> dict:
+    """Load the EFFECTIVE allowlist: tracked template + host-local override.
+
+    Precedence: local override > tracked file. See `merge_allowlists`.
+
+    Args:
+        path:      tracked file to read (default: the repo template).
+        local_path: explicit override to overlay (default: discovered).
+        use_local: set False to load the tracked template ALONE. The negative
+                   tests use this to assert that the override is load-bearing —
+                   i.e. that the template on its own does NOT clear the gate.
+    """
+    tracked = _load_yaml_file(path or ALLOWLIST)
+    if not use_local:
+        return tracked
+    local = resolve_local_override_path(local_path)
+    if local is None:
+        return tracked
+    return merge_allowlists(tracked, _load_yaml_file(local))
+
+
+def effective_sources(
+    path: Path | None = None, local_path: Path | None = None, *, use_local: bool = True
+) -> tuple[Path, Path | None]:
+    """Return (tracked_path, local_path_or_None) for display in the audit."""
+    tracked = path or ALLOWLIST
+    if not use_local:
+        return tracked, None
+    try:
+        return tracked, resolve_local_override_path(local_path)
+    except SystemExit:
+        return tracked, None
+
+
+def find_placeholders(allow: dict) -> list[tuple[str, str]]:
+    """Return (key, placeholder) pairs surviving in security-relevant fields.
+
+    A placeholder in the effective policy means the operator forgot to populate
+    the local override: the gate will still run, still classify, and will
+    silently fail to recognise this host's tailnet. D-612 shipped exactly that
+    state and it was invisible for a full commit cycle.
+    """
+    found: list[tuple[str, str]] = []
+    for key in SECURITY_RELEVANT_KEYS:
+        for item in _as_list(allow.get(key)):
+            if isinstance(item, dict):
+                for sub in ("address", "port", "process"):
+                    val = item.get(sub)
+                    if val is not None and PLACEHOLDER_RE.match(str(val).strip()):
+                        found.append((f"{key}.{sub}", str(val)))
+            elif item is not None and PLACEHOLDER_RE.match(str(item).strip()):
+                found.append((key, str(item)))
+    return found
 
 
 def _mini_yaml(text: str) -> dict:
@@ -294,6 +456,7 @@ def classify(l: Listener, allow: dict) -> tuple[str, str] | None:
 
 def main() -> int:
     allow = load_allowlist()
+    tracked_path, local_path = effective_sources()
     listeners = parse_ss()
 
     findings: list[Finding] = []
@@ -316,7 +479,29 @@ def main() -> int:
     print(f"  non-loopback listeners   : {non_loopback}")
     print(f"  allowlist version        : {allow.get('version', '?')} "
           f"(updated {allow.get('updated', '?')})")
+    print(f"  policy source (tracked)  : {tracked_path}")
+    print(f"  policy source (local)    : "
+          f"{local_path if local_path else 'NONE — tracked template only'}")
     print()
+
+    # Placeholders reaching the EFFECTIVE policy are the D-612 signature. The
+    # tracked template is placeholder-only BY DESIGN; what matters is whether one
+    # survived the merge, because that means this host's real tailnet is not
+    # being recognised and every tailnet bind will be misfiled as a LAN bind.
+    placeholders = find_placeholders(allow)
+    if placeholders:
+        print(f"{YELLOW}POLICY INTEGRITY WARNING — "
+              f"{len(placeholders)} placeholder(s) in the EFFECTIVE policy{NC}")
+        print("  The tracked file is a public template and is placeholder-only by")
+        print("  design. A placeholder surviving into the effective policy means the")
+        print("  host-local override is missing or stale, so this host's real")
+        print("  tailnet addresses and interfaces are NOT recognised. Every tailnet")
+        print("  bind will then be misreported as a LAN bind — the D-612 failure.")
+        print("  Populate the untracked override, e.g.:")
+        print(f"    {LOCAL_OVERRIDE_CANDIDATES[0]}")
+        for key, val in placeholders:
+            print(f"    - {key} = {val}")
+        print()
 
     if lan:
         print(f"{RED}{len(lan)} LAN EXPOSURE(S) — gate RED{NC}")

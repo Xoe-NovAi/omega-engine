@@ -2,7 +2,28 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# LAN EXPOSURE ALLOWLIST — versioned, reviewable, authoritative.
+# LAN EXPOSURE ALLOWLIST — PUBLIC TEMPLATE. Placeholder-only, by design.
+#
+# THIS FILE SHIPS. It must never contain a real address, interface name, or
+# MagicDNS hostname. The real values for this host live in the UNTRACKED,
+# gitignored overlay:
+#
+#   config/lan_exposure_allowlist.local.yaml
+#
+# which the audit overlays on top of this file (local > tracked, by top-level
+# key replacement). If you find yourself wanting to write a real value into this
+# file to make the gate pass, you are about to leak a node's tailnet address to
+# every clone of the repo. Populate the local overlay instead.
+#
+# WHY THE TEMPLATE/REALITY SPLIT EXISTS (2026-10-04, D-616):
+#   D-612 sanitized real IPs out of this file so they would stop shipping. That
+#   was right for the public surface and it broke the gate on the host it was
+#   run from: `tailnet_interfaces: [<TAILSCALE_IFACE>]` cannot match the real
+#   `tailscale0`, so three genuine tailscaled binds on the tailnet address were
+#   reclassified as LAN exposures. Worse, the negative tests were sanitized by
+#   the same commit, so both sides of the assertion moved together and the suite
+#   passed 29/29 while agreeing with itself about a gate that was blind.
+#   D-612 also MISSED the tailnet IPv6, which was still shipping in this file.
 #
 # WHY THIS FILE EXISTS (2026-09-28, E1 dispatch):
 #   Three separate times a service was found bound to a non-loopback interface
@@ -23,13 +44,16 @@
 #
 #   Do NOT "fix" a failing gate by adding the offender to this file without
 #   recording why in the PR. That is the exact failure mode this gate exists to
-#   prevent.
+#   prevent. And do not add a placeholder-shaped or wildcard entry to make a
+#   finding go away — a justification must be a real host-local value, which
+#   means the local overlay, not this file.
 
-version: 1
-updated: "2026-09-28"
+version: 2
+updated: "2026-10-04"
 owner: doom_guy (S1)
 
 # Addresses that are never reported: loopback and the systemd-resolved stub.
+# These are not host-identifying and are safe to track.
 always_exempt_addresses:
   - 127.0.0.1
   - 127.0.0.53
@@ -41,11 +65,17 @@ always_exempt_addresses:
 # DIFFERENT exposure class: a tailnet bind is still gated by the Tailscale
 # packet filter, so a bind here is not equivalent to a LAN bind. The audit
 # reports them in a separate section and applies a separate allowlist.
+#
+# PLACEHOLDER ONLY. n0's real tailnet IPv4 and IPv6 are host-identifying and
+# live in the untracked overlay. A fresh clone that sees only the placeholders
+# will (correctly) report every tailnet bind as an unapproved LAN bind until an
+# operator populates config/lan_exposure_allowlist.local.yaml.
 tailnet_addresses:
-  - 10.0.0.1      # n0 tailnet IPv4
-  - fd7a:115c:a1e0::d835:3344   # n0 tailnet IPv6
+  - <N0_TAILNET_IPV4>      # documentation placeholder — real value in .local
+  - <N0_TAILNET_IPV6>      # documentation placeholder — real value in .local
 
 # Interfaces whose addresses count as "tailnet" for classification purposes.
+# PLACEHOLDER ONLY — see above.
 tailnet_interfaces:
   - <TAILSCALE_IFACE>
 
@@ -67,46 +97,48 @@ allowed_lan_bindings: []
 # Tailnet bindings that are APPROVED. These are policy-gated by tailscaled, so
 # the risk is lower than a LAN bind, but they are still enumerated so that a
 # new one cannot appear silently.
+#
+# THE ADDRESSES BELOW ARE PLACEHOLDERS. This whole block is host-identifying
+# (real tailnet addresses), so the operative copy — with the real addresses —
+# belongs in config/lan_exposure_allowlist.local.yaml, where the audit merges
+# it over this template. The PORT, PROCESS and REASON columns are not
+# host-identifying and are kept here as the reviewed, versioned record of WHAT
+# is approved and WHY; the local overlay supplies only the address binding.
+#
+# Reviewed entries (address column redacted to placeholder):
+#   8016 v4 + v6  tailscaled  Hub MCP — Tailscale Serve route, tailnet-only, ACL-gated
+#   8019 v4 + v6  tailscaled  Omega exchange pipe — Serve route, tailnet-only, read-only
+#   40656 v6      tailscaled  tailscaled peerapi, IPv6
+#   <peerapi> v4  tailscaled  tailscaled peerapi, IPv4 — DYNAMIC port, see local overlay
 allowed_tailnet_bindings:
-  - address: "10.0.0.1"
+  - address: "<N0_TAILNET_IPV4>"
     port: 8016
     process: "tailscaled"
     reason: "Hub MCP — Tailscale Serve route, tailnet-only, ACL-gated"
-  - address: "10.0.0.1"
+  - address: "<N0_TAILNET_IPV4>"
     port: 8019
     process: "tailscaled"
     reason: "Omega exchange pipe — Tailscale Serve route, tailnet-only, read-only"
-  - address: "10.0.0.1"
-    port: 40656
-    process: "tailscaled"
-    reason: "tailscaled internal (peerapi/DERP), not user-facing"
-  # tailscaled also holds a v4 listener on an ephemeral high port for its own
-  # peer/telemetry traffic. Attribution was confirmed with a root-side
-  # `ss -ltnp`: 10.0.0.1:43961 is tailscaled pid 2280 fd=22. It is
-  # infrastructure, not a user service, and it is tailnet-scoped. The port
-  # number is assigned by tailscaled and can change across restarts, so it is
-  # matched by process rather than pinned — if a future run reports a
-  # different high port from tailscaled, update this entry rather than
-  # widening the LAN allowlist.
-  - address: "10.0.0.1"
-    port: 43961
-    process: "tailscaled"
-    reason: "tailscaled internal peer/telemetry listener (root-confirmed pid 2280)"
-  # Same two Serve ports, IPv6. Tailscale Serve listens on BOTH the v4 and the
-  # fd7a:: address, so approving only the v4 entry leaves the v6 socket
-  # reported on every run — a gate that cries wolf is a gate that gets ignored.
-  - address: "fd7a:115c:a1e0::d835:3344"
+  - address: "<N0_TAILNET_IPV6>"
     port: 8016
     process: "tailscaled"
     reason: "Hub MCP — IPv6 twin of the 8016 Serve route"
-  - address: "fd7a:115c:a1e0::d835:3344"
+  - address: "<N0_TAILNET_IPV6>"
     port: 8019
     process: "tailscaled"
     reason: "Exchange pipe — IPv6 twin of the 8019 Serve route"
-  - address: "fd7a:115c:a1e0::d835:3344"
-    port: 40656
-    process: "tailscaled"
-    reason: "tailscaled internal (peerapi/DERP), IPv6"
+  # NOTE: the peerapi port (v4 ~43xxx, v6 ~40xxx) is deliberately NOT listed
+  # here with a pinned number. tailscaled assigns it dynamically — on this host
+  # it was observed as a v4/v6 pair logged by tailscaled itself as
+  #   peerapi: serving on http://<N0_TAILNET_IPV4>:<peerapi_v4>
+  #   peerapi: serving on http://[<N0_TAILNET_IPV6>]:<peerapi_v6>
+  # so the port changes across restarts and pinning it in a tracked file would
+  # be pinning a value that cannot be true twice. The concrete address+port pair
+  # for THIS host, with its justification, lives in the local overlay.
+  #
+  # A wildcard/placeholder entry here is NOT an acceptable substitute: the audit
+  # matches address+port exactly, and an entry that matches "anything" is an
+  # entry that approves the next process to bind the tailnet.
 
 # Ports the audit should NEVER report regardless of bind address, because they
 # are transient or kernel-internal and produce false positives. Keep this short

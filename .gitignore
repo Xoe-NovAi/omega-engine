@@ -414,3 +414,9 @@ data/quarantine/**/*.md
 # rules predate this kind of content, so nothing caught it.
 data/coordination/sessions/
 !docs/federation/RESPONSE_TO_SONNET_4_6_*.md
+
+# ── Host-local LAN exposure allowlist overlay (D-616) ──
+# Real tailnet addresses / interface names for THIS node. Untracked by design:
+# the tracked config/lan_exposure_allowlist.yaml is a public placeholder-only
+# template, and the real values must never ship (D-612 closed that leak).
+config/lan_exposure_allowlist.local.yaml
