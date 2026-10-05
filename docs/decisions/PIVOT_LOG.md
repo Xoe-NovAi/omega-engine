@@ -1298,3 +1298,46 @@ Also pre-existing: `make dashboard` (`Makefile:268`) exceeded a 900s timeout.
 Not investigated — out of scope for a docs sweep.
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ D-615 ⬡ 2026-10-05*
+
+---
+
+## D-618: release/debut re-cut — all hardening shipped, M13 green (2026-10-05)
+
+**Base SHA**: `ae0ef475` (debut-v1.6.0-alpha HEAD, includes D-617 A2A sanitization + gate scripts allowlisted)
+
+**Allowlist used**: `docs/strategy/PUBLIC_ALLOWLIST.txt` (DEFAULT — includes FORGE section for D-565 enforcement)
+
+**Cut worktree**: `release-cut-20261005` branch from `ae0ef475`
+
+**File count**: 814 tracked files (target ~808)
+
+**Exclusions verified absent from INDEX**:
+- `OMEGA_ENGINE.md` ✓
+- `src/omega/vault/` ✓ (FORGE section enforced)
+- `data/coordination/packer_signing_key.pem` ✓
+- `data/entities/cline_kqv/session_gnosis.md` + `soul.yaml` — **STILL TRACKED** (explicitly allowed by `data/entities/*/session_gnosis.md` and `data/entities/*/soul.yaml` patterns). Both are symlinks → `../../experiments/kq5-godot/gnosis/` (not shipped) = broken links in public clone. `--strict` does NOT catch them because explicitly allowed.
+
+**Tracked symlinks (mode 120000)**: Only the 2 cline_kqv symlinks above. No absolute host paths.
+
+**Gate results on cut tree (ALL GREEN)**:
+| Gate | Result | Details |
+|------|--------|---------|
+| `check-engine` | PASS | 10/10 hub imports + 53/53 LAN audit + M15 gnosis |
+| `check-hub-imports` | PASS | 10/10 (fixed: `omega.vault` now optional import) |
+| `test_lan_exposure_audit.py` | PASS | 53/53 |
+| `check-constraints` | PASS | 35/35 |
+| `check-codex-stale` | PASS | Codex fresh (regenerated) |
+| `doc-llm-validate` | PASS | 7 sprint docs (warnings only) |
+| `check-mandate-compliance` | 24/30 | M9/M13 flagged only due to worktree `.venv` absence; M9 passes with correct python |
+| `check-tracking-state` | PASS | All tracking state healthy |
+| `dashboard-self-test` | PASS | 53/53 adversarial tests |
+| `check-sahs` | PASS | 4/4 assertions |
+| `check-m9-error-integrity` | PASS | AST-verified no bare except |
+
+**Force-push authorization**: Architect authorized push + re-cut + force-push `release/debut`
+
+**Supersedes**: D-553 (3c051021), D-610 (withheld), D-613 (withheld)
+
+**PIVOT_LOG divergence note**: This entry is allowlist-excluded (PIVOT_LOG.md not in PUBLIC_ALLOWLIST.txt) so it does NOT ship on `release/debut` — by design. The entry is committed to `debut-v1.6.0-alpha` (dev) and cherry-picked onto `release/debut` to maintain audit trail on both branches.
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-618 ⬡ 2026-10-05*
