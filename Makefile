@@ -1007,7 +1007,14 @@ gate-secrets:
 # real cause instead of the generic "editable install failed", which points at
 # pyproject.toml and sends them debugging the wrong thing.
 HUB_IMPORT_PIP_TIMEOUT ?= 420
-HUB_IMPORT_WORKTREE := /tmp/omega-hub-import-verify
+# [D-621] PID-unique. This path used to be a fixed shared name, so two concurrent
+# `make check-hub-imports` runs (the fleet runs them from parallel agents
+# routinely) raced: one run's `trap cleanup` did `rm -rf` on the exact path the
+# other was installing into, producing
+#   OSError: [Errno 2] No such file or directory
+# mid-install. The patch file was already `$$`-unique; the worktree was not —
+# the asymmetry that caused the race. Now both are per-PID.
+HUB_IMPORT_WORKTREE := /tmp/omega-hub-import-verify-$$
 # HUB_IMPORT_MODE=auto      overlay the tracked working-tree diff AND SAY SO
 # HUB_IMPORT_MODE=pristine  never overlay; the verdict describes HEAD exactly.
 #                            The release/CI path sets pristine via require_clean.
