@@ -41,7 +41,7 @@ tags: ["sqlite-vec", "optimization", "vec0", "hnsw", "wal", "mrl"]
 │  │              omega_memory.db (WAL mode)             │   │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │   │
 │  │  │omega_mem │ │omega_mem │ │omega_vec │ │omega_  │  │   │
-│  │  │_data     │ │_fts (FTS5)│ │_gemma_768│ │memory_ │  │   │
+│  │  │_data     │ │_fts (FTS5)│ │_qwen_1024│ │memory_ │  │   │
 │  │  │(metadata)│ │(BM25)    │ │(vec0)    │ │spatial │  │   │
 │  │  └──────────┘ └──────────┘ └──────────┘ │(R-tree)│  │   │
 │  │  ... 6 more vec0 collections ...         └────────┘  │   │
@@ -112,7 +112,7 @@ async def start_periodic_checkpoint(self, interval_seconds: int = 300):
 | Collection | Dimension | Quantization | HNSW | Use Case |
 |------------|-----------|--------------|------|----------|
 | `omega_vec_qwen_1024` | 1024 | int8_rescore | m=16, ef_c=200, ef_s=64 | **Primary (canonical, D-1024)** |
-| `omega_vec_gemma_768` | 768 | int8_rescore | m=16, ef_c=200, ef_s=64 | DEPRECATED — Gemma-era, superseded by the above |
+| `omega_vec_qwen_1024` | 768 | int8_rescore | m=16, ef_c=200, ef_s=64 | DEPRECATED — Gemma-era, superseded by the above |
 | `omega_vec_nomic_768` | 768 | int8_rescore | m=16, ef_c=200, ef_s=64 | Fallback (Nomic v1.5) |
 | `omega_vec_nomic_512` | 512 | int8_rescore | m=16, ef_c=200, ef_s=64 | MRL Tier 1 |
 | `omega_vec_nomic_256` | 256 | int8_rescore | m=16, ef_c=200, ef_s=64 | MRL Tier 2 |

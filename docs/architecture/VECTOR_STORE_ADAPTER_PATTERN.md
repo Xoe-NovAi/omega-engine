@@ -229,7 +229,7 @@ Phase 2: Deploy Qdrant via Podman quadlet (6GB limit, 80% CPU)
     ↓
 Phase 3: Add config toggle (vector_store.type: qdrant|sqlite_vec)
     ↓
-Phase 4: Migrate primary collection (omega_vec_gemma_768) first
+Phase 4: Migrate primary collection (omega_vec_qwen_1024) first
     ↓
 Phase 5: Parity test per collection (≥95% recall)
     ↓
