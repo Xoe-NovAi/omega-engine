@@ -1,5 +1,10 @@
 # Omega Engine — Communication Channel Review
 
+> **📅 DATED RECORD — 2026-10-02.** The `1.6.0-alpha.1` /health responses quoted
+> below were accurate when probed. That version no longer exists; live is
+> `1.6.0-alpha` with **55** tools (2026-10-05). Body verbatim per M28. See
+> `docs/operations/DOC_CORRECTION_SWEEP_20261005.md`.
+
 ```
 schema_version: "1.0"
 document_type: "review"

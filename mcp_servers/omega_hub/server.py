@@ -255,7 +255,9 @@ except Exception as e:  # pragma: no cover — defensive, must never block boot
     logger.warning("Tool surface curation failed (non-fatal): %s", e)
 
 
-# Legacy tool names retired during tool-surface curation (92 → 66 tools),
+# Legacy tool names retired during tool-surface curation (92 → 66 tools as of
+# 2026-09-23; the live surface is 55 as of 2026-10-05 — this is a historical
+# record of the pruning decree, NOT today's tool count),
 # mapped to their unified replacements. Accessing any of these names returns a
 # thin adapter so existing callers keep working instead of raising
 # AttributeError. Each entry is (unified_tool_name, bound_kwargs).

@@ -411,4 +411,10 @@ must be **restarted** before `control` is reachable over MCP. Until then,
 `tests/test_hub_health.py::test_registered_surface_is_complete` fails with
 `55 != 54` — verified to be exactly this delta by unregistering `control` (54 == 54, PASS).
 
+> **RESOLVED 2026-10-05.** This deployment note is retained verbatim per M28. The restart
+> happened: the live hub on `:8016` now serves **55 tools** and `/health` reports
+> `1.6.0-alpha` (measured this date). `control` is reachable over MCP and
+> `test_registered_surface_is_complete` passes. The "54" figures above describe the
+> pre-restart process only.
+
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ SLOT-S1 ⬡ CONTROL-PLANE-v1 ⬡ 2026-10-03*

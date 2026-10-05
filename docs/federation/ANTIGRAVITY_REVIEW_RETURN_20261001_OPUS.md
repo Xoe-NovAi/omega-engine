@@ -1,4 +1,10 @@
 # 🔱 PROVENANCE RECORD: STAGE 3 REVIEW
+
+> **📅 DATED RECORD — 2026-10-01.** The `pyproject.toml` claim of
+> `version = "1.6.0-alpha.1"` was verified true at review time. It is no longer
+> the repo version — `pyproject.toml` and `/health` both say `1.6.0-alpha` as of
+> 2026-10-05. Body verbatim per M28. See
+> `docs/operations/DOC_CORRECTION_SWEEP_20261005.md`.
 > **Origin**: `~/.gemini/antigravity-ide/brain/5bc0596f-3a47-4ba1-8625-e0bb260e4e39/stage3_epistemic_synthesis.md`
 > **Author**: Claude Opus 4.6 (Thinking)
 > **Date**: 2026-10-01

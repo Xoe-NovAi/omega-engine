@@ -36,9 +36,11 @@ Use **SQLite native R-tree virtual table** (`omega_memory_spatial`) for 3D coord
 ## Schema
 
 ```sql
--- Semantic embeddings (7 collections, vec0)
-CREATE VIRTUAL TABLE omega_vec_gemma_768 USING vec0(embedding float[768], entity_name TEXT partition key);
--- ... 6 more vec0 collections ...
+-- Semantic embeddings (vec0). Canonical collection is omega_vec_qwen_1024
+-- (D-1024, Qwen3-Embedding-0.6B). The Gemma-era omega_vec_gemma_768 is
+-- DEPRECATED and must not be created new — see MEMORY_SUBSYSTEM_DESIGN.md.
+CREATE VIRTUAL TABLE omega_vec_qwen_1024 USING vec0(embedding float[1024], entity_name TEXT partition key);
+-- ... further vec0 collections (MRL tiers) ...
 
 -- Full-text search (FTS5)
 CREATE VIRTUAL TABLE omega_memory_fts USING fts5(content, entity_name, session_id, role, timestamp);

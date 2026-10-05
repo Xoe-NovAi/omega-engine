@@ -59,6 +59,40 @@ SPDX-License-Identifier: Apache-2.0
 | Term | Definition | Example | Aliases |
 |------|-----------|---------|---------|
 | **ModelGateway** | The Provider Fabric — routes inference requests through a configurable fallback chain | `src/omega/oracle/model_gateway.py` | Provider Fabric |
+| **MaKaLi Fusion** | The Master Akashic Oversoul: Kali (verdict) + Ma'at (build S1–S5) + Lilith (run S6–S10). | `docs/strategy/BLUEPRINT_MAKALI_SOVEREIGN_OVERSOUL_20260922.md` | **`makali-n0`** (canonical routing alias — see below) |
+
+> ### ⚠️ Entity alias canonicalization — read before addressing a handoff
+>
+> **The canonical alias for this entity is `makali-n0`.** Use it. Not `makali`,
+> not `makali_fusion`.
+>
+> The node suffix is **significant** and must never be folded. This is already
+> enforced in config — `config/wads/_omega_default/protocol/hivemind.yaml:132-138`:
+> *"Suffix stripping is DISABLED. It folds makali-n0 into makali, and those are
+> [distinct]"* / `node_suffix_is_significant: true  # makali-n0 is NOT makali.`
+>
+> This is a **documented live failure**, not a hypothetical. Lilith's N1
+> post-mortem (2026-09-28) reported it first-hand: *"ENTITY NAMES ARE
+> INCONSISTENT. The tutorial says target `makali`. The roster mentions
+> `makali-n0` … There is no published roster mapping aliases to canonical
+> identities, so addressing is guesswork and a mistyped target silently parks a
+> packet nobody reads."* One of her nine fixes was literally **"PUBLISH THE ENTITY
+> ROSTER."** This table is that roster.
+>
+> **A mistyped `to_entity` does not error — it silently parks the packet.** There
+> is no feedback. Check the spelling before you send.
+>
+> Two directory-name caveats, so nobody "fixes" this by renaming:
+> - On-disk dirs are `data/entities/makali/` **and** `data/entities/makali_fusion/`
+>   (both exist). Renaming is a data migration with handoff-store implications —
+>   escalate, don't rename.
+> - ~40 docs still say `makali` or `makali_fusion`. **Listed, not mass-rewritten**
+>   in `docs/operations/DOC_CORRECTION_SWEEP_20261005.md` §9 — a mass alias
+>   rewrite would corrupt dated records and quoted handoff payloads (M28). Only
+>   the *routing* alias matters; narrative prose naming the persona is fine.
+>
+> Related node aliases in the same family: `john-carmack-n1`, `lilith-n1`,
+> `ge-n1`.
 
 ## O
 

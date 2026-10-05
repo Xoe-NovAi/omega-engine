@@ -74,7 +74,7 @@ cd ~/Documents/Xoe-NovAi/omega-engine
 
 # Check hub health
 curl http://localhost:8016/health
-# {"status":"healthy","version":"1.6.0-alpha.1"}
+# {"status":"healthy","version":"1.6.0-alpha"}
 
 # Check exchange health
 curl http://localhost:8019/healthz
@@ -198,11 +198,11 @@ curl https://n1.tail51f14a.ts.net:8019/healthz
 ```bash
 # From Node 1, test Node 0 hub
 curl https://n0.tail51f14a.ts.net:8016/health
-# {"status":"healthy","version":"1.6.0-alpha.1"}
+# {"status":"healthy","version":"1.6.0-alpha"}
 
 # From Node 0, test Node 1 hub
 curl https://n1.tail51f14a.ts.net:8016/health
-# {"status":"healthy","version":"1.6.0-alpha.1"}
+# {"status":"healthy","version":"1.6.0-alpha"}
 ```
 
 ### 3.3 Run Federation Diagnostics

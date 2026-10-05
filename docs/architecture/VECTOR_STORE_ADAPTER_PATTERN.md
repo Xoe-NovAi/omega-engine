@@ -115,7 +115,8 @@ class IVectorStoreAdapter(ABC):
 
 | Collection | Dimension | Model | Purpose |
 |------------|-----------|-------|---------|
-| `omega_vec_gemma_768` | 768 | EmbeddingGemma 300M | Primary canonical |
+| `omega_vec_qwen_1024` | 1024 | Qwen3-Embedding-0.6B | **Primary canonical** (D-1024) |
+| `omega_vec_qwen_768` | 768 | Qwen3-Embedding-0.6B (MRL) | Reduced dim |
 | `omega_vec_nomic_768` | 768 | Nomic Embed Text v1.5 | Cloud fallback |
 | `omega_vec_nomic_512` | 512 | Nomic MRL truncation | Reduced dim |
 | `omega_vec_nomic_256` | 256 | Nomic MRL truncation | Reduced dim |

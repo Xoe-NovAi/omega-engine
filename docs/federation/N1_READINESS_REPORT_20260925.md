@@ -6,6 +6,14 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 N1_READINESS_REPORT_20260925.md
 
+> **📅 HISTORICAL SNAPSHOT — dated 2026-09-25. Do not read the counts below as
+> current.** The "66 tools" figures were TRUE on this date: verified by Lilith on
+> Node 1 over Tailscale (per-category breakdown + curl in §1.1/§1.2) and
+> independently by maat on Node 0. Current live count is **55**, and
+> `1.6.0-alpha.1` (quoted throughout) is no longer a real version — `pyproject.toml`
+> and `/health` both say `1.6.0-alpha`. Timeline and evidence:
+> `docs/operations/DOC_CORRECTION_SWEEP_20261005.md`. Body left verbatim per M28.
+
 **AP Token**: `AP-LILITH-N1-READINESS-20260925-v1.0.0`
 ⬡ OMEGA ⬡ LILITH ⬡ space-bunny-free ⬡ opencode ⬡ trc_n1_readiness ⬡ DELIVERED
 

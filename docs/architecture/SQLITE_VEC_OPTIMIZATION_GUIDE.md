@@ -69,7 +69,7 @@ async def batch_upsert(self, items: List[Dict], collection: str) -> List[str]:
 # Before: vec0 query → N metadata SELECTs
 # After: Single JOIN query
 SELECT v.rowid, v.distance, d.uuid, d.entity_name, d.content...
-FROM omega_vec_gemma_768 v
+FROM omega_vec_qwen_1024 v
 JOIN omega_memory_data d ON v.rowid = d.id
 WHERE v.embedding MATCH ? AND v.entity_name = ? AND k = ?
 ```
@@ -93,7 +93,7 @@ self._read_pool_size = 4
 ### 5. Configurable HNSW per Collection
 ```python
 COLLECTIONS = {
-    "omega_vec_gemma_768": {
+    "omega_vec_qwen_1024": {
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
     # ... per-collection tuning
@@ -111,7 +111,8 @@ async def start_periodic_checkpoint(self, interval_seconds: int = 300):
 
 | Collection | Dimension | Quantization | HNSW | Use Case |
 |------------|-----------|--------------|------|----------|
-| `omega_vec_gemma_768` | 768 | int8_rescore | m=16, ef_c=200, ef_s=64 | Primary (Gemma 300M) |
+| `omega_vec_qwen_1024` | 1024 | int8_rescore | m=16, ef_c=200, ef_s=64 | **Primary (canonical, D-1024)** |
+| `omega_vec_gemma_768` | 768 | int8_rescore | m=16, ef_c=200, ef_s=64 | DEPRECATED — Gemma-era, superseded by the above |
 | `omega_vec_nomic_768` | 768 | int8_rescore | m=16, ef_c=200, ef_s=64 | Fallback (Nomic v1.5) |
 | `omega_vec_nomic_512` | 512 | int8_rescore | m=16, ef_c=200, ef_s=64 | MRL Tier 1 |
 | `omega_vec_nomic_256` | 256 | int8_rescore | m=16, ef_c=200, ef_s=64 | MRL Tier 2 |

@@ -5,12 +5,14 @@
 #
 # test_lan_exposure_audit.py — negative tests for `make check-lan-exposure`.
 #
-# WHY A NEGATIVE TEST IS MANDATORY:
-#   A gate that has never been observed failing is not a gate. The first run of
-#   this audit on real hardware produced 15 genuine findings, which is evidence
-#   the parser works — but that is a live accident, not a test. These cases pin
-#   the behaviour so a future refactor cannot silently turn the gate into a
-#   no-op that always prints PASS.
+# THIS IS A STANDALONE SCRIPT, NOT A PYTEST MODULE. It defines no module-level
+# `test_*` functions, so `pytest` correctly collects 0 tests from it. Run it
+# directly — `python scripts/test_lan_exposure_audit.py` (Makefile:417, :1149).
+# A gate that has never been observed failing is not a gate. The first run of
+# this audit on real hardware produced 15 genuine findings, which is evidence
+# the parser works — but that is a live accident, not a test. These cases pin
+# the behaviour so a future refactor cannot silently turn the gate into a
+# no-op that always prints PASS.
 #
 # Every case below is synthetic: it feeds `classify()` a constructed Listener and
 # asserts the verdict. No socket is opened, no service is touched, nothing on the

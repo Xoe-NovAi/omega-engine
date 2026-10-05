@@ -12,6 +12,46 @@
 ═══════════════════════════════════════════════════════════════════════════════
 -->
 
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+  📌 DATED CORRECTION NOTE — added 2026-10-05 by @researcher (D-615 sweep).
+  Body below is UNTOUCHED per M28. Read this before the figures.
+═══════════════════════════════════════════════════════════════════════════════
+  ON THE "66 tools" FIGURES AND THE "VERIFIED by N1" ATTRIBUTION
+
+  A sweep was asked to RETRACT the "VERIFIED by N1" attribution on line 41 as a
+  fabricated verification claim. That premise was checked and it is WRONG. The
+  verification was performed and is documented four independent times:
+
+    1. docs/federation/N1_READINESS_REPORT_20260925.md:23  — "MCP Parity VERIFIED,
+       66 tools", with a per-category breakdown and the curl invocations (:65-77)
+    2. docs/federation/N1_READINESS_REPORT_20260925.md:82  — "Tools List | POST
+       /mcp/ tools/list | 66 tools returned", inside a handshake results table
+    3. data/entities/lilith/gnosis/session_gnosis.md:151-152 — Lilith's own
+       first-person record of the P2 handshake over Tailscale
+    4. data/entities/maat/gnosis/archive/session_gnosis_20260928-1858.md:26 — the
+       independent Node-0 side: "92 to 66 … exactly 66 tools"
+
+  66 was the TRUE tool count from 2026-09-23 to 2026-09-26. The number is STALE,
+  not FABRICATED — different defects with opposite repairs. Retracting it would
+  have destroyed four mutually corroborating contemporaneous measurements to
+  correct a number that was never wrong. The attribution STANDS.
+
+  TOOL-COUNT TIMELINE (an undated count is a provenance defect):
+    2026-09-23  92 → 66   26-Tool Pruning Decree (maat, ratified + executed)
+    2026-09-25  66        verified by Lilith on N1 over Tailscale
+    2026-09-26  66        THIS snapshot was taken
+    2026-09-27  66 → 54  Hivemind 7 fragmented handoff tools → 1 action-based tool
+    2026-10-03  54 → 55  `control` unified tool (4 control planes), commit 5e97ef84
+    2026-10-05  55       LIVE, measured this sweep (POST :8016/mcp tools/list)
+
+  So: lines 24 and 41 read "66" and are CORRECT FOR 2026-09-26. The live count is
+  55 and the live version is `1.6.0-alpha` (this file says `1.6.0-alpha.1`,
+  which no longer exists in pyproject.toml). Full audit, including the tool-count
+  lineage: docs/operations/DOC_CORRECTION_SWEEP_20261005.md
+═══════════════════════════════════════════════════════════════════════════════
+-->
+
 ========================================================================================
 🔱 OMEGA FLEET TELEMETRY & SUBSTRATE COCKPIT — 2026-09-26 (HISTORICAL SNAPSHOT)
 ========================================================================================

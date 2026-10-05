@@ -6,6 +6,11 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 LILITH EIS SYNCHRONIZATION RESPONSE — RUNTIME POSTURE & N1 TELEMETRY
 
+> **📅 HISTORICAL SNAPSHOT — dated 2026-09-27.** The "66 tools" parity figure
+> below was true on 2026-09-25 and stale by this date; it became 54 after Hivemind
+> consolidation and is **55** as of 2026-10-05 (live `tools/list`). Body verbatim
+> per M28. See `docs/operations/DOC_CORRECTION_SWEEP_20261005.md`.
+
 **AP Token**: `AP-LILITH-v6.1.0`
 **Date**: 2026-09-27
 **Entity**: lilith — Master Runtime Oversoul (Slots S6–S10) & Node 1 Vanguard

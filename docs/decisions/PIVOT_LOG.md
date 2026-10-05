@@ -1193,3 +1193,108 @@ conflict is resolved by the Architect. Re-cutting without that fix reproduces
 exactly this state: green on the 3 fix-verification gates, red on M13, withheld.
 
 *⬡ OMEGA ⬡ MAAT ⬡ D-613 ⬡ 2026-10-04*
+
+---
+
+## D-614 — allowlist cut performance: 780s → 12s (63×)
+
+**Decision**: the public-cut mechanic is unchanged in *semantics* (same allowlist,
+same exclusion policy); only its **runtime** was fixed. Recorded here because
+`e3d27d26` shipped the fix with no PIVOT_LOG entry, leaving the cut mechanic
+undocumented for anyone reasoning about it.
+
+**What changed** (`e3d27d26`, HEAD of `debut-v1.6.0-alpha`):
+
+| | |
+|:---|:---|
+| **Before** | 780s (~13 min) per `scripts/apply_public_allowlist.sh --confirm` run |
+| **After** | **12s** |
+| **Speedup** | **63×** |
+| **Mechanic** | batched index writes + precompiled patterns |
+
+A 13-minute cut was not merely slow — it was indistinguishable from a hang, so
+operators were reaching for `--force` to escape it. `--force` skips the
+strict-mode refusals, and those refusals are exactly what caught the D-611
+symlink leak. **Slow enough to be escaped is a correctness bug in a safety
+gate**, which is why this belongs in the decision log and not a commit message.
+
+**Unchanged**: the 8 files added by D-612 are still required (`config/embedding_strategy.yaml`,
+`scripts/check_secret_history.py`, `scripts/gnosis_archive.py`, `scripts/load_constraints.py`,
+`config/wads/arcana_novai/axioms.yaml`, `config/lan_exposure_allowlist.yaml`,
+`scripts/test_lan_exposure_audit.py`, `scripts/lan_exposure_audit.py`) — they are
+`check-engine` steps whose absence caused 17 failures + 2 collection errors on the
+cut tree.
+
+> **Still binding from D-613**: do not attempt another `release/debut` cut until
+> the gate-script/allowlist conflict is resolved by the Architect. The perf fix
+> makes cutting *fast*; it does not make cutting *pass*.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ D-614 ⬡ 2026-10-05*
+
+---
+
+## D-615 — fleet-wide documentation accuracy sweep (executed; one instruction declined)
+
+**Decision**: 39 claims measured against live sources. 11 corrected, 16 annotated
+as historical (M28), 11 verified already-correct, 3 escalated, **1 refused**.
+
+Full audit, with the evidence table and the tool-count lineage:
+`docs/operations/DOC_CORRECTION_SWEEP_20261005.md`.
+
+**Ground truth measured 2026-10-05**: hub serves **55** tools and version
+`1.6.0-alpha` (live `tools/list` + `/health`). SDK is `mcp` 1.30.0, supporting
+`['2024-11-05','2025-03-26','2025-06-18','2025-11-25']` — `2026-07-28` is **not**
+in that set. Canonical vector collection is `omega_vec_qwen_1024` (D-1024).
+
+### 🛑 One instruction declined, with cause
+
+The sweep was instructed to retract the `"tools/list 66 tools — VERIFIED by N1"`
+attribution in `data/coordination/STATE_OF_THE_REALM.md` as *"a FABRICATED
+verification claim … never performed."*
+
+**The premise is false.** The verification was performed and is documented four
+independent times — `docs/federation/N1_READINESS_REPORT_20260925.md:23` (with
+per-category breakdown and curl), `:82` (handshake results table),
+`data/entities/lilith/gnosis/session_gnosis.md:151-152` (first-person record), and
+`data/entities/maat/gnosis/archive/session_gnosis_20260928-1858.md:26` (independent
+Node-0 confirmation).
+
+**66 was the true count from 2026-09-23 to 2026-09-26.** The number is *stale*,
+not *fabricated* — different defects with opposite repairs:
+
+- stale → annotate with the current value; the record stays true for its date
+- fabricated → retract; the record was never true
+
+Executing the retraction would have erased four mutually corroborating
+contemporaneous measurements to correct a number that was never wrong. **A
+fabricated retraction is a worse provenance defect than the staleness it was
+meant to cure** — precisely the failure class this sweep exists to eliminate.
+The attribution stands; a dated margin note with the full timeline was added
+instead, and the file's existing SUPERSEDED banner already marks it historical.
+
+**Standing rule adopted**: a stale number and a false number must never be
+repaired with the same action. Verify the *date* before you touch the *value*.
+
+### Gate status found (pre-existing, NOT caused by this sweep — zero edits made)
+
+`make temple-grade` is **RED at pristine HEAD**: `check-mandates` →
+`check-lan-exposure` (`Makefile:634`, `:1147`) reports 3 unapproved binds —
+`100.123.51.67` on ports 43961, 8019, 8016.
+
+**This is a D-612 side-effect.** D-612 replaced real IPs in
+`config/lan_exposure_allowlist.yaml` with placeholders so nothing sensitive
+ships. The gate runs against the **live host**, where those three services
+genuinely bind a tailnet IP — and a placeholder entry cannot approve a real
+bind. So the sanitization fixed the disclosure and **inoperabilized the gate**.
+
+The gate's own output names the anti-pattern: *"Do NOT silence this by adding
+entries to the allowlist without recording the justification."* Adding a
+placeholder-matching entry to make a docs commit green would be exactly that,
+and would smuggle a security-posture change through a documentation change.
+**Not done.** Escalated to the Architect: rebind to `127.0.0.1`, or record a
+reviewed justification per tailnet bind.
+
+Also pre-existing: `make dashboard` (`Makefile:268`) exceeded a 900s timeout.
+Not investigated — out of scope for a docs sweep.
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ D-615 ⬡ 2026-10-05*

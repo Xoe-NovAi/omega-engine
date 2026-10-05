@@ -116,8 +116,8 @@ entity improvised its own HTTP call to work around it.
 | Check | Result |
 |---|---|
 | Hub process | `active/running`, `NRestarts=0` |
-| `GET :8016/health` | HTTP 200, `1.6.0-alpha.1` |
-| `tools/list` over JSON-RPC | **54 tools advertised**, including `hivemind_awareness`, `hivemind_handoff`, `hivemind_lock`, `hivemind_get_metrics` |
+| `GET :8016/health` | HTTP 200, `1.6.0-alpha` |
+| `tools/list` over JSON-RPC | **55 tools advertised** (verified 2026-10-05), including `hivemind_awareness`, `hivemind_handoff`, `hivemind_lock`, `hivemind_get_metrics` |
 | `tools/call` round-trip | works (used for every post in this arc) |
 | `opencode.json` `mcp.omega-hub` | `enabled: true`, `url: http://127.0.0.1:8016/mcp` |
 | Permission rules | **no rule names any `omega-hub` tool** — permissions are not the cause |

@@ -489,7 +489,18 @@ Where F is the CDF of a normal distribution with mean/stddev estimated from **hi
 **Transport**: 
 - **Streamable HTTP** (2026-07-28): Mandatory `Mcp-Method` and `Mcp-Name` HTTP headers for routing/filtering without JSON-RPC parsing
 - **SSE** (legacy): Server-Sent Events for streaming
-- **Dual-Version Support**: C# SDK v2.2.0+ serves both 2025-11-25 (stateful) and 2026-07-28 (stateless) clients on single endpoint
+- **Dual-Version Support**: 🚩 **UNVERIFIED** — C# SDK v2.2.0+ serves both 2025-11-25 (stateful) and 2026-07-28 (stateless) clients on single endpoint. *(Marked UNVERIFIED 2026-10-05 per M23: this is a third-party SDK claim, not checkable from this repo and not exercised by any test here. Do not cite as Omega capability.)*
+
+> **⚠️ SCOPE — these bullets describe the 2026-07-28 SPEC, not Omega Hub behaviour.**
+> The Omega Hub does **not** send `Mcp-Method`/`Mcp-Name`, and does **not** assert
+> `2026-07-28` in the SEP-2243 `MCP-Protocol-Version` transport header
+> (`SEND_PROTOCOL_VERSION_HEADER = False` in
+> `mcp_servers/omega_hub/protocol_version.py:54` — deliberate, because the pinned
+> `mcp` 1.30.0 answers a `2026-07-28` header with HTTP 400 / JSON-RPC `-32600`).
+> The Hub declares its identity only in the SEP-2575 `_meta` envelope, which the
+> SDK ignores — so handshake-less `tools/list` works anyway. Full 2026-07-28
+> stateless compliance is **aspirational and NOT achieved**. Precise statement:
+> `docs/operations/DOC_CORRECTION_SWEEP_20261005.md` §6.
 
 **Security**: No MCP server sees whole conversation or other servers' internals. Each gets minimal input, returns results to host.
 

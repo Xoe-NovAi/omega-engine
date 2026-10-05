@@ -16,7 +16,7 @@ The **Omega Hub** is the central MCP (Model Context Protocol) server that expose
 **Hub Components**:
 - **MCP Server** (`mcp_servers/omega_hub/server.py`) — Port 8016
 - **Hardware Bridge** (`src/omega/hub.py`) — Hardware stats for Oracle
-- **Tool Registry** — 54+ unified tools
+- **Tool Registry** — 55 unified tools (verified 2026-10-05 via live `tools/list`)
 
 ---
 
@@ -25,7 +25,7 @@ The **Omega Hub** is the central MCP (Model Context Protocol) server that expose
 ```bash
 # 1. Basic health endpoint
 curl http://localhost:8016/health
-# Expected: {"status":"healthy","version":"1.6.0-alpha.1"}
+# Expected: {"status":"healthy","version":"1.6.0-alpha"}
 
 # 2. Check process
 ps aux | grep "omega_hub.server"
