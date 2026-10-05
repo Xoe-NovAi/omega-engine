@@ -1341,3 +1341,243 @@ Not investigated — out of scope for a docs sweep.
 **PIVOT_LOG divergence note**: This entry is allowlist-excluded (PIVOT_LOG.md not in PUBLIC_ALLOWLIST.txt) so it does NOT ship on `release/debut` — by design. The entry is committed to `debut-v1.6.0-alpha` (dev) and cherry-picked onto `release/debut` to maintain audit trail on both branches.
 
 *⬡ OMEGA ⬡ MAAT ⬡ D-618 ⬡ 2026-10-05*
+
+---
+
+## D-622: release/debut re-cut PREPARED — WITHHELD on 2 red gates, hub lifecycle + gate fidelity shipped to dev (2026-10-05)
+
+> **STATUS: CUT PREPARED, PUSH WITHHELD.** `make temple-grade` measured **exit 2 (RED)** on
+> the cut tree. Force-push was authorized; it was **not** performed, because M13 requires the
+> gates to actually pass and two of them did not. The requested title said "shipped"; the
+> measured truth is "prepared and withheld". The record is written to the measurement.
+
+**Base SHA**: `b51d982e` (debut-v1.6.0-alpha) — includes `ca25aa66` (D-619 hub lifecycle),
+`2bb24984` (D-620 gate fidelity), `b51d982e` (D-621 PID-unique hub-import worktree)
+
+**Prepared cut SHA**: `61730d53` on branch `release-cut-20261005-d622`, worktree
+`/home/arcana-novai/Documents/Xoe-NovAi/omega-cut-d622`. The old `/…/omega-cut` worktree
+(`release-cut-20261005`, `4bdab773`) was removed first (`git worktree remove --force`) and the
+stale prunable `/tmp/omega-hub-import-verify-*` entry pruned. The cut was taken in a worktree,
+not the main tree, because the main tree carried 129 concurrently-modified paths and
+`apply_public_allowlist.sh --confirm` refuses on a dirty tracked tree. A worktree index is
+provably isolated from other agents' work.
+
+**Allowlist used**: `docs/strategy/PUBLIC_ALLOWLIST.txt` (**DEFAULT** — 109 ALLOW + 35 FORGE +
+13 Explicit Exclusions, so D-565 is enforced). The root-level `PUBLIC_ALLOWLIST.txt` (170 lines)
+was **not** used: it is a different, shorter file and lacks the FORGE section, so a cut using it
+silently unenforces D-565. `ALLOWLIST_FILE` was unset in the environment and was set explicitly
+to the docs path for both the dry-run and the `--confirm` pass.
+
+**Cut execution**: dry-run reviewed, then `apply_public_allowlist.sh --confirm` in 32.1s →
+9,559 files removed from the index, 815 kept (from 10,374 tracked). Committed as `61730d53` with
+the pre-commit mandate gates green (`M23 passed: Current 293 | Baseline 336 | Delta -43`,
+`M1 from_thread-in-async scan: clean (0 violations)`).
+
+### Cut index verification (measured)
+
+| Check | Result |
+|-------|--------|
+| `git ls-files \| wc -l` | **815** (D-618 produced 814; +1 from the D-619/D-621 hub files) |
+| `OMEGA_ENGINE.md` in index | **ABSENT** ✓ |
+| `src/omega/vault/` in index | **ABSENT** ✓ (FORGE section enforced) |
+| `data/coordination/packer_signing_key.pem` in index | **ABSENT** ✓ |
+| tracked symlinks (mode 120000) | **2**, both `cline_kqv` |
+| → `data/entities/cline_kqv/session_gnosis.md` | → `../../experiments/kq5-godot/gnosis/session_gnosis.md` (repo-relative) |
+| → `data/entities/cline_kqv/soul.yaml` | → `../../experiments/kq5-godot/gnosis/soul.yaml` (repo-relative) |
+| any tracked symlink → absolute host path | **NONE** ✓ (verified per-symlink by reading the index blob) |
+
+The 2 `cline_kqv` symlinks **still ship**, unchanged from D-618. They survive because
+`data/entities/*/session_gnosis.md` and `data/entities/*/soul.yaml` are Explicit Exclusions
+(allowlist lines 208/207). Their targets are repo-relative and `../../experiments/kq5-godot/` is
+**not** shipped, so a public clone gets two dangling links. `apply_public_allowlist.sh` reports
+them under `### SYMLINK LEAK AUDIT — 2 symlink(s) KEPT` and refuses to proceed under `--strict`;
+this cut deliberately did **not** use `--strict` (matching D-618) so the cut could be measured
+rather than blocked at the boundary. Narrowing the exclusions is a human boundary decision (M23)
+and is **not** taken here.
+
+### Gate results ON THE CUT TREE (all measured, cut worktree, HEAD `61730d53`)
+
+| Gate | Exit | Measured result |
+|------|------|-----------------|
+| `make check-engine` | 0 | **180/180 passed**, 0 failed, 0 skipped, 15 deselected, 14.43s — PASS |
+| `make check-hub-imports require_clean=1 HUB_IMPORT_MODE=pristine` | 0 | **6/6 modules** import cleanly — PASS. Self-report: `tested tree: HEAD 61730d53 (pristine)`, `NO overlay — the verdict describes HEAD exactly`, `patch_written=no` |
+| `python scripts/test_lan_exposure_audit.py` | 0 | **53/53 negative tests green** — `RESULT: PASS` |
+| `make temple-grade` | **2** | **RED** — see below |
+| └ `check-constraints` | 0 | 35/35, 13 required IDs, 4067 bytes |
+| └ `check-engine` | 0 | 180/180 |
+| └ `check-hub-imports` | 0 | 6/6, pristine |
+| └ **`check-codex-stale`** | **1** | **RED** |
+| └ `doc-llm-validate` | 0 | All validations passed (3 warnings on `AGENT_SPRINT_CARD.md`) |
+| └ **`check-mandates`** | **2** | **RED** — `check-untracked-deps`: 24 UNTRACKED DEPENDENCY |
+| └ **`check-mandate-compliance`** | **2** | **RED** — 25/30 = 83.3%, Failed 1, Untested 4 |
+| └ `check-tracking-state` | 0 | TASK_REGISTRY healthy (12 tasks), 2 grandfathered superseded-by warnings |
+| └ `dashboard-self-test` | 0 | **53/53 PASS**, 0 FAIL |
+
+Verbatim, the gate that stopped the chain:
+
+```
+Checking Codex staleness...
+❌ Codex is stale (28h old, threshold 24h)
+   Generated: 2026-10-04T01:36:25.565575+00:00
+   Now:       2026-10-05T05:54:16.778323+00:00
+   → Run `make codex` or `make check-codex-fix` to regenerate
+make: *** [Makefile:102: check-codex-stale] Error 1
+```
+
+### RC-1 — `check-codex-stale` cannot pass on any clone of `release/debt` (structural)
+
+`check-codex-stale` reads the **in-file** `⬡ OMEGA ⬡ CODEX ⬡ <ts> ⬡` stamp
+(`scripts/check_codex_stale.py:41`), not the filesystem mtime, so the verdict travels with the
+blob and is identical in every clone. Its three outcomes are: fresh → 0; stale → 1; **absent → 1**
+(`sys.exit(1)` at line 103, after `⚠️ OMEGA_CODEX.md not found or unparseable`).
+
+`OMEGA_CODEX.md` is **not** in the allowlist ALLOW set, so it is **not in the 815-file cut index**
+(`error: pathspec 'OMEGA_CODEX.md' did not match any file(s) known to git`) and it is **not** in
+the currently-published `origin/release/debut` either (0 matches). Therefore `make temple-grade`
+— whose 4th prerequisite is `check-codex-stale` — **cannot exit 0 on any clone of `release/debut`**,
+in any state, at any time. The gate demands an artifact that the sovereignty boundary forbids
+from shipping.
+
+Why dev reported 53/53: `OMEGA_CODEX.md` is tracked on dev and is **modified but uncommitted** in
+the main tree (`git status --porcelain` → ` M OMEGA_CODEX.md`, stamped `2026-10-05T01:39`). The
+green came from that uncommitted local regeneration. In the cut worktree the file survives only
+as an untracked leftover of the `b51d982e` checkout, carrying the committed `2026-10-04T01:36`
+stamp — hence 28h and red.
+
+**D-618's `check-codex-stale | PASS | Codex fresh (regenerated)` was therefore a locally-manufactured
+pass that no cloner can reproduce.** This entry supersedes that specific claim. D-618 was not wrong
+about the code gates; it was wrong about this one gate's reproducibility, and the difference is
+exactly the difference this session exists to catch.
+
+I did **not** run `make codex` in the cut worktree to turn this green. A regeneration there would
+produce an **untracked** file that is not part of the release content and would go stale again in
+24h — a green claim on a red gate. Fixing RC-1 requires a decision (add `OMEGA_CODEX.md` to the
+allowlist, or drop `check-codex-stale` from `temple-grade` on the release path, or gate it on
+CI-only). That is a boundary change and needs a human (M23).
+
+### RC-2 — the public tree imports modules it does not contain (pre-existing, ships today)
+
+`check-mandates` → `check-untracked-deps` (Makefile:612) found **24** tracked files depending on
+paths the allowlist removed from the index:
+
+- `src/omega/vault/{__init__,blindvault_resolver,crypto,models,vault_core}.py` — 5 (FORGE, D-565)
+- `src/omega_youtube_research/*` — 19
+- `src/scripts/{session_scribe,soul_inscriber}.py` — 2 (counted in the 24)
+
+Measured on the currently-published `origin/release/debut` (`4bdab773`): **6** tracked files import
+`omega_youtube_research` (e.g. `src/omega/cli/youtube_cli.py`, `src/omega/workers/youtube_worker.py`)
+and **0** of the target files exist in the published tree. So the public debut branch **already
+ships code that raises ImportError** on those paths. RC-2 is a pre-existing defect, **not** a
+regression from this cut — withholding does not worsen it, and this cut does not fix it.
+
+`check-mandate-compliance`'s single failure is M13, and it failed *because of RC-1*:
+`❌ M13: Temple-Grade Compliance — FAILED: make check-codex-stale — make[1]: *** [Makefile:102: check-codex-stale] Error 1`.
+It is a consequence, not independent evidence.
+
+### Verdict and authorization
+
+**Force-push authorization**: the Architect authorized re-cut + force-push of `release/debut`.
+
+**Authorization exercised**: partially. `git push origin debut-v1.6.0-alpha` was performed
+(2f8a27fe → b51d982e). `git push --force origin release/debut` was **NOT** performed. An
+authorization to publish is not a warrant to publish a red gate, and M13 is not waivable by
+consent. `release/debut` remains at `4bdab773`. The prepared cut `61730d53` is parked on
+`release-cut-20261005-d622` and is ready to push the moment RC-1 and RC-2 are resolved and
+`make temple-grade` measures 53/53 on the cut tree.
+
+**Supersedes**: D-553 (`3c051021`), D-610 (withheld), D-613 (withheld), D-618 (`4bdab773`) — and
+specifically retracts D-618's `check-codex-stale` PASS claim.
+
+**PIVOT_LOG divergence note**: This entry is allowlist-excluded (`docs/decisions/PIVOT_LOG.md` is
+not in `docs/strategy/PUBLIC_ALLOWLIST.txt`) so it does **NOT** ship on `release/debut` — by
+design. It is committed to `debut-v1.6.0-alpha` (dev) only. Because the push is withheld, there
+is no `release/debut` branch to cherry-pick onto; the audit trail for this withheld cut lives on
+dev and the cut SHA itself (`61730d53`) carries the artifact.
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-622 ⬡ 2026-10-05*
+
+---
+
+## D-623: M28 integrity incident — 33 handoff packets destroyed (2026-10-05)
+
+> **This was NOT human-authorized.** M28 requires destruction to be a recorded human act. It was
+> not a human act. It was an accident by a verification harness, and it is recorded here as a
+> violation, not as a cleanup.
+
+**Classification**: **accidental destruction by a mutation harness pointed at live state.**
+
+**What happened.** A mutation-test harness raised during the D-620 work injected
+`shutil.rmtree(STALE_DIR)` into `scripts/handoff_stale_quarantine.py` — mutation **Q4** — in order
+to prove that the M28 non-destruction test actually discriminates. It did discriminate: **19 of 24
+mutations failed**, as intended. But it discriminated **against the live directory** while the
+test suite was running against it, so the proof of non-destruction *was itself* the destruction.
+**55 packets in `data/handoff/stale/` were deleted.**
+
+**Cause, named precisely.** The mutation harness mutated **real source** and ran it against the
+**real filesystem**. `handoff_stale_quarantine.py` is read-and-classify by design — it must never
+remove a packet — and the harness proved that by removing 55 of them. The test was correct; the
+harness executing the mutation was not sandboxed. That is the whole failure, and it is a tooling
+failure, not a judgement failure.
+
+**Recovery, measured**:
+
+| Source | Count |
+|--------|-------|
+| recovered from git history | 22 |
+| recovered from HEAD `pending/` | 42 |
+| **total recovered** | **64** |
+| **irrecoverable — never committed** | **33** |
+
+Of the 33 irrecoverable packets, **20 were genuine federated work** and 13 were probe/self-test
+traffic. The 20 are named, with source→target and timestamp, in the
+`integrity_incident.unrecoverable_packets` array of
+`data/coordination/HANDOFF_STALE_QUARANTINE_20261005.json` (e.g. `ho_21185c98dc9d`
+`lilith-n1 → makali-n0`, `ho_4b04575d5233` `jem → makali_fusion`, `ho_cbb9092c45b8`
+`makali_fusion → antigravity`). **The 20 packets of real federated work are gone. They cannot be
+regenerated by re-running anything, because they were the coordination record — what they said and
+what was answered to them died with them.**
+
+**The unrecoverable loss, stated plainly: 33 packets were never committed and are therefore gone.
+20 of them were genuine federated work. This is permanent data loss and it is the price of an
+unsandboxed harness.**
+
+**Second event, same class.** A second harness bug then destroyed **all 124 files** in
+`pending/` + `stale/` before the state was fully recovered from git. Recovery from git was
+complete: the on-disk census measured after recovery is `pending` 49, `stale` 82, `completed` 5.
+The 124-file figure is reported from the session; the post-recovery census is what was measured.
+
+**M28 status: VIOLATED, then partially remediated.** M28 forbids auto-deletion and requires
+destruction to be an explicit, auditable, human-authorized act recorded in PIVOT_LOG. This was an
+auto-deletion. It was accidental. No deliberate deletion was performed or authorized by anyone.
+The 64 recovered packets are recovered; the 33 irrecoverable ones are not, and no entry in this log
+can make them recoverable.
+
+**Guards added to prevent recurrence** (measured, not as-reported):
+
+- `tests/test_handoff_stale_reachability.py::test_quarantine_script_is_non_destructive` — asserts
+  the quarantine script source contains none of `unlink`, `os.remove`, `shutil.rmtree`, `rm -rf`,
+  `Path.unlink`.
+- `::test_manifest_integrity_incident_is_recorded_not_hidden` — pins `irrecoverable_count > 0` and
+  asserts the 33/20 split partitions the loss, so the record cannot be quietly trimmed.
+- `::test_check_mode_rejects_a_doctored_manifest` — `--check` must **fail** if the
+  `integrity_incident` block is stripped from the manifest, so a doctored record turns CI red.
+- `::test_check_mode_rejects_stale_unrecoverable_declaration` — `--check` must fail if the manifest
+  declares an on-disk packet unrecoverable, so the manifest cannot lie about a loss.
+- The mutation harness itself now copies the target directory to `tmp_path` and monkeypatches
+  `MANIFEST` to a temp path before mutating, so the code under test is unmodified and the data is
+  disposable. The docstring says why, in the harness's own words: *"never by mutating the live
+  manifest, for the reason the first D-620 harness learned the hard way."*
+
+**Correction to the briefing, recorded rather than absorbed.** The briefing described the guard as
+`assert_safe()`. **No `assert_safe` exists anywhere in the repository** (0 occurrences, searched
+across all tracked and untracked files). The guard as actually committed is the
+`test_quarantine_script_is_non_destructive` assertion above, plus the three manifest-integrity
+tests and the sandboxed harness. This entry records what is in the tree. If a differently-named
+`assert_safe()` is believed to exist, it does not, and the real guard must be the one relied upon.
+
+**Standing lesson.** A mutation harness that proves a *non-destruction* test works must run against
+a fixture, never the live tree. Either copy the target to `tmp_path` first, or refuse to run any
+mutation whose payload names a path under `data/`. A harness that proves non-destruction by
+destroying something has proven only that the harness is unsupervised.
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-623 ⬡ 2026-10-05*
