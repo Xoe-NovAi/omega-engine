@@ -57,8 +57,11 @@ jobs:
         make check-mandates
 
     - name: Temple-Grade (full release gate)
+      # D-620: require_clean=1 — CI checks out a clean tree, so the import gate
+      # must describe HEAD exactly. With an overlay it could pass on code that
+      # does not exist in the commit being gated.
       run: |
-        make temple-grade
+        make temple-grade require_clean=1 HUB_IMPORT_MODE=pristine
 
     - name: Test with pytest (Mock Mode)
       env:

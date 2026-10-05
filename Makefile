@@ -1008,12 +1008,26 @@ gate-secrets:
 # pyproject.toml and sends them debugging the wrong thing.
 HUB_IMPORT_PIP_TIMEOUT ?= 420
 HUB_IMPORT_WORKTREE := /tmp/omega-hub-import-verify
+# HUB_IMPORT_MODE=auto      overlay the tracked working-tree diff AND SAY SO
+# HUB_IMPORT_MODE=pristine  never overlay; the verdict describes HEAD exactly.
+#                            The release/CI path sets pristine via require_clean.
+HUB_IMPORT_MODE ?= auto
 HUB_IMPORT_MODULES := mcp_servers.omega_hub.server \
                       mcp_servers.omega_hub.state \
                       mcp_servers.omega_hub.hub_tools \
                       mcp_servers.omega_hub.github_bridge \
                       mcp_servers.searxng.server \
                       mcp_servers.firecrawl.server
+
+# [D-620] The gate describer. ABSOLUTE path, for the same reason as PYTHON_ABS:
+# the recipe `cd`s into the verification worktree, where neither a relative
+# script path nor an untracked file exists. Resolved from the invoking repo
+# root (CURDIR) — never from $CWD-at-use-time.
+HUB_IMPORT_GATE := $(abspath scripts/check_hub_import_gate.py)
+# The repo the diff was taken FROM. Pinned at invocation, because the recipe
+# later `cd`s into the verification worktree — reading the repo from $CWD at
+# use time is the original CWD trap, reproduced one level down.
+HUB_IMPORT_REPO := $(CURDIR)
 
 check-hub-imports:
 	@echo "$(YELLOW)Tier B: clean-worktree import gate for MCP servers...$(NC)"
@@ -1024,10 +1038,12 @@ check-hub-imports:
 	if ! git worktree add --detach $(HUB_IMPORT_WORKTREE) HEAD >/dev/null 2>&1; then \
 		echo "$(RED)FAIL: could not create detached worktree at HEAD$(NC)"; exit 1; \
 	fi; \
-	git diff HEAD > /tmp/omega-hub-import-$$.patch 2>/dev/null; \
+	$(PYTHON_ABS) $(HUB_IMPORT_GATE) --repo $(HUB_IMPORT_REPO) --mode $(HUB_IMPORT_MODE) \
+	    $(if $(filter 1 true yes,$(require_clean)),--require-pristine,) \
+	    --patch-out /tmp/omega-hub-import-$$.patch || exit $$?; \
 	if [ -s /tmp/omega-hub-import-$$.patch ]; then \
 		if (cd $(HUB_IMPORT_WORKTREE) && git apply /tmp/omega-hub-import-$$.patch) >/dev/null 2>&1; then \
-			echo "  overlaying tracked working-tree diff onto HEAD (untracked files excluded by design)"; \
+			:; \
 		else \
 			rm -f /tmp/omega-hub-import-$$.patch; \
 			echo "$(RED)FAIL: working-tree diff does not apply onto HEAD — cannot verify$(NC)"; \
@@ -1067,9 +1083,10 @@ check-hub-imports:
 	done; \
 	if [ "$$FAILED" -ne 0 ]; then \
 		echo "$(RED)check-hub-imports FAILED — a daemon entry point does not import$(NC)"; \
+		echo "$(RED)      tested tree: $$($(PYTHON_ABS) $(HUB_IMPORT_GATE) --repo $(HUB_IMPORT_REPO) --mode $(HUB_IMPORT_MODE) --label-only)$(NC)"; \
 		exit 1; \
 	fi; \
-	echo "$(GREEN)check-hub-imports PASSED ($$(echo $(HUB_IMPORT_MODULES) | wc -w) modules import cleanly in a clean venv)$(NC)"
+	echo "$(GREEN)check-hub-imports PASSED ($$(echo $(HUB_IMPORT_MODULES) | wc -w) modules import cleanly in a fresh venv) — tested tree: $$($(PYTHON_ABS) $(HUB_IMPORT_GATE) --repo $(HUB_IMPORT_REPO) --mode $(HUB_IMPORT_MODE) --label-only)$(NC)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Check Omega Hub health — CRASH-LOOP DETECTING  [seam-fix 2026-09-27 maat]

@@ -50,7 +50,7 @@ jobs:
 
       - name: Temple-Grade validation
         run: |
-          make temple-grade
+          make temple-grade require_clean=1 HUB_IMPORT_MODE=pristine
 
       - name: Extract version from tag
         id: version

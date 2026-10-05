@@ -77,7 +77,8 @@ jobs:
       - name: Run temple-grade gate
         run: |
           echo "Running temple-grade gate..."
-          make temple-grade
+          # D-620: pristine — the gate must describe HEAD on an automated run.
+          make temple-grade require_clean=1 HUB_IMPORT_MODE=pristine
       
       - name: Commit and push changes
         if: github.event_name == 'schedule' || github.event.inputs.force == 'true'
