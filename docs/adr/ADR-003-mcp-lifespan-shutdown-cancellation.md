@@ -252,6 +252,66 @@ re-run the sampler harness on a confirmed-free port (e.g. 8142).
 converts the 30s SIGKILL into an observable, attributable shutdown, which is a
 better production posture than an unbounded drain regardless of the root cause.
 
+---
+
+## §8 AMENDED (D-619, 2026-10-05) — §7.1's negative result was a MIS-PLACED FIX
+
+**The task group WAS the blocker. §7.1 did not disprove that hypothesis; it measured
+a fix that had never been correctly applied.**
+
+§1 of this ADR specified the correct placement: `tg.cancel_scope.cancel()`
+*"immediately after the lifespan's `yield` returns, **before leaving the task
+group**."* The committed code placed it **after** leaving the task group. `yield`
+sits inside `async with anyio.create_task_group()`, so on SIGTERM the generator
+resumes, exits `streamable_mgr.run()`, and `__aexit__` blocks joining children that
+never return. Only after that join did control reach the cancel — cancelling an
+already-joined scope. The ADR was right and the code contradicted it, and nobody
+checked the code against the ADR because the comment block above the line
+described the correct AnyIO pattern in confident detail.
+
+| | before (D-619) | after (D-619) |
+|---|---|---|
+| `systemctl --user stop` | **29.06s**, `stop-sigterm timed out. Killing.` | **0.251s**, rc=0 |
+| systemd verdict | SIGKILL, `Failed with result 'timeout'` | `Stopped` cleanly |
+| `on_shutdown` (`_cleanup_indexer`) | **never reached** | runs; logs "batch writer stopped cleanly" |
+| MemoryStore batch-writer flush | truncated on every restart | completes |
+
+**Repro used to settle placement rather than reading it** (Starlette lifespan, one
+`while True: await anyio.sleep(300)` child, under `timeout 6`):
+
+- cancel **inside** the task group → `LIFESPAN EXITED CLEANLY`, exit **0**
+- cancel **outside** the task group → no output, killed by `timeout`, exit **124**
+
+That 0-vs-124 split is the entire bug in two numbers.
+
+### §8.1 Two corrections to the record
+
+1. **§7.1's "the task group was never the thing blocking production shutdown" is
+   withdrawn.** Its A/B was a valid experiment of the wrong thing: both the
+   "post-fix" restarts loaded code that could not work. The negative result is
+   explained by the mis-placement, not by a second unknown blocker.
+2. **`uvicorn.Config(timeout_graceful_shutdown=N)` is NOT the fix** and must not be
+   adopted as one. It bounds the symptom — turning a 30s SIGKILL into an
+   *observable* stop — while leaving the task group uncancelled and
+   `on_shutdown` unreached. It is legitimate *instrumentation* for a future
+   hang, and adopting it now would have closed this investigation with the defect
+   still in place. The §7 "next step" recommendation is superseded.
+
+### §8.2 The transferable lesson
+
+§7.1 recorded a real, reproducible failure and then correctly refused to cite
+ADR-003 as its fix. That was good practice. The failure was concluding the
+hypothesis was *wrong* rather than concluding the *fix* was unverified. A negative
+A/B distinguishes "this fix does not work" from "this hypothesis is false" only
+when the fix has been shown to be in the executed path — and here it was not.
+
+*⬡ OMEGA ⬡ DOOM_GUY ⬡ ADR-003-AMDENDED ⬡ AP-ADR-003-MCP-TG-SHUTDOWN-v1.0.0 ⬡ 2026-10-05*
+
 
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ ADR-003 ⬡ AP-ADR-003-MCP-TG-SHUTDOWN-v1.0.0 ⬡ 2026-10-03*
+<!-- PROVENANCE-CORRECTED 2026-10-04T04:03:43Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

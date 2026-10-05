@@ -222,33 +222,49 @@ def run_mcp(
                         await result
                 async with streamable_mgr.run():
                     yield
-            # [doom_guy 2026-10-03] TaskGroup exit: cancel all background tasks.
+                # [doom_guy 2026-10-05] D-619 — the cancel MUST live INSIDE the
+                # `async with anyio.create_task_group()` block.
+                #
+                # The 2026-10-03 fix placed `tg.cancel_scope.cancel()` AFTER the
+                # block closed, believing it cancelled the children. It never ran
+                # in time to matter: `yield` is INSIDE the task group, so the
+                # generator resumes, falls out of `streamable_mgr.run()`, and then
+                # the task group's __aexit__ runs — BLOCKING on children that
+                # never finish. Only after that join does control reach the
+                # cancel, which by then is cancelling an already-joined scope.
+                #
+                # Placement is the whole bug, and it is invisible to the reader:
+                # the comment block sat directly above the mis-placed line and
+                # explained the correct AnyIO pattern while the code did the
+                # opposite. Proved, not assumed — a 30-line Starlette lifespan
+                # repro with one `while True: await anyio.sleep(300)` child:
+                #   cancel INSIDE  the group -> lifespan exits, exit 0
+                #   cancel OUTSIDE the group -> hangs until SIGKILL, exit 124
+                # That is the production signature exactly: TimeoutStopSec=30
+                # elapsed, then systemd SIGKILLed the hub.
+                #
+                # Streams must be exited BEFORE the cancel, which is why this
+                # line sits after `streamable_mgr.run()` but inside the group.
+                tg.cancel_scope.cancel()
+            # [doom_guy 2026-10-03] TaskGroup exit: children are now cancelled and
+            # the group has joined cleanly, because the cancel above runs INSIDE
+            # the group. See the D-619 note there for why the placement is the
+            # entire bug. `on_shutdown` below now actually gets reached.
             #
-            # The comment here previously read "all background tasks cancelled".
-            # That was FALSE, and the false comment is load-bearing: it is what
-            # let three infinite background loops ship as if they were self-
-            # terminating. anyio.create_task_group() does NOT cancel its children
-            # when the block exits — it WAITS for every child to finish. Proved
-            # with a 12-line repro (a single `while True: await anyio.sleep(300)`
-            # child hung the enclosing task group until the process was killed;
-            # exit code 124 under `timeout`).
+            # Historical note, retained because the false version of this comment
+            # was itself load-bearing: it read "all background tasks cancelled"
+            # while the cancel sat outside the task group and therefore never
+            # executed before the blocking join. Three infinite background loops
+            # (_prune_awareness_background, _reaper_background,
+            # run_harvester_loop) shipped as if they were self-terminating, and
+            # every shutdown cost TimeoutStopSec=30 followed by SIGKILL — which
+            # can truncate in-flight work such as the MemoryStore batch-writer
+            # flush and the harvester's filesystem walk.
             #
-            # Every loop in omega_hub's _on_startup is of exactly that shape:
-            # _prune_awareness_background, _reaper_background and
-            # run_harvester_loop. So on SIGTERM the lifespan resumes after
-            # `yield`, tries to leave the task group, and blocks on children
-            # that will never return. The process only dies because systemd's
-            # TimeoutStopSec=30 escalates to SIGKILL — every restart costs a
-            # full 30s stall plus a hard kill, which can truncate in-flight
-            # work such as the MemoryStore batch-writer flush and the harvester's
-            # filesystem walk.
-            #
-            # This is the documented AnyIO pattern: cancel the scope, then let
-            # __aexit__ absorb the cancellation. Children get their cancellation
-            # delivered, the group joins cleanly, and `on_shutdown` below still
-            # runs. Streams must be exited BEFORE the cancel, which is why the
-            # cancel sits outside `streamable_mgr.run()`.
-            tg.cancel_scope.cancel()
+            # NOTE: there is deliberately NO second `tg.cancel_scope.cancel()`
+            # here. It used to sit at this indentation, one line below the task
+            # group — i.e. it ran only AFTER __aexit__ had already blocked on
+            # the children it was meant to cancel. See the D-619 note above.
             # Shutdown cleanup — call on_shutdown if provided
             # [id-soft: vet-008] Zone Memory — deterministic cleanup via zone-purge semantics
             if on_shutdown:
