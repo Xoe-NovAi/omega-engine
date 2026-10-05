@@ -56,6 +56,12 @@ scripts/gnosis_archive.py
 scripts/load_constraints.py
 scripts/test_lan_exposure_audit.py
 scripts/lan_exposure_audit.py
+scripts/check_codex_stale.py
+scripts/check_hub_imports.py
+scripts/check_mandate_compliance.py
+scripts/validate_llm_docs.py
+scripts/validate_tracking_state.py
+scripts/benchmark_dashboard.py
 README.md
 LICENSE
 CONTRIBUTING.md

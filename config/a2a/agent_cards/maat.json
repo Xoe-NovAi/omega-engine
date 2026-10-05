@@ -75,7 +75,7 @@
   "securitySchemes": {
     "meshIdentity": {
       "mtlsSecurityScheme": {
-        "description": "APPROXIMATION - NOT AN mTLS CLAIM. Omega seat identity is enforced at the Tailscale/WireGuard MESH layer (tailnet-only, ACL-gated; tailnet IPv4 100.123.51.67 and IPv6 fd7a:115c:a1e0::d835:3344; enforced by tailscaled Serve routes and recorded in config/lan_exposure_allowlist.yaml). It is NOT HTTP-layer mutual TLS and NOT an API key. The A2A SecurityScheme oneof (§4.5.1) has no member that expresses mesh-layer network identity, so mtlsSecurityScheme (§4.5.6) is used as the nearest available marker. Per §4.5.6 that member carries only an optional `description`, which is why it cannot encode mesh specifics - hence this field. A client MUST NOT read this scheme as evidence of negotiated mTLS on the transport."
+        "description": "APPROXIMATION - NOT AN mTLS CLAIM. Omega seat identity is enforced at the Tailscale/WireGuard MESH layer (tailnet-only, ACL-gated; tailnet IPv4 <TAILNET_IP> and IPv6 <TAILNET_IPV6>; enforced by tailscaled Serve routes and recorded in config/lan_exposure_allowlist.yaml). It is NOT HTTP-layer mutual TLS and NOT an API key. The A2A SecurityScheme oneof (§4.5.1) has no member that expresses mesh-layer network identity, so mtlsSecurityScheme (§4.5.6) is used as the nearest available marker. Per §4.5.6 that member carries only an optional `description`, which is why it cannot encode mesh specifics - hence this field. A client MUST NOT read this scheme as evidence of negotiated mTLS on the transport."
       }
     }
   },
