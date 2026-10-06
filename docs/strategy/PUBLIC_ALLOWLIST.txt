@@ -41,6 +41,15 @@ scripts/hivemind_post.py             # Hivemind post helper
 scripts/infra_inventory.py           # S1 inventory
 scripts/soul_promote.py              # soul promotion
 
+# [D-624] Non-Python assets that shipped GATES open unconditionally. The Makefile
+# passes these paths directly (Makefile:316-317), so their absence is a hard
+# FileNotFoundError, not a soft skip. All 3 verified 0 sensitive hits.
+# NOTE: config/*.local.yaml is deliberately NOT listed — it holds host-local
+# LAN policy (D-616) and must never ship.
+schemas/llm_doc_frontmatter.json     # doc-llm-validate frontmatter contract
+configs/token_budgets.yaml           # doc-llm-validate token budgets
+config/handoff_policy.yaml           # handoff store policy
+
 # Core engine (after DEL-1)
 src/omega/
 
