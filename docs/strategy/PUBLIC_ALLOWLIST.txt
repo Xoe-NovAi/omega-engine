@@ -250,6 +250,13 @@ migrate_heritage.py
 - `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — subagent dispatch protocol
 - `docs/strategy/sote/2026-W37/` — SOTE Week 37 report
 - `config/model_registry/index.sqlite` — do NOT commit (runtime artifact)
+- `schemas/llm_doc_frontmatter.json` — [D-624] doc-llm-validate frontmatter contract; the
+  Makefile opens this path unconditionally (Makefile:317), so its absence is a hard
+  FileNotFoundError. Listed as an EXCLUSION rather than an ALLOW because FORGE outranks
+  ALLOW in the cut precedence chain, and bare `schemas/` sits in FORGE (line 223).
+- `configs/token_budgets.yaml` — [D-624] doc-llm-validate token budgets; same reason,
+  bare `configs/` is in FORGE (line 214).
+- `config/handoff_policy.yaml` — [D-624] handoff store policy, read by shipped gate code.
 - `tests/tmp/` — runtime vault fixtures, FORGE only (G1)
 - `.firecrawl/` — scrape cache, FORGE only (G2)
 - `config/github_accounts.yaml` — credential file, FORGE only (G3)
