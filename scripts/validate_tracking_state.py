@@ -152,11 +152,22 @@ def validate_gap_registry():
 
 def validate_active_sprint():
     print(f"\n���� Validating {ACTIVE_SPRINT_PATH.name}...")
-    if not ACTIVE_SPRINT_PATH.exists():
-        print_error(f"{ACTIVE_SPRINT_PATH.name} not found.")
-        return False
+    # [D-624] A public clone has no live ACTIVE_SPRINT.json — it is per-host runtime
+    # state (M27: state follows the Tracking Architecture, not the release). Fall back
+    # to the sanitized public template, which ships, so the tracking gate can still
+    # validate the SCHEMA on a fresh clone instead of hard-failing on absence.
+    # The template is schema-identical; only host identity is placeholdered.
+    sprint_path = ACTIVE_SPRINT_PATH
+    if not sprint_path.exists():
+        template = DATA_DIR / "ACTIVE_SPRINT.public.json"
+        if template.exists():
+            sprint_path = template
+            print(f"   ℹ️  live file absent; validating sanitized template {template.name}")
+        else:
+            print_error(f"{ACTIVE_SPRINT_PATH.name} not found (and no public template).")
+            return False
 
-    data = load_json(ACTIVE_SPRINT_PATH)
+    data = load_json(sprint_path)
     errors = 0
 
     # Load GAP_REGISTRY for R-ID cross-check
