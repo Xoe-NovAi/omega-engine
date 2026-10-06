@@ -457,6 +457,30 @@ def classify(l: Listener, allow: dict) -> tuple[str, str] | None:
 def main() -> int:
     allow = load_allowlist()
     tracked_path, local_path = effective_sources()
+
+    # [D-624] A public clone has no host-local policy — config/*.local.yaml is
+    # gitignored by design (D-616), because it carries THIS host's real tailnet
+    # addresses. Without it there is nothing to audit against, so the honest
+    # verdict is NOT-APPLICABLE, not RED. Reporting RED here would mean every
+    # public clone fails a security gate for the crime of not shipping secrets,
+    # which trains operators to disable the gate.
+    if local_path is None and find_placeholders(allow):
+        print(f"{CYAN}LAN EXPOSURE AUDIT{NC}")
+        print(f"  policy source (tracked)  : {tracked_path}")
+        print(f"  policy source (local)    : NONE — no host-local override on this host")
+        print()
+        print(f"{YELLOW}NOT APPLICABLE — this host has no LAN exposure policy.{NC}")
+        print("  config/*.local.yaml is gitignored by design (D-616): it carries the")
+        print("  host's real tailnet addresses and must never be published. A public")
+        print("  clone therefore has no policy to audit against.")
+        print()
+        print("  This is NOT a pass and NOT a failure. To audit a real host, populate:")
+        print("    config/lan_exposure_allowlist.local.yaml")
+        print("  The negative-test suite (scripts/test_lan_exposure_audit.py) still")
+        print("  runs everywhere and is the portable half of this gate.")
+        print()
+        return 0
+
     listeners = parse_ss()
 
     findings: list[Finding] = []
