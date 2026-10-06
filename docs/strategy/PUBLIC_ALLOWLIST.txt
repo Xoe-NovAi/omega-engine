@@ -20,6 +20,13 @@
 # temple-grade was unsatisfiable on any fresh clone (RC-1).
 OMEGA_CODEX.md
 
+# [D-624] Compaction-immune mandate manifest (4KB, zero secrets). check-constraints
+# hard-fails when it is absent — correctly, per M23: a missing constraint set is a
+# governance failure, not an empty one. A repo that ships governance gates must
+# ship the governance. This is the artifact that makes P0-2's Governance Decay
+# defence real for every clone instead of only on this host.
+docs/governance/CONSTRAINTS.md
+
 # Core engine (after DEL-1)
 src/omega/
 
