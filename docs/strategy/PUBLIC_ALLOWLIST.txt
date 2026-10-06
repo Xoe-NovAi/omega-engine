@@ -261,11 +261,13 @@ migrate_heritage.py
   check-mandate-compliance. 0 sensitive hits.
 - `.opencode/agents/` — [D-624] M10 Fleet Integrity gate requires this directory to exist;
   16 agent definition files, 0 sensitive hits.
-- `data/coordination/ACTIVE_SPRINT.public.json` — [D-624] SANITIZED template of the live
+- `config/templates/ACTIVE_SPRINT.public.json` — [D-624] SANITIZED template of the live
   ACTIVE_SPRINT.json (user, tailnet IP and mount paths replaced with placeholders).
   check-tracking-state falls back to it when the live per-host file is absent, so the
   gate validates the schema on a fresh clone instead of hard-failing.
 - `data/coordination/TASK_REGISTRY.json` — [D-624] task registry the tracking gate reads.
+  NOTE: lives under the gitignored data/ tree, so it needs an explicit force-add if the gate
+  requires it on a clone; the ACTIVE_SPRINT template deliberately sits in config/templates/.
 - `docs/sprints/current/README.md` — [D-624] doc-llm-validate opens this path unconditionally
   (Makefile:322). Same FORGE-outranks-ALLOW trap as schemas/configs above.
 - `docs/sprints/current/llms.txt` — [D-624] token-budget input for doc-llm-validate.

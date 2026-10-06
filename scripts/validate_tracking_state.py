@@ -159,7 +159,7 @@ def validate_active_sprint():
     # The template is schema-identical; only host identity is placeholdered.
     sprint_path = ACTIVE_SPRINT_PATH
     if not sprint_path.exists():
-        template = DATA_DIR / "ACTIVE_SPRINT.public.json"
+        template = ROOT_DIR / "config" / "templates" / "ACTIVE_SPRINT.public.json"
         if template.exists():
             sprint_path = template
             print(f"   ℹ️  live file absent; validating sanitized template {template.name}")

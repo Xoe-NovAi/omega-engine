@@ -1,0 +1,103 @@
+{
+  "phase": "SUBSTRATE_REPAIRED__SPRINT_RECONCILED",
+  "updated": "2026-09-29T05:40:00Z",
+  "status_detail": "Governance deliverables COMPLETE: 5 artifacts committed (Soul Audit, Persona WAD Architecture, Strategy Dialectic Protocol, Identity Binding Decision, Identity Ontology Fixture). Alpha Release PR #3 MERGED (v1.6.1-alpha on main, commit f062a626). Public Flip READY \u2014 Antigravity blockers fixed, Temple-Grade 53/53 PASS, repo PRIVATE ready for flip. DEL-1 Micro-PR Chain: Phase 0-3 COMPLETE. Nomenclature Sweep COMPLETE. L3-MetaFrameVerification (0.92) RATIFIED as fleet standard. Soul Audit = 1:1 Mapping Mandate (39\u219228, 14 agent + 14 WAD entity). Persona WAD Architecture = Portable Governance. Identity Binding = Explicit Contracts Only (OD-IDENTITY-006). Governance Fixture = Drift Prevention.",
+  "package": {
+    "current_path": "data/federation/usb-payload/exchange/n0-to-n1-v2",
+    "renamed_by": "architect",
+    "files": 43,
+    "ledger_ok": "42/42",
+    "stale_do_not_deliver": "data/federation/usb-payload/exchange/n0-to-n1.zip (38/42, missing policy-update round)",
+    "delivery_staging": "/home/<USER>/exchange/full-pack-20260926",
+    "delivery_ledger": "DELIVERY_SHA256SUMS 43/43 OK",
+    "n1_destination": "~/omega-exchange/n0-to-n1"
+  },
+  "identity": {
+    "node": "n0-bastion",
+    "hostname": "Arcana-NovAi",
+    "user": "<USER>",
+    "tailscale_ip": "<TAILNET_IP>",
+    "active_entity": "lilith",
+    "model": "opencode/big-pickle"
+  },
+  "immediate_execution_queue": [
+    {
+      "step": 1,
+      "action": "Alias suffix-strip policy decision: Carmack argues CUT the strip and rely on sender discipline. UNRESOLVED - Architect's call. Blocks item 2.",
+      "status": "blocked",
+      "owner": "architect"
+    },
+    {
+      "step": 2,
+      "action": "Retroactive merge of the 10 alias forks. BLOCKED ON step 1 - do not start before the suffix-strip policy is ruled.",
+      "status": "blocked",
+      "owner": "makali_fusion"
+    },
+    {
+      "step": 3,
+      "action": "Define per-entity liveness semantics at submit time: 'resolves' vs 'reachable' is undefined for chat-session peers (no daemon, no port). Produce the semantic contract, then wire it to the submit-time check.",
+      "status": "in_progress",
+      "owner": "makali_fusion"
+    },
+    {
+      "step": 4,
+      "action": "HANDOFF_BASE process-global residual: architecture debate active, call-graph trace running. Await trace result, then rule on process-global vs per-instance state.",
+      "status": "in_progress",
+      "owner": "makali_fusion"
+    },
+    {
+      "step": 5,
+      "action": "Node 1 reverse channel (N1->N0) is UNBUILT, not untested. Requires a handoff to a session with a vantage on Node 1 substrate. Node 0 session cannot execute this - no cross-node SSH/NFS by policy (D-FED-01). Origin pattern: docs/operations/EXCHANGE_PIPE_RUNBOOK.md (manifest.json, X-Omega-SHA256/Size, JSON access log, loopback-only refusal, read-only 405).",
+      "status": "pending",
+      "owner": "lilith-n1 + ge_n1"
+    },
+    {
+      "step": 6,
+      "action": "N0 install as first outside user: not started. Largest untouched item in the queue. No prior session has executed an install against the public repo.",
+      "status": "pending",
+      "owner": "makali_fusion"
+    },
+    {
+      "step": 7,
+      "action": "Tailnet policy v2: mark the three 09-26 variants superseded in-file. data/federation/ still holds CONVERTED / DEFINITIVE / RECOMMENDED 20260926 alongside v2-20260928 with no authority marker; v2-20260928 matches live netmap (N1->N0 8016, 8019 allow; 8017, 8018, 22, 2049, 6379, 51372 deny).",
+      "status": "pending",
+      "owner": "makali_fusion"
+    },
+    {
+      "step": 8,
+      "action": "Handoff queue archive pass: data/handoff/pending/ holds 30 packets. Determine which are actionable before more are added; '607 stale handoffs' in known_degradations is now understated.",
+      "status": "pending",
+      "owner": "makali_fusion"
+    }
+  ],
+  "ruling_decisions": {
+    "D-1024-DIM-NATIVE-20260926": "Architect FINAL veto: Qwen3-Embedding-0.6B at 1024-D native on both nodes. Supersedes D-768-DIM-UNIFIED. MRL available, not canonical. N1 retires Nomic before embedding.",
+    "TAILNET-GRANTS-20260926": "Architect converted acls->grants. Final posture: granted 8016 both ways + 8017 N1->N0 + ICMP; REMOVED all node-to-node SSH, NFS 2049, and the funnel nodeAttrs entry; retained admin-only SSH in check mode at default 12h; added a tests section so Tailscale rejects any policy re-adding SSH/NFS. Node-to-node SSH and NFS are now tripwires.",
+    "D-FED-01": "git bundle + minisign is the authoritative release path; NFS demoted; no cross-node NFS/SSH. Now enforced by tailnet policy, not merely documented.",
+    "D-FED-02": "Redis loopback-only, bounded 512MB, non-authoritative, N0-local.",
+    "D-FED-03": "RETIRED - entities are sovereign AND may collaborate; delegation permitted with explicit contract (OD-IDENTITY-006).",
+    "ALPHA_MCP_RATIFIED": "Architect ratified unauthenticated HTTPS MCP (tailnet as trust boundary) for the Alpha stage. Does NOT close C6/N0-04.",
+    "D-GOV-001": "Soul Audit = 1:1 Mapping Mandate (39 souls \u2192 14 agents, 26 orphans, 28 target).",
+    "D-GOV-002": "Persona WAD Architecture = Portable Governance (PWAD manifest, loader, soul, packaging).",
+    "D-GOV-003": "Strategy Dialectic Protocol = Authenticated, provenance-preserving, model-independent, Gates A-F.",
+    "D-GOV-004": "Identity Binding Decision = Explicit contracts only, delegation permitted (OD-IDENTITY-006).",
+    "D-GOV-005": "Identity Ontology Fixture = Drift prevention (2 entities, 4 assignments, 8 negative cases)."
+  },
+  "open_gates": {
+    "C6/N0-04": "OPEN - no detached signature, no publisher trust root, no tamper bundle. Final authenticated transfer NOT claimed.",
+    "physical_usb_quarantine": "Architect-approved (personally controlled). USB media now RETIRED (degraded + unmounted); do not reuse.",
+    "n1_plugin_policy": "Node 1 receives NO Node 0 plugins. Plugin files are untracked and do not ship; no install/enable/patch instructions exist in the package.",
+    "n1_device_identity": "UNRESOLVED - records conflict (ASUS ExpertBook P1503CVA / ASUS ROG / XNAi-Asus). N1 must confirm canonical hostname and model."
+  },
+  "known_degradations": [
+    "Redis module absent - ephemeral Hivemind pubsub unavailable; file-based only.",
+    "607 stale handoffs polluting the queue - needs archive pass.",
+    "Node 0 opencode.json global is a 67-byte skeleton; project config supplies providers. Do not repair mid-session.",
+    "Local worker pool daemon not running; omega-research.service in auto-restart loop.",
+    "USB /media/<USER>/D3E6-A900 unmounted and retired.",
+    "data/federation/usb-payload/exchange/n0-to-n1.zip is a stale 02:28 snapshot (38/42) - do not deliver."
+  ],
+  "headline": "ACTIVE_SPRINT reconciled 2026-09-29 by lilith. Queue rewritten to 8 real open items with named owners. Prior queue named DEL-1 Micro-PR 1 (branch del1/01-test-infrastructure + tests/test_engine_islands.py) which never existed - branch is debut-v1.6.0-alpha and that test file is absent.",
+  "notes": "RECONCILIATION 2026-09-29 (lilith): drifted items DROPPED because no repo trace exists - DEL-1 Micro-PR 1 branch/test skeleton, dispatch_guard.py secrets-scan extraction, DEL-1 Mon-Fri chain, Public Flip (repo is already public: PR #4 merged to main at 268528e7), Soul Audit consolidation, Persona WAD migration, L3-MetaFrameVerification CI gate, SOTE Week 38, Roc doc sweep. PRESERVED as still-true: package block, ruling_decisions, open_gates, identity host fields. NOT re-listed as pending because committed: artifact_ids strict-drop fix, M36 queue isolation, M9 AST gate, 42-packet purge, ge_n1 fork retirement, tailnet v2, Talescail regression fixture, SOTR SUPERSEDED / Week 40 SOTE. UNVERIFIED at reconcile time: the claim that the three superseded tailnet variants are marked - data/federation/ shows no in-file marker on the 09-26 files (see step 7).",
+  "_template_notice": "Sanitized public template. Host identity (user, tailnet IP, mount paths) replaced with placeholders. Copy to ACTIVE_SPRINT.json and fill in per host."
+}
