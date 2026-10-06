@@ -1581,3 +1581,99 @@ mutation whose payload names a path under `data/`. A harness that proves non-des
 destroying something has proven only that the harness is unsupervised.
 
 *⬡ OMEGA ⬡ MAAT ⬡ D-623 ⬡ 2026-10-05*
+
+---
+
+## D-624: release/debut published — temple-grade 53/53 on a TRUE public clone (2026-10-05)
+
+**Status**: ✅ PUBLISHED. Supersedes D-553 (`3c051021`), D-610 (withheld),
+D-613 (withheld), D-618 (`4bdab773`, retracted), D-622 (withheld).
+
+**Operator authorization**: Architect, verbatim — *"Agreed, authorized, push."*
+Force-push of `release/debut` authorized. Only `release/debut` was force-pushed;
+`main` (`cbbc3539`) and the dev branch were never touched by a force push.
+
+### Published state
+| | |
+|:---|:---|
+| `origin/release/debut` | **`7ddff271`** (forced from `4bdab773`) |
+| `origin/debut-v1.6.0-alpha` | `0e4a7c19` |
+| Files in cut | **874** (from 10,374) |
+| Cut wall time | **14.3s** (was 780s pre-`e3d27d26`, ~63× faster) |
+| temple-grade | **TOTAL 53 · PASS 53 · FAIL 0 · exit 0** |
+| Verification surface | **fresh `git clone`, 0 untracked files** |
+
+### Why this took nine rounds — and why that is the finding
+Verification in a git *worktree* was worthless: worktrees carry **677 untracked
+leftover files**, and `check-untracked-deps` reads `git ls-files --others`. Every
+gate run in a worktree was measuring a tree that no public clone would ever have.
+Only a real clone exposed the class of defect that dominated this release:
+
+> **The cut shipped a `Makefile` that referenced dozens of files it did not contain.**
+
+`tests/` is broadly ALLOW-listed while `scripts/`, `configs/`, `schemas/` and
+`docs/sprints/current/` are enumerated per-file. The result was nine successive
+single-file failures from one structural cause.
+
+| # | Blocker | Resolution |
+|:--|:---|:---|
+| RC-1 | `check-codex-stale` exits 1 when `OMEGA_CODEX.md` absent → `temple-grade` unsatisfiable on ANY clone | Architect ruling (c): ship CODEX + regenerate in-cut |
+| RC-2 | *apparent* 24 tracked files importing 0-tracked modules | **False alarm** — worktree leftovers. Clean on pristine clone |
+| RC-3 | `check-constraints` hard-fails without `docs/governance/CONSTRAINTS.md` | Shipped (4,067 B, 0 sensitive hits) |
+| RC-4 | 8 gate scripts absent — shipped tests, absent subjects | Shipped all 8 |
+| RC-5 | 3 config assets the Makefile opens unconditionally | Shipped via Explicit Exclusions |
+| RC-6 | `doc-llm-validate` inputs FORGE-cut | Shipped `docs/sprints/current/{README.md,llms.txt}` |
+| RC-7 | 22 further Makefile-invoked gate scripts | Shipped all 22 |
+| RC-8 | `check-tracking-state` needs per-host `ACTIVE_SPRINT.json` | Sanitized template + documented fallback |
+| RC-9 | `dashboard-self-test` subject absent | Shipped |
+
+### Two precedence traps that cost two silent rounds
+1. **ALLOW loses to FORGE.** Chain is
+   `exception > explicit exclusion > FORGE > allowlist > remove`
+   (`apply_public_allowlist.sh:441-451`). Entries added to ALLOW were cut by the
+   very section meant to be overridden *by* them — bare `configs/` (line 214) and
+   `schemas/` (line 223) sit in FORGE. **Fix: Explicit Exclusions.**
+2. **`is_exception()` is exact-match** (`[[ "$f" == "$ex" ]]`). A comma-joined
+   line `a.py, b.py, c.py` is ONE literal string that can never match a path.
+   Two rounds of "additions" were therefore silent no-ops.
+
+### Honesty fixes shipped alongside
+- **`check-lan-exposure`**: now returns NOT-APPLICABLE (exit 0) when a host has no
+  local policy, instead of RED. Failing a security gate for the crime of *not
+  shipping secrets* trains operators to disable the gate. Host behaviour unchanged.
+- **`ACTIVE_SPRINT` ships as a sanitized template**
+  (`config/templates/ACTIVE_SPRINT.public.json`, 8,218 B): operator username,
+  tailnet IP and `/home` + `/media` mount paths replaced with placeholders.
+- **`docs/sprints/current/llms-full.txt` deliberately NOT shipped** — contains
+  8× `/home/arcana` and 2× `arcana-novai`. The gate reads `llms.txt`.
+
+### Retractions and prior corrections carried forward
+- **D-618's `check-codex-stale PASS` is RETRACTED.** It was true only against an
+  uncommitted regeneration and was not reproducible on any clone.
+- The `assert_safe()` guard named in D-623 has **0 occurrences repo-wide**; the
+  real guards are `test_quarantine_script_is_non_destructive` + 3 manifest-integrity
+  tests. Corrected by @maat; correction carried forward.
+- **D-619's shutdown root cause was not the harvester loop.** It was a mis-placed
+  `tg.cancel_scope.cancel()` sitting one line *below* the `async with` it was meant
+  to escape. ADR-003 §7.1 had "resolved" this by measuring
+  `timeout_graceful_shutdown` — a fix that could not work — then declaring the
+  hypothesis false. Both conclusions withdrawn in ADR-003 §8.
+- **D-621's premise was partly wrong.** The PID-unique worktree fix is real and
+  worth keeping, but the actual cause of `check-hub-imports` failures was **disk
+  starvation (97% full) plus network throughput**, not concurrency. The gate's own
+  error text said so and I diagnosed past it.
+
+### Still open (not blocking debut)
+- `gate-secrets` RED — 35 findings, all `data/coordination/**` + historical logs.
+- REUSE v3.3 (M37) — ~4.7k files lack SPDX. Waiver `cd92d7c4` covers debut.
+- `data/coordination/TASK_REGISTRY.json` remains unreachable on a fresh clone
+  (gitignored runtime state). Documented, not force-added: force-adding gitignored
+  runtime state is the pattern that leaked `opencode.db` and the signing key.
+- 2 `cline_kqv` entity symlinks ship and dangle in public clones (Explicit
+  Exclusions, M11/M15 compliance). Relative paths only; no absolute host paths.
+- D-620 Task 2 incomplete — 2 surviving mutations (Q3, Q5).
+
+### Verification method now recorded as doctrine
+**A release cut is not verified until `temple-grade` passes on a fresh
+`git clone` with zero untracked files.** A worktree is not a substitute: it carries
+leftovers that silently mask absent-file failures.
