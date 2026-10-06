@@ -14,6 +14,12 @@
 ## ✅ ALLOW — Public Surface
 
 ```
+# [D-624] Generated code map. Shipped so a public clone can run
+# check-codex-stale and prove its own freshness: the gate reads the
+# in-file stamp and exits 1 when the file is ABSENT, so without this
+# temple-grade was unsatisfiable on any fresh clone (RC-1).
+OMEGA_CODEX.md
+
 # Core engine (after DEL-1)
 src/omega/
 
