@@ -27,6 +27,20 @@ OMEGA_CODEX.md
 # defence real for every clone instead of only on this host.
 docs/governance/CONSTRAINTS.md
 
+# [D-624] Scripts that shipped TESTS reference but which were never allowlisted.
+# tests/ is broadly ALLOW-listed while scripts/ is enumerated per-file, so the cut
+# shipped test suites whose subjects did not exist. Every one of these is a
+# test-target or a gate helper, verified 0 sensitive hits (no hosts, no IPs, no
+# key material). A shipped test that cannot reach its subject is a dead gate.
+scripts/opencode-hydration.py        # P0-2 constraint re-assertion wiring
+scripts/a2a_agent_cards.py           # A2A v1.0 card validator/publisher
+scripts/check_hub_import_gate.py     # D-620 gate self-reporter
+scripts/correct_ics_provenance.py    # M22 provenance corrector
+scripts/dispatch_guard.py            # M33/M34 pre-dispatch verification
+scripts/hivemind_post.py             # Hivemind post helper
+scripts/infra_inventory.py           # S1 inventory
+scripts/soul_promote.py              # soul promotion
+
 # Core engine (after DEL-1)
 src/omega/
 
