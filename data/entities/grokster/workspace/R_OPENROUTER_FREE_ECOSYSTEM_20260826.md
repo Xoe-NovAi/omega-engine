@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
 **Date**: 2026-08-26  
 **Researcher**: grokster (antigravity-specialist)  
 **Model**: Nemotron 3 Ultra via OpenCode Zen  
-**API Key**: `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`
+**API Key**: `<REVOKED_OPENROUTER_KEY>8ea8ea60678b7ee8b7113f65bd74c38aa`
 
 ---
 

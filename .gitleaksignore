@@ -75,7 +75,7 @@ fd5dc1771805226a0a9897196494da4bfa03bcfa:src/omega/oracle/soul_validator.py:gene
 2e4ea0fce4b3f694b3e3a6ac6b2720cf25b3642b:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
 36508d92e04afdddf9ff0ef2c10e262d740ece30:data/coordination/WAKE_STATE.json:generic-api-key:289
 
-# ARCHITECT-STRIKE 2026-09-27 triage: useDefault=true surfaced 50 findings (33 generic-api-key, 9 openrouter-api-key, 4 private-key, 4 curl-auth-header) across 18 unique rule:file pairs. All triaged WONTFIX (AP tokens / session IDs / explicit test fixtures / doc curl examples / template PEM with ... placeholders / Architect-REVOKED sk-or-v1-62dc75 key). Zero live secrets. Entries below are bare fingerprints (gitleaks 8.21.2 parsing).
+# ARCHITECT-STRIKE 2026-09-27 triage: useDefault=true surfaced 50 findings (33 generic-api-key, 9 openrouter-api-key, 4 private-key, 4 curl-auth-header) across 18 unique rule:file pairs. All triaged WONTFIX (AP tokens / session IDs / explicit test fixtures / doc curl examples / template PEM with ... placeholders / Architect-REVOKED <REVOKED_OPENROUTER_KEY> key). Zero live secrets. Entries below are bare fingerprints (gitleaks 8.21.2 parsing).
 # WHY: doc curl example on 127.0.0.1 with Bearer sk-local-extractor placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:251)
 7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
 # WHY: doc curl example on 127.0.0.1 with Bearer sk-local-extractor placeholder, not a credential (LOCAL_MODEL_OPTIMIZATION_GUIDE.md:251)
@@ -167,23 +167,23 @@ b44b34be859b6fc96d8ac13d4097ad7e227e2021:data/realms/omegaverse/archive/state.ya
 7ffb78dc58ce985cb75bf5f728914eb549d61bc7:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:220
 # WHY: template/example PEM block with ... placeholders, documented redaction marker, never a real key (R_VAULT_SCHEMA_V2.md:220)
 4406dedb2e98267e652b22acc4da6aac8f3963e8:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:220
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209 documents the key as NOT-tracked local-only)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209 documents the key as NOT-tracked local-only)
 3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
 d0b85655e17188d8bd2c233de207c1edf7341529:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (ROC_PRE_PUBLISH_AUDIT_20260902.md:209)
 3036f720d43f17a23097df0777c78398349e9265:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
 3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:313
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
 c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:310
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:313/310 report footer)
 cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:310
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
 3a5b5582dc2d7093820edb9eb01ae7a925acb1f7:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:12
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
 c552e643120a7ed36f788e6bd3506374ca2d5ebe:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
-# WHY: Architect-REVOKED 2026-09-27 sk-or-v1-62dc75 key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
+# WHY: Architect-REVOKED 2026-09-27 <REVOKED_OPENROUTER_KEY> key, dead in history, WONTFIX-by-revocation (R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:12/6 API Key field)
 cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:6
 
 # ──────────────────────────────────────────────────────────────────────
@@ -210,7 +210,7 @@ cbe649e13969e0eef644f3b74db9e78423114d7c:data/entities/grokster/workspace/R_OPEN
 #    1  ghp_... in test_well.py                  - INVERTED fixture:
 #        that test asserts such tokens are REJECTED by the scanner
 #
-# The single sk-or-v1-62dc75... OpenRouter key (revoked 2026-09-27) does
+# The single <REVOKED_OPENROUTER_KEY>... OpenRouter key (revoked 2026-09-27) does
 # NOT appear in this CI set: it is already covered by the block above.
 # Its history presence remains dead-by-revocation; the scrub decision
 # is tracked separately (ACTIVE_SPRINT step 18, before public flip).
@@ -349,3 +349,31 @@ feb985f3fa28ceba07f45d36eaf063615fd3f9a0:data/handoff/archive/ho_c3ad398fd0fa.js
 0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
 0a639bb07e6c372bc6aadf55ba4d444790d4bc25:docs/strategy/teacher_pipeline/NEMOTON_TEACHER_PIPELINE_SPEC.md:generic-api-key:2
 26379199f030f426ed6d2042ab9211e37e7f3b55:docs/reference/API_REFERENCE.md:generic-api-key:67
+
+# [D-625] Historical commit cd12af4f (2026-09-30) - all findings are REVOKED credentials
+# Key <REVOKED_OPENROUTER_KEY>269be8aa9c4c16ee842f902d4 was revoked 2026-09-27 (Architect-REVOKED),
+# three days before this commit. All 24 findings are dead credentials.
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/DEL1_RESEARCH_FINDINGS_20260901.md:generic-api-key:462
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:134
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/LILITH_M34_RUNTIME_SPEC_20260830.md:generic-api-key:162
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/ROC_PRE_PUBLISH_AUDIT_20260902.md:openrouter-api-key:209
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/research/R_VAULT_CLINE_DEEPER_20260827.md:generic-api-key:124
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/research/R_VAULT_ANTIGRAVITY_20260827.md:curl-auth-header:46
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/research/R_VAULT_CLINE_20260827.md:generic-api-key:142
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/coordination/research/R_VAULT_CLINE_ROUND3_20260827.md:generic-api-key:426
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/grokster/soul.yaml.bak.20260826T113627Z:generic-api-key:9
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/grokster/workspace/R_MINIMAX_M27_M3_CAPABILITY_ANALYSIS_20260826.md:openrouter-api-key:313
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/grokster/workspace/R_OPENROUTER_FREE_ECOSYSTEM_20260826.md:openrouter-api-key:12
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/john_carmack/workspace/DEEP_SIPHON_CARMACK_REVIEW.md:generic-api-key:8
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/kali/workspace/KALI_HANDOFF_SOVEREIGN_OVERSEER_20260607.md:generic-api-key:104
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/researcher/workspace/research_reports/R54_IDENTITY_FLUIDITY_20260813.md:generic-api-key:53
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:data/entities/roc_racoon/workspace/PII_MASKER_IMPLEMENTATION_SPEC.md:generic-api-key:641
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md:private-key:152
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md:private-key:226
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/archive/specs/vault-overhaul-20260818/VAULT_SYSTEM_OVERHAUL_SPEC_20260818_PART5.md:generic-api-key:122
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:251
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/guides/LOCAL_MODEL_OPTIMIZATION_GUIDE.md:curl-auth-header:263
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/specs/qdrant_headroom/headroom_middleware/10_VERIFICATION_TESTS.md:generic-api-key:558
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/sprints/f821-remediation/AGENT_EXECUTION_PLAN.md:generic-api-key:2
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/strategy/teacher_pipeline/NEMOTON_TEACHER_PIPELINE_SPEC.md:generic-api-key:2
+cd12af4f7c4c8493fc7e51e428e7249f58a37e4b:docs/great-agent-responses/session-ses_ff78.md:generic-api-key:7178

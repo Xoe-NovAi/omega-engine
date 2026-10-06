@@ -206,7 +206,7 @@ git mv P1.md docs/strategy/pillar_P1.md
 | `.env` | Says "secrets migrated to vault" but the file exists | **NOT tracked**. Local-only. |
 | `auth.json` | Not in working tree root | OK |
 
-**or-key.md contents** (line 2): `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`
+**or-key.md contents** (line 2): `<REVOKED_OPENROUTER_KEY>8ea8ea60678b7ee8b7113f65bd74c38aa`
 
 This is a **real OpenRouter key** but it's NOT tracked. Good. The .gitignore rule `or-key.md` (line 259) is working.
 

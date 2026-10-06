@@ -310,4 +310,4 @@ providers:
 
 ---
 
-*Report generated via live OpenRouter API testing with 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*
+*Report generated via live OpenRouter API testing with <REVOKED_OPENROUTER_KEY>8ea8ea60678b7ee8b7113f65bd74c38aa*
