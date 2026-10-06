@@ -257,6 +257,8 @@ migrate_heritage.py
 - `configs/token_budgets.yaml` — [D-624] doc-llm-validate token budgets; same reason,
   bare `configs/` is in FORGE (line 214).
 - `config/handoff_policy.yaml` — [D-624] handoff store policy, read by shipped gate code.
+- `scripts/benchmark_dashboard_adversarial_test.py` — [D-624] dashboard-self-test subject
+  (Makefile:280); 53 adversarial cases the gate runs. 0 sensitive hits.
 - `scripts/check_secrets.py` — [D-624] M30 third-party boundary gate; referenced by
   check-mandate-compliance. 0 sensitive hits.
 - `.opencode/agents/` — [D-624] M10 Fleet Integrity gate requires this directory to exist;
