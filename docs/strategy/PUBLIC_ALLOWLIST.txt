@@ -257,6 +257,14 @@ migrate_heritage.py
 - `configs/token_budgets.yaml` — [D-624] doc-llm-validate token budgets; same reason,
   bare `configs/` is in FORGE (line 214).
 - `config/handoff_policy.yaml` — [D-624] handoff store policy, read by shipped gate code.
+- `.gitleaksignore` — [D-625] 163 audited gitleaks fingerprints (Kali ratified
+  ho_e53ab57ea212 Q2; 39 historical findings at 0a639bb0). Without it the Secret Scan
+  and M35 workflows die with "FTL unable to load gitleaks config". SHIP BYTE-FOR-BYTE:
+  its header warns trailing comments after a fingerprint break gitleaks 8.21.2 parsing,
+  and 163 non-comment lines were verified to equal 163 bare fingerprint lines.
+- `.gitleaks.toml` — [D-625] gitleaks rule config; same failure without it.
+- `scripts/check_dashboard_determinism.py` — [D-625] subject of the Dashboard Test
+  determinism step; absent → `can't open file`, exit 2.
 - `scripts/benchmark_dashboard_adversarial_test.py` — [D-624] dashboard-self-test subject
   (Makefile:280); 53 adversarial cases the gate runs. 0 sensitive hits.
 - `scripts/check_secrets.py` — [D-624] M30 third-party boundary gate; referenced by
