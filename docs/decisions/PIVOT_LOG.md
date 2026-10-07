@@ -1677,3 +1677,81 @@ single-file failures from one structural cause.
 **A release cut is not verified until `temple-grade` passes on a fresh
 `git clone` with zero untracked files.** A worktree is not a substitute: it carries
 leftovers that silently mask absent-file failures.
+
+---
+
+## D-626: Authority reversal recorded + two attribution corrections (2026-10-07)
+
+**Status**: RECORDED. Architect-ratified. No code executed by MaKaLi N0 in this entry.
+
+### 1. Authority reversal — AGY re-authorized over `src/omega/`
+- **Prior state**: Antigravity IDE stood down from `src/omega/` under M2 on ~2026-10-04.
+- **Reversal**: Architect reviewed AGY's packet
+  `HANDOFF_MAKALI_ROC_POSITIONING_STRATEGY_20261007.md` ("ACTIVE HANDOFF FOR EXECUTION",
+  P0 = fix the CI failure) and forwarded it to Roc as a steering prompt.
+- **Conflict surfaced by Roc**: AGY's packet asserted "Architect Mandate" while MaKaLi's
+  brief said ANALYSIS ONLY. Roc correctly **declined to act on authority he could not
+  reconcile**, and did no mutations. That is M23 behaving correctly under pressure.
+- **Resolution**: Architect is the ratifying authority. The M2 stand-down is reversed
+  **for this patch scope only** (Harvester allowlist, graduation doc, README claims,
+  split-brain ticket). Recorded here so the reversal is auditable rather than implicit.
+- **M27**: an audit trail must not be rewritten to match a later convention. Reversals
+  are appended, never edited in place.
+
+### 2. CORRECTION — Test-job CI cause was misattributed by MaKaLi
+- **MaKaLi claimed**: the `Test` job redness was a missing `platform_adapters` dependency.
+  This was taken from CI log text without tracing it.
+- **Actual cause (Roc, verified on disk)**: `tests/test_hivemind_harvester.py:7` imports
+  `scripts.hivemind_harvest.py` at module scope with **no `importorskip`, no try/except**.
+  The test ships; the module is FORGE-cut. On a fresh clone this raises
+  `ModuleNotFoundError` **at collection**.
+- **This is an unlisted 5th red job**, and it **fuses two directives**: cutting the
+  Harvester broke the test suite. One allowlist entry resolves both.
+- **Resolution**: allowlist the FULL `scripts/hivemind_harvest.py`. Verified it degrades
+  gracefully in a clean clone — `harvest_once()` does `mkdir(parents=True, exist_ok=True)`
+  on its own output dirs (`:104-108`) and guards every read with `.exists()`
+  (`:126`, `:160`). With no `data/coordination/` present it globs nothing and writes a
+  valid **empty** overview, which demonstrates the zero-inference mechanism live.
+  Harvester-Lite was rejected: the test imports and *calls* `harvest_once()`, so a
+  partial extraction would not satisfy it.
+
+### 3. CORRECTION — the 17% Retention metric is Researcher's, not MaKaLi's
+- **MaKaLi claimed**: the 17% Retention Enemy (arXiv:2608.11242) was discovered on
+  2026-10-06 as fresh archaeology, and was presented as the lead concept.
+- **Actual**: already documented in-repo at
+  `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` §2.1
+  (commit `83b292b2`, dated **2026-08-29**), and claimed by
+  `data/entities/researcher/session_gnosis.md:518` (**2026-09-11**):
+  *"17% Retention Baseline = The Enemy — Researcher owns this metric. CONFIRMED."*
+- **Web verification** confirms the *paper* (arXiv:2608.11242, Wang/Zhang/Lee/Yang,
+  submitted 2026-07-31; 17% retention; remedy >90%). It cannot adjudicate *internal*
+  attribution. The internal record is authoritative for ownership.
+- **Resolution**: `FULL_DEPTH_POSITIONING_BRIEF_20261006.md` corrected in place with a
+  visible provenance block. The concept and paper remain valid and are still the
+  strongest lead — **only the ownership claim was wrong.**
+- **Root cause of the error**: MaKaLi read a five-week-old citation as a fresh discovery
+  and went to the web to verify what was already established internally. **Lesson: search
+  the repo before the web.** A local-first mandate (M7) applied to *knowledge*, not just
+  inference.
+
+### 4. Correction to MaKaLi's own session-paging doctrine
+- MaKaLi asserted "no EIS session ID can be paged via `task_id`," overriding the
+  Architect twice, based on a narrower skill.
+- **The project's canonical protocol disagrees**: `docs/strategy/EIS_NES_DISPATCH_MATRIX_20260923.md`
+  §2 registers canonical EIS IDs per entity and §5.1 mandates
+  `task_id=<EIS_ID>` for EIS resume. §5.3 defines the continuation directive template.
+- **Empirically confirmed**: paging Roc at `ses_eebe0ff14ffef4lSoyTvmcfYS4` returned full
+  continuity (gnosis 1074 → 1123 lines, correct self-identification). The earlier claim
+  was **wrong**.
+- **Root cause**: `parent_id IS NULL` on an EIS session does **not** prevent `task()` from
+  binding it. The inference drawn from that column was invalid.
+- **Doctrine**: the repo's `docs/strategy/` protocols outrank a skill file. Read the
+  project's own protocol before asserting a mechanism is impossible.
+
+### 5. Still open, not blocking
+- `OPENCODE_API_KEY` exposed in a transcript via `env | grep` (Roc, self-reported).
+  Rotation status **unconfirmed**. Not reprinted here.
+- `entity_context` returns a response shape its own contract says no longer exists — unassigned.
+- 4 CI jobs red, all Architect-deferred to post-announcement.
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ D-626 ⬡ 2026-10-07 ⬡*
