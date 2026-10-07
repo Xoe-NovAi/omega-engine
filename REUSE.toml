@@ -39,6 +39,17 @@ path = "tests/**/*.py"
 SPDX-FileCopyrightText = "2026 Xoe-NovAi"
 SPDX-License-Identifier = "Apache-2.0"
 
+# ── Release metadata (JSON/MD that cannot or must not carry inline headers) ─
+[[annotations]]
+path = "scripts/groups.json"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "scripts/hydration_header.md"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
 # ── OpenCode ───────────────────────────────────────────────────────────────
 [[annotations]]
 path = ".opencode/**/*.md"
