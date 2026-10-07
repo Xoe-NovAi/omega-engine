@@ -237,10 +237,11 @@ def test_the_double_submit_pair_is_still_on_disk_and_addressable():
     """The evidence. Both packets of the measured fork must remain readable,
     byte-identical, forever (M28: no auto-deletion)."""
     ids = ("ho_98ae17535622", "ho_7db7cfdb09ac")  # -> makali and -> makali-n0
-    if not any(True for _ in _packets()):
-        pytest.skip("handoff packet corpus absent on this tree (public debut ships no private packets)")
+    packets = list(_packets())
+    if len(packets) < 2:
+        pytest.skip("measured fork packets absent on this tree (public debut ships no private packets)")
     found = {}
-    for f, pkt in _packets():
+    for f, pkt in packets:
         pid = pkt.get("packet_id")
         if pid in ids:
             found[pid] = pkt
@@ -261,10 +262,11 @@ def test_the_double_submit_pair_is_still_on_disk_and_addressable():
 def test_every_legacy_alias_addressed_on_disk_still_resolves():
     """Every packet addressed to an alias must remain addressable by that
     spelling — no packet becomes orphaned by the merge."""
-    if not any(True for _ in _packets()):
+    packets = list(_packets())
+    if not packets:
         pytest.skip("handoff packet corpus absent on this tree (public debut ships no private packets)")
     seen = 0
-    for _f, pkt in _packets():
+    for _f, pkt in packets:
         for key in ("target_agent_id", "source_agent_id"):
             raw = pkt.get(key)
             if not isinstance(raw, str) or "/" not in raw:
