@@ -483,3 +483,8 @@ and deliberately **not** estimated as committed work.
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ AP-A2A-AGENT-CARDS-v1.0.0 ⬡ 2026-10-03 ⬡ A2A-informed, NOT A2A-compliant*
+<!-- PROVENANCE-CORRECTED 2026-10-04T04:03:43Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: space-bunny-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -97,8 +97,26 @@ def calculate_heartbeat_tier(post_ts_iso: str, now: datetime, extended_ttl: int 
         return "🟡 UNKNOWN"
 
 
-def harvest_once() -> int:
-    repo_root = get_repo_root()
+def harvest_once(repo_root: Path | None = None) -> int:
+    """Run one harvest cycle.
+
+    `repo_root` is the INJECTION POINT. Every path this function touches --
+    the out_dir writes, the handoff-pending read, and the HALL_OF_RECORDS
+    traversal -- derives from it. Callers that omit it get the historical
+    behaviour (the script's own repo root), which is what production wants.
+
+    Tests MUST pass an explicit root (pytest's tmp_path). Without it this
+    function resolves the live checkout via get_repo_root() and writes into
+    it: latest.json/latest.md at :314-318, latest_good.* at :322-323, a
+    history record at :328, and -- once history exceeds 288 cycles -- an
+    append-only MANIFEST.jsonl entry at :339-348 that is cumulative and
+    never rewritten. A test that calls harvest_once() bare is a write-targeting
+    harness aimed at live coordination state, which is the D-623 defect class
+    that permanently lost 33 handoff packets. See
+    tests/test_hivemind_harvester.py::test_harvest_execution_produces_artifacts,
+    which asserts live data/ is byte-identical across the run.
+    """
+    repo_root = repo_root if repo_root is not None else get_repo_root()
     coord_dir = repo_root / "data" / "coordination"
     out_dir = coord_dir / "hivemind_overview"
     out_dir.mkdir(parents=True, exist_ok=True)

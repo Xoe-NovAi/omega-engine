@@ -6,7 +6,9 @@
 
 **Date**: 2026-08-10
 **Author**: jem (Sovereign Synthesizer)
-**Status**: ACTIVE — Verified against live 16GB database
+**Status**: ACTIVE — Verified against live 16GB database (2026-08-10)
+
+> **⚠️ NOTE (2026-10-04)**: This document reflects the database state as of 2026-08-10 (~16 GB, 2,436 sessions). The database has since grown to **~43 GB (3,100 sessions)** with a **21 GB `event` table (78.9% of live data)**. For current compaction/reclaim procedures, see `docs/kb/OPENCODE_DB_COMPACTION_GUIDE.md` (kb-0007) and `scripts/opencode_db_compact.py`. The `event` table (21 GB, 78.9% of live data) does NOT cascade from `session` and is not pruned by session deletion.
 
 ---
 

@@ -1314,36 +1314,58 @@ def _federation_dispatch(action: str, *, source_channel, source_entity, packet_i
     """Bind inbox / receipts / read to the store, without losing its guarantees."""
     from .. import federation_store as fstore
     from .. import federation_session as fsess
+    from .. import federation_envelope as fe
 
     if not source_channel or not source_entity:
         return json.dumps({"error": {"code": "missing_identity",
                                      "message": f"{action} requires source_channel and source_entity"}})
-    store = _federation_store()
 
-    # ── M15/ADR-001: read state is INSTANCE-scoped, not entity-scoped ──
-    # `unread_scope: instance` (hivemind.yaml:190). `ge-n0` and `ge-n1` are
-    # two chat sessions of ONE agent, so keying `read_by` by `source_entity`
-    # cannot separate them — an agent that cannot tell its own mail from its
-    # other instance's cannot know what it has reviewed. Falls back to the
-    # entity name so pre-ADR callers keep their existing read state.
-    read_key = source_instance or source_entity
+    # TOTAL FROM HERE. Store construction and session resolution are INSIDE the
+    # guarded region, deliberately. They were outside it once, which left three
+    # unguarded faults ahead of the real work: an OSError while binding
+    # HANDOFF_BASE, a failure in `resolve_session_id`, and a malformed resolution
+    # record. Each would have escaped as a bare `str(exc)` in an error payload —
+    # the exact contract violation this function exists to prevent. A boundary
+    # that starts after the setup is not a boundary.
+    try:
+        store = _federation_store()
 
-    resolved = fsess.resolve_session_id(
-        session_id, bump=store.bump, fallback_entity=source_entity,
-        daemon_session_id=f"ses_stamped_{source_channel}_{source_entity}")
-    session_block = {
-        "session_id": resolved["session_id"],
-        "session_id_source": resolved["source"],
-        "session_verified": resolved["verified"],
-        "unverified_sender": resolved["unverified_sender"],
-    }
-    if resolved["source"] == "server_stamped":
-        # Never substitute silently: the caller must learn their id was NOT the
-        # one recorded, or they will believe provenance that does not exist.
-        session_block["session_id_substituted"] = True
-        session_block["session_id_note"] = (
-            f"your supplied session_id was {resolved['reason']!r}; the server stamped "
-            "one instead and flagged the envelope unverified")
+        # ── M15/ADR-001: read state is INSTANCE-scoped, not entity-scoped ──
+        # `unread_scope: instance` (hivemind.yaml:190). `ge-n0` and `ge-n1` are
+        # two chat sessions of ONE agent, so keying `read_by` by `source_entity`
+        # cannot separate them — an agent that cannot tell its own mail from its
+        # other instance's cannot know what it has reviewed. Falls back to the
+        # entity name so pre-ADR callers keep their existing read state.
+        read_key = source_instance or source_entity
+
+        resolved = fsess.resolve_session_id(
+            session_id, bump=store.bump, fallback_entity=source_entity,
+            daemon_session_id=f"ses_stamped_{source_channel}_{source_entity}")
+        session_block = {
+            "session_id": resolved.get("session_id"),
+            "session_id_source": resolved.get("source"),
+            "session_verified": resolved.get("verified"),
+            # M29: this flag is what the RECEIVING agent reads. A missing
+            # resolution is UNKNOWN, never verified — so the fail-safe sentinel,
+            # never False and never None.
+            "unverified_sender": resolved.get("unverified_sender",
+                                              fe.UNVERIFIED_SENDER_UNKNOWN),
+        }
+        if resolved.get("source") == "server_stamped":
+            # Never substitute silently: the caller must learn their id was NOT the
+            # one recorded, or they will believe provenance that does not exist.
+            session_block["session_id_substituted"] = True
+            session_block["session_id_note"] = (
+                f"your supplied session_id was {resolved.get('reason')!r}; the server "
+                "stamped one instead and flagged the envelope unverified")
+    except Exception as exc:  # pragma: no cover — total boundary
+        logger.exception("handoff %s: session/store setup failed", action)
+        return json.dumps({
+            "error": {"code": "store_unreachable", "message": str(exc),
+                      "exception": type(exc).__name__,
+                      "hint": "the store or session resolver failed before any "
+                              "record could be read. entries are ABSENT, not empty."},
+        })
 
     try:
         if action == "inbox":
@@ -1377,6 +1399,44 @@ def _federation_dispatch(action: str, *, source_channel, source_entity, packet_i
     except ValueError as exc:
         return json.dumps({"error": {"code": "invalid_request", "message": str(exc)},
                            **session_block})
+    except (KeyError, TypeError, AttributeError) as exc:
+        # A MALFORMED RECORD IS NOT A STORE FAILURE, and it is not an empty
+        # result either. It is a record the reader could not interpret, and the
+        # caller must be able to tell that apart from both.
+        #
+        # Why this arm exists: the store holds two disjoint record shapes (a
+        # legacy 14-key projection and the full §8 envelope). A bare subscript of
+        # an absent key raised KeyError straight out of this function, which
+        # `m9_safe` rendered as {"error": "'created_at_utc'"} — an error STRING
+        # where the documented contract promises an error OBJECT with a `code`
+        # to branch on. A caller following the documented contract did
+        # `payload["error"]["code"]` on that and got a TypeError of its own,
+        # one layer away from the real fault. The store is now shape-tolerant
+        # (federation_envelope.normalize_envelope), so this arm should be
+        # unreachable; it is retained deliberately, because the contract that a
+        # failure is ALWAYS a coded payload is worth more than the brevity of
+        # not having a catch-all. `read_path_unhandled` says the defect is in
+        # our reader, not in the caller's request — an escalation signal, not a
+        # caller-fixable condition.
+        logger.exception("handoff %s: unhandled read-path fault", action)
+        return json.dumps({
+            "error": {"code": "read_path_unhandled", "message": str(exc),
+                      "exception": type(exc).__name__,
+                      "hint": "the handoff store holds two record shapes and the "
+                              "reader could not interpret one of them. This is a "
+                              "reader defect, not a caller error; entries are "
+                              "ABSENT, not empty."},
+            **session_block})
+    except Exception as exc:  # pragma: no cover — total boundary
+        # TOTAL by construction. This function is dispatched OUTSIDE the tool's
+        # own try/except, so anything raised here reaches `m9_safe` and becomes
+        # an unstructured string error. The contract says a failure is a coded
+        # object; so this function does not raise. Ever.
+        logger.exception("handoff %s: unexpected failure", action)
+        return json.dumps({
+            "error": {"code": "internal_error", "message": str(exc),
+                      "exception": type(exc).__name__},
+            **session_block})
 
     out = {**payload, **session_block}
     out.pop("error", None)

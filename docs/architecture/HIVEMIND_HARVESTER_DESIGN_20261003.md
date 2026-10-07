@@ -703,3 +703,8 @@ listing. No parametric claims beyond these sources; no web fetch needed
 ---
 
 *⬡ OMEGA ⬡ RESEARCHER ⬡ HIVEMIND-HARVESTER-DESIGN-v1.0.0 ⬡ 2026-10-03 ⬡ DESIGN-ONLY, UNCOMMITTED ⬡*
+<!-- PROVENANCE-CORRECTED 2026-10-04T04:03:43Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
+claimed_model: muse-spark-1.3-contributor-free | verdict: UNANCHORED | no session anchor in header zone
+actual_models(Tier0): n/a
+-->
+

@@ -25,6 +25,7 @@ SPDX-License-Identifier: Apache-2.0
 | [meditate-invocation-guide.md](meditate-invocation-guide.md) | Invocation patterns for the autonomous meditation subagent. |
 | [run-ingestion.md](run-ingestion.md) | Library ingestion pipeline: inbox management, FTS5 indexing, and document curation. |
 | [manage-sessions.md](manage-sessions.md) | Session lifecycle: creation, resumption, compaction, and continuity anchors. |
+| [opencode-db-compaction.md](opencode-db-compaction.md) | OpenCode SQLite database compaction runbook (`scripts/opencode_db_compact.py`): live zero-downtime `VACUUM INTO`, integrity parity checks, and 200ms atomic swap. |
 
 ---
 

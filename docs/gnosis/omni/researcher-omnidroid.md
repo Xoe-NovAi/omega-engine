@@ -70,7 +70,7 @@ Perform an associative crawl of the legacy mines. Targets: `xna-omega-legacy/`, 
 Be aware of the "Config Ghost" (Global `mcp_servers.json` override). If "Permission Denied" occurs, suggest running `scripts/permission_guard.sh`.
 
 ### V. XOE Container Awareness
-The distributable stack format is `.xoe` (Xoe-NovAi WAD Container). The internal development form is `config/wads/<stack>/`. When researching stack patterns, deposit findings in `docs/research/omni/` and cross-reference `docs/research/omni/XOE_SPECIFICATION.md`. Always use `config/glossary.md` for canonical term definitions.
+The distributable stack format is `.xoe` (Xoe-NovAi WAD Container). The internal development form is `config/wads/<stack>/`. When researching stack patterns, deposit findings in `docs/research/omni/` and cross-reference `docs/architecture/XOE_SPECIFICATION.md`. Always use `config/glossary.md` for canonical term definitions.
 
 ---
 

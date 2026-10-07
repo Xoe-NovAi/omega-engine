@@ -51,6 +51,14 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
    `.opencode/rules/05-spatial-integrity.md` has **never been written** (known gap).
    R-tree + vec0 dual-index for VR navigation (Option B). Spatial coordinates computed once, joined everywhere.
 
+6. **Hardware Adaptation (DHAL)** → `.opencode/rules/06-hardware-adaptation.md`
+   Heterogeneous fleet profiles; polymorphic CPU optimizer.
+
+7. **Sovereign Fetch (M23/M24)** → `.opencode/rules/07-sovereign-fetch.md`
+   ⚡ **aria2c is MANDATORY for every download >1MB on Node 0.** Never `wget`/`curl` a large
+   file — single-connection fetchers forfeit most of the link. Profile: `~/.config/aria2/aria2.conf`.
+   Skill: `sovereign-fetch`. Verify archives after download (`xz -t`, `unzip -t`).
+
 ## The 5 Critical Mandates (Tier-0 injection)
 
 These are injected pre-compaction so the law survives context loss:
@@ -98,10 +106,12 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` §"The 
 | M22 Response Provenance | `GenerateResult.provider_name` is the ACTUAL provider |
 | M23 Failure Integrity | Broken tools → `[TOOL-CHAIN-COLLAPSE]`; no synthesis |
 | M24 Venv Sovereignty | All Python in `.venv/`; no `--break-system-packages` |
+| Downloads >1MB | **aria2c mandatory** → `.opencode/rules/07-sovereign-fetch.md` + skill `sovereign-fetch` |
 | M26 Doc Standards | Reference docs pass `make doc-llm-validate` |
 | M27 Tracking Integrity | State follows 5-Tier Tracking Architecture |
 | M28 Sovereign Artifact Preservation | No auto-deletion; transitions explicit, auditable, recoverable; deep-archive requires manifest + operator auth; destruction requires human act in PIVOT_LOG |
 | M29 Remote Claim Integrity | "Works from here" ≠ "works from there"; remote claims require peer-vantage test or UNTESTED; local success ≠ remote success; UNTESTABLE means instrument, don't assume |
+| OpenCode DB Compaction | `scripts/opencode_db_compact.py` — live `VACUUM INTO` + atomic swap runbook |
 
 ## M33/M34 Dispatch Guard Anchors (Jem §1.2.1)
 

@@ -65,6 +65,15 @@ HANDOFF_COLD = "cold"
 HANDOFF_RETIRED = "retired"
 HANDOFF_DIRS = (HANDOFF_PENDING, HANDOFF_HOT, HANDOFF_COLD, HANDOFF_RETIRED)
 
+#: Where the reaper parks TTL-expired packets [D-620].
+#:
+#: A distinct name from the four above, because it means something the others
+#: do not: these records were DELIVERED-ONCE-AND-EXPIRED, not "waiting". Seven
+#: of the stranded `makali_fusion` packets carry read journals proving they
+#: were actioned before reaping. Surfacing them as inbox entries would be a
+#: false-positive delivery, so `stale/` is queryable but NOT inbox scope.
+HANDOFF_STALE = "stale"
+
 # The inbox is the query path. `_readable()` requires it, so its absence is a
 # loud StoreUnreachable rather than a silent empty result.
 HANDOFF_INBOX = HANDOFF_PENDING
@@ -328,6 +337,124 @@ def new_seq_file(path: Path, start: int = 0) -> int:
     finally:
         os.close(fd)  # closing the descriptor RELEASES the flock
     return nxt
+
+
+# ── SHAPE TOLERANCE (the read boundary) ──────────────────────────────────────
+#
+# THE STORE HOLDS TWO DISJOINT RECORD SHAPES, AND THE SPLIT IS TIME-PARTITIONED.
+#
+# The envelope schema (§8) went live at commit 51d07148. Records written before
+# that are served through the pre-envelope legacy writer and carry only the 14
+# legacy keys. The partition is perfect — no interleaving — because it is a
+# PRODUCER boundary, not corruption. As of 2026-10-04 the pending store holds
+# 30 legacy and 30 full records with a 53-second gap between them.
+#
+# WHY THIS IS A READ-BOUNDARY PROBLEM AND NOT A MIGRATION PROBLEM:
+#   * M28 forbids rewriting records to paper over a reader that cannot cope.
+#   * The legacy records are the only evidence that pre-envelope packets ever
+#     existed. A migration that back-fills `created_at_utc` with `submitted_at`
+#     DESTROYS that evidence by asserting a birth time nobody recorded.
+#   * The reader is cheap to make honest. Rewriting history is not.
+#
+# SO: every absent schema key is materialised with an EXPLICIT, HONEST value.
+# Not omitted (a consumer must be able to rely on the key existing), and never
+# invented (see UNVERIFIED_SENDER_UNKNOWN for the load-bearing case).
+
+#: Every key the §8 envelope schema defines. Used to detect, not to store.
+SCHEMA_KEYS: frozenset[str] = frozenset({
+    "handoff_id", "schema_version", "seq", "task", "payload_ref",
+    "payload_bytes", "payload_sha256", "released_at_utc", "released_by",
+    "source_entity", "source_channel", "source_session_id", "sender_verified",
+    "unverified_sender", "source_hardware", "target_entity", "target_channel",
+    "created_at_utc", "received_at_utc", "time_diagnostics",
+    "last_event_at_utc", "status", "decided_by", "decisions", "outcome",
+    "read_by", "state_history", "prev_sha256", "body_sha256",
+})
+
+#: M29 — the value that means "this packet's verification state was never
+#: recorded", chosen to FAIL SAFE under BOTH consumer idioms.
+#:
+#:   `unverified_sender` is documented as a flag VISIBLE TO THE RECEIVING
+#:   AGENT. So the value for "unknown" must never read as "verified". Two
+#:   candidate defaults and why both fail:
+#:
+#:     False -> a consumer writing `if not env["unverified_sender"]: trust(env)`
+#:              reads unknown as VERIFIED. That is the exact confident-trust
+#:              failure M29 exists to prevent, manufactured by a defensive
+#:              default. Rejected.
+#:     None  -> falsy, so the SAME idiom above still reads it as verified.
+#:              Only `is True` / `is False` checks would be safe, and the
+#:              falsy idiom is the common one. Rejected.
+#:     "unknown" -> TRUTHY. Under `if not env["unverified_sender"]` it reads
+#:              as NOT-verified. Under `env["unverified_sender"] is True` it
+#:              reads as not-verified. Under `is False` it reads as not
+#:              verified. It fails safe under every idiom. ADOPTED.
+#:
+#: It is deliberately not a bool: a truthiness test that was written against a
+#: bool must not silently keep working on a different meaning.
+UNVERIFIED_SENDER_UNKNOWN = "unknown"
+
+#: Explicit per-key defaults for a key ABSENT from a legacy record. Chosen so
+#: that no default is indistinguishable from a recorded value:
+#:   * `decisions`/`state_history` -> empty LIST (a legacy packet demonstrably
+#:     recorded no transitions, so "empty" is a true statement about it).
+#:   * `read_by` -> empty MAP (same reasoning; `unread_for` already treats a
+#:     missing map as "nobody has read this", so this changes no decision).
+#:   * everything else -> None (honest "not recorded"), EXCEPT
+#:     `unverified_sender`, which gets the fail-safe sentinel above and
+#:     `sender_verified`, which gets None so it cannot be read as `True`.
+_ABSENT_DEFAULTS: dict = {
+    "decisions": [],
+    "state_history": [],
+    "read_by": {},
+    "unverified_sender": UNVERIFIED_SENDER_UNKNOWN,
+    "sender_verified": None,
+}
+
+
+def envelope_is_full(env: dict) -> bool:
+    """True when `env` carries every §8 schema key. Cheap, exact, no I/O."""
+    return SCHEMA_KEYS.issubset(env.keys())
+
+
+def normalize_envelope(env: dict) -> dict:
+    """Return a shape-tolerant VIEW of `env` for the read path. Never mutates.
+
+    A FULL envelope is returned BY IDENTITY — the caller gets the very object
+    that was read off disk, so a full-shape record round-trips byte-identical
+    and a test can assert `normalize_envelope(x) is x`. Nothing is defaulted,
+    nothing is reordered, no marker is added.
+
+    A legacy record gains every missing schema key with an explicit honest
+    value (see `_ABSENT_DEFAULTS`), plus two diagnostic keys:
+      * `provenance_state: "legacy_projection"` — this record predates the §8
+        envelope schema. Named so a receiving agent can branch on it without
+        needing to know the sentinel values.
+      * `legacy_missing_fields: [...]` — sorted list of exactly which schema
+        keys this record does not carry. The receiving agent can see the shape
+        of its own ignorance instead of inferring it from absent keys.
+
+    WHY NOT BACK-FILL `created_at_utc` FROM `submitted_at`:
+    `created_at_utc` is FROZEN at envelope birth (see `build_envelope`);
+    `submitted_at` is stamped later by the submit path. Asserting they are
+    equal invents a birth time nobody recorded, and destroys the evidence that
+    the two clocks are distinct. The honest value is None, and
+    `legacy_missing_fields` names it. Consumers that need a timestamp for a
+    legacy record should read `submitted_at`, which is what that field means.
+    """
+    if not isinstance(env, dict):
+        return env
+    if envelope_is_full(env):
+        return env  # identity: full shape round-trips untouched
+    missing = sorted(SCHEMA_KEYS - env.keys())
+    if not missing:
+        return env
+    view = dict(env)
+    for key in missing:
+        view[key] = _ABSENT_DEFAULTS.get(key)  # None when not in the table
+    view["provenance_state"] = "legacy_projection"
+    view["legacy_missing_fields"] = missing
+    return view
 
 
 def build_envelope(*,

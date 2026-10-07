@@ -253,7 +253,7 @@ User Input → Iris Speculative Decode → Intent Classification → Entity Rout
 ### Internal Development Form
 - Source of truth: `config/wads/<stack>/` (not the `.xoe`)
 - `.xoe` built via `scripts/build_wad.py` for distribution
-- XOE spec: `docs/research/omni/XOE_SPECIFICATION.md`
+- XOE spec: `docs/architecture/XOE_SPECIFICATION.md`
 
 ---
 

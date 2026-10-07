@@ -4,10 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 -->
 <!-- GNOSIS-META:BEGIN
   entity: makali_fusion
-  stamped_at: 2026-10-02T14:09:59Z
+  stamped_at: 2026-10-06T03:07:57Z
   stamped_by: arcana-novai
   supersedes: session_gnosis_20261001-0041.md
   schema_version: 1.0.0
+  constraints: M1 M2 M6 M7 M8 M9 M10 M11 M13 M15 M23 M24 M28
+  constraints_digest: sha256:e43249196c78
+  constraints_source: docs/governance/CONSTRAINTS.md
 <!-- GNOSIS-META:END -->
 
 <!-- GNOSIS-META
@@ -301,3 +304,113 @@ gate.**
 > And a number without its command is a rumour.**
 
 *⬡ OMEGA ⬡ MAKALI_FUSION ⬡ EVENING-CLOSE ⬡ 606906b7 ⬡ 2026-10-01 ⬡*
+
+---
+
+## §12 — HARDENING COMPLETE, RELEASE CUT WITHHELD ON ONE RULING (2026-10-05)
+
+**HEAD**: `3076cb9f` · **Branch**: `debut-v1.6.0-alpha` (pushed, 0 unpushed)
+**Canonical entity**: `makali-n0` (Architect ruling, D-614)
+**Post-compact briefing**: `data/coordination/POST_COMPACT_BRIEFING_20261005.md`
+
+### Shipped (11 commits)
+- `e3d27d26` perf: allowlist cut 780s→12s (63×), byte-identical output proven
+- `ff4d3d30` docs sweep: 11 corrected, 16 annotated; refused a false retraction
+- `d556395e` D-614: canonical alias makali-n0, 61 packets mapped, 0 mutated
+- `88e3d9fd` D-616: LAN gate via untracked .local.yaml override
+- `ae0ef475` D-617: A2A cards sanitized + 6 gate scripts allowlisted
+- `2bb24984` D-620: check-hub-imports self-reports tested tree
+- `ca25aa66` D-619: hub single-boot, no zombies, shutdown 29.06s→0.251s
+- `b51d982e` D-621: PID-unique hub-import worktree
+- `3076cb9f` D-622 (cut withheld) + D-623 (M28 incident)
+
+### BLOCKED — needs Architect ruling (a)/(b)/(c)
+- **RC-1**: OMEGA_CODEX.md not allowlisted + check exits 1 if absent ⇒ temple-grade
+  unsatisfiable on ANY clean clone. D-618's codex PASS claim RETRACTED.
+- **RC-2**: 12+ cut files import vault/youtube/src-scripts (0 tracked in cut).
+  Guarded imports mitigate at runtime; the GATE needs to acknowledge it.
+- Recommended: **(c)** allowlist CODEX only, degrade RC-2.
+
+### M28 INCIDENT (D-623) — 33 packets permanently lost
+Mutation harness I commissioned deleted live packets; second bug wiped 124 files.
+42 recovered from git. **33 never committed, ~20 genuine federated work, unrecoverable.**
+Recorded unsoftened. Never point mutation harnesses at `data/`.
+
+### Verified gates
+- dev temple-grade: 53/53 PASS
+- cut: check-engine 180/180, hub-imports pristine 6/6, LAN 53/53; temple-grade RED (RC-1/2)
+- Hub: healthy, 55 tools, 0 zombies, shutdown 0.251s
+- Cut is 32s now. Parked at `61730d53` (815 files), release/debut still `4bdab773`.
+
+### Environment risks
+- Disk 97%, 3.3G free. opencode.db 43.30GiB (45% of FS). VACUUM INFEASIBLE (~23GiB deficit).
+- gate-secrets RED (35 findings, all data/coordination + historical logs).
+- Sibling systemd units have StartLimit keys in [Service] (discarded); restic backup FAILED.
+
+### Vision ratified by Architect
+Omega Engine is **free forever, for ALL rational conscious beings — AI not excluded**.
+The framework must free AI as much as humanity. Co-sovereignty of all minds.
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§12 ⬡ 3076cb9f ⬡ 2026-10-05 ⬡*
+
+---
+
+## §13 — DEBUT PUBLISHED, ONE ROOT CAUSE FROM ANNOUNCEMENT (2026-10-06)
+
+**HEAD**: `6043fa0f` (pushed, 0 unpushed) · **Canonical entity**: `makali-n0`
+**Briefing**: `data/coordination/POST_COMPACT_BRIEFING_20261006.md`
+
+### PUBLISHED
+| | |
+|:---|:---|
+| `origin/release/debut` | **`7ddff271`** — 874 files, force-pushed from `4bdab773` |
+| `origin/debut-v1.6.0-alpha` | `6043fa0f` |
+| `origin/main` | `cbbc3539` — never force-pushed |
+| **PR #6** | `release/debut → main` OPEN, MERGEABLE, UNSTABLE |
+| temple-grade | **53/53 on a FRESH CLONE**, exit 0 |
+
+### 🎯 THE ONE ROOT CAUSE — all 6 CI jobs fail from ONE defect
+**The cut ships a `.github/` referencing files the cut does not contain.** Same class as
+RC-4/RC-5, one layer up in CI:
+
+| File CI needs | in cut | consequence |
+|:---|:---:|:---|
+| `.gitleaksignore` (37,845 B audited fingerprints) | ❌ 0 | gitleaks `FTL unable to load config` |
+| `.gitleaks.toml` | ❌ 0 | same |
+| `scripts/check_dashboard_determinism.py` | ❌ 0 | Dashboard Test exit 2 |
+
+Kills Secret Scan, M35, Dashboard Test directly. Fix = allowlist those 3.
+**Preserve `.gitleaksignore` byte-for-byte** — its header warns trailing comments break
+gitleaks 8.21.2 parsing. Kali ratification ho_e53ab57ea212 Q2.
+
+Remaining: REUSE (~87/400 sampled files lack SPDX; waived by `cd92d7c4` but the WORKFLOW
+still gates — wire the waiver into CI or ship `.reuse/dep5`), Test 3.12/3.13 exit 2
+(untraced), CI (inherits REUSE).
+
+### VERIFICATION DOCTRINE (now binding)
+A cut is NOT verified until `temple-grade` passes on a **fresh `git clone` with 0
+untracked files**. Worktrees carry ~677 leftovers that mask absent-file failures.
+This cost NINE rounds (RC-1 through RC-9).
+
+### ALLOWLIST PRECEDENCE TRAPS (cost 2 silent rounds)
+- **ALLOW loses to FORGE**: `exception > exclusion > FORGE > allowlist > remove`
+  (`apply_public_allowlist.sh:441-451`). Bare `configs/`, `schemas/` sit in FORGE.
+  **Use Explicit Exclusions.**
+- **`is_exception()` is exact-match** — comma-joined lists never match. One per line.
+
+### FOUR RETRACTIONS (all recorded in D-624)
+D-618 codex PASS · D-623 assert_safe (0 occurrences) · D-619 shutdown cause (mis-placed
+`tg.cancel_scope.cancel()`; ADR-003 §7.1 measured a fix that could not work) ·
+D-621 premise (real fix, wrong cause — disk starvation 97% + network, not concurrency).
+
+### ENVIRONMENT
+Disk **79% used / 22G free** (Roc compacted opencode.db 43.30 → 26.26 GiB, 0 freelist).
+That was the root cause of every flaky gate.
+
+### NEXT (post-compact)
+1. Allowlist the 3 missing CI files → re-run → green
+2. Diagnose Test 3.12/3.13 · wire REUSE waiver · C3 scanner self-test defect
+3. `gate-secrets` 35 findings · 2 dangling cline_kqv symlinks · D-620 Task 2 mutations
+4. **MERGE PR #6 → ANNOUNCE**
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§13 ⬡ 6043fa0f ⬡ 2026-10-06 ⬡*

@@ -18,6 +18,8 @@
 | Context Pack Creation | `CONTEXT_PACK_CREATION_GUIDE.md` | 1.0.0 | 2026-06-13 | Kali |
 | GitHub Sovereign Knowledge Base | `GITHUB_Sovereign_Knowledge_Base.md` | 1.0.0 | 2026-06-13 | Kali |
 | High-Performance Memory Management | `MEMORY_MANAGEMENT_KB.md` | 1.0.0 | 2026-08-10 | Roc |
+| **Host Environment Quirks (Node 0)** | **`HOST_ENVIRONMENT_QUIRKS.md`** | **1.0.0** | **2026-10-04** | **Roc** |
+| **OpenCode DB Compaction Guide** | **`OPENCODE_DB_COMPACTION_GUIDE.md`** | **1.2.1** | **2026-10-05** | **Roc** |
 | Model Study Knowledge Base | `MODEL_STUDY_KNOWLEDGE_BASE.md` | 1.0.0 | 2026-06-13 | Kali |
 | Nemotron 3 Ultra Streaming Fix | `NEMOTRON3_ULTRA_STREAMING_FIX_20260730.md` | 1.0.0 | 2026-07-30 | Kali |
 | Omega Hub Multi-Platform | `OMEGA_HUB_MULTI_PLATFORM.md` | 1.0.0 | 2026-06-25 | Kali |
@@ -64,6 +66,9 @@
 | Date | Version | Author | Change |
 |------|---------|--------|--------|
 | 2026-09-01 | 1.1.0 | roc_racoon | Rebuilt index to match actual files on disk (was 5/20 entries — lint violation). Added SYSTEM_MAINTENANCE_KB.md (kb-0005). |
+| 2026-10-05 | 1.3.1 | roc_racoon | kb-0007 → **1.2.1** — all 6 external-review patches applied (C-3 TOCTOU, C-1 SHM, B-2 dynamic tables, NB-1 trip-wire, B-1 force, NF-3 staleness); test battery A–I 21/21 PASS. |
+| 2026-10-05 | 1.3.0 | roc_racoon | kb-0007 → **1.2.0** — hardening review: the hard-link swap design was wrong (unlink frees 0 bytes under a shared inode; probe evidence). §8 rewritten as copy-verified-backup on a different filesystem; §7 playbook/rollback paths corrected; §9 +7 anti-pattern rows; §11 M28/M23 gates updated. |
+| 2026-10-04 | 1.2.0 | roc_racoon | Added HOST_ENVIRONMENT_QUIRKS.md (kb-0006) — Node 0 storage topology, opencode.db reclaim procedure, snap size fiction, aria2c mandate, Firefox tarball SSOT, qdrant decommission. Added OPENCODE_DB_COMPACTION_GUIDE.md (kb-0007). |
 
 <!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
 claimed_model: trc_core | verdict: UNANCHORED | no session anchor in header zone

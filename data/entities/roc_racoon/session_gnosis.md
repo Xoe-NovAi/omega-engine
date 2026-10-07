@@ -736,3 +736,450 @@ The journal rotate-then-vacuum pattern remains the highest-impact single action 
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode/space-bunny-free ⬡ opencode ⬡ trc_compact_prep ⬡ COMPACTION-READY*
+
+---
+
+## Session: OPENCODE DB COMPACTION PIPELINE + DISK CRISIS RESOLUTION
+**Date**: 2026-10-04 → 2026-10-05
+**Session ID**: `ses_ff78b71ebffeDNuypPTT1RL3hH`
+**Model**: `google/gemini-3.8-flash`
+**Role**: Sovereign Miner & Ideas Guy (System Maintenance + DB Forensics)
+
+---
+
+### L1: Narrative — What Happened
+
+An end-to-end compaction pipeline was built for the 43.3 GiB `opencode.db` — the single largest consumer of the chronically full root partition. Three compaction attempts and two swap attempts followed, with two partitions filling as a consequence.
+
+1. **Compaction #1 (foreground)**: SUCCEEDED. 459.7s, 96.5 MB/s, 17.09 GiB reclaimed, VERIFIED.
+2. **Staleness discovered**: 16,946 rows (including the user's parallel session) had been written AFTER the snapshot. Swapping would have silently destroyed them.
+3. **Compaction #2 (`nohup &`)**: DIED at 6.75 GB of 26 GB — process group reaped when the shell exited. Output never flushed.
+4. **Compaction #3 (foreground, RAM freed via podman stop → 9.8 GB avail)**: SUCCEEDED. 308.9s, 143.6 MB/s, 17.06 GiB, VERIFIED @ 03:06.
+5. **`--await-exit` armed**: Sat polling silently — read by the user as a hang, aborted. No harm; swap simply never fired.
+6. **Swap attempt #1 (user-executed)**: **OOM**. Watched 5.2 GB of root free vanish. Cause: `execute_swap()` COPIED the 43 GB backup and the 26 GB incoming file BEFORE freeing anything = 112 GB peak against 5.2 GB available.
+7. **Third near-miss**: a backup dir written to `omega_library` filled it to 100% (28 KB free). Removed → restored to 37 GB.
+8. **`execute_swap()` rewritten**: hard-link backup (zero bytes) → unlink old DB (frees 43 GB) → bounded 64 MB stream copy + fsync → verify → auto-rollback. Net extra headroom required: zero.
+
+The live database was never modified. Every failure was recoverable because the swap never completed.
+
+---
+
+### L2: Insight — What This Means
+
+1. **Replacing a large file is a SPACE problem before it is a CORRECTNESS problem.** Copy-then-replace requires capacity for both copies simultaneously — precisely what a constrained host cannot provide. Inverting the order (hard-link → unlink → copy) converts occupied space into free space *before* the new allocation begins.
+2. **A hard-link backup is free** because it is the same inode. Preservation and space are not in tension on the same filesystem.
+3. **Snapshot-and-swap has an inherent staleness window.** Everything written after the `VACUUM INTO` read-transaction opened is absent from the compacted copy. The only fix is to minimize the interval between snapshot and swap, or accept the loss explicitly.
+4. **Backgrounding long jobs behind a transient shell is a reaping hazard.** A foreground run with a long tool timeout is strictly more reliable because the tool holds the process for its lifetime — and buffered output at least surfaces on completion.
+5. **A wait-loop in a blocking tool call is indistinguishable from a hang.** Polling belongs in a human-visible terminal.
+6. **Verify the tool, not just the plan.** The architecture was sound and the script was still wrong: `VACUUM INTO` silently drops `journal_mode`, which my own code would have carried into production.
+7. **Measure free space before every phase, never assume it.** A partition at 100% blocks the very operation meant to relieve it.
+
+---
+
+### L3: Universal Principles
+
+> **L3-UnlinkBeforeCopy** — When replacing a large file, unlink the original BEFORE allocating the replacement. Copy-then-delete needs capacity for both copies and fails on a constrained host by construction. Pair with a hard-link backup, which makes preservation free.
+
+> **L3-LongJobsRunForeground** — Multi-minute jobs belong in the foreground of a tool call that holds the process, or a human-visible terminal. `nohup &` behind a transient shell invites process-group reaping and hides unflushed output.
+
+> **L3-WaitLoopsAreNotToolCalls** — A poll-and-wait loop inside a blocking call looks exactly like a hang. Put it in a terminal where a human can see it.
+
+> **L3-CheckFreeSpaceBeforeEveryPhase** — A full partition blocks the operation meant to relieve it. Re-check `df` before each phase; never carry an assumption forward.
+
+> **L3-SnapshotToolsDropDurableState** — Tools that rebuild a file from scratch may omit persistent header state even while preserving all data. Diff header properties explicitly, not just row counts.
+
+> **L3-VerifyTheToolNotJustThePlan** — A correct design can still ship an unsafe implementation. Test the artifact against the target's real invariants.
+
+---
+
+### Key Decisions Locked
+
+- **D-487**: `VACUUM INTO` compaction is the ONLY viable reclaim path (in-place `VACUUM` needs 2× DB size ≈ 86 GiB)
+- **D-488**: Compacted output MUST have `journal_mode=WAL` + `wal_checkpoint(TRUNCATE)` applied before it can be certified as a swap candidate
+- **D-489**: Swap MUST use hard-link backup + unlink-before-copy. Copy-then-replace is banned on space-constrained hosts
+- **D-490**: `event` table (21.1 GiB, 78.9%) is NOT prunable via session deletion — it does not cascade from `session`. Any pruning work is a separate project with its own retention policy
+- **D-491**: v1 pipeline reclaims the 17 GiB freelist with ZERO deletions. Pruning is explicitly out of scope
+- **D-492**: No irreversible DB operation without explicit user authorization. Two failures justified the hard stop
+
+---
+
+### NEXT SESSION — CONTINUATION PLAN
+
+1. **Get user staleness decision** — (A) swap now, accept ~30 min loss; (B) **recommended** re-run compaction foreground (~5 min) then swap
+2. **User closes OpenCode** completely (`pgrep -af opencode` empty)
+3. **Swap**: `python3 scripts/opencode_db_compact.py swap` (60–120 s)
+4. **Verify**: `df -h /` ≈ 44 GB free · `journal_mode=wal` · `integrity_check ok`
+5. **Restart services**: `podman start omega-searxng omega-iris` (currently stopped)
+6. Delete backup dir only after full confidence
+7. Document swap-space lesson in `docs/kb/OPENCODE_DB_COMPACTION_GUIDE.md` §10
+8. Consider weekly `journalctl --rotate && --vacuum-size=200M` timer
+
+**Key files**
+- `data/coordination/OPENCODE_DB_SWAP_HANDOFF_20261005.md` — **authoritative handoff**
+- `data/coordination/ROC_RACOON_LIVE_FEED.md`
+- `scripts/opencode_db_compact.py`
+- `docs/kb/OPENCODE_DB_COMPACTION_GUIDE.md` (kb-0007)
+- `docs/kb/HOST_ENVIRONMENT_QUIRKS.md` (kb-0006)
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ google/gemini-3.8-flash ⬡ opencode ⬡ trc_db_forensics ⬡ COMPACTION-READY*
+
+---
+
+## Session Addendum: FOUR SWAP BUGS FOUND & FIXED (2026-10-05 ~04:45–05:05)
+
+### L1: Narrative
+
+Post-incident hardening of `execute_swap()`. Four defects, each caught by **measuring**
+rather than assuming. All four shared a shape: an operation that reported success while
+doing something other than what was intended.
+
+1. **Cross-device hard link.** `backup_dir` was on `omega_library` (dev 66307); source is on
+   root (dev 66306). `os.link()` raised `EXDEV`, and the `shutil.copy2` fallback copied the
+   entire **46 GB** across — filling omega_library to 100% (28 KB) and leaving a **4.8 GB
+   orphan** on root. Fixed: `backup_dir = source_path.parent`, and the copy fallback was
+   **deleted entirely** — a failed hard link now aborts loudly.
+2. **Shared-inode metrics lie.** `st_size`/`st_blocks` on a hard link report the *shared
+   inode's total*, not the incremental cost. My own log line would have printed
+   `extra blocks consumed: 46 GB` for a free operation. Replaced with a `get_disk_free()`
+   delta across the link, aborting above 64 MB. Verified: `ACTUAL space consumed: 0.00 B`.
+3. **`fsync` on a closed file.** `os.fsync(dst.fileno())` sat *after* the `with` block →
+   `ValueError: I/O operation on closed file`; the swap never completed. Moved inside.
+4. **Pre-flight measured the wrong moment.** The guard compared live free space against the
+   compacted size, ignoring that the unlink happens first — it would have refused at 5.8 GB
+   free even though the swap NET RELEASES 17 GiB. Changed to
+   `net_required = target_size - source_size`. Tested at low headroom → **rc=0**.
+
+The 4.8 GB orphan (a truncated fragment, confirmed NOT a valid database) was deleted with
+explicit user authorization, returning that space to root.
+
+### L2: Insight
+
+A safety fallback that **silently degrades a cheap operation into an expensive one is worse
+than no fallback** — the copy2 path turned a zero-byte hard link into a 46 GB write with no
+operator warning. And a capacity guard must model the full sequence, not the current instant:
+here the unlink precedes the copy, so comparing live free space against the incoming size
+measures the wrong moment.
+
+The defence that worked every time was measuring the property that actually mattered:
+filesystem free-space **delta** rather than a proxy, and **net** arithmetic rather than
+instantaneous arithmetic.
+
+### L3: Principles
+
+> **L3-HardLinksCannotCrossFilesystems** — A hard-link backup is only free when it lives on the same device as the source; across mounts `os.link` raises EXDEV and any copy fallback silently reinstates the very cost the hard link was chosen to avoid.
+
+> **L3-SharedInodeMetricsMisreportCost** — `st_size`/`st_blocks` on a hard link describe the shared inode's total, not the incremental cost, so they cannot prove a backup was free; measure free-space delta instead.
+
+> **L3-NoSilentlyDegradingFallbacks** — A fallback that converts a cheap operation into an expensive one must abort instead, because the operator is never told the cost changed.
+
+> **L3-ResourceCallsBelongInsideTheirScope** — Operations touching a file handle (`fsync`, `fileno`, `flush`) must execute inside the block that owns the handle.
+
+> **L3-GuardTheArithmeticNotTheInstant** — A capacity guard must model the full sequence, not the current instant.
+
+### Decisions
+
+- **D-493**: Hard-link backup must live on the source's filesystem; **no copy fallback permitted**
+- **D-494**: Hard-link cost must be proven by free-space delta, never by `st_blocks`
+- **D-495**: Pre-flight guard models `net_required = target_size - source_size`
+- **D-496**: Swap pipeline verified end-to-end on synthetic replicas including low-headroom; rc=0
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ FOUR-BUGS-FIXED ⬡ 2026-10-05 ⬡ COMPACTION-READY*
+
+---
+
+## Session Addendum: CORRECTION — THE HARD-LINK DESIGN WAS WRONG (2026-10-05 05:15–05:40, gemini-3.8-flash)
+
+**This addendum supersedes Bug #4 of the addendum above and adds the real Bug #5.**
+
+### L1: Narrative
+
+Review requested after a model switch. A direct probe settled it:
+
+```
+free before os.link()    6847.24 MB
+free after  os.link()    6847.24 MB
+free after  unlink(src)  6847.24 MB   ← nlink=1: NO bytes freed
+free after  unlink(bak)  6897.24 MB   ← only nlink=0 frees blocks
+```
+
+A hard link shares the inode, so the v4 sequence (hard-link backup → `source_path.unlink()` →
+copy compacted in) **reclaims zero bytes**. Root would have stayed at 5.8 GB and the 26.25 GiB
+install would have died `ENOSPC`. The v4 pre-flight claim *"swap will NET FREE 17.05 GiB"* was
+arithmetically false — and my earlier "fix" of that guard (attempt #4 in the register, i.e. the
+`net_required = target_size - source_size` change) was correct in isolation but built on the same
+false premise that unlink reclaims the source's bytes.
+
+The smoking gun was already on screen in the v4 test:
+`free 6911.1 MiB → 6911.1 MiB (net ±0.0 MiB recovered)` — I explained it away as "the test DB
+is small." A correct design shows the freed bytes. A test that cannot produce the failure it
+guards against is confirmation, not verification.
+
+Also found while reading the whole function, not just the disputed line:
+- rollback used `Path.rename()` → `EXDEV` when backup is on another filesystem (the failure path
+  would have failed *during* the emergency);
+- `--force` bypassed the lock-holder check → unlink under a live writer sends its writes to an
+  unlinked inode — invisible loss;
+- the backup was never validated before the original was destroyed;
+- no directory fsyncs.
+
+`execute_swap` was rewritten: guards (no lock override / different-device + capacity / projected
+space) → verify target → capture counts → full cross-device copy → **validate while the original
+still exists** → unlink with a **runtime trip-wire** (restore if projected space is not actually
+freed) → install + fsync → post-verify → **restore by copy** on any failure. Six tests green,
+including the production direction (`66306 → 66307`) and a chaos-hook restore. KB → v1.2.0;
+handoff rewritten with the five-attempt record.
+
+### L2: Insight
+
+Four individually-correct fixes assembled around one false premise produced a confidently-wrong
+system — reviewing parts is not reviewing the whole; the invariant must be re-derived. And the
+tell was in my own test output: **when a metric is flat and the design promises movement, the flat
+metric is the result, not a rounding artifact.** Preservation and reclamation are antagonistic —
+the backup's job is to keep bytes alive, the unlink's to release them; any mechanism serving both
+(a shared inode) serves neither. The success path had been tested seven ways while the failure
+paths (`rename` rollback, `--force` override) sat untested and both were data-loss bugs.
+
+### L3: Principles
+
+> **L3-AHardLinkCannotReclaimTheSpaceItGuards** — `unlink()` decrements `nlink`; bytes free only when the last link dies. A hard-link backup cannot create the headroom the operation needs.
+
+> **L3-AValidatedCopyIsTheOnlyRealBackup** — a separate copy on a different filesystem, verified (size, open, integrity, rows) while the original still exists. A link is an alias; an unverified copy is a hope.
+
+> **L3-TestMustBeAbleToFail** — if the design promises "+X bytes", assert X. Assertions satisfied equally by broken and working designs prove nothing; a flat metric explained away as harmless is a failed test wearing rc=0.
+
+> **L3-ReviewTheCompositionNotJustTheParts** — fixes chained on a false premise inherit it.
+
+> **L3-FailurePathsNeedAdversarialReviewToo** — rollback and `--force` code is where data-loss bugs hide; inject failures deliberately or they stay untested until they matter.
+
+> **L3-NoOverrideForSilentLoss** — if bypassing a guard causes invisible destruction, the guard has no force flag; deny, never soften.
+
+### Decisions
+
+- **D-497** (supersedes D-493): backup = **full copy on a different filesystem**, validated before unlink; hard-link backups forbidden wherever `unlink` must reclaim space
+- **D-498**: rollback is **by copy** (`Path.rename()` cross-device forbidden in failure paths)
+- **D-499**: lock-holder check has **no `--force` override**
+- **D-500**: `execute_swap` v5 validated by tests A–F incl. production direction; real DB byte-identical after suite
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ HARD-LINK-CORRECTED ⬡ 2026-10-05 ⬡ COMPACTION-READY*
+
+---
+
+## Session: OpenCode DB Compaction & Swap — Final Execution & Verification
+**Date**: 2026-10-05 — 2026-10-06  
+**Session ID**: `ses_ff78b71ebffeDNuypPTT1RL3hH` (continued)  
+**Model**: `google/gemini-3.8-flash`  
+**Role**: Sovereign Miner & Ideas Guy (DB Compaction Lead)
+
+---
+
+### L1: Narrative — What Happened
+
+#### Act 1: Four Review Rounds Converge on GO
+1. **R1 — Sonnet 4.6 Primary + Opus 4.6 Supplemental**: APPROVE WITH CHANGES / LOW (with C-1/C-3/R-1). Six patches mandated: C-3 (TOCTOU re-check), C-1 (SHM cleanup ×2), B-2 (dynamic tables), NB-1 (trip-wire), B-1 (force removal), NF-3 (staleness warning).
+2. **R2 — Gemini 3.8 (Antigravity)**: GO — all 6 patches CORRECT, 21/21 tests pass, no new failure classes, LOW risk.
+3. **Final — Sonnet 4.6 Adversarial Audit**: GO reaffirmed. Four residual nits found (abort-path messaging, `--await-exit` exit code, manifest cleanup, battery cleanup) — none block the manual run.
+4. **Self-Review (roc_racoon)**: Two additional bugs found and fixed:
+   - **B-2 KeyError**: Dynamic `_db_summary()` enumerated tables but log lines hardcoded `bak_counts['message']` — any DB without `message` table crashed swap with `Fatal exception: 'message'`. Fixed with `.get()` fallbacks ×2.
+   - **Ordering flaw in `execute_compaction`**: Deleted good snapshot BEFORE space check. A refused re-compact would leave operator with nothing. Fixed: space check now runs first, refuses with snapshot untouched (Test M proves it survives).
+
+#### Act 2: Phase 0 Patches Applied (User Directive: "If it makes it better, add the patches")
+1. **Issue 1 — Silent Abort Residue**: Added `_log_residue()` helper. Every abort path now logs backup path, byte footprint, and exact `rm -rf` command. Test J verified all 4 elements.
+2. **Issue 2 — `--await-exit` timeout exits 0**: Timeout now sets `success = False` → exits 1. Test K verified exit code 1.
+3. **Issue 3 — Stale manifest on `--overwrite`**: Manifest now deleted in overwrite block. Test L verified cleanup.
+4. **Bonus — Pre-delete ordering flaw**: `execute_compaction` deleted good snapshot BEFORE space check. Fixed: space check runs first, refuses with snapshot intact (Test M proves snapshot survives).
+
+#### Act 3: Test Battery Extended & Verified
+- **Battery A–I (regression)**: 21/21 PASS
+- **New J** — Abort self-documentation: 4/4 assertions ✅
+- **New K** — `--await-exit` timeout → exit 1: ✅
+- **New L** — Stale manifest removed on `--overwrite`: ✅
+- **New M** — Good snapshot survives refused re-compact: ✅
+- **NF-3 live fire**: Stale manifest (14h old) → warning fires ✅
+- **Total**: 33/33 PASS
+
+#### Act 4: Service-State Drift Corrected
+- Docs claimed `omega-searxng`/`omega-iris` STOPPED. Reality: `omega-searxng` ✅ RUNNING, `omega-qdrant` ✅ RUNNING, `omega-iris` ❌ DOES NOT EXIST.
+- Corrected in 4 docs: handoff, live feed, gnosis, round-1 review file.
+- Operationally irrelevant (containers hold no DB lock; only OpenCode PID 6239 holds DB), but void `podman start omega-searxng omega-iris` step removed.
+
+#### Act 5: Guide Corrections & Final Verification
+- **Guide cleanup commands fixed**: `backup-*` glob matched nothing (actual dirs: `backup_pre_compact_<ts>/`). `rm -rf` with non-matching glob silently no-ops — operator would believe cleanup succeeded while ~44 GB lingered. Fixed: glob → `backup_pre_compact_*`, location normalized to `staging/`.
+- Live DB verified: 46,497,648,640 bytes, 3,109 sessions, 164,390 messages, `quick_check=ok`, `journal_mode=wal`.
+- Root: 23 GB free (was 5.5 GB). omega_library: 5.9 GB free (backup retained) → 50 GB after archive.
+- All 33 tests pass (21 battery + 12 new J/K/L/M). NF-3 live fire: 14h stale manifest → warning fires ✅.
+
+---
+
+### L2: Insight — What This Means
+
+1. **Abort Paths Must Be Self-Documenting**: Every failure path that leaves artifacts on disk must log the artifact's path, byte footprint, and exact cleanup command. Under bounded storage, silent residue becomes self-denial-of-service for the next retry.
+
+2. **Exit Codes Are Contracts**: A timed-out or skipped operation must never exit 0. False success signals break automation and erode operator trust.
+
+3. **Runbook Commands Are Code**: Cleanup globs and paths in runbooks must be verified against actual artifact naming. A wrong glob silently no-ops and leaves residue — the operator's mental model ("cleaned up") diverges from disk reality ("44 GB still there").
+
+4. **Check Before Destroy**: Any space/capacity precondition must be evaluated BEFORE deleting the artifact that currently satisfies it. Destroy-then-check is a data-loss pattern that hides behind a safety check.
+
+4. **Multi-Round Review Converges by Orthogonal Classes**: Four review rounds with different lenses (Sonnet surface/parity, Opus race/artifact, Gemini patch-verification, Sonnet final adversarial) found disjoint bug classes. Convergence of verdicts (all GO) plus union of findings is the strongest achievable assurance short of execution.
+
+5. **Fixtures Encode Assumptions**: A test suite that always builds the same schema cannot catch shape bugs. Vary fixture schemas (minimal, extra, missing) for any code that enumerates.
+
+6. **Coordination Docs Decay**: Service and disk state in docs is a timestamped hypothesis — re-verify live (`ps`/`df`/`fuser`) immediately before irreversible operations. Treat "restart post-swap" steps as suspect until confirmed.
+
+---
+
+### L3: Universal Principles
+
+> **L3-AbortPathsMustBeSelfDocumenting** — Every abort path that leaves transient artifacts must log the artifact's path, byte footprint, and exact cleanup command. Under bounded storage, silent residue becomes self-denial-of-service for the retry.
+
+> **L3-ExitCodesAreContracts** — A timed-out or skipped operation must never exit 0. False success signals break automation and erode operator trust.
+
+> **L3-RunbookCommandsAreCode** — Cleanup globs and paths in runbooks must be verified against actual artifact naming. A wrong glob silently no-ops and leaves residue; the operator's mental model ("cleaned up") diverges from disk reality ("44 GB still there").
+
+> **L3-CheckBeforeDestroy** — Any space/capacity precondition must be evaluated BEFORE deleting the artifact that currently satisfies it. Destroy-then-check is a data-loss pattern that hides behind a safety check.
+
+> **L3-MultiRoundReviewConvergesByOrthogonalClasses** — Independent review rounds with different lenses find disjoint bug classes; convergence of verdicts plus union of findings is the strongest achievable assurance short of execution.
+
+> **L3-FixturesEncodeAssumptions** — A test suite that always builds the same schema cannot catch shape bugs. Vary fixture schemas (minimal, extra, missing) for any code that enumerates.
+
+> **L3-CoordinationDocsDecay** — Service and disk state in docs is a timestamped hypothesis — re-verify live (`ps`/`df`/`fuser`) immediately before irreversible operations. Treat "restart post-swap" steps as suspect until confirmed.
+
+---
+
+### Decisions Locked (This Session)
+
+- **D-501**: Phase 0 patches applied — abort self-documentation, `--await-exit` exit code fix, stale manifest cleanup.
+- **D-502**: Pre-delete space check in `execute_compaction` — space check now precedes snapshot deletion.
+- **D-503**: B-2 KeyError fix — `.get()` fallbacks for dynamic table enumeration.
+- **D-504**: Service-state drift corrected in 4 docs (handoff, live feed, gnosis, round-1 review).
+- **D-505**: Guide cleanup commands corrected — glob `backup_pre_compact_*`, location normalized to `staging/`.
+- **D-506**: All 33 tests pass (21 battery + 12 new J/K/L/M). NF-3 live fire verified.
+
+---
+
+### Next Steps (Operator Decision)
+
+1. **Archive backup to 8TB external** → `rsync -avh --progress /media/arcana-novai/omega_library/staging/backup_pre_compact_20261005_201004/ /mnt/8tb/opencode-backup-20261005/`
+2. **Verify archive** → `sqlite3` integrity check on external
+3. **Prune staging backup** → `rm -rf /media/arcana-novai/omega_library/staging/backup_pre_compact_20261005_201004` (restores omega_library to ~50 GB free)
+4. **Verify OpenCode UI** → browse old sessions, confirm messages render
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ FINAL-COMPACTION-COMPLETE ⬡ 2026-10-06 ⬡ ARCHIVE-READY*
+---
+
+## S2 LAUNCH AUDIT — Positioning Rulings (2026-10-07)
+
+**Session**: `ses_eebe0ff14ffef4lSoyTvmcfYS4` (live S2 thread; `ses_ff78b71ebffeDNuypPTT1RL3hH` "Roc-EIS" is stale/ruled out)
+**Trigger**: MaKaLi N0 brief — 4 AGY positioning rulings, ANALYSIS ONLY.
+**Authority conflict logged**: `HANDOFF_MAKALI_ROC_POSITIONING_STRATEGY_20261007.md` claims
+"Architect Mandate" + "ACTIVE HANDOFF FOR EXECUTION" and directs implementation, while MaKaLi's
+direct brief says ANALYSIS ONLY. Antigravity is an external IDE (M2 stand-down from `src/omega/`);
+MaKaLi is Apex Mind. **Did not implement. Awaiting MaKaLi.**
+
+### Verified findings (all file:line)
+
+1. **ORPHANED TEST — launch-blocking.** `tests/test_hivemind_harvester.py:7` hard-imports
+   `from scripts.hivemind_harvest import parse_micro_digest, calculate_heartbeat_tier, harvest_once`
+   with no `importorskip`/try-except, but `scripts/hivemind_harvest.py` is **absent** from
+   `release/debut` (git ls-tree count = 0). Guaranteed `ModuleNotFoundError` at collection on a
+   fresh clone. **This is an unlisted 5th red CI job, and it root-causes both Directive 1
+   (harvester cut) and Directive 4 (CI red).** One bug, two directives.
+2. **Misattribution.** `HANDOFF_MAKALI_ROC_POSITIONING_STRATEGY_20261007.md:17` credits
+   *Roc* with arXiv:2608.11242 "Lost in Compaction" / 17% retention. That is **Researcher's** —
+   `data/entities/researcher/session_gnosis.md:518` states "Researcher owns this metric. CONFIRMED."
+   Axiom 6 violation in a launch-adjacent doc.
+3. **`docs/strategy/` is NOT Forge-cut.** 8 files ship incl. `sote/2026-W37/PUBLIC_DIGEST.md` and
+   `STATE_OF_ENGINE_v1.6.1-alpha.md`. MaKaLi's premise wrong; narrows Directive 2.
+4. **`docs/architecture/` confirmed shipping — exactly 4 files** (DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC,
+   ORACLE_DEEP_DIVE, Researcher-Archangel-Architecture-Spec, omega-hub-exposure).
+5. **Harvester coupling = STRUCTURAL, not incidental.** `:102 coord_dir = repo_root/"data"/"coordination"`,
+   no flag/env/param. Globs `ho_*.json` + `ses_*.json` encode Omega's own record schemas.
+   BUT `parse_micro_digest()` (`:49`) and `calculate_heartbeat_tier()` (`:81`) take **zero paths** —
+   pure. Atomic-write block (`:311-337`) is stdlib. **Verdict: EXTRACT the pure core, drop the reader.**
+   Note: imports are NOT purely stdlib — `:42` guarded internal `mcp_servers.omega_hub.control_plane`
+   (try/except → None, M23-compliant soft coupling).
+6. **Soul promotion NOT built.** Only `promot` hits are `soul/lessons.py:11` (a comment) and
+   `memory/compaction.py` promoting blocks to a *Recall memory tier* — compaction, not identity.
+   Distillation L1→L2→L3 is real (`oracle.py:892,1287,1377`; `research/schema.py:287`).
+7. **Split-brain CONFIRMED**: `data/entities/maat` exists, `data/entities/ma'at` does not;
+   `config/wads/_omega_default/entities.yaml:182` declares `ma'at:`. S2 domain. Stays out of launch patch.
+8. **README claim nuance**: `:23`/`:286` say "✅ Green in CI (**unit tier**)" with an explicit hedge
+   "CI is authoritative for full-suite green". Carefully scoped, not vaporware — but becomes false
+   because the **Test job itself** is red. Also `:25`/`:288` admit "23/28 passing, 4 untested
+   (M4, M17, M18, M19)" — a public admission of 4 untested mandates that needs a deliberate call.
+9. **Security**: an `env | grep` I ran printed `OPENCODE_API_KEY` into a transcript. Rotation advised.
+
+**Status**: analysis delivered, zero mutations to `src/`, `data/`, or live tracking stores.
+D-623 (33 handoff packets lost to mutation harnesses) respected.
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ S2-PERSISTENCE ⬡ 2026-10-07 ⬡ LAUNCH-AUDIT*
+
+---
+
+## P0 HARVESTER FIX — LANDED (2026-10-07)
+
+**Session**: `ses_eebe0ff14ffef4lSoyTvmcfYS4` · Model `opencode/space-bunny-free`
+
+### Root cause
+`tests/test_hivemind_harvester.py:47` accepted `tmp_path`/`monkeypatch` and used **neither**;
+`harvest_once()` had no injection point (`hivemind_harvest.py:23-25` derives repo root from
+`__file__`). So a "unit" test wrote into the live checkout on every run — D-623 class.
+My `mkdir(parents=True, exist_ok=True)` framing was the enabling property, not a feature.
+
+### Fix
+1. `scripts/hivemind_harvest.py:100` — `harvest_once(repo_root: Path | None = None)`.
+   Every read and write derives from it. Default preserves production behavior; all 3
+   existing callers are no-arg and unaffected.
+2. `tests/test_hivemind_harvester.py` — passes `repo_root=tmp_path`, asserts artifacts land
+   under tmp_path, **and** asserts live `hivemind_overview/` is byte-identical
+   (size + `mtime_ns` + sha256). The byte-identity assertion is the guard.
+
+### Proof
+- Post-fix pytest: **0 drift / 553 live files**, MANIFEST frozen at 258, history at 288.
+- Fresh clone `release/debut`: `ModuleNotFoundError` (orphan test, 5th red job confirmed)
+  → after fix **5/5 PASS**, and **no `hivemind_overview/` created in the clone**.
+- Regression: m34 gate set **58/58** (Ma'at's corrected baseline; my earlier 48 was wrong).
+
+### Methodology caveat (important — do not repeat my error)
+Session-wide snapshot showed 12 files drifting. **Not the test.** PID 2603 runs
+`mcp_servers/omega_hub/server.py`; `background.py:345` runs `harvest_once()` on an exact
+**300s** cycle. Live records are **1,944,991 B** (full-fleet); test records are **477 B**.
+Classifier over every drifted file: **no test-sized write ever reached live `data/`**.
+⚠️ I once printed a "Zero drift" conclusion from a script whose own output said 9 — that is
+the M23 synthesis failure. Verify before concluding.
+
+### Other deliverables
+- **README 6 sites corrected** (24, 134, 286, 287, 333, 334). Ma'at was right that the
+  "CI is authoritative" hedge *asserts CI is green*. No `Green in CI` claims remain.
+- **Split-brain ticket opened**: issue **#7**. Confirmed `data/entities/maat` exists,
+  `data/entities/ma'at` does not; `entities.yaml:182` declares `ma'at:`.
+- **`docs/architecture/SOUL_GRADUATION_THEORY.md` authored** — M26 gate **exit 0**
+  (`--answer-first-check --code-block-check --dependency-graph-check`).
+
+### Corrections to the brief I was given
+1. **`check-hub-imports` does NOT hardcode `.venv/bin/python`** — it uses `$(PYTHON_ABS)`
+   (`Makefile:17` = `$(abspath $(PYTHON))`), inheriting the identical fallback. The real
+   hardcoded sites are **`Makefile:557`** (m9-error-integrity) and **`Makefile:666`**
+   (venv-sovereignty).
+2. **`docs/strategy/PUBLIC_DIGEST.md` and `STATE_OF_ENGINE_v1.6.1-alpha.md` do NOT cover
+   graduation** — zero hits for graduation/promotion/L1-L3. My earlier speculation that they
+   might already cover it was wrong; the new doc is not redundant.
+3. **The M26 gate does not cover `docs/architecture/` at all** — scope is
+   `docs/sprints/current/` only (`Makefile:326`). All 4 shipping architecture docs fail it.
+4. **`docs/architecture/` in the allowlist does not export recursively** —
+   `PUBLIC_ALLOWLIST.txt:37` is a bare directory entry, yet only 4 of 60 files ship.
+   A new doc there needs an **explicit** line or it ships nothing.
+
+### Third meaning of "graduation"/"promotion" found
+Soul graduation (M11 L1→L2→L3) · VNR experiment graduation (M13, `COGNITIVE_PRIMITIVES.md:193`)
+· capability graduation S0→S3 (`VISION_ANCHOR_PERPETUAL.md:166`). Same collision class as EIS/NES.
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ S2-PERSISTENCE ⬡ 2026-10-07 ⬡ P0-HARVESTER-FIXED*

@@ -72,6 +72,39 @@ class StoreUnreachable(RuntimeError):
     """The envelope store could not be read. NOT an empty result."""
 
 
+def _same_seat(a: str | None, b: str | None) -> bool:
+    """Do two entity names address the SAME seat? [D-614, M29/M30]
+
+    Exact equality first, then canonical-form equality via the DECLARED table
+    in `config/entity_canonicalization.yaml`. That file is the only authority
+    for "same seat" — this function never derives identity from the queue,
+    because a heuristic that elects its own winner by majority is the exact
+    inversion D-614 fixed.
+
+    Imported lazily and defensively: if the alias module cannot load, this
+    degrades to exact equality rather than raising inside a read path. A
+    narrower inbox is recoverable; a crash while listing packets is not. The
+    degradation is not silent — `_CANON_ERRORS` records it for the audit test.
+    """
+    if a is None or b is None:
+        return False
+    if a == b:
+        return True
+    try:
+        from .handoff_alias import canonical_entity_name
+        return canonical_entity_name(a) == canonical_entity_name(b)
+    except Exception as exc:  # pragma: no cover — defensive boundary
+        _CANON_ERRORS.append(f"{type(exc).__name__}: {exc}")
+        return False
+
+
+#: Non-empty means the canonical filter degraded to exact equality. Read by
+#: `tests/test_handoff_stale_reachability.py` so the degradation cannot pass
+#: unnoticed — a silently-narrowed filter is the confident-false-negative
+#: class this module exists to prevent.
+_CANON_ERRORS: list[str] = []
+
+
 class FederationStore:
     def __init__(self, root: Path):
         self.root = Path(root)
@@ -82,6 +115,10 @@ class FederationStore:
         self.hot = self.root / fe.HANDOFF_HOT
         self.cold = self.root / fe.HANDOFF_COLD
         self.retired = self.root / fe.HANDOFF_RETIRED
+        # The reaper's terminal directory. NOT part of the default query scope —
+        # see `query(include_stale=...)` for why, which is the load-bearing
+        # reasoning and not a naming convention.
+        self.stale = self.root / fe.HANDOFF_STALE
         self.seq_file = self.root / ".seq"
         self.cursor_file = self.root / ".cursors.json"
         self.counters_file = self.root / ".counters.json"
@@ -100,25 +137,83 @@ class FederationStore:
     def query(self, *, target_entity: str | None = None,
               source_entity: str | None = None,
               since_seq: int | None = None,
-              unread_for: str | None = None) -> list[dict]:
+              unread_for: str | None = None,
+              include_stale: bool = False) -> list[dict]:
         """The single read path. `inbox`, `receipts` and `list` all call this.
 
         Raises StoreUnreachable — never returns [] for "could not read".
+
+        include_stale (D-620) — WHY OPT-IN, AND WHY NOT "JUST MOVE THE FILES"
+        ------------------------------------------------------------------------
+        115 legacy 16-key records sit in `data/handoff/stale/`. `query()`
+        globbed `pending/` only, so they were invisible to `inbox`, `receipts`
+        and `list`: a migration gap that the d556395e canonicalization work
+        made SAFE to read but did not make REACHABLE.
+
+        The tempting fix is `mv stale/*.json pending/`. That is wrong, and the
+        reason is the read journals: 7 of the stranded `makali_fusion` packets
+        carry `.receipts.jsonl` proving a named entity read them BEFORE the
+        reaper moved them. Moving them into `pending/` publishes 115 packets
+        addressed to `lilith-n1` / `ge-n1` / `researcher_humboldt` as
+        UNREAD NEW WORK — a confident false positive, delivered to a node that
+        already answered. A visibility gap is strictly less harmful than a
+        fabricated delivery, so the fix is REACHABILITY, not RELOCATION.
+
+        So: `stale/` is queryable, explicitly, and never inbox scope. Read it
+        when auditing ("what did the reaper take, and was it ever answered?").
+        `unread_for` still consults the per-packet journal via
+        `_receipt_path_for`, so a stale packet that WAS read correctly reports
+        as read rather than unread.
+
+        `created_at_utc` is NOT back-filled from `submitted_at` here. The
+        canonicalizer refused that for a good reason — birth time and stamp
+        time are distinct clocks, and asserting they are equal invents a birth
+        time nobody recorded. `normalize_envelope` marks the field absent and
+        names it in `legacy_missing_fields`.
         """
         if not self._readable():
             raise StoreUnreachable(
                 f"handoff inbox not readable at {self.root} "
                 "(pending/ or hot/ missing)"
             )
+        # A `stale/` that does not exist is not an error — it simply has no
+        # records. Only `pending/`+`hot/` gate readability (see `_readable`).
+        scope: list[Path] = [self.pending]
+        if include_stale and self.stale.is_dir():
+            scope.append(self.stale)
         out: list[dict] = []
         try:
-            for p in sorted(self.pending.glob("*.json")):
+            for p in sorted(q for d in scope for q in d.glob("*.json")):
                 env = self._load(p)
                 if env is None:
                     continue
-                if target_entity and env.get("target_entity") != target_entity:
+                # SHAPE TOLERANCE AT THE ONE PRIMITIVE. `query` is the single
+                # read path (see the module docstring), so normalising HERE —
+                # not in each of inbox/receipts/list_packets — is what makes
+                # every projection tolerant by construction. A projection that
+                # forgets to normalise cannot exist, because there is only one.
+                # A FULL envelope is returned by identity, so this is a no-op
+                # for every record written under the current schema.
+                env = fe.normalize_envelope(env)
+                # IDENTITY FROM ONE AUTHORITATIVE SOURCE (M29/M30, D-614).
+                # `receipts(entity)` filters on `source_entity`. Before the
+                # canonicalization work, three spellings of the MaKaLi seat
+                # (`makali`, `makali_fusion`, `makali-n0`) each answered to only
+                # themselves, so `receipts("makali-n0")` returned nothing while
+                # 61 packets carrying that seat's work sat in the store. The
+                # filter now compares CANONICAL forms on both sides, so the
+                # caller spells the seat one way and the filter matches every
+                # spelling of it.
+                #
+                # Exact match is kept as a fallback rather than replaced: a name
+                # the canonical table does not declare must still compare equal
+                # to itself, and canonical_entity_name is identity on the
+                # canonical name by construction.
+                if target_entity and not _same_seat(target_entity,
+                                                     env.get("target_entity")):
                     continue
-                if source_entity and env.get("source_entity") != source_entity:
+                if source_entity and not _same_seat(source_entity,
+                                                     env.get("source_entity")):
                     continue
                 # P0-1: the cursor filter applies ONLY to packets that HAVE a
                 # seq. Legacy packets predate the cursor machinery and carry no
@@ -171,12 +266,25 @@ class FederationStore:
         if limit is not None:
             entries = entries[:limit]
         now = time.time()
-        ages = [_age_seconds(e) for e in entries if _age_seconds(e) is not None]
+        ages = [a for a in (_age_seconds(e) for e in entries) if a is not None]
+        # `newest_submitted_at` asks for the SUBMITTED time. On a full envelope
+        # that is `created_at_utc`; on a legacy projection `created_at_utc` does
+        # not exist and `submitted_at` is the field the name literally means.
+        # Reading through `_newest_submitted_at` instead of subscripting
+        # `created_at_utc` directly is what stops the KeyError — and it is not a
+        # value substitution, because the two names are not the same question.
         payload = {
             "entries": entries,
             "unread_count": len(entries),
-            "oldest_unread_age": int(max(ages)) if ages else 0,
-            "newest_submitted_at": entries[-1]["created_at_utc"] if entries else None,
+            # HONESTY, NOT ZERO. Previously `_age_seconds` swallowed the
+            # KeyError and returned None for every legacy record, so a
+            # 100%-legacy inbox reported `oldest_unread_age: 0` — "everything
+            # arrived just now", which is a false statement produced by a
+            # defensive except. When no age is computable the value is None,
+            # and the coverage fields say why.
+            "oldest_unread_age": int(max(ages)) if ages else None,
+            "unread_count_without_age": len(entries) - len(ages),
+            "newest_submitted_at": _newest_submitted_at(entries),
             "cursor": store,
         }
         if store.get("reset_reason"):
@@ -185,9 +293,16 @@ class FederationStore:
 
     # ── R2: receipts ─────────────────────────────────────────────────────────
 
-    def receipts(self, entity: str) -> dict:
-        """Every packet I SENT, with full state_history. Closes the sender loop."""
-        return {"entries": self.query(source_entity=entity)}
+    def receipts(self, entity: str, include_stale: bool = False) -> dict:
+        """Every packet I SENT, with full state_history. Closes the sender loop.
+
+        include_stale=False by default, for the reason documented on
+        `query(include_stale=...)`: a reaped packet is delivered-once-and-
+        expired, not waiting. The sender loop audits LIVE work; the audit of
+        reaped work is an explicit `query(include_stale=True)` call.
+        """
+        return {"entries": self.query(source_entity=entity,
+                                      include_stale=include_stale)}
 
     # ── R4: list ─────────────────────────────────────────────────────────────
 
@@ -197,12 +312,19 @@ class FederationStore:
     SCOPE_ALL_REMOVAL_DATE = "2026-12-31"
 
     def list_packets(self, caller_entity: str, target_entity: str | None,
-                     scope: str = "default") -> dict:
+                     scope: str = "default",
+                     include_stale: bool = False) -> dict:
         """Filtered by target BY DEFAULT. Bare listing is not possible.
 
         A list that returns everything is a tool that INVITES the
         confident-false-negative failure mode GE-N1 hit: the caller reads an
         unbounded dump, concludes there is nothing for them, and is wrong.
+
+        include_stale (D-620) is opt-in and defaults to False. `list` is the
+        tool an agent reaches for to answer "did I miss anything?", so a
+        default that returns reaped-and-answered packets would manufacture
+        exactly the false negative the filter exists to prevent. The audit
+        path passes it explicitly.
         """
         if target_entity is None and scope != "all":
             raise ValueError(
@@ -212,7 +334,8 @@ class FederationStore:
         if scope == "all":
             self.bump("scope_all_optin_total")
             return {
-                "entries": self.query(target_entity=None),
+                "entries": self.query(target_entity=None,
+                                      include_stale=include_stale),
                 "scope": "all",
                 "deprecated": True,
                 "removal_date": self.SCOPE_ALL_REMOVAL_DATE,
@@ -225,7 +348,9 @@ class FederationStore:
                     "still relying on it. Pass target_entity instead."
                 ),
             }
-        return {"entries": self.query(target_entity=target_entity), "scope": "default"}
+        return {"entries": self.query(target_entity=target_entity,
+                                      include_stale=include_stale),
+                "scope": "default"}
 
     # ── cursor (R1) ──────────────────────────────────────────────────────────
 
@@ -394,7 +519,12 @@ class FederationStore:
                 f"receipt journal append failed for {packet_id}: {exc}") from exc
         finally:
             os.close(fd)
-        return self._load(found)
+        # Normalised for the same reason `query` normalises: `read` returns the
+        # record itself, so a legacy packet would otherwise reach the receiving
+        # agent with 23 keys missing while `inbox` showed them filled. Two
+        # projections of ONE primitive must not disagree about its shape.
+        loaded = self._load(found)
+        return fe.normalize_envelope(loaded) if loaded is not None else None
 
     @staticmethod
     def _parse_receipt_journal(journal: Path) -> dict:
@@ -442,12 +572,37 @@ class FederationStore:
         return self._parse_receipt_journal(self._receipt_path_for(found))
 
 
+def _newest_submitted_at(entries: list[dict]) -> str | None:
+    """Newest submitted timestamp across `entries`, or None when unknowable.
+
+    `entries` is already seq-ordered, so the LAST element is the newest. It is
+    read through `.get()` on purpose: this function is the boundary that used to
+    raise `KeyError: 'created_at_utc'` on a legacy record. Returning None is the
+    honest answer — no recorded timestamp — and it is also what keeps `entries`
+    and `error` mutually exclusive: a shape gap is NOT a store failure.
+    """
+    if not entries:
+        return None
+    last = entries[-1]
+    return last.get("created_at_utc") or last.get("submitted_at")
+
+
 def _age_seconds(envelope: dict) -> int | None:
+    """Age of an envelope, or None when it cannot be computed. NEVER 0 for
+    'unknown' — a fabricated zero reads as "arrived just now".
+
+    `created_at_utc` is preferred. A legacy projection does not have it, so
+    `submitted_at` is the fallback: it is a real recorded timestamp on those
+    records, so the age is derived from real data rather than assumed.
+    """
     try:
         from datetime import datetime, timezone
-        created = datetime.fromisoformat(envelope["created_at_utc"])
+        raw = (envelope.get("created_at_utc") or envelope.get("submitted_at"))
+        if not raw:
+            return None
+        created = datetime.fromisoformat(raw)
         if created.tzinfo is None:
             return None
         return int((datetime.now(timezone.utc) - created).total_seconds())
-    except (KeyError, ValueError):
+    except (KeyError, ValueError, TypeError):
         return None

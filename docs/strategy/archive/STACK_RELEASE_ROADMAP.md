@@ -12,7 +12,7 @@
 
 ## §0 The WAD Architecture (Recap)
 
-**Note**: The distributable form of a WAD is the **XOE File** (`.xoe`). See `docs/research/omni/XOE_SPECIFICATION.md`. The WAD directories under `config/wads/` are the development form; `.xoe` files are the compressed, shareable packages.
+**Note**: The distributable form of a WAD is the **XOE File** (`.xoe`). See `docs/architecture/XOE_SPECIFICATION.md`. The WAD directories under `config/wads/` are the development form; `.xoe` files are the compressed, shareable packages.
 
 ```
 Omega Engine Core (5 components, never expands)
