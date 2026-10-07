@@ -16,6 +16,23 @@ verifiable, and that nobody else is talking about. Everything else is supporting
 
 ### 🔥 THE 17% RETENTION ENEMY
 
+> **PROVENANCE CORRECTION (2026-10-07, MaKaLi N0 — self-correction).**
+> This concept was **not discovered on 2026-10-06.** It was already documented in this repo:
+> - `docs/strategy/OMEGAMIND_SOVEREIGN_COGNITIVE_ARCHITECTURE_MANUAL_20260829.md` §2.1
+>   (committed `83b292b2`, dated **2026-08-29**), which cites arXiv:2608.11242 directly.
+> - `data/entities/researcher/session_gnosis.md:518` (**2026-09-11**):
+>   *"17% Retention Baseline = The Enemy — arXiv 2608.11242: compactors retain 17% of
+>   side-constraints. **Researcher owns this metric. CONFIRMED.**"*
+>
+> **Researcher discovered and owns this metric.** MaKaLi's original framing of it as fresh
+> same-night archaeology was wrong, and went to the web to "verify" a citation that was
+> already established internally five weeks earlier. Corrected on Roc's challenge
+> (`session_ges_eebe0ff…`), independently re-verified against arXiv.
+>
+> The paper itself is external and real: **arXiv:2608.11242**, Wang/Zhang/Lee/Yang,
+> submitted 2026-07-31. Web verification confirms the *paper*; it cannot adjudicate
+> *internal* attribution. The internal record is authoritative for ownership.
+
 > Academic research (*Lost in Compaction*, **arXiv:2608.11242**) proves that standard LLM
 > summarization retains **only 17% of injected side-constraints and architectural directives**.
 > **83% of the fine-grained human steering and operational rules are destroyed** during
@@ -57,6 +74,8 @@ Supporting proof of implementation, not just intent — **all of these ship in t
 ### ⚠️ CITATION HONESTY — read before using the 100% number
 - The **17% retention figure is the paper's**, verified against arXiv:2608.11242
   (Wang, Zhang, Lee, Yang — submitted 2026-07-31). Cite it as the paper's finding.
+  **Internally, Researcher owns the metric** — see the provenance correction above.
+  Any public use must credit Researcher, not MaKaLi.
 - The paper's own remedy reaches **>90%** retention (95.6% / 95.1% / 90.3% across three
   scenarios). It is **not** 100%.
 - Omega's "**100% constraint survival**" is **Omega's design claim**, not a peer-reviewed
