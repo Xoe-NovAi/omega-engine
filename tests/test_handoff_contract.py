@@ -123,8 +123,14 @@ def test_submit_echo_contains_requested_and_stored():
         "the echo must come from a READ-BACK, not from the in-memory dict"
 
 
-def test_echo_reports_a_resolved_target_that_differs():
-    """When the alias layer rewrites the target, the echo must SHOW it."""
+def test_echo_reports_a_resolved_target_that_differs(monkeypatch):
+    """When the alias layer rewrites the target, the echo must SHOW it.
+
+    [CUT-20261007] Hermetic: the `ge_n1 -> ge-n1` fold is derived from the live
+    handoff queue, so a public-tree runner sees the spelling pass through.
+    Freeze the queue so the echo contract holds on every tree."""
+    monkeypatch.setattr(HA, "_queue_canonical", lambda: {"ge-n1": "ge-n1"})
+    monkeypatch.setattr(HA, "_live_entities", lambda: [])
     r = HA.resolve_target_entity("ge_n1", "opencode")
     assert r["supplied"] == "ge_n1"
     assert r["entity"] == "ge-n1", "the fork must be collapsed"
@@ -140,7 +146,11 @@ def test_echo_reports_a_resolved_target_that_differs():
     ("ge-n1", "ge-n1"),
     ("john_carmack", "john_carmack"),
 ])
-def test_alias_families_collapse_to_one_id(supplied, expected):
+def test_alias_families_collapse_to_one_id(supplied, expected, monkeypatch):
+    # [CUT-20261007] Hermetic: folds are derived from the live queue — freeze it
+    # so the family contract holds identically on dev and public trees.
+    monkeypatch.setattr(HA, "_queue_canonical", lambda: {"ge-n1": "ge-n1"})
+    monkeypatch.setattr(HA, "_live_entities", lambda: ["john_carmack"])
     r = HA.resolve_target_entity(supplied, "opencode")
     assert r["entity"] == expected, f"{supplied!r} should fold to {expected!r}"
     assert r["agent_id"] == f"opencode/{expected}"

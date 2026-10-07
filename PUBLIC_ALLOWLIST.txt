@@ -188,6 +188,9 @@ config/mandate_claims.yaml
 config/entity_canonicalization.yaml
 
 # P2P Omegaverse Documentation (2026-09-09)
+
+# [CUT-20261007-B2] docs companion for the vaultless-fallback engine fix
+docs/how-to/configure-provider.md
 docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md
 docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md
 docs/tech-architecture-research/ASUS_SECUREBOOT_PROVISIONING_POSTMORTEM_20260907.md

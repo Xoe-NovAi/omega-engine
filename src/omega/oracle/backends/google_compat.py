@@ -94,7 +94,13 @@ class GoogleCompatProvider:
             return cred.encrypted_blob if cred else ""
         except Exception as e:
             logger.debug("Vault key resolution failed, falling back to config: %s", e)
-            return self.config.get("api_key", "") or ""
+            get = getattr(self.config, "get", None)
+            if get is None:
+                return ""
+            try:
+                return get("api_key", "") or ""
+            except (AttributeError, TypeError):
+                return ""
 
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create HTTP client with connection pooling."""

@@ -51,10 +51,14 @@ def test_baseline_stores_no_secret_material():
 
 def test_baseline_entries_are_complete_and_unique():
     entries = checker.load_baseline()
-    assert len(entries) == 6, "expected 6 audited tokens (2 revoked, 4 public)"
+    # [CUT-20261007] The audited count grows as history is audited (6 at
+    # inception: 2 revoked + 4 public; +22 test-fixture mocks 2026-10-07).
+    # Pin the SHAPE of every entry, not the count — the count is a fact to
+    # report, never a contract to break when the next audit lands.
+    assert len(entries) >= 6, f"baseline lost audited tokens: {len(entries)}"
     for digest, entry in entries.items():
         assert re.fullmatch(r"[0-9a-f]{16}", digest)
-        assert entry["disposition"] in {"revoked", "retained-public", "purged"}
+        assert entry["disposition"] in {"revoked", "retained-public", "purged", "test-fixture"}
         assert len(entry["why"]) > 20, "every disposition needs a real WHY"
 
 
