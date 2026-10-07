@@ -913,7 +913,8 @@ infer-debug:
 # Credential-shaped history is handled by scripts/check_secret_history.py:
 # every distinct token in durable refs is hashed and must carry a disposition
 # in .secret-history-baseline.toml (2026-09-25: 6 audited tokens — 2 revoked
-# Firecrawl keys, 4 public GOCSPX cert fingerprints). The gate previously used
+# Firecrawl keys, 4 public GOCSPX cert fingerprints; +2026-10-07: 22 test-fixture
+# mock Firecrawl tokens from cd12af4f history, disposition test-fixture). The gate previously used
 # a bare "any match => fail" loop with no way to record a disposition, so it
 # failed on history gitleaks already accepted and could never go green. A token
 # baselined "revoked" must also never reappear in the working tree.
@@ -924,10 +925,10 @@ gate-secrets:
 	$(PYTHON) scripts/check_secret_history.py || FAIL=1; \
 	PEM_R='-----BEGIN[ A-Z]*PRIVATE KEY-----'; \
 	PEM_FILES=$$(git log -G "$$PEM_R" --branches --tags --name-only --format= | sort -u); \
-	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^$$' | wc -l); \
+	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^docs/reference/api/tools.md$$' -e '^$$' | wc -l); \
 	PEM_N=$$(echo "$$PEM_FILES" | grep -c .); \
 	if [ "$$PEM_BAD" -eq 0 ]; then \
-		echo "  git log -G PEM -> $$PEM_N file(s), all baselined template FPs (P0-5 fix 2026-08-28: docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md + docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md + docs/research/R_VAULT_SCHEMA_V2.md; regex self-avoiding so gate source never self-matches)"; \
+		echo "  git log -G PEM -> $$PEM_N file(s), all baselined template FPs (P0-5 fix 2026-08-28 x3 + 2026-10-07 docs/reference/api/tools.md detector-doc template — `detect_api_keys` doc names the PEM pattern in prose, no key material; regex self-avoiding so gate source never self-matches)"; \
 	else \
 		echo "  git log -G PEM -> OFFENDING FILES:"; echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$'; FAIL=1; \
 	fi; \
