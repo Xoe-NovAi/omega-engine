@@ -1,4 +1,0 @@
-{"event_seq": 1, "event_type": "session_start", "instance_id": "opencode/test_multi_miap/019f6d20-0416-7cd1-a4e1-d3fb76a79775", "timestamp": "2026-07-16T22:50:42.588050+00:00", "payload": {"objective": "Multi-instance test", "model": "big-pickle"}}
-{"event_seq": 2, "event_type": "task_complete", "instance_id": "opencode/test_multi_miap/019f6d20-0416-7cd1-a4e1-d3fb76a79775", "timestamp": "2026-07-16T22:50:42.592215+00:00", "payload": {"task": "Instance 1 did work"}}
-{"event_seq": 3, "event_type": "session_start", "instance_id": "cline/test_multi_miap/019f6d20-041b-7878-8351-f9daf63b4157", "timestamp": "2026-07-16T22:50:42.600274+00:00", "payload": {"objective": "Multi-instance test", "model": "nemotron"}}
-{"event_seq": 4, "event_type": "decision", "instance_id": "cline/test_multi_miap/019f6d20-041b-7878-8351-f9daf63b4157", "timestamp": "2026-07-16T22:50:42.602822+00:00", "payload": {"decision": "Use MIAP", "rationale": "Prevents collision"}}

@@ -1,1 +1,0 @@
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/session_gnosis/test_multi_miap/projection.md

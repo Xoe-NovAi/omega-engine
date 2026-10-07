@@ -1,6 +1,0 @@
-{"event_seq": 1, "event_type": "session_start", "instance_id": "opencode/event_test/019f6d26-5df3-748b-a4ec-db550851d9a8", "timestamp": "2026-07-16T22:57:38.804167+00:00", "payload": {"objective": "Test"}}
-{"event_seq": 2, "event_type": "task_complete", "instance_id": "opencode/event_test/019f6d26-5df3-748b-a4ec-db550851d9a8", "timestamp": "2026-07-16T22:57:38.807810+00:00", "payload": {"task": "Task 1"}}
-{"event_seq": 3, "event_type": "decision", "instance_id": "opencode/event_test/019f6d26-5df3-748b-a4ec-db550851d9a8", "timestamp": "2026-07-16T22:57:38.810617+00:00", "payload": {"decision": "Decision 1"}}
-{"event_seq": 4, "event_type": "session_start", "instance_id": "opencode/event_test/019f6d26-e8c8-779a-9acb-592ca0906156", "timestamp": "2026-07-16T22:58:14.346284+00:00", "payload": {"objective": "Test"}}
-{"event_seq": 5, "event_type": "task_complete", "instance_id": "opencode/event_test/019f6d26-e8c8-779a-9acb-592ca0906156", "timestamp": "2026-07-16T22:58:14.349030+00:00", "payload": {"task": "Task 1"}}
-{"event_seq": 6, "event_type": "decision", "instance_id": "opencode/event_test/019f6d26-e8c8-779a-9acb-592ca0906156", "timestamp": "2026-07-16T22:58:14.351863+00:00", "payload": {"decision": "Decision 1"}}

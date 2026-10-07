@@ -1,1 +1,0 @@
-{"kind":"SLOW_DRIBBLE","timestamp":"2026-09-19T23:57:44.822Z","sessionID":"ses_f46987f4effewQmwd2evkqr07y","modelID":"nvidia/nemotron-3-ultra-550b-a55b:free","providerID":"openrouter","detail":"msg=msg_0bc14ddc6001M28zTF4RPU6d3W out=0tok text=0ch in=0tok dur=93s","metrics":{"outputTokens":0,"inputTokens":0,"textLen":0,"durationMs":92978}}

@@ -1,9 +1,0 @@
-{
-  "classification_basis": "Roc ruling: legacy name -> cold/legacy-*, never retired/ by name equivalence",
-  "from": "data/handoff/archive/ho_b75007ff7044.json",
-  "migrated_at_utc": "2026-09-29T06:51:43+00:00",
-  "packet_id": "ho_b75007ff7044",
-  "provenance": "migrate_handoffs",
-  "sha256": "0312036d560d72986a03b3b922211e534479e98dfee5c4c0cff1ad6b0935a82a",
-  "to": "data/handoff/cold/legacy-archive/ho_b75007ff7044.json"
-}
