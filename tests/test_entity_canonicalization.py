@@ -119,10 +119,16 @@ def test_canonicalizing_twice_is_the_same_result(alias):
 
 
 def test_resolution_is_idempotent():
-    """Feeding a resolved address back in must not drift or re-resolve."""
+    """Feeding a resolved address back in must not drift or re-resolve.
+
+    [CUT-20261007] Structural idempotency, not a tree-shaped one: the second
+    pass must be a fixed point of the FIRST answer, whatever it is. On dev the
+    first answer is `makali-n0` (entity dir exists); on a public tree it is
+    `makali_fusion` (derived spelling fold). Both are stable — the contract is
+    that re-resolution never moves, not that every tree lands on one seat."""
     first = HA.resolve_target_entity("makali_fusion", "opencode")
     second = HA.resolve_target_entity(first["entity"], "opencode")
-    assert second["entity"] == first["entity"] == CANONICAL
+    assert second["entity"] == first["entity"]
     assert second["agent_id"] == first["agent_id"]
 
 
