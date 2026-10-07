@@ -1755,3 +1755,78 @@ leftovers that silently mask absent-file failures.
 - 4 CI jobs red, all Architect-deferred to post-announcement.
 
 *⬡ OMEGA ⬡ MAKALI_N0 ⬡ D-626 ⬡ 2026-10-07 ⬡*
+
+---
+
+## D-627: Two launch-blocking numbers were wrong; prior art exists for our lead (2026-10-07)
+
+**Status**: RECORDED. Four launch-blocking corrections, all independently re-verified by MaKaLi N0
+after being found by @john_carmack (S3) and @jem (Sovereign Researcher).
+
+### 1. 🔴 "53/53" WAS NEVER THE RELEASE GATE — it is ONE dashboard self-test
+Carmack, verified:
+- `Makefile:446` — `temple-grade` has **NINE** prerequisites:
+  `check-constraints · check-engine · check-hub-imports · check-codex-stale · doc-llm-validate ·
+   check-mandates · check-mandate-compliance · check-tracking-state · dashboard-self-test`
+- The string `TOTAL: 53 PASS: 53` is emitted by **`scripts/benchmark_dashboard.py`** — i.e. the
+  **dashboard adversarial self-test**, the 9th of 9.
+
+**MaKaLi asserted "temple-grade 53/53 on a fresh clone" repeatedly as the release proof. That
+number was never a release verdict.** The correct statement is not "it was true when I said it" —
+it is that the figure being quoted was never the thing being claimed.
+
+### 2. 🔴 "30 CI-enforced mandates" is FALSE — it is 30 mandates, 26 enforced
+Jem, verified by MaKaLi:
+- `grep -cE '^### [0-9]+\.' SOVEREIGN_MANDATES.md` → **30** (contiguous, no gaps)
+- M4, M17, M18, M19 are declared **and** carry a hardcoded `"untested"` status in
+  `scripts/check_mandate_compliance.py` (9 such strings; 4 distinct mandates)
+- `SOVEREIGN_MANDATES.md:15` heading still reads **"The Twenty-Seven Laws of Sovereign Execution"**
+  in a 30-mandate file — the source of the 27/28/30 inconsistency.
+
+**One command falsifies the public headline** (`grep -c '"untested"' …` → 4). On a *governance*
+project, this is the least survivable credibility class. **Approved public phrasing: "30 mandates,
+26 CI-enforced, the remaining four tracked as explicit gaps."**
+
+### 3. 🔴 PRIOR ART EXISTS for our lead concept — and it predates and strengthens it
+Jem: we lead with arXiv:**2608.11242** (17% constraint retention, 2026-07-31). The prior paper is
+**arXiv:2606.22528** — *Governance Decay: How Context Compaction Silently Erases Safety Constraints
+in Long-Horizon LLM Agents* (**2026-06-21**, ~5 weeks earlier), which reports violation rising
+**0% → 59%**, isolates causality (constraint survives → 0% violation; dropped → 38%), names an
+adversarial **Compaction-Eviction Attack**, and proposes **"Constraint Pinning"** — *quarantining
+governance constraints from lossy compaction*.
+
+**"Constraint Pinning" is structurally identical to our M11/M15 separation.** We may claim
+**implementation and application to a governance corpus**. We may **not** claim the idea.
+**Action: cite 2606.22528 first; lead with the stronger, earlier paper.**
+Related: arXiv:2603.11768 (SSGM governed memory), Hindsight's consolidation-policy taxonomy.
+
+### 4. 🟠 Agent identity: the field chose SPIFFE/WIMSE, not DID/VC — and nothing is shipped
+Jem: **no interoperable portable agent-identity standard exists.** The keystone is
+`draft-klrc-aiagent-auth-03` (2026-07-06), composing **SPIFFE + WIMSE + OAuth 2.0 + HTTP Message
+Signatures** — individual I-Ds, under two months old, zero deployments. **Google A2A v0.3.0 ships
+discovery, not identity** (its own spec scopes credential acquisition out). DID/VC appears only as
+an incompatible aside; `did:key` is mentioned as *not* the chosen path.
+
+**Approved claim: "portable agent identity is an unsolved standards problem; here is our local
+solution and here is the documented gap."** Not "we have portable agent identity."
+
+### 5. 🟠 Competitive reality: local-first is table stakes
+Jem: Ollama ~174K stars / **~52M monthly model downloads**; Jan already ships *"fully offline, no
+telemetry, no cloud calls"* — our exact M8 pitch, in a consumer app. **Local-first is not the
+differentiator; governance is.** Do not lead with local-first.
+
+### 6. 🟡 Our no-expiry memory design has a published, named objection
+r/LocalLLaMA, verbatim: *"skills from logs is interesting, but I'd want review/expiry before
+lessons become permanent. self-improvement can fossilize bad habits fast."* That is our graduation
+mechanism, critiqued, by our exact audience. Meanwhile the field's strongest memory system (Zep)
+is built on **decay**, which our append-only store omits. **We must be able to say why we reject
+decay** — currently we look like we never met the argument.
+
+### 7. Recurring discipline failure (named, not footnoted)
+MaKaLi asserted four load-bearing facts this cycle from partial evidence:
+`53/53` as the release verdict · a time-dependent gate as reproducible · a five-week-old citation as
+same-night discovery · "30 CI-enforced." **Each was falsified within one cycle by an audit.**
+Pattern: **asserting a number or mechanism without reading what emits it.** The fix is one habit —
+**before quoting a number, grep for the line that prints it.** Recorded as a L3 lesson candidate.
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ D-627 ⬡ 2026-10-07 ⬡*
