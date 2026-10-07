@@ -22,7 +22,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
 | Hivemind MCP coordination | ✅ Working |
 | `make test` (unit tier) | ⚠️ Dev-box green. **CI is NOT green** — 4 jobs red on the published cut (`release/debut` @ D-625): REUSE/SPDX debt (107 files), missing `platform_adapters` in the Test job, 2 workflow-validation failures. |
 | Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ⚠️ `temple-grade` exits 2 at `check-codex-stale` — a doc-age gate, not a code defect |
-| Mandate compliance | 23/28 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
+| Mandate compliance | 26/30 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
 | `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
@@ -285,7 +285,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | Hivemind MCP coordination | ✅ Working |
 | `make test` (unit tier) | ⚠️ Dev-box green. **CI is NOT green** — 4 jobs red on the published cut (`release/debut` @ D-625): REUSE/SPDX debt (107 files), missing `platform_adapters` in the Test job, 2 workflow-validation failures. |
 | Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ⚠️ `temple-grade` exits 2 at `check-codex-stale` — a doc-age gate, not a code defect |
-| Mandate compliance | 23/28 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
+| Mandate compliance | 26/30 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
 | `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
@@ -332,7 +332,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 |------|--------|
 | Test Suite (unit tier) | ⚠️ Dev-box green; CI has 4 red jobs on the published cut (`release/debut` @ D-625) |
 | Core CI Gates (M1, M7, M8, M9, M22, M23, M26, M27) | ⚠️ Blocked at `check-codex-stale` (doc-age gate, 24h threshold) — not a code defect |
-| Mandate Compliance | 23/28 passing; 0 failing; 4 untested (M4, M17, M18, M19) |
+| Mandate Compliance | 26/30 passing; 0 failing; 4 untested (M4, M17, M18, M19) |
 | Agent Fleet | **13 agents** (canonical), M10 compliant (max 14) |
 | AnyIO Compliance | ✅ Zero `import asyncio` in core (M1) |
 | Zero Telemetry | ✅ No external phone-home (M8) |
