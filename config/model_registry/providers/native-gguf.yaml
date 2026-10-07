@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Native GGUF Provider Configuration (Local-First Priority 0)
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+provider: "native-gguf"
+priority: 0
+enabled: true
+description: "Local GGUF inference via llama.cpp (highest priority - local-first)"
+
+# Model path resolution via environment variable
+model_path: "env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf"
+n_ctx: 8192
+n_ctx_max: 32768
+
+# CPU affinity (4 cores for inference)
+cores:
+  - 0
+  - 2
+  - 4
+  - 6
+
+# Threading
+n_threads: 4
+n_threads_batch: 4
+
+# KV Cache
+type_k: 8
+type_v: 1
+kv_cache_type: "f16"
+
+# Batching
+n_batch: 512
+n_ubatch: 32
+
+# Memory
+use_mmap: true
+use_mlock: false
+n_gpu_layers: 0
+
+# Supported local models (from model registry - local models)
+supported_models:
+  - "llama-4-scout-local"
+  - "gpt-oss-120b-local"
+  - "qwen-3.5-72b-local"
+  - "nemotron-3-ultra-local"
+  - "qwen3-1.7b-local"
+  - "qwen3-4b-thinking-local"
+  - "krikri-8b-local"
+  - "deepseek-r1-qwen3-8b-local"
+  - "ministral-3b-local"
+  - "qwen3-0.6b-local"
+  - "qwen2.5-0.5b-local"
+  - "functiongemma-270m-local"
+  - "embeddinggemma-300m-local"

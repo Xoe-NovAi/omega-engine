@@ -278,6 +278,7 @@ def reset_state(monkeypatch):
     from mcp_servers.omega_hub import state
     state._hot_store.clear()
     state._awareness.clear()
+    state._init_complete = False
     yield
 
 

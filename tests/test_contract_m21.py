@@ -18,6 +18,7 @@ Test Plan:
      text (str), provider_name (str), is_cloud (bool)
 """
 
+import importlib.util
 import pytest
 import os
 
@@ -536,6 +537,7 @@ def test_session_lifecycle_stats_returns_lifecyclestats():
 
 # ── Test 17: VaultCore retrieve_credential returns credential (via env fallback) ──
 
+@pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="vault excluded from public debut (D-565)")
 def test_vault_core_retrieve_credential_returns_credential():
     """M21: Contract test — VaultCore.retrieve_credential() returns credential (or falls back to env)."""
     from omega.vault import VaultCore
@@ -549,6 +551,7 @@ def test_vault_core_retrieve_credential_returns_credential():
 
 # ── Test 18: VaultCore store_credential stores correctly ──
 
+@pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="vault excluded from public debut (D-565)")
 def test_vault_core_store_credential_and_get_providers():
     """M21: Contract test — VaultCore.store_credential() and get_providers()."""
     from omega.vault import VaultCore
@@ -596,6 +599,7 @@ def test_vault_core_store_credential_and_get_providers():
 
 # ── Test 19: VaultCore loads without error ──
 
+@pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="vault excluded from public debut (D-565)")
 def test_vault_core_loads_without_error():
     """M21: Contract test — VaultCore loads without error."""
     from omega.vault import VaultCore

@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import importlib.util
 import os
 from unittest.mock import AsyncMock, patch
 
@@ -52,6 +53,7 @@ class TestGoogleAIProvider:
     def provider(self):
         return GoogleAIProvider("google", {})
 
+    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
     @pytest.mark.anyio
     async def test_is_available_with_key(self, provider):
         """is_available returns True when GOOGLE_API_KEY is set."""
@@ -64,6 +66,7 @@ class TestGoogleAIProvider:
         with patch.dict(os.environ, {}, clear=True):
             assert await provider.is_available() is False
 
+    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
     @pytest.mark.anyio
     async def test_generate_success(self, provider):
         """Successful API call returns parsed text."""
@@ -84,6 +87,7 @@ class TestGoogleAIProvider:
                 )
                 assert result == "Hello, world!"
 
+    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
     @pytest.mark.anyio
     async def test_generate_missing_candidates(self, provider):
         """API response without candidates returns None."""
@@ -98,6 +102,7 @@ class TestGoogleAIProvider:
                 )
                 assert result is None
 
+    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
     @pytest.mark.anyio
     async def test_generate_malformed_response(self, provider):
         """Malformed API response returns None without raising."""
@@ -112,6 +117,7 @@ class TestGoogleAIProvider:
                 )
                 assert result is None
 
+    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
     @pytest.mark.anyio
     async def test_generate_http_error(self, provider):
         """HTTP errors propagate as custom OmegaErrors."""

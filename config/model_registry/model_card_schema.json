@@ -1,0 +1,214 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Omega Engine Model Card Schema v1.1.0",
+  "description": "Schema for model registry YAML cards. Validated by model_registry/schema_validator.py",
+  "type": "object",
+  "required": ["model_id", "display_name", "version", "provider", "platform", "tier", "status", "context_window", "capabilities", "pricing", "routing", "tags", "schema_version", "created_at", "updated_at"],
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "description": "Unique model identifier (e.g., gemma-4-31b, deepseek-v4-flash)",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable model name",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "version": {
+      "type": "string",
+      "description": "Model version string",
+      "pattern": "^\\d+\\.\\d+"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Provider slug (must exist in providers/ directory)",
+      "minLength": 1
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["cloud", "local", "cli", "stealth"],
+      "description": "Deployment platform"
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["T1", "T2", "T3"],
+      "description": "Capability tier (T1=Fast, T2=Balanced, T3=Reasoning)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "deprecated", "experimental", "blocked"],
+      "description": "Model availability status"
+    },
+    "context_window": {
+      "type": "integer",
+      "description": "Maximum context window in tokens",
+      "minimum": 512,
+      "maximum": 10000000
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Model capability flags and scores",
+      "properties": {
+        "coding": { "type": "boolean" },
+        "reasoning": { "type": "boolean" },
+        "vision": { "type": "boolean" },
+        "tool_use": { "type": "boolean" },
+        "function_calling": { "type": "boolean" },
+        "agentic": { "type": "boolean" },
+        "multilingual": { "type": "boolean" },
+        "math": { "type": "boolean" },
+        "creative_writing": { "type": "boolean" },
+        "max_output_tokens": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["coding", "reasoning"]
+    },
+    "pricing": {
+      "type": "object",
+      "description": "Pricing information",
+      "properties": {
+        "input_per_1m": { "type": ["number", "null"], "minimum": 0 },
+        "output_per_1m": { "type": ["number", "null"], "minimum": 0 },
+        "currency": { "type": "string", "default": "USD" },
+        "free_tier": { "type": "boolean", "default": false }
+      },
+      "required": ["input_per_1m", "output_per_1m"]
+    },
+    "routing": {
+      "type": "object",
+      "description": "Oracle routing configuration",
+      "properties": {
+        "preferred_use_cases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "avoid_use_cases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "max_concurrent": { "type": "integer", "minimum": 1, "default": 1 },
+        "timeout_seconds": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["preferred_use_cases"]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags",
+      "minItems": 1
+    },
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0.0", "1.1.0"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "identity_history": {
+      "type": "object",
+      "description": "Model identity tracking (for stealth models)",
+      "properties": {
+        "known_aliases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "identity_stable": { "type": "boolean", "default": true },
+        "last_identity_check": { "type": "string", "format": "date-time" }
+      }
+    },
+    "community_intelligence": {
+      "type": "object",
+      "description": "Community-reported intelligence",
+      "properties": {
+        "strengths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "weaknesses": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "hallucination_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "unknown"]
+        }
+      }
+    },
+    "live_api_state": {
+      "type": "object",
+      "description": "Current API availability",
+      "properties": {
+        "available": { "type": "boolean" },
+        "latency_ms_avg": { "type": ["number", "null"] },
+        "error_rate_pct": { "type": ["number", "null"] },
+        "last_checked": { "type": "string", "format": "date-time" }
+      }
+    },
+    "enrichment": {
+      "type": "object",
+      "description": "Auto-enriched data from external sources",
+      "properties": {
+        "aa_intelligence_index": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "aa_coding_index": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "aa_agentic_index": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "aa_price_input_per_1m": { "type": ["number", "null"], "minimum": 0 },
+        "aa_price_output_per_1m": { "type": ["number", "null"], "minimum": 0 },
+        "aa_median_tps": { "type": ["number", "null"], "minimum": 0 },
+        "aa_median_ttft": { "type": ["number", "null"], "minimum": 0 },
+        "aa_context_window": { "type": ["integer", "null"] },
+        "aa_open_weights": { "type": ["boolean", "null"] },
+        "aa_benchmarks": {
+          "type": "object",
+          "description": "Individual benchmark scores from AA",
+          "properties": {
+            "mmlu_pro": { "type": ["number", "null"] },
+            "gpqa_diamond": { "type": ["number", "null"] },
+            "hle": { "type": ["number", "null"] },
+            "livecodebench": { "type": ["number", "null"] },
+            "scicode": { "type": ["number", "null"] },
+            "critpt": { "type": ["number", "null"] },
+            "gdpval_aa_elo": { "type": ["number", "null"] },
+            "tau_banking": { "type": ["number", "null"] },
+            "terminalbench_v2_1": { "type": ["number", "null"] }
+          }
+        },
+        "hf_model_id": { "type": ["string", "null"] },
+        "hf_total_parameters_b": { "type": ["number", "null"] },
+        "hf_architectures": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "hf_pipeline_tag": { "type": ["string", "null"] },
+        "hf_downloads": { "type": ["integer", "null"] },
+        "hf_last_modified": { "type": ["string", "null"] },
+        "enriched_at": { "type": ["string", "null"] },
+        "match_confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "match_method": { "type": ["string", "null"] }
+      }
+    },
+    "research_profile": {
+      "type": "string",
+      "description": "Reference to research_profiles/ YAML"
+    },
+    "provider_fabric": {
+      "type": "object",
+      "description": "Provider routing configuration",
+      "properties": {
+        "primary": { "type": "string" },
+        "fallback": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

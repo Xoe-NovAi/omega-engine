@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Google AI Studio / Vertex Provider Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+# [P0-2026-08-28] 8-account multi-key (D205 sticky-failover) — grokster
+
+provider: "google"
+priority: 4
+enabled: true
+description: "Google AI Studio - 8-account Active-Passive sharding (D205)"
+
+# 8-account rotation: 8 keys, sticky failover on 429 (D205)
+# Key 2 (xoe.nova.ai primary) is denied (HTTP 403) — skipped
+api_keys:
+  - "env:GOOGLE_API_KEY_1"  # arcana.novai@gmail.com
+  - "env:GOOGLE_API_KEY_2"  # xoe.nova.ai (secondary)
+  - "env:GOOGLE_API_KEY_3"  # TJF
+  - "env:GOOGLE_API_KEY_4"  # TB27
+  - "env:GOOGLE_API_KEY_5"  # Anti27
+  - "env:GOOGLE_API_KEY_6"  # Anti74
+  - "env:GOOGLE_API_KEY_7"  # LilithAsterion
+  - "env:GOOGLE_API_KEY_8"  # arcananovaai
+
+# Google provides Gemini and Gemma models
+# No local model mappings - this is a cloud provider
+
+supported_models:
+  - "gemini-3-flash-preview"     # Latest Flash, tested responsive ~1s
+  - "gemini-3.1-flash-lite"     # High RPD variant
+  - "gemini-3.1-flash-lite-preview"
+  - "gemini-flash-latest"       # Alias to latest stable Flash
+  - "gemini-flash-lite-latest"  # Alias to latest Flash-Lite
+  - "gemini-2.5-flash"          # Confirmed available
+  - "gemini-2.5-flash-lite"     # Highest RPD
+  - "gemini-2.5-pro"            # Best reasoning (5 RPM / 100 RPD)
+  - "gemini-pro-latest"         # Alias to latest Pro
+  - "gemma-4-31b-it"            # Free via Gemini API
+  - "gemma-4-26b-a4b-it"        # Free via Gemini API

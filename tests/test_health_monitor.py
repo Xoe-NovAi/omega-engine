@@ -9,6 +9,7 @@ Covers: Circuit breaker states, latency tracking, quota management, success rate
 """
 
 import anyio
+import importlib.util
 import pytest
 
 from omega.oracle.health_monitor import (
@@ -238,6 +239,7 @@ class TestStatusReport:
         assert "google" in report["providers"]
         assert "gemma-4-31b" in report["models"]
 
+@pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="vault excluded from public debut (D-565)")
 class TestVaultCoreRateLimit:
     def test_rate_limit_does_not_trigger_rotation(self):
         """[IW-2] Rate limits must raise ProviderRateLimitError, not rotate keys.

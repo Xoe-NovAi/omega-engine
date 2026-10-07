@@ -162,6 +162,31 @@ data/coordination/R_RESEARCHER_SQLITE_VEC_GAPS_20260828.md
 data/coordination/SESSION_ANCHOR.md
 data/coordination/anchored_summary/kali/projection.md
 
+# [CUT-20261007-B2] Test dependencies restored — tracked at PR head eff47559, dropped by
+# default-deny; shipped tests import/read them (196-failure cause classes: capability matrix,
+# a2a cards, cohort registry, eval golden set, federation docs, streamable-http config).
+config/a2a/
+config/provider_capabilities.yaml
+data/registry/
+data/eval/
+docs/federation/node1_received/
+opencode.json
+
+# [CUT-20261007-B2] Generated registry + narrative — tests/test_who_is.py asserts the loud
+# "DO NOT PAGE PEER EIS IDS" banner (M4/G4-Ruling-4 doctrine guard). Content = task slugs
+# only, same class as the deliberately-kept TASK_REGISTRY.json (Explicit Exclusions).
+data/coordination/EXPERT_SESSION_REGISTRY.md
+data/coordination/EXPERT_SESSION_REGISTRY_NARRATIVE.md
+
+# [CUT-20261007-B2] Test dependencies restored (continued) — registry/YAML configs that
+# shipped tests load: model registry cards+providers (test_model_registry reads
+# config/model_registry files directly), mandate-claims contract (2 tests read
+# config/mandate_claims.yaml), entity alias table (canonicalisation + handoff fold
+# tests read config/entity_canonicalization.yaml).
+config/model_registry/
+config/mandate_claims.yaml
+config/entity_canonicalization.yaml
+
 # P2P Omegaverse Documentation (2026-09-09)
 docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md
 docs/strategy/P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md
@@ -191,6 +216,21 @@ data/entities/john_carmack/session_gnosis.md
 data/entities/john_carmack/proposed_lessons.yaml
 data/entities/jem/session_gnosis_jem-N13.md
 
+# [CUT-20261007-B2] arcana_novai showcase WAD (minus plugins/) — tests/test_world_state.py
+# loads this WAD and lattices core->physics. Plugins stay private: plugins/
+# contains host paths (/media/arcana-novai/*) and is FORGE-listed below.
+config/wads/arcana_novai/adapters/
+config/wads/arcana_novai/entities/
+config/wads/arcana_novai/world/
+config/wads/arcana_novai/entities.yaml
+config/wads/arcana_novai/hierarchy.yaml
+config/wads/arcana_novai/manifest.yaml
+config/wads/arcana_novai/qliphoth.yaml
+config/wads/arcana_novai/spheres.yaml
+config/wads/arcana_novai/vault_schema.yaml
+# [CUT-20261007-B2] merge manifest — tests/test_entity_canonicalization.py opens this exact path.
+data/coordination/ENTITY_CANONICALIZATION_20261005.json
+
 # Session Anchors
 data/coordination/SESSION_ANCHOR.md
 data/coordination/anchored_summary/kali/projection.md
@@ -206,6 +246,8 @@ docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
 ```
 src/omega/vault/             # D-565: Vault excluded from debut (no code changes)
 tests/unit/test_vault_core.py   # D-565 — vault excluded from debut; test cannot import the cut src/omega/vault/
+tests/test_entity_roc_racoon.py   # all 24 tests import the private arcana_novai WAD plugin (host paths /media/arcana-novai/*) — plugin stays private
+config/wads/arcana_novai/plugins/   # host paths /media/arcana-novai/* — FORGE beats any broader entry; keep it private
 docs/research/
 docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above
