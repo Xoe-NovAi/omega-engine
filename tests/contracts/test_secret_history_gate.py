@@ -62,6 +62,12 @@ def test_baseline_entries_are_complete_and_unique():
         assert len(entry["why"]) > 20, "every disposition needs a real WHY"
 
 
+# The scan walks `git log -p -G` over EVERY ref it can see. A fresh CI clone
+# (one branch) is fast; a full-history dev checkout with every branch, tag and
+# stash is not — it measures in minutes on big histories. The 60s default from
+# addopts is a guard against hangs, not a budget for this scan, so the test
+# declares its own.
+@pytest.mark.timeout(300)
 def test_every_history_token_is_baselined():
     """Integration: durable refs must be fully accounted for."""
     history = checker.scan_history()

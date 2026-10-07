@@ -49,8 +49,26 @@ from mcp_servers.omega_hub import handoff_alias as HA  # noqa: E402
 # ═══════════════════════════════════════════════════════════════════════════
 
 # The ruling, verbatim: `makali-n0` is authoritative.
+#
+# [CUT-20261007] These spellings assert the DECLARED seat. Full delivery needs
+# the declared canonical's entity directory OR live queue traffic — absent by
+# law on a packetless public tree, where the resolver honestly reports what it
+# can deliver. Tests that need the seat present declare their precondition via
+# the _seat_present fixture; tests of the declaration itself need no seat.
 DECLARED_ALIASES = ["makali", "makali_fusion", "makali-fusion", "MAKALI_N0", " makali "]
 CANONICAL = "makali-n0"
+
+
+@pytest.fixture
+def _seat_present(monkeypatch):
+    """Provide the declared seat's deliverability precondition.
+
+    The resolver delivers a declared alias only when the canonical is a known
+    destination (entity dir or queue traffic). Dev has both; a public tree has
+    neither. Freeze the precondition so seat-assertion tests hold on every tree.
+    """
+    monkeypatch.setattr(HA, "_live_entities", lambda: ["makali-n0", "makali", "makali_fusion"])
+    monkeypatch.setattr(HA, "_queue_canonical", lambda: {"makali-n0": "makali-n0"})
 
 
 @pytest.mark.parametrize("alias", DECLARED_ALIASES)
@@ -67,7 +85,7 @@ def test_canonical_name_is_identity():
 
 
 @pytest.mark.parametrize("alias", DECLARED_ALIASES)
-def test_resolution_is_resolved_true_for_every_spelling(alias):
+def test_resolution_is_resolved_true_for_every_spelling(alias, _seat_present):
     """THE HEADLINE. `resolved: false` here is what forked the packet."""
     r = HA.resolve_target_entity(alias, "opencode")
     assert r["resolved"] is True, f"{alias!r} did not resolve: {r}"
@@ -75,7 +93,7 @@ def test_resolution_is_resolved_true_for_every_spelling(alias):
     assert r["agent_id"] == f"opencode/{CANONICAL}"
 
 
-def test_identity_reports_exact_and_folds_report_declared_alias():
+def test_identity_reports_exact_and_folds_report_declared_alias(_seat_present):
     """`rule` must not lie about whether a name matched or was rewritten.
 
     The ruling asked for `rule: exact` on every spelling. Reporting a fold as
@@ -182,10 +200,15 @@ def test_the_alias_table_is_not_a_registry_hidden_in_code():
 
 def test_a_missing_table_degrades_instead_of_breaking_addressing(monkeypatch, tmp_path):
     """An absent declaration must fall back to the pre-existing derived
-    behaviour. It must never take federation addressing down with it."""
+    behaviour. It must never take federation addressing down with it.
+
+    [CUT-20261007] The derived fold needs a live queue — freeze one so the
+    fallback contract (alarm-free, addressing alive) holds on packetless trees.
+    """
     monkeypatch.setattr(HA, "CANONICALIZATION_PATH", tmp_path / "absent.yaml")
     monkeypatch.setattr(HA, "_alias_cache", {"mtime": None, "table": {}})
-    monkeypatch.setattr(HA, "_queue_canonical", lambda: {})
+    monkeypatch.setattr(HA, "_queue_canonical", lambda: {"ge-n1": "ge-n1"})
+    monkeypatch.setattr(HA, "_live_entities", lambda: [])
     assert HA.canonical_entity_name("makali") == "makali", "unreadable table changed addressing"
     r = HA.resolve_target_entity("ge_n1", "opencode")
     assert r["entity"] == "ge-n1", f"derived fold broke without the table: {r}"

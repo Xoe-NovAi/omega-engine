@@ -19,14 +19,18 @@ from omega.oracle.oom_protector import AdmissionResult  # noqa: E402
 
 
 @pytest.fixture
-def _calm_pressure(oom_protector):
-    from omega.oracle.psi_monitor import PSISnapshot, Resource
+def _calm_pressure(oom_protector, monkeypatch):
+    from omega.oracle.psi_monitor import PSISnapshot
 
+    # Freeze the container leg too: real cgroup memory.pressure on a busy
+    # runner can exceed the thrashing thresholds and deny leg 2 of the RAM
+    # test (mem=8.0, PSI calm, cgroup DENY). All three signals must be pinned.
+    monkeypatch.setattr(oom_protector, "_cgroup_available", False)
     with patch.object(
         oom_protector.psi, "get_all_metrics", new_callable=AsyncMock
     ) as m_psi:
         m_psi.return_value = PSISnapshot(
-            resource=Resource.MEMORY,
+            resource="memory",
             some_avg10=0.0, some_avg60=0.0, some_avg300=0.0, some_total_us=0,
             full_avg10=0.0, full_avg60=0.0, full_avg300=0.0, full_total_us=0,
         )
@@ -36,6 +40,13 @@ def _calm_pressure(oom_protector):
 @pytest.mark.anyio
 async def test_oom_protector_handles_sigkill(admission_controller):
     """Simulate OOM killer sending SIGKILL — admission should fail-fast."""
+    # [CUT-20261007] This test's subject is semaphore release semantics after a
+    # crash, not RAM arithmetic. acquire() consults live MemAvailable first
+    # (2.16GB + reserve) — a busy runner or a 7GB CI box denies BEFORE the
+    # semaphore is ever reached. Freeze the OOM leg so the contract under test
+    # is the slot, not the host's free RAM at this instant.
+    admission_controller._oom_protector.check_available = AsyncMock(return_value=True)
+
     # In a real OOM scenario, the kernel kills the process.
     # This test verifies that admission controller releases resources on unexpected exit.
     
