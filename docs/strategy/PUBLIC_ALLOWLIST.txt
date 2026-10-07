@@ -325,6 +325,22 @@ budget input the gate actually reads, so the gate is satisfied without the leak.
 - `.firecrawl/` — scrape cache, FORGE only (G2)
 - `config/github_accounts.yaml` — credential file, FORGE only (G3)
 
+# [CUT-20261007] CODEX generation chain + root-allowlist public assets. Found by
+# fresh-clone gate verification: every prior cut removed these, so `make codex` /
+# `check-codex-fix` could NEVER run on a public clone — the age-gated
+# `check-codex-stale` (M13) then failed with no possible remedy, taking
+# check-mandates + check-mandate-compliance (M13) with it. Measured on the cut:
+# 6/8 temple-grade prereqs PASS, every failure traced to this one chain.
+- `scripts/groups.json` — codex groups config; codex_cat.py opens it unconditionally (groups_file).
+- `scripts/hydration_header.md` — D-277 hydration header; codex_cat.py:77 reads it unconditionally.
+- `scripts/codex/` — ENGINE/MANDATES/AGENTS_CONDENSED.md codex sources + license sidecars (groups.json entries).
+- `ORACLE_STACK.md` — codex source (groups.json) + root-allowlisted agent read target.
+- `CREDITS.md` — codex source (groups.json) + id Software heritage attribution; root-allowlisted.
+- `docs/kb/REFINEMENT_PROTOCOL.md` — codex source (groups.json).
+- `REUSE.toml` — SPDX annotation metadata for the public surface; root-allowlisted (M37 debt deferred post-PR but the file is boundary-legitimate).
+- `Dockerfile.iris` — root-allowlisted container build; audited clean (0 private paths/secrets).
+- `Dockerfile.iris.license` — license sidecar for Dockerfile.iris (root-allowlisted).
+
 ## Acceptance
 
 - A clone of the public ref has **no** `docs/research/` corpus, **no** agent workspace dumps, **no** handoff JSON.
