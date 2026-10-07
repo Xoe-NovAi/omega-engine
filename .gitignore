@@ -202,6 +202,7 @@ rag-v1/
 rag-v1/**/*
 scripts/omega-roc_racoon-entrypoint.py
 src/data/datasets/
+src/data/jobs/
 src/data/library/index/
 src/omega/entity_roc_racoon.py
 test_discovery.py
