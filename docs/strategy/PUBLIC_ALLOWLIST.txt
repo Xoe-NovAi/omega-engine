@@ -288,6 +288,10 @@ migrate_heritage.py
 # public Makefile references files that do not exist in the public repo. NOTE: each entry
 # MUST be its own line — is_exception() is an exact string match, so comma-joined lists
 # silently never match.
+# [D-626] Full harvester module: tests/test_hivemind_harvester.py imports it at module scope
+# (ModuleNotFoundError at collection on a clone without it); mcp hub background loop calls
+# harvest_once() (background.py:357, started server.py:624). Verified graceful in clean clone.
+- `scripts/hivemind_harvest.py` — [D-626] full module: test + hub background loop depend on it; 0 sensitive hits.
 - `scripts/check_m9_error_integrity.py` — [D-624] gate script invoked by a shipped Makefile target.
 - `scripts/check_sahs.py` — [D-624] gate script invoked by a shipped Makefile target.
 - `scripts/check_m7_sovereignty.py` — [D-624] gate script invoked by a shipped Makefile target.
