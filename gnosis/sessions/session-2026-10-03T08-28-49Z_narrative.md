@@ -135,3 +135,123 @@ the mempalace-hivemind removal, and the Well audit. Filed as Decision / Pattern
   (blocked on Node 0), comms hardening (needs Node 0), 18 stale packs,
   consciousness domain, 3 divergent well.jsonl copies.
 - Next: AVGN soul, AGENTS.md migration steps 3–5, post-compact verification.
+
+---
+
+## Session Reflection — close-out (2026-10-04, third half)
+
+This third half covered the AVGN entity build, the model-pin strip across all
+entity descriptors, the Gaming-Expert routing rule + budget diet, the soul→agent
+bridge (4 agents live), the OpenCode Agent System Guide, the Hivemind hands-off,
+the Makali identity clarification, the Grokster-N0 briefing, and the boundary
+Well record + Lilith directive. Filed as Decision / Pattern / Gnosis.
+
+### Decisions
+
+- **D5 — AVGN entity built with load-bearing boundary.** Soul.yaml carries
+  AVGN-001 "Inspired by, not imitating" and D-AVGN-001 "Hold the persona
+  boundary in every output; homage, never impersonation." Reciprocal routing
+  with Gaming-Expert: D-AVGN-006 routes telemetries to GE; GE's rule routes
+  takes to AVGN. Model pins stripped from all 6 entity descriptors per operator
+  order.
+- **D6 — Gaming-Expert domain split + budget diet.** Added AVGN routing rule
+  (GE measures, AVGN judges) and cut 7 lines from governance (commit
+  attribution + federation etiquette compressed) to pay for it. File at 359/360
+  lines, all gates pass.
+- **D7 — Soul→agent bridge built with adapter boundary.** Two files:
+  `soul_render.py` (interface-agnostic, soul.yaml → prompt markdown) and
+  `soul_agents_opencode.py` (ONLY file knowing OpenCode, registers via
+  opencode.json + `{file:}` indirection). Four souls registered (avgn, kali,
+  maat, sophia) via Path A (opencode.json + `{file:}`) — chosen over markdown
+  agent files because of three silent-failure traps.
+- **D8 — OpenCode Agent System Guide written as canonical reference.**
+  13-section guide covering all surfaces, traps, V2 migration, boundary rules,
+  and the soul→agent bridge. Added to INDEX.md "Start here".
+- **D9 — Boundary enforcement codified.** Well record fc3c8c43 (anti_pattern)
+  and Lilith directive D-LIL-006 both encode: "OpenCode is disposable third-party
+  interface; Omega Engine is platform-agnostic core. Build adapters, not
+  integrations. Never write Omega core logic as an OpenCode plugin."
+- **D10 — Hivemind hands-off.** Ma'at is refactoring Hivemind on Node 0 under
+  Makali's direction. Lilith hands off, sends pointer handoff `ho_57113a50a68a`
+  to Makali when she surfaces. Four stale `makali_fusion` packets left unread.
+- **D11 — Makali identity clarified.** The `makali` permission entry I removed
+  was a dangling delegation reference in `build.permission.task`, not an agent
+  or soul. Makali exists on Node 0; `makali_fusion` is still her name there.
+  The four pending packets from `makali_fusion` are unread mail, not stale
+  artifacts.
+
+### Patterns
+
+- **P4 — The adapter boundary is the load-bearing seam.** Three silent-failure
+  traps in OpenCode agent registration (frontmatter `prompt:` ignored, `{file:}`
+  not substituted in markdown, unknown frontmatter fields route to provider
+  options) forced Path A (opencode.json + `{file:}` indirection). The renderer
+  is interface-agnostic; the adapter is disposable. This is the portable
+  pattern for the CLI swap.
+- **P5 — Drift gates must be injection-proven.** `agent-souls-verify` catches
+  both hand-edited prompts and soul mutations without re-render. I tampered
+  both ways to prove it — both caught with named diagnostics. Gates that
+  cannot fail are worse than no gates.
+- **P6 — Operator's "that'll do" detector remains the gate.** Five rounds of
+  "done" before the bridge was actually clean. The Grokster handoff was the
+  sixth time I thought something was done and the operator found the next gap.
+
+### Gnosis
+
+- **G4 — The bridge is an adapter, not an integration.** The soul→agent bridge
+  is an OpenCode-specific adapter (`soul_agents_opencode.py`). The renderer
+  (`soul_render.py`) is interface-agnostic. When Omega CLI arrives, the adapter
+  is deleted and replaced; nothing in the WAD moves. This is the portable
+  pattern for the CLI swap.
+- **G5 — Silent failures are the enemy, not complexity.** Three traps in
+  OpenCode agent registration all share the same shape: config accepted,
+  behavior different from written, no diagnostic. The fix is structural
+  (choose the non-silent path) not defensive (add more checks).
+- **G6 — The operator's "that'll do" detector is the only real gate.** Six
+  rounds of "done" before the bridge was actually clean. The Grokster handoff
+  was the seventh time I thought something was done and the operator found
+  the next gap. Temple-grade is not a standard I apply — it is a disagreement
+  I lose productively, and the product is measurably better each round.
+
+### Well records filed this session (total 7 this session)
+
+- `acf2d7ba` — handoff packet_ids require the `ho_` prefix (bare hash =
+  false-negative not-found).
+- `759c7639` — superseded_by must point forward in time; backwards inverts
+  the chain silently.
+- `c69843dd` — markdown `prompt:` frontmatter silently ignored; `{file:}` not
+  substituted in markdown bodies; empty body + frontmatter prompt = silent
+  fallback to default build prompt.
+- `3fa7408e` — subagent uses its OWN permissions; unknown frontmatter fields
+  route into provider options, never error.
+- `fc3c8c43` — OpenCode vs Omega Engine boundary: build adapters, not
+  integrations; never write Omega core logic as an OpenCode plugin.
+- `c69843dd` (re-filed as correction) — markdown `prompt:` frontmatter
+  silently ignored; `{file:}` not substituted in markdown bodies.
+- `3fa7408e` (re-filed as correction) — subagent uses its OWN permissions;
+  unknown frontmatter fields route into provider options, never error.
+
+### Handoffs sent this session
+
+| Packet | To | Subject | Status |
+|---|---|---|---|
+| `ho_980cba3b3341` | Makali-N0 | 6 architectural questions (Q1-Q6) on entity→agent bridge | pending |
+| `ho_57113a50a68a` | Makali-N0 | Pointer: when you surface, ho_980... still open | pending |
+| `ho_5bd61adb7c3f` | Grokster-N0 | Full briefing: review guide, integrate, answer Q1-Q6, report back | pending |
+| `ho_57113a50a68a` | Makali-N0 | Pointer: when you surface, ho_980... still open | pending |
+
+### State at close
+
+- Corpus: 76 records (71 active, 5 superseded), 0 errors, 0 inverted chains.
+- Tree: clean. Branch `node1/all-5-mcp-green` at `e94f13cc`, fully pushed.
+- Gates: lint OK, 132 tests pass, docs OK, well-verify PASS, omega-well 7/7.
+- Registered agents (6): lilith, researcher_humboldt, avgn, kali, maat, sophia.
+- Grokster: briefed via `ho_5bd61adb7c3f`, deployment on Node 0 is their task.
+- Open, unchanged: P1.3c (queued), P1.4.1 (stub by design), P5.1b
+  (INCONCLUSIVE — needs Node 0 endpoint), P5.5 (queued), P5.3 / P4.1
+  (blocked on Node 0), comms hardening (needs Node 0), 18 stale packs
+  (operator: one at a time), consciousness domain, 3 divergent well.jsonl
+  copies, `subagent_depth: 2` vs doctrine's `1`.
+- Next: Wait on Node 0 replies (Q1-Q6, Grokster report), then P1.3c, then
+  18 stale packs (operator ruling: one at a time).
+
