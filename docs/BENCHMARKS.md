@@ -115,6 +115,87 @@ Verdict: **active** — strict upgrade across the representative screen
 `docs/models/gemma4-12b-qat.md`. The harness now exposes `--think {on,off}`
 (default off) and `--lite`; the full 18-run matrix is optional follow-up.
 
+## 2026-10-07 — Thread curves, E-core isolation, engine parity (LFM + Krikri)
+
+Raw data: `logs/20261007-threads/` (JSON runs, turbostat logs, harness scripts).
+Host: i7-13620H (6P+4E/16T, AVX2+AVX-VNNI ceiling — no AVX-512; fused off on
+Raptor Lake-H), 16GB single-channel DDR5-5200, CPU-only. Engine: raw
+`llama-server` (Ollama 0.34.4 build, ggml `libggml-cpu-alderlake`) vs
+`llama-cpp-python 0.3.36` (venv, `CMAKE_ARGS=-DGGML_NATIVE=ON`).
+
+### Engine parity (no difference)
+
+Same LFM2.5-2.6B-heretic Q4_K_M file, same prompt, 64 tokens, matched settings
+(c=8192, t=6, b=1024/ub=512, FA on, KV q8_0):
+
+| Engine | Wall | Decode | Load |
+|---|---|---|---|
+| raw `llama-server` :8089 | 3.22s | 20.4 t/s (server timings) | pre-loaded |
+| `llama-cpp-python` 0.3.36 | 3.22s | ~19.9 t/s | 0.64s (mmap) |
+
+**The Python binding is free** — in-process `Llama()` matches the HTTP server to
+the third decimal. mmap load (0.6s) beats Ollama's `--load-mode none` (~2.5s) for
+load/unload worker patterns.
+
+### LFM thread curve (idle, isolated) — peak at t=6
+
+| t | 4 | 5 | **6** | 8 | 10 | 12 | 16 |
+|---|---|---|---|---|---|---|---|
+| dec t/s | 19.7 | 20.4–20.7 | **21.2** | 20.5 | 20.3 | 20.1 | 19.4 |
+
+Beyond 6, decode *falls* — single-channel bandwidth saturates; extra threads
+fight the bus and the OS. Matches the tag: `lfm25-t6` keeps `num_thread 6`.
+
+### The embedder misplacement (root cause of "WebUI is 5x slower" residuals)
+
+`qwen3-embedding:0.6b` auto-loaded by the **primary** Ollama can only use CPUs
+0-11 (`AllowedCPUs`) — its 10 runner threads squatted on the P-cores and LFM
+collapsed **21.2 → 4.6 t/s (−78%)** with 5-vs-6 thread differences lost in the
+noise. Fix deployed and verified: `scripts/embed_service.py install` →
+`ollama-embed.service` (second instance, `:11435`, `AllowedCPUs=12-15`,
+`OMP_NUM_THREADS=4`); runner affinity confirmed `12-15` at runtime. This is the
+design already documented in that script's docstring — Intel Thread Director is
+not available on Linux, explicit pinning is the mechanism.
+
+### LFM under true E-core load — keep t=6
+
+| Loaded (E-hammer active) | t=4 | t=5 | **t=6** |
+|---|---|---|---|
+| decode t/s | 18.0 | 18.7–18.8 | **18.6–18.9** |
+| TTFT | 0.18–0.21s | 0.16–0.18s | 0.17s |
+
+**Decision: LFM tag stays `num_thread 6`.** Isolated E-core load costs only
+~11% (vs 78% unisolated).
+
+### Performance-mode rerun (scaling governor `performance`, whole matrix)
+
+| t=6, E-hammer | governor=powersave | governor=performance |
+|---|---|---|
+| LFM loaded | 18.8 | **19.6–20.0 (+5%)** |
+| LFM loaded TTFT | 0.17s | **0.12–0.15s (−25%)** |
+| Krikri loaded | 6.6–6.7 | 5.8–6.2 |
+
+Prompt eval and loaded decode are clock-sensitive → performance governor kept.
+Krikri's loaded dip under performance mode: faster E-cores consume more memory
+bandwidth — on a bandwidth-bound model the hammer itself gets heavier.
+
+### Krikri thread curve → **decision: `num_thread 4`**
+
+| t | 3 | **4** | 6 | 8 |
+|---|---|---|---|---|
+| idle t/s | 6.27 | **6.67** | 6.50 | ~6.2 |
+| loaded t/s | 6.10 | **6.27** | 5.97 | — |
+
+- Peak at exactly **t=4**, corroborated by STREAM (32.6 GB/s saturates at 4–5
+  threads) and by params/speed linearity: 8B÷2.6B = 3.1× params, 21.2÷6.5 =
+  3.3× slower — pure bandwidth wall, thread count is secondary.
+- **Decision applied 2026-10-07**: Krikri tag rebuilt via `ollama create`
+  (`num_thread 8 → 4`, verified `ollama show --parameters`: `num_thread 4`;
+  blob/template/stops unchanged, no re-download). Server-level
+  `OLLAMA_NUM_THREADS=8` default is a separate fallback — untouched.
+- Thermals: no throttling in any run (max 86°C heat-soaked vs 97–100°C
+  threshold; 18–35W package).
+
 ## Pending benchmarks
 
 - [ ] `bench-all` full sweep across all 8 installed models

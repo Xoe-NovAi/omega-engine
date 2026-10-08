@@ -1,0 +1,11 @@
+== krikri t=4 idle ==
+{"run": 0, "ttft_s": 0.774, "wall_s": 10.02, "ntok": 61, "dec_ts": 6.6}
+{"run": 1, "ttft_s": 0.3, "wall_s": 4.94, "ntok": 31, "dec_ts": 6.7}
+{"run": 2, "ttft_s": 0.313, "wall_s": 5.41, "ntok": 34, "dec_ts": 6.7}
+== krikri t=4 loaded ==
+{"run": 0, "ttft_s": 0.81, "wall_s": 10.39, "ntok": 61, "dec_ts": 6.4}
+{"run": 1, "ttft_s": 0.303, "wall_s": 5.13, "ntok": 31, "dec_ts": 6.4}
+{"run": 2, "ttft_s": 0.336, "wall_s": 6.04, "ntok": 34, "dec_ts": 6.0}
+SAVED /home/xnai/Documents/Projects/omega-engine-alpha/logs/20261007-threads/perf_krikri_t4.json
+krikri_t4_idle       dec=[6.6, 6.7, 6.7]
+krikri_t4_loaded     dec=[6.4, 6.4, 6.0]

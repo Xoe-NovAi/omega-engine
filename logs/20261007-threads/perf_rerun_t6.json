@@ -1,0 +1,98 @@
+{
+ "governor": "performance",
+ "t": 6,
+ "runs": {
+  "lfm_idle": [
+   {
+    "run": 0,
+    "ttft_s": 0.125,
+    "wall_s": 3.25,
+    "ntok": 64,
+    "dec_ts": 20.5
+   },
+   {
+    "run": 1,
+    "ttft_s": 0.114,
+    "wall_s": 3.21,
+    "ntok": 64,
+    "dec_ts": 20.6
+   },
+   {
+    "run": 2,
+    "ttft_s": 0.106,
+    "wall_s": 3.22,
+    "ntok": 64,
+    "dec_ts": 20.5
+   }
+  ],
+  "lfm_loaded": [
+   {
+    "run": 0,
+    "ttft_s": 0.146,
+    "wall_s": 3.35,
+    "ntok": 64,
+    "dec_ts": 19.9
+   },
+   {
+    "run": 1,
+    "ttft_s": 0.13,
+    "wall_s": 3.4,
+    "ntok": 64,
+    "dec_ts": 19.6
+   },
+   {
+    "run": 2,
+    "ttft_s": 0.123,
+    "wall_s": 3.33,
+    "ntok": 64,
+    "dec_ts": 20.0
+   }
+  ],
+  "krikri_idle": [
+   {
+    "run": 0,
+    "ttft_s": 0.643,
+    "wall_s": 9.68,
+    "ntok": 61,
+    "dec_ts": 6.8
+   },
+   {
+    "run": 1,
+    "ttft_s": 0.319,
+    "wall_s": 5.2,
+    "ntok": 31,
+    "dec_ts": 6.4
+   },
+   {
+    "run": 2,
+    "ttft_s": 0.315,
+    "wall_s": 5.68,
+    "ntok": 34,
+    "dec_ts": 6.3
+   }
+  ],
+  "krikri_loaded": [
+   {
+    "run": 0,
+    "ttft_s": 0.711,
+    "wall_s": 10.6,
+    "ntok": 61,
+    "dec_ts": 6.2
+   },
+   {
+    "run": 1,
+    "ttft_s": 0.338,
+    "wall_s": 5.68,
+    "ntok": 31,
+    "dec_ts": 5.8
+   },
+   {
+    "run": 2,
+    "ttft_s": 0.341,
+    "wall_s": 6.06,
+    "ntok": 34,
+    "dec_ts": 5.9
+   }
+  ]
+ }
+}

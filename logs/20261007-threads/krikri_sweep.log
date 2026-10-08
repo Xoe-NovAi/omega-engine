@@ -1,0 +1,16 @@
+=== t=4 ===
+{"t": 4, "load_s": 2.41, "ttft_s": 0.99, "wall_s": 10.69, "ntok": 61, "dec_ts": 6.3}
+=== t=5 ===
+{"t": 5, "load_s": 0.35, "ttft_s": 0.878, "wall_s": 10.33, "ntok": 61, "dec_ts": 6.5}
+=== t=6 ===
+{"t": 6, "load_s": 0.34, "ttft_s": 0.793, "wall_s": 10.39, "ntok": 61, "dec_ts": 6.4}
+=== t=8 ===
+{"t": 8, "load_s": 0.34, "ttft_s": 0.822, "wall_s": 10.59, "ntok": 61, "dec_ts": 6.2}
+=== t=10 ===
+{"t": 10, "load_s": 0.34, "ttft_s": 0.76, "wall_s": 10.51, "ntok": 61, "dec_ts": 6.3}
+SAVED /home/xnai/Documents/Projects/omega-engine-alpha/logs/20261007-threads/krikri_sweep.json
+t= 5 load=0.3s TTFT=0.878s wall=10.3s dec=6.5 t/s
+t= 6 load=0.3s TTFT=0.793s wall=10.4s dec=6.4 t/s
+t= 4 load=2.4s TTFT=0.990s wall=10.7s dec=6.3 t/s
+t=10 load=0.3s TTFT=0.760s wall=10.5s dec=6.3 t/s
+t= 8 load=0.3s TTFT=0.822s wall=10.6s dec=6.2 t/s

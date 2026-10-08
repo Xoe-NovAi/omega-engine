@@ -1,0 +1,29 @@
+{
+ "A_raw_server": {
+  "wall_s": 3.22,
+  "tokens_predicted": 64,
+  "tokens_evaluated": 8,
+  "timings": {
+   "cache_n": 0,
+   "prompt_n": 8,
+   "prompt_ms": 112.877,
+   "prompt_per_token_ms": 14.109625,
+   "prompt_per_second": 70.87360578328624,
+   "predicted_n": 64,
+   "predicted_ms": 3089.476,
+   "predicted_per_token_ms": 49.03930158730159,
+   "predicted_per_second": 20.391807542767772
+  },
+  "text_head": " Definition: A quantum computer is a type of computer that uses quantum bits (qubits) to perform operations on data, whe"
+ },
+ "B_load_s": 0.64,
+ "B_llamacpp": {
+  "wall_s": 3.22,
+  "usage": {
+   "prompt_tokens": 8,
+   "completion_tokens": 64,
+   "total_tokens": 72
+  },
+  "text_head": " A: **Boson sampling** is a specific type of photonic quantum computing model that uses bosonic modes to perform Gaussia"
+ }
+}

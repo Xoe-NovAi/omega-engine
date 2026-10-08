@@ -1,0 +1,38 @@
+
+=== t=4 tb=4 ===
+{"t": 4, "tb": 4, "load_s": 0.65, "ttft_s": 0.133, "wall_s": 3.38, "ntok": 64, "dec_ts": 19.7}
+
+=== t=6 tb=6 ===
+{"t": 6, "tb": 6, "load_s": 0.58, "ttft_s": 0.102, "wall_s": 3.12, "ntok": 64, "dec_ts": 21.2}
+
+=== t=6 tb=12 ===
+{"t": 6, "tb": 12, "load_s": 0.59, "ttft_s": 0.107, "wall_s": 3.13, "ntok": 64, "dec_ts": 21.2}
+
+=== t=8 tb=8 ===
+{"t": 8, "tb": 8, "load_s": 0.58, "ttft_s": 0.109, "wall_s": 3.22, "ntok": 64, "dec_ts": 20.5}
+
+=== t=8 tb=12 ===
+{"t": 8, "tb": 12, "load_s": 0.58, "ttft_s": 0.107, "wall_s": 3.23, "ntok": 64, "dec_ts": 20.5}
+
+=== t=10 tb=10 ===
+{"t": 10, "tb": 10, "load_s": 0.61, "ttft_s": 0.109, "wall_s": 3.27, "ntok": 64, "dec_ts": 20.3}
+
+=== t=10 tb=12 ===
+{"t": 10, "tb": 12, "load_s": 0.59, "ttft_s": 0.104, "wall_s": 3.28, "ntok": 64, "dec_ts": 20.2}
+
+=== t=12 tb=12 ===
+{"t": 12, "tb": 12, "load_s": 0.63, "ttft_s": 0.106, "wall_s": 3.29, "ntok": 64, "dec_ts": 20.1}
+
+=== t=16 tb=16 ===
+{"t": 16, "tb": 16, "load_s": 0.6, "ttft_s": 0.104, "wall_s": 3.4, "ntok": 64, "dec_ts": 19.4}
+
+SAVED /tmp/thread_sweep.json
+t= 6 tb= 6 TTFT=0.102s wall=3.12s dec=21.2 t/s
+t= 6 tb=12 TTFT=0.107s wall=3.13s dec=21.2 t/s
+t= 8 tb= 8 TTFT=0.109s wall=3.22s dec=20.5 t/s
+t= 8 tb=12 TTFT=0.107s wall=3.23s dec=20.5 t/s
+t=10 tb=10 TTFT=0.109s wall=3.27s dec=20.3 t/s
+t=10 tb=12 TTFT=0.104s wall=3.28s dec=20.2 t/s
+t=12 tb=12 TTFT=0.106s wall=3.29s dec=20.1 t/s
+t= 4 tb= 4 TTFT=0.133s wall=3.38s dec=19.7 t/s
+t=16 tb=16 TTFT=0.104s wall=3.40s dec=19.4 t/s
