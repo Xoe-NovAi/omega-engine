@@ -293,13 +293,13 @@ excels at tool calling and reasoning, and it needs a JSON-forcing wrapper for
 | E-core embedder on `powersave` | Krikri loaded dipped under perf mode | keep at powersave |
 | don't rebuild Modelfiles from deleted sources | blobs intact, 48 GB; external drive unmounted | accepted |
 
-## 10. Tool audit → Lilith-N1 (Node-0 domain)
+## 10. Tool audit → Lilith-N1 (Node-1 domain)
 
 Documented "93 tools" vs live `tools/list` = **55**. The Sept-18 handshake already
 consolidated fragments into unified action-tools (your descriptions say so: "replaces
 7 fragmented tools", "consolidates 9", etc.). What remains is a real curation list:
 
-**Node-0 side (≈16 removals for Lilith-N1):**
+**16 server-side removals for Lilith-N1:**
 - 6 `github_*` fragments — unified `github` covers all 6 actions
 - 2 stats fragments (`get_system_stats`, `get_hardware_stats`) — unified `system_stats`
 - 8 tools with **empty descriptions** (likely never used): headroom_retrieve,
@@ -354,7 +354,7 @@ consolidated fragments into unified action-tools (your descriptions say so: "rep
 | `benchmarking/` | `realworld/` (harness + 3 JSON runs), `output/` (Krikri test10-03) |
 | `docs/BENCHMARKS.md` | full measurement tables (existing doc) |
 | `docs/research/` | LFM25 research branch + QA log (current commit) |
-| `exchange/n1-to-n0/` | tool audit + 55-tool catalogs (queued to Lilith-N1) |
+| `n1-cline-to-lilith/` | full handoff packet + tool audit + 55-tool catalogs (delivered to Lilith-N1 on Node 1) |
 | `scripts/` | `realworld_eval.py` (new), `embed_service.py`, `bench_threads.py` |
 
 **Commit:** `9cf01714` docs: comprehensive session report 2026-10-08 (this file), clean
