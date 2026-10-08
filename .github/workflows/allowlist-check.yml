@@ -44,30 +44,40 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0  # full history for the M23 pre-cut secret check
 
-      - name: M23 pre-cut secret-history check
+      - name: M23 pre-cut secret-history check (disposition-aware)
         # Per R_VAULT_COPILOT_20260827 §1.2 Area 6:
         # Before the debut cut, the public history must be CLEAN of secrets.
-        # This is the M23 fail-closed gate: if any csk-/sk-/xai- pattern
-        # appears in history (excluding test fixtures), the cut cannot ship.
+        #
+        # Rebuilt 2026-10-07 (CUT-20261007): the previous form of this step —
+        # a bare `git log -S <pattern>` loop with no way to record a
+        # disposition — was structurally unsatisfiable. The scanner's OWN
+        # pattern literals live in durable refs (this workflow file, the
+        # scripts/check_secret_history.py PATTERNS map, the mandate_claims.yaml
+        # ban-definitions, .gitleaksignore rationales), so `git log -S "csk-"`
+        # etc. can never return zero for any tree containing its own detector.
+        # Its own error text ("Run git filter-repo first") could not fix it:
+        # filter-repo removes tokens, not pattern DEFINITIONS — the post-rewrite
+        # history still contains the scanner source and still fails.
+        #
+        # This is the same failure class the Makefile `gate-secrets` target
+        # documented 2026-09-25 when it was rebuilt: "the gate previously used
+        # a bare 'any match => fail' loop with no way to record a disposition,
+        # so it failed on history gitleaks already accepted and could never go
+        # green." The replacement here is its exact successor in CI form:
+        #
+        #   scripts/check_secret_history.py
+        #
+        # hashes every distinct credential-shaped token found in durable refs
+        # (`git log -G` + tree scan) and requires each to carry a disposition
+        # in .secret-history-baseline.toml (revoked / retained-public /
+        # purged / test-fixture, every one with a WHY). Any token WITHOUT a
+        # baseline entry fails closed. Audited history stays green; new
+        # unaudited material still blocks the cut. That is the fail-closed
+        # property the old step claimed and could not deliver.
         run: |
           set -euo pipefail
-          echo "=== M23 pre-cut secret-history check ==="
-          # Search history for known secret prefixes
-          BAD=0
-          for pat in "csk-" "sk-[A-Za-z0-9]" "xai-[A-Za-z0-9]" "ghp_[A-Za-z0-9]" "GOCSPX-" "AIza[A-Za-z0-9]"; do
-            HITS=$(git log -S "$pat" --all 2>/dev/null \
-              | grep -v "tests/fixtures\|scripts/ci_secret_scan\|HERITAGE_VET_LOG\|public-allowlist\|trust boundary" \
-              | wc -l || echo 0)
-            if [[ "$HITS" -gt 0 ]]; then
-              echo "::error file=history::M23 violation: '$pat' found in $HITS commit(s) in history"
-              BAD=$((BAD+1))
-            fi
-          done
-          if [[ "$BAD" -gt 0 ]]; then
-            echo "::error::M23 fail-closed: secret-history check found $BAD violation(s). Do NOT cut release/debut. Run git filter-repo (Debut Manual §5 P0-1d) first."
-            exit 1
-          fi
-          echo "✅ Secret-history clean"
+          echo "=== M23 pre-cut secret-history check (disposition-aware) ==="
+          python3 scripts/check_secret_history.py
 
       - name: Setup Python (for shellcheck + python validation)
         uses: actions/setup-python@v5
