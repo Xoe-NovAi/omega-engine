@@ -400,6 +400,10 @@ budget input the gate actually reads, so the gate is satisfied without the leak.
 - `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md` — [CUT-20261007] public-flip PR template (commit 6dc154d4 "public flip readiness — ... PR template"); GitHub applies it automatically to community PRs. SPDX-headered.
 - `.github/secret-scanning.yml` — [CUT-20261007] secret-scanning paths-ignore rules (commit b44b34be, M23/M27 wake-up fixes). SPDX-headered.
 - `.gitguardian.yaml` — [CUT-20261007] GitGuardian ignore config (AP tokens, session IDs, local key fixtures — false-positive suppression for the public scan). SPDX-headered.
+- `scripts/heritage_vet.sh` — [CUT-20261007-B4] M14 Heritage Vet Gate: test.yml step "Heritage Vetting" runs `make heritage-vet` → this script; absent → exit 127. Reads src/omega/ [id-soft:] tags, checks them against HERITAGE_VET_LOG.md. SPDX-headered, 0 sensitive hits.
+- `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md` — [CUT-20261007-B4] vet records the M14 gate greps; without it heritage_vet.sh exits 1 by design (and check_mandate_compliance skips — so shipping it is what makes M14 ENFORCED on a clone instead of silently skipped). 1257 lines, SPDX-headered, 0 private paths, 0 secret shapes. Force-add required: lives under gitignored data/**/*.md.
+- `scripts/ci_check_docs.sh` — [CUT-20261007-B4] ci.yml step "Omega Doc Lint" runs this directly; absent → exit 127. Lints docs/research + docs/decisions headers (both FORGE-dropped on the cut, so on a public tree it finds zero tracked files and exits 0 — the step becomes a principled no-op, same as its own empty-repo fallback). SPDX-headered, 0 sensitive hits.
+- `scripts/ci_secret_scan.py` — [CUT-20261007-B4] C3 gitleaks mirror: secrets.yml + secret-scan.yml invoke it (plant test + full-repo scan); absent → exit 2 on both secret workflows. Pure stdlib, self-excludes, only literals are the documented plant fixture + AWS example key. SPDX-headered.
 
 # [CUT-20261007] DELIBERATELY NOT SHIPPED — private backups that leaked into the keep set via
 # prefix semantics: glob_to_regex emits a ^ anchor but no $ (fuzz-tested v4 core; M23 says do
