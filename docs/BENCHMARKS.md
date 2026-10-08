@@ -297,6 +297,46 @@ Sources are on a partitioned external disk that is not mounted.
 Archive: `logs/20261007-threads/` (55 files; `logs/thermal/` gitignored with turbostat
 logs), `benchmarking/` (3 runs + harness + 8B JSON), `docs/research/` (this branch),
 `exchange/` (tool audit relay for Makali).
+### C. Why WebUI felt "drastically slower" than the terminal — DISSECTION
+
+Same engine (`llama-server` at 21.0–21.2 t/s loaded), same model. The difference was
+**six stacked layers**:
+
+1. **WebUI → Ollama path**: `/api/chat` (OpenAI shape) vs `/api/generate`; the chat
+   template prepends a system prompt + role markers before the tokens.
+2. **Prompt processing**: terminal /api/generate = 1 sentence (8–17 tokens, TTFT 0.07s,
+   70.9 tok/s prompt-eval); WebUI /api/chat with a system prompt + history = 155 tokens,
+   prompt-eval 1.69s before the first visible token — a 24× TTFT gap at identical
+   decode speed. LFM2.5's context is 128k spec'd but the tag caps at 8192.
+3. **Hidden background jobs**: each WebUI message triggers title/tag/follow-up
+   suggestions concurrently. `OLLAMA_NUM_PARALLEL=1, MAX_LOADED=1` = one slot, so
+   4 jobs serialize; theerno-run, a single message costs ~5 minutes of inference
+   (title 34s → answer 2m19s → follow-ups 1m38s → tags 25s). This alone caused
+   >95% of the perceived slowness.
+4. **Model reload tax**: `MAX_LOADED=1` + switching models unloads/reloads (10–30 s
+   on this box). Each command/chat with a different model pays a full warm-up.
+5. **Docker hops**: buffer-copy + single uvicorn worker (`--workers 1`).
+6. **Background load**: an E-core embedder instance running concurrently on the same
+   P-cores collapsed the box from 21.2 t/s to **4.6 t/s (−78%)** — the truly
+   catastrophic case, explained in §D.
+
+Verify in WebUI (extras off): fresh chat, same 1-sentence prompt → TTFT ~0.07–0.13s,
+21 t/s decode. With extras on → 5× slower to first token, 4× slower generation.
+
+### D. The embedder misplacement — root cause + fix (verified by measurement)
+
+`scripts/embed_service.py` (built 2026-09-26) documents the design: a second Ollama
+instance is mandatory because **a single Ollama process cannot pin embeddings to E-cores
+and generation to P-cores** (`AllowedCPUs=0-11` fixed by systemd). The fix:
+
+- `ollama-embed.service`: `:11435`, `AllowedCPUs=12-15`,
+  `OLLAMA_NUM_THREADS=4`, `OMP_NUM_THREADS=4`, 4 runner threads.
+- Runner affinity confirmed at runtime: `12-15` (Gracemont, 2.8 GHz).
+
+**Measured effect** (true load, E-core embedder + LFM): 21.2 → **18.8 t/s (+5%)**
+— a *margin*, not a tax, against the unisolated collapse (−78%). Under `performance`
+governor (§F) the hammer's own power draw made Krikri loaded dip 6.6→5.8 t/s, so
+the E-core design should be left on `powersave` on the E-cores.
 
 ### E. Thread curves, load, and performance governor — all measured
 
